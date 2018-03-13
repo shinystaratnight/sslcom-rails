@@ -44,14 +44,21 @@
     %span=@order.notes
 
   -if (@invoice.refunded? || @invoice.partially_refunded?) && refund_merchant
+    -other_payment = refund_merchant == 'other'
+    -amount = other_payment ? @order.amount.format : Money.new(@order.get_total_merchant_refunds).format
     %h3.order_results_header
-      Refunds (#{ Money.new(@order.get_total_merchant_refunds).format })
-    -@order.refunds.where(status: 'success').each_with_index do |o, i|
+      Refunds (#{ amount })
+    -if other_payment
       #order_date
-        #{i+1}. #{o.created_at.strftime('%F')}:
-        %strong #{Money.new(o.amount).format}
-    -if system_admins
-      #order_date
-        =link_to "<strong>Refund Details</strong>".html_safe,       |
-        refund_merchant_order_path(@ssl_slug, @order, mo_ref: @invoice.reference_number, type: :new), |
-        method: :get, class: 'btn-refunds-detail'
+        -type = @invoice.paid_wire_transfer? ? :wire : :po
+        Full refund issued for payment type #{MonthlyInvoice::PAYMENT_METHODS_TEXT[type]}.
+    -else
+      -@order.refunds.where(status: 'success').each_with_index do |o, i|
+        #order_date
+          #{i+1}. #{o.created_at.strftime('%F')}:
+          %strong #{Money.new(o.amount).format}
+      -if system_admins
+        #order_date
+          =link_to "<strong>Refund Details</strong>".html_safe,       |
+          refund_merchant_order_path(@ssl_slug, @order, mo_ref: @invoice.reference_number, type: :new), |
+          method: :get, class: 'btn-refunds-detail'

@@ -54,13 +54,19 @@
       #btn-invoice-generate
         =link_to "&#x2631; Update".html_safe, '#', class: 'button-mo-invoice', id: 'lnk-mo-invoice-update'
       
-      -unless payment.nil?
+      -if @invoice.show_refund_actions?
         -if ref_merchant && %{stripe paypal authnet}.include?(ref_merchant) && !@invoice.merchant_refunded?
           #btn-invoice-generate
             -refunded = payment.get_total_merchant_refunds
             =link_to "<strong>Refund (#{ref_merchant.capitalize})</strong>".html_safe,       |
             refund_merchant_order_path(@ssl_slug, payment, mo_ref: invoice_ref, type: :new), |
             method: :get, class: 'button-mo-invoice', id: 'lnk-mo-invoice-refund'
+        
+        -if @invoice.paid_wire_transfer? || @invoice.paid_po_other?
+          -type = @invoice.paid_wire_transfer? ? :wire : :po 
+          =link_to "Refund #{MonthlyInvoice::PAYMENT_METHODS_TEXT[type]}",      |
+          refund_other_invoice_path(@ssl_slug, invoice_ref, refund_type: type), |
+          method: :put, class: 'button-mo-invoice'
     
     #invoice-admin-errors  
     #invoice-container-admin

@@ -70,6 +70,25 @@ class InvoicesController < ApplicationController
     end
   end
   
+  def refund_other
+    if @invoice && !@invoice.refunded?
+      payment = @invoice.payment
+      payment_type = MonthlyInvoice::PAYMENT_METHODS_TEXT[params[:refund_type].to_sym]
+      @invoice.full_refund!
+      payment.full_refund! unless payment.fully_refunded?
+      SystemAudit.create(
+        owner:  current_user,
+        target: @invoice,
+        notes:  "Full refund issued for payment type #{payment_type}.",
+        action: "Monthly Invoice ##{@invoice.reference_number}, refund issued for #{payment.amount.format}."
+      )
+      flash[:notice] = "Invoice was successfully refunded for payment type #{payment_type}."
+    else
+      flash[:error] = "This invoice is already refunded."  
+    end
+    redirect_to_invoice
+  end
+  
   def remove_item
     if @invoice && !@invoice.paid?
       o = @invoice.orders.find_by(reference_number: params[:item_ref])

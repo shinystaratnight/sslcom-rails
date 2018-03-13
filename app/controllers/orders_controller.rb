@@ -301,7 +301,6 @@ class OrdersController < ApplicationController
       notes:  params["refund_reason"],
       action: "Monthly Invoice ##{mo.reference_number}, merchant refund issued for #{amount.format}."
     )
-    
   end
   
   def change_state

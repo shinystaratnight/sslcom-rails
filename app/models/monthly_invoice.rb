@@ -25,6 +25,14 @@ class MonthlyInvoice < Invoice
     ssl ? ssl.monthly_invoices.where(start_date: DateTime.now.beginning_of_month).first : nil
   end
   
+  def paid_wire_transfer?
+    payment && payment.notes.include?(PAYMENT_METHODS_TEXT[:wire])
+  end
+  
+  def paid_po_other?
+    payment && payment.notes.include?(PAYMENT_METHODS_TEXT[:po])
+  end
+    
   def paid?
     status == 'paid'
   end
@@ -43,6 +51,10 @@ class MonthlyInvoice < Invoice
 
   def show_payment_actions?
     !(paid? || refunded? || partially_refunded?)
+  end
+  
+  def show_refund_actions?
+    payment && !(merchant_refunded? || refunded?)
   end
   
   def merchant_refunded?
