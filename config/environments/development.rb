@@ -52,6 +52,14 @@ SslCom::Application.configure do
       resource '*', :headers => :any, :methods => :any
     end
   end
+  
+  # AWS S3
+  config.paperclip_defaults = {
+    storage:      :s3,
+    bucket:       Rails.application.secrets.s3_bucket,
+    s3_region:    Rails.application.secrets.s3_region,
+    s3_host_name: "s3-#{Rails.application.secrets.s3_region}.amazonaws.com"
+  }
 end
 
 # SubdomainFu.configure do |config|

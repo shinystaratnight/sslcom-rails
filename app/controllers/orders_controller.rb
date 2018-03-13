@@ -243,35 +243,66 @@ class OrdersController < ApplicationController
     unless @order.blank?
       @refunds = @order.refunds
       if params[:type] == 'create'
-        co = CertificateOrder.find(params[:cancel_cert_order].to_i) if params[:cancel_cert_order]
+        if params[:cancel_cert_order]
+          co = CertificateOrder.find(params[:cancel_cert_order].to_i)
+        end
+        
+        if params[:mo_ref]
+          mo = if current_user.is_system_admins?
+            MonthlyInvoice.find_by(reference_number: params[:mo_ref])
+          else
+            current_user.ssl_account.monthly_invoices.find_by(reference_number: params[:mo_ref])
+          end
+        end
+
         amount      = Money.new(co ? @order.make_available_line(co, :merchant) : (params[:refund_amount].to_d * 100))
         refund      = @order.refund_merchant(amount.cents, params[:refund_reason], current_user.id)
         last_refund = @order.refunds.last
+
         if refund && last_refund && last_refund.successful?
           flash[:notice] = "Successfully refunded merchant for amount #{amount.format}."
-          if co
-            funded = @order.make_available_funded(co)
-            co.refund!
-            co.revoke!(params["refund_reason"], current_user)
-            SystemAudit.create(
-              owner:  current_user,
-              target: co,
-              notes:  params["refund_reason"],
-              action: "Cancelled partial order #{co.ref}, merchant refund issued for #{amount.format}."
-            )
-            if funded > 0
-              @order.billable.funded_account.add_cents(funded)
-              flash[:notice] << " And made $#{Money.new(funded).format} available to customer."
-            end
-          end
-
+          refund_merchant_for_co(co, amount) if co
+          refund_merchant_for_mo(mo, amount) if mo
         else
           flash[:error] = "Refund for #{amount.format} has failed! #{last_refund.message}"
         end
       end
     end
   end
-
+  
+  def refund_merchant_for_co(co, amount)
+    funded = @order.make_available_funded(co)
+    co.refund!
+    co.revoke!(params["refund_reason"], current_user)
+    SystemAudit.create(
+      owner:  current_user,
+      target: co,
+      notes:  params["refund_reason"],
+      action: "Cancelled partial order #{co.ref}, merchant refund issued for #{amount.format}."
+    )
+    if funded > 0
+      @order.billable.funded_account.add_cents(funded)
+      flash[:notice] << " And made $#{Money.new(funded).format} available to customer."
+    end
+  end
+  
+  def refund_merchant_for_mo(mo, amount)
+    if mo.merchant_refunded?
+      mo.full_refund!
+      @order.full_refund! unless @order.fully_refunded?
+    else
+      mo.partial_refund!
+      @order.partial_refund!
+    end
+    
+    SystemAudit.create(
+      owner:  current_user,
+      target: mo,
+      notes:  params["refund_reason"],
+      action: "Monthly Invoice ##{mo.reference_number}, merchant refund issued for #{amount.format}."
+    )
+  end
+  
   def change_state
     performed="order changed to #{params[:state]}"
     unless @order.blank?

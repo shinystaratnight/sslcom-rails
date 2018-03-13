@@ -483,7 +483,7 @@ class CertificateOrdersController < ApplicationController
       cc.registrant.update(registrant_params) if registrant_params
       cc.registrant
     else
-      registrant_params ? cc.registrant.build(registrant_params) : cc.build_registrant
+      registrant_params ? cc.build_registrant(registrant_params) : cc.build_registrant
     end
   end
 end
