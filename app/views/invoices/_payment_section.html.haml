@@ -42,3 +42,16 @@
   #order_ref_num
     notes:
     %span=@order.notes
+
+  -if (@invoice.refunded? || @invoice.partially_refunded?) && refund_merchant
+    %h3.order_results_header
+      Refunds (#{ Money.new(@order.get_total_merchant_refunds).format })
+    -@order.refunds.where(status: 'success').each_with_index do |o, i|
+      #order_date
+        #{i+1}. #{o.created_at.strftime('%F')}:
+        %strong #{Money.new(o.amount).format}
+    -if system_admins
+      #order_date
+        =link_to "<strong>Refund Details</strong>".html_safe,       |
+        refund_merchant_order_path(@ssl_slug, @order, mo_ref: @invoice.reference_number, type: :new), |
+        method: :get, class: 'btn-refunds-detail'
