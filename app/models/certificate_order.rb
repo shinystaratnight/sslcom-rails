@@ -64,7 +64,7 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   default_scope{ where{(workflow_state << ['canceled','refunded','charged_back']) & (is_expired != true)}.
-      joins(:certificate_contents).includes(:certificate_contents).order(updated_at: :desc).
+      joins(:certificate_contents).order(updated_at: :desc).
       references(:all).readonly(false)}
 
   scope :not_test, ->{where{(is_test == nil) | (is_test==false)}}
