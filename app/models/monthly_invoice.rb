@@ -1,6 +1,6 @@
 class MonthlyInvoice < Invoice
   belongs_to :billable, polymorphic: true
-  belongs_to :payment, class_name: 'Order', foreign_key: 'order_id'
+  belongs_to :payment, -> { unscope(where: :state) }, class_name: 'Order', foreign_key: :order_id
   has_many   :orders, foreign_key: :invoice_id
   
   validates :start_date, :end_date, :status, :billable_id, :billable_type, :default_payment, presence: true
@@ -13,7 +13,7 @@ class MonthlyInvoice < Invoice
   
   PAYMENT_METHODS      = {bp: 'billing_profile', wire: 'wire_transfer', po: 'po_other'}
   PAYMENT_METHODS_TEXT = {bp: 'Billing Profile', wire: 'WireXfer', po: 'PO/Other'}
-  STATUS               = %w{pending paid}
+  STATUS               = %w{pending paid refunded partially_refunded}
   
   def self.invoice_exists?(ssl_account_id)
     ssl = SslAccount.find ssl_account_id
@@ -25,6 +25,14 @@ class MonthlyInvoice < Invoice
     ssl ? ssl.monthly_invoices.where(start_date: DateTime.now.beginning_of_month).first : nil
   end
   
+  def paid_wire_transfer?
+    payment && payment.notes.include?(PAYMENT_METHODS_TEXT[:wire])
+  end
+  
+  def paid_po_other?
+    payment && payment.notes.include?(PAYMENT_METHODS_TEXT[:po])
+  end
+    
   def paid?
     status == 'paid'
   end
@@ -33,6 +41,43 @@ class MonthlyInvoice < Invoice
     status == 'pending'
   end
   
+  def refunded?
+    status == 'refunded'
+  end
+  
+  def partially_refunded?
+    status == 'partially_refunded'
+  end
+
+  def show_payment_actions?
+    !(paid? || refunded? || partially_refunded?)
+  end
+  
+  def show_refund_actions?
+    payment && !(merchant_refunded? || refunded?)
+  end
+  
+  def merchant_refunded?
+    fully_refunded = false
+    if payment
+      ref_merchant = payment.get_merchant
+      if ref_merchant && %{stripe paypal authnet}.include?(ref_merchant)
+        order_amount = payment.get_total_merchant_amount
+        refunds = payment.refunds.any? ? payment.refunds.pluck(:amount).sum : 0
+        fully_refunded = (order_amount - refunds) == 0
+      end
+    end
+    fully_refunded
+  end
+  
+  def full_refund!
+    update(status: 'refunded')
+  end
+  
+  def partial_refund!
+    update(status: 'partially_refunded')
+  end
+    
   def get_approved_items
     orders.where(approval: 'approved')
   end

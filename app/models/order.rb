@@ -758,7 +758,7 @@ class Order < ActiveRecord::Base
       new_refund = Refund.refund_merchant(params)
     end
     if self.amount.cents == self.refunds.where{status == "success"}.sum(:amount)
-      full_refund!
+      full_refund! unless fully_refunded?
     elsif self.amount.cents < self.refunds.where{status == "success"}.sum(:amount)
       partial_refund! unless self.partially_refunded?
     end

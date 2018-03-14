@@ -15,13 +15,10 @@ class ValidationHistory < ActiveRecord::Base
     # Comment out the remainder parameters
 #    :path => ":Rails.root/attachments/:class/:id/:attachment/:style.:extension",
 #    :styles=>{:thumb=>['100x100#', :png], :preview=>['400x400#', :png]}
-    :styles=>{:thumb=>['100x100#', :png], :preview=>['400x400#', :png]},
-    :storage => :s3,
-    :s3_credentials => "#{Rails.root}/config/s3.yml",
-    :s3_permissions => :private,
-    :s3_protocol => 'http',
-    :bucket => 'ssl-validation-docs',
-    :path => ":id_partition/:random_secret/:style.:extension"
+    styles: {:thumb=>['100x100#', :png], :preview=>['400x400#', :png]},
+    s3_permissions: :private,
+    s3_protocol:    'http',
+    path:           ":id_partition/:random_secret/:style.:extension"
 
   CONTENT_TYPES =   [['image/jpeg', 'jpg, jpeg, jpe, jfif'], ['image/png','png'],
     ['application/pdf', 'pdf'], ['image/tiff', 'tif, tiff'],
@@ -75,9 +72,9 @@ class ValidationHistory < ActiveRecord::Base
   end
 
   def authenticated_s3_get_url(options={})
-    expires_in=10.minutes
-    options.reverse_merge! :expires_in => expires_in, :use_ssl => true
-    document.s3_object(options[:style]).url_for(:read, :secure => true, :expires => expires_in).to_s
+    expires_in = 10.minutes
+    options.reverse_merge! expires_in: expires_in, use_ssl: true
+    document.s3_object(options[:style]).presigned_url(:get, secure: true, expires_in: expires_in).to_s
   end
 
   private

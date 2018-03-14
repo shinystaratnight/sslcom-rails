@@ -5,6 +5,9 @@
 -total_format  = @invoice.get_amount_format
 -funded_amount = @order.get_funded_account_amount if @order
 -items_params  = {descriptions: descriptions, total_format: total_format, funded_amount: funded_amount}
+-invoice_ref   = @invoice.reference_number
+-payment       = @invoice.payment
+-ref_merchant  = payment.get_merchant unless payment.nil?
 
 #validations.monthly-invoice
   #summary
@@ -13,10 +16,10 @@
       %strong Monthly Invoice
     %div
       %span INVOICE #:
-      %strong #{@invoice.reference_number}
+      %strong #{invoice_ref}
     %div
       %span STATUS:
-      %strong #{@invoice.status.upcase}
+      %strong #{@invoice.status.upcase.gsub('_', ' ')}
     %div
       %span ITEMS:
       %strong #{@invoice.get_approved_items.count}
@@ -28,25 +31,43 @@
   =render partial: 'items_list', locals: items_params.merge(approved_list: true)
   -if @invoice.get_removed_items.any?
     =render partial: 'items_list', locals: items_params.merge(approved_list: false)
-            
--if @invoice.paid? && @order
-  =render partial: 'payment_section'
+       
+-if payment
+  =render partial: 'payment_section', locals: { refund_merchant: ref_merchant, system_admins: system_admins }
 
 -if system_admins
   #monthly-invoice-actions
     %h3.order_results_header
       Admin Actions
     #invoice-container
-      #btn-invoice-generate
-        =link_to "&#x27B2; Payment #{MonthlyInvoice::PAYMENT_METHODS_TEXT[:wire]}".html_safe, |
-          make_payment_other_invoice_path(@ssl_slug, @invoice.reference_number, ptm_type: :wire), |
-          class: 'button-mo-invoice', method: :put
-      #btn-invoice-generate
-        =link_to "&#x27B2; Payment #{MonthlyInvoice::PAYMENT_METHODS_TEXT[:po]}".html_safe, |
-          make_payment_other_invoice_path(@ssl_slug, @invoice.reference_number, ptm_type: :po), |
-          class: 'button-mo-invoice', method: :put
+      -if @invoice.show_payment_actions?
+        #btn-invoice-generate
+          =link_to "&#x27B2; Payment #{MonthlyInvoice::PAYMENT_METHODS_TEXT[:wire]}".html_safe, |
+            make_payment_other_invoice_path(@ssl_slug, invoice_ref, ptm_type: :wire),           |
+            class: 'button-mo-invoice', method: :put
+      
+        #btn-invoice-generate
+          =link_to "&#x27B2; Payment #{MonthlyInvoice::PAYMENT_METHODS_TEXT[:po]}".html_safe, |
+            make_payment_other_invoice_path(@ssl_slug, invoice_ref, ptm_type: :po),           |
+            class: 'button-mo-invoice', method: :put
+    
       #btn-invoice-generate
         =link_to "&#x2631; Update".html_safe, '#', class: 'button-mo-invoice', id: 'lnk-mo-invoice-update'
+      
+      -if @invoice.show_refund_actions?
+        -if ref_merchant && %{stripe paypal authnet}.include?(ref_merchant) && !@invoice.merchant_refunded?
+          #btn-invoice-generate
+            -refunded = payment.get_total_merchant_refunds
+            =link_to "<strong>Refund (#{ref_merchant.capitalize})</strong>".html_safe,       |
+            refund_merchant_order_path(@ssl_slug, payment, mo_ref: invoice_ref, type: :new), |
+            method: :get, class: 'button-mo-invoice', id: 'lnk-mo-invoice-refund'
+        
+        -if @invoice.paid_wire_transfer? || @invoice.paid_po_other?
+          -type = @invoice.paid_wire_transfer? ? :wire : :po 
+          =link_to "Refund #{MonthlyInvoice::PAYMENT_METHODS_TEXT[type]}",      |
+          refund_other_invoice_path(@ssl_slug, invoice_ref, refund_type: type), |
+          method: :put, class: 'button-mo-invoice'
+    
     #invoice-admin-errors  
     #invoice-container-admin
       =render partial: 'invoice_update'
@@ -56,13 +77,13 @@
     Actions
   #invoice-container
     #btn-invoice-dwnl
-      #{link_to "\u21E9 Download".html_safe, download_invoice_path(@ssl_slug, @invoice.reference_number), class: 'button-mo-invoice'}
+      #{link_to "\u21E9 Download".html_safe, download_invoice_path(@ssl_slug, invoice_ref), class: 'button-mo-invoice'}
     #btn-invoice-update
       #{link_to "&#x2631; Change Address".html_safe, '#', id: 'lnk-update-invoice', class: 'button-mo-invoice'}
-    -unless @invoice.paid? && @order
+    -if @invoice.show_payment_actions?
       #btn-invoice-generate
         =link_to "Make Payment".html_safe, |
-          new_payment_invoice_path(@ssl_slug, @invoice.reference_number), |
+          new_payment_invoice_path(@ssl_slug, invoice_ref), |
           class: 'button-mo-invoice', method: :get
   
   #invoice-container-errors

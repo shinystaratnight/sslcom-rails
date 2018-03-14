@@ -12,7 +12,10 @@
   #validations
     %table(cellspacing='0')
       -message = fully_refunded ? "fully refunded #{order_total}" : "refunded #{refunded} of payment total #{order_total}"
-      %caption #{ref_merchant} Refund History (#{message})
+      %caption
+        #{ref_merchant} Refund History (#{message})
+        -if params[:mo_ref]
+          =link_to "Invoice ##{params[:mo_ref]}", invoice_path(@ssl_slug, params[:mo_ref])
       %tr.heading_row
         %th Date
         %th User
@@ -42,12 +45,15 @@
     #stylized.default_form
       =form_tag refund_merchant_order_url(@ssl_slug, @order.reference_number), method: :get  do
         =hidden_field_tag :type, 'create'
+        =hidden_field_tag :mo_ref, params[:mo_ref] if params[:mo_ref]
+        
         .clearfix
           %label{for: 'refund_amount'}
             Refund Merchant $:
             %span.label_desc
               Maximum refund allowed #{max_refund.format}.
           =number_field_tag :refund_amount, max_refund, min: 1, max: max_refund, step: :any, required: true
+        
         .clearfix
           .refund-receipt
             %br
@@ -74,12 +80,13 @@
               %tr
                 %td #{ref_merchant}
                 %td #{max_refund.format}
+        
         .clearfix
           %label{for: 'refund_reason'}
             Reason:
             %span.label_desc *optional
           =text_field_tag :refund_reason
+        
         .clearfix
           .center{style: 'width:25%'}
             =submit_tag 'Refund Merchant', class: 'button_blue'
-          
