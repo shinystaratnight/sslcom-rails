@@ -65,9 +65,14 @@ private
 
   def go_forward
     if @reseller.nil? || @reseller.new?
-      #prevent the form from sumitting to update, we need to create a new
-      reseller = Reseller.new(params[:reseller])
-      reseller.ssl_account = current_user.ssl_account
+      if @reseller.nil?
+        reseller = Reseller.new(params[:reseller])
+        reseller.ssl_account = current_user.ssl_account
+      else
+        @reseller.update(params[:reseller])
+        reseller = @reseller
+      end
+      
       if reseller.valid?
         #atts was a hack because the direct merge! doesn't work
         @reseller = reseller
