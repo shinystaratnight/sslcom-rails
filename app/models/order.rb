@@ -504,14 +504,20 @@ class Order < ActiveRecord::Base
   end  
   
   def get_ccref_from_notes
-    notes.split(').').first.split.last.delete(')')
+    unless notes.blank?
+      notes.split(').').first.split.last.delete(')')
+    end
   end
   
   def get_reprocess_cc(co)
     cc = nil
     if co
       str = get_ccref_from_notes
-      cc  = co.certificate_contents.where("ref = ? OR label = ? OR id = ?", str, str, str)
+      cc  = if str.nil?
+        []
+      else  
+        co.certificate_contents.where("ref = ? OR label = ? OR id = ?", str, str, str)
+      end
       cc  = cc.any? ? cc.first : nil
     end
     cc
