@@ -18,6 +18,7 @@ class ValidationHistory < ActiveRecord::Base
     styles: {:thumb=>['100x100#', :png], :preview=>['400x400#', :png]},
     s3_permissions: :private,
     s3_protocol:    'http',
+    bucket:        'ssl-validation-docs',
     path:           ":id_partition/:random_secret/:style.:extension"
 
   CONTENT_TYPES =   [['image/jpeg', 'jpg, jpeg, jpe, jfif'], ['image/png','png'],
