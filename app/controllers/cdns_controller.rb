@@ -228,7 +228,6 @@ class CdnsController < ApplicationController
 
     if action_type == 'modify'
       if generate_type == 'auto'
-        byebug
         @response = HTTParty.post('https://reseller.cdnify.com/api/v1/resources/' + resource_id + '/ssl_certificate/' + host_name,
                                   basic_auth: {username: api_key, password: 'x'})
 
