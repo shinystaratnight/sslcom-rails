@@ -237,10 +237,12 @@ class CdnsController < ApplicationController
     cdn = Cdn.where(custom_domain_name: host_name).first
 
     if action_type == 'modify'
+      byebug
       body_params = {}
       ac = current_user.ssl_account.api_credential
       body_params['account_key'] = ac.account_key
       body_params['secret_key'] = ac.secret_key
+      body_params['is_test'] = is_sandbox? ? 'Y' : 'N'
       body_params['ref'] = cdn.certificate_order_ref if cdn && cdn.certificate_order_ref
 
       if generate_type == 'auto'
