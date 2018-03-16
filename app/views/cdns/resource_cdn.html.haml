@@ -174,8 +174,10 @@
                       -if domain['valid_to']
                         SSL valid to
                         =DateTime.parse(domain['valid_to']['date']).strftime('%d/%m/%Y')
+                      -else
+                        Pending
                     %td
-                      =link_to 'Edit', nil, :class => 'custom-domain-modal-link', 'data-toggle' => 'modal', 'data-target' => '#custom-domain-modal', 'data-hostname' => domain['hostname']
+                      =link_to 'Edit SSL', nil, :class => 'custom-domain-modal-link', 'data-toggle' => 'modal', 'data-target' => '#custom-domain-modal', 'data-hostname' => domain['hostname']
               -else
                 %tr
                   %td(colspan="4")
@@ -270,7 +272,7 @@
               %div.container-fluid
                 %div.row
                   %div.col-4
-                    =button_tag 'Delete', 'class ' => 'delete-custom-domain', 'type' => 'button'
+                    =button_tag 'Delete SSL', 'class ' => 'delete-custom-domain', 'type' => 'button'
                   %div.col-8
-                    =button_tag 'Modify', 'class' => 'modify-custom-domain float-right', 'type' => 'button'
+                    =button_tag 'Save', 'class' => 'modify-custom-domain float-right', 'type' => 'button'
                     =button_tag 'Close', 'class' => 'float-right mr-1', 'data-dismiss' => 'modal', 'type' => 'button'
