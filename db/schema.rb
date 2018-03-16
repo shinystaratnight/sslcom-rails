@@ -189,13 +189,16 @@ ActiveRecord::Schema.define(version: 20180316010525) do
   end
 
   create_table "cdns", force: :cascade do |t|
-    t.integer  "ssl_account_id",        limit: 4
-    t.string   "api_key",               limit: 255
-    t.datetime "created_at",                        null: false
-    t.datetime "updated_at",                        null: false
-    t.string   "custom_domain_name",    limit: 255
-    t.string   "certificate_order_ref", limit: 255
+    t.integer  "ssl_account_id",       limit: 4
+    t.string   "api_key",              limit: 255
+    t.datetime "created_at",                       null: false
+    t.datetime "updated_at",                       null: false
+    t.string   "resource_id",          limit: 255
+    t.string   "custom_domain_name",   limit: 255
+    t.integer  "certificate_order_id", limit: 4
   end
+
+  add_index "cdns", ["certificate_order_id"], name: "fk_rails_486d5cc190", using: :btree
 
   create_table "certificate_api_requests", force: :cascade do |t|
     t.integer  "server_software_id",                limit: 4
@@ -1475,5 +1478,6 @@ ActiveRecord::Schema.define(version: 20180316010525) do
     t.datetime "updated_at"
   end
 
+  add_foreign_key "cdns", "certificate_orders"
   add_foreign_key "signed_certificates", "cas"
 end
