@@ -536,11 +536,11 @@ class Order < ActiveRecord::Base
         current = []
         co.orders.order(created_at: :asc).each do |o|
           if o != self && o.reprocess_ucc_order?
-            cc = get_reprocess_cc(co)
+            cc = o.get_reprocess_cc(co)
             current << {
               date:      o.created_at.strftime('%F'),
               order_ref: o.reference_number,
-              domains:   (cc.nil? ? 0 : cc.domains.count),
+              domains:   (cc.nil? ? 0 : co.get_reprocess_cc_domains(cc).count),
               amount:    o.get_full_reprocess_format
             }
           end
