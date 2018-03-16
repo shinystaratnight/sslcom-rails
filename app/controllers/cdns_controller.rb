@@ -237,7 +237,6 @@ class CdnsController < ApplicationController
     cdn = Cdn.where(custom_domain_name: host_name).first
 
     if action_type == 'modify'
-      byebug
       body_params = {}
       ac = current_user.ssl_account.api_credential
       body_params['account_key'] = ac.account_key
