@@ -26,8 +26,7 @@
     %div
       %span DUE:
       %strong #{@invoice.end_date.strftime('%F')}
-  
-  
+
   =render partial: 'items_list', locals: items_params.merge(approved_list: true)
   -if @invoice.get_removed_items.any?
     =render partial: 'items_list', locals: items_params.merge(approved_list: false)
@@ -73,7 +72,7 @@
             =link_to 'Credit', credit_invoice_path(@ssl_slug, invoice_ref), |
             class: 'button-mo-invoice', id: 'lnk-mo-invoice-credit'
     
-    #invoice-admin-errors  
+    #invoice-admin-errors
     #invoice-container-admin
       =render partial: 'invoice_update'
     #invoice-container-credit
@@ -89,7 +88,7 @@
       #{link_to "&#x2631; Change Address".html_safe, '#', id: 'lnk-update-invoice', class: 'button-mo-invoice'}
     -if @invoice.show_payment_actions?
       #btn-invoice-generate
-        =link_to "Make Payment".html_safe, |
+        =link_to "Make Payment".html_safe,                  |
           new_payment_invoice_path(@ssl_slug, invoice_ref), |
           class: 'button-mo-invoice', method: :get
   

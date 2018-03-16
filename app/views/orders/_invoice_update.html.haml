@@ -17,45 +17,65 @@
   .registration_form
     .fields
       .clearfix
+        %label{:for=>'vat'}
+          VAT #:
+        =f.text_field :vat
+        
+      .clearfix
         %label{:for=>'first_name'}
           *First Name:
         =f.text_field :first_name
+        
+      .clearfix
+        %label{:for=>'first_name'}
+          *First Name:
+        =f.text_field :first_name
+      
       .clearfix
         %label{:for=>'last_name'}
           *Last Name:
         =f.text_field :last_name
+      
       .clearfix
         %label{:for=>'phone'}
           Phone:
         =f.text_field :phone
+      
       .clearfix
         %label{:for=>'fax'}
           Fax:
         =f.text_field :fax
+      
       .clearfix
         %label{:for=>'company'}
           Company:
         =f.text_field :company
+      
       .clearfix
         %label{:for=>'address_1'}
           *Address 1:
         =f.text_field :address_1
+      
       .clearfix
         %label{:for=>'address_2'}
           Address 2:
         =f.text_field :address_2
+      
       .clearfix
         %label{:for=>'city'}
           *City:
         =f.text_field :city
+      
       .clearfix
         %label{:for=>'state'}
           *State:
         =f.text_field :state
+      
       .clearfix
         %label{:for=>'postal_code'}
           *Postal Code:
         =f.text_field :postal_code
+      
       .clearfix
         %label{:for=>'country'}
           *Country:

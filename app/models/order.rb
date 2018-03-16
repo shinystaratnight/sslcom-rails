@@ -465,6 +465,10 @@ class Order < ActiveRecord::Base
     on_monthly_invoice? && approval == 'rejected'
   end
   
+  def invoice_address
+    Invoice.find_by(order_id: id)
+  end
+  
   def reprocess_ucc_order?
     description == Order::SSL_REPROCESS_UCC
   end
@@ -492,16 +496,18 @@ class Order < ActiveRecord::Base
     tot_non_wildcard = non_wildcard.count - old_non_wildcard.count
     tot_wildcard     = wildcard.count - old_wildcard.count
     
+    tot_non_wildcard  = tot_non_wildcard < 0 ? 0 : tot_non_wildcard
+    tot_wildcard      = tot_wildcard < 0 ? 0 : tot_wildcard
     new_domains_count = tot_non_wildcard + tot_wildcard
     
     {
       all:                cur_domains,
       new_domains_count:  (new_domains_count < 0 ? 0 : new_domains_count),
       cur_wildcard:       wildcard.count,
-      wildcard:           (tot_wildcard < 0 ? 0 : tot_wildcard),
-      non_wildcard:       (tot_non_wildcard < 0 ? 0 : tot_non_wildcard)
+      wildcard:           tot_wildcard,
+      non_wildcard:       tot_non_wildcard
     }
-  end  
+  end
   
   def get_ccref_from_notes
     unless notes.blank?

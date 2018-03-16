@@ -34,8 +34,13 @@
           %td#invoice-sum
             %p.font-small-grey Invoice #
             %p#ref-num #{@invoice.reference_number}
+            
             %p#date.font-small-grey Due Date
             %p#invoice-date #{@invoice.end_date.strftime('%F')}
+            
+            -unless @invoice.blank?
+              %p.font-small-grey#date VAT #
+              %p#invoice-date #{@invoice.vat}
           
           %td#invoice-total
             %p.font-small-grey Invoice Total
