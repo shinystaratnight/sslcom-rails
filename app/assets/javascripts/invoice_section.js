@@ -3,12 +3,21 @@ $(function($) {
   $('#invoice-container-ext').hide();
   
   function hideAllForms() {
-    $('#frm-inv-download').hide();
-    $('#frm-inv-download').hide();
-    $('#invoice-container-ext').hide();
+    var ids = [
+      '#frm-inv-download',
+      '#invoice-container-ext',
+      '#invoice-container-credit',
+      '#invoice-container-admin'
+    ];
+    $(ids.join(', ')).hide();
   }
 
   $('#invoice-container-ext').on('click', '#btn-inv-cancel, #btn-inv-update-cancel', function(e) {
+    e.preventDefault();
+    hideAllForms();
+  });
+  
+  $('#invoice-container-credit').on('click', '#btn-inv-update-cancel', function(e) {
     e.preventDefault();
     hideAllForms();
   });
@@ -48,6 +57,7 @@ $(function($) {
   
   // Sysadmin Section in Monthly Invoice
   $('#invoice-container-admin').hide();
+  $('#invoice-container-credit').hide();
   
   $('#frm-mo-inv-update').on('ajax:success', function(xhr, data, status) {
     $('.errors-invoice-update').remove();
@@ -60,9 +70,14 @@ $(function($) {
   });
   
   $('#lnk-mo-invoice-update').on('click', function(e) {
-    console.log('lnk-mo-invoice-update');
     e.preventDefault();
     $('#invoice-container-admin').show('slow');
+  });
+  
+  $('#invoice-container').on('click', '#lnk-mo-invoice-credit', function(e) {
+    e.preventDefault();
+    hideAllForms();
+    $('#invoice-container-credit').show('slow');
   });
   
   $('#frm-mo-inv-update').on('ajax:error', function(xhr, data, status) {

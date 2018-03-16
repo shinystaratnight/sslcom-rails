@@ -42,7 +42,8 @@ authorization do
       :remove_item,
       :make_payment_other,
       :update,
-      :refund_other
+      :refund_other,
+      :credit
     ]
   end
 

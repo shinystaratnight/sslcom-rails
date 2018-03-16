@@ -2,6 +2,8 @@ class Invoice < ActiveRecord::Base
   include Filterable
   include Sortable
   
+  attr_accessor :credit_reason
+  
   validates :first_name, :last_name, :address_1, :country, :city,
     :state, :postal_code, presence: true, unless: Proc.new {|i| i.type == 'MonthlyInvoice'}
   

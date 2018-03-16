@@ -67,10 +67,17 @@
           =link_to "Refund #{MonthlyInvoice::PAYMENT_METHODS_TEXT[type]}",      |
           refund_other_invoice_path(@ssl_slug, invoice_ref, refund_type: type), |
           method: :put, class: 'button-mo-invoice'
+        
+        -if @invoice.max_credit.cents > 0
+          #btn-invoice-generate
+            =link_to 'Credit', credit_invoice_path(@ssl_slug, invoice_ref), |
+            class: 'button-mo-invoice', id: 'lnk-mo-invoice-credit'
     
     #invoice-admin-errors  
     #invoice-container-admin
       =render partial: 'invoice_update'
+    #invoice-container-credit
+      =render partial: 'invoice_credit'
             
 #monthly-invoice-actions
   %h3.order_results_header
