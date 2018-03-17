@@ -1,4 +1,3 @@
-require 'apis/certificates_api_app'
 require 'domain_constraint'
 
 SslCom::Application.routes.draw do

@@ -21,7 +21,7 @@ gem "savon", '~> 2.0'
 gem 'zip-zip'
 gem 'rb-inotify', :require => false
 gem 'aws-sdk', '~> 2.0'
-gem "paperclip", '~> 5.0.0'
+gem "paperclip", '~> 5.3.0'
 gem 'xml-simple'
 gem 'json', '~> 1.8.1'
 gem 'easy_roles'
@@ -30,7 +30,6 @@ gem 'yui-compressor'
 #Commented out while converting to pipeline
 # gem 'jammit'
 gem "config"
-gem 'sinatra'
 gem 'uuidtools'
 gem 'radix62'
 gem 'whenever', require: false
