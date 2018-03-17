@@ -2,6 +2,23 @@
   jQuery.noConflict();
   jQuery(function($) {
     $(document).ready(function() {
+      $('.chk-delete').click(function() {
+        if ($(this).prop('checked')) {
+          $('#btn_update_resource').attr('disabled', false);
+        } else {
+          var chk_delete_list = $('.chk-delete');
+          var exist_chk = false;
+
+          $.each(chk_delete_list, function(idx, chk_delete) {
+            if ($(chk_delete).prop('checked')) {
+              exist_chk = true;
+              return false;
+            }
+          });
+
+          exist_chk ? $('#btn_update_resource').attr('disabled', false) : $('#btn_update_resource').attr('disabled', true);
+        }
+      });
       $("#generate_install_ssl_chk").change(function() {
         if ($(this).prop('checked')) {
           $("#custom_domain_modal_form").hide();

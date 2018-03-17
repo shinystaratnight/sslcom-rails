@@ -72,6 +72,8 @@ class ValidationsController < ApplicationController
 
     domain_name_arry.each do |domain_name|
       cn_obj = certificate_order.certificate_content.certificate_names.find_by_name(domain_name)
+      next unless cn_obj
+
       res = ComodoApi.auto_remove_domain(domain_name: cn_obj, order_number: certificate_order.external_order_number)
 
       error_code = -1
