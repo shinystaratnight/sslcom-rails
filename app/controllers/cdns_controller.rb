@@ -89,7 +89,9 @@ class CdnsController < ApplicationController
       resources.each do |resource_id|
         @response = HTTParty.delete('https://reseller.cdnify.com/api/v1/resources/' + resource_id,
                                     basic_auth: {username: params['api_key'], password: 'x'})
-        if @response.parsed_response
+        if @response.code == 204
+          Cdn.where(:resource_id => resource_id).delete_all
+        else
           is_deleted = false
           @response.parsed_response['errors'].each do |error|
             msg = error['code'].to_s + ': ' + error['message']
@@ -99,9 +101,7 @@ class CdnsController < ApplicationController
       end
     end
 
-    if is_deleted
-      flash[:notice] = 'Successfully Updated.'
-    end
+    flash[:notice] = 'Successfully Updated.' if is_deleted
 
     redirect_to cdns_path(ssl_slug: @ssl_slug)
   end
@@ -211,6 +211,7 @@ class CdnsController < ApplicationController
           cdn = Cdn.new
           cdn.api_key = api_key
           cdn.ssl_account_id = current_user.ssl_account.id
+          cdn.resource_id = resource_id
           cdn.custom_domain_name = custom_domain
           cdn.save
 
@@ -234,7 +235,7 @@ class CdnsController < ApplicationController
     api_key = params['api_key']
     host_name = params['host_name']
     generate_type = params['generate_type']
-    cdn = Cdn.where(custom_domain_name: host_name).first
+    cdn = Cdn.where(resource_id: resource_id, custom_domain_name: host_name).first
 
     if action_type == 'modify'
       body_params = {}
@@ -242,7 +243,11 @@ class CdnsController < ApplicationController
       body_params['account_key'] = ac.account_key
       body_params['secret_key'] = ac.secret_key
       body_params['is_test'] = is_sandbox? ? 'Y' : 'N'
-      body_params['ref'] = cdn.certificate_order_ref if cdn && cdn.certificate_order_ref
+
+      if cdn
+        co = cdn.certificate_order
+        body_params['ref'] = co.ref if co
+      end
 
       if generate_type == 'auto'
         @response = HTTParty.post('https://reseller.cdnify.com/api/v1/resources/' + resource_id + '/ssl_certificate/' + host_name,
@@ -254,7 +259,11 @@ class CdnsController < ApplicationController
         #                            body: body_params})
 
         if @response.code == 200 || @response.code == 201
-          cdn.update_attribute(:certificate_order_ref, @response['message']['ref']) if cdn && cdn.certificate_order_ref != @response['message']['ref']
+          co = CertificateOrder.find_by_ref(@response['message']['ref'])
+          if cdn && co
+            cdn.certificate_order = co
+            cdn.save
+          end
 
           if Settings.cdn_ssl_notification_address.blank?
             flash[:notice] = "Successfully Modified."
@@ -278,7 +287,11 @@ class CdnsController < ApplicationController
         #                            body: body_params})
 
         if @response.code == 200 || @response.code == 201
-          cdn.update_attribute(:certificate_order_ref, @response['message']['ref']) if cdn && cdn.certificate_order_ref != @response['message']['ref']
+          co = CertificateOrder.find_by_ref(@response['message']['ref'])
+          if cdn && co
+            cdn.certificate_order = co
+            cdn.save
+          end
 
           if Settings.cdn_ssl_notification_address.blank?
             flash[:notice] = "Successfully Modified."
@@ -411,6 +424,7 @@ class CdnsController < ApplicationController
 
       redirect_to resource_cdn_cdn_path(@ssl_slug, resource_id) and return
     else
+      Cdn.where(:resource_id => resource_id).delete_all
       flash[:notice] = 'Successfully Deleted Resource.'
     end
 
@@ -488,6 +502,12 @@ class CdnsController < ApplicationController
 
     if @response.parsed_response
       if @response.parsed_response['resources']
+        cdn = Cdn.new
+        cdn.api_key = api_key
+        cdn.ssl_account_id = current_user.ssl_account.id
+        cdn.resource_id = @response.parsed_response['resources'][0]['id']
+        cdn.save
+
         flash[:notice] = 'Successfully Created Resource.'
       else
         @response.parsed_response['errors'].each do |error|

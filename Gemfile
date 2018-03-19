@@ -115,7 +115,7 @@ group :test do
 end
 
 group :assets do
-  gem 'uglifier'
+  gem 'uglifier', '4.1.8'
 end
 
 gem 'httparty'

@@ -1,15 +1,7 @@
 class AddToCdns < ActiveRecord::Migration
-  def self.up
-    change_table :cdns do |t|
-      t.string :custom_domain_name
-      t.string :certificate_order_ref
-    end
-  end
-
-  def self.down
-    change_table :cdns do |t|
-      t.remove :custom_domain_name
-      t.remove :certificate_order_ref
-    end
+  def change
+    add_column :cdns, :resource_id, :string
+    add_column :cdns, :custom_domain_name, :string
+    add_reference :cdns, :certificate_order, foreign_key: true
   end
 end
