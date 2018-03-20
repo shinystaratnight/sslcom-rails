@@ -264,7 +264,7 @@ class CertificateOrdersController < ApplicationController
     @certificate_order.has_csr=true #we are submitting a csr afterall
     @certificate_content.certificate_order=@certificate_order
     @certificate_content.preferred_reprocessing=true if eval("@#{CertificateOrder::REPROCESSING}")
-    reprocess_ucc = params[:reprocessing] && params[:certificate][:product] == 'ucc'
+    reprocess_ucc = params[:reprocessing] && params[:certificate][:product].include?('ucc')
     respond_to do |format|
       if @certificate_content.valid?
         cc = @certificate_order.transfer_certificate_content(@certificate_content)
