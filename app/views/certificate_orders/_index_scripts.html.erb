@@ -19,45 +19,121 @@ jQuery(function($) {
     var url = window.location.pathname;
     if (url.substr(url.lastIndexOf('/') + 1, url.length) == 'generate_cert') {
       <%if @certificate_order%>
-        $('.cs_generate_csr_pri_key').click(function() {
-          $('.cs_generate_csr_pri_key').attr('disabled', true);
+        var is_cs = '<%=@certificate_order.certificate.is_cs?%>';
 
-          const info = {}
-          var subject_dn_str = $('.cs_subject_dn').val().split(",");
+        $('.cs_generate_csr_pri_key_cert').click(function() {
+          // Adding loading bar while generate CSR, Private Key and Certificate.
+          var page_loader_wrap = $('<div></div>');
+          page_loader_wrap.attr('class', 'page_loader_wrap');
 
-          $.each(subject_dn_str, function(idx) {
-            if (subject_dn_str[idx].split('=')[0] == 'CN') {
-              info['commonname'] = subject_dn_str[idx].split('=')[1];
-            } else if (subject_dn_str[idx].split('=')[0] == 'O') {
-              info['organization'] = subject_dn_str[idx].split('=')[1];
-            } else if (subject_dn_str[idx].split('=')[0] == 'C') {
-              info['country'] = subject_dn_str[idx].split('=')[1];
-            }
-          });
+          var page_loader = $('<div></div>');
+          page_loader.attr('class', 'page_loader');
 
-          generateCSR(info, undefined, function(csr, pkey) {
-            $('.cs_csr').val(csr);
-            $('.cs_pri_key').val(pkey);
-          }, function(err) {
-            alert(err);
-          });
-        });
+          page_loader_wrap.append(page_loader);
 
-        $('.cs_certificate_download').click(function() {
-          $('.cs_certificate_download').attr('disabled', true);
-
-          var password = $('.cs_certificate_password').val();
-          var certificate = $('.cs_certificate').val().replace(/(-----(BEGIN|END) CERTIFICATE-----|\n)/g, '');
-          var priKey = $('.cs_pri_key').val().replace(/(-----(BEGIN|END) PRIVATE KEY-----|\n)/g, '');
-          passwordBasedIntegrity([certificate], priKey, password);
-        });
-
-        $('.cs_generate_cert').click(function() {
-          $('.cs_generate_cert').attr('disabled', true);
+          window.scrollTo(0, 0);
+          $('body').addClass('no_scroll_y');
+          page_loader_wrap.insertBefore($('#header'));
 
           var account_key = '<%= @certificate_order.ssl_account.api_credential.account_key %>';
           var secret_key = '<%= @certificate_order.ssl_account.api_credential.secret_key %>';
           var ref = '<%= @certificate_order.ref %>';
+
+          if (is_cs == '' && $('.cs_csr').val() != '') {
+            $.ajax({
+              url: '/generate_certificate',
+              data: {
+                csr: $('.cs_csr').val(),
+                ref: ref,
+                account_key: account_key,
+                secret_key: secret_key
+              },
+              type: "POST",
+              success: function (data) {
+                $('.page_loader_wrap').hide();
+                $('body').removeClass('no_scroll_y');
+
+                $('.cs_csr').attr('readonly', true);
+                $('.cs_certificate').val(data.cert_results);
+                $('.cs_certificate').attr('readonly', true);
+
+                $('.cs_generate_csr_pri_key_cert').hide();
+                $('.cert_password_download').show();
+              }
+            });
+          } else {
+            // Extracting Common Info from Subject
+            const info = {}
+            var subject_dn_str = $('.cs_subject_dn').val().split(",");
+
+            $.each(subject_dn_str, function(idx) {
+              if (subject_dn_str[idx].split('=')[0] == 'CN') {
+                info['commonname'] = subject_dn_str[idx].split('=')[1];
+              } else if (subject_dn_str[idx].split('=')[0] == 'O') {
+                info['organization'] = subject_dn_str[idx].split('=')[1];
+              } else if (subject_dn_str[idx].split('=')[0] == 'C') {
+                info['country'] = subject_dn_str[idx].split('=')[1];
+              }
+            });
+
+            // Generating CSR, Private Key and Certificate
+            generateCSR(info, undefined, function(csr, pkey) {
+              $('.cs_csr').val(csr);
+              $('.cs_csr').attr('readonly', true);
+
+              $('.cs_pri_key').val(pkey);
+              $('.cs_pri_key').attr('readonly', true);
+
+              $.ajax({
+                url: '/generate_certificate',
+                data: {
+                  csr: csr,
+                  ref: ref,
+                  account_key: account_key,
+                  secret_key: secret_key
+                },
+                type: "POST",
+                success: function (data) {
+                  $('.page_loader_wrap').hide();
+                  $('body').removeClass('no_scroll_y');
+
+                  $('.cs_certificate').val(data.cert_results);
+                  $('.cs_certificate').attr('readonly', true);
+
+                  $('.cs_generate_csr_pri_key_cert').hide();
+                  $('.cert_password_download').show();
+                }
+              });
+            }, function(err) {
+              alert(err);
+            });
+          }
+        });
+
+        $('.cs_certificate_download').click(function() {
+          if ($('.cs_pri_key').val() == '') {
+            alert('Please input your own Private Key.');
+          } else {
+            window.scrollTo(0, 0);
+            $('body').addClass('no_scroll_y');
+            $('.page_loader_wrap').show();
+
+            var password = $('.cs_certificate_password').val();
+            var certificate = $('.cs_certificate').val().replace(/(-----(BEGIN|END) CERTIFICATE-----|\n)/g, '');
+            var priKey = $('.cs_pri_key').val().replace(/(-----(BEGIN|END) PRIVATE KEY-----|\n)/g, '');
+            passwordBasedIntegrity([certificate], priKey, password, function() {
+              $('.page_loader_wrap').hide();
+              $('body').removeClass('no_scroll_y');
+            });
+          }
+        });
+
+        /*$('.cs_generate_cert').click(function() {
+          $('.cs_generate_cert').attr('disabled', true);
+
+          var account_key = '< %= @certificate_order.ssl_account.api_credential.account_key %>';
+          var secret_key = '< %= @certificate_order.ssl_account.api_credential.secret_key %>';
+          var ref = '< %= @certificate_order.ref %>';
           var csr = $('.cs_csr').val();
 
           $.ajax({
@@ -73,7 +149,7 @@ jQuery(function($) {
               $('.cs_certificate').val(data.cert_results);
             }
           });
-        });
+        });*/
       <%end%>
     }
 

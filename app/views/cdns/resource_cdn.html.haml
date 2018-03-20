@@ -250,14 +250,17 @@
                   %div.col-md-6.col-sm-6.col-lg-5
                     Generate and install SSL
                   %div.col-md-3.col-sm-3.col-lg-4
-                    =check_box_tag :generate_install_ssl_chk
+                    -#=check_box_tag :generate_install_ssl_chk
+                    =check_box_tag :generate_install_ssl_chk, false, true, :disabled=>'disabled'
               %hr.gen-install-ssl-divider
               %div.container-fluid
-                =form_tag :update_custom_domain_cdn, :id=>'custom_domain_modal_form' do
+                -#=form_tag :update_custom_domain_cdn, :id=>'custom_domain_modal_form' do
+                =form_tag :update_custom_domain_cdn, :id=>'custom_domain_modal_form', :class=>'hidden' do
                   =hidden_field_tag :api_key, api_key
                   =hidden_field_tag :host_name
                   =hidden_field_tag :action_type, 'modify'
-                  =hidden_field_tag :generate_type, 'manual'
+                  -#=hidden_field_tag :generate_type, 'manual'
+                  =hidden_field_tag :generate_type, 'auto'
                   %div.row
                     %div.col-md-4.col-sm-4.col-lg-3
                       Certificate
