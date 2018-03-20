@@ -8,11 +8,13 @@ remote: true, method: :put, data: {type: :json}, html: {id: 'frm-mo-inv-update'}
       .clearfix
         =f.label :status
         =f.select :status, MonthlyInvoice::STATUS.map{|s| [s.upcase, s]}, include_blank: false
+      
       .clearfix
         =f.label :default_payment
         =f.select :default_payment, |
         pm.keys.map {|key| [ pm_text[key.to_sym], pm[key.to_sym] ]}, |
         include_blank: false
+      
       .clearfix
         =f.label :notes
         =f.text_area :notes, size: "47x10"

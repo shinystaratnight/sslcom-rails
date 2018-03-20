@@ -89,7 +89,9 @@ class CdnsController < ApplicationController
       resources.each do |resource_id|
         @response = HTTParty.delete('https://reseller.cdnify.com/api/v1/resources/' + resource_id,
                                     basic_auth: {username: params['api_key'], password: 'x'})
-        if @response.parsed_response
+        if @response.code == 204
+          Cdn.where(:resource_id => resource_id).delete_all
+        else
           is_deleted = false
           @response.parsed_response['errors'].each do |error|
             msg = error['code'].to_s + ': ' + error['message']
@@ -99,9 +101,7 @@ class CdnsController < ApplicationController
       end
     end
 
-    if is_deleted
-      flash[:notice] = 'Successfully Updated.'
-    end
+    flash[:notice] = 'Successfully Updated.' if is_deleted
 
     redirect_to cdns_path(ssl_slug: @ssl_slug)
   end
@@ -111,7 +111,7 @@ class CdnsController < ApplicationController
     @results = {}
 
     unless current_user.ssl_account.blank?
-      cdn = Cdn.where(ssl_account_id: current_user.ssl_account.id).last
+      cdn = Cdn.where(ssl_account_id: current_user.ssl_account.id).first
 
       if cdn
         @results[:active_tab] = @tab_overview
@@ -207,8 +207,18 @@ class CdnsController < ApplicationController
           flash[:error] = msg
         end
       elsif @response.parsed_response['message']
-        flash[:notice] = @response.parsed_response['message'] if @response.parsed_response['id']
-        flash[:error] = @response.parsed_response['message'] unless @response.parsed_response['id']
+        if @response.parsed_response['id']
+          cdn = Cdn.new
+          cdn.api_key = api_key
+          cdn.ssl_account_id = current_user.ssl_account.id
+          cdn.resource_id = resource_id
+          cdn.custom_domain_name = custom_domain
+          cdn.save
+
+          flash[:notice] = @response.parsed_response['message']
+        else
+          flash[:error] = @response.parsed_response['message']
+        end
       end
     else
       flash[:error] = 'Failed to Add a New Custom Domain.'
@@ -225,16 +235,36 @@ class CdnsController < ApplicationController
     api_key = params['api_key']
     host_name = params['host_name']
     generate_type = params['generate_type']
+    cdn = Cdn.where(resource_id: resource_id, custom_domain_name: host_name).first
 
     if action_type == 'modify'
+      body_params = {}
+      ac = current_user.ssl_account.api_credential
+      body_params['account_key'] = ac.account_key
+      body_params['secret_key'] = ac.secret_key
+      body_params['is_test'] = is_sandbox? ? 'Y' : 'N'
+
+      if cdn
+        co = cdn.certificate_order
+        body_params['ref'] = co.ref if co
+      end
+
       if generate_type == 'auto'
         @response = HTTParty.post('https://reseller.cdnify.com/api/v1/resources/' + resource_id + '/ssl_certificate/' + host_name,
-                                  basic_auth: {username: api_key, password: 'x'})
+                                  {basic_auth: {username: api_key, password: 'x'},
+                                   body: body_params})
 
         # @response = HTTParty.post('https://reseller.cdnify.com/api/v1/resources/fa4b779/ssl_certificate/testcdn.ee.auth.gr',
-        #                           basic_auth: {username: '38b4ffb5b930cb33a4da982359a60298c6a7b00f3d995eff93', password: 'x'})
+        #                           {basic_auth: {username: '38b4ffb5b930cb33a4da982359a60298c6a7b00f3d995eff93', password: 'x'},
+        #                            body: body_params})
 
         if @response.code == 200 || @response.code == 201
+          co = CertificateOrder.find_by_ref(@response['message']['ref'])
+          if cdn && co
+            cdn.certificate_order = co
+            cdn.save
+          end
+
           if Settings.cdn_ssl_notification_address.blank?
             flash[:notice] = "Successfully Modified."
           else
@@ -245,14 +275,24 @@ class CdnsController < ApplicationController
           flash[:error] = @response.parsed_response['error']['message']
         end
       else
-        certificate_value = params['certificate_value']
-        private_key = params['private_key']
+        body_params['certificate'] = params['certificate_value']
+        body_params['privateKey'] = params['private_key']
 
         @response = HTTParty.put('https://reseller.cdnify.com/api/v1/resources/' + resource_id + '/ssl_certificate/' + host_name,
-                      {basic_auth: {username: api_key, password: 'x'},
-                       body: {certificate: certificate_value, privateKey: private_key}})
+                                  {basic_auth: {username: api_key, password: 'x'},
+                                   body: body_params})
+
+        # @response = HTTParty.put('https://reseller.cdnify.com/api/v1/resources/fa4b779/ssl_certificate/testcdn.ee.auth.gr',
+        #                           {basic_auth: {username: '38b4ffb5b930cb33a4da982359a60298c6a7b00f3d995eff93', password: 'x'},
+        #                            body: body_params})
 
         if @response.code == 200 || @response.code == 201
+          co = CertificateOrder.find_by_ref(@response['message']['ref'])
+          if cdn && co
+            cdn.certificate_order = co
+            cdn.save
+          end
+
           if Settings.cdn_ssl_notification_address.blank?
             flash[:notice] = "Successfully Modified."
           else
@@ -262,56 +302,56 @@ class CdnsController < ApplicationController
         else
           flash[:error] = @response.parsed_response['message']
         end
-
-        # @response = update_cert_private_key(resource_id, host_name, api_key, certificate_value, private_key)
-        #
-        # if @response.parsed_response && @response.parsed_response['errors']
-        #   @response.parsed_response['errors'].each do |error|
-        #     msg = error['code'].to_s + ': ' + error['message']
-        #     flash[:error] = msg
-        #   end
-        # elsif @response.parsed_response && @response.parsed_response['message']
-        #   if  @response.parsed_response['id']
-        #     flash[:notice] = @response.parsed_response['message']
-        #
-        #     # TODO: Email Sent
-        #     # current_user.deliver_ssl_cert_private_key!(resource_id, host_name, @response.parsed_response['id'])
-        #   else
-        #     if @response.parsed_response['message'] == DUPLICATE_CUSTOM_DOMAIN
-        #       @response = delete_custom_domain(resource_id, host_name, api_key)
-        #
-        #       if @response.parsed_response
-        #         if @response.parsed_response['errors']
-        #           @response.parsed_response['errors'].each do |error|
-        #             msg = error['code'].to_s + ': ' + error['message']
-        #             flash[:error] = msg
-        #           end
-        #         end
-        #       else
-        #         @response = update_cert_private_key(resource_id, host_name, api_key, certificate_value, private_key)
-        #
-        #         if @response.parsed_response && @response.parsed_response['errors']
-        #           @response.parsed_response['errors'].each do |error|
-        #             msg = error['code'].to_s + ': ' + error['message']
-        #             flash[:error] = msg
-        #           end
-        #         elsif @response.parsed_response && @response.parsed_response['message']
-        #           if  @response.parsed_response['id']
-        #             flash[:notice] = @response.parsed_response['message']
-        #
-        #             # TODO: Email Sent
-        #             # current_user.deliver_ssl_cert_private_key!(resource_id, host_name, @response.parsed_response['id'])
-        #           else
-        #             flash[:error] = @response.parsed_response['message']
-        #           end
-        #         end
-        #       end
-        #     else
-        #       flash[:error] = @response.parsed_response['message']
-        #     end
-        #   end
-        # end
       end
+
+      # @response = update_cert_private_key(resource_id, host_name, api_key, certificate_value, private_key)
+      #
+      # if @response.parsed_response && @response.parsed_response['errors']
+      #   @response.parsed_response['errors'].each do |error|
+      #     msg = error['code'].to_s + ': ' + error['message']
+      #     flash[:error] = msg
+      #   end
+      # elsif @response.parsed_response && @response.parsed_response['message']
+      #   if  @response.parsed_response['id']
+      #     flash[:notice] = @response.parsed_response['message']
+      #
+      #     # TODO: Email Sent
+      #     # current_user.deliver_ssl_cert_private_key!(resource_id, host_name, @response.parsed_response['id'])
+      #   else
+      #     if @response.parsed_response['message'] == DUPLICATE_CUSTOM_DOMAIN
+      #       @response = delete_custom_domain(resource_id, host_name, api_key)
+      #
+      #       if @response.parsed_response
+      #         if @response.parsed_response['errors']
+      #           @response.parsed_response['errors'].each do |error|
+      #             msg = error['code'].to_s + ': ' + error['message']
+      #             flash[:error] = msg
+      #           end
+      #         end
+      #       else
+      #         @response = update_cert_private_key(resource_id, host_name, api_key, certificate_value, private_key)
+      #
+      #         if @response.parsed_response && @response.parsed_response['errors']
+      #           @response.parsed_response['errors'].each do |error|
+      #             msg = error['code'].to_s + ': ' + error['message']
+      #             flash[:error] = msg
+      #           end
+      #         elsif @response.parsed_response && @response.parsed_response['message']
+      #           if  @response.parsed_response['id']
+      #             flash[:notice] = @response.parsed_response['message']
+      #
+      #             # TODO: Email Sent
+      #             # current_user.deliver_ssl_cert_private_key!(resource_id, host_name, @response.parsed_response['id'])
+      #           else
+      #             flash[:error] = @response.parsed_response['message']
+      #           end
+      #         end
+      #       end
+      #     else
+      #       flash[:error] = @response.parsed_response['message']
+      #     end
+      #   end
+    # end
     else
       @response = HTTParty.delete('https://reseller.cdnify.com/api/v1/resources/' + resource_id + '/custom_domains/' + host_name,
                                   basic_auth: {username: api_key, password: 'x'})
@@ -324,6 +364,7 @@ class CdnsController < ApplicationController
           end
         end
       else
+        cdn.destroy if cdn
         flash[:notice] = 'Successfully Deleted.'
       end
     end
@@ -383,6 +424,7 @@ class CdnsController < ApplicationController
 
       redirect_to resource_cdn_cdn_path(@ssl_slug, resource_id) and return
     else
+      Cdn.where(:resource_id => resource_id).delete_all
       flash[:notice] = 'Successfully Deleted Resource.'
     end
 
@@ -460,6 +502,12 @@ class CdnsController < ApplicationController
 
     if @response.parsed_response
       if @response.parsed_response['resources']
+        cdn = Cdn.new
+        cdn.api_key = api_key
+        cdn.ssl_account_id = current_user.ssl_account.id
+        cdn.resource_id = @response.parsed_response['resources'][0]['id']
+        cdn.save
+
         flash[:notice] = 'Successfully Created Resource.'
       else
         @response.parsed_response['errors'].each do |error|

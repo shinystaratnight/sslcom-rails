@@ -56,15 +56,30 @@ class MonthlyInvoice < Invoice
   def show_refund_actions?
     payment && !(merchant_refunded? || refunded?)
   end
-  
+
+  def max_credit
+    amt = if payment && !refunded?
+      refunds = get_merchant_refunds
+      return 0.0 if (refunds == payment.amount) && (payment.get_funded_account_amount == 0)
+      
+      if payment.get_merchant == 'other'
+        payment.get_funded_account_amount - refunds
+      else  
+        (payment.make_available_total) - refunds
+      end
+    else
+      0.0
+    end
+    Money.new(amt)
+  end
+    
   def merchant_refunded?
     fully_refunded = false
     if payment
       ref_merchant = payment.get_merchant
       if ref_merchant && %{stripe paypal authnet}.include?(ref_merchant)
         order_amount = payment.get_total_merchant_amount
-        refunds = payment.refunds.any? ? payment.refunds.pluck(:amount).sum : 0
-        fully_refunded = (order_amount - refunds) == 0
+        fully_refunded = (order_amount - get_merchant_refunds) == 0
       end
     end
     fully_refunded
@@ -86,6 +101,19 @@ class MonthlyInvoice < Invoice
     orders.where(approval: 'rejected')
   end
   
+  def get_credited_total
+    if refunded? && 
+      ( (payment.make_available_total - get_merchant_refunds) > get_cents )
+      get_cents
+    else
+      max_credit
+    end
+  end
+  
+  def get_merchant_refunds
+    payment.refunds.any? ? payment.refunds.pluck(:amount).sum : 0
+  end
+  
   def get_cents
     get_approved_items.map(&:cents).sum
   end  
@@ -98,7 +126,23 @@ class MonthlyInvoice < Invoice
     amt = get_amount
     amt.is_a?(Fixnum) ? Money.new(get_cents).format : amt.format
   end
-    
+  
+  def get_final_amount
+    if %w{paypal stripe authnet}.include?(payment.get_merchant)
+      payment.get_total_merchant_amount
+    else
+      get_cents - payment.get_funded_account_amount
+    end
+  end
+  
+  def funded_account_credit?
+    payment.get_funded_account_amount > 0
+  end
+  
+  def get_final_amount_format
+    Money.new(get_final_amount).format
+  end
+      
   def get_item_descriptions
     orders.inject({}) do |final, o|
       co      = o.certificate_orders.first

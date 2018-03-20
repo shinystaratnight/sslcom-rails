@@ -1,5 +1,6 @@
 -title = "CDN Management"
 -content_for :title, title
+=render :partial => 'index_scripts'
 =stylesheet_link_tag "bootstrap_style", :media => 'all'
 -#-is_system_admin = @results[:is_admin]
 -api_key = @results[:api_key]
@@ -48,13 +49,13 @@
                     %td
                       =DateTime.parse(resource['created_at']).strftime("%d/%m/%Y")
                     %td
-                      =check_box_tag "deleted_resources[]", resource['id']
+                      =check_box_tag "deleted_resources[]", resource['id'], false, class: 'chk-delete'
               -else
                 %tr
                   %td(colspan="6")
                     There is no resources
             -if resources && resources.length > 0
-              =submit_tag 'Save', :id=>'btn_update_resource'
+              =submit_tag 'Save', :id=>'btn_update_resource', :disabled=>true
       %hr
       %div.create-resource
         .sub-title Create Resource
