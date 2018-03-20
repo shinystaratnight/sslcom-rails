@@ -1,27 +1,32 @@
 -content_for :title, "Test Certificate generation for CS"
 =render :partial => 'index_scripts'
 = javascript_include_tag "promise.min", "webcrypto-liner.shim", "asmcrypto.min", "elliptic.min", "bundle.umd.min", "bundle.pkcs.umd.min"
-%input.cs_subject_dn{:type=>'hidden', :value=>"#{@certificate_order.certificate_content.subject_dn}"}
-%input.cs_generate_csr_pri_key{:type=>'button', :value=>'Generate CSR / Private Key'}
-%br
-%br
-%p CSR :
-%textarea.cs_csr{:cols=>80, :rows=>10}
-%br
-%br
-%p Private Key :
-%textarea.cs_pri_key{:cols=>80, :rows=>10}
-%br
-%br
-%input.cs_generate_cert{:type=>'button', :value=>'Generate'}
-%br
-%br
-%p Certificate :
-%textarea.cs_certificate{:cols=>80, :rows=>10}
-%br
-%br
-%p Password :
-%input.cs_certificate_password{:type=>'text'}
-%br
-%br
-%input.cs_certificate_download{:type=>'button', :value=>'Download'}
+=stylesheet_link_tag 'bootstrap_style', :media => 'all'
+%div{:style=>"width: 100%"}
+  %div.pt-3{:style=>"width: 300px; margin: auto"}
+    %input.cs_subject_dn{:type=>'hidden', :value=>"#{@certificate_order.certificate_content.subject_dn}"}
+    %input.cs_generate_csr_pri_key_cert{:type=>'button', :value=>'Generate Certificate'}
+  .row.pt-5
+    .col-md-3{:style=>"text-align: right"}
+      CSR :
+    .col-md-9
+      %textarea.cs_csr{:cols=>80, :rows=>10}
+  .row.pt-4
+    .col-md-3{:style=>"text-align: right"}
+      Private Key :
+    .col-md-9
+      %textarea.cs_pri_key{:cols=>80, :rows=>10}
+  .row.pt-4
+    .col-md-3{:style=>"text-align: right"}
+      Certificate :
+    .col-md-9
+      %textarea.cs_certificate{:cols=>80, :rows=>10}
+  .cert_password_download.hidden
+    .row.pt-5
+      .col-md-3{:style=>"text-align: right"}
+        Password :
+      .col-md-4
+        %input.cs_certificate_password{:type=>'text', :style=>'width: 100%'}
+      .col-md-5
+        %input.cs_certificate_download{:type=>'button', :value=>'Download'}
+
