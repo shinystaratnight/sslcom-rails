@@ -1,0 +1,21 @@
+=form_for @invoice.becomes(Invoice), url: credit_invoice_path(@ssl_slug, @invoice.reference_number), |
+method: :put, html: {id: 'frm-mo-inv-credit'} do |f|
+  .registration_form
+    .fields
+      
+      .clearfix
+        %label{for: 'amount'}
+          *Amount
+          %br/
+          %span.label_desc Max amount: #{@invoice.max_credit.format}
+        =f.number_field :amount, value: @invoice.max_credit, max: @invoice.max_credit, |
+        required: true, step: :any
+
+      .clearfix
+        =f.label :credit_reason
+        =f.text_area :credit_reason, size: '30x5'
+        
+  #button_container
+    #auto_adjust
+      =image_tag 'cancel_bl.gif', id: 'btn-inv-update-cancel'
+      =image_submit_tag 'bl_submit_button.gif'

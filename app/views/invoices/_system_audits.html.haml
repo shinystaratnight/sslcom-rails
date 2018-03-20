@@ -1,0 +1,29 @@
+-if @invoice.system_audits.any?
+  #monthly-invoice-actions
+    %h3.order_results_header
+      System Audit
+    
+    #invoice-container
+      %table#monthly-invoice-sa
+        %thead
+          %tr.heading_row
+            %th DATE
+            %th DETAIL
+            %th USER
+          %tr.divider
+            %td{colspan: '5'}
+        %tbody
+          -@invoice.system_audits.order(created_at: :asc).each do |sa|
+            %tr
+              %td
+                =sa.created_at
+              
+              %td.detail
+                %strong ACTION: 
+                #{sa.action}
+                %br/
+                %strong NOTES: 
+                #{sa.notes}
+              
+              %td.user
+                =sa.owner.email

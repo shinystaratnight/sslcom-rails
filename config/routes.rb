@@ -149,6 +149,7 @@ SslCom::Application.routes.draw do
         put  :add_item
         put  :make_payment_other
         put  :refund_other
+        put  :credit
       end
     end
       

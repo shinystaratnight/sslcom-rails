@@ -1,12 +1,13 @@
 -reprocess_order = order.reprocess_ucc_order?
 -full_reprocess_format = order.get_full_reprocess_format if reprocess_order
+-ia = order.invoice_address
 
-%div{id: 'header', class: 'alwaysbreak'}
+%div#header.alwaysbreak
   %table
     %tr
-      %td{id: 'header-logo'}
+      %td#header-logo
         =image_tag wicked_pdf_asset_base64('ssl_logo_print.png')
-      %td{id: 'header-address'}
+      %td#header-address
         SSL.com
         %br
         3100 Richmond Ave
@@ -17,28 +18,32 @@
 #sub-header
   %table
     %tr
-      %td{id: 'bill-to'}
-        %p{class: 'font-small-grey'} Billed To
+      %td#bill-to
+        %p.font-small-grey Billed To
         -order.invoice_bill_to_str.each do |line|
           =line.strip
           %br
       
-      %td{id: 'invoice-sum'}
-        %p{class: 'font-small-grey'} Reference Number
-        %p{id: 'ref-num'} #{order.reference_number}
-        %p{class: 'font-small-grey', id: 'date'} Invoice Date
-        %p{id: 'invoice-date'} #{order.created_at.strftime('%F')}
-      
-      %td{id: 'invoice-total'}
+      %td#invoice-sum
+        %p.font-small-grey Reference Number
+        %p#ref-num #{order.reference_number}
+        %p.font-small-grey#date Invoice Date
+        %p#invoice-date #{order.created_at.strftime('%F')}
+
+        -if ia && !ia.vat.blank?
+          %p.font-small-grey#date VAT #
+          %p#invoice-date #{ia.vat}
+          
+      %td#invoice-total
         -cents = order.cents.blank? ? 0 : order.cents
-        %p{class: 'font-small-grey'} Invoice Total
-        %p{id: 'amount'} 
+        %p.font-small-grey Invoice Total
+        %p#amount
           #{reprocess_order ? full_reprocess_format : Money.new(cents).format}
 
 #line-items
   %table
     %caption
-      %p{id: 'bg-note'}
+      %p#bg-note
         *Invoice and charges are accurate
         %br
         ="as of #{DateTime.now.strftime('%F %I:%M %p')}."
@@ -69,33 +74,33 @@
           %td.price 
             #{reprocess_order ? full_reprocess_format : Money.new(cert.amount).format}
 
-%div{id: 'line-items-total', class: 'nobreak'}
+%div#line-items-total.nobreak
   %table
     %tr
-      %td{id: 'subtotal'} Subtotal
-      %td{class: 'amount'}
+      %td#subtotal Subtotal
+      %td.amount
         -if reprocess_order
           #{full_reprocess_format}
         -else
           #{Money.new(order.certificate_orders.map(&:amount).sum).format}
     -if order.discounts.any?
       %tr
-        %td{id: 'discount-lbl'} Discount (#{order.discounts.map(&:label).join(', ')})
-        %td{id: 'discount-amt'} -#{order.discount_amount(:items).format}
+        %td#discount-lbl Discount (#{order.discounts.map(&:label).join(', ')})
+        %td#discount-amt -#{order.discount_amount(:items).format}
     -if order.get_funded_account_amount > 0
       %tr
-        %td{id: 'fund-lbl'} Funded Account Credit
-        %td{id: 'fund-amt'} -#{Money.new(order.get_funded_account_amount).format}
+        %td#fund-lbl Funded Account Credit
+        %td#fund-amt -#{Money.new(order.get_funded_account_amount).format}
     %tr
-      %td{id: 'total-lbl'} Total
-      %td{id: 'total-amt'} #{Money.new(order.get_total_merchant_amount).format}
+      %td#total-lbl Total
+      %td#total-amt #{Money.new(order.get_total_merchant_amount).format}
     %tr
-      %td{id: 'paid-lbl'} Paid
-      %td{id: 'paid-amt'}
+      %td#paid-lbl Paid
+      %td#paid-amt
         -if reprocess_order 
           #{Money.new(order.get_paid_reprocess_amount).format}
         -else
           ="-#{order.get_order_charged.amount.format}"
-    %tr{id: 'amount-due'}
-      %td{id: 'due-lbl'} Amount Due
-      %td{id: 'due-amt'} $0.00
+    %tr#amount-due
+      %td#due-lbl Amount Due
+      %td#due-amt $0.00

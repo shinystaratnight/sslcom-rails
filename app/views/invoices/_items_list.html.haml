@@ -49,7 +49,7 @@
         %tr.order-total
           %td.description.total_row{colspan: '4'} Total:
           %td.price.total_row
-            #{Money.new(@order.get_total_merchant_amount).format}
+            =@invoice.get_final_amount_format
       -else
         %tr.order-subtotal
           %td.description.total_row{colspan: '4'} Total:
