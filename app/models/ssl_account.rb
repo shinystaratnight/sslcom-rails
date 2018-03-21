@@ -34,6 +34,7 @@ class SslAccount < ActiveRecord::Base
   has_many  :saved_contacts, as: :contactable, class_name: 'CertificateContact', dependent: :destroy
   has_many  :saved_registrants, as: :contactable, class_name: 'Registrant', dependent: :destroy
   has_many  :all_saved_contacts, as: :contactable, class_name: 'Contact', dependent: :destroy
+  has_many  :cdns
 
   unless MIGRATING_FROM_LEGACY
     #has_many  :orders, :as=>:billable, :after_add=>:build_line_items
