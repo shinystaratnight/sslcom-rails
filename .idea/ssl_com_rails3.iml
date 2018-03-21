@@ -1037,7 +1037,7 @@
     <orderEntry type="library" scope="PROVIDED" name="binding_of_caller (v0.7.2, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="bootstrap (v4.0.0.beta, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="builder (v3.2.3, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
-    <orderEntry type="library" scope="PROVIDED" name="bundler (v1.16.0, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="bundler (v1.15.4, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="byebug (v9.1.0, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="cancan (v1.6.10, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="capistrano (v2.15.9, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />

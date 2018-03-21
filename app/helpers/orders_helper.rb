@@ -94,7 +94,7 @@ module OrdersHelper
   end
 
   def reseller_initial_deposit?
-      return false unless ssl_account.reseller
+      return false if ssl_account.reseller.blank?
       ssl_account.reseller.enter_billing_information? || ssl_account.reseller.select_tier?
   end
 

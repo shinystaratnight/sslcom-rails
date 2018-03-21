@@ -8,10 +8,11 @@
 #cdns
   %hr
   -unless api_key
-    %div.activate-cdn
+    %div.center
+      %h3 By activating SSL.com's CDN Service, you agree to CDNify.com's "Terms of Service" below:
+      =text_area_tag :agreement, render(file: "public/agreements/cdnify.txt"), :size=>"100x8"
       =form_tag :register_account_cdns, :method=>:post do
-        %div.active-cdn
-          =submit_tag 'Activate CDN'
+        =submit_tag 'Activate CDN', class: 'button_blue'
     %hr
   -if api_key
     -#-if is_system_admin
@@ -53,7 +54,7 @@
               -else
                 %tr
                   %td(colspan="6")
-                    There is no resources
+                    There are no resources
             -if resources && resources.length > 0
               =submit_tag 'Save', :id=>'btn_update_resource', :disabled=>true
       %hr
@@ -65,13 +66,13 @@
             %div.reg-resource.clearfix
               .field-label Resource Origin:
               .field-cont
-                =text_field_tag :resource_origin, root_url
+                =text_field_tag :resource_origin, nil, placeholder: 'http://www.yoursite.com'
                 .note
                   Which website should we mirror on the CDN?
             %div.reg-resource.clearfix
               .field-label Resource Name:
               .field-cont
-                =text_field_tag :resource_name
+                =text_field_tag :resource_name, nil, placeholder: 'mysite'
                 %span .a.cdnify.io
                 .note
                   Something to identify this resource by (e.g. mysite.a.cdnify.io)

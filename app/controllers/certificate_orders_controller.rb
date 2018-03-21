@@ -163,7 +163,7 @@ class CertificateOrdersController < ApplicationController
       @certificate_order.has_csr=true
       @certificate = @certificate_order.mapped_certificate
       @certificate_content = @certificate_order.certificate_contents.build(
-        domains: @certificate_order.certificate_content.signed_certificate.subject_alternative_names,
+        domains: @certificate_order.certificate_content.signed_certificate.try(:subject_alternative_names),
         server_software_id: @certificate_order.certificate_content.server_software_id
       )
       # @certificate_content.additional_domains = domains
@@ -483,7 +483,7 @@ class CertificateOrdersController < ApplicationController
       cc.registrant.update(registrant_params) if registrant_params
       cc.registrant
     else
-      registrant_params ? cc.registrant.build(registrant_params) : cc.build_registrant
+      registrant_params ? cc.build_registrant(registrant_params) : cc.build_registrant
     end
   end
 end

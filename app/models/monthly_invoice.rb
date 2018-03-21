@@ -1,6 +1,6 @@
 class MonthlyInvoice < Invoice
   belongs_to :billable, polymorphic: true
-  belongs_to :payment, class_name: 'Order', foreign_key: 'order_id'
+  belongs_to :payment, -> { unscope(where: :state) }, class_name: 'Order', foreign_key: :order_id
   has_many   :orders, foreign_key: :invoice_id
   
   validates :start_date, :end_date, :status, :billable_id, :billable_type, :default_payment, presence: true
@@ -13,7 +13,7 @@ class MonthlyInvoice < Invoice
   
   PAYMENT_METHODS      = {bp: 'billing_profile', wire: 'wire_transfer', po: 'po_other'}
   PAYMENT_METHODS_TEXT = {bp: 'Billing Profile', wire: 'WireXfer', po: 'PO/Other'}
-  STATUS               = %w{pending paid}
+  STATUS               = %w{pending paid refunded partially_refunded}
   
   def self.invoice_exists?(ssl_account_id)
     ssl = SslAccount.find ssl_account_id
@@ -25,6 +25,14 @@ class MonthlyInvoice < Invoice
     ssl ? ssl.monthly_invoices.where(start_date: DateTime.now.beginning_of_month).first : nil
   end
   
+  def paid_wire_transfer?
+    payment && payment.notes.include?(PAYMENT_METHODS_TEXT[:wire])
+  end
+  
+  def paid_po_other?
+    payment && payment.notes.include?(PAYMENT_METHODS_TEXT[:po])
+  end
+    
   def paid?
     status == 'paid'
   end
@@ -33,12 +41,77 @@ class MonthlyInvoice < Invoice
     status == 'pending'
   end
   
+  def refunded?
+    status == 'refunded'
+  end
+  
+  def partially_refunded?
+    status == 'partially_refunded'
+  end
+
+  def show_payment_actions?
+    !(paid? || refunded? || partially_refunded?)
+  end
+  
+  def show_refund_actions?
+    payment && !(merchant_refunded? || refunded?)
+  end
+
+  def max_credit
+    amt = if payment && !refunded?
+      refunds = get_merchant_refunds
+      return 0.0 if (refunds == payment.amount) && (payment.get_funded_account_amount == 0)
+      
+      if payment.get_merchant == 'other'
+        payment.get_funded_account_amount - refunds
+      else  
+        (payment.make_available_total) - refunds
+      end
+    else
+      0.0
+    end
+    Money.new(amt)
+  end
+    
+  def merchant_refunded?
+    fully_refunded = false
+    if payment
+      ref_merchant = payment.get_merchant
+      if ref_merchant && %{stripe paypal authnet}.include?(ref_merchant)
+        order_amount = payment.get_total_merchant_amount
+        fully_refunded = (order_amount - get_merchant_refunds) == 0
+      end
+    end
+    fully_refunded
+  end
+  
+  def full_refund!
+    update(status: 'refunded')
+  end
+  
+  def partial_refund!
+    update(status: 'partially_refunded')
+  end
+    
   def get_approved_items
     orders.where(approval: 'approved')
   end
   
   def get_removed_items
     orders.where(approval: 'rejected')
+  end
+  
+  def get_credited_total
+    if refunded? && 
+      ( (payment.make_available_total - get_merchant_refunds) > get_cents )
+      get_cents
+    else
+      max_credit
+    end
+  end
+  
+  def get_merchant_refunds
+    payment.refunds.any? ? payment.refunds.pluck(:amount).sum : 0
   end
   
   def get_cents
@@ -53,7 +126,23 @@ class MonthlyInvoice < Invoice
     amt = get_amount
     amt.is_a?(Fixnum) ? Money.new(get_cents).format : amt.format
   end
-    
+  
+  def get_final_amount
+    if %w{paypal stripe authnet}.include?(payment.get_merchant)
+      payment.get_total_merchant_amount
+    else
+      get_cents - payment.get_funded_account_amount
+    end
+  end
+  
+  def funded_account_credit?
+    payment.get_funded_account_amount > 0
+  end
+  
+  def get_final_amount_format
+    Money.new(get_final_amount).format
+  end
+      
   def get_item_descriptions
     orders.inject({}) do |final, o|
       co      = o.certificate_orders.first

@@ -465,6 +465,10 @@ class Order < ActiveRecord::Base
     on_monthly_invoice? && approval == 'rejected'
   end
   
+  def invoice_address
+    Invoice.find_by(order_id: id)
+  end
+  
   def reprocess_ucc_order?
     description == Order::SSL_REPROCESS_UCC
   end
@@ -492,26 +496,34 @@ class Order < ActiveRecord::Base
     tot_non_wildcard = non_wildcard.count - old_non_wildcard.count
     tot_wildcard     = wildcard.count - old_wildcard.count
     
+    tot_non_wildcard  = tot_non_wildcard < 0 ? 0 : tot_non_wildcard
+    tot_wildcard      = tot_wildcard < 0 ? 0 : tot_wildcard
     new_domains_count = tot_non_wildcard + tot_wildcard
     
     {
       all:                cur_domains,
       new_domains_count:  (new_domains_count < 0 ? 0 : new_domains_count),
       cur_wildcard:       wildcard.count,
-      wildcard:           (tot_wildcard < 0 ? 0 : tot_wildcard),
-      non_wildcard:       (tot_non_wildcard < 0 ? 0 : tot_non_wildcard)
+      wildcard:           tot_wildcard,
+      non_wildcard:       tot_non_wildcard
     }
-  end  
+  end
   
   def get_ccref_from_notes
-    notes.split(').').first.split.last.delete(')')
+    unless notes.blank?
+      notes.split(').').first.split.last.delete(')')
+    end
   end
   
   def get_reprocess_cc(co)
     cc = nil
     if co
       str = get_ccref_from_notes
-      cc  = co.certificate_contents.where("ref = ? OR label = ? OR id = ?", str, str, str)
+      cc  = if str.nil?
+        []
+      else  
+        co.certificate_contents.where("ref = ? OR label = ? OR id = ?", str, str, str)
+      end
       cc  = cc.any? ? cc.first : nil
     end
     cc
@@ -524,11 +536,11 @@ class Order < ActiveRecord::Base
         current = []
         co.orders.order(created_at: :asc).each do |o|
           if o != self && o.reprocess_ucc_order?
-            cc = get_reprocess_cc(co)
+            cc = o.get_reprocess_cc(co)
             current << {
               date:      o.created_at.strftime('%F'),
               order_ref: o.reference_number,
-              domains:   (cc.nil? ? 0 : cc.domains.count),
+              domains:   (cc.nil? ? 0 : co.get_reprocess_cc_domains(cc).count),
               amount:    o.get_full_reprocess_format
             }
           end
@@ -758,7 +770,7 @@ class Order < ActiveRecord::Base
       new_refund = Refund.refund_merchant(params)
     end
     if self.amount.cents == self.refunds.where{status == "success"}.sum(:amount)
-      full_refund!
+      full_refund! unless fully_refunded?
     elsif self.amount.cents < self.refunds.where{status == "success"}.sum(:amount)
       partial_refund! unless self.partially_refunded?
     end

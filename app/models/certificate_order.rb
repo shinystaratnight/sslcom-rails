@@ -65,7 +65,7 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   default_scope{ where{(workflow_state << ['canceled','refunded','charged_back']) & (is_expired != true)}.
-      joins(:certificate_contents).includes(:certificate_contents).order(updated_at: :desc).
+      joins(:certificate_contents).order(updated_at: :desc).
       references(:all).readonly(false)}
 
   scope :not_test, ->{where{(is_test == nil) | (is_test==false)}}
@@ -98,7 +98,8 @@ class CertificateOrder < ActiveRecord::Base
   #     merge(options)
   # }
   #
-  scope :search_with_csr, lambda {|term="", options={}|
+  scope :search_with_csr, lambda {|term, options={}|
+    term ||= ""
     term = term.strip.split(/\s(?=(?:[^']|'[^']*')*$)/)
     filters = {common_name: nil, organization: nil, organization_unit: nil, address: nil, state: nil, postal_code: nil,
                subject_alternative_names: nil, locality: nil, country:nil, signature: nil, fingerprint: nil, strength: nil,
@@ -492,7 +493,8 @@ class CertificateOrder < ActiveRecord::Base
       end
     end
     if cur_domains.any?
-      cur_domains = cur_domains.map(&:signed_certificates).compact
+      cur_domains = cur_domains.joins(:signed_certificates)
+        .map(&:signed_certificates).compact
         .reject{ |sc| sc.empty? }.flatten.map(&:subject_alternative_names)
     end
     cur_domains

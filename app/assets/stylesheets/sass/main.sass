@@ -5815,7 +5815,8 @@ span.notifications-teams
     color: white
 
 #invoice-container-ext,
-#invoice-container-admin 
+#invoice-container-admin,
+#invoice-container-credit 
   form
     border-top: 1px dashed lightgrey
     margin-top: 2.5rem
@@ -5841,7 +5842,8 @@ span.notifications-teams
     padding: 5px 15px
     box-shadow: none
 
-#invoice-container-admin
+#invoice-container-admin,
+#invoice-container-credit
   form
     font-size: 1.3rem !important
     label
@@ -5849,6 +5851,10 @@ span.notifications-teams
       font-size: 1.3rem !important
       width: 30%
       
+    .label_desc
+      font-weight: 500  
+      font-size: 1.1rem !important
+
 #cdns
   .sub-title
     font-size: 14px
@@ -6453,7 +6459,8 @@ span.notifications-teams
 .btn-team-disable,
 .btn-team-enable,
 .btn-rmv-invoice-item,
-.btn-add-invoice-item
+.btn-add-invoice-item,
+.btn-refunds-detail
   background-color: grey
   border-radius: 3px
   color: #FFFFFF !important
@@ -6475,6 +6482,11 @@ span.notifications-teams
   background-color: #6b9029
   border: 1px solid #6b9029
 
+.btn-refunds-detail
+  background-color: grey
+  border: 1px solid grey
+  text-transform: uppercase
+  
 /*
  * Invoices Page
  */
@@ -6541,6 +6553,40 @@ span.notifications-teams
   span
     font-weight: 500
     color: black
+
+#monthly-invoice-sa
+  border: none
+  border-collapse: collapse
+  width: 100%
+  font-size: 1.4em
+  text-align: center
+  
+  tr td:first-child
+    margin-left: 0.5rem
+  
+  td
+    padding-bottom: 0.5rem
+    
+  tr.heading_row
+    color: grey
+    font-size: 1.1rem
+  
+  .detail
+    width: 55%
+    text-align: left
+    border-bottom: dashed 1px grey
+    
+    strong
+      color: grey
+      font-size: 1rem
+  
+  .user
+    color: grey
+    
+  .divider
+    td
+      border-bottom: 1px solid #ccc
+      padding: 0.4rem 0 !important
   
 /*
  * Transaction Show: Reprocess UCC Section

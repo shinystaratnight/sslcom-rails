@@ -1,4 +1,3 @@
-require 'apis/certificates_api_app'
 require 'domain_constraint'
 
 SslCom::Application.routes.draw do
@@ -149,6 +148,8 @@ SslCom::Application.routes.draw do
         put  :remove_item
         put  :add_item
         put  :make_payment_other
+        put  :refund_other
+        put  :credit
       end
     end
       

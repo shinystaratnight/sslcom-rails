@@ -70,6 +70,59 @@ class InvoicesController < ApplicationController
     end
   end
   
+  def credit
+    amount = params[:invoice][:amount].to_f
+
+    if @invoice && !@invoice.refunded? && amount > 0
+      payment        = @invoice.payment
+      max            = @invoice.max_credit.to_s.to_f
+      amount         = max if max <= amount
+      imvoice_amount = @invoice.get_amount.to_s.to_f
+      refunds        = Money.new(@invoice.get_merchant_refunds).to_s.to_f
+      f_amount       = Money.new(amount*100).format
+      
+      if amount > 0
+        @invoice.billable.funded_account.add_cents(amount*100)
+        if (amount == imvoice_amount) || ((amount + refunds) == imvoice_amount)
+          @invoice.full_refund!
+          payment.full_refund! unless payment.fully_refunded?
+        else
+          @invoice.partial_refund!
+        end
+          
+        SystemAudit.create(
+          owner:  current_user,
+          target: @invoice,
+          notes:  "Credit issued with reason: #{params[:invoice][:credit_reason]}",
+          action: "Monthly Invoice ##{@invoice.reference_number}, credit issued for #{f_amount}."
+        )
+      end
+      flash[:notice] = "Invoice was successfully credited for amount #{f_amount}."
+    else
+      flash[:error] = "This invoice cannot be credited."
+    end
+    redirect_to_invoice
+  end
+  
+  def refund_other
+    if @invoice && !@invoice.refunded?
+      payment = @invoice.payment
+      payment_type = MonthlyInvoice::PAYMENT_METHODS_TEXT[params[:refund_type].to_sym]
+      @invoice.full_refund!
+      payment.full_refund! unless payment.fully_refunded?
+      SystemAudit.create(
+        owner:  current_user,
+        target: @invoice,
+        notes:  "Full refund issued for payment type #{payment_type}.",
+        action: "Monthly Invoice ##{@invoice.reference_number}, refund issued for #{payment.amount.format}."
+      )
+      flash[:notice] = "Invoice was successfully refunded for payment type #{payment_type}."
+    else
+      flash[:error] = "This invoice is already refunded."
+    end
+    redirect_to_invoice
+  end
+  
   def remove_item
     if @invoice && !@invoice.paid?
       o = @invoice.orders.find_by(reference_number: params[:item_ref])

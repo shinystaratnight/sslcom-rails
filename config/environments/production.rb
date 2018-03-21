@@ -80,6 +80,15 @@ SslCom::Application.configure do
   config.log_level = :info
   # END ActiveMerchant configuration
   config.eager_load = true
+  
+  # AWS S3 
+  config.paperclip_defaults = {
+    storage:      :s3,
+    bucket:       Rails.application.secrets.s3_bucket,
+    s3_region:    Rails.application.secrets.s3_region,
+    preserve_files: true,
+    s3_host_name: "s3-#{Rails.application.secrets.s3_region}.amazonaws.com"
+  }
 
 end
 #comment out temporarily
