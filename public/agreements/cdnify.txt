@@ -1,0 +1,97 @@
+
+Terms of Service
+
+CDNify LLC is a Texas company located at 2617c W Holcombe Blvd Ste 286, Houston, TX, 77025, US.
+
+Referred hereinafter as ‘CDNIFY’,’Cdnify’,’cdnify.com’, ‘our’, ‘we’ and ‘us’; is an internet service provider. All customers under our service are subject to the terms and conditions described in this document. Under the terms of this agreement, signing up and/or using our service(s) in any form therefore declares that you have read, understand, and agree to the terms and conditions stated below. Cdnify reserves the right to make alterations to this document whenever we deem reasonable. It is the client’s sole responsibility to check this document for updates on a regular basis.
+
+Our Terms of Service (TOS) are designed to be read by the average person. Please read them carefully prior to ordering services from us, and make sure you understand what they say. Our TOS is a legally binding contract between CDNify and you. You agree that our continued provision of services to you, and your continued use of them, represent your agreement to be bound by the TOS.
+
+Last Updated: 20th March 2018
+
+Copyright Statement
+
+All material on this site, including but not limited to text, images, illustrations, code, scripts audio/video content is protected by copyrights which are owned and controlled by CDNify. Material from this website may not be copied, reproduced, republished, uploaded, posted, transmitted, or distributed in any way, unless we give you the written permission to do so.
+Content Hosting & Acceptable Use
+
+For us to host and distribute your content, it is necessary for our servers to cache and store copies of your files. By purchasing content delivery services from us, you acknowledge that these copies are being made, and give us the permission (a license) to maintain these copies and make them available publicly to users of the Internet. You are solely responsible for providing all of the content and other data that make up your website. You retain ownership of any intellectual property rights that you hold in that content. In short, what belongs to you stays yours.
+Copyright & Illegal Use
+
+Cdnify does not actively monitor files stored on our CDN and all content distributed via your account is the sole responsibility of you, the client. We do not provide any form of legal cover to individuals or companies who utilize our services to distribute any content with any copyright protection. Under no circumstances will Cdnify be responsible for the behaviour of our clients or their users when found to be distributing protected content. All licensing, copyright and royalty issues are the sole responsibility of the individual clients and/or their production entities.
+
+You may not use our services to distribute spyware, adware, spam, scams, illegal, adult, racist or any other un-sociable material.
+
+If contacted by an authority in the event of an illegal situation regarding any of the above, we will co-operate fully in any investigations they decide to make against clients found to be breaking the law.
+
+Cdnify will make every effort possible to ensure security of client’s data, however due to the large volume of media stored, our standard costs do not guarantee redundant backup of data, please contact us if you would like to arrange this at an extra cost. All data is stored at client’s own risk and we will assume no responsibility for any loss, damage or corruption of files hosted on our servers. Data backup is the sole responsibility of the client.
+DMCA
+
+In accordance with the Digital Millennium Copyright Act (DMCA), we have adopted a policy to suspend or terminate the accounts of customers found to be in violation of copyright. We respect the intellectual property of others. You must do the same. We may, in appropriate circumstances and at our sole discretion, disable and/or terminate the accounts of users who infringe. If we terminate this agreement for your violation of the DMCA, you will not receive a refund of the Fees. If you believe that your work has been copied in a way that constitutes copyright infringement, or your intellectual property rights have been otherwise violated, please provide our Copyright Agent (identified below) with the following information:
+
+    An electronic or physical signature of the person authorized to act on behalf of the owner of the copyright or other intellectual property interest;
+
+    A description of the copyrighted work or other intellectual property that you claim has been infringed;
+
+    A description of where the material that you claim is infringing is located on the site;
+
+    Your address, telephone number, and email address;
+
+    A statement by you that you have a good faith belief that the disputed use is not authorized by the copyright owner, its agent, or the law;
+
+    A statement by you, made under penalty of perjury, that the above information in your;
+
+    Notice is accurate and that you are the copyright or intellectual property owner or authorized to act on the copyright or intellectual property owner’s behalf.
+
+Our agent for notice of claims of copyright infringement can be reached as follows:
+
+    By mail:
+    Copyright Agent,
+    CDNify LLC,
+    2617c W Holcombe Blvd Ste 286,
+    Houston, TX, 77025,
+    US
+
+Service Level Agreement
+
+This Service Level Agreement (SLA) governs the use of the CDNify service under the Terms & Conditions. CDNify reserves the right to change the terms of this SLA at any time and in its sole discretion in accordance with the CDNify Terms of Service. CDNify SLA states and represents customer's sole and exclusive remedy for any failure by CDNify to meet this SLA.
+
+SLA Types
+
+CDNify offers different SLA types based on amount - All plans come with basic technical support in the forms of email, chat, and phone call support. Plans $100 and over offer 24 hour support, with plans $500 and over receiving priority support.
+
+Service Availability
+
+CDNify will use reasonable efforts to provide the services 24 hours a day, 7 days a week for as long as you have paid for them, subject to planned maintenance and network interruptions. All server locations provided by CDNify are subject to change at our sole discretion. Sometimes, however, for a number of reasons, the services may be unavailable to you. You recognise and acknowledge that occasional unavailability of the services will occur. We make no representation or warranty that the services will be uninterrupted. Unless explicitly stated by CDNify in writing, CDNify makes no commitment to a minimum service level agreement. Whilst we will make every effort to restrict maintenance to non-peak times, this may not always be possible. Please be aware, unless other specifically stated in writing by CDNify we do not commit to providing support out of normal office hours.
+Bandwidth
+
+Bandwidth Reset
+
+Bandwidth (referred to as data or data transfer) is allocated at the start of your billing period and expires on the billing date unless otherwise stated. If bandwidth was purchased on a pay as you go (PAYG) basis, please be aware this data will expire 1 year from purchase.
+
+Data Overage
+
+Data overages occur when you exceed your monthly bandwidth limit. CDNify charges in increments of 100GB based on the price per GB related to your plan. Overages are waived when plans are upgraded.
+Termination
+
+CDNify’s policy is to investigate any violations of our Terms of Service and terminate repeat infringers. You agree that CDNify may, under certain circumstances and without prior notice, immediately terminate your CDNify account, any associated email address, and access to cdnify.com and associated Services. Cause for such termination shall include, but not be limited to: (a) breaches or violations of the Terms of Service; (b) requests by law enforcement or other government agencies; (c) a request by you (self-initiated account deletions); (d) you have engaged or are reasonably suspected to be engaged in fraudulent or illegal activities; (e) having provided false information as part of your account; (f) having failed to keep your account complete, true, and accurate. Further, you agree that all terminations for cause shall be made in CDNify’s sole discretion and that CDNify shall not be liable to you or any third-party for any termination of your account, access to the Service, or any disruption to your services such a termination may cause. You expressly agree that in the case of a termination for cause you will not have any opportunity to cure.
+
+Compensation
+
+Pricing may be amended from time to time at CDNify’s sole discretion. Unless otherwise determined by CDNify, all purchases are payable prior to the use of said data. CDNify’s method of billing is subject to change and at CDNify’s sole discretion. All sales are final and non-refundable, clients wishing to cancel should contact us at least 7 days via email before the next billing date, we are unable to accept cancellation requests via any other form of communication. Unless otherwise agreed to in writing by CDNify there is no trial or cooling-off period.
+
+Other Concerns
+
+If any provision of this agreement shall be unlawful, void, or for any reason unenforceable then that provision shall be deemed severable from this agreement and shall not affect the validity and enforceability of any remaining provisions. This is the entire agreement between the parties relating to the matters contained herein. CDNIFY may at any time revise these Terms and Conditions by updating this posting. You are bound by any such revisions and should therefore periodically visit this page to review the then current Terms and Conditions to which you are bound.
+Limitation of Liability
+
+TO THE EXTENT ALLOWED BY APPLICABLE LAW, IN ANY EVENT SHALL CDNIFY OR ITS SUPPLIERS BE LIABLE FOR ANY DAMAGES WHATSOEVER, INCLUDING WITHOUT LIMITATION, ANY LOSS OF PROFITS, LOSS OF BUSINESS, LOSS OF USE OR DATA, INTERRUPTION OF BUSINESS, OR FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES OF ANY KIND, EVEN IF CDNIFY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES AND NOTWITHSTANDING ANY FAILURE OF ESSENTIAL PURPOSE OF ANY LIMITED REMEDY.
+
+IN NO EVENT WILL CDNIFY OR ITS SUPPLIERS BE LIABLE FOR ANY CLAIM AGAINST A CUSTOMER BY ANY THIRD PARTY.
+
+IN NO EVENT SHALL CDNIFY OR ITS SUPPLIERS BE LIABLE FOR THE FOLLOWING:
+
+    ANY REPRESENTATION OR WARRANTY MADE TO ANY THIRD PARTY BY CUSTOMER, ANY DISTRIBUTOR OR THEIR RESPECTIVE AGENTS;
+
+    FAILURE OF THE PRODUCTS TO PERFORM;
+
+    FAILURE OF THE PRODUCTS TO PROVIDE SECURITY;
