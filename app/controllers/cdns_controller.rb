@@ -3,9 +3,18 @@ require 'securerandom'
 class CdnsController < ApplicationController
   include HTTParty
   before_action :set_cdn, only: [:show, :update, :destroy]
-  before_action :require_user, only: [:index, :register_account, :register_api_key, :resource_cdn, :update_custom_domain]
+  # before_action :require_user, only: [:index, :register_account, :register_api_key, :resource_cdn, :update_custom_domain]
   before_action :set_tab_name, only: [:resource_cdn, :update_resource, :add_custom_domain, :update_advanced_setting,
                                       :update_custom_domain, :purge_cache, :update_cache_expiry, :delete_resource]
+
+  before_filter :require_user, only: [:index, :register_account, :register_api_key, :resource_cdn, :update_custom_domain]
+
+  filter_access_to :all
+  filter_access_to :index, :resource_cdn, require: :read
+  filter_access_to :create, :register_account, :add_custom_domain, require: :new
+  filter_access_to :update_resource, :update_advanced_setting, :update_cache_expiry, require: :update
+  filter_access_to :update_resources, :purge_cache, :delete_resource, require: :delete
+  filter_access_to :update_custom_domain, require: [:new, :update, :delete]
 
   DUPLICATE_CUSTOM_DOMAIN = "This custom domain is already in use."
 
