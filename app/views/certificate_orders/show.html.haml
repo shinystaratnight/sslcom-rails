@@ -49,7 +49,7 @@
                     %td(colspan="5")
                       .certificate_details_box
                         %ul
-                          -unless co.certificate.is_evcs?
+                          -unless co.certificate.admin_submit_csr?
                             %li
                               %strong certificate contents
                             -if @cc.csr.blank?
