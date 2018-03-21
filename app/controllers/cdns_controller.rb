@@ -16,7 +16,7 @@ class CdnsController < ApplicationController
     # @results[:is_admin] = current_user.is_system_admins?
 
     if current_user.ssl_account
-      cdn = Cdn.where(ssl_account_id: current_user.ssl_account.id).last
+      cdn = current_user.ssl_account.cdns.last
 
       if cdn
         @results[:api_key] = cdn.api_key
@@ -111,7 +111,7 @@ class CdnsController < ApplicationController
     @results = {}
 
     unless current_user.ssl_account.blank?
-      cdn = Cdn.where(ssl_account_id: current_user.ssl_account.id).first
+      cdn = current_user.ssl_account.cdns.first
 
       if cdn
         @results[:active_tab] = @tab_overview
@@ -543,7 +543,7 @@ class CdnsController < ApplicationController
   private
 
     def set_cdn
-      @cdn = Cdn.find(params[:id])
+      @cdn = (current_user.is_system_admins? ? Cdn : current_user.ssl_account.cdns).find(params[:id])
     end
 
     def set_tab_name
