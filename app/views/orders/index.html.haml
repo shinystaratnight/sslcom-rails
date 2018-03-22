@@ -59,7 +59,10 @@
         .filter_label
           .filter_cont.hidden{'data-type'=>'select'}
             =select_tag :filter_product,
-            options_for_select([['Deposit', 'deposit'], ['Certificate Order', 'certificate'], ['Reseller Tier', 'reseller'],
+            options_for_select([['Reprocess SAN', 'reprocess'], 
+              ['Deposit', 'deposit'], 
+              ['Certificate Order', 'certificate'], 
+              ['Reseller Tier', 'reseller'],
               ['Basic SSL (basicssl)', 'basicssl'],
               ['Wildcard SSL (wildcard)', 'wildcard'],
               ['Premium SSL (premiumssl)', 'premium'],
@@ -105,6 +108,12 @@
         .filter_label
           .filter_cont.hidden{'data-type'=>'text'}
             =text_field_tag :filter_ssl_slug, nil, :class=>'filter_cont_text', 'data-field'=>'ssl_slug'
+    .filter_items_col
+      %div.filter_item
+        .filter_evt.clearfix
+          %label
+            =check_box_tag :filter_mi_chk, true, false, :class=>'filter_chk'
+            Monthly Invoice
       -if current_user.is_system_admins?
         %div.filter_item
           .filter_evt.clearfix

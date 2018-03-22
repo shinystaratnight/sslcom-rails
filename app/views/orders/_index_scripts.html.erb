@@ -145,7 +145,10 @@ jQuery(function($) {
             query += $(this).find('.filter_chk').data('field') + ':true ';
             return;
           }
-
+          if ($(this).find('.filter_chk').prop('id') == 'filter_mi_chk') {
+            query += 'monthly_invoice:true';
+            return;
+          }
           var filterCont = $(this).find('.filter_cont');
           var val, itemQuery = '';
 
