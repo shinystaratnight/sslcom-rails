@@ -74,11 +74,12 @@ jQuery(function($) {
           var account_key = '<%= @certificate_order.ssl_account.api_credential.account_key %>';
           var secret_key = '<%= @certificate_order.ssl_account.api_credential.secret_key %>';
           var ref = '<%= @certificate_order.ref %>';
+          var api_domain = '<%=api_domain%>';
 
           /*if (is_cs == '' && $('.csr').val() != '') {*/
           if ($('.csr').val() != '') {
             $.ajax({
-              url: '/generate_certificate',
+              url: api_domain + '/generate_certificate',
               data: {
                 csr: $('.csr').val(),
                 ref: ref,
@@ -126,7 +127,7 @@ jQuery(function($) {
               $('.pri_key_wrap').show();
 
               $.ajax({
-                url: '/generate_certificate',
+                url: api_domain + '/generate_certificate',
                 data: {
                   csr: csr,
                   ref: ref,

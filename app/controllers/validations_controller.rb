@@ -106,9 +106,11 @@ class ValidationsController < ApplicationController
     addresses.delete("none")
 
     returnObj = {}
+    returnObj['caa_check'] = CaaCheck.pass?(params['domain_name']) ? 'passed' : 'failed'
+    returnObj['new_emails'] = {}
 
     addresses.each do |addr|
-      returnObj[addr] = addr
+      returnObj['new_emails'][addr] = addr
     end
 
     render :json => returnObj
@@ -172,7 +174,8 @@ class ValidationsController < ApplicationController
               # 'status' => ds && ds[cn.name] ? domain_status.downcase : '',
               'status' => domain_status ? domain_status.downcase : '',
               'count_domain' => count_domain,
-              'count_validated' => count_validated
+              'count_validated' => count_validated,
+              'caa_check' => CaaCheck.pass?(cn.name) ? 'passed' : 'failed'
             },
             # 'tr_instruction' => {
             #     'instruction' => "domains[#{cn.name}][dcv]",
@@ -181,15 +184,15 @@ class ValidationsController < ApplicationController
           }
         end
       else
-        if Settings.enable_caa_test && CaaCheck.caa_lookup(cn)==false
-          returnObj = {
-              # 'caa_test_failed' => {
-              #     'checkbox_id' => cn.id,
-              #     'domain_name' => cn.name,
-              # }
-              'caa_test_failed' => true
-          }
-        else
+        # if Settings.enable_caa_test && CaaCheck.caa_lookup(cn)==false
+        #   returnObj = {
+        #       # 'caa_test_failed' => {
+        #       #     'checkbox_id' => cn.id,
+        #       #     'domain_name' => cn.name,
+        #       # }
+        #       'caa_test_failed' => true
+        #   }
+        # else
           last_sent = cn.last_dcv
           all_validated = false
           if ds
@@ -238,14 +241,15 @@ class ValidationsController < ApplicationController
               'attempted_on' => dcv.blank? ? 'n/a' : dcv.created_at,
               # 'status' => ds && ds[cn.name] ? domain_status.downcase : '',
               'status' => domain_status ? domain_status.downcase : '',
-              'all_validated' => all_validated ? true : false
+              'all_validated' => all_validated ? true : false,
+              'caa_check' => CaaCheck.pass?(cn.name) ? 'passed' : 'failed'
             },
             # 'tr_instruction' => {
             #     'instruction' => "domains[#{cn.name}][dcv]",
             # }
             'tr_instruction' => validated ? true : false
           }
-        end
+        # end
       end
     else
       optionsObj = {}
@@ -276,7 +280,8 @@ class ValidationsController < ApplicationController
           'pretest' => 'n/a',
           'attempt' => 'validation not performed yet',
           'attempted_on' => 'n/a',
-          'status' => 'waiting'
+          'status' => 'waiting',
+          'caa_check' => CaaCheck.pass?(cn.name) ? 'passed' : 'failed'
         },
         # 'tr_instruction' => {
         #     'instruction' => "domains[#{cn.name}][dcv]",
