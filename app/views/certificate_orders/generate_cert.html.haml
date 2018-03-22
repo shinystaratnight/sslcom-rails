@@ -3,30 +3,40 @@
 = javascript_include_tag "promise.min", "webcrypto-liner.shim", "asmcrypto.min", "elliptic.min", "bundle.umd.min", "bundle.pkcs.umd.min"
 =stylesheet_link_tag 'bootstrap_style', :media => 'all'
 %div{:style=>"width: 100%"}
-  %div.pt-3{:style=>"width: 300px; margin: auto"}
-    %input.cs_subject_dn{:type=>'hidden', :value=>"#{@certificate_order.certificate_content.subject_dn}"}
-    %input.cs_generate_csr_pri_key_cert{:type=>'button', :value=>'Generate Certificate'}
-  .row.pt-5
-    .col-md-3{:style=>"text-align: right"}
-      CSR :
-    .col-md-9
-      %textarea.cs_csr{:cols=>80, :rows=>10}
-  .row.pt-4
-    .col-md-3{:style=>"text-align: right"}
-      Private Key :
-    .col-md-9
-      %textarea.cs_pri_key{:cols=>80, :rows=>10}
-  .row.pt-4
-    .col-md-3{:style=>"text-align: right"}
-      Certificate :
-    .col-md-9
-      %textarea.cs_certificate{:cols=>80, :rows=>10}
-  .cert_password_download.hidden
+  %input.cs_subject_dn{:type=>'hidden', :value=>"#{@certificate_order.certificate_content.subject_dn}"}
+  .generate_wrap
+    .row.pt-3
+      .col-md-6
+        %input.generate_cert.right{:type=>'button', :value=>'Generate Certificate'}
+      .col-md-6{:style=>'font-size: 15px'}
+        %input.own_csr{:type=>'checkbox', :style=>'height: 20px; vertical-align: bottom; margin-right: 10px'} I have my own CSR
+  .csr_wrap.hidden
+    .row.pt-4
+      .col-md-3{:style=>"text-align: right"}
+        CSR :
+      .col-md-9
+        %textarea.csr{:cols=>80, :rows=>10}
+  .pri_key_wrap.hidden
+    .row.pt-4
+      .col-md-3{:style=>"text-align: right"}
+        Private Key :
+      .col-md-9
+        %textarea.pri_key{:cols=>80, :rows=>10}
+  .cert_wrap.hidden
+    .row.pt-4
+      .col-md-3{:style=>"text-align: right"}
+        Certificate :
+      .col-md-9
+        %textarea.cert{:cols=>80, :rows=>10}
+  .pkcs_download_wrap.hidden
     .row.pt-5
       .col-md-3{:style=>"text-align: right"}
         Password :
       .col-md-4
-        %input.cs_certificate_password{:type=>'text', :style=>'width: 100%'}
+        %input.pkcs_password{:type=>'text', :style=>'width: 100%'}
       .col-md-5
-        %input.cs_certificate_download{:type=>'button', :value=>'Download'}
+        %input.pkcs_download{:type=>'button', :value=>'Download'}
+  .cert_download_wrap.pt-5.hidden
+    %input.cert_download{:type=>'button', :value=>'Download', :style=>'display:block; margin: auto'}
+    -#%a.user_cert_download{:download=>'sslcom_cert.crt'} Download File
 

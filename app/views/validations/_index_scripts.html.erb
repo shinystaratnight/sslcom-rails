@@ -340,6 +340,11 @@ jQuery(function($) {
       }
     });
     <%if @certificate_order and !@certificate_order.certificate.is_code_signing?%>
+      <%
+        is_ucc = @certificate_order.certificate.is_ucc?
+        is_evucc = @certificate_order.certificate.is_evucc?
+        is_premium_ssl = @certificate_order.certificate.is_premium_ssl?
+      %>
       $(document).on('change', 'select[id^=domains]', function() {
       //$('select[id^=domains]').change(function(){
         var dcv_select=$(this);
@@ -356,18 +361,26 @@ jQuery(function($) {
               $(selected).attr('selected', false);
           });
         }
+        <%if is_ucc || is_evucc || is_premium_ssl%>
+          domain=$(this).attr("alt").replace("*.", "").toLowerCase();
+        <%else%>
+          domain=$(this).attr("alt").replace("*.", "").replace("www.", "").toLowerCase();
+        <%end%>
+
         //get cert order index
         instruction=$('span[alt="'+$(this).attr('name')+'"]')[0];
-        file=$(this).attr("alt").replace("*.", "").toLowerCase()+"/.well-known/pki-validation/"+$('.md5_hash').text()+".txt";
+        /*file=$(this).attr("alt").replace("*.", "").toLowerCase()+"/.well-known/pki-validation/"+$('.md5_hash').text()+".txt";*/
+        file=domain+"/.well-known/pki-validation/"+$('.md5_hash').text()+".txt";
         https = "https://"+file;
         http = "http://"+file;
         wwwfile=$(this).attr("alt").replace("*.", "www.").toLowerCase()+"/.well-known/pki-validation/"+$('.md5_hash').text()+".txt";
         wwwhttps = "https://"+wwwfile;
         wwwhttp = "http://"+wwwfile;
-        cname = $('.dns_md5_hash').text()+"."+$(this).attr("alt").replace("*.", "").toLowerCase()+" -> "+$('.dns_sha2_hash').text()+".comodoca.com";
+        /*cname = $('.dns_md5_hash').text()+"."+$(this).attr("alt").replace("*.", "").toLowerCase()+" -> "+$('.dns_sha2_hash').text()+".comodoca.com";*/
+        cname = $('.dns_md5_hash').text()+"."+domain+" -> "+$('.dns_sha2_hash').text()+".comodoca.com";
 
         if (methods[0] == 'Please select a validation method') {
-          $(instruction).html("");
+          $(instruction).html("Please select a validation method");
           $('td.pretest[class~="'+$(dcv_select).attr("alt")+'"]').html("n/a").css({ background: "white", color:"black" });
         }
         else if(/@/.test(methods[0])){
@@ -378,7 +391,7 @@ jQuery(function($) {
           instructions="Upload <a href='<%=http_dcv_file_csr_path(@ssl_slug, @certificate_order.csr.id)%>'>this file</a> to this location: <a href='"+https+"' target='_new'>"+https+"</a>";
           $(instruction).html(instructions);
           $.ajax({url: '<%=verification_check_csr_path(@ssl_slug, @certificate_order.csr)%>?protocol=https&dcv='+
-            $(dcv_select).parents('tr').attr('id')+'&ref='+$(dcv_select).parents('tbody').attr('data-ref')}).done(
+            $(dcv_select).parents('tr').attr('id')+'&new_name='+$(dcv_select).attr('alt')+'&ref='+$(dcv_select).parents('tbody').attr('data-ref')}).done(
               function(data){
                 $('td.pretest[class~="'+$(dcv_select).attr("alt")+'"]').html((data ? "passed" : "failed")).css((data ? { background: "green", color:"white" } : { background: "red", color:"white" }));
               });
@@ -387,7 +400,7 @@ jQuery(function($) {
           instructions="Upload <a href='<%=http_dcv_file_csr_path(@ssl_slug, @certificate_order.csr.id)%>'>this file</a> to this location: <a href='"+http+"' target='_new'>"+http+"</a>";
           $(instruction).html(instructions);
           $.ajax({url: '<%=verification_check_csr_path(@ssl_slug, @certificate_order.csr)%>?protocol=http&dcv='+
-            $(dcv_select).parents('tr').attr('id')+'&ref='+$(dcv_select).parents('tbody').attr('data-ref')}).done(
+            $(dcv_select).parents('tr').attr('id')+'&new_name='+$(dcv_select).attr('alt')+'&ref='+$(dcv_select).parents('tbody').attr('data-ref')}).done(
               function(data){
                 $('td.pretest[class~="'+$(dcv_select).attr("alt")+'"]').html((data ? "passed" : "failed")).css((data ? { background: "green", color:"white" } : { background: "red", color:"white" }));
               });
@@ -395,7 +408,7 @@ jQuery(function($) {
         else if(/cname/.test(methods[0])){
           $(instruction).html("Create CNAME: "+cname);
           $.ajax({url: '<%=verification_check_csr_path(@ssl_slug, @certificate_order.csr)%>?protocol=cname&dcv='+
-            $(dcv_select).parents('tr').attr('id')+'&ref='+$(dcv_select).parents('tbody').attr('data-ref')}).done(
+            $(dcv_select).parents('tr').attr('id')+'&new_name='+$(dcv_select).attr('alt')+'&ref='+$(dcv_select).parents('tbody').attr('data-ref')}).done(
               function(data){
                 $('td.pretest[class~="'+$(dcv_select).attr("alt")+'"]').html((data ? "passed" : "failed")).css((data ? { background: "green", color:"white" } : { background: "red", color:"white" }));
               });
@@ -675,11 +688,11 @@ jQuery(function($) {
                         tdElement.append(checkboxElement);
 
                         <%if is_ucc || is_evucc || is_premium_ssl%>
-                        var btnElement = $('<input></input>');
-                        btnElement.attr('class', 'btn_remove_domain');
-                        btnElement.attr('type', 'button');
-                        btnElement.attr('value', 'Remove');
-                        tdElement.append(btnElement);
+                          var btnElement = $('<input></input>');
+                          btnElement.attr('class', 'btn_remove_domain');
+                          btnElement.attr('type', 'button');
+                          btnElement.attr('value', 'Remove');
+                          tdElement.append(btnElement);
                         <%end%>
 
                         var editBtnElement = $('<input></input>');
@@ -723,6 +736,9 @@ jQuery(function($) {
                         sltElement.attr('name', 'domains[' + value + '][dcv]');
                         sltElement.attr('id', 'domains_' + value + '_dcv');
                         sltElement.attr('alt', value);
+                        if (result[key]['caa_check'] == 'failed') {
+                          sltElement.attr('disabled', true);
+                        }
 
                         var optElement = $('<option></option>');
                         optElement.attr('value', '');
@@ -748,6 +764,11 @@ jQuery(function($) {
                       trElement.append(tdElement);
                       /*$('[name="domains[' + result[key]['domain_name'] + '][dcv]"]').val(result[key]['slt_option']);*/
                       $('[name="domains[' + value + '][dcv]"]').val(result[key]['slt_option']);
+
+                      tdElement = $('<td></td>');
+                      tdElement.append(result[key]['caa_check']);
+                      tdElement.attr('class', 'caa_check ' + value);
+                      trElement.append(tdElement);
 
                       tdElement = $('<td></td>');
                       tdElement.append(result[key]['pretest']);
@@ -793,7 +814,7 @@ jQuery(function($) {
                       tdElement.append(spanElement);
                       trElement.append(tdElement);
 
-                    } else if (key == 'caa_test_failed') {
+                    } /*else if (key == 'caa_test_failed') {
                       var trElement = $('<tr></tr>');
                       trElement.attr('class', 'certificate_name');
                       trElement.attr('id', 'certificate_name_' + value);
@@ -803,14 +824,14 @@ jQuery(function($) {
                       tdElement = $('<td></td>');
                       var checkboxElement = $('<input></input>');
                       checkboxElement.attr('class', 'check_box');
-                      /*checkboxElement.attr('id', result[key]['checkbox_id']);*/
+                      /!*checkboxElement.attr('id', result[key]['checkbox_id']);*!/
                       checkboxElement.attr('id', value);
                       checkboxElement.attr('type', 'checkbox');
                       tdElement.append(checkboxElement);
                       trElement.append(tdElement);
 
                       var tdElement = $('<td></td>');
-                      /*tdElement.append(result[key]['domain_name']);*/
+                      /!*tdElement.append(result[key]['domain_name']);*!/
                       tdElement.append(value);
                       trElement.append(tdElement);
 
@@ -818,7 +839,7 @@ jQuery(function($) {
                       tdElement.attr('colspan', 5);
                       tdElement.append('CAA Test Failed!');
                       trElement.append(tdElement);
-                    }
+                    }*/
                   });
 
                   if (idx === (total - 1) /*&& !all_validated*/) {
@@ -842,14 +863,68 @@ jQuery(function($) {
             var domain_list = $('tbody.domain_list').find('tr.certificate_name');
             var ori_domain_names_str = $('#ori_domain_names_str').val().split(',');
             var domain_names_str = '';
+            var all_passed_caa_check = true;
+            var caa_check_failed_domain_names_str = '';
+
             $.each(domain_list, function(idx, domain) {
               if ($(domain).hasClass('removed_domain') == false && $(domain).hasClass('validated') == false) {
                 /*domain_names_str = domain_names_str + ',' + $(domain).find('.check_box').prop('alt');*/
                 domain_names_str = domain_names_str.concat(',' + $(domain).find('.check_box').prop('id'));
+
+                if ($(domain).find('.caa_check').text() == 'passed') {
+                  all_passed_caa_check &= true;
+                } else {
+                  all_passed_caa_check &= false;
+                  caa_check_failed_domain_names_str = caa_check_failed_domain_names_str.concat(',' + $(domain).find('.check_box').prop('id'));
+                }
               } else if ($(domain).hasClass('validated') == true) {
                 domain_names_str = domain_names_str.concat(',' + $(domain).find('td:first-child').children().first().val());
+                if ($(domain).find('.caa_check').val() == 'passed') {
+                  all_passed_caa_check &= true;
+                } else {
+                  all_passed_caa_check &= false;
+                  caa_check_failed_domain_names_str = caa_check_failed_domain_names_str.concat(',' + $(domain).find('.check_box').prop('id'));
+                }
               }
             });
+
+            // Check all domains has been passed for CAA_CHECK
+            if (!all_passed_caa_check) {
+              caa_check_failed_domain_names_str = caa_check_failed_domain_names_str.substr(1).split(',');
+
+              var message_wrap_element = $('<div></div>');
+              message_wrap_element.attr('class', 'flash_message error');
+
+              var message_element = $('<span></span>');
+              message_element.html('Cannot validate: CAA failed for following domain(s) : </br><ul>');
+              $.each(caa_check_failed_domain_names_str, function(key) {
+                message_element.append('<li>' + caa_check_failed_domain_names_str[key] + '</li>');
+              });
+              message_element.append('</ul>');
+              message_element.append('Please resolve this by visiting <a href="http://www.hsrise.com" target="_blank">http://www.hsrise.com</a> to CAA info');
+              message_wrap_element.append(message_element);
+
+              var btn_element = $('<small></small>');
+              var close_btn_element = $('<div></div>');
+              close_btn_element.attr('class', 'close_flash_message');
+
+              var close_sign_element = $('<span></span>');
+              close_sign_element.append('X');
+
+              close_btn_element.append(close_sign_element);
+              close_btn_element.append('close');
+
+              btn_element.append(close_btn_element);
+              message_wrap_element.append(btn_element);
+
+              if ($('#content').find('.inner').children().first().hasClass('flash_message')) {
+                $('#content').find('.inner').children().first().remove();
+              }
+              message_wrap_element.insertBefore($('#content').find('.inner').children().first());
+
+              return false;
+            }
+
             domain_names_str = domain_names_str.substr(1).split(',');
 
             var api_domain = '<%=api_domain%>';
@@ -1134,14 +1209,16 @@ jQuery(function($) {
                     var optGroupElement = $('optgroup:first', $('[name="domains[' + new_domain_name + '][dcv]"]'));
                     optGroupElement.empty();
 
-                    Object.keys(result).map(function (optKey) {
+                    Object.keys(result['new_emails']).map(function (optKey) {
                       var optElement = $('<option></option>');
                       optElement.attr('value', optKey);
-                      optElement.append(result[optKey]);
+                      optElement.append(result['new_emails'][optKey]);
                       optGroupElement.append(optElement);
                     });
 
                     $('[name="domains[' + new_domain_name + '][dcv]"]').change();
+                    $('[name="domains[' + new_domain_name + '][dcv]"]').parent().next().empty();
+                    $('[name="domains[' + new_domain_name + '][dcv]"]').parent().next().append(result['caa_check']);
 
                     $('.domains_loader_wrap').hide();
                     $('#upload_validations').show();
