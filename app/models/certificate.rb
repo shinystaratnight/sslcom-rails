@@ -334,7 +334,7 @@ class Certificate < ActiveRecord::Base
   end
 
   def admin_submit_csr?
-    is_evcs?
+    is_evcs? or is_cs?
   end
 
   def is_client?
