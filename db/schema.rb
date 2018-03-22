@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180316010525) do
+ActiveRecord::Schema.define(version: 20180321222639) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        limit: 255
@@ -358,39 +358,43 @@ ActiveRecord::Schema.define(version: 20180316010525) do
   add_index "client_applications", ["key"], name: "index_client_applications_on_key", unique: true, using: :btree
 
   create_table "contacts", force: :cascade do |t|
-    t.string   "title",              limit: 255
-    t.string   "first_name",         limit: 255
-    t.string   "last_name",          limit: 255
-    t.string   "company_name",       limit: 255
-    t.string   "department",         limit: 255
-    t.string   "po_box",             limit: 255
-    t.string   "address1",           limit: 255
-    t.string   "address2",           limit: 255
-    t.string   "address3",           limit: 255
-    t.string   "city",               limit: 255
-    t.string   "state",              limit: 255
-    t.string   "country",            limit: 255
-    t.string   "postal_code",        limit: 255
-    t.string   "email",              limit: 255
-    t.string   "phone",              limit: 255
-    t.string   "ext",                limit: 255
-    t.string   "fax",                limit: 255
-    t.string   "notes",              limit: 255
-    t.string   "type",               limit: 255
-    t.string   "roles",              limit: 255, default: "--- []"
-    t.integer  "contactable_id",     limit: 4
-    t.string   "contactable_type",   limit: 255
+    t.string   "title",                 limit: 255
+    t.string   "first_name",            limit: 255
+    t.string   "last_name",             limit: 255
+    t.string   "company_name",          limit: 255
+    t.string   "department",            limit: 255
+    t.string   "po_box",                limit: 255
+    t.string   "address1",              limit: 255
+    t.string   "address2",              limit: 255
+    t.string   "address3",              limit: 255
+    t.string   "city",                  limit: 255
+    t.string   "state",                 limit: 255
+    t.string   "country",               limit: 255
+    t.string   "postal_code",           limit: 255
+    t.string   "email",                 limit: 255
+    t.string   "phone",                 limit: 255
+    t.string   "ext",                   limit: 255
+    t.string   "fax",                   limit: 255
+    t.string   "notes",                 limit: 255
+    t.string   "type",                  limit: 255
+    t.string   "roles",                 limit: 255, default: "--- []"
+    t.integer  "contactable_id",        limit: 4
+    t.string   "contactable_type",      limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "registrant_type",    limit: 4
-    t.string   "callback_method",    limit: 255
+    t.integer  "registrant_type",       limit: 4
+    t.string   "callback_method",       limit: 255
     t.date     "incorporation_date"
-    t.string   "assumed_name",       limit: 255
-    t.string   "business_category",  limit: 255
-    t.string   "duns_number",        limit: 255
-    t.string   "company_number",     limit: 255
-    t.integer  "parent_id",          limit: 4
-    t.boolean  "saved_default",                  default: false
+    t.string   "incorporation_country", limit: 255
+    t.string   "incorporation_state",   limit: 255
+    t.string   "incorporation_city",    limit: 255
+    t.string   "assumed_name",          limit: 255
+    t.string   "business_category",     limit: 255
+    t.string   "duns_number",           limit: 255
+    t.string   "company_number",        limit: 255
+    t.string   "registration_service",  limit: 255
+    t.integer  "parent_id",             limit: 4
+    t.boolean  "saved_default",                     default: false
   end
 
   add_index "contacts", ["contactable_id", "contactable_type"], name: "index_contacts_on_contactable_id_and_contactable_type", using: :btree
@@ -1393,10 +1397,10 @@ ActiveRecord::Schema.define(version: 20180316010525) do
     t.string   "description",                          limit: 255
     t.string   "operator",                             limit: 255
     t.integer  "parent_id",                            limit: 4
-    t.string   "applicable_validation_methods",        limit: 255
-    t.string   "required_validation_methods",          limit: 255
-    t.string   "required_validation_methods_operator", limit: 255, default: "AND"
-    t.string   "notes",                                limit: 255
+    t.text     "applicable_validation_methods",        limit: 65535
+    t.text     "required_validation_methods",          limit: 65535
+    t.string   "required_validation_methods_operator", limit: 255,   default: "AND"
+    t.text     "notes",                                limit: 65535
     t.datetime "created_at"
     t.datetime "updated_at"
   end
