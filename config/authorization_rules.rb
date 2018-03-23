@@ -43,7 +43,8 @@ authorization do
       :make_payment_other,
       :update,
       :refund_other,
-      :credit
+      :credit,
+      :destroy
     ]
   end
 

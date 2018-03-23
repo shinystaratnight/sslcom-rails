@@ -140,7 +140,7 @@ SslCom::Application.routes.draw do
   end
 
   concern :teamable do
-    resources :invoices, only: [:index, :edit, :update, :show] do
+    resources :invoices, only: [:index, :edit, :update, :show, :destroy] do
       member do
         get  :download
         get  :new_payment

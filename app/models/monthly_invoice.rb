@@ -1,7 +1,7 @@
 class MonthlyInvoice < Invoice
   belongs_to :billable, polymorphic: true
   belongs_to :payment, -> { unscope(where: :state) }, class_name: 'Order', foreign_key: :order_id
-  has_many   :orders, foreign_key: :invoice_id
+  has_many   :orders, foreign_key: :invoice_id, dependent: :destroy
   
   validates :start_date, :end_date, :status, :billable_id, :billable_type, :default_payment, presence: true
   

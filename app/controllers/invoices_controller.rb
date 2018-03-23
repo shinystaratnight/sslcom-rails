@@ -170,6 +170,19 @@ class InvoicesController < ApplicationController
     end
     redirect_to_invoice
   end
+  
+  def destroy
+    if @invoice
+      items = @invoice.orders.count
+      if @invoice.destroy
+        redirect_to invoices_path(@ssl_slug),
+          notice: "Invoice #{@invoice.reference_number} and #{items} items have been successfully deleted."
+      else
+        flash[:error] = "Something went wrong, please try again!"
+        redirect_to_invoice
+      end
+    end
+  end
     
   private
   
