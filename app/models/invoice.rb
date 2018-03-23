@@ -25,7 +25,7 @@ class Invoice < ActiveRecord::Base
     
     if p[:team].present?
       found = SslAccount.where("ssl_slug = ? OR acct_number = ? OR id = ?", p[:team], p[:team], p[:team])
-      filters[:billable_id] = { '=' => found }
+      filters[:billable_id] = { '=' => found.first.id } if found.any?
     end
     result = filter(filters)
     result = result.where("orders.reference_number" => p[:order_ref]) if p[:order_ref].present?
