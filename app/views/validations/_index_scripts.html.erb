@@ -1091,6 +1091,11 @@ jQuery(function($) {
 
         // Click Edit button per domain.
         $(document).on('click', '.btn_edit_domain', function() {
+          <%if !is_ucc && !is_evucc && !is_premium_ssl%>
+            var reprocess_url = '<%=reprocess_certificate_order_path(@ssl_slug, @certificate_order)%>';
+            window.location.href = reprocess_url;
+            return false;
+          <%end%>
           $(this).parent().css('background-color', 'white');
           $(this).siblings().prop('disabled', true);
 
