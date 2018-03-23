@@ -341,9 +341,7 @@ jQuery(function($) {
     });
     <%if @certificate_order and !@certificate_order.certificate.is_code_signing?%>
       <%
-        is_ucc = @certificate_order.certificate.is_ucc?
-        is_evucc = @certificate_order.certificate.is_evucc?
-        is_premium_ssl = @certificate_order.certificate.is_premium_ssl?
+        is_single = @certificate_order.certificate.is_single?
       %>
       $(document).on('change', 'select[id^=domains]', function() {
       //$('select[id^=domains]').change(function(){
@@ -361,10 +359,10 @@ jQuery(function($) {
               $(selected).attr('selected', false);
           });
         }
-        <%if is_ucc || is_evucc || is_premium_ssl%>
-          domain=$(this).attr("alt").replace("*.", "").toLowerCase();
+        <%if is_single%>
+          domain=$(this).attr("alt").replace("www.", "").toLowerCase();
         <%else%>
-          domain=$(this).attr("alt").replace("*.", "").replace("www.", "").toLowerCase();
+          domain=$(this).attr("alt").replace("*.", "").toLowerCase();
         <%end%>
 
         //get cert order index
@@ -633,6 +631,7 @@ jQuery(function($) {
               is_ucc = @certificate_order.certificate.is_ucc?
               is_evucc = @certificate_order.certificate.is_evucc?
               is_premium_ssl = @certificate_order.certificate.is_premium_ssl?
+              is_wildcard = @certificate_order.certificate.is_wildcard?
             %>
 
             var all_validated = false;
@@ -901,7 +900,7 @@ jQuery(function($) {
                 message_element.append('<li>' + caa_check_failed_domain_names_str[key] + '</li>');
               });
               message_element.append('</ul>');
-              message_element.append('Please resolve this by visiting <a href="http://www.hsrise.com" target="_blank">http://www.hsrise.com</a> to CAA info');
+              message_element.append('Please resolve this by visiting <a href="#" target="_blank">this</a> to CAA info');
               message_wrap_element.append(message_element);
 
               var btn_element = $('<small></small>');
@@ -1113,6 +1112,17 @@ jQuery(function($) {
           }
 
           var new_domain_name = $(this).parent().next().find('input').val();
+
+          <%if is_wildcard%>
+            if (new_domain_name.substr(0, 2) != '*.') {
+              alert('For this order(whildcard), domain name should be begin with "*."');
+              return false;
+            } else if ((new_domain_name.match(/\*./g) || []).length > 1 || (new_domain_name.match(/\*/g) || []).length > 1) {
+              alert('For this order(whildcard), domain name is not allowed to use "*." or "*" several times');
+              return false;
+            }
+          <%end%>
+
           /*var origin_name = $('input:first-child', $(this).parent()).prop('alt');*/
           var origin_name = $('input:first-child', $(this).parent()).prop('id');
 
