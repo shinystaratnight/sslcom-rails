@@ -295,6 +295,10 @@ class Csr < ActiveRecord::Base
     openssl_request.public_key
   end
 
+  def verify_signature
+    openssl_request.verify public_key
+  end
+
   def public_key_sha1
     if read_attribute(:public_key_sha1).blank?
       write_attribute(:public_key_sha1, OpenSSL::Digest::SHA1.new(public_key.to_der).to_s)

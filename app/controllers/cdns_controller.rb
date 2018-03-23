@@ -9,12 +9,12 @@ class CdnsController < ApplicationController
 
   before_filter :require_user, only: [:index, :register_account, :register_api_key, :resource_cdn, :update_custom_domain]
 
-  filter_access_to :all
-  filter_access_to :index, :resource_cdn, require: :read
-  filter_access_to :create, :register_account, :add_custom_domain, require: :new
-  filter_access_to :update_resource, :update_advanced_setting, :update_cache_expiry, require: :update
-  filter_access_to :update_resources, :purge_cache, :delete_resource, require: :delete
-  filter_access_to :update_custom_domain, require: [:new, :update, :delete]
+  # filter_access_to :all
+  # filter_access_to :index, :resource_cdn, require: :read
+  # filter_access_to :create, :register_account, :add_custom_domain, require: :new
+  # filter_access_to :update_resource, :update_advanced_setting, :update_cache_expiry, require: :update
+  # filter_access_to :update_resources, :purge_cache, :delete_resource, require: :delete
+  # filter_access_to :update_custom_domain, require: [:new, :update, :delete]
 
   DUPLICATE_CUSTOM_DOMAIN = "This custom domain is already in use."
 

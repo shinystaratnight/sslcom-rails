@@ -223,7 +223,7 @@ module CertificateOrdersHelper
   end
 
   def for_ev?
-    @certificate_order.certificate.is_evcs? unless ["ov","dv"].include?(params[:downstep])
+    @certificate_order.certificate.is_ev? unless ["ov","dv"].include?(params[:downstep])
   end
 
   # EV SSL can downstep to OV

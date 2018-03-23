@@ -41,7 +41,7 @@
                 Postal Code:
                 %span.label_desc postal code or zip
               =text_field_tag :postal_code, @certificate_order.registrant.postal_code
-            -if for_ov? or for_ev?
+            -if for_ov? or for_ev? or for_evcs?
               .clearfix
                 %label{for: 'postal_address'}
                   Postal Address:
