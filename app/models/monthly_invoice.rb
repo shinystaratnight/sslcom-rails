@@ -17,12 +17,25 @@ class MonthlyInvoice < Invoice
   
   def self.invoice_exists?(ssl_account_id)
     ssl = SslAccount.find ssl_account_id
-    ssl && ssl.monthly_invoices.where(start_date: DateTime.now.beginning_of_month).any?
+    ssl && ssl.monthly_invoices
+      .where(start_date: DateTime.now.beginning_of_month, status: 'pending').any?
   end
   
   def self.get_current_invoice(ssl_account_id)
     ssl = SslAccount.find ssl_account_id
-    ssl ? ssl.monthly_invoices.where(start_date: DateTime.now.beginning_of_month).first : nil
+    if ssl
+      ssl.monthly_invoices.order(created_at: :desc)
+        .where(start_date: DateTime.now.beginning_of_month, status: 'pending').first
+    else
+      nil
+    end
+  end
+  
+  def self.last_invoice_for_month(ssl_account_id, exclude=nil)
+    ssl = SslAccount.find ssl_account_id
+    ssl.monthly_invoices.order(created_at: :desc)
+      .where(start_date: DateTime.now.beginning_of_month)
+      .where.not(id: exclude).first
   end
   
   def paid_wire_transfer?
@@ -198,9 +211,20 @@ class MonthlyInvoice < Invoice
   
   def generate_reference_number
     if reference_number.blank?
-      update_attribute(
-        :reference_number, "mi-#{SecureRandom.hex(2)}-#{Time.now.to_i.to_s(32)}"
-      )
+      last_invoice = MonthlyInvoice.last_invoice_for_month(billable.id, self)
+      ref_parts    = last_invoice.reference_number.split('-') if last_invoice
+      
+      ref = if last_invoice && ref_parts.count == 4
+        sub_ref = ref_parts.pop.to_i + 1
+        ref_parts.push(sub_ref)
+        ref_parts.join('-')
+      elsif last_invoice && ref_parts.count == 3
+        "#{last_invoice.reference_number}-1"
+      else
+        "mi-#{SecureRandom.hex(2)}-#{Time.now.to_i.to_s(32)}"
+      end
+      
+      update_attribute(:reference_number, ref)
     end
   end
   
