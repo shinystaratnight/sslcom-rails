@@ -20,6 +20,9 @@
     =link_to "invite", new_managed_user_path({ssl_slug: @ssl_slug})
     another user to complete the validation step.
     =link_to "How do I use this page?", Settings.dv_explanation_link, target: "_blank"
+  -if co.certificate.is_single?
+    %h3
+      Please generate a new CSR with the correct common name value and submit the new CSR here {Edit button}
   %table{style: "width: 100%; border: 1px solid black; padding: 1em"}
     %tr
       %th(colspan="2") validation hashes
