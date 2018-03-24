@@ -1,0 +1,3 @@
+class ReprocessCertificateOrder < Order
+    
+end

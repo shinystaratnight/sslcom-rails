@@ -292,7 +292,13 @@ class UsersController < ApplicationController
 
   def teams
     p = {page: params[:page]}
-    @teams = @user.get_all_approved_accounts.paginate(p)
+    team = params[:team]
+    @teams = @user.get_all_approved_accounts
+    unless team.blank?
+      team = team.strip.downcase
+      @teams = @teams.where("acct_number = ? OR ssl_slug = ? OR company_name = ?", team, team, team)
+    end
+    @teams = @teams.paginate(p)
   end
 
   def create_team

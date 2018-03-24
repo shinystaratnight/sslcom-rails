@@ -36,9 +36,9 @@ class Order < ActiveRecord::Base
     end
   end
   
-  SSL_REPROCESS_UCC = "Reprocess UCC Order"
-  SSL_CERTIFICATE   = "SSL Certificate Order"
-  INVOICE_PAYMENT   = "Monthly Invoice Payment"
+  DOMAINS_ADJUSTMENT = "Domains Adjustment"
+  SSL_CERTIFICATE    = "SSL Certificate Order"
+  INVOICE_PAYMENT    = "Monthly Invoice Payment"
   # If team's billing_method is set to 'monthly', grab all orders w/'approved' approval
   # when running charges at the end of the month for orders from ucc reprocessing.
   BILLING_STATUS = %w{approved pending declined}
@@ -126,7 +126,7 @@ class Order < ActiveRecord::Base
       query=filters[field.to_sym]
       case query
         when /reprocess/
-          result = result.where(description: "Reprocess UCC Order")
+          result = result.where(type: "ReprocessCertificateOrder")
         when /deposit/
           result = result.joins{line_items.sellable(Deposit)}
         when /certificate/
@@ -473,7 +473,7 @@ class Order < ActiveRecord::Base
   end
   
   def reprocess_ucc_order?
-    description == Order::SSL_REPROCESS_UCC
+    self.is_a?(ReprocessCertificateOrder)
   end
   
   def reprocess_ucc_free?
