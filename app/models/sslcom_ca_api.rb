@@ -143,12 +143,13 @@ class SslcomCaApi
     certificate = certificate_order.certificate
     options.merge! cc: cc = options[:certificate_content] || certificate_order.certificate_content
     if (certificate.is_ev? or certificate.is_evcs?) and
-        !certificate_order.csr.sslcom_ca_requests.empty? and
-        certificate_order.csr.sslcom_ca_requests.first.username.blank?
+        (certificate_order.csr.sslcom_ca_requests.empty? or
+        (!certificate_order.csr.sslcom_ca_requests.empty? and
+        certificate_order.csr.sslcom_ca_requests.first.username.blank?))
         # create the user for EV order
       host = Rails.application.secrets.sslcom_ca_host+"/v1/user"
       options.merge! no_public_key: true, ca: Ca::SSLCOM_CA # create an ejbca user only
-     else
+    else
       host = Rails.application.secrets.sslcom_ca_host+
           "/v1/certificate#{'/ev' if certificate.is_ev? or certificate.is_evcs?}/pkcs10"
       options.merge!(collect_certificate: true, username: certificate_order.
