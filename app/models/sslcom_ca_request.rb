@@ -4,7 +4,7 @@ class SslcomCaRequest < CaApiRequest
   @parsed
   def username
     begin
-      (@parsed ||= JSON.parse(response))["username"] unless response.blank?
+      (@parsed ||= JSON.parse(response))["username"] or @parsed["user_name"] unless response.blank?
     rescue
       @parsed=nil
     end

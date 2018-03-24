@@ -123,7 +123,7 @@ class SslcomCaApi
     if options[:cc].csr
       dn={}
       if options[:collect_certificate]
-        dn.merge! username: options[:username]
+        dn.merge! user_name: options[:username]
       else
         dn.merge! subject_dn: options[:action]=="send_to_ca" ? subject_dn(options) : # req sent via RA form
                                   (options[:subject_dn] || options[:cc].subject_dn),
@@ -153,7 +153,7 @@ class SslcomCaApi
       host = Rails.application.secrets.sslcom_ca_host+
           "/v1/certificate#{'/ev' if certificate.is_ev? or certificate.is_evcs?}/pkcs10"
       options.merge!(collect_certificate: true, username: certificate_order.
-          csr.sslcom_ca_requests.first.username) if certificate.is_ev? or certificate.is_evcs? # collect ev cert
+          csr.sslcom_usernames.first) if certificate.is_ev? or certificate.is_evcs? # collect ev cert
     end
     req, res = call_ca(host, options, issue_cert_json(options))
     cc.create_csr(body: options[:csr]) if cc.csr.blank?
@@ -208,9 +208,9 @@ class SslcomCaApi
   end
 
   def self.get_status(certificate_order)
-    return if certificate_order.csr.sslcom_ca_requests.first.approval_id.blank?
-    host = Rails.application.secrets.sslcom_ca_host+
-        "/v1/status/#{certificate_order.csr.sslcom_ca_requests.first.approval_id}"
+    approval=certificate_order.csr.sslcom_approval_ids.first
+    return if approval.blank?
+    host = Rails.application.secrets.sslcom_ca_host+"/v1/status/#{approval}"
     options={method: "get"}
     body = ""
     req, res = call_ca(host, options, body)
