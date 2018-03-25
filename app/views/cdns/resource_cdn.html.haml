@@ -161,7 +161,7 @@
               %tr.heading_row
                 %th Domain Name
                 %th Created
-                %th Valid Status
+                %th Validation Status
                 %th
               -if domain_list && domain_list.length > 0
                 -domain_list.each do |domain|
@@ -175,7 +175,10 @@
                         SSL valid to
                         =DateTime.parse(domain['valid_to']['date']).strftime('%d/%m/%Y')
                       -else
-                        Pending
+                        -if domain['is_ssl_req']
+                          Pending
+                        -else
+                          N/A
                     %td
                       =link_to 'Edit SSL', nil, :class => 'custom-domain-modal-link', 'data-toggle' => 'modal', 'data-target' => '#custom-domain-modal', 'data-hostname' => domain['hostname']
               -else

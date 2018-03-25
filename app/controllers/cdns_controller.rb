@@ -43,6 +43,7 @@ class CdnsController < ApplicationController
   end
 
   def register_account
+    returnObj = {}
     if current_user.ssl_account
       reseller_api_key = Rails.application.secrets.cdnify_reseller_api_key
 
@@ -63,17 +64,49 @@ class CdnsController < ApplicationController
         cdn.ssl_account_id = current_user.ssl_account.id
         cdn.save
 
-        flash[:notice] = 'Successfully Registered Account.'
+        returnObj['api_key'] = api_key
       elsif @response.parsed_response && @response.parsed_response['error']
-        flash[:error] = @response.parsed_response['error']
+        returnObj['error'] = @response.parsed_response['error']
       else
-        flash[:error] = 'Failed to Register Account.'
+        returnObj['error'] = 'Failed to Register Account.'
       end
     else
-      flash[:error] = 'Failed to Register Account Because Current User have not SSL Account.'
+      returnObj['error'] = 'Failed to Register Account Because Current User have not SSL Account.'
     end
 
-    redirect_to cdns_path(ssl_slug: @ssl_slug)
+    render :json => returnObj
+
+    # if current_user.ssl_account
+    #   reseller_api_key = Rails.application.secrets.cdnify_reseller_api_key
+    #
+    #   email_addr = current_user.ssl_account.acct_number + '@ssl.com'
+    #   email_addr = 'sandbox-' + email_addr if is_sandbox?
+    #   password = SecureRandom.hex(32)
+    #
+    #   @response = HTTParty.post('https://reseller.cdnify.com/users',
+    #                             {basic_auth: {username: reseller_api_key, password: 'x'}, body: {email: email_addr, password: password}})
+    #
+    #   if @response.parsed_response &&
+    #       @response.parsed_response['users'] &&
+    #       @response.parsed_response['users'].length > 0
+    #     api_key = @response.parsed_response['users'][0]['api_key']
+    #
+    #     cdn = Cdn.new
+    #     cdn.api_key = api_key
+    #     cdn.ssl_account_id = current_user.ssl_account.id
+    #     cdn.save
+    #
+    #     flash[:notice] = 'Successfully Registered Account.'
+    #   elsif @response.parsed_response && @response.parsed_response['error']
+    #     flash[:error] = @response.parsed_response['error']
+    #   else
+    #     flash[:error] = 'Failed to Register Account.'
+    #   end
+    # else
+    #   flash[:error] = 'Failed to Register Account Because Current User have not SSL Account.'
+    # end
+    #
+    # redirect_to cdns_path(ssl_slug: @ssl_slug)
   end
 
   # def register_api_key
@@ -152,6 +185,12 @@ class CdnsController < ApplicationController
         @response = HTTParty.get('https://reseller.cdnify.com/api/v1/resources/' + resource_id,
                                  basic_auth: {username: cdn.api_key, password: 'x'})
         @results[:resource] = @response.parsed_response['resources'][0] if @response.parsed_response
+        if @results[:resource]['custom_domains']
+          @results[:resource]['custom_domains'].each do |custom_domain|
+            tmp = current_user.ssl_account.cdns.where(resource_id: resource_id, custom_domain_name: custom_domain['hostname']).first
+            custom_domain['is_ssl_req'] = tmp.is_ssl_req
+          end
+        end
 
         # Cache Data
         @results[:expire_time] = @response.parsed_response['resources'][0]['advanced_settings']['cache_expire_time'] if @response.parsed_response
@@ -271,6 +310,7 @@ class CdnsController < ApplicationController
           co = CertificateOrder.find_by_ref(@response['message']['ref'])
           if cdn && co
             cdn.certificate_order = co
+            cdn.is_ssl_req = true
             cdn.save
           end
 
@@ -299,6 +339,7 @@ class CdnsController < ApplicationController
           co = CertificateOrder.find_by_ref(@response['message']['ref'])
           if cdn && co
             cdn.certificate_order = co
+            cdn.is_ssl_req = true
             cdn.save
           end
 

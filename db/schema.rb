@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180316010525) do
+ActiveRecord::Schema.define(version: 20180324222045) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        limit: 255
@@ -191,11 +191,12 @@ ActiveRecord::Schema.define(version: 20180316010525) do
   create_table "cdns", force: :cascade do |t|
     t.integer  "ssl_account_id",       limit: 4
     t.string   "api_key",              limit: 255
-    t.datetime "created_at",                       null: false
-    t.datetime "updated_at",                       null: false
+    t.datetime "created_at",                                       null: false
+    t.datetime "updated_at",                                       null: false
     t.string   "resource_id",          limit: 255
     t.string   "custom_domain_name",   limit: 255
     t.integer  "certificate_order_id", limit: 4
+    t.boolean  "is_ssl_req",                       default: false
   end
 
   add_index "cdns", ["certificate_order_id"], name: "fk_rails_486d5cc190", using: :btree
