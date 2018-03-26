@@ -317,7 +317,6 @@ ActiveRecord::Schema.define(version: 20180324222045) do
   add_index "certificate_orders", ["is_test"], name: "index_certificate_orders_on_is_test", using: :btree
   add_index "certificate_orders", ["ref"], name: "index_certificate_orders_on_ref", using: :btree
   add_index "certificate_orders", ["site_seal_id"], name: "index_certificate_orders_site_seal_id", using: :btree
-  add_index "certificate_orders", ["validation_id"], name: "index_certificate_orders_on_validation_id", using: :btree
 
   create_table "certificates", force: :cascade do |t|
     t.integer  "reseller_tier_id",      limit: 4
@@ -360,43 +359,39 @@ ActiveRecord::Schema.define(version: 20180324222045) do
   add_index "client_applications", ["key"], name: "index_client_applications_on_key", unique: true, using: :btree
 
   create_table "contacts", force: :cascade do |t|
-    t.string   "title",                 limit: 255
-    t.string   "first_name",            limit: 255
-    t.string   "last_name",             limit: 255
-    t.string   "company_name",          limit: 255
-    t.string   "department",            limit: 255
-    t.string   "po_box",                limit: 255
-    t.string   "address1",              limit: 255
-    t.string   "address2",              limit: 255
-    t.string   "address3",              limit: 255
-    t.string   "city",                  limit: 255
-    t.string   "state",                 limit: 255
-    t.string   "country",               limit: 255
-    t.string   "postal_code",           limit: 255
-    t.string   "email",                 limit: 255
-    t.string   "phone",                 limit: 255
-    t.string   "ext",                   limit: 255
-    t.string   "fax",                   limit: 255
-    t.string   "notes",                 limit: 255
-    t.string   "type",                  limit: 255
-    t.string   "roles",                 limit: 255, default: "--- []"
-    t.integer  "contactable_id",        limit: 4
-    t.string   "contactable_type",      limit: 255
+    t.string   "title",              limit: 255
+    t.string   "first_name",         limit: 255
+    t.string   "last_name",          limit: 255
+    t.string   "company_name",       limit: 255
+    t.string   "department",         limit: 255
+    t.string   "po_box",             limit: 255
+    t.string   "address1",           limit: 255
+    t.string   "address2",           limit: 255
+    t.string   "address3",           limit: 255
+    t.string   "city",               limit: 255
+    t.string   "state",              limit: 255
+    t.string   "country",            limit: 255
+    t.string   "postal_code",        limit: 255
+    t.string   "email",              limit: 255
+    t.string   "phone",              limit: 255
+    t.string   "ext",                limit: 255
+    t.string   "fax",                limit: 255
+    t.string   "notes",              limit: 255
+    t.string   "type",               limit: 255
+    t.string   "roles",              limit: 255, default: "--- []"
+    t.integer  "contactable_id",     limit: 4
+    t.string   "contactable_type",   limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "registrant_type",       limit: 4
-    t.string   "callback_method",       limit: 255
+    t.integer  "registrant_type",    limit: 4
+    t.string   "callback_method",    limit: 255
     t.date     "incorporation_date"
-    t.string   "incorporation_country", limit: 255
-    t.string   "incorporation_state",   limit: 255
-    t.string   "incorporation_city",    limit: 255
-    t.string   "assumed_name",          limit: 255
-    t.string   "business_category",     limit: 255
-    t.string   "duns_number",           limit: 255
-    t.string   "company_number",        limit: 255
-    t.string   "registration_service",  limit: 255
-    t.integer  "parent_id",             limit: 4
-    t.boolean  "saved_default",                     default: false
+    t.string   "assumed_name",       limit: 255
+    t.string   "business_category",  limit: 255
+    t.string   "duns_number",        limit: 255
+    t.string   "company_number",     limit: 255
+    t.integer  "parent_id",          limit: 4
+    t.boolean  "saved_default",                  default: false
   end
 
   add_index "contacts", ["contactable_id", "contactable_type"], name: "index_contacts_on_contactable_id_and_contactable_type", using: :btree
@@ -1158,7 +1153,6 @@ ActiveRecord::Schema.define(version: 20180324222045) do
 
   add_index "ssl_account_users", ["ssl_account_id", "user_id"], name: "index_ssl_account_users_on_ssl_account_id_and_user_id", using: :btree
   add_index "ssl_account_users", ["ssl_account_id"], name: "index_ssl_account_users_on_ssl_account_id", using: :btree
-  add_index "ssl_account_users", ["user_id", "ssl_account_id", "approved", "user_enabled"], name: "index_ssl_account_users_on_4_fields", using: :btree
   add_index "ssl_account_users", ["user_id", "ssl_account_id", "approved", "user_enabled"], name: "index_ssl_account_users_on_four_fields", using: :btree
   add_index "ssl_account_users", ["user_id"], name: "index_ssl_account_users_on_user_id", using: :btree
 

@@ -109,7 +109,7 @@ class CertificateName < ActiveRecord::Base
   end
 
   def new_name(new_name)
-    @new_name = new_name.downcase
+    @new_name = new_name.downcase if new_name
   end
 
   def name

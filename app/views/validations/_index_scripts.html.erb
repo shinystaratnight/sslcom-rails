@@ -735,9 +735,11 @@ jQuery(function($) {
                         sltElement.attr('name', 'domains[' + value + '][dcv]');
                         sltElement.attr('id', 'domains_' + value + '_dcv');
                         sltElement.attr('alt', value);
-                        if (result[key]['caa_check'] == 'failed') {
-                          sltElement.attr('disabled', true);
-                        }
+                        <%if Settings.enable_caa%>
+                          if (result[key]['caa_check'] == 'failed') {
+                            sltElement.attr('disabled', true);
+                          }
+                        <%end%>
 
                         var optElement = $('<option></option>');
                         optElement.attr('value', '');
@@ -764,10 +766,12 @@ jQuery(function($) {
                       /*$('[name="domains[' + result[key]['domain_name'] + '][dcv]"]').val(result[key]['slt_option']);*/
                       $('[name="domains[' + value + '][dcv]"]').val(result[key]['slt_option']);
 
-                      tdElement = $('<td></td>');
-                      tdElement.append(result[key]['caa_check']);
-                      tdElement.attr('class', 'caa_check ' + value);
-                      trElement.append(tdElement);
+                      <%if Settings.enable_caa%>
+                        tdElement = $('<td></td>');
+                        tdElement.append(result[key]['caa_check']);
+                        tdElement.attr('class', 'caa_check ' + value);
+                        trElement.append(tdElement);
+                      <%end%>
 
                       tdElement = $('<td></td>');
                       tdElement.append(result[key]['pretest']);
@@ -862,6 +866,8 @@ jQuery(function($) {
             var domain_list = $('tbody.domain_list').find('tr.certificate_name');
             var ori_domain_names_str = $('#ori_domain_names_str').val().split(',');
             var domain_names_str = '';
+
+            var enable_caa = '<%=Settings.enable_caa%>';
             var all_passed_caa_check = true;
             var caa_check_failed_domain_names_str = '';
 
@@ -870,25 +876,30 @@ jQuery(function($) {
                 /*domain_names_str = domain_names_str + ',' + $(domain).find('.check_box').prop('alt');*/
                 domain_names_str = domain_names_str.concat(',' + $(domain).find('.check_box').prop('id'));
 
-                if ($(domain).find('.caa_check').text() == 'passed') {
-                  all_passed_caa_check &= true;
-                } else {
-                  all_passed_caa_check &= false;
-                  caa_check_failed_domain_names_str = caa_check_failed_domain_names_str.concat(',' + $(domain).find('.check_box').prop('id'));
+                if (enable_caa == 'true') {
+                  if ($(domain).find('.caa_check').text() == 'passed') {
+                    all_passed_caa_check &= true;
+                  } else {
+                    all_passed_caa_check &= false;
+                    caa_check_failed_domain_names_str = caa_check_failed_domain_names_str.concat(',' + $(domain).find('.check_box').prop('id'));
+                  }
                 }
               } else if ($(domain).hasClass('validated') == true) {
                 domain_names_str = domain_names_str.concat(',' + $(domain).find('td:first-child').children().first().val());
-                if ($(domain).find('.caa_check').val() == 'passed') {
-                  all_passed_caa_check &= true;
-                } else {
-                  all_passed_caa_check &= false;
-                  caa_check_failed_domain_names_str = caa_check_failed_domain_names_str.concat(',' + $(domain).find('.check_box').prop('id'));
+
+                if (enable_caa == 'true') {
+                  if ($(domain).find('.caa_check').val() == 'passed') {
+                    all_passed_caa_check &= true;
+                  } else {
+                    all_passed_caa_check &= false;
+                    caa_check_failed_domain_names_str = caa_check_failed_domain_names_str.concat(',' + $(domain).find('.check_box').prop('id'));
+                  }
                 }
               }
             });
 
             // Check all domains has been passed for CAA_CHECK
-            if (!all_passed_caa_check) {
+            if (enable_caa == 'true' && !all_passed_caa_check) {
               caa_check_failed_domain_names_str = caa_check_failed_domain_names_str.substr(1).split(',');
 
               var message_wrap_element = $('<div></div>');
