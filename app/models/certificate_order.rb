@@ -526,12 +526,12 @@ class CertificateOrder < ActiveRecord::Base
     list
   end
 
-  def add_reproces_order(order)
-    order.save unless order.persisted?
-    order.line_items.destroy_all
-    if order.valid?
+  def add_reproces_order(target_order)
+    target_order.save unless target_order.persisted?
+    target_order.line_items.destroy_all
+    if target_order.valid?
       line_items << LineItem.create(
-        order_id: order.id, cents: order.cents, amount: order.amount, currency: 'USD'
+        order_id: target_order.id, cents: target_order.cents, amount: target_order.amount, currency: 'USD'
       )
     end
   end
