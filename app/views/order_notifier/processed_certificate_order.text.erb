@@ -22,7 +22,7 @@ Please submit the document items outlined in the link below through your SSL.com
 Learn more about your certificate order page using the link below:
 
   https://www.ssl.com/article/certificate-order-page-information/
-<%if (@certificate_order.certificate_duration(:days).to_i > 1187) && (@certificate_order.created_at > Date.parse('Apr 1 2015'))-%>
+<%if (@certificate_order.exceeds_br_duration?) && (@certificate_order.created_at > Date.parse('Apr 1 2015'))-%>
 
   <%=render(:partial=>"duration_limit")%>
 <%end-%>
