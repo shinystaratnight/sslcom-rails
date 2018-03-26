@@ -7,14 +7,14 @@
 -resources = @results[:resources]
 #cdns
   %hr
-  -unless api_key
-    %div.center
-      %h3 By activating SSL.com's CDN Service, you agree to CDNify.com's "Terms of Service" below:
-      =text_area_tag :agreement, render(file: "public/agreements/cdnify.txt"), :size=>"100x8"
-      =form_tag :register_account_cdns, :method=>:post do
-        =submit_tag 'Activate CDN', class: 'button_blue'
-    %hr
-  -if api_key
+  -#-unless api_key
+  -#  %div.center
+  -#    %h3 By activating SSL.com's CDN Service, you agree to CDNify.com's "Terms of Service" below:
+  -#    =text_area_tag :agreement, render(file: "public/agreements/cdnify.txt"), :size=>"100x8"
+  -#    =form_tag :register_account_cdns, :method=>:post do
+  -#      =submit_tag 'Activate CDN', class: 'button_blue'
+  -#  %hr
+  -#-if api_key
     -#-if is_system_admin
     -#  %div.manage-api-key
     -#    .sub-cont
@@ -25,56 +25,78 @@
     -#            =text_field_tag :api_key, api_key
     -#            =submit_tag 'Update'
       %hr
-    %div
-      .sub-title Resources
-      .sub-cont
-        =form_tag :update_resources_cdns, :method=>:post do
-          =hidden_field_tag :api_key, api_key
-          #resources
-            %table(cellspacing="0")
-              %tr.heading_row
-                %th Alias
-                %th Origin
-                %th Hostname
-                %th Created
-                %th Delete?
-              -if resources && resources.length > 0
-                -resources.each do |resource|
-                  %tr
-                    %td
-                      =link_to resource['alias'], resource_cdn_cdn_path(@ssl_slug, resource['id'])
-                    %td
-                      =resource['origin']
-                    %td
-                      =resource['hostname']
-                    %td
-                      =DateTime.parse(resource['created_at']).strftime("%d/%m/%Y")
-                    %td
-                      =check_box_tag "deleted_resources[]", resource['id'], false, class: 'chk-delete'
-              -else
-                %tr
-                  %td(colspan="6")
-                    There are no resources
+  %div
+    .sub-title Resources
+    .sub-cont
+      =form_tag :update_resources_cdns, :method=>:post do
+        =hidden_field_tag :api_key, api_key
+        #resources
+          %table(cellspacing="0")
+            %tr.heading_row
+              %th Alias
+              %th Origin
+              %th Hostname
+              %th Created
+              %th Delete?
             -if resources && resources.length > 0
-              =submit_tag 'Save', :id=>'btn_update_resource', :disabled=>true
-      %hr
-      %div.create-resource
-        .sub-title Create Resource
-        .sub-cont
-          =form_tag :id=>'create_resource', :method=>:post do
-            =hidden_field_tag :api_key, api_key
-            %div.reg-resource.clearfix
-              .field-label Resource Origin:
-              .field-cont
-                =text_field_tag :resource_origin, nil, placeholder: 'http://www.yoursite.com'
-                .note
-                  Which website should we mirror on the CDN?
-            %div.reg-resource.clearfix
-              .field-label Resource Name:
-              .field-cont
-                =text_field_tag :resource_name, nil, placeholder: 'mysite'
-                %span .a.cdnify.io
-                .note
-                  Something to identify this resource by (e.g. mysite.a.cdnify.io)
-            =submit_tag 'Create', :id=>'btn_create_resource'
-      %hr
+              -resources.each do |resource|
+                %tr
+                  %td
+                    =link_to resource['alias'], resource_cdn_cdn_path(@ssl_slug, resource['id'])
+                  %td
+                    =resource['origin']
+                  %td
+                    =resource['hostname']
+                  %td
+                    =DateTime.parse(resource['created_at']).strftime("%d/%m/%Y")
+                  %td
+                    =check_box_tag "deleted_resources[]", resource['id'], false, class: 'chk-delete'
+            -else
+              %tr
+                %td(colspan="6")
+                  There are no resources
+          -if resources && resources.length > 0
+            =submit_tag 'Save', :id=>'btn_update_resource', :disabled=>true
+    %hr
+    %div.create-resource
+      .sub-title Create Resource
+      .sub-cont
+        =form_tag '', :id=>'create_resource', :method=>:post do
+          =hidden_field_tag :api_key, api_key
+          %div.reg-resource.clearfix
+            .field-label * Resource Origin:
+            .field-cont
+              =text_field_tag :resource_origin, nil, placeholder: 'http://www.yoursite.com'
+              .note
+                Which website should we mirror on the CDN?
+          %div.reg-resource.clearfix
+            .field-label * Resource Name:
+            .field-cont
+              =text_field_tag :resource_name, nil, placeholder: 'mysite'
+              %span .a.cdnify.io
+              .note
+                Something to identify this resource by (e.g. mysite.a.cdnify.io)
+          =submit_tag 'Create', :id=>'btn_create_resource'
+    %hr
+
+  %div.modal#tos-modal
+    %div.modal-dialog
+      %div.modal-content
+        %div.modal-header
+          %h4.modal-title#modal-label Activate CDN
+          %button.close{:type => 'button', 'data-dismiss' => 'modal'}
+            #span &times
+        %div.modal-body
+          %div.container-fluid
+            .row
+              =text_area_tag :agreement, render(file: "public/agreements/cdnify.txt"), :size=>"100x20", :readonly=>true
+            .row.pt-3
+              %label
+                =check_box_tag :agree_tos_chk, false
+                I agree to CDNify's "Terms of Service" above
+        %div.modal-footer
+          %div.container-fluid
+            %div.row
+              .col-12
+                =button_tag 'Save', 'class' => 'agree-cdn-tos float-right', 'type' => 'button', 'disabled' => 'disabled'
+                =button_tag 'Close', 'class' => 'float-right mr-1', 'data-dismiss' => 'modal', 'type' => 'button'
