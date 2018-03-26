@@ -6,10 +6,18 @@
       %tr.heading_row
         %th DATE
         %th ORDER
-        %th DOMAINS
+        %th
+          INVOICE
+          %br/
+          DOWNLOAD
+        %th ALL DOMAINS
+        %th 
+          CHARGED
+          %br/
+          DOMAINS
         %th AMOUNT
       %tr.order-divider
-        %td{colspan: '5'}
+        %td{colspan: '6'}
     %tbody
       -reprocess_orders.each do |result|
         %tr
@@ -18,6 +26,15 @@
           %td.order-edit
             =link_to result[:order_ref], order_path(@ssl_slug, result[:order_ref])
           %td.domains-list
-            =result[:domains]
+            -o  = Order.find_by(reference_number: result[:order_ref])
+            -mi = o.monthly_invoice
+            -if mi.nil?
+              =link_to "\u21E9 Download".html_safe, invoice_order_path(@ssl_slug, result[:order_ref])
+            -else
+              =link_to "\u21E9 Download".html_safe, download_invoice_path(@ssl_slug, mi.reference_number)
+          %td.domains-list
+            =result[:domains][:all].count
+          %td.domains-list
+            =result[:domains][:new_domains_count]
           %td.reprocess-amount
             =result[:amount]

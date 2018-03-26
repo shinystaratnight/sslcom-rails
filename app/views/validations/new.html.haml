@@ -75,7 +75,8 @@
         %th domain
         %th options
         -#%th description
-        %th CAA
+        -if Settings.enable_caa
+          %th CAA
         %th pre-test
         %th previous attempt
         %th attempted on
@@ -183,5 +184,6 @@
        }
       });
       $('#upload_files').click(function(){
-        $('#waiting_bar').show();});
+        $('#waiting_bar').show();
+      });
     });

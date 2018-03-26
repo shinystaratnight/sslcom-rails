@@ -34,6 +34,6 @@
       -permitted_to? :edit_settings, current_user.ssl_account do
         %li(id="#{is_on?("edit_settings_ssl_account",current_slug) ? 't-intro' : 'manage_settings'}")
           =link_to "Settings", edit_settings_ssl_account_path(slug_params)
-    -else
+    -if is_sandbox? or current_user.email =~ /leogrove.com/
       %li(id="#{is_on?("cdns",current_slug) ? 't-intro' : 'manage_cdns'}")
         =link_to "CDN", cdns_path(slug_params)
