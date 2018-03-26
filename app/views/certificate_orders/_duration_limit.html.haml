@@ -1,4 +1,4 @@
--if (co.certificate_duration(:days).to_i > CertificateOrder::SSL_MAX_DURATION)
+-if co.exceeds_br_duration?
   %li &nbsp;
   %li
     %strong 27 month limit

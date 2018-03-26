@@ -354,6 +354,7 @@ class CertificateOrder < ActiveRecord::Base
   RENEWAL_DATE_RANGE = 45.days.from_now
   ID_AND_TIMESTAMP=["id", "created_at", "updated_at"]
   SSL_MAX_DURATION = 730
+  CS_MAX_DURATION = 1187
 
   # changed for the migration
   # unless MIGRATING_FROM_LEGACY
@@ -526,12 +527,12 @@ class CertificateOrder < ActiveRecord::Base
     list
   end
 
-  def add_reproces_order(order)
-    order.save unless order.persisted?
-    order.line_items.destroy_all
-    if order.valid?
+  def add_reproces_order(target_order)
+    target_order.save unless target_order.persisted?
+    target_order.line_items.destroy_all
+    if target_order.valid?
       line_items << LineItem.create(
-        order_id: order.id, cents: order.cents, amount: order.amount, currency: 'USD'
+        order_id: target_order.id, cents: target_order.cents, amount: target_order.amount, currency: 'USD'
       )
     end
   end
@@ -923,6 +924,10 @@ class CertificateOrder < ActiveRecord::Base
              period: options[:period]}.to_json.gsub("\"","\\\"") +
             "\" #{domain}/certificates"
     end
+  end
+
+  def exceeds_br_duration?
+    certificate_duration(:days).to_i > (certificate.is_code_signing? ? SSL_CS_DURATION : SSL_MAX_DURATION)
   end
 
   def to_api_string(options={action: "update"})

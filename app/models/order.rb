@@ -473,7 +473,7 @@ class Order < ActiveRecord::Base
   end
   
   def reprocess_ucc_order?
-    self.is_a?(ReprocessCertificateOrder)
+    self.type == 'ReprocessCertificateOrder'
   end
   
   def reprocess_ucc_free?
