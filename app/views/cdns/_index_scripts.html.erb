@@ -61,6 +61,108 @@
         $('#purge_files').val(file_uri);
         $('#purge_form').submit();
       });
+
+      $('#btn_create_resource').click(function() {
+        var api_key = $('form#create_resource #api_key').val();
+        if (api_key) {
+          var res_ori = $('form#create_resource #resource_origin').val();
+          var res_name = $('form#create_resource #resource_name').val();
+
+          if (res_ori == '' || res_name == '') {
+            if ($('#content').find('.inner').children().first().hasClass('flash_message')) {
+              $('#content').find('.inner').children().first().remove();
+            }
+
+            var message_wrap_element = $('<div></div>');
+            message_wrap_element.attr('class', 'flash_message error');
+
+            var message_element = $('<span></span>');
+            if (res_ori == '') {
+              message_element.append('<li>Resource Origin is required.</li>');
+            }
+            if (res_name == '') {
+              message_element.append('<li>Resource Name is required.</li>');
+            }
+            message_wrap_element.append(message_element);
+
+            var btn_element = $('<small></small>');
+            var close_btn_element = $('<div></div>');
+            close_btn_element.attr('class', 'close_flash_message');
+
+            var close_sign_element = $('<span></span>');
+            close_sign_element.append('X');
+
+            close_btn_element.append(close_sign_element);
+            close_btn_element.append('close');
+
+            btn_element.append(close_btn_element);
+            message_wrap_element.append(btn_element);
+
+            message_wrap_element.insertBefore($('#content').find('.inner').children().first());
+
+            return false;
+          }
+        } else {
+          $('#tos-modal #agree_tos_chk').attr('checked', false);
+          $('#tos-modal .agree-cdn-tos').prop('disabled', 'disabled');
+          $('#tos-modal').modal('toggle');
+          return false;
+        }
+      });
+
+      $('#agree_tos_chk').click(function() {
+        var is_agree = $(this).prop('checked');
+        if (is_agree) {
+          $('.agree-cdn-tos').prop('disabled', '');
+        } else {
+          $('.agree-cdn-tos').prop('disabled', 'disabled');
+        }
+      });
+
+      $('.agree-cdn-tos').click(function() {
+        $(this).attr('disabled', 'disabled');
+        var ajaxActivateCDNUrl = '<%=register_account_cdns_path%>';
+        $.ajax({
+          url: ajaxActivateCDNUrl,
+          type: "POST",
+          success: function(data) {
+            if (data['error']) {
+              if ($('#content').find('.inner').children().first().hasClass('flash_message')) {
+                $('#content').find('.inner').children().first().remove();
+              }
+
+              var message_wrap_element = $('<div></div>');
+              message_wrap_element.attr('class', 'flash_message error');
+
+              var message_element = $('<span></span>');
+              message_element.append(data['error']);
+              message_wrap_element.append(message_element);
+
+              var btn_element = $('<small></small>');
+              var close_btn_element = $('<div></div>');
+              close_btn_element.attr('class', 'close_flash_message');
+
+              var close_sign_element = $('<span></span>');
+              close_sign_element.append('X');
+
+              close_btn_element.append(close_sign_element);
+              close_btn_element.append('close');
+
+              btn_element.append(close_btn_element);
+              message_wrap_element.append(btn_element);
+
+              message_wrap_element.insertBefore($('#content').find('.inner').children().first());
+
+              $('#tos-modal').modal('toggle');
+            } else {
+              $('#tos-modal').modal('toggle');
+              $('form#create_resource #api_key').val(data['api_key']);
+              $('#btn_create_resource').trigger('click');
+            }
+          }
+        });
+      });
+
     });
   });
 </script>

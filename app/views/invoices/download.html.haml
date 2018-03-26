@@ -38,7 +38,7 @@
             %p#date.font-small-grey Due Date
             %p#invoice-date #{@invoice.end_date.strftime('%F')}
             
-            -unless @invoice.blank?
+            -if @invoice && !@invoice.vat.blank?
               %p.font-small-grey#date VAT #
               %p#invoice-date #{@invoice.vat}
           

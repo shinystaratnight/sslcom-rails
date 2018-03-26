@@ -37,6 +37,7 @@ module OrdersHelper
       order        = @ssl_account.purchase(@certificate_order)
       order.cents  = @certificate_order.ucc_prorated_amount(@certificate_content)
       order.amount = Money.new(order.cents)
+      order.type   = "ReprocessCertificateOrder"
       order
     end
   end
@@ -254,7 +255,7 @@ module OrdersHelper
     return false unless (ActiveMerchant::Billing::Base.mode == :test ? true : @credit_card.valid?)
     
     @order.description = if @reprocess_ucc
-      Order::SSL_REPROCESS_UCC
+      Order::DOMAINS_ADJUSTMENT
     else
       @monthly_invoice ? Order::INVOICE_PAYMENT : Order::SSL_CERTIFICATE
     end

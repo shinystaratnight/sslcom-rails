@@ -143,7 +143,7 @@
                 .field-cont
                   =text_field_tag :custom_domain
                   .note
-                    SSL is only valid for your first custom domain.
+                    autoinstalled SSL/TLS available after host name is created
               -#%div.reg-resource.clearfix
               -#  .field-label Certificate:
               -#  .field-cont
@@ -161,7 +161,7 @@
               %tr.heading_row
                 %th Domain Name
                 %th Created
-                %th Valid Status
+                %th Validation Status
                 %th
               -if domain_list && domain_list.length > 0
                 -domain_list.each do |domain|
@@ -175,7 +175,10 @@
                         SSL valid to
                         =DateTime.parse(domain['valid_to']['date']).strftime('%d/%m/%Y')
                       -else
-                        Pending
+                        -if domain['is_ssl_req']
+                          Pending
+                        -else
+                          N/A
                     %td
                       =link_to 'Edit SSL', nil, :class => 'custom-domain-modal-link', 'data-toggle' => 'modal', 'data-target' => '#custom-domain-modal', 'data-hostname' => domain['hostname']
               -else
@@ -241,9 +244,9 @@
               %button.close{:type => 'button', 'data-dismiss' => 'modal'}
                 #span &times
             %div.modal-body
-              %div.modal-note
-                Please paste in the certificate and private key provided to you by your SSL certificate issuer.
-              %hr
+              -#%div.modal-note
+              -#  Please paste in the certificate and private key provided to you by your SSL certificate issuer.
+              -#%hr
               %div.container-fluid
                 %div.row
                   %div.col-md-3.col-sm-3.col-lg-3
@@ -252,7 +255,7 @@
                   %div.col-md-3.col-sm-3.col-lg-4
                     -#=check_box_tag :generate_install_ssl_chk
                     =check_box_tag :generate_install_ssl_chk, false, true, :disabled=>'disabled'
-              %hr.gen-install-ssl-divider
+              -#%hr.gen-install-ssl-divider
               %div.container-fluid
                 -#=form_tag :update_custom_domain_cdn, :id=>'custom_domain_modal_form' do
                 =form_tag :update_custom_domain_cdn, :id=>'custom_domain_modal_form', :class=>'hidden' do

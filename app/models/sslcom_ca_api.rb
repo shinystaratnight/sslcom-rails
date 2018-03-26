@@ -121,21 +121,40 @@ class SslcomCaApi
   def self.issue_cert_json(options)
     cert = options[:cc].certificate
     if options[:cc].csr
-      dn={subject_dn: options[:action]=="send_to_ca" ? subject_dn(options) : # req sent via RA form
-                       (options[:subject_dn] || options[:cc].subject_dn),
-       ca_name: ca_name(options),
-       certificate_profile: certificate_profile(options),
-       end_entity_profile: end_entity_profile(options),
-       duration: "#{options[:cc].certificate_order.certificate_duration(:sslcom_api)}:0:0" || options[:duration],
-       pkcs10: Csr.remove_begin_end_tags(options[:cc].csr.body)}
-      dn.merge!(subject_alt_name: subject_alt_name(options)) unless cert.is_code_signing?
+      dn={}
+      if options[:collect_certificate]
+        dn.merge! user_name: options[:username]
+      else
+        dn.merge! subject_dn: options[:action]=="send_to_ca" ? subject_dn(options) : # req sent via RA form
+                                  (options[:subject_dn] || options[:cc].subject_dn),
+          ca_name: options[:ca_name] || ca_name(options),
+          certificate_profile: certificate_profile(options),
+          end_entity_profile: end_entity_profile(options),
+          duration: "#{options[:cc].certificate_order.certificate_duration(:sslcom_api)}:0:0" || options[:duration]
+        dn.merge!(subject_alt_name: subject_alt_name(options)) unless cert.is_code_signing?
+      end
+      dn.merge!(request_type: "public_key",request_data: options[:cc].csr.public_key.to_s) if
+          options[:collect_certificate] or options[:no_public_key].blank?
       dn.to_json
     end
   end
 
   def self.apply_for_certificate(certificate_order, options={})
+    certificate = certificate_order.certificate
     options.merge! cc: cc = options[:certificate_content] || certificate_order.certificate_content
-    host = Rails.application.secrets.sslcom_ca_host+"/v1/certificate/pkcs10"
+    if (certificate.is_ev? or certificate.is_evcs?) and
+        (certificate_order.csr.sslcom_ca_requests.empty? or
+        (!certificate_order.csr.sslcom_ca_requests.empty? and
+        certificate_order.csr.sslcom_ca_requests.first.username.blank?))
+        # create the user for EV order
+      host = Rails.application.secrets.sslcom_ca_host+"/v1/user"
+      options.merge! no_public_key: true, ca: Ca::SSLCOM_CA # create an ejbca user only
+    else
+      host = Rails.application.secrets.sslcom_ca_host+
+          "/v1/certificate#{'/ev' if certificate.is_ev? or certificate.is_evcs?}/pkcs10"
+      options.merge!(collect_certificate: true, username: certificate_order.
+          csr.sslcom_usernames.first) if certificate.is_ev? or certificate.is_evcs? # collect ev cert
+    end
     req, res = call_ca(host, options, issue_cert_json(options))
     cc.create_csr(body: options[:csr]) if cc.csr.blank?
     api_log_entry=cc.csr.sslcom_ca_requests.create(request_url: host,
@@ -188,12 +207,21 @@ class SslcomCaApi
     end
   end
 
+  def self.get_status(certificate_order)
+    approval=certificate_order.csr.sslcom_approval_ids.first
+    return if approval.blank?
+    host = Rails.application.secrets.sslcom_ca_host+"/v1/status/#{approval}"
+    options={method: "get"}
+    body = ""
+    req, res = call_ca(host, options, body)
+  end
+
   private
 
   # body - parameters in JSON format
   def self.call_ca(host, options, body)
     uri = URI.parse(host)
-    req = Net::HTTP::Post.new(uri, 'Content-Type' => 'application/json')
+    req = (options[:method]=~/GET/i ? Net::HTTP::Get : Net::HTTP::Post).new(uri, 'Content-Type' => 'application/json')
     http = Net::HTTP.new(uri.host, uri.port)
     http.use_ssl = true
     http.verify_mode = OpenSSL::SSL::VERIFY_NONE

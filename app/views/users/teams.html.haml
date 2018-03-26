@@ -2,6 +2,13 @@
 -will_paginate @teams
 -content_for :title, title
 -system_admins = current_user.is_system_admins?
+
+#search_bar
+  =form_tag teams_user_path, id: 'search_form', method: :get do
+    name, account #, or slug
+    =text_field_tag :team, params[:team]
+    =button_tag 'Search', id: 'btn_teams_search'
+
 #validations
   %table(cellspacing="0")
     -if will_paginate @teams

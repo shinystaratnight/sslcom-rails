@@ -36,9 +36,9 @@ class Order < ActiveRecord::Base
     end
   end
   
-  SSL_REPROCESS_UCC = "Reprocess UCC Order"
-  SSL_CERTIFICATE   = "SSL Certificate Order"
-  INVOICE_PAYMENT   = "Monthly Invoice Payment"
+  DOMAINS_ADJUSTMENT = "Domains Adjustment"
+  SSL_CERTIFICATE    = "SSL Certificate Order"
+  INVOICE_PAYMENT    = "Monthly Invoice Payment"
   # If team's billing_method is set to 'monthly', grab all orders w/'approved' approval
   # when running charges at the end of the month for orders from ucc reprocessing.
   BILLING_STATUS = %w{approved pending declined}
@@ -69,7 +69,7 @@ class Order < ActiveRecord::Base
   scope :search, lambda {|term|
     term = term.strip.split(/\s(?=(?:[^']|'[^']*')*$)/)
     filters = {amount: nil, email: nil, login: nil, account_number: nil, product: nil, created_at: nil,
-               discount_amount: nil, company_name: nil, ssl_slug: nil, is_test: nil, reference_number: nil}
+               discount_amount: nil, company_name: nil, ssl_slug: nil, is_test: nil, reference_number: nil, monthly_invoice: nil}
     filters.each{|fn, fv|
       term.delete_if {|s|s =~ Regexp.new(fn.to_s+"\\:\\'?([^']*)\\'?"); filters[fn] ||= $1; $1}
     }
@@ -125,6 +125,8 @@ class Order < ActiveRecord::Base
     %w(product).each do |field|
       query=filters[field.to_sym]
       case query
+        when /reprocess/
+          result = result.where(type: "ReprocessCertificateOrder")
         when /deposit/
           result = result.joins{line_items.sellable(Deposit)}
         when /certificate/
@@ -161,6 +163,7 @@ class Order < ActiveRecord::Base
         result = result.where{created_at >> (start..finish)}
       end
     end
+    result = result.where.not(invoice_id: nil) unless filters[:monthly_invoice].nil?
     result.uniq.order("orders.created_at desc")
   } do
 
@@ -470,7 +473,7 @@ class Order < ActiveRecord::Base
   end
   
   def reprocess_ucc_order?
-    description == Order::SSL_REPROCESS_UCC
+    self.is_a?(ReprocessCertificateOrder)
   end
   
   def reprocess_ucc_free?

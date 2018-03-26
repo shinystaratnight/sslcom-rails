@@ -133,6 +133,14 @@ class Csr < ActiveRecord::Base
     csr
   end
 
+  def sslcom_approval_ids
+    sslcom_ca_requests.map(&:approval_id).compact
+  end
+
+  def sslcom_usernames
+    sslcom_ca_requests.map(&:username).compact
+  end
+
   def self.enclose_with_tags(csr)
     csr=remove_begin_end_tags(csr)
     unless (csr =~ Regexp.new(BEGIN_TAG))
@@ -293,6 +301,10 @@ class Csr < ActiveRecord::Base
 
   def public_key
     openssl_request.public_key
+  end
+
+  def verify_signature
+    openssl_request.verify public_key
   end
 
   def public_key_sha1

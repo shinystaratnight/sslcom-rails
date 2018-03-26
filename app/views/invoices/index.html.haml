@@ -35,7 +35,9 @@
         %tr
           %td=i.end_date.strftime('%F')
           -if system_admins
-            %td=i.billable.get_team_name
+            -team_name = i.billable.get_team_name
+            %td=link_to team_name, invoices_path(@ssl_slug, team: team_name, commit: 'Search'), |
+            method: :get
           %td=link_to i.reference_number, invoice_path(@ssl_slug, i.reference_number)
           %td
             %strong=i.get_amount_format

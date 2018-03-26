@@ -464,11 +464,11 @@ class OrdersController < ApplicationController
     @reprocess_ucc = true
     ucc_or_invoice_params
     
-    @order = Order.new(
+    @order = ReprocessCertificateOrder.new(
       billing_profile_id: params[:funding_source],
       amount:             @target_amount,
       cents:             (@target_amount * 100).to_i,
-      description:        Order::SSL_REPROCESS_UCC,
+      description:        Order::DOMAINS_ADJUSTMENT,
       state:              'pending',
       approval:           'approved',
       notes:              reprocess_ucc_notes
@@ -626,7 +626,7 @@ class OrdersController < ApplicationController
     end
     
     @order             = current_order_reprocess_ucc
-    @order.description = Order::SSL_REPROCESS_UCC
+    @order.description = Order::DOMAINS_ADJUSTMENT
     @order.state       = 'invoiced'
     @order.notes       = reprocess_ucc_notes
     @order.invoice_id  = invoice.id
@@ -646,10 +646,10 @@ class OrdersController < ApplicationController
 
       if @ssl_account.billing_monthly? || amount == 0
         if amount == 0 # Reprocess is free, no additional domains added
-          @order = Order.new(
+          @order = ReprocessCertificateOrder.new(
             amount:      0,
             cents:       0,
-            description: Order::SSL_REPROCESS_UCC,
+            description: Order::DOMAINS_ADJUSTMENT,
             notes:       reprocess_ucc_notes,
             approval:    'approved'
           )

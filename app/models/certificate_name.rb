@@ -108,8 +108,13 @@ class CertificateName < ActiveRecord::Base
     @csr || certificate_content.csr
   end
 
+  def new_name(new_name)
+    @new_name = new_name.downcase
+  end
+
   def name
-    read_attribute(:name).downcase
+    ori_name = read_attribute(:name).downcase
+    @new_name ? (@new_name == ori_name ? ori_name : @new_name) : ori_name
   end
 
   def dcv_verified?(options={})

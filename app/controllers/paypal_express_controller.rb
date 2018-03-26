@@ -148,10 +148,10 @@ class PaypalExpressController < ApplicationController
   private
   
   def setup_reprocess_ucc_order(purchase_params)
-    @order = Order.new(
+    @order = ReprocessCertificateOrder.new(
       amount:        Money.new(purchase_params[:subtotal]),
       cents:         purchase_params[:subtotal],
-      description:   Order::SSL_REPROCESS_UCC,
+      description:   Order::DOMAINS_ADJUSTMENT,
       state:         'pending',
       approval:      'approved',
       notes:         "Reprocess UCC (certificate order: #{params[:co_ref]}, certificate content: #{params[:cc_ref]})."
