@@ -145,6 +145,19 @@ class InvoicesController < ApplicationController
     redirect_to_invoice
   end
   
+  def update_item
+    if @invoice
+      o = @invoice.orders.find_by(reference_number: params[:item_ref])
+      if o
+        o.update(invoice_description: params[:item_description]) unless params[:item_description].blank?
+        flash[:notice] = "Item #{o.reference_number} description has been updated."
+      end
+    else
+      flash[:error] = "Something went wrong, please try again."
+    end
+    redirect_to_invoice
+  end
+  
   def make_payment_other
     pmt_type = MonthlyInvoice::PAYMENT_METHODS_TEXT[params[:ptm_type].to_sym]
     if @invoice && !@invoice.paid?
