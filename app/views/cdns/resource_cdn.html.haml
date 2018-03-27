@@ -180,7 +180,10 @@
                         -else
                           N/A
                     %td
-                      =link_to 'Edit SSL', nil, :class => 'custom-domain-modal-link', 'data-toggle' => 'modal', 'data-target' => '#custom-domain-modal', 'data-hostname' => domain['hostname']
+                      -if domain['valid_to'] || domain['is_ssl_req']
+                        =link_to 'Delete SSL', nil, :class => 'custom-domain-delete-link', 'data-hostname' => domain['hostname']
+                      -else
+                        =link_to 'Edit SSL', nil, :class => 'custom-domain-modal-link', 'data-toggle' => 'modal', 'data-target' => '#custom-domain-modal', 'data-hostname' => domain['hostname']
               -else
                 %tr
                   %td(colspan="4")
@@ -254,7 +257,7 @@
                     Generate and install SSL
                   %div.col-md-3.col-sm-3.col-lg-4
                     -#=check_box_tag :generate_install_ssl_chk
-                    =check_box_tag :generate_install_ssl_chk, false, true, :disabled=>'disabled'
+                    =check_box_tag :generate_install_ssl_chk, false
               -#%hr.gen-install-ssl-divider
               %div.container-fluid
                 -#=form_tag :update_custom_domain_cdn, :id=>'custom_domain_modal_form' do
@@ -280,5 +283,5 @@
                   %div.col-4
                     =button_tag 'Delete SSL', 'class ' => 'delete-custom-domain', 'type' => 'button'
                   %div.col-8
-                    =button_tag 'Save', 'class' => 'modify-custom-domain float-right', 'type' => 'button'
+                    =button_tag 'Save', 'class' => 'modify-custom-domain float-right', 'type' => 'button', 'disabled' => 'disabled'
                     =button_tag 'Close', 'class' => 'float-right mr-1', 'data-dismiss' => 'modal', 'type' => 'button'
