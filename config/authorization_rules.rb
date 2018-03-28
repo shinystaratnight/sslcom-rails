@@ -44,7 +44,8 @@ authorization do
       :update,
       :refund_other,
       :credit,
-      :destroy
+      :destroy,
+      :update_item
     ]
   end
 

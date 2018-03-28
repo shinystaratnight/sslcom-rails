@@ -11,6 +11,7 @@
       %th Total
   %tbody
     -orders.each_with_index do |o, i|
+      -order_ref = o.reference_number
       %tr
         %td
           %strong
@@ -18,21 +19,32 @@
         %td
           =o.created_at.strftime('%F')
         %td
-          =link_to o.reference_number, order_path(@ssl_slug, o)
+          =link_to order_ref, order_path(@ssl_slug, o)
         %td
           %strong
-            %span #{descriptions[o.reference_number.to_s][:item]}
+            %span #{descriptions[order_ref.to_s][:item]}
           %br
-          =descriptions[o.reference_number.to_s][:description]
+          =descriptions[order_ref.to_s][:description]              
+          
           -if current_user.is_system_admins?
+            %div{id: "mi-update-item-desc-#{order_ref}", class: 'hidden'}
+              =form_tag update_item_invoice_path(@ssl_slug, @invoice.reference_number), method: :put do
+                .clearfix
+                  =hidden_field_tag :item_ref, order_ref
+                  =text_field_tag   :item_description, nil, size: 72, placeholder: 'New description'
+                .clearfix
+                  =button_tag 'Update', id: 'btn-update-invoice-item'
+                  =button_tag 'Cancel', class: 'btn-cancel-invoice-item', data: {order_ref: order_ref}
+
             %br
             -if o.approved_for_invoice? 
               =link_to 'REMOVE ITEM', |
-                remove_item_invoice_path(@ssl_slug, @invoice.reference_number, item_ref: o.reference_number), |
+                remove_item_invoice_path(@ssl_slug, @invoice.reference_number, item_ref: order_ref), |
                 method: :put, class: 'btn-rmv-invoice-item'
             -if o.removed_from_invoice?
-              =link_to 'ADD ITEM', add_item_invoice_path(@ssl_slug, @invoice.reference_number, item_ref: o.reference_number), |
+              =link_to 'ADD ITEM', add_item_invoice_path(@ssl_slug, @invoice.reference_number, item_ref: order_ref), |
                 method: :put, class: 'btn-add-invoice-item'
+            =link_to 'EDIT', '#', class: 'btn-edit-invoice-item', data: {order_ref: order_ref}
         %td
           %strong
             =o.amount.format
