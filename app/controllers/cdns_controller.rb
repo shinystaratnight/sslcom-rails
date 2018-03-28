@@ -464,6 +464,24 @@ class CdnsController < ApplicationController
     redirect_to resource_cdn_cdn_path(@ssl_slug, resource_id) and return
   end
 
+  def check_cname
+    resource_name = params['resource_name']
+    custom_domain = params['custom_domain']
+
+    exist = begin
+      Timeout.timeout(Surl::TIMEOUT_DURATION) do
+        txt = Resolv::DNS.open do |dns|
+          records = dns.getresources(custom_domain, Resolv::DNS::Resource::IN::CNAME)
+        end
+        resource_name == txt.last.name.to_s
+      end
+    rescue Exception=>e
+      false
+    end
+
+    render :json => exist
+  end
+
   def delete_resource
     resource_id = params[:id]
     api_key = params[:api_key]
