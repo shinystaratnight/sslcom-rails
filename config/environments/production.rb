@@ -15,7 +15,7 @@ SslCom::Application.configure do
     if source=~/\A\/validation_histories\/.*?\/documents/
       "https://www.ssl.com"
     else
-      "https://wwwsslcom.a.cdnify.io"
+      "https://cdn.ssl.com"
     end
   }
 
