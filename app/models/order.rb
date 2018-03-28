@@ -473,7 +473,7 @@ class Order < ActiveRecord::Base
   end
   
   def reprocess_ucc_order?
-    self.is_a?(ReprocessCertificateOrder)
+    self.type == 'ReprocessCertificateOrder'
   end
   
   def reprocess_ucc_free?
@@ -538,13 +538,12 @@ class Order < ActiveRecord::Base
       certificate_orders.each do |co|
         current = []
         co.orders.order(created_at: :asc).each do |o|
-          if o != self && o.reprocess_ucc_order?
-            cc = o.get_reprocess_cc(co)
+          if o.reprocess_ucc_order?
             current << {
-              date:      o.created_at.strftime('%F'),
-              order_ref: o.reference_number,
-              domains:   (cc.nil? ? 0 : co.get_reprocess_cc_domains(cc).count),
-              amount:    o.get_full_reprocess_format
+              date:       o.created_at.strftime('%F'),
+              order_ref:  o.reference_number,
+              domains:    o.get_reprocess_domains,
+              amount:     o.get_full_reprocess_format
             }
           end
         end
