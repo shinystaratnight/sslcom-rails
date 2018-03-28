@@ -192,7 +192,8 @@
                       -if is_ssl_req
                         =link_to 'Delete', nil, :class => 'custom-domain-delete-link', 'data-hostname' => domain['hostname']
                       -else
-                        =link_to 'Edit SSL', nil, :class => 'custom-domain-modal-link', 'data-toggle' => 'modal', 'data-target' => '#custom-domain-modal', 'data-hostname' => domain['hostname']
+                        -#=link_to 'Edit SSL', nil, :class => 'custom-domain-modal-link', 'data-toggle' => 'modal', 'data-target' => '#custom-domain-modal', 'data-hostname' => domain['hostname']
+                        =link_to 'Edit SSL', nil, :class => 'custom-domain-modal-link', 'data-hostname' => domain['hostname'], 'data-resourcename' => hostname
 
               -else
                 %tr
@@ -294,4 +295,4 @@
                     =button_tag 'Delete SSL', 'class ' => 'delete-custom-domain', 'type' => 'button'
                   %div.col-8
                     =button_tag 'Save', 'class' => 'modify-custom-domain float-right', 'type' => 'button', 'disabled' => 'disabled'
-                    =button_tag 'Close', 'class' => 'float-right mr-1', 'data-dismiss' => 'modal', 'type' => 'button'
+                    =button_tag 'Close', 'class' => 'cancel-custom-domain float-right mr-1', 'data-dismiss' => 'modal', 'type' => 'button'
