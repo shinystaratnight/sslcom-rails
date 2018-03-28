@@ -927,7 +927,7 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def exceeds_br_duration?
-    certificate_duration(:days).to_i > (certificate.is_code_signing? ? SSL_CS_DURATION : SSL_MAX_DURATION)
+    certificate_duration(:days).to_i > (certificate.is_code_signing? ? CS_MAX_DURATION : SSL_MAX_DURATION)
   end
 
   def to_api_string(options={action: "update"})
