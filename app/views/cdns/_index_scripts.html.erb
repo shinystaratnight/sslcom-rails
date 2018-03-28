@@ -21,13 +21,15 @@
       });
       $("#generate_install_ssl_chk").change(function() {
         if ($(this).prop('checked')) {
-          $("#custom_domain_modal_form").hide();
+          /*$("#custom_domain_modal_form").hide();
           $(".gen-install-ssl-divider").hide();
-          $("#generate_type").val("auto");
+          $("#generate_type").val("auto");*/
+          $('.modify-custom-domain').attr('disabled', false);
         } else {
-          $("#custom_domain_modal_form").show();
+          /*$("#custom_domain_modal_form").show();
           $(".gen-install-ssl-divider").show();
-          $("#generate_type").val("manual");
+          $("#generate_type").val("manual");*/
+          $('.modify-custom-domain').attr('disabled', true);
         }
       });
       $('#private_key').bind('cut copy', function (e) {
@@ -45,6 +47,13 @@
       $('.custom-domain-modal-link').click(function() {
         var hostname = $(this).data('hostname');
         $('#host_name').val(hostname);
+      });
+
+      $('.custom-domain-delete-link').click(function() {
+        var hostname = $(this).data('hostname');
+        $('#host_name').val(hostname);
+        $('.delete-custom-domain').trigger('click');
+        return false;
       });
 
       $('.delete-custom-domain').click(function() {
