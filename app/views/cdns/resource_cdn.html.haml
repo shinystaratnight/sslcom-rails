@@ -11,6 +11,7 @@
 -files = @results[:files]
 -locations = @results[:locations]
 -if @results[:resource]
+  -is_ssl_req = @results[:resource]['is_ssl_req']
   -domain_list = @results[:resource]['custom_domains']
   -origin = @results[:resource]['origin']
   -hostname = @results[:resource]['alias']
@@ -175,15 +176,24 @@
                         SSL valid to
                         =DateTime.parse(domain['valid_to']['date']).strftime('%d/%m/%Y')
                       -else
-                        -if domain['is_ssl_req']
+                        -#-if domain['is_ssl_req']
+                        -#  Pending
+                        -#-else
+                        -#  N/A
+                        -if is_ssl_req
                           Pending
                         -else
                           N/A
                     %td
-                      -if domain['valid_to'] || domain['is_ssl_req']
-                        =link_to 'Delete SSL', nil, :class => 'custom-domain-delete-link', 'data-hostname' => domain['hostname']
+                      -#-if domain['valid_to'] || domain['is_ssl_req']
+                      -#  =link_to 'Delete', nil, :class => 'custom-domain-delete-link', 'data-hostname' => domain['hostname']
+                      -#-else
+                      -#  =link_to 'Edit SSL', nil, :class => 'custom-domain-modal-link', 'data-toggle' => 'modal', 'data-target' => '#custom-domain-modal', 'data-hostname' => domain['hostname']
+                      -if is_ssl_req
+                        =link_to 'Delete', nil, :class => 'custom-domain-delete-link', 'data-hostname' => domain['hostname']
                       -else
                         =link_to 'Edit SSL', nil, :class => 'custom-domain-modal-link', 'data-toggle' => 'modal', 'data-target' => '#custom-domain-modal', 'data-hostname' => domain['hostname']
+
               -else
                 %tr
                   %td(colspan="4")

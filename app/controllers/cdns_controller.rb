@@ -185,10 +185,17 @@ class CdnsController < ApplicationController
         @response = HTTParty.get('https://reseller.cdnify.com/api/v1/resources/' + resource_id,
                                  basic_auth: {username: cdn.api_key, password: 'x'})
         @results[:resource] = @response.parsed_response['resources'][0] if @response.parsed_response
+        @results[:resource]['is_ssl_req'] = false
+
         if @results[:resource]['custom_domains']
           @results[:resource]['custom_domains'].each do |custom_domain|
+
             tmp = current_user.ssl_account.cdns.where(resource_id: resource_id, custom_domain_name: custom_domain['hostname']).first
-            custom_domain['is_ssl_req'] = tmp.is_ssl_req
+            # custom_domain['is_ssl_req'] = tmp.is_ssl_req
+            if tmp.is_ssl_req
+              @results[:resource]['is_ssl_req'] = true
+              break
+            end
           end
         end
 
@@ -290,7 +297,7 @@ class CdnsController < ApplicationController
       ac = current_user.ssl_account.api_credential
       body_params['account_key'] = ac.account_key
       body_params['secret_key'] = ac.secret_key
-      body_params['is_test'] = is_sandbox? ? 'Y' : 'N'
+      body_params['is_test'] = true if is_sandbox?
 
       if cdn
         co = cdn.certificate_order
