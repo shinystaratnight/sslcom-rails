@@ -501,9 +501,11 @@ class CertificateOrder < ActiveRecord::Base
           )
           all
         end
-      if signed_certificates_list.any?
-        cur_domains = signed_certificates_list.compact.reject{ |sc| sc.empty? }
+      cur_domains = if signed_certificates_list.any?
+        signed_certificates_list.compact.reject{ |sc| sc.empty? }
           .flatten.map(&:subject_alternative_names)
+      else
+        []
       end
     end
     cur_domains
