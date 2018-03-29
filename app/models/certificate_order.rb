@@ -488,7 +488,7 @@ class CertificateOrder < ActiveRecord::Base
       cur_domains = certificate_contents
       end_target  = certificate_contents.find_by(id: cc_id) unless cc_id.nil?
       if end_target
-        cur_domains.where(
+        cur_domains = cur_domains.where(
           created_at: certificate_contents.first.created_at...end_target.created_at
         )
       end
