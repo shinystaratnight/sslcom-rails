@@ -21,6 +21,8 @@ class CdnsController < ApplicationController
   # # GET /cdns
   # # GET /cdns.json
   def index
+    # SslAccount.test
+
     @results = {}
     # @results[:is_admin] = current_user.is_system_admins?
 
@@ -192,7 +194,7 @@ class CdnsController < ApplicationController
 
             tmp = current_user.ssl_account.cdns.where(resource_id: resource_id, custom_domain_name: custom_domain['hostname']).first
             # custom_domain['is_ssl_req'] = tmp.is_ssl_req
-            if tmp.is_ssl_req
+            if tmp && tmp.is_ssl_req
               @results[:resource]['is_ssl_req'] = true
               break
             end
@@ -465,7 +467,7 @@ class CdnsController < ApplicationController
   end
 
   def check_cname
-    resource_name = params['resource_name']
+    resource_name = params['resource_name'] + '.a.cdnify.io'
     custom_domain = params['custom_domain']
 
     exist = begin
