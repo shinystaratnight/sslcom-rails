@@ -33,7 +33,7 @@
         %td(class="#{status_class(@cc)}")
           #{certificate_order_status(@cc)}
         %td
-          =@certificate_order.order.created_at.strftime("%b %d, %Y")
+          =@certificate_order.orders.first.created_at.strftime("%b %d, %Y")
         %td(class="#{expires_on_class(@cc)}")
           %span.expires_on=expires_on(@cc)
         %td.ssl_action=action(@certificate_order)
@@ -317,12 +317,13 @@
                                   issued to: #{sc.common_name}
                                 %textarea.selectAll{cols: 30, rows: 10}=sc.decoded
                               -else
+                                -san = sc.subject_alternative_names
                                 %strong parsed certificate
                                 %div
-                                  domains
-                                %textarea.selectAll{cols: 10, rows: 5}=sc.subject_alternative_names ? sc.subject_alternative_names.join("\n") : ""
+                                  =san ? "DOMAINS (#{san.count})" : 'DOMAINS'
+                                %textarea.selectAll{cols: 10, rows: 5}=san ? san.join("\n") : ""
                                 %div
-                                  raw
+                                  DECODED
                                 %textarea.selectAll{cols: 10, rows: 4}=sc.decoded
                   -if current_user.is_admin?
                     %tr
