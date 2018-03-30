@@ -20,8 +20,9 @@
     =link_to "invite", new_managed_user_path({ssl_slug: @ssl_slug})
     another user to complete the validation step.
     =link_to "How do I use this page?", Settings.dv_explanation_link, target: "_blank"
-    If you are getting "failed" under the pre-test column, please refer to
-    =link_to "the failed pre-test article", "https://www.ssl.com/guide/failed-pre-test/", target: "_blank"
+    **If you are getting "failed" under the pre-test column, please refer to the
+    =link_to "'Failed Pre-test?!' article.", "https://www.ssl.com/guide/failed-pre-test/", target: "_blank"
+    **
   -if co.certificate.is_single?
     %h3
       Please generate a new CSR with the correct common name value and submit the new CSR here {Edit button}
