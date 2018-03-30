@@ -303,6 +303,7 @@ SslCom::Application.routes.draw do
       post :register_account, on: :collection
       # post :register_api_key, on: :collection
       post :update_resources, on: :collection
+      get :check_cname, on: :collection
 
       member do
         get :resource_cdn

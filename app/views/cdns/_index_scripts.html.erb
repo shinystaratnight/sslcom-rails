@@ -46,7 +46,51 @@
 
       $('.custom-domain-modal-link').click(function() {
         var hostname = $(this).data('hostname');
-        $('#host_name').val(hostname);
+        var resourcename = $(this).data('resourcename');
+        var ajaxCheckCnameUrl = '<%=check_cname_cdns_path%>';
+
+        $.ajax({
+          url: ajaxCheckCnameUrl,
+          data: {
+            custom_domain: hostname,
+            resource_name: resourcename
+          },
+          type: "GET",
+          success: function(result) {
+            if ($('#content').find('.inner').children().first().hasClass('flash_message')) {
+              $('#content').find('.inner').children().first().remove();
+            }
+
+            if (result == true) {
+              $('#host_name').val(hostname);
+              $('#custom-domain-modal').modal('toggle');
+            } else {
+              var message_wrap_element = $('<div></div>');
+              message_wrap_element.attr('class', 'flash_message error');
+
+              var message_element = $('<span></span>');
+              message_element.html('CNAME for <strong>' + hostname + ' -> ' + resourcename + '.a.cdnify.io</strong> not detected, Autoinstall SSL requires this CNAME');
+              message_wrap_element.append(message_element);
+
+              var btn_element = $('<small></small>');
+              var close_btn_element = $('<div></div>');
+              close_btn_element.attr('class', 'close_flash_message');
+
+              var close_sign_element = $('<span></span>');
+              close_sign_element.append('X');
+
+              close_btn_element.append(close_sign_element);
+              close_btn_element.append('close');
+
+              btn_element.append(close_btn_element);
+              message_wrap_element.append(btn_element);
+
+              message_wrap_element.insertBefore($('#content').find('.inner').children().first());
+            }
+          }
+        });
+
+        return false;
       });
 
       $('.custom-domain-delete-link').click(function() {
@@ -62,6 +106,10 @@
       });
 
       $('.modify-custom-domain').click(function() {
+        $('.modify-custom-domain').attr('disabled', true);
+        $('.cancel-custom-domain').attr('disabled', true);
+        $('.delete-custom-domain').attr('disabled', true);
+
         $('form#custom_domain_modal_form').submit();
       });
 

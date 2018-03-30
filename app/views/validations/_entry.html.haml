@@ -1,6 +1,6 @@
 -@cert_order = co
 -cc = co.certificate_content
--cn = cc.csr.common_name
+-cn = co.certificate.is_code_signing? ? co.registrant.company_name : cc.csr.common_name
 -v = co.validation
 %tr.expanded(class="#{'hidden' if current_page?(:validations) or current_page?(:search_validations)}")
   %td(colspan="6")

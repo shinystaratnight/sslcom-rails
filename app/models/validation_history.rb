@@ -24,7 +24,7 @@ class ValidationHistory < ActiveRecord::Base
     ['application/pdf', 'pdf'], ['image/tiff', 'tif, tiff'],
     ['image/gif', 'gif'], ['image/bmp', 'bmp'],
     ['application/zip', 'zip'],
-    ['application/msword', 'doc'], ['audio/mpeg', 'mp3']]
+    ['application/msword', 'doc'], ['audio/mpeg', 'mp3'], ['text/plain', 'txt, text']]
 
   # validates_attachment_presence :document
 #   validates_attachment_size :document, :less_than => 50.megabytes

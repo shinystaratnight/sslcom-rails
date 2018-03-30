@@ -21,6 +21,8 @@ class CdnsController < ApplicationController
   # # GET /cdns
   # # GET /cdns.json
   def index
+    # SslAccount.test
+
     @results = {}
     # @results[:is_admin] = current_user.is_system_admins?
 
@@ -192,7 +194,7 @@ class CdnsController < ApplicationController
 
             tmp = current_user.ssl_account.cdns.where(resource_id: resource_id, custom_domain_name: custom_domain['hostname']).first
             # custom_domain['is_ssl_req'] = tmp.is_ssl_req
-            if tmp.is_ssl_req
+            if tmp && tmp.is_ssl_req
               @results[:resource]['is_ssl_req'] = true
               break
             end
@@ -462,6 +464,24 @@ class CdnsController < ApplicationController
     session[:selected_tab] = @tab_setting
 
     redirect_to resource_cdn_cdn_path(@ssl_slug, resource_id) and return
+  end
+
+  def check_cname
+    resource_name = params['resource_name'] + '.a.cdnify.io'
+    custom_domain = params['custom_domain']
+
+    exist = begin
+      Timeout.timeout(Surl::TIMEOUT_DURATION) do
+        txt = Resolv::DNS.open do |dns|
+          records = dns.getresources(custom_domain, Resolv::DNS::Resource::IN::CNAME)
+        end
+        resource_name == txt.last.name.to_s
+      end
+    rescue Exception=>e
+      false
+    end
+
+    render :json => exist
   end
 
   def delete_resource

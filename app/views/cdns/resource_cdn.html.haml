@@ -192,7 +192,8 @@
                       -if domain['valid_to'] || is_ssl_req
                         =link_to 'Delete', nil, :class => 'custom-domain-delete-link', 'data-hostname' => domain['hostname']
                       -else
-                        =link_to 'Edit SSL', nil, :class => 'custom-domain-modal-link', 'data-toggle' => 'modal', 'data-target' => '#custom-domain-modal', 'data-hostname' => domain['hostname']
+                        -#=link_to 'Edit SSL', nil, :class => 'custom-domain-modal-link', 'data-toggle' => 'modal', 'data-target' => '#custom-domain-modal', 'data-hostname' => domain['hostname']
+                        =link_to 'Edit SSL', nil, :class => 'custom-domain-modal-link', 'data-hostname' => domain['hostname'], 'data-resourcename' => hostname
 
               -else
                 %tr
