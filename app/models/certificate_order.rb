@@ -488,15 +488,25 @@ class CertificateOrder < ActiveRecord::Base
       cur_domains = certificate_contents
       end_target  = certificate_contents.find_by(id: cc_id) unless cc_id.nil?
       if end_target
-        cur_domains.where(
+        cur_domains = cur_domains.where(
           created_at: certificate_contents.first.created_at...end_target.created_at
         )
       end
     end
     if cur_domains.any?
-      cur_domains = cur_domains.joins(:signed_certificates)
-        .map(&:signed_certificates).compact
-        .reject{ |sc| sc.empty? }.flatten.map(&:subject_alternative_names)
+      signed_certificates_list = cur_domains.joins(:signed_certificates)
+        .inject([]) do |all, certificate_content|
+          all << certificate_content.signed_certificates.where(
+            signed_certificates: { created_at: certificate_contents.first.created_at..(certificate_content.created_at + 5.minutes) }
+          )
+          all
+        end
+      cur_domains = if signed_certificates_list.any?
+        signed_certificates_list.compact.reject{ |sc| sc.empty? }
+          .flatten.map(&:subject_alternative_names)
+      else
+        []
+      end
     end
     cur_domains
   end
