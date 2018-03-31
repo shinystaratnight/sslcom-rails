@@ -89,15 +89,6 @@ class CertificateOrder < ActiveRecord::Base
     joins{certificate_contents.csr}.where{certificate_contents.csr.common_name =~ "%#{term}%"}
   }
 
-  # scope :search_with_csr, lambda {|term, options|
-  #   cids=SignedCertificate.select{csr_id}.where{common_name=~"%#{term}%"}.map(&:csr_id)+
-  #     CaCertificateRequest.select{api_requestable_id}.where{(response=~"%#{term}%") & (api_requestable_type == "Csr")}.map(&:api_requestable_id)
-  #   {:conditions => ["certificate_contents.domains #{SQL_LIKE} ? OR csrs.common_name #{SQL_LIKE} ? #{"OR csrs.id IN (#{cids.join(",")})" unless
-  #     cids.empty?} OR `certificate_orders`.`ref` #{SQL_LIKE} ? OR `certificate_orders`.`external_order_number` #{SQL_LIKE} ? OR `certificate_orders`.`notes` #{SQL_LIKE} ?",
-  #     '%'+term+'%', '%'+term+'%', '%'+term+'%', '%'+term+'%', '%'+term+'%'], :include => {:certificate_contents=>:csr}, select: "distinct certificate_orders.*"}.
-  #     merge(options)
-  # }
-  #
   scope :search_with_csr, lambda {|term, options={}|
     term ||= ""
     term = term.strip.split(/\s(?=(?:[^']|'[^']*')*$)/)
@@ -105,7 +96,7 @@ class CertificateOrder < ActiveRecord::Base
                subject_alternative_names: nil, locality: nil, country:nil, signature: nil, fingerprint: nil, strength: nil,
                expires_at: nil, created_at: nil, login: nil, email: nil, account_number: nil, product: nil,
                decoded: nil, is_test: nil, order_by_csr: nil, physical_tokens: nil, issued_at: nil, notes: nil,
-               ref: nil, external_order_number: nil, status: nil}
+               ref: nil, external_order_number: nil, status: nil, duration: nil}
     filters.each{|fn, fv|
       term.delete_if {|s|s =~ Regexp.new(fn.to_s+"\\:\\'?([^']*)\\'?"); filters[fn] ||= $1; $1}
     }
@@ -167,6 +158,10 @@ class CertificateOrder < ActiveRecord::Base
     %w(product).each do |field|
       query=filters[field.to_sym]
       result = result.filter_by(query) if query
+    end
+    %w(duration).each do |field|
+      query=filters[field.to_sym]
+      result = result.filter_by_duration(query) if query
     end
     %w(ref).each do |field|
       query=filters[field.to_sym]
@@ -250,6 +245,10 @@ class CertificateOrder < ActiveRecord::Base
   scope :filter_by, lambda { |term|
     joins{sub_order_items.product_variant_item.product_variant_group.
         variantable(Certificate)}.where{certificates.product >> term.split(',')}
+  }
+
+  scope :filter_by_duration, lambda { |term|
+    where{certificate_contents.duration >> term.split(',')}
   }
 
   scope :unvalidated, ->{where{(is_expired==false) &
