@@ -23,6 +23,13 @@ class Reminder < ActionMailer::Base
     mail(:to => @to, :subject => subject)
   end
 
+  def digest_notify(d)
+    preparing_recipients(d)
+    @e_certs = d[1].uniq
+    subject = "SSL.com reminder - ssl certificate expiring digest"
+    mail(:to => @to, :subject => subject)
+  end
+
   def past_expired_digest_notice(d, interval)
     @first, @last = interval.first.to_i, interval.last.to_i
     preparing_recipients(d)

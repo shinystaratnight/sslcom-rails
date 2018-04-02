@@ -150,6 +150,23 @@ class SslAccount < ActiveRecord::Base
       map(&:csr).flatten.compact.map(&:signed_certificate)
   end
 
+  def unique_first_signed_certificates
+    ([]).tap do |result|
+      tmp_certs={}
+      signed_certificates.compact.each do |sc|
+        if tmp_certs[sc.common_name]
+          tmp_certs[sc.common_name] << sc
+        else
+          tmp_certs.merge! sc.common_name => [sc]
+        end
+      end
+      tmp_certs
+      tmp_certs.each do |k,v|
+        result << tmp_certs[k].min{|a,b|a.created_at <=> b.created_at}
+      end
+    end
+  end
+
   def unique_signed_certificates
     ([]).tap do |result|
       tmp_certs={}
@@ -335,6 +352,38 @@ class SslAccount < ActiveRecord::Base
     ssl_slug || acct_number
   end
 
+  def expiring_certificates_for_old
+    results=[]
+
+    unique_first_signed_certificates.compact.each do |sc|
+      pd = (sc.expiration_date - sc.effective_date) / 1.day
+      ecd = sc.csr.certificate_content.duration
+
+      if pd && ecd
+        if (ecd - pd) > 825
+          results << Struct::Reminding.new(2, sc)
+        elsif (ecd - pd) > 365
+          results << Struct::Reminding.new(1, sc)
+        end
+      end
+    end
+
+    results
+
+    # unrenewed_signed_certificates.compact.each do |sc|
+    #   scd = sc.created_at
+    #   sed = sc.expiration_date
+    #   unless sed.blank?
+    #     if (((scd + 3.years) < sed) &&
+    #         (Time.now < sed) &&
+    #         (scd > 3.years.from_now) &&
+    #         (scd < (Time.now - 2.years - 10.months)))
+    #       results << Struct::Expiring.new(sc)
+    #     end
+    #   end
+    # end
+  end
+
   def expiring_certificates
     results=[]
 
@@ -417,6 +466,64 @@ class SslAccount < ActiveRecord::Base
       self.send_and_create_reminders(e_certs, digest, true, intervals)
     end
     logger.info "exiting ssl reminder app"
+  end
+
+  # def self.test
+  #   SslAccount.unscoped.order('created_at').includes(
+  #       [:stored_preferences, {:certificate_orders =>
+  #                                  [:orders, :certificate_contents=>
+  #                                      {:csr=>:signed_certificates}]}]).find_in_batches(batch_size: 250) do |batch_list|
+  #     logger.info "Filtering out expiring certs"
+  #     e_certs = batch_list.map{|batch| batch.expiring_certificates_for_old}.reject{|e|e.empty?}.flatten
+  #     digest = {}
+  #     SslAccount.send_notify(e_certs, digest)
+  #   end
+  # end
+
+  def self.send_notify(expiring_certs, digest)
+    expiring_certs.each do |ec|
+      cert = ec.cert
+      contacts=[cert.csr.certificate_content.technical_contact,cert.csr.certificate_content.administrative_contact]
+      contacts.uniq.compact.each do |contact|
+        logger.info "adding contact to digest"
+        unless contact.email.blank? ||
+            SentReminder.exists?(trigger_value: ec.year,
+                                 expires_at: cert.expiration_date,
+                                 subject: cert.common_name,
+                                 recipients: contact.email)
+          dk = contact.to_digest_key
+          if digest[dk].blank?
+            digest.merge!({dk => [ec]})
+          else
+            digest[dk] << ec
+          end
+        end
+      end
+    end
+    unless digest.empty?
+      digest.each do |d|
+        u_certs = d[1].map(&:cert).map(&:common_name).uniq.compact
+        begin
+          unless u_certs.empty?
+            logger.info "Sending notification"
+            body = Reminder.digest_notify(d)
+            body.deliver unless body.to.empty?
+          end
+          d[1].each do |ec|
+            logger.info "create SentReminder"
+            SentReminder.create(trigger_value: ec.year,
+                                expires_at: ec.cert.expiration_date,
+                                signed_certificate_id: ec.cert.id,
+                                subject: ec.cert.common_name,
+                                body: body,
+                                recipients: d[0].split(",").last)
+          end
+        rescue Exception=>e
+          logger.error e.backtrace.inspect
+          raise e
+        end
+      end
+    end
   end
 
   def self.send_and_create_reminders(expired_certs, digest, past=false,
