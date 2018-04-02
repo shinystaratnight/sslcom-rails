@@ -17,6 +17,16 @@ $(function($) {
     hideAllForms();
   });
   
+  $('.btn-edit-invoice-item').on('click', function(e) {
+    e.preventDefault();
+    $('#mi-update-item-desc-'+ $(this).data('order-ref')).show('slow');
+  });
+  
+  $('.btn-cancel-invoice-item').on('click', function(e) {
+    e.preventDefault();
+    $('#mi-update-item-desc-'+ $(this).data('order-ref')).hide();
+  });
+
   $('#invoice-container-credit').on('click', '#btn-inv-update-cancel', function(e) {
     e.preventDefault();
     hideAllForms();

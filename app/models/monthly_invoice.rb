@@ -160,9 +160,14 @@ class MonthlyInvoice < Invoice
     orders.inject({}) do |final, o|
       co      = o.certificate_orders.first
       domains = o.get_reprocess_domains
+      desc    = if o.invoice_description.blank?
+        "Additional #{domains[:non_wildcard]} non-wildcard and #{domains[:wildcard]} wildcard domains for certificate order #{co.ref}."
+      else
+        o.invoice_description
+      end  
       
       final[o.reference_number] = {
-        description:  "Additional #{domains[:non_wildcard]} non-wildcard and #{domains[:wildcard]} wildcard domains for certificate order #{co.ref}.",
+        description:  desc, 
         item:         co.respond_to?(:description_with_tier) ? co.description_with_tier : co.certificate.description['certificate_type'],
         new_domains:  domains[:new_domains_count],
         wildcard:     domains[:wildcard],

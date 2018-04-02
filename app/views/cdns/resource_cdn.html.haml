@@ -144,7 +144,7 @@
                 .field-cont
                   =text_field_tag :custom_domain
                   .note
-                    autoinstalled SSL/TLS available after host name is created
+                    Be sure Host Name points to Resource Name in CNAME
               -#%div.reg-resource.clearfix
               -#  .field-label Certificate:
               -#  .field-cont
@@ -156,7 +156,7 @@
               =submit_tag 'Create', :id=>'btn_add_custom_domain'
         %hr
         %div
-          .sub-title Custom Domain List
+          .sub-title Custom Domain List with Optional SSL/TLS
           .sub-cont#resource-custom-domain-list
             %table(cellspacing="0")
               %tr.heading_row
@@ -189,7 +189,7 @@
                       -#  =link_to 'Delete', nil, :class => 'custom-domain-delete-link', 'data-hostname' => domain['hostname']
                       -#-else
                       -#  =link_to 'Edit SSL', nil, :class => 'custom-domain-modal-link', 'data-toggle' => 'modal', 'data-target' => '#custom-domain-modal', 'data-hostname' => domain['hostname']
-                      -if is_ssl_req
+                      -if domain['valid_to'] || is_ssl_req
                         =link_to 'Delete', nil, :class => 'custom-domain-delete-link', 'data-hostname' => domain['hostname']
                       -else
                         -#=link_to 'Edit SSL', nil, :class => 'custom-domain-modal-link', 'data-toggle' => 'modal', 'data-target' => '#custom-domain-modal', 'data-hostname' => domain['hostname']
@@ -292,7 +292,7 @@
               %div.container-fluid
                 %div.row
                   %div.col-4
-                    =button_tag 'Delete SSL', 'class ' => 'delete-custom-domain', 'type' => 'button'
+                    =button_tag 'Delete Host Name', 'class ' => 'delete-custom-domain', 'type' => 'button'
                   %div.col-8
                     =button_tag 'Save', 'class' => 'modify-custom-domain float-right', 'type' => 'button', 'disabled' => 'disabled'
-                    =button_tag 'Close', 'class' => 'cancel-custom-domain float-right mr-1', 'data-dismiss' => 'modal', 'type' => 'button'
+                    =button_tag 'Cancel', 'class' => 'float-right mr-1', 'data-dismiss' => 'modal', 'type' => 'button'

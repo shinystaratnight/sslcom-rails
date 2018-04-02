@@ -71,9 +71,8 @@
           =link_to "Teams", teams_user_path(current_user)
         %li(id="#{current_page?(users_url) ? 't-intro' : 'manage_certificates'}")
           =link_to "Users", users_path(slug_params)
-        -if is_sandbox? or current_user.email =~ /leogrove.com/
-          %li(id="#{current_page?(cdns_url) ? 't-intro' : 'manage_cdns'}")
-            =link_to "CDN", cdns_path(slug_params)
+        %li(id="#{current_page?(cdns_url) ? 't-intro' : 'manage_cdns'}")
+          =link_to "CDN", cdns_path(slug_params)
     .inner
       =render :partial => "shared/messages"
       =yield
