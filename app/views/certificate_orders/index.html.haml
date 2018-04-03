@@ -313,8 +313,6 @@
       %th(scope="col") Expires
       %th(scope="col") Action
     -@certificate_orders.each do |co|
-      -order=Order.unscoped{co.orders.first}
-      -next if order.blank?
       -cc = co.certificate_content
       -cn = (co.is_unused_credit? || cc.csr.blank?) ? nil : cc.csr.common_name
       %tr(alt="#{co.ref}")
@@ -326,7 +324,7 @@
         %td.status_message(class="#{status_class(cc)}")
           #{certificate_order_status(cc)}
         %td
-          =order.created_at.strftime("%b %d, %Y")
+          =co.created_at.strftime("%b %d, %Y")
         %td(class="#{expires_on_class(cc)}")
           #{expires_on(cc)}
         %td.ssl_action

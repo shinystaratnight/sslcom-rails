@@ -610,7 +610,6 @@ jQuery(function($) {
           }, delay);
         } else {
           // Loading domains initially.
-          //var domain_str = $('#cert_names_ids_str').val();
           var domain_str = $('#ori_domain_names_str').val();
           var domains = [];
           if (domain_str.length > 0) {
@@ -618,241 +617,225 @@ jQuery(function($) {
             var ajaxDomainUrl = '<%=get_asynch_domains_certificate_order_validation_path(@ssl_slug, @certificate_order)%>';
 
             <%
-              # mdc_validation = ComodoApi.mdc_status(@certificate_order)
-              # ds = mdc_validation.domain_status
-              # byebug
-              # all_validated = true
-              # ds.each {|key, value|
-              #   if value['status'].downcase != 'validated'
-              #     all_validated = false
-              #     break
-              #   end
-              # }
               is_ucc = @certificate_order.certificate.is_ucc?
               is_evucc = @certificate_order.certificate.is_evucc?
               is_premium_ssl = @certificate_order.certificate.is_premium_ssl?
               is_wildcard = @certificate_order.certificate.is_wildcard?
             %>
 
-            var all_validated = false;
-            var count_validated = 0;
-            var count_domain = 0;
             var total = domains.length;
+            var validated_domains = '<%=@validated_domains%>'.split(',');
+            var domain_status = JSON.parse('<%= raw @ds ? @ds.to_json : {}%>');
+
+            if (validated_domains.length > 0 && validated_domains[0] != '') {
+              $.each(validated_domains, function(idx, value) {
+                var trElement = $('<tr></tr>');
+                trElement.attr('class', 'certificate_name validated');
+                trElement.attr('id', 'certificate_name__' + value);
+
+                $('.domain_list').append(trElement);
+
+                var tdElement = $('<td></td>');
+                var cnsElement = $('<input></input>');
+                cnsElement.attr('type', 'hidden');
+                cnsElement.attr('name', 'cert_names[' + value + ']');
+                cnsElement.attr('value', value);
+                tdElement.append(cnsElement);
+                trElement.append(tdElement);
+
+                tdElement = $('<td></td>');
+                tdElement.attr('class', 'domain_name ' + value);
+                tdElement.append(value);
+                trElement.append(tdElement);
+
+                tdElement = $('<td></td>');
+                tdElement.append('Validation satisfied for ' + value);
+                trElement.append(tdElement);
+
+                <%if Settings.enable_caa%>
+                  tdElement = $('<td></td>');
+                  tdElement.append('passed');
+                  tdElement.attr('class', 'caa_check ' + value);
+                  trElement.append(tdElement);
+                <%end%>
+
+                tdElement = $('<td></td>');
+                tdElement.append('n/a');
+                tdElement.attr('class', 'pretest ' + value);
+                trElement.append(tdElement);
+
+                tdElement = $('<td></td>');
+                tdElement.append(domain_status[value]['method'].toLowerCase().replace('%28', '').replace('%29', ''));
+                tdElement.attr('class', 'attempt ' + value);
+                trElement.append(tdElement);
+
+                tdElement = $('<td></td>');
+                tdElement.append(domain_status[value]['attempted_on']);
+                tdElement.attr('class', 'attempted_on ' + value);
+                trElement.append(tdElement);
+
+                var tdElement = $('<td></td>');
+                tdElement.append('validated');
+                tdElement.attr('class', 'status ' + value);
+                trElement.append(tdElement);
+              });
+            }
 
             $.each(domains, function(idx, value) {
-              $.ajax({
-                url: ajaxDomainUrl,
-                data: {
-                  domain_name: value,
-                  domain_count: total,
-                  domain_status: JSON.parse('<%= raw @ds ? @ds.to_json : {}%>'),
-                  is_ucc: '<%=is_ucc%>',
-                  count_validated: count_validated,
-                  count_domain: count_domain,
-                },
-                type: "POST",
-                success: function(result) {
-                  // TODO: Loading Domain.
-                  Object.keys(result).map(function(key) {
-                    if (key == 'tr_info') {
-                      if (result[key]['count_domain']) {
-                        count_domain = result[key]['count_domain'];
-                      }
-                      if (result[key]['count_validated']) {
-                        count_validated = result[key]['count_validated'];
-                      }
-                      if (result[key]['all_validated']) {
-                        all_validated = result[key]['all_validated'];
-                      }
+              if ($.inArray(value, validated_domains) == -1) {
+                $.ajax({
+                  url: ajaxDomainUrl,
+                  data: {
+                    domain_name: value,
+                    domain_count: total,
+                    domain_status: domain_status,
+                    is_ucc: '<%=is_ucc%>',
+                  },
+                  type: "POST",
+                  success: function(result) {
+                    // TODO: Loading Domain.
+                    Object.keys(result).map(function(key) {
+                      if (key == 'tr_info') {
+                        var trElement = $('<tr></tr>');
+                        if (!$.isEmptyObject(result[key]['options'])) {
+                          trElement.attr('class', 'certificate_name');
+                        } else {
+                          trElement.attr('class', 'certificate_name validated');
+                        }
+                        trElement.attr('id', 'certificate_name__' + value);
 
-                      var trElement = $('<tr></tr>');
-                      if (!$.isEmptyObject(result[key]['options'])) {
-                        trElement.attr('class', 'certificate_name');
-                      } else {
-                        trElement.attr('class', 'certificate_name validated');
-                      }
-                      trElement.attr('id', 'certificate_name__' + value);
+                        $('.domain_list').append(trElement);
 
-                      $('.domain_list').append(trElement);
+                        var tdElement = $('<td></td>');
 
-                      tdElement = $('<td></td>');
+                        if (!$.isEmptyObject(result[key]['options'])) {
+                          var checkboxElement = $('<input></input>');
+                          checkboxElement.attr('class', 'check_box');
+                          checkboxElement.attr('id', value);
+                          checkboxElement.attr('type', 'checkbox');
+                          tdElement.append(checkboxElement);
 
-                      if (!$.isEmptyObject(result[key]['options'])) {
-                        var checkboxElement = $('<input></input>');
-                        checkboxElement.attr('class', 'check_box');
-                        /*checkboxElement.attr('id', result[key]['checkbox_id']);
-                         checkboxElement.attr('alt', result[key]['domain_name']);*/
-                        checkboxElement.attr('id', value);
-                        checkboxElement.attr('type', 'checkbox');
-                        tdElement.append(checkboxElement);
+                          <%if is_ucc || is_evucc || is_premium_ssl%>
+                            var btnElement = $('<input></input>');
+                            btnElement.attr('class', 'btn_remove_domain');
+                            btnElement.attr('type', 'button');
+                            btnElement.attr('value', 'Remove');
+                            tdElement.append(btnElement);
+                          <%end%>
 
-                        <%if is_ucc || is_evucc || is_premium_ssl%>
-                          var btnElement = $('<input></input>');
-                          btnElement.attr('class', 'btn_remove_domain');
-                          btnElement.attr('type', 'button');
-                          btnElement.attr('value', 'Remove');
-                          tdElement.append(btnElement);
-                        <%end%>
+                          var editBtnElement = $('<input></input>');
+                          editBtnElement.attr('class', 'btn_edit_domain');
+                          editBtnElement.attr('type', 'button');
+                          editBtnElement.attr('value', 'Edit');
+                          tdElement.append(editBtnElement);
+                        }
+                        var cnsElement = $('<input></input>');
+                        cnsElement.attr('type', 'hidden');
+                        cnsElement.attr('name', 'cert_names[' + value + ']');
+                        cnsElement.attr('value', value);
+                        tdElement.append(cnsElement);
+                        trElement.append(tdElement);
 
-                        var editBtnElement = $('<input></input>');
-                        editBtnElement.attr('class', 'btn_edit_domain');
-                        editBtnElement.attr('type', 'button');
-                        editBtnElement.attr('value', 'Edit');
-                        tdElement.append(editBtnElement);
-                      }
-                      var cnsElement = $('<input></input>');
-                      cnsElement.attr('type', 'hidden');
-                      /*cnsElement.attr('name', 'cert_names[' + result[key]['checkbox_id'] + ']');*/
-                      /*cnsElement.attr('value', result[key]['domain_name']);*/
-                      cnsElement.attr('name', 'cert_names[' + value + ']');
-                      cnsElement.attr('value', value);
-                      tdElement.append(cnsElement);
-                      trElement.append(tdElement);
+                        tdElement = $('<td></td>');
+                        tdElement.attr('class', 'domain_name ' + value);
+                        tdElement.append(value);
+                        trElement.append(tdElement);
 
-                      tdElement = $('<td></td>');
-                      /*tdElement.attr('class', 'domain_name ' + result[key]['domain_name']);*/
-                      tdElement.attr('class', 'domain_name ' + value);
-                      /*tdElement.append(result[key]['domain_name']);*/
-                      tdElement.append(value);
-                      trElement.append(tdElement);
+                        tdElement = $('<td></td>');
+                        if ($.isEmptyObject(result[key]['options'])) {
+                          tdElement.append('Validation satisfied for ' + value);
+                        } else {
+                          var sltElement = $('<select></select>');
+                          sltElement.attr('name', 'domains[' + value + '][dcv]');
+                          sltElement.attr('id', 'domains_' + value + '_dcv');
+                          sltElement.attr('alt', value);
+                          <%if Settings.enable_caa%>
+                            if (result[key]['caa_check'] == 'failed') {
+                              sltElement.attr('disabled', true);
+                            }
+                          <%end%>
 
-                      tdElement = $('<td></td>');
-                      if ($.isEmptyObject(result[key]['options'])) {
-                        /*tdElement.append('Validation satisfied for ' + result[key]['domain_name']);*/
-                        tdElement.append('Validation satisfied for ' + value);
+                          var optElement = $('<option></option>');
+                          optElement.attr('value', '');
+                          optElement.append('Please select a validation method');
+                          sltElement.append(optElement);
 
-                        /*var hiddenSltElement = $('<input></input>');
-                         hiddenSltElement.attr('type', 'hidden');
-                         hiddenSltElement.attr('name', 'domains[' + value + '][dcv]');
-                         hiddenSltElement.attr('value', result[key]['slt_option']);
+                          Object.keys(result[key]['options']).map(function(optGroupKey) {
+                            var optGroupElement = $('<optgroup></optgroup>');
+                            optGroupElement.attr('label', optGroupKey);
 
-                         tdElement.append(hiddenSltElement);*/
-                      } else {
-                        var sltElement = $('<select></select>');
-                        /*sltElement.attr('name', 'domains[' + result[key]['domain_name'] + '][dcv]');
-                         sltElement.attr('id', 'domains_' + result[key]['domain_name'] + '_dcv');
-                         sltElement.attr('alt', result[key]['domain_name']);*/
-                        sltElement.attr('name', 'domains[' + value + '][dcv]');
-                        sltElement.attr('id', 'domains_' + value + '_dcv');
-                        sltElement.attr('alt', value);
-                        <%if Settings.enable_caa%>
-                          if (result[key]['caa_check'] == 'failed') {
-                            sltElement.attr('disabled', true);
-                          }
-                        <%end%>
+                            Object.keys(result[key]['options'][optGroupKey]).map(function(optKey) {
+                              var optElement = $('<option></option>');
+                              optElement.attr('value', optKey);
+                              optElement.append(result[key]['options'][optGroupKey][optKey]);
+                              optGroupElement.append(optElement);
+                            });
 
-                        var optElement = $('<option></option>');
-                        optElement.attr('value', '');
-                        optElement.append('Please select a validation method');
-                        sltElement.append(optElement);
-
-                        Object.keys(result[key]['options']).map(function(optGroupKey) {
-                          var optGroupElement = $('<optgroup></optgroup>');
-                          optGroupElement.attr('label', optGroupKey);
-
-                          Object.keys(result[key]['options'][optGroupKey]).map(function(optKey) {
-                            var optElement = $('<option></option>');
-                            optElement.attr('value', optKey);
-                            optElement.append(result[key]['options'][optGroupKey][optKey]);
-                            optGroupElement.append(optElement);
+                            sltElement.append(optGroupElement);
                           });
 
-                          sltElement.append(optGroupElement);
-                        });
-
-                        tdElement.append(sltElement);
-                      }
-                      trElement.append(tdElement);
-                      /*$('[name="domains[' + result[key]['domain_name'] + '][dcv]"]').val(result[key]['slt_option']);*/
-                      $('[name="domains[' + value + '][dcv]"]').val(result[key]['slt_option']);
-
-                      <%if Settings.enable_caa%>
-                        tdElement = $('<td></td>');
-                        tdElement.append(result[key]['caa_check']);
-                        tdElement.attr('class', 'caa_check ' + value);
+                          tdElement.append(sltElement);
+                        }
                         trElement.append(tdElement);
-                      <%end%>
+                        $('[name="domains[' + value + '][dcv]"]').val(result[key]['slt_option']);
 
-                      tdElement = $('<td></td>');
-                      tdElement.append(result[key]['pretest']);
-                      /*tdElement.attr('class', 'pretest ' + result[key]['domain_name']);*/
-                      tdElement.attr('class', 'pretest ' + value);
-                      trElement.append(tdElement);
+                        <%if Settings.enable_caa%>
+                          tdElement = $('<td></td>');
+                          tdElement.append(result[key]['caa_check']);
+                          tdElement.attr('class', 'caa_check ' + value);
+                          trElement.append(tdElement);
+                        <%end%>
 
-                      tdElement = $('<td></td>');
-                      tdElement.append(result[key]['attempt']);
-                      /*tdElement.attr('class', 'attempt ' + result[key]['domain_name']);*/
-                      tdElement.attr('class', 'attempt ' + value);
-                      trElement.append(tdElement);
+                        tdElement = $('<td></td>');
+                        tdElement.append(result[key]['pretest']);
+                        tdElement.attr('class', 'pretest ' + value);
+                        trElement.append(tdElement);
 
-                      tdElement = $('<td></td>');
-                      tdElement.append(result[key]['attempted_on']);
-                      /*tdElement.attr('class', 'attempted_on ' + result[key]['domain_name']);*/
-                      tdElement.attr('class', 'attempted_on ' + value);
-                      trElement.append(tdElement);
+                        tdElement = $('<td></td>');
+                        tdElement.append(result[key]['attempt']);
+                        tdElement.attr('class', 'attempt ' + value);
+                        trElement.append(tdElement);
 
-                      var tdElement = $('<td></td>');
-                      tdElement.append(result[key]['status']);
-                      /*tdElement.attr('class', 'status ' + result[key]['domain_name']);*/
-                      tdElement.attr('class', 'status ' + value);
-                      trElement.append(tdElement);
+                        tdElement = $('<td></td>');
+                        tdElement.append(result[key]['attempted_on']);
+                        tdElement.attr('class', 'attempted_on ' + value);
+                        trElement.append(tdElement);
 
-                    } else if (key == 'tr_instruction' && !result[key]) {
-                      var trElement = $('<tr></tr>');
-                      $('.domain_list').append(trElement);
+                        var tdElement = $('<td></td>');
+                        tdElement.append(result[key]['status']);
+                        tdElement.attr('class', 'status ' + value);
+                        trElement.append(tdElement);
 
-                      tdElement = $('<td></td>');
-                      trElement.append(tdElement);
-                      tdElement = $('<td></td>');
-                      trElement.append(tdElement);
+                      } else if (key == 'tr_instruction' && !result[key]) {
+                        var trElement = $('<tr></tr>');
+                        $('.domain_list').append(trElement);
 
-                      var tdElement = $('<td></td>');
-                      tdElement.attr('colspan', 5);
-                      tdElement.append('Instructions: ');
+                        tdElement = $('<td></td>');
+                        trElement.append(tdElement);
+                        tdElement = $('<td></td>');
+                        trElement.append(tdElement);
 
-                      var spanElement = $('<span></span>');
-                      /*spanElement.attr('alt', result[key]['instruction']);*/
-                      spanElement.attr('alt', 'domains[' + value + '][dcv]');
-                      spanElement.append('Please select a validation method');
-                      tdElement.append(spanElement);
-                      trElement.append(tdElement);
+                        var tdElement = $('<td></td>');
+                        tdElement.attr('colspan', 5);
+                        tdElement.append('Instructions: ');
 
-                    } /*else if (key == 'caa_test_failed') {
-                      var trElement = $('<tr></tr>');
-                      trElement.attr('class', 'certificate_name');
-                      trElement.attr('id', 'certificate_name_' + value);
+                        var spanElement = $('<span></span>');
+                        spanElement.attr('alt', 'domains[' + value + '][dcv]');
+                        spanElement.append('Please select a validation method');
+                        tdElement.append(spanElement);
+                        trElement.append(tdElement);
+                      }
+                    });
 
-                      $('.domain_list').append(trElement);
+                    if (idx == (total - 1)) {
+                      $('.domains_loader_wrap').hide();
+                      $('#upload_validations').show();
+                    }
 
-                      tdElement = $('<td></td>');
-                      var checkboxElement = $('<input></input>');
-                      checkboxElement.attr('class', 'check_box');
-                      /!*checkboxElement.attr('id', result[key]['checkbox_id']);*!/
-                      checkboxElement.attr('id', value);
-                      checkboxElement.attr('type', 'checkbox');
-                      tdElement.append(checkboxElement);
-                      trElement.append(tdElement);
-
-                      var tdElement = $('<td></td>');
-                      /!*tdElement.append(result[key]['domain_name']);*!/
-                      tdElement.append(value);
-                      trElement.append(tdElement);
-
-                      tdElement = $('<td></td>');
-                      tdElement.attr('colspan', 5);
-                      tdElement.append('CAA Test Failed!');
-                      trElement.append(tdElement);
-                    }*/
-                  });
-
-                  if (idx === (total - 1) /*&& !all_validated*/) {
-                    $('.domains_loader_wrap').hide();
-                    $('#upload_validations').show();
+                    $('select[id^=domains]').last().change();
                   }
-
-                  $('select[id^=domains]').last().change();
-                }
-              });
+                });
+              }
             });
           } else {
             $('.domains_loader_wrap').hide();

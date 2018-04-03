@@ -1,32 +1,22 @@
-Dear <%=@name%>
+Hello,
 
-You are receiving this courtesy email because you have ordered or purchased your certificate(s) from SSL.com.
+Thank you for your multi-year order from SSL.com. As you may be aware, the original certificate for your order is getting close to expiration. This is true even though your order still has 1 or 2 years of coverage.
 
-This is a reminder that the SSL.com certificate(s) for the domains named below have expired or are expiring:
+A new certificate will be issued for the remaining duration of the order so that you can continue to benefit from multi-year discounting while remaining compliant with the CA/Browser Forum requirements.
 
-<%@e_certs.map(&:cert).sort{|a,b|b.expiration_date<=>a.expiration_date}.uniq(&:common_name).each_with_index do |cert,i| -%>
-  <%
-    days_expired=cert.expiration_date.strftime('%j').to_i
-    days_today=Date.today.strftime('%j').to_i
-    days = days_today-days_expired
-    if Time.now < cert.expiration_date -%>
-    <%=(i+=1).to_s+") "+cert.common_name%> expires in <%=time_ago_in_words(cert.expiration_date)%> on <%=cert.expiration_date.strftime("%b %d, %Y")%> (renew here: https://www.ssl.com/certificate_orders/<%=cert.certificate_order.ref%>/renew - ref # <%=cert.certificate_order.ref%>)
-  <%else-%>
-    <%=(i+=1).to_s+") "+cert.common_name%> expired <%=time_ago_in_words(cert.expiration_date) %> ago on <%=cert.expiration_date.strftime("%b %d, %Y")%> (renew here: https://www.ssl.com/certificate_orders/<%=cert.certificate_order.ref%>/renew - ref # <%=cert.certificate_order.ref%>)
-  <%end -%>
-<%end -%>
+This new certificate will not affect your currently installed server certificate. The new certificate is being issued at no additional cost to you.
 
-When renewing, any remaining time from your expiring SSL/TLS certificate, up to 90 days, will be added to your renewal certificate so that you do not lose any SSL/TLS coverage.
+However, you will need to replace the original certificate prior to it's expiration by installing the newly issued certificate. Please login to your account and complete the certificate re-issuance by using one of the certificate links below.
 
-If you need to reset your username or password, please visit https://www.ssl.com/password_resets/new
+Certificate Order: https://www.ssl.com/certificate_orders/<%=@e_certs[0].cert.certificate_order.ref%>/validation/new
+Certificate Reprocess: https://www.ssl.com/certificate_orders/<%=@e_certs[0].cert.certificate_order.ref%>/reprocess
+Validation Guide: https://www.ssl.com/faqs/ssl-dv-validation-requirements/
 
-Thank you for choosing SSL.com - we look forward to continuing to provide you with the most cost-effective certificates in the market.
+After the validation above has been completed you will need install the newly issued server Certificate. This server certificate will replace the existing certificate that is already on your website and will be used for the last years of your order.
 
-Kind Regards,
+Please let us know if you have any domain validation questions.
 
-SSL.com
-Toll Free: 877-SSL-Secure (877-775-7328)
-Intl: SSL-Certificates (+1-775-237-8434)
+Best Regards,
 
-
-<%=render partial: "email_prefs"%>
+SSL Support Team
+support@ssl.com

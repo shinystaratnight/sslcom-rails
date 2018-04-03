@@ -21,8 +21,6 @@ class CdnsController < ApplicationController
   # # GET /cdns
   # # GET /cdns.json
   def index
-    # SslAccount.test
-
     @results = {}
     # @results[:is_admin] = current_user.is_system_admins?
 
