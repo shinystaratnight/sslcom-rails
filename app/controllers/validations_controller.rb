@@ -58,7 +58,7 @@ class ValidationsController < ApplicationController
               validated_domain_arry << key
               cn = @certificate_order.certificate_content.certificate_names.find_by_name(key)
               dcv = cn.domain_control_validations.last
-              value['attempted_on'] = dcv.created_at
+              value['attempted_on'] = dcv.blank? ? 'n/a' : dcv.created_at
             end
           end
 
