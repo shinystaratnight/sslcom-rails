@@ -107,6 +107,7 @@ class CertificateOrder < ActiveRecord::Base
     result = result.joins{certificate_contents.outer}.joins{certificate_contents.csr.outer}.
               joins{certificate_contents.signed_certificates.outer}.joins{ssl_account.outer}.
               joins{ssl_account.users.outer} unless (
+                  term.blank? and
                   !filters.map{|k,v|k.to_s unless v.blank?}.compact.empty? and
                   (filters.map{|k,v|k.to_s unless v.blank?}.compact - %w(is_test order_by_csr ref)).empty?)
     unless term.blank?
@@ -478,13 +479,13 @@ class CertificateOrder < ActiveRecord::Base
     (addt_nonwildcard * nonwildcard_cost) + (addt_wildcard * wildcard_cost)
   end
   
-  # Retrieve certificate contents last signed certificate (subject_alternative_names). 
+  # Retrieve certificate contents signed certificate (subject_alternative_names). 
   # IF certificate content is passed, THEN consider ONLY certificate 
   # contents prior to passed certificate content.
   def get_reprocess_cc_domains(cc_id=nil)
     cur_domains = []
     if certificate_contents.any?
-      cur_domains = certificate_contents
+      cur_domains = certificate_contents.where(workflow_state: 'issued')
       end_target  = certificate_contents.find_by(id: cc_id) unless cc_id.nil?
       if end_target
         cur_domains = cur_domains.where(
@@ -493,19 +494,9 @@ class CertificateOrder < ActiveRecord::Base
       end
     end
     if cur_domains.any?
-      signed_certificates_list = cur_domains.joins(:signed_certificates)
-        .inject([]) do |all, certificate_content|
-          all << certificate_content.signed_certificates.where(
-            signed_certificates: { created_at: certificate_contents.first.created_at..(certificate_content.created_at + 5.minutes) }
-          )
-          all
-        end
-      cur_domains = if signed_certificates_list.any?
-        signed_certificates_list.compact.reject{ |sc| sc.empty? }
-          .flatten.map(&:subject_alternative_names)
-      else
-        []
-      end
+      cur_domains = cur_domains.joins(:signed_certificates)
+        .map(&:signed_certificates).compact
+        .reject{ |sc| sc.empty? }.flatten.map(&:subject_alternative_names)
     end
     cur_domains
   end
