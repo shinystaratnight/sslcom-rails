@@ -57,8 +57,8 @@ class ValidationsController < ApplicationController
             else
               validated_domain_arry << key
               cn = @certificate_order.certificate_content.certificate_names.find_by_name(key)
-              dcv = cn.domain_control_validations.last
-              value['attempted_on'] = dcv.created_at
+              dcv = cn.blank? ? nil : cn.domain_control_validations.last
+              value['attempted_on'] = dcv.blank? ? "n/a" :dcv.created_at
             end
           end
 
@@ -116,7 +116,7 @@ class ValidationsController < ApplicationController
     addresses.delete("none")
 
     returnObj = {}
-    returnObj['caa_check'] = CaaCheck.pass?(params['domain_name']) ? 'passed' : 'failed'
+    returnObj['caa_check'] = CaaCheck.pass?(params[:certificate_order_id], params['domain_name']) ? 'passed' : 'failed'
     returnObj['new_emails'] = {}
 
     addresses.each do |addr|
@@ -169,7 +169,7 @@ class ValidationsController < ApplicationController
               'attempt' => domain_method ? domain_method.downcase.gsub('%28', ' ').gsub('%29', ' ') : '',
               'attempted_on' => dcv.blank? ? 'n/a' : dcv.created_at,
               'status' => domain_status ? domain_status.downcase : '',
-              'caa_check' => CaaCheck.pass?(cn.name) ? 'passed' : 'failed'
+              'caa_check' => CaaCheck.pass?(params[:certificate_order_id], cn.name) ? 'passed' : 'failed'
             },
             'tr_instruction' => false
           }
@@ -204,7 +204,7 @@ class ValidationsController < ApplicationController
             'attempt' => domain_method ? domain_method.downcase.gsub('%28', '').gsub('%29', '') : '',
             'attempted_on' => dcv.blank? ? 'n/a' : dcv.created_at,
             'status' => domain_status ? domain_status.downcase : '',
-            'caa_check' => CaaCheck.pass?(cn.name) ? 'passed' : 'failed'
+            'caa_check' => CaaCheck.pass?(params[:certificate_order_id], cn.name) ? 'passed' : 'failed'
           },
           'tr_instruction' => false
         }
@@ -237,7 +237,7 @@ class ValidationsController < ApplicationController
           'attempt' => 'validation not performed yet',
           'attempted_on' => 'n/a',
           'status' => 'waiting',
-          'caa_check' => CaaCheck.pass?(cn.name) ? 'passed' : 'failed'
+          'caa_check' => CaaCheck.pass?(params[:certificate_order_id], cn.name) ? 'passed' : 'failed'
         },
         'tr_instruction' => false
       }

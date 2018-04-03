@@ -11,12 +11,12 @@ class CaaCheck < ActiveRecord::Base
     CAA_COMMAND.call name
   end
 
-  def self.pass?(name)
+  def self.pass?(certificate_order_id, name)
     result = caa_lookup(name)
     if result =~ /status/ #Returned CAA Check Result.
-      arry = result.split(',')
-      status = arry[0] if arry
-      return status.split(':')[1].gsub(' ', '') == 'true'
+      arry = JSON.parse(result.gsub("}\n", "}").gsub("\n", "|||"))
+      log_caa_check(certificate_order_id, name, arry)
+      return arry['status'].to_s == 'true'
     else
       return false
     end
@@ -43,5 +43,26 @@ class CaaCheck < ActiveRecord::Base
     # else
     #   true
     # end
+  end
+
+  private
+
+  def self.log_caa_check(cert_order_ref, name, result)
+    dir = Rails.application.secrets.caa_check_log_path
+    Dir.mkdir(dir) unless Dir.exists?(dir)
+
+    caatestout = result['caatestout'].gsub("|||", "\n")
+    message = result['message'].gsub("|||", "\n")
+
+    log_path = (dir + '/' + cert_order_ref + '.txt').gsub('//', '/')
+    file = File.open(log_path, 'a')
+    file.write "******************************************************************************** \n"
+    file.write "CAA Check Results for Domain \"" + name + "\" at " + Time.now.strftime("%d/%m/%Y %H:%M:%S") + "\n"
+    file.write "CAA Test Out : \n"
+    file.write (caatestout + "\n").gsub("\n\n", "\n")
+    file.write "Message : \n"
+    file.write (message + "\n").gsub("\n\n", "\n")
+    file.write "\n"
+    file.close
   end
 end

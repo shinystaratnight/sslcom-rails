@@ -37,8 +37,11 @@ class CsrsController < ApplicationController
     http_or_s = false
     if cc = CertificateContent.find_by_ref(params[:ref])
       cn = cc.certificate_names.find_by_name(params[:dcv].split('__')[1])
-      cn.new_name params['new_name']
-      http_or_s = cn.dcv_verify(params[:protocol])
+      http_or_s = 'false'
+      if cn
+        cn.new_name params['new_name']
+        http_or_s = cn.dcv_verify(params[:protocol])
+      end
     end
 
     # http_or_s=ActiveRecord::Base.find_from_model_and_id(params[:dcv]).dcv_verify(params[:protocol])
