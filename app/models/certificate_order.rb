@@ -453,8 +453,17 @@ class CertificateOrder < ActiveRecord::Base
     if certificate.is_ucc?
       durations = {}
       i = years-1
-      certificate.num_domain_tiers.times do |j|
-        durations["tier_#{j+1}"] = (certificate.items_by_domains(true)[i][j].price * ( (j==0) ? 3 : 1 )).cents
+      cur_certificate = certificate
+      res_tier = ssl_account.reseller_tier_label
+      
+      unless res_tier.nil?
+        cur_certificate = Certificate.where(
+          title: certificate.title, reseller_tier_id: res_tier.to_i
+        ).first
+      end
+
+      cur_certificate.num_domain_tiers.times do |j|
+        durations["tier_#{j+1}"] = (cur_certificate.items_by_domains(true)[i][j].price * ( (j==0) ? 3 : 1 )).cents
       end
       durations
     end
