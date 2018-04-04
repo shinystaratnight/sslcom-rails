@@ -100,7 +100,7 @@
         -if reprocess_order 
           #{Money.new(order.get_paid_reprocess_amount).format}
         -else
-          ="-#{order.get_order_charged.amount.format}"
+          ="-#{Money.new(order.get_total_merchant_amount).format}"
     %tr#amount-due
       %td#due-lbl Amount Due
       %td#due-amt $0.00
