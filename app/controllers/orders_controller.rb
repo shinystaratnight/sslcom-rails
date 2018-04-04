@@ -471,7 +471,8 @@ class OrdersController < ApplicationController
       description:        Order::DOMAINS_ADJUSTMENT,
       state:              'pending',
       approval:           'approved',
-      notes:              reprocess_ucc_notes
+      notes:              reprocess_ucc_notes,
+      invoice_description: params[:order][:order_description]
     )
     @order.billable = @ssl_account
 
@@ -631,6 +632,7 @@ class OrdersController < ApplicationController
     @order.notes       = reprocess_ucc_notes
     @order.invoice_id  = invoice.id
     @order.approval    = 'approved'
+    @order.invoice_description = params[:order_description]
     @certificate_order.add_reproces_order @order
     record_order_visit(@order)
   end

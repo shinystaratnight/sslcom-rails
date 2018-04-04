@@ -270,7 +270,10 @@ class CertificateOrdersController < ApplicationController
         cc = @certificate_order.transfer_certificate_content(@certificate_content)
         if reprocess_ucc
           format.html {redirect_to new_order_path(@ssl_slug,
-            co_ref: @certificate_order.ref, cc_ref: cc.ref, reprocess_ucc: true
+            co_ref: @certificate_order.ref,
+            cc_ref: cc.ref,
+            reprocess_ucc: true,
+            order_description: params[:order][:order_description]
           )}
         else  
           if cc.pending_validation?

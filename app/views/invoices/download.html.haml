@@ -62,20 +62,21 @@
             %th Line Total
         %tbody
           -@invoice.orders.each_with_index do |o, i|
+            -cur_descr = descriptions[o.reference_number.to_s] 
             %tr.nobreak
               %td
                 .description-ext
                   %strong
                     %small
-                      =descriptions[o.reference_number.to_s][:item]
+                      =cur_descr[:item]
                   %br
-                  =descriptions[o.reference_number.to_s][:description]
+                  =cur_descr[:description]
                 .description
                   .domain-names-medium
-                    -quantity = descriptions[o.reference_number.to_s][:new_domains]
+                    -quantity = cur_descr[:new_domains]
                     Reprocessed on #{o.created_at.strftime('%F')} for #{quantity} additional #{(quantity > 1) ? 'domains' : 'domain'}.
-              %td.quantity #{descriptions[o.reference_number.to_s][:non_wildcard]}
-              %td.quantity #{descriptions[o.reference_number.to_s][:wildcard]}
+              %td.quantity #{cur_descr[:non_wildcard]}
+              %td.quantity #{cur_descr[:wildcard]}
               %td.price #{o.amount.format}
     
     %div#line-items-total.nobreak

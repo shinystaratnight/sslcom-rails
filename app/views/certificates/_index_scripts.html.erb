@@ -45,7 +45,7 @@ jQuery(function($) {
       });
   };
   
-  $.adjust_domain_pricing = function(textArea){
+  $.adjustDomainPricing = function(textArea) {
       var domains = $.domains(textArea);
       $.removeFromArray("", domains);
       $('.order_amount_desc span').text((domains.length > <%=Certificate::UCC_INITIAL_DOMAINS_BLOCK%>) ? domains.length : <%=Certificate::UCC_INITIAL_DOMAINS_BLOCK%>);
@@ -63,9 +63,20 @@ jQuery(function($) {
         $('#wildcard-current-count').text('x ' + addt_wildcard);
         $('#nonwildcard-current-count').text('x ' + addt_nonwildcard);
         $.updateUccReprocessAmount(addt_nonwildcard, addt_wildcard);
+        $.updateOrderDescription(addt_nonwildcard, addt_wildcard);
       } else {
-        $.update_order_pricing();  
+        $.update_order_pricing();
       }
+  };
+  
+  $.updateOrderDescription  = function(nonwildcards, wildcards) {
+    var all_domains = nonwildcards + wildcards;
+    $('#order_order_description').val('Prorated charge for ' + all_domains
+      + ' additional domains. (wildcard: ' + wildcards + ' x $'
+      + $('#ucc-wildcard-amount').data('cost') + ', '
+      + 'non wildcard: ' + nonwildcards + ' x $'
+      + $('#ucc-nonwildcard-amount').data('cost') + ')'
+    );
   };
   
   $("textarea[name*=signing_request]").click(function(){
@@ -113,7 +124,7 @@ jQuery(function($) {
             if((typeof data.certificate_content.csr.subject_alternative_names != 'undefined')){
               additional_domains = $("textarea[name*=additional_domains]").text() + " " + data.certificate_content.csr.subject_alternative_names;
               $("textarea[name*=additional_domains]").val($.uniqueStrings(additional_domains.split(/[\s,\n]+/)).join(" "));
-              $.adjust_domain_pricing($("textarea[name*=additional_domains]")[0]);
+              $.adjustDomainPricing($("textarea[name*=additional_domains]")[0]);
             }
           <%end-%>
           }
@@ -213,7 +224,7 @@ jQuery(function($) {
       <%end -%>
     <%end%>
     $('textarea[id$=domains]').keyup(function () {
-      $.adjust_domain_pricing(this);
+      $.adjustDomainPricing(this);
     });
     $(':radio[name*=duration]').click(function(){
       duration_index = $(':radio[name*=duration]:checked').val();
@@ -296,7 +307,7 @@ jQuery(function($) {
     });
     <%end%>
     <%if @certificate.is_ucc?-%>
-      $.adjust_domain_pricing($('textarea[id$=domains]')[0]);
+      $.adjustDomainPricing($('textarea[id$=domains]')[0]);
     <%end-%>
     $.update_order_pricing();
     <%unless Settings.show_csr_submit_on_buy_page%>

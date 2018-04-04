@@ -161,9 +161,9 @@ class MonthlyInvoice < Invoice
       co      = o.certificate_orders.first
       domains = o.get_reprocess_domains
       desc    = if o.invoice_description.blank?
-        "Additional #{domains[:non_wildcard]} non-wildcard and #{domains[:wildcard]} wildcard domains for certificate order #{co.ref}."
+        "Additional #{domains[:non_wildcard]} non-wildcard and #{domains[:wildcard]} wildcard domains for certificate order ##{co.ref}."
       else
-        o.invoice_description
+        "#{o.invoice_description} for certificate order ##{co.ref}."
       end  
       
       final[o.reference_number] = {

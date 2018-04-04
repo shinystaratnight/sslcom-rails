@@ -69,9 +69,9 @@
                     =item
           %td.unit-price
             #{reprocess_order ? full_reprocess_format : cert.price.format}
-          %td.quantity 
+          %td.quantity
             #{reprocess_order ? 1 : cert.line_items.count}
-          %td.price 
+          %td.price
             #{reprocess_order ? full_reprocess_format : Money.new(cert.amount).format}
 
 %div#line-items-total.nobreak

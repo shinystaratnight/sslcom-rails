@@ -273,7 +273,7 @@ class Order < ActiveRecord::Base
   end
     
   def total
-    unless reprocess_ucc_order? || monthly_invoice_order?
+    unless reprocess_ucc_order? || monthly_invoice_order? || on_monthly_invoice?
       self.amount = line_items.inject(0.to_money) {|sum,l| sum + l.amount }
     end
   end
