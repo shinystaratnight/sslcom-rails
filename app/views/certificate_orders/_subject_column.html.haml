@@ -23,7 +23,7 @@
         -if co.certificate_content.issued? && !co.certificate_content.expired?
           %span :
           =link_to 'rekey', reprocess_certificate_order_path(@ssl_slug, co)
-      -if permitted_to? :read, co.orders.first
+      -if co.orders.first and permitted_to?(:read, co.orders.first)
         %span :
         =link_to "invoice", order_path(@ssl_slug, co.orders.first), :title=>"transaction information for "+cn
       -u=co.ssl_account.try(:primary_user)

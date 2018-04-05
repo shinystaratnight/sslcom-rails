@@ -142,18 +142,19 @@ class SslcomCaApi
   def self.apply_for_certificate(certificate_order, options={})
     certificate = certificate_order.certificate
     options.merge! cc: cc = options[:certificate_content] || certificate_order.certificate_content
-    if (certificate.is_ev? or certificate.is_evcs?) and
-        (certificate_order.csr.sslcom_ca_requests.empty? or
-        (!certificate_order.csr.sslcom_ca_requests.empty? and
-        certificate_order.csr.sslcom_ca_requests.first.username.blank?))
+    approval_req, approval_res = SslcomCaApi.get_status(cc.csr)
+    return cc.csr.sslcom_ca_requests.create(
+      parameters: approval_req.body, method: "get", response: approval_res.try(:body),
+                                            ca: options[:ca]) if approval_res.body=~/WAITING FOR APPROVAL/
+    if (certificate.is_ev? or certificate.is_evcs?) and approval_res.body.blank?
         # create the user for EV order
       host = Rails.application.secrets.sslcom_ca_host+"/v1/user"
       options.merge! no_public_key: true, ca: Ca::SSLCOM_CA # create an ejbca user only
     else
       host = Rails.application.secrets.sslcom_ca_host+
           "/v1/certificate#{'/ev' if certificate.is_ev? or certificate.is_evcs?}/pkcs10"
-      options.merge!(collect_certificate: true, username: certificate_order.
-          csr.sslcom_usernames.first) if certificate.is_ev? or certificate.is_evcs? # collect ev cert
+      options.merge!(collect_certificate: true, username:
+          cc.csr.sslcom_usernames.first) if certificate.is_ev? or certificate.is_evcs? # collect ev cert
     end
     req, res = call_ca(host, options, issue_cert_json(options))
     cc.create_csr(body: options[:csr]) if cc.csr.blank?
@@ -207,13 +208,26 @@ class SslcomCaApi
     end
   end
 
-  def self.get_status(certificate_order)
-    approval=certificate_order.csr.sslcom_approval_ids.first
-    return if approval.blank?
-    host = Rails.application.secrets.sslcom_ca_host+"/v1/status/#{approval}"
-    options={method: "get"}
-    body = ""
-    req, res = call_ca(host, options, body)
+  def self.get_status(csr=nil,host_only=false)
+    unless csr.blank?
+      return if csr.sslcom_approval_ids.blank?
+      query="status/#{csr.sslcom_approval_ids.compact.first}"
+    else
+      query="approvals"
+    end
+    host = Rails.application.secrets.sslcom_ca_host+"/v1/#{query}"
+    if host_only
+      host
+    else
+      options={method: "get"}
+      body = ""
+      call_ca(host, options, body)
+    end
+  end
+
+  def self.approvals
+    status = get_status
+    JSON.parse(status) if status!="[]"
   end
 
   private

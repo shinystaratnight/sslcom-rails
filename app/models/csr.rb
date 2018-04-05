@@ -134,11 +134,20 @@ class Csr < ActiveRecord::Base
   end
 
   def sslcom_approval_ids
-    sslcom_ca_requests.map(&:approval_id).compact
+    sslcom_ca_requests.pluck(:approval_id)
   end
 
   def sslcom_usernames
-    sslcom_ca_requests.map(&:username).compact
+    sslcom_ca_requests.pluck(&:username)
+  end
+
+  def sslcom_outstanding_approvals
+    status=SslcomCaApi.get_status(self)[1].body
+    if status=="[]" or status.blank?
+      0
+    else
+      JSON.parse(status)
+    end
   end
 
   def self.enclose_with_tags(csr)
