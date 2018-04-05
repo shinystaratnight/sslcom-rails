@@ -260,9 +260,10 @@ class OrdersController < ApplicationController
         last_refund = @order.refunds.last
 
         if refund && last_refund && last_refund.successful?
-          flash[:notice] = "Successfully refunded merchant for amount #{amount.format}."
           refund_merchant_for_co(co, amount) if co
           refund_merchant_for_mo(mo, amount) if mo
+          @order.billable.funded_account.decrement!(:cents, last_refund.amount) if @order.is_deposit?
+          flash[:notice] = "Successfully refunded merchant for amount #{amount.format}."
         else
           flash[:error] = "Refund for #{amount.format} has failed! #{last_refund.message}"
         end
