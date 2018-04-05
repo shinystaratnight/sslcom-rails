@@ -198,9 +198,10 @@ class CertificateContent < ActiveRecord::Base
     end
   end
 
-  after_create do |cc|
-    cc.update_column :ref, cc.to_ref
-    cc.update_column :label, cc.to_ref
+  before_create do |cc|
+    ref_number = cc.to_ref
+    self.ref = ref_number
+    self.label = ref_number
   end
 
   def certificate_names_from_domains
@@ -448,8 +449,9 @@ class CertificateContent < ActiveRecord::Base
   end
 
   def to_ref
-    # "cc-"+created_at.to_i.to_s(16)
-    certificate_order.ref+"-"+certificate_order.certificate_contents.index(self).to_s
+    cc = certificate_order.certificate_contents.last
+    index = cc.id.nil? ? 0 : (cc.ref.split('-').last.to_i + 1)
+    "#{certificate_order.ref}-#{index}"
   end
   
   def contacts_for_form_opt(type=nil)
