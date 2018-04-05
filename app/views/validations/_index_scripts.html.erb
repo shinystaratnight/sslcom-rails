@@ -861,20 +861,29 @@ jQuery(function($) {
                       }
                     });
 
-                    if (idx == (total - 1)) {
+                    /*if (idx == (total - 1)) {
                       $('.domains_loader_wrap').hide();
                       $('#upload_validations').show();
-                    }
+                    }*/
 
                     $('select[id^=domains]').last().change();
                   }
-                });
-                /*.done(function() {
+                }).done(function(data) {
                   if (idx == (total - 1)) {
                     $('.domains_loader_wrap').hide();
                     $('#upload_validations').show();
                   }
-                })*/
+                }).fail(function() {
+                  if (idx == (total - 1)) {
+                    $('.domains_loader_wrap').hide();
+                    $('#upload_validations').show();
+                  }
+                });
+              } else {
+                if (idx == (total - 1)) {
+                  $('.domains_loader_wrap').hide();
+                  $('#upload_validations').show();
+                }
               }
             });
           } else {
