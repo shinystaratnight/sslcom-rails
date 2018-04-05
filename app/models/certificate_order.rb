@@ -404,7 +404,9 @@ class CertificateOrder < ActiveRecord::Base
       event :charge_back, :transitions_to => :charged_back
       event :start_over, transitions_to: :paid do |complete=false|
         if self.certificate_contents.count >1
-          self.certificate_contents.last.delete
+          cc = self.certificate_contents.last
+          cc.preserve_certificate_contacts
+          cc.delete
         else
           duration = self.certificate_content.duration
           temp_cc=self.certificate_contents.create(duration: duration)
@@ -735,7 +737,21 @@ class CertificateOrder < ActiveRecord::Base
   def skip_verification?
     self.certificate.skip_verification?
   end
-
+  
+  def reprocess_skip_contacts?
+    if Contact.optional_contacts?
+      if signed_certificate.try('is_dv?'.to_sym) && Settings.exempt_dv_contacts
+        true
+      else
+        order.reprocess_ucc_order? && certificate_contents.map(&:certificate_contacts).flatten.any?
+      end
+    else
+      roles = co.certificate_contacts.map(&:roles).flatten.uniq
+      req_roles = CertificateContent::CONTACT_ROLES
+      (roles & req_roles).count == req_roles.count
+    end
+  end
+  
   def order_status
     if is_ev?
       "waiting for documents"
@@ -759,7 +775,11 @@ class CertificateOrder < ActiveRecord::Base
   end
   
   def reprocess_ucc_process
-    ssl_account.billing_monthly? ? REPROCES_SIGNUP_W_INVOICE : REPROCES_SIGNUP_W_PAYMENT 
+    process = ssl_account.billing_monthly? ? REPROCES_SIGNUP_W_INVOICE : REPROCES_SIGNUP_W_PAYMENT
+    if order.reprocess_ucc_order? && reprocess_skip_contacts?
+      process[:pages].delete('Contacts')
+    end
+    process
   end
   
   def is_express_signup?
