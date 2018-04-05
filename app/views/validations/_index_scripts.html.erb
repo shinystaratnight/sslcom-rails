@@ -869,6 +869,12 @@ jQuery(function($) {
                     $('select[id^=domains]').last().change();
                   }
                 });
+                /*.done(function() {
+                  if (idx == (total - 1)) {
+                    $('.domains_loader_wrap').hide();
+                    $('#upload_validations').show();
+                  }
+                })*/
               }
             });
           } else {

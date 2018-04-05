@@ -46,6 +46,7 @@
 
       $('.custom-domain-modal-link').click(function() {
         var hostname = $(this).data('hostname');
+        var ref = $(this).data('ref');
         var resourcename = $(this).data('resourcename');
         var ajaxCheckCnameUrl = '<%=check_cname_cdns_path%>';
 
@@ -63,6 +64,7 @@
 
             if (result == true) {
               $('#host_name').val(hostname);
+              $('#custom_domain_ref').val(ref);
               $('#custom-domain-modal').modal('toggle');
             } else {
               var message_wrap_element = $('<div></div>');
