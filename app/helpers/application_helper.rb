@@ -420,6 +420,8 @@ module ApplicationHelper
       "padding: 0 #{1.4 + (sv ? added_padding : 0.0)}em"
     end
     pages = sv ? process[:pages] - [CertificateOrder::VERIFICATION_STEP] : process[:pages]
+    process[:pages].delete('Contacts') if co.skip_contacts_step?
+
     render(:partial => '/shared/form_progress_indicator',
       :locals => {:pages=>[pages, page],
         :options=>{:li_style=>padding}, certificate: certificate})
