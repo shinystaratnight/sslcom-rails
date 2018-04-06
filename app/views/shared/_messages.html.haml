@@ -14,7 +14,7 @@
               %br
     -else
       .flash_message{:class => "#{type.to_s}"}
-        %span=message_for_item(flash[type.to_sym], flash["#{type}_item".to_sym])
+        %span=message_for_item(flash[type.to_sym], flash["#{type}_item".to_sym]).html_safe
         %small
           %div.close_flash_message
             %span X

@@ -17,6 +17,7 @@
   =form_for Order.new, url: create_reprocess_ucc_orders_path(@ssl_slug) do |f|
     =f.hidden_field :co_ref, value: params[:co_ref]
     =f.hidden_field :cc_ref, value: params[:cc_ref]
+    =f.hidden_field :order_description, value: params[:order_description]
     
     -if current_user && current_order.cents > 0
       -# Funding Sources Section

@@ -399,7 +399,10 @@ module ApplicationHelper
     co=@certificate_order
     sv=co.certificate ? co.skip_verification? : CertificateOrder.skip_verification?(certificate)
     added_padding=1.54
-    process = if params[:reprocess_ucc] || (co.certificate && co.certificate.is_ucc? && params[:action] == "reprocess")
+    process = if params[:reprocess_ucc] || 
+      (co.certificate && co.certificate.is_ucc? && 
+      (co.order.reprocess_ucc_order? || params[:action] == "reprocess"))
+      
       co.reprocess_ucc_process
     else
       skip_payment? ? co.prepaid_signup_process(certificate) : co.signup_process(certificate)

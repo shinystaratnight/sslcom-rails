@@ -260,9 +260,10 @@ class OrdersController < ApplicationController
         last_refund = @order.refunds.last
 
         if refund && last_refund && last_refund.successful?
-          flash[:notice] = "Successfully refunded merchant for amount #{amount.format}."
           refund_merchant_for_co(co, amount) if co
           refund_merchant_for_mo(mo, amount) if mo
+          @order.billable.funded_account.decrement!(:cents, last_refund.amount) if @order.is_deposit?
+          flash[:notice] = "Successfully refunded merchant for amount #{amount.format}."
         else
           flash[:error] = "Refund for #{amount.format} has failed! #{last_refund.message}"
         end
@@ -471,7 +472,8 @@ class OrdersController < ApplicationController
       description:        Order::DOMAINS_ADJUSTMENT,
       state:              'pending',
       approval:           'approved',
-      notes:              reprocess_ucc_notes
+      notes:              reprocess_ucc_notes,
+      invoice_description: params[:order][:order_description]
     )
     @order.billable = @ssl_account
 
@@ -631,6 +633,7 @@ class OrdersController < ApplicationController
     @order.notes       = reprocess_ucc_notes
     @order.invoice_id  = invoice.id
     @order.approval    = 'approved'
+    @order.invoice_description = params[:order_description]
     @certificate_order.add_reproces_order @order
     record_order_visit(@order)
   end

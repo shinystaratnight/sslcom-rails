@@ -3,7 +3,6 @@
 =render :partial => 'index_scripts'
 =stylesheet_link_tag 'bootstrap_style', :media => 'all'
 -slug_params = {ssl_slug: @ssl_slug}
--api_key = @results[:api_key]
 -active_tab = @results[:active_tab]
 -bandwidth = @results[:bandwidth]
 -hits = @results[:hits]
@@ -11,7 +10,6 @@
 -files = @results[:files]
 -locations = @results[:locations]
 -if @results[:resource]
-  -is_ssl_req = @results[:resource]['is_ssl_req']
   -domain_list = @results[:resource]['custom_domains']
   -origin = @results[:resource]['origin']
   -hostname = @results[:resource]['alias']
@@ -94,7 +92,7 @@
           .sub-title Purge Files
           .sub-cont
             =form_tag :purge_cache_cdn, :id=>'purge_form', :method=>:delete do
-              =hidden_field_tag :api_key, api_key
+              =hidden_field_tag :api_key, @current_user_api_key
               =hidden_field_tag :purge_all, false
               %div.clearfix
                 .field-label Purge Files:
@@ -106,7 +104,7 @@
           .sub-title Cache Expiry
           .sub-cont
             =form_tag :update_cache_expiry_cdn, :method=>:post do
-              =hidden_field_tag :api_key, api_key
+              =hidden_field_tag :api_key, @current_user_api_key
               %div.clearfix
                 .field-label Cache Expiry(set hours):
                 .field-cont
@@ -118,7 +116,7 @@
           .sub-title General Settings
           .sub-cont
             =form_tag :update_resource_cdn, :method=>:post do
-              =hidden_field_tag :api_key, api_key
+              =hidden_field_tag :api_key, @current_user_api_key
               %div.reg-resource.clearfix
                 .field-label Resource Origin:
                 .field-cont
@@ -138,7 +136,7 @@
           .sub-title Add A Custom Domain
           .sub-cont
             =form_tag :add_custom_domain_cdn, :method=>:post do
-              =hidden_field_tag :api_key, api_key
+              =hidden_field_tag :api_key, @current_user_api_key
               %div.reg-resource.clearfix
                 .field-label Host Name:
                 .field-cont
@@ -164,6 +162,7 @@
                 %th Created
                 %th Validation Status
                 %th
+                %th
               -if domain_list && domain_list.length > 0
                 -domain_list.each do |domain|
                   %tr
@@ -176,25 +175,18 @@
                         SSL valid to
                         =DateTime.parse(domain['valid_to']['date']).strftime('%d/%m/%Y')
                       -else
-                        -#-if domain['is_ssl_req']
-                        -#  Pending
-                        -#-else
-                        -#  N/A
-                        -if is_ssl_req
+                        -if domain['certificate_validation_pending']
                           Pending
                         -else
                           N/A
                     %td
-                      -#-if domain['valid_to'] || domain['is_ssl_req']
-                      -#  =link_to 'Delete', nil, :class => 'custom-domain-delete-link', 'data-hostname' => domain['hostname']
-                      -#-else
-                      -#  =link_to 'Edit SSL', nil, :class => 'custom-domain-modal-link', 'data-toggle' => 'modal', 'data-target' => '#custom-domain-modal', 'data-hostname' => domain['hostname']
-                      -if domain['valid_to'] || is_ssl_req
+                      -if !domain['valid_to'] && !domain['certificate_validation_pending']
                         =link_to 'Delete', nil, :class => 'custom-domain-delete-link', 'data-hostname' => domain['hostname']
-                      -else
-                        -#=link_to 'Edit SSL', nil, :class => 'custom-domain-modal-link', 'data-toggle' => 'modal', 'data-target' => '#custom-domain-modal', 'data-hostname' => domain['hostname']
-                        =link_to 'Edit SSL', nil, :class => 'custom-domain-modal-link', 'data-hostname' => domain['hostname'], 'data-resourcename' => hostname
-
+                    %td
+                      -if domain['valid_to'] && !domain['certificate_validation_pending']
+                        =link_to 'Delete', nil, :class => 'custom-domain-delete-link', 'data-hostname' => domain['hostname']
+                      -elsif !domain['valid_to'] && !domain['certificate_validation_pending']
+                        =link_to 'Edit SSL', nil, :class => 'custom-domain-modal-link', 'data-hostname' => domain['hostname'], 'data-ref' => domain['ref'], 'data-resourcename' => hostname
               -else
                 %tr
                   %td(colspan="4")
@@ -204,7 +196,7 @@
           .sub-title Advanced Setting
           .sub-cont
             =form_tag :update_advanced_setting_cdn, :method=>:post do
-              =hidden_field_tag :api_key, api_key
+              =hidden_field_tag :api_key, @current_user_api_key
               %div.reg-resource.clearfix
                 .field-setting-event
                   =check_box_tag :allow_robots, true, allow_robots
@@ -246,7 +238,7 @@
           .sub-title Delete This Resource
           .sub-cont
             =form_tag :delete_resource_cdn, :method=>:delete do
-              =hidden_field_tag :api_key, api_key
+              =hidden_field_tag :api_key, @current_user_api_key
               %div.field-note
                 Deleting a resource cannot be undone. Before continuing make sure you are certain.
               =submit_tag 'Delete', :id=>'btn_delete_resource'
@@ -267,16 +259,14 @@
                   %div.col-md-6.col-sm-6.col-lg-5
                     Generate and install SSL
                   %div.col-md-3.col-sm-3.col-lg-4
-                    -#=check_box_tag :generate_install_ssl_chk
                     =check_box_tag :generate_install_ssl_chk, false
               -#%hr.gen-install-ssl-divider
               %div.container-fluid
-                -#=form_tag :update_custom_domain_cdn, :id=>'custom_domain_modal_form' do
                 =form_tag :update_custom_domain_cdn, :id=>'custom_domain_modal_form', :class=>'hidden' do
-                  =hidden_field_tag :api_key, api_key
+                  =hidden_field_tag :api_key, @current_user_api_key
                   =hidden_field_tag :host_name
+                  =hidden_field_tag :custom_domain_ref
                   =hidden_field_tag :action_type, 'modify'
-                  -#=hidden_field_tag :generate_type, 'manual'
                   =hidden_field_tag :generate_type, 'auto'
                   %div.row
                     %div.col-md-4.col-sm-4.col-lg-3

@@ -20,7 +20,7 @@
           =o.created_at.strftime('%F')
         %td
           =link_to order_ref, order_path(@ssl_slug, o)
-        %td
+        %td.description
           %strong
             %span #{descriptions[order_ref.to_s][:item]}
           %br

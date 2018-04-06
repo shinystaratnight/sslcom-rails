@@ -27,6 +27,7 @@
   =error_messages_for :certificate_order, :certificate_content
   =form_for(*form_params) do |f|
     =hidden_field :certificate, :product
+    =hidden_field :order, :order_description, value: nil
     =recert?
     #stylized.default_form
       =render :partial => "/certificates/form", :locals => {:f=>f}

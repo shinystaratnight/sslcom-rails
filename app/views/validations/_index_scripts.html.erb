@@ -391,7 +391,14 @@ jQuery(function($) {
           $.ajax({url: '<%=verification_check_csr_path(@ssl_slug, @certificate_order.csr)%>?protocol=https&dcv='+
             $(dcv_select).parents('tr').attr('id')+'&new_name='+$(dcv_select).attr('alt')+'&ref='+$(dcv_select).parents('tbody').attr('data-ref')}).done(
               function(data){
-                $('td.pretest[class~="'+$(dcv_select).attr("alt")+'"]').html((data ? "passed" : "failed")).css((data ? { background: "green", color:"white" } : { background: "red", color:"white" }));
+                var anchorElement = $('<a></a>');
+                anchorElement.attr('href', 'https://www.ssl.com/guide/failed-pre-test/');
+                anchorElement.attr('target', '_blank');
+                anchorElement.attr('style', 'color: white');
+                anchorElement.append('failed');
+
+                $('td.pretest[class~="'+$(dcv_select).attr("alt")+'"]').html((data ? "passed" : anchorElement))
+                  .css((data ? { background: "green", color:"white" } : { background: "red", color:"white" }));
               });
         }
         else if(/http/.test(methods[0])){
@@ -400,7 +407,14 @@ jQuery(function($) {
           $.ajax({url: '<%=verification_check_csr_path(@ssl_slug, @certificate_order.csr)%>?protocol=http&dcv='+
             $(dcv_select).parents('tr').attr('id')+'&new_name='+$(dcv_select).attr('alt')+'&ref='+$(dcv_select).parents('tbody').attr('data-ref')}).done(
               function(data){
-                $('td.pretest[class~="'+$(dcv_select).attr("alt")+'"]').html((data ? "passed" : "failed")).css((data ? { background: "green", color:"white" } : { background: "red", color:"white" }));
+                var anchorElement = $('<a></a>');
+                anchorElement.attr('href', 'https://www.ssl.com/guide/failed-pre-test/');
+                anchorElement.attr('target', '_blank');
+                anchorElement.attr('style', 'color: white');
+                anchorElement.append('failed');
+
+                $('td.pretest[class~="'+$(dcv_select).attr("alt")+'"]').html((data ? "passed" : anchorElement))
+                  .css((data ? { background: "green", color:"white" } : { background: "red", color:"white" }));
               });
         }
         else if(/cname/.test(methods[0])){
@@ -408,7 +422,14 @@ jQuery(function($) {
           $.ajax({url: '<%=verification_check_csr_path(@ssl_slug, @certificate_order.csr)%>?protocol=cname&dcv='+
             $(dcv_select).parents('tr').attr('id')+'&new_name='+$(dcv_select).attr('alt')+'&ref='+$(dcv_select).parents('tbody').attr('data-ref')}).done(
               function(data){
-                $('td.pretest[class~="'+$(dcv_select).attr("alt")+'"]').html((data ? "passed" : "failed")).css((data ? { background: "green", color:"white" } : { background: "red", color:"white" }));
+                var anchorElement = $('<a></a>');
+                anchorElement.attr('href', 'https://www.ssl.com/guide/failed-pre-test/');
+                anchorElement.attr('target', '_blank');
+                anchorElement.attr('style', 'color: white');
+                anchorElement.append('failed');
+
+                $('td.pretest[class~="'+$(dcv_select).attr("alt")+'"]').html((data ? "passed" : anchorElement))
+                  .css((data ? { background: "green", color:"white" } : { background: "red", color:"white" }));
               });
         }
         $(instruction).css({ background: "yellow" });
@@ -656,6 +677,7 @@ jQuery(function($) {
                   tdElement = $('<td></td>');
                   tdElement.append('passed');
                   tdElement.attr('class', 'caa_check ' + value);
+                  tdElement.attr('style', 'background: green; color: white');
                   trElement.append(tdElement);
                 <%end%>
 
@@ -781,7 +803,19 @@ jQuery(function($) {
 
                         <%if Settings.enable_caa%>
                           tdElement = $('<td></td>');
-                          tdElement.append(result[key]['caa_check']);
+                          if (result[key]['caa_check'] == 'failed') {
+                            var anchorElement = $('<a></a>');
+                            anchorElement.attr('href', 'https://www.ssl.com/how-to/configure-caa-records-to-authorize-ssl-com/');
+                            anchorElement.attr('target', '_blank');
+                            anchorElement.attr('style', 'color: white');
+                            anchorElement.append(result[key]['caa_check']);
+
+                            tdElement.attr('style', 'background: red; color: white');
+                            tdElement.append(anchorElement);
+                          } else if (result[key]['caa_check'] == 'passed') {
+                            tdElement.attr('style', 'background: green; color: white');
+                            tdElement.append(result[key]['caa_check']);
+                          }
                           tdElement.attr('class', 'caa_check ' + value);
                           trElement.append(tdElement);
                         <%end%>
@@ -827,14 +861,29 @@ jQuery(function($) {
                       }
                     });
 
-                    if (idx == (total - 1)) {
+                    /*if (idx == (total - 1)) {
                       $('.domains_loader_wrap').hide();
                       $('#upload_validations').show();
-                    }
+                    }*/
 
                     $('select[id^=domains]').last().change();
                   }
+                }).done(function(data) {
+                  if (idx == (total - 1)) {
+                    $('.domains_loader_wrap').hide();
+                    $('#upload_validations').show();
+                  }
+                }).fail(function() {
+                  if (idx == (total - 1)) {
+                    $('.domains_loader_wrap').hide();
+                    $('#upload_validations').show();
+                  }
                 });
+              } else {
+                if (idx == (total - 1)) {
+                  $('.domains_loader_wrap').hide();
+                  $('#upload_validations').show();
+                }
               }
             });
           } else {
@@ -871,7 +920,7 @@ jQuery(function($) {
                 domain_names_str = domain_names_str.concat(',' + $(domain).find('td:first-child').children().first().val());
 
                 if (enable_caa == 'true') {
-                  if ($(domain).find('.caa_check').val() == 'passed') {
+                  if ($(domain).find('.caa_check').text() == 'passed') {
                     all_passed_caa_check &= true;
                   } else {
                     all_passed_caa_check &= false;
@@ -1227,7 +1276,21 @@ jQuery(function($) {
 
                     $('[name="domains[' + new_domain_name + '][dcv]"]').change();
                     $('[name="domains[' + new_domain_name + '][dcv]"]').parent().next().empty();
-                    $('[name="domains[' + new_domain_name + '][dcv]"]').parent().next().append(result['caa_check']);
+                    if (result['caa_check'] == 'failed') {
+                      $('[name="domains[' + new_domain_name + '][dcv]"]').attr('disabled', true);
+                      var anchorElement = $('<a></a>');
+                      anchorElement.attr('href', 'https://www.ssl.com/how-to/configure-caa-records-to-authorize-ssl-com/');
+                      anchorElement.attr('target', '_blank');
+                      anchorElement.attr('style', 'color: white');
+                      anchorElement.append(result['caa_check']);
+
+                      $('[name="domains[' + new_domain_name + '][dcv]"]').parent().next().attr('style', 'background: red; color: white');
+                      $('[name="domains[' + new_domain_name + '][dcv]"]').parent().next().append(anchorElement);
+                    } else if (result['caa_check'] == 'passed') {
+                      $('[name="domains[' + new_domain_name + '][dcv]"]').attr('disabled', false);
+                      $('[name="domains[' + new_domain_name + '][dcv]"]').parent().next().attr('style', 'background: green; color: white');
+                      $('[name="domains[' + new_domain_name + '][dcv]"]').parent().next().append(result['caa_check']);
+                    }
 
                     $('.domains_loader_wrap').hide();
                     $('#upload_validations').show();
