@@ -258,7 +258,7 @@
                             (serial number: #{sc.serial})
                     %tr
                       %td(colspan="5")
-                        -if current_user.is_system_admins? or !@certificate_order.certificate.is_code_signing?
+                        -if !@certificate_order.certificate.is_code_signing? # or current_user.is_system_admins?
                           .certificate_details_box
                             %strong certificate signing request
                             -unless permitted_to?(:create, SignedCertificate.new) && current
