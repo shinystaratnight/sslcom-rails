@@ -238,7 +238,7 @@ class CertificateOrdersController < ApplicationController
             end
           end
         end
-        if @certificate_order.is_express_signup? || @certificate_order.reprocess_skip_contacts?
+        if @certificate_order.is_express_signup? || @certificate_order.skip_contacts_step?
           format.html { redirect_to validation_destination(slug: @ssl_slug, certificate_order: @certificate_order) }
         else #assume ev full signup process
           format.html { redirect_to certificate_content_contacts_path(@ssl_slug, cc) }

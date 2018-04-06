@@ -250,15 +250,15 @@
                     -sc = c.csr.try(:signed_certificate)
                     %tr
                       %td(colspan="5" style="text-align: left;")
-                        %span.previous_requests #{c!=@certificate_order.certificate_content ? "previous" : "current" }: #{c.label}
-                        -unless !co.certificate.is_code_signing?
+                        -unless co.certificate.is_code_signing?
+                          %span.previous_requests #{c!=@certificate_order.certificate_content ? "previous" : "current" }: #{c.label}
                           -if sc.try(:body).blank?
                             (server software: #{c.server_software.try :title})
                           -else
                             (serial number: #{sc.serial})
                     %tr
                       %td(colspan="5")
-                        -unless csr.blank?
+                        -if current_user.is_system_admins? or !@certificate_order.certificate.is_code_signing?
                           .certificate_details_box
                             %strong certificate signing request
                             -unless permitted_to?(:create, SignedCertificate.new) && current

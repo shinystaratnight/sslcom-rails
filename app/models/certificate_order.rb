@@ -738,12 +738,12 @@ class CertificateOrder < ActiveRecord::Base
     self.certificate.skip_verification?
   end
   
-  def reprocess_skip_contacts?
+  def skip_contacts_step?
     if Contact.optional_contacts?
       if signed_certificate.try('is_dv?'.to_sym) && Settings.exempt_dv_contacts
         true
       else
-        order.reprocess_ucc_order? && certificate_contents.map(&:certificate_contacts).flatten.any?
+        certificate_contents.map(&:certificate_contacts).flatten.any?
       end
     else
       roles = co.certificate_contacts.map(&:roles).flatten.uniq
@@ -775,11 +775,7 @@ class CertificateOrder < ActiveRecord::Base
   end
   
   def reprocess_ucc_process
-    process = ssl_account.billing_monthly? ? REPROCES_SIGNUP_W_INVOICE : REPROCES_SIGNUP_W_PAYMENT
-    if order.reprocess_ucc_order? && reprocess_skip_contacts?
-      process[:pages].delete('Contacts')
-    end
-    process
+    ssl_account.billing_monthly? ? REPROCES_SIGNUP_W_INVOICE : REPROCES_SIGNUP_W_PAYMENT
   end
   
   def is_express_signup?
