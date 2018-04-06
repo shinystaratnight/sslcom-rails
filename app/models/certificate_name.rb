@@ -84,20 +84,21 @@ class CertificateName < ActiveRecord::Base
     end
   end
 
-  def dcv_url(secure=false, prepend="")
-    "http#{'s' if secure}://#{prepend+non_wildcard_name}/.well-known/pki-validation/#{csr.md5_hash}.txt"
+  def dcv_url(secure=false, prepend="", check_type=false)
+    "http#{'s' if secure}://#{prepend+non_wildcard_name(check_type)}/.well-known/pki-validation/#{csr.md5_hash}.txt"
   end
 
-  def cname_origin
-    "#{csr.dns_md5_hash}.#{non_wildcard_name}"
+  def cname_origin(check_type=false)
+    "#{csr.dns_md5_hash}.#{non_wildcard_name(check_type)}"
   end
 
   def cname_destination
     "#{csr.dns_sha2_hash}.comodoca.com"
   end
 
-  def non_wildcard_name
-    name.gsub(/\A\*\./, "").downcase
+  def non_wildcard_name(check_type=false)
+    check_type && self.certificate_content.certificate_order.certificate.is_single? ?
+        name.gsub(/\A\*\./, "").downcase.gsub("www.", "") : name.gsub(/\A\*\./, "").downcase
   end
 
   def dcv_contents
@@ -159,7 +160,7 @@ class CertificateName < ActiveRecord::Base
     begin
       Timeout.timeout(Surl::TIMEOUT_DURATION) do
         if protocol=="https"
-          uri = URI.parse(dcv_url(true,prepend))
+          uri = URI.parse(dcv_url(true,prepend, true))
           http = Net::HTTP.new(uri.host, uri.port)
           http.use_ssl = true
           http.verify_mode = OpenSSL::SSL::VERIFY_NONE
@@ -167,11 +168,11 @@ class CertificateName < ActiveRecord::Base
           r = http.request(request).body
         elsif protocol=="cname"
           txt = Resolv::DNS.open do |dns|
-            records = dns.getresources(cname_origin, Resolv::DNS::Resource::IN::CNAME)
+            records = dns.getresources(cname_origin(true), Resolv::DNS::Resource::IN::CNAME)
           end
           return cname_destination==txt.last.name.to_s
         else
-          r=open(dcv_url(false,prepend), redirect: false).read
+          r=open(dcv_url(false,prepend, true), redirect: false).read
         end
         return "true" if !!(r =~ Regexp.new("^#{csr.sha2_hash}") && r =~ Regexp.new("^comodoca.com") &&
             (csr.unique_value.blank? ? true : r =~ Regexp.new("^#{csr.unique_value}")))
