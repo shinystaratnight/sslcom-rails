@@ -65,7 +65,7 @@ class SignedCertificate < ActiveRecord::Base
 
   after_save do |s|
     unless self.ca_id==Ca::ISSUER[:sslcom_shadow]
-      s.send_processed_certificate # if s.email_customer
+      s.send_processed_certificate
       cc=s.csr.certificate_content
       if cc.preferred_reprocessing?
         cc.preferred_reprocessing=false
@@ -320,23 +320,27 @@ class SignedCertificate < ActiveRecord::Base
 
   def send_processed_certificate(options=nil)
     # for production certs, attached the bundle, change workflow and send site seal
-    zip_path =
-        if certificate_order.is_iis?
-          zipped_pkcs7
-        elsif certificate_order.is_nginx?
-          to_nginx_file
-        elsif certificate_order.is_cpanel?
-          zipped_whm_bundle
-        elsif certificate_order.is_apache?
-          zipped_apache_bundle
-        else
-          create_signed_cert_zip_bundle
+    unless certificate_order.certificate.is_code_signing?
+      zip_path =
+          if certificate_order.is_iis?
+            zipped_pkcs7
+          elsif certificate_order.is_nginx?
+            to_nginx_file
+          elsif certificate_order.is_cpanel?
+            zipped_whm_bundle
+          elsif certificate_order.is_apache?
+            zipped_apache_bundle
+          else
+            create_signed_cert_zip_bundle
+          end
+      co=csr.certificate_content.certificate_order
+      co.site_seal.fully_activate! unless co.site_seal.fully_activated?
+      if email_customer
+        co.processed_recipients.map{|r|r.split(" ")}.flatten.uniq.each do |c|
+          OrderNotifier.processed_certificate_order(c, co, zip_path).deliver
+          OrderNotifier.site_seal_approve(c, co).deliver
         end
-    co=csr.certificate_content.certificate_order
-    co.site_seal.fully_activate! unless co.site_seal.fully_activated?
-    co.processed_recipients.map{|r|r.split(" ")}.flatten.uniq.each do |c|
-      OrderNotifier.processed_certificate_order(c, co, zip_path).deliver
-      OrderNotifier.site_seal_approve(c, co).deliver
+      end
     end
     # for shadow certs, only send the certificate
     begin
