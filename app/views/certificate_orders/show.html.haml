@@ -9,7 +9,7 @@
 -if params[:checkout] && co.certificate_content.pending_validation?
   -i=adjusted_position(7, co)
 =order_progress_indicator(i, co.certificate) unless i.blank?
--if token=co.physical_tokens.first(&"in_transit?".to_sym)
+-if token=co.physical_tokens.last.in_transit?
   -flash.now[:warning] = "Token #{token.name} has shipped with tracking number #{token.tracking_number}!" if co.certificate.is_evcs? and !co.physical_tokens.blank?
 =render :partial=>'quick_links'
 #certificate_orders
@@ -200,7 +200,7 @@
                                   %li Admin PIN - #{token.admin_pin}
                       .certificate_details_box
                         %ul
-                          -if co.certificate_content.issued? && !co.certificate_content.expired?
+                          -if !co.certificate.is_code_signing? && co.certificate_content.issued? && !co.certificate_content.expired?
                             =render partial: 'download', locals: {co: co}
                           -unless @cc.csr.blank? || hide_validation?(co)
                             -if @cc.pending_validation?
