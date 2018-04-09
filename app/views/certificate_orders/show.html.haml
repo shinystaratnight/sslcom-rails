@@ -9,7 +9,8 @@
 -if params[:checkout] && co.certificate_content.pending_validation?
   -i=adjusted_position(7, co)
 =order_progress_indicator(i, co.certificate) unless i.blank?
--if token=co.physical_tokens.first(&"in_transit?".to_sym)
+-token=co.physical_tokens.last
+-if token.try("in_transit?".to_sym)
   -flash.now[:warning] = "Token #{token.name} has shipped with tracking number #{token.tracking_number}!" if co.certificate.is_evcs? and !co.physical_tokens.blank?
 =render :partial=>'quick_links'
 #certificate_orders
