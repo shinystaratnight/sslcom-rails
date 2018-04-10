@@ -626,12 +626,11 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
 
       if @acr.is_a?(CertificateOrder) && @acr.errors.empty?
         package_certificate_order(@result, @acr)
-
-        render(:template => @template) and return
       end
     else
       InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
     end
+    render_200_status
   rescue => e
     render_500_error e
   end
