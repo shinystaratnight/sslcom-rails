@@ -766,6 +766,8 @@ class CertificateContent < ActiveRecord::Base
           are allowed [A-Za-z0-9.-#{'*' if(is_ucc || is_wildcard)}] in the subject"
     if csr.common_name.blank?
       errors.add(:signing_request, 'is missing the common name (CN) field or is invalid and cannot be parsed')
+    elsif !csr.verify_signature
+      errors.add(:signing_request, 'has an invalid signature')
     else
       unless is_code_signing || is_client
         #errors.add(:signing_request, 'is missing the organization (O) field') if csr.organization.blank?
