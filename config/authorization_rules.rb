@@ -449,6 +449,10 @@ authorization do
     has_permission_on :users, :to => :decline_account_invite do
       if_attribute get_approval_tokens: is {user.get_approval_tokens}
     end
+
+    # Ajax
+    has_permission_on :certificate_orders, :to => :ajax
+    has_permission_on :validations, :to => :ajax
   end
 end
 
@@ -460,7 +464,7 @@ privileges do
     :change_state, :create, :delete, :read, :refund, :update
   ]
   privilege :read, includes: [
-    :index, :invoice, :lookup_discount, :search, :show, :show_cart, :developer, :site_report
+    :index, :invoice, :lookup_discount, :search, :show, :show_cart, :developer, :site_report, :ajax
   ]
   privilege :update, includes: [
     :edit, :edit_email, :edit_update, :verification_check
