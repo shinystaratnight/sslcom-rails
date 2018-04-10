@@ -9,7 +9,8 @@ module PaypalExpressHelper
       action: 'purchase',
       ssl_slug: params[:ssl_slug],
       only_path: false,
-      deduct_order: params[:deduct_order]
+      deduct_order: params[:deduct_order],
+      order_description: params[:order_description]
     }
     
     if params[:reprocess_ucc]

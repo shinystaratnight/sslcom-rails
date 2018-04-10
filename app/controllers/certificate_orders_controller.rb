@@ -243,7 +243,7 @@ class CertificateOrdersController < ApplicationController
             end
           end
         end
-        if @certificate_order.is_express_signup?
+        if @certificate_order.is_express_signup? || @certificate_order.skip_contacts_step?
           format.html { redirect_to validation_destination(slug: @ssl_slug, certificate_order: @certificate_order) }
         else #assume ev full signup process
           format.html { redirect_to certificate_content_contacts_path(@ssl_slug, cc) }
@@ -275,7 +275,10 @@ class CertificateOrdersController < ApplicationController
         cc = @certificate_order.transfer_certificate_content(@certificate_content)
         if reprocess_ucc
           format.html {redirect_to new_order_path(@ssl_slug,
-            co_ref: @certificate_order.ref, cc_ref: cc.ref, reprocess_ucc: true
+            co_ref: @certificate_order.ref,
+            cc_ref: cc.ref,
+            reprocess_ucc: true,
+            order_description: params[:order][:order_description]
           )}
         else  
           if cc.pending_validation?

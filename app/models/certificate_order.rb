@@ -404,7 +404,9 @@ class CertificateOrder < ActiveRecord::Base
       event :charge_back, :transitions_to => :charged_back
       event :start_over, transitions_to: :paid do |complete=false|
         if self.certificate_contents.count >1
-          self.certificate_contents.last.delete
+          cc = self.certificate_contents.last
+          cc.preserve_certificate_contacts
+          cc.delete
         else
           duration = self.certificate_content.duration
           temp_cc=self.certificate_contents.create(duration: duration)
@@ -453,8 +455,17 @@ class CertificateOrder < ActiveRecord::Base
     if certificate.is_ucc?
       durations = {}
       i = years-1
-      certificate.num_domain_tiers.times do |j|
-        durations["tier_#{j+1}"] = (certificate.items_by_domains(true)[i][j].price * ( (j==0) ? 3 : 1 )).cents
+      cur_certificate = certificate
+      res_tier = ssl_account.reseller_tier_label
+      
+      unless res_tier.nil?
+        cur_certificate = Certificate.where(
+          title: certificate.title, reseller_tier_id: res_tier.to_i
+        ).first
+      end
+
+      cur_certificate.num_domain_tiers.times do |j|
+        durations["tier_#{j+1}"] = (cur_certificate.items_by_domains(true)[i][j].price * ( (j==0) ? 3 : 1 )).cents
       end
       durations
     end
@@ -726,7 +737,21 @@ class CertificateOrder < ActiveRecord::Base
   def skip_verification?
     self.certificate.skip_verification?
   end
-
+  
+  def skip_contacts_step?
+    if Contact.optional_contacts?
+      if signed_certificate.try('is_dv?'.to_sym) && Settings.exempt_dv_contacts
+        true
+      else
+        certificate_contents.map(&:certificate_contacts).flatten.any?
+      end
+    else
+      roles = co.certificate_contacts.map(&:roles).flatten.uniq
+      req_roles = CertificateContent::CONTACT_ROLES
+      (roles & req_roles).count == req_roles.count
+    end
+  end
+  
   def order_status
     if is_ev?
       "waiting for documents"
@@ -750,7 +775,7 @@ class CertificateOrder < ActiveRecord::Base
   end
   
   def reprocess_ucc_process
-    ssl_account.billing_monthly? ? REPROCES_SIGNUP_W_INVOICE : REPROCES_SIGNUP_W_PAYMENT 
+    ssl_account.billing_monthly? ? REPROCES_SIGNUP_W_INVOICE : REPROCES_SIGNUP_W_PAYMENT
   end
   
   def is_express_signup?

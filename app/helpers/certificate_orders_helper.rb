@@ -1,8 +1,7 @@
 module CertificateOrdersHelper
   def order_line_items(certificate_order, email_template=false, invoice=false)
     items = []
-    if certificate_order.certificate.is_ucc? ||
-        certificate_order.certificate.is_wildcard?
+    if certificate_order.certificate.is_ucc? || certificate_order.certificate.is_wildcard?
       soi = certificate_order.sub_order_items.detect{|item|item.
           product_variant_item.is_server_license?}
       unless soi.blank?
@@ -33,11 +32,15 @@ module CertificateOrdersHelper
             end
             
             if reprocess_order && reprocess_domains[:new_domains_count] > 0
-              items << content_tag(:strong, 
+              co_desc = invoice ? " for certificate order ##{certificate_order.ref}." : ''
+              descr = if @order.invoice_description.blank?
                 "Prorated charge for #{reprocess_domains[:new_domains_count]} 
                 additional domains. (wildcard: #{reprocess_domains[:wildcard]}, 
                 non wildcard: #{reprocess_domains[:non_wildcard]})"
-              )
+              else
+                "#{@order.invoice_description} #{co_desc}"
+              end
+              items << content_tag(:strong, descr )
             end
           end
         end

@@ -18,8 +18,7 @@ function paypalCheckoutUrl() {
   
   if (reprocess_ucc.length) {
     url +='?amount=' + $('#order_order_amount').val() 
-        + '&deduct_order=true'
-        + '&order_type=order';
+        + '&deduct_order=true' + '&order_type=order';
         
     if (reprocess_ucc.data('monthly-invoice')) {
       url += '&monthly_invoice=true'
@@ -27,7 +26,8 @@ function paypalCheckoutUrl() {
     } else {
       url += '&reprocess_ucc=true'
         + '&co_ref=' + reprocess_ucc.data('co-ref')
-        + '&cc_ref=' + reprocess_ucc.data('cc-ref');
+        + '&cc_ref=' + reprocess_ucc.data('cc-ref')
+        + '&order_description=' + $('#order_order_description').val();
     }
     if (typeof $('#order_charge_amount').val() !== "undefined") {
       url += '&funded_target=' + $('#order_charge_amount').val();
