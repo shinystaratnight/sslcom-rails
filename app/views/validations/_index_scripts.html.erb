@@ -1074,38 +1074,42 @@ jQuery(function($) {
               type: "POST",
               success: function (result) {
                 if (Object.keys(result).length > 0) {
-                  var message_wrap_element = $('<div></div>');
-                  message_wrap_element.attr('class', 'flash_message error');
+                  if ($.inArray('no-user', Object.keys(result)) == -1) {
+                    var message_wrap_element = $('<div></div>');
+                    message_wrap_element.attr('class', 'flash_message error');
 
-                  var message_element = $('<span></span>');
-                  Object.keys(result).map(function(key) {
-                    /*$('#' + key).parent().css('background-color', 'red');*/
-                    $('td:first-child', $('[id="certificate_name__' + key + '"]')).css('background-color', 'red');
-                    message_element.append(key + ' : ' + result[key] + '\r\n');
-                  });
-                  message_wrap_element.append(message_element);
+                    var message_element = $('<span></span>');
+                    Object.keys(result).map(function(key) {
+                      /*$('#' + key).parent().css('background-color', 'red');*/
+                      $('td:first-child', $('[id="certificate_name__' + key + '"]')).css('background-color', 'red');
+                      message_element.append(key + ' : ' + result[key] + '\r\n');
+                    });
+                    message_wrap_element.append(message_element);
 
-                  var btn_element = $('<small></small>');
-                  var close_btn_element = $('<div></div>');
-                  close_btn_element.attr('class', 'close_flash_message');
+                    var btn_element = $('<small></small>');
+                    var close_btn_element = $('<div></div>');
+                    close_btn_element.attr('class', 'close_flash_message');
 
-                  var close_sign_element = $('<span></span>');
-                  close_sign_element.append('X');
+                    var close_sign_element = $('<span></span>');
+                    close_sign_element.append('X');
 
-                  close_btn_element.append(close_sign_element);
-                  close_btn_element.append('close');
+                    close_btn_element.append(close_sign_element);
+                    close_btn_element.append('close');
 
-                  btn_element.append(close_btn_element);
-                  message_wrap_element.append(btn_element);
+                    btn_element.append(close_btn_element);
+                    message_wrap_element.append(btn_element);
 
-                  if ($('#content').find('.inner').children().first().hasClass('flash_message')) {
-                    $('#content').find('.inner').children().first().remove();
+                    if ($('#content').find('.inner').children().first().hasClass('flash_message')) {
+                      $('#content').find('.inner').children().first().remove();
+                    }
+                    message_wrap_element.insertBefore($('#content').find('.inner').children().first());
+
+                    /*$('#upload_validations').show();*/
+                    $('[id="certificate_name__' + domain_name + '"]').next().show();
+                    $('[id="certificate_name__' + domain_name + '"]').show();
+                  } else {
+                    location.reload(true);
                   }
-                  message_wrap_element.insertBefore($('#content').find('.inner').children().first());
-
-                  /*$('#upload_validations').show();*/
-                  $('[id="certificate_name__' + domain_name + '"]').next().show();
-                  $('[id="certificate_name__' + domain_name + '"]').show();
                 } else {
                   /*$('#certificate_name_' + domain_id).next().remove();
                   $('#certificate_name_' + domain_id).remove();*/
@@ -1264,36 +1268,40 @@ jQuery(function($) {
                   },
                   type: "POST",
                   success: function (result) {
-                    var optGroupElement = $('optgroup:first', $('[name="domains[' + new_domain_name + '][dcv]"]'));
-                    optGroupElement.empty();
+                    if ($.inArray('no-user', Object.keys(result)) == -1) {
+                      var optGroupElement = $('optgroup:first', $('[name="domains[' + new_domain_name + '][dcv]"]'));
+                      optGroupElement.empty();
 
-                    Object.keys(result['new_emails']).map(function (optKey) {
-                      var optElement = $('<option></option>');
-                      optElement.attr('value', optKey);
-                      optElement.append(result['new_emails'][optKey]);
-                      optGroupElement.append(optElement);
-                    });
+                      Object.keys(result['new_emails']).map(function (optKey) {
+                        var optElement = $('<option></option>');
+                        optElement.attr('value', optKey);
+                        optElement.append(result['new_emails'][optKey]);
+                        optGroupElement.append(optElement);
+                      });
 
-                    $('[name="domains[' + new_domain_name + '][dcv]"]').change();
-                    $('[name="domains[' + new_domain_name + '][dcv]"]').parent().next().empty();
-                    if (result['caa_check'] == 'failed') {
-                      $('[name="domains[' + new_domain_name + '][dcv]"]').attr('disabled', true);
-                      var anchorElement = $('<a></a>');
-                      anchorElement.attr('href', 'https://www.ssl.com/how-to/configure-caa-records-to-authorize-ssl-com/');
-                      anchorElement.attr('target', '_blank');
-                      anchorElement.attr('style', 'color: white');
-                      anchorElement.append(result['caa_check']);
+                      $('[name="domains[' + new_domain_name + '][dcv]"]').change();
+                      $('[name="domains[' + new_domain_name + '][dcv]"]').parent().next().empty();
+                      if (result['caa_check'] == 'failed') {
+                        $('[name="domains[' + new_domain_name + '][dcv]"]').attr('disabled', true);
+                        var anchorElement = $('<a></a>');
+                        anchorElement.attr('href', 'https://www.ssl.com/how-to/configure-caa-records-to-authorize-ssl-com/');
+                        anchorElement.attr('target', '_blank');
+                        anchorElement.attr('style', 'color: white');
+                        anchorElement.append(result['caa_check']);
 
-                      $('[name="domains[' + new_domain_name + '][dcv]"]').parent().next().attr('style', 'background: red; color: white');
-                      $('[name="domains[' + new_domain_name + '][dcv]"]').parent().next().append(anchorElement);
-                    } else if (result['caa_check'] == 'passed') {
-                      $('[name="domains[' + new_domain_name + '][dcv]"]').attr('disabled', false);
-                      $('[name="domains[' + new_domain_name + '][dcv]"]').parent().next().attr('style', 'background: green; color: white');
-                      $('[name="domains[' + new_domain_name + '][dcv]"]').parent().next().append(result['caa_check']);
+                        $('[name="domains[' + new_domain_name + '][dcv]"]').parent().next().attr('style', 'background: red; color: white');
+                        $('[name="domains[' + new_domain_name + '][dcv]"]').parent().next().append(anchorElement);
+                      } else if (result['caa_check'] == 'passed') {
+                        $('[name="domains[' + new_domain_name + '][dcv]"]').attr('disabled', false);
+                        $('[name="domains[' + new_domain_name + '][dcv]"]').parent().next().attr('style', 'background: green; color: white');
+                        $('[name="domains[' + new_domain_name + '][dcv]"]').parent().next().append(result['caa_check']);
+                      }
+
+                      $('.domains_loader_wrap').hide();
+                      $('#upload_validations').show();
+                    } else {
+                      location.reload(true);
                     }
-
-                    $('.domains_loader_wrap').hide();
-                    $('#upload_validations').show();
                   }
                 });
               }

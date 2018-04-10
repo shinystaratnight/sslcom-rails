@@ -9,7 +9,8 @@
 -if params[:checkout] && co.certificate_content.pending_validation?
   -i=adjusted_position(7, co)
 =order_progress_indicator(i, co.certificate) unless i.blank?
--if token=co.physical_tokens.first(&"in_transit?".to_sym)
+-token=co.physical_tokens.last
+-if token.try("in_transit?".to_sym)
   -flash.now[:warning] = "Token #{token.name} has shipped with tracking number #{token.tracking_number}!" if co.certificate.is_evcs? and !co.physical_tokens.blank?
 =render :partial=>'quick_links'
 #certificate_orders
@@ -200,7 +201,7 @@
                                   %li Admin PIN - #{token.admin_pin}
                       .certificate_details_box
                         %ul
-                          -if co.certificate_content.issued? && !co.certificate_content.expired?
+                          -if !co.certificate.is_code_signing? && co.certificate_content.issued? && !co.certificate_content.expired?
                             =render partial: 'download', locals: {co: co}
                           -unless @cc.csr.blank? || hide_validation?(co)
                             -if @cc.pending_validation?
@@ -258,7 +259,7 @@
                             (serial number: #{sc.serial})
                     %tr
                       %td(colspan="5")
-                        -if current_user.is_system_admins? or !@certificate_order.certificate.is_code_signing?
+                        -if !@certificate_order.certificate.is_code_signing? # or current_user.is_system_admins?
                           .certificate_details_box
                             %strong certificate signing request
                             -unless permitted_to?(:create, SignedCertificate.new) && current
