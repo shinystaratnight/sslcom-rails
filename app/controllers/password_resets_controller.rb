@@ -2,7 +2,11 @@ class PasswordResetsController < ApplicationController
   before_filter :require_no_user
   before_filter :find_dup_login, :find_dup_email, only: [:create]
   before_filter :load_user_using_perishable_token, :only => [:edit, :update]
-
+  
+  def index
+    redirect_to new_password_reset_path
+  end
+  
   def edit
     render
   end
