@@ -134,6 +134,7 @@ class CertificateContent < ActiveRecord::Base
     end
 
     state :contacts_provided do
+      event :provide_contacts, transitions_to: :contacts_provided
       event :submit_csr, :transitions_to => :csr_submitted
       event :issue, :transitions_to => :issued
       event :pend_validation, :transitions_to => :pending_validation do |options={}|
