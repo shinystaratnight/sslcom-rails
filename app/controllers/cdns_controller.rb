@@ -3,11 +3,11 @@ require 'securerandom'
 class CdnsController < ApplicationController
   include HTTParty
   before_action :set_cdn, only: [:show, :update, :destroy]
-  # before_action :require_user, only: [:index, :register_account, :register_api_key, :resource_cdn, :update_custom_domain]
+  before_action :require_user, only: [:index, :register_account, :resource_cdn, :update_custom_domain]
   before_action :set_tab_name, only: [:resource_cdn, :update_resource, :add_custom_domain, :update_advanced_setting,
                                       :update_custom_domain, :purge_cache, :update_cache_expiry, :delete_resource]
 
-  before_filter :require_user, only: [:index, :register_account, :resource_cdn, :update_custom_domain]
+  # before_filter :require_user, only: [:index, :register_account, :resource_cdn, :update_custom_domain]
 
   # filter_access_to :all
   # filter_access_to :index, :resource_cdn, require: :read

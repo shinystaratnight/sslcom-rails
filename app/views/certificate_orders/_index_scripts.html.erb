@@ -547,10 +547,14 @@ jQuery(function($) {
           type: "GET",
           dataType: "html",
           success: function(result) {
-            if (currentElmt.parents().filter('tr').next().hasClass('expanded') == false) {
-              currentElmt.parents().filter('tr').after(result);
-              currentElmt.parents().filter('tr').find('.dropdown img').attr('src',"<%= asset_path('contract.png') %>");
-              currentElmt.parents().filter('tr').find('.expand').text('close');
+            if (result == 'no-user') {
+              location.reload(true);
+            } else {
+              if (currentElmt.parents().filter('tr').next().hasClass('expanded') == false) {
+                currentElmt.parents().filter('tr').after(result);
+                currentElmt.parents().filter('tr').find('.dropdown img').attr('src',"<%= asset_path('contract.png') %>");
+                currentElmt.parents().filter('tr').find('.expand').text('close');
+              }
             }
           }
         });

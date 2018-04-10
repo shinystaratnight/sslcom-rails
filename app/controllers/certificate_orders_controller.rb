@@ -20,13 +20,14 @@ class CertificateOrdersController < ApplicationController
   skip_before_filter :verify_authenticity_token, only: [:parse_csr]
   filter_access_to :all
   filter_access_to :read, :update, :delete, :show, :edit, :developer
-  filter_access_to :incomplete, :pending, :search, :reprocessing, :order_by_csr, :generate_cert, :show_cert_order, :require=>:read
+  filter_access_to :incomplete, :pending, :search, :reprocessing, :order_by_csr, :generate_cert, :require=>:read
   filter_access_to :credits, :filter_by, :filter_by_scope, :require=>:index
   filter_access_to :update_csr, require: [:update]
   filter_access_to :download, :start_over, :reprocess, :admin_update, :change_ext_order_number,
                    :developers, :require=>[:update, :delete]
   filter_access_to :renew, :parse_csr, require: [:create]
   filter_access_to :auto_renew, require: [:admin_manage]
+  filter_access_to :show_cert_order, :require=>:ajax
   # filter_access_to :sslcom_ca, require: [:sysadmin_manage]
   #cache_sweeper :certificate_order_sweeper
   # before_filter :require_user,
@@ -53,10 +54,14 @@ class CertificateOrdersController < ApplicationController
   end
 
   def show_cert_order
-    @certificate_order = (current_user.is_system_admins? ? CertificateOrder :
-                              current_user.ssl_account.certificate_orders).find_by_ref(params[:id])
+    if current_user
+      @certificate_order = (current_user.is_system_admins? ? CertificateOrder :
+                                current_user.ssl_account.certificate_orders).find_by_ref(params[:id])
 
-    render :partial=>'detailed_info', :locals=>{:certificate_order=>@certificate_order}
+      render :partial=>'detailed_info', :locals=>{:certificate_order=>@certificate_order}
+    else
+      render :json => 'no-user'
+    end
   end
 
   def search
