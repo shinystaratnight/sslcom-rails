@@ -1079,7 +1079,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
                                                          layout: false
                                                      ))
     elsif (acr.csr)
-      result.certificates = acr.csr.body
+      result.certificates = nil
       result.common_name = acr.csr.common_name
     end
   end
