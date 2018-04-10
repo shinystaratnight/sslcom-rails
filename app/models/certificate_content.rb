@@ -9,7 +9,7 @@ class CertificateContent < ActiveRecord::Base
   belongs_to  :server_software
   has_one     :csr, :dependent => :destroy
   has_many    :signed_certificates, through: :csr
-  has_one     :registrant, :as => :contactable
+  has_one     :registrant, as: :contactable, dependent: :destroy
   has_many    :certificate_contacts, :as => :contactable
   has_many    :certificate_names # used for dcv of each domain in a UCC or multi domain ssl
   has_many    :url_callbacks, as: :callbackable
@@ -134,6 +134,7 @@ class CertificateContent < ActiveRecord::Base
     end
 
     state :contacts_provided do
+      event :provide_contacts, transitions_to: :contacts_provided
       event :submit_csr, :transitions_to => :csr_submitted
       event :issue, :transitions_to => :issued
       event :pend_validation, :transitions_to => :pending_validation do |options={}|
