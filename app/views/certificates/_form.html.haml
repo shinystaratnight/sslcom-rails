@@ -334,8 +334,8 @@
     -if reprocess_ucc
       -wildcard_count    = @certificate_order.get_reprocess_max_wildcard.count
       -nonwildcard_count = @certificate_order.get_reprocess_max_nonwildcard.count
-      -nonwildcard_cost  = @certificate_order.ucc_prorated_domain
-      
+      -nonwildcard_cost  = @certificate_order.ucc_prorated_domain(:nonwildcard, @tier)
+
       .clearfix
         %label{for: "ucc_nonwildcard_amount"}
           Domain Amount:
@@ -347,7 +347,7 @@
           %span{id: 'nonwildcard-current-count'}
       
       -unless @certificate_order.certificate.is_ev?
-        -wildcard_cost = @certificate_order.ucc_prorated_domain(:wildcard)
+        -wildcard_cost = @certificate_order.ucc_prorated_domain(:wildcard, @tier)
         %br
         .clearfix
           %label{for: "ucc_wildcard_amount"}

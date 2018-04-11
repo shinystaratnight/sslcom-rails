@@ -645,8 +645,7 @@ class OrdersController < ApplicationController
       @ssl_account = @certificate_order.ssl_account
       @certificate_content = @certificate_order.certificate_contents.find_by(ref: params[:cc_ref])
       @reprocess_ucc       = true
-      amount               = @certificate_order.ucc_prorated_amount(@certificate_content)
-
+      amount               = @certificate_order.ucc_prorated_amount(@certificate_content, find_tier)
       if @ssl_account.billing_monthly? || amount == 0
         if amount == 0 # Reprocess is free, no additional domains added
           @order = ReprocessCertificateOrder.new(
