@@ -163,6 +163,7 @@ class CertificateOrdersController < ApplicationController
 
   # GET /certificate_orders/1/reprocess
   def reprocess
+    @tier = find_tier
     @certificate_order = recert(CertificateOrder::REPROCESSING)
     unless @certificate_order.blank?
       @certificate_order.has_csr=true
