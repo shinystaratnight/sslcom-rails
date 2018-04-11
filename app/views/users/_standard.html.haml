@@ -114,7 +114,7 @@
                                 billing and purchase
                             -if permitted_to? :create, :funded_accounts
                               %li available funds: $#{ssl_account.funded_account.amount}
-                            -permitted_to? :read, :orders do
+                            -if permitted_to? :read, :orders do
                               %li=link_to "billing", is_sandbox? ? search_orders_path(search:'is_test:true') : orders_path(ssl_slug: @ssl_slug)
                             %li=link_to 'buy certificate', certificates_url
                             %li=link_to 'deposit funds', allocate_funds_url(ssl_slug: @ssl_slug)
