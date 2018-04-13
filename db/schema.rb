@@ -60,8 +60,8 @@ ActiveRecord::Schema.define(version: 20180404162536) do
     t.integer  "ssl_account_id", limit: 4
     t.string   "account_key",    limit: 255
     t.string   "secret_key",     limit: 255
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",                 null: false
+    t.datetime "updated_at",                 null: false
   end
 
   create_table "apis", force: :cascade do |t|
@@ -90,6 +90,16 @@ ActiveRecord::Schema.define(version: 20180404162536) do
     t.string   "nick_name",  limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
+  end
+
+  create_table "auto_renewals", force: :cascade do |t|
+    t.integer  "certificate_order_id", limit: 4
+    t.integer  "order_id",             limit: 4
+    t.text     "body",                 limit: 65535
+    t.string   "recipients",           limit: 255
+    t.string   "subject",              limit: 255
+    t.datetime "created_at",                         null: false
+    t.datetime "updated_at",                         null: false
   end
 
   create_table "billing_profiles", force: :cascade do |t|
@@ -125,6 +135,8 @@ ActiveRecord::Schema.define(version: 20180404162536) do
     t.boolean  "default_profile"
   end
 
+  add_index "billing_profiles", ["ssl_account_id"], name: "index_billing_profile_on_ssl_account_id", using: :btree
+
   create_table "blocklists", force: :cascade do |t|
     t.string   "type",        limit: 255
     t.string   "domain",      limit: 255
@@ -139,12 +151,12 @@ ActiveRecord::Schema.define(version: 20180404162536) do
 
   create_table "ca_api_requests", force: :cascade do |t|
     t.integer  "api_requestable_id",   limit: 4
-    t.string   "api_requestable_type", limit: 255
+    t.string   "api_requestable_type", limit: 191
     t.text     "request_url",          limit: 65535
     t.text     "parameters",           limit: 65535
     t.string   "method",               limit: 255
     t.text     "response",             limit: 65535
-    t.string   "type",                 limit: 255
+    t.string   "type",                 limit: 191
     t.string   "ca",                   limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -155,6 +167,9 @@ ActiveRecord::Schema.define(version: 20180404162536) do
     t.text     "certificate_chain",    limit: 65535
   end
 
+  add_index "ca_api_requests", ["api_requestable_id", "api_requestable_type"], name: "index_ca_api_requests_on_api_requestable", using: :btree
+  add_index "ca_api_requests", ["id", "api_requestable_id", "api_requestable_type", "type", "created_at"], name: "index_ca_api_requests_on_type_and_api_requestable_and_created_at", using: :btree
+  add_index "ca_api_requests", ["id", "api_requestable_id", "api_requestable_type", "type"], name: "index_ca_api_requests_on_type_and_api_requestable", unique: true, using: :btree
   add_index "ca_api_requests", ["username", "approval_id"], name: "index_ca_api_requests_on_username_and_approval_id", unique: true, using: :btree
 
   create_table "caa_checks", force: :cascade do |t|
@@ -233,7 +248,7 @@ ActiveRecord::Schema.define(version: 20180404162536) do
 
   create_table "certificate_contents", force: :cascade do |t|
     t.integer  "certificate_order_id", limit: 4,     null: false
-    t.text     "signing_request",      limit: 65535, null: false
+    t.text     "signing_request",      limit: 65535
     t.text     "signed_certificate",   limit: 65535
     t.integer  "server_software_id",   limit: 4
     t.text     "domains",              limit: 65535
@@ -251,6 +266,9 @@ ActiveRecord::Schema.define(version: 20180404162536) do
     t.string   "approval",             limit: 255
   end
 
+  add_index "certificate_contents", ["certificate_order_id"], name: "index_certificate_contents_on_certificate_order_id", using: :btree
+  add_index "certificate_contents", ["workflow_state"], name: "index_certificate_contents_on_workflow_state", using: :btree
+
   create_table "certificate_lookups", force: :cascade do |t|
     t.text     "certificate", limit: 65535
     t.string   "serial",      limit: 255
@@ -266,8 +284,8 @@ ActiveRecord::Schema.define(version: 20180404162536) do
     t.string   "email",                  limit: 255
     t.string   "name",                   limit: 255
     t.boolean  "is_common_name"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",                         null: false
+    t.datetime "updated_at",                         null: false
     t.string   "acme_account_id",        limit: 255
   end
 
@@ -297,8 +315,12 @@ ActiveRecord::Schema.define(version: 20180404162536) do
   end
 
   add_index "certificate_orders", ["created_at"], name: "index_certificate_orders_on_created_at", using: :btree
+  add_index "certificate_orders", ["id", "is_test"], name: "index_certificate_orders_on_test", using: :btree
+  add_index "certificate_orders", ["id", "workflow_state", "is_expired", "is_test"], name: "index_certificate_orders_on_workflow_state", unique: true, using: :btree
   add_index "certificate_orders", ["is_expired"], name: "index_certificate_orders_on_is_expired", using: :btree
+  add_index "certificate_orders", ["is_test"], name: "index_certificate_orders_on_is_test", using: :btree
   add_index "certificate_orders", ["ref"], name: "index_certificate_orders_on_ref", using: :btree
+  add_index "certificate_orders", ["site_seal_id"], name: "index_certificate_orders_site_seal_id", using: :btree
 
   create_table "certificates", force: :cascade do |t|
     t.integer  "reseller_tier_id",      limit: 4
@@ -334,8 +356,8 @@ ActiveRecord::Schema.define(version: 20180404162536) do
     t.string   "key",          limit: 40
     t.string   "secret",       limit: 40
     t.integer  "user_id",      limit: 4
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",               null: false
+    t.datetime "updated_at",               null: false
   end
 
   add_index "client_applications", ["key"], name: "index_client_applications_on_key", unique: true, using: :btree
@@ -366,7 +388,6 @@ ActiveRecord::Schema.define(version: 20180404162536) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "registrant_type",       limit: 4
-    t.integer  "parent_id",             limit: 4
     t.string   "callback_method",       limit: 255
     t.date     "incorporation_date"
     t.string   "incorporation_country", limit: 255
@@ -377,9 +398,11 @@ ActiveRecord::Schema.define(version: 20180404162536) do
     t.string   "duns_number",           limit: 255
     t.string   "company_number",        limit: 255
     t.string   "registration_service",  limit: 255
+    t.integer  "parent_id",             limit: 4
     t.boolean  "saved_default",                     default: false
   end
 
+  add_index "contacts", ["contactable_id", "contactable_type"], name: "index_contacts_on_contactable_id_and_contactable_type", using: :btree
   add_index "contacts", ["id", "parent_id"], name: "index_contacts_on_id_and_parent_id", using: :btree
 
   create_table "countries", force: :cascade do |t|
@@ -433,6 +456,8 @@ ActiveRecord::Schema.define(version: 20180404162536) do
     t.string   "public_key_md5",            limit: 255
   end
 
+  add_index "csrs", ["certificate_content_id", "common_name"], name: "index_csrs_on_common_name_and_certificate_content_id", using: :btree
+  add_index "csrs", ["certificate_content_id"], name: "index_csrs_on_certificate_content_id", using: :btree
   add_index "csrs", ["common_name"], name: "index_csrs_on_common_name", using: :btree
   add_index "csrs", ["organization"], name: "index_csrs_on_organization", using: :btree
   add_index "csrs", ["public_key_sha1", "unique_value"], name: "index_csrs_on_public_key_sha1_and_unique_value", unique: true, using: :btree
@@ -514,15 +539,15 @@ ActiveRecord::Schema.define(version: 20180404162536) do
   create_table "discounts_certificates", force: :cascade do |t|
     t.integer  "discount_id",    limit: 4
     t.integer  "certificate_id", limit: 4
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",               null: false
+    t.datetime "updated_at",               null: false
   end
 
   create_table "discounts_orders", force: :cascade do |t|
     t.integer  "discount_id", limit: 4
     t.integer  "order_id",    limit: 4
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",            null: false
+    t.datetime "updated_at",            null: false
   end
 
   create_table "domain_control_validations", force: :cascade do |t|
@@ -542,6 +567,8 @@ ActiveRecord::Schema.define(version: 20180404162536) do
     t.integer  "certificate_name_id",        limit: 4
     t.string   "failure_action",             limit: 255
   end
+
+  add_index "domain_control_validations", ["id", "csr_id"], name: "index_domain_control_validations_on_id_csr_id", using: :btree
 
   create_table "duplicate_v2_users", force: :cascade do |t|
     t.string   "login",      limit: 255
@@ -597,8 +624,8 @@ ActiveRecord::Schema.define(version: 20180404162536) do
     t.string   "vat",              limit: 255
     t.string   "tax",              limit: 255
     t.text     "notes",            limit: 65535
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",                     null: false
+    t.datetime "updated_at",                     null: false
     t.string   "type",             limit: 255
     t.integer  "billable_id",      limit: 4
     t.string   "billable_type",    limit: 255
@@ -630,14 +657,13 @@ ActiveRecord::Schema.define(version: 20180404162536) do
   end
 
   add_index "line_items", ["order_id"], name: "index_line_items_on_order_id", using: :btree
+  add_index "line_items", ["sellable_id", "sellable_type"], name: "index_line_items_on_sellable_id_and_sellable_type", using: :btree
   add_index "line_items", ["sellable_id"], name: "index_line_items_on_sellable_id", using: :btree
   add_index "line_items", ["sellable_type"], name: "index_line_items_on_sellable_type", using: :btree
 
   create_table "malware_hashes", force: :cascade do |t|
     t.string "url", limit: 32, null: false
   end
-
-  add_index "malware_hashes", ["url"], name: "index_malware_hashes_on_url", using: :btree
 
   create_table "malwares", force: :cascade do |t|
     t.integer  "black_major",   limit: 4
@@ -665,8 +691,8 @@ ActiveRecord::Schema.define(version: 20180404162536) do
   create_table "oauth_nonces", force: :cascade do |t|
     t.string   "nonce",      limit: 255
     t.integer  "timestamp",  limit: 4
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
   end
 
   add_index "oauth_nonces", ["nonce", "timestamp"], name: "index_oauth_nonces_on_nonce_and_timestamp", unique: true, using: :btree
@@ -683,8 +709,8 @@ ActiveRecord::Schema.define(version: 20180404162536) do
     t.datetime "authorized_at"
     t.datetime "invalidated_at"
     t.datetime "valid_to"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",                        null: false
+    t.datetime "updated_at",                        null: false
   end
 
   add_index "oauth_tokens", ["token"], name: "index_oauth_tokens_on_token", unique: true, using: :btree
@@ -723,9 +749,9 @@ ActiveRecord::Schema.define(version: 20180404162536) do
     t.string   "status",                 limit: 255, default: "active"
     t.string   "reference_number",       limit: 255
     t.integer  "deducted_from_id",       limit: 4
+    t.string   "notes",                  limit: 255
     t.string   "po_number",              limit: 255
     t.string   "quote_number",           limit: 255
-    t.string   "notes",                  limit: 255
     t.integer  "visitor_token_id",       limit: 4
     t.string   "ext_affiliate_name",     limit: 255
     t.string   "ext_affiliate_id",       limit: 255
@@ -737,6 +763,7 @@ ActiveRecord::Schema.define(version: 20180404162536) do
     t.string   "invoice_description",    limit: 255
   end
 
+  add_index "orders", ["billable_id", "billable_type"], name: "index_orders_on_billable_id_and_billable_type", using: :btree
   add_index "orders", ["billable_id"], name: "index_orders_on_billable_id", using: :btree
   add_index "orders", ["billable_type"], name: "index_orders_on_billable_type", using: :btree
   add_index "orders", ["created_at"], name: "index_orders_on_created_at", using: :btree
@@ -744,6 +771,7 @@ ActiveRecord::Schema.define(version: 20180404162536) do
   add_index "orders", ["quote_number"], name: "index_orders_on_quote_number", using: :btree
   add_index "orders", ["reference_number"], name: "index_orders_on_reference_number", using: :btree
   add_index "orders", ["state", "billable_id", "billable_type"], name: "index_orders_on_state_and_billable_id_and_billable_type", using: :btree
+  add_index "orders", ["status"], name: "index_orders_on_status", using: :btree
   add_index "orders", ["updated_at"], name: "index_orders_on_updated_at", using: :btree
 
   create_table "other_party_requests", force: :cascade do |t|
@@ -781,15 +809,15 @@ ActiveRecord::Schema.define(version: 20180404162536) do
     t.string   "subject_class", limit: 255
     t.integer  "subject_id",    limit: 4
     t.text     "description",   limit: 65535
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",                  null: false
+    t.datetime "updated_at",                  null: false
   end
 
   create_table "permissions_roles", force: :cascade do |t|
     t.integer  "permission_id", limit: 4
     t.integer  "role_id",       limit: 4
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",              null: false
+    t.datetime "updated_at",              null: false
   end
 
   create_table "physical_tokens", force: :cascade do |t|
@@ -821,7 +849,10 @@ ActiveRecord::Schema.define(version: 20180404162536) do
     t.datetime "updated_at"
   end
 
-  add_index "preferences", ["owner_id", "owner_type", "name", "group_id", "group_type"], name: "index_preferences_on_owner_and_name_and_preference", unique: true, using: :btree
+  add_index "preferences", ["group_id", "group_type", "name", "owner_id", "owner_type"], name: "index_preferences_on_owner_and_name_and_preference", unique: true, using: :btree
+  add_index "preferences", ["id", "name", "owner_id", "owner_type", "value"], name: "index_preferences_on_owner_and_name_and_value", using: :btree
+  add_index "preferences", ["id", "name", "value"], name: "index_preferences_on_name_and_value", using: :btree
+  add_index "preferences", ["id", "owner_id", "owner_type"], name: "index_preferences_on_owner_id_and_owner_type", unique: true, using: :btree
 
   create_table "product_orders", force: :cascade do |t|
     t.integer  "ssl_account_id",    limit: 4
@@ -909,6 +940,29 @@ ActiveRecord::Schema.define(version: 20180404162536) do
     t.datetime "updated_at"
   end
 
+  create_table "receipts", force: :cascade do |t|
+    t.integer  "order_id",                 limit: 4
+    t.string   "confirmation_recipients",  limit: 255
+    t.string   "receipt_recipients",       limit: 255
+    t.string   "processed_recipients",     limit: 255
+    t.string   "deposit_reference_number", limit: 255
+    t.string   "deposit_created_at",       limit: 255
+    t.string   "deposit_description",      limit: 255
+    t.string   "deposit_method",           limit: 255
+    t.string   "profile_full_name",        limit: 255
+    t.string   "profile_credit_card",      limit: 255
+    t.string   "profile_last_digits",      limit: 255
+    t.string   "deposit_amount",           limit: 255
+    t.string   "available_funds",          limit: 255
+    t.string   "order_reference_number",   limit: 255
+    t.string   "order_created_at",         limit: 255
+    t.string   "line_item_descriptions",   limit: 255
+    t.string   "line_item_amounts",        limit: 255
+    t.string   "order_amount",             limit: 255
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "refunds", force: :cascade do |t|
     t.string   "merchant",             limit: 255
     t.string   "reference",            limit: 255
@@ -939,8 +993,8 @@ ActiveRecord::Schema.define(version: 20180404162536) do
   create_table "renewal_attempts", force: :cascade do |t|
     t.integer  "certificate_order_id", limit: 4
     t.integer  "order_transaction_id", limit: 4
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",                     null: false
+    t.datetime "updated_at",                     null: false
   end
 
   create_table "renewal_notifications", force: :cascade do |t|
@@ -948,8 +1002,8 @@ ActiveRecord::Schema.define(version: 20180404162536) do
     t.text     "body",                 limit: 65535
     t.string   "recipients",           limit: 255
     t.string   "subject",              limit: 255
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",                         null: false
+    t.datetime "updated_at",                         null: false
   end
 
   create_table "reseller_tiers", force: :cascade do |t|
@@ -1009,6 +1063,8 @@ ActiveRecord::Schema.define(version: 20180404162536) do
     t.datetime "updated_at"
   end
 
+  add_index "sent_reminders", ["recipients", "subject", "trigger_value", "expires_at"], name: "index_contacts_on_recipients_subject_trigger_value_expires_at", using: :btree
+
   create_table "server_softwares", force: :cascade do |t|
     t.string   "title",       limit: 255, null: false
     t.datetime "created_at"
@@ -1019,8 +1075,8 @@ ActiveRecord::Schema.define(version: 20180404162536) do
   create_table "sessions", force: :cascade do |t|
     t.string   "session_id", limit: 191,   null: false
     t.text     "data",       limit: 65535
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",               null: false
+    t.datetime "updated_at",               null: false
   end
 
   add_index "sessions", ["session_id"], name: "index_sessions_on_session_id", using: :btree
@@ -1034,8 +1090,8 @@ ActiveRecord::Schema.define(version: 20180404162536) do
     t.string   "crypted_password", limit: 255
     t.string   "password_salt",    limit: 255
     t.string   "access",           limit: 255
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",                     null: false
+    t.datetime "updated_at",                     null: false
   end
 
   create_table "signed_certificates", force: :cascade do |t|
@@ -1071,6 +1127,7 @@ ActiveRecord::Schema.define(version: 20180404162536) do
   end
 
   add_index "signed_certificates", ["ca_id"], name: "fk_rails_d21ca532b7", using: :btree
+  add_index "signed_certificates", ["csr_id"], name: "index_signed_certificates_on_csr_id", using: :btree
 
   create_table "site_checks", force: :cascade do |t|
     t.text     "url",                   limit: 65535
@@ -1086,6 +1143,9 @@ ActiveRecord::Schema.define(version: 20180404162536) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "site_seals", ["ref"], name: "index_site_seals_ref", using: :btree
+  add_index "site_seals", ["workflow_state"], name: "index_site_seals_workflow_state", using: :btree
 
   create_table "ssl_account_users", force: :cascade do |t|
     t.integer  "user_id",        limit: 4,                   null: false
@@ -1117,6 +1177,8 @@ ActiveRecord::Schema.define(version: 20180404162536) do
     t.string   "billing_method",         limit: 255, default: "monthly"
   end
 
+  add_index "ssl_accounts", ["acct_number"], name: "index_ssl_account_on_acct_number", using: :btree
+
   create_table "ssl_docs", force: :cascade do |t|
     t.integer  "folder_id",             limit: 4
     t.string   "reviewer",              limit: 255
@@ -1145,6 +1207,8 @@ ActiveRecord::Schema.define(version: 20180404162536) do
     t.integer  "product_id",              limit: 4
   end
 
+  add_index "sub_order_items", ["id", "sub_itemable_id", "sub_itemable_type"], name: "index_sub_order_items_on_sub_itemable", using: :btree
+
   create_table "surl_blacklists", force: :cascade do |t|
     t.string   "fingerprint", limit: 255
     t.datetime "created_at"
@@ -1162,6 +1226,8 @@ ActiveRecord::Schema.define(version: 20180404162536) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "surl_visits", ["surl_id"], name: "index_surl_visits_on_surl_id", using: :btree
 
   create_table "surls", force: :cascade do |t|
     t.integer  "user_id",       limit: 4
@@ -1185,8 +1251,8 @@ ActiveRecord::Schema.define(version: 20180404162536) do
     t.string   "target_type", limit: 255
     t.text     "notes",       limit: 65535
     t.string   "action",      limit: 255
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",                null: false
+    t.datetime "updated_at",                null: false
   end
 
   create_table "tracked_urls", force: :cascade do |t|
@@ -1197,6 +1263,7 @@ ActiveRecord::Schema.define(version: 20180404162536) do
   end
 
   add_index "tracked_urls", ["md5", "url"], name: "index_tracked_urls_on_md5_and_url", length: {"md5"=>100, "url"=>100}, using: :btree
+  add_index "tracked_urls", ["md5"], name: "index_tracked_urls_on_md5", using: :btree
 
   create_table "trackings", force: :cascade do |t|
     t.integer  "tracked_url_id",   limit: 4
@@ -1242,8 +1309,8 @@ ActiveRecord::Schema.define(version: 20180404162536) do
     t.integer  "user_group_id", limit: 4
     t.string   "status",        limit: 255
     t.string   "notes",         limit: 255
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",                null: false
+    t.datetime "updated_at",                null: false
   end
 
   create_table "users", force: :cascade do |t|
@@ -1256,6 +1323,17 @@ ActiveRecord::Schema.define(version: 20180404162536) do
     t.string   "single_access_token", limit: 255,                 null: false
     t.string   "perishable_token",    limit: 255,                 null: false
     t.string   "status",              limit: 255
+    t.integer  "login_count",         limit: 4,   default: 0,     null: false
+    t.integer  "failed_login_count",  limit: 4,   default: 0,     null: false
+    t.datetime "last_request_at"
+    t.datetime "current_login_at"
+    t.datetime "last_login_at"
+    t.string   "current_login_ip",    limit: 255
+    t.string   "last_login_ip",       limit: 255
+    t.boolean  "active",                          default: false, null: false
+    t.string   "openid_identifier",   limit: 255
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.string   "first_name",          limit: 255
     t.string   "last_name",           limit: 255
     t.string   "phone",               limit: 255
@@ -1268,21 +1346,6 @@ ActiveRecord::Schema.define(version: 20180404162536) do
     t.string   "city",                limit: 255
     t.string   "state",               limit: 255
     t.string   "country",             limit: 255
-    t.string   "ext",                 limit: 255
-    t.string   "fax",                 limit: 255
-    t.string   "website",             limit: 255
-    t.string   "tax_number",          limit: 255
-    t.integer  "login_count",         limit: 4,   default: 0,     null: false
-    t.integer  "failed_login_count",  limit: 4,   default: 0,     null: false
-    t.datetime "last_request_at"
-    t.datetime "current_login_at"
-    t.datetime "last_login_at"
-    t.string   "current_login_ip",    limit: 255
-    t.string   "last_login_ip",       limit: 255
-    t.boolean  "active",                          default: false, null: false
-    t.string   "openid_identifier",   limit: 255
-    t.datetime "created_at"
-    t.datetime "updated_at"
     t.boolean  "is_auth_token"
     t.integer  "default_ssl_account", limit: 4
     t.integer  "max_teams",           limit: 4
@@ -1292,8 +1355,13 @@ ActiveRecord::Schema.define(version: 20180404162536) do
 
   add_index "users", ["default_ssl_account"], name: "index_users_on_default_ssl_account", using: :btree
   add_index "users", ["email"], name: "index_users_on_email", using: :btree
+  add_index "users", ["id", "ssl_account_id", "status"], name: "index_users_on_status_and_ssl_account_id", using: :btree
+  add_index "users", ["id", "status"], name: "index_users_on_status", using: :btree
+  add_index "users", ["login", "email"], name: "index_users_on_login_and_email", using: :btree
   add_index "users", ["login"], name: "index_users_on_login", using: :btree
   add_index "users", ["perishable_token"], name: "index_users_on_perishable_token", using: :btree
+  add_index "users", ["ssl_account_id", "login", "email"], name: "index_users_on_ssl_account_id_and_login_and_email", using: :btree
+  add_index "users", ["ssl_account_id"], name: "index_users_on_ssl_acount_id", using: :btree
 
   create_table "v2_migration_progresses", force: :cascade do |t|
     t.string   "source_table_name", limit: 255
@@ -1323,6 +1391,7 @@ ActiveRecord::Schema.define(version: 20180404162536) do
   end
 
   add_index "validation_histories", ["validation_id"], name: "index_validation_histories_on_validation_id", using: :btree
+  add_index "validation_histories", ["validation_id"], name: "index_validation_histories_validation_id", using: :btree
 
   create_table "validation_history_validations", force: :cascade do |t|
     t.integer  "validation_history_id", limit: 4
@@ -1353,6 +1422,9 @@ ActiveRecord::Schema.define(version: 20180404162536) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "validation_rulings", ["validation_rulable_id", "validation_rulable_type"], name: "index_validation_rulings_on_rulable_id_and_rulable_type", using: :btree
+  add_index "validation_rulings", ["validation_rule_id"], name: "index_validation_rulings_on_validation_rule_id", using: :btree
 
   create_table "validation_rulings_validation_histories", force: :cascade do |t|
     t.integer  "validation_history_id", limit: 4
@@ -1396,6 +1468,7 @@ ActiveRecord::Schema.define(version: 20180404162536) do
   end
 
   add_index "visitor_tokens", ["guid", "affiliate_id"], name: "index_visitor_tokens_on_guid_and_affiliate_id", using: :btree
+  add_index "visitor_tokens", ["guid"], name: "index_visitor_tokens_on_guid", using: :btree
 
   create_table "websites", force: :cascade do |t|
     t.string  "host",        limit: 255

@@ -111,6 +111,12 @@ jQuery(function($) {
                 info['commonname'] = subject_dn_str[idx].split('=')[1];
               } else if (subject_dn_str[idx].split('=')[0] == 'O') {
                 info['organization'] = subject_dn_str[idx].split('=')[1];
+              } else if (subject_dn_str[idx].split('=')[0] == 'OU') {
+                info['organizationalunit'] = subject_dn_str[idx].split('=')[1];
+              } else if (subject_dn_str[idx].split('=')[0] == 'L') {
+                info['locality'] = subject_dn_str[idx].split('=')[1];
+              } else if (subject_dn_str[idx].split('=')[0] == 'ST') {
+                info['state'] = subject_dn_str[idx].split('=')[1];
               } else if (subject_dn_str[idx].split('=')[0] == 'C') {
                 info['country'] = subject_dn_str[idx].split('=')[1];
               }
