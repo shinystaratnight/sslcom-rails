@@ -435,6 +435,7 @@ class CertificateOrder < ActiveRecord::Base
 
     state :rejected do #only refund a canceled order
       event :unreject, :transitions_to => :paid
+      event :refund, :transitions_to => :refunded
     end
   end
   
