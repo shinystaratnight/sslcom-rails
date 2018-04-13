@@ -824,6 +824,8 @@ class CertificateContent < ActiveRecord::Base
       .where.not(contactable_id: id)
       .update_all(contactable_id: id)
     
+    Contact.clear_duplicate_co_contacts(certificate_order)
+    
     if certificate_contacts.any? && info_provided?
       provide_contacts!
     end
