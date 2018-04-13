@@ -142,7 +142,7 @@ class SslAccount < ActiveRecord::Base
   end
 
   def reseller_tier_label
-    reseller.reseller_tier.label if has_role?('reseller')
+    reseller.reseller_tier.label if (reseller && reseller.reseller_tier)
   end
 
   def signed_certificates
