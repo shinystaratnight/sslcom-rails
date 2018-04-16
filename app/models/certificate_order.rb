@@ -463,7 +463,7 @@ class CertificateOrder < ActiveRecord::Base
         unless ssl_tier.blank?
           reseller_tier = reseller_tier.include?(ssl_tier) ? reseller_tier : "#{ssl_tier}tr"
         end
-        cur_certificate = Certificate.tiered_products(reseller_tier)
+        cur_certificate = Certificate.tiered_products(/\-?#{reseller_tier}/)
           .find {|c| c.title == certificate.title}
         cur_certificate = certificate if cur_certificate.nil?
       end
