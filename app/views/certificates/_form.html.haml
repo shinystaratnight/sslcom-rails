@@ -229,7 +229,7 @@
                 %span#third_domain_tier_price>
                   #{third.price.format}
                 \ ea wildcard domain
-      =cert_form.text_area :additional_domains, cols: 40, rows: 10
+      =cert_form.text_area :additional_domains, cols: 40, rows: 10, class: 'subject_alternative_names'
   -unless @certificate_order.is_unused_credit?
     .clearfix
       %label{:for=>"duration"}
