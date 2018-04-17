@@ -35,7 +35,7 @@ module OrdersHelper
     if current_user
       @ssl_account = current_user.is_system_admins? ? @certificate_order.ssl_account : current_user.ssl_account
       order        = @ssl_account.purchase(@certificate_order)
-      order.cents  = @certificate_order.ucc_prorated_amount(@certificate_content, find_tier)
+      order.cents  = @certificate_order.ucc_prorated_amount(@certificate_content, @tier)
       order.amount = Money.new(order.cents)
       order.type   = "ReprocessCertificateOrder"
       order
