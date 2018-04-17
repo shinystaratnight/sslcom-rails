@@ -38,6 +38,28 @@ class Contact < ActiveRecord::Base
     end
   end
   
+  # Remove duplicate certificate contacts for current certificate content 
+  # of passed certificate order.
+  # Param certificate_order: object, object.id, array of objects, array of ids
+  def self.clear_duplicate_co_contacts(certificate_order)
+    co = case certificate_order.class.to_s
+      when 'Integer'
+        [CertificateOrder.find(certificate_order)]
+      when 'Array'
+        certificate_order.map {|o| o.is_a? Integer ? CertificateOrder.find(o) : o}
+      when 'CertificateOrder'
+        [certificate_order]
+    end
+    
+    co.each do |cur_co|
+      co_contacts = cur_co.certificate_content.certificate_contacts
+      co_contacts.each do |c|
+        check_attr = c.attributes.keep_if {|k,_| Contact::SYNC_FIELDS_REQUIRED.include?(k.to_sym)}
+        c.destroy if co_contacts.where(check_attr).where.not(id: c.id).any?
+      end
+    end
+  end
+  
   def to_api_query
     {}.tap do |result|
       (ALIAS_FIELDS.keys+%w(postal_code country email)).each do |k,v|

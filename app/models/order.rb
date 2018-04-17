@@ -374,6 +374,18 @@ class Order < ActiveRecord::Base
     state :charged_back
 
     state :rejected do
+      event :partial_refund, transitions_to: :partially_refunded do |ref, amount=nil|
+        item =line_items.find {|li|li.sellable.try(:ref)==ref} || certificate_orders.find {|co| co.try(:ref)==ref}
+        if item
+          decrement! :cents, (amount ? amount : item.cents)
+          to_refund = item.is_a?(LineItem) ? item.sellable : item
+          to_refund.refund! if (to_refund.respond_to?("refund!".to_sym) && !to_refund.refunded?)
+        end
+      end
+      event :full_refund, transitions_to: :fully_refunded do |complete=true|
+        line_items.each {|li|li.sellable.refund! if(
+          li.sellable.respond_to?("refund!".to_sym) && !li.sellable.refunded?)} if complete
+      end
       event :unreject, transitions_to: :paid do |complete=true|
         line_items.each {|li|
           CertificateOrder.unscoped.find(li.sellable_id).unreject! if li.sellable_type=="CertificateOrder"} if complete

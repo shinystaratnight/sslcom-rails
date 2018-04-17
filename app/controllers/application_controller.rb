@@ -70,7 +70,9 @@ class ApplicationController < ActionController::Base
   def find_tier
     @tier =''
     tier_label = ->(label){"#{'-' unless label =~/\A\d\z/}"+label + 'tr'}  #add '-' for non single digit tier due to flexible labeling
-    if current_user and current_user.ssl_account.tier_suffix
+    if @certificate_order and @certificate_order.ssl_account.tier_suffix
+      @tier = @certificate_order.ssl_account.tier_suffix
+    elsif current_user and current_user.ssl_account.tier_suffix
       @tier = current_user.ssl_account.tier_suffix
     elsif cookies[:r_tier]
       @tier = ResellerTier.tier_suffix(cookies[:r_tier])

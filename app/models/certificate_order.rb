@@ -435,6 +435,7 @@ class CertificateOrder < ActiveRecord::Base
 
     state :rejected do #only refund a canceled order
       event :unreject, :transitions_to => :paid
+      event :refund, :transitions_to => :refunded
     end
   end
   
@@ -458,7 +459,11 @@ class CertificateOrder < ActiveRecord::Base
       cur_certificate = certificate
       
       unless reseller_tier.blank?
-        cur_certificate = Certificate.tiered_products(reseller_tier)
+        ssl_tier  = ssl_account.reseller_tier_label
+        unless ssl_tier.blank?
+          reseller_tier = reseller_tier.include?(ssl_tier) ? reseller_tier : "#{ssl_tier}tr"
+        end
+        cur_certificate = Certificate.tiered_products(/\-?#{reseller_tier}/)
           .find {|c| c.title == certificate.title}
         cur_certificate = certificate if cur_certificate.nil?
       end

@@ -82,7 +82,7 @@
                           %li
                             %strong billing and purchase
                           -if permitted_to? :create, :funded_accounts
-                            %li available funds: $#{ssl_account.funded_account.amount(true).format :with_currency=>false}
+                            %li available funds: #{ssl_account.funded_account.amount(true).format :with_currency=>false}
                           -if permitted_to? :read, :orders
                             %li=link_to "billing", is_sandbox? ? search_orders_path(search:'is_test:true') : orders_path(ssl_slug: @ssl_slug)
                           %li=link_to 'deposit funds', allocate_funds_url(ssl_slug: @ssl_slug)

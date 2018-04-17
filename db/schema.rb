@@ -321,6 +321,7 @@ ActiveRecord::Schema.define(version: 20180404162536) do
   add_index "certificate_orders", ["is_test"], name: "index_certificate_orders_on_is_test", using: :btree
   add_index "certificate_orders", ["ref"], name: "index_certificate_orders_on_ref", using: :btree
   add_index "certificate_orders", ["site_seal_id"], name: "index_certificate_orders_site_seal_id", using: :btree
+  add_index "certificate_orders", ["validation_id"], name: "index_certificate_orders_on_validation_id", using: :btree
 
   create_table "certificates", force: :cascade do |t|
     t.integer  "reseller_tier_id",      limit: 4
@@ -388,6 +389,7 @@ ActiveRecord::Schema.define(version: 20180404162536) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "registrant_type",       limit: 4
+    t.integer  "parent_id",             limit: 4
     t.string   "callback_method",       limit: 255
     t.date     "incorporation_date"
     t.string   "incorporation_country", limit: 255
@@ -398,7 +400,6 @@ ActiveRecord::Schema.define(version: 20180404162536) do
     t.string   "duns_number",           limit: 255
     t.string   "company_number",        limit: 255
     t.string   "registration_service",  limit: 255
-    t.integer  "parent_id",             limit: 4
     t.boolean  "saved_default",                     default: false
   end
 
