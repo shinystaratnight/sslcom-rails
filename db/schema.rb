@@ -151,12 +151,12 @@ ActiveRecord::Schema.define(version: 20180404162536) do
 
   create_table "ca_api_requests", force: :cascade do |t|
     t.integer  "api_requestable_id",   limit: 4
-    t.string   "api_requestable_type", limit: 255
+    t.string   "api_requestable_type", limit: 191
     t.text     "request_url",          limit: 65535
     t.text     "parameters",           limit: 65535
     t.string   "method",               limit: 255
     t.text     "response",             limit: 65535
-    t.string   "type",                 limit: 255
+    t.string   "type",                 limit: 191
     t.string   "ca",                   limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -859,7 +859,7 @@ ActiveRecord::Schema.define(version: 20180404162536) do
     t.integer  "ssl_account_id",    limit: 4
     t.integer  "product_id",        limit: 4
     t.string   "workflow_state",    limit: 255
-    t.string   "ref",               limit: 255
+    t.string   "ref",               limit: 191
     t.string   "auto_renew",        limit: 255
     t.string   "auto_renew_status", limit: 255
     t.boolean  "is_expired"
@@ -1074,7 +1074,7 @@ ActiveRecord::Schema.define(version: 20180404162536) do
   end
 
   create_table "sessions", force: :cascade do |t|
-    t.string   "session_id", limit: 255,   null: false
+    t.string   "session_id", limit: 191,   null: false
     t.text     "data",       limit: 65535
     t.datetime "created_at",               null: false
     t.datetime "updated_at",               null: false
