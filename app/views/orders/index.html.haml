@@ -164,6 +164,7 @@
         %td(colspan="3")=o.created_at.strftime("%b %d, %Y")
         %td=o.reference_number
         -if o.is_deposit?
-          %td=o.final_amount.format :with_currency
+          -amt = o.final_amount.format :with_currency
+          %td=o.faw_order? ? "(#{amt})" : amt
         -else
           %td (#{o.final_amount.format :with_currency})

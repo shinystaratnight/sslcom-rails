@@ -391,15 +391,21 @@ class OrdersController < ApplicationController
       ).where(status: 'success')
       
       deposits = unpaginated.joins{ line_items.sellable(Deposit) }
+
       orders = unpaginated.where.not(id: deposits.map(&:id))
         .where.not(description: Order::INVOICE_PAYMENT)
         .where.not(state: 'invoiced')
+      
+      # Funded Account Withdrawal
+      faw = unpaginated.where(description: Order::FAW).sum(:cents)
+
+      deposits = deposits.where.not(description: Order::FAW)
         
       @refunded_amount = refunded.sum(:amount)
       @refunded_count  = refunded.count
       @deposits_amount = deposits.sum(:cents)
       @deposits_count  = deposits.count
-      @total_amount    = orders.sum(:cents) - @negative - @refunded_amount
+      @total_amount    = orders.sum(:cents) - @negative - @refunded_amount - faw
       @total_count     = orders.count
     end
     @orders = unpaginated.paginate(@p)
