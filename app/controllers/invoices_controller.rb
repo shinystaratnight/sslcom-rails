@@ -212,6 +212,7 @@ class InvoicesController < ApplicationController
     if current_user && order_reqs_valid? && !@too_many_declines && purchase_successful?
       save_billing_profile unless (params[:funding_source])
       @order.billing_profile = @profile
+      @order.save
       withdraw_funded_account((@funded_amount * 100).to_i) if @funded_amount > 0
       invoice_paid
       record_order_visit(@order)

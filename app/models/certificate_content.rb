@@ -9,7 +9,7 @@ class CertificateContent < ActiveRecord::Base
   belongs_to  :server_software
   has_one     :csr, :dependent => :destroy
   has_many    :signed_certificates, through: :csr
-  has_one     :registrant, :as => :contactable
+  has_one     :registrant, as: :contactable, dependent: :destroy
   has_one     :locked_registrant, :as => :contactable
   has_many    :certificate_contacts, :as => :contactable
   has_many    :certificate_names # used for dcv of each domain in a UCC or multi domain ssl
@@ -135,6 +135,7 @@ class CertificateContent < ActiveRecord::Base
     end
 
     state :contacts_provided do
+      event :provide_contacts, transitions_to: :contacts_provided
       event :submit_csr, :transitions_to => :csr_submitted
       event :issue, :transitions_to => :issued
       event :pend_validation, :transitions_to => :pending_validation do |options={}|
@@ -779,6 +780,8 @@ class CertificateContent < ActiveRecord::Base
           are allowed [A-Za-z0-9.-#{'*' if(is_ucc || is_wildcard)}] in the subject"
     if csr.common_name.blank?
       errors.add(:signing_request, 'is missing the common name (CN) field or is invalid and cannot be parsed')
+    elsif !csr.verify_signature
+      errors.add(:signing_request, 'has an invalid signature')
     else
       unless is_code_signing || is_client
         #errors.add(:signing_request, 'is missing the organization (O) field') if csr.organization.blank?
@@ -833,6 +836,8 @@ class CertificateContent < ActiveRecord::Base
     certificate_order.certificate_contacts
       .where.not(contactable_id: id)
       .update_all(contactable_id: id)
+    
+    Contact.clear_duplicate_co_contacts(certificate_order)
     
     if certificate_contacts.any? && info_provided?
       provide_contacts!

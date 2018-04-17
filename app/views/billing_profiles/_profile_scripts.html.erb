@@ -1,6 +1,6 @@
 var profile_id = "",
     profile_form_hidden = <%=!initial_display?.empty?%>,
-    reprocess_ucc_url = $('form#new_order').attr('action');
+    initial_url = $('form#new_order').attr('action');
 $.last_delete_clicked=function(){
   if($('.delete_billing_profile').size() <= 1)
     $('.funding_sources_head, #existing_credit_cards').empty();
@@ -57,7 +57,7 @@ function reprocessUccAmounts() {
       $('#lbl-charge-amount').text('$0.00 USD');
       $('[name*=next]').show();
       $('[name*=paypal]').hide();
-      $('form#new_order').attr('action', reprocess_ucc_url);
+      $('form#new_order').attr('action', initial_url);
     } else {
       total = amount - funded;
       if( $('#funding_source_paypal').is(':checked') ) {
@@ -75,8 +75,8 @@ function reprocessUccAmounts() {
   
 $('#payment_method_paypal, #funding_source_paypal').on('click', function(){
   if($('#payment_method_paypal, #funding_source_paypal').is(':checked')){
-    $('form#new_order').attr('action', paypalCheckoutUrl());
     reprocessUccAmounts();
+    $('form#new_order').attr('action', paypalCheckoutUrl());
   }
 });
 
@@ -88,6 +88,7 @@ $('#expand_register_card').live('click', function(){
     profile_id = $(':radio[name*=funding_source]:checked').attr("id");
     $(':radio[name*=funding_source]').removeAttr('checked');
     profile_form_hidden = false;
+    $('form#new_order').attr("action", initial_url);
   }
   else{
     $('#register_card_form').fadeOut();
@@ -100,10 +101,12 @@ $('#expand_register_card').live('click', function(){
     $('[name*=next],[name*=load_funds]').hide();
     $('[name*=paypal]').show();
     reprocessUccAmounts();
+    $('form#new_order').attr("action", paypalCheckoutUrl());
   }
   else{
     $('[name*=next],[name*=load_funds]').show();
     $('[name*=paypal]').hide();
+    $('form#new_order').attr("action", initial_url);
   }
   if($("#payment_method_paypal").is(":checked")){
     $('#credit_card_form').hide();
@@ -112,7 +115,7 @@ $('#expand_register_card').live('click', function(){
   else{
     $('#credit_card_form').show();
     if (!$('#reprocess_ucc_amount')) {
-      $('form#new_order').attr("action","/orders");
+      $('form#new_order').attr("action", initial_url);
     }
   }
 });
@@ -146,10 +149,12 @@ $(':radio[name*=funding_source]').change(function(){
     $('[name*=next],[name*=load_funds],#credit_card_form').hide();
     $('[name*=paypal]').show();
     reprocessUccAmounts();
+    $('form#new_order').attr("action", paypalCheckoutUrl());
   }
   else{
     $('[name*=next],[name*=load_funds],#credit_card_form').show();
     $('[name*=paypal]').hide();
+    $('form#new_order').attr("action", initial_url);
   }
 });
 $(':radio[name*=payment_method]').change(function(){

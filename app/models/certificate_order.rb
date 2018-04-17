@@ -435,15 +435,16 @@ class CertificateOrder < ActiveRecord::Base
 
     state :rejected do #only refund a canceled order
       event :unreject, :transitions_to => :paid
+      event :refund, :transitions_to => :refunded
     end
   end
   
   # Prorated pricing for single domain for ucc certificate,
   # used in calculating reprocessing amount for additional domains.
-  def ucc_prorated_domain(wildcard=nil)
+  def ucc_prorated_domain(type, reseller_tier=nil)
     if certificate.is_ucc?
-      tiers = ucc_duration_amounts(certificate_duration(:years).to_i)
-      domain_amount  = wildcard ? tiers['tier_3'] : tiers['tier_2']
+      tiers = ucc_duration_amounts(certificate_duration(:years).to_i, reseller_tier)
+      domain_amount  = (type == :wildcard) ? tiers['tier_3'] : tiers['tier_2']
       total_duration = certificate_duration(:days)
       domain_amount - ( (used_days/total_duration) * domain_amount )
     end
@@ -451,19 +452,22 @@ class CertificateOrder < ActiveRecord::Base
   
   # Get pricing for each tier for a given duration,
   # used in calculating reprocessing amount for additional domains.
-  def ucc_duration_amounts(years=1)
+  def ucc_duration_amounts(years=1, reseller_tier=nil)
     if certificate.is_ucc?
       durations = {}
       i = years-1
       cur_certificate = certificate
-      res_tier = ssl_account.reseller_tier_label
       
-      unless res_tier.nil?
-        cur_certificate = Certificate.where(
-          title: certificate.title, reseller_tier_id: res_tier.to_i
-        ).first
+      unless reseller_tier.blank?
+        ssl_tier  = ssl_account.reseller_tier_label
+        unless ssl_tier.blank?
+          reseller_tier = reseller_tier.include?(ssl_tier) ? reseller_tier : "#{ssl_tier}tr"
+        end
+        cur_certificate = Certificate.tiered_products(/\-?#{reseller_tier}/)
+          .find {|c| c.title == certificate.title}
+        cur_certificate = certificate if cur_certificate.nil?
       end
-
+      
       cur_certificate.num_domain_tiers.times do |j|
         durations["tier_#{j+1}"] = (cur_certificate.items_by_domains(true)[i][j].price * ( (j==0) ? 3 : 1 )).cents
       end
@@ -471,13 +475,13 @@ class CertificateOrder < ActiveRecord::Base
     end
   end
   
-  def ucc_prorated_amount(certificate_content)
+  def ucc_prorated_amount(certificate_content, reseller_tier)
     wildcard_count        = get_reprocess_max_wildcard(certificate_content).count
     nonwildcard_count     = get_reprocess_max_nonwildcard(certificate_content).count
     # make sure NOT to charge for tier 1 domains (3 total)
     nonwildcard_count     = (nonwildcard_count < 3) ? 3 : nonwildcard_count
-    nonwildcard_cost      = ucc_prorated_domain
-    wildcard_cost         = ucc_prorated_domain(:wildcard)
+    nonwildcard_cost      = ucc_prorated_domain(:nonwildcard, reseller_tier)
+    wildcard_cost         = ucc_prorated_domain(:wildcard, reseller_tier)
     new_nonwildcard_count = 0
     new_wildcard_count    = 0
     certificate_content.domains.each do |name|
