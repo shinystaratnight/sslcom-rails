@@ -1,0 +1,31 @@
+%tr
+  %td(scope="col" colspan="7")
+    .order-stats-cont
+      %div
+        ="<span class='emp'>Orders</span>".html_safe
+        %span (#{Money.new(@total_amount).format},
+        count: 
+        %span #{@total_count})
+      %div
+        ="<span class='emp'>&#8226; Deposits</span>".html_safe
+        %span (#{Money.new(@deposits_amount).format},
+        count: 
+        %span #{@deposits_count})
+      %div
+        ="<span class='emp'>&#8226; Refunds</span>".html_safe
+        %span (#{Money.new(@refunded_amount).format},
+        count: 
+        %span #{@refunded_count})
+    .order-stats-cont
+      %div
+        ="<span class='emp'>Monthly Invoices</span>".html_safe
+        (total: 
+        %span #{@monthly_invoices_count}
+        pending:
+        %span #{Money.new(@pending_monthly_invoices).format},
+        paid: 
+        %span #{Money.new(@paid_monthly_invoices).format},
+        fully refunded:
+        %span #{Money.new(@refunded_monthly_invoices).format},
+        partially refunded:
+        %span #{Money.new(@partial_refunds_monthly_invoices).format})
