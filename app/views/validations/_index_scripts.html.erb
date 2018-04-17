@@ -1,5 +1,21 @@
 <%checkout_in_progress=@certificate_order && @certificate_order.validation_stage_checkout_in_progress?%>
 <script type="text/javascript">
+function destroy_generate_cert_link(event) {
+  document.body.removeChild(event.target);
+}
+
+function link_to_generate_cert(url) {
+  var pageLink = document.createElement('a');
+  pageLink.innerHTML = "Generate Certificate";
+
+  pageLink.href = url;
+  pageLink.onclick = destroy_generate_cert_link;
+  pageLink.style.display = "none";
+  document.body.appendChild(pageLink);
+
+  pageLink.click();
+}
+
 jQuery(function($) {
   //This prototype is provided by the Mozilla foundation and
   //is distributed under the MIT license.
@@ -154,72 +170,140 @@ jQuery(function($) {
     });
     // prepare Options Object
     var options = {
-        dataType: 'json',
-        beforeSubmit: function(){
-          return confirm(
-          "This will adjust the approval status of this order. Are you sure?");
-        },
-        success: function(data, status, $form) {
-          alt=$form.attr('alt');
-          all_approvals=[];
-          $form.find(':radio:checked').each(function(i){
-            approval=$(this).val();
-            all_approvals.push(approval);
-            vrl_alt = $(this).attr('alt');
-            reason = $("#ruling_reason_"+vrl_alt).val();
-            $('ul.status_history_'+vrl_alt)
-              .append('<li><em>'+approval+' by '+data.by_user+':</em><ul><li>'+
-                reason+' - '+
-                Date.parse('today').toString("MMM d, yyyy")+
-                '</li></ul></li>');
-            status_span=$('.validation_status_result_'+vrl_alt);
-            if(approval=='<%=ValidationRuling::APPROVED%>'){
-              status_span.text("<%=ValidationRuling::APPROVED%>");
-              status_span
-                .removeClass("<%=ValidationRuling::ATTENTION_CLASS%>")
-                .removeClass("<%=ValidationRuling::WAITING_CLASS%>")
-                .addClass("<%=ValidationRuling::APPROVED_CLASS%>");
-            }
-            else if(approval=='<%=ValidationRuling::UNAPPROVED%>'){
-              status_span.text("<%=ValidationRuling::UNAPPROVED%>");
-              status_span
-                .removeClass("<%=ValidationRuling::APPROVED_CLASS%>")
-                .removeClass("<%=ValidationRuling::WAITING_CLASS%>")
-                .addClass("<%=ValidationRuling::ATTENTION_CLASS%>");
-            }
-            else if(approval=='<%=ValidationRuling::MORE_REQUIRED%>'){
-              status_span.text("<%=ValidationRuling::INSUFFICIENT%>");
-              status_span.removeClass("<%=ValidationRuling::APPROVED_CLASS%>")
-                .removeClass("<%=ValidationRuling::WAITING_CLASS%>")
-                .addClass("<%=ValidationRuling::ATTENTION_CLASS%>");
-            }
-            $('.reason_block_'+alt).hide();
-            $('.no_validation_decisions_'+vrl_alt).remove();
-          });
-          message_span=$('.vs_message_'+alt.split("_")[0]);
-          if(all_approvals.some(is_requiring_more)){
-            message_span.text("<%=ValidationRuling::MORE_REQUIRED_STATUS%>");
-            message_span.removeClass("<%=ValidationRuling::APPROVED_CLASS%>")
-              .removeClass("<%=ValidationRuling::WAITING_CLASS%>")
-              .addClass("<%=ValidationRuling::ATTENTION_CLASS%>");
-          }
-          else if(all_approvals.some(is_unapproved)){
-            message_span.text("<%=ValidationRuling::UNAPPROVED_STATUS%>");
-            message_span
-              .removeClass("<%=ValidationRuling::APPROVED_CLASS%>")
-              .removeClass("<%=ValidationRuling::WAITING_CLASS%>")
-              .addClass("<%=ValidationRuling::ATTENTION_CLASS%>");
-          }
-          else if(all_approvals.every(is_approved)){
-            message_span.text("<%=ValidationRuling::APPROVED_STATUS%>");
-            message_span
+      dataType: 'json',
+      beforeSubmit: function(){
+        return confirm(
+        "This will adjust the approval status of this order. Are you sure?");
+      },
+      success: function(data, status, $form) {
+        form = $('.edit_validation_ruling');
+        alt = form.attr('alt');
+        all_approvals = [];
+
+        form.find(':radio:checked').each(function() {
+          approval = $(this).val();
+          all_approvals.push(approval);
+
+          vrl_alt  = $(this).attr('alt');
+          reason = $('#ruling_reason_' + vrl_alt).val();
+          $('ul.status_history_' + vrl_alt)
+            .append('<li><em>' + approval + ' by ' + data.by_user + ':</em><ul><li>' +
+              reason + ' - ' +
+              Date.parse('today').toString("MMM d, yyyy") +
+              '</li></ul></li>');
+
+          status_span = $('.validation_status_result_' + vrl_alt);
+          if (approval == '<%=ValidationRuling::APPROVED%>' ) {
+            status_span.text("<%=ValidationRuling::APPROVED%>");
+            status_span
               .removeClass("<%=ValidationRuling::ATTENTION_CLASS%>")
               .removeClass("<%=ValidationRuling::WAITING_CLASS%>")
               .addClass("<%=ValidationRuling::APPROVED_CLASS%>");
+          } else if (approval == '<%=ValidationRuling::UNAPPROVED%>') {
+            status_span.text("<%=ValidationRuling::UNAPPROVED%>");
+            status_span
+              .removeClass("<%=ValidationRuling::APPROVED_CLASS%>")
+              .removeClass("<%=ValidationRuling::WAITING_CLASS%>")
+              .addClass("<%=ValidationRuling::ATTENTION_CLASS%>");
+          } else if (approval == '<%=ValidationRuling::MORE_REQUIRED%>') {
+            status_span.text("<%=ValidationRuling::INSUFFICIENT%>");
+            status_span.removeClass("<%=ValidationRuling::APPROVED_CLASS%>")
+              .removeClass("<%=ValidationRuling::WAITING_CLASS%>")
+              .addClass("<%=ValidationRuling::ATTENTION_CLASS%>");
           }
-          alert('Approval status change successful!');
-          $form.reset();
+
+          $('.reason_block_' + alt).hide();
+          $('.no_validation_decisions_' + vrl_alt).remove();
+        });
+
+        message_span = $('.vs_message_' + alt.split("_")[0]);
+        if (all_approvals.some(is_requiring_more)) {
+          message_span.text("<%=ValidationRuling::MORE_REQUIRED_STATUS%>");
+          message_span.removeClass("<%=ValidationRuling::APPROVED_CLASS%>")
+            .removeClass("<%=ValidationRuling::WAITING_CLASS%>")
+            .addClass("<%=ValidationRuling::ATTENTION_CLASS%>");
+        } else if (all_approvals.some(is_unapproved)) {
+          message_span.text("<%=ValidationRuling::UNAPPROVED_STATUS%>");
+          message_span
+            .removeClass("<%=ValidationRuling::APPROVED_CLASS%>")
+            .removeClass("<%=ValidationRuling::WAITING_CLASS%>")
+            .addClass("<%=ValidationRuling::ATTENTION_CLASS%>");
+        } else if (all_approvals.every(is_approved)) {
+          message_span.text("<%=ValidationRuling::APPROVED_STATUS%>");
+          message_span
+            .removeClass("<%=ValidationRuling::ATTENTION_CLASS%>")
+            .removeClass("<%=ValidationRuling::WAITING_CLASS%>")
+            .addClass("<%=ValidationRuling::APPROVED_CLASS%>");
         }
+
+        alert('Approval status change successful!');
+        form.reset();
+
+        if (data.is_validated == 'true') {
+          url = $('#link_to_generate_cert').val();
+          link_to_generate_cert(url);
+        }
+
+        /*alt=$form.attr('alt');
+        all_approvals=[];
+        $form.find(':radio:checked').each(function(i){
+          approval=$(this).val();
+          all_approvals.push(approval);
+          vrl_alt = $(this).attr('alt');
+          reason = $("#ruling_reason_"+vrl_alt).val();
+          $('ul.status_history_'+vrl_alt)
+            .append('<li><em>'+approval+' by '+data.by_user+':</em><ul><li>'+
+              reason+' - '+
+              Date.parse('today').toString("MMM d, yyyy")+
+              '</li></ul></li>');
+          status_span=$('.validation_status_result_'+vrl_alt);
+          if(approval=='< %=ValidationRuling::APPROVED%>'){
+            status_span.text("< %=ValidationRuling::APPROVED%>");
+            status_span
+              .removeClass("< %=ValidationRuling::ATTENTION_CLASS%>")
+              .removeClass("< %=ValidationRuling::WAITING_CLASS%>")
+              .addClass("< %=ValidationRuling::APPROVED_CLASS%>");
+          }
+          else if(approval=='< %=ValidationRuling::UNAPPROVED%>'){
+            status_span.text("< %=ValidationRuling::UNAPPROVED%>");
+            status_span
+              .removeClass("< %=ValidationRuling::APPROVED_CLASS%>")
+              .removeClass("< %=ValidationRuling::WAITING_CLASS%>")
+              .addClass("< %=ValidationRuling::ATTENTION_CLASS%>");
+          }
+          else if(approval=='< %=ValidationRuling::MORE_REQUIRED%>'){
+            status_span.text("< %=ValidationRuling::INSUFFICIENT%>");
+            status_span.removeClass("< %=ValidationRuling::APPROVED_CLASS%>")
+              .removeClass("< %=ValidationRuling::WAITING_CLASS%>")
+              .addClass("< %=ValidationRuling::ATTENTION_CLASS%>");
+          }
+          $('.reason_block_'+alt).hide();
+          $('.no_validation_decisions_'+vrl_alt).remove();
+        });
+        message_span=$('.vs_message_'+alt.split("_")[0]);
+        if(all_approvals.some(is_requiring_more)){
+          message_span.text("< %=ValidationRuling::MORE_REQUIRED_STATUS%>");
+          message_span.removeClass("< %=ValidationRuling::APPROVED_CLASS%>")
+            .removeClass("< %=ValidationRuling::WAITING_CLASS%>")
+            .addClass("< %=ValidationRuling::ATTENTION_CLASS%>");
+        }
+        else if(all_approvals.some(is_unapproved)){
+          message_span.text("< %=ValidationRuling::UNAPPROVED_STATUS%>");
+          message_span
+            .removeClass("< %=ValidationRuling::APPROVED_CLASS%>")
+            .removeClass("< %=ValidationRuling::WAITING_CLASS%>")
+            .addClass("< %=ValidationRuling::ATTENTION_CLASS%>");
+        }
+        else if(all_approvals.every(is_approved)){
+          message_span.text("< %=ValidationRuling::APPROVED_STATUS%>");
+          message_span
+            .removeClass("< %=ValidationRuling::ATTENTION_CLASS%>")
+            .removeClass("< %=ValidationRuling::WAITING_CLASS%>")
+            .addClass("< %=ValidationRuling::APPROVED_CLASS%>");
+        }
+        alert('Approval status change successful!');
+        $form.reset();*/
+      }
     };
     $('form.edit_validation_ruling').ajaxForm(options);
     /*$('form.api_certificate_request').ajaxForm({
@@ -703,6 +787,7 @@ jQuery(function($) {
               });
             }
 
+            var is_error = false
             $.each(domains, function(idx, value) {
               if ($.inArray(value, validated_domains) == -1) {
                 $.ajax({
@@ -716,173 +801,260 @@ jQuery(function($) {
                   type: "POST",
                   success: function(result) {
                     // TODO: Loading Domain.
-                    Object.keys(result).map(function(key) {
-                      if (key == 'tr_info') {
-                        var trElement = $('<tr></tr>');
-                        if (!$.isEmptyObject(result[key]['options'])) {
-                          trElement.attr('class', 'certificate_name');
-                        } else {
-                          trElement.attr('class', 'certificate_name validated');
-                        }
-                        trElement.attr('id', 'certificate_name__' + value);
+                    if ($.isEmptyObject(result)) {
+                      is_error = true;
+                    } else {
+                      Object.keys(result).map(function(key) {
+                        if (key == 'tr_info') {
+                          var trElement = $('<tr></tr>');
+                          if (!$.isEmptyObject(result[key]['options'])) {
+                            trElement.attr('class', 'certificate_name');
+                          } else {
+                            trElement.attr('class', 'certificate_name validated');
+                          }
+                          trElement.attr('id', 'certificate_name__' + value);
 
-                        $('.domain_list').append(trElement);
+                          $('.domain_list').append(trElement);
 
-                        var tdElement = $('<td></td>');
+                          var tdElement = $('<td></td>');
 
-                        if (!$.isEmptyObject(result[key]['options'])) {
-                          var checkboxElement = $('<input></input>');
-                          checkboxElement.attr('class', 'check_box');
-                          checkboxElement.attr('id', value);
-                          checkboxElement.attr('type', 'checkbox');
-                          tdElement.append(checkboxElement);
+                          if (!$.isEmptyObject(result[key]['options'])) {
+                            var checkboxElement = $('<input></input>');
+                            checkboxElement.attr('class', 'check_box');
+                            checkboxElement.attr('id', value);
+                            checkboxElement.attr('type', 'checkbox');
+                            tdElement.append(checkboxElement);
 
-                          <%if is_ucc || is_evucc || is_premium_ssl%>
-                            var btnElement = $('<input></input>');
-                            btnElement.attr('class', 'btn_remove_domain');
-                            btnElement.attr('type', 'button');
-                            btnElement.attr('value', 'Remove');
-                            tdElement.append(btnElement);
-                          <%end%>
+                            <%if is_ucc || is_evucc || is_premium_ssl%>
+                              var btnElement = $('<input></input>');
+                              btnElement.attr('class', 'btn_remove_domain');
+                              btnElement.attr('type', 'button');
+                              btnElement.attr('value', 'Remove');
+                              tdElement.append(btnElement);
+                            <%end%>
 
-                          var editBtnElement = $('<input></input>');
-                          editBtnElement.attr('class', 'btn_edit_domain');
-                          editBtnElement.attr('type', 'button');
-                          editBtnElement.attr('value', 'Edit');
-                          tdElement.append(editBtnElement);
-                        }
-                        var cnsElement = $('<input></input>');
-                        cnsElement.attr('type', 'hidden');
-                        cnsElement.attr('name', 'cert_names[' + value + ']');
-                        cnsElement.attr('value', value);
-                        tdElement.append(cnsElement);
-                        trElement.append(tdElement);
+                            var editBtnElement = $('<input></input>');
+                            editBtnElement.attr('class', 'btn_edit_domain');
+                            editBtnElement.attr('type', 'button');
+                            editBtnElement.attr('value', 'Edit');
+                            tdElement.append(editBtnElement);
+                          }
+                          var cnsElement = $('<input></input>');
+                          cnsElement.attr('type', 'hidden');
+                          cnsElement.attr('name', 'cert_names[' + value + ']');
+                          cnsElement.attr('value', value);
+                          tdElement.append(cnsElement);
+                          trElement.append(tdElement);
 
-                        tdElement = $('<td></td>');
-                        tdElement.attr('class', 'domain_name ' + value);
-                        tdElement.append(value);
-                        trElement.append(tdElement);
+                          tdElement = $('<td></td>');
+                          tdElement.attr('class', 'domain_name ' + value);
+                          tdElement.append(value);
+                          trElement.append(tdElement);
 
-                        tdElement = $('<td></td>');
-                        if ($.isEmptyObject(result[key]['options'])) {
-                          tdElement.append('Validation satisfied for ' + value);
-                        } else {
-                          var sltElement = $('<select></select>');
-                          sltElement.attr('name', 'domains[' + value + '][dcv]');
-                          sltElement.attr('id', 'domains_' + value + '_dcv');
-                          sltElement.attr('alt', value);
-                          <%if Settings.enable_caa%>
-                            if (result[key]['caa_check'] == 'failed') {
-                              sltElement.attr('disabled', true);
-                            }
-                          <%end%>
+                          tdElement = $('<td></td>');
+                          if ($.isEmptyObject(result[key]['options'])) {
+                            tdElement.append('Validation satisfied for ' + value);
+                          } else {
+                            var sltElement = $('<select></select>');
+                            sltElement.attr('name', 'domains[' + value + '][dcv]');
+                            sltElement.attr('id', 'domains_' + value + '_dcv');
+                            sltElement.attr('alt', value);
+                            <%if Settings.enable_caa%>
+                              if (result[key]['caa_check'] == 'failed') {
+                                // TODO: Disable CAA CHECK temporarily for now.
+                                /*sltElement.attr('disabled', true);*/
+                                sltElement.attr('disabled', false);
+                              }
+                            <%end%>
 
-                          var optElement = $('<option></option>');
-                          optElement.attr('value', '');
-                          optElement.append('Please select a validation method');
-                          sltElement.append(optElement);
+                            var optElement = $('<option></option>');
+                            optElement.attr('value', '');
+                            optElement.append('Please select a validation method');
+                            sltElement.append(optElement);
 
-                          Object.keys(result[key]['options']).map(function(optGroupKey) {
-                            var optGroupElement = $('<optgroup></optgroup>');
-                            optGroupElement.attr('label', optGroupKey);
+                            Object.keys(result[key]['options']).map(function(optGroupKey) {
+                              var optGroupElement = $('<optgroup></optgroup>');
+                              optGroupElement.attr('label', optGroupKey);
 
-                            Object.keys(result[key]['options'][optGroupKey]).map(function(optKey) {
-                              var optElement = $('<option></option>');
-                              optElement.attr('value', optKey);
-                              optElement.append(result[key]['options'][optGroupKey][optKey]);
-                              optGroupElement.append(optElement);
+                              Object.keys(result[key]['options'][optGroupKey]).map(function(optKey) {
+                                var optElement = $('<option></option>');
+                                optElement.attr('value', optKey);
+                                optElement.append(result[key]['options'][optGroupKey][optKey]);
+                                optGroupElement.append(optElement);
+                              });
+
+                              sltElement.append(optGroupElement);
                             });
 
-                            sltElement.append(optGroupElement);
-                          });
-
-                          tdElement.append(sltElement);
-                        }
-                        trElement.append(tdElement);
-                        $('[name="domains[' + value + '][dcv]"]').val(result[key]['slt_option']);
-
-                        <%if Settings.enable_caa%>
-                          tdElement = $('<td></td>');
-                          if (result[key]['caa_check'] == 'failed') {
-                            var anchorElement = $('<a></a>');
-                            anchorElement.attr('href', 'https://www.ssl.com/how-to/configure-caa-records-to-authorize-ssl-com/');
-                            anchorElement.attr('target', '_blank');
-                            anchorElement.attr('style', 'color: white');
-                            anchorElement.append(result[key]['caa_check']);
-
-                            tdElement.attr('style', 'background: red; color: white');
-                            tdElement.append(anchorElement);
-                          } else if (result[key]['caa_check'] == 'passed') {
-                            tdElement.attr('style', 'background: green; color: white');
-                            tdElement.append(result[key]['caa_check']);
+                            tdElement.append(sltElement);
                           }
-                          tdElement.attr('class', 'caa_check ' + value);
                           trElement.append(tdElement);
-                        <%end%>
+                          $('[name="domains[' + value + '][dcv]"]').val(result[key]['slt_option']);
 
-                        tdElement = $('<td></td>');
-                        tdElement.append(result[key]['pretest']);
-                        tdElement.attr('class', 'pretest ' + value);
-                        trElement.append(tdElement);
+                          <%if Settings.enable_caa%>
+                            tdElement = $('<td></td>');
+                            if (result[key]['caa_check'] == 'failed') {
+                              var anchorElement = $('<a></a>');
+                              anchorElement.attr('href', 'https://www.ssl.com/how-to/configure-caa-records-to-authorize-ssl-com/');
+                              anchorElement.attr('target', '_blank');
+                              anchorElement.attr('style', 'color: white');
+                              anchorElement.append(result[key]['caa_check']);
 
-                        tdElement = $('<td></td>');
-                        tdElement.append(result[key]['attempt']);
-                        tdElement.attr('class', 'attempt ' + value);
-                        trElement.append(tdElement);
+                              tdElement.attr('style', 'background: red; color: white');
+                              tdElement.append(anchorElement);
+                            } else if (result[key]['caa_check'] == 'passed') {
+                              tdElement.attr('style', 'background: green; color: white');
+                              tdElement.append(result[key]['caa_check']);
+                            }
+                            tdElement.attr('class', 'caa_check ' + value);
+                            trElement.append(tdElement);
+                          <%end%>
 
-                        tdElement = $('<td></td>');
-                        tdElement.append(result[key]['attempted_on']);
-                        tdElement.attr('class', 'attempted_on ' + value);
-                        trElement.append(tdElement);
+                          tdElement = $('<td></td>');
+                          tdElement.append(result[key]['pretest']);
+                          tdElement.attr('class', 'pretest ' + value);
+                          trElement.append(tdElement);
 
-                        var tdElement = $('<td></td>');
-                        tdElement.append(result[key]['status']);
-                        tdElement.attr('class', 'status ' + value);
-                        trElement.append(tdElement);
+                          tdElement = $('<td></td>');
+                          tdElement.append(result[key]['attempt']);
+                          tdElement.attr('class', 'attempt ' + value);
+                          trElement.append(tdElement);
 
-                      } else if (key == 'tr_instruction' && !result[key]) {
-                        var trElement = $('<tr></tr>');
-                        $('.domain_list').append(trElement);
+                          tdElement = $('<td></td>');
+                          tdElement.append(result[key]['attempted_on']);
+                          tdElement.attr('class', 'attempted_on ' + value);
+                          trElement.append(tdElement);
 
-                        tdElement = $('<td></td>');
-                        trElement.append(tdElement);
-                        tdElement = $('<td></td>');
-                        trElement.append(tdElement);
+                          var tdElement = $('<td></td>');
+                          tdElement.append(result[key]['status']);
+                          tdElement.attr('class', 'status ' + value);
+                          trElement.append(tdElement);
 
-                        var tdElement = $('<td></td>');
-                        tdElement.attr('colspan', 5);
-                        tdElement.append('Instructions: ');
+                        } else if (key == 'tr_instruction' && !result[key]) {
+                          var trElement = $('<tr></tr>');
+                          $('.domain_list').append(trElement);
 
-                        var spanElement = $('<span></span>');
-                        spanElement.attr('alt', 'domains[' + value + '][dcv]');
-                        spanElement.append('Please select a validation method');
-                        tdElement.append(spanElement);
-                        trElement.append(tdElement);
-                      }
-                    });
+                          tdElement = $('<td></td>');
+                          trElement.append(tdElement);
+                          tdElement = $('<td></td>');
+                          trElement.append(tdElement);
 
-                    /*if (idx == (total - 1)) {
-                      $('.domains_loader_wrap').hide();
-                      $('#upload_validations').show();
-                    }*/
+                          var tdElement = $('<td></td>');
+                          tdElement.attr('colspan', 5);
+                          tdElement.append('Instructions: ');
 
-                    $('select[id^=domains]').last().change();
+                          var spanElement = $('<span></span>');
+                          spanElement.attr('alt', 'domains[' + value + '][dcv]');
+                          spanElement.append('Please select a validation method');
+                          tdElement.append(spanElement);
+                          trElement.append(tdElement);
+                        }
+                      });
+
+                      /*if (idx == (total - 1)) {
+                       $('.domains_loader_wrap').hide();
+                       $('#upload_validations').show();
+                       }*/
+
+                      $('select[id^=domains]').last().change();
+                    }
                   }
                 }).done(function(data) {
                   if (idx == (total - 1)) {
                     $('.domains_loader_wrap').hide();
-                    $('#upload_validations').show();
+                    if (is_error) {
+                      var message_wrap_element = $('<div></div>');
+                      message_wrap_element.attr('class', 'flash_message error');
+
+                      var message_element = $('<span></span>');
+                      message_element.append('While loading domains, some issue occurs. Please try again to load this page.');
+                      message_wrap_element.append(message_element);
+
+                      var btn_element = $('<small></small>');
+                      var close_btn_element = $('<div></div>');
+                      close_btn_element.attr('class', 'close_flash_message');
+
+                      var close_sign_element = $('<span></span>');
+                      close_sign_element.append('X');
+
+                      close_btn_element.append(close_sign_element);
+                      close_btn_element.append('close');
+
+                      btn_element.append(close_btn_element);
+                      message_wrap_element.append(btn_element);
+
+                      if ($('#content').find('.inner').children().first().hasClass('flash_message')) {
+                        $('#content').find('.inner').children().first().remove();
+                      }
+                      message_wrap_element.insertBefore($('#content').find('.inner').children().first());
+                    } else {
+                      $('#upload_validations').show();
+                    }
                   }
                 }).fail(function() {
                   if (idx == (total - 1)) {
                     $('.domains_loader_wrap').hide();
-                    $('#upload_validations').show();
+                    if (is_error) {
+                      var message_wrap_element = $('<div></div>');
+                      message_wrap_element.attr('class', 'flash_message error');
+
+                      var message_element = $('<span></span>');
+                      message_element.append('While loading domains, some issue occurs. Please try again to load this page.');
+                      message_wrap_element.append(message_element);
+
+                      var btn_element = $('<small></small>');
+                      var close_btn_element = $('<div></div>');
+                      close_btn_element.attr('class', 'close_flash_message');
+
+                      var close_sign_element = $('<span></span>');
+                      close_sign_element.append('X');
+
+                      close_btn_element.append(close_sign_element);
+                      close_btn_element.append('close');
+
+                      btn_element.append(close_btn_element);
+                      message_wrap_element.append(btn_element);
+
+                      if ($('#content').find('.inner').children().first().hasClass('flash_message')) {
+                        $('#content').find('.inner').children().first().remove();
+                      }
+                      message_wrap_element.insertBefore($('#content').find('.inner').children().first());
+                    } else {
+                      $('#upload_validations').show();
+                    }
                   }
                 });
               } else {
                 if (idx == (total - 1)) {
                   $('.domains_loader_wrap').hide();
-                  $('#upload_validations').show();
+                  if (is_error) {
+                    var message_wrap_element = $('<div></div>');
+                    message_wrap_element.attr('class', 'flash_message error');
+
+                    var message_element = $('<span></span>');
+                    message_element.append('While loading domains, some issue occurs. Please try again to load this page.');
+                    message_wrap_element.append(message_element);
+
+                    var btn_element = $('<small></small>');
+                    var close_btn_element = $('<div></div>');
+                    close_btn_element.attr('class', 'close_flash_message');
+
+                    var close_sign_element = $('<span></span>');
+                    close_sign_element.append('X');
+
+                    close_btn_element.append(close_sign_element);
+                    close_btn_element.append('close');
+
+                    btn_element.append(close_btn_element);
+                    message_wrap_element.append(btn_element);
+
+                    if ($('#content').find('.inner').children().first().hasClass('flash_message')) {
+                      $('#content').find('.inner').children().first().remove();
+                    }
+                    message_wrap_element.insertBefore($('#content').find('.inner').children().first());
+                  } else {
+                    $('#upload_validations').show();
+                  }
                 }
               }
             });
@@ -930,8 +1102,9 @@ jQuery(function($) {
               }
             });
 
+            // TODO: Disable CAA CHECK temporarily for now.
             // Check all domains has been passed for CAA_CHECK
-            if (enable_caa == 'true' && !all_passed_caa_check) {
+            /*if (enable_caa == 'true' && !all_passed_caa_check) {
               caa_check_failed_domain_names_str = caa_check_failed_domain_names_str.substr(1).split(',');
 
               var message_wrap_element = $('<div></div>');
@@ -965,7 +1138,7 @@ jQuery(function($) {
               message_wrap_element.insertBefore($('#content').find('.inner').children().first());
 
               return false;
-            }
+            }*/
 
             domain_names_str = domain_names_str.substr(1).split(',');
 
@@ -1164,6 +1337,35 @@ jQuery(function($) {
           }
 
           var new_domain_name = $(this).parent().next().find('input').val();
+          var origin_name = $('input:first-child', $(this).parent()).prop('id');
+
+          if (new_domain_name.indexOf('_') > -1) {
+            $(this).parent().next().find('input').val(origin_name);
+
+            var message_wrap_element = $('<div></div>');
+            message_wrap_element.attr('class', 'flash_message error');
+
+            var message_element = $('<span></span>');
+            message_element.append(new_domain_name + ' : Domain names can not contains \'_\' underline letter.');
+            message_wrap_element.append(message_element);
+
+            var btn_element = $('<small></small>');
+            var close_btn_element = $('<div></div>');
+            close_btn_element.attr('class', 'close_flash_message');
+
+            var close_sign_element = $('<span></span>');
+            close_sign_element.append('X');
+
+            close_btn_element.append(close_sign_element);
+            close_btn_element.append('close');
+
+            btn_element.append(close_btn_element);
+            message_wrap_element.append(btn_element);
+
+            message_wrap_element.insertBefore($('#content').find('.inner').children().first());
+
+            return false;
+          }
 
           <%if is_wildcard%>
             if (new_domain_name.substr(0, 2) != '*.') {
@@ -1174,9 +1376,6 @@ jQuery(function($) {
               return false;
             }
           <%end%>
-
-          /*var origin_name = $('input:first-child', $(this).parent()).prop('alt');*/
-          var origin_name = $('input:first-child', $(this).parent()).prop('id');
 
           if (new_domain_name == origin_name) {
             $(this).parent().next().empty();
@@ -1282,7 +1481,9 @@ jQuery(function($) {
                       $('[name="domains[' + new_domain_name + '][dcv]"]').change();
                       $('[name="domains[' + new_domain_name + '][dcv]"]').parent().next().empty();
                       if (result['caa_check'] == 'failed') {
-                        $('[name="domains[' + new_domain_name + '][dcv]"]').attr('disabled', true);
+                        // TODO: Disable CAA CHECK temporarily for now.
+                        /*$('[name="domains[' + new_domain_name + '][dcv]"]').attr('disabled', true);*/
+                        $('[name="domains[' + new_domain_name + '][dcv]"]').attr('disabled', false);
                         var anchorElement = $('<a></a>');
                         anchorElement.attr('href', 'https://www.ssl.com/how-to/configure-caa-records-to-authorize-ssl-com/');
                         anchorElement.attr('target', '_blank');

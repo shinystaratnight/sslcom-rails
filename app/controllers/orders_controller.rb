@@ -324,9 +324,9 @@ class OrdersController < ApplicationController
     unpaginated =
       if !@search.blank?
         if current_user.is_system_admins?
-          (@ssl_account.try(:orders) ? Order.unscoped{@ssl_account.try(:orders)} : Order.unscoped).where{state << ['payment_declined']}.search(params[:search])
+          (@ssl_account.try(:orders) ? Order.unscoped{@ssl_account.try(:orders)} : Order.unscoped).where{state << ['payment_declined']}.search(@search)
         else
-          current_user.ssl_account.orders.not_new.search(params[:search])
+          current_user.ssl_account.orders.not_new.search(@search)
         end
       else
         if current_user.is_system_admins?
@@ -345,13 +345,64 @@ class OrdersController < ApplicationController
   end
 
   def stats(unpaginated)
-    @negative = unpaginated.where{state >> ['fully_refunded','charged_back', 'canceled']}.sum(:cents)
-    @paid_via_deposit = unpaginated.where{billing_profile_id == nil }.sum(:cents)
-    @deposits_amount=unpaginated.joins { line_items.sellable(Deposit) }.sum(:cents)
-    @deposits_count=unpaginated.joins { line_items.sellable(Deposit) }.count
-    @total_amount=unpaginated.sum(:cents)-@deposits_amount-@negative
-    @total_count=unpaginated.count
-    @orders=unpaginated.paginate(@p)
+    if current_user.is_admin?
+      # Invoiced orders
+      invoice_items = unpaginated.where(state: 'invoiced')
+      
+      @monthly_invoices = MonthlyInvoice
+        .where(id: invoice_items.map(&:invoice_id).uniq).joins(:orders)
+      
+      @pending_monthly_invoices = @monthly_invoices
+        .where(status: 'pending')
+        .where(orders: {approval: 'approved'})
+        .map(&:orders).flatten.uniq.sum(&:cents)
+      
+      @paid_monthly_invoices = @monthly_invoices
+        .where(status: ['paid', 'partially_refunded'])
+        .where(orders: {approval: 'approved'})
+        .map(&:orders).flatten.uniq.sum(&:cents)
+        
+      @refunded_monthly_invoices = @monthly_invoices
+        .where(status: 'refunded')
+        .where(orders: {approval: 'approved'})
+        .map(&:orders).flatten.uniq.sum(&:cents)
+        
+      @partial_refunds_monthly_invoices = @monthly_invoices
+        .where(status: 'partially_refunded')
+        .where(orders: {approval: 'approved'})
+        .map(&:payment).map(&:refunds).flatten.uniq.sum(&:amount)
+      
+      @paid_monthly_invoices -= @partial_refunds_monthly_invoices
+      
+      @monthly_invoices_count = @monthly_invoices.uniq.count
+      
+      # Non invoiced orders
+      @negative = unpaginated
+        .where(state: %w{charged_back canceled rejected payment_not_required payment_declined})
+        .where.not(description: Order::INVOICE_PAYMENT)  # exclude invoice payments (as order)
+        .where.not(state: 'invoiced')                    # exclude invoice items (as order)
+        .sum(:cents)
+      
+      refunded = Refund.where(
+        order_id: unpaginated
+          .where.not(description: Order::INVOICE_PAYMENT)
+          .where.not(state: 'invoiced')
+          .where(state: ['partially_refunded', 'fully_refunded']).map(&:id)
+      ).where(status: 'success')
+      
+      deposits = unpaginated.joins{ line_items.sellable(Deposit) }
+      orders = unpaginated.where.not(id: deposits.map(&:id))
+        .where.not(description: Order::INVOICE_PAYMENT)
+        .where.not(state: 'invoiced')
+        
+      @refunded_amount = refunded.sum(:amount)
+      @refunded_count  = refunded.count
+      @deposits_amount = deposits.sum(:cents)
+      @deposits_count  = deposits.count
+      @total_amount    = orders.sum(:cents) - @negative - @refunded_amount
+      @total_count     = orders.count
+    end
+    @orders = unpaginated.paginate(@p)
   end
 
   def filter_by_state
