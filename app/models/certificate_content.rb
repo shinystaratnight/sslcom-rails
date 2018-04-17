@@ -10,6 +10,7 @@ class CertificateContent < ActiveRecord::Base
   has_one     :csr, :dependent => :destroy
   has_many    :signed_certificates, through: :csr
   has_one     :registrant, as: :contactable, dependent: :destroy
+  has_one     :locked_registrant, :as => :contactable
   has_many    :certificate_contacts, :as => :contactable
   has_many    :certificate_names # used for dcv of each domain in a UCC or multi domain ssl
   has_many    :url_callbacks, as: :callbackable
@@ -362,7 +363,6 @@ class CertificateContent < ActiveRecord::Base
     csr.signed_certificate.expired? if csr.try(:signed_certificate)
   end
 
-
   def expiring?
     if csr.try(:signed_certificate)
       ed=csr.signed_certificate.expiration_date
@@ -537,6 +537,7 @@ class CertificateContent < ActiveRecord::Base
   def dedupe_certificate_names
     CertificateName.delete(certificate_names.pluck(:id) - uniq_certificate_names)
   end
+
   # 1- End Entity Profile : DV_SERVER_CERT_EE and Certificate Profile: DV_RSA_SERVER_CERT
   #
   # Subject DN
@@ -631,6 +632,18 @@ class CertificateContent < ActiveRecord::Base
   #
   #  Subject DN format : "subject_dn": "CN=saad.com,O=SSL.COM,C=US". The names in open and closing parenthisis are just for description e.g. CN (common name). Here (common name) is for description. You only need to pass CN in subject DN. Those names that do not have any parenthisis will be passed as it is in subject DN.
   #      Subject alternative name format : "subject_alt_name": "dNSName=foo2.bar.com, dNSName=foo2.bar.com"
+
+  def locked_subject_dn
+    dn = ["CN=#{locked_registrant.company_name}"]
+    dn << "O=#{locked_registrant.company_name}"
+    dn << "OU=#{locked_registrant.department}" unless locked_registrant.department.blank?
+    dn << "L=#{locked_registrant.city}" unless locked_registrant.city.blank?
+    dn << "ST=#{locked_registrant.state}" unless locked_registrant.state.blank?
+    dn << "C=#{locked_registrant.country}" unless locked_registrant.country.blank?
+    # dn << "postalCode=#{locked_registrant.postal_code}" unless locked_registrant.postal_code.blank?
+
+    dn.map{|d|d.gsub(/\\/,'\\\\').gsub(',','\,')}.join(",")
+  end
 
   def subject_dn(options={})
     cert = options[:certificate] || self.certificate

@@ -130,6 +130,7 @@ class CertificateOrdersController < ApplicationController
 #  end
 
   # GET /certificate_orders/1/edit
+
   def edit
     unless @certificate_order.blank?
       @certificate = @certificate_order.mapped_certificate
@@ -216,6 +217,13 @@ class CertificateOrdersController < ApplicationController
     respond_to do |format|
       if @certificate_order.update_attributes(params[:certificate_order])
         cc = @certificate_order.certificate_content
+
+        # TODO: Store LockedRegistrant Data in case of CS
+        setup_locked_registrant(
+            params[:certificate_order][:certificate_contents_attributes]['0'],
+            cc
+        ) if @certificate_order.certificate.is_code_signing? #TODO: For only CS case.
+
         if cc.csr_submitted? or cc.new?
           cc.provide_info!
           if current_user.ssl_account.is_registered_reseller?
@@ -356,7 +364,6 @@ class CertificateOrdersController < ApplicationController
   end
 
   def filter_by
-    
     @certificate_orders = current_user.is_admin? ?
         (@ssl_account.try(:certificate_orders) || CertificateOrder) : current_user.ssl_account.certificate_orders
     @certificate_orders = @certificate_orders.not_test.not_new.filter_by(params[:id]).paginate(@p)
@@ -493,6 +500,19 @@ class CertificateOrdersController < ApplicationController
       cc.registrant
     else
       registrant_params ? cc.build_registrant(registrant_params) : cc.build_registrant
+    end
+  end
+
+  def setup_locked_registrant(cc_params=nil, cc)
+    if cc_params && cc_params[:registrant_attributes]
+      cc_params[:registrant_attributes].delete('id')
+
+      if cc.locked_registrant.blank?
+        cc.create_locked_registrant(cc_params[:registrant_attributes])
+        # cc.locked_registrant.save!
+      elsif current_user.is_admin?
+        cc.locked_registrant.update(cc_params[:registrant_attributes])
+      end
     end
   end
 end

@@ -125,8 +125,10 @@ class SslcomCaApi
       if options[:collect_certificate]
         dn.merge! user_name: options[:username]
       else
+        # dn.merge! subject_dn: options[:action]=="send_to_ca" ? subject_dn(options) : # req sent via RA form
+        #                           (options[:subject_dn] || options[:cc].subject_dn),
         dn.merge! subject_dn: options[:action]=="send_to_ca" ? subject_dn(options) : # req sent via RA form
-                                  (options[:subject_dn] || options[:cc].subject_dn),
+                                  (options[:subject_dn] || cert.is_code_signing? ? options[:cc].locked_subject_dn : options[:cc].subject_dn),
           ca_name: options[:ca_name] || ca_name(options),
           certificate_profile: certificate_profile(options),
           end_entity_profile: end_entity_profile(options),
