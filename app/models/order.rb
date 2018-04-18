@@ -36,6 +36,7 @@ class Order < ActiveRecord::Base
     end
   end
   
+  FAW                = "Funded Account Withdrawal"
   DOMAINS_ADJUSTMENT = "Domains Adjustment"
   SSL_CERTIFICATE    = "SSL Certificate Order"
   INVOICE_PAYMENT    = "Monthly Invoice Payment"
@@ -496,6 +497,9 @@ class Order < ActiveRecord::Base
     description == Order::INVOICE_PAYMENT
   end
   
+  def faw_order?
+    description == Order::FAW
+  end
   # Fetches all domain counts that were added during UCC certificate reprocess
   def get_reprocess_domains
     co           = certificate_orders.first
