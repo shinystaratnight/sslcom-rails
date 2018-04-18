@@ -475,7 +475,7 @@ class CertificateOrder < ActiveRecord::Base
     end
   end
   
-  def ucc_prorated_amount(certificate_content, reseller_tier)
+  def ucc_prorated_amount(certificate_content, reseller_tier=nil)
     wildcard_count        = get_reprocess_max_wildcard(certificate_content).count
     nonwildcard_count     = get_reprocess_max_nonwildcard(certificate_content).count
     # make sure NOT to charge for tier 1 domains (3 total)
