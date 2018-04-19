@@ -61,7 +61,7 @@
             %th Wildcard
             %th Line Total
         %tbody
-          -@invoice.orders.each_with_index do |o, i|
+          -@invoice.get_approved_items.each_with_index do |o, i|
             -cur_descr = descriptions[o.reference_number.to_s] 
             %tr.nobreak
               %td
