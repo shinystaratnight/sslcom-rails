@@ -130,6 +130,10 @@ class Order < ActiveRecord::Base
           result = result.where(type: "ReprocessCertificateOrder")
         when /deposit/
           result = result.joins{line_items.sellable(Deposit)}
+            .where.not(description: Order::FAW)
+        when /faw/
+          result = result.joins{line_items.sellable(Deposit)}
+            .where(description: Order::FAW)
         when /certificate/
           result = result.joins{line_items.sellable(CertificateOrder)}
         when /reseller/

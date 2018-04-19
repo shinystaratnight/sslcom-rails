@@ -60,7 +60,8 @@
           .filter_cont.hidden{'data-type'=>'select'}
             =select_tag :filter_product,
             options_for_select([['Domains Adjustment', 'reprocess'],
-              ['Deposit', 'deposit'], 
+              ['Deposit', 'deposit'],
+              [Order::FAW, 'faw'], 
               ['Certificate Order', 'certificate'], 
               ['Reseller Tier', 'reseller'],
               ['Basic SSL (basicssl)', 'basicssl'],
