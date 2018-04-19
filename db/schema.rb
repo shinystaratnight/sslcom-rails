@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180404162536) do
+ActiveRecord::Schema.define(version: 20180417143053) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        limit: 255
@@ -1272,6 +1272,16 @@ ActiveRecord::Schema.define(version: 20180404162536) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "remote_ip",        limit: 255
+  end
+
+  create_table "u2fs", force: :cascade do |t|
+    t.integer  "user_id",     limit: 4
+    t.text     "certificate", limit: 65535
+    t.string   "key_handle",  limit: 255
+    t.string   "public_key",  limit: 255
+    t.integer  "counter",     limit: 4,     default: 0, null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "unsubscribes", force: :cascade do |t|

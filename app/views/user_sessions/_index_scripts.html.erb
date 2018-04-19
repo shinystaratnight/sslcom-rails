@@ -1,0 +1,64 @@
+<script type="text/javascript">
+jQuery.noConflict();
+jQuery(function($) {
+  $(document).ready(function() {
+    $('.btn_login').click(function() {
+      var user_session = {};
+      user_session['login'] = $('#user_session_login').val();
+      user_session['password'] = $('#user_session_password').val();
+
+      var ajaxLoginUrl = '<%=user_login_user_session_path%>';
+      $.ajax({
+        url: ajaxLoginUrl,
+        data: {
+          user_session: user_session
+        },
+        type: "POST",
+        success: function (result) {
+          if ($.isEmptyObject(result)) {
+            $('.new_user_session').submit();
+          } else {
+            var appId = result['app_id'];
+            var signRequests = result['sign_requests'];
+            var challenge = result['challenge'];
+
+            u2f.sign(appId, challenge, signRequests, function(signResponse) {
+              if (signResponse.errorCode) {
+                var message_wrap_element = $('<div></div>');
+                message_wrap_element.attr('class', 'flash_message error');
+
+                var message_element = $('<span></span>');
+                message_element.append('U2F Authentication Error: ' + signResponse.errorCode);
+                message_wrap_element.append(message_element);
+
+                var btn_element = $('<small></small>');
+                var close_btn_element = $('<div></div>');
+                close_btn_element.attr('class', 'close_flash_message');
+
+                var close_sign_element = $('<span></span>');
+                close_sign_element.append('X');
+
+                close_btn_element.append(close_sign_element);
+                close_btn_element.append('close');
+
+                btn_element.append(close_btn_element);
+                message_wrap_element.append(btn_element);
+
+                if ($('#content').find('.inner').children().first().hasClass('flash_message')) {
+                  $('#content').find('.inner').children().first().remove();
+                }
+                message_wrap_element.insertBefore($('#content').find('.inner').children().first());
+              } else {
+                $('.u2f_response').val(JSON.stringify(signResponse));
+                $('.new_user_session').submit();
+              }
+            });
+          }
+        }
+      });
+
+      return false;
+    });
+  });
+});
+</script>

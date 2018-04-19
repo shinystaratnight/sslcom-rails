@@ -467,7 +467,6 @@ class ValidationsController < ApplicationController
         else
           if vrs.all?(&:approved?)
             cc.validate! unless cc.validated?
-            is_validated = true
           else
             cc.pend_validation!(host: request.host_with_port) unless cc.pending_validation?
           end

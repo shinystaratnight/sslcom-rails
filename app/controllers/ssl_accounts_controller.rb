@@ -20,6 +20,18 @@ class SslAccountsController < ApplicationController
 
   # GET /ssl_account/edit_settings
   def edit_settings
+    # Generate one for each version of U2F, currently only `U2F_V2`
+    @registration_requests = u2f.registration_requests
+
+    # Store challenges. We need them for the verification step
+    session[:challenges] = @registration_requests.map(&:challenge)
+
+    # Fetch existing Registrations from your db and generate SignRequests
+    # key_handles = Registration.map(&:key_handle)
+    key_handles = current_user.u2fs.pluck(:key_handle)
+    @sign_requests = u2f.authentication_requests(key_handles)
+
+    @app_id = u2f.app_id
   end
 
   def update_ssl_slug
@@ -56,7 +68,7 @@ class SslAccountsController < ApplicationController
       redirect_to edit_ssl_account_path(params[:ssl_account].merge(update_company_name: true))
     end
   end
-  
+
   # PUT /ssl_account/
   def update
     params[:monthly_billing] ? update_monthly_billing : update_reseller_profile
@@ -71,9 +83,43 @@ class SslAccountsController < ApplicationController
             ReminderTrigger.find(i+1)
       end
     end
+
+    unless params[:u2f_response].blank?
+      response = U2F::RegisterResponse.load_from_json(params[:u2f_response])
+      exist = current_user.u2fs.first(key_handle: response.key_handle)
+
+      if exist
+        flash[:error] = "This U2F device has already been registered."
+      else
+        begin
+          reg = u2f.register!(session[:challenges], response)
+
+          # save a reference to your database
+          current_user.u2fs.create!(certificate: reg.certificate,
+                                    key_handle:  reg.key_handle,
+                                    public_key:  reg.public_key,
+                                    counter:     reg.counter)
+
+          # current_user.u2fs.create!(certificate: "CERTIFICATE",
+          #                          key_handle:  "weqmtkmMMKSFWWRSDsadkfASfs",
+          #                          public_key:  "sadfjqwer2342jfasd23jksfsa",
+          #                          counter:     1)
+        rescue U2F::Error => e
+          # return "Unable to register: <%= e.class.name %>"
+          flash[:error] = "Unable to register: " + e.class.name
+        ensure
+          session.delete(:challenges)
+          flash[:notice] = 'New U2F device has been registered successfully.'
+        end
+      end
+    end
+
     respond_to do |format|
       if @ssl_account.update_attributes(params[:ssl_account])
-        flash[:notice] = 'Account settings were successfully updated.'
+        flash[:notice].blank? ?
+            flash[:notice] = "Account settings were successfully updated." :
+            flash[:notice] += "<br /> Account settings were successfully updated."
+
         format.html { redirect_to(account_path(ssl_slug: @ssl_slug)) }
         format.xml  { head :ok }
       else
@@ -82,7 +128,6 @@ class SslAccountsController < ApplicationController
       end
     end
   end
-
 
   def adjust_funds
     amount=params["amount"].to_f*100

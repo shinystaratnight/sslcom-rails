@@ -153,8 +153,13 @@ SslCom::Application.routes.draw do
         put  :update_item
       end
     end
-      
-    resource :user_session
+
+    resource :user_session do
+      collection do
+        post :user_login
+      end
+    end
+
     resources :certificate_orders do
       resources :physical_tokens do
         member do
