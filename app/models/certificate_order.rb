@@ -419,6 +419,7 @@ class CertificateOrder < ActiveRecord::Base
     end
 
     state :canceled do
+      event :uncancel, :transitions_to => :paid
       event :unrefund, :transitions_to => :canceled
       event :refund, :transitions_to => :refunded
       event :reject, :transitions_to => :rejected
