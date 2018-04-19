@@ -167,22 +167,27 @@ class CertificateOrdersController < ApplicationController
     @certificate_order = recert(CertificateOrder::REPROCESSING)
     @tier = find_tier
     unless @certificate_order.blank?
-      @certificate_order.has_csr=true
-      @certificate = @certificate_order.mapped_certificate
-      @certificate_content = @certificate_order.certificate_contents.build(
-        domains: @certificate_order.certificate_content.signed_certificate.try(:subject_alternative_names),
-        server_software_id: @certificate_order.certificate_content.server_software_id
-      )
-      # @certificate_content.additional_domains = domains
-      #reset dcv validation
-      @certificate_content.agreement=true
-      @certificate_order.validation.validation_rules.each do |vr|
-        if vr.description=~/\Adomain/
-          ruling=@certificate_order.validation.validation_rulings.detect{|vrl| vrl.validation_rule == vr}
-          ruling.pend! unless ruling.pending?
+      if @certificate_order.certificate_content.workflow_state == 'pending_validation' &&
+        !current_user.is_system_admins?
+        redirect_to new_certificate_order_validation_path(@ssl_slug, @certificate_order)
+      else  
+        @certificate_order.has_csr=true
+        @certificate = @certificate_order.mapped_certificate
+        @certificate_content = @certificate_order.certificate_contents.build(
+          domains: @certificate_order.certificate_content.signed_certificate.try(:subject_alternative_names),
+          server_software_id: @certificate_order.certificate_content.server_software_id
+        )
+        # @certificate_content.additional_domains = domains
+        #reset dcv validation
+        @certificate_content.agreement=true
+        @certificate_order.validation.validation_rules.each do |vr|
+          if vr.description=~/\Adomain/
+            ruling=@certificate_order.validation.validation_rulings.detect{|vrl| vrl.validation_rule == vr}
+            ruling.pend! unless ruling.pending?
+          end
         end
+        return render '/certificates/buy', :layout=>'application'
       end
-      return render '/certificates/buy', :layout=>'application'
     else
       not_found
     end
