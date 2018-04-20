@@ -47,7 +47,7 @@ class MonthlyInvoice < Invoice
   def self.get_invoices_for_select(ssl_account_id)
     MonthlyInvoice.get_teams_invoices(ssl_account_id)
       .map{|mi| ["#{mi.reference_number.upcase} (#{mi.status.gsub('_', ' ')})", mi.reference_number]}
-      .insert(0, ['NEW INVOCE', 'new_invoice'])
+      .insert(0, ['NEW INVOICE', 'new_invoice'])
   end
     
   def archived?
