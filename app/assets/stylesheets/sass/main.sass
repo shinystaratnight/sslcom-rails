@@ -5788,30 +5788,37 @@ span.notifications-teams
   justify-content: center
   font-size: 1rem
 
-  .button-invoice,
-  .button-mo-invoice
-    background: -webkit-linear-gradient(#69B3FF, #334DFF)
-    background: -o-linear-gradient(#69B3FF, #334DFF)
-    background: -moz-linear-gradient(#69B3FF, #334DFF)
-    background: linear-gradient(#69B3FF, #334DFF)
-    border-radius: 3px
-    border: 2px solid #334DFF
-    color: #FFFFFF
-    cursor: pointer
-    display: block
-    font-size: 1.3rem
-    letter-spacing: 1.5px
-    margin: 15px 15px
-    padding: 5px 15px
-    box-shadow: none
-  
-  .button-mo-invoice.btn-mo-destroy
-    background: -webkit-linear-gradient(#cc0000, #990000)
-    background: -o-linear-gradient(#cc0000, #990000)
-    background: -moz-linear-gradient(#cc0000, #990000)
-    background: linear-gradient(#cc0000, #990000)
-    border: 2px solid #990000
-      
+.button-invoice,
+.button-mo-invoice
+  background: -webkit-linear-gradient(#69B3FF, #334DFF)
+  background: -o-linear-gradient(#69B3FF, #334DFF)
+  background: -moz-linear-gradient(#69B3FF, #334DFF)
+  background: linear-gradient(#69B3FF, #334DFF)
+  border-radius: 3px
+  border: 2px solid #334DFF
+  color: #FFFFFF
+  cursor: pointer
+  display: block
+  font-size: 1.3rem
+  letter-spacing: 1.5px
+  margin: 15px 15px
+  padding: 5px 15px
+  box-shadow: none
+
+.button-mo-invoice.btn-mo-destroy
+  background: -webkit-linear-gradient(#cc0000, #990000)
+  background: -o-linear-gradient(#cc0000, #990000)
+  background: -moz-linear-gradient(#cc0000, #990000)
+  background: linear-gradient(#cc0000, #990000)
+  border: 2px solid #990000
+
+.button-mo-invoice.btn-mo-manage
+  background: -webkit-linear-gradient(#84b332, #6b9029)
+  background: -o-linear-gradient(#84b332, #6b9029)
+  background: -moz-linear-gradient(#84b332, #6b9029)
+  background: linear-gradient(#84b332, #6b9029)
+  border: 2px solid #84b332
+        
 #invoice-container-errors,
 #invoice-admin-errors
   .errors-invoice-update
@@ -6521,11 +6528,15 @@ span.notifications-teams
   background-color: white
   color: #334DFF !important
   
-#invoice-status
+#invoice-status,
+#invoice-status-archived
   color: grey
   font-weight: 600
   font-size: 1.2rem
-  
+
+#invoice-status-archived
+  color: red
+    
 .monthly-invoice
   #summary
     font-size: 1.5rem
@@ -6553,9 +6564,19 @@ span.notifications-teams
   span
     color: grey
   
+  .items-description
+    font-size: 1.2rem
+    width: 50%
+  
+  #mo-select
+    width: 50% !important
+
   .description.total_row
     text-align: right
   
+  .select-item td
+    margin-left: 1rem
+    
   .order-funded td,
   .order-total td,
   .order-subtotal td
@@ -6573,6 +6594,22 @@ span.notifications-teams
   .order-funded
     color: grey
 
+#items-invoice-select
+  width: 22%
+  
+  .select2.select2-container
+    width: 100% !important
+  
+#summary.transfer-items
+  div
+    margin-right: 2.5rem
+    margin-bottom: 1.5rem
+  
+  #items-invoice-transfer .button-mo-invoice
+    margin: 0 0 0 2rem
+    padding: 1.5px 15px
+    font-size: 1.4rem
+    
 #monthly-invoice-actions,
 #monthly-invoice-pmt
   margin: 2em auto 4em
