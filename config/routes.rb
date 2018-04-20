@@ -144,6 +144,7 @@ SslCom::Application.routes.draw do
       member do
         get  :download
         get  :new_payment
+        get  :manage_items
         post :make_payment
         put  :remove_item
         put  :add_item
@@ -151,6 +152,7 @@ SslCom::Application.routes.draw do
         put  :refund_other
         put  :credit
         put  :update_item
+        get  :transfer_items
       end
     end
       

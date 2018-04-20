@@ -1,0 +1,64 @@
+- descriptions  = @invoice.get_item_descriptions
+- invoices = MonthlyInvoice.get_invoices_for_select(@invoice.billable.id)
+- orders = @invoice.orders
+
+#validations.monthly-invoice
+  #summary.transfer-items
+    #items-selected
+      %span SELECTED:
+      %strong{data: {count: 0, total: orders.count}} 0
+    #items-selected-amt
+      %span AMOUNT:
+      %strong{data: {amount: 0, total: orders.map(&:amount).sum.to_s}} 0
+    #items-invoice-type
+      %span TO INVOICE:
+      %strong NEW
+    #items-invoice-select
+      = select_tag(:monthly_invoice, options_for_select(invoices), |
+        multiple: false, id: "mo-select", style: 'width: 100% !important')
+    #items-invoice-transfer
+      = link_to "Create", transfer_items_invoice_path(@ssl_slug, @invoice.reference_number), |
+        class: "button-mo-invoice", id: 'btn-transfer-mi-items', method: :get
+      
+  #summary
+    %table#tbl-monthly-invoice(cellspacing='0')
+      %thead
+        %tr.heading_row
+          %th 
+            = check_box_tag :mi_all_items
+          %th Date
+          %th Order
+          %th Description Items
+          %th Total
+      %tbody
+        - orders.each_with_index do |o, i|
+          - order_ref = o.reference_number
+          %tr
+            %td.select-item
+              = check_box_tag :order_ref, order_ref, false,  |
+                id: order_ref, class: 'chk-items-selected',  |
+                data: {amount: o.amount.to_s}
+            %td
+              = o.created_at.strftime('%F')
+            %td
+              = link_to order_ref, order_path(@ssl_slug, o)
+            %td.items-description
+              %strong
+                %span #{descriptions[order_ref.to_s][:item]}
+              %br
+              = descriptions[order_ref.to_s][:description]
+            %td
+              %strong
+                = o.amount.format
+
+-content_for :js do
+  :javascript
+    $("#mo-select").select2({
+      width: 'resolve'
+    });
+    $(document).ready(function() {
+      $('#btn-transfer-mi-items').hide();
+      $("#mo-select").select2({
+        width: 'resolve'
+      });
+    });

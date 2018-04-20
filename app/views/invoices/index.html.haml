@@ -43,4 +43,5 @@
             %strong=i.get_amount_format
           %td=i.orders.count
           %td=link_to "\u21E9 Download".html_safe, download_invoice_path(@ssl_slug, i.reference_number)
-          %td#invoice-status=i.status.upcase
+          %td{id: i.archived? ? 'invoice-status-archived' : 'invoice-status'}
+            =i.status.upcase.gsub('_', ' ')

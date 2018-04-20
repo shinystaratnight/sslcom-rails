@@ -27,6 +27,28 @@ class InvoicesController < ApplicationController
     @order = @invoice.payment unless @invoice.payment.nil?
   end
   
+  def manage_items
+    
+  end
+  
+  def transfer_items
+    orders = @invoice.orders.where(reference_number: params[:orders].split(','))
+    orders_count = orders.count
+    if orders_count > 0
+      invoice = if params[:invoice] == 'new_invoice'
+        MonthlyInvoice.create(billable_id: @invoice.billable.id, billable_type: 'SslAccount')
+      else
+        MonthlyInvoice.find_by(reference_number: params[:invoice])
+      end
+      orders.update_all(invoice_id: invoice.id)
+      flash[:notice] = "All #{orders_count} order(s) have been successfully transferred to invoice ##{invoice.reference_number}."
+      redirect_to invoice_path(@ssl_slug, invoice.reference_number)
+    else
+      flash[:error] = "Please select at least one order!"
+      redirect_to manage_items_invoice_path(@ssl_slug, @invoice.reference_number)
+    end
+  end
+  
   def edit
   end
   
@@ -186,15 +208,14 @@ class InvoicesController < ApplicationController
   
   def destroy
     if @invoice
-      items = @invoice.orders.count
-      if @invoice.destroy
-        redirect_to invoices_path(@ssl_slug),
-          notice: "Invoice #{@invoice.reference_number} and #{items} items have been successfully deleted."
+      if @invoice.archive!
+          flash[:notice] = "Invoice #{@invoice.reference_number} successfully deleted."
       else
         flash[:error] = "Something went wrong, please try again!"
         redirect_to_invoice
       end
     end
+    redirect_to_invoice
   end
     
   private
@@ -203,7 +224,7 @@ class InvoicesController < ApplicationController
     base = if current_user && current_user.is_system_admins?
       MonthlyInvoice
     else
-      current_user.ssl_account.monthly_invoices
+      current_user.ssl_account.monthly_invoices.where.not(status: 'archived')
     end
     base.joins(:orders).uniq.sort_with(params)
   end

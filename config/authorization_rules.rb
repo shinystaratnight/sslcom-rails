@@ -45,7 +45,9 @@ authorization do
       :refund_other,
       :credit,
       :destroy,
-      :update_item
+      :update_item,
+      :manage_items,
+      :transfer_items
     ]
   end
 
