@@ -29,6 +29,7 @@
           =render partial: "billing_profiles", locals: {ssl_account: ssl_account}
         -else
           =render partial: "order_login"
+          =hidden_field_tag 'u2f_response', '', :class => 'u2f_response'
         -if current_order.amount.to_s.to_i > 0
           #billing_section
             #register_card_form{initial_display?}

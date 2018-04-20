@@ -130,6 +130,14 @@
         =text_field_tag 'reminder_email', rr=="0" ? "" : rr, :size=>10
         .field_desc
           %em space separated
+.subheading
+  U2F
+.settings_block.clearfix
+  .destination_block
+    %label
+      Register New Device
+  .destination_block.right
+    =check_box_tag "is_register_u2f", true, false
 #what_are_expiration_notices.hidden
   #what_is_number_licenses_explain
     %p

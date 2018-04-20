@@ -71,6 +71,7 @@ gem 'api-pagination'
 gem 'rubyzip', '~> 1.2.1'
 gem 'wkhtmltopdf-binary'
 gem 'wicked_pdf'
+gem 'u2f'
 
 group :development do
   gem 'foreman'
