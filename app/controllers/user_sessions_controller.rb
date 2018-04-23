@@ -9,7 +9,11 @@ class UserSessionsController < ApplicationController
   end
 
   def show
-    redirect_to action: :new
+    if params[:login]
+      create
+    else
+      redirect_to action: :new
+    end
   end
 
   def user_login
@@ -21,11 +25,11 @@ class UserSessionsController < ApplicationController
     if @user_session.save && !@user_session.user.is_disabled?
       user = @user_session.user
 
-      cookies[:acct] = {
-          :value=>user.ssl_account.acct_number,
-          :path => "/",
-          :expires => Settings.cart_cookie_days.to_i.days.from_now
-      }
+      # cookies[:acct] = {
+      #     :value=>user.ssl_account.acct_number,
+      #     :path => "/",
+      #     :expires => Settings.cart_cookie_days.to_i.days.from_now
+      # }
 
       #we'll know what tier the user is even if s/he is not logged in
       cookies.delete(:r_tier)
@@ -78,39 +82,81 @@ class UserSessionsController < ApplicationController
 
     if current_user.blank?
       @user_session = UserSession.new(params[:user_session])
+    else
+      if current_user.is_admin? && params[:login]
+        @user_session = UserSession.new(User.find_by_login params[:login])
+        @user_session.id = :shadow
+        clear_cart
+      end
+
+      unless current_user.ssl_account.nil?
+        cookies[:acct] = {
+          value: current_user.ssl_account.acct_number,
+          path: "/",
+          expires: Settings.cart_cookie_days.to_i.days.from_now
+        }
+      end
     end
 
     respond_to do |format|
       if @user_session
-        unless @user_session.save && !@user_session.user.is_disabled?
-          if @user_session.attempted_record && !@user_session.attempted_record.active?
-            flash[:notice] = "Your account has not been activated. %s"
-            flash[:notice_item] = "Click here to have the activation email resent to #{@user_session.attempted_record.email}.",
-                resend_activation_users_path(:login => @user_session.attempted_record.login)
-            @user_session.errors[:base] << ("please visit #{resend_activation_users_url(
-                :login => @user_session.attempted_record.login)} to have your activation notice resent")
+        if @user_session.save && !@user_session.user.is_disabled?
+          user = @user_session.user
 
-            log_failed_attempt(@user_session.user, params,flash[:notice])
-            format.html {render :action => :new}
-            format.js   {render :json=>@user_session.errors}
-          elsif @user_session.user.blank? || (!@user_session.user.blank? && @user_session.user.is_admin_disabled?)
-            unless @user_session.user.blank?
-              if (!@user_session.user.blank? && @user_session.user.is_admin_disabled?)
-                flash.now[:error] = "Ooops, it appears this account has been disabled." unless request.xhr?
+          cookies[:acct] = {
+              :value=>user.ssl_account.acct_number,
+              :path => "/",
+              :expires => Settings.cart_cookie_days.to_i.days.from_now
+          }
 
-                log_failed_attempt(@user_session.user, params,flash.now[:error])
-                @user_session.destroy
-                @user_session=UserSession.new
-              end
-            end
-            log_failed_attempt(@user_session.user, params,@user_session.errors.to_json)
-            format.html {render :action => :new}
-            format.js   {render :json=>@user_session}
-          else
-            log_failed_attempt(params[:user_session][:login], params,flash.now[:error])
-            format.html {render :action => :new}
-            format.js   {render :json=>@user_session.errors}
+          #we'll know what tier the user is even if s/he is not logged in
+          cookies.delete(:r_tier)
+          cookies[:cart] = {
+              :value=>user.shopping_cart.content,
+              :path => "/",
+              :expires => Settings.cart_cookie_days.to_i.days.from_now
+          } if user.shopping_cart
+
+          if user.ssl_account.is_registered_reseller?
+            cookies[:r_tier] = {
+                :value=>user.ssl_account.reseller.reseller_tier.label,
+                :path => "/",
+                :expires => Settings.cart_cookie_days.to_i.days.from_now
+            }
           end
+
+          flash[:notice] = "Successfully logged in." unless request.xhr?
+          format.js   {render :json=>url_for_js(user)}
+          format.html {redirect_back_or_default account_path(user.ssl_account(:default_team) ?
+                                                                 user.ssl_account(:default_team).to_slug :
+                                                                 {})}
+        elsif @user_session.attempted_record && !@user_session.attempted_record.active?
+          flash[:notice] = "Your account has not been activated. %s"
+          flash[:notice_item] = "Click here to have the activation email resent to #{@user_session.attempted_record.email}.",
+              resend_activation_users_path(:login => @user_session.attempted_record.login)
+          @user_session.errors[:base] << ("please visit #{resend_activation_users_url(
+              :login => @user_session.attempted_record.login)} to have your activation notice resent")
+
+          log_failed_attempt(@user_session.user, params,flash[:notice])
+          format.html {render :action => :new}
+          format.js   {render :json=>@user_session.errors}
+        elsif @user_session.user.blank? || (!@user_session.user.blank? && @user_session.user.is_admin_disabled?)
+          unless @user_session.user.blank?
+            if (!@user_session.user.blank? && @user_session.user.is_admin_disabled?)
+              flash.now[:error] = "Ooops, it appears this account has been disabled." unless request.xhr?
+
+              log_failed_attempt(@user_session.user, params,flash.now[:error])
+              @user_session.destroy
+              @user_session=UserSession.new
+            end
+          end
+          log_failed_attempt(@user_session.user, params,@user_session.errors.to_json)
+          format.html {render :action => :new}
+          format.js   {render :json=>@user_session}
+        else
+          log_failed_attempt(params[:user_session][:login], params,flash.now[:error])
+          format.html {render :action => :new}
+          format.js   {render :json=>@user_session.errors}
         end
       else
         @user_session = current_user_session

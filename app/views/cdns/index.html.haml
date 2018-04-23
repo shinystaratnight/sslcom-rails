@@ -13,20 +13,41 @@
         #resources
           %table(cellspacing="0")
             %tr.heading_row
-              %th Alias
-              %th Origin
+              -#%th Alias
+              -#%th Origin
+              -#%th Hostname
+              -#%th Created
+              -#%th Delete?
               %th Hostname
+              %th Origin
+              %th Custom Host Name
               %th Created
               %th Delete?
             -if resources && resources.length > 0
+              -#-resources.each do |resource|
+              -#  %tr
+              -#    %td
+              -#      =link_to resource['alias'], resource_cdn_cdn_path(@ssl_slug, resource['id'])
+              -#    %td
+              -#      =resource['origin']
+              -#    %td
+              -#      =resource['hostname']
+              -#    %td
+              -#      =DateTime.parse(resource['created_at']).strftime("%d/%m/%Y")
+              -#    %td
+              -#      =check_box_tag "deleted_resources[]", resource['id'] + '|' + resource['alias'], false, class: 'chk-delete'
               -resources.each do |resource|
                 %tr
                   %td
-                    =link_to resource['alias'], resource_cdn_cdn_path(@ssl_slug, resource['id'])
+                    =link_to resource['hostname'], resource_cdn_cdn_path(@ssl_slug, resource['id'])
                   %td
                     =resource['origin']
                   %td
-                    =resource['hostname']
+                    -if resource['custom_domains'].size > 0
+                      -resource['custom_domains'].each do |custom_domain|
+                        %p=custom_domain['hostname']
+                    -else
+                      %span ---
                   %td
                     =DateTime.parse(resource['created_at']).strftime("%d/%m/%Y")
                   %td
@@ -42,7 +63,7 @@
       .sub-title Create Resource
       .sub-cont
         =form_tag '', :id=>'create_resource', :method=>:post do
-          =hidden_field_tag :api_key, @current_user_api
+          =hidden_field_tag :api_key, @current_user_api_key
           %div.reg-resource.clearfix
             .field-label * Resource Origin:
             .field-cont
