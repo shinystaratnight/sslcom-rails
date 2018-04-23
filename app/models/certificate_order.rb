@@ -744,6 +744,7 @@ class CertificateOrder < ActiveRecord::Base
   end
   
   def skip_contacts_step?
+    return false if certificate_contents.count == 1
     if Contact.optional_contacts?
       if signed_certificate.try('is_dv?'.to_sym) && Settings.exempt_dv_contacts
         true
