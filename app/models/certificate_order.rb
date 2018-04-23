@@ -445,7 +445,7 @@ class CertificateOrder < ActiveRecord::Base
   def ucc_prorated_domain(type, reseller_tier=nil)
     if certificate.is_ucc?
       tiers = ucc_duration_amounts(certificate_duration(:years).to_i, reseller_tier)
-      domain_amount  = (type == :wildcard) ? tiers['tier_3'] : tiers['tier_2']
+      domain_amount  = (type == :wildcard && !certificate.is_ev?) ? tiers['tier_3'] : tiers['tier_2']
       total_duration = certificate_duration(:days)
       domain_amount - ( (used_days/total_duration) * domain_amount )
     end
