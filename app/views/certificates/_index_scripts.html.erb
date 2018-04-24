@@ -70,11 +70,13 @@ jQuery(function($) {
   };
   
   $.updateOrderDescription  = function(nonwildcards, wildcards) {
-    var all_domains = nonwildcards + wildcards;
+    var all_domains = nonwildcards + wildcards,
+      wildcard_data = $('#ucc-wildcard-amount').data('cost'),
+      wildcard_cost = (typeof wildcard_data =='undefined') ? '0.00' : wildcard_data;
+    
     $('#order_order_description').val('Prorated charge for ' + all_domains
-      + ' additional domains. (wildcard: ' + wildcards + ' x $'
-      + $('#ucc-wildcard-amount').data('cost') + ', '
-      + 'non wildcard: ' + nonwildcards + ' x $'
+      + ' additional domains. (wildcard: ' + wildcards + ' x $' + wildcard_cost
+      + ', non wildcard: ' + nonwildcards + ' x $'
       + $('#ucc-nonwildcard-amount').data('cost') + ')'
     );
   };

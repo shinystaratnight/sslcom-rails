@@ -126,8 +126,8 @@ class Order < ActiveRecord::Base
     %w(product).each do |field|
       query=filters[field.to_sym]
       case query
-        when /reprocess/
-          result = result.where(type: "ReprocessCertificateOrder")
+      when /domain_adjustments/
+          result = result.where(description: Order::DOMAINS_ADJUSTMENT)
         when /deposit/
           result = result.joins{line_items.sellable(Deposit)}
             .where.not(description: Order::FAW)
