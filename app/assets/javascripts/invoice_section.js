@@ -103,4 +103,68 @@ $(function($) {
       }
     }
   });
+  
+  // Monthly Invoice Manage Items
+  var init_transfer_url = $('#btn-transfer-mi-items').attr('href');
+  
+  function updateTransferItemsUrl() {
+    var orders = [],
+      invoice = $('#mo-select').find(':selected').val();
+    $('.chk-items-selected:checked').each(function() {
+      orders.push(this.id);
+    });
+    $('#btn-transfer-mi-items').attr('href', 
+      init_transfer_url + '?invoice=' + invoice + "&orders=" + orders
+    );
+  }
+  
+  $('.chk-items-selected').on('click', function() {
+    var id = $(this).attr('id'),
+      count = $('#items-selected strong').data('count'),
+      amount = $('#items-selected-amt strong').data('amount');
+      
+    if ($(this).is(':checked')) {
+      amount += $(this).data('amount');
+      count  += 1;
+      $(this).parents('tr').css('background-color', 'rgb(204, 255, 204)');
+    } else {
+      amount -= $(this).data('amount');
+      count  -= 1;
+      $(this).parents('tr').css('background-color', '#ffffff');
+    }
+    
+    count == 0 ? $('#btn-transfer-mi-items').hide() : $('#btn-transfer-mi-items').show();
+    $('#items-selected strong').text(count);
+    $('#items-selected strong').data('count', count);
+    $('#items-selected-amt strong').text('$' + amount.toFixed(2));
+    $('#items-selected-amt strong').data('amount', amount);
+    updateTransferItemsUrl();
+  });
+  
+  $('#mo-select').on('change', function() {
+    var selected = $(this).find(':selected').val(),
+      btn_text = (selected == 'new_invoice') ? 'Create' : 'Transfer Items';
+      
+    selected = (selected == 'new_invoice') ? 'NEW' : selected;
+    $('#items-invoice-type strong').text(selected);
+    $('#btn-transfer-mi-items').text(btn_text);
+    updateTransferItemsUrl();
+  });
+  
+  $('#mi_all_items').on('click', function() {
+    var amount = $('#items-selected-amt strong').data('total').toFixed(2),
+      checked = $(this).is(':checked'),
+      bc = checked ? 'rgb(204, 255, 204)' : '#ffffff',
+      amount = checked ? amount : 0,
+      count = checked ? $('#items-selected strong').data('total') : 0;
+    
+    $('.chk-items-selected').prop('checked', checked);
+    $('.chk-items-selected').parents('tr').css('background-color', bc);
+    $('#items-selected strong').text(count);
+    $('#items-selected strong').data('count', count);
+    $('#items-selected-amt strong').text('$' + amount);
+    $('#items-selected-amt strong').data('amount', amount);
+    count == 0 ? $('#btn-transfer-mi-items').hide() : $('#btn-transfer-mi-items').show();
+    updateTransferItemsUrl();
+  });  
 });

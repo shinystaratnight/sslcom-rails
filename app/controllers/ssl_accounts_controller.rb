@@ -109,6 +109,10 @@ class SslAccountsController < ApplicationController
   end  
     
   def update_reseller_profile
+    if current_user.is_system_admins?
+      @ssl_account = Reseller.find(params[:ssl_account][:reseller_attributes][:id]).ssl_account
+      @ssl_slug = @ssl_account.to_slug
+    end
     respond_to do |format|
       if @ssl_account.update_attributes(params[:ssl_account])
         flash[:notice] = 'Reseller profile information was successfully updated.'

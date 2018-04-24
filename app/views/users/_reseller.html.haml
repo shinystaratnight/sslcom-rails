@@ -54,7 +54,7 @@
                           %li ext: #{r.ext}
                         -unless r.fax.blank?
                           %li fax: #{r.fax}
-                        %li=link_to 'edit', edit_ssl_account_url
+                        %li=link_to 'edit', edit_ssl_account_path(@ssl_slug || params[:ssl_slug])
                     .certificate_details_box
                       %ul
                         %li
@@ -75,7 +75,7 @@
                           \#{r.country}
                         %li
                           \#{r.website}
-                        %li=link_to 'edit', edit_ssl_account_url
+                        %li=link_to 'edit', edit_ssl_account_path(@ssl_slug || params[:ssl_slug])
                     .certificate_details_box
                       %ul
                         -if permitted_to?(:edit, :billing_profiles)
