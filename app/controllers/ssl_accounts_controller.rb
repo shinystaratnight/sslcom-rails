@@ -76,6 +76,16 @@ class SslAccountsController < ApplicationController
 
   # PUT /ssl_account/
   def update_settings
+    # *************************** TODO: Testing ***************************
+    # temp_u2f_response = {
+    #     'registrationData'=>'BQTiHTk7ui4mormExZ1G70IACAaV1S9CpQDACWBbs1I4s_BUvBP39tnzTm-TIY0R28bBzGeGxxSLerpxbSAVOYIDQDueolFjTiRAitlxRNcx1y5vKlN14f0OYQlKNawBBKTM7Lb0gwTLfdSyXFo93TIp4O1-88rEI4LWVaU4ZvQIWj8wggE1MIHcoAMCAQICCwDY4Y_UyJucCPduMAoGCCqGSM49BAMCMBUxEzARBgNVBAMTClUyRiBJc3N1ZXIwGhcLMDAwMTAxMDAwMFoXCzAwMDEwMTAwMDBaMBUxEzARBgNVBAMTClUyRiBEZXZpY2UwWTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAARa9fZ556cZWqmmoAN3rWErKUu3r6YODFcI0Wf9hH0UW65YTEsq33U_2397bZnJON8tPqHO0O9jAA-YgikhTTLooxcwFTATBgsrBgEEAYLlHAIBAQQEAwIFIDAKBggqhkjOPQQDAgNIADBFAiEAwaOmji8WpyFGJwV_YrtyjJ4D56G6YtBGUk5FbSwvP3MCIAtfeOURqhgSn28jbZITIn2StOZ-31PoFt-wXZ3IuQ_eMEQCIHSibtLw2ShFqhSha8btuURH67OYL0e6Px46xyCUYCIbAiA-Gh8y_lfrDHS4c8foXxoDzBRBYCeyJGNVtVpmbfRY9w',
+    #     'version'=>'U2F_V2',
+    #     'challenge'=>'Awb4tNZaXIHU5WDVZnw-U8CthkqhtkYinK0tetrm6qs',
+    #     'clientData'=>'eyJ0eXAiOiJuYXZpZ2F0b3IuaWQuZmluaXNoRW5yb2xsbWVudCIsImNoYWxsZW5nZSI6IkF3YjR0TlphWElIVTVXRFZabnctVThDdGhrcWh0a1lpbkswdGV0cm02cXMiLCJvcmlnaW4iOiJodHRwczovL3NhbmRib3gzLnNzbC5jb20iLCJjaWRfcHVia2V5IjoidW51c2VkIn0'
+    # }
+    # params[:u2f_response] = temp_u2f_response.to_json
+    # *********************************************************************
+
     if params[:reminder_notice_triggers]
       params[:reminder_notice_triggers].uniq.sort{|a,b|a.to_i <=> b.to_i}.
         reverse.each_with_index do |rt, i|
@@ -86,13 +96,16 @@ class SslAccountsController < ApplicationController
 
     unless params[:u2f_response].blank?
       response = U2F::RegisterResponse.load_from_json(params[:u2f_response])
-      exist = current_user.u2fs.first(key_handle: response.key_handle)
+      exist = current_user.u2fs.find_by_key_handle(response.key_handle)
 
       if exist
         flash[:error] = "This U2F device has already been registered."
       else
         begin
           reg = u2f.register!(session[:challenges], response)
+          # *************************** TODO: Testing ***************************
+          # reg = u2f.register!(['Awb4tNZaXIHU5WDVZnw-U8CthkqhtkYinK0tetrm6qs'], response)
+          # *********************************************************************
 
           # save a reference to your database
           current_user.u2fs.create!(certificate: reg.certificate,

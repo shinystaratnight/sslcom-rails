@@ -1,6 +1,7 @@
 -certificate ||= @certificate_order.certificate if @certificate_order
 -title=new_order_title(certificate)
 -content_for :title, title
+= javascript_include_tag 'u2f-api'
 =order_progress_indicator(2, certificate) if certificate
 .reseller_registration_select_tier
   %h3
@@ -30,6 +31,7 @@
         -else
           =render partial: "order_login"
           =hidden_field_tag 'u2f_response', '', :class => 'u2f_response'
+          =hidden_field_tag 'logout', 'false', :class => 'u2f_logout'
         -if current_order.amount.to_s.to_i > 0
           #billing_section
             #register_card_form{initial_display?}
