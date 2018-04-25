@@ -23,6 +23,12 @@ class CdnsController < ApplicationController
   def index
     @results = {}
     if current_user.ssl_account
+      # @response = current_user.is_system_admins? ?
+      #                 HTTParty.get('https://reseller.cdnify.com/api/v1/resources/all-reseller-resources',
+      #                              basic_auth: {username: current_user_api_key, password: 'x'}) :
+      #                 HTTParty.get('https://reseller.cdnify.com/api/v1/resources',
+      #                              basic_auth: {username: current_user_api_key, password: 'x'})
+
       @response = HTTParty.get('https://reseller.cdnify.com/api/v1/resources',
                                basic_auth: {username: current_user_api_key, password: 'x'})
       @results[:resources] = @response.parsed_response['resources'] if @response.code == 200

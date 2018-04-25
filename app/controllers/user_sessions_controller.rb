@@ -159,37 +159,87 @@ class UserSessionsController < ApplicationController
           format.js   {render :json=>@user_session.errors}
         end
       else
-        @user_session = current_user_session
+        if params[:logout] == 'true'
+          if current_user.is_admin?
+            cookies.delete(:r_tier)
+            cookies.delete(:cart_guid)
+            clear_cart
+          end
+          cookies.delete(:acct)
+          current_user_session.destroy
+          Authorization.current_user=nil
+          flash[:error] = "Unable to sign with U2F." unless params[:user]
 
-        # TODO: Check U2F
-        if params['u2f_response'].blank?
-          flash[:notice] = "Successfully logged in." unless request.xhr?
+          @user_session = UserSession.new(params[:user_session])
 
-          format.js   {render :json=>url_for_js(current_user)}
-          format.html {redirect_back_or_default account_path(current_user.ssl_account(:default_team) ?
-                                                                 current_user.ssl_account(:default_team).to_slug :
-                                                                 {})}
+          format.html {render :action => :new}
+          format.js   {render :json=>@user_session}
         else
-          # if current_user.is_admin?
-          #   cookies.delete(:r_tier)
-          #   cookies.delete(:cart_guid)
-          #   clear_cart
-          # end
-          # cookies.delete(:acct)
-          # current_user_session.destroy
-          # Authorization.current_user=nil
-          # flash[:error] = "Unable to authenticate with U2F: "
-          #
-          # @user_session = UserSession.new(params[:user_session])
-          # format.html {render :action => :new}
-          # format.js   {render :json=>@user_session}
+          @user_session = current_user_session
 
-          response = U2F::SignResponse.load_from_json(params[:u2f_response])
-          reg_u2f = current_user.u2fs.first(
-              key_handle: response.key_handle
-          ) if response.key_handle
+          # TODO: Check U2F
+          if params['u2f_response'].blank?
+            flash[:notice] = "Successfully logged in." unless request.xhr?
 
-          unless reg_u2f
+            format.js   {render :json=>url_for_js(current_user)}
+            format.html {redirect_back_or_default account_path(current_user.ssl_account(:default_team) ?
+                                                                   current_user.ssl_account(:default_team).to_slug :
+                                                                   {})}
+          else
+            # if current_user.is_admin?
+            #   cookies.delete(:r_tier)
+            #   cookies.delete(:cart_guid)
+            #   clear_cart
+            # end
+            # cookies.delete(:acct)
+            # current_user_session.destroy
+            # Authorization.current_user=nil
+            # flash[:error] = "Unable to authenticate with U2F: "
+            #
+            # @user_session = UserSession.new(params[:user_session])
+            # format.html {render :action => :new}
+            # format.js   {render :json=>@user_session}
+
+            response = U2F::SignResponse.load_from_json(params[:u2f_response])
+            reg_u2f = current_user.u2fs.find_by_key_handle(response.key_handle) if response.key_handle
+
+            unless reg_u2f
+              flash[:notice] = "Successfully logged in." unless request.xhr?
+
+              format.js   {render :json=>url_for_js(current_user)}
+              format.html {redirect_back_or_default account_path(current_user.ssl_account(:default_team) ?
+                                                                     current_user.ssl_account(:default_team).to_slug :
+                                                                     {})}
+            end
+
+            begin
+              u2f.authenticate!(
+                  session[:challenge],
+                  response,
+                  Base64.decode64(reg_u2f.public_key),
+                  reg_u2f.counter
+              )
+
+              reg_u2f.update(counter: response.counter)
+            rescue U2F::Error => e
+              # Log out to protect hack.
+              if current_user.is_admin?
+                cookies.delete(:r_tier)
+                cookies.delete(:cart_guid)
+                clear_cart
+              end
+              cookies.delete(:acct)
+              current_user_session.destroy
+              Authorization.current_user=nil
+              flash[:error] = "Unable to authenticate with U2F: " + e.class.name unless params[:user]
+
+              @user_session = UserSession.new(params[:user_session])
+              format.html {render :action => :new}
+              format.js   {render :json=>@user_session.errors}
+            ensure
+              session.delete(:challenge)
+            end
+
             flash[:notice] = "Successfully logged in." unless request.xhr?
 
             format.js   {render :json=>url_for_js(current_user)}
@@ -197,41 +247,6 @@ class UserSessionsController < ApplicationController
                                                                    current_user.ssl_account(:default_team).to_slug :
                                                                    {})}
           end
-
-          begin
-            u2f.authenticate!(
-                session[:challenge],
-                response,
-                Base64.decode64(reg_u2f.public_key),
-                reg_u2f.counter
-            )
-
-            reg_u2f.update(counter: response.counter)
-          rescue U2F::Error => e
-            # Log out to protect hack.
-            if current_user.is_admin?
-              cookies.delete(:r_tier)
-              cookies.delete(:cart_guid)
-              clear_cart
-            end
-            cookies.delete(:acct)
-            current_user_session.destroy
-            Authorization.current_user=nil
-            flash[:error] = "Unable to authenticate with U2F: " + e.class.name
-
-            @user_session = UserSession.new(params[:user_session])
-            format.html {render :action => :new}
-            format.js   {render :json=>@user_session}
-          ensure
-            session.delete(:challenge)
-          end
-
-          flash[:notice] = "Successfully logged in." unless request.xhr?
-
-          format.js   {render :json=>url_for_js(current_user)}
-          format.html {redirect_back_or_default account_path(current_user.ssl_account(:default_team) ?
-                                                                 current_user.ssl_account(:default_team).to_slug :
-                                                                 {})}
         end
       end
     end
