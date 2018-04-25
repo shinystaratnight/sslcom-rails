@@ -73,8 +73,6 @@
           =link_to "Users", users_path(slug_params)
         %li(id="#{current_page?(cdns_url) ? 't-intro' : 'manage_cdns'}")
           =link_to "CDN", cdns_path(slug_params)
-        %li(id="t-intro")
-          =link_to "Settings", edit_settings_ssl_account_path(slug_params)
     .inner
       =render :partial => "shared/messages"
       =yield
