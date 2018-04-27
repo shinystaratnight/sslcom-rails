@@ -1,6 +1,15 @@
 -if current_user.is_admin?
   -make_available = @order.make_available_total
   :javascript
+    function revoke_all() {
+      var reason = prompt('Reason for revoking all items.', '');
+      if (reason == null || reason == '') {
+        return;
+      } else {
+        window.location = '#{revoke_order_url(id: @order.reference_number, revoke_all: true)}'
+          + '&revoke_reason=' + encodeURIComponent(reason);
+      }
+    }
     function refund_reason(return_funds){
       label="Cancel order #{@order.reference_number}";
       if(return_funds==true)
@@ -29,7 +38,9 @@
           %ul
             %li=remote_login_link(u)
             %li=link_to 'user dashboard', admin_show_user_path(u)
-            %li=link_to "chargeback order", '#', onclick:  "change_state('charge_back')"
+            -unless @order.charged_back?
+              %li=link_to "chargeback order", '#', onclick:  "change_state('charge_back')"
+            %li=link_to "revoke ALL items", '#', onclick:  "revoke_all()"
             -unless @order.rejected?
               %li=link_to "reject order", '#', onclick:  "change_state('reject')"
             -else

@@ -5,6 +5,11 @@
 
 .order_container
   =render partial: "orders/cancel_order"
+  
+  -if current_user.is_admin?
+    #completed_order_results
+      =render partial: 'orders/order_status'
+  
   #completed_order_results
     =render partial: 'orders/order_report'
 

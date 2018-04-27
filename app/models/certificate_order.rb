@@ -440,6 +440,12 @@ class CertificateOrder < ActiveRecord::Base
     end
   end
   
+  def get_audit_logs
+    al = SystemAudit.where(target_id: id, target_type: 'CertificateOrder')
+    al << SystemAudit.where(target_id: line_items.ids, target_type: 'LineItem')
+    al.flatten.sort_by(&:created_at).reverse
+  end
+  
   # Prorated pricing for single domain for ucc certificate,
   # used in calculating reprocessing amount for additional domains.
   def ucc_prorated_domain(type, reseller_tier=nil)
