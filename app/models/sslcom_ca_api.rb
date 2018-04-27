@@ -146,9 +146,9 @@ class SslcomCaApi
     options.merge! cc: cc = options[:certificate_content] || certificate_order.certificate_content
     approval_req, approval_res = SslcomCaApi.get_status(cc.csr)
     return cc.csr.sslcom_ca_requests.create(
-      parameters: approval_req.body, method: "get", response: approval_res.try(:body),
-                                            ca: options[:ca]) if approval_res.body=~/WAITING FOR APPROVAL/
-    if (certificate.is_ev? or certificate.is_evcs?) and approval_res.body.blank?
+      parameters: approval_req.body, method: "get", response: approval_res.body,
+                                            ca: options[:ca]) if approval_res.try(:body)=~/WAITING FOR APPROVAL/
+    if (certificate.is_ev? or certificate.is_evcs?) and approval_res.try(:body).blank?
         # create the user for EV order
       host = Rails.application.secrets.sslcom_ca_host+"/v1/user"
       options.merge! no_public_key: true, ca: Ca::SSLCOM_CA # create an ejbca user only
