@@ -13,30 +13,14 @@
         #resources
           %table(cellspacing="0")
             %tr.heading_row
-              -#%th Alias
-              -#%th Origin
-              -#%th Hostname
-              -#%th Created
-              -#%th Delete?
               %th Hostname
               %th Origin
               %th Custom Host Name
               %th Created
               %th Delete?
             -if resources && resources.length > 0
-              -#-resources.each do |resource|
-              -#  %tr
-              -#    %td
-              -#      =link_to resource['alias'], resource_cdn_cdn_path(@ssl_slug, resource['id'])
-              -#    %td
-              -#      =resource['origin']
-              -#    %td
-              -#      =resource['hostname']
-              -#    %td
-              -#      =DateTime.parse(resource['created_at']).strftime("%d/%m/%Y")
-              -#    %td
-              -#      =check_box_tag "deleted_resources[]", resource['id'] + '|' + resource['alias'], false, class: 'chk-delete'
               -resources.each do |resource|
+                -owner_key = resource['user_api_key'] ? resource['user_api_key'] : @current_user_api_key
                 %tr
                   %td
                     =link_to resource['hostname'], resource_cdn_cdn_path(@ssl_slug, resource['id'])
@@ -51,7 +35,7 @@
                   %td
                     =DateTime.parse(resource['created_at']).strftime("%d/%m/%Y")
                   %td
-                    =check_box_tag "deleted_resources[]", resource['id'] + '|' + resource['alias'], false, class: 'chk-delete'
+                    =check_box_tag "deleted_resources[]", resource['id'] + '|' + resource['alias'] + '|' + owner_key, false, class: 'chk-delete'
             -else
               %tr
                 %td(colspan="6")

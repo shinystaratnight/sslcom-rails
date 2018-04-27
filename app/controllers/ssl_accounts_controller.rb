@@ -27,9 +27,9 @@ class SslAccountsController < ApplicationController
     session[:challenges] = @registration_requests.map(&:challenge)
 
     # Fetch existing Registrations from your db and generate SignRequests
-    # key_handles = Registration.map(&:key_handle)
     key_handles = current_user.u2fs.pluck(:key_handle)
     @sign_requests = u2f.authentication_requests(key_handles)
+    @u2fs = current_user.u2fs
 
     @app_id = u2f.app_id
   end
@@ -37,7 +37,7 @@ class SslAccountsController < ApplicationController
   def update_ssl_slug
     ssl_slug = params[:ssl_account][:ssl_slug].downcase
     ssl      = SslAccount.find params[:ssl_account][:id]
-    
+
     if ssl && SslAccount.ssl_slug_valid?(ssl_slug) && ssl.update(ssl_slug: ssl_slug)
       flash[:notice] = "You have successfully changed your team url to https://www.ssl.com/team/#{params[:ssl_account][:ssl_slug]}."
       if current_user.is_system_admins?
@@ -74,18 +74,58 @@ class SslAccountsController < ApplicationController
     params[:monthly_billing] ? update_monthly_billing : update_reseller_profile
   end
 
+  def remove_u2f
+    resultObj = {}
+    if current_user
+      u2f = current_user.u2fs.find(params['u2f_device_id'])
+      if u2f
+        u2f.destroy
+        resultObj['u2f_device_id'] = u2f.id
+      else
+        resultObj['error'] = 'There is no data for selected U2f Token'
+      end
+    else
+      resultObj['error'] = ''
+    end
+
+    render json: resultObj
+  end
+
+  def register_u2f
+    resultObj = {}
+    if current_user
+      response = U2F::RegisterResponse.load_from_json(params[:u2f_response])
+      exist = current_user.u2fs.find_by_key_handle(response.key_handle)
+
+      if exist
+        resultObj['error'] = 'This U2F device has already been registered.';
+      else
+        begin
+          reg = u2f.register!(session[:challenges], response)
+
+          # save a reference to your database
+          current_user.u2fs.create!(nick_name: params['nick_name'],
+                                    certificate: reg.certificate,
+                                    key_handle:  reg.key_handle,
+                                    public_key:  reg.public_key,
+                                    counter:     reg.counter)
+        rescue U2F::Error => e
+          resultObj['error'] = 'Unable to register: ' + e.class.name
+        ensure
+          session.delete(:challenges)
+          resultObj['created_at'] = current_user.u2fs.last.created_at.strftime("%b %d, %Y")
+          resultObj['u2f_device_id'] = current_user.u2fs.last.id
+        end
+      end
+    else
+      resultObj['error'] = ''
+    end
+
+    render json: resultObj
+  end
+
   # PUT /ssl_account/
   def update_settings
-    # *************************** TODO: Testing ***************************
-    # temp_u2f_response = {
-    #     'registrationData'=>'BQTiHTk7ui4mormExZ1G70IACAaV1S9CpQDACWBbs1I4s_BUvBP39tnzTm-TIY0R28bBzGeGxxSLerpxbSAVOYIDQDueolFjTiRAitlxRNcx1y5vKlN14f0OYQlKNawBBKTM7Lb0gwTLfdSyXFo93TIp4O1-88rEI4LWVaU4ZvQIWj8wggE1MIHcoAMCAQICCwDY4Y_UyJucCPduMAoGCCqGSM49BAMCMBUxEzARBgNVBAMTClUyRiBJc3N1ZXIwGhcLMDAwMTAxMDAwMFoXCzAwMDEwMTAwMDBaMBUxEzARBgNVBAMTClUyRiBEZXZpY2UwWTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAARa9fZ556cZWqmmoAN3rWErKUu3r6YODFcI0Wf9hH0UW65YTEsq33U_2397bZnJON8tPqHO0O9jAA-YgikhTTLooxcwFTATBgsrBgEEAYLlHAIBAQQEAwIFIDAKBggqhkjOPQQDAgNIADBFAiEAwaOmji8WpyFGJwV_YrtyjJ4D56G6YtBGUk5FbSwvP3MCIAtfeOURqhgSn28jbZITIn2StOZ-31PoFt-wXZ3IuQ_eMEQCIHSibtLw2ShFqhSha8btuURH67OYL0e6Px46xyCUYCIbAiA-Gh8y_lfrDHS4c8foXxoDzBRBYCeyJGNVtVpmbfRY9w',
-    #     'version'=>'U2F_V2',
-    #     'challenge'=>'Awb4tNZaXIHU5WDVZnw-U8CthkqhtkYinK0tetrm6qs',
-    #     'clientData'=>'eyJ0eXAiOiJuYXZpZ2F0b3IuaWQuZmluaXNoRW5yb2xsbWVudCIsImNoYWxsZW5nZSI6IkF3YjR0TlphWElIVTVXRFZabnctVThDdGhrcWh0a1lpbkswdGV0cm02cXMiLCJvcmlnaW4iOiJodHRwczovL3NhbmRib3gzLnNzbC5jb20iLCJjaWRfcHVia2V5IjoidW51c2VkIn0'
-    # }
-    # params[:u2f_response] = temp_u2f_response.to_json
-    # *********************************************************************
-
     if params[:reminder_notice_triggers]
       params[:reminder_notice_triggers].uniq.sort{|a,b|a.to_i <=> b.to_i}.
         reverse.each_with_index do |rt, i|
@@ -94,44 +134,9 @@ class SslAccountsController < ApplicationController
       end
     end
 
-    unless params[:u2f_response].blank?
-      response = U2F::RegisterResponse.load_from_json(params[:u2f_response])
-      exist = current_user.u2fs.find_by_key_handle(response.key_handle)
-
-      if exist
-        flash[:error] = "This U2F device has already been registered."
-      else
-        begin
-          reg = u2f.register!(session[:challenges], response)
-          # *************************** TODO: Testing ***************************
-          # reg = u2f.register!(['Awb4tNZaXIHU5WDVZnw-U8CthkqhtkYinK0tetrm6qs'], response)
-          # *********************************************************************
-
-          # save a reference to your database
-          current_user.u2fs.create!(certificate: reg.certificate,
-                                    key_handle:  reg.key_handle,
-                                    public_key:  reg.public_key,
-                                    counter:     reg.counter)
-
-          # current_user.u2fs.create!(certificate: "CERTIFICATE",
-          #                          key_handle:  "weqmtkmMMKSFWWRSDsadkfASfs",
-          #                          public_key:  "sadfjqwer2342jfasd23jksfsa",
-          #                          counter:     1)
-        rescue U2F::Error => e
-          # return "Unable to register: <%= e.class.name %>"
-          flash[:error] = "Unable to register: " + e.class.name
-        ensure
-          session.delete(:challenges)
-          flash[:notice] = 'New U2F device has been registered successfully.'
-        end
-      end
-    end
-
     respond_to do |format|
       if @ssl_account.update_attributes(params[:ssl_account])
-        flash[:notice].blank? ?
-            flash[:notice] = "Account settings were successfully updated." :
-            flash[:notice] += "<br /> Account settings were successfully updated."
+        flash[:notice] = 'Account settings were successfully updated.'
 
         format.html { redirect_to(account_path(ssl_slug: @ssl_slug)) }
         format.xml  { head :ok }
@@ -157,7 +162,7 @@ class SslAccountsController < ApplicationController
     if current_user.is_system_admins?
       ssl_account = SslAccount.where(
         'ssl_slug = ? OR acct_number = ?', params[:ssl_slug], params[:ssl_slug]
-      ).first 
+      ).first
       ssl_account.update(billing_method: (params[:status] == 'enable' ? 'monthly' : 'due_at_checkout'))
       flash[:notice] = "Successfully #{params[:status]}d team #{params[:ssl_slug]} monthly billing."
     else

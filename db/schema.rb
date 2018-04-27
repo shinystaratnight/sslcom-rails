@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180417143053) do
+ActiveRecord::Schema.define(version: 20180425221036) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        limit: 255
@@ -1282,6 +1282,7 @@ ActiveRecord::Schema.define(version: 20180417143053) do
     t.integer  "counter",     limit: 4,     default: 0, null: false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "nick_name",   limit: 255
   end
 
   create_table "unsubscribes", force: :cascade do |t|

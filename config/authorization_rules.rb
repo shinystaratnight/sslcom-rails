@@ -488,6 +488,8 @@ privileges do
     :search,
     :update_company_name,
     :update_settings,
+    :register_u2f,
+    :remove_u2f,
     :update_ssl_slug
   ]
   privilege :sysadmin_manage, includes: [
