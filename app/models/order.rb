@@ -473,6 +473,11 @@ class Order < ActiveRecord::Base
   ## END acts_as_state_machine
 
   # BEGIN number
+
+  def merchant_fully_refunded?
+    get_total_merchant_refunds == get_total_merchant_amount
+  end
+  
   def on_monthly_invoice?
     !invoice_id.blank? && state == 'invoiced'
   end
@@ -791,11 +796,18 @@ class Order < ActiveRecord::Base
       }
       new_refund = Refund.refund_merchant(params)
     end
-    if self.amount.cents == self.refunds.where{status == "success"}.sum(:amount)
-      full_refund! unless fully_refunded?
-    elsif self.amount.cents < self.refunds.where{status == "success"}.sum(:amount)
-      partial_refund! unless self.partially_refunded?
+    
+    unless monthly_invoice_order?
+      if merchant_fully_refunded?
+        full_refund! unless fully_refunded?
+        if certificate_orders.any?
+          certificate_orders.each {|co| co.refund! unless co.refunded?}
+        end
+      else
+        partial_refund! unless partially_refunded?
+      end
     end
+    
     SystemAudit.create(
         owner:  User.find(user_id),
         target: o,
@@ -849,10 +861,15 @@ class Order < ActiveRecord::Base
     get_total_merchant_amount
   end
   
+  def get_funded_account_order
+    # order for funded account withdrawal
+    Order.where('description LIKE ?', "%Funded Account Withdrawal%")
+      .where('notes LIKE ?', "%#{reference_number}%").last
+  end  
+  
   def get_funded_account_amount
     # order was partially paid by funded account?
-    found = Order.where('description LIKE ?', "%Funded Account Withdrawal%")
-      .where('notes LIKE ?', "%#{reference_number}%").last
+    found = get_funded_account_order
     found ? found.cents : 0
   end
   

@@ -273,6 +273,7 @@ SslCom::Application.routes.draw do
       member do
         get :invoice
         get :refund
+        get :revoke
         get :change_state
         get :refund_merchant
         match :update_invoice, via: [:put, :post]

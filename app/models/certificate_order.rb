@@ -440,12 +440,18 @@ class CertificateOrder < ActiveRecord::Base
     end
   end
   
+  def get_audit_logs
+    al = SystemAudit.where(target_id: id, target_type: 'CertificateOrder')
+    al << SystemAudit.where(target_id: line_items.ids, target_type: 'LineItem')
+    al.flatten.sort_by(&:created_at).reverse
+  end
+  
   # Prorated pricing for single domain for ucc certificate,
   # used in calculating reprocessing amount for additional domains.
   def ucc_prorated_domain(type, reseller_tier=nil)
     if certificate.is_ucc?
       tiers = ucc_duration_amounts(certificate_duration(:years).to_i, reseller_tier)
-      domain_amount  = (type == :wildcard) ? tiers['tier_3'] : tiers['tier_2']
+      domain_amount  = (type == :wildcard && !certificate.is_ev?) ? tiers['tier_3'] : tiers['tier_2']
       total_duration = certificate_duration(:days)
       domain_amount - ( (used_days/total_duration) * domain_amount )
     end
@@ -744,6 +750,7 @@ class CertificateOrder < ActiveRecord::Base
   end
   
   def skip_contacts_step?
+    return false if certificate_contents.count == 1
     if Contact.optional_contacts?
       if signed_certificate.try('is_dv?'.to_sym) && Settings.exempt_dv_contacts
         true

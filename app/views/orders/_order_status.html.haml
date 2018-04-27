@@ -1,0 +1,69 @@
+.order_details
+  %h3.order_results_header
+    Order Status
+  .order-status
+    STATUS:
+    %span
+      = @order.state.upcase.gsub('_', ' ')
+  %div
+    
+  %table#order_status_section
+    %tbody
+      %tr#heading_row
+        %th CERTIFICATE ORDER
+        %th STATUS
+        %th DETAIL
+      
+      -@order.certificate_orders.each_with_index do |co, i|
+        %tr
+          %td.ref
+            %strong #{co.ref}
+            %br/
+            %br/
+            %strong #{Money.new(@order.make_available_line(co)).format}
+          %td.status
+            = co.workflow_state.upcase.gsub('_', ' ')
+          %td.details
+            - al = co.get_audit_logs
+            - cc = co.certificate_content
+            
+            - unless cc.nil?
+              .cert-content-state
+                %span CERTIFICATE CONTENT:
+                %br/
+                = "#{cc.ref}: #{cc.workflow_state}"
+                
+            - unless co.paid?
+              - comodo_api_res = ComodoApi.collect_ssl(co).response
+              .revoke-status
+                %span COMODO STATUS:
+                %br/
+                - if !comodo_api_res.nil? && comodo_api_res.length > 100
+                  = text_area_tag :comodo_api_status, comodo_api_res, size: '60x5'
+                - else 
+                  = comodo_api_res
+            
+            - if al.any?
+              .system-audit
+                %span AUDIT LOG:
+                - al.each do |sa|
+                  .system-audit
+                    %strong
+                      = "&#8594; (#{sa.created_at.strftime('%F')})".html_safe
+                    %strong action:
+                    = sa.action
+                    %br/
+                    %strong notes:
+                    = sa.notes
+
+              - revoked = al.find {|sa| sa.action == 'revocation'}
+              - unless revoked.nil?
+                .revoke-status
+                  %span REVOKED:
+                  %br/
+                  %strong
+                    = "(#{revoked.created_at.strftime('%F')})".html_safe
+                  %strong action: 
+                  = "#{revoked.action} | "
+                  %strong notes:
+                  = revoked.notes

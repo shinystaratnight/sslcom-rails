@@ -492,9 +492,23 @@ class CertificateOrdersController < ApplicationController
   end
 
   def load_certificate_order
-    @certificate_order=CertificateOrder.unscoped{
-      (current_user.is_system_admins? ? CertificateOrder :
-              current_user.ssl_account.certificate_orders).find_by_ref(params[:id])} if current_user
+    if current_user
+      @certificate_order=CertificateOrder.unscoped{
+        (current_user.is_system_admins? ? CertificateOrder :
+                current_user.ssl_account.certificate_orders).find_by_ref(params[:id])}
+
+      if @certificate_order.nil?
+        co = current_user.ssl_accounts.map(&:certificate_orders)
+          .flatten.find{|c| c.ref == params[:id]}
+        @certificate_order = co if co
+        if co && co.ssl_account != current_user.ssl_account &&
+          current_user.ssl_accounts.include?(co.ssl_account)
+          
+          current_user.set_default_ssl_account(co.ssl_account)
+          set_ssl_slug
+        end
+      end
+    end
     render 'site/404_not_found', status: 404 unless @certificate_order
   end
 

@@ -343,14 +343,14 @@ class SignedCertificate < ActiveRecord::Base
       end
     end
     # for shadow certs, only send the certificate
-    begin
+    # begin
       if Settings.shadow_certificate_recipient
         co.apply_for_certificate(ca_id: Ca::ISSUER[:sslcom_shadow], ca: Ca::MANAGEMENT_CA)
         OrderNotifier.processed_certificate_order(Settings.shadow_certificate_recipient, co, nil,
                                                   co.shadow_certificates.last).deliver
       end
-    rescue Exception=>e
-    end
+    # rescue Exception=>e
+    # end
   end
 
   def friendly_common_name
