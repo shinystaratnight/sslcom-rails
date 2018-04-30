@@ -23,9 +23,13 @@ class CdnsController < ApplicationController
   def index
     @results = {}
     if current_user.ssl_account
-      @response = HTTParty.get('https://reseller.cdnify.com/api/v1/resources',
-                               basic_auth: {username: current_user_api_key, password: 'x'})
-      @results[:resources] = @response.parsed_response['resources'] if @response.code == 200
+      @response = current_user.is_system_admins? ?
+                      HTTParty.get('https://reseller.cdnify.com/api/v1/resources/all-reseller-resources',
+                                   basic_auth: {username: current_user_api_key, password: 'x'}) :
+                      HTTParty.get('https://reseller.cdnify.com/api/v1/resources',
+                                   basic_auth: {username: current_user_api_key, password: 'x'})
+
+      @results[:resources] = @response.parsed_response['resources'] if @response && @response.code == 200
     end
 
     respond_to do |format|
@@ -46,11 +50,12 @@ class CdnsController < ApplicationController
       @response = HTTParty.post('https://reseller.cdnify.com/users',
                                 {basic_auth: {username: reseller_api_key, password: 'x'}, body: {email: email_addr, password: password}})
 
-      if @response.parsed_response &&
+      if @response &&
+          @response.parsed_response &&
           @response.parsed_response['users'] &&
           @response.parsed_response['users'].length > 0
         returnObj['api_key'] = @response.parsed_response['users'][0]['api_key']
-      elsif @response.parsed_response && @response.parsed_response['error']
+      elsif @response && @response.parsed_response && @response.parsed_response['error']
         returnObj['error'] = @response.parsed_response['error']
       else
         returnObj['error'] = 'Failed to Register Account.'
@@ -69,15 +74,19 @@ class CdnsController < ApplicationController
     if resources
       resources.each do |resource_key|
         @response = HTTParty.delete('https://reseller.cdnify.com/api/v1/resources/' + resource_key.split('|')[0],
-                                    basic_auth: {username: params['api_key'], password: 'x'})
+                                    basic_auth: {username: resource_key.split('|')[2], password: 'x'})
 
-        unless @response.code == 204
-          is_deleted = false
-          @response.parsed_response['errors'].each do |error|
-            flash[:error] = '' unless flash[:error]
-            flash[:error].concat("<br />") unless flash[:error] == ''
-            flash[:error].concat(resource_key.split('|')[1] + ': ' + error['code'].to_s + ': ' + error['message'])
+        if @response
+          unless @response.code == 204
+            is_deleted = false
+            @response.parsed_response['errors'].each do |error|
+              flash[:error] = '' unless flash[:error]
+              flash[:error].concat("<br />") unless flash[:error] == ''
+              flash[:error].concat(resource_key.split('|')[1] + ': ' + error['code'].to_s + ': ' + error['message'])
+            end
           end
+        else
+          flash[:error] = 'Faile to delete selected resources'
         end
       end
     end
@@ -99,33 +108,61 @@ class CdnsController < ApplicationController
       @results[:active_tab] = session[:selected_tab] if session[:selected_tab]
       session.delete(:selected_tab)
 
-      # Overview Data
-      @response = HTTParty.get('https://reseller.cdnify.com/api/v1/stats/' + resource_id + '/bandwidth',
-                               basic_auth: {username: current_user_api_key, password: 'x'})
+      # Getting user api key for resource.
+      if current_user.is_system_admins?
+        if session[:user_api_key]
+          api_key = current_user_api_key(session[:user_api_key])
+          session.delete(:user_api_key)
+        else
+          admin_user_api_key = Rails.application.secrets.cdnify_admin_user_api_key
+          @response = HTTParty.get('https://reseller.cdnify.com/api/v1/resources/all-reseller-resources',
+                                   basic_auth: {username: admin_user_api_key, password: 'x'})
 
-      if @response.parsed_response
-        @results[:bandwidth] = @response.parsed_response['bandwidth_usage'] &&
-            @response.parsed_response['bandwidth_usage'].length > 0 ?
-                                   @response.parsed_response['bandwidth_usage'][0] : 0
-        @results[:hits] = @response.parsed_response['hit_usage'] &&
-            @response.parsed_response['hit_usage'].length > 0 ?
-                              @response.parsed_response['hit_usage'][0] : 0
-        @results[:locations] = @response.parsed_response['pop_usage'] &&
-            @response.parsed_response['pop_usage'].length > 0 ?
-                                   @response.parsed_response['pop_usage'][0] : nil
+          if @response && @response.code == 200
+            @response.parsed_response['resources'].each do |resource|
+              if resource['id'] == resource_id
+                api_key = current_user_api_key(resource['user_api_key'])
+                break
+              end
+            end
+          end
+        end
+      else
+        api_key = current_user_api_key
+        session.delete(:user_api_key) if session[:user_api_key]
       end
 
-      # Settings Data
-      @response = HTTParty.get('https://reseller.cdnify.com/api/v1/resources/' + resource_id,
-                               basic_auth: {username: current_user_api_key, password: 'x'})
-      @results[:resource] = @response.parsed_response['resources'][0] if @response.parsed_response
+      if api_key
+        # Overview Data
+        @response = HTTParty.get('https://reseller.cdnify.com/api/v1/stats/' + resource_id + '/bandwidth',
+                                 basic_auth: {username: api_key, password: 'x'})
 
-      # Cache Data
-      @results[:expire_time] = @response.parsed_response['resources'][0]['advanced_settings']['cache_expire_time'] if @response.parsed_response
+        if @response && @response.parsed_response
+          @results[:bandwidth] = @response.parsed_response['bandwidth_usage'] &&
+              @response.parsed_response['bandwidth_usage'].length > 0 ?
+                                     @response.parsed_response['bandwidth_usage'][0] : 0
+          @results[:hits] = @response.parsed_response['hit_usage'] &&
+              @response.parsed_response['hit_usage'].length > 0 ?
+                                @response.parsed_response['hit_usage'][0] : 0
+          @results[:locations] = @response.parsed_response['pop_usage'] &&
+              @response.parsed_response['pop_usage'].length > 0 ?
+                                     @response.parsed_response['pop_usage'][0] : nil
+        end
 
-      @response = HTTParty.get('https://reseller.cdnify.com/api/v1/resources/' + resource_id + '/cache',
-                               basic_auth: {username: current_user_api_key, password: 'x'})
-      @results[:files] = @response.parsed_response['files'] if @response.parsed_response && @response.parsed_response['files']
+        # Settings Data
+        @response = HTTParty.get('https://reseller.cdnify.com/api/v1/resources/' + resource_id,
+                                 basic_auth: {username: api_key, password: 'x'})
+        @results[:resource] = @response.parsed_response['resources'][0] if @response && @response.parsed_response
+
+        # Cache Data
+        @results[:expire_time] = @response.parsed_response['resources'][0]['advanced_settings']['cache_expire_time'] if @response && @response.parsed_response
+
+        @response = HTTParty.get('https://reseller.cdnify.com/api/v1/resources/' + resource_id + '/cache',
+                                 basic_auth: {username: api_key, password: 'x'})
+        @results[:files] = @response.parsed_response['files'] if @response && @response.parsed_response && @response.parsed_response['files']
+      else
+        flash[:error] = 'Unable to load selected resource.'
+      end
     end
 
     respond_to do |format|
@@ -143,7 +180,7 @@ class CdnsController < ApplicationController
     @response = HTTParty.patch('https://reseller.cdnify.com/api/v1/resources/' + resource_id,
                                {basic_auth: {username: api_key, password: 'x'}, body: {alias: resource_name, origin: resource_origin}})
 
-    if @response.parsed_response
+    if @response && @response.parsed_response
       if @response.parsed_response['resources']
         flash[:notice] = 'Successfully Updated General Settings.'
       else
@@ -158,6 +195,7 @@ class CdnsController < ApplicationController
     end
 
     session[:selected_tab] = @tab_setting
+    session[:user_api_key] = api_key
 
     redirect_to resource_cdn_cdn_path(@ssl_slug, resource_id) and return
   end
@@ -176,11 +214,9 @@ class CdnsController < ApplicationController
     #                           {basic_auth: {username: api_key, password: 'x'},
     #                            body: {hostname: custom_domain, certificates: {certificate: certificate_value, privateKey: private_key}}})
 
-    if @response.parsed_response
+    if @response && @response.parsed_response
       if @response.parsed_response['errors']
         @response.parsed_response['errors'].each do |error|
-          # msg = error['code'].to_s + ': ' + error['message']
-          # flash[:error] = msg
           flash[:error] = '' unless flash[:error]
           flash[:error].concat("<br />") unless flash[:error] == ''
           flash[:error].concat(error['code'].to_s + ': ' + error['message'])
@@ -197,6 +233,7 @@ class CdnsController < ApplicationController
     end
 
     session[:selected_tab] = @tab_setting
+    session[:user_api_key] = api_key
 
     redirect_to resource_cdn_cdn_path(@ssl_slug, resource_id) and return
   end
@@ -221,19 +258,19 @@ class CdnsController < ApplicationController
         @response = HTTParty.post('https://reseller.cdnify.com/api/v1/resources/' + resource_id + '/ssl_certificate/' + host_name,
                                   {basic_auth: {username: api_key, password: 'x'}, body: body_params})
 
-        # @response = HTTParty.post('https://reseller.cdnify.com/api/v1/resources/fa4b779/ssl_certificate/testcdn.ee.auth.gr',
-        #                           {basic_auth: {username: '38b4ffb5b930cb33a4da982359a60298c6a7b00f3d995eff93', password: 'x'},
-        #                            body: body_params})
-
-        if @response.code == 200 || @response.code == 201
-          if Settings.cdn_ssl_notification_address.blank?
-            flash[:notice] = "Successfully Modified."
+        if @response
+          if @response.code == 200 || @response.code == 201
+            if Settings.cdn_ssl_notification_address.blank?
+              flash[:notice] = "Successfully Modified."
+            else
+              flash[:notice] = "The processing SSL certificate request has been emailed."
+              current_user.deliver_generate_install_ssl!(resource_id, host_name, Settings.cdn_ssl_notification_address)
+            end
           else
-            flash[:notice] = "The processing SSL certificate request has been emailed."
-            current_user.deliver_generate_install_ssl!(resource_id, host_name, Settings.cdn_ssl_notification_address)
+            flash[:error] = @response.parsed_response['error']['message']
           end
         else
-          flash[:error] = @response.parsed_response['error']['message']
+          flash[:error] = 'Failed to update custom domain'
         end
       else
         body_params['certificate'] = params['certificate_value']
@@ -242,39 +279,44 @@ class CdnsController < ApplicationController
         @response = HTTParty.put('https://reseller.cdnify.com/api/v1/resources/' + resource_id + '/ssl_certificate/' + host_name,
                                   {basic_auth: {username: api_key, password: 'x'}, body: body_params})
 
-        # @response = HTTParty.put('https://reseller.cdnify.com/api/v1/resources/fa4b779/ssl_certificate/testcdn.ee.auth.gr',
-        #                           {basic_auth: {username: '38b4ffb5b930cb33a4da982359a60298c6a7b00f3d995eff93', password: 'x'},
-        #                            body: body_params})
-
-        if @response.code == 200 || @response.code == 201
-          if Settings.cdn_ssl_notification_address.blank?
-            flash[:notice] = "Successfully Modified."
+        if @response
+          if @response.code == 200 || @response.code == 201
+            if Settings.cdn_ssl_notification_address.blank?
+              flash[:notice] = "Successfully Modified."
+            else
+              flash[:notice] = "The processing SSL certificate request has been emailed."
+              current_user.deliver_ssl_cert_private_key!(resource_id, host_name, @response.parsed_response['id'])
+            end
           else
-            flash[:notice] = "The processing SSL certificate request has been emailed."
-            current_user.deliver_ssl_cert_private_key!(resource_id, host_name, @response.parsed_response['id'])
+            flash[:error] = @response.parsed_response['message']
           end
         else
-          flash[:error] = @response.parsed_response['message']
+          flash[:error] = 'Failed to update custom domain'
         end
       end
     else
       @response = HTTParty.delete('https://reseller.cdnify.com/api/v1/resources/' + resource_id + '/custom_domains/' + host_name,
                                   basic_auth: {username: api_key, password: 'x'})
 
-      if @response.parsed_response
-        if @response.parsed_response['errors']
-          @response.parsed_response['errors'].each do |error|
-            flash[:error] = '' unless flash[:error]
-            flash[:error].concat("<br />") unless flash[:error] == ''
-            flash[:error].concat(error['code'].to_s + ': ' + error['message'])
+      if @response
+        if @response.parsed_response
+          if @response.parsed_response['errors']
+            @response.parsed_response['errors'].each do |error|
+              flash[:error] = '' unless flash[:error]
+              flash[:error].concat("<br />") unless flash[:error] == ''
+              flash[:error].concat(error['code'].to_s + ': ' + error['message'])
+            end
           end
+        else
+          flash[:notice] = 'Successfully Deleted.'
         end
       else
-        flash[:notice] = 'Successfully Deleted.'
+        flash[:error] = 'Failed to delete custom domain'
       end
     end
 
     session[:selected_tab] = @tab_setting
+    session[:user_api_key] = api_key
 
     redirect_to resource_cdn_cdn_path(@ssl_slug, resource_id) and return
   end
@@ -294,7 +336,7 @@ class CdnsController < ApplicationController
                                    link: !params[:link].blank?
                                }})
 
-    if @response.parsed_response
+    if @response && @response.parsed_response
       if @response.parsed_response['resource']
         flash[:notice] = 'Successfully Updated Advanced Settings.'
       else
@@ -309,6 +351,7 @@ class CdnsController < ApplicationController
     end
 
     session[:selected_tab] = @tab_setting
+    session[:user_api_key] = api_key
 
     redirect_to resource_cdn_cdn_path(@ssl_slug, resource_id) and return
   end
@@ -338,18 +381,22 @@ class CdnsController < ApplicationController
     @response = HTTParty.delete('https://reseller.cdnify.com/api/v1/resources/' + resource_id,
                                 basic_auth: {username: api_key, password: 'x'})
 
-    if @response.parsed_response
-      @response.parsed_response['errors'].each do |error|
-        flash[:error] = '' unless flash[:error]
-        flash[:error].concat("<br />") unless flash[:error] == ''
-        flash[:error].concat(error['code'].to_s + ': ' + error['message'])
+    if @response
+      if @response.parsed_response
+        @response.parsed_response['errors'].each do |error|
+          flash[:error] = '' unless flash[:error]
+          flash[:error].concat("<br />") unless flash[:error] == ''
+          flash[:error].concat(error['code'].to_s + ': ' + error['message'])
+        end
+
+        session[:selected_tab] = @tab_setting
+
+        redirect_to resource_cdn_cdn_path(@ssl_slug, resource_id) and return
+      else
+        flash[:notice] = 'Successfully Deleted Resource.'
       end
-
-      session[:selected_tab] = @tab_setting
-
-      redirect_to resource_cdn_cdn_path(@ssl_slug, resource_id) and return
     else
-      flash[:notice] = 'Successfully Deleted Resource.'
+      flash[:error] = 'Failed to delete resource.'
     end
 
     redirect_to cdns_path(ssl_slug: @ssl_slug)
@@ -369,17 +416,22 @@ class CdnsController < ApplicationController
                                   {basic_auth: {username: api_key, password: 'x'}, body: {files: files}})
     end
 
-    if @response.parsed_response
-      @response.parsed_response['errors'].each do |error|
-        flash[:error] = '' unless flash[:error]
-        flash[:error].concat("<br />") unless flash[:error] == ''
-        flash[:error].concat(error['code'].to_s + ': ' + error['message'])
+    if @response
+      if @response.parsed_response
+        @response.parsed_response['errors'].each do |error|
+          flash[:error] = '' unless flash[:error]
+          flash[:error].concat("<br />") unless flash[:error] == ''
+          flash[:error].concat(error['code'].to_s + ': ' + error['message'])
+        end
+      else
+        flash[:notice] = 'Successfully Purged File(s).'
       end
     else
-      flash[:notice] = 'Successfully Purged File(s).'
+      flash[:error] = 'Failed to purge file(s).'
     end
 
     session[:selected_tab] = @tab_cache
+    session[:user_api_key] = api_key
 
     redirect_to resource_cdn_cdn_path(@ssl_slug, resource_id) and return
   end
@@ -391,7 +443,7 @@ class CdnsController < ApplicationController
     @response = HTTParty.patch('https://reseller.cdnify.com/api/v1/resources/' + resource_id + '/settings',
                                {basic_auth: {username: api_key, password: 'x'}, body: {cache_expire_time: params[:expiry_hours]}})
 
-    if @response.parsed_response
+    if @response && @response.parsed_response
       if @response.parsed_response['resource']
         flash[:notice] = 'Successfully Updated Cache Expire Time.'
       else
@@ -406,6 +458,7 @@ class CdnsController < ApplicationController
     end
 
     session[:selected_tab] = @tab_cache
+    session[:user_api_key] = api_key
 
     redirect_to resource_cdn_cdn_path(@ssl_slug, resource_id) and return
   end
@@ -426,7 +479,7 @@ class CdnsController < ApplicationController
     @response = HTTParty.post('https://reseller.cdnify.com/api/v1/resources',
                              {basic_auth: {username: api_key, password: 'x'}, body: {alias: resource_name, origin: resource_origin}})
 
-    if @response.parsed_response
+    if @response && @response.parsed_response
       if @response.parsed_response['resources']
         flash[:notice] = 'Successfully Created Resource.'
       else
@@ -477,16 +530,24 @@ class CdnsController < ApplicationController
       params.require(:cdn).permit()
     end
 
-    def current_user_api_key
+    def current_user_api_key(key = nil)
       return @current_user_api_key if defined?(@current_user_api_key)
 
-      email_addr = current_user.ssl_account.acct_number + '@ssl.com'
-      email_addr = 'sandbox-' + email_addr if is_sandbox?
-      reseller_api_key = Rails.application.secrets.cdnify_reseller_api_key
+      if key
+        @current_user_api_key = key
+      else
+        if current_user.is_system_admins?
+          @current_user_api_key = Rails.application.secrets.cdnify_admin_user_api_key
+        else
+          email_addr = current_user.ssl_account.acct_number + '@ssl.com'
+          email_addr = 'sandbox-' + email_addr if is_sandbox?
+          reseller_api_key = Rails.application.secrets.cdnify_reseller_api_key
 
-      @response = HTTParty.get('https://reseller.cdnify.com/users/' + email_addr + '?email=True',
-                               basic_auth: {username: reseller_api_key, password: 'x'})
+          @response = HTTParty.get('https://reseller.cdnify.com/users/' + email_addr + '?email=True',
+                                   basic_auth: {username: reseller_api_key, password: 'x'})
 
-      @current_user_api_key = @response.code == 200 ? @response.parsed_response['users'][0]['api_key'] : nil
+          @current_user_api_key = @response && @response.code == 200 ? @response.parsed_response['users'][0]['api_key'] : nil
+        end
+      end
     end
 end

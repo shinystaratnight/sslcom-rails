@@ -110,6 +110,10 @@
         %li
           %textarea.selectAll='curl -k -H "Accept: application/json" -H "Content-type: application/json" -X POST -d "'+ComodoApi.params_collect(co).gsub('"', '\"')+'" \''+ComodoApi::COLLECT_SSL_URL+'\''
         %li
+          %strong Comodo API MDC Command
+        %li
+          %textarea.selectAll{style: "width:95%;"}='curl -k -H "Accept: application/json" -H "Content-type: application/json" -X POST -d "'+ComodoApi.params_domains_status(co).gsub('"', '\"')+'" \''+ComodoApi::GET_MDC_DETAILS+'\''
+        %li
           %strong Comodo API Update DCV Command
         %li
           %textarea.selectAll

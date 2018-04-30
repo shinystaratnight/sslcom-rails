@@ -1,5 +1,7 @@
 -title = request.subdomain==Reseller::SUBDOMAIN ? "Reseller login" : "Customer login"
 -content_for :title, title
+=render :partial => 'index_scripts'
+= javascript_include_tag 'u2f-api'
 .reseller_registration_profile
   =form_for @user_session, :url => user_session_path do |f|
     =f.error_messages
@@ -11,6 +13,8 @@
     #stylized.default_form
       .subheading Credentials
       =render :partial => "form", :object => f
+      =hidden_field_tag 'u2f_response', '', :class => 'u2f_response'
+      =hidden_field_tag 'logout', 'false', :class => 'u2f_logout'
       #forgot_container
         %p#forgot_username_or_password
           Forgot username or password?
@@ -22,4 +26,4 @@
           Experiencing account activation problems?
           =link_to 'Resend activation notice.', activation_notice_users_url
     #button_container
-      #next_submit=image_submit_tag "next_bl.gif", alt: "submit"
+      #next_submit=image_submit_tag "next_bl.gif", alt: "submit", class: "btn_login"
