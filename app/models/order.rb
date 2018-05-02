@@ -762,13 +762,13 @@ class Order < ActiveRecord::Base
       item.is_a?(LineItem) ? item.cents : item.amount
     end
     percent      = total.to_d/order_total.to_d
-    discount     = discount_amt==0 ? discount_amt : (discount_amt.cents * percent)
+    discount     = discount_amt.blank? ? discount_amt : (discount_amt.cents * percent)
     funded       = get_funded_account_amount == 0 ? 0 : (get_funded_account_amount * percent)
     
     if type == :merchant
-      total - (discount + funded)
+      total - (discount.cents + funded)
     else
-      total - discount
+      total - discount.cents
     end
   end
 
