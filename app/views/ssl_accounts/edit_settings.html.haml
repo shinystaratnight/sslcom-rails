@@ -11,8 +11,9 @@
       -unless current_user.is_system_admins?
         .subheading Team Name and URL
         =render partial: '/users/ssl_slug_company', locals: {user: current_user}
-      -else
         =render partial: "settings_form", :locals => {:f=>f, :u2fs=>@u2fs}
+      -else
+        =render partial: 'u2f_settings', :locals => {:f=>f, :u2fs=>@u2fs}
         =hidden_field_tag 'u2f_response', '', :class => 'u2f_response'
     #button_container
       #next_submit=image_submit_tag "bl_submit_button.gif", class: 'edit_setting_btn'
