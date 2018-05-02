@@ -287,6 +287,10 @@ SslCom::Application.routes.draw do
       match :update_settings, via: [:put, :patch]
       match :update_ssl_slug, via: [:put, :patch]
       match :update_company_name, via: [:put, :patch]
+      collection do
+        post :register_u2f
+        post :remove_u2f
+      end
       member do
         get :adjust_funds
       end

@@ -165,7 +165,8 @@
                             -unless r.email.blank?
                               %li
                                 =r.email
-                            -if current_user.is_system_admins?
+                            -#-if current_user.is_system_admins?
+                            -if !co.certificate.is_code_signing? || (co.certificate.is_code_signing? && !current_user.is_system_admins?)
                               %li
                                 =link_to 'edit registrant', edit_certificate_order_url(id: @certificate_order.ref, registrant: true)
                           -else
@@ -174,6 +175,46 @@
                                 =link_to 'provide info (required)', edit_certificate_order_path(@certificate_order)
                               -else
                                 none
+                          -if co.certificate.is_code_signing?
+                            %li.category_border
+                            %li
+                              %strong locked registrant
+                            -unless @cc.locked_registrant.blank?
+                              -r = @cc.locked_registrant
+                              %li
+                                =r.company_name
+                              -unless r.department.blank?
+                                %li
+                                  =r.department
+                              -unless r.po_box.blank?
+                                %li
+                                  =r.po_box
+                              -unless r.address1.blank?
+                                %li
+                                  =r.address1
+                              -unless r.address2.blank?
+                                %li
+                                  =r.address2
+                              -unless r.address3.blank?
+                                %li
+                                  =r.address3
+                              %li
+                                \#{[r.city, r.state, r.postal_code].join(', ')}
+                              -unless r.country.blank?
+                                %li
+                                  =r.country
+                              -unless r.email.blank?
+                                %li
+                                  =r.email
+                              -if current_user.is_system_admins?
+                                %li
+                                  =link_to 'edit locked registrant', edit_certificate_order_url(id: @certificate_order.ref, registrant: false)
+                            -else
+                              %li
+                                -if @cc.workflow_state=="csr_submitted"
+                                  none
+                                -elsif current_user.is_system_admins?
+                                  =link_to 'edit locked registrant', edit_certificate_order_url(id: @certificate_order.ref, registrant: false)
                           -unless @certificate_order.physical_tokens.active.blank?
                             %li.category_border
                             %li

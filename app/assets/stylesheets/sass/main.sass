@@ -4044,6 +4044,42 @@ label.error
       &.right
         width: 355px
 
+    .u2f_block
+      width: 500px
+      padding: .3em 0
+      margin-left: 100px
+
+      .u2f_device_info_block
+        width: 350px
+        font-size: 12px
+        padding: 5px 0px
+
+        .u2f_device_info
+          float: left
+
+          &:first-child
+            font-weight: bold
+            padding-right: 5px
+          &:last-child
+            float: right
+
+          button
+            padding: 0px 6px
+
+      button
+        border-width: 2px
+        border-style: outset
+        border-color: buttonface
+        padding: 4px 6px
+        margin: 0px
+        font-size: 12px
+        cursor: pointer
+
+      input[type='text']
+        margin: 0px 5px 0px 0px
+        padding: 5px 2px
+        font-size: 12px
+
 input#upload_files, input#start_over, input#validate_domains
   margin: 1em
   float: none

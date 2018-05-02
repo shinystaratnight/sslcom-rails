@@ -146,6 +146,7 @@ class CertificateOrdersController < ApplicationController
         else
           @csr = @certificate_order.certificate_content.csr
           setup_registrant()
+          setup_registrant_from_locked if params[:registrant] == 'false'
           @registrant.company_name = @csr.organization
           @registrant.department = @csr.organization_unit
           @registrant.city = @csr.locality
@@ -155,6 +156,7 @@ class CertificateOrdersController < ApplicationController
         end
       else
         setup_registrant
+        setup_registrant_from_locked if params[:registrant] == 'false'
       end
       @saved_registrants = current_user.ssl_account.saved_registrants
     else
@@ -519,6 +521,28 @@ class CertificateOrdersController < ApplicationController
       cc.registrant
     else
       registrant_params ? cc.build_registrant(registrant_params) : cc.build_registrant
+    end
+  end
+
+  def setup_registrant_from_locked
+    locked_registrant = @certificate_order.certificate_content.locked_registrant
+    unless locked_registrant.blank?
+      @registrant.assumed_name = locked_registrant.assumed_name
+      @registrant.duns_number = locked_registrant.duns_number
+      @registrant.department = locked_registrant.department
+      @registrant.po_box = locked_registrant.po_box
+      @registrant.address1 = locked_registrant.address1
+      @registrant.address2 = locked_registrant.address2
+      @registrant.address3 = locked_registrant.address3
+      @registrant.city = locked_registrant.city
+      @registrant.state = locked_registrant.state
+      @registrant.postal_code = locked_registrant.postal_code
+      @registrant.country = locked_registrant.country
+      @registrant.title = locked_registrant.title
+      @registrant.first_name = locked_registrant.first_name
+      @registrant.last_name = locked_registrant.last_name
+      @registrant.email = locked_registrant.email
+      @registrant.phone = locked_registrant.phone
     end
   end
 
