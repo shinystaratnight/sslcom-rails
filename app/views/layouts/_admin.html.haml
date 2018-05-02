@@ -61,8 +61,6 @@
           =link_to "Validations", validations_path(slug_params)
         -#%li(id="#{current_page?(validations_url) ? 't-intro' : 'manage_validations'}")
         -#  =link_to "Documents", validations_url
-        %li(id="#{current_page?(site_seals_url) ? 't-intro' : 'manage_site_seals'}")
-          =link_to "Smart SeaLs", site_seals_path(slug_params)
         %li(id="#{current_page?(certificate_orders_url) ? 't-intro' : 'manage_certificate_orders'}")
           =link_to "Orders", is_sandbox? ? search_certificate_orders_path(search:'is_test:true') : certificate_orders_path(slug_params)
         %li(id="#{current_page?(orders_url) ? 't-intro' : 'manage_orders'}")
