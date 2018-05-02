@@ -399,9 +399,9 @@ module ApplicationHelper
     co=@certificate_order
     sv=co.certificate ? co.skip_verification? : CertificateOrder.skip_verification?(certificate)
     added_padding=1.54
-    process = if params[:reprocess_ucc] || 
+    process = if params[:order_description] || (params[:reprocess_ucc] || 
       (co.certificate && co.certificate.is_ucc? && 
-      (co.order.reprocess_ucc_order? || params[:action] == "reprocess"))
+      (co.order.reprocess_ucc_order? || params[:action] == "reprocess")))
       
       co.reprocess_ucc_process
     else
