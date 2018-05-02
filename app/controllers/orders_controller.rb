@@ -63,8 +63,8 @@ class OrdersController < ApplicationController
   end
 
   def new
-    if params[:reprocess_ucc]
-      new_reprocess_ucc
+    if params[:reprocess_ucc] || params[:renew_ucc] || params[:ucc_csr_submit]
+      ucc_domains_adjust
     else  
       if params[:certificate_order]
         @certificate = Certificate.for_sale.find_by_product(params[:certificate][:product])
@@ -527,29 +527,35 @@ class OrdersController < ApplicationController
       render :action => 'new'
   end
   
-  # Order created for existing UCC certificate order on reprocess/rekey 
-  def create_reprocess_ucc
-    @reprocess_ucc = true
+  # Order created for existing UCC certificate order on reprocess/rekey or renew, 
+  # or initial CSR submit.
+  def ucc_domains_adjust_create
+    @reprocess_ucc  = params[:order][:reprocess_ucc]
+    @renew_ucc      = params[:order][:renew_ucc]
+    @ucc_csr_submit = params[:order][:ucc_csr_submit]
+
     ucc_or_invoice_params
-    
-    @order = ReprocessCertificateOrder.new(
+
+    order_params = {
       billing_profile_id: params[:funding_source],
       amount:             @target_amount,
       cents:             (@target_amount * 100).to_i,
       description:        Order::DOMAINS_ADJUSTMENT,
       state:              'pending',
       approval:           'approved',
-      notes:              reprocess_ucc_notes,
+      notes:              get_order_notes,
       invoice_description: params[:order][:order_description]
-    )
+    }
+    
+    @order = @reprocess_ucc ? ReprocessCertificateOrder.new(order_params) : Order.new(order_params)
     @order.billable = @ssl_account
 
     if @funded_amount > 0 && (@order_amount <= @funded_amount)
       # All amount covered by credit from funded account
-      reprocess_ucc_funded_account(params)
+      ucc_domains_adjust_funded(params)
     else
       # Pay full or partial payment by CC or Paypal
-      reprocess_ucc_hybrid_payment(params)
+      domains_adjust_hybrid_payment(params)
     end
   end
     
@@ -637,7 +643,7 @@ class OrdersController < ApplicationController
     )
   end
   
-  def reprocess_ucc_funded_account(params)
+  def ucc_domains_adjust_funded(params)
     withdraw_amount     = @order_amount < @funded_amount ? @order_amount : @funded_amount
     withdraw_amount     = (withdraw_amount * 100).to_i
     withdraw_amount_str = Money.new(withdraw_amount).format
@@ -655,7 +661,7 @@ class OrdersController < ApplicationController
     end
   end
     
-  def reprocess_ucc_hybrid_payment(params)
+  def domains_adjust_hybrid_payment(params)
     if current_user && order_reqs_valid? && !@too_many_declines && purchase_successful?
       save_billing_profile unless (params[:funding_source])
       @order.billing_profile = @profile
@@ -686,18 +692,23 @@ class OrdersController < ApplicationController
     @order.save
   end
   
-  def reprocess_ucc_invoice(params)
+  def add_to_monthly_invoice(params)
     ssl_id  = @ssl_account.id
     invoice = if MonthlyInvoice.invoice_exists?(ssl_id)
       MonthlyInvoice.get_current_invoice(ssl_id)
     else
       MonthlyInvoice.create(billable_id: ssl_id, billable_type: 'SslAccount')
     end
+    @order = current_order_reprocess_ucc if @reprocess_ucc
     
-    @order             = current_order_reprocess_ucc
+    if @renew_ucc || @ucc_csr_submit
+      @order        = @ssl_account.purchase(@certificate_order)
+      @order.cents  = @amount * 100
+      @order.amount = @amount
+    end
     @order.description = Order::DOMAINS_ADJUSTMENT
     @order.state       = 'invoiced'
-    @order.notes       = reprocess_ucc_notes
+    @order.notes       = get_order_notes
     @order.invoice_id  = invoice.id
     @order.approval    = 'approved'
     @order.invoice_description = params[:order_description]
@@ -705,38 +716,67 @@ class OrdersController < ApplicationController
     record_order_visit(@order)
   end
     
-  def new_reprocess_ucc
+  def ucc_domains_adjust
     if current_user
-      @certificate_order   = (current_user.is_system_admins? ? CertificateOrder :
-                                  current_user.ssl_account.certificate_orders).find_by(ref: params[:co_ref])
+      @certificate_order = if current_user.is_system_admins?
+        CertificateOrder.find_by(ref: params[:co_ref])
+      else
+        current_user.ssl_account.certificate_orders.find_by(ref: params[:co_ref])
+      end
       @ssl_account = @certificate_order.ssl_account
       @certificate_content = @certificate_order.certificate_contents.find_by(ref: params[:cc_ref])
-      @reprocess_ucc       = true
-      amount               = @certificate_order.ucc_prorated_amount(@certificate_content, find_tier)
-      if @ssl_account.billing_monthly? || amount == 0
-        if amount == 0 # Reprocess is free, no additional domains added
-          @order = ReprocessCertificateOrder.new(
-            amount:      0,
-            cents:       0,
-            description: Order::DOMAINS_ADJUSTMENT,
-            notes:       reprocess_ucc_notes,
-            approval:    'approved'
-          )
-          @order.billable = @ssl_account
-          reprocess_ucc_order_free(params)
-          flash[:notice] = "This UCC certificate reprocess is free due to no additional domains."
-        end
-        
-        if @ssl_account.billing_monthly? && amount > 0 # Invoice Order, do not charge
-          reprocess_ucc_invoice(params)
-          flash[:notice] = "This UCC reprocess in the amount of #{Money.new(amount).format} will appear on the monthly invoice."
-        end
-        redirect_to edit_certificate_order_path(@ssl_slug, @certificate_order)
+
+      @amount = if params[:renew_ucc] || params[:ucc_csr_submit]
+        params[:order_amount].to_f
       else
-        render 'new_reprocess_ucc'
+        @certificate_order.ucc_prorated_amount(@certificate_content)
       end
+      ucc_domains_adjust_reprocess if params[:reprocess_ucc]
+      ucc_domains_adjust_other if params[:renew_ucc] || params[:ucc_csr_submit]
     else
       redirect_to login_url and return
+    end
+  end
+  
+  def ucc_domains_adjust_other
+    @renew_ucc = params[:renew_ucc]
+    @ucc_csr_submit = params[:ucc_csr_submit]
+    
+    if @ssl_account.billing_monthly? || @amount == 0
+      if @ssl_account.billing_monthly? && @amount > 0 # Invoice Order, do not charge
+        add_to_monthly_invoice(params)
+        flash[:notice] = "The domains adjustment amount of #{@order.amount.format} will appear on the monthly invoice."
+      end
+      redirect_to edit_certificate_order_path(@ssl_slug, @certificate_order)
+    else
+      render 'ucc_domains_adjust'
+    end
+  end
+    
+  def ucc_domains_adjust_reprocess
+    @reprocess_ucc = true
+    
+    if @ssl_account.billing_monthly? || @amount == 0
+      if @amount == 0 # Reprocess is free, no additional domains added
+        @order = ReprocessCertificateOrder.new(
+          amount:      0,
+          cents:       0,
+          description: Order::DOMAINS_ADJUSTMENT,
+          notes:       reprocess_ucc_notes,
+          approval:    'approved'
+        )
+        @order.billable = @ssl_account
+        reprocess_ucc_order_free(params)
+        flash[:notice] = "This UCC certificate reprocess is free due to no additional domains."
+      end
+      
+      if @ssl_account.billing_monthly? && @amount > 0 # Invoice Order, do not charge
+        add_to_monthly_invoice(params)
+        flash[:notice] = "This UCC reprocess in the amount of #{Money.new(@amount).format} will appear on the monthly invoice."
+      end
+      redirect_to edit_certificate_order_path(@ssl_slug, @certificate_order)
+    else
+      render 'ucc_domains_adjust'
     end
   end
   

@@ -240,7 +240,7 @@ authorization do
         :create,
         :create_free_ssl,
         :create_multi_free_ssl,
-        :create_reprocess_ucc,
+        :ucc_domains_adjust_create,
         :delete,
         :read,
         :update

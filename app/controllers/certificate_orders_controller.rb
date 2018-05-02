@@ -285,18 +285,28 @@ class CertificateOrdersController < ApplicationController
     @certificate_order.has_csr=true #we are submitting a csr afterall
     @certificate_content.certificate_order=@certificate_order
     @certificate_content.preferred_reprocessing=true if eval("@#{CertificateOrder::REPROCESSING}")
-    reprocess_ucc = params[:reprocessing] && params[:certificate][:product].include?('ucc')
+    
+    da_billing     = @certificate_order.domains_adjust_billing?
+    ucc_renew      = true if da_billing && @certificate_order.renew_billing?
+    ucc_reprocess  = true if da_billing && !params[:reprocessing].blank?
+    ucc_csr_submit = true if da_billing && !ucc_reprocess && !ucc_renew
+    domains_adjustment = ucc_reprocess || ucc_renew || ucc_csr_submit
+
     respond_to do |format|
       if @certificate_content.valid?
         cc = @certificate_order.transfer_certificate_content(@certificate_content)
-        if reprocess_ucc
-          format.html {redirect_to new_order_path(@ssl_slug,
-            co_ref: @certificate_order.ref,
-            cc_ref: cc.ref,
-            reprocess_ucc: true,
-            order_description: params[:order][:order_description]
-          )}
-        else  
+        if domains_adjustment
+          order_params = {
+            co_ref:            @certificate_order.ref,
+            cc_ref:            cc.ref,
+            reprocess_ucc:     ucc_reprocess,
+            renew_ucc:         ucc_renew,
+            ucc_csr_submit:    ucc_csr_submit,
+            order_description: params[:order][:order_description],
+            order_amount:      params[:order][:adjustment_amount]
+          }
+          format.html { redirect_to new_order_path(@ssl_slug, order_params) }
+        else
           if cc.pending_validation?
             format.html { redirect_to certificate_order_path(@ssl_slug, @certificate_order) }
           end
@@ -304,9 +314,14 @@ class CertificateOrdersController < ApplicationController
           format.xml  { head :ok }
         end
       else
-        if reprocess_ucc
+        if domains_adjustment
+          path = if ucc_reprocess
+            reprocess_certificate_order_path(@ssl_slug, @certificate_order)
+          else
+            edit_certificate_order_path(@ssl_slug, @certificate_order)
+          end
           flash[:error] = "Please correct errors in this step. #{@certificate_content.errors.full_messages.join(', ')}."
-          format.html { redirect_to reprocess_certificate_order_path(@ssl_slug, @certificate_order) }
+          format.html { redirect_to path }
         else
           @certificate = @certificate_order.certificate
           format.html { render '/certificates/buy', :layout=>'application' }

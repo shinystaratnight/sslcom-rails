@@ -278,7 +278,9 @@ class Order < ActiveRecord::Base
   end
     
   def total
-    unless reprocess_ucc_order? || monthly_invoice_order? || on_monthly_invoice?
+    unless reprocess_ucc_order? || monthly_invoice_order? || 
+      on_monthly_invoice? || domains_adjustment?
+      
       self.amount = line_items.inject(0.to_money) {|sum,l| sum + l.amount }
     end
   end
@@ -498,6 +500,10 @@ class Order < ActiveRecord::Base
     self.type == 'ReprocessCertificateOrder'
   end
   
+  def domains_adjustment?
+    description == Order::DOMAINS_ADJUSTMENT
+  end
+  
   def reprocess_ucc_free?
     reprocess_ucc_order? && cents==0
   end
@@ -509,6 +515,17 @@ class Order < ActiveRecord::Base
   def faw_order?
     description == Order::FAW
   end
+  
+  def get_order_type_label
+    if reprocess_ucc_order?
+      '(Reprocess)'
+    elsif domains_adjustment? && !reprocess_ucc_order?
+      '(Domains Adjustment)'
+    else
+      ''
+    end  
+  end
+  
   # Fetches all domain counts that were added during UCC certificate reprocess
   def get_reprocess_domains
     co           = certificate_orders.first
@@ -754,9 +771,9 @@ class Order < ActiveRecord::Base
   end
   
   def make_available_line(item, type=nil)
-    order_total  = reprocess_ucc_order? ? get_full_reprocess_amount : line_items.pluck(:cents).sum
+    order_total  = domains_adjustment? ? get_full_reprocess_amount : line_items.pluck(:cents).sum
     discount_amt = discount_amount(:items)
-    total        = if reprocess_ucc_order?
+    total = if domains_adjustment?
       get_full_reprocess_amount
     else  
       item.is_a?(LineItem) ? item.cents : item.amount

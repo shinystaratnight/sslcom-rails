@@ -446,6 +446,12 @@ class CertificateOrder < ActiveRecord::Base
     al.flatten.sort_by(&:created_at).reverse
   end
   
+
+def domains_adjust_billing?
+  certificate.is_ucc? && (certificate.is_premium_ssl? !=0) &&
+  orders.count > 0 && orders.first.persisted?
+end
+
   # Prorated pricing for single domain for ucc certificate,
   # used in calculating reprocessing amount for additional domains.
   def ucc_prorated_domain(type, reseller_tier=nil)
@@ -519,6 +525,10 @@ class CertificateOrder < ActiveRecord::Base
       cur_domains = cur_domains.joins(:signed_certificates)
         .map(&:signed_certificates).compact
         .reject{ |sc| sc.empty? }.flatten.map(&:subject_alternative_names)
+    end
+
+    if cur_domains.empty? && (renew_billing? || domains_adjust_billing?)
+      cur_domains = certificate_contents.map(&:domains)
     end
     cur_domains
   end
@@ -1756,6 +1766,13 @@ class CertificateOrder < ActiveRecord::Base
       result.certificates = ""
       result.common_name = self.csr.common_name
     end
+  end
+  
+  def renew_billing?
+    co = self.parent
+    return false if co.nil?
+    ucc = co.certificate.is_ucc? && (co.certificate.is_premium_ssl? !=0)
+    ucc && co.certificate_content.expiring? && co.renewal && co.renewal.paid?
   end
   
   private

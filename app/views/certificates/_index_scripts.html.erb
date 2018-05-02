@@ -140,7 +140,8 @@ jQuery(function($) {
         wildcard_cost    = (wildcard.length ? wildcard.data('cost') : 0),
         nonwildcard_cost = $('#ucc-nonwildcard-amount').data('cost'),
         final_amount     = (nonwildcard_count * nonwildcard_cost) + (wildcard_count * wildcard_cost);
-        
+    
+    $('#order_adjustment_amount').val(final_amount.toFixed(2));
     $('#calculated_reprocess_price').text('$' + final_amount.toFixed(2) + " USD");
   };
   

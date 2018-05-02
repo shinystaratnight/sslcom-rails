@@ -9,10 +9,11 @@ module CertificateOrdersHelper
           items << pluralize(soi.quantity+1, "server license")
         end
         if certificate_order.certificate.is_ucc?
-          reprocess_order = @order && @order.reprocess_ucc_order?
-          reprocess_domains = @order.get_reprocess_domains if reprocess_order
+          reprocess_order    = @order && @order.reprocess_ucc_order?
+          domains_adjustment = @order && @order.domains_adjustment? && !reprocess_order
+          reprocess_domains  = @order.get_reprocess_domains if (reprocess_order || domains_adjustment)
           
-          quantity = reprocess_order ? reprocess_domains[:all].count : certificate_order.purchased_domains('all')
+          quantity = domains_adjustment ? reprocess_domains[:all].count : certificate_order.purchased_domains('all')
 
           unless certificate_order.certificate_contents.empty?
             d            = reprocess_order ? reprocess_domains[:all] : certificate_order.all_domains
@@ -31,7 +32,7 @@ module CertificateOrdersHelper
                 (domains.empty? ? "" : content_tag(:dd,"("+domains+")"))
             end
             
-            if reprocess_order && reprocess_domains[:new_domains_count] > 0
+            if (reprocess_order && reprocess_domains[:new_domains_count] > 0) || domains_adjustment
               co_desc = invoice ? " for certificate order ##{certificate_order.ref}." : ''
               descr = if @order.invoice_description.blank?
                 "Prorated charge for #{reprocess_domains[:new_domains_count]} 
@@ -68,6 +69,11 @@ module CertificateOrdersHelper
 
   def sandbox_notice
     flash[:sandbox] = "SSL.com Sandbox. This is a test environment for api orders. Transactions and orders are not live."
+  end
+  
+  def domains_adjust_billing?(certificate_order)
+    return false if certificate_order.nil? || certificate_order.new?
+    certificate_order.domains_adjust_billing?
   end
 
   def action(certificate_order)

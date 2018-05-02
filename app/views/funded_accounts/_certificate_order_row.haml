@@ -4,10 +4,10 @@
     %td.line-index
       =index+1
     %td.description
-      ="#{row_description(co)} #{@order.reprocess_ucc_order? ? '(Reprocess)' : ''}"
+      ="#{row_description(co)} #{@order.get_order_type_label}"
     %td.quantity 1
     %td.price
-      =Money.new(@order.reprocess_ucc_order? ? @order.get_full_reprocess_amount : co.amount).format
+      =Money.new(@order.domains_adjustment? ? @order.get_full_reprocess_amount : co.amount).format
   -if co.migrated_from_v2?
     -co.v2_line_items.each do |item|
       %tr.line_item
