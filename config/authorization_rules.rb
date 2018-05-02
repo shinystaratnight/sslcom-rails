@@ -17,6 +17,7 @@ authorization do
       :to => :sysadmin_manage, except: :delete
     has_permission_on :affiliates, :certificate_orders, :cdns, :csrs, :orders, :signed_certificates, :surls, :physical_tokens,
       :to => :manage
+    has_permission_on :orders, to: :revoke
     has_permission_on :managed_users, :ssl_accounts, :validations, :validation_histories,
       :to => :sysadmin_manage
     has_permission_on :resellers,    to: [:create, :read, :update]
@@ -239,7 +240,7 @@ authorization do
         :create,
         :create_free_ssl,
         :create_multi_free_ssl,
-        :create_reprocess_ucc,
+        :ucc_domains_adjust_create,
         :delete,
         :read,
         :update
@@ -490,6 +491,8 @@ privileges do
     :search,
     :update_company_name,
     :update_settings,
+    :register_u2f,
+    :remove_u2f,
     :update_ssl_slug
   ]
   privilege :sysadmin_manage, includes: [

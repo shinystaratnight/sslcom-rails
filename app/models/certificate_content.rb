@@ -339,10 +339,11 @@ class CertificateContent < ActiveRecord::Base
   end
 
   def show_validation_view?
-    if new? || csr_submitted? || info_provided? || contacts_provided?
-      return false
+    if new? || csr_submitted?
+      false
+    else
+      true
     end
-    true
   end
 
   def validation_type
@@ -634,13 +635,24 @@ class CertificateContent < ActiveRecord::Base
   #      Subject alternative name format : "subject_alt_name": "dNSName=foo2.bar.com, dNSName=foo2.bar.com"
 
   def locked_subject_dn
-    dn = ["CN=#{locked_registrant.company_name}"]
-    dn << "O=#{locked_registrant.company_name}"
-    dn << "OU=#{locked_registrant.department}" unless locked_registrant.department.blank?
-    dn << "L=#{locked_registrant.city}" unless locked_registrant.city.blank?
-    dn << "ST=#{locked_registrant.state}" unless locked_registrant.state.blank?
-    dn << "C=#{locked_registrant.country}" unless locked_registrant.country.blank?
-    # dn << "postalCode=#{locked_registrant.postal_code}" unless locked_registrant.postal_code.blank?
+    dn = []
+    if locked_registrant
+      dn << "CN=#{locked_registrant.company_name}" unless locked_registrant.company_name.blank?
+      dn << "O=#{locked_registrant.company_name}" unless locked_registrant.company_name.blank?
+      dn << "OU=#{locked_registrant.department}" unless locked_registrant.department.blank?
+      dn << "L=#{locked_registrant.city}" unless locked_registrant.city.blank?
+      dn << "ST=#{locked_registrant.state}" unless locked_registrant.state.blank?
+      dn << "C=#{locked_registrant.country}" unless locked_registrant.country.blank?
+      # dn << "postalCode=#{locked_registrant.postal_code}" unless locked_registrant.postal_code.blank?
+    else
+      dn << "CN=#{registrant.company_name}" unless registrant.company_name.blank?
+      dn << "O=#{registrant.company_name}" unless registrant.company_name.blank?
+      dn << "OU=#{registrant.department}" unless registrant.department.blank?
+      dn << "L=#{registrant.city}" unless registrant.city.blank?
+      dn << "ST=#{registrant.state}" unless registrant.state.blank?
+      dn << "C=#{registrant.country}" unless registrant.country.blank?
+      # dn << "postalCode=#{locked_registrant.postal_code}" unless locked_registrant.postal_code.blank?
+    end
 
     dn.map{|d|d.gsub(/\\/,'\\\\').gsub(',','\,')}.join(",")
   end

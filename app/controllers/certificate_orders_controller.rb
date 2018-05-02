@@ -146,6 +146,7 @@ class CertificateOrdersController < ApplicationController
         else
           @csr = @certificate_order.certificate_content.csr
           setup_registrant()
+          setup_registrant_from_locked if params[:registrant] == 'false'
           @registrant.company_name = @csr.organization
           @registrant.department = @csr.organization_unit
           @registrant.city = @csr.locality
@@ -155,6 +156,7 @@ class CertificateOrdersController < ApplicationController
         end
       else
         setup_registrant
+        setup_registrant_from_locked if params[:registrant] == 'false'
       end
       @saved_registrants = current_user.ssl_account.saved_registrants
     else
@@ -283,18 +285,28 @@ class CertificateOrdersController < ApplicationController
     @certificate_order.has_csr=true #we are submitting a csr afterall
     @certificate_content.certificate_order=@certificate_order
     @certificate_content.preferred_reprocessing=true if eval("@#{CertificateOrder::REPROCESSING}")
-    reprocess_ucc = params[:reprocessing] && params[:certificate][:product].include?('ucc')
+    
+    da_billing     = @certificate_order.domains_adjust_billing?
+    ucc_renew      = true if da_billing && @certificate_order.renew_billing?
+    ucc_reprocess  = true if da_billing && !params[:reprocessing].blank?
+    ucc_csr_submit = true if da_billing && !ucc_reprocess && !ucc_renew
+    domains_adjustment = ucc_reprocess || ucc_renew || ucc_csr_submit
+
     respond_to do |format|
       if @certificate_content.valid?
         cc = @certificate_order.transfer_certificate_content(@certificate_content)
-        if reprocess_ucc
-          format.html {redirect_to new_order_path(@ssl_slug,
-            co_ref: @certificate_order.ref,
-            cc_ref: cc.ref,
-            reprocess_ucc: true,
-            order_description: params[:order][:order_description]
-          )}
-        else  
+        if domains_adjustment
+          order_params = {
+            co_ref:            @certificate_order.ref,
+            cc_ref:            cc.ref,
+            reprocess_ucc:     ucc_reprocess,
+            renew_ucc:         ucc_renew,
+            ucc_csr_submit:    ucc_csr_submit,
+            order_description: params[:order][:order_description],
+            order_amount:      params[:order][:adjustment_amount]
+          }
+          format.html { redirect_to new_order_path(@ssl_slug, order_params) }
+        else
           if cc.pending_validation?
             format.html { redirect_to certificate_order_path(@ssl_slug, @certificate_order) }
           end
@@ -302,9 +314,14 @@ class CertificateOrdersController < ApplicationController
           format.xml  { head :ok }
         end
       else
-        if reprocess_ucc
+        if domains_adjustment
+          path = if ucc_reprocess
+            reprocess_certificate_order_path(@ssl_slug, @certificate_order)
+          else
+            edit_certificate_order_path(@ssl_slug, @certificate_order)
+          end
           flash[:error] = "Please correct errors in this step. #{@certificate_content.errors.full_messages.join(', ')}."
-          format.html { redirect_to reprocess_certificate_order_path(@ssl_slug, @certificate_order) }
+          format.html { redirect_to path }
         else
           @certificate = @certificate_order.certificate
           format.html { render '/certificates/buy', :layout=>'application' }
@@ -492,9 +509,23 @@ class CertificateOrdersController < ApplicationController
   end
 
   def load_certificate_order
-    @certificate_order=CertificateOrder.unscoped{
-      (current_user.is_system_admins? ? CertificateOrder :
-              current_user.ssl_account.certificate_orders).find_by_ref(params[:id])} if current_user
+    if current_user
+      @certificate_order=CertificateOrder.unscoped{
+        (current_user.is_system_admins? ? CertificateOrder :
+                current_user.ssl_account.certificate_orders).find_by_ref(params[:id])}
+
+      if @certificate_order.nil?
+        co = current_user.ssl_accounts.map(&:certificate_orders)
+          .flatten.find{|c| c.ref == params[:id]}
+        @certificate_order = co if co
+        if co && co.ssl_account != current_user.ssl_account &&
+          current_user.ssl_accounts.include?(co.ssl_account)
+          
+          current_user.set_default_ssl_account(co.ssl_account)
+          set_ssl_slug
+        end
+      end
+    end
     render 'site/404_not_found', status: 404 unless @certificate_order
   end
 
@@ -505,6 +536,28 @@ class CertificateOrdersController < ApplicationController
       cc.registrant
     else
       registrant_params ? cc.build_registrant(registrant_params) : cc.build_registrant
+    end
+  end
+
+  def setup_registrant_from_locked
+    locked_registrant = @certificate_order.certificate_content.locked_registrant
+    unless locked_registrant.blank?
+      @registrant.assumed_name = locked_registrant.assumed_name
+      @registrant.duns_number = locked_registrant.duns_number
+      @registrant.department = locked_registrant.department
+      @registrant.po_box = locked_registrant.po_box
+      @registrant.address1 = locked_registrant.address1
+      @registrant.address2 = locked_registrant.address2
+      @registrant.address3 = locked_registrant.address3
+      @registrant.city = locked_registrant.city
+      @registrant.state = locked_registrant.state
+      @registrant.postal_code = locked_registrant.postal_code
+      @registrant.country = locked_registrant.country
+      @registrant.title = locked_registrant.title
+      @registrant.first_name = locked_registrant.first_name
+      @registrant.last_name = locked_registrant.last_name
+      @registrant.email = locked_registrant.email
+      @registrant.phone = locked_registrant.phone
     end
   end
 

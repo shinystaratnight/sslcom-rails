@@ -4,10 +4,10 @@
     %td.line-index
       =index+1
     %td.description
-      ="#{row_description(co)} #{@order.reprocess_ucc_order? ? '(Reprocess)' : ''}"
+      ="#{row_description(co)} #{@order.get_order_type_label}"
     %td.quantity 1
     %td.price
-      =Money.new(@order.reprocess_ucc_order? ? @order.get_full_reprocess_amount : co.amount).format
+      =Money.new(@order.domains_adjustment? ? @order.get_full_reprocess_amount : co.amount).format
   -if co.migrated_from_v2?
     -co.v2_line_items.each do |item|
       %tr.line_item
@@ -23,20 +23,29 @@
             function refund_reason_#{co.id}(return_funds) {
               var label ="Cancel item #{co.subject} (#{co.ref})",
               reason = "";
+              
               if(return_funds==true) {
                 label += " and make #{Money.new(@order.make_available_line(co)).format} available to customer again";
                 reason = prompt(label + "? Reason for refund.", "");
+              } else if (return_funds == 'revoke') {
+                reason = prompt("Reason for revoking item #{co.ref}.", "");
               } else {
                 reason = prompt(label + "? Reason for cancel.", "");
               }
               
-              if (reason == null || reason=="")
+              if (reason == null || reason == "") {
                 return;
-              else
-                if(return_funds==true)
-                  window.location = '#{refund_order_url(id: @order.reference_number, return_funds: true, partial: co.ref)}&refund_reason='+encodeURIComponent(reason);
-                else
-                  window.location = '#{refund_order_url(id: @order.reference_number, cancel_only: true, partial: co.ref)}&refund_reason='+encodeURIComponent(reason);
+              } else {
+                var encoded = encodeURIComponent(reason), url = '';
+                if (return_funds == true) {
+                  url = '#{refund_order_url(id: @order.reference_number, return_funds: true, partial: co.ref)}&refund_reason=' + encoded;
+                } else if (return_funds == 'revoke') {
+                  url = '#{revoke_order_url(id: @order.reference_number, co_ref: co.ref)}&revoke_reason=' + encoded;
+                } else {
+                  url = '#{refund_order_url(id: @order.reference_number, cancel_only: true, partial: co.ref)}&refund_reason=' + encoded;
+                }
+                window.location = url;
+              }
             }
         -unless co.subject.blank?
           .order-detail-cn #{co.subject}
@@ -45,6 +54,8 @@
             %div
               =link_to("#{co.ref.upcase}", certificate_order_path(@ssl_slug, co), id: 'btn-order-edit')
           -if current_user.is_admin?
+            %div
+              =link_to("REVOKE", '#', onclick:  "refund_reason_#{co.id}('revoke')", id: 'btn-order-revoke')
             -unless co.canceled? || co.refunded?
               %div
                 =link_to("CANCEL", '#', onclick:  "refund_reason_#{co.id}(false)", id: 'btn-order-cancel')

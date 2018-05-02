@@ -4,6 +4,7 @@ class User < ActiveRecord::Base
 
   OWNED_MAX_TEAMS = 3
 
+  has_many  :u2fs
   has_many  :assignments, dependent: :destroy
   has_many  :visitor_tokens
   has_many  :surls

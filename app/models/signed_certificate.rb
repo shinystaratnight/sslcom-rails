@@ -350,6 +350,8 @@ class SignedCertificate < ActiveRecord::Base
                                                   co.shadow_certificates.last).deliver
       end
     rescue Exception=>e
+      logger.error e.message
+      e.backtrace.each { |line| logger.error line }
     end
   end
 

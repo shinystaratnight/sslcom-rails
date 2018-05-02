@@ -1,0 +1,41 @@
+<script type="text/javascript">
+jQuery.noConflict();
+jQuery(function($) {
+  $(document).ready(function() {
+    $('.btn_login').click(function() {
+      var user_session = {};
+      user_session['login'] = $('#user_session_login').val();
+      user_session['password'] = $('#user_session_password').val();
+
+      var ajaxLoginUrl = '<%=user_login_user_session_path%>';
+      $.ajax({
+        url: ajaxLoginUrl,
+        data: {
+          user_session: user_session
+        },
+        type: "POST",
+        success: function (result) {
+          if ($.isEmptyObject(result)) {
+            $('.new_user_session').submit();
+          } else {
+            var appId = result['app_id'];
+            var signRequests = result['sign_requests'];
+            var challenge = result['challenge'];
+
+            u2f.sign(appId, challenge, signRequests, function(signResponse) {
+              if (signResponse.errorCode) {
+                $('.u2f_logout').val('true');
+              } else {
+                $('.u2f_response').val(JSON.stringify(signResponse));
+              }
+              $('.new_user_session').submit();
+            });
+          }
+        }
+      });
+
+      return false;
+    });
+  });
+});
+</script>

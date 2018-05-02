@@ -155,8 +155,13 @@ SslCom::Application.routes.draw do
         get  :transfer_items
       end
     end
-      
-    resource :user_session
+
+    resource :user_session do
+      collection do
+        post :user_login
+      end
+    end
+
     resources :certificate_orders do
       resources :physical_tokens do
         member do
@@ -263,11 +268,12 @@ SslCom::Application.routes.draw do
         get :search
         get :visitor_trackings
         post :create_free_ssl, :create_multi_free_ssl, :lookup_discount
-        post :create_reprocess_ucc
+        post :ucc_domains_adjust_create
       end
       member do
         get :invoice
         get :refund
+        get :revoke
         get :change_state
         get :refund_merchant
         match :update_invoice, via: [:put, :post]
@@ -281,6 +287,10 @@ SslCom::Application.routes.draw do
       match :update_settings, via: [:put, :patch]
       match :update_ssl_slug, via: [:put, :patch]
       match :update_company_name, via: [:put, :patch]
+      collection do
+        post :register_u2f
+        post :remove_u2f
+      end
       member do
         get :adjust_funds
       end

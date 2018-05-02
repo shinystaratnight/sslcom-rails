@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180404162536) do
+ActiveRecord::Schema.define(version: 20180425221036) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        limit: 255
@@ -151,12 +151,12 @@ ActiveRecord::Schema.define(version: 20180404162536) do
 
   create_table "ca_api_requests", force: :cascade do |t|
     t.integer  "api_requestable_id",   limit: 4
-    t.string   "api_requestable_type", limit: 255
+    t.string   "api_requestable_type", limit: 191
     t.text     "request_url",          limit: 65535
     t.text     "parameters",           limit: 65535
     t.string   "method",               limit: 255
     t.text     "response",             limit: 65535
-    t.string   "type",                 limit: 255
+    t.string   "type",                 limit: 191
     t.string   "ca",                   limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -321,7 +321,6 @@ ActiveRecord::Schema.define(version: 20180404162536) do
   add_index "certificate_orders", ["is_test"], name: "index_certificate_orders_on_is_test", using: :btree
   add_index "certificate_orders", ["ref"], name: "index_certificate_orders_on_ref", using: :btree
   add_index "certificate_orders", ["site_seal_id"], name: "index_certificate_orders_site_seal_id", using: :btree
-  add_index "certificate_orders", ["validation_id"], name: "index_certificate_orders_on_validation_id", using: :btree
 
   create_table "certificates", force: :cascade do |t|
     t.integer  "reseller_tier_id",      limit: 4
@@ -389,7 +388,6 @@ ActiveRecord::Schema.define(version: 20180404162536) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "registrant_type",       limit: 4
-    t.integer  "parent_id",             limit: 4
     t.string   "callback_method",       limit: 255
     t.date     "incorporation_date"
     t.string   "incorporation_country", limit: 255
@@ -400,6 +398,7 @@ ActiveRecord::Schema.define(version: 20180404162536) do
     t.string   "duns_number",           limit: 255
     t.string   "company_number",        limit: 255
     t.string   "registration_service",  limit: 255
+    t.integer  "parent_id",             limit: 4
     t.boolean  "saved_default",                     default: false
   end
 
@@ -859,7 +858,7 @@ ActiveRecord::Schema.define(version: 20180404162536) do
     t.integer  "ssl_account_id",    limit: 4
     t.integer  "product_id",        limit: 4
     t.string   "workflow_state",    limit: 255
-    t.string   "ref",               limit: 255
+    t.string   "ref",               limit: 191
     t.string   "auto_renew",        limit: 255
     t.string   "auto_renew_status", limit: 255
     t.boolean  "is_expired"
@@ -1074,7 +1073,7 @@ ActiveRecord::Schema.define(version: 20180404162536) do
   end
 
   create_table "sessions", force: :cascade do |t|
-    t.string   "session_id", limit: 255,   null: false
+    t.string   "session_id", limit: 191,   null: false
     t.text     "data",       limit: 65535
     t.datetime "created_at",               null: false
     t.datetime "updated_at",               null: false
@@ -1273,6 +1272,17 @@ ActiveRecord::Schema.define(version: 20180404162536) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "remote_ip",        limit: 255
+  end
+
+  create_table "u2fs", force: :cascade do |t|
+    t.integer  "user_id",     limit: 4
+    t.text     "certificate", limit: 65535
+    t.string   "key_handle",  limit: 255
+    t.string   "public_key",  limit: 255
+    t.integer  "counter",     limit: 4,     default: 0, null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "nick_name",   limit: 255
   end
 
   create_table "unsubscribes", force: :cascade do |t|

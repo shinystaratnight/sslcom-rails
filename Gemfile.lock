@@ -447,6 +447,7 @@ GEM
     turbolinks-source (5.0.0)
     tzinfo (1.2.4)
       thread_safe (~> 0.1)
+    u2f (1.0.0)
     uglifier (4.1.8)
       execjs (>= 0.3.0, < 3)
     unscoped_associations (0.6.5)
@@ -568,6 +569,7 @@ DEPENDENCIES
   terminal-notifier-guard
   therubyracer (~> 0.12.0)
   turbolinks
+  u2f
   uglifier (= 4.1.8)
   unscoped_associations
   uuidtools

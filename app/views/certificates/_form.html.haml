@@ -1,4 +1,4 @@
--reprocess_ucc = @certificate.is_ucc? && (@certificate.is_premium_ssl? !=0) && action_name == 'reprocess' && controller_name == 'certificate_orders'
+-reprocess_ucc = domains_adjust_billing?(@certificate_order)
 -if @certificate.is_ucc?
   -if @certificate.is_ev?
     -first, second = @certificate.items_by_domains(true).transpose[0]

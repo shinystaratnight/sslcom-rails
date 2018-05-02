@@ -27,9 +27,8 @@
     -permitted_to? :read, :users do
       %li(id="#{(is_on?("users",current_slug) && !@prev) ? 't-intro' : 'manage_users'}")
         =link_to "Users", users_path(slug_params)
-    -unless is_sandbox?
-      -permitted_to? :edit_settings, current_user.ssl_account do
-        %li(id="#{is_on?("edit_settings_ssl_account",current_slug) ? 't-intro' : 'manage_settings'}")
-          =link_to "Settings", edit_settings_ssl_account_path(slug_params)
+    -permitted_to? :edit_settings, current_user.ssl_account do
+      %li(id="#{is_on?("edit_settings_ssl_account",current_slug) ? 't-intro' : 'manage_settings'}")
+        =link_to "Settings", edit_settings_ssl_account_path(slug_params)
     %li(id="#{is_on?("cdns",current_slug) ? 't-intro' : 'manage_cdns'}")
       =link_to "CDN", cdns_path(slug_params)
