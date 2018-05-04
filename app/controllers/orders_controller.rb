@@ -643,6 +643,18 @@ class OrdersController < ApplicationController
     )
   end
   
+  def ucc_update_domain_counts
+    wildcard       = params[:order][:wildcard_count].to_i
+    nonwildcard    = params[:order][:nonwildcard_count].to_i
+    co_nonwildcard = @certificate_order.nonwildcard_count.blank? ? 0 : @certificate_order.nonwildcard_count
+    co_wildcard_count = @certificate_order.wildcard_count.blank? ? 0 : @certificate_order.wildcard_count
+
+    @certificate_order.update(
+      nonwildcard_count: (nonwildcard > co_nonwildcard ? nonwildcard : co_nonwildcard),
+      wildcard_count:    (wildcard > co_wildcard_count ? wildcard : co_wildcard_count)
+    )
+  end
+    
   def ucc_domains_adjust_funded(params)
     withdraw_amount     = @order_amount < @funded_amount ? @order_amount : @funded_amount
     withdraw_amount     = (withdraw_amount * 100).to_i
@@ -653,6 +665,7 @@ class OrdersController < ApplicationController
     if current_user && @order.valid? &&
       ((@ssl_account.funded_account.cents + withdraw_amount) == @funded_account_init)
       reprocess_ucc_order_free(params)
+      ucc_update_domain_counts
       flash[:notice] = "Succesfully paid full amount of #{withdraw_amount_str} from funded account for order."
       redirect_to edit_certificate_order_path(@ssl_slug, @certificate_order)
     else
@@ -668,6 +681,7 @@ class OrdersController < ApplicationController
       @certificate_order.add_reproces_order @order
       withdraw_funded_account((@funded_amount * 100).to_i) if @funded_amount > 0
       record_order_visit(@order)
+      ucc_update_domain_counts
       redirect_to edit_certificate_order_path(@ssl_slug, @certificate_order)
     else
       if @too_many_declines
@@ -713,6 +727,7 @@ class OrdersController < ApplicationController
     @order.approval    = 'approved'
     @order.invoice_description = params[:order_description]
     @certificate_order.add_reproces_order @order
+    ucc_update_domain_counts
     record_order_visit(@order)
   end
     

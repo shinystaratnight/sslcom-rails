@@ -526,7 +526,7 @@ class Order < ActiveRecord::Base
     end  
   end
   
-  # Fetches all domain counts that were added during UCC certificate reprocess
+  # Fetches all domain counts that were added during UCC domains adjustment
   def get_reprocess_domains
     co           = certificate_orders.first
     cc           = get_reprocess_cc(co)
@@ -535,11 +535,8 @@ class Order < ActiveRecord::Base
     non_wildcard = cur_domains.map {|d| d if !d.include?('*')}.compact
     wildcard     = cur_domains.map {|d| d if d.include?('*')}.compact
     
-    old_non_wildcard = co.get_reprocess_max_nonwildcard(cc)
-    old_wildcard     = co.get_reprocess_max_wildcard(cc)
-    
-    tot_non_wildcard = non_wildcard.count - old_non_wildcard.count
-    tot_wildcard     = wildcard.count - old_wildcard.count
+    tot_non_wildcard = non_wildcard.count - co.get_reprocess_max_nonwildcard(cc).count
+    tot_wildcard     = wildcard.count - co.get_reprocess_max_wildcard(cc).count
     
     tot_non_wildcard  = tot_non_wildcard < 0 ? 0 : tot_non_wildcard
     tot_wildcard      = tot_wildcard < 0 ? 0 : tot_wildcard
@@ -1021,6 +1018,9 @@ class Order < ActiveRecord::Base
                                 :amount              =>pd[2].amount*wildcards)
           certificate_order.sub_order_items << so
         end
+
+        certificate_order.wildcard_count = wildcards
+        certificate_order.nonwildcard_count = (certificate_order.domains.try(:size) || 0) - wildcards
       end
     end
     unless certificate.is_ucc?

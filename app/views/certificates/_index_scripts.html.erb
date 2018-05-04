@@ -60,6 +60,9 @@ jQuery(function($) {
             addt_wildcard    =  wildcard_domains.length - init_wildcard;
         addt_nonwildcard     = (addt_nonwildcard < 0) ? 0 : addt_nonwildcard;
         addt_wildcard        = (addt_wildcard < 0) ? 0 : addt_wildcard;
+        
+        $('#order_wildcard_count').val(wildcard_domains.length);
+        $('#order_nonwildcard_count').val(domains.length - wildcard_domains.length);
         $('#wildcard-current-count').text('x ' + addt_wildcard);
         $('#nonwildcard-current-count').text('x ' + addt_nonwildcard);
         $.updateUccReprocessAmount(addt_nonwildcard, addt_wildcard);

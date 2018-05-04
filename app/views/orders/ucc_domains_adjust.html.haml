@@ -19,6 +19,9 @@
     =f.hidden_field :co_ref, value: params[:co_ref]
     =f.hidden_field :cc_ref, value: params[:cc_ref]
     =f.hidden_field :order_description, value: params[:order_description]
+    =f.hidden_field :wildcard_count, value: params[:wildcard_count]
+    =f.hidden_field :nonwildcard_count, value: params[:nonwildcard_count]
+    
     -if @reprocess_ucc
       =f.hidden_field :reprocess_ucc, value: @reprocess_ucc
     -if @renew_ucc
