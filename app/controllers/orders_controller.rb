@@ -775,8 +775,7 @@ class OrdersController < ApplicationController
       else
         @certificate_order.ucc_prorated_amount(@certificate_content)
       end
-      ucc_domains_adjust_reprocess if params[:reprocess_ucc]
-      ucc_domains_adjust_other if params[:renew_ucc] || params[:ucc_csr_submit]
+      params[:reprocess_ucc] ? ucc_domains_adjust_reprocess : ucc_domains_adjust_other
     else
       redirect_to login_url and return
     end

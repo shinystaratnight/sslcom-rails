@@ -24,7 +24,7 @@
     
     -if @reprocess_ucc
       =f.hidden_field :reprocess_ucc, value: @reprocess_ucc
-    -if @renew_ucc
+    -if @renew_ucc && !@reprocess_ucc
       =f.hidden_field :renew_ucc, value: @renew_ucc
     -if @ucc_csr_submit
       =f.hidden_field :ucc_csr_submit, value: @ucc_csr_submit
