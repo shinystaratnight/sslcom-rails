@@ -33,7 +33,7 @@ module CertificateOrdersHelper
             end
             
             if (reprocess_order && reprocess_domains[:new_domains_count] > 0) || domains_adjustment
-              co_desc = invoice ? " for certificate order ##{certificate_order.ref}." : ''
+              co_desc = invoice ? " For certificate order ##{certificate_order.ref}." : ''
               descr = if @order.invoice_description.blank?
                 "Prorated charge for #{reprocess_domains[:new_domains_count]} 
                 additional domains. (wildcard: #{reprocess_domains[:wildcard]}, 
@@ -41,7 +41,7 @@ module CertificateOrdersHelper
               else
                 "#{@order.invoice_description} #{co_desc}"
               end
-              items << content_tag(:strong, descr )
+              items << content_tag(:strong, descr)
             end
           end
         end

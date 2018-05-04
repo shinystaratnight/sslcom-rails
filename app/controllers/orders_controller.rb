@@ -644,14 +644,41 @@ class OrdersController < ApplicationController
   end
   
   def ucc_update_domain_counts
-    wildcard       = params[:order][:wildcard_count].to_i
-    nonwildcard    = params[:order][:nonwildcard_count].to_i
-    co_nonwildcard = @certificate_order.nonwildcard_count.blank? ? 0 : @certificate_order.nonwildcard_count
-    co_wildcard_count = @certificate_order.wildcard_count.blank? ? 0 : @certificate_order.wildcard_count
+    co = @certificate_order
+    notes = []
+    order = params[:order]
+    
+    # domains entered
+    wildcard = order ? order[:wildcard_count].to_i : params[:wildcard_count].to_i
+    nonwildcard = order ? order[:nonwildcard_count].to_i : params[:nonwildcard_count].to_i
+    
+    # max domain counts stored
+    co_nonwildcard = co.nonwildcard_count.blank? ? 0 : co.nonwildcard_count
+    co_wildcard = co.wildcard_count.blank? ? 0 : co.wildcard_count
+    
+    # max for previous signed certificates to determine credited domains
+    prev_wildcard    = co.get_reprocess_max_wildcard(co.certificate_content).count
+    prev_nonwildcard = co.get_reprocess_max_nonwildcard(co.certificate_content).count
+    
+    if (co_nonwildcard > prev_nonwildcard) &&
+      (nonwildcard > co_nonwildcard) || (@reprocess_ucc && 
+      (nonwildcard >= co_nonwildcard && (nonwildcard > 0)))
+      notes << "#{co_nonwildcard - prev_nonwildcard} non wildcard domains"
+    end
+    if (co_wildcard > prev_wildcard) &&
+      (wildcard > co_wildcard) || (@reprocess_ucc && 
+      (wildcard >= co_wildcard && (wildcard > 0)))
+      notes << "#{co_wildcard - prev_wildcard} wildcard domains"
+    end
 
-    @certificate_order.update(
+    if notes.any?  
+      @order.invoice_description = '' if @order.invoice_description.nil?
+      @order.invoice_description << " Received credit for #{notes.join('and')}."
+      @order.save
+    end
+    co.update(
       nonwildcard_count: (nonwildcard > co_nonwildcard ? nonwildcard : co_nonwildcard),
-      wildcard_count:    (wildcard > co_wildcard_count ? wildcard : co_wildcard_count)
+      wildcard_count:    (wildcard > co_wildcard ? wildcard : co_wildcard)
     )
   end
     
@@ -704,6 +731,8 @@ class OrdersController < ApplicationController
     @certificate_order.add_reproces_order @order
     record_order_visit(@order)
     @order.save
+    # In case credits were used to cover the cost of order.
+    ucc_update_domain_counts
   end
   
   def add_to_monthly_invoice(params)
