@@ -65,7 +65,7 @@ class SslAccount < ActiveRecord::Base
   before_validation :b_create, on: :create
   after_create  :initial_setup
   
-  BILLING_METHODS = ['monthly', 'due_at_checkout']
+  BILLING_METHODS = ['monthly', 'due_at_checkout', 'daily']
   PULL_RESELLER = "pull_from_reseller"
   PULL_ADMIN_TECH = "pull_from_admin_and_tech"
   PULL_ADMIN = "pull_from_admin"
