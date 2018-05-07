@@ -365,17 +365,20 @@ class OrdersController < ApplicationController
       @pending_monthly_invoices = @monthly_invoices
         .where(status: 'pending')
         .where(orders: {approval: 'approved'})
-        .map(&:orders).flatten.uniq.sum(&:cents)
+        .map(&:orders).flatten.uniq
+        .select{|o| invoice_items.include?(o)}.sum(&:cents)
       
       @paid_monthly_invoices = @monthly_invoices
         .where(status: ['paid', 'partially_refunded'])
         .where(orders: {approval: 'approved'})
-        .map(&:orders).flatten.uniq.sum(&:cents)
+        .map(&:orders).flatten.uniq
+        .select{|o| invoice_items.include?(o)}.sum(&:cents)
         
       @refunded_monthly_invoices = @monthly_invoices
         .where(status: 'refunded')
         .where(orders: {approval: 'approved'})
-        .map(&:orders).flatten.uniq.sum(&:cents)
+        .map(&:orders).flatten.uniq
+        .select{|o| invoice_items.include?(o)}.sum(&:cents)
         
       @partial_refunds_monthly_invoices = @monthly_invoices
         .where(status: 'partially_refunded')
@@ -385,6 +388,7 @@ class OrdersController < ApplicationController
       @paid_monthly_invoices -= @partial_refunds_monthly_invoices
       
       @monthly_invoices_count = @monthly_invoices.uniq.count
+      @invoiced_orders_count = invoice_items.count
       
       # Non invoiced orders
       @negative = unpaginated
@@ -410,7 +414,7 @@ class OrdersController < ApplicationController
       faw = unpaginated.where(description: Order::FAW).sum(:cents)
 
       deposits = deposits.where.not(description: Order::FAW)
-        
+    
       @refunded_amount = refunded.sum(:amount)
       @refunded_count  = refunded.count
       @deposits_amount = deposits.sum(:cents)
