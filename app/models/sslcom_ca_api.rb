@@ -149,14 +149,14 @@ class SslcomCaApi
       parameters: approval_req.body, method: "get", response: approval_res.body,
                                             ca: options[:ca]) if approval_res.try(:body)=~/WAITING FOR APPROVAL/
     if (certificate.is_ev? or certificate.is_evcs?) and approval_res.try(:body).blank?
-        # create the user for EV order
+      # create the user for EV order
       host = Rails.application.secrets.sslcom_ca_host+"/v1/user"
       options.merge! no_public_key: true, ca: Ca::SSLCOM_CA # create an ejbca user only
-    else
+    else # collect ev cert
       host = Rails.application.secrets.sslcom_ca_host+
           "/v1/certificate#{'/ev' if certificate.is_ev? or certificate.is_evcs?}/pkcs10"
       options.merge!(collect_certificate: true, username:
-          cc.csr.sslcom_usernames.first) if certificate.is_ev? or certificate.is_evcs? # collect ev cert
+          cc.csr.sslcom_usernames.first) if certificate.is_ev? or certificate.is_evcs?
     end
     req, res = call_ca(host, options, issue_cert_json(options))
     cc.create_csr(body: options[:csr]) if cc.csr.blank?
