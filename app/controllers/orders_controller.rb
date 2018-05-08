@@ -144,18 +144,20 @@ class OrdersController < ApplicationController
   end
   
   def update_invoice
-    monthly_invoice = params[:monthly_invoice]
+    cur_invoice = params[:monthly_invoice] || params[:daily_invoice]
     
-    found = if monthly_invoice
-      Invoice.find_by(reference_number: monthly_invoice[:invoice_ref])
+    found = if cur_invoice
+      Invoice.find_by(reference_number: cur_invoice[:invoice_ref])
     else
       Invoice.find_by(order_id: @order.id) if @order
     end
     update = found ? found : Invoice.new(params[:invoice])
     
     no_errors = if found
-      new_params = monthly_invoice ? monthly_invoice : params[:invoice]
-      update.update_attributes(new_params.keep_if {|k, v| !['order_id', 'invoice_ref'].include?(k)})
+      update.update_attributes(
+        (cur_invoice ? cur_invoice : params[:invoice])
+          .keep_if {|k, v| !['order_id', 'invoice_ref'].include?(k)}
+      )
     else
       update.save
     end
@@ -259,7 +261,7 @@ class OrdersController < ApplicationController
         
         if params[:mo_ref]
           mo = if current_user.is_system_admins?
-            MonthlyInvoice.find_by(reference_number: params[:mo_ref])
+            Invoice.find_by(reference_number: params[:mo_ref])
           else
             current_user.ssl_account.monthly_invoices.find_by(reference_number: params[:mo_ref])
           end
@@ -739,13 +741,8 @@ class OrdersController < ApplicationController
     ucc_update_domain_counts
   end
   
-  def add_to_monthly_invoice(params)
-    ssl_id  = @ssl_account.id
-    invoice = if MonthlyInvoice.invoice_exists?(ssl_id)
-      MonthlyInvoice.get_current_invoice(ssl_id)
-    else
-      MonthlyInvoice.create(billable_id: ssl_id, billable_type: 'SslAccount')
-    end
+  def add_to_payable_invoice(params)
+    invoice = Invoice.get_or_create_for_team(@ssl_account)
     @order = current_order_reprocess_ucc if @reprocess_ucc
     
     if @renew_ucc || @ucc_csr_submit
@@ -789,9 +786,9 @@ class OrdersController < ApplicationController
     @renew_ucc = params[:renew_ucc]
     @ucc_csr_submit = params[:ucc_csr_submit]
     
-    if @ssl_account.billing_monthly? || @amount == 0
-      if @ssl_account.billing_monthly? && @amount > 0 # Invoice Order, do not charge
-        add_to_monthly_invoice(params)
+    if @ssl_account.invoice_required? || @amount == 0
+      if @ssl_account.invoice_required? && @amount > 0 # Invoice Order, do not charge
+        add_to_payable_invoice(params)
         flash[:notice] = "The domains adjustment amount of #{@order.amount.format} will appear on the monthly invoice."
       end
       redirect_to edit_certificate_order_path(@ssl_slug, @certificate_order)
@@ -803,7 +800,7 @@ class OrdersController < ApplicationController
   def ucc_domains_adjust_reprocess
     @reprocess_ucc = true
     
-    if @ssl_account.billing_monthly? || @amount == 0
+    if @ssl_account.invoice_required? || @amount == 0
       if @amount == 0 # Reprocess is free, no additional domains added
         @order = ReprocessCertificateOrder.new(
           amount:      0,
@@ -817,8 +814,8 @@ class OrdersController < ApplicationController
         flash[:notice] = "This UCC certificate reprocess is free due to no additional domains."
       end
       
-      if @ssl_account.billing_monthly? && @amount > 0 # Invoice Order, do not charge
-        add_to_monthly_invoice(params)
+      if @ssl_account.invoice_required? && @amount > 0 # Invoice Order, do not charge
+        add_to_payable_invoice(params)
         flash[:notice] = "This UCC reprocess in the amount of #{Money.new(@amount).format} will appear on the monthly invoice."
       end
       redirect_to edit_certificate_order_path(@ssl_slug, @certificate_order)

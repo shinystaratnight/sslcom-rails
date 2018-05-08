@@ -36,9 +36,9 @@ class InvoicesController < ApplicationController
     orders_count = orders.count
     if orders_count > 0
       invoice = if params[:invoice] == 'new_invoice'
-        MonthlyInvoice.create(billable_id: @invoice.billable.id, billable_type: 'SslAccount')
+        Invoice.create_invoice_for_team(@invoice.billable.id)
       else
-        MonthlyInvoice.find_by(reference_number: params[:invoice])
+        Invoice.find_by(reference_number: params[:invoice])
       end
       orders.update_all(invoice_id: invoice.id)
       flash[:notice] = "All #{orders_count} order(s) have been successfully transferred to invoice ##{invoice.reference_number}."
@@ -129,7 +129,7 @@ class InvoicesController < ApplicationController
   def refund_other
     if @invoice && !@invoice.refunded?
       payment = @invoice.payment
-      payment_type = MonthlyInvoice::PAYMENT_METHODS_TEXT[params[:refund_type].to_sym]
+      payment_type = Invoice::PAYMENT_METHODS_TEXT[params[:refund_type].to_sym]
       @invoice.full_refund!
       payment.full_refund! unless payment.fully_refunded?
       SystemAudit.create(
@@ -181,7 +181,7 @@ class InvoicesController < ApplicationController
   end
   
   def make_payment_other
-    pmt_type = MonthlyInvoice::PAYMENT_METHODS_TEXT[params[:ptm_type].to_sym]
+    pmt_type = Invoice::PAYMENT_METHODS_TEXT[params[:ptm_type].to_sym]
     if @invoice && !@invoice.paid?
       @order = Order.new(
         amount:      @invoice.get_amount,
@@ -222,9 +222,9 @@ class InvoicesController < ApplicationController
   
   def invoices_base_query
     base = if current_user && current_user.is_system_admins?
-      MonthlyInvoice
+      Invoice.where.not(billable_id: nil, type: nil)
     else
-      current_user.ssl_account.monthly_invoices.where.not(status: 'archived')
+      current_user.ssl_account.invoices.where.not(status: 'archived')
     end
     base.joins(:orders).uniq.sort_with(params)
   end
@@ -294,7 +294,7 @@ class InvoicesController < ApplicationController
     if current_user
       ref = params[:order].nil? ? params[:id] : params[:order][:id]
       @ssl_account = if current_user.is_system_admins?
-        MonthlyInvoice.find_by(reference_number: ref).billable
+        Invoice.find_by(reference_number: ref).billable
       else
         current_user.ssl_account
       end
@@ -305,9 +305,9 @@ class InvoicesController < ApplicationController
     if current_user
       ref = params[:order].nil? ? params[:id] : params[:order][:id]
       @invoice = if current_user.is_system_admins?
-        MonthlyInvoice.find_by(reference_number: ref)
+        Invoice.find_by(reference_number: ref)
       else
-        current_user.ssl_account.monthly_invoices.find_by(reference_number: ref)
+        current_user.ssl_account.invoices.find_by(reference_number: ref)
       end
     end
   end

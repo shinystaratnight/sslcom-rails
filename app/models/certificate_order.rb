@@ -814,7 +814,7 @@ class CertificateOrder < ActiveRecord::Base
   end
   
   def reprocess_ucc_process
-    ssl_account.billing_monthly? ? REPROCES_SIGNUP_W_INVOICE : REPROCES_SIGNUP_W_PAYMENT
+    ssl_account.invoice_required? ? REPROCES_SIGNUP_W_INVOICE : REPROCES_SIGNUP_W_PAYMENT
   end
   
   def is_express_signup?

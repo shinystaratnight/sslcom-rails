@@ -19,11 +19,14 @@
     %thead
       %tr.heading_row
         %th
+          = sort_link('start_date', get_col_direction('start_date', params), 'Start Date')
+        %th
           = sort_link('end_date', get_col_direction('end_date', params), 'Due Date')
         -if system_admins
           %th Team
         %th
           = sort_link('reference_number', get_col_direction('reference_number', params), 'Invoice #')
+        %th Type
         %th Amount
         %th
           = sort_link('orders', get_col_direction('orders', params), 'Orders')
@@ -33,15 +36,19 @@
     %tbody
       -@invoices.each do |i|
         %tr
-          %td=i.end_date.strftime('%F')
+          %td #{i.start_date.strftime('%F')}
+          %td #{i.end_date.strftime('%F')}
           -if system_admins
             -team_name = i.billable.get_team_name
             %td=link_to team_name, invoices_path(@ssl_slug, team: team_name, commit: 'Search'), |
             method: :get
           %td=link_to i.reference_number, invoice_path(@ssl_slug, i.reference_number)
           %td
+            = "#{i.class.to_s.include?('Daily') ? '&#128197;' : '&#128467;'}".html_safe
+            = i.class.to_s.gsub('Invoice', '')
+          %td
             %strong=i.get_amount_format
           %td=i.orders.count
           %td=link_to "\u21E9 Download".html_safe, download_invoice_path(@ssl_slug, i.reference_number)
           %td{id: i.archived? ? 'invoice-status-archived' : 'invoice-status'}
-            =i.status.upcase.gsub('_', ' ')
+            = i.status.upcase.gsub('_', ' ')
