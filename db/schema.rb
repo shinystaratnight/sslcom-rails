@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180425221036) do
+ActiveRecord::Schema.define(version: 20180503174425) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        limit: 255
@@ -312,6 +312,8 @@ ActiveRecord::Schema.define(version: 20180425221036) do
     t.string   "ext_customer_ref",      limit: 255
     t.string   "validation_type",       limit: 255
     t.string   "acme_account_id",       limit: 255
+    t.integer  "wildcard_count",        limit: 4
+    t.integer  "nonwildcard_count",     limit: 4
   end
 
   add_index "certificate_orders", ["created_at"], name: "index_certificate_orders_on_created_at", using: :btree

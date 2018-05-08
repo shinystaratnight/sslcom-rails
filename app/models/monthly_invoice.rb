@@ -183,7 +183,7 @@ class MonthlyInvoice < Invoice
       desc    = if o.invoice_description.blank?
         "Additional #{domains[:non_wildcard]} non-wildcard and #{domains[:wildcard]} wildcard domains for certificate order ##{co.ref}."
       else
-        "#{o.invoice_description} for certificate order ##{co.ref}."
+        "#{o.invoice_description} For certificate order ##{co.ref}."
       end  
       
       final[o.reference_number] = {

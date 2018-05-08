@@ -19,8 +19,10 @@
     .order-stats-cont
       %div
         ="<span class='emp'>Monthly Invoices</span>".html_safe
-        (total: 
-        %span #{@monthly_invoices_count}
+        (invoices: 
+        %span #{@monthly_invoices_count},
+        orders:
+        %span #{@invoiced_orders_count},
         pending:
         %span #{Money.new(@pending_monthly_invoices).format},
         paid: 

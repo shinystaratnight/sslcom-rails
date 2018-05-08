@@ -332,8 +332,9 @@
             #{"sub" if @certificate.is_premium_ssl?}domains)
   -else
     -if reprocess_ucc
-      -wildcard_count    = @certificate_order.get_reprocess_max_wildcard.count
-      -nonwildcard_count = @certificate_order.get_reprocess_max_nonwildcard.count
+      -max_counts        = @certificate_order.ucc_get_max_counts
+      -wildcard_count    = max_counts[:wildcard_count]
+      -nonwildcard_count = max_counts[:nonwildcard_count]
       -nonwildcard_cost  = @certificate_order.ucc_prorated_domain(:nonwildcard, @tier)
 
       .clearfix
