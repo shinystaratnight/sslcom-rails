@@ -71,7 +71,7 @@ class SslAccountsController < ApplicationController
 
   # PUT /ssl_account/
   def update
-    params[:monthly_billing] ? update_monthly_billing : update_reseller_profile
+    params[:billing_method] ? update_billing_method : update_reseller_profile
   end
 
   def remove_u2f
@@ -158,13 +158,13 @@ class SslAccountsController < ApplicationController
   
   private
   
-  def update_monthly_billing
+  def update_billing_method
     if current_user.is_system_admins?
       ssl_account = SslAccount.where(
         'ssl_slug = ? OR acct_number = ?', params[:ssl_slug], params[:ssl_slug]
       ).first
-      ssl_account.update(billing_method: (params[:status] == 'enable' ? 'monthly' : 'due_at_checkout'))
-      flash[:notice] = "Successfully #{params[:status]}d team #{params[:ssl_slug]} monthly billing."
+      ssl_account.update(billing_method: params[:billing_method])
+      flash[:notice] = "Successfully updated team #{params[:ssl_slug]} to '#{params[:billing_method]}' billing."
     else
       flash[:error] = "You are not authorized to perform this action."
     end  

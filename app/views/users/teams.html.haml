@@ -85,13 +85,12 @@
             -if system_admins || permissions.include?(:users)
               =link_to "users (#{t.users.count})", users_path(ssl_slug: t.to_slug), class: 'btn-team-links'
           -if system_admins
-            %div
-              -billing_status = t.billing_monthly? ? 'disable' : 'enable'
-              =link_to "#{billing_status} monthly billing", |
-                ssl_account_path(ssl_slug: t.to_slug, monthly_billing: true, status: billing_status), |
-                method: :put, class: "btn-team-#{billing_status}"
-              
-              
+            #team-billing-method
+              =form_tag ssl_account_path(ssl_slug: t.to_slug), id: 'frm-team-billing-method',  method: :put do
+                =select_tag :billing_method,                                                                           |
+                  options_for_select(SslAccount::BILLING_METHODS.map{|bm| [bm.gsub('_', ' '), bm]}, t.billing_method), |
+                  id: 'team-billing-method'
+
         %td=t.created_at.strftime("%b %d, %Y")
         -unless system_admins
           %td
