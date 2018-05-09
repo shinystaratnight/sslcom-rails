@@ -11,7 +11,7 @@
       =render :partial=>'/funded_accounts/certificate_order_row'
       %tr.order-divider
         %td{colspan: '4'}
-      -unless order.on_monthly_invoice?  
+      -unless order.on_payable_invoice?
         %tr.order-subtotal
           %td.description.total_row{colspan: '3'} Subtotal:
           %td.price.total_row
@@ -31,7 +31,7 @@
     %tr.order-total
       %td.description.total_row{colspan: '3'} Total:
       %td.price.total_row
-        -if order.on_monthly_invoice?
+        -if order.on_payable_invoice?
           #{order.amount.format}
         -else
           #{Money.new(order.get_total_merchant_amount).format}
