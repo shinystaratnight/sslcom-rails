@@ -148,7 +148,8 @@ class SslcomCaApi
     return cc.csr.sslcom_ca_requests.create(
       parameters: approval_req.body, method: "get", response: approval_res.body,
                                             ca: options[:ca]) if approval_res.try(:body)=~/WAITING FOR APPROVAL/
-    if (certificate.is_ev? or certificate.is_evcs?) and approval_res.try(:body).blank?
+    if (certificate.is_ev? or certificate.is_evcs?) and
+        (approval_res.try(:body).blank? or approval_res.try(:body)=~/EXPIRED AND NOTIFIED/)
       # create the user for EV order
       host = Rails.application.secrets.sslcom_ca_host+"/v1/user"
       options.merge! no_public_key: true, ca: Ca::SSLCOM_CA # create an ejbca user only
@@ -156,15 +157,15 @@ class SslcomCaApi
       host = Rails.application.secrets.sslcom_ca_host+
           "/v1/certificate#{'/ev' if certificate.is_ev? or certificate.is_evcs?}/pkcs10"
       options.merge!(collect_certificate: true, username:
-          cc.csr.sslcom_usernames.first) if certificate.is_ev? or certificate.is_evcs?
+          cc.csr.sslcom_usernames.compact.first) if certificate.is_ev? or certificate.is_evcs?
     end
     req, res = call_ca(host, options, issue_cert_json(options))
     cc.create_csr(body: options[:csr]) if cc.csr.blank?
     api_log_entry=cc.csr.sslcom_ca_requests.create(request_url: host,
       parameters: req.body, method: "post", response: res.try(:body), ca: options[:ca])
-    unless api_log_entry.username
+    if api_log_entry.username.blank?
       OrderNotifier.problem_ca_sending("support@ssl.com", cc.certificate_order,"sslcom").deliver
-    else
+    elsif api_log_entry.certificate_chain # signed certificate is issued
       cc.update_column(:ref, api_log_entry.username) unless api_log_entry.blank?
       cc.csr.signed_certificates.create body: api_log_entry.end_entity_certificate.to_s, ca_id: options[:ca_id]
       SystemAudit.create(
@@ -173,6 +174,8 @@ class SslcomCaApi
           notes:  "issued signed certificate for certificate order #{certificate_order.ref}",
           action: "SslcomCaApi#apply_for_certificate"
       )
+    else # still waiting for approval
+
     end
     api_log_entry
   end
@@ -212,7 +215,7 @@ class SslcomCaApi
 
   def self.get_status(csr=nil,host_only=false)
     unless csr.blank?
-      return if csr.sslcom_approval_ids.blank?
+      return if csr.sslcom_approval_ids.compact.first.blank?
       query="status/#{csr.sslcom_approval_ids.compact.first}"
     else
       query="approvals"
@@ -227,9 +230,9 @@ class SslcomCaApi
     end
   end
 
-  def self.approvals
-    status = get_status
-    JSON.parse(status) if status!="[]"
+  def self.unique_id(approval_id)
+    req,res = get_status
+    JSON.parse(res.body).select{|approval|approval[1]==approval_id.to_i}.first[0] unless res.body.blank?
   end
 
   private
