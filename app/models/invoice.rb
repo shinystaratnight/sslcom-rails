@@ -117,7 +117,9 @@ class Invoice < ActiveRecord::Base
   end
 
   def show_payment_actions?
-    !(paid? || refunded? || partially_refunded?)
+    amt = get_amount
+    amt = amt.is_a?(Integer) ? amt : amt.cents
+    !(paid? || refunded? || partially_refunded? || (amt == 0))
   end
   
   def show_refund_actions?
