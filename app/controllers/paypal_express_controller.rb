@@ -165,7 +165,7 @@ class PaypalExpressController < ApplicationController
     @order = Order.new(
       amount:        Money.new(purchase_params[:subtotal]),
       cents:         purchase_params[:subtotal],
-      description:   Order::INVOICE_PAYMENT,
+      description:   @ssl_account.get_invoice_pmt_description,
       state:         'pending',
       approval:      'approved',
       notes:         order_invoice_notes

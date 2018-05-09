@@ -75,7 +75,7 @@ class InvoicesController < ApplicationController
       billing_profile_id: params[:funding_source],
       amount:             @target_amount,
       cents:              (@target_amount * 100).to_i,
-      description:        Order::INVOICE_PAYMENT,
+      description:        @ssl_account.get_invoice_pmt_description,
       state:              'pending',
       approval:           'approved',
       notes:              order_invoice_notes
@@ -186,7 +186,7 @@ class InvoicesController < ApplicationController
       @order = Order.new(
         amount:      @invoice.get_amount,
         cents:       @invoice.get_cents,
-        description: Order::INVOICE_PAYMENT,
+        description: @ssl_account.get_invoice_pmt_description,
         state:       'paid',
         approval:    'approved',
         notes:       order_invoice_notes << " Paid full amount of #{@invoice.get_amount_format} by #{pmt_type}."

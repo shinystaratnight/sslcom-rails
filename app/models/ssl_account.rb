@@ -339,7 +339,17 @@ class SslAccount < ActiveRecord::Base
       !@@reserved_routes.include?(cur_ssl_slug) &&
       cur_ssl_slug.gsub(/([a-zA-Z]|_|-|\s|\d)/, '').length == 0
   end
-
+  
+  def get_invoice_label
+    return 'monthly' if billing_monthly?
+    return 'daily' if billing_daily?
+    ''
+  end
+  
+  def get_invoice_pmt_description
+    billing_monthly? ? Order::MI_PAYMENT : Order::DI_PAYMENT
+  end
+  
   def get_account_owner
     Assignment.where(
       role_id: [Role.get_owner_id, Role.get_reseller_id], ssl_account_id: id

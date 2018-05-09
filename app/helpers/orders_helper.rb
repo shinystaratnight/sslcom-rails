@@ -201,7 +201,8 @@ module OrdersHelper
   end
   
   def order_invoice_notes
-    "Payment for monthly invoice total of #{@invoice.get_amount_format} due on #{@invoice.end_date.strftime('%F')}."
+    "Payment for #{@invoice.billable.get_invoice_label} 
+    invoice total of #{@invoice.get_amount_format} due on #{@invoice.end_date.strftime('%F')}."
   end
   
   def ucc_csr_submit_notes
