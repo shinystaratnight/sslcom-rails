@@ -16,7 +16,7 @@ class InvoicesController < ApplicationController
   
   def download
     if @invoice
-      render pdf: "ssl.com_monthly_invoice_#{@invoice.reference_number}"
+      render pdf: "ssl.com_#{@ssl_account.get_invoice_label}_invoice_#{@invoice.reference_number}"
     else
       flash[:error] = "This invoice doesn't exist."
       redirect_to :back
@@ -64,11 +64,11 @@ class InvoicesController < ApplicationController
   end
   
   def new_payment
-    @monthly_invoice = true
+    @payable_invoice = true
   end
   
   def make_payment
-    @monthly_invoice = true
+    @payable_invoice = true
     ucc_or_invoice_params
     
     @order = Order.new(
@@ -116,7 +116,7 @@ class InvoicesController < ApplicationController
           owner:  current_user,
           target: @invoice,
           notes:  "Credit issued with reason: #{params[:invoice][:credit_reason]}",
-          action: "Monthly Invoice ##{@invoice.reference_number}, credit issued for #{f_amount}."
+          action: "#{@ssl_account.get_invoice_label.capitalize} Invoice ##{@invoice.reference_number}, credit issued for #{f_amount}."
         )
       end
       flash[:notice] = "Invoice was successfully credited for amount #{f_amount}."
@@ -136,7 +136,7 @@ class InvoicesController < ApplicationController
         owner:  current_user,
         target: @invoice,
         notes:  "Full refund issued for payment type #{payment_type}.",
-        action: "Monthly Invoice ##{@invoice.reference_number}, refund issued for #{payment.amount.format}."
+        action: "#{@ssl_account.get_invoice_label.capitalize} Invoice ##{@invoice.reference_number}, refund issued for #{payment.amount.format}."
       )
       flash[:notice] = "Invoice was successfully refunded for payment type #{payment_type}."
     else
