@@ -3,6 +3,13 @@
   -if ca_response.instance_of? SslcomCaRequest
     %dd username: #{ca_response.username}
     %dd certificate_chain: #{ca_response.certificate_chain}
+    %dd approval_id: #{ca_response.approval_id}
+    %dd response: #{ca_response.response}
+    -if ca_response.response =~ /WAITING FOR APPROVAL/ or ca_response.response =~ /approval_id/
+      -approval_id=ca_response.api_requestable.sslcom_approval_ids.compact.first
+      -unique_id=SslcomCaApi.unique_id(approval_id)
+      %dd=link_to "click to approve",
+        "#{Rails.application.secrets.sslcom_ca_admin_host}/ejbca/adminweb/approval/approveaction.jsf?uniqueId=#{unique_id}", target: "_blank"
   -elsif !ca_response.response.blank?
     -result=CGI::parse(ca_response.response)
     -if result['errorCode'][0]=~/^[0]/

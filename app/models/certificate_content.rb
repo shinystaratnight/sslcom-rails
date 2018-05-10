@@ -243,7 +243,7 @@ class CertificateContent < ActiveRecord::Base
 
   def domains=(names)
     unless names.blank?
-      names = names.split(/\s+/).flatten.uniq.reject{|d|d.blank?}
+      names = names.split(/[\s+]+/).flatten.uniq.reject{|d|d.blank?}
     end
     write_attribute(:domains, names)
   end
@@ -783,13 +783,9 @@ class CertificateContent < ActiveRecord::Base
   def csr_validation
     allow_wildcard_ucc=certificate_order.certificate.allow_wildcard_ucc?
     is_wildcard = certificate_order.certificate.is_wildcard?
-    is_free = certificate_order.certificate.is_free?
     is_ucc = certificate_order.certificate.is_ucc?
     is_code_signing = certificate_order.certificate.is_code_signing?
     is_client = certificate_order.certificate.is_client?
-    is_premium_ssl = certificate_order.certificate.is_premium_ssl?
-    invalid_chars_msg = "domain has invalid characters. Only the following characters
-          are allowed [A-Za-z0-9.-#{'*' if(is_ucc || is_wildcard)}] in the subject"
     if csr.common_name.blank?
       errors.add(:signing_request, 'is missing the common name (CN) field or is invalid and cannot be parsed')
     elsif !csr.verify_signature

@@ -31,14 +31,14 @@
           %span paypal #{$1}
         -elsif @order.deducted_from.try(:reference_number)
           %span=link_to @order.deducted_from.reference_number, order_path(@order.deducted_from)
-        -elsif current_user.ssl_account.is_registered_reseller? && !@order.on_monthly_invoice?
+        -elsif current_user.ssl_account.is_registered_reseller? && !@order.on_payable_invoice?
           %span funded account
         -else
-          -if @order.on_monthly_invoice?
-            -invoice = @order.monthly_invoice
+          -if @order.on_payable_invoice?
+            -invoice = @order.invoice
             %span
               %strong
-                =link_to "monthly invoice (#{invoice.status})", invoice_path(@ssl_slug, invoice.reference_number)
+                =link_to "#{invoice.billable.get_invoice_label} invoice (#{invoice.status})", invoice_path(@ssl_slug, invoice.reference_number)
           -else
             %span=@order.state.humanize.downcase
   =render :partial=>'/funded_accounts/certificate_order_detail'

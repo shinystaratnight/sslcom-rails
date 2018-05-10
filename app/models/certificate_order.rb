@@ -447,10 +447,10 @@ class CertificateOrder < ActiveRecord::Base
   end
   
 
-def domains_adjust_billing?
-  certificate.is_ucc? && (certificate.is_premium_ssl? !=0) &&
-  orders.count > 0 && orders.first.persisted?
-end
+  def domains_adjust_billing?
+    certificate.is_ucc? && (certificate.is_premium_ssl? !=0) &&
+    orders.count > 0 && orders.first.persisted?
+  end
 
   # Prorated pricing for single domain for ucc certificate,
   # used in calculating reprocessing amount for additional domains.
@@ -488,11 +488,28 @@ end
     end
   end
   
+  def ucc_get_max_counts(certificate_content=nil)
+    max_wildcard_count    = get_reprocess_max_wildcard(certificate_content).count
+    max_nonwildcard_count = get_reprocess_max_nonwildcard(certificate_content).count
+    
+    # check against counts of certificate's initial purchase
+    if !wildcard_count.blank? && (wildcard_count > max_wildcard_count)
+      max_wildcard_count = wildcard_count
+    end
+    if !nonwildcard_count.blank? && (nonwildcard_count > max_nonwildcard_count)
+      max_nonwildcard_count = nonwildcard_count
+    end
+    
+    {wildcard_count: max_wildcard_count, nonwildcard_count: max_nonwildcard_count}
+  end
+    
   def ucc_prorated_amount(certificate_content, reseller_tier=nil)
-    wildcard_count        = get_reprocess_max_wildcard(certificate_content).count
-    nonwildcard_count     = get_reprocess_max_nonwildcard(certificate_content).count
+    max = ucc_get_max_counts(certificate_content)
+    max_wildcard_count    = max[:wildcard_count]
+    max_nonwildcard_count = max[:nonwildcard_count]
+    
     # make sure NOT to charge for tier 1 domains (3 total)
-    nonwildcard_count     = (nonwildcard_count < 3) ? 3 : nonwildcard_count
+    max_nonwildcard_count = (max_nonwildcard_count < 3) ? 3 : max_nonwildcard_count
     nonwildcard_cost      = ucc_prorated_domain(:nonwildcard, reseller_tier)
     wildcard_cost         = ucc_prorated_domain(:wildcard, reseller_tier)
     new_nonwildcard_count = 0
@@ -500,8 +517,8 @@ end
     certificate_content.domains.each do |name|
       name.include?('*') ? (new_wildcard_count +=1) : (new_nonwildcard_count +=1)
     end
-    addt_nonwildcard = new_nonwildcard_count - nonwildcard_count
-    addt_wildcard    = new_wildcard_count - wildcard_count
+    addt_nonwildcard = new_nonwildcard_count - max_nonwildcard_count
+    addt_wildcard    = new_wildcard_count - max_wildcard_count
     addt_nonwildcard = (addt_nonwildcard < 0) ? 0 : addt_nonwildcard
     addt_wildcard    = (addt_wildcard < 0) ? 0 : addt_wildcard
     (addt_nonwildcard * nonwildcard_cost) + (addt_wildcard * wildcard_cost)
@@ -797,7 +814,7 @@ end
   end
   
   def reprocess_ucc_process
-    ssl_account.billing_monthly? ? REPROCES_SIGNUP_W_INVOICE : REPROCES_SIGNUP_W_PAYMENT
+    ssl_account.invoice_required? ? REPROCES_SIGNUP_W_INVOICE : REPROCES_SIGNUP_W_PAYMENT
   end
   
   def is_express_signup?

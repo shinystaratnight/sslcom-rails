@@ -9,7 +9,7 @@ class Order < ActiveRecord::Base
   belongs_to  :billing_profile_unscoped, foreign_key: :billing_profile_id, class_name: "BillingProfileUnscoped"
   belongs_to  :deducted_from, class_name: "Order", foreign_key: "deducted_from_id"
   belongs_to  :visitor_token
-  belongs_to  :monthly_invoice, class_name: "Invoice", foreign_key: :invoice_id
+  belongs_to  :invoice, class_name: "Invoice", foreign_key: :invoice_id
   has_many    :line_items, dependent: :destroy, after_add: Proc.new { |p, d| p.amount += d.amount}
   has_many    :certificate_orders, through: :line_items, :source => :sellable,
               :source_type => 'CertificateOrder', unscoped: true
@@ -39,7 +39,9 @@ class Order < ActiveRecord::Base
   FAW                = "Funded Account Withdrawal"
   DOMAINS_ADJUSTMENT = "Domains Adjustment"
   SSL_CERTIFICATE    = "SSL Certificate Order"
-  INVOICE_PAYMENT    = "Monthly Invoice Payment"
+  MI_PAYMENT         = "Monthly Invoice Payment"
+  DI_PAYMENT         = "Daily Invoice Payment"
+  
   # If team's billing_method is set to 'monthly', grab all orders w/'approved' approval
   # when running charges at the end of the month for orders from ucc reprocessing.
   BILLING_STATUS = %w{approved pending declined}
@@ -279,7 +281,7 @@ class Order < ActiveRecord::Base
     
   def total
     unless reprocess_ucc_order? || monthly_invoice_order? || 
-      on_monthly_invoice? || domains_adjustment?
+      daily_invoice_order? || on_payable_invoice? || domains_adjustment?
       
       self.amount = line_items.inject(0.to_money) {|sum,l| sum + l.amount }
     end
@@ -480,16 +482,16 @@ class Order < ActiveRecord::Base
     get_total_merchant_refunds == get_total_merchant_amount
   end
   
-  def on_monthly_invoice?
+  def on_payable_invoice?
     !invoice_id.blank? && state == 'invoiced'
   end
   
   def approved_for_invoice?
-    on_monthly_invoice? && approval == 'approved'
+    on_payable_invoice? && approval == 'approved'
   end
   
   def removed_from_invoice?
-    on_monthly_invoice? && approval == 'rejected'
+    on_payable_invoice? && approval == 'rejected'
   end
   
   def invoice_address
@@ -501,7 +503,7 @@ class Order < ActiveRecord::Base
   end
   
   def domains_adjustment?
-    description == Order::DOMAINS_ADJUSTMENT
+    description == DOMAINS_ADJUSTMENT
   end
   
   def reprocess_ucc_free?
@@ -509,11 +511,17 @@ class Order < ActiveRecord::Base
   end
   
   def monthly_invoice_order?
-    description == Order::INVOICE_PAYMENT
+    # Payment for total of monthly invoice
+    description == MI_PAYMENT
+  end
+  
+  def daily_invoice_order?
+    # Payment for total of daily invoice
+    description == DI_PAYMENT
   end
   
   def faw_order?
-    description == Order::FAW
+    description == FAW # Funded Account Withdrawal
   end
   
   def get_order_type_label
@@ -526,7 +534,7 @@ class Order < ActiveRecord::Base
     end  
   end
   
-  # Fetches all domain counts that were added during UCC certificate reprocess
+  # Fetches all domain counts that were added during UCC domains adjustment
   def get_reprocess_domains
     co           = certificate_orders.first
     cc           = get_reprocess_cc(co)
@@ -535,11 +543,8 @@ class Order < ActiveRecord::Base
     non_wildcard = cur_domains.map {|d| d if !d.include?('*')}.compact
     wildcard     = cur_domains.map {|d| d if d.include?('*')}.compact
     
-    old_non_wildcard = co.get_reprocess_max_nonwildcard(cc)
-    old_wildcard     = co.get_reprocess_max_wildcard(cc)
-    
-    tot_non_wildcard = non_wildcard.count - old_non_wildcard.count
-    tot_wildcard     = wildcard.count - old_wildcard.count
+    tot_non_wildcard = non_wildcard.count - co.get_reprocess_max_nonwildcard(cc).count
+    tot_wildcard     = wildcard.count - co.get_reprocess_max_wildcard(cc).count
     
     tot_non_wildcard  = tot_non_wildcard < 0 ? 0 : tot_non_wildcard
     tot_wildcard      = tot_wildcard < 0 ? 0 : tot_wildcard
@@ -814,7 +819,7 @@ class Order < ActiveRecord::Base
       new_refund = Refund.refund_merchant(params)
     end
     
-    unless monthly_invoice_order?
+    unless monthly_invoice_order? || daily_invoice_order?
       if merchant_fully_refunded?
         full_refund! unless fully_refunded?
         if certificate_orders.any?
@@ -1021,6 +1026,9 @@ class Order < ActiveRecord::Base
                                 :amount              =>pd[2].amount*wildcards)
           certificate_order.sub_order_items << so
         end
+
+        certificate_order.wildcard_count = wildcards
+        certificate_order.nonwildcard_count = (certificate_order.domains.try(:size) || 0) - wildcards
       end
     end
     unless certificate.is_ucc?

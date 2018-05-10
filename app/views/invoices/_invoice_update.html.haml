@@ -1,5 +1,5 @@
--pm      = MonthlyInvoice::PAYMENT_METHODS
--pm_text = MonthlyInvoice::PAYMENT_METHODS_TEXT
+-pm      = Invoice::PAYMENT_METHODS
+-pm_text = Invoice::PAYMENT_METHODS_TEXT
 
 =form_for @invoice.becomes(Invoice), url: invoice_url(@ssl_slug, @invoice.reference_number), |
 remote: true, method: :put, data: {type: :json}, html: {id: 'frm-mo-inv-update'} do |f|
@@ -7,7 +7,7 @@ remote: true, method: :put, data: {type: :json}, html: {id: 'frm-mo-inv-update'}
     .fields
       .clearfix
         =f.label :status
-        =f.select :status, MonthlyInvoice::STATUS.map{|s| [s.upcase, s]}, include_blank: false
+        =f.select :status, Invoice::STATUS.map{|s| [s.upcase, s]}, include_blank: false
       
       .clearfix
         =f.label :default_payment

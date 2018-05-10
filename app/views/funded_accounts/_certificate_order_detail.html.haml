@@ -1,5 +1,7 @@
 -cert ||= @certificate_order ? [@certificate_order] : @certificate_orders
 -order ||= @order || current_order
+-invoiced = order.on_payable_invoice?
+
 %table#order_details_section(class="#{order.receipt ? 'receipt' : ''}")
   %tbody
     -unless cert.blank?
@@ -11,7 +13,7 @@
       =render :partial=>'/funded_accounts/certificate_order_row'
       %tr.order-divider
         %td{colspan: '4'}
-      -unless order.on_monthly_invoice?  
+      -unless invoiced
         %tr.order-subtotal
           %td.description.total_row{colspan: '3'} Subtotal:
           %td.price.total_row
@@ -28,10 +30,24 @@
           %tr.order-funded
             %td.description.total_row{colspan: '3'} Funded Account Credit:
             %td.price.total_row -#{Money.new(order.get_funded_account_amount).format}
+    
     %tr.order-total
-      %td.description.total_row{colspan: '3'} Total:
+      -if invoiced
+        -invoice = order.invoice
+        %td{colspan: '2'}
+          .order-detail-actions
+            %emp Pay: 
+            = link_to "this invoice #{invoice.get_amount_format}",           |
+              new_payment_invoice_path(@ssl_slug, invoice.reference_number), |
+              class: 'btn-pay-invoices', method: :get
+            = link_to 'all unpaid invoices',                               |
+              invoices_path(@ssl_slug, commit: true, status: ['pending']), |
+              class: 'btn-pay-invoices'
+        %td.description.total_row Total:
+      -else
+        %td.description.total_row{colspan: '3'} Total:
       %td.price.total_row
-        -if order.on_monthly_invoice?
+        -if invoiced
           #{order.amount.format}
         -else
           #{Money.new(order.get_total_merchant_amount).format}

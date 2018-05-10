@@ -92,8 +92,8 @@
                             %li=link_to 'manage saved contacts', saved_contacts_contacts_path(ssl_slug: @ssl_slug)
                           %li=link_to 'buy certificate', certificates_url
                           %li=link_to 'certificate pricing', reseller_tier_url(ssl_account.reseller.reseller_tier.id)
-                          -if ssl_account && permitted_to?(:index, :invoices) && ssl_account.monthly_invoices.any?
-                            %li=link_to 'monthly invoices', invoices_path(@ssl_slug)
+                          -if ssl_account && permitted_to?(:index, :invoices) && ssl_account.invoices.any?
+                            %li=link_to 'monthly and daily invoices', invoices_path(@ssl_slug)
                 %tr
                   %td(colspan="5")
                     -if ac = ssl_account.api_credential

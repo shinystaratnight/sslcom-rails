@@ -6407,7 +6407,8 @@ span.notifications-teams
     #btn-order-cancel,
     #btn-order-credit,
     #btn-order-co-refunt,
-    #btn-order-revoke
+    #btn-order-revoke,
+    .btn-pay-invoices
       border-radius: 3px
       border: none  
       font-weight: 500
@@ -6441,6 +6442,22 @@ span.notifications-teams
       border: 1px solid #334DFF
       color: #334DFF !important
       background-color: none
+    
+    .btn-pay-invoices
+      margin-right: 1.3rem
+      font-size: 0.95rem
+      font-weight: 600
+      border: 1px solid #6b9029 !important
+      color: #6b9029 !important
+      background-color: none !important
+      margin-top: 0.7rem
+      text-transform: uppercase
+    
+    emp
+      padding-right: 1rem
+      text-transform: uppercase
+      font-size: 1.1rem
+      margin-top: 0.9rem
       
   .description.total_row
     text-align: right
@@ -6580,8 +6597,6 @@ span.notifications-teams
     float: left
   
 .btn-team-links,
-.btn-team-disable,
-.btn-team-enable,
 .btn-rmv-invoice-item,
 .btn-add-invoice-item,
 .btn-edit-invoice-item,
@@ -6598,26 +6613,33 @@ span.notifications-teams
   padding: 2px 3px
   border: 1px solid grey
   margin: 0.1rem
-  
-.btn-team-disable,
-.btn-rmv-invoice-item
-  background-color: #F51C29
-  border: 1px solid #F51C29
-
-.btn-team-enable,
-.btn-add-invoice-item
-  background-color: #6b9029
-  border: 1px solid #6b9029
 
 .btn-refunds-detail
   background-color: grey
   border: 1px solid grey
   text-transform: uppercase
+
+#team-billing-method
+  margin-top: 0.5rem
   
 /*
- * Invoices Page
+ * Invoices details and index
  */
- 
+.invoices-index
+  td, th
+    text-align: left !important
+  
+  td:first-child, th:first-child
+    padding-left: 1rem !important
+    
+  .type span
+    font-size: 1rem
+    text-transform: uppercase
+    color: grey
+    
+  .list
+    text-align: center !important
+      
 .btn-edit-invoice-item,
 #btn-update-invoice-item
   border: 1px solid #334DFF

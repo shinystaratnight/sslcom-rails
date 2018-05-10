@@ -20,6 +20,8 @@ module Sortable
       case column_name
       when :end_date
         order("invoices.end_date #{direction.upcase}")
+      when :start_date
+        order("invoices.start_date #{direction.upcase}")
       when :reference_number
         order("invoices.reference_number #{direction.upcase}")
       when :status

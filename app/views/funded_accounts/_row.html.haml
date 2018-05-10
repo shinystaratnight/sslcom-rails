@@ -1,7 +1,7 @@
 -colspan ||= '3'
 -indx ||= ""
 -row_class=indx.blank? ? "" : "row_#{indx}"
--if cert.respond_to?(:parent) && cert.parent
+-if cert.respond_to?(:parent) && cert.parent && !(@order && @order.reprocess_ucc_order?)
   %tr.line_item(class=row_class)
     -unless action_name == 'show_cart'
       %td

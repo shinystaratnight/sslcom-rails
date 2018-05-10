@@ -52,7 +52,7 @@
         %h3.order_results_header Refunds (#{ amount })
         #order_date
           -type = @invoice.paid_wire_transfer? ? :wire : :po
-          Full refund issued for payment type #{MonthlyInvoice::PAYMENT_METHODS_TEXT[type]}.
+          Full refund issued for payment type #{Invoice::PAYMENT_METHODS_TEXT[type]}.
       -else
         -amount = Money.new(@invoice.get_credited_total).format
         %h3.order_results_header Refunds (#{ amount })

@@ -303,7 +303,9 @@ class CertificateOrdersController < ApplicationController
             renew_ucc:         ucc_renew,
             ucc_csr_submit:    ucc_csr_submit,
             order_description: params[:order][:order_description],
-            order_amount:      params[:order][:adjustment_amount]
+            order_amount:      params[:order][:adjustment_amount],
+            wildcard_count:    params[:order][:wildcard_count].to_i,
+            nonwildcard_count: params[:order][:nonwildcard_count].to_i
           }
           format.html { redirect_to new_order_path(@ssl_slug, order_params) }
         else
