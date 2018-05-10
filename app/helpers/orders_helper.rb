@@ -201,7 +201,8 @@ module OrdersHelper
   end
   
   def order_invoice_notes
-    "Payment for monthly invoice total of #{@invoice.get_amount_format} due on #{@invoice.end_date.strftime('%F')}."
+    "Payment for #{@invoice.billable.get_invoice_label} 
+    invoice total of #{@invoice.get_amount_format} due on #{@invoice.end_date.strftime('%F')}."
   end
   
   def ucc_csr_submit_notes
@@ -217,7 +218,7 @@ module OrdersHelper
   end
   
   def ucc_or_invoice_params
-    unless @monthly_invoice
+    unless @payable_invoice
       @ssl_account = if current_user.is_system_admins?
         CertificateOrder.find_by(ref: params[:order][:co_ref]).ssl_account
       else
@@ -252,7 +253,7 @@ module OrdersHelper
     full_amount  = Money.new(@order.cents + amount).format
     notes = "#{payment_type} payment for order ##{@order.reference_number} (#{full_amount}) "
     notes << " for UCC certificate reprocess." if @reprocess_ucc
-    notes << " for monthly invoice ##{@invoice.reference_number}." if @monthly_invoice
+    notes << " for #{@ssl_account.get_invoice_label} invoice ##{@invoice.reference_number}." if @payable_invoice
     
     fund = Deposit.create(
       amount:         amount,
@@ -273,7 +274,7 @@ module OrdersHelper
   
   def get_order_notes
     return reprocess_ucc_notes if @reprocess_ucc
-    return order_invoice_notes if @monthly_invoice
+    return order_invoice_notes if @payable_invoice
     return renew_ucc_notes if @renew_ucc
     return ucc_csr_submit_notes if @ucc_csr_submit
     ''
@@ -281,7 +282,7 @@ module OrdersHelper
   
   def get_order_descriptions
     return Order::DOMAINS_ADJUSTMENT if @reprocess_ucc || @renew_ucc || @ucc_csr_submit
-    return Order::INVOICE_PAYMENT if @monthly_invoice
+    return (@ssl_account.get_invoice_pmt_description) if @payable_invoice
     Order::SSL_CERTIFICATE
   end
   
@@ -290,7 +291,7 @@ module OrdersHelper
     
     @order.description = get_order_descriptions
     
-    other_order = @reprocess_ucc || @renew_ucc || @monthly_invoice
+    other_order = @reprocess_ucc || @renew_ucc || @payable_invoice
     
     options = @profile.build_info(@order.description.gsub('Payment', 'Pmt')).merge(
       stripe_card_token: params[:billing_profile][:stripe_card_token],

@@ -20,6 +20,8 @@ class SslAccount < ActiveRecord::Base
   has_one   :funded_account, :dependent => :destroy
   has_many  :orders, :as=>:billable, :after_add=>:build_line_items
   has_many  :monthly_invoices, as: :billable
+  has_many  :daily_invoices, as: :billable
+  has_many  :invoices, as: :billable
   has_many  :transactions, through: :orders
   has_many  :user_groups
   has_many  :api_certificate_requests, as: :api_requestable, dependent: :destroy
@@ -337,7 +339,17 @@ class SslAccount < ActiveRecord::Base
       !@@reserved_routes.include?(cur_ssl_slug) &&
       cur_ssl_slug.gsub(/([a-zA-Z]|_|-|\s|\d)/, '').length == 0
   end
-
+  
+  def get_invoice_label
+    return 'monthly' if billing_monthly?
+    return 'daily' if billing_daily?
+    ''
+  end
+  
+  def get_invoice_pmt_description
+    billing_monthly? ? Order::MI_PAYMENT : Order::DI_PAYMENT
+  end
+  
   def get_account_owner
     Assignment.where(
       role_id: [Role.get_owner_id, Role.get_reseller_id], ssl_account_id: id
@@ -593,6 +605,14 @@ class SslAccount < ActiveRecord::Base
   
   def billing_monthly?
     billing_method == 'monthly'
+  end
+  
+  def billing_daily?
+    billing_method == 'daily'
+  end
+  
+  def invoice_required?
+    billing_monthly? || billing_daily?
   end
     
   private

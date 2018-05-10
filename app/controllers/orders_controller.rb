@@ -144,18 +144,20 @@ class OrdersController < ApplicationController
   end
   
   def update_invoice
-    monthly_invoice = params[:monthly_invoice]
+    cur_invoice = params[:monthly_invoice] || params[:daily_invoice]
     
-    found = if monthly_invoice
-      Invoice.find_by(reference_number: monthly_invoice[:invoice_ref])
+    found = if cur_invoice
+      Invoice.find_by(reference_number: cur_invoice[:invoice_ref])
     else
       Invoice.find_by(order_id: @order.id) if @order
     end
     update = found ? found : Invoice.new(params[:invoice])
     
     no_errors = if found
-      new_params = monthly_invoice ? monthly_invoice : params[:invoice]
-      update.update_attributes(new_params.keep_if {|k, v| !['order_id', 'invoice_ref'].include?(k)})
+      update.update_attributes(
+        (cur_invoice ? cur_invoice : params[:invoice])
+          .keep_if {|k, v| !['order_id', 'invoice_ref'].include?(k)}
+      )
     else
       update.save
     end
@@ -259,9 +261,9 @@ class OrdersController < ApplicationController
         
         if params[:mo_ref]
           mo = if current_user.is_system_admins?
-            MonthlyInvoice.find_by(reference_number: params[:mo_ref])
+            Invoice.find_by(reference_number: params[:mo_ref])
           else
-            current_user.ssl_account.monthly_invoices.find_by(reference_number: params[:mo_ref])
+            current_user.ssl_account.invoices.find_by(reference_number: params[:mo_ref])
           end
         end
 
@@ -310,7 +312,7 @@ class OrdersController < ApplicationController
       owner:  current_user,
       target: mo,
       notes:  params["refund_reason"],
-      action: "Monthly Invoice ##{mo.reference_number}, merchant refund issued for #{amount.format}."
+      action: "#{@ssl_account.get_invoice_label.capitalize} Invoice ##{mo.reference_number}, merchant refund issued for #{amount.format}."
     )
   end
   
@@ -359,47 +361,48 @@ class OrdersController < ApplicationController
       # Invoiced orders
       invoice_items = unpaginated.where(state: 'invoiced')
       
-      @monthly_invoices = MonthlyInvoice
+      @payable_invoices = Invoice
+        .where.not(billable_id: nil, type: nil)
         .where(id: invoice_items.map(&:invoice_id).uniq).joins(:orders)
       
-      @pending_monthly_invoices = @monthly_invoices
+      @pending_payable_invoices = @payable_invoices
         .where(status: 'pending')
         .where(orders: {approval: 'approved'})
         .map(&:orders).flatten.uniq
         .select{|o| invoice_items.include?(o)}.sum(&:cents)
       
-      @paid_monthly_invoices = @monthly_invoices
+      @paid_payable_invoices = @payable_invoices
         .where(status: ['paid', 'partially_refunded'])
         .where(orders: {approval: 'approved'})
         .map(&:orders).flatten.uniq
         .select{|o| invoice_items.include?(o)}.sum(&:cents)
         
-      @refunded_monthly_invoices = @monthly_invoices
+      @refunded_payable_invoices = @payable_invoices
         .where(status: 'refunded')
         .where(orders: {approval: 'approved'})
         .map(&:orders).flatten.uniq
         .select{|o| invoice_items.include?(o)}.sum(&:cents)
         
-      @partial_refunds_monthly_invoices = @monthly_invoices
+      @partial_refunds_payable_invoices = @payable_invoices
         .where(status: 'partially_refunded')
         .where(orders: {approval: 'approved'})
         .map(&:payment).map(&:refunds).flatten.uniq.sum(&:amount)
       
-      @paid_monthly_invoices -= @partial_refunds_monthly_invoices
+      @paid_payable_invoices -= @partial_refunds_payable_invoices
       
-      @monthly_invoices_count = @monthly_invoices.uniq.count
+      @payable_invoices_count = @payable_invoices.uniq.count
       @invoiced_orders_count = invoice_items.count
       
       # Non invoiced orders
       @negative = unpaginated
         .where(state: %w{charged_back canceled rejected payment_not_required payment_declined})
-        .where.not(description: Order::INVOICE_PAYMENT)  # exclude invoice payments (as order)
+        .where.not(description: [Order::MI_PAYMENT, Order::DI_PAYMENT])  # exclude invoice payments (as order)
         .where.not(state: 'invoiced')                    # exclude invoice items (as order)
         .sum(:cents)
       
       refunded = Refund.where(
         order_id: unpaginated
-          .where.not(description: Order::INVOICE_PAYMENT)
+          .where.not(description: [Order::MI_PAYMENT, Order::DI_PAYMENT])
           .where.not(state: 'invoiced')
           .where(state: ['partially_refunded', 'fully_refunded']).map(&:id)
       ).where(status: 'success')
@@ -407,7 +410,7 @@ class OrdersController < ApplicationController
       deposits = unpaginated.joins{ line_items.sellable(Deposit) }
 
       orders = unpaginated.where.not(id: deposits.map(&:id))
-        .where.not(description: Order::INVOICE_PAYMENT)
+        .where.not(description: [Order::MI_PAYMENT, Order::DI_PAYMENT])
         .where.not(state: 'invoiced')
       
       # Funded Account Withdrawal
@@ -677,7 +680,7 @@ class OrdersController < ApplicationController
 
     if notes.any?  
       @order.invoice_description = '' if @order.invoice_description.nil?
-      @order.invoice_description << " Received credit for #{notes.join('and')}."
+      @order.invoice_description << " Received credit for #{notes.join(' and ')}."
       @order.save
     end
     co.update(
@@ -739,13 +742,8 @@ class OrdersController < ApplicationController
     ucc_update_domain_counts
   end
   
-  def add_to_monthly_invoice(params)
-    ssl_id  = @ssl_account.id
-    invoice = if MonthlyInvoice.invoice_exists?(ssl_id)
-      MonthlyInvoice.get_current_invoice(ssl_id)
-    else
-      MonthlyInvoice.create(billable_id: ssl_id, billable_type: 'SslAccount')
-    end
+  def add_to_payable_invoice(params)
+    invoice = Invoice.get_or_create_for_team(@ssl_account)
     @order = current_order_reprocess_ucc if @reprocess_ucc
     
     if @renew_ucc || @ucc_csr_submit
@@ -789,10 +787,11 @@ class OrdersController < ApplicationController
     @renew_ucc = params[:renew_ucc]
     @ucc_csr_submit = params[:ucc_csr_submit]
     
-    if @ssl_account.billing_monthly? || @amount == 0
-      if @ssl_account.billing_monthly? && @amount > 0 # Invoice Order, do not charge
-        add_to_monthly_invoice(params)
-        flash[:notice] = "The domains adjustment amount of #{@order.amount.format} will appear on the monthly invoice."
+    if @ssl_account.invoice_required? || @amount == 0
+      if @ssl_account.invoice_required? && @amount > 0 # Invoice Order, do not charge
+        add_to_payable_invoice(params)
+        flash[:notice] = "The domains adjustment amount of #{@order.amount.format} 
+          will appear on the #{@ssl_account.get_invoice_label} invoice."
       end
       redirect_to edit_certificate_order_path(@ssl_slug, @certificate_order)
     else
@@ -803,7 +802,7 @@ class OrdersController < ApplicationController
   def ucc_domains_adjust_reprocess
     @reprocess_ucc = true
     
-    if @ssl_account.billing_monthly? || @amount == 0
+    if @ssl_account.invoice_required? || @amount == 0
       if @amount == 0 # Reprocess is free, no additional domains added
         @order = ReprocessCertificateOrder.new(
           amount:      0,
@@ -817,9 +816,10 @@ class OrdersController < ApplicationController
         flash[:notice] = "This UCC certificate reprocess is free due to no additional domains."
       end
       
-      if @ssl_account.billing_monthly? && @amount > 0 # Invoice Order, do not charge
-        add_to_monthly_invoice(params)
-        flash[:notice] = "This UCC reprocess in the amount of #{Money.new(@amount).format} will appear on the monthly invoice."
+      if @ssl_account.invoice_required? && @amount > 0 # Invoice Order, do not charge
+        add_to_payable_invoice(params)
+        flash[:notice] = "This UCC reprocess in the amount of #{Money.new(@amount * 100).format} 
+          will appear on the #{@ssl_account.get_invoice_label} invoice."
       end
       redirect_to edit_certificate_order_path(@ssl_slug, @certificate_order)
     else

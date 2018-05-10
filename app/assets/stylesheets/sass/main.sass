@@ -6407,7 +6407,8 @@ span.notifications-teams
     #btn-order-cancel,
     #btn-order-credit,
     #btn-order-co-refunt,
-    #btn-order-revoke
+    #btn-order-revoke,
+    .btn-pay-invoices
       border-radius: 3px
       border: none  
       font-weight: 500
@@ -6441,6 +6442,22 @@ span.notifications-teams
       border: 1px solid #334DFF
       color: #334DFF !important
       background-color: none
+    
+    .btn-pay-invoices
+      margin-right: 1.3rem
+      font-size: 0.95rem
+      font-weight: 600
+      border: 1px solid #6b9029 !important
+      color: #6b9029 !important
+      background-color: none !important
+      margin-top: 0.7rem
+      text-transform: uppercase
+    
+    emp
+      padding-right: 1rem
+      text-transform: uppercase
+      font-size: 1.1rem
+      margin-top: 0.9rem
       
   .description.total_row
     text-align: right
@@ -6606,9 +6623,23 @@ span.notifications-teams
   margin-top: 0.5rem
   
 /*
- * Invoices Page
+ * Invoices details and index
  */
- 
+.invoices-index
+  td, th
+    text-align: left !important
+  
+  td:first-child, th:first-child
+    padding-left: 1rem !important
+    
+  .type span
+    font-size: 1rem
+    text-transform: uppercase
+    color: grey
+    
+  .list
+    text-align: center !important
+      
 .btn-edit-invoice-item,
 #btn-update-invoice-item
   border: 1px solid #334DFF

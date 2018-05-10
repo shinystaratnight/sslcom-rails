@@ -13,7 +13,7 @@
   #summary
     %div
       %span TYPE:
-      %strong Monthly Invoice
+      %strong #{@invoice.class.to_s.gsub('Invoice', ' Invoice')}
     %div
       %span INVOICE #:
       %strong #{invoice_ref}
@@ -46,14 +46,14 @@
           
       -if @invoice.show_payment_actions?
         #btn-invoice-generate
-          -p_text_wire = MonthlyInvoice::PAYMENT_METHODS_TEXT[:wire]
+          -p_text_wire = Invoice::PAYMENT_METHODS_TEXT[:wire]
           =link_to "&#x27B2; Payment #{p_text_wire}".html_safe,                       |
             make_payment_other_invoice_path(@ssl_slug, invoice_ref, ptm_type: :wire), |
             class: 'button-mo-invoice', method: :put,                                 |
             data: { confirm: "Are you sure you want to pay by #{p_text_wire} and set invoice to paid?" }
       
         #btn-invoice-generate
-          -p_text_other = MonthlyInvoice::PAYMENT_METHODS_TEXT[:po]
+          -p_text_other = Invoice::PAYMENT_METHODS_TEXT[:po]
           =link_to "&#x27B2; Payment #{p_text_other}".html_safe,                    |
             make_payment_other_invoice_path(@ssl_slug, invoice_ref, ptm_type: :po), |
             class: 'button-mo-invoice', method: :put,                               |
@@ -78,7 +78,7 @@
         
         -if @invoice.paid_wire_transfer? || @invoice.paid_po_other?
           -type = @invoice.paid_wire_transfer? ? :wire : :po 
-          =link_to "Refund #{MonthlyInvoice::PAYMENT_METHODS_TEXT[type]}",      |
+          =link_to "Refund #{Invoice::PAYMENT_METHODS_TEXT[type]}",      |
           refund_other_invoice_path(@ssl_slug, invoice_ref, refund_type: type), |
           method: :put, class: 'button-mo-invoice'
         

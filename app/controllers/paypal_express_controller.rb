@@ -110,7 +110,7 @@ class PaypalExpressController < ApplicationController
           @certificate_order = @ssl_account.certificate_orders.find_by(ref: params[:co_ref])
           @certificate_order.add_reproces_order @order
         elsif params[:monthly_invoice]
-          @invoice = MonthlyInvoice.find_by(reference_number: params[:invoice_ref])
+          @invoice = Invoice.find_by(reference_number: params[:invoice_ref])
           setup_monthly_invoice_order(purchase_params)
           funded_account_credit(purchase_params)
           @order.notes += " #{auth_code}"
@@ -165,7 +165,7 @@ class PaypalExpressController < ApplicationController
     @order = Order.new(
       amount:        Money.new(purchase_params[:subtotal]),
       cents:         purchase_params[:subtotal],
-      description:   Order::INVOICE_PAYMENT,
+      description:   @ssl_account.get_invoice_pmt_description,
       state:         'pending',
       approval:      'approved',
       notes:         order_invoice_notes
