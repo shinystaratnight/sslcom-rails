@@ -287,6 +287,7 @@ GEM
     net-ssh (3.2.0)
     net-ssh-gateway (1.2.0)
       net-ssh (>= 2.6.5)
+    newrelic_rpm (5.1.0.344)
     nokogiri (1.8.2)
       mini_portile2 (~> 2.3.0)
     nori (2.6.0)
@@ -533,6 +534,7 @@ DEPENDENCIES
   mocha
   money (= 2.1.0)
   mysql2
+  newrelic_rpm
   nokogiri
   oauth-plugin (>= 0.4.0.pre1)
   openssl-extensions
