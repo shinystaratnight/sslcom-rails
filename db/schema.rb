@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180503174425) do
+ActiveRecord::Schema.define(version: 20180511155358) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        limit: 255
@@ -1129,6 +1129,7 @@ ActiveRecord::Schema.define(version: 20180503174425) do
   end
 
   add_index "signed_certificates", ["ca_id"], name: "fk_rails_d21ca532b7", using: :btree
+  add_index "signed_certificates", ["common_name"], name: "index_signed_certificates_on_common_name", using: :btree
   add_index "signed_certificates", ["csr_id"], name: "index_signed_certificates_on_csr_id", using: :btree
 
   create_table "site_checks", force: :cascade do |t|
