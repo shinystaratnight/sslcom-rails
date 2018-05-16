@@ -453,7 +453,7 @@ class CertificateContent < ActiveRecord::Base
   end
 
   def to_ref
-    cc = certificate_order.certificate_contents
+    cc = certificate_order.certificate_contents.where.not(id: nil)
     index = if cc.empty?
       0
     else
