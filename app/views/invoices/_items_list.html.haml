@@ -37,6 +37,7 @@
                   =button_tag 'Cancel', class: 'btn-cancel-invoice-item', data: {order_ref: order_ref}
 
             %br
+            =link_to 'UPDATE ORDER', edit_order_path(@ssl_slug, o), class: 'btn-update-invoice-item'
             -if o.approved_for_invoice? 
               =link_to 'REMOVE ITEM', |
                 remove_item_invoice_path(@ssl_slug, @invoice.reference_number, item_ref: order_ref), |
@@ -45,6 +46,7 @@
               =link_to 'ADD ITEM', add_item_invoice_path(@ssl_slug, @invoice.reference_number, item_ref: order_ref), |
                 method: :put, class: 'btn-add-invoice-item'
             =link_to 'EDIT', '#', class: 'btn-edit-invoice-item', data: {order_ref: order_ref}
+            
         %td
           %strong
             =o.amount.format

@@ -5,7 +5,7 @@ class OrdersController < ApplicationController
   #resource_controller
   helper_method :cart_items_from_model_and_id
   before_filter :finish_reseller_signup, :only => [:new], if: "current_user"
-  before_filter :find_order, :only => [:show, :invoice, :update_invoice, :refund, :refund_merchant, :change_state, :revoke]
+  before_filter :find_order, :only => [:show, :invoice, :update_invoice, :refund, :refund_merchant, :change_state, :revoke, :edit, :update]
   before_filter :set_prev_flag, only: [:create, :create_free_ssl, :create_multi_free_ssl]
   before_filter :prep_certificate_orders_instances, only: [:create, :create_free_ssl]
   before_filter :go_prev, :parse_certificate_orders, only: [:create_multi_free_ssl]
@@ -17,7 +17,20 @@ class OrdersController < ApplicationController
   filter_access_to :show, :update_invoice, attribute_check: true
   before_filter :find_user, :only => [:user_orders]
   before_filter :set_row_page, only: [:index, :search, :filter_by_state, :visitor_trackings]
-
+  
+  def edit
+    
+  end
+  
+  def update
+    @order ||= Order.find(params[:id])
+    if @order.update_attributes(params[:order])
+      flash[:notice] = "Order ##{@order.reference_number} has been successfully updated."
+      redirect_to edit_order_path(@ssl_slug, @order)
+    else
+      render :edit
+    end
+  end
 
   def show_cart
     @cart = ShoppingCart.find_by_guid(params[:id]) if params[:id]

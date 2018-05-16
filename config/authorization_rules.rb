@@ -17,11 +17,10 @@ authorization do
       :to => :sysadmin_manage, except: :delete
     has_permission_on :affiliates, :certificate_orders, :cdns, :csrs, :orders, :signed_certificates, :surls, :physical_tokens,
       :to => :manage
-    has_permission_on :orders, to: :revoke
     has_permission_on :managed_users, :ssl_accounts, :validations, :validation_histories,
       :to => :sysadmin_manage
     has_permission_on :resellers,    to: [:create, :read, :update]
-    has_permission_on :orders,       to: [:refund_merchant, :update_invoice]
+    has_permission_on :orders,       to: [:refund_merchant, :update_invoice, :revoke]
     has_permission_on :ssl_accounts, to: [
       :create,
       :read,

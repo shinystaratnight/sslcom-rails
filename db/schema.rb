@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180511172930) do
+ActiveRecord::Schema.define(version: 20180515215437) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        limit: 255
@@ -763,7 +763,14 @@ ActiveRecord::Schema.define(version: 20180511172930) do
     t.string   "approval",               limit: 255
     t.integer  "invoice_id",             limit: 4
     t.string   "type",                   limit: 255
-    t.string   "invoice_description",    limit: 255
+    t.text     "invoice_description",    limit: 65535
+    t.integer  "cur_wildcard",           limit: 4
+    t.integer  "cur_non_wildcard",       limit: 4
+    t.integer  "max_wildcard",           limit: 4
+    t.integer  "max_non_wildcard",       limit: 4
+    t.integer  "wildcard_cents",         limit: 4
+    t.integer  "non_wildcard_cents",     limit: 4
+    t.integer  "reseller_tier_id",       limit: 4
   end
 
   add_index "orders", ["billable_id", "billable_type"], name: "index_orders_on_billable_id_and_billable_type", using: :btree

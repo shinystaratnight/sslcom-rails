@@ -10,6 +10,7 @@ class Order < ActiveRecord::Base
   belongs_to  :deducted_from, class_name: "Order", foreign_key: "deducted_from_id"
   belongs_to  :visitor_token
   belongs_to  :invoice, class_name: "Invoice", foreign_key: :invoice_id
+  belongs_to  :reseller_tier, foreign_key: :reseller_tier_id
   has_many    :line_items, dependent: :destroy, after_add: Proc.new { |p, d| p.amount += d.amount}
   has_many    :certificate_orders, through: :line_items, :source => :sellable,
               :source_type => 'CertificateOrder', unscoped: true
@@ -20,6 +21,8 @@ class Order < ActiveRecord::Base
   has_and_belongs_to_many    :discounts
 
   money :amount
+  money :wildcard_amount, cents: :wildcard_cents
+  money :non_wildcard_amount, cents: :non_wildcard_cents
 
   before_create :total, :determine_description
   after_create :generate_reference_number, :commit_discounts
@@ -34,6 +37,13 @@ class Order < ActiveRecord::Base
       self.receipt ||= false
       self.deposit_mode ||= false
     end
+    self.cur_wildcard = nil if self.cur_wildcard.blank?
+    self.cur_non_wildcard = nil if self.cur_non_wildcard.blank?
+    self.max_wildcard = nil if self.max_wildcard.blank?
+    self.max_non_wildcard = nil if self.max_non_wildcard.blank?
+    self.reseller_tier_id = nil if self.reseller_tier_id.blank?
+    self.wildcard_cents = 0 if self.wildcard_cents.blank?
+    self.non_wildcard_cents = 0 if self.non_wildcard_cents.blank?
   end
   
   FAW                = "Funded Account Withdrawal"
