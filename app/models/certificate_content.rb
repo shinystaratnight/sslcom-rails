@@ -453,8 +453,12 @@ class CertificateContent < ActiveRecord::Base
   end
 
   def to_ref
-    cc = certificate_order.certificate_contents.last
-    index = cc.id.nil? ? 0 : (cc.ref.split('-').last.to_i + 1)
+    cc = certificate_order.certificate_contents.where.not(id: nil)
+    index = if cc.empty?
+      0
+    else
+      cc.pluck(:ref).map{ |r| r.split('-').last.to_i }.sort.last + 1
+    end
     "#{certificate_order.ref}-#{index}"
   end
   

@@ -666,24 +666,24 @@ class OrdersController < ApplicationController
     # max for previous signed certificates to determine credited domains
     prev_wildcard    = co.get_reprocess_max_wildcard(co.certificate_content).count
     prev_nonwildcard = co.get_reprocess_max_nonwildcard(co.certificate_content).count
-    
+
     if (co_nonwildcard > prev_nonwildcard) &&
-      (nonwildcard > co_nonwildcard) || (@reprocess_ucc && 
-      (nonwildcard >= co_nonwildcard && (nonwildcard > 0)))
+      ((nonwildcard > co_nonwildcard) || (@reprocess_ucc && 
+      (nonwildcard >= co_nonwildcard && (nonwildcard > 0))))
       notes << "#{co_nonwildcard - prev_nonwildcard} non wildcard domains"
     end
     if (co_wildcard > prev_wildcard) &&
-      (wildcard > co_wildcard) || (@reprocess_ucc && 
-      (wildcard >= co_wildcard && (wildcard > 0)))
+      ((wildcard > co_wildcard) || (@reprocess_ucc && 
+      (wildcard >= co_wildcard && (wildcard > 0))))
       notes << "#{co_wildcard - prev_wildcard} wildcard domains"
     end
-
+    
     if notes.any?  
       @order.invoice_description = '' if @order.invoice_description.nil?
       @order.invoice_description << " Received credit for #{notes.join(' and ')}."
       @order.save
     end
-    co.update(
+    co.update( # record new max counts
       nonwildcard_count: (nonwildcard > co_nonwildcard ? nonwildcard : co_nonwildcard),
       wildcard_count:    (wildcard > co_wildcard ? wildcard : co_wildcard)
     )
@@ -775,7 +775,7 @@ class OrdersController < ApplicationController
       @amount = if params[:renew_ucc] || params[:ucc_csr_submit]
         params[:order_amount].to_f
       else
-        @certificate_order.ucc_prorated_amount(@certificate_content)
+        @certificate_order.ucc_prorated_amount(@certificate_content, find_tier)
       end
       params[:reprocess_ucc] ? ucc_domains_adjust_reprocess : ucc_domains_adjust_other
     else
@@ -818,7 +818,7 @@ class OrdersController < ApplicationController
       
       if @ssl_account.invoice_required? && @amount > 0 # Invoice Order, do not charge
         add_to_payable_invoice(params)
-        flash[:notice] = "This UCC reprocess in the amount of #{Money.new(@amount * 100).format} 
+        flash[:notice] = "This UCC reprocess in the amount of #{Money.new(@amount).format} 
           will appear on the #{@ssl_account.get_invoice_label} invoice."
       end
       redirect_to edit_certificate_order_path(@ssl_slug, @certificate_order)

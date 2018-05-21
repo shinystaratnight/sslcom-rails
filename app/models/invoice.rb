@@ -165,6 +165,10 @@ class Invoice < ActiveRecord::Base
   def partial_refund!
     update(status: 'partially_refunded')
   end
+  
+  def get_type_format
+    type.gsub('Invoice', '')
+  end
     
   def get_approved_items
     orders.where(approval: 'approved')
