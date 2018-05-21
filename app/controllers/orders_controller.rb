@@ -558,13 +558,15 @@ class OrdersController < ApplicationController
 
     order_params = {
       billing_profile_id: params[:funding_source],
-      amount:             @target_amount,
-      cents:             (@target_amount * 100).to_i,
-      description:        Order::DOMAINS_ADJUSTMENT,
-      state:              'pending',
-      approval:           'approved',
-      notes:              get_order_notes,
-      invoice_description: params[:order][:order_description]
+      amount:              @target_amount,
+      cents:               (@target_amount * 100).to_i,
+      description:         Order::DOMAINS_ADJUSTMENT,
+      state:               'pending',
+      approval:            'approved',
+      notes:               get_order_notes,
+      invoice_description: params[:order][:order_description],
+      wildcard_amount:      params[:order][:wildcard_amount],
+      non_wildcard_amount:  params[:order][:nonwildcard_amount],
     }
     
     @order = @reprocess_ucc ? ReprocessCertificateOrder.new(order_params) : Order.new(order_params)
@@ -667,6 +669,7 @@ class OrdersController < ApplicationController
     co = @certificate_order
     notes = []
     order = params[:order]
+    reseller_tier = @tier || find_tier
     
     # domains entered
     wildcard = order ? order[:wildcard_count].to_i : params[:wildcard_count].to_i
@@ -685,21 +688,30 @@ class OrdersController < ApplicationController
       (nonwildcard >= co_nonwildcard && (nonwildcard > 0))))
       notes << "#{co_nonwildcard - prev_nonwildcard} non wildcard domains"
     end
+    
     if (co_wildcard > prev_wildcard) &&
       ((wildcard > co_wildcard) || (@reprocess_ucc && 
       (wildcard >= co_wildcard && (wildcard > 0))))
       notes << "#{co_wildcard - prev_wildcard} wildcard domains"
     end
+
+    # record new max counts
+    new_nonwildcard = nonwildcard > co_nonwildcard ? nonwildcard : co_nonwildcard
+    new_wildcard = wildcard > co_wildcard ? wildcard : co_wildcard
+
+    @order.max_non_wildcard = new_nonwildcard
+    @order.max_wildcard = new_wildcard
     
-    if notes.any?  
+    if reseller_tier
+      @order.reseller_tier_id = ResellerTier.find_by(label: find_tier.delete('tr')).try(:id)
+    end
+
+    if notes.any?
+      co.update( nonwildcard_count: new_nonwildcard, wildcard_count: new_wildcard )
       @order.invoice_description = '' if @order.invoice_description.nil?
       @order.invoice_description << " Received credit for #{notes.join(' and ')}."
-      @order.save
     end
-    co.update( # record new max counts
-      nonwildcard_count: (nonwildcard > co_nonwildcard ? nonwildcard : co_nonwildcard),
-      wildcard_count:    (wildcard > co_wildcard ? wildcard : co_wildcard)
-    )
+    @order.save
   end
     
   def ucc_domains_adjust_funded(params)
@@ -770,6 +782,9 @@ class OrdersController < ApplicationController
     @order.invoice_id  = invoice.id
     @order.approval    = 'approved'
     @order.invoice_description = params[:order_description]
+    @order.wildcard_amount     = params[:wildcard_amount]
+    @order.non_wildcard_amount = params[:nonwildcard_amount]
+    
     @certificate_order.add_reproces_order @order
     ucc_update_domain_counts
     record_order_visit(@order)

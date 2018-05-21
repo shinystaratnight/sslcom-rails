@@ -16,10 +16,9 @@
         = link_to "\u21E9 Download Invoice".html_safe, download_invoice_path(@ssl_slug, invoice.reference_number)
       - else
         = link_to "\u21E9 Download Invoice".html_safe, invoice_order_path(@ssl_slug, @order.reference_number)
-        
-    
+
     = error_messages_for :order
-    = form_for @order do |f|
+    = form_for @order.becomes(Order) do |f|
       #stylized.default_form
         .fields
           .saved-contact-fields Wildcard

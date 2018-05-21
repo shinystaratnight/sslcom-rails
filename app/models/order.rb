@@ -20,7 +20,7 @@ class Order < ActiveRecord::Base
   has_many    :order_transactions
   has_and_belongs_to_many    :discounts
 
-  money :amount
+  money :amount, cents: :cents
   money :wildcard_amount, cents: :wildcard_cents
   money :non_wildcard_amount, cents: :non_wildcard_cents
 
@@ -42,8 +42,8 @@ class Order < ActiveRecord::Base
     self.max_wildcard = nil if self.max_wildcard.blank?
     self.max_non_wildcard = nil if self.max_non_wildcard.blank?
     self.reseller_tier_id = nil if self.reseller_tier_id.blank?
-    self.wildcard_cents = 0 if self.wildcard_cents.blank?
-    self.non_wildcard_cents = 0 if self.non_wildcard_cents.blank?
+    self.wildcard_cents = nil if self.wildcard_cents.blank?
+    self.non_wildcard_cents = nil if self.non_wildcard_cents.blank?
   end
   
   FAW                = "Funded Account Withdrawal"
@@ -553,8 +553,17 @@ class Order < ActiveRecord::Base
     non_wildcard = cur_domains.map {|d| d if !d.include?('*')}.compact
     wildcard     = cur_domains.map {|d| d if d.include?('*')}.compact
     
-    tot_non_wildcard = non_wildcard.count - co.get_reprocess_max_nonwildcard(cc).count
-    tot_wildcard     = wildcard.count - co.get_reprocess_max_wildcard(cc).count
+    tot_non_wildcard = if cur_non_wildcard.blank?
+      non_wildcard.count - co.get_reprocess_max_nonwildcard(cc).count
+    else
+      cur_non_wildcard
+    end
+    
+    tot_wildcard = if cur_wildcard.blank?
+      wildcard.count - co.get_reprocess_max_wildcard(cc).count
+    else
+      cur_wildcard
+    end
     
     tot_non_wildcard  = tot_non_wildcard < 0 ? 0 : tot_non_wildcard
     tot_wildcard      = tot_wildcard < 0 ? 0 : tot_wildcard

@@ -1400,9 +1400,14 @@ class CertificateOrder < ActiveRecord::Base
     end
   end
 
-  def description_with_tier
+  def description_with_tier(target_order=nil)
     return description if certificate.reseller_tier.blank?
-    description + " (Tier #{certificate.reseller_tier.label} Reseller)"
+    tier_label = if target_order && target_order.reseller_tier
+      target_order.reseller_tier.label
+    else
+      certificate.reseller_tier.label
+    end
+    description + " (Tier #{tier_label} Reseller)"
   end
 
   def validation_stage_checkout_in_progress?

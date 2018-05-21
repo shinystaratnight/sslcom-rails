@@ -232,7 +232,7 @@ class Invoice < ActiveRecord::Base
       
       final[o.reference_number] = {
         description:  desc, 
-        item:         co.respond_to?(:description_with_tier) ? co.description_with_tier : co.certificate.description['certificate_type'],
+        item:         co.respond_to?(:description_with_tier) ? co.description_with_tier(o) : co.certificate.description['certificate_type'],
         new_domains:  domains[:new_domains_count],
         wildcard:     domains[:wildcard],
         non_wildcard: domains[:non_wildcard]
