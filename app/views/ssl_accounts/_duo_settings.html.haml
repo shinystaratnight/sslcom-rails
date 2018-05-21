@@ -15,7 +15,7 @@
       = text_field_tag :duo_ikey, duo ? duo.duo_ikey : "", :class => "click_to_select_all", :disabled => !(user.ssl_account.duo_own_used)
     .clearfix
       = label_tag :duo_skey, "Duo Secret Key".html_safe
-      = text_field_tag :duo_skey, duo ? "Click to view." : "", :class => "click_to_select_all", :disabled => !(user.ssl_account.duo_own_used), 'data-skey' => "#{duo ? duo.duo_ikey : ""}"
+      = text_field_tag :duo_skey, duo ? "Click to view." : "", :class => "click_to_select_all", :disabled => !(user.ssl_account.duo_own_used), 'data-skey' => "#{duo ? duo.duo_skey : ""}"
     .clearfix
       = label_tag :duo_akey, "Duo A Key".html_safe
       = text_field_tag :duo_akey, duo ? duo.duo_akey : "", :class => "click_to_select_all", :disabled => "disabled"
