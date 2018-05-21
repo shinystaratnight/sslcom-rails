@@ -4044,7 +4044,7 @@ label.error
       &.right
         width: 355px
 
-    .u2f_block
+    .u2f_block, .duo_block
       width: 500px
       padding: .3em 0
       margin-left: 100px
@@ -4209,7 +4209,9 @@ table#at_a_glance_header
   font-weight: bold
   margin: 0 1em
 
-#deposit_details, #order_details
+#deposit_details, 
+#order_details,
+.order_details
   margin: 0 0 1em
   div
     margin: 0 0 0 1em
@@ -5112,6 +5114,13 @@ textarea[id^=certificate_order]
     border: 1px solid
     padding: 0pt 0.2em
 
+#duo_iframe
+  width: 100%
+  min-width: 304px
+  max-width: 620px
+  height: 330px
+  border: none
+
 #new_user_session
   input[type=password], input[type=text]
     width: 196px
@@ -5824,30 +5833,37 @@ span.notifications-teams
   justify-content: center
   font-size: 1rem
 
-  .button-invoice,
-  .button-mo-invoice
-    background: -webkit-linear-gradient(#69B3FF, #334DFF)
-    background: -o-linear-gradient(#69B3FF, #334DFF)
-    background: -moz-linear-gradient(#69B3FF, #334DFF)
-    background: linear-gradient(#69B3FF, #334DFF)
-    border-radius: 3px
-    border: 2px solid #334DFF
-    color: #FFFFFF
-    cursor: pointer
-    display: block
-    font-size: 1.3rem
-    letter-spacing: 1.5px
-    margin: 15px 15px
-    padding: 5px 15px
-    box-shadow: none
-  
-  .button-mo-invoice.btn-mo-destroy
-    background: -webkit-linear-gradient(#cc0000, #990000)
-    background: -o-linear-gradient(#cc0000, #990000)
-    background: -moz-linear-gradient(#cc0000, #990000)
-    background: linear-gradient(#cc0000, #990000)
-    border: 2px solid #990000
-      
+.button-invoice,
+.button-mo-invoice
+  background: -webkit-linear-gradient(#69B3FF, #334DFF)
+  background: -o-linear-gradient(#69B3FF, #334DFF)
+  background: -moz-linear-gradient(#69B3FF, #334DFF)
+  background: linear-gradient(#69B3FF, #334DFF)
+  border-radius: 3px
+  border: 2px solid #334DFF
+  color: #FFFFFF
+  cursor: pointer
+  display: block
+  font-size: 1.3rem
+  letter-spacing: 1.5px
+  margin: 15px 15px
+  padding: 5px 15px
+  box-shadow: none
+
+.button-mo-invoice.btn-mo-destroy
+  background: -webkit-linear-gradient(#cc0000, #990000)
+  background: -o-linear-gradient(#cc0000, #990000)
+  background: -moz-linear-gradient(#cc0000, #990000)
+  background: linear-gradient(#cc0000, #990000)
+  border: 2px solid #990000
+
+.button-mo-invoice.btn-mo-manage
+  background: -webkit-linear-gradient(#84b332, #6b9029)
+  background: -o-linear-gradient(#84b332, #6b9029)
+  background: -moz-linear-gradient(#84b332, #6b9029)
+  background: linear-gradient(#84b332, #6b9029)
+  border: 2px solid #84b332
+        
 #invoice-container-errors,
 #invoice-admin-errors
   .errors-invoice-update
@@ -6257,7 +6273,63 @@ span.notifications-teams
 
 /*
  * Order Details Page
- */ 
+ */
+.order_details
+  .order-status
+    font-size: 1.4rem  
+    span
+      font-weight: 600
+   
+#order_status_section
+  margin: 1em auto 0
+  border: none
+  border-collapse: collapse
+  width: 100%
+  font-size: 1.4em
+  text-align: left
+  
+  tr#heading_row
+    color: grey
+    font-size: 1.1rem
+    
+    th
+      border-bottom: 1px solid #ccc
+      
+      &:first-child
+        padding-left: 1rem
+  
+  tr
+    border-bottom: 1px dashed grey
+    
+    &:last-child
+      border: none
+        
+  td
+    margin: 1.5rem
+    
+    &:first-child
+      padding-left: 1rem
+    
+  .ref
+    width: 23%
+  
+  .status
+    font-weight: 600
+    font-size: 1.1rem
+    width: 13%
+      
+  .system-audit,
+  .revoke-status,
+  .cert-content-state
+    font-weight: 400
+    font-size: 1.2rem
+    margin: 1.2rem 0
+    
+    span
+      margin-bottom: 0.2rem
+      font-size: 1rem
+      font-weight: 600
+   
 #order_details_section
   margin: 1em auto 0
   border: none
@@ -6341,7 +6413,8 @@ span.notifications-teams
     #btn-order-edit,  
     #btn-order-cancel,
     #btn-order-credit,
-    #btn-order-co-refunt
+    #btn-order-co-refunt,
+    #btn-order-revoke
       border-radius: 3px
       border: none  
       font-weight: 500
@@ -6370,7 +6443,12 @@ span.notifications-teams
     #btn-order-co-refunt
       border: 1px solid #F51C29
       background-color: #F51C29
-  
+    
+    #btn-order-revoke
+      border: 1px solid #334DFF
+      color: #334DFF !important
+      background-color: none
+      
   .description.total_row
     text-align: right
   
@@ -6509,8 +6587,6 @@ span.notifications-teams
     float: left
   
 .btn-team-links,
-.btn-team-disable,
-.btn-team-enable,
 .btn-rmv-invoice-item,
 .btn-add-invoice-item,
 .btn-edit-invoice-item,
@@ -6527,21 +6603,14 @@ span.notifications-teams
   padding: 2px 3px
   border: 1px solid grey
   margin: 0.1rem
-  
-.btn-team-disable,
-.btn-rmv-invoice-item
-  background-color: #F51C29
-  border: 1px solid #F51C29
-
-.btn-team-enable,
-.btn-add-invoice-item
-  background-color: #6b9029
-  border: 1px solid #6b9029
 
 .btn-refunds-detail
   background-color: grey
   border: 1px solid grey
   text-transform: uppercase
+
+#team-billing-method
+  margin-top: 0.5rem
   
 /*
  * Invoices Page
@@ -6557,11 +6626,15 @@ span.notifications-teams
   background-color: white
   color: #334DFF !important
   
-#invoice-status
+#invoice-status,
+#invoice-status-archived
   color: grey
   font-weight: 600
   font-size: 1.2rem
-  
+
+#invoice-status-archived
+  color: red
+    
 .monthly-invoice
   #summary
     font-size: 1.5rem
@@ -6589,9 +6662,19 @@ span.notifications-teams
   span
     color: grey
   
+  .items-description
+    font-size: 1.2rem
+    width: 50%
+  
+  #mo-select
+    width: 50% !important
+
   .description.total_row
     text-align: right
   
+  .select-item td
+    margin-left: 1rem
+    
   .order-funded td,
   .order-total td,
   .order-subtotal td
@@ -6609,6 +6692,22 @@ span.notifications-teams
   .order-funded
     color: grey
 
+#items-invoice-select
+  width: 22%
+  
+  .select2.select2-container
+    width: 100% !important
+  
+#summary.transfer-items
+  div
+    margin-right: 2.5rem
+    margin-bottom: 1.5rem
+  
+  #items-invoice-transfer .button-mo-invoice
+    margin: 0 0 0 2rem
+    padding: 1.5px 15px
+    font-size: 1.4rem
+    
 #monthly-invoice-actions,
 #monthly-invoice-pmt
   margin: 2em auto 4em

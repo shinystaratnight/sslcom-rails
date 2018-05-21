@@ -3,6 +3,7 @@ class SslAccount < ActiveRecord::Base
   acts_as_billable
   easy_roles :roles
   has_one   :api_credential
+  has_one   :duo_account
   has_many  :billing_profiles
   has_many  :certificate_orders, -> { unscope(where: [:workflow_state, :is_expired]).includes([:orders]) } do
     def current
@@ -65,7 +66,7 @@ class SslAccount < ActiveRecord::Base
   before_validation :b_create, on: :create
   after_create  :initial_setup
   
-  BILLING_METHODS = ['monthly', 'due_at_checkout']
+  BILLING_METHODS = ['monthly', 'due_at_checkout', 'daily']
   PULL_RESELLER = "pull_from_reseller"
   PULL_ADMIN_TECH = "pull_from_admin_and_tech"
   PULL_ADMIN = "pull_from_admin"

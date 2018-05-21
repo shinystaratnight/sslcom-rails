@@ -339,10 +339,11 @@ class CertificateContent < ActiveRecord::Base
   end
 
   def show_validation_view?
-    if new? || csr_submitted? || info_provided? || contacts_provided?
-      return false
+    if new? || csr_submitted?
+      false
+    else
+      true
     end
-    true
   end
 
   def validation_type

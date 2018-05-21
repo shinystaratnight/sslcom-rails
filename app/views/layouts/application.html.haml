@@ -33,7 +33,7 @@
   %body
     =render partial: "layouts/facebook" if Rails.env=~/production/i
     #wrapper
-      -if (current_user.blank?) || yield(:header)=='public' || yield(:header)=='public_wo_container'
+      -if (current_user.blank?) || (!session[:duo_auth]) || yield(:header)=='public' || yield(:header)=='public_wo_container'
         -unless request.subdomain==Reseller::SUBDOMAIN
           =render :partial => '/layouts/public_new'
           -#

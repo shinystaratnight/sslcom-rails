@@ -126,8 +126,8 @@ class Order < ActiveRecord::Base
     %w(product).each do |field|
       query=filters[field.to_sym]
       case query
-        when /reprocess/
-          result = result.where(type: "ReprocessCertificateOrder")
+      when /domain_adjustments/
+          result = result.where(description: Order::DOMAINS_ADJUSTMENT)
         when /deposit/
           result = result.joins{line_items.sellable(Deposit)}
             .where.not(description: Order::FAW)
@@ -278,7 +278,9 @@ class Order < ActiveRecord::Base
   end
     
   def total
-    unless reprocess_ucc_order? || monthly_invoice_order? || on_monthly_invoice?
+    unless reprocess_ucc_order? || monthly_invoice_order? || 
+      on_monthly_invoice? || domains_adjustment?
+      
       self.amount = line_items.inject(0.to_money) {|sum,l| sum + l.amount }
     end
   end
@@ -473,6 +475,11 @@ class Order < ActiveRecord::Base
   ## END acts_as_state_machine
 
   # BEGIN number
+
+  def merchant_fully_refunded?
+    get_total_merchant_refunds == get_total_merchant_amount
+  end
+  
   def on_monthly_invoice?
     !invoice_id.blank? && state == 'invoiced'
   end
@@ -493,6 +500,10 @@ class Order < ActiveRecord::Base
     self.type == 'ReprocessCertificateOrder'
   end
   
+  def domains_adjustment?
+    description == Order::DOMAINS_ADJUSTMENT
+  end
+  
   def reprocess_ucc_free?
     reprocess_ucc_order? && cents==0
   end
@@ -504,7 +515,18 @@ class Order < ActiveRecord::Base
   def faw_order?
     description == Order::FAW
   end
-  # Fetches all domain counts that were added during UCC certificate reprocess
+  
+  def get_order_type_label
+    if reprocess_ucc_order?
+      '(Reprocess)'
+    elsif domains_adjustment? && !reprocess_ucc_order?
+      '(Domains Adjustment)'
+    else
+      ''
+    end  
+  end
+  
+  # Fetches all domain counts that were added during UCC domains adjustment
   def get_reprocess_domains
     co           = certificate_orders.first
     cc           = get_reprocess_cc(co)
@@ -513,11 +535,8 @@ class Order < ActiveRecord::Base
     non_wildcard = cur_domains.map {|d| d if !d.include?('*')}.compact
     wildcard     = cur_domains.map {|d| d if d.include?('*')}.compact
     
-    old_non_wildcard = co.get_reprocess_max_nonwildcard(cc)
-    old_wildcard     = co.get_reprocess_max_wildcard(cc)
-    
-    tot_non_wildcard = non_wildcard.count - old_non_wildcard.count
-    tot_wildcard     = wildcard.count - old_wildcard.count
+    tot_non_wildcard = non_wildcard.count - co.get_reprocess_max_nonwildcard(cc).count
+    tot_wildcard     = wildcard.count - co.get_reprocess_max_wildcard(cc).count
     
     tot_non_wildcard  = tot_non_wildcard < 0 ? 0 : tot_non_wildcard
     tot_wildcard      = tot_wildcard < 0 ? 0 : tot_wildcard
@@ -749,21 +768,21 @@ class Order < ActiveRecord::Base
   end
   
   def make_available_line(item, type=nil)
-    order_total  = reprocess_ucc_order? ? get_full_reprocess_amount : line_items.pluck(:cents).sum
+    order_total  = domains_adjustment? ? get_full_reprocess_amount : line_items.pluck(:cents).sum
     discount_amt = discount_amount(:items)
-    total        = if reprocess_ucc_order?
+    total = if domains_adjustment?
       get_full_reprocess_amount
     else  
       item.is_a?(LineItem) ? item.cents : item.amount
     end
     percent      = total.to_d/order_total.to_d
-    discount     = discount_amt==0 ? discount_amt : (discount_amt.cents * percent)
+    discount     = discount_amt.blank? ? discount_amt : (discount_amt.cents * percent)
     funded       = get_funded_account_amount == 0 ? 0 : (get_funded_account_amount * percent)
     
     if type == :merchant
-      total - (discount + funded)
+      total - (discount.cents + funded)
     else
-      total - discount
+      total - discount.cents
     end
   end
 
@@ -791,11 +810,18 @@ class Order < ActiveRecord::Base
       }
       new_refund = Refund.refund_merchant(params)
     end
-    if self.amount.cents == self.refunds.where{status == "success"}.sum(:amount)
-      full_refund! unless fully_refunded?
-    elsif self.amount.cents < self.refunds.where{status == "success"}.sum(:amount)
-      partial_refund! unless self.partially_refunded?
+    
+    unless monthly_invoice_order?
+      if merchant_fully_refunded?
+        full_refund! unless fully_refunded?
+        if certificate_orders.any?
+          certificate_orders.each {|co| co.refund! unless co.refunded?}
+        end
+      else
+        partial_refund! unless partially_refunded?
+      end
     end
+    
     SystemAudit.create(
         owner:  User.find(user_id),
         target: o,
@@ -849,10 +875,15 @@ class Order < ActiveRecord::Base
     get_total_merchant_amount
   end
   
+  def get_funded_account_order
+    # order for funded account withdrawal
+    Order.where('description LIKE ?', "%Funded Account Withdrawal%")
+      .where('notes LIKE ?', "%#{reference_number}%").last
+  end  
+  
   def get_funded_account_amount
     # order was partially paid by funded account?
-    found = Order.where('description LIKE ?', "%Funded Account Withdrawal%")
-      .where('notes LIKE ?', "%#{reference_number}%").last
+    found = get_funded_account_order
     found ? found.cents : 0
   end
   
@@ -987,6 +1018,9 @@ class Order < ActiveRecord::Base
                                 :amount              =>pd[2].amount*wildcards)
           certificate_order.sub_order_items << so
         end
+
+        certificate_order.wildcard_count = wildcards
+        certificate_order.nonwildcard_count = (certificate_order.domains.try(:size) || 0) - wildcards
       end
     end
     unless certificate.is_ucc?

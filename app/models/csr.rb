@@ -134,11 +134,11 @@ class Csr < ActiveRecord::Base
   end
 
   def sslcom_approval_ids
-    sslcom_ca_requests.pluck(:approval_id)
+    sslcom_ca_requests.unexpired.map(&:approval_id)
   end
 
   def sslcom_usernames
-    sslcom_ca_requests.pluck(&:username)
+    sslcom_ca_requests.unexpired.map(&:username)
   end
 
   def sslcom_outstanding_approvals

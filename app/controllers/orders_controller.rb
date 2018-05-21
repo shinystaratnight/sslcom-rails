@@ -5,7 +5,7 @@ class OrdersController < ApplicationController
   #resource_controller
   helper_method :cart_items_from_model_and_id
   before_filter :finish_reseller_signup, :only => [:new], if: "current_user"
-  before_filter :find_order, :only => [:show, :invoice, :update_invoice, :refund, :refund_merchant, :change_state]
+  before_filter :find_order, :only => [:show, :invoice, :update_invoice, :refund, :refund_merchant, :change_state, :revoke]
   before_filter :set_prev_flag, only: [:create, :create_free_ssl, :create_multi_free_ssl]
   before_filter :prep_certificate_orders_instances, only: [:create, :create_free_ssl]
   before_filter :go_prev, :parse_certificate_orders, only: [:create_multi_free_ssl]
@@ -63,8 +63,8 @@ class OrdersController < ApplicationController
   end
 
   def new
-    if params[:reprocess_ucc]
-      new_reprocess_ucc
+    if params[:reprocess_ucc] || params[:renew_ucc] || params[:ucc_csr_submit]
+      ucc_domains_adjust
     else  
       if params[:certificate_order]
         @certificate = Certificate.for_sale.find_by_product(params[:certificate][:product])
@@ -197,9 +197,29 @@ class OrdersController < ApplicationController
   def search
     index
   end
+  
+  def revoke
+    if params[:revoke_all]
+      list = @order.certificate_orders
+      list.each {|co| co.revoke!(params[:revoke_reason], current_user)}
+      
+      SystemAudit.create(
+        owner: current_user,
+        target: @order,
+        notes: params[:revoke_reason],
+        action: 'Revoke all #{list.count} items(s) for order.'
+      )
+      flash[:notice] = "All #{list.count} order item(s) have been revoked."
+    else  
+      co = CertificateOrder.unscoped.find_by(ref: params[:co_ref])
+      co.revoke!(params[:revoke_reason], current_user) if co
+      flash[:notice] = "Item ##{params[:co_ref]} has been revoked."
+    end
+    redirect_to order_path @order
+  end
 
   def refund
-    @performed="canceled #{'partial ' if params["partial"]}order"
+    @performed="#{params['cancel_only'] ? 'Cancelled ' : 'Refunded '} #{'partial ' if params["partial"]}order"
     unless @order.blank?
       unless params["partial"] # full refund
         @target = @order
@@ -208,22 +228,12 @@ class OrdersController < ApplicationController
           @performed << " and made #{Money.new(@order.make_available_total).format} available to customer."
         end
         @order.full_refund!
-        @order.certificate_orders.each do |co|
-          co.revoke!(params["refund_reason"], current_user)
-        end
         notify_ca(params["refund_reason"])
       else # partial refunds or cancel line item
         @target = @order.line_items.find {|li|li.sellable.try(:ref)==params["partial"]}
         @target ||= @order.certificate_orders.find { |co| co.ref==params["partial"] }
         refund_partial_amount(params) if params["return_funds"]
         refund_partial_cancel(params) if params["cancel_only"]
-
-        if @target.is_a?(LineItem) && @target.sellable.is_a?(CertificateOrder)
-          @target.sellable.revoke!(params["refund_reason"], current_user)
-        end
-        if @target.is_a?(CertificateOrder)
-          @target.revoke!(params["refund_reason"], current_user)
-        end
       end
       SystemAudit.create(owner: current_user, target: @target, notes: params["refund_reason"], action: @performed)
     end
@@ -270,16 +280,16 @@ class OrdersController < ApplicationController
       end
     end
   end
-  
+    
   def refund_merchant_for_co(co, amount)
     funded = @order.make_available_funded(co)
+    
     co.refund!
-    co.revoke!(params["refund_reason"], current_user)
     SystemAudit.create(
       owner:  current_user,
       target: co,
       notes:  params["refund_reason"],
-      action: "Cancelled partial order #{co.ref}, merchant refund issued for #{amount.format}."
+      action: "Refunded partial amount for certificate order ##{co.ref}, merchant refund issued for #{amount.format}."
     )
     if funded > 0
       @order.billable.funded_account.add_cents(funded)
@@ -355,17 +365,20 @@ class OrdersController < ApplicationController
       @pending_monthly_invoices = @monthly_invoices
         .where(status: 'pending')
         .where(orders: {approval: 'approved'})
-        .map(&:orders).flatten.uniq.sum(&:cents)
+        .map(&:orders).flatten.uniq
+        .select{|o| invoice_items.include?(o)}.sum(&:cents)
       
       @paid_monthly_invoices = @monthly_invoices
         .where(status: ['paid', 'partially_refunded'])
         .where(orders: {approval: 'approved'})
-        .map(&:orders).flatten.uniq.sum(&:cents)
+        .map(&:orders).flatten.uniq
+        .select{|o| invoice_items.include?(o)}.sum(&:cents)
         
       @refunded_monthly_invoices = @monthly_invoices
         .where(status: 'refunded')
         .where(orders: {approval: 'approved'})
-        .map(&:orders).flatten.uniq.sum(&:cents)
+        .map(&:orders).flatten.uniq
+        .select{|o| invoice_items.include?(o)}.sum(&:cents)
         
       @partial_refunds_monthly_invoices = @monthly_invoices
         .where(status: 'partially_refunded')
@@ -375,6 +388,7 @@ class OrdersController < ApplicationController
       @paid_monthly_invoices -= @partial_refunds_monthly_invoices
       
       @monthly_invoices_count = @monthly_invoices.uniq.count
+      @invoiced_orders_count = invoice_items.count
       
       # Non invoiced orders
       @negative = unpaginated
@@ -400,7 +414,7 @@ class OrdersController < ApplicationController
       faw = unpaginated.where(description: Order::FAW).sum(:cents)
 
       deposits = deposits.where.not(description: Order::FAW)
-        
+    
       @refunded_amount = refunded.sum(:amount)
       @refunded_count  = refunded.count
       @deposits_amount = deposits.sum(:cents)
@@ -517,29 +531,35 @@ class OrdersController < ApplicationController
       render :action => 'new'
   end
   
-  # Order created for existing UCC certificate order on reprocess/rekey 
-  def create_reprocess_ucc
-    @reprocess_ucc = true
+  # Order created for existing UCC certificate order on reprocess/rekey or renew, 
+  # or initial CSR submit.
+  def ucc_domains_adjust_create
+    @reprocess_ucc  = params[:order][:reprocess_ucc]
+    @renew_ucc      = params[:order][:renew_ucc]
+    @ucc_csr_submit = params[:order][:ucc_csr_submit]
+
     ucc_or_invoice_params
-    
-    @order = ReprocessCertificateOrder.new(
+
+    order_params = {
       billing_profile_id: params[:funding_source],
       amount:             @target_amount,
       cents:             (@target_amount * 100).to_i,
       description:        Order::DOMAINS_ADJUSTMENT,
       state:              'pending',
       approval:           'approved',
-      notes:              reprocess_ucc_notes,
+      notes:              get_order_notes,
       invoice_description: params[:order][:order_description]
-    )
+    }
+    
+    @order = @reprocess_ucc ? ReprocessCertificateOrder.new(order_params) : Order.new(order_params)
     @order.billable = @ssl_account
 
     if @funded_amount > 0 && (@order_amount <= @funded_amount)
       # All amount covered by credit from funded account
-      reprocess_ucc_funded_account(params)
+      ucc_domains_adjust_funded(params)
     else
       # Pay full or partial payment by CC or Paypal
-      reprocess_ucc_hybrid_payment(params)
+      domains_adjust_hybrid_payment(params)
     end
   end
     
@@ -627,7 +647,46 @@ class OrdersController < ApplicationController
     )
   end
   
-  def reprocess_ucc_funded_account(params)
+  def ucc_update_domain_counts
+    co = @certificate_order
+    notes = []
+    order = params[:order]
+    
+    # domains entered
+    wildcard = order ? order[:wildcard_count].to_i : params[:wildcard_count].to_i
+    nonwildcard = order ? order[:nonwildcard_count].to_i : params[:nonwildcard_count].to_i
+    
+    # max domain counts stored
+    co_nonwildcard = co.nonwildcard_count.blank? ? 0 : co.nonwildcard_count
+    co_wildcard = co.wildcard_count.blank? ? 0 : co.wildcard_count
+    
+    # max for previous signed certificates to determine credited domains
+    prev_wildcard    = co.get_reprocess_max_wildcard(co.certificate_content).count
+    prev_nonwildcard = co.get_reprocess_max_nonwildcard(co.certificate_content).count
+    
+    if (co_nonwildcard > prev_nonwildcard) &&
+      (nonwildcard > co_nonwildcard) || (@reprocess_ucc && 
+      (nonwildcard >= co_nonwildcard && (nonwildcard > 0)))
+      notes << "#{co_nonwildcard - prev_nonwildcard} non wildcard domains"
+    end
+    if (co_wildcard > prev_wildcard) &&
+      (wildcard > co_wildcard) || (@reprocess_ucc && 
+      (wildcard >= co_wildcard && (wildcard > 0)))
+      notes << "#{co_wildcard - prev_wildcard} wildcard domains"
+    end
+
+    if notes.any?  
+      @order.invoice_description = '' if @order.invoice_description.nil?
+      @order.invoice_description << " Received credit for #{notes.join('and')}."
+      @order.save
+    end
+    co.update(
+      nonwildcard_count: (nonwildcard > co_nonwildcard ? nonwildcard : co_nonwildcard),
+      wildcard_count:    (wildcard > co_wildcard ? wildcard : co_wildcard)
+    )
+  end
+    
+  def ucc_domains_adjust_funded(params)
     withdraw_amount     = @order_amount < @funded_amount ? @order_amount : @funded_amount
     withdraw_amount     = (withdraw_amount * 100).to_i
     withdraw_amount_str = Money.new(withdraw_amount).format
@@ -637,6 +696,7 @@ class OrdersController < ApplicationController
     if current_user && @order.valid? &&
       ((@ssl_account.funded_account.cents + withdraw_amount) == @funded_account_init)
       reprocess_ucc_order_free(params)
+      ucc_update_domain_counts
       flash[:notice] = "Succesfully paid full amount of #{withdraw_amount_str} from funded account for order."
       redirect_to edit_certificate_order_path(@ssl_slug, @certificate_order)
     else
@@ -645,13 +705,14 @@ class OrdersController < ApplicationController
     end
   end
     
-  def reprocess_ucc_hybrid_payment(params)
+  def domains_adjust_hybrid_payment(params)
     if current_user && order_reqs_valid? && !@too_many_declines && purchase_successful?
       save_billing_profile unless (params[:funding_source])
       @order.billing_profile = @profile
       @certificate_order.add_reproces_order @order
       withdraw_funded_account((@funded_amount * 100).to_i) if @funded_amount > 0
       record_order_visit(@order)
+      ucc_update_domain_counts
       redirect_to edit_certificate_order_path(@ssl_slug, @certificate_order)
     else
       if @too_many_declines
@@ -674,59 +735,95 @@ class OrdersController < ApplicationController
     @certificate_order.add_reproces_order @order
     record_order_visit(@order)
     @order.save
+    # In case credits were used to cover the cost of order.
+    ucc_update_domain_counts
   end
   
-  def reprocess_ucc_invoice(params)
+  def add_to_monthly_invoice(params)
     ssl_id  = @ssl_account.id
     invoice = if MonthlyInvoice.invoice_exists?(ssl_id)
       MonthlyInvoice.get_current_invoice(ssl_id)
     else
       MonthlyInvoice.create(billable_id: ssl_id, billable_type: 'SslAccount')
     end
+    @order = current_order_reprocess_ucc if @reprocess_ucc
     
-    @order             = current_order_reprocess_ucc
+    if @renew_ucc || @ucc_csr_submit
+      @order        = @ssl_account.purchase(@certificate_order)
+      @order.cents  = @amount * 100
+      @order.amount = @amount
+    end
     @order.description = Order::DOMAINS_ADJUSTMENT
     @order.state       = 'invoiced'
-    @order.notes       = reprocess_ucc_notes
+    @order.notes       = get_order_notes
     @order.invoice_id  = invoice.id
     @order.approval    = 'approved'
     @order.invoice_description = params[:order_description]
     @certificate_order.add_reproces_order @order
+    ucc_update_domain_counts
     record_order_visit(@order)
   end
     
-  def new_reprocess_ucc
+  def ucc_domains_adjust
     if current_user
-      @certificate_order   = (current_user.is_system_admins? ? CertificateOrder :
-                                  current_user.ssl_account.certificate_orders).find_by(ref: params[:co_ref])
+      @certificate_order = if current_user.is_system_admins?
+        CertificateOrder.find_by(ref: params[:co_ref])
+      else
+        current_user.ssl_account.certificate_orders.find_by(ref: params[:co_ref])
+      end
       @ssl_account = @certificate_order.ssl_account
       @certificate_content = @certificate_order.certificate_contents.find_by(ref: params[:cc_ref])
-      @reprocess_ucc       = true
-      amount               = @certificate_order.ucc_prorated_amount(@certificate_content, find_tier)
-      if @ssl_account.billing_monthly? || amount == 0
-        if amount == 0 # Reprocess is free, no additional domains added
-          @order = ReprocessCertificateOrder.new(
-            amount:      0,
-            cents:       0,
-            description: Order::DOMAINS_ADJUSTMENT,
-            notes:       reprocess_ucc_notes,
-            approval:    'approved'
-          )
-          @order.billable = @ssl_account
-          reprocess_ucc_order_free(params)
-          flash[:notice] = "This UCC certificate reprocess is free due to no additional domains."
-        end
-        
-        if @ssl_account.billing_monthly? && amount > 0 # Invoice Order, do not charge
-          reprocess_ucc_invoice(params)
-          flash[:notice] = "This UCC reprocess in the amount of #{Money.new(amount).format} will appear on the monthly invoice."
-        end
-        redirect_to edit_certificate_order_path(@ssl_slug, @certificate_order)
+
+      @amount = if params[:renew_ucc] || params[:ucc_csr_submit]
+        params[:order_amount].to_f
       else
-        render 'new_reprocess_ucc'
+        @certificate_order.ucc_prorated_amount(@certificate_content)
       end
+      params[:reprocess_ucc] ? ucc_domains_adjust_reprocess : ucc_domains_adjust_other
     else
       redirect_to login_url and return
+    end
+  end
+  
+  def ucc_domains_adjust_other
+    @renew_ucc = params[:renew_ucc]
+    @ucc_csr_submit = params[:ucc_csr_submit]
+    
+    if @ssl_account.billing_monthly? || @amount == 0
+      if @ssl_account.billing_monthly? && @amount > 0 # Invoice Order, do not charge
+        add_to_monthly_invoice(params)
+        flash[:notice] = "The domains adjustment amount of #{@order.amount.format} will appear on the monthly invoice."
+      end
+      redirect_to edit_certificate_order_path(@ssl_slug, @certificate_order)
+    else
+      render 'ucc_domains_adjust'
+    end
+  end
+    
+  def ucc_domains_adjust_reprocess
+    @reprocess_ucc = true
+    
+    if @ssl_account.billing_monthly? || @amount == 0
+      if @amount == 0 # Reprocess is free, no additional domains added
+        @order = ReprocessCertificateOrder.new(
+          amount:      0,
+          cents:       0,
+          description: Order::DOMAINS_ADJUSTMENT,
+          notes:       reprocess_ucc_notes,
+          approval:    'approved'
+        )
+        @order.billable = @ssl_account
+        reprocess_ucc_order_free(params)
+        flash[:notice] = "This UCC certificate reprocess is free due to no additional domains."
+      end
+      
+      if @ssl_account.billing_monthly? && @amount > 0 # Invoice Order, do not charge
+        add_to_monthly_invoice(params)
+        flash[:notice] = "This UCC reprocess in the amount of #{Money.new(@amount).format} will appear on the monthly invoice."
+      end
+      redirect_to edit_certificate_order_path(@ssl_slug, @certificate_order)
+    else
+      render 'ucc_domains_adjust'
     end
   end
   
@@ -746,19 +843,20 @@ class OrdersController < ApplicationController
   # admin user refunds line item
   def refund_partial_amount(params)
     refund_amount = @order.make_available_line(@target)
-    item_remains  = @order.line_items.select{|li|li.sellable.try("refunded?")}.count==(@order.line_items.count)
-
+    item_remains  = @order.line_items.select{|li|li.sellable.try("refunded?")}.count == @order.line_items.count
+    refund_amount_f = Money.new(refund_amount).format
+    
     @order.billable.funded_account.add_cents(refund_amount)
-    @performed << " and made $#{refund_amount} available to customer"
+    @performed << " and made #{refund_amount_f} available to customer"
 
-    #at least 1 lineitem needs to remain unrefunded or refunded amount is less than order total
+    # at least 1 lineitem needs to remain unrefunded or refunded amount is less than order total
     if item_remains
       @order.full_refund!
     else
       @order.partial_refund!(params["partial"], refund_amount)
     end
     if (@target.is_a?(LineItem) && @target.sellable.refunded?) || (@target.is_a?(CertificateOrder) && @target.refunded?)
-      flash[:notice] = "Line item was successfully credited for #{Money.new(refund_amount).format}."
+      flash[:notice] = "Line item was successfully credited for #{refund_amount_f}."
     end
   end
 

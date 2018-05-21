@@ -1,24 +1,34 @@
 -content_for :title, 'Reprocess Payment'
 =order_progress_indicator(2, @certificate_order.certificate) if @certificate_order
--current_order      = current_order_reprocess_ucc
+-current_order      = @reprocess_ucc ? current_order_reprocess_ucc : domains_adjustment_order
 -funded_account_amt = @ssl_account.funded_account(true).amount
 -remaining_amt      = current_order.amount - funded_account_amt
 -funded_account_amt = remaining_amt.cents < 0 ? current_order.amount : funded_account_amt
 -remaining_amt      = remaining_amt.cents < 0 ? Money.new(0) : remaining_amt
   
 .reseller_registration_select_tier
-  %h3 Reprocess UCC Certificate Payment
+  -desc_type = @renew_ucc ? 'Renew' : (@reprocess_ucc ? 'Reprocess' : 'Domains Adjustment:')
+  %h3 #{desc_type} UCC Certificate Payment
   %p
     Please fill out the (*) required fields below
     -if current_order.amount.to_s.to_i > 0
       This charge will appear as #{Settings.merchant_name} on your credit card statement.
   =error_messages_for :user, :billing_profile, :credit_card, object_name: 'transaction'
   
-  =form_for Order.new, url: create_reprocess_ucc_orders_path(@ssl_slug) do |f|
+  =form_for Order.new, url: ucc_domains_adjust_create_orders_path(@ssl_slug) do |f|
     =f.hidden_field :co_ref, value: params[:co_ref]
     =f.hidden_field :cc_ref, value: params[:cc_ref]
     =f.hidden_field :order_description, value: params[:order_description]
+    =f.hidden_field :wildcard_count, value: params[:wildcard_count]
+    =f.hidden_field :nonwildcard_count, value: params[:nonwildcard_count]
     
+    -if @reprocess_ucc
+      =f.hidden_field :reprocess_ucc, value: @reprocess_ucc
+    -if @renew_ucc && !@reprocess_ucc
+      =f.hidden_field :renew_ucc, value: @renew_ucc
+    -if @ucc_csr_submit
+      =f.hidden_field :ucc_csr_submit, value: @ucc_csr_submit
+
     -if current_user && current_order.cents > 0
       -# Funding Sources Section
       #stylized.deposit_funds_form

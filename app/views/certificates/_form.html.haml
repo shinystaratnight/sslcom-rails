@@ -1,4 +1,4 @@
--reprocess_ucc = @certificate.is_ucc? && (@certificate.is_premium_ssl? !=0) && action_name == 'reprocess' && controller_name == 'certificate_orders'
+-reprocess_ucc = domains_adjust_billing?(@certificate_order)
 -if @certificate.is_ucc?
   -if @certificate.is_ev?
     -first, second = @certificate.items_by_domains(true).transpose[0]
@@ -332,8 +332,9 @@
             #{"sub" if @certificate.is_premium_ssl?}domains)
   -else
     -if reprocess_ucc
-      -wildcard_count    = @certificate_order.get_reprocess_max_wildcard.count
-      -nonwildcard_count = @certificate_order.get_reprocess_max_nonwildcard.count
+      -max_counts        = @certificate_order.ucc_get_max_counts
+      -wildcard_count    = max_counts[:wildcard_count]
+      -nonwildcard_count = max_counts[:nonwildcard_count]
       -nonwildcard_cost  = @certificate_order.ucc_prorated_domain(:nonwildcard, @tier)
 
       .clearfix
@@ -374,8 +375,7 @@
       =cert_form.check_box :agreement
       %p
         &nbsp;By clicking this check box, you agree to the terms of the
-        -#=link_to "SSL.com Subscriber Agreement", "https://www.ssl.com/wp-content/uploads/2014/06/ssl_com_subscriber_agreement.pdf"
-        =link_to "SSL.com Subscriber Agreement", "https://www.ssl.com/app/uploads/2016/07/SSL_com_Subscriber_Agreement_V_1_0_06242016.pdf"
+        =link_to "SSL.com Subscriber Agreement", Certificate::SSLCOM_SUBSCRIBER_AGREEMENT
 #what_is_number_licenses.hidden
   #what_is_number_licenses_explain
     %p

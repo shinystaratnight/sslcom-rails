@@ -35,6 +35,11 @@
   -if is_receipt?
     %h3=title
   =render partial: "orders/cancel_order"
+  
+  -if current_user.is_admin? && @certificate_order
+    #completed_order_results
+      =render partial: 'orders/order_status'
+      
   -if @certificate_order
     %p
       -if permitted_to?(:update, @certificate_order)

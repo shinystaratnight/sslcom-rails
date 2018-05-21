@@ -151,6 +151,9 @@
     $.prettyLoader();
     $(".btn-buynow span, .hide_me").hide();
     $("a[rel^='prettyPopin']").prettyPopin();
+    $('#team-billing-method').on('change', function() {
+      $('#frm-team-billing-method').submit();
+    });
     $('div.flash_message').click(function(){
       $(this).fadeOut();
     });

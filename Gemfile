@@ -72,6 +72,7 @@ gem 'rubyzip', '~> 1.2.1'
 gem 'wkhtmltopdf-binary'
 gem 'wicked_pdf'
 gem 'u2f'
+gem 'duo_web', '~> 1.0'
 
 group :development do
   gem 'foreman'

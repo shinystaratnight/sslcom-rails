@@ -2,6 +2,7 @@ class SslAccountsController < ApplicationController
   before_filter :require_user, only: [:show, :edit, :edit_settings]
   before_filter :find_ssl_account
   filter_access_to :all, attribute_check: true
+  before_action :verify_duo_authentication
 
   # GET /ssl_account/
   def show
@@ -30,6 +31,7 @@ class SslAccountsController < ApplicationController
     key_handles = current_user.u2fs.pluck(:key_handle)
     @sign_requests = u2f.authentication_requests(key_handles)
     @u2fs = current_user.u2fs
+    @duo_account = current_user.ssl_account.duo_account
 
     @app_id = u2f.app_id
   end
@@ -71,7 +73,7 @@ class SslAccountsController < ApplicationController
 
   # PUT /ssl_account/
   def update
-    params[:monthly_billing] ? update_monthly_billing : update_reseller_profile
+    params[:billing_method] ? update_billing_method : update_reseller_profile
   end
 
   def remove_u2f
@@ -124,6 +126,17 @@ class SslAccountsController < ApplicationController
     render json: resultObj
   end
 
+  def register_duo
+    resultObj = {}
+    if(@ssl_account.duo_account)
+      @ssl_account.duo_account.update_attributes(params.except(:action, :controller))
+    else
+      @ssl_account.create_duo_account
+      @ssl_account.duo_account.update_attributes(params.except(:action, :controller))
+    end
+    render json: resultObj
+  end
+
   # PUT /ssl_account/
   def update_settings
     if params[:reminder_notice_triggers]
@@ -147,6 +160,22 @@ class SslAccountsController < ApplicationController
     end
   end
 
+  #PUT /ssl_account/duo_enable
+  def duo_enable
+    @ssl_account.update_attribute(:duo_enabled, params['duo_enable'])
+    respond_to do |format|
+      format.js {render json: @user.to_json}
+    end  
+  end
+
+  #PUT /ssl_account/duo_own_used
+  def duo_own_used
+    @ssl_account.update_attribute(:duo_own_used, params['duo_own_used'])
+    respond_to do |format|
+      format.js {render json: @user.to_json}
+    end  
+  end
+
   def adjust_funds
     amount=params["amount"].to_f*100
     @ssl_account.funded_account.add_cents(amount)
@@ -158,13 +187,13 @@ class SslAccountsController < ApplicationController
   
   private
   
-  def update_monthly_billing
+  def update_billing_method
     if current_user.is_system_admins?
       ssl_account = SslAccount.where(
         'ssl_slug = ? OR acct_number = ?', params[:ssl_slug], params[:ssl_slug]
       ).first
-      ssl_account.update(billing_method: (params[:status] == 'enable' ? 'monthly' : 'due_at_checkout'))
-      flash[:notice] = "Successfully #{params[:status]}d team #{params[:ssl_slug]} monthly billing."
+      ssl_account.update(billing_method: params[:billing_method])
+      flash[:notice] = "Successfully updated team #{params[:ssl_slug]} to '#{params[:billing_method]}' billing."
     else
       flash[:error] = "You are not authorized to perform this action."
     end  
@@ -172,6 +201,10 @@ class SslAccountsController < ApplicationController
   end  
     
   def update_reseller_profile
+    if current_user.is_system_admins?
+      @ssl_account = Reseller.find(params[:ssl_account][:reseller_attributes][:id]).ssl_account
+      @ssl_slug = @ssl_account.to_slug
+    end
     respond_to do |format|
       if @ssl_account.update_attributes(params[:ssl_account])
         flash[:notice] = 'Reseller profile information was successfully updated.'

@@ -31,6 +31,18 @@ module OrdersHelper
     order
   end
   
+  def domains_adjustment_order
+    if current_user
+      amount       = Money.new(params[:order_amount].to_f * 100)
+      @ssl_account = @certificate_order.ssl_account
+      order        = @ssl_account.purchase(@certificate_order)
+      order.amount = amount
+      order.cents  = amount.cents
+      order.invoice_description = params[:order_description]
+      order
+    end
+  end
+  
   def current_order_reprocess_ucc
     if current_user
       @ssl_account = @certificate_order.ssl_account
@@ -130,7 +142,7 @@ module OrdersHelper
   end
   
   def confirm_affiliate_sale
-    if !@order.ext_affiliate_credited? # && @order.created_at > 5.minutes.ago
+    if !@order.domains_adjustment? && !@order.ext_affiliate_credited? && @order.created_at < 1.minute.ago
       @order.toggle! :ext_affiliate_credited
       if @order.ext_affiliate_name=="shareasale"
         "<img src=\"https://shareasale.com/sale.cfm?amount=#{@order.final_amount.to_s}&tracking=#{@order.reference_number}&transtype=sale&merchantID=#{@order.ext_affiliate_id}\" width=\"1\" height=\"1\">".html_safe
@@ -192,6 +204,14 @@ module OrdersHelper
     "Payment for monthly invoice total of #{@invoice.get_amount_format} due on #{@invoice.end_date.strftime('%F')}."
   end
   
+  def ucc_csr_submit_notes
+    "Initial CSR submit, UCC domains adjustment (certificate order: #{@certificate_order.ref}, certificate content: #{@certificate_content.ref})"
+  end
+  
+  def renew_ucc_notes
+    "Renewal UCC domains adjustment (certificate order: #{@certificate_order.ref}, certificate content: #{@certificate_content.ref})"
+  end
+  
   def reprocess_ucc_notes
     "Reprocess UCC (certificate order: #{@certificate_order.ref}, certificate content: #{@certificate_content.ref})"
   end
@@ -220,7 +240,7 @@ module OrdersHelper
     @funded_account_init = @ssl_account.funded_account.cents
     @target_amount       = (@charge_amount.blank? || @charge_amount == 0) ? @order_amount : @charge_amount
     
-    if @reprocess_ucc
+    if @reprocess_ucc || @renew_ucc || @ucc_csr_submit
       @certificate_order   = @ssl_account.certificate_orders.find_by(ref: params[:order][:co_ref])
       @certificate_content = @certificate_order.certificate_contents.find_by(ref: params[:order][:cc_ref])
     end
@@ -251,24 +271,32 @@ module OrdersHelper
     @ssl_account.funded_account.save
   end
   
+  def get_order_notes
+    return reprocess_ucc_notes if @reprocess_ucc
+    return order_invoice_notes if @monthly_invoice
+    return renew_ucc_notes if @renew_ucc
+    return ucc_csr_submit_notes if @ucc_csr_submit
+    ''
+  end
+  
+  def get_order_descriptions
+    return Order::DOMAINS_ADJUSTMENT if @reprocess_ucc || @renew_ucc || @ucc_csr_submit
+    return Order::INVOICE_PAYMENT if @monthly_invoice
+    Order::SSL_CERTIFICATE
+  end
+  
   def purchase_successful?
     return false unless (ActiveMerchant::Billing::Base.mode == :test ? true : @credit_card.valid?)
     
-    @order.description = if @reprocess_ucc
-      Order::DOMAINS_ADJUSTMENT
-    else
-      @monthly_invoice ? Order::INVOICE_PAYMENT : Order::SSL_CERTIFICATE
-    end
-    notes = @reprocess_ucc ? reprocess_ucc_notes : (@monthly_invoice ? order_invoice_notes : '')
+    @order.description = get_order_descriptions
+    
+    other_order = @reprocess_ucc || @renew_ucc || @monthly_invoice
     
     options = @profile.build_info(@order.description.gsub('Payment', 'Pmt')).merge(
       stripe_card_token: params[:billing_profile][:stripe_card_token],
       owner_email: current_user.nil? ? params[:user][:email] : current_user.ssl_account.get_account_owner.email
     )
-    
-    if @reprocess_ucc || @monthly_invoice
-      options.merge!(amount: (@target_amount.to_f * 100).to_i)
-    end
+    options.merge!(amount: (@target_amount.to_f * 100).to_i) if other_order
     
     @gateway_response = @order.purchase(@credit_card, options)
     log_declined_transaction(@gateway_response, @credit_card.number.last(4)) unless @gateway_response.success?
@@ -277,7 +305,7 @@ module OrdersHelper
         flash.now[:notice] = @gateway_response.message
         @order.mark_paid!
         # in case the discount becomes invalid before check out, give it to the customer
-        unless @reprocess_ucc || @monthly_invoice
+        unless other_order
           @order.discounts.each do |discount|
             Discount.decrement_counter(:remaining, discount) unless discount.remaining.blank?
           end
@@ -286,7 +314,7 @@ module OrdersHelper
             owner:  current_user,
             target: @order,
             action: "purchase successful",
-            notes:  notes
+            notes:  get_order_notes
         )
       else
         flash.now[:error] = if @gateway_response.message=~/no match/i
@@ -295,7 +323,7 @@ module OrdersHelper
           @gateway_response.message #no descriptive enough
         end
         @order.transaction_declined!
-        unless @reprocess_ucc || @monthly_invoice
+        unless other_order
           @certificate_order.destroy unless @certificate_order.blank?
         end
       end

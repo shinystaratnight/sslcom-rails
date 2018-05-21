@@ -28,6 +28,10 @@
   =form_for(*form_params) do |f|
     =hidden_field :certificate, :product
     =hidden_field :order, :order_description, value: nil
+    =hidden_field :order, :adjustment_amount, value: 0
+    =hidden_field :order, :wildcard_count, value: 0
+    =hidden_field :order, :nonwildcard_count, value: 0
+    
     =recert?
     #stylized.default_form
       =render :partial => "/certificates/form", :locals => {:f=>f}

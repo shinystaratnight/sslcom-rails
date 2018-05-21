@@ -1,5 +1,5 @@
--reprocess_order = order.reprocess_ucc_order?
--full_reprocess_format = order.get_full_reprocess_format if reprocess_order
+-domains_adjustment = order.reprocess_ucc_order? || order.domains_adjustment?
+-full_domains_adjust_format = order.get_full_reprocess_format if domains_adjustment
 -ia = order.invoice_address
 
 %div#header.alwaysbreak
@@ -38,7 +38,7 @@
         -cents = order.cents.blank? ? 0 : order.cents
         %p.font-small-grey Invoice Total
         %p#amount
-          #{reprocess_order ? full_reprocess_format : Money.new(cents).format}
+          #{domains_adjustment ? full_domains_adjust_format : Money.new(cents).format}
 
 #line-items
   %table
@@ -58,7 +58,7 @@
         %tr
           %td
             .description
-              ="#{row_description(cert)} #{@order.reprocess_ucc_order? ? '(Reprocess)' : ''}"
+              ="#{row_description(cert)} #{@order.get_order_type_label}"
             .description-ext
               -order_line_items(cert, nil, :invoice).each do |item|
                 -if item.is_a? Array
@@ -68,19 +68,19 @@
                   .description-info
                     =item
           %td.unit-price
-            #{reprocess_order ? full_reprocess_format : cert.price.format}
+            #{domains_adjustment ? full_domains_adjust_format : cert.price.format}
           %td.quantity
-            #{reprocess_order ? 1 : cert.line_items.count}
+            #{domains_adjustment ? 1 : cert.line_items.count}
           %td.price
-            #{reprocess_order ? full_reprocess_format : Money.new(cert.amount).format}
+            #{domains_adjustment ? full_domains_adjust_format : Money.new(cert.amount).format}
 
 %div#line-items-total.nobreak
   %table
     %tr
       %td#subtotal Subtotal
       %td.amount
-        -if reprocess_order
-          #{full_reprocess_format}
+        -if domains_adjustment
+          #{full_domains_adjust_format}
         -else
           #{Money.new(order.certificate_orders.map(&:amount).sum).format}
     -if order.discounts.any?
@@ -97,7 +97,7 @@
     %tr
       %td#paid-lbl Paid
       %td#paid-amt
-        -if reprocess_order 
+        -if domains_adjustment 
           #{Money.new(order.get_paid_reprocess_amount).format}
         -else
           ="-#{Money.new(order.get_total_merchant_amount).format}"

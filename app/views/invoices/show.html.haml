@@ -39,24 +39,34 @@
     %h3.order_results_header
       Admin Actions
     #invoice-container
+      #btn-invoice-generate
+        =link_to "&#x2713; Manage Items".html_safe,          |
+          manage_items_invoice_path(@ssl_slug, invoice_ref), |
+          class: 'button-mo-invoice btn-mo-manage', method: :get
+          
       -if @invoice.show_payment_actions?
         #btn-invoice-generate
-          =link_to "&#x27B2; Payment #{MonthlyInvoice::PAYMENT_METHODS_TEXT[:wire]}".html_safe, |
-            make_payment_other_invoice_path(@ssl_slug, invoice_ref, ptm_type: :wire),           |
-            class: 'button-mo-invoice', method: :put
+          -p_text_wire = MonthlyInvoice::PAYMENT_METHODS_TEXT[:wire]
+          =link_to "&#x27B2; Payment #{p_text_wire}".html_safe,                       |
+            make_payment_other_invoice_path(@ssl_slug, invoice_ref, ptm_type: :wire), |
+            class: 'button-mo-invoice', method: :put,                                 |
+            data: { confirm: "Are you sure you want to pay by #{p_text_wire} and set invoice to paid?" }
       
         #btn-invoice-generate
-          =link_to "&#x27B2; Payment #{MonthlyInvoice::PAYMENT_METHODS_TEXT[:po]}".html_safe, |
-            make_payment_other_invoice_path(@ssl_slug, invoice_ref, ptm_type: :po),           |
-            class: 'button-mo-invoice', method: :put
-    
+          -p_text_other = MonthlyInvoice::PAYMENT_METHODS_TEXT[:po]
+          =link_to "&#x27B2; Payment #{p_text_other}".html_safe,                    |
+            make_payment_other_invoice_path(@ssl_slug, invoice_ref, ptm_type: :po), |
+            class: 'button-mo-invoice', method: :put,                               |
+            data: { confirm: "Are you sure you want to pay by #{p_text_other} and set invoice to paid?" }
+            
       #btn-invoice-generate
         =link_to "&#x2631; Update".html_safe, '#', class: 'button-mo-invoice', id: 'lnk-mo-invoice-update'
-        
-      #btn-invoice-generate
-        =link_to "&#x2716; Delete".html_safe, invoice_path(@ssl_slug, invoice_ref), |
-          class: 'button-mo-invoice btn-mo-destroy', method: :delete,               |
-          data: { confirm: "Are you sure you want to delete this invoice and #{@invoice.orders.count} orders?" }
+      
+      -unless @invoice.archived?
+        #btn-invoice-generate
+          =link_to "&#x2716; Delete".html_safe, invoice_path(@ssl_slug, invoice_ref), |
+            class: 'button-mo-invoice btn-mo-destroy', method: :delete,               |
+            data: { confirm: "Are you sure you want to delete (archive) this invoice?" }
 
       -if @invoice.show_refund_actions?
         -if ref_merchant && %{stripe paypal authnet}.include?(ref_merchant) && !@invoice.merchant_refunded?

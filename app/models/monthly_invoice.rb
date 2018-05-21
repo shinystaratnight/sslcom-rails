@@ -1,7 +1,7 @@
 class MonthlyInvoice < Invoice
   belongs_to :billable, polymorphic: true
   belongs_to :payment, -> { unscope(where: :state) }, class_name: 'Order', foreign_key: :order_id
-  has_many   :orders, foreign_key: :invoice_id, dependent: :destroy
+  has_many   :orders, -> { unscope(where: :state) }, foreign_key: :invoice_id
   
   validates :start_date, :end_date, :status, :billable_id, :billable_type, :default_payment, presence: true
   
@@ -13,7 +13,8 @@ class MonthlyInvoice < Invoice
   
   PAYMENT_METHODS      = {bp: 'billing_profile', wire: 'wire_transfer', po: 'po_other'}
   PAYMENT_METHODS_TEXT = {bp: 'Billing Profile', wire: 'WireXfer', po: 'PO/Other'}
-  STATUS               = %w{pending paid refunded partially_refunded}
+  STATUS               = %w{pending paid refunded partially_refunded archived}
+  DEFAULT_STATUS       = STATUS.dup - ['archived']
   
   def self.invoice_exists?(ssl_account_id)
     ssl = SslAccount.find ssl_account_id
@@ -36,6 +37,21 @@ class MonthlyInvoice < Invoice
     ssl.monthly_invoices.order(created_at: :desc)
       .where(start_date: DateTime.now.beginning_of_month)
       .where.not(id: exclude).first
+  end
+  
+  def self.get_teams_invoices(ssl_account_id)
+    ssl = SslAccount.find ssl_account_id
+    ssl.monthly_invoices.order(created_at: :desc)
+  end
+  
+  def self.get_invoices_for_select(ssl_account_id)
+    MonthlyInvoice.get_teams_invoices(ssl_account_id)
+      .map{|mi| ["#{mi.reference_number.upcase} (#{mi.status.gsub('_', ' ')})", mi.reference_number]}
+      .insert(0, ['NEW INVOICE', 'new_invoice'])
+  end
+    
+  def archived?
+    status == 'archived'
   end
   
   def paid_wire_transfer?
@@ -96,6 +112,10 @@ class MonthlyInvoice < Invoice
       end
     end
     fully_refunded
+  end
+  
+  def archive!
+    update(status: 'archived')
   end
   
   def full_refund!
@@ -163,7 +183,7 @@ class MonthlyInvoice < Invoice
       desc    = if o.invoice_description.blank?
         "Additional #{domains[:non_wildcard]} non-wildcard and #{domains[:wildcard]} wildcard domains for certificate order ##{co.ref}."
       else
-        "#{o.invoice_description} for certificate order ##{co.ref}."
+        "#{o.invoice_description} For certificate order ##{co.ref}."
       end  
       
       final[o.reference_number] = {

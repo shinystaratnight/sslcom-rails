@@ -1,7 +1,10 @@
 class UsersController < ApplicationController
   # fix for https://sslcom.airbrake.io/projects/128852/groups/2108774376847787256?resolved=any&tab=overview
   skip_before_filter :verify_authenticity_token, :only => [:create]
+  skip_before_action :require_no_authentication, :only => [:duo_verify]
+  skip_before_action :verify_authenticity_token
   before_filter :require_no_user, :only => [:new, :create]
+  before_filter :verify_duo_authentication, :only => [:show]
   before_filter :require_user, only: [
     :show, :edit, :update, :cancel_reseller_signup, 
     :approve_account_invite, :resend_account_invite,
@@ -228,16 +231,63 @@ class UsersController < ApplicationController
 
   def switch_default_ssl_account
     old_ssl_slug       = @ssl_slug
-    switch_ssl_account = params[:ssl_account_id]
-    if switch_ssl_account && @user.get_all_approved_accounts.map(&:id).include?(switch_ssl_account.to_i)
-      @user.set_default_ssl_account(switch_ssl_account)
-      flash[:notice]      = "You have switched to team %s."
-      flash[:notice_item] = "<strong>#{@user.ssl_account.get_team_name}</strong>"
-      set_ssl_slug(@user)
+    @switch_ssl_account = params[:ssl_account_id]
+    session[:switch_ssl_account] = @switch_ssl_account
+    session[:old_ssl_slug] = old_ssl_slug
+    team = SslAccount.find(params[:ssl_account_id])
+    if team.duo_enabled
+      redirect_to duo_user_path
     else
-      flash[:error] = "Something went wrong. Please try again!"
+      if @switch_ssl_account && @user.get_all_approved_accounts.map(&:id).include?(@switch_ssl_account.to_i)
+        @user.set_default_ssl_account(@switch_ssl_account)
+        flash[:notice]      = "You have switched to team %s."
+        flash[:notice_item] = "<strong>#{@user.ssl_account.get_team_name}</strong>"
+        set_ssl_slug(@user)
+      else
+        flash[:error] = "Something went wrong. Please try again!"
+      end
+      redirect_to redirect_back_w_team_slug(old_ssl_slug)
     end
-    redirect_to redirect_back_w_team_slug(old_ssl_slug)
+  end
+
+  def duo 
+    team = SslAccount.find(session[:switch_ssl_account])
+    if team.duo_own_used
+      @duo_account = team.duo_account
+      @duo_hostname = @duo_account.duo_hostname
+      @sig_request = Duo.sign_request(@duo_account ? @duo_account.duo_ikey : "", @duo_account ? @duo_account.duo_skey : "", @duo_account ? @duo_account.duo_akey : "", current_user.login)
+    else
+      s = Rails.application.secrets;
+      @duo_hostname = s.duo_hostname
+      @sig_request = Duo.sign_request(s.duo_ikey, s.duo_skey, s.duo_akey, current_user.login)
+    end
+  end
+
+  def duo_verify
+    old_ssl_slug = session[:old_ssl_slug]
+    @switch_ssl_account = session[:switch_ssl_account]
+    @user = current_user
+    team = SslAccount.find(session[:switch_ssl_account])
+    if team.duo_own_used
+      @duo_account = team.duo_account
+      @authenticated_user = Duo.verify_response(@duo_account ? @duo_account.duo_ikey : "", @duo_account ? @duo_account.duo_skey : "", @duo_account ? @duo_account.duo_akey : "", params['sig_response'])
+    else
+      s = Rails.application.secrets;
+      @authenticated_user = Duo.verify_response(s.duo_ikey, s.duo_skey, s.duo_akey, params['sig_response'])
+    end
+    if @authenticated_user
+      if @switch_ssl_account && @user.get_all_approved_accounts.map(&:id).include?(@switch_ssl_account.to_i)
+        @user.set_default_ssl_account(@switch_ssl_account)
+        flash[:notice]      = "You have switched to team %s."
+        flash[:notice_item] = "<strong>#{@user.ssl_account.get_team_name}</strong>"
+        set_ssl_slug(@user)
+      else
+        flash[:error] = "Something went wrong. Please try again!"
+      end
+      redirect_to account_path(ssl_slug: @ssl_slug)
+    else
+      redirect_to redirect_back_w_team_slug(old_ssl_slug)
+    end
   end
 
   def approve_account_invite

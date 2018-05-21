@@ -1,3 +1,6 @@
+-system_admins = current_user && current_user.is_system_admins?
+-status_list = system_admins ? MonthlyInvoice::STATUS : MonthlyInvoice::DEFAULT_STATUS
+
 = form_tag(invoices_path(@ssl_slug), method: :get, class: "filter-form", data: {display: params[:commit] == "Search"}) do
   = render partial: "shared/sortable_fields"
   %table
@@ -5,12 +8,12 @@
       %td
         .clearfix
           = label_tag(:status, "Status:")
-          = select_tag(:status,                                          |
-            options_for_select(MonthlyInvoice::STATUS, params[:status]), |
-            multiple: true, id: "mo-status")
+          = select_tag(:status,                                                      |
+            options_for_select(status_list.map{|mi| [mi.upcase.gsub('_', ' '), mi]}, |
+            params[:status]), multiple: true, id: "mo-status")
       
       %td
-        -if current_user && current_user.is_system_admins?
+        -if system_admins
           .clearfix
             = label_tag(:team, "Team:")
             = text_field_tag(:team, params[:team])

@@ -144,6 +144,7 @@ SslCom::Application.routes.draw do
       member do
         get  :download
         get  :new_payment
+        get  :manage_items
         post :make_payment
         put  :remove_item
         put  :add_item
@@ -151,12 +152,16 @@ SslCom::Application.routes.draw do
         put  :refund_other
         put  :credit
         put  :update_item
+        get  :transfer_items
       end
     end
 
     resource :user_session do
       collection do
         post :user_login
+        get  :duo
+        post :duo_verify
+        get  :duo_verify
       end
     end
 
@@ -266,11 +271,12 @@ SslCom::Application.routes.draw do
         get :search
         get :visitor_trackings
         post :create_free_ssl, :create_multi_free_ssl, :lookup_discount
-        post :create_reprocess_ucc
+        post :ucc_domains_adjust_create
       end
       member do
         get :invoice
         get :refund
+        get :revoke
         get :change_state
         get :refund_merchant
         match :update_invoice, via: [:put, :post]
@@ -287,6 +293,9 @@ SslCom::Application.routes.draw do
       collection do
         post :register_u2f
         post :remove_u2f
+        post :register_duo
+        put  :duo_enable
+        put  :duo_own_used
       end
       member do
         get :adjust_funds
@@ -385,6 +394,14 @@ SslCom::Application.routes.draw do
       match :admin_activate, via: [:put, :patch]
       get   :leave_team
       get   :dont_show_again
+    end
+  end
+
+  resource :user do
+    collection do
+      get  :duo
+      post :duo_verify
+      get  :duo_verify
     end
   end
 
