@@ -3,6 +3,7 @@ class SslAccount < ActiveRecord::Base
   acts_as_billable
   easy_roles :roles
   has_one   :api_credential
+  has_one   :duo_account
   has_many  :billing_profiles
   has_many  :certificate_orders, -> { unscope(where: [:workflow_state, :is_expired]).includes([:orders]) } do
     def current

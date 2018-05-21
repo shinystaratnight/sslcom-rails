@@ -388,6 +388,12 @@ authorization do
     has_permission_on :users, :to => :switch_default_ssl_account do
       if_attribute default_ssl_account: is_in {user.ssl_accounts.map(&:id)}
     end
+    has_permission_on :users, :to => :duo do
+      if_attribute default_ssl_account: is_in {user.ssl_accounts.map(&:id)}
+    end
+    has_permission_on :users, :to => :duo_verify do
+      if_attribute default_ssl_account: is_in {user.ssl_accounts.map(&:id)}
+    end
     has_permission_on :users, :to => :resend_account_invite do
       if_attribute ssl_account_id: is_in {user.ssl_accounts.map(&:id)}
     end
@@ -493,6 +499,9 @@ privileges do
     :update_settings,
     :register_u2f,
     :remove_u2f,
+    :register_duo,
+    :duo_enable,
+    :duo_own_used,
     :update_ssl_slug
   ]
   privilege :sysadmin_manage, includes: [

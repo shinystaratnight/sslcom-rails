@@ -67,6 +67,12 @@ class ApplicationController < ActionController::Base
     Authorization.current_user = @current_user = @user_session.record
   end
 
+  def verify_duo_authentication
+    if !session[:duo_auth]
+      redirect_to duo_user_session_path
+    end
+  end
+
   def find_tier
     @tier =''
     tier_label = ->(label){"#{'-' unless label =~/\A\d\z/}"+label + 'tr'}  #add '-' for non single digit tier due to flexible labeling

@@ -210,6 +210,89 @@ jQuery(function($) {
         $('input[name*=confirmation_recipients]:checkbox').val(
           $('#confirmation_email').val());
     });
+
+    var ajaxDuoEnableUrl = '<%= duo_enable_ssl_account_path %>';
+    $(document).on('change', '#duo_login_enable', function() {
+      $('#duo_own_used').prop('disabled', !this.checked);
+      $.ajax({
+        url: ajaxDuoEnableUrl,
+        data: {
+          id: $(this).val(),
+          duo_enable: this.checked
+        },
+        type: 'PUT',
+        success: function(result) {
+        }
+      });
+    });
+
+    var ajaxDuoOwnUsedUrl = '<%= duo_own_used_ssl_account_path %>';
+    $(document).on('change', '#duo_own_used', function() {
+      $('.duo_info').css('display', this.checked ? 'block' : 'none');
+      $.ajax({
+        url: ajaxDuoOwnUsedUrl,
+        data: {
+          id: $(this).val(),
+          duo_own_used: this.checked
+        },
+        type: 'PUT',
+        success: function(result) {
+        }
+      });
+    });
+
+    $(document).on('focus click', '#duo_skey', function() {
+      var skey = $(this).attr('data-skey');
+      $(this).val(skey);
+    });
+
+    $(document).on('change', '#duo_skey', function() {
+      var skey = $(this).val();
+      $(this).attr('data-skey', skey);
+    });
+
+    $(document).on('focus click', '.click_to_select_all', function() {
+      $(this).select();
+    });
+
+    $(document).on('blur', '#duo_skey', function() {
+      $(this).val('Click to view.');
+    });
+
+    $(document).on('click', '.btn_generate', function() {
+      var akey = generate_akey();
+      $('#duo_akey').val(akey);
+    });
+
+    var ajaxRegisterDuoUrl = '<%= register_duo_ssl_account_path %>';
+    $(document).on('click', '.register_duo', function() {
+      var ikey = $('#duo_ikey').val();
+      var skey = $('#duo_skey').attr('data-skey');
+      var akey = $('#duo_akey').val();
+      var hostname = $('#duo_hostname').val();
+      $.ajax({
+        url: ajaxRegisterDuoUrl,
+        data: {
+          duo_ikey: ikey,
+          duo_skey: skey,
+          duo_akey: akey,
+          duo_hostname: hostname
+        },
+        type: 'POST',
+        success: function(result) {
+        }
+      });
+    });
+
+    function generate_akey() {
+      var text = "";
+      var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+      for (var i = 0; i < 40; i++)
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+      return text;
+    }
   });
 });
 </script>
