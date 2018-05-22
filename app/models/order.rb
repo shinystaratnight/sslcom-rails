@@ -891,7 +891,8 @@ class Order < ActiveRecord::Base
   end
   
   def get_full_reprocess_amount
-    get_total_merchant_amount + get_funded_account_amount
+    cur_amount = cents != get_total_merchant_amount ? cents : get_total_merchant_amount
+    cur_amount + get_funded_account_amount
   end
   
   def get_full_reprocess_format
