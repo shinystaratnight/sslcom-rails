@@ -42,8 +42,8 @@ class Order < ActiveRecord::Base
     self.max_wildcard = nil if self.max_wildcard.blank?
     self.max_non_wildcard = nil if self.max_non_wildcard.blank?
     self.reseller_tier_id = nil if self.reseller_tier_id.blank?
-    self.wildcard_cents = nil if self.wildcard_cents.blank?
-    self.non_wildcard_cents = nil if self.non_wildcard_cents.blank?
+    self.wildcard_cents = 0 if self.wildcard_cents.blank?
+    self.non_wildcard_cents = 0 if self.non_wildcard_cents.blank?
   end
   
   FAW                = "Funded Account Withdrawal"
