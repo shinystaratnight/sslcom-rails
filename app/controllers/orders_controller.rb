@@ -664,55 +664,6 @@ class OrdersController < ApplicationController
       co_ref: @certificate_order.ref, cc_ref: @certificate_content.ref, reprocess_ucc: true
     )
   end
-  
-  def ucc_update_domain_counts
-    co = @certificate_order
-    notes = []
-    order = params[:order]
-    reseller_tier = @tier || find_tier
-    
-    # domains entered
-    wildcard = order ? order[:wildcard_count].to_i : params[:wildcard_count].to_i
-    nonwildcard = order ? order[:nonwildcard_count].to_i : params[:nonwildcard_count].to_i
-    
-    # max domain counts stored
-    co_nonwildcard = co.nonwildcard_count.blank? ? 0 : co.nonwildcard_count
-    co_wildcard = co.wildcard_count.blank? ? 0 : co.wildcard_count
-    
-    # max for previous signed certificates to determine credited domains
-    prev_wildcard    = co.get_reprocess_max_wildcard(co.certificate_content).count
-    prev_nonwildcard = co.get_reprocess_max_nonwildcard(co.certificate_content).count
-
-    if (co_nonwildcard > prev_nonwildcard) &&
-      ((nonwildcard > co_nonwildcard) || (@reprocess_ucc && 
-      (nonwildcard >= co_nonwildcard && (nonwildcard > 0))))
-      notes << "#{co_nonwildcard - prev_nonwildcard} non wildcard domains"
-    end
-    
-    if (co_wildcard > prev_wildcard) &&
-      ((wildcard > co_wildcard) || (@reprocess_ucc && 
-      (wildcard >= co_wildcard && (wildcard > 0))))
-      notes << "#{co_wildcard - prev_wildcard} wildcard domains"
-    end
-
-    # record new max counts
-    new_nonwildcard = nonwildcard > co_nonwildcard ? nonwildcard : co_nonwildcard
-    new_wildcard = wildcard > co_wildcard ? wildcard : co_wildcard
-
-    @order.max_non_wildcard = new_nonwildcard
-    @order.max_wildcard = new_wildcard
-    
-    if reseller_tier
-      @order.reseller_tier_id = ResellerTier.find_by(label: find_tier.delete('tr')).try(:id)
-    end
-
-    if notes.any?
-      co.update( nonwildcard_count: new_nonwildcard, wildcard_count: new_wildcard )
-      @order.invoice_description = '' if @order.invoice_description.nil?
-      @order.invoice_description << " Received credit for #{notes.join(' and ')}."
-    end
-    @order.save
-  end
     
   def ucc_domains_adjust_funded(params)
     withdraw_amount     = @order_amount < @funded_amount ? @order_amount : @funded_amount

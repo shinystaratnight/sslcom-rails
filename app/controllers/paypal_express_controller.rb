@@ -55,6 +55,7 @@ class PaypalExpressController < ApplicationController
       current_user = Authorization.current_user = User.first
       @ssl_account = current_user.ssl_account
     end
+    set_order_type
     paypal_details = @gateway.details_for(params[:token])
     total_as_cents, purchase_params = get_purchase_params paypal_details, request, params
     purchase = @gateway.purchase total_as_cents, purchase_params
@@ -102,12 +103,12 @@ class PaypalExpressController < ApplicationController
         end
       else
         auth_code = "#paidviapaypal#{purchase.authorization}"
-        
-        if params[:reprocess_ucc]
-          setup_reprocess_ucc_order(purchase_params)
+        if @domains_adjustment
+          @certificate_order = @ssl_account.certificate_orders.find_by(ref: params[:co_ref])
+          @certificate_content = @ssl_account.certificate_contents.find_by(ref: params[:cc_ref])
+          domains_adjustment_order(purchase_params)
           funded_account_credit(purchase_params)
           @order.notes += " #{auth_code}"
-          @certificate_order = @ssl_account.certificate_orders.find_by(ref: params[:co_ref])
           @certificate_order.add_reproces_order @order
         elsif params[:monthly_invoice]
           @invoice = Invoice.find_by(reference_number: params[:invoice_ref])
@@ -134,8 +135,8 @@ class PaypalExpressController < ApplicationController
       notice = "Woops. Something went wrong while we were trying to complete the purchase with Paypal. Btw, here's what Paypal said: #{purchase.message}"
     end
     
-    if params[:reprocess_ucc]
-      flash[:notice] = "Succesfully paid for UCC reprocess order."
+    if @domains_adjustment
+      flash[:notice] = "Succesfully paid for UCC domains adjustment order."
       redirect_to edit_certificate_order_path(@ssl_slug, @certificate_order)
     elsif params[:monthly_invoice]
       flash[:notice] = "Succesfully paid for invoice #{@invoice.reference_number}."
@@ -147,17 +148,21 @@ class PaypalExpressController < ApplicationController
 
   private
   
-  def setup_reprocess_ucc_order(purchase_params)
-    @order = ReprocessCertificateOrder.new( 
-      amount:        Money.new(purchase_params[:subtotal]),
-      cents:         purchase_params[:subtotal],
-      description:   Order::DOMAINS_ADJUSTMENT,
-      state:         'pending',
-      approval:      'approved',
-      notes:         "Reprocess UCC (certificate order: #{params[:co_ref]}, certificate content: #{params[:cc_ref]}).",
-      invoice_description: params[:order_description]
-    )
+  def domains_adjustment_order(purchase_params)
+    order_params = { 
+      amount:               Money.new(purchase_params[:subtotal]),
+      cents:                purchase_params[:subtotal],
+      description:          Order::DOMAINS_ADJUSTMENT,
+      state:                'pending',
+      approval:             'approved',
+      notes:                get_order_notes,
+      invoice_description:  params[:order_description],
+      wildcard_amount:      params[:wildcard_amount],
+      non_wildcard_amount:  params[:nonwildcard_amount]
+    }
+    @order = @reprocess_ucc ? ReprocessCertificateOrder.new(order_params) : Order.new(order_params)
     @order.billable = @ssl_account
+    ucc_update_domain_counts
     @order.save
   end
   
@@ -200,33 +205,22 @@ class PaypalExpressController < ApplicationController
       signature: s.paypal_signature
     )
   end
-
+  
+  def set_order_type
+    @reprocess_ucc   = params[:reprocess_ucc]
+    @renew_ucc       = params[:renew_ucc]
+    @ucc_csr_submit  = params[:ucc_csr_submit]
+    @payable_invoice = params[:monthly_invoice]
+    @domains_adjustment = @reprocess_ucc || @renew_ucc || @ucc_csr_submit
+  end
+    
   def funded_account_credit(purchase_params)
-    special_order = params[:reprocess_ucc] || params[:monthly_invoice]
     funded_exists = purchase_params[:items].find {|i| i[:name]=='Funded Account'}
-    funded_amt    = funded_exists ? funded_exists[:amount].abs : 0
-    amount_str    = if special_order
-      Money.new(@order.cents + funded_amt).format
-    else
-      @order.amount.format
-    end
-
+    funded_amt    = funded_exists ? (funded_exists[:amount].abs * 100) : 0
+    
+    order_amount = purchase_params[:items].find {|i| i[:name]=='Reprocess UCC Cert'}[:amount]
     if funded_exists && funded_amt > 0
-      fund = Deposit.create(
-        amount:         funded_amt,
-        full_name:      "Team #{@ssl_account.get_team_name} funded account",
-        credit_card:    'N/A',
-        last_digits:    'N/A',
-        payment_method: 'Funded Account'
-      )
-      @funded = @ssl_account.purchase fund
-      @funded.description = 'Funded Account Withdrawal'
-      @funded.notes = "Partial payment for order ##{@order.reference_number} (#{amount_str})"
-      @funded.notes << ' for UCC certificate reprocess.' if params[:reprocess_ucc]
-      @funded.notes << " for monthly invoice ##{@invoice.reference_number}." if params[:monthly_invoice]
-      @funded.save
-      @funded.mark_paid!
-      @ssl_account.funded_account.decrement!(:cents, funded_amt) if special_order
+      withdraw_funded_account(funded_amt, order_amount)
     end
   end
 end
