@@ -50,7 +50,7 @@
           .saved-contact-fields Other
           .clearfix
             = f.label :amount
-            = f.number_field :amount, step: :any, required: true
+            = f.number_field :amount, value: @order.amount, step: :any, required: true
           
           .clearfix
             = f.label :reseller_tier
