@@ -229,6 +229,7 @@ jQuery(function($) {
     var ajaxDuoOwnUsedUrl = '<%= duo_own_used_ssl_account_path %>';
     $(document).on('change', '#duo_own_used', function() {
       $('.duo_info').css('display', this.checked ? 'block' : 'none');
+      $('.duo_info :input').prop('disabled', !this.checked);
       $.ajax({
         url: ajaxDuoOwnUsedUrl,
         data: {

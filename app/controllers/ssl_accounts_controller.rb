@@ -31,7 +31,7 @@ class SslAccountsController < ApplicationController
     key_handles = current_user.u2fs.pluck(:key_handle)
     @sign_requests = u2f.authentication_requests(key_handles)
     @u2fs = current_user.u2fs
-    @duo_account = current_user.ssl_account.duo_account
+    @duo_account = current_user.ssl_account(:default_team).duo_account
 
     @app_id = u2f.app_id
   end
@@ -128,11 +128,11 @@ class SslAccountsController < ApplicationController
 
   def register_duo
     resultObj = {}
-    if(@ssl_account.duo_account)
-      @ssl_account.duo_account.update_attributes(params.except(:action, :controller))
+    if(current_user.ssl_account(:default_team).duo_account)
+      current_user.ssl_account(:default_team).duo_account.update_attributes(params.except(:action, :controller))
     else
-      @ssl_account.create_duo_account
-      @ssl_account.duo_account.update_attributes(params.except(:action, :controller))
+      current_user.ssl_account(:default_team).create_duo_account
+      current_user.ssl_account(:default_team).duo_account.update_attributes(params.except(:action, :controller))
     end
     render json: resultObj
   end
