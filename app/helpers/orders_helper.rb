@@ -322,16 +322,15 @@ module OrdersHelper
     # record new max counts
     new_nonwildcard = nonwildcard > co_nonwildcard ? nonwildcard : co_nonwildcard
     new_wildcard = wildcard > co_wildcard ? wildcard : co_wildcard
-
+    co.update( nonwildcard_count: new_nonwildcard, wildcard_count: new_wildcard )
     @order.max_non_wildcard = new_nonwildcard
     @order.max_wildcard = new_wildcard
     
     if reseller_tier
       @order.reseller_tier_id = ResellerTier.find_by(label: find_tier.delete('tr')).try(:id)
     end
-    
+
     if notes.any?
-      co.update( nonwildcard_count: new_nonwildcard, wildcard_count: new_wildcard )
       @order.invoice_description = '' if @order.invoice_description.nil?
       @order.invoice_description << " Received credit for #{notes.join(' and ')}."
     end
