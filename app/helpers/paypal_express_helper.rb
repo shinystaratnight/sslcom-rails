@@ -87,7 +87,21 @@ module PaypalExpressHelper
         number: "payment",
         quantity: 1,
         amount: get_amount(params[:amount])
-      }]  
+      }]
+    elsif params[:renew_ucc]
+      [{
+        name: "Renew UCC Cert",
+        number: "renewal order",
+        quantity: 1,
+        amount: get_amount(params[:amount])
+      }]
+    elsif params[:ucc_csr_submit]
+      [{
+        name: "UCC Cert Adjustment",
+        number: "adjustment order",
+        quantity: 1,
+        amount: get_amount(params[:amount])
+      }]
     else  
       cart.line_items.collect do |line_item|
         if line_item.sellable.is_a?(Deposit)

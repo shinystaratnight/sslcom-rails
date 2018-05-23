@@ -217,8 +217,13 @@ class PaypalExpressController < ApplicationController
   def funded_account_credit(purchase_params)
     funded_exists = purchase_params[:items].find {|i| i[:name]=='Funded Account'}
     funded_amt    = funded_exists ? (funded_exists[:amount].abs * 100) : 0
-    
-    order_amount = purchase_params[:items].find {|i| i[:name]=='Reprocess UCC Cert'}[:amount]
+    names = [
+      'Monthly Invoice Pmt',
+      'Reprocess UCC Cert',
+      'Renew UCC Cert',
+      'UCC Cert Adjustment'
+    ]
+    order_amount = purchase_params[:items].find {|i| names.include?(i[:name])}[:amount]
     if funded_exists && funded_amt > 0
       withdraw_funded_account(funded_amt, order_amount)
     end
