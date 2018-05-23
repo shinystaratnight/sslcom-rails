@@ -4,7 +4,7 @@ class SslcomCaRequest < CaApiRequest
   after_initialize do
     if new_record? and !self.response.blank?
       parsed=JSON.parse(self.response)
-      self.username = parsed["user_name"]
+      self.username = parsed["user_name"] || parsed["username"]
       self.approval_id = parsed["approval_id"]
       self.certificate_chain = parsed["certificate_chain"]
     end
@@ -21,7 +21,8 @@ class SslcomCaRequest < CaApiRequest
   end
 
   def username
-    read_attribute(:username) || (JSON.parse(self.response)["user_name"] unless self.response.blank?)
+    read_attribute(:username) || ((JSON.parse(self.response)["user_name"] ||
+        JSON.parse(self.response)["username"]) unless self.response.blank?)
   end
 
   def approval_id

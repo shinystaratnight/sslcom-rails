@@ -142,9 +142,8 @@ module OrdersHelper
   end
   
   def confirm_affiliate_sale
-    if @order.persisted? && !@order.domains_adjustment? && 
-      !@order.ext_affiliate_credited? && (@order.created_at < 1.minute.ago)
-      
+    if !@order.domains_adjustment? && !@order.ext_affiliate_credited? &&
+        (@order.persisted? ? @order.created_at > 1.minute.ago : true )
       @order.toggle! :ext_affiliate_credited
       if @order.ext_affiliate_name=="shareasale"
         "<img src=\"https://shareasale.com/sale.cfm?amount=#{@order.final_amount.to_s}&tracking=#{@order.reference_number}&transtype=sale&merchantID=#{@order.ext_affiliate_id}\" width=\"1\" height=\"1\">".html_safe
@@ -203,8 +202,7 @@ module OrdersHelper
   end
   
   def order_invoice_notes
-    "Payment for #{@invoice.billable.get_invoice_label} 
-    invoice total of #{@invoice.get_amount_format} due on #{@invoice.end_date.strftime('%F')}."
+    "Payment for #{@invoice.get_type_format.downcase} invoice total of #{@invoice.get_amount_format} due on #{@invoice.end_date.strftime('%F')}."
   end
   
   def ucc_csr_submit_notes
@@ -251,11 +249,13 @@ module OrdersHelper
   
   def withdraw_funded_account(amount)
     @order.save unless @order.persisted?
-    payment_type = (amount >= (@order_amount * 100).to_i) ? 'Full' : 'Partial'
-    full_amount  = Money.new(@order.cents + amount).format
-    notes = "#{payment_type} payment for order ##{@order.reference_number} (#{full_amount}) "
-    notes << " for UCC certificate reprocess." if @reprocess_ucc
-    notes << " for #{@ssl_account.get_invoice_label} invoice ##{@invoice.reference_number}." if @payable_invoice
+    fully_covered = amount >= (@order_amount * 100).to_i
+    full_amount = fully_covered ? @order.amount.format : Money.new(@order.cents + amount).format
+    notes = "#{fully_covered ? 'Full' : 'Partial'} payment for order ##{@order.reference_number} (#{full_amount}) "
+    notes << "for UCC certificate reprocess." if @reprocess_ucc
+    notes << "for renewal UCC domains adjustment." if @renew_ucc
+    notes << "for initial CSR submit UCC domains adjustment." if @ucc_csr_submit
+    notes << "for #{@invoice.get_type_format.downcase} invoice ##{@invoice.reference_number}." if @payable_invoice
     
     fund = Deposit.create(
       amount:         amount,

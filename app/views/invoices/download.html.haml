@@ -81,10 +81,12 @@
     
     %div#line-items-total.nobreak
       -payment = @invoice.payment
-      -paid    = payment && @invoice.payment.paid?
+      -paid    = payment && payment.paid?
       -funded  = paid ? payment.get_funded_account_amount : 0
       -total   = @invoice.get_cents - funded
-      -due     = paid ? Money.new(total - payment.cents).format : @invoice.get_amount_format
+      -total_f = Money.new(total).format
+      -due     = paid ? '$0.00' : total_f
+
       %table
         %tr
           %td#subtotal Subtotal
@@ -95,7 +97,7 @@
             %td#fund-amt -#{Money.new(funded).format}
         %tr
           %td#total-lbl Total
-          %td#total-amt #{Money.new(total).format}
+          %td#total-amt #{total_f}
         %tr
           %td#paid-lbl Paid
           %td#paid-amt #{paid ? payment.amount.format : '$0.00'}
