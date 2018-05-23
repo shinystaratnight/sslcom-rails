@@ -235,6 +235,9 @@ authorization do
     #
     # Orders
     #
+    has_permission_on :orders, to: :transfer_order do
+      if_attribute :billable => is_in {user.ssl_accounts}
+    end
     has_permission_on :orders, :to => [
         :create,
         :create_free_ssl,

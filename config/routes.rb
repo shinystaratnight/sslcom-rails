@@ -280,6 +280,7 @@ SslCom::Application.routes.draw do
         get :change_state
         get :refund_merchant
         match :update_invoice, via: [:put, :post]
+        match :transfer_order, via: [:put, :post]
       end
     end
     resources :billing_profiles

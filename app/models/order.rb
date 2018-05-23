@@ -548,6 +548,14 @@ class Order < ActiveRecord::Base
     end  
   end
   
+  # Get all orders for certificate orders or line items of main order.
+  def get_all_orders
+    certificate_orders.map(&:orders).inject([]) do |all, o|
+      all << o if o != self
+      all.flatten
+    end
+  end
+  
   # Fetches all domain counts that were added during UCC domains adjustment
   def get_reprocess_domains
     co           = certificate_orders.first

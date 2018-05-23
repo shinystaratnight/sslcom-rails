@@ -302,7 +302,7 @@ class Invoice < ActiveRecord::Base
         DailyInvoice.last_invoice_for_day(billable.id, self)
       end
       
-      ref_parts    = last_invoice.reference_number.split('-') if last_invoice
+      ref_parts = last_invoice.reference_number.split('-') if last_invoice
       ref = if last_invoice && ref_parts.count == 4
         sub_ref = ref_parts.pop.to_i + 1
         ref_parts.push(sub_ref)
@@ -340,7 +340,7 @@ class Invoice < ActiveRecord::Base
   end
   
   def set_status
-    self.status = 'pending'
+    self.status = 'pending' if status.blank?
   end
   
   def set_default_billing
