@@ -5,7 +5,7 @@ class OrdersController < ApplicationController
   #resource_controller
   helper_method :cart_items_from_model_and_id
   before_filter :finish_reseller_signup, :only => [:new], if: "current_user"
-  before_filter :find_order, :only => [:show, :invoice, :update_invoice, :refund, :refund_merchant, :change_state, :revoke, :edit, :update]
+  before_filter :find_order, :only => [:show, :invoice, :update_invoice, :refund, :refund_merchant, :change_state, :revoke, :edit, :update, :transfer_order]
   before_filter :set_prev_flag, only: [:create, :create_free_ssl, :create_multi_free_ssl]
   before_filter :prep_certificate_orders_instances, only: [:create, :create_free_ssl]
   before_filter :go_prev, :parse_certificate_orders, only: [:create_multi_free_ssl]
@@ -30,6 +30,27 @@ class OrdersController < ApplicationController
     else
       render :edit
     end
+  end
+
+  def transfer_order
+    from_team = @ssl_account
+    to_team = if current_user.is_system_admins?
+      SslAccount.find_by(acct_number: params[:target_team])
+    else
+      current_user.ssl_accounts.find_by(acct_number: params[:target_team])
+    end
+    
+    if from_team && to_team
+      SslAccount.migrate_orders(from_team, to_team, [@order.reference_number])
+      if to_team.orders.include?(@order)
+        flash[:notice] = "Successfully transfered order #{@order.reference_number} to team #{to_team.to_slug}."
+      else
+        flash[:error] = "Something went wrong, please try again!"
+      end
+    else
+        flash[:error] = "You do not have access to team #{params[:target_team]}!"
+    end
+    redirect_to orders_path
   end
 
   def show_cart

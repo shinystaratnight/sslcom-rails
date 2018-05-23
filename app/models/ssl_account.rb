@@ -311,22 +311,38 @@ class SslAccount < ActiveRecord::Base
   # to_sa - the ssl_account to migrate to
   def self.migrate_orders(from_sa, to_sa, refs=[])
     unless refs.blank?
-      refs.each do |ref|
-        if co = from_sa.certificate_orders.find_by_ref(ref)
-          from_sa.migrate_order to_sa, co.order.reference_number
+      orders_list = []
+      Order.where(reference_number: refs).each do |o|
+        to_sa.certificate_orders << o.certificate_orders
+        o.certificate_orders.each do |co|
+          co_orders = co.orders
+          to_sa.orders << co_orders
+          orders_list << co_orders
         end
       end
-    else
-      to_sa.orders << from_sa.orders.each{|o|from_sa.migrate_order(to_sa, o.reference_number)}
+      orders_list = orders_list.uniq.flatten.compact
+      migrate_orders_to_invoices(to_sa, orders_list) if orders_list.any?
     end
   end
-
-  # to_sa - the ssl_account to migrate to
-  # ref_number - reference number of the order to migrate
-  def migrate_order(to_sa, ref_number)
-    o=self.orders.find_by_reference_number(ref_number)
-    to_sa.certificate_orders << o.certificate_orders
-    to_sa.orders << o
+  
+  def self.migrate_orders_to_invoices(to_sa, orders_list=[])
+    invoiced_orders = orders_list.select {|io| io.state == 'invoiced'}
+    pending_invoice = nil
+    invoiced_orders.each do |o|
+      from_invoice = o.invoice
+      if from_invoice
+        exclude_params = %w{id reference_number created_at updated_at billable_id}
+        cur_params = from_invoice.attributes.except!(*exclude_params)
+          .merge(billable_id: to_sa.id)
+        target_invoice = if from_invoice.pending? && pending_invoice.nil?
+          pending_invoice = Invoice.get_or_create_for_team(to_sa)
+        else
+          Invoice.create(cur_params)
+        end
+        o.update(invoice_id: target_invoice.try(:id)) if target_invoice
+      end
+      from_invoice.destroy if from_invoice.orders.empty?
+    end
   end
 
   def primary_user
