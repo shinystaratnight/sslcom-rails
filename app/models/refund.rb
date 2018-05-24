@@ -108,12 +108,8 @@ class Refund < ActiveRecord::Base
   end
   
   def partial_refund?(params)
-    amt = if params[:order_transaction]
-      params[:order_transaction].amount * 100
-    else
-      params[:order].cents
-    end
-    params[:amount] < amt
+    amt = params[:order_transaction] ? params[:order_transaction] : params[:order]
+    params[:amount] < amt.cents
   end
   # 
   # Stripe Helpers

@@ -325,7 +325,7 @@ class OrdersController < ApplicationController
       owner:  current_user,
       target: mo,
       notes:  params["refund_reason"],
-      action: "#{@ssl_account.get_invoice_label.capitalize} Invoice ##{mo.reference_number}, merchant refund issued for #{amount.format}."
+      action: "#{@order.billable.get_invoice_label.capitalize} Invoice ##{mo.reference_number}, merchant refund issued for #{amount.format}."
     )
   end
   
