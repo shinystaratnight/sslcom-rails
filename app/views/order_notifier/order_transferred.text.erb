@@ -1,0 +1,17 @@
+Dear team owner,
+
+User <%= @user %> has transferred <%= @order_list.count %> order(s) from team <%= @from_team.to_slug %> to team <%= @to_team.to_slug %>.
+
+Orders:
+
+<% @order_list.each_with_index do |o, i| -%>
+  <%= "#{i + 1}. ##{o.reference_number} (#{o.amount.format}, #{o.state})" %>
+<% end -%>
+
+Certificate Orders:
+
+<% @co_list.each_with_index do |co, i| -%>
+  <%= "#{i + 1}. ##{co.ref} (#{co.workflow_state})" %>
+<% end -%>
+
+<%= render partial: 'user_notifier/support_signature' %>

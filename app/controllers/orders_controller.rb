@@ -41,7 +41,7 @@ class OrdersController < ApplicationController
     end
     
     if from_team && to_team
-      SslAccount.migrate_orders(from_team, to_team, [@order.reference_number])
+      SslAccount.migrate_orders(from_team, to_team, [@order.reference_number], current_user)
       if to_team.orders.include?(@order)
         flash[:notice] = "Successfully transfered order #{@order.reference_number} to team #{to_team.to_slug}."
       else

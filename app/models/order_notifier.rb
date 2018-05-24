@@ -10,6 +10,20 @@ class OrderNotifier < ActionMailer::Base
   end
   alias_method :something, :test
 
+  def order_transferred(params)
+    @order_list = params[:orders_list]
+    @co_list    = params[:co_list]
+    @user       = params[:user].email
+    @from_team  = params[:from_sa]
+    @to_team    = params[:to_sa]
+    @from_owner = @from_team.get_account_owner.email
+    @to_owner   = @to_team.get_account_owner.email
+
+    mail  subject: "Order(s) have been transferred from team #{@from_team.to_slug} to team #{@to_team.to_slug}.",
+          from:    Settings.from_email.orders,
+          to:      [@from_owner, @to_owner].uniq
+  end
+  
   def reseller_certificate_order_paid(ssl_account, certificate_order)
     @ssl_account        = ssl_account
     @certificate_order  = certificate_order.reload

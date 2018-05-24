@@ -309,19 +309,57 @@ class SslAccount < ActiveRecord::Base
 
   # from_sa - the ssl_account to migrate from
   # to_sa - the ssl_account to migrate to
-  def self.migrate_orders(from_sa, to_sa, refs=[])
+  def self.migrate_orders(from_sa, to_sa, refs=[], user)
     unless refs.blank?
       orders_list = []
+      co_list = []
       Order.where(reference_number: refs).each do |o|
         to_sa.certificate_orders << o.certificate_orders
         o.certificate_orders.each do |co|
           co_orders = co.orders
           to_sa.orders << co_orders
           orders_list << co_orders
+          co_list << co
         end
       end
-      orders_list = orders_list.uniq.flatten.compact
-      migrate_orders_to_invoices(to_sa, orders_list) if orders_list.any?
+      orders_list = orders_list.flatten.uniq.compact
+      co_list = co_list.flatten.uniq.compact
+      params = {
+        from_sa: from_sa,
+        to_sa: to_sa,
+        orders_list: orders_list,
+        co_list: co_list,
+        user: user
+      }
+      if orders_list.any?
+        OrderNotifier.order_transferred(params).deliver_now
+        migrate_orders_to_invoices(to_sa, orders_list)
+      end
+      co_list.map(&:certificate_contacts).flatten.uniq.compact.each do |contact|
+        contact.update(parent_id: nil)
+      end
+      migrate_orders_system_audit(params)
+    end
+  end
+
+  def self.migrate_orders_system_audit(params)
+    notes_ext = "from team #{params[:from_sa].to_slug} to team #{params[:to_sa].to_slug} on #{DateTime.now.strftime('%c')}"
+    
+    params[:co_list].each do |co|
+      SystemAudit.create(
+        owner: params[:user],
+        target: co,
+        notes: "Transfered certificate order ##{co.ref} #{notes_ext}.",
+        action: "Transfer Certificate Order To Team"
+      )
+    end
+    params[:orders_list].each do |o|
+      SystemAudit.create(
+        owner: params[:user],
+        target: o,
+        notes: "Transfered order ##{o.reference_number} #{notes_ext}.",
+        action: "Transfer Order To Team"
+      )
     end
   end
   
