@@ -258,8 +258,8 @@ class UsersController < ApplicationController
       @sig_request = Duo.sign_request(@duo_account ? @duo_account.duo_ikey : "", @duo_account ? @duo_account.duo_skey : "", @duo_account ? @duo_account.duo_akey : "", current_user.login)
     else
       s = Rails.application.secrets;
-      @duo_hostname = s.duo_hostname
-      @sig_request = Duo.sign_request(s.duo_ikey, s.duo_skey, s.duo_akey, current_user.login)
+      @duo_hostname = s.duo_api_hostname
+      @sig_request = Duo.sign_request(s.duo_integration_key, s.duo_secret_key, s.duo_application_key, current_user.login)
     end
   end
 
@@ -273,7 +273,7 @@ class UsersController < ApplicationController
       @authenticated_user = Duo.verify_response(@duo_account ? @duo_account.duo_ikey : "", @duo_account ? @duo_account.duo_skey : "", @duo_account ? @duo_account.duo_akey : "", params['sig_response'])
     else
       s = Rails.application.secrets;
-      @authenticated_user = Duo.verify_response(s.duo_ikey, s.duo_skey, s.duo_akey, params['sig_response'])
+      @authenticated_user = Duo.verify_response(s.duo_integration_key, s.duo_secret_key, s.duo_application_key, params['sig_response'])
     end
     if @authenticated_user
       if @switch_ssl_account && @user.get_all_approved_accounts.map(&:id).include?(@switch_ssl_account.to_i)
@@ -335,6 +335,13 @@ class UsersController < ApplicationController
 
   def enable_disable
     update_user_status(params) if params[:user][:status]
+    respond_to do |format|
+      format.js {render json: @user.to_json}
+    end  
+  end
+
+  def enable_disable_duo
+    update_user_duo_status(params) if params[:user][:duo_enabled]
     respond_to do |format|
       format.js {render json: @user.to_json}
     end  
@@ -482,6 +489,12 @@ def update_user_status(params)
       target_user.set_status_for_account(target_status, current_user.ssl_account)
     end
   end
+end
+
+def update_user_duo_status(params)
+  target_user   = User.unscoped.find params[:id]
+  target_status = params[:user][:duo_enabled].to_sym
+  target_user.update_attribute(:duo_enabled, target_status)
 end
 
 def create_custom_ssl_acct(user, params)

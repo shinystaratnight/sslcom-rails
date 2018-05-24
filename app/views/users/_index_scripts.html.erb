@@ -29,6 +29,9 @@ jQuery(function($) {
     $('input:radio[name*=status]').click(function(){
       $(this).parents().filter('form').ajaxSubmit();
     });
+    $('input:radio[name*=duo_enabled]').click(function(){
+      $(this).parents().filter('form').ajaxSubmit();
+    });
   });
 });
 </script>

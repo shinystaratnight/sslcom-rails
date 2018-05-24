@@ -69,7 +69,11 @@ class ApplicationController < ActionController::Base
 
   def verify_duo_authentication
     if !session[:duo_auth]
-      redirect_to duo_user_session_path
+      if current_user
+        redirect_to duo_user_session_path
+      else
+        redirect_to new_user_session_path
+      end
     end
   end
 

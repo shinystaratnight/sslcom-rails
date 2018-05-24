@@ -304,6 +304,7 @@ SslCom::Application.routes.draw do
 
     resources :users, only: :index do
       match :enable_disable, via: [:put, :patch], on: :member
+      match :enable_disable_duo, via: [:put, :patch], on: :member
     end
 
     resource :account, controller: :users do
@@ -371,6 +372,7 @@ SslCom::Application.routes.draw do
       get :search
       get :cancel_reseller_signup
       match :enable_disable, via: [:put, :patch]
+      match :enable_disable_duo, via: [:put, :patch]
     end
 
     member do

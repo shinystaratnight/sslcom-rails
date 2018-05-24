@@ -132,7 +132,7 @@ authorization do
     #
     # Users
     #
-    has_permission_on :users, :to => [:enable_disable, :delete], join_by: :and do
+    has_permission_on :users, :to => [:enable_disable, :enable_disable_duo, :delete], join_by: :and do
       if_attribute id: is_not {user.id}
       if_attribute id: is_in  {user.ssl_account.users.map(&:id).uniq}
       if_attribute total_teams_owned: does_not_contain {user.ssl_account}
@@ -160,7 +160,7 @@ authorization do
     # Users
     #
     has_permission_on :users, :to => [:create, :read]
-    has_permission_on :users, :to => [:enable_disable, :delete], join_by: :and do
+    has_permission_on :users, :to => [:enable_disable, :enable_disable_duo, :delete], join_by: :and do
       if_attribute id: is_not {user.id}
       if_attribute id: is_in  {user.ssl_account.users.map(&:id).uniq}
       if_attribute total_teams_cannot_manage_users: contains {user.ssl_account}

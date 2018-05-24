@@ -10,17 +10,17 @@
       = check_box_tag :duo_own_used, user.ssl_account.id, user.ssl_account.duo_own_used, :disabled => !(user.ssl_account.duo_enabled)
       = label_tag :duo_own_used, "Use own Duo account".html_safe
   .duo_block.duo_info{:style => "display: #{user.ssl_account.duo_own_used ? "block" : "none"};"}
-    .clearfix
+    .clearfix.duo_key
       = label_tag :duo_ikey, "Duo Integration Key".html_safe
       = text_field_tag :duo_ikey, duo ? duo.duo_ikey : "", :class => "click_to_select_all", :disabled => !(user.ssl_account.duo_own_used)
-    .clearfix
+    .clearfix.duo_key
       = label_tag :duo_skey, "Duo Secret Key".html_safe
       = text_field_tag :duo_skey, duo ? "Click to view." : "", :class => "click_to_select_all", :disabled => !(user.ssl_account.duo_own_used), 'data-skey' => "#{duo ? duo.duo_skey : ""}"
-    .clearfix
+    .clearfix.duo_key
       = label_tag :duo_akey, "Duo A Key".html_safe
       = text_field_tag :duo_akey, duo ? duo.duo_akey : "", :class => "click_to_select_all", :disabled => "disabled"
       = button_tag "Generate", :type=>'button', :class=>'btn_generate', :disabled=>!(user.ssl_account.duo_own_used)
-    .clearfix
+    .clearfix.duo_key
       = label_tag :duo_hostname, "Duo API Hostname".html_safe
       = text_field_tag :duo_hostname, duo ? duo.duo_hostname : "", :class => "click_to_select_all", :disabled => !(user.ssl_account.duo_own_used)
     .duo_block.register

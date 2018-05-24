@@ -183,12 +183,12 @@ class UserSessionsController < ApplicationController
           # TODO: Check U2F
           if params['u2f_response'].blank?
             if current_user.ssl_account(:default_team).duo_enabled
-              flash[:notice] = "2 Step Verification." unless request.xhr?
+              flash[:notice] = "Duo 2-factor authentication setup." unless request.xhr?
             else
               flash[:notice] = "Successfully logged in." unless request.xhr?
             end
             format.js   {render :json=>url_for_js(current_user)}
-            if current_user.ssl_account(:default_team).duo_enabled
+            if current_user.ssl_account(:default_team).duo_enabled && Settings.enable_duo
               format.html {redirect_to(duo_user_session_url)}
             else
               session[:duo_auth] = true
@@ -366,8 +366,8 @@ class UserSessionsController < ApplicationController
       @sig_request = Duo.sign_request(@duo_account ? @duo_account.duo_ikey : "", @duo_account ? @duo_account.duo_skey : "", @duo_account ? @duo_account.duo_akey : "", current_user.login)
     else
       s = Rails.application.secrets;
-      @duo_hostname = s.duo_hostname
-      @sig_request = Duo.sign_request(s.duo_ikey, s.duo_skey, s.duo_akey, current_user.login)
+      @duo_hostname = s.duo_api_hostname
+      @sig_request = Duo.sign_request(s.duo_integration_key, s.duo_secret_key, s.duo_application_key, current_user.login)
     end
   end
 
@@ -377,7 +377,7 @@ class UserSessionsController < ApplicationController
       @authenticated_user = Duo.verify_response(@duo_account ? @duo_account.duo_ikey : "", @duo_account ? @duo_account.duo_skey : "", @duo_account ? @duo_account.duo_akey : "", params['sig_response'])
     else
       s = Rails.application.secrets;
-      @authenticated_user = Duo.verify_response(s.duo_ikey, s.duo_skey, s.duo_akey, params['sig_response'])
+      @authenticated_user = Duo.verify_response(s.duo_integration_key, s.duo_secret_key, s.duo_application_key, params['sig_response'])
     end
     if @authenticated_user
       session[:duo_auth] = true

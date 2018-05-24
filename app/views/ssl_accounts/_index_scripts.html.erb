@@ -230,6 +230,7 @@ jQuery(function($) {
     $(document).on('change', '#duo_own_used', function() {
       $('.duo_info').css('display', this.checked ? 'block' : 'none');
       $('.duo_info :input').prop('disabled', !this.checked);
+      $('#duo_akey').prop('disabled', true);
       $.ajax({
         url: ajaxDuoOwnUsedUrl,
         data: {
