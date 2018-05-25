@@ -357,7 +357,7 @@ class SslAccount < ActiveRecord::Base
   end
   
   def self.migrate_orders_system_audit(params)
-    notes_ext = "from team #{params[:from_sa].to_slug} to team #{params[:to_sa].to_slug} on #{DateTime.now.strftime('%c')}"
+    notes_ext = "from team #{params[:from_sa].acct_number} to team #{params[:to_sa].acct_number} on #{DateTime.now.strftime('%c')}"
     
     params[:co_list].each do |co|
       SystemAudit.create(
