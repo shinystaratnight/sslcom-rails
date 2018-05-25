@@ -334,6 +334,7 @@ class SslAccount < ActiveRecord::Base
       if orders_list.any?
         OrderNotifier.order_transferred(params).deliver_now
         migrate_orders_to_invoices(to_sa, orders_list)
+        migrate_orders_associations(params)
       end
       co_list.map(&:certificate_contacts).flatten.uniq.compact.each do |contact|
         contact.update(parent_id: nil)
@@ -341,7 +342,20 @@ class SslAccount < ActiveRecord::Base
       migrate_orders_system_audit(params)
     end
   end
-
+  
+  def self.migrate_orders_associations(params)
+    list = []
+    # Funded Account Withdrawal used to pay for order
+    params[:orders_list].each do |o|
+      list << Order.where('description LIKE ?', "%#{Order::FAW}%")
+        .where('notes LIKE ?', "%#{o.reference_number}%").first
+    end
+    # Deposits used to pay for order
+    list << Order.where(id: params[:orders_list].map(&:deducted_from_id))
+    list = list.flatten.compact.uniq
+    params[:to_sa].orders << list if list.any?
+  end
+  
   def self.migrate_orders_system_audit(params)
     notes_ext = "from team #{params[:from_sa].to_slug} to team #{params[:to_sa].to_slug} on #{DateTime.now.strftime('%c')}"
     
