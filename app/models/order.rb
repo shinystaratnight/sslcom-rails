@@ -954,12 +954,22 @@ class Order < ActiveRecord::Base
     billing_profile_id.nil? &&
       po_number.nil? &&
       quote_number.nil? &&
-      ( notes.blank? || (!notes.blank? && notes.include?('Reprocess UCC')) ) &&
+      ( notes.blank? || funded_account_w_notes? ) &&
       transactions.empty? &&
       deducted_from_id.nil? &&
       state == 'paid'
   end
   
+  def funded_account_w_notes?
+    !notes.blank? && (
+      notes.include?('Reprocess UCC') ||
+      notes.include?('Initial CSR') ||
+      notes.include?('Renewal UCC') ||
+      notes.include?('monthly invoice') ||
+      notes.include?('daily invoice')
+    )
+  end
+    
   def payment_stripe?
     !payment_not_refundable? && transactions.any? &&
       !transactions.last.reference.blank? &&
