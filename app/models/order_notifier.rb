@@ -19,7 +19,7 @@ class OrderNotifier < ActionMailer::Base
     @from_owner = @from_team.get_account_owner.email
     @to_owner   = @to_team.get_account_owner.email
 
-    mail  subject: "Order(s) have been transferred from team #{@from_team.to_slug} to team #{@to_team.to_slug}.",
+    mail  subject: "Order(s) have been transferred from team #{@from_team.get_team_name} to team #{@to_team.get_team_name}.",
           from:    Settings.from_email.orders,
           to:      [@from_owner, @to_owner].uniq
   end
