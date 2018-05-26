@@ -7,6 +7,8 @@ class CdnsController < ApplicationController
   before_action :set_tab_name, only: [:resource_cdn, :update_resource, :add_custom_domain, :update_advanced_setting,
                                       :update_custom_domain, :purge_cache, :update_cache_expiry, :delete_resource]
 
+  before_action :set_row_page, only: [:index]
+
   # before_filter :require_user, only: [:index, :register_account, :resource_cdn, :update_custom_domain]
 
   # filter_access_to :all
@@ -29,7 +31,7 @@ class CdnsController < ApplicationController
                       HTTParty.get('https://reseller.cdnify.com/api/v1/resources',
                                    basic_auth: {username: current_user_api_key, password: 'x'})
 
-      @results[:resources] = @response.parsed_response['resources'] if @response && @response.code == 200
+      @results[:resources] = @response.parsed_response['resources'].paginate(@p) if @response && @response.code == 200
     end
 
     respond_to do |format|
@@ -515,6 +517,19 @@ class CdnsController < ApplicationController
   end
 
   private
+
+    def set_row_page
+      preferred_row_count = current_user.preferred_cdn_row_count
+      @per_page = params[:per_page] || preferred_row_count.or_else("10")
+      Cdn.per_page = @per_page if Cdn.per_page != @per_page
+
+      if @per_page != preferred_row_count
+        current_user.preferred_cdn_row_count = @per_page
+        current_user.save(validate: false)
+      end
+
+      @p = {page: (params[:page] || 1), per_page: @per_page}
+    end
 
     def set_cdn
       @cdn = (current_user.is_system_admins? ? Cdn : current_user.ssl_account.cdns).find(params[:id])

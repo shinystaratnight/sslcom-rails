@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180511172930) do
+ActiveRecord::Schema.define(version: 20180511172931) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        limit: 255
@@ -323,6 +323,8 @@ ActiveRecord::Schema.define(version: 20180511172930) do
   add_index "certificate_orders", ["is_test"], name: "index_certificate_orders_on_is_test", using: :btree
   add_index "certificate_orders", ["ref"], name: "index_certificate_orders_on_ref", using: :btree
   add_index "certificate_orders", ["site_seal_id"], name: "index_certificate_orders_site_seal_id", using: :btree
+  add_index "certificate_orders", ["ssl_account_id", "workflow_state", "is_test", "updated_at"], name: "index_certificate_orders_on_4_cols", using: :btree
+  add_index "certificate_orders", ["workflow_state", "is_expired", "is_test"], name: "index_certificate_orders_on_3_cols", using: :btree
 
   create_table "certificates", force: :cascade do |t|
     t.integer  "reseller_tier_id",      limit: 4
@@ -460,6 +462,7 @@ ActiveRecord::Schema.define(version: 20180511172930) do
 
   add_index "csrs", ["certificate_content_id", "common_name"], name: "index_csrs_on_common_name_and_certificate_content_id", using: :btree
   add_index "csrs", ["certificate_content_id"], name: "index_csrs_on_certificate_content_id", using: :btree
+  add_index "csrs", ["common_name", "email", "sig_alg"], name: "index_csrs_on_common_name_and_email_and_sig_alg", using: :btree
   add_index "csrs", ["common_name"], name: "index_csrs_on_common_name", using: :btree
   add_index "csrs", ["organization"], name: "index_csrs_on_organization", using: :btree
   add_index "csrs", ["public_key_sha1", "unique_value"], name: "index_csrs_on_public_key_sha1_and_unique_value", unique: true, using: :btree
@@ -856,7 +859,7 @@ ActiveRecord::Schema.define(version: 20180511172930) do
   add_index "preferences", ["id", "name", "owner_id", "owner_type", "value"], name: "index_preferences_on_owner_and_name_and_value", using: :btree
   add_index "preferences", ["id", "name", "value"], name: "index_preferences_on_name_and_value", using: :btree
   add_index "preferences", ["id", "owner_id", "owner_type"], name: "index_preferences_on_id_and_owner_id_and_owner_type", unique: true, using: :btree
-  add_index "preferences", ["owner_id", "owner_type"], name: "index_preferences_on_owner_id_and_owner_type", using: :btree
+  add_index "preferences", ["id", "owner_id", "owner_type"], name: "index_preferences_on_owner_id_and_owner_type", unique: true, using: :btree
 
   create_table "product_orders", force: :cascade do |t|
     t.integer  "ssl_account_id",    limit: 4
@@ -1130,6 +1133,7 @@ ActiveRecord::Schema.define(version: 20180511172930) do
     t.integer  "ca_id",                     limit: 4
   end
 
+  add_index "signed_certificates", ["ca_id"], name: "fk_rails_d21ca532b7", using: :btree
   add_index "signed_certificates", ["ca_id"], name: "index_signed_certificates_on_ca_id", using: :btree
   add_index "signed_certificates", ["common_name"], name: "index_signed_certificates_on_common_name", using: :btree
   add_index "signed_certificates", ["csr_id"], name: "index_signed_certificates_on_csr_id", using: :btree
@@ -1380,6 +1384,7 @@ ActiveRecord::Schema.define(version: 20180511172930) do
   add_index "users", ["perishable_token"], name: "index_users_on_perishable_token", using: :btree
   add_index "users", ["ssl_account_id", "login", "email"], name: "index_users_on_ssl_account_id_and_login_and_email", using: :btree
   add_index "users", ["ssl_account_id"], name: "index_users_on_ssl_acount_id", using: :btree
+  add_index "users", ["status", "login", "email"], name: "index_users_on_status_and_login_and_email", using: :btree
 
   create_table "v2_migration_progresses", force: :cascade do |t|
     t.string   "source_table_name", limit: 255

@@ -2,6 +2,11 @@
   jQuery.noConflict();
   jQuery(function($) {
     $(document).ready(function() {
+      $('#number_rows').change(function() {
+        $('#per_page').val($(this).val());
+        $('#hidden_form').submit();
+      });
+
       $('.chk-delete').click(function() {
         if ($(this).prop('checked')) {
           $('#btn_update_resource').attr('disabled', false);

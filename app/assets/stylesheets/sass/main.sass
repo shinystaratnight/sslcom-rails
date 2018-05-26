@@ -3305,6 +3305,10 @@ a.bu_standard:hover
 .pagination
   margin-right: 15px
   float: right
+  a
+    text-decoration: none !important
+    &:hover
+      text-decoration: none
 
 .bu_standard span
   color: #FFFFFF
@@ -3612,6 +3616,15 @@ label.error
 
 #certificate_orders
   margin: .8em 0 .5em
+
+#resources
+  .pagination
+    display: block
+  table
+    border-collapse: separate
+    caption
+      caption-side: top
+      color: #3C3C3C
 
 #certificate_listing
   line-height: normal
