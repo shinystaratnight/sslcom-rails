@@ -137,6 +137,18 @@ ActiveRecord::Schema.define(version: 20180523223416) do
 
   add_index "billing_profiles", ["ssl_account_id"], name: "index_billing_profile_on_ssl_account_id", using: :btree
 
+  create_table "blocklist", force: :cascade do |t|
+    t.string   "type",        limit: 255
+    t.string   "domain",      limit: 255
+    t.integer  "validation",  limit: 4
+    t.string   "status",      limit: 255
+    t.string   "reason",      limit: 255
+    t.string   "description", limit: 255
+    t.text     "notes",       limit: 65535
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "blocklists", force: :cascade do |t|
     t.string   "type",        limit: 255
     t.string   "domain",      limit: 255
@@ -171,6 +183,16 @@ ActiveRecord::Schema.define(version: 20180523223416) do
   add_index "ca_api_requests", ["id", "api_requestable_id", "api_requestable_type", "type", "created_at"], name: "index_ca_api_requests_on_type_and_api_requestable_and_created_at", using: :btree
   add_index "ca_api_requests", ["id", "api_requestable_id", "api_requestable_type", "type"], name: "index_ca_api_requests_on_type_and_api_requestable", unique: true, using: :btree
   add_index "ca_api_requests", ["username", "approval_id"], name: "index_ca_api_requests_on_username_and_approval_id", unique: true, using: :btree
+
+  create_table "caa_check", force: :cascade do |t|
+    t.integer  "checkable_id",   limit: 4
+    t.string   "checkable_type", limit: 255
+    t.string   "domain",         limit: 255
+    t.string   "request",        limit: 255
+    t.text     "result",         limit: 65535
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "caa_checks", force: :cascade do |t|
     t.integer  "checkable_id",   limit: 4
@@ -323,6 +345,9 @@ ActiveRecord::Schema.define(version: 20180523223416) do
   add_index "certificate_orders", ["is_test"], name: "index_certificate_orders_on_is_test", using: :btree
   add_index "certificate_orders", ["ref"], name: "index_certificate_orders_on_ref", using: :btree
   add_index "certificate_orders", ["site_seal_id"], name: "index_certificate_orders_site_seal_id", using: :btree
+  add_index "certificate_orders", ["ssl_account_id", "workflow_state", "is_test", "updated_at"], name: "index_certificate_orders_on_4_cols", using: :btree
+  add_index "certificate_orders", ["validation_id"], name: "index_certificate_orders_on_validation_id", using: :btree
+  add_index "certificate_orders", ["workflow_state", "is_expired", "is_test"], name: "index_certificate_orders_on_3_cols", using: :btree
 
   create_table "certificates", force: :cascade do |t|
     t.integer  "reseller_tier_id",      limit: 4
@@ -390,6 +415,7 @@ ActiveRecord::Schema.define(version: 20180523223416) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "registrant_type",       limit: 4
+    t.integer  "parent_id",             limit: 4
     t.string   "callback_method",       limit: 255
     t.date     "incorporation_date"
     t.string   "incorporation_country", limit: 255
@@ -400,7 +426,6 @@ ActiveRecord::Schema.define(version: 20180523223416) do
     t.string   "duns_number",           limit: 255
     t.string   "company_number",        limit: 255
     t.string   "registration_service",  limit: 255
-    t.integer  "parent_id",             limit: 4
     t.boolean  "saved_default",                     default: false
   end
 
@@ -460,6 +485,7 @@ ActiveRecord::Schema.define(version: 20180523223416) do
 
   add_index "csrs", ["certificate_content_id", "common_name"], name: "index_csrs_on_common_name_and_certificate_content_id", using: :btree
   add_index "csrs", ["certificate_content_id"], name: "index_csrs_on_certificate_content_id", using: :btree
+  add_index "csrs", ["common_name", "email", "sig_alg"], name: "index_csrs_on_common_name_and_email_and_sig_alg", using: :btree
   add_index "csrs", ["common_name"], name: "index_csrs_on_common_name", using: :btree
   add_index "csrs", ["organization"], name: "index_csrs_on_organization", using: :btree
   add_index "csrs", ["public_key_sha1", "unique_value"], name: "index_csrs_on_public_key_sha1_and_unique_value", unique: true, using: :btree
@@ -572,6 +598,28 @@ ActiveRecord::Schema.define(version: 20180523223416) do
   end
 
   add_index "domain_control_validations", ["id", "csr_id"], name: "index_domain_control_validations_on_id_csr_id", using: :btree
+
+  create_table "duo_accounts", force: :cascade do |t|
+    t.integer  "ssl_account_id",              limit: 4
+    t.string   "duo_ikey",                    limit: 255
+    t.string   "duo_skey",                    limit: 255
+    t.string   "duo_akey",                    limit: 255
+    t.string   "duo_hostname",                limit: 255
+    t.string   "encrypted_duo_ikey",          limit: 255
+    t.string   "encrypted_duo_skey",          limit: 255
+    t.string   "encrypted_duo_akey",          limit: 255
+    t.string   "encrypted_duo_hostname",      limit: 255
+    t.string   "encrypted_duo_ikey_salt",     limit: 255
+    t.string   "encrypted_duo_ikey_iv",       limit: 255
+    t.string   "encrypted_duo_skey_salt",     limit: 255
+    t.string   "encrypted_duo_skey_iv",       limit: 255
+    t.string   "encrypted_duo_akey_salt",     limit: 255
+    t.string   "encrypted_duo_akey_iv",       limit: 255
+    t.string   "encrypted_duo_hostname_salt", limit: 255
+    t.string   "encrypted_duo_hostname_iv",   limit: 255
+    t.datetime "created_at",                              null: false
+    t.datetime "updated_at",                              null: false
+  end
 
   create_table "duplicate_v2_users", force: :cascade do |t|
     t.string   "login",      limit: 255
@@ -747,10 +795,10 @@ ActiveRecord::Schema.define(version: 20180523223416) do
     t.datetime "updated_at"
     t.datetime "paid_at"
     t.datetime "canceled_at"
-    t.integer  "lock_version",           limit: 4,   default: 0
+    t.integer  "lock_version",           limit: 4,     default: 0
     t.string   "description",            limit: 255
-    t.string   "state",                  limit: 255, default: "pending"
-    t.string   "status",                 limit: 255, default: "active"
+    t.string   "state",                  limit: 255,   default: "pending"
+    t.string   "status",                 limit: 255,   default: "active"
     t.string   "reference_number",       limit: 255
     t.integer  "deducted_from_id",       limit: 4
     t.string   "notes",                  limit: 255
@@ -831,6 +879,19 @@ ActiveRecord::Schema.define(version: 20180523223416) do
     t.datetime "updated_at",              null: false
   end
 
+  create_table "physical_token", force: :cascade do |t|
+    t.integer  "certificate_order_id",  limit: 4
+    t.integer  "signed_certificate_id", limit: 4
+    t.string   "tracking_number",       limit: 255
+    t.string   "shipping_method",       limit: 255
+    t.string   "activation_pin",        limit: 255
+    t.string   "manufacturer",          limit: 255
+    t.string   "model_number",          limit: 255
+    t.string   "serial_number",         limit: 255
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "physical_tokens", force: :cascade do |t|
     t.integer  "certificate_order_id",  limit: 4
     t.integer  "signed_certificate_id", limit: 4
@@ -864,7 +925,7 @@ ActiveRecord::Schema.define(version: 20180523223416) do
   add_index "preferences", ["id", "name", "owner_id", "owner_type", "value"], name: "index_preferences_on_owner_and_name_and_value", using: :btree
   add_index "preferences", ["id", "name", "value"], name: "index_preferences_on_name_and_value", using: :btree
   add_index "preferences", ["id", "owner_id", "owner_type"], name: "index_preferences_on_id_and_owner_id_and_owner_type", unique: true, using: :btree
-  add_index "preferences", ["owner_id", "owner_type"], name: "index_preferences_on_owner_id_and_owner_type", using: :btree
+  add_index "preferences", ["id", "owner_id", "owner_type"], name: "index_preferences_on_owner_id_and_owner_type", unique: true, using: :btree
 
   create_table "product_orders", force: :cascade do |t|
     t.integer  "ssl_account_id",    limit: 4
@@ -1138,6 +1199,7 @@ ActiveRecord::Schema.define(version: 20180523223416) do
     t.integer  "ca_id",                     limit: 4
   end
 
+  add_index "signed_certificates", ["ca_id"], name: "fk_rails_d21ca532b7", using: :btree
   add_index "signed_certificates", ["ca_id"], name: "index_signed_certificates_on_ca_id", using: :btree
   add_index "signed_certificates", ["common_name"], name: "index_signed_certificates_on_common_name", using: :btree
   add_index "signed_certificates", ["csr_id"], name: "index_signed_certificates_on_csr_id", using: :btree
@@ -1189,6 +1251,8 @@ ActiveRecord::Schema.define(version: 20180523223416) do
     t.string   "company_name",           limit: 255
     t.string   "issue_dv_no_validation", limit: 255
     t.string   "billing_method",         limit: 255, default: "monthly"
+    t.boolean  "duo_enabled"
+    t.boolean  "duo_own_used"
   end
 
   add_index "ssl_accounts", ["acct_number", "company_name", "ssl_slug"], name: "index_ssl_accounts_on_acct_number_and_company_name_and_ssl_slug", using: :btree
@@ -1341,22 +1405,22 @@ ActiveRecord::Schema.define(version: 20180523223416) do
 
   create_table "users", force: :cascade do |t|
     t.integer  "ssl_account_id",      limit: 4
-    t.string   "login",               limit: 255,                 null: false
-    t.string   "email",               limit: 255,                 null: false
+    t.string   "login",               limit: 255,                     null: false
+    t.string   "email",               limit: 255,                     null: false
     t.string   "crypted_password",    limit: 255
     t.string   "password_salt",       limit: 255
-    t.string   "persistence_token",   limit: 255,                 null: false
-    t.string   "single_access_token", limit: 255,                 null: false
-    t.string   "perishable_token",    limit: 255,                 null: false
+    t.string   "persistence_token",   limit: 255,                     null: false
+    t.string   "single_access_token", limit: 255,                     null: false
+    t.string   "perishable_token",    limit: 255,                     null: false
     t.string   "status",              limit: 255
-    t.integer  "login_count",         limit: 4,   default: 0,     null: false
-    t.integer  "failed_login_count",  limit: 4,   default: 0,     null: false
+    t.integer  "login_count",         limit: 4,   default: 0,         null: false
+    t.integer  "failed_login_count",  limit: 4,   default: 0,         null: false
     t.datetime "last_request_at"
     t.datetime "current_login_at"
     t.datetime "last_login_at"
     t.string   "current_login_ip",    limit: 255
     t.string   "last_login_ip",       limit: 255
-    t.boolean  "active",                          default: false, null: false
+    t.boolean  "active",                          default: false,     null: false
     t.string   "openid_identifier",   limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -1377,6 +1441,7 @@ ActiveRecord::Schema.define(version: 20180523223416) do
     t.integer  "max_teams",           limit: 4
     t.integer  "main_ssl_account",    limit: 4
     t.boolean  "persist_notice",                  default: false
+    t.string   "duo_enabled",         limit: 255, default: "enabled"
   end
 
   add_index "users", ["default_ssl_account"], name: "index_users_on_default_ssl_account", using: :btree
@@ -1388,6 +1453,7 @@ ActiveRecord::Schema.define(version: 20180523223416) do
   add_index "users", ["perishable_token"], name: "index_users_on_perishable_token", using: :btree
   add_index "users", ["ssl_account_id", "login", "email"], name: "index_users_on_ssl_account_id_and_login_and_email", using: :btree
   add_index "users", ["ssl_account_id"], name: "index_users_on_ssl_acount_id", using: :btree
+  add_index "users", ["status", "login", "email"], name: "index_users_on_status_and_login_and_email", using: :btree
 
   create_table "v2_migration_progresses", force: :cascade do |t|
     t.string   "source_table_name", limit: 255
