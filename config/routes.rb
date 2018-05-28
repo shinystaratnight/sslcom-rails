@@ -159,6 +159,9 @@ SslCom::Application.routes.draw do
     resource :user_session do
       collection do
         post :user_login
+        get  :duo
+        post :duo_verify
+        get  :duo_verify
       end
     end
 
@@ -290,6 +293,9 @@ SslCom::Application.routes.draw do
       collection do
         post :register_u2f
         post :remove_u2f
+        post :register_duo
+        put  :duo_enable
+        put  :duo_own_used
       end
       member do
         get :adjust_funds
@@ -298,6 +304,7 @@ SslCom::Application.routes.draw do
 
     resources :users, only: :index do
       match :enable_disable, via: [:put, :patch], on: :member
+      match :enable_disable_duo, via: [:put, :patch], on: :member
     end
 
     resource :account, controller: :users do
@@ -365,6 +372,7 @@ SslCom::Application.routes.draw do
       get :search
       get :cancel_reseller_signup
       match :enable_disable, via: [:put, :patch]
+      match :enable_disable_duo, via: [:put, :patch]
     end
 
     member do
@@ -388,6 +396,14 @@ SslCom::Application.routes.draw do
       match :admin_activate, via: [:put, :patch]
       get   :leave_team
       get   :dont_show_again
+    end
+  end
+
+  resource :user do
+    collection do
+      get  :duo
+      post :duo_verify
+      get  :duo_verify
     end
   end
 

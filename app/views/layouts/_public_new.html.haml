@@ -48,7 +48,7 @@
               %li
                 %a(href="#{account_url}")
                   %div MY ACCOUNT
-                -if current_user
+                -if current_user && session[:duo_auth]
                   %ul
                     %li
                       =link_to "Logout", logout_url
