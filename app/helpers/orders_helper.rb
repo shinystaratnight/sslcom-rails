@@ -142,8 +142,8 @@ module OrdersHelper
   end
   
   def confirm_affiliate_sale
-    if !@order.domains_adjustment? && !@order.ext_affiliate_credited? &&
-        (@order.persisted? ? @order.created_at > 1.minute.ago : true )
+    if !@order.domains_adjustment? && !@order.invoice_payment? && !@order.on_payable_invoice?
+        !@order.ext_affiliate_credited? && (@order.persisted? ? @order.created_at > 1.minute.ago : true )
       @order.toggle! :ext_affiliate_credited
       if @order.ext_affiliate_name=="shareasale"
         "<img src=\"https://shareasale.com/sale.cfm?amount=#{@order.final_amount.to_s}&tracking=#{@order.reference_number}&transtype=sale&merchantID=#{@order.ext_affiliate_id}\" width=\"1\" height=\"1\">".html_safe

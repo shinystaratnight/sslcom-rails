@@ -290,8 +290,8 @@ class Order < ActiveRecord::Base
   end
     
   def total
-    unless reprocess_ucc_order? || monthly_invoice_order? || 
-      daily_invoice_order? || on_payable_invoice? || domains_adjustment?
+    unless reprocess_ucc_order? || invoice_payment? ||
+      on_payable_invoice? || domains_adjustment?
       
       self.amount = line_items.inject(0.to_money) {|sum,l| sum + l.amount }
     end
@@ -528,6 +528,10 @@ class Order < ActiveRecord::Base
   def daily_invoice_order?
     # Payment for total of daily invoice
     description == DI_PAYMENT
+  end
+  
+  def invoice_payment?
+    monthly_invoice_order? || daily_invoice_order?
   end
   
   def faw_order?
@@ -838,7 +842,7 @@ class Order < ActiveRecord::Base
       new_refund = Refund.refund_merchant(params)
     end
     
-    unless monthly_invoice_order? || daily_invoice_order?
+    unless invoice_payment?
       if merchant_fully_refunded?
         full_refund! unless fully_refunded?
         if certificate_orders.any?
@@ -877,7 +881,7 @@ class Order < ActiveRecord::Base
   def get_total_merchant_amount
     merchant = get_merchant
     o = get_order_charged
-    return (o.transactions.map(&:amount).sum * 100) if o && %w{stripe authnet}.include?(merchant)
+    return (o.transactions.map(&:cents).sum) if o && %w{stripe authnet}.include?(merchant)
     return o.cents if o && merchant == 'paypal'
     if o
       if %w{no_payment zero_amt funded}.include?(merchant)
@@ -950,12 +954,22 @@ class Order < ActiveRecord::Base
     billing_profile_id.nil? &&
       po_number.nil? &&
       quote_number.nil? &&
-      ( notes.blank? || (!notes.blank? && notes.include?('Reprocess UCC')) ) &&
+      ( notes.blank? || funded_account_w_notes? ) &&
       transactions.empty? &&
       deducted_from_id.nil? &&
       state == 'paid'
   end
   
+  def funded_account_w_notes?
+    !notes.blank? && (
+      notes.include?('Reprocess UCC') ||
+      notes.include?('Initial CSR') ||
+      notes.include?('Renewal UCC') ||
+      notes.include?('monthly invoice') ||
+      notes.include?('daily invoice')
+    )
+  end
+    
   def payment_stripe?
     !payment_not_refundable? && transactions.any? &&
       !transactions.last.reference.blank? &&
