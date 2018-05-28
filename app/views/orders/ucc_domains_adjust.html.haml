@@ -21,7 +21,9 @@
     =f.hidden_field :order_description, value: params[:order_description]
     =f.hidden_field :wildcard_count, value: params[:wildcard_count]
     =f.hidden_field :nonwildcard_count, value: params[:nonwildcard_count]
-    
+    =f.hidden_field :wildcard_amount, value: params[:wildcard_amount]
+    =f.hidden_field :nonwildcard_amount, value: params[:nonwildcard_amount]
+
     -if @reprocess_ucc
       =f.hidden_field :reprocess_ucc, value: @reprocess_ucc
     -if @renew_ucc && !@reprocess_ucc

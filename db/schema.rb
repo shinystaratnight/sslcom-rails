@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180511172931) do
+ActiveRecord::Schema.define(version: 20180523223416) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        limit: 255
@@ -576,6 +576,28 @@ ActiveRecord::Schema.define(version: 20180511172931) do
 
   add_index "domain_control_validations", ["id", "csr_id"], name: "index_domain_control_validations_on_id_csr_id", using: :btree
 
+  create_table "duo_accounts", force: :cascade do |t|
+    t.integer  "ssl_account_id",              limit: 4
+    t.string   "duo_ikey",                    limit: 255
+    t.string   "duo_skey",                    limit: 255
+    t.string   "duo_akey",                    limit: 255
+    t.string   "duo_hostname",                limit: 255
+    t.string   "encrypted_duo_ikey",          limit: 255
+    t.string   "encrypted_duo_skey",          limit: 255
+    t.string   "encrypted_duo_akey",          limit: 255
+    t.string   "encrypted_duo_hostname",      limit: 255
+    t.string   "encrypted_duo_ikey_salt",     limit: 255
+    t.string   "encrypted_duo_ikey_iv",       limit: 255
+    t.string   "encrypted_duo_skey_salt",     limit: 255
+    t.string   "encrypted_duo_skey_iv",       limit: 255
+    t.string   "encrypted_duo_akey_salt",     limit: 255
+    t.string   "encrypted_duo_akey_iv",       limit: 255
+    t.string   "encrypted_duo_hostname_salt", limit: 255
+    t.string   "encrypted_duo_hostname_iv",   limit: 255
+    t.datetime "created_at",                              null: false
+    t.datetime "updated_at",                              null: false
+  end
+
   create_table "duplicate_v2_users", force: :cascade do |t|
     t.string   "login",      limit: 255
     t.string   "email",      limit: 255
@@ -723,7 +745,7 @@ ActiveRecord::Schema.define(version: 20180511172931) do
 
   create_table "order_transactions", force: :cascade do |t|
     t.integer  "order_id",     limit: 4
-    t.integer  "amount",       limit: 4
+    t.integer  "old_amount",   limit: 4
     t.boolean  "success"
     t.string   "reference",    limit: 255
     t.string   "message",      limit: 255
@@ -736,6 +758,7 @@ ActiveRecord::Schema.define(version: 20180511172931) do
     t.string   "notes",        limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "cents",        limit: 4
   end
 
   create_table "orders", force: :cascade do |t|
@@ -749,10 +772,10 @@ ActiveRecord::Schema.define(version: 20180511172931) do
     t.datetime "updated_at"
     t.datetime "paid_at"
     t.datetime "canceled_at"
-    t.integer  "lock_version",           limit: 4,   default: 0
+    t.integer  "lock_version",           limit: 4,     default: 0
     t.string   "description",            limit: 255
-    t.string   "state",                  limit: 255, default: "pending"
-    t.string   "status",                 limit: 255, default: "active"
+    t.string   "state",                  limit: 255,   default: "pending"
+    t.string   "status",                 limit: 255,   default: "active"
     t.string   "reference_number",       limit: 255
     t.integer  "deducted_from_id",       limit: 4
     t.string   "notes",                  limit: 255
@@ -766,7 +789,14 @@ ActiveRecord::Schema.define(version: 20180511172931) do
     t.string   "approval",               limit: 255
     t.integer  "invoice_id",             limit: 4
     t.string   "type",                   limit: 255
-    t.string   "invoice_description",    limit: 255
+    t.text     "invoice_description",    limit: 65535
+    t.integer  "cur_wildcard",           limit: 4
+    t.integer  "cur_non_wildcard",       limit: 4
+    t.integer  "max_wildcard",           limit: 4
+    t.integer  "max_non_wildcard",       limit: 4
+    t.integer  "wildcard_cents",         limit: 4
+    t.integer  "non_wildcard_cents",     limit: 4
+    t.integer  "reseller_tier_id",       limit: 4
   end
 
   add_index "orders", ["billable_id", "billable_type"], name: "index_orders_on_billable_id_and_billable_type", using: :btree
@@ -1185,6 +1215,8 @@ ActiveRecord::Schema.define(version: 20180511172931) do
     t.string   "company_name",           limit: 255
     t.string   "issue_dv_no_validation", limit: 255
     t.string   "billing_method",         limit: 255, default: "monthly"
+    t.boolean  "duo_enabled"
+    t.boolean  "duo_own_used"
   end
 
   add_index "ssl_accounts", ["acct_number", "company_name", "ssl_slug"], name: "index_ssl_accounts_on_acct_number_and_company_name_and_ssl_slug", using: :btree
@@ -1337,22 +1369,22 @@ ActiveRecord::Schema.define(version: 20180511172931) do
 
   create_table "users", force: :cascade do |t|
     t.integer  "ssl_account_id",      limit: 4
-    t.string   "login",               limit: 255,                 null: false
-    t.string   "email",               limit: 255,                 null: false
+    t.string   "login",               limit: 255,                     null: false
+    t.string   "email",               limit: 255,                     null: false
     t.string   "crypted_password",    limit: 255
     t.string   "password_salt",       limit: 255
-    t.string   "persistence_token",   limit: 255,                 null: false
-    t.string   "single_access_token", limit: 255,                 null: false
-    t.string   "perishable_token",    limit: 255,                 null: false
+    t.string   "persistence_token",   limit: 255,                     null: false
+    t.string   "single_access_token", limit: 255,                     null: false
+    t.string   "perishable_token",    limit: 255,                     null: false
     t.string   "status",              limit: 255
-    t.integer  "login_count",         limit: 4,   default: 0,     null: false
-    t.integer  "failed_login_count",  limit: 4,   default: 0,     null: false
+    t.integer  "login_count",         limit: 4,   default: 0,         null: false
+    t.integer  "failed_login_count",  limit: 4,   default: 0,         null: false
     t.datetime "last_request_at"
     t.datetime "current_login_at"
     t.datetime "last_login_at"
     t.string   "current_login_ip",    limit: 255
     t.string   "last_login_ip",       limit: 255
-    t.boolean  "active",                          default: false, null: false
+    t.boolean  "active",                          default: false,     null: false
     t.string   "openid_identifier",   limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -1373,6 +1405,7 @@ ActiveRecord::Schema.define(version: 20180511172931) do
     t.integer  "max_teams",           limit: 4
     t.integer  "main_ssl_account",    limit: 4
     t.boolean  "persist_notice",                  default: false
+    t.string   "duo_enabled",         limit: 255, default: "enabled"
   end
 
   add_index "users", ["default_ssl_account"], name: "index_users_on_default_ssl_account", using: :btree

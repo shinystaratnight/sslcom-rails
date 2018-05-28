@@ -4057,7 +4057,7 @@ label.error
       &.right
         width: 355px
 
-    .u2f_block
+    .u2f_block, .duo_block
       width: 500px
       padding: .3em 0
       margin-left: 100px
@@ -4092,6 +4092,9 @@ label.error
         margin: 0px 5px 0px 0px
         padding: 5px 2px
         font-size: 12px
+      
+      .duo_key
+        margin-bottom: 10px
 
 input#upload_files, input#start_over, input#validate_domains
   margin: 1em
@@ -5126,6 +5129,13 @@ textarea[id^=certificate_order]
   span
     border: 1px solid
     padding: 0pt 0.2em
+
+#duo_iframe
+  width: 60%
+  margin-left: 20%
+  min-width: 304px
+  height: 330px
+  border: none
 
 #new_user_session
   input[type=password], input[type=text]
@@ -6613,6 +6623,7 @@ span.notifications-teams
 .btn-rmv-invoice-item,
 .btn-add-invoice-item,
 .btn-edit-invoice-item,
+.btn-update-invoice-item,
 #btn-update-invoice-item,
 .btn-cancel-invoice-item,
 .btn-refunds-detail
@@ -6658,7 +6669,8 @@ span.notifications-teams
   border: 1px solid #334DFF
   background-color: #334DFF
 
-.btn-cancel-invoice-item
+.btn-cancel-invoice-item,
+.btn-update-invoice-item
   border: 1px solid #334DFF
   background-color: white
   color: #334DFF !important
@@ -6794,7 +6806,18 @@ span.notifications-teams
     td
       border-bottom: 1px solid #ccc
       padding: 0.4rem 0 !important
-  
+
+/*
+ * Edit Order
+ */
+.admin-edit-order
+  .admin-edit-actions
+    text-align: center
+    a
+      font-size: 1.3rem
+      font-weight: 600
+      margin-right: 2.5rem
+    
 /*
  * Transaction Show: Reprocess UCC Section
  */ 
@@ -6911,3 +6934,7 @@ span.notifications-teams
 
   span
     font-weight: 600
+
+#duo_settings
+  label
+    text-align: left

@@ -73,6 +73,17 @@
                         %li
                           =ed.radio_button :status, 'disabled'
                           disabled
+                    .clearfix.adjust_duo_status
+                      =form_for u, url: enable_disable_duo_users_path(id: u.id) do |ed|
+                        %ul
+                          %li
+                            %strong duo enabled?
+                          %li
+                            =ed.radio_button :duo_enabled, 'enabled'
+                            enabled
+                          %li
+                            =ed.radio_button :duo_enabled, 'disabled'
+                            disabled
                 %td(width="30%")
                   -if current_user.is_system_admins?
                     %ul

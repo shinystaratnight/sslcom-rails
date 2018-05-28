@@ -7,6 +7,18 @@ $.last_delete_clicked=function(){
   $('#register_card_form').fadeIn();
 };
 
+function paypalDomAdjustmentType() {
+  var str = '';
+  if ($(order_reprocess_ucc).length) {
+    str = 'reprocess_ucc';
+  } else if ($(order_renew_ucc).length) {
+    str = 'renew_ucc';
+  } else {
+    str = 'ucc_csr_submit';
+  }
+  return str;
+}
+  
 function paypalCheckoutUrl() {
   var url = "<%= paypal_express_checkout_url(ssl_slug: params[:ssl_slug]) %>",
       discount = $('span#discount_applied'),
@@ -24,11 +36,16 @@ function paypalCheckoutUrl() {
       url += '&monthly_invoice=true'
         + '&invoice_ref=' + reprocess_ucc.data('monthly-ref');
     } else {
-      url += '&reprocess_ucc=true'
+      url += '&' + paypalDomAdjustmentType() + '=true'
         + '&co_ref=' + reprocess_ucc.data('co-ref')
         + '&cc_ref=' + reprocess_ucc.data('cc-ref')
-        + '&order_description=' + $('#order_order_description').val();
+        + '&wildcard_amount=' + $('#order_wildcard_amount').val()
+        + '&nonwildcard_amount=' + $('#order_nonwildcard_amount').val()
+        + '&order_description=' + $('#order_order_description').val()
+        + '&nonwildcard_count=' + $('#order_nonwildcard_count').val()
+        + '&wildcard_count=' + $('#order_wildcard_count').val();
     }
+    
     if (typeof $('#order_charge_amount').val() !== "undefined") {
       url += '&funded_target=' + $('#order_charge_amount').val();
     }
