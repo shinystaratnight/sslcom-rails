@@ -833,7 +833,7 @@ class Order < ActiveRecord::Base
   end
   
   # If order has been transfered from another team, then the originating team 
-  # should be credited or refunded. Lookup SystemAudit log for specific keywords
+  # should be credited. Lookup SystemAudit log for specific keywords
   # to determine originating order.
   def get_team_to_credit
     order_transferred = SystemAudit

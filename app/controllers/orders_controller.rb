@@ -329,7 +329,7 @@ class OrdersController < ApplicationController
     )
     if funded > 0
       add_cents_to_funded_account(funded)
-      flash[:notice] << " And made $#{Money.new(funded).format} available to customer."
+      flash[:notice] << " And made #{Money.new(funded).format} available to customer."
     end
   end
   
