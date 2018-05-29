@@ -260,7 +260,7 @@ class OrdersController < ApplicationController
       unless params["partial"] # full refund
         @target = @order
         if params["return_funds"]
-          @order.billable.funded_account.add_cents(@order.make_available_total)
+          add_cents_to_funded_account(@order.make_available_total)
           @performed << " and made #{Money.new(@order.make_available_total).format} available to customer."
         end
         @order.full_refund!
@@ -306,10 +306,10 @@ class OrdersController < ApplicationController
         last_refund = @order.refunds.last
 
         if refund && last_refund && last_refund.successful?
+          flash[:notice] = "Successfully refunded merchant for amount #{amount.format}."
           refund_merchant_for_co(co, amount) if co
           refund_merchant_for_mo(mo, amount) if mo
-          @order.billable.funded_account.decrement!(:cents, last_refund.amount) if @order.is_deposit?
-          flash[:notice] = "Successfully refunded merchant for amount #{amount.format}."
+          @order.get_team_to_credit.funded_account.decrement!(:cents, last_refund.amount) if @order.is_deposit?
         else
           flash[:error] = "Refund for #{amount.format} has failed! #{last_refund.message}"
         end
@@ -328,7 +328,7 @@ class OrdersController < ApplicationController
       action: "Refunded partial amount for certificate order ##{co.ref}, merchant refund issued for #{amount.format}."
     )
     if funded > 0
-      @order.billable.funded_account.add_cents(funded)
+      add_cents_to_funded_account(funded)
       flash[:notice] << " And made $#{Money.new(funded).format} available to customer."
     end
   end
@@ -674,6 +674,10 @@ class OrdersController < ApplicationController
 
   private
   
+  def add_cents_to_funded_account(cents)
+    @order.get_team_to_credit.funded_account.add_cents(cents)
+  end
+  
   # ============================================================================
   # UCC Certificate reprocess/rekey helper methods for 
   #   Invoiced Order:       will be added to monthly invoice to be charged later
@@ -843,14 +847,14 @@ class OrdersController < ApplicationController
   # admin user refunds line item
   def refund_partial_amount(params)
     refund_amount = @order.make_available_line(@target)
-    item_remains  = @order.line_items.select{|li|li.sellable.try("refunded?")}.count == @order.line_items.count
+    all_refunded  = @order.line_items.select{|li|li.sellable.try("refunded?")}.count == @order.line_items.count
     refund_amount_f = Money.new(refund_amount).format
     
-    @order.billable.funded_account.add_cents(refund_amount)
+    add_cents_to_funded_account(refund_amount)
     @performed << " and made #{refund_amount_f} available to customer"
 
     # at least 1 lineitem needs to remain unrefunded or refunded amount is less than order total
-    if item_remains
+    if all_refunded || (@order.cents <= refund_amount)
       @order.full_refund!
     else
       @order.partial_refund!(params["partial"], refund_amount)

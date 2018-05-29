@@ -10,9 +10,9 @@
         %br/
         -ssl_slug = @ssl_slug.nil? ? @order.billable.to_slug : @ssl_slug
         -teams = if current_user.is_system_admins?
-          -@order.billable.get_account_owner.ssl_accounts.where.not(id: @ssl_account)
+          -@order.billable.get_account_owner.ssl_accounts.where.not(id: (@ssl_account || ssl_account))
         -else
-          -current_user.ssl_accounts.where.not(id: @ssl_account)
+          -current_user.ssl_accounts.where.not(id: current_user.ssl_account)
         .clearfix
           =form_tag transfer_order_order_path(ssl_slug, @order), method: :post do
             =select_tag :target_team, options_for_select(teams.map{|sa| [sa.to_slug.upcase, sa.acct_number]}), |

@@ -357,13 +357,13 @@ class SslAccount < ActiveRecord::Base
   end
   
   def self.migrate_orders_system_audit(params)
-    notes_ext = "from team #{params[:from_sa].acct_number} to team #{params[:to_sa].acct_number} on #{DateTime.now.strftime('%c')}"
+    notes_ext = "from team acct ##{params[:from_sa].acct_number} to team acct ##{params[:to_sa].acct_number} on #{DateTime.now.strftime('%c')}"
     
     params[:co_list].each do |co|
       SystemAudit.create(
         owner: params[:user],
         target: co,
-        notes: "Transfered certificate order ##{co.ref} #{notes_ext}.",
+        notes: "Transfered certificate order #{co.ref} #{notes_ext}.",
         action: "Transfer Certificate Order To Team"
       )
     end
@@ -371,7 +371,7 @@ class SslAccount < ActiveRecord::Base
       SystemAudit.create(
         owner: params[:user],
         target: o,
-        notes: "Transfered order ##{o.reference_number} #{notes_ext}.",
+        notes: "Transfered order #{o.reference_number} #{notes_ext}.",
         action: "Transfer Order To Team"
       )
     end

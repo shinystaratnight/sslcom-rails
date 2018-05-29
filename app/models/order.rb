@@ -831,6 +831,22 @@ class Order < ActiveRecord::Base
     percent      = total.to_d/order_total.to_d
     get_funded_account_amount == 0 ? 0 : (get_funded_account_amount * percent)
   end
+  
+  # If order has been transfered from another team, then the originating team 
+  # should be credited or refunded. Lookup SystemAudit log for specific keywords
+  # to determine originating order.
+  def get_team_to_credit
+    order_transferred = SystemAudit
+      .where(target_type: 'Order', target_id: id)
+      .where("notes LIKE ?", "%from team%")
+      .order(created_at: :desc).last
+    unless order_transferred.nil?
+      from_team = order_transferred.notes.split.find {|str| str.include?('#')}
+    end
+    from_team = SslAccount.find_by(acct_number: from_team.gsub('#', '')) unless from_team.nil?
+    from_team.nil? ? billable : from_team
+  end
+  
   # ============================================================================
   # REFUND (utilizes 3 merchants, Stripe, PaypalExpress and Authorize.net)
   # ============================================================================
