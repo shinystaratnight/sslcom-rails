@@ -236,7 +236,7 @@ class UsersController < ApplicationController
     session[:old_ssl_slug] = old_ssl_slug
     team = SslAccount.find(params[:ssl_account_id])
     if team.duo_enabled
-      redirect_to duo_user_path
+      redirect_to duo_user_path(@user.id, ssl_slug: @ssl_slug)
     else
       if @switch_ssl_account && @user.get_all_approved_accounts.map(&:id).include?(@switch_ssl_account.to_i)
         @user.set_default_ssl_account(@switch_ssl_account)
