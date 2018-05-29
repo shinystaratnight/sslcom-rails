@@ -91,7 +91,7 @@ class Refund < ActiveRecord::Base
   
   def get_reference(params)
     merchant = params[:merchant]
-    return params[:order].notes.delete('#paidviapaypal') if merchant == 'paypal'
+    return params[:order].notes.split.last.strip.delete('#paidviapaypal') if merchant == 'paypal'
     return params[:order_transaction].reference if %w{stripe authnet}.include?(merchant)
   end
   
