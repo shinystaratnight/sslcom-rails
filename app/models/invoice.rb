@@ -181,7 +181,7 @@ class Invoice < ActiveRecord::Base
   def get_credited_total
     if refunded? && 
       ( (payment.make_available_total - get_merchant_refunds) > get_cents )
-      get_cents
+      get_amount
     else
       max_credit
     end
