@@ -394,6 +394,14 @@ jQuery(function($) {
       }
      });*/
 
+    enableSubmitBtn = function() {
+      $('.order_next').show();
+    }
+
+    disableSubmitBtn = function () {
+      $('.order_next').hide();
+    }
+
     var options = {
       dataType: 'json',
       url: '<%=user_session_path%>',
@@ -422,6 +430,14 @@ jQuery(function($) {
 
           errorString = errorArray.join(",\n");
           alert(msg+errorString);
+
+          if (
+            parseInt($('.failed_count').val()) >= <%= Rails.application.secrets.failed_login_limit_count %> &&
+            $('#g-recaptcha-response').val() == ""
+          ) {
+            $('.order_next').hide();
+            $('#recaptcha_container').show();
+          }
         } else {
           if (data.record.user.status == 'disabled') {
             alert('This account has been disabled');
@@ -475,6 +491,8 @@ jQuery(function($) {
         var user_session = {};
         user_session['login'] = $('#user_session_login').val();
         user_session['password'] = $('#user_session_password').val();
+        user_session['failed_count'] = $('.failed_count').val();
+        user_session['g-recaptcha-response'] = $('#g-recaptcha-response').val();
 
         var ajaxLoginUrl = '<%=user_login_user_session_path%>';
         $.ajax({
@@ -484,7 +502,26 @@ jQuery(function($) {
           },
           type: "POST",
           success: function (result) {
-            if ($.isEmptyObject(result)) {
+            if (result['app_id']) {
+              var appId = result['app_id'];
+              var signRequests = result['sign_requests'];
+              var challenge = result['challenge'];
+
+              u2f.sign(appId, challenge, signRequests, function(signResponse) {
+                if (signResponse.errorCode) {
+                  $('.u2f_logout').val('true');
+                } else {
+                  $('.u2f_response').val(JSON.stringify(signResponse));
+                }
+                $('form#new_order').ajaxSubmit(options);
+              });
+            } else {
+              var failed_count = parseInt($('.failed_count').val()) + 1;
+              $('.failed_count').val(failed_count);
+              $('form#new_order').ajaxSubmit(options);
+            }
+
+            /*if ($.isEmptyObject(result)) {
               $('form#new_order').ajaxSubmit(options);
             } else {
               var appId = result['app_id'];
@@ -499,7 +536,7 @@ jQuery(function($) {
                 }
                 $('form#new_order').ajaxSubmit(options);
               });
-            }
+            }*/
           }
         });
 

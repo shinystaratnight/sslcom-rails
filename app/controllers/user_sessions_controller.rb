@@ -5,8 +5,9 @@ class UserSessionsController < ApplicationController
   skip_filter :finish_reseller_signup, only: [:destroy]
   skip_before_action :verify_authenticity_token
   skip_before_action :require_no_authentication, only: [:duo_verify]
-  
+
   def new
+    @failed_count = 0
     @user_session = UserSession.new
     session[:duo_auth] = false
   end
@@ -23,36 +24,72 @@ class UserSessionsController < ApplicationController
     result_obj = {}
     key_handles = []
 
-    @user_session = UserSession.new(params[:user_session])
+    if params[:user_session][:failed_count].to_i >= Rails.application.secrets.failed_login_limit_count.to_i
+      if verify_recaptcha(response: params[:user_session]['g-recaptcha-response'])
+        @user_session = UserSession.new(params[:user_session])
 
-    if @user_session.save && !@user_session.user.is_disabled?
-      user = @user_session.user
+        if @user_session.save && !@user_session.user.is_disabled?
+          user = @user_session.user
 
-      # cookies[:acct] = {
-      #     :value=>user.ssl_account.acct_number,
-      #     :path => "/",
-      #     :expires => Settings.cart_cookie_days.to_i.days.from_now
-      # }
+          # cookies[:acct] = {
+          #     :value=>user.ssl_account.acct_number,
+          #     :path => "/",
+          #     :expires => Settings.cart_cookie_days.to_i.days.from_now
+          # }
 
-      #we'll know what tier the user is even if s/he is not logged in
-      cookies.delete(:r_tier)
-      cookies[:cart] = {
-          :value=>user.shopping_cart.content,
-          :path => "/",
-          :expires => Settings.cart_cookie_days.to_i.days.from_now
-      } if user.shopping_cart
+          #we'll know what tier the user is even if s/he is not logged in
+          cookies.delete(:r_tier)
+          cookies[:cart] = {
+              :value=>user.shopping_cart.content,
+              :path => "/",
+              :expires => Settings.cart_cookie_days.to_i.days.from_now
+          } if user.shopping_cart
 
-      if user.ssl_account.is_registered_reseller?
-        cookies[:r_tier] = {
-            :value=>user.ssl_account.reseller.reseller_tier.label,
+          if user.ssl_account.is_registered_reseller?
+            cookies[:r_tier] = {
+                :value=>user.ssl_account.reseller.reseller_tier.label,
+                :path => "/",
+                :expires => Settings.cart_cookie_days.to_i.days.from_now
+            }
+          end
+
+          # Fetch existing U2Fs from your db
+          key_handles = @user_session.user.u2fs.pluck(:key_handle)
+          # @user_session.destroy
+        end
+      end
+    else
+      @user_session = UserSession.new(params[:user_session])
+
+      if @user_session.save && !@user_session.user.is_disabled?
+        user = @user_session.user
+
+        # cookies[:acct] = {
+        #     :value=>user.ssl_account.acct_number,
+        #     :path => "/",
+        #     :expires => Settings.cart_cookie_days.to_i.days.from_now
+        # }
+
+        #we'll know what tier the user is even if s/he is not logged in
+        cookies.delete(:r_tier)
+        cookies[:cart] = {
+            :value=>user.shopping_cart.content,
             :path => "/",
             :expires => Settings.cart_cookie_days.to_i.days.from_now
-        }
-      end
+        } if user.shopping_cart
 
-      # Fetch existing U2Fs from your db
-      key_handles = @user_session.user.u2fs.pluck(:key_handle)
-      # @user_session.destroy
+        if user.ssl_account.is_registered_reseller?
+          cookies[:r_tier] = {
+              :value=>user.ssl_account.reseller.reseller_tier.label,
+              :path => "/",
+              :expires => Settings.cart_cookie_days.to_i.days.from_now
+          }
+        end
+
+        # Fetch existing U2Fs from your db
+        key_handles = @user_session.user.u2fs.pluck(:key_handle)
+        # @user_session.destroy
+      end
     end
 
     unless key_handles.empty?
@@ -64,6 +101,8 @@ class UserSessionsController < ApplicationController
       # Store challenge. We need it for the verification step
       session[:challenge] = result_obj['challenge']
     end
+
+    result_obj['failed_count'] = params[:user_session][:failed_count]
 
     render :json => result_obj
   end
@@ -102,6 +141,8 @@ class UserSessionsController < ApplicationController
     end
 
     respond_to do |format|
+      @failed_count = params[:failed_count].to_i
+
       if @user_session
         if @user_session.save && !@user_session.user.is_disabled?
           user = @user_session.user
