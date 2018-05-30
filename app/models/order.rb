@@ -10,6 +10,7 @@ class Order < ActiveRecord::Base
   belongs_to  :deducted_from, class_name: "Order", foreign_key: "deducted_from_id"
   belongs_to  :visitor_token
   belongs_to  :invoice, class_name: "Invoice", foreign_key: :invoice_id
+  belongs_to  :reseller_tier, foreign_key: :reseller_tier_id
   has_many    :line_items, dependent: :destroy, after_add: Proc.new { |p, d| p.amount += d.amount}
   has_many    :certificate_orders, through: :line_items, :source => :sellable,
               :source_type => 'CertificateOrder', unscoped: true
@@ -19,7 +20,9 @@ class Order < ActiveRecord::Base
   has_many    :order_transactions
   has_and_belongs_to_many    :discounts
 
-  money :amount
+  money :amount, cents: :cents
+  money :wildcard_amount, cents: :wildcard_cents
+  money :non_wildcard_amount, cents: :non_wildcard_cents
 
   before_create :total, :determine_description
   after_create :generate_reference_number, :commit_discounts
@@ -34,6 +37,13 @@ class Order < ActiveRecord::Base
       self.receipt ||= false
       self.deposit_mode ||= false
     end
+    self.cur_wildcard = nil if self.cur_wildcard.blank?
+    self.cur_non_wildcard = nil if self.cur_non_wildcard.blank?
+    self.max_wildcard = nil if self.max_wildcard.blank?
+    self.max_non_wildcard = nil if self.max_non_wildcard.blank?
+    self.reseller_tier_id = nil if self.reseller_tier_id.blank?
+    self.wildcard_cents = 0 if self.wildcard_cents.blank?
+    self.non_wildcard_cents = 0 if self.non_wildcard_cents.blank?
   end
   
   FAW                = "Funded Account Withdrawal"
@@ -280,8 +290,8 @@ class Order < ActiveRecord::Base
   end
     
   def total
-    unless reprocess_ucc_order? || monthly_invoice_order? || 
-      daily_invoice_order? || on_payable_invoice? || domains_adjustment?
+    unless reprocess_ucc_order? || invoice_payment? ||
+      on_payable_invoice? || domains_adjustment?
       
       self.amount = line_items.inject(0.to_money) {|sum,l| sum + l.amount }
     end
@@ -520,6 +530,10 @@ class Order < ActiveRecord::Base
     description == DI_PAYMENT
   end
   
+  def invoice_payment?
+    monthly_invoice_order? || daily_invoice_order?
+  end
+  
   def faw_order?
     description == FAW # Funded Account Withdrawal
   end
@@ -543,8 +557,17 @@ class Order < ActiveRecord::Base
     non_wildcard = cur_domains.map {|d| d if !d.include?('*')}.compact
     wildcard     = cur_domains.map {|d| d if d.include?('*')}.compact
     
-    tot_non_wildcard = non_wildcard.count - co.get_reprocess_max_nonwildcard(cc).count
-    tot_wildcard     = wildcard.count - co.get_reprocess_max_wildcard(cc).count
+    tot_non_wildcard = if cur_non_wildcard.blank?
+      non_wildcard.count - co.get_reprocess_max_nonwildcard(cc).count
+    else
+      cur_non_wildcard
+    end
+    
+    tot_wildcard = if cur_wildcard.blank?
+      wildcard.count - co.get_reprocess_max_wildcard(cc).count
+    else
+      cur_wildcard
+    end
     
     tot_non_wildcard  = tot_non_wildcard < 0 ? 0 : tot_non_wildcard
     tot_wildcard      = tot_wildcard < 0 ? 0 : tot_wildcard
@@ -819,7 +842,7 @@ class Order < ActiveRecord::Base
       new_refund = Refund.refund_merchant(params)
     end
     
-    unless monthly_invoice_order? || daily_invoice_order?
+    unless invoice_payment?
       if merchant_fully_refunded?
         full_refund! unless fully_refunded?
         if certificate_orders.any?
@@ -858,7 +881,7 @@ class Order < ActiveRecord::Base
   def get_total_merchant_amount
     merchant = get_merchant
     o = get_order_charged
-    return (o.transactions.map(&:amount).sum * 100) if o && %w{stripe authnet}.include?(merchant)
+    return (o.transactions.map(&:cents).sum) if o && %w{stripe authnet}.include?(merchant)
     return o.cents if o && merchant == 'paypal'
     if o
       if %w{no_payment zero_amt funded}.include?(merchant)
@@ -872,7 +895,8 @@ class Order < ActiveRecord::Base
   end
   
   def get_full_reprocess_amount
-    get_total_merchant_amount + get_funded_account_amount
+    cur_amount = cents != get_total_merchant_amount ? cents : get_total_merchant_amount
+    cur_amount + get_funded_account_amount
   end
   
   def get_full_reprocess_format
@@ -930,12 +954,22 @@ class Order < ActiveRecord::Base
     billing_profile_id.nil? &&
       po_number.nil? &&
       quote_number.nil? &&
-      ( notes.blank? || (!notes.blank? && notes.include?('Reprocess UCC')) ) &&
+      ( notes.blank? || funded_account_w_notes? ) &&
       transactions.empty? &&
       deducted_from_id.nil? &&
       state == 'paid'
   end
   
+  def funded_account_w_notes?
+    !notes.blank? && (
+      notes.include?('Reprocess UCC') ||
+      notes.include?('Initial CSR') ||
+      notes.include?('Renewal UCC') ||
+      notes.include?('monthly invoice') ||
+      notes.include?('daily invoice')
+    )
+  end
+    
   def payment_stripe?
     !payment_not_refundable? && transactions.any? &&
       !transactions.last.reference.blank? &&

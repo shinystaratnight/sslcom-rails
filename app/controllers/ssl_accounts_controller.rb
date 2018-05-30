@@ -2,6 +2,7 @@ class SslAccountsController < ApplicationController
   before_filter :require_user, only: [:show, :edit, :edit_settings]
   before_filter :find_ssl_account
   filter_access_to :all, attribute_check: true
+  before_action :verify_duo_authentication
 
   # GET /ssl_account/
   def show
@@ -30,6 +31,7 @@ class SslAccountsController < ApplicationController
     key_handles = current_user.u2fs.pluck(:key_handle)
     @sign_requests = u2f.authentication_requests(key_handles)
     @u2fs = current_user.u2fs
+    @duo_account = current_user.ssl_account(:default_team).duo_account
 
     @app_id = u2f.app_id
   end
@@ -124,6 +126,17 @@ class SslAccountsController < ApplicationController
     render json: resultObj
   end
 
+  def register_duo
+    resultObj = {}
+    if(current_user.ssl_account(:default_team).duo_account)
+      current_user.ssl_account(:default_team).duo_account.update_attributes(params.except(:action, :controller))
+    else
+      current_user.ssl_account(:default_team).create_duo_account
+      current_user.ssl_account(:default_team).duo_account.update_attributes(params.except(:action, :controller))
+    end
+    render json: resultObj
+  end
+
   # PUT /ssl_account/
   def update_settings
     if params[:reminder_notice_triggers]
@@ -145,6 +158,22 @@ class SslAccountsController < ApplicationController
         format.xml  { render :xml => @ssl_account.errors, :status => :unprocessable_entity }
       end
     end
+  end
+
+  #PUT /ssl_account/duo_enable
+  def duo_enable
+    @ssl_account.update_attribute(:duo_enabled, params['duo_enable'])
+    respond_to do |format|
+      format.js {render json: @user.to_json}
+    end  
+  end
+
+  #PUT /ssl_account/duo_own_used
+  def duo_own_used
+    @ssl_account.update_attribute(:duo_own_used, params['duo_own_used'])
+    respond_to do |format|
+      format.js {render json: @user.to_json}
+    end  
   end
 
   def adjust_funds

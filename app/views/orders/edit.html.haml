@@ -1,0 +1,66 @@
+-if current_user && current_user.is_system_admins?
+  .reseller_registration_profile.admin-edit-order
+    %h3 Order ##{@order.reference_number} (#{@order.description})
+    
+    %br/
+    %h4 Notes: #{@order.notes}
+    %h4 Description: #{@order.invoice_description}
+    
+    %br/
+    .admin-edit-actions
+      = link_to 'Transaction Details', order_path(@order)
+      
+      - invoice = @order.invoice
+      - if invoice
+        = link_to 'Invoice Details', invoice_path(@ssl_slug, invoice.reference_number)
+        = link_to "\u21E9 Download Invoice".html_safe, download_invoice_path(@ssl_slug, invoice.reference_number)
+      - else
+        = link_to "\u21E9 Download Invoice".html_safe, invoice_order_path(@ssl_slug, @order.reference_number)
+
+    = error_messages_for :order
+    = form_for @order.becomes(Order) do |f|
+      #stylized.default_form
+        .fields
+          .saved-contact-fields Wildcard
+          .clearfix
+            = f.label 'Current'
+            = f.number_field :cur_wildcard, step: :any, required: false
+            
+          .clearfix
+            = f.label 'Max'
+            = f.number_field :max_wildcard, step: :any, required: false
+            
+          .clearfix
+            = f.label 'Price $'
+            = f.number_field :wildcard_amount, step: :any, required: false
+          
+          .saved-contact-fields Non Wildcard
+          .clearfix
+            = f.label 'Current'
+            = f.number_field :cur_non_wildcard, step: :any, required: false
+          
+          .clearfix
+            = f.label 'Max'
+            = f.number_field :max_non_wildcard, step: :any, required: false
+            
+          .clearfix
+            = f.label 'Price $'
+            = f.number_field :non_wildcard_amount, step: :any, required: false
+          
+          .saved-contact-fields Other
+          .clearfix
+            = f.label :amount
+            = f.number_field :amount, value: @order.amount, step: :any, required: true
+          
+          .clearfix
+            = f.label :reseller_tier
+            = f.select :reseller_tier_id, ResellerTier.all.map{|rt| ["#{rt.label} - #{rt.roles}", rt.id]}, |
+              { include_blank: true }
+              
+          .clearfix
+            = f.label :Description
+            = f.text_area :invoice_description, size: '40x3'
+          
+      #button_container
+        #auto_adjust
+          = image_submit_tag 'bl_submit_button.gif'

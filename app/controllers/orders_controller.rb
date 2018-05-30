@@ -5,7 +5,7 @@ class OrdersController < ApplicationController
   #resource_controller
   helper_method :cart_items_from_model_and_id
   before_filter :finish_reseller_signup, :only => [:new], if: "current_user"
-  before_filter :find_order, :only => [:show, :invoice, :update_invoice, :refund, :refund_merchant, :change_state, :revoke]
+  before_filter :find_order, :only => [:show, :invoice, :update_invoice, :refund, :refund_merchant, :change_state, :revoke, :edit, :update]
   before_filter :set_prev_flag, only: [:create, :create_free_ssl, :create_multi_free_ssl]
   before_filter :prep_certificate_orders_instances, only: [:create, :create_free_ssl]
   before_filter :go_prev, :parse_certificate_orders, only: [:create_multi_free_ssl]
@@ -17,7 +17,20 @@ class OrdersController < ApplicationController
   filter_access_to :show, :update_invoice, attribute_check: true
   before_filter :find_user, :only => [:user_orders]
   before_filter :set_row_page, only: [:index, :search, :filter_by_state, :visitor_trackings]
-
+  
+  def edit
+    
+  end
+  
+  def update
+    @order ||= Order.find(params[:id])
+    if @order.update_attributes(params[:order])
+      flash[:notice] = "Order ##{@order.reference_number} has been successfully updated."
+      redirect_to edit_order_path(@ssl_slug, @order)
+    else
+      render :edit
+    end
+  end
 
   def show_cart
     @cart = ShoppingCart.find_by_guid(params[:id]) if params[:id]
@@ -312,7 +325,7 @@ class OrdersController < ApplicationController
       owner:  current_user,
       target: mo,
       notes:  params["refund_reason"],
-      action: "#{@ssl_account.get_invoice_label.capitalize} Invoice ##{mo.reference_number}, merchant refund issued for #{amount.format}."
+      action: "#{@order.billable.get_invoice_label.capitalize} Invoice ##{mo.reference_number}, merchant refund issued for #{amount.format}."
     )
   end
   
@@ -545,13 +558,15 @@ class OrdersController < ApplicationController
 
     order_params = {
       billing_profile_id: params[:funding_source],
-      amount:             @target_amount,
-      cents:             (@target_amount * 100).to_i,
-      description:        Order::DOMAINS_ADJUSTMENT,
-      state:              'pending',
-      approval:           'approved',
-      notes:              get_order_notes,
-      invoice_description: params[:order][:order_description]
+      amount:              @target_amount,
+      cents:               (@target_amount * 100).to_i,
+      description:         Order::DOMAINS_ADJUSTMENT,
+      state:               'pending',
+      approval:            'approved',
+      notes:               get_order_notes,
+      invoice_description: params[:order][:order_description],
+      wildcard_amount:      params[:order][:wildcard_amount],
+      non_wildcard_amount:  params[:order][:nonwildcard_amount],
     }
     
     @order = @reprocess_ucc ? ReprocessCertificateOrder.new(order_params) : Order.new(order_params)
@@ -649,45 +664,6 @@ class OrdersController < ApplicationController
       co_ref: @certificate_order.ref, cc_ref: @certificate_content.ref, reprocess_ucc: true
     )
   end
-  
-  def ucc_update_domain_counts
-    co = @certificate_order
-    notes = []
-    order = params[:order]
-    
-    # domains entered
-    wildcard = order ? order[:wildcard_count].to_i : params[:wildcard_count].to_i
-    nonwildcard = order ? order[:nonwildcard_count].to_i : params[:nonwildcard_count].to_i
-    
-    # max domain counts stored
-    co_nonwildcard = co.nonwildcard_count.blank? ? 0 : co.nonwildcard_count
-    co_wildcard = co.wildcard_count.blank? ? 0 : co.wildcard_count
-    
-    # max for previous signed certificates to determine credited domains
-    prev_wildcard    = co.get_reprocess_max_wildcard(co.certificate_content).count
-    prev_nonwildcard = co.get_reprocess_max_nonwildcard(co.certificate_content).count
-
-    if (co_nonwildcard > prev_nonwildcard) &&
-      ((nonwildcard > co_nonwildcard) || (@reprocess_ucc && 
-      (nonwildcard >= co_nonwildcard && (nonwildcard > 0))))
-      notes << "#{co_nonwildcard - prev_nonwildcard} non wildcard domains"
-    end
-    if (co_wildcard > prev_wildcard) &&
-      ((wildcard > co_wildcard) || (@reprocess_ucc && 
-      (wildcard >= co_wildcard && (wildcard > 0))))
-      notes << "#{co_wildcard - prev_wildcard} wildcard domains"
-    end
-    
-    if notes.any?  
-      @order.invoice_description = '' if @order.invoice_description.nil?
-      @order.invoice_description << " Received credit for #{notes.join(' and ')}."
-      @order.save
-    end
-    co.update( # record new max counts
-      nonwildcard_count: (nonwildcard > co_nonwildcard ? nonwildcard : co_nonwildcard),
-      wildcard_count:    (wildcard > co_wildcard ? wildcard : co_wildcard)
-    )
-  end
     
   def ucc_domains_adjust_funded(params)
     withdraw_amount     = @order_amount < @funded_amount ? @order_amount : @funded_amount
@@ -757,6 +733,9 @@ class OrdersController < ApplicationController
     @order.invoice_id  = invoice.id
     @order.approval    = 'approved'
     @order.invoice_description = params[:order_description]
+    @order.wildcard_amount     = params[:wildcard_amount]
+    @order.non_wildcard_amount = params[:nonwildcard_amount]
+    
     @certificate_order.add_reproces_order @order
     ucc_update_domain_counts
     record_order_visit(@order)

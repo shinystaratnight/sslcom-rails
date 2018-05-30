@@ -3,6 +3,13 @@ jQuery.noConflict();
 jQuery(function($) {
   var ucc_reprocess = $('#calculated_reprocess_price');
   
+  if (ucc_reprocess.length) {
+    var wildcard_cost = $('#ucc-wildcard-amount').data('cost');
+    wildcard_cost = (typeof wildcard_cost =='undefined') ? '0.00' : wildcard_cost;
+    $('#order_wildcard_amount').val(wildcard_cost);
+    $('#order_nonwildcard_amount').val($('#ucc-nonwildcard-amount').data('cost'));
+  }
+  
   $.uniqueStrings = function(list) {
     var result = [];
     $.each(list, function(i, e) {
@@ -45,42 +52,72 @@ jQuery(function($) {
       });
   };
   
+  $.extractWildcards = function(domains) {
+    var wildcards;
+    if ( $('#ucc-wildcard-amount').length ) {
+      wildcards = $.grep(domains, function(n, i) {
+        return ( n.indexOf('*.')==0);
+      }).filter(Boolean);
+    } else {
+      wildcards = [];
+    }
+    return wildcards.length;
+  };
+  
+  $.getAllDomainCounts = function(domains) {
+    var init_nonwildcard = $('#ucc-nonwildcard-amount').data('initial-count'),
+        wildcard         = $('#ucc-wildcard-amount');
+    init_nonwildcard     = (init_nonwildcard < 3 ? 3 : init_nonwildcard);
+    var cur_wildcard     = $.extractWildcards(domains),
+        init_wildcard    = (wildcard.length ? wildcard.data('initial-count') : 0),
+        cur_nonwildcard  = domains.length - cur_wildcard,
+        addt_nonwildcard = cur_nonwildcard - init_nonwildcard,
+        addt_wildcard    = cur_wildcard - init_wildcard;
+    return {
+      cur_nonwildcard: cur_nonwildcard,
+      cur_wildcard: cur_wildcard,
+      addt_nonwildcard: (addt_nonwildcard < 0) ? 0 : addt_nonwildcard,
+      addt_wildcard: (addt_wildcard < 0) ? 0 : addt_wildcard,
+      init_nonwildcard: init_nonwildcard,
+      init_wildcard: init_wildcard
+    };
+  };  
+  
   $.adjustDomainPricing = function(textArea) {
-      var domains = $.domains(textArea);
+      var domains = $.domains(textArea),
+          ucc_initial = <%= Certificate::UCC_INITIAL_DOMAINS_BLOCK %>;
       $.removeFromArray("", domains);
-      $('.order_amount_desc span').text((domains.length > <%=Certificate::UCC_INITIAL_DOMAINS_BLOCK%>) ? domains.length : <%=Certificate::UCC_INITIAL_DOMAINS_BLOCK%>);
+      $('.order_amount_desc span').text(
+        (domains.length > ucc_initial) ? domains.length : ucc_initial
+      );
       
       if (ucc_reprocess.length > 0) {
-        var init_nonwildcard = $('#ucc-nonwildcard-amount').data('initial-count'),
-            wildcard         = $('#ucc-wildcard-amount');
-        init_nonwildcard     = (init_nonwildcard < 3 ? 3 : init_nonwildcard);
-        var wildcard_domains = (wildcard.length ? $.grep(domains, function(n, i){ return ( n.indexOf('*.')==0); }).filter(Boolean) : []),
-            init_wildcard    = (wildcard.length ? wildcard.data('initial-count') : 0),
-            addt_nonwildcard = (domains.length - wildcard_domains.length) - init_nonwildcard,
-            addt_wildcard    =  wildcard_domains.length - init_wildcard;
-        addt_nonwildcard     = (addt_nonwildcard < 0) ? 0 : addt_nonwildcard;
-        addt_wildcard        = (addt_wildcard < 0) ? 0 : addt_wildcard;
+        var domain_counts = $.getAllDomainCounts(domains);
+        $('#order_wildcard_count').val(domain_counts.cur_wildcard);
+        $('#order_nonwildcard_count').val(domain_counts.cur_nonwildcard);
+        $('#wildcard-current-count').text('x ' + domain_counts.addt_wildcard);
+        $('#nonwildcard-current-count').text('x ' + domain_counts.addt_nonwildcard);
         
-        $('#order_wildcard_count').val(wildcard_domains.length);
-        $('#order_nonwildcard_count').val(domains.length - wildcard_domains.length);
-        $('#wildcard-current-count').text('x ' + addt_wildcard);
-        $('#nonwildcard-current-count').text('x ' + addt_nonwildcard);
-        $.updateUccReprocessAmount(addt_nonwildcard, addt_wildcard);
-        $.updateOrderDescription(addt_nonwildcard, addt_wildcard);
+        $.updateUccReprocessAmount(domain_counts.addt_nonwildcard, domain_counts.addt_wildcard);
+        $.updateOrderDescription(domain_counts);
       } else {
         $.update_order_pricing();
       }
   };
   
-  $.updateOrderDescription  = function(nonwildcards, wildcards) {
-    var all_domains = nonwildcards + wildcards,
-      wildcard_data = $('#ucc-wildcard-amount').data('cost'),
+  $.updateOrderDescription  = function(args) {
+    var wildcard_data = $('#ucc-wildcard-amount').data('cost'),
       wildcard_cost = (typeof wildcard_data =='undefined') ? '0.00' : wildcard_data;
     
-    $('#order_order_description').val('Prorated charge for ' + all_domains
-      + ' additional domains. (wildcard: ' + wildcards + ' x $' + wildcard_cost
-      + ', non wildcard: ' + nonwildcards + ' x $'
-      + $('#ucc-nonwildcard-amount').data('cost') + ').'
+    $('#order_order_description').val('Prorated charge for ' 
+      + (args.addt_nonwildcard + args.addt_wildcard)
+      + ' additional domains: (wildcard: ' + args.addt_wildcard + ' x $' + wildcard_cost
+      + ', non wildcard: ' + args.addt_nonwildcard + ' x $'
+      + $('#ucc-nonwildcard-amount').data('cost') + '). '
+      + 'Used ' + args.cur_wildcard + ' of ' + args.init_wildcard 
+      + ' available wildcard domains and '
+      + args.cur_nonwildcard + ' of ' + args.init_nonwildcard 
+      + ' available non wildcard domains.'
     );
   };
   

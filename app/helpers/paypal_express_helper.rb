@@ -5,7 +5,7 @@ module PaypalExpressHelper
     credit_and_discount params
     load_funds(params) unless params[:reprocess_ucc] || params[:monthly_invoice]
     
-    return_url_params = {
+    @return_url_params = {
       action: 'purchase',
       ssl_slug: params[:ssl_slug],
       only_path: false,
@@ -13,16 +13,10 @@ module PaypalExpressHelper
       order_description: params[:order_description]
     }
     
-    if params[:reprocess_ucc]
-      return_url_params.merge!({
-        co_ref: params[:co_ref],
-        cc_ref: params[:cc_ref],
-        reprocess_ucc: true
-      })
-    end
+    get_domains_adjustments
     
     if params[:monthly_invoice]
-      return_url_params.merge!({
+      @return_url_params.merge!({
         invoice_ref: params[:invoice_ref],
         monthly_invoice: true
       })
@@ -30,7 +24,7 @@ module PaypalExpressHelper
       
     return to_cents(@total), {
       ip:                request.remote_ip,
-      return_url:        url_for(return_url_params),
+      return_url:        url_for(@return_url_params),
       cancel_return_url: root_url,
       subtotal:          to_cents(@total),
       shipping:          to_cents(@shipping),
@@ -40,7 +34,24 @@ module PaypalExpressHelper
       items:             @items,
     }
   end
-
+  
+  def get_domains_adjustments
+    if params[:reprocess_ucc] || params[:renew_ucc] || params[:ucc_csr_submit]
+      dom_params = {
+        co_ref:             params[:co_ref],
+        cc_ref:             params[:cc_ref],
+        wildcard_amount:    params[:wildcard_amount],
+        nonwildcard_amount: params[:nonwildcard_amount],
+        wildcard_count:     params[:wildcard_count],
+        nonwildcard_count:  params[:nonwildcard_count]
+      }
+      dom_params.merge!(reprocess_ucc: true) if params[:reprocess_ucc]
+      dom_params.merge!(renew_ucc: true) if params[:renew_ucc]
+      dom_params.merge!(ucc_csr_submit: true) if params[:ucc_csr_submit]
+      @return_url_params.merge!(dom_params)
+    end
+  end
+  
   def get_order_info(gateway_response, cart)
     subtotal, shipping, total = get_totals(cart)
     {
@@ -76,7 +87,21 @@ module PaypalExpressHelper
         number: "payment",
         quantity: 1,
         amount: get_amount(params[:amount])
-      }]  
+      }]
+    elsif params[:renew_ucc]
+      [{
+        name: "Renew UCC Cert",
+        number: "renewal order",
+        quantity: 1,
+        amount: get_amount(params[:amount])
+      }]
+    elsif params[:ucc_csr_submit]
+      [{
+        name: "UCC Cert Adjustment",
+        number: "adjustment order",
+        quantity: 1,
+        amount: get_amount(params[:amount])
+      }]
     else  
       cart.line_items.collect do |line_item|
         if line_item.sellable.is_a?(Deposit)

@@ -1,0 +1,4 @@
+= javascript_include_tag "Duo-Web-v2"
+%iframe#duo_iframe{"data-host" => @duo_hostname, 
+  "data-sig-request" => @sig_request, 
+  "data-post-action" => "/users/duo_verify"};

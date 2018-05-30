@@ -3,9 +3,12 @@ class UserSessionsController < ApplicationController
   before_filter :find_dup_login, only: [:create]
   before_filter :require_user, only: :destroy
   skip_filter :finish_reseller_signup, only: [:destroy]
-
+  skip_before_action :verify_authenticity_token
+  skip_before_action :require_no_authentication, only: [:duo_verify]
+  
   def new
     @user_session = UserSession.new
+    session[:duo_auth] = false
   end
 
   def show
@@ -179,12 +182,18 @@ class UserSessionsController < ApplicationController
 
           # TODO: Check U2F
           if params['u2f_response'].blank?
-            flash[:notice] = "Successfully logged in." unless request.xhr?
-
+            if current_user.ssl_account(:default_team).duo_enabled
+              flash[:notice] = "Duo 2-factor authentication setup." unless request.xhr?
+            else
+              flash[:notice] = "Successfully logged in." unless request.xhr?
+            end
             format.js   {render :json=>url_for_js(current_user)}
-            format.html {redirect_back_or_default account_path(current_user.ssl_account(:default_team) ?
-                                                                   current_user.ssl_account(:default_team).to_slug :
-                                                                   {})}
+            if current_user.ssl_account(:default_team).duo_enabled && Settings.enable_duo
+              format.html {redirect_to(duo_user_session_url)}
+            else
+              session[:duo_auth] = true
+              format.html {redirect_back_or_default account_path(current_user.ssl_account(:default_team) ? current_user.ssl_account(:default_team).to_slug : {})}
+            end
           else
             # if current_user.is_admin?
             #   cookies.delete(:r_tier)
@@ -349,6 +358,37 @@ class UserSessionsController < ApplicationController
 #       end
 #     end
 #   end
+
+  def duo
+    if current_user.ssl_account(:default_team).duo_own_used
+      @duo_account = current_user.ssl_account(:default_team).duo_account
+      @duo_hostname = @duo_account.duo_hostname
+      @sig_request = Duo.sign_request(@duo_account ? @duo_account.duo_ikey : "", @duo_account ? @duo_account.duo_skey : "", @duo_account ? @duo_account.duo_akey : "", current_user.login)
+    else
+      s = Rails.application.secrets;
+      @duo_hostname = s.duo_api_hostname
+      @sig_request = Duo.sign_request(s.duo_integration_key, s.duo_secret_key, s.duo_application_key, current_user.login)
+    end
+  end
+
+  def duo_verify
+    if current_user.ssl_account(:default_team).duo_own_used
+      @duo_account = current_user.ssl_account(:default_team).duo_account
+      @authenticated_user = Duo.verify_response(@duo_account ? @duo_account.duo_ikey : "", @duo_account ? @duo_account.duo_skey : "", @duo_account ? @duo_account.duo_akey : "", params['sig_response'])
+    else
+      s = Rails.application.secrets;
+      @authenticated_user = Duo.verify_response(s.duo_integration_key, s.duo_secret_key, s.duo_application_key, params['sig_response'])
+    end
+    if @authenticated_user
+      session[:duo_auth] = true
+      respond_to do |format|
+        format.js   {render :json=>url_for_js(current_user)}
+        format.html {redirect_to account_path(current_user.ssl_account(:default_team) ? current_user.ssl_account(:default_team).to_slug : {})}
+      end
+    else
+      redirect_to action: :new
+    end
+  end
 
   def destroy
     if current_user.is_admin?
