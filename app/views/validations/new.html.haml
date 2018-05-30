@@ -68,8 +68,14 @@
         %th domain
         %th options
         -if Settings.enable_caa
-          %th caa
-        %th pre-test
+          %th
+            caa
+            %a{:href => "https://www.ssl.com/how-to/configure-caa-records-to-authorize-ssl-com/", :target => "_blank"}
+              %span.badge ?
+        %th
+          pre-test
+          %a{:href => "https://www.ssl.com/guide/failed-pre-test/", :target => "_blank"}
+            %span.badge ?
         %th previous attempt
         %th attempted on
         %th status

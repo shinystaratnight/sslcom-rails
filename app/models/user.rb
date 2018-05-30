@@ -31,6 +31,7 @@ class User < ActiveRecord::Base
 
   preference  :cert_order_row_count, :string, :default=>"10"
   preference  :order_row_count, :string, :default=>"10"
+  preference  :cdn_row_count, :string, :default=>"10"
   
   attr_accessor :changing_password, :admin_update, :role_ids, :role_change_type
   attr_accessible :login, :email, :password, :password_confirmation,

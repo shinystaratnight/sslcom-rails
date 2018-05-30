@@ -3305,6 +3305,10 @@ a.bu_standard:hover
 .pagination
   margin-right: 15px
   float: right
+  a
+    text-decoration: none !important
+    &:hover
+      text-decoration: none
 
 .bu_standard span
   color: #FFFFFF
@@ -3612,6 +3616,15 @@ label.error
 
 #certificate_orders
   margin: .8em 0 .5em
+
+#resources
+  .pagination
+    display: block
+  table
+    border-collapse: separate
+    caption
+      caption-side: top
+      color: #3C3C3C
 
 #certificate_listing
   line-height: normal
@@ -6535,6 +6548,19 @@ span.notifications-teams
           width: 100px
         input[type='checkbox']
           vertical-align: middle
+      a
+        cursor: pointer
+        span.badge
+          display: inline-block
+          padding: 2px 3px
+          color: #FFF
+          text-align: center
+          background-color: #777
+          border-radius: 50px
+          margin: 0
+          width: 10px
+          height: 10px
+
   tbody tr
     &.removed_domain
       background-color: lightgrey
@@ -6967,3 +6993,8 @@ span.notifications-teams
 #duo_settings
   label
     text-align: left
+
+#recaptcha_container
+  width: 300px
+  padding: 10px 0px 20px 0px
+  margin: auto

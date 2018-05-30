@@ -3,6 +3,9 @@
 =render :partial => 'index_scripts'
 =stylesheet_link_tag "bootstrap_style", :media => 'all'
 -resources = @results[:resources]
+#search_bar.hidden
+  =form_tag :cdns, :id=>'hidden_form', :method=>:get do
+    =hidden_field_tag :per_page, @per_page
 #cdns
   %hr
   %div
@@ -12,6 +15,17 @@
         =hidden_field_tag :api_key, @current_user_api_key
         #resources
           %table(cellspacing="0")
+            -if will_paginate resources
+              %tfoot
+                %tr
+                  %td.wrap_number_rows(colspan='2')
+                    =select_tag :number_rows,
+                    options_for_select([[5, 5], [10, 10], [20, 20], [50, 50], [100, 100]], @per_page),
+                    :class=>'per_page'
+                  %td(colspan='4')=will_paginate resources
+            %caption
+              Resources Management
+              =will_paginate resources
             %tr.heading_row
               %th Hostname
               %th Origin

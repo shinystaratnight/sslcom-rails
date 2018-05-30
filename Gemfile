@@ -73,6 +73,8 @@ gem 'wkhtmltopdf-binary'
 gem 'wicked_pdf'
 gem 'u2f'
 gem 'duo_web', '~> 1.0'
+# gem 'simple_captcha2', require: 'simple_captcha'
+gem 'recaptcha', require: 'recaptcha/rails'
 
 group :development do
   gem 'foreman'

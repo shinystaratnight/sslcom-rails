@@ -16,7 +16,13 @@ class CaaCheck < ActiveRecord::Base
   }
 
   def self.caa_lookup(name, authority)
-    CAA_COMMAND.call name, authority
+    begin
+      timeout(Surl::TIMEOUT_DURATION) do
+        CAA_COMMAND.call name, authority
+      end
+    rescue Timeout::Error, RuntimeError
+      return false
+    end
   end
 
   def self.pass?(certificate_order_id, name)

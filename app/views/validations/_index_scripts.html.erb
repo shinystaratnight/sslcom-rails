@@ -475,13 +475,16 @@ jQuery(function($) {
           $.ajax({url: '<%=verification_check_csr_path(@ssl_slug, @certificate_order.csr)%>?protocol=https&dcv='+
             $(dcv_select).parents('tr').attr('id')+'&new_name='+$(dcv_select).attr('alt')+'&ref='+$(dcv_select).parents('tbody').attr('data-ref')}).done(
               function(data){
-                var anchorElement = $('<a></a>');
+                /*var anchorElement = $('<a></a>');
                 anchorElement.attr('href', 'https://www.ssl.com/guide/failed-pre-test/');
                 anchorElement.attr('target', '_blank');
                 anchorElement.attr('style', 'color: white');
                 anchorElement.append('failed');
 
                 $('td.pretest[class~="'+$(dcv_select).attr("alt")+'"]').html((data ? "passed" : anchorElement))
+                  .css((data ? { background: "green", color:"white" } : { background: "red", color:"white" }));*/
+
+                $('td.pretest[class~="'+$(dcv_select).attr("alt")+'"]').html((data ? "passed" : "failed"))
                   .css((data ? { background: "green", color:"white" } : { background: "red", color:"white" }));
               });
         }
@@ -491,13 +494,16 @@ jQuery(function($) {
           $.ajax({url: '<%=verification_check_csr_path(@ssl_slug, @certificate_order.csr)%>?protocol=http&dcv='+
             $(dcv_select).parents('tr').attr('id')+'&new_name='+$(dcv_select).attr('alt')+'&ref='+$(dcv_select).parents('tbody').attr('data-ref')}).done(
               function(data){
-                var anchorElement = $('<a></a>');
+                /*var anchorElement = $('<a></a>');
                 anchorElement.attr('href', 'https://www.ssl.com/guide/failed-pre-test/');
                 anchorElement.attr('target', '_blank');
                 anchorElement.attr('style', 'color: white');
                 anchorElement.append('failed');
 
                 $('td.pretest[class~="'+$(dcv_select).attr("alt")+'"]').html((data ? "passed" : anchorElement))
+                  .css((data ? { background: "green", color:"white" } : { background: "red", color:"white" }));*/
+
+                $('td.pretest[class~="'+$(dcv_select).attr("alt")+'"]').html((data ? "passed" : "failed"))
                   .css((data ? { background: "green", color:"white" } : { background: "red", color:"white" }));
               });
         }
@@ -506,13 +512,16 @@ jQuery(function($) {
           $.ajax({url: '<%=verification_check_csr_path(@ssl_slug, @certificate_order.csr)%>?protocol=cname&dcv='+
             $(dcv_select).parents('tr').attr('id')+'&new_name='+$(dcv_select).attr('alt')+'&ref='+$(dcv_select).parents('tbody').attr('data-ref')}).done(
               function(data){
-                var anchorElement = $('<a></a>');
+                /*var anchorElement = $('<a></a>');
                 anchorElement.attr('href', 'https://www.ssl.com/guide/failed-pre-test/');
                 anchorElement.attr('target', '_blank');
                 anchorElement.attr('style', 'color: white');
                 anchorElement.append('failed');
 
                 $('td.pretest[class~="'+$(dcv_select).attr("alt")+'"]').html((data ? "passed" : anchorElement))
+                  .css((data ? { background: "green", color:"white" } : { background: "red", color:"white" }));*/
+
+                $('td.pretest[class~="'+$(dcv_select).attr("alt")+'"]').html((data ? "passed" : "failed"))
                   .css((data ? { background: "green", color:"white" } : { background: "red", color:"white" }));
               });
         }
@@ -894,14 +903,15 @@ jQuery(function($) {
                           <%if Settings.enable_caa%>
                             tdElement = $('<td></td>');
                             if (result[key]['caa_check'] == 'failed') {
-                              var anchorElement = $('<a></a>');
+                              /*var anchorElement = $('<a></a>');
                               anchorElement.attr('href', 'https://www.ssl.com/how-to/configure-caa-records-to-authorize-ssl-com/');
                               anchorElement.attr('target', '_blank');
                               anchorElement.attr('style', 'color: white');
-                              anchorElement.append(result[key]['caa_check']);
+                              anchorElement.append(result[key]['caa_check']);*/
 
                               tdElement.attr('style', 'background: red; color: white');
-                              tdElement.append(anchorElement);
+                              /*tdElement.append(anchorElement);*/
+                              tdElement.append(result[key]['caa_check']);
                             } else if (result[key]['caa_check'] == 'passed') {
                               tdElement.attr('style', 'background: green; color: white');
                               tdElement.append(result[key]['caa_check']);
@@ -1484,14 +1494,15 @@ jQuery(function($) {
                         // TODO: Disable CAA CHECK temporarily for now.
                         /*$('[name="domains[' + new_domain_name + '][dcv]"]').attr('disabled', true);*/
                         $('[name="domains[' + new_domain_name + '][dcv]"]').attr('disabled', false);
-                        var anchorElement = $('<a></a>');
+                        /*var anchorElement = $('<a></a>');
                         anchorElement.attr('href', 'https://www.ssl.com/how-to/configure-caa-records-to-authorize-ssl-com/');
                         anchorElement.attr('target', '_blank');
                         anchorElement.attr('style', 'color: white');
-                        anchorElement.append(result['caa_check']);
+                        anchorElement.append(result['caa_check']);*/
 
                         $('[name="domains[' + new_domain_name + '][dcv]"]').parent().next().attr('style', 'background: red; color: white');
-                        $('[name="domains[' + new_domain_name + '][dcv]"]').parent().next().append(anchorElement);
+                        /*$('[name="domains[' + new_domain_name + '][dcv]"]').parent().next().append(anchorElement);*/
+                        $('[name="domains[' + new_domain_name + '][dcv]"]').parent().next().append(result['caa_check']);
                       } else if (result['caa_check'] == 'passed') {
                         $('[name="domains[' + new_domain_name + '][dcv]"]').attr('disabled', false);
                         $('[name="domains[' + new_domain_name + '][dcv]"]').parent().next().attr('style', 'background: green; color: white');
