@@ -396,14 +396,8 @@ SslCom::Application.routes.draw do
       match :admin_activate, via: [:put, :patch]
       get   :leave_team
       get   :dont_show_again
-    end
-  end
-
-  resource :user do
-    collection do
-      get  :duo
-      post :duo_verify
-      get  :duo_verify
+      get   :duo
+      match :duo_verify, via: [:get, :post]
     end
   end
 
