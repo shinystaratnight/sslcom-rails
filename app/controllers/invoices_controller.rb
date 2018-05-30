@@ -279,7 +279,10 @@ class InvoicesController < ApplicationController
   end
   
   def invoice_paid
-    @invoice.update(order_id: @order.id, status: 'paid') if @order.persisted?
+    if @order.persisted?
+      @invoice.update(order_id: @order.id, status: 'paid')
+      @invoice.notify_invoice_paid(current_user)
+    end
   end
   
   def redirect_new_payment

@@ -24,6 +24,29 @@ class OrderNotifier < ActionMailer::Base
           to:      [@from_owner, @to_owner].uniq
   end
   
+  def payable_invoice_new(params)
+    @user    = params[:user]
+    @invoice = params[:invoice]
+    @team    = @invoice.billable
+    @invoice_type = @invoice.get_type_format.downcase
+    
+    mail  subject: "You have a new #{@invoice_type} invoice for team #{@team.get_team_name}.",
+          from:    Settings.from_email.orders,
+          to:      @user.email
+  end
+  
+  def payable_invoice_paid(params)
+    @user    = params[:user]
+    @paid_by = params[:paid_by]
+    @invoice = params[:invoice]
+    @team    = @invoice.billable
+    @invoice_type = @invoice.get_type_format.downcase
+    
+    mail  subject: "Payment has been submitted for #{@invoice_type} invoice ##{@invoice.reference_number} for team #{@team.get_team_name}.",
+          from:    Settings.from_email.orders,
+          to:      @user.email
+  end
+  
   def reseller_certificate_order_paid(ssl_account, certificate_order)
     @ssl_account        = ssl_account
     @certificate_order  = certificate_order.reload

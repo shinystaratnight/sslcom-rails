@@ -18,6 +18,7 @@ class Invoice < ActiveRecord::Base
   before_validation :set_default_billing, if: :payable_invoice?
   before_validation :set_address, if: :payable_invoice?
   after_create      :generate_reference_number, if: :payable_invoice?
+  after_create      :notify_admin_billing, if: :payable_invoice?
   
   validates :first_name, :last_name, :address_1, :country, :city,
     :state, :postal_code, presence: true, unless: :payable_invoice?
@@ -199,6 +200,10 @@ class Invoice < ActiveRecord::Base
     get_approved_items.map(&:amount).sum
   end  
   
+  def get_paid_invoice_amount
+    Money.new(payment.cents + payment.get_funded_account_amount)
+  end
+  
   def get_amount_format
     amt = get_amount
     amt.is_a?(Fixnum) ? Money.new(get_cents).format : amt.format
@@ -270,6 +275,14 @@ class Invoice < ActiveRecord::Base
     is_a?(DailyInvoice) || type == 'DailyInvoice'
   end
   
+  def notify_invoice_paid(user=nil)
+    users_can_manage_invoice.each do |u|
+      OrderNotifier.payable_invoice_paid(
+        user: u, invoice: self, paid_by: user
+      ).deliver_now
+    end
+  end
+  
   private
   
   def self.get_team(ssl_account)
@@ -314,6 +327,18 @@ class Invoice < ActiveRecord::Base
       end
       
       update_attribute(:reference_number, ref)
+    end
+  end
+  
+  def users_can_manage_invoice
+    Assignment.where(
+      ssl_account_id: billable.id, role_id: Role.can_manage_payable_invoice
+    ).map(&:user).uniq
+  end
+  
+  def notify_admin_billing
+    users_can_manage_invoice.each do |u|
+      OrderNotifier.payable_invoice_new(user: u, invoice: self).deliver_now
     end
   end
   

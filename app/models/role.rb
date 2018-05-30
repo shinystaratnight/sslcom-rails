@@ -64,6 +64,14 @@ class Role < ActiveRecord::Base
     ])
   end
   
+  def self.can_manage_payable_invoice
+    Role.get_role_ids([
+      ACCOUNT_ADMIN,
+      BILLING,
+      OWNER,
+      RESELLER
+    ])
+  end
   # 
   # Roles that cannot be managed by users_manager role
   # 
