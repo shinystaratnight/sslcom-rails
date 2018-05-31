@@ -431,8 +431,15 @@ jQuery(function($) {
           errorString = errorArray.join(",\n");
           alert(msg+errorString);
 
+          /*if (
+            parseInt($('.failed_count').val()) >= < %= Rails.application.secrets.failed_login_limit_count %> &&
+            $('#g-recaptcha-response').val() == ""
+          ) {
+            $('.order_next').hide();
+            $('#recaptcha_container').show();
+          }*/
           if (
-            parseInt($('.failed_count').val()) >= <%= Rails.application.secrets.failed_login_limit_count %> &&
+            parseInt($('.failed_count').val()) >= <%= Settings.captcha_threshold %> &&
             $('#g-recaptcha-response').val() == ""
           ) {
             $('.order_next').hide();

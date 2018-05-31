@@ -24,7 +24,7 @@ class UserSessionsController < ApplicationController
     result_obj = {}
     key_handles = []
 
-    if params[:user_session][:failed_count].to_i >= Rails.application.secrets.failed_login_limit_count.to_i
+    if params[:user_session][:failed_count].to_i >= Settings.captcha_threshold.to_i
       if verify_recaptcha(response: params[:user_session]['g-recaptcha-response'])
         @user_session = UserSession.new(params[:user_session])
 

@@ -3,7 +3,7 @@
 =render :partial => 'index_scripts'
 = javascript_include_tag 'u2f-api'
 -failed_count = @failed_count || 0
--limited_count = Rails.application.secrets.failed_login_limit_count
+-limited_count = Settings.captcha_threshold
 .reseller_registration_profile
   =form_for @user_session, :url => user_session_path do |f|
     =f.error_messages

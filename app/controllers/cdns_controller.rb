@@ -24,6 +24,7 @@ class CdnsController < ApplicationController
   # # GET /cdns.json
   def index
     @results = {}
+
     if current_user.ssl_account
       @response = current_user.is_system_admins? ?
                       HTTParty.get('https://reseller.cdnify.com/api/v1/resources/all-reseller-resources',
@@ -31,7 +32,11 @@ class CdnsController < ApplicationController
                       HTTParty.get('https://reseller.cdnify.com/api/v1/resources',
                                    basic_auth: {username: current_user_api_key, password: 'x'})
 
-      @results[:resources] = @response.parsed_response['resources'].paginate(@p) if @response && @response.code == 200
+      if @response && @response.code == 200
+        @results[:resources] = @response.parsed_response['resources'].paginate(@p)
+      else
+        @results[:resources] = [].paginate(@p)
+      end
     end
 
     respond_to do |format|
