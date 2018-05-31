@@ -25,7 +25,7 @@ class Order < ActiveRecord::Base
   money :non_wildcard_amount, cents: :non_wildcard_cents
 
   before_create :total, :determine_description
-  after_create :generate_reference_number, :commit_discounts
+  after_create :generate_reference_number, :commit_discounts, :domains_adjustment_notice
 
   #is_free? is used to as a way to allow orders that are not charged (ie cent==0)
   attr_accessor  :is_free, :receipt, :deposit_mode, :temp_discounts
@@ -1160,6 +1160,14 @@ class Order < ActiveRecord::Base
   end
   
   private
+  
+  def domains_adjustment_notice
+    if domains_adjustment?
+      Assignment.users_can_manage_invoice(billable).each do |u|
+        OrderNotifier.domains_adjustment_new(user: u, order: self).deliver_now
+      end
+    end
+  end
 
   def gateway
     OrderTransaction.gateway

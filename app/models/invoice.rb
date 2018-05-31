@@ -276,7 +276,7 @@ class Invoice < ActiveRecord::Base
   end
   
   def notify_invoice_paid(user=nil)
-    users_can_manage_invoice.each do |u|
+    Assignment.users_can_manage_invoice(billable).each do |u|
       OrderNotifier.payable_invoice_paid(
         user: u, invoice: self, paid_by: user
       ).deliver_now
@@ -330,14 +330,8 @@ class Invoice < ActiveRecord::Base
     end
   end
   
-  def users_can_manage_invoice
-    Assignment.where(
-      ssl_account_id: billable.id, role_id: Role.can_manage_payable_invoice
-    ).map(&:user).uniq
-  end
-  
   def notify_admin_billing
-    users_can_manage_invoice.each do |u|
+    Assignment.users_can_manage_invoice(billable).each do |u|
       OrderNotifier.payable_invoice_new(user: u, invoice: self).deliver_now
     end
   end

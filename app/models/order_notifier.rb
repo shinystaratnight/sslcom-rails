@@ -24,6 +24,16 @@ class OrderNotifier < ActionMailer::Base
           to:      [@from_owner, @to_owner].uniq
   end
   
+  def domains_adjustment_new(params)
+    @user  = params[:user]
+    @order = params[:order]
+    @team  = @order.billable
+    
+    mail  subject: "A new domains adjustment order has been placed for team #{@team.get_team_name}.",
+          from:    Settings.from_email.orders,
+          to:      @user.email
+  end
+  
   def payable_invoice_new(params)
     @user    = params[:user]
     @invoice = params[:invoice]
