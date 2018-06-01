@@ -37,6 +37,8 @@ SslCom::Application.routes.draw do
           as: :api_user_create_v1_4, via: [:options, :post]
         match '/user/:login' => 'api_user_requests#show_v1_4',
           as: :api_user_show_v1_4, via: [:options, :get], login: /.+\/?/
+        match '/users/get_teams' => 'api_user_requests#get_teams_v1_4',
+          as: :api_user_get_teams_v1_4, via: [:options, :get], get_teams: /.+\/?/
 
         # Code Signing.
         match '/generate_certificate' => 'api_certificate_requests#generate_certificate_v1_4',
