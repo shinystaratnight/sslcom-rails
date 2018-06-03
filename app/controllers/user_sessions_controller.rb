@@ -31,12 +31,6 @@ class UserSessionsController < ApplicationController
         if @user_session.save && !@user_session.user.is_disabled?
           user = @user_session.user
 
-          # cookies[:acct] = {
-          #     :value=>user.ssl_account.acct_number,
-          #     :path => "/",
-          #     :expires => Settings.cart_cookie_days.to_i.days.from_now
-          # }
-
           #we'll know what tier the user is even if s/he is not logged in
           cookies.delete(:r_tier)
           cookies[:cart] = {
@@ -55,7 +49,6 @@ class UserSessionsController < ApplicationController
 
           # Fetch existing U2Fs from your db
           key_handles = @user_session.user.u2fs.pluck(:key_handle)
-          # @user_session.destroy
         end
       end
     else
@@ -63,12 +56,6 @@ class UserSessionsController < ApplicationController
 
       if @user_session.save && !@user_session.user.is_disabled?
         user = @user_session.user
-
-        # cookies[:acct] = {
-        #     :value=>user.ssl_account.acct_number,
-        #     :path => "/",
-        #     :expires => Settings.cart_cookie_days.to_i.days.from_now
-        # }
 
         #we'll know what tier the user is even if s/he is not logged in
         cookies.delete(:r_tier)
@@ -88,7 +75,6 @@ class UserSessionsController < ApplicationController
 
         # Fetch existing U2Fs from your db
         key_handles = @user_session.user.u2fs.pluck(:key_handle)
-        # @user_session.destroy
       end
     end
 
@@ -236,20 +222,6 @@ class UserSessionsController < ApplicationController
               format.html {redirect_back_or_default account_path(current_user.ssl_account(:default_team) ? current_user.ssl_account(:default_team).to_slug : {})}
             end
           else
-            # if current_user.is_admin?
-            #   cookies.delete(:r_tier)
-            #   cookies.delete(:cart_guid)
-            #   clear_cart
-            # end
-            # cookies.delete(:acct)
-            # current_user_session.destroy
-            # Authorization.current_user=nil
-            # flash[:error] = "Unable to authenticate with U2F: "
-            #
-            # @user_session = UserSession.new(params[:user_session])
-            # format.html {render :action => :new}
-            # format.js   {render :json=>@user_session}
-
             response = U2F::SignResponse.load_from_json(params[:u2f_response])
             reg_u2f = current_user.u2fs.find_by_key_handle(response.key_handle) if response.key_handle
 
@@ -301,104 +273,6 @@ class UserSessionsController < ApplicationController
       end
     end
   end
-
-#   def create
-#     if params["prev.x".intern]
-#       #assume trying to login during checkout
-#       if params[:certificate_order]
-#         @certificate_order=CertificateOrder.new(params[:certificate_order])
-#         @certificate_order.has_csr=true
-#         if params["prev.x".intern]
-#           render(:template => "/certificates/buy",
-#             :layout=>"application")
-#         end
-#       else
-#         redirect_to show_cart_orders_url and return
-#       end
-#     end
-#     unless current_user.blank?
-#       if current_user.is_admin?
-#         @user_session = UserSession.new(User.find_by_login params[:login])
-#         @user_session.id = :shadow
-#         clear_cart
-#       else
-#         @user_session = current_user_session
-#       end
-#       unless current_user.ssl_account.nil?
-#         cookies[:acct] = {
-#           value:   current_user.ssl_account.acct_number, path: "/",
-#           expires: Settings.cart_cookie_days.to_i.days.from_now
-#         }
-#       end
-#     else
-#       require_no_user
-#       @user_session = UserSession.new(params[:user_session])
-#     end
-#     respond_to do |format|
-#       if @user_session.save && !@user_session.user.is_disabled?
-#         user = @user_session.user
-#         cookies[:acct] = {:value=>user.ssl_account.acct_number, :path => "/", :expires => Settings.
-#             cart_cookie_days.to_i.days.from_now}
-#         #we'll know what tier the user is even if s/he is not logged in
-#         cookies.delete(:r_tier)
-#         cookies[:cart] = {:value=>user.shopping_cart.content, :path => "/",
-#                           :expires => Settings.cart_cookie_days.to_i.days.from_now} if user.shopping_cart
-#         if user.ssl_account.is_registered_reseller?
-#           cookies[:r_tier] = {:value=>user.ssl_account.reseller.
-#             reseller_tier.label, :path => "/", :expires => Settings.
-#             cart_cookie_days.to_i.days.from_now}
-#         end
-#         flash[:notice] = "Successfully logged in." unless request.xhr?
-#         format.js   {render :json=>url_for_js(user)}
-#         format.html {redirect_back_or_default account_path(user.ssl_account(:default_team) ? user.ssl_account(:default_team).to_slug : {})}
-# #        us_json = @user_session.to_json.chop << ',"redirect":"'+
-# #          (user.ssl_account.is_registered_reseller?  ?
-# #          "create" : new_order_url) +'"}'
-#
-#
-# #        else
-# #          redirect and present choices of user names and emails (if dupes exist) (radios) then
-# #            delete the remaining dup_v2_users rename current username the new username
-# #          end
-#           #we'll know what tier the user is even if s/he is not logged in
-# #          flash[:notice] = "Successfully logged in. Multiple usernames and/or
-# #            email addresses were found for this account."
-# #          format.html {redirect_to consolidate_user_url(user)}
-# #          us_json = @user_session.to_json.chop << ',"redirect":"'+
-# #            consolidate_user_url(user) +'"}'
-# #          format.js   {render :json=>us_json}
-# #        end
-#       elsif @user_session.attempted_record &&
-#         !@user_session.attempted_record.active?
-#         flash[:notice] = "Your account has not been activated. %s"
-#         flash[:notice_item] = "Click here to have the activation email
-#           resent to #{@user_session.attempted_record.email}.",
-#           resend_activation_users_path(:login => @user_session.attempted_record.login)
-#         @user_session.errors[:base]<<("please visit
-#           #{resend_activation_users_url(:login => @user_session.attempted_record.login)}
-#           to have your activation notice resent")
-#         log_failed_attempt(@user_session.user, params,flash[:notice])
-#         format.html {render :action => :new}
-#         format.js   {render :json=>@user_session.errors}
-#       elsif @user_session.user.blank? || (!@user_session.user.blank? && @user_session.user.is_admin_disabled?)
-#         unless @user_session.user.blank?
-#           if (!@user_session.user.blank? && @user_session.user.is_admin_disabled?)
-#             flash.now[:error] = "Ooops, it appears this account has been disabled." unless request.xhr?
-#             log_failed_attempt(@user_session.user, params,flash.now[:error])
-#             @user_session.destroy
-#             @user_session=UserSession.new
-#           end
-#         end
-#         log_failed_attempt(@user_session.user, params,@user_session.errors.to_json)
-#         format.html {render :action => :new}
-#         format.js   {render :json=>@user_session}
-#       else
-#         log_failed_attempt(params[:user_session][:login], params,flash.now[:error])
-#         format.html {render :action => :new}
-#         format.js   {render :json=>@user_session.errors}
-#       end
-#     end
-#   end
 
   def duo
     if current_user.ssl_account(:default_team).duo_own_used

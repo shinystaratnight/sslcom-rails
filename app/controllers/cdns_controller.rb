@@ -33,7 +33,8 @@ class CdnsController < ApplicationController
                                    basic_auth: {username: current_user_api_key, password: 'x'})
 
       if @response && @response.code == 200
-        @results[:resources] = @response.parsed_response['resources'].paginate(@p)
+        resources = @response.parsed_response['resources'].sort_by {|resource| resource['created_at']}.reverse
+        @results[:resources] = resources.paginate(@p)
       else
         @results[:resources] = [].paginate(@p)
       end
