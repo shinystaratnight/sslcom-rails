@@ -298,6 +298,7 @@ SslCom::Application.routes.draw do
         post :register_duo
         put  :duo_enable
         put  :duo_own_used
+        put  :set_2fa_type
       end
       member do
         get :adjust_funds
