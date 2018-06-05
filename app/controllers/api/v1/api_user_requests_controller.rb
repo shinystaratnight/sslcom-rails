@@ -74,7 +74,37 @@ class Api::V1::ApiUserRequestsController < Api::V1::APIController
             result.company_name = team.company_name
             result.issue_dv_no_validation = @obj.is_standard? || @obj.is_validations? ? team.issue_dv_no_validation : nil
             result.billing_method = @obj.is_installer? && @obj.roles_symbols.count == 1 ? nil : team.billing_method
+            result.reseller_tier = team.reseller ? team.reseller.reseller_tier : nil
+            result.is_default_team = team.id == @obj.ssl_account.id ? true : false
             @results << result
+          end
+        else
+          @result = @obj #so that rabl can report errors
+        end
+      else
+        @result.errors[:login] << "#{@result.login} not found or incorrect password"
+      end
+    else
+      InvalidApiUserRequest.create parameters: params, response: @result.errors.to_json
+    end
+    render_200_status
+  rescue => e
+    render_500_error e
+  end
+
+  def set_default_team_v1_4
+    set_template "set_default_team_v1_4"
+    if @result.save
+      if @obj = UserSession.create(params).user
+        @results = []
+        if @obj.is_a?(User) && @obj.errors.empty?
+          @ssl_account = SslAccount.find_by(acct_number: params[:acct_number])
+          if @obj.is_approved_account?(@ssl_account)
+            @obj.update_attribute(:default_ssl_account, @ssl_account.id)
+            @result.account_key = @obj.ssl_account.api_credential.account_key
+            @result.secret_key = @obj.ssl_account.api_credential.secret_key
+          else
+            @result.errors[:login] << "#{@result.login} not approved to #{params[:ssl_account_id]}"
           end
         else
           @result = @obj #so that rabl can report errors
@@ -100,6 +130,8 @@ class Api::V1::ApiUserRequestsController < Api::V1::APIController
                 ApiUserShow_v1_4
               when "get_teams_v1_4"
                 ApiUserListTeam_v1_4
+              when "set_default_team_v1_4"
+                ApiUserSetDefaultTeam_v1_4
             end
     @result=klass.new(params[:api_certificate_request] || _wrap_parameters(params)['api_user_request'])
     @result.debug = params[:debug] if params[:debug]
