@@ -37,7 +37,8 @@ class CertificateOrder < ActiveRecord::Base
   has_many    :app_reps, as: :contactable, class_name: 'AppRep' # for SSL.com OV and EV; rw by vetting agents, r by customer
   has_many    :physical_tokens
   has_many    :url_callbacks, as: :callbackable, :through=>:certificate_contents
-
+  has_many    :taggings, as: :taggable
+  has_many    :tags, through: :taggings
 
   accepts_nested_attributes_for :certificate_contents, :allow_destroy => false
   attr_accessor :duration, :has_csr

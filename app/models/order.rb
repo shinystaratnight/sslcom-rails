@@ -18,6 +18,8 @@ class Order < ActiveRecord::Base
   has_many    :transactions, class_name: 'OrderTransaction', dependent: :destroy
   has_many    :refunds, dependent: :destroy
   has_many    :order_transactions
+  has_many    :taggings, as: :taggable
+  has_many    :tags, through: :taggings
   has_and_belongs_to_many    :discounts
 
   money :amount, cents: :cents

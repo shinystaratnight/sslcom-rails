@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180523223416) do
+ActiveRecord::Schema.define(version: 20180605181336) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        limit: 255
@@ -1297,6 +1297,30 @@ ActiveRecord::Schema.define(version: 20180523223416) do
     t.datetime "created_at",                null: false
     t.datetime "updated_at",                null: false
   end
+
+  create_table "taggings", force: :cascade do |t|
+    t.integer  "tag_id",        limit: 4,   null: false
+    t.integer  "taggable_id",   limit: 4,   null: false
+    t.string   "taggable_type", limit: 255, null: false
+    t.datetime "created_at",                null: false
+    t.datetime "updated_at",                null: false
+  end
+
+  add_index "taggings", ["tag_id"], name: "index_taggings_on_tag_id", using: :btree
+  add_index "taggings", ["taggable_type", "taggable_id", "tag_id"], name: "unique_taggings", unique: true, using: :btree
+  add_index "taggings", ["taggable_type", "taggable_id"], name: "index_taggings_on_taggable_type_and_taggable_id", using: :btree
+
+  create_table "tags", force: :cascade do |t|
+    t.string   "name",           limit: 255,             null: false
+    t.integer  "ssl_account_id", limit: 4,               null: false
+    t.integer  "taggings_count", limit: 4,   default: 0, null: false
+    t.datetime "created_at",                             null: false
+    t.datetime "updated_at",                             null: false
+  end
+
+  add_index "tags", ["ssl_account_id", "name"], name: "index_tags_on_ssl_account_id_and_name", using: :btree
+  add_index "tags", ["ssl_account_id"], name: "index_tags_on_ssl_account_id", using: :btree
+  add_index "tags", ["taggings_count"], name: "index_tags_on_taggings_count", using: :btree
 
   create_table "tracked_urls", force: :cascade do |t|
     t.text     "url",        limit: 65535
