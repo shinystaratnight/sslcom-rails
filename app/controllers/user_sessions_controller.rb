@@ -5,7 +5,7 @@ class UserSessionsController < ApplicationController
   skip_filter :finish_reseller_signup, only: [:destroy]
   skip_before_action :verify_authenticity_token
   skip_before_action :require_no_authentication, only: [:duo_verify]
-  
+
   def new
     @failed_count = 0
     @user_session = UserSession.new
@@ -64,7 +64,6 @@ class UserSessionsController < ApplicationController
             :path => "/",
             :expires => Settings.cart_cookie_days.to_i.days.from_now
         } if user.shopping_cart
-
         if user.ssl_account.is_registered_reseller?
           cookies[:r_tier] = {
               :value=>user.ssl_account.reseller.reseller_tier.label,
@@ -72,7 +71,6 @@ class UserSessionsController < ApplicationController
               :expires => Settings.cart_cookie_days.to_i.days.from_now
           }
         end
-
         # Fetch existing U2Fs from your db
         key_handles = @user_session.user.u2fs.pluck(:key_handle)
       end
