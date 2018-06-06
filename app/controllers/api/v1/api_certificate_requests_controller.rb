@@ -150,6 +150,11 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
             @result = @acr #so that rabl can report errors
           end
         end
+
+        @result.cert_names.keys.each do |key|
+          # expire_fragment(params[:ref] + ':' + key)
+          Rails.cache.delete(params[:ref] + ':' + key)
+        end
       else
         InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
       end
@@ -183,6 +188,11 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
           else
             @result = @acr #so that rabl can report errors
           end
+        end
+
+        @result.cert_names.keys.each do |key|
+          # expire_fragment(params[:ref] + ':' + key)
+          Rails.cache.delete(params[:ref] + ':' + key)
         end
       else
         InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"

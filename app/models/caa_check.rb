@@ -7,7 +7,7 @@ class CaaCheck < ActiveRecord::Base
 
   def self.caa_lookup(name, authority)
     begin
-      timeout(Surl::TIMEOUT_DURATION) do
+      Timeout.timeout(Surl::TIMEOUT_DURATION) do
         CAA_COMMAND.call name, authority
       end
     rescue Timeout::Error
