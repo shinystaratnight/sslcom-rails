@@ -39,6 +39,8 @@ SslCom::Application.routes.draw do
           as: :api_user_show_v1_4, via: [:options, :get], login: /.+\/?/
         match '/users/get_teams' => 'api_user_requests#get_teams_v1_4',
           as: :api_user_get_teams_v1_4, via: [:options, :get], get_teams: /.+\/?/
+        match '/users/set_default_team' => 'api_user_requests#set_default_team_v1_4',
+          as: :api_user_set_default_team_v1_4, via: [:options, :put], set_default_team: /.+\/?/
 
         # Code Signing.
         match '/generate_certificate' => 'api_certificate_requests#generate_certificate_v1_4',
@@ -299,6 +301,7 @@ SslCom::Application.routes.draw do
         post :register_duo
         put  :duo_enable
         put  :duo_own_used
+        put  :set_2fa_type
       end
       member do
         get :adjust_funds

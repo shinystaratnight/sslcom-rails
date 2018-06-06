@@ -504,6 +504,7 @@ privileges do
     :register_duo,
     :duo_enable,
     :duo_own_used,
+    :set_2fa_type,
     :update_ssl_slug
   ]
   privilege :sysadmin_manage, includes: [

@@ -176,6 +176,15 @@ class SslAccountsController < ApplicationController
     end  
   end
 
+  #PUT /ssl_account/set_2fa_type
+  def set_2fa_type
+    type = @ssl_account.sec_type == params['sec_type'] ? '' : params['sec_type']
+    @ssl_account.update_attribute(:sec_type, type)
+    respond_to do |format|
+      format.js {render json: @ssl_account.to_json}
+    end
+  end
+
   def adjust_funds
     amount=params["amount"].to_f*100
     @ssl_account.funded_account.add_cents(amount)
