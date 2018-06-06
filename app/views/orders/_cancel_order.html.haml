@@ -57,6 +57,8 @@
                       -refunded  = @order.get_total_merchant_refunds
                       -link_text = "refund merchant (#{ref_merchant.capitalize}) *refunded: #{Money.new(refunded).format}"
                       =link_to "<strong>#{link_text}</strong>".html_safe, refund_merchant_order_path(@ssl_slug, @order, type: :new)
+            %li=link_to "EDIT/UPDATE order", edit_order_path(@ssl_slug, @order)
+            
         %td(width="30%")
           %table
             %tr

@@ -40,7 +40,7 @@ gem "therubyracer", '~> 0.12.0', platform: :ruby
 gem "libv8", '~> 3.16.14.0'
 # gem 'request_exception_handler'
 gem 'rvm-capistrano'
-# gem 'newrelic_rpm'
+gem 'newrelic_rpm'
 gem 'dalli'
 gem 'attr_encrypted', '>= 3.0.3'
 gem 'delayed_job_active_record'
@@ -73,6 +73,8 @@ gem 'wkhtmltopdf-binary'
 gem 'wicked_pdf'
 gem 'u2f'
 gem 'duo_web', '~> 1.0'
+# gem 'simple_captcha2', require: 'simple_captcha'
+gem 'recaptcha', require: 'recaptcha/rails'
 
 group :development do
   gem 'foreman'

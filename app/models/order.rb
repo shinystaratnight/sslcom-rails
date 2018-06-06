@@ -9,7 +9,8 @@ class Order < ActiveRecord::Base
   belongs_to  :billing_profile_unscoped, foreign_key: :billing_profile_id, class_name: "BillingProfileUnscoped"
   belongs_to  :deducted_from, class_name: "Order", foreign_key: "deducted_from_id"
   belongs_to  :visitor_token
-  belongs_to  :monthly_invoice, class_name: "Invoice", foreign_key: :invoice_id
+  belongs_to  :invoice, class_name: "Invoice", foreign_key: :invoice_id
+  belongs_to  :reseller_tier, foreign_key: :reseller_tier_id
   has_many    :line_items, dependent: :destroy, after_add: Proc.new { |p, d| p.amount += d.amount}
   has_many    :certificate_orders, through: :line_items, :source => :sellable,
               :source_type => 'CertificateOrder', unscoped: true
@@ -19,10 +20,12 @@ class Order < ActiveRecord::Base
   has_many    :order_transactions
   has_and_belongs_to_many    :discounts
 
-  money :amount
+  money :amount, cents: :cents
+  money :wildcard_amount, cents: :wildcard_cents
+  money :non_wildcard_amount, cents: :non_wildcard_cents
 
   before_create :total, :determine_description
-  after_create :generate_reference_number, :commit_discounts
+  after_create :generate_reference_number, :commit_discounts, :domains_adjustment_notice
 
   #is_free? is used to as a way to allow orders that are not charged (ie cent==0)
   attr_accessor  :is_free, :receipt, :deposit_mode, :temp_discounts
@@ -34,12 +37,21 @@ class Order < ActiveRecord::Base
       self.receipt ||= false
       self.deposit_mode ||= false
     end
+    self.cur_wildcard = nil if self.cur_wildcard.blank?
+    self.cur_non_wildcard = nil if self.cur_non_wildcard.blank?
+    self.max_wildcard = nil if self.max_wildcard.blank?
+    self.max_non_wildcard = nil if self.max_non_wildcard.blank?
+    self.reseller_tier_id = nil if self.reseller_tier_id.blank?
+    self.wildcard_cents = 0 if self.wildcard_cents.blank?
+    self.non_wildcard_cents = 0 if self.non_wildcard_cents.blank?
   end
   
   FAW                = "Funded Account Withdrawal"
   DOMAINS_ADJUSTMENT = "Domains Adjustment"
   SSL_CERTIFICATE    = "SSL Certificate Order"
-  INVOICE_PAYMENT    = "Monthly Invoice Payment"
+  MI_PAYMENT         = "Monthly Invoice Payment"
+  DI_PAYMENT         = "Daily Invoice Payment"
+  
   # If team's billing_method is set to 'monthly', grab all orders w/'approved' approval
   # when running charges at the end of the month for orders from ucc reprocessing.
   BILLING_STATUS = %w{approved pending declined}
@@ -278,8 +290,8 @@ class Order < ActiveRecord::Base
   end
     
   def total
-    unless reprocess_ucc_order? || monthly_invoice_order? || 
-      on_monthly_invoice? || domains_adjustment?
+    unless reprocess_ucc_order? || invoice_payment? ||
+      on_payable_invoice? || domains_adjustment?
       
       self.amount = line_items.inject(0.to_money) {|sum,l| sum + l.amount }
     end
@@ -480,16 +492,16 @@ class Order < ActiveRecord::Base
     get_total_merchant_refunds == get_total_merchant_amount
   end
   
-  def on_monthly_invoice?
+  def on_payable_invoice?
     !invoice_id.blank? && state == 'invoiced'
   end
   
   def approved_for_invoice?
-    on_monthly_invoice? && approval == 'approved'
+    on_payable_invoice? && approval == 'approved'
   end
   
   def removed_from_invoice?
-    on_monthly_invoice? && approval == 'rejected'
+    on_payable_invoice? && approval == 'rejected'
   end
   
   def invoice_address
@@ -501,7 +513,7 @@ class Order < ActiveRecord::Base
   end
   
   def domains_adjustment?
-    description == Order::DOMAINS_ADJUSTMENT
+    description == DOMAINS_ADJUSTMENT
   end
   
   def reprocess_ucc_free?
@@ -509,11 +521,21 @@ class Order < ActiveRecord::Base
   end
   
   def monthly_invoice_order?
-    description == Order::INVOICE_PAYMENT
+    # Payment for total of monthly invoice
+    description == MI_PAYMENT
+  end
+  
+  def daily_invoice_order?
+    # Payment for total of daily invoice
+    description == DI_PAYMENT
+  end
+  
+  def invoice_payment?
+    monthly_invoice_order? || daily_invoice_order?
   end
   
   def faw_order?
-    description == Order::FAW
+    description == FAW # Funded Account Withdrawal
   end
   
   def get_order_type_label
@@ -526,6 +548,14 @@ class Order < ActiveRecord::Base
     end  
   end
   
+  # Get all orders for certificate orders or line items of main order.
+  def get_all_orders
+    certificate_orders.map(&:orders).inject([]) do |all, o|
+      all << o if o != self
+      all.flatten
+    end
+  end
+  
   # Fetches all domain counts that were added during UCC domains adjustment
   def get_reprocess_domains
     co           = certificate_orders.first
@@ -535,8 +565,17 @@ class Order < ActiveRecord::Base
     non_wildcard = cur_domains.map {|d| d if !d.include?('*')}.compact
     wildcard     = cur_domains.map {|d| d if d.include?('*')}.compact
     
-    tot_non_wildcard = non_wildcard.count - co.get_reprocess_max_nonwildcard(cc).count
-    tot_wildcard     = wildcard.count - co.get_reprocess_max_wildcard(cc).count
+    tot_non_wildcard = if cur_non_wildcard.blank?
+      non_wildcard.count - co.get_reprocess_max_nonwildcard(cc).count
+    else
+      cur_non_wildcard
+    end
+    
+    tot_wildcard = if cur_wildcard.blank?
+      wildcard.count - co.get_reprocess_max_wildcard(cc).count
+    else
+      cur_wildcard
+    end
     
     tot_non_wildcard  = tot_non_wildcard < 0 ? 0 : tot_non_wildcard
     tot_wildcard      = tot_wildcard < 0 ? 0 : tot_wildcard
@@ -776,13 +815,13 @@ class Order < ActiveRecord::Base
       item.is_a?(LineItem) ? item.cents : item.amount
     end
     percent      = total.to_d/order_total.to_d
-    discount     = discount_amt.blank? ? discount_amt : (discount_amt.cents * percent)
+    discount     = (discount_amt.blank? || discount_amt.cents == 0) ? 0 : (discount_amt.cents * percent)
     funded       = get_funded_account_amount == 0 ? 0 : (get_funded_account_amount * percent)
     
     if type == :merchant
-      total - (discount.cents + funded)
+      total - (discount + funded)
     else
-      total - discount.cents
+      total - discount
     end
   end
 
@@ -792,6 +831,22 @@ class Order < ActiveRecord::Base
     percent      = total.to_d/order_total.to_d
     get_funded_account_amount == 0 ? 0 : (get_funded_account_amount * percent)
   end
+  
+  # If order has been transfered from another team, then the originating team 
+  # should be credited. Lookup SystemAudit log for specific keywords
+  # to determine originating order.
+  def get_team_to_credit
+    order_transferred = SystemAudit
+      .where(target_type: 'Order', target_id: id)
+      .where("notes LIKE ?", "%from team%")
+      .order(created_at: :desc).last
+    unless order_transferred.nil?
+      from_team = order_transferred.notes.split.find {|str| str.include?('#')}
+    end
+    from_team = SslAccount.find_by(acct_number: from_team.gsub('#', '')) unless from_team.nil?
+    from_team.nil? ? billable : from_team
+  end
+  
   # ============================================================================
   # REFUND (utilizes 3 merchants, Stripe, PaypalExpress and Authorize.net)
   # ============================================================================
@@ -811,7 +866,7 @@ class Order < ActiveRecord::Base
       new_refund = Refund.refund_merchant(params)
     end
     
-    unless monthly_invoice_order?
+    unless invoice_payment?
       if merchant_fully_refunded?
         full_refund! unless fully_refunded?
         if certificate_orders.any?
@@ -850,7 +905,7 @@ class Order < ActiveRecord::Base
   def get_total_merchant_amount
     merchant = get_merchant
     o = get_order_charged
-    return (o.transactions.map(&:amount).sum * 100) if o && %w{stripe authnet}.include?(merchant)
+    return (o.transactions.map(&:cents).sum) if o && %w{stripe authnet}.include?(merchant)
     return o.cents if o && merchant == 'paypal'
     if o
       if %w{no_payment zero_amt funded}.include?(merchant)
@@ -864,7 +919,8 @@ class Order < ActiveRecord::Base
   end
   
   def get_full_reprocess_amount
-    get_total_merchant_amount + get_funded_account_amount
+    cur_amount = cents != get_total_merchant_amount ? cents : get_total_merchant_amount
+    cur_amount + get_funded_account_amount
   end
   
   def get_full_reprocess_format
@@ -922,12 +978,22 @@ class Order < ActiveRecord::Base
     billing_profile_id.nil? &&
       po_number.nil? &&
       quote_number.nil? &&
-      ( notes.blank? || (!notes.blank? && notes.include?('Reprocess UCC')) ) &&
+      ( notes.blank? || funded_account_w_notes? ) &&
       transactions.empty? &&
       deducted_from_id.nil? &&
       state == 'paid'
   end
   
+  def funded_account_w_notes?
+    !notes.blank? && (
+      notes.include?('Reprocess UCC') ||
+      notes.include?('Initial CSR') ||
+      notes.include?('Renewal UCC') ||
+      notes.include?('monthly invoice') ||
+      notes.include?('daily invoice')
+    )
+  end
+    
   def payment_stripe?
     !payment_not_refundable? && transactions.any? &&
       !transactions.last.reference.blank? &&
@@ -1094,6 +1160,14 @@ class Order < ActiveRecord::Base
   end
   
   private
+  
+  def domains_adjustment_notice
+    if domains_adjustment?
+      Assignment.users_can_manage_invoice(billable).each do |u|
+        OrderNotifier.domains_adjustment_new(user: u, order: self).deliver_now
+      end
+    end
+  end
 
   def gateway
     OrderTransaction.gateway

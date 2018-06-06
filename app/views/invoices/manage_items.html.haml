@@ -1,5 +1,5 @@
 - descriptions  = @invoice.get_item_descriptions
-- invoices = MonthlyInvoice.get_invoices_for_select(@invoice.billable.id)
+- invoices = Invoice.get_invoices_for_select(@invoice.billable.id)
 - orders = @invoice.orders
 
 #validations.monthly-invoice

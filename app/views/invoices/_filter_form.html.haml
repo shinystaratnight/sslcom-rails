@@ -1,5 +1,5 @@
 -system_admins = current_user && current_user.is_system_admins?
--status_list = system_admins ? MonthlyInvoice::STATUS : MonthlyInvoice::DEFAULT_STATUS
+-status_list = system_admins ? Invoice::STATUS : Invoice::DEFAULT_STATUS
 
 = form_tag(invoices_path(@ssl_slug), method: :get, class: "filter-form", data: {display: params[:commit] == "Search"}) do
   = render partial: "shared/sortable_fields"

@@ -16,7 +16,7 @@ class InvoicesController < ApplicationController
   
   def download
     if @invoice
-      render pdf: "ssl.com_monthly_invoice_#{@invoice.reference_number}"
+      render pdf: "ssl.com_#{@ssl_account.get_invoice_label}_invoice_#{@invoice.reference_number}"
     else
       flash[:error] = "This invoice doesn't exist."
       redirect_to :back
@@ -36,9 +36,9 @@ class InvoicesController < ApplicationController
     orders_count = orders.count
     if orders_count > 0
       invoice = if params[:invoice] == 'new_invoice'
-        MonthlyInvoice.create(billable_id: @invoice.billable.id, billable_type: 'SslAccount')
+        Invoice.create_invoice_for_team(@invoice.billable.id)
       else
-        MonthlyInvoice.find_by(reference_number: params[:invoice])
+        Invoice.find_by(reference_number: params[:invoice])
       end
       orders.update_all(invoice_id: invoice.id)
       flash[:notice] = "All #{orders_count} order(s) have been successfully transferred to invoice ##{invoice.reference_number}."
@@ -64,18 +64,18 @@ class InvoicesController < ApplicationController
   end
   
   def new_payment
-    @monthly_invoice = true
+    @payable_invoice = true
   end
   
   def make_payment
-    @monthly_invoice = true
+    @payable_invoice = true
     ucc_or_invoice_params
     
     @order = Order.new(
       billing_profile_id: params[:funding_source],
       amount:             @target_amount,
       cents:              (@target_amount * 100).to_i,
-      description:        Order::INVOICE_PAYMENT,
+      description:        @ssl_account.get_invoice_pmt_description,
       state:              'pending',
       approval:           'approved',
       notes:              order_invoice_notes
@@ -116,7 +116,7 @@ class InvoicesController < ApplicationController
           owner:  current_user,
           target: @invoice,
           notes:  "Credit issued with reason: #{params[:invoice][:credit_reason]}",
-          action: "Monthly Invoice ##{@invoice.reference_number}, credit issued for #{f_amount}."
+          action: "#{@ssl_account.get_invoice_label.capitalize} Invoice ##{@invoice.reference_number}, credit issued for #{f_amount}."
         )
       end
       flash[:notice] = "Invoice was successfully credited for amount #{f_amount}."
@@ -129,14 +129,14 @@ class InvoicesController < ApplicationController
   def refund_other
     if @invoice && !@invoice.refunded?
       payment = @invoice.payment
-      payment_type = MonthlyInvoice::PAYMENT_METHODS_TEXT[params[:refund_type].to_sym]
+      payment_type = Invoice::PAYMENT_METHODS_TEXT[params[:refund_type].to_sym]
       @invoice.full_refund!
       payment.full_refund! unless payment.fully_refunded?
       SystemAudit.create(
         owner:  current_user,
         target: @invoice,
         notes:  "Full refund issued for payment type #{payment_type}.",
-        action: "Monthly Invoice ##{@invoice.reference_number}, refund issued for #{payment.amount.format}."
+        action: "#{@ssl_account.get_invoice_label.capitalize} Invoice ##{@invoice.reference_number}, refund issued for #{payment.amount.format}."
       )
       flash[:notice] = "Invoice was successfully refunded for payment type #{payment_type}."
     else
@@ -181,12 +181,12 @@ class InvoicesController < ApplicationController
   end
   
   def make_payment_other
-    pmt_type = MonthlyInvoice::PAYMENT_METHODS_TEXT[params[:ptm_type].to_sym]
+    pmt_type = Invoice::PAYMENT_METHODS_TEXT[params[:ptm_type].to_sym]
     if @invoice && !@invoice.paid?
       @order = Order.new(
         amount:      @invoice.get_amount,
         cents:       @invoice.get_cents,
-        description: Order::INVOICE_PAYMENT,
+        description: @ssl_account.get_invoice_pmt_description,
         state:       'paid',
         approval:    'approved',
         notes:       order_invoice_notes << " Paid full amount of #{@invoice.get_amount_format} by #{pmt_type}."
@@ -222,9 +222,9 @@ class InvoicesController < ApplicationController
   
   def invoices_base_query
     base = if current_user && current_user.is_system_admins?
-      MonthlyInvoice
+      Invoice.where.not(billable_id: nil, type: nil)
     else
-      current_user.ssl_account.monthly_invoices.where.not(status: 'archived')
+      current_user.ssl_account.invoices.where.not(status: 'archived')
     end
     base.joins(:orders).uniq.sort_with(params)
   end
@@ -279,7 +279,10 @@ class InvoicesController < ApplicationController
   end
   
   def invoice_paid
-    @invoice.update(order_id: @order.id, status: 'paid') if @order.persisted?
+    if @order.persisted?
+      @invoice.update(order_id: @order.id, status: 'paid')
+      @invoice.notify_invoice_paid(current_user)
+    end
   end
   
   def redirect_new_payment
@@ -294,7 +297,7 @@ class InvoicesController < ApplicationController
     if current_user
       ref = params[:order].nil? ? params[:id] : params[:order][:id]
       @ssl_account = if current_user.is_system_admins?
-        MonthlyInvoice.find_by(reference_number: ref).billable
+        Invoice.find_by(reference_number: ref).billable
       else
         current_user.ssl_account
       end
@@ -305,9 +308,9 @@ class InvoicesController < ApplicationController
     if current_user
       ref = params[:order].nil? ? params[:id] : params[:order][:id]
       @invoice = if current_user.is_system_admins?
-        MonthlyInvoice.find_by(reference_number: ref)
+        Invoice.find_by(reference_number: ref)
       else
-        current_user.ssl_account.monthly_invoices.find_by(reference_number: ref)
+        current_user.ssl_account.invoices.find_by(reference_number: ref)
       end
     end
   end

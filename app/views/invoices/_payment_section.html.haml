@@ -4,6 +4,9 @@
   #order_ref_num 
     reference number:
     %span=h @order.reference_number
+  #order_ref_num 
+    charged:
+    %span=h @order.amount.format
   #order_date
     date of payment:
     %span=h @order.created_at.strftime('%F')
@@ -49,19 +52,19 @@
     
     -if other_payment
       -unless @invoice.funded_account_credit?
-        %h3.order_results_header Refunds (#{ amount })
+        %h3.order_results_header Refunds (#{amount})
         #order_date
           -type = @invoice.paid_wire_transfer? ? :wire : :po
-          Full refund issued for payment type #{MonthlyInvoice::PAYMENT_METHODS_TEXT[type]}.
+          Full refund issued for payment type #{Invoice::PAYMENT_METHODS_TEXT[type]}.
       -else
-        -amount = Money.new(@invoice.get_credited_total).format
-        %h3.order_results_header Refunds (#{ amount })
+        -amount = @invoice.get_credited_total.format
+        %h3.order_results_header Refunds (#{amount})
         #order_date
           *Funded Account Credited: 
-          %strong #{Money.new(@invoice.get_credited_total).format}
+          %strong #{amount}
         
     -else
-      %h3.order_results_header Refunds (#{ amount })
+      %h3.order_results_header Refunds (#{amount})
       -@order.refunds.where(status: 'success').each_with_index do |o, i|
         #order_date
           #{i+1}. #{o.created_at.strftime('%F')}:
@@ -71,7 +74,7 @@
             %br/
             %br/
             *Funded Account Credited: 
-            %strong #{Money.new(@invoice.get_credited_total).format}
+            %strong #{@invoice.get_credited_total.format}
             
       -if system_admins
         #order_date

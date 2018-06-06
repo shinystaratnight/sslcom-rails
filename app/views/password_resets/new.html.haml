@@ -1,4 +1,5 @@
 -content_for :title, "Forgot Password"
+=render :partial => 'index_scripts'
 .reseller_registration_profile
   %h3 Forgot Password
   =form_tag password_resets_path do |f|
@@ -21,5 +22,7 @@
           Email
           %span.label_desc must be a valid address
         = text_field_tag :email
+    #recaptcha_container
+      =recaptcha_tags(:callback => 'enableSubmitBtn', :expired_callback => 'disableSubmitBtn')
     #button_container
-      #next_submit=image_submit_tag "bl_submit_button.gif"
+      #next_submit=image_submit_tag "bl_submit_button.gif", class: 'password_resets_btn hidden'

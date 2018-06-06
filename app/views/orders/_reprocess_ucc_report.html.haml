@@ -27,7 +27,7 @@
             =link_to result[:order_ref], order_path(@ssl_slug, result[:order_ref])
           %td.domains-list
             -o  = Order.find_by(reference_number: result[:order_ref])
-            -mi = o.monthly_invoice
+            -mi = o.invoice
             -if mi.nil?
               =link_to "\u21E9 Download".html_safe, invoice_order_path(@ssl_slug, result[:order_ref])
             -else

@@ -296,16 +296,19 @@ class CertificateOrdersController < ApplicationController
       if @certificate_content.valid?
         cc = @certificate_order.transfer_certificate_content(@certificate_content)
         if domains_adjustment
+          o = params[:order]
           order_params = {
             co_ref:            @certificate_order.ref,
-            cc_ref:            cc.ref,
-            reprocess_ucc:     ucc_reprocess,
-            renew_ucc:         ucc_renew,
-            ucc_csr_submit:    ucc_csr_submit,
-            order_description: params[:order][:order_description],
-            order_amount:      params[:order][:adjustment_amount],
-            wildcard_count:    params[:order][:wildcard_count].to_i,
-            nonwildcard_count: params[:order][:nonwildcard_count].to_i
+            cc_ref:             cc.ref,
+            reprocess_ucc:      ucc_reprocess,
+            renew_ucc:          ucc_renew,
+            ucc_csr_submit:     ucc_csr_submit,
+            wildcard_amount:    o[:wildcard_amount],
+            nonwildcard_amount: o[:nonwildcard_amount],
+            order_description:  o[:order_description],
+            order_amount:       o[:adjustment_amount],
+            wildcard_count:     o[:wildcard_count].to_i,
+            nonwildcard_count:  o[:nonwildcard_count].to_i
           }
           format.html { redirect_to new_order_path(@ssl_slug, order_params) }
         else

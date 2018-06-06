@@ -9,7 +9,9 @@ class OrderTransaction < ActiveRecord::Base
   serialize :avs
   serialize :cvv
   cattr_accessor :gateway
-
+  
+  money :amount, cents: :cents, currency: false
+  
   scope :paid_successfully, lambda{
     where{(success == true) & (amount > 0)}
   }

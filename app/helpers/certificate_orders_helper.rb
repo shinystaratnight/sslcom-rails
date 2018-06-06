@@ -13,8 +13,7 @@ module CertificateOrdersHelper
           domains_adjustment = @order && @order.domains_adjustment? && !reprocess_order
           reprocess_domains  = @order.get_reprocess_domains if (reprocess_order || domains_adjustment)
           
-          quantity = domains_adjustment ? reprocess_domains[:all].count : certificate_order.purchased_domains('all')
-
+          quantity = (domains_adjustment || reprocess_order) ? reprocess_domains[:all].count : certificate_order.purchased_domains('all')
           unless certificate_order.certificate_contents.empty?
             d            = reprocess_order ? reprocess_domains[:all] : certificate_order.all_domains
             domains      = d.blank? ? "" : d.join(", ")

@@ -814,7 +814,7 @@ class CertificateOrder < ActiveRecord::Base
   end
   
   def reprocess_ucc_process
-    ssl_account.billing_monthly? ? REPROCES_SIGNUP_W_INVOICE : REPROCES_SIGNUP_W_PAYMENT
+    ssl_account.invoice_required? ? REPROCES_SIGNUP_W_INVOICE : REPROCES_SIGNUP_W_PAYMENT
   end
   
   def is_express_signup?
@@ -998,8 +998,8 @@ class CertificateOrder < ActiveRecord::Base
     domain = options[:domain_override] || "https://sws-test.sslpki.com"
     api_contacts, api_domains, cc, registrant_params = base_api_params
     if ssl_account.api_credential
-      account_key = options[:show_credentials] ? ssl_account.api_credential.account_key : "[REDACTED]"
-      secret_key = options[:show_credentials] ? ssl_account.api_credential.secret_key : "[REDACTED]"
+      account_key = (options[:show_credentials] || options[:current_user].try("is_system_admins?".to_sym)) ? ssl_account.api_credential.account_key : "[REDACTED]"
+      secret_key = (options[:show_credentials] || options[:current_user].try("is_system_admins?".to_sym)) ? ssl_account.api_credential.secret_key : "[REDACTED]"
     end
     case options[:action]
       when /update_dcv/
@@ -1400,9 +1400,14 @@ class CertificateOrder < ActiveRecord::Base
     end
   end
 
-  def description_with_tier
+  def description_with_tier(target_order=nil)
     return description if certificate.reseller_tier.blank?
-    description + " (Tier #{certificate.reseller_tier.label} Reseller)"
+    tier_label = if target_order && target_order.reseller_tier
+      target_order.reseller_tier.label
+    else
+      certificate.reseller_tier.label
+    end
+    description + " (Tier #{tier_label} Reseller)"
   end
 
   def validation_stage_checkout_in_progress?
