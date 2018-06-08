@@ -154,18 +154,19 @@
       %th(scope="col") Order #
       %th(scope="col") Amount
     -@orders.each do |o|
-      %tr
-        -if o.is_reseller_tier?
-          %td Reseller Tier #{o.line_items.last.sellable.label} Discounting
-        -elsif o.description.blank?
-          %td.name=link_to 'nil', order_path(@ssl_slug, o), :title=> "transaction"
-        -else
-          -qualifier = o.display_state
-          %td.name=link_to [qualifier,o.description.shorten(45, false)].join(" "), order_path(@ssl_slug, o), :title=> o.description
-        %td(colspan="3")=o.created_at.strftime("%b %d, %Y")
-        %td=o.reference_number
-        -if o.is_deposit?
-          -amt = o.final_amount.format :with_currency
-          %td=o.faw_order? ? "(#{amt})" : amt
-        -else
-          %td (#{o.final_amount.format :with_currency})
+      -cache(o) do
+        %tr
+          -if o.is_reseller_tier?
+            %td Reseller Tier #{o.line_items.last.sellable.label} Discounting
+          -elsif o.description.blank?
+            %td.name=link_to 'nil', order_path(@ssl_slug, o), :title=> "transaction"
+          -else
+            -qualifier = o.display_state
+            %td.name=link_to [qualifier,o.description.shorten(45, false)].join(" "), order_path(@ssl_slug, o), :title=> o.description
+          %td(colspan="3")=o.created_at.strftime("%b %d, %Y")
+          %td=o.reference_number
+          -if o.is_deposit?
+            -amt = o.final_amount.format :with_currency
+            %td=o.faw_order? ? "(#{amt})" : amt
+          -else
+            %td (#{o.final_amount.format :with_currency})

@@ -153,7 +153,10 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
 
         @result.cert_names.keys.each do |key|
           # expire_fragment(params[:ref] + ':' + key)
-          Rails.cache.delete(params[:ref] + ':' + key)
+          cache = Rails.cache.read(params[:ref] + ':' + key)
+          unless cache && JSON.parse(cache)['tr_info']['status'] == 'validated'
+            Rails.cache.delete(params[:ref] + ':' + key)
+          end
         end
       else
         InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
@@ -192,7 +195,10 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
 
         @result.cert_names.keys.each do |key|
           # expire_fragment(params[:ref] + ':' + key)
-          Rails.cache.delete(params[:ref] + ':' + key)
+          cache = Rails.cache.read(params[:ref] + ':' + key)
+          unless cache && JSON.parse(cache)['tr_info']['status'] == 'validated'
+            Rails.cache.delete(params[:ref] + ':' + key)
+          end
         end
       else
         InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"

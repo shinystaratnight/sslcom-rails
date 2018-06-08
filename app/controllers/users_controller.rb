@@ -39,7 +39,18 @@ class UsersController < ApplicationController
   end
 
   def index
-    p = {:page => params[:page],per_page: 10}
+    preferred_row_count = current_user.preferred_user_row_count
+    @per_page = params[:per_page] || preferred_row_count.or_else("10")
+    User.per_page = @per_page if User.per_page != @per_page
+
+    if @per_page != preferred_row_count
+      current_user.preferred_user_row_count = @per_page
+      current_user.save(validate: false)
+    end
+
+    # p = {:page => params[:page],per_page: 10}
+    @p = {page: (params[:page] || 1), per_page: @per_page}
+
     set_users
 
     if params[:search]
@@ -50,7 +61,7 @@ class UsersController < ApplicationController
       @users = @users.with_role(role) if role
       @users = @users.search(search) unless search.blank?
     end
-    @users = @users.order("created_at desc").paginate(p)
+    @users = @users.order("created_at desc").paginate(@p)
 
     respond_to do |format|
       format.html { render :action => :index }
