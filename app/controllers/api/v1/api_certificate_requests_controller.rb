@@ -150,6 +150,14 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
             @result = @acr #so that rabl can report errors
           end
         end
+
+        @result.cert_names.keys.each do |key|
+          # expire_fragment(params[:ref] + ':' + key)
+          cache = Rails.cache.read(params[:ref] + ':' + key)
+          unless cache && JSON.parse(cache)['tr_info']['status'] == 'validated'
+            Rails.cache.delete(params[:ref] + ':' + key)
+          end
+        end
       else
         InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
       end
@@ -182,6 +190,14 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
             @result.debug=(@result.parameters_to_hash["debug"]=="true") # && @acr.admin_submitted = true
           else
             @result = @acr #so that rabl can report errors
+          end
+        end
+
+        @result.cert_names.keys.each do |key|
+          # expire_fragment(params[:ref] + ':' + key)
+          cache = Rails.cache.read(params[:ref] + ':' + key)
+          unless cache && JSON.parse(cache)['tr_info']['status'] == 'validated'
+            Rails.cache.delete(params[:ref] + ':' + key)
           end
         end
       else

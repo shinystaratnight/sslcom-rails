@@ -313,19 +313,20 @@
       %th(scope="col") Expires
       %th(scope="col") Action
     -@certificate_orders.each do |co|
-      -cc = co.certificate_content
-      -cn = (co.is_unused_credit? || cc.csr.blank?) ? nil : cc.csr.common_name
-      %tr(alt="#{co.ref}")
-        %td.dropdown
-          -if !co.is_expired_credit? and permitted_to?(:index, co)
-            =image_tag 'expand.png'
-        %td.name
-          =render :partial=>'subject_column', :locals=>{:certificate_order=>co}
-        %td.status_message(class="#{status_class(cc)}")
-          #{certificate_order_status(cc)}
-        %td
-          =co.created_at.strftime("%b %d, %Y")
-        %td(class="#{expires_on_class(cc)}")
-          #{expires_on(cc)}
-        %td.ssl_action
-          #{action(co)}
+      -cache(co.certificate_content) do
+        -cc = co.certificate_content
+        -cn = (co.is_unused_credit? || cc.csr.blank?) ? nil : cc.csr.common_name
+        %tr(alt="#{co.ref}")
+          %td.dropdown
+            -if !co.is_expired_credit? and permitted_to?(:index, co)
+              =image_tag 'expand.png'
+          %td.name
+            =render :partial=>'subject_column', :locals=>{:certificate_order=>co}
+          %td.status_message(class="#{status_class(cc)}")
+            #{certificate_order_status(cc)}
+          %td
+            =co.created_at.strftime("%b %d, %Y")
+          %td(class="#{expires_on_class(cc)}")
+            #{expires_on(cc)}
+          %td.ssl_action
+            #{action(co)}
