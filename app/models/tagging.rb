@@ -2,11 +2,11 @@ class Tagging < ActiveRecord::Base
   belongs_to :tag
   belongs_to :taggable, polymorphic: true
   
-  before_validation :unique_taggings
-  after_create      :increment_tag
-  after_destroy     :decrement_tag
+  before_create :unique_taggings
+  after_create  :increment_tag
+  after_destroy :decrement_tag
   
-  validates :ssl_account_is, :tag_id, :taggable_type, :taggable_id, 
+  validates :tag_id, :taggable_type, :taggable_id, 
     presence: true, allow_blank: false, allow_nil: false
   
   private

@@ -1,0 +1,5 @@
+- unless @taggable.nil?
+  - selected_tags = Tag.get_all_tag_names(@taggable)
+  = form_tag send("update_tags_#{@taggable.class.to_s.underscore}_path", @ssl_slug, @taggable), remote: true do
+    = select_tag :tags_list, options_for_select(@team_tags.pluck(:name), selected: selected_tags), |
+      multiple: true
