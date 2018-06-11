@@ -843,7 +843,6 @@ class OrdersController < ApplicationController
     @p = {page: (params[:page] || 1), per_page: @per_page}
   end
 
-
   # admin user refunds line item
   def refund_partial_amount(params)
     refund_amount = @order.make_available_line(@target)

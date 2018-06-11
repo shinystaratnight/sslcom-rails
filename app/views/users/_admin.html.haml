@@ -39,13 +39,4 @@
                         %li roles: #{user.role_symbols.join('/')}
                         %li=link_to 'edit email address', edit_email_users_url
                         %li=link_to 'change password', edit_password_users_url
-                    -if ac = user.ssl_account.api_credential
-                      .full_width_box
-                        %ul
-                          %li
-                            %strong
-                              api credentials
-                          %li account key: #{ac.account_key}
-                          %li secret key: #{ac.secret_key}
-                          %li=link_to "developer tools", is_sandbox? ? developers_certificate_orders_url : "https://sandbox.ssl.com"
-                          %li=link_to 'view documentation', "http://docs.sslcomapi.apiary.io/", target: "_new"
+                   

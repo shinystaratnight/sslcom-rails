@@ -313,6 +313,13 @@ SslCom::Application.routes.draw do
       match :enable_disable_duo, via: [:put, :patch], on: :member
     end
 
+    resources :api_credentials do
+      member do
+        patch 'update_roles'
+        get   'remove'
+      end
+    end
+
     resource :account, controller: :users do
       resource :reseller
     end

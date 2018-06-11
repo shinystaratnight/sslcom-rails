@@ -2,7 +2,7 @@ class SslAccount < ActiveRecord::Base
   using_access_control
   acts_as_billable
   easy_roles :roles
-  has_one   :api_credential
+  has_many   :api_credentials
   has_one   :duo_account
   has_many  :billing_profiles
   has_many  :certificate_orders, -> { unscope(where: [:workflow_state, :is_expired]).includes([:orders]) } do
@@ -110,7 +110,6 @@ class SslAccount < ActiveRecord::Base
     self.preferred_reminder_notice_triggers = "1", ReminderTrigger.find(4)
     self.preferred_reminder_notice_triggers = "-30", ReminderTrigger.find(5)
     generate_funded_account
-    create_api_credential if api_credential.blank?
   end
 
   def self.human_attribute_name(attr, options={})

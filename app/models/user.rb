@@ -32,7 +32,12 @@ class User < ActiveRecord::Base
   preference  :cert_order_row_count, :string, :default=>"10"
   preference  :order_row_count, :string, :default=>"10"
   preference  :cdn_row_count, :string, :default=>"10"
-  
+  preference  :user_row_count, :string, :default => "10"
+
+  #will_paginate
+  cattr_accessor :per_page
+  @@per_page = 10
+
   attr_accessor :changing_password, :admin_update, :role_ids, :role_change_type
   attr_accessible :login, :email, :password, :password_confirmation,
     :openid_identifier, :status, :assignments_attributes, :first_name, :last_name,
@@ -319,6 +324,10 @@ class User < ActiveRecord::Base
 
   def manageable_users
     ssl_account.users
+  end
+
+  def manageable_acs
+    ssl_account.api_credentials
   end
 
   def has_role?(role)

@@ -1,9 +1,9 @@
 class InvoicesController < ApplicationController
   include OrdersHelper
   
-  before_filter :find_invoice, except: :index
   before_filter :find_ssl_account, except: :index
   before_filter :set_ssl_slug, except: :index
+  before_filter :find_invoice, except: :index
   
   filter_access_to :all
   filter_access_to :show, :update_invoice
@@ -24,7 +24,7 @@ class InvoicesController < ApplicationController
   end
   
   def show
-    @order = @invoice.payment unless @invoice.payment.nil?
+    @order = @invoice.payment unless @invoice.nil? || @invoice.payment.nil?
   end
   
   def manage_items
@@ -311,6 +311,27 @@ class InvoicesController < ApplicationController
         Invoice.find_by(reference_number: ref)
       else
         current_user.ssl_account.invoices.find_by(reference_number: ref)
+      end
+      switch_to_invoice_team
+    end
+  end
+  
+  def switch_to_invoice_team
+    unless current_user.is_system_admins?
+      ref = params[:order].nil? ? params[:id] : params[:order][:id]
+      approved_teams = current_user.get_all_approved_accounts
+      # Couldn't find invoice in users default team.
+      if @invoice.nil?
+        @invoice = approved_teams.map(&:invoices).flatten.find { |i| i.reference_number == ref }
+      end
+      # Switch user to invoices team
+      if @invoice && @invoice.billable != @ssl_account &&
+        approved_teams.map(&:id).include?(@invoice.billable.id)
+          
+          current_user.set_default_ssl_account(@invoice.billable.id)
+          flash[:notice]      = "You have switched to team %s."
+          flash[:notice_item] = "<strong>#{current_user.ssl_account.get_team_name}</strong>"
+          set_ssl_slug(current_user)
       end
     end
   end
