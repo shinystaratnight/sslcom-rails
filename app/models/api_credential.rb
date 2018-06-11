@@ -14,4 +14,20 @@ class ApiCredential < ActiveRecord::Base
   def reset_secret_key
     update_attribute :secret_key, SecureRandom.base64(10)
   end
+
+  def set_role_ids role_ids
+    self.roles = role_ids.to_json
+  end
+
+  def role_ids
+    JSON.parse self.roles.nil? ? "[]" : self.roles
+  end
+
+  def role_names
+    role_names = []
+    role_ids.each do |role_id|
+      role_names << Role.find(role_id).name
+    end
+    role_names
+  end
 end

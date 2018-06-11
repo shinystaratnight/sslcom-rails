@@ -318,20 +318,25 @@ class UserSessionsController < ApplicationController
   end
 
   def duo_verify
-    if Settings.duo_auto_enabled && Settings.duo_custom_enabled
-      if current_user.ssl_account(:default_team).duo_own_used
-        @duo_account = current_user.ssl_account(:default_team).duo_account
-        @authenticated_user = Duo.verify_response(@duo_account ? @duo_account.duo_ikey : "", @duo_account ? @duo_account.duo_skey : "", @duo_account ? @duo_account.duo_akey : "", params['sig_response'])
-      else
+    if current_user.is_system_admins?
+      s = Rails.application.secrets;
+      @authenticated_user = Duo.verify_response(s.duo_system_admins_integration_key, s.duo_system_admins_secret_key, s.duo_system_admins_application_key, params['sig_response'])
+    else
+      if Settings.duo_auto_enabled && Settings.duo_custom_enabled
+        if current_user.ssl_account(:default_team).duo_own_used
+          @duo_account = current_user.ssl_account(:default_team).duo_account
+          @authenticated_user = Duo.verify_response(@duo_account ? @duo_account.duo_ikey : "", @duo_account ? @duo_account.duo_skey : "", @duo_account ? @duo_account.duo_akey : "", params['sig_response'])
+        else
+          s = Rails.application.secrets;
+          @authenticated_user = Duo.verify_response(s.duo_integration_key, s.duo_secret_key, s.duo_application_key, params['sig_response'])
+        end
+      elsif Settings.duo_auto_enabled && !Settings.duo_custom_enabled
         s = Rails.application.secrets;
         @authenticated_user = Duo.verify_response(s.duo_integration_key, s.duo_secret_key, s.duo_application_key, params['sig_response'])
+      else
+        @duo_account = current_user.ssl_account(:default_team).duo_account
+        @authenticated_user = Duo.verify_response(@duo_account ? @duo_account.duo_ikey : "", @duo_account ? @duo_account.duo_skey : "", @duo_account ? @duo_account.duo_akey : "", params['sig_response'])
       end
-    elsif Settings.duo_auto_enabled && !Settings.duo_custom_enabled
-      s = Rails.application.secrets;
-      @authenticated_user = Duo.verify_response(s.duo_integration_key, s.duo_secret_key, s.duo_application_key, params['sig_response'])
-    else
-      @duo_account = current_user.ssl_account(:default_team).duo_account
-      @authenticated_user = Duo.verify_response(@duo_account ? @duo_account.duo_ikey : "", @duo_account ? @duo_account.duo_skey : "", @duo_account ? @duo_account.duo_akey : "", params['sig_response'])
     end
     
     if @authenticated_user

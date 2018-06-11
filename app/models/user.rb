@@ -326,6 +326,10 @@ class User < ActiveRecord::Base
     ssl_account.users
   end
 
+  def manageable_acs
+    ssl_account.api_credentials
+  end
+
   def has_role?(role)
     roles.map{|r|r.name.downcase}.include?(role.to_s)
   end
