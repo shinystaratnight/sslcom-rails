@@ -142,7 +142,8 @@ module OrdersHelper
   end
   
   def confirm_affiliate_sale
-    if !@order.domains_adjustment? && !@order.ext_affiliate_credited? && @order.created_at < 1.minute.ago
+    if !@order.domains_adjustment? && !@order.invoice_payment? && !@order.on_payable_invoice?
+        !@order.ext_affiliate_credited? && (@order.persisted? ? @order.created_at > 1.minute.ago : true )
       @order.toggle! :ext_affiliate_credited
       if @order.ext_affiliate_name=="shareasale"
         "<img src=\"https://shareasale.com/sale.cfm?amount=#{@order.final_amount.to_s}&tracking=#{@order.reference_number}&transtype=sale&merchantID=#{@order.ext_affiliate_id}\" width=\"1\" height=\"1\">".html_safe
@@ -154,7 +155,7 @@ module OrdersHelper
 
   def row_description(order)
     if order.is_a?(CertificateOrder)
-      order.respond_to?(:description_with_tier) ? order.description_with_tier : certificate_type(order)
+      order.respond_to?(:description_with_tier) ? order.description_with_tier(@order) : certificate_type(order)
     elsif order.is_a?(ProductOrder)
       order.product.title
     else
@@ -201,7 +202,7 @@ module OrdersHelper
   end
   
   def order_invoice_notes
-    "Payment for monthly invoice total of #{@invoice.get_amount_format} due on #{@invoice.end_date.strftime('%F')}."
+    "Payment for #{@invoice.get_type_format.downcase} invoice total of #{@invoice.get_amount_format} due on #{@invoice.end_date.strftime('%F')}."
   end
   
   def ucc_csr_submit_notes
@@ -217,7 +218,7 @@ module OrdersHelper
   end
   
   def ucc_or_invoice_params
-    unless @monthly_invoice
+    unless @payable_invoice
       @ssl_account = if current_user.is_system_admins?
         CertificateOrder.find_by(ref: params[:order][:co_ref]).ssl_account
       else
@@ -246,16 +247,19 @@ module OrdersHelper
     end
   end
   
-  def withdraw_funded_account(amount)
+  def withdraw_funded_account(credit_amount, full_amount=0)
     @order.save unless @order.persisted?
-    payment_type = (amount >= (@order_amount * 100).to_i) ? 'Full' : 'Partial'
-    full_amount  = Money.new(@order.cents + amount).format
-    notes = "#{payment_type} payment for order ##{@order.reference_number} (#{full_amount}) "
-    notes << " for UCC certificate reprocess." if @reprocess_ucc
-    notes << " for monthly invoice ##{@invoice.reference_number}." if @monthly_invoice
+    order_amount = @order_amount || full_amount
+    fully_covered = credit_amount >= (order_amount * 100).to_i
+    full_amount = fully_covered ? @order.amount.format : Money.new(@order.cents + credit_amount).format
+    notes = "#{fully_covered ? 'Full' : 'Partial'} payment for order ##{@order.reference_number} (#{full_amount}) "
+    notes << "for UCC certificate reprocess." if @reprocess_ucc
+    notes << "for renewal UCC domains adjustment." if @renew_ucc
+    notes << "for initial CSR submit UCC domains adjustment." if @ucc_csr_submit
+    notes << "for #{@invoice.get_type_format.downcase} invoice ##{@invoice.reference_number}." if @payable_invoice
     
     fund = Deposit.create(
-      amount:         amount,
+      amount:         credit_amount,
       full_name:      "Team #{@ssl_account.get_team_name} funded account",
       credit_card:    'N/A',
       last_digits:    'N/A',
@@ -267,13 +271,13 @@ module OrdersHelper
     @funded.notes = notes
     @funded.save
     @funded.mark_paid!
-    @ssl_account.funded_account.decrement! :cents, amount
+    @ssl_account.funded_account.decrement! :cents, credit_amount
     @ssl_account.funded_account.save
   end
   
   def get_order_notes
     return reprocess_ucc_notes if @reprocess_ucc
-    return order_invoice_notes if @monthly_invoice
+    return order_invoice_notes if @payable_invoice
     return renew_ucc_notes if @renew_ucc
     return ucc_csr_submit_notes if @ucc_csr_submit
     ''
@@ -281,8 +285,56 @@ module OrdersHelper
   
   def get_order_descriptions
     return Order::DOMAINS_ADJUSTMENT if @reprocess_ucc || @renew_ucc || @ucc_csr_submit
-    return Order::INVOICE_PAYMENT if @monthly_invoice
+    return (@ssl_account.get_invoice_pmt_description) if @payable_invoice
     Order::SSL_CERTIFICATE
+  end
+  
+  def ucc_update_domain_counts
+    co = @certificate_order
+    notes = []
+    order = params[:order]
+    reseller_tier = @tier || find_tier
+    
+    # domains entered
+    wildcard = order ? order[:wildcard_count].to_i : params[:wildcard_count].to_i
+    nonwildcard = order ? order[:nonwildcard_count].to_i : params[:nonwildcard_count].to_i
+    
+    # max domain counts stored
+    co_nonwildcard = co.nonwildcard_count.blank? ? 0 : co.nonwildcard_count
+    co_wildcard = co.wildcard_count.blank? ? 0 : co.wildcard_count
+    
+    # max for previous signed certificates to determine credited domains
+    prev_wildcard    = co.get_reprocess_max_wildcard(co.certificate_content).count
+    prev_nonwildcard = co.get_reprocess_max_nonwildcard(co.certificate_content).count
+
+    if (co_nonwildcard > prev_nonwildcard) &&
+      ((nonwildcard > co_nonwildcard) || (@reprocess_ucc && 
+      (nonwildcard >= co_nonwildcard && (nonwildcard > 0))))
+      notes << "#{co_nonwildcard - prev_nonwildcard} non wildcard domains"
+    end
+    
+    if (co_wildcard > prev_wildcard) &&
+      ((wildcard > co_wildcard) || (@reprocess_ucc && 
+      (wildcard >= co_wildcard && (wildcard > 0))))
+      notes << "#{co_wildcard - prev_wildcard} wildcard domains"
+    end
+
+    # record new max counts
+    new_nonwildcard = nonwildcard > co_nonwildcard ? nonwildcard : co_nonwildcard
+    new_wildcard = wildcard > co_wildcard ? wildcard : co_wildcard
+    co.update( nonwildcard_count: new_nonwildcard, wildcard_count: new_wildcard )
+    @order.max_non_wildcard = new_nonwildcard
+    @order.max_wildcard = new_wildcard
+    
+    if reseller_tier
+      @order.reseller_tier_id = ResellerTier.find_by(label: find_tier.delete('tr')).try(:id)
+    end
+
+    if notes.any?
+      @order.invoice_description = '' if @order.invoice_description.nil?
+      @order.invoice_description << " Received credit for #{notes.join(' and ')}."
+    end
+    @order.save
   end
   
   def purchase_successful?
@@ -290,7 +342,7 @@ module OrdersHelper
     
     @order.description = get_order_descriptions
     
-    other_order = @reprocess_ucc || @renew_ucc || @monthly_invoice
+    other_order = @reprocess_ucc || @renew_ucc || @payable_invoice
     
     options = @profile.build_info(@order.description.gsub('Payment', 'Pmt')).merge(
       stripe_card_token: params[:billing_profile][:stripe_card_token],

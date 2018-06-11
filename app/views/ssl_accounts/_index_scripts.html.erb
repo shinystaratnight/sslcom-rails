@@ -23,13 +23,6 @@ jQuery(function($) {
     var registerRequests = <%= @registration_requests.to_json.html_safe %>;
     var signRequests = <%= @sign_requests.as_json.to_json.html_safe %>;
 
-    $('.register_u2f').click(function() {
-      $('.u2f_block.register').hide();
-      $('.u2f_device_name').val('');
-      $('.add_u2f_device').prop('disabled', true);
-      $('.u2f_block.add_nick_name').show();
-    });
-
     $('.u2f_device_name').keyup(function() {
       if ($(this).val().trim() == '') {
         $('.add_u2f_device').prop('disabled', true);
@@ -211,6 +204,33 @@ jQuery(function($) {
           $('#confirmation_email').val());
     });
 
+    var ajax2faTypeUrl = '<%= set_2fa_type_ssl_account_path %>'
+    $('input:radio[name=sec_type]').click(function(){
+      var sec_type = $(this).val();
+      var $this = $(this);
+      if(sec_type == 'duo'){
+        $('.duo_info :input').prop('disabled', false);
+        $('#duo_login_enable').prop('disabled', false);
+      } else {
+        $('.duo_info :input').prop('disabled', true);
+        $('#duo_login_enable').prop('disabled', true);
+      }
+      $.ajax({
+        url: ajax2faTypeUrl,
+        data: {
+          sec_type: sec_type
+        },
+        type: 'PUT',
+        success: function(result) {
+          if(result['ssl_account'].sec_type==""){
+            $('.duo_info :input').prop('disabled', true);
+            $this.prop('checked', false);
+            $('#duo_login_enable').prop('disabled', true);
+          }
+        }
+      });
+    });
+
     var ajaxDuoEnableUrl = '<%= duo_enable_ssl_account_path %>';
     $(document).on('change', '#duo_login_enable', function() {
       $('#duo_own_used').prop('disabled', !this.checked);
@@ -222,6 +242,7 @@ jQuery(function($) {
         },
         type: 'PUT',
         success: function(result) {
+          
         }
       });
     });
@@ -230,6 +251,7 @@ jQuery(function($) {
     $(document).on('change', '#duo_own_used', function() {
       $('.duo_info').css('display', this.checked ? 'block' : 'none');
       $('.duo_info :input').prop('disabled', !this.checked);
+      $('#duo_akey').prop('disabled', true);
       $.ajax({
         url: ajaxDuoOwnUsedUrl,
         data: {
@@ -266,23 +288,35 @@ jQuery(function($) {
     });
 
     var ajaxRegisterDuoUrl = '<%= register_duo_ssl_account_path %>';
-    $(document).on('click', '.register_duo', function() {
-      var ikey = $('#duo_ikey').val();
-      var skey = $('#duo_skey').attr('data-skey');
-      var akey = $('#duo_akey').val();
-      var hostname = $('#duo_hostname').val();
-      $.ajax({
-        url: ajaxRegisterDuoUrl,
-        data: {
-          duo_ikey: ikey,
-          duo_skey: skey,
-          duo_akey: akey,
-          duo_hostname: hostname
-        },
-        type: 'POST',
-        success: function(result) {
-        }
-      });
+    $(document).on('click', '.register_2fa', function() {
+      var u2f_checked = $('#sec_type_u2f').prop('checked');
+      var duo_checked = $('#sec_type_duo').prop('checked');
+      if(u2f_checked){
+        $('.u2f_device_name').val('');
+        $('.add_u2f_device').prop('disabled', true);
+        $('.u2f_block.add_nick_name').show();
+      }
+      else if(duo_checked) {
+        var ikey = $('#duo_ikey').val();
+        var skey = $('#duo_skey').attr('data-skey');
+        var akey = $('#duo_akey').val();
+        var hostname = $('#duo_hostname').val();
+        $.ajax({
+          url: ajaxRegisterDuoUrl,
+          data: {
+            duo_ikey: ikey,
+            duo_skey: skey,
+            duo_akey: akey,
+            duo_hostname: hostname
+          },
+          type: 'POST',
+          success: function(result) {
+          }
+        });
+      }
+      else {
+        return;
+      }
     });
 
     function generate_akey() {

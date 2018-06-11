@@ -23,9 +23,6 @@
     **If you are getting "failed" under the pre-test column, please refer to the
     =link_to "'Failed Pre-test?!' article.", "https://www.ssl.com/guide/failed-pre-test/", target: "_blank"
     **
-  -if co.certificate.is_single?
-    %h3
-      Please generate a new CSR with the correct common name value and submit the new CSR here {Edit button}
   %table{style: "width: 100%; border: 1px solid black; padding: 1em"}
     %tr
       %th(colspan="2") validation hashes
@@ -71,8 +68,14 @@
         %th domain
         %th options
         -if Settings.enable_caa
-          %th caa
-        %th pre-test
+          %th
+            caa
+            %a{:href => "https://www.ssl.com/how-to/configure-caa-records-to-authorize-ssl-com/", :target => "_blank"}
+              %span.badge ?
+        %th
+          pre-test
+          %a{:href => "https://www.ssl.com/guide/failed-pre-test/", :target => "_blank"}
+            %span.badge ?
         %th previous attempt
         %th attempted on
         %th status

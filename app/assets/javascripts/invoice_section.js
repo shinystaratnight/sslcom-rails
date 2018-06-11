@@ -104,7 +104,7 @@ $(function($) {
     }
   });
   
-  // Monthly Invoice Manage Items
+  // Monthly/daily Invoice Manage Items
   var init_transfer_url = $('#btn-transfer-mi-items').attr('href');
   
   function updateTransferItemsUrl() {

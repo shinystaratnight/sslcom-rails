@@ -2,6 +2,8 @@
 -content_for :title, title
 =render :partial => 'index_scripts'
 = javascript_include_tag 'u2f-api'
+-failed_count = @failed_count || 0
+-limited_count = Settings.captcha_threshold
 .reseller_registration_profile
   =form_for @user_session, :url => user_session_path do |f|
     =f.error_messages
@@ -15,6 +17,10 @@
       =render :partial => "form", :object => f
       =hidden_field_tag 'u2f_response', '', :class => 'u2f_response'
       =hidden_field_tag 'logout', 'false', :class => 'u2f_logout'
+      =hidden_field_tag 'failed_count', failed_count, :class => 'failed_count'
+      -if failed_count >= limited_count.to_i
+        #recaptcha_container
+          =recaptcha_tags(:callback => 'enableSubmitBtn', :expired_callback => 'disableSubmitBtn')
       #forgot_container
         %p#forgot_username_or_password
           Forgot username or password?
@@ -26,4 +32,7 @@
           Experiencing account activation problems?
           =link_to 'Resend activation notice.', activation_notice_users_url
     #button_container
-      #next_submit=image_submit_tag "next_bl.gif", alt: "submit", class: "btn_login"
+      -if failed_count >= limited_count
+        #next_submit=image_submit_tag "next_bl.gif", alt: "submit", class: "btn_login hidden", id: "btn_login"
+      -else
+        #next_submit=image_submit_tag "next_bl.gif", alt: "submit", class: "btn_login", id: "btn_login"

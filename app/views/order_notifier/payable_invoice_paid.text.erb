@@ -1,0 +1,21 @@
+Dear <%= @user.email %>,
+
+<%= @invoice_type.capitalize %> invoice has been paid by user <%= @paid_by.email %>.
+
+Invoice:
+
+reference #: <%= @invoice.reference_number %>
+due: <%= @invoice.end_date.strftime('%F') %>
+amount: <%= @invoice.get_paid_invoice_amount.format %>
+paid: <%= @invoice.payment.created_at.strftime('%F') %>
+team: <%= @team.get_team_name %>
+
+Line Items:
+
+<% @invoice.get_approved_items.each_with_index do |o, i| %>
+  <%= "#{i + 1}. ##{o.reference_number}: #{o.amount.format} (#{o.created_at.strftime('%F')})" %>
+<% end %>
+
+Go to invoice: <%= invoice_url(@team.to_slug, @invoice.reference_number) %>
+
+<%= render partial: 'user_notifier/support_signature' %>

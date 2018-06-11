@@ -2,18 +2,19 @@ class PasswordResetsController < ApplicationController
   before_filter :require_no_user
   before_filter :find_dup_login, :find_dup_email, only: [:create]
   before_filter :load_user_using_perishable_token, :only => [:edit, :update]
-  
+
   def index
     redirect_to new_password_reset_path
   end
-  
+
   def edit
     render
   end
 
   def update
     @user.password = params[:user][:password]
-    @user.password_confirmation = params[:user][:password_confirmation]    
+    @user.password_confirmation = params[:user][:password_confirmation]
+
     if @user.save
       flash[:notice] = "Password successfully updated"
       redirect_to account_url
@@ -27,32 +28,38 @@ class PasswordResetsController < ApplicationController
   end
 
   def create
-    unless params[:login].blank?
-      @user = User.find_by_login(params[:login])
-      if @user
-        @user.deliver_password_reset_instructions!
-        flash[:notice] =
-          "Instructions to reset your password have been emailed to you. Please check your email."
-        redirect_to login_url
+    if verify_recaptcha(response: params['g-recaptcha-response'])
+      unless params[:login].blank?
+        @user = User.find_by_login(params[:login])
+        if @user
+          @user.deliver_password_reset_instructions!
+          flash[:notice] =
+              "Instructions to reset your password have been emailed to you. Please check your email."
+          redirect_to login_url
+        else
+          flash[:notice] = "No user was found with that login"
+          render :action => :new
+        end
       else
-        flash[:notice] = "No user was found with that login"
-        render :action => :new
+        @user = User.find_by_email(params[:email])
+        if @user
+          @user.deliver_username_reminder!
+          flash[:notice] =
+              "Your username has been emailed to you. Please check your email."
+          redirect_to login_url
+        else
+          flash[:notice] = "No user was found with that email"
+          render :action => :new
+        end
       end
     else
-      @user = User.find_by_email(params[:email])
-      if @user
-        @user.deliver_username_reminder!
-        flash[:notice] =
-          "Your username has been emailed to you. Please check your email."
-        redirect_to login_url
-      else
-        flash[:notice] = "No user was found with that email"
-        render :action => :new
-      end
+      flash[:notice] = "It failed to verify as human."
+      render :action => :new
     end
   end
 
   private
+
   def load_user_using_perishable_token
     @user = User.find_by_perishable_token(params[:id])
     unless @user
@@ -64,5 +71,5 @@ class PasswordResetsController < ApplicationController
       EOS
       redirect_to login_url
     end
-  end  
-end  
+  end
+end

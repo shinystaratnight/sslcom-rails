@@ -5,7 +5,7 @@ class OrdersController < ApplicationController
   #resource_controller
   helper_method :cart_items_from_model_and_id
   before_filter :finish_reseller_signup, :only => [:new], if: "current_user"
-  before_filter :find_order, :only => [:show, :invoice, :update_invoice, :refund, :refund_merchant, :change_state, :revoke]
+  before_filter :find_order, :only => [:show, :invoice, :update_invoice, :refund, :refund_merchant, :change_state, :revoke, :edit, :update, :transfer_order]
   before_filter :set_prev_flag, only: [:create, :create_free_ssl, :create_multi_free_ssl]
   before_filter :prep_certificate_orders_instances, only: [:create, :create_free_ssl]
   before_filter :go_prev, :parse_certificate_orders, only: [:create_multi_free_ssl]
@@ -17,7 +17,41 @@ class OrdersController < ApplicationController
   filter_access_to :show, :update_invoice, attribute_check: true
   before_filter :find_user, :only => [:user_orders]
   before_filter :set_row_page, only: [:index, :search, :filter_by_state, :visitor_trackings]
+  
+  def edit
+    
+  end
+  
+  def update
+    @order ||= Order.find(params[:id])
+    if @order.update_attributes(params[:order])
+      flash[:notice] = "Order ##{@order.reference_number} has been successfully updated."
+      redirect_to edit_order_path(@ssl_slug, @order)
+    else
+      render :edit
+    end
+  end
 
+  def transfer_order
+    from_team = @ssl_account
+    to_team = if current_user.is_system_admins?
+      SslAccount.find_by(acct_number: params[:target_team])
+    else
+      current_user.ssl_accounts.find_by(acct_number: params[:target_team])
+    end
+    
+    if from_team && to_team
+      SslAccount.migrate_orders(from_team, to_team, [@order.reference_number], current_user)
+      if to_team.orders.include?(@order)
+        flash[:notice] = "Successfully transfered order #{@order.reference_number} to team #{to_team.get_team_name}."
+      else
+        flash[:error] = "Something went wrong, please try again!"
+      end
+    else
+        flash[:error] = "You do not have access to team #{params[:target_team]}!"
+    end
+    redirect_to orders_path
+  end
 
   def show_cart
     @cart = ShoppingCart.find_by_guid(params[:id]) if params[:id]
@@ -144,18 +178,20 @@ class OrdersController < ApplicationController
   end
   
   def update_invoice
-    monthly_invoice = params[:monthly_invoice]
+    cur_invoice = params[:monthly_invoice] || params[:daily_invoice]
     
-    found = if monthly_invoice
-      Invoice.find_by(reference_number: monthly_invoice[:invoice_ref])
+    found = if cur_invoice
+      Invoice.find_by(reference_number: cur_invoice[:invoice_ref])
     else
       Invoice.find_by(order_id: @order.id) if @order
     end
     update = found ? found : Invoice.new(params[:invoice])
     
     no_errors = if found
-      new_params = monthly_invoice ? monthly_invoice : params[:invoice]
-      update.update_attributes(new_params.keep_if {|k, v| !['order_id', 'invoice_ref'].include?(k)})
+      update.update_attributes(
+        (cur_invoice ? cur_invoice : params[:invoice])
+          .keep_if {|k, v| !['order_id', 'invoice_ref'].include?(k)}
+      )
     else
       update.save
     end
@@ -224,7 +260,7 @@ class OrdersController < ApplicationController
       unless params["partial"] # full refund
         @target = @order
         if params["return_funds"]
-          @order.billable.funded_account.add_cents(@order.make_available_total)
+          add_cents_to_funded_account(@order.make_available_total)
           @performed << " and made #{Money.new(@order.make_available_total).format} available to customer."
         end
         @order.full_refund!
@@ -259,9 +295,9 @@ class OrdersController < ApplicationController
         
         if params[:mo_ref]
           mo = if current_user.is_system_admins?
-            MonthlyInvoice.find_by(reference_number: params[:mo_ref])
+            Invoice.find_by(reference_number: params[:mo_ref])
           else
-            current_user.ssl_account.monthly_invoices.find_by(reference_number: params[:mo_ref])
+            current_user.ssl_account.invoices.find_by(reference_number: params[:mo_ref])
           end
         end
 
@@ -270,10 +306,10 @@ class OrdersController < ApplicationController
         last_refund = @order.refunds.last
 
         if refund && last_refund && last_refund.successful?
+          flash[:notice] = "Successfully refunded merchant for amount #{amount.format}."
           refund_merchant_for_co(co, amount) if co
           refund_merchant_for_mo(mo, amount) if mo
-          @order.billable.funded_account.decrement!(:cents, last_refund.amount) if @order.is_deposit?
-          flash[:notice] = "Successfully refunded merchant for amount #{amount.format}."
+          @order.get_team_to_credit.funded_account.decrement!(:cents, last_refund.amount) if @order.is_deposit?
         else
           flash[:error] = "Refund for #{amount.format} has failed! #{last_refund.message}"
         end
@@ -292,8 +328,8 @@ class OrdersController < ApplicationController
       action: "Refunded partial amount for certificate order ##{co.ref}, merchant refund issued for #{amount.format}."
     )
     if funded > 0
-      @order.billable.funded_account.add_cents(funded)
-      flash[:notice] << " And made $#{Money.new(funded).format} available to customer."
+      add_cents_to_funded_account(funded)
+      flash[:notice] << " And made #{Money.new(funded).format} available to customer."
     end
   end
   
@@ -310,7 +346,7 @@ class OrdersController < ApplicationController
       owner:  current_user,
       target: mo,
       notes:  params["refund_reason"],
-      action: "Monthly Invoice ##{mo.reference_number}, merchant refund issued for #{amount.format}."
+      action: "#{@order.billable.get_invoice_label.capitalize} Invoice ##{mo.reference_number}, merchant refund issued for #{amount.format}."
     )
   end
   
@@ -359,47 +395,48 @@ class OrdersController < ApplicationController
       # Invoiced orders
       invoice_items = unpaginated.where(state: 'invoiced')
       
-      @monthly_invoices = MonthlyInvoice
+      @payable_invoices = Invoice
+        .where.not(billable_id: nil, type: nil)
         .where(id: invoice_items.map(&:invoice_id).uniq).joins(:orders)
       
-      @pending_monthly_invoices = @monthly_invoices
+      @pending_payable_invoices = @payable_invoices
         .where(status: 'pending')
         .where(orders: {approval: 'approved'})
         .map(&:orders).flatten.uniq
         .select{|o| invoice_items.include?(o)}.sum(&:cents)
       
-      @paid_monthly_invoices = @monthly_invoices
+      @paid_payable_invoices = @payable_invoices
         .where(status: ['paid', 'partially_refunded'])
         .where(orders: {approval: 'approved'})
         .map(&:orders).flatten.uniq
         .select{|o| invoice_items.include?(o)}.sum(&:cents)
         
-      @refunded_monthly_invoices = @monthly_invoices
+      @refunded_payable_invoices = @payable_invoices
         .where(status: 'refunded')
         .where(orders: {approval: 'approved'})
         .map(&:orders).flatten.uniq
         .select{|o| invoice_items.include?(o)}.sum(&:cents)
         
-      @partial_refunds_monthly_invoices = @monthly_invoices
+      @partial_refunds_payable_invoices = @payable_invoices
         .where(status: 'partially_refunded')
         .where(orders: {approval: 'approved'})
         .map(&:payment).map(&:refunds).flatten.uniq.sum(&:amount)
       
-      @paid_monthly_invoices -= @partial_refunds_monthly_invoices
+      @paid_payable_invoices -= @partial_refunds_payable_invoices
       
-      @monthly_invoices_count = @monthly_invoices.uniq.count
+      @payable_invoices_count = @payable_invoices.uniq.count
       @invoiced_orders_count = invoice_items.count
       
       # Non invoiced orders
       @negative = unpaginated
         .where(state: %w{charged_back canceled rejected payment_not_required payment_declined})
-        .where.not(description: Order::INVOICE_PAYMENT)  # exclude invoice payments (as order)
+        .where.not(description: [Order::MI_PAYMENT, Order::DI_PAYMENT])  # exclude invoice payments (as order)
         .where.not(state: 'invoiced')                    # exclude invoice items (as order)
         .sum(:cents)
       
       refunded = Refund.where(
         order_id: unpaginated
-          .where.not(description: Order::INVOICE_PAYMENT)
+          .where.not(description: [Order::MI_PAYMENT, Order::DI_PAYMENT])
           .where.not(state: 'invoiced')
           .where(state: ['partially_refunded', 'fully_refunded']).map(&:id)
       ).where(status: 'success')
@@ -407,7 +444,7 @@ class OrdersController < ApplicationController
       deposits = unpaginated.joins{ line_items.sellable(Deposit) }
 
       orders = unpaginated.where.not(id: deposits.map(&:id))
-        .where.not(description: Order::INVOICE_PAYMENT)
+        .where.not(description: [Order::MI_PAYMENT, Order::DI_PAYMENT])
         .where.not(state: 'invoiced')
       
       # Funded Account Withdrawal
@@ -542,13 +579,15 @@ class OrdersController < ApplicationController
 
     order_params = {
       billing_profile_id: params[:funding_source],
-      amount:             @target_amount,
-      cents:             (@target_amount * 100).to_i,
-      description:        Order::DOMAINS_ADJUSTMENT,
-      state:              'pending',
-      approval:           'approved',
-      notes:              get_order_notes,
-      invoice_description: params[:order][:order_description]
+      amount:              @target_amount,
+      cents:               (@target_amount * 100).to_i,
+      description:         Order::DOMAINS_ADJUSTMENT,
+      state:               'pending',
+      approval:            'approved',
+      notes:               get_order_notes,
+      invoice_description: params[:order][:order_description],
+      wildcard_amount:      params[:order][:wildcard_amount],
+      non_wildcard_amount:  params[:order][:nonwildcard_amount],
     }
     
     @order = @reprocess_ucc ? ReprocessCertificateOrder.new(order_params) : Order.new(order_params)
@@ -635,6 +674,10 @@ class OrdersController < ApplicationController
 
   private
   
+  def add_cents_to_funded_account(cents)
+    @order.get_team_to_credit.funded_account.add_cents(cents)
+  end
+  
   # ============================================================================
   # UCC Certificate reprocess/rekey helper methods for 
   #   Invoiced Order:       will be added to monthly invoice to be charged later
@@ -644,45 +687,6 @@ class OrdersController < ApplicationController
   def reprocess_ucc_redirect_back
     redirect_to new_order_path(@ssl_slug,
       co_ref: @certificate_order.ref, cc_ref: @certificate_content.ref, reprocess_ucc: true
-    )
-  end
-  
-  def ucc_update_domain_counts
-    co = @certificate_order
-    notes = []
-    order = params[:order]
-    
-    # domains entered
-    wildcard = order ? order[:wildcard_count].to_i : params[:wildcard_count].to_i
-    nonwildcard = order ? order[:nonwildcard_count].to_i : params[:nonwildcard_count].to_i
-    
-    # max domain counts stored
-    co_nonwildcard = co.nonwildcard_count.blank? ? 0 : co.nonwildcard_count
-    co_wildcard = co.wildcard_count.blank? ? 0 : co.wildcard_count
-    
-    # max for previous signed certificates to determine credited domains
-    prev_wildcard    = co.get_reprocess_max_wildcard(co.certificate_content).count
-    prev_nonwildcard = co.get_reprocess_max_nonwildcard(co.certificate_content).count
-    
-    if (co_nonwildcard > prev_nonwildcard) &&
-      (nonwildcard > co_nonwildcard) || (@reprocess_ucc && 
-      (nonwildcard >= co_nonwildcard && (nonwildcard > 0)))
-      notes << "#{co_nonwildcard - prev_nonwildcard} non wildcard domains"
-    end
-    if (co_wildcard > prev_wildcard) &&
-      (wildcard > co_wildcard) || (@reprocess_ucc && 
-      (wildcard >= co_wildcard && (wildcard > 0)))
-      notes << "#{co_wildcard - prev_wildcard} wildcard domains"
-    end
-
-    if notes.any?  
-      @order.invoice_description = '' if @order.invoice_description.nil?
-      @order.invoice_description << " Received credit for #{notes.join('and')}."
-      @order.save
-    end
-    co.update(
-      nonwildcard_count: (nonwildcard > co_nonwildcard ? nonwildcard : co_nonwildcard),
-      wildcard_count:    (wildcard > co_wildcard ? wildcard : co_wildcard)
     )
   end
     
@@ -739,13 +743,8 @@ class OrdersController < ApplicationController
     ucc_update_domain_counts
   end
   
-  def add_to_monthly_invoice(params)
-    ssl_id  = @ssl_account.id
-    invoice = if MonthlyInvoice.invoice_exists?(ssl_id)
-      MonthlyInvoice.get_current_invoice(ssl_id)
-    else
-      MonthlyInvoice.create(billable_id: ssl_id, billable_type: 'SslAccount')
-    end
+  def add_to_payable_invoice(params)
+    invoice = Invoice.get_or_create_for_team(@ssl_account)
     @order = current_order_reprocess_ucc if @reprocess_ucc
     
     if @renew_ucc || @ucc_csr_submit
@@ -759,6 +758,9 @@ class OrdersController < ApplicationController
     @order.invoice_id  = invoice.id
     @order.approval    = 'approved'
     @order.invoice_description = params[:order_description]
+    @order.wildcard_amount     = params[:wildcard_amount]
+    @order.non_wildcard_amount = params[:nonwildcard_amount]
+    
     @certificate_order.add_reproces_order @order
     ucc_update_domain_counts
     record_order_visit(@order)
@@ -777,7 +779,7 @@ class OrdersController < ApplicationController
       @amount = if params[:renew_ucc] || params[:ucc_csr_submit]
         params[:order_amount].to_f
       else
-        @certificate_order.ucc_prorated_amount(@certificate_content)
+        @certificate_order.ucc_prorated_amount(@certificate_content, find_tier)
       end
       params[:reprocess_ucc] ? ucc_domains_adjust_reprocess : ucc_domains_adjust_other
     else
@@ -789,10 +791,11 @@ class OrdersController < ApplicationController
     @renew_ucc = params[:renew_ucc]
     @ucc_csr_submit = params[:ucc_csr_submit]
     
-    if @ssl_account.billing_monthly? || @amount == 0
-      if @ssl_account.billing_monthly? && @amount > 0 # Invoice Order, do not charge
-        add_to_monthly_invoice(params)
-        flash[:notice] = "The domains adjustment amount of #{@order.amount.format} will appear on the monthly invoice."
+    if @ssl_account.invoice_required? || @amount == 0
+      if @ssl_account.invoice_required? && @amount > 0 # Invoice Order, do not charge
+        add_to_payable_invoice(params)
+        flash[:notice] = "The domains adjustment amount of #{@order.amount.format} 
+          will appear on the #{@ssl_account.get_invoice_label} invoice."
       end
       redirect_to edit_certificate_order_path(@ssl_slug, @certificate_order)
     else
@@ -803,7 +806,7 @@ class OrdersController < ApplicationController
   def ucc_domains_adjust_reprocess
     @reprocess_ucc = true
     
-    if @ssl_account.billing_monthly? || @amount == 0
+    if @ssl_account.invoice_required? || @amount == 0
       if @amount == 0 # Reprocess is free, no additional domains added
         @order = ReprocessCertificateOrder.new(
           amount:      0,
@@ -817,9 +820,10 @@ class OrdersController < ApplicationController
         flash[:notice] = "This UCC certificate reprocess is free due to no additional domains."
       end
       
-      if @ssl_account.billing_monthly? && @amount > 0 # Invoice Order, do not charge
-        add_to_monthly_invoice(params)
-        flash[:notice] = "This UCC reprocess in the amount of #{Money.new(@amount).format} will appear on the monthly invoice."
+      if @ssl_account.invoice_required? && @amount > 0 # Invoice Order, do not charge
+        add_to_payable_invoice(params)
+        flash[:notice] = "This UCC reprocess in the amount of #{Money.new(@amount).format} 
+          will appear on the #{@ssl_account.get_invoice_label} invoice."
       end
       redirect_to edit_certificate_order_path(@ssl_slug, @certificate_order)
     else
@@ -839,18 +843,17 @@ class OrdersController < ApplicationController
     @p = {page: (params[:page] || 1), per_page: @per_page}
   end
 
-
   # admin user refunds line item
   def refund_partial_amount(params)
     refund_amount = @order.make_available_line(@target)
-    item_remains  = @order.line_items.select{|li|li.sellable.try("refunded?")}.count == @order.line_items.count
+    all_refunded  = @order.line_items.select{|li|li.sellable.try("refunded?")}.count == @order.line_items.count
     refund_amount_f = Money.new(refund_amount).format
     
-    @order.billable.funded_account.add_cents(refund_amount)
+    add_cents_to_funded_account(refund_amount)
     @performed << " and made #{refund_amount_f} available to customer"
 
     # at least 1 lineitem needs to remain unrefunded or refunded amount is less than order total
-    if item_remains
+    if all_refunded || (@order.cents <= refund_amount)
       @order.full_refund!
     else
       @order.partial_refund!(params["partial"], refund_amount)

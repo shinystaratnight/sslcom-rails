@@ -91,7 +91,7 @@ class Refund < ActiveRecord::Base
   
   def get_reference(params)
     merchant = params[:merchant]
-    return params[:order].notes.delete('#paidviapaypal') if merchant == 'paypal'
+    return params[:order].notes.split.last.strip.delete('#paidviapaypal') if merchant == 'paypal'
     return params[:order_transaction].reference if %w{stripe authnet}.include?(merchant)
   end
   
@@ -108,12 +108,8 @@ class Refund < ActiveRecord::Base
   end
   
   def partial_refund?(params)
-    amt = if params[:order_transaction]
-      params[:order_transaction].amount * 100
-    else
-      params[:order].cents
-    end
-    params[:amount] < amt
+    amt = params[:order_transaction] ? params[:order_transaction] : params[:order]
+    params[:amount] < amt.cents
   end
   # 
   # Stripe Helpers

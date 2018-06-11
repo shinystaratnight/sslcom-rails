@@ -7,7 +7,7 @@ class CaRetrieveCertificate < CaApiRequest
 
   #format is as follows - response_code, cert, status
   def certificate
-    response =~ /\A\d\n(.+)\n.+?/m if response_code==2
+    response =~ /\A\d\n(.+)\n\n.+?/m if response_code==2
     $1
   end
 

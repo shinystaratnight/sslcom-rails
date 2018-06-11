@@ -37,6 +37,10 @@ SslCom::Application.routes.draw do
           as: :api_user_create_v1_4, via: [:options, :post]
         match '/user/:login' => 'api_user_requests#show_v1_4',
           as: :api_user_show_v1_4, via: [:options, :get], login: /.+\/?/
+        match '/users/get_teams' => 'api_user_requests#get_teams_v1_4',
+          as: :api_user_get_teams_v1_4, via: [:options, :get], get_teams: /.+\/?/
+        match '/users/set_default_team' => 'api_user_requests#set_default_team_v1_4',
+          as: :api_user_set_default_team_v1_4, via: [:options, :put], set_default_team: /.+\/?/
 
         # Code Signing.
         match '/generate_certificate' => 'api_certificate_requests#generate_certificate_v1_4',
@@ -280,6 +284,7 @@ SslCom::Application.routes.draw do
         get :change_state
         get :refund_merchant
         match :update_invoice, via: [:put, :post]
+        match :transfer_order, via: [:put, :post]
       end
     end
     resources :billing_profiles
@@ -296,6 +301,7 @@ SslCom::Application.routes.draw do
         post :register_duo
         put  :duo_enable
         put  :duo_own_used
+        put  :set_2fa_type
       end
       member do
         get :adjust_funds
@@ -304,6 +310,7 @@ SslCom::Application.routes.draw do
 
     resources :users, only: :index do
       match :enable_disable, via: [:put, :patch], on: :member
+      match :enable_disable_duo, via: [:put, :patch], on: :member
     end
 
     resource :account, controller: :users do
@@ -371,6 +378,7 @@ SslCom::Application.routes.draw do
       get :search
       get :cancel_reseller_signup
       match :enable_disable, via: [:put, :patch]
+      match :enable_disable_duo, via: [:put, :patch]
     end
 
     member do
@@ -394,14 +402,8 @@ SslCom::Application.routes.draw do
       match :admin_activate, via: [:put, :patch]
       get   :leave_team
       get   :dont_show_again
-    end
-  end
-
-  resource :user do
-    collection do
-      get  :duo
-      post :duo_verify
-      get  :duo_verify
+      get   :duo
+      match :duo_verify, via: [:get, :post]
     end
   end
 

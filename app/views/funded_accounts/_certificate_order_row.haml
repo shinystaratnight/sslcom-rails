@@ -59,7 +59,7 @@
             -unless co.canceled? || co.refunded?
               %div
                 =link_to("CANCEL", '#', onclick:  "refund_reason_#{co.id}(false)", id: 'btn-order-cancel')
-            -if co.price.cents > 0 && !co.refunded? && !@order.on_monthly_invoice? && !@order.reprocess_ucc_free? 
+            -if co.price.cents > 0 && !co.refunded? && !@order.on_payable_invoice? && !@order.reprocess_ucc_free? 
               %div
                 =link_to("CREDIT #{Money.new(@order.make_available_line(co)).format}", '#', onclick:  "refund_reason_#{co.id}(true)", id: 'btn-order-credit')
               -unless fully_refunded

@@ -18,16 +18,16 @@
         %span #{@refunded_count})
     .order-stats-cont
       %div
-        ="<span class='emp'>Monthly Invoices</span>".html_safe
+        ="<span class='emp'>Invoices</span>".html_safe
         (invoices: 
-        %span #{@monthly_invoices_count},
+        %span #{@payable_invoices_count},
         orders:
         %span #{@invoiced_orders_count},
         pending:
-        %span #{Money.new(@pending_monthly_invoices).format},
+        %span #{Money.new(@pending_payable_invoices).format},
         paid: 
-        %span #{Money.new(@paid_monthly_invoices).format},
+        %span #{Money.new(@paid_payable_invoices).format},
         fully refunded:
-        %span #{Money.new(@refunded_monthly_invoices).format},
+        %span #{Money.new(@refunded_payable_invoices).format},
         partially refunded:
-        %span #{Money.new(@partial_refunds_monthly_invoices).format})
+        %span #{Money.new(@partial_refunds_payable_invoices).format})
