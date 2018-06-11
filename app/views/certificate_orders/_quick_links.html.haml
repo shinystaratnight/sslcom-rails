@@ -34,11 +34,4 @@
         %li=link_to 'Chargebacks', filter_by_state_orders_path(@ssl_slug, "charged_back")
         %li=link_to 'Refunds', filter_by_state_orders_path(@ssl_slug, "fully_refunded")
       
-      - if @team_tags.any?
-        %li &nbsp;
-        %li Popular Tags:
-        - @team_tags.where.not(taggings_count: 0).first(5).each do |tag|
-          %li
-            = link_to "#{tag.name} (#{tag.taggings_count})", 
-              search_certificate_orders_path(@ssl_slug, search: "tags:[tag.id]"), 
-              class: 'lnk-popular-tags'
+      =render partial: '/tags/popular_tags'
