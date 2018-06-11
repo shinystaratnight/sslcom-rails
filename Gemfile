@@ -75,6 +75,7 @@ gem 'u2f'
 gem 'duo_web', '~> 1.0'
 # gem 'simple_captcha2', require: 'simple_captcha'
 gem 'recaptcha', require: 'recaptcha/rails'
+gem 'font-awesome-rails'
 
 group :development do
   gem 'foreman'

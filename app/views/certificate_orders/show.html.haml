@@ -286,6 +286,11 @@
                                 %br
               %table(cellspacing="0")
                 %tbody
+                  %tr
+                    %td
+                      = render partial: 'tags/certificate_order_tags'
+              %table(cellspacing="0")
+                %tbody
                   -@certificate_order.certificate_contents.order('created_at DESC').each do |c|
                     -current = c==@certificate_order.certificate_content
                     -csr = c.csr
@@ -298,6 +303,9 @@
                             (server software: #{c.server_software.try :title})
                           -else
                             (serial number: #{sc.serial})
+                    %tr
+                      %td(colspan="5" style="text-align: left;")
+                        = render partial: '/tags/certificate_content_tags', locals: {taggable: c}
                     %tr
                       %td(colspan="5")
                         -if !@certificate_order.certificate.is_code_signing? # or current_user.is_system_admins?

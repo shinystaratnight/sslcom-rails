@@ -434,6 +434,18 @@ class ApplicationController < ActionController::Base
 
   private
 
+  def get_team_tags
+    unless @team_tags
+      @team_tags = if @taggable
+        Tag.get_object_team_tags(@taggable)
+      elsif @ssl_account || ssl_account
+        (@ssl_account || ssl_account).tags.order(name: :asc)
+      else
+        []
+      end
+    end
+  end
+
   #Saves a cookie using a hash
   # <tt>options</tt> - Contains keys name, value (a hash), path, and expires
   def save_cookie(options)

@@ -88,4 +88,13 @@ jQuery(function($) {
       e.preventDefault();
     }
   });
+  
+  // Tagging Functionality
+  settings = { tags: true };
+  $('#tags_list').select2(settings);
+  $('#tags-cc-input #tags_list').select2(settings);
+
+  $('#tags-container form').on('change', function() {
+    $(this).submit();
+  });
 });

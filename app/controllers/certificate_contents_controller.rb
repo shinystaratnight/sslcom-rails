@@ -1,6 +1,8 @@
 class CertificateContentsController < ApplicationController
   layout 'application'
 
+  filter_access_to :update_tags
+
   def show
     redirect_to certificate_order_path(@ssl_slug, CertificateContent.find(params[:id]).certificate_order)
   end
@@ -67,6 +69,17 @@ class CertificateContentsController < ApplicationController
         end
       end
     end  
+  end
+
+  def update_tags
+    @cc = CertificateContent.find params[:id]
+    if @cc
+      @taggable = @cc
+      Tag.update_for_model(@taggable, params[:tags_list])
+    end
+    render json: {
+      tags_list: @taggable.nil? ? [] : @taggable.tags.pluck(:name)
+    }
   end
 
   private
