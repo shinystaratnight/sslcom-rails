@@ -131,18 +131,20 @@ class User < ActiveRecord::Base
     status
   end
 
-  def is_passed_2fa?
+  def is_passed_2fa session_duo
     status = false
-    if self.ssl_account.sec_type == 'duo'
-      if Settings.duo_auto_enabled || Settings.duo_custom_enabled
-        if session[:duo_auth]
+    if self.is_system_admins?
+      status = session_duo
+    else
+      if self.ssl_account.sec_type == 'duo'
+        if Settings.duo_auto_enabled || Settings.duo_custom_enabled
+          status = session_duo
+        else
           status = true
         end
       else
         status = true
       end
-    else
-      status = true
     end
     status
   end
