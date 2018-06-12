@@ -25,8 +25,10 @@ class ApiCredential < ActiveRecord::Base
 
   def role_names
     role_names = []
-    role_ids.each do |role_id|
-      role_names << Role.find(role_id).name
+    unless role_ids.nil?
+      role_ids.each do |role_id|
+        role_names << Role.find(role_id).name
+      end
     end
     role_names
   end
