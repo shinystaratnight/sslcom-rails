@@ -1,6 +1,6 @@
 class Tag < ActiveRecord::Base
   belongs_to :ssl_account
-  has_many :taggings
+  has_many :taggings, dependent: :destroy
   has_many :orders, through: :taggings, source: :taggable, source_type: 'Order'
   has_many :certificate_orders, through: :taggings,
            source: :taggable, source_type: 'CertificateOrder'
@@ -45,6 +45,10 @@ class Tag < ActiveRecord::Base
           taggable_type: (type == :order ? 'Order' : ['CertificateOrder', 'CertificateContent'])
         }
       ).uniq
+  end
+
+  def get_name_format
+    name.length > 16 ? "#{name[0..16]}..." : name
   end
 
   private
