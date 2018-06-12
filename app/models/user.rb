@@ -131,6 +131,22 @@ class User < ActiveRecord::Base
     status
   end
 
+  def is_passed_2fa?
+    status = false
+    if self.ssl_account.sec_type == 'duo'
+      if Settings.duo_auto_enabled || Settings.duo_custom_enabled
+        if session[:duo_auth]
+          status = true
+        end
+      else
+        status = true
+      end
+    else
+      status = true
+    end
+    status
+  end
+
   def self.total_teams_owned(user_id)
     User.find(user_id).assignments.where(role_id: Role.get_owner_id).map(&:ssl_account).uniq.compact
   end
