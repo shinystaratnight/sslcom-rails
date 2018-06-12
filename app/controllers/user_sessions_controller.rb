@@ -4,6 +4,7 @@ class UserSessionsController < ApplicationController
   before_filter :require_user, only: :destroy
   skip_filter :finish_reseller_signup, only: [:destroy]
   skip_before_action :verify_authenticity_token
+  skip_before_action :verify_duo_authentication, only: [:new, :create, :destroy]
   skip_before_action :require_no_authentication, only: [:duo_verify]
 
   def new
@@ -290,6 +291,7 @@ class UserSessionsController < ApplicationController
   end
 
   def duo
+    return if current_user.blank?
     if current_user.is_system_admins?
       s = Rails.application.secrets
       @duo_hostname = s.duo_system_admins_api_hostname

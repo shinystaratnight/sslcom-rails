@@ -4,7 +4,6 @@ class UsersController < ApplicationController
   skip_before_action :require_no_authentication, :only => [:duo_verify]
   skip_before_action :verify_authenticity_token
   before_filter :require_no_user, :only => [:new, :create]
-  before_filter :verify_duo_authentication, :only => [:show]
   before_filter :require_user, only: [
     :show, :edit, :update, :cancel_reseller_signup, 
     :approve_account_invite, :resend_account_invite,
