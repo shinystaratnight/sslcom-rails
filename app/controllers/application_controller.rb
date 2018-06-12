@@ -18,6 +18,7 @@ class ApplicationController < ActionController::Base
   before_filter :set_mailer_host
   before_filter :detect_recert, except: [:renew, :reprocess]
   before_filter :set_current_user
+  before_filter :verify_duo_authentication, except: [:duo, :duo_verify, :login, :logout]
   before_filter :identify_visitor, :record_visit,
                 if: "Settings.track_visitors"
   before_filter :finish_reseller_signup, if: "current_user"
