@@ -110,6 +110,18 @@ class SslAccount < ActiveRecord::Base
     self.preferred_reminder_notice_triggers = "1", ReminderTrigger.find(4)
     self.preferred_reminder_notice_triggers = "-30", ReminderTrigger.find(5)
     generate_funded_account
+    create_api_credential if api_credential.blank?
+  end
+
+  def api_credential
+    api_credentials.last
+  end
+
+  def create_api_credential
+    @ac = ApiCredential.new
+    @ac.ssl_account_id = self.id
+    @ac.roles = "[#{Role.get_account_admin_id}]"
+    @ac.save
   end
 
   def self.human_attribute_name(attr, options={})

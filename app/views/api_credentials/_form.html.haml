@@ -18,7 +18,7 @@
   = form.label :role_id, "Role(s)<span class='label_desc'>set permissions</span>".html_safe
   .checkbox_roles
     = collection_check_boxes(:api_credential, :role_ids, User.roles_list_for_user(current_user).order(:name), 
-      :id, :name, checked: (role_ids)) do |r|
+      :id, :name, checked: (role_ids || [Role.get_account_admin_id])) do |r|
       .checkbox_role{id: "role_#{r.object.name}"}
         = r.check_box
         = r.label

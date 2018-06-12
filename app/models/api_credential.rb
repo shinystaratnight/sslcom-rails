@@ -20,7 +20,7 @@ class ApiCredential < ActiveRecord::Base
   end
 
   def role_ids
-    JSON.parse self.roles.nil? ? "[]" : self.roles
+    self.roles.nil? ? nil : (JSON.parse self.roles)
   end
 
   def role_names

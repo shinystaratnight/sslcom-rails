@@ -29,10 +29,9 @@ class ApiCredentialsController < ApplicationController
   end
 
   def create
-    role_ids     = params[:api_credential][:role_ids].reject(&:blank?)
+    role_ids = params[:api_credential][:role_ids].reject(&:blank?)
     params[:api_credential][:roles] = role_ids.to_json
-    params[:api_credential][:ssl_account_id] = current_user.ssl_account.id
-    ac_params = params[:api_credential]
+    params[:api_credential][:ssl_account_id] = current_user.ssl_account.id  
     @ac = ApiCredential.new(params[:api_credential].except(:role_ids))
     @ac.save
     redirect_to api_credentials_path(ssl_slug: @ssl_slug)
@@ -47,7 +46,7 @@ class ApiCredentialsController < ApplicationController
   end
 
   def update
-    role_ids     = params[:api_credential][:role_ids].reject(&:blank?)
+    role_ids = params[:api_credential][:role_ids].reject(&:blank?)
     @ac = ApiCredential.find(params[:id])
     @ac.roles = role_ids.to_json
     @ac.save
