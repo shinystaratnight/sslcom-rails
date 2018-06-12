@@ -438,6 +438,8 @@ class ApplicationController < ActionController::Base
     unless @team_tags
       @team_tags = if @taggable
         Tag.get_object_team_tags(@taggable)
+      elsif current_user.is_system_admins?
+        Tag.all.order(taggings_count: :desc)
       elsif @ssl_account || ssl_account
         (@ssl_account || ssl_account).tags.order(name: :asc)
       else

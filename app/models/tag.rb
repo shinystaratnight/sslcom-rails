@@ -37,6 +37,16 @@ class Tag < ActiveRecord::Base
     get_team_tags.order(taggings_count: :desc)
   end
 
+  def self.filter_popular_tags(tags, type=:order)
+    tags.joins(:taggings)
+      .where.not(taggings_count: 0)
+      .where(taggings:
+        {
+          taggable_type: (type == :order ? 'Order' : ['CertificateOrder', 'CertificateContent'])
+        }
+      ).uniq
+  end
+
   private
 
   def self.get_object_team(target_object=nil)
