@@ -23,5 +23,5 @@
           %td.actions
             =link_to 'edit', edit_api_credential_path(ac, slug_params)
             -unless @acs.count-1 <= index
-              =link_to 'remove', remove_api_credential_path(ac, slug_params), :class => 'remove_ac'
+              =link_to '| remove', remove_api_credential_path(ac, slug_params), :class => 'remove_ac'
        
