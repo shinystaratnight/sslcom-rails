@@ -334,7 +334,7 @@
       %th(scope="col") Expires
       %th(scope="col") Action
     -@certificate_orders.each do |co|
-      -cache(co.certificate_content) do
+      -cache(['list', co.certificate_content]) do
         -cc = co.certificate_content
         -cn = (co.is_unused_credit? || cc.csr.blank?) ? nil : cc.csr.common_name
         %tr(alt="#{co.ref}")
