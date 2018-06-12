@@ -125,4 +125,12 @@
                               %li=link_to 'use certificate credits', credits_certificate_orders_url(ssl_slug: @ssl_slug)
                             -if ssl_account && permitted_to?(:index, :invoices) && ssl_account.invoices.any?
                               %li=link_to 'monthly and daily invoices', invoices_path(@ssl_slug)
-                    
+                    -if ssl_account.api_credentials
+                      .half_width_box
+                        %ul
+                          -unless user.is_validations? || user.is_billing?
+                            %li
+                              %strong
+                                =link_to "Api Credentials", api_credentials_path(ssl_slug: @ssl_slug)
+                          %li=link_to "developer tools", is_sandbox? ? developers_certificate_orders_url : "https://sandbox.ssl.com"
+                          %li=link_to 'view documentation', "http://docs.sslcomapi.apiary.io/", target: "_new"

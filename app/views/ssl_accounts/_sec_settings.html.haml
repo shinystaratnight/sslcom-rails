@@ -1,27 +1,28 @@
-.subheading
-  Require 2FA for Team #{@ssl_account.acct_number}
-.settings_block
-  .settings_block#u2f_settings
-    = radio_button_tag :sec_type, 'u2f', @ssl_account.sec_type == 'u2f'
-    = label_tag :sec_type_u2f, "Use U2f"
-    .u2f_block.u2f_info
-      -if u2fs.size > 0
-        -u2fs.each do |u2f|
-          .u2f_device_info_block.clearfix{:id => "u2f_device_#{u2f.id}"}
-            .u2f_device_info
-              =u2f.nick_name
-            .u2f_device_info
-              %span - registered on
-              =u2f.created_at.strftime("%b %d, %Y")
-            .u2f_device_info.right
-              =button_tag 'Remove', :type=>'button', :class=>'remove_u2f_device', 'data-id'=>u2f.id
-      -else
-        .clearfix
-        .u2f_no_devices 
-          %em no devices are currently registered
-    .u2f_block.add_nick_name.hidden
-      =text_field_tag 'u2f_device_name', nil, :size=>30, :class=>'left u2f_device_name', :placeholder=>'Enter a nickname for this security key.'
-      =button_tag 'Add', :type=>'button', :class=>'add_u2f_device disabled'
+-if Settings.u2f_enabled
+  .subheading
+    Require 2FA for Team #{@ssl_account.acct_number}
+  .settings_block
+    .settings_block#u2f_settings
+      = radio_button_tag :sec_type, 'u2f', @ssl_account.sec_type == 'u2f'
+      = label_tag :sec_type_u2f, "Use U2f"
+      .u2f_block.u2f_info
+        -if u2fs.size > 0
+          -u2fs.each do |u2f|
+            .u2f_device_info_block.clearfix{:id => "u2f_device_#{u2f.id}"}
+              .u2f_device_info
+                =u2f.nick_name
+              .u2f_device_info
+                %span - registered on
+                =u2f.created_at.strftime("%b %d, %Y")
+              .u2f_device_info.right
+                =button_tag 'Remove', :type=>'button', :class=>'remove_u2f_device', 'data-id'=>u2f.id
+        -else
+          .clearfix
+          .u2f_no_devices
+            %em no devices are currently registered
+      .u2f_block.add_nick_name.hidden
+        =text_field_tag 'u2f_device_name', nil, :size=>30, :class=>'left u2f_device_name', :placeholder=>'Enter a nickname for this security key.'
+        =button_tag 'Add', :type=>'button', :class=>'add_u2f_device disabled'
   -if Settings.duo_auto_enabled || Settings.duo_custom_enabled
     .settings_block#duo_settings
       = radio_button_tag :sec_type, 'duo', @ssl_account.sec_type == 'duo'
