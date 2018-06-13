@@ -264,7 +264,7 @@
                 =check_box_tag :filter_activated_chk, true, false, 'data-field'=>'in_possession', :class=>'filter_cont_chk'
               .filter_cont_item_label
                 Activated
-      -if @team_tags.any?
+      -if @team_tags.try("any?".to_sym)
         %div.filter_item
           .filter_evt.clearfix
             %label
