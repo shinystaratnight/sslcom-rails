@@ -74,6 +74,8 @@ class Api::V1::ApiUserRequestsController < Api::V1::APIController
             result.company_name = team.company_name
             result.issue_dv_no_validation = @obj.is_standard? || @obj.is_validations? ? team.issue_dv_no_validation : nil
             result.billing_method = @obj.is_installer? && @obj.roles_symbols.count == 1 ? nil : team.billing_method
+            result.available_funds = Money.new(team.funded_account.cents).format
+            result.currency = team.funded_account.currency
             result.reseller_tier = team.reseller ? team.reseller.reseller_tier : nil
             result.is_default_team = team.id == @obj.ssl_account.id ? true : false
             @results << result
