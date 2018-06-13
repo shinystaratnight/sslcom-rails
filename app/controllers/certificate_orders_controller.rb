@@ -28,20 +28,27 @@ class CertificateOrdersController < ApplicationController
   filter_access_to :renew, :parse_csr, require: [:create]
   filter_access_to :auto_renew, require: [:admin_manage]
   filter_access_to :show_cert_order, :require=>:ajax
-  # filter_access_to :sslcom_ca, require: [:sysadmin_manage]
-  #cache_sweeper :certificate_order_sweeper
-  # before_filter :require_user,
-  #               only: [:index, :search, :credits, :show, :update, :edit, :download, :destroy, :update_csr, :auto_renew, :start_over,
-  #                      :change_ext_order_number, :admin_update, :developer, :sslcom_ca, :order_by_csr]
   before_filter :load_certificate_order,
                 only: [:show, :update, :edit, :download, :destroy, :delete, :update_csr, :auto_renew, :start_over,
-                       :change_ext_order_number, :admin_update, :developer, :sslcom_ca]
+                       :change_ext_order_number, :admin_update, :developer, :sslcom_ca, :update_tags]
   before_filter :set_row_page, only: [:index, :search, :credits, :pending, :filter_by_scope, :order_by_csr, :filter_by,
                                       :incomplete, :reprocessing]
+  before_filter :get_team_tags, only: [:index, :search]
   in_place_edit_for :certificate_order, :notes
   in_place_edit_for :csr, :signed_certificate_by_text
 
   NUM_ROWS_LIMIT=2
+
+  def update_tags
+    if @certificate_order
+      @taggable = @certificate_order
+      get_team_tags
+      Tag.update_for_model(@taggable, params[:tags_list])
+    end
+    render json: {
+      tags_list: @taggable.nil? ? [] : @taggable.tags.pluck(:name)
+    }
+  end
 
   def generate_cert
     @certificate_order = (current_user.is_system_admins? ? CertificateOrder :
@@ -85,6 +92,8 @@ class CertificateOrdersController < ApplicationController
   # GET /certificate_orders/1
   # GET /certificate_orders/1.xml
   def show
+    @taggable = @certificate_order
+    get_team_tags
     redirect_to edit_certificate_order_path(@ssl_slug, @certificate_order) and return if @certificate_order.certificate_content.new?
     respond_to do |format|
       format.html # show.html.erb
