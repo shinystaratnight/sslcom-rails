@@ -13,20 +13,21 @@
 -if token.try("in_transit?".to_sym)
   -flash.now[:warning] = "Token #{token.name} has shipped with tracking number #{token.tracking_number}!" if co.certificate.is_evcs? and !co.physical_tokens.blank?
 =render :partial=>'quick_links'
-#certificate_orders
-  %table(cellspacing="0")
-    %caption
-      SSL Certificate For
-      %span.common_name
-        #{cn}
-      -if permitted_to?(:update, @certificate_order)
-        =link_to "[how do I use this page?]", "https://www.ssl.com/article/certificate-order-page-information/"
-    %tr.heading_row
-      %th(scope="col") Subject
-      %th(scope="col") Status
-      %th(scope="col") Order Date
-      %th(scope="col") Expires
-      %th(scope="col") Action
+-cache(['show', co.certificate_content]) do
+  #certificate_orders
+    %table(cellspacing="0")
+      %caption
+        SSL Certificate For
+        %span.common_name
+          #{cn}
+        -if permitted_to?(:update, @certificate_order)
+          =link_to "[how do I use this page?]", "https://www.ssl.com/article/certificate-order-page-information/"
+      %tr.heading_row
+        %th(scope="col") Subject
+        %th(scope="col") Status
+        %th(scope="col") Order Date
+        %th(scope="col") Expires
+        %th(scope="col") Action
       %tr
         %td.name.not_expandable
           .subject_column.center_subject
@@ -286,6 +287,11 @@
                                 %br
               %table(cellspacing="0")
                 %tbody
+                  %tr
+                    %td
+                      = render partial: 'tags/certificate_order_tags'
+              %table(cellspacing="0")
+                %tbody
                   -@certificate_order.certificate_contents.order('created_at DESC').each do |c|
                     -current = c==@certificate_order.certificate_content
                     -csr = c.csr
@@ -367,6 +373,9 @@
                                 %div
                                   DECODED
                                 %textarea.selectAll{cols: 10, rows: 4}=sc.decoded
+                    %tr
+                      %td(colspan="5" style="text-align: left;")
+                        = render partial: '/tags/certificate_content_tags', locals: {taggable: c}
                   -if current_user.is_admin?
                     %tr
                       %td(colspan="5")

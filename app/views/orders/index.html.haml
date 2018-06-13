@@ -129,6 +129,18 @@
             %label
               =check_box_tag :filter_is_test_chk, true, false, :class=>'filter_chk', 'data-field'=>'is_test'
               Test
+      -if @team_tags.any?
+        %div.filter_item
+          .filter_evt.clearfix
+            %label
+              =check_box_tag :filter_order_tags_chk, true, false, :class=>'filter_chk'
+              Order Tags (Ctrl + Click Multi)
+          .filter_label
+            .filter_cont.hidden{'data-type'=>'select-multi'}
+              =select_tag :filter_order_tags,                                                |
+              options_for_select(@team_tags.map {|tag| [tag.name, tag.id]}),                 |
+              class: 'filter_cont_slt slt-large', 'data-field': 'order_tags', multiple: true
+  
   =button_tag 'Search', :type=>'button', :id=>'btn_order_filter_search'
   =button_tag 'Cancel', :type=>'button', :id=>'btn_close_order_filter'
 
@@ -154,7 +166,7 @@
       %th(scope="col") Order #
       %th(scope="col") Amount
     -@orders.each do |o|
-      -cache(o) do
+      -cache(['list', o]) do
         %tr
           -if o.is_reseller_tier?
             %td Reseller Tier #{o.line_items.last.sellable.label} Discounting

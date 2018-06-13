@@ -92,6 +92,8 @@
           %span=h @deposit.amount.format :with_currency
     -if @order && !@order.new_record? && (@order.cents > 0 or @order.is_free?) && !@order.is_deposit?
       =render :partial=>'/orders/order_report'
+    -if @taggable
+      =render partial: '/tags/order_tags'
     -unless is_receipt?
       #available_funds
         %h3.order_results_header Available Funds in SSL Account

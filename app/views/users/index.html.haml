@@ -42,7 +42,7 @@
       - unless current_user.is_system_admins?
         %th(scope="col") Approved
     -@users.each do |u|
-      -cache(u) do
+      -cache(['list', u]) do
         -user_view = current_user.is_system_admins?
         -user_view ||= u!=current_user && !u.is_owner?(current_user.ssl_account)
         %tr{class: "#{user_view ? 'enable' : 'disable'}"}

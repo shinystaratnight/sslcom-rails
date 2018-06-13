@@ -102,9 +102,7 @@
                           -unless user.is_validations? || user.is_billing?
                             %li
                               %strong
-                                api credentials
-                            %li account key: #{ac.account_key}
-                            %li secret key: #{ac.secret_key}
+                                =link_to "Api Credentials", api_credentials_path(ssl_slug: @ssl_slug)
                           %li=link_to "developer tools", is_sandbox? ? developers_certificate_orders_url : "https://sandbox.ssl.com"
                           %li=link_to 'view documentation', "http://docs.sslcomapi.apiary.io/", target: "_new"
                     .certificate_details_box
