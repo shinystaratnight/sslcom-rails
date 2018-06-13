@@ -129,7 +129,7 @@
             %label
               =check_box_tag :filter_is_test_chk, true, false, :class=>'filter_chk', 'data-field'=>'is_test'
               Test
-      -if @team_tags.try("any?".to_sym)?
+      -if @team_tags.try("any?".to_sym)
         %div.filter_item
           .filter_evt.clearfix
             %label

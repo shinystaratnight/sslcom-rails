@@ -1,4 +1,4 @@
-- if @team_tags.try("any?".to_sym)?
+- if @team_tags.try("any?".to_sym)
   - cert_orders = controller_name == 'certificate_orders'
   - search_filter = cert_orders ? 'co_tags' : 'order_tags'
   - current_tags = Tag.filter_popular_tags(@team_tags, (cert_orders ? :cert_orders : :order))
