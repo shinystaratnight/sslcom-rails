@@ -21,7 +21,7 @@ class DailyInvoice < Invoice
   
   def self.last_invoice_for_day(ssl_account_id, exclude=nil)
     ssl = SslAccount.find ssl_account_id
-    ssl.daily_invoices.order(created_at: :desc)
+    ssl.daily_invoices.order(id: :desc)
       .where(start_date: START_DATE).where.not(id: exclude).first
   end
 end

@@ -2,7 +2,6 @@ class SslAccountsController < ApplicationController
   before_filter :require_user, only: [:show, :edit, :edit_settings]
   before_filter :find_ssl_account
   filter_access_to :all, attribute_check: true
-  before_action :verify_duo_authentication
 
   # GET /ssl_account/
   def show
@@ -174,6 +173,15 @@ class SslAccountsController < ApplicationController
     respond_to do |format|
       format.js {render json: @user.to_json}
     end  
+  end
+
+  #PUT /ssl_account/set_2fa_type
+  def set_2fa_type
+    type = @ssl_account.sec_type == params['sec_type'] ? '' : params['sec_type']
+    @ssl_account.update_attribute(:sec_type, type)
+    respond_to do |format|
+      format.js {render json: @ssl_account.to_json}
+    end
   end
 
   def adjust_funds

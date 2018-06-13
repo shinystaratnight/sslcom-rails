@@ -39,6 +39,7 @@ ucc_max_domains: 200
 cert_expiration_threshold_days: 365
 expiring_threshold: 90
 enable_caa: true
+captcha_threshold: 3
 intermediate_certs_path: "<%=Rails.root%>/public/cert_bundles/"
 #header_phone_numbers: "toll free: 1-877-SSL-Secure (1-877-775-7328); intl: +1-SSL-Certificate (+1-775-237-8434)"
 header_phone_numbers: "+1-SSL-Certificate (+1-775-237-8434) or toll free 877-SSL-Secure"
@@ -109,10 +110,7 @@ send_dv_first: true
 # The label you use for 'staff' writers (featured writer, staff, pro, etc.)
 featured_writer_label: 'Featured Writer'
 allow_anonymous_commenting: false
-require_captcha_on_signup: true
 require_server_software_w_csr_submit: true # Comodo API still relies on this
-recaptcha_pub_key: 6Lch9QYAAAAAAMKfJMXiclR-6EuiZRBr8o98dHdF
-recaptcha_priv_key: 6Lch9QYAAAAAAAlWpfQKWpn7eTkc3f2FWhv4fVIG
 # uncomment these keys if you turn captcha on for commenting or signup
 studio_fee_rate: .3
 affiliate_cookie_days: 30

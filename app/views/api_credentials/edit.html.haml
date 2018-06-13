@@ -1,0 +1,21 @@
+-title = "Edit Credential"
+-content_for :title, title
+.reseller_registration_profile
+  %h3=title
+  %p
+    Please update roles for user.
+  =form_for @ac, url: api_credential_path, html: {id: 'mu_update_roles'} do |f|
+    =f.error_messages
+    #stylized.default_form
+      .subheading Credentials
+      =render partial: "form", object: f
+    #button_container
+      #next_submit=image_submit_tag "bl_submit_button.gif"
+
+-content_for :js do
+  :javascript
+    $("#user_ssl_account_ids").select2();
+    $(document).ready(function() {
+      $("#user_ssl_account_ids").select2();
+    });
+

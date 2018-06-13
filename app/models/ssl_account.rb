@@ -2,7 +2,7 @@ class SslAccount < ActiveRecord::Base
   using_access_control
   acts_as_billable
   easy_roles :roles
-  has_one   :api_credential
+  has_many   :api_credentials
   has_one   :duo_account
   has_many  :billing_profiles
   has_many  :certificate_orders, -> { unscope(where: [:workflow_state, :is_expired]).includes([:orders]) } do
@@ -38,6 +38,7 @@ class SslAccount < ActiveRecord::Base
   has_many  :saved_registrants, as: :contactable, class_name: 'Registrant', dependent: :destroy
   has_many  :all_saved_contacts, as: :contactable, class_name: 'Contact', dependent: :destroy
   has_many  :cdns
+  has_many  :tags
 
   unless MIGRATING_FROM_LEGACY
     #has_many  :orders, :as=>:billable, :after_add=>:build_line_items
@@ -111,6 +112,17 @@ class SslAccount < ActiveRecord::Base
     self.preferred_reminder_notice_triggers = "-30", ReminderTrigger.find(5)
     generate_funded_account
     create_api_credential if api_credential.blank?
+  end
+
+  def api_credential
+    api_credentials.last
+  end
+
+  def create_api_credential
+    @ac = ApiCredential.new
+    @ac.ssl_account_id = self.id
+    @ac.roles = "[#{Role.get_account_admin_id}]"
+    @ac.save
   end
 
   def self.human_attribute_name(attr, options={})
@@ -309,24 +321,92 @@ class SslAccount < ActiveRecord::Base
 
   # from_sa - the ssl_account to migrate from
   # to_sa - the ssl_account to migrate to
-  def self.migrate_orders(from_sa, to_sa, refs=[])
+  def self.migrate_orders(from_sa, to_sa, refs=[], user)
     unless refs.blank?
-      refs.each do |ref|
-        if co = from_sa.certificate_orders.find_by_ref(ref)
-          from_sa.migrate_order to_sa, co.order.reference_number
+      orders_list = []
+      co_list = []
+      Order.where(reference_number: refs).each do |o|
+        to_sa.certificate_orders << o.certificate_orders
+        o.certificate_orders.each do |co|
+          co_orders = co.orders
+          to_sa.orders << co_orders
+          orders_list << co_orders
+          co_list << co
         end
       end
-    else
-      to_sa.orders << from_sa.orders.each{|o|from_sa.migrate_order(to_sa, o.reference_number)}
+      orders_list = orders_list.flatten.uniq.compact
+      co_list = co_list.flatten.uniq.compact
+      params = {
+        from_sa: from_sa,
+        to_sa: to_sa,
+        orders_list: orders_list,
+        co_list: co_list,
+        user: user
+      }
+      if orders_list.any?
+        OrderNotifier.order_transferred(params).deliver_now
+        migrate_orders_to_invoices(to_sa, orders_list)
+        migrate_orders_associations(params)
+      end
+      co_list.map(&:certificate_contacts).flatten.uniq.compact.each do |contact|
+        contact.update(parent_id: nil)
+      end
+      migrate_orders_system_audit(params)
     end
   end
-
-  # to_sa - the ssl_account to migrate to
-  # ref_number - reference number of the order to migrate
-  def migrate_order(to_sa, ref_number)
-    o=self.orders.find_by_reference_number(ref_number)
-    to_sa.certificate_orders << o.certificate_orders
-    to_sa.orders << o
+  
+  def self.migrate_orders_associations(params)
+    list = []
+    # Funded Account Withdrawal used to pay for order
+    params[:orders_list].each do |o|
+      list << Order.where('description LIKE ?', "%#{Order::FAW}%")
+        .where('notes LIKE ?', "%#{o.reference_number}%").first
+    end
+    # Deposits used to pay for order
+    list << Order.where(id: params[:orders_list].map(&:deducted_from_id))
+    list = list.flatten.compact.uniq
+    params[:to_sa].orders << list if list.any?
+  end
+  
+  def self.migrate_orders_system_audit(params)
+    notes_ext = "from team acct ##{params[:from_sa].acct_number} to team acct ##{params[:to_sa].acct_number} on #{DateTime.now.strftime('%c')}"
+    
+    params[:co_list].each do |co|
+      SystemAudit.create(
+        owner: params[:user],
+        target: co,
+        notes: "Transfered certificate order #{co.ref} #{notes_ext}.",
+        action: "Transfer Certificate Order To Team"
+      )
+    end
+    params[:orders_list].each do |o|
+      SystemAudit.create(
+        owner: params[:user],
+        target: o,
+        notes: "Transfered order #{o.reference_number} #{notes_ext}.",
+        action: "Transfer Order To Team"
+      )
+    end
+  end
+  
+  def self.migrate_orders_to_invoices(to_sa, orders_list=[])
+    invoiced_orders = orders_list.select {|io| io.state == 'invoiced'}
+    pending_invoice = nil
+    invoiced_orders.each do |o|
+      from_invoice = o.invoice
+      if from_invoice
+        exclude_params = %w{id reference_number created_at updated_at billable_id}
+        cur_params = from_invoice.attributes.except!(*exclude_params)
+          .merge(billable_id: to_sa.id)
+        target_invoice = if from_invoice.pending? && pending_invoice.nil?
+          pending_invoice = Invoice.get_or_create_for_team(to_sa)
+        else
+          Invoice.create(cur_params)
+        end
+        o.update(invoice_id: target_invoice.try(:id)) if target_invoice
+      end
+      from_invoice.destroy if from_invoice.orders.empty?
+    end
   end
 
   def primary_user

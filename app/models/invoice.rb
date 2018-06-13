@@ -18,6 +18,7 @@ class Invoice < ActiveRecord::Base
   before_validation :set_default_billing, if: :payable_invoice?
   before_validation :set_address, if: :payable_invoice?
   after_create      :generate_reference_number, if: :payable_invoice?
+  after_create      :notify_admin_billing, if: :payable_invoice?
   
   validates :first_name, :last_name, :address_1, :country, :city,
     :state, :postal_code, presence: true, unless: :payable_invoice?
@@ -181,7 +182,7 @@ class Invoice < ActiveRecord::Base
   def get_credited_total
     if refunded? && 
       ( (payment.make_available_total - get_merchant_refunds) > get_cents )
-      get_cents
+      get_amount
     else
       max_credit
     end
@@ -198,6 +199,10 @@ class Invoice < ActiveRecord::Base
   def get_amount
     get_approved_items.map(&:amount).sum
   end  
+  
+  def get_paid_invoice_amount
+    Money.new(payment.cents + payment.get_funded_account_amount)
+  end
   
   def get_amount_format
     amt = get_amount
@@ -270,6 +275,14 @@ class Invoice < ActiveRecord::Base
     is_a?(DailyInvoice) || type == 'DailyInvoice'
   end
   
+  def notify_invoice_paid(user=nil)
+    Assignment.users_can_manage_invoice(billable).each do |u|
+      OrderNotifier.payable_invoice_paid(
+        user: u, invoice: self, paid_by: user
+      ).deliver_now
+    end
+  end
+  
   private
   
   def self.get_team(ssl_account)
@@ -302,7 +315,7 @@ class Invoice < ActiveRecord::Base
         DailyInvoice.last_invoice_for_day(billable.id, self)
       end
       
-      ref_parts    = last_invoice.reference_number.split('-') if last_invoice
+      ref_parts = last_invoice.reference_number.split('-') if last_invoice
       ref = if last_invoice && ref_parts.count == 4
         sub_ref = ref_parts.pop.to_i + 1
         ref_parts.push(sub_ref)
@@ -314,6 +327,12 @@ class Invoice < ActiveRecord::Base
       end
       
       update_attribute(:reference_number, ref)
+    end
+  end
+  
+  def notify_admin_billing
+    Assignment.users_can_manage_invoice(billable).each do |u|
+      OrderNotifier.payable_invoice_new(user: u, invoice: self).deliver_now
     end
   end
   
@@ -340,7 +359,7 @@ class Invoice < ActiveRecord::Base
   end
   
   def set_status
-    self.status = 'pending'
+    self.status = 'pending' if status.blank?
   end
   
   def set_default_billing

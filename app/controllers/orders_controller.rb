@@ -5,7 +5,7 @@ class OrdersController < ApplicationController
   #resource_controller
   helper_method :cart_items_from_model_and_id
   before_filter :finish_reseller_signup, :only => [:new], if: "current_user"
-  before_filter :find_order, :only => [:show, :invoice, :update_invoice, :refund, :refund_merchant, :change_state, :revoke, :edit, :update]
+  before_filter :find_order, :only => [:show, :invoice, :update_invoice, :refund, :refund_merchant, :change_state, :revoke, :edit, :update, :transfer_order, :update_tags]
   before_filter :set_prev_flag, only: [:create, :create_free_ssl, :create_multi_free_ssl]
   before_filter :prep_certificate_orders_instances, only: [:create, :create_free_ssl]
   before_filter :go_prev, :parse_certificate_orders, only: [:create_multi_free_ssl]
@@ -17,6 +17,18 @@ class OrdersController < ApplicationController
   filter_access_to :show, :update_invoice, attribute_check: true
   before_filter :find_user, :only => [:user_orders]
   before_filter :set_row_page, only: [:index, :search, :filter_by_state, :visitor_trackings]
+  before_filter :get_team_tags, only: [:index, :search]
+
+  def update_tags
+    if @order
+      @taggable = @order
+      get_team_tags
+      Tag.update_for_model(@taggable, params[:tags_list])
+    end
+    render json: {
+      tags_list: @taggable.nil? ? [] : @taggable.tags.pluck(:name)
+    }
+  end
   
   def edit
     
@@ -30,6 +42,27 @@ class OrdersController < ApplicationController
     else
       render :edit
     end
+  end
+
+  def transfer_order
+    from_team = @ssl_account
+    to_team = if current_user.is_system_admins?
+      SslAccount.find_by(acct_number: params[:target_team])
+    else
+      current_user.ssl_accounts.find_by(acct_number: params[:target_team])
+    end
+    
+    if from_team && to_team
+      SslAccount.migrate_orders(from_team, to_team, [@order.reference_number], current_user)
+      if to_team.orders.include?(@order)
+        flash[:notice] = "Successfully transfered order #{@order.reference_number} to team #{to_team.get_team_name}."
+      else
+        flash[:error] = "Something went wrong, please try again!"
+      end
+    else
+        flash[:error] = "You do not have access to team #{params[:target_team]}!"
+    end
+    redirect_to orders_path
   end
 
   def show_cart
@@ -239,7 +272,7 @@ class OrdersController < ApplicationController
       unless params["partial"] # full refund
         @target = @order
         if params["return_funds"]
-          @order.billable.funded_account.add_cents(@order.make_available_total)
+          add_cents_to_funded_account(@order.make_available_total)
           @performed << " and made #{Money.new(@order.make_available_total).format} available to customer."
         end
         @order.full_refund!
@@ -285,10 +318,10 @@ class OrdersController < ApplicationController
         last_refund = @order.refunds.last
 
         if refund && last_refund && last_refund.successful?
+          flash[:notice] = "Successfully refunded merchant for amount #{amount.format}."
           refund_merchant_for_co(co, amount) if co
           refund_merchant_for_mo(mo, amount) if mo
-          @order.billable.funded_account.decrement!(:cents, last_refund.amount) if @order.is_deposit?
-          flash[:notice] = "Successfully refunded merchant for amount #{amount.format}."
+          @order.get_team_to_credit.funded_account.decrement!(:cents, last_refund.amount) if @order.is_deposit?
         else
           flash[:error] = "Refund for #{amount.format} has failed! #{last_refund.message}"
         end
@@ -307,8 +340,8 @@ class OrdersController < ApplicationController
       action: "Refunded partial amount for certificate order ##{co.ref}, merchant refund issued for #{amount.format}."
     )
     if funded > 0
-      @order.billable.funded_account.add_cents(funded)
-      flash[:notice] << " And made $#{Money.new(funded).format} available to customer."
+      add_cents_to_funded_account(funded)
+      flash[:notice] << " And made #{Money.new(funded).format} available to customer."
     end
   end
   
@@ -474,6 +507,8 @@ class OrdersController < ApplicationController
   # GET /orders/1.xml
   def show
     @order.receipt=true
+    @taggable = @order
+    get_team_tags
     if @order.description =~ /Deposit|Funded Account Withdrawal/i
       @deposit = @order
     elsif @order.line_items.count==1
@@ -653,6 +688,10 @@ class OrdersController < ApplicationController
 
   private
   
+  def add_cents_to_funded_account(cents)
+    @order.get_team_to_credit.funded_account.add_cents(cents)
+  end
+  
   # ============================================================================
   # UCC Certificate reprocess/rekey helper methods for 
   #   Invoiced Order:       will be added to monthly invoice to be charged later
@@ -818,18 +857,17 @@ class OrdersController < ApplicationController
     @p = {page: (params[:page] || 1), per_page: @per_page}
   end
 
-
   # admin user refunds line item
   def refund_partial_amount(params)
     refund_amount = @order.make_available_line(@target)
-    item_remains  = @order.line_items.select{|li|li.sellable.try("refunded?")}.count == @order.line_items.count
+    all_refunded  = @order.line_items.select{|li|li.sellable.try("refunded?")}.count == @order.line_items.count
     refund_amount_f = Money.new(refund_amount).format
     
-    @order.billable.funded_account.add_cents(refund_amount)
+    add_cents_to_funded_account(refund_amount)
     @performed << " and made #{refund_amount_f} available to customer"
 
     # at least 1 lineitem needs to remain unrefunded or refunded amount is less than order total
-    if item_remains
+    if all_refunded || (@order.cents <= refund_amount)
       @order.full_refund!
     else
       @order.partial_refund!(params["partial"], refund_amount)

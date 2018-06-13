@@ -18,6 +18,7 @@ class ApplicationController < ActionController::Base
   before_filter :set_mailer_host
   before_filter :detect_recert, except: [:renew, :reprocess]
   before_filter :set_current_user
+  before_filter :verify_duo_authentication, except: [:duo, :duo_verify, :login, :logout]
   before_filter :identify_visitor, :record_visit,
                 if: "Settings.track_visitors"
   before_filter :finish_reseller_signup, if: "current_user"
@@ -68,11 +69,19 @@ class ApplicationController < ActionController::Base
   end
 
   def verify_duo_authentication
-    if !session[:duo_auth]
-      if current_user
-        redirect_to duo_user_session_path
+    if current_user
+      if current_user.is_system_admins?
+        if !session[:duo_auth]
+          redirect_to duo_user_session_path
+        end
       else
-        redirect_to new_user_session_path
+        if current_user.ssl_account.sec_type == 'duo' && current_user.duo_enabled
+          if Settings.duo_auto_enabled || Settings.duo_custom_enabled
+            if !session[:duo_auth]
+              redirect_to duo_user_session_path
+            end
+          end
+        end
       end
     end
   end
@@ -429,6 +438,20 @@ class ApplicationController < ActionController::Base
   end
 
   private
+
+  def get_team_tags
+    unless @team_tags
+      @team_tags = if @taggable
+        Tag.get_object_team_tags(@taggable)
+      elsif current_user.is_system_admins?
+        Tag.all.order(taggings_count: :desc)
+      elsif @ssl_account || ssl_account
+        (@ssl_account || ssl_account).tags.order(name: :asc)
+      else
+        []
+      end
+    end
+  end
 
   #Saves a cookie using a hash
   # <tt>options</tt> - Contains keys name, value (a hash), path, and expires

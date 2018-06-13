@@ -235,6 +235,9 @@ authorization do
     #
     # Orders
     #
+    has_permission_on :orders, to: :transfer_order do
+      if_attribute :billable => is_in {user.ssl_accounts}
+    end
     has_permission_on :orders, :to => [
         :create,
         :create_free_ssl,
@@ -406,6 +409,12 @@ authorization do
       if_attribute ssl_account: is_in {user.ssl_accounts}
     end
     # 
+    # CertificateOrder
+    #
+    has_permission_on :certificate_orders, :certificate_contents, to: :update_tags do
+      if_attribute ssl_account_id: is_in {user.ssl_accounts.pluck(:id)}
+    end
+    # 
     # Contacts
     #
     has_permission_on :contacts, to: [
@@ -416,7 +425,7 @@ authorization do
     # 
     # Orders
     #
-    has_permission_on :orders, to: :update_invoice do
+    has_permission_on :orders, to: [:update_invoice, :update_tags] do
       if_attribute billable_id: is_in {user.ssl_accounts.pluck(:id)}
     end
   end
@@ -501,6 +510,7 @@ privileges do
     :register_duo,
     :duo_enable,
     :duo_own_used,
+    :set_2fa_type,
     :update_ssl_slug
   ]
   privilege :sysadmin_manage, includes: [

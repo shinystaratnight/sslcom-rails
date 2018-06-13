@@ -1,0 +1,7 @@
+%strong.cc-tags
+  %i.fa.fa-tags
+  #{taggable.label} tags
+#tags-container
+  #tags-cc-input
+    - @taggable = taggable
+    = render partial: '/tags/form'

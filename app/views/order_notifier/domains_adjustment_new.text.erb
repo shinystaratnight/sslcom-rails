@@ -1,0 +1,20 @@
+Dear <%= @user.email %>,
+
+A new domains adjustment order has been placed for team <%= @team.get_team_name %>.
+
+Order:
+
+reference #: <%= @order.reference_number %>
+date: <%= @order.created_at.strftime('%F') %>
+amount: <%= @order.get_full_reprocess_format %>
+team: <%= @team.get_team_name %>
+
+<% unless @order.invoice_description.blank? %>
+Description:
+
+<%= @order.invoice_description %>
+<% end %>
+
+Go to order: <%= order_url(@team.to_slug, @order.reference_number) %>
+
+<%= render partial: 'user_notifier/support_signature' %>

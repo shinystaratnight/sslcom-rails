@@ -157,7 +157,8 @@ jQuery(function($) {
             if (val.trim() != '') {
               itemQuery = filterCont.children().data('field') + ':' + val;
             }
-          } else if ( filterCont.data('type') == 'select') {
+          } else if ( (filterCont.data('type') == 'select') || (filterCont.data('type') == 'select-multi') ) {
+            
             if (filterCont.children().val()) {
               val = filterCont.children().val().toString();
 
@@ -223,6 +224,8 @@ jQuery(function($) {
           filterItem.children().first().children().first().val('');
           filterItem.children().last().children().first().val('');
         } else if ($(this).prop('id') == 'filter_product_chk') {
+          filterItem.children().val([]);
+        } else if ($(this).prop('id') == 'filter_order_tags_chk') {
           filterItem.children().val([]);
         } else if ($(this).prop('id') == 'filter_amount_chk') {
           filterItem.find('#filter_amount').val('equal');
@@ -317,83 +320,16 @@ jQuery(function($) {
       }
     });
     $(':radio[name*=has_account][value=false]').click();
-    // prepare Options Object
-    /*var options = {
-        dataType: 'json',
-        url: '< %=user_session_path%>',
-        beforeSubmit: function(){
-          $('div[id*=Explanation][class*=Explanation]').remove();
-          $('#waiting_bar').show();
-        },
-        success: function(data, status, $form) {
-          $('#waiting_bar').hide();
-          if(typeof(data.record) == "undefined"){
-            errorArray=[];
-            msg="Login error(s):\n";
-            if(typeof(data.errors) != "undefined"){
-              for (var key in data.errors) {
-                if (data.errors.hasOwnProperty(key)) {
-                  errorArray.push(key + ": " + data.errors[key].join(", "));
-                }
-              }
-            }
-            else if (typeof(data.duplicate_v2_user) != "undefined"){
-              errorArray.push(
-                 "Ooops, '"+data.duplicate_v2_user.login+"' has been consolidated with a primary account. Please contact support@ssl.com for assistance or more information.");
-            }
-            errorString = errorArray.join(",\n");
-            alert(msg+errorString);
-          }
-          else{
-            if(data.record.user.status=='disabled')
-              alert('This account has been disabled');
-            else if(data.record.user.status=='enabled'){
-              if (!$('#billing_section').is(':visible') && !$('#new_user_section').is(':visible')) {
-                data.redirect_method='redirect';
-              }
-              if(data.redirect_method=='submit'){
-                  if(data.url)
-                    $('form#new_order').attr("action", data.url);
-                  $('form#new_order').submit();
-              }
-              else if(data.redirect_method=='redirect')
-                window.location=data.url;
-              else{
-                //leave only billing fields showing
-                $('#billing_section').show();
-                $('#subscriber_agreement').show();
-                $('#login_section, #new_user_section').add($('.radio_choices').parent()).remove();
-                var status_bar = $("<div class='flash_message close'></div>");
-                status_bar.hide();
-                $('.reseller_registration_select_tier').before(status_bar);
-                status_bar.addClass('notice').append("<span>Successfully logged in.</span>");
-                status_bar.fadeIn();
-                $('.user_session').html('< %=link_to "Logout", logout_url%>');
-                if(data.billing_profiles){
-                  $('#stylized.deposit_funds_form').prepend(data.billing_profiles);
-                  profile_form_hidden = < %=!initial_display?.empty?%>;
-                  if(profile_form_hidden == false){
-                    $('#register_card_form').fadeOut();
-                    $(this).add('img[id=toggle_billing_profile_form]').attr('src', "< %= asset_path('add_new_billing_profile.png') %>");
-                    $(':radio[id*='+profile_id+']').attr("checked","checked");
-                    profile_form_hidden = true;
-                  }
-                }
-              }
-              return true;
-            }
-          }
-          $(':password').clearFields();
-        }
-    };*/
-    /*$('input:image').livequery('click', function(){
-      if($(':radio[name*=has_account]:checked').val()=="true" && $(this).attr('name')=='next') {
-        $('form#new_order').ajaxSubmit(options);
-        // return false to prevent normal browser submit and page navigation
-        return false;
-      }
-     });*/
 
+    enableSubmitBtn = function() {
+      $('.order_next').show();
+    }
+
+    disableSubmitBtn = function () {
+      $('.order_next').hide();
+    }
+
+    // prepare Options Object
     var options = {
       dataType: 'json',
       url: '<%=user_session_path%>',
@@ -422,6 +358,14 @@ jQuery(function($) {
 
           errorString = errorArray.join(",\n");
           alert(msg+errorString);
+
+          if (
+            parseInt($('.failed_count').val()) >= <%= Settings.captcha_threshold %> &&
+            $('#g-recaptcha-response').val() == ""
+          ) {
+            $('.order_next').hide();
+            $('#recaptcha_container').show();
+          }
         } else {
           if (data.record.user.status == 'disabled') {
             alert('This account has been disabled');
@@ -475,6 +419,8 @@ jQuery(function($) {
         var user_session = {};
         user_session['login'] = $('#user_session_login').val();
         user_session['password'] = $('#user_session_password').val();
+        user_session['failed_count'] = $('.failed_count').val();
+        user_session['g-recaptcha-response'] = $('#g-recaptcha-response').val();
 
         var ajaxLoginUrl = '<%=user_login_user_session_path%>';
         $.ajax({
@@ -484,9 +430,7 @@ jQuery(function($) {
           },
           type: "POST",
           success: function (result) {
-            if ($.isEmptyObject(result)) {
-              $('form#new_order').ajaxSubmit(options);
-            } else {
+            if (result['app_id']) {
               var appId = result['app_id'];
               var signRequests = result['sign_requests'];
               var challenge = result['challenge'];
@@ -499,6 +443,10 @@ jQuery(function($) {
                 }
                 $('form#new_order').ajaxSubmit(options);
               });
+            } else {
+              var failed_count = parseInt($('.failed_count').val()) + 1;
+              $('.failed_count').val(failed_count);
+              $('form#new_order').ajaxSubmit(options);
             }
           }
         });

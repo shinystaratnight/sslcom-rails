@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180523223416) do
+ActiveRecord::Schema.define(version: 20180608202612) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        limit: 255
@@ -62,6 +62,7 @@ ActiveRecord::Schema.define(version: 20180523223416) do
     t.string   "secret_key",     limit: 255
     t.datetime "created_at",                 null: false
     t.datetime "updated_at",                 null: false
+    t.string   "roles",          limit: 255
   end
 
   create_table "apis", force: :cascade do |t|
@@ -346,7 +347,6 @@ ActiveRecord::Schema.define(version: 20180523223416) do
   add_index "certificate_orders", ["ref"], name: "index_certificate_orders_on_ref", using: :btree
   add_index "certificate_orders", ["site_seal_id"], name: "index_certificate_orders_site_seal_id", using: :btree
   add_index "certificate_orders", ["ssl_account_id", "workflow_state", "is_test", "updated_at"], name: "index_certificate_orders_on_4_cols", using: :btree
-  add_index "certificate_orders", ["validation_id"], name: "index_certificate_orders_on_validation_id", using: :btree
   add_index "certificate_orders", ["workflow_state", "is_expired", "is_test"], name: "index_certificate_orders_on_3_cols", using: :btree
 
   create_table "certificates", force: :cascade do |t|
@@ -415,7 +415,6 @@ ActiveRecord::Schema.define(version: 20180523223416) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "registrant_type",       limit: 4
-    t.integer  "parent_id",             limit: 4
     t.string   "callback_method",       limit: 255
     t.date     "incorporation_date"
     t.string   "incorporation_country", limit: 255
@@ -426,6 +425,7 @@ ActiveRecord::Schema.define(version: 20180523223416) do
     t.string   "duns_number",           limit: 255
     t.string   "company_number",        limit: 255
     t.string   "registration_service",  limit: 255
+    t.integer  "parent_id",             limit: 4
     t.boolean  "saved_default",                     default: false
   end
 
@@ -1199,7 +1199,6 @@ ActiveRecord::Schema.define(version: 20180523223416) do
     t.integer  "ca_id",                     limit: 4
   end
 
-  add_index "signed_certificates", ["ca_id"], name: "fk_rails_d21ca532b7", using: :btree
   add_index "signed_certificates", ["ca_id"], name: "index_signed_certificates_on_ca_id", using: :btree
   add_index "signed_certificates", ["common_name"], name: "index_signed_certificates_on_common_name", using: :btree
   add_index "signed_certificates", ["csr_id"], name: "index_signed_certificates_on_csr_id", using: :btree
@@ -1253,6 +1252,7 @@ ActiveRecord::Schema.define(version: 20180523223416) do
     t.string   "billing_method",         limit: 255, default: "monthly"
     t.boolean  "duo_enabled"
     t.boolean  "duo_own_used"
+    t.string   "sec_type",               limit: 255
   end
 
   add_index "ssl_accounts", ["acct_number", "company_name", "ssl_slug"], name: "index_ssl_accounts_on_acct_number_and_company_name_and_ssl_slug", using: :btree
@@ -1333,6 +1333,30 @@ ActiveRecord::Schema.define(version: 20180523223416) do
     t.datetime "created_at",                null: false
     t.datetime "updated_at",                null: false
   end
+
+  create_table "taggings", force: :cascade do |t|
+    t.integer  "tag_id",        limit: 4,   null: false
+    t.integer  "taggable_id",   limit: 4,   null: false
+    t.string   "taggable_type", limit: 255, null: false
+    t.datetime "created_at",                null: false
+    t.datetime "updated_at",                null: false
+  end
+
+  add_index "taggings", ["tag_id"], name: "index_taggings_on_tag_id", using: :btree
+  add_index "taggings", ["taggable_type", "taggable_id", "tag_id"], name: "unique_taggings", unique: true, using: :btree
+  add_index "taggings", ["taggable_type", "taggable_id"], name: "index_taggings_on_taggable_type_and_taggable_id", using: :btree
+
+  create_table "tags", force: :cascade do |t|
+    t.string   "name",           limit: 255,             null: false
+    t.integer  "ssl_account_id", limit: 4,               null: false
+    t.integer  "taggings_count", limit: 4,   default: 0, null: false
+    t.datetime "created_at",                             null: false
+    t.datetime "updated_at",                             null: false
+  end
+
+  add_index "tags", ["ssl_account_id", "name"], name: "index_tags_on_ssl_account_id_and_name", using: :btree
+  add_index "tags", ["ssl_account_id"], name: "index_tags_on_ssl_account_id", using: :btree
+  add_index "tags", ["taggings_count"], name: "index_tags_on_taggings_count", using: :btree
 
   create_table "tracked_urls", force: :cascade do |t|
     t.text     "url",        limit: 65535

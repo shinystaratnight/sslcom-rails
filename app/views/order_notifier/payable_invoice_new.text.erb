@@ -1,0 +1,13 @@
+Dear <%= @user.email %>,
+
+A new <%= @invoice_type %> invoice has been generated for team <%= @team.get_team_name %>.
+
+Invoice:
+
+reference #: <%= @invoice.reference_number %>
+date: <%= @invoice.created_at.strftime('%F') %>
+team: <%= @team.get_team_name %>
+
+Go to invoice: <%= invoice_url(@team.to_slug, @invoice.reference_number) %>
+
+<%= render partial: 'user_notifier/support_signature' %>
