@@ -502,7 +502,7 @@ module ApplicationHelper
   def remote_login_link(u)
     link_to("login as #{u.login}", user_session_url(:login=>u.login, 
         authenticity_token: form_authenticity_token()), :method=>:post,
-        :id=>u.model_and_id)
+        :id=>u.model_and_id) unless u.is_disabled?
   end
 
   def link_cluster(arry)

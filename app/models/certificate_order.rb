@@ -932,7 +932,7 @@ class CertificateOrder < ActiveRecord::Base
 
   def apply_for_certificate(options={})
     if [Ca::CERTLOCK_CA,Ca::SSLCOM_CA,Ca::MANAGEMENT_CA].include? options[:ca]
-      SslcomCaApi.apply_for_certificate(self, options)
+      SslcomCaApi.apply_for_certificate(self, options) if options[:current_user].is_super_user?
     else
       ComodoApi.apply_for_certificate(self, options) if ca_name=="comodo"
     end

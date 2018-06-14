@@ -131,9 +131,13 @@ class User < ActiveRecord::Base
     status
   end
 
+  def is_duo_required?
+    is_super_user?
+  end
+
   def is_passed_2fa session_duo
     status = false
-    if self.is_system_admins?
+    if self.is_duo_required?
       status = session_duo
     else
       if self.ssl_account.sec_type == 'duo'

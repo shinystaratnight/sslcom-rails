@@ -12,5 +12,5 @@
           %td=link_to("smart seal", certificate_order_site_seal_path(ssl_slug: @ssl_slug, certificate_order_id: co.ref), :title=>"get smart seal for "+cn)
       -if current_user.is_system_admins?
         %td=link_to("billing invoice", order_path(@ssl_slug, co.orders.first), :title=>"transaction information for "+cn)
-      -if current_user.is_system_admins? and co.registrant
+      -if current_user.is_super_user? and co.registrant
         %td=link_to("SSL.com CA", sslcom_ca_certificate_order_path(@ssl_slug, co.ref), :title=>"send #"+co.ref+" to SSL.com CA")

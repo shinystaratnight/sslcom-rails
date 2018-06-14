@@ -70,7 +70,7 @@ class ApplicationController < ActionController::Base
 
   def verify_duo_authentication
     if current_user
-      if current_user.is_system_admins?
+      if current_user.is_duo_required?
         if !session[:duo_auth]
           redirect_to duo_user_session_path
         end
