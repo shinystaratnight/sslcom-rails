@@ -10,7 +10,7 @@
         %br/
         -ssl_slug = @ssl_slug.nil? ? @order.billable.to_slug : @ssl_slug
         -teams = if current_user.is_system_admins?
-          -SslAccount.all
+          -SslAccount.select(["ssl_slug","acct_number"])
         -else
           -current_user.ssl_accounts.where.not(id: current_user.ssl_account)
         .clearfix
