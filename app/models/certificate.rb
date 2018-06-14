@@ -461,6 +461,10 @@ class Certificate < ActiveRecord::Base
     product_root
   end
 
+  def has_locked_registrant?
+    is_code_signing? || is_ev? || is_ov?
+  end
+
   def subscriber_agreement
     SUBSCRIBER_AGREEMENTS[product_root.to_sym]
   end

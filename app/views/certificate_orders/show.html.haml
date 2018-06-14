@@ -175,7 +175,7 @@
                               =link_to 'provide info (required)', edit_certificate_order_path(@certificate_order)
                             -else
                               none
-                        -if co.certificate.is_code_signing?
+                        -if co.certificate.has_locked_registrant?
                           %li.category_border
                           %li
                             %strong locked registrant
