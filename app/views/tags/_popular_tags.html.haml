@@ -8,8 +8,8 @@
     %li
       %i.fa.fa-tags
       Popular Tags:
-    - current_tags.first(5).each do |tag|
+    - current_tags.first(6).each do |tag|
       %li
-        = link_to "#{tag.get_name_format} <span>#{tag.taggings_count}</span>".html_safe,           |
-          eval("search_#{controller_name}_path(@ssl_slug, search: '#{search_filter}:#{tag.id}')"), |
+        = link_to "#{tag.get_name_format} <span>#{tag.taggings_count}</span>".html_safe,             |
+          eval("search_#{controller_name}_path(@ssl_slug, search: '#{search_filter}:#{tag.name}')"), |
           class: 'lnk-popular-tags'
