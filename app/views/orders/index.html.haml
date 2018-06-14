@@ -138,7 +138,7 @@
           .filter_label
             .filter_cont.hidden{'data-type'=>'select-multi'}
               =select_tag :filter_order_tags,                                                |
-              options_for_select(@team_tags.map {|tag| [tag.name, tag.id]}),                 |
+              options_for_select(@team_tags.pluck(:name).sort_by(&:downcase)),               |
               class: 'filter_cont_slt slt-large', 'data-field': 'order_tags', multiple: true
   
   =button_tag 'Search', :type=>'button', :id=>'btn_order_filter_search'
