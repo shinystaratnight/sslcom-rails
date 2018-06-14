@@ -190,6 +190,7 @@ SslCom::Application.routes.draw do
       member do
         get :update_csr, to: 'application#not_found', status: 404
         match :update_csr, via: [:put, :patch]
+        match :update_tags, via: [:put, :post]
         get :download
         get :developer
         get :download_other
@@ -219,6 +220,7 @@ SslCom::Application.routes.draw do
 
     resources :certificate_contents do
       resources :contacts, only: :index
+      match :update_tags, via: [:put, :post], on: :member
     end
     
     resources :contacts, except: :index do
@@ -285,6 +287,7 @@ SslCom::Application.routes.draw do
         get :refund_merchant
         match :update_invoice, via: [:put, :post]
         match :transfer_order, via: [:put, :post]
+        match :update_tags, via: [:put, :post]
       end
     end
     resources :billing_profiles
@@ -317,6 +320,12 @@ SslCom::Application.routes.draw do
       member do
         patch 'update_roles'
         get   'remove'
+      end
+    end
+
+    resource :api_credential do
+      collection do
+        post :reset_credential
       end
     end
 
