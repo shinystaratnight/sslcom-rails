@@ -163,11 +163,11 @@ class CertificateOrder < ActiveRecord::Base
     end
     %w(co_tags).each do |field|
       query = filters[field.to_sym]
-      result = result.joins(:tags).where(tags: {id: query.split(',')}) if query
+      result = result.joins(:tags).where(tags: {name: query.split(',')}) if query
     end
     %w(cc_tags).each do |field|
       query = filters[field.to_sym]
-      result = result.joins(certificate_contents: [:tags]).where(tags: {id: query.split(',')}) if query
+      result = result.joins(certificate_contents: [:tags]).where(tags: {name: query.split(',')}) if query
     end
     %w(duration).each do |field|
       query=filters[field.to_sym]
