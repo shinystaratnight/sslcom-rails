@@ -177,7 +177,7 @@ class Order < ActiveRecord::Base
     end
     %w(order_tags).each do |field|
       query = filters[field.to_sym]
-      result = result.joins(:tags).where(tags: {id: query.split(',')}) if query
+      result = result.joins(:tags).where(tags: {name: query.split(',')}) if query
     end
     %w(created_at).each do |field|
       query=filters[field.to_sym]
