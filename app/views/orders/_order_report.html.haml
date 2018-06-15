@@ -2,7 +2,7 @@
 #order_details
   %h3.order_results_header
     =title
-    -other_orders = @certificate_order.orders
+    -other_orders = @order.certificate_orders.uniq.last.orders
     -if current_user.is_system_admins? || current_user.ssl_accounts.count > 1
       =link_to "<span>&#10144;</span> transfer to team".html_safe, '#', id: 'btn-transfer-order'
       #dialog-form
