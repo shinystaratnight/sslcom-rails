@@ -39,7 +39,7 @@ class ApiCredentialsController < ApplicationController
   end
 
   def edit
-    @ac = find_api_credential.find(params[:id])
+    @ac = find_api_credential(params[:id])
     if current_user.is_system_admins?
       @user_accounts_roles = User.get_user_accounts_roles(@user)
     end
@@ -48,7 +48,7 @@ class ApiCredentialsController < ApplicationController
 
   def update
     role_ids = params[:api_credential][:role_ids].reject(&:blank?)
-    @ac = find_api_credential.find(params[:id])
+    @ac = find_api_credential(params[:id])
     @ac.account_key = params[:api_credential][:account_key]
     @ac.secret_key = params[:api_credential][:acc_secret_key]
     @ac.roles = role_ids.to_json
@@ -57,7 +57,7 @@ class ApiCredentialsController < ApplicationController
   end
 
   def reset_credential
-    @ac = find_api_credential.find(params[:acc_id])
+    @ac = find_api_credential(params[:acc_id])
     new_ac = ApiCredential.new
     @ac.secret_key = new_ac.secret_key
     @ac.save
