@@ -345,7 +345,7 @@ class UserSessionsController < ApplicationController
       session[:duo_auth] = true
       respond_to do |format|
         format.js   {render :json=>url_for_js(current_user)}
-        format.html {redirect_to account_path(current_user.ssl_account(:default_team) ? current_user.ssl_account(:default_team).to_slug : {})}
+        format.html {redirect_back_or_default account_path(current_user.ssl_account(:default_team) ? current_user.ssl_account(:default_team).to_slug : {})}
       end
     else
       redirect_to action: :new

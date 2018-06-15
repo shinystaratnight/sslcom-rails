@@ -31,8 +31,9 @@ class ApiCredentialsController < ApplicationController
   def create
     role_ids = params[:api_credential][:role_ids].reject(&:blank?)
     params[:api_credential][:roles] = role_ids.to_json
-    params[:api_credential][:ssl_account_id] = current_user.ssl_account.id  
-    @ac = ApiCredential.new(params[:api_credential].except(:role_ids))
+    params[:api_credential][:ssl_account_id] = current_user.ssl_account.id
+    params[:api_credential][:secret_key] = params[:api_credential][:acc_secret_key]
+    @ac = ApiCredential.new(params[:api_credential].except(:role_ids, :acc_id, :acc_secret_key))
     @ac.save
     redirect_to api_credentials_path(ssl_slug: @ssl_slug)
   end
@@ -48,9 +49,21 @@ class ApiCredentialsController < ApplicationController
   def update
     role_ids = params[:api_credential][:role_ids].reject(&:blank?)
     @ac = ApiCredential.find(params[:id])
+    @ac.account_key = params[:api_credential][:account_key]
+    @ac.secret_key = params[:api_credential][:acc_secret_key]
     @ac.roles = role_ids.to_json
     @ac.save
     redirect_to api_credentials_path(ssl_slug: @ssl_slug)
+  end
+
+  def reset_credential
+    @ac = ApiCredential.find(params[:acc_id])
+    new_ac = ApiCredential.new
+    @ac.secret_key = new_ac.secret_key
+    @ac.save
+    respond_to do |format|
+      format.js {render json: new_ac.to_json}
+    end  
   end
 
   def remove

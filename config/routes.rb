@@ -323,6 +323,12 @@ SslCom::Application.routes.draw do
       end
     end
 
+    resource :api_credential do
+      collection do
+        post :reset_credential
+      end
+    end
+
     resource :account, controller: :users do
       resource :reseller
     end

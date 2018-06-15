@@ -1,9 +1,40 @@
 <script type="text/javascript">
-jQuery.noConflict();
 jQuery(function($) {
   $(document).ready(function() {
     $('.remove_ac').on('click', function(){
       if(!confirm('Please confirm deletion of API credential. This cannot be undone')) return false;
+    });
+
+    $(document).on('click', '#api_credential_secret_key', function() {
+      var skey = $(this).attr('data-secret-key');
+      $(this).val(skey);
+    });
+
+    $(document).on('change', '#api_credential_secret_key', function() {
+      var skey = $(this).val();
+      $(this).attr('data-secret-key', skey);
+      $('#api_credential_acc_secret_key').val(skey);
+    });
+
+    $(document).on('blur', '#api_credential_secret_key', function() {
+      $(this).val('Click to view');
+    });
+
+    var ajaxResetCredentialUrl = '<%= reset_credential_api_credential_path %>';
+    $(document).on('click', '#btn_reset_secretkey', function() {
+      if(!confirm('Are you sure you want to reset the secret key?')) return false;
+      var acc_id = $('#api_credential_acc_id').val();
+      $.ajax({
+          url: ajaxResetCredentialUrl,
+          data: {
+            acc_id: acc_id
+          },
+          type: 'POST',
+          success: function(result) {
+            $('#api_credential_secret_key').attr('data-secret-key', result.api_credential.secret_key);
+            $('#api_credential_acc_secret_key').val(result.api_credential.secret_key);
+          }
+        });
     });
   });
 });

@@ -161,14 +161,6 @@ class CertificateOrder < ActiveRecord::Base
       query=filters[field.to_sym]
       result = result.filter_by(query) if query
     end
-    %w(co_tags).each do |field|
-      query = filters[field.to_sym]
-      result = result.joins(:tags).where(tags: {name: query.split(',')}) if query
-    end
-    %w(cc_tags).each do |field|
-      query = filters[field.to_sym]
-      result = result.joins(certificate_contents: [:tags]).where(tags: {name: query.split(',')}) if query
-    end
     %w(duration).each do |field|
       query=filters[field.to_sym]
       result = result.filter_by_duration(query) if query
@@ -229,6 +221,27 @@ class CertificateOrder < ActiveRecord::Base
           result = result.where{(certificate_contents.csr.signed_certificates.created_at >> (start..finish))}
         else
           result = result.where{created_at >> (start..finish)}
+        end
+      end
+    end
+    %w(co_tags).each do |field|
+      query = filters[field.to_sym]
+      if query
+        @result_prior_co_tags = result
+        result = result.joins(:tags).where(tags: {name: query.split(',')})
+      end
+    end
+    %w(cc_tags).each do |field|
+      query = filters[field.to_sym]
+      if query
+        cc_results = (@result_prior_co_tags || result)
+          .joins(certificate_contents: [:tags]).where(tags: {name: query.split(',')})
+        
+        result = if @result_prior_co_tags.nil?
+          cc_results
+        else
+          # includes tags in BOTH certificate orders and certificate contents tags, not a union
+          CertificateOrder.where(id: (result + cc_results).map(&:id).uniq)
         end
       end
     end
