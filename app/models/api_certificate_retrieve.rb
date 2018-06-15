@@ -23,7 +23,7 @@ class ApiCertificateRetrieve < ApiCertificateRequest
   attr_accessor :validity_period, :domains, :ext_status, :certificates, :order_status, :certificate_order,
                 :common_name, :subject_alternative_names, :effective_date, :expiration_date, :algorithm,
                 :site_seal_code, :domains_qty_purchased, :wildcard_qty_purchased, :description, :subscriber_agreement,
-                :order_date, :product_type, :period
+                :order_date, :product_type, :period, :private_cache_key
 
   def initialize(attributes = {})
     super
