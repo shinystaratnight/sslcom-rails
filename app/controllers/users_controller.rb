@@ -7,7 +7,8 @@ class UsersController < ApplicationController
   before_filter :require_user, only: [
     :show, :edit, :update, :cancel_reseller_signup, 
     :approve_account_invite, :resend_account_invite,
-    :switch_default_ssl_account, :enable_disable, :teams, :index, :admin_show
+    :switch_default_ssl_account, :enable_disable, :teams,
+    :index, :admin_show, :search_teams
   ]
   before_filter :finish_reseller_signup, :only => [:show]
   before_filter :new_user, :only=>[:create, :new]
@@ -35,6 +36,29 @@ class UsersController < ApplicationController
 
   def search
     index
+  end
+
+  def search_teams
+    if current_user.is_system_admins?
+      unless params[:search_term].blank?
+        s = params[:search_term]
+        str = s.downcase
+        @found_teams = SslAccount.where(
+          "id = ? OR lower(acct_number) LIKE ? OR lower(company_name) LIKE ? OR lower(ssl_slug) LIKE ?",
+          s, "%#{str}%", "%#{str}%", "%#{str}%"
+        )
+      end
+      json = if @found_teams && @found_teams.any?
+        @order = Order.find_by(reference_number: params[:order]) if params[:order]
+        @certificate_order = CertificateOrder.find_by(ref: params[:certificate_order]) if params[:certificate_order]
+        {content: render_to_string(partial: '/orders/order_transfer_form', layout: false)}
+      else
+        {error: 'Team does not exist.'}
+      end
+    else
+      json = {error: 'Not authorized to do this action!'}
+    end
+    render json: json
   end
 
   def index
