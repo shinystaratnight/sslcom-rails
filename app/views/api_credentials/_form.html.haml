@@ -9,6 +9,7 @@
     - ssl_select     = system_admin ? scoped_ssl.id : current_user.default_ssl_account
   - else
     = form.hidden_field :ssl_account_ids, value: [current_user.ssl_account.try(:id)]
+  = form.hidden_field :acc_id, value: @ac.id
   = form.hidden_field :acc_secret_key, value: @ac.secret_key
   = form.label :account_key, 'Account key'
   = form.text_field :account_key
