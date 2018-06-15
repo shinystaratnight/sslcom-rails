@@ -12,9 +12,9 @@
   = form.hidden_field :acc_secret_key, value: @ac.secret_key
   = form.label :account_key, 'Account key'
   = form.text_field :account_key
-  = form.label :account_key, 'Secret key'
+  = form.label :secret_key, 'Secret key'
   = form.text_field :secret_key, value: 'Click to view', 'data-secret-key': @ac.secret_key
-  = button_tag 'Reset', :type=>'button', :id=>'btn_reset_secretkey'
+  = button_tag 'Reset Secret Key', :type=>'button', :id=>'btn_reset_secretkey'
 .clearfix.form_input
   - role_ids = @ac.role_ids
   = form.label :role_id, "Role(s)<span class='label_desc'>set permissions</span>".html_safe

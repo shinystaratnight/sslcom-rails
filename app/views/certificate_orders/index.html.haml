@@ -264,7 +264,7 @@
                 =check_box_tag :filter_activated_chk, true, false, 'data-field'=>'in_possession', :class=>'filter_cont_chk'
               .filter_cont_item_label
                 Activated
-      -if @team_tags.any?
+      -if @team_tags.try("any?".to_sym)
         %div.filter_item
           .filter_evt.clearfix
             %label
@@ -272,9 +272,9 @@
               Certificate Order Tags (Ctrl + Click Multi)
           .filter_label
             .filter_cont.hidden{'data-type'=>'select-multi'}
-              =select_tag :filter_co_tags,                                                |
-              options_for_select(@team_tags.map {|tag| [tag.name, tag.id]}),              |
-              class: 'filter_cont_slt slt-large', 'data-field': 'co_tags', multiple: true 
+              =select_tag :filter_co_tags,                                     |
+              options_for_select(@team_tags.pluck(:name).sort_by(&:downcase)), |
+              class: 'filter_cont_slt slt-large', 'data-field': 'co_tags', multiple: true
         %div.filter_item
           .filter_evt.clearfix
             %label
@@ -282,9 +282,9 @@
               Certificate Content Tags (Ctrl + Click Multi)
           .filter_label
             .filter_cont.hidden{'data-type'=>'select-multi'}
-              =select_tag :filter_cc_tags,                                                |
-              options_for_select(@team_tags.map {|tag| [tag.name, tag.id]}),              |
-              class: 'filter_cont_slt slt-large', 'data-field': 'cc_tags', multiple: true 
+              =select_tag :filter_cc_tags,                                     |
+              options_for_select(@team_tags.pluck(:name).sort_by(&:downcase)), |
+              class: 'filter_cont_slt slt-large', 'data-field': 'cc_tags', multiple: true
       -if current_user.is_system_admins?
         %div.filter_item
           .filter_evt.clearfix

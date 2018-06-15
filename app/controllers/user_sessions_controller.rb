@@ -291,7 +291,8 @@ class UserSessionsController < ApplicationController
   end
 
   def duo
-    if current_user.is_system_admins?
+    return if current_user.blank?
+    if current_user.is_duo_required?
       s = Rails.application.secrets
       @duo_hostname = s.duo_system_admins_api_hostname
       @sig_request = Duo.sign_request(s.duo_system_admins_integration_key, s.duo_system_admins_secret_key, s.duo_system_admins_application_key, current_user.login)
@@ -319,7 +320,7 @@ class UserSessionsController < ApplicationController
   end
 
   def duo_verify
-    if current_user.is_system_admins?
+    if current_user.is_duo_required?
       s = Rails.application.secrets;
       @authenticated_user = Duo.verify_response(s.duo_system_admins_integration_key, s.duo_system_admins_secret_key, s.duo_system_admins_application_key, params['sig_response'])
     else
