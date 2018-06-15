@@ -57,7 +57,7 @@ class UsersController < ApplicationController
       role = nil
       search.delete_if {|s|s =~ /role\:(.+)/; role ||= $1; $1}
       search = search.join(" ")
-      @users = @users.with_role(role) if role
+      @users = @users.with_role(role).uniq if role
       @users = @users.search(search) unless search.blank?
     end
     @users = @users.order("created_at desc").paginate(@p)
