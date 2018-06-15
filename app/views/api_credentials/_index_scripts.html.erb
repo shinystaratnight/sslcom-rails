@@ -22,9 +22,13 @@ jQuery(function($) {
 
     var ajaxResetCredentialUrl = '<%= reset_credential_api_credential_path %>';
     $(document).on('click', '#btn_reset_secretkey', function() {
-      //if(!confirm('Are you sure you want to reset the secret key?')) return false;
+      if(!confirm('Are you sure you want to reset the secret key?')) return false;
+      var acc_id = $('#api_credential_acc_id').val();
       $.ajax({
           url: ajaxResetCredentialUrl,
+          data: {
+            acc_id: acc_id
+          },
           type: 'POST',
           success: function(result) {
             $('#api_credential_secret_key').attr('data-secret-key', result.api_credential.secret_key);
