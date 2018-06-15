@@ -27,9 +27,6 @@
     -permitted_to? :read, :users do
       %li(id="#{(is_on?("users",current_slug) && !@prev) ? 't-intro' : 'manage_users'}")
         =link_to "Users", users_path(slug_params)
-    -permitted_to? :read, :users do
-      %li(id="#{(is_on?("api_credentials",current_slug) && !@prev) ? 't-intro' : 'manage_api_credentials'}")
-        =link_to "API Credentials", api_credentials_path(slug_params)
     -permitted_to? :edit_settings, current_user.ssl_account do
       %li(id="#{is_on?("edit_settings_ssl_account",current_slug) ? 't-intro' : 'manage_settings'}")
         =link_to "Settings", edit_settings_ssl_account_path(slug_params)

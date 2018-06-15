@@ -7,8 +7,8 @@
   - when 'CertificateOrder'
     - "certificate order #{@taggable.ref}"
   - when 'CertificateContent'
-    - "certificate #{@taggable.label}"
+    - "end-entity certificate #{@taggable.label}"
 
   = form_tag send("update_tags_#{@taggable.class.base_class.to_s.underscore}_path", @ssl_slug, @taggable), remote: true do
     = select_tag :tags_list, options_for_select(@team_tags.pluck(:name), selected: selected_tags), |
-      multiple: true, data: {placeholder: "click here to add/remove/edit tags for #{placeholder}"}
+      multiple: true, data: {placeholder: "click here to add/remove/edit searchable tags for #{placeholder}"}

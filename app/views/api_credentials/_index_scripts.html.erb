@@ -27,7 +27,6 @@ jQuery(function($) {
           url: ajaxResetCredentialUrl,
           type: 'POST',
           success: function(result) {
-            $('#api_credential_account_key').val(result.api_credential.account_key);
             $('#api_credential_secret_key').attr('data-secret-key', result.api_credential.secret_key);
             $('#api_credential_acc_secret_key').val(result.api_credential.secret_key);
           }
