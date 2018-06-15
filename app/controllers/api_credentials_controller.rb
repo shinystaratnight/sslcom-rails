@@ -39,7 +39,7 @@ class ApiCredentialsController < ApplicationController
   end
 
   def edit
-    @ac = current_user.ssl_account.api_credentials.find(params[:id])
+    @ac = find_api_credential.find(params[:id])
     if current_user.is_system_admins?
       @user_accounts_roles = User.get_user_accounts_roles(@user)
     end
@@ -48,7 +48,7 @@ class ApiCredentialsController < ApplicationController
 
   def update
     role_ids = params[:api_credential][:role_ids].reject(&:blank?)
-    @ac = current_user.ssl_account.api_credentials.find(params[:id])
+    @ac = find_api_credential.find(params[:id])
     @ac.account_key = params[:api_credential][:account_key]
     @ac.secret_key = params[:api_credential][:acc_secret_key]
     @ac.roles = role_ids.to_json
@@ -57,7 +57,7 @@ class ApiCredentialsController < ApplicationController
   end
 
   def reset_credential
-    @ac = current_user.ssl_account.api_credentials.find(params[:acc_id])
+    @ac = find_api_credential.find(params[:acc_id])
     new_ac = ApiCredential.new
     @ac.secret_key = new_ac.secret_key
     @ac.save
@@ -67,7 +67,7 @@ class ApiCredentialsController < ApplicationController
   end
 
   def remove
-    @ac = current_user.ssl_account.api_credentials.find(params[:id])
+    @ac = find_api_credential(params[:id])
     @ac.destroy
     redirect_to api_credentials_path(ssl_slug: @ssl_slug)
   end
@@ -79,6 +79,14 @@ class ApiCredentialsController < ApplicationController
       @acs = @ssl_account.try(:api_credentials) || ApiCredential.unscoped
     else
       @acs = current_user.manageable_acs
+    end
+  end
+
+  def find_api_credential(id)
+    if current_user.is_system_admins?
+      ApiCredential.find(id)
+    else
+      current_user.ssl_account.api_credentials.find(id)
     end
   end
 end
