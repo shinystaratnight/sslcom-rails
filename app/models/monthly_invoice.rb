@@ -23,7 +23,7 @@ class MonthlyInvoice < Invoice
   
   def self.last_invoice_for_month(ssl_account, exclude=nil)
     ssl = Invoice.get_team ssl_account
-    ssl.monthly_invoices.order(created_at: :desc)
+    ssl.monthly_invoices.order(id: :desc)
       .where(start_date: START_DATE).where.not(id: exclude).first
   end
 end

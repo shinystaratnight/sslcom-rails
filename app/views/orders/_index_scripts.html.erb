@@ -157,7 +157,8 @@ jQuery(function($) {
             if (val.trim() != '') {
               itemQuery = filterCont.children().data('field') + ':' + val;
             }
-          } else if ( filterCont.data('type') == 'select') {
+          } else if ( (filterCont.data('type') == 'select') || (filterCont.data('type') == 'select-multi') ) {
+            
             if (filterCont.children().val()) {
               val = filterCont.children().val().toString();
 
@@ -223,6 +224,8 @@ jQuery(function($) {
           filterItem.children().first().children().first().val('');
           filterItem.children().last().children().first().val('');
         } else if ($(this).prop('id') == 'filter_product_chk') {
+          filterItem.children().val([]);
+        } else if ($(this).prop('id') == 'filter_order_tags_chk') {
           filterItem.children().val([]);
         } else if ($(this).prop('id') == 'filter_amount_chk') {
           filterItem.find('#filter_amount').val('equal');

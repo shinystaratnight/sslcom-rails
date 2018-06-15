@@ -1,9 +1,10 @@
 class UserSessionsController < ApplicationController
   before_filter :require_no_user, only: [:new]
   before_filter :find_dup_login, only: [:create]
-  before_filter :require_user, only: :destroy
+  before_filter :require_user, only: [:destroy, :duo]
   skip_filter :finish_reseller_signup, only: [:destroy]
   skip_before_action :verify_authenticity_token
+  skip_before_action :verify_duo_authentication, only: [:new, :create, :destroy]
   skip_before_action :require_no_authentication, only: [:duo_verify]
 
   def new
@@ -64,7 +65,6 @@ class UserSessionsController < ApplicationController
             :path => "/",
             :expires => Settings.cart_cookie_days.to_i.days.from_now
         } if user.shopping_cart
-
         if user.ssl_account.is_registered_reseller?
           cookies[:r_tier] = {
               :value=>user.ssl_account.reseller.reseller_tier.label,
@@ -72,7 +72,6 @@ class UserSessionsController < ApplicationController
               :expires => Settings.cart_cookie_days.to_i.days.from_now
           }
         end
-
         # Fetch existing U2Fs from your db
         key_handles = @user_session.user.u2fs.pluck(:key_handle)
       end
@@ -207,93 +206,141 @@ class UserSessionsController < ApplicationController
         else
           @user_session = current_user_session
 
-          # TODO: Check U2F
-          if params['u2f_response'].blank?
-            if current_user.ssl_account(:default_team).duo_enabled
-              flash[:notice] = "Duo 2-factor authentication setup." unless request.xhr?
-            else
-              flash[:notice] = "Successfully logged in." unless request.xhr?
-            end
+          if current_user.is_duo_required?
+            flash[:notice] = "Duo 2-factor authentication setup." unless request.xhr?
             format.js   {render :json=>url_for_js(current_user)}
-            if current_user.ssl_account(:default_team).duo_enabled && Settings.enable_duo
-              format.html {redirect_to(duo_user_session_url)}
-            else
-              session[:duo_auth] = true
-              format.html {redirect_back_or_default account_path(current_user.ssl_account(:default_team) ? current_user.ssl_account(:default_team).to_slug : {})}
-            end
+            format.html {redirect_to(duo_user_session_url)}
           else
-            response = U2F::SignResponse.load_from_json(params[:u2f_response])
-            reg_u2f = current_user.u2fs.find_by_key_handle(response.key_handle) if response.key_handle
-
-            unless reg_u2f
-              flash[:notice] = "Successfully logged in." unless request.xhr?
-
-              format.js   {render :json=>url_for_js(current_user)}
-              format.html {redirect_back_or_default account_path(current_user.ssl_account(:default_team) ?
-                                                                     current_user.ssl_account(:default_team).to_slug :
-                                                                     {})}
-            end
-
-            begin
-              u2f.authenticate!(
-                  session[:challenge],
-                  response,
-                  Base64.decode64(reg_u2f.public_key),
-                  reg_u2f.counter
-              )
-
-              reg_u2f.update(counter: response.counter)
-            rescue U2F::Error => e
-              # Log out to protect hack.
-              if current_user.is_admin?
-                cookies.delete(:r_tier)
-                cookies.delete(:cart_guid)
-                clear_cart
+            if current_user.ssl_account(:default_team).sec_type == 'duo'
+              if current_user.ssl_account(:default_team).duo_enabled && (Settings.duo_auto_enabled || Settings.duo_custom_enabled) && current_user.duo_enabled
+                flash[:notice] = "Duo 2-factor authentication setup." unless request.xhr?
+              else
+                flash[:notice] = "Successfully logged in." unless request.xhr?
               end
-              cookies.delete(:acct)
-              current_user_session.destroy
-              Authorization.current_user=nil
-              flash[:error] = "Unable to authenticate with U2F: " + e.class.name unless params[:user]
-
-              @user_session = UserSession.new(params[:user_session])
-              format.html {render :action => :new}
-              format.js   {render :json=>@user_session.errors}
-            ensure
-              session.delete(:challenge)
+              format.js   {render :json=>url_for_js(current_user)}
+              if current_user.ssl_account(:default_team).duo_enabled && (Settings.duo_auto_enabled || Settings.duo_custom_enabled) && current_user.duo_enabled
+                format.html {redirect_to(duo_user_session_url)}
+              else
+                session[:duo_auth] = true
+                format.html {redirect_back_or_default account_path(current_user.ssl_account(:default_team) ? current_user.ssl_account(:default_team).to_slug : {})}
+              end
+            elsif current_user.ssl_account(:default_team).sec_type == 'u2f'
+              session[:duo_auth] = true
+              if params['u2f_response'].blank?
+                flash[:notice] = "Successfully logged in." unless request.xhr?
+                format.js   {render :json=>url_for_js(current_user)}
+                format.html {redirect_back_or_default account_path(current_user.ssl_account(:default_team) ? current_user.ssl_account(:default_team).to_slug : {})}
+              else  
+                response = U2F::SignResponse.load_from_json(params[:u2f_response])
+                reg_u2f = current_user.u2fs.find_by_key_handle(response.key_handle) if response.key_handle
+    
+                unless reg_u2f
+                  flash[:notice] = "Successfully logged in." unless request.xhr?
+    
+                  format.js   {render :json=>url_for_js(current_user)}
+                  format.html {redirect_back_or_default account_path(current_user.ssl_account(:default_team) ?
+                                                                         current_user.ssl_account(:default_team).to_slug :
+                                                                         {})}
+                end
+    
+                begin
+                  u2f.authenticate!(
+                      session[:challenge],
+                      response,
+                      Base64.decode64(reg_u2f.public_key),
+                      reg_u2f.counter
+                  )
+    
+                  reg_u2f.update(counter: response.counter)
+                rescue U2F::Error => e
+                  # Log out to protect hack.
+                  if current_user.is_admin?
+                    cookies.delete(:r_tier)
+                    cookies.delete(:cart_guid)
+                    clear_cart
+                  end
+                  cookies.delete(:acct)
+                  current_user_session.destroy
+                  Authorization.current_user=nil
+                  flash[:error] = "Unable to authenticate with U2F: " + e.class.name unless params[:user]
+    
+                  @user_session = UserSession.new(params[:user_session])
+                  format.html {render :action => :new}
+                  format.js   {render :json=>@user_session.errors}
+                ensure
+                  session.delete(:challenge)
+                end
+    
+                flash[:notice] = "Successfully logged in." unless request.xhr?
+    
+                format.js   {render :json=>url_for_js(current_user)}
+                format.html {redirect_back_or_default account_path(current_user.ssl_account(:default_team) ?
+                                                                       current_user.ssl_account(:default_team).to_slug :
+                                                                       {})}
+              end
+            else
+              session[:duo_auth] = true;
+              flash[:notice] = "Successfully logged in." unless request.xhr?
+                format.js   {render :json=>url_for_js(current_user)}
+                format.html {redirect_back_or_default account_path(current_user.ssl_account(:default_team) ? current_user.ssl_account(:default_team).to_slug : {})}
             end
-
-            flash[:notice] = "Successfully logged in." unless request.xhr?
-
-            format.js   {render :json=>url_for_js(current_user)}
-            format.html {redirect_back_or_default account_path(current_user.ssl_account(:default_team) ?
-                                                                   current_user.ssl_account(:default_team).to_slug :
-                                                                   {})}
-          end
+          end  
         end
       end
     end
   end
 
   def duo
-    if current_user.ssl_account(:default_team).duo_own_used
-      @duo_account = current_user.ssl_account(:default_team).duo_account
-      @duo_hostname = @duo_account.duo_hostname
-      @sig_request = Duo.sign_request(@duo_account ? @duo_account.duo_ikey : "", @duo_account ? @duo_account.duo_skey : "", @duo_account ? @duo_account.duo_akey : "", current_user.login)
+    return if current_user.blank?
+    if current_user.is_duo_required?
+      s = Rails.application.secrets
+      @duo_hostname = s.duo_system_admins_api_hostname
+      @sig_request = Duo.sign_request(s.duo_system_admins_integration_key, s.duo_system_admins_secret_key, s.duo_system_admins_application_key, current_user.login)
     else
-      s = Rails.application.secrets;
-      @duo_hostname = s.duo_api_hostname
-      @sig_request = Duo.sign_request(s.duo_integration_key, s.duo_secret_key, s.duo_application_key, current_user.login)
+      if Settings.duo_auto_enabled && Settings.duo_custom_enabled
+        if current_user.ssl_account(:default_team).duo_own_used
+          @duo_account = current_user.ssl_account(:default_team).duo_account
+          @duo_hostname = @duo_account.duo_hostname
+          @sig_request = Duo.sign_request(@duo_account ? @duo_account.duo_ikey : "", @duo_account ? @duo_account.duo_skey : "", @duo_account ? @duo_account.duo_akey : "", current_user.login)
+        else
+          s = Rails.application.secrets
+          @duo_hostname = s.duo_api_hostname
+          @sig_request = Duo.sign_request(s.duo_integration_key, s.duo_secret_key, s.duo_application_key, current_user.login)
+        end
+      elsif Settings.duo_auto_enabled && !Settings.duo_custom_enabled
+        s = Rails.application.secrets
+        @duo_hostname = s.duo_api_hostname
+        @sig_request = Duo.sign_request(s.duo_integration_key, s.duo_secret_key, s.duo_application_key, current_user.login)
+      else
+        @duo_account = current_user.ssl_account(:default_team).duo_account
+        @duo_hostname = @duo_account ? @duo_account.duo_hostname : ""
+        @sig_request = Duo.sign_request(@duo_account ? @duo_account.duo_ikey : "", @duo_account ? @duo_account.duo_skey : "", @duo_account ? @duo_account.duo_akey : "", current_user.login)
+      end
     end
   end
 
   def duo_verify
-    if current_user.ssl_account(:default_team).duo_own_used
-      @duo_account = current_user.ssl_account(:default_team).duo_account
-      @authenticated_user = Duo.verify_response(@duo_account ? @duo_account.duo_ikey : "", @duo_account ? @duo_account.duo_skey : "", @duo_account ? @duo_account.duo_akey : "", params['sig_response'])
-    else
+    if current_user.is_duo_required?
       s = Rails.application.secrets;
-      @authenticated_user = Duo.verify_response(s.duo_integration_key, s.duo_secret_key, s.duo_application_key, params['sig_response'])
+      @authenticated_user = Duo.verify_response(s.duo_system_admins_integration_key, s.duo_system_admins_secret_key, s.duo_system_admins_application_key, params['sig_response'])
+    else
+      if Settings.duo_auto_enabled && Settings.duo_custom_enabled
+        if current_user.ssl_account(:default_team).duo_own_used
+          @duo_account = current_user.ssl_account(:default_team).duo_account
+          @authenticated_user = Duo.verify_response(@duo_account ? @duo_account.duo_ikey : "", @duo_account ? @duo_account.duo_skey : "", @duo_account ? @duo_account.duo_akey : "", params['sig_response'])
+        else
+          s = Rails.application.secrets;
+          @authenticated_user = Duo.verify_response(s.duo_integration_key, s.duo_secret_key, s.duo_application_key, params['sig_response'])
+        end
+      elsif Settings.duo_auto_enabled && !Settings.duo_custom_enabled
+        s = Rails.application.secrets;
+        @authenticated_user = Duo.verify_response(s.duo_integration_key, s.duo_secret_key, s.duo_application_key, params['sig_response'])
+      else
+        @duo_account = current_user.ssl_account(:default_team).duo_account
+        @authenticated_user = Duo.verify_response(@duo_account ? @duo_account.duo_ikey : "", @duo_account ? @duo_account.duo_skey : "", @duo_account ? @duo_account.duo_akey : "", params['sig_response'])
+      end
     end
+    
     if @authenticated_user
       session[:duo_auth] = true
       respond_to do |format|

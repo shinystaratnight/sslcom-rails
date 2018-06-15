@@ -72,13 +72,13 @@ class User < ActiveRecord::Base
   default_scope        {where{status << ['disabled']}.order("created_at desc")}
   scope :with_role, -> (role){joins(:roles).where('lower(roles.name) LIKE (?)',
                         "%#{role.downcase.strip}%")}
-  scope :search,    -> (term){joins{ssl_accounts.api_credential}.where{
+  scope :search,    -> (term){joins{ssl_accounts.api_credentials}.where{
                         (login =~ "%#{term}%") |
                         (email =~ "%#{term}%") |
                         (last_login_ip =~ "%#{term}%") |
                         (current_login_ip =~ "%#{term}%") |
-                        (ssl_accounts.api_credential.account_key =~ "%#{term}%") |
-                        (ssl_accounts.api_credential.secret_key =~ "%#{term}%") |
+                        (ssl_accounts.api_credentials.account_key =~ "%#{term}%") |
+                        (ssl_accounts.api_credentials.secret_key =~ "%#{term}%") |
                         (ssl_accounts.acct_number =~ "%#{term}%")}.uniq}
 
   def ssl_account(default_team=nil)
@@ -127,6 +127,28 @@ class User < ActiveRecord::Base
       status = :expired  if ssl.token_expires && (status != :declined) && (ssl.token_expires < DateTime.now)
       status = :pending  if !active && (status != :declined) 
       status = :pending  if active && (!ssl.approved && ssl.token_expires && ssl.approval_token) && (ssl.token_expires > DateTime.now)
+    end
+    status
+  end
+
+  def is_duo_required?
+    is_super_user?
+  end
+
+  def is_passed_2fa session_duo
+    status = false
+    if self.is_duo_required?
+      status = session_duo
+    else
+      if self.ssl_account.sec_type == 'duo'
+        if Settings.duo_auto_enabled || Settings.duo_custom_enabled
+          status = session_duo
+        else
+          status = true
+        end
+      else
+        status = true
+      end
     end
     status
   end
@@ -324,6 +346,10 @@ class User < ActiveRecord::Base
 
   def manageable_users
     ssl_account.users
+  end
+
+  def manageable_acs
+    ssl_account.api_credentials
   end
 
   def has_role?(role)

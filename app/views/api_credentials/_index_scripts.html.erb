@@ -1,0 +1,10 @@
+<script type="text/javascript">
+jQuery.noConflict();
+jQuery(function($) {
+  $(document).ready(function() {
+    $('.remove_ac').on('click', function(){
+      if(!confirm('Please confirm deletion of API credential. This cannot be undone')) return false;
+    });
+  });
+});
+</script>

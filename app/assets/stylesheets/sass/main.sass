@@ -17,6 +17,7 @@
   font-style: normal
 
 $height_buf: 270px
+$base_green: #6b9029
 
 /*---global common definitions---*/
 *
@@ -49,7 +50,7 @@ img
   border: 0
 
 a
-  color: #6b9029
+  color: $base_green
   outline: none
   text-decoration: none
   border-bottom-style: none
@@ -4057,7 +4058,7 @@ label.error
       &.right
         width: 355px
 
-    .u2f_block, .duo_block
+    .u2f_block, .duo_block, ._2fa_block
       width: 500px
       padding: .3em 0
       margin-left: 100px
@@ -4774,7 +4775,7 @@ img.blue_icon
   .what_is_this
     background-color: white
     padding: 1px
-    border: solid 1px #6B9029
+    border: solid 1px $base_green
     vertical-align: top
 
 .document_access_type
@@ -5121,7 +5122,7 @@ textarea[id^=certificate_order]
   text-align: center
 
 .close_flash_message
-  color: #6B9029
+  color: $base_green
   font-size: .9em
   float: right
   margin-right: 1em
@@ -5443,6 +5444,11 @@ span#no_emails_accessible
     font-size: .7em
     list-style-type: none
 
+#certificate_orders
+  .ssl_action
+    a
+      font-size: 1.1rem
+
 .download_certificate
   table, th, td
     border: 1px solid black !important
@@ -5574,7 +5580,7 @@ span#no_emails_accessible
   &:hover .acc-sel-dropdown-cont
     display: block
   &:hover .acc-sel-dropbtn
-    color: #6B9029
+    color: $base_green
 
 .acc-sel-dropdown-cont
   background-color: #2d2d2f
@@ -5592,7 +5598,7 @@ span#no_emails_accessible
     display: block
     font-size: 1.2rem
     &:hover
-      color: #6B9029
+      color: $base_green
 
 .search-hint
   font-size:   1rem
@@ -5625,7 +5631,7 @@ table .constrained
     font-size: 1.3rem
 
 .chip
-  background: #6b9029
+  background: $base_green
   border-radius: 4px
   font-size: 1.2rem
   font-weight: 500
@@ -5874,10 +5880,10 @@ span.notifications-teams
   border: 2px solid #990000
 
 .button-mo-invoice.btn-mo-manage
-  background: -webkit-linear-gradient(#84b332, #6b9029)
-  background: -o-linear-gradient(#84b332, #6b9029)
-  background: -moz-linear-gradient(#84b332, #6b9029)
-  background: linear-gradient(#84b332, #6b9029)
+  background: -webkit-linear-gradient(#84b332, $base_green)
+  background: -o-linear-gradient(#84b332, $base_green)
+  background: -moz-linear-gradient(#84b332, $base_green)
+  background: linear-gradient(#84b332, $base_green)
   border: 2px solid #84b332
         
 #invoice-container-errors,
@@ -6251,8 +6257,8 @@ span.notifications-teams
     border: 1px solid #F51C29
     background-color: #F51C29
   .btn-add-contact
-    border: 1px solid #6b9029
-    background-color: #6b9029
+    border: 1px solid $base_green
+    background-color: $base_green
   #role-disclaimer
     font-size: 1.1rem
     color: grey
@@ -6444,13 +6450,13 @@ span.notifications-teams
       margin-top: -0.3rem
       
     #btn-order-edit
-      border: 1px solid #6b9029
+      border: 1px solid $base_green
       font-weight: 600
-      background-color: #6b9029
+      background-color: $base_green
       
     #btn-order-cancel
-      border: 1px solid #6b9029
-      color: #6b9029 !important
+      border: 1px solid $base_green
+      color: $base_green !important
       background-color: none
 
     #btn-order-credit
@@ -6470,8 +6476,8 @@ span.notifications-teams
       margin-right: 1.3rem
       font-size: 0.95rem
       font-weight: 600
-      border: 1px solid #6b9029 !important
-      color: #6b9029 !important
+      border: 1px solid $base_green !important
+      color: $base_green !important
       background-color: none !important
       margin-top: 0.7rem
       text-transform: uppercase
@@ -6832,6 +6838,48 @@ span.notifications-teams
       margin-right: 2.5rem
     
 /*
+ * Transaction Details
+ */
+.dl-transfer-team
+  border-radius: 0
+  
+  #dialog-form
+    background-color: #ffffff !important
+    
+  .ui-dialog-buttonpane
+    font-size: 1.4rem
+    background-color: #eeeeee
+    margin: 0 !important
+
+  .ui-dialog-buttonset button:nth-child(2) 
+    color: #ffffff
+    background-color: $base_green
+    border-color: $base_green
+    border-radius: 4px
+      
+  .ui-dialog, .ui-widget-content
+    font-family: sans-serif, Arial
+    
+  .ui-widget-header
+    border: 1px solid grey
+    background: grey
+    font-size: 1.5rem
+  
+  .ui-dialog-content
+    font-size: 1.4rem
+    
+  .ui-dialog-titlebar-close
+    color: white
+
+#btn-transfer-order
+  text-transform: uppercase
+  float: right
+  font-size: 1.3rem
+  
+  span
+    font-size: 1.5rem
+
+/*
  * Transaction Show: Reprocess UCC Section
  */ 
 #order_details_reprocess_ucc
@@ -6886,8 +6934,8 @@ span.notifications-teams
     text-transform: uppercase
       
   #btn-bp-default
-    border: 1px solid #6b9029
-    background-color: #6b9029
+    border: 1px solid $base_green
+    background-color: $base_green
 
   #btn-bp-delete
     border: 1px solid #F51C29
@@ -6948,7 +6996,7 @@ span.notifications-teams
   span
     font-weight: 600
 
-#duo_settings
+#duo_settings, #u2f_settings
   label
     text-align: left
 
@@ -6956,3 +7004,74 @@ span.notifications-teams
   width: 300px
   padding: 10px 0px 20px 0px
   margin: auto
+  
+/*
+ * Tags Input Container
+ */
+.lnk-popular-tags
+  background-color: $base_green
+  border: 1px solid $base_green
+  border-radius: 4px
+  color: white
+  font-size: 1.1rem
+  font-weight: 500
+  padding: 2px 3px
+  letter-spacing: 1px
+
+  span
+    font-size: 1.2rem
+    font-weight: 600   
+
+.cc-tags
+  margin-left: 2.1rem
+
+.co-tags
+  float: left
+  margin-left: 2.1rem
+  margin-bottom: -1.5rem
+  
+#tags-container
+  margin: 0 !important
+  
+  .select2
+    float: none !important
+    width: 96% !important
+
+  .select2-selection
+    background-color: #f0efef !important
+
+  .select2-selection__choice
+    background-color: #bfcfa4b0
+    border: 1px solid #6a9029
+    color: #3c3c3c
+    font-weight: 600
+    font-size: 1.25rem
+    
+    .select2-selection__choice__remove
+      color: #3c3c3c
+      font-size: 1.7rem
+      font-weight: 700
+  
+  #tags-co-input,
+  #tags-cc-input
+    margin-top: -2rem
+
+    .select2
+      background-image: none !important
+      margin: 0 !important
+
+    .select2-results__options
+      font-size: 1.3rem !important
+
+  #tags-co-input
+    width: 97%
+    margin-left: 1rem
+
+  #tags-cc-input
+    margin-left: 2rem
+
+    .select2-selection__choice
+      padding: 0 3px
+
+    .select2-selection__choice__remove
+      padding: 0

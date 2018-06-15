@@ -29,6 +29,9 @@
       %li &nbsp;
       %li Developers:
       %li=link_to "Developer Tools", is_sandbox? ? developers_certificate_orders_url : "https://sandbox.ssl.com"
+      
       -if current_user.is_system_admins?
         %li=link_to 'Chargebacks', filter_by_state_orders_path(@ssl_slug, "charged_back")
         %li=link_to 'Refunds', filter_by_state_orders_path(@ssl_slug, "fully_refunded")
+      
+      =render partial: '/tags/popular_tags'

@@ -37,7 +37,8 @@ class CertificateOrder < ActiveRecord::Base
   has_many    :app_reps, as: :contactable, class_name: 'AppRep' # for SSL.com OV and EV; rw by vetting agents, r by customer
   has_many    :physical_tokens
   has_many    :url_callbacks, as: :callbackable, :through=>:certificate_contents
-
+  has_many    :taggings, as: :taggable
+  has_many    :tags, through: :taggings
 
   accepts_nested_attributes_for :certificate_contents, :allow_destroy => false
   attr_accessor :duration, :has_csr
@@ -96,7 +97,7 @@ class CertificateOrder < ActiveRecord::Base
                subject_alternative_names: nil, locality: nil, country:nil, signature: nil, fingerprint: nil, strength: nil,
                expires_at: nil, created_at: nil, login: nil, email: nil, account_number: nil, product: nil,
                decoded: nil, is_test: nil, order_by_csr: nil, physical_tokens: nil, issued_at: nil, notes: nil,
-               ref: nil, external_order_number: nil, status: nil, duration: nil}
+               ref: nil, external_order_number: nil, status: nil, duration: nil, co_tags: nil, cc_tags: nil}
     filters.each{|fn, fv|
       term.delete_if {|s|s =~ Regexp.new(fn.to_s+"\\:\\'?([^']*)\\'?"); filters[fn] ||= $1; $1}
     }
@@ -159,6 +160,14 @@ class CertificateOrder < ActiveRecord::Base
     %w(product).each do |field|
       query=filters[field.to_sym]
       result = result.filter_by(query) if query
+    end
+    %w(co_tags).each do |field|
+      query = filters[field.to_sym]
+      result = result.joins(:tags).where(tags: {name: query.split(',')}) if query
+    end
+    %w(cc_tags).each do |field|
+      query = filters[field.to_sym]
+      result = result.joins(certificate_contents: [:tags]).where(tags: {name: query.split(',')}) if query
     end
     %w(duration).each do |field|
       query=filters[field.to_sym]
@@ -923,7 +932,7 @@ class CertificateOrder < ActiveRecord::Base
 
   def apply_for_certificate(options={})
     if [Ca::CERTLOCK_CA,Ca::SSLCOM_CA,Ca::MANAGEMENT_CA].include? options[:ca]
-      SslcomCaApi.apply_for_certificate(self, options)
+      SslcomCaApi.apply_for_certificate(self, options) if options[:current_user].is_super_user?
     else
       ComodoApi.apply_for_certificate(self, options) if ca_name=="comodo"
     end

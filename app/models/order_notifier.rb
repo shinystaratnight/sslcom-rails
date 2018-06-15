@@ -10,6 +10,53 @@ class OrderNotifier < ActionMailer::Base
   end
   alias_method :something, :test
 
+  def order_transferred(params)
+    @order_list = params[:orders_list]
+    @co_list    = params[:co_list]
+    @user       = params[:user].email
+    @from_team  = params[:from_sa]
+    @to_team    = params[:to_sa]
+    @from_owner = @from_team.get_account_owner.email
+    @to_owner   = @to_team.get_account_owner.email
+
+    mail  subject: "Order(s) have been transferred from team #{@from_team.get_team_name} to team #{@to_team.get_team_name}.",
+          from:    Settings.from_email.orders,
+          to:      [@from_owner, @to_owner].uniq
+  end
+  
+  def domains_adjustment_new(params)
+    @user  = params[:user]
+    @order = params[:order]
+    @team  = @order.billable
+    
+    mail  subject: "A new domains adjustment order has been placed for team #{@team.get_team_name}.",
+          from:    Settings.from_email.orders,
+          to:      @user.email
+  end
+  
+  def payable_invoice_new(params)
+    @user    = params[:user]
+    @invoice = params[:invoice]
+    @team    = @invoice.billable
+    @invoice_type = @invoice.get_type_format.downcase
+    
+    mail  subject: "You have a new #{@invoice_type} invoice for team #{@team.get_team_name}.",
+          from:    Settings.from_email.orders,
+          to:      @user.email
+  end
+  
+  def payable_invoice_paid(params)
+    @user    = params[:user]
+    @paid_by = params[:paid_by]
+    @invoice = params[:invoice]
+    @team    = @invoice.billable
+    @invoice_type = @invoice.get_type_format.downcase
+    
+    mail  subject: "Payment has been submitted for #{@invoice_type} invoice ##{@invoice.reference_number} for team #{@team.get_team_name}.",
+          from:    Settings.from_email.orders,
+          to:      @user.email
+  end
+  
   def reseller_certificate_order_paid(ssl_account, certificate_order)
     @ssl_account        = ssl_account
     @certificate_order  = certificate_order.reload

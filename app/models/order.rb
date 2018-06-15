@@ -18,6 +18,8 @@ class Order < ActiveRecord::Base
   has_many    :transactions, class_name: 'OrderTransaction', dependent: :destroy
   has_many    :refunds, dependent: :destroy
   has_many    :order_transactions
+  has_many    :taggings, as: :taggable
+  has_many    :tags, through: :taggings
   has_and_belongs_to_many    :discounts
 
   money :amount, cents: :cents
@@ -25,7 +27,7 @@ class Order < ActiveRecord::Base
   money :non_wildcard_amount, cents: :non_wildcard_cents
 
   before_create :total, :determine_description
-  after_create :generate_reference_number, :commit_discounts
+  after_create :generate_reference_number, :commit_discounts, :domains_adjustment_notice
 
   #is_free? is used to as a way to allow orders that are not charged (ie cent==0)
   attr_accessor  :is_free, :receipt, :deposit_mode, :temp_discounts
@@ -81,8 +83,10 @@ class Order < ActiveRecord::Base
 
   scope :search, lambda {|term|
     term = term.strip.split(/\s(?=(?:[^']|'[^']*')*$)/)
-    filters = {amount: nil, email: nil, login: nil, account_number: nil, product: nil, created_at: nil,
-               discount_amount: nil, company_name: nil, ssl_slug: nil, is_test: nil, reference_number: nil, monthly_invoice: nil}
+    filters = { amount: nil, email: nil, login: nil, account_number: nil, product: nil, created_at: nil,
+                discount_amount: nil, company_name: nil, ssl_slug: nil, is_test: nil, reference_number: nil, 
+                monthly_invoice: nil, order_tags: nil
+              }
     filters.each{|fn, fv|
       term.delete_if {|s|s =~ Regexp.new(fn.to_s+"\\:\\'?([^']*)\\'?"); filters[fn] ||= $1; $1}
     }
@@ -170,6 +174,10 @@ class Order < ActiveRecord::Base
           result = result.where{cents >> ((query[0].to_f*100).to_i..(query[1].to_f*100).to_i)}
         end
       end
+    end
+    %w(order_tags).each do |field|
+      query = filters[field.to_sym]
+      result = result.joins(:tags).where(tags: {name: query.split(',')}) if query
     end
     %w(created_at).each do |field|
       query=filters[field.to_sym]
@@ -548,6 +556,14 @@ class Order < ActiveRecord::Base
     end  
   end
   
+  # Get all orders for certificate orders or line items of main order.
+  def get_all_orders
+    certificate_orders.map(&:orders).inject([]) do |all, o|
+      all << o if o != self
+      all.flatten
+    end
+  end
+  
   # Fetches all domain counts that were added during UCC domains adjustment
   def get_reprocess_domains
     co           = certificate_orders.first
@@ -823,6 +839,22 @@ class Order < ActiveRecord::Base
     percent      = total.to_d/order_total.to_d
     get_funded_account_amount == 0 ? 0 : (get_funded_account_amount * percent)
   end
+  
+  # If order has been transfered from another team, then the originating team 
+  # should be credited. Lookup SystemAudit log for specific keywords
+  # to determine originating order.
+  def get_team_to_credit
+    order_transferred = SystemAudit
+      .where(target_type: 'Order', target_id: id)
+      .where("notes LIKE ?", "%from team%")
+      .order(created_at: :desc).last
+    unless order_transferred.nil?
+      from_team = order_transferred.notes.split.find {|str| str.include?('#')}
+    end
+    from_team = SslAccount.find_by(acct_number: from_team.gsub('#', '')) unless from_team.nil?
+    from_team.nil? ? billable : from_team
+  end
+  
   # ============================================================================
   # REFUND (utilizes 3 merchants, Stripe, PaypalExpress and Authorize.net)
   # ============================================================================
@@ -1136,6 +1168,14 @@ class Order < ActiveRecord::Base
   end
   
   private
+  
+  def domains_adjustment_notice
+    if domains_adjustment?
+      Assignment.users_can_manage_invoice(billable).each do |u|
+        OrderNotifier.domains_adjustment_new(user: u, order: self).deliver_now
+      end
+    end
+  end
 
   def gateway
     OrderTransaction.gateway
