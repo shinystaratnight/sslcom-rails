@@ -2,25 +2,7 @@
 #order_details
   %h3.order_results_header
     =title
-    -other_orders = @order.certificate_orders.uniq.last.orders
-    -if current_user.is_system_admins? || current_user.ssl_accounts.count > 1
-      =link_to "<span>&#10144;</span> transfer to team".html_safe, '#', id: 'btn-transfer-order'
-      #dialog-form
-        %p Please select team to transfer order:
-        %br/
-        -ssl_slug = @ssl_slug.nil? ? @order.billable.to_slug : @ssl_slug
-        -teams = if current_user.is_system_admins?
-          -SslAccount.select(["ssl_slug","acct_number"])
-        -else
-          -current_user.ssl_accounts.where.not(id: current_user.ssl_account)
-        .clearfix
-          =form_tag transfer_order_order_path(ssl_slug, @order), method: :post do
-            =select_tag :target_team, options_for_select(teams.map{|sa| [sa.to_slug.upcase, sa.acct_number]}), |
-              multiple: false, id: 'sel-transfer-order', include_blank: false
-        -if other_orders.count > 1
-          .clearfix
-            %br/
-            %p *Note: #{other_orders.count} orders associated with certificate orders will also be transfered to selected team.
+    =render partial: '/orders/order_transfer'
         
   #order_ref_num 
     reference number:
@@ -62,31 +44,3 @@
           -else
             %span=@order.state.humanize.downcase
   =render :partial=>'/funded_accounts/certificate_order_detail'
-  
-:javascript
-  jQuery(function($) {
-    var curDialog = $('#dialog-form');
-    $("#sel-transfer-order").select2();
-    function transferToTeam() {
-      curDialog.find('form').submit();
-    }
-    curDialog.dialog({
-      position: { my: 'top center', at: 'top center', of: window },
-      title: 'Transfer To Team',
-      autoOpen: false,
-      height: 240,
-      width: 300,
-      modal: true,
-      dialogClass: 'dl-transfer-team',
-      buttons: {
-        Cancel: function() {
-          curDialog.dialog('close');
-        },
-        'Transfer': transferToTeam,
-      }
-    });
-    $('#btn-transfer-order').on( 'click', function(e) {
-      e.preventDefault();
-      curDialog.dialog( 'open' );
-    });
-  });
