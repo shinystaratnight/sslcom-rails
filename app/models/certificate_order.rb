@@ -232,6 +232,27 @@ class CertificateOrder < ActiveRecord::Base
         end
       end
     end
+    %w(co_tags).each do |field|
+      query = filters[field.to_sym]
+      if query
+        @result_prior_co_tags = result
+        result = result.joins(:tags).where(tags: {name: query.split(',')})
+      end
+    end
+    %w(cc_tags).each do |field|
+      query = filters[field.to_sym]
+      if query
+        cc_results = (@result_prior_co_tags || result)
+          .joins(certificate_contents: [:tags]).where(tags: {name: query.split(',')})
+        
+        result = if @result_prior_co_tags.nil?
+          cc_results
+        else
+          # includes tags in BOTH certificate orders and certificate contents tags, not a union
+          CertificateOrder.where(id: (result + cc_results).map(&:id).uniq)
+        end
+      end
+    end
     result.uniq
   }
 
@@ -932,7 +953,7 @@ class CertificateOrder < ActiveRecord::Base
 
   def apply_for_certificate(options={})
     if [Ca::CERTLOCK_CA,Ca::SSLCOM_CA,Ca::MANAGEMENT_CA].include? options[:ca]
-      SslcomCaApi.apply_for_certificate(self, options)
+      SslcomCaApi.apply_for_certificate(self, options) if options[:current_user].is_super_user?
     else
       ComodoApi.apply_for_certificate(self, options) if ca_name=="comodo"
     end

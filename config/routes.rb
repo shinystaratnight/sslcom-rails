@@ -323,6 +323,12 @@ SslCom::Application.routes.draw do
       end
     end
 
+    resource :api_credential do
+      collection do
+        post :reset_credential
+      end
+    end
+
     resource :account, controller: :users do
       resource :reseller
     end
@@ -406,6 +412,7 @@ SslCom::Application.routes.draw do
       get   :resend_account_invite
       get   :decline_account_invite
       get   :teams
+      get   :search_teams
       match :create_team, via: [:get, :post]
       put   :set_default_team
       match :set_default_team_max, via: [:put, :patch]

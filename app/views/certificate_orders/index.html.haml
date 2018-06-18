@@ -95,7 +95,7 @@
         .filter_evt.clearfix
           %label
             =check_box_tag :filter_status_chk, true, false, :class=>'filter_chk'
-            Status (Ctrl + Click Multi)
+            Status (Ctrl + Click)
         .filter_label
           .filter_cont.hidden{'data-type'=>'select-multi'}
             =select_tag :filter_status,
@@ -136,7 +136,7 @@
         .filter_evt.clearfix
           %label
             =check_box_tag :filter_product_chk, true, false, :class=>'filter_chk'
-            Product (Ctrl + Click Multi)
+            Product (Ctrl + Click)
         .filter_label
           .filter_cont.hidden{'data-type'=>'select-multi'}
             =select_tag :filter_product,
@@ -153,7 +153,7 @@
         .filter_evt.clearfix
           %label
             =check_box_tag :filter_duration_chk, true, false, :class=>'filter_chk'
-            Duration (Ctrl + Click Multi)
+            Duration (Ctrl + Click)
         .filter_label
           .filter_cont.hidden{'data-type'=>'select-multi'}
             =select_tag :filter_duration,
@@ -264,27 +264,27 @@
                 =check_box_tag :filter_activated_chk, true, false, 'data-field'=>'in_possession', :class=>'filter_cont_chk'
               .filter_cont_item_label
                 Activated
-      -if @team_tags.any?
+      -if @team_tags.try("any?".to_sym)
         %div.filter_item
           .filter_evt.clearfix
             %label
               =check_box_tag :filter_co_tags_chk, true, false, :class=>'filter_chk'
-              Certificate Order Tags (Ctrl + Click Multi)
+              Certificate Order Tags (Ctrl + Click)
           .filter_label
             .filter_cont.hidden{'data-type'=>'select-multi'}
-              =select_tag :filter_co_tags,                                                |
-              options_for_select(@team_tags.map {|tag| [tag.name, tag.id]}),              |
-              class: 'filter_cont_slt slt-large', 'data-field': 'co_tags', multiple: true 
+              =select_tag :filter_co_tags,                                     |
+              options_for_select(@team_tags.pluck(:name).sort_by(&:downcase)), |
+              class: 'filter_cont_slt slt-large', 'data-field': 'co_tags', multiple: true
         %div.filter_item
           .filter_evt.clearfix
             %label
               =check_box_tag :filter_cc_tags_chk, true, false, :class=>'filter_chk'
-              Certificate Content Tags (Ctrl + Click Multi)
+              End-entity Certificate Tags (Ctrl + Click)
           .filter_label
             .filter_cont.hidden{'data-type'=>'select-multi'}
-              =select_tag :filter_cc_tags,                                                |
-              options_for_select(@team_tags.map {|tag| [tag.name, tag.id]}),              |
-              class: 'filter_cont_slt slt-large', 'data-field': 'cc_tags', multiple: true 
+              =select_tag :filter_cc_tags,                                     |
+              options_for_select(@team_tags.pluck(:name).sort_by(&:downcase)), |
+              class: 'filter_cont_slt slt-large', 'data-field': 'cc_tags', multiple: true
       -if current_user.is_system_admins?
         %div.filter_item
           .filter_evt.clearfix

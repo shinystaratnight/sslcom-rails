@@ -1,7 +1,7 @@
 class UserSessionsController < ApplicationController
   before_filter :require_no_user, only: [:new]
   before_filter :find_dup_login, only: [:create]
-  before_filter :require_user, only: :destroy
+  before_filter :require_user, only: [:destroy, :duo]
   skip_filter :finish_reseller_signup, only: [:destroy]
   skip_before_action :verify_authenticity_token
   skip_before_action :verify_duo_authentication, only: [:new, :create, :destroy]
@@ -206,7 +206,7 @@ class UserSessionsController < ApplicationController
         else
           @user_session = current_user_session
 
-          if current_user.is_system_admins?
+          if current_user.is_duo_required?
             flash[:notice] = "Duo 2-factor authentication setup." unless request.xhr?
             format.js   {render :json=>url_for_js(current_user)}
             format.html {redirect_to(duo_user_session_url)}
@@ -292,7 +292,7 @@ class UserSessionsController < ApplicationController
 
   def duo
     return if current_user.blank?
-    if current_user.is_system_admins?
+    if current_user.is_duo_required?
       s = Rails.application.secrets
       @duo_hostname = s.duo_system_admins_api_hostname
       @sig_request = Duo.sign_request(s.duo_system_admins_integration_key, s.duo_system_admins_secret_key, s.duo_system_admins_application_key, current_user.login)
@@ -320,7 +320,7 @@ class UserSessionsController < ApplicationController
   end
 
   def duo_verify
-    if current_user.is_system_admins?
+    if current_user.is_duo_required?
       s = Rails.application.secrets;
       @authenticated_user = Duo.verify_response(s.duo_system_admins_integration_key, s.duo_system_admins_secret_key, s.duo_system_admins_application_key, params['sig_response'])
     else
@@ -345,7 +345,7 @@ class UserSessionsController < ApplicationController
       session[:duo_auth] = true
       respond_to do |format|
         format.js   {render :json=>url_for_js(current_user)}
-        format.html {redirect_to account_path(current_user.ssl_account(:default_team) ? current_user.ssl_account(:default_team).to_slug : {})}
+        format.html {redirect_back_or_default account_path(current_user.ssl_account(:default_team) ? current_user.ssl_account(:default_team).to_slug : {})}
       end
     else
       redirect_to action: :new
