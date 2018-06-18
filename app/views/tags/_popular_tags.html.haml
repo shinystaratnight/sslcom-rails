@@ -1,6 +1,5 @@
 - if @team_tags.try("any?".to_sym)
   - cert_orders = controller_name == 'certificate_orders'
-  - search_filter = cert_orders ? 'co_tags' : 'order_tags'
   - current_tags = Tag.filter_popular_tags(@team_tags, (cert_orders ? :cert_orders : :order))
 
   - if current_tags.any?
@@ -10,6 +9,7 @@
       Popular Tags:
     - current_tags.first(6).each do |tag|
       %li
-        = link_to "#{tag.get_name_format} <span>#{tag.taggings_count}</span>".html_safe,             |
-          eval("search_#{controller_name}_path(@ssl_slug, search: '#{search_filter}:#{tag.name}')"), |
+        - search = cert_orders ? "co_tags:'#{tag.name}' cc_tags:'#{tag.name}'" : "order_tags:'#{tag.name}'"
+        = link_to "#{tag.get_name_format} <span>#{tag.taggings_count}</span>".html_safe, |
+          eval("search_#{controller_name}_path(@ssl_slug, search: \"#{search}\")"),      |
           class: 'lnk-popular-tags'

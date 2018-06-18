@@ -206,7 +206,7 @@ class UserSessionsController < ApplicationController
         else
           @user_session = current_user_session
 
-          if current_user.is_system_admins?
+          if current_user.is_duo_required?
             flash[:notice] = "Duo 2-factor authentication setup." unless request.xhr?
             format.js   {render :json=>url_for_js(current_user)}
             format.html {redirect_to(duo_user_session_url)}
@@ -345,7 +345,7 @@ class UserSessionsController < ApplicationController
       session[:duo_auth] = true
       respond_to do |format|
         format.js   {render :json=>url_for_js(current_user)}
-        format.html {redirect_to account_path(current_user.ssl_account(:default_team) ? current_user.ssl_account(:default_team).to_slug : {})}
+        format.html {redirect_back_or_default account_path(current_user.ssl_account(:default_team) ? current_user.ssl_account(:default_team).to_slug : {})}
       end
     else
       redirect_to action: :new

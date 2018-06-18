@@ -97,4 +97,23 @@ jQuery(function($) {
   $('#tags-container form').on('change', function() {
     $(this).submit();
   });
+
+  // Transfer Teams
+  $('#btn-teams-search').on('click', function(e) {
+    e.preventDefault();
+    $.ajax({
+      type: 'GET',
+      url: $('#frm-team-search').attr('action'),
+      data: $('#frm-team-search').serialize(),
+      dataType: 'JSON'
+    }).success(function(json) {
+      if (json.error) {
+        $('#team-search-results').html(json.error);
+        $('.ui-dialog-buttonset button:last-child').hide();
+      } else {
+        $('#team-search-results').html(json.content);
+        $('.ui-dialog-buttonset button:last-child').show();
+      }
+    });
+  });
 });
