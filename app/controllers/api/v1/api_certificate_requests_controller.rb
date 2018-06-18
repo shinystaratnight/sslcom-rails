@@ -1084,28 +1084,50 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
     if @result.save  #save the api request
       @acr = CertificateOrder.new
       @acr.certificate_contents.build.build_csr(body: @result.csr)
+
       if @acr.csr.errors.empty?
         @result.dcv_methods={}
+
         if @acr.csr.common_name
-          @result.instructions = ApiDcvMethods::INSTRUCTIONS
-          unless @acr.csr.blank?
-            @result.md5_hash = @acr.csr.md5_hash
-            @result.sha2_hash = @acr.csr.sha2_hash
-            @result.dns_md5_hash = @acr.csr.dns_md5_hash
-            @result.dns_sha2_hash = @acr.csr.dns_sha2_hash
-          end
-          ([@acr.csr.common_name]+(@result.domains || [])).compact.map(&:downcase).uniq.each do |domain|
-            @result.dcv_methods.merge! domain=>{}
-            @result.dcv_methods[domain].merge! "email_addresses"=>ComodoApi.domain_control_email_choices(domain).email_address_choices
+          # Reading cache of csr hashes for "Retrieve all validation methods based on hash of certificate signing request" API.
+          cache = Rails.cache.read('api-csr-hash-' + @acr.csr.md5_hash)
+
+          if cache.blank?
+            @result.instructions = ApiDcvMethods::INSTRUCTIONS
+
             unless @acr.csr.blank?
-              @result.dcv_methods[domain].merge! "http_csr_hash"=>
-                 {"http"=>"#{@acr.csr.dcv_url(false,domain)}",
-                  "allow_https"=>"true",
-                  "contents"=>"#{@result.sha2_hash}\ncomodoca.com#{"\n#{@acr.csr.unique_value}" unless @acr.csr.unique_value.blank?}"}
-              @result.dcv_methods[domain].merge! "cname_csr_hash"=>{"cname"=>"#{@result.dns_md5_hash}.#{domain}. CNAME #{@result.dns_sha2_hash}.comodoca.com.","name"=>"#{@result.dns_md5_hash}.#{domain}","value"=>"#{@result.dns_sha2_hash}.comodoca.com."}
+              @result.md5_hash = @acr.csr.md5_hash
+              @result.sha2_hash = @acr.csr.sha2_hash
+              @result.dns_md5_hash = @acr.csr.dns_md5_hash
+              @result.dns_sha2_hash = @acr.csr.dns_sha2_hash
             end
+
+            ([@acr.csr.common_name]+(@result.domains || [])).compact.map(&:downcase).uniq.each do |domain|
+              @result.dcv_methods.merge! domain=>{}
+              @result.dcv_methods[domain].merge! "email_addresses"=>ComodoApi.domain_control_email_choices(domain).email_address_choices
+              unless @acr.csr.blank?
+                @result.dcv_methods[domain].merge! "http_csr_hash"=>
+                                                       {"http"=>"#{@acr.csr.dcv_url(false,domain)}",
+                                                        "allow_https"=>"true",
+                                                        "contents"=>"#{@result.sha2_hash}\ncomodoca.com#{"\n#{@acr.csr.unique_value}" unless @acr.csr.unique_value.blank?}"}
+                @result.dcv_methods[domain].merge! "cname_csr_hash"=>{"cname"=>"#{@result.dns_md5_hash}.#{domain}. CNAME #{@result.dns_sha2_hash}.comodoca.com.","name"=>"#{@result.dns_md5_hash}.#{domain}","value"=>"#{@result.dns_sha2_hash}.comodoca.com."}
+              end
+            end
+
+            # Caching CSR Hashes for "Retrieve all validation methods based on hash of certificate signing request" API.
+            ActiveRecord::Base.include_root_in_json = false
+            cache_key = 'api-csr-hash-' + @result.md5_hash
+            Rails.cache.write(cache_key, @result.to_json(:methods => [:instructions, :md5_hash, :sha2_hash, :dns_md5_hash, :dns_sha2_hash, :dcv_methods]))
+          else
+            @result.instructions = JSON.parse(cache)['instructions']
+            @result.md5_hash = JSON.parse(cache)['md5_hash']
+            @result.sha2_hash = JSON.parse(cache)['sha2_hash']
+            @result.dns_md5_hash = JSON.parse(cache)['dns_md5_hash']
+            @result.dns_sha2_hash = JSON.parse(cache)['dns_sha2_hash']
+            @result.dcv_methods = JSON.parse(cache)['dcv_methods']
           end
         end
+
         unless @result.dcv_methods.blank?
           render(:template => @template) and return
         end
