@@ -1,4 +1,4 @@
-- other_orders = @certificate_order.orders
+- other_orders = @order.certificate_orders.uniq.last.orders
 - sysadmins    = current_user.is_system_admins?
 - user_teams   = current_user.ssl_accounts
 
