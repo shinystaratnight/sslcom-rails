@@ -495,6 +495,26 @@ class Order < ActiveRecord::Base
   ## END acts_as_state_machine
 
   # BEGIN number
+  
+  def get_full_refund_amount
+    refunded = 0
+    if fully_refunded?
+      funded_amt   = get_funded_account_amount
+      not_standard = on_payable_invoice? || (domains_adjustment? && funded_amt > 0)
+      refunded     = (not_standard ? cents : get_total_merchant_amount) + funded_amt
+    end
+
+    if partially_refunded?
+      refunded_items = CertificateOrder.unscoped
+        .where(id: line_items.map(&:sellable_id), workflow_state: 'refunded')
+      if refunded_items.any?
+        refunded_items.each { |item| refunded += make_available_line(item) }
+      else
+        refunded = get_total_merchant_refunds
+      end
+    end
+    refunded
+  end
 
   def merchant_fully_refunded?
     get_total_merchant_refunds == get_total_merchant_amount

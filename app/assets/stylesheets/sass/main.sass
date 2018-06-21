@@ -6511,7 +6511,8 @@ span.notifications-teams
   .order-discount td,
   .order-funded td,
   .order-total td,
-  .order-subtotal td
+  .order-subtotal td,
+  #order-refunded td
     padding-top: 1rem !important
     vertical-align: top !important
     
@@ -6522,10 +6523,29 @@ span.notifications-teams
   .order-funded
     color: grey
   
+  .line-item-refunded
+    .description
+      letter-spacing: 0.5px
+    td
+      color: #c13a3a
+      font-weight: 600
+      padding-top: 0
+
+  #order-refunded
+    color: #c13a3a
+  
   .order-divider
     td
       border-bottom: 1px solid #ccc
       padding: 2rem !important
+
+.order-refund-status
+  color: #c13a3a
+  font-size: 1.2rem
+  border-bottom: 1px dashed
+  border-top: 1px dashed
+  margin-left: 1rem
+
 .api_certificate_request
   position: relative
   .domains_loader_wrap

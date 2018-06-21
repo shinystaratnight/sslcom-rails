@@ -5,8 +5,7 @@
     %meta{:charset => 'utf-8'}/
     =stylesheet_link_tag wicked_pdf_asset_base64('invoice.css')
   %body
-    #background
-      %p{id: 'bg-text'} PAID
-    
     -@orders.each do |order|
+      #background
+        %p{id: 'bg-text'} #{order.state.upcase.gsub('_', ' ')}
       =render partial: 'orders/invoice_page', locals: {order: order}
