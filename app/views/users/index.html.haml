@@ -37,9 +37,8 @@
       -if current_user.is_system_admins?
         %th(scope="col") Created
         %th(scope="col") Last Login
-      - if current_user.is_system_admins?
         %th(scope="col") Status
-      - unless current_user.is_system_admins?
+      -else
         %th(scope="col") Approved
     -@users.each do |u|
       -cache(['list', u]) do

@@ -2,6 +2,9 @@
 #order_details
   %h3.order_results_header
     =title
+    -if @order.fully_refunded? || @order.partially_refunded?
+      %span.order-refund-status
+        #{@order.state.upcase.gsub('_', ' ')}
     =render partial: '/orders/order_transfer'
         
   #order_ref_num 

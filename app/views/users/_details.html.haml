@@ -31,7 +31,7 @@
                         %br
             %li
               %strong manage account
-            - if permitted_to? :admin_manage
+            -if permitted_to? :admin_manage, u
               %li login count: #{u.login_count}
               %li failed login count: #{u.failed_login_count}
               %li last login ip: #{link_to(u.last_login_ip, "http://www.infosniper.net/index.php?ip_address=#{u.last_login_ip}&map_source=1&overview_map=1&lang=1&map_type=1&zoom_level=7", target: "_blank") if u.last_login_ip}

@@ -7,7 +7,7 @@
     (order ref##{@certificate_order.ref})
   %p
     Please provide point of contacts
-    -if @certificate_order.subject
+    -if !@certificate_order.subject.blank?
       for #{@certificate_order.subject.downcase}.
     -partial = Contact.optional_contacts? ? 'optional' : 'required'
     -if Contact.optional_contacts?

@@ -8,6 +8,17 @@
     %td.quantity 1
     %td.price
       =Money.new(@order.domains_adjustment? ? @order.get_full_reprocess_amount : co.amount).format
+  
+  -if co.refunded?
+    %tr.line_item.line-item-refunded
+      %td.line-index
+      %td.description
+        %i.fa.fa-shopping-cart
+        ="Refunded line item ##{co.ref}"
+      %td.quantity 1
+      %td.price
+        ="-#{Money.new(@order.make_available_line(co)).format}"
+        
   -if co.migrated_from_v2?
     -co.v2_line_items.each do |item|
       %tr.line_item

@@ -191,6 +191,14 @@ caption {
   text-align: right;
 }
 
+#line-items .refund-item {
+  border: none;
+  color:#808080;
+  font-size: 0.8rem;
+  font-style: italic;
+  text-align: right;
+}
+
 #line-items-total {
   border: none;
   float: right;

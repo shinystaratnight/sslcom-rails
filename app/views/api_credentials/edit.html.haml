@@ -4,7 +4,7 @@
 .default_container
   %h3=title
   %p
-    Please update roles for credential.
+    Update access roles for api credential #{ac.account_key}
   =form_for @ac, url: api_credential_path, html: {id: 'mu_update_roles'} do |f|
     =f.error_messages
     #stylized.default_form

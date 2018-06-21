@@ -1,6 +1,6 @@
 -title = 'Create Credential'
 -content_for :title, title
-.default_container
+.default_container.reseller_registration_profile
   %h3=title
   =form_for @ac, url: api_credentials_path, html: {id: 'mu_create_ac'} do |f|
     =f.error_messages
@@ -8,7 +8,7 @@
       .subheading Credential
       =render :partial => "form", :object => f
     #button_container
-      =f.submit 'Create', class: 'button_blue', 'class' => 'acc_submit'
+      =f.submit 'Create', class: 'button_blue acc_submit'
 
 -content_for :js do
   :javascript
