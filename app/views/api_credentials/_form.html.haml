@@ -1,5 +1,5 @@
 - system_admin = current_user.is_system_admins?
-.clearfix.form_input
+.clearfix.form_input#acc_form
   - if system_admin || current_user.can_manage_team_users?
     - if @user_accounts_roles 
       .hidden{data: {accounts_roles: @user_accounts_roles.to_json}, id: 'user_account_roles'}
@@ -9,10 +9,13 @@
     - ssl_select     = system_admin ? scoped_ssl.id : current_user.default_ssl_account
   - else
     = form.hidden_field :ssl_account_ids, value: [current_user.ssl_account.try(:id)]
+  = form.hidden_field :acc_id, value: @ac.id
+  = form.hidden_field :acc_secret_key, value: @ac.secret_key
   = form.label :account_key, 'Account key'
   = form.text_field :account_key
-  = form.label :account_key, 'Secret key'
-  = form.text_field :secret_key
+  = form.label :secret_key, 'Secret key'
+  = form.text_field :secret_key, value: 'Click to view', 'data-secret-key': @ac.secret_key
+  = button_tag 'Reset Secret Key', :type=>'button', :id=>'btn_reset_secretkey'
 .clearfix.form_input
   - role_ids = @ac.role_ids
   = form.label :role_id, "Role(s)<span class='label_desc'>set permissions</span>".html_safe

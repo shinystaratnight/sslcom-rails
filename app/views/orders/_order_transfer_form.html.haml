@@ -1,0 +1,20 @@
+- other_orders ||= @certificate_order.orders
+- sysadmins    ||= current_user.is_system_admins?
+- user_teams   ||= current_user.ssl_accounts
+- ssl_slug     ||= @ssl_slug.nil? ? @order.billable.to_slug : @ssl_slug
+- teams        ||= sysadmins ? (@found_teams || []) : user_teams.where.not(id: current_user.ssl_account)
+
+.clearfix
+  = form_tag transfer_order_order_path(ssl_slug, @order), method: :post do
+    = select_tag :target_team, options_for_select(teams.map{|sa| ["#{sa.to_slug.upcase} (#{sa.acct_number})", sa.acct_number]}), |
+      multiple: false, id: 'sel-transfer-order', include_blank: false
+
+- if other_orders.count > 1
+  .clearfix
+    %br/
+    %p *Note: #{other_orders.count} orders associated with certificate orders will also be transfered to selected team.
+
+:javascript
+  jQuery(function($) {
+    $("#sel-transfer-order").select2();
+  });

@@ -7,6 +7,8 @@ class Tag < ActiveRecord::Base
   has_many :certificate_contents, through: :taggings,
            source: :taggable, source_type: 'CertificateContent'
   
+  before_validation :strip_tag_name
+           
   validates :name, allow_nil: false, allow_blank: false, uniqueness: {
     case_sensitive: true,
     scope: :ssl_account_id,
@@ -92,5 +94,9 @@ class Tag < ActiveRecord::Base
   
   def self.get_team_tags
     @team.tags
+  end
+
+  def strip_tag_name
+    name = name.strip unless name.nil?
   end
 end

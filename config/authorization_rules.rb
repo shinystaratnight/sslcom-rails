@@ -523,6 +523,7 @@ privileges do
     :search,
     :set_default_team_max,
     :sslcom_ca,
-    :update_roles
+    :update_roles,
+    :search_teams
   ]
 end

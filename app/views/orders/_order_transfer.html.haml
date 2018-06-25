@@ -1,0 +1,54 @@
+- other_orders = @order.certificate_orders.uniq.last.orders
+- sysadmins    = current_user.is_system_admins?
+- user_teams   = current_user.ssl_accounts
+
+- if sysadmins || (user_teams.count > 1)
+  = link_to "<span>&#10144;</span> transfer to team".html_safe, '#', id: 'btn-transfer-order'
+  #dialog-form
+    %p Please select team to transfer order:
+    %br/
+    - ssl_slug = @ssl_slug.nil? ? @order.billable.to_slug : @ssl_slug
+    - teams = sysadmins ? [] : user_teams.where.not(id: current_user.ssl_account)
+    
+    - if sysadmins
+      %strong STEP 1: Search
+      - path = search_teams_user_path(current_user, order: @order, certificate_order: @certificate_order)
+      = form_tag path, method: :get, id: 'frm-team-search', remote: true do
+        = text_field_tag :search_term, params[:search_term], |
+          required: true, id: 'sysadmin-team-search'
+        %i#btn-teams-search.fa.fa-search
+      
+      %strong STEP 2: Select Team
+      #team-search-results
+    - else
+      .clearfix
+        = render partial: '/orders/order_transfer_form', |
+          locals: {other_orders: other_orders, sysadmins: sysadmins, user_teams: user_teams, ssl_slug: ssl_slug, teams: teams}
+
+:javascript
+  jQuery(function($) {
+    var curDialog = $('#dialog-form');
+    $("#sel-transfer-order").select2();
+    function transferToTeam() {
+      curDialog.find('form').submit();
+    }
+    curDialog.dialog({
+      position: { my: 'top center', at: 'top center', of: window },
+      title: 'Transfer To Team',
+      autoOpen: false,
+      height: 250,
+      width: 300,
+      modal: true,
+      dialogClass: 'dl-transfer-team',
+      buttons: {
+        Cancel: function() {
+          curDialog.dialog('close');
+        },
+        'Transfer': transferToTeam,
+      }
+    });
+    $('#btn-transfer-order').on('click', function(e) {
+      e.preventDefault();
+      curDialog.dialog('open');
+    });
+  });

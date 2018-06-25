@@ -95,7 +95,7 @@
         .filter_evt.clearfix
           %label
             =check_box_tag :filter_status_chk, true, false, :class=>'filter_chk'
-            Status (Ctrl + Click Multi)
+            Status (Ctrl + Click)
         .filter_label
           .filter_cont.hidden{'data-type'=>'select-multi'}
             =select_tag :filter_status,
@@ -136,7 +136,7 @@
         .filter_evt.clearfix
           %label
             =check_box_tag :filter_product_chk, true, false, :class=>'filter_chk'
-            Product (Ctrl + Click Multi)
+            Product (Ctrl + Click)
         .filter_label
           .filter_cont.hidden{'data-type'=>'select-multi'}
             =select_tag :filter_product,
@@ -153,7 +153,7 @@
         .filter_evt.clearfix
           %label
             =check_box_tag :filter_duration_chk, true, false, :class=>'filter_chk'
-            Duration (Ctrl + Click Multi)
+            Duration (Ctrl + Click)
         .filter_label
           .filter_cont.hidden{'data-type'=>'select-multi'}
             =select_tag :filter_duration,
@@ -269,7 +269,7 @@
           .filter_evt.clearfix
             %label
               =check_box_tag :filter_co_tags_chk, true, false, :class=>'filter_chk'
-              Certificate Order Tags (Ctrl + Click Multi)
+              Certificate Order Tags (Ctrl + Click)
           .filter_label
             .filter_cont.hidden{'data-type'=>'select-multi'}
               =select_tag :filter_co_tags,                                     |
@@ -279,7 +279,7 @@
           .filter_evt.clearfix
             %label
               =check_box_tag :filter_cc_tags_chk, true, false, :class=>'filter_chk'
-              Certificate Content Tags (Ctrl + Click Multi)
+              End-entity Certificate Tags (Ctrl + Click)
           .filter_label
             .filter_cont.hidden{'data-type'=>'select-multi'}
               =select_tag :filter_cc_tags,                                     |

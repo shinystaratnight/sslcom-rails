@@ -37,17 +37,25 @@
         %td{colspan: '2'}
           .order-detail-actions
             %emp Pay: 
-            = link_to "this invoice #{invoice.get_amount_format}",           |
-              new_payment_invoice_path(@ssl_slug, invoice.reference_number), |
-              class: 'btn-pay-invoices', method: :get
+            - unless invoice.refunded? || invoice.partially_refunded
+              = link_to "this invoice #{invoice.get_amount_format}",           |
+                new_payment_invoice_path(@ssl_slug, invoice.reference_number), |
+                class: 'btn-pay-invoices', method: :get
             = link_to 'all unpaid invoices',                               |
               invoices_path(@ssl_slug, commit: true, status: ['pending']), |
               class: 'btn-pay-invoices'
         %td.description.total_row Total:
       -else
         %td.description.total_row{colspan: '3'} Total:
+      
       %td.price.total_row
         -if invoiced || (order.domains_adjustment? && order.get_funded_account_amount > 0)
           #{order.amount.format}
         -else
           #{Money.new(order.get_total_merchant_amount).format}
+      
+    -if order.partially_refunded? || order.fully_refunded?
+      %tr#order-refunded
+        %td.description.total_row{colspan: '3'} Refunds:
+        %td.price.total_row -#{Money.new(order.get_full_refund_amount).format}
+      

@@ -1,16 +1,17 @@
 -title = "Edit Credential"
 -content_for :title, title
-.reseller_registration_profile
+=render :partial => 'index_scripts'
+.default_container
   %h3=title
   %p
-    Please update roles for user.
+    Update access roles for api credential #{ac.account_key}
   =form_for @ac, url: api_credential_path, html: {id: 'mu_update_roles'} do |f|
     =f.error_messages
     #stylized.default_form
       .subheading Credentials
       =render partial: "form", object: f
     #button_container
-      #next_submit=image_submit_tag "bl_submit_button.gif"
+      #next_submit=image_submit_tag "bl_submit_button.gif", 'class' => 'acc_submit'
 
 -content_for :js do
   :javascript

@@ -309,7 +309,9 @@ jQuery(function($) {
               val = filterCont.children().val().toString();
 
               if (val.trim() != '') {
-                itemQuery = filterCont.children().data('field') + ':' + val;
+                cur_field = filterCont.children().data('field');
+                cur_val = (cur_field == 'co_tags' || cur_field == 'cc_tags') ? ('\'' + val + '\'')  : val;
+                itemQuery = cur_field + ':' + cur_val;
               }
             }
           } else if (filterCont.data('type') == 'date') {
