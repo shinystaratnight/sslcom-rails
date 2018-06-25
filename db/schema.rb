@@ -216,6 +216,8 @@ ActiveRecord::Schema.define(version: 20180625174208) do
     t.string  "caa_issuers",   limit: 255
     t.string  "host",          limit: 255
     t.string  "admin_host",    limit: 255
+    t.string  "ekus",          limit: 255
+    t.integer "end_entity_id", limit: 4
   end
 
   create_table "cas_certificates", force: :cascade do |t|
