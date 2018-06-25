@@ -8,7 +8,10 @@ namespace :cas do
                       algorithm: "rsa",
                       size: 4096,
                       description: "",
-                      profile_type: "ca_name"
+                      profile_type: "ca_name",
+                      caa_issuers: "ssl.com",
+                      host: "https://192.168.100.5:8442/restapi",
+                      admin_host: "https://192.168.100.5:8443"
                   },
                   {
                       ref: "1001",
@@ -17,7 +20,10 @@ namespace :cas do
                       algorithm: "rsa",
                       size: 4096,
                       description: "",
-                      profile_type: "ca_name"
+                      profile_type: "ca_name",
+                      caa_issuers: "ssl.com",
+                      host: "https://192.168.100.5:8442/restapi",
+                      admin_host: "https://192.168.100.5:8443"
                   },
                   {
                       ref: "1002",
@@ -26,7 +32,10 @@ namespace :cas do
                       algorithm: "ecc",
                       size: 384,
                       description: "",
-                      profile_type: "ca_name"
+                      profile_type: "ca_name",
+                      caa_issuers: "ssl.com",
+                      host: "https://192.168.100.5:8442/restapi",
+                      admin_host: "https://192.168.100.5:8443"
                   },
                   {
                       ref: "1003",
@@ -35,8 +44,11 @@ namespace :cas do
                       algorithm: "ecc",
                       size: 384,
                       description: "",
-                      profile_type: "ca_name"
-                  },
+                      profile_type: "ca_name",
+                      caa_issuers: "ssl.com",
+                      host: "https://192.168.100.5:8442/restapi",
+                      admin_host: "https://192.168.100.5:8443"
+                },
                   {
                       ref: "1004",
                       friendly_name: "",
@@ -44,8 +56,11 @@ namespace :cas do
                       algorithm: "ecc",
                       size: 384,
                       description: "",
-                      profile_type: "ca_name"
-                  },
+                      profile_type: "ca_name",
+                      caa_issuers: "ssl.com",
+                      host: "https://192.168.100.5:8442/restapi",
+                      admin_host: "https://192.168.100.5:8443"
+                },
                   {
                       ref: "1005",
                       friendly_name: "",
@@ -53,8 +68,11 @@ namespace :cas do
                       algorithm: "rsa",
                       size: 4096,
                       description: "",
-                      profile_type: "ca_name"
-                  },
+                      profile_type: "ca_name",
+                      caa_issuers: "ssl.com",
+                      host: "https://192.168.100.5:8442/restapi",
+                      admin_host: "https://192.168.100.5:8443"
+                },
                   {
                       ref: "1006",
                       friendly_name: "",
@@ -62,8 +80,11 @@ namespace :cas do
                       algorithm: "ecc",
                       size: 384,
                       description: "",
-                      profile_type: "ca_name"
-                  },
+                      profile_type: "ca_name",
+                      caa_issuers: "ssl.com",
+                      host: "https://192.168.100.5:8442/restapi",
+                      admin_host: "https://192.168.100.5:8443"
+                },
                   {
                       ref: "1007",
                       friendly_name: "",
@@ -71,8 +92,11 @@ namespace :cas do
                       algorithm: "rsa",
                       size: 4096,
                       description: "",
-                      profile_type: "ca_name"
-                  },
+                      profile_type: "ca_name",
+                      caa_issuers: "ssl.com",
+                      host: "https://192.168.100.5:8442/restapi",
+                      admin_host: "https://192.168.100.5:8443"
+                },
                   {
                       ref: "1008",
                       friendly_name: "",
@@ -80,8 +104,11 @@ namespace :cas do
                       algorithm: "ecc",
                       size: 384,
                       description: "",
-                      profile_type: "ca_name"
-                  },
+                      profile_type: "ca_name",
+                      caa_issuers: "ssl.com",
+                      host: "https://192.168.100.5:8442/restapi",
+                      admin_host: "https://192.168.100.5:8443"
+                },
                   {
                       ref: "1009",
                       friendly_name: "",
@@ -89,8 +116,11 @@ namespace :cas do
                       algorithm: "rsa",
                       size: 4096,
                       description: "",
-                      profile_type: "ca_name"
-                  },
+                      profile_type: "ca_name",
+                      caa_issuers: "ssl.com",
+                      host: "https://192.168.100.5:8442/restapi",
+                      admin_host: "https://192.168.100.5:8443"
+                },
                   {
                       ref: "1010",
                       friendly_name: "",
@@ -98,8 +128,11 @@ namespace :cas do
                       algorithm: "rsa",
                       size: 4096,
                       description: "",
-                      profile_type: "ca_name"
-                  },
+                      profile_type: "ca_name",
+                      caa_issuers: "ssl.com",
+                      host: "https://192.168.100.5:8442/restapi",
+                      admin_host: "https://192.168.100.5:8443"
+                },
                   {
                       ref: "1011",
                       friendly_name: "",
@@ -107,8 +140,11 @@ namespace :cas do
                       algorithm: "rsa",
                       size: 4096,
                       description: "",
-                      profile_type: "ca_name"
-                  },
+                      profile_type: "ca_name",
+                      caa_issuers: "ssl.com",
+                      host: "https://192.168.100.5:8442/restapi",
+                      admin_host: "https://192.168.100.5:8443"
+                },
                   {
                       ref: "1012",
                       friendly_name: "",
@@ -116,8 +152,11 @@ namespace :cas do
                       algorithm: "ecc",
                       size: 384,
                       description: "",
-                      profile_type: "ca_name"
-                  },
+                      profile_type: "ca_name",
+                      caa_issuers: "ssl.com",
+                      host: "https://192.168.100.5:8442/restapi",
+                      admin_host: "https://192.168.100.5:8443"
+                },
                   {
                       ref: "1013",
                       friendly_name: "",
@@ -125,8 +164,11 @@ namespace :cas do
                       algorithm: "ecc",
                       size: 384,
                       description: "",
-                      profile_type: "ca_name"
-                  },
+                      profile_type: "ca_name",
+                      caa_issuers: "ssl.com",
+                      host: "https://192.168.100.5:8442/restapi",
+                      admin_host: "https://192.168.100.5:8443"
+                },
                   {
                       ref: "1014",
                       friendly_name: "",
@@ -134,8 +176,11 @@ namespace :cas do
                       algorithm: "ecc",
                       size: 384,
                       description: "",
-                      profile_type: "ca_name"
-                  },
+                      profile_type: "ca_name",
+                      caa_issuers: "ssl.com",
+                      host: "https://192.168.100.5:8442/restapi",
+                      admin_host: "https://192.168.100.5:8443"
+                },
                   {
                       ref: "1015",
                       friendly_name: "",
@@ -143,8 +188,11 @@ namespace :cas do
                       algorithm: "ecc",
                       size: 384,
                       description: "",
-                      profile_type: "ca_name"
-                  },
+                      profile_type: "ca_name",
+                      caa_issuers: "ssl.com",
+                      host: "https://192.168.100.5:8442/restapi",
+                      admin_host: "https://192.168.100.5:8443"
+                },
                   {
                       ref: "1016",
                       friendly_name: "",
@@ -152,8 +200,11 @@ namespace :cas do
                       algorithm: "ecc",
                       size: 384,
                       description: "",
-                      profile_type: "ca_name"
-                  },
+                      profile_type: "ca_name",
+                      caa_issuers: "ssl.com",
+                      host: "https://192.168.100.5:8442/restapi",
+                      admin_host: "https://192.168.100.5:8443"
+                },
                   {
                       ref: "1017",
                       friendly_name: "",
@@ -161,8 +212,11 @@ namespace :cas do
                       algorithm: "ecc",
                       size: 384,
                       description: "",
-                      profile_type: "ca_name"
-                  },
+                      profile_type: "ca_name",
+                      caa_issuers: "ssl.com",
+                      host: "https://192.168.100.5:8442/restapi",
+                      admin_host: "https://192.168.100.5:8443"
+                },
                   {
                       ref: "1018",
                       friendly_name: "",
@@ -170,8 +224,11 @@ namespace :cas do
                       algorithm: "rsa",
                       size: 4096,
                       description: "",
-                      profile_type: "ca_name"
-                  },
+                      profile_type: "ca_name",
+                      caa_issuers: "ssl.com",
+                      host: "https://192.168.100.5:8442/restapi",
+                      admin_host: "https://192.168.100.5:8443"
+                },
                   {
                       ref: "1019",
                       friendly_name: "",
@@ -179,8 +236,11 @@ namespace :cas do
                       algorithm: "rsa",
                       size: 4096,
                       description: "",
-                      profile_type: "ca_name"
-                  },
+                      profile_type: "ca_name",
+                      caa_issuers: "ssl.com",
+                      host: "https://192.168.100.5:8442/restapi",
+                      admin_host: "https://192.168.100.5:8443"
+                },
                   {
                       ref: "1020",
                       friendly_name: "",
@@ -188,8 +248,11 @@ namespace :cas do
                       algorithm: "rsa",
                       size: 4096,
                       description: "",
-                      profile_type: "ca_name"
-                  },
+                      profile_type: "ca_name",
+                      caa_issuers: "ssl.com",
+                      host: "https://192.168.100.5:8442/restapi",
+                      admin_host: "https://192.168.100.5:8443"
+                },
                   {
                       ref: "1021",
                       friendly_name: "",
@@ -197,8 +260,11 @@ namespace :cas do
                       algorithm: "rsa",
                       size: 4096,
                       description: "",
-                      profile_type: "ca_name"
-                  },
+                      profile_type: "ca_name",
+                      caa_issuers: "ssl.com",
+                      host: "https://192.168.100.5:8442/restapi",
+                      admin_host: "https://192.168.100.5:8443"
+                },
                   {
                       ref: "1022",
                       friendly_name: "",
@@ -206,8 +272,11 @@ namespace :cas do
                       algorithm: "rsa",
                       size: 4096,
                       description: "",
-                      profile_type: "ca_name"
-                  },
+                      profile_type: "ca_name",
+                      caa_issuers: "ssl.com",
+                      host: "https://192.168.100.5:8442/restapi",
+                      admin_host: "https://192.168.100.5:8443"
+                },
                   {
                       ref: "1023",
                       friendly_name: "",
@@ -215,8 +284,11 @@ namespace :cas do
                       algorithm: "rsa",
                       size: 4096,
                       description: "",
-                      profile_type: "ca_name"
-                  },
+                      profile_type: "ca_name",
+                      caa_issuers: "ssl.com",
+                      host: "https://192.168.100.5:8442/restapi",
+                      admin_host: "https://192.168.100.5:8443"
+                },
                   {
                       ref: "1024",
                       friendly_name: "",
@@ -224,8 +296,11 @@ namespace :cas do
                       algorithm: "rsa",
                       size: 4096,
                       description: "",
-                      profile_type: "ca_name"
-                  },
+                      profile_type: "ca_name",
+                      caa_issuers: "ssl.com",
+                      host: "https://192.168.100.5:8442/restapi",
+                      admin_host: "https://192.168.100.5:8443"
+                },
                   {
                       ref: "1025",
                       friendly_name: "",
@@ -233,8 +308,11 @@ namespace :cas do
                       algorithm: "rsa",
                       size: 4096,
                       description: "",
-                      profile_type: "ca_name"
-                  },
+                      profile_type: "ca_name",
+                      caa_issuers: "ssl.com",
+                      host: "https://192.168.100.5:8442/restapi",
+                      admin_host: "https://192.168.100.5:8443"
+                },
                   {
                       ref: "1026",
                       friendly_name: "",
@@ -242,8 +320,11 @@ namespace :cas do
                       algorithm: "rsa",
                       size: 4096,
                       description: "",
-                      profile_type: "ca_name"
-                  },
+                      profile_type: "ca_name",
+                      caa_issuers: "ssl.com",
+                      host: "https://192.168.100.5:8442/restapi",
+                      admin_host: "https://192.168.100.5:8443"
+                },
                   {
                       ref: "1027",
                       friendly_name: "",
@@ -251,8 +332,11 @@ namespace :cas do
                       algorithm: "rsa",
                       size: 4096,
                       description: "",
-                      profile_type: "ca_name"
-                  },
+                      profile_type: "ca_name",
+                      caa_issuers: "ssl.com",
+                      host: "https://192.168.100.5:8442/restapi",
+                      admin_host: "https://192.168.100.5:8443"
+                },
                   {
                       ref: "1028",
                       friendly_name: "",
@@ -260,8 +344,11 @@ namespace :cas do
                       algorithm: "rsa",
                       size: 4096,
                       description: "",
-                      profile_type: "ca_name"
-                  },
+                      profile_type: "ca_name",
+                      caa_issuers: "ssl.com",
+                      host: "https://192.168.100.5:8442/restapi",
+                      admin_host: "https://192.168.100.5:8443"
+                },
                   {
                       ref: "2000",
                       friendly_name: "",
@@ -361,5 +448,10 @@ namespace :cas do
                       description: "",
                       profile_type: "end_entity_profile"
                   }])
+    Certificate.all.each {|cert|
+      Ca.all.each {|ca|
+        cert.cas << ca
+      }
+    }
   end
 end
