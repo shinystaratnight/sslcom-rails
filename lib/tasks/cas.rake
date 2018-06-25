@@ -8,7 +8,7 @@ namespace :cas do
                       algorithm: "rsa",
                       size: 4096,
                       description: "",
-                      profile_type: "ca_name",
+                      profile_type: "subCA",
                       caa_issuers: "ssl.com",
                       host: "https://192.168.100.5:8442/restapi",
                       admin_host: "https://192.168.100.5:8443"
@@ -20,7 +20,7 @@ namespace :cas do
                       algorithm: "rsa",
                       size: 4096,
                       description: "",
-                      profile_type: "ca_name",
+                      profile_type: "subCA",
                       caa_issuers: "ssl.com",
                       host: "https://192.168.100.5:8442/restapi",
                       admin_host: "https://192.168.100.5:8443"
@@ -32,7 +32,7 @@ namespace :cas do
                       algorithm: "ecc",
                       size: 384,
                       description: "",
-                      profile_type: "ca_name",
+                      profile_type: "subCA",
                       caa_issuers: "ssl.com",
                       host: "https://192.168.100.5:8442/restapi",
                       admin_host: "https://192.168.100.5:8443"
@@ -44,7 +44,7 @@ namespace :cas do
                       algorithm: "ecc",
                       size: 384,
                       description: "",
-                      profile_type: "ca_name",
+                      profile_type: "subCA",
                       caa_issuers: "ssl.com",
                       host: "https://192.168.100.5:8442/restapi",
                       admin_host: "https://192.168.100.5:8443"
@@ -56,7 +56,7 @@ namespace :cas do
                       algorithm: "ecc",
                       size: 384,
                       description: "",
-                      profile_type: "ca_name",
+                      profile_type: "ca",
                       caa_issuers: "ssl.com",
                       host: "https://192.168.100.5:8442/restapi",
                       admin_host: "https://192.168.100.5:8443"
@@ -68,7 +68,7 @@ namespace :cas do
                       algorithm: "rsa",
                       size: 4096,
                       description: "",
-                      profile_type: "ca_name",
+                      profile_type: "ca",
                       caa_issuers: "ssl.com",
                       host: "https://192.168.100.5:8442/restapi",
                       admin_host: "https://192.168.100.5:8443"
@@ -80,7 +80,7 @@ namespace :cas do
                       algorithm: "ecc",
                       size: 384,
                       description: "",
-                      profile_type: "ca_name",
+                      profile_type: "ca",
                       caa_issuers: "ssl.com",
                       host: "https://192.168.100.5:8442/restapi",
                       admin_host: "https://192.168.100.5:8443"
@@ -92,7 +92,7 @@ namespace :cas do
                       algorithm: "rsa",
                       size: 4096,
                       description: "",
-                      profile_type: "ca_name",
+                      profile_type: "ca",
                       caa_issuers: "ssl.com",
                       host: "https://192.168.100.5:8442/restapi",
                       admin_host: "https://192.168.100.5:8443"
@@ -104,7 +104,7 @@ namespace :cas do
                       algorithm: "ecc",
                       size: 384,
                       description: "",
-                      profile_type: "ca_name",
+                      profile_type: "ca",
                       caa_issuers: "ssl.com",
                       host: "https://192.168.100.5:8442/restapi",
                       admin_host: "https://192.168.100.5:8443"
@@ -116,7 +116,7 @@ namespace :cas do
                       algorithm: "rsa",
                       size: 4096,
                       description: "",
-                      profile_type: "ca_name",
+                      profile_type: "ca",
                       caa_issuers: "ssl.com",
                       host: "https://192.168.100.5:8442/restapi",
                       admin_host: "https://192.168.100.5:8443"
@@ -128,7 +128,7 @@ namespace :cas do
                       algorithm: "rsa",
                       size: 4096,
                       description: "",
-                      profile_type: "ca_name",
+                      profile_type: "ca",
                       caa_issuers: "ssl.com",
                       host: "https://192.168.100.5:8442/restapi",
                       admin_host: "https://192.168.100.5:8443"
@@ -140,7 +140,7 @@ namespace :cas do
                       algorithm: "rsa",
                       size: 4096,
                       description: "",
-                      profile_type: "ca_name",
+                      profile_type: "subCA",
                       caa_issuers: "ssl.com",
                       host: "https://192.168.100.5:8442/restapi",
                       admin_host: "https://192.168.100.5:8443"
@@ -152,7 +152,7 @@ namespace :cas do
                       algorithm: "ecc",
                       size: 384,
                       description: "",
-                      profile_type: "ca_name",
+                      profile_type: "ca",
                       caa_issuers: "ssl.com",
                       host: "https://192.168.100.5:8442/restapi",
                       admin_host: "https://192.168.100.5:8443"
@@ -164,7 +164,7 @@ namespace :cas do
                       algorithm: "ecc",
                       size: 384,
                       description: "",
-                      profile_type: "ca_name",
+                      profile_type: "ca",
                       caa_issuers: "ssl.com",
                       host: "https://192.168.100.5:8442/restapi",
                       admin_host: "https://192.168.100.5:8443"
@@ -176,7 +176,7 @@ namespace :cas do
                       algorithm: "ecc",
                       size: 384,
                       description: "",
-                      profile_type: "ca_name",
+                      profile_type: "ca",
                       caa_issuers: "ssl.com",
                       host: "https://192.168.100.5:8442/restapi",
                       admin_host: "https://192.168.100.5:8443"
@@ -188,7 +188,7 @@ namespace :cas do
                       algorithm: "ecc",
                       size: 384,
                       description: "",
-                      profile_type: "ca_name",
+                      profile_type: "ca",
                       caa_issuers: "ssl.com",
                       host: "https://192.168.100.5:8442/restapi",
                       admin_host: "https://192.168.100.5:8443"
@@ -200,7 +200,7 @@ namespace :cas do
                       algorithm: "ecc",
                       size: 384,
                       description: "",
-                      profile_type: "ca_name",
+                      profile_type: "subCA",
                       caa_issuers: "ssl.com",
                       host: "https://192.168.100.5:8442/restapi",
                       admin_host: "https://192.168.100.5:8443"
@@ -212,7 +212,7 @@ namespace :cas do
                       algorithm: "ecc",
                       size: 384,
                       description: "",
-                      profile_type: "ca_name",
+                      profile_type: "subCA",
                       caa_issuers: "ssl.com",
                       host: "https://192.168.100.5:8442/restapi",
                       admin_host: "https://192.168.100.5:8443"
@@ -224,7 +224,7 @@ namespace :cas do
                       algorithm: "rsa",
                       size: 4096,
                       description: "",
-                      profile_type: "ca_name",
+                      profile_type: "ca",
                       caa_issuers: "ssl.com",
                       host: "https://192.168.100.5:8442/restapi",
                       admin_host: "https://192.168.100.5:8443"
@@ -236,7 +236,7 @@ namespace :cas do
                       algorithm: "rsa",
                       size: 4096,
                       description: "",
-                      profile_type: "ca_name",
+                      profile_type: "ca",
                       caa_issuers: "ssl.com",
                       host: "https://192.168.100.5:8442/restapi",
                       admin_host: "https://192.168.100.5:8443"
@@ -248,7 +248,7 @@ namespace :cas do
                       algorithm: "rsa",
                       size: 4096,
                       description: "",
-                      profile_type: "ca_name",
+                      profile_type: "ca",
                       caa_issuers: "ssl.com",
                       host: "https://192.168.100.5:8442/restapi",
                       admin_host: "https://192.168.100.5:8443"
@@ -260,7 +260,7 @@ namespace :cas do
                       algorithm: "rsa",
                       size: 4096,
                       description: "",
-                      profile_type: "ca_name",
+                      profile_type: "ca",
                       caa_issuers: "ssl.com",
                       host: "https://192.168.100.5:8442/restapi",
                       admin_host: "https://192.168.100.5:8443"
@@ -272,7 +272,7 @@ namespace :cas do
                       algorithm: "rsa",
                       size: 4096,
                       description: "",
-                      profile_type: "ca_name",
+                      profile_type: "subCA",
                       caa_issuers: "ssl.com",
                       host: "https://192.168.100.5:8442/restapi",
                       admin_host: "https://192.168.100.5:8443"
@@ -284,7 +284,7 @@ namespace :cas do
                       algorithm: "rsa",
                       size: 4096,
                       description: "",
-                      profile_type: "ca_name",
+                      profile_type: "subCA",
                       caa_issuers: "ssl.com",
                       host: "https://192.168.100.5:8442/restapi",
                       admin_host: "https://192.168.100.5:8443"
@@ -296,7 +296,7 @@ namespace :cas do
                       algorithm: "rsa",
                       size: 4096,
                       description: "",
-                      profile_type: "ca_name",
+                      profile_type: "subCA",
                       caa_issuers: "ssl.com",
                       host: "https://192.168.100.5:8442/restapi",
                       admin_host: "https://192.168.100.5:8443"
@@ -308,7 +308,7 @@ namespace :cas do
                       algorithm: "rsa",
                       size: 4096,
                       description: "",
-                      profile_type: "ca_name",
+                      profile_type: "subCA",
                       caa_issuers: "ssl.com",
                       host: "https://192.168.100.5:8442/restapi",
                       admin_host: "https://192.168.100.5:8443"
@@ -320,7 +320,7 @@ namespace :cas do
                       algorithm: "rsa",
                       size: 4096,
                       description: "",
-                      profile_type: "ca_name",
+                      profile_type: "subCA",
                       caa_issuers: "ssl.com",
                       host: "https://192.168.100.5:8442/restapi",
                       admin_host: "https://192.168.100.5:8443"
@@ -332,7 +332,7 @@ namespace :cas do
                       algorithm: "rsa",
                       size: 4096,
                       description: "",
-                      profile_type: "ca_name",
+                      profile_type: "ca",
                       caa_issuers: "ssl.com",
                       host: "https://192.168.100.5:8442/restapi",
                       admin_host: "https://192.168.100.5:8443"
@@ -344,7 +344,7 @@ namespace :cas do
                       algorithm: "rsa",
                       size: 4096,
                       description: "",
-                      profile_type: "ca_name",
+                      profile_type: "subCA",
                       caa_issuers: "ssl.com",
                       host: "https://192.168.100.5:8442/restapi",
                       admin_host: "https://192.168.100.5:8443"
