@@ -91,14 +91,14 @@ class ValidationsController < ApplicationController
               @all_validated = false if @all_validated
             else
               validated_domain_arry << key
-              cache = Rails.cache.read(params[:certificate_order_id] + '_' + key)
+              cache = Rails.cache.read(params[:certificate_order_id] + ':' + key)
 
               if cache.blank?
                 cn = @certificate_order.certificate_content.certificate_names.find_by_name(key)
                 dcv = cn.blank? ? nil : cn.domain_control_validations.last
                 value['attempted_on'] = dcv.blank? ? 'n/a' : dcv.created_at
 
-                Rails.cache.write(params[:certificate_order_id] + '_' + key, value['attempted_on'])
+                Rails.cache.write(params[:certificate_order_id] + ':' + key, value['attempted_on'])
               else
                 value['attempted_on'] = cache
               end
