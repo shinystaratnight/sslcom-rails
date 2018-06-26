@@ -605,8 +605,11 @@ jQuery(function($) {
             var total = domains.length;
             var validated_domains = '<%=@validated_domains%>'.split(',');
             var domain_status = JSON.parse('<%= raw @ds ? @ds.to_json : {}%>');
+            var unvalidated_domain_total = total - validated_domains.length;
+            var unvalidated_domain_success_count = 0;
+            var unvalidated_domain_failed_count = 0;
 
-            if (validated_domains.length > 0 && validated_domains[0] != '') {
+            /*if (validated_domains.length > 0 && validated_domains[0] != '') {
               $.each(validated_domains, function(idx, value) {
                 var trElement = $('<tr></tr>');
                 trElement.attr('class', 'certificate_name validated');
@@ -631,13 +634,13 @@ jQuery(function($) {
                 tdElement.append('Validation satisfied for ' + value);
                 trElement.append(tdElement);
 
-                <%if Settings.enable_caa%>
+                < %if Settings.enable_caa%>
                   tdElement = $('<td></td>');
                   tdElement.append('passed');
                   tdElement.attr('class', 'caa_check ' + value);
                   tdElement.attr('style', 'background: green; color: white');
                   trElement.append(tdElement);
-                <%end%>
+                < %end%>
 
                 tdElement = $('<td></td>');
                 tdElement.append('n/a');
@@ -659,7 +662,7 @@ jQuery(function($) {
                 tdElement.attr('class', 'status ' + value);
                 trElement.append(tdElement);
               });
-            }
+            }*/
 
             var is_error = false
             $.each(domains, function(idx, value) {
@@ -674,6 +677,8 @@ jQuery(function($) {
                   },
                   type: "POST",
                   success: function(result) {
+                    unvalidated_domain_success_count ++;
+
                     // TODO: Loading Domain.
                     if ($.isEmptyObject(result)) {
                       is_error = true;
@@ -726,20 +731,52 @@ jQuery(function($) {
                           trElement.append(tdElement);
 
                           tdElement = $('<td></td>');
-                          if ($.isEmptyObject(result[key]['options'])) {
+                          var sltElement = $('<select></select>');
+                          sltElement.attr('name', 'domains[' + value + '][dcv]');
+                          sltElement.attr('id', 'domains_' + value + '_dcv');
+                          sltElement.attr('alt', value);
+                          <%if Settings.enable_caa%>
+                          if (result[key]['caa_check'] == 'failed') {
+                            // TODO: Disable CAA CHECK temporarily for now.
+                            /*sltElement.attr('disabled', true);*/
+                            sltElement.attr('disabled', false);
+                          }
+                          <%end%>
+
+                          var optElement = $('<option></option>');
+                          optElement.attr('value', '');
+                          optElement.append('Please select a validation method');
+                          sltElement.append(optElement);
+
+                          Object.keys(result[key]['options']).map(function(optGroupKey) {
+                            var optGroupElement = $('<optgroup></optgroup>');
+                            optGroupElement.attr('label', optGroupKey);
+
+                            Object.keys(result[key]['options'][optGroupKey]).map(function(optKey) {
+                              var optElement = $('<option></option>');
+                              optElement.attr('value', optKey);
+                              optElement.append(result[key]['options'][optGroupKey][optKey]);
+                              optGroupElement.append(optElement);
+                            });
+
+                            sltElement.append(optGroupElement);
+                          });
+
+                          tdElement.append(sltElement);
+                          /*if ($.isEmptyObject(result[key]['options'])) {
                             tdElement.append('Validation satisfied for ' + value);
                           } else {
                             var sltElement = $('<select></select>');
                             sltElement.attr('name', 'domains[' + value + '][dcv]');
                             sltElement.attr('id', 'domains_' + value + '_dcv');
                             sltElement.attr('alt', value);
-                            <%if Settings.enable_caa%>
+                            < %if Settings.enable_caa%>
                               if (result[key]['caa_check'] == 'failed') {
                                 // TODO: Disable CAA CHECK temporarily for now.
-                                /*sltElement.attr('disabled', true);*/
+                                /!*sltElement.attr('disabled', true);*!/
                                 sltElement.attr('disabled', false);
                               }
-                            <%end%>
+                            < %end%>
 
                             var optElement = $('<option></option>');
                             optElement.attr('value', '');
@@ -761,7 +798,7 @@ jQuery(function($) {
                             });
 
                             tdElement.append(sltElement);
-                          }
+                          }*/
                           trElement.append(tdElement);
                           $('[name="domains[' + value + '][dcv]"]').val(result[key]['slt_option']);
 
@@ -821,9 +858,75 @@ jQuery(function($) {
 
                       $('select[id^=domains]').last().change();
                     }
+
+                    if ((unvalidated_domain_success_count + unvalidated_domain_failed_count) == unvalidated_domain_total) {
+                      $('.domains_loader_wrap').hide();
+                      if (is_error) {
+                        var message_wrap_element = $('<div></div>');
+                        message_wrap_element.attr('class', 'flash_message error');
+
+                        var message_element = $('<span></span>');
+                        message_element.append('Error detected during domain loading. Please reload this page.');
+                        message_wrap_element.append(message_element);
+
+                        var btn_element = $('<small></small>');
+                        var close_btn_element = $('<div></div>');
+                        close_btn_element.attr('class', 'close_flash_message');
+
+                        var close_sign_element = $('<span></span>');
+                        close_sign_element.append('X');
+
+                        close_btn_element.append(close_sign_element);
+                        close_btn_element.append('close');
+
+                        btn_element.append(close_btn_element);
+                        message_wrap_element.append(btn_element);
+
+                        if ($('#content').find('.inner').children().first().hasClass('flash_message')) {
+                          $('#content').find('.inner').children().first().remove();
+                        }
+                        message_wrap_element.insertBefore($('#content').find('.inner').children().first());
+                      } else {
+                        $('#upload_validations').show();
+                      }
+                    }
+                  },
+                  error: function() {
+                    unvalidated_domain_failed_count ++;
+                    is_error = true;
+
+                    if ((unvalidated_domain_success_count + unvalidated_domain_failed_count) == unvalidated_domain_total) {
+                      $('.domains_loader_wrap').hide();
+
+                      var message_wrap_element = $('<div></div>');
+                      message_wrap_element.attr('class', 'flash_message error');
+
+                      var message_element = $('<span></span>');
+                      message_element.append('Error detected during domain loading. Please reload this page.');
+                      message_wrap_element.append(message_element);
+
+                      var btn_element = $('<small></small>');
+                      var close_btn_element = $('<div></div>');
+                      close_btn_element.attr('class', 'close_flash_message');
+
+                      var close_sign_element = $('<span></span>');
+                      close_sign_element.append('X');
+
+                      close_btn_element.append(close_sign_element);
+                      close_btn_element.append('close');
+
+                      btn_element.append(close_btn_element);
+                      message_wrap_element.append(btn_element);
+
+                      if ($('#content').find('.inner').children().first().hasClass('flash_message')) {
+                        $('#content').find('.inner').children().first().remove();
+                      }
+                      message_wrap_element.insertBefore($('#content').find('.inner').children().first());
+                    }
                   }
-                }).done(function(data) {
-                  if (idx == (total - 1)) {
+                });/*.done(function(data) {
+                  /!*if (idx == (total - 1)) {*!/
+                  if (unvalidated_domain_count == unvalidated_domain_total) {
                     $('.domains_loader_wrap').hide();
                     if (is_error) {
                       var message_wrap_element = $('<div></div>');
@@ -855,7 +958,8 @@ jQuery(function($) {
                     }
                   }
                 }).fail(function() {
-                  if (idx == (total - 1)) {
+                  /!*if (idx == (total - 1)) {*!/
+                  if (unvalidated_domain_count == unvalidated_domain_total) {
                     $('.domains_loader_wrap').hide();
                     if (is_error) {
                       var message_wrap_element = $('<div></div>');
@@ -886,9 +990,60 @@ jQuery(function($) {
                       $('#upload_validations').show();
                     }
                   }
-                });
+                });*/
               } else {
-                if (idx == (total - 1)) {
+                var trElement = $('<tr></tr>');
+                trElement.attr('class', 'certificate_name validated');
+                trElement.attr('id', 'certificate_name__' + value);
+
+                $('.domain_list').append(trElement);
+
+                var tdElement = $('<td></td>');
+                var cnsElement = $('<input></input>');
+                cnsElement.attr('type', 'hidden');
+                cnsElement.attr('name', 'cert_names[' + value + ']');
+                cnsElement.attr('value', value);
+                tdElement.append(cnsElement);
+                trElement.append(tdElement);
+
+                tdElement = $('<td></td>');
+                tdElement.attr('class', 'domain_name ' + value);
+                tdElement.append(value);
+                trElement.append(tdElement);
+
+                tdElement = $('<td></td>');
+                tdElement.append('Validation satisfied for ' + value);
+                trElement.append(tdElement);
+
+                <%if Settings.enable_caa%>
+                  tdElement = $('<td></td>');
+                  tdElement.append('passed');
+                  tdElement.attr('class', 'caa_check ' + value);
+                  tdElement.attr('style', 'background: green; color: white');
+                  trElement.append(tdElement);
+                <%end%>
+
+                tdElement = $('<td></td>');
+                tdElement.append('n/a');
+                tdElement.attr('class', 'pretest ' + value);
+                trElement.append(tdElement);
+
+                tdElement = $('<td></td>');
+                tdElement.append(domain_status[value]['method'].toLowerCase().replace('%28', '').replace('%29', ''));
+                tdElement.attr('class', 'attempt ' + value);
+                trElement.append(tdElement);
+
+                tdElement = $('<td></td>');
+                tdElement.append(domain_status[value]['attempted_on']);
+                tdElement.attr('class', 'attempted_on ' + value);
+                trElement.append(tdElement);
+
+                var tdElement = $('<td></td>');
+                tdElement.append('validated');
+                tdElement.attr('class', 'status ' + value);
+                trElement.append(tdElement);
+
+                /*if (idx == (total - 1)) {
                   $('.domains_loader_wrap').hide();
                   if (is_error) {
                     var message_wrap_element = $('<div></div>');
@@ -918,7 +1073,7 @@ jQuery(function($) {
                   } else {
                     $('#upload_validations').show();
                   }
-                }
+                }*/
               }
             });
           } else {
