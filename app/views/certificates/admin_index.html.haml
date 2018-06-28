@@ -1,0 +1,42 @@
+- title = 'Certificates'
+- will_paginate @certificates
+- content_for :title, title
+- system_admins = current_user.is_system_admins?
+
+#validations
+  -# =render partial: 'filter_form'
+  
+#certificates-admin-index
+  %table(cellspacing='0')
+    %br
+    %tr
+      = link_to 'New Certificate', new_certificate_path, class: 'button_blue button_index'
+    - if will_paginate @certificates
+      %tfoot
+        %tr
+          %td(colspan='5')
+            = will_paginate @certificates
+    %caption
+      %strong
+        = title
+      = will_paginate @certificates
+    %thead
+      %tr.heading_row
+        %th Serial
+        %th Title
+        %th Product
+        %th Role
+        %th CA Certificate
+        %th
+    %tbody
+      -@certificates.each do |c|
+        %tr
+          %td.serial #{c.serial}
+          %td.title #{c.title}
+          %td #{c.product}
+          %td.roles #{c.roles}
+          %td.ca
+            = c.ca.blank? ? '' : "#{c.ca.ref}: #{c.ca.profile_name}"
+          %td.actions
+            = link_to 'update', edit_certificate_path(c.id), class: 'btn-cert-update'
+          

@@ -219,6 +219,7 @@ ActiveRecord::Schema.define(version: 20180625174208) do
     t.string  "ekus",          limit: 255
     t.integer "end_entity",    limit: 4
     t.string  "ca_name",       limit: 255
+    t.string  "type",          limit: 255
   end
 
   create_table "cas_certificates", force: :cascade do |t|
@@ -386,7 +387,10 @@ ActiveRecord::Schema.define(version: 20180625174208) do
     t.string   "roles",                 limit: 255,   default: "--- []"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "ca_certificate_id",     limit: 4
   end
+
+  add_index "certificates", ["ca_certificate_id"], name: "index_certificates_on_ca_certificate_id", using: :btree
 
   create_table "certificates_products", force: :cascade do |t|
     t.integer  "certificate_id", limit: 4

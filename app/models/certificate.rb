@@ -8,12 +8,18 @@ class Certificate < ActiveRecord::Base
   has_and_belongs_to_many :cas
   acts_as_publishable :live, :draft, :discontinue_sell
   belongs_to  :reseller_tier
+  belongs_to  :ca, foreign_key: :ca_certificate_id
+  
   serialize   :icons
   serialize   :description
   serialize   :display_order
   serialize   :title
   preference  :certificate_chain, :string
-
+  
+  accepts_nested_attributes_for :product_variant_groups, allow_destroy: false
+  
+  ROLES = ResellerTier.pluck(:roles).compact.push('Registered').sort
+  
   NUM_DOMAINS_TIERS = 3
   UCC_INITIAL_DOMAINS_BLOCK = 3
   UCC_MAX_DOMAINS = 200

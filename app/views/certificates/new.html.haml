@@ -1,0 +1,8 @@
+.reseller_registration_profile
+  %h3 New Certificate
+
+.reseller_registration_profile
+  = error_messages_for :certificate
+  
+  = form_for @certificate do |f|
+    = render partial: 'form_for_admin', locals: {f: f}
