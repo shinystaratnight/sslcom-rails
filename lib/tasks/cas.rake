@@ -159,7 +159,7 @@ namespace :cas do
                       caa_issuers: "ssl.com",
                       host: "https://192.168.100.5:8442/restapi",
                       admin_host: "https://192.168.100.5:8443",
-                      ekus: ["tls"],
+                      ekus: Ca::EKUS[:code_signing],
                       end_entity: Ca::END_ENTITY[:evcs],
                       ca_name: Ca::SSLCOM_CA
                 },

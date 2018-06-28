@@ -9,6 +9,11 @@ class Ca < ActiveRecord::Base
   SSLCOM_CA = "sslcom"
   MANAGEMENT_CA = "management_ca"
 
+  EKUS = {server: "tls",
+          client: "client",
+          email: "smime",
+          code_signing: "cs"}
+
   END_ENTITY={evcs: 'EV_CS_CERT_EE',
               cs: 'CS_CERT_EE',
               dvssl: 'DV_SERVER_CERT_EE',
