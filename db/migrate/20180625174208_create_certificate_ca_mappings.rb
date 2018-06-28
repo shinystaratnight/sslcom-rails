@@ -13,6 +13,7 @@ class CreateCertificateCaMappings < ActiveRecord::Migration
     add_column :cas, :host, :string
     add_column :cas, :admin_host, :string
     add_column :cas, :ekus, :string
-    add_column :cas, :end_entity_id, :integer
+    add_column :cas, :end_entity, :integer
+    add_column :cas, :ca_name, :string
   end
 end

@@ -11,7 +11,10 @@ namespace :cas do
                       profile_type: "subCA",
                       caa_issuers: "ssl.com",
                       host: "https://192.168.100.5:8442/restapi",
-                      admin_host: "https://192.168.100.5:8443"
+                      admin_host: "https://192.168.100.5:8443",
+                      ekus: ["tls"],
+                      end_entity: Ca::END_ENTITY[:evssl],
+                      ca_name: Ca::CERTLOCK_CA
                   },
                   {
                       ref: "1001",
@@ -35,7 +38,10 @@ namespace :cas do
                       profile_type: "subCA",
                       caa_issuers: "ssl.com",
                       host: "https://192.168.100.5:8442/restapi",
-                      admin_host: "https://192.168.100.5:8443"
+                      admin_host: "https://192.168.100.5:8443",
+                      ekus: ["tls"],
+                      end_entity: Ca::END_ENTITY[:ssl],
+                      ca_name: Ca::CERTLOCK_CA
                   },
                   {
                       ref: "1003",
@@ -47,7 +53,10 @@ namespace :cas do
                       profile_type: "subCA",
                       caa_issuers: "ssl.com",
                       host: "https://192.168.100.5:8442/restapi",
-                      admin_host: "https://192.168.100.5:8443"
+                      admin_host: "https://192.168.100.5:8443",
+                      ekus: ["tls"],
+                      end_entity: Ca::END_ENTITY[:evssl],
+                      ca_name: Ca::CERTLOCK_CA
                 },
                   {
                       ref: "1004",
@@ -59,7 +68,8 @@ namespace :cas do
                       profile_type: "ca",
                       caa_issuers: "ssl.com",
                       host: "https://192.168.100.5:8442/restapi",
-                      admin_host: "https://192.168.100.5:8443"
+                      admin_host: "https://192.168.100.5:8443",
+                      ca_name: Ca::CERTLOCK_CA
                 },
                   {
                       ref: "1005",
@@ -71,7 +81,8 @@ namespace :cas do
                       profile_type: "ca",
                       caa_issuers: "ssl.com",
                       host: "https://192.168.100.5:8442/restapi",
-                      admin_host: "https://192.168.100.5:8443"
+                      admin_host: "https://192.168.100.5:8443",
+                      ca_name: Ca::CERTLOCK_CA
                 },
                   {
                       ref: "1006",
@@ -83,7 +94,8 @@ namespace :cas do
                       profile_type: "ca",
                       caa_issuers: "ssl.com",
                       host: "https://192.168.100.5:8442/restapi",
-                      admin_host: "https://192.168.100.5:8443"
+                      admin_host: "https://192.168.100.5:8443",
+                      ca_name: Ca::CERTLOCK_CA
                 },
                   {
                       ref: "1007",
@@ -95,7 +107,8 @@ namespace :cas do
                       profile_type: "ca",
                       caa_issuers: "ssl.com",
                       host: "https://192.168.100.5:8442/restapi",
-                      admin_host: "https://192.168.100.5:8443"
+                      admin_host: "https://192.168.100.5:8443",
+                      ca_name: Ca::CERTLOCK_CA
                 },
                   {
                       ref: "1008",
@@ -107,7 +120,8 @@ namespace :cas do
                       profile_type: "ca",
                       caa_issuers: "ssl.com",
                       host: "https://192.168.100.5:8442/restapi",
-                      admin_host: "https://192.168.100.5:8443"
+                      admin_host: "https://192.168.100.5:8443",
+                      ca_name: Ca::ECOSSL_CA
                 },
                   {
                       ref: "1009",
@@ -119,7 +133,8 @@ namespace :cas do
                       profile_type: "ca",
                       caa_issuers: "ssl.com",
                       host: "https://192.168.100.5:8442/restapi",
-                      admin_host: "https://192.168.100.5:8443"
+                      admin_host: "https://192.168.100.5:8443",
+                      ca_name: Ca::ECOSSL_CA
                 },
                   {
                       ref: "1010",
@@ -143,7 +158,10 @@ namespace :cas do
                       profile_type: "subCA",
                       caa_issuers: "ssl.com",
                       host: "https://192.168.100.5:8442/restapi",
-                      admin_host: "https://192.168.100.5:8443"
+                      admin_host: "https://192.168.100.5:8443",
+                      ekus: ["tls"],
+                      end_entity: Ca::END_ENTITY[:evcs],
+                      ca_name: Ca::SSLCOM_CA
                 },
                   {
                       ref: "1012",
