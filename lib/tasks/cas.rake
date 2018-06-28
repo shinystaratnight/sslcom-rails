@@ -374,7 +374,7 @@ namespace :cas do
                       algorithm: "rsa",
                       size: 4096,
                       description: "",
-                      profile_type: "certificate_profile"
+                      profile_type: "end_entity_profile"
                   },
                   {
                       ref: "2001",
@@ -383,7 +383,7 @@ namespace :cas do
                       algorithm: "rsa",
                       size: 4096,
                       description: "",
-                      profile_type: "certificate_profile"
+                      profile_type: "end_entity_profile"
                   },
                   {
                       ref: "2002",
@@ -392,7 +392,7 @@ namespace :cas do
                       algorithm: "rsa",
                       size: 4096,
                       description: "",
-                      profile_type: "certificate_profile"
+                      profile_type: "end_entity_profile"
                   },
                   {
                       ref: "2003",
@@ -401,7 +401,7 @@ namespace :cas do
                       algorithm: "ecc",
                       size: 384,
                       description: "",
-                      profile_type: "certificate_profile"
+                      profile_type: "end_entity_profile"
                   },
                   {
                       ref: "2004",
@@ -410,7 +410,7 @@ namespace :cas do
                       algorithm: "ecc",
                       size: 384,
                       description: "",
-                      profile_type: "certificate_profile"
+                      profile_type: "end_entity_profile"
                   },
                   {
                       ref: "2005",
@@ -419,7 +419,7 @@ namespace :cas do
                       algorithm: "ecc",
                       size: 384,
                       description: "",
-                      profile_type: "certificate_profile"
+                      profile_type: "end_entity_profile"
                   },
                   {
                       ref: "3000",
