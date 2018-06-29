@@ -180,7 +180,7 @@ class ApiCertificateRequest < CaApiRequest
       if serial
         Certificate.find_by_serial(serial)
       elsif ref
-        CertificateOrder.find_by_ref(ref).certificate
+        CertificateOrder.unscoped.find_by_ref(ref).certificate
       end
   end
 

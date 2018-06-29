@@ -199,7 +199,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
           unless cache && JSON.parse(cache)['tr_info']['status'] == 'validated'
             Rails.cache.delete(params[:ref] + ':' + key)
           end
-        end
+        end unless @result.cert_names.blank?
       else
         InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
       end
