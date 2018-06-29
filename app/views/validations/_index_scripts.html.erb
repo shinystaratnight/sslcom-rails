@@ -605,7 +605,7 @@ jQuery(function($) {
             var total = domains.length;
             var validated_domains = '<%=@validated_domains%>'.split(',');
             var domain_status = JSON.parse('<%= raw @ds ? @ds.to_json : {}%>');
-            var unvalidated_domain_total = total - validated_domains.length;
+            var unvalidated_domain_total = total - (validated_domains[0] == '' ? 0 : validated_domains.length);
             var unvalidated_domain_success_count = 0;
             var unvalidated_domain_failed_count = 0;
 
