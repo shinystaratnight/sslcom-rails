@@ -26,7 +26,6 @@
         %th Title
         %th Product
         %th Role
-        %th CA Certificate
         %th
     %tbody
       -@certificates.each do |c|
@@ -35,8 +34,6 @@
           %td.title #{c.title}
           %td #{c.product}
           %td.roles #{c.roles}
-          %td.ca
-            = c.ca.blank? ? '' : "#{c.ca.ref}: #{c.ca.profile_name}"
           %td.actions
             = link_to 'update', edit_certificate_path(c.id), class: 'btn-cert-update'
           

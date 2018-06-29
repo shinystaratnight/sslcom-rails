@@ -121,10 +121,11 @@ class CertificatesController < ApplicationController
   def update
     parse_params
     if @certificate.update(@new_params)
-      redirect_to admin_index_certificates_path,
-        notice: "Certificate #{@certificate.serial} was successfully updated."
+      update_cas_certificates
+      flash[:notice] = "Certificate #{@certificate.serial} was successfully updated."
+      mpv_redirect_to_cert
     else
-      render :new,
+      render :edit,
         error: "Failed to update certificate due to errors: #{@certificate.errors.full_messages.join(', ')}."
     end
   end
@@ -133,8 +134,9 @@ class CertificatesController < ApplicationController
     parse_params
     @certificate = Certificate.new(@new_params)
     if @certificate.save
-      redirect_to admin_index_certificates_path,
-        notice: "Certificate #{@certificate.serial} was successfully created."
+      update_cas_certificates
+      flash[:notice] = "Certificate #{@certificate.serial} was successfully created."
+      mpv_redirect_to_cert
     else
       render :new, 
         error: "Failed to create certificate due to errors: #{@certificate.errors.full_messages.join(', ')}."
@@ -274,5 +276,16 @@ class CertificatesController < ApplicationController
       .merge(display_order: JSON.parse(cert[:display_order]))
       .merge(description: JSON.parse(cert[:description]))
       .merge(allow_wildcard_ucc: (cert[:allow_wildcard_ucc].blank? ? nil : 0) ).to_h
+  end
+
+  def update_cas_certificates
+    cas = params[:ca_certificates]
+    if cas && cas.any?
+      @certificate.cas_certificates.where.not(ca_id: cas).destroy_all
+      exist_cas = @certificate.cas_certificates.where(ca_id: cas).map(&:ca)
+      @certificate.cas << (Ca.where(id: cas) - exist_cas)
+    else
+      @certificate.cas_certificates.destroy_all
+    end  
   end
 end

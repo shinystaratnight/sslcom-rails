@@ -1,7 +1,12 @@
 - cert_id = @certificate.id
 
 .reseller_registration_profile
-  %h3 Edit Certificate #{@certificate.serial}
+  %h3 
+    Edit Certificate #{@certificate.serial}
+    %br/
+    %br/
+    = link_to "<i class='fa fa-caret-left'></i> Certificates".html_safe, |
+      admin_index_certificates_path
 
 #frm-cert-edit.reseller_registration_profile
   = error_messages_for :certificate

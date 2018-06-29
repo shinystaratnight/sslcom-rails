@@ -1,6 +1,7 @@
 class Ca < ActiveRecord::Base
 
-  has_and_belongs_to_many :certificates
+  has_many  :cas_certificates, dependent: :destroy
+  has_many  :certificates, through: :cas_certificates
   serialize :caa_issuers
   serialize :ekus
 
@@ -11,8 +12,8 @@ class Ca < ActiveRecord::Base
   MANAGEMENT_CA = "management_ca"
 
   END_ENTITY = {
-    evcs: 'EV_CS_CERT_EE',
-    cs: 'CS_CERT_EE',
+    evcs:  'EV_CS_CERT_EE',
+    cs:    'CS_CERT_EE',
     dvssl: 'DV_SERVER_CERT_EE',
     ovssl: 'OV_SERVER_CERT_EE',
     evssl: 'EV_SERVER_CERT_EE'

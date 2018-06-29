@@ -5,11 +5,11 @@ class Certificate < ActiveRecord::Base
   has_many    :validation_rulings, :as=>:validation_rulable
   has_many    :validation_rules, :through => :validation_rulings
   has_and_belongs_to_many :products
-  has_and_belongs_to_many :cas
+  has_many    :cas_certificates, dependent: :destroy
+  has_many    :cas, through: :cas_certificates
   acts_as_publishable :live, :draft, :discontinue_sell
   belongs_to  :reseller_tier
-  belongs_to  :ca, foreign_key: :ca_certificate_id
-  
+
   serialize   :icons
   serialize   :description
   serialize   :display_order

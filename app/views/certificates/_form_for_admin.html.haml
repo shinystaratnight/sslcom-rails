@@ -51,12 +51,13 @@
         #pvg-open-form
           = link_to "<i class='fa fa-plus'></i> Add Group".html_safe, '#', id: 'lnk-pvg-open-form'
 
-    .certificate-fields CA Certificate
+    - cas = f.object.cas
+    .certificate-fields CA Certificate ( #{cas.count} )
     .clearfix
-      - ca_list = Ca.all.map { |ca| ["#{ca.ref}: #{ca.profile_type} - #{ca.profile_name}", ca.id] }
-      = f.label :ca_certificate_id
-      = f.select :ca_certificate_id, |
-        options_for_select(ca_list, f.object.ca_certificate_id), include_blank: true
+      #ca-certificates-select
+        - ca_list = Ca.all.map { |ca| ["#{ca.ref}: #{ca.type} - #{ca.profile_name}", ca.id] }
+        = select_tag :ca_certificates, |
+          options_for_select(ca_list, cas.pluck(:id)), include_blank: true, multiple: true
 
     .certificate-fields Display Order
     - displ_order_hash = { all: '', index: '' }
@@ -83,3 +84,10 @@
   #auto_adjust
     = link_to "#{image_tag('cancel_bl.gif')}".html_safe, admin_index_certificates_path
     = image_submit_tag 'bl_submit_button.gif', id: 'btn-certificate-submit'
+
+-content_for :js do
+  :javascript
+    $("#ca_certificates").select2();
+    $(document).ready(function() {
+      $("#ca_certificates").select2();
+    });

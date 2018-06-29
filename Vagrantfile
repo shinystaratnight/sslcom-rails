@@ -76,6 +76,6 @@ Vagrant.configure(2) do |config|
   config.vm.network "forwarded_port", guest: 4443, host: 4443, auto_correct: true
   config.vm.network "forwarded_port", guest: 9515, host: 9515, auto_correct: true
 
-  # config.ssh.private_key_path = "C:/Users/leo/RubymineProjects/sslcom-rails/.vagrant/machines/default/virtualbox/private_key"
+  config.ssh.private_key_path = "C:/Users/leo/RubymineProjects/sslcom-rails/.vagrant/machines/default/virtualbox/private_key"
 
 end
