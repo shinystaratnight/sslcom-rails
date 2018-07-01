@@ -212,13 +212,13 @@ ActiveRecord::Schema.define(version: 20180625174208) do
     t.string  "algorithm",     limit: 255
     t.integer "size",          limit: 4
     t.string  "description",   limit: 255
-    t.string  "profile_type",  limit: 255
     t.string  "caa_issuers",   limit: 255
     t.string  "host",          limit: 255
     t.string  "admin_host",    limit: 255
     t.string  "ekus",          limit: 255
     t.integer "end_entity",    limit: 4
     t.string  "ca_name",       limit: 255
+    t.string  "profile_type",  limit: 255
   end
 
   create_table "cas_certificates", force: :cascade do |t|
@@ -386,6 +386,7 @@ ActiveRecord::Schema.define(version: 20180625174208) do
     t.string   "roles",                 limit: 255,   default: "--- []"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "ca_certificate_id",     limit: 4
   end
 
   create_table "certificates_products", force: :cascade do |t|
