@@ -1,6 +1,10 @@
 namespace :cas do
   desc "CA profiles that can be referenced"
   task seed_ejbca_profiles: :environment do
+    if ENV['RESET']
+      CasCertificate.delete_all
+      Ca.delete_all
+    end
     Ca.create!([{
                       ref: "1000",
                       friendly_name: "",
@@ -12,7 +16,7 @@ namespace :cas do
                       caa_issuers: "ssl.com",
                       host: "https://192.168.100.5:8442/restapi",
                       admin_host: "https://192.168.100.5:8443",
-                      ekus: ["tls"],
+                      ekus: Ca::EKUS[:code_signing],
                       end_entity: Ca::END_ENTITY[:evssl],
                       ca_name: Ca::CERTLOCK_CA
                   },
@@ -161,7 +165,7 @@ namespace :cas do
                       caa_issuers: "ssl.com",
                       host: "https://192.168.100.5:8442/restapi",
                       admin_host: "https://192.168.100.5:8443",
-                      ekus: ["tls"],
+                      ekus: Ca::EKUS[:code_signing],
                       end_entity: Ca::END_ENTITY[:evcs],
                       ca_name: Ca::SSLCOM_CA
                 },
@@ -487,7 +491,9 @@ namespace :cas do
                   }])
     Certificate.all.each {|cert|
       Ca.all.each {|ca|
-        cert.cas << ca
+        unless Ca.is_a? EndEntityProfile
+          cert.cas << ca
+        end
       }
     }
   end
