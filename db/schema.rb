@@ -212,13 +212,13 @@ ActiveRecord::Schema.define(version: 20180629182134) do
     t.string  "algorithm",     limit: 255
     t.integer "size",          limit: 4
     t.string  "description",   limit: 255
-    t.string  "type",          limit: 255
     t.string  "caa_issuers",   limit: 255
     t.string  "host",          limit: 255
     t.string  "admin_host",    limit: 255
     t.string  "ekus",          limit: 255
     t.integer "end_entity",    limit: 4
     t.string  "ca_name",       limit: 255
+    t.string  "type",          limit: 255
   end
 
   create_table "cas_certificates", force: :cascade do |t|
