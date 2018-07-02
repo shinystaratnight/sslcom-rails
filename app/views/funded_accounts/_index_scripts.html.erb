@@ -19,9 +19,11 @@ jQuery(function($) {
     if ($('#funded_account_target_amount').length) {
       $.updateRequiredDeposit();
     }
-    $('#funded_account_target_amount').on('click change', function() {
+
+    $('#funded_account_funding_source_paypal, #funded_account_target_amount').on('click change', function() {
       $.updateRequiredDeposit();
     });
+    
     $('button[name=apply_discount]').on('click', function() {
       $.applyDiscount();
       setTimeout(function(){$.updateRequiredDeposit();}, 2000);
