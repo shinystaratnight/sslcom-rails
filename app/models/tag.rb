@@ -9,11 +9,13 @@ class Tag < ActiveRecord::Base
   
   before_validation :strip_tag_name
            
-  validates :name, allow_nil: false, allow_blank: false, uniqueness: {
-    case_sensitive: true,
-    scope: :ssl_account_id,
-    message: 'Tag already exists for this team.'
-  }
+  validates :name, allow_nil: false, allow_blank: false,
+    length: { minimum: 1, maximum: 255 },
+    uniqueness: {
+      case_sensitive: true,
+      scope: :ssl_account_id,
+      message: 'Tag already exists for this team.'
+    }
   
   def self.update_for_model(object, tags_list=[])
     @object = object
@@ -66,7 +68,6 @@ class Tag < ActiveRecord::Base
     ).destroy_all
   end 
 
-  
   def self.add_tags
     if @new_tags.any?
       found_team_tags = get_team_tags.where(name: @new_tags)
@@ -81,7 +82,10 @@ class Tag < ActiveRecord::Base
   end
   
   def self.add_tags_to_team
-    @new_team_tags.each { |name| @team.tags << Tag.new(name: name) }
+    @new_team_tags.each do |name|
+      current_tag = Tag.new(name: name, ssl_account_id: @team.id)
+      @team.tags << current_tag if current_tag.valid?
+    end
   end
   
   def self.get_tag_names

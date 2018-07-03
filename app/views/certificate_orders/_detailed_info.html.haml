@@ -30,7 +30,7 @@
                             =render partial: "certificate_orders/duration_limit", locals:{co: co}
                         -unless co.is_unused_credit? || !permitted_to?(:show, co)
                           %li=link_to "view certificate details", certificate_order_path(@ssl_slug, co)
-                        -if permitted_to?(:show, order)
+                        -if current_user.is_system_admins?
                           %li=link_to "view order transaction", order_path(@ssl_slug, order)
                         %li.category_border
                         %li
