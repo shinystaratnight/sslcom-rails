@@ -1,0 +1,13 @@
+.reseller_registration_profile
+  %h3
+    = "Product Variant Items"
+  %p
+    %strong
+      = "Group: id: #{@pv_group.id} | title: #{@pv_group.title} | display order: #{@pv_group.display_order} | items: #{@pv_group.product_variant_items.count}"
+      %br/
+      = "Certificate: #{@certificate.serial}"
+      %br/
+      %br/
+      = link_to "<i class='fa fa-caret-left'></i> Back to Certificate".html_safe, edit_certificate_path(@certificate.id)
+.reseller_registration_profile
+  = render partial: '/certificates/form_for_admin_pvi'

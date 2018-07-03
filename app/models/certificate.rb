@@ -5,14 +5,21 @@ class Certificate < ActiveRecord::Base
   has_many    :validation_rulings, :as=>:validation_rulable
   has_many    :validation_rules, :through => :validation_rulings
   has_and_belongs_to_many :products
+  has_many    :cas_certificates, dependent: :destroy
+  has_many    :cas, through: :cas_certificates
   acts_as_publishable :live, :draft, :discontinue_sell
   belongs_to  :reseller_tier
+
   serialize   :icons
   serialize   :description
   serialize   :display_order
   serialize   :title
   preference  :certificate_chain, :string
-
+  
+  accepts_nested_attributes_for :product_variant_groups, allow_destroy: false
+  
+  ROLES = ResellerTier.pluck(:roles).compact.push('Registered').sort
+  
   NUM_DOMAINS_TIERS = 3
   UCC_INITIAL_DOMAINS_BLOCK = 3
   UCC_MAX_DOMAINS = 200
