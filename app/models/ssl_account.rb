@@ -296,11 +296,14 @@ class SslAccount < ActiveRecord::Base
       users.each do |u|
         u.set_roles_for_account(self, [Role.find_by_name(Role::RESELLER).id])
       end
-      reseller.update_attribute :workflow_state, "complete"
     else
       reseller.reseller_tier=ResellerTier.find_by_label(tier)
       reseller.save
     end
+    roles << "reseller" unless is_reseller?
+    roles.delete "new_reseller" if is_new_reseller?
+    save
+    reseller.completed! unless reseller.complete?
   end
 
   def api_certificate_requests_string
