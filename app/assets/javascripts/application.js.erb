@@ -88,6 +88,13 @@ jQuery(function($) {
       e.preventDefault();
     }
   });
+
+  $('#sign_up_account').submit(function(e) {
+    if ($('input#tos').length > 0 && !$('input#tos').is(':checked')) {
+      $('input#tos').css('outline', '2px solid red');
+      e.preventDefault();
+    }
+  });
   
   // Tagging Functionality
   settings = { tags: true };

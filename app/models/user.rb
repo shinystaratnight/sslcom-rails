@@ -482,6 +482,14 @@ class User < ActiveRecord::Base
     assign_roles(params)
     self.login = params[:user][:login] if login.blank?
     self.email = params[:user][:email]
+
+    # TODO: New logic for auto activation account by passing password on Signup page.
+    if Settings.require_signup_password
+      self.password = params[:user][:password] unless params[:user][:password].blank?
+      self.password_confirmation = params[:user][:password_confirmation] unless params[:user][:password_confirmation].blank?
+      self.active = true unless params[:user][:password].blank?
+    end
+
     save_without_session_maintenance
   end
 
