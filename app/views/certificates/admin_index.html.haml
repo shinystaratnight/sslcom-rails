@@ -25,7 +25,7 @@
         %th Serial
         %th Title
         %th Product
-        %th Role
+        %th Reseller Tier
         %th
     %tbody
       -@certificates.each do |c|
@@ -33,7 +33,7 @@
           %td.serial #{c.serial}
           %td.title #{c.title}
           %td #{c.product}
-          %td.roles #{c.roles}
+          %td.roles #{c.reseller_tier ? c.reseller_tier.roles : nil}
           %td.actions
-            = link_to 'update', edit_certificate_path(c.id), class: 'btn-cert-update'
+            = link_to 'edit', edit_certificate_path(c.id), class: 'btn-cert-update'
           
