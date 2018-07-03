@@ -3,7 +3,7 @@ namespace :cas do
   task seed_ejbca_profiles: :environment do
     if ENV['RESET']
       CasCertificate.delete_all
-      Ca.delete_all
+      Ca.where{ref!="0"}.delete_all
     end
     Ca.create!([{
                       ref: "1000",
@@ -363,7 +363,7 @@ namespace :cas do
                       admin_host: "https://192.168.100.5:8443",
                       ca_name: Ca::SSLCOM_CA,
                       ekus: [Ca::EKUS[:code_signing]],
-                      end_entity: Ca::END_ENTITY[:evcs]
+                      end_entity: Ca::END_ENTITY[:cs]
                 },
                   {
                       ref: "0014",
@@ -408,7 +408,6 @@ namespace :cas do
                       admin_host: "https://192.168.100.5:8443",
                       ca_name: Ca::SSLCOM_CA,
                       ekus: [Ca::EKUS[:time_stamping]],
-                      end_entity: Ca::END_ENTITY[:evcs]
                 },
                   {
                       ref: "0017",
@@ -569,11 +568,19 @@ namespace :cas do
                   }])
     Certificate.all.each {|cert|
       Ca.all.each {|ca|
-        unless ca.is_a?(EndEntityProfile) or ca.is_a?(RootCa)
-          if cert.is_code_signing? and ca.ekus.include?(Ca::EKUS[:code_signing])
+        unless ca.is_a?(EndEntityProfile) or ca.is_a?(RootCa) or ca.ekus.blank?
+          if cert.is_evcs? and ca.end_entity==(Ca::END_ENTITY[:evcs])
             cert.cas << ca
-          elsif  cert.is_dv? or cert.is_ov? or cert.is_ev?  and ca.ekus.include?(Ca::EKUS[:server])
+          elsif cert.is_cs? and ca.end_entity==(Ca::END_ENTITY[:cs])
             cert.cas << ca
+          elsif  cert.is_dv? or cert.is_ov? or cert.is_ev?
+            if ca.end_entity==(Ca::END_ENTITY[:dvssl])
+              cert.cas << ca
+            elsif (cert.is_ov? or cert.is_ev?) and ca.end_entity==(Ca::END_ENTITY[:ovssl])
+              cert.cas << ca
+            elsif cert.is_ev? and ca.end_entity==(Ca::END_ENTITY[:evssl])
+              cert.cas << ca
+            end
           end
         end
       }

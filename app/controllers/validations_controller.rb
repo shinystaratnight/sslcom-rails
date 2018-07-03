@@ -141,7 +141,7 @@ class ValidationsController < ApplicationController
     # @cache = read_fragment(params[:certificate_order_id] + ':' + params['domain_name'])
     cache = Rails.cache.read(params[:certificate_order_id] + ':' + params['domain_name'])
 
-    if cache.blank? or cache="{}"
+    if cache.blank? or cache=="{}"
       co = (current_user.is_system_admins? ? CertificateOrder :
                 current_user.certificate_orders).find_by_ref(params[:certificate_order_id])
       returnObj = {}
