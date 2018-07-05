@@ -232,6 +232,10 @@ class Certificate < ActiveRecord::Base
     end
   end
 
+  def role_can_manage
+    Role.get_role_id Role::RA_ADMIN
+  end
+
   def price=(amount)
     self.amount = amount.gsub(/\./,"").to_i
   end

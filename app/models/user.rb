@@ -590,12 +590,20 @@ class User < ActiveRecord::Base
     SslAccount.joins{assignments}.where{assignments.role_id==4}.count
   end
 
+  def can_manage_certificates?
+    is_system_admins? && is_ra_admin?
+  end
+
   def is_admin?
     role_symbols.include? Role::SYS_ADMIN.to_sym
   end
 
   def is_super_user?
     role_symbols.include? Role::SUPER_USER.to_sym
+  end
+
+  def is_ra_admin?
+    role_symbols.include? Role::RA_ADMIN.to_sym
   end
 
   def is_owner?(target_account=nil)

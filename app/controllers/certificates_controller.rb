@@ -8,7 +8,9 @@ class CertificatesController < ApplicationController
     only: [:show, :buy, :pricing, :buy_renewal]
   before_filter :find_certificate_by_id,
     only: [:edit, :update, :manage_product_variants]
-  filter_access_to :buy_renewal
+  filter_access_to :edit, :update, :manage_product_variants, 
+    attribute_check: true
+  filter_access_to :buy_renewal, :new, :admin_index, :create
   layout false, only: [:pricing]
 
   def index
