@@ -588,8 +588,9 @@ class Order < ActiveRecord::Base
   def get_reprocess_domains
     co           = certificate_orders.first
     cc           = get_reprocess_cc(co)
-    
-    cur_domains  = cc.nil? ? [] : cc.domains
+    cs           = cc.signed_certificate if cc
+    cc_domains   = (cc.nil? || (cc && cc.domains.blank?)) ? [] : cc.domains
+    cur_domains  = (cc && cs) ? cs.subject_alternative_names : cc_domains
     non_wildcard = cur_domains.map {|d| d if !d.include?('*')}.compact
     wildcard     = cur_domains.map {|d| d if d.include?('*')}.compact
     
