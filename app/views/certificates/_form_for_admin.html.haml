@@ -29,7 +29,7 @@
     
     .clearfix
       = f.label :allow_wildcard_ucc
-      = f.select :allow_wildcard_ucc, [['NO', nil], ['YES', 1]], include_blank: false
+      = f.select :allow_wildcard_ucc, [['NO', false], ['YES', true]], include_blank: false
         
     .certificate-fields Reseller Tier
     .clearfix

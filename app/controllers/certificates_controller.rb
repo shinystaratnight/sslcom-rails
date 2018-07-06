@@ -166,7 +166,8 @@ class CertificatesController < ApplicationController
   end
   
   def admin_index
-    @certificates = Certificate.all.order(serial: :asc)
+    @certificates = Certificate.all.sort_with(params)
+    @certificates = @certificates.index_filter(params) if params[:commit]
     @certificates = @certificates.paginate(page: params[:page], per_page: 25)
   end
   
@@ -276,8 +277,7 @@ class CertificatesController < ApplicationController
     cert = params[:certificate]
     @new_params = cert
       .merge(display_order: JSON.parse(cert[:display_order]))
-      .merge(description: JSON.parse(cert[:description]))
-      .merge(allow_wildcard_ucc: (cert[:allow_wildcard_ucc].blank? ? nil : 0) ).to_h
+      .merge(description: JSON.parse(cert[:description])).to_h
   end
 
   def update_cas_certificates

@@ -4,13 +4,14 @@
 - system_admins = current_user.is_system_admins?
 
 #validations
-  -# =render partial: 'filter_form'
+  = render partial: 'filter_form'
   
 #certificates-admin-index
   %table(cellspacing='0')
     %br
-    %tr
-      = link_to 'New Certificate', new_certificate_path, class: 'button_blue button_index'
+    - if current_user.can_manage_certificates?
+      %tr
+        = link_to 'New Certificate', new_certificate_path, class: 'button_blue button_index'
     - if will_paginate @certificates
       %tfoot
         %tr
@@ -22,10 +23,14 @@
       = will_paginate @certificates
     %thead
       %tr.heading_row
-        %th Serial
-        %th Title
-        %th Product
-        %th Reseller Tier
+        %th
+          = sort_link('serial', get_col_direction('serial', params), 'Serial')
+        %th
+          = sort_link('title', get_col_direction('title', params), 'Title')
+        %th
+          = sort_link('product', get_col_direction('product', params), 'Product')
+        %th 
+          = sort_link('reseller_tier_id', get_col_direction('reseller_tier_id', params), 'Reseller Tier')
         %th
     %tbody
       -@certificates.each do |c|
@@ -34,6 +39,7 @@
           %td.title #{c.title}
           %td #{c.product}
           %td.roles #{c.reseller_tier ? c.reseller_tier.roles : nil}
-          %td.actions
-            = link_to 'edit', edit_certificate_path(c.id), class: 'btn-cert-update'
+          - if current_user.can_manage_certificates?
+            %td.actions
+              = link_to 'edit', edit_certificate_path(c.id), class: 'btn-cert-update'
           

@@ -526,6 +526,7 @@ module ApplicationHelper
   end
   
   def get_full_path(params)
-    send("#{params[:controller]}_path", params.except(:controller, :action))
+    path = params[:controller] == 'certificates' ? "admin_index_" : ''
+    send("#{path}#{params[:controller]}_path", params.except(:controller, :action))
   end
 end
