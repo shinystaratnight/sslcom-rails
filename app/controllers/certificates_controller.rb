@@ -125,6 +125,7 @@ class CertificatesController < ApplicationController
     if @certificate.update(@new_params)
       update_cas_certificates
       flash[:notice] = "Certificate #{@certificate.serial} was successfully updated."
+      log_system_audit(:update)
       mpv_redirect_to_cert
     else
       render :edit,
@@ -138,6 +139,7 @@ class CertificatesController < ApplicationController
     if @certificate.save
       update_cas_certificates
       flash[:notice] = "Certificate #{@certificate.serial} was successfully created."
+      log_system_audit(:create)
       mpv_redirect_to_cert
     else
       render :new, 
@@ -289,5 +291,15 @@ class CertificatesController < ApplicationController
     else
       @certificate.cas_certificates.destroy_all
     end  
+  end
+
+  def log_system_audit(type)
+    action = type == :create ? 'created' : 'updated'
+    SystemAudit.create(
+      owner:  current_user,
+      target: @certificate,
+      action: "User #{current_user.email} has #{action} certificate on #{DateTime.now.strftime("%b %d, %Y %R %Z")}",
+      notes:  "Certificate #{@certificate.serial} #{action.capitalize}"
+    )
   end
 end
