@@ -1,5 +1,9 @@
 class CasCertificate < ActiveRecord::Base
-  STATUS = %w(default active inactive shadow hide)
+  STATUS = {default: "default",
+            active: "active",
+            inactive: "inactive",
+            shadow: "shadow",
+            hide: "hide"}
 
   belongs_to :ca
   belongs_to :certificate

@@ -51,7 +51,7 @@
     .certificate-fields CA Certificate ( #{cas.count} )
     .clearfix
       #ca-certificates-select
-        - ca_list = Ca.all.map { |ca| ["#{ca.ref}: #{ca.type} - #{ca.profile_name}", ca.id] }
+        - ca_list = Ca.all.map { |ca| ["#{ca.ref}: #{ca.type} - #{ca.friendly_name}", ca.id] }
         = select_tag :ca_certificates, |
           options_for_select(ca_list, cas.pluck(:id)), include_blank: true, multiple: true
 
