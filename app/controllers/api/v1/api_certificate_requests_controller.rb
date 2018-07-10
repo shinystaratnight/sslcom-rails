@@ -1129,8 +1129,8 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
     @result.options ||= params[:options] if params[:options]
     @result.test = @test
     @result.request_url = request.url
-    @result.parameters = params.to_json
-    @result.raw_request = request.raw_post
+    @result.parameters = params.to_utf8.to_json
+    @result.raw_request = request.raw_post.force_encoding("ISO-8859-1").encode("UTF-8")
     @result.request_method = request.request_method
     @result.saved_registrant ||= params[:saved_registrant] if params[:saved_registrant]
   end
