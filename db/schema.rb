@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180608202612) do
+ActiveRecord::Schema.define(version: 20180707154020) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        limit: 255
@@ -716,6 +716,39 @@ ActiveRecord::Schema.define(version: 20180608202612) do
   add_index "notes", ["notable_id"], name: "index_notes_on_notable_id", using: :btree
   add_index "notes", ["notable_type"], name: "index_notes_on_notable_type", using: :btree
   add_index "notes", ["user_id"], name: "index_notes_on_user_id", using: :btree
+
+  create_table "notification_groups", force: :cascade do |t|
+    t.integer  "ssl_account_id", limit: 4
+    t.string   "ref",            limit: 255, null: false
+    t.string   "friendly_name",  limit: 255, null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "notification_groups", ["ssl_account_id", "ref"], name: "index_notification_groups_on_ssl_account_id_and_ref", using: :btree
+  add_index "notification_groups", ["ssl_account_id"], name: "index_notification_groups_on_ssl_account_id", using: :btree
+
+  create_table "notification_groups_contacts", force: :cascade do |t|
+    t.string   "email_address",         limit: 255
+    t.integer  "notification_group_id", limit: 4
+    t.integer  "contactable_id",        limit: 4
+    t.string   "contactable_type",      limit: 255
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "notification_groups_contacts", ["notification_group_id"], name: "index_notification_groups_contacts_on_notification_group_id", using: :btree
+
+  create_table "notification_groups_subjects", force: :cascade do |t|
+    t.string   "domain_name",           limit: 255
+    t.integer  "notification_group_id", limit: 4
+    t.integer  "subjectable_id",        limit: 4
+    t.string   "subjectable_type",      limit: 255
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "notification_groups_subjects", ["notification_group_id"], name: "index_notification_groups_subjects_on_notification_group_id", using: :btree
 
   create_table "oauth_nonces", force: :cascade do |t|
     t.string   "nonce",      limit: 255

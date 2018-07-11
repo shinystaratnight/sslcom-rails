@@ -39,6 +39,7 @@ class SslAccount < ActiveRecord::Base
   has_many  :all_saved_contacts, as: :contactable, class_name: 'Contact', dependent: :destroy
   has_many  :cdns
   has_many  :tags
+  has_many  :notification_groups
 
   unless MIGRATING_FROM_LEGACY
     #has_many  :orders, :as=>:billable, :after_add=>:build_line_items
