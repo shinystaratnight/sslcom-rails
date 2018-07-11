@@ -332,7 +332,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
         CertificateContent::CONTACT_ROLES.each do |role|
           c = if options[:contacts] && (options[:contacts][role] || options[:contacts][:all])
                 CertificateContact.new(retrieve_saved_contact(
-                    options[:contacts][(options[:contacts][role] ? role : :all)],
+                    options[:contacts][(options[:contacts][role] ? role : :all)].to_utf8,
                     %w(company_name department)
                 ))
               else

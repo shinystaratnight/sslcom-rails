@@ -1,4 +1,5 @@
 class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
+  prepend_view_path "app/views/api/v1/api_certificate_requests"
   include ActionController::Helpers
   helper SiteSealsHelper
   before_filter :set_database, if: "request.host=~/^sandbox/ || request.host=~/^sws-test/ || request.host=~/ssl.local$/"
