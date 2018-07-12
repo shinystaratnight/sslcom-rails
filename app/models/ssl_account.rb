@@ -322,6 +322,18 @@ class SslAccount < ActiveRecord::Base
     self.find_each{|s|s.create_api_credential if s.api_credential.blank?}
   end
 
+  def self.migrate_deposit(from_sa, to_sa, deposit, user)
+    to_sa.orders << deposit if deposit
+    if deposit && to_sa.orders.include?(deposit)
+      SystemAudit.create(
+        owner: user,
+        target: deposit,
+        notes: "Transfered deposit #{deposit.reference_number} from team acct ##{from_sa.acct_number} to team acct ##{to_sa.acct_number} on #{DateTime.now.strftime('%c')}.",
+        action: "Transfer Deposit To Team"
+      )
+    end
+  end
+
   # from_sa - the ssl_account to migrate from
   # to_sa - the ssl_account to migrate to
   def self.migrate_orders(from_sa, to_sa, refs=[], user)
