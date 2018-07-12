@@ -1,0 +1,29 @@
+- cert_id = @certificate.id
+
+.reseller_registration_profile
+  %h3 
+    Edit Certificate #{@certificate.serial}
+    %br/
+    %br/
+    = link_to "<i class='fa fa-caret-left'></i> Certificates".html_safe, |
+      admin_index_certificates_path
+
+#frm-cert-edit.reseller_registration_profile
+  = error_messages_for :certificate
+  = form_for @certificate do |f|
+    = f.hidden_field :id, value: cert_id
+    = render partial: 'form_for_admin', locals: {f: f}
+
+#frm-cert-pvg-create.reseller_registration_profile.hidden
+  = form_tag manage_product_variants_certificate_path(cert_id, manage_type: 'create_group'), method: :post do
+    #stylized.default_form.certificates-admin-edit
+      .fields
+        .certificate-fields.certificate-fields-top
+          = "<i class='fa fa-plus'></i> New Group".html_safe
+        = render partial: '/certificates/form_for_admin_pvg_attrs', |
+          locals: { pvg: ProductVariantGroup.new(variantable_id: cert_id, variantable_type: 'Certificate')}
+
+    #button_container
+      #auto_adjust
+        = link_to "#{image_tag('cancel_bl.gif')}".html_safe, '#', id: 'btn-cert-pvg-cancel'
+        = image_submit_tag 'bl_submit_button.gif'

@@ -430,10 +430,12 @@ SslCom::Application.routes.draw do
     collection do
       get :single_domain
       get :wildcard_or_ucc
+      get :admin_index
     end
     member do
       get :buy
       get :buy_renewal
+      match :manage_product_variants, via: [:get, :post]
     end
   end
 
