@@ -600,6 +600,7 @@ jQuery(function($) {
               is_evucc = @certificate_order.certificate.is_evucc?
               is_premium_ssl = @certificate_order.certificate.is_premium_ssl?
               is_wildcard = @certificate_order.certificate.is_wildcard?
+              ext_order_number = @certificate_order.external_order_number ? @certificate_order.external_order_number : 'eon'
             %>
 
             var total = domains.length;
@@ -674,6 +675,7 @@ jQuery(function($) {
                     domain_count: total,
                     domain_status: domain_status,
                     is_ucc: '<%=is_ucc%>',
+                    ext_order_number: '<%=ext_order_number%>'
                   },
                   type: "POST",
                   success: function(result) {
