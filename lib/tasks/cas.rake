@@ -7,7 +7,7 @@ namespace :cas do
     end
     Ca.create!([{
                       ref: "1000",
-                      friendly_name: "CertLock-SubCA-EV-SSL-RSA-4096",
+                      friendly_name: "CertLock SSL RSA 4096 (EV)",
                       profile_name: "CertLock-SubCA-EV-SSL-RSA-4096",
                       algorithm: "rsa",
                       size: 4096,
@@ -22,7 +22,7 @@ namespace :cas do
                   },
                   {
                       ref: "1001",
-                      friendly_name: "CertLock-SubCA-SSL-RSA-4096 (DV)",
+                      friendly_name: "CertLock SSL RSA 4096 (DV)",
                       profile_name: "CertLock-SubCA-SSL-RSA-4096",
                       algorithm: "rsa",
                       size: 4096,
@@ -37,7 +37,7 @@ namespace :cas do
                   },
                   {
                       ref: "1002",
-                      friendly_name: "CertLock-SubCA-SSL-RSA-4096 (OV)",
+                      friendly_name: "CertLock SSL RSA 4096 (OV)",
                       profile_name: "CertLock-SubCA-SSL-RSA-4096",
                       algorithm: "rsa",
                       size: 4096,
@@ -52,7 +52,7 @@ namespace :cas do
                   },
                   {
                       ref: "1003",
-                      friendly_name: "CertLockECCSSLsubCA (DV)",
+                      friendly_name: "CertLock SSL ECC (DV)",
                       profile_name: "CertLockECCSSLsubCA",
                       algorithm: "ecc",
                       size: 384,
@@ -67,7 +67,7 @@ namespace :cas do
                   },
                   {
                       ref: "1004",
-                      friendly_name: "CertLockECCSSLsubCA (OV)",
+                      friendly_name: "CertLock SSL ECC (OV)",
                       profile_name: "CertLockECCSSLsubCA",
                       algorithm: "ecc",
                       size: 384,
@@ -82,7 +82,7 @@ namespace :cas do
                   },
                   {
                       ref: "1005",
-                      friendly_name: "CertLockEVECCSSLsubCA",
+                      friendly_name: "CertLock SSL ECC (EV)",
                       profile_name: "CertLockEVECCSSLsubCA",
                       algorithm: "ecc",
                       size: 384,
@@ -188,7 +188,7 @@ namespace :cas do
                 },
                   {
                       ref: "0001",
-                      friendly_name: "SSL.com-EV-codeSigning-Intermediate-RSA-4096",
+                      friendly_name: "SSL.com EV CS RSA 4096",
                       profile_name: "SSL.com-EV-codeSigning-Intermediate-RSA-4096",
                       algorithm: "rsa",
                       size: 4096,
@@ -255,7 +255,7 @@ namespace :cas do
                 },
                   {
                       ref: "0006",
-                      friendly_name: "SSLcom-SubCA-EV-SSL-ECC-384-R1",
+                      friendly_name: "SSL.com SSL ECC 384 (EV)",
                       profile_name: "SSLcom-SubCA-EV-SSL-ECC-384-R1",
                       algorithm: "ecc",
                       size: 384,
@@ -270,7 +270,7 @@ namespace :cas do
                 },
                   {
                       ref: "0007",
-                      friendly_name: "SSLcom-SubCA-SSL-ECC-384-R1 (DV)",
+                      friendly_name: "SSL.com SSL ECC 384 (DV)",
                       profile_name: "SSLcom-SubCA-SSL-ECC-384-R1",
                       algorithm: "ecc",
                       size: 384,
@@ -285,7 +285,7 @@ namespace :cas do
                 },
                   {
                       ref: "0008",
-                      friendly_name: "SSLcom-SubCA-SSL-ECC-384-R1 (OV)",
+                      friendly_name: "SSL.com SSL ECC 384 (OV)",
                       profile_name: "SSLcom-SubCA-SSL-ECC-384-R1",
                       algorithm: "ecc",
                       size: 384,
@@ -352,7 +352,7 @@ namespace :cas do
                 },
                   {
                       ref: "0013",
-                      friendly_name: "SSLcom-SubCA-CodeSigning-RSA-4096-R1",
+                      friendly_name: "SSL.com CS RSA 4096",
                       profile_name: "SSLcom-SubCA-CodeSigning-RSA-4096-R1",
                       algorithm: "rsa",
                       size: 4096,
@@ -367,7 +367,7 @@ namespace :cas do
                 },
                   {
                       ref: "0014",
-                      friendly_name: "SSLcom-SubCA-EV-CodeSigning-RSA-4096-R2",
+                      friendly_name: "SSL.com EV CS RSA 4096",
                       profile_name: "SSLcom-SubCA-EV-CodeSigning-RSA-4096-R2",
                       algorithm: "rsa",
                       size: 4096,
@@ -382,7 +382,7 @@ namespace :cas do
                 },
                   {
                       ref: "0015",
-                      friendly_name: "SSLcom-SubCA-EV-SSL-RSA-4096-R2",
+                      friendly_name: "SSL.com SSL RSA 4096 R2 (EV)",
                       profile_name: "SSLcom-SubCA-EV-SSL-RSA-4096-R2",
                       algorithm: "rsa",
                       size: 4096,
@@ -397,7 +397,7 @@ namespace :cas do
                 },
                   {
                       ref: "0016",
-                      friendly_name: "SSLcom-SubCA-EV-TimeStamping-RSA-4096-R1",
+                      friendly_name: "SSL.com EV TimeStamping RSA 4096",
                       profile_name: "SSLcom-SubCA-EV-TimeStamping-RSA-4096-R1",
                       algorithm: "rsa",
                       size: 4096,
@@ -411,7 +411,7 @@ namespace :cas do
                 },
                   {
                       ref: "0017",
-                      friendly_name: "SSLcom-SubCA-SSL-RSA-4096-R1 (DV)",
+                      friendly_name: "SSL.com SSL RSA 4096 (DV)",
                       profile_name: "SSLcom-SubCA-SSL-RSA-4096-R1",
                       algorithm: "rsa",
                       size: 4096,
@@ -426,7 +426,7 @@ namespace :cas do
                 },
                   {
                       ref: "0018",
-                      friendly_name: "SSLcom-SubCA-SSL-RSA-4096-R1 (OV)",
+                      friendly_name: "SSL.com SSL RSA 4096 (OV)",
                       profile_name: "SSLcom-SubCA-SSL-RSA-4096-R1",
                       algorithm: "rsa",
                       size: 4096,
