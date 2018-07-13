@@ -12,26 +12,25 @@
   %h3
     \#{@title}
   =form_tag register_notification_group_notification_groups_path(params[:ssl_slug], @notification_group), :method => :post do
-    -#=hidden_field_tag 'new_group', @notification_groups ? 'true' : 'false'
     #stylized.default_form
       .subheading Friendly Name
       .group_block.clearfix
         =text_field_tag "friendly_name", @notification_group ? @notification_group.friendly_name : ''
-      .subheading Contacts
-      .group_block.clearfix
-        #contacts-container
-          =select_tag :contacts_list, options_for_select(contacts_list, selected: slt_contacts_list),
-            multiple: true, data: {placeholder: "click here to add/remove/edit emails."}
-      .subheading Domains
+      .subheading Monitor These Domains
       .group_block.clearfix
         #subjects-container
           =select_tag :subjects_list, options_for_select(subjects_list, selected: slt_subjects_list),
             multiple: true, data: {placeholder: "click here to add/remove/edit domains."}
-      .subheading Certificate Orders
+      .subheading Monitor These Certificates
       .group_block.clearfix
         #cos-container
           =select_tag :cos_list, options_for_select(cos_list, selected: slt_cos_list),
             multiple: true, data: {placeholder: "click here to add/remove/edit certificate orders."}
+      .subheading Notify These Contacts on Expiration
+      .group_block.clearfix
+        #contacts-container
+          =select_tag :contacts_list, options_for_select(contacts_list, selected: slt_contacts_list),
+            multiple: true, data: {placeholder: "click here to add/remove/edit emails."}
       .subheading Expiration Reminder
       -5.times do |i|
         -init_days = ['60', '30', '15', '1', '-15']

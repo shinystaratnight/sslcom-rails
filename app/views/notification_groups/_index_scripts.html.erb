@@ -25,6 +25,29 @@
         }
       });
 
+      $('#btn_remove_groups').click(function(e) {
+        e.preventDefault();
+
+        var chk_remove_list = $('.chk-remove');
+        var confirmMsg = 'Are you sure you want to delete the following SSL Expiration Notification Group(s)?';
+        var chk_first_group = true
+
+        $.each(chk_remove_list, function(idx, chk_remove) {
+          if ($(chk_remove).prop('checked')) {
+            if (chk_first_group) {
+              chk_first_group = false
+              confirmMsg = confirmMsg.concat('\r\n      ' + $(chk_remove).attr('data-group-name'));
+            } else {
+              confirmMsg = confirmMsg.concat('\n      ' + $(chk_remove).attr('data-group-name'));
+            }
+          }
+        });
+
+        if (confirm(confirmMsg)) {
+          this.form.submit();
+        }
+      });
+
       // Getting Domains from selected Certificate Orders.
       var ajaxGettingDomainsUrl = '<%=certificate_orders_domains_contacts_notification_groups_path(@ssl_slug)%>';
       settings = { tags: true };

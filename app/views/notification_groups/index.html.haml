@@ -5,7 +5,7 @@
   =form_tag :notification_groups, :id=>'hidden_form', :method=>:get do
     =hidden_field_tag :per_page, @per_page
 #notification_groups
-  =form_tag :remove_groups_notification_groups, :method => :post do
+  =form_tag :remove_groups_notification_groups, :id=> 'notification_group_list', :method => :post do
     %table(cellspacing="0")
       %tfoot
         %tr
@@ -29,7 +29,7 @@
             %td
               =link_to ng.friendly_name, edit_notification_group_path(@ssl_slug, ng.id)
             %td
-              =check_box_tag "remove_groups[]", ng.id, false, class: 'chk-remove'
+              =check_box_tag "remove_groups[]", ng.id, false, class: 'chk-remove', 'data-group-name' => ng.friendly_name
       -else
         %tr
           %td(colspan='2')
