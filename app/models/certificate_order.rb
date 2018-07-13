@@ -39,6 +39,8 @@ class CertificateOrder < ActiveRecord::Base
   has_many    :url_callbacks, as: :callbackable, :through=>:certificate_contents
   has_many    :taggings, as: :taggable
   has_many    :tags, through: :taggings
+  has_many    :notification_groups_subjects, as: :subjectable
+  has_many    :notification_groups, through: :notification_groups_subjects
 
   accepts_nested_attributes_for :certificate_contents, :allow_destroy => false
   attr_accessor :duration, :has_csr

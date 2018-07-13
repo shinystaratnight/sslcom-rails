@@ -133,6 +133,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
     if @result.csr_obj && !result.csr_obj.valid?
       @result = @result.csr_obj
     else
+      ext_order_number = CertificateOrder.find_by_ref(params[:ref]).external_order_number || 'eon'
       if @result.save
         if @acr = @result.replace_certificate_order
           if @acr.is_a?(CertificateOrder) && @acr.errors.empty?
@@ -150,14 +151,20 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
           else
             @result = @acr #so that rabl can report errors
           end
-        end
 
-        @result.cert_names.keys.each do |key|
-          # expire_fragment(params[:ref] + ':' + key)
-          cache = Rails.cache.read(params[:ref] + ':' + key)
-          unless cache && JSON.parse(cache)['tr_info']['status'] == 'validated'
-            Rails.cache.delete(params[:ref] + ':' + key)
+          unless @result.cert_names.blank?
+            @result.cert_names.keys.each do |key|
+              byebug
+              # expire_fragment(params[:ref] + ':' + key)
+              Rails.cache.delete(params[:ref] + ':' + ext_order_number + ':' + key)
+
+              # cache = Rails.cache.read(params[:ref] + ':' + ext_order_number + ':' + key)
+              # unless cache && JSON.parse(cache)['tr_info']['status'] == 'validated'
+              #   Rails.cache.delete(params[:ref] + ':' + ext_order_number + ':' + key)
+              # end
+            end
           end
+
         end
       else
         InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
@@ -174,6 +181,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
       # we do this sloppy maneuver because the rabl template only reports errors
       @result = @result.csr_obj
     else
+      ext_order_number = CertificateOrder.find_by_ref(params[:ref]).external_order_number || 'eon'
       if @result.save #save the api request
         if @acr = @result.update_certificate_order
           # successfully charged
@@ -192,15 +200,29 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
           else
             @result = @acr #so that rabl can report errors
           end
+
+          unless @result.cert_names.blank?
+            @result.cert_names.keys.each do |key|
+              byebug
+              # expire_fragment(params[:ref] + ':' + key)
+              Rails.cache.delete(params[:ref] + ':' + ext_order_number + ':' + key)
+
+              # cache = Rails.cache.read(params[:ref] + ':' + ext_order_number + ':' + key)
+              # unless cache && JSON.parse(cache)['tr_info']['status'] == 'validated'
+              #   Rails.cache.delete(params[:ref] + ':' + ext_order_number + ':' + key)
+              # end
+            end
+          end
+
         end
 
-        @result.cert_names.keys.each do |key|
-          # expire_fragment(params[:ref] + ':' + key)
-          cache = Rails.cache.read(params[:ref] + ':' + key)
-          unless cache && JSON.parse(cache)['tr_info']['status'] == 'validated'
-            Rails.cache.delete(params[:ref] + ':' + key)
-          end
-        end unless @result.cert_names.blank?
+        # @result.cert_names.keys.each do |key|
+        #   # expire_fragment(params[:ref] + ':' + key)
+        #   cache = Rails.cache.read(params[:ref] + ':' + key)
+        #   unless cache && JSON.parse(cache)['tr_info']['status'] == 'validated'
+        #     Rails.cache.delete(params[:ref] + ':' + key)
+        #   end
+        # end unless @result.cert_names.blank?
       else
         InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
       end
@@ -275,7 +297,6 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
       if @acr.is_a?(CertificateOrder) && @acr.errors.empty?
         @result.menu = {}
 
-        # byebug
         # @result.menu[:certificate_details_tab] = permitted_to?(:show, @acr)
         # @result.menu[:validation_status_tab] = permitted_to?(:show, @acr.validation)
         # @result.menu[:smart_seal_tab] = permitted_to?(:show, @acr.site_seal)
@@ -637,12 +658,39 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
 
   def show_v1_4
     set_template "show_v1_4"
-
     if @result.valid?
       @acr = @result.find_certificate_order
 
-      if @acr.is_a?(CertificateOrder) && @acr.errors.empty?
-        package_certificate_order(@result, @acr)
+      # Reading cache of Certificate order for "SSL-Certificate-Collection" API.
+      cache = Rails.cache.read('api-retrieve-ssl-cert-' + params[:ref])
+      is_new = false
+
+      if cache.blank?
+        is_new = true
+      elsif JSON.parse(cache)['private_cache_key'] != @acr.certificate_content.updated_at.strftime('%Y%m%d%H%M%S')
+        is_new = true
+        Rails.cache.delete('api-retrieve-ssl-cert-' + params[:ref])
+      end
+
+      if is_new
+        if @acr.is_a?(CertificateOrder) && @acr.errors.empty?
+          package_certificate_order(@result, @acr)
+
+          # Caching Certificate order for "Retrieve an SSL Certificate" API.
+          @result.private_cache_key = @acr.certificate_content.updated_at.strftime('%Y%m%d%H%M%S')
+
+          ActiveRecord::Base.include_root_in_json = false
+          cache_key = 'api-retrieve-ssl-cert-' + params[:ref]
+
+          Rails.cache.write(cache_key, @result.to_json(:methods => [
+              :description, :product, :product_name, :order_status, :order_date, :registrant, :certificates,
+              :common_name, :domains_qty_purchased, :wildcard_qty_purchased, :subject_alternative_names, :validations,
+              :effective_date, :expiration_date, :algorithm, :external_order_number, :domains, :site_seal_code,
+              :subscriber_agreement, :server_software, :contacts, :private_cache_key
+          ]))
+        end
+      else
+        @result = ApiCertificateRetrieve.new(JSON.parse(cache))
       end
     else
       InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
@@ -792,12 +840,25 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
   end
 
   def api_parameters_v1_4
+    set_template "api_parameters_v1_4"
+
     if @result.save
       @acr = @result.find_certificate_order
+
       if @acr.is_a?(CertificateOrder) && @acr.errors.empty?
-        api_domain = "https://" + (@acr.is_test ? Settings.test_api_domain : Settings.api_domain)
-        set_template "api_parameters_v1_4"
-        @result.parameters = @acr.to_api_string(action: @result.api_call, domain_override: api_domain, caller: "api")
+        # Reading cache of Api Parameters for "Retrieve acceptable domain validation methods for Certificate" API.
+        cache = Rails.cache.read('api-retrieve-domain-valid-methods-' + @acr.ref + '-' + @result.api_call)
+
+        if cache.blank?
+          api_domain = "https://" + (@acr.is_test ? Settings.test_api_domain : Settings.api_domain)
+          @result.parameters = @acr.to_api_string(action: @result.api_call, domain_override: api_domain, caller: "api")
+
+          # Caching Api Parameters for "Retrieve acceptable domain validation methods for Certificate" API.
+          Rails.cache.write('api-retrieve-domain-valid-methods-' + @acr.ref + '-' + @result.api_call, @result.parameters.to_json)
+        else
+          @result.parameters = JSON.parse(cache)
+        end
+
         render(:template => @template) and return
       end
     else
@@ -851,55 +912,80 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
           c = acr.certificate
           sc = acr.signed_certificate
           cc = acr.certificate_content
+          is_new = false
 
-          result = ApiCertificateRetrieve.new(ref: acr.ref)
-          result.order_date =   acr.created_at
-          result.order_status = acr.status
-          result.domains =      acr.all_domains
-          result.description =  acr.description
-          result.common_name =  sc ? sc.common_name : nil
-          result.product_type = c.product
-          result.period =       acr.certificate_contents.first.duration
+          # Reading cache of Individual Certificate order for "SSL-Certificate-Collection" API.
+          cache = Rails.cache.read('api-ssl-cert-collection-' + acr.ref + '-' + (client_app ? 'T' : 'F'))
 
-          if client_app
-            result.expiration_date = sc ? sc.expiration_date : nil
-          else
-            result.registrant = cc.registrant.to_api_query if (cc && cc.registrant)
-            result.validations = result.validations_from_comodo(acr) #'validations' kept executing twice so it was renamed to 'validations_from_comodo'
-
-            if c.is_ucc?
-              result.domains_qty_purchased = acr.purchased_domains('all').to_s
-              result.wildcard_qty_purchased = acr.purchased_domains('wildcard').to_s
-            else
-              result.domains_qty_purchased = '1'
-              result.wildcard_qty_purchased = c.is_wildcard? ? '1' : '0'
-            end
-
-            if (sc && result.query_type!='order_status_only')
-              signed_certificate_format = sc.to_format(
-                  response_type:     @result.response_type, #assume comodo issued cert
-                  response_encoding: @result.response_encoding
-              )
-              result.certificates = signed_certificate_format || sc.to_nginx
-              result.subject_alternative_names = sc.subject_alternative_names
-              result.effective_date = sc.effective_date
-              result.expiration_date = sc.expiration_date
-              result.algorithm = sc.is_SHA2? ? 'SHA256' : 'SHA1'
-              result.site_seal_code = ERB::Util.json_escape(render_to_string(
-                                                                partial: 'site_seals/site_seal_code.html.haml',
-                                                                locals: {co: acr},
-                                                                layout: false)
-              )
-            end
+          if cache.blank?
+            is_new = true
+          elsif JSON.parse(cache)['private_cache_key'] != cc.updated_at.strftime('%Y%m%d%H%M%S')
+            is_new = true
+            Rails.cache.delete('api-ssl-cert-collection-' + acr.ref)
           end
+
+          if is_new
+            result = ApiCertificateRetrieve.new(ref: acr.ref)
+            result.order_date =   acr.created_at
+            result.order_status = acr.status
+            result.domains =      acr.all_domains
+            result.description =  acr.description
+            result.common_name =  sc ? sc.common_name : nil
+            result.product_type = c.product
+            result.period =       acr.certificate_contents.first.duration
+
+            if client_app
+              result.expiration_date = sc ? sc.expiration_date : nil
+            else
+              result.registrant = cc.registrant.to_api_query if (cc && cc.registrant)
+              result.validations = result.validations_from_comodo(acr) #'validations' kept executing twice so it was renamed to 'validations_from_comodo'
+
+              if c.is_ucc?
+                result.domains_qty_purchased = acr.purchased_domains('all').to_s
+                result.wildcard_qty_purchased = acr.purchased_domains('wildcard').to_s
+              else
+                result.domains_qty_purchased = '1'
+                result.wildcard_qty_purchased = c.is_wildcard? ? '1' : '0'
+              end
+
+              if (sc && result.query_type!='order_status_only')
+                signed_certificate_format = sc.to_format(
+                    response_type:     @result.response_type, #assume comodo issued cert
+                    response_encoding: @result.response_encoding
+                )
+                result.certificates = signed_certificate_format || sc.to_nginx
+                result.subject_alternative_names = sc.subject_alternative_names
+                result.effective_date = sc.effective_date
+                result.expiration_date = sc.expiration_date
+                result.algorithm = sc.is_SHA2? ? 'SHA256' : 'SHA1'
+                result.site_seal_code = ERB::Util.json_escape(render_to_string(
+                                                                  partial: 'site_seals/site_seal_code.html.haml',
+                                                                  locals: {co: acr},
+                                                                  layout: false)
+                )
+              end
+            end
+
+            # Caching Individual Certificate order for "SSL-Certificate-Collection" API.
+            result.private_cache_key = cc.updated_at.strftime('%Y%m%d%H%M%S')
+
+            ActiveRecord::Base.include_root_in_json = false
+            cache_key = 'api-ssl-cert-collection-' + acr.ref + '-' + (client_app ? 'T' : 'F')
+
+            Rails.cache.write(cache_key, result.to_json(:methods => [
+                :ref, :description, :order_status, :order_date, :registrant, :certificates, :common_name, :domains_qty_purchased,
+                :wildcard_qty_purchased, :subject_alternative_names, :validations, :effective_date, :expiration_date, :algorithm,
+                :domains, :site_seal_code, :product_type, :period, :private_cache_key]))
+          else
+            result = ApiCertificateRetrieve.new(JSON.parse(cache))
+          end
+
           @results << result
         end
       end
 
       if client_app
-        render json: serialize_models(@results,
-          meta: { orders_count: @orders.count, page: page, per_page: per_page }
-        )
+        render json: serialize_models(@results, meta: {orders_count: @orders.count, page: page, per_page: per_page})
       else
         render(template: @template) and return
       end
@@ -923,19 +1009,44 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
   end
 
   def dcv_emails_v1_3
+    set_template "dcv_emails_v1_3"
+
     if @result.save
       @result.email_addresses={}
-      @certificate_order=find_certificate_order
-      @certificate_order.is_a?(CertificateOrder)
+      # @certificate_order=find_certificate_order
+      # @certificate_order.is_a?(CertificateOrder)
+
       if @result.domain
-        @result.email_addresses=ComodoApi.domain_control_email_choices(@result.domain).email_address_choices
+        # Reading cache of email address for "Acceptable Email addresses for domain control validation" API.
+        cache = Rails.cache.read('api-email-addresses-' + @result.domain)
+
+        if cache.blank?
+          @result.email_addresses = ComodoApi.domain_control_email_choices(@result.domain).email_address_choices
+
+          # Caching Certificate order for "Retrieve an SSL Certificate" API.
+          cache_key = 'api-email-addresses-' + @result.domain
+          Rails.cache.write(cache_key, @result.email_addresses.join('-'))
+        else
+          @result.email_addresses = cache.split('-')
+        end
       else
         @result.domains.each do |domain|
-          @result.email_addresses.merge! domain=>ComodoApi.domain_control_email_choices(domain).email_address_choices
+          # Reading cache of email address for "Acceptable Email addresses for domain control validation" API.
+          cache = Rails.cache.read('api-email-addresses-' + domain)
+
+          if cache.blank?
+            @result.email_addresses.merge! domain => ComodoApi.domain_control_email_choices(domain).email_address_choices
+
+            # Caching Certificate order for "Retrieve an SSL Certificate" API.
+            cache_key = 'api-email-addresses-' + domain
+            Rails.cache.write(cache_key, @result.email_addresses[domain].join('-'))
+          else
+            @result.email_addresses.merge! domain => cache.split('-')
+          end
         end
       end
+
       unless @result.email_addresses.blank?
-        set_template "dcv_emails_v1_3"
         render(:template => @template) and return
       end
     else
@@ -996,28 +1107,50 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
     if @result.save  #save the api request
       @acr = CertificateOrder.new
       @acr.certificate_contents.build.build_csr(body: @result.csr)
+
       if @acr.csr.errors.empty?
         @result.dcv_methods={}
+
         if @acr.csr.common_name
-          @result.instructions = ApiDcvMethods::INSTRUCTIONS
-          unless @acr.csr.blank?
-            @result.md5_hash = @acr.csr.md5_hash
-            @result.sha2_hash = @acr.csr.sha2_hash
-            @result.dns_md5_hash = @acr.csr.dns_md5_hash
-            @result.dns_sha2_hash = @acr.csr.dns_sha2_hash
-          end
-          ([@acr.csr.common_name]+(@result.domains || [])).compact.map(&:downcase).uniq.each do |domain|
-            @result.dcv_methods.merge! domain=>{}
-            @result.dcv_methods[domain].merge! "email_addresses"=>ComodoApi.domain_control_email_choices(domain).email_address_choices
+          # Reading cache of csr hashes for "Retrieve all validation methods based on hash of certificate signing request" API.
+          cache = Rails.cache.read('api-csr-hash-' + @acr.csr.md5_hash)
+
+          if cache.blank?
+            @result.instructions = ApiDcvMethods::INSTRUCTIONS
+
             unless @acr.csr.blank?
-              @result.dcv_methods[domain].merge! "http_csr_hash"=>
-                 {"http"=>"#{@acr.csr.dcv_url(false,domain)}",
-                  "allow_https"=>"true",
-                  "contents"=>"#{@result.sha2_hash}\ncomodoca.com#{"\n#{@acr.csr.unique_value}" unless @acr.csr.unique_value.blank?}"}
-              @result.dcv_methods[domain].merge! "cname_csr_hash"=>{"cname"=>"#{@result.dns_md5_hash}.#{domain}. CNAME #{@result.dns_sha2_hash}.comodoca.com.","name"=>"#{@result.dns_md5_hash}.#{domain}","value"=>"#{@result.dns_sha2_hash}.comodoca.com."}
+              @result.md5_hash = @acr.csr.md5_hash
+              @result.sha2_hash = @acr.csr.sha2_hash
+              @result.dns_md5_hash = @acr.csr.dns_md5_hash
+              @result.dns_sha2_hash = @acr.csr.dns_sha2_hash
             end
+
+            ([@acr.csr.common_name]+(@result.domains || [])).compact.map(&:downcase).uniq.each do |domain|
+              @result.dcv_methods.merge! domain=>{}
+              @result.dcv_methods[domain].merge! "email_addresses"=>ComodoApi.domain_control_email_choices(domain).email_address_choices
+              unless @acr.csr.blank?
+                @result.dcv_methods[domain].merge! "http_csr_hash"=>
+                                                       {"http"=>"#{@acr.csr.dcv_url(false,domain)}",
+                                                        "allow_https"=>"true",
+                                                        "contents"=>"#{@result.sha2_hash}\ncomodoca.com#{"\n#{@acr.csr.unique_value}" unless @acr.csr.unique_value.blank?}"}
+                @result.dcv_methods[domain].merge! "cname_csr_hash"=>{"cname"=>"#{@result.dns_md5_hash}.#{domain}. CNAME #{@result.dns_sha2_hash}.comodoca.com.","name"=>"#{@result.dns_md5_hash}.#{domain}","value"=>"#{@result.dns_sha2_hash}.comodoca.com."}
+              end
+            end
+
+            # Caching CSR Hashes for "Retrieve all validation methods based on hash of certificate signing request" API.
+            ActiveRecord::Base.include_root_in_json = false
+            cache_key = 'api-csr-hash-' + @result.md5_hash
+            Rails.cache.write(cache_key, @result.to_json(:methods => [:instructions, :md5_hash, :sha2_hash, :dns_md5_hash, :dns_sha2_hash, :dcv_methods]))
+          else
+            @result.instructions = JSON.parse(cache)['instructions']
+            @result.md5_hash = JSON.parse(cache)['md5_hash']
+            @result.sha2_hash = JSON.parse(cache)['sha2_hash']
+            @result.dns_md5_hash = JSON.parse(cache)['dns_md5_hash']
+            @result.dns_sha2_hash = JSON.parse(cache)['dns_sha2_hash']
+            @result.dcv_methods = JSON.parse(cache)['dcv_methods']
           end
         end
+
         unless @result.dcv_methods.blank?
           render(:template => @template) and return
         end

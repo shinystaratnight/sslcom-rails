@@ -28,11 +28,13 @@ class User < ActiveRecord::Base
   has_many  :discounts, as: :benefactor, dependent: :destroy
   has_one   :shopping_cart
   has_and_belongs_to_many :user_groups
+  has_many  :notification_groups, through: :ssl_accounts
 
   preference  :cert_order_row_count, :string, :default=>"10"
   preference  :order_row_count, :string, :default=>"10"
   preference  :cdn_row_count, :string, :default=>"10"
   preference  :user_row_count, :string, :default => "10"
+  preference  :note_group_row_count, :string, :default => "10"
 
   #will_paginate
   cattr_accessor :per_page
@@ -482,6 +484,14 @@ class User < ActiveRecord::Base
     assign_roles(params)
     self.login = params[:user][:login] if login.blank?
     self.email = params[:user][:email]
+
+    # TODO: New logic for auto activation account by passing password on Signup page.
+    if Settings.require_signup_password
+      self.password = params[:user][:password] unless params[:user][:password].blank?
+      self.password_confirmation = params[:user][:password_confirmation] unless params[:user][:password_confirmation].blank?
+      self.active = true unless params[:user][:password].blank?
+    end
+
     save_without_session_maintenance
   end
 

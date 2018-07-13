@@ -573,6 +573,7 @@ jQuery(function($) {
     $('textarea[name*=body]').click(function(){
       $(this).select();
     });
+
     $('form[id^=edit_certificate_order] textarea').keyup(function(){
       $(this).parents().filter('form').ajaxSubmit();
     });
@@ -580,6 +581,30 @@ jQuery(function($) {
     $('#certificate_orders').on('keyup', '#certificate_order_notes', function() {
       $(this).parents().filter('form').ajaxSubmit();
     });
+
+    // Cancel button
+    if (url.substr(url.lastIndexOf('/') + 1, (url.indexOf('?') != -1 ? url.indexOf('?') : url.length)) == 'edit') {
+      <%if @certificate_order%>
+        $('#start_over_redirect').click(function() {
+          var isLockedRegistrant = '<%=params[:registrant]%>';
+          if (isLockedRegistrant == 'false') {
+            window.location.href = "<%= certificate_order_path(@ssl_slug, @certificate_order) %>";
+          } else {
+            $.ajax({
+              url: "<%= start_over_certificate_order_url(@ssl_slug, @certificate_order.ref) %>",
+              type: "POST",
+              beforeSend: function() {
+                return confirm("Are you sure you want to start over with this certificate order?");
+              },
+              success: function(data, status) {
+                window.location.href = "<%= edit_certificate_order_path(@ssl_slug, @certificate_order.ref) %>";
+              }
+            });
+          }
+        });
+      <%end%>
+    }
+
   });
 });
 </script>
