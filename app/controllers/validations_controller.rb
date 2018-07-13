@@ -6,7 +6,7 @@ require 'tempfile'
 include Open3
 
 class ValidationsController < ApplicationController
-  before_filter :require_user, only: [:index, :new, :edit, :show, :upload, :document_upload]
+  before_filter :require_user, only: [:index, :new, :edit, :show, :upload, :document_upload, :get_asynch_domains]
   before_filter :find_validation, only: [:update, :new]
   before_filter :find_certificate_order, only: [:new, :edit, :show, :upload, :document_upload]
 
@@ -141,7 +141,7 @@ class ValidationsController < ApplicationController
     # @cache = read_fragment(params[:certificate_order_id] + ':' + params['domain_name'])
     cache = Rails.cache.read(params[:certificate_order_id] + ':' + params['domain_name'])
 
-    if cache.blank?
+    if cache.blank? or cache=="{}"
       co = (current_user.is_system_admins? ? CertificateOrder :
                 current_user.certificate_orders).find_by_ref(params[:certificate_order_id])
       returnObj = {}
@@ -263,10 +263,8 @@ class ValidationsController < ApplicationController
       end
 
       # write_fragment(params[:certificate_order_id] + ':' + params['domain_name'], returnObj.to_json)
-      if returnObj['tr_info']['status'] == 'validated'
+      if !returnObj.blank? and returnObj['tr_info']['status'] == 'validated'
         Rails.cache.write(params[:certificate_order_id] + ':' + params['domain_name'], returnObj.to_json)
-      else
-        Rails.cache.write(params[:certificate_order_id] + ':' + params['domain_name'], returnObj.to_json, :expires_in => 10.minutes)
       end
 
       render :json => returnObj

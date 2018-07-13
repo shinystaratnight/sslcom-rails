@@ -37,7 +37,7 @@
         %td{colspan: '2'}
           .order-detail-actions
             %emp Pay: 
-            - unless invoice.refunded? || invoice.partially_refunded
+            - unless invoice.refunded? || invoice.partially_refunded?
               = link_to "this invoice #{invoice.get_amount_format}",           |
                 new_payment_invoice_path(@ssl_slug, invoice.reference_number), |
                 class: 'btn-pay-invoices', method: :get
