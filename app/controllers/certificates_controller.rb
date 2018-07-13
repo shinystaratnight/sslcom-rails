@@ -8,7 +8,9 @@ class CertificatesController < ApplicationController
     only: [:show, :buy, :pricing, :buy_renewal]
   before_filter :find_certificate_by_id,
     only: [:edit, :update, :manage_product_variants]
-  filter_access_to :buy_renewal
+  filter_access_to :edit, :update, :manage_product_variants, 
+    attribute_check: true
+  filter_access_to :buy_renewal, :new, :admin_index, :create
   layout false, only: [:pricing]
 
   def index
@@ -123,6 +125,7 @@ class CertificatesController < ApplicationController
     if @certificate.update(@new_params)
       update_cas_certificates
       flash[:notice] = "Certificate #{@certificate.serial} was successfully updated."
+      log_system_audit(:update)
       mpv_redirect_to_cert
     else
       render :edit,
@@ -136,6 +139,7 @@ class CertificatesController < ApplicationController
     if @certificate.save
       update_cas_certificates
       flash[:notice] = "Certificate #{@certificate.serial} was successfully created."
+      log_system_audit(:create)
       mpv_redirect_to_cert
     else
       render :new, 
@@ -164,7 +168,8 @@ class CertificatesController < ApplicationController
   end
   
   def admin_index
-    @certificates = Certificate.all.order(serial: :asc)
+    @certificates = Certificate.all.sort_with(params)
+    @certificates = @certificates.index_filter(params) if params[:commit]
     @certificates = @certificates.paginate(page: params[:page], per_page: 25)
   end
   
@@ -274,8 +279,7 @@ class CertificatesController < ApplicationController
     cert = params[:certificate]
     @new_params = cert
       .merge(display_order: JSON.parse(cert[:display_order]))
-      .merge(description: JSON.parse(cert[:description]))
-      .merge(allow_wildcard_ucc: (cert[:allow_wildcard_ucc].blank? ? nil : 0) ).to_h
+      .merge(description: JSON.parse(cert[:description])).to_h
   end
 
   def update_cas_certificates
@@ -287,5 +291,15 @@ class CertificatesController < ApplicationController
     else
       @certificate.cas_certificates.destroy_all
     end  
+  end
+
+  def log_system_audit(type)
+    action = type == :create ? 'created' : 'updated'
+    SystemAudit.create(
+      owner:  current_user,
+      target: @certificate,
+      action: "User #{current_user.email} has #{action} certificate on #{DateTime.now.strftime("%b %d, %Y %R %Z")}",
+      notes:  "Certificate #{@certificate.serial} #{action.capitalize}"
+    )
   end
 end

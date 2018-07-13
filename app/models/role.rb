@@ -13,6 +13,7 @@ class Role < ActiveRecord::Base
   SYS_ADMIN     = 'sysadmin'
   USERS_MANAGER = 'users_manager'
   VALIDATIONS   = 'validations'
+  RA_ADMIN      = 'ra_admin'
   
   def self.get_role_id(role_name)
     Role.find_by(name: role_name).id
@@ -23,7 +24,7 @@ class Role < ActiveRecord::Base
   end
 
   def self.admin_role_ids
-    Role.get_role_ids([SYS_ADMIN, SUPER_USER, OWNER])
+    Role.get_role_ids([SYS_ADMIN, SUPER_USER, OWNER, RA_ADMIN])
   end
 
   def self.get_account_admin_id
@@ -39,7 +40,13 @@ class Role < ActiveRecord::Base
   end
   
   def self.get_select_ids_for_owner
-    Role.get_role_ids([ACCOUNT_ADMIN, BILLING, INSTALLER, VALIDATIONS, USERS_MANAGER])
+    Role.get_role_ids([
+      ACCOUNT_ADMIN,
+      BILLING,
+      INSTALLER,
+      VALIDATIONS,
+      USERS_MANAGER
+    ])
   end
 
   def self.can_manage_users
@@ -82,11 +89,18 @@ class Role < ActiveRecord::Base
       RESELLER,
       SUPER_USER,
       SYS_ADMIN,
-      USERS_MANAGER
+      USERS_MANAGER,
+      RA_ADMIN
     ])
   end
 
   def self.cannot_be_invited
-    Role.get_role_ids([OWNER, RESELLER, SUPER_USER, SYS_ADMIN])
+    Role.get_role_ids([
+      OWNER,
+      RESELLER,
+      SUPER_USER,
+      SYS_ADMIN,
+      RA_ADMIN
+    ])
   end
 end

@@ -12,14 +12,16 @@ authorization do
   role :sysadmin do
     includes :user
     includes :owner
+    has_permission_on :certificates, to: [:admin_index, :new, :create]
     has_permission_on :certificates, to: [
-      :admin_index,
       :edit,
       :update,
       :show,
-      :new,
-      :manage_product_variants
-    ]
+      :manage_product_variants,
+      :destroy
+    ] do
+      if_attribute role_can_manage: is_in {user.roles.ids}
+    end
     has_permission_on :authorization_rules, :to => :read
     has_permission_on :site_seals, :validation_rules, :certificate_orders,
       :to => :sysadmin_manage, except: :delete
