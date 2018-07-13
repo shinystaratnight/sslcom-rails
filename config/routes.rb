@@ -250,6 +250,14 @@ SslCom::Application.routes.draw do
       end
     end
 
+    resources :notification_groups do
+      collection do
+        get :certificate_orders_domains_contacts
+        post :register_notification_group
+        post :remove_groups
+      end
+    end
+
     resources :other_party_validation_requests, only: [:create, :show]
 
     resources :validation_histories

@@ -132,6 +132,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
     if @result.csr_obj && !result.csr_obj.valid?
       @result = @result.csr_obj
     else
+      ext_order_number = CertificateOrder.find_by_ref(params[:ref]).external_order_number || 'eon'
       if @result.save
         if @acr = @result.replace_certificate_order
           if @acr.is_a?(CertificateOrder) && @acr.errors.empty?
@@ -149,14 +150,20 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
           else
             @result = @acr #so that rabl can report errors
           end
-        end
 
-        @result.cert_names.keys.each do |key|
-          # expire_fragment(params[:ref] + ':' + key)
-          cache = Rails.cache.read(params[:ref] + ':' + key)
-          unless cache && JSON.parse(cache)['tr_info']['status'] == 'validated'
-            Rails.cache.delete(params[:ref] + ':' + key)
+          unless @result.cert_names.blank?
+            @result.cert_names.keys.each do |key|
+              byebug
+              # expire_fragment(params[:ref] + ':' + key)
+              Rails.cache.delete(params[:ref] + ':' + ext_order_number + ':' + key)
+
+              # cache = Rails.cache.read(params[:ref] + ':' + ext_order_number + ':' + key)
+              # unless cache && JSON.parse(cache)['tr_info']['status'] == 'validated'
+              #   Rails.cache.delete(params[:ref] + ':' + ext_order_number + ':' + key)
+              # end
+            end
           end
+
         end
       else
         InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
@@ -173,6 +180,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
       # we do this sloppy maneuver because the rabl template only reports errors
       @result = @result.csr_obj
     else
+      ext_order_number = CertificateOrder.find_by_ref(params[:ref]).external_order_number || 'eon'
       if @result.save #save the api request
         if @acr = @result.update_certificate_order
           # successfully charged
@@ -191,15 +199,29 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
           else
             @result = @acr #so that rabl can report errors
           end
+
+          unless @result.cert_names.blank?
+            @result.cert_names.keys.each do |key|
+              byebug
+              # expire_fragment(params[:ref] + ':' + key)
+              Rails.cache.delete(params[:ref] + ':' + ext_order_number + ':' + key)
+
+              # cache = Rails.cache.read(params[:ref] + ':' + ext_order_number + ':' + key)
+              # unless cache && JSON.parse(cache)['tr_info']['status'] == 'validated'
+              #   Rails.cache.delete(params[:ref] + ':' + ext_order_number + ':' + key)
+              # end
+            end
+          end
+
         end
 
-        @result.cert_names.keys.each do |key|
-          # expire_fragment(params[:ref] + ':' + key)
-          cache = Rails.cache.read(params[:ref] + ':' + key)
-          unless cache && JSON.parse(cache)['tr_info']['status'] == 'validated'
-            Rails.cache.delete(params[:ref] + ':' + key)
-          end
-        end unless @result.cert_names.blank?
+        # @result.cert_names.keys.each do |key|
+        #   # expire_fragment(params[:ref] + ':' + key)
+        #   cache = Rails.cache.read(params[:ref] + ':' + key)
+        #   unless cache && JSON.parse(cache)['tr_info']['status'] == 'validated'
+        #     Rails.cache.delete(params[:ref] + ':' + key)
+        #   end
+        # end unless @result.cert_names.blank?
       else
         InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
       end

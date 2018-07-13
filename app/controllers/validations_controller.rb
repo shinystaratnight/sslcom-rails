@@ -91,14 +91,15 @@ class ValidationsController < ApplicationController
               @all_validated = false if @all_validated
             else
               validated_domain_arry << key
-              cache = Rails.cache.read(params[:certificate_order_id] + ':' + key)
+              ext_order_number = @certificate_order.external_order_number ? @certificate_order.external_order_number : 'eon'
+              cache = Rails.cache.read(params[:certificate_order_id] + ':' + ext_order_number + ':' + key)
 
               if cache.blank?
                 cn = @certificate_order.certificate_content.certificate_names.find_by_name(key)
                 dcv = cn.blank? ? nil : cn.domain_control_validations.last
                 value['attempted_on'] = dcv.blank? ? 'n/a' : dcv.created_at
 
-                Rails.cache.write(params[:certificate_order_id] + ':' + key, value['attempted_on'])
+                Rails.cache.write(params[:certificate_order_id] + ':' + ext_order_number + ':' + key, value['attempted_on'])
               else
                 value['attempted_on'] = cache
               end
@@ -184,7 +185,7 @@ class ValidationsController < ApplicationController
 
   def get_asynch_domains
     # @cache = read_fragment(params[:certificate_order_id] + ':' + params['domain_name'])
-    cache = Rails.cache.read(params[:certificate_order_id] + ':' + params['domain_name'])
+    cache = Rails.cache.read(params[:certificate_order_id] + ':' + params[:ext_order_number] + ':' + params['domain_name'])
 
     if cache.blank? or cache="{}"
       co = (current_user.is_system_admins? ? CertificateOrder :
@@ -308,7 +309,11 @@ class ValidationsController < ApplicationController
 
       # write_fragment(params[:certificate_order_id] + ':' + params['domain_name'], returnObj.to_json)
       if !returnObj.blank? and returnObj['tr_info']['status'] == 'validated'
-        Rails.cache.write(params[:certificate_order_id] + ':' + params['domain_name'], returnObj.to_json)
+        Rails.cache.write(params[:certificate_order_id] + ':' + params[:ext_order_number] + ':' + params['domain_name'],
+                          returnObj.to_json)
+      else
+        Rails.cache.write(params[:certificate_order_id] + ':' + params[:ext_order_number] + ':' + params['domain_name'],
+                          returnObj.to_json, :expires_in => 10.minutes)
       end
 
       render :json => returnObj

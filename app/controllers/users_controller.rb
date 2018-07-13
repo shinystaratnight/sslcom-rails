@@ -104,10 +104,19 @@ class UsersController < ApplicationController
         @user.ssl_account,
         [Role.find_by_name((reseller ? Role::RESELLER : Role::OWNER)).id]
       )
-      @user.deliver_activation_instructions!
-      notice = "Your account has been created. Please check your
-        e-mail at #{@user.email} for your account activation instructions!"
-      flash[:notice] = notice
+
+      if Settings.require_signup_password
+        # TODO: New Logic for auto activation by signup with password.
+        notice = "Your account has been created."
+        flash[:notice] = notice
+      else
+        # TODO: Original Logic for activation by email.
+        @user.deliver_activation_instructions!
+        notice = "Your account has been created. Please check your
+          e-mail at #{@user.email} for your account activation instructions!"
+        flash[:notice] = notice
+      end
+
       #in production heroku, requests coming FROM a subdomain will not transmit
       #flash messages to the target page. works fine in dev though
       redirect_to(request.subdomain == Reseller::SUBDOMAIN ? login_url(:notice => notice) : login_url)
