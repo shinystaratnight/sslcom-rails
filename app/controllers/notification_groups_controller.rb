@@ -21,7 +21,7 @@ class NotificationGroupsController < ApplicationController
 
   def new
     @cos_list = @ssl_account.certificate_orders.pluck(:ref, :id).uniq!
-    @title = 'New Group'
+    @title = 'New SSL Expiration Notification Group'
 
     render 'group'
   end
@@ -43,7 +43,7 @@ class NotificationGroupsController < ApplicationController
                          .flatten.compact.map{ |cc| [cc.email, cc.id] }.uniq
                          .concat(email_addresses.pluck(:email_address, :email_address))
     @slt_contacts_list = @notification_group.contacts.pluck(:id).concat(email_addresses.pluck(:email_address))
-    @title = 'Edit Group'
+    @title = 'Edit SSL Expiration Notification Group'
 
     render 'group'
   end
