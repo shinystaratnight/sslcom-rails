@@ -26,11 +26,12 @@ class Certificate < ActiveRecord::Base
 
   FREE_CERTS_CART_LIMIT=5
 
-  USERTRUST_EV_SUBSCRIBER_AGREEMENT="https://wwwsslcom.a.cdnify.io/app/uploads/2015/07/ssl_certificate_subscriber_agreement.pdf"
-  USERTRUST_EV_AUTHORIZATION="https://wwwsslcom.a.cdnify.io/app/uploads/2015/07/ev-request-form-simplified.pdf"
-  SSLCOM_EV_SUBSCRIBER_AGREEMENT="https://wwwsslcom.a.cdnify.io/app/uploads/2017/06/SSL_com_EV_Subscriber_Agreement.pdf"
-  SSLCOM_EV_AUTHORIZATION="https://wwwsslcom.a.cdnify.io/app/uploads/2018/03/SSL_com_EV_Request_Form_1.1.pdf"
-  SSLCOM_SUBSCRIBER_AGREEMENT="https://www.ssl.com/subscriber_agreement"
+  USERTRUST_EV_SUBSCRIBER_AGREEMENT="https://cdn.ssl.com/app/uploads/2015/07/ssl_certificate_subscriber_agreement.pdf"
+  USERTRUST_EV_AUTHORIZATION="https://cdn.ssl.com/app/uploads/2015/07/ev-request-form-simplified.pdf"
+  SSLCOM_EV_SUBSCRIBER_AGREEMENT="https://cdn.ssl.com/app/uploads/2017/06/SSL_com_EV_Subscriber_Agreement.pdf"
+  SSLCOM_EV_AUTHORIZATION="https://cdn.ssl.com/app/uploads/2018/03/SSL_com_EV_Request_Form_1.1.pdf"
+  SSLCOM_SUBSCRIBER_AGREEMENT="https://cdn.ssl.com/subscriber_agreement"
+  SSLCOM_CP_CPS="https://cdn.ssl.com/repository/SSLcom-CPS.pdf"
 
   #mapping from old to v2 products (see CertificateOrder#preferred_v2_product_description)
   MAP_TO_TRIAL=[["Comodo Trial SSL Certificate", "SSL128SCGN SSL Certificate",
