@@ -53,6 +53,7 @@ gem 'unscoped_associations'
 gem 'nokogiri'
 gem 'coffee-rails'
 gem 'jquery-rails'
+gem 'jquery-ui-rails'
 gem 'turbolinks'
 gem 'jbuilder'
 gem 'sdoc',          group: :doc

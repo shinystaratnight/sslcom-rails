@@ -1,10 +1,10 @@
 //= require jquery_ujs
+//= require jquery-ui
 //= require application
 //= require jquery.livequery
 //= require multifile/jquery.MetaData
 //= require multifile/jquery.MultiFile.pack
 //= require multifile/jquery.blockUI
-//= require jquery-ui-1.8.7.custom.min
 //= require jquery.cookie
 //= require jquery.json-2.2.min
 //= require jquery.tooltip.min

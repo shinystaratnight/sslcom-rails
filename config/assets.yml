@@ -3,12 +3,12 @@ embed_assets: datauri
 javascripts:
   common:
     - public/javascripts/jquery_ujs.js
+    - public/javascripts/jquery-ui.js
     - public/javascripts/application.js
     - public/javascripts/jquery.livequery.js
     - public/javascripts/multifile/jquery.MetaData.js
     - public/javascripts/multifile/jquery.MultiFile.pack.js
     - public/javascripts/multifile/jquery.blockUI.js
-    - public/javascripts/jquery-ui-1.8.7.custom.min.js
     - public/javascripts/jquery.cookie.js
     - public/javascripts/jquery.json-2.2.min.js
     - public/javascripts/jquery.tooltip.min.js
@@ -29,7 +29,6 @@ stylesheets:
     - public/stylesheets/compiled/main.css
     - public/stylesheets/compiled/master.css
   common:
-    - public/stylesheets/jquery-ui-1.8.7.custom.css
     - public/stylesheets/jquery.tooltip.css
     - public/stylesheets/prettyPhoto.css
     - public/stylesheets/prettyLoader.css
