@@ -11,7 +11,6 @@ javascripts:
     - public/javascripts/multifile/jquery.blockUI.js
     - public/javascripts/jquery.cookie.js
     - public/javascripts/jquery.json-2.2.min.js
-    - public/javascripts/jquery.tooltip.min.js
     - public/javascripts/jCal.js
     - public/javascripts/datejs.js
     - public/javascripts/datejs.js
@@ -29,7 +28,6 @@ stylesheets:
     - public/stylesheets/compiled/main.css
     - public/stylesheets/compiled/master.css
   common:
-    - public/stylesheets/jquery.tooltip.css
     - public/stylesheets/prettyPhoto.css
     - public/stylesheets/prettyLoader.css
     - public/stylesheets/prettyPopin.css

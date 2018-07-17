@@ -7,7 +7,6 @@
 //= require multifile/jquery.blockUI
 //= require jquery.cookie
 //= require jquery.json-2.2.min
-//= require jquery.tooltip.min
 //= require jCal
 //= require datejs
 //= require merchant_validate_cc
