@@ -126,9 +126,11 @@ class ValidationsController < ApplicationController
       # order_number = CertificateOrder.find_by_ref(params['certificate_order_id']).external_order_number
       certificate_order = (current_user.is_system_admins? ? CertificateOrder :
                                current_user.ssl_account.certificate_orders).find_by_ref(params[:certificate_order_id])
+      certificate_content = certificate_order.certificate_content
+      certificate_names = certificate_content.certificate_names
 
       domain_name_arry.each do |domain_name|
-        cn_obj = certificate_order.certificate_content.certificate_names.find_by_name(domain_name)
+        cn_obj = certificate_names.find_by_name(domain_name)
         next unless cn_obj
 
         res = ComodoApi.auto_remove_domain(domain_name: cn_obj, order_number: certificate_order.external_order_number)
@@ -146,6 +148,10 @@ class ValidationsController < ApplicationController
         end
 
         if error_code.zero?
+          # Remove Domain from Notification Group
+          NotificationGroup.auto_manage_cert_name(certificate_content, false, cn_obj.id)
+
+          # Remove Domain Object
           cn_obj.destroy
 
           # TODO: Remove cache for removed domain

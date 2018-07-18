@@ -13,6 +13,7 @@ class SslAccount < ActiveRecord::Base
   has_many  :validations, through: :certificate_orders
   has_many  :site_seals, through: :certificate_orders
   has_many  :certificate_contents, through: :certificate_orders
+  has_many  :certificate_names, through: :certificate_orders
   has_many  :signed_certificates, through: :certificate_contents
   has_many  :certificate_contacts, through: :certificate_contents
   has_one   :reseller, :dependent => :destroy

@@ -52,8 +52,21 @@
       var ajaxGettingDomainsUrl = '<%=certificate_orders_domains_contacts_notification_groups_path(@ssl_slug)%>';
       settings = { tags: true };
       $('#cos_list').select2(settings);
+      $('#cos_list').on('select2:opening select2:closing', function( event ) {
+        var $searchfield = $(this).parent().find('.select2-search__field');
+        $searchfield.prop('disabled', 'disabled');
+      });
       $('#contacts_list').select2(settings);
-      $('#subjects_list').select2(settings);
+      $('#subjects_list').select2({
+        tags: true,
+        minimumResultsForSearch: -1,
+        templateSelection: function(data, container) {
+          if (data.element.value == data.text) {
+            $(container).css("background-color", '#a4c000');
+          }
+          return data.text;
+        }
+      });
 
       $('#cos_list').on('change', function(e) {
         $.ajax({
@@ -67,40 +80,35 @@
             // =============== Parsing Subjects ===============
             subjects = JSON.parse(result)['domains'];
             slt_subjects = $('#subjects_list').val() || [];
+
+            if (slt_subjects.length > 0) {
+              $.each(slt_subjects, function(idx, domain) {
+                if (Math.floor(domain) == domain && $.isNumeric(domain)) return true;
+                subjects.push([domain, domain]);
+              });
+            }
+
             $('#subjects_list').empty();
 
-            // Adding domains what belongs to selected certificate orders
+            // Adding domains
             $.each(subjects, function(idx, domain) {
               var optElement = $('<option></option>');
               optElement.attr('value', domain[1]);
+              optElement.attr('selected', 'selected');
               optElement.append(domain[0]);
-
-              var index = $.inArray(domain[1].toString(), slt_subjects);
-              if (index != -1) {
-                optElement.attr('selected', 'selected');
-                slt_subjects.splice(index, 1);
-              }
 
               $('#subjects_list').append(optElement);
             });
 
-            // Adding domains what does not belong to selected certificate orders
-            if (slt_subjects.length > 0) {
-              $.each(slt_subjects, function(idx, domain) {
-                if (Math.floor(domain) == domain && $.isNumeric(domain)) {
-                  return true;
+            $('#subjects_list').select2({
+              tags: true,
+              templateSelection: function(data, container) {
+                if (data.element.value == data.text) {
+                  $(container).css("background-color", '#a4c000');
                 }
-
-                var optElement = $('<option></option>');
-                optElement.attr('value', domain);
-                optElement.append(domain);
-                optElement.attr('selected', 'selected');
-
-                $('#subjects_list').append(optElement);
-              });
-            }
-
-            $('#subjects_list').select2(settings);
+                return data.text;
+              }
+            });
 
             // =============== Parsing Contacts ===============
             contacts = JSON.parse(result)['contacts'];

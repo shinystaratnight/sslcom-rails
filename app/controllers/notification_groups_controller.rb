@@ -20,7 +20,8 @@ class NotificationGroupsController < ApplicationController
   end
 
   def new
-    @cos_list = @ssl_account.certificate_orders.pluck(:ref, :id).uniq!
+    @cos_list = @ssl_account.certificate_orders.pluck(:ref, :id).uniq
+    @subjects_list = @ssl_account.certificate_names.pluck(:name, :id).uniq
     @title = 'New SSL Expiration Notification Group'
 
     render 'group'
@@ -29,12 +30,14 @@ class NotificationGroupsController < ApplicationController
   def edit
     @notification_group = @ssl_account.notification_groups.where(id: params[:id]).first
     slt_cert_orders = @notification_group.certificate_orders.flatten.compact
-    @cos_list = @ssl_account.certificate_orders.pluck(:ref, :id).uniq!
+    @cos_list = @ssl_account.certificate_orders.pluck(:ref, :id).uniq
     @slt_cos_list = slt_cert_orders.map(&:id)
 
     domain_names = @notification_group.notification_groups_subjects.where.not(domain_name: [nil, ''])
-    @subjects_list = slt_cert_orders.map(&:certificate_contents).flatten.compact.map(&:certificate_names)
-                        .flatten.compact.map{ |cn| [cn.name, cn.id] }.uniq
+    # @subjects_list = slt_cert_orders.map(&:certificate_contents).flatten.compact.map(&:certificate_names)
+    #                     .flatten.compact.map{ |cn| [cn.name, cn.id] }.uniq
+    #                      .concat(domain_names.pluck(:domain_name, :domain_name))
+    @subjects_list = @ssl_account.certificate_names.pluck(:name, :id).uniq
                          .concat(domain_names.pluck(:domain_name, :domain_name))
     @slt_subjects_list = @notification_group.certificate_names.pluck(:id).concat(domain_names.pluck(:domain_name))
 
