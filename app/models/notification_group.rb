@@ -34,4 +34,29 @@ class NotificationGroup < ActiveRecord::Base
   def to_param
     ref
   end
+
+  def self.auto_manage_cert_name(cc, is_add, domain_id=nil)
+    notification_groups = cc.certificate_order.notification_groups
+
+    if notification_groups
+      notification_groups.each do |group|
+        ngs = group.notification_groups_subjects
+
+        if domain_id
+          ngs.where(subjectable_type: 'CertificateName', subjectable_id: domain_id).destroy_all
+        else
+          cc.certificate_names.each do |cn|
+            if is_add
+              ngs.build(
+                  subjectable_type: 'CertificateName', subjectable_id: cn.id
+              ).save
+            else
+              ngs.where(subjectable_type: 'CertificateName', subjectable_id: cn.id).destroy_all
+            end
+          end
+        end
+      end
+    end
+  end
+
 end
