@@ -373,6 +373,11 @@ class User < ActiveRecord::Base
     !ssl_account_users.map(&:user_enabled).include?(true)
   end
 
+  def deliver_auto_activation_confirmation!
+    reset_perishable_token!
+    UserNotifier.auto_activation_confirmation(self).deliver
+  end
+
   def deliver_activation_instructions!
     reset_perishable_token!
     UserNotifier.activation_instructions(self).deliver
