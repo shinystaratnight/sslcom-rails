@@ -94,7 +94,7 @@ namespace :cas do
                       ekus: [Ca::EKUS[:server]],
                       end_entity: Ca::END_ENTITY[:evssl],
                       ca_name: Ca::CERTLOCK_CA
-                },
+                  },
                   {
                       ref: "1006",
                       friendly_name: "CertLockEVROOTCAECC",
@@ -107,7 +107,7 @@ namespace :cas do
                       host: "https://192.168.100.5:8442/restapi",
                       admin_host: "https://192.168.100.5:8443",
                       ca_name: Ca::CERTLOCK_CA
-                },
+                  },
                   {
                       ref: "1007",
                       friendly_name: "CertLockEVROOTCARSA",
@@ -120,7 +120,7 @@ namespace :cas do
                       host: "https://192.168.100.5:8442/restapi",
                       admin_host: "https://192.168.100.5:8443",
                       ca_name: Ca::CERTLOCK_CA
-                },
+                  },
                   {
                       ref: "1008",
                       friendly_name: "CertLockROOTCAECC",
@@ -133,7 +133,7 @@ namespace :cas do
                       host: "https://192.168.100.5:8442/restapi",
                       admin_host: "https://192.168.100.5:8443",
                       ca_name: Ca::CERTLOCK_CA
-                },
+                  },
                   {
                       ref: "1009",
                       friendly_name: "CertLockROOTCARSA",
@@ -146,7 +146,7 @@ namespace :cas do
                       host: "https://192.168.100.5:8442/restapi",
                       admin_host: "https://192.168.100.5:8443",
                       ca_name: Ca::CERTLOCK_CA
-                },
+                  },
                   {
                       ref: "1100",
                       friendly_name: "ECOsslcom-RootCA-ECC-384-R1",
@@ -159,7 +159,7 @@ namespace :cas do
                       host: "https://192.168.100.5:8442/restapi",
                       admin_host: "https://192.168.100.5:8443",
                       ca_name: Ca::ECOSSL_CA
-                },
+                  },
                   {
                       ref: "1101",
                       friendly_name: "ECOsslcom-RootCA-RSA-4096-R1",
@@ -172,7 +172,7 @@ namespace :cas do
                       host: "https://192.168.100.5:8442/restapi",
                       admin_host: "https://192.168.100.5:8443",
                       ca_name: Ca::ECOSSL_CA
-                },
+                  },
                   {
                       ref: "1200",
                       friendly_name: "ManagementCA",
@@ -185,7 +185,7 @@ namespace :cas do
                       host: "https://192.168.100.5:8442/restapi",
                       admin_host: "https://192.168.100.5:8443",
                       ca_name: Ca::MANAGEMENT_CA
-                },
+                  },
                   {
                       ref: "0001",
                       friendly_name: "SSL.com EV CS RSA 4096",
@@ -200,7 +200,7 @@ namespace :cas do
                       ekus: Ca::EKUS[:code_signing],
                       end_entity: Ca::END_ENTITY[:evcs],
                       ca_name: Ca::SSLCOM_CA
-                },
+                  },
                   {
                       ref: "0002",
                       friendly_name: "SSLcom-RootCA-ECC-384-R1",
@@ -213,7 +213,7 @@ namespace :cas do
                       host: "https://192.168.100.5:8442/restapi",
                       admin_host: "https://192.168.100.5:8443",
                       ca_name: Ca::SSLCOM_CA
-                },
+                  },
                   {
                       ref: "0003",
                       friendly_name: "SSLcom-RootCA-ECC-384-R2",
@@ -226,7 +226,7 @@ namespace :cas do
                       host: "https://192.168.100.5:8442/restapi",
                       admin_host: "https://192.168.100.5:8443",
                       ca_name: Ca::SSLCOM_CA
-                },
+                  },
                   {
                       ref: "0004",
                       friendly_name: "SSLcom-RootCA-EV-ECC-384-R1",
@@ -239,7 +239,7 @@ namespace :cas do
                       host: "https://192.168.100.5:8442/restapi",
                       admin_host: "https://192.168.100.5:8443",
                       ca_name: Ca::SSLCOM_CA
-                },
+                  },
                   {
                       ref: "0005",
                       friendly_name: "SSLcom-RootCA-EV-ECC-384-R2",
@@ -252,7 +252,7 @@ namespace :cas do
                       host: "https://192.168.100.5:8442/restapi",
                       admin_host: "https://192.168.100.5:8443",
                       ca_name: Ca::SSLCOM_CA
-                },
+                  },
                   {
                       ref: "0006",
                       friendly_name: "SSL.com SSL ECC 384 (EV)",
@@ -267,7 +267,7 @@ namespace :cas do
                       ca_name: Ca::SSLCOM_CA,
                       ekus: [Ca::EKUS[:server]],
                       end_entity: Ca::END_ENTITY[:evssl]
-                },
+                  },
                   {
                       ref: "0007",
                       friendly_name: "SSL.com SSL ECC 384 (DV)",
@@ -282,7 +282,7 @@ namespace :cas do
                       ca_name: Ca::SSLCOM_CA,
                       ekus: [Ca::EKUS[:server]],
                       end_entity: Ca::END_ENTITY[:dvssl]
-                },
+                  },
                   {
                       ref: "0008",
                       friendly_name: "SSL.com SSL ECC 384 (OV)",
@@ -297,7 +297,7 @@ namespace :cas do
                       ca_name: Ca::SSLCOM_CA,
                       ekus: [Ca::EKUS[:server]],
                       end_entity: Ca::END_ENTITY[:ovssl]
-                },
+                  },
                   {
                       ref: "0009",
                       friendly_name: "SSLcom-RootCA-EV-RSA-4096-R2",
@@ -310,7 +310,7 @@ namespace :cas do
                       host: "https://192.168.100.5:8442/restapi",
                       admin_host: "https://192.168.100.5:8443",
                       ca_name: Ca::SSLCOM_CA
-                },
+                  },
                   {
                       ref: "0010",
                       friendly_name: "SSLcom-RootCA-EV-RSA-4096-R3",
@@ -323,7 +323,7 @@ namespace :cas do
                       host: "https://192.168.100.5:8442/restapi",
                       admin_host: "https://192.168.100.5:8443",
                       ca_name: Ca::SSLCOM_CA
-                },
+                  },
                   {
                       ref: "0011",
                       friendly_name: "SSLcom-RootCA-RSA-4096-R1",
@@ -336,7 +336,7 @@ namespace :cas do
                       host: "https://192.168.100.5:8442/restapi",
                       admin_host: "https://192.168.100.5:8443",
                       ca_name: Ca::SSLCOM_CA
-                },
+                  },
                   {
                       ref: "0012",
                       friendly_name: "SSLcom-RootCA-RSA-4096-R2",
@@ -349,7 +349,7 @@ namespace :cas do
                       host: "https://192.168.100.5:8442/restapi",
                       admin_host: "https://192.168.100.5:8443",
                       ca_name: Ca::SSLCOM_CA
-                },
+                  },
                   {
                       ref: "0013",
                       friendly_name: "SSL.com CS RSA 4096",
@@ -364,7 +364,7 @@ namespace :cas do
                       ca_name: Ca::SSLCOM_CA,
                       ekus: [Ca::EKUS[:code_signing]],
                       end_entity: Ca::END_ENTITY[:cs]
-                },
+                  },
                   {
                       ref: "0014",
                       friendly_name: "SSL.com EV CS RSA 4096",
@@ -379,7 +379,7 @@ namespace :cas do
                       ca_name: Ca::SSLCOM_CA,
                       ekus: [Ca::EKUS[:code_signing]],
                       end_entity: Ca::END_ENTITY[:evcs]
-                },
+                  },
                   {
                       ref: "0015",
                       friendly_name: "SSL.com SSL RSA 4096 R2 (EV)",
@@ -394,7 +394,7 @@ namespace :cas do
                       ca_name: Ca::SSLCOM_CA,
                       ekus: [Ca::EKUS[:server]],
                       end_entity: Ca::END_ENTITY[:evssl]
-                },
+                  },
                   {
                       ref: "0016",
                       friendly_name: "SSL.com EV TimeStamping RSA 4096",
@@ -407,8 +407,8 @@ namespace :cas do
                       host: "https://192.168.100.5:8442/restapi",
                       admin_host: "https://192.168.100.5:8443",
                       ca_name: Ca::SSLCOM_CA,
-                      ekus: [Ca::EKUS[:time_stamping]],
-                },
+                      ekus: [Ca::EKUS[:time_stamping]]
+                  },
                   {
                       ref: "0017",
                       friendly_name: "SSL.com SSL RSA 4096 (DV)",
@@ -423,7 +423,7 @@ namespace :cas do
                       ca_name: Ca::SSLCOM_CA,
                       ekus: [Ca::EKUS[:server]],
                       end_entity: Ca::END_ENTITY[:dvssl]
-                },
+                  },
                   {
                       ref: "0018",
                       friendly_name: "SSL.com SSL RSA 4096 (OV)",
@@ -438,7 +438,7 @@ namespace :cas do
                       ca_name: Ca::SSLCOM_CA,
                       ekus: [Ca::EKUS[:server]],
                       end_entity: Ca::END_ENTITY[:ovssl]
-                },
+                  },
                   {
                       ref: "0019",
                       friendly_name: "SSLcomEVROOTCARSA",
@@ -451,7 +451,7 @@ namespace :cas do
                       host: "https://192.168.100.5:8442/restapi",
                       admin_host: "https://192.168.100.5:8443",
                       ca_name: Ca::SSLCOM_CA
-                },
+                  },
                   {
                       ref: "0020",
                       friendly_name: "SSLcomEVRSASSLsubCA",
@@ -465,8 +465,68 @@ namespace :cas do
                       admin_host: "https://192.168.100.5:8443",
                       ca_name: Ca::SSLCOM_CA,
                       ekus: [Ca::EKUS[:server]],
-                      end_entity: Ca::END_ENTITY[:evssl]                   
-                },
+                      end_entity: Ca::END_ENTITY[:evssl]
+                  },
+                  {
+                      ref: "0021",
+                      friendly_name: "NAESB Client Cert Rudimentary Assurance",
+                      profile_name: "OV_RSA_NAESB_RA_CERT",
+                      algorithm: "rsa",
+                      size: 4096,
+                      description: "",
+                      type: "SubCa",
+                      caa_issuers: ["ssl.com"],
+                      host: "https://192.168.100.5:8442/restapi",
+                      admin_host: "https://192.168.100.5:8443",
+                      ca_name: Ca::SSLCOM_CA,
+                      ekus: [Ca::EKUS[:client]],
+                      end_entity: Ca::END_ENTITY[:ov_client]
+                  },
+                  {
+                      ref: "0022",
+                      friendly_name: "NAESB Client Cert Basic Assurance",
+                      profile_name: "OV_RSA_NAESB_BA_CERT",
+                      algorithm: "rsa",
+                      size: 4096,
+                      description: "",
+                      type: "SubCa",
+                      caa_issuers: ["ssl.com"],
+                      host: "https://192.168.100.5:8442/restapi",
+                      admin_host: "https://192.168.100.5:8443",
+                      ca_name: Ca::SSLCOM_CA,
+                      ekus: [Ca::EKUS[:client]],
+                      end_entity: Ca::END_ENTITY[:ov_client]
+                  },
+                  {
+                      ref: "0023",
+                      friendly_name: "NAESB RSA Client Cert High Assurance",
+                      profile_name: "OV_RSA_NAESB_HA_CERT",
+                      algorithm: "rsa",
+                      size: 4096,
+                      description: "",
+                      type: "SubCa",
+                      caa_issuers: ["ssl.com"],
+                      host: "https://192.168.100.5:8442/restapi",
+                      admin_host: "https://192.168.100.5:8443",
+                      ca_name: Ca::SSLCOM_CA,
+                      ekus: [Ca::EKUS[:client]],
+                      end_entity: Ca::END_ENTITY[:ov_client]
+                  },
+                  {
+                      ref: "0024",
+                      friendly_name: "NAESB RSA Client Cert Medium Assurance",
+                      profile_name: "OV_RSA_NAESB_MA_CERT",
+                      algorithm: "rsa",
+                      size: 4096,
+                      description: "",
+                      type: "SubCa",
+                      caa_issuers: ["ssl.com"],
+                      host: "https://192.168.100.5:8442/restapi",
+                      admin_host: "https://192.168.100.5:8443",
+                      ca_name: Ca::SSLCOM_CA,
+                      ekus: [Ca::EKUS[:client]],
+                      end_entity: Ca::END_ENTITY[:ov_client]
+                  },
                   {
                       ref: "2000",
                       friendly_name: "DV_RSA_SERVER_CERT",
@@ -561,6 +621,15 @@ namespace :cas do
                       ref: "3004",
                       friendly_name: "EV_CS_CERT_EE",
                       profile_name: "EV_CS_CERT_EE",
+                      algorithm: "",
+                      size: 4096,
+                      description: "",
+                      type: "EndEntityProfile"
+                  },
+                  {
+                      ref: "3005",
+                      friendly_name: "OV_CLIENTAUTH_CERT_EE",
+                      profile_name: "OV_CLIENTAUTH_CERT_EE",
                       algorithm: "",
                       size: 4096,
                       description: "",
