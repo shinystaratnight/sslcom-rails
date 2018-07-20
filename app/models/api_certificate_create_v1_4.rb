@@ -156,9 +156,10 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
             certificate_name.destroy
 
             # Remove Domain from Notification Group
-            NotificationGroup.auto_manage_cert_name(@certificate_order.certificate_content, false, certificate_name.id)
+            NotificationGroup.auto_manage_cert_name(@certificate_order.certificate_content, 'delete', certificate_name)
           elsif self.cert_names[certificate_name.name] != certificate_name.name
             certificate_name.update_column(:name, self.cert_names[certificate_name.name])
+            NotificationGroup.auto_manage_cert_name(@certificate_order.certificate_content, 'update', certificate_name)
           end
         end
         # @certificate_order.certificate_content.update_attribute(:domains, self.domains.keys)

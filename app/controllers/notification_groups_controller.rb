@@ -20,8 +20,10 @@ class NotificationGroupsController < ApplicationController
   end
 
   def new
+    certificate_names = @ssl_account.certificate_names.pluck(:name, :id)
+    @subjects_list = remove_duplicate(certificate_names)
+                         .map{ |arr| [arr[0], arr[0] + '---' + arr[1].to_s] }
     @cos_list = @ssl_account.certificate_orders.pluck(:ref, :id).uniq
-    @subjects_list = @ssl_account.certificate_names.pluck(:name, :id).uniq
     @title = 'New SSL Expiration Notification Group'
 
     render 'group'
@@ -33,13 +35,11 @@ class NotificationGroupsController < ApplicationController
     @cos_list = @ssl_account.certificate_orders.pluck(:ref, :id).uniq
     @slt_cos_list = slt_cert_orders.map(&:id)
 
-    domain_names = @notification_group.notification_groups_subjects.where.not(domain_name: [nil, ''])
-    # @subjects_list = slt_cert_orders.map(&:certificate_contents).flatten.compact.map(&:certificate_names)
-    #                     .flatten.compact.map{ |cn| [cn.name, cn.id] }.uniq
-    #                      .concat(domain_names.pluck(:domain_name, :domain_name))
-    @subjects_list = @ssl_account.certificate_names.pluck(:name, :id).uniq
+    @slt_subjects_list = generate_slt_subjects
+    domain_names = @notification_group.notification_groups_subjects.where(subjectable_id: nil)
+    @subjects_list = remove_duplicate(@ssl_account.certificate_names.pluck(:name, :id))
+                         .map{ |arr| [arr[0], @slt_subjects_list.include?(arr[1].to_s) ? arr[1] : (arr[0] + '---' + arr[1].to_s)] }
                          .concat(domain_names.pluck(:domain_name, :domain_name))
-    @slt_subjects_list = @notification_group.certificate_names.pluck(:id).concat(domain_names.pluck(:domain_name))
 
     email_addresses = @notification_group.notification_groups_contacts.where.not(email_address: [nil, ''])
     @contacts_list = slt_cert_orders.map(&:certificate_contents).flatten.compact.map(&:certificate_contacts)
@@ -100,42 +100,51 @@ class NotificationGroupsController < ApplicationController
 
     # Saving subject tags
     if params[:subjects_list]
-      current_tags = notification_group.certificate_names.pluck(:id)
-      domain_tags = notification_group.notification_groups_subjects.where.not(domain_name: [nil, '']).pluck(:domain_name)
-      current_tags += domain_tags
-
-      remove_tags = current_tags - params[:subjects_list]
-      add_tags = params[:subjects_list] - current_tags
+      parsed_params = parse_params(params[:subjects_list])
+      current_tags = notification_group.notification_groups_subjects
+                         .where(subjectable_type: ['CertificateName', nil]).pluck(:domain_name, :subjectable_id)
+                         .map{ |arr| arr[0].blank? ? arr[1].to_s : (arr[1].blank? ? arr[0] : (arr[0] + '---' + arr[1].to_s)) }
+      remove_tags = current_tags - parsed_params
+      add_tags = parsed_params - current_tags
 
       # Remove old tags
-      remove_tags.each do |id|
-        if id !~ /\D/
-          notification_group.notification_groups_subjects.
-              where(subjectable_type: 'CertificateName', subjectable_id: id).destroy_all
+      remove_tags.each do |subject|
+        if subject.split('---').size == 1
+          if subject !~ /\D/
+            notification_group.notification_groups_subjects
+                .where(subjectable_type: 'CertificateName', subjectable_id: subject).destroy_all
+          else
+            notification_group.notification_groups_subjects.where(domain_name: subject).destroy_all
+          end
         else
-          notification_group.notification_groups_subjects.where(domain_name: id).destroy_all
+          notification_group.notification_groups_subjects
+              .where(subjectable_type: 'CertificateName', subjectable_id: subject.split('---')[1]).destroy_all
         end
       end
 
       # Add new tags
-      add_tags.each do |id|
-        if id !~ /\D/
-          notification_group.notification_groups_subjects.build(
-              subjectable_type: 'CertificateName', subjectable_id: id
-          ).save
+      add_tags.each do |subject|
+        if subject.split('---').size == 1
+          if subject !~ /\D/
+            notification_group.notification_groups_subjects.build(
+                subjectable_type: 'CertificateName', subjectable_id: subject
+            ).save
+          else
+            notification_group.notification_groups_subjects.build(
+                domain_name: subject
+            ).save
+          end
         else
           notification_group.notification_groups_subjects.build(
-              domain_name: id
+              domain_name: subject.split('---')[0],
+              subjectable_id: subject.split('---')[1],
+              subjectable_type: 'CertificateName'
           ).save
         end
       end
     else
-      domain_tags = notification_group.notification_groups_subjects.where.not(domain_name: [nil, '']).pluck(:domain_name)
-      domain_tags.each do |name|
-        notification_group.notification_groups_subjects.where(domain_name: name).destroy_all
-      end
-      notification_group.notification_groups_subjects
-          .where(subjectable_type: 'CertificateName').destroy_all
+      # Remove all domains for this notification group
+      notification_group.notification_groups_subjects.where(subjectable_type: ['CertificateName', nil]).destroy_all
     end
 
     # Saving contact tags
@@ -170,12 +179,7 @@ class NotificationGroupsController < ApplicationController
         end
       end
     else
-      email_tags = notification_group.notification_groups_contacts.where.not(email_address: [nil, '']).pluck(:email_address)
-      email_tags.each do |addr|
-        notification_group.notification_groups_contacts.where(email_address: addr).destroy_all
-      end
-      notification_group.notification_groups_contacts
-          .where(contactable_type: 'Contact').destroy_all
+      notification_group.notification_groups_contacts.destroy_all
     end
 
     flash[:notice] = "Notification group has been updated successfully."
@@ -186,23 +190,23 @@ class NotificationGroupsController < ApplicationController
 
   def certificate_orders_domains_contacts
     domains = []
+    domain_ids = []
     contacts = []
 
     if params['cos'] && params['cos'].size > 0
-      certificate_orders = @ssl_account.certificate_orders
+      certificate_contents = @ssl_account.certificate_orders.where(id: params['cos']).flatten.compact
+                                 .map(&:certificate_contents).flatten.compact
 
-      params['cos'].each do |id|
-        co = certificate_orders.where(id: id).first
-
-        unless co.blank?
-          domains.concat co.certificate_content.certificate_names.pluck(:name, :id)
-          contacts.concat co.certificate_content.certificate_contacts.pluck(:email, :id)
-        end
-      end
+      removed_dup_cns = remove_duplicate(certificate_contents.map(&:certificate_names)
+                                             .flatten.compact.map{ |cn| [cn.name, cn.id] })
+      domains.concat removed_dup_cns.keys
+      domain_ids.concat removed_dup_cns.values
+      contacts.concat certificate_contents.map(&:certificate_contacts).flatten.compact.map{ |cct| [cct.email, cct.id]}
     end
 
     results = {}
     results['domains'] = domains
+    results['domain_ids'] = domain_ids
     results['contacts'] = contacts
 
     render :json => results
@@ -220,5 +224,66 @@ class NotificationGroupsController < ApplicationController
       end
 
       @p = {page: (params[:page] || 1), per_page: @per_page}
+    end
+
+    def remove_duplicate(mArry)
+      result = {}
+
+      mArry.each do |arr|
+        if result[arr[0]].blank?
+          result[arr[0]] = arr[1].to_s
+        else
+          result[arr[0]] = result[arr[0]] + '|' + arr[1].to_s
+        end
+      end
+
+      result
+    end
+
+    def parse_params(params)
+      result = []
+
+      params.each do |param|
+        if param !~ /\D/
+          result << param
+        else
+          if param.split('---').size == 1
+            param.split('|').size == 1 ? result << param : result.concat(param.split('|'))
+          else
+            if param.split('---')[1].split('|').size == 1
+              result << param
+            else
+              result.concat(param.split('---')[1].split('|').map{ |val| param.split('---')[0] + '---' + val })
+            end
+          end
+        end
+      end
+
+      result
+    end
+
+    def generate_slt_subjects
+      result = []
+
+      subjects = @notification_group.notification_groups_subjects
+      typed_subjects = subjects.where(["domain_name IS NOT ? and subjectable_id IS ?",
+                                       nil,
+                                       nil]).pluck(:domain_name)
+      result.concat(typed_subjects)
+
+      selected_subjects = remove_duplicate(
+          subjects.where.not(domain_name: nil, subjectable_id: nil).pluck(:domain_name, :subjectable_id)
+      ).map{ |arr| arr[0] + '---' + arr[1].to_s }
+      result.concat(selected_subjects)
+
+      from_cert_orders = remove_duplicate(
+          @ssl_account.certificate_names
+              .where(id: subjects.where(domain_name: nil, subjectable_type: 'CertificateName')
+                             .pluck(:subjectable_id))
+              .pluck(:name, :id)).map{ |arr| arr[1].to_s }
+
+      result.concat(from_cert_orders)
+
+      result
     end
 end

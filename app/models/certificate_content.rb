@@ -92,7 +92,7 @@ class CertificateContent < ActiveRecord::Base
       end
 
       # Auto adding domains in case of certificate order has been included into some groups.
-      NotificationGroup.auto_manage_cert_name(cc, true)
+      NotificationGroup.auto_manage_cert_name(cc, 'create')
     end
   end
 
@@ -226,7 +226,7 @@ class CertificateContent < ActiveRecord::Base
       end
 
       # Auto adding domains in case of certificate order has been included into some groups.
-      NotificationGroup.auto_manage_cert_name(self, true)
+      NotificationGroup.auto_manage_cert_name(self, 'create')
     else
       all_domains.flatten.each_slice(100) do |domain_slice|
         Delayed::Job.enqueue CertificateNamesJob.new(id, domain_slice)

@@ -149,7 +149,7 @@ class ValidationsController < ApplicationController
 
         if error_code.zero?
           # Remove Domain from Notification Group
-          NotificationGroup.auto_manage_cert_name(certificate_content, false, cn_obj.id)
+          NotificationGroup.auto_manage_cert_name(certificate_content, 'delete', cn_obj)
 
           # Remove Domain Object
           cn_obj.destroy
