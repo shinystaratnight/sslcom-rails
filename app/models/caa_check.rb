@@ -14,6 +14,8 @@ class CaaCheck < ActiveRecord::Base
       return true
     rescue RuntimeError
       return false
+    rescue Exception=>e
+      return false
     end
   end
 
