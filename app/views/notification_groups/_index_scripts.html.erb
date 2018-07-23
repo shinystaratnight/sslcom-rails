@@ -48,26 +48,48 @@
         }
       });
 
-      // Getting Domains from selected Certificate Orders.
-      var ajaxGettingDomainsUrl = '<%=certificate_orders_domains_contacts_notification_groups_path(@ssl_slug)%>';
-      settings = { tags: true };
-      $('#cos_list').select2(settings);
+      $('#cos_list').select2({ tags: true });
+
       $('#cos_list').on('select2:opening select2:closing', function( event ) {
         var $searchfield = $(this).parent().find('.select2-search__field');
         $searchfield.prop('disabled', 'disabled');
       });
-      $('#contacts_list').select2(settings);
+
+      $('#contacts_list').select2({ tags: true });
+
       $('#subjects_list').select2({
         tags: true,
         minimumResultsForSearch: -1,
         templateSelection: function(data, container) {
-          if (data.element.value == data.text) {
+          var value = data.element.value
+          if ((!$.isNumeric(value)) && (value.split('---')[0].indexOf('|') == -1)) {
             $(container).css("background-color", '#a4c000');
           }
+
           return data.text;
         }
       });
 
+      $('#subjects_list').change(function() {
+        var slt_subjects = $(this).val() || [];
+        $('#subjects_list option').each(function() {
+          var value = $(this).val();
+          var text = $(this).text();
+
+          if (($.isNumeric(value) && $.inArray(value, slt_subjects) == -1)
+            || ((!$.isNumeric(value)
+                && value.split('---').length == 1
+                && value.split('|').length > 1
+                && $.inArray(value, slt_subjects) == -1))) {
+            $(this).attr('selected', false);
+            $(this).val(text + '---' + value);
+            return false;
+          }
+        });
+      });
+
+      // Getting Domains and Contacts from selected Certificate Orders.
+      var ajaxGettingDomainsUrl = '<%=certificate_orders_domains_contacts_notification_groups_path(@ssl_slug)%>';
       $('#cos_list').on('change', function(e) {
         $.ajax({
           url: ajaxGettingDomainsUrl,
@@ -78,41 +100,67 @@
           dataType: 'html',
           success: function(result) {
             // =============== Parsing Subjects ===============
-            subjects = JSON.parse(result)['domains'];
-            slt_subjects = $('#subjects_list').val() || [];
+            var subjects = JSON.parse(result)['domains'];
+            var subject_ids = JSON.parse(result)['domain_ids'];
+            var slt_subjects = $('#subjects_list').val() || [];
 
-            if (slt_subjects.length > 0) {
-              $.each(slt_subjects, function(idx, domain) {
-                if (Math.floor(domain) == domain && $.isNumeric(domain)) return true;
-                subjects.push([domain, domain]);
-              });
-            }
+            $('#subjects_list option').each(function() {
+              var value = $(this).val();
+              var text = $(this).text();
 
-            $('#subjects_list').empty();
-
-            // Adding domains
-            $.each(subjects, function(idx, domain) {
-              var optElement = $('<option></option>');
-              optElement.attr('value', domain[1]);
-              optElement.attr('selected', 'selected');
-              optElement.append(domain[0]);
-
-              $('#subjects_list').append(optElement);
+              if ($.isNumeric(value)) {
+                if ($.inArray(value, subject_ids) != -1) {
+                  $(this).attr('selected', true);
+                } else {
+                  $(this).attr('selected', false);
+                  $(this).val(text + '---' + value);
+                }
+              } else {
+                if (value.split('---').length == 1) {
+                  if (value.split('|').length > 1) {
+                    if ($.inArray(text, subjects) != -1) {
+                      $(this).attr('selected', true);
+                    } else {
+                      $(this).attr('selected', false);
+                      $(this).val(text + '---' + value);
+                    }
+                  } else {
+                    if ($.inArray(value, slt_subjects) != -1) {
+                      $(this).attr('selected', true);
+                    } else {
+                      $(this).attr('selected', false);
+                    }
+                  }
+                } else {
+                  if ($.inArray(value, slt_subjects) != -1) {
+                    $(this).attr('selected', true);
+                  } else {
+                    if ($.inArray(text, subjects) != -1) {
+                      $(this).attr('selected', true);
+                      $(this).val(value.split('---')[1]);
+                    } else {
+                      $(this).attr('selected', false);
+                    }
+                  }
+                }
+              }
             });
 
             $('#subjects_list').select2({
               tags: true,
               templateSelection: function(data, container) {
-                if (data.element.value == data.text) {
+                var value = data.element.value
+                if ((!$.isNumeric(value)) && (value.split('---')[0].indexOf('|') == -1)) {
                   $(container).css("background-color", '#a4c000');
                 }
+
                 return data.text;
               }
             });
 
             // =============== Parsing Contacts ===============
-            contacts = JSON.parse(result)['contacts'];
-            slt_contacts = $('#contacts_list').val() || [];
+            var contacts = JSON.parse(result)['contacts'];
+            var slt_contacts = $('#contacts_list').val() || [];
             $('#contacts_list').empty();
 
             // Adding contacts what belongs to selected certificate orders
@@ -146,7 +194,7 @@
               });
             }
 
-            $('#contacts_list').select2(settings);
+            $('#contacts_list').select2({ tags: true });
           }
         });
       });

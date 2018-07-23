@@ -35,23 +35,36 @@ class NotificationGroup < ActiveRecord::Base
     ref
   end
 
-  def self.auto_manage_cert_name(cc, is_add, domain_id=nil)
+  def self.auto_manage_cert_name(cc, cud, domain=nil)
     notification_groups = cc.certificate_order.notification_groups
 
     if notification_groups
       notification_groups.each do |group|
         ngs = group.notification_groups_subjects
 
-        if domain_id
-          ngs.where(subjectable_type: 'CertificateName', subjectable_id: domain_id).destroy_all
+        if domain
+          if cud == 'delete'
+            ngs.where(subjectable_type: 'CertificateName', subjectable_id: domain.id, domain_name: nil).destroy_all
+            ngs.where(subjectable_type: 'CertificateName', subjectable_id: domain.id)
+                .update_all(subjectable_type: nil, subjectable_id: nil)
+          elsif cud == 'update'
+            ngs.where([
+                          "subjectable_type = ? and subjectable_id = ? and domain_name IS NOT ?",
+                          "CertificateName",
+                          domain.id,
+                          nil
+                      ]).update_all(domain_name: domain.name)
+          end
         else
           cc.certificate_names.each do |cn|
-            if is_add
+            if cud == 'create'
               ngs.build(
                   subjectable_type: 'CertificateName', subjectable_id: cn.id
               ).save
-            else
-              ngs.where(subjectable_type: 'CertificateName', subjectable_id: cn.id).destroy_all
+            elsif cud == 'delete'
+              ngs.where(subjectable_type: 'CertificateName', subjectable_id: cn.id, domain_name: nil).destroy_all
+              ngs.where(subjectable_type: 'CertificateName', subjectable_id: domain.id)
+                  .update_all(subjectable_type: nil, subjectable_id: nil)
             end
           end
         end
