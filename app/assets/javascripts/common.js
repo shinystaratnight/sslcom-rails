@@ -13,3 +13,4 @@
 //= require popper
 //= require bootstrap-sprockets
 //= require invoice_section
+//= require vakata-jstree/jstree.min
