@@ -1,0 +1,49 @@
+<% if controller_name == "folders" && action_name == "index" %>
+  <script>
+    jQuery(function($) {
+      $(document).ready(function() {
+        $("#folders-tree").jstree({
+          "core" : {
+            "check_callback" : function(operation, node, node_parent, node_position, more) {
+              if (operation == 'move_node' || operation == 'delete_node') {
+                return (node.data ? !node.data['archived'] : true);
+              }
+            },
+            "force_text" : true,
+            "themes" : {
+              "dots" : true,
+              "dashed" : true,
+              "variant" : "large"
+            },
+            "data" : {
+              "url" : "<%= children_folders_path(@ssl_slug) %>",
+              "data" : function(node) {
+                return {"id" : node.id};
+              }
+            }
+          },
+          "types" : {
+              "folder" : {
+                "icon" : "fa fa-folder-open",
+                "valid_children" : ["folder", "file"]
+              },
+              "file" : {
+                "icon" : "jstree-file",
+                "valid_children" : []
+              }
+          },
+          "plugins" : [ 
+            "contextmenu",
+            "dnd",
+            "search",
+            "state",
+            "types",
+            "wholerow"
+          ]
+        });
+      });
+    });
+  </script>
+<% else %>
+   
+<% end %>

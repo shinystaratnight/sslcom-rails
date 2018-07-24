@@ -5905,8 +5905,17 @@ span.notifications-teams
   padding: 5px 15px
   box-shadow: none
 
+#btn-folder-rename,
+#btn-folder-default
+  background: -webkit-linear-gradient(#69B3FF, #334DFF)
+  background: -o-linear-gradient(#69B3FF, #334DFF)
+  background: -moz-linear-gradient(#69B3FF, #334DFF)
+  background: linear-gradient(#69B3FF, #334DFF)
+  border: 2px solid #334DFF
+
 .button-mo-invoice.btn-mo-destroy,
-.btn-pvg-destroy
+.btn-pvg-destroy, 
+#btn-folder-destroy
   background: -webkit-linear-gradient(#cc0000, #990000)
   background: -o-linear-gradient(#cc0000, #990000)
   background: -moz-linear-gradient(#cc0000, #990000)
@@ -5914,7 +5923,8 @@ span.notifications-teams
   border: 2px solid #990000
 
 .button-mo-invoice.btn-mo-manage,
-.btn-pvg-create
+.btn-pvg-create,
+#btn-folder-create
   background: -webkit-linear-gradient(#84b332, $base_green)
   background: -o-linear-gradient(#84b332, $base_green)
   background: -moz-linear-gradient(#84b332, $base_green)
@@ -7251,3 +7261,42 @@ span.notifications-teams
 #frm-cert-filter
   select
     float: left
+
+/*
+ * Folders
+ */
+.jstree-node
+  font-size: 1.5rem
+
+#folders_index
+  width: 84%
+  margin: 1.5rem auto
+
+  i
+    font-size: 1.5rem
+
+  #folders-action
+    margin-bottom: 1.2rem
+
+  .btn-folder-index
+    color: white
+    padding: 5px 10px
+    font-size: 1.3rem
+    font-weight: 500
+    letter-spacing: 1px
+    line-height: 2
+    border-radius: 3px
+    margin-right: 1rem
+
+  #folder-scan
+    border: 1px solid darkgrey
+    border-radius: 3px
+    font-size: 1.2rem
+    padding: 0.6rem
+    margin-left: 1rem
+
+  .jstree-folder-archive
+    color: #990000
+  
+  .jstree-co
+    color: grey !important

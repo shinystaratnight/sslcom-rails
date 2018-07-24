@@ -1,0 +1,33 @@
+#folders_index
+  %h3 Manage Folders
+  %br
+  #folders-action
+    = link_to "<i class='fa fa-plus'></i> Create".html_safe, '#', |
+      id: 'btn-folder-create', class: 'btn-folder-index'
+    = link_to "<i class='fa fa-edit'></i> Rename".html_safe, '#', |
+      id: 'btn-folder-rename', class: 'btn-folder-index'
+    = link_to "<i class='fa fa-cog'></i> Default".html_safe, '#', |
+      id: 'btn-folder-default', class: 'btn-folder-index'
+    = link_to "<i class='fa fa-times'></i> Delete".html_safe, '#', |
+      id: 'btn-folder-destroy', class: 'btn-folder-index'
+    = text_field_tag :folder_search, nil, id: 'folder-scan'
+  #folders-tree
+
+  #folder-forms.hidden
+    - folder = Folder.new
+    = form_for folder, url: folders_url(@ssl_slug), remote: true, |
+      method: :post, data: {type: :json}, html: {id: 'frm-folder-create'} do |f|
+      = f.hidden_field :parent_id, value: nil
+      = f.hidden_field :name, value: nil
+
+    = form_for folder, url: folder_url(@ssl_slug, '#'), remote: true, |
+      method: :delete, data: {type: :json}, html: {id: 'frm-folder-delete'} do |f|
+      = f.hidden_field :id, value: nil
+    
+    = form_for folder, url: folder_url(@ssl_slug, '#'), remote: true, |
+      method: :put, data: {type: :json}, html: {id: 'frm-folder-edit'} do |f|
+      = f.hidden_field :id, value: nil
+      = f.hidden_field :name, value: nil
+      = f.hidden_field :parent_id, value: nil
+
+= render partial: '/folders/jstree_script'
