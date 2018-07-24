@@ -43,6 +43,8 @@ GEM
       minitest (~> 5.1)
       thread_safe (~> 0.3, >= 0.3.4)
       tzinfo (~> 1.1)
+    acts_as_tree (2.7.1)
+      activerecord (>= 3.0.0)
     addressable (2.5.0)
       public_suffix (~> 2.0, >= 2.0.2)
     airbrake (5.6.1)
@@ -489,6 +491,7 @@ PLATFORMS
 DEPENDENCIES
   actionpack-action_caching (~> 1.1, >= 1.1.1)
   activemerchant
+  acts_as_tree
   airbrake
   annotate
   api-pagination
