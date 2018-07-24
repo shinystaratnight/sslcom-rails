@@ -41,6 +41,7 @@ class SslAccount < ActiveRecord::Base
   has_many  :cdns
   has_many  :tags
   has_many  :notification_groups
+  has_many  :folders, dependent: :destroy
 
   unless MIGRATING_FROM_LEGACY
     #has_many  :orders, :as=>:billable, :after_add=>:build_line_items
