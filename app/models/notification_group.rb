@@ -35,6 +35,27 @@ class NotificationGroup < ActiveRecord::Base
     ref
   end
 
+  def self.auto_manage_email_address(cc, cud, contacts=[])
+    notification_groups = cc.certificate_order.notification_groups
+
+    if notification_groups
+      notification_groups.each do |group|
+        ngc = group.notification_groups_contacts
+
+        contacts.each do |contact|
+          if cud == 'delete'
+            ngc.where(contactable_id: contact.id, email_address: nil).destroy_all
+            ngc.where(contactable_id: contact.id).update_all(contactable_type: nil, contactable_id: nil)
+          elsif cud == 'update'
+            ngc.where(["contactable_id = ? and email_address IS NOT ?",
+                       contact.id,
+                       nil]).update_all(email_address: contact.email)
+          end
+        end
+      end
+    end
+  end
+
   def self.auto_manage_cert_name(cc, cud, domain=nil)
     notification_groups = cc.certificate_order.notification_groups
 

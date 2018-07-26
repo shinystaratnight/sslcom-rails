@@ -55,7 +55,37 @@
         $searchfield.prop('disabled', 'disabled');
       });
 
-      $('#contacts_list').select2({ tags: true });
+      $('#contacts_list').select2({
+        tags: true,
+        minimumResultsForSearch: -1,
+        templateSelection: function(data, container) {
+          var value = data.element.value
+          if ((!$.isNumeric(value)) && (value.split('---')[0].indexOf('|') == -1)) {
+            $(container).css("background-color", '#a4c000');
+          }
+
+          return data.text;
+        }
+      });
+
+      $('#contacts_list').change(function() {
+        var slt_contacts = $(this).val() || [];
+        $('#contacts_list option').each(function() {
+          var value = $(this).val();
+          var text = $(this).text();
+
+          if (($.isNumeric(value) && $.inArray(value, slt_contacts) == -1)
+            || ((!$.isNumeric(value)
+            && value.split('---').length == 1
+            && value.split('|').length > 1
+            && $.inArray(value, slt_contacts) == -1))) {
+            $(this).attr('selected', false);
+            $(this).val(text + '---' + value);
+
+            return false;
+          }
+        });
+      });
 
       $('#subjects_list').select2({
         tags: true,
@@ -83,6 +113,7 @@
                 && $.inArray(value, slt_subjects) == -1))) {
             $(this).attr('selected', false);
             $(this).val(text + '---' + value);
+
             return false;
           }
         });
@@ -160,41 +191,62 @@
 
             // =============== Parsing Contacts ===============
             var contacts = JSON.parse(result)['contacts'];
+            var contact_ids = JSON.parse(result)['contact_ids'];
             var slt_contacts = $('#contacts_list').val() || [];
-            $('#contacts_list').empty();
 
-            // Adding contacts what belongs to selected certificate orders
-            $.each(contacts, function(idx, contact) {
-              var optElement = $('<option></option>');
-              optElement.attr('value', contact[1]);
-              optElement.append(contact[0]);
+            $('#contacts_list option').each(function() {
+              var value = $(this).val();
+              var text = $(this).text();
 
-              var index = $.inArray(contact[1].toString(), slt_contacts);
-              if (index != -1) {
-                optElement.attr('selected', 'selected');
-                slt_contacts.splice(index, 1);
+              if ($.isNumeric(value)) {
+                if ($.inArray(value, contact_ids) != -1) {
+                  $(this).attr('selected', true);
+                } else {
+                  $(this).attr('selected', false);
+                  $(this).val(text + '---' + value);
+                }
+              } else {
+                if (value.split('---').length == 1) {
+                  if (value.split('|').length > 1) {
+                    if ($.inArray(text, contacts) != -1) {
+                      $(this).attr('selected', true);
+                    } else {
+                      $(this).attr('selected', false);
+                      $(this).val(text + '---' + value);
+                    }
+                  } else {
+                    if ($.inArray(value, slt_contacts) != -1) {
+                      $(this).attr('selected', true);
+                    } else {
+                      $(this).attr('selected', false);
+                    }
+                  }
+                } else {
+                  if ($.inArray(value, slt_contacts) != -1) {
+                    $(this).attr('selected', true);
+                  } else {
+                    if ($.inArray(text, contacts) != -1) {
+                      $(this).attr('selected', true);
+                      $(this).val(value.split('---')[1]);
+                    } else {
+                      $(this).attr('selected', false);
+                    }
+                  }
+                }
               }
-
-              $('#contacts_list').append(optElement);
             });
 
-            // Adding contacts what does not belong to selected certificate orders
-            if (slt_contacts.length > 0) {
-              $.each(slt_contacts, function(idx, contact) {
-                if (Math.floor(contact) == contact && $.isNumeric(contact)) {
-                  return true;
+            $('#contacts_list').select2({
+              tags: true,
+              templateSelection: function(data, container) {
+                var value = data.element.value
+                if ((!$.isNumeric(value)) && (value.split('---')[0].indexOf('|') == -1)) {
+                  $(container).css("background-color", '#a4c000');
                 }
 
-                var optElement = $('<option></option>');
-                optElement.attr('value', contact);
-                optElement.append(contact);
-                optElement.attr('selected', 'selected');
-
-                $('#contacts_list').append(optElement);
-              });
-            }
-
-            $('#contacts_list').select2({ tags: true });
+                return data.text;
+              }
+            });
           }
         });
       });
