@@ -5,38 +5,14 @@ class CaaCheck < ActiveRecord::Base
     %x{echo `cd #{Rails.application.secrets.caa_check_path} && python checkcaa.py #{name} #{authority}`}
   }
 
-  # def self.caa_lookup(name, authority)
-  #   begin
-  #     Timeout.timeout(Surl::TIMEOUT_DURATION) do
-  #       CAA_COMMAND.call name, authority
-  #     end
-  #   rescue Timeout::Error
-  #     return true
-  #   rescue RuntimeError
-  #     return false
-  #   end
-  # end
-
   def self.caa_lookup(name, authority)
     begin
-      # Timeout.timeout(Surl::TIMEOUT_DURATION) do
-      Timeout.timeout(60) do
-        byebug
-        @checkcaa=IO.popen("echo `cd #{Rails.application.secrets.caa_check_path} && python checkcaa.py #{name} #{authority}`")
-        byebug
-        result = @checkcaa.readlines
-        Process.wait @checkcaa.pid
-        result
+      Timeout.timeout(Surl::TIMEOUT_DURATION) do
+        CAA_COMMAND.call name, authority
       end
     rescue Timeout::Error
-      Process.kill 9, @checkcaa.pid
-      # we need to collect status so it doesn't
-      # stick around as zombie process
-      Process.wait @checkcaa.pid
       return true
     rescue RuntimeError
-      return false
-    rescue Exception=>e
       return false
     end
   end
