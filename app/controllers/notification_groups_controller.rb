@@ -23,6 +23,10 @@ class NotificationGroupsController < ApplicationController
     certificate_names = @ssl_account.certificate_names.pluck(:name, :id)
     @subjects_list = remove_duplicate(certificate_names)
                          .map{ |arr| [arr[0], arr[0] + '---' + arr[1].to_s] }
+    @contacts_list = remove_duplicate(@ssl_account.certificate_orders.flatten.compact
+                                          .map(&:certificate_contents).flatten.compact
+                                          .map(&:certificate_contacts).flatten.compact.map{ |cct| [cct.email, cct.id] })
+                         .map{ |arr| [arr[0], arr[0] + '---' + arr[1].to_s] }
     @cos_list = @ssl_account.certificate_orders.pluck(:ref, :id).uniq
     @title = 'New SSL Expiration Notification Group'
 
@@ -41,11 +45,16 @@ class NotificationGroupsController < ApplicationController
                          .map{ |arr| [arr[0], @slt_subjects_list.include?(arr[1].to_s) ? arr[1] : (arr[0] + '---' + arr[1].to_s)] }
                          .concat(domain_names.pluck(:domain_name, :domain_name))
 
-    email_addresses = @notification_group.notification_groups_contacts.where.not(email_address: [nil, ''])
-    @contacts_list = slt_cert_orders.map(&:certificate_contents).flatten.compact.map(&:certificate_contacts)
-                         .flatten.compact.map{ |cc| [cc.email, cc.id] }.uniq
+    @slt_contacts_list = generate_slt_contacts
+    email_addresses = @notification_group.notification_groups_contacts.where(contactable_id: nil)
+    @contacts_list = remove_duplicate(
+        @ssl_account.certificate_orders.flatten.compact
+            .map(&:certificate_contents).flatten.compact
+            .map(&:certificate_contacts).flatten.compact
+            .map{ |cct| [cct.email, cct.id] }
+    ).map{ |arr| [arr[0], @slt_contacts_list.include?(arr[1].to_s) ? arr[1] : (arr[0] + '---' + arr[1].to_s)] }
                          .concat(email_addresses.pluck(:email_address, :email_address))
-    @slt_contacts_list = @notification_group.contacts.pluck(:id).concat(email_addresses.pluck(:email_address))
+
     @title = 'Edit SSL Expiration Notification Group'
 
     render 'group'
@@ -149,36 +158,49 @@ class NotificationGroupsController < ApplicationController
 
     # Saving contact tags
     if params[:contacts_list]
-      current_tags = notification_group.contacts.pluck(:id)
-      email_tags = notification_group.notification_groups_contacts.where.not(email_address: [nil, '']).pluck(:email_address)
-      current_tags += email_tags
-
-      remove_tags = current_tags - params[:contacts_list]
-      add_tags = params[:contacts_list] - current_tags
+      parsed_params = parse_params(params[:contacts_list])
+      current_tags = notification_group.notification_groups_contacts.pluck(:email_address, :contactable_id)
+                         .map{ |arr| arr[0].blank? ? arr[1].to_s : (arr[1].blank? ? arr[0] : (arr[0] + '---' + arr[1].to_s)) }
+      remove_tags = current_tags - parsed_params
+      add_tags = parsed_params - current_tags
 
       # Remove old tags
-      remove_tags.each do |id|
-        if id !~ /\D/
-          notification_group.notification_groups_contacts.
-              where(contactable_type: 'Contact', contactable_id: id).destroy_all
+      remove_tags.each do |contact|
+        if contact.split('---').size == 1
+          if contact !~ /\D/
+            notification_group.notification_groups_contacts
+                .where(subjectable_type: 'CertificateContact', contactable_id: contact).destroy_all
+          else
+            notification_group.notification_groups_contacts.where(email_address: contact).destroy_all
+          end
         else
-          notification_group.notification_groups_contacts.where(email_address: id).destroy_all
+          notification_group.notification_groups_contacts
+              .where(contactable_type: 'CertificateContact', contactable_id: contact.split('---')[1]).destroy_all
         end
       end
 
       # Add new tags
-      add_tags.each do |id|
-        if id !~ /\D/
-          notification_group.notification_groups_contacts.build(
-              contactable_type: 'Contact', contactable_id: id
-          ).save
+      add_tags.each do |contact|
+        if contact.split('---').size == 1
+          if contact !~ /\D/
+            notification_group.notification_groups_contacts.build(
+                contactable_type: 'CertificateContact', contactable_id: contact
+            ).save
+          else
+            notification_group.notification_groups_contacts.build(
+                email_address: contact
+            ).save
+          end
         else
           notification_group.notification_groups_contacts.build(
-              email_address: id
+              email_address: contact.split('---')[0],
+              contactable_id: contact.split('---')[1],
+              contactable_type: 'CertificateContact'
           ).save
         end
       end
     else
+      # Remove all domains for this notification group
       notification_group.notification_groups_contacts.destroy_all
     end
 
@@ -192,6 +214,7 @@ class NotificationGroupsController < ApplicationController
     domains = []
     domain_ids = []
     contacts = []
+    contact_ids = []
 
     if params['cos'] && params['cos'].size > 0
       certificate_contents = @ssl_account.certificate_orders.where(id: params['cos']).flatten.compact
@@ -201,13 +224,18 @@ class NotificationGroupsController < ApplicationController
                                              .flatten.compact.map{ |cn| [cn.name, cn.id] })
       domains.concat removed_dup_cns.keys
       domain_ids.concat removed_dup_cns.values
-      contacts.concat certificate_contents.map(&:certificate_contacts).flatten.compact.map{ |cct| [cct.email, cct.id]}
+
+      removed_dup_ccts = remove_duplicate(certificate_contents.map(&:certificate_contacts)
+                                              .flatten.compact.map{ |cct| [cct.email, cct.id] })
+      contacts.concat removed_dup_ccts.keys
+      contact_ids.concat removed_dup_ccts.values
     end
 
     results = {}
     results['domains'] = domains
     results['domain_ids'] = domain_ids
     results['contacts'] = contacts
+    results['contact_ids'] = contact_ids
 
     render :json => results
   end
@@ -233,7 +261,7 @@ class NotificationGroupsController < ApplicationController
         if result[arr[0]].blank?
           result[arr[0]] = arr[1].to_s
         else
-          result[arr[0]] = result[arr[0]] + '|' + arr[1].to_s
+          result[arr[0]] = (result[arr[0]] + '|' + arr[1].to_s).split('|').sort.join('|')
         end
       end
 
@@ -280,7 +308,37 @@ class NotificationGroupsController < ApplicationController
           @ssl_account.certificate_names
               .where(id: subjects.where(domain_name: nil, subjectable_type: 'CertificateName')
                              .pluck(:subjectable_id))
-              .pluck(:name, :id)).map{ |arr| arr[1].to_s }
+              .pluck(:name, :id)
+      ).map{ |arr| arr[1].to_s }
+
+      result.concat(from_cert_orders)
+
+      result
+    end
+
+    def generate_slt_contacts
+      result = []
+
+      contacts = @notification_group.notification_groups_contacts
+      typed_contacts = contacts.where(["email_address IS NOT ? and contactable_id IS ?",
+                                       nil,
+                                       nil]).pluck(:email_address)
+      result.concat(typed_contacts)
+
+      selected_contacts = remove_duplicate(
+          contacts.where.not(email_address: nil, contactable_id: nil).pluck(:email_address, :contactable_id)
+      ).map{ |arr| arr[0] + '---' + arr[1].to_s }
+      result.concat(selected_contacts)
+
+      slt_contact_ids = contacts.where(email_address: nil, contactable_type: 'CertificateContact')
+                            .pluck(:contactable_id)
+      from_cert_orders = remove_duplicate(
+          @ssl_account.certificate_orders.flatten.compact
+              .map(&:certificate_contents).flatten.compact
+              .map(&:certificate_contacts).flatten.compact
+              .select{ |contact| slt_contact_ids.include?(contact.id) }
+              .map{ |contact| [contact.email, contact.id.to_s] }
+      ).map{ |arr| arr[1] }
 
       result.concat(from_cert_orders)
 

@@ -30,7 +30,7 @@
       .group_block.clearfix
         #contacts-container
           =select_tag :contacts_list, options_for_select(contacts_list, selected: slt_contacts_list),
-            multiple: true, data: {placeholder: "click here to add/remove/edit emails."}
+            multiple: true, data: {placeholder: "click here to add/remove/edit email addresses or contacts."}
       .subheading Expiration Reminder
       -5.times do |i|
         -init_days = ['60', '30', '15', '1', '-15']
