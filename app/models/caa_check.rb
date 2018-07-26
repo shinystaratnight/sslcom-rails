@@ -7,12 +7,21 @@ class CaaCheck < ActiveRecord::Base
 
   def self.caa_lookup(name, authority)
     begin
-      Timeout.timeout(Surl::TIMEOUT_DURATION) do
-        CAA_COMMAND.call name, authority
+      Timeout.timeout(30) do
+        @checkcaa=IO.popen("echo `cd #{Rails.application.secrets.caa_check_path} && python checkcaa.py #{name} #{authority}`")
+        result = @checkcaa.readlines
+        Process.wait @checkcaa.pid
+        result
       end
     rescue Timeout::Error
+      Process.kill 9, @checkcaa.pid
+      # we need to collect status so it doesn't
+      # stick around as zombie process
+      Process.wait @checkcaa.pid
       return true
     rescue RuntimeError
+      return false
+    rescue Exception=>e
       return false
     end
   end
