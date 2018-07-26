@@ -1,0 +1,11 @@
+-content_for :title, "Domain Control Validation"
+.user_session_format
+  %h3 Validate your domain control
+  %p Enter the validate code that you received and click the submit button. This will validate you are the owner of the domain.
+  =error_messages_for :dcv
+  =form_tag('', method: :post, id: :dcv_email_validate) do |f|
+    #stylized.default_form
+      .subheading Enter the validation code
+      =render partial: "dcv_validate_form", locals: {form: f}
+    #button_container
+      #next_submit=image_submit_tag "bl_submit_button.gif"

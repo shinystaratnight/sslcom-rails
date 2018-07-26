@@ -576,6 +576,10 @@ jQuery(function($) {
     $('form[id^=edit_certificate_order] textarea').keyup(function(){
       $(this).parents().filter('form').ajaxSubmit();
     });
+
+    $('#certificate_orders').on('keyup', '#certificate_order_notes', function() {
+      $(this).parents().filter('form').ajaxSubmit();
+    });
   });
 });
 </script>

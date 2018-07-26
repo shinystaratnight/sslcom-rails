@@ -12,6 +12,14 @@ authorization do
   role :sysadmin do
     includes :user
     includes :owner
+    has_permission_on :certificates, to: [
+      :admin_index,
+      :edit,
+      :update,
+      :show,
+      :new,
+      :manage_product_variants
+    ]
     has_permission_on :authorization_rules, :to => :read
     has_permission_on :site_seals, :validation_rules, :certificate_orders,
       :to => :sysadmin_manage, except: :delete
@@ -308,7 +316,7 @@ authorization do
     # Validations
     #
     # has_permission_on :validations, :to => [:create]
-    has_permission_on :validations, :to => [:read, :update, :create] do
+    has_permission_on :validations, :to => [:read, :update, :create, :dcv_email_validate] do
       if_attribute :users => contains {user}
     end
     #

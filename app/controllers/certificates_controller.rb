@@ -2,7 +2,12 @@ class CertificatesController < ApplicationController
   before_filter :find_tier
   before_filter :require_user, :only=>[:buy, :buy_renewal],
     :if=>'request.subdomain==Reseller::SUBDOMAIN'
-  before_filter :find_certificate, only: [:show, :buy, :pricing, :buy_renewal]
+  before_filter :require_user,
+    only: [:admin_index, :new, :edit, :create, :update, :manage_product_variants]
+  before_filter :find_certificate,
+    only: [:show, :buy, :pricing, :buy_renewal]
+  before_filter :find_certificate_by_id,
+    only: [:edit, :update, :manage_product_variants]
   filter_access_to :buy_renewal
   layout false, only: [:pricing]
 
@@ -105,8 +110,135 @@ class CertificatesController < ApplicationController
       end
     end
   end
+  
+  def new
+    @certificate = Certificate.new
+  end
+  
+  def edit
+  end
 
+  def update
+    parse_params
+    if @certificate.update(@new_params)
+      update_cas_certificates
+      flash[:notice] = "Certificate #{@certificate.serial} was successfully updated."
+      mpv_redirect_to_cert
+    else
+      render :edit,
+        error: "Failed to update certificate due to errors: #{@certificate.errors.full_messages.join(', ')}."
+    end
+  end
+  
+  def create
+    parse_params
+    @certificate = Certificate.new(@new_params)
+    if @certificate.save
+      update_cas_certificates
+      flash[:notice] = "Certificate #{@certificate.serial} was successfully created."
+      mpv_redirect_to_cert
+    else
+      render :new, 
+        error: "Failed to create certificate due to errors: #{@certificate.errors.full_messages.join(', ')}."
+    end
+  end
+
+  def manage_product_variants
+    if @certificate
+      @pv_group = @certificate.product_variant_groups.find(params[:pvg]) if params[:pvg]
+      @pv_item = ProductVariantItem.find(params[:pvi]) if params[:pvi]
+      @pvi_params = params.dup.keep_if {|k,_| (ProductVariantItem.attribute_names - ['id']).include?(k)}
+      @pvg_params = params.dup.keep_if {|k,_| (ProductVariantGroup.attribute_names - ['id']).include?(k)}
+
+      case params[:manage_type]
+      when 'delete_group' then mpv_delete_group
+      when 'create_group' then mpv_create_group
+      when 'create_item'  then mpv_create_item
+      when 'delete_item'  then mpv_delete_item
+      when 'update_item' then mpv_update_item
+      when 'manage_items' then mpv_manage_items
+      else
+        mpv_redirect_to_cert
+      end
+    end
+  end
+  
+  def admin_index
+    @certificates = Certificate.all.order(serial: :asc)
+    @certificates = @certificates.paginate(page: params[:page], per_page: 25)
+  end
+  
   private
+
+  def mpv_delete_group
+    if @pv_group.destroy
+      flash[:notice] = "Group #{@pv_group.id} was successfully deleted."
+    else
+      flash[:error] = "Something went wrong while deleting group, please try again."
+    end
+    mpv_redirect_to_cert
+  end
+
+  def mpv_create_group
+    new_group = ProductVariantGroup.new(
+      @pvg_params.merge(variantable_id: @certificate.id, variantable_type: 'Certificate')
+    )
+    if new_group.save
+      flash[:notice] = "Group was successfully created."
+    else
+      flash[:error] = "Failed to create group due to errors: #{new_group.errors.full_messages.join(', ')}!"
+    end
+    mpv_redirect_to_cert
+  end
+
+  def mpv_create_item
+    new_item = ProductVariantItem.new(
+      @pvi_params.merge(product_variant_group_id: @pv_group.id)
+    )
+    if new_item.save
+      flash[:notice] = "Item #{new_item.serial} was successfully created."
+    else
+      flash[:error] = "Failed to create item due to errors: #{new_item.errors.full_messages.join(', ')}!"
+    end
+    mpv_redirect_to_group
+  end
+
+  def mpv_delete_item
+    if @pv_item && @pv_item.destroy
+      flash[:notice] = "Item #{@pv_item.serial} was successfully deleted."
+    else
+      flash[:error] = "Something went wrong, please try again."
+    end
+    mpv_redirect_to_group
+  end
+
+  def mpv_update_item
+    if @pv_item && @pv_item.update(@pvi_params)
+      flash[:notice] = "Item #{@pv_item.serial} was successfully updated."
+    else
+      error = if @pv_item
+        "Failed to update item #{@pv_item.serial} due to errors: #{@pv_item.errors.full_messages.join(', ')}!"
+      else
+        "Something went wrong, please try again."
+      end
+        flash[:error] = error
+    end
+    mpv_redirect_to_group
+  end
+
+  def mpv_manage_items
+    render :manage_product_variants
+  end
+
+  def mpv_redirect_to_group
+    redirect_to manage_product_variants_certificate_path(
+      @certificate.id, pvg: @pv_group, manage_type: 'manage_items'
+    )
+  end
+
+  def mpv_redirect_to_cert
+    redirect_to edit_certificate_path(@certificate.id)
+  end
 
   def prep_purchase
     unless @certificate.blank?
@@ -131,5 +263,29 @@ class CertificatesController < ApplicationController
   def find_certificate
     prod = params[:id]=='mssl' ? 'high_assurance' : params[:id]
     @certificate = Certificate.for_sale.find_by_product(prod+@tier)
+  end
+
+  def find_certificate_by_id
+    cur_id = params[:certificate] ? params[:certificate][:id] : params[:id]
+    @certificate = Certificate.find cur_id
+  end
+
+  def parse_params
+    cert = params[:certificate]
+    @new_params = cert
+      .merge(display_order: JSON.parse(cert[:display_order]))
+      .merge(description: JSON.parse(cert[:description]))
+      .merge(allow_wildcard_ucc: (cert[:allow_wildcard_ucc].blank? ? nil : 0) ).to_h
+  end
+
+  def update_cas_certificates
+    cas = params[:ca_certificates]
+    if cas && cas.any?
+      @certificate.cas_certificates.where.not(ca_id: cas).destroy_all
+      exist_cas = @certificate.cas_certificates.where(ca_id: cas).map(&:ca)
+      @certificate.cas << (Ca.where(id: cas) - exist_cas)
+    else
+      @certificate.cas_certificates.destroy_all
+    end  
   end
 end

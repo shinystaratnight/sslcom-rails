@@ -1,0 +1,87 @@
+- pv_item  = ProductVariantItem
+- items    = @pv_group.product_variant_items.sort_by(&:display_order)
+- new_item = items.any? ? (items.last.display_order + 1) : 1
+- items    = items.push(ProductVariantItem.new(product_variant_group_id: @pv_group.id))
+
+- items.each do |item|
+  #stylized.default_form.certificates-admin-edit
+    .fields
+      .certificate-fields.certificate-fields-top 
+        = item.persisted? ? item.serial : "<i class='fa fa-plus'></i> Create Item".html_safe
+
+      = form_tag manage_product_variants_certificate_path(@certificate.id), method: :get do
+        - if item.persisted?
+          = hidden_field_tag :pvi, item.id
+
+        = hidden_field_tag :pvg, @pv_group.id
+        = hidden_field_tag :manage_type, 'manage_items'
+
+        .clearfix
+          = label_tag :display_order
+          = number_field_tag :display_order,                   |
+            (item.persisted? ? item.display_order : new_item), |
+            required: true, step: 1
+
+        .clearfix
+          = label_tag :item_type
+          = select_tag :item_type,                                                   |
+            options_for_select(pv_item.pluck(:item_type).uniq.sort, item.item_type), |
+            include_blank: false
+
+        .clearfix
+          = label_tag :title
+          = text_field_tag :title, item.title, include_blank: false, |
+            required: true, maxlength: 255
+        
+        .clearfix
+          = label_tag :status
+          = select_tag :status,                                                |
+            options_for_select(pv_item.pluck(:status).uniq.sort, item.status), |
+            include_blank: false
+        
+        .clearfix
+          = label_tag :amount
+          = number_field_tag :amount, item.amount, required: true
+        
+        .clearfix
+          = label_tag :value
+          = number_field_tag :value, item.value, required: true
+
+        .clearfix
+          = label_tag :serial
+          = text_field_tag :serial, item.serial, include_blank: false, |
+            required: true, maxlength: 255
+        
+        .clearfix
+          = label_tag :published_as
+          = select_tag :published_as,                                                      |
+            options_for_select(pv_item.pluck(:published_as).uniq.sort, item.published_as), |
+            include_blank: false
+        
+        .clearfix
+          = label_tag :description
+          = text_area_tag :description, item.description, required: true, |
+            include_blank: false
+        
+        .clearfix
+          = label_tag :text_only_description
+          = text_area_tag :text_only_description, item.text_only_description, |
+            required: true, include_blank: false
+
+        %br/
+        #pvg-actions
+          - if item.persisted?
+            - delete_params = {pvg: @pv_group.id, pvi: item.id, manage_type: 'delete_item'}
+            = link_to "<i class='fa fa-times'></i> Delete".html_safe,                   |
+              manage_product_variants_certificate_path(@certificate.id, delete_params), |
+              class: 'btn-pvg-destroy'
+            
+            = link_to "Update".html_safe, '#', class: 'btn-pvg-items', |
+              id: 'btn_pvi_update_item'
+          
+          - else
+            = link_to "<i class='fa fa-caret-left'></i> Back".html_safe, |
+              edit_certificate_path(@certificate.id), class: 'btn-pvg-items'
+            
+            = link_to "<i class='fa fa-plus'></i> Create".html_safe, |
+              '#', class: 'btn-pvg-items', id: 'btn_pvi_create_item'

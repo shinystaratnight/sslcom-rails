@@ -1,0 +1,19 @@
+- index = 1
+- cert = f.object
+- cert_id = cert.try(:id)
+
+= f.fields_for :product_variant_groups do |pvg|
+  - items_count = pvg.object.product_variant_items.count
+  .sub-heading Group #{index} (#{items_count} items)
+  = render partial: '/certificates/form_for_admin_pvg_attrs', locals: { pvg: pvg }
+  
+  #pvg-actions
+    = link_to "<i class='fa fa-times'></i> Delete Group".html_safe,                                    |
+      manage_product_variants_certificate_path(cert_id, pvg: pvg.object, manage_type: 'delete_group'), |
+      data: { confirm: "Are you sure you want to delete this group and #{items_count} items?" },       |
+      method: :post, class: 'btn-pvg-destroy'
+    
+    = link_to "<i class='fa fa-list'></i> Manage Items".html_safe,                                     |
+      manage_product_variants_certificate_path(cert_id, pvg: pvg.object, manage_type: 'manage_items'), |
+      method: :get, class: 'btn-pvg-items'
+  - index += 1

@@ -1005,15 +1005,15 @@ jQuery(function($) {
 
             domain_names_str = domain_names_str.substr(1).split(',');
 
-            var api_domain = '<%=api_domain%>';
+            var api_domain = '<%=api_domain(@certificate_order)%>';
             var update_dcv = '<%=api_certificate_update_v1_4_path(@certificate_order.ref)%>';
             var replace_ssl = '<%=api_certificate_replace_v1_4_path(@certificate_order.ref)%>';
 
-            if ($(ori_domain_names_str).not(domain_names_str).length == 0 && $(domain_names_str).not(ori_domain_names_str).length == 0) {
-              $(this).attr('url', api_domain + update_dcv);
-            } else {
-              $(this).attr('url', api_domain + replace_ssl);
-            }
+             if ($(ori_domain_names_str).not(domain_names_str).length == 0 && $(domain_names_str).not(ori_domain_names_str).length == 0) {
+               $(this).attr('url', api_domain + update_dcv);
+             } else {
+               $(this).attr('url', api_domain + replace_ssl);
+             }
 
             confirmed = confirm('Proceed with validation?');
             if(confirmed){
