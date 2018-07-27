@@ -21,6 +21,7 @@ class Surl < ActiveRecord::Base
     otherwise we'll loop forever."
   SUBDOMAIN="links"
   TIMEOUT_DURATION=10
+  TIMEOUT_CAA_CHECK_DURATION=30
   RETRIES=2
   COOKIE_VERSION=1
   COOKIE_NAME=:links2
