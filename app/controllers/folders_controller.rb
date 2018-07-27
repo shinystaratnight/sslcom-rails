@@ -10,7 +10,6 @@ class FoldersController < ApplicationController
 
   filter_access_to :all
   filter_access_to [
-    :add_to_folder,
     :add_certificate_order,
     :add_certificate_orders,
     :destroy,
