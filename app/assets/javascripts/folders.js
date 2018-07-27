@@ -5,6 +5,11 @@ $(function($) {
     errorsExist =  false;
   };
 
+  getJstreeRef = function() {
+    var folder_id = $('#folders-tree').length ? '#folders-tree' : '#folders-tree-co';
+    return $(folder_id).jstree(true);
+  };
+
   certificateOrder = function(node) {
     str_id = node.id ? node.id : node;
     return (str_id.split('_').pop() == 'cert');
@@ -26,7 +31,7 @@ $(function($) {
   };
 
   folderCreateJstree = function() {
-    var ref = $('#folders-tree').jstree(true),
+    var ref = getJstreeRef(),
       sel = ref.get_selected(true);
 
     if (!sel.length) { return false; }
@@ -46,7 +51,7 @@ $(function($) {
   };
 
   folderRenameJstree = function() {
-    var ref = $('#folders-tree').jstree(true),
+    var ref = getJstreeRef(),
       sel = ref.get_selected();
     if (!sel.length) { return false; }
     sel = sel[0];
@@ -59,7 +64,7 @@ $(function($) {
   };
 
   folderDeleteJstree = function() {
-    var ref = $('#folders-tree').jstree(true),
+    var ref = getJstreeRef(),
       sel = ref.get_selected(true);
     if (!sel.length) { return false; }
 
@@ -72,7 +77,7 @@ $(function($) {
   };
 
   folderDefaultJstree = function() {
-    var ref = $('#folders-tree').jstree(true),
+    var ref = getJstreeRef(),
       sel = ref.get_selected(true);
     if (!sel.length) { return false; }
 
@@ -101,6 +106,7 @@ $(function($) {
   folderDefault = function(node_id) {
     var form = $('#frm-folder-edit');
     form.find('#folder_id').val(node_id);
+    updateFolderId(form, node_id);
     folderAction(form, 'PUT', "&update_type=default");
     return !errorsExist;
   };
@@ -108,6 +114,7 @@ $(function($) {
   folderDelete = function(node_id) {
     var form = $('#frm-folder-delete');
     form.find('#folder_id').val(node_id);
+    updateFolderId(form, node_id);
     folderAction(form, 'DELETE');
     return !errorsExist;
   };
@@ -124,6 +131,7 @@ $(function($) {
     var form = $('#frm-folder-edit');
     form.find('#folder_id').val(node_id);
     form.find('#folder_name').val(node_name);
+    updateFolderId(form, node_id);
     folderAction(form, 'PUT', "&update_type=rename");
     return !errorsExist;
   };
@@ -132,9 +140,16 @@ $(function($) {
     var form = $('#frm-folder-edit');
     form.find('#folder_id').val(node.node.id);
     form.find('#folder_parent_id').val(node.parent);
+    updateFolderId(form, node.node.id.replace('_folder', ''));
     folderAction(form, 'PUT', "&update_type=move");
     return !errorsExist;
   };
+
+  updateFolderId = function(form, folder_id) {
+    cur_action = form.data('initial-action');
+    new_action = decodeURIComponent(cur_action).replace('#', folder_id);
+    form.attr('action', new_action);
+  }
 
   $('#btn-folder-create').on('click', function(e) {
     e.preventDefault();

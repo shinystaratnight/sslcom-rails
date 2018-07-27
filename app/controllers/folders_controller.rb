@@ -2,8 +2,15 @@ class FoldersController < ApplicationController
   before_filter :find_ssl_account, except: :index
   before_filter :set_ssl_slug, except: :index
   
-  # filter_access_to :all
-  
+  filter_access_to :all
+  filter_access_to [
+    :add_to_folder,
+    :add_certificate_order,
+    :add_certificate_orders,
+    :destroy,
+    :update
+  ], attribute_check: true
+
   def index
     @folders = get_team_root_folders
   end

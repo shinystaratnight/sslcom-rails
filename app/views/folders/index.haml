@@ -20,14 +20,23 @@
       = f.hidden_field :parent_id, value: nil
       = f.hidden_field :name, value: nil
 
-    = form_for folder, url: folder_url(@ssl_slug, '#'), remote: true, |
-      method: :delete, data: {type: :json}, html: {id: 'frm-folder-delete'} do |f|
+    - url = folder_url(@ssl_slug, '#')
+    = form_for folder, url: url, remote: true,                   |
+      method: :delete, data: {type: :json, initial_action: url}, |
+      html: {id: 'frm-folder-delete'} do |f|
       = f.hidden_field :id, value: nil
-    
-    = form_for folder, url: folder_url(@ssl_slug, '#'), remote: true, |
-      method: :put, data: {type: :json}, html: {id: 'frm-folder-edit'} do |f|
+
+    = form_for folder, url: url, remote: true,                |
+      method: :put, data: {type: :json, initial_action: url}, |
+      html: {id: 'frm-folder-edit'} do |f|
       = f.hidden_field :id, value: nil
       = f.hidden_field :name, value: nil
       = f.hidden_field :parent_id, value: nil
+    
+    - url = add_certificate_order_folder_url(@ssl_slug, '#')
+    = form_for folder, url: url, remote: true,                |
+      method: :put, data: {type: :json, initial_action: url}, |
+      html: {id: 'frm-folder-add-cert'} do |f|
+      = f.number_field :certificate_order_id, value: nil
 
 = render partial: '/folders/jstree_script'
