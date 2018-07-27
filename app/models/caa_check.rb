@@ -7,9 +7,9 @@ class CaaCheck < ActiveRecord::Base
 
   def self.caa_lookup(name, authority)
     begin
-      Timeout.timeout(Surl::TIMEOUT_DURATION) do
+      Timeout.timeout(30) do
         @checkcaa=IO.popen("echo `cd #{Rails.application.secrets.caa_check_path} && python checkcaa.py #{name} #{authority}`")
-        result = @checkcaa.readlines
+        result = @checkcaa.read
         Process.wait @checkcaa.pid
         result
       end
