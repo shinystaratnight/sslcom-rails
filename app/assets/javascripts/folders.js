@@ -15,6 +15,16 @@ $(function($) {
     return (str_id.split('_').pop() == 'cert');
   };
 
+  fetchFolderId = function(node) {
+    str = (typeof(node) === typeof(String())) ? node : node.node.id;
+    return str.replace('_folder', '');
+  }
+
+  fetchCertOrderId = function(node) {
+    str = (typeof(node) === typeof(String())) ? node : node.node.id;
+    return str.replace('_cert', '');
+  }
+
   folderParseErrors = function(json) {
     var errors_output = '';
     if ( json.responseText.includes("<html") ) {
@@ -137,12 +147,30 @@ $(function($) {
   };
 
   nodeMoveJstree = function(node) {
-    var form = $('#frm-folder-edit');
-    form.find('#folder_id').val(node.node.id);
-    form.find('#folder_parent_id').val(node.parent);
-    updateFolderId(form, node.node.id.replace('_folder', ''));
-    folderAction(form, 'PUT', "&update_type=move");
+    var node_id = node.node.id;
+    if (node_id.includes('_folder')) {
+      folderNodeMove(node);
+    } else {
+      coNodeMove(node);
+    }
     return !errorsExist;
+  };
+
+  folderNodeMove = function(node) {
+    var form = $('#frm-folder-edit'),
+      node_id = fetchFolderId(node);
+    form.find('#folder_id').val(node_id);
+    form.find('#folder_parent_id').val(fetchFolderId(node.parent));
+    updateFolderId(form, node_id);
+    folderAction(form, 'PUT', "&update_type=move");
+  };
+
+  coNodeMove = function(node) {
+    var form = $('#frm-folder-add-cert'),
+      node_id = fetchCertOrderId(node);
+    form.find('#folder_certificate_order_id').val(node_id);
+    updateFolderId(form, fetchFolderId(node.parent));
+    folderAction(form, 'PUT');
   };
 
   updateFolderId = function(form, folder_id) {

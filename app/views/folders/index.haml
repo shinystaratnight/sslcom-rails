@@ -37,6 +37,6 @@
     = form_for folder, url: url, remote: true,                |
       method: :put, data: {type: :json, initial_action: url}, |
       html: {id: 'frm-folder-add-cert'} do |f|
-      = f.number_field :certificate_order_id, value: nil
+      = f.text_field :certificate_order_id, value: nil
 
 = render partial: '/folders/jstree_script'

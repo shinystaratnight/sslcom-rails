@@ -1,7 +1,8 @@
 class FoldersController < ApplicationController
   before_filter :find_ssl_account, except: :index
   before_filter :set_ssl_slug, except: :index
-  
+  before_filter :find_folder, only: [:update, :destroy, :add_certificate_order]
+
   filter_access_to :all
   filter_access_to [
     :add_to_folder,
@@ -27,94 +28,94 @@ class FoldersController < ApplicationController
   end
   
   def children
-    @folders_and_cos = if params[:id] == '#'
+    @folders = if params[:id] == '#'
       get_team_root_folders.order(name: :asc)
     else
       @ssl_account.folders.where(parent_id: params[:id]).order(name: :asc)
     end
+    @tree_type = params[:tree_type]
     render partial: 'folder_children'
   end
   
   def update
-    @node = find_node
-    if @node
+    if @folder
       case params[:update_type]
         when 'rename' then update_rename
         when 'default' then update_default
         when 'move' then update_move
       end
     else
-      render json: { folder: ['Something went wrong, please try again.'] },
-        status: :unprocessable_entity
+      render_try_again_error
     end
   end
 
   def destroy
-    @node = find_node
-    if @node && folder_node? && @node.can_destroy?
-      @node.destroy
-      render json: { message: "Folder successfully deleted." }, status: :ok
+    if @folder && @folder.can_destroy?
+      if @folder.destroy
+        render json: { message: "Folder successfully deleted." }, status: :ok
+      else
+        render_try_again_error
+      end
     else
       render json: { folder: ['This folder is archived or cannot be deleted.'] },
         status: :unprocessable_entity
     end
   end
-  
+
+  def add_certificate_order
+    if @folder
+      co = CertificateOrder.find_by(ref: params[:folder][:certificate_order_id])
+    end
+    
+    if @folder && co
+      if co.update(folder_id: @folder.id)
+        render json: { message: "Certificate has been successfully moved." }, status: :ok
+      else
+        render_try_again_error
+      end
+    else
+      render_try_again_error
+    end 
+  end
+
   private
 
-  def co_id?
-    params[:folder] && params[:folder][:id].include?('_cert')
+  def render_try_again_error
+    render json: { folder: ['Something went wrong, please try again.'] },
+      status: :unprocessable_entity
   end
 
-  def find_node
-    f = params[:folder]
-    if f
-      if co_id?
-        CertificateOrder.find_by(ref: f[:id].split('_').first)
-      else  
-        Folder.find(f[:id])
-      end
-    end
-  end
-
-  def folder_node?
-    @node.is_a? Folder
-  end
-
-  def co_node?
-    @node.is_a? CertificateOrder
+  def find_folder
+    @folder = Folder.find(params[:id])
   end
 
   def update_rename
-    if @node.update(name: params[:folder][:name])
+    if @folder.update(name: params[:folder][:name])
       render json: { message: "Folder successfully renamed." }, status: :ok
     else
-      render json: @node.errors.messages, status: :unprocessable_entity
+      render json: @folder.errors.messages, status: :unprocessable_entity
     end
   end
 
   def update_default
-    if @node.archive?
+    if @folder.archive?
       render json: { archive: ['Archive folder cannot be set as default.'] },
         status: :unprocessable_entity
     else  
-      if @node.update(default: true)
+      if @folder.update(default: true)
         render json: { message: "Folder successfully set as default." }, status: :ok
       else
-        render json: @node.errors.messages, status: :unprocessable_entity
+        render json: @folder.errors.messages, status: :unprocessable_entity
       end
     end
   end
   
   def update_move
-    @node = find_node
-    new_value = parent_root? ? nil : params[:folder][:parent_id].split('_').first
-    updated = folder_node? ? @node.update(parent_id: new_value) : @node.update(folder_id: new_value)
-    
-    if updated
+    new_value = parent_root? ? nil : params[:folder][:parent_id]
+    if @folder.update(parent_id: new_value)
       render json: { message: "Folder successfully moved." }, status: :ok
     else
-      render json: @node.errors.messages, status: :unprocessable_entity
+      render json: @folder.errors.messages, status: :unprocessable_entity
     end
   end
 
