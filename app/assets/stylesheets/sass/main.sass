@@ -7047,7 +7047,8 @@ span.notifications-teams
 
 .btn-filter-clear,
 .btn-filter-search,
-.btn-cert-update
+.btn-cert-update,
+.btn-co-folders
   border-radius: 3px
   border: none
   font-size: 1.2rem
@@ -7058,15 +7059,26 @@ span.notifications-teams
   padding: 5px 7px
   text-transform: uppercase
   
-.btn-filter-clear
-  border: 1px solid #334DFF
+.btn-filter
   background-color: white
   color: #334DFF !important
 
-.btn-cert-update
+.btn-cert-update,
   border: 1px solid #334DFF
   background-color: #334DFF
   font-size: 1rem
+
+.btn-co-folders
+  border: 1px solid $base_green
+  background-color: $base_green
+  font-size: 1rem
+
+.btn-co-folders.sub-actions
+  border: 1px solid $base_green
+  background-color: white
+  color: $base_green
+  font-size: 1rem
+
 
 .btn-filter-search
   border: 1px solid #334DFF
@@ -7265,6 +7277,13 @@ span.notifications-teams
 /*
  * Folders
  */
+#folder-scan
+  border: 1px solid darkgrey
+  border-radius: 3px
+  font-size: 1.2rem
+  padding: 0.6rem
+  margin-left: 1rem
+
 .jstree-node
   font-size: 1.5rem
 
@@ -7288,15 +7307,52 @@ span.notifications-teams
     border-radius: 3px
     margin-right: 1rem
 
-  #folder-scan
-    border: 1px solid darkgrey
-    border-radius: 3px
-    font-size: 1.2rem
-    padding: 0.6rem
-    margin-left: 1rem
-
   .jstree-folder-archive
     color: #990000
   
   .jstree-co
     color: grey !important
+
+#lnk-folders-ql
+  color: $base_green
+
+#co-folders-container
+  margin: 0.8em 0 0.5em
+  
+  #folder-tree-fixed
+    max-height: 250px
+    overflow: scroll
+
+  #folder-tree-actions
+    padding: 1.3rem
+    text-align: center
+
+    &.sub-menu
+      border-bottom: 1px solid #ccf
+    
+    i
+      font-size: 1.5rem
+ 
+    .btn-co-folders
+      margin-right: 1rem
+      font-size: 1rem
+      font-weight: 600
+
+  table
+    width: 84%
+    float: right
+    margin-bottom: 2em
+    border: 1px solid #ccf
+    border-top: none
+
+    .heading_row
+      background: #cfc
+      color: grey
+      font-size: 1.4rem
+      font-weight: 500
+      text-align: center
+
+      td
+        border-bottom: 1px solid #ccf
+        border-top: 1px solid #ccf
+        padding: 1rem

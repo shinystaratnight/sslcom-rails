@@ -1,7 +1,12 @@
 class FoldersController < ApplicationController
   before_filter :find_ssl_account, except: :index
   before_filter :set_ssl_slug, except: :index
-  before_filter :find_folder, only: [:update, :destroy, :add_certificate_order]
+  before_filter :find_folder, only: [
+    :update,
+    :destroy,
+    :add_certificate_order,
+    :add_certificate_orders
+  ]
 
   filter_access_to :all
   filter_access_to [
@@ -66,7 +71,7 @@ class FoldersController < ApplicationController
     if @folder
       co = CertificateOrder.find_by(ref: params[:folder][:certificate_order_id])
     end
-    
+
     if @folder && co
       if co.update(folder_id: @folder.id)
         render json: { message: "Certificate has been successfully moved." }, status: :ok
@@ -76,6 +81,24 @@ class FoldersController < ApplicationController
     else
       render_try_again_error
     end 
+  end
+
+  def add_certificate_orders
+    co_refs = params[:folder][:folder_certificate_order_ids].split(',')
+    if @folder && co_refs.any?
+      certificate_orders = CertificateOrder.where(ref: co_refs)
+    end
+    if @folder && certificate_orders && certificate_orders.any?
+      certificate_orders.update_all(folder_id: @folder.id)
+      if certificate_orders.map(&:folder_id).uniq == [@folder.id]
+        flash[:notice] = "Certifiate Orders #{certificate_orders.map(&:ref).uniq.join(', ')} were successfully moved to folder #{@folder.name}"
+      else
+        flash[:error] = "Something went wrong, please try again."
+      end
+    else
+      flash[:error] = "Please select at least one certificate order to place in folder."
+    end
+    redirect_to certificate_orders_path(@ssl_slug, folders: true)
   end
 
   private

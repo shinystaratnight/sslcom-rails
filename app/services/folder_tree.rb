@@ -1,16 +1,16 @@
 class FolderTree
   attr_reader :full_tree, :selected_ids
 
-  def initialize(ssl_account_id, folder, selected_ids=nil)
+  def initialize(ssl_account_id, folder, tree_type='folders_index', selected_ids=nil)
     @full_tree = []
     @selected_ids = selected_ids.is_a?(Array) ? selected_ids : [selected_ids].compact
     @folder = folder
-    @full_tree = build_subtree(@folder)
+    @full_tree = build_subtree(@folder, tree_type)
   end
 
-  def build_subtree(folder)
-    children = folder.children ? folder.children.inject([]) {|all, child| all << build_subtree(child) } : []
-    co_children = build_cert_orders(folder)
+  def build_subtree(folder, tree_type)
+    children = folder.children ? folder.children.inject([]) {|all, child| all << build_subtree(child, tree_type) } : []
+    co_children = tree_type == 'co_folders_index' ? [] : build_cert_orders(folder)
     return {
       id: get_id_format(folder),
       text: folder.name,

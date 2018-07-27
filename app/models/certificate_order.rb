@@ -100,7 +100,8 @@ class CertificateOrder < ActiveRecord::Base
                subject_alternative_names: nil, locality: nil, country:nil, signature: nil, fingerprint: nil, strength: nil,
                expires_at: nil, created_at: nil, login: nil, email: nil, account_number: nil, product: nil,
                decoded: nil, is_test: nil, order_by_csr: nil, physical_tokens: nil, issued_at: nil, notes: nil,
-               ref: nil, external_order_number: nil, status: nil, duration: nil, co_tags: nil, cc_tags: nil}
+               ref: nil, external_order_number: nil, status: nil, duration: nil, co_tags: nil, cc_tags: nil, 
+               folder_ids: nil}
     filters.each{|fn, fv|
       term.delete_if {|s|s =~ Regexp.new(fn.to_s+"\\:\\'?([^']*)\\'?"); filters[fn] ||= $1; $1}
     }
@@ -248,6 +249,12 @@ class CertificateOrder < ActiveRecord::Base
         end
       end
     end
+    %w(folder_ids).each do |field|
+      query = filters[field.to_sym]
+      if query
+        result = result.where(folder_id: query.split(',')) if query
+      end
+    end  
     result.uniq
   }
 

@@ -207,8 +207,89 @@ $(function($) {
   $('#folder-scan').keyup(function () {
     if(to) { clearTimeout(to); }
     to = setTimeout(function () {
-      var v = $('#folder-scan').val();
-      $('#folders-tree').jstree(true).search(v);
+      var search = $('#folder-scan').val();
+      getJstreeRef().search(search);
     }, 250);
   });
+
+  /*
+   * Certificate Orders Index: Folders
+   */
+  var co_id = '#folders-tree-co';
+
+  setSelectedCount = function(data='clear') {
+    return $("#folders-selected-count").text(
+      (data == 'clear' ? 0 : data.selected.length)
+    );
+  };
+  
+  setFilterParams = function(clear=false) {
+    var checked = getJstreeRef().get_checked(),
+      new_url = '',
+      base_url = $('#btn-co-filter-by').attr('href').split('?')[0];
+    
+    if (clear) {
+      new_url = base_url;
+    } else {
+      query = "?search=folder_ids:"
+        + checked.join().split('_folder,').join().replace('_folder','');
+      new_url = base_url + query;
+    }
+    $('#btn-co-filter-by').attr('href', new_url);
+  };
+
+  addCertOrdersJstree = function() {
+    var form = $('#frm-folder-add-certs'),
+      node_id = fetchFolderId(getJstreeRef().get_checked()[0]);
+    updateFolderId(form, node_id);
+    form.submit();
+  };
+
+  $(co_id).on("check_node.jstree", function (e, data) {
+    setSelectedCount(data);
+    setFilterParams();
+  });
+
+  $(co_id).on("uncheck_node.jstree", function (e, data) {
+    setSelectedCount(data);
+    setFilterParams();
+  });
+
+  $('#btn-folder-uncheck').on('click', function(e) {
+    e.preventDefault();
+    getJstreeRef().uncheck_all();
+    setSelectedCount();
+    setFilterParams(true);
+  });
+
+  $('#btn-folder-closeall').on('click', function(e) {
+    e.preventDefault();
+    getJstreeRef().close_all();
+  });
+
+  $('#btn-folder-openall').on('click', function(e) {
+    e.preventDefault();
+    getJstreeRef().open_all();
+  });
+
+  $('#btn-co-filter-by').on('click', function(e) {
+    if (getJstreeRef().get_checked().length == 0) {
+      e.preventDefault();
+      alert('Check at least one folder.');
+    }
+  });
+
+  $('#btn-co-folders-addcert').on('click', function(e) {
+    e.preventDefault();
+    var selected = getJstreeRef().get_checked().length;
+    
+    if ( selected == 0) {
+      alert('Check at least one folder.');
+    } else if (selected > 1) {
+      alert('You checked ' + selected + ' folders. Please select only one folder to move certificates.' );
+    } else {
+      addCertOrdersJstree();
+    }
+  });
+  
 });
