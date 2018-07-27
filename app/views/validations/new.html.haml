@@ -1,6 +1,6 @@
 -content_for :title, "Validation for #{@certificate_order.ref}"
 -co = @certificate_order
--checkout_in_progress=true
+-checkout_in_progress=co.validation_stage_checkout_in_progress?
 -if checkout_in_progress
   -i=adjusted_position(5, co)
   =order_progress_indicator(i, co.certificate)

@@ -18,11 +18,12 @@ class Ca < ActiveRecord::Base
           code_signing: "cs"}
 
   END_ENTITY = {
-    evcs:  'EV_CS_CERT_EE',
-    cs:    'CS_CERT_EE',
-    dvssl: 'DV_SERVER_CERT_EE',
-    ovssl: 'OV_SERVER_CERT_EE',
-    evssl: 'EV_SERVER_CERT_EE'
+          evcs:         'EV_CS_CERT_EE',
+          cs:           'CS_CERT_EE',
+          ov_client:    'OV_CLIENTAUTH_CERT_EE',
+          dvssl:        'DV_SERVER_CERT_EE',
+          ovssl:        'OV_SERVER_CERT_EE',
+          evssl:        'EV_SERVER_CERT_EE'
   }
   
   # issuer (entity and purpose)

@@ -141,6 +141,7 @@ class ValidationsController < ApplicationController
   end
 
   def get_email_addresses
+    returnObj = {}
     if current_user
       addresses = params['total_domains'].to_i > Validation::COMODO_EMAIL_LOOKUP_THRESHHOLD ?
                       DomainControlValidation.email_address_choices(params['domain_name']) :
