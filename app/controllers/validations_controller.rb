@@ -6,7 +6,7 @@ require 'tempfile'
 include Open3
 
 class ValidationsController < ApplicationController
-  before_filter :require_user, only: [:index, :new, :edit, :show, :upload, :document_upload]
+  before_filter :require_user, only: [:index, :new, :edit, :show, :upload, :document_upload, :get_asynch_domains]
   before_filter :find_validation, only: [:update, :new]
   before_filter :find_certificate_order, only: [:new, :edit, :show, :upload, :document_upload]
 
@@ -49,6 +49,17 @@ class ValidationsController < ApplicationController
         @all_validated = true
         @validated_domains = ''
         validated_domain_arry = []
+
+        cnames = @certificate_order.certificate_content.certificate_names
+        cnames.each do |cn|
+          dcv = cn.domain_control_validations.last
+          unless dcv && dcv.identifier_found
+            @all_validated = false if @all_validated
+          else
+            validated_domain_arry << cn.name
+          end
+        end
+        @validated_domains = validated_domain_arry.join(',')
 
         if @ds
           # tmpCnt = 0
@@ -116,8 +127,21 @@ class ValidationsController < ApplicationController
         end
       end
     end
-
     redirect_to url and return unless url.blank?
+  end
+
+  def dcv_email_validate
+    @certificate_order = CertificateOrder.find_by_ref(params['certificate_order_id'])
+    if(params['authenticity_token'])
+      identifier = params['validate_code']
+      cnames = @certificate_order.certificate_content.certificate_names
+      cnames.each do |cn|
+        dcv = cn.domain_control_validations.last
+        if dcv.identifier == identifier
+          dcv.update_attribute(:identifier_found, true)
+        end
+      end
+    end
   end
 
   def remove_domains
@@ -187,7 +211,7 @@ class ValidationsController < ApplicationController
     # @cache = read_fragment(params[:certificate_order_id] + ':' + params['domain_name'])
     cache = Rails.cache.read(params[:certificate_order_id] + ':' + params[:ext_order_number] + ':' + params['domain_name'])
 
-    if cache.blank? or cache="{}"
+    if cache.blank? or cache=="{}"
       co = (current_user.is_system_admins? ? CertificateOrder :
                 current_user.certificate_orders).find_by_ref(params[:certificate_order_id])
       returnObj = {}

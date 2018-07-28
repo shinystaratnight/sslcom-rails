@@ -31,16 +31,12 @@
       = f.label :allow_wildcard_ucc
       = f.select :allow_wildcard_ucc, [['NO', nil], ['YES', 1]], include_blank: false
         
-    .certificate-fields Roles and Reseller Tier
+    .certificate-fields Reseller Tier
     .clearfix
       = f.label 'Reseller Tier'
       = f.select :reseller_tier_id, ResellerTier.all.map{|rt| ["#{rt.label} - #{rt.roles}", rt.id]}, |
         include_blank: true
-    
-    .clearfix
-      = f.label :roles
-      = f.select :roles, Certificate::ROLES, include_blank: false
-    
+
     - if f.object.persisted?
       .certificate-fields.no-margin Product Variant Groups
       = render partial: '/certificates/form_for_admin_pvg', locals: {f: f}
@@ -55,7 +51,7 @@
     .certificate-fields CA Certificate ( #{cas.count} )
     .clearfix
       #ca-certificates-select
-        - ca_list = Ca.all.map { |ca| ["#{ca.ref}: #{ca.type} - #{ca.profile_name}", ca.id] }
+        - ca_list = Ca.all.map { |ca| ["#{ca.ref}: #{ca.type} - #{ca.friendly_name}", ca.id] }
         = select_tag :ca_certificates, |
           options_for_select(ca_list, cas.pluck(:id)), include_blank: true, multiple: true
 

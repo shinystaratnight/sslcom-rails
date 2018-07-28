@@ -1,0 +1,14 @@
+Dear <%=@contact%>,
+
+We have received a request to issue an SSL certificate for:
+
+Domain:
+  <%@domains.each do |domain| -%>
+    <%=domain%>
+  <%end -%>
+
+To permit the issuance of the certificate please visit <%=@validation_url%> and enter the following "validation code":
+
+            <%=@identifier%>
+
+<%=render(:partial=>"support_contact")%>

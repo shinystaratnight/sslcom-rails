@@ -194,7 +194,7 @@ ActiveRecord::Schema.define(version: 20180707154020) do
     t.string  "host",          limit: 255
     t.string  "admin_host",    limit: 255
     t.string  "ekus",          limit: 255
-    t.integer "end_entity",    limit: 4
+    t.string  "end_entity",    limit: 255
     t.string  "ca_name",       limit: 255
     t.string  "type",          limit: 255
   end

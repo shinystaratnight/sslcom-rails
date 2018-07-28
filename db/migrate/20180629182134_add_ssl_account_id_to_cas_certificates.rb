@@ -5,6 +5,6 @@ class AddSslAccountIdToCasCertificates < ActiveRecord::Migration
     add_index :cas_certificates, :ssl_account_id
 
     remove_column :cas, :profile_type, :string
-    remove_column :certificates, :ca_certificate_id, :integer
+    change_column :cas, :end_entity, :string
   end
 end

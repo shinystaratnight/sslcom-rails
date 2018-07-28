@@ -1,0 +1,5 @@
+.clearfix
+  = label_tag :validate_code, "Validate Code<span class='label_desc'> 20 chars</span>".html_safe
+  = text_field_tag :validate_code, nil, {maxlength: 20, size: 20, required: true}
+.clearfix
+  ="If you have any questions please contact <strong>#{mail_to 'support@ssl.com'}</strong> for assistance.".html_safe

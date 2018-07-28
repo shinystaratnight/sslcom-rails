@@ -211,6 +211,7 @@ SslCom::Application.routes.draw do
         post :remove_domains
         post :get_email_addresses
         member do
+          match :dcv_email_validate, via: [:get, :post, :options]
           get :document_upload
         end
       end

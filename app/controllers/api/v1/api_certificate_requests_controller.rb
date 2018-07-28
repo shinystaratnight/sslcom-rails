@@ -1,4 +1,5 @@
 class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
+  prepend_view_path "app/views/api/v1/api_certificate_requests"
   include ActionController::Helpers
   helper SiteSealsHelper
   before_filter :set_database, if: "request.host=~/^sandbox/ || request.host=~/^sws-test/ || request.host=~/ssl.local$/"
@@ -193,6 +194,35 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
             # @result.error_message=ccr.response_error_message
             # @result.eta=ccr.response_certificate_eta
             # @result.order_status = ccr.response_certificate_status
+            cnames = @acr.certificate_content.certificate_names
+            random_source = [('a'..'z'), ('A'..'Z')].map(&:to_a).flatten
+            email_for_identifier = ''
+            identifier = ''
+            email_list = []
+            identifier_list = []
+            domain_ary = []
+            domain_list = []
+            cnames.each do |cn|
+              dcv = cn.domain_control_validations.last
+              if dcv.email_address != email_for_identifier
+                if domain_list.length>0
+                  domain_ary << domain_list
+                  email_list << email_for_identifier
+                  identifier_list << identifier
+                  domain_list = []
+                end
+                identifier = (0..19).map { random_source[rand(random_source.length)] }.join
+                email_for_identifier = dcv.email_address
+              end
+              domain_list << cn.name
+              dcv.update_attribute(:identifier, identifier)
+            end
+            domain_ary << domain_list
+            email_list << email_for_identifier
+            identifier_list << identifier
+            email_list.each_with_index do |value, key|
+              OrderNotifier.dcv_email_send(@acr, value, identifier_list[key], domain_ary[key]).deliver
+            end
 
             set_result_parameters(@result, @acr)
             @result.debug=(@result.parameters_to_hash["debug"]=="true") # && @acr.admin_submitted = true
@@ -1262,8 +1292,8 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
     @result.options ||= params[:options] if params[:options]
     @result.test = @test
     @result.request_url = request.url
-    @result.parameters = params.to_json
-    @result.raw_request = request.raw_post
+    @result.parameters = params.to_utf8.to_json
+    @result.raw_request = request.raw_post.force_encoding("ISO-8859-1").encode("UTF-8")
     @result.request_method = request.request_method
     @result.saved_registrant ||= params[:saved_registrant] if params[:saved_registrant]
   end

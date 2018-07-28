@@ -55,6 +55,9 @@
                     %br/
                     %strong notes:
                     = sa.notes
+                    %br/
+                    %strong user:
+                    = sa.owner.email
 
               - revoked = al.find {|sa| sa.action == 'revocation'}
               - unless revoked.nil?

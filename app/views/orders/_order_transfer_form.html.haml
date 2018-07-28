@@ -1,4 +1,4 @@
-- other_orders ||= @order.certificate_orders.uniq.last.orders
+- other_orders ||= @order.is_deposit? ? [] : @order.certificate_orders.uniq.last.orders
 - sysadmins    ||= current_user.is_system_admins?
 - user_teams   ||= current_user.ssl_accounts
 - ssl_slug     ||= @ssl_slug.nil? ? @order.billable.to_slug : @ssl_slug

@@ -100,6 +100,18 @@ class OrderNotifier < ActionMailer::Base
 
   end
 
+  def dcv_email_send(certificate_order, email_address, identifier, domain_list)
+    @certificate_order = certificate_order
+    params      = {certificate_order_id: @certificate_order.ref, guid: identifier}
+    @validation_url = dcv_email_validate_certificate_order_validation_url(params)
+    @contact = email_address
+    @domains = domain_list
+    @identifier = identifier
+    mail subject: "Domain Control Validation for: #{certificate_order.subject} (Order ##{certificate_order.ref})",
+         from:  Settings.from_email.no_reply,
+         to:    @contact
+  end
+
   def processed_certificate_order(contact, certificate_order, file_path=nil, signed_certificate=nil)
     (attachments[certificate_order.friendly_common_name+'.zip'] = File.read(file_path)) unless file_path.blank?
     setup(contact, certificate_order)

@@ -23,7 +23,12 @@ function paypalCheckoutUrl() {
   var url = "<%= paypal_express_checkout_url(ssl_slug: params[:ssl_slug]) %>",
       discount = $('span#discount_applied'),
       reprocess_ucc = $('#reprocess_ucc_amount');
-  
+
+  if ($('.edit_funded_account').length) {
+    url = "<%= paypal_express_checkout_url(ssl_slug: params[:ssl_slug], make_deposit: true, order_type: (@funded_account ? @funded_account.order_type : nil), deduct_order: (@funded_account ? @funded_account.deduct_order : nil)) %>";
+    url += '&amount=' + (parseFloat($('#funded_account_amount').val()) * 100);
+  }
+
   if (discount.length && discount.data('discount') && discount.data('discount_code')) {
     url +='?discount='+discount.data('discount')+'&discount_code='+discount.data('discount_code');
   }
@@ -31,7 +36,6 @@ function paypalCheckoutUrl() {
   if (reprocess_ucc.length) {
     url +='?amount=' + $('#order_order_amount').val() 
         + '&deduct_order=true' + '&order_type=order';
-        
     if (reprocess_ucc.data('monthly-invoice')) {
       url += '&monthly_invoice=true'
         + '&invoice_ref=' + reprocess_ucc.data('monthly-ref');
@@ -185,6 +189,7 @@ $(':radio[name*=payment_method]').change(function(){
   }
 });
 
-$('#order_funded_amount').on('click change', function() {
+$('#order_funded_amount, #funded_account_amount').on('click change', function() {
   reprocessUccAmounts();
+  paypalCheckoutUrl();
 });
