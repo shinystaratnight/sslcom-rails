@@ -176,7 +176,9 @@ class SignedCertificate < ActiveRecord::Base
         self[:effective_date] = parsed.not_before
         self[:expiration_date] = parsed.not_after
         self[:subject_alternative_names] = parsed.subject_alternative_names
-        self[:strength] = parsed.strength
+        #TODO ecdsa throws exception. Find better method
+        self[:strength] = parsed.public_key.instance_of?(OpenSSL::PKey::EC) ?
+                              parsed.to_text.match(/Public-Key\: \((\d+)/)[1] : parsed.strength
       end
     else
       ssl_util = Savon::Client.new Settings.certificate_parser_wsdl

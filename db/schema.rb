@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180707154020) do
+ActiveRecord::Schema.define(version: 20180729001349) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        limit: 255
@@ -190,8 +190,28 @@ ActiveRecord::Schema.define(version: 20180707154020) do
     t.string  "algorithm",     limit: 255
     t.integer "size",          limit: 4
     t.string  "description",   limit: 255
-    t.string  "profile_type",  limit: 255
+    t.string  "caa_issuers",   limit: 255
+    t.string  "host",          limit: 255
+    t.string  "admin_host",    limit: 255
+    t.string  "ekus",          limit: 255
+    t.string  "end_entity",    limit: 255
+    t.string  "ca_name",       limit: 255
+    t.string  "type",          limit: 255
   end
+
+  create_table "cas_certificates", force: :cascade do |t|
+    t.integer  "certificate_id", limit: 4,   null: false
+    t.integer  "ca_id",          limit: 4,   null: false
+    t.string   "status",         limit: 255
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "ssl_account_id", limit: 4
+  end
+
+  add_index "cas_certificates", ["ca_id"], name: "index_cas_certificates_on_ca_id", using: :btree
+  add_index "cas_certificates", ["certificate_id", "ca_id"], name: "index_cas_certificates_on_certificate_id_and_ca_id", using: :btree
+  add_index "cas_certificates", ["certificate_id"], name: "index_cas_certificates_on_certificate_id", using: :btree
+  add_index "cas_certificates", ["ssl_account_id"], name: "index_cas_certificates_on_ssl_account_id", using: :btree
 
   create_table "cdns", force: :cascade do |t|
     t.integer  "ssl_account_id",       limit: 4
@@ -265,6 +285,7 @@ ActiveRecord::Schema.define(version: 20180707154020) do
     t.boolean  "agreement"
     t.string   "ext_customer_ref",     limit: 255
     t.string   "approval",             limit: 255
+    t.integer  "ca_id",                limit: 4
   end
 
   add_index "certificate_contents", ["certificate_order_id"], name: "index_certificate_contents_on_certificate_order_id", using: :btree

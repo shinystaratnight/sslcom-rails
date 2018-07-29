@@ -41,6 +41,12 @@ class SslAccount < ActiveRecord::Base
   has_many  :cdns
   has_many  :tags
   has_many  :notification_groups
+  has_many :certificate_names, through: :certificate_contents
+  has_many :domain_control_validations, through: :certificate_names do
+    def sslcom
+      where.not certificate_contents: {ca_id: nil}
+    end
+  end
 
   unless MIGRATING_FROM_LEGACY
     #has_many  :orders, :as=>:billable, :after_add=>:build_line_items
@@ -298,11 +304,14 @@ class SslAccount < ActiveRecord::Base
       users.each do |u|
         u.set_roles_for_account(self, [Role.find_by_name(Role::RESELLER).id])
       end
-      reseller.update_attribute :workflow_state, "complete"
     else
       reseller.reseller_tier=ResellerTier.find_by_label(tier)
       reseller.save
     end
+    roles << "reseller" unless is_reseller?
+    roles.delete "new_reseller" if is_new_reseller?
+    save
+    reseller.completed! unless reseller.complete?
   end
 
   def api_certificate_requests_string
@@ -319,6 +328,18 @@ class SslAccount < ActiveRecord::Base
 
   def self.api_credentials_for_all
     self.find_each{|s|s.create_api_credential if s.api_credential.blank?}
+  end
+
+  def self.migrate_deposit(from_sa, to_sa, deposit, user)
+    to_sa.orders << deposit if deposit
+    if deposit && to_sa.orders.include?(deposit)
+      SystemAudit.create(
+        owner: user,
+        target: deposit,
+        notes: "Transfered deposit #{deposit.reference_number} from team acct ##{from_sa.acct_number} to team acct ##{to_sa.acct_number} on #{DateTime.now.strftime('%c')}.",
+        action: "Transfer Deposit To Team"
+      )
+    end
   end
 
   # from_sa - the ssl_account to migrate from

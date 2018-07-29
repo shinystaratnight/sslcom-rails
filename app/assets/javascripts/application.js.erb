@@ -123,4 +123,49 @@ jQuery(function($) {
       }
     });
   });
+
+  // Certificate Management
+  $('#btn_pvi_update_item, #btn_pvi_create_item').on('click', function(e) {
+    e.preventDefault();
+    form = $(this).parents('form');
+    form.find('#manage_type').val(
+      $(this).attr('id').replace('btn_pvi_', '')
+    );
+    form.submit();
+  });
+
+  $('#lnk-pvg-open-form, #btn-cert-pvg-cancel').on('click', function(e) {
+    e.preventDefault();
+    if ($(this).attr('id') == 'lnk-pvg-open-form') {
+      $('#frm-cert-edit').hide();
+      $('#frm-cert-pvg-create').show();
+      $('#frm-cert-pvg-create .certificate-fields certificate-fields-top').focus();
+    } else {
+      $('#frm-cert-edit').show();
+      $('#frm-cert-pvg-create').hide();
+    }
+  });
+  
+  $('#new_certificate #btn-certificate-submit, .edit_certificate #btn-certificate-submit').on('click', function(e) {
+    console.log('Submit');
+    e.preventDefault();
+    form = $(this).parents('form');
+
+    form.find('#certificate_display_order').val(
+      JSON.stringify({
+        all: form.find('#all').val(),
+        index: form.find('#index').val()
+      })
+    );
+    form.find('#certificate_description').val(
+      JSON.stringify({
+        certificate_type: form.find('#certificate_type').val(),
+        points: form.find('#points').val(),
+        validation_level: form.find('#validation_level').val(),
+        summary: form.find('#summary').val(),
+        abbr: form.find('#abbr').val()
+      })
+    );
+    form.submit();
+  });
 });

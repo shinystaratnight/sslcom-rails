@@ -1,4 +1,5 @@
 class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
+  prepend_view_path "app/views/api/v1/api_certificate_requests"
   include ActionController::Helpers
   helper SiteSealsHelper
   before_filter :set_database, if: "request.host=~/^sandbox/ || request.host=~/^sws-test/ || request.host=~/ssl.local$/"
@@ -1240,8 +1241,8 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
     @result.options ||= params[:options] if params[:options]
     @result.test = @test
     @result.request_url = request.url
-    @result.parameters = params.to_json
-    @result.raw_request = request.raw_post
+    @result.parameters = params.to_utf8.to_json
+    @result.raw_request = request.raw_post.force_encoding("ISO-8859-1").encode("UTF-8")
     @result.request_method = request.request_method
     @result.saved_registrant ||= params[:saved_registrant] if params[:saved_registrant]
   end
