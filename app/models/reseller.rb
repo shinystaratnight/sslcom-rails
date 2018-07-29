@@ -61,6 +61,7 @@ class Reseller < ActiveRecord::Base
 
     state :select_tier do
       event :tier_selected, :transitions_to => :enter_billing_information
+      event :completed, :transitions_to => :complete
       event :back, :transitions_to => :new
     end
 

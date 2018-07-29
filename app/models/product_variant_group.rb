@@ -1,5 +1,5 @@
 class ProductVariantGroup < ActiveRecord::Base
-  has_many :product_variant_items
+  has_many :product_variant_items, dependent: :destroy
   belongs_to  :variantable, :polymorphic => true
   validates_uniqueness_of :display_order, :scope => [:variantable_id, :variantable_type]
 

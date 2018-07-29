@@ -3453,9 +3453,19 @@ label.error
     cursor: pointer
     background: lightyellow
 
-#report, #reseller_tiers, #domain_pricing_popup, #certificate_listing,
-#dashboard, #certificate_orders, #validations, #resources, #resource-custom-domain-list,
-#popular-files, #resource-popular-location-list, #notification_groups
+#report,
+#reseller_tiers,
+#domain_pricing_popup,
+#certificate_listing,
+#dashboard,
+#certificate_orders,
+#validations,
+#resources,
+#resource-custom-domain-list,
+#popular-files,
+#resource-popular-location-list,
+#notification_groups,
+#certificates-admin-index
   line-height: 1.5em
   font-size: 1.4em
   background: #fff
@@ -5885,7 +5895,10 @@ span.notifications-teams
   font-size: 1rem
 
 .button-invoice,
-.button-mo-invoice
+.button-mo-invoice,
+.btn-pvg-items,
+.btn-pvg-create,
+.btn-pvg-destroy
   background: -webkit-linear-gradient(#69B3FF, #334DFF)
   background: -o-linear-gradient(#69B3FF, #334DFF)
   background: -moz-linear-gradient(#69B3FF, #334DFF)
@@ -5901,14 +5914,16 @@ span.notifications-teams
   padding: 5px 15px
   box-shadow: none
 
-.button-mo-invoice.btn-mo-destroy
+.button-mo-invoice.btn-mo-destroy,
+.btn-pvg-destroy
   background: -webkit-linear-gradient(#cc0000, #990000)
   background: -o-linear-gradient(#cc0000, #990000)
   background: -moz-linear-gradient(#cc0000, #990000)
   background: linear-gradient(#cc0000, #990000)
   border: 2px solid #990000
 
-.button-mo-invoice.btn-mo-manage
+.button-mo-invoice.btn-mo-manage,
+.btn-pvg-create
   background: -webkit-linear-gradient(#84b332, $base_green)
   background: -o-linear-gradient(#84b332, $base_green)
   background: -moz-linear-gradient(#84b332, $base_green)
@@ -6299,7 +6314,8 @@ span.notifications-teams
     border-top-left-radius: 4px
     border-top-right-radius: 4px
 
-.saved-contact-fields
+.saved-contact-fields,
+.certificate-fields
   align-content: center
   background-color: #6CB1FA
   text-align: center
@@ -6308,6 +6324,11 @@ span.notifications-teams
   font-weight: 500
   margin-bottom: 1.5rem
   padding: 0.5rem 0
+
+.certificate-fields-top
+  margin-top: -1.4rem
+  border-top-left-radius: 3px
+  border-top-right-radius: 3px
 
 .cc-contacts-index
   background-color: #000000
@@ -7024,7 +7045,8 @@ span.notifications-teams
     border: none !important
 
 .btn-filter-clear,
-.btn-filter-search
+.btn-filter-search,
+.btn-cert-update
   border-radius: 3px
   border: none
   font-size: 1.2rem
@@ -7040,6 +7062,11 @@ span.notifications-teams
   background-color: white
   color: #334DFF !important
 
+.btn-cert-update
+  border: 1px solid #334DFF
+  background-color: #334DFF
+  font-size: 1rem 
+    
 .btn-filter-search
   border: 1px solid #334DFF
   background-color: #334DFF
@@ -7101,7 +7128,9 @@ span.notifications-teams
 
 #contacts-container,
 #subjects-container,
-#cos-container
+#cos-container,
+#tags-container,
+#ca-certificates-select
   margin: 0 !important
   
   .select2
@@ -7163,3 +7192,69 @@ span.notifications-teams
 
     .select2-selection__choice__remove
       padding: 0
+
+/*
+ * Certificates Edit for Admins 
+ */
+#ca-certificates-select
+  width: 65% !important
+  margin: auto !important
+
+  .select2
+    margin-bottom: 2rem
+
+  .select2-selection__choice
+    background-color: #cccccc
+    border: 1px solid #cccccc
+    font-weight: 500
+    font-size: 1.2rem
+
+.certificates-admin-edit
+  .sub-heading
+    background-color: lightgrey
+    font-size: 1.5rem
+    font-weight: 600
+    color: white
+    padding: 0.4rem
+    text-align: center
+    text-transform: uppercase
+    margin-bottom: 1rem
+  
+  .no-margin
+    margin: 0
+  
+  #pvg-open-form
+    width: 25%
+    margin: 2.5rem auto
+    
+    #lnk-pvg-open-form
+      border-radius: 3px
+      border: 1px dashed lightgrey
+      color: grey
+      font-size: 1.4rem
+      font-weight: 600
+      padding: 1rem 3rem
+    
+  #pvg-actions
+    text-align: center
+    margin-bottom: 2.5rem
+    
+    a
+      display: inline
+
+      &:first-child
+        margin-right: 0
+
+/*
+ * Certificates Index for Admins 
+ */    
+#certificates-admin-index
+  .serial
+    font-weight: 600
+  
+  .title
+    font-size: 1.1rem
+  
+  .ca
+    font-size: 1rem
+>>>>>>> a9dbbbc18fd8c32e51120e6f92383bc3fa6d7457

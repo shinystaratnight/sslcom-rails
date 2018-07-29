@@ -601,6 +601,9 @@ jQuery(function($) {
       <%end%>
     }
 
+    $('#certificate_orders').on('keyup', '#certificate_order_notes', function() {
+      $(this).parents().filter('form').ajaxSubmit();
+    });
   });
 });
 </script>

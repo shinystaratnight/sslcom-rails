@@ -1,0 +1,58 @@
+- pv_group = ProductVariantGroup
+- title_select = pv_group.pluck(:title).uniq.sort
+- status_select = pv_group.pluck(:status).uniq.sort
+- desc_select = pv_group.pluck(:description).uniq.sort
+- text_desc_select = pv_group.pluck(:text_only_description).uniq.sort
+- published_select = pv_group.pluck(:published_as).uniq.sort
+
+- if !pvg.is_a?(ProductVariantGroup) && pvg.object
+  .clearfix
+    = pvg.label :title
+    = pvg.select :title, title_select, include_blank: false
+
+  .clearfix
+    = pvg.label :status
+    = pvg.select :status, status_select, include_blank: false
+
+  .clearfix
+    = pvg.label :description
+    = pvg.select :description, desc_select, include_blank: false
+    
+  .clearfix
+    = pvg.label :text_only_description
+    = pvg.select :text_only_description, text_desc_select, include_blank: false
+    
+  .clearfix
+    = pvg.label :display_order
+    = pvg.number_field :display_order, value: pvg.object.display_order, step: 1
+
+  .clearfix
+    = pvg.label :published_as
+    = pvg.select :published_as, published_select, include_blank: false
+
+- else
+  .clearfix
+    = label_tag :title
+    = select_tag :title, options_for_select(title_select), include_blank: false
+
+  .clearfix
+    = label_tag :status
+    = select_tag :status, options_for_select(status_select), include_blank: false
+
+  .clearfix
+    = label_tag :description
+    = select_tag :description, options_for_select(desc_select), include_blank: false
+    
+  .clearfix
+    = label_tag :text_only_description
+    = select_tag :text_only_description, options_for_select(text_desc_select), include_blank: false
+    
+  .clearfix
+    - pvg_list = @certificate.product_variant_groups
+    - display_order = pvg_list.any? ? (pvg_list.pluck(:display_order).sort.last + 1) : 1
+    = label_tag :display_order
+    = number_field_tag :display_order, display_order, step: 1, required: true
+
+  .clearfix
+    = label_tag :published_as
+    = select_tag :published_as, options_for_select(published_select), include_blank: false
