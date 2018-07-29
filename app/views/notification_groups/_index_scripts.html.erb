@@ -52,7 +52,7 @@
 
       $('#cos_list').on('select2:opening select2:closing', function( event ) {
         var $searchfield = $(this).parent().find('.select2-search__field');
-        $searchfield.prop('disabled', 'disabled');
+        $searchfield.prop('readonly', true);
       });
 
       $('#contacts_list').select2({
