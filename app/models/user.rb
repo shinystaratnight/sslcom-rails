@@ -28,11 +28,13 @@ class User < ActiveRecord::Base
   has_many  :discounts, as: :benefactor, dependent: :destroy
   has_one   :shopping_cart
   has_and_belongs_to_many :user_groups
+  has_many  :notification_groups, through: :ssl_accounts
 
   preference  :cert_order_row_count, :string, :default=>"10"
   preference  :order_row_count, :string, :default=>"10"
   preference  :cdn_row_count, :string, :default=>"10"
   preference  :user_row_count, :string, :default => "10"
+  preference  :note_group_row_count, :string, :default => "10"
 
   #will_paginate
   cattr_accessor :per_page
@@ -371,6 +373,11 @@ class User < ActiveRecord::Base
     !ssl_account_users.map(&:user_enabled).include?(true)
   end
 
+  def deliver_auto_activation_confirmation!
+    reset_perishable_token!
+    UserNotifier.auto_activation_confirmation(self).deliver
+  end
+
   def deliver_activation_instructions!
     reset_perishable_token!
     UserNotifier.activation_instructions(self).deliver
@@ -482,6 +489,14 @@ class User < ActiveRecord::Base
     assign_roles(params)
     self.login = params[:user][:login] if login.blank?
     self.email = params[:user][:email]
+
+    # TODO: New logic for auto activation account by passing password on Signup page.
+    if Settings.require_signup_password
+      self.password = params[:user][:password] unless params[:user][:password].blank?
+      self.password_confirmation = params[:user][:password_confirmation] unless params[:user][:password_confirmation].blank?
+      self.active = true unless params[:user][:password].blank?
+    end
+
     save_without_session_maintenance
   end
 
@@ -590,12 +605,20 @@ class User < ActiveRecord::Base
     SslAccount.joins{assignments}.where{assignments.role_id==4}.count
   end
 
+  def can_manage_certificates?
+    is_system_admins? && is_ra_admin?
+  end
+
   def is_admin?
     role_symbols.include? Role::SYS_ADMIN.to_sym
   end
 
   def is_super_user?
     role_symbols.include? Role::SUPER_USER.to_sym
+  end
+
+  def is_ra_admin?
+    role_symbols.include? Role::RA_ADMIN.to_sym
   end
 
   def is_owner?(target_account=nil)

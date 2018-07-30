@@ -1,0 +1,38 @@
+#co-folders-container
+  %table(cellspacing='0')
+    %tr.heading_row
+      %td#co-folders-header
+        = "Folders ( total: #{@ssl_account.folders.count} | selected: <span id='folders-selected-count'>0</span> )".html_safe
+    %tr
+      %td
+        #folder-tree-actions.sub-menu
+          = link_to "<i class='fa fa-check-square'></i> Uncheck All".html_safe, '#', |
+            class: 'btn-co-folders sub-actions', id: 'btn-folder-uncheck'
+          = link_to "<i class='fa fa-folder'></i> Close All".html_safe, '#', |
+            class: 'btn-co-folders sub-actions', id: 'btn-folder-closeall'
+          = link_to "<i class='fa fa-folder-open'></i> Open All".html_safe, '#', |
+            class: 'btn-co-folders sub-actions', id: 'btn-folder-openall'
+          = link_to "<i class='fa fa-cogs'></i> Manage Folders".html_safe, |
+            folders_path(@ssl_slug), class: 'btn-co-folders sub-actions'
+          = text_field_tag :folder_search, nil, id: 'folder-scan'
+    %tr
+      %td
+        #folder-tree-fixed
+          #folders-tree-co
+    %tr
+      %td
+        #folder-tree-actions
+          = link_to "<i class='fa fa-plus'></i> Add Certificates To Folder".html_safe, |
+            '#', class: 'btn-co-folders', id: 'btn-co-folders-addcert'
+            
+          - url = add_certificate_orders_folder_url(@ssl_slug, '#')
+          = form_for Folder.new, url: url, method: :put,  |
+            data: {type: :json, initial_action: url},     |
+            html: {id: 'frm-folder-add-certs', class: 'hidden'} do |f|
+            = f.text_field :folder_certificate_order_ids, value: @certificate_orders.map(&:ref).join(',')
+
+          = link_to "<i class='fa fa-search'></i> Filter Certificates By Folders".html_safe, |
+            search_certificate_orders_path(@ssl_slug),                                       |
+            class: 'btn-co-folders', id: 'btn-co-filter-by'
+  
+  = render partial: '/folders/jstree_script'

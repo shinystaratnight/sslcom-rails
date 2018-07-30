@@ -90,6 +90,9 @@ class CertificateContent < ActiveRecord::Base
           cc.certificate_names.create(name: domain, is_common_name: cc.csr.try(:common_name)==domain)
         end
       end
+
+      # Auto adding domains in case of certificate order has been included into some groups.
+      NotificationGroup.auto_manage_cert_name(cc, 'create')
     end
   end
 
@@ -214,12 +217,16 @@ class CertificateContent < ActiveRecord::Base
     if csr && certificate_names.find_by_name(csr.common_name).blank?
       certificate_names.create(name: csr.common_name, is_common_name: true)
     end
+
     if all_domains.length <= DOMAIN_COUNT_OFFLOAD
       all_domains.flatten.each_with_index do |domain, i|
         if certificate_names.find_by_name(domain).blank?
           certificate_names.create(name: domain, is_common_name: csr.try(:common_name)==domain)
         end
       end
+
+      # Auto adding domains in case of certificate order has been included into some groups.
+      NotificationGroup.auto_manage_cert_name(self, 'create')
     else
       all_domains.flatten.each_slice(100) do |domain_slice|
         Delayed::Job.enqueue CertificateNamesJob.new(id, domain_slice)

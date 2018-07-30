@@ -367,7 +367,7 @@ namespace :cas do
                   },
                   {
                       ref: "0014",
-                      friendly_name: "SSL.com EV CS RSA 4096",
+                      friendly_name: "SSL.com EV CS RSA 4096 R2",
                       profile_name: "SSLcom-SubCA-EV-CodeSigning-RSA-4096-R2",
                       algorithm: "rsa",
                       size: 4096,
@@ -804,16 +804,16 @@ namespace :cas do
       Ca.all.each {|ca|
         unless ca.is_a?(EndEntityProfile) or ca.is_a?(RootCa) or ca.ekus.blank?
           if cert.is_evcs? and ca.end_entity==(Ca::END_ENTITY[:evcs])
-            cert.ca_certificates.create(ca_id: ca.id,status: CasCertificate::STATUS[:active])
+            cert.cas_certificates.create(ca_id: ca.id,status: CasCertificate::STATUS[:active])
           elsif cert.is_cs? and ca.end_entity==(Ca::END_ENTITY[:cs])
-            cert.ca_certificates.create(ca_id: ca.id,status: CasCertificate::STATUS[:active])
+            cert.cas_certificates.create(ca_id: ca.id,status: CasCertificate::STATUS[:active])
           elsif  cert.is_dv? or cert.is_ov? or cert.is_ev?
             if ca.end_entity==(Ca::END_ENTITY[:dvssl])
-              cert.ca_certificates.create(ca_id: ca.id,status: CasCertificate::STATUS[:active])
+              cert.cas_certificates.create(ca_id: ca.id,status: CasCertificate::STATUS[:active])
             elsif (cert.is_ov? or cert.is_ev?) and ca.end_entity==(Ca::END_ENTITY[:ovssl])
-              cert.ca_certificates.create(ca_id: ca.id,status: CasCertificate::STATUS[:active])
+              cert.cas_certificates.create(ca_id: ca.id,status: CasCertificate::STATUS[:active])
             elsif cert.is_ev? and ca.end_entity==(Ca::END_ENTITY[:evssl])
-              cert.ca_certificates.create(ca_id: ca.id,status: CasCertificate::STATUS[:active])
+              cert.cas_certificates.create(ca_id: ca.id,status: CasCertificate::STATUS[:active])
             end
           end
         end

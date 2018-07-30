@@ -311,6 +311,10 @@
   =button_tag 'Cancel', :type=>'button', :id=>'btn_close_cert_order_filter'
 
 =render :partial=>'quick_links'
+
+-if show_folders_container?
+  =render partial: 'folders/co_index_folders'
+
 #certificate_orders
   %table(cellspacing="0")
     -#.loader_wrap
@@ -329,6 +333,7 @@
     %tr.heading_row
       %td
       %th.name(scope="col")Subject
+      %th(scope="col") Folder
       %th(scope="col") Status
       %th(scope="col") Order Date
       %th(scope="col") Expires
@@ -343,6 +348,9 @@
               =image_tag 'expand.png'
           %td.name
             =render :partial=>'subject_column', :locals=>{:certificate_order=>co}
+          %td.co-folder-name
+            - if co.folder
+              %i.fa.fa-folder-open
           %td.status_message(class="#{status_class(cc)}")
             #{certificate_order_status(cc)}
           %td

@@ -12,14 +12,16 @@ authorization do
   role :sysadmin do
     includes :user
     includes :owner
+    has_permission_on :certificates, to: [:admin_index, :new, :create]
     has_permission_on :certificates, to: [
-      :admin_index,
       :edit,
       :update,
       :show,
-      :new,
-      :manage_product_variants
-    ]
+      :manage_product_variants,
+      :destroy
+    ] do
+      if_attribute role_can_manage: is_in {user.roles.ids}
+    end
     has_permission_on :authorization_rules, :to => :read
     has_permission_on :site_seals, :validation_rules, :certificate_orders,
       :to => :sysadmin_manage, except: :delete
@@ -56,6 +58,19 @@ authorization do
       :update_item,
       :manage_items,
       :transfer_items
+    ]
+    #
+    # Folders
+    #
+    has_permission_on :folders, to: [
+      :add_certificate_order,
+      :add_certificate_orders,
+      :add_to_folder,
+      :children,
+      :create,
+      :destroy,
+      :index,
+      :update
     ]
   end
 
@@ -143,6 +158,19 @@ authorization do
       if_attribute id: is_not {user.id}
       if_attribute id: is_in  {user.ssl_account.users.map(&:id).uniq}
       if_attribute total_teams_owned: does_not_contain {user.ssl_account}
+    end
+    #
+    # Folders
+    #
+    has_permission_on :folders, to: [:children, :index, :create]
+    has_permission_on :folders, to: [
+      :add_to_folder,
+      :add_certificate_order,
+      :add_certificate_orders,
+      :destroy,
+      :update
+    ] do
+      if_attribute ssl_account_id: is {user.ssl_account.id}
     end
   end
 
@@ -436,6 +464,10 @@ authorization do
     has_permission_on :orders, to: [:update_invoice, :update_tags] do
       if_attribute billable_id: is_in {user.ssl_accounts.pluck(:id)}
     end
+    #
+    # Folders
+    #
+    has_permission_on :folders, to: [:children, :index]
   end
 
   # ============================================================================

@@ -136,10 +136,13 @@ class CertificateContentsController < ApplicationController
     remove = @certificate_content.certificate_contacts
       .find_by(id: params[:remove_selected_contact].to_i)
     if remove && remove.parent_id
-      @certificate_content.certificate_contacts
-        .where(parent_id: remove.parent_id).destroy_all
+      contacts = @certificate_content.certificate_contacts
+        .where(parent_id: remove.parent_id)
+      contacts.destroy_all
+      NotificationGroup.auto_manage_email_address(@certificate_content, 'delete', contacts)
     else
       remove.destroy if remove
+      NotificationGroup.auto_manage_email_address(@certificate_content, 'delete', [remove])
     end
     render_contacts
   end
@@ -186,7 +189,10 @@ class CertificateContentsController < ApplicationController
       found = CertificateContact.find_by(id: params[:contact][:id].to_i)
       found.assign_attributes(attrs.merge(parent_id: parent_id))
       errors = found.errors unless found.valid?
-      found.save if found.changed? && errors.nil?
+      if found.changed? && errors.nil?
+        found.save
+        NotificationGroup.auto_manage_email_address(@certificate_content, 'update', [found])
+      end
     end
     if errors.blank?
       render_contacts
@@ -198,6 +204,7 @@ class CertificateContentsController < ApplicationController
   def update_available_contact(params)
     contact = Contact.find_by(id: params[:contact][:id].to_i)
     if contact.update_attributes(params[:contact])
+      NotificationGroup.auto_manage_email_address(@certificate_content, 'update', [contact])
       render_contacts
     else
       render json: contact.errors.messages, status: :unprocessable_entity

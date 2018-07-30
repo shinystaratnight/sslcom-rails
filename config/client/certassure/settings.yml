@@ -40,6 +40,7 @@ cert_expiration_threshold_days: 365
 expiring_threshold: 90
 enable_caa: true
 captcha_threshold: 3
+require_signup_password: true
 intermediate_certs_path: "<%=Rails.root%>/public/cert_bundles/"
 #header_phone_numbers: "toll free: 1-877-SSL-Secure (1-877-775-7328); intl: +1-SSL-Certificate (+1-775-237-8434)"
 header_phone_numbers: "+1-SSL-Certificate (+1-775-237-8434) or toll free 877-SSL-Secure"

@@ -4,6 +4,9 @@ class Contact < ActiveRecord::Base
 
   belongs_to :contactable, polymorphic: true
   has_many   :order_contacts, foreign_key: :parent_id, class_name: 'Contact'
+
+  has_many    :notification_groups_subjects, as: :subjectable
+  has_many    :notification_groups, through: :notification_groups_subjects
   
   attr_accessor :update_parent, :administrative_role, :billing_role, :technical_role, :validation_role
   

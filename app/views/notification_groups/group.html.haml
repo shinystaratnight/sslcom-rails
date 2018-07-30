@@ -1,0 +1,47 @@
+-content_for :title, @title
+-contacts_list = @contacts_list || []
+-slt_contacts_list = @slt_contacts_list || []
+-subjects_list = @subjects_list || []
+-slt_subjects_list = @slt_subjects_list || []
+-cos_list = @cos_list || []
+-slt_cos_list = @slt_cos_list || []
+
+= render :partial => 'index_scripts'
+
+.note_group_container
+  %h3
+    \#{@title}
+  =form_tag register_notification_group_notification_groups_path(params[:ssl_slug], @notification_group), :method => :post do
+    #stylized.default_form
+      .subheading Friendly Name
+      .group_block.clearfix
+        =text_field_tag "friendly_name", @notification_group ? @notification_group.friendly_name : ''
+      .subheading Monitor These Domains
+      .group_block.clearfix
+        #subjects-container
+          =select_tag :subjects_list, options_for_select(subjects_list, selected: slt_subjects_list),
+            multiple: true, data: {placeholder: "click here to add/remove/edit domains."}
+      .subheading Monitor These Certificates
+      .group_block.clearfix
+        #cos-container
+          =select_tag :cos_list, options_for_select(cos_list, selected: slt_cos_list),
+            multiple: true, data: {placeholder: "click here to list available certificate orders to monitor."}
+      .subheading Notify These Contacts on Expiration
+      .group_block.clearfix
+        #contacts-container
+          =select_tag :contacts_list, options_for_select(contacts_list, selected: slt_contacts_list),
+            multiple: true, data: {placeholder: "click here to add/remove/edit email addresses or contacts."}
+      .subheading Expiration Reminder
+      -5.times do |i|
+        -init_days = ['60', '30', '15', '1', '-15']
+        -ngt = @notification_group ? @notification_group.preferred_notification_group_triggers(ReminderTrigger.find(i + 1)) : init_days[i]
+        .group_block.clearfix(style="#{'margin-bottom: 1em;' if i==4}")
+          %label
+            Send notification
+            %span.label_desc integer value in range #{SslAccount::TRIGGER_RANGE.to_s}
+          %div(class="#{reminder_trigger_errors(ngt)}")
+            =text_field_tag "notification_group_triggers[]", ngt , :size=>2, :max_size=>2, :class=>'reminder_days'
+          .field_desc
+            %em days from expiration
+    #button_container
+      #next_submit=image_submit_tag "bl_submit_button.gif", class: 'edit_setting_btn'

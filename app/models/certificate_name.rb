@@ -20,6 +20,9 @@ class CertificateName < ActiveRecord::Base
       where{dcv_method >> ['http','https','email']}.last
     end
   end
+  has_many    :notification_groups_subjects, as: :subjectable
+  has_many    :notification_groups, through: :notification_groups_subjects
+
   attr_accessor :csr
 
   def is_ip_address?

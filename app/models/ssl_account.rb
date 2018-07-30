@@ -13,6 +13,7 @@ class SslAccount < ActiveRecord::Base
   has_many  :validations, through: :certificate_orders
   has_many  :site_seals, through: :certificate_orders
   has_many  :certificate_contents, through: :certificate_orders
+  has_many  :certificate_names, through: :certificate_orders
   has_many  :signed_certificates, through: :certificate_contents
   has_many  :certificate_contacts, through: :certificate_contents
   has_one   :reseller, :dependent => :destroy
@@ -39,6 +40,18 @@ class SslAccount < ActiveRecord::Base
   has_many  :all_saved_contacts, as: :contactable, class_name: 'Contact', dependent: :destroy
   has_many  :cdns
   has_many  :tags
+  has_many  :notification_groups
+  has_many  :folders, dependent: :destroy
+  has_many :certificate_names, through: :certificate_contents do
+    def sslcom
+      where.not certificate_contents: {ca_id: nil}
+    end
+  end
+  has_many :domain_control_validations, through: :certificate_names do
+    def sslcom
+      where.not certificate_contents: {ca_id: nil}
+    end
+  end
 
   unless MIGRATING_FROM_LEGACY
     #has_many  :orders, :as=>:billable, :after_add=>:build_line_items
