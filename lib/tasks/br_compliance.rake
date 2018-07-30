@@ -1,4 +1,4 @@
-namespace :cas do
+namespace :validation_compliances do
   desc "Domain Control Validation Compliance Mappings"
   task seed_validation_compliances: :environment do
     if ENV['RESET']
