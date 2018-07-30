@@ -51,16 +51,62 @@ class ValidationsController < ApplicationController
         validated_domain_arry = []
 
         if @ds
+          # tmpCnt = 0
+          # before = DateTime.now
           @ds.each do |key, value|
+            # if value['status'].casecmp('validated') != 0
+            #   if tmpCnt < 199
+            #     tmpCnt += 1
+            #     validated_domain_arry << key
+            #     cache = Rails.cache.read(params[:certificate_order_id] + '_' + key)
+            #
+            #     if cache.blank?
+            #       cn = @certificate_order.certificate_content.certificate_names.find_by_name(key)
+            #       dcv = cn.blank? ? nil : cn.domain_control_validations.last
+            #       value['attempted_on'] = dcv.blank? ? 'n/a' : dcv.created_at
+            #
+            #       Rails.cache.write(params[:certificate_order_id] + '_' + key, value['attempted_on'])
+            #     else
+            #       value['attempted_on'] = cache
+            #     end
+            #   else
+            #     @all_validated = false if @all_validated
+            #   end
+            # else
+            #   validated_domain_arry << key
+            #   cache = Rails.cache.read(params[:certificate_order_id] + '_' + key)
+            #
+            #   if cache.blank?
+            #     cn = @certificate_order.certificate_content.certificate_names.find_by_name(key)
+            #     dcv = cn.blank? ? nil : cn.domain_control_validations.last
+            #     value['attempted_on'] = dcv.blank? ? 'n/a' : dcv.created_at
+            #
+            #     Rails.cache.write(params[:certificate_order_id] + '_' + key, value['attempted_on'])
+            #   else
+            #     value['attempted_on'] = cache
+            #   end
+            # end
+
             if value['status'].casecmp('validated') != 0
               @all_validated = false if @all_validated
             else
               validated_domain_arry << key
-              cn = @certificate_order.certificate_content.certificate_names.find_by_name(key)
-              dcv = cn.blank? ? nil : cn.domain_control_validations.last
-              value['attempted_on'] = dcv.blank? ? 'n/a' : dcv.created_at
+              ext_order_number = @certificate_order.external_order_number ? @certificate_order.external_order_number : 'eon'
+              cache = Rails.cache.read(params[:certificate_order_id] + ':' + ext_order_number + ':' + key)
+
+              if cache.blank?
+                cn = @certificate_order.certificate_content.certificate_names.find_by_name(key)
+                dcv = cn.blank? ? nil : cn.domain_control_validations.last
+                value['attempted_on'] = dcv.blank? ? 'n/a' : dcv.created_at
+
+                Rails.cache.write(params[:certificate_order_id] + ':' + ext_order_number + ':' + key, value['attempted_on'])
+              else
+                value['attempted_on'] = cache
+              end
             end
           end
+          # after = DateTime.now
+          # subtract = after.to_i - before.to_i
 
           @validated_domains = validated_domain_arry.join(',')
 
@@ -81,9 +127,11 @@ class ValidationsController < ApplicationController
       # order_number = CertificateOrder.find_by_ref(params['certificate_order_id']).external_order_number
       certificate_order = (current_user.is_system_admins? ? CertificateOrder :
                                current_user.ssl_account.certificate_orders).find_by_ref(params[:certificate_order_id])
+      certificate_content = certificate_order.certificate_content
+      certificate_names = certificate_content.certificate_names
 
       domain_name_arry.each do |domain_name|
-        cn_obj = certificate_order.certificate_content.certificate_names.find_by_name(domain_name)
+        cn_obj = certificate_names.find_by_name(domain_name)
         next unless cn_obj
 
         res = ComodoApi.auto_remove_domain(domain_name: cn_obj, order_number: certificate_order.external_order_number)
@@ -101,6 +149,10 @@ class ValidationsController < ApplicationController
         end
 
         if error_code.zero?
+          # Remove Domain from Notification Group
+          NotificationGroup.auto_manage_cert_name(certificate_content, 'delete', cn_obj)
+
+          # Remove Domain Object
           cn_obj.destroy
 
           # TODO: Remove cache for removed domain
@@ -139,7 +191,7 @@ class ValidationsController < ApplicationController
 
   def get_asynch_domains
     # @cache = read_fragment(params[:certificate_order_id] + ':' + params['domain_name'])
-    cache = Rails.cache.read(params[:certificate_order_id] + ':' + params['domain_name'])
+    cache = Rails.cache.read(params[:certificate_order_id] + ':' + params[:ext_order_number] + ':' + params['domain_name'])
 
     if cache.blank? or cache=="{}"
       co = (current_user.is_system_admins? ? CertificateOrder :
@@ -152,7 +204,6 @@ class ValidationsController < ApplicationController
 
         domain_status = params['is_ucc'] == 'true' ? (ds && ds[cn.name] ? ds[cn.name]['status'] : nil) : (ds && ds.to_a[0] && ds.to_a[0][1] ? ds.to_a[0][1]['status'] : nil)
         domain_method = params['is_ucc'] == 'true' ? (ds && ds[cn.name] ? ds[cn.name]['method'] : nil) : (ds && ds.to_a[0] && ds.to_a[0][1] ? ds.to_a[0][1]['method'] : nil)
-
 
         if co.external_order_number
           dcv = cn.domain_control_validations.last
@@ -264,7 +315,11 @@ class ValidationsController < ApplicationController
 
       # write_fragment(params[:certificate_order_id] + ':' + params['domain_name'], returnObj.to_json)
       if !returnObj.blank? and returnObj['tr_info']['status'] == 'validated'
-        Rails.cache.write(params[:certificate_order_id] + ':' + params['domain_name'], returnObj.to_json)
+        Rails.cache.write(params[:certificate_order_id] + ':' + params[:ext_order_number] + ':' + params['domain_name'],
+                          returnObj.to_json)
+      else
+        Rails.cache.write(params[:certificate_order_id] + ':' + params[:ext_order_number] + ':' + params['domain_name'],
+                          returnObj.to_json, :expires_in => 10.minutes)
       end
 
       render :json => returnObj

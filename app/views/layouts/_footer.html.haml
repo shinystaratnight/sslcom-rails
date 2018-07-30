@@ -103,10 +103,10 @@
     $("a[rel^='prettyPhoto']").prettyPhoto({social_tools: false, allowresize:false, theme:'pp_default', showTitle:false});
     $('.striped_div > div:nth-child(odd)').css("background-color","#eeeeee");
     $('.striped_tr tr:nth-child(odd)').css("background-color","#eeeeee");
-    $('#close_window').live('click', function(){
+    $('#close_window').on('click', function(){
       window.close();
     });
-    $('.close').live('click', function(){
+    $('.close').on('click', function(){
       $(this).remove();
     });
     $("input[name='next']").click(function(){

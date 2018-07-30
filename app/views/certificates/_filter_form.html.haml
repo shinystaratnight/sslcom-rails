@@ -1,0 +1,51 @@
+= form_tag(admin_index_certificates_path(@ssl_slug), method: :get, class: "filter-form", id: "frm-cert-filter", data: {display: params[:commit] == "Search"}) do
+  = render partial: "shared/sortable_fields"
+  %table
+    %tr
+      %td
+        .clearfix
+          = label_tag(:serial, "Serial:")
+          = text_field_tag(:serial, params[:serial])
+
+        .clearfix
+          = label_tag(:title, "Title:")
+          = text_field_tag(:title, params[:title])
+
+      %td  
+        .clearfix
+          = label_tag(:product, "Product:")
+          = text_field_tag(:product, params[:product])
+        
+        .clearfix
+          = label_tag(:description, "Description:")
+          = text_field_tag(:description, params[:description])
+
+      %td      
+        .clearfix
+          = label_tag(:reseller_tier_id, "Reseller:")
+          = select_tag(:reseller_tier_id,                                                                                   |
+            options_for_select(ResellerTier.all.map{|rt| ["#{rt.label} - #{rt.roles}", rt.id]}, params[:reseller_tier_id]), |
+            {include_blank: true})
+
+        .clearfix
+          = label_tag(:created_at, "Created:")
+          = select_tag(:created_at_type,                                         |
+            options_for_select(filter_operators_list, params[:created_at_type]))
+          
+          = date_field_tag(:created_at, nil, id: "mo-start-date", |
+            value: params[:created_at])
+        
+        .clearfix
+          = label_tag(:updated_at, "Updated:")
+          = select_tag(:updated_at_type,                                         |
+            options_for_select(filter_operators_list, params[:updated_at_type]))
+          
+          = date_field_tag(:updated_at, nil, id: "mo-end-date", value: params[:updated_at])
+
+    %tr
+      %td{colspan: '3'}
+        = link_to "Clear", admin_index_certificates_path(@ssl_slug, commit: "Search"),  |
+          class: "btn-filter-clear"
+
+        = submit_tag "Search", class: "btn-filter-search"
+

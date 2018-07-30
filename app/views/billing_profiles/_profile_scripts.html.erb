@@ -101,7 +101,7 @@ $('#payment_method_paypal, #funding_source_paypal').on('click', function(){
   }
 });
 
-$('#expand_register_card').live('click', function(){
+$('#expand_register_card').on('click', function(){
   if(profile_form_hidden){
     $.profileRequiredToggle('enable');
     $('#register_card_form').fadeIn();

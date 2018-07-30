@@ -1,5 +1,8 @@
 class Certificate < ActiveRecord::Base
   include CertificateType
+  include Filterable
+  include Sortable
+
   has_many    :product_variant_groups, :as => :variantable
   has_many    :product_variant_items, through: :product_variant_groups
   has_many    :validation_rulings, :as=>:validation_rulable
@@ -235,6 +238,31 @@ class Certificate < ActiveRecord::Base
       type = mapping=='renew' ? 1 : 2
       return Certificate.find_by_product(m[type]) if m[0].include?(description)
     end
+  end
+
+  def self.index_filter(params)
+    filters = {}
+    p = params
+    filters[:serial] = { 'LIKE' => p[:serial] } unless p[:serial].blank?
+    filters[:title] = { 'LIKE' => p[:title] } unless p[:title].blank?
+    filters[:product] = { 'LIKE' => p[:product] } unless p[:product].blank?
+    filters[:description] = { 'LIKE' => p[:description] } unless p[:description].blank?
+    unless p[:created_at_type].blank? || p[:created_at].blank?
+      operator = COMPARISON[p[:created_at_type].to_sym]
+      filters[:created_at] = { operator => DateTime.parse(p[:created_at]).beginning_of_day }
+    end
+    unless p[:updated_at_type].blank? || p[:updated_at].blank?
+      operator = COMPARISON[p[:updated_at_type].to_sym]
+      filters[:updated_at] = { operator => DateTime.parse(p[:updated_at]).end_of_day }
+    end
+    filters[:allow_wildcard_ucc] = { '=' => p[:wildcard] } unless p[:wildcard].blank?
+    filters[:reseller_tier_id] = { '=' => p[:reseller_tier_id] } unless p[:reseller_tier_id].blank?
+    result = filter(filters)
+    result
+  end
+
+  def role_can_manage
+    Role.get_role_id Role::RA_ADMIN
   end
 
   def price=(amount)
