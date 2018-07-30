@@ -1274,6 +1274,7 @@ ActiveRecord::Schema.define(version: 20180730032858) do
     t.integer  "ca_id",                     limit: 4
   end
 
+  add_index "signed_certificates", ["ca_id"], name: "index_signed_certificates_on_ca_id", using: :btree
   add_index "signed_certificates", ["common_name"], name: "index_signed_certificates_on_common_name", using: :btree
   add_index "signed_certificates", ["csr_id"], name: "index_signed_certificates_on_csr_id", using: :btree
 
@@ -1564,9 +1565,10 @@ ActiveRecord::Schema.define(version: 20180730032858) do
   end
 
   create_table "validation_compliances", force: :cascade do |t|
-    t.string   "document",   limit: 255
-    t.string   "version",    limit: 255
-    t.string   "section",    limit: 255
+    t.string   "document",    limit: 255
+    t.string   "version",     limit: 255
+    t.string   "section",     limit: 255
+    t.string   "description", limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -1688,4 +1690,5 @@ ActiveRecord::Schema.define(version: 20180730032858) do
   end
 
   add_foreign_key "cdns", "certificate_orders"
+  add_foreign_key "signed_certificates", "cas"
 end
