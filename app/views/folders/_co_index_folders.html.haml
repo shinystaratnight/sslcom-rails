@@ -22,14 +22,14 @@
     %tr
       %td
         #folder-tree-actions
-          = link_to "<i class='fa fa-plus'></i> Add Certificates To Folder".html_safe, |
+          = link_to "<i class='fa fa-plus'></i> Selected Certificates To Folder".html_safe, |
             '#', class: 'btn-co-folders', id: 'btn-co-folders-addcert'
             
           - url = add_certificate_orders_folder_url(@ssl_slug, '#')
           = form_for Folder.new, url: url, method: :put,  |
             data: {type: :json, initial_action: url},     |
             html: {id: 'frm-folder-add-certs', class: 'hidden'} do |f|
-            = f.text_field :folder_certificate_order_ids, value: @certificate_orders.map(&:ref).join(',')
+            = f.text_field :folder_certificate_order_ids, value: nil
 
           = link_to "<i class='fa fa-search'></i> Filter Certificates By Folders".html_safe, |
             search_certificate_orders_path(@ssl_slug),                                       |

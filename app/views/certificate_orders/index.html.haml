@@ -331,6 +331,9 @@
       SSL Certificates Management
       =will_paginate @certificate_orders
     %tr.heading_row
+      -if show_folders_container?
+        %th
+          %i.fa.fa-folder
       %td
       %th.name(scope="col")Subject
       %th(scope="col") Folder
@@ -343,6 +346,9 @@
         -cc = co.certificate_content
         -cn = (co.is_unused_credit? || cc.csr.blank?) ? nil : cc.csr.common_name
         %tr(alt="#{co.ref}")
+          -if show_folders_container?
+            %td
+              =check_box_tag :folder_add_co, 'yes', false, id: co.ref, class: 'chk-folder-add-co'
           %td.dropdown
             -if !co.is_expired_credit? and permitted_to?(:index, co)
               =image_tag 'expand.png'
@@ -350,7 +356,7 @@
             =render :partial=>'subject_column', :locals=>{:certificate_order=>co}
           %td.co-folder-name
             - if co.folder
-              %i.fa.fa-folder-open
+              %i.fa.fa-folder-open.icon-co-add-folder
           %td.status_message(class="#{status_class(cc)}")
             #{certificate_order_status(cc)}
           %td

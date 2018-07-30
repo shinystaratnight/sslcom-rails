@@ -238,9 +238,19 @@ $(function($) {
     $('#btn-co-filter-by').attr('href', new_url);
   };
 
+  getCheckedCertOrders = function() {
+    var cert_orders  = $('.chk-folder-add-co:checkbox:checked').map(function() {
+      return this.id;
+    }).get();
+    return cert_orders;
+  };
+
   addCertOrdersJstree = function() {
     var form = $('#frm-folder-add-certs'),
       node_id = fetchFolderId(getJstreeRef().get_checked()[0]);
+    form.find("#folder_folder_certificate_order_ids").val(
+      getCheckedCertOrders().join(',')
+    );
     updateFolderId(form, node_id);
     form.submit();
   };
@@ -281,12 +291,15 @@ $(function($) {
 
   $('#btn-co-folders-addcert').on('click', function(e) {
     e.preventDefault();
-    var selected = getJstreeRef().get_checked().length;
+    var selected = getJstreeRef().get_checked().length,
+        selected_co = getCheckedCertOrders();
     
     if ( selected == 0) {
       alert('Check at least one folder.');
     } else if (selected > 1) {
       alert('You checked ' + selected + ' folders. Please select only one folder to move certificates.' );
+    } else if (selected_co.length == 0) {
+      alert('Select at least one certificate below to put in folder.' );
     } else {
       addCertOrdersJstree();
     }
