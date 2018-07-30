@@ -4,6 +4,7 @@ class CreateValidationCompliance < ActiveRecord::Migration
       t.string :document
       t.string :version
       t.string :section
+      t.string :description
       t.timestamps
     end
 

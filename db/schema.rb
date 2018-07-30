@@ -1533,9 +1533,10 @@ ActiveRecord::Schema.define(version: 20180730032858) do
   end
 
   create_table "validation_compliances", force: :cascade do |t|
-    t.string   "document",   limit: 255
-    t.string   "version",    limit: 255
-    t.string   "section",    limit: 255
+    t.string   "document",    limit: 255
+    t.string   "version",     limit: 255
+    t.string   "section",     limit: 255
+    t.string   "description", limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
   end
