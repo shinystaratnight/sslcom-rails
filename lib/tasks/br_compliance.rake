@@ -1,6 +1,6 @@
 namespace :cas do
   desc "Domain Control Validation Compliance Mappings"
-  task seed_ejbca_profiles: :environment do
+  task seed_validation_compliances: :environment do
     if ENV['RESET']
       ValidationCompliance.delete_all
     end
