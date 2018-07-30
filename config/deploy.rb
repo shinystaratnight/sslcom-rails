@@ -32,7 +32,7 @@ set :user, "ubuntu"
 set :branch, "staging"
 ssh_options[:keys] = [File.join(ENV["HOME"], ".ssh", "id_rsa")]
 
-server = "sandbox3"
+server = "sandbox4"
 case server
   when "sandbox"
     require "rvm/capistrano"
@@ -47,7 +47,12 @@ case server
   when "sandbox3"
     require "rvm/capistrano"
     set :branch, "sandbox3_ssl_com"
-    set :application, 'sandbox3_ssl_com'
+    set :application, 'ssl_com_test'
+    set :deploy_to, "/home/ubuntu/sites/#{application}"
+  when "sandbox4"
+    require "rvm/capistrano"
+    set :branch, "sandbox4_ssl_com"
+    set :application, 'ssl_com_test'
     set :deploy_to, "/home/ubuntu/sites/#{application}"
   when "staging"
     require "rvm/capistrano"
