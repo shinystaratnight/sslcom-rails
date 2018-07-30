@@ -578,10 +578,6 @@ jQuery(function($) {
       $(this).parents().filter('form').ajaxSubmit();
     });
 
-    $('#certificate_orders').on('keyup', '#certificate_order_notes', function() {
-      $(this).parents().filter('form').ajaxSubmit();
-    });
-
     // Cancel button
     if (url.substr(url.lastIndexOf('/') + 1, (url.indexOf('?') != -1 ? url.indexOf('?') : url.length)) == 'edit') {
       <%if @certificate_order%>
@@ -605,6 +601,9 @@ jQuery(function($) {
       <%end%>
     }
 
+    $('#certificate_orders').on('keyup', '#certificate_order_notes', function() {
+      $(this).parents().filter('form').ajaxSubmit();
+    });
   });
 });
 </script>
