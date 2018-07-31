@@ -171,7 +171,7 @@ class CertificateOrder < ActiveRecord::Base
     end
     %w(ref).each do |field|
       query=filters[field.to_sym]
-      result = result.where(field.to_sym  >> query.split(',')) if query
+      result = result.where{field  >> query.split(',')} if query
     end
     %w(country strength).each do |field|
       query=filters[field.to_sym]
