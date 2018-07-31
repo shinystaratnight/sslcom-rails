@@ -545,7 +545,7 @@ jQuery(function($) {
         }
       } else {
         var cert_order_ref = currentElmt.parents().filter('tr').attr('alt');
-        var ajaxUrl = '<%=show_cert_order_certificate_orders_path%>';
+        var ajaxUrl = '<%=show_cert_order_certificate_orders_path(folders: show_folders_container?)%>';
 
         $.ajax({
           url: ajaxUrl,
