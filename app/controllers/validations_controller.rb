@@ -160,7 +160,7 @@ class ValidationsController < ApplicationController
     redirect_to url and return unless url.blank?
   end
 
-  def dcv_email_validate
+  def dcv_validate
     @certificate_order = CertificateOrder.find_by_ref(params['certificate_order_id'])
     cc = @certificate_order.certificate_content
     if(params['authenticity_token'])

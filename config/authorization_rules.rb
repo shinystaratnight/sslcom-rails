@@ -344,7 +344,7 @@ authorization do
     # Validations
     #
     # has_permission_on :validations, :to => [:create]
-    has_permission_on :validations, :to => [:read, :update, :create, :dcv_email_validate] do
+    has_permission_on :validations, :to => [:read, :update, :create, :dcv_validate] do
       if_attribute :users => contains {user}
     end
     #

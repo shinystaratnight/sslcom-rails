@@ -102,8 +102,8 @@ class OrderNotifier < ActionMailer::Base
 
   def dcv_email_send(certificate_order, email_address, identifier, domain_list)
     @certificate_order = certificate_order
-    params      = {certificate_order_id: @certificate_order.ref, guid: identifier}
-    @validation_url = dcv_email_validate_certificate_order_validation_url(params)
+    params      = {certificate_order_id: @certificate_order.ref}
+    @validation_url = dcv_validate_certificate_order_validation_url(params)
     @contact = email_address
     @domains = domain_list
     @identifier = identifier
