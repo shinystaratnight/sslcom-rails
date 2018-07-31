@@ -191,7 +191,7 @@ class NotificationGroupsController < ApplicationController
         if contact.split('---').size == 1
           if contact !~ /\D/
             notification_group.notification_groups_contacts
-                .where(subjectable_type: 'CertificateContact', contactable_id: contact).destroy_all
+                .where(contactable_type: 'CertificateContact', contactable_id: contact).destroy_all
           else
             notification_group.notification_groups_contacts.where(email_address: contact).destroy_all
           end
