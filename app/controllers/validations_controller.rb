@@ -50,80 +50,82 @@ class ValidationsController < ApplicationController
         @validated_domains = ''
         validated_domain_arry = []
 
-        cnames = @certificate_order.certificate_content.certificate_names
-        cnames.each do |cn|
-          dcv = cn.domain_control_validations.last
-          unless dcv && dcv.identifier_found
-            @all_validated = false if @all_validated
-          else
-            validated_domain_arry << cn.name
-          end
-        end
-        @validated_domains = validated_domain_arry.join(',')
-
-        if @ds
-          # tmpCnt = 0
-          # before = DateTime.now
-          @ds.each do |key, value|
-            # if value['status'].casecmp('validated') != 0
-            #   if tmpCnt < 199
-            #     tmpCnt += 1
-            #     validated_domain_arry << key
-            #     cache = Rails.cache.read(params[:certificate_order_id] + '_' + key)
-            #
-            #     if cache.blank?
-            #       cn = @certificate_order.certificate_content.certificate_names.find_by_name(key)
-            #       dcv = cn.blank? ? nil : cn.domain_control_validations.last
-            #       value['attempted_on'] = dcv.blank? ? 'n/a' : dcv.created_at
-            #
-            #       Rails.cache.write(params[:certificate_order_id] + '_' + key, value['attempted_on'])
-            #     else
-            #       value['attempted_on'] = cache
-            #     end
-            #   else
-            #     @all_validated = false if @all_validated
-            #   end
-            # else
-            #   validated_domain_arry << key
-            #   cache = Rails.cache.read(params[:certificate_order_id] + '_' + key)
-            #
-            #   if cache.blank?
-            #     cn = @certificate_order.certificate_content.certificate_names.find_by_name(key)
-            #     dcv = cn.blank? ? nil : cn.domain_control_validations.last
-            #     value['attempted_on'] = dcv.blank? ? 'n/a' : dcv.created_at
-            #
-            #     Rails.cache.write(params[:certificate_order_id] + '_' + key, value['attempted_on'])
-            #   else
-            #     value['attempted_on'] = cache
-            #   end
-            # end
-
-            if value['status'].casecmp('validated') != 0
+        unless @certificate_order.certificate_content.ca_id.nil
+          cnames = @certificate_order.certificate_content.certificate_names
+          cnames.each do |cn|
+            dcv = cn.domain_control_validations.last
+            unless dcv && dcv.identifier_found
               @all_validated = false if @all_validated
             else
-              validated_domain_arry << key
-              ext_order_number = @certificate_order.external_order_number ? @certificate_order.external_order_number : 'eon'
-              cache = Rails.cache.read(params[:certificate_order_id] + ':' + ext_order_number + ':' + key)
-
-              if cache.blank?
-                cn = @certificate_order.certificate_content.certificate_names.find_by_name(key)
-                dcv = cn.blank? ? nil : cn.domain_control_validations.last
-                value['attempted_on'] = dcv.blank? ? 'n/a' : dcv.created_at
-
-                Rails.cache.write(params[:certificate_order_id] + ':' + ext_order_number + ':' + key, value['attempted_on'])
-              else
-                value['attempted_on'] = cache
-              end
+              validated_domain_arry << cn.name
             end
           end
-          # after = DateTime.now
-          # subtract = after.to_i - before.to_i
-
           @validated_domains = validated_domain_arry.join(',')
+        else
+          if @ds
+            # tmpCnt = 0
+            # before = DateTime.now
+            @ds.each do |key, value|
+              # if value['status'].casecmp('validated') != 0
+              #   if tmpCnt < 199
+              #     tmpCnt += 1
+              #     validated_domain_arry << key
+              #     cache = Rails.cache.read(params[:certificate_order_id] + '_' + key)
+              #
+              #     if cache.blank?
+              #       cn = @certificate_order.certificate_content.certificate_names.find_by_name(key)
+              #       dcv = cn.blank? ? nil : cn.domain_control_validations.last
+              #       value['attempted_on'] = dcv.blank? ? 'n/a' : dcv.created_at
+              #
+              #       Rails.cache.write(params[:certificate_order_id] + '_' + key, value['attempted_on'])
+              #     else
+              #       value['attempted_on'] = cache
+              #     end
+              #   else
+              #     @all_validated = false if @all_validated
+              #   end
+              # else
+              #   validated_domain_arry << key
+              #   cache = Rails.cache.read(params[:certificate_order_id] + '_' + key)
+              #
+              #   if cache.blank?
+              #     cn = @certificate_order.certificate_content.certificate_names.find_by_name(key)
+              #     dcv = cn.blank? ? nil : cn.domain_control_validations.last
+              #     value['attempted_on'] = dcv.blank? ? 'n/a' : dcv.created_at
+              #
+              #     Rails.cache.write(params[:certificate_order_id] + '_' + key, value['attempted_on'])
+              #   else
+              #     value['attempted_on'] = cache
+              #   end
+              # end
 
-          # if all_validated
-          #   url=certificate_order_path(@ssl_slug, @certificate_order)
-          # end
+              if value['status'].casecmp('validated') != 0
+                @all_validated = false if @all_validated
+              else
+                validated_domain_arry << key
+                ext_order_number = @certificate_order.external_order_number ? @certificate_order.external_order_number : 'eon'
+                cache = Rails.cache.read(params[:certificate_order_id] + ':' + ext_order_number + ':' + key)
+
+                if cache.blank?
+                  cn = @certificate_order.certificate_content.certificate_names.find_by_name(key)
+                  dcv = cn.blank? ? nil : cn.domain_control_validations.last
+                  value['attempted_on'] = dcv.blank? ? 'n/a' : dcv.created_at
+
+                  Rails.cache.write(params[:certificate_order_id] + ':' + ext_order_number + ':' + key, value['attempted_on'])
+                else
+                  value['attempted_on'] = cache
+                end
+              end
+            end
+            # after = DateTime.now
+            # subtract = after.to_i - before.to_i
+
+            @validated_domains = validated_domain_arry.join(',')
+
+            # if all_validated
+            #   url=certificate_order_path(@ssl_slug, @certificate_order)
+            # end
+          end
         end
       end
     end
