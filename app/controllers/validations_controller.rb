@@ -44,17 +44,43 @@ class ValidationsController < ApplicationController
           format.html { redirect_to certificate_order_path({id: @certificate_order.ref}.merge!(checkout))}
         end
       else
-        mdc_validation = ComodoApi.mdc_status(@certificate_order)
-        @ds = mdc_validation.domain_status
         @all_validated = true
         @validated_domains = ''
         validated_domain_arry = []
 
-        unless @certificate_order.certificate_content.ca_id.nil
+        unless @certificate_order.certificate_content.ca_id.nil?
           cnames = @certificate_order.certificate_content.certificate_names
+          team_cnames = current_user.ssl_account.certificate_names
+
+          # Team level validation check
           cnames.each do |cn|
-            dcv = cn.domain_control_validations.last
-            unless dcv && dcv.identifier_found
+            team_level_validated = false
+            team_cnames.each do |team_cn|
+              if team_cn.name == cn.name
+                # Check if Comodo order or not
+                if team_cn.certificate_content.ca_id.nil?
+                  mdc_validation = ComodoApi.mdc_status(team_cn.certificate_content.certificate_order)
+                  ds = mdc_validation.domain_status
+                  if ds
+                    ds.each do |key, value|
+                      if key == team_cn.name
+                        if value['status'].casecmp('validated') != 0
+                          team_level_validated = true
+                          break
+                        end
+                      end
+                    end
+                  end
+                else
+                  team_dcv = team_cn.domain_control_validations.last
+                  if team_dcv && team_dcv.identifier_found
+                    team_level_validated = true
+                  end
+                end
+                break if team_level_validated
+              end
+            end
+            unless team_level_validated
               @all_validated = false if @all_validated
             else
               validated_domain_arry << cn.name
@@ -62,6 +88,8 @@ class ValidationsController < ApplicationController
           end
           @validated_domains = validated_domain_arry.join(',')
         else
+          mdc_validation = ComodoApi.mdc_status(@certificate_order)
+          @ds = mdc_validation.domain_status
           if @ds
             # tmpCnt = 0
             # before = DateTime.now
@@ -134,14 +162,20 @@ class ValidationsController < ApplicationController
 
   def dcv_email_validate
     @certificate_order = CertificateOrder.find_by_ref(params['certificate_order_id'])
+    cc = @certificate_order.certificate_content
     if(params['authenticity_token'])
       identifier = params['validate_code']
-      cnames = @certificate_order.certificate_content.certificate_names
+      cnames = cc.certificate_names
+      all_validated = true
       cnames.each do |cn|
         dcv = cn.domain_control_validations.last
         if dcv.identifier == identifier
           dcv.update_attribute(:identifier_found, true)
         end
+        all_validated = false unless dcv.identifier_found
+      end
+      if all_validated
+        cc.validate! unless cc.validated?
       end
     end
   end

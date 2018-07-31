@@ -235,7 +235,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
 
           unless @result.cert_names.blank?
             @result.cert_names.keys.each do |key|
-              byebug
+              #byebug
               # expire_fragment(params[:ref] + ':' + key)
               Rails.cache.delete(params[:ref] + ':' + ext_order_number + ':' + key)
 
