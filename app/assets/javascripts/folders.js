@@ -305,4 +305,30 @@ $(function($) {
     }
   });
   
+  $('#co-folder-column').on('click', function(e) {
+    $('.chk-folder-add-co').click();
+  });
+
+  /*
+   * Change Folder Modal
+   */
+  var co_id = '#folders-tree-modal',
+    checked = [];
+  
+  addCertOrderJstree = function(folder_id) {
+    var form = $('#frm-folder-add-cert');
+    updateFolderId(form, fetchFolderId(folder_id));
+  };
+
+  // Can only select one folder.
+  $(co_id).on('check_node.jstree', function (e, data) {
+    checked = $(co_id).jstree("get_checked");
+    var cur_checked = checked.join(','),
+      folder_id = data.node.id;
+    cur_checked = cur_checked
+      .replace(',' + folder_id, '')
+      .replace(folder_id, '');
+    $(co_id).jstree('uncheck_node', cur_checked);
+    addCertOrderJstree(folder_id);
+  });
 });

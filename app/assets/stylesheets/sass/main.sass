@@ -7114,6 +7114,9 @@ span.notifications-teams
 /*
  * Tags Input Container
  */
+#co-folder-column
+  cursor: pointer
+
 .lnk-popular-tags
   background-color: $base_green
   border: 1px solid $base_green
@@ -7321,6 +7324,7 @@ span.notifications-teams
 
 .icon-co-add-folder
   color: $base_green
+  cursor: pointer
 
 #co-folders-container
   margin: 0.8em 0 0.5em
@@ -7362,3 +7366,26 @@ span.notifications-teams
         border-bottom: 1px solid #ccf
         border-top: 1px solid #ccf
         padding: 1rem
+
+        #co-folders-header
+          font-weight: 500
+          float: right
+          width: 97%
+
+          div:first-child
+            margin-top: -0.5rem
+            letter-spacing: 0.8px
+
+          div:last-child
+            margin-top: 0.5rem
+            font-size: 1.1rem
+            margin-bottom: -0.5rem
+
+        #folder-tree-actions-hdr
+          float: right
+          width: 3%
+          i
+            cursor: pointer
+            color: #888
+            font-size: 1.7rem
+            

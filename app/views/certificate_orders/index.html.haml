@@ -313,7 +313,9 @@
 =render :partial=>'quick_links'
 
 -if show_folders_container?
-  =render partial: 'folders/co_index_folders'
+  =render partial: 'folders/co_index_folders', locals: {container_type: 'expanded'}
+-else
+  =render partial: 'folders/co_index_folders', locals: {container_type: 'closed'}
 
 #certificate_orders
   %table(cellspacing="0")
@@ -333,7 +335,7 @@
     %tr.heading_row
       -if show_folders_container?
         %th
-          %i.fa.fa-folder
+          %i.fa.fa-folder#co-folder-column
       %td
       %th.name(scope="col")Subject
       %th(scope="col") Folder
@@ -355,8 +357,10 @@
           %td.name
             =render :partial=>'subject_column', :locals=>{:certificate_order=>co}
           %td.co-folder-name
-            - if co.folder
-              %i.fa.fa-folder-open.icon-co-add-folder
+            -if co.folder
+              %i.fa.fa-folder-open.icon-co-add-folder{id: co.ref}
+            -else
+              %i.fa.fa-plus.icon-co-add-folder{id: co.ref}
           %td.status_message(class="#{status_class(cc)}")
             #{certificate_order_status(cc)}
           %td
@@ -365,3 +369,5 @@
             #{expires_on(cc)}
           %td.ssl_action
             #{action(co)}
+
+= render partial: '/folders/folder_tree_modal'
