@@ -196,7 +196,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
             # @result.order_status = ccr.response_certificate_status
 
             #Send validation email unless ca_id is nil
-            if @acr.certificate_content.ca_id.nil?
+            unless @acr.certificate_content.ca_id.nil?
               cnames = @acr.certificate_content.certificate_names
               email_for_identifier = ''
               identifier = ''
