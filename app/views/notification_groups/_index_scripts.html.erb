@@ -250,6 +250,12 @@
           }
         });
       });
+
+      var scanGroupsUrl = '<%=scan_groups_notification_groups_path(@ssl_slug)%>';
+      $('#btn_scan_groups').click(function(e) {
+        e.preventDefault();
+        $('#notification_group_list').attr('action', scanGroupsUrl).submit();
+      });
     });
   });
 </script>
