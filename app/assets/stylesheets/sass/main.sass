@@ -6934,8 +6934,7 @@ span.notifications-teams
 
   .ui-dialog-buttonpane
     font-size: 1.4rem
-    background-color: #eeeeee
-    margin: 0 !important
+    margin-bottom: -3rem !important
 
   .ui-dialog-buttonset button:nth-child(2) 
     color: #ffffff
@@ -7077,8 +7076,20 @@ span.notifications-teams
 .btn-cert-update
   border: 1px solid #334DFF
   background-color: #334DFF
-  font-size: 1rem 
-    
+  font-size: 1rem
+
+.btn-co-folders
+  border: 1px solid $base_green
+  background-color: $base_green
+  font-size: 1rem
+
+.btn-co-folders.sub-actions
+  border: 1px solid $base_green
+  background-color: white
+  color: $base_green
+  font-size: 1rem
+
+
 .btn-filter-search
   border: 1px solid #334DFF
   background-color: #334DFF
@@ -7113,6 +7124,9 @@ span.notifications-teams
 /*
  * Tags Input Container
  */
+#co-folder-column
+  cursor: pointer
+
 .lnk-popular-tags
   background-color: $base_green
   border: 1px solid $base_green
@@ -7205,7 +7219,7 @@ span.notifications-teams
       padding: 0
 
 /*
- * Certificates Edit for Admins 
+ * Certificates Edit for Admins
  */
 #ca-certificates-select
   width: 65% !important
@@ -7230,14 +7244,14 @@ span.notifications-teams
     text-align: center
     text-transform: uppercase
     margin-bottom: 1rem
-  
+
   .no-margin
     margin: 0
-  
+
   #pvg-open-form
     width: 25%
     margin: 2.5rem auto
-    
+
     #lnk-pvg-open-form
       border-radius: 3px
       border: 1px dashed lightgrey
@@ -7245,11 +7259,11 @@ span.notifications-teams
       font-size: 1.4rem
       font-weight: 600
       padding: 1rem 3rem
-    
+
   #pvg-actions
     text-align: center
     margin-bottom: 2.5rem
-    
+
     a
       display: inline
 
@@ -7257,15 +7271,18 @@ span.notifications-teams
         margin-right: 0
 
 /*
- * Certificates Index for Admins 
- */    
+ * Certificates Index for Admins
+ */
+.chk-folder-add-co
+  margin-left: 0.5rem
+
 #certificates-admin-index
   .serial
     font-weight: 600
-  
+
   .title
     font-size: 1.1rem
-  
+
   .ca
     font-size: 1rem
 
@@ -7308,16 +7325,20 @@ span.notifications-teams
 
   .jstree-folder-archive
     color: #990000
-
+  
   .jstree-co
     color: grey !important
 
 #lnk-folders-ql
   color: $base_green
 
+.icon-co-add-folder
+  color: $base_green
+  cursor: pointer
+
 #co-folders-container
   margin: 0.8em 0 0.5em
-
+  
   #folder-tree-fixed
     max-height: 250px
     overflow: scroll
@@ -7328,10 +7349,10 @@ span.notifications-teams
 
     &.sub-menu
       border-bottom: 1px solid #ccf
-
+    
     i
       font-size: 1.5rem
-
+ 
     .btn-co-folders
       margin-right: 1rem
       font-size: 1rem
@@ -7355,3 +7376,25 @@ span.notifications-teams
         border-bottom: 1px solid #ccf
         border-top: 1px solid #ccf
         padding: 1rem
+
+        #co-folders-header
+          font-weight: 500
+          float: right
+          width: 97%
+
+          div:first-child
+            margin-top: -0.5rem
+            letter-spacing: 0.8px
+
+          div:last-child
+            margin-top: 0.5rem
+            font-size: 1.1rem
+            margin-bottom: -0.5rem
+
+        #folder-tree-actions-hdr
+          float: right
+          width: 3%
+          i
+            cursor: pointer
+            color: #888
+            font-size: 1.7rem
