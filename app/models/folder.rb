@@ -25,6 +25,10 @@ class Folder < ActiveRecord::Base
     end
   end
 
+  def self.show_folders?
+    Settings.folders == "show"
+  end
+
   def folder_contents
     contents = []
     @total_certificate_orders = 0
