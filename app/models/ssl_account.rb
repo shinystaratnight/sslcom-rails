@@ -454,6 +454,14 @@ class SslAccount < ActiveRecord::Base
     return 'daily' if billing_daily?
     ''
   end
+
+  def validated_domains
+
+  end
+
+  def is_validated?(domain)
+    validated_domains.include?(domain)
+  end
   
   def get_invoice_pmt_description
     billing_monthly? ? Order::MI_PAYMENT : Order::DI_PAYMENT
