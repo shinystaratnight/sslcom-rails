@@ -456,7 +456,15 @@ class SslAccount < ActiveRecord::Base
   end
 
   def validated_domains
-
+    validated_domains = []
+    cnames = self.certificate_names
+    cnames.each do |cn|
+      dcv = cn.domain_control_validations.last
+      if dcv && dcv.identifier_found
+        validated_domains << cn.name unless validated_domains.include?(cn.name)
+      end
+    end
+    validated_domains
   end
 
   def is_validated?(domain)

@@ -57,25 +57,9 @@ class ValidationsController < ApplicationController
             team_level_validated = false
             team_cnames.each do |team_cn|
               if team_cn.name == cn.name
-                # Check if Comodo order or not
-                if team_cn.certificate_content.ca_id.nil?
-                  mdc_validation = ComodoApi.mdc_status(team_cn.certificate_content.certificate_order)
-                  ds = mdc_validation.domain_status
-                  if ds
-                    ds.each do |key, value|
-                      if key == team_cn.name
-                        if value['status'].casecmp('validated') != 0
-                          team_level_validated = true
-                          break
-                        end
-                      end
-                    end
-                  end
-                else
-                  team_dcv = team_cn.domain_control_validations.last
-                  if team_dcv && team_dcv.identifier_found
-                    team_level_validated = true
-                  end
+                team_dcv = team_cn.domain_control_validations.last
+                if team_dcv && team_dcv.identifier_found
+                  team_level_validated = true
                 end
                 break if team_level_validated
               end
