@@ -7126,6 +7126,7 @@ span.notifications-teams
 #notification_groups input[type='submit']
   margin-top: 13px
 
+.schedule_container,
 #contacts-container,
 #subjects-container,
 #cos-container,
@@ -7257,4 +7258,74 @@ span.notifications-teams
   
   .ca
     font-size: 1rem
->>>>>>> a9dbbbc18fd8c32e51120e6f92383bc3fa6d7457
+
+.schedule_type_block,
+.schedule_custom_block
+  .block_label
+    float: left
+    width: 110px
+    line-height: 20px
+    padding-right: 3px
+    text-align: right
+    font-size: 1.4em
+  .block_body
+    float: left
+    margin-bottom: 10px
+    width: 400px
+    .block_item
+      line-height: 20px
+      margin-bottom: 3px
+      .block_item_type
+        float: left
+        span
+          font-size: 1.4em
+          input[type='radio']
+            vertical-align: top
+            margin-top: 4px !important
+    .block_item_simple select
+      font-size: 1.2em !important
+      margin-bottom: 0px !important
+
+#wrap_note_group_filter
+  background: #EEE
+  border: 1px solid #CCF
+  font-size: 13px
+  color: #3c3c3c
+  padding: 1em
+  width: 610px
+  margin: auto
+
+  .wrap_filter_block
+    border-bottom: 1px solid #ccc
+    padding: 8px 0px
+    width: 600px
+    margin: auto
+    .filter_block
+      line-height: 20px
+      .block_label
+        font-weight: bold
+      .filter_item
+        padding-right: 10px
+        input[type='radio']
+          vertical-align: middle
+    .horizontal_align
+      .block_label
+        float: left
+        padding-right: 10px
+      .block_cont
+        float: left
+        .filter_item
+          float: left
+    .vertical_align
+      float: left
+      &:first-child
+        padding-left: 10px
+      .block_label
+        padding-bottom: 5px
+        padding-left: 15px
+      .filter_item
+        padding-bottom: 5px
+        width: 85px
+        padding: 0px 15px
+        select
+          height: 120px

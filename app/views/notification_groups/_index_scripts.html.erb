@@ -2,52 +2,7 @@
   jQuery.noConflict();
   jQuery(function($) {
     $(document).ready(function () {
-      $('#number_rows').change(function() {
-        $('#per_page').val($(this).val());
-        $('#hidden_form').submit();
-      });
-
-      $('.chk-remove').click(function() {
-        if ($(this).prop('checked')) {
-          $('#btn_remove_groups').attr('disabled', false);
-        } else {
-          var chk_remove_list = $('.chk-remove');
-          var exist_chk = false;
-
-          $.each(chk_remove_list, function(idx, chk_remove) {
-            if ($(chk_remove).prop('checked')) {
-              exist_chk = true;
-              return false;
-            }
-          });
-
-          exist_chk ? $('#btn_remove_groups').attr('disabled', false) : $('#btn_remove_groups').attr('disabled', true);
-        }
-      });
-
-      $('#btn_remove_groups').click(function(e) {
-        e.preventDefault();
-
-        var chk_remove_list = $('.chk-remove');
-        var confirmMsg = 'Are you sure you want to delete the following SSL Expiration Notification Group(s)?';
-        var chk_first_group = true
-
-        $.each(chk_remove_list, function(idx, chk_remove) {
-          if ($(chk_remove).prop('checked')) {
-            if (chk_first_group) {
-              chk_first_group = false
-              confirmMsg = confirmMsg.concat('\r\n      ' + $(chk_remove).attr('data-group-name'));
-            } else {
-              confirmMsg = confirmMsg.concat('\n      ' + $(chk_remove).attr('data-group-name'));
-            }
-          }
-        });
-
-        if (confirm(confirmMsg)) {
-          this.form.submit();
-        }
-      });
-
+      //******************** Notification group create / edit ********************
       $('#cos_list').select2({ tags: true });
 
       $('#cos_list').on('select2:opening select2:closing', function( event ) {
@@ -251,11 +206,202 @@
         });
       });
 
+      $('#weekday_custom_list').select2({ tags: true });
+      $('#month_custom_list').select2({ tags: true });
+      $('#day_custom_list').select2({ tags: true });
+      $('#hour_custom_list').select2({ tags: true });
+      $('#minute_custom_list').select2({ tags: true });
+
+      $('input[name="schedule_type"]').change(function() {
+        if ($(this).val() == 'true') {
+          $('.schedule_custom_block').hide();
+          $('#schedule_sub_type').show();
+        } else {
+          $('.schedule_custom_block').show();
+          $('#schedule_sub_type').hide();
+        }
+      });
+
+      $('input[name="weekday_type"]').change(function() {
+        if ($(this).val() == 'true') {
+          $('.block_item_weekday_custom').hide();
+        } else {
+          $('.block_item_weekday_custom').show();
+        }
+      });
+
+      $('input[name="month_type"]').change(function() {
+        if ($(this).val() == 'true') {
+          $('.block_item_month_custom').hide();
+        } else {
+          $('.block_item_month_custom').show();
+        }
+      });
+
+      $('input[name="day_type"]').change(function() {
+        if ($(this).val() == 'true') {
+          $('.block_item_day_custom').hide();
+        } else {
+          $('.block_item_day_custom').show();
+        }
+      });
+
+      $('input[name="hour_type"]').change(function() {
+        if ($(this).val() == 'true') {
+          $('.block_item_hour_custom').hide();
+        } else {
+          $('.block_item_hour_custom').show();
+        }
+      });
+
+      $('input[name="minute_type"]').change(function() {
+        if ($(this).val() == 'true') {
+          $('.block_item_minute_custom').hide();
+        } else {
+          $('.block_item_minute_custom').show();
+        }
+      });
+
+      var url = window.location.pathname;
+      if (url.substr(url.lastIndexOf('/') + 1, url.length) == 'new') {
+        $('.block_item_weekday_custom').hide();
+        $('.block_item_month_custom').hide();
+        $('.block_item_day_custom').hide();
+        $('.block_item_hour_custom').hide();
+        $('.block_item_minute_custom').hide();
+        $('.schedule_custom_block').hide();
+      }
+
+      //******************** Notification group list ********************
+      if (url.substr(url.lastIndexOf('/') + 1, url.length) == 'notification_groups') {
+        var search = '<%= @search%>';
+        if (search != '') {
+          search = JSON.parse(search);
+        }
+
+        if (search == "") {
+          $('.schedule_weekday').hide();
+          $('.schedule_month').hide();
+          $('.schedule_day').hide();
+          $('.schedule_hour').hide();
+          $('.schedule_minute').hide();
+
+          $('input[name="filter_type"][value="true"]').attr('checked', 'checked');
+          $('#wrap_schedule_type').hide();
+          $('#wrap_schedule_custom').hide();
+        }
+      }
+
+      $('input[name="filter_type"]').change(function() {
+        if ($(this).val() == 'true') {
+          $('input[name="filter_schedule_type"][value="true"]').attr('checked', 'checked');
+          $('#wrap_schedule_custom').hide();
+          $('#wrap_schedule_type').hide();
+        } else {
+          $('#wrap_schedule_type').show();
+          $('.schedule_simple').show();
+        }
+      });
+
+      $('input[name="filter_schedule_type"]').change(function() {
+        if ($(this).val() == 'true') {
+          $('#wrap_schedule_custom').hide();
+          $('.schedule_simple').show();
+        } else {
+          $('#wrap_schedule_custom').show();
+          $('.schedule_simple').hide();
+        }
+      });
+
+      $('input[name="filter_weekday_type"]').change(function() {
+        if ($(this).val() == 'true') {
+          $('.schedule_weekday').hide();
+        } else {
+          $('.schedule_weekday').show();
+        }
+      });
+      $('input[name="filter_month_type"]').change(function() {
+        if ($(this).val() == 'true') {
+          $('.schedule_month').hide();
+        } else {
+          $('.schedule_month').show();
+        }
+      });
+      $('input[name="filter_day_type"]').change(function() {
+        if ($(this).val() == 'true') {
+          $('.schedule_day').hide();
+        } else {
+          $('.schedule_day').show();
+        }
+      });
+      $('input[name="filter_hour_type"]').change(function() {
+        if ($(this).val() == 'true') {
+          $('.schedule_hour').hide();
+        } else {
+          $('.schedule_hour').show();
+        }
+      });
+      $('input[name="filter_minute_type"]').change(function() {
+        if ($(this).val() == 'true') {
+          $('.schedule_minute').hide();
+        } else {
+          $('.schedule_minute').show();
+        }
+      });
+
+      $('#number_rows').change(function() {
+        $('#per_page').val($(this).val());
+        $('#hidden_form').submit();
+      });
+
+      $('.chk-remove').click(function() {
+        if ($(this).prop('checked')) {
+          $('#btn_remove_groups').attr('disabled', false);
+        } else {
+          var chk_remove_list = $('.chk-remove');
+          var exist_chk = false;
+
+          $.each(chk_remove_list, function(idx, chk_remove) {
+            if ($(chk_remove).prop('checked')) {
+              exist_chk = true;
+              return false;
+            }
+          });
+
+          exist_chk ? $('#btn_remove_groups').attr('disabled', false) : $('#btn_remove_groups').attr('disabled', true);
+        }
+      });
+
+      $('#btn_remove_groups').click(function(e) {
+        e.preventDefault();
+
+        var chk_remove_list = $('.chk-remove');
+        var confirmMsg = 'Are you sure you want to delete the following SSL Expiration Notification Group(s)?';
+        var chk_first_group = true
+
+        $.each(chk_remove_list, function(idx, chk_remove) {
+          if ($(chk_remove).prop('checked')) {
+            if (chk_first_group) {
+              chk_first_group = false
+              confirmMsg = confirmMsg.concat('\r\n      ' + $(chk_remove).attr('data-group-name'));
+            } else {
+              confirmMsg = confirmMsg.concat('\n      ' + $(chk_remove).attr('data-group-name'));
+            }
+          }
+        });
+
+        if (confirm(confirmMsg)) {
+          this.form.submit();
+        }
+      });
+
+      // Scanning notification groups
       var scanGroupsUrl = '<%=scan_groups_notification_groups_path(@ssl_slug)%>';
       $('#btn_scan_groups').click(function(e) {
         e.preventDefault();
         $('#notification_group_list').attr('action', scanGroupsUrl).submit();
       });
+
     });
   });
 </script>
