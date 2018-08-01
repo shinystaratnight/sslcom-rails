@@ -144,6 +144,14 @@ SslCom::Application.routes.draw do
   end
 
   concern :teamable do
+    resources :folders, only: [:index, :create, :update, :destroy] do
+      get :children, on: :collection
+      member do
+        put :add_certificate_order
+        put :add_certificate_orders
+      end
+    end
+
     resources :invoices, only: [:index, :edit, :update, :show, :destroy] do
       member do
         get  :download
@@ -247,6 +255,14 @@ SslCom::Application.routes.draw do
       member do
         get :http_dcv_file
         get :verification_check
+      end
+    end
+
+    resources :notification_groups do
+      collection do
+        get :certificate_orders_domains_contacts
+        post :register_notification_group
+        post :remove_groups
       end
     end
 

@@ -3,6 +3,7 @@ class CertificateOrder < ActiveRecord::Base
   #using_access_control
   acts_as_sellable :cents => :amount, :currency => false
   belongs_to  :ssl_account
+  belongs_to  :folder
   has_many    :users, through: :ssl_account
   belongs_to  :validation
   has_many    :validation_histories, through: :validation
@@ -39,6 +40,8 @@ class CertificateOrder < ActiveRecord::Base
   has_many    :url_callbacks, as: :callbackable, :through=>:certificate_contents
   has_many    :taggings, as: :taggable
   has_many    :tags, through: :taggings
+  has_many    :notification_groups_subjects, as: :subjectable
+  has_many    :notification_groups, through: :notification_groups_subjects
 
   accepts_nested_attributes_for :certificate_contents, :allow_destroy => false
   attr_accessor :duration, :has_csr
@@ -97,7 +100,8 @@ class CertificateOrder < ActiveRecord::Base
                subject_alternative_names: nil, locality: nil, country:nil, signature: nil, fingerprint: nil, strength: nil,
                expires_at: nil, created_at: nil, login: nil, email: nil, account_number: nil, product: nil,
                decoded: nil, is_test: nil, order_by_csr: nil, physical_tokens: nil, issued_at: nil, notes: nil,
-               ref: nil, external_order_number: nil, status: nil, duration: nil, co_tags: nil, cc_tags: nil}
+               ref: nil, external_order_number: nil, status: nil, duration: nil, co_tags: nil, cc_tags: nil, 
+               folder_ids: nil}
     filters.each{|fn, fv|
       term.delete_if {|s|s =~ Regexp.new(fn.to_s+"\\:\\'?([^']*)\\'?"); filters[fn] ||= $1; $1}
     }
@@ -245,6 +249,12 @@ class CertificateOrder < ActiveRecord::Base
         end
       end
     end
+    %w(folder_ids).each do |field|
+      query = filters[field.to_sym]
+      if query
+        result = result.where(folder_id: query.split(',')) if query
+      end
+    end  
     result.uniq
   }
 
