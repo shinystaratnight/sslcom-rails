@@ -61,7 +61,7 @@ class FoldersController < ApplicationController
         render_try_again_error
       end
     else
-      render json: { folder: ['This folder is archived or cannot be deleted.'] },
+      render json: { folder: ['Archived and expired folders cannot be deleted.'] },
         status: :unprocessable_entity
     end
   end
@@ -121,7 +121,7 @@ class FoldersController < ApplicationController
 
   def update_default
     if @folder.archived?
-      render json: { archive: ['Archive folder cannot be set as default.'] },
+      render json: { archive: ['Archived folder cannot be set as default.'] },
         status: :unprocessable_entity
     else  
       if @folder.update(default: true)
