@@ -17,7 +17,7 @@ class FolderTree
       icon: get_icon(folder),
       type: 'folder',
       li_attr: get_li_attr(folder),
-      data: get_data(folder),
+      data: get_data(folder, tree_type),
       state: { opened: false },
       children: (children + co_children).flatten
     }
@@ -74,10 +74,41 @@ class FolderTree
     return { class: klass }
   end
 
-  def get_data(folder)
-    return {
+  def get_data(folder, tree_type=nil)
+    data = {
       archived: folder.archive?,
       default: folder.default?
     }
+    if tree_type && tree_type == 'co_folders_index'
+      cos = get_data_certificates(folder)
+      data = data.merge(cos);
+    end
+    return data
+  end
+
+  def get_data_certificates(folder)
+    data = {certificate_orders: []}
+    list = folder.certificate_orders.uniq
+    folder.certificate_orders.uniq.each do |co|
+      data[:certificate_orders].push co_common_name(co)
+    end
+    data.merge(certificate_orders_count: list.count)
+  end
+
+  def co_common_name(co)
+    if co.is_expired_credit?
+      cn = "expired certificate"
+    else
+      cn = if co.is_unused_credit?
+        "credit - #{co.certificate.description['certificate_type']} certificate"
+      else
+        if co.certificate.is_code_signing?
+          co.registrant.try(:company_name) || "#{co.certificate.description['certificate_type']} certificate"
+        else
+          co.common_name
+        end
+      end
+    end
+    "#{cn} (#{co.ref})"
   end
 end
