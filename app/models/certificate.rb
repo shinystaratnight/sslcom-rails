@@ -13,7 +13,11 @@ class Certificate < ActiveRecord::Base
       where status: CasCertificate::STATUS[:default]
     end
   end
-  has_many    :cas, through: :cas_certificates
+  has_many    :cas, through: :cas_certificates do
+    def default
+      where cas_certificates: {status: CasCertificate::STATUS[:default]}
+    end
+  end
   acts_as_publishable :live, :draft, :discontinue_sell
   belongs_to  :reseller_tier
 

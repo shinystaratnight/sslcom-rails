@@ -954,7 +954,7 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def apply_for_certificate(options={})
-    if [Ca::CERTLOCK_CA,Ca::SSLCOM_CA,Ca::MANAGEMENT_CA].include? options[:ca]
+    if !options[:send_to_ca].blank? or ([Ca::CERTLOCK_CA,Ca::SSLCOM_CA,Ca::MANAGEMENT_CA].include? options[:ca])
       SslcomCaApi.apply_for_certificate(self, options) if options[:current_user].blank? or
           options[:current_user].is_super_user?
     else

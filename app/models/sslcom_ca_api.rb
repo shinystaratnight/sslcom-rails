@@ -27,7 +27,9 @@ class SslcomCaApi
 
   # end entity profile details what will be in the certificate
   def self.end_entity_profile(options)
-    if options[:cc].certificate.is_evcs?
+    if options[:mapping]
+      options[:mapping].end_entity
+    elsif options[:cc].certificate.is_evcs?
         'EV_CS_CERT_EE'
     elsif options[:cc].certificate.is_cs?
         'CS_CERT_EE'
@@ -41,7 +43,9 @@ class SslcomCaApi
   end
 
   def self.certificate_profile(options)
-    if options[:cc].certificate.is_evcs?
+    if options[:mapping]
+      options[:mapping].profile_name
+    elsif options[:cc].certificate.is_evcs?
       "EV_RSA_CS_CERT"
     elsif options[:cc].certificate.is_cs?
       "RSA_CS_CERT"
@@ -51,7 +55,9 @@ class SslcomCaApi
   end
 
   def self.ca_name(options)
-    if options[:ca]==Ca::CERTLOCK_CA
+    if options[:mapping]
+      options[:mapping].ca_name
+    elsif options[:ca]==Ca::CERTLOCK_CA
       case options[:cc].certificate.product
         when /^ev/
           sig_alg_parameter(options[:cc].csr) =~ /rsa/i ? 'CertLock-SubCA-EV-SSL-RSA-4096' :
@@ -144,6 +150,7 @@ class SslcomCaApi
   def self.apply_for_certificate(certificate_order, options={})
     certificate = certificate_order.certificate
     options.merge! cc: cc = options[:certificate_content] || certificate_order.certificate_content
+    options[:mapping] = CasCertificate.find_by_ref(options[:send_to_ca]) if options[:send_to_ca]
     approval_req, approval_res = SslcomCaApi.get_status(cc.csr)
     return cc.csr.sslcom_ca_requests.create(
       parameters: approval_req.body, method: "get", response: approval_res.body,

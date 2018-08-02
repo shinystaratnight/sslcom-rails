@@ -412,7 +412,7 @@ namespace :cas do
                   {
                       ref: "0017",
                       friendly_name: "SSL.com SSL RSA 4096 (DV)",
-                      profile_name: "SSLcom-SubCA-SSL-RSA-4096-R1",
+                      profile_name: "DV_RSA_SERVER_CERT",
                       algorithm: "rsa",
                       size: 4096,
                       description: "",
@@ -420,14 +420,14 @@ namespace :cas do
                       caa_issuers: ["ssl.com"],
                       host: "https://192.168.100.5:8442/restapi",
                       admin_host: "https://192.168.100.5:8443",
-                      ca_name: Ca::SSLCOM_CA,
+                      ca_name: "SSLcom-SubCA-SSL-RSA-4096-R1",
                       ekus: [Ca::EKUS[:server]],
                       end_entity: Ca::END_ENTITY[:dvssl]
                   },
                   {
                       ref: "0018",
                       friendly_name: "SSL.com SSL RSA 4096 (OV)",
-                      profile_name: "SSLcom-SubCA-SSL-RSA-4096-R1",
+                      profile_name: "OV_RSA_SERVER_CERT",
                       algorithm: "rsa",
                       size: 4096,
                       description: "",
@@ -435,7 +435,7 @@ namespace :cas do
                       caa_issuers: ["ssl.com"],
                       host: "https://192.168.100.5:8442/restapi",
                       admin_host: "https://192.168.100.5:8443",
-                      ca_name: Ca::SSLCOM_CA,
+                      ca_name: "SSLcom-SubCA-SSL-RSA-4096-R1",
                       ekus: [Ca::EKUS[:server]],
                       end_entity: Ca::END_ENTITY[:ovssl]
                   },
