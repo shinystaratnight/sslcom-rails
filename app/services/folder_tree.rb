@@ -45,8 +45,10 @@ class FolderTree
     if object.is_a?(Folder)
       if object.default?
         'fa fa-certificate'
-      elsif object.archive?
+      elsif object.archived?
         'fa fa-archive'
+      elsif object.expired?
+        'fa fa-warning'
       else
         'jstree-folder'
       end
@@ -63,8 +65,10 @@ class FolderTree
     if object.is_a?(Folder)
       klass = if object.default?
         'jstree-folder-default'
-      elsif object.archive?
+      elsif object.archived?
         'jstree-folder-archive'
+      elsif object.expired?
+        'jstree-folder-expired'  
       else
         'jstree-folder-normal'
       end
@@ -76,8 +80,9 @@ class FolderTree
 
   def get_data(folder, tree_type=nil)
     data = {
-      archived: folder.archive?,
-      default: folder.default?
+      archived: folder.archived?,
+      default: folder.default?,
+      expired: folder.expired?
     }
     if tree_type && tree_type == 'co_folders_index'
       cos = get_data_certificates(folder)

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180730032858) do
+ActiveRecord::Schema.define(version: 20180802185351) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        limit: 255
@@ -638,13 +638,14 @@ ActiveRecord::Schema.define(version: 20180730032858) do
   create_table "folders", force: :cascade do |t|
     t.integer  "parent_id",      limit: 4
     t.boolean  "default",                    default: false, null: false
-    t.boolean  "archive",                    default: false, null: false
+    t.boolean  "archived",                   default: false, null: false
     t.string   "name",           limit: 255,                 null: false
     t.string   "description",    limit: 255
     t.integer  "ssl_account_id", limit: 4,                   null: false
     t.integer  "items_count",    limit: 4,   default: 0
     t.datetime "created_at",                                 null: false
     t.datetime "updated_at",                                 null: false
+    t.boolean  "expired",                    default: false
   end
 
   add_index "folders", ["name"], name: "index_folders_on_name", using: :btree

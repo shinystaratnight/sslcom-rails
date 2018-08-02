@@ -2,16 +2,27 @@
 # 
 # rails r bin/setup_team_folders.rb
 # 
-# Setup 'archive' folder and 'default' folder for every team.
+# Setup 'archived', 'expired' and 'default' folder for every team.
 #   Move expired certificte orders to archive folder.
 #   Move other certificte orders to default folder.
 #
 SslAccount.all.each do |team|
+  archived_exist = Folder.where(name: 'archive', archived: true)
+  
+  if archived_exist.any?
+    archived_exist.update_all(name: 'archived')
+  end
+
   archive_folder = Folder.find_or_create_by(
-    name: 'archive', archive: true, ssl_account_id: team.id
+    name: 'archived', archived: true, ssl_account_id: team.id
   )
+
   default_folder = Folder.find_or_create_by(
     name: 'default', default: true, ssl_account_id: team.id
+  )
+  
+  expired_folder = Folder.find_or_create_by(
+    name: 'expired', expired: true, ssl_account_id: team.id
   )
   
   if archive_folder.persisted? && default_folder.persisted?
