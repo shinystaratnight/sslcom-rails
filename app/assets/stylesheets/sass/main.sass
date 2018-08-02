@@ -7341,7 +7341,41 @@ span.notifications-teams
   
   #folder-tree-fixed
     max-height: 250px
-    overflow: scroll
+    display: flex
+    flex-direction: row
+
+    #folders-tree-co,
+    #folder-co-list
+      justify-content: flex-start
+      max-height: 250px
+      overflow-y: scroll
+      overflow-x: scroll
+
+    #folders-tree-co
+      width: 75%
+
+    #folder-co-list
+      color: grey
+      width: 25%
+
+      #folder-co-list-cont
+        margin: 1rem
+        font-size: 1.4rem
+
+        .f-co-item
+          margin-top: 0.5rem
+          overflow: hidden
+          text-overflow: ellipsis
+          white-space: nowrap
+          width: 100%
+          display: inline-block
+          
+          &:hover
+            background-color: #beebff
+          
+          a
+            color: grey
+        
 
   #folder-tree-actions
     padding: 1.3rem
