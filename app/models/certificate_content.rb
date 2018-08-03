@@ -132,6 +132,7 @@ class CertificateContent < ActiveRecord::Base
     end
 
     state :info_provided do
+      event :validate, :transitions_to => :validated
       event :submit_csr, :transitions_to => :csr_submitted
       event :issue, :transitions_to => :issued
       event :provide_contacts, :transitions_to => :contacts_provided
@@ -140,6 +141,7 @@ class CertificateContent < ActiveRecord::Base
     end
 
     state :contacts_provided do
+      event :validate, :transitions_to => :validated
       event :provide_contacts, transitions_to: :contacts_provided
       event :submit_csr, :transitions_to => :csr_submitted
       event :issue, :transitions_to => :issued
