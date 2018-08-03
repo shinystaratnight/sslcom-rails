@@ -5,6 +5,12 @@
 -slt_subjects_list = @slt_subjects_list || []
 -cos_list = @cos_list || []
 -slt_cos_list = @slt_cos_list || []
+-slt_schedule_simple = @slt_schedule_simple || []
+-slt_schedule_weekdays = @slt_schedule_weekdays || []
+-slt_schedule_months = @slt_schedule_months || []
+-slt_schedule_days = @slt_schedule_days || []
+-slt_schedule_hours = @slt_schedule_hours || []
+-slt_schedule_minutes = @slt_schedule_minutes || []
 
 = render :partial => 'index_scripts'
 
@@ -59,7 +65,7 @@
                   =radio_button_tag :schedule_type, false, false
                   Custom
             .block_item_simple
-              =select_tag :schedule_sub_type, options_for_select(@schedule_simple_type), :class=>'filter_simple_type'
+              =select_tag :schedule_simple_type, options_for_select(@schedule_simple_type, selected: slt_schedule_simple)
         .schedule_custom_block
           .schedule_custom_item_block.clearfix
             .block_label
@@ -76,7 +82,7 @@
                     Selected
               .block_item_weekday_custom
                 .schedule_container
-                  =select_tag :weekday_custom_list, options_for_select(@schedule_weekdays, selected: @schedule_weekdays),
+                  =select_tag :weekday_custom_list, options_for_select(@schedule_weekdays, selected: slt_schedule_weekdays),
                     multiple: true, data: {placeholder: "click here to list available weekdays to scan."}
           .schedule_custom_item_block.clearfix
             .block_label
@@ -93,7 +99,7 @@
                     Selected
               .block_item_month_custom
                 .schedule_container
-                  =select_tag :month_custom_list, options_for_select(@schedule_months, selected: @schedule_months),
+                  =select_tag :month_custom_list, options_for_select(@schedule_months, selected: slt_schedule_months),
                     multiple: true, data: {placeholder: "click here to list available months to scan."}
           .schedule_custom_item_block.clearfix
             .block_label
@@ -110,7 +116,7 @@
                     Selected
               .block_item_day_custom
                 .schedule_container
-                  =select_tag :day_custom_list, options_for_select(@schedule_days, selected: @schedule_days),
+                  =select_tag :day_custom_list, options_for_select(@schedule_days, selected: slt_schedule_days),
                     multiple: true, data: {placeholder: "click here to list available days to scan."}
           .schedule_custom_item_block.clearfix
             .block_label
@@ -127,7 +133,7 @@
                     Selected
               .block_item_hour_custom
                 .schedule_container
-                  =select_tag :hour_custom_list, options_for_select(@schedule_hours, selected: @schedule_hours),
+                  =select_tag :hour_custom_list, options_for_select(@schedule_hours, selected: slt_schedule_hours),
                     multiple: true, data: {placeholder: "click here to list available hours to scan."}
           .schedule_custom_item_block.clearfix
             .block_label
@@ -144,7 +150,7 @@
                     Selected
               .block_item_minute_custom
                 .schedule_container
-                  =select_tag :minute_custom_list, options_for_select(@schedule_minutes, selected: @schedule_minutes),
+                  =select_tag :minute_custom_list, options_for_select(@schedule_minutes, selected: slt_schedule_minutes),
                     multiple: true, data: {placeholder: "click here to list available minutes to scan."}
     #button_container
       #next_submit=image_submit_tag "bl_submit_button.gif", class: 'edit_setting_btn'

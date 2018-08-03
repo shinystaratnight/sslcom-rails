@@ -215,10 +215,10 @@
       $('input[name="schedule_type"]').change(function() {
         if ($(this).val() == 'true') {
           $('.schedule_custom_block').hide();
-          $('#schedule_sub_type').show();
+          $('#schedule_simple_type').show();
         } else {
           $('.schedule_custom_block').show();
-          $('#schedule_sub_type').hide();
+          $('#schedule_simple_type').hide();
         }
       });
 
@@ -270,6 +270,61 @@
         $('.block_item_hour_custom').hide();
         $('.block_item_minute_custom').hide();
         $('.schedule_custom_block').hide();
+
+        $('#schedule_simple_type option[value="2"]').attr('selected', true);
+      }
+
+      if (url.substr(url.lastIndexOf('/') + 1, url.length) == 'edit') {
+        var simple = '<%= @slt_schedule_simple ? @slt_schedule_simple.join(',') : ""%>';
+        var weekdays = '<%= @slt_schedule_weekdays ? @slt_schedule_weekdays.join(',') : ""%>';
+        var months = '<%= @slt_schedule_months ? @slt_schedule_months.join(',') : ""%>';
+        var days = '<%= @slt_schedule_days ? @slt_schedule_days.join(',') : ""%>';
+        var hours = '<%= @slt_schedule_hours ? @slt_schedule_hours.join(',') : ""%>';
+        var minutes = '<%= @slt_schedule_minutes ? @slt_schedule_minutes.join(',') : ""%>';
+
+        if (simple != '') {
+          $('.block_item_weekday_custom').hide();
+          $('.block_item_month_custom').hide();
+          $('.block_item_day_custom').hide();
+          $('.block_item_hour_custom').hide();
+          $('.block_item_minute_custom').hide();
+          $('.schedule_custom_block').hide();
+
+          $('#schedule_simple_type option[value="' + simple.split(',')[0] + '"]').attr('selected', true);
+        } else {
+          $('input[name="schedule_type"][value="false"]').attr('checked', 'checked');
+          $('#schedule_simple_type').hide();
+
+          if (weekdays == 'All') {
+            $('.block_item_weekday_custom').hide();
+          } else {
+            $('input[name="weekday_type"][value="false"]').attr('checked', 'checked');
+          }
+
+          if (months == 'All') {
+            $('.block_item_month_custom').hide();
+          } else {
+            $('input[name="month_type"][value="false"]').attr('checked', 'checked');
+          }
+
+          if (days == 'All') {
+            $('.block_item_day_custom').hide();
+          } else {
+            $('input[name="day_type"][value="false"]').attr('checked', 'checked');
+          }
+
+          if (hours == 'All') {
+            $('.block_item_hour_custom').hide();
+          } else {
+            $('input[name="hour_type"][value="false"]').attr('checked', 'checked');
+          }
+
+          if (minutes == 'All') {
+            $('.block_item_minute_custom').hide();
+          } else {
+            $('input[name="minute_type"][value="false"]').attr('checked', 'checked');
+          }
+        }
       }
 
       //******************** Notification group list ********************

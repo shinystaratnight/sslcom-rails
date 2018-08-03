@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180729001349) do
+ActiveRecord::Schema.define(version: 20180802002757) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        limit: 255
@@ -1143,6 +1143,16 @@ ActiveRecord::Schema.define(version: 20180729001349) do
     t.text     "description",    limit: 65535
     t.string   "status",         limit: 255
   end
+
+  create_table "schedules", force: :cascade do |t|
+    t.integer  "notification_group_id", limit: 4
+    t.string   "schedule_type",         limit: 255, null: false
+    t.string   "schedule_value",        limit: 255, null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "schedules", ["notification_group_id"], name: "index_schedules_on_notification_group_id", using: :btree
 
   create_table "sent_reminders", force: :cascade do |t|
     t.integer  "signed_certificate_id", limit: 4

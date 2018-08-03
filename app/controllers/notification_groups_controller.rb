@@ -2,7 +2,7 @@ class NotificationGroupsController < ApplicationController
   before_action :require_user, only: [:index, :new, :create, :edit, :update, :destroy]
   before_action :find_ssl_account
   before_action :set_row_page, only: [:index]
-  before_action :set_schedule_value, only: [:index, :new]
+  before_action :set_schedule_value, only: [:index, :new, :edit]
 
   def index
     @notification_groups = @ssl_account.notification_groups.paginate(@p)
@@ -14,6 +14,7 @@ class NotificationGroupsController < ApplicationController
     unless group_ids.blank?
       @ssl_account.notification_groups.where(id: group_ids).destroy_all
       Preference.where(owner_type: 'NotificationGroup', owner_id: group_ids).destroy_all
+      Schedule.where(notification_group_id: group_ids).destroy_all
     end
 
     flash[:notice] = "Selected notification groups has been removed successfully."
@@ -77,6 +78,19 @@ class NotificationGroupsController < ApplicationController
             .map{ |cct| [cct.email, cct.id] }
     ).map{ |arr| [arr[0], @slt_contacts_list.include?(arr[1].to_s) ? arr[1] : (arr[0] + '---' + arr[1].to_s)] }
                          .concat(email_addresses.pluck(:email_address, :email_address))
+
+    @slt_schedule_simple = @notification_group.schedules.where(schedule_type: 'Simple').
+        pluck(:schedule_value)
+    @slt_schedule_weekdays = @notification_group.schedules.where(schedule_type: 'Weekday').
+        pluck(:schedule_value)
+    @slt_schedule_months = @notification_group.schedules.where(schedule_type: 'Month').
+        pluck(:schedule_value)
+    @slt_schedule_days = @notification_group.schedules.where(schedule_type: 'Day').
+        pluck(:schedule_value)
+    @slt_schedule_hours = @notification_group.schedules.where(schedule_type: 'Hour').
+        pluck(:schedule_value)
+    @slt_schedule_minutes = @notification_group.schedules.where(schedule_type: 'Minute').
+        pluck(:schedule_value)
 
     @title = 'Edit SSL Expiration Notification Group'
 
@@ -225,6 +239,138 @@ class NotificationGroupsController < ApplicationController
     else
       # Remove all domains for this notification group
       notification_group.notification_groups_contacts.destroy_all
+    end
+
+    # Saving schedule
+    if params[:schedule_type] == 'true'
+      current_schedules = notification_group.schedules.pluck(:schedule_type)
+      unless current_schedules.include? 'Simple'
+        notification_group.schedules.destroy_all
+        notification_group.schedules.build(
+            schedule_type: 'Simple',
+            schedule_value: params[:schedule_simple_type]
+        ).save
+      end
+    else
+      current_schedules = notification_group.schedules.pluck(:schedule_type)
+      if current_schedules.include? 'Simple'
+        notification_group.schedules.destroy_all
+      end
+
+      # Weekday
+      current_schedules = notification_group.schedules.where(schedule_type: 'Weekday').pluck(:schedule_value)
+      if params[:weekday_type] == 'true'
+        unless current_schedules.include? 'All'
+          notification_group.schedules.where(schedule_type: 'Weekday').destroy_all
+          notification_group.schedules.build(
+              schedule_type: 'Weekday',
+              schedule_value: 'All'
+          ).save
+        end
+      else
+        new_weekdays = params[:weekday_custom_list] - current_schedules
+        old_weekdays = current_schedules - params[:weekday_custom_list]
+
+        notification_group.schedules.where(schedule_type: 'Weekday', schedule_value: old_weekdays).destroy_all
+        new_weekdays.each do |weekday|
+          notification_group.schedules.build(
+              schedule_type: 'Weekday',
+              schedule_value: weekday
+          ).save
+        end
+      end
+
+      # Month
+      current_schedules = notification_group.schedules.where(schedule_type: 'Month').pluck(:schedule_value)
+      if params[:month_type] == 'true'
+        unless current_schedules.include? 'All'
+          notification_group.schedules.where(schedule_type: 'Month').destroy_all
+          notification_group.schedules.build(
+              schedule_type: 'Month',
+              schedule_value: 'All'
+          ).save
+        end
+      else
+        new_months = params[:month_custom_list] - current_schedules
+        old_months = current_schedules - params[:month_custom_list]
+
+        notification_group.schedules.where(schedule_type: 'Month', schedule_value: old_months).destroy_all
+        new_months.each do |month|
+          notification_group.schedules.build(
+              schedule_type: 'Month',
+              schedule_value: month
+          ).save
+        end
+      end
+
+      # Day
+      current_schedules = notification_group.schedules.where(schedule_type: 'Day').pluck(:schedule_value)
+      if params[:day_type] == 'true'
+        unless current_schedules.include? 'All'
+          notification_group.schedules.where(schedule_type: 'Day').destroy_all
+          notification_group.schedules.build(
+              schedule_type: 'Day',
+              schedule_value: 'All'
+          ).save
+        end
+      else
+        new_days = params[:day_custom_list] - current_schedules
+        old_days = current_schedules - params[:day_custom_list]
+
+        notification_group.schedules.where(schedule_type: 'Day', schedule_value: old_days).destroy_all
+        new_days.each do |day|
+          notification_group.schedules.build(
+              schedule_type: 'Day',
+              schedule_value: day
+          ).save
+        end
+      end
+
+      # Hour
+      current_schedules = notification_group.schedules.where(schedule_type: 'Hour').pluck(:schedule_value)
+      if params[:hour_type] == 'true'
+        unless current_schedules.include? 'All'
+          notification_group.schedules.where(schedule_type: 'Hour').destroy_all
+          notification_group.schedules.build(
+              schedule_type: 'Hour',
+              schedule_value: 'All'
+          ).save
+        end
+      else
+        new_hours = params[:hour_custom_list] - current_schedules
+        old_hours = current_schedules - params[:hour_custom_list]
+
+        notification_group.schedules.where(schedule_type: 'Hour', schedule_value: old_hours).destroy_all
+        new_hours.each do |hour|
+          notification_group.schedules.build(
+              schedule_type: 'Hour',
+              schedule_value: hour
+          ).save
+        end
+      end
+
+      # Minute
+      current_schedules = notification_group.schedules.where(schedule_type: 'Minute').pluck(:schedule_value)
+      if params[:minute_type] == 'true'
+        unless current_schedules.include? 'All'
+          notification_group.schedules.where(schedule_type: 'Minute').destroy_all
+          notification_group.schedules.build(
+              schedule_type: 'Minute',
+              schedule_value: 'All'
+          ).save
+        end
+      else
+        new_minutes = params[:minute_custom_list] - current_schedules
+        old_minutes = current_schedules - params[:minute_custom_list]
+
+        notification_group.schedules.where(schedule_type: 'Minute', schedule_value: old_minutes).destroy_all
+        new_minutes.each do |minute|
+          notification_group.schedules.build(
+              schedule_type: 'Minute',
+              schedule_value: minute
+          ).save
+        end
+      end
     end
 
     flash[:notice] = "Notification group has been updated successfully."

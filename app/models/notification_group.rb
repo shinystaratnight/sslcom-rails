@@ -12,6 +12,7 @@ class NotificationGroup < ActiveRecord::Base
             source: :subjectable, source_type: 'CertificateContent'
   has_many  :certificate_names, through: :notification_groups_subjects,
             source: :subjectable, source_type: 'CertificateName'
+  has_many  :schedules
 
   preference  :notification_group_triggers, :string
 
