@@ -48,6 +48,10 @@ class FolderTree
       elsif object.archived?
         'fa fa-archive'
       elsif object.expired?
+        'fa fa-history'
+      elsif object.active?
+        'fa fa-gear'
+      elsif object.revoked?
         'fa fa-warning'
       else
         'jstree-folder'
@@ -67,7 +71,9 @@ class FolderTree
         'jstree-folder-default'
       elsif object.archived?
         'jstree-folder-archive'
-      elsif object.expired?
+      elsif object.active?
+        'jstree-folder-active'
+      elsif object.expired?  
         'jstree-folder-expired'  
       else
         'jstree-folder-normal'

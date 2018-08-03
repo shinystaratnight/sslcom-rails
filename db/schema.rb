@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180802185351) do
+ActiveRecord::Schema.define(version: 20180803200958) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        limit: 255
@@ -667,6 +667,8 @@ ActiveRecord::Schema.define(version: 20180802185351) do
     t.datetime "created_at",                                 null: false
     t.datetime "updated_at",                                 null: false
     t.boolean  "expired",                    default: false
+    t.boolean  "active",                     default: false
+    t.boolean  "revoked",                    default: false
   end
 
   add_index "folders", ["name"], name: "index_folders_on_name", using: :btree
