@@ -6,7 +6,7 @@
 #   Move expired certificte orders to archive folder.
 #   Move other certificte orders to default folder.
 #
-SslAccount.for_each do |team|
+SslAccount.all.each do |team|
   archived_exist = Folder.where(name: 'archive', archived: true)
   
   if archived_exist.any?
@@ -25,14 +25,30 @@ SslAccount.for_each do |team|
     name: 'expired', expired: true, ssl_account_id: team.id
   )
   
+  active_folder = Folder.find_or_create_by(
+    name: 'active', active: true, ssl_account_id: team.id
+  )
+  
+  revoked_folder = Folder.find_or_create_by(
+    name: 'revoked', revoked: true, ssl_account_id: team.id
+  )
+  
   if archive_folder.persisted? && default_folder.persisted?
     team.update(default_folder_id: default_folder.id)
     cos = team.certificate_orders
     
+    # expired certificates
     expired_cos = cos.where(is_expired: true)
-    expired_cos.update_all(folder_id: archive_folder.id) if expired_cos.any?
+    expired_cos.update_all(folder_id: expired_folder.id) if expired_cos.any?
     
-    default_cos = cos.where(is_expired: false)
+    # revoked certificates
+    revoked_cos = cos.joins(:signed_certificates)
+      .where(signed_certificates: {status: :revoked}).uniq
+    revoked_cos.update_all(folder_id: revoked_folder.id) if revoked_cos.any?
+
+    default_cos = cos.where.not(
+      id: (expired_cos.map(&:id) + revoked_cos.map(&:id)).compact.uniq.flatten
+    )
     default_cos.update_all(folder_id: default_folder.id) if default_cos.any?
   end
 end
