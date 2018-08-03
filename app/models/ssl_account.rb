@@ -14,6 +14,7 @@ class SslAccount < ActiveRecord::Base
   has_many  :site_seals, through: :certificate_orders
   has_many  :certificate_contents, through: :certificate_orders
   has_many  :certificate_names, through: :certificate_orders
+  has_many  :domains, :dependent => :destroy
   has_many  :signed_certificates, through: :certificate_contents
   has_many  :certificate_contacts, through: :certificate_contents
   has_one   :reseller, :dependent => :destroy
@@ -453,6 +454,23 @@ class SslAccount < ActiveRecord::Base
     return 'monthly' if billing_monthly?
     return 'daily' if billing_daily?
     ''
+  end
+
+  def domain_names(only_ca = true)
+    cnames = self.certificate_names.order(:created_at).reverse_order
+    dnames = self.domains.order(:created_at).reverse_order
+    domain_names = []
+    cnames.each do |cn|
+      unless only_ca
+        domain_names << cn.name unless domain_names.include?(cn.name)
+      else
+        domain_names << cn.name unless domain_names.include?(cn.name) && cn.certificate_content.ca_id.nil?
+      end
+    end
+    dnames.each do |dn|
+      domain_names << dn.name unless domain_names.include?(dn.name)
+    end
+    domain_names
   end
 
   def validated_domains
