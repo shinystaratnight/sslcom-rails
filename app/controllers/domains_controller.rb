@@ -39,7 +39,7 @@ class DomainsController < ApplicationController
 
   def validation_request
     @domain = current_user.ssl_account.domains.find_by(id: params[:id])
-    if @domain.domain_control_validations.last.identifier_found
+    if @domain.domain_control_validations.last.try(:identifier_found)
       redirect_to domains_path(@ssl_slug)
       return
     end
