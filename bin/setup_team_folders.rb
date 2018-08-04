@@ -38,12 +38,11 @@ SslAccount.find_each do |team|
     cos = team.certificate_orders
     
     # expired certificates
-    expired_cos = cos.where(is_expired: true)
+    expired_cos = team.certificate_orders.expired
     expired_cos.update_all(folder_id: expired_folder.id) if expired_cos.any?
     
     # revoked certificates
-    revoked_cos = cos.joins(:signed_certificates)
-      .where(signed_certificates: {status: :revoked}).uniq
+    revoked_cos = team.certificate_orders.revoked
     revoked_cos.update_all(folder_id: revoked_folder.id) if revoked_cos.any?
 
     default_cos = cos.where.not(

@@ -1275,9 +1275,9 @@ ActiveRecord::Schema.define(version: 20180803200958) do
     t.string   "ext_customer_ref",          limit: 255
     t.text     "status",                    limit: 65535, null: false
     t.integer  "ca_id",                     limit: 4
+    t.string   "type",                      limit: 255
   end
 
-  add_index "signed_certificates", ["ca_id"], name: "index_signed_certificates_on_ca_id", using: :btree
   add_index "signed_certificates", ["common_name"], name: "index_signed_certificates_on_common_name", using: :btree
   add_index "signed_certificates", ["csr_id"], name: "index_signed_certificates_on_csr_id", using: :btree
 
@@ -1693,5 +1693,4 @@ ActiveRecord::Schema.define(version: 20180803200958) do
   end
 
   add_foreign_key "cdns", "certificate_orders"
-  add_foreign_key "signed_certificates", "cas"
 end
