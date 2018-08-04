@@ -45,7 +45,7 @@ class FolderTree
     if object.is_a?(Folder)
       if object.default?
         'fa fa-certificate'
-      elsif object.archive?
+      elsif object.archived?
         'fa fa-archive'
       else
         'jstree-folder'
@@ -63,7 +63,7 @@ class FolderTree
     if object.is_a?(Folder)
       klass = if object.default?
         'jstree-folder-default'
-      elsif object.archive?
+      elsif object.archived?
         'jstree-folder-archive'
       else
         'jstree-folder-normal'
@@ -76,7 +76,7 @@ class FolderTree
 
   def get_data(folder)
     return {
-      archived: folder.archive?,
+      archived: folder.archived?,
       default: folder.default?
     }
   end

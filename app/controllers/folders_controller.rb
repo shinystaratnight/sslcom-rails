@@ -120,7 +120,7 @@ class FoldersController < ApplicationController
   end
 
   def update_default
-    if @folder.archive?
+    if @folder.archived?
       render json: { archive: ['Archive folder cannot be set as default.'] },
         status: :unprocessable_entity
     else  

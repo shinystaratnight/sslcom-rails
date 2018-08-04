@@ -120,23 +120,19 @@ class User < ActiveRecord::Base
   end
 
   def owned_ssl_account
-    Rails.cache.fetch("#{cache_key}/owned_ssl_account", expires_in: 12.hours) do
-      assignments.where{role_id = Role.get_owner_id}.first.try :ssl_account
-    end
+    assignments.where{role_id = Role.get_owner_id}.first.try :ssl_account
   end
 
   def team_status(team)
-    Rails.cache.fetch("#{cache_key}/team_status", expires_in: 12.hours) do
-      ssl    = ssl_account_users.where(ssl_account_id: team.id).uniq.compact.first
-      if ssl
-        status = :accepted if active && ssl.approved
-        status = :declined if ssl.declined_at || (!ssl.approved && ssl.token_expires.nil? && ssl.approval_token.nil?)
-        status = :expired  if ssl.token_expires && (status != :declined) && (ssl.token_expires < DateTime.now)
-        status = :pending  if !active && (status != :declined)
-        status = :pending  if active && (!ssl.approved && ssl.token_expires && ssl.approval_token) && (ssl.token_expires > DateTime.now)
-      end
-      status
+    ssl    = ssl_account_users.where(ssl_account_id: team.id).uniq.compact.first
+    if ssl
+      status = :accepted if active && ssl.approved
+      status = :declined if ssl.declined_at || (!ssl.approved && ssl.token_expires.nil? && ssl.approval_token.nil?)
+      status = :expired  if ssl.token_expires && (status != :declined) && (ssl.token_expires < DateTime.now)
+      status = :pending  if !active && (status != :declined)
+      status = :pending  if active && (!ssl.approved && ssl.token_expires && ssl.approval_token) && (ssl.token_expires > DateTime.now)
     end
+    status
   end
 
   def is_duo_required?
@@ -237,7 +233,7 @@ class User < ActiveRecord::Base
   end
 
   def roles_for_account(target_ssl=nil)
-    Rails.cache.fetch("#{cache_key}/roles_for_account", expires_in: 12.hours) do
+    Rails.cache.fetch("#{cache_key}/roles_for_account") do
       ssl = target_ssl.nil? ? ssl_account : target_ssl
       if ssl_accounts.include?(ssl)
         assignments.where(ssl_account_id: ssl).pluck(:role_id).uniq
@@ -248,8 +244,8 @@ class User < ActiveRecord::Base
   end
 
   def get_roles_by_name(role_name)
-    role_id = Role.get_role_id(role_name)
-    role_id ? assignments.where(role_id: role_id) : []
+      role_id = Role.get_role_id(role_name)
+      role_id ? assignments.where(role_id: role_id) : []
   end
 
   def update_account_role(account, old_role, new_role)
@@ -263,8 +259,8 @@ class User < ActiveRecord::Base
 
   def duplicate_role?(role, target_ssl=nil)
     assignments.where(
-      ssl_account_id: (target_ssl.nil? ? ssl_account : target_ssl).id, 
-      role_id:        (role.is_a?(String) ? Role.get_role_id(role): Role.find(role))
+        ssl_account_id: (target_ssl.nil? ? ssl_account : target_ssl).id,
+        role_id:        (role.is_a?(String) ? Role.get_role_id(role): Role.find(role))
     ).any?
   end
 
