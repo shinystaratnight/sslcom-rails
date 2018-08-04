@@ -2,7 +2,7 @@ class CertificateContent < ActiveRecord::Base
   include V2MigrationProgressAddon
   include Workflow
   
-  belongs_to  :certificate_order, -> { unscope(where: [:workflow_state, :is_expired]) }
+  belongs_to  :certificate_order, -> { unscope(where: [:workflow_state, :is_expired]) }, touch: true
   has_one     :ssl_account, through: :certificate_order
   has_one     :certificate, through: :certificate_order
   has_many    :users, through: :certificate_order

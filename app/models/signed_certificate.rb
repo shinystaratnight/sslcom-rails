@@ -339,8 +339,12 @@ class SignedCertificate < ActiveRecord::Base
       co.site_seal.fully_activate! unless co.site_seal.fully_activated?
       if email_customer
         co.processed_recipients.map{|r|r.split(" ")}.flatten.uniq.each do |c|
-          OrderNotifier.processed_certificate_order(c, co, zip_path).deliver
-          OrderNotifier.site_seal_approve(c, co).deliver
+          begin
+            OrderNotifier.processed_certificate_order(c, co, zip_path).deliver
+            OrderNotifier.site_seal_approve(c, co).deliver
+          rescue Exception=>e
+            logger.error e.backtrace.inspect
+          end
         end
       end
     end

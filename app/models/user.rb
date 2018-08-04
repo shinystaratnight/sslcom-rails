@@ -84,21 +84,23 @@ class User < ActiveRecord::Base
                         (ssl_accounts.acct_number =~ "%#{term}%")}.uniq}
 
   def ssl_account(default_team=nil)
-    default_ssl = default_ssl_account && is_approved_account?(default_ssl_account)
-    main_ssl    = main_ssl_account && is_approved_account?(main_ssl_account)
+    Rails.cache.fetch("#{cache_key}/ssl_account") do
+      default_ssl = default_ssl_account && is_approved_account?(default_ssl_account)
+      main_ssl    = main_ssl_account && is_approved_account?(main_ssl_account)
 
-    # Retrieve team that was manually set as default in Teams by user
-    return SslAccount.find(main_ssl_account) if (default_team && main_ssl)
+      # Retrieve team that was manually set as default in Teams by user
+      return SslAccount.find(main_ssl_account) if (default_team && main_ssl)
 
-    if default_ssl
-      SslAccount.find default_ssl_account
-    elsif !default_ssl && main_ssl
-      set_default_ssl_account main_ssl_account
-      SslAccount.find main_ssl_account
-    else
-      approved_account = get_first_approved_acct
-      set_default_ssl_account(approved_account) if approved_account
-      approved_account
+      if default_ssl
+        SslAccount.find default_ssl_account
+      elsif !default_ssl && main_ssl
+        set_default_ssl_account main_ssl_account
+        SslAccount.find main_ssl_account
+      else
+        approved_account = get_first_approved_acct
+        set_default_ssl_account(approved_account) if approved_account
+        approved_account
+      end
     end
   end
 
@@ -118,19 +120,23 @@ class User < ActiveRecord::Base
   end
 
   def owned_ssl_account
-    assignments.where{role_id = Role.get_owner_id}.first.try :ssl_account
+    Rails.cache.fetch("#{cache_key}/owned_ssl_account", expires_in: 12.hours) do
+      assignments.where{role_id = Role.get_owner_id}.first.try :ssl_account
+    end
   end
 
   def team_status(team)
-    ssl    = ssl_account_users.where(ssl_account_id: team.id).uniq.compact.first
-    if ssl
-      status = :accepted if active && ssl.approved
-      status = :declined if ssl.declined_at || (!ssl.approved && ssl.token_expires.nil? && ssl.approval_token.nil?)
-      status = :expired  if ssl.token_expires && (status != :declined) && (ssl.token_expires < DateTime.now)
-      status = :pending  if !active && (status != :declined) 
-      status = :pending  if active && (!ssl.approved && ssl.token_expires && ssl.approval_token) && (ssl.token_expires > DateTime.now)
+    Rails.cache.fetch("#{cache_key}/team_status", expires_in: 12.hours) do
+      ssl    = ssl_account_users.where(ssl_account_id: team.id).uniq.compact.first
+      if ssl
+        status = :accepted if active && ssl.approved
+        status = :declined if ssl.declined_at || (!ssl.approved && ssl.token_expires.nil? && ssl.approval_token.nil?)
+        status = :expired  if ssl.token_expires && (status != :declined) && (ssl.token_expires < DateTime.now)
+        status = :pending  if !active && (status != :declined)
+        status = :pending  if active && (!ssl.approved && ssl.token_expires && ssl.approval_token) && (ssl.token_expires > DateTime.now)
+      end
+      status
     end
-    status
   end
 
   def is_duo_required?
@@ -231,11 +237,13 @@ class User < ActiveRecord::Base
   end
 
   def roles_for_account(target_ssl=nil)
-    ssl = target_ssl.nil? ? ssl_account : target_ssl
-    if ssl_accounts.include?(ssl)
-      assignments.where(ssl_account_id: ssl).pluck(:role_id).uniq
-    else
-      []  
+    Rails.cache.fetch("#{cache_key}/roles_for_account", expires_in: 12.hours) do
+      ssl = target_ssl.nil? ? ssl_account : target_ssl
+      if ssl_accounts.include?(ssl)
+        assignments.where(ssl_account_id: ssl).pluck(:role_id).uniq
+      else
+        []
+      end
     end
   end
 
