@@ -1,0 +1,46 @@
+#dialog-form.hidden
+  #folders-tree-modal
+  = render partial: '/folders/folders_popup_jstree'
+
+  - url = add_certificate_order_folder_url(@ssl_slug, '#')
+  = form_for Folder.new, url: url, remote: true,                |
+    method: :put, data: {type: :json, initial_action: url}, |
+    html: {id: 'frm-folder-add-cert', class: 'hidden'} do |f|
+    = f.text_field :certificate_order_id, value: nil
+
+:javascript
+  jQuery(function($) {
+    var curDialog = $('#dialog-form'),
+      form = $('#frm-folder-add-cert'),
+      coId = '';
+    
+    function updateFolder() {
+      form.submit();
+      curDialog.dialog('close');
+    }
+
+    function setFolderDialog() {
+      curDialog.dialog({
+        position: { my: 'top center', at: 'top center', of: window },
+        title: 'Select Folder For Certificate #' + coId,
+        autoOpen: false,
+        height: 280,
+        width: 400,
+        modal: true,
+        dialogClass: 'dl-transfer-team',
+        buttons: {
+          Cancel: function() {
+            curDialog.dialog('close');
+          },
+          'Update Folder': updateFolder,
+        }
+      });
+    }
+
+    $('.icon-co-add-folder').on('click', function(e) {
+      coId = $(this).attr('id');
+      form.find('#folder_certificate_order_id').val(coId);
+      setFolderDialog();
+      curDialog.dialog('open');
+    });
+  });

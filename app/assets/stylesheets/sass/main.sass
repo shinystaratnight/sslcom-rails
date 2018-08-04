@@ -3453,9 +3453,18 @@ label.error
     cursor: pointer
     background: lightyellow
 
-#report, #reseller_tiers, #domain_pricing_popup, #certificate_listing,
-#dashboard, #certificate_orders, #validations, #resources, #resource-custom-domain-list,
-#popular-files, #resource-popular-location-list, #notification_groups,
+#report,
+#reseller_tiers,
+#domain_pricing_popup,
+#certificate_listing,
+#dashboard,
+#certificate_orders,
+#validations,
+#resources,
+#resource-custom-domain-list,
+#popular-files,
+#resource-popular-location-list,
+#notification_groups,
 #certificates-admin-index
   line-height: 1.5em
   font-size: 1.4em
@@ -5914,7 +5923,7 @@ span.notifications-teams
   border: 2px solid #334DFF
 
 .button-mo-invoice.btn-mo-destroy,
-.btn-pvg-destroy, 
+.btn-pvg-destroy,
 #btn-folder-destroy
   background: -webkit-linear-gradient(#cc0000, #990000)
   background: -o-linear-gradient(#cc0000, #990000)
@@ -7059,11 +7068,12 @@ span.notifications-teams
   padding: 5px 7px
   text-transform: uppercase
   
-.btn-filter
+.btn-filter, .btn-filter-clear
+  border: 1px solid #334DFF
   background-color: white
   color: #334DFF !important
 
-.btn-cert-update,
+.btn-cert-update
   border: 1px solid #334DFF
   background-color: #334DFF
   font-size: 1rem
@@ -7114,6 +7124,9 @@ span.notifications-teams
 /*
  * Tags Input Container
  */
+#co-folder-column
+  cursor: pointer
+
 .lnk-popular-tags
   background-color: $base_green
   border: 1px solid $base_green
@@ -7260,6 +7273,9 @@ span.notifications-teams
 /*
  * Certificates Index for Admins
  */
+.chk-folder-add-co
+  margin-left: 0.5rem
+
 #certificates-admin-index
   .serial
     font-weight: 600
@@ -7316,6 +7332,10 @@ span.notifications-teams
 #lnk-folders-ql
   color: $base_green
 
+.icon-co-add-folder
+  color: $base_green
+  cursor: pointer
+
 #co-folders-container
   margin: 0.8em 0 0.5em
   
@@ -7356,3 +7376,25 @@ span.notifications-teams
         border-bottom: 1px solid #ccf
         border-top: 1px solid #ccf
         padding: 1rem
+
+        #co-folders-header
+          font-weight: 500
+          float: right
+          width: 97%
+
+          div:first-child
+            margin-top: -0.5rem
+            letter-spacing: 0.8px
+
+          div:last-child
+            margin-top: 0.5rem
+            font-size: 1.1rem
+            margin-bottom: -0.5rem
+
+        #folder-tree-actions-hdr
+          float: right
+          width: 3%
+          i
+            cursor: pointer
+            color: #888
+            font-size: 1.7rem

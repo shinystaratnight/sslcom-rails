@@ -171,7 +171,7 @@ class CertificateOrder < ActiveRecord::Base
     end
     %w(ref).each do |field|
       query=filters[field.to_sym]
-      result = result.where(field.to_sym  >> query.split(',')) if query
+      result = result.where{ref >> query.split(',')} if query
     end
     %w(country strength).each do |field|
       query=filters[field.to_sym]
@@ -954,8 +954,9 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def apply_for_certificate(options={})
-    if [Ca::CERTLOCK_CA,Ca::SSLCOM_CA,Ca::MANAGEMENT_CA].include?(options[:ca]) or !certificate_content.ca.blank?
-      SslcomCaApi.apply_for_certificate(self, options) if options[:current_user].is_super_user?
+    if [Ca::CERTLOCK_CA,Ca::SSLCOM_CA,Ca::MANAGEMENT_CA].include? options[:ca] or !certificate_content.ca.blank?
+      SslcomCaApi.apply_for_certificate(self, options) if options[:current_user].blank? or
+          options[:current_user].is_super_user?
     else
       ComodoApi.apply_for_certificate(self, options) if ca_name=="comodo"
     end

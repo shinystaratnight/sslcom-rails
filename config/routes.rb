@@ -263,6 +263,7 @@ SslCom::Application.routes.draw do
         get :certificate_orders_domains_contacts
         post :register_notification_group
         post :remove_groups
+        post :scan_groups
       end
     end
 

@@ -39,11 +39,15 @@ class SslAccount < ActiveRecord::Base
   has_many  :all_saved_contacts, as: :contactable, class_name: 'Contact', dependent: :destroy
   has_many  :cdns
   has_many  :tags
+  has_many  :folders, dependent: :destroy
   has_many :certificate_names, through: :certificate_contents do
     def sslcom
       where.not certificate_contents: {ca_id: nil}
     end
   end
+  has_many  :notification_groups
+  has_many  :folders, dependent: :destroy
+  has_many :certificate_names, through: :certificate_contents
   has_many :domain_control_validations, through: :certificate_names do
     def sslcom
       where.not certificate_contents: {ca_id: nil}

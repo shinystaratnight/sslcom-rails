@@ -52,7 +52,7 @@
 
       $('#cos_list').on('select2:opening select2:closing', function( event ) {
         var $searchfield = $(this).parent().find('.select2-search__field');
-        $searchfield.prop('disabled', 'disabled');
+        $searchfield.prop('readonly', true);
       });
 
       $('#contacts_list').select2({
@@ -249,6 +249,12 @@
             });
           }
         });
+      });
+
+      var scanGroupsUrl = '<%=scan_groups_notification_groups_path(@ssl_slug)%>';
+      $('#btn_scan_groups').click(function(e) {
+        e.preventDefault();
+        $('#notification_group_list').attr('action', scanGroupsUrl).submit();
       });
     });
   });

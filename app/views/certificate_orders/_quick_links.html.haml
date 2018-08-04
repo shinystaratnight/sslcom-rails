@@ -3,13 +3,10 @@
     .heading
       %strong Quick Links
     %ul
-      %li#lnk-folders-ql
-        -if show_folders_container?
+      - if Folder.show_folders?
+        %li#lnk-folders-ql
           %i.fa.fa-folder-open
-          =link_to "Folders", certificate_orders_path(@ssl_slug), id: "lnk-co-folders"
-        -else
-          %i.fa.fa-folder
-          =link_to "Folders", certificate_orders_path(@ssl_slug, folders: true), id: "lnk-co-folders"
+          =link_to "Folders", folders_path(@ssl_slug), id: "lnk-co-folders"
       -unless is_sandbox?
         -if permitted_to?(:create, :order)
           %li=link_to 'Buy Certificate', certificates_url

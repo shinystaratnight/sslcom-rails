@@ -16,6 +16,18 @@ class Folder < ActiveRecord::Base
   after_destroy  :release_certificate_orders
 
   attr_reader :total_certificate_orders
+  
+  def get_folder_path
+    if ancestors.any?
+      ancestors.last.self_and_descendants.map(&:name).join('/')
+    else
+      name
+    end
+  end
+
+  def self.show_folders?
+    Settings.folders == "show"
+  end
 
   def folder_contents
     contents = []
@@ -31,20 +43,6 @@ class Folder < ActiveRecord::Base
       @total_certificate_orders +=self.certificate_orders.count
     end
     contents.join(',')
-  end
-
-  def self.find_by_safe_path(folder_path)
-    find_or_create_by_safe_path(folder_path, true)
-  end
-
-  # starting with /a/b/c we want to end with a/b/c
-  def self.find_or_create_by_safe_path(folder_path, find_only=false)
-    folder_path = $1 if folder_path =~ /^\/?(.*)/
-    if folder_path.nil? || folder_path == "."
-      nil
-    else
-      Folder.send((find_only ? :find_by_path : :find_or_create_by_path), folder_path.split('/'))
-    end
   end
 
   def can_destroy?

@@ -19,6 +19,28 @@ class NotificationGroupsController < ApplicationController
     redirect_to notification_groups_path(ssl_slug: @ssl_slug)
   end
 
+  def scan_groups
+    group_ids = params[:scan_groups]
+
+    if group_ids.blank?
+      groups = @ssl_account.notification_groups
+    else
+      groups = @ssl_account.notification_groups.where(id: group_ids)
+    end
+
+    groups.includes(
+        [:stored_preferences, {:certificate_orders =>
+                                   [:orders, :certificate_contents =>
+                                       {:csr => :signed_certificates}]}]).find_in_batches(batch_size: 250) do |batch_list|
+      batch_list.each do |group|
+        NotificationGroup.scan_notification_group(group)
+      end
+    end
+
+    flash[:notice] = "Scan has been done successfully."
+    redirect_to notification_groups_path(ssl_slug: @ssl_slug)
+  end
+
   def new
     certificate_names = @ssl_account.certificate_names.pluck(:name, :id)
     @subjects_list = remove_duplicate(certificate_names)

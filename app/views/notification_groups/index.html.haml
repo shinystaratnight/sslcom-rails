@@ -13,7 +13,7 @@
             =select_tag :number_rows,
                     options_for_select([[5, 5], [10, 10], [20, 20], [50, 50], [100, 100]], @per_page),
                     :class=>'per_page'
-          %td=will_paginate @notification_groups
+          %td(colspan='2')=will_paginate @notification_groups
         %caption
           Notification Groups Management
           =will_paginate @notification_groups
@@ -23,6 +23,7 @@
       %tr.heading_row
         %td(scope="col") Friendly Name
         %td(scope="col") Delete?
+        %td(scope="col") Scan?
       -if @notification_groups.size > 0
         -@notification_groups.each do |ng|
           %tr
@@ -30,10 +31,13 @@
               =link_to ng.friendly_name, edit_notification_group_path(@ssl_slug, ng.id)
             %td
               =check_box_tag "remove_groups[]", ng.id, false, class: 'chk-remove', 'data-group-name' => ng.friendly_name
+            %td
+              =check_box_tag "scan_groups[]", ng.id, false, class: 'chk-scan'
       -else
         %tr
-          %td(colspan='2')
+          %td(colspan='3')
             There are no notification groups
     -if @notification_groups.size > 0
       =submit_tag 'Save', :id => 'btn_remove_groups', :disabled => true
+      =submit_tag 'Scan', :id => 'btn_scan_groups'
 
