@@ -74,9 +74,11 @@ $(function($) {
     if (sel && !certificateOrder(sel)) {
       ref.edit(sel, sel.text, function(data) {
         errors = folderRename(data.id.split('_').shift(), data.text);
-        if (errors) {
-          ref.rename_node([ref.get_selected(true)[0]], prev_text);
-        }
+        setTimeout(function() {
+          if (errorsExist) {
+            ref.rename_node([ref.get_selected(true)[0]], prev_text);
+          }
+        }, 450);
         return errors;
       });
     }

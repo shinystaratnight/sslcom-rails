@@ -112,10 +112,15 @@ class FoldersController < ApplicationController
   end
 
   def update_rename
-    if @folder.update(name: params[:folder][:name])
-      render json: { message: "Folder successfully renamed." }, status: :ok
+    if @folder && @folder.can_destroy?
+      if @folder.update(name: params[:folder][:name])
+        render json: { message: "Folder successfully renamed." }, status: :ok
+      else
+        render json: @folder.errors.messages, status: :unprocessable_entity
+      end
     else
-      render json: @folder.errors.messages, status: :unprocessable_entity
+      render json: { folder: ['System folders cannot be renamed.'] },
+        status: :unprocessable_entity
     end
   end
 
