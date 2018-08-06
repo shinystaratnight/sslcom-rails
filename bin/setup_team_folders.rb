@@ -6,7 +6,7 @@
 #   Move expired certificate orders to archive folder.
 #   Move other certificate orders to default folder.
 #
-SslAccount.all do |team|
+SslAccount.find_each do |team|
   archived_exist = Folder.where(name: 'archive', archived: true)
   
   if archived_exist.any?
