@@ -25,7 +25,7 @@ class FoldersController < ApplicationController
     new_params = new_params.merge(parent_id: nil) if parent_root?
     @folder = Folder.new(new_params)
     if @folder.save
-      render json: { message: "Folder successfully created." }, status: :ok
+      render json: { folder_id: @folder.id }, status: :ok
     else
       render json: @folder.errors.messages, status: :unprocessable_entity
     end

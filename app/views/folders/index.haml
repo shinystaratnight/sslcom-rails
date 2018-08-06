@@ -1,18 +1,25 @@
-#folders_index
-  %h3 Manage Folders
+#folders-index
+  %h3 Certificate Explorer
   %br
   #folders-action
-    = link_to "<i class='fa fa-plus'></i> Create".html_safe, '#', |
+    = link_to "<i class='fa fa-arrow-circle-o-left'></i> Create".html_safe, '#', |
+      id: 'btn-folder-create-root', class: 'btn-folder-index'
+    = link_to "<i class='fa fa-arrow-circle-o-down'></i> Create".html_safe, '#', |
       id: 'btn-folder-create', class: 'btn-folder-index'
-    = link_to "<i class='fa fa-edit'></i> Rename".html_safe, '#', |
-      id: 'btn-folder-rename', class: 'btn-folder-index'
-    = link_to "<i class='fa fa-cog'></i> Default".html_safe, '#', |
-      id: 'btn-folder-default', class: 'btn-folder-index'
     = link_to "<i class='fa fa-times'></i> Delete".html_safe, '#', |
       id: 'btn-folder-destroy', class: 'btn-folder-index'
+    = link_to "<i class='fa fa-edit'></i> Rename".html_safe, '#', |
+      id: 'btn-folder-rename', class: 'btn-folder-index'
+    = link_to "<i class='fa fa-certificate'></i> Default".html_safe, '#', |
+      id: 'btn-folder-default', class: 'btn-folder-index'
+    = link_to "<i class='fa fa-reply'></i> Orders".html_safe, |
+      certificate_orders_path(@ssl_slug, folders: true),            |
+      id: 'btn-folder-certificates', class: 'btn-folder-index'
     = text_field_tag :folder_search, nil, id: 'folder-scan'
-  #folders-tree
-
+  
+  #file-explorer
+    #folders-tree
+                  
   #folder-forms.hidden
     - folder = Folder.new
     = form_for folder, url: folders_url(@ssl_slug), remote: true, |
