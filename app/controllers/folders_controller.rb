@@ -61,7 +61,7 @@ class FoldersController < ApplicationController
         render_try_again_error
       end
     else
-      render json: { folder: ['Archived and expired folders cannot be deleted.'] },
+      render json: { folder: ['System folders cannot be deleted.'] },
         status: :unprocessable_entity
     end
   end

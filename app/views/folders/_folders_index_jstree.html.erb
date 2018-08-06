@@ -61,10 +61,14 @@
           "check_callback" : function(operation, node, node_parent, node_position, more) {
             var callback = true;
             if (operation == 'move_node' || operation == 'delete_node') {
-              callback = node.data && !node.data['archived'];
+              callback = node.data && 
+                !node.data['archived'] &&
+                !node.data['expired'] && 
+                !node.data['revoked'] && 
+                !node.data['active'];
             }
             if (operation == 'move_node' && node_parent.id == '#') {
-              if (!callback){callback = node.type !='file';}
+              callback = node.type !='file';
             }
             return callback;
           },
