@@ -1,8 +1,100 @@
 class NotificationGroupsController < ApplicationController
   before_action :require_user, only: [:index, :new, :create, :edit, :update, :destroy]
   before_action :find_ssl_account
-  before_action :set_row_page, only: [:index]
-  before_action :set_schedule_value, only: [:index, :new, :edit]
+  before_action :set_row_page, only: [:index, :search]
+  before_action :set_schedule_value, only: [:index, :new, :edit, :search]
+
+  def search
+    @filter_slt_type = params[:filter_type]
+
+    if params[:filter_type] == 'true'
+      @notification_groups = @ssl_account.notification_groups.paginate(@p)
+    else
+      @filter_slt_schedule_type = params[:filter_schedule_type]
+
+      if params[:filter_schedule_type] == 'true'
+        @filter_slt_schedule_simple = params[:filter_schedule_simple]
+        notification_group_ids = Schedule.where(schedule_type: 'Simple',
+                                                schedule_value: params[:filter_schedule_simple])
+                                     .pluck(:notification_group_id).uniq
+        @notification_groups = @ssl_account.notification_groups.where(id: notification_group_ids).paginate(@p)
+      else
+        notification_group_ids = []
+
+        if params[:filter_weekday_type] == 'true'
+          notification_group_ids.concat Schedule.
+              where(schedule_type: 'Weekday',
+                    schedule_value: 'All').
+              pluck(:notification_group_id).uniq
+        else
+          @filter_slt_weekdays = params[:filter_weekday]
+          notification_group_ids.concat Schedule.
+              where(schedule_type: 'Weekday',
+                    schedule_value: params[:filter_weekday]).
+              pluck(:notification_group_id).uniq
+        end
+
+        if params[:filter_month_type] == 'true'
+          notification_group_ids.concat Schedule.
+              where(schedule_type: 'Month',
+                    schedule_value: 'All').
+              pluck(:notification_group_id).uniq
+        else
+          @filter_slt_months = params[:filter_month]
+          notification_group_ids.concat Schedule.
+              where(schedule_type: 'Month',
+                    schedule_value: params[:filter_month]).
+              pluck(:notification_group_id).uniq
+        end
+
+        if params[:filter_day_type] == 'true'
+          notification_group_ids.concat Schedule.
+              where(schedule_type: 'Day',
+                    schedule_value: 'All').
+              pluck(:notification_group_id).uniq
+        else
+          @filter_slt_days = params[:filter_day]
+          notification_group_ids.concat Schedule.
+              where(schedule_type: 'Day',
+                    schedule_value: params[:filter_day]).
+              pluck(:notification_group_id).uniq
+        end
+
+        if params[:filter_hour_type] == 'true'
+          notification_group_ids.concat Schedule.
+              where(schedule_type: 'Hour',
+                    schedule_value: 'All').
+              pluck(:notification_group_id).uniq
+        else
+          @filter_slt_hours = params[:filter_hour]
+          notification_group_ids.concat Schedule.
+              where(schedule_type: 'Hour',
+                    schedule_value: params[:filter_hour]).
+              pluck(:notification_group_id).uniq
+        end
+
+        if params[:filter_minute_type] == 'true'
+          notification_group_ids.concat Schedule.
+              where(schedule_type: 'Minute',
+                    schedule_value: 'All').
+              pluck(:notification_group_id).uniq
+        else
+          @filter_slt_minutes = params[:filter_minute]
+          notification_group_ids.concat Schedule.
+              where(schedule_type: 'Minute',
+                    schedule_value: params[:filter_minute]).
+              pluck(:notification_group_id).uniq
+        end
+
+        @notification_groups = @ssl_account.notification_groups.where(id: notification_group_ids.uniq).paginate(@p)
+      end
+    end
+
+    respond_to do |format|
+      format.html { render :action => :index }
+      format.xml  { render :xml => @notification_groups }
+    end
+  end
 
   def index
     @notification_groups = @ssl_account.notification_groups.paginate(@p)
