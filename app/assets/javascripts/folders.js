@@ -99,13 +99,13 @@ $(function($) {
     }
   };
 
-  folderAction = function(form, type, concat='') {
+  folderAction = function(form, type, concat='', data_type='JSON') {
     $.ajax({
       type: type,
       url: form.attr('action'),
       data: form.serialize().concat(concat),
-      dataType: 'JSON'
-    }).success(function() {
+      dataType: data_type
+    }).success(function(resp) {
       errorsExist = false;
     }).error(function(json) {
       errorsExist = true;
@@ -254,6 +254,26 @@ $(function($) {
     updateFolderId(form, node_id);
     form.submit();
   };
+
+  $(co_id).on('select_node.jstree', function (e, data) {
+    var node = data.node;
+    $('#folder-co-list-cont').empty();
+    if (node.data.certificate_orders_count > 0) {
+      node.data.certificate_orders.forEach(function(title) {
+        co = title.substring(title.indexOf("(") + 1, title.indexOf(")"));
+        link = decodeURIComponent(
+          $('#folder-co-list-cont').data('co-url')
+        ).replace('#', co);
+        
+        $('#folder-co-list-cont').append(
+          "<div class='f-co-item'><a title='" + title + "'"
+          + " href='" + link + "'>" + title + "</a></div>"
+        );
+      });
+    } else {
+      $('#folder-co-list-cont').append("0 certificates");
+    }
+  });
 
   $(co_id).on("check_node.jstree", function (e, data) {
     setSelectedCount(data);

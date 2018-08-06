@@ -3,7 +3,7 @@
   = render partial: '/folders/folders_popup_jstree'
 
   - url = add_certificate_order_folder_url(@ssl_slug, '#')
-  = form_for Folder.new, url: url, remote: true,                |
+  = form_for Folder.new, url: url, remote: true,            |
     method: :put, data: {type: :json, initial_action: url}, |
     html: {id: 'frm-folder-add-cert', class: 'hidden'} do |f|
     = f.text_field :certificate_order_id, value: nil
@@ -12,11 +12,39 @@
   jQuery(function($) {
     var curDialog = $('#dialog-form'),
       form = $('#frm-folder-add-cert'),
-      coId = '';
+      coId = '',
+      folderName = ' ',
+      folderId = ' ',
+      iconClicked = null;
+    
+    function updateIconInfo() {
+      checked = $('#folders-tree-modal').jstree("get_checked", true)[0];
+      iconClicked.removeClass('fa-plus');
+      iconClicked.addClass('fa-folder-open');
+      iconClicked.data('folder-name', checked.text);
+      iconClicked.data('folder-id', checked.id.replace('_folder', ''));
+    }
     
     function updateFolder() {
-      form.submit();
-      curDialog.dialog('close');
+      if ($('#folders-tree-modal').jstree("get_checked").length == 0) {
+        alert("Please check one folder to update.");
+      } else {
+        form.submit();
+        curDialog.dialog('close');
+        updateIconInfo();
+      }
+    }
+
+    function selectFolder() {
+      id = folderId + '_folder';
+      $('#folders-tree-modal').jstree('check_node', [id]);
+    }
+    
+    function renderFolder() {
+      bp = $('.ui-dialog-buttonpane');
+      bp.children('p').remove();
+      bp.append("<p><i class='fa fa-folder-open'></i> " + folderName + '</p>');
+      bp.children('p').css('margin', '0.6rem').css('color', 'grey');
     }
 
     function setFolderDialog() {
@@ -24,10 +52,11 @@
         position: { my: 'top center', at: 'top center', of: window },
         title: 'Select Folder For Certificate #' + coId,
         autoOpen: false,
-        height: 280,
+        resizable: false,
+        height: 320,
         width: 400,
         modal: true,
-        dialogClass: 'dl-transfer-team',
+        dialogClass: 'dl-select-folder',
         buttons: {
           Cancel: function() {
             curDialog.dialog('close');
@@ -39,8 +68,16 @@
 
     $('.icon-co-add-folder').on('click', function(e) {
       coId = $(this).attr('id');
+      iconClicked = $(this);
+      
+      if ($(this).data('folder-name')) {
+        folderName = $(this).data('folder-name');
+        folderId = $(this).data('folder-id');
+        selectFolder();
+      }
       form.find('#folder_certificate_order_id').val(coId);
       setFolderDialog();
       curDialog.dialog('open');
+      renderFolder();
     });
   });

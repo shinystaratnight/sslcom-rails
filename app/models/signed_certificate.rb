@@ -11,6 +11,8 @@ class SignedCertificate < ActiveRecord::Base
   belongs_to :parent, :foreign_key=>:parent_id,
     :class_name=> 'SignedCertificate', :dependent=>:destroy
   belongs_to :csr
+  delegate :certificate_content, to: :csr
+  delegate :certificate_order, to: :certificate_content
   belongs_to :certificate_lookup
   validates_presence_of :body, :if=> Proc.new{|r| !r.parent_cert}
   validates :csr_id, :presence=>true, :on=>:save
@@ -367,10 +369,6 @@ class SignedCertificate < ActiveRecord::Base
 
   def nonidn_friendly_common_name
     SimpleIDN.to_ascii(read_attribute(:common_name) || csr.common_name).gsub('*', 'STAR').gsub('.', '_')
-  end
-
-  def certificate_order
-    csr.certificate_content.certificate_order
   end
 
   def expiration_date_js

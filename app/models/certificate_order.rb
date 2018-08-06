@@ -20,7 +20,11 @@ class CertificateOrder < ActiveRecord::Base
   has_many    :certificate_contacts, through: :certificate_contents
   has_many    :domain_control_validations, through: :certificate_names
   has_many    :csrs, :through=>:certificate_contents
-  has_many    :signed_certificates, :through=>:csrs
+  has_many    :signed_certificates, :through=>:csrs do
+    def expired
+      where{expiration_date > Date.today}
+    end
+  end
   has_many    :shadow_certificates, :through=>:csrs, class_name: "SignedCertificate"
   has_many    :ca_certificate_requests, :through=>:csrs
   has_many    :ca_api_requests, :through=>:csrs
