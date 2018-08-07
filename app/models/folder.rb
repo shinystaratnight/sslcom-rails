@@ -46,7 +46,7 @@ class Folder < ActiveRecord::Base
   end
 
   def can_destroy?
-    !archived? && !expired?
+    !archived? && !expired? && !active? && !revoked?
   end
 
   protected
