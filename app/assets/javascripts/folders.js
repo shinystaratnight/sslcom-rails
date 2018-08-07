@@ -106,10 +106,22 @@ $(function($) {
     if (!sel.length) { return false; }
 
     if (sel) {
-      resp = folderDefault(
-        ref.get_selected(true)[0].id.split('_').shift()
-      );
-      if (resp) { ref.load_all(); }
+      errors = folderDefault(sel[0].id.split('_').shift());
+      setTimeout(function() {
+        if (!errorsExist) {
+          // unset default folder
+          remove_default = ref.get_node(
+            $("li i.fa-certificate").parents('li')[0].id
+          );
+          remove_default.data.default = false;
+          ref.set_icon(remove_default, 'jstree-folder');
+          
+          // set default folder
+          sel[0].data.default = true;
+          ref.set_icon(sel[0], 'fa fa-certificate');
+        }
+      }, 450);
+      return errors;
     }
   };
 

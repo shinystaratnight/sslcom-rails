@@ -125,15 +125,16 @@ class FoldersController < ApplicationController
   end
 
   def update_default
-    if @folder.archived?
-      render json: { archive: ['Archived folder cannot be set as default.'] },
-        status: :unprocessable_entity
-    else  
+    if @folder && @folder.can_destroy?
       if @folder.update(default: true)
+        @folder.ssl_account.update(default_folder_id: @folder.id)
         render json: { message: "Folder successfully set as default." }, status: :ok
       else
         render json: @folder.errors.messages, status: :unprocessable_entity
       end
+    else  
+      render json: { default: ['System folders cannot be set as default folder'] },
+        status: :unprocessable_entity
     end
   end
   

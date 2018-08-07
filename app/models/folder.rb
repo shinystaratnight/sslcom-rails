@@ -8,7 +8,8 @@ class Folder < ActiveRecord::Base
             presence: {allow_blank: false},
             uniqueness: {scope: [:ssl_account_id, :parent_id],  case_sensitive: false},
             format: { with: /\A[\w ]+\z/,
-                      message: 'Letters, Numbers, Spaces and Underscores Only'}
+                      message: 'Letters, Numbers, Spaces and Underscores Only'
+                    }
 
   after_save     :there_can_only_be_one_default_folder
   before_destroy :can_destroy?
