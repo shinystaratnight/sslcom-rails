@@ -166,7 +166,7 @@
       %th(scope="col") Order #
       %th(scope="col") Amount
     -@orders.each do |o|
-      -cache(['list', o]) do
+      -cache([current_user,'orders_list', u], expires_in: 12.hours) do
         %tr
           -if o.is_reseller_tier?
             %td Reseller Tier #{o.line_items.last.sellable.label} Discounting
