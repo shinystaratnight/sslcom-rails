@@ -153,6 +153,10 @@ SslCom::Application.routes.draw do
     end
 
     resources :domains, only: [:index, :create, :update, :destroy] do
+      collection do
+        match :validate_all, via: [:get, :post]
+        match :dcv_all_validate, via: [:get, :post]
+      end
       member do
         match :validation_request, via: [:get, :post]
         match :dcv_validate, via: [:get, :post]
