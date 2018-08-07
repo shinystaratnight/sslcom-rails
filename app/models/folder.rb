@@ -50,6 +50,11 @@ class Folder < ActiveRecord::Base
     !archived? && !expired? && !active? && !revoked?
   end
 
+  def self.reset_to_system_folders(team)
+    if team
+    end
+  end
+
   protected
 
   # if this is going to be the default folder, all others should not

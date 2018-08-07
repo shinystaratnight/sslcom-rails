@@ -1,21 +1,28 @@
 #folders-index
-  %h3 Certificate Explorer
-  %br
+  
+  #folders-header
+    %p Certificate Explorer
+    = text_field_tag :folder_search, nil, id: 'folder-scan'
+    = link_to "<i class='fa fa-gears'></i>".html_safe,       |
+      reset_to_system_folders_path(@ssl_slug), method: :put, |
+      id: 'btn-folder-reset-sys', class: 'btn-folder-index', |
+      data: { confirm: "This will organize certificates into folders according to SSL.com default settings. Current certificate and folder organization will be overwritten. Proceed?" }
+  %br/
+  
   #folders-action
-    = link_to "<i class='fa fa-arrow-circle-o-left'></i> Create".html_safe, '#', |
+    = link_to "<i class='fa fa-plus'></i> Folder".html_safe, '#', |
       id: 'btn-folder-create-root', class: 'btn-folder-index'
-    = link_to "<i class='fa fa-arrow-circle-o-down'></i> Create".html_safe, '#', |
+    = link_to "<i class='fa fa-plus'></i> Subfolder".html_safe, '#', |
       id: 'btn-folder-create', class: 'btn-folder-index'
-    = link_to "<i class='fa fa-times'></i> Delete".html_safe, '#', |
+    = link_to "<i class='fa fa-trash'></i>".html_safe, '#', |
       id: 'btn-folder-destroy', class: 'btn-folder-index'
     = link_to "<i class='fa fa-edit'></i> Rename".html_safe, '#', |
       id: 'btn-folder-rename', class: 'btn-folder-index'
     = link_to "<i class='fa fa-certificate'></i> Default".html_safe, '#', |
       id: 'btn-folder-default', class: 'btn-folder-index'
     = link_to "<i class='fa fa-reply'></i> Orders".html_safe, |
-      certificate_orders_path(@ssl_slug, folders: true),            |
+      certificate_orders_path(@ssl_slug, folders: true),      |
       id: 'btn-folder-certificates', class: 'btn-folder-index'
-    = text_field_tag :folder_search, nil, id: 'folder-scan'
   
   #file-explorer
     #folders-tree
