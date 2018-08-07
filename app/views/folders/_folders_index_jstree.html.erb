@@ -10,26 +10,34 @@
             },
             icon: "fa fa-edit"
           },
-          deleteFolder: {
-            label: "Delete",
+          defaultFolder: {
+            label: "Set To Default",
             action: function(obj) {
-              $('#btn-folder-destroy').click();
+              $('#' + obj.reference[0].id.remove('_anchor')).click();
+              $('#btn-folder-default').click();
             },
-            icon: "fa fa-trash"
+            icon: "fa fa-certificate"
           },
           createFolderInside: {
-            label: "Create Inside",
+            label: "Create Subfolder",
             action: function(obj) {
               $('#btn-folder-create').click();
             },
             icon: "fa fa-indent"
           },
           createFolderOutside: {
-            label: "Create Outside",
+            label: "Create Folder",
             action: function(obj) {
               $('#btn-folder-create-root').click();
             },
             icon: "fa fa-outdent"
+          },
+          deleteFolder: {
+            label: "Delete",
+            action: function(obj) {
+              $('#btn-folder-destroy').click();
+            },
+            icon: "fa fa-trash"
           }
         }
       }
