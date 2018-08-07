@@ -16,6 +16,7 @@ class CertificateContent < ActiveRecord::Base
   has_many    :url_callbacks, as: :callbackable
   has_many    :taggings, as: :taggable
   has_many    :tags, through: :taggings
+  belongs_to  :ca
 
   accepts_nested_attributes_for :certificate_contacts, :allow_destroy => true
   accepts_nested_attributes_for :registrant, :allow_destroy => false
