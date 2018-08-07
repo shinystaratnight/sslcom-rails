@@ -42,7 +42,7 @@ class FoldersController < ApplicationController
   end
 
   def reset_to_system
-    # Folder.reset_to_system_folders(@ssl_account)
+    Folder.reset_to_system_folders(@ssl_account)
     redirect_to folders_path(@ssl_slug), 
       notice: "Certificates have been reset to system folders."
   end
