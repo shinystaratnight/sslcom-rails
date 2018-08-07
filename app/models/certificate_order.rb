@@ -2012,7 +2012,7 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   # cron job that flags unused certificate_order credits as expired after a period of time (1 year)
-  def self.expire_credits(options)
+  def self.expire_credits(options={})
     Website.sandbox_db.use_database if options[:db]=="sandbox"
     CertificateOrder.unflagged_expired_credits.update_all(is_expired: true)
     SystemAudit.create(owner: nil, target: nil,
