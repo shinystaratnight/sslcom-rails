@@ -1,0 +1,14 @@
+<script type="text/javascript">
+  jQuery.noConflict();
+  jQuery(function ($) {
+    $(document).ready(function () {
+      $("#dcv_address").on('change', function () {
+        if($(this).val().indexOf("@") == -1){
+          $("#dcv_instruction").html("Please select email address.");
+        } else {
+          $("#dcv_instruction").html("Validation email will be emailed to " + $(this).val() + ". Please follow those instructions.");
+        }
+      });
+    });
+  });
+</script>

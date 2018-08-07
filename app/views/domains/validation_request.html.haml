@@ -1,4 +1,5 @@
 -content_for :title, "Validation for #{@domain.name}"
+=render :partial => 'dcv_scripts'
 %h2 Domain Validation
 %h3
   Please select the appropriate address and then click the 'Validate' button.
@@ -18,7 +19,7 @@
       %tr
         %td.center=@domain.name
         %td.center
-          %select(name="dcv_address" )
+          %select(name="dcv_address" id="dcv_address" )
             %option select email address
             -@addresses.each do |address|
               %option(value="#{address}" )=address
@@ -29,7 +30,7 @@
         %td
         %td.center
           Instructions:
-          %span(style="background: yellow" )Please select email address
+          %span(style="background: yellow" id="dcv_instruction" )Please select email address
   #upload_validations(style='width: 100%; text-align: center')
     =submit_tag "Validate", :id=>"validate_domains", :disable_with=>"Submitting..."
     .clearfix

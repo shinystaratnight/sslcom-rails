@@ -1,10 +1,10 @@
 -title = "Domains"
 -content_for :title, title
 -system_admins = current_user.is_system_admins?
-
+=render :partial => 'index_scripts'
 #search_bar
   =form_tag domains_path, id: 'add_domains', method: :post do
-    Input domain names splitting by comma or space
+    Input domain name(s) (separated by commas or spaces)
     =text_field_tag :domain_names, params[:domains]
     =button_tag 'Add', id: 'btn_add_domains'
 
@@ -16,16 +16,19 @@
       %th.name(scope="col") Name
       %th(scope="col") Scoped
       %th(scope="col") Status
+      %th(scope="col") Validity period
       -unless system_admins
         %th(scope="col") Action
     -@domains.each do |d|
       -dcv = d.domain_control_validations.last
       -validation_status = (dcv && dcv.identifier_found) ? 'Validated' : 'Pending validation'
+      -validity_period = (validation_status=='Pending validation' || dcv.responded_at.nil?) ? 'n/a' : (30-(Date.today-dcv.responded_at.to_date).to_i).to_s + " days remaining"
       -order_ref = d.certificate_content ? d.certificate_content.certificate_order.ref : 'Team'
       %tr
         %td=d.name
         %td=order_ref
         %td=validation_status
+        %td=validity_period
         -unless system_admins
           %td
             -unless validation_status == 'Validated'
@@ -39,11 +42,13 @@
     -@cnames.each do |d|
       -dcv = d.domain_control_validations.last
       -validation_status = (dcv && dcv.identifier_found) ? 'Validated' : 'Pending validation'
+      -validity_period = (validation_status=='Pending validation' || dcv.responded_at.nil?) ? 'n/a' : (30-(Date.today-dcv.responded_at.to_date).to_i).to_s + " days remaining"
       -order_ref = d.certificate_content ? d.certificate_content.certificate_order.ref : 'Team'
       %tr
         %td=d.name
         %td=order_ref
         %td=validation_status
+        %td=validity_period
         -unless system_admins
           %td
             -unless validation_status == 'Validated'

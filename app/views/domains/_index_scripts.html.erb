@@ -1,0 +1,53 @@
+<script type="text/javascript">
+  jQuery.noConflict();
+  jQuery(function ($) {
+    $(document).ready(function () {
+      $('form#add_domains').ajaxForm({
+        dataType: "json",
+        success: function(data, status){
+          var domains = data['domains'];
+          var exist_domains = data['exist_domains']
+          console.log(domains)
+          console.log(exist_domains)
+          if(exist_domains.length>0){
+            var message_wrap_element = $('<div></div>');
+            message_wrap_element.attr('class', 'flash_message notice');
+
+            var message_element = $('<span></span>');
+            var message = exist_domains.join(', ');
+            message += " already exist";
+            message += exist_domains.length>1 ? "" : "s";
+            message_element.append(message);
+            message_wrap_element.append(message_element);
+
+            var btn_element = $('<small></small>');
+            var close_btn_element = $('<div></div>');
+            close_btn_element.attr('class', 'close_flash_message');
+
+            var close_sign_element = $('<span></span>');
+            close_sign_element.append('X');
+
+            close_btn_element.append(close_sign_element);
+            close_btn_element.append('close');
+
+            btn_element.append(close_btn_element);
+            message_wrap_element.append(btn_element);
+
+            if ($('#content').find('.inner').children().first().hasClass('flash_message')) {
+              $('#content').find('.inner').children().first().remove();
+            }
+            message_wrap_element.insertBefore($('#content').find('.inner').children().first());
+          }
+          $.each(domains, function (key, value) {
+            var new_row = "<tr>";
+            new_row += "<td>" + value.domain.name + "</td>";
+            new_row += "<td>Team</td><td>Pending validation</td><td>";
+            new_row += '<a href="/team/<%=@ssl_slug%>/domains/' + value.domain.id + '/validation_request">validate</a> | ';
+            new_row += '<a data-confirm="Are you sure you want to delete this domain?" rel="nofollow" data-method="delete" href="/team/<%=@ssl_slug%>/domains/' + value.domain.id + '">remove</a></td></tr>';
+            $(new_row).insertAfter($(".heading_row"));
+          });
+        }
+      });
+    });
+  });
+</script>

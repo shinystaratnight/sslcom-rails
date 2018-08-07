@@ -1,6 +1,6 @@
 
 class DomainsController < ApplicationController
-  before_filter :require_user
+  before_filter :require_user, :except => [:dcv_validate]
   before_filter :find_ssl_account
 
   def index
@@ -9,7 +9,9 @@ class DomainsController < ApplicationController
   end
 
   def create
+    res_Obj = {}
     exist_domain_names = []
+    created_domains = []
     domain_names = params[:domain_names].split(/[\s,']/)
     domain_names.each do |d_name|
       if @ssl_account.domain_names.include?(d_name)
@@ -19,12 +21,12 @@ class DomainsController < ApplicationController
         @domain.name = d_name
         @domain.ssl_account_id = @ssl_account.id
         @domain.save()
+        created_domains << @domain
       end
     end
-    if exist_domain_names.length > 0
-      flash[:notice] = "#{exist_domain_names.join(', ')} #{exist_domain_names.length>1 ? "are" : "is"} already exist."
-    end
-    redirect_to domains_path(ssl_slug: @ssl_slug)
+    res_Obj['domains'] = created_domains
+    res_Obj['exist_domains'] = exist_domain_names
+    render :json => res_Obj
   end
 
   def destroy
@@ -39,7 +41,8 @@ class DomainsController < ApplicationController
 
   def validation_request
     @domain = current_user.ssl_account.domains.find_by(id: params[:id])
-    if @domain.domain_control_validations.last.identifier_found
+    dcv = @domain.domain_control_validations.last
+    if dcv && dcv.identifier_found
       redirect_to domains_path(@ssl_slug)
       return
     end
@@ -50,6 +53,8 @@ class DomainsController < ApplicationController
         @domain.domain_control_validations.create(dcv_method: "email", email_address: params[:dcv_address],
                                                   identifier: identifier, failure_action: "ignore", candidate_addresses: @addresses)
         OrderNotifier.dcv_email_send(nil, params[:dcv_address], identifier, [@domain.name], @domain.id, @ssl_slug).deliver
+        @domain.domain_control_validations.last.send_dcv!
+        flash[:notice] = "Validation email has been sent."
       end
     end
   end
@@ -62,6 +67,7 @@ class DomainsController < ApplicationController
       dcv = @domain.domain_control_validations.last
       if dcv.identifier == identifier
         dcv.update_attribute(:identifier_found, true)
+        dcv.satisfy! unless dcv.satisfied?
       end
     end
   end
