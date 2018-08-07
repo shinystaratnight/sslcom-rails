@@ -52,48 +52,49 @@
             %br
             =link_to "decline", t[:decline], {style: 'color:red;'}
     -@teams.each do |t|
-      -account_owner = current_user.is_account_owner? t
-      -main_account  = current_user.is_main_account? t
-      -if permitted_to? :set_default_team, current_user
-        -set_default_team = link_to 'set default', set_default_team_user_path(current_user, ssl_account_id: t.id), method: :put
-      %tr
-        %td
-          -unless system_admins
-            =link_to t.get_team_name, switch_default_ssl_account_user_path(current_user.id, ssl_account_id: t.id)
-          -else
-            =t.get_team_name
-        %td=t.acct_number
-        -unless system_admins
-          %td= main_account ? "&#10003;".html_safe : set_default_team
-          %td=current_user.role_symbols(t)
-        -else
-          %td=link_to(t.get_account_owner.try(:login).shorten(15,false),admin_show_user_path(t.get_account_owner), title: t.get_account_owner.try(:login)) if t.get_account_owner.try(:login)
-        %td
-          -if system_admins
-            %a{style:"cursor: pointer;", onclick: "adjust_funds_ssl_account('#{t.ssl_slug}','#{t.get_team_name}')"} $#{t.funded_account.try :amount}
-          -else
-            $#{t.funded_account.try :amount}
-        %td#team-detail-links
-          -permissions = team_index_permissions(current_user, t)
-          %div
-            -if system_admins || permissions.include?(:orders)
-              =link_to "orders (#{t.certificate_orders.count})", certificate_orders_path(ssl_slug: t.to_slug), class: 'btn-team-links'
-            -if system_admins || permissions.include?(:transactions)
-              =link_to "transactions (#{t.orders.count})", orders_path(ssl_slug: t.to_slug), class: 'btn-team-links'
-            -if system_admins || permissions.include?(:validations)
-              =link_to "validations (#{t.validations.count})", validations_path(ssl_slug: t.to_slug), class: 'btn-team-links'
-            -if system_admins || permissions.include?(:users)
-              =link_to "users (#{t.users.count})", users_path(ssl_slug: t.to_slug), class: 'btn-team-links'
-          -if system_admins
-            #team-billing-method
-              =form_tag ssl_account_path(ssl_slug: t.to_slug), id: 'frm-team-billing-method',  method: :put do
-                =select_tag :billing_method,                                                                           |
-                  options_for_select(SslAccount::BILLING_METHODS.map{|bm| [bm.gsub('_', ' '), bm]}, t.billing_method), |
-                  id: 'team-billing-method'
-
-        %td=t.created_at.strftime("%b %d, %Y")
-        -unless system_admins
+      -cache(['list', t]) do
+        -account_owner = current_user.is_account_owner? t
+        -main_account  = current_user.is_main_account? t
+        -if permitted_to? :set_default_team, current_user
+          -set_default_team = link_to 'set default', set_default_team_user_path(current_user, ssl_account_id: t.id), method: :put
+        %tr
           %td
-            [#{link_to "view", switch_default_ssl_account_user_path(current_user.id, ssl_account_id: t.id)}]
-            -unless account_owner || system_admins
-              [#{link_to "leave team", leave_team_user_path(current_user, ssl_account_id: t.id), data: {confirm: "Please confirm you want to leave team #{t.get_team_name}."}}]
+            -unless system_admins
+              =link_to t.get_team_name, switch_default_ssl_account_user_path(current_user.id, ssl_account_id: t.id)
+            -else
+              =t.get_team_name
+          %td=t.acct_number
+          -unless system_admins
+            %td= main_account ? "&#10003;".html_safe : set_default_team
+            %td=current_user.role_symbols(t)
+          -else
+            %td=link_to(t.get_account_owner.try(:login).shorten(15,false),admin_show_user_path(t.get_account_owner), title: t.get_account_owner.try(:login)) if t.get_account_owner.try(:login)
+          %td
+            -if system_admins
+              %a{style:"cursor: pointer;", onclick: "adjust_funds_ssl_account('#{t.ssl_slug}','#{t.get_team_name}')"} $#{t.funded_account.try :amount}
+            -else
+              $#{t.funded_account.try :amount}
+          %td#team-detail-links
+            -permissions = team_index_permissions(current_user, t)
+            %div
+              -if system_admins || permissions.include?(:orders)
+                =link_to "orders (#{t.certificate_orders.count})", certificate_orders_path(ssl_slug: t.to_slug), class: 'btn-team-links'
+              -if system_admins || permissions.include?(:transactions)
+                =link_to "transactions (#{t.orders.count})", orders_path(ssl_slug: t.to_slug), class: 'btn-team-links'
+              -if system_admins || permissions.include?(:validations)
+                =link_to "validations (#{t.validations.count})", validations_path(ssl_slug: t.to_slug), class: 'btn-team-links'
+              -if system_admins || permissions.include?(:users)
+                =link_to "users (#{t.users.count})", users_path(ssl_slug: t.to_slug), class: 'btn-team-links'
+            -if system_admins
+              #team-billing-method
+                =form_tag ssl_account_path(ssl_slug: t.to_slug), id: 'frm-team-billing-method',  method: :put do
+                  =select_tag :billing_method,                                                                           |
+                    options_for_select(SslAccount::BILLING_METHODS.map{|bm| [bm.gsub('_', ' '), bm]}, t.billing_method), |
+                    id: 'team-billing-method'
+
+          %td=t.created_at.strftime("%b %d, %Y")
+          -unless system_admins
+            %td
+              [#{link_to "view", switch_default_ssl_account_user_path(current_user.id, ssl_account_id: t.id)}]
+              -unless account_owner || system_admins
+                [#{link_to "leave team", leave_team_user_path(current_user, ssl_account_id: t.id), data: {confirm: "Please confirm you want to leave team #{t.get_team_name}."}}]

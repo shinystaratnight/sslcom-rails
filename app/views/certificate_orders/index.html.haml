@@ -311,6 +311,13 @@
   =button_tag 'Cancel', :type=>'button', :id=>'btn_close_cert_order_filter'
 
 =render :partial=>'quick_links'
+
+-if Folder.show_folders?
+  -if show_folders_container?
+    =render partial: 'folders/co_index_folders', locals: {container_type: 'expanded'}
+  -else
+    =render partial: 'folders/co_index_folders', locals: {container_type: 'closed'}
+
 #certificate_orders
   %table(cellspacing="0")
     -#.loader_wrap
@@ -327,8 +334,13 @@
       SSL Certificates Management
       =will_paginate @certificate_orders
     %tr.heading_row
+      -if Folder.show_folders? && show_folders_container?
+        %th
+          %i.fa.fa-folder#co-folder-column
       %td
       %th.name(scope="col")Subject
+      - if Folder.show_folders?
+        %th(scope="col") Folder
       %th(scope="col") Status
       %th(scope="col") Order Date
       %th(scope="col") Expires
@@ -338,11 +350,20 @@
         -cc = co.certificate_content
         -cn = (co.is_unused_credit? || cc.csr.blank?) ? nil : cc.csr.common_name
         %tr(alt="#{co.ref}")
+          -if Folder.show_folders? && show_folders_container?
+            %td
+              =check_box_tag :folder_add_co, 'yes', false, id: co.ref, class: 'chk-folder-add-co'
           %td.dropdown
             -if !co.is_expired_credit? and permitted_to?(:index, co)
               =image_tag 'expand.png'
           %td.name
             =render :partial=>'subject_column', :locals=>{:certificate_order=>co}
+          -if Folder.show_folders?
+            %td.co-folder-name
+              -if co.folder
+                %i.fa.fa-folder-open.icon-co-add-folder{id: co.ref}
+              -else
+                %i.fa.fa-plus.icon-co-add-folder{id: co.ref}
           %td.status_message(class="#{status_class(cc)}")
             #{certificate_order_status(cc)}
           %td
@@ -351,3 +372,6 @@
             #{expires_on(cc)}
           %td.ssl_action
             #{action(co)}
+
+-if Folder.show_folders?
+  = render partial: '/folders/folder_tree_modal'

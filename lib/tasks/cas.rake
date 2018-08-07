@@ -804,9 +804,11 @@ namespace :cas do
       Ca.all.each {|ca|
         unless ca.is_a?(EndEntityProfile) or ca.is_a?(RootCa) or ca.ekus.blank?
           if cert.is_evcs? and ca.end_entity==(Ca::END_ENTITY[:evcs])
-            cert.cas_certificates.create(ca_id: ca.id,status: CasCertificate::STATUS[:active])
+            cert.cas_certificates.create(ca_id: ca.id,
+               status: CasCertificate::STATUS[ca.ref=="0014" ? :default : :active])
           elsif cert.is_cs? and ca.end_entity==(Ca::END_ENTITY[:cs])
-            cert.cas_certificates.create(ca_id: ca.id,status: CasCertificate::STATUS[:active])
+            cert.cas_certificates.create(ca_id: ca.id,status: CasCertificate::STATUS[ca.ref=="0013" ?
+                                                                                         :default : :active])
           elsif  cert.is_dv? or cert.is_ov? or cert.is_ev?
             if ca.end_entity==(Ca::END_ENTITY[:dvssl])
               cert.cas_certificates.create(ca_id: ca.id,status: CasCertificate::STATUS[:active])

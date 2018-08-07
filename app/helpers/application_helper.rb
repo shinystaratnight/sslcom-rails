@@ -526,6 +526,19 @@ module ApplicationHelper
   end
   
   def get_full_path(params)
-    send("#{params[:controller]}_path", params.except(:controller, :action))
+    path = params[:controller] == 'certificates' ? "admin_index_" : ''
+    send("#{path}#{params[:controller]}_path", params.except(:controller, :action))
+  end
+  
+  def co_folder_children(contents, options={})
+    output = []
+    contents.each do |f|
+      output << FolderTree.new(@ssl_account, f, @tree_type, []).full_tree
+    end
+    output.to_json.html_safe
+  end
+
+  def show_folders_container?
+    params[:folders] || (params[:search] && params[:search].include?('folder_ids'))
   end
 end
