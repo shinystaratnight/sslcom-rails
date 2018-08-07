@@ -13,7 +13,7 @@
           defaultFolder: {
             label: "Set To Default",
             action: function(obj) {
-              $('#' + obj.reference[0].id.remove('_anchor')).click();
+              $('#' + obj.reference[0].id.replace('_anchor','')).click();
               $('#btn-folder-default').click();
             },
             icon: "fa fa-certificate"

@@ -1,5 +1,13 @@
 $(function($) {
-  var errorsExist = false, curResponse = {};
+  var errorsExist = false,
+    curResponse = {},
+    actionBtnIds = [
+      '#btn-folder-create-root',
+      '#btn-folder-create',
+      '#btn-folder-destroy',
+      '#btn-folder-rename',
+      '#btn-folder-default'
+    ].join(', ');
 
   folderClearErrors = function() {
     errorsExist =  false;
@@ -100,6 +108,12 @@ $(function($) {
     }
   };
 
+  findDefaultNode = function() {
+    return getJstreeRef().get_node(
+      $("li i.fa-certificate").parents('li')[0].id
+    );
+  };
+
   folderDefaultJstree = function() {
     var ref = getJstreeRef(),
       sel = ref.get_selected(true);
@@ -110,9 +124,10 @@ $(function($) {
       setTimeout(function() {
         if (!errorsExist) {
           // unset default folder
-          remove_default = ref.get_node(
-            $("li i.fa-certificate").parents('li')[0].id
-          );
+          remove_default = findDefaultNode();
+          if (typeof(remove_default) == 'undefined') {
+            remove_default = findDefaultNode();
+          }
           remove_default.data.default = false;
           ref.set_icon(remove_default, 'jstree-folder');
           
@@ -207,6 +222,18 @@ $(function($) {
     form.attr('action', new_action);
   }
 
+  hideBtnForCert = function() {
+    $('#btn-folder-create, #btn-folder-destroy, #btn-folder-rename, #btn-folder-default').hide();
+  }
+
+  hideBtnForSystem = function() {
+    $('#btn-folder-destroy, #btn-folder-rename, #btn-folder-default').hide();
+  }
+
+  enableButtons = function() {
+    $(actionBtnIds).show();
+  }
+
   $('#btn-folder-create').on('click', function(e) {
     e.preventDefault();
     folderCreateJstree();
@@ -242,7 +269,7 @@ $(function($) {
   });
 
   /*
-  * Certificates Explorer
+  * Folders Explorer
   */
  $('#folders-tree').on("select_cell.jstree-grid", function(event, data) {
    var node = data.node[0];
@@ -258,6 +285,19 @@ $(function($) {
       var search = $('#folder-scan').val();
       getJstreeRef().searchColumn({0: search});
     }, 250);
+  });
+
+  $('#folders-tree').on('select_node.jstree', function (e, data) {
+    console.log(data.node);
+    icon = data.node.icon;
+    enableButtons();
+    if (icon == 'jstree-folder') {
+      enableButtons();
+    } else if (icon == 'jstree-file') {
+      hideBtnForCert();
+    } else {
+      hideBtnForSystem();
+    }
   });
 
   /*
