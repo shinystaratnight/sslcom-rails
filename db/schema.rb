@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180629182134) do
+ActiveRecord::Schema.define(version: 20180803165627) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        limit: 255
@@ -307,6 +307,7 @@ ActiveRecord::Schema.define(version: 20180629182134) do
     t.boolean  "agreement"
     t.string   "ext_customer_ref",     limit: 255
     t.string   "approval",             limit: 255
+    t.integer  "ca_id",                limit: 4
   end
 
   add_index "certificate_contents", ["certificate_order_id"], name: "index_certificate_contents_on_certificate_order_id", using: :btree
@@ -330,6 +331,7 @@ ActiveRecord::Schema.define(version: 20180629182134) do
     t.datetime "created_at",                         null: false
     t.datetime "updated_at",                         null: false
     t.string   "acme_account_id",        limit: 255
+    t.integer  "ssl_account_id",         limit: 4
   end
 
   create_table "certificate_orders", force: :cascade do |t|
@@ -357,6 +359,7 @@ ActiveRecord::Schema.define(version: 20180629182134) do
     t.string   "acme_account_id",       limit: 255
     t.integer  "wildcard_count",        limit: 4
     t.integer  "nonwildcard_count",     limit: 4
+    t.integer  "folder_id",             limit: 4
   end
 
   add_index "certificate_orders", ["created_at"], name: "index_certificate_orders_on_created_at", using: :btree
@@ -617,6 +620,8 @@ ActiveRecord::Schema.define(version: 20180629182134) do
     t.string   "dcv_method",                 limit: 255
     t.integer  "certificate_name_id",        limit: 4
     t.string   "failure_action",             limit: 255
+    t.integer  "validation_compliance_id",   limit: 4
+    t.datetime "validation_compliance_date"
   end
 
   add_index "domain_control_validations", ["id", "csr_id"], name: "index_domain_control_validations_on_id_csr_id", using: :btree
@@ -651,6 +656,23 @@ ActiveRecord::Schema.define(version: 20180629182134) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  create_table "folders", force: :cascade do |t|
+    t.integer  "parent_id",      limit: 4
+    t.boolean  "default",                    default: false, null: false
+    t.boolean  "archived",                   default: false, null: false
+    t.string   "name",           limit: 255,                 null: false
+    t.string   "description",    limit: 255
+    t.integer  "ssl_account_id", limit: 4,                   null: false
+    t.integer  "items_count",    limit: 4,   default: 0
+    t.datetime "created_at",                                 null: false
+    t.datetime "updated_at",                                 null: false
+    t.boolean  "expired",                    default: false
+  end
+
+  add_index "folders", ["name"], name: "index_folders_on_name", using: :btree
+  add_index "folders", ["parent_id"], name: "index_folders_on_parent_id", using: :btree
+  add_index "folders", ["ssl_account_id"], name: "index_folders_on_ssl_account_id", using: :btree
 
   create_table "funded_accounts", force: :cascade do |t|
     t.integer  "ssl_account_id", limit: 4
@@ -761,6 +783,39 @@ ActiveRecord::Schema.define(version: 20180629182134) do
   add_index "notes", ["notable_id"], name: "index_notes_on_notable_id", using: :btree
   add_index "notes", ["notable_type"], name: "index_notes_on_notable_type", using: :btree
   add_index "notes", ["user_id"], name: "index_notes_on_user_id", using: :btree
+
+  create_table "notification_groups", force: :cascade do |t|
+    t.integer  "ssl_account_id", limit: 4
+    t.string   "ref",            limit: 255, null: false
+    t.string   "friendly_name",  limit: 255, null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "notification_groups", ["ssl_account_id", "ref"], name: "index_notification_groups_on_ssl_account_id_and_ref", using: :btree
+  add_index "notification_groups", ["ssl_account_id"], name: "index_notification_groups_on_ssl_account_id", using: :btree
+
+  create_table "notification_groups_contacts", force: :cascade do |t|
+    t.string   "email_address",         limit: 255
+    t.integer  "notification_group_id", limit: 4
+    t.integer  "contactable_id",        limit: 4
+    t.string   "contactable_type",      limit: 255
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "notification_groups_contacts", ["notification_group_id"], name: "index_notification_groups_contacts_on_notification_group_id", using: :btree
+
+  create_table "notification_groups_subjects", force: :cascade do |t|
+    t.string   "domain_name",           limit: 255
+    t.integer  "notification_group_id", limit: 4
+    t.integer  "subjectable_id",        limit: 4
+    t.string   "subjectable_type",      limit: 255
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "notification_groups_subjects", ["notification_group_id"], name: "index_notification_groups_subjects_on_notification_group_id", using: :btree
 
   create_table "oauth_nonces", force: :cascade do |t|
     t.string   "nonce",      limit: 255
@@ -1219,6 +1274,7 @@ ActiveRecord::Schema.define(version: 20180629182134) do
     t.string   "ext_customer_ref",          limit: 255
     t.text     "status",                    limit: 65535, null: false
     t.integer  "ca_id",                     limit: 4
+    t.string   "type",                      limit: 255
   end
 
   add_index "signed_certificates", ["ca_id"], name: "index_signed_certificates_on_ca_id", using: :btree
@@ -1274,6 +1330,7 @@ ActiveRecord::Schema.define(version: 20180629182134) do
     t.boolean  "duo_enabled"
     t.boolean  "duo_own_used"
     t.string   "sec_type",               limit: 255
+    t.integer  "default_folder_id",      limit: 4
   end
 
   add_index "ssl_accounts", ["acct_number", "company_name", "ssl_slug"], name: "index_ssl_accounts_on_acct_number_and_company_name_and_ssl_slug", using: :btree
@@ -1506,6 +1563,15 @@ ActiveRecord::Schema.define(version: 20180629182134) do
     t.integer  "migratable_id",     limit: 4
     t.string   "migratable_type",   limit: 255
     t.datetime "migrated_at"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "validation_compliances", force: :cascade do |t|
+    t.string   "document",    limit: 255
+    t.string   "version",     limit: 255
+    t.string   "section",     limit: 255
+    t.string   "description", limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
   end

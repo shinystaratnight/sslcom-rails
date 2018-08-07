@@ -41,8 +41,11 @@ class DomainsController < ApplicationController
 
   def validation_request
     @domain = current_user.ssl_account.domains.find_by(id: params[:id])
+<<<<<<< HEAD
     dcv = @domain.domain_control_validations.last
     if dcv && dcv.identifier_found
+=======
+>>>>>>> f771157b1525aa044d7638b5e58071f7172784a0
       redirect_to domains_path(@ssl_slug)
       return
     end
