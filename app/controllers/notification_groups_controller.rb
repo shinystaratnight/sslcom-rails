@@ -194,10 +194,12 @@ class NotificationGroupsController < ApplicationController
       # Saving notification group info
       notification_group = @ssl_account.notification_groups.where(ref: params[:format]).first
       notification_group.friendly_name = params[:friendly_name]
+      notification_group.scan_port = params[:scan_port]
     else
       # Saving notification group info
       notification_group = NotificationGroup.new(
           friendly_name: params[:friendly_name],
+          scan_port: params[:scan_port],
           ssl_account: @ssl_account
       )
     end

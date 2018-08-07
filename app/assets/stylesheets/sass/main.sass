@@ -3953,7 +3953,7 @@ label.error
     float: none
 
   //the following should be able to exist outside stylized
-  input[type=text], input[type=url], input[type=email], input[type=password], select, textarea
+  input[type=text], input[type=number], input[type=url], input[type=email], input[type=password], select, textarea
     font-size: 1.5em
     @include text-shadow(0px 1px 0px #fff)
     outline: none
@@ -4064,6 +4064,16 @@ label.error
     margin: 0 auto
     width: 550px
 
+    > .block_label
+      width: 110px
+      float: left
+      font-size: 1.4em
+      text-align: right
+      padding-top: 5px
+    > .block_body
+      float: left
+      padding-left: 3px
+
     label
       width: 13.8em
 
@@ -4134,6 +4144,9 @@ label.error
 
     &.reminder_days
       margin-bottom: 20px
+
+    &.port_number
+      width: 60px
 
 input#upload_files, input#start_over, input#validate_domains
   margin: 1em

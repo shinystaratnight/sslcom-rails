@@ -49,6 +49,12 @@
             =text_field_tag "notification_group_triggers[]", ngt , :size=>2, :max_size=>2, :class=>'reminder_days'
           .field_desc
             %em days from expiration
+      .subheading Scan
+      .group_block.clearfix
+        .block_label
+          Port :
+        .block_body
+          =number_field_tag "scan_port", @notification_group ? @notification_group.scan_port : '443', :class=>'port_number'
       .subheading Schedule
       .group_block
         .schedule_type_block.clearfix
