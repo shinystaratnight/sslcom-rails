@@ -22,7 +22,7 @@ class CertificateOrder < ActiveRecord::Base
   has_many    :csrs, :through=>:certificate_contents
   has_many    :signed_certificates, :through=>:csrs do
     def expired
-      where{expiration_date > Date.today}
+      where{expiration_date < Date.today}
     end
   end
   has_many    :shadow_certificates, :through=>:csrs, class_name: "SignedCertificate"
