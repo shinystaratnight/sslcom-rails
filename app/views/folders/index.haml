@@ -1,11 +1,14 @@
 #folders-index
   
   #folders-header
-    %p Certificate Explorer
+    %p Folders
+    
     = text_field_tag :folder_search, nil, id: 'folder-scan'
-    = link_to "<i class='fa fa-gears'></i>".html_safe,       |
-      reset_to_system_folders_path(@ssl_slug), method: :put, |
-      id: 'btn-folder-reset-sys', class: 'btn-folder-index', |
+    %span
+      %i.fa.fa-search
+    = link_to "<i class='fa fa-gears'></i> auto arrange".html_safe, |
+      reset_to_system_folders_path(@ssl_slug), method: :put,        |
+      id: 'btn-folder-reset-sys', class: 'btn-folder-index',        |
       data: { confirm: "This will organize certificates into folders according to SSL.com default settings. Current certificate and folder organization will be overwritten. Proceed?" }
   %br/
   

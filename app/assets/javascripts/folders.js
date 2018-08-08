@@ -271,7 +271,7 @@ $(function($) {
   /*
   * Folders Explorer
   */
- $('#folders-tree').on("select_cell.jstree-grid", function(event, data) {
+  $('#folders-tree').on("select_cell.jstree-grid", function(event, data) {
    var node = data.node[0];
     if (data.value == 'details') {
       window.location.href = node.baseURI.replace('folders', 'certificate_orders/') + fetchCertOrderId(node.id)
@@ -288,7 +288,6 @@ $(function($) {
   });
 
   $('#folders-tree').on('select_node.jstree', function (e, data) {
-    console.log(data.node);
     icon = data.node.icon;
     enableButtons();
     if (icon == 'jstree-folder') {
