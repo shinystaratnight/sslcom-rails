@@ -13,9 +13,10 @@
     var curDialog = $('#dialog-form'),
       form = $('#frm-folder-add-cert'),
       coId = '',
-      folderName = ' ',
-      folderId = ' ',
-      iconClicked = null;
+      folderName = '',
+      folderId = '',
+      iconClicked = null, 
+      commonName = '';
     
     function updateIconInfo() {
       checked = $('#folders-tree-modal').jstree("get_checked", true)[0];
@@ -25,6 +26,31 @@
       iconClicked.data('folder-id', checked.id.replace('_folder', ''));
     }
     
+    function removeFromFolderExplorer() {
+      if ( (folderId.constructor === String && folderId.length > 0) || Number.isInteger(folderId) ) {
+        remove_node = ref.get_node('#' + folderId + '_folder');
+        remove_node.data.certificate_orders.forEach(function(title) {
+          if (title.includes(coId)) {
+            remove_node.data.certificate_orders.splice(
+              remove_node.data.certificate_orders.indexOf(title), 1
+            );
+            remove_node.data.certificate_orders_count -= 1;
+          }
+        });
+      }
+    }
+
+    function addToFolderExplorer() {
+      ref = $('#folders-tree-co').jstree(true);
+      add_node = ref.get_node('#' + iconClicked.data('folder-id') + '_folder');
+      if (add_node.data.certificate_orders_count == 0) {
+        add_node.data.certificate_orders = [commonName + ' (' + coId + ')'];
+      } else {
+        add_node.data.certificate_orders.push(commonName + ' (' + coId + ')');
+      }
+      add_node.data.certificate_orders_count += 1;
+    }
+
     function updateFolder() {
       if ($('#folders-tree-modal').jstree("get_checked").length == 0) {
         alert("Please check one folder to update.");
@@ -32,6 +58,10 @@
         form.submit();
         curDialog.dialog('close');
         updateIconInfo();
+        if ($('.fa-caret-square-o-up').length) {
+          addToFolderExplorer();
+          removeFromFolderExplorer();
+        }
       }
     }
 
@@ -73,6 +103,7 @@
       if ($(this).data('folder-name')) {
         folderName = $(this).data('folder-name');
         folderId = $(this).data('folder-id');
+        commonName = $(this).parents('tr').find('.common_name').attr('title');
         selectFolder();
       }
       form.find('#folder_certificate_order_id').val(coId);

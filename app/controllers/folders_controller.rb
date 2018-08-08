@@ -40,6 +40,12 @@ class FoldersController < ApplicationController
     @tree_type = params[:tree_type]
     render partial: 'folder_children'
   end
+
+  def reset_to_system
+    Folder.reset_to_system_folders(@ssl_account)
+    redirect_to folders_path(@ssl_slug), 
+      notice: "Certificates have been sorted into to system folders."
+  end
   
   def update
     if @folder
@@ -72,7 +78,9 @@ class FoldersController < ApplicationController
     end
 
     if @folder && co
+      CertificateOrder.record_timestamps = false
       if co.update(folder_id: @folder.id)
+        CertificateOrder.record_timestamps = true
         render json: { message: "Certificate has been successfully moved." }, status: :ok
       else
         render_try_again_error
@@ -125,15 +133,16 @@ class FoldersController < ApplicationController
   end
 
   def update_default
-    if @folder.archived?
-      render json: { archive: ['Archived folder cannot be set as default.'] },
-        status: :unprocessable_entity
-    else  
+    if @folder && @folder.can_destroy?
       if @folder.update(default: true)
+        @folder.ssl_account.update(default_folder_id: @folder.id)
         render json: { message: "Folder successfully set as default." }, status: :ok
       else
         render json: @folder.errors.messages, status: :unprocessable_entity
       end
+    else  
+      render json: { default: ['System folders cannot be set as default folder'] },
+        status: :unprocessable_entity
     end
   end
   

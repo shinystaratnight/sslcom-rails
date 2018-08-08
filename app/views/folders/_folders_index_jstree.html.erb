@@ -10,26 +10,34 @@
             },
             icon: "fa fa-edit"
           },
-          deleteFolder: {
-            label: "Delete",
+          defaultFolder: {
+            label: "Set To Default",
             action: function(obj) {
-              $('#btn-folder-destroy').click();
+              $('#' + obj.reference[0].id.replace('_anchor','')).click();
+              $('#btn-folder-default').click();
             },
-            icon: "fa fa-trash"
+            icon: "fa fa-certificate"
           },
           createFolderInside: {
-            label: "Create Inside",
+            label: "Create Subfolder",
             action: function(obj) {
               $('#btn-folder-create').click();
             },
             icon: "fa fa-indent"
           },
           createFolderOutside: {
-            label: "Create Outside",
+            label: "Create Folder",
             action: function(obj) {
               $('#btn-folder-create-root').click();
             },
             icon: "fa fa-outdent"
+          },
+          deleteFolder: {
+            label: "Delete",
+            action: function(obj) {
+              $('#btn-folder-destroy').click();
+            },
+            icon: "fa fa-trash"
           }
         }
       }
@@ -51,8 +59,10 @@
       function customMenu(node) {
         if (node.icon == "jstree-folder") {
           return foldersMenu(node);
-        } else {
+        } else if (node.icon == "jstree-file") {
           return fileMenu(node);
+        } else {
+          return {};
         }
       }
 
@@ -61,10 +71,10 @@
           "check_callback" : function(operation, node, node_parent, node_position, more) {
             var callback = true;
             if (operation == 'move_node' || operation == 'delete_node') {
-              callback = node.data && 
+              callback = node.data &&
                 !node.data['archived'] &&
-                !node.data['expired'] && 
-                !node.data['revoked'] && 
+                !node.data['expired'] &&
+                !node.data['revoked'] &&
                 !node.data['active'];
             }
             if (operation == 'move_node' && node_parent.id == '#') {

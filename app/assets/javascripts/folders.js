@@ -1,5 +1,13 @@
 $(function($) {
-  var errorsExist = false, curResponse = {};
+  var errorsExist = false,
+    curResponse = {},
+    actionBtnIds = [
+      '#btn-folder-create-root',
+      '#btn-folder-create',
+      '#btn-folder-destroy',
+      '#btn-folder-rename',
+      '#btn-folder-default'
+    ].join(', ');
 
   folderClearErrors = function() {
     errorsExist =  false;
@@ -100,16 +108,35 @@ $(function($) {
     }
   };
 
+  findDefaultNode = function() {
+    return getJstreeRef().get_node(
+      $("li i.fa-certificate").parents('li')[0].id
+    );
+  };
+
   folderDefaultJstree = function() {
     var ref = getJstreeRef(),
       sel = ref.get_selected(true);
     if (!sel.length) { return false; }
 
     if (sel) {
-      resp = folderDefault(
-        ref.get_selected(true)[0].id.split('_').shift()
-      );
-      if (resp) { ref.load_all(); }
+      errors = folderDefault(sel[0].id.split('_').shift());
+      setTimeout(function() {
+        if (!errorsExist) {
+          // unset default folder
+          remove_default = findDefaultNode();
+          if (typeof(remove_default) == 'undefined') {
+            remove_default = findDefaultNode();
+          }
+          remove_default.data.default = false;
+          ref.set_icon(remove_default, 'jstree-folder');
+          
+          // set default folder
+          sel[0].data.default = true;
+          ref.set_icon(sel[0], 'fa fa-certificate');
+        }
+      }, 450);
+      return errors;
     }
   };
 
@@ -195,6 +222,18 @@ $(function($) {
     form.attr('action', new_action);
   }
 
+  hideBtnForCert = function() {
+    $('#btn-folder-create, #btn-folder-destroy, #btn-folder-rename, #btn-folder-default').hide();
+  }
+
+  hideBtnForSystem = function() {
+    $('#btn-folder-destroy, #btn-folder-rename, #btn-folder-default').hide();
+  }
+
+  enableButtons = function() {
+    $(actionBtnIds).show();
+  }
+
   $('#btn-folder-create').on('click', function(e) {
     e.preventDefault();
     folderCreateJstree();
@@ -230,9 +269,9 @@ $(function($) {
   });
 
   /*
-  * Certificates Explorer
+  * Folders Explorer
   */
- $('#folders-tree').on("select_cell.jstree-grid", function(event, data) {
+  $('#folders-tree').on("select_cell.jstree-grid", function(event, data) {
    var node = data.node[0];
     if (data.value == 'details') {
       window.location.href = node.baseURI.replace('folders', 'certificate_orders/') + fetchCertOrderId(node.id)
@@ -246,6 +285,18 @@ $(function($) {
       var search = $('#folder-scan').val();
       getJstreeRef().searchColumn({0: search});
     }, 250);
+  });
+
+  $('#folders-tree').on('select_node.jstree', function (e, data) {
+    icon = data.node.icon;
+    enableButtons();
+    if (icon == 'jstree-folder') {
+      enableButtons();
+    } else if (icon == 'jstree-file') {
+      hideBtnForCert();
+    } else {
+      hideBtnForSystem();
+    }
   });
 
   /*
