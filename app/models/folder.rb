@@ -26,8 +26,8 @@ class Folder < ActiveRecord::Base
     end
   end
 
-  def self.show_folders?
-    Settings.folders == "show"
+  def self.show_folders?(user=nil)
+    user.is_system_admins? ? false : Settings.folders == "show"
   end
 
   def folder_contents

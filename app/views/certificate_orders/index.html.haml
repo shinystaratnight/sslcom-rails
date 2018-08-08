@@ -312,7 +312,7 @@
 
 =render :partial=>'quick_links'
 
--if Folder.show_folders?
+-if Folder.show_folders?(current_user)
   -if show_folders_container?
     =render partial: 'folders/co_index_folders', locals: {container_type: 'expanded'}
   -else
@@ -334,12 +334,12 @@
       SSL Certificates Management
       =will_paginate @certificate_orders
     %tr.heading_row
-      -if Folder.show_folders? && show_folders_container?
+      -if Folder.show_folders?(current_user) && show_folders_container?
         %th
           %i.fa.fa-folder#co-folder-column
       %td
       %th.name(scope="col")Subject
-      - if Folder.show_folders?
+      - if Folder.show_folders?(current_user)
         %th(scope="col") Folder
       %th(scope="col") Status
       %th(scope="col") Order Date
@@ -350,7 +350,7 @@
         -cc = co.certificate_content
         -cn = (co.is_unused_credit? || cc.csr.blank?) ? nil : cc.csr.common_name
         %tr(alt="#{co.ref}")
-          -if Folder.show_folders? && show_folders_container?
+          -if Folder.show_folders?(current_user) && show_folders_container?
             %td
               =check_box_tag :folder_add_co, 'yes', false, id: co.ref, class: 'chk-folder-add-co'
           %td.dropdown
@@ -358,7 +358,7 @@
               =image_tag 'expand.png'
           %td.name
             =render :partial=>'subject_column', :locals=>{:certificate_order=>co}
-          -if Folder.show_folders?
+          -if Folder.show_folders?(current_user)
             %td.co-folder-name
               -if co.folder
                 %i.fa.fa-folder-open.icon-co-add-folder{id: co.ref, |
@@ -374,5 +374,5 @@
           %td.ssl_action
             #{action(co)}
 
--if Folder.show_folders?
+-if Folder.show_folders?(current_user)
   = render partial: '/folders/folder_tree_modal'
