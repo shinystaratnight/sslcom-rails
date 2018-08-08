@@ -78,7 +78,9 @@ class FoldersController < ApplicationController
     end
 
     if @folder && co
+      CertificateOrder.record_timestamps = false
       if co.update(folder_id: @folder.id)
+        CertificateOrder.record_timestamps = true
         render json: { message: "Certificate has been successfully moved." }, status: :ok
       else
         render_try_again_error
