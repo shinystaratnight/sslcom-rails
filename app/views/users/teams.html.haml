@@ -52,7 +52,7 @@
             %br
             =link_to "decline", t[:decline], {style: 'color:red;'}
     -@teams.each do |t|
-      -cache([current_user,'teams_list', u], expires_in: 12.hours) do
+      -cache([current_user,'teams_list', t], expires_in: 12.hours) do
         -account_owner = current_user.is_account_owner? t
         -main_account  = current_user.is_main_account? t
         -if permitted_to? :set_default_team, current_user
