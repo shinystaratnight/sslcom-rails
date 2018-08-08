@@ -207,7 +207,7 @@ class SslAccount < ActiveRecord::Base
       end
       tmp_certs
       tmp_certs.each do |k,v|
-        result << tmp_certs[k].min{|a,b|a.created_at <=> b.created_at}
+        result << tmp_certs[k].min{|a,b|a.created_at.to_i <=> b.created_at.to_i}
       end
     end
   end
