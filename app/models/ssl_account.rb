@@ -9,11 +9,27 @@ class SslAccount < ActiveRecord::Base
     def current
       where{workflow_state >>['new']}.first
     end
+
+    def expired
+      joins{signed_certificates}.where{signed_certificates.expiration_date > Date.today}
+    end
+
+    def revoked
+      joins{signed_certificates}.where{signed_certificates.status=="revoked"}
+    end
   end
   has_many  :validations, through: :certificate_orders
   has_many  :site_seals, through: :certificate_orders
   has_many  :certificate_contents, through: :certificate_orders
-  has_many  :signed_certificates, through: :certificate_contents
+  has_many  :signed_certificates, through: :certificate_contents do
+    def expired
+      where{expiration_date < Date.today}
+    end
+
+    def revoked
+      where{status=="revoked"}
+    end
+  end
   has_many  :certificate_contacts, through: :certificate_contents
   has_one   :reseller, :dependent => :destroy
   accepts_nested_attributes_for :reseller, :allow_destroy=>false
@@ -39,6 +55,20 @@ class SslAccount < ActiveRecord::Base
   has_many  :all_saved_contacts, as: :contactable, class_name: 'Contact', dependent: :destroy
   has_many  :cdns
   has_many  :tags
+  has_many  :folders, dependent: :destroy
+  has_many :certificate_names, through: :certificate_contents do
+    def sslcom
+      where.not certificate_contents: {ca_id: nil}
+    end
+  end
+  has_many  :notification_groups
+  has_many  :folders, dependent: :destroy
+  has_many :certificate_names, through: :certificate_contents
+  has_many :domain_control_validations, through: :certificate_names do
+    def sslcom
+      where.not certificate_contents: {ca_id: nil}
+    end
+  end
 
   unless MIGRATING_FROM_LEGACY
     #has_many  :orders, :as=>:billable, :after_add=>:build_line_items
@@ -160,10 +190,10 @@ class SslAccount < ActiveRecord::Base
     reseller.reseller_tier.label if (reseller && reseller.reseller_tier)
   end
 
-  def signed_certificates
-    certificate_orders.map(&:certificate_contents).flatten.compact.
-      map(&:csr).flatten.compact.map(&:signed_certificate)
-  end
+  # def signed_certificates
+  #   certificate_orders.map(&:certificate_contents).flatten.compact.
+  #     map(&:csr).flatten.compact.map(&:signed_certificate)
+  # end
 
   def unique_first_signed_certificates
     ([]).tap do |result|
@@ -177,7 +207,7 @@ class SslAccount < ActiveRecord::Base
       end
       tmp_certs
       tmp_certs.each do |k,v|
-        result << tmp_certs[k].min{|a,b|a.created_at <=> b.created_at}
+        result << tmp_certs[k].min{|a,b|a.created_at.to_i <=> b.created_at.to_i}
       end
     end
   end
@@ -296,11 +326,14 @@ class SslAccount < ActiveRecord::Base
       users.each do |u|
         u.set_roles_for_account(self, [Role.find_by_name(Role::RESELLER).id])
       end
-      reseller.update_attribute :workflow_state, "complete"
     else
       reseller.reseller_tier=ResellerTier.find_by_label(tier)
       reseller.save
     end
+    roles << "reseller" unless is_reseller?
+    roles.delete "new_reseller" if is_new_reseller?
+    save
+    reseller.completed! unless reseller.complete?
   end
 
   def api_certificate_requests_string
@@ -317,6 +350,18 @@ class SslAccount < ActiveRecord::Base
 
   def self.api_credentials_for_all
     self.find_each{|s|s.create_api_credential if s.api_credential.blank?}
+  end
+
+  def self.migrate_deposit(from_sa, to_sa, deposit, user)
+    to_sa.orders << deposit if deposit
+    if deposit && to_sa.orders.include?(deposit)
+      SystemAudit.create(
+        owner: user,
+        target: deposit,
+        notes: "Transfered deposit #{deposit.reference_number} from team acct ##{from_sa.acct_number} to team acct ##{to_sa.acct_number} on #{DateTime.now.strftime('%c')}.",
+        action: "Transfer Deposit To Team"
+      )
+    end
   end
 
   # from_sa - the ssl_account to migrate from
@@ -873,7 +918,11 @@ class SslAccount < ActiveRecord::Base
     #only do for prepaid, because 1-off certificate_orders when added are not
     #necessarily paid for already
     if !order.new_record? && order.line_items.all? {|c|c.sellable.try("is_prepaid?".to_sym) if c.sellable.respond_to?("is_prepaid?".to_sym)}
-      OrderNotifier.certificate_order_prepaid(self, order).deliver
+      begin
+        OrderNotifier.certificate_order_prepaid(self, order).deliver
+      rescue Exception=>e
+        logger.error e.backtrace.inspect
+      end
       order.line_items.each do |cert|
         self.certificate_orders << cert.sellable
         cert.sellable.pay!(true) unless cert.sellable.paid?

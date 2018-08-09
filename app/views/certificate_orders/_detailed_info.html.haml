@@ -4,7 +4,7 @@
   -cc=co.certificate_content
   -cn = (co.is_unused_credit? || cc.csr.blank?) ? nil : cc.csr.common_name
   %tr.expanded
-    %td(colspan="6")
+    %td{colspan: show_folders_container? ? '8' : '7'}
       .certificate_details
         =render :partial=>'/certificate_orders/menu', :locals=>{:co=>co}
         =render :partial=>'/certificate_orders/co', :object=>co
@@ -30,7 +30,7 @@
                             =render partial: "certificate_orders/duration_limit", locals:{co: co}
                         -unless co.is_unused_credit? || !permitted_to?(:show, co)
                           %li=link_to "view certificate details", certificate_order_path(@ssl_slug, co)
-                        -if permitted_to?(:show, order)
+                        -if current_user.is_system_admins?
                           %li=link_to "view order transaction", order_path(@ssl_slug, order)
                         %li.category_border
                         %li

@@ -3,6 +3,7 @@ class CertificateOrder < ActiveRecord::Base
   #using_access_control
   acts_as_sellable :cents => :amount, :currency => false
   belongs_to  :ssl_account
+  belongs_to  :folder
   has_many    :users, through: :ssl_account
   belongs_to  :validation
   has_many    :validation_histories, through: :validation
@@ -19,7 +20,11 @@ class CertificateOrder < ActiveRecord::Base
   has_many    :certificate_contacts, through: :certificate_contents
   has_many    :domain_control_validations, through: :certificate_names
   has_many    :csrs, :through=>:certificate_contents
-  has_many    :signed_certificates, :through=>:csrs
+  has_many    :signed_certificates, :through=>:csrs do
+    def expired
+      where{expiration_date < Date.today}
+    end
+  end
   has_many    :shadow_certificates, :through=>:csrs, class_name: "SignedCertificate"
   has_many    :ca_certificate_requests, :through=>:csrs
   has_many    :ca_api_requests, :through=>:csrs
@@ -39,6 +44,8 @@ class CertificateOrder < ActiveRecord::Base
   has_many    :url_callbacks, as: :callbackable, :through=>:certificate_contents
   has_many    :taggings, as: :taggable
   has_many    :tags, through: :taggings
+  has_many    :notification_groups_subjects, as: :subjectable
+  has_many    :notification_groups, through: :notification_groups_subjects
 
   accepts_nested_attributes_for :certificate_contents, :allow_destroy => false
   attr_accessor :duration, :has_csr
@@ -97,7 +104,8 @@ class CertificateOrder < ActiveRecord::Base
                subject_alternative_names: nil, locality: nil, country:nil, signature: nil, fingerprint: nil, strength: nil,
                expires_at: nil, created_at: nil, login: nil, email: nil, account_number: nil, product: nil,
                decoded: nil, is_test: nil, order_by_csr: nil, physical_tokens: nil, issued_at: nil, notes: nil,
-               ref: nil, external_order_number: nil, status: nil, duration: nil, co_tags: nil, cc_tags: nil}
+               ref: nil, external_order_number: nil, status: nil, duration: nil, co_tags: nil, cc_tags: nil, 
+               folder_ids: nil}
     filters.each{|fn, fv|
       term.delete_if {|s|s =~ Regexp.new(fn.to_s+"\\:\\'?([^']*)\\'?"); filters[fn] ||= $1; $1}
     }
@@ -167,7 +175,7 @@ class CertificateOrder < ActiveRecord::Base
     end
     %w(ref).each do |field|
       query=filters[field.to_sym]
-      result = result.where(field.to_sym  >> query.split(',')) if query
+      result = result.where{ref >> query.split(',')} if query
     end
     %w(country strength).each do |field|
       query=filters[field.to_sym]
@@ -245,6 +253,12 @@ class CertificateOrder < ActiveRecord::Base
         end
       end
     end
+    %w(folder_ids).each do |field|
+      query = filters[field.to_sym]
+      if query
+        result = result.where(folder_id: query.split(',')) if query
+      end
+    end  
     result.uniq
   }
 
@@ -944,8 +958,9 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def apply_for_certificate(options={})
-    if [Ca::CERTLOCK_CA,Ca::SSLCOM_CA,Ca::MANAGEMENT_CA].include? options[:ca]
-      SslcomCaApi.apply_for_certificate(self, options) if options[:current_user].is_super_user?
+    if [Ca::CERTLOCK_CA,Ca::SSLCOM_CA,Ca::MANAGEMENT_CA].include? options[:ca] or !certificate_content.ca.blank?
+      SslcomCaApi.apply_for_certificate(self, options) if options[:current_user].blank? or
+          options[:current_user].is_super_user?
     else
       ComodoApi.apply_for_certificate(self, options) if ca_name=="comodo"
     end
@@ -1997,7 +2012,7 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   # cron job that flags unused certificate_order credits as expired after a period of time (1 year)
-  def self.expire_credits(options)
+  def self.expire_credits(options={})
     Website.sandbox_db.use_database if options[:db]=="sandbox"
     CertificateOrder.unflagged_expired_credits.update_all(is_expired: true)
     SystemAudit.create(owner: nil, target: nil,

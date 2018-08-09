@@ -2,7 +2,7 @@ class CertificateContent < ActiveRecord::Base
   include V2MigrationProgressAddon
   include Workflow
   
-  belongs_to  :certificate_order, -> { unscope(where: [:workflow_state, :is_expired]) }
+  belongs_to  :certificate_order, -> { unscope(where: [:workflow_state, :is_expired]) }, touch: true
   has_one     :ssl_account, through: :certificate_order
   has_one     :certificate, through: :certificate_order
   has_many    :users, through: :certificate_order
@@ -16,6 +16,7 @@ class CertificateContent < ActiveRecord::Base
   has_many    :url_callbacks, as: :callbackable
   has_many    :taggings, as: :taggable
   has_many    :tags, through: :taggings
+  belongs_to  :ca
 
   accepts_nested_attributes_for :certificate_contacts, :allow_destroy => true
   accepts_nested_attributes_for :registrant, :allow_destroy => false
@@ -90,6 +91,9 @@ class CertificateContent < ActiveRecord::Base
           cc.certificate_names.create(name: domain, is_common_name: cc.csr.try(:common_name)==domain)
         end
       end
+
+      # Auto adding domains in case of certificate order has been included into some groups.
+      NotificationGroup.auto_manage_cert_name(cc, 'create')
     end
   end
 
@@ -214,12 +218,16 @@ class CertificateContent < ActiveRecord::Base
     if csr && certificate_names.find_by_name(csr.common_name).blank?
       certificate_names.create(name: csr.common_name, is_common_name: true)
     end
+
     if all_domains.length <= DOMAIN_COUNT_OFFLOAD
       all_domains.flatten.each_with_index do |domain, i|
         if certificate_names.find_by_name(domain).blank?
           certificate_names.create(name: domain, is_common_name: csr.try(:common_name)==domain)
         end
       end
+
+      # Auto adding domains in case of certificate order has been included into some groups.
+      NotificationGroup.auto_manage_cert_name(self, 'create')
     else
       all_domains.flatten.each_slice(100) do |domain_slice|
         Delayed::Job.enqueue CertificateNamesJob.new(id, domain_slice)

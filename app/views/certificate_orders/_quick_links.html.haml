@@ -3,6 +3,10 @@
     .heading
       %strong Quick Links
     %ul
+      - if Folder.show_folders?(current_user)
+        %li#lnk-folders-ql
+          %i.fa.fa-folder-open
+          =link_to "Explorer", folders_path(@ssl_slug), id: "lnk-co-folders"
       -unless is_sandbox?
         -if permitted_to?(:create, :order)
           %li=link_to 'Buy Certificate', certificates_url
@@ -14,7 +18,9 @@
           %li=link_to 'Billing Profiles', billing_profiles_path(ssl_slug: @ssl_slug)
         -if permitted_to?(:index, :site_seals)
           %li=link_to "Smart SeaLs", details_site_seals_url
-        %li &nbsp;
+      -if current_user.can_manage_certificates?
+        %li=link_to "Certificate Mgmt", admin_index_certificates_path
+      %li &nbsp;
       %li Filter Orders:
       -is_test=is_sandbox? ? " is_test:true" : ""
       %li=link_to Certificate.find_by_serial("basic256sslcom").title, search_certificate_orders_path(@ssl_slug, search: "product:basicssl#{is_test}")

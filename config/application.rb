@@ -13,6 +13,7 @@ CLIENT_OPTIONS=["ssl.com","certassure"]
 DEPLOYMENT_CLIENT=CLIENT_OPTIONS[0]
 
 Struct.new("Expiring", :before, :after, :cert)
+Struct.new("Notification", :before, :after, :cert)
 Struct.new("Reminding", :year, :cert)
 
 module SslCom
@@ -126,6 +127,7 @@ require "#{Rails.root}/lib/domain_constraint.rb"
 require "#{Rails.root}/lib/preferences.rb"
 require "#{Rails.root}/lib/active_record.rb"
 require "#{Rails.root}/lib/active_record_base.rb"
+require "#{Rails.root}/lib/hash.rb"
 require "will_paginate"
 
 #try to figure this out for heroku and rails 3

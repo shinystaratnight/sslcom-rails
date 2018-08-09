@@ -26,7 +26,7 @@
         discounts on ssl certificate purchases?
         =link_to "Click here", new_account_url(:subdomain=>false)
         to create a standard account for single certificate purchases.
-  =form_for @user, :url =>account_path do |f|
+  =form_for @user, :url =>account_path, html: {id: 'sign_up_account'} do |f|
     =f.error_messages
     #stylized.default_form
       .subheading Credentials

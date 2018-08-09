@@ -1,4 +1,4 @@
-- other_orders = @order.certificate_orders.uniq.last.orders
+- other_orders = @order.is_deposit? ? [] : @order.certificate_orders.uniq.last.orders
 - sysadmins    = current_user.is_system_admins?
 - user_teams   = current_user.ssl_accounts
 
@@ -36,7 +36,7 @@
       position: { my: 'top center', at: 'top center', of: window },
       title: 'Transfer To Team',
       autoOpen: false,
-      height: 250,
+      height: 280,
       width: 300,
       modal: true,
       dialogClass: 'dl-transfer-team',

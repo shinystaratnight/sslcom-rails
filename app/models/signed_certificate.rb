@@ -11,6 +11,8 @@ class SignedCertificate < ActiveRecord::Base
   belongs_to :parent, :foreign_key=>:parent_id,
     :class_name=> 'SignedCertificate', :dependent=>:destroy
   belongs_to :csr
+  delegate :certificate_content, to: :csr
+  delegate :certificate_order, to: :certificate_content
   belongs_to :certificate_lookup
   validates_presence_of :body, :if=> Proc.new{|r| !r.parent_cert}
   validates :csr_id, :presence=>true, :on=>:save
@@ -27,7 +29,7 @@ class SignedCertificate < ActiveRecord::Base
   BEGIN_PKCS7_TAG="-----BEGIN PKCS7-----"
   END_PKCS7_TAG="-----END PKCS7-----"
 
-  IIS_INSTALL_LINK = "https://info.ssl.com/howto-install-an-ssl-certificate-on-iis-7"
+  IIS_INSTALL_LINK = "https://www.ssl.com/how-to/modern-iis-ssl-installation-the-easy-way/"
   CPANEL_INSTALL_LINK = "https://www.ssl.com/how-to/install-certificate-whm-cpanel/"
   NGINX_INSTALL_LINK = "http://nginx.org/en/docs/http/configuring_https_servers.html"
   V8_NODEJS_INSTALL_LINK = "http://nodejs.org/api/https.html"
@@ -103,7 +105,7 @@ class SignedCertificate < ActiveRecord::Base
     mre=self.most_recent_expiring(start,finish).each do |sc|
         # replace signed_certificate with one from lookups
         remove = cl.select{|c|c.common_name == sc.common_name}.
-            sort{|a,b|a.created_at <=> b.created_at}
+            sort{|a,b|a.created_at.to_i <=> b.created_at.to_i}
         if remove.last
           sc = cl.delete(remove.last)
           remove.each {|r| cl.delete(r)}
@@ -120,7 +122,7 @@ class SignedCertificate < ActiveRecord::Base
     end
     tmp_certs
     tmp_certs.each do |k,v|
-      result << tmp_certs[k].max{|a,b|a.created_at <=> b.created_at}
+      result << tmp_certs[k].max{|a,b|a.created_at.to_i <=> b.created_at.to_i}
     end
     expiring = (mre << result).flatten
     #expiring.each {|e|e.certificate_order.do_auto_renew}
@@ -176,7 +178,9 @@ class SignedCertificate < ActiveRecord::Base
         self[:effective_date] = parsed.not_before
         self[:expiration_date] = parsed.not_after
         self[:subject_alternative_names] = parsed.subject_alternative_names
-        self[:strength] = parsed.strength
+        #TODO ecdsa throws exception. Find better method
+        self[:strength] = parsed.public_key.instance_of?(OpenSSL::PKey::EC) ?
+                              parsed.to_text.match(/Public-Key\: \((\d+)/)[1] : parsed.strength
       end
     else
       ssl_util = Savon::Client.new Settings.certificate_parser_wsdl
@@ -337,8 +341,12 @@ class SignedCertificate < ActiveRecord::Base
       co.site_seal.fully_activate! unless co.site_seal.fully_activated?
       if email_customer
         co.processed_recipients.map{|r|r.split(" ")}.flatten.uniq.each do |c|
-          OrderNotifier.processed_certificate_order(c, co, zip_path).deliver
-          OrderNotifier.site_seal_approve(c, co).deliver
+          begin
+            OrderNotifier.processed_certificate_order(c, co, zip_path).deliver
+            OrderNotifier.site_seal_approve(c, co).deliver
+          rescue Exception=>e
+            logger.error e.backtrace.inspect
+          end
         end
       end
     end
@@ -361,10 +369,6 @@ class SignedCertificate < ActiveRecord::Base
 
   def nonidn_friendly_common_name
     SimpleIDN.to_ascii(read_attribute(:common_name) || csr.common_name).gsub('*', 'STAR').gsub('.', '_')
-  end
-
-  def certificate_order
-    csr.certificate_content.certificate_order
   end
 
   def expiration_date_js

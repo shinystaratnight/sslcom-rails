@@ -1,0 +1,12 @@
+.reseller_registration_profile
+  %h3 
+    New Certificate
+    %br/
+    %br/
+    = link_to "<i class='fa fa-caret-left'></i> Certificates".html_safe, |
+      admin_index_certificates_path
+.reseller_registration_profile
+  = error_messages_for :certificate
+  
+  = form_for @certificate do |f|
+    = render partial: 'form_for_admin', locals: {f: f}

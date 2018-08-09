@@ -32,3 +32,5 @@
         =link_to "Settings", edit_settings_ssl_account_path(slug_params)
     %li(id="#{is_on?("cdns",current_slug) ? 't-intro' : 'manage_cdns'}")
       =link_to "CDN", cdns_path(slug_params)
+    -#%li(id="#{is_on?("notification_groups", current_slug) ? 't-intro' : 'manage_domains'}")
+    -#  =link_to "Monitoring", notification_groups_path(slug_params)

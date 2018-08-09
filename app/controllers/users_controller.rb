@@ -104,10 +104,42 @@ class UsersController < ApplicationController
         @user.ssl_account,
         [Role.find_by_name((reseller ? Role::RESELLER : Role::OWNER)).id]
       )
-      @user.deliver_activation_instructions!
-      notice = "Your account has been created. Please check your
-        e-mail at #{@user.email} for your account activation instructions!"
-      flash[:notice] = notice
+
+      if Settings.require_signup_password
+        # TODO: New Logic for auto activation by signup with password.
+        @user.deliver_auto_activation_confirmation!
+        notice = "Your account has been created."
+        flash[:notice] = notice
+
+        # Auto Login after register
+        @user_session = UserSession.new({
+                                            login: params[:user][:login],
+                                            password: params[:user][:password],
+                                            failed_account: '0'
+                                        })
+        if @user_session.save
+          user = @user_session.user
+
+          cookies[:acct] = {
+              :value=>user.ssl_account.acct_number,
+              :path => "/",
+              :expires => Settings.cart_cookie_days.to_i.days.from_now
+          }
+
+          flash[:notice] = "Successfully logged in."
+
+          redirect_to (account_path(user.ssl_account(:default_team) ?
+                                                                 user.ssl_account(:default_team).to_slug :
+                                                                 {})) and return
+        end
+      else
+        # TODO: Original Logic for activation by email.
+        @user.deliver_activation_instructions!
+        notice = "Your account has been created. Please check your
+          e-mail at #{@user.email} for your account activation instructions!"
+        flash[:notice] = notice
+      end
+
       #in production heroku, requests coming FROM a subdomain will not transmit
       #flash messages to the target page. works fine in dev though
       redirect_to(request.subdomain == Reseller::SUBDOMAIN ? login_url(:notice => notice) : login_url)

@@ -28,11 +28,13 @@ class User < ActiveRecord::Base
   has_many  :discounts, as: :benefactor, dependent: :destroy
   has_one   :shopping_cart
   has_and_belongs_to_many :user_groups
+  has_many  :notification_groups, through: :ssl_accounts
 
   preference  :cert_order_row_count, :string, :default=>"10"
   preference  :order_row_count, :string, :default=>"10"
   preference  :cdn_row_count, :string, :default=>"10"
   preference  :user_row_count, :string, :default => "10"
+  preference  :note_group_row_count, :string, :default => "10"
 
   #will_paginate
   cattr_accessor :per_page
@@ -52,7 +54,7 @@ class User < ActiveRecord::Base
   accepts_nested_attributes_for :assignments
 
   acts_as_authentic do |c|
-    c.logged_in_timeout = 20.minutes
+    c.logged_in_timeout = 30.minutes
     c.validate_email_field = false
     c.session_ids = [nil, :shadow]
     c.crypto_provider = Authlogic::CryptoProviders::Sha512
@@ -82,21 +84,23 @@ class User < ActiveRecord::Base
                         (ssl_accounts.acct_number =~ "%#{term}%")}.uniq}
 
   def ssl_account(default_team=nil)
-    default_ssl = default_ssl_account && is_approved_account?(default_ssl_account)
-    main_ssl    = main_ssl_account && is_approved_account?(main_ssl_account)
+    Rails.cache.fetch("#{cache_key}/ssl_account") do
+      default_ssl = default_ssl_account && is_approved_account?(default_ssl_account)
+      main_ssl    = main_ssl_account && is_approved_account?(main_ssl_account)
 
-    # Retrieve team that was manually set as default in Teams by user
-    return SslAccount.find(main_ssl_account) if (default_team && main_ssl)
+      # Retrieve team that was manually set as default in Teams by user
+      return SslAccount.find(main_ssl_account) if (default_team && main_ssl)
 
-    if default_ssl
-      SslAccount.find default_ssl_account
-    elsif !default_ssl && main_ssl
-      set_default_ssl_account main_ssl_account
-      SslAccount.find main_ssl_account
-    else
-      approved_account = get_first_approved_acct
-      set_default_ssl_account(approved_account) if approved_account
-      approved_account
+      if default_ssl
+        SslAccount.find default_ssl_account
+      elsif !default_ssl && main_ssl
+        set_default_ssl_account main_ssl_account
+        SslAccount.find main_ssl_account
+      else
+        approved_account = get_first_approved_acct
+        set_default_ssl_account(approved_account) if approved_account
+        approved_account
+      end
     end
   end
 
@@ -125,7 +129,7 @@ class User < ActiveRecord::Base
       status = :accepted if active && ssl.approved
       status = :declined if ssl.declined_at || (!ssl.approved && ssl.token_expires.nil? && ssl.approval_token.nil?)
       status = :expired  if ssl.token_expires && (status != :declined) && (ssl.token_expires < DateTime.now)
-      status = :pending  if !active && (status != :declined) 
+      status = :pending  if !active && (status != :declined)
       status = :pending  if active && (!ssl.approved && ssl.token_expires && ssl.approval_token) && (ssl.token_expires > DateTime.now)
     end
     status
@@ -229,17 +233,19 @@ class User < ActiveRecord::Base
   end
 
   def roles_for_account(target_ssl=nil)
-    ssl = target_ssl.nil? ? ssl_account : target_ssl
-    if ssl_accounts.include?(ssl)
-      assignments.where(ssl_account_id: ssl).pluck(:role_id).uniq
-    else
-      []  
+    Rails.cache.fetch("#{cache_key}/roles_for_account") do
+      ssl = target_ssl.nil? ? ssl_account : target_ssl
+      if ssl_accounts.include?(ssl)
+        assignments.where(ssl_account_id: ssl).pluck(:role_id).uniq
+      else
+        []
+      end
     end
   end
 
   def get_roles_by_name(role_name)
-    role_id = Role.get_role_id(role_name)
-    role_id ? assignments.where(role_id: role_id) : []
+      role_id = Role.get_role_id(role_name)
+      role_id ? assignments.where(role_id: role_id) : []
   end
 
   def update_account_role(account, old_role, new_role)
@@ -253,8 +259,8 @@ class User < ActiveRecord::Base
 
   def duplicate_role?(role, target_ssl=nil)
     assignments.where(
-      ssl_account_id: (target_ssl.nil? ? ssl_account : target_ssl).id, 
-      role_id:        (role.is_a?(String) ? Role.get_role_id(role): Role.find(role))
+        ssl_account_id: (target_ssl.nil? ? ssl_account : target_ssl).id,
+        role_id:        (role.is_a?(String) ? Role.get_role_id(role): Role.find(role))
     ).any?
   end
 
@@ -371,6 +377,11 @@ class User < ActiveRecord::Base
     !ssl_account_users.map(&:user_enabled).include?(true)
   end
 
+  def deliver_auto_activation_confirmation!
+    reset_perishable_token!
+    UserNotifier.auto_activation_confirmation(self).deliver
+  end
+
   def deliver_activation_instructions!
     reset_perishable_token!
     UserNotifier.activation_instructions(self).deliver
@@ -482,6 +493,14 @@ class User < ActiveRecord::Base
     assign_roles(params)
     self.login = params[:user][:login] if login.blank?
     self.email = params[:user][:email]
+
+    # TODO: New logic for auto activation account by passing password on Signup page.
+    if Settings.require_signup_password
+      self.password = params[:user][:password] unless params[:user][:password].blank?
+      self.password_confirmation = params[:user][:password_confirmation] unless params[:user][:password_confirmation].blank?
+      self.active = true unless params[:user][:password].blank?
+    end
+
     save_without_session_maintenance
   end
 
@@ -590,12 +609,20 @@ class User < ActiveRecord::Base
     SslAccount.joins{assignments}.where{assignments.role_id==4}.count
   end
 
+  def can_manage_certificates?
+    is_system_admins? && is_ra_admin?
+  end
+
   def is_admin?
     role_symbols.include? Role::SYS_ADMIN.to_sym
   end
 
   def is_super_user?
     role_symbols.include? Role::SUPER_USER.to_sym
+  end
+
+  def is_ra_admin?
+    role_symbols.include? Role::RA_ADMIN.to_sym
   end
 
   def is_owner?(target_account=nil)

@@ -154,8 +154,12 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
 
           if cn_keys.exclude? certificate_name.name
             certificate_name.destroy
+
+            # Remove Domain from Notification Group
+            NotificationGroup.auto_manage_cert_name(@certificate_order.certificate_content, 'delete', certificate_name)
           elsif self.cert_names[certificate_name.name] != certificate_name.name
             certificate_name.update_column(:name, self.cert_names[certificate_name.name])
+            NotificationGroup.auto_manage_cert_name(@certificate_order.certificate_content, 'update', certificate_name)
           end
         end
         # @certificate_order.certificate_content.update_attribute(:domains, self.domains.keys)
@@ -332,7 +336,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
         CertificateContent::CONTACT_ROLES.each do |role|
           c = if options[:contacts] && (options[:contacts][role] || options[:contacts][:all])
                 CertificateContact.new(retrieve_saved_contact(
-                    options[:contacts][(options[:contacts][role] ? role : :all)],
+                    options[:contacts][(options[:contacts][role] ? role : :all)].to_utf8,
                     %w(company_name department)
                 ))
               else
@@ -516,8 +520,8 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
             elsif !extra.empty?
               msg = {c_role.to_sym => "The following parameters are invalid: #{extra.join(', ')}"}
               errors[:contacts].last.merge!(msg)
-            elsif !CertificateContact.new(attrs.merge(roles: [role])).valid?
-              r = CertificateContact.new(attrs.merge(roles: [role]))
+            elsif !CertificateContact.new(attrs.to_utf8.merge(roles: [role])).valid?
+              r = CertificateContact.new(attrs.to_utf8.merge(roles: [role]))
               r.valid?
               errors[:contacts].last.merge!(c_role.to_sym => r.errors)
             elsif attrs['country'].blank? || Country.find_by_iso1_code(attrs['country'].upcase).blank?

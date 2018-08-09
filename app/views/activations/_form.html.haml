@@ -36,7 +36,7 @@
     .tos-check
       =check_box_tag :tos
     .tos-desc
-      -link = link_to 'Subscriber Agreement', 'https://www.ssl.com/app/uploads/2015/07/ssl_certificate_subscriber_agreement.pdf', target: :blank
+      -link = link_to 'Subscriber Agreement', Certificate::SSLCOM_SUBSCRIBER_AGREEMENT, target: :blank
       By accepting the invitation to join this Team at SSL.com you are agreeing to 
       abide by the terms and conditions of the SSL.com #{"<strong>#{link}</strong>".html_safe}. 
       Any actions that you perform while in your role will directly affect your active Team. 

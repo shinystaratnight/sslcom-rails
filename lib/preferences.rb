@@ -367,25 +367,27 @@ module Preferences
     #   user.write_preference(:color, 'blue')
     #   user.preferred(:color)            # => "blue"
     def preferred(name, group = nil)
-      name = name.to_s
-      assert_valid_preference(name)
+      Rails.cache.fetch("#{cache_key}/preferred") do
+        name = name.to_s
+        assert_valid_preference(name)
 
-      if preferences_group(group).include?(name)
-        # Value for this group/name has been written, but not saved yet:
-        # grab from the pending values
-        value = preferences_group(group)[name]
-      else
-        # Grab the first preference; if it doesn't exist, use the default value
-        group_id, group_type = Preference.split_group(group)
-        preference = find_preferences(:name => name, :group_id => group_id, :group_type => group_type).first unless preferences_group_loaded?(group)
+        if preferences_group(group).include?(name)
+          # Value for this group/name has been written, but not saved yet:
+          # grab from the pending values
+          value = preferences_group(group)[name]
+        else
+          # Grab the first preference; if it doesn't exist, use the default value
+          group_id, group_type = Preference.split_group(group)
+          preference = find_preferences(:name => name, :group_id => group_id, :group_type => group_type).first unless preferences_group_loaded?(group)
 
-        value = preference ? preference.value : preference_definitions[name].default_value(group_type)
-        preferences_group(group)[name] = value
+          value = preference ? preference.value : preference_definitions[name].default_value(group_type)
+          preferences_group(group)[name] = value
+        end
+
+        definition = preference_definitions[name]
+        value = definition.type_cast(value) unless value.nil?
+        value
       end
-
-      definition = preference_definitions[name]
-      value = definition.type_cast(value) unless value.nil?
-      value
     end
     alias_method :prefers, :preferred
 

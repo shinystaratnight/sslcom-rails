@@ -56,6 +56,7 @@
         -header = (desc =~ /Funded Account/) ? "#{desc} <br />#{@deposit.notes}" : 'SSL Account Deposit Details'
         %h3.order_results_header
           =header.html_safe
+          =render partial: '/orders/order_transfer'
         #deposit_ref_num
           reference number:
           %span=h @deposit.reference_number

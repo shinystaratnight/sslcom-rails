@@ -3453,9 +3453,19 @@ label.error
     cursor: pointer
     background: lightyellow
 
-#report, #reseller_tiers, #domain_pricing_popup, #certificate_listing,
-#dashboard, #certificate_orders, #validations, #resources, #resource-custom-domain-list,
-#popular-files, #resource-popular-location-list
+#report,
+#reseller_tiers,
+#domain_pricing_popup,
+#certificate_listing,
+#dashboard,
+#certificate_orders,
+#validations,
+#resources,
+#resource-custom-domain-list,
+#popular-files,
+#resource-popular-location-list,
+#notification_groups,
+#certificates-admin-index
   line-height: 1.5em
   font-size: 1.4em
   background: #fff
@@ -3872,6 +3882,9 @@ label.error
     text-align: center
     width: 360px
 
+  #password_validate_field
+    margin-left: 21rem
+
   #forgot_container, #already_have_account, #apply_deduct_instructions
     margin: 0pt auto
     width: 300px
@@ -4046,6 +4059,7 @@ label.error
       top: 53px
       right: -70px
 
+  .group_block,
   .settings_block
     margin: 0 auto
     width: 550px
@@ -4113,6 +4127,13 @@ label.error
       
       .duo_key
         margin-bottom: 10px
+
+  .group_block input
+    margin-top: 0px
+    margin-bottom: 0px
+
+    &.reminder_days
+      margin-bottom: 20px
 
 input#upload_files, input#start_over, input#validate_domains
   margin: 1em
@@ -4322,7 +4343,7 @@ table#line_items_receipt
 
 .reseller_registration_select_tier, .reseller_registration_profile,
 .user_session_format, .reseller_tier_pricing_popup, .order_container,
-.upload_document_container, .default_container
+.upload_document_container, .default_container, .note_group_container
   margin: 2em auto
   width: 70%
   padding: 0px
@@ -5720,6 +5741,7 @@ span.notifications-teams
 .activation-tos
   width: 65%
   margin-left: 21rem
+  margin-bottom: 2rem
   font-size: 1.15rem
   .tos-check
     display: block !important
@@ -5873,7 +5895,10 @@ span.notifications-teams
   font-size: 1rem
 
 .button-invoice,
-.button-mo-invoice
+.button-mo-invoice,
+.btn-pvg-items,
+.btn-pvg-create,
+.btn-pvg-destroy
   background: -webkit-linear-gradient(#69B3FF, #334DFF)
   background: -o-linear-gradient(#69B3FF, #334DFF)
   background: -moz-linear-gradient(#69B3FF, #334DFF)
@@ -5889,14 +5914,28 @@ span.notifications-teams
   padding: 5px 15px
   box-shadow: none
 
-.button-mo-invoice.btn-mo-destroy
+#btn-folder-rename,
+#btn-folder-default,
+#btn-folder-certificates
+  background: -webkit-linear-gradient(#69B3FF, #334DFF)
+  background: -o-linear-gradient(#69B3FF, #334DFF)
+  background: -moz-linear-gradient(#69B3FF, #334DFF)
+  background: linear-gradient(#69B3FF, #334DFF)
+  border: 2px solid #334DFF
+
+.button-mo-invoice.btn-mo-destroy,
+.btn-pvg-destroy,
+#btn-folder-destroy
   background: -webkit-linear-gradient(#cc0000, #990000)
   background: -o-linear-gradient(#cc0000, #990000)
   background: -moz-linear-gradient(#cc0000, #990000)
   background: linear-gradient(#cc0000, #990000)
   border: 2px solid #990000
 
-.button-mo-invoice.btn-mo-manage
+.button-mo-invoice.btn-mo-manage,
+.btn-pvg-create,
+#btn-folder-create,
+#btn-folder-create-root
   background: -webkit-linear-gradient(#84b332, $base_green)
   background: -o-linear-gradient(#84b332, $base_green)
   background: -moz-linear-gradient(#84b332, $base_green)
@@ -6287,7 +6326,8 @@ span.notifications-teams
     border-top-left-radius: 4px
     border-top-right-radius: 4px
 
-.saved-contact-fields
+.saved-contact-fields,
+.certificate-fields
   align-content: center
   background-color: #6CB1FA
   text-align: center
@@ -6296,6 +6336,11 @@ span.notifications-teams
   font-weight: 500
   margin-bottom: 1.5rem
   padding: 0.5rem 0
+
+.certificate-fields-top
+  margin-top: -1.4rem
+  border-top-left-radius: 3px
+  border-top-right-radius: 3px
 
 .cc-contacts-index
   background-color: #000000
@@ -6891,8 +6936,7 @@ span.notifications-teams
 
   .ui-dialog-buttonpane
     font-size: 1.4rem
-    background-color: #eeeeee
-    margin: 0 !important
+    margin-bottom: -3rem !important
 
   .ui-dialog-buttonset button:nth-child(2) 
     color: #ffffff
@@ -6905,6 +6949,7 @@ span.notifications-teams
     
   .ui-widget-header
     border: 1px solid grey
+    color: white
     background: grey
     font-size: 1.5rem
   
@@ -7012,7 +7057,9 @@ span.notifications-teams
     border: none !important
 
 .btn-filter-clear,
-.btn-filter-search
+.btn-filter-search,
+.btn-cert-update,
+.btn-co-folders
   border-radius: 3px
   border: none
   font-size: 1.2rem
@@ -7023,10 +7070,31 @@ span.notifications-teams
   padding: 5px 7px
   text-transform: uppercase
   
-.btn-filter-clear
+.btn-filter, .btn-filter-clear
   border: 1px solid #334DFF
   background-color: white
   color: #334DFF !important
+
+.btn-cert-update
+  border: 1px solid #334DFF
+  background-color: #334DFF
+  font-size: 1rem
+
+.btn-co-folders
+  border: 1px solid $base_green
+  background-color: $base_green
+  font-size: 1rem
+
+.btn-co-folders.sub-actions
+  border: 1px solid $base_green
+  background-color: white
+  color: $base_green
+  font-size: 1rem
+  padding-top: 8px
+
+  &:hover
+    background-color: $base_green
+    color: white
 
 .btn-filter-search
   border: 1px solid #334DFF
@@ -7062,6 +7130,9 @@ span.notifications-teams
 /*
  * Tags Input Container
  */
+#co-folder-column
+  cursor: pointer
+
 .lnk-popular-tags
   background-color: $base_green
   border: 1px solid $base_green
@@ -7083,8 +7154,14 @@ span.notifications-teams
   float: left
   margin-left: 2.1rem
   margin-bottom: -1.5rem
-  
-#tags-container
+
+#notification_groups input[type='submit']
+  margin-top: 13px
+
+#contacts-container,
+#subjects-container,
+#cos-container, #tags-container,
+#ca-certificates-select
   margin: 0 !important
   
   .select2
@@ -7094,17 +7171,34 @@ span.notifications-teams
   .select2-selection
     background-color: #f0efef !important
 
-  .select2-selection__choice
-    background-color: #bfcfa4b0
-    border: 1px solid #6a9029
-    color: #3c3c3c
-    font-weight: 600
-    font-size: 1.25rem
-    
-    .select2-selection__choice__remove
-      color: #3c3c3c
-      font-size: 1.7rem
-      font-weight: 700
+    .select2-selection__rendered
+      padding: 5px 5px 3px
+
+      li:first-child
+        .select2-search__field
+          margin-left: -5px
+          margin-right: 0px
+          padding-left: 10px
+          padding-right: 10px
+
+      .select2-selection__choice
+        background-color: #bfcfa4b0
+        border: 1px solid #6a9029
+        color: #3c3c3c
+        font-weight: 600
+        font-size: 1.25rem
+        margin-top: 0px
+        margin-bottom: 5px
+
+        .select2-selection__choice__remove
+          color: #3c3c3c
+          font-size: 1.7rem
+          font-weight: 700
+          padding: 0px 4px
+          margin-right: 2px
+          vertical-align: middle
+
+      .select2-search
   
   #tags-co-input,
   #tags-cc-input
@@ -7129,3 +7223,320 @@ span.notifications-teams
 
     .select2-selection__choice__remove
       padding: 0
+
+/*
+ * Certificates Edit for Admins
+ */
+#ca-certificates-select
+  width: 65% !important
+  margin: auto !important
+
+  .select2
+    margin-bottom: 2rem
+
+  .select2-selection__choice
+    background-color: #cccccc
+    border: 1px solid #cccccc
+    font-weight: 500
+    font-size: 1.2rem
+
+.certificates-admin-edit
+  .sub-heading
+    background-color: lightgrey
+    font-size: 1.5rem
+    font-weight: 600
+    color: white
+    padding: 0.4rem
+    text-align: center
+    text-transform: uppercase
+    margin-bottom: 1rem
+
+  .no-margin
+    margin: 0
+
+  #pvg-open-form
+    width: 25%
+    margin: 2.5rem auto
+
+    #lnk-pvg-open-form
+      border-radius: 3px
+      border: 1px dashed lightgrey
+      color: grey
+      font-size: 1.4rem
+      font-weight: 600
+      padding: 1rem 3rem
+
+  #pvg-actions
+    text-align: center
+    margin-bottom: 2.5rem
+
+    a
+      display: inline
+
+      &:first-child
+        margin-right: 0
+
+/*
+ * Certificates Index for Admins
+ */
+.chk-folder-add-co
+  margin-left: 0.5rem
+
+#certificates-admin-index
+  .serial
+    font-weight: 600
+
+  .title
+    font-size: 1.1rem
+
+  .ca
+    font-size: 1rem
+
+#frm-cert-filter
+  select
+    float: left
+
+/*
+ * Folders Index
+ */
+#folders-index
+  width: 85%
+  margin: 1.5rem auto
+  
+  .jstree-grid-wrapper
+    border: 1px solid lightgrey
+    width: 100%
+    height: 650px
+    overflow-y: scroll
+    overflow-x: scroll
+
+  .folder-index-subject,
+  .folder-index-status,
+  .folder-index-expires,
+  .folder-index-action
+    font-size: 1.3rem
+  
+  .folder-index-action
+    font-weight: 600
+    color: $base_green
+    cursor: pointer
+
+  .folder-index-status
+    font-weight: 600
+  
+  .folder-index-name
+    border-right: 1px solid grey
+
+  .folder-index-subject-cell
+    color: grey
+    font-weight: 600
+
+  .jstree-grid-col-0
+    border-right: 1px solid lightgrey
+
+  .folder-index-header
+    background-color: white
+    color: grey
+    font-size: 1.3rem
+    padding: 0.5rem
+
+  #folders-tree
+  
+  i
+    font-size: 1.5rem
+  
+  #folders-header
+    margin-bottom: 0.5rem
+    height: 25px
+
+    span
+      float: right
+      color: white
+      padding: 0.66rem
+      background-color: grey
+      margin-right: -0.5rem
+      border-top-left-radius: 3px
+      border-bottom-left-radius: 3px
+
+    p
+      float: left
+      font-size: 1.6rem
+      font-weight: 600
+      letter-spacing: 0.5px
+    
+    #folder-scan
+      margin-left: 0.5rem
+      float: right
+      margin-bottom: 2rem
+      border-top-left-radius: 0
+      border-bottom-left-radius: 0
+
+    #btn-folder-reset-sys
+      border: 1px solid grey
+      color: grey
+      float: right
+      height: 1.7rem
+
+      i
+        font-size: 1.7rem
+
+      &:hover
+        color: white
+        background-color: grey
+
+  #folders-action
+    padding: 1.2rem 0
+    text-align: center
+    background-color: #e6e6e6
+
+  .btn-folder-index
+    color: white
+    padding: 5px 10px
+    font-size: 1.2rem
+    font-weight: 500
+    letter-spacing: 1px
+    line-height: 2
+    border-radius: 3px
+    margin-right: 1rem
+
+  .jstree-folder-archive
+    color: #990000
+  
+  .jstree-co
+    color: grey !important
+
+/*
+ * Folders
+ */
+#folder-scan
+  border: 1px solid darkgrey
+  border-radius: 3px
+  font-size: 1.2rem
+  padding: 0.6rem
+  margin-left: 1rem
+
+.jstree-node
+  font-size: 1.5rem
+
+#lnk-folders-ql
+  color: $base_green
+
+.icon-co-add-folder
+  color: $base_green
+  cursor: pointer
+
+#co-folders-container
+  margin: 0.8em 0 0.5em
+  
+  #folder-tree-fixed
+    max-height: 250px
+    display: flex
+    flex-direction: row
+
+    #folders-tree-co,
+    #folder-co-list
+      justify-content: flex-start
+      max-height: 250px
+      overflow-y: scroll
+      overflow-x: scroll
+
+    #folders-tree-co
+      width: 60%
+
+    #folder-co-list
+      color: grey
+      width: 40%
+
+      #folder-co-list-cont
+        margin: 1rem
+        font-size: 1.4rem
+
+        .f-co-item
+          margin-top: 0.5rem
+          overflow: hidden
+          text-overflow: ellipsis
+          white-space: nowrap
+          width: 100%
+          display: inline-block
+          
+          &:hover
+            background-color: #beebff
+          
+          a
+            color: grey
+        
+
+  #folder-tree-actions
+    padding: 1.3rem
+    text-align: center
+
+    &.sub-menu
+      border-bottom: 1px solid #ccf
+    
+    i
+      font-size: 1.5rem
+ 
+    .btn-co-folders
+      margin-right: 1rem
+      font-size: 1rem
+      font-weight: 600
+
+  table
+    width: 84%
+    float: right
+    margin-bottom: 2em
+    border: 1px solid #ccf
+    border-top: none
+
+    .heading_row
+      background: #cfc
+      color: grey
+      font-size: 1.4rem
+      font-weight: 500
+      text-align: center
+
+      td
+        border-bottom: 1px solid #ccf
+        border-top: 1px solid #ccf
+        padding: 1rem
+
+        #co-folders-header
+          font-weight: 500
+          float: right
+          width: 97%
+
+          div:first-child
+            margin-top: -0.5rem
+            letter-spacing: 0.8px
+
+          div:last-child
+            margin-top: 0.5rem
+            font-size: 1.1rem
+            margin-bottom: -0.5rem
+
+        #folder-tree-actions-hdr
+          float: right
+          width: 3%
+          i
+            cursor: pointer
+            color: #888
+            font-size: 1.7rem
+
+/*
+ * Folders Dialog
+ */
+.dl-select-folder
+  .ui-dialog-buttonpane
+    font-size: 1.4rem
+
+  .ui-dialog-buttonset button:nth-child(2) 
+    color: #ffffff
+    background-color: $base_green
+    border-color: $base_green
+    border-radius: 3px
+        
+  .ui-widget-header
+    border: 1px solid grey
+    color: white
+    background: grey
+    font-size: 1.3rem

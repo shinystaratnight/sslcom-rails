@@ -1,29 +1,44 @@
 class Certificate < ActiveRecord::Base
   include CertificateType
+  include Filterable
+  include Sortable
+
   has_many    :product_variant_groups, :as => :variantable
   has_many    :product_variant_items, through: :product_variant_groups
   has_many    :validation_rulings, :as=>:validation_rulable
   has_many    :validation_rules, :through => :validation_rulings
   has_and_belongs_to_many :products
+  has_many    :cas_certificates, dependent: :destroy do
+    def default
+      where status: CasCertificate::STATUS[:default]
+    end
+  end
+  has_many    :cas, through: :cas_certificates
   acts_as_publishable :live, :draft, :discontinue_sell
   belongs_to  :reseller_tier
+
   serialize   :icons
   serialize   :description
   serialize   :display_order
   serialize   :title
   preference  :certificate_chain, :string
-
+  
+  accepts_nested_attributes_for :product_variant_groups, allow_destroy: false
+  
+  ROLES = ResellerTier.pluck(:roles).compact.push('Registered').sort
+  
   NUM_DOMAINS_TIERS = 3
   UCC_INITIAL_DOMAINS_BLOCK = 3
   UCC_MAX_DOMAINS = 200
 
   FREE_CERTS_CART_LIMIT=5
 
-  USERTRUST_EV_SUBSCRIBER_AGREEMENT="https://wwwsslcom.a.cdnify.io/app/uploads/2015/07/ssl_certificate_subscriber_agreement.pdf"
-  USERTRUST_EV_AUTHORIZATION="https://wwwsslcom.a.cdnify.io/app/uploads/2015/07/ev-request-form-simplified.pdf"
-  SSLCOM_EV_SUBSCRIBER_AGREEMENT="https://wwwsslcom.a.cdnify.io/app/uploads/2017/06/SSL_com_EV_Subscriber_Agreement.pdf"
-  SSLCOM_EV_AUTHORIZATION="https://wwwsslcom.a.cdnify.io/app/uploads/2018/03/SSL_com_EV_Request_Form_1.1.pdf"
-  SSLCOM_SUBSCRIBER_AGREEMENT="https://wwwsslcom.a.cdnify.io/app/uploads/2018/02/SSL_com_Subscriber_Agreement_1.2.pdf"
+  USERTRUST_EV_SUBSCRIBER_AGREEMENT="https://cdn.ssl.com/app/uploads/2015/07/ssl_certificate_subscriber_agreement.pdf"
+  USERTRUST_EV_AUTHORIZATION="https://cdn.ssl.com/app/uploads/2015/07/ev-request-form-simplified.pdf"
+  SSLCOM_EV_SUBSCRIBER_AGREEMENT="https://cdn.ssl.com/app/uploads/2017/06/SSL_com_EV_Subscriber_Agreement.pdf"
+  SSLCOM_EV_AUTHORIZATION="https://cdn.ssl.com/app/uploads/2018/03/SSL_com_EV_Request_Form_1.1.pdf"
+  SSLCOM_SUBSCRIBER_AGREEMENT="https://cdn.ssl.com/subscriber_agreement"
+  SSLCOM_CP_CPS="https://cdn.ssl.com/repository/SSLcom-CPS.pdf"
 
   #mapping from old to v2 products (see CertificateOrder#preferred_v2_product_description)
   MAP_TO_TRIAL=[["Comodo Trial SSL Certificate", "SSL128SCGN SSL Certificate",
@@ -223,6 +238,31 @@ class Certificate < ActiveRecord::Base
       type = mapping=='renew' ? 1 : 2
       return Certificate.find_by_product(m[type]) if m[0].include?(description)
     end
+  end
+
+  def self.index_filter(params)
+    filters = {}
+    p = params
+    filters[:serial] = { 'LIKE' => p[:serial] } unless p[:serial].blank?
+    filters[:title] = { 'LIKE' => p[:title] } unless p[:title].blank?
+    filters[:product] = { 'LIKE' => p[:product] } unless p[:product].blank?
+    filters[:description] = { 'LIKE' => p[:description] } unless p[:description].blank?
+    unless p[:created_at_type].blank? || p[:created_at].blank?
+      operator = COMPARISON[p[:created_at_type].to_sym]
+      filters[:created_at] = { operator => DateTime.parse(p[:created_at]).beginning_of_day }
+    end
+    unless p[:updated_at_type].blank? || p[:updated_at].blank?
+      operator = COMPARISON[p[:updated_at_type].to_sym]
+      filters[:updated_at] = { operator => DateTime.parse(p[:updated_at]).end_of_day }
+    end
+    filters[:allow_wildcard_ucc] = { '=' => p[:wildcard] } unless p[:wildcard].blank?
+    filters[:reseller_tier_id] = { '=' => p[:reseller_tier_id] } unless p[:reseller_tier_id].blank?
+    result = filter(filters)
+    result
+  end
+
+  def role_can_manage
+    Role.get_role_id Role::RA_ADMIN
   end
 
   def price=(amount)

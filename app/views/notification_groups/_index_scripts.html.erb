@@ -1,0 +1,261 @@
+<script type="text/javascript">
+  jQuery.noConflict();
+  jQuery(function($) {
+    $(document).ready(function () {
+      $('#number_rows').change(function() {
+        $('#per_page').val($(this).val());
+        $('#hidden_form').submit();
+      });
+
+      $('.chk-remove').click(function() {
+        if ($(this).prop('checked')) {
+          $('#btn_remove_groups').attr('disabled', false);
+        } else {
+          var chk_remove_list = $('.chk-remove');
+          var exist_chk = false;
+
+          $.each(chk_remove_list, function(idx, chk_remove) {
+            if ($(chk_remove).prop('checked')) {
+              exist_chk = true;
+              return false;
+            }
+          });
+
+          exist_chk ? $('#btn_remove_groups').attr('disabled', false) : $('#btn_remove_groups').attr('disabled', true);
+        }
+      });
+
+      $('#btn_remove_groups').click(function(e) {
+        e.preventDefault();
+
+        var chk_remove_list = $('.chk-remove');
+        var confirmMsg = 'Are you sure you want to delete the following SSL Expiration Notification Group(s)?';
+        var chk_first_group = true
+
+        $.each(chk_remove_list, function(idx, chk_remove) {
+          if ($(chk_remove).prop('checked')) {
+            if (chk_first_group) {
+              chk_first_group = false
+              confirmMsg = confirmMsg.concat('\r\n      ' + $(chk_remove).attr('data-group-name'));
+            } else {
+              confirmMsg = confirmMsg.concat('\n      ' + $(chk_remove).attr('data-group-name'));
+            }
+          }
+        });
+
+        if (confirm(confirmMsg)) {
+          this.form.submit();
+        }
+      });
+
+      $('#cos_list').select2({ tags: true });
+
+      $('#cos_list').on('select2:opening select2:closing', function( event ) {
+        var $searchfield = $(this).parent().find('.select2-search__field');
+        $searchfield.prop('readonly', true);
+      });
+
+      $('#contacts_list').select2({
+        tags: true,
+        minimumResultsForSearch: -1,
+        templateSelection: function(data, container) {
+          var value = data.element.value
+          if ((!$.isNumeric(value)) && (value.split('---')[0].indexOf('|') == -1)) {
+            $(container).css("background-color", '#a4c000');
+          }
+
+          return data.text;
+        }
+      });
+
+      $('#contacts_list').change(function() {
+        var slt_contacts = $(this).val() || [];
+        $('#contacts_list option').each(function() {
+          var value = $(this).val();
+          var text = $(this).text();
+
+          if (($.isNumeric(value) && $.inArray(value, slt_contacts) == -1)
+            || ((!$.isNumeric(value)
+            && value.split('---').length == 1
+            && value.split('|').length > 1
+            && $.inArray(value, slt_contacts) == -1))) {
+            $(this).attr('selected', false);
+            $(this).val(text + '---' + value);
+
+            return false;
+          }
+        });
+      });
+
+      $('#subjects_list').select2({
+        tags: true,
+        minimumResultsForSearch: -1,
+        templateSelection: function(data, container) {
+          var value = data.element.value
+          if ((!$.isNumeric(value)) && (value.split('---')[0].indexOf('|') == -1)) {
+            $(container).css("background-color", '#a4c000');
+          }
+
+          return data.text;
+        }
+      });
+
+      $('#subjects_list').change(function() {
+        var slt_subjects = $(this).val() || [];
+        $('#subjects_list option').each(function() {
+          var value = $(this).val();
+          var text = $(this).text();
+
+          if (($.isNumeric(value) && $.inArray(value, slt_subjects) == -1)
+            || ((!$.isNumeric(value)
+                && value.split('---').length == 1
+                && value.split('|').length > 1
+                && $.inArray(value, slt_subjects) == -1))) {
+            $(this).attr('selected', false);
+            $(this).val(text + '---' + value);
+
+            return false;
+          }
+        });
+      });
+
+      // Getting Domains and Contacts from selected Certificate Orders.
+      var ajaxGettingDomainsUrl = '<%=certificate_orders_domains_contacts_notification_groups_path(@ssl_slug)%>';
+      $('#cos_list').on('change', function(e) {
+        $.ajax({
+          url: ajaxGettingDomainsUrl,
+          data: {
+            cos: $('#cos_list').val() || []
+          },
+          type: 'GET',
+          dataType: 'html',
+          success: function(result) {
+            // =============== Parsing Subjects ===============
+            var subjects = JSON.parse(result)['domains'];
+            var subject_ids = JSON.parse(result)['domain_ids'];
+            var slt_subjects = $('#subjects_list').val() || [];
+
+            $('#subjects_list option').each(function() {
+              var value = $(this).val();
+              var text = $(this).text();
+
+              if ($.isNumeric(value)) {
+                if ($.inArray(value, subject_ids) != -1) {
+                  $(this).attr('selected', true);
+                } else {
+                  $(this).attr('selected', false);
+                  $(this).val(text + '---' + value);
+                }
+              } else {
+                if (value.split('---').length == 1) {
+                  if (value.split('|').length > 1) {
+                    if ($.inArray(text, subjects) != -1) {
+                      $(this).attr('selected', true);
+                    } else {
+                      $(this).attr('selected', false);
+                      $(this).val(text + '---' + value);
+                    }
+                  } else {
+                    if ($.inArray(value, slt_subjects) != -1) {
+                      $(this).attr('selected', true);
+                    } else {
+                      $(this).attr('selected', false);
+                    }
+                  }
+                } else {
+                  if ($.inArray(value, slt_subjects) != -1) {
+                    $(this).attr('selected', true);
+                  } else {
+                    if ($.inArray(text, subjects) != -1) {
+                      $(this).attr('selected', true);
+                      $(this).val(value.split('---')[1]);
+                    } else {
+                      $(this).attr('selected', false);
+                    }
+                  }
+                }
+              }
+            });
+
+            $('#subjects_list').select2({
+              tags: true,
+              templateSelection: function(data, container) {
+                var value = data.element.value
+                if ((!$.isNumeric(value)) && (value.split('---')[0].indexOf('|') == -1)) {
+                  $(container).css("background-color", '#a4c000');
+                }
+
+                return data.text;
+              }
+            });
+
+            // =============== Parsing Contacts ===============
+            var contacts = JSON.parse(result)['contacts'];
+            var contact_ids = JSON.parse(result)['contact_ids'];
+            var slt_contacts = $('#contacts_list').val() || [];
+
+            $('#contacts_list option').each(function() {
+              var value = $(this).val();
+              var text = $(this).text();
+
+              if ($.isNumeric(value)) {
+                if ($.inArray(value, contact_ids) != -1) {
+                  $(this).attr('selected', true);
+                } else {
+                  $(this).attr('selected', false);
+                  $(this).val(text + '---' + value);
+                }
+              } else {
+                if (value.split('---').length == 1) {
+                  if (value.split('|').length > 1) {
+                    if ($.inArray(text, contacts) != -1) {
+                      $(this).attr('selected', true);
+                    } else {
+                      $(this).attr('selected', false);
+                      $(this).val(text + '---' + value);
+                    }
+                  } else {
+                    if ($.inArray(value, slt_contacts) != -1) {
+                      $(this).attr('selected', true);
+                    } else {
+                      $(this).attr('selected', false);
+                    }
+                  }
+                } else {
+                  if ($.inArray(value, slt_contacts) != -1) {
+                    $(this).attr('selected', true);
+                  } else {
+                    if ($.inArray(text, contacts) != -1) {
+                      $(this).attr('selected', true);
+                      $(this).val(value.split('---')[1]);
+                    } else {
+                      $(this).attr('selected', false);
+                    }
+                  }
+                }
+              }
+            });
+
+            $('#contacts_list').select2({
+              tags: true,
+              templateSelection: function(data, container) {
+                var value = data.element.value
+                if ((!$.isNumeric(value)) && (value.split('---')[0].indexOf('|') == -1)) {
+                  $(container).css("background-color", '#a4c000');
+                }
+
+                return data.text;
+              }
+            });
+          }
+        });
+      });
+
+      var scanGroupsUrl = '<%=scan_groups_notification_groups_path(@ssl_slug)%>';
+      $('#btn_scan_groups').click(function(e) {
+        e.preventDefault();
+        $('#notification_group_list').attr('action', scanGroupsUrl).submit();
+      });
+    });
+  });
+</script>

@@ -144,6 +144,17 @@ SslCom::Application.routes.draw do
   end
 
   concern :teamable do
+    resources :folders, only: [:index, :create, :update, :destroy] do
+      collection do
+        put :reset_to_system
+        get :children
+      end
+      member do
+        put :add_certificate_order
+        put :add_certificate_orders
+      end
+    end
+
     resources :invoices, only: [:index, :edit, :update, :show, :destroy] do
       member do
         get  :download
@@ -247,6 +258,15 @@ SslCom::Application.routes.draw do
       member do
         get :http_dcv_file
         get :verification_check
+      end
+    end
+
+    resources :notification_groups do
+      collection do
+        get :certificate_orders_domains_contacts
+        post :register_notification_group
+        post :remove_groups
+        post :scan_groups
       end
     end
 
@@ -430,10 +450,12 @@ SslCom::Application.routes.draw do
     collection do
       get :single_domain
       get :wildcard_or_ucc
+      get :admin_index
     end
     member do
       get :buy
       get :buy_renewal
+      match :manage_product_variants, via: [:get, :post]
     end
   end
 

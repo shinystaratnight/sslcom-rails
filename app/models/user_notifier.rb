@@ -20,6 +20,14 @@ class UserNotifier < ActionMailer::Base
               to: user.email
   end
 
+  def auto_activation_confirmation(user)
+    @account_url = account_url
+    @login = user.login
+    mail subject: "SSL.com user account auto activated",
+         from: Settings.from_email.activations,
+         to: user.email
+  end
+
   def password_reset_instructions(user)
     @edit_password_reset_url = edit_password_reset_url(user.perishable_token)
     mail  subject: "SSL.com user account password reset instructions",
