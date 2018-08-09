@@ -116,6 +116,70 @@ class DomainsController < ApplicationController
     end
   end
 
+  def remove_selected
+    params[:d_name_check].each do |d_name_id|
+      d_name = CertificateName.find_by_id(d_name_id)
+      d_name.destroy
+    end
+    flash[:notice] = "Domain was successfully deleted."
+    redirect_to domains_path
+  end
+
+  def validate_selected
+    unless params[:d_name_check]
+      d_name_ids = params[:d_name_id]
+      addresses = params[:dcv_address]
+      cnames = []
+      d_name_ids.each_with_index do |id, index|
+        if addresses[index]=~EmailValidator::EMAIL_FORMAT
+          cn = CertificateName.find_by_id(id)
+          cn.domain_control_validations.create(dcv_method: "email", email_address: addresses[index])
+          cnames << cn
+        end
+      end
+      email_for_identifier = ''
+      identifier = ''
+      email_list = []
+      identifier_list = []
+      domain_ary = []
+      domain_list = []
+      cnames.each do |cn|
+        dcv = cn.domain_control_validations.last
+        if dcv.email_address != email_for_identifier
+          if domain_list.length>0
+            domain_ary << domain_list
+            email_list << email_for_identifier
+            identifier_list << identifier
+            domain_list = []
+          end
+          identifier = (SecureRandom.hex(8)+Time.now.to_i.to_s(32))[0..19]
+          email_for_identifier = dcv.email_address
+        end
+        domain_list << cn.name
+        dcv.update_attribute(:identifier, identifier)
+        dcv.send_dcv!
+      end
+      domain_ary << domain_list
+      email_list << email_for_identifier
+      identifier_list << identifier
+      email_list.each_with_index do |value, key|
+        OrderNotifier.dcv_email_send(nil, value, identifier_list[key], domain_ary[key], nil, @ssl_slug, 'group').deliver
+      end
+      flash[:notice] = "DCV email sent."
+      redirect_to domains_path
+    else
+      @all_domains = []
+      @address_choices = []
+      params[:d_name_check].each do |dn_name_id|
+        dn = CertificateName.find_by_id(dn_name_id)
+        dcv = dn.domain_control_validations.last
+        next if dcv && dcv.identifier_found
+        @all_domains << dn
+        @address_choices << DomainControlValidation.email_address_choices(dn.name)
+      end
+    end
+  end
+
   def dcv_validate
     @domain = current_user.ssl_account.domains.find_by(id: params[:id])
     @domain = current_user.ssl_account.certificate_names.find_by(id: params[:id]) if @domain.nil?

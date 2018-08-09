@@ -8,55 +8,42 @@
     =text_field_tag :domain_names, params[:domains]
     =button_tag 'Add', id: 'btn_add_domains'
 
-#validations
-  %table(cellspacing="0")
-    %caption
-      =title
-      =link_to 'validate all unvalidated domains', validate_all_domains_path, style: "float: right"
-    %tr.heading_row
-      %th.name(scope="col") Name
-      %th(scope="col") Scoped
-      %th(scope="col") Status
-      %th(scope="col") Validity period
-      -unless system_admins
-        %th(scope="col") Action
-    -@domains.each do |d|
-      -dcv = d.domain_control_validations.last
-      -validation_status = (dcv && dcv.identifier_found) ? 'Validated' : 'Pending validation'
-      -validity_period = (validation_status=='Pending validation' || dcv.responded_at.nil?) ? 'n/a' : (30-(Date.today-dcv.responded_at.to_date).to_i).to_s + " days remaining"
-      -order_ref = d.certificate_content ? d.certificate_content.certificate_order.ref : 'Team'
-      %tr
-        %td=d.name
-        %td=order_ref
-        %td=validation_status
-        %td=validity_period
-        -unless system_admins
-          %td
-            -unless validation_status == 'Validated'
-              -if order_ref == 'Team'
-                =link_to 'validate', validation_request_domain_path(@ssl_slug, d)
-              -else
-                =link_to 'validate', new_certificate_order_validation_path(@ssl_slug, d.certificate_content.certificate_order)
-              |
-            =link_to 'remove', domain_path(@ssl_slug, d), :class => 'remove_domain', method: :delete,
-          data: {confirm: 'Are you sure you want to delete this domain?'}
-    -@cnames.each do |d|
-      -dcv = d.domain_control_validations.last
-      -validation_status = (dcv && dcv.identifier_found) ? 'Validated' : 'Pending validation'
-      -validity_period = (validation_status=='Pending validation' || dcv.responded_at.nil?) ? 'n/a' : (30-(Date.today-dcv.responded_at.to_date).to_i).to_s + " days remaining"
-      -order_ref = d.certificate_content ? d.certificate_content.certificate_order.ref : 'Team'
-      %tr
-        %td=d.name
-        %td=order_ref
-        %td=validation_status
-        %td=validity_period
-        -unless system_admins
-          %td
-            -unless validation_status == 'Validated'
-              -if order_ref == 'Team'
-                =link_to 'validate', validation_request_domain_path(@ssl_slug, d)
-              -else
-                =link_to 'validate', new_certificate_order_validation_path(@ssl_slug, d.certificate_content.certificate_order)
-              |
-            =link_to 'remove', domain_path(@ssl_slug, d), :class => 'remove_domain', method: :delete,
-          data: {confirm: 'Are you sure you want to delete this domain?'}
+=form_tag '', id: 'domains_list', method: :post do
+  #validations
+    %table(cellspacing="0")
+      %caption
+        =title
+        %ul(style="float: right; display: flex; list-style: none;" )
+          %li(style="margin-right: 0.5rem" )
+            =submit_tag 'validate ', formaction: "#{validate_selected_domains_path(@ssl_slug)}", style: "padding: 0.5rem", id: "d_name_action_validate", disabled: 'true'
+          %li
+            =submit_tag 'remove ', formaction: "#{remove_selected_domains_path(@ssl_slug)}", style: "padding: 0.5rem", id: "d_name_action_remove", disabled: 'true',
+            data: {confirm: 'Are you sure you want to delete this domain?'}
+      %tr.heading_row
+        %th
+        %th.name(scope="col") Name
+        %th(scope="col") Scoped
+        %th(scope="col") Status
+        %th(scope="col") Validity period
+      -@domains.each do |d|
+        -dcv = d.domain_control_validations.last
+        -validation_status = (dcv && dcv.identifier_found) ? 'Validated' : 'Pending validation'
+        -validity_period = (validation_status=='Pending validation' || dcv.responded_at.nil?) ? 'n/a' : (30-(Date.today-dcv.responded_at.to_date).to_i).to_s + " days remaining"
+        -order_ref = d.certificate_content ? d.certificate_content.certificate_order.ref : 'Team'
+        %tr
+          %td=check_box_tag "d_name_check[]",d.id, false, :id => "d_name_check_#{d.id}", :class => "d_name_check"
+          %td=d.name
+          %td=order_ref
+          %td.d_name_status=validation_status
+          %td=validity_period
+      -@cnames.each do |d|
+        -dcv = d.domain_control_validations.last
+        -validation_status = (dcv && dcv.identifier_found) ? 'Validated' : 'Pending validation'
+        -validity_period = (validation_status=='Pending validation' || dcv.responded_at.nil?) ? 'n/a' : (30-(Date.today-dcv.responded_at.to_date).to_i).to_s + " days remaining"
+        -order_ref = d.certificate_content ? d.certificate_content.certificate_order.ref : 'Team'
+        %tr
+          %td=check_box_tag "d_name_check[]",d.id, false, :id => "d_name_check_#{d.id}", :class => "d_name_check"
+          %td=d.name
+          %td=order_ref
+          %td=validation_status
+          %td=validity_period
