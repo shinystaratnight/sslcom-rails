@@ -32,7 +32,7 @@ set :user, "ubuntu"
 set :branch, "staging"
 ssh_options[:keys] = [File.join(ENV["HOME"], ".ssh", "id_rsa")]
 
-server = "sandbox4"
+server = "production"
 case server
   when "sandbox"
     require "rvm/capistrano"

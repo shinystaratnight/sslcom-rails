@@ -18,7 +18,6 @@ class OrdersController < ApplicationController
   before_filter :find_user, :only => [:user_orders]
   before_filter :set_row_page, only: [:index, :search, :filter_by_state, :visitor_trackings]
   before_filter :get_team_tags, only: [:index, :search]
-  caches_page :index
 
   def update_tags
     if @order

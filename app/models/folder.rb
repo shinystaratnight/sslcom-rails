@@ -8,7 +8,8 @@ class Folder < ActiveRecord::Base
             presence: {allow_blank: false},
             uniqueness: {scope: [:ssl_account_id, :parent_id],  case_sensitive: false},
             format: { with: /\A[\w ]+\z/,
-                      message: 'Letters, Numbers, Spaces and Underscores Only'}
+                      message: 'Letters, Numbers, Spaces and Underscores Only'
+                    }
 
   after_save     :there_can_only_be_one_default_folder
   before_destroy :can_destroy?
@@ -25,8 +26,8 @@ class Folder < ActiveRecord::Base
     end
   end
 
-  def self.show_folders?
-    Settings.folders == "show"
+  def self.show_folders?(user=nil)
+    user.is_system_admins? ? false : Settings.folders == "show"
   end
 
   def folder_contents
@@ -46,7 +47,33 @@ class Folder < ActiveRecord::Base
   end
 
   def can_destroy?
-    !archived? && !expired?
+    !archived? && !expired? && !active? && !revoked?
+  end
+
+  def self.reset_to_system_folders(team)
+    if team
+      co_list = team.certificate_orders.joins(:signed_certificates)
+      folders = team.folders
+      expired_folder = folders.find_by(expired: true)
+      revoked_folder = folders.find_by(revoked: true)
+      active_folder = folders.find_by(active: true)
+      default_folder = folders.find_by(default: true)
+
+      if expired_folder
+        co_list.expired.update_all(folder_id: expired_folder.id)
+      end
+      if revoked_folder
+        co_list.revoked.update_all(folder_id: revoked_folder.id)
+      end
+      if active_folder
+        co_list.where.not(id:
+          (co_list.expired.ids + co_list.revoked.ids + co_list.unused_credits.ids).flatten.compact.uniq
+        ).update_all(folder_id: active_folder.id)
+      end
+      if default_folder
+        co_list.unused_credits.update_all(folder_id: default_folder.id)
+      end
+    end
   end
 
   protected

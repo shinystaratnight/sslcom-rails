@@ -3,10 +3,10 @@
     .heading
       %strong Quick Links
     %ul
-      - if Folder.show_folders?
+      - if Folder.show_folders?(current_user)
         %li#lnk-folders-ql
           %i.fa.fa-folder-open
-          =link_to "Folders", folders_path(@ssl_slug), id: "lnk-co-folders"
+          =link_to "Explorer", folders_path(@ssl_slug), id: "lnk-co-folders"
       -unless is_sandbox?
         -if permitted_to?(:create, :order)
           %li=link_to 'Buy Certificate', certificates_url

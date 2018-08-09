@@ -6,7 +6,7 @@
 #   Move expired certificate orders to archive folder.
 #   Move other certificate orders to default folder.
 #
-SslAccount.all do |team|
+SslAccount.find_each do |team|
   archived_exist = Folder.where(name: 'archive', archived: true)
   
   if archived_exist.any?
@@ -33,21 +33,6 @@ SslAccount.all do |team|
     name: 'revoked', revoked: true, ssl_account_id: team.id
   )
   
-  if archive_folder.persisted? && default_folder.persisted?
-    team.update(default_folder_id: default_folder.id)
-    cos = team.certificate_orders
-    
-    # expired certificates
-    expired_cos = team.certificate_orders.expired
-    expired_cos.update_all(folder_id: expired_folder.id) if expired_cos.any?
-    
-    # revoked certificates
-    revoked_cos = team.certificate_orders.revoked
-    revoked_cos.update_all(folder_id: revoked_folder.id) if revoked_cos.any?
-
-    default_cos = cos.where.not(
-      id: (expired_cos.map(&:id) + revoked_cos.map(&:id)).compact.uniq.flatten
-    )
-    default_cos.update_all(folder_id: default_folder.id) if default_cos.any?
-  end
+  team.update(default_folder_id: default_folder.id)
+  Folder.reset_to_system_folders(team)
 end

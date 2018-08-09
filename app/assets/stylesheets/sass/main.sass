@@ -5915,7 +5915,8 @@ span.notifications-teams
   box-shadow: none
 
 #btn-folder-rename,
-#btn-folder-default
+#btn-folder-default,
+#btn-folder-certificates
   background: -webkit-linear-gradient(#69B3FF, #334DFF)
   background: -o-linear-gradient(#69B3FF, #334DFF)
   background: -moz-linear-gradient(#69B3FF, #334DFF)
@@ -5933,7 +5934,8 @@ span.notifications-teams
 
 .button-mo-invoice.btn-mo-manage,
 .btn-pvg-create,
-#btn-folder-create
+#btn-folder-create,
+#btn-folder-create-root
   background: -webkit-linear-gradient(#84b332, $base_green)
   background: -o-linear-gradient(#84b332, $base_green)
   background: -moz-linear-gradient(#84b332, $base_green)
@@ -7295,32 +7297,102 @@ span.notifications-teams
     float: left
 
 /*
- * Folders
+ * Folders Index
  */
-#folder-scan
-  border: 1px solid darkgrey
-  border-radius: 3px
-  font-size: 1.2rem
-  padding: 0.6rem
-  margin-left: 1rem
-
-.jstree-node
-  font-size: 1.5rem
-
-#folders_index
-  width: 84%
+#folders-index
+  width: 85%
   margin: 1.5rem auto
+  
+  .jstree-grid-wrapper
+    border: 1px solid lightgrey
+    width: 100%
+    height: 650px
+    overflow-y: scroll
+    overflow-x: scroll
 
+  .folder-index-subject,
+  .folder-index-status,
+  .folder-index-expires,
+  .folder-index-action
+    font-size: 1.3rem
+  
+  .folder-index-action
+    font-weight: 600
+    color: $base_green
+    cursor: pointer
+
+  .folder-index-status
+    font-weight: 600
+  
+  .folder-index-name
+    border-right: 1px solid grey
+
+  .folder-index-subject-cell
+    color: grey
+    font-weight: 600
+
+  .jstree-grid-col-0
+    border-right: 1px solid lightgrey
+
+  .folder-index-header
+    background-color: white
+    color: grey
+    font-size: 1.3rem
+    padding: 0.5rem
+
+  #folders-tree
+  
   i
     font-size: 1.5rem
+  
+  #folders-header
+    margin-bottom: 0.5rem
+    height: 25px
+
+    span
+      float: right
+      color: white
+      padding: 0.66rem
+      background-color: grey
+      margin-right: -0.5rem
+      border-top-left-radius: 3px
+      border-bottom-left-radius: 3px
+
+    p
+      float: left
+      font-size: 1.6rem
+      font-weight: 600
+      letter-spacing: 0.5px
+    
+    #folder-scan
+      margin-left: 0.5rem
+      float: right
+      margin-bottom: 2rem
+      border-top-left-radius: 0
+      border-bottom-left-radius: 0
+
+    #btn-folder-reset-sys
+      border: 1px solid grey
+      color: grey
+      float: right
+      height: 1.7rem
+
+      i
+        font-size: 1.7rem
+
+      &:hover
+        color: white
+        background-color: grey
 
   #folders-action
-    margin-bottom: 1.2rem
+    padding: 1.2rem 0
+    text-align: center
+    background-color: #e6e6e6
 
   .btn-folder-index
     color: white
     padding: 5px 10px
-    font-size: 1.3rem
+    font-size: 1.2rem
     font-weight: 500
     letter-spacing: 1px
     line-height: 2
@@ -7332,6 +7404,19 @@ span.notifications-teams
   
   .jstree-co
     color: grey !important
+
+/*
+ * Folders
+ */
+#folder-scan
+  border: 1px solid darkgrey
+  border-radius: 3px
+  font-size: 1.2rem
+  padding: 0.6rem
+  margin-left: 1rem
+
+.jstree-node
+  font-size: 1.5rem
 
 #lnk-folders-ql
   color: $base_green
@@ -7356,11 +7441,11 @@ span.notifications-teams
       overflow-x: scroll
 
     #folders-tree-co
-      width: 75%
+      width: 60%
 
     #folder-co-list
       color: grey
-      width: 25%
+      width: 40%
 
       #folder-co-list-cont
         margin: 1rem

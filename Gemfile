@@ -78,7 +78,6 @@ gem 'duo_web', '~> 1.0'
 gem 'recaptcha', require: 'recaptcha/rails'
 gem 'font-awesome-rails'
 gem 'acts_as_tree'
-gem "actionpack-page_caching"
 
 group :development do
   gem 'foreman'

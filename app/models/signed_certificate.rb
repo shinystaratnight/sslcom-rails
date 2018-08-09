@@ -105,7 +105,7 @@ class SignedCertificate < ActiveRecord::Base
     mre=self.most_recent_expiring(start,finish).each do |sc|
         # replace signed_certificate with one from lookups
         remove = cl.select{|c|c.common_name == sc.common_name}.
-            sort{|a,b|a.created_at <=> b.created_at}
+            sort{|a,b|a.created_at.to_i <=> b.created_at.to_i}
         if remove.last
           sc = cl.delete(remove.last)
           remove.each {|r| cl.delete(r)}
@@ -122,7 +122,7 @@ class SignedCertificate < ActiveRecord::Base
     end
     tmp_certs
     tmp_certs.each do |k,v|
-      result << tmp_certs[k].max{|a,b|a.created_at <=> b.created_at}
+      result << tmp_certs[k].max{|a,b|a.created_at.to_i <=> b.created_at.to_i}
     end
     expiring = (mre << result).flatten
     #expiring.each {|e|e.certificate_order.do_auto_renew}

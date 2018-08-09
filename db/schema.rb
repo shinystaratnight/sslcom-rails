@@ -331,6 +331,7 @@ ActiveRecord::Schema.define(version: 20180803200958) do
     t.datetime "created_at",                         null: false
     t.datetime "updated_at",                         null: false
     t.string   "acme_account_id",        limit: 255
+    t.integer  "ssl_account_id",         limit: 4
   end
 
   create_table "certificate_orders", force: :cascade do |t|
@@ -1278,6 +1279,7 @@ ActiveRecord::Schema.define(version: 20180803200958) do
     t.string   "type",                      limit: 255
   end
 
+  add_index "signed_certificates", ["ca_id"], name: "index_signed_certificates_on_ca_id", using: :btree
   add_index "signed_certificates", ["common_name"], name: "index_signed_certificates_on_common_name", using: :btree
   add_index "signed_certificates", ["csr_id"], name: "index_signed_certificates_on_csr_id", using: :btree
 
@@ -1693,4 +1695,5 @@ ActiveRecord::Schema.define(version: 20180803200958) do
   end
 
   add_foreign_key "cdns", "certificate_orders"
+  add_foreign_key "signed_certificates", "cas"
 end
