@@ -216,7 +216,7 @@ class PaypalExpressController < ApplicationController
     
   def funded_account_credit(purchase_params)
     funded_exists = purchase_params[:items].find {|i| i[:name]=='Funded Account'}
-    funded_amt    = funded_exists ? (funded_exists[:amount].abs * 100) : 0
+    funded_amt    = funded_exists ? funded_exists[:amount].abs : 0
     names = [
       'Monthly Invoice Pmt',
       'Reprocess UCC Cert',
