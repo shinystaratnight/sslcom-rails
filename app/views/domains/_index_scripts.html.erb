@@ -7,8 +7,6 @@
         success: function(data, status){
           var domains = data['domains'];
           var exist_domains = data['exist_domains']
-          console.log(domains)
-          console.log(exist_domains)
           if(exist_domains.length>0){
             var message_wrap_element = $('<div></div>');
             message_wrap_element.attr('class', 'flash_message notice');
@@ -42,9 +40,7 @@
             var new_row = "<tr>";
             new_row += "<td><input type='checkbox' name='d_name_check[]' id='d_name_check_" + value.domain.id + "' value='" + value.domain.id + "' class='d_name_check'></td>"
             new_row += "<td>" + value.domain.name + "</td>";
-            new_row += "<td>Team</td><td>Pending validation</td><td>n/a</td><td>";
-            new_row += '<a href="/team/<%=@ssl_slug%>/domains/' + value.domain.id + '/validation_request">validate</a> | ';
-            new_row += '<a data-confirm="Are you sure you want to delete this domain?" rel="nofollow" data-method="delete" href="/team/<%=@ssl_slug%>/domains/' + value.domain.id + '">remove</a></td></tr>';
+            new_row += "<td>Team</td><td>Pending validation</td><td>n/a</td></tr>";
             $(new_row).insertAfter($(".heading_row"));
           });
         }
