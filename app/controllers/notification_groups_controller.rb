@@ -127,7 +127,8 @@ class NotificationGroupsController < ApplicationController
                                    [:orders, :certificate_contents =>
                                        {:csr => :signed_certificates}]}]).find_in_batches(batch_size: 250) do |batch_list|
       batch_list.each do |group|
-        NotificationGroup.scan_notification_group(group)
+        # NotificationGroup.scan_notification_group(group)
+        group.scan_notification_group
       end
     end
 
