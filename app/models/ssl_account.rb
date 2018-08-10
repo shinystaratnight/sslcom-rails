@@ -224,7 +224,7 @@ class SslAccount < ActiveRecord::Base
       end
       tmp_certs
       tmp_certs.each do |k,v|
-        result << tmp_certs[k].max{|a,b|a.expiration_date <=> b.expiration_date}
+        result << tmp_certs[k].max{|a,b|a.expiration_date.to_i <=> b.expiration_date.to_i}
       end
     end
   end
