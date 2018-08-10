@@ -9,9 +9,9 @@ $.last_delete_clicked=function(){
 
 function paypalDomAdjustmentType() {
   var str = '';
-  if ($(order_reprocess_ucc).length) {
+  if ($('#order_reprocess_ucc').length) {
     str = 'reprocess_ucc';
-  } else if ($(order_renew_ucc).length) {
+  } else if ($('#order_renew_ucc').length) {
     str = 'renew_ucc';
   } else {
     str = 'ucc_csr_submit';
@@ -39,6 +39,8 @@ function setPayPalButton() {
     $('[name*=next], [name*=load_funds], #credit_card_form').hide();
     $('[name*=paypal]').show();
     $('form#new_order').attr('action', paypalCheckoutUrl());
+  } else {
+    setStandardButton();
   }
 }
 

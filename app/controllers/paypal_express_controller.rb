@@ -221,7 +221,8 @@ class PaypalExpressController < ApplicationController
       'Monthly Invoice Pmt',
       'Reprocess UCC Cert',
       'Renew UCC Cert',
-      'UCC Cert Adjustment'
+      'UCC Cert Adjustment',
+      'Deposit'
     ]
     order_amount = purchase_params[:items].find {|i| names.include?(i[:name])}[:amount]
     if funded_exists && funded_amt > 0
