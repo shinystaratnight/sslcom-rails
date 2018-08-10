@@ -628,7 +628,7 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def signed_certificate
-    signed_certificates.sort{|a,b|a.created_at<=>b.created_at}.last
+    signed_certificates.sort{|a,b|a.created_at.to_i<=>b.created_at.to_i}.last
   end
 
   def comodo_ca_id
@@ -653,7 +653,7 @@ class CertificateOrder < ActiveRecord::Base
 
   def used_days(options={round: false})
     if signed_certificates && !signed_certificates.empty?
-      sum = (Time.now - signed_certificates.sort{|a,b|a.created_at<=>b.created_at}.first.effective_date)
+      sum = (Time.now - signed_certificates.sort{|a,b|a.created_at.to_i<=>b.created_at.to_i}.first.effective_date)
       (options[:round] ? sum.round : sum)/1.day
     else
       0
@@ -672,8 +672,8 @@ class CertificateOrder < ActiveRecord::Base
   def total_days(options={round: false, duration: :order})
     if options[:duration]== :actual
       if signed_certificates && !signed_certificates.empty?
-        sum = (signed_certificates.sort{|a,b|a.created_at<=>b.created_at}.last.expiration_date -
-            signed_certificates.sort{|a,b|a.created_at<=>b.created_at}.first.effective_date)
+        sum = (signed_certificates.sort{|a,b|a.created_at.to_i<=>b.created_at.to_i}.last.expiration_date -
+            signed_certificates.sort{|a,b|a.created_at.to_i<=>b.created_at.to_i}.first.effective_date)
         (options[:round] ? sum.round : sum)/1.day
       else
         0
