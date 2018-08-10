@@ -50,14 +50,14 @@ class Folder < ActiveRecord::Base
     !archived? && !expired? && !active? && !revoked?
   end
 
-  def self.reset_to_system_folders(team)
+  def self.reset_to_system_folders(team,options={})
     if team
-      co_list = team.certificate_orders.joins(:signed_certificates)
+      co_list = CertificateOrder.unscoped{team.certificate_orders.joins(:signed_certificates)}
       folders = team.folders
-      expired_folder = folders.find_by(expired: true)
-      revoked_folder = folders.find_by(revoked: true)
-      active_folder = folders.find_by(active: true)
-      default_folder = folders.find_by(default: true)
+      expired_folder = options[:expired_folder] || folders.find_by(expired: true)
+      revoked_folder = options[:revoked_folder] || folders.find_by(revoked: true)
+      active_folder = options[:active_folder] || folders.find_by(active: true)
+      default_folder = options[:default_folder] || folders.find_by(default: true)
 
       if expired_folder
         co_list.expired.update_all(folder_id: expired_folder.id)
