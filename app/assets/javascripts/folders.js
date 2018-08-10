@@ -1,5 +1,13 @@
 $(function($) {
-  var errorsExist = false;
+  var errorsExist = false,
+    curResponse = {},
+    actionBtnIds = [
+      '#btn-folder-create-root',
+      '#btn-folder-create',
+      '#btn-folder-destroy',
+      '#btn-folder-rename',
+      '#btn-folder-default'
+    ].join(', ');
 
   folderClearErrors = function() {
     errorsExist =  false;
@@ -40,22 +48,26 @@ $(function($) {
     alert(errors_output);
   };
 
-  folderCreateJstree = function() {
+  folderCreateJstree = function(root=false) {
     var ref = getJstreeRef(),
       sel = ref.get_selected(true);
 
     if (!sel.length) { return false; }
     sel = sel[0];
-    if (certificateOrder(sel)) {
-      sel = ref.create_node(ref.get_node(sel.parent, true), { "type":"folder" });
-    } else {
-      sel = ref.create_node(sel, { "type":"folder" });
+    parent_node = sel;
+    if (root) {
+      parent_node = ref.get_node(sel.parent, true);
     }
+    final_parent = certificateOrder(sel) ? ref.get_node(sel.parent, true) : parent_node
+    sel = ref.create_node(final_parent, { "type":"folder" }, 'first');
+
     if (sel) {
       ref.edit(sel, 'new_folder', function(data) {
-        resp = folderCreate(data.parent.split('_').shift(), data.text);
-        if (!resp) { ref.delete_node(sel); }
-        return resp;
+        error = folderCreate(data.parent.split('_').shift(), data.text);
+        setTimeout(function() {
+          errorsExist ? ref.delete_node(sel) : ref.refresh();
+        }, 650);
+        return error;
       });
     }
   };
@@ -64,11 +76,18 @@ $(function($) {
     var ref = getJstreeRef(),
       sel = ref.get_selected();
     if (!sel.length) { return false; }
+    
     sel = sel[0];
+    prev_text = ref.get_selected(true)[0].text;
     if (sel && !certificateOrder(sel)) {
       ref.edit(sel, sel.text, function(data) {
-        resp = folderRename(data.id.split('_').shift(), data.text);
-        return resp;
+        errors = folderRename(data.id.split('_').shift(), data.text);
+        setTimeout(function() {
+          if (errorsExist) {
+            ref.rename_node([ref.get_selected(true)[0]], prev_text);
+          }
+        }, 450);
+        return errors;
       });
     }
   };
@@ -82,8 +101,17 @@ $(function($) {
       resp = folderDelete(
         ref.get_selected(true)[0].id.split('_').shift()
       );
-      if (resp) { ref.delete_node(sel); }
+      if (resp) {
+        ref.delete_node(sel);
+        $('.jstree-hovered').remove();
+      }
     }
+  };
+
+  findDefaultNode = function() {
+    return getJstreeRef().get_node(
+      $("li i.fa-certificate").parents('li')[0].id
+    );
   };
 
   folderDefaultJstree = function() {
@@ -92,10 +120,23 @@ $(function($) {
     if (!sel.length) { return false; }
 
     if (sel) {
-      resp = folderDefault(
-        ref.get_selected(true)[0].id.split('_').shift()
-      );
-      if (resp) { ref.load_all(); }
+      errors = folderDefault(sel[0].id.split('_').shift());
+      setTimeout(function() {
+        if (!errorsExist) {
+          // unset default folder
+          remove_default = findDefaultNode();
+          if (typeof(remove_default) == 'undefined') {
+            remove_default = findDefaultNode();
+          }
+          remove_default.data.default = false;
+          ref.set_icon(remove_default, 'jstree-folder');
+          
+          // set default folder
+          sel[0].data.default = true;
+          ref.set_icon(sel[0], 'fa fa-certificate');
+        }
+      }, 450);
+      return errors;
     }
   };
 
@@ -106,9 +147,11 @@ $(function($) {
       data: form.serialize().concat(concat),
       dataType: data_type
     }).success(function(resp) {
+      curResponse = resp;
       errorsExist = false;
     }).error(function(json) {
       errorsExist = true;
+      curResponse = {};
       folderParseErrors(json);
     });
   };
@@ -179,9 +222,26 @@ $(function($) {
     form.attr('action', new_action);
   }
 
+  hideBtnForCert = function() {
+    $('#btn-folder-create, #btn-folder-destroy, #btn-folder-rename, #btn-folder-default').hide();
+  }
+
+  hideBtnForSystem = function() {
+    $('#btn-folder-destroy, #btn-folder-rename, #btn-folder-default').hide();
+  }
+
+  enableButtons = function() {
+    $(actionBtnIds).show();
+  }
+
   $('#btn-folder-create').on('click', function(e) {
     e.preventDefault();
     folderCreateJstree();
+  });
+
+  $('#btn-folder-create-root').on('click', function(e) {
+    e.preventDefault();
+    folderCreateJstree(true);
   });
 
   $('#btn-folder-rename').on('click', function(e) {
@@ -191,7 +251,12 @@ $(function($) {
 
   $('#btn-folder-destroy').on('click', function(e) {
     e.preventDefault();
-    folderDeleteJstree();
+    var r = confirm(
+      'Are you sure you want to delete selected folder and all of its sub folders?'
+    );
+    if (r == true) {
+      folderDeleteJstree();
+    }
   });
 
   $('#btn-folder-default').on('click', function(e) {
@@ -203,13 +268,35 @@ $(function($) {
     nodeMoveJstree(node);
   });
 
+  /*
+  * Folders Explorer
+  */
+  $('#folders-tree').on("select_cell.jstree-grid", function(event, data) {
+   var node = data.node[0];
+    if (data.value == 'details') {
+      window.location.href = node.baseURI.replace('folders', 'certificate_orders/') + fetchCertOrderId(node.id)
+    }
+  });
+
   var to = false;
   $('#folder-scan').keyup(function () {
     if(to) { clearTimeout(to); }
     to = setTimeout(function () {
       var search = $('#folder-scan').val();
-      getJstreeRef().search(search);
+      getJstreeRef().searchColumn({0: search});
     }, 250);
+  });
+
+  $('#folders-tree').on('select_node.jstree', function (e, data) {
+    icon = data.node.icon;
+    enableButtons();
+    if (icon == 'jstree-folder') {
+      enableButtons();
+    } else if (icon == 'jstree-file') {
+      hideBtnForCert();
+    } else {
+      hideBtnForSystem();
+    }
   });
 
   /*

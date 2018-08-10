@@ -70,6 +70,7 @@ authorization do
       :create,
       :destroy,
       :index,
+      :reset_to_system,
       :update
     ]
   end
@@ -168,6 +169,7 @@ authorization do
       :add_certificate_order,
       :add_certificate_orders,
       :destroy,
+      :reset_to_system,
       :update
     ] do
       if_attribute ssl_account_id: is {user.ssl_account.id}

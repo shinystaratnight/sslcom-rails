@@ -22,7 +22,7 @@ class CertificateOrder < ActiveRecord::Base
   has_many    :csrs, :through=>:certificate_contents
   has_many    :signed_certificates, :through=>:csrs do
     def expired
-      where{expiration_date > Date.today}
+      where{expiration_date < Date.today}
     end
   end
   has_many    :shadow_certificates, :through=>:csrs, class_name: "SignedCertificate"
@@ -628,7 +628,7 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def signed_certificate
-    signed_certificates.sort{|a,b|a.created_at<=>b.created_at}.last
+    signed_certificates.sort{|a,b|a.created_at.to_i<=>b.created_at.to_i}.last
   end
 
   def comodo_ca_id
@@ -653,7 +653,7 @@ class CertificateOrder < ActiveRecord::Base
 
   def used_days(options={round: false})
     if signed_certificates && !signed_certificates.empty?
-      sum = (Time.now - signed_certificates.sort{|a,b|a.created_at<=>b.created_at}.first.effective_date)
+      sum = (Time.now - signed_certificates.sort{|a,b|a.created_at.to_i<=>b.created_at.to_i}.first.effective_date)
       (options[:round] ? sum.round : sum)/1.day
     else
       0
@@ -672,8 +672,8 @@ class CertificateOrder < ActiveRecord::Base
   def total_days(options={round: false, duration: :order})
     if options[:duration]== :actual
       if signed_certificates && !signed_certificates.empty?
-        sum = (signed_certificates.sort{|a,b|a.created_at<=>b.created_at}.last.expiration_date -
-            signed_certificates.sort{|a,b|a.created_at<=>b.created_at}.first.effective_date)
+        sum = (signed_certificates.sort{|a,b|a.created_at.to_i<=>b.created_at.to_i}.last.expiration_date -
+            signed_certificates.sort{|a,b|a.created_at.to_i<=>b.created_at.to_i}.first.effective_date)
         (options[:round] ? sum.round : sum)/1.day
       else
         0
@@ -2012,7 +2012,7 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   # cron job that flags unused certificate_order credits as expired after a period of time (1 year)
-  def self.expire_credits(options)
+  def self.expire_credits(options={})
     Website.sandbox_db.use_database if options[:db]=="sandbox"
     CertificateOrder.unflagged_expired_credits.update_all(is_expired: true)
     SystemAudit.create(owner: nil, target: nil,

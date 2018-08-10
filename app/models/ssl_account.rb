@@ -23,7 +23,7 @@ class SslAccount < ActiveRecord::Base
   has_many  :certificate_contents, through: :certificate_orders
   has_many  :signed_certificates, through: :certificate_contents do
     def expired
-      where{expiration_date > Date.today}
+      where{expiration_date < Date.today}
     end
 
     def revoked
@@ -207,7 +207,7 @@ class SslAccount < ActiveRecord::Base
       end
       tmp_certs
       tmp_certs.each do |k,v|
-        result << tmp_certs[k].min{|a,b|a.created_at <=> b.created_at}
+        result << tmp_certs[k].min{|a,b|a.created_at.to_i <=> b.created_at.to_i}
       end
     end
   end
@@ -918,7 +918,11 @@ class SslAccount < ActiveRecord::Base
     #only do for prepaid, because 1-off certificate_orders when added are not
     #necessarily paid for already
     if !order.new_record? && order.line_items.all? {|c|c.sellable.try("is_prepaid?".to_sym) if c.sellable.respond_to?("is_prepaid?".to_sym)}
-      OrderNotifier.certificate_order_prepaid(self, order).deliver
+      begin
+        OrderNotifier.certificate_order_prepaid(self, order).deliver
+      rescue Exception=>e
+        logger.error e.backtrace.inspect
+      end
       order.line_items.each do |cert|
         self.certificate_orders << cert.sellable
         cert.sellable.pay!(true) unless cert.sellable.paid?
