@@ -25,7 +25,7 @@ class FoldersController < ApplicationController
     new_params = new_params.merge(parent_id: nil) if parent_root?
     @folder = Folder.new(new_params)
     if @folder.save
-      render json: { message: "Folder successfully created." }, status: :ok
+      render json: { folder_id: @folder.id }, status: :ok
     else
       render json: @folder.errors.messages, status: :unprocessable_entity
     end
@@ -39,6 +39,12 @@ class FoldersController < ApplicationController
     end
     @tree_type = params[:tree_type]
     render partial: 'folder_children'
+  end
+
+  def reset_to_system
+    Folder.reset_to_system_folders(@ssl_account)
+    redirect_to folders_path(@ssl_slug), 
+      notice: "Certificates have been sorted into to system folders."
   end
   
   def update
@@ -61,7 +67,7 @@ class FoldersController < ApplicationController
         render_try_again_error
       end
     else
-      render json: { folder: ['Archived and expired folders cannot be deleted.'] },
+      render json: { folder: ['System folders cannot be deleted.'] },
         status: :unprocessable_entity
     end
   end
@@ -72,7 +78,9 @@ class FoldersController < ApplicationController
     end
 
     if @folder && co
+      CertificateOrder.record_timestamps = false
       if co.update(folder_id: @folder.id)
+        CertificateOrder.record_timestamps = true
         render json: { message: "Certificate has been successfully moved." }, status: :ok
       else
         render_try_again_error
@@ -112,23 +120,29 @@ class FoldersController < ApplicationController
   end
 
   def update_rename
-    if @folder.update(name: params[:folder][:name])
-      render json: { message: "Folder successfully renamed." }, status: :ok
+    if @folder && @folder.can_destroy?
+      if @folder.update(name: params[:folder][:name])
+        render json: { message: "Folder successfully renamed." }, status: :ok
+      else
+        render json: @folder.errors.messages, status: :unprocessable_entity
+      end
     else
-      render json: @folder.errors.messages, status: :unprocessable_entity
+      render json: { folder: ['System folders cannot be renamed.'] },
+        status: :unprocessable_entity
     end
   end
 
   def update_default
-    if @folder.archived?
-      render json: { archive: ['Archived folder cannot be set as default.'] },
-        status: :unprocessable_entity
-    else  
+    if @folder && @folder.can_destroy?
       if @folder.update(default: true)
+        @folder.ssl_account.update(default_folder_id: @folder.id)
         render json: { message: "Folder successfully set as default." }, status: :ok
       else
         render json: @folder.errors.messages, status: :unprocessable_entity
       end
+    else  
+      render json: { default: ['System folders cannot be set as default folder'] },
+        status: :unprocessable_entity
     end
   end
   

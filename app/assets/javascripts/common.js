@@ -14,4 +14,5 @@
 //= require bootstrap-sprockets
 //= require invoice_section
 //= require vakata-jstree/jstree.min
+//= require deitch-jstree-grid/jstreegrid
 //= require folders
