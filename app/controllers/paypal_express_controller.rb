@@ -119,7 +119,7 @@ class PaypalExpressController < ApplicationController
           setup_orders
           @order.notes = auth_code
         end
-        
+        @order.lock!
         @ssl_account.orders << @order
         @order.finalize_sale(
           params: params,
