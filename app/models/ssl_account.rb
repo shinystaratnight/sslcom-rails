@@ -11,7 +11,7 @@ class SslAccount < ActiveRecord::Base
     end
 
     def expired
-      joins{signed_certificates}.where{signed_certificates.expiration_date > Date.today}
+      joins{signed_certificates}.where{signed_certificates.expiration_date < Date.today}
     end
 
     def revoked
