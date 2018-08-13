@@ -1,4 +1,5 @@
 class Role < ActiveRecord::Base
+  include ModelCachingExtension
   has_many                  :assignments, dependent: :destroy
   has_many                  :users, :through => :assignments
   has_and_belongs_to_many   :permissions

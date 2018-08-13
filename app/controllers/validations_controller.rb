@@ -190,9 +190,7 @@ class ValidationsController < ApplicationController
   end
 
   def get_asynch_domains
-    # @cache = read_fragment(params[:certificate_order_id] + ':' + params['domain_name'])
-    cache = Rails.cache.read(params[:certificate_order_id] + ':' + params[:ext_order_number] + ':' + params['domain_name'])
-
+    cache=nil
     if cache.blank? or cache=="{}"
       co = (current_user.is_system_admins? ? CertificateOrder :
                 current_user.certificate_orders).find_by_ref(params[:certificate_order_id])
