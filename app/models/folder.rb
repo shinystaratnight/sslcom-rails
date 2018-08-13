@@ -52,7 +52,7 @@ class Folder < ActiveRecord::Base
 
   def self.reset_to_system_folders(team,options={})
     if team
-      co_list = CertificateOrder.unscoped{team.certificate_orders.joins(:signed_certificates)}
+      co_list = team.certificate_orders.joins{signed_certificates.outer}
       folders = team.folders
       expired_folder = options[:expired_folder] || folders.find_by(expired: true)
       revoked_folder = options[:revoked_folder] || folders.find_by(revoked: true)
@@ -60,18 +60,18 @@ class Folder < ActiveRecord::Base
       default_folder = options[:default_folder] || folders.find_by(default: true)
 
       if expired_folder
-        co_list.expired.update_all(folder_id: expired_folder.id)
+        co_list.expired.where{(folder_id != expired_folder.id) | (folder_id == nil)}.update_all(folder_id: expired_folder.id)
       end
       if revoked_folder
-        co_list.revoked.update_all(folder_id: revoked_folder.id)
-      end
-      if active_folder
-        co_list.where.not(id:
-          (co_list.expired.ids + co_list.revoked.ids + co_list.unused_credits.ids).flatten.compact.uniq
-        ).update_all(folder_id: active_folder.id)
+        co_list.revoked.where{(folder_id != revoked_folder.id) | (folder_id == nil)}.update_all(folder_id: revoked_folder.id)
       end
       if default_folder
-        co_list.unused_credits.update_all(folder_id: default_folder.id)
+        co_list.unused_credits.where{(folder_id != default_folder.id) | (folder_id == nil)}.update_all(folder_id: default_folder.id)
+      end
+      if active_folder
+        co_list.where{id <<
+          (co_list.expired.ids + co_list.revoked.ids + co_list.unused_credits.ids).flatten.compact.uniq
+        }.update_all(folder_id: active_folder.id)
       end
     end
   end

@@ -322,8 +322,8 @@ class CertificateOrder < ActiveRecord::Base
   scope :free, ->{not_new.where(:amount => 0)}
 
   scope :unused_credits, ->{
-    unused = where{(workflow_state=='paid') & (is_expired==false)}
-    where{id << unused.joins{certificate_contents.csr.signed_certificates.outer}.pluck(id)}
+    unused = joins{}
+    where{(workflow_state=='paid') & (is_expired==false) & (id << unused.joins{certificate_contents.csr.signed_certificates.outer}.pluck(id).uniq)}
   }
 
   scope :used_credits, ->{

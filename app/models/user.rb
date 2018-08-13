@@ -233,7 +233,7 @@ class User < ActiveRecord::Base
   end
 
   def roles_for_account(target_ssl=nil)
-    Rails.cache.fetch("#{cache_key}/roles_for_account") do
+    Rails.cache.fetch("#{cache_key}/roles_for_account/#{target_ssl ? target_ssl.cache_key : ''}") do
       ssl = target_ssl.nil? ? ssl_account : target_ssl
       if ssl_accounts.include?(ssl)
         assignments.where(ssl_account_id: ssl).pluck(:role_id).uniq
@@ -534,12 +534,12 @@ class User < ActiveRecord::Base
     unless user.is_system_admins?
       exclude_roles << Role.where.not(id: Role.get_select_ids_for_owner).map(&:id).uniq
     end
-    exclude_roles.any? ? Role.where.not(id: exclude_roles.flatten) : Role.all
+    exclude_roles.any? ? Role.where.not(id: exclude_roles.flatten) : Role.all_cached
   end
 
   def self.get_user_accounts_roles(user)
     # e.g.: {17198:[4], 29:[17, 18], 15:[17, 18, 19, 20]}
-    mapped_roles = Role.all.map{|r| [r.id, r.name]}.to_h
+    mapped_roles = Role.all_cached.map{|r| [r.id, r.name]}.to_h
     user.ssl_accounts.inject({}) do |all, s|
       all[s.id] = user.assignments.where(ssl_account_id: s.id).pluck(:role_id).uniq
       all
@@ -548,7 +548,7 @@ class User < ActiveRecord::Base
 
   def self.get_user_accounts_roles_names(user)
     # e.g.: {'team_1': ['owner'], 'team_2': ['account_admin', 'installer']}
-    mapped_roles = Role.all.map{|r| [r.id, r.name]}.to_h
+    mapped_roles = Role.all_cached.map{|r| [r.id, r.name]}.to_h
     user.ssl_accounts.inject({}) do |all, s|
       all[s.get_team_name] = user.assignments.where(ssl_account_id: s.id)
         .map(&:role).uniq.map(&:name)
