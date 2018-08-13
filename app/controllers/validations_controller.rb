@@ -91,8 +91,8 @@ class ValidationsController < ApplicationController
               @all_validated = false if @all_validated
             else
               validated_domain_arry << key
-              ext_order_number = @certificate_order.external_order_number ? @certificate_order.external_order_number : 'eon'
-              cache = Rails.cache.read(params[:certificate_order_id] + ':' + ext_order_number + ':' + key)
+              ext_order_number = @certificate_order.external_order_number || 'eon'
+              cache = nil # Rails.cache.read(params[:certificate_order_id] + ':' + ext_order_number + ':' + key)
 
               if cache.blank?
                 cn = @certificate_order.certificate_content.certificate_names.find_by_name(key)
@@ -190,9 +190,7 @@ class ValidationsController < ApplicationController
   end
 
   def get_asynch_domains
-    # @cache = read_fragment(params[:certificate_order_id] + ':' + params['domain_name'])
-    cache = Rails.cache.read(params[:certificate_order_id] + ':' + params[:ext_order_number] + ':' + params['domain_name'])
-
+    cache=nil
     if cache.blank? or cache=="{}"
       co = (current_user.is_system_admins? ? CertificateOrder :
                 current_user.certificate_orders).find_by_ref(params[:certificate_order_id])
