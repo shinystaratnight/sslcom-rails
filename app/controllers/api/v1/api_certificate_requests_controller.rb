@@ -152,18 +152,17 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
             @result = @acr #so that rabl can report errors
           end
 
-          unless @result.cert_names.blank?
-            @result.cert_names.keys.each do |key|
-              byebug
-              # expire_fragment(params[:ref] + ':' + key)
-              Rails.cache.delete(params[:ref] + ':' + ext_order_number + ':' + key)
-
-              # cache = Rails.cache.read(params[:ref] + ':' + ext_order_number + ':' + key)
-              # unless cache && JSON.parse(cache)['tr_info']['status'] == 'validated'
-              #   Rails.cache.delete(params[:ref] + ':' + ext_order_number + ':' + key)
-              # end
-            end
-          end
+          # unless @result.cert_names.blank?
+          #   @result.cert_names.keys.each do |key|
+          #     # expire_fragment(params[:ref] + ':' + key)
+          #     Rails.cache.delete(params[:ref] + ':' + ext_order_number + ':' + key)
+          #
+          #     # cache = Rails.cache.read(params[:ref] + ':' + ext_order_number + ':' + key)
+          #     # unless cache && JSON.parse(cache)['tr_info']['status'] == 'validated'
+          #     #   Rails.cache.delete(params[:ref] + ':' + ext_order_number + ':' + key)
+          #     # end
+          #   end
+          # end
 
         end
       else
@@ -201,18 +200,17 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
             @result = @acr #so that rabl can report errors
           end
 
-          unless @result.cert_names.blank?
-            @result.cert_names.keys.each do |key|
-              byebug
-              # expire_fragment(params[:ref] + ':' + key)
-              Rails.cache.delete(params[:ref] + ':' + ext_order_number + ':' + key)
-
-              # cache = Rails.cache.read(params[:ref] + ':' + ext_order_number + ':' + key)
-              # unless cache && JSON.parse(cache)['tr_info']['status'] == 'validated'
-              #   Rails.cache.delete(params[:ref] + ':' + ext_order_number + ':' + key)
-              # end
-            end
-          end
+          # unless @result.cert_names.blank?
+          #   @result.cert_names.keys.each do |key|
+          #     # expire_fragment(params[:ref] + ':' + key)
+          #     Rails.cache.delete(params[:ref] + ':' + ext_order_number + ':' + key)
+          #
+          #     # cache = Rails.cache.read(params[:ref] + ':' + ext_order_number + ':' + key)
+          #     # unless cache && JSON.parse(cache)['tr_info']['status'] == 'validated'
+          #     #   Rails.cache.delete(params[:ref] + ':' + ext_order_number + ':' + key)
+          #     # end
+          #   end
+          # end
 
         end
 
