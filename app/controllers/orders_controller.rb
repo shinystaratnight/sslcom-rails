@@ -685,6 +685,7 @@ class OrdersController < ApplicationController
     @order.state = 'paid'
     @certificate_order.add_reproces_order @order
     record_order_visit(@order)
+    @order.lock!
     @order.save
     # In case credits were used to cover the cost of order.
     ucc_update_domain_counts

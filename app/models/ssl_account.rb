@@ -11,7 +11,7 @@ class SslAccount < ActiveRecord::Base
     end
 
     def expired
-      joins{signed_certificates}.where{signed_certificates.expiration_date > Date.today}
+      joins{signed_certificates}.where{signed_certificates.expiration_date < Date.today}
     end
 
     def revoked
@@ -142,6 +142,7 @@ class SslAccount < ActiveRecord::Base
     self.preferred_reminder_notice_triggers = "-30", ReminderTrigger.find(5)
     generate_funded_account
     create_api_credential if api_credential.blank?
+    create_folders
   end
 
   def api_credential
@@ -224,7 +225,7 @@ class SslAccount < ActiveRecord::Base
       end
       tmp_certs
       tmp_certs.each do |k,v|
-        result << tmp_certs[k].max{|a,b|a.expiration_date <=> b.expiration_date}
+        result << tmp_certs[k].max{|a,b|a.expiration_date.to_i <=> b.expiration_date.to_i}
       end
     end
   end
@@ -739,6 +740,32 @@ class SslAccount < ActiveRecord::Base
   
   def invoice_required?
     billing_monthly? || billing_daily?
+  end
+  
+  protected
+  
+  def create_folders
+    archive_folder = Folder.find_or_create_by(
+        name: 'archived', archived: true, ssl_account_id: self.id
+    )
+
+    default_folder = Folder.find_or_create_by(
+        name: 'default', default: true, ssl_account_id: self.id
+    )
+
+    expired_folder = Folder.find_or_create_by(
+        name: 'expired', expired: true, ssl_account_id: self.id
+    )
+
+    active_folder = Folder.find_or_create_by(
+        name: 'active', active: true, ssl_account_id: self.id
+    )
+
+    revoked_folder = Folder.find_or_create_by(
+        name: 'revoked', revoked: true, ssl_account_id: self.id
+    )
+
+    self.update_column(:default_folder_id, default_folder.id)
   end
     
   private

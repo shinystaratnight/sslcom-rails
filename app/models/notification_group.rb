@@ -240,7 +240,7 @@ class NotificationGroup < ActiveRecord::Base
   #     end
   #   end
   # end
-
+  #
   # def self.scan_notification_group(group)
   #   certs = group.expiring_certificates_in_group
   #   digest = {}
