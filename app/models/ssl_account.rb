@@ -142,6 +142,7 @@ class SslAccount < ActiveRecord::Base
     self.preferred_reminder_notice_triggers = "-30", ReminderTrigger.find(5)
     generate_funded_account
     create_api_credential if api_credential.blank?
+    create_folders
   end
 
   def api_credential
@@ -739,6 +740,32 @@ class SslAccount < ActiveRecord::Base
   
   def invoice_required?
     billing_monthly? || billing_daily?
+  end
+  
+  protected
+  
+  def create_folders
+    archive_folder = Folder.find_or_create_by(
+        name: 'archived', archived: true, ssl_account_id: self.id
+    )
+
+    default_folder = Folder.find_or_create_by(
+        name: 'default', default: true, ssl_account_id: self.id
+    )
+
+    expired_folder = Folder.find_or_create_by(
+        name: 'expired', expired: true, ssl_account_id: self.id
+    )
+
+    active_folder = Folder.find_or_create_by(
+        name: 'active', active: true, ssl_account_id: self.id
+    )
+
+    revoked_folder = Folder.find_or_create_by(
+        name: 'revoked', revoked: true, ssl_account_id: self.id
+    )
+
+    self.update_column(:default_folder_id, default_folder.id)
   end
     
   private
