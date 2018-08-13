@@ -122,10 +122,11 @@ class NotificationGroupsController < ApplicationController
       groups = @ssl_account.notification_groups.where(id: group_ids)
     end
 
-    groups.includes(
-        [:stored_preferences, {:certificate_orders =>
-                                   [:orders, :certificate_contents =>
-                                       {:csr => :signed_certificates}]}]).find_in_batches(batch_size: 250) do |batch_list|
+    # groups.includes(
+    #     [:stored_preferences, {:certificate_orders =>
+    #                                [:orders, :certificate_contents =>
+    #                                    {:csr => :signed_certificates}]}]).find_in_batches(batch_size: 250) do |batch_list|
+    groups.find_in_batches(batch_size: 250) do |batch_list|
       batch_list.each do |group|
         # NotificationGroup.scan_notification_group(group)
         group.scan_notification_group
@@ -363,6 +364,7 @@ class NotificationGroupsController < ApplicationController
           ).save
         end
       else
+        params[:weekday_custom_list] ||= []
         new_weekdays = params[:weekday_custom_list] - current_schedules
         old_weekdays = current_schedules - params[:weekday_custom_list]
 
@@ -386,6 +388,7 @@ class NotificationGroupsController < ApplicationController
           ).save
         end
       else
+        params[:month_custom_list] ||= []
         new_months = params[:month_custom_list] - current_schedules
         old_months = current_schedules - params[:month_custom_list]
 
@@ -409,6 +412,7 @@ class NotificationGroupsController < ApplicationController
           ).save
         end
       else
+        params[:day_custom_list] ||= []
         new_days = params[:day_custom_list] - current_schedules
         old_days = current_schedules - params[:day_custom_list]
 
@@ -432,6 +436,7 @@ class NotificationGroupsController < ApplicationController
           ).save
         end
       else
+        params[:hour_custom_list] ||= []
         new_hours = params[:hour_custom_list] - current_schedules
         old_hours = current_schedules - params[:hour_custom_list]
 
@@ -455,6 +460,7 @@ class NotificationGroupsController < ApplicationController
           ).save
         end
       else
+        params[:minute_custom_list] ||= []
         new_minutes = params[:minute_custom_list] - current_schedules
         old_minutes = current_schedules - params[:minute_custom_list]
 
