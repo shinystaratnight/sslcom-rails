@@ -420,6 +420,7 @@ class CertificateOrder < ActiveRecord::Base
       v.validation_rulings << vrl
     end
     co.site_seal=SiteSeal.create
+    co.folder=Folder.find_by(name: 'active', active: true, ssl_account_id: co.ssl_account.id)
   end
 
   after_initialize do

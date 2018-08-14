@@ -9,9 +9,6 @@
     -if !(single and co.is_expired_credit?) and permitted_to? :index, co
       %a.expand open
     -unless co.is_unused_credit?
-      -if permitted_to? :update, co
-        %span :
-        =link_to co.certificate_content.issued? ? "download" : "details", certificate_order_path(@ssl_slug, co), :title=>"view order for "+cn
       -unless hide_validation?(co)
         -if permitted_to? :show, co.validation
           %span :
