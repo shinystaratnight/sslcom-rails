@@ -127,19 +127,20 @@
 #notification_groups
   =form_tag :remove_groups_notification_groups, :id=> 'notification_group_list', :method => :post do
     %table(cellspacing="0")
-      %tfoot
-        %tr
-          %td.wrap_number_rows
-            =select_tag :number_rows,
-                    options_for_select([[5, 5], [10, 10], [20, 20], [50, 50], [100, 100]], @per_page),
-                    :class=>'per_page'
-          %td(colspan='2')=will_paginate @notification_groups
-        %caption
-          Notification Groups Management
-          =will_paginate @notification_groups
-        %br
-        %tr
-          =link_to "+ Create Notification Group", new_notification_group_path, class: 'button_blue button_index'
+      -if will_paginate @notification_groups
+        %tfoot
+          %tr
+            %td.wrap_number_rows
+              =select_tag :number_rows,
+                      options_for_select([[5, 5], [10, 10], [20, 20], [50, 50], [100, 100]], @per_page),
+                      :class=>'per_page'
+            %td(colspan='2')=will_paginate @notification_groups
+      %caption
+        Notification Groups Management
+        =will_paginate @notification_groups
+      %br
+      %tr
+        =link_to "+ Create Notification Group", new_notification_group_path, class: 'button_blue button_index'
       %tr.heading_row
         -if @notification_groups.size > 0
           %td(scope="col") Friendly Name

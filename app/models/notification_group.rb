@@ -310,7 +310,13 @@ class NotificationGroup < ActiveRecord::Base
             scan_status = 'name_mismatch'
           end
 
-          scanned_cert = ScannedCertificate.create body: cert.to_s, decoded: cert.to_text
+          # scanned_cert = ScannedCertificate.create body: cert.to_s, decoded: cert.to_text
+          scanned_cert = ScannedCertificate.create_with(
+              body: cert.to_s,
+              decoded:cert.to_text
+          ).find_or_create_by(
+              serial: cert.serial.to_s
+          )
         else
           scan_status = 'not_found'
           scanned_cert = nil

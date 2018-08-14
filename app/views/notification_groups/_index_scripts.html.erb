@@ -330,6 +330,16 @@
       //******************** Notification group list ********************
       if (url.substr(url.lastIndexOf('/') + 1, url.length) == 'notification_groups' ||
         url.substr(url.lastIndexOf('/') + 1, url.length) == 'search') {
+
+        if (url.substr(url.lastIndexOf('/') + 1, url.length) == 'notification_groups') {
+          var counts = '<%= (@notification_groups ||= []).length %>';
+          if (counts == '0') {
+            $('#search_form').hide();
+          } else {
+            $('#search_form').show();
+          }
+        }
+
         var filter_slt_type = '<%= @filter_slt_type ||= "true"%>';
         var filter_slt_schedule_type = '<%= @filter_slt_schedule_type ||= "true"%>';
 
