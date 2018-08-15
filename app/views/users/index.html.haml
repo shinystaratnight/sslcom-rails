@@ -14,7 +14,8 @@
   %div{style: 'flex-basis:270px;'}
 #validations
   %table(cellspacing="0")
-    -if will_paginate @users
+    -#-if will_paginate @users
+    -if @users.size > 0
       %tfoot
         %tr
           %td.wrap_number_rows
@@ -40,29 +41,39 @@
         %th(scope="col") Status
       -else
         %th(scope="col") Approved
-    -@users.each do |u|
-      -cache([current_user,'users_list', u], expires_in: 12.hours) do
-        -user_view = current_user.is_system_admins?
-        -user_view ||= u!=current_user && !u.is_owner?(current_user.ssl_account)
-        %tr{class: "#{user_view ? 'enable' : 'disable'}"}
-          %td.dropdown= user_view ? image_tag('expand.png') : ''
-          %td.name.expandable=u.login
-          %td.expandable=u.email
-          -if current_user.is_system_admins?
-            -type = ""
-            -User.get_user_accounts_roles_names(u).each{|ssl| type << "<strong>#{ssl.first}</strong>: #{ssl.second.join(', ')}<br />"}
-            %td.expandable.constrained=type.html_safe
-          -else
-            %td.expandable="#{u.role_symbols(current_user.ssl_account).join('/')}"
-          -if current_user.is_system_admins?
-            %td.expandable=u.created_at.strftime("%b %d, %Y")
-            %td.expandable=(u.last_login_at.blank?) ? "never" : u.last_login_at.strftime("%b %d, %Y")
-            -us, us_class=user_status(u)
-            %td.expandable.validation_status_message(class="#{us_class}" colspan="1")=us
-          - unless current_user.is_system_admins?
-            -as, as_class=ssl_account_status(u, current_user.ssl_account)
-            %td.expandable.validation_status_message(class="#{as_class}" colspan="1")=as
-          %tr.hidden.expanded
-            %td(colspan="6")
-              .certificate_details
-                =render "details", u: u
+    -if @users.size > 0
+      -@users.each do |u|
+        -cache([current_user,'users_list', u], expires_in: 12.hours) do
+          -user_view = current_user.is_system_admins?
+          -user_view ||= u!=current_user && !u.is_owner?(current_user.ssl_account)
+          %tr{class: "#{user_view ? 'enable' : 'disable'}"}
+            %td.dropdown= user_view ? image_tag('expand.png') : ''
+            %td.name.expandable=u.login
+            %td.expandable=u.email
+            -if current_user.is_system_admins?
+              -type = ""
+              -User.get_user_accounts_roles_names(u).each{|ssl| type << "<strong>#{ssl.first}</strong>: #{ssl.second.join(', ')}<br />"}
+              %td.expandable.constrained=type.html_safe
+            -else
+              %td.expandable="#{u.role_symbols(current_user.ssl_account).join('/')}"
+            -if current_user.is_system_admins?
+              %td.expandable=u.created_at.strftime("%b %d, %Y")
+              %td.expandable=(u.last_login_at.blank?) ? "never" : u.last_login_at.strftime("%b %d, %Y")
+              -us, us_class=user_status(u)
+              %td.expandable.validation_status_message(class="#{us_class}" colspan="1")=us
+            - unless current_user.is_system_admins?
+              -as, as_class=ssl_account_status(u, current_user.ssl_account)
+              %td.expandable.validation_status_message(class="#{as_class}" colspan="1")=as
+            %tr.hidden.expanded
+              %td(colspan="6")
+                .certificate_details
+                  =render "details", u: u
+    -else
+      %tr
+        -if current_user.is_system_admins?
+          %td(colspan='7')
+            There are no Notification Groups
+        -else
+          %td(colspan='5')
+            There are no Notification Groups
+

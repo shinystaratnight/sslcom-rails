@@ -127,7 +127,7 @@
 #notification_groups
   =form_tag :remove_groups_notification_groups, :id=> 'notification_group_list', :method => :post do
     %table(cellspacing="0")
-      -if will_paginate @notification_groups
+      -if @notification_groups.size > 0
         %tfoot
           %tr
             %td.wrap_number_rows
@@ -160,7 +160,7 @@
       -else
         %tr
           %td(colspan='3')
-            There are no notification groups
+            There are no Notification Groups
     -if @notification_groups.size > 0
       =submit_tag 'Save', :id => 'btn_remove_groups', :disabled => true
       =submit_tag 'Scan', :id => 'btn_scan_groups'
