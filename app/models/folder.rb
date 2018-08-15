@@ -80,32 +80,20 @@ class Folder < ActiveRecord::Base
 
   # if this is going to be the default folder, all others should not
   def there_can_only_be_one_default_folder
-    if default
-      if self.destroyed?
-        # If this was the default folder and just destroyed, make sure another folder becomes default
-        if ssl_account.default_folder_id == id
-          # Try to find some other folder that was marked default if possible. otherwise first avail
-          another_top_level_folder = Folder.where(parent_id: nil, default: true).where.not(id: id).first ||
-                                      Folder.where(parent_id: nil, default: false).where.not(id: id).first
-          if another_top_level_folder
-            another_top_level_folder.update_attribute(:default, true)
-            ssl_account.update_attribute(:default_folder_id, another_top_level_folder.id)
-          else
-            ssl_account.update_attribute(:default_folder_id, nil)
-          end
+    if self.destroyed?
+      # create a new default folder if default is destroyed
+      if default
+        new_default = ssl_account.folders.create(default: true, name: 'default')
+        if new_default.persisted?
+          ssl_account.update_column(:default_folder_id, new_default.id)
         end
-      else
-        # If this is the default folder and saved normally, make sure there are no other defaults
-	      ssl_account.folders.where.not(id: id).update_all(default: false)
-        ssl_account.update_attribute(:default_folder_id, id)
       end
     else
-      # If this isn't a default folder, check to see if there are any others. If not, promote this one
-      if Folder.where(default: true).count == 0
-        unless self.destroyed?
-          self.update_attribute(:default, true)
-          ssl_account.update_attribute(:default_folder_id, id)
-        end
+      # If this is the default folder and saved normally, make sure there are no other defaults
+      if default && can_destroy?
+        ssl_account.folders.where.not(id: id)
+          .where(default: true).update_all(default: false)
+        ssl_account.update_column(:default_folder_id, id)
       end
     end
   end
