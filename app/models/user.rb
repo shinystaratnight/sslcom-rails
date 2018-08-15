@@ -534,7 +534,7 @@ class User < ActiveRecord::Base
     unless user.is_system_admins?
       exclude_roles << Role.where.not(id: Role.get_select_ids_for_owner).map(&:id).uniq
     end
-    exclude_roles.any? ? Role.where.not(id: exclude_roles.flatten) : Role.all_cached
+    exclude_roles.any? ? Role.where.not(id: exclude_roles.flatten) : Role.all
   end
 
   def self.get_user_accounts_roles(user)
