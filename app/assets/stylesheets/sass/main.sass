@@ -3953,7 +3953,7 @@ label.error
     float: none
 
   //the following should be able to exist outside stylized
-  input[type=text], input[type=url], input[type=email], input[type=password], select, textarea
+  input[type=text], input[type=number], input[type=url], input[type=email], input[type=password], select, textarea
     font-size: 1.5em
     @include text-shadow(0px 1px 0px #fff)
     outline: none
@@ -4064,6 +4064,16 @@ label.error
     margin: 0 auto
     width: 550px
 
+    > .block_label
+      width: 110px
+      float: left
+      font-size: 1.4em
+      text-align: right
+      padding-top: 5px
+    > .block_body
+      float: left
+      padding-left: 3px
+
     label
       width: 13.8em
 
@@ -4134,6 +4144,9 @@ label.error
 
     &.reminder_days
       margin-bottom: 20px
+
+    &.port_number
+      width: 60px
 
 input#upload_files, input#start_over, input#validate_domains
   margin: 1em
@@ -7158,6 +7171,7 @@ span.notifications-teams
 #notification_groups input[type='submit']
   margin-top: 13px
 
+.schedule_container,
 #contacts-container,
 #subjects-container,
 #cos-container, #tags-container,
@@ -7291,6 +7305,80 @@ span.notifications-teams
 
   .ca
     font-size: 1rem
+
+.schedule_type_block,
+.schedule_custom_block
+  .block_label
+    float: left
+    width: 110px
+    line-height: 20px
+    padding-right: 3px
+    text-align: right
+    font-size: 1.4em
+  .block_body
+    float: left
+    margin-bottom: 10px
+    width: 400px
+    .block_item
+      line-height: 20px
+      margin-bottom: 3px
+      .block_item_type
+        float: left
+        span
+          font-size: 1.4em
+          input[type='radio']
+            vertical-align: top
+            margin-top: 4px !important
+    .block_item_simple select
+      font-size: 1.2em !important
+      margin-bottom: 0px !important
+
+#wrap_note_group_filter
+  background: #EEE
+  border: 1px solid #CCF
+  font-size: 13px
+  color: #3c3c3c
+  padding: 1em
+  width: 610px
+  margin: 2em auto
+
+  #btn_note_group_search
+    margin: 10px 0px 0px 5px
+
+  .wrap_filter_block
+    border-bottom: 1px solid #ccc
+    padding: 8px 0px
+    width: 600px
+    margin: auto
+    .filter_block
+      line-height: 20px
+      .block_label
+        font-weight: bold
+      .filter_item
+        padding-right: 10px
+        input[type='radio']
+          vertical-align: middle
+    .horizontal_align
+      .block_label
+        float: left
+        padding-right: 10px
+      .block_cont
+        float: left
+        .filter_item
+          float: left
+    .vertical_align
+      float: left
+      &:first-child
+        padding-left: 10px
+      .block_label
+        padding-bottom: 5px
+        padding-left: 15px
+      .filter_item
+        padding-bottom: 5px
+        width: 85px
+        padding: 0px 15px
+        select
+          height: 120px
 
 #frm-cert-filter
   select
