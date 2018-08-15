@@ -30,6 +30,9 @@ function getOrderAmount() {
   if ($('#order_amount').length) {
     charge_amount = parseFloat($('#order_amount').val());
   }
+  if ($('#funded_account_amount').length && !$('#funded_account_target_amount').length) {
+    charge_amount = parseFloat($('#funded_account_amount').val());
+  }
   return charge_amount;
 }
 
