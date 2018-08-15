@@ -292,6 +292,8 @@ class UsersController < ApplicationController
         end
       end
       redirect_to login_path
+    else
+      redirect_to activation_notice_users_path
     end
   end
 
