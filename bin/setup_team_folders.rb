@@ -37,5 +37,5 @@ SslAccount.find_each do |team|
   Folder.reset_to_system_folders(team,expired_folder: expired_folder,
                                  active_folder: active_folder,
                                  default_folder: default_folder,
-                                 revoked_folder: revoked_folder)
+                                 revoked_folder: revoked_folder) unless team.certificate_orders.empty?
 end

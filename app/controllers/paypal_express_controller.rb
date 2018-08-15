@@ -82,11 +82,11 @@ class PaypalExpressController < ApplicationController
           else
             setup_orders
           end
-          funded_account_credit(purchase_params)
           order_w_discount = discount.any? ? (@order.cents - discount.first[:amount].abs) : @order.cents
           if @ssl_account.funded_account.cents >= order_w_discount
-            @ssl_account.orders << @order
+            funded_account_credit(purchase_params)
             @ssl_account.funded_account.decrement! :cents, order_w_discount
+            @ssl_account.orders << @order
             @order.finalize_sale(params: params, deducted_from: @deposit,
                                  visitor_token: @visitor_token, cookies: cookies)
             if initial_reseller_deposit?
@@ -119,7 +119,7 @@ class PaypalExpressController < ApplicationController
           setup_orders
           @order.notes = auth_code
         end
-        
+        @order.lock!
         @ssl_account.orders << @order
         @order.finalize_sale(
           params: params,
@@ -221,7 +221,8 @@ class PaypalExpressController < ApplicationController
       'Monthly Invoice Pmt',
       'Reprocess UCC Cert',
       'Renew UCC Cert',
-      'UCC Cert Adjustment'
+      'UCC Cert Adjustment',
+      'Deposit'
     ]
     order_amount = purchase_params[:items].find {|i| names.include?(i[:name])}[:amount]
     if funded_exists && funded_amt > 0

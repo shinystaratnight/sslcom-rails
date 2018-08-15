@@ -9,9 +9,9 @@ $.last_delete_clicked=function(){
 
 function paypalDomAdjustmentType() {
   var str = '';
-  if ($(order_reprocess_ucc).length) {
+  if ($('#order_reprocess_ucc').length) {
     str = 'reprocess_ucc';
-  } else if ($(order_renew_ucc).length) {
+  } else if ($('#order_renew_ucc').length) {
     str = 'renew_ucc';
   } else {
     str = 'ucc_csr_submit';
@@ -19,13 +19,31 @@ function paypalDomAdjustmentType() {
   return str;
 }
 
-function setPayPalButton() {
+function getOrderAmount() {
   var charge_amount = parseFloat($('#order_charge_amount').val());
+  if ($('#funded_account_target_amount').length) {
+    charge_amount = parseFloat($('#funded_account_target_amount').val());
+  }
+  if ($('#reprocess_ucc_amount').length) {
+    charge_amount = parseFloat($('#order_order_amount').val());
+  }
+  if ($('#order_amount').length) {
+    charge_amount = parseFloat($('#order_amount').val());
+  }
+  if ($('#funded_account_amount').length && !$('#funded_account_target_amount').length) {
+    charge_amount = parseFloat($('#funded_account_amount').val());
+  }
+  return charge_amount;
+}
 
-  if (charge_amount > 0) {
+function setPayPalButton() {
+  paypalCheckoutUrl();
+  if (getOrderAmount() > 0) {
     $('[name*=next], [name*=load_funds], #credit_card_form').hide();
-    $('[name*=paypal]').show();  
+    $('[name*=paypal]').show();
     $('form#new_order').attr('action', paypalCheckoutUrl());
+  } else {
+    setStandardButton();
   }
 }
 
@@ -119,15 +137,14 @@ $('#expand_register_card').on('click', function(){
     $('#register_card_form').fadeIn();
     $(this).add('img[id=toggle_billing_profile_form]').attr('src', "<%= asset_path('hide_billing_profile_form.png') %>");
     profile_id = $(':radio[name*=funding_source]:checked').attr("id");
-    $(':radio[name*=funding_source]').removeAttr('checked');
+    $(':radio[name*=funding_source]').prop("checked", false);
     profile_form_hidden = false;
     $('form#new_order').attr("action", initial_url);
-  }
-  else{
+  } else {
     $('#register_card_form').fadeOut();
     $.profileRequiredToggle('disable');
     $(this).add('img[id=toggle_billing_profile_form]').attr('src', "<%= asset_path('add_new_billing_profile.png') %>");
-    $(':radio[id*='+profile_id+']').attr("checked","checked");
+    $(':radio[id*='+profile_id+']').prop("checked", true);
     profile_form_hidden = true;
   }
   if($("#funding_source_paypal, #funded_account_funding_source_paypal").is(":checked")){
