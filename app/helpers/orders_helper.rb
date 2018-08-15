@@ -406,6 +406,7 @@ module OrdersHelper
       @order.invoice_description = '' if @order.invoice_description.nil?
       @order.invoice_description << " Received credit for #{notes.join(' and ')}."
     end
+    @order.lock!
     @order.save
   end
   

@@ -1,4 +1,5 @@
 class Role < ActiveRecord::Base
+  include ModelCachingExtension
   has_many                  :assignments, dependent: :destroy
   has_many                  :users, :through => :assignments
   has_and_belongs_to_many   :permissions
@@ -16,11 +17,13 @@ class Role < ActiveRecord::Base
   RA_ADMIN      = 'ra_admin'
   
   def self.get_role_id(role_name)
-    Role.find_by(name: role_name).id
+    Rails.cache.fetch(["get_role_id",role_name]) { Role.find_by(name: role_name).id }
   end
 
   def self.get_role_ids(role_names)
-    Role.where(name: role_names).ids.uniq.reject(&:blank?).compact
+    Rails.cache.fetch(["get_role_ids",role_names.join("_")]) {
+      Role.where(name: role_names).ids.uniq.reject(&:blank?).compact
+    }
   end
 
   def self.admin_role_ids
