@@ -2,7 +2,7 @@ class CertificateContent < ActiveRecord::Base
   include V2MigrationProgressAddon
   include Workflow
   
-  belongs_to  :certificate_order, -> { unscope(where: [:workflow_state, :is_expired]) }
+  belongs_to  :certificate_order, -> { unscope(where: [:workflow_state, :is_expired]) }, touch: true
   has_one     :ssl_account, through: :certificate_order
   has_one     :certificate, through: :certificate_order
   has_many    :users, through: :certificate_order
@@ -16,6 +16,7 @@ class CertificateContent < ActiveRecord::Base
   has_many    :url_callbacks, as: :callbackable
   has_many    :taggings, as: :taggable
   has_many    :tags, through: :taggings
+  belongs_to  :ca
 
   accepts_nested_attributes_for :certificate_contacts, :allow_destroy => true
   accepts_nested_attributes_for :registrant, :allow_destroy => false
@@ -132,6 +133,7 @@ class CertificateContent < ActiveRecord::Base
     end
 
     state :info_provided do
+      event :validate, :transitions_to => :validated
       event :submit_csr, :transitions_to => :csr_submitted
       event :issue, :transitions_to => :issued
       event :provide_contacts, :transitions_to => :contacts_provided
@@ -140,6 +142,7 @@ class CertificateContent < ActiveRecord::Base
     end
 
     state :contacts_provided do
+      event :validate, :transitions_to => :validated
       event :provide_contacts, transitions_to: :contacts_provided
       event :submit_csr, :transitions_to => :csr_submitted
       event :issue, :transitions_to => :issued

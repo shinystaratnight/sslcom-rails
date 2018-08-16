@@ -63,6 +63,7 @@ class FundedAccountsController < ApplicationController
     @funded_account.funding_source = FundedAccount::NEW_CREDIT_CARD if @funded_account.funding_source.blank?
     if @funded_account.valid?
       @account_total = account.funded_account(true)
+      @funded_original = @account_total.cents
       #if not deducting order, then it's a straight deposit since we don't deduct anything
       @order ||= (@funded_account.deduct_order?)? current_order :
         Order.new(:cents => 0, :deposit_mode => true)
@@ -170,6 +171,9 @@ class FundedAccountsController < ApplicationController
         if @funded
           @funded.destroy
           @account_total.cents = @funded_original # put original amount back on the funded account
+        end
+        if @funded_account.valid? && !@funded_account.deduct_order?
+          @ssl_account.funded_account.update(cents: @funded_original)
         end
         flash[:error] = @gateway_response.message if @gateway_response
         flash[:error] = 'Too many failed attempts, please wait 1 minute to try again!' if too_many_declines

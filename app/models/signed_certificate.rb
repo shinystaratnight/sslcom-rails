@@ -11,6 +11,8 @@ class SignedCertificate < ActiveRecord::Base
   belongs_to :parent, :foreign_key=>:parent_id,
     :class_name=> 'SignedCertificate', :dependent=>:destroy
   belongs_to :csr
+  delegate :certificate_content, to: :csr
+  delegate :certificate_order, to: :certificate_content
   belongs_to :certificate_lookup
   validates_presence_of :body, :if=> Proc.new{|r| !r.parent_cert}
   validates :csr_id, :presence=>true, :on=>:save
@@ -89,9 +91,7 @@ class SignedCertificate < ActiveRecord::Base
     end
   end
 
-  scope :shadow, -> {where{ca_id >> [Ca::ISSUER[:sslcom_shadow]]}}
-
-  scope :live, -> {where{ca_id == nil}}
+  scope :live, -> {where{type == nil}}
 
   scope :most_recent_expiring, lambda{|start, finish|
     find_by_sql("select * from signed_certificates as T where expiration_date between '#{start}' AND '#{finish}' AND created_at = ( select max(created_at) from signed_certificates where common_name like T.common_name )")}
@@ -103,7 +103,7 @@ class SignedCertificate < ActiveRecord::Base
     mre=self.most_recent_expiring(start,finish).each do |sc|
         # replace signed_certificate with one from lookups
         remove = cl.select{|c|c.common_name == sc.common_name}.
-            sort{|a,b|a.created_at <=> b.created_at}
+            sort{|a,b|a.created_at.to_i <=> b.created_at.to_i}
         if remove.last
           sc = cl.delete(remove.last)
           remove.each {|r| cl.delete(r)}
@@ -120,7 +120,7 @@ class SignedCertificate < ActiveRecord::Base
     end
     tmp_certs
     tmp_certs.each do |k,v|
-      result << tmp_certs[k].max{|a,b|a.created_at <=> b.created_at}
+      result << tmp_certs[k].max{|a,b|a.created_at.to_i <=> b.created_at.to_i}
     end
     expiring = (mre << result).flatten
     #expiring.each {|e|e.certificate_order.do_auto_renew}
@@ -339,18 +339,23 @@ class SignedCertificate < ActiveRecord::Base
       co.site_seal.fully_activate! unless co.site_seal.fully_activated?
       if email_customer
         co.processed_recipients.map{|r|r.split(" ")}.flatten.uniq.each do |c|
-          OrderNotifier.processed_certificate_order(c, co, zip_path).deliver
-          OrderNotifier.site_seal_approve(c, co).deliver
+          begin
+            OrderNotifier.processed_certificate_order(c, co, zip_path).deliver
+            OrderNotifier.site_seal_approve(c, co).deliver
+          rescue Exception=>e
+            logger.error e.backtrace.inspect
+          end
         end
       end
     end
     # for shadow certs, only send the certificate
     begin
-      if Settings.shadow_certificate_recipient
-        co.apply_for_certificate(ca_id: Ca::ISSUER[:sslcom_shadow], ca: Ca::MANAGEMENT_CA)
+      if certificate_order.certificate.cas.shadow.each do |shadow_ca|
+        co.apply_for_certificate(mapping: shadow_ca)
         OrderNotifier.processed_certificate_order(Settings.shadow_certificate_recipient, co, nil,
                                                   co.shadow_certificates.last).deliver
       end
+    end
     rescue Exception=>e
       logger.error e.message
       e.backtrace.each { |line| logger.error line }
@@ -363,10 +368,6 @@ class SignedCertificate < ActiveRecord::Base
 
   def nonidn_friendly_common_name
     SimpleIDN.to_ascii(read_attribute(:common_name) || csr.common_name).gsub('*', 'STAR').gsub('.', '_')
-  end
-
-  def certificate_order
-    csr.certificate_content.certificate_order
   end
 
   def expiration_date_js

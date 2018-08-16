@@ -12,8 +12,20 @@ class Certificate < ActiveRecord::Base
     def default
       where status: CasCertificate::STATUS[:default]
     end
+
+    def shadow
+      where status: CasCertificate::STATUS[:shadow]
+    end
   end
-  has_many    :cas, through: :cas_certificates
+  has_many    :cas, through: :cas_certificates do
+    def default
+      where cas_certificates: {status: CasCertificate::STATUS[:default]}
+    end
+
+    def shadow
+      where cas_certificates: {status: CasCertificate::STATUS[:shadow]}
+    end
+  end
   acts_as_publishable :live, :draft, :discontinue_sell
   belongs_to  :reseller_tier
 

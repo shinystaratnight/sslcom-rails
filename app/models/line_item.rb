@@ -1,7 +1,7 @@
 class LineItem < ActiveRecord::Base
-  belongs_to  :order
+  belongs_to  :order, touch: true
   belongs_to  :affiliate
-  belongs_to  :sellable, :polymorphic => true
+  belongs_to  :sellable, :polymorphic => true, touch: true
   
   money :amount
   

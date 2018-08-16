@@ -3,7 +3,7 @@ require 'bigdecimal'
 
 class Order < ActiveRecord::Base
   include V2MigrationProgressAddon
-  belongs_to  :billable, :polymorphic => true
+  belongs_to  :billable, :polymorphic => true, touch: true
   belongs_to  :address
   belongs_to  :billing_profile, -> { unscope(where: [:status]) }
   belongs_to  :billing_profile_unscoped, foreign_key: :billing_profile_id, class_name: "BillingProfileUnscoped"
@@ -263,16 +263,10 @@ class Order < ActiveRecord::Base
 
   def apply_discounts(params)
     if (params[:discount_code])
-      self.temp_discounts =[]
+      self.temp_discounts = []
       general_discount = Discount.viable.general.find_by_ref(params[:discount_code])
-      if current_user and !current_user.is_system_admins?
-        if current_user.ssl_account.discounts.find_by_ref(params[:discount_code])
-          self.temp_discounts<<current_user.ssl_account.discounts.find_by_ref(params[:discount_code]).id
-        elsif general_discount
-          self.temp_discounts<<general_discount.id
-        end
-      elsif general_discount
-        self.temp_discounts<<general_discount.id
+      if general_discount
+        self.temp_discounts << general_discount.id
       end
     end
   end
@@ -586,37 +580,39 @@ class Order < ActiveRecord::Base
   
   # Fetches all domain counts that were added during UCC domains adjustment
   def get_reprocess_domains
-    co           = certificate_orders.first
-    cc           = get_reprocess_cc(co)
-    cs           = cc.signed_certificate if cc
-    cc_domains   = (cc.nil? || (cc && cc.domains.blank?)) ? [] : cc.domains
-    cur_domains  = (cc && cs) ? cs.subject_alternative_names : cc_domains
-    non_wildcard = cur_domains.map {|d| d if !d.include?('*')}.compact
-    wildcard     = cur_domains.map {|d| d if d.include?('*')}.compact
-    
-    tot_non_wildcard = if cur_non_wildcard.blank?
-      non_wildcard.count - co.get_reprocess_max_nonwildcard(cc).count
-    else
-      cur_non_wildcard
+    Rails.cache.fetch("#{cache_key}/get_reprocess_domains") do
+      co           = certificate_orders.first
+      cc           = get_reprocess_cc(co)
+      cs           = cc.signed_certificate if cc
+      cc_domains   = (cc.nil? || (cc && cc.domains.blank?)) ? [] : cc.domains
+      cur_domains  = (cc && cs) ? cs.subject_alternative_names : cc_domains
+      non_wildcard = cur_domains.map {|d| d if !d.include?('*')}.compact
+      wildcard     = cur_domains.map {|d| d if d.include?('*')}.compact
+
+      tot_non_wildcard = if cur_non_wildcard.blank?
+                           non_wildcard.count - co.get_reprocess_max_nonwildcard(cc).count
+                         else
+                           cur_non_wildcard
+                         end
+
+      tot_wildcard = if cur_wildcard.blank?
+                       wildcard.count - co.get_reprocess_max_wildcard(cc).count
+                     else
+                       cur_wildcard
+                     end
+
+      tot_non_wildcard  = tot_non_wildcard < 0 ? 0 : tot_non_wildcard
+      tot_wildcard      = tot_wildcard < 0 ? 0 : tot_wildcard
+      new_domains_count = tot_non_wildcard + tot_wildcard
+
+      {
+          all:                cur_domains,
+          new_domains_count:  (new_domains_count < 0 ? 0 : new_domains_count),
+          cur_wildcard:       wildcard.count,
+          wildcard:           tot_wildcard,
+          non_wildcard:       tot_non_wildcard
+      }
     end
-    
-    tot_wildcard = if cur_wildcard.blank?
-      wildcard.count - co.get_reprocess_max_wildcard(cc).count
-    else
-      cur_wildcard
-    end
-    
-    tot_non_wildcard  = tot_non_wildcard < 0 ? 0 : tot_non_wildcard
-    tot_wildcard      = tot_wildcard < 0 ? 0 : tot_wildcard
-    new_domains_count = tot_non_wildcard + tot_wildcard
-    
-    {
-      all:                cur_domains,
-      new_domains_count:  (new_domains_count < 0 ? 0 : new_domains_count),
-      cur_wildcard:       wildcard.count,
-      wildcard:           tot_wildcard,
-      non_wildcard:       tot_non_wildcard
-    }
   end
   
   def get_ccref_from_notes
