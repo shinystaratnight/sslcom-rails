@@ -132,11 +132,12 @@ class ValidationsController < ApplicationController
             # after = DateTime.now
             # subtract = after.to_i - before.to_i
 
-          @validated_domains = validated_domain_arry.join(',')
+            @validated_domains = validated_domain_arry.join(',')
 
-          # if all_validated
-          #   url=certificate_order_path(@ssl_slug, @certificate_order)
-          # end
+            # if all_validated
+            #   url=certificate_order_path(@ssl_slug, @certificate_order)
+            # end
+          end
         end
       end
     end
