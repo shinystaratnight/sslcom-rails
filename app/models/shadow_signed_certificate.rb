@@ -1,0 +1,2 @@
+class ShadowSignedCertificate < SignedCertificate
+end
