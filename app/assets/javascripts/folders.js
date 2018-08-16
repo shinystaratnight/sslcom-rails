@@ -416,6 +416,14 @@ $(function($) {
     $('.chk-folder-add-co').click();
   });
 
+  $('#folder-scan-co').keyup(function () {
+    if(to) { clearTimeout(to); }
+    to = setTimeout(function () {
+      var search = $('#folder-scan-co').val();
+      getJstreeRef().search(search);
+    }, 250);
+  });
+
   /*
    * Change Folder Modal
    */
