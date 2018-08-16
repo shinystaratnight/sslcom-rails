@@ -155,6 +155,19 @@ SslCom::Application.routes.draw do
       end
     end
 
+    resources :domains, only: [:index, :create, :update, :destroy] do
+      collection do
+        match :validate_all, via: [:get, :post]
+        match :dcv_all_validate, via: [:get, :post]
+        match :remove_selected, via: [:get, :post]
+        match :validate_selected, via: [:get, :post]
+      end
+      member do
+        match :validation_request, via: [:get, :post]
+        match :dcv_validate, via: [:get, :post]
+      end
+    end
+
     resources :invoices, only: [:index, :edit, :update, :show, :destroy] do
       member do
         get  :download
@@ -222,6 +235,7 @@ SslCom::Application.routes.draw do
         post :remove_domains
         post :get_email_addresses
         member do
+          match :dcv_validate, via: [:get, :post, :options]
           get :document_upload
         end
       end
