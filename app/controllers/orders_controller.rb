@@ -384,7 +384,7 @@ class OrdersController < ApplicationController
     if is_sandbox? and @search.include?("is_test:true").blank?
       @search << " is_test:true"
     end
-    @unpaginated =
+    unpaginated =
       if !@search.blank?
         if current_user.is_system_admins?
           (@ssl_account.try(:orders) ? Order.unscoped{@ssl_account.try(:orders)} : Order.unscoped).where{state << ['payment_declined']}.search(@search)
@@ -399,12 +399,84 @@ class OrdersController < ApplicationController
         end
       end.uniq
 
-    @orders = @unpaginated.paginate(@p)
+    stats(unpaginated)
 
     respond_to do |format|
       format.html { render :action => :index}
       format.xml  { render :xml => @orders }
     end
+  end
+
+  def stats(unpaginated)
+    if current_user.is_admin?
+      # Invoiced orders
+      invoice_items = unpaginated.where(state: 'invoiced')
+      
+      @payable_invoices = Invoice
+        .where.not(billable_id: nil, type: nil)
+        .where(id: invoice_items.map(&:invoice_id).uniq).joins(:orders)
+      
+      @pending_payable_invoices = @payable_invoices
+        .where(status: 'pending')
+        .where(orders: {approval: 'approved'})
+        .map(&:orders).flatten.uniq
+        .select{|o| invoice_items.include?(o)}.sum(&:cents)
+      
+      @paid_payable_invoices = @payable_invoices
+        .where(status: ['paid', 'partially_refunded'])
+        .where(orders: {approval: 'approved'})
+        .map(&:orders).flatten.uniq
+        .select{|o| invoice_items.include?(o)}.sum(&:cents)
+        
+      @refunded_payable_invoices = @payable_invoices
+        .where(status: 'refunded')
+        .where(orders: {approval: 'approved'})
+        .map(&:orders).flatten.uniq
+        .select{|o| invoice_items.include?(o)}.sum(&:cents)
+        
+      @partial_refunds_payable_invoices = @payable_invoices
+        .where(status: 'partially_refunded')
+        .where(orders: {approval: 'approved'})
+        .map(&:payment).map(&:refunds).flatten.uniq.sum(&:amount)
+      
+      @paid_payable_invoices -= @partial_refunds_payable_invoices
+      
+      @payable_invoices_count = @payable_invoices.uniq.count
+      @invoiced_orders_count = invoice_items.count
+      
+      # Non invoiced orders
+      @negative = unpaginated
+        .where(state: %w{charged_back canceled rejected payment_not_required payment_declined})
+        .where.not(description: [Order::MI_PAYMENT, Order::DI_PAYMENT])  # exclude invoice payments (as order)
+        .where.not(state: 'invoiced')                    # exclude invoice items (as order)
+        .sum(:cents)
+      
+      refunded = Refund.where(
+        order_id: unpaginated
+          .where.not(description: [Order::MI_PAYMENT, Order::DI_PAYMENT])
+          .where.not(state: 'invoiced')
+          .where(state: ['partially_refunded', 'fully_refunded']).map(&:id)
+      ).where(status: 'success')
+      
+      deposits = unpaginated.joins{ line_items.sellable(Deposit) }
+
+      orders = unpaginated.where.not(id: deposits.map(&:id))
+        .where.not(description: [Order::MI_PAYMENT, Order::DI_PAYMENT])
+        .where.not(state: 'invoiced')
+      
+      # Funded Account Withdrawal
+      faw = unpaginated.where(description: Order::FAW).sum(:cents)
+
+      deposits = deposits.where.not(description: Order::FAW)
+    
+      @refunded_amount = refunded.sum(:amount)
+      @refunded_count  = refunded.count
+      @deposits_amount = deposits.sum(:cents)
+      @deposits_count  = deposits.count
+      @total_amount    = orders.sum(:cents) - @negative - @refunded_amount - faw
+      @total_count     = orders.count
+    end
+    @orders = unpaginated.paginate(@p)
   end
 
   def filter_by_state
@@ -416,7 +488,7 @@ class OrdersController < ApplicationController
         current_user.ssl_account.orders.unscoped{
           current_user.ssl_account.orders.includes(:line_items).where{state >> states}.order(:created_at.desc)}
       end
-    @orders = @unpaginated.paginate(@p)
+    stats(unpaginated)
 
     respond_to do |format|
       format.html { render :action=>:index}
@@ -685,7 +757,6 @@ class OrdersController < ApplicationController
     @order.state = 'paid'
     @certificate_order.add_reproces_order @order
     record_order_visit(@order)
-    @order.lock!
     @order.save
     # In case credits were used to cover the cost of order.
     ucc_update_domain_counts

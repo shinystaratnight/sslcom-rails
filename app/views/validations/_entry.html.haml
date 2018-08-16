@@ -54,7 +54,7 @@
                             %ul
                               %li.email_customer
                                 #{check_box_tag "email_customer", true, false, :alt=>"#{i}"}notify customer?
-                              -if co.certificate.is_code_signing?
+                              -if co.certificate.is_code_signing? && cc.pending_validation?
                                 %li.validation_complete
                                   #{check_box_tag "validation_complete", true, false, :alt=>"#{i}"}validation complete
                               %li.approve_submit=submit_tag 'submit'

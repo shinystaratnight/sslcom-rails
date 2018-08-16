@@ -1,5 +1,4 @@
 class Country < ActiveRecord::Base
-  include ModelCachingExtension
   BLACKLIST=%w(AF CU ER GN IR IQ LR KP RW SL SY SD SS ZW)
   PRIORITY = [["United States", "US"], ["United Kingdom", "GB"], ["Canada", "CA"]]
 

@@ -10,7 +10,7 @@ class Csr < ActiveRecord::Base
   
   has_many    :whois_lookups, :dependent => :destroy
   has_many    :signed_certificates, -> {SignedCertificate.live}, :dependent => :destroy
-  has_many    :shadow_certificates
+  has_many    :shadow_certificates, -> {SignedCertificate.shadow}, :dependent => :destroy, class_name: "SignedCertificate"
   has_many    :ca_certificate_requests, as: :api_requestable, dependent: :destroy
   has_many    :sslcom_ca_requests, as: :api_requestable
   has_many    :ca_api_requests, as: :api_requestable
@@ -349,7 +349,7 @@ class Csr < ActiveRecord::Base
   end
 
   def signed_certificate
-    signed_certificates.sort{|a,b|a.created_at.to_i<=>b.created_at.to_i}.last
+    signed_certificates.sort{|a,b|a.created_at<=>b.created_at}.last
   end
 
   def replace_csr(csr)

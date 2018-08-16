@@ -145,10 +145,7 @@ SslCom::Application.routes.draw do
 
   concern :teamable do
     resources :folders, only: [:index, :create, :update, :destroy] do
-      collection do
-        put :reset_to_system
-        get :children
-      end
+      get :children, on: :collection
       member do
         put :add_certificate_order
         put :add_certificate_orders
@@ -278,10 +275,8 @@ SslCom::Application.routes.draw do
     resources :notification_groups do
       collection do
         get :certificate_orders_domains_contacts
-        post :search
         post :register_notification_group
         post :remove_groups
-        post :scan_groups
       end
     end
 

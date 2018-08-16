@@ -1,7 +1,7 @@
 class Assignment < ActiveRecord::Base
-  belongs_to  :user, touch: true
+  belongs_to  :user
   belongs_to  :role
-  belongs_to  :ssl_account, touch: true
+  belongs_to  :ssl_account
   
   def self.users_can_manage_invoice(team)
     if team && team.is_a?(SslAccount)

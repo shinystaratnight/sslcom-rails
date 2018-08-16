@@ -5,19 +5,18 @@
 @font-face
   font-family: 'Museo700'
   src: url('/fonts/Museo700-Regular-webfont.eot')
-  src: local("☺"), url('/fonts/Museo700-Regular-webfont.eot?iefix') format('eot'), url('/fonts/Museo700-Regular-webfont.woff') format('woff'), url('/fonts/Museo700-Regular-webfont.ttf') format('truetype'), url('/fonts/Museo700-Regular-webfont.svg#webfontNpXBDqia') format('svg')
+  src: local("image-☺"), url('/fonts/Museo700-Regular-webfont.eot?iefix') format('eot'), url('/fonts/Museo700-Regular-webfont.woff') format('woff'), url('/fonts/Museo700-Regular-webfont.ttf') format('truetype'), url('/fonts/Museo700-Regular-webfont.svg#webfontNpXBDqia') format('svg')
   font-weight: normal
   font-style: normal
 
 @font-face
   font-family: 'Museo300'
-  src: url('/fonts/Museo300-Regular-webfont.eot')
-  src: local("☺"), url('/fonts/Museo300-Regular-webfont.eot?iefix') format('eot'), url('/fonts/Museo300-Regular-webfont.woff') format('woff'), url('/fonts/Museo300-Regular-webfont.ttf') format('truetype'), url('/fonts/Museo300-Regular-webfont.svg#webfontNpXBDqia') format('svg')
+  src: url('/fimage-onts/Museo300-Regular-webfont.eot')
+  src: local("image-☺"), url('/fonts/Museo300-Regular-webfont.eot?iefix') format('eot'), url('/fonts/Museo300-Regular-webfont.woff') format('woff'), url('/fonts/Museo300-Regular-webfont.ttf') format('truetype'), url('/fonts/Museo300-Regular-webfont.svg#webfontNpXBDqia') format('svg')
   font-weight: normal
   font-style: normal
 
 $height_buf: 270px
-$base_green: #6b9029
 
 /*---global common definitions---*/
 *
@@ -50,7 +49,7 @@ img
   border: 0
 
 a
-  color: $base_green
+  color: #6b9029
   outline: none
   text-decoration: none
   border-bottom-style: none
@@ -72,27 +71,27 @@ a:hover
   background-color: black
   width: 100%
   background-image: image-url('sitesprite2.png')
+  background-position: 0px -10px
   background-repeat: repeat-x
   font-family: "Raleway",Arial !important
 
 #header .logo
   display: block
-  height: 44px
-  margin: 8px 0 0
-  width: 180px
-  //overflow: hidden
-  //text-indent: -9999px
-  background-image: image-url('ssl_logo_original.jpg')
-  background-size: 180px 44px
-  background-repeat: no-repeat
+  height: 70px
+  margin: 5px 0 0 -10px
+  background: image-url('certassure/certlogo.png') no-repeat
 
   a
     height: 100%
     display: block
-    width: 180px
+    width: 320px
 
     span
       visibility: hidden
+
+  &.reseller
+    background-position: -10px -10px
+    width: 240px
 
     a
       width: 240px
@@ -171,7 +170,7 @@ a:hover
 
 .inner
   padding-bottom: 0px
-  width: 940px
+  //width: 940px
   margin: 0 auto
   overflow: hidden
   clear: both
@@ -444,38 +443,6 @@ a:hover
   text-indent: -9999px
   border-bottom-style: none
 
-.button_blue
-  background: -webkit-linear-gradient(#69B3FF, #334DFF)
-  background: -o-linear-gradient(#69B3FF, #334DFF)
-  background: -moz-linear-gradient(#69B3FF, #334DFF)
-  background: linear-gradient(#69B3FF, #334DFF)
-  border-radius: 3px
-  border: 2px solid #334DFF
-  color: #FFFFFF !important
-  cursor: pointer
-  display: block
-  font-size: 1.8rem
-  letter-spacing: 1.5px
-  margin: 15px auto
-  padding: 5px 25px
-  box-shadow: none
-
-  &.button_index
-    border-radius: 3px 3px 0 0
-    font-size: 1.6rem
-    letter-spacing: 1px
-    margin: -2rem 0 0
-    float: right
-    padding: 5px 10px
-  
-  &.button_show
-    border-radius: 3px 3px 0 0
-    font-size: 1.6rem
-    letter-spacing: 1px
-    margin: -1.9rem -0.3rem -0.9rem 0.8rem
-    float: right
-    padding: 5px 10px
-    
 .small
   background: image-url('bg-small-button.gif') no-repeat
   display: block
@@ -2036,19 +2003,6 @@ a:hover
   width: 273px
   background-image: image-url('chargify_identity.gif')
 
-#footer, .push
-  height: $height_buf
-
-#footer
-  font-size: 8px
-  width: 100%
-  background: none repeat scroll 0 0 #10102F
-  //background-image: image-url('sitesprite2.png')
-  //background-position: 0px -101px
-  //background-repeat: repeat-x
-  font-family: "Raleway",Arial !important
-  color: #b3b3b3
-
 .links
   float: right
   padding: 15px 0 0
@@ -2077,50 +2031,6 @@ a:hover
   background-repeat: no-repeat
   border-bottom-style: none
 
-#footer .inner
-  font-size: 1.25em
-  text-align: center
-  margin: auto
-
-#footer .inner p
-  margin-top: 8px
-  font-size: 130%
-#footer .logo
-  float: left
-  margin: 0 18px 0 0
-
-#footer .nav
-  float: none
-  height: 1%
-  overflow: hidden
-  margin: 0 auto
-  padding: 11px 0 0
-  width: 73%
-
-#footer .nav li
-  background-repeat: no-repeat
-  background-image: image-url('sitesprite1.png')
-  background-position: -10px -1320.5px
-
-#footer .nav a
-  color: #7ea730
-#footer .nav a:hover
-  text-decoration: underline
-#footer p
-  height: 1%
-  overflow: hidden
-  margin: 9px 0
-
-#footer p a
-  color: #b3b3b3
-  text-decoration: none
-
-#footer p span, #footer p span a
-  color: #7ea730
-.highlight
-  color: #7ea62f
-#footer p a:hover
-  text-decoration: underline
 .emphasis
   margin-bottom: 40px
   font-size: 1.3em
@@ -3306,10 +3216,6 @@ a.bu_standard:hover
 .pagination
   margin-right: 15px
   float: right
-  a
-    text-decoration: none !important
-    &:hover
-      text-decoration: none
 
 .bu_standard span
   color: #FFFFFF
@@ -3376,14 +3282,14 @@ label.error
   display: block
   margin: 0
   padding: .3em 1em
-  color: #eee !important
+  color: #eee
   text-decoration: none
   border-bottom: none
   background: #060511
 
 #prog_nav a:hover, #t-intro a
-  color: #333 !important
-  background: #fff image-url('on_bg.gif') repeat-x top left
+  color: #333
+  background: #fff image-url('if') repeat-x top left
 
 .order_amount_strong
   font-size: 110%
@@ -3454,9 +3360,7 @@ label.error
     background: lightyellow
 
 #report, #reseller_tiers, #domain_pricing_popup, #certificate_listing,
-#dashboard, #certificate_orders, #validations, #resources, #resource-custom-domain-list,
-#popular-files, #resource-popular-location-list, #notification_groups,
-#certificates-admin-index
+#dashboard, #certificate_orders, #validations
   line-height: 1.5em
   font-size: 1.4em
   background: #fff
@@ -3508,10 +3412,6 @@ label.error
 
   & table td.selected
     border-bottom: none
-
-  & table td.wrap_number_rows
-    text-align: left
-    padding-left: 15px
 
   & table
     .attention, .validation_attention, .alert
@@ -3565,6 +3465,7 @@ label.error
 
       td
         padding: .5em 0
+        width: 25%
 
     & table td a
       font-weight: bold
@@ -3615,22 +3516,9 @@ label.error
         float: left
         font-weight: bold
         padding-right: .3em
-    td.td_secret_key
-      width: 210px
-      &:focus
-        outline: none
 
 #certificate_orders
   margin: .8em 0 .5em
-
-#resources
-  .pagination
-    display: block
-  table
-    border-collapse: separate
-    caption
-      caption-side: top
-      color: #3C3C3C
 
 #certificate_listing
   line-height: normal
@@ -3707,28 +3595,28 @@ label.error
 /* Flexible box */
 
 .quickbox
-  //background: image-url('quickbox_bottom_bg.gif') no-repeat bottom left
+  background: image-url('quickbox_bottom_bg.gif') no-repeat bottom left
   font-size: 1.4em
 
 .quickbox .heading
   color: #333
   border-bottom: 1px solid #7e8dfd
-  //background: image-url('quickbox_header_bg.gif') no-repeat top left
+  background: image-url('quickbox_header_bg.gif') no-repeat top left
 
 .quickbox strong
   display: block
   margin: 0
   padding: 6px 0px 4px 10px
-  //background: image-url('quickbox_header_rt.gif') no-repeat top right
+  background: image-url('quickbox_header_rt.gif') no-repeat top right
 
 .quickbox ul
   margin: 0
-  padding: 14px 0px
+  padding: 14px 10px
   list-style: none
-  //background: image-url('quickbox_bottom_rt.gif') no-repeat bottom right
+  background: lightblue
 
 .quickbox li
-  margin: 0 0 8px
+  margin: 0 0 6px
   padding: 0
 
 // Dashboard
@@ -3811,14 +3699,6 @@ label.error
 .default_form
   margin: 2em auto
 
-.billing_index_form
-  margin: 2em 0
-  width:  70%
-  .center
-    display: block
-    float:   none !important
-    margin:  1rem auto !important
-    
 
 /* ----------- Generic Form ----------- */
 #plain_form
@@ -3872,9 +3752,6 @@ label.error
     margin: 0pt auto
     text-align: center
     width: 360px
-
-  #password_validate_field
-    margin-left: 21rem
 
   #forgot_container, #already_have_account, #apply_deduct_instructions
     margin: 0pt auto
@@ -4037,20 +3914,6 @@ label.error
       padding: 0
       margin: 0
 
-  #acc_form 
-    position: relative
-    #btn_reset_secretkey
-      border-width: 2px
-      border-style: outset
-      border-color: buttonface
-      padding: 4px 10px
-      margin-left: 6px
-      cursor: pointer
-      position: absolute
-      top: 53px
-      right: -70px
-
-  .group_block,
   .settings_block
     margin: 0 auto
     width: 550px
@@ -4079,52 +3942,6 @@ label.error
 
       &.right
         width: 355px
-
-    .u2f_block, .duo_block, ._2fa_block
-      width: 500px
-      padding: .3em 0
-      margin-left: 100px
-
-      .u2f_device_info_block
-        width: 350px
-        font-size: 12px
-        padding: 5px 0px
-
-        .u2f_device_info
-          float: left
-
-          &:first-child
-            font-weight: bold
-            padding-right: 5px
-          &:last-child
-            float: right
-
-          button
-            padding: 0px 6px
-
-      button
-        border-width: 2px
-        border-style: outset
-        border-color: buttonface
-        padding: 4px 6px
-        margin: 0px
-        font-size: 12px
-        cursor: pointer
-
-      input[type='text']
-        margin: 0px 5px 0px 0px
-        padding: 5px 2px
-        font-size: 12px
-      
-      .duo_key
-        margin-bottom: 10px
-
-  .group_block input
-    margin-top: 0px
-    margin-bottom: 0px
-
-    &.reminder_days
-      margin-bottom: 20px
 
 input#upload_files, input#start_over, input#validate_domains
   margin: 1em
@@ -4167,7 +3984,7 @@ input#upload_files, input#start_over, input#validate_domains
 .flash_message
   cursor: pointer
 
-.notice, .warning, .error, .sandbox
+.notice, .warning, .error
   width: 100%
   border-top: 1px solid green
   border-bottom: 1px solid green
@@ -4178,7 +3995,6 @@ input#upload_files, input#start_over, input#validate_domains
 
   span
     font-size: 1.4em
-    display: inline-block
 
 .warning
   border-top: 1px solid #fc0
@@ -4192,31 +4008,16 @@ input#upload_files, input#start_over, input#validate_domains
   background: #fdd
   color: #c00
 
-.flash_message_more
-  border: 1px solid #CCCCFF
-  font-size: 1.3rem
-  margin-top: 2rem
-  padding: 1rem
-  .close_flash_message
-    color: #5a79a5
-    cursor: pointer
-    margin-right: -0.5rem
-    span
-      font-weight: normal
-    span:nth-child(1)
-      font-size: 1.3rem
-    span:nth-child(2)
-      border: none
-
 table#at_a_glance_header
-  margin-top: 7px
+  margin-top: 15px
+  width: 65%
 
 #at_a_glance_header
   float: right
   color: #808080
   th, td
     vertical-align: top
-    padding: 0 10px
+    padding: 0 5px
     text-transform: uppercase
     line-height: 90%
   #info
@@ -4226,19 +4027,17 @@ table#at_a_glance_header
   .validations, .validations a
     vertical-align: top
     display: block
-    color: #f00 !important
+    color: #f00
     line-height: 90%
   #logout_header_link
     text-transform: none
     padding-left: 60px
   th.certificate_status, th.certificate_status a
-    color: #808080 !important
     vertical-align: top
     line-height: 90%
   td.certificate_status a
     vertical-align: top
     display: block
-    color: #fff !important
   td:hover
     text-decoration: underline
 
@@ -4255,9 +4054,7 @@ table#at_a_glance_header
   font-weight: bold
   margin: 0 1em
 
-#deposit_details, 
-#order_details,
-.order_details
+#deposit_details, #order_details
   margin: 0 0 1em
   div
     margin: 0 0 0 1em
@@ -4334,7 +4131,7 @@ table#line_items_receipt
 
 .reseller_registration_select_tier, .reseller_registration_profile,
 .user_session_format, .reseller_tier_pricing_popup, .order_container,
-.upload_document_container, .default_container, .note_group_container
+.upload_document_container, .default_container
   margin: 2em auto
   width: 70%
   padding: 0px
@@ -4489,16 +4286,8 @@ table#line_items_receipt
 #domains_label_text
   padding-bottom: 2px
 
-#current_balance, 
-#balance_after_load,
-#tier_load_amount,
-#buying_tier_level,
-#calculated_price,
-#calculated_reprocess_price,
-.displayed_csr_field,
-#ucc-wildcard-amount span,
-#ucc-nonwildcard-amount span,
-#reprocess_ucc_amount
+#current_balance, #balance_after_load, #tier_load_amount, #buying_tier_level,
+#calculated_price, .displayed_csr_field
   float: left
   font-size: 1.6em
   font-weight: bold
@@ -4775,8 +4564,6 @@ img.blue_icon
   width: 400px
   font-size: 1.4em
   border: 1px solid #ccf
-  #search
-    width: 160px
 
 #validation_requirements_box
   ul
@@ -4804,7 +4591,7 @@ img.blue_icon
   .what_is_this
     background-color: white
     padding: 1px
-    border: solid 1px $base_green
+    border: solid 1px #6B9029
     vertical-align: top
 
 .document_access_type
@@ -4853,8 +4640,7 @@ span.rule_name
 .rules_methods_block, .small_section
   padding-bottom: 1em
 
-  li.email_customer,
-  li.validation_complete
+  li.email_customer
     padding: .5em
 
 ul[class^=status_history] > li
@@ -4952,7 +4738,7 @@ span.footer_link
   padding: 10px 0 10px 10px
 
 #sample_site_report, #sample_artifacts
-  margin: 10px 10px 0px 0px
+  margin-right: 10px 10px 0 0
   float: left
   width: 300px
 
@@ -5151,7 +4937,7 @@ textarea[id^=certificate_order]
   text-align: center
 
 .close_flash_message
-  color: $base_green
+  color: #6B9029
   font-size: .9em
   float: right
   margin-right: 1em
@@ -5159,13 +4945,6 @@ textarea[id^=certificate_order]
   span
     border: 1px solid
     padding: 0pt 0.2em
-
-#duo_iframe
-  width: 60%
-  margin-left: 20%
-  min-width: 304px
-  height: 330px
-  border: none
 
 #new_user_session
   input[type=password], input[type=text]
@@ -5473,11 +5252,6 @@ span#no_emails_accessible
     font-size: .7em
     list-style-type: none
 
-#certificate_orders
-  .ssl_action
-    a
-      font-size: 1.1rem
-
 .download_certificate
   table, th, td
     border: 1px solid black !important
@@ -5585,1774 +5359,240 @@ span#no_emails_accessible
   -moz-box-sizing: border-box
   box-sizing: border-box
 
-.select2
-  width: 172px !important
-  float: left !important
-  margin-left: 11px !important
-  background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #dddddd), color-stop(100%, #ffffff)) !important
-  background: -moz-linear-gradient(top, #dddddd, #ffffff) !important
-  background: -webkit-linear-gradient(top, #dddddd, #ffffff) !important
-  background: linear-gradient(to bottom, #dddddd, #ffffff) !important
+/* CSS for ssl Website
+@import url(https://fonts.googleapis.com/css?family=Montserrat)
+@import url(https://fonts.googleapis.com/css?family=Raleway)
 
-.select2-selection
-  background-color: transparent !important
+@font-face
+  font-family: "arial black"
+  src: url(/fonts/aria-black.eot)
+  src: url(/fonts/aria-black.ttf)
 
-/* Ssl Account select dropdown */
-.acc-sel-dropbtn
-  color: white
-  border: none
-  cursor: pointer
+@font-face
+  font-family: "arial black italic"
+  src: url(/fonts/arial-black-italic.eot)
+  src: url(/fonts/arial-black-italic.ttf)
 
-.acc-sel-dropdown
-  text-decoration: none !important
-  display: inline-block
-  &:hover .acc-sel-dropdown-cont
-    display: block
-  &:hover .acc-sel-dropbtn
-    color: $base_green
+body
+  background: #fff
+  font-family: "Raleway",Georgia,"Times New Roman",Times,serif
+  min-height: 100%
+  width: 100%
+  height: 100%
+  margin-left: 0 !important
+  padding: 0
+  position: relative !important
+  overflow-x: hidden !important
+  overflow-y: scroll !important
+  &[class|="page-body"]
+    background: #fff
+/* Applies to IE 7 and most modern browsers except Opera
 
-.acc-sel-dropdown-cont
-  background-color: #2d2d2f
-  display: none
-  position: absolute
-  z-index: 100
-  ul
-    list-style: none
-    padding: 2px 0
-  a
-    color: white
-    min-width: 95px
-    text-decoration: none
-    padding: 2px 0
-    display: block
-    font-size: 1.2rem
-    &:hover
-      color: $base_green
+/*MISCELLANOUS
 
-.search-hint
-  font-size:   1rem
+a
+  text-decoration: none
+  img
+    border: none
+
+.bold
   font-weight: bold
-  margin-left: 4.2rem
 
-#slug_validator
-  font-size: 1.2rem
-  font-weight: 700
-  margin-top: 1rem
-  margin-left: 6.5rem
-
-.checkbox_roles
-  margin-left: 12rem
-  margin-top: 1rem
-
-.checkbox_role input
-  float: left !important
-  margin: 0 1rem 0 0 !important
-
-.checkbox_role label
-  float: left !important
-  text-align: left !important
-
-table .constrained
-  font-size: 1.2rem
-  max-width: 20rem
-  text-align: left !important
-  strong
-    font-size: 1.3rem
-
-.chip
-  background: $base_green
-  border-radius: 4px
-  font-size: 1.2rem
-  font-weight: 500
-  letter-spacing: 1.5px
-  padding: 2px
-  color: white
-  a
-    color: white
-  &.tiny
-    font-size: 0.4rem
-    padding: 3px 2px 1px 2px
-  &.medium
-    font-size: 0.6rem
-  &.medium--grey
-    font-size: 0.6rem
-    background: #C0C0C0
-
-/* Header notifications */
-i.material-icons
-  &.notifications-email
-    cursor: pointer
-    margin-top: -2rem
-    margin-right: -3rem
-    margin-left: 0.5rem
-  &.notifications-alert
-    cursor: pointer
-    font-size: 1.3rem
-    margin-right: -3.4rem
-    margin-top: -1.7rem
-    color: red
-    position: relative
-
-span.notifications-teams
-  background-color: red
-  border: 1px solid red
-  border-radius: 15px
-  color: white
-  font-size: 10px
-  font-weight: 600
-  margin-left: -2rem
-  margin-top: -0.8rem
-  padding: 0 1px
-  position: absolute
-
-.notifications-expand
-  background: #FFFFFF
-  border: 1px solid #DCA
-  border-radius: 3px
-  display: inline
-  color: #111
-  line-height: 1.5rem
-  margin-left: -25rem
-  opacity: 0.9
-  padding: 0.5rem
-  position: absolute
-  text-transform: lowercase
-  width: 25rem
-  z-index: 100
-  span
-    text-transform: uppercase
-  &.notifications-hide
-    display: none
-
-.timestamp
-  font-size: 1rem
-  padding: 0.2rem
-  color: #5a79a5
-
-.activation-tos
-  width: 65%
-  margin-left: 21rem
-  margin-bottom: 2rem
-  font-size: 1.15rem
-  .tos-check
-    display: block !important
-    #tos
-      margin-left: 0 !important
-      cursor: pointer
-  .tos-desc
-    display: block !important
-    margin-left: 2.5rem
-    width: 90%
-
-.activation-pass-hint
-  font-size: 1.1rem
-  color: #5a79a5
-  margin-left: 21rem
-  margin-bottom: 1rem
-  width: 65%
-  div:last-child
-    margin-left: 2rem
-
-/* 403 Error Page */
-#not-authorized-container
-  background-color: #F7F7F7
-  padding: 8rem 0
-  text-align: center
-  #error-num
-    font-size: 8rem
-    font-weight: 700
-  #error-title
-    color: #808080
-    font-size: 2rem
-  #error-desc
-    font-size: 1.3rem
-    margin-top: 2rem
-  #error-btn
-    .button_blue
-      font-size: 1.3rem
-      padding: 0.5rem
-      width: 11%
-
-.lbl-usd
-  font-size: 1.5rem
-  font-weight: 600
-  line-height: 3rem
-  margin-left: 1rem
-
-#funded_account_target_amount
-  font-size: 1.6rem !important
-  font-weight: 600
-
-.cc-error
-  background-color: #FF0000
-  border: solid 1px #FF0000
-  font-size: 1.3rem
-  font-weight: 500
-  color: white
-  text-align: center
-  
-.refund-receipt
-  color: #666666
-  width: 37%
-  margin: auto
-  padding-bottom: 1rem
-  tr
-    td:first-child
-      text-align: left
-    td:last-child
-      text-align: right
-  tr:last-child
-    td
-      border-top: 1px solid #666666
-
-.saved_contact
-  border: none !important
-  tr
-    border: none !important
-  td
-    text-align: left !important
-    padding-left: 1rem !important
-    border: none !important
-  .colored_row
-    background-color: #EEEEEE !important
-
-//#cdns
-//  hr
-//    margin: 15px 0px
-//  .sub-title
-//    font-size: 14px
-//    font-weight: bold
-//    text-decoration: underline
-//    margin-top: 10px
-//  #resources,
-//  #resource-custom-domain-list
-//    margin-top: 3px
-//    > table
-//      margin-bottom: 10px
-//  .reg-api-key,
-//  .reg-resource
-//    .field-label,
-//    .field-setting-event
-//      float: left
-//      padding-right: 10px
-//      font-size: 14px
-//      width: 130px
-//    .field-cont
-//      float: left
-//      .note
-//        font-size: 12px
-//        font-style: italic
-//        color: #888
-//      input[type="submit"]
-//        margin-top: 0px
-//      span
-//        font-size: 13px
-//    .field-setting-event
-//      width: 20px
-//    .field-setting-label
-//      float: left
-//      font-size: 13px
-//  .sub-cont
-//    margin-left: 10px
-//    .reg-resource > div
-//      padding-top: 10px
-//    input[type="submit"]
-//      margin-top: 10px
-//  form input[type="submit"]
-//    height: 20px
-//    line-height: 15px
-//    font-size: 13px
-//  #resource-info
-//    width: 60%
-//    float: left
-//  #resource-setting
-//    width: 38%
-//    float: right
-//    .field-note
-//      font-size: 13px
-//      margin-top: 3px
-
-#custom-domain-modal
-  .modal-title
-    font-weight: bold
-  .modal-body
-    font-size: 13px
-    &.modal-note
-      padding-bottom: 10px
-
-#invoice-container
-  display: flex
-  justify-content: center
-  font-size: 1rem
-
-.button-invoice,
-.button-mo-invoice,
-.btn-pvg-items,
-.btn-pvg-create,
-.btn-pvg-destroy
-  background: -webkit-linear-gradient(#69B3FF, #334DFF)
-  background: -o-linear-gradient(#69B3FF, #334DFF)
-  background: -moz-linear-gradient(#69B3FF, #334DFF)
-  background: linear-gradient(#69B3FF, #334DFF)
-  border-radius: 3px
-  border: 2px solid #334DFF
-  color: #FFFFFF
-  cursor: pointer
-  display: block
-  font-size: 1.3rem
-  letter-spacing: 1.5px
-  margin: 15px 15px
-  padding: 5px 15px
-  box-shadow: none
-
-#btn-folder-rename,
-#btn-folder-default
-  background: -webkit-linear-gradient(#69B3FF, #334DFF)
-  background: -o-linear-gradient(#69B3FF, #334DFF)
-  background: -moz-linear-gradient(#69B3FF, #334DFF)
-  background: linear-gradient(#69B3FF, #334DFF)
-  border: 2px solid #334DFF
-
-.button-mo-invoice.btn-mo-destroy,
-.btn-pvg-destroy, 
-#btn-folder-destroy
-  background: -webkit-linear-gradient(#cc0000, #990000)
-  background: -o-linear-gradient(#cc0000, #990000)
-  background: -moz-linear-gradient(#cc0000, #990000)
-  background: linear-gradient(#cc0000, #990000)
-  border: 2px solid #990000
-
-.button-mo-invoice.btn-mo-manage,
-.btn-pvg-create,
-#btn-folder-create
-  background: -webkit-linear-gradient(#84b332, $base_green)
-  background: -o-linear-gradient(#84b332, $base_green)
-  background: -moz-linear-gradient(#84b332, $base_green)
-  background: linear-gradient(#84b332, $base_green)
-  border: 2px solid #84b332
-        
-#invoice-container-errors,
-#invoice-admin-errors
-  .errors-invoice-update
-    font-size: 1.5rem
-    padding: 0.5rem
-    background-color: red
-    color: white
-
-#invoice-container-ext,
-#invoice-container-admin,
-#invoice-container-credit 
-  form
-    border-top: 1px dashed lightgrey
-    margin-top: 2.5rem
-    font-size: 1.1rem
-    label
-      font-weight: 600
-      font-size: 1.1rem !important
-  .clearfix
-    margin-bottom: 1.5rem
-  #btn-inv-cancel,
-  #btn-inv-download
-    background: -webkit-linear-gradient(#69B3FF, #334DFF)
-    background: -o-linear-gradient(#69B3FF, #334DFF)
-    background: -moz-linear-gradient(#69B3FF, #334DFF)
-    background: linear-gradient(#69B3FF, #334DFF)
-    border-radius: 3px
-    border: 2px solid #334DFF
-    color: #FFFFFF
-    cursor: pointer
-    font-size: 1.2rem
-    letter-spacing: 1.5px
-    margin: 0 15px
-    padding: 5px 15px
-    box-shadow: none
-
-#invoice-container-admin,
-#invoice-container-credit
-  form
-    font-size: 1.3rem !important
-    label
-      font-weight: 600
-      font-size: 1.3rem !important
-      width: 30%
-      
-    .label_desc
-      font-weight: 500  
-      font-size: 1.1rem !important
-
-#cdns
-  .sub-title
-    font-size: 14px
-    font-weight: bold
-    text-decoration: underline
-  .sub-cont
-    padding-top: 5px
-    margin-left: 10px !important
-    form input[type="submit"]
-      height: 20px
-      line-height: 15px
-      font-size: 13px
-  .field-label
-    float: left
-    padding-right: 10px
-    font-size: 14px
-    width: 180px
-  .field-cont
-    float: left
-    input[type="text"],
-    input[type="number"]
-      min-width: 250px
-  #resources
-    margin-top: 5px
-    input[type="submit"]
-      margin-top: 13px
-  .create-resource
-    .sub-cont .reg-resource
-      padding-bottom: 10px
-      .note
-        font-size: 11px
-        font-style: italic
-        color: #888
-  .modal
-    .modal-title
-      font-weight: bold
-    label
-      font-size: 11px
-      height: 15px
-      width: 100%
-      input[type="checkbox"]
-        vertical-align: text-bottom
-        height: 12px
-        margin-right: 7px
-
-.resource-detail
-  .nav
-    float: left
-    width: 100%
-    li
-      background-image: none
-      a
-        font-size: 14px
-        &.active
-          font-weight: bold
-          cursor: none
-  .tab-content
-    margin: 20px 10px 10px
-    padding-bottom: 10px
-    border-bottom: 1px solid rgba(0, 0, 0, .1)
-    .sub-title
-      font-size: 14px
-      font-weight: bold
-      text-decoration: underline
-    .sub-cont
-      padding-top: 5px
-      margin-left: 10px !important
-      input[type="submit"]
-        margin-top: 10px
-      form input[type="submit"]
-        height: 20px
-        line-height: 15px
-        font-size: 13px
-    .field-label
-      float: left
-      padding-right: 10px
-      font-size: 14px
-      width: 180px
-    .field-cont
-      float: left
-      input[type="text"],
-      input[type="number"]
-        min-width: 250px
-    #resource-popular-location-list,
-    #resource-custom-domain-list,
-    #popular-files
-      margin-top: 5px
-      padding-bottom: 5px
-    #overview
-      .bandwidth .field-label
-        width: 100px
-      .hits .field-label
-        width: 50px
-      .bandwidth .field-cont,
-      .hits .field-cont
-        font-size: 14px
-    #caches
-      padding-bottom: 8px
-      #popular-files
-        button
-          height: 20px
-          line-height: 15px
-          font-size: 13px
-        table th,
-        table td
-          text-align: left
-          &:first-child
-            padding-left: 10px
-          &:last-child
-            text-align: center
-      #purge-files,
-      #cache-expiry
-        float: left
-        width: 50%
-        form .field-label
-          width: 130px
-      #cache-expiry form .field-label
-        width: 180px
-      .sub-cont div
-        padding-top: 3px
-    #settings
-      #resource-info
-        width: 60%
-        float: left
-        #resource-general .sub-cont .reg-resource
-          padding-bottom: 10px
-          &.resource-name
-            padding-bottom: 0px
-        .note
-          font-size: 11px
-          font-style: italic
-          color: #888
-      #resource-setting
-        width: 38%
-        float: right
-        .field-note
-          font-size: 13px
-          margin-top: 3px
-        #advanced-setting .sub-cont
-          padding-top: 0px
-        #advanced-setting .sub-cont .reg-resource
-          > div
-            float: left
-            padding-top: 10px
-            &:first-child
-              width: 20px
-              padding-right: 10px
-              font-size: 15px
-            &:last-child
-              font-size: 13px
-              max-width: 310px
-
-
-#wrap_cert_order_filter,
-#wrap_order_filter
-  margin: 0.8em 0 0.5em
-  width: 84%
-  background: #EEE
-  border: 1px solid #CCF
-  float: right
-  .wrap_filter_items
-    margin: 15px 10px 3px
-    .filter_items_col
-      float: left
-      width: 33.33%
-      .filter_item
-        margin: 0 0 .7em
-        .filter_evt
-          label
-            font-size: 11px
-            height: 15px
-            width: 100%
-            input[type="checkbox"]
-              vertical-align: text-bottom
-              height: 12px
-              margin-right: 7px
-        .filter_label
-          padding-left: 25px
-        .filter_cont
-          margin-top: 3px
-          select
-            width: 130px
-            &.slt-small
-              width: 90px
-              margin-right: 5px
-            &.slt-large
-              width: 180px
-          .filter_cont_item
-            float: left
-            input[type="number"]
-              width: 45px
-              &.small_input
-                width: 40px
-                height: 9px
-                margin-left: 2px
-                margin-right: 2px
-            .filter_cont_item_evt,
-            .filter_cont_item_label
-              float: left
-            .filter_cont_item_evt
-              padding-right: 3px
-            .filter_cont_item_label
-              padding-top: 2px
-              padding-right: 5px
-  button
-    margin: 3px 0 10px 10px
-.link-contact-update,
-.link-update-cancel
+.left
   float: left
-  font-size: 1.4rem
-  font-weight: 700
-  margin: 1.5rem 0 1rem -31rem
 
-.edit_certificate_content
-  .select2-container
-    margin-bottom: 1rem !important
-  .select2-selection__choice
-    font-size: 1.2rem
+.right
+  float: right
 
-/* Optional/dynamic contacts is turned on: custom styles */
-
-#btn_cancel_saved_contact,
-#btn_cancel_role_contact,
-  margin-left: 18rem !important
-
-#btn_edit_saved_contact,
-#btn_create_role_contact,
-#btn_update_role_contact
-  margin-left: 1rem !important
-
-.button_medium_blue
-  font-size: 1.4rem
-  margin-left: 21rem !important
-  text-align: center
-  padding: 5px
-  width: 25%
-
-#btn_create_new_contact
-  background: linear-gradient(#69b3ff, #334dff) !important
-  border-radius: 3px
-  border: 2px solid #334DFF
-  color: #FFFFFF !important
-  cursor: pointer
-  display: block
-  font-size: 1.5rem
-  margin: 1rem 0 -2rem 51rem
-  text-align: center
-  padding: 5px
-  width: 20%
-
-#zero-contacts-box
-  color: #A9A9A9
-  margin: auto
-  width: 45%
-  div
-    border: dashed 1px #91b145
-    border-radius: 5px
-    margin-bottom: 1.5rem
-    h3
-      margin: 1rem
-  #lnk_create_new_contact
-    font-size: 1.3rem
-  small
-    margin-left: 3.5rem
-
-#opt_contacts_container
-  h3
-    margin: 2.5rem 0
-    text-align: center
-  .sub_container
-    width: 100%
-  #selected-contacts,
-  #available-contacts
-    margin-left: 2rem
-    table-layout: fixed
-    width: 90%
-    white-space: nowrap
-    font-size: 1.1rem
-    .role-checkbox
-      width: 16%
-      text-align: center
-      input
-        margin: 1rem 2rem 1rem 3rem
-  #edit_saved_contact
-    .edit_saved_contact_errors
-      font-size: 1.5rem
-      padding: 0.5rem
-      background-color: red
-      color: #FFFFFF !important
-    label
-      font-weight: 600
-    margin-left: -4.5rem !important
-    width: 120% !important
-    border: solid 1px #69AFFD
-    @include box-shadow(0 0 1px 1px rgba(255, 255, 255, 0.4) inset)
-    @include border-radius(5px)
-    .button_red
-      font-weight: 600
-      color: #FFFFFF !important
-      margin-right: -18rem
-      background-color: #FC0D1B
-      margin-left: 10rem
-      border-radius: 3px
-      border: none
-      padding: 6px 11px
-      cursor: pointer
-  #lnk-update-role-contact.btn-decorate,
-  #lnk-update-saved.btn-decorate,
-  .btn-remove-contact,
-  .btn-add-contact
-    padding: 1px 3px
-    border-radius: 2px
-    color: #FFFFFF !important
-    letter-spacing: 1px
-  #lnk-update-role-contact.btn-decorate,
-  #lnk-update-saved.btn-decorate
-    border: 1px solid grey
-    background-color: grey
-  .btn-remove-contact
-    border: 1px solid #F51C29
-    background-color: #F51C29
-  .btn-add-contact
-    border: 1px solid $base_green
-    background-color: $base_green
-  #role-disclaimer
-    font-size: 1.1rem
-    color: grey
-    text-align: center
-    margin-top: 1rem
-    margin-bottom: -1rem
-  .saved-contact-fields:first-child
-    margin-top: -4.6rem
-    border-top-left-radius: 4px
-    border-top-right-radius: 4px
-
-.saved-contact-fields,
-.certificate-fields
-  align-content: center
-  background-color: #6CB1FA
-  text-align: center
-  color: white
-  font-size: 1.6rem
-  font-weight: 500
-  margin-bottom: 1.5rem
-  padding: 0.5rem 0
-
-.certificate-fields-top
-  margin-top: -1.4rem
-  border-top-left-radius: 3px
-  border-top-right-radius: 3px
-
-.cc-contacts-index
-  background-color: #000000
-  width: 5%
-  font-weight: 500
-  font-size: 0.7rem
-  color: 	#FFFFFF
-  border: solid 2px #000000
-  -webkit-border-radius: 16px
-  -moz-border-radius: 16px
-  border-radius: 16px
-  padding: 0 1px
-  text-align: center !important
-
-/*
- * Order Details Page
- */
-.order_details
-  .order-status
-    font-size: 1.4rem  
-    span
-      font-weight: 600
-   
-#order_status_section
-  margin: 1em auto 0
-  border: none
-  border-collapse: collapse
-  width: 100%
-  font-size: 1.4em
-  text-align: left
-  
-  tr#heading_row
-    color: grey
-    font-size: 1.1rem
-    
-    th
-      border-bottom: 1px solid #ccc
-      
-      &:first-child
-        padding-left: 1rem
-  
-  tr
-    border-bottom: 1px dashed grey
-    
-    &:last-child
-      border: none
-        
-  td
-    margin: 1.5rem
-    
-    &:first-child
-      padding-left: 1rem
-    
-  .ref
-    width: 23%
-  
-  .status
-    font-weight: 600
-    font-size: 1.1rem
-    width: 13%
-      
-  .system-audit,
-  .revoke-status,
-  .cert-content-state
-    font-weight: 400
-    font-size: 1.2rem
-    margin: 1.2rem 0
-    
-    span
-      margin-bottom: 0.2rem
-      font-size: 1rem
-      font-weight: 600
-   
-#order_details_section
-  margin: 1em auto 0
-  border: none
-  border-collapse: collapse
-  width: 100%
-  font-size: 1.4em
-
-  tr#heading_row
-    color: grey
-    font-size: 1.1rem
-    
-    th
-      border-bottom: 1px solid #ccc
-    .index
-      width: 0.5%
-
-    .description
-      width: 75%
-    
-    .quantity
-      width: 10%
-    
-    .price
-      width: 10%
-  
-  td, th
-    padding: 1em
-    &.description
-      text-align: left
-      font-size: .9em
-      font-weight: 600
-      width: 75%
-  
-      &.subitem
-        padding: 0 0 0 2em
-        font-size: .8em
-        font-weight: 400
-        color: #333
-  
-    &.line-index
-      color: grey
-      opacity: 0.6
-      
-    &.quantity
-      text-align: right
-      width: 10%
-  
-    &.price
-      text-align: right
-      width: 10%
-  
-    &.total_row
-      padding-top: 1em
-      font-weight: bold
-  
-  .line_item td
-    padding-bottom: 0
- 
-  .line-index,
-  .index,
-  tr td:first-child,
-  tr, th:first-child
-    padding: 1em 0 0 1em
-    width: 15px
-    max-width: 15px
-    
-  .order-detail-container
-    margin: 0.5rem 1rem 0.5rem 0.5rem
-  
-  .order-detail-cn
-    color: #3c3c3c
-    font-size: 1.1rem
-    font-weight: 600
-    margin: -1rem 0 2rem 2.5rem
-    text-transform: uppercase
-    
-  .order-detail-actions
-    font-size: 0.8rem
-    display: flex
-    
-    #btn-order-edit,  
-    #btn-order-cancel,
-    #btn-order-credit,
-    #btn-order-co-refunt,
-    #btn-order-revoke,
-    .btn-pay-invoices
-      border-radius: 3px
-      border: none  
-      font-weight: 500
-      color: #FFFFFF !important
-      cursor: pointer
-      letter-spacing: 1px
-      padding: 2px 3px
-    
-    form
-      margin-top: -0.3rem
-      
-    #btn-order-edit
-      border: 1px solid $base_green
-      font-weight: 600
-      background-color: $base_green
-      
-    #btn-order-cancel
-      border: 1px solid $base_green
-      color: $base_green !important
-      background-color: none
-
-    #btn-order-credit
-      border: 1px solid grey
-      background-color: grey
-    
-    #btn-order-co-refunt
-      border: 1px solid #F51C29
-      background-color: #F51C29
-    
-    #btn-order-revoke
-      border: 1px solid #334DFF
-      color: #334DFF !important
-      background-color: none
-    
-    .btn-pay-invoices
-      margin-right: 1.3rem
-      font-size: 0.95rem
-      font-weight: 600
-      border: 1px solid $base_green !important
-      color: $base_green !important
-      background-color: none !important
-      margin-top: 0.7rem
-      text-transform: uppercase
-    
-    emp
-      padding-right: 1rem
-      text-transform: uppercase
-      font-size: 1.1rem
-      margin-top: 0.9rem
-      
-  .description.total_row
-    text-align: right
-  
-  .order-discount td,
-  .order-funded td,
-  .order-total td,
-  .order-subtotal td,
-  #order-refunded td
-    padding-top: 1rem !important
-    vertical-align: top !important
-    
-    &.price
-      padding-right: 1rem
-    
-  .order-discount,
-  .order-funded
-    color: grey
-  
-  .line-item-refunded
-    .description
-      letter-spacing: 0.5px
-    td
-      color: #c13a3a
-      font-weight: 600
-      padding-top: 0
-
-  #order-refunded
-    color: #c13a3a
-  
-  .order-divider
-    td
-      border-bottom: 1px solid #ccc
-      padding: 2rem !important
-
-.order-refund-status
-  color: #c13a3a
-  font-size: 1.2rem
-  border-bottom: 1px dashed
-  border-top: 1px dashed
-  margin-left: 1rem
-
-.api_certificate_request
-  position: relative
-  .domains_loader_wrap
-    position: absolute
-    background-color: rgba(0, 0, 0, .1)
-    z-index: 100
-    width: 100%
-    height: 100%
-    .domains_loader
-      position: absolute
-      left: calc(50% - 18px)
-      top: calc(50% - 18px)
-      border: 5px solid #f3f3f3
-      border-radius: 50%
-      border-top: 5px solid #9a9a9a
-      width: 26px
-      height: 26px
-      -webkit-animation: spin 2s linear infinite /* Safari */
-      animation: spin 2s linear infinite
-/* Safari */
-@-webkit-keyframes spin
-  0%
-    -webkit-transform: rotate(0deg)
-  100%
-    -webkit-transform: rotate(360deg)
-@keyframes spin
-  0%
-    transform: rotate(0deg)
-  100%
-    transform: rotate(360deg)
-#domains_validation
-  width: 100%
-  border: 1px solid black
-  padding: 1em
-  border-spacing: 0px
-  thead tr
-    height: 25px
-    > th
-      border-bottom: 1px solid grey
-      &:first-child
-        width: 130px
-        #validation_common_type
-          width: 100px
-        input[type='checkbox']
-          vertical-align: middle
-      a
-        cursor: pointer
-        span.badge
-          display: inline-block
-          padding: 2px 3px
-          color: #FFF
-          text-align: center
-          background-color: #777
-          border-radius: 50px
-          margin: 0
-          width: 10px
-          height: 10px
-
-  tbody tr
-    &.removed_domain
-      background-color: lightgrey
-    &.certificate_name td
-      padding-bottom: 5px
-      padding-top: 5px
-      padding-left: 5px
-      &:first-child
-        text-align: center
-        padding-left: 0px
-        input[type='button']
-          margin-left: 3px
-      .check_box
-        vertical-align: middle
-
-.redirect_message_wrap
-  position: absolute
-  background-color: rgba(0, 0, 0, .5)
-  width: 100%
-  height: 100%
-  z-index: 100
-  .redirect_message
-    position: absolute
-    background-color: white
-    width: 500px
-    height: 150px
-    line-height: 150px
-    top: 0
-    right: 0
-    bottom: 0
-    left: 0
-    margin: auto
-    border-radius: 10px
-    text-align: center
-    span
-      font-family: Raleway, Arial
-      font-size: 16px
-      font-weight: bold
-      display: inline-block
-      vertical-align: middle
-      line-height: 30px
-
-.page_loader_wrap
-  position: absolute
-  background-color: rgba(0, 0, 0, .1)
-  z-index: 100
-  width: 100%
-  height: 100%
-  .page_loader
-    position: absolute
-    left: calc(50% - 25px)
-    top: calc(50% - 25px)
-    border: 5px solid #f3f3f3
-    border-radius: 50%
-    border-top: 5px solid #9a9a9a
-    width: 40px
-    height: 40px
-    -webkit-animation: spin 2s linear infinite /* Safari */
-    animation: spin 2s linear infinite
-
-.no_scroll_y
-  overflow-y: hidden !important
-
-/*
- * Teams Index Page
- */ 
-#team-detail-links
-  width: 45%
-  div
-    float: left
-  
-.btn-team-links,
-.btn-rmv-invoice-item,
-.btn-add-invoice-item,
-.btn-edit-invoice-item,
-.btn-update-invoice-item,
-#btn-update-invoice-item,
-.btn-cancel-invoice-item,
-.btn-refunds-detail
-  background-color: grey
-  border-radius: 3px
-  color: #FFFFFF !important
-  cursor: pointer
-  font-weight: 500
-  font-size: 1.1rem
-  letter-spacing: 1px
-  padding: 2px 3px
-  border: 1px solid grey
-  margin: 0.1rem
-
-.btn-refunds-detail
-  background-color: grey
-  border: 1px solid grey
-  text-transform: uppercase
-
-#team-billing-method
-  margin-top: 0.5rem
-  
-/*
- * Invoices details and index
- */
-.invoices-index
-  td, th
-    text-align: left !important
-  
-  td:first-child, th:first-child
-    padding-left: 1rem !important
-    
-  .type span
-    font-size: 1rem
-    text-transform: uppercase
-    color: grey
-    
-  .list
-    text-align: center !important
-      
-.btn-edit-invoice-item,
-#btn-update-invoice-item
-  border: 1px solid #334DFF
-  background-color: #334DFF
-
-.btn-cancel-invoice-item,
-.btn-update-invoice-item
-  border: 1px solid #334DFF
-  background-color: white
-  color: #334DFF !important
-  
-#invoice-status,
-#invoice-status-archived
-  color: grey
-  font-weight: 600
-  font-size: 1.2rem
-
-#invoice-status-archived
-  color: red
-    
-.monthly-invoice
-  #summary
-    font-size: 1.5rem
-    display: flex
-    justify-content: center
-    
-    div
-      margin-right: 1.9rem
-      margin-bottom: 1rem
-    
-    span
-      color: grey
-      font-size: 1.2rem
-
-#validations.monthly-invoice,
-#validations.monthly-invoice > table,
-#validations.monthly-invoice > table td
-  border-color: #CCCCCC !important
-  
-#tbl-monthly-invoice
-  tbody
-    .description
-      width: 60%
-  
-  span
-    color: grey
-  
-  .items-description
-    font-size: 1.2rem
-    width: 50%
-  
-  #mo-select
-    width: 50% !important
-
-  .description.total_row
-    text-align: right
-  
-  .select-item td
-    margin-left: 1rem
-    
-  .order-funded td,
-  .order-total td,
-  .order-subtotal td
-    border: none
-    font-weight: 600
-    padding-top: 1rem !important
-    vertical-align: top !important
-      
-    &.price
-      padding-right: 1rem
-  
-  .order-subtotal td
-    border-top: 2px solid grey
-            
-  .order-funded
-    color: grey
-
-#items-invoice-select
-  width: 22%
-  
-  .select2.select2-container
-    width: 100% !important
-  
-#summary.transfer-items
-  div
-    margin-right: 2.5rem
-    margin-bottom: 1.5rem
-  
-  #items-invoice-transfer .button-mo-invoice
-    margin: 0 0 0 2rem
-    padding: 1.5px 15px
-    font-size: 1.4rem
-    
-#monthly-invoice-actions,
-#monthly-invoice-pmt
-  margin: 2em auto 4em
-  width: 99.1%
+.clear
+  height: 1%
   clear: both
-  border: 1px #ccc solid
+  content: "."
+  height: 0
+  visibility: hidden
 
-#monthly-invoice-pmt
-  div
-    font-size: 1.4rem
-    margin: 1rem
-    color: grey
-  span
-    font-weight: 500
-    color: black
+.divider
+  border-bottom: 1px solid #444
 
-#monthly-invoice-sa
-  border: none
-  border-collapse: collapse
+.divider-horizontal
+  border-right: 1px solid #aaa
+  padding: 0 4px
+  height: 20px
+  margin: -3px 6px 0 0
+
+/*icons
+
+.icn_live, .icn_phone, .icn_email, .icn_support
+  background: image-url("icon-set.png") no-repeat
+
+.icn_live
+  background-position: -10px 13px
+  padding: 17px 12px
+
+.icn_phone
+  background-position: -42px 12px
+  padding: 17px 14px
+
+.icn_email
+  background-position: -88px 12px
+  padding: 17px 14px
+
+.icn_support
+  background-position: -130px 12px
+  padding: 17px 12px
+
+.icn_cart
+  background: image-url("icn-cart.png") 4px 3px no-repeat #4d4d4d
+  padding: 5px 6px 4px 24px
+  margin-left: 3px
+  color: #fff
+  font-weight: bold
+  font-size: 12px
+
+.icn_cart-filled
+  background: image-url("icn-cart.png") 4px 3px no-repeat #4d4d4d
+  padding: 5px 6px 4px 24px
+  margin-left: 3px
+  color: #fff
+  font-weight: bold
+  font-size: 12px
+  background: image-url("icn-cart.png") 4px 3px no-repeat #8bb43b
+
+.icn_cart:hover, .icn_cart-filled:hover
+  text-decoration: underline
+
+.content
+  margin: 0 auto !important
+  width: 960px
+
+  li
+    font-size: 14px
+
+/*header
+
+#header
+  text-align: left !important
+  background: #fff 100%
   width: 100%
-  font-size: 1.4em
-  text-align: center
-  
-  tr td:first-child
-    margin-left: 0.5rem
-  
-  td
-    padding-bottom: 0.5rem
-    
-  tr.heading_row
-    color: grey
-    font-size: 1.1rem
-  
-  .detail
-    width: 55%
-    text-align: left
-    border-bottom: dashed 1px grey
-    
-    strong
-      color: grey
-      font-size: 1rem
-  
-  .user
-    color: grey
-    
-  .divider
-    td
-      border-bottom: 1px solid #ccc
-      padding: 0.4rem 0 !important
+  height: 100%
+  margin: 0px
+  height: 78px
+  .content
+    .logo
+      float: left
+      padding: 0px 310px 0px 0
+      //margin-right: 15px
+      background: image-url("certassure/certlogo.png") no-repeat
+    .navigation
+      float: left
+      width: 580px
+      .top_navigation
+        width: 580px
+        padding: 12px 0px 13px 30px
+        margin-left: 1px
+      .bottom_navigation
+        width: 580px
+        padding: 17px 30px 0px
 
-/*
- * Edit Order
- */
-.admin-edit-order
-  .admin-edit-actions
-    text-align: center
-    a
-      font-size: 1.3rem
-      font-weight: 600
-      margin-right: 2.5rem
-    
-/*
- * Transaction Details
- */
-.dl-transfer-team
-  border-radius: 0
-  
-  #dialog-form
-    background-color: #ffffff !important
-    
-    #frm-team-search
-      margin: 1rem
-    
-    #team-search-results
-      margin-top: 1rem
+.top_navigation
+  a
+    color: #000 !important
+  li
+    a:hover
+      color: #000 !important
+      text-decoration: underline
+      cursor: pointer !important
+    float: right !important
+    color: #000
+    list-style-type: none
+    padding: 0 4px
+    font-size: 12px
 
-  .ui-dialog-buttonpane
-    font-size: 1.4rem
-    margin-bottom: -3rem !important
-
-  .ui-dialog-buttonset button:nth-child(2) 
-    color: #ffffff
-    background-color: $base_green
-    border-color: $base_green
-    border-radius: 4px
-      
-  .ui-dialog, .ui-widget-content
-    font-family: sans-serif, Arial
-    
-  .ui-widget-header
-    border: 1px solid grey
-    color: white
-    background: grey
-    font-size: 1.5rem
-  
-  .ui-dialog-content
-    font-size: 1.4rem
-    
-  .ui-dialog-titlebar-close
-    color: white
-
-#btn-transfer-order
-  text-transform: uppercase
-  float: right
-  font-size: 1.3rem
-  
-  span
-    font-size: 1.5rem
-
-#btn-teams-search
-  border: 0.5px solid #bebcbc
-  padding: 2.5px 5px
-  cursor: pointer
-  
-  &:hover,
-  &:active
-    background-color: $base_green
-    border: 1px solid $base_green
-    color: white
-
-/*
- * Transaction Show: Reprocess UCC Section
- */ 
-#order_details_reprocess_ucc
-  border: none
-  border-collapse: collapse
-  width: 100%
-  font-size: 1.4em
-  text-align: center
-  
-  tr td:first-child
-    margin-left: 0.5rem
-  
-  td
-    padding-bottom: 0.5rem
-    
-  tr.heading_row
-    color: grey
-    font-size: 1.1rem
-  
-  .domains-list
-  
-  .order-edit
-    font-weight: 500
-    
-  .order-divider
-    td
-      border-bottom: 1px solid #ccc
-      padding: 0.4rem 0 !important
-  
-  .reprocess-amount
-    font-weight: 600
-
-
-.billing_profile
-  #card-name
-    color: grey
-    font-size: 0.9rem
-    font-weight: 600
-    letter-spacing: 1px
-    text-transform: uppercase
-    
-  #btn-bp-default,
-  #btn-bp-delete
-    border-radius: 3px
-    border: none
-    font-size: 0.9rem
-    font-weight: 500
-    color: #FFFFFF !important
-    cursor: pointer
-    letter-spacing: 1px
-    padding: 2px 3px
-    text-transform: uppercase
-      
-  #btn-bp-default
-    border: 1px solid $base_green
-    background-color: $base_green
-
-  #btn-bp-delete
-    border: 1px solid #F51C29
-    background-color: #F51C29
-    
-    
-.filter-form
-  label
-    font-weight: 600
-    font-size: 1.25rem
-    width: 6.7rem
-  
-  .clearfix
-    margin-bottom: 1rem
-  
-  table
-    border-bottom: 1px solid #ccf !important
-    
-  tr, td
-    border: none !important
-
-.btn-filter-clear,
-.btn-filter-search,
-.btn-cert-update,
-.btn-co-folders
-  border-radius: 3px
-  border: none
-  font-size: 1.2rem
-  font-weight: 500
-  color: #FFFFFF
-  cursor: pointer
-  letter-spacing: 1px
-  padding: 5px 7px
-  text-transform: uppercase
-  
-.btn-filter
-  background-color: white
-  color: #334DFF !important
-
-.btn-cert-update,
-  border: 1px solid #334DFF
-  background-color: #334DFF
-  font-size: 1rem
-
-.btn-co-folders
-  border: 1px solid $base_green
-  background-color: $base_green
-  font-size: 1rem
-
-.btn-co-folders.sub-actions
-  border: 1px solid $base_green
-  background-color: white
-  color: $base_green
-  font-size: 1rem
-
-
-.btn-filter-search
-  border: 1px solid #334DFF
-  background-color: #334DFF
-  margin-left: 1.5rem
-  
-.order-stats-cont
-  display: flex
-  font-size: 1.3rem
-  justify-content: center
-  color: grey
-  
-  .emp
-    font-weight: 600
-    font-size: 1.2rem
-    text-transform: uppercase
-
-  div
-    margin-left: 0.5rem
-
-  span
-    font-weight: 600
-
-#duo_settings, #u2f_settings
-  label
-    text-align: left
-
-#recaptcha_container
-  width: 300px
-  padding: 10px 0px 20px 0px
-  margin: auto
-  
-/*
- * Tags Input Container
- */
-.lnk-popular-tags
-  background-color: $base_green
-  border: 1px solid $base_green
-  border-radius: 4px
-  color: white
-  font-size: 1.1rem
-  font-weight: 500
-  padding: 2px 3px
-  letter-spacing: 1px
-
-  span
-    font-size: 1.2rem
-    font-weight: 600   
-
-.cc-tags
-  margin-left: 2.1rem
-
-.co-tags
-  float: left
-  margin-left: 2.1rem
-  margin-bottom: -1.5rem
-
-#notification_groups input[type='submit']
-  margin-top: 13px
-
-#contacts-container,
-#subjects-container,
-#cos-container, #tags-container,
-#ca-certificates-select
-  margin: 0 !important
-  
-  .select2
-    float: none !important
-    width: 96% !important
-
-  .select2-selection
-    background-color: #f0efef !important
-
-    .select2-selection__rendered
-      padding: 5px 5px 3px
-
-      li:first-child
-        .select2-search__field
-          margin-left: -5px
-          margin-right: 0px
-          padding-left: 10px
-          padding-right: 10px
-
-      .select2-selection__choice
-        background-color: #bfcfa4b0
-        border: 1px solid #6a9029
-        color: #3c3c3c
-        font-weight: 600
-        font-size: 1.25rem
-        margin-top: 0px
-        margin-bottom: 5px
-
-        .select2-selection__choice__remove
-          color: #3c3c3c
-          font-size: 1.7rem
-          font-weight: 700
-          padding: 0px 4px
-          margin-right: 2px
-          vertical-align: middle
-
-      .select2-search
-  
-  #tags-co-input,
-  #tags-cc-input
-    margin-top: -2rem
-
-    .select2
-      background-image: none !important
-      margin: 0 !important
-
-    .select2-results__options
-      font-size: 1.3rem !important
-
-  #tags-co-input
-    width: 97%
-    margin-left: 1rem
-
-  #tags-cc-input
-    margin-left: 2rem
-
-    .select2-selection__choice
-      padding: 0 3px
-
-    .select2-selection__choice__remove
-      padding: 0
-
-/*
- * Certificates Edit for Admins
- */
-#ca-certificates-select
-  width: 65% !important
-  margin: auto !important
-
-  .select2
-    margin-bottom: 2rem
-
-  .select2-selection__choice
-    background-color: #cccccc
-    border: 1px solid #cccccc
-    font-weight: 500
-    font-size: 1.2rem
-
-.certificates-admin-edit
-  .sub-heading
-    background-color: lightgrey
-    font-size: 1.5rem
-    font-weight: 600
-    color: white
-    padding: 0.4rem
-    text-align: center
-    text-transform: uppercase
-    margin-bottom: 1rem
-
-  .no-margin
+.bottom_navigation
+  ul#nav
+    list-style: none
+    padding: 0
     margin: 0
+  li
+    float: right !important
+    background: #fff
+    border-right: 1px solid #282928
+    font-family: "Raleway",Arial !important
+    font-size: 12px
+    padding: 9px 18px
+    position: relative
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35)
+    -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35)
+    -ms-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35)
+    -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35)
+    &:hover
+      a div
+        color: #fff
+      background: #232323
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7)
+      -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7)
+      -ms-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7)
+      -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7)
+  ul#nav a
+    display: block
+    color: #000
+    &:hover
+      color: #fff
+  li
+    span.dropdown
+    ul
+      display: none
+      position: absolute
+      width: 220px
+      top: 0
+      left: 0
+      margin-left: -41px
+    > ul
+      top: 32px
+      left: 40px
+      background: #212121
+    &:hover ul, &.over ul
+      display: block
+      list-style: none
+    &:hover ul li
+      background: #232323
+      padding: 10px
+      width: 240px !important
+      border: none
+      box-shadow: none
+      -moz-box-shadow: none
+      -ms-box-shadow: none
+      -webkit-box-shadow: none
+      cursor: pointer
+      &.divider
+        margin: 0 0 0 10px
+        padding: 0 10px
+        border-bottom: #999 1px solid
+      a
+        color: #CCC !important
+        margin-left: 4px
+        &:hover
+          color: #fff !important
+      &:hover
+        width: 240px !important
+        background: #000 !important
+        color: #fff !important
 
-  #pvg-open-form
-    width: 25%
-    margin: 2.5rem auto
+/*content
 
-    #lnk-pvg-open-form
-      border-radius: 3px
-      border: 1px dashed lightgrey
-      color: grey
-      font-size: 1.4rem
-      font-weight: 600
-      padding: 1rem 3rem
+.container
+  padding: 15px 0 0 0 !important
 
-  #pvg-actions
-    text-align: center
-    margin-bottom: 2.5rem
+#container
+  min-height: 100%
+  margin: 0
+  padding: 0
+  width: 100%
+  height: auto  !important
+  /* for modern browsers
+  height: 100%
+  // background: #e6e6e6
+  text-align: left !important
 
-    a
-      display: inline
+/*footer
 
-      &:first-child
-        margin-right: 0
-
-/*
- * Certificates Index for Admins
- */
-#certificates-admin-index
-  .serial
-    font-weight: 600
-
-  .title
-    font-size: 1.1rem
-
-  .ca
-    font-size: 1rem
-
-#frm-cert-filter
-  select
-    float: left
-
-/*
- * Folders
- */
-#folder-scan
-  border: 1px solid darkgrey
-  border-radius: 3px
-  font-size: 1.2rem
-  padding: 0.6rem
-  margin-left: 1rem
-
-.jstree-node
-  font-size: 1.5rem
-
-#folders_index
-  width: 84%
-  margin: 1.5rem auto
-
-  i
-    font-size: 1.5rem
-
-  #folders-action
-    margin-bottom: 1.2rem
-
-  .btn-folder-index
-    color: white
-    padding: 5px 10px
-    font-size: 1.3rem
-    font-weight: 500
-    letter-spacing: 1px
-    line-height: 2
-    border-radius: 3px
-    margin-right: 1rem
-
-  .jstree-folder-archive
-    color: #990000
-  
-  .jstree-co
-    color: grey !important
-
-#lnk-folders-ql
-  color: $base_green
-
-#co-folders-container
-  margin: 0.8em 0 0.5em
-  
-  #folder-tree-fixed
-    max-height: 250px
-    overflow: scroll
-
-  #folder-tree-actions
-    padding: 1.3rem
-    text-align: center
-
-    &.sub-menu
-      border-bottom: 1px solid #ccf
-    
-    i
-      font-size: 1.5rem
- 
-    .btn-co-folders
-      margin-right: 1rem
-      font-size: 1rem
-      font-weight: 600
-
-  table
-    width: 84%
-    float: right
-    margin-bottom: 2em
-    border: 1px solid #ccf
-    border-top: none
-
-    .heading_row
-      background: #cfc
-      color: grey
-      font-size: 1.4rem
-      font-weight: 500
-      text-align: center
-
-      td
-        border-bottom: 1px solid #ccf
-        border-top: 1px solid #ccf
-        padding: 1rem

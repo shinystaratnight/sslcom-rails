@@ -1,35 +1,33 @@
--cache([request.fullpath,"order_stats", current_user.ssl_account]) do
-  -stats(@unpaginated)
-  %tr
-    %td(scope="col" colspan="7")
-      .order-stats-cont
-        %div
-          ="<span class='emp'>Orders</span>".html_safe
-          %span (#{Money.new(@total_amount).format},
-          count:
-          %span #{@total_count})
-        %div
-          ="<span class='emp'>&#8226; Deposits</span>".html_safe
-          %span (#{Money.new(@deposits_amount).format},
-          count:
-          %span #{@deposits_count})
-        %div
-          ="<span class='emp'>&#8226; Refunds</span>".html_safe
-          %span (#{Money.new(@refunded_amount).format},
-          count:
-          %span #{@refunded_count})
-      .order-stats-cont
-        %div
-          ="<span class='emp'>Invoices</span>".html_safe
-          (invoices:
-          %span #{@payable_invoices_count},
-          orders:
-          %span #{@invoiced_orders_count},
-          pending:
-          %span #{Money.new(@pending_payable_invoices).format},
-          paid:
-          %span #{Money.new(@paid_payable_invoices).format},
-          fully refunded:
-          %span #{Money.new(@refunded_payable_invoices).format},
-          partially refunded:
-          %span #{Money.new(@partial_refunds_payable_invoices).format})
+%tr
+  %td(scope="col" colspan="7")
+    .order-stats-cont
+      %div
+        ="<span class='emp'>Orders</span>".html_safe
+        %span (#{Money.new(@total_amount).format},
+        count: 
+        %span #{@total_count})
+      %div
+        ="<span class='emp'>&#8226; Deposits</span>".html_safe
+        %span (#{Money.new(@deposits_amount).format},
+        count: 
+        %span #{@deposits_count})
+      %div
+        ="<span class='emp'>&#8226; Refunds</span>".html_safe
+        %span (#{Money.new(@refunded_amount).format},
+        count: 
+        %span #{@refunded_count})
+    .order-stats-cont
+      %div
+        ="<span class='emp'>Invoices</span>".html_safe
+        (invoices: 
+        %span #{@payable_invoices_count},
+        orders:
+        %span #{@invoiced_orders_count},
+        pending:
+        %span #{Money.new(@pending_payable_invoices).format},
+        paid: 
+        %span #{Money.new(@paid_payable_invoices).format},
+        fully refunded:
+        %span #{Money.new(@refunded_payable_invoices).format},
+        partially refunded:
+        %span #{Money.new(@partial_refunds_payable_invoices).format})

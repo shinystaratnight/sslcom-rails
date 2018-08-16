@@ -20,11 +20,7 @@ class CertificateOrder < ActiveRecord::Base
   has_many    :certificate_contacts, through: :certificate_contents
   has_many    :domain_control_validations, through: :certificate_names
   has_many    :csrs, :through=>:certificate_contents
-  has_many    :signed_certificates, :through=>:csrs do
-    def expired
-      where{expiration_date < Date.today}
-    end
-  end
+  has_many    :signed_certificates, :through=>:csrs
   has_many    :shadow_certificates, :through=>:csrs, class_name: "SignedCertificate"
   has_many    :ca_certificate_requests, :through=>:csrs
   has_many    :ca_api_requests, :through=>:csrs
@@ -175,7 +171,7 @@ class CertificateOrder < ActiveRecord::Base
     end
     %w(ref).each do |field|
       query=filters[field.to_sym]
-      result = result.where{ref >> query.split(',')} if query
+      result = result.where(field.to_sym  >> query.split(',')) if query
     end
     %w(country strength).each do |field|
       query=filters[field.to_sym]
@@ -321,15 +317,8 @@ class CertificateOrder < ActiveRecord::Base
 
   scope :free, ->{not_new.where(:amount => 0)}
 
-  scope :unused_credits, ->{
-    unused = joins{}
-    where{(workflow_state=='paid') & (is_expired==false) & (id << unused.joins{certificate_contents.csr.signed_certificates.outer}.pluck(id).uniq)}
-  }
-
-  scope :used_credits, ->{
-    unused = where{(workflow_state=='paid') & (is_expired==false)}
-    where{id >> unused.joins{certificate_contents.csr.signed_certificates.outer}.pluck(id)}
-  }
+  scope :unused_credits, ->{where{(workflow_state=='paid') & (is_expired==false) &
+      (external_order_number == nil)}}
 
   scope :unflagged_expired_credits, ->{unused_credits.
       where{created_at < Settings.cert_expiration_threshold_days.to_i.days.ago}}
@@ -420,13 +409,6 @@ class CertificateOrder < ActiveRecord::Base
       v.validation_rulings << vrl
     end
     co.site_seal=SiteSeal.create
-  end
-
-  after_create do |co|
-    if co.ssl_account
-      folder=Folder.find_by(name: 'default', default: true, ssl_account_id: co.ssl_account.id)
-      co.update_column :folder_id, folder.id
-    end
   end
 
   after_initialize do
@@ -642,7 +624,7 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def signed_certificate
-    signed_certificates.sort{|a,b|a.created_at.to_i<=>b.created_at.to_i}.last
+    signed_certificates.sort{|a,b|a.created_at<=>b.created_at}.last
   end
 
   def comodo_ca_id
@@ -667,7 +649,7 @@ class CertificateOrder < ActiveRecord::Base
 
   def used_days(options={round: false})
     if signed_certificates && !signed_certificates.empty?
-      sum = (Time.now - signed_certificates.sort{|a,b|a.created_at.to_i<=>b.created_at.to_i}.first.effective_date)
+      sum = (Time.now - signed_certificates.sort{|a,b|a.created_at<=>b.created_at}.first.effective_date)
       (options[:round] ? sum.round : sum)/1.day
     else
       0
@@ -686,8 +668,8 @@ class CertificateOrder < ActiveRecord::Base
   def total_days(options={round: false, duration: :order})
     if options[:duration]== :actual
       if signed_certificates && !signed_certificates.empty?
-        sum = (signed_certificates.sort{|a,b|a.created_at.to_i<=>b.created_at.to_i}.last.expiration_date -
-            signed_certificates.sort{|a,b|a.created_at.to_i<=>b.created_at.to_i}.first.effective_date)
+        sum = (signed_certificates.sort{|a,b|a.created_at<=>b.created_at}.last.expiration_date -
+            signed_certificates.sort{|a,b|a.created_at<=>b.created_at}.first.effective_date)
         (options[:round] ? sum.round : sum)/1.day
       else
         0
@@ -972,9 +954,8 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def apply_for_certificate(options={})
-    if [Ca::CERTLOCK_CA,Ca::SSLCOM_CA,Ca::MANAGEMENT_CA].include? options[:ca] or !certificate_content.ca.blank?
-      SslcomCaApi.apply_for_certificate(self, options) if options[:current_user].blank? or
-          options[:current_user].is_super_user?
+    if [Ca::CERTLOCK_CA,Ca::SSLCOM_CA,Ca::MANAGEMENT_CA].include? options[:ca]
+      SslcomCaApi.apply_for_certificate(self, options) if options[:current_user].is_super_user?
     else
       ComodoApi.apply_for_certificate(self, options) if ca_name=="comodo"
     end
@@ -2026,7 +2007,7 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   # cron job that flags unused certificate_order credits as expired after a period of time (1 year)
-  def self.expire_credits(options={})
+  def self.expire_credits(options)
     Website.sandbox_db.use_database if options[:db]=="sandbox"
     CertificateOrder.unflagged_expired_credits.update_all(is_expired: true)
     SystemAudit.create(owner: nil, target: nil,

@@ -312,11 +312,8 @@
 
 =render :partial=>'quick_links'
 
--if Folder.show_folders?(current_user)
-  -if show_folders_container?
-    =render partial: 'folders/co_index_folders', locals: {container_type: 'expanded'}
-  -else
-    =render partial: 'folders/co_index_folders', locals: {container_type: 'closed'}
+-if show_folders_container?
+  =render partial: 'folders/co_index_folders'
 
 #certificate_orders
   %table(cellspacing="0")
@@ -334,37 +331,26 @@
       SSL Certificates Management
       =will_paginate @certificate_orders
     %tr.heading_row
-      -if Folder.show_folders?(current_user) && show_folders_container?
-        %th
-          %i.fa.fa-folder#co-folder-column
       %td
       %th.name(scope="col")Subject
-      - if Folder.show_folders?(current_user)
-        %th(scope="col") Folder
+      %th(scope="col") Folder
       %th(scope="col") Status
       %th(scope="col") Order Date
       %th(scope="col") Expires
       %th(scope="col") Action
     -@certificate_orders.each do |co|
-      -cache([current_user,'certificate_orders_list', co.certificate_content], expires_in: 12.hours) do
+      -cache(['list', co.certificate_content]) do
         -cc = co.certificate_content
         -cn = (co.is_unused_credit? || cc.csr.blank?) ? nil : cc.csr.common_name
         %tr(alt="#{co.ref}")
-          -if Folder.show_folders?(current_user) && show_folders_container?
-            %td
-              =check_box_tag :folder_add_co, 'yes', false, id: co.ref, class: 'chk-folder-add-co'
           %td.dropdown
             -if !co.is_expired_credit? and permitted_to?(:index, co)
               =image_tag 'expand.png'
           %td.name
             =render :partial=>'subject_column', :locals=>{:certificate_order=>co}
-          -if Folder.show_folders?(current_user)
-            %td.co-folder-name
-              -if co.folder
-                %i.fa.fa-folder-open.icon-co-add-folder{id: co.ref, |
-                  data: {folder_id: co.folder.try(:id), folder_name: co.folder.try(:name)}}
-              -else
-                %i.fa.fa-plus.icon-co-add-folder{id: co.ref}
+          %td.co-folder-name
+            - if co.folder
+              %i.fa.fa-folder-open
           %td.status_message(class="#{status_class(cc)}")
             #{certificate_order_status(cc)}
           %td
@@ -373,6 +359,3 @@
             #{expires_on(cc)}
           %td.ssl_action
             #{action(co)}
-
--if Folder.show_folders?(current_user)
-  = render partial: '/folders/folder_tree_modal'

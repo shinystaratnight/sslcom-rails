@@ -13,7 +13,6 @@ CLIENT_OPTIONS=["ssl.com","certassure"]
 DEPLOYMENT_CLIENT=CLIENT_OPTIONS[0]
 
 Struct.new("Expiring", :before, :after, :cert)
-Struct.new("Notification", :before, :after, :cert)
 Struct.new("Reminding", :year, :cert)
 
 module SslCom

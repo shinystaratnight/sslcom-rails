@@ -175,9 +175,7 @@ class DomainsController < ApplicationController
         dcv = dn.domain_control_validations.last
         next if dcv && dcv.identifier_found
         @all_domains << dn
-        standard_addresses = DomainControlValidation.email_address_choices(dn.name)
-        whois_addresses = WhoisLookup.email_addresses(Whois.whois(CertificateContent.top_level_domain(dn.name)).inspect)
-        @address_choices << (standard_addresses + whois_addresses)
+        @address_choices << DomainControlValidation.email_address_choices(dn.name)
       end
     end
   end

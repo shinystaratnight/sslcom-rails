@@ -1,13 +1,5 @@
 $(function($) {
-  var errorsExist = false,
-    curResponse = {},
-    actionBtnIds = [
-      '#btn-folder-create-root',
-      '#btn-folder-create',
-      '#btn-folder-destroy',
-      '#btn-folder-rename',
-      '#btn-folder-default'
-    ].join(', ');
+  var errorsExist = false;
 
   folderClearErrors = function() {
     errorsExist =  false;
@@ -48,26 +40,22 @@ $(function($) {
     alert(errors_output);
   };
 
-  folderCreateJstree = function(root=false) {
+  folderCreateJstree = function() {
     var ref = getJstreeRef(),
       sel = ref.get_selected(true);
 
     if (!sel.length) { return false; }
     sel = sel[0];
-    parent_node = sel;
-    if (root) {
-      parent_node = ref.get_node(sel.parent, true);
+    if (certificateOrder(sel)) {
+      sel = ref.create_node(ref.get_node(sel.parent, true), { "type":"folder" });
+    } else {
+      sel = ref.create_node(sel, { "type":"folder" });
     }
-    final_parent = certificateOrder(sel) ? ref.get_node(sel.parent, true) : parent_node
-    sel = ref.create_node(final_parent, { "type":"folder" }, 'first');
-
     if (sel) {
       ref.edit(sel, 'new_folder', function(data) {
-        error = folderCreate(data.parent.split('_').shift(), data.text);
-        setTimeout(function() {
-          errorsExist ? ref.delete_node(sel) : ref.refresh();
-        }, 650);
-        return error;
+        resp = folderCreate(data.parent.split('_').shift(), data.text);
+        if (!resp) { ref.delete_node(sel); }
+        return resp;
       });
     }
   };
@@ -76,18 +64,11 @@ $(function($) {
     var ref = getJstreeRef(),
       sel = ref.get_selected();
     if (!sel.length) { return false; }
-    
     sel = sel[0];
-    prev_text = ref.get_selected(true)[0].text;
     if (sel && !certificateOrder(sel)) {
       ref.edit(sel, sel.text, function(data) {
-        errors = folderRename(data.id.split('_').shift(), data.text);
-        setTimeout(function() {
-          if (errorsExist) {
-            ref.rename_node([ref.get_selected(true)[0]], prev_text);
-          }
-        }, 450);
-        return errors;
+        resp = folderRename(data.id.split('_').shift(), data.text);
+        return resp;
       });
     }
   };
@@ -101,17 +82,8 @@ $(function($) {
       resp = folderDelete(
         ref.get_selected(true)[0].id.split('_').shift()
       );
-      if (resp) {
-        ref.delete_node(sel);
-        $('.jstree-hovered').remove();
-      }
+      if (resp) { ref.delete_node(sel); }
     }
-  };
-
-  findDefaultNode = function() {
-    return getJstreeRef().get_node(
-      $("li i.fa-certificate").parents('li')[0].id
-    );
   };
 
   folderDefaultJstree = function() {
@@ -120,38 +92,23 @@ $(function($) {
     if (!sel.length) { return false; }
 
     if (sel) {
-      errors = folderDefault(sel[0].id.split('_').shift());
-      setTimeout(function() {
-        if (!errorsExist) {
-          // unset default folder
-          remove_default = findDefaultNode();
-          if (typeof(remove_default) == 'undefined') {
-            remove_default = findDefaultNode();
-          }
-          remove_default.data.default = false;
-          ref.set_icon(remove_default, 'jstree-folder');
-          
-          // set default folder
-          sel[0].data.default = true;
-          ref.set_icon(sel[0], 'fa fa-certificate');
-        }
-      }, 450);
-      return errors;
+      resp = folderDefault(
+        ref.get_selected(true)[0].id.split('_').shift()
+      );
+      if (resp) { ref.load_all(); }
     }
   };
 
-  folderAction = function(form, type, concat='', data_type='JSON') {
+  folderAction = function(form, type, concat='') {
     $.ajax({
       type: type,
       url: form.attr('action'),
       data: form.serialize().concat(concat),
-      dataType: data_type
-    }).success(function(resp) {
-      curResponse = resp;
+      dataType: 'JSON'
+    }).success(function() {
       errorsExist = false;
     }).error(function(json) {
       errorsExist = true;
-      curResponse = {};
       folderParseErrors(json);
     });
   };
@@ -222,26 +179,9 @@ $(function($) {
     form.attr('action', new_action);
   }
 
-  hideBtnForCert = function() {
-    $('#btn-folder-create, #btn-folder-destroy, #btn-folder-rename, #btn-folder-default').hide();
-  }
-
-  hideBtnForSystem = function() {
-    $('#btn-folder-destroy, #btn-folder-rename, #btn-folder-default').hide();
-  }
-
-  enableButtons = function() {
-    $(actionBtnIds).show();
-  }
-
   $('#btn-folder-create').on('click', function(e) {
     e.preventDefault();
     folderCreateJstree();
-  });
-
-  $('#btn-folder-create-root').on('click', function(e) {
-    e.preventDefault();
-    folderCreateJstree(true);
   });
 
   $('#btn-folder-rename').on('click', function(e) {
@@ -251,12 +191,7 @@ $(function($) {
 
   $('#btn-folder-destroy').on('click', function(e) {
     e.preventDefault();
-    var r = confirm(
-      'Are you sure you want to delete selected folder and all of its sub folders?'
-    );
-    if (r == true) {
-      folderDeleteJstree();
-    }
+    folderDeleteJstree();
   });
 
   $('#btn-folder-default').on('click', function(e) {
@@ -268,35 +203,13 @@ $(function($) {
     nodeMoveJstree(node);
   });
 
-  /*
-  * Folders Explorer
-  */
-  $('#folders-tree').on("select_cell.jstree-grid", function(event, data) {
-   var node = data.node[0];
-    if (data.value == 'details') {
-      window.location.href = node.baseURI.replace('folders', 'certificate_orders/') + fetchCertOrderId(node.id)
-    }
-  });
-
   var to = false;
   $('#folder-scan').keyup(function () {
     if(to) { clearTimeout(to); }
     to = setTimeout(function () {
       var search = $('#folder-scan').val();
-      getJstreeRef().searchColumn({0: search});
+      getJstreeRef().search(search);
     }, 250);
-  });
-
-  $('#folders-tree').on('select_node.jstree', function (e, data) {
-    icon = data.node.icon;
-    enableButtons();
-    if (icon == 'jstree-folder') {
-      enableButtons();
-    } else if (icon == 'jstree-file') {
-      hideBtnForCert();
-    } else {
-      hideBtnForSystem();
-    }
   });
 
   /*
@@ -325,42 +238,12 @@ $(function($) {
     $('#btn-co-filter-by').attr('href', new_url);
   };
 
-  getCheckedCertOrders = function() {
-    var cert_orders  = $('.chk-folder-add-co:checkbox:checked').map(function() {
-      return this.id;
-    }).get();
-    return cert_orders;
-  };
-
   addCertOrdersJstree = function() {
     var form = $('#frm-folder-add-certs'),
       node_id = fetchFolderId(getJstreeRef().get_checked()[0]);
-    form.find("#folder_folder_certificate_order_ids").val(
-      getCheckedCertOrders().join(',')
-    );
     updateFolderId(form, node_id);
     form.submit();
   };
-
-  $(co_id).on('select_node.jstree', function (e, data) {
-    var node = data.node;
-    $('#folder-co-list-cont').empty();
-    if (node.data.certificate_orders_count > 0) {
-      node.data.certificate_orders.forEach(function(title) {
-        co = title.substring(title.indexOf("(") + 1, title.indexOf(")"));
-        link = decodeURIComponent(
-          $('#folder-co-list-cont').data('co-url')
-        ).replace('#', co);
-        
-        $('#folder-co-list-cont').append(
-          "<div class='f-co-item'><a title='" + title + "'"
-          + " href='" + link + "'>" + title + "</a></div>"
-        );
-      });
-    } else {
-      $('#folder-co-list-cont').append("0 certificates");
-    }
-  });
 
   $(co_id).on("check_node.jstree", function (e, data) {
     setSelectedCount(data);
@@ -398,44 +281,15 @@ $(function($) {
 
   $('#btn-co-folders-addcert').on('click', function(e) {
     e.preventDefault();
-    var selected = getJstreeRef().get_checked().length,
-        selected_co = getCheckedCertOrders();
+    var selected = getJstreeRef().get_checked().length;
     
     if ( selected == 0) {
       alert('Check at least one folder.');
     } else if (selected > 1) {
       alert('You checked ' + selected + ' folders. Please select only one folder to move certificates.' );
-    } else if (selected_co.length == 0) {
-      alert('Select at least one certificate below to put in folder.' );
     } else {
       addCertOrdersJstree();
     }
   });
   
-  $('#co-folder-column').on('click', function(e) {
-    $('.chk-folder-add-co').click();
-  });
-
-  /*
-   * Change Folder Modal
-   */
-  var co_id = '#folders-tree-modal',
-    checked = [];
-  
-  addCertOrderJstree = function(folder_id) {
-    var form = $('#frm-folder-add-cert');
-    updateFolderId(form, fetchFolderId(folder_id));
-  };
-
-  // Can only select one folder.
-  $(co_id).on('check_node.jstree', function (e, data) {
-    checked = $(co_id).jstree("get_checked");
-    var cur_checked = checked.join(','),
-      folder_id = data.node.id;
-    cur_checked = cur_checked
-      .replace(',' + folder_id, '')
-      .replace(folder_id, '');
-    $(co_id).jstree('uncheck_node', cur_checked);
-    addCertOrderJstree(folder_id);
-  });
 });

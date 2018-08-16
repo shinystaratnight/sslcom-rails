@@ -36,6 +36,9 @@
       -unless is_iphone?
         %li(class="#{current_page?(details_site_seals_path) ? 'active' : ''}")
           =link_to "Smart SeaL", details_site_seals_url({:subdomain=>false})
+      -if show_short_links?
+        %li(class="#{current_page?(surls_root_url(:subdomain=>Surl::SUBDOMAIN)) ? 'active' : ''}")
+          =link_to "Shorten Links", surls_root_url(:subdomain=>Surl::SUBDOMAIN)
     =render partial: "/layouts/logo_header"
 #container
   #content.content

@@ -54,7 +54,7 @@ jQuery(function($) {
   function update_checkbox(checkbox_ids, update_type) {
     $.each( $(checkbox_ids), function(key, checkbox) {
       var cur = $('#'+checkbox.id);
-      cur.prop('checked', (update_type == 'check'));
+      (update_type == 'check') ? cur.attr('checked', true) : cur.removeAttr('checked');
     });
   }
 

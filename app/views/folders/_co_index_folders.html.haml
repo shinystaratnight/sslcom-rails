@@ -1,29 +1,9 @@
-- minimize = (container_type == 'closed')
-- css_class = minimize ? 'hidden' : ''
-- co_params = {}
-- co_params.merge!(search: params[:search]) if params[:search]
-- co_params.merge!(per_page: params[:per_page]) if params[:per_page]
-
 #co-folders-container
   %table(cellspacing='0')
     %tr.heading_row
-      %td
-        #folder-tree-actions-hdr
-          - if minimize
-            = link_to "<i class='fa fa-caret-square-o-down'></i>".html_safe, |
-              certificate_orders_path(@ssl_slug, co_params.merge(folders: true))
-          - else
-            = link_to "<i class='fa fa-caret-square-o-up'></i>".html_safe, |
-              certificate_orders_path(@ssl_slug, co_params)
-        
-        #co-folders-header
-          %div
-            %strong Folders Management
-          %div
-            = "TOTAL: #{(@ssl_account || ssl_account).folders.count}  | "
-            = " SELECTED: <span id='folders-selected-count'>0</span>".html_safe
-
-    %tr{class: css_class}
+      %td#co-folders-header
+        = "Folders ( total: #{@ssl_account.folders.count} | selected: <span id='folders-selected-count'>0</span> )".html_safe
+    %tr
       %td
         #folder-tree-actions.sub-menu
           = link_to "<i class='fa fa-check-square'></i> Uncheck All".html_safe, '#', |
@@ -32,31 +12,27 @@
             class: 'btn-co-folders sub-actions', id: 'btn-folder-closeall'
           = link_to "<i class='fa fa-folder-open'></i> Open All".html_safe, '#', |
             class: 'btn-co-folders sub-actions', id: 'btn-folder-openall'
-          = link_to "<i class='fa fa-cogs'></i> Explorer".html_safe, |
+          = link_to "<i class='fa fa-cogs'></i> Manage Folders".html_safe, |
             folders_path(@ssl_slug), class: 'btn-co-folders sub-actions'
           = text_field_tag :folder_search, nil, id: 'folder-scan'
-    
-    %tr{class: css_class}
+    %tr
       %td
         #folder-tree-fixed
           #folders-tree-co
-          #folder-co-list
-            #folder-co-list-cont{data: {co_url: certificate_order_url(@ssl_slug, '#')}}
-    
-    %tr{class: css_class}
+    %tr
       %td
         #folder-tree-actions
-          = link_to "<i class='fa fa-plus'></i> Selected Certificates To Folder".html_safe, |
+          = link_to "<i class='fa fa-plus'></i> Add Certificates To Folder".html_safe, |
             '#', class: 'btn-co-folders', id: 'btn-co-folders-addcert'
             
           - url = add_certificate_orders_folder_url(@ssl_slug, '#')
           = form_for Folder.new, url: url, method: :put,  |
             data: {type: :json, initial_action: url},     |
             html: {id: 'frm-folder-add-certs', class: 'hidden'} do |f|
-            = f.text_field :folder_certificate_order_ids, value: nil
+            = f.text_field :folder_certificate_order_ids, value: @certificate_orders.map(&:ref).join(',')
 
           = link_to "<i class='fa fa-search'></i> Filter Certificates By Folders".html_safe, |
             search_certificate_orders_path(@ssl_slug),                                       |
             class: 'btn-co-folders', id: 'btn-co-filter-by'
   
-  = render partial: '/folders/co_index_jstree'
+  = render partial: '/folders/jstree_script'

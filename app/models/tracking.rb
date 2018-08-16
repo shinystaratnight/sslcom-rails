@@ -5,7 +5,7 @@ class Tracking < ActiveRecord::Base
 
   def parents
     Tracking.where{(referer_id == my{tracked_url_id}) & (visitor_token_id == my{visitor_token_id}) &
-    (created_at < my{created_at})}.sort{|a,b|a.created_at.to_i<=>b.created_at.to_i}
+    (created_at < my{created_at})}.sort{|a,b|a.created_at<=>b.created_at}
   end
 
   def parent
