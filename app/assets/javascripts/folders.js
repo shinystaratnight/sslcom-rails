@@ -58,14 +58,18 @@ $(function($) {
     if (root) {
       parent_node = ref.get_node(sel.parent, true);
     }
-    final_parent = certificateOrder(sel) ? ref.get_node(sel.parent, true) : parent_node
+    final_parent = certificateOrder(sel) ? ref.get_node(sel.parent, true) : parent_node;
     sel = ref.create_node(final_parent, { "type":"folder" }, 'first');
 
     if (sel) {
       ref.edit(sel, 'new_folder', function(data) {
         error = folderCreate(data.parent.split('_').shift(), data.text);
         setTimeout(function() {
-          errorsExist ? ref.delete_node(sel) : ref.refresh();
+          if (errorsExist) {
+            ref.delete_node(sel);
+          } else {
+            ref.set_id(data, curResponse['folder_id'] + '_folder');
+          }
         }, 650);
         return error;
       });
@@ -190,11 +194,18 @@ $(function($) {
   };
 
   nodeMoveJstree = function(node) {
-    var node_id = node.node.id;
+    var node_id = node.node.id,
+      ref = getJstreeRef();
     if (node_id.includes('_folder')) {
       folderNodeMove(node);
     } else {
       coNodeMove(node);
+    }
+    ref.open_node(node.parent);
+
+    if (!errorsExist) {
+      redraw_node = node.parent == '#' ? [node] : [node.parent];
+      ref.redraw(redraw_node);
     }
     return !errorsExist;
   };
