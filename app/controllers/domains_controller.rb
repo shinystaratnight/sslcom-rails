@@ -202,14 +202,14 @@ class DomainsController < ApplicationController
       identifier = params['validate_code']
       cnames.each do |cn|
         dcv = cn.domain_control_validations.last
-        if dcv.identifier == identifier
+        if dcv && dcv.identifier == identifier
           dcv.update_attribute(:identifier_found, true)
           dcv.satisfy! unless dcv.satisfied?
         end
       end
       dnames.each do |dn|
         dcv = dn.domain_control_validations.last
-        if dcv.identifier == identifier
+        if dcv && dcv.identifier == identifier
           dcv.update_attribute(:identifier_found, true)
           dcv.satisfy! unless dcv.satisfied?
         end

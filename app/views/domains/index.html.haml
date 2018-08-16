@@ -42,8 +42,8 @@
         -validity_period = (validation_status=='Pending validation' || dcv.responded_at.nil?) ? 'n/a' : (30-(Date.today-dcv.responded_at.to_date).to_i).to_s + " days remaining"
         -order_ref = d.certificate_content ? d.certificate_content.certificate_order.ref : 'Team'
         %tr
-          %td=check_box_tag "d_name_check[]",d.id, false, :id => "d_name_check_#{d.id}", :class => "d_name_check"
+          %td
           %td=d.name
-          %td=order_ref
+          %td=(validation_status=='Pending validation') ? (link_to order_ref, new_certificate_order_validation_path(@ssl_slug, d.certificate_content.certificate_order)) : order_ref
           %td=validation_status
           %td=validity_period
