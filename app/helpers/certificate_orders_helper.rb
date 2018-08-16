@@ -95,8 +95,13 @@ module CertificateOrdersHelper
           link_to('submit csr', edit_certificate_order_path(@ssl_slug, certificate_order)) if
               permitted_to?(:update, certificate_order)
         when "contacts_provided", "pending_validation", "validated"
-          link_to certificate_order.certificate.admin_submit_csr? ? 'upload documents' : 'perform validation', new_certificate_order_validation_path(@ssl_slug, certificate_order) if
-              permitted_to?(:update, certificate_order.validation) # assume multi domain
+            if certificate_content.workflow_state == "validated" and certificate_order.certificate.is_cs?
+              link_to 'generate certificate', generate_cert_certificate_order_path(@ssl_slug, certificate_order.ref) if
+                  permitted_to?(:update, certificate_order.validation) # assume multi domain
+            else
+              link_to certificate_order.certificate.admin_submit_csr? ? 'upload documents' : 'perform validation', new_certificate_order_validation_path(@ssl_slug, certificate_order) if
+                  permitted_to?(:update, certificate_order.validation) # assume multi domain
+            end
         when "issued"
           if certificate_content.expiring?
             if certificate_order.renewal && certificate_order.renewal.paid?
