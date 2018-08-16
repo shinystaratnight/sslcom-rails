@@ -113,7 +113,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
       co.certificate_content.create_csr(body: params[:csr])
 
       options = {}
-      options[:ca] = Ca::MANAGEMENT_CA
+      options[:mapping] = co.certificate.cas.default.last
       options[:cc] = co.certificate_content
 
       if res = SslcomCaApi.generate_for_certificate(options)
