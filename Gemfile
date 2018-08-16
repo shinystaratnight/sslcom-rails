@@ -78,6 +78,7 @@ gem 'duo_web', '~> 1.0'
 gem 'recaptcha', require: 'recaptcha/rails'
 gem 'font-awesome-rails'
 gem 'acts_as_tree'
+gem 'whois', '~> 4.0'
 
 group :development do
   gem 'foreman'
