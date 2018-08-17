@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180814074956) do
+ActiveRecord::Schema.define(version: 20180816141802) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        limit: 255
@@ -309,6 +309,7 @@ ActiveRecord::Schema.define(version: 20180814074956) do
     t.datetime "created_at",                         null: false
     t.datetime "updated_at",                         null: false
     t.string   "acme_account_id",        limit: 255
+    t.integer  "ssl_account_id",         limit: 4
   end
 
   create_table "certificate_orders", force: :cascade do |t|
@@ -773,6 +774,7 @@ ActiveRecord::Schema.define(version: 20180814074956) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "scan_port",      limit: 255, default: "443"
+    t.boolean  "notify_all",                 default: true
   end
 
   add_index "notification_groups", ["ssl_account_id", "ref"], name: "index_notification_groups_on_ssl_account_id_and_ref", using: :btree
@@ -1212,6 +1214,7 @@ ActiveRecord::Schema.define(version: 20180814074956) do
     t.datetime "expires_at"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "reminder_type",         limit: 255
   end
 
   add_index "sent_reminders", ["recipients", "subject", "trigger_value", "expires_at"], name: "index_contacts_on_recipients_subject_trigger_value_expires_at", using: :btree

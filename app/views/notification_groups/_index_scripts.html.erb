@@ -327,6 +327,161 @@
         }
       }
 
+      $('.save_notification_group').click(function(e) {
+        e.preventDefault();
+
+        var ajaxCheckDuplicateUrl = '<%=check_duplicate_notification_groups_url%>';
+        $.ajax({
+          url: ajaxCheckDuplicateUrl,
+          data: {
+            friendly_name: $('#friendly_name').val(),
+            ng_id : $('#notification_group_id').val()
+          },
+          type: "POST",
+          success: function (result) {
+            if (Object.keys(result).length > 0) {
+              if (result['is_duplicated'] == 'false') {
+                $('.ng_form').submit();
+              } else {
+                $('#friendly_name').addClass('warning-field');
+                $('.alert-warning').show();
+              }
+            }
+          }
+        });
+      });
+
+      $('.scan_notification_group').click(function() {
+        var is_changed = false;
+        var obj = document.getElementById('friendly_name');
+        if (obj.value != obj.defaultValue) {
+          is_changed = true;
+        }
+
+        obj = document.getElementById('scan_port');
+        if (!is_changed && obj.value != obj.defaultValue) {
+          is_changed = true;
+        }
+
+        obj = document.getElementById('notify_all');
+        if (!is_changed && obj.checked != obj.defaultChecked) {
+          is_changed = true;
+        }
+
+        var obj_list = document.getElementsByName('notification_group_triggers[]');
+        $.each(obj_list, function(idx, obj) {
+          if (!is_changed && obj.value != obj.defaultValue) {
+            is_changed = true;
+            return false;
+          }
+        });
+
+        var cos = '<%= @slt_cos_list ? @slt_cos_list.join(',') : ""%>';
+        if (!is_changed && ($($('#cos_list').val()).not(cos.split(',')).length != 0 ||
+          $(cos.split(',')).not($('#cos_list').val()).length != 0)) {
+          is_changed = true;
+        }
+
+        var subjects = '<%= @slt_subjects_list ? @slt_subjects_list.join(',') : ""%>';
+        if (!is_changed && ($($('#subjects_list').val()).not(subjects.split(',')).length != 0 ||
+          $(subjects.split(',')).not($('#subjects_list').val()).length != 0)) {
+          is_changed = true;
+        }
+
+        var contacts = '<%= @slt_contacts_list ? @slt_contacts_list.join(',') : ""%>';
+        if (!is_changed && ($($('#contacts_list').val()).not(contacts.split(',')).length != 0 ||
+          $(contacts.split(',')).not($('#contacts_list').val()).length != 0)) {
+          is_changed = true;
+        }
+
+        obj_list = document.getElementsByName('schedule_type');
+        if (!is_changed
+          && obj_list[0].checked != obj_list[0].defaultChecked
+          && obj_list[1].checked != obj_list[1].defaultChecked) {
+          is_changed = true;
+        }
+
+        obj_list = document.getElementsByName('weekday_type');
+        if (!is_changed
+          && obj_list[0].checked != obj_list[0].defaultChecked
+          && obj_list[1].checked != obj_list[1].defaultChecked) {
+          is_changed = true;
+        }
+
+        obj_list = document.getElementsByName('month_type');
+        if (!is_changed
+          && obj_list[0].checked != obj_list[0].defaultChecked
+          && obj_list[1].checked != obj_list[1].defaultChecked) {
+          is_changed = true;
+        }
+
+        obj_list = document.getElementsByName('day_type');
+        if (!is_changed
+          && obj_list[0].checked != obj_list[0].defaultChecked
+          && obj_list[1].checked != obj_list[1].defaultChecked) {
+          is_changed = true;
+        }
+
+        obj_list = document.getElementsByName('hour_type');
+        if (!is_changed
+          && obj_list[0].checked != obj_list[0].defaultChecked
+          && obj_list[1].checked != obj_list[1].defaultChecked) {
+          is_changed = true;
+        }
+
+        obj_list = document.getElementsByName('minute_type');
+        if (!is_changed
+          && obj_list[0].checked != obj_list[0].defaultChecked
+          && obj_list[1].checked != obj_list[1].defaultChecked) {
+          is_changed = true;
+        }
+
+        var schedule_simple = '<%= @slt_schedule_simple ? @slt_schedule_simple.join(',') : ""%>';
+        if (!is_changed && ($($('#schedule_simple_type').val() || [""]).not(schedule_simple.split(',')).length != 0 ||
+          $(schedule_simple.split(',')).not($('#schedule_simple_type').val() || [""]).length != 0)) {
+          is_changed = true;
+        }
+
+        var weekdays = '<%= @slt_schedule_weekdays ? (@slt_schedule_weekdays[0] == 'All' ? "" : @slt_schedule_weekdays.join(',')) : ""%>';
+        if (!is_changed && ($($('#weekday_custom_list').val() || [""]).not(weekdays.split(',')).length != 0 ||
+          $(weekdays.split(',')).not($('#weekday_custom_list').val() || [""]).length != 0)) {
+          is_changed = true;
+        }
+
+        var months = '<%= @slt_schedule_months ? (@slt_schedule_months[0] == 'All' ? "" : @slt_schedule_months.join(',')) : ""%>';
+        if (!is_changed && ($($('#month_custom_list').val() || [""]).not(months.split(',')).length != 0 ||
+          $(months.split(',')).not($('#month_custom_list').val() || [""]).length != 0)) {
+          is_changed = true;
+        }
+
+        var days = '<%= @slt_schedule_days ? (@slt_schedule_days[0] == 'All' ? "" : @slt_schedule_days.join(',')) : ""%>';
+        if (!is_changed && ($($('#day_custom_list').val() || [""]).not(days.split(',')).length != 0 ||
+          $(days.split(',')).not($('#day_custom_list').val() || [""]).length != 0)) {
+          is_changed = true;
+        }
+
+        var hours = '<%= @slt_schedule_hours ? (@slt_schedule_hours[0] == 'All' ? "" : @slt_schedule_hours.join(',')) : ""%>';
+        if (!is_changed && ($($('#hour_custom_list').val() || [""]).not(hours.split(',')).length != 0 ||
+          $(hours.split(',')).not($('#hour_custom_list').val() || [""]).length != 0)) {
+          is_changed = true;
+        }
+
+        var minutes = '<%= @slt_schedule_minutes ? (@slt_schedule_minutes[0] == 'All' ? "" : @slt_schedule_minutes.join(',')) : ""%>';
+        if (!is_changed && ($($('#minute_custom_list').val() || [""]).not(minutes.split(',')).length != 0 ||
+          $(minutes.split(',')).not($('#minute_custom_list').val() || [""]).length != 0)) {
+          is_changed = true;
+        }
+
+        var scanGroupUrl = '<%= scan_individual_group_notification_groups_path(@ssl_slug)%>';
+        if (is_changed) {
+          if (confirm("You are leaving the page with unsaved changes, do you want to continue?")) {
+            $('.ng_form').attr('action', scanGroupUrl).submit();
+          }
+        } else {
+          $('.ng_form').attr('action', scanGroupUrl).submit();
+        }
+      });
+
       //******************** Notification group list ********************
       if (url.substr(url.lastIndexOf('/') + 1, url.length) == 'notification_groups' ||
         url.substr(url.lastIndexOf('/') + 1, url.length) == 'search') {

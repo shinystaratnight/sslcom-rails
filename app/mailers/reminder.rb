@@ -23,9 +23,10 @@ class Reminder < ActionMailer::Base
     mail(:to => @to, :subject => subject)
   end
 
-  def domain_digest_notice(d)
+  def domain_digest_notice(d, reminder_type)
     preparing_recipients(d)
-    subject = "SSL.com reminder - domain expiration digest"
+    subject = "SSL.com reminder - domain digest reminder"
+    @reminder_type = reminder_type
     mail(:to => @to, :subject => subject)
   end
 

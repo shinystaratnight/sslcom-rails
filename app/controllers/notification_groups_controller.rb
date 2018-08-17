@@ -137,6 +137,14 @@ class NotificationGroupsController < ApplicationController
     redirect_to notification_groups_path(ssl_slug: @ssl_slug)
   end
 
+  def scan_individual_group
+    notification_group = @ssl_account.notification_groups.find(params[:notification_group_id])
+    notification_group.scan_notification_group
+
+    flash[:notice] = "Scan has been done successfully."
+    redirect_to edit_notification_group_path(@ssl_slug, notification_group.id)
+  end
+
   def new
     certificate_names = @ssl_account.certificate_names.pluck(:name, :id)
     @subjects_list = remove_duplicate(certificate_names)
@@ -191,17 +199,31 @@ class NotificationGroupsController < ApplicationController
     render 'group'
   end
 
+  def check_duplicate
+    notification_group = NotificationGroup.find_by_friendly_name(params[:friendly_name])
+    returnObj = {}
+    returnObj['is_duplicated'] = notification_group ?
+                                     (params[:ng_id] == '' ?
+                                          'true' :
+                                          (notification_group.id.to_s == params[:ng_id] ?
+                                               'false' : 'true'))
+                                     : 'false'
+    render :json => returnObj
+  end
+
   def register_notification_group
     if params[:format]
       # Saving notification group info
       notification_group = @ssl_account.notification_groups.where(ref: params[:format]).first
       notification_group.friendly_name = params[:friendly_name]
       notification_group.scan_port = params[:scan_port]
+      notification_group.notify_all = params[:notify_all]
     else
       # Saving notification group info
       notification_group = NotificationGroup.new(
           friendly_name: params[:friendly_name],
           scan_port: params[:scan_port],
+          notify_all: paramsp[:notify_all],
           ssl_account: @ssl_account
       )
     end
