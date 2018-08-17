@@ -978,8 +978,7 @@ ActiveRecord::Schema.define(version: 20180816141802) do
   add_index "preferences", ["group_id", "group_type", "name", "owner_id", "owner_type"], name: "index_preferences_on_owner_and_name_and_preference", unique: true, using: :btree
   add_index "preferences", ["id", "name", "owner_id", "owner_type", "value"], name: "index_preferences_on_owner_and_name_and_value", using: :btree
   add_index "preferences", ["id", "name", "value"], name: "index_preferences_on_name_and_value", using: :btree
-  add_index "preferences", ["id", "owner_id", "owner_type"], name: "index_preferences_on_id_and_owner_id_and_owner_type", unique: true, using: :btree
-  add_index "preferences", ["id", "owner_id", "owner_type"], name: "index_preferences_on_owner_id_and_owner_type", unique: true, using: :btree
+  add_index "preferences", ["owner_id", "owner_type"], name: "index_preferences_on_owner_id_and_owner_type", using: :btree
 
   create_table "product_orders", force: :cascade do |t|
     t.integer  "ssl_account_id",    limit: 4
@@ -1284,6 +1283,7 @@ ActiveRecord::Schema.define(version: 20180816141802) do
     t.integer  "ca_id",                     limit: 4
     t.string   "type",                      limit: 255
     t.datetime "revoked_at"
+    t.string   "type",                      limit: 255
   end
 
   add_index "signed_certificates", ["ca_id"], name: "fk_rails_d21ca532b7", using: :btree

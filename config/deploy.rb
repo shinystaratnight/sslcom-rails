@@ -30,6 +30,9 @@ set :application, "ssl_com"
 set :domain, '172.16.1.12' #Rails 4 staging
 set :user, "ubuntu"
 set :branch, "staging"
+# NOTE: for some reason Capistrano requires you to have both the public and
+# the private key in the same folder, the public key should have the
+# extension ".pub".
 ssh_options[:keys] = [File.join(ENV["HOME"], ".ssh", "id_rsa")]
 
 server = "production"
@@ -37,30 +40,23 @@ case server
   when "sandbox"
     require "rvm/capistrano"
     set :deploy_to, "/home/ubuntu/sites/#{application}"
-    # NOTE: for some reason Capistrano requires you to have both the public and
-    # the private key in the same folder, the public key should have the
-    # extension ".pub".
   when "sandbox2"
     require "rvm/capistrano"
     set :application, 'ssl_com_test'
     set :deploy_to, "/home/ubuntu/sites/#{application}"
   when "sandbox3"
     require "rvm/capistrano"
-    set :branch, "sandbox3_ssl_com"
-    set :application, 'ssl_com_test'
-    set :deploy_to, "/home/ubuntu/sites/#{application}"
+    set :application, 'sandbox3_ssl_com'
+    set :branch, application
+    set :deploy_to, "/home/ubuntu/sites/ssl_com_test"
   when "sandbox4"
     require "rvm/capistrano"
-    set :branch, "sandbox4_ssl_com"
-    set :application, 'ssl_com_test'
-    set :deploy_to, "/home/ubuntu/sites/#{application}"
+    set :application, 'sandbox4_ssl_com'
+    set :branch, application
+    set :deploy_to, "/home/ubuntu/sites/ssl_com_test"
   when "staging"
     require "rvm/capistrano"
     set :deploy_to, "/home/ubuntu/sites/#{application}"
-    # NOTE: for some reason Capistrano requires you to have both the public and
-    # the private key in the same folder, the public key should have the
-    # extension ".pub".
-    ssh_options[:keys] = [File.join(ENV["HOME"], ".ssh", "id_rsa")]
   when "production"
     require "rvm/capistrano"
     set :branch, "master"
