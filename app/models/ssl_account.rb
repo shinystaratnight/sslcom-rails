@@ -22,6 +22,7 @@ class SslAccount < ActiveRecord::Base
   has_many  :site_seals, through: :certificate_orders
   has_many  :certificate_contents, through: :certificate_orders
   has_many  :domains, :dependent => :destroy
+  has_many  :csrs, through: :certificate_contents
   has_many  :signed_certificates, through: :certificate_contents do
     def expired
       where{expiration_date < Date.today}
@@ -64,6 +65,7 @@ class SslAccount < ActiveRecord::Base
   end
   has_many  :notification_groups
   has_many  :folders, dependent: :destroy
+  has_many :certificate_names, through: :certificate_contents
   has_many :domain_control_validations, through: :certificate_names do
     def sslcom
       where.not certificate_contents: {ca_id: nil}
@@ -505,7 +507,7 @@ class SslAccount < ActiveRecord::Base
   def is_validated?(domain)
     validated_domains.include?(domain)
   end
-  
+
   def get_invoice_pmt_description
     billing_monthly? ? Order::MI_PAYMENT : Order::DI_PAYMENT
   end

@@ -17,9 +17,10 @@ SslAccount.find_each do |team|
       name: 'archived', archived: true, ssl_account_id: team.id
   )
 
-  default_folder = Folder.find_or_create_by(
-      name: 'default', default: true, ssl_account_id: team.id
-  )
+  default_folder = Folder.find(
+      default: true, ssl_account_id: team.id
+  ) ||  Folder.create(name: 'default', default: true, ssl_account_id: team.id)
+
 
   expired_folder = Folder.find_or_create_by(
       name: 'expired', expired: true, ssl_account_id: team.id
