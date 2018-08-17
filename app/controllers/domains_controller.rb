@@ -122,7 +122,7 @@ class DomainsController < ApplicationController
       d_name.destroy
     end
     flash[:notice] = "Domain was successfully deleted."
-    redirect_to domains_path
+    redirect_to domains_path(@ssl_slug)
   end
 
   def validate_selected
