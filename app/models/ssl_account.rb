@@ -22,6 +22,7 @@ class SslAccount < ActiveRecord::Base
   has_many  :site_seals, through: :certificate_orders
   has_many  :certificate_contents, through: :certificate_orders
   has_many  :domains, :dependent => :destroy
+  has_many  :csrs, through: :certificate_contents
   has_many  :signed_certificates, through: :certificate_contents do
     def expired
       where{expiration_date < Date.today}
