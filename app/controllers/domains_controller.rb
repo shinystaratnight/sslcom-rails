@@ -178,7 +178,7 @@ class DomainsController < ApplicationController
         standard_addresses = DomainControlValidation.email_address_choices(dn.name)
         whois_addresses = WhoisLookup.email_addresses(Whois.whois(ActionDispatch::Http::URL.extract_domain(dn.name, 1)).inspect)
         whois_addresses.each do |ad|
-          standard_addresses << ad unless ad.include? 'abuse'
+          standard_addresses << ad unless ad.include? 'abuse@'
         end
         @address_choices << standard_addresses
       end
