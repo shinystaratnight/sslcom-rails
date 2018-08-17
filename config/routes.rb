@@ -262,6 +262,8 @@ SslCom::Application.routes.draw do
     end
 
     resources :notification_groups do
+      resources :scan_logs, only: :index
+
       collection do
         get :certificate_orders_domains_contacts
         post :search
