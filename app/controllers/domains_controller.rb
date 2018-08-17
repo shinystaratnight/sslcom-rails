@@ -176,8 +176,11 @@ class DomainsController < ApplicationController
         next if dcv && dcv.identifier_found
         @all_domains << dn
         standard_addresses = DomainControlValidation.email_address_choices(dn.name)
-        whois_addresses = WhoisLookup.email_addresses(Whois.whois(CertificateContent.top_level_domain(dn.name)).inspect)
-        @address_choices << (standard_addresses + whois_addresses)
+        whois_addresses = WhoisLookup.email_addresses(Whois.whois(ActionDispatch::Http::URL.extract_domain(dn.name, 1)).inspect)
+        whois_addresses.each do |ad|
+          standard_addresses << ad unless ad.include? 'abuse'
+        end
+        @address_choices << standard_addresses
       end
     end
   end
