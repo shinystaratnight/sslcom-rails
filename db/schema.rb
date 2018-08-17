@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180814074956) do
+ActiveRecord::Schema.define(version: 20180816141802) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        limit: 255
@@ -342,6 +342,7 @@ ActiveRecord::Schema.define(version: 20180814074956) do
 
   add_index "certificate_orders", ["created_at"], name: "index_certificate_orders_on_created_at", using: :btree
   add_index "certificate_orders", ["id", "is_test"], name: "index_certificate_orders_on_test", using: :btree
+  add_index "certificate_orders", ["id", "workflow_state", "is_expired", "is_test"], name: "05122018_index_certificate_orders_on_4_cols", unique: true, using: :btree
   add_index "certificate_orders", ["id", "workflow_state", "is_expired", "is_test"], name: "index_certificate_orders_on_workflow_state", unique: true, using: :btree
   add_index "certificate_orders", ["is_expired"], name: "index_certificate_orders_on_is_expired", using: :btree
   add_index "certificate_orders", ["is_test"], name: "index_certificate_orders_on_is_test", using: :btree
@@ -777,6 +778,7 @@ ActiveRecord::Schema.define(version: 20180814074956) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "scan_port",      limit: 255, default: "443"
+    t.boolean  "notify_all",                 default: true
   end
 
   add_index "notification_groups", ["ssl_account_id", "ref"], name: "index_notification_groups_on_ssl_account_id_and_ref", using: :btree
@@ -1193,6 +1195,7 @@ ActiveRecord::Schema.define(version: 20180814074956) do
     t.text     "decoded",    limit: 65535
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "serial",     limit: 255
   end
 
   create_table "schedules", force: :cascade do |t|
@@ -1214,6 +1217,7 @@ ActiveRecord::Schema.define(version: 20180814074956) do
     t.datetime "expires_at"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "reminder_type",         limit: 255
   end
 
   add_index "sent_reminders", ["recipients", "subject", "trigger_value", "expires_at"], name: "index_contacts_on_recipients_subject_trigger_value_expires_at", using: :btree
@@ -1277,12 +1281,12 @@ ActiveRecord::Schema.define(version: 20180814074956) do
     t.string   "ext_customer_ref",          limit: 255
     t.text     "status",                    limit: 65535, null: false
     t.integer  "ca_id",                     limit: 4
+    t.string   "type",                      limit: 255
     t.datetime "revoked_at"
     t.string   "type",                      limit: 255
   end
 
   add_index "signed_certificates", ["ca_id"], name: "fk_rails_d21ca532b7", using: :btree
-  add_index "signed_certificates", ["ca_id"], name: "index_signed_certificates_on_ca_id", using: :btree
   add_index "signed_certificates", ["common_name"], name: "index_signed_certificates_on_common_name", using: :btree
   add_index "signed_certificates", ["csr_id"], name: "index_signed_certificates_on_csr_id", using: :btree
   add_index "signed_certificates", ["strength"], name: "index_signed_certificates_on_strength", using: :btree

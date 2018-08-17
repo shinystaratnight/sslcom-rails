@@ -17,11 +17,14 @@
 .note_group_container
   %h3
     \#{@title}
-  =form_tag register_notification_group_notification_groups_path(params[:ssl_slug], @notification_group), :method => :post do
+  =form_tag register_notification_group_notification_groups_path(params[:ssl_slug], @notification_group), :class => 'ng_form', :method => :post do
+    =hidden_field_tag "notification_group_id", @notification_group ? @notification_group.id : ''
     #stylized.default_form
       .subheading Friendly Name
       .group_block.clearfix
         =text_field_tag "friendly_name", @notification_group ? @notification_group.friendly_name : ''
+        .alert-warning.hidden
+          * This Friendly Name already exist
       .subheading Monitor These Domains
       .group_block.clearfix
         #subjects-container
@@ -55,6 +58,11 @@
           Port :
         .block_body
           =number_field_tag "scan_port", @notification_group ? @notification_group.scan_port : '443', :class=>'port_number'
+      .group_block.clearfix
+        .block_label
+          =check_box_tag :notify_all, true, @notification_group ? @notification_group.notify_all : false
+        .block_body
+          %span Only notify me of expiring ssl/tls certificates ?
       .subheading Schedule
       .group_block
         .schedule_type_block.clearfix
@@ -159,4 +167,9 @@
                   =select_tag :minute_custom_list, options_for_select(@schedule_minutes, selected: slt_schedule_minutes),
                     multiple: true, data: {placeholder: "click here to list available minutes to scan."}
     #button_container
-      #next_submit=image_submit_tag "bl_submit_button.gif", class: 'edit_setting_btn'
+      -##scan_now=image_submit_tag "bl_submit_button.gif", class: 'scan_notification_group'
+      -##prev_next_submit=image_submit_tag "bl_submit_button.gif", class: 'save_notification_group'
+      #notification_group_auto_adjust.clearfix
+        -if @notification_group
+          =button_tag "Scan now", type: 'button', class: 'button_blue button_index scan_notification_group'
+        =button_tag "Save", class: 'button_blue button_index save_notification_group'

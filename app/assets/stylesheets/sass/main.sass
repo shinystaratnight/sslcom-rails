@@ -4070,9 +4070,20 @@ label.error
       font-size: 1.4em
       text-align: right
       padding-top: 5px
+
+      > input[type="checkbox"]
+        float: right
+        height: 30px
+        margin-right: 0px
+
     > .block_body
       float: left
       padding-left: 3px
+
+      > span
+        font-size: 1.4em
+        line-height: 38px
+        padding-left: 10px
 
     label
       width: 13.8em
@@ -4147,6 +4158,14 @@ label.error
 
     &.port_number
       width: 60px
+
+  .group_block .alert-warning
+    padding-top: 10px
+    color: red
+    font-size: 13px
+  .group_block .warning-field
+    border-color: red
+    box-shadow: 0px 0px 5px red
 
 input#upload_files, input#start_over, input#validate_domains
   margin: 1em
@@ -4445,7 +4464,7 @@ table#line_items_receipt
       float: right
 
   #auto_adjust, #prev_next_submit, #next_submit, #click_to_load,  #shop_more_checkout,
-  #add_items, #skip_button
+  #add_items, #skip_button, #notification_group_auto_adjust
     margin: 2.5em auto 3em
     width: 340px
 
@@ -4464,6 +4483,15 @@ table#line_items_receipt
 
   #click_to_load
     width: 238px
+
+  #notification_group_auto_adjust
+    text-align: center
+    button
+      margin: 0 1em
+      float: inherit
+      display: inline-block
+      padding: 8px 15px
+
 
 /* ----------- What is security code----------- */
 

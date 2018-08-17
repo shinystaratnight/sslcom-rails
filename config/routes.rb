@@ -282,6 +282,8 @@ SslCom::Application.routes.draw do
         post :register_notification_group
         post :remove_groups
         post :scan_groups
+        post :scan_individual_group
+        post :check_duplicate
       end
     end
 

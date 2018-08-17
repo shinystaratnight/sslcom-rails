@@ -20,12 +20,7 @@ class NotificationGroup < ActiveRecord::Base
   preference  :notification_group_triggers, :string
 
   validates :friendly_name, allow_nil: false, allow_blank: false,
-            length: { minimum: 1, maximum: 255 },
-            uniqueness: {
-                case_sensitive: true,
-                scope: :ssl_account_id,
-                message: 'Friendly name already exists for this user or team.'
-            }
+            length: { minimum: 1, maximum: 255 }
 
   before_create do |ng|
     ng.ref = 'ng-' + SecureRandom.hex(1) + Time.now.to_i.to_s(32)
@@ -285,19 +280,21 @@ class NotificationGroup < ActiveRecord::Base
 
     domains.uniq.each do |domain|
       unless except_certs.(domain, except_list)
-        scan_status = 'ok'
+        scan_status = 'expiring'
         ssl_domain_connect(domain.gsub("*.", "www."), scan_port)
 
         if ssl_client
           cert = domain_certificate
-          expiration_date = cert.not_after unless cert.blank?
+          # expiration_date = cert.not_after unless cert.blank?
+          expiration_date = cert.blank? ? nil : cert.not_after
 
           if expiration_date
             exp_dates.each_with_index do |ed, i|
               if (i < exp_dates.count - 1) &&
                   (expiration_date < ed.to_i.days.from_now) &&
-                  (expiration_date >= exp_dates[i + 1].days.from_now)
-                results << Struct::Notification.new(ed, exp_dates[i + 1], domain, expiration_date)
+                  (expiration_date >= exp_dates[i + 1].days.from_now) &&
+                  (expiration_date >= DateTime.now.to_date)
+                results << Struct::Notification.new(ed, exp_dates[i + 1], domain, expiration_date, scan_status)
               end
             end
           end
@@ -310,10 +307,24 @@ class NotificationGroup < ActiveRecord::Base
             scan_status = 'name_mismatch'
           end
 
-          scanned_cert = ScannedCertificate.create body: cert.to_s, decoded: cert.to_text
+          # scanned_cert = ScannedCertificate.create body: cert.to_s, decoded: cert.to_text
+          scanned_cert = ScannedCertificate.create_with(
+              body: cert.to_s,
+              decoded:cert.to_text
+          ).find_or_create_by(
+              serial: cert.serial.to_s
+          )
+
+          if notify_all.nil? && scan_status != 'expiring'
+            results << Struct::Notification.new(nil, nil, domain, expiration_date, scan_status)
+          end
         else
           scan_status = 'not_found'
           scanned_cert = nil
+
+          if notify_all.nil?
+            results << Struct::Notification.new(nil, nil, domain, nil, scan_status)
+          end
         end
 
         scan_logs.build(
@@ -328,7 +339,7 @@ class NotificationGroup < ActiveRecord::Base
       results.each do |result|
         logger.info "Sending reminder"
         d = [",," + contacts.uniq.join(";")]
-        body = Reminder.domain_digest_notice(d)
+        body = Reminder.domain_digest_notice(d, result.reminder_type)
         body.deliver unless body.to.empty?
 
         logger.info "create SentReminder"
@@ -336,7 +347,8 @@ class NotificationGroup < ActiveRecord::Base
                             expires_at: result.expire,
                             subject: result.domain,
                             body: body,
-                            recipients: contacts.uniq.join(";"))
+                            recipients: contacts.uniq.join(";"),
+                            reminder_type: result.reminder_type)
       end
     end
   end
