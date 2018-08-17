@@ -7437,12 +7437,20 @@ span.notifications-teams
     margin-bottom: 0.5rem
     height: 25px
 
+    #btn-folder-new-cert
+      border-radius: 3px
+      font-size: 1.3rem
+      float: right
+      letter-spacing: 0.5px
+      margin-right: 1rem
+      padding: 7px 4px 3px 4px
+
     span
       float: right
       color: white
       padding: 0.66rem
       background-color: grey
-      margin-right: -0.5rem
+      margin-right: -0.6rem
       border-top-left-radius: 3px
       border-bottom-left-radius: 3px
 
@@ -7459,7 +7467,8 @@ span.notifications-teams
       border-top-left-radius: 0
       border-bottom-left-radius: 0
 
-    #btn-folder-reset-sys
+    #btn-folder-reset-sys,
+    #btn-folder-new-cert
       border: 1px solid grey
       color: grey
       float: right
@@ -7496,7 +7505,8 @@ span.notifications-teams
 /*
  * Folders
  */
-#folder-scan
+#folder-scan,
+#folder-scan-co
   border: 1px solid darkgrey
   border-radius: 3px
   font-size: 1.2rem
@@ -7516,6 +7526,14 @@ span.notifications-teams
 #co-folders-container
   margin: 0.8em 0 0.5em
   
+  .folder-co-count
+    background-color: $base_green
+    border-radius: 8px
+    color: white
+    font-weight: 600
+    font-size: 0.9rem
+    padding: 2px 5px
+
   #folder-tree-fixed
     max-height: 250px
     display: flex
