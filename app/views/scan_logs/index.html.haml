@@ -1,0 +1,43 @@
+-content_for :title, "Scan History Logs"
+
+= render :partial => 'index_scripts'
+
+#search_bar.hidden
+  =form_tag :notification_group_scan_logs, :id=>'hidden_form', :method=>:get do
+    =hidden_field_tag :per_page, @per_page
+
+#notification_group_scan_his_logs
+  =form_tag :remove_groups_notification_groups, :id=> 'notification_group_list', :method => :post do
+    %table(cellspacing="0")
+      -if @scan_history_list.size > 0
+        %tfoot
+          %tr
+            %td.wrap_number_rows
+              =select_tag :number_rows,
+                      options_for_select([[5, 5], [10, 10], [20, 20], [50, 50], [100, 100]], @per_page),
+                      :class=>'per_page'
+            %td(colspan='2')=will_paginate @scan_history_list
+      %caption
+        Notification Groups Scan History Logs
+        =will_paginate @scan_history_list
+      %br
+      %tr.heading_row
+        -if @scan_history_list.size > 0
+          %td(scope="col") Domain Name
+          %td(scope="col") Scan Status
+          %td(scope="col") Created At
+        -else
+          %td(scope="col" colspan='3') Domain Name
+      -if @scan_history_list.size > 0
+        -@scan_history_list.each do |scan|
+          %tr
+            %td
+              =scan.domain_name
+            %td
+              =scan.scan_status
+            %td
+              =scan.created_at.strftime("%b %d %Y, %H:%M")
+      -else
+        %tr
+          %td(colspan='3')
+            There are no Scan Logs
