@@ -424,8 +424,8 @@ class CertificateOrder < ActiveRecord::Base
 
   after_create do |co|
     if co.ssl_account
-      folder=Folder.find_by(name: 'default', default: true, ssl_account_id: co.ssl_account.id)
-      co.update_column :folder_id, folder.id
+      folder=Folder.find_by(default: true, ssl_account_id: co.ssl_account.id)
+      co.update_column(:folder_id, folder.id) unless folder.blank?
     end
   end
 
