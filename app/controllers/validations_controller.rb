@@ -44,80 +44,124 @@ class ValidationsController < ApplicationController
           format.html { redirect_to certificate_order_path({id: @certificate_order.ref}.merge!(checkout))}
         end
       else
-        mdc_validation = ComodoApi.mdc_status(@certificate_order)
-        @ds = mdc_validation.domain_status
         @all_validated = true
         @validated_domains = ''
         validated_domain_arry = []
 
-        if @ds
-          # tmpCnt = 0
-          # before = DateTime.now
-          @ds.each do |key, value|
-            # if value['status'].casecmp('validated') != 0
-            #   if tmpCnt < 199
-            #     tmpCnt += 1
-            #     validated_domain_arry << key
-            #     cache = Rails.cache.read(params[:certificate_order_id] + '_' + key)
-            #
-            #     if cache.blank?
-            #       cn = @certificate_order.certificate_content.certificate_names.find_by_name(key)
-            #       dcv = cn.blank? ? nil : cn.domain_control_validations.last
-            #       value['attempted_on'] = dcv.blank? ? 'n/a' : dcv.created_at
-            #
-            #       Rails.cache.write(params[:certificate_order_id] + '_' + key, value['attempted_on'])
-            #     else
-            #       value['attempted_on'] = cache
-            #     end
-            #   else
-            #     @all_validated = false if @all_validated
-            #   end
-            # else
-            #   validated_domain_arry << key
-            #   cache = Rails.cache.read(params[:certificate_order_id] + '_' + key)
-            #
-            #   if cache.blank?
-            #     cn = @certificate_order.certificate_content.certificate_names.find_by_name(key)
-            #     dcv = cn.blank? ? nil : cn.domain_control_validations.last
-            #     value['attempted_on'] = dcv.blank? ? 'n/a' : dcv.created_at
-            #
-            #     Rails.cache.write(params[:certificate_order_id] + '_' + key, value['attempted_on'])
-            #   else
-            #     value['attempted_on'] = cache
-            #   end
-            # end
+        unless @certificate_order.certificate_content.ca_id.nil?
+          cnames = @certificate_order.certificate_content.certificate_names
+          team_cnames = current_user.ssl_account.certificate_names
 
-            if value['status'].casecmp('validated') != 0
-              @all_validated = false if @all_validated
-            else
-              validated_domain_arry << key
-              ext_order_number = @certificate_order.external_order_number || 'eon'
-              cache = nil # Rails.cache.read(params[:certificate_order_id] + ':' + ext_order_number + ':' + key)
-
-              if cache.blank?
-                cn = @certificate_order.certificate_content.certificate_names.find_by_name(key)
-                dcv = cn.blank? ? nil : cn.domain_control_validations.last
-                value['attempted_on'] = dcv.blank? ? 'n/a' : dcv.created_at
-
-                Rails.cache.write(params[:certificate_order_id] + ':' + ext_order_number + ':' + key, value['attempted_on'])
-              else
-                value['attempted_on'] = cache
+          # Team level validation check
+          cnames.each do |cn|
+            team_level_validated = false
+            team_cnames.each do |team_cn|
+              if team_cn.name == cn.name
+                team_dcv = team_cn.domain_control_validations.last
+                if team_dcv && team_dcv.identifier_found
+                  team_level_validated = true
+                end
+                break if team_level_validated
               end
             end
+            unless team_level_validated
+              @all_validated = false if @all_validated
+            else
+              validated_domain_arry << cn.name
+            end
           end
-          # after = DateTime.now
-          # subtract = after.to_i - before.to_i
-
           @validated_domains = validated_domain_arry.join(',')
+        else
+          mdc_validation = ComodoApi.mdc_status(@certificate_order)
+          @ds = mdc_validation.domain_status
+          if @ds
+            # tmpCnt = 0
+            # before = DateTime.now
+            @ds.each do |key, value|
+              # if value['status'].casecmp('validated') != 0
+              #   if tmpCnt < 199
+              #     tmpCnt += 1
+              #     validated_domain_arry << key
+              #     cache = Rails.cache.read(params[:certificate_order_id] + '_' + key)
+              #
+              #     if cache.blank?
+              #       cn = @certificate_order.certificate_content.certificate_names.find_by_name(key)
+              #       dcv = cn.blank? ? nil : cn.domain_control_validations.last
+              #       value['attempted_on'] = dcv.blank? ? 'n/a' : dcv.created_at
+              #
+              #       Rails.cache.write(params[:certificate_order_id] + '_' + key, value['attempted_on'])
+              #     else
+              #       value['attempted_on'] = cache
+              #     end
+              #   else
+              #     @all_validated = false if @all_validated
+              #   end
+              # else
+              #   validated_domain_arry << key
+              #   cache = Rails.cache.read(params[:certificate_order_id] + '_' + key)
+              #
+              #   if cache.blank?
+              #     cn = @certificate_order.certificate_content.certificate_names.find_by_name(key)
+              #     dcv = cn.blank? ? nil : cn.domain_control_validations.last
+              #     value['attempted_on'] = dcv.blank? ? 'n/a' : dcv.created_at
+              #
+              #     Rails.cache.write(params[:certificate_order_id] + '_' + key, value['attempted_on'])
+              #   else
+              #     value['attempted_on'] = cache
+              #   end
+              # end
 
-          # if all_validated
-          #   url=certificate_order_path(@ssl_slug, @certificate_order)
-          # end
+              if value['status'].casecmp('validated') != 0
+                @all_validated = false if @all_validated
+              else
+                validated_domain_arry << key
+                ext_order_number = @certificate_order.external_order_number || 'eon'
+                cache = nil # Rails.cache.read(params[:certificate_order_id] + ':' + ext_order_number + ':' + key)
+
+                if cache.blank?
+                  cn = @certificate_order.certificate_content.certificate_names.find_by_name(key)
+                  dcv = cn.blank? ? nil : cn.domain_control_validations.last
+                  value['attempted_on'] = dcv.blank? ? 'n/a' : dcv.created_at
+
+                  Rails.cache.write(params[:certificate_order_id] + ':' + ext_order_number + ':' + key, value['attempted_on'])
+                else
+                  value['attempted_on'] = cache
+                end
+              end
+            end
+            # after = DateTime.now
+            # subtract = after.to_i - before.to_i
+
+            @validated_domains = validated_domain_arry.join(',')
+
+            # if all_validated
+            #   url=certificate_order_path(@ssl_slug, @certificate_order)
+            # end
+          end
         end
       end
     end
-
     redirect_to url and return unless url.blank?
+  end
+
+  def dcv_validate
+    @certificate_order = CertificateOrder.find_by_ref(params['certificate_order_id'])
+    cc = @certificate_order.certificate_content
+    if(params['authenticity_token'])
+      identifier = params['validate_code']
+      cnames = cc.certificate_names
+      all_validated = true
+      cnames.each do |cn|
+        dcv = cn.domain_control_validations.last
+        if dcv.identifier == identifier
+          dcv.update_attribute(:identifier_found, true)
+        end
+        all_validated = false unless dcv.identifier_found
+      end
+      if all_validated
+        cc.validate! unless cc.validated?
+      end
+    end
   end
 
   def remove_domains
@@ -198,15 +242,53 @@ class ValidationsController < ApplicationController
 
       if co
         cn = co.certificate_content.certificate_names.find_by_name(params['domain_name'])
-        ds = params['domain_status']
 
-        domain_status = params['is_ucc'] == 'true' ? (ds && ds[cn.name] ? ds[cn.name]['status'] : nil) : (ds && ds.to_a[0] && ds.to_a[0][1] ? ds.to_a[0][1]['status'] : nil)
-        domain_method = params['is_ucc'] == 'true' ? (ds && ds[cn.name] ? ds[cn.name]['method'] : nil) : (ds && ds.to_a[0] && ds.to_a[0][1] ? ds.to_a[0][1]['method'] : nil)
+        if co.certificate_content.ca_id.nil?
+          ds = params['domain_status']
 
-        if co.external_order_number
-          dcv = cn.domain_control_validations.last
-          if params['is_ucc'] == 'true'
-            if ds && ds[cn.name]
+          domain_status = params['is_ucc'] == 'true' ? (ds && ds[cn.name] ? ds[cn.name]['status'] : nil) : (ds && ds.to_a[0] && ds.to_a[0][1] ? ds.to_a[0][1]['status'] : nil)
+          domain_method = params['is_ucc'] == 'true' ? (ds && ds[cn.name] ? ds[cn.name]['method'] : nil) : (ds && ds.to_a[0] && ds.to_a[0][1] ? ds.to_a[0][1]['method'] : nil)
+
+          if co.external_order_number
+            dcv = cn.domain_control_validations.last
+            if params['is_ucc'] == 'true'
+              if ds && ds[cn.name]
+                optionsObj = {}
+                addresses = params['domain_count'].to_i > Validation::COMODO_EMAIL_LOOKUP_THRESHHOLD ?
+                                DomainControlValidation.email_address_choices(cn.name) :
+                                ComodoApi.domain_control_email_choices(cn.name).email_address_choices
+                addresses.delete("none")
+
+                viaEmail = {}
+                viaCSR = {}
+
+                addresses.each do |addr|
+                  viaEmail[addr] = addr
+                end
+
+                viaCSR['http_csr_hash'] = 'CSR hash text file using http://'
+                viaCSR['https_csr_hash'] = 'CSR hash text file using https://'
+                viaCSR['cname_csr_hash'] = 'Add cname entry'
+
+                optionsObj['Validation via email'] = viaEmail
+                optionsObj['Validation via csr hash'] = viaCSR
+
+                returnObj = {
+                    'tr_info' => {
+                        'options' => optionsObj,
+                        'slt_option' => domain_method ?
+                                            domain_method.downcase.gsub('pre-validated %28', '').gsub('%29', '').gsub(' ', '_') : nil,
+                        'pretest' => 'n/a',
+                        'attempt' => domain_method ? domain_method.downcase.gsub('%28', ' ').gsub('%29', ' ') : '',
+                        'attempted_on' => dcv.blank? ? 'n/a' : dcv.created_at,
+                        'status' => domain_status ? domain_status.downcase : '',
+                        'caa_check' => domain_status && domain_status.downcase == 'validated' ? 'passed' :
+                                           (CaaCheck.pass?(params[:certificate_order_id], cn.name) ? 'passed' : 'failed')
+                    },
+                    'tr_instruction' => false
+                }
+              end
+            else
               optionsObj = {}
               addresses = params['domain_count'].to_i > Validation::COMODO_EMAIL_LOOKUP_THRESHHOLD ?
                               DomainControlValidation.email_address_choices(cn.name) :
@@ -231,9 +313,9 @@ class ValidationsController < ApplicationController
                   'tr_info' => {
                       'options' => optionsObj,
                       'slt_option' => domain_method ?
-                                          domain_method.downcase.gsub('pre-validated %28', '').gsub('%29', '').gsub(' ', '_') : nil,
+                                          domain_method.downcase.gsub('pre-validated %28', '').gsub('%29', '').gsub(' ', '_') : dcv.try(:dcv_method),
                       'pretest' => 'n/a',
-                      'attempt' => domain_method ? domain_method.downcase.gsub('%28', ' ').gsub('%29', ' ') : '',
+                      'attempt' => domain_method ? domain_method.downcase.gsub('%28', '').gsub('%29', '') : '',
                       'attempted_on' => dcv.blank? ? 'n/a' : dcv.created_at,
                       'status' => domain_status ? domain_status.downcase : '',
                       'caa_check' => domain_status && domain_status.downcase == 'validated' ? 'passed' :
@@ -244,10 +326,7 @@ class ValidationsController < ApplicationController
             end
           else
             optionsObj = {}
-            addresses = params['domain_count'].to_i > Validation::COMODO_EMAIL_LOOKUP_THRESHHOLD ?
-                            DomainControlValidation.email_address_choices(cn.name) :
-                            ComodoApi.domain_control_email_choices(cn.name).email_address_choices
-            addresses.delete("none")
+            addresses = DomainControlValidation.email_address_choices(cn.name)
 
             viaEmail = {}
             viaCSR = {}
@@ -263,17 +342,17 @@ class ValidationsController < ApplicationController
             optionsObj['Validation via email'] = viaEmail
             optionsObj['Validation via csr hash'] = viaCSR
 
+            le = cn.domain_control_validations.last_emailed
+
             returnObj = {
                 'tr_info' => {
                     'options' => optionsObj,
-                    'slt_option' => domain_method ?
-                                        domain_method.downcase.gsub('pre-validated %28', '').gsub('%29', '').gsub(' ', '_') : dcv.try(:dcv_method),
+                    'slt_option' => le.blank? ? nil : le.email_address,
                     'pretest' => 'n/a',
-                    'attempt' => domain_method ? domain_method.downcase.gsub('%28', '').gsub('%29', '') : '',
-                    'attempted_on' => dcv.blank? ? 'n/a' : dcv.created_at,
-                    'status' => domain_status ? domain_status.downcase : '',
-                    'caa_check' => domain_status && domain_status.downcase == 'validated' ? 'passed' :
-                                       (CaaCheck.pass?(params[:certificate_order_id], cn.name) ? 'passed' : 'failed')
+                    'attempt' => 'validation not performed yet',
+                    'attempted_on' => 'n/a',
+                    'status' => 'waiting',
+                    'caa_check' => CaaCheck.pass?(params[:certificate_order_id], cn.name) ? 'passed' : 'failed'
                 },
                 'tr_instruction' => false
             }

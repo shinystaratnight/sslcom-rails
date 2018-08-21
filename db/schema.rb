@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180814074956) do
+ActiveRecord::Schema.define(version: 20180816141802) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        limit: 255
@@ -777,6 +777,7 @@ ActiveRecord::Schema.define(version: 20180814074956) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "scan_port",      limit: 255, default: "443"
+    t.boolean  "notify_all",                 default: true
   end
 
   add_index "notification_groups", ["ssl_account_id", "ref"], name: "index_notification_groups_on_ssl_account_id_and_ref", using: :btree
@@ -976,7 +977,8 @@ ActiveRecord::Schema.define(version: 20180814074956) do
   add_index "preferences", ["group_id", "group_type", "name", "owner_id", "owner_type"], name: "index_preferences_on_owner_and_name_and_preference", unique: true, using: :btree
   add_index "preferences", ["id", "name", "owner_id", "owner_type", "value"], name: "index_preferences_on_owner_and_name_and_value", using: :btree
   add_index "preferences", ["id", "name", "value"], name: "index_preferences_on_name_and_value", using: :btree
-  add_index "preferences", ["owner_id", "owner_type"], name: "index_preferences_on_owner_id_and_owner_type", using: :btree
+  add_index "preferences", ["id", "owner_id", "owner_type"], name: "index_preferences_on_id_and_owner_id_and_owner_type", unique: true, using: :btree
+  add_index "preferences", ["id", "owner_id", "owner_type"], name: "index_preferences_on_owner_id_and_owner_type", unique: true, using: :btree
 
   create_table "product_orders", force: :cascade do |t|
     t.integer  "ssl_account_id",    limit: 4
@@ -1193,6 +1195,7 @@ ActiveRecord::Schema.define(version: 20180814074956) do
     t.text     "decoded",    limit: 65535
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "serial",     limit: 255
   end
 
   create_table "schedules", force: :cascade do |t|
@@ -1214,6 +1217,7 @@ ActiveRecord::Schema.define(version: 20180814074956) do
     t.datetime "expires_at"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "reminder_type",         limit: 255
   end
 
   add_index "sent_reminders", ["recipients", "subject", "trigger_value", "expires_at"], name: "index_contacts_on_recipients_subject_trigger_value_expires_at", using: :btree
@@ -1282,7 +1286,6 @@ ActiveRecord::Schema.define(version: 20180814074956) do
   end
 
   add_index "signed_certificates", ["ca_id"], name: "fk_rails_d21ca532b7", using: :btree
-  add_index "signed_certificates", ["ca_id"], name: "index_signed_certificates_on_ca_id", using: :btree
   add_index "signed_certificates", ["common_name"], name: "index_signed_certificates_on_common_name", using: :btree
   add_index "signed_certificates", ["csr_id"], name: "index_signed_certificates_on_csr_id", using: :btree
   add_index "signed_certificates", ["strength"], name: "index_signed_certificates_on_strength", using: :btree

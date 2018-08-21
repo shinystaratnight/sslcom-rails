@@ -100,6 +100,39 @@ class OrderNotifier < ActionMailer::Base
 
   end
 
+  def dcv_email_send(certificate_order, email_address, identifier, domain_list, domain_id = nil, ssl_slug = '', dcv_type = 'cert')
+    if dcv_type == 'cert'
+      @certificate_order = certificate_order
+      params      = {certificate_order_id: @certificate_order.ref}
+      @validation_url = dcv_validate_certificate_order_validation_url(params)
+      @contact = email_address
+      @domains = domain_list
+      @identifier = identifier
+      mail subject: "Domain Control Validation for: #{certificate_order.subject} (Order ##{certificate_order.ref})",
+           from:  Settings.from_email.no_reply,
+           to:    @contact
+    elsif dcv_type == 'team'
+      params      = {ssl_slug: ssl_slug, id: domain_id}
+      @validation_url = dcv_validate_domain_url(params)
+      @contact = email_address
+      @domains = domain_list
+      @identifier = identifier
+      mail subject: "Domain Control Validation for: #{domain_list[0]}",
+           from:  Settings.from_email.no_reply,
+           to:    @contact
+    else
+      params      = {ssl_slug: ssl_slug}
+      @validation_url = dcv_all_validate_domains_url(params)
+      @contact = email_address
+      @domains = domain_list
+      @identifier = identifier
+      mail subject: "Domain Control Validation for: #{ssl_slug}",
+           from:  Settings.from_email.no_reply,
+           to:    @contact
+    end
+
+  end
+
   def processed_certificate_order(contact, certificate_order, file_path=nil, signed_certificate=nil)
     (attachments[certificate_order.friendly_common_name+'.zip'] = File.read(file_path)) unless file_path.blank?
     setup(contact, certificate_order)

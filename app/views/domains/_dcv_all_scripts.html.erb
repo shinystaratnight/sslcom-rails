@@ -1,0 +1,19 @@
+<script type="text/javascript">
+  jQuery.noConflict();
+  jQuery(function ($) {
+    $(document).ready(function () {
+      $("select[name='dcv_address[]']").on('change', function () {
+        if($(this).val().indexOf("@") == -1){
+          $(this).closest("tr").next().find(".dcv_instruction").html("Please select email address.");
+        } else {
+          $(this).closest("tr").next().find(".dcv_instruction").html("Validation email will be emailed to " + $(this).val() + ". Please follow those instructions.");
+        }
+      });
+      $(".btn_remove_domain").on('click', function () {
+        console.log('here');
+        $(this).closest("tr").next().remove();
+        $(this).closest("tr").remove();
+      });
+    });
+  });
+</script>

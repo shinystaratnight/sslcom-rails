@@ -17,4 +17,9 @@ class WhoisLookup < ActiveRecord::Base
     self.raw.scan(/\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}\b/im).uniq unless
       self.raw.blank?
   end
+
+  def self.email_addresses(raw)
+    raw.scan(/\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}\b/im).uniq unless
+        raw.blank?
+  end
 end

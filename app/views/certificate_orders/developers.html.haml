@@ -69,8 +69,24 @@
           %td 350
         %tr
           %td=radio_button_tag :product, 360
-          %td EV Code Signing (* up to 3 years)
+          %td EV Code Signing
           %td 360
+        %tr
+          %td=radio_button_tag :product, 300
+          %td Personal Basic (SMIME/Client)
+          %td 300
+        %tr
+          %td=radio_button_tag :product, 301
+          %td Personal Pro (SMIME/Client)
+          %td 301
+        %tr
+          %td=radio_button_tag :product, 302
+          %td Personal Business (SMIME/Client)
+          %td 302
+        %tr
+          %td=radio_button_tag :product, 303
+          %td Personal Enterprise (SMIME/Client)
+          %td 303
       %table#at_a_glance_header{style: "float: none"}
         %thead
           %td(colspan="2" )
@@ -85,10 +101,6 @@
           %td=radio_button_tag :period, 730
           %td 730
           %td 730
-        %tr
-          %td=radio_button_tag :period, 1095
-          %td 1095 (not valid for EV SSL/TLS)
-          %td 1095 (not valid for EV SSL/TLS)
       =submit_tag "Create Test Order"
   %h3 2) API Call Method
   %p

@@ -511,7 +511,7 @@ class SslAccount < ActiveRecord::Base
   def is_validated?(domain)
     validated_domains.include?(domain)
   end
-  
+
   def get_invoice_pmt_description
     billing_monthly? ? Order::MI_PAYMENT : Order::DI_PAYMENT
   end
