@@ -16,9 +16,9 @@
     -permitted_to? :index, :certificate_orders do
       %li(id="#{(is_on?("certificate_orders",current_slug) && !@prev) ? 't-intro' : 'manage_certificate_orders' }")
         =link_to "Orders", is_sandbox? ? search_certificate_orders_path(search:'is_test:true') : certificate_orders_path(slug_params)
-    -permitted_to? :index, :domains do
-      %li(id="#{(is_on?("domains",current_slug) && !@prev) ? 't-intro' : 'manage_domains' }")
-        =link_to "Domains", domains_path(slug_params)
+    -#-permitted_to? :index, :domains do
+    -#  %li(id="#{(is_on?("domains",current_slug) && !@prev) ? 't-intro' : 'manage_domains' }")
+    -#    =link_to "Domains", domains_path(slug_params)
     -if current_user.get_all_approved_accounts.length > 0
       %li(id="#{current_page?(teams_user_path(current_user)) ? 't-intro' : 'manage_teams'}")
         =link_to "Teams(#{current_user.get_all_approved_accounts.count})", teams_user_path(current_user)
@@ -32,5 +32,5 @@
         =link_to "Settings", edit_settings_ssl_account_path(slug_params)
     %li(id="#{is_on?("cdns",current_slug) ? 't-intro' : 'manage_cdns'}")
       =link_to "CDN", cdns_path(slug_params)
-    %li(id="#{is_on?("notification_groups", current_slug) ? 't-intro' : 'manage_domains'}")
-      =link_to "Monitoring", notification_groups_path(slug_params)
+    -#%li(id="#{is_on?("notification_groups", current_slug) ? 't-intro' : 'manage_domains'}")
+    -#  =link_to "Monitoring", notification_groups_path(slug_params)
