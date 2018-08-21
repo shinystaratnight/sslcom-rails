@@ -25,7 +25,7 @@ authorization do
     has_permission_on :authorization_rules, :to => :read
     has_permission_on :site_seals, :validation_rules, :certificate_orders,
       :to => :sysadmin_manage, except: :delete
-    has_permission_on :affiliates, :certificate_orders, :cdns, :csrs, :orders, :signed_certificates, :surls, :physical_tokens,
+    has_permission_on :affiliates, :certificate_orders, :domains, :cdns, :csrs, :orders, :signed_certificates, :surls, :physical_tokens,
       :to => :manage
     has_permission_on :managed_users, :ssl_accounts, :validations, :validation_histories,
       :to => :sysadmin_manage
@@ -346,7 +346,7 @@ authorization do
     # Validations
     #
     # has_permission_on :validations, :to => [:create]
-    has_permission_on :validations, :to => [:read, :update, :create] do
+    has_permission_on :validations, :to => [:read, :update, :create, :dcv_validate] do
       if_attribute :users => contains {user}
     end
     #
@@ -470,6 +470,10 @@ authorization do
     # Folders
     #
     has_permission_on :folders, to: [:children, :index]
+    #
+    # Domains
+    #
+    has_permission_on :domains, to: [:index]
   end
 
   # ============================================================================

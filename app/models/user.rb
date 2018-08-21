@@ -35,6 +35,7 @@ class User < ActiveRecord::Base
   preference  :cdn_row_count, :string, :default=>"10"
   preference  :user_row_count, :string, :default => "10"
   preference  :note_group_row_count, :string, :default => "10"
+  preference  :scan_log_row_count, :string, :default => "10"
 
   #will_paginate
   cattr_accessor :per_page

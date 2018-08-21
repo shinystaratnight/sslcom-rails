@@ -91,9 +91,7 @@ class SignedCertificate < ActiveRecord::Base
     end
   end
 
-  scope :shadow, -> {where{ca_id >> [Ca::ISSUER[:sslcom_shadow]]}}
-
-  scope :live, -> {where{ca_id == nil}}
+  scope :live, -> {where{type == nil}}
 
   scope :most_recent_expiring, lambda{|start, finish|
     find_by_sql("select * from signed_certificates as T where expiration_date between '#{start}' AND '#{finish}' AND created_at = ( select max(created_at) from signed_certificates where common_name like T.common_name )")}
@@ -352,11 +350,12 @@ class SignedCertificate < ActiveRecord::Base
     end
     # for shadow certs, only send the certificate
     begin
-      if Settings.shadow_certificate_recipient
-        co.apply_for_certificate(ca_id: Ca::ISSUER[:sslcom_shadow], ca: Ca::MANAGEMENT_CA)
+      if certificate_order.certificate.cas.shadow.each do |shadow_ca|
+        co.apply_for_certificate(mapping: shadow_ca)
         OrderNotifier.processed_certificate_order(Settings.shadow_certificate_recipient, co, nil,
                                                   co.shadow_certificates.last).deliver
       end
+    end
     rescue Exception=>e
       logger.error e.message
       e.backtrace.each { |line| logger.error line }

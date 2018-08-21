@@ -23,6 +23,13 @@ class Reminder < ActionMailer::Base
     mail(:to => @to, :subject => subject)
   end
 
+  def domain_digest_notice(d, reminder_type)
+    preparing_recipients(d)
+    subject = "SSL.com reminder - domain digest reminder"
+    @reminder_type = reminder_type
+    mail(:to => @to, :subject => subject)
+  end
+
   def digest_notify(d)
     preparing_recipients(d)
     @e_certs = d[1].uniq

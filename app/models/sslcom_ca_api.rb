@@ -27,7 +27,9 @@ class SslcomCaApi
 
   # end entity profile details what will be in the certificate
   def self.end_entity_profile(options)
-    if options[:cc].certificate.is_evcs?
+    if options[:mapping]
+      options[:mapping].end_entity
+    elsif options[:cc].certificate.is_evcs?
         'EV_CS_CERT_EE'
     elsif options[:cc].certificate.is_cs?
         'CS_CERT_EE'
@@ -41,7 +43,9 @@ class SslcomCaApi
   end
 
   def self.certificate_profile(options)
-    if options[:cc].certificate.is_evcs?
+    if options[:mapping]
+      options[:mapping].profile_name
+    elsif options[:cc].certificate.is_evcs?
       "EV_RSA_CS_CERT"
     elsif options[:cc].certificate.is_cs?
       "RSA_CS_CERT"
@@ -51,7 +55,9 @@ class SslcomCaApi
   end
 
   def self.ca_name(options)
-    if options[:ca]==Ca::CERTLOCK_CA
+    if options[:mapping]
+      options[:mapping].ca_name
+    elsif options[:ca]==Ca::CERTLOCK_CA
       case options[:cc].certificate.product
         when /^ev/
           sig_alg_parameter(options[:cc].csr) =~ /rsa/i ? 'CertLock-SubCA-EV-SSL-RSA-4096' :
@@ -80,24 +86,24 @@ class SslcomCaApi
 
   def self.subject_dn(options={})
     dn=["CN=#{options[:cn]}"]
-    dn << "O=#{options[:o]}" unless options[:o].blank?
     dn << "OU=#{options[:ou]}" unless options[:ou].blank?
     dn << "OU=Key Hash #{options[:cc].csr.sha2_hash}"
-    dn << "C=#{options[:country]}" unless options[:country].blank?
-    dn << "L=#{options[:city]}" unless options[:city].blank?
-    dn << "ST=#{options[:state]}" unless options[:state].blank?
-    dn << "postalCode=#{options[:postal_code]}" unless options[:postal_code].blank?
-    dn << "postalAddress=#{options[:postal_address]}" unless options[:postal_address].blank?
-    dn << "streetAddress=#{options[:street_address]}" unless options[:street_address].blank?
-    dn << "serialNumber=#{options[:serial_number]}" unless options[:serial_number].blank?
-    dn << "2.5.4.15=#{options[:business_category]}" unless options[:business_category].blank?
-    dn << "1.3.6.1.4.1.311.60.2.1.1=#{options[:joi_locality]}" unless options[:joi_locality].blank?
-    dn << "1.3.6.1.4.1.311.60.2.1.2=#{options[:joi_state]}" unless options[:joi_state].blank?
-    dn << "1.3.6.1.4.1.311.60.2.1.3=#{options[:joi_country]}" unless options[:joi_country].blank?
-                                          # =text_area_tag :csr, @certificate_order.certificate_content.csr.body
-                                          #    =text_area_tag :san, @certificate_order.all_domains.join("\n"),readonly: true
-
-
+    unless options[:mapping].profile_name =~ /DV/
+      dn << "O=#{options[:o]}" unless options[:o].blank?
+      dn << "C=#{options[:country]}" unless options[:country].blank?
+      dn << "L=#{options[:city]}" unless options[:city].blank?
+      dn << "ST=#{options[:state]}" unless options[:state].blank?
+      dn << "postalCode=#{options[:postal_code]}" unless options[:postal_code].blank?
+      dn << "postalAddress=#{options[:postal_address]}" unless options[:postal_address].blank?
+      dn << "streetAddress=#{options[:street_address]}" unless options[:street_address].blank?
+      dn << "serialNumber=#{options[:serial_number]}" unless options[:serial_number].blank?
+      dn << "2.5.4.15=#{options[:business_category]}" unless options[:business_category].blank?
+      dn << "1.3.6.1.4.1.311.60.2.1.1=#{options[:joi_locality]}" unless options[:joi_locality].blank?
+      dn << "1.3.6.1.4.1.311.60.2.1.2=#{options[:joi_state]}" unless options[:joi_state].blank?
+      dn << "1.3.6.1.4.1.311.60.2.1.3=#{options[:joi_country]}" unless options[:joi_country].blank?
+        # =text_area_tag :csr, @certificate_order.certificate_content.csr.body
+        #    =text_area_tag :san, @certificate_order.all_domains.join("\n"),readonly: true
+    end
     dn.map{|d|d.gsub(/\\/,'\\\\').gsub(',','\,')}.join(",")
   end
 
@@ -144,6 +150,7 @@ class SslcomCaApi
   def self.apply_for_certificate(certificate_order, options={})
     certificate = certificate_order.certificate
     options.merge! cc: cc = options[:certificate_content] || certificate_order.certificate_content
+    options[:mapping] = Ca.find_by_ref(options[:send_to_ca]) if options[:send_to_ca]
     approval_req, approval_res = SslcomCaApi.get_status(cc.csr)
     return cc.csr.sslcom_ca_requests.create(
       parameters: approval_req.body, method: "get", response: approval_res.body,
@@ -167,7 +174,9 @@ class SslcomCaApi
       OrderNotifier.problem_ca_sending("support@ssl.com", cc.certificate_order,"sslcom").deliver
     elsif api_log_entry.certificate_chain # signed certificate is issued
       cc.update_column(:ref, api_log_entry.username) unless api_log_entry.blank?
-      cc.csr.signed_certificates.create body: api_log_entry.end_entity_certificate.to_s, ca_id: options[:ca_id]
+      attrs = {body: api_log_entry.end_entity_certificate.to_s, ca_id: options[:mapping].id}
+      attrs.merge!(type: "ShadowSignedCertificate") if certificate.cas.shdaow.include?(options[:mapping])
+      cc.csr.signed_certificates.create(attrs)
       SystemAudit.create(
           owner:  options[:current_user],
           target: api_log_entry,
@@ -181,7 +190,8 @@ class SslcomCaApi
   end
 
   def self.generate_for_certificate(options={})
-    host = Rails.application.secrets.sslcom_ca_host + "/v1/certificate/pkcs10"
+    host = options[:mapping] ? options[:mapping].host :
+               Rails.application.secrets.sslcom_ca_host + "/v1/certificate/pkcs10"
     req, res = call_ca(host, {}, issue_cert_json(options))
 
     api_log_entry = options[:cc].csr.sslcom_ca_requests.create(request_url: host, parameters: req.body,

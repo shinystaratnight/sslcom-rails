@@ -4,7 +4,7 @@
 -cn = "expired certificate" if co.is_expired_credit?
 .subject_column
   %a.common_name(title=cn)
-    =((co.is_test ? " (TEST) " : "") + (%w(refunded rejected charged_back).include?(co.workflow_state) ? " (#{co.workflow_state.upcase})" : "") + cn.downcase).shorten(35, false)
+    =((co.is_test ? " (TEST) " : "") + (%w(refunded rejected charged_back).include?(co.workflow_state) ? " (#{co.workflow_state.upcase})" : "") + cn.downcase).shorten(33, false)
   %span.expand_or_view_order
     -if !(single and co.is_expired_credit?) and permitted_to? :index, co
       %a.expand open

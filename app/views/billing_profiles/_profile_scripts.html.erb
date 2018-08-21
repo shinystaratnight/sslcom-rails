@@ -37,10 +37,15 @@ function getOrderAmount() {
 }
 
 function setPayPalButton() {
-  paypalCheckoutUrl();
   if (getOrderAmount() > 0) {
-    $('[name*=next], [name*=load_funds], #credit_card_form').hide();
-    $('[name*=paypal]').show();
+    if ($('#new_user_section').length || $('#login_section').length) {
+      $('#credit_card_form').hide();
+      $('[name*=paypal]').hide();
+      $('[name*=next]').show();
+    } else {
+      $('[name*=paypal]').show();
+      $('[name*=next], [name*=load_funds], #credit_card_form').hide();
+    }
     $('form#new_order').attr('action', paypalCheckoutUrl());
   } else {
     setStandardButton();
@@ -206,7 +211,7 @@ $(':radio[name*=payment_method]').change(function(){
   }
   else{
     $('#credit_card_form').show();
-    $('form#new_order').attr("action","/orders");
+    setStandardButton();
   }
 });
 

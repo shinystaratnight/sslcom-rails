@@ -3465,6 +3465,7 @@ label.error
 #popular-files,
 #resource-popular-location-list,
 #notification_groups,
+#notification_group_scan_his_logs,
 #certificates-admin-index
   line-height: 1.5em
   font-size: 1.4em
@@ -3953,7 +3954,7 @@ label.error
     float: none
 
   //the following should be able to exist outside stylized
-  input[type=text], input[type=url], input[type=email], input[type=password], select, textarea
+  input[type=text], input[type=number], input[type=url], input[type=email], input[type=password], select, textarea
     font-size: 1.5em
     @include text-shadow(0px 1px 0px #fff)
     outline: none
@@ -4064,6 +4065,27 @@ label.error
     margin: 0 auto
     width: 550px
 
+    > .block_label
+      width: 110px
+      float: left
+      font-size: 1.4em
+      text-align: right
+      padding-top: 5px
+
+      > input[type="checkbox"]
+        float: right
+        height: 30px
+        margin-right: 0px
+
+    > .block_body
+      float: left
+      padding-left: 3px
+
+      > span
+        font-size: 1.4em
+        line-height: 38px
+        padding-left: 10px
+
     label
       width: 13.8em
 
@@ -4134,6 +4156,17 @@ label.error
 
     &.reminder_days
       margin-bottom: 20px
+
+    &.port_number
+      width: 60px
+
+  .group_block .alert-warning
+    padding-top: 10px
+    color: red
+    font-size: 13px
+  .group_block .warning-field
+    border-color: red
+    box-shadow: 0px 0px 5px red
 
 input#upload_files, input#start_over, input#validate_domains
   margin: 1em
@@ -4432,7 +4465,7 @@ table#line_items_receipt
       float: right
 
   #auto_adjust, #prev_next_submit, #next_submit, #click_to_load,  #shop_more_checkout,
-  #add_items, #skip_button
+  #add_items, #skip_button, #notification_group_auto_adjust
     margin: 2.5em auto 3em
     width: 340px
 
@@ -4451,6 +4484,15 @@ table#line_items_receipt
 
   #click_to_load
     width: 238px
+
+  #notification_group_auto_adjust
+    text-align: center
+    button
+      margin: 0 1em
+      float: inherit
+      display: inline-block
+      padding: 8px 15px
+
 
 /* ----------- What is security code----------- */
 
@@ -7158,6 +7200,7 @@ span.notifications-teams
 #notification_groups input[type='submit']
   margin-top: 13px
 
+.schedule_container,
 #contacts-container,
 #subjects-container,
 #cos-container, #tags-container,
@@ -7292,6 +7335,80 @@ span.notifications-teams
   .ca
     font-size: 1rem
 
+.schedule_type_block,
+.schedule_custom_block
+  .block_label
+    float: left
+    width: 110px
+    line-height: 20px
+    padding-right: 3px
+    text-align: right
+    font-size: 1.4em
+  .block_body
+    float: left
+    margin-bottom: 10px
+    width: 400px
+    .block_item
+      line-height: 20px
+      margin-bottom: 3px
+      .block_item_type
+        float: left
+        span
+          font-size: 1.4em
+          input[type='radio']
+            vertical-align: top
+            margin-top: 4px !important
+    .block_item_simple select
+      font-size: 1.2em !important
+      margin-bottom: 0px !important
+
+#wrap_note_group_filter
+  background: #EEE
+  border: 1px solid #CCF
+  font-size: 13px
+  color: #3c3c3c
+  padding: 1em
+  width: 610px
+  margin: 2em auto
+
+  #btn_note_group_search
+    margin: 10px 0px 0px 5px
+
+  .wrap_filter_block
+    border-bottom: 1px solid #ccc
+    padding: 8px 0px
+    width: 600px
+    margin: auto
+    .filter_block
+      line-height: 20px
+      .block_label
+        font-weight: bold
+      .filter_item
+        padding-right: 10px
+        input[type='radio']
+          vertical-align: middle
+    .horizontal_align
+      .block_label
+        float: left
+        padding-right: 10px
+      .block_cont
+        float: left
+        .filter_item
+          float: left
+    .vertical_align
+      float: left
+      &:first-child
+        padding-left: 10px
+      .block_label
+        padding-bottom: 5px
+        padding-left: 15px
+      .filter_item
+        padding-bottom: 5px
+        width: 85px
+        padding: 0px 15px
+        select
+          height: 120px
+
 #frm-cert-filter
   select
     float: left
@@ -7349,12 +7466,28 @@ span.notifications-teams
     margin-bottom: 0.5rem
     height: 25px
 
+    #btn-folder-new-cert
+      border-radius: 3px
+      font-size: 1.3rem
+      float: right
+      letter-spacing: 0.5px
+      margin-right: 1rem
+      padding: 7px 4px 3px 4px
+      border: 1px solid $base_green
+      color: $base_green
+      float: right
+      height: 1.7rem
+
+      &:hover
+        color: white
+        background-color: $base_green
+
     span
       float: right
       color: white
       padding: 0.66rem
       background-color: grey
-      margin-right: -0.5rem
+      margin-right: -0.6rem
       border-top-left-radius: 3px
       border-bottom-left-radius: 3px
 
@@ -7408,7 +7541,8 @@ span.notifications-teams
 /*
  * Folders
  */
-#folder-scan
+#folder-scan,
+#folder-scan-co
   border: 1px solid darkgrey
   border-radius: 3px
   font-size: 1.2rem
@@ -7428,6 +7562,14 @@ span.notifications-teams
 #co-folders-container
   margin: 0.8em 0 0.5em
   
+  .folder-co-count
+    background-color: $base_green
+    border-radius: 8px
+    color: white
+    font-weight: 600
+    font-size: 0.9rem
+    padding: 2px 5px
+
   #folder-tree-fixed
     max-height: 250px
     display: flex

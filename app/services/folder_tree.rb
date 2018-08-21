@@ -10,17 +10,32 @@ class FolderTree
 
   def build_subtree(folder, tree_type)
     children = folder.children ? folder.children.inject([]) {|all, child| all << build_subtree(child, tree_type) } : []
-    co_children = tree_type == 'co_folders_index' ? [] : build_cert_orders(folder)
+    co_children = if %w{co_folders_index co_folders_index_modal}.include?(tree_type)
+      []
+    else
+      build_cert_orders(folder)
+    end
+    
+    data = get_data(folder, tree_type)
+    
     return {
-      id: get_id_format(folder),
-      text: folder.name,
-      icon: get_icon(folder),
-      type: 'folder',
-      li_attr: get_li_attr(folder),
-      data: get_data(folder, tree_type),
-      state: { opened: false },
+      id:       get_id_format(folder),
+      icon:     get_icon(folder),
+      text:     get_folder_name(folder, tree_type, data),
+      type:     'folder',
+      li_attr:  get_li_attr(folder),
+      data:     data,
+      state:    { opened: false },
       children: (children + co_children).flatten
     }
+  end
+
+  def get_folder_name(folder, tree_type, options=nil)
+    if tree_type == 'co_folders_index'
+      "#{folder.name} <span class='folder-co-count'>#{options[:certificate_orders_count]}</span>".html_safe
+    else
+      folder.name
+    end
   end
 
   def build_cert_orders(folder)

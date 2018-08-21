@@ -1,42 +1,169 @@
 -content_for :title, "Notification Group Management"
+
+-slt_schedule_simple = @filter_slt_schedule_simple || []
+-slt_schedule_weekdays = @filter_slt_weekdays || []
+-slt_schedule_months = @filter_slt_months || []
+-slt_schedule_days = @filter_slt_days || []
+-slt_schedule_hours = @filter_slt_hours || []
+-slt_schedule_minutes = @filter_slt_minutes || []
+
 = render :partial => 'index_scripts'
 
-#search_bar.hidden
-  =form_tag :notification_groups, :id=>'hidden_form', :method=>:get do
-    =hidden_field_tag :per_page, @per_page
+-##search_bar.hidden
+-#  =form_tag :notification_groups, :id=>'hidden_form', :method=>:get do
+-#    =hidden_field_tag :per_page, @per_page
+
+=form_tag :search_notification_groups, :id=>'search_form', :method=>:post do
+  =hidden_field_tag :per_page, @per_page
+  #wrap_note_group_filter
+    .wrap_filter_block.clearfix
+      .filter_block.horizontal_align.clearfix
+        .block_label
+          Search :
+        .block_cont
+          .item_block.clearfix
+            .filter_item
+              %span
+                =radio_button_tag :filter_type, true, true
+                All
+            .filter_item
+              %span
+                =radio_button_tag :filter_type, false, false
+                Schedule
+    #wrap_schedule_type.wrap_filter_block.clearfix
+      .filter_block.horizontal_align.clearfix
+        .block_label
+          Schedule Type :
+        .block_cont
+          .item_block.clearfix
+            .filter_item
+              %span
+                =radio_button_tag :filter_schedule_type, true, true
+                Simple
+            .filter_item.schedule_simple
+              =select_tag :filter_schedule_simple, options_for_select(@schedule_simple_type, selected: slt_schedule_simple)
+            .filter_item
+              %span
+                =radio_button_tag :filter_schedule_type, false, false
+                Custom
+    #wrap_schedule_custom.wrap_filter_block.clearfix
+      .filter_block.vertical_align
+        .block_label
+          WeekDays
+        .block_cont
+          .item_block
+            .filter_item
+              %span
+                =radio_button_tag :filter_weekday_type, true, true
+                All
+            .filter_item
+              %span
+                =radio_button_tag :filter_weekday_type, false, false
+                Selected
+            .filter_item.schedule_weekday
+              =select_tag :filter_weekday, options_for_select(@schedule_weekdays, selected: slt_schedule_weekdays), multiple: true
+      .filter_block.vertical_align
+        .block_label
+          Months
+        .block_cont
+          .item_block
+            .filter_item
+              %span
+                =radio_button_tag :filter_month_type, true, true
+                All
+            .filter_item
+              %span
+                =radio_button_tag :filter_month_type, false, false
+                Selected
+            .filter_item.schedule_month
+              =select_tag :filter_month, options_for_select(@schedule_months, selected: slt_schedule_months), multiple: true
+      .filter_block.vertical_align
+        .block_label
+          Days
+        .block_cont
+          .item_block
+            .filter_item
+              %span
+                =radio_button_tag :filter_day_type, true, true
+                All
+            .filter_item
+              %span
+                =radio_button_tag :filter_day_type, false, false
+                Selected
+            .filter_item.schedule_day
+              =select_tag :filter_day, options_for_select(@schedule_days, selected: slt_schedule_days), multiple: true
+      .filter_block.vertical_align
+        .block_label
+          Hours
+        .block_cont
+          .item_block
+            .filter_item
+              %span
+                =radio_button_tag :filter_hour_type, true, true
+                All
+            .filter_item
+              %span
+                =radio_button_tag :filter_hour_type, false, false
+                Selected
+            .filter_item.schedule_hour
+              =select_tag :filter_hour, options_for_select(@schedule_hours, selected: slt_schedule_hours), multiple: true
+      .filter_block.vertical_align
+        .block_label
+          Minutes
+        .block_cont
+          .item_block
+            .filter_item
+              %span
+                =radio_button_tag :filter_minute_type, true, true
+                All
+            .filter_item
+              %span
+                =radio_button_tag :filter_minute_type, false, false
+                Selected
+            .filter_item.schedule_minute
+              =select_tag :filter_minute, options_for_select(@schedule_minutes, selected: slt_schedule_minutes), multiple: true
+    =button_tag 'Search', :id=>'btn_note_group_search'
+
 #notification_groups
   =form_tag :remove_groups_notification_groups, :id=> 'notification_group_list', :method => :post do
     %table(cellspacing="0")
-      %tfoot
-        %tr
-          %td.wrap_number_rows
-            =select_tag :number_rows,
-                    options_for_select([[5, 5], [10, 10], [20, 20], [50, 50], [100, 100]], @per_page),
-                    :class=>'per_page'
-          %td(colspan='2')=will_paginate @notification_groups
-        %caption
-          Notification Groups Management
-          =will_paginate @notification_groups
-        %br
-        %tr
-          =link_to "+ Create Notification Group", new_notification_group_path, class: 'button_blue button_index'
+      -if @notification_groups.size > 0
+        %tfoot
+          %tr
+            %td.wrap_number_rows
+              =select_tag :number_rows,
+                      options_for_select([[5, 5], [10, 10], [20, 20], [50, 50], [100, 100]], @per_page),
+                      :class=>'per_page'
+            %td(colspan='3')=will_paginate @notification_groups
+      %caption
+        Notification Groups Management
+        =will_paginate @notification_groups
+      %br
+      %tr
+        =link_to "+ Create Notification Group", new_notification_group_path, class: 'button_blue button_index'
       %tr.heading_row
-        %td(scope="col") Friendly Name
-        %td(scope="col") Delete?
-        %td(scope="col") Scan?
+        -if @notification_groups.size > 0
+          %td(scope="col") Friendly Name
+          %td(scope="col") Scan History Counts
+          %td(scope="col") Delete?
+          %td(scope="col") Scan?
+        -else
+          %td(scope="col" colspan='4') Friendly Name
       -if @notification_groups.size > 0
         -@notification_groups.each do |ng|
           %tr
             %td
               =link_to ng.friendly_name, edit_notification_group_path(@ssl_slug, ng.id)
             %td
+              =link_to ng.scan_logs.count, notification_group_scan_logs_path(@ssl_slug, ng.id)
+            %td
               =check_box_tag "remove_groups[]", ng.id, false, class: 'chk-remove', 'data-group-name' => ng.friendly_name
             %td
               =check_box_tag "scan_groups[]", ng.id, false, class: 'chk-scan'
       -else
         %tr
-          %td(colspan='3')
-            There are no notification groups
+          %td(colspan='4')
+            There are no Notification Groups
     -if @notification_groups.size > 0
       =submit_tag 'Save', :id => 'btn_remove_groups', :disabled => true
       =submit_tag 'Scan', :id => 'btn_scan_groups'

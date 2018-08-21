@@ -113,7 +113,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
       co.certificate_content.create_csr(body: params[:csr])
 
       options = {}
-      options[:ca] = Ca::MANAGEMENT_CA
+      options[:mapping] = co.certificate.cas.default.last
       options[:cc] = co.certificate_content
 
       if res = SslcomCaApi.generate_for_certificate(options)
@@ -152,17 +152,17 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
             @result = @acr #so that rabl can report errors
           end
 
-          unless @result.cert_names.blank?
-            @result.cert_names.keys.each do |key|
-              # expire_fragment(params[:ref] + ':' + key)
-              Rails.cache.delete(params[:ref] + ':' + ext_order_number + ':' + key)
-
-              # cache = Rails.cache.read(params[:ref] + ':' + ext_order_number + ':' + key)
-              # unless cache && JSON.parse(cache)['tr_info']['status'] == 'validated'
-              #   Rails.cache.delete(params[:ref] + ':' + ext_order_number + ':' + key)
-              # end
-            end
-          end
+          # unless @result.cert_names.blank?
+          #   @result.cert_names.keys.each do |key|
+          #     # expire_fragment(params[:ref] + ':' + key)
+          #     Rails.cache.delete(params[:ref] + ':' + ext_order_number + ':' + key)
+          #
+          #     # cache = Rails.cache.read(params[:ref] + ':' + ext_order_number + ':' + key)
+          #     # unless cache && JSON.parse(cache)['tr_info']['status'] == 'validated'
+          #     #   Rails.cache.delete(params[:ref] + ':' + ext_order_number + ':' + key)
+          #     # end
+          #   end
+          # end
 
         end
       else
@@ -194,23 +194,55 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
             # @result.eta=ccr.response_certificate_eta
             # @result.order_status = ccr.response_certificate_status
 
+            #Send validation email unless ca_id is nil
+            unless @acr.certificate_content.ca_id.nil?
+              cnames = @acr.certificate_content.certificate_names
+              email_for_identifier = ''
+              identifier = ''
+              email_list = []
+              identifier_list = []
+              domain_ary = []
+              domain_list = []
+              cnames.each do |cn|
+                dcv = cn.domain_control_validations.last
+                if dcv.email_address != email_for_identifier
+                  if domain_list.length>0
+                    domain_ary << domain_list
+                    email_list << email_for_identifier
+                    identifier_list << identifier
+                    domain_list = []
+                  end
+                  identifier = (SecureRandom.hex(8)+Time.now.to_i.to_s(32))[0..19]
+                  email_for_identifier = dcv.email_address
+                end
+                domain_list << cn.name
+                dcv.update_attribute(:identifier, identifier)
+              end
+              domain_ary << domain_list
+              email_list << email_for_identifier
+              identifier_list << identifier
+              email_list.each_with_index do |value, key|
+                OrderNotifier.dcv_email_send(@acr, value, identifier_list[key], domain_ary[key]).deliver
+              end
+            end
+
             set_result_parameters(@result, @acr)
             @result.debug=(@result.parameters_to_hash["debug"]=="true") # && @acr.admin_submitted = true
           else
             @result = @acr #so that rabl can report errors
           end
 
-          unless @result.cert_names.blank?
-            @result.cert_names.keys.each do |key|
-              # expire_fragment(params[:ref] + ':' + key)
-              Rails.cache.delete(params[:ref] + ':' + ext_order_number + ':' + key)
-
-              # cache = Rails.cache.read(params[:ref] + ':' + ext_order_number + ':' + key)
-              # unless cache && JSON.parse(cache)['tr_info']['status'] == 'validated'
-              #   Rails.cache.delete(params[:ref] + ':' + ext_order_number + ':' + key)
-              # end
-            end
-          end
+          # unless @result.cert_names.blank?
+          #   @result.cert_names.keys.each do |key|
+          #     # expire_fragment(params[:ref] + ':' + key)
+          #     Rails.cache.delete(params[:ref] + ':' + ext_order_number + ':' + key)
+          #
+          #     # cache = Rails.cache.read(params[:ref] + ':' + ext_order_number + ':' + key)
+          #     # unless cache && JSON.parse(cache)['tr_info']['status'] == 'validated'
+          #     #   Rails.cache.delete(params[:ref] + ':' + ext_order_number + ':' + key)
+          #     # end
+          #   end
+          # end
 
         end
 

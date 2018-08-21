@@ -2,52 +2,7 @@
   jQuery.noConflict();
   jQuery(function($) {
     $(document).ready(function () {
-      $('#number_rows').change(function() {
-        $('#per_page').val($(this).val());
-        $('#hidden_form').submit();
-      });
-
-      $('.chk-remove').click(function() {
-        if ($(this).prop('checked')) {
-          $('#btn_remove_groups').attr('disabled', false);
-        } else {
-          var chk_remove_list = $('.chk-remove');
-          var exist_chk = false;
-
-          $.each(chk_remove_list, function(idx, chk_remove) {
-            if ($(chk_remove).prop('checked')) {
-              exist_chk = true;
-              return false;
-            }
-          });
-
-          exist_chk ? $('#btn_remove_groups').attr('disabled', false) : $('#btn_remove_groups').attr('disabled', true);
-        }
-      });
-
-      $('#btn_remove_groups').click(function(e) {
-        e.preventDefault();
-
-        var chk_remove_list = $('.chk-remove');
-        var confirmMsg = 'Are you sure you want to delete the following SSL Expiration Notification Group(s)?';
-        var chk_first_group = true
-
-        $.each(chk_remove_list, function(idx, chk_remove) {
-          if ($(chk_remove).prop('checked')) {
-            if (chk_first_group) {
-              chk_first_group = false
-              confirmMsg = confirmMsg.concat('\r\n      ' + $(chk_remove).attr('data-group-name'));
-            } else {
-              confirmMsg = confirmMsg.concat('\n      ' + $(chk_remove).attr('data-group-name'));
-            }
-          }
-        });
-
-        if (confirm(confirmMsg)) {
-          this.form.submit();
-        }
-      });
-
+      //******************** Notification group create / edit ********************
       $('#cos_list').select2({ tags: true });
 
       $('#cos_list').on('select2:opening select2:closing', function( event ) {
@@ -251,11 +206,482 @@
         });
       });
 
+      $('#weekday_custom_list').select2({ tags: true });
+      $('#month_custom_list').select2({ tags: true });
+      $('#day_custom_list').select2({ tags: true });
+      $('#hour_custom_list').select2({ tags: true });
+      $('#minute_custom_list').select2({ tags: true });
+
+      $('input[name="schedule_type"]').change(function() {
+        if ($(this).val() == 'true') {
+          $('.schedule_custom_block').hide();
+          $('#schedule_simple_type').show();
+        } else {
+          $('.schedule_custom_block').show();
+          $('#schedule_simple_type').hide();
+        }
+      });
+
+      $('input[name="weekday_type"]').change(function() {
+        if ($(this).val() == 'true') {
+          $('.block_item_weekday_custom').hide();
+        } else {
+          $('.block_item_weekday_custom').show();
+        }
+      });
+
+      $('input[name="month_type"]').change(function() {
+        if ($(this).val() == 'true') {
+          $('.block_item_month_custom').hide();
+        } else {
+          $('.block_item_month_custom').show();
+        }
+      });
+
+      $('input[name="day_type"]').change(function() {
+        if ($(this).val() == 'true') {
+          $('.block_item_day_custom').hide();
+        } else {
+          $('.block_item_day_custom').show();
+        }
+      });
+
+      $('input[name="hour_type"]').change(function() {
+        if ($(this).val() == 'true') {
+          $('.block_item_hour_custom').hide();
+        } else {
+          $('.block_item_hour_custom').show();
+        }
+      });
+
+      $('input[name="minute_type"]').change(function() {
+        if ($(this).val() == 'true') {
+          $('.block_item_minute_custom').hide();
+        } else {
+          $('.block_item_minute_custom').show();
+        }
+      });
+
+      var url = window.location.pathname;
+      if (url.substr(url.lastIndexOf('/') + 1, url.length) == 'new') {
+        $('.block_item_weekday_custom').hide();
+        $('.block_item_month_custom').hide();
+        $('.block_item_day_custom').hide();
+        $('.block_item_hour_custom').hide();
+        $('.block_item_minute_custom').hide();
+        $('.schedule_custom_block').hide();
+
+        $('#schedule_simple_type option[value="2"]').attr('selected', true);
+      }
+
+      if (url.substr(url.lastIndexOf('/') + 1, url.length) == 'edit') {
+        var simple = '<%= @slt_schedule_simple ? @slt_schedule_simple.join(',') : ""%>';
+        var weekdays = '<%= @slt_schedule_weekdays ? @slt_schedule_weekdays.join(',') : ""%>';
+        var months = '<%= @slt_schedule_months ? @slt_schedule_months.join(',') : ""%>';
+        var days = '<%= @slt_schedule_days ? @slt_schedule_days.join(',') : ""%>';
+        var hours = '<%= @slt_schedule_hours ? @slt_schedule_hours.join(',') : ""%>';
+        var minutes = '<%= @slt_schedule_minutes ? @slt_schedule_minutes.join(',') : ""%>';
+
+        if (simple != '') {
+          $('.block_item_weekday_custom').hide();
+          $('.block_item_month_custom').hide();
+          $('.block_item_day_custom').hide();
+          $('.block_item_hour_custom').hide();
+          $('.block_item_minute_custom').hide();
+          $('.schedule_custom_block').hide();
+
+          $('#schedule_simple_type option[value="' + simple.split(',')[0] + '"]').attr('selected', true);
+        } else {
+          $('input[name="schedule_type"][value="false"]').attr('checked', 'checked');
+          $('#schedule_simple_type').hide();
+
+          if (weekdays == 'All') {
+            $('.block_item_weekday_custom').hide();
+          } else {
+            $('input[name="weekday_type"][value="false"]').attr('checked', 'checked');
+          }
+
+          if (months == 'All') {
+            $('.block_item_month_custom').hide();
+          } else {
+            $('input[name="month_type"][value="false"]').attr('checked', 'checked');
+          }
+
+          if (days == 'All') {
+            $('.block_item_day_custom').hide();
+          } else {
+            $('input[name="day_type"][value="false"]').attr('checked', 'checked');
+          }
+
+          if (hours == 'All') {
+            $('.block_item_hour_custom').hide();
+          } else {
+            $('input[name="hour_type"][value="false"]').attr('checked', 'checked');
+          }
+
+          if (minutes == 'All') {
+            $('.block_item_minute_custom').hide();
+          } else {
+            $('input[name="minute_type"][value="false"]').attr('checked', 'checked');
+          }
+        }
+      }
+
+      $('.save_notification_group').click(function(e) {
+        e.preventDefault();
+
+        var ajaxCheckDuplicateUrl = '<%=check_duplicate_notification_groups_url%>';
+        $.ajax({
+          url: ajaxCheckDuplicateUrl,
+          data: {
+            friendly_name: $('#friendly_name').val(),
+            ng_id : $('#notification_group_id').val()
+          },
+          type: "POST",
+          success: function (result) {
+            if (Object.keys(result).length > 0) {
+              if (result['is_duplicated'] == 'false') {
+                $('.ng_form').submit();
+              } else {
+                $('#friendly_name').addClass('warning-field');
+                $('.alert-warning').show();
+              }
+            }
+          }
+        });
+      });
+
+      $('.scan_notification_group').click(function() {
+        var is_changed = false;
+        var obj = document.getElementById('friendly_name');
+        if (obj.value != obj.defaultValue) {
+          is_changed = true;
+        }
+
+        obj = document.getElementById('scan_port');
+        if (!is_changed && obj.value != obj.defaultValue) {
+          is_changed = true;
+        }
+
+        obj = document.getElementById('notify_all');
+        if (!is_changed && obj.checked != obj.defaultChecked) {
+          is_changed = true;
+        }
+
+        var obj_list = document.getElementsByName('notification_group_triggers[]');
+        $.each(obj_list, function(idx, obj) {
+          if (!is_changed && obj.value != obj.defaultValue) {
+            is_changed = true;
+            return false;
+          }
+        });
+
+        var cos = '<%= @slt_cos_list ? @slt_cos_list.join(',') : ""%>';
+        if (!is_changed && ($($('#cos_list').val()).not(cos.split(',')).length != 0 ||
+          $(cos.split(',')).not($('#cos_list').val()).length != 0)) {
+          is_changed = true;
+        }
+
+        var subjects = '<%= @slt_subjects_list ? @slt_subjects_list.join(',') : ""%>';
+        if (!is_changed && ($($('#subjects_list').val()).not(subjects.split(',')).length != 0 ||
+          $(subjects.split(',')).not($('#subjects_list').val()).length != 0)) {
+          is_changed = true;
+        }
+
+        var contacts = '<%= @slt_contacts_list ? @slt_contacts_list.join(',') : ""%>';
+        if (!is_changed && ($($('#contacts_list').val()).not(contacts.split(',')).length != 0 ||
+          $(contacts.split(',')).not($('#contacts_list').val()).length != 0)) {
+          is_changed = true;
+        }
+
+        var slt_schedule_simple = '<%= @slt_schedule_simple ? @slt_schedule_simple.join(',') : ""%>';
+        var radio_default = slt_schedule_simple == 'All' ? true : false
+        obj_list = document.getElementsByName('schedule_type');
+        if (!is_changed
+          && obj_list[0].checked != radio_default
+          && obj_list[1].checked == radio_default) {
+          is_changed = true;
+        }
+
+        var slt_schedule_weekdays = '<%= @slt_schedule_weekdays ? @slt_schedule_weekdays.join(',') : ""%>';
+        radio_default = slt_schedule_weekdays == 'All' ? true : false
+        obj_list = document.getElementsByName('weekday_type');
+        if (!is_changed
+          && obj_list[0].checked != radio_default
+          && obj_list[1].checked == radio_default) {
+          is_changed = true;
+        }
+
+        var slt_schedule_months = '<%= @slt_schedule_months ? @slt_schedule_months.join(',') : ""%>';
+        radio_default = slt_schedule_months == 'All' ? true : false
+        obj_list = document.getElementsByName('month_type');
+        if (!is_changed
+          && obj_list[0].checked != radio_default
+          && obj_list[1].checked == radio_default) {
+          is_changed = true;
+        }
+
+        var slt_schedule_days = '<%= @slt_schedule_days ? @slt_schedule_days.join(',') : ""%>';
+        radio_default = slt_schedule_days == 'All' ? true : false
+        obj_list = document.getElementsByName('day_type');
+        if (!is_changed
+          && obj_list[0].checked != radio_default
+          && obj_list[1].checked == radio_default) {
+          is_changed = true;
+        }
+
+        var slt_schedule_hours = '<%= @slt_schedule_hours ? @slt_schedule_hours.join(',') : ""%>';
+        radio_default = slt_schedule_hours == 'All' ? true : false
+        obj_list = document.getElementsByName('hour_type');
+        if (!is_changed
+          && obj_list[0].checked != radio_default
+          && obj_list[1].checked == radio_default) {
+          is_changed = true;
+        }
+
+        var slt_schedule_minutes = '<%= @slt_schedule_minutes ? @slt_schedule_minutes.join(',') : ""%>';
+        radio_default = slt_schedule_minutes == 'All' ? true : false
+        obj_list = document.getElementsByName('minute_type');
+        if (!is_changed
+          && obj_list[0].checked != radio_default
+          && obj_list[1].checked == radio_default) {
+          is_changed = true;
+        }
+
+        var schedule_simple = '<%= @slt_schedule_simple ? @slt_schedule_simple.join(',') : ""%>';
+        if (!is_changed && ($($('#schedule_simple_type').val() || [""]).not(schedule_simple.split(',')).length != 0 ||
+          $(schedule_simple.split(',')).not($('#schedule_simple_type').val() || [""]).length != 0)) {
+          is_changed = true;
+        }
+
+        var weekdays = '<%= @slt_schedule_weekdays ? (@slt_schedule_weekdays[0] == 'All' ? "" : @slt_schedule_weekdays.join(',')) : ""%>';
+        if (!is_changed && ($($('#weekday_custom_list').val() || [""]).not(weekdays.split(',')).length != 0 ||
+          $(weekdays.split(',')).not($('#weekday_custom_list').val() || [""]).length != 0)) {
+          is_changed = true;
+        }
+
+        var months = '<%= @slt_schedule_months ? (@slt_schedule_months[0] == 'All' ? "" : @slt_schedule_months.join(',')) : ""%>';
+        if (!is_changed && ($($('#month_custom_list').val() || [""]).not(months.split(',')).length != 0 ||
+          $(months.split(',')).not($('#month_custom_list').val() || [""]).length != 0)) {
+          is_changed = true;
+        }
+
+        var days = '<%= @slt_schedule_days ? (@slt_schedule_days[0] == 'All' ? "" : @slt_schedule_days.join(',')) : ""%>';
+        if (!is_changed && ($($('#day_custom_list').val() || [""]).not(days.split(',')).length != 0 ||
+          $(days.split(',')).not($('#day_custom_list').val() || [""]).length != 0)) {
+          is_changed = true;
+        }
+
+        var hours = '<%= @slt_schedule_hours ? (@slt_schedule_hours[0] == 'All' ? "" : @slt_schedule_hours.join(',')) : ""%>';
+        if (!is_changed && ($($('#hour_custom_list').val() || [""]).not(hours.split(',')).length != 0 ||
+          $(hours.split(',')).not($('#hour_custom_list').val() || [""]).length != 0)) {
+          is_changed = true;
+        }
+
+        var minutes = '<%= @slt_schedule_minutes ? (@slt_schedule_minutes[0] == 'All' ? "" : @slt_schedule_minutes.join(',')) : ""%>';
+        if (!is_changed && ($($('#minute_custom_list').val() || [""]).not(minutes.split(',')).length != 0 ||
+          $(minutes.split(',')).not($('#minute_custom_list').val() || [""]).length != 0)) {
+          is_changed = true;
+        }
+
+        var scanGroupUrl = '<%= scan_individual_group_notification_groups_path(@ssl_slug)%>';
+        if (is_changed) {
+          if (confirm("You are leaving the page with unsaved changes, do you want to continue?")) {
+            $('.ng_form').attr('action', scanGroupUrl).submit();
+          }
+        } else {
+          $('.ng_form').attr('action', scanGroupUrl).submit();
+        }
+      });
+
+      //******************** Notification group list ********************
+      if (url.substr(url.lastIndexOf('/') + 1, url.length) == 'notification_groups' ||
+        url.substr(url.lastIndexOf('/') + 1, url.length) == 'search') {
+
+        if (url.substr(url.lastIndexOf('/') + 1, url.length) == 'notification_groups') {
+          var counts = '<%= (@notification_groups ||= []).length %>';
+          if (counts == '0') {
+            $('#search_form').hide();
+          } else {
+            $('#search_form').show();
+          }
+        }
+
+        var filter_slt_type = '<%= @filter_slt_type ||= "true"%>';
+        var filter_slt_schedule_type = '<%= @filter_slt_schedule_type ||= "true"%>';
+
+        if (filter_slt_type == 'true') {
+          $('.schedule_weekday').hide();
+          $('.schedule_month').hide();
+          $('.schedule_day').hide();
+          $('.schedule_hour').hide();
+          $('.schedule_minute').hide();
+
+          $('#wrap_schedule_custom').hide();
+          $('#wrap_schedule_type').hide();
+        } else {
+          $('input[name="filter_type"][value="false"]').attr('checked', 'checked');
+
+          if (filter_slt_schedule_type == 'true') {
+            $('.schedule_weekday').hide();
+            $('.schedule_month').hide();
+            $('.schedule_day').hide();
+            $('.schedule_hour').hide();
+            $('.schedule_minute').hide();
+            $('#wrap_schedule_custom').hide();
+          } else {
+            $('input[name="filter_schedule_type"][value="false"]').attr('checked', 'checked');
+            $('.schedule_simple').hide();
+
+            var weekdays = '<%= @filter_slt_weekdays ? @filter_slt_weekdays.join(',') : ""%>';
+            var months = '<%= @filter_slt_months ? @filter_slt_months.join(',') : ""%>';
+            var days = '<%= @filter_slt_days ? @filter_slt_days.join(',') : ""%>';
+            var hours = '<%= @filter_slt_hours ? @filter_slt_hours.join(',') : ""%>';
+            var minutes = '<%= @filter_slt_minutes ? @filter_slt_minutes.join(',') : ""%>';
+
+            if (weekdays == '') {
+              $('.schedule_weekday').hide();
+            } else {
+              $('input[name="filter_weekday_type"][value="false"]').attr('checked', 'checked');
+            }
+
+            if (months == '') {
+              $('.schedule_month').hide();
+            } else {
+              $('input[name="filter_month_type"][value="false"]').attr('checked', 'checked');
+            }
+
+            if (days == '') {
+              $('.schedule_day').hide();
+            } else {
+              $('input[name="filter_day_type"][value="false"]').attr('checked', 'checked');
+            }
+
+            if (hours == '') {
+              $('.schedule_hour').hide();
+            } else {
+              $('input[name="filter_hour_type"][value="false"]').attr('checked', 'checked');
+            }
+
+            if (minutes == '') {
+              $('.schedule_minute').hide();
+            } else {
+              $('input[name="filter_minute_type"][value="false"]').attr('checked', 'checked');
+            }
+          }
+        }
+      }
+
+      $('input[name="filter_type"]').change(function() {
+        if ($(this).val() == 'true') {
+          $('input[name="filter_schedule_type"][value="true"]').attr('checked', 'checked');
+          $('#wrap_schedule_custom').hide();
+          $('#wrap_schedule_type').hide();
+        } else {
+          $('#wrap_schedule_type').show();
+          $('.schedule_simple').show();
+        }
+      });
+
+      $('input[name="filter_schedule_type"]').change(function() {
+        if ($(this).val() == 'true') {
+          $('#wrap_schedule_custom').hide();
+          $('.schedule_simple').show();
+        } else {
+          $('#wrap_schedule_custom').show();
+          $('.schedule_simple').hide();
+        }
+      });
+
+      $('input[name="filter_weekday_type"]').change(function() {
+        if ($(this).val() == 'true') {
+          $('.schedule_weekday').hide();
+        } else {
+          $('.schedule_weekday').show();
+        }
+      });
+      $('input[name="filter_month_type"]').change(function() {
+        if ($(this).val() == 'true') {
+          $('.schedule_month').hide();
+        } else {
+          $('.schedule_month').show();
+        }
+      });
+      $('input[name="filter_day_type"]').change(function() {
+        if ($(this).val() == 'true') {
+          $('.schedule_day').hide();
+        } else {
+          $('.schedule_day').show();
+        }
+      });
+      $('input[name="filter_hour_type"]').change(function() {
+        if ($(this).val() == 'true') {
+          $('.schedule_hour').hide();
+        } else {
+          $('.schedule_hour').show();
+        }
+      });
+      $('input[name="filter_minute_type"]').change(function() {
+        if ($(this).val() == 'true') {
+          $('.schedule_minute').hide();
+        } else {
+          $('.schedule_minute').show();
+        }
+      });
+
+      $('#number_rows').change(function() {
+        $('#per_page').val($(this).val());
+        $('#search_form').submit();
+      });
+
+      $('.chk-remove').click(function() {
+        if ($(this).prop('checked')) {
+          $('#btn_remove_groups').attr('disabled', false);
+        } else {
+          var chk_remove_list = $('.chk-remove');
+          var exist_chk = false;
+
+          $.each(chk_remove_list, function(idx, chk_remove) {
+            if ($(chk_remove).prop('checked')) {
+              exist_chk = true;
+              return false;
+            }
+          });
+
+          exist_chk ? $('#btn_remove_groups').attr('disabled', false) : $('#btn_remove_groups').attr('disabled', true);
+        }
+      });
+
+      $('#btn_remove_groups').click(function(e) {
+        e.preventDefault();
+
+        var chk_remove_list = $('.chk-remove');
+        var confirmMsg = 'Are you sure you want to delete the following SSL Expiration Notification Group(s)?';
+        var chk_first_group = true
+
+        $.each(chk_remove_list, function(idx, chk_remove) {
+          if ($(chk_remove).prop('checked')) {
+            if (chk_first_group) {
+              chk_first_group = false
+              confirmMsg = confirmMsg.concat('\r\n      ' + $(chk_remove).attr('data-group-name'));
+            } else {
+              confirmMsg = confirmMsg.concat('\n      ' + $(chk_remove).attr('data-group-name'));
+            }
+          }
+        });
+
+        if (confirm(confirmMsg)) {
+          this.form.submit();
+        }
+      });
+
+      // Scanning notification groups
       var scanGroupsUrl = '<%=scan_groups_notification_groups_path(@ssl_slug)%>';
       $('#btn_scan_groups').click(function(e) {
         e.preventDefault();
         $('#notification_group_list').attr('action', scanGroupsUrl).submit();
       });
+
     });
   });
 </script>

@@ -5,7 +5,11 @@ class SslAccount < ActiveRecord::Base
   has_many   :api_credentials
   has_one   :duo_account
   has_many  :billing_profiles
-  has_many  :certificate_orders, -> { unscope(where: [:workflow_state, :is_expired]).includes([:orders]) } do
+  has_many  :certificate_orders, -> { unscope(where: [:workflow_state, :is_expired]).includes([:orders]) },
+            before_add: Proc.new { |p, d|
+                folder=Folder.find_by(default: true, ssl_account_id: p.id)
+                d.folder_id= folder.id unless folder.blank?
+            } do
     def current
       where{workflow_state >>['new']}.first
     end
@@ -21,6 +25,8 @@ class SslAccount < ActiveRecord::Base
   has_many  :validations, through: :certificate_orders
   has_many  :site_seals, through: :certificate_orders
   has_many  :certificate_contents, through: :certificate_orders
+  has_many  :domains, :dependent => :destroy
+  has_many  :csrs, through: :certificate_contents
   has_many  :signed_certificates, through: :certificate_contents do
     def expired
       where{expiration_date < Date.today}
@@ -472,7 +478,40 @@ class SslAccount < ActiveRecord::Base
     return 'daily' if billing_daily?
     ''
   end
-  
+
+  def domain_names(only_ca = true)
+    cnames = self.certificate_names.order(:created_at).reverse_order
+    dnames = self.domains.order(:created_at).reverse_order
+    domain_names = []
+    cnames.each do |cn|
+      unless only_ca
+        domain_names << cn.name unless domain_names.include?(cn.name)
+      else
+        domain_names << cn.name unless domain_names.include?(cn.name) && cn.certificate_content.ca_id.nil?
+      end
+    end
+    dnames.each do |dn|
+      domain_names << dn.name unless domain_names.include?(dn.name)
+    end
+    domain_names
+  end
+
+  def validated_domains
+    validated_domains = []
+    cnames = self.certificate_names
+    cnames.each do |cn|
+      dcv = cn.domain_control_validations.last
+      if dcv && dcv.identifier_found
+        validated_domains << cn.name unless validated_domains.include?(cn.name)
+      end
+    end
+    validated_domains
+  end
+
+  def is_validated?(domain)
+    validated_domains.include?(domain)
+  end
+
   def get_invoice_pmt_description
     billing_monthly? ? Order::MI_PAYMENT : Order::DI_PAYMENT
   end
@@ -749,9 +788,9 @@ class SslAccount < ActiveRecord::Base
         name: 'archived', archived: true, ssl_account_id: self.id
     )
 
-    default_folder = Folder.find_or_create_by(
-        name: 'default', default: true, ssl_account_id: self.id
-    )
+    default_folder = Folder.find(
+        default: true, ssl_account_id: team.id
+    ) ||  Folder.create(name: 'default', default: true, ssl_account_id: team.id)
 
     expired_folder = Folder.find_or_create_by(
         name: 'expired', expired: true, ssl_account_id: self.id
