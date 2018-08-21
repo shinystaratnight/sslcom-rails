@@ -5,7 +5,11 @@ class SslAccount < ActiveRecord::Base
   has_many   :api_credentials
   has_one   :duo_account
   has_many  :billing_profiles
-  has_many  :certificate_orders, -> { unscope(where: [:workflow_state, :is_expired]).includes([:orders]) } do
+  has_many  :certificate_orders, -> { unscope(where: [:workflow_state, :is_expired]).includes([:orders]) },
+            before_add: Proc.new { |p, d|
+                folder=Folder.find_by(default: true, ssl_account_id: p.id)
+                d.folder_id= folder.id unless folder.blank?
+            } do
     def current
       where{workflow_state >>['new']}.first
     end
@@ -749,9 +753,9 @@ class SslAccount < ActiveRecord::Base
         name: 'archived', archived: true, ssl_account_id: self.id
     )
 
-    default_folder = Folder.find_or_create_by(
-        name: 'default', default: true, ssl_account_id: self.id
-    )
+    default_folder = Folder.find(
+        default: true, ssl_account_id: team.id
+    ) ||  Folder.create(name: 'default', default: true, ssl_account_id: team.id)
 
     expired_folder = Folder.find_or_create_by(
         name: 'expired', expired: true, ssl_account_id: self.id

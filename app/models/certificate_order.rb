@@ -422,13 +422,6 @@ class CertificateOrder < ActiveRecord::Base
     co.site_seal=SiteSeal.create
   end
 
-  after_create do |co|
-    if co.ssl_account
-      folder=Folder.find_by(name: 'default', default: true, ssl_account_id: co.ssl_account.id)
-      co.update_column :folder_id, folder.id
-    end
-  end
-
   after_initialize do
     if new_record?
       self.quantity ||= 1
