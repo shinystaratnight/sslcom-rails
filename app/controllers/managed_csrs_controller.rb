@@ -1,0 +1,64 @@
+
+class ManagedCsrsController < ApplicationController
+  before_filter :require_user
+
+
+  def index
+    @csrs = current_user.ssl_account.csrs
+    @managed_csrs = current_user.ssl_account.managed_csrs
+  end
+
+  def new
+    @csr=ManagedCsr.new
+  end
+
+  def create
+    redirect_to new_managed_csr_path(@ssl_slug) and return unless current_user
+    logger.debug("##################{params.inspect}")
+    @csr = ManagedCsr.new(params[:managed_csr])
+    @csr.ssl_account_id = current_user.ssl_account.id
+    logger.debug("##################{@csr.inspect}")
+    respond_to do |format|
+      if @csr.save
+        format.html {redirect_to managed_csrs_path(@ssl_slug)}
+      else
+        format.html {redirect_to new_managed_csr_path(@ssl_slug)}
+      end
+    end
+  end
+
+  def edit
+    @csr = current_user.ssl_account.csrs.find_by(id: params[:id])
+    @csr = current_user.ssl_account.managed_csrs.find_by(id: params[:id]) if @csr.nil?
+  end
+
+  def update
+    @csr = current_user.ssl_account.csrs.find_by(id: params[:id])
+    @csr = current_user.ssl_account.managed_csrs.find_by(id: params[:id]) if @csr.nil?
+    @csr.friendly_name = params[:csr][:friendly_name]
+    @csr.body = params[:csr][:body]
+    @csr.save
+    redirect_to managed_csrs_path(@ssl_slug)
+  end
+
+  def destroy
+    @csr = current_user.ssl_account.csrs.find_by(id: params[:id])
+    @csr = current_user.ssl_account.managed_csrs.find_by(id: params[:id]) if @csr.nil?
+    @csr.destroy
+    respond_to do |format|
+      flash[:notice] = "Csr was successfully deleted."
+      format.html { redirect_to managed_csrs_path(@ssl_slug) }
+    end
+  end
+
+  def show_csr_detail
+    if current_user
+      @csr = current_user.ssl_account.csrs.find_by(id: params[:id])
+      @csr = current_user.ssl_account.managed_csrs.find_by(id: params[:id]) if @csr.nil?
+
+      render :partial=>'detailed_info', :locals=>{:csr=>@csr}
+    else
+      render :json => 'no-user'
+    end
+  end
+end

@@ -275,6 +275,12 @@ SslCom::Application.routes.draw do
       end
     end
 
+    resources :managed_csrs do
+      collection do
+        get :show_csr_detail
+      end
+    end
+
     resources :notification_groups do
       collection do
         get :certificate_orders_domains_contacts

@@ -1,0 +1,44 @@
+-title = "Csrs"
+-content_for :title, title
+=render :partial => 'index_scripts'
+
+#validations
+  %table(cellspacing="0")
+    %caption
+      =title
+    -unless current_user.is_system_admins?
+      %tr
+        =link_to 'Add Csr', new_managed_csr_path(@ssl_slug), class: 'button_blue button_index'
+    %tr.heading_row
+      %td
+      %th.name(scope="col") MD5 Hash
+      %th(scope="col") Friendly Name
+      %th(scope="col") Common Name
+      %th(scope="col") Created At
+      %th(scope="col") Action
+    -@csrs.each do |csr|
+      %tr(alt="#{csr.id}")
+        %td.dropdown
+          =image_tag 'expand.png'
+        %td=csr.md5_hash
+        %td=csr.friendly_name
+        %td=csr.common_name
+        %td=csr.created_at.strftime("%b %d, %Y")
+        %td
+          =link_to('edit', edit_managed_csr_path(@ssl_slug, csr.id))
+          -if csr.certificate_order.nil?
+            |
+            =link_to 'remove', managed_csr_path(@ssl_slug, csr.id), method: :delete
+    -@managed_csrs.each do |csr|
+      %tr(alt="#{csr.id}")
+        %td.dropdown
+          =image_tag 'expand.png'
+        %td=csr.md5_hash
+        %td=csr.friendly_name
+        %td=csr.common_name
+        %td=csr.created_at.strftime("%b %d, %Y")
+        %td
+          =link_to 'edit', managed_csr_path(@ssl_slug, csr.id)
+          -if csr.certificate_order.nil?
+            |
+            =link_to 'remove', managed_csr_path(@ssl_slug, csr.id), method: :delete

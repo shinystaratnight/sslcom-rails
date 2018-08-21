@@ -1,0 +1,48 @@
+<script type="text/javascript">
+jQuery.noConflict();
+jQuery(function($) {
+  $(document).ready(function() {
+    $('.dropdown, .status_message, .expand, .subject_column > a').click(function(){
+
+      var currentElmt = $(this);
+
+      if (currentElmt.parents().filter('tr').next().hasClass('expanded') == true) {
+        if (currentElmt.parents().filter('tr').next().is(":visible")) {
+          currentElmt.parents().filter('tr').next().hide();
+          currentElmt.parents().filter('tr').find('.dropdown img').attr('src',"<%= asset_path('expand.png') %>");
+          currentElmt.parents().filter('tr').find('.expand').text('open');
+        } else {
+          currentElmt.parents().filter('tr').next().show();
+          currentElmt.parents().filter('tr').find('.dropdown img').attr('src',"<%= asset_path('contract.png') %>");
+          currentElmt.parents().filter('tr').find('.expand').text('close');
+        }
+      } else {
+        var csr_id = currentElmt.parents().filter('tr').attr('alt');
+        var ajaxUrl = '<%=show_csr_detail_managed_csrs_path()%>';
+
+        $.ajax({
+          url: ajaxUrl,
+          data: {
+            id: csr_id
+          },
+          type: "GET",
+          dataType: "html",
+          success: function(result) {
+            if (result == 'no-user') {
+              location.reload(true);
+            } else {
+              console.log(result);
+              if (currentElmt.parents().filter('tr').next().hasClass('expanded') == false) {
+                currentElmt.parents().filter('tr').after(result);
+                currentElmt.parents().filter('tr').find('.dropdown img').attr('src',"<%= asset_path('contract.png') %>");
+                currentElmt.parents().filter('tr').find('.expand').text('close');
+              }
+            }
+          }
+        });
+      }
+
+    });
+  });
+});
+</script>
