@@ -78,6 +78,7 @@ class Csr < ActiveRecord::Base
       COMMAND.call tmp_file
     end
     c.update_column(:modulus, modulus)
+    File.delete(tmp_file) if File.exist?(tmp_file)
   end
 
   after_save do |c|
