@@ -38,7 +38,7 @@
         %td=csr.common_name
         %td=csr.created_at.strftime("%b %d, %Y")
         %td
-          =link_to 'edit', managed_csr_path(@ssl_slug, csr.id)
+          =link_to 'edit', edit_managed_csr_path(@ssl_slug, csr.id)
           -if csr.certificate_order.nil?
             |
             =link_to 'remove', managed_csr_path(@ssl_slug, csr.id), method: :delete
