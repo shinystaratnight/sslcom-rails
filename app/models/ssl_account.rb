@@ -788,9 +788,9 @@ class SslAccount < ActiveRecord::Base
         name: 'archived', archived: true, ssl_account_id: self.id
     )
 
-    default_folder = Folder.find(
+    default_folder = Folder.find_by(
         default: true, ssl_account_id: self.id
-    ) ||  Folder.create(name: 'default', default: true, ssl_account_id: self.id)
+    ) || Folder.create(name: 'default', default: true, ssl_account_id: self.id)
 
     expired_folder = Folder.find_or_create_by(
         name: 'expired', expired: true, ssl_account_id: self.id
