@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180816141802) do
+ActiveRecord::Schema.define(version: 20180822094222) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        limit: 255
@@ -1107,6 +1107,22 @@ ActiveRecord::Schema.define(version: 20180816141802) do
   add_index "refunds", ["order_transaction_id"], name: "index_refunds_on_order_transaction_id", using: :btree
   add_index "refunds", ["user_id"], name: "index_refunds_on_user_id", using: :btree
 
+  create_table "registered_agents", force: :cascade do |t|
+    t.string   "ref",             limit: 255, null: false
+    t.integer  "ssl_account_id",  limit: 4,   null: false
+    t.string   "ip_address",      limit: 255, null: false
+    t.string   "mac_address",     limit: 255, null: false
+    t.string   "agent",           limit: 255, null: false
+    t.string   "friendly_name",   limit: 255
+    t.integer  "requester_id",    limit: 4
+    t.datetime "requested_at"
+    t.integer  "approver_id",     limit: 4
+    t.datetime "approved_at"
+    t.string   "workflow_status", limit: 255, null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "reminder_triggers", force: :cascade do |t|
     t.integer  "name",       limit: 4
     t.datetime "created_at"
@@ -1280,6 +1296,7 @@ ActiveRecord::Schema.define(version: 20180816141802) do
     t.integer  "ca_id",                     limit: 4
     t.datetime "revoked_at"
     t.string   "type",                      limit: 255
+    t.integer  "registered_agent_id",       limit: 4
   end
 
   add_index "signed_certificates", ["ca_id"], name: "fk_rails_d21ca532b7", using: :btree
