@@ -36,12 +36,12 @@
         %th(scope="col") Validity period
       -@domains.each do |d|
         -dcv = d.domain_control_validations.last
-        -validation_status = (dcv && dcv.identifier_found) ? 'Validated' : 'Pending validation'
-        -validity_period = (validation_status=='Pending validation' || dcv.responded_at.nil?) ? 'n/a' : (30-(Date.today-dcv.responded_at.to_date).to_i).to_s + " days remaining"
+        -validation_status = (dcv.try(:identifier_found) || !d.signed_certificates.empty?) ? 'Validated' : 'Pending validation'
+        -validity_period = (validation_status=='Pending validation' || dcv.try(:responded_at).nil?) ? 'n/a' : (30-(Date.today-dcv.responded_at.to_date).to_i).to_s + " days remaining"
         -order_ref = d.certificate_content ? d.certificate_content.certificate_order.ref : 'Team'
         %tr
           %td=order_ref=='Team' ? (check_box_tag "d_name_check[]",d.id, false, :id => "d_name_check_#{d.id}", :class => "d_name_check") : ''
           %td=d.name
-          %td=(order_ref!='Team'  && validation_status=='Pending validation') ? (link_to order_ref, new_certificate_order_validation_path(@ssl_slug, d.certificate_content.certificate_order)) : order_ref
+          %td=link_to(order_ref,d.certificate_content.certificate_order) unless order_ref=='Team'
           %td.d_name_status=validation_status
           %td=validity_period
