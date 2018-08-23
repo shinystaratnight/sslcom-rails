@@ -39,6 +39,10 @@ class Csr < ActiveRecord::Base
   validates_presence_of :common_name, :if=> "!body.blank?", :message=> "field blank. Invalid csr."
   validates   :unique_value, uniqueness: { scope: :public_key_sha1 }
 
+  #will_paginate
+  cattr_accessor :per_page
+  @@per_page = 10
+
   scope :search, lambda {|term|
     where(csrs.common_name =~ "%#{term}%").includes{certificate_content.certificate_order}.references(:all)
   }

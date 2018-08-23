@@ -1,11 +1,10 @@
 
 class ManagedCsrsController < ApplicationController
   before_filter :require_user
-
+  before_filter :set_row_page, only: [:index]
 
   def index
-    @csrs = current_user.ssl_account.csrs
-    @managed_csrs = current_user.ssl_account.managed_csrs
+    @csrs = (current_user.ssl_account.csrs + current_user.ssl_account.managed_csrs).paginate(@p)
   end
 
   def new
@@ -60,5 +59,13 @@ class ManagedCsrsController < ApplicationController
     else
       render :json => 'no-user'
     end
+  end
+
+  private
+  def set_row_page
+    @per_page = params[:per_page] ? params[:per_page] : 10
+    Csr.per_page = @per_page if Csr.per_page != @per_page
+
+    @p = {page: (params[:page] || 1), per_page: @per_page}
   end
 end

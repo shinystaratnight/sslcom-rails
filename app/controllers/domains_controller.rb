@@ -2,10 +2,11 @@
 class DomainsController < ApplicationController
   before_filter :require_user, :except => [:dcv_validate, :dcv_all_validate]
   before_filter :find_ssl_account
+  before_filter :set_row_page, only: [:index]
 
   def index
-    @cnames = @ssl_account.certificate_names.order(:created_at).reverse_order
-    @domains = @ssl_account.domains.order(:created_at).reverse_order
+    cnames = @ssl_account.certificate_names.order(:created_at).reverse_order
+    @domains = (@ssl_account.domains.order(:created_at).reverse_order + cnames).paginate(@p)
   end
 
   def create
@@ -218,5 +219,13 @@ class DomainsController < ApplicationController
         end
       end
     end
+  end
+
+  private
+  def set_row_page
+    @per_page = params[:per_page] ? params[:per_page] : 10
+    CertificateName.per_page = @per_page if CertificateName.per_page != @per_page
+
+    @p = {page: (params[:page] || 1), per_page: @per_page}
   end
 end
