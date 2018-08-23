@@ -373,7 +373,7 @@ class Csr < ActiveRecord::Base
   end
 
   def signed_certificate
-    signed_certificates.sort{|a,b|a.created_at.to_i<=>b.created_at.to_i}.last
+    signed_certificates.order(:created_at).last
   end
 
   def replace_csr(csr)
