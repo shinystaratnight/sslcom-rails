@@ -39,6 +39,10 @@ class Csr < ActiveRecord::Base
   validates_presence_of :common_name, :if=> "!body.blank?", :message=> "field blank. Invalid csr."
   validates   :unique_value, uniqueness: { scope: :public_key_sha1 }
 
+  #will_paginate
+  cattr_accessor :per_page
+  @@per_page = 10
+
   scope :search, lambda {|term|
     where(csrs.common_name =~ "%#{term}%").includes{certificate_content.certificate_order}.references(:all)
   }
@@ -62,10 +66,34 @@ class Csr < ActiveRecord::Base
   BEGIN_NEW_TAG="-----BEGIN NEW CERTIFICATE REQUEST-----"
   END_NEW_TAG="-----END NEW CERTIFICATE REQUEST-----"
 
+  COMMAND=->(key_file){%x"openssl rsa -pubin -in #{key_file} -text -noout"}
+  TIMEOUT_DURATION=10
+
+  before_create do |csr|
+    csr.ref = 'csr-'+SecureRandom.hex(1)+Time.now.to_i.to_s(32)
+  end
+
+  after_create do |c|
+    tmp_file = "#{Rails.root}/tmp/csr_pub-#{DateTime.now.to_i}.key"
+    File.open(tmp_file, 'wb') do |f|
+      f.write c.public_key
+    end
+    modulus = timeout(TIMEOUT_DURATION) do
+      COMMAND.call tmp_file
+    end
+    c.update_column(:modulus, modulus)
+    File.delete(tmp_file) if File.exist?(tmp_file)
+  end
+
   after_save do |c|
     c.certificate_content.touch unless c.certificate_content.blank?
     c.certificate_order.touch unless c.certificate_content.blank?
+
   end
+
+  # def to_param
+  #   ref
+  # end
 
   def common_name
     SimpleIDN.to_unicode(read_attribute(:common_name)).gsub(/\x00/, '') unless read_attribute(:common_name).blank?
