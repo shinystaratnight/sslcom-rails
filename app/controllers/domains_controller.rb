@@ -118,12 +118,15 @@ class DomainsController < ApplicationController
   end
 
   def remove_selected
+    res_Obj = {}
+    deleted_domains = []
     params[:d_name_check].each do |d_name_id|
+      deleted_domains << d_name_id
       d_name = CertificateName.find_by_id(d_name_id)
       d_name.destroy
     end
-    flash[:notice] = "Domain was successfully deleted."
-    redirect_to domains_path(@ssl_slug)
+    res_Obj['deleted_domains'] = deleted_domains
+    render :json => res_Obj
   end
 
   def validate_selected
