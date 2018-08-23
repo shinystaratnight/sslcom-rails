@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180803165627) do
+ActiveRecord::Schema.define(version: 20180820025703) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        limit: 255
@@ -507,6 +507,10 @@ ActiveRecord::Schema.define(version: 20180803165627) do
     t.string   "public_key_sha1",           limit: 255
     t.string   "public_key_sha256",         limit: 255
     t.string   "public_key_md5",            limit: 255
+    t.integer  "ssl_account_id",            limit: 4
+    t.string   "ref",                       limit: 255
+    t.string   "friendly_name",             limit: 255
+    t.text     "modulus",                   limit: 65535
   end
 
   add_index "csrs", ["certificate_content_id", "common_name"], name: "index_csrs_on_common_name_and_certificate_content_id", using: :btree
@@ -668,8 +672,16 @@ ActiveRecord::Schema.define(version: 20180803165627) do
     t.datetime "created_at",                                 null: false
     t.datetime "updated_at",                                 null: false
     t.boolean  "expired",                    default: false
+    t.boolean  "active",                     default: false
+    t.boolean  "revoked",                    default: false
   end
 
+  add_index "folders", ["archived", "name", "ssl_account_id"], name: "index_folders_on_archived_and_name_and_ssl_account_id", using: :btree
+  add_index "folders", ["default", "archived", "name", "ssl_account_id", "expired", "active", "revoked"], name: "index_folder_statuses", using: :btree
+  add_index "folders", ["default", "name", "ssl_account_id"], name: "index_folders_on_default_and_name_and_ssl_account_id", using: :btree
+  add_index "folders", ["name", "ssl_account_id", "active", "revoked"], name: "index_folders_on_name_and_ssl_account_id_and_active_and_revoked", using: :btree
+  add_index "folders", ["name", "ssl_account_id", "expired"], name: "index_folders_on_name_and_ssl_account_id_and_expired", using: :btree
+  add_index "folders", ["name", "ssl_account_id", "revoked"], name: "index_folders_on_name_and_ssl_account_id_and_revoked", using: :btree
   add_index "folders", ["name"], name: "index_folders_on_name", using: :btree
   add_index "folders", ["parent_id"], name: "index_folders_on_parent_id", using: :btree
   add_index "folders", ["ssl_account_id"], name: "index_folders_on_ssl_account_id", using: :btree
@@ -786,10 +798,11 @@ ActiveRecord::Schema.define(version: 20180803165627) do
 
   create_table "notification_groups", force: :cascade do |t|
     t.integer  "ssl_account_id", limit: 4
-    t.string   "ref",            limit: 255, null: false
-    t.string   "friendly_name",  limit: 255, null: false
+    t.string   "ref",            limit: 255,                 null: false
+    t.string   "friendly_name",  limit: 255,                 null: false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "scan_port",      limit: 255, default: "443"
   end
 
   add_index "notification_groups", ["ssl_account_id", "ref"], name: "index_notification_groups_on_ssl_account_id_and_ref", using: :btree
@@ -1202,6 +1215,35 @@ ActiveRecord::Schema.define(version: 20180803165627) do
     t.string   "status",         limit: 255
   end
 
+  create_table "scan_logs", force: :cascade do |t|
+    t.integer  "notification_group_id",  limit: 4
+    t.integer  "scanned_certificate_id", limit: 4
+    t.string   "domain_name",            limit: 255
+    t.string   "scan_status",            limit: 255
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "scan_logs", ["notification_group_id"], name: "index_scan_logs_on_notification_group_id", using: :btree
+  add_index "scan_logs", ["scanned_certificate_id"], name: "index_scan_logs_on_scanned_certificate_id", using: :btree
+
+  create_table "scanned_certificates", force: :cascade do |t|
+    t.text     "body",       limit: 65535
+    t.text     "decoded",    limit: 65535
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "schedules", force: :cascade do |t|
+    t.integer  "notification_group_id", limit: 4
+    t.string   "schedule_type",         limit: 255, null: false
+    t.string   "schedule_value",        limit: 255, null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "schedules", ["notification_group_id"], name: "index_schedules_on_notification_group_id", using: :btree
+
   create_table "sent_reminders", force: :cascade do |t|
     t.integer  "signed_certificate_id", limit: 4
     t.text     "body",                  limit: 65535
@@ -1274,10 +1316,10 @@ ActiveRecord::Schema.define(version: 20180803165627) do
     t.string   "ext_customer_ref",          limit: 255
     t.text     "status",                    limit: 65535, null: false
     t.integer  "ca_id",                     limit: 4
+    t.datetime "revoked_at"
     t.string   "type",                      limit: 255
   end
 
-  add_index "signed_certificates", ["ca_id"], name: "index_signed_certificates_on_ca_id", using: :btree
   add_index "signed_certificates", ["common_name"], name: "index_signed_certificates_on_common_name", using: :btree
   add_index "signed_certificates", ["csr_id"], name: "index_signed_certificates_on_csr_id", using: :btree
 
@@ -1693,5 +1735,4 @@ ActiveRecord::Schema.define(version: 20180803165627) do
   end
 
   add_foreign_key "cdns", "certificate_orders"
-  add_foreign_key "signed_certificates", "cas"
 end
