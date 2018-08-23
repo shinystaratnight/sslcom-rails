@@ -6,8 +6,8 @@
       =render partial: "dcv_choices"
       #http_dcv
         %p
-          =link_to image_tag('download.png', :class=>'blue_icon'), http_dcv_file_csr_path(co.csr)
-          =link_to "click here to download file #{co.csr.md5_hash}.txt", http_dcv_file_csr_path(co.csr)
+          =link_to image_tag('download.png', :class=>'blue_icon'), http_dcv_file_csr_path(co.csr.id)
+          =link_to "click here to download file #{co.csr.md5_hash}.txt", http_dcv_file_csr_path(co.csr.id)
         %p
           Upload the above file to your site root so that:
         %p#http_dcv_url=current_user.is_admin? ? link_to(co.csr.dcv_url, co.csr.dcv_url, target: "_blank") : co.csr.dcv_url
