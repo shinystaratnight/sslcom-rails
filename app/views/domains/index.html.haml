@@ -26,8 +26,7 @@
           %li(style="margin-right: 0.5rem" )
             =submit_tag 'validate ', formaction: "#{validate_selected_domains_path(@ssl_slug)}", style: "padding: 0.5rem", id: "d_name_action_validate", disabled: 'true'
           %li
-            =submit_tag 'remove ', formaction: "#{remove_selected_domains_path(@ssl_slug)}", style: "padding: 0.5rem", id: "d_name_action_remove", disabled: 'true',
-            data: {confirm: 'Are you sure you want to delete this domain?'}
+            =submit_tag 'remove ', formaction: "#{remove_selected_domains_path(@ssl_slug)}", style: "padding: 0.5rem", id: "d_name_action_remove", disabled: 'true'
       %tr.heading_row
         %th
         %th.name(scope="col") Name
@@ -42,6 +41,6 @@
         %tr
           %td=order_ref=='Team' ? (check_box_tag "d_name_check[]",d.id, false, :id => "d_name_check_#{d.id}", :class => "d_name_check") : ''
           %td=d.name
-          %td=link_to(order_ref,d.certificate_content.certificate_order) unless order_ref=='Team'
+          %td=order_ref=='Team' ? 'Team' : link_to(order_ref,d.certificate_content.certificate_order)
           %td.d_name_status=validation_status
           %td=validity_period
