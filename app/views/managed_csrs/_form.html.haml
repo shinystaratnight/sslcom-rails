@@ -1,0 +1,7 @@
+.clearfix.form_input
+  = form.label :friendly_name, "Friendly Name"
+  = form.text_field :friendly_name, :size=>HTML_TEXT_FIELD_SIZE, required: true
+.clearfix.form_input
+  = form.text_area :body, :cols => 50, :rows => 10, required: true
+
+

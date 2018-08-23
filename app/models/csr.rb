@@ -62,9 +62,33 @@ class Csr < ActiveRecord::Base
   BEGIN_NEW_TAG="-----BEGIN NEW CERTIFICATE REQUEST-----"
   END_NEW_TAG="-----END NEW CERTIFICATE REQUEST-----"
 
+  COMMAND=->(key_file){%x"openssl rsa -pubin -in #{key_file} -text -noout"}
+  TIMEOUT_DURATION=10
+
+  before_create do |csr|
+    csr.ref = 'csr-'+SecureRandom.hex(1)+Time.now.to_i.to_s(32)
+  end
+
+  after_create do |c|
+    tmp_file = "#{Rails.root}/tmp/csr_pub-#{DateTime.now.to_i}.key"
+    File.open(tmp_file, 'wb') do |f|
+      f.write c.public_key
+    end
+    modulus = timeout(TIMEOUT_DURATION) do
+      COMMAND.call tmp_file
+    end
+    c.update_column(:modulus, modulus)
+    File.delete(tmp_file) if File.exist?(tmp_file)
+  end
+
   after_save do |c|
     c.certificate_content.touch unless c.certificate_content.blank?
     c.certificate_order.touch unless c.certificate_content.blank?
+
+  end
+
+  def to_param
+    ref
   end
 
   def common_name

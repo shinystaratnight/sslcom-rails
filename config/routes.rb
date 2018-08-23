@@ -275,6 +275,12 @@ SslCom::Application.routes.draw do
       end
     end
 
+    resources :managed_csrs do
+      collection do
+        get :show_csr_detail
+      end
+    end
+
     resources :notification_groups do
       resources :scan_logs, only: :index
 
