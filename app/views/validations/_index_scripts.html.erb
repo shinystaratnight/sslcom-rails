@@ -368,7 +368,7 @@ jQuery(function($) {
         else if(/https/.test(methods[0])){
           instructions="Upload <a href='<%=http_dcv_file_csr_path(@ssl_slug, @certificate_order.csr.id)%>'>this file</a> to this location: <a href='"+https+"' target='_new'>"+https+"</a>";
           $(instruction).html(instructions);
-          $.ajax({url: '<%=verification_check_csr_path(@ssl_slug, @certificate_order.csr)%>?protocol=https&dcv='+
+          $.ajax({url: '<%=verification_check_csr_path(@ssl_slug, @certificate_order.csr.id)%>?protocol=https&dcv='+
             $(dcv_select).parents('tr').attr('id')+'&new_name='+$(dcv_select).attr('alt')+'&ref='+$(dcv_select).parents('tbody').attr('data-ref')}).done(
               function(data){
                 $('td.pretest[class~="'+$(dcv_select).attr("alt")+'"]').html((data ? "passed" : "failed"))
@@ -378,7 +378,7 @@ jQuery(function($) {
         else if(/http/.test(methods[0])){
           instructions="Upload <a href='<%=http_dcv_file_csr_path(@ssl_slug, @certificate_order.csr.id)%>'>this file</a> to this location: <a href='"+http+"' target='_new'>"+http+"</a>";
           $(instruction).html(instructions);
-          $.ajax({url: '<%=verification_check_csr_path(@ssl_slug, @certificate_order.csr)%>?protocol=http&dcv='+
+          $.ajax({url: '<%=verification_check_csr_path(@ssl_slug, @certificate_order.csr.id)%>?protocol=http&dcv='+
             $(dcv_select).parents('tr').attr('id')+'&new_name='+$(dcv_select).attr('alt')+'&ref='+$(dcv_select).parents('tbody').attr('data-ref')}).done(
               function(data){
                 $('td.pretest[class~="'+$(dcv_select).attr("alt")+'"]').html((data ? "passed" : "failed"))
@@ -387,7 +387,7 @@ jQuery(function($) {
         }
         else if(/cname/.test(methods[0])){
           $(instruction).html("Create CNAME: "+cname);
-          $.ajax({url: '<%=verification_check_csr_path(@ssl_slug, @certificate_order.csr)%>?protocol=cname&dcv='+
+          $.ajax({url: '<%=verification_check_csr_path(@ssl_slug, @certificate_order.csr.id)%>?protocol=cname&dcv='+
             $(dcv_select).parents('tr').attr('id')+'&new_name='+$(dcv_select).attr('alt')+'&ref='+$(dcv_select).parents('tbody').attr('data-ref')}).done(
               function(data){
                 $('td.pretest[class~="'+$(dcv_select).attr("alt")+'"]').html((data ? "passed" : "failed"))
