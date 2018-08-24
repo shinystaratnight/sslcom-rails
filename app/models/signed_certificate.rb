@@ -20,6 +20,7 @@ class SignedCertificate < ActiveRecord::Base
     Proc.new{|r| !r.parent_cert && !r.body.blank?}
   has_many  :sslcom_ca_revocation_requests, as: :api_requestable
   #validate :same_as_previously_signed_certificate?, :if=> '!csr.blank?'
+  belongs_to  :registered_agent
 
   attr :parsed
   attr_accessor :email_customer
@@ -62,11 +63,11 @@ class SignedCertificate < ActiveRecord::Base
   end
 
   after_create do |s|
-    s.csr.certificate_content.issue! unless self.ca_id==Ca::ISSUER[:sslcom_shadow]
+    s.csr.certificate_content.issue! if self.ca_id!=Ca::ISSUER[:sslcom_shadow] && self.type != 'ManagedCertificate'
   end
 
   after_save do |s|
-    unless self.ca_id==Ca::ISSUER[:sslcom_shadow]
+    if self.ca_id!=Ca::ISSUER[:sslcom_shadow] && self.type != 'ManagedCertificate'
       s.send_processed_certificate
       cc=s.csr.certificate_content
       if cc.preferred_reprocessing?

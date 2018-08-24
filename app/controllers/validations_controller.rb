@@ -220,7 +220,8 @@ class ValidationsController < ApplicationController
                       ComodoApi.domain_control_email_choices(params['domain_name']).email_address_choices
       addresses.delete("none")
 
-      returnObj['caa_check'] = CaaCheck.pass?(params[:certificate_order_id], params['domain_name']) ? 'passed' : 'failed'
+      # returnObj['caa_check'] = CaaCheck.pass?(params[:certificate_order_id], params['domain_name']) ? 'passed' : 'failed'
+      returnObj['caa_check'] = 'failed'
       returnObj['new_emails'] = {}
 
       addresses.each do |addr|
@@ -243,6 +244,7 @@ class ValidationsController < ApplicationController
       if co
         cn = co.certificate_content.certificate_names.find_by_name(params['domain_name'])
 
+<<<<<<< HEAD
         if co.certificate_content.ca_id.nil?
           ds = params['domain_status']
 
@@ -289,6 +291,22 @@ class ValidationsController < ApplicationController
                 }
               end
             else
+=======
+        if co.external_order_number
+          dcv = cn.domain_control_validations.last
+          caa_check = 'failed'
+
+          if domain_status && domain_status.downcase == 'validated'
+            if cn.caa_passed
+              caa_check = 'passed'
+            else
+              CaaCheck.pass?(params[:certificate_order_id], cn, cn.certificate_content)
+            end
+          end
+
+          if params['is_ucc'] == 'true'
+            if ds && ds[cn.name]
+>>>>>>> origin/improving-validation-new-page
               optionsObj = {}
               addresses = params['domain_count'].to_i > Validation::COMODO_EMAIL_LOOKUP_THRESHHOLD ?
                               DomainControlValidation.email_address_choices(cn.name) :
@@ -309,6 +327,15 @@ class ValidationsController < ApplicationController
               optionsObj['Validation via email'] = viaEmail
               optionsObj['Validation via csr hash'] = viaCSR
 
+              # caa_check = 'failed'
+              # if domain_status && domain_status.downcase == 'validated'
+              #   if cn.caa_pass
+              #     caa_check = 'passed'
+              #   else
+              #     CaaCheck.pass?(params[:certificate_order_id], cn.name)
+              #   end
+              # end
+
               returnObj = {
                   'tr_info' => {
                       'options' => optionsObj,
@@ -318,8 +345,9 @@ class ValidationsController < ApplicationController
                       'attempt' => domain_method ? domain_method.downcase.gsub('%28', '').gsub('%29', '') : '',
                       'attempted_on' => dcv.blank? ? 'n/a' : dcv.created_at,
                       'status' => domain_status ? domain_status.downcase : '',
-                      'caa_check' => domain_status && domain_status.downcase == 'validated' ? 'passed' :
-                                         (CaaCheck.pass?(params[:certificate_order_id], cn.name) ? 'passed' : 'failed')
+                      # 'caa_check' => domain_status && domain_status.downcase == 'validated' ? 'passed' :
+                      #                    (CaaCheck.pass?(params[:certificate_order_id], cn.name) ? 'passed' : 'failed')
+                      'caa_check' => caa_check
                   },
                   'tr_instruction' => false
               }
@@ -342,17 +370,37 @@ class ValidationsController < ApplicationController
             optionsObj['Validation via email'] = viaEmail
             optionsObj['Validation via csr hash'] = viaCSR
 
+<<<<<<< HEAD
             le = cn.domain_control_validations.last_emailed
+=======
+            # caa_check = 'failed'
+            # if domain_status && domain_status.downcase == 'validated'
+            #   if cn.caa_pass
+            #     caa_check = 'passed'
+            #   else
+            #     CaaCheck.pass?(params[:certificate_order_id], cn.name)
+            #   end
+            # end
+>>>>>>> origin/improving-validation-new-page
 
             returnObj = {
                 'tr_info' => {
                     'options' => optionsObj,
                     'slt_option' => le.blank? ? nil : le.email_address,
                     'pretest' => 'n/a',
+<<<<<<< HEAD
                     'attempt' => 'validation not performed yet',
                     'attempted_on' => 'n/a',
                     'status' => 'waiting',
                     'caa_check' => CaaCheck.pass?(params[:certificate_order_id], cn.name) ? 'passed' : 'failed'
+=======
+                    'attempt' => domain_method ? domain_method.downcase.gsub('%28', '').gsub('%29', '') : '',
+                    'attempted_on' => dcv.blank? ? 'n/a' : dcv.created_at,
+                    'status' => domain_status ? domain_status.downcase : '',
+                    # 'caa_check' => domain_status && domain_status.downcase == 'validated' ? 'passed' :
+                    #                    (CaaCheck.pass?(params[:certificate_order_id], cn.name) ? 'passed' : 'failed')
+                    'caa_check' => caa_check
+>>>>>>> origin/improving-validation-new-page
                 },
                 'tr_instruction' => false
             }
@@ -385,7 +433,8 @@ class ValidationsController < ApplicationController
                   'attempt' => 'validation not performed yet',
                   'attempted_on' => 'n/a',
                   'status' => 'waiting',
-                  'caa_check' => CaaCheck.pass?(params[:certificate_order_id], cn.name) ? 'passed' : 'failed'
+                  # 'caa_check' => CaaCheck.pass?(params[:certificate_order_id], cn.name) ? 'passed' : 'failed'
+                  'caa_check' => 'failed'
               },
               'tr_instruction' => false
           }
