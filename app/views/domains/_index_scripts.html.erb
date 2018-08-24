@@ -53,6 +53,51 @@
           });
         }
       });
+
+      $('#d_name_action_remove').on('click', function (e) {
+        e.preventDefault();
+        if(confirm("Are you sure you want remove selected domains?")){
+          var action = location.pathname + '/remove_selected';
+          $('form#domains_list').attr('action', action);
+          $('form#domains_list').submit();
+        }
+      })
+
+      $('form#domains_list').ajaxForm({
+        dataType: "json",
+        success: function(data, status){
+          var deleted_domains = data['deleted_domains'];
+          if(deleted_domains.length>0){
+            var message_wrap_element = $('<div></div>');
+            message_wrap_element.attr('class', 'flash_message notice');
+
+            var message_element = $('<span>Domains removed successfully</span>');
+            message_wrap_element.append(message_element);
+
+            var btn_element = $('<small></small>');
+            var close_btn_element = $('<div></div>');
+            close_btn_element.attr('class', 'close_flash_message');
+
+            var close_sign_element = $('<span></span>');
+            close_sign_element.append('X');
+
+            close_btn_element.append(close_sign_element);
+            close_btn_element.append('close');
+
+            btn_element.append(close_btn_element);
+            message_wrap_element.append(btn_element);
+
+            if ($('#content').find('.inner').children().first().hasClass('flash_message')) {
+              $('#content').find('.inner').children().first().remove();
+            }
+            message_wrap_element.insertBefore($('#content').find('.inner').children().first());
+          }
+          $.each(deleted_domains, function (key, value) {
+            $('#d_name_check_'+value).closest('tr').remove();
+          });
+        }
+      });
+
       $(document).on('click', '.d_name_check', function () {
         if($('.d_name_check:checkbox:checked').length>0){
           $("#d_name_action_remove").prop('disabled', false);

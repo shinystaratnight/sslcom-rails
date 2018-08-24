@@ -129,6 +129,7 @@ sync_aid_li_and_cart: false
 browser_acceptance: "99.9%"
 notify_address: "support@ssl.com"
 disable_links_banner: false
+auto_approve_ssl_manager_register: true
 
 from_email:
   orders: 'orders@ssl.com'

@@ -220,7 +220,8 @@ class ValidationsController < ApplicationController
                       ComodoApi.domain_control_email_choices(params['domain_name']).email_address_choices
       addresses.delete("none")
 
-      returnObj['caa_check'] = CaaCheck.pass?(params[:certificate_order_id], params['domain_name']) ? 'passed' : 'failed'
+      # returnObj['caa_check'] = CaaCheck.pass?(params[:certificate_order_id], params['domain_name']) ? 'passed' : 'failed'
+      returnObj['caa_check'] = 'failed'
       returnObj['new_emails'] = {}
 
       addresses.each do |addr|
@@ -251,6 +252,18 @@ class ValidationsController < ApplicationController
 
           if co.external_order_number
             dcv = cn.domain_control_validations.last
+            caa_check = 'failed'
+
+            if domain_status && domain_status.downcase == 'validated'
+              if cn.caa_passed
+                caa_check = 'passed'
+              else
+                CaaCheck.pass?(params[:certificate_order_id], cn, cn.certificate_content)
+              end
+            else
+              caa_check = ''
+            end
+
             if params['is_ucc'] == 'true'
               if ds && ds[cn.name]
                 optionsObj = {}
@@ -274,18 +287,19 @@ class ValidationsController < ApplicationController
                 optionsObj['Validation via csr hash'] = viaCSR
 
                 returnObj = {
-                    'tr_info' => {
-                        'options' => optionsObj,
-                        'slt_option' => domain_method ?
-                                            domain_method.downcase.gsub('pre-validated %28', '').gsub('%29', '').gsub(' ', '_') : nil,
-                        'pretest' => 'n/a',
-                        'attempt' => domain_method ? domain_method.downcase.gsub('%28', ' ').gsub('%29', ' ') : '',
-                        'attempted_on' => dcv.blank? ? 'n/a' : dcv.created_at,
-                        'status' => domain_status ? domain_status.downcase : '',
-                        'caa_check' => domain_status && domain_status.downcase == 'validated' ? 'passed' :
-                                           (CaaCheck.pass?(params[:certificate_order_id], cn.name) ? 'passed' : 'failed')
-                    },
-                    'tr_instruction' => false
+                  'tr_info' => {
+                    'options' => optionsObj,
+                    'slt_option' => domain_method ?
+                                        domain_method.downcase.gsub('pre-validated %28', '').gsub('%29', '').gsub(' ', '_') : nil,
+                    'pretest' => 'n/a',
+                    'attempt' => domain_method ? domain_method.downcase.gsub('%28', ' ').gsub('%29', ' ') : '',
+                    'attempted_on' => dcv.blank? ? 'n/a' : dcv.created_at,
+                    'status' => domain_status ? domain_status.downcase : '',
+                    # 'caa_check' => domain_status && domain_status.downcase == 'validated' ? 'passed' :
+                    #                    (CaaCheck.pass?(params[:certificate_order_id], cn.name) ? 'passed' : 'failed')
+                    'caa_check' => caa_check
+                  },
+                  'tr_instruction' => false
                 }
               end
             else
@@ -309,19 +323,29 @@ class ValidationsController < ApplicationController
               optionsObj['Validation via email'] = viaEmail
               optionsObj['Validation via csr hash'] = viaCSR
 
+              # caa_check = 'failed'
+              # if domain_status && domain_status.downcase == 'validated'
+              #   if cn.caa_pass
+              #     caa_check = 'passed'
+              #   else
+              #     CaaCheck.pass?(params[:certificate_order_id], cn.name)
+              #   end
+              # end
+
               returnObj = {
-                  'tr_info' => {
-                      'options' => optionsObj,
-                      'slt_option' => domain_method ?
-                                          domain_method.downcase.gsub('pre-validated %28', '').gsub('%29', '').gsub(' ', '_') : dcv.try(:dcv_method),
-                      'pretest' => 'n/a',
-                      'attempt' => domain_method ? domain_method.downcase.gsub('%28', '').gsub('%29', '') : '',
-                      'attempted_on' => dcv.blank? ? 'n/a' : dcv.created_at,
-                      'status' => domain_status ? domain_status.downcase : '',
-                      'caa_check' => domain_status && domain_status.downcase == 'validated' ? 'passed' :
-                                         (CaaCheck.pass?(params[:certificate_order_id], cn.name) ? 'passed' : 'failed')
-                  },
-                  'tr_instruction' => false
+                'tr_info' => {
+                  'options' => optionsObj,
+                  'slt_option' => domain_method ?
+                                      domain_method.downcase.gsub('pre-validated %28', '').gsub('%29', '').gsub(' ', '_') : dcv.try(:dcv_method),
+                  'pretest' => 'n/a',
+                  'attempt' => domain_method ? domain_method.downcase.gsub('%28', '').gsub('%29', '') : '',
+                  'attempted_on' => dcv.blank? ? 'n/a' : dcv.created_at,
+                  'status' => domain_status ? domain_status.downcase : '',
+                  # 'caa_check' => domain_status && domain_status.downcase == 'validated' ? 'passed' :
+                  #                    (CaaCheck.pass?(params[:certificate_order_id], cn.name) ? 'passed' : 'failed')
+                  'caa_check' => caa_check
+                },
+                'tr_instruction' => false
               }
             end
           else
@@ -345,16 +369,17 @@ class ValidationsController < ApplicationController
             le = cn.domain_control_validations.last_emailed
 
             returnObj = {
-                'tr_info' => {
-                    'options' => optionsObj,
-                    'slt_option' => le.blank? ? nil : le.email_address,
-                    'pretest' => 'n/a',
-                    'attempt' => 'validation not performed yet',
-                    'attempted_on' => 'n/a',
-                    'status' => 'waiting',
-                    'caa_check' => CaaCheck.pass?(params[:certificate_order_id], cn.name) ? 'passed' : 'failed'
-                },
-                'tr_instruction' => false
+              'tr_info' => {
+                'options' => optionsObj,
+                'slt_option' => le.blank? ? nil : le.email_address,
+                'pretest' => 'n/a',
+                'attempt' => 'validation not performed yet',
+                'attempted_on' => 'n/a',
+                'status' => 'waiting',
+                # 'caa_check' => CaaCheck.pass?(params[:certificate_order_id], cn.name) ? 'passed' : 'failed'
+                'caa_check' => ''
+              },
+              'tr_instruction' => false
             }
           end
         else
@@ -378,16 +403,17 @@ class ValidationsController < ApplicationController
           le = cn.domain_control_validations.last_emailed
 
           returnObj = {
-              'tr_info' => {
-                  'options' => optionsObj,
-                  'slt_option' => le.blank? ? nil : le.email_address,
-                  'pretest' => 'n/a',
-                  'attempt' => 'validation not performed yet',
-                  'attempted_on' => 'n/a',
-                  'status' => 'waiting',
-                  'caa_check' => CaaCheck.pass?(params[:certificate_order_id], cn.name) ? 'passed' : 'failed'
-              },
-              'tr_instruction' => false
+            'tr_info' => {
+              'options' => optionsObj,
+              'slt_option' => le.blank? ? nil : le.email_address,
+              'pretest' => 'n/a',
+              'attempt' => 'validation not performed yet',
+              'attempted_on' => 'n/a',
+              'status' => 'waiting',
+              # 'caa_check' => CaaCheck.pass?(params[:certificate_order_id], cn.name) ? 'passed' : 'failed'
+              'caa_check' => ''
+            },
+            'tr_instruction' => false
           }
         end
       end
