@@ -738,7 +738,7 @@ jQuery(function($) {
                           sltElement.attr('id', 'domains_' + value + '_dcv');
                           sltElement.attr('alt', value);
                           <%if Settings.enable_caa%>
-                          if (result[key]['caa_check'] == 'failed') {
+                          if (result[key]['caa_check'] == 'failed' || result[key]['caa_check'] == '') {
                             // TODO: Disable CAA CHECK temporarily for now.
                             /*sltElement.attr('disabled', true);*/
                             sltElement.attr('disabled', false);
@@ -806,7 +806,7 @@ jQuery(function($) {
 
                           <%if Settings.enable_caa%>
                             tdElement = $('<td></td>');
-                            if (result[key]['caa_check'] == 'failed') {
+                            if (result[key]['caa_check'] == 'failed' || result[key]['caa_check'] == '') {
                               tdElement.attr('style', 'background: red; color: white');
                               tdElement.append(result[key]['caa_check']);
                             } else if (result[key]['caa_check'] == 'passed') {
@@ -1457,7 +1457,7 @@ jQuery(function($) {
 
                       $('[name="domains[' + new_domain_name + '][dcv]"]').change();
                       $('[name="domains[' + new_domain_name + '][dcv]"]').parent().next().empty();
-                      if (result['caa_check'] == 'failed') {
+                      if (result['caa_check'] == 'failed' || result['caa_check'] == '') {
                         // TODO: Disable CAA CHECK temporarily for now.
                         /*$('[name="domains[' + new_domain_name + '][dcv]"]').attr('disabled', true);*/
                         $('[name="domains[' + new_domain_name + '][dcv]"]').attr('disabled', false);
