@@ -409,7 +409,7 @@ class OrdersController < ApplicationController
 
   def filter_by_state
     states = [params[:id]]
-    unpaginated =
+    @unpaginated =
       if current_user.is_admin?
         Order.unscoped{Order.includes(:line_items).where{state >> states}.order("created_at desc")}
       else

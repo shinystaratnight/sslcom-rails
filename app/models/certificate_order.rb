@@ -1201,6 +1201,10 @@ class CertificateOrder < ActiveRecord::Base
     certificate_content.try("new?") && workflow_state=='paid'
   end
 
+  def is_unused?
+    certificate_content.try("new?") && (workflow_state=='paid' || workflow_state=='refunded')
+  end
+
   def is_prepaid?
     preferred_payment_order=='prepaid'
   end

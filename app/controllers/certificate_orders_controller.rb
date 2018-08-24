@@ -29,7 +29,7 @@ class CertificateOrdersController < ApplicationController
   filter_access_to :auto_renew, require: [:admin_manage]
   filter_access_to :show_cert_order, :require=>:ajax
   before_filter :load_certificate_order,
-                only: [:show, :update, :edit, :download, :destroy, :delete, :update_csr, :auto_renew, :start_over,
+                only: [:show, :show_cert_order, :update, :edit, :download, :destroy, :delete, :update_csr, :auto_renew, :start_over,
                        :change_ext_order_number, :admin_update, :developer, :sslcom_ca, :update_tags]
   before_filter :set_row_page, only: [:index, :search, :credits, :pending, :filter_by_scope, :order_by_csr, :filter_by,
                                       :incomplete, :reprocessing]
@@ -62,9 +62,6 @@ class CertificateOrdersController < ApplicationController
 
   def show_cert_order
     if current_user
-      @certificate_order = (current_user.is_system_admins? ? CertificateOrder :
-                                current_user.ssl_account.certificate_orders).find_by_ref(params[:id])
-
       render :partial=>'detailed_info', :locals=>{:certificate_order=>@certificate_order}
     else
       render :json => 'no-user'
@@ -92,12 +89,16 @@ class CertificateOrdersController < ApplicationController
   # GET /certificate_orders/1
   # GET /certificate_orders/1.xml
   def show
-    @taggable = @certificate_order
-    get_team_tags
-    redirect_to edit_certificate_order_path(@ssl_slug, @certificate_order) and return if @certificate_order.certificate_content.new?
-    respond_to do |format|
-      format.html # show.html.erb
-      format.xml  { render :xml => @certificate_order }
+    if @certificate_order.workflow_state=="refunded"
+      not_found
+    else
+      @taggable = @certificate_order
+      get_team_tags
+      redirect_to edit_certificate_order_path(@ssl_slug, @certificate_order) and return if @certificate_order.certificate_content.new?
+      respond_to do |format|
+        format.html # show.html.erb
+        format.xml  { render :xml => @certificate_order }
+      end
     end
   end
 
