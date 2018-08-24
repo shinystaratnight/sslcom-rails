@@ -2,6 +2,14 @@
   jQuery.noConflict();
   jQuery(function ($) {
     $(document).ready(function () {
+      $('#number_rows').change(function() {
+        url = window.location.href;
+        if (url.indexOf('?')>0) {
+          url = url.substring(0, url.indexOf('?'))
+        }
+        window.location = url + "/?per_page=" + $(this).val();
+      });
+
       $('form#add_domains').ajaxForm({
         dataType: "json",
         success: function(data, status){

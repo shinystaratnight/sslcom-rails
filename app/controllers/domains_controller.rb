@@ -2,10 +2,11 @@
 class DomainsController < ApplicationController
   before_filter :require_user, :except => [:dcv_validate, :dcv_all_validate]
   before_filter :find_ssl_account
+  before_filter :set_row_page, only: [:index]
 
   def index
-    @cnames = @ssl_account.certificate_names.order(:created_at).reverse_order
-    @domains = @ssl_account.domains.order(:created_at).reverse_order
+    cnames = @ssl_account.certificate_names.order(:created_at).reverse_order
+    @domains = (@ssl_account.domains.order(:created_at).reverse_order + cnames).paginate(@p)
   end
 
   def create
@@ -122,7 +123,7 @@ class DomainsController < ApplicationController
       d_name.destroy
     end
     flash[:notice] = "Domain was successfully deleted."
-    redirect_to domains_path
+    redirect_to domains_path(@ssl_slug)
   end
 
   def validate_selected
@@ -176,8 +177,11 @@ class DomainsController < ApplicationController
         next if dcv && dcv.identifier_found
         @all_domains << dn
         standard_addresses = DomainControlValidation.email_address_choices(dn.name)
-        whois_addresses = WhoisLookup.email_addresses(Whois.whois(CertificateContent.top_level_domain(dn.name)).inspect)
-        @address_choices << (standard_addresses + whois_addresses)
+        whois_addresses = WhoisLookup.email_addresses(Whois.whois(ActionDispatch::Http::URL.extract_domain(dn.name, 1)).inspect)
+        whois_addresses.each do |ad|
+          standard_addresses << ad unless ad.include? 'abuse@'
+        end
+        @address_choices << standard_addresses
       end
     end
   end
@@ -215,5 +219,13 @@ class DomainsController < ApplicationController
         end
       end
     end
+  end
+
+  private
+  def set_row_page
+    @per_page = params[:per_page] ? params[:per_page] : 10
+    CertificateName.per_page = @per_page if CertificateName.per_page != @per_page
+
+    @p = {page: (params[:page] || 1), per_page: @per_page}
   end
 end

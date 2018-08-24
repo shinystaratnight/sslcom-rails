@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180816141802) do
+ActiveRecord::Schema.define(version: 20180820025703) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        limit: 255
@@ -507,6 +507,10 @@ ActiveRecord::Schema.define(version: 20180816141802) do
     t.string   "public_key_sha1",           limit: 255
     t.string   "public_key_sha256",         limit: 255
     t.string   "public_key_md5",            limit: 255
+    t.integer  "ssl_account_id",            limit: 4
+    t.string   "ref",                       limit: 255
+    t.string   "friendly_name",             limit: 255
+    t.text     "modulus",                   limit: 65535
   end
 
   add_index "csrs", ["certificate_content_id", "common_name"], name: "index_csrs_on_common_name_and_certificate_content_id", using: :btree
@@ -1012,8 +1016,7 @@ ActiveRecord::Schema.define(version: 20180816141802) do
   add_index "preferences", ["group_id", "group_type", "name", "owner_id", "owner_type"], name: "index_preferences_on_owner_and_name_and_preference", unique: true, using: :btree
   add_index "preferences", ["id", "name", "owner_id", "owner_type", "value"], name: "index_preferences_on_owner_and_name_and_value", using: :btree
   add_index "preferences", ["id", "name", "value"], name: "index_preferences_on_name_and_value", using: :btree
-  add_index "preferences", ["id", "owner_id", "owner_type"], name: "index_preferences_on_id_and_owner_id_and_owner_type", unique: true, using: :btree
-  add_index "preferences", ["id", "owner_id", "owner_type"], name: "index_preferences_on_owner_id_and_owner_type", unique: true, using: :btree
+  add_index "preferences", ["owner_id", "owner_type"], name: "index_preferences_on_owner_id_and_owner_type", using: :btree
 
   create_table "product_orders", force: :cascade do |t|
     t.integer  "ssl_account_id",    limit: 4

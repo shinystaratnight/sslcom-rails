@@ -25,6 +25,10 @@ class CertificateName < ActiveRecord::Base
 
   attr_accessor :csr
 
+  #will_paginate
+  cattr_accessor :per_page
+  @@per_page = 10
+
   def is_ip_address?
     name.index(/\A(?:[0-9]{1,3}\.){3}[0-9]{1,3}\z/)==0 if name
   end

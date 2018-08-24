@@ -28,7 +28,7 @@
       %th(colspan="2") validation hashes
     %tr
       %td file
-      %td=link_to "click here to download file #{co.csr.md5_hash}.txt", http_dcv_file_csr_path(@ssl_slug, co.csr)
+      %td=link_to "click here to download file #{co.csr.md5_hash}.txt", http_dcv_file_csr_path(@ssl_slug, co.csr.id)
     %tr
       %td cname
       %td create CNAME in dns and point to #{co.csr.dns_sha2_hash}.comodoca.com
