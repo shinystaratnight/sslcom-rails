@@ -6692,12 +6692,13 @@ span.notifications-teams
           height: 10px
 
   tbody tr
+    &:last-child td
+      border-bottom: 2px solid grey
     &.removed_domain
       background-color: lightgrey
     &.certificate_name td
-      padding-bottom: 5px
-      padding-top: 5px
-      padding-left: 5px
+      padding: 3px
+      border-top: 1px solid grey
       &:first-child
         text-align: center
         padding-left: 0px
@@ -6705,6 +6706,18 @@ span.notifications-teams
           margin-left: 3px
       .check_box
         vertical-align: middle
+
+      &.pretest,
+      &.caa_check
+        text-align: center
+        div
+          padding: 5px
+          &.passed
+            background-color: green
+            color: white
+          &.failed
+            background-color: red
+            color: white
 
 .redirect_message_wrap
   position: absolute
