@@ -772,7 +772,7 @@ class SslAccount < ActiveRecord::Base
   end
   
   def billing_monthly?
-    billing_method == 'monthly'
+    billing_method == 'monthly' || no_limit
   end
   
   def billing_daily?
@@ -780,7 +780,7 @@ class SslAccount < ActiveRecord::Base
   end
   
   def invoice_required?
-    billing_monthly? || billing_daily?
+    billing_monthly? || billing_daily? || no_limit
   end
   
   protected
