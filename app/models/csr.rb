@@ -94,7 +94,7 @@ class Csr < ActiveRecord::Base
   # def to_param
   #   ref
   # end
-
+  #
   def common_name
     SimpleIDN.to_unicode(read_attribute(:common_name)).gsub(/\x00/, '') unless read_attribute(:common_name).blank?
   end

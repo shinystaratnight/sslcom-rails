@@ -292,8 +292,11 @@ class Order < ActiveRecord::Base
   end
     
   def total
-    unless reprocess_ucc_order? || invoice_payment? ||
-      on_payable_invoice? || domains_adjustment?
+    unless reprocess_ucc_order? || 
+      invoice_payment? ||
+      on_payable_invoice? || 
+      domains_adjustment? ||
+      no_limit_order?
       
       self.amount = line_items.inject(0.to_money) {|sum,l| sum + l.amount }
     end
@@ -512,6 +515,10 @@ class Order < ActiveRecord::Base
 
   def merchant_fully_refunded?
     get_total_merchant_refunds == get_total_merchant_amount
+  end
+
+  def no_limit_order?
+    state == 'invoiced'
   end
   
   def on_payable_invoice?

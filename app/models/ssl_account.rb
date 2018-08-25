@@ -76,6 +76,7 @@ class SslAccount < ActiveRecord::Base
       where.not certificate_contents: {ca_id: nil}
     end
   end
+  has_many  :registered_agents
 
   unless MIGRATING_FROM_LEGACY
     #has_many  :orders, :as=>:billable, :after_add=>:build_line_items
@@ -771,7 +772,7 @@ class SslAccount < ActiveRecord::Base
   end
   
   def billing_monthly?
-    billing_method == 'monthly'
+    billing_method == 'monthly' || no_limit
   end
   
   def billing_daily?
@@ -779,7 +780,7 @@ class SslAccount < ActiveRecord::Base
   end
   
   def invoice_required?
-    billing_monthly? || billing_daily?
+    billing_monthly? || billing_daily? || no_limit
   end
   
   protected

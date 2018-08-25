@@ -455,6 +455,12 @@ class User < ActiveRecord::Base
     UserNotifier.generate_install_ssl(self, resource_id, host_name, to_address).deliver
   end
 
+  def deliver_register_ssl_manager_to_team!(registered_agent_id, ssl_account, auto_approve)
+    auto_approve ?
+        UserNotifier.auto_register_ssl_manager_to_team(self, ssl_account).deliver :
+        UserNotifier.register_ssl_manager_to_team(self, registered_agent_id, ssl_account).deliver
+  end
+
   def browsing_history(l_bound=nil, h_bound=nil, sort="asc")
     l_bound = "01/01/2000" if l_bound.blank?
     s= l_bound =~ /\// ? "%m/%d/%Y" : "%m-%d-%Y"
