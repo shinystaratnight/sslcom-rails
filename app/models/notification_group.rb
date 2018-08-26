@@ -269,7 +269,6 @@ class NotificationGroup < ActiveRecord::Base
                                                         nil]).pluck(:email_address)
     contacts.concat Contact.where(id: notification_groups_contacts.where(contactable_type: 'CertificateContact')
                                                  .pluck(:contactable_id)).pluck(:email)
-    contacts.concat ["test@mail.com"]
 
     domains = []
     domains.concat notification_groups_subjects.where(["domain_name IS NOT ? and subjectable_id IS ?",
@@ -335,7 +334,7 @@ class NotificationGroup < ActiveRecord::Base
       end
     end
 
-    unless results.empty?
+    unless results.empty? or contacts.empty?
       results.each do |result|
         logger.info "Sending reminder"
         d = [",," + contacts.uniq.join(";")]

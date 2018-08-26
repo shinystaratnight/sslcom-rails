@@ -5,8 +5,9 @@ class CasCertificate < ActiveRecord::Base
             shadow: "shadow",
             hide: "hide"}
 
-  belongs_to :ca
-  belongs_to :certificate
+  belongs_to                    :ca
+  belongs_to                    :certificate
+  has_and_belongs_to_many :ssl_accounts
 end
 
 
