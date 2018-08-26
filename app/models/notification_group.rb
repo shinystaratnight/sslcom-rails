@@ -359,6 +359,7 @@ class NotificationGroup < ActiveRecord::Base
       domain, ori_port = url.split ":"
       tcp_client = TCPSocket.new(domain, ori_port || default_port)
       self.ssl_client = OpenSSL::SSL::SSLSocket.new tcp_client, context
+      self.ssl_client.hostname = domain
       self.ssl_client.connect
     end
   rescue

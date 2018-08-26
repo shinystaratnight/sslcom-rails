@@ -1,7 +1,4 @@
 class AddCaaPassedToCertificateNames < ActiveRecord::Migration
-  # def change
-  # end
-
   def self.up
     change_table :certificate_names do |t|
       t.boolean :caa_passed, :default => false
@@ -9,7 +6,7 @@ class AddCaaPassedToCertificateNames < ActiveRecord::Migration
   end
 
   def self.down
-    change_talbe :certificate_names do |t|
+    change_table :certificate_names do |t|
       t.remove  :caa_passed
     end
   end

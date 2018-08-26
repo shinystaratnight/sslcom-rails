@@ -21,7 +21,7 @@ class SiteCheck < ActiveRecord::Base
 
   before_create :create_certificate_lookup
 
-  COMMAND=->(url, port){%x"echo QUIT | openssl s_client -connect #{url}:#{port} -CAfile /usr/lib/ssl/certs/ca-certificates.crt"}
+  COMMAND=->(url, port){%x"echo QUIT | openssl s_client -servername #{url} -connect #{url}:#{port} -CAfile /usr/lib/ssl/certs/ca-certificates.crt"}
   TIMEOUT_DURATION=10
 
   def openssl_connect(port=443)
