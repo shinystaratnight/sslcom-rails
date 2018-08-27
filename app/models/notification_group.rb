@@ -269,7 +269,6 @@ class NotificationGroup < ActiveRecord::Base
                                                         nil]).pluck(:email_address)
     contacts.concat Contact.where(id: notification_groups_contacts.where(contactable_type: 'CertificateContact')
                                                  .pluck(:contactable_id)).pluck(:email)
-    contacts.concat ["test@mail.com"]
 
     domains = []
     domains.concat notification_groups_subjects.where(["domain_name IS NOT ? and subjectable_id IS ?",
@@ -335,7 +334,7 @@ class NotificationGroup < ActiveRecord::Base
       end
     end
 
-    unless results.empty?
+    unless results.empty? or contacts.empty?
       results.each do |result|
         logger.info "Sending reminder"
         d = [",," + contacts.uniq.join(";")]
@@ -359,6 +358,7 @@ class NotificationGroup < ActiveRecord::Base
       domain, ori_port = url.split ":"
       tcp_client = TCPSocket.new(domain, ori_port || default_port)
       self.ssl_client = OpenSSL::SSL::SSLSocket.new tcp_client, context
+      self.ssl_client.hostname = domain
       self.ssl_client.connect
     end
   rescue
@@ -369,6 +369,74 @@ class NotificationGroup < ActiveRecord::Base
     certs = ssl_client.peer_cert_chain_with_openssl_extension
     unless certs.blank?
       certs.first
+    end
+  end
+
+  # Scan the domains belongs to notification groups and sending a reminder if expiration date is in reminder days what has been set"
+  def self.scan(options={})
+    Sandbox.find_by_host(options[:db]).use_database unless options[:db].blank?
+    current = DateTime.now
+    month = current.strftime("%m").to_i.to_s
+    day = current.strftime("%d").to_i.to_s
+    week_day = current.strftime("%w")
+    hour = current.strftime("%H").to_i.to_s
+    minute = current.strftime("%M").to_i.to_s
+
+    NotificationGroup.order('created_at').find_in_batches(batch_size: 250) do |batch_list|
+      batch_list.each do |group|
+        schedules = {}
+        group.schedules.pluck(:schedule_type, :schedule_value).each do |arr|
+          if schedules[arr[0]].blank?
+            schedules[arr[0]] = arr[1]
+          else
+            schedules[arr[0]] = (schedules[arr[0]] + '|' + arr[1].to_s).split('|').sort.join('|')
+          end
+        end
+
+        run_scan = true
+        if schedules['Simple']
+          if (schedules['Simple'] == '1' && minute != '0') ||
+              (schedules['Simple'] == '2' && hour != '0' && minute != '0') ||
+              (schedules['Simple'] == '3' && week_day != '0' && hour != '0' && minute != '0') ||
+              (schedules['Simple'] == '4' && day != '1' && week_day != '0' && hour != '0' && minute != '0') ||
+              (schedules['Simple'] == '5' && month != '1' && day != '1' && week_day != '0' && hour != '0' && minute != '0')
+            run_scan = false
+          end
+        else
+          if schedules['Hour']
+            run_scan = (schedules['Hour'] == 'All' || schedules['Hour'].split('|').include?(hour))
+          else
+            run_scan = (hour == '0') unless schedules['Minute']
+          end
+
+          if run_scan && schedules['Minute']
+            run_scan = (schedules['Minute'] == 'All' || schedules['Minute'].split('|').include?(minute))
+          elsif run_scan && !schedules['Minute']
+            run_scan = (minute == '0')
+          end
+
+          if run_scan
+            run_scan_week_day = false
+            if schedules['Weekday']
+              run_scan_week_day = (schedules['Weekday'] == 'All' || schedules['Weekday'].split('|').include?(week_day))
+            end
+
+            unless run_scan_week_day
+              if schedules['Month']
+                run_scan = (schedules['Month'] == 'All' || schedules['Month'].split('|').include?(month))
+              end
+
+              if run_scan && schedules['Day']
+                run_scan = (schedules['Day'] == 'All' || schedules['Day'].split('|').include?(day))
+              elsif run_scan && !schedules['Day']
+                run_scan = (day == '1') unless schedules['Hour'] && schedules['Minute']
+              end
+            end
+          end
+        end
+
+        group.scan_notification_group if run_scan
+      end
     end
   end
 end

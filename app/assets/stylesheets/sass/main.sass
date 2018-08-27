@@ -6692,12 +6692,13 @@ span.notifications-teams
           height: 10px
 
   tbody tr
+    &:last-child td
+      border-bottom: 2px solid grey
     &.removed_domain
       background-color: lightgrey
     &.certificate_name td
-      padding-bottom: 5px
-      padding-top: 5px
-      padding-left: 5px
+      padding: 3px
+      border-top: 1px solid grey
       &:first-child
         text-align: center
         padding-left: 0px
@@ -6705,6 +6706,18 @@ span.notifications-teams
           margin-left: 3px
       .check_box
         vertical-align: middle
+
+      &.pretest,
+      &.caa_check
+        text-align: center
+        div
+          padding: 5px
+          &.passed
+            background-color: green
+            color: white
+          &.failed
+            background-color: red
+            color: white
 
 .redirect_message_wrap
   position: absolute
@@ -6781,13 +6794,40 @@ span.notifications-teams
   border: 1px solid grey
   margin: 0.1rem
 
+.btn-team-links
+  background-color: white
+  border: 1px solid $base_green
+  color: $base_green !important
+  float: left
+  margin: 0 0.5rem 0.5rem 0
+  padding: 0 3px
+
+  &:hover
+    color: white !important
+    background-color: $base_green
+
+
 .btn-refunds-detail
   background-color: grey
   border: 1px solid grey
   text-transform: uppercase
 
-#team-billing-method
-  margin-top: 0.5rem
+#team-billing-method,
+#team-no-limit
+  margin-top: 0.7rem
+  form
+    text-align: left
+
+    label
+      font-weight: 500
+      font-size: 1rem
+      width: 9em
+      text-transform: uppercase
+    
+  #frm-team-no-limit
+    label
+      margin-left: 1rem
+      width: 5em
   
 /*
  * Invoices details and index

@@ -223,7 +223,7 @@ class NotificationGroupsController < ApplicationController
       notification_group = NotificationGroup.new(
           friendly_name: params[:friendly_name],
           scan_port: params[:scan_port],
-          notify_all: paramsp[:notify_all],
+          notify_all: params[:notify_all],
           ssl_account: @ssl_account
       )
     end

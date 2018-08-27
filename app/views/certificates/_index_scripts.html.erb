@@ -246,6 +246,10 @@ jQuery(function($) {
     $.add_remove_cart_items(add, configured);
   };
 
+  $.noLimitAccount = function() {
+    return <%= current_user && current_user.ssl_account && current_user.ssl_account.no_limit %>;
+  };
+
   $(document).ready(function() {
     domains = [];
     durations = new Array(<%=@certificate.num_durations%>);
@@ -362,12 +366,16 @@ jQuery(function($) {
     <%if !@certificate_order.is_unused_credit?%>
     $('form').submit(function(){
       //add to cart if csr is not ready
-      if($(':radio[name*=has_csr]').length!=0 &&
-        $(':radio[name*=has_csr]:checked').val()=="false"){
+      if ($(':radio[name*=has_csr]').length!=0 && $(':radio[name*=has_csr]:checked').val()=="false") {
         $('textarea[name*=signing_request]').remove();
         $.change_cart_items("add");
-        window.location="<%=show_cart_orders_url%>";
-        return false;}
+        if ($.noLimitAccount()) {
+          return true;
+        } else {
+          window.location = "<%=show_cart_orders_url%>";
+          return false;
+        }
+      }
     });
     if($(':radio[name*=has_csr]:checked').val()=="false"){
       show_csr=false;

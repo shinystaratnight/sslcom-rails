@@ -92,7 +92,7 @@ class SignedCertificate < ActiveRecord::Base
     end
   end
 
-  scope :live, -> {where{type == nil}}
+  scope :live, -> {where{ca_id == nil}}
 
   scope :most_recent_expiring, lambda{|start, finish|
     find_by_sql("select * from signed_certificates as T where expiration_date between '#{start}' AND '#{finish}' AND created_at = ( select max(created_at) from signed_certificates where common_name like T.common_name )")}

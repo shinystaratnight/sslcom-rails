@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180823073440) do
+ActiveRecord::Schema.define(version: 20180826221903) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        limit: 255
@@ -205,13 +205,23 @@ ActiveRecord::Schema.define(version: 20180823073440) do
     t.string   "status",         limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "ssl_account_id", limit: 4
   end
 
   add_index "cas_certificates", ["ca_id"], name: "index_cas_certificates_on_ca_id", using: :btree
   add_index "cas_certificates", ["certificate_id", "ca_id"], name: "index_cas_certificates_on_certificate_id_and_ca_id", using: :btree
   add_index "cas_certificates", ["certificate_id"], name: "index_cas_certificates_on_certificate_id", using: :btree
-  add_index "cas_certificates", ["ssl_account_id"], name: "index_cas_certificates_on_ssl_account_id", using: :btree
+
+  create_table "cas_certificates_ssl_accounts", force: :cascade do |t|
+    t.integer  "cas_certificate_id", limit: 4,   null: false
+    t.integer  "ssl_account_id",     limit: 4,   null: false
+    t.string   "status",             limit: 255
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "cas_certificates_ssl_accounts", ["cas_certificate_id", "ssl_account_id"], name: "index_cas_certficates_ssl_accounts", using: :btree
+  add_index "cas_certificates_ssl_accounts", ["cas_certificate_id"], name: "index_cas_certificates_ssl_accounts_on_cas_certificate_id", using: :btree
+  add_index "cas_certificates_ssl_accounts", ["ssl_account_id"], name: "index_cas_certificates_ssl_accounts_on_ssl_account_id", using: :btree
 
   create_table "cdns", force: :cascade do |t|
     t.integer  "ssl_account_id",       limit: 4
@@ -348,7 +358,8 @@ ActiveRecord::Schema.define(version: 20180823073440) do
   add_index "certificate_orders", ["is_test"], name: "index_certificate_orders_on_is_test", using: :btree
   add_index "certificate_orders", ["ref"], name: "index_certificate_orders_on_ref", using: :btree
   add_index "certificate_orders", ["site_seal_id"], name: "index_certificate_orders_site_seal_id", using: :btree
-  add_index "certificate_orders", ["ssl_account_id", "workflow_state", "is_test", "updated_at"], name: "index_certificate_orders_on_4_cols", using: :btree
+  add_index "certificate_orders", ["ssl_account_id", "workflow_state", "is_test"], name: "index_certificate_orders_on_3_cols2", using: :btree
+  add_index "certificate_orders", ["validation_id"], name: "index_certificate_orders_on_validation_id", using: :btree
   add_index "certificate_orders", ["workflow_state", "is_expired", "is_test"], name: "index_certificate_orders_on_3_cols", using: :btree
 
   create_table "certificates", force: :cascade do |t|
@@ -1305,7 +1316,6 @@ ActiveRecord::Schema.define(version: 20180823073440) do
     t.integer  "registered_agent_id",       limit: 4
   end
 
-  add_index "signed_certificates", ["ca_id"], name: "fk_rails_d21ca532b7", using: :btree
   add_index "signed_certificates", ["common_name"], name: "index_signed_certificates_on_common_name", using: :btree
   add_index "signed_certificates", ["csr_id"], name: "index_signed_certificates_on_csr_id", using: :btree
   add_index "signed_certificates", ["strength"], name: "index_signed_certificates_on_strength", using: :btree
@@ -1360,6 +1370,7 @@ ActiveRecord::Schema.define(version: 20180823073440) do
     t.boolean  "duo_own_used"
     t.string   "sec_type",               limit: 255
     t.integer  "default_folder_id",      limit: 4
+    t.boolean  "no_limit",                           default: false
   end
 
   add_index "ssl_accounts", ["acct_number", "company_name", "ssl_slug"], name: "index_ssl_accounts_on_acct_number_and_company_name_and_ssl_slug", using: :btree
