@@ -74,6 +74,7 @@ class CertificateContent < ActiveRecord::Base
     :if => :certificate_order_has_csr_and_signing_request
   validate :domains_validation, if: :validate_domains?
   validate :csr_validation, if: "new? && csr"
+  validates :ref, uniqueness: true, allow_nil: false, allow_blank: false
 
   attr_accessor  :additional_domains #used to html format results to page
   attr_accessor  :ajax_check_csr
@@ -203,17 +204,13 @@ class CertificateContent < ActiveRecord::Base
     state :revoked
   end
 
+  before_validation :generate_ref_number
+
   after_initialize do
     if new_record?
       self.ajax_check_csr ||= false
       self.signing_request ||= ""
     end
-  end
-
-  before_create do |cc|
-    ref_number = cc.to_ref
-    self.ref = ref_number
-    self.label = ref_number
   end
 
   def certificate_names_from_domains
@@ -462,6 +459,14 @@ class CertificateContent < ActiveRecord::Base
     unless is_ip_address?(name) && is_server_name?(name)
       name.index(/\A[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?\z/ix)==0
     end if name
+  end
+
+  def generate_ref_number
+    if ref.blank?
+      ref_number = to_ref
+      self.ref = ref_number
+      self.label = ref_number
+    end
   end
 
   def to_ref
