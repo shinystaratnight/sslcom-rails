@@ -204,8 +204,6 @@ class CertificateContent < ActiveRecord::Base
     state :revoked
   end
 
-  before_validation :generate_ref_number
-
   after_initialize do
     if new_record?
       self.ajax_check_csr ||= false
@@ -461,7 +459,7 @@ class CertificateContent < ActiveRecord::Base
     end if name
   end
 
-  def generate_ref_number
+  def generate_ref_number!
     if ref.blank?
       ref_number = to_ref
       self.ref = ref_number
@@ -474,7 +472,8 @@ class CertificateContent < ActiveRecord::Base
     index = if cc.empty?
       0
     else
-      cc.pluck(:ref).map{ |r| r.split('-').last.to_i }.sort.last + 1
+      cc_ref=cc.order(:created_at).pluck(:ref).last
+      cc_ref.blank? ? 0 : cc_ref.split('-').last.to_i + 1
     end
     "#{certificate_order.ref}-#{index}"
   end
