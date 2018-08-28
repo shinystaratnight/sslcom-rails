@@ -175,7 +175,7 @@ class SslcomCaApi
     elsif api_log_entry.certificate_chain # signed certificate is issued
       cc.update_column(:ref, api_log_entry.username) unless api_log_entry.blank?
       attrs = {body: api_log_entry.end_entity_certificate.to_s, ca_id: options[:mapping].id}
-      attrs.merge!(type: "ShadowSignedCertificate") if certificate.cas.shdaow.include?(options[:mapping])
+      attrs.merge!(type: "ShadowSignedCertificate") if certificate.cas.shadow.include?(options[:mapping])
       cc.csr.signed_certificates.create(attrs)
       SystemAudit.create(
           owner:  options[:current_user],
