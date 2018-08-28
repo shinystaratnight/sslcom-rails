@@ -190,8 +190,8 @@ class SslcomCaApi
   end
 
   def self.generate_for_certificate(options={})
-    host = options[:mapping] ? options[:mapping].host :
-               Rails.application.secrets.sslcom_ca_host + "/v1/certificate/pkcs10"
+    host = (options[:mapping] ? options[:mapping].host :
+                   Rails.application.secrets.sslcom_ca_host) + "/v1/certificate/pkcs10"
     req, res = call_ca(host, {}, issue_cert_json(options))
 
     api_log_entry = options[:cc].csr.sslcom_ca_requests.create(request_url: host, parameters: req.body,
