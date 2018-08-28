@@ -1010,6 +1010,7 @@
     <orderEntry type="library" scope="PROVIDED" name="activemodel (v4.2.7.1, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="activerecord (v4.2.7.1, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="activesupport (v4.2.7.1, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="acts_as_tree (v2.7.1, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="addressable (v2.5.0, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="airbrake (v5.6.1, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="airbrake-ruby (v1.6.0, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
@@ -1100,6 +1101,7 @@
     <orderEntry type="library" scope="PROVIDED" name="jbuilder (v2.6.1, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="jmespath (v1.3.1, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="jquery-rails (v4.3.1, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="jquery-ui-rails (v6.0.1, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="json (v1.8.6, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="json-schema (v2.8.0, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="jsonapi-serializers (v1.0.0, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
@@ -1210,6 +1212,7 @@
     <orderEntry type="library" scope="PROVIDED" name="web-console (v2.3.0, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="websocket (v1.2.3, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="whenever (v0.9.7, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="whois (v4.0.7, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="wicked_pdf (v1.1.0, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="will_paginate (v3.1.5, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="wkhtmltopdf-binary (v0.12.3.1, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />

@@ -13,6 +13,6 @@
 //= require popper
 //= require bootstrap-sprockets
 //= require invoice_section
-//= require vakata-jstree/jstree.min
+//= require vakata-jstree/jstree
 //= require deitch-jstree-grid/jstreegrid
 //= require folders

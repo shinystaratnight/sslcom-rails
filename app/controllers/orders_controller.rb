@@ -116,8 +116,8 @@ class OrdersController < ApplicationController
   def new
     if params[:reprocess_ucc] || params[:renew_ucc] || params[:ucc_csr_submit]
       ucc_domains_adjust
-    else  
-      if params[:certificate_order]
+    else
+      if params[:certificate_order] && !single_cert_no_limit_order?
         @certificate = Certificate.for_sale.find_by_product(params[:certificate][:product])
         unless params["prev.x".intern].nil?
           redirect_to buy_certificate_url(@certificate) and return
@@ -130,6 +130,8 @@ class OrdersController < ApplicationController
       if current_user
         if @certificate_orders && is_order_free?
           create_multi_free_ssl
+        elsif ssl_account && ssl_account.no_limit
+          create_no_limit_order
         elsif current_user.ssl_account.funded_account.cents > 0
           redirect_to(is_current_order_affordable? ? confirm_funds_url(:order) :
                           allocate_funds_for_order_path(id: :order)) and return
@@ -409,7 +411,7 @@ class OrdersController < ApplicationController
 
   def filter_by_state
     states = [params[:id]]
-    unpaginated =
+    @unpaginated =
       if current_user.is_admin?
         Order.unscoped{Order.includes(:line_items).where{state >> states}.order("created_at desc")}
       else
@@ -621,6 +623,10 @@ class OrdersController < ApplicationController
 
   private
   
+  def single_cert_no_limit_order?
+    ssl_account && ssl_account.no_limit && request.referer.include?('certificates')
+  end
+
   def add_cents_to_funded_account(cents)
     @order.get_team_to_credit.funded_account.add_cents(cents)
   end
@@ -691,6 +697,55 @@ class OrdersController < ApplicationController
     ucc_update_domain_counts
   end
   
+  def create_no_limit_order
+    single_certificate = single_cert_no_limit_order?
+    ssl_account_id = ssl_account.id
+
+    if single_certificate
+      @certificate_order = certificates_from_cookie.last
+      @certificate_order.quantity = 1
+      @order = Order.new(
+        amount: @certificate_order.amount,
+        billable_id: ssl_account_id,
+        billable_type: 'SslAccount',
+        state: 'invoiced'
+      )
+      @order.add_certificate_orders([@certificate_order])
+      if @order.save
+        @certificate_order = @order.certificate_orders.first
+        @certificate_order.update(
+          ssl_account_id: ssl_account_id, workflow_state: 'paid'
+        )
+      end
+    else
+      setup_orders
+      @order.billable_id = ssl_account_id
+      @order.billable_type = 'SslAccount'
+      if @order.save
+        @order.certificate_orders.update_all(
+          ssl_account_id: ssl_account_id, workflow_state: 'paid'
+        )
+      end
+      clear_cart
+    end
+    
+    @order.update(
+      state: 'invoiced',
+      invoice_id: Invoice.get_or_create_for_team(ssl_account_id).try(:id),
+      approval: 'approved',
+      invoice_description: Order::SSL_CERTIFICATE
+    )
+    record_order_visit(@order)
+
+    flash[:notice] = "Order in the amount of #{@order.amount.format} 
+        will appear on the #{ssl_account.get_invoice_label} invoice."
+    if single_certificate
+      redirect_to edit_certificate_order_path(@ssl_slug, @certificate_order.ref)
+    else
+      redirect_to order_path(@ssl_slug, @order)
+    end
+  end
+
   def add_to_payable_invoice(params)
     invoice = Invoice.get_or_create_for_team(@ssl_account)
     @order = current_order_reprocess_ucc if @reprocess_ucc

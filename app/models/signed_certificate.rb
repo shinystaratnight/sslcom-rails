@@ -20,6 +20,7 @@ class SignedCertificate < ActiveRecord::Base
     Proc.new{|r| !r.parent_cert && !r.body.blank?}
   has_many  :sslcom_ca_revocation_requests, as: :api_requestable
   #validate :same_as_previously_signed_certificate?, :if=> '!csr.blank?'
+  belongs_to  :registered_agent
 
   attr :parsed
   attr_accessor :email_customer
@@ -62,11 +63,11 @@ class SignedCertificate < ActiveRecord::Base
   end
 
   after_create do |s|
-    s.csr.certificate_content.issue! unless self.ca_id==Ca::ISSUER[:sslcom_shadow]
+    s.csr.certificate_content.issue! if self.ca_id!=Ca::ISSUER[:sslcom_shadow] && self.type != 'ManagedCertificate'
   end
 
   after_save do |s|
-    unless self.ca_id==Ca::ISSUER[:sslcom_shadow]
+    if self.ca_id!=Ca::ISSUER[:sslcom_shadow] && self.type != 'ManagedCertificate'
       s.send_processed_certificate
       cc=s.csr.certificate_content
       if cc.preferred_reprocessing?
@@ -91,7 +92,7 @@ class SignedCertificate < ActiveRecord::Base
     end
   end
 
-  scope :live, -> {where{type == nil}}
+  scope :live, -> {where{ca_id == nil}}
 
   scope :most_recent_expiring, lambda{|start, finish|
     find_by_sql("select * from signed_certificates as T where expiration_date between '#{start}' AND '#{finish}' AND created_at = ( select max(created_at) from signed_certificates where common_name like T.common_name )")}

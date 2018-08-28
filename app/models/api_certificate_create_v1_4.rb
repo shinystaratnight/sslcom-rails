@@ -194,8 +194,10 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
         #set domains
         @certificate_order.certificate_content.update_attribute(:domains, self.domains.keys)
         @certificate_order.certificate_content.dcv_domains({domains: self.domains, emails: self.dcv_candidate_addresses})
-        #send to comodo
-        comodo_auto_update_dcv(certificate_order: @certificate_order)
+        #send to comodo if ca_id is nil
+        if @certificate_order.certificate_content.ca_id.nil?
+          comodo_auto_update_dcv(certificate_order: @certificate_order)
+        end
       else
         if self.csr_obj
           certificate_content = @certificate_order.certificate_contents.build

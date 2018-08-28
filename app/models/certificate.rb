@@ -386,31 +386,14 @@ class Certificate < ActiveRecord::Base
   end
 
   def admin_submit_csr?
-    is_evcs? or is_cs?
-  end
-
-  def is_client?
-    product.include?('personal')
-  end
-
-  def is_client_basic?
-    product_root=~/basic\z/
-  end
-
-  def is_client_pro?
-    product_root=~/pro\z/
-  end
-
-  def is_client_business?
-    product_root=~/business\z/
-  end
-
-  def is_client_enterprise?
-    product_root=~/enterprise\z/
-  end
-
-  def requires_company_info?
-    is_client_business? || is_client_enterprise? || is_server? || is_code_signing? || is_ov?
+    is_evcs? or
+    is_cs? or
+    is_smime? or
+    is_client? or
+    is_client_basic? or
+    is_client_business? or
+    is_client_enterprise? or
+    is_client_pro?
   end
 
   def is_server?

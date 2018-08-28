@@ -78,19 +78,35 @@
             -permissions = team_index_permissions(current_user, t)
             %div
               -if system_admins || permissions.include?(:orders)
-                =link_to "orders (#{t.certificate_orders.count})", certificate_orders_path(ssl_slug: t.to_slug), class: 'btn-team-links'
+                =link_to "<i class='fa fa-file-text'></i> orders: #{t.certificate_orders.count}".html_safe, |
+                  certificate_orders_path(ssl_slug: t.to_slug), class: 'btn-team-links'
               -if system_admins || permissions.include?(:transactions)
-                =link_to "transactions (#{t.orders.count})", orders_path(ssl_slug: t.to_slug), class: 'btn-team-links'
+                =link_to "<i class='fa fa-credit-card'></i> transactions: #{t.orders.count}".html_safe, |
+                  orders_path(ssl_slug: t.to_slug), class: 'btn-team-links'
               -if system_admins || permissions.include?(:validations)
-                =link_to "validations (#{t.validations.count})", validations_path(ssl_slug: t.to_slug), class: 'btn-team-links'
+                =link_to "<i class='fa fa-expeditedssl'></i> validations: #{t.validations.count}".html_safe, |
+                  validations_path(ssl_slug: t.to_slug), class: 'btn-team-links'
               -if system_admins || permissions.include?(:users)
-                =link_to "users (#{t.users.count})", users_path(ssl_slug: t.to_slug), class: 'btn-team-links'
+                =link_to "<i class='fa fa-user-circle-o'></i> users: #{t.users.count}".html_safe, |
+                  users_path(ssl_slug: t.to_slug), class: 'btn-team-links'
+            
             -if system_admins
               #team-billing-method
                 =form_tag ssl_account_path(ssl_slug: t.to_slug), id: 'frm-team-billing-method',  method: :put do
+                  =label_tag 'BILLING METHOD:'
                   =select_tag :billing_method,                                                                           |
                     options_for_select(SslAccount::BILLING_METHODS.map{|bm| [bm.gsub('_', ' '), bm]}, t.billing_method), |
-                    id: 'team-billing-method'
+                    class: 'team-sel-billing-method'
+                  - if params[:page]
+                    =hidden_field_tag :page, params[:page]
+              
+              #team-no-limit
+                =form_tag ssl_account_path(ssl_slug: t.to_slug), id: 'frm-team-no-limit',  method: :put do
+                  =label_tag 'NO LIMIT:'
+                  =select_tag :no_limit, options_for_select([ ['ON', true], ['OFF', false] ], t.no_limit), |
+                    class: 'team-sel-no-limit'
+                  - if params[:page]
+                    =hidden_field_tag :page, params[:page]
 
           %td=t.created_at.strftime("%b %d, %Y")
           -unless system_admins

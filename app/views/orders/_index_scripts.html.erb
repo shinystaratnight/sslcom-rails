@@ -494,7 +494,7 @@ jQuery(function($) {
       $.line_item_total(id);
     });
     $('#register_card_form').on('click', function(){
-      $(':radio[name=funding_source]').removeAttr('checked');
+      $(':radio[name=funding_source]').prop('checked', false);
     });
     $(':radio[name=funding_source]').on('click', function(){
       $('#register_card_form').fadeOut();

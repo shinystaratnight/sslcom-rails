@@ -3,6 +3,7 @@ require 'resolv'
 
 class CertificateName < ActiveRecord::Base
   belongs_to  :certificate_content
+  has_many    :signed_certificates, through: :certificate_content
   has_many    :caa_checks, as: :checkable
   has_many    :ca_certificate_requests, as: :api_requestable, dependent: :destroy
   has_many    :ca_dcv_requests, as: :api_requestable, dependent: :destroy
@@ -24,6 +25,10 @@ class CertificateName < ActiveRecord::Base
   has_many    :notification_groups, through: :notification_groups_subjects
 
   attr_accessor :csr
+
+  #will_paginate
+  cattr_accessor :per_page
+  @@per_page = 10
 
   def is_ip_address?
     name.index(/\A(?:[0-9]{1,3}\.){3}[0-9]{1,3}\z/)==0 if name
