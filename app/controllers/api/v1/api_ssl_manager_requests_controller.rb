@@ -7,10 +7,14 @@ class Api::V1::ApiSslManagerRequestsController < Api::V1::APIController
         ApiSslManagerRequest::COLLECTION
       ).uniq]
 
-  def set_result_parameter(result, asm)
-    result.ref = asm.ref
-    result.created_at = asm.created_at
-    result.updated_at = asm.updated_at
+  def set_result_parameter(result, asm, message)
+    if asm
+      result.ref = asm.ref
+      result.created_at = asm.created_at
+      result.updated_at = asm.updated_at
+    else
+      result.message = message
+    end
   end
 
   def register
@@ -19,7 +23,9 @@ class Api::V1::ApiSslManagerRequestsController < Api::V1::APIController
     if @result.save
       if @obj = @result.create_ssl_manager
         if @obj.is_a?(RegisteredAgent) && @obj.errors.empty?
-          set_result_parameter(@result, @obj)
+          set_result_parameter(@result, @obj, nil)
+        elsif @obj.is_a?(String)
+          set_result_parameter(@result, nil, @obj)
         else
           @result = @obj
         end
@@ -39,7 +45,7 @@ class Api::V1::ApiSslManagerRequestsController < Api::V1::APIController
     if @result.save
       if @obj = @result.create_managed_certificates
         if @obj.is_a?(RegisteredAgent) && @obj.errors.empty?
-          set_result_parameter(@result, @obj)
+          set_result_parameter(@result, @obj, nil)
         else
           @result = @obj
         end
