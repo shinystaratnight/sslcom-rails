@@ -14,8 +14,7 @@ class CertificateOrder < ActiveRecord::Base
   has_many    :renewal_attempts
   has_many    :renewal_notifications
   has_many    :cdns
-  has_many    :certificate_contents, :dependent => :destroy,
-                after_add: Proc.new { |co, cc| cc.generate_ref_number! if (cc.ref.blank? and co.ref)}
+  has_many    :certificate_contents, :dependent => :destroy
   has_many    :certificate_names, through: :certificate_contents
   has_many    :registrants, through: :certificate_contents
   has_many    :certificate_contacts, through: :certificate_contents
