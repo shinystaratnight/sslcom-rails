@@ -33,7 +33,4 @@ class Ca < ActiveRecord::Base
   
   private
 
-  def set_profile_type
-    self.profile_type = self.class.to_s
-  end
 end
