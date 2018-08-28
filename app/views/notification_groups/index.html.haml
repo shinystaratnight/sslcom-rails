@@ -145,10 +145,11 @@
         -if @notification_groups.size > 0
           %td(scope="col") Friendly Name
           %td(scope="col") Scan History Counts
+          %td(scope="col") Disabled?
           %td(scope="col") Delete?
           %td(scope="col") Scan?
         -else
-          %td(scope="col" colspan='4') Friendly Name
+          %td(scope="col" colspan='5') Friendly Name
       -if @notification_groups.size > 0
         -@notification_groups.each do |ng|
           %tr
@@ -157,12 +158,14 @@
             %td
               =link_to ng.scan_logs.count, notification_group_scan_logs_path(@ssl_slug, ng.id)
             %td
+              =ng.status ? "Disabled" : "Enabled"
+            %td
               =check_box_tag "remove_groups[]", ng.id, false, class: 'chk-remove', 'data-group-name' => ng.friendly_name
             %td
               =check_box_tag "scan_groups[]", ng.id, false, class: 'chk-scan'
       -else
         %tr
-          %td(colspan='4')
+          %td(colspan='5')
             There are no Notification Groups
     -if @notification_groups.size > 0
       =submit_tag 'Save', :id => 'btn_remove_groups', :disabled => true

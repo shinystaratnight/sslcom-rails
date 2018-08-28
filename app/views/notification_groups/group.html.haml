@@ -63,6 +63,11 @@
           =check_box_tag :notify_all, true, @notification_group ? @notification_group.notify_all : false
         .block_body
           %span Only notify me of expiring ssl/tls certificates ?
+      .group_block.clearfix
+        .block_label
+          =check_box_tag :status, true, @notification_group ? @notification_group.status : false
+        .block_body
+          %span Disabled ?
       .subheading Schedule
       .group_block
         .schedule_type_block.clearfix
