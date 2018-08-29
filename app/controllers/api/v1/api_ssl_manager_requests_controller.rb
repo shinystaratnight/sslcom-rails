@@ -4,7 +4,8 @@ class Api::V1::ApiSslManagerRequestsController < Api::V1::APIController
   wrap_parameters ApiSslManagerRequest, include:
       [*(
         ApiSslManagerRequest::REGISTER+
-        ApiSslManagerRequest::COLLECTION
+        ApiSslManagerRequest::COLLECTION+
+        ApiSslManagerRequest::DELETE
       ).uniq]
 
   def set_result_parameter(result, asm, message)
@@ -17,6 +18,41 @@ class Api::V1::ApiSslManagerRequestsController < Api::V1::APIController
     end
   end
 
+  def index
+    set_template "index"
+
+    if @result.save
+      @ssl_managers = @result.find_ssl_managers(params[:search])
+
+      page = params[:page] || 1
+      per_page = params[:per_page] || PER_PAGE_DEFAULT
+      @paged_ssl_managers = paginate @ssl_managers, per_page: per_page.to_i, page: page.to_i
+
+      if @paged_ssl_managers.is_a?(ActiveRecord::Relation)
+        @results = []
+
+        @paged_ssl_managers.each do |ssl_manager|
+          result = ApiSslManagerRetrieve.new(ref: ssl_manager.ref)
+          result.ip_address = ssl_manager.ip_address
+          result.mac_address = ssl_manager.mac_address
+          result.agent = ssl_manager.agent
+          result.friendly_name = ssl_manager.friendly_name
+          result.workflow_status = ssl_manager.workflow_status
+          result.created_at = ssl_manager.created_at
+          result.updated_at = ssl_manager.updated_at
+
+          @results << result
+        end
+      end
+    else
+      InvalidApiSslManagerRequest.create parameters: params, response: @result.to_json
+    end
+
+    render_200_status
+  rescue => e
+    render_500_error e
+  end
+
   def register
     set_template "register"
 
@@ -25,6 +61,26 @@ class Api::V1::ApiSslManagerRequestsController < Api::V1::APIController
         if @obj.is_a?(RegisteredAgent) && @obj.errors.empty?
           set_result_parameter(@result, @obj, nil)
         elsif @obj.is_a?(String)
+          set_result_parameter(@result, nil, @obj)
+        else
+          @result = @obj
+        end
+      end
+    else
+      InvalidApiSslManagerRequest.create parameters: params, response: @result.to_json
+    end
+
+    render_200_status
+  rescue => e
+    render_500_error e
+  end
+
+  def delete
+    set_template "delete"
+
+    if @result.save
+      if @obj = @result.delete_ssl_manager
+        if @obj.is_a?(String)
           set_result_parameter(@result, nil, @obj)
         else
           @result = @obj
@@ -67,6 +123,10 @@ class Api::V1::ApiSslManagerRequestsController < Api::V1::APIController
                   ApiSslManagerCreate
                 when "collection"
                   ApiManagedCertificateCreate
+                when "delete"
+                  ApiSslManagerDelete
+                when "index"
+                  ApiSslManagerRetrieve
               end
 
       @result = klass.new(params[:api_ssl_manager_request] || _wrap_parameters(params)['api_ssl_manager_request'])
