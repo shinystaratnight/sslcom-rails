@@ -9,8 +9,9 @@ class Certificate < ActiveRecord::Base
   has_many    :validation_rules, :through => :validation_rulings
   has_and_belongs_to_many :products
   has_many    :cas_certificates, dependent: :destroy do
-    def default
-      where status: CasCertificate::STATUS[:default]
+    def default(ssl_account=nil)
+      joins{ssl_accounts}.where{status==CasCertificate::STATUS[:default] &&
+          (cas_certificates_ssl_accounts.ssl_account_id==ssl_account.id unless ssl_account.blank?)}
     end
 
     def shadow
@@ -18,13 +19,16 @@ class Certificate < ActiveRecord::Base
     end
   end
   has_many    :cas, through: :cas_certificates do
-    def default
-      where cas_certificates: {status: CasCertificate::STATUS[:default]}
-    end
-
-    def shadow
-      where cas_certificates: {status: CasCertificate::STATUS[:shadow]}
-    end
+    # # default CA
+    # def default(ssl_account=nil)
+    #   joins{ssl_accounts}.where cas_certificates: {status: CasCertificate::STATUS[:default] &&
+    #       (cas_certificates_ssl_accounts.ssl_account_id==ssl_account.id unless ssl_account.blank?)}
+    # end
+    #
+    # # CAs used for issuing shadow certs
+    # def shadow
+    #   where cas_certificates: {status: CasCertificate::STATUS[:shadow]}
+    # end
   end
   acts_as_publishable :live, :draft, :discontinue_sell
   belongs_to  :reseller_tier
