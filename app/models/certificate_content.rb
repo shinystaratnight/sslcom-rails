@@ -253,14 +253,14 @@ class CertificateContent < ActiveRecord::Base
   end
 
   def ca
-    if read_attribute(:ca_id).blank? and certificate_order.ssl_account
+    if read_attribute(:ca).blank? and certificate_order.ssl_account
       tmp_ca=certificate.cas.ssl_account_or_general_default(certificate_order.ssl_account).last
       if tmp_ca
         write_attribute(:ca_id, tmp_ca.id)
         save(validate: false) unless new_record?
       end
     end
-    read_attribute(:ca_id)
+    read_attribute(:ca)
   end
 
   def domains=(names)
