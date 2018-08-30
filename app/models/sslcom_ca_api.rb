@@ -87,7 +87,6 @@ class SslcomCaApi
   def self.subject_dn(options={})
     dn=["CN=#{options[:cn]}"]
     dn << "OU=#{options[:ou]}" unless options[:ou].blank?
-    dn << "OU=Key Hash #{options[:cc].csr.sha2_hash}"
     unless options[:mapping].profile_name =~ /DV/
       dn << "O=#{options[:o]}" unless options[:o].blank?
       dn << "C=#{options[:country]}" unless options[:country].blank?
@@ -133,8 +132,9 @@ class SslcomCaApi
       else
         # dn.merge! subject_dn: options[:action]=="send_to_ca" ? subject_dn(options) : # req sent via RA form
         #                           (options[:subject_dn] || options[:cc].subject_dn),
-        dn.merge! subject_dn: options[:action]=="send_to_ca" ? subject_dn(options) : # req sent via RA form
-                                  (options[:subject_dn] || cert.is_code_signing? ? options[:cc].locked_subject_dn : options[:cc].subject_dn),
+        dn.merge! subject_dn: (options[:action]=="send_to_ca" ? subject_dn(options) : # req sent via RA form
+          (options[:subject_dn] || cert.is_code_signing? ? options[:cc].locked_subject_dn : options[:cc].subject_dn))+
+            ",OU=Key Hash #{options[:cc].csr.sha2_hash}",
           ca_name: options[:ca_name] || ca_name(options),
           certificate_profile: certificate_profile(options),
           end_entity_profile: end_entity_profile(options),
