@@ -8,24 +8,9 @@ class Certificate < ActiveRecord::Base
   has_many    :validation_rulings, :as=>:validation_rulable
   has_many    :validation_rules, :through => :validation_rulings
   has_and_belongs_to_many :products
-  has_many    :cas_certificates, dependent: :destroy do
-    def default
-      where status: CasCertificate::STATUS[:default]
-    end
+  has_many    :cas_certificates, dependent: :destroy
+  has_many    :cas, through: :cas_certificates
 
-    def shadow
-      where status: CasCertificate::STATUS[:shadow]
-    end
-  end
-  has_many    :cas, through: :cas_certificates do
-    def default
-      where cas_certificates: {status: CasCertificate::STATUS[:default]}
-    end
-
-    def shadow
-      where cas_certificates: {status: CasCertificate::STATUS[:shadow]}
-    end
-  end
   acts_as_publishable :live, :draft, :discontinue_sell
   belongs_to  :reseller_tier
 

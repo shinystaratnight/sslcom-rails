@@ -13,16 +13,18 @@ class DomainsController < ApplicationController
     res_Obj = {}
     exist_domain_names = []
     created_domains = []
-    domain_names = params[:domain_names].split(/[\s,']/)
-    domain_names.each do |d_name|
-      if @ssl_account.domain_names.include?(d_name)
-        exist_domain_names << d_name
-      else
-        @domain = Domain.new
-        @domain.name = d_name
-        @domain.ssl_account_id = @ssl_account.id
-        @domain.save()
-        created_domains << @domain
+    unless params[:domain_names].nil?
+      domain_names = params[:domain_names].split(/[\s,']/)
+      domain_names.each do |d_name|
+        if @ssl_account.domain_names.include?(d_name)
+          exist_domain_names << d_name
+        else
+          @domain = Domain.new
+          @domain.name = d_name
+          @domain.ssl_account_id = @ssl_account.id
+          @domain.save()
+          created_domains << @domain
+        end
       end
     end
     res_Obj['domains'] = created_domains

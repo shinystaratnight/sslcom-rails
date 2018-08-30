@@ -115,12 +115,12 @@
         %label{:for=>"phone"}
           *Phone:
         =rf.text_field :phone
-    -if current_user.ssl_account.has_role? 'reseller'
-      .clearfix
-        %label{:for=>"verified"}
-          *Validated:
-        =rf.check_box :validation, :confirm=>'Validated checkbox must have been selected in order to proceed.'
-        #confirmed_validation
-          I confirm that I have completed the validation of this applicant's
-          details in accordance with the customer validation requirements specified
-          in the Web Host Reseller validation guidelines.
+    -#-if current_user.ssl_account.has_role? 'reseller'
+    -#  .clearfix
+    -#    %label{:for=>"verified"}
+    -#      *Validated:
+    -#    =rf.check_box :validation, :confirm=>'Validated checkbox must have been selected in order to proceed.'
+    -#    #confirmed_validation
+    -#      I confirm that I have completed the validation of this applicant's
+    -#      details in accordance with the customer validation requirements specified
+    -#      in the Web Host Reseller validation guidelines.

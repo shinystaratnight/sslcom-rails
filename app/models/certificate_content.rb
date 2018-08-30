@@ -4,7 +4,6 @@ class CertificateContent < ActiveRecord::Base
   
   belongs_to  :certificate_order, -> { unscope(where: [:workflow_state, :is_expired]) }, touch: true
   has_one     :ssl_account, through: :certificate_order
-  has_one     :certificate, through: :certificate_order
   has_many    :users, through: :certificate_order
   belongs_to  :server_software
   has_one     :csr, :dependent => :destroy
@@ -251,6 +250,17 @@ class CertificateContent < ActiveRecord::Base
 
   def cli_domain
     @@cli_domain
+  end
+
+  def ca
+    if read_attribute(:ca).blank? and certificate_order.ssl_account
+      tmp_ca=certificate.cas.ssl_account_or_general_default(certificate_order.ssl_account).last
+      if tmp_ca
+        write_attribute(:ca_id, tmp_ca.id)
+        save(validate: false) unless new_record?
+      end
+    end
+    read_attribute(:ca)
   end
 
   def domains=(names)
