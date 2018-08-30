@@ -8,27 +8,29 @@ class Certificate < ActiveRecord::Base
   has_many    :validation_rulings, :as=>:validation_rulable
   has_many    :validation_rules, :through => :validation_rulings
   has_and_belongs_to_many :products
-  has_many    :cas_certificates, dependent: :destroy do
-    def default(ssl_account=nil)
-      joins{ssl_accounts}.where{status==CasCertificate::STATUS[:default] &&
-          (cas_certificates_ssl_accounts.ssl_account_id==ssl_account.id unless ssl_account.blank?)}
+  has_many    :cas_certificates, ->(ssl_account=nil){
+      joins{ssl_accounts.outer}.where{cas_certificates_ssl_accounts.ssl_account_id==ssl_account.try(:id)}
+    }, dependent: :destroy do
+    def default
+      where{status==CasCertificate::STATUS[:default]}
     end
 
     def shadow
-      where status: CasCertificate::STATUS[:shadow]
+      where{status==CasCertificate::STATUS[:shadow]}
     end
   end
-  has_many    :cas, through: :cas_certificates do
-    # # default CA
-    # def default(ssl_account=nil)
-    #   joins{ssl_accounts}.where cas_certificates: {status: CasCertificate::STATUS[:default] &&
-    #       (cas_certificates_ssl_accounts.ssl_account_id==ssl_account.id unless ssl_account.blank?)}
-    # end
-    #
-    # # CAs used for issuing shadow certs
-    # def shadow
-    #   where cas_certificates: {status: CasCertificate::STATUS[:shadow]}
-    # end
+  has_many    :cas, ->(ssl_account=nil){
+    joins{cas_certificates.ssl_accounts}.where{cas_certificates_ssl_accounts.ssl_account_id==ssl_account.try(:id)}
+    }, through: :cas_certificates  do
+    # default CA
+    def default(ssl_account=nil)
+      where{cas_certificates.status==CasCertificate::STATUS[:default]}
+    end
+
+    # CAs used for issuing shadow certs
+    def shadow
+      where{cas_certificates.status==CasCertificate::STATUS[:shadow]}
+    end
   end
   acts_as_publishable :live, :draft, :discontinue_sell
   belongs_to  :reseller_tier

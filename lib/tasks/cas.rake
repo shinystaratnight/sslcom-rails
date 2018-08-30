@@ -747,8 +747,8 @@ namespace :cas do
             cert.cas_certificates.create(ca_id: ca.id,
                status: CasCertificate::STATUS[ca.ref=="0014" ? :default : :active])
           elsif cert.is_cs? and ca.end_entity==(Ca::END_ENTITY[:cs])
-            cert.cas_certificates.create(ca_id: ca.id,status: CasCertificate::STATUS[ca.ref=="0013" ?
-                                                                                         :default : :active])
+            cert.cas_certificates.create(ca_id: ca.id,
+               status: CasCertificate::STATUS[ca.ref=="0013" ? :default : :active])
           elsif  cert.is_dv? or cert.is_ov? or cert.is_ev?
             if ca.end_entity==(Ca::END_ENTITY[:dvssl])
               cert.cas_certificates.create(ca_id: ca.id,status: CasCertificate::STATUS[:active])
