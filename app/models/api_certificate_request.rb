@@ -21,7 +21,7 @@ class ApiCertificateRequest < CaApiRequest
       :ca_certificate_id, :is_customer_validated, :hide_certificate_reference, :external_order_number,
       :dcv_candidate_addresses, :dcv_method, :ref, :contacts, :options, :renewal_id, :billing_profile]
 
-  UPDATE_ACCESSORS_1_4 = [:cert_names]
+  UPDATE_ACCESSORS_1_4 = [:cert_names, :caa_check_domains]
 
   ACCESSORS = [:account_key, :secret_key, :product, :period, :server_count, :server_software, :domains, :options,
       :domain, :common_names_flag, :csr, :organization_name, :organization_unit_name, :post_office_box,

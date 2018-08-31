@@ -135,7 +135,8 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   def replace_certificate_order
     @certificate_order = self.find_certificate_order
     self.domains={self.csr_obj.common_name=>{"dcv"=>"http_csr_hash"}} if self.domains.blank?
-    caa_check_domains = parameters_to_hash["caa_check_domains"].split(',')
+    # caa_check_domains = parameters_to_hash["caa_check_domains"].split(',')
+    caa_check_domains = self.caa_check_domains.split(',')
 
     if @certificate_order.is_a?(CertificateOrder)
       # CAA Checking for domains what has been validated and no passed for CAA.
@@ -193,7 +194,8 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   def update_certificate_order
     @certificate_order=self.find_certificate_order
     self.domains={self.csr_obj.common_name=>{"dcv"=>"http_csr_hash"}} if self.domains.blank?
-    caa_check_domains = parameters_to_hash["caa_check_domains"].split(',')
+    # caa_check_domains = parameters_to_hash["caa_check_domains"].split(',')
+    caa_check_domains = self.caa_check_domains.split(',')
 
     if @certificate_order.is_a?(CertificateOrder)
       # CAA Checking for domains what has been validated and no passed for CAA.
@@ -626,6 +628,10 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
 
   def cert_names
     @cert_names || parameters_to_hash["cert_names"]
+  end
+
+  def caa_check_domains
+    @caa_check_domains || parameters_to_hash["caa_check_domains"]
   end
 
   def ref
