@@ -4,7 +4,7 @@ class CaApiRequest < ActiveRecord::Base
   default_scope{ order("created_at desc")}
 
   def success?
-    Rails.cache.fetch("#{cache_key}/success?", expires_in: 24.hours) do
+    Rails.cache.fetch("#{cache_key}/success", expires_in: 24.hours) do
       !!(response=~/errorCode=0/ or response=~/\A0\n/)
     end
   end
