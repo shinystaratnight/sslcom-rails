@@ -1,0 +1,20 @@
+-title = 'Add Csr'
+-content_for :title, title
+.reseller_registration_profile
+  %h3=title
+  %p
+    Please enter the csr string.
+  =form_for @csr, url: managed_csrs_path do |f|
+    =f.error_messages
+    #stylized.default_form
+      .subheading Csr
+      =render :partial => "form", :object => f
+    #button_container
+      =f.submit 'Add', class: 'button_blue'
+
+-content_for :js do
+  :javascript
+    $("#user_ssl_account_ids").select2();
+    $(document).ready(function() {
+      $("#user_ssl_account_ids").select2();
+    });

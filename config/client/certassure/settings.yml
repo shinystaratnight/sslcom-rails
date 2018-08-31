@@ -25,7 +25,6 @@ closed_beta_mode: false
 track_visitors: false
 single_server_license_only: true
 show_csr_submit_on_buy_page: false
-enable_caa_test: true
 dynamic_contact_count: "on"
 send_api_calls: ""
 shadow_certificate_recipient: "shadow-cert@ssl.com" # for test SSL.com certificates parallel issuance
@@ -129,6 +128,7 @@ sync_aid_li_and_cart: false
 browser_acceptance: "99.9%"
 notify_address: "support@ssl.com"
 disable_links_banner: false
+auto_approve_ssl_manager_register: true
 
 from_email:
   orders: 'orders@ssl.com'

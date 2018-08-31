@@ -135,8 +135,18 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   def replace_certificate_order
     @certificate_order = self.find_certificate_order
     self.domains={self.csr_obj.common_name=>{"dcv"=>"http_csr_hash"}} if self.domains.blank?
+    # caa_check_domains = parameters_to_hash["caa_check_domains"].split(',')
+    caa_check_domains = self.caa_check_domains.split(',')
 
     if @certificate_order.is_a?(CertificateOrder)
+      # CAA Checking for domains what has been validated and no passed for CAA.
+      if caa_check_domains && caa_check_domains[0] != ''
+        caa_check_domains.each do |domain|
+          cn = @certificate_order.certificate_content.certificate_names.find_by_name(domain)
+          CaaCheck.pass?(@certificate_order.ref, cn, cn.certificate_content)
+        end
+      end
+
       @certificate_order.update_attribute(:external_order_number, self.ca_order_number) if (self.admin_submitted && self.ca_order_number)
       @certificate_order.update_attribute(:ext_customer_ref, self.external_order_number) if self.external_order_number
       @certificate_order.is_test=self.test
@@ -184,7 +194,18 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   def update_certificate_order
     @certificate_order=self.find_certificate_order
     self.domains={self.csr_obj.common_name=>{"dcv"=>"http_csr_hash"}} if self.domains.blank?
+    # caa_check_domains = parameters_to_hash["caa_check_domains"].split(',')
+    caa_check_domains = self.caa_check_domains.split(',')
+
     if @certificate_order.is_a?(CertificateOrder)
+      # CAA Checking for domains what has been validated and no passed for CAA.
+      if caa_check_domains && caa_check_domains[0] != ''
+        caa_check_domains.each do |domain|
+          cn = @certificate_order.certificate_content.certificate_names.find_by_name(domain)
+          CaaCheck.pass?(@certificate_order.ref, cn, cn.certificate_content)
+        end
+      end
+
       @certificate_order.update_attribute(:external_order_number, self.ca_order_number) if (self.admin_submitted && self.ca_order_number)
       @certificate_order.update_attribute(:ext_customer_ref, self.external_order_number) if self.external_order_number
       # choose the right ca_certificate_id for submit to Comodo
@@ -607,6 +628,10 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
 
   def cert_names
     @cert_names || parameters_to_hash["cert_names"]
+  end
+
+  def caa_check_domains
+    @caa_check_domains || parameters_to_hash["caa_check_domains"]
   end
 
   def ref

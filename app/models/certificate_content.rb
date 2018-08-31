@@ -4,7 +4,6 @@ class CertificateContent < ActiveRecord::Base
   
   belongs_to  :certificate_order, -> { unscope(where: [:workflow_state, :is_expired]) }, touch: true
   has_one     :ssl_account, through: :certificate_order
-  has_one     :certificate, through: :certificate_order
   has_many    :users, through: :certificate_order
   belongs_to  :server_software
   has_one     :csr, :dependent => :destroy
@@ -26,6 +25,12 @@ class CertificateContent < ActiveRecord::Base
   after_save   :certificate_names_from_domains, unless: :certificate_names_created?
   after_save   :transfer_existing_contacts
   before_destroy :preserve_certificate_contacts
+
+  before_create do |cc|
+    ref_number = cc.to_ref
+    cc.ref = ref_number
+    cc.label = ref_number
+  end
 
   SIGNING_REQUEST_REGEX = /\A[\w\-\/\s\n\+=]+\Z/
   MIN_KEY_SIZE = 2047 #thought would be 2048, be see
@@ -210,12 +215,6 @@ class CertificateContent < ActiveRecord::Base
     end
   end
 
-  before_create do |cc|
-    ref_number = cc.to_ref
-    self.ref = ref_number
-    self.label = ref_number
-  end
-
   def certificate_names_from_domains
     if csr && certificate_names.find_by_name(csr.common_name).blank?
       certificate_names.create(name: csr.common_name, is_common_name: true)
@@ -251,6 +250,17 @@ class CertificateContent < ActiveRecord::Base
 
   def cli_domain
     @@cli_domain
+  end
+
+  def ca
+    if read_attribute(:ca).blank? and certificate_order.ssl_account
+      tmp_ca=certificate.cas.ssl_account_or_general_default(certificate_order.ssl_account).last
+      if tmp_ca
+        write_attribute(:ca_id, tmp_ca.id)
+        save(validate: false) unless new_record?
+      end
+    end
+    read_attribute(:ca)
   end
 
   def domains=(names)
@@ -469,7 +479,8 @@ class CertificateContent < ActiveRecord::Base
     index = if cc.empty?
       0
     else
-      cc.pluck(:ref).map{ |r| r.split('-').last.to_i }.sort.last + 1
+      cc_ref=cc.order(:created_at).last.ref
+      cc_ref.blank? ? 0 : cc_ref.split('-').last.to_i + 1
     end
     "#{certificate_order.ref}-#{index}"
   end

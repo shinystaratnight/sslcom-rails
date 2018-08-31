@@ -2,26 +2,29 @@
 class DomainsController < ApplicationController
   before_filter :require_user, :except => [:dcv_validate, :dcv_all_validate]
   before_filter :find_ssl_account
+  before_filter :set_row_page, only: [:index]
 
   def index
-    @cnames = @ssl_account.certificate_names.order(:created_at).reverse_order
-    @domains = @ssl_account.domains.order(:created_at).reverse_order
+    cnames = @ssl_account.certificate_names.order(:created_at).reverse_order
+    @domains = (@ssl_account.domains.order(:created_at).reverse_order + cnames).paginate(@p)
   end
 
   def create
     res_Obj = {}
     exist_domain_names = []
     created_domains = []
-    domain_names = params[:domain_names].split(/[\s,']/)
-    domain_names.each do |d_name|
-      if @ssl_account.domain_names.include?(d_name)
-        exist_domain_names << d_name
-      else
-        @domain = Domain.new
-        @domain.name = d_name
-        @domain.ssl_account_id = @ssl_account.id
-        @domain.save()
-        created_domains << @domain
+    unless params[:domain_names].nil?
+      domain_names = params[:domain_names].split(/[\s,']/)
+      domain_names.each do |d_name|
+        if @ssl_account.domain_names.include?(d_name)
+          exist_domain_names << d_name
+        else
+          @domain = Domain.new
+          @domain.name = d_name
+          @domain.ssl_account_id = @ssl_account.id
+          @domain.save()
+          created_domains << @domain
+        end
       end
     end
     res_Obj['domains'] = created_domains
@@ -117,12 +120,15 @@ class DomainsController < ApplicationController
   end
 
   def remove_selected
+    res_Obj = {}
+    deleted_domains = []
     params[:d_name_check].each do |d_name_id|
+      deleted_domains << d_name_id
       d_name = CertificateName.find_by_id(d_name_id)
       d_name.destroy
     end
-    flash[:notice] = "Domain was successfully deleted."
-    redirect_to domains_path
+    res_Obj['deleted_domains'] = deleted_domains
+    render :json => res_Obj
   end
 
   def validate_selected
@@ -176,8 +182,11 @@ class DomainsController < ApplicationController
         next if dcv && dcv.identifier_found
         @all_domains << dn
         standard_addresses = DomainControlValidation.email_address_choices(dn.name)
-        whois_addresses = WhoisLookup.email_addresses(Whois.whois(CertificateContent.top_level_domain(dn.name)).inspect)
-        @address_choices << (standard_addresses + whois_addresses)
+        whois_addresses = WhoisLookup.email_addresses(Whois.whois(ActionDispatch::Http::URL.extract_domain(dn.name, 1)).inspect)
+        whois_addresses.each do |ad|
+          standard_addresses << ad unless ad.include? 'abuse@'
+        end
+        @address_choices << standard_addresses
       end
     end
   end
@@ -190,7 +199,10 @@ class DomainsController < ApplicationController
       dcv = @domain.domain_control_validations.last
       if dcv.identifier == identifier
         dcv.update_attribute(:identifier_found, true)
-        dcv.satisfy! unless dcv.satisfied?
+        unless dcv.satisfied?
+          dcv.satisfy!
+          CaaCheck.pass?(@ssl_account.acct_number + 'domains', @domain, nil)
+        end
       end
     end
   end
@@ -204,16 +216,30 @@ class DomainsController < ApplicationController
         dcv = cn.domain_control_validations.last
         if dcv && dcv.identifier == identifier
           dcv.update_attribute(:identifier_found, true)
-          dcv.satisfy! unless dcv.satisfied?
+          unless dcv.satisfied?
+            dcv.satisfy!
+            CaaCheck.pass?(@ssl_account.acct_number + 'domains', cn, nil)
+          end
         end
       end
       dnames.each do |dn|
         dcv = dn.domain_control_validations.last
         if dcv && dcv.identifier == identifier
           dcv.update_attribute(:identifier_found, true)
-          dcv.satisfy! unless dcv.satisfied?
+          unless dcv.satisfied?
+            dcv.satisfy!
+            CaaCheck.pass?(@ssl_account.acct_number + 'domains', dn, nil)
+          end
         end
       end
     end
+  end
+
+  private
+  def set_row_page
+    @per_page = params[:per_page] ? params[:per_page] : 10
+    CertificateName.per_page = @per_page if CertificateName.per_page != @per_page
+
+    @p = {page: (params[:page] || 1), per_page: @per_page}
   end
 end

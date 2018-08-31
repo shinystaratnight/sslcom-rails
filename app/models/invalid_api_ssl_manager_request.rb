@@ -1,0 +1,2 @@
+class InvalidApiSslManagerRequest < CaApiRequest
+end

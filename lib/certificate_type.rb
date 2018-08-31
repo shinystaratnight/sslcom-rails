@@ -11,7 +11,9 @@ module CertificateType
     if self.is_a? SignedCertificate
       !!(decoded.include?(SignedCertificate::OID_OV))
     else
-      (self.is_a?(ApiCertificateRequest) ? target_certificate :  self).product =~ /\A(wildcard|high_assurance|ucc|premiumssl)/
+      (self.is_a?(ApiCertificateRequest) ? target_certificate :
+           self).product =~ /\A(wildcard|high_assurance|ucc|premiumssl)/ ||
+          is_client_enterprise? || is_client_business? || is_client_pro?
     end
   end
   
@@ -63,6 +65,34 @@ module CertificateType
 
   def is_smime?
     (self.is_a?(ApiCertificateRequest) ? target_certificate :  self).product =~ /\Asmime/
+  end
+
+  def is_client?
+    (self.is_a?(ApiCertificateRequest) ? target_certificate :  self).product.include?('personal')
+  end
+
+  def is_client_basic?
+    (self.is_a?(ApiCertificateRequest) ? target_certificate :  self).product_root=~/basic\z/
+  end
+
+  def is_client_pro?
+    (self.is_a?(ApiCertificateRequest) ? target_certificate :  self).product_root=~/pro\z/
+  end
+
+  def is_client_business?
+    (self.is_a?(ApiCertificateRequest) ? target_certificate :  self).product_root=~/business\z/
+  end
+
+  def is_client_enterprise?
+    (self.is_a?(ApiCertificateRequest) ? target_certificate :  self).product_root=~/enterprise\z/
+  end
+
+  def is_ov_client?
+    is_client_enterprise? or is_client_business?
+  end
+
+  def requires_company_info?
+    is_client_business? || is_client_enterprise? || is_server? || is_code_signing? || is_ov?
   end
 
   def comodo_ca_id

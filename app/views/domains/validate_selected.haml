@@ -13,12 +13,16 @@
       %th
       %th domain
       %th email addresses
+      %th
+        caa
+        %a{:href => "https://www.ssl.com/how-to/configure-caa-records-to-authorize-ssl-com/", :target => "_blank"}
+          %span.badge ?
       %th previous attempt
       %th attempted on
       %th status
     %tbody.domain_list
       -@all_domains.each_with_index do |d, index|
-        %tr
+        %tr.certificate_name
           =hidden_field_tag "d_name_id[]", d.id
           %td
             =button_tag "Remove", :class => "btn_remove_domain", :type => "button"
@@ -28,6 +32,11 @@
               %option select email address
               -@address_choices[index].each do |address|
                 %option(value="#{address}" )=address
+          %td.caa_check
+            -if d.caa_passed
+              %div.passed passed
+            -else
+              %div.failed failed
           %td.center n/a
           %td.center validation not performed yet
           %td.center waiting
