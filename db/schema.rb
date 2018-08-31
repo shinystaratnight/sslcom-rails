@@ -205,12 +205,23 @@ ActiveRecord::Schema.define(version: 20180827200828) do
     t.string   "status",         limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "ssl_account_id", limit: 4
   end
 
   add_index "cas_certificates", ["ca_id"], name: "index_cas_certificates_on_ca_id", using: :btree
   add_index "cas_certificates", ["certificate_id", "ca_id"], name: "index_cas_certificates_on_certificate_id_and_ca_id", using: :btree
   add_index "cas_certificates", ["certificate_id"], name: "index_cas_certificates_on_certificate_id", using: :btree
+
+  create_table "cas_certificates_ssl_accounts", force: :cascade do |t|
+    t.integer  "cas_certificate_id", limit: 4,   null: false
+    t.integer  "ssl_account_id",     limit: 4,   null: false
+    t.string   "status",             limit: 255
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "cas_certificates_ssl_accounts", ["cas_certificate_id", "ssl_account_id"], name: "index_cas_certficates_ssl_accounts", using: :btree
+  add_index "cas_certificates_ssl_accounts", ["cas_certificate_id"], name: "index_cas_certificates_ssl_accounts_on_cas_certificate_id", using: :btree
+  add_index "cas_certificates_ssl_accounts", ["ssl_account_id"], name: "index_cas_certificates_ssl_accounts_on_ssl_account_id", using: :btree
 
   create_table "cdns", force: :cascade do |t|
     t.integer  "ssl_account_id",       limit: 4
