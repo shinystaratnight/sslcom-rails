@@ -161,6 +161,8 @@ SslCom::Application.routes.draw do
         match :dcv_all_validate, via: [:get, :post]
         match :remove_selected, via: [:get, :post]
         match :validate_selected, via: [:get, :post]
+        match :select_csr, via: [:get, :post]
+        match :validate_against_csr, via: [:get, :post]
       end
       member do
         match :validation_request, via: [:get, :post]

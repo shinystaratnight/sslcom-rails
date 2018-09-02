@@ -1,0 +1,92 @@
+-content_for :title, "Validation against CSR"
+.error{style: "display: none;"}
+%h2 Domain Validation Against CSR
+%h3
+  Please select the appropriate validation option for each domain and then click the 'Validate' button.
+  Only after you click 'Validate' will the actual validation be performed. You can also
+  =link_to "invite", new_managed_user_path({ssl_slug: @ssl_slug})
+  another user to complete the validation step.
+  =link_to "How do I use this page?", Settings.dv_explanation_link, target: "_blank"
+  **If you are getting "failed" under the pre-test column, please refer to the
+  =link_to "'Failed Pre-test?!' article.", "https://www.ssl.com/guide/failed-pre-test/", target: "_blank"
+  **
+%table{style: "width: 100%; border: 1px solid black; padding: 1em"}
+  %tr
+    %th(colspan="2") validation hashes
+  %tr
+    %td file
+    %td=link_to "click here to download file #{@csr.md5_hash}.txt", http_dcv_file_csr_path(@ssl_slug, @csr.id)
+  %tr
+    %td cname
+    %td create CNAME in dns and point to #{@csr.dns_sha2_hash}.com
+  %tr
+    %td md5 hash
+    %td.md5_hash=@csr.md5_hash
+  %tr
+    %td sha2 hash
+    %td.sha2_hash=@csr.sha2_hash
+  %tr
+    %td cname md5 hash
+    %td.dns_md5_hash=@csr.dns_md5_hash
+  %tr
+    %td cname sha2 hash
+    %td.dns_sha2_hash=@csr.dns_sha2_hash
+  -unless @csr.unique_value.blank?
+    %tr
+      %td unique value*
+      %td.unique_value=@csr.unique_value
+    %tr
+      %td(colspan="2") (* Any domain name removals or edits will require updating the unique value after clicking the Validate button.)
+=form_tag('', method: :post, class: :api_certificate_request) do
+  =hidden_field_tag :selected_csr, @csr.id
+  %table#domains_validation
+    %thead
+      %th domain
+      %th options
+      %th previous attempt
+      %th attempted on
+      %th status
+    %tbody.domain_list
+      -@selected_domains.each_with_index do |d, index|
+        %tr
+          =hidden_field_tag "d_name_id[]", d.id
+          %td.center=d.name
+          %td.center
+            %select(name="dcv_address[]" id="dcv_methods" alt="#{d.name}")
+              %option Please select a validation method
+              %optgroup(label="Validation via email" )
+                -@address_choices[index].each do |address|
+                  %option(value="#{address}" )=address
+              %optgroup(label="Validation via csr hash" )
+                %option(value="http_csr_hash" )CSR hash text file using http://
+                %option(value="https_csr_hash" )CSR hash text file using https://
+                %option(value="cname_csr_hash" )Add cname entry
+          %td.center validation not performed yet
+          %td.center n/a
+          %td.center waiting
+        %tr
+          %td
+          %td(colspan="4" )
+            Instructions:
+            %span(style="background: yellow" class="dcv_instruction" alt="#{d.name}" )Please select a validation method
+  #upload_validations(style='width: 100%; text-align: center;')
+    =submit_tag "Validate", :id=>"validate_domains", :disable_with=>"Submitting..."
+    .clearfix
+      =image_tag('waiting_bar_medium.gif', :id=>'waiting_bar', :style=>'display: none; vertical-align: middle;')
+=render :partial => 'index_scripts'
+%script{:type=>"text/javascript"}
+  :plain
+    //# PLUGIN INTEGRATION
+    jQuery(function($){
+      $('#multi_upload').MultiFile({
+        max: 5,
+        accept: '#{ValidationHistory.multi_upload_types}',
+        STRING:{
+        remove: '#{image_tag('minus.gif')}'},
+        afterFileSelect:function(element,value,master){
+       }
+      });
+      $('#upload_files').click(function(){
+        $('#waiting_bar').show();
+      });
+    });
