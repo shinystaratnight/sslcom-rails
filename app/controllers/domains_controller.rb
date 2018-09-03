@@ -13,16 +13,18 @@ class DomainsController < ApplicationController
     res_Obj = {}
     exist_domain_names = []
     created_domains = []
-    domain_names = params[:domain_names].split(/[\s,']/)
-    domain_names.each do |d_name|
-      if @ssl_account.domain_names.include?(d_name)
-        exist_domain_names << d_name
-      else
-        @domain = Domain.new
-        @domain.name = d_name
-        @domain.ssl_account_id = @ssl_account.id
-        @domain.save()
-        created_domains << @domain
+    unless params[:domain_names].nil?
+      domain_names = params[:domain_names].split(/[\s,']/)
+      domain_names.each do |d_name|
+        if @ssl_account.domain_names.include?(d_name)
+          exist_domain_names << d_name
+        else
+          @domain = Domain.new
+          @domain.name = d_name
+          @domain.ssl_account_id = @ssl_account.id
+          @domain.save()
+          created_domains << @domain
+        end
       end
     end
     res_Obj['domains'] = created_domains
@@ -197,7 +199,10 @@ class DomainsController < ApplicationController
       dcv = @domain.domain_control_validations.last
       if dcv.identifier == identifier
         dcv.update_attribute(:identifier_found, true)
-        dcv.satisfy! unless dcv.satisfied?
+        unless dcv.satisfied?
+          dcv.satisfy!
+          CaaCheck.pass?(@ssl_account.acct_number + 'domains', @domain, nil)
+        end
       end
     end
   end
@@ -211,14 +216,20 @@ class DomainsController < ApplicationController
         dcv = cn.domain_control_validations.last
         if dcv && dcv.identifier == identifier
           dcv.update_attribute(:identifier_found, true)
-          dcv.satisfy! unless dcv.satisfied?
+          unless dcv.satisfied?
+            dcv.satisfy!
+            CaaCheck.pass?(@ssl_account.acct_number + 'domains', cn, nil)
+          end
         end
       end
       dnames.each do |dn|
         dcv = dn.domain_control_validations.last
         if dcv && dcv.identifier == identifier
           dcv.update_attribute(:identifier_found, true)
-          dcv.satisfy! unless dcv.satisfied?
+          unless dcv.satisfied?
+            dcv.satisfy!
+            CaaCheck.pass?(@ssl_account.acct_number + 'domains', dn, nil)
+          end
         end
       end
     end

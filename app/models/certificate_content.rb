@@ -4,7 +4,6 @@ class CertificateContent < ActiveRecord::Base
   
   belongs_to  :certificate_order, -> { unscope(where: [:workflow_state, :is_expired]) }, touch: true
   has_one     :ssl_account, through: :certificate_order
-  has_one     :certificate, through: :certificate_order
   has_many    :users, through: :certificate_order
   belongs_to  :server_software
   has_one     :csr, :dependent => :destroy
@@ -26,6 +25,12 @@ class CertificateContent < ActiveRecord::Base
   after_save   :certificate_names_from_domains, unless: :certificate_names_created?
   after_save   :transfer_existing_contacts
   before_destroy :preserve_certificate_contacts
+
+  before_create do |cc|
+    ref_number = cc.to_ref
+    cc.ref = ref_number
+    cc.label = ref_number
+  end
 
   SIGNING_REQUEST_REGEX = /\A[\w\-\/\s\n\+=]+\Z/
   MIN_KEY_SIZE = 2047 #thought would be 2048, be see
@@ -74,7 +79,6 @@ class CertificateContent < ActiveRecord::Base
     :if => :certificate_order_has_csr_and_signing_request
   validate :domains_validation, if: :validate_domains?
   validate :csr_validation, if: "new? && csr"
-  validates :ref, uniqueness: true, allow_nil: false, allow_blank: false
 
   attr_accessor  :additional_domains #used to html format results to page
   attr_accessor  :ajax_check_csr
@@ -246,6 +250,17 @@ class CertificateContent < ActiveRecord::Base
 
   def cli_domain
     @@cli_domain
+  end
+
+  def ca
+    if read_attribute(:ca).blank? and certificate_order.ssl_account
+      tmp_ca=certificate.cas.ssl_account_or_general_default(certificate_order.ssl_account).last
+      if tmp_ca
+        write_attribute(:ca_id, tmp_ca.id)
+        save(validate: false) unless new_record?
+      end
+    end
+    read_attribute(:ca)
   end
 
   def domains=(names)
@@ -459,20 +474,12 @@ class CertificateContent < ActiveRecord::Base
     end if name
   end
 
-  def generate_ref_number!
-    if ref.blank?
-      ref_number = to_ref
-      self.ref = ref_number
-      self.label = ref_number
-    end
-  end
-
   def to_ref
     cc = certificate_order.certificate_contents.where.not(id: nil)
     index = if cc.empty?
       0
     else
-      cc_ref=cc.order(:created_at).pluck(:ref).last
+      cc_ref=cc.order(:created_at).last.ref
       cc_ref.blank? ? 0 : cc_ref.split('-').last.to_i + 1
     end
     "#{certificate_order.ref}-#{index}"

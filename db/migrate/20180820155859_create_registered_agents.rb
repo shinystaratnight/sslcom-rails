@@ -1,6 +1,6 @@
 class CreateRegisteredAgents < ActiveRecord::Migration
   def change
-    create_table :registered_agents do |t|
+    create_table :registered_agents, force: true do |t|
       t.string  :ref, :null => false
       t.references  :ssl_account, :null => false
       t.string  :ip_address, :null => false

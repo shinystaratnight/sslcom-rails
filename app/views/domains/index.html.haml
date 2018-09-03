@@ -41,6 +41,6 @@
         %tr
           %td=order_ref=='Team' ? (check_box_tag "d_name_check[]",d.id, false, :id => "d_name_check_#{d.id}", :class => "d_name_check") : ''
           %td=d.name
-          %td=order_ref=='Team' ? 'Team' : link_to(order_ref,d.certificate_content.certificate_order)
+          %td=order_ref=='Team' ? 'Team' : (link_to order_ref, new_certificate_order_validation_path(@ssl_slug, d.certificate_content.certificate_order))
           %td.d_name_status=validation_status
           %td=validity_period

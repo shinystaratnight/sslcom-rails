@@ -94,19 +94,21 @@ class DomainControlValidation < ActiveRecord::Base
   end
 
   def self.email_address_choices(name)
-    return [] unless ::PublicSuffix.valid?(name.downcase)
-    d=::PublicSuffix.parse(name.downcase)
-    subdomains = d.trd ? d.trd.split(".") : []
-    subdomains.shift if subdomains[0]=="*" #remove wildcard
-    [].tap {|s|
-      0.upto(subdomains.count) do |i|
-        s << (subdomains.slice(0,i)<<d.domain).join(".")
-      end
-    }.map do |e|
-      AUTHORITY_EMAIL_ADDRESSES.map do |ae|
-        ae+e
-      end
-    end.flatten
+    Rails.cache.fetch("email_address_choices/#{name}", expires_in: 30.days) do
+      return [] unless ::PublicSuffix.valid?(name.downcase)
+      d=::PublicSuffix.parse(name.downcase)
+      subdomains = d.trd ? d.trd.split(".") : []
+      subdomains.shift if subdomains[0]=="*" #remove wildcard
+      [].tap {|s|
+        0.upto(subdomains.count) do |i|
+          s << (subdomains.slice(0,i)<<d.domain).join(".")
+        end
+      }.map do |e|
+        AUTHORITY_EMAIL_ADDRESSES.map do |ae|
+          ae+e
+        end
+      end.flatten
+    end
   end
 
   def comodo_email_address_choices
