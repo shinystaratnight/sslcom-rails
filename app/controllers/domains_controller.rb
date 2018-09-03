@@ -198,9 +198,12 @@ class DomainsController < ApplicationController
         dn = CertificateName.find_by_id(d_id)
         @selected_domains << dn
       end
+      if @selected_domains.blank?
+        redirect_to domains_path(@ssl_slug)
+      end
       @csrs = current_user.ssl_account.csrs + current_user.ssl_account.managed_csrs
     else
-      logger.debug("###################{params}")
+      redirect_to domains_path(@ssl_slug)
     end
   end
 
@@ -216,9 +219,15 @@ class DomainsController < ApplicationController
         whois_addresses.each do |ad|
           standard_addresses << ad unless ad.include? 'abuse@'
         end
+        if @selected_domains.blank?
+          redirect_to domains_path(@ssl_slug)
+        end
         @address_choices << standard_addresses
       end
       @csr = Csr.find_by_id(params[:selected_csr])
+      if @csr.nil?
+        redirect_to domains_path(@ssl_slug)
+      end
     else
       d_name_ids = params[:d_name_id]
       addresses = params[:dcv_address]
