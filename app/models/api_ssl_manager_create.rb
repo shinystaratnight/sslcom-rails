@@ -1,7 +1,7 @@
 require "declarative_authorization/maintenance"
 
 class ApiSslManagerCreate < ApiSslManagerRequest
-  attr_accessor :message
+  attr_accessor :status, :reason
 
   validates :account_key, :secret_key, presence: true
   validates :ip_address, :mac_address, :agent, presence: true
@@ -14,10 +14,10 @@ class ApiSslManagerCreate < ApiSslManagerRequest
     ).first
 
     if already_registered
-      message = "Already registered and approved" if already_registered.workflow_status == "active"
-      message = "Pending Registration Approval" if already_registered.workflow_status == "pending_registration"
+      already_registered.api_status = 'already_registered' if already_registered.workflow_status == "active"
+      already_registered.api_status = 'pending'  if already_registered.workflow_status == "pending_registration"
 
-      return message
+      return already_registered
     else
       @registered_agent = RegisteredAgent.new
 
@@ -43,6 +43,8 @@ class ApiSslManagerCreate < ApiSslManagerRequest
           )
         end
       end
+
+      @registered_agent.api_status = Settings.auto_approve_ssl_manager_register ? 'approved' : 'pending'
 
       return @registered_agent
     end

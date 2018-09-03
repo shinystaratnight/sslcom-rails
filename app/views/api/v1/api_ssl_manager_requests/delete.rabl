@@ -5,6 +5,6 @@ if !@result.errors.blank?
   end
 else
   glue @result do
-    attributes :message
+    attributes :status
   end
 end

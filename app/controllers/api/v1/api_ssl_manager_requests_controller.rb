@@ -8,13 +8,13 @@ class Api::V1::ApiSslManagerRequestsController < Api::V1::APIController
         ApiSslManagerRequest::DELETE
       ).uniq]
 
-  def set_result_parameter(result, asm, message)
-    if asm
+  def set_result_parameter(result, asm, message = nil)
+    if message.nil?
       result.ref = asm.ref
-      result.created_at = asm.created_at
-      result.updated_at = asm.updated_at
+      result.status = asm.api_status
+      result.reason = asm.reason unless asm.reason.blank?
     else
-      result.message = message
+      result.status = message
     end
   end
 
@@ -59,9 +59,7 @@ class Api::V1::ApiSslManagerRequestsController < Api::V1::APIController
     if @result.save
       if @obj = @result.create_ssl_manager
         if @obj.is_a?(RegisteredAgent) && @obj.errors.empty?
-          set_result_parameter(@result, @obj, nil)
-        elsif @obj.is_a?(String)
-          set_result_parameter(@result, nil, @obj)
+          set_result_parameter(@result, @obj)
         else
           @result = @obj
         end

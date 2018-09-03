@@ -4,6 +4,8 @@ class RegisteredAgent < ActiveRecord::Base
   belongs_to  :approver, :class_name => 'User'
   has_many :managed_certificates, dependent: :destroy
 
+  attr_accessor :api_status, :reason
+
   # will_paginate
   # cattr_accessor :per_page
   # @@per_page = 10
