@@ -116,6 +116,7 @@
           var d_status = $(this).closest("tr").find(".d_name_status").first().html();
           if(d_status=='Validated') {
             $("#d_name_action_validate").prop('disabled', true);
+            $("#d_name_action_bind").prop('disabled', true);
           }
         })
       });
