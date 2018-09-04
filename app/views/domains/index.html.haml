@@ -21,7 +21,8 @@
             %td(colspan='4')=will_paginate @domains
       %caption
         =title
-        =link_to 'managed csrs', managed_csrs_path(@ssl_slug)
+        |
+        =link_to 'Managed CSRs', managed_csrs_path(@ssl_slug)
         %ul(style="float: right; display: flex; list-style: none;" )
           %li(style="margin-right: 0.5rem" )
             =submit_tag 'validate against CSR', formaction: "#{select_csr_domains_path(@ssl_slug)}", style: "padding: 0.5rem", id: "d_name_action_bind", disabled: 'true'

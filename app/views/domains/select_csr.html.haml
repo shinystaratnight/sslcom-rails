@@ -1,6 +1,6 @@
 -title = "Validate Domains against CSR"
 -content_for :title, title
-=form_tag '', method: :post do
+=form_tag "#{validate_against_csr_domains_path(@ssl_slug)}", method: :post do
   #search_bar
     -@selected_domains.each do |dn|
       .d_name
@@ -26,4 +26,4 @@
           %td=csr.created_at.strftime("%b %d, %Y")
   #button_container
     #auto_adjust
-      =image_submit_tag 'bl_submit_button.gif', formaction: "#{validate_against_csr_domains_path(@ssl_slug)}"
+      =image_submit_tag 'bl_submit_button.gif'
