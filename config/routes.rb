@@ -235,6 +235,7 @@ SslCom::Application.routes.draw do
         get :update_csr, to: 'application#not_found', status: 404
         match :update_csr, via: [:put, :patch]
         match :update_tags, via: [:put, :post]
+        match :recipient, via: [:get, :post]
         get :download
         get :developer
         get :download_other

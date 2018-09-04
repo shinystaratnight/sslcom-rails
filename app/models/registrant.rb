@@ -1,6 +1,8 @@
 class Registrant < Contact
   
   enum registrant_type: { individual: 0, organization: 1 }
+  
+  after_save :set_default_status
 
   unless MIGRATING_FROM_LEGACY
     validates_presence_of :contactable
@@ -49,10 +51,24 @@ class Registrant < Contact
     if: proc { |r| r.reusable? && (r.organization? || r.individual?) }
   validates :company_name, :phone, presence: true, if: proc { |r| r.reusable? && r.organization? }
   validates :first_name, :last_name, presence: true, if: proc { |r| r.reusable? && r.individual? }
-  
+
   protected
   
+  def set_default_status
+    if reusable? && status.nil?
+      self.in_progress!
+    end
+  end
+
   def reusable?
     contactable.is_a?(SslAccount) && !registrant_type.nil?
+  end
+
+  def self.get_validated_registrants(team)
+    Registrant.where(
+      contactable_type: team.class,
+      contactable_id: team.id,
+      status: statuses[:validated]
+    )
   end
 end

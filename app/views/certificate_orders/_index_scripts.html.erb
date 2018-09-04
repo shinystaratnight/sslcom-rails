@@ -546,6 +546,13 @@ jQuery(function($) {
         ['fax', 'fax'],
         ['ext', 'ext']
       ];
+      $('#saved_registrant_id').val(
+        $(this).find('option:selected').attr('value')
+      );
+      $('#saved_registrant_status').val(
+        $(this).find('option:selected').data('status')
+      );
+      $('#registrant_contact').attr('checked', false);
       list.forEach(function(el) {
         populateContact(el[0], $('#saved_contacts option:selected').data(el[1]));
       });
@@ -610,6 +617,19 @@ jQuery(function($) {
 
     $('form[id^=edit_certificate_order] textarea').keyup(function(){
       $(this).parents().filter('form').ajaxSubmit();
+    });
+    
+    $('#registrant_contact').change(function() {
+      if(this.checked) {
+        $('#first_name').val($(this).data('first-name'));
+        $('#last_name').val($(this).data('last-name'));
+        $('#email').val($(this).data('email'));
+        $('#saved_contacts').val('');
+      } else {
+        $('#first_name').val(null);
+        $('#last_name').val(null);
+        $('#email').val(null);
+      }
     });
 
     // Cancel button

@@ -379,6 +379,10 @@ class CertificateOrder < ActiveRecord::Base
   PREPAID_FULL = 'prepaid_full'
   PREPAID_EXPRESS = 'prepaid_express'
   VERIFICATION_STEP = 'Perform Validation'
+  CLIENT_SMIME_VALIDATE = 'client_smime_validate'
+  CLIENT_SMIME_VALIDATED = 'client_smime_validated'
+  CLIENT_SMIME_VALIDATED_SHORT = 'client_smime_validated_short'
+
   FULL_SIGNUP_PROCESS = {:label=>FULL, :pages=>%W(Submit\ CSR Payment
     Registrant Contacts #{VERIFICATION_STEP} Complete)}
   EXPRESS_SIGNUP_PROCESS = {:label=>EXPRESS,
@@ -393,7 +397,27 @@ class CertificateOrder < ActiveRecord::Base
     pages: FULL_SIGNUP_PROCESS[:pages]}
   REPROCES_SIGNUP_W_INVOICE = {label: PREPAID_EXPRESS,
     pages: FULL_SIGNUP_PROCESS[:pages] - %w(Payment)}
-
+  CLIENT_SMIME_FULL = {
+    label: CLIENT_SMIME_VALIDATE,
+    pages: ['Registrant', 'Recipient', 'Upload Documents', 'Complete']
+  }
+  CLIENT_SMIME_IV_VALIDATE = {
+    label: CLIENT_SMIME_VALIDATE,
+    pages: ['Recipient', 'Upload Documents', 'Complete']
+  }
+  CLIENT_SMIME_IV_VALIDATED = {
+    label: CLIENT_SMIME_VALIDATE,
+    pages: ['Recipient', 'Complete']
+  }
+  CLIENT_SMIME_NO_DOCS = {
+    label: CLIENT_SMIME_VALIDATED,
+    pages: ['Registrant', 'Recipient', 'Complete']
+  }
+  CLIENT_SMIME_NO_IV_OV = {
+    label: CLIENT_SMIME_VALIDATED_SHORT,
+    pages: ['Recipient', 'Complete']
+  }
+  
   CSR_SUBMITTED = :csr_submitted
   INFO_PROVIDED = :info_provided
   REPROCESS_REQUESTED = :reprocess_requested
@@ -830,7 +854,9 @@ class CertificateOrder < ActiveRecord::Base
 
   def skip_contacts_step?
     return false if certificate_contents.count == 1
-    if Contact.optional_contacts?
+    if certificate && certificate.is_smime_or_client?
+      true
+    elsif Contact.optional_contacts?
       if signed_certificate.try('is_dv?'.to_sym) && Settings.exempt_dv_contacts
         true
       else
@@ -862,6 +888,59 @@ class CertificateOrder < ActiveRecord::Base
       PREPAID_EXPRESS_SIGNUP_PROCESS
     else
       PREPAID_FULL_SIGNUP_PROCESS
+    end
+  end
+
+  def iv_validated?
+    if assignee
+      iv_exists = get_team_iv
+      iv_exists && iv_exists.validated?
+    else
+      false
+    end  
+  end
+
+  def ov_validated?
+    locked_registrants.where(
+      registrant_type: Registrant::registrant_types[:organization],
+      status: Registrant::statuses[:validated]
+    ).any?
+  end
+    
+  def iv_ov_validated?
+    iv_validated? && ov_validated?
+  end
+
+  def smime_client_process
+    return CLIENT_SMIME_NO_DOCS if certificate.nil?
+    registrant_types = certificate.client_smime_validations
+    
+    if registrant_types == 'iv_ov'
+      iv_ov_validated? ? CLIENT_SMIME_NO_DOCS : CLIENT_SMIME_FULL
+    elsif registrant_types == 'iv'
+      iv_validated? ? CLIENT_SMIME_IV_VALIDATED : CLIENT_SMIME_IV_VALIDATE
+    else
+      CLIENT_SMIME_NO_IV_OV
+    end
+  end
+
+  def get_team_iv
+    if assignee
+      ssl_account.individual_validations.find_by(user_id: assignee.id)
+    end
+  end
+
+  def copy_iv_ov_validation_history(type='iv')
+    iv_exists = get_team_iv
+    if assignee && iv_exists && iv_exists.validation_histories.any?
+      new_vh = iv_exists.validation_histories - validation.validation_histories
+      validation.validation_histories << new_vh
+    end
+
+    if type == 'iv_ov' && locked_registrant &&
+      locked_registrant.validation_histories.any?
+      new_vh = locked_registrant.validation_histories - validation.validation_histories
+      validation.validation_histories << new_vh
     end
   end
 

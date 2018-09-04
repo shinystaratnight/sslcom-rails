@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180914183330) do
+ActiveRecord::Schema.define(version: 20180920032908) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        limit: 255
@@ -415,6 +415,17 @@ ActiveRecord::Schema.define(version: 20180914183330) do
 
   add_index "client_applications", ["key"], name: "index_client_applications_on_key", unique: true, using: :btree
 
+  create_table "contact_validation_histories", force: :cascade do |t|
+    t.integer  "contact_id",            limit: 4, null: false
+    t.integer  "validation_history_id", limit: 4, null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "contact_validation_histories", ["contact_id", "validation_history_id"], name: "index_cont_val_histories_on_contact_id_and_validation_history_id", using: :btree
+  add_index "contact_validation_histories", ["contact_id"], name: "index_contact_validation_histories_on_contact_id", using: :btree
+  add_index "contact_validation_histories", ["validation_history_id"], name: "index_contact_validation_histories_on_validation_history_id", using: :btree
+
   create_table "contacts", force: :cascade do |t|
     t.string   "title",                 limit: 255
     t.string   "first_name",            limit: 255
@@ -453,11 +464,14 @@ ActiveRecord::Schema.define(version: 20180914183330) do
     t.string   "company_number",        limit: 255
     t.string   "registration_service",  limit: 255
     t.boolean  "saved_default",                     default: false
+    t.integer  "status",                limit: 4
+    t.integer  "user_id",               limit: 4
   end
 
   add_index "contacts", ["contactable_id", "contactable_type"], name: "index_contacts_on_contactable_id_and_contactable_type", using: :btree
   add_index "contacts", ["id", "parent_id"], name: "index_contacts_on_id_and_parent_id", using: :btree
   add_index "contacts", ["parent_id"], name: "index_contacts_on_parent_id", using: :btree
+  add_index "contacts", ["user_id"], name: "index_contacts_on_user_id", using: :btree
 
   create_table "countries", force: :cascade do |t|
     t.string  "iso1_code", limit: 255

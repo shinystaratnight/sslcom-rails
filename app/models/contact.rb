@@ -2,11 +2,19 @@ class Contact < ActiveRecord::Base
   include V2MigrationProgressAddon
   # include RefParam
 
+  enum status: {
+    in_progress: 1,
+    pending_validation: 5,
+    additional_info: 15,
+    validated: 20
+  }
+
   belongs_to :contactable, polymorphic: true
   has_many   :order_contacts, foreign_key: :parent_id, class_name: 'Contact'
-
-  has_many    :notification_groups_subjects, as: :subjectable
-  has_many    :notification_groups, through: :notification_groups_subjects
+  has_many   :notification_groups_subjects, as: :subjectable
+  has_many   :notification_groups, through: :notification_groups_subjects
+  has_many   :contact_validation_histories, dependent: :destroy
+  has_many   :validation_histories, through: :contact_validation_histories
   
   attr_accessor :update_parent, :administrative_role, :billing_role, :technical_role, :validation_role
   

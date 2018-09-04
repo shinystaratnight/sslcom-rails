@@ -95,7 +95,10 @@ module CertificateOrdersHelper
           link_to('submit csr', edit_certificate_order_path(@ssl_slug, certificate_order)) if
               permitted_to?(:update, certificate_order)
         when "contacts_provided", "pending_validation", "validated"
-          if certificate_content.workflow_state == "validated" and certificate_order.certificate.is_cs?
+          certificate = certificate_order.certificate
+          if certificate_content.workflow_state == "validated" && 
+            (certificate.is_cs? || certificate.is_smime_or_client?)
+
             if current_user.is_individual_certificate?
               if certificate_order.certificate_order_token.blank?
                 link_to 'request certificate', nil, class: 'link_to_send_notify',
@@ -112,7 +115,12 @@ module CertificateOrdersHelper
             elsif current_user.is_billing_only? || current_user.is_validations_only? || current_user.is_validations_and_billing_only?
               'n/a'
             else
-              if certificate_order.locked_registrant and certificate_order.certificate_content.ca
+              if certificate.is_smime_or_client? && certificate_order.assignee
+                iv = Contact.find_by(user_id: certificate_order.assignee.id)
+                link_to 'send activation link to ' + iv.email,
+                  nil, class: 'link_to_send_notify',
+                  data: { ref: certificate_order.ref, type: 'token' }
+              elsif certificate_order.locked_registrant and certificate_order.certificate_content.ca
                 link_to 'send activation link to ' + certificate_order.locked_registrant.email,
                         nil, class: 'link_to_send_notify',
                         :data => { :ref => certificate_order.ref, :type => 'token' }

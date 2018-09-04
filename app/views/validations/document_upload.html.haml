@@ -107,7 +107,22 @@
             Up to 5 files can be uploaded. Zipped documents can also be uploaded, and
             they will automatically be unpacked. The following file types are accepted:
             #{ValidationHistory.acceptable_file_types}
-        =file_field_tag "filedata[]", :id=> "multi_upload"
+        
+        - if co.certificate.is_smime_or_client?
+          #iv-ov-file-upload
+            - unless co.certificate.is_client_basic? || co.certificate.is_client_pro?
+              .clearfix
+                %p Registrant Files:
+                = file_field_tag "iv_filedata[]", id: "iv_multi_upload"
+            
+            .clearfix
+              %p Recipient Files:
+              = file_field_tag "ov_filedata[]", id: "ov_multi_upload"
+          %br/
+        - else
+          = file_field_tag "filedata[]", id: "multi_upload"
+        
+
     #upload_validations(style='width: 100%; text-align: center;')
       -if checkout_in_progress
         %input(type="button" class="shiny_blue_button" id="start_over" value="Cancel")
@@ -121,7 +136,7 @@
   :plain
     //# PLUGIN INTEGRATION
     jQuery(function($){
-      $('#multi_upload').MultiFile({
+      $('#multi_upload, #iv_multi_upload, #ov_multi_upload').MultiFile({
         max: 5,
         accept: '#{ValidationHistory.multi_upload_types}',
         STRING:{

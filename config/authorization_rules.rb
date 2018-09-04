@@ -71,7 +71,8 @@ authorization do
       :destroy,
       :index,
       :reset_to_system,
-      :update
+      :update,
+      :recipient
     ]
   end
 
@@ -352,7 +353,8 @@ authorization do
       :delete,
       :read,
       :show,
-      :update
+      :update,
+      :recipient
     ] do
       if_attribute ssl_account: is {user.ssl_account}
     end
@@ -564,7 +566,7 @@ end
 # ============================================================================ 
 privileges do
   privilege :manage, includes: [
-    :change_state, :create, :delete, :read, :refund, :update
+    :change_state, :create, :delete, :read, :refund, :update, :recipient
   ]
   privilege :read, includes: [
     :index, :invoice, :lookup_discount, :search, :show, :show_cart, :developer, :site_report, :ajax
