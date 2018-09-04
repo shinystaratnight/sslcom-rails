@@ -52,7 +52,7 @@
           =hidden_field_tag "d_name_id[]", d.id
           %td.center=d.name
           %td.center
-            %select(name="dcv_address[]" id="dcv_methods" alt="#{d.name}")
+            %select(name="dcv_address[]" id="dcv_methods" alt="#{d.name}" style="width: 50%;" )
               %option Please select a validation method
               %optgroup(label="Validation via email" )
                 -@address_choices[index].each do |address|
