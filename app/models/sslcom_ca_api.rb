@@ -108,10 +108,20 @@ class SslcomCaApi
 
   def self.subject_alt_name(options)
     cert = options[:cc].certificate
+    common_name=options[:cc].csr.common_name
     if cert.is_smime?
       "rfc822Name="
     elsif !cert.is_code_signing?
       (options[:san] ? options[:san].split(/\s+/) : options[:cc].all_domains).map{|d|"dNSName="+d.downcase}.join(",")
+    end
+    if cert.is_wildcard?
+      options[:san]<<",dNSName=#{CertificateContent.non_wildcard_name(common_name)}"
+    elsif cert.is_basic? or cert.is_high_assurance? or cert.is_free?
+      if common_name=~/\Awww\./
+        options[:san]<<",dNSName=#{common_name[4..-1]}"
+      else
+        options[:san]<<",dNSName=www.#{common_name}"
+      end
     end
   end
 
@@ -130,11 +140,10 @@ class SslcomCaApi
       if options[:collect_certificate]
         dn.merge! user_name: options[:username]
       else
-        # dn.merge! subject_dn: options[:action]=="send_to_ca" ? subject_dn(options) : # req sent via RA form
-        #                           (options[:subject_dn] || options[:cc].subject_dn),
-        dn.merge! subject_dn: (options[:action]=="send_to_ca" ? subject_dn(options) : # req sent via RA form
-          (options[:subject_dn] || cert.is_code_signing? ? options[:cc].locked_subject_dn : options[:cc].subject_dn))+
-            ",OU=Key Hash sc-#{options[:cc].ref}-#{DateTime.now.to_i}",
+        dn.merge! subject_dn: (options[:action]=="send_to_ca" ? subject_dn(options) : # via RA form or shadow
+          (options[:subject_dn] || cert.is_code_signing? ?
+               options[:cc].locked_subject_dn : options[:cc].subject_dn({mapping: options[:mapping]})))+
+            ",OU=sc-#{options[:cc].ref}-#{DateTime.now.to_i}",
           ca_name: options[:ca_name] || ca_name(options),
           certificate_profile: certificate_profile(options),
           end_entity_profile: end_entity_profile(options),

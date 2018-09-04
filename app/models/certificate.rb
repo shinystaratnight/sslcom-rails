@@ -393,6 +393,10 @@ class Certificate < ActiveRecord::Base
     product =~ /basic/
   end
 
+  def is_high_assurance?
+    product =~ /high_assurance/
+  end
+
   def is_browser_generated_capable?
     is_code_signing? || is_client?
   end

@@ -25,7 +25,7 @@ class CertificateOrder < ActiveRecord::Base
       where{expiration_date < Date.today}
     end
   end
-  has_many    :shadow_certificates, :through=>:csrs, class_name: "SignedCertificate"
+  has_many    :shadow_certificates, :through=>:csrs, class_name: "ShadowSignedCertificate"
   has_many    :ca_certificate_requests, :through=>:csrs
   has_many    :ca_api_requests, :through=>:csrs
   has_many    :sslcom_ca_requests, :through=>:csrs
