@@ -1,4 +1,4 @@
-//= require jquery-ujs/1.2.2/rails.min
+//= require jquery_ujs
 //= require jquery-ui
 //= require application
 //= require jquery.livequery
