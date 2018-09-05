@@ -469,6 +469,13 @@ ActiveRecord::Schema.define(version: 20180904143640) do
     t.datetime "updated_at"
   end
 
+  create_table "csr_unique_values", force: :cascade do |t|
+    t.string   "unique_value", limit: 255
+    t.integer  "csr_id",       limit: 4
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "csrs", force: :cascade do |t|
     t.integer  "certificate_content_id",    limit: 4
     t.text     "body",                      limit: 65535

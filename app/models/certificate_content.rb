@@ -687,7 +687,7 @@ class CertificateContent < ActiveRecord::Base
   def subject_dn(options={})
     cert = options[:certificate] || self.certificate
     dn=["CN=#{options[:common_name] || csr.common_name}"]
-    unless cert.is_dv?
+    if !(options[:mapping] ? options[:mapping].try(:profile_name) =~ /DV/ : cert.is_dv?)
       dn << "O=#{options[:o] || registrant.company_name}"
       dn << "C=#{options[:c] || registrant.country}"
       if cert.is_ev?
