@@ -258,6 +258,15 @@ class OrderNotifier < ActionMailer::Base
           to:    Settings.send_api_calls
   end
 
+  def certificate_order_token_send(co, token)
+    @inssurance_link = confirm_url(token)
+    @certificate_order = co
+
+    mail subject: "Inssurance Link",
+         from:  Settings.from_email.no_reply,
+         to:    co.registrant.email
+  end
+
   protected
   def setup_email(user)
     @recipients  = "#{user.email}"

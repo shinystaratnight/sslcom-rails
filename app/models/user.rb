@@ -29,6 +29,7 @@ class User < ActiveRecord::Base
   has_one   :shopping_cart
   has_and_belongs_to_many :user_groups
   has_many  :notification_groups, through: :ssl_accounts
+  has_many  :certificate_order_tokens
 
   preference  :cert_order_row_count, :string, :default=>"10"
   preference  :order_row_count, :string, :default=>"10"

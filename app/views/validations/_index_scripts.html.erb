@@ -247,6 +247,25 @@ jQuery(function($) {
     };
     $('form.edit_validation_ruling').ajaxForm(options);
 
+    var token_send_options = {
+      dataType: 'json',
+      success: function(data) {
+        if (data == 'success') {
+          alert('Successfully sent token link.');
+        } else if (data == 'not_found_ssl_account') {
+          alert('Not found team account. Please try again.');
+        } else if (data == 'session_expired') {
+          alert('The session has been expired. You need to login again.');
+          location.reload(true);
+        }
+      }
+    };
+    
+    $('#link_to_send_token').click(function(e) {
+      e.preventDefault();
+      $('form#send_certificate_order_token').ajaxSubmit(token_send_options);
+    });
+
     $('input:checkbox[name*=publish_to_site_seal]').click(function(){
       $(this).parents().filter('form').ajaxSubmit();
     });

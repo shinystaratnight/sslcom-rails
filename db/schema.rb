@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180831035328) do
+ActiveRecord::Schema.define(version: 20180904143640) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        limit: 255
@@ -310,6 +310,17 @@ ActiveRecord::Schema.define(version: 20180831035328) do
     t.string   "acme_account_id",        limit: 255
     t.integer  "ssl_account_id",         limit: 4
     t.boolean  "caa_passed",                         default: false
+  end
+
+  create_table "certificate_order_tokens", force: :cascade do |t|
+    t.integer  "certificate_order_id", limit: 4
+    t.integer  "user_id",              limit: 4
+    t.integer  "ssl_account_id",       limit: 4
+    t.string   "token",                limit: 255
+    t.boolean  "is_expired"
+    t.datetime "due_date"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "certificate_orders", force: :cascade do |t|
