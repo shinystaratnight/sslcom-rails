@@ -228,6 +228,19 @@ class DomainsController < ApplicationController
       if @csr.nil?
         redirect_to domains_path(@ssl_slug)
       end
+      dcvs = @csr.csr_unique_value.domain_control_validations
+      dcvs.each do |dcv|
+        next if dcv.workflow_state == 'satisfied'
+        dn = CertificateName.find_by_id(dcv.certificate_name_id)
+        next if @selected_domains.include?(dn)
+        @selected_domains << dn
+        standard_addresses = DomainControlValidation.email_address_choices(dn.name)
+        whois_addresses = WhoisLookup.email_addresses(Whois.whois(ActionDispatch::Http::URL.extract_domain(dn.name, 1)).inspect)
+        whois_addresses.each do |ad|
+          standard_addresses << ad unless ad.include? 'abuse@'
+        end
+        @address_choices << standard_addresses
+      end
     elsif params[:unique_value]
       csr_unique_value = CsrUniqueValue.find_by_unique_value(params[:unique_value])
       @csr = csr_unique_value.csr
@@ -237,6 +250,7 @@ class DomainsController < ApplicationController
       dcvs.each do |dcv|
         next if dcv.workflow_state == 'satisfied'
         dn = CertificateName.find_by_id(dcv.certificate_name_id)
+        next if @selected_domains.include?(dn)
         @selected_domains << dn
         standard_addresses = DomainControlValidation.email_address_choices(dn.name)
         whois_addresses = WhoisLookup.email_addresses(Whois.whois(ActionDispatch::Http::URL.extract_domain(dn.name, 1)).inspect)
