@@ -3465,6 +3465,7 @@ label.error
 #popular-files,
 #resource-popular-location-list,
 #notification_groups,
+#notification_group_scan_his_logs,
 #certificates-admin-index
   line-height: 1.5em
   font-size: 1.4em
@@ -4070,9 +4071,20 @@ label.error
       font-size: 1.4em
       text-align: right
       padding-top: 5px
+
+      > input[type="checkbox"]
+        float: right
+        height: 30px
+        margin-right: 0px
+
     > .block_body
       float: left
       padding-left: 3px
+
+      > span
+        font-size: 1.4em
+        line-height: 38px
+        padding-left: 10px
 
     label
       width: 13.8em
@@ -4147,6 +4159,14 @@ label.error
 
     &.port_number
       width: 60px
+
+  .group_block .alert-warning
+    padding-top: 10px
+    color: red
+    font-size: 13px
+  .group_block .warning-field
+    border-color: red
+    box-shadow: 0px 0px 5px red
 
 input#upload_files, input#start_over, input#validate_domains
   margin: 1em
@@ -4445,7 +4465,7 @@ table#line_items_receipt
       float: right
 
   #auto_adjust, #prev_next_submit, #next_submit, #click_to_load,  #shop_more_checkout,
-  #add_items, #skip_button
+  #add_items, #skip_button, #notification_group_auto_adjust
     margin: 2.5em auto 3em
     width: 340px
 
@@ -4464,6 +4484,15 @@ table#line_items_receipt
 
   #click_to_load
     width: 238px
+
+  #notification_group_auto_adjust
+    text-align: center
+    button
+      margin: 0 1em
+      float: inherit
+      display: inline-block
+      padding: 8px 15px
+
 
 /* ----------- What is security code----------- */
 
@@ -6666,9 +6695,8 @@ span.notifications-teams
     &.removed_domain
       background-color: lightgrey
     &.certificate_name td
-      padding-bottom: 5px
-      padding-top: 5px
-      padding-left: 5px
+      padding: 3px
+      border-top: 1px solid grey
       &:first-child
         text-align: center
         padding-left: 0px
@@ -6676,6 +6704,18 @@ span.notifications-teams
           margin-left: 3px
       .check_box
         vertical-align: middle
+
+      &.pretest,
+      &.caa_check
+        text-align: center
+        div
+          padding: 5px
+          &.passed
+            background-color: green
+            color: white
+          &.failed
+            background-color: red
+            color: white
 
 .redirect_message_wrap
   position: absolute
@@ -6752,13 +6792,40 @@ span.notifications-teams
   border: 1px solid grey
   margin: 0.1rem
 
+.btn-team-links
+  background-color: white
+  border: 1px solid $base_green
+  color: $base_green !important
+  float: left
+  margin: 0 0.5rem 0.5rem 0
+  padding: 0 3px
+
+  &:hover
+    color: white !important
+    background-color: $base_green
+
+
 .btn-refunds-detail
   background-color: grey
   border: 1px solid grey
   text-transform: uppercase
 
-#team-billing-method
-  margin-top: 0.5rem
+#team-billing-method,
+#team-no-limit
+  margin-top: 0.7rem
+  form
+    text-align: left
+
+    label
+      font-weight: 500
+      font-size: 1rem
+      width: 9em
+      text-transform: uppercase
+    
+  #frm-team-no-limit
+    label
+      margin-left: 1rem
+      width: 5em
   
 /*
  * Invoices details and index
@@ -7437,12 +7504,28 @@ span.notifications-teams
     margin-bottom: 0.5rem
     height: 25px
 
+    #btn-folder-new-cert
+      border-radius: 3px
+      font-size: 1.3rem
+      float: right
+      letter-spacing: 0.5px
+      margin-right: 1rem
+      padding: 7px 4px 3px 4px
+      border: 1px solid $base_green
+      color: $base_green
+      float: right
+      height: 1.7rem
+
+      &:hover
+        color: white
+        background-color: $base_green
+
     span
       float: right
       color: white
       padding: 0.66rem
       background-color: grey
-      margin-right: -0.5rem
+      margin-right: -0.6rem
       border-top-left-radius: 3px
       border-bottom-left-radius: 3px
 
@@ -7496,7 +7579,8 @@ span.notifications-teams
 /*
  * Folders
  */
-#folder-scan
+#folder-scan,
+#folder-scan-co
   border: 1px solid darkgrey
   border-radius: 3px
   font-size: 1.2rem
@@ -7516,6 +7600,14 @@ span.notifications-teams
 #co-folders-container
   margin: 0.8em 0 0.5em
   
+  .folder-co-count
+    background-color: $base_green
+    border-radius: 8px
+    color: white
+    font-weight: 600
+    font-size: 0.9rem
+    padding: 2px 5px
+
   #folder-tree-fixed
     max-height: 250px
     display: flex

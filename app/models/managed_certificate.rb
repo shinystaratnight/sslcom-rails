@@ -1,0 +1,2 @@
+class ManagedCertificate < SignedCertificate
+end

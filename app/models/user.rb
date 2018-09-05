@@ -35,6 +35,7 @@ class User < ActiveRecord::Base
   preference  :cdn_row_count, :string, :default=>"10"
   preference  :user_row_count, :string, :default => "10"
   preference  :note_group_row_count, :string, :default => "10"
+  preference  :scan_log_row_count, :string, :default => "10"
 
   #will_paginate
   cattr_accessor :per_page
@@ -452,6 +453,12 @@ class User < ActiveRecord::Base
 
   def deliver_generate_install_ssl!(resource_id, host_name, to_address)
     UserNotifier.generate_install_ssl(self, resource_id, host_name, to_address).deliver
+  end
+
+  def deliver_register_ssl_manager_to_team!(registered_agent_id, ssl_account, auto_approve)
+    auto_approve ?
+        UserNotifier.auto_register_ssl_manager_to_team(self, ssl_account).deliver :
+        UserNotifier.register_ssl_manager_to_team(self, registered_agent_id, ssl_account).deliver
   end
 
   def browsing_history(l_bound=nil, h_bound=nil, sort="asc")

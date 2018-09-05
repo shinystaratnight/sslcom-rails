@@ -42,6 +42,12 @@ SslCom::Application.routes.draw do
         match '/users/set_default_team' => 'api_user_requests#set_default_team_v1_4',
           as: :api_user_set_default_team_v1_4, via: [:options, :put], set_default_team: /.+\/?/
 
+        # SSL Manager
+        match '/ssl_manager' => 'api_ssl_manager_requests#register',
+              as: :api_ssl_manager_register, via: [:options, :post]
+        match '/ssl_manager/:ref' => 'api_ssl_manager_requests#collection',
+              as: :api_ssl_manager_collection, via: [:options, :post]
+
         # Code Signing.
         match '/generate_certificate' => 'api_certificate_requests#generate_certificate_v1_4',
               as: :api_certificate_generate_v1_4, via: [:options, :post]
@@ -284,12 +290,16 @@ SslCom::Application.routes.draw do
     end
 
     resources :notification_groups do
+      resources :scan_logs, only: :index
+
       collection do
         get :certificate_orders_domains_contacts
         post :search
         post :register_notification_group
         post :remove_groups
         post :scan_groups
+        post :scan_individual_group
+        post :check_duplicate
       end
     end
 
@@ -482,6 +492,7 @@ SslCom::Application.routes.draw do
     end
   end
 
+  match '/ssl_manager/:id/approve' => 'registered_agents#approve', :as => :approve_ssl_manager, via: [:get]
   match '/activate/:id' => 'activations#create', :as => :activate, via: [:get, :post]
   match '/register/:activation_code' => 'activations#new', :as => :register, via: [:get, :post]
   match '/sitemap.xml' => 'site#sitemap', :as => :sitemap, via: [:get, :post]

@@ -5,7 +5,11 @@ class SslAccount < ActiveRecord::Base
   has_many   :api_credentials
   has_one   :duo_account
   has_many  :billing_profiles
-  has_many  :certificate_orders, -> { unscope(where: [:workflow_state, :is_expired]).includes([:orders]) } do
+  has_many  :certificate_orders, -> { unscope(where: [:workflow_state, :is_expired]).includes([:orders]) },
+            before_add: Proc.new { |p, d|
+                folder=Folder.find_by(default: true, ssl_account_id: p.id)
+                d.folder_id= folder.id unless folder.blank?
+            } do
     def current
       where{workflow_state >>['new']}.first
     end
@@ -20,7 +24,7 @@ class SslAccount < ActiveRecord::Base
   end
   has_many  :validations, through: :certificate_orders
   has_many  :site_seals, through: :certificate_orders
-  has_many  :certificate_contents, through: :certificate_orders
+  has_many  :certificate_contents, through: :certificate_orders, after_add: :add_ca
   has_many  :domains, :dependent => :destroy
   has_many  :csrs, through: :certificate_contents
   has_many  :managed_csrs
@@ -66,11 +70,15 @@ class SslAccount < ActiveRecord::Base
   end
   has_many  :notification_groups
   has_many  :folders, dependent: :destroy
+  has_many :certificate_names, through: :certificate_contents
   has_many :domain_control_validations, through: :certificate_names do
     def sslcom
       where.not certificate_contents: {ca_id: nil}
     end
   end
+  has_many                  :registered_agents
+  has_many  :cas_certificates
+  has_many  :cas, through: :cas_certificates
 
   unless MIGRATING_FROM_LEGACY
     #has_many  :orders, :as=>:billable, :after_add=>:build_line_items
@@ -187,6 +195,11 @@ class SslAccount < ActiveRecord::Base
 
   def self.top_paid_amounts(how_many=10)
     top_paid([:orders]).last(how_many).map(&:total_amount_paid).map(&:format)
+  end
+
+  def add_ca(certificate_content)
+    certificate_content.ca = (certificate_content.certificate.cas.ssl_account_or_general_default(self)).last
+    certificate_content.save
   end
 
   def reseller_tier_label
@@ -507,7 +520,7 @@ class SslAccount < ActiveRecord::Base
   def is_validated?(domain)
     validated_domains.include?(domain)
   end
-  
+
   def get_invoice_pmt_description
     billing_monthly? ? Order::MI_PAYMENT : Order::DI_PAYMENT
   end
@@ -766,7 +779,7 @@ class SslAccount < ActiveRecord::Base
   end
   
   def billing_monthly?
-    billing_method == 'monthly'
+    billing_method == 'monthly' || no_limit
   end
   
   def billing_daily?
@@ -774,7 +787,7 @@ class SslAccount < ActiveRecord::Base
   end
   
   def invoice_required?
-    billing_monthly? || billing_daily?
+    billing_monthly? || billing_daily? || no_limit
   end
   
   protected
@@ -784,9 +797,9 @@ class SslAccount < ActiveRecord::Base
         name: 'archived', archived: true, ssl_account_id: self.id
     )
 
-    default_folder = Folder.find_or_create_by(
-        name: 'default', default: true, ssl_account_id: self.id
-    )
+    default_folder = Folder.find_by(
+        default: true, ssl_account_id: self.id
+    ) || Folder.create(name: 'default', default: true, ssl_account_id: self.id)
 
     expired_folder = Folder.find_or_create_by(
         name: 'expired', expired: true, ssl_account_id: self.id

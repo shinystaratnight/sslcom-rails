@@ -168,4 +168,9 @@ jQuery(function($) {
     );
     form.submit();
   });
+
+  // Teams Index
+  $('.team-sel-billing-method, .team-sel-no-limit').on('change', function() {
+    $(this).parent().submit();
+  });
 });

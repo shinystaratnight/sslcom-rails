@@ -54,6 +54,7 @@
   =form_tag('', method: :post, class: :api_certificate_request) do
     =hidden_field_tag :account_key, current_user.ssl_account.api_credential.account_key
     =hidden_field_tag :secret_key, current_user.ssl_account.api_credential.secret_key
+    =hidden_field_tag :caa_check_domains, @caa_check_domains
     -if co.certificate.is_evucc? || co.certificate.is_premium_ssl? || co.certificate.is_ucc?
       -opts=[["Delete","delete"], ["Use http csr hash validation","http_csr_hash"], ["Use https csr hash validation","https_csr_hash"], ["Use cname csr hash validation","cname_csr_hash"]]
     -else

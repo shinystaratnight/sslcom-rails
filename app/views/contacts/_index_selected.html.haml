@@ -39,6 +39,6 @@
       %h3 None
       %div
         %h3
-          =link_to "+ Create New Contact", '#', id: 'lnk_create_new_contact'
+          =link_to "+ #{@certificate_order.certificate.is_ov_client? ? 'Create New Recipient' : 'Create New Contact'}", '#', id: 'lnk_create_new_contact'
       -if saved_contacts.any?
         %small or, add from Available Contacts section

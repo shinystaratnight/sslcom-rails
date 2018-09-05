@@ -92,11 +92,15 @@ class Csr < ActiveRecord::Base
 
   end
 
-  def to_param
-    ref
-  end
+  # def to_param
+  #   ref
+  # end
 
   def unique_value
+    csr_unique_value.unique_value
+  end
+
+  def csr_unique_value
     last_unique_value = csr_unique_values.last
     if last_unique_value.nil?
       last_unique_value = csr_unique_values.create(unique_value: SecureRandom.hex(5))
@@ -106,7 +110,7 @@ class Csr < ActiveRecord::Base
     if (Date.today-last_unique_value.created_at.to_date).to_i > 30
       last_unique_value = csr_unique_values.create(unique_value: SecureRandom.hex(5))
     end
-    last_unique_value.unique_value
+    last_unique_value
   end
 
   def common_name
@@ -391,7 +395,7 @@ class Csr < ActiveRecord::Base
   end
 
   def signed_certificate
-    signed_certificates.sort{|a,b|a.created_at.to_i<=>b.created_at.to_i}.last
+    signed_certificates.order(:created_at).last
   end
 
   def replace_csr(csr)
@@ -419,7 +423,7 @@ class Csr < ActiveRecord::Base
   end
 
   def sent_success(with_order_num=false)
-    ca_certificate_requests.select(:response).all.find{|cr|cr.success? && (with_order_num ? cr.order_number : true)}
+    ca_certificate_requests.all.find{|cr|cr.success? && (with_order_num ? cr.order_number : true)}
   end
 
   #TODO need to convert to dem - see http://support.citrix.com/article/CTX106631

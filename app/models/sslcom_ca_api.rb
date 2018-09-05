@@ -87,7 +87,6 @@ class SslcomCaApi
   def self.subject_dn(options={})
     dn=["CN=#{options[:cn]}"]
     dn << "OU=#{options[:ou]}" unless options[:ou].blank?
-    dn << "OU=Key Hash #{options[:cc].csr.sha2_hash}"
     unless options[:mapping].profile_name =~ /DV/
       dn << "O=#{options[:o]}" unless options[:o].blank?
       dn << "C=#{options[:country]}" unless options[:country].blank?
@@ -109,10 +108,20 @@ class SslcomCaApi
 
   def self.subject_alt_name(options)
     cert = options[:cc].certificate
+    common_name=options[:cc].csr.common_name
     if cert.is_smime?
       "rfc822Name="
     elsif !cert.is_code_signing?
       (options[:san] ? options[:san].split(/\s+/) : options[:cc].all_domains).map{|d|"dNSName="+d.downcase}.join(",")
+    end
+    if cert.is_wildcard?
+      options[:san]<<",dNSName=#{CertificateContent.non_wildcard_name(common_name)}"
+    elsif cert.is_basic? or cert.is_high_assurance? or cert.is_free?
+      if common_name=~/\Awww\./
+        options[:san]<<",dNSName=#{common_name[4..-1]}"
+      else
+        options[:san]<<",dNSName=www.#{common_name}"
+      end
     end
   end
 
@@ -131,10 +140,10 @@ class SslcomCaApi
       if options[:collect_certificate]
         dn.merge! user_name: options[:username]
       else
-        # dn.merge! subject_dn: options[:action]=="send_to_ca" ? subject_dn(options) : # req sent via RA form
-        #                           (options[:subject_dn] || options[:cc].subject_dn),
-        dn.merge! subject_dn: options[:action]=="send_to_ca" ? subject_dn(options) : # req sent via RA form
-                                  (options[:subject_dn] || cert.is_code_signing? ? options[:cc].locked_subject_dn : options[:cc].subject_dn),
+        dn.merge! subject_dn: (options[:action]=="send_to_ca" ? subject_dn(options) : # via RA form or shadow
+          (options[:subject_dn] || cert.is_code_signing? ?
+               options[:cc].locked_subject_dn : options[:cc].subject_dn({mapping: options[:mapping]})))+
+            ",OU=sc-#{options[:cc].ref}-#{DateTime.now.to_i}",
           ca_name: options[:ca_name] || ca_name(options),
           certificate_profile: certificate_profile(options),
           end_entity_profile: end_entity_profile(options),
@@ -175,7 +184,7 @@ class SslcomCaApi
     elsif api_log_entry.certificate_chain # signed certificate is issued
       cc.update_column(:ref, api_log_entry.username) unless api_log_entry.blank?
       attrs = {body: api_log_entry.end_entity_certificate.to_s, ca_id: options[:mapping].id}
-      attrs.merge!(type: "ShadowSignedCertificate") if certificate.cas.shdaow.include?(options[:mapping])
+      attrs.merge!(type: "ShadowSignedCertificate") if certificate.cas.shadow.include?(options[:mapping])
       cc.csr.signed_certificates.create(attrs)
       SystemAudit.create(
           owner:  options[:current_user],
@@ -190,8 +199,8 @@ class SslcomCaApi
   end
 
   def self.generate_for_certificate(options={})
-    host = options[:mapping] ? options[:mapping].host :
-               Rails.application.secrets.sslcom_ca_host + "/v1/certificate/pkcs10"
+    host = (options[:mapping] ? options[:mapping].host :
+                   Rails.application.secrets.sslcom_ca_host) + "/v1/certificate/pkcs10"
     req, res = call_ca(host, {}, issue_cert_json(options))
 
     api_log_entry = options[:cc].csr.sslcom_ca_requests.create(request_url: host, parameters: req.body,

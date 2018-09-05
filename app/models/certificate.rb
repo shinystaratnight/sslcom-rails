@@ -8,24 +8,9 @@ class Certificate < ActiveRecord::Base
   has_many    :validation_rulings, :as=>:validation_rulable
   has_many    :validation_rules, :through => :validation_rulings
   has_and_belongs_to_many :products
-  has_many    :cas_certificates, dependent: :destroy do
-    def default
-      where status: CasCertificate::STATUS[:default]
-    end
+  has_many    :cas_certificates, dependent: :destroy
+  has_many    :cas, through: :cas_certificates
 
-    def shadow
-      where status: CasCertificate::STATUS[:shadow]
-    end
-  end
-  has_many    :cas, through: :cas_certificates do
-    def default
-      where cas_certificates: {status: CasCertificate::STATUS[:default]}
-    end
-
-    def shadow
-      where cas_certificates: {status: CasCertificate::STATUS[:shadow]}
-    end
-  end
   acts_as_publishable :live, :draft, :discontinue_sell
   belongs_to  :reseller_tier
 
@@ -386,31 +371,14 @@ class Certificate < ActiveRecord::Base
   end
 
   def admin_submit_csr?
-    is_evcs? or is_cs?
-  end
-
-  def is_client?
-    product.include?('personal')
-  end
-
-  def is_client_basic?
-    product_root=~/basic\z/
-  end
-
-  def is_client_pro?
-    product_root=~/pro\z/
-  end
-
-  def is_client_business?
-    product_root=~/business\z/
-  end
-
-  def is_client_enterprise?
-    product_root=~/enterprise\z/
-  end
-
-  def requires_company_info?
-    is_client_business? || is_client_enterprise? || is_server? || is_code_signing? || is_ov?
+    is_evcs? or
+    is_cs? or
+    is_smime? or
+    is_client? or
+    is_client_basic? or
+    is_client_business? or
+    is_client_enterprise? or
+    is_client_pro?
   end
 
   def is_server?
@@ -423,6 +391,10 @@ class Certificate < ActiveRecord::Base
 
   def is_basic?
     product =~ /basic/
+  end
+
+  def is_high_assurance?
+    product =~ /high_assurance/
   end
 
   def is_browser_generated_capable?

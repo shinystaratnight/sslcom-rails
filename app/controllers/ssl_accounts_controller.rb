@@ -72,7 +72,13 @@ class SslAccountsController < ApplicationController
 
   # PUT /ssl_account/
   def update
-    params[:billing_method] ? update_billing_method : update_reseller_profile
+    if params[:billing_method]
+      update_billing_method
+    elsif params[:no_limit]
+      update_no_limit
+    else
+      update_reseller_profile
+    end
   end
 
   def remove_u2f
@@ -195,6 +201,20 @@ class SslAccountsController < ApplicationController
   
   private
   
+  def update_no_limit
+    if current_user.is_system_admins?
+      ssl_account = SslAccount.where(
+        'ssl_slug = ? OR acct_number = ?', params[:ssl_slug], params[:ssl_slug]
+      ).first
+      ssl_account.update(no_limit: params[:no_limit])
+      setting_type = params[:no_limit] == 'false' ? 'OFF' : 'ON'
+      flash[:notice] = "Successfully turned #{setting_type} team #{params[:ssl_slug]} no-limit setting."
+    else
+      flash[:error] = "You are not authorized to perform this action."
+    end  
+    redirect_to teams_user_path(current_user, page: (params[:page] || 1))
+  end  
+
   def update_billing_method
     if current_user.is_system_admins?
       ssl_account = SslAccount.where(
@@ -205,7 +225,7 @@ class SslAccountsController < ApplicationController
     else
       flash[:error] = "You are not authorized to perform this action."
     end  
-    redirect_to teams_user_path(current_user)
+    redirect_to teams_user_path(current_user, page: (params[:page] || 1))
   end  
     
   def update_reseller_profile

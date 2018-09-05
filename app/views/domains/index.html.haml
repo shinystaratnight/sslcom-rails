@@ -40,10 +40,10 @@
         -dcv = d.domain_control_validations.last
         -validation_status = (dcv.try(:workflow_state)=='satisfied' || !d.signed_certificates.empty?) ? 'Validated' : 'Pending validation'
         -validity_period = (validation_status=='Pending validation' || dcv.try(:responded_at).nil?) ? 'n/a' : (30-(Date.today-dcv.responded_at.to_date).to_i).to_s + " days remaining"
-        -order_ref = d.certificate_content ? d.certificate_content.certificate_order.ref : 'Team'
+        -order_ref = d.certificate_content ? d.certificate_content.certificate_order.ref : ((dcv && dcv.csr_unique_value) ? dcv.csr_unique_value.csr.ref : 'Team')
         %tr
-          %td=order_ref=='Team' ? (check_box_tag "d_name_check[]",d.id, false, :id => "d_name_check_#{d.id}", :class => "d_name_check") : ''
+          %td=(order_ref=='Team' || (dcv && dcv.csr_unique_value)) ? (check_box_tag "d_name_check[]",d.id, false, :id => "d_name_check_#{d.id}", :class => "d_name_check") : ''
           %td=d.name
-          %td=order_ref=='Team' ? 'Team' : (link_to order_ref, new_certificate_order_validation_path(@ssl_slug, d.certificate_content.certificate_order))
+          %td=d.certificate_content ? (link_to order_ref, new_certificate_order_validation_path(@ssl_slug, d.certificate_content.certificate_order)) : ((dcv && dcv.csr_unique_value) ? (link_to order_ref, validate_against_csr_domains_path(@ssl_slug, unique_value: dcv.csr_unique_value.unique_value)) : 'Team')
           %td.d_name_status=validation_status
           %td=validity_period

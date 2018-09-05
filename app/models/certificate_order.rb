@@ -25,7 +25,7 @@ class CertificateOrder < ActiveRecord::Base
       where{expiration_date < Date.today}
     end
   end
-  has_many    :shadow_certificates, :through=>:csrs, class_name: "SignedCertificate"
+  has_many    :shadow_certificates, :through=>:csrs, class_name: "ShadowSignedCertificate"
   has_many    :ca_certificate_requests, :through=>:csrs
   has_many    :ca_api_requests, :through=>:csrs
   has_many    :sslcom_ca_requests, :through=>:csrs
@@ -422,13 +422,6 @@ class CertificateOrder < ActiveRecord::Base
     co.site_seal=SiteSeal.create
   end
 
-  after_create do |co|
-    if co.ssl_account
-      folder=Folder.find_by(default: true, ssl_account_id: co.ssl_account.id)
-      co.update_column(:folder_id, folder.id) unless folder.blank?
-    end
-  end
-
   after_initialize do
     if new_record?
       self.quantity ||= 1
@@ -642,23 +635,12 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def signed_certificate
-    signed_certificates.sort{|a,b|a.created_at.to_i<=>b.created_at.to_i}.last
+    signed_certificates.order(:created_at).last
   end
 
   def comodo_ca_id
     (signed_certificate || certificate).comodo_ca_id
   end
-  # def signed_certificates(index=nil)
-  #   all_csrs = certificate_contents.map(&:csr).flatten.compact
-  #   unless all_csrs.blank?
-  #     case index
-  #       when nil
-  #         all_csrs.map(&:signed_certificates).flatten
-  #       else
-  #         all_csrs.map(&:signed_certificates).flatten[index]
-  #     end
-  #   end
-  # end
 
   # find the ratio remaining on the cert ie (today-effective_date/expiration_date-effective_date)
   def duration_remaining(options={duration: :order})
@@ -972,7 +954,8 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def apply_for_certificate(options={})
-    if [Ca::CERTLOCK_CA,Ca::SSLCOM_CA,Ca::MANAGEMENT_CA].include? options[:ca] or !certificate_content.ca.blank?
+    if [Ca::CERTLOCK_CA,Ca::SSLCOM_CA,Ca::MANAGEMENT_CA].include?(options[:ca]) or !certificate_content.ca.blank? or
+        !options[:mapping].blank?
       SslcomCaApi.apply_for_certificate(self, options) if options[:current_user].blank? or
           options[:current_user].is_super_user?
     else
@@ -1217,6 +1200,10 @@ class CertificateOrder < ActiveRecord::Base
 
   def is_unused_credit?
     certificate_content.try("new?") && workflow_state=='paid'
+  end
+
+  def is_unused?
+    certificate_content.try("new?") && (workflow_state=='paid' || workflow_state=='refunded')
   end
 
   def is_prepaid?

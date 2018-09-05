@@ -1,6 +1,6 @@
 -title = "Validate Domains against CSR"
 -content_for :title, title
-=form_tag "#{validate_against_csr_domains_path(@ssl_slug)}", method: :post do
+=form_tag "#{validate_against_csr_domains_path(@ssl_slug)}", id: "select_csr_form", method: :post do
   #search_bar
     -@selected_domains.each do |dn|
       .d_name
