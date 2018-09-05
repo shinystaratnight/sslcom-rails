@@ -405,7 +405,7 @@ class Csr < ActiveRecord::Base
   end
 
   def sent_success(with_order_num=false)
-    ca_certificate_requests.select(:response).all.find{|cr|cr.success? && (with_order_num ? cr.order_number : true)}
+    ca_certificate_requests.all.find{|cr|cr.success? && (with_order_num ? cr.order_number : true)}
   end
 
   #TODO need to convert to dem - see http://support.citrix.com/article/CTX106631

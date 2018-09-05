@@ -48,7 +48,8 @@ $(function($) {
     alert(errors_output);
   };
 
-  folderCreateJstree = function(root=false) {
+  folderCreateJstree = function(root) {
+    root = (typeof(root) == 'undefined') ? false : root;
     var ref = getJstreeRef(),
       sel = ref.get_selected(true);
 
@@ -144,7 +145,9 @@ $(function($) {
     }
   };
 
-  folderAction = function(form, type, concat='', data_type='JSON') {
+  folderAction = function(form, type, concat, data_type) {
+    concat = (typeof(concat) == 'undefined') ? '' : concat;
+    data_type = (typeof(data_type) == 'undefined') ? 'JSON' : data_type;
     $.ajax({
       type: type,
       url: form.attr('action'),
@@ -315,13 +318,15 @@ $(function($) {
    */
   var co_id = '#folders-tree-co';
 
-  setSelectedCount = function(data='clear') {
+  setSelectedCount = function(data) {
+    data = (typeof(data) == 'undefined') ? 'clear' : data;
     return $("#folders-selected-count").text(
       (data == 'clear' ? 0 : data.selected.length)
     );
   };
   
-  setFilterParams = function(clear=false) {
+  setFilterParams = function(clear) {
+    clear = (typeof(clear) == 'undefined') ? false : clear;
     var checked = getJstreeRef().get_checked(),
       new_url = '',
       base_url = $('#btn-co-filter-by').attr('href').split('?')[0];

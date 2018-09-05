@@ -25,7 +25,7 @@ class CertificateOrder < ActiveRecord::Base
       where{expiration_date < Date.today}
     end
   end
-  has_many    :shadow_certificates, :through=>:csrs, class_name: "SignedCertificate"
+  has_many    :shadow_certificates, :through=>:csrs, class_name: "ShadowSignedCertificate"
   has_many    :ca_certificate_requests, :through=>:csrs
   has_many    :ca_api_requests, :through=>:csrs
   has_many    :sslcom_ca_requests, :through=>:csrs
@@ -954,7 +954,8 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def apply_for_certificate(options={})
-    if [Ca::CERTLOCK_CA,Ca::SSLCOM_CA,Ca::MANAGEMENT_CA].include?(options[:ca]) or !certificate_content.ca.blank?
+    if [Ca::CERTLOCK_CA,Ca::SSLCOM_CA,Ca::MANAGEMENT_CA].include?(options[:ca]) or !certificate_content.ca.blank? or
+        !options[:mapping].blank?
       SslcomCaApi.apply_for_certificate(self, options) if options[:current_user].blank? or
           options[:current_user].is_super_user?
     else

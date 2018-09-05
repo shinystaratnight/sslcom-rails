@@ -227,6 +227,7 @@ ActiveRecord::Schema.define(version: 20180831035328) do
     t.string   "status",         limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "ssl_account_id", limit: 4
   end
 
   add_index "cas_certificates", ["ca_id"], name: "index_cas_certificates_on_ca_id", using: :btree
@@ -478,6 +479,13 @@ ActiveRecord::Schema.define(version: 20180831035328) do
     t.string   "locality",          limit: 255
     t.string   "postal_code",       limit: 255
     t.string   "country",           limit: 255
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "csr_unique_values", force: :cascade do |t|
+    t.string   "unique_value", limit: 255
+    t.integer  "csr_id",       limit: 4
     t.datetime "created_at"
     t.datetime "updated_at"
   end
