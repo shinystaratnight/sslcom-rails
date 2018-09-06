@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180904143640) do
+ActiveRecord::Schema.define(version: 20180905135124) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        limit: 255
@@ -349,6 +349,7 @@ ActiveRecord::Schema.define(version: 20180904143640) do
     t.integer  "wildcard_count",        limit: 4
     t.integer  "nonwildcard_count",     limit: 4
     t.integer  "folder_id",             limit: 4
+    t.integer  "assignee_id",           limit: 4
   end
 
   add_index "certificate_orders", ["created_at"], name: "index_certificate_orders_on_created_at", using: :btree
@@ -465,13 +466,6 @@ ActiveRecord::Schema.define(version: 20180904143640) do
     t.string   "locality",          limit: 255
     t.string   "postal_code",       limit: 255
     t.string   "country",           limit: 255
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "csr_unique_values", force: :cascade do |t|
-    t.string   "unique_value", limit: 255
-    t.integer  "csr_id",       limit: 4
     t.datetime "created_at"
     t.datetime "updated_at"
   end

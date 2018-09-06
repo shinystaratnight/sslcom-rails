@@ -380,7 +380,10 @@ class CertificateOrdersController < ApplicationController
   def filter_by_scope
     @certificate_orders = (current_user.is_admin? ?
       CertificateOrder.send(params[:id].to_sym) :
-        current_user.ssl_account.certificate_orders.send(params[:id].to_sym)).paginate(@p)
+      (current_user.role_symbols(current_user.ssl_account).join(',').split(',').include?(Role::INDIVIDUAL_CERTIFICATE) ?
+           (current_user.ssl_account.certificate_orders.search_assigned(current_user.id).send(params[:id].to_sym)) :
+           (current_user.ssl_account.certificate_orders.send(params[:id].to_sym))
+      )).paginate(@p)
 
     respond_to do |format|
       format.html { render :action=>:index}

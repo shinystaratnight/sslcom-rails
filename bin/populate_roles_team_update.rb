@@ -64,3 +64,8 @@ Role.find_by(name: 'validations').update(
 Role.find_by(name: 'account_admin').update(
   description: "Access to all tasks related to managing entire account and team except altering user who owns the ssl team."
 )
+
+#
+# Create 1 new roles in the roles table.
+#
+Role.create(name: 'individual_certificate')

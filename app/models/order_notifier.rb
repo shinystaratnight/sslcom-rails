@@ -264,7 +264,7 @@ class OrderNotifier < ActionMailer::Base
 
     mail subject: "Inssurance Link",
          from:  Settings.from_email.no_reply,
-         to:    co.registrant.email
+         to:    co.certificate_content.locked_registrant.email
   end
 
   protected

@@ -1,8 +1,9 @@
 -@cert_order = co
 -cc = co.certificate_content
 -cn = co.certificate.is_code_signing? ? co.registrant.company_name : cc.csr.common_name
--to_reminder = co.registrant.email
+-to_reminder = cc.locked_registrant.email if co.certificate.is_code_signing?
 -v = co.validation
+-status=certificate_order_status(cc)
 %tr.expanded(class="#{'hidden' if current_page?(:validations) or current_page?(:search_validations)}")
   %td(colspan="6")
     .certificate_details
@@ -53,22 +54,23 @@
                                   %ul
                                     %li=text_area_tag "ruling_reason_#{vrl.id}"
                             %ul
-                              -#%li.email_customer
-                                #{check_box_tag "email_customer", true, false, :alt=>"#{i}"}notify customer?
                               -if co.certificate.is_code_signing?
                                 %li.validation_complete
                                   #{check_box_tag "validation_complete", true, false, :alt=>"#{i}"}validation complete
+                              -else
+                                %li.email_customer
+                                  #{check_box_tag "email_customer", true, false, :alt=>"#{i}"}notify customer?
                               %li.approve_submit=submit_tag 'submit'
-                        %li
-                          =form_tag certificate_order_tokens_path(@ssl_slug), :id => 'send_certificate_order_token', :method => :post do
-                            =hidden_field_tag 'certificate_order_ref', co.ref
-                            -#=hidden_field_tag 'email_address', to_reminder
-                            %em
-                              =link_to 'send inssurance link to ' + to_reminder, nil, id: 'link_to_send_token'
-                      -elsif current_user.try("is_account_admin?")
+                        -if co.certificate.is_code_signing?
+                          %ul
+                            %li
+                              =form_tag certificate_order_tokens_path(@ssl_slug), :id => 'send_certificate_order_token', :method => :post, :class => (status == 'validated' ? '' : 'hidden') do
+                                =hidden_field_tag 'certificate_order_ref', co.ref
+                                %em
+                                  =link_to 'send inssurance link to ' + to_reminder, nil, id: 'link_to_send_token'
+                      -elsif current_user.try("is_account_admin?") && co.certificate.is_code_signing? && status == 'validated'
                         =form_tag certificate_order_tokens_path(@ssl_slug), :id => 'send_certificate_order_token', :method => :post do
                           =hidden_field_tag 'certificate_order_ref', co.ref
-                          -#=hidden_field_tag 'email_address', to_reminder
                           %em team admin only:
                           %ul
                             %li

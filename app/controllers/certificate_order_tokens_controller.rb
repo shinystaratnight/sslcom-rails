@@ -34,6 +34,10 @@ class CertificateOrderTokensController < ApplicationController
             co_token.save!
           end
 
+          email_address = co.certificate_content.locked_registrant.email
+          assignee = User.find_by_email(email_address)
+          co.update_attribute(:assignee, assignee) unless co.assignee == assignee
+
           OrderNotifier.certificate_order_token_send(co, co_token.token).deliver
           returnObj['status'] = 'success'
         end

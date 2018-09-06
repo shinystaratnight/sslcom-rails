@@ -281,6 +281,14 @@ class User < ActiveRecord::Base
       ssl = user.create_ssl_account([Role.get_owner_id])
       user.update_attribute(:main_ssl_account, ssl.id) if ssl
       user.update_attribute(:persist_notice, true)
+
+      # Check Code Signing Certificate Order for assign as assignee.
+      if Settings.require_signup_password
+        CertificateOrder.unscoped.search_validated_not_assigned(user.email).each do |cert_order|
+          cert_order.update_attribute(:assignee, user)
+        end
+      end
+
       user
     end
   end

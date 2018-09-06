@@ -5,6 +5,7 @@ class CertificateOrder < ActiveRecord::Base
   belongs_to  :ssl_account
   belongs_to  :folder
   has_many    :users, through: :ssl_account
+  belongs_to  :assignee, class_name: "User"
   belongs_to  :validation
   has_many    :validation_histories, through: :validation
   belongs_to  :site_seal
@@ -96,6 +97,19 @@ class CertificateOrder < ActiveRecord::Base
 
   scope :search_csr, lambda {|term|
     joins{certificate_contents.csr}.where{certificate_contents.csr.common_name =~ "%#{term}%"}
+  }
+
+  scope :search_assigned, lambda { |term|
+    joins{ assignee }.where{ assignee.id == term }
+  }
+
+  scope :search_validated_not_assigned, lambda { |term|
+    joins{ certificate_contents }.
+        joins{ certificate_contents.locked_registrant }.
+        where{ (assignee_id == nil ) &
+        (certificate_contents.workflow_state == 'validated') &
+        (certificate_contents.locked_registrant.email == term)
+    }
   }
 
   scope :search_with_csr, lambda {|term, options={}|
@@ -245,7 +259,7 @@ class CertificateOrder < ActiveRecord::Base
       if query
         cc_results = (@result_prior_co_tags || result)
           .joins(certificate_contents: [:tags]).where(tags: {name: query.split(',')})
-        
+
         result = if @result_prior_co_tags.nil?
           cc_results
         else
@@ -259,7 +273,7 @@ class CertificateOrder < ActiveRecord::Base
       if query
         result = result.where(folder_id: query.split(',')) if query
       end
-    end  
+    end
     result.uniq
   }
 
@@ -378,7 +392,7 @@ class CertificateOrder < ActiveRecord::Base
     pages: FULL_SIGNUP_PROCESS[:pages]}
   REPROCES_SIGNUP_W_INVOICE = {label: PREPAID_EXPRESS,
     pages: FULL_SIGNUP_PROCESS[:pages] - %w(Payment)}
-    
+
   CSR_SUBMITTED = :csr_submitted
   INFO_PROVIDED = :info_provided
   REPROCESS_REQUESTED = :reprocess_requested
@@ -483,13 +497,13 @@ class CertificateOrder < ActiveRecord::Base
       event :refund, :transitions_to => :refunded
     end
   end
-  
+
   def get_audit_logs
     al = SystemAudit.where(target_id: id, target_type: 'CertificateOrder')
     al << SystemAudit.where(target_id: line_items.ids, target_type: 'LineItem')
     al.flatten.sort_by(&:created_at).reverse
   end
-  
+
 
   def domains_adjust_billing?
     certificate.is_ucc? && (certificate.is_premium_ssl? !=0) &&
@@ -506,7 +520,7 @@ class CertificateOrder < ActiveRecord::Base
       domain_amount - ( (used_days/total_duration) * domain_amount )
     end
   end
-  
+
   # Get pricing for each tier for a given duration,
   # used in calculating reprocessing amount for additional domains.
   def ucc_duration_amounts(years=1, reseller_tier=nil)
@@ -514,7 +528,7 @@ class CertificateOrder < ActiveRecord::Base
       durations = {}
       i = years-1
       cur_certificate = certificate
-      
+
       unless reseller_tier.blank?
         ssl_tier  = ssl_account.reseller_tier_label
         unless ssl_tier.blank?
@@ -524,18 +538,18 @@ class CertificateOrder < ActiveRecord::Base
           .find {|c| c.title == certificate.title}
         cur_certificate = certificate if cur_certificate.nil?
       end
-      
+
       cur_certificate.num_domain_tiers.times do |j|
         durations["tier_#{j+1}"] = (cur_certificate.items_by_domains(true)[i][j].price * ( (j==0) ? 3 : 1 )).cents
       end
       durations
     end
   end
-  
+
   def ucc_get_max_counts(certificate_content=nil)
     max_wildcard_count    = get_reprocess_max_wildcard(certificate_content).count
     max_nonwildcard_count = get_reprocess_max_nonwildcard(certificate_content).count
-    
+
     # check against counts of certificate's initial purchase
     if !wildcard_count.blank? && (wildcard_count > max_wildcard_count)
       max_wildcard_count = wildcard_count
@@ -543,15 +557,15 @@ class CertificateOrder < ActiveRecord::Base
     if !nonwildcard_count.blank? && (nonwildcard_count > max_nonwildcard_count)
       max_nonwildcard_count = nonwildcard_count
     end
-    
+
     {wildcard_count: max_wildcard_count, nonwildcard_count: max_nonwildcard_count}
   end
-    
+
   def ucc_prorated_amount(certificate_content, reseller_tier=nil)
     max = ucc_get_max_counts(certificate_content)
     max_wildcard_count    = max[:wildcard_count]
     max_nonwildcard_count = max[:nonwildcard_count]
-    
+
     # make sure NOT to charge for tier 1 domains (3 total)
     max_nonwildcard_count = (max_nonwildcard_count < 3) ? 3 : max_nonwildcard_count
     nonwildcard_cost      = ucc_prorated_domain(:nonwildcard, reseller_tier)
@@ -567,9 +581,9 @@ class CertificateOrder < ActiveRecord::Base
     addt_wildcard    = (addt_wildcard < 0) ? 0 : addt_wildcard
     (addt_nonwildcard * nonwildcard_cost) + (addt_wildcard * wildcard_cost)
   end
-  
-  # Retrieve certificate contents signed certificate (subject_alternative_names). 
-  # IF certificate content is passed, THEN consider ONLY certificate 
+
+  # Retrieve certificate contents signed certificate (subject_alternative_names).
+  # IF certificate content is passed, THEN consider ONLY certificate
   # contents prior to passed certificate content.
   def get_reprocess_cc_domains(cc_id=nil)
     cur_domains = []
@@ -593,7 +607,7 @@ class CertificateOrder < ActiveRecord::Base
     end
     cur_domains
   end
-  
+
   def get_reprocess_max_nonwildcard(cc_id=nil)
     max  = 0
     list = []
@@ -606,7 +620,7 @@ class CertificateOrder < ActiveRecord::Base
     end
     list
   end
-  
+
   def get_reprocess_max_wildcard(cc_id=nil)
     max  = 0
     list = []
@@ -629,7 +643,7 @@ class CertificateOrder < ActiveRecord::Base
       )
     end
   end
-      
+
   def certificate
     sub_order_items[0].product_variant_item.certificate if sub_order_items[0] &&
         sub_order_items[0].product_variant_item
@@ -808,7 +822,7 @@ class CertificateOrder < ActiveRecord::Base
   def skip_verification?
     self.certificate.skip_verification?
   end
-  
+
   def skip_contacts_step?
     return false if certificate_contents.count == 1
     if Contact.optional_contacts?
@@ -823,7 +837,7 @@ class CertificateOrder < ActiveRecord::Base
       (roles & req_roles).count == req_roles.count
     end
   end
-  
+
   def order_status
     if is_ev?
       "waiting for documents"
@@ -845,11 +859,11 @@ class CertificateOrder < ActiveRecord::Base
       PREPAID_FULL_SIGNUP_PROCESS
     end
   end
-  
+
   def reprocess_ucc_process
     ssl_account.invoice_required? ? REPROCES_SIGNUP_W_INVOICE : REPROCES_SIGNUP_W_PAYMENT
   end
-  
+
   def is_express_signup?
     !signup_process[:label].scan(EXPRESS).blank?
   end
