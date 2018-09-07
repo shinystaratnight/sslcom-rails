@@ -886,6 +886,10 @@ class CertificateOrder < ActiveRecord::Base
     certificate_content.registrant
   end
 
+  def locked_registrant
+    certificate_content.locked_registrant
+  end
+
   def csr
     certificate_content.csr
   end
