@@ -259,10 +259,10 @@ class OrderNotifier < ActionMailer::Base
   end
 
   def certificate_order_token_send(co, token)
-    @inssurance_link = confirm_url(token)
+    @activation_link = confirm_url(token)
     @certificate_order = co
 
-    mail subject: "Inssurance Link",
+    mail subject: "Certificate Activation Link",
          from:  Settings.from_email.no_reply,
          to:    co.certificate_content.locked_registrant.email
   end
@@ -271,7 +271,7 @@ class OrderNotifier < ActionMailer::Base
     @certificate_order = co
     @user = user
 
-    mail subject: "Inssurance Link",
+    mail subject: "Certificate Activation Link",
          from:  Settings.from_email.no_reply,
          to:    user.email
   end

@@ -67,14 +67,14 @@
                               =form_tag certificate_order_tokens_path(@ssl_slug), :id => 'send_certificate_order_token', :method => :post, :class => (status == 'validated' ? '' : 'hidden') do
                                 =hidden_field_tag 'certificate_order_ref', co.ref
                                 %em
-                                  =link_to 'send inssurance link to ' + to_reminder, nil, id: 'link_to_send_token'
+                                  =link_to 'send activation link to ' + to_reminder, nil, id: 'link_to_send_token'
                       -#-elsif current_user.try("is_account_admin?") && co.certificate.is_code_signing? && status == 'validated'
                         =form_tag certificate_order_tokens_path(@ssl_slug), :id => 'send_certificate_order_token', :method => :post do
                           =hidden_field_tag 'certificate_order_ref', co.ref
                           %em team admin only:
                           %ul
                             %li
-                              =link_to 'send inssurance link to ' + to_reminder, nil, id: 'link_to_send_token'
+                              =link_to 'send activation link to ' + to_reminder, nil, id: 'link_to_send_token'
                     -v.validation_rules.each_with_index do |vr, vri|
                       -is_domain_validation = vr.description=~/^domain/
                       %li.validation_section
