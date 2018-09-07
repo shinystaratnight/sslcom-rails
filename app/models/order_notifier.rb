@@ -267,6 +267,15 @@ class OrderNotifier < ActionMailer::Base
          to:    co.certificate_content.locked_registrant.email
   end
 
+  def request_token_send(co, user)
+    @certificate_order = co
+    @user = user
+
+    mail subject: "Inssurance Link",
+         from:  Settings.from_email.no_reply,
+         to:    user.email
+  end
+
   protected
   def setup_email(user)
     @recipients  = "#{user.email}"

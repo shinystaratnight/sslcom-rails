@@ -85,6 +85,8 @@ class User < ActiveRecord::Base
                         (ssl_accounts.api_credentials.secret_key =~ "%#{term}%") |
                         (ssl_accounts.acct_number =~ "%#{term}%")}.uniq}
 
+  scope :search_sys_admin, ->{ joins{ roles }.where{ roles.name == Role::SYS_ADMIN } }
+
   def ssl_account(default_team=nil)
     Rails.cache.fetch("#{cache_key}/ssl_account") do
       default_ssl = default_ssl_account && is_approved_account?(default_ssl_account)
@@ -671,6 +673,20 @@ class User < ActiveRecord::Base
 
   def is_validations?
     role_symbols.include? Role::VALIDATIONS.to_sym
+  end
+
+  def is_validations_only?
+    role_symbols.include?(Role::VALIDATIONS.to_sym) && role_symbols.count == 1
+  end
+
+  def is_validations_and_billing_only?
+    role_symbols.include?(Role::VALIDATIONS.to_sym) &&
+        role_symbols.include?(Role::BILLING.to_sym) &&
+        role_symbols.count == 2
+  end
+
+  def is_individual_certificate?
+    role_symbols.include? Role::INDIVIDUAL_CERTIFICATE.to_sym
   end
 
   def is_users_manager?

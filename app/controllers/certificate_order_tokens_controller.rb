@@ -49,6 +49,38 @@ class CertificateOrderTokensController < ApplicationController
     end
   end
 
+  def request_token
+    respond_to do |format|
+      returnObj = {}
+
+      if current_user
+        co = (current_user.is_system_admins? ? CertificateOrder :
+                  current_user.ssl_account.certificate_orders).find_by_ref(params[:certificate_order_ref])
+
+        # Sending Notify to SysAdmin role's users.
+        sys_admins = User.search_sys_admin.uniq
+        sys_admins.each do |sys_admin|
+          OrderNotifier.request_token_send(co, sys_admin).deliver
+        end
+
+        # Sending Notify to TeamAdmin role's users.
+        team_account = current_user.ssl_account
+        unless team_account.blank?
+          team_admins = team_account.users.with_role(Role::ACCOUNT_ADMIN).uniq
+          team_admins.each do |team_admin|
+            OrderNotifier.request_token_send(co, team_admin).deliver
+          end
+        end
+
+        returnObj['status'] = 'success'
+      else
+        returnObj['status'] = 'session_expired'
+      end
+
+      format.js { render :json => returnObj['status'].to_json }
+    end
+  end
+
   def confirm
     co_token = CertificateOrderToken.find_by_token(params[:token])
     if co_token

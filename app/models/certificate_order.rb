@@ -877,6 +877,10 @@ class CertificateOrder < ActiveRecord::Base
     certificate_contents.last
   end
 
+  def certificate_order_token
+    certificate_order_tokens.last
+  end
+
   def registrant
     certificate_content.registrant
   end

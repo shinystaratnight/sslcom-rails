@@ -203,7 +203,11 @@ SslCom::Application.routes.draw do
       end
     end
 
-    resources :certificate_order_tokens
+    resources :certificate_order_tokens do
+      collection do
+        post :request_token
+      end
+    end
 
     resources :certificate_orders do
       resources :physical_tokens do

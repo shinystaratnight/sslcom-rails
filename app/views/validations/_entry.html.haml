@@ -31,7 +31,7 @@
                         %li.rules_methods_block(class="admin_approve_#{i}" style='color:red')
                           =form_for v, :html=>{:alt=>"#{i}", :class=>'edit_validation_ruling'} do |f|
                             =hidden_field_tag 'certificate_order', co.id
-                            =hidden_field_tag 'link_to_generate_cert', generate_cert_certificate_order_path(@ssl_slug, co.ref)
+                            -#=hidden_field_tag 'link_to_generate_cert', generate_cert_certificate_order_path(@ssl_slug, co.ref)
                             %em admin only:
                             -v.validation_rules.each_with_index do |vr, vri|
                               -vrl = v.validation_rulings.detect do |vrl| vrl.validation_rule == vr end
@@ -61,14 +61,14 @@
                                 %li.email_customer
                                   #{check_box_tag "email_customer", true, false, :alt=>"#{i}"}notify customer?
                               %li.approve_submit=submit_tag 'submit'
-                        -if co.certificate.is_code_signing?
+                        -#-if co.certificate.is_code_signing?
                           %ul
                             %li
                               =form_tag certificate_order_tokens_path(@ssl_slug), :id => 'send_certificate_order_token', :method => :post, :class => (status == 'validated' ? '' : 'hidden') do
                                 =hidden_field_tag 'certificate_order_ref', co.ref
                                 %em
                                   =link_to 'send inssurance link to ' + to_reminder, nil, id: 'link_to_send_token'
-                      -elsif current_user.try("is_account_admin?") && co.certificate.is_code_signing? && status == 'validated'
+                      -#-elsif current_user.try("is_account_admin?") && co.certificate.is_code_signing? && status == 'validated'
                         =form_tag certificate_order_tokens_path(@ssl_slug), :id => 'send_certificate_order_token', :method => :post do
                           =hidden_field_tag 'certificate_order_ref', co.ref
                           %em team admin only:
