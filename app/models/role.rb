@@ -15,6 +15,7 @@ class Role < ActiveRecord::Base
   USERS_MANAGER = 'users_manager'
   VALIDATIONS   = 'validations'
   RA_ADMIN      = 'ra_admin'
+  INDIVIDUAL_CERTIFICATE  = 'individual_certificate'
   
   def self.get_role_id(role_name)
     Rails.cache.fetch(["get_role_id",role_name]) { Role.find_by(name: role_name).id }
@@ -48,7 +49,8 @@ class Role < ActiveRecord::Base
       BILLING,
       INSTALLER,
       VALIDATIONS,
-      USERS_MANAGER
+      USERS_MANAGER,
+      INDIVIDUAL_CERTIFICATE
     ])
   end
 

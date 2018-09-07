@@ -7,6 +7,11 @@
     =button_tag 'Search', :id=>'btn_cert_order_search'
     =button_tag 'Filters', :type=>'button', :id=>'btn_cert_order_filter'
 
+#send_notify.hidden
+  =form_tag nil, :id=>'send_notify_form', :method=>:post do
+    =hidden_field_tag :certificate_order_ref
+    =hidden_field_tag :notify_type
+
 %div.hidden#wrap_cert_order_filter
   .wrap_filter_items.clearfix
     .filter_items_col

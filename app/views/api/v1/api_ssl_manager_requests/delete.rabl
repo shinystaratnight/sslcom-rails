@@ -5,6 +5,6 @@ if !@result.errors.blank?
   end
 else
   glue @result do
-    attributes :ref, :status
+    attributes :status
   end
 end

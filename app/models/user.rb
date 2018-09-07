@@ -29,6 +29,7 @@ class User < ActiveRecord::Base
   has_one   :shopping_cart
   has_and_belongs_to_many :user_groups
   has_many  :notification_groups, through: :ssl_accounts
+  has_many  :certificate_order_tokens
 
   preference  :cert_order_row_count, :string, :default=>"10"
   preference  :order_row_count, :string, :default=>"10"
@@ -83,6 +84,8 @@ class User < ActiveRecord::Base
                         (ssl_accounts.api_credentials.account_key =~ "%#{term}%") |
                         (ssl_accounts.api_credentials.secret_key =~ "%#{term}%") |
                         (ssl_accounts.acct_number =~ "%#{term}%")}.uniq}
+
+  scope :search_sys_admin, ->{ joins{ roles }.where{ roles.name == Role::SYS_ADMIN } }
 
   def ssl_account(default_team=nil)
     Rails.cache.fetch("#{cache_key}/ssl_account") do
@@ -280,6 +283,14 @@ class User < ActiveRecord::Base
       ssl = user.create_ssl_account([Role.get_owner_id])
       user.update_attribute(:main_ssl_account, ssl.id) if ssl
       user.update_attribute(:persist_notice, true)
+
+      # Check Code Signing Certificate Order for assign as assignee.
+      if Settings.require_signup_password
+        CertificateOrder.unscoped.search_validated_not_assigned(user.email).each do |cert_order|
+          cert_order.update_attribute(:assignee, user)
+        end
+      end
+
       user
     end
   end
@@ -662,6 +673,20 @@ class User < ActiveRecord::Base
 
   def is_validations?
     role_symbols.include? Role::VALIDATIONS.to_sym
+  end
+
+  def is_validations_only?
+    role_symbols.include?(Role::VALIDATIONS.to_sym) && role_symbols.count == 1
+  end
+
+  def is_validations_and_billing_only?
+    role_symbols.include?(Role::VALIDATIONS.to_sym) &&
+        role_symbols.include?(Role::BILLING.to_sym) &&
+        role_symbols.count == 2
+  end
+
+  def is_individual_certificate?
+    role_symbols.include? Role::INDIVIDUAL_CERTIFICATE.to_sym
   end
 
   def is_users_manager?

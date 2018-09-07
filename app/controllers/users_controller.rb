@@ -106,6 +106,11 @@ class UsersController < ApplicationController
       )
 
       if Settings.require_signup_password
+        # Check Code Signing Certificate Order for assign as assignee.
+        CertificateOrder.unscoped.search_validated_not_assigned(params[:user][:email]).each do |cert_order|
+          cert_order.update_attribute(:assignee, @user)
+        end
+
         # TODO: New Logic for auto activation by signup with password.
         @user.deliver_auto_activation_confirmation!
         notice = "Your account has been created."
