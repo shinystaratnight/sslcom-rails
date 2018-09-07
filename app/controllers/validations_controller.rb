@@ -27,7 +27,9 @@ class ValidationsController < ApplicationController
   def new
     url=nil
     # if CS then go to doc upload
-    if @certificate_order.certificate.is_code_signing?
+    if @certificate_order.certificate_content.issued?
+      url=certificate_order_url(@certificate_order.ref)
+    elsif @certificate_order.certificate.is_code_signing?
       url=document_upload_certificate_order_validation_url(certificate_order_id: @certificate_order.ref)
     else
       if @certificate_order.certificate_content.contacts_provided?
