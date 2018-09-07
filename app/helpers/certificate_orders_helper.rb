@@ -112,8 +112,13 @@ module CertificateOrdersHelper
             elsif current_user.is_billing_only? || current_user.is_validations_only? || current_user.is_validations_and_billing_only?
               'n/a'
             else
-              link_to 'send activation link to ' + certificate_order.locked_registrant.try(:email),
-                      nil, class: 'link_to_send_notify', :data => { :ref => certificate_order.ref, :type => 'token' }
+              if certificate_order.locked_registrant
+                link_to 'send activation link to ' + certificate_order.locked_registrant.email,
+                        nil, class: 'link_to_send_notify',
+                        :data => { :ref => certificate_order.ref, :type => 'token' }
+              else
+                'n/a'
+              end
             end
             # link_to 'generate certificate', generate_cert_certificate_order_path(@ssl_slug, certificate_order.ref) if
             #     permitted_to?(:update, certificate_order.validation) # assume multi domain
