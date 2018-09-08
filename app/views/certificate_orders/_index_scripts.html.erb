@@ -238,7 +238,6 @@ jQuery(function($) {
       var notify_type = $(this).attr('data-type');
       $('#certificate_order_ref').val(ref);
       $('#notify_type').val(notify_type);
-      alert(ref + ':::' + notify_type);
       $('form#send_notify_form').ajaxSubmit(send_notify_options);
     });
 
