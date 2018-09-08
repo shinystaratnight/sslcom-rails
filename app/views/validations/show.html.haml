@@ -5,6 +5,11 @@
 -cc=co.certificate_content
 -cn=co.subject
 -v=co.validation
+#send_notify.hidden
+  =form_tag nil, :id=>'send_notify_form', :method=>:post do
+    =hidden_field_tag :certificate_order_ref
+    =hidden_field_tag :notify_type
+
 #validations
   %table(cellspacing="0")
     %caption

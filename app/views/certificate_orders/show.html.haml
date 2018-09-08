@@ -13,6 +13,12 @@
 -if token.try("in_transit?".to_sym)
   -flash.now[:warning] = "Token #{token.name} has shipped with tracking number #{token.tracking_number}!" if co.certificate.is_evcs? and !co.physical_tokens.blank?
 =render :partial=>'quick_links'
+
+#send_notify.hidden
+  =form_tag nil, :id=>'send_notify_form', :method=>:post do
+    =hidden_field_tag :certificate_order_ref
+    =hidden_field_tag :notify_type
+
 #certificate_orders
   %table(cellspacing="0")
     %caption

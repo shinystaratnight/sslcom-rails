@@ -249,7 +249,7 @@ jQuery(function($) {
     };
     $('form.edit_validation_ruling').ajaxForm(options);
 
-    var token_send_options = {
+    /*var token_send_options = {
       dataType: 'json',
       success: function(data) {
         if (data == 'success') {
@@ -266,6 +266,40 @@ jQuery(function($) {
     $('#link_to_send_token').click(function(e) {
       e.preventDefault();
       $('form#send_certificate_order_token').ajaxSubmit(token_send_options);
+    });*/
+
+    var send_notify_options = {
+      dataType: 'json',
+      beforeSubmit: function() {
+        var notify_type = $('#notify_type').val();
+        var token_url = '<%= certificate_order_tokens_path(@ssl_slug)%>';
+        var request_url = '<%= request_token_certificate_order_tokens_path(@ssl_slug)%>';
+
+        if (notify_type == 'token') {
+          $(this).attr('url', token_url);
+        } else {
+          $(this).attr('url', request_url);
+        }
+      },
+      success: function(data) {
+        if (data == 'success') {
+          alert('Successfully sent notify email.');
+        } else if (data == 'not_found_ssl_account') {
+          alert('Not found team account. Please try again.');
+        } else if (data == 'session_expired') {
+          alert('The session has been expired. You need to login again.');
+          location.reload(true);
+        }
+      }
+    };
+
+    $('.link_to_send_notify').click(function(e) {
+      e.preventDefault();
+      var ref = $(this).attr('data-ref');
+      var notify_type = $(this).attr('data-type');
+      $('#certificate_order_ref').val(ref);
+      $('#notify_type').val(notify_type);
+      $('form#send_notify_form').ajaxSubmit(send_notify_options);
     });
 
     $('input:checkbox[name*=publish_to_site_seal]').click(function(){

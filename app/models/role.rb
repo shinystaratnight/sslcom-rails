@@ -42,6 +42,10 @@ class Role < ActiveRecord::Base
   def self.get_reseller_id
     Role.get_role_id(Role::RESELLER)
   end
+
+  def self.get_individual_certificate_id
+    Role.get_role_id(Role::INDIVIDUAL_CERTIFICATE)
+  end
   
   def self.get_select_ids_for_owner
     Role.get_role_ids([
