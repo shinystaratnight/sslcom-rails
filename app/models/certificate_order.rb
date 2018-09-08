@@ -18,6 +18,7 @@ class CertificateOrder < ActiveRecord::Base
   has_many    :certificate_contents, :dependent => :destroy
   has_many    :certificate_names, through: :certificate_contents
   has_many    :registrants, through: :certificate_contents
+  has_many    :locked_registrants, through: :certificate_contents
   has_many    :certificate_contacts, through: :certificate_contents
   has_many    :domain_control_validations, through: :certificate_names
   has_many    :csrs, :through=>:certificate_contents
@@ -883,6 +884,10 @@ class CertificateOrder < ActiveRecord::Base
 
   def registrant
     certificate_content.registrant
+  end
+
+  def locked_registrant
+    certificate_content.locked_registrant
   end
 
   def csr

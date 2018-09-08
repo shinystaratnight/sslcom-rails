@@ -1,7 +1,9 @@
-Dear <%=[@certificate_order.registrant.first_name, @certificate_order.registrant.last_name].join(" ")%>,
+Dear <%=[@certificate_order.locked_registrant.first_name, @certificate_order.locked_registrant.last_name].join(" ")%>,
 
-Your <%=Settings.community_name%> certificate for <%=@certificate_order.subject%> (order #<%=@certificate_order.order.reference_number%>) has been validated and approved
-In order to download certificate, please visit this page <%=@activation_link%>
+Your <%=Settings.community_name%> certificate for <%=@certificate_order.locked_registrant.company_name%> (order #<%=@certificate_order.order.reference_number%>) has been validated and approved.
+In order to download certificate, please visit this page:
+
+<%=@activation_link%>
 
 Thank you for using ssl.com
 
