@@ -669,7 +669,7 @@ class Certificate < ActiveRecord::Base
                                <div class='check'>2048 bit public key encryption</div>
                                <em style='color:#333;display:block;padding:5px 20px;'>also comes with the following</em>
                                <div class='check'>quick issuance</div>
-                               <div class='check'>30 day unconditional refund</div>
+                               <div class='check'>30 day money-back guaranty</div>
                                <div class='check'>24 hour support</div>
                                <div class='check'>unlimited reissuances</div>",
         "validation_level" => "domain",
@@ -744,7 +744,7 @@ class Certificate < ActiveRecord::Base
                                <div class='check'>2048 bit public key encryption</div>
                                <em style='color:#333;display:block;padding:5px 20px;'>also comes with the following</em>
                                <div class='check'>quick issuance</div>
-                               <div class='check'>30 day unconditional refund</div>
+                               <div class='check'>30 day money-back guaranty</div>
                                <div class='check'>24 hour support</div>
                                <div class='check'>unlimited reissuances</div>",
         "validation_level" => "domain",
@@ -785,7 +785,7 @@ class Certificate < ActiveRecord::Base
                                <div class='check'>2048 bit public key encryption</div>
                                <em style='color:#333;display:block;padding:5px 20px;'>also comes with the following</em>
                                <div class='check'>quick issuance</div>
-                               <div class='check'>30 day unconditional refund</div>
+                               <div class='check'>30 day money-back guaranty</div>
                                <div class='check'>24 hour support</div>
                                <div class='check'>unlimited reissuances</div>",
         "validation_level" => "organization",
@@ -838,11 +838,11 @@ class Certificate < ActiveRecord::Base
                   "points" => "<div class='check'>extended validation</div>
                                <div class='check'>results in higher sales conversion</div>
                                <div class='check'>$2 million USD insurance guaranty</div>
-                               <div class='check'>works with Microsfot Smartscreen</div>
+                               <div class='check'>works with Microsoft Smartscreen</div>
                                <div class='check'>2048 bit public key encryption</div>
                                <em style='color:#333;display:block;padding:5px 20px;'>also comes with the following</em>
                                <div class='check'>quick issuance</div>
-                               <div class='check'>30 day unconditional refund</div>
+                               <div class='check'>30 day money-back guaranty</div>
                                <div class='check'>stored on fips 140-2 USB token</div>
                                <div class='check'>24 hour support</div>",
         "validation_level" => "extended",
@@ -930,7 +930,14 @@ class Certificate < ActiveRecord::Base
                }},
               {serial_root: "naesbbasic",title: "NAESB Basic",validation_type: "basic",
                summary: "for authenticating and encrypting email and well as client services",
-               product: "naesb-basic",
+               product: "personal-naesb-basic",
+               points:  "<div class='check'>Required for NAESB EIR and etag authentication</div>
+                         <div class='check'>User for wesbsite authentication</div>
+                         <div class='check'>Issued from SSL.com ACA</div>
+                         <div class='check'>2048 bit public key encryption</div>
+                         <div class='check'>quick issuance</div>
+                         <div class='check'>30 day money-back guaranty </div>
+                         <div class='check'>24 hour 5-star support</div>",
                price_adjusts:{sslcomnaesbbasicclient1yr: [15000,15000],
                               sslcomnaesbbasicclient1yr1tr: [15000,15000],
                               sslcomnaesbbasicclient1yr2tr: [12000,15000],
@@ -947,7 +954,7 @@ class Certificate < ActiveRecord::Base
       title = p[:title]
       description={
           "certificate_type" => title,
-          "points" => "",
+          "points" => p[:points] || "",
           "validation_level" => p[:validation_type],
           "summary" => p[:summary],
           "abbr" => title
@@ -979,6 +986,7 @@ class Certificate < ActiveRecord::Base
               text_only_description: pvi.text_only_description.gsub(/\d/,years.to_s),
               display_order: years.to_s,
               item_type: pvi.item_type, value: 365*years, published_as: pvi.published_as)
+            pvg.product_variant_items.where{serial << serials}.delete_all
           end
         }
       end

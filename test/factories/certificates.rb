@@ -121,7 +121,7 @@ FactoryGirl.define do
       icons                 {{main: 'silver_lock_lg.gif'}}
       display_order         {{all: 3, index: 2}}
       description           {{certificate_type: "Basic SSL",
-                              points:           "<div class='check'>quick domain validation</div>\n<div class='check'>results in higher sales conversion</div>\n<div class='check'>$10,000 USD insurance guaranty</div>\n<div class='check'>activates SSL Secure Site Seal</div>\n<div class='check'>2048 bit public key encryption</div>\n<em style='color:#333;display:block;padding:5px 20px;'>also comes with the following</em>\n<div class='check'>quick issuance</div>\n<div class='check'>30 day unconditional refund</div>\n<div class='check'>24 hour support</div>\n<div class='check'>unlimited reissuances</div>",
+                              points:           "<div class='check'>quick domain validation</div>\n<div class='check'>results in higher sales conversion</div>\n<div class='check'>$10,000 USD insurance guarranty</div>\n<div class='check'>activates SSL Secure Site Seal</div>\n<div class='check'>2048 bit public key encryption</div>\n<em style='color:#333;display:block;padding:5px 20px;'>also comes with the following</em>\n<div class='check'>quick issuance</div>\n<div class='check'>30 day unconditional refund</div>\n<div class='check'>24 hour support</div>\n<div class='check'>unlimited reissuances</div>",
                               validation_level: "domain",
                               summary:          "for securing small sites",
                               abbr:             "Basic SSL"
@@ -172,7 +172,7 @@ FactoryGirl.define do
       icons                 {{main: 'ev_bar_lg.jpg'}}
       display_order         {{all: 1, index: 1}}
       description           {{certificate_type: "Enterprise EV",
-                              points:           "<div class='check'>highest rated trust available</div>\n<div class='check'>enables green navigation bar</div>\n<div class='check'>results in higher sales conversion</div>\n<div class='check'>$250,000 USD insurance guaranty</div>\n<div class='check'>activates SSL Secure Site Seal</div>\n<div class='check'>2048 bit public key encryption</div>\n<em style='color:#333;display:block;padding:5px 20px;'>also comes with the following</em>\n<div class='check'>quick issuance</div> \n<div class='check'>30 day unconditional refund</div>\n<div class='check'>24 hour support</div>\n<div class='check'>dedicated support representative</div>\n<div class='check'>unlimited reissuances</div>\n<div class='check'>daily site scan monitoring</div>\n",
+                              points:           "<div class='check'>highest rated trust available</div>\n<div class='check'>enables green navigation bar</div>\n<div class='check'>results in higher sales conversion</div>\n<div class='check'>$250,000 USD insurance guarranty</div>\n<div class='check'>activates SSL Secure Site Seal</div>\n<div class='check'>2048 bit public key encryption</div>\n<em style='color:#333;display:block;padding:5px 20px;'>also comes with the following</em>\n<div class='check'>quick issuance</div> \n<div class='check'>30 day unconditional refund</div>\n<div class='check'>24 hour support</div>\n<div class='check'>dedicated support representative</div>\n<div class='check'>unlimited reissuances</div>\n<div class='check'>daily site scan monitoring</div>\n",
                               validation_level: "Class 3 DoD",
                               summary:          "highest trust assurance",
                               abbr:             "EV SSL"
@@ -511,7 +511,7 @@ FactoryGirl.define do
       icons                 {{main: 'silver_locks_lg.gif'}}
       display_order         {{all: 6, index: 6}}
       description           {{certificate_type: "Premium SSL",
-                              points:           "<div class='check'>quick domain validation</div>\n<div class='check'>results in higher sales conversion</div>\n<div class='check'>$10,000 USD insurance guaranty</div>\n<div class='check'>works on MS Exchange or OWA</div>\n<div class='check'>activates SSL Secure Site Seal</div>\n<div class='check'>2048 bit public key encryption</div>\n<em style='color:#333;display:block;padding:5px 20px;'>also comes with the following</em>\n<div class='check'>quick issuance</div>\n<div class='check'>30 day unconditional refund</div>\n<div class='check'>24 hour support</div>\n",
+                              points:           "<div class='check'>quick domain validation</div>\n<div class='check'>results in higher sales conversion</div>\n<div class='check'>$10,000 USD insurance guarranty</div>\n<div class='check'>works on MS Exchange or OWA</div>\n<div class='check'>activates SSL Secure Site Seal</div>\n<div class='check'>2048 bit public key encryption</div>\n<em style='color:#333;display:block;padding:5px 20px;'>also comes with the following</em>\n<div class='check'>quick issuance</div>\n<div class='check'>30 day unconditional refund</div>\n<div class='check'>24 hour support</div>\n",
                               validation_level: "domain",
                               summary:          "ssl for up to 3 subdomains\n",
                               abbr:             "Premium SSL"
