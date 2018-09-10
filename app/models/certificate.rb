@@ -5,6 +5,7 @@ class Certificate < ActiveRecord::Base
 
   has_many    :product_variant_groups, :as => :variantable
   has_many    :product_variant_items, through: :product_variant_groups
+  has_many    :sub_order_items, through: :product_variant_items
   has_many    :validation_rulings, :as=>:validation_rulable
   has_many    :validation_rules, :through => :validation_rulings
   has_and_belongs_to_many :products
@@ -585,25 +586,27 @@ class Certificate < ActiveRecord::Base
     self.product_variant_groups.each do |pvg|
       new_pvg = pvg.dup
       new_cert.product_variant_groups << new_pvg
-      pvg.product_variant_items.each do |pvi|
-        new_pvi=pvi.dup
-        if options[:old_pvi_serial] and options[:new_pvi_serial]
-          new_pvi.serial=pvi.serial.gsub(options[:old_pvi_serial], options[:new_pvi_serial])
-        elsif options[:reseller_tier_label]
-          if ProductVariantItem.find_by_serial("#{pvi.serial}-#{options[:reseller_tier_label]}tr") # adding reseller tier
-            new_pvi = ProductVariantItem.find_by_serial("#{pvi.serial}-#{options[:reseller_tier_label]}tr") # update
-          else
-            new_pvi.serial="#{pvi.serial}-#{options[:reseller_tier_label]}tr" # create reseller tier
+      pvg.product_variant_items.each_with_index do |pvi, i|
+        if i < options[:product][:price_adjusts].first[1].count
+          new_pvi=pvi.dup
+          if options[:old_pvi_serial] and options[:new_pvi_serial]
+            new_pvi.serial=pvi.serial.gsub(options[:old_pvi_serial], options[:new_pvi_serial])
+          elsif options[:reseller_tier_label]
+            if ProductVariantItem.find_by_serial("#{pvi.serial}-#{options[:reseller_tier_label]}tr") # adding reseller tier
+              new_pvi = ProductVariantItem.find_by_serial("#{pvi.serial}-#{options[:reseller_tier_label]}tr") # update
+            else
+              new_pvi.serial="#{pvi.serial}-#{options[:reseller_tier_label]}tr" # create reseller tier
+            end
           end
-        end
-        new_pvi.amount=((new_pvi.amount || 0)*options[:discount_rate]).ceil if options[:discount_rate]
-        new_pvg.product_variant_items << new_pvi
-        unless pvi.sub_order_item.blank?
-          if new_pvi.sub_order_item.blank?
-            new_pvi.sub_order_item=pvi.sub_order_item.dup
+          new_pvi.amount=((new_pvi.amount || 0)*options[:discount_rate]).ceil if options[:discount_rate]
+          new_pvg.product_variant_items << new_pvi
+          unless pvi.sub_order_item.blank?
+            if new_pvi.sub_order_item.blank?
+              new_pvi.sub_order_item=pvi.sub_order_item.dup
+            end
+            new_pvi.sub_order_item.amount=((new_pvi.sub_order_item.amount || 0)*options[:discount_rate]).ceil if options[:discount_rate]
+            new_pvi.sub_order_item.save
           end
-          new_pvi.sub_order_item.amount=((new_pvi.sub_order_item.amount || 0)*options[:discount_rate]).ceil if options[:discount_rate]
-          new_pvi.sub_order_item.save
         end
       end
     end
@@ -623,8 +626,7 @@ class Certificate < ActiveRecord::Base
   # this method duplicates the base certificate product along with all reseller_tiers
   def duplicate_w_tiers(options)
     sr = "#{self.serial_root}%"
-    Certificate.where{serial =~ sr}.map {|c|
-      c.duplicate(options)}
+    Certificate.where{serial =~ sr}.map {|c| c.duplicate(options)}
   end
 
   # this method duplicates the base certificate product along with all standard 5 reseller_tiers
@@ -925,10 +927,22 @@ class Certificate < ActiveRecord::Base
                               sslcompersonalenterprise256ssl1yr3tr: [24900, 49900, 59900],
                               sslcompersonalenterprise256ssl1yr4tr: [24900, 49900, 59900],
                               sslcompersonalenterprise256ssl1yr5tr: [24900, 49900, 59900]
+               }},
+              {serial_root: "naesbbasic",title: "NAESB Basic",validation_type: "basic",
+               summary: "for authenticating and encrypting email and well as client services",
+               product: "naesb-basic",
+               price_adjusts:{sslcomnaesbbasicclient1yr: [15000,15000],
+                              sslcomnaesbbasicclient1yr1tr: [15000,15000],
+                              sslcomnaesbbasicclient1yr2tr: [12000,15000],
+                              sslcomnaesbbasicclient1yr3tr: [11250,15000],
+                              sslcomnaesbbasicclient1yr4tr: [10500,15000],
+                              sslcomnaesbbasicclient1yr5tr: [9000,15000],
+                              sslcomnaesbbasicclient1yr6tr: [7500,15000],
+                              sslcomnaesbbasicclient1yr7tr: [6000,15000]
                }}]
     products.each do |p|
       c=Certificate.available.find_by_product "high_assurance"
-      certs = c.duplicate_w_tiers(new_serial: "#{p[:serial_root]}256sslcom",
+      certs = c.duplicate_w_tiers(product: p, new_serial: "#{p[:serial_root]}256sslcom",
                                 old_pvi_serial: "ov256ssl", new_pvi_serial: "#{p[:serial_root]}256ssl")
       title = p[:title]
       description={
@@ -947,7 +961,7 @@ class Certificate < ActiveRecord::Base
       certs.each{ |c| c.product_variant_items.where{display_order > 3}.destroy_all}
       p[:price_adjusts].each do |k,v|
         serials=[]
-        num_years=3
+        num_years=v.count
         1.upto(num_years){|i|serials<<k.to_s.gsub(/1yr/, i.to_s+"yr")}
         serials.each_with_index {|s, i|
           if ProductVariantItem.find_by_serial(s)
@@ -971,15 +985,17 @@ class Certificate < ActiveRecord::Base
     end
   end
 
-  def self.purge(serial_snippet)
-    Certificate.where{serial=~"%#{serial_snippet}%"}.each do |c|
-      c.product_variant_groups.each do |pvg|
-        pvg.product_variant_items.each do |pvi|
-          pvi.destroy
+  def self.purge(serial_snippets=[])
+    serial_snippets.each do |serial_snippet|
+      Certificate.where{serial=~"%#{serial_snippet}%"}.each do |c|
+        c.product_variant_groups.each do |pvg|
+          pvg.product_variant_items.each do |pvi|
+            pvi.destroy
+          end
+          pvg.destroy
         end
-        pvg.destroy
+        c.destroy
       end
-      c.destroy
     end
   end
 
