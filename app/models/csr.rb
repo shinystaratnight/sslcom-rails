@@ -38,7 +38,7 @@ class Csr < ActiveRecord::Base
   serialize   :subject_alternative_names
   validates_presence_of :body
   validates_presence_of :common_name, :if=> "!body.blank?", :message=> "field blank. Invalid csr."
-  validates   :unique_value, uniqueness: { scope: :public_key_sha1 }
+  validates   :unique_value, uniqueness: { scope: :public_key_sha1 }, :unless => Proc.new() {|r| r.new_record?}
 
   #will_paginate
   cattr_accessor :per_page
@@ -89,7 +89,6 @@ class Csr < ActiveRecord::Base
   after_save do |c|
     c.certificate_content.touch unless c.certificate_content.blank?
     c.certificate_order.touch unless c.certificate_content.blank?
-
   end
 
   # def to_param
