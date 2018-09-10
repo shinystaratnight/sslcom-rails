@@ -1,11 +1,8 @@
 require "declarative_authorization/maintenance"
 
 class ApiManagedCertificateCreate < ApiSslManagerRequest
-<<<<<<< HEAD
-=======
   attr_accessor :status
 
->>>>>>> staging
   validates :account_key, :secret_key, presence: true
   validates :certificates, presence: true
 
@@ -20,10 +17,7 @@ class ApiManagedCertificateCreate < ApiSslManagerRequest
       managed_certificate.save!
     end
 
-<<<<<<< HEAD
-=======
     registered_agent.api_status = 'registered'
->>>>>>> staging
     registered_agent
   end
 end

@@ -5,10 +5,6 @@ if !@result.errors.blank?
   end
 else
   glue @result do
-<<<<<<< HEAD
-    attributes :ref
-=======
     attributes :ref, :status
->>>>>>> staging
   end
 end

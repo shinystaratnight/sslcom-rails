@@ -4,15 +4,6 @@ class Api::V1::ApiSslManagerRequestsController < Api::V1::APIController
   wrap_parameters ApiSslManagerRequest, include:
       [*(
         ApiSslManagerRequest::REGISTER+
-<<<<<<< HEAD
-        ApiSslManagerRequest::COLLECTION
-      ).uniq]
-
-  def set_result_parameter(result, asm)
-    result.ref = asm.ref
-    result.created_at = asm.created_at
-    result.updated_at = asm.updated_at
-=======
         ApiSslManagerRequest::COLLECTION+
         ApiSslManagerRequest::DELETE
       ).uniq]
@@ -60,7 +51,6 @@ class Api::V1::ApiSslManagerRequestsController < Api::V1::APIController
     render_200_status
   rescue => e
     render_500_error e
->>>>>>> staging
   end
 
   def register
@@ -83,8 +73,6 @@ class Api::V1::ApiSslManagerRequestsController < Api::V1::APIController
     render_500_error e
   end
 
-<<<<<<< HEAD
-=======
   def delete
     set_template "delete"
 
@@ -105,18 +93,13 @@ class Api::V1::ApiSslManagerRequestsController < Api::V1::APIController
     render_500_error e
   end
 
->>>>>>> staging
   def collection
     set_template "collection"
 
     if @result.save
       if @obj = @result.create_managed_certificates
         if @obj.is_a?(RegisteredAgent) && @obj.errors.empty?
-<<<<<<< HEAD
-          set_result_parameter(@result, @obj)
-=======
           set_result_parameter(@result, @obj, nil)
->>>>>>> staging
         else
           @result = @obj
         end
@@ -138,13 +121,10 @@ class Api::V1::ApiSslManagerRequestsController < Api::V1::APIController
                   ApiSslManagerCreate
                 when "collection"
                   ApiManagedCertificateCreate
-<<<<<<< HEAD
-=======
                 when "delete"
                   ApiSslManagerDelete
                 when "index"
                   ApiSslManagerRetrieve
->>>>>>> staging
               end
 
       @result = klass.new(params[:api_ssl_manager_request] || _wrap_parameters(params)['api_ssl_manager_request'])

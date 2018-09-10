@@ -4,14 +4,9 @@ class ApiSslManagerRequest < CaApiRequest
   REGISTER = [:ref, :ip_address, :mac_address, :agent, :friendly_name, :workflow_status, :account_key,
               :secret_key, :requester]
   COLLECTION = [:certificates]
-<<<<<<< HEAD
-
-  attr_accessor *(REGISTER+COLLECTION).uniq
-=======
   DELETE = [:ref_list]
 
   attr_accessor *(REGISTER+COLLECTION+DELETE).uniq
->>>>>>> staging
 
   before_validation(on: :create) do
     ac = api_credential
@@ -28,8 +23,6 @@ class ApiSslManagerRequest < CaApiRequest
     (self.account_key && self.secret_key) ?
         ApiCredential.find_by_account_key_and_secret_key(self.account_key, self.secret_key) : nil
   end
-<<<<<<< HEAD
-=======
 
   def find_ssl_managers(search)
     ssl_managers = self.api_requestable.registered_agents
@@ -41,5 +34,4 @@ class ApiSslManagerRequest < CaApiRequest
       (errors[:ssl_managers] << "SSL Managers not found.")
     end
   end
->>>>>>> staging
 end

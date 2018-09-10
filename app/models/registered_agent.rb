@@ -2,9 +2,6 @@ class RegisteredAgent < ActiveRecord::Base
   belongs_to  :ssl_account
   belongs_to  :requester, :class_name => 'User'
   belongs_to  :approver, :class_name => 'User'
-<<<<<<< HEAD
-  has_many  :managed_certificates
-=======
   has_many :managed_certificates, dependent: :destroy
 
   attr_accessor :api_status, :reason
@@ -88,7 +85,6 @@ class RegisteredAgent < ActiveRecord::Base
 
     result.uniq
   }
->>>>>>> staging
 
   before_create do |ra|
     ra.ref = 'sm-' + SecureRandom.hex(1) + Time.now.to_i.to_s(32)

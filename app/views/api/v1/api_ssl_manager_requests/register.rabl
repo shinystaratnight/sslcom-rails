@@ -5,11 +5,7 @@ if !@result.errors.blank?
   end
 else
   glue @result do
-<<<<<<< HEAD
-    attributes :ref, :created_at, :updated_at
-=======
     attributes :ref, :status
     attribute :reason, :unless => lambda { |m| m.reason.nil? }
->>>>>>> staging
   end
 end
