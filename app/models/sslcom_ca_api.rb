@@ -109,11 +109,16 @@ class SslcomCaApi
   def self.subject_alt_name(options)
     cert = options[:cc].certificate
     common_name=options[:cc].csr.common_name
+<<<<<<< HEAD
     if cert.is_smime?
+=======
+    names=if cert.is_smime?
+>>>>>>> staging
       "rfc822Name="
     elsif !cert.is_code_signing?
       (options[:san] ? options[:san].split(/\s+/) : options[:cc].all_domains).map{|d|"dNSName="+d.downcase}.join(",")
     end
+<<<<<<< HEAD
     if cert.is_wildcard?
       options[:san]<<",dNSName=#{CertificateContent.non_wildcard_name(common_name)}"
     elsif cert.is_basic? or cert.is_high_assurance? or cert.is_free?
@@ -123,6 +128,18 @@ class SslcomCaApi
         options[:san]<<",dNSName=www.#{common_name}"
       end
     end
+=======
+    names << if cert.is_wildcard?
+      ",dNSName=#{CertificateContent.non_wildcard_name(common_name)}"
+    elsif cert.is_basic? or cert.is_high_assurance? or cert.is_free?
+      if common_name=~/\Awww\./
+        ",dNSName=#{common_name[4..-1]}"
+      else
+        ",dNSName=www.#{common_name}"
+      end
+    end
+    names
+>>>>>>> staging
   end
 
   # revoke json parameter string for REST call to EJBCA

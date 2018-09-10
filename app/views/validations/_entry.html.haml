@@ -1,7 +1,9 @@
 -@cert_order = co
 -cc = co.certificate_content
 -cn = co.certificate.is_code_signing? ? co.registrant.company_name : cc.csr.common_name
+-to_reminder = cc.locked_registrant.email if co.certificate.is_code_signing?
 -v = co.validation
+-status=certificate_order_status(cc)
 %tr.expanded(class="#{'hidden' if current_page?(:validations) or current_page?(:search_validations)}")
   %td(colspan="6")
     .certificate_details
@@ -29,7 +31,7 @@
                         %li.rules_methods_block(class="admin_approve_#{i}" style='color:red')
                           =form_for v, :html=>{:alt=>"#{i}", :class=>'edit_validation_ruling'} do |f|
                             =hidden_field_tag 'certificate_order', co.id
-                            =hidden_field_tag 'link_to_generate_cert', generate_cert_certificate_order_path(@ssl_slug, co.ref)
+                            -#=hidden_field_tag 'link_to_generate_cert', generate_cert_certificate_order_path(@ssl_slug, co.ref)
                             %em admin only:
                             -v.validation_rules.each_with_index do |vr, vri|
                               -vrl = v.validation_rulings.detect do |vrl| vrl.validation_rule == vr end
@@ -52,12 +54,27 @@
                                   %ul
                                     %li=text_area_tag "ruling_reason_#{vrl.id}"
                             %ul
-                              %li.email_customer
-                                #{check_box_tag "email_customer", true, false, :alt=>"#{i}"}notify customer?
                               -if co.certificate.is_code_signing?
                                 %li.validation_complete
                                   #{check_box_tag "validation_complete", true, false, :alt=>"#{i}"}validation complete
+                              -else
+                                %li.email_customer
+                                  #{check_box_tag "email_customer", true, false, :alt=>"#{i}"}notify customer?
                               %li.approve_submit=submit_tag 'submit'
+                        -#-if co.certificate.is_code_signing?
+                          %ul
+                            %li
+                              =form_tag certificate_order_tokens_path(@ssl_slug), :id => 'send_certificate_order_token', :method => :post, :class => (status == 'validated' ? '' : 'hidden') do
+                                =hidden_field_tag 'certificate_order_ref', co.ref
+                                %em
+                                  =link_to 'send activation link to ' + to_reminder, nil, id: 'link_to_send_token'
+                      -#-elsif current_user.try("is_account_admin?") && co.certificate.is_code_signing? && status == 'validated'
+                        =form_tag certificate_order_tokens_path(@ssl_slug), :id => 'send_certificate_order_token', :method => :post do
+                          =hidden_field_tag 'certificate_order_ref', co.ref
+                          %em team admin only:
+                          %ul
+                            %li
+                              =link_to 'send activation link to ' + to_reminder, nil, id: 'link_to_send_token'
                     -v.validation_rules.each_with_index do |vr, vri|
                       -is_domain_validation = vr.description=~/^domain/
                       %li.validation_section

@@ -47,6 +47,13 @@ SslCom::Application.routes.draw do
               as: :api_ssl_manager_register, via: [:options, :post]
         match '/ssl_manager/:ref' => 'api_ssl_manager_requests#collection',
               as: :api_ssl_manager_collection, via: [:options, :post]
+<<<<<<< HEAD
+=======
+        match '/ssl_managers' => 'api_ssl_manager_requests#delete',
+              as: :api_ssl_managers_delete, via: [:options, :delete]
+        match '/ssl_managers' => 'api_ssl_manager_requests#index',
+              as: :api_ssl_managers_index, via: [:options, :get]
+>>>>>>> staging
 
         # Code Signing.
         match '/generate_certificate' => 'api_certificate_requests#generate_certificate_v1_4',
@@ -198,6 +205,12 @@ SslCom::Application.routes.draw do
         get  :duo
         post :duo_verify
         get  :duo_verify
+      end
+    end
+
+    resources :certificate_order_tokens do
+      collection do
+        post :request_token
       end
     end
 
@@ -502,6 +515,8 @@ SslCom::Application.routes.draw do
   match 'browser_compatibility' => 'site#compatibility', as: :browsers, via: [:get, :post]
   match 'acceptable-top-level-domains-tlds-for-ssl-certificates' => 'site#top_level_domains_tlds',
         as: :tlds, via: [:get, :post]
+  match '/certificate_order_token/:token' => 'certificate_order_tokens#confirm', :as => :confirm, via: [:get]
+
   #match 'paid_cert_orders'=> 'site#paid_cert_orders'
   (Reseller::TARGETED+SiteController::STANDARD_PAGES).each do |i|
     send("get", i=>"site##{i}", :as => i.to_sym)

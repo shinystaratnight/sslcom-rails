@@ -258,6 +258,24 @@ class OrderNotifier < ActionMailer::Base
           to:    Settings.send_api_calls
   end
 
+  def certificate_order_token_send(co, token)
+    @activation_link = confirm_url(token)
+    @certificate_order = co
+
+    mail subject: "Certificate Activation Link",
+         from:  Settings.from_email.no_reply,
+         to:    co.certificate_content.locked_registrant.email
+  end
+
+  def request_token_send(co, user)
+    @certificate_order = co
+    @user = user
+
+    mail subject: "Certificate Activation Link",
+         from:  Settings.from_email.no_reply,
+         to:    user.email
+  end
+
   protected
   def setup_email(user)
     @recipients  = "#{user.email}"

@@ -386,7 +386,10 @@ class DomainsController < ApplicationController
       dcv = @domain.domain_control_validations.last
       if dcv.identifier == identifier
         dcv.update_attribute(:identifier_found, true)
-        dcv.satisfy! unless dcv.satisfied?
+        unless dcv.satisfied?
+          dcv.satisfy!
+          CaaCheck.pass?(@ssl_account.acct_number + 'domains', @domain, nil)
+        end
       end
     end
   end
@@ -400,14 +403,20 @@ class DomainsController < ApplicationController
         dcv = cn.domain_control_validations.last
         if dcv && dcv.identifier == identifier
           dcv.update_attribute(:identifier_found, true)
-          dcv.satisfy! unless dcv.satisfied?
+          unless dcv.satisfied?
+            dcv.satisfy!
+            CaaCheck.pass?(@ssl_account.acct_number + 'domains', cn, nil)
+          end
         end
       end
       dnames.each do |dn|
         dcv = dn.domain_control_validations.last
         if dcv && dcv.identifier == identifier
           dcv.update_attribute(:identifier_found, true)
-          dcv.satisfy! unless dcv.satisfied?
+          unless dcv.satisfied?
+            dcv.satisfy!
+            CaaCheck.pass?(@ssl_account.acct_number + 'domains', dn, nil)
+          end
         end
       end
     end

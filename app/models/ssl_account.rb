@@ -79,6 +79,10 @@ class SslAccount < ActiveRecord::Base
   has_many                  :registered_agents
   has_many  :cas_certificates
   has_many  :cas, through: :cas_certificates
+<<<<<<< HEAD
+=======
+  has_many  :certificate_order_tokens
+>>>>>>> staging
 
   unless MIGRATING_FROM_LEGACY
     #has_many  :orders, :as=>:billable, :after_add=>:build_line_items

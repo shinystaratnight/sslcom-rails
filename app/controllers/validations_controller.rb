@@ -27,7 +27,9 @@ class ValidationsController < ApplicationController
   def new
     url=nil
     # if CS then go to doc upload
-    if @certificate_order.certificate.is_code_signing?
+    if @certificate_order.certificate_content.issued?
+      url=certificate_order_url(@certificate_order.ref)
+    elsif @certificate_order.certificate.is_code_signing?
       url=document_upload_certificate_order_validation_url(certificate_order_id: @certificate_order.ref)
     else
       if @certificate_order.certificate_content.contacts_provided?
@@ -591,9 +593,15 @@ class ValidationsController < ApplicationController
           is_validated = true
         else
           if vrs.all?(&:approved?)
-            cc.validate! unless cc.validated?
+            unless cc.validated?
+              cc.validate!
+              is_validated = true
+            end
           else
-            cc.pend_validation!(host: request.host_with_port) unless cc.pending_validation?
+            unless cc.pending_validation?
+              cc.pend_validation!(host: request.host_with_port)
+              is_validated = true
+            end
           end
         end
 

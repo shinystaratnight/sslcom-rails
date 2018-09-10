@@ -95,6 +95,7 @@ class Csr < ActiveRecord::Base
   # def to_param
   #   ref
   # end
+<<<<<<< HEAD
 
   def unique_value
     csr_unique_value.unique_value
@@ -112,6 +113,8 @@ class Csr < ActiveRecord::Base
     end
     last_unique_value
   end
+=======
+>>>>>>> staging
 
   def common_name
     SimpleIDN.to_unicode(read_attribute(:common_name)).gsub(/\x00/, '') unless read_attribute(:common_name).blank?
