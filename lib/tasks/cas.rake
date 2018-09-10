@@ -644,54 +644,6 @@ namespace :cas do
       ekus: [Ca::EKUS[:client]],
       end_entity: Ca::END_ENTITY[:ov_client]
     )
-    Ca.find_or_initialize_by(ref: "2000").update_attributes(
-      friendly_name: "DV_RSA_SERVER_CERT",
-      profile_name: "DV_RSA_SERVER_CERT",
-      algorithm: "rsa",
-      size: 4096,
-      description: "",
-      type: "EndEntityProfile"
-    )
-    Ca.find_or_initialize_by(ref: "2001").update_attributes(
-      friendly_name: "OV_RSA_SERVER_CERT",
-      profile_name: "OV_RSA_SERVER_CERT",
-      algorithm: "rsa",
-      size: 4096,
-      description: "",
-      type: "EndEntityProfile"
-    )
-    Ca.find_or_initialize_by(ref: "2002").update_attributes(
-      friendly_name: "EV_RSA_SERVER_CERT",
-      profile_name: "EV_RSA_SERVER_CERT",
-      algorithm: "rsa",
-      size: 4096,
-      description: "",
-      type: "EndEntityProfile"
-    )
-    Ca.find_or_initialize_by(ref: "2003").update_attributes(
-      friendly_name: "DV_ECC_SERVER_CERT",
-      profile_name: "DV_ECC_SERVER_CERT",
-      algorithm: "ecc",
-      size: 384,
-      description: "",
-      type: "EndEntityProfile"
-    )
-    Ca.find_or_initialize_by(ref: "2004").update_attributes(
-      friendly_name: "OV_ECC_SERVER_CERT",
-      profile_name: "OV_ECC_SERVER_CERT",
-      algorithm: "ecc",
-      size: 384,
-      description: "",
-      type: "EndEntityProfile"
-    )
-    Ca.find_or_initialize_by(ref: "2005").update_attributes(
-      friendly_name: "EV_ECC_SERVER_CERT",
-      profile_name: "EV_ECC_SERVER_CERT",
-      algorithm: "ecc",
-      size: 384,
-      description: "",
-      type: "EndEntityProfile"
-    )
     Ca.find_or_initialize_by(ref: "3000").update_attributes(
       friendly_name: "DV_SERVER_CERT_EE",
       profile_name: "DV_SERVER_CERT_EE",
@@ -752,11 +704,14 @@ namespace :cas do
                status: CasCertificate::STATUS[ca.ref=="0013" ? :default : status])
           elsif  cert.is_dv? or cert.is_ov? or cert.is_ev?
             if ca.end_entity==(Ca::END_ENTITY[:dvssl])
-              cert.cas_certificates.create(ca_id: ca.id,status: status)
+              cert.cas_certificates.create(ca_id: ca.id,
+               status: CasCertificate::STATUS[(cert.is_ucc? and ca.ref=="0017") ? :default : status])
             elsif (cert.is_ov? or cert.is_ev?) and ca.end_entity==(Ca::END_ENTITY[:ovssl])
-              cert.cas_certificates.create(ca_id: ca.id,status: status)
+              cert.cas_certificates.create(ca_id: ca.id,
+               status: CasCertificate::STATUS[cert.is_ucc? ? status : status])
             elsif cert.is_ev? and ca.end_entity==(Ca::END_ENTITY[:evssl])
-              cert.cas_certificates.create(ca_id: ca.id,status: status)
+              cert.cas_certificates.create(ca_id: ca.id,
+               status: CasCertificate::STATUS[cert.is_ucc? ? status : status])
             end
           end
         end
