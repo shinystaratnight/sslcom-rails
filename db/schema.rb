@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180905135124) do
+ActiveRecord::Schema.define(version: 20180910095626) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        limit: 255
@@ -138,6 +138,18 @@ ActiveRecord::Schema.define(version: 20180905135124) do
 
   add_index "billing_profiles", ["ssl_account_id"], name: "index_billing_profile_on_ssl_account_id", using: :btree
 
+  create_table "blocklist", force: :cascade do |t|
+    t.string   "type",        limit: 255
+    t.string   "domain",      limit: 255
+    t.integer  "validation",  limit: 4
+    t.string   "status",      limit: 255
+    t.string   "reason",      limit: 255
+    t.string   "description", limit: 255
+    t.text     "notes",       limit: 65535
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "blocklists", force: :cascade do |t|
     t.string   "type",        limit: 255
     t.string   "domain",      limit: 255
@@ -172,6 +184,16 @@ ActiveRecord::Schema.define(version: 20180905135124) do
   add_index "ca_api_requests", ["id", "api_requestable_id", "api_requestable_type", "type", "created_at"], name: "index_ca_api_requests_on_type_and_api_requestable_and_created_at", using: :btree
   add_index "ca_api_requests", ["id", "api_requestable_id", "api_requestable_type", "type"], name: "index_ca_api_requests_on_type_and_api_requestable", unique: true, using: :btree
   add_index "ca_api_requests", ["username", "approval_id"], name: "index_ca_api_requests_on_username_and_approval_id", unique: true, using: :btree
+
+  create_table "caa_check", force: :cascade do |t|
+    t.integer  "checkable_id",   limit: 4
+    t.string   "checkable_type", limit: 255
+    t.string   "domain",         limit: 255
+    t.string   "request",        limit: 255
+    t.text     "result",         limit: 65535
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "caa_checks", force: :cascade do |t|
     t.integer  "checkable_id",   limit: 4
@@ -354,6 +376,8 @@ ActiveRecord::Schema.define(version: 20180905135124) do
 
   add_index "certificate_orders", ["created_at"], name: "index_certificate_orders_on_created_at", using: :btree
   add_index "certificate_orders", ["id", "is_test"], name: "index_certificate_orders_on_test", using: :btree
+  add_index "certificate_orders", ["id", "ref", "ssl_account_id"], name: "index_certificate_orders_on_id_and_ref_and_ssl_account_id", using: :btree
+  add_index "certificate_orders", ["id", "workflow_state", "is_expired", "is_test"], name: "05122018_index_certificate_orders_on_4_cols", unique: true, using: :btree
   add_index "certificate_orders", ["id", "workflow_state", "is_expired", "is_test"], name: "index_certificate_orders_on_workflow_state", unique: true, using: :btree
   add_index "certificate_orders", ["is_expired"], name: "index_certificate_orders_on_is_expired", using: :btree
   add_index "certificate_orders", ["is_test"], name: "index_certificate_orders_on_is_test", using: :btree
@@ -499,7 +523,6 @@ ActiveRecord::Schema.define(version: 20180905135124) do
     t.integer  "certificate_lookup_id",     limit: 4
     t.text     "decoded",                   limit: 65535
     t.string   "ext_customer_ref",          limit: 255
-    t.string   "unique_value",              limit: 255
     t.string   "public_key_sha1",           limit: 255
     t.string   "public_key_sha256",         limit: 255
     t.string   "public_key_md5",            limit: 255
@@ -514,8 +537,6 @@ ActiveRecord::Schema.define(version: 20180905135124) do
   add_index "csrs", ["common_name", "email", "sig_alg"], name: "index_csrs_on_common_name_and_email_and_sig_alg", using: :btree
   add_index "csrs", ["common_name"], name: "index_csrs_on_common_name", using: :btree
   add_index "csrs", ["organization"], name: "index_csrs_on_organization", using: :btree
-  add_index "csrs", ["public_key_sha1", "unique_value"], name: "index_csrs_on_public_key_sha1_and_unique_value", unique: true, using: :btree
-  add_index "csrs", ["sig_alg", "common_name", "email"], name: "index_csrs_on_sig_alg_and_common_name_and_email", using: :btree
 
   create_table "dbs", force: :cascade do |t|
     t.string "name",     limit: 255
@@ -623,6 +644,7 @@ ActiveRecord::Schema.define(version: 20180905135124) do
     t.string   "failure_action",             limit: 255
     t.integer  "validation_compliance_id",   limit: 4
     t.datetime "validation_compliance_date"
+    t.integer  "csr_unique_value_id",        limit: 4
   end
 
   add_index "domain_control_validations", ["id", "csr_id"], name: "index_domain_control_validations_on_id_csr_id", using: :btree
@@ -761,6 +783,7 @@ ActiveRecord::Schema.define(version: 20180905135124) do
   end
 
   add_index "line_items", ["order_id", "sellable_id", "sellable_type"], name: "05122018_index_line_items_on_order_id_and_sellable_id_and_type", using: :btree
+  add_index "line_items", ["order_id", "sellable_id", "sellable_type"], name: "index_line_items_on_order_id_and_sellable_id_and_sellable_type", using: :btree
   add_index "line_items", ["order_id"], name: "index_line_items_on_order_id", using: :btree
   add_index "line_items", ["sellable_id", "sellable_type"], name: "index_line_items_on_sellable_id_and_sellable_type", using: :btree
   add_index "line_items", ["sellable_id"], name: "index_line_items_on_sellable_id", using: :btree
@@ -801,7 +824,6 @@ ActiveRecord::Schema.define(version: 20180905135124) do
     t.datetime "updated_at"
     t.string   "scan_port",      limit: 255, default: "443"
     t.boolean  "notify_all",                 default: true
-    t.boolean  "status"
   end
 
   add_index "notification_groups", ["ssl_account_id", "ref"], name: "index_notification_groups_on_ssl_account_id_and_ref", using: :btree
@@ -916,6 +938,7 @@ ActiveRecord::Schema.define(version: 20180905135124) do
   add_index "orders", ["billable_id"], name: "index_orders_on_billable_id", using: :btree
   add_index "orders", ["billable_type"], name: "index_orders_on_billable_type", using: :btree
   add_index "orders", ["created_at"], name: "index_orders_on_created_at", using: :btree
+  add_index "orders", ["id", "state"], name: "index_orders_on_id_and_state", using: :btree
   add_index "orders", ["po_number"], name: "index_orders_on_po_number", using: :btree
   add_index "orders", ["quote_number"], name: "index_orders_on_quote_number", using: :btree
   add_index "orders", ["reference_number"], name: "index_orders_on_reference_number", using: :btree
@@ -967,6 +990,19 @@ ActiveRecord::Schema.define(version: 20180905135124) do
     t.integer  "role_id",       limit: 4
     t.datetime "created_at",              null: false
     t.datetime "updated_at",              null: false
+  end
+
+  create_table "physical_token", force: :cascade do |t|
+    t.integer  "certificate_order_id",  limit: 4
+    t.integer  "signed_certificate_id", limit: 4
+    t.string   "tracking_number",       limit: 255
+    t.string   "shipping_method",       limit: 255
+    t.string   "activation_pin",        limit: 255
+    t.string   "manufacturer",          limit: 255
+    t.string   "model_number",          limit: 255
+    t.string   "serial_number",         limit: 255
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "physical_tokens", force: :cascade do |t|
@@ -1224,8 +1260,6 @@ ActiveRecord::Schema.define(version: 20180905135124) do
     t.string   "scan_status",            limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.datetime "expiration_date"
-    t.integer  "scan_group",             limit: 4
   end
 
   add_index "scan_logs", ["notification_group_id"], name: "index_scan_logs_on_notification_group_id", using: :btree
@@ -1330,7 +1364,6 @@ ActiveRecord::Schema.define(version: 20180905135124) do
   add_index "signed_certificates", ["ca_id"], name: "index_signed_certificates_on_ca_id", using: :btree
   add_index "signed_certificates", ["common_name"], name: "index_signed_certificates_on_common_name", using: :btree
   add_index "signed_certificates", ["csr_id"], name: "index_signed_certificates_on_csr_id", using: :btree
-  add_index "signed_certificates", ["strength"], name: "index_signed_certificates_on_strength", using: :btree
 
   create_table "site_checks", force: :cascade do |t|
     t.text     "url",                   limit: 65535
@@ -1387,6 +1420,7 @@ ActiveRecord::Schema.define(version: 20180905135124) do
 
   add_index "ssl_accounts", ["acct_number", "company_name", "ssl_slug"], name: "index_ssl_accounts_on_acct_number_and_company_name_and_ssl_slug", using: :btree
   add_index "ssl_accounts", ["acct_number"], name: "index_ssl_account_on_acct_number", using: :btree
+  add_index "ssl_accounts", ["id", "created_at"], name: "index_ssl_accounts_on_id_and_created_at", using: :btree
 
   create_table "ssl_docs", force: :cascade do |t|
     t.integer  "folder_id",             limit: 4
