@@ -38,7 +38,6 @@ class Csr < ActiveRecord::Base
   serialize   :subject_alternative_names
   validates_presence_of :body
   validates_presence_of :common_name, :if=> "!body.blank?", :message=> "field blank. Invalid csr."
-  validates   :unique_value, uniqueness: { scope: :public_key_sha1 }
 
   #will_paginate
   cattr_accessor :per_page
