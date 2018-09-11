@@ -30,6 +30,7 @@ class CertificateContent < ActiveRecord::Base
     ref_number = cc.to_ref
     cc.ref = ref_number
     cc.label = ref_number
+    cc.add_ca(cc.certificate_order.ssl_account) unless cc.certificate_order.ssl_account.blank?
   end
 
   SIGNING_REQUEST_REGEX = /\A[\w\-\/\s\n\+=]+\Z/
@@ -215,6 +216,10 @@ class CertificateContent < ActiveRecord::Base
     end
   end
 
+  def add_ca(ssl_account)
+    self.ca = (self.certificate.cas.ssl_account_or_general_default(ssl_account)).last
+  end
+
   def certificate_names_from_domains
     if csr && certificate_names.find_by_name(csr.common_name).blank?
       certificate_names.create(name: csr.common_name, is_common_name: true)
@@ -250,17 +255,6 @@ class CertificateContent < ActiveRecord::Base
 
   def cli_domain
     @@cli_domain
-  end
-
-  def ca
-    if read_attribute(:ca).blank? and certificate_order.ssl_account
-      tmp_ca=certificate.cas.ssl_account_or_general_default(certificate_order.ssl_account).last
-      if tmp_ca
-        write_attribute(:ca_id, tmp_ca.id)
-        save(validate: false) unless new_record?
-      end
-    end
-    read_attribute(:ca)
   end
 
   def domains=(names)

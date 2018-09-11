@@ -32,20 +32,17 @@ class ValidationsController < ApplicationController
     elsif @certificate_order.certificate.is_code_signing?
       url=document_upload_certificate_order_validation_url(certificate_order_id: @certificate_order.ref)
     else
-      if @certificate_order.certificate_content.contacts_provided?
-        @certificate_order.certificate_content.pend_validation!(host: request.host_with_port)
-
-        mdc_validation = ComodoApi.mdc_status(@certificate_order)
-        @ds = mdc_validation.domain_status
-        @all_validated = false
-        @validated_domains = ''
-      elsif @certificate_order.certificate_content.issued? # or @certificate_order.all_domains_validated?
+      if @certificate_order.certificate_content.issued? # or @certificate_order.all_domains_validated?
         checkout={checkout: "true"}
         flash.now[:notice] = "All domains have been validated, please wait for certificate issuance" if @certificate_order.all_domains_validated?
         respond_to do |format|
           format.html { redirect_to certificate_order_path({id: @certificate_order.ref}.merge!(checkout))}
         end
       else
+        if @certificate_order.certificate_content.contacts_provided?
+          @certificate_order.certificate_content.pend_validation!(host: request.host_with_port)
+        end
+
         @all_validated = true
         @validated_domains = ''
         @caa_check_domains = ''
