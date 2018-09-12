@@ -216,7 +216,7 @@ class ValidationsController < ApplicationController
     Rails.cache.fetch("#{(current_user.is_system_admins? ? CertificateOrder :
         current_user.certificate_orders).find_by_ref(params[:certificate_order_id]).
         certificate_content.certificate_names.find_by_name(params['domain_name']).
-        domain_control_validations.last.cache_key}/get_asynch_domains/#{params['domain_name']}") do
+        domain_control_validations.last.try(:cache_key)}/get_asynch_domains/#{params['domain_name']}") do
       co = (current_user.is_system_admins? ? CertificateOrder :
                 current_user.certificate_orders).find_by_ref(params[:certificate_order_id])
 
