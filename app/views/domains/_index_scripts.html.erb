@@ -48,7 +48,7 @@
             var new_row = "<tr>";
             new_row += "<td><input type='checkbox' name='d_name_check[]' id='d_name_check_" + value.domain.id + "' value='" + value.domain.id + "' class='d_name_check'></td>"
             new_row += "<td>" + value.domain.name + "</td>";
-            new_row += "<td>Team</td><td>Pending validation</td><td>n/a</td></tr>";
+            new_row += "<td>Team</td><td><a href='<%=validate_selected_domains_path(@ssl_slug)%>?d_name_check%5B%5D="+ value.domain.id +"'>Pending Validation</a></td><td>n/a</td></tr>";
             $(new_row).insertAfter($(".heading_row"));
           });
         }
@@ -106,17 +106,93 @@
         if($('.d_name_check:checkbox:checked').length>0){
           $("#d_name_action_remove").prop('disabled', false);
           $("#d_name_action_validate").prop('disabled', false);
+          $("#d_name_action_bind").prop('disabled', false);
         } else {
           $("#d_name_action_remove").prop('disabled', true);
           $("#d_name_action_validate").prop('disabled', true);
+          $("#d_name_action_bind").prop('disabled', true);
         }
         $('.d_name_check:checkbox:checked').each(function () {
           var d_status = $(this).closest("tr").find(".d_name_status").first().html();
           if(d_status=='Validated') {
             $("#d_name_action_validate").prop('disabled', true);
+            $("#d_name_action_bind").prop('disabled', true);
           }
         })
-      })
+      });
+      <%if @csr%>
+        $(document).on('change', 'select[id=dcv_methods]', function() {
+          console.log("here");
+          var dcv_select=$(this);
+          var dt = new Date();
+          var time = (dt.getMonth()+1) + "-"
+            + dt.getDate() + "-"
+            + dt.getFullYear() + " "
+            + dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds();
+          //prevent other options from being selected if None is selected
+          methods=$.get_selected_options(this, 'text');
+          if($.method_none_selected(methods)){
+            $(this).find(':selected').each(function(c, selected){
+              if($(selected).text()!='<%=Validation::NONE_SELECTED%>')
+                $(selected).attr('selected', false);
+            });
+          }
+
+          var domain = $(this).attr("alt");
+
+          //get cert order index
+          instruction=$('span[alt="'+$(this).attr('alt')+'"]')[0];
+          /*file=$(this).attr("alt").replace("*.", "").toLowerCase()+"/.well-known/pki-validation/"+$('.md5_hash').text()+".txt";*/
+          file=domain+"/.well-known/pki-validation/"+$('.md5_hash').text()+".txt";
+          https = "https://"+file;
+          http = "http://"+file;
+          wwwfile=$(this).attr("alt").replace("*.", "www.").toLowerCase()+"/.well-known/pki-validation/"+$('.md5_hash').text()+".txt";
+          wwwhttps = "https://"+wwwfile;
+          wwwhttp = "http://"+wwwfile;
+          cname = $('.dns_md5_hash').text()+"."+domain+" -> "+$('.dns_sha2_hash').text()+".com";
+
+          if (methods[0] == 'Please select a validation method') {
+            $(instruction).html("Please select a validation method");
+            $('td.pretest[class~="'+$(dcv_select).attr("alt")+'"]').html("n/a").css({ background: "white", color:"black" });
+          }
+          else if(/@/.test(methods[0])){
+            $(instruction).html("Validation instructions will be emailed to "+methods[0]+". Please follow those instructions.")
+            $('td.pretest[class~="'+$(dcv_select).attr("alt")+'"]').html("n/a").css({ background: "white", color:"black" });
+          }
+          else if(/https/.test(methods[0])){
+            instructions="Upload <a href='<%=http_dcv_file_csr_path(@ssl_slug, @csr.id)%>'>this file</a> to this location: <a href='"+https+"' target='_new'>"+https+"</a>";
+            $(instruction).html(instructions);
+          }
+          else if(/http/.test(methods[0])){
+            instructions="Upload <a href='<%=http_dcv_file_csr_path(@ssl_slug, @csr.id)%>'>this file</a> to this location: <a href='"+http+"' target='_new'>"+http+"</a>";
+            $(instruction).html(instructions);
+          }
+          else if(/cname/.test(methods[0])){
+            $(instruction).html("Create CNAME: "+cname);
+          }
+          $(instruction).css({ background: "yellow" });
+        });
+      <%end %>
+
+      $.get_selected_options=function(select, type){
+        options=[];
+        $(select).find(':selected').each(function(c, selected){
+          if(type=='text')
+            options[c] = $(selected).text();
+          else
+            options[c] = $(selected).val();
+        });
+        return options;
+      };
+
+      $.method_none_selected=function(methods){
+        for(m=0; m<methods.length; m++){
+          if(methods[m]=='<%=Validation::NONE_SELECTED%>')
+            return true;
+        }
+        return false;
+      }
+
     });
   });
 </script>

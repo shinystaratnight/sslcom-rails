@@ -797,7 +797,9 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def migrated_from_v2?
-    order.try(:preferred_migrated_from_v2)
+    Rails.cache.fetch("#{cache_key}/migrated_from_v2") do
+      order.try(:preferred_migrated_from_v2)
+    end
   end
 
   def signup_process(cert=certificate)

@@ -1,0 +1,29 @@
+-title = "Validate Domains against CSR"
+-content_for :title, title
+=form_tag "#{validate_against_csr_domains_path(@ssl_slug)}", id: "select_csr_form", method: :post do
+  #search_bar
+    -@selected_domains.each do |dn|
+      .d_name
+        =dn.name
+        %input(type="hidden" name="d_name_selected[]" value="#{dn.id}" )
+  #validations
+    %table(cellspacing="0")
+      %caption
+        =title
+      %tr.heading_row
+        %td
+        %th.name(scope="col") MD5 Hash
+        %th(scope="col") Friendly Name
+        %th(scope="col") Common Name
+        %th(scope="col") Created At
+      -@csrs.each do |csr|
+        %tr(alt="#{csr.id}")
+          %td
+            =radio_button_tag 'selected_csr', csr.id
+          %td=csr.md5_hash
+          %td=csr.friendly_name
+          %td=csr.common_name
+          %td=csr.created_at.strftime("%b %d, %Y")
+  #button_container
+    #auto_adjust
+      =image_submit_tag 'bl_submit_button.gif'

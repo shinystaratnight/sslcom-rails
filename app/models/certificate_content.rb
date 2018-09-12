@@ -30,6 +30,7 @@ class CertificateContent < ActiveRecord::Base
     ref_number = cc.to_ref
     cc.ref = ref_number
     cc.label = ref_number
+    cc.add_ca(cc.certificate_order.ssl_account) unless cc.certificate_order.ssl_account.blank?
   end
 
   SIGNING_REQUEST_REGEX = /\A[\w\-\/\s\n\+=]+\Z/
@@ -154,9 +155,9 @@ class CertificateContent < ActiveRecord::Base
       event :pend_validation, :transitions_to => :pending_validation do |options={}|
         if csr and !csr.sent_success #do not send if already sent successfully
           options[:certificate_content]=self
-          unless self.infringement.empty? # possible trademark problems
+          if !self.infringement.empty? # possible trademark problems
             OrderNotifier.potential_trademark(Settings.notify_address, certificate_order, self.infringement).deliver_now
-          else
+          elsif ca.blank?
             certificate_order.apply_for_certificate(options)
           end
           if options[:host]
@@ -215,25 +216,22 @@ class CertificateContent < ActiveRecord::Base
     end
   end
 
+  def add_ca(ssl_account)
+    self.ca = (self.certificate.cas.ssl_account_or_general_default(ssl_account)).last
+  end
+
   def certificate_names_from_domains
     if csr && certificate_names.find_by_name(csr.common_name).blank?
       certificate_names.create(name: csr.common_name, is_common_name: true)
     end
-
-    if all_domains.length <= DOMAIN_COUNT_OFFLOAD
-      all_domains.flatten.each_with_index do |domain, i|
-        if certificate_names.find_by_name(domain).blank?
-          certificate_names.create(name: domain, is_common_name: csr.try(:common_name)==domain)
-        end
-      end
-
-      # Auto adding domains in case of certificate order has been included into some groups.
-      NotificationGroup.auto_manage_cert_name(self, 'create')
-    else
-      all_domains.flatten.each_slice(100) do |domain_slice|
-        Delayed::Job.enqueue CertificateNamesJob.new(id, domain_slice)
+    all_domains.flatten.each_with_index do |domain, i|
+      if certificate_names.find_by_name(domain).blank?
+        certificate_names.create(name: domain, is_common_name: csr.try(:common_name)==domain)
       end
     end
+
+    # Auto adding domains in case of certificate order has been included into some groups.
+    NotificationGroup.auto_manage_cert_name(self, 'create')
   end
 
   def signed_certificate
@@ -250,17 +248,6 @@ class CertificateContent < ActiveRecord::Base
 
   def cli_domain
     @@cli_domain
-  end
-
-  def ca
-    if read_attribute(:ca).blank? and certificate_order.ssl_account
-      tmp_ca=certificate.cas.ssl_account_or_general_default(certificate_order.ssl_account).last
-      if tmp_ca
-        write_attribute(:ca_id, tmp_ca.id)
-        save(validate: false) unless new_record?
-      end
-    end
-    read_attribute(:ca)
   end
 
   def domains=(names)

@@ -9,6 +9,7 @@ class SslAccount < ActiveRecord::Base
             before_add: Proc.new { |p, d|
                 folder=Folder.find_by(default: true, ssl_account_id: p.id)
                 d.folder_id= folder.id unless folder.blank?
+                d.certificate_content.add_ca(p)
             } do
     def current
       where{workflow_state >>['new']}.first
@@ -24,7 +25,7 @@ class SslAccount < ActiveRecord::Base
   end
   has_many  :validations, through: :certificate_orders
   has_many  :site_seals, through: :certificate_orders
-  has_many  :certificate_contents, through: :certificate_orders, after_add: :add_ca
+  has_many  :certificate_contents, through: :certificate_orders
   has_many  :domains, :dependent => :destroy
   has_many  :csrs, through: :certificate_contents
   has_many  :managed_csrs
@@ -76,7 +77,7 @@ class SslAccount < ActiveRecord::Base
       where.not certificate_contents: {ca_id: nil}
     end
   end
-  has_many                  :registered_agents
+  has_many  :registered_agents
   has_many  :cas_certificates
   has_many  :cas, through: :cas_certificates
   has_many  :certificate_order_tokens
