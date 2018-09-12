@@ -163,7 +163,8 @@ class CertificateName < ActiveRecord::Base
     end
   end
 
-  def dcv_verify(protocol)
+  def
+  dcv_verify(protocol)
     prepend=""
     begin
       Timeout.timeout(Surl::TIMEOUT_DURATION) do
