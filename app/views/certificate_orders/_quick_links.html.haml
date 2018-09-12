@@ -7,7 +7,7 @@
         %li#lnk-folders-ql
           %i.fa.fa-folder-open
           =link_to "Explorer", folders_path(@ssl_slug), id: "lnk-co-folders"
-      -unless !is_sandbox?
+      -unless is_sandbox?
         %li=link_to 'Buy Certificate', certificates_url
         %li=link_to 'Deposit Funds', allocate_funds_url(ssl_slug: @ssl_slug)
         -if current_page?(orders_url) && ssl_account && permitted_to?(:index, :invoices) && ssl_account.invoices.any?
