@@ -155,9 +155,9 @@ class CertificateContent < ActiveRecord::Base
       event :pend_validation, :transitions_to => :pending_validation do |options={}|
         if csr and !csr.sent_success #do not send if already sent successfully
           options[:certificate_content]=self
-          unless self.infringement.empty? # possible trademark problems
+          if !self.infringement.empty? # possible trademark problems
             OrderNotifier.potential_trademark(Settings.notify_address, certificate_order, self.infringement).deliver_now
-          else
+          elsif ca.blank?
             certificate_order.apply_for_certificate(options)
           end
           if options[:host]

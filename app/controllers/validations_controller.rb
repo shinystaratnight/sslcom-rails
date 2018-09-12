@@ -211,10 +211,11 @@ class ValidationsController < ApplicationController
   end
 
   def get_asynch_domains
-    Rails.cache.fetch("#{current_user.cache_key}/get_asynch_domains/#{params['domain_name']}",expires_in: 10.minutes) do
+    returnObj =
+
+    Rails.cache.fetch("#{current_user.email}/get_asynch_domains/#{params['domain_name']}",expires_in: 10.minutes) do
       co = (current_user.is_system_admins? ? CertificateOrder :
                 current_user.certificate_orders).find_by_ref(params[:certificate_order_id])
-      returnObj = {}
 
       if co
         cn = co.certificate_content.certificate_names.find_by_name(params['domain_name'])
@@ -250,7 +251,7 @@ class ValidationsController < ApplicationController
                 optionsObj['Validation via email'] = viaEmail
                 optionsObj['Validation via csr hash'] = viaCSR
 
-                returnObj = {
+                {
                   'tr_info' => {
                     'options' => optionsObj,
                     'slt_option' => domain_method ?
@@ -285,7 +286,7 @@ class ValidationsController < ApplicationController
               optionsObj['Validation via email'] = viaEmail
               optionsObj['Validation via csr hash'] = viaCSR
 
-              returnObj = {
+              {
                 'tr_info' => {
                   'options' => optionsObj,
                   'slt_option' => domain_method ?
@@ -319,7 +320,7 @@ class ValidationsController < ApplicationController
 
             le = cn.domain_control_validations.last_emailed
 
-            returnObj = {
+            {
               'tr_info' => {
                 'options' => optionsObj,
                 'slt_option' => le.blank? ? nil : le.email_address,
@@ -352,7 +353,7 @@ class ValidationsController < ApplicationController
 
           le = cn.domain_control_validations.last_emailed
 
-          returnObj = {
+          {
             'tr_info' => {
               'options' => optionsObj,
               'slt_option' => le.blank? ? nil : le.email_address,
@@ -375,9 +376,8 @@ class ValidationsController < ApplicationController
       # #   Rails.cache.write(params[:certificate_order_id] + ':' + params[:ext_order_number] + ':' + params['domain_name'],
       # #                     returnObj.to_json, :expires_in => 10.minutes)
       # end
-
-      render :json => returnObj
     end
+    render :json => returnObj
   end
 
   def index
