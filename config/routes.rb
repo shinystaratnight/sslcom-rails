@@ -311,6 +311,19 @@ SslCom::Application.routes.draw do
       end
     end
 
+    resources :registered_agents do
+      collection do
+        post :search
+        post :remove_agents
+      end
+
+      member do
+        get :managed_certificates
+        post :search_managed_certificates
+        post :remove_managed_certificates
+      end
+    end
+
     resources :other_party_validation_requests, only: [:create, :show]
 
     resources :validation_histories

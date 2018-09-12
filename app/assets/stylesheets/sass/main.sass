@@ -3466,7 +3466,9 @@ label.error
 #resource-popular-location-list,
 #notification_groups,
 #notification_group_scan_his_logs,
-#certificates-admin-index
+#certificates-admin-index,
+#registered_agents,
+#registered_agent_managed_certificates
   line-height: 1.5em
   font-size: 1.4em
   background: #fff
@@ -3690,6 +3692,44 @@ label.error
       th, td
         border-top: none
         padding-top: 0px
+
+#registered_agent_managed_certificate_list
+  & > table
+    border-bottom: 1px solid #ccf
+    border-top: none
+
+    th, td
+      border-bottom: none
+      border-top: 1px solid #ccf
+
+    tr.expanded
+      td
+        border: none
+        padding: 0px 8px
+        line-heigh: 30px
+        .extra_field_group
+          background-color: #eee
+          padding: 10px
+          .extra_field_block
+            float: left
+            width: 50%
+            ul
+              padding-left: 30px
+              text-align: left
+              list-style: none
+              font-size: 1em
+              li
+                padding-left: 10px
+                &.label
+                  padding-left: 0px
+                  padding-bottom: 5px
+                  text-decoration: underline
+                .item_key
+                  float: left
+                  width: 160px
+                .item_value
+                  float: left
+                  padding-left: 5px
 
 #certificate_orders > table
   width: 84%
@@ -4167,6 +4207,35 @@ label.error
   .group_block .warning-field
     border-color: red
     box-shadow: 0px 0px 5px red
+  .field_block
+    margin: 0 auto
+    width: 500px
+    font-size: 1.4em
+    padding-top: 18px
+    line-height: 20px
+
+    &:first-child
+      padding-top: 10px
+    &:last-child
+      padding-bottom: 10px
+
+    span
+      vertical-align: middle
+
+    .field_label
+      width: 150px
+      float: left
+      text-align: right
+
+    .field_body
+      float: left
+      padding-left: 20px
+
+      input[type=text]
+        font-size: 1em
+        margin-left: 0px !important
+        margin-bottom: 0px
+        width: 250px
 
 input#upload_files, input#start_over, input#validate_domains
   margin: 1em
@@ -4376,13 +4445,20 @@ table#line_items_receipt
 
 .reseller_registration_select_tier, .reseller_registration_profile,
 .user_session_format, .reseller_tier_pricing_popup, .order_container,
-.upload_document_container, .default_container, .note_group_container
+.upload_document_container, .default_container, .note_group_container,
+.registered_agent_container
   margin: 2em auto
   width: 70%
   padding: 0px
 
   p
     font-size: 1.4em
+
+.registered_agent_container
+  label
+    line-height: 30px
+  .form_input:first-child
+    margin-top: 20px !important
 
 .default_container
   padding-bottom: 1em
@@ -4485,6 +4561,7 @@ table#line_items_receipt
   #click_to_load
     width: 238px
 
+  #registered_agent_auto_adjust,
   #notification_group_auto_adjust
     text-align: center
     button
@@ -7235,6 +7312,8 @@ span.notifications-teams
   margin-left: 2.1rem
   margin-bottom: -1.5rem
 
+#registered_agent_managed_certificates input[type='submit'],
+#registered_agents input[type='submit'],
 #notification_groups input[type='submit']
   margin-top: 13px
 

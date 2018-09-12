@@ -31,6 +31,8 @@ class User < ActiveRecord::Base
   has_many  :notification_groups, through: :ssl_accounts
   has_many  :certificate_order_tokens
 
+  preference  :managed_certificate_row_count, :string, :default=>"10"
+  preference  :registered_agent_row_count, :string, :default=>"10"
   preference  :cert_order_row_count, :string, :default=>"10"
   preference  :order_row_count, :string, :default=>"10"
   preference  :cdn_row_count, :string, :default=>"10"

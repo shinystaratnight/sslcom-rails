@@ -7,7 +7,7 @@
         %li#lnk-folders-ql
           %i.fa.fa-folder-open
           =link_to "Explorer", folders_path(@ssl_slug), id: "lnk-co-folders"
-      -unless is_sandbox?
+      -unless !is_sandbox?
         %li=link_to 'Buy Certificate', certificates_url
         %li=link_to 'Deposit Funds', allocate_funds_url(ssl_slug: @ssl_slug)
         -if current_page?(orders_url) && ssl_account && permitted_to?(:index, :invoices) && ssl_account.invoices.any?
@@ -19,6 +19,8 @@
           %li=link_to 'Billing Profiles', billing_profiles_path(ssl_slug: @ssl_slug)
         -if permitted_to?(:index, :site_seals)
           %li=link_to "Smart SeaLs", details_site_seals_url
+        -if permitted_to?(:index, :registered_agents)
+          %li=link_to "SSL Managers", registered_agents_path(ssl_slug: @ssl_slug)
       -if current_user.can_manage_certificates?
         %li=link_to "Certificate Mgmt", admin_index_certificates_path
       %li &nbsp;
