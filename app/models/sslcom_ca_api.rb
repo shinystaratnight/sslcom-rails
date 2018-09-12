@@ -122,6 +122,8 @@ class SslcomCaApi
       else
         ",dNSName=www.#{common_name}"
       end
+    else
+      ""
     end
     names
   end

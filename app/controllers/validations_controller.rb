@@ -26,21 +26,22 @@ class ValidationsController < ApplicationController
 
   def new
     url=nil
-    # if CS then go to doc upload
-    if @certificate_order.certificate_content.issued?
+    cc=@certificate_order.certificate_content
+    if cc.issued?
       url=certificate_order_url(@certificate_order.ref)
+    # if CS then go to doc upload
     elsif @certificate_order.certificate.is_code_signing?
       url=document_upload_certificate_order_validation_url(certificate_order_id: @certificate_order.ref)
     else
-      if @certificate_order.certificate_content.issued? # or @certificate_order.all_domains_validated?
+      if cc.issued? # or @certificate_order.all_domains_validated?
         checkout={checkout: "true"}
         flash.now[:notice] = "All domains have been validated, please wait for certificate issuance" if @certificate_order.all_domains_validated?
         respond_to do |format|
           format.html { redirect_to certificate_order_path({id: @certificate_order.ref}.merge!(checkout))}
         end
       else
-        if @certificate_order.certificate_content.contacts_provided?
-          @certificate_order.certificate_content.pend_validation!(host: request.host_with_port)
+        if cc.contacts_provided?
+          cc.pend_validation!(host: request.host_with_port)
         end
 
         @all_validated = true
@@ -49,8 +50,8 @@ class ValidationsController < ApplicationController
         validated_domain_arry = []
         caa_check_domain_arry = []
 
-        unless @certificate_order.certificate_content.ca_id.nil?
-          cnames = @certificate_order.certificate_content.certificate_names
+        unless cc.ca_id.nil?
+          cnames = cc.certificate_names
           team_cnames = current_user.ssl_account.certificate_names
 
           # Team level validation check
@@ -87,7 +88,7 @@ class ValidationsController < ApplicationController
                 cache = nil # Rails.cache.read(params[:certificate_order_id] + ':' + ext_order_number + ':' + key)
 
                 if cache.blank?
-                  cn = @certificate_order.certificate_content.certificate_names.find_by_name(key)
+                  cn = cc.certificate_names.find_by_name(key)
                   dcv = cn.blank? ? nil : cn.domain_control_validations.last
                   value['attempted_on'] = dcv.blank? ? 'n/a' : dcv.created_at
 
@@ -210,8 +211,7 @@ class ValidationsController < ApplicationController
   end
 
   def get_asynch_domains
-    cache=nil
-    if cache.blank? or cache=="{}"
+    Rails.cache.fetch("#{current_user.cache_key}/get_asynch_domains/#{params['domain_name']}",expires_in: 10.minutes) do
       co = (current_user.is_system_admins? ? CertificateOrder :
                 current_user.certificate_orders).find_by_ref(params[:certificate_order_id])
       returnObj = {}
@@ -377,8 +377,6 @@ class ValidationsController < ApplicationController
       # end
 
       render :json => returnObj
-    else
-      render :json => JSON.parse(cache)
     end
   end
 

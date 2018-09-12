@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180910095626) do
+ActiveRecord::Schema.define(version: 20180912022511) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        limit: 255
@@ -310,6 +310,7 @@ ActiveRecord::Schema.define(version: 20180910095626) do
   end
 
   add_index "certificate_contents", ["certificate_order_id"], name: "index_certificate_contents_on_certificate_order_id", using: :btree
+  add_index "certificate_contents", ["ref"], name: "index_certificate_contents_on_ref", using: :btree
   add_index "certificate_contents", ["workflow_state"], name: "index_certificate_contents_on_workflow_state", using: :btree
 
   create_table "certificate_lookups", force: :cascade do |t|
@@ -333,6 +334,9 @@ ActiveRecord::Schema.define(version: 20180910095626) do
     t.integer  "ssl_account_id",         limit: 4
     t.boolean  "caa_passed",                         default: false
   end
+
+  add_index "certificate_names", ["certificate_content_id"], name: "index_certificate_names_on_certificate_content_id", using: :btree
+  add_index "certificate_names", ["name"], name: "index_certificate_names_on_name", using: :btree
 
   create_table "certificate_order_tokens", force: :cascade do |t|
     t.integer  "certificate_order_id", limit: 4
@@ -647,6 +651,8 @@ ActiveRecord::Schema.define(version: 20180910095626) do
     t.integer  "csr_unique_value_id",        limit: 4
   end
 
+  add_index "domain_control_validations", ["certificate_name_id", "email_address", "dcv_method"], name: "index_domain_control_validations_on_3_cols", using: :btree
+  add_index "domain_control_validations", ["csr_id", "email_address", "dcv_method"], name: "index_domain_control_validations_on_3_cols(2)", using: :btree
   add_index "domain_control_validations", ["id", "csr_id"], name: "index_domain_control_validations_on_id_csr_id", using: :btree
 
   create_table "duo_accounts", force: :cascade do |t|
@@ -714,6 +720,8 @@ ActiveRecord::Schema.define(version: 20180910095626) do
     t.datetime "updated_at"
     t.text     "card_declined",  limit: 65535
   end
+
+  add_index "funded_accounts", ["ssl_account_id"], name: "index_funded_accounts_on_ssl_account_id", using: :btree
 
   create_table "gateways", force: :cascade do |t|
     t.string "service",  limit: 255
@@ -943,6 +951,7 @@ ActiveRecord::Schema.define(version: 20180910095626) do
   add_index "orders", ["quote_number"], name: "index_orders_on_quote_number", using: :btree
   add_index "orders", ["reference_number"], name: "index_orders_on_reference_number", using: :btree
   add_index "orders", ["state", "billable_id", "billable_type"], name: "index_orders_on_state_and_billable_id_and_billable_type", using: :btree
+  add_index "orders", ["state", "description", "notes"], name: "index_orders_on_state_and_description_and_notes", using: :btree
   add_index "orders", ["status"], name: "index_orders_on_status", using: :btree
   add_index "orders", ["updated_at"], name: "index_orders_on_updated_at", using: :btree
 
@@ -1361,7 +1370,6 @@ ActiveRecord::Schema.define(version: 20180910095626) do
     t.integer  "registered_agent_id",       limit: 4
   end
 
-  add_index "signed_certificates", ["ca_id"], name: "index_signed_certificates_on_ca_id", using: :btree
   add_index "signed_certificates", ["common_name"], name: "index_signed_certificates_on_common_name", using: :btree
   add_index "signed_certificates", ["csr_id"], name: "index_signed_certificates_on_csr_id", using: :btree
 
@@ -1497,6 +1505,10 @@ ActiveRecord::Schema.define(version: 20180910095626) do
     t.datetime "created_at",                null: false
     t.datetime "updated_at",                null: false
   end
+
+  add_index "system_audits", ["owner_id", "owner_type"], name: "index_system_audits_on_owner_id_and_owner_type", using: :btree
+  add_index "system_audits", ["target_id", "target_type", "owner_id", "owner_type"], name: "index_system_audits_on_4_cols", using: :btree
+  add_index "system_audits", ["target_id", "target_type"], name: "index_system_audits_on_target_id_and_target_type", using: :btree
 
   create_table "taggings", force: :cascade do |t|
     t.integer  "tag_id",        limit: 4,   null: false
@@ -1779,5 +1791,4 @@ ActiveRecord::Schema.define(version: 20180910095626) do
   end
 
   add_foreign_key "cdns", "certificate_orders"
-  add_foreign_key "signed_certificates", "cas"
 end
