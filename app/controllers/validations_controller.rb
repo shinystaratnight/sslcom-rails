@@ -40,7 +40,7 @@ class ValidationsController < ApplicationController
           format.html { redirect_to certificate_order_path({id: @certificate_order.ref}.merge!(checkout))}
         end
       else
-        if cc.contacts_provided?
+        if cc.contacts_provided? or cc.info_provided?
           cc.pend_validation!(host: request.host_with_port)
         end
 
@@ -219,123 +219,56 @@ class ValidationsController < ApplicationController
         domain_control_validations.last.try(:cache_key)}/get_asynch_domains/#{params['domain_name']}") do
       co = (current_user.is_system_admins? ? CertificateOrder :
                 current_user.certificate_orders).find_by_ref(params[:certificate_order_id])
-
       if co
         cn = co.certificate_content.certificate_names.find_by_name(params['domain_name'])
-
-        if co.certificate_content.ca_id.nil?
-          ds = params['domain_status']
-
+        ds = params['domain_status']
+        dcv = cn.domain_control_validations.last
+        if dcv and co.certificate_content.ca
+          domain_status = dcv.identifier_found? ? "validated" : "pending"
+          domain_method = dcv.email_address ? dcv.email_address : dcv.dcv_method
+        else
           domain_status = params['is_ucc'] == 'true' ? (ds && ds[cn.name] ? ds[cn.name]['status'] : nil) : (ds && ds.to_a[0] && ds.to_a[0][1] ? ds.to_a[0][1]['status'] : nil)
           domain_method = params['is_ucc'] == 'true' ? (ds && ds[cn.name] ? ds[cn.name]['method'] : nil) : (ds && ds.to_a[0] && ds.to_a[0][1] ? ds.to_a[0][1]['method'] : nil)
+        end
 
-          if co.external_order_number
-            dcv = cn.domain_control_validations.last
-
-            if params['is_ucc'] == 'true'
-              if ds && ds[cn.name]
-                optionsObj = {}
-                addresses = params['domain_count'].to_i > Validation::COMODO_EMAIL_LOOKUP_THRESHHOLD ?
-                                DomainControlValidation.email_address_choices(cn.name) :
-                                ComodoApi.domain_control_email_choices(cn.name).email_address_choices
-                addresses.delete("none")
-
-                viaEmail = {}
-                viaCSR = {}
-
-                addresses.each do |addr|
-                  viaEmail[addr] = addr
-                end
-
-                viaCSR['http_csr_hash'] = 'CSR hash text file using http://'
-                viaCSR['https_csr_hash'] = 'CSR hash text file using https://'
-                viaCSR['cname_csr_hash'] = 'Add cname entry'
-
-                optionsObj['Validation via email'] = viaEmail
-                optionsObj['Validation via csr hash'] = viaCSR
-
-                {
-                  'tr_info' => {
-                    'options' => optionsObj,
-                    'slt_option' => domain_method ?
-                                        domain_method.downcase.gsub('pre-validated %28', '').gsub('%29', '').gsub(' ', '_') : nil,
-                    'pretest' => 'n/a',
-                    'attempt' => domain_method ? domain_method.downcase.gsub('%28', ' ').gsub('%29', ' ') : '',
-                    'attempted_on' => dcv.blank? ? 'n/a' : dcv.created_at,
-                    'status' => domain_status ? domain_status.downcase : '',
-                    'caa_check' => ''
-                  },
-                  'tr_instruction' => false
-                }
-              end
+        addresses =
+            if co.certificate_content.ca.blank? and co.external_order_number
+              params['domain_count'].to_i > Validation::COMODO_EMAIL_LOOKUP_THRESHHOLD ?
+                  DomainControlValidation.email_address_choices(cn.name) :
+                  ComodoApi.domain_control_email_choices(cn.name).email_address_choices
             else
-              optionsObj = {}
-              addresses = params['domain_count'].to_i > Validation::COMODO_EMAIL_LOOKUP_THRESHHOLD ?
-                              DomainControlValidation.email_address_choices(cn.name) :
-                              ComodoApi.domain_control_email_choices(cn.name).email_address_choices
-              addresses.delete("none")
-
-              viaEmail = {}
-              viaCSR = {}
-
-              addresses.each do |addr|
-                viaEmail[addr] = addr
-              end
-
-              viaCSR['http_csr_hash'] = 'CSR hash text file using http://'
-              viaCSR['https_csr_hash'] = 'CSR hash text file using https://'
-              viaCSR['cname_csr_hash'] = 'Add cname entry'
-
-              optionsObj['Validation via email'] = viaEmail
-              optionsObj['Validation via csr hash'] = viaCSR
-
-              {
-                'tr_info' => {
-                  'options' => optionsObj,
-                  'slt_option' => domain_method ?
-                                      domain_method.downcase.gsub('pre-validated %28', '').gsub('%29', '').gsub(' ', '_') : dcv.try(:dcv_method),
-                  'pretest' => 'n/a',
-                  'attempt' => domain_method ? domain_method.downcase.gsub('%28', '').gsub('%29', '') : '',
-                  'attempted_on' => dcv.blank? ? 'n/a' : dcv.created_at,
-                  'status' => domain_status ? domain_status.downcase : '',
-                  'caa_check' => ''
-                },
-                'tr_instruction' => false
-              }
+              DomainControlValidation.email_address_choices(cn.name)
             end
-          else
-            optionsObj = {}
-            addresses = DomainControlValidation.email_address_choices(cn.name)
+        addresses.delete("none")
+        optionsObj = {}
+        viaEmail = {}
+        viaCSR = {}
 
-            viaEmail = {}
-            viaCSR = {}
-
-            addresses.each do |addr|
-              viaEmail[addr] = addr
-            end
-
-            viaCSR['http_csr_hash'] = 'CSR hash text file using http://'
-            viaCSR['https_csr_hash'] = 'CSR hash text file using https://'
-            viaCSR['cname_csr_hash'] = 'Add cname entry'
-
-            optionsObj['Validation via email'] = viaEmail
-            optionsObj['Validation via csr hash'] = viaCSR
-
-            le = cn.domain_control_validations.last_emailed
-
-            {
-              'tr_info' => {
-                'options' => optionsObj,
-                'slt_option' => le.blank? ? nil : le.email_address,
-                'pretest' => 'n/a',
-                'attempt' => 'validation not performed yet',
-                'attempted_on' => 'n/a',
-                'status' => 'waiting',
-                'caa_check' => ''
-              },
-              'tr_instruction' => false
-            }
+        if dcv or (ds && ds[cn.name])
+          addresses.each do |addr|
+            viaEmail[addr] = addr
           end
+
+          viaCSR['http_csr_hash'] = 'CSR hash text file using http://'
+          viaCSR['https_csr_hash'] = 'CSR hash text file using https://'
+          viaCSR['cname_csr_hash'] = 'Add cname entry'
+
+          optionsObj['Validation via email'] = viaEmail
+          optionsObj['Validation via csr hash'] = viaCSR
+
+          {
+            'tr_info' => {
+              'options' => optionsObj,
+              'slt_option' => domain_method ?
+                                  domain_method.downcase.gsub('pre-validated %28', '').gsub('%29', '').gsub(' ', '_') : nil,
+              'pretest' => 'n/a',
+              'attempt' => domain_method ? domain_method.downcase.gsub('%28', ' ').gsub('%29', ' ') : '',
+              'attempted_on' => dcv.blank? ? 'n/a' : dcv.created_at,
+              'status' => domain_status ? domain_status.downcase : '',
+              'caa_check' => ''
+            },
+            'tr_instruction' => false
+          }
         else
           optionsObj = {}
           addresses = DomainControlValidation.email_address_choices(cn.name)
@@ -357,28 +290,19 @@ class ValidationsController < ApplicationController
           le = cn.domain_control_validations.last_emailed
 
           {
-            'tr_info' => {
-              'options' => optionsObj,
-              'slt_option' => le.blank? ? nil : le.email_address,
-              'pretest' => 'n/a',
-              'attempt' => 'validation not performed yet',
-              'attempted_on' => 'n/a',
-              'status' => 'waiting',
-              'caa_check' => ''
-            },
-            'tr_instruction' => false
+              'tr_info' => {
+                  'options' => optionsObj,
+                  'slt_option' => le.blank? ? nil : le.email_address,
+                  'pretest' => 'n/a',
+                  'attempt' => 'validation not performed yet',
+                  'attempted_on' => 'n/a',
+                  'status' => 'waiting',
+                  'caa_check' => ''
+              },
+              'tr_instruction' => false
           }
         end
       end
-
-      # # write_fragment(params[:certificate_order_id] + ':' + params['domain_name'], returnObj.to_json)
-      # if !returnObj.blank? and returnObj['tr_info']['status'] == 'validated'
-      #   Rails.cache.write(params[:certificate_order_id] + ':' + params[:ext_order_number] + ':' + params['domain_name'],
-      #                     returnObj.to_json, :expires_in => 30.days)
-      # # else
-      # #   Rails.cache.write(params[:certificate_order_id] + ':' + params[:ext_order_number] + ':' + params['domain_name'],
-      # #                     returnObj.to_json, :expires_in => 10.minutes)
-      # end
     end
     render :json => returnObj
   end
