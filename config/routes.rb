@@ -45,7 +45,7 @@ SslCom::Application.routes.draw do
         # SSL Manager
         match '/ssl_manager' => 'api_ssl_manager_requests#register',
               as: :api_ssl_manager_register, via: [:options, :post]
-        match '/ssl_manager/:ref' => 'api_ssl_manager_requests#collection',
+        match '/ssl_manager/collection' => 'api_ssl_manager_requests#collection',
               as: :api_ssl_manager_collection, via: [:options, :post]
         match '/ssl_managers' => 'api_ssl_manager_requests#delete',
               as: :api_ssl_managers_delete, via: [:options, :delete]
