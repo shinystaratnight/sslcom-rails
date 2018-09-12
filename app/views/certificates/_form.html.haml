@@ -107,13 +107,17 @@
             -other=[ServerSoftware.find(1)].map{|s|[s.title,s.id]}
             =select_field_for(cert_form, :server_software_id.to_s, other+ss.sort{|a,b|a.title<=>b.title}.collect{|s|[s.title,s.id]},{:no_label=>true}, {})
   -else
-    -if @certificate.is_browser_generated_capable?
+    -if @certificate.is_code_signing?
       %p #{@certificate.title} Certificate Summary
       %ul.cert_reqs
         %li Used to secure apps by making them tamper proof
         %li Validates the identity of the owner or author of the application to be installed
         %li Eliminates "Untrusted App" dialogs when installing or executing the application
         %li Prevents unauthorized bundling of app with other applications (such as malware/bloatware/spyware)
+    -elsif @certificate.is_client?
+      %p #{@certificate.title} Certificate Summary
+      %ul.cert_reqs
+        #{@certificate.description["points"].html_safe}
     -elsif @certificate.is_wildcard?
       %p #{@certificate.title} Summary
       %ul.cert_reqs

@@ -512,7 +512,7 @@ SslCom::Application.routes.draw do
   match 'browser_compatibility' => 'site#compatibility', as: :browsers, via: [:get, :post]
   match 'acceptable-top-level-domains-tlds-for-ssl-certificates' => 'site#top_level_domains_tlds',
         as: :tlds, via: [:get, :post]
-  match '/certificate_order_token/:token' => 'certificate_order_tokens#confirm', :as => :confirm, via: [:get]
+  match '/certificate_order_token/:token/generate_cert' => 'certificate_orders#generate_cert', :as => :confirm, via: [:get]
 
   #match 'paid_cert_orders'=> 'site#paid_cert_orders'
   (Reseller::TARGETED+SiteController::STANDARD_PAGES).each do |i|

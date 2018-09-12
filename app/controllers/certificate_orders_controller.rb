@@ -51,12 +51,31 @@ class CertificateOrdersController < ApplicationController
   end
 
   def generate_cert
-    @certificate_order = (current_user.is_system_admins? ? CertificateOrder :
-         current_user.ssl_account.certificate_orders).find_by_ref(params[:id])
+    co_token = CertificateOrderToken.find_by_token(params[:token])
+    is_expired = false
 
-    respond_to do |format|
-      format.html
-      format.xml  { render :xml => @certificate_order }
+    if co_token
+      if co_token.user != current_user
+        is_expired = true
+        flash[:error] = "The current user can not access to the page."
+      elsif co_token.is_expired
+        is_expired = true
+        flash[:error] = "The page has expired or is no longer valid."
+      elsif co_token.due_date < DateTime.now
+        is_expired = true
+        flash[:error] = "The page has expired or is no longer valid."
+      else
+        @certificate_order = co_token.certificate_order
+      end
+    else
+      is_expired = true
+      flash[:error] = "Provided token is incorrect."
+    end
+
+    if is_expired
+      render "confirm"
+    else
+      render "generate_cert"
     end
   end
 
