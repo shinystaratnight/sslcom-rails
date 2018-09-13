@@ -117,7 +117,7 @@ class SignedCertificate < ActiveRecord::Base
                      (status =~ "%#{term}%")}
     end
 
-    %w(subject).each do |field|
+    %w(common_name).each do |field|
       query = filters[field.to_sym]
       result = result.where{ common_name =~ "%#{query}%" } if query
     end
