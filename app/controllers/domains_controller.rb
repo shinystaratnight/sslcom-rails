@@ -67,14 +67,14 @@ class DomainsController < ApplicationController
     end
     @all_domains = []
     @address_choices = []
-    @cnames = @ssl_account.certificate_names.order(:created_at).reverse_order
+    @cnames = @ssl_account.certificate_names.order(created_at: :desc)
     @cnames.each do |cn|
       dcv = cn.domain_control_validations.last
       next if dcv && dcv.identifier_found
       @all_domains << cn
       @address_choices << DomainControlValidation.email_address_choices(cn.name)
     end
-    @domains = @ssl_account.domains.order(:created_at).reverse_order
+    @domains = @ssl_account.domains.order(created_at: :desc)
     @domains.each do |dn|
       dcv = dn.domain_control_validations.last
       next if dcv && dcv.identifier_found
@@ -96,7 +96,7 @@ class DomainsController < ApplicationController
   end
 
   def validate_selected
-    unless params[:d_name_check]
+    if params[:d_name_check]
       send_validation_email(params)
       flash[:notice] = "DCV email sent."
       redirect_to domains_path
