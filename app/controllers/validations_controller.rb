@@ -219,16 +219,18 @@ class ValidationsController < ApplicationController
         domain_control_validations.last.try(:cache_key)}/get_asynch_domains/#{params['domain_name']}") do
       co = (current_user.is_system_admins? ? CertificateOrder :
                 current_user.certificate_orders).find_by_ref(params[:certificate_order_id])
+
       if co
         cn = co.certificate_content.certificate_names.find_by_name(params['domain_name'])
         ds = params['domain_status']
         dcv = cn.domain_control_validations.last
+
         if dcv and co.certificate_content.ca
           domain_status = dcv.identifier_found? ? "validated" : "pending"
           domain_method = dcv.email_address ? dcv.email_address : dcv.dcv_method
         else
-          domain_status = params['is_ucc'] == 'true' ? (ds && ds[cn.name] ? ds[cn.name]['status'] : nil) : (ds && ds.to_a[0] && ds.to_a[0][1] ? ds.to_a[0][1]['status'] : nil)
-          domain_method = params['is_ucc'] == 'true' ? (ds && ds[cn.name] ? ds[cn.name]['method'] : nil) : (ds && ds.to_a[0] && ds.to_a[0][1] ? ds.to_a[0][1]['method'] : nil)
+          domain_status = !ds.blank? && ds['status'] ? ds['status'] : nil
+          domain_method = !ds.blank? && ds['method'] ? ds['method'] : nil
         end
 
         addresses =
@@ -240,11 +242,12 @@ class ValidationsController < ApplicationController
               DomainControlValidation.email_address_choices(cn.name)
             end
         addresses.delete("none")
+
         optionsObj = {}
         viaEmail = {}
         viaCSR = {}
 
-        if dcv or (ds && ds[cn.name])
+        if dcv or !ds.blank?
           addresses.each do |addr|
             viaEmail[addr] = addr
           end
@@ -304,6 +307,7 @@ class ValidationsController < ApplicationController
         end
       end
     end
+
     render :json => returnObj
   end
 

@@ -658,6 +658,7 @@ jQuery(function($) {
             var total = domains.length;
             var validated_domains = '<%=@validated_domains%>'.split(',');
             var domain_status = JSON.parse('<%= raw @ds ? @ds.to_json : {}%>');
+            var domain_status_keys = Object.keys(domain_status);
             var unvalidated_domain_total = total - (validated_domains[0] == '' ? 0 : validated_domains.length);
             var unvalidated_domain_success_count = 0;
             var unvalidated_domain_failed_count = 0;
@@ -669,8 +670,12 @@ jQuery(function($) {
                   data: {
                     domain_name: value,
                     domain_count: total,
-                    domain_status: domain_status,
-                    is_ucc: '<%=is_ucc%>',
+                    domain_status: domain_status_keys.length > 0 ?
+                      ('<%=is_ucc%>' == 'true' ?
+                        domain_status[value] :
+                        domain_status[domain_status_keys[0]]
+                      ) :
+                      null,
                     ext_order_number: '<%=ext_order_number%>'
                   },
                   type: "POST",
