@@ -7,6 +7,16 @@ $.last_delete_clicked=function(){
   $('#register_card_form').fadeIn();
 };
 
+function resetToStandardButton() {
+  var charge_amount = $('#order_charge_amount');
+  if ($('#order_funded_amount').length &&
+    charge_amount.length &&
+    (parseFloat(charge_amount.val()) == 0)
+  ) {
+    setStandardButton();
+  }
+}
+
 function paypalDomAdjustmentType() {
   var str = '';
   if ($('#order_reprocess_ucc').length) {
@@ -50,6 +60,7 @@ function setPayPalButton() {
   } else {
     setStandardButton();
   }
+  resetToStandardButton();
 }
 
 function setStandardButton() {

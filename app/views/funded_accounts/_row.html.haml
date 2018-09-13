@@ -1,9 +1,11 @@
 -colspan ||= '3'
 -indx ||= ""
--row_class=indx.blank? ? "" : "row_#{indx}"
+-row_class = indx.blank? ? "" : "row_#{indx}"
+-no_td = ['confirm_funds', 'show_cart'].include?(action_name)
+
 -if cert.respond_to?(:parent) && cert.parent && !(@order && @order.reprocess_ucc_order?)
   %tr.line_item(class=row_class)
-    -unless action_name == 'show_cart'
+    -unless no_td
       %td
     %td.description.subitem
       Renewal for certificate
@@ -12,7 +14,7 @@
 -if cert.is_a? CertificateOrder
   -order_line_items(cert).each do |item|
     %tr.line_item(class=row_class)
-      -unless action_name == 'show_cart'
+      -unless no_td
         %td
       %td.description.subitem= item
       %td(colspan="#{colspan}")
