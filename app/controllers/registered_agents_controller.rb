@@ -54,7 +54,7 @@ class RegisteredAgentsController < ApplicationController
 
   def remove_managed_certificates
     registered_agent = @ssl_account.registered_agents.find(params[:id])
-    registered_agent.managed_certificates.where(id, params[:remove_managed_certs]).destroy_all
+    registered_agent.managed_certificates.where(id: params[:remove_managed_certs]).destroy_all
 
     managed_certificates
   end
