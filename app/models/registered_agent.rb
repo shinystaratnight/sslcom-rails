@@ -7,8 +7,8 @@ class RegisteredAgent < ActiveRecord::Base
   attr_accessor :api_status, :reason
 
   # will_paginate
-  # cattr_accessor :per_page
-  # @@per_page = 10
+  cattr_accessor :per_page
+  @@per_page = 10
 
   scope :search_with_terms, lambda { |term|
     term ||= ""

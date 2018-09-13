@@ -4,8 +4,9 @@ class Api::V1::ApiSslManagerRequestsController < Api::V1::APIController
   wrap_parameters ApiSslManagerRequest, include:
       [*(
         ApiSslManagerRequest::REGISTER+
+        ApiSslManagerRequest::DELETE+
         ApiSslManagerRequest::COLLECTION+
-        ApiSslManagerRequest::DELETE
+        ApiSslManagerRequest::COLLECTIONS
       ).uniq]
 
   def set_result_parameter(result, asm, message = nil)
@@ -113,6 +114,43 @@ class Api::V1::ApiSslManagerRequestsController < Api::V1::APIController
     render_500_error e
   end
 
+  def collections
+    set_template "collections"
+
+    if @result.save
+      @managed_certs = @result.find_managed_certs(params[:ssl_manager_ref], params[:search])
+
+      page = params[:page] || 1
+      per_page = params[:per_page] || PER_PAGE_DEFAULT
+      @paged_managed_certs = paginate @managed_certs, per_page: per_page.to_i, page: page.to_i
+
+      if @paged_managed_certs.is_a?(ActiveRecord::Relation)
+        @results = []
+
+        @paged_managed_certs.each do |managed_cert|
+          result = ApiManagedCertificateRetrieve.new
+          result.common_name = managed_cert.common_name
+          result.subject_alternative_names = managed_cert.subject_alternative_names.split(',').join(', ')
+          result.effective_date = managed_cert.effective_date
+          result.expiration_date = managed_cert.expiration_date
+          result.serial = managed_cert.serial
+          result.issuer = managed_cert.issuer_dn
+          result.status = managed_cert.status
+          result.created_at = managed_cert.created_at
+          result.updated_at = managed_cert.updated_at
+
+          @results << result
+        end
+      end
+    else
+      InvalidApiSslManagerRequest.create parameters: params, response: @result.to_json
+    end
+
+    render_200_status
+  rescue => e
+    render_500_error e
+  end
+
   private
 
     def record_parameters
@@ -121,6 +159,8 @@ class Api::V1::ApiSslManagerRequestsController < Api::V1::APIController
                   ApiSslManagerCreate
                 when "collection"
                   ApiManagedCertificateCreate
+                when "collections"
+                  ApiManagedCertificateRetrieve
                 when "delete"
                   ApiSslManagerDelete
                 when "index"
