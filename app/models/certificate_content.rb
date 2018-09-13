@@ -121,7 +121,7 @@ class CertificateContent < ActiveRecord::Base
     end
   end
 
-  def self.pre_validation(options)
+  def pre_validation(options)
     if csr and !csr.sent_success #do not send if already sent successfully
       options[:certificate_content] = self
       if !self.infringement.empty? # possible trademark problems

@@ -337,6 +337,7 @@ ActiveRecord::Schema.define(version: 20180912022511) do
 
   add_index "certificate_names", ["certificate_content_id"], name: "index_certificate_names_on_certificate_content_id", using: :btree
   add_index "certificate_names", ["name"], name: "index_certificate_names_on_name", using: :btree
+  add_index "certificate_names", ["ssl_account_id"], name: "index_certificate_names_on_ssl_account_id", using: :btree
 
   create_table "certificate_order_tokens", force: :cascade do |t|
     t.integer  "certificate_order_id", limit: 4
@@ -388,8 +389,10 @@ ActiveRecord::Schema.define(version: 20180912022511) do
   add_index "certificate_orders", ["ref"], name: "index_certificate_orders_on_ref", using: :btree
   add_index "certificate_orders", ["site_seal_id"], name: "index_certificate_orders_site_seal_id", using: :btree
   add_index "certificate_orders", ["ssl_account_id", "workflow_state", "is_test"], name: "index_certificate_orders_on_3_cols2", using: :btree
+  add_index "certificate_orders", ["ssl_account_id"], name: "index_certificate_orders_on_ssl_account_id", using: :btree
   add_index "certificate_orders", ["validation_id"], name: "index_certificate_orders_on_validation_id", using: :btree
   add_index "certificate_orders", ["workflow_state", "is_expired", "is_test"], name: "index_certificate_orders_on_3_cols", using: :btree
+  add_index "certificate_orders", ["workflow_state", "is_expired", "is_test"], name: "index_certificate_orders_on_ws_ie_it_ua", using: :btree
 
   create_table "certificates", force: :cascade do |t|
     t.integer  "reseller_tier_id",      limit: 4
@@ -1370,7 +1373,6 @@ ActiveRecord::Schema.define(version: 20180912022511) do
     t.integer  "registered_agent_id",       limit: 4
   end
 
-  add_index "signed_certificates", ["ca_id"], name: "index_signed_certificates_on_ca_id", using: :btree
   add_index "signed_certificates", ["common_name"], name: "index_signed_certificates_on_common_name", using: :btree
   add_index "signed_certificates", ["csr_id"], name: "index_signed_certificates_on_csr_id", using: :btree
 
@@ -1792,5 +1794,4 @@ ActiveRecord::Schema.define(version: 20180912022511) do
   end
 
   add_foreign_key "cdns", "certificate_orders"
-  add_foreign_key "signed_certificates", "cas"
 end
