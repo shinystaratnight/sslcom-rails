@@ -682,6 +682,146 @@
         $('#notification_group_list').attr('action', scanGroupsUrl).submit();
       });
 
+      // Testing
+      $('#btn_ssl_manager_index').click(function(e) {
+        e.preventDefault();
+
+        var api_domain = '<%=api_domain%>';
+        var index_ssl_managers = '<%= api_ssl_managers_index_path %>';
+
+        $.ajax({
+          dataType: 'JSON',
+          url: api_domain + index_ssl_managers,
+          data: {
+            account_key: '4cda723d5b5a',
+            secret_key: '6Q56ggoWox7NuA==',
+            search: ""
+          },
+          type: 'GET',
+          success: function(result) {
+            console.log(result);
+          }
+        });
+      });
+
+      $('#btn_certs_index').click(function(e) {
+        e.preventDefault();
+
+        var api_domain = '<%=api_domain%>';
+        var index_ssl_managers = '<%= api_ssl_managers_collections_path %>';
+
+        $.ajax({
+          dataType: 'JSON',
+          url: api_domain + index_ssl_managers,
+          data: {
+            account_key: '4cda723d5b5a',
+            secret_key: '6Q56ggoWox7NuA==',
+            ssl_manager_ref: "sm-711dphr0q",
+            search: "istejmam.com"
+          },
+          type: 'GET',
+          success: function(result) {
+            console.log(result);
+          }
+        });
+      });
+
+      $('#btn_ssl_manager_delete').click(function(e) {
+        e.preventDefault();
+
+        var api_domain = '<%=api_domain%>';
+        var delete_ssl_managers = '<%= api_ssl_managers_delete_path %>';
+
+        $.ajax({
+          dataType: 'JSON',
+          url: api_domain + delete_ssl_managers,
+          data: {
+            account_key: '4cda723d5b5a',
+            secret_key: '6Q56ggoWox7NuA==',
+            ref_list: ['sm-161dnq4un', 'sm-db1doavs6']
+          },
+          type: 'DELETE',
+          success: function(result) {
+            console.log(result);
+          }
+        });
+      });
+
+      $('#btn_collect_certs').click(function(e) {
+        e.preventDefault();
+
+        var api_domain = '<%=api_domain%>';
+        var collect_certs = '<%= api_ssl_manager_collection_path %>';
+        var certificate = '-----BEGIN CERTIFICATE-----\n' +
+            'MIIE0zCCA7ugAwIBAgIQQhU2Tr3+VrBbOxwMiWSbzTANBgkqhkiG9w0BAQsFADBN\n' +
+            'MQswCQYDVQQGEwJVUzEQMA4GA1UEChMHU1NMLmNvbTEUMBIGA1UECxMLd3d3LnNz\n' +
+            'bC5jb20xFjAUBgNVBAMTDVNTTC5jb20gRFYgQ0EwHhcNMTcwMTAxMDAwMDAwWhcN\n' +
+            'MTcwNDAxMjM1OTU5WjBqMSEwHwYDVQQLExhEb21haW4gQ29udHJvbCBWYWxpZGF0\n' +
+            'ZWQxLjAsBgNVBAsTJUhvc3RlZCBieSBTZWN1cmUgU29ja2V0cyBMYWJvcmF0b3Jp\n' +
+            'ZXMxFTATBgNVBAMTDGlzdGVqbWFtLmNvbTCCASIwDQYJKoZIhvcNAQEBBQADggEP\n' +
+            'ADCCAQoCggEBAM1lLjWiP5iEPpgRkIDRrU1lhfDC27XODujLSqcbpuLrbRr3UTYh\n' +
+            '1NYXEkQEqbPkYR2s9m7tOpCEr8QSoAlVY1FCGGzVbwKWSrZrgwwy8C6t76K1yx5F\n' +
+            'jw7WUQ4CbSpThuS3h1n3vgs9cREwadKfA4Mc7WxluQWHKkfAGleI5eMTbjA6wVAm\n' +
+            'ks6uDXUEjbJ1Kq9wx+p99coBE2g0/epB20hPm5LGb0GvfOzyyyNAJhLXvbOCuKEj\n' +
+            '7+4kJcF+fMVOQVmy/OL7mUAE5BaC7qWtndwH0rI9RvD1WAJq/T39wpwDZV9sO9X1\n' +
+            'exvDghomlrpdm8cgrLXF+4pQLpSqO2FisnUCAwEAAaOCAZAwggGMMB8GA1UdIwQY\n' +
+            'MBaAFEaa/fxRXnxUU1LimeOzMu+TGn9WMB0GA1UdDgQWBBTHZhooBEZA+861TUqu\n' +
+            'o9mb+5TDQTAOBgNVHQ8BAf8EBAMCBaAwDAYDVR0TAQH/BAIwADAdBgNVHSUEFjAU\n' +
+            'BggrBgEFBQcDAQYIKwYBBQUHAwIwSgYDVR0gBEMwQTA1BgorBgEEAYKpMAEBMCcw\n' +
+            'JQYIKwYBBQUHAgEWGWh0dHBzOi8vY3BzLnVzZXJ0cnVzdC5jb20wCAYGZ4EMAQIB\n' +
+            'MDQGA1UdHwQtMCswKaAnoCWGI2h0dHA6Ly9jcmwuc3NsLmNvbS9TU0xjb21EVkNB\n' +
+            'XzIuY3JsMGAGCCsGAQUFBwEBBFQwUjAvBggrBgEFBQcwAoYjaHR0cDovL2NydC5z\n' +
+            'c2wuY29tL1NTTGNvbURWQ0FfMi5jcnQwHwYIKwYBBQUHMAGGE2h0dHA6Ly9vY3Nw\n' +
+            'LnNzbC5jb20wKQYDVR0RBCIwIIIMaXN0ZWptYW0uY29tghB3d3cuaXN0ZWptYW0u\n' +
+            'Y29tMA0GCSqGSIb3DQEBCwUAA4IBAQCuPJrmyU2H6g0gaZeCcyXdMgNdmRzxl3Bb\n' +
+            'Jn2tQcgEy+ub5Ema5+mXWs+A77p4zz1Rqqthzb1/yQog2b/295jUW4qwHff1i5F0\n' +
+            'ZvC5UDRHYY7Oh6xa0M0vNfIElzcCjtVvlMvL6wlwbixPb3L0qFS2+3suMmMewPzC\n' +
+            '46QllPutdqvijgCU0zAZ8QBDhmLIFpGsBKvOJ2U16k+MydCFGjuabSsIE2UU+Q8Y\n' +
+            '5s0JeZ495V1Upvfi1WFC5zzqry+QlRf6tZO0W6FCggsw9ueoOr5dkNRjbg2cfSjb\n' +
+            'Ro9tm3FjaRTTlpcs2IhhdOmMHctTIQIjQKgs9FB+NrvtOKgQ9C6d\n' +
+            '-----END CERTIFICATE-----';
+
+        $.ajax({
+          dataType: 'JSON',
+          url: api_domain + collect_certs,
+          data: {
+            account_key: '4cda723d5b5a',
+            secret_key: '6Q56ggoWox7NuA==',
+            certificates: [certificate],
+            ref: 'sm-fe1dpi7p8'
+          },
+          type: 'POST',
+          success: function(result) {
+            console.log(result);
+          }
+        });
+      });
+
+      $('#btn_ssl_manager_register').click(function(e) {
+        e.preventDefault();
+
+        var api_domain = '<%=api_domain%>';
+        var register_ssl_manager = '<%= api_ssl_manager_register_path %>';
+
+        $.ajax({
+          dataType: 'JSON',
+          url: api_domain + register_ssl_manager,
+          data: {
+            ip_address: '192.168.1.1',
+            mac_address: '00-FF-55-11-77-DD',
+            agent: 'SSL Manager v2.0 build 12234-0987',
+            account_key: '4cda723d5b5a',
+            secret_key: '6Q56ggoWox7NuA==',
+            requester: '11199'
+          },
+          type: 'POST',
+          success: function(result) {
+            console.log(result);
+          }
+        });
+      });
+
+
     });
   });
 </script>

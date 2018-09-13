@@ -51,6 +51,8 @@ SslCom::Application.routes.draw do
               as: :api_ssl_managers_delete, via: [:options, :delete]
         match '/ssl_managers' => 'api_ssl_manager_requests#index',
               as: :api_ssl_managers_index, via: [:options, :get]
+        match '/ssl_manager/collections' => 'api_ssl_manager_requests#collections',
+              as: :api_ssl_managers_collections, via: [:options, :get]
 
         # Code Signing.
         match '/generate_certificate' => 'api_certificate_requests#generate_certificate_v1_4',
