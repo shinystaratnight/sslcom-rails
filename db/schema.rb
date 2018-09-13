@@ -1336,7 +1336,6 @@ ActiveRecord::Schema.define(version: 20180912022511) do
     t.integer  "registered_agent_id",       limit: 4
   end
 
-  add_index "signed_certificates", ["ca_id"], name: "fk_rails_d21ca532b7", using: :btree
   add_index "signed_certificates", ["ca_id"], name: "index_signed_certificates_on_ca_id", using: :btree
   add_index "signed_certificates", ["common_name"], name: "index_signed_certificates_on_common_name", using: :btree
   add_index "signed_certificates", ["csr_id"], name: "index_signed_certificates_on_csr_id", using: :btree

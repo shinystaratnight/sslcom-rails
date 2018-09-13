@@ -206,12 +206,14 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
         end
       end
 
-      @certificate_order.update_attribute(:external_order_number, self.ca_order_number) if (self.admin_submitted && self.ca_order_number)
+      @certificate_order.update_attribute(:external_order_number, self.ca_order_number) if # from API
+          (self.admin_submitted && self.ca_order_number)
       @certificate_order.update_attribute(:ext_customer_ref, self.external_order_number) if self.external_order_number
       # choose the right ca_certificate_id for submit to Comodo
       @certificate_order.is_test=self.test
       #assume updating domain validation, already sent to comodo
-      if @certificate_order.certificate_content && @certificate_order.certificate_content.pending_validation? && @certificate_order.external_order_number
+      if @certificate_order.certificate_content && @certificate_order.certificate_content.pending_validation? &&
+          (@certificate_order.external_order_number || !@certificate_order.certificate_content.ca.blank?)
         #set domains
         @certificate_order.certificate_content.update_attribute(:domains, self.domains.keys)
         @certificate_order.certificate_content.dcv_domains({domains: self.domains, emails: self.dcv_candidate_addresses})

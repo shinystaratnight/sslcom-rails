@@ -120,7 +120,32 @@ class CertificateContent < ActiveRecord::Base
       end
     end
   end
-  
+
+  def self.pre_validation(options)
+    if csr and !csr.sent_success #do not send if already sent successfully
+      options[:certificate_content] = self
+      if !self.infringement.empty? # possible trademark problems
+        OrderNotifier.potential_trademark(Settings.notify_address, certificate_order, self.infringement).deliver_now
+      elsif ca.blank?
+        certificate_order.apply_for_certificate(options)
+      end
+      if options[:host]
+        Delayed::Job.enqueue DcvSentNotifyJob.new(id, options[:host])
+      else
+        last_sent = unless certificate_order.certificate.is_ucc?
+                      csr.domain_control_validations.last_sent
+                    else
+                      certificate_names.map {|cn| cn.domain_control_validations.last_sent}.flatten.compact
+                    end
+        unless last_sent.blank?
+          certificate_order.valid_recipients_list.each do |c|
+            OrderNotifier.dcv_sent(c, certificate_order, last_sent).deliver!
+          end
+        end
+      end
+    end
+  end
+
   workflow do
     state :new do
       event :submit_csr, :transitions_to => :csr_submitted
@@ -145,6 +170,9 @@ class CertificateContent < ActiveRecord::Base
       event :provide_contacts, :transitions_to => :contacts_provided
       event :cancel, :transitions_to => :canceled
       event :reset, :transitions_to => :new
+      event :pend_validation, :transitions_to => :pending_validation do |options={}|
+        pre_validation(options)
+      end
     end
 
     state :contacts_provided do
@@ -153,28 +181,7 @@ class CertificateContent < ActiveRecord::Base
       event :submit_csr, :transitions_to => :csr_submitted
       event :issue, :transitions_to => :issued
       event :pend_validation, :transitions_to => :pending_validation do |options={}|
-        if csr and !csr.sent_success #do not send if already sent successfully
-          options[:certificate_content]=self
-          if !self.infringement.empty? # possible trademark problems
-            OrderNotifier.potential_trademark(Settings.notify_address, certificate_order, self.infringement).deliver_now
-          elsif ca.blank?
-            certificate_order.apply_for_certificate(options)
-          end
-          if options[:host]
-            Delayed::Job.enqueue DcvSentNotifyJob.new(id, options[:host])
-          else
-            last_sent=unless certificate_order.certificate.is_ucc?
-              csr.domain_control_validations.last_sent
-            else
-              certificate_names.map{|cn|cn.domain_control_validations.last_sent}.flatten.compact
-            end
-            unless last_sent.blank?
-              certificate_order.valid_recipients_list.each do |c|
-                OrderNotifier.dcv_sent(c,certificate_order,last_sent).deliver!
-              end
-            end
-          end
-        end
+        pre_validation(options)
       end
       event :cancel, :transitions_to => :canceled
       event :reset, :transitions_to => :new
