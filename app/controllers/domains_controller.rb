@@ -5,8 +5,8 @@ class DomainsController < ApplicationController
   before_filter :set_row_page, only: [:index]
 
   def index
-    cnames = @ssl_account.certificate_names.order(:created_at).reverse_order
-    @domains = (@ssl_account.domains.order(:created_at).reverse_order + cnames).paginate(@p)
+    cnames = @ssl_account.certificate_names.order(created_at: :desc)
+    @domains = (@ssl_account.domains.order(created_at: :desc) + cnames).paginate(@p)
   end
 
   def create
@@ -63,54 +63,18 @@ class DomainsController < ApplicationController
 
   def validate_all
     if params[:authenticity_token]
-      d_name_ids = params[:d_name_id]
-      addresses = params[:dcv_address]
-      cnames = []
-      d_name_ids.each_with_index do |id, index|
-        if addresses[index]=~EmailValidator::EMAIL_FORMAT
-          cn = CertificateName.find_by_id(id)
-          cn.domain_control_validations.create(dcv_method: "email", email_address: addresses[index])
-          cnames << cn
-        end
-      end
-      email_for_identifier = ''
-      identifier = ''
-      email_list = []
-      identifier_list = []
-      domain_ary = []
-      domain_list = []
-      cnames.each do |cn|
-        dcv = cn.domain_control_validations.last
-        if dcv.email_address != email_for_identifier
-          if domain_list.length>0
-            domain_ary << domain_list
-            email_list << email_for_identifier
-            identifier_list << identifier
-            domain_list = []
-          end
-          identifier = (SecureRandom.hex(8)+Time.now.to_i.to_s(32))[0..19]
-          email_for_identifier = dcv.email_address
-        end
-        domain_list << cn.name
-        dcv.update_attribute(:identifier, identifier)
-      end
-      domain_ary << domain_list
-      email_list << email_for_identifier
-      identifier_list << identifier
-      email_list.each_with_index do |value, key|
-        OrderNotifier.dcv_email_send(nil, value, identifier_list[key], domain_ary[key], nil, @ssl_slug, 'group').deliver
-      end
+      send_validation_email(params)
     end
     @all_domains = []
     @address_choices = []
-    @cnames = @ssl_account.certificate_names.order(:created_at).reverse_order
+    @cnames = @ssl_account.certificate_names.order(created_at: :desc)
     @cnames.each do |cn|
       dcv = cn.domain_control_validations.last
       next if dcv && dcv.identifier_found
       @all_domains << cn
       @address_choices << DomainControlValidation.email_address_choices(cn.name)
     end
-    @domains = @ssl_account.domains.order(:created_at).reverse_order
+    @domains = @ssl_account.domains.order(created_at: :desc)
     @domains.each do |dn|
       dcv = dn.domain_control_validations.last
       next if dcv && dcv.identifier_found
@@ -132,45 +96,8 @@ class DomainsController < ApplicationController
   end
 
   def validate_selected
-    unless params[:d_name_check]
-      d_name_ids = params[:d_name_id]
-      addresses = params[:dcv_address]
-      cnames = []
-      d_name_ids.each_with_index do |id, index|
-        if addresses[index]=~EmailValidator::EMAIL_FORMAT
-          cn = CertificateName.find_by_id(id)
-          cn.domain_control_validations.create(dcv_method: "email", email_address: addresses[index])
-          cnames << cn
-        end
-      end
-      email_for_identifier = ''
-      identifier = ''
-      email_list = []
-      identifier_list = []
-      domain_ary = []
-      domain_list = []
-      cnames.each do |cn|
-        dcv = cn.domain_control_validations.last
-        if dcv.email_address != email_for_identifier
-          if domain_list.length>0
-            domain_ary << domain_list
-            email_list << email_for_identifier
-            identifier_list << identifier
-            domain_list = []
-          end
-          identifier = (SecureRandom.hex(8)+Time.now.to_i.to_s(32))[0..19]
-          email_for_identifier = dcv.email_address
-        end
-        domain_list << cn.name
-        dcv.update_attribute(:identifier, identifier)
-        dcv.send_dcv!
-      end
-      domain_ary << domain_list
-      email_list << email_for_identifier
-      identifier_list << identifier
-      email_list.each_with_index do |value, key|
-        OrderNotifier.dcv_email_send(nil, value, identifier_list[key], domain_ary[key], nil, @ssl_slug, 'group').deliver
-      end
+    if params[:d_name_id]
+      send_validation_email(params)
       flash[:notice] = "DCV email sent."
       redirect_to domains_path
     else
@@ -423,6 +350,48 @@ class DomainsController < ApplicationController
   end
 
   private
+
+  def send_validation_email(params)
+    d_name_ids = params[:d_name_id]
+    addresses = params[:dcv_address]
+    cnames = []
+    d_name_ids.each_with_index do |id, index|
+      if addresses[index] =~ EmailValidator::EMAIL_FORMAT
+        cn = CertificateName.find_by_id(id)
+        cn.domain_control_validations.create(dcv_method: "email", email_address: addresses[index])
+        cnames << cn
+      end
+    end
+    email_for_identifier = ''
+    identifier = ''
+    email_list = []
+    identifier_list = []
+    domain_ary = []
+    domain_list = []
+    cnames.each do |cn|
+      dcv = cn.domain_control_validations.last
+      if dcv.email_address != email_for_identifier
+        if domain_list.length > 0
+          domain_ary << domain_list
+          email_list << email_for_identifier
+          identifier_list << identifier
+          domain_list = []
+        end
+        identifier = (SecureRandom.hex(8) + Time.now.to_i.to_s(32))[0..19]
+        email_for_identifier = dcv.email_address
+      end
+      domain_list << cn.name
+      dcv.update_attribute(:identifier, identifier)
+      dcv.send_dcv!
+    end
+    domain_ary << domain_list
+    email_list << email_for_identifier
+    identifier_list << identifier
+    email_list.each_with_index do |value, key|
+      OrderNotifier.dcv_email_send(nil, value, identifier_list[key], domain_ary[key], nil, @ssl_slug, 'group').deliver
+    end
+  end
+
   def set_row_page
     @per_page = params[:per_page] ? params[:per_page] : 10
     CertificateName.per_page = @per_page if CertificateName.per_page != @per_page

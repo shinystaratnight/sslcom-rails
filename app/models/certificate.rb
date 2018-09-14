@@ -888,6 +888,7 @@ class Certificate < ActiveRecord::Base
   end
 
   def self.create_email_certs
+    Certificate.purge %w(personalbasic personalbusiness personalpro personalenterprise naesbbasic)
     products=[{serial_root: "personalbasic",title: "Personal Basic",validation_type: "class 1",
                summary: "for authenticating and encrypting email and well as client services",
                product: "personal-basic",

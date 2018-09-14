@@ -79,7 +79,8 @@ class ValidationsController < ApplicationController
           if @ds
             # tmpCnt = 0
             # before = DateTime.now
-            @ds.each do |key, value|
+            cc.certificate_names.find_by_domains(@ds.keys).each do |cn|
+              key,value=cn.name,@ds[cn.name]
               if value['status'].casecmp('validated') != 0
                 @all_validated = false if @all_validated
               else
@@ -88,7 +89,6 @@ class ValidationsController < ApplicationController
                 cache = nil # Rails.cache.read(params[:certificate_order_id] + ':' + ext_order_number + ':' + key)
 
                 if cache.blank?
-                  cn = cc.certificate_names.find_by_name(key)
                   dcv = cn.blank? ? nil : cn.domain_control_validations.last
                   value['attempted_on'] = dcv.blank? ? 'n/a' : dcv.created_at
 
@@ -151,8 +151,10 @@ class ValidationsController < ApplicationController
       certificate_content = certificate_order.certificate_content
       certificate_names = certificate_content.certificate_names
 
+      certificate_names.find_by_domains(domain_name_arry).each do |cn_obj|
+
+      end
       domain_name_arry.each do |domain_name|
-        cn_obj = certificate_names.find_by_name(domain_name)
         next unless cn_obj
 
         res = ComodoApi.auto_remove_domain(domain_name: cn_obj, order_number: certificate_order.external_order_number)
@@ -179,7 +181,7 @@ class ValidationsController < ApplicationController
           # TODO: Remove cache for removed domain
           Rails.cache.delete(params[:certificate_order_id] + ':' + domain_name)
         else
-          result_obj[domain_name] = error_message.gsub("+", " ").gsub("%27", "'").gsub("%21", "!")
+          result_obj[cn_obj.name] = error_message.gsub("+", " ").gsub("%27", "'").gsub("%21", "!")
         end
       end
     else
@@ -219,16 +221,18 @@ class ValidationsController < ApplicationController
         domain_control_validations.last.try(:cache_key)}/get_asynch_domains/#{params['domain_name']}") do
       co = (current_user.is_system_admins? ? CertificateOrder :
                 current_user.certificate_orders).find_by_ref(params[:certificate_order_id])
+
       if co
         cn = co.certificate_content.certificate_names.find_by_name(params['domain_name'])
         ds = params['domain_status']
         dcv = cn.domain_control_validations.last
+
         if dcv and co.certificate_content.ca
           domain_status = dcv.identifier_found? ? "validated" : "pending"
           domain_method = dcv.email_address ? dcv.email_address : dcv.dcv_method
         else
-          domain_status = params['is_ucc'] == 'true' ? (ds && ds[cn.name] ? ds[cn.name]['status'] : nil) : (ds && ds.to_a[0] && ds.to_a[0][1] ? ds.to_a[0][1]['status'] : nil)
-          domain_method = params['is_ucc'] == 'true' ? (ds && ds[cn.name] ? ds[cn.name]['method'] : nil) : (ds && ds.to_a[0] && ds.to_a[0][1] ? ds.to_a[0][1]['method'] : nil)
+          domain_status = !ds.blank? && ds['status'] ? ds['status'] : nil
+          domain_method = !ds.blank? && ds['method'] ? ds['method'] : nil
         end
 
         addresses =
@@ -240,11 +244,12 @@ class ValidationsController < ApplicationController
               DomainControlValidation.email_address_choices(cn.name)
             end
         addresses.delete("none")
+
         optionsObj = {}
         viaEmail = {}
         viaCSR = {}
 
-        if dcv or (ds && ds[cn.name])
+        if dcv or !ds.blank?
           addresses.each do |addr|
             viaEmail[addr] = addr
           end
@@ -304,6 +309,7 @@ class ValidationsController < ApplicationController
         end
       end
     end
+
     render :json => returnObj
   end
 

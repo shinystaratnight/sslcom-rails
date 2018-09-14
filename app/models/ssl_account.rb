@@ -491,8 +491,8 @@ class SslAccount < ActiveRecord::Base
   end
 
   def domain_names(only_ca = true)
-    cnames = self.certificate_names.order(:created_at).reverse_order
-    dnames = self.domains.order(:created_at).reverse_order
+    cnames = self.certificate_names.order(created_at: :desc)
+    dnames = self.domains.order(created_at: :desc)
     domain_names = []
     cnames.each do |cn|
       unless only_ca

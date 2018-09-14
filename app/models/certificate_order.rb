@@ -1160,14 +1160,13 @@ class CertificateOrder < ActiveRecord::Base
          country_name: r.country}
     api_domains = {}
     if !cc.domains.blank?
-      (cc.domains.flatten+[common_name]).each { |d|
-        cn=cc.certificate_names.find_by_name(d)
+      cc.certificate_names.find_by_domains(cc.domains.flatten+[common_name]).each {|cn|
         if cn
-          api_domains.merge!(d.to_sym => {dcv:
-                      cn.domain_control_validations.last_method.try(:method_for_api) ||
-                      ApiCertificateCreate_v1_4::DEFAULT_DCV_METHOD })
+          api_domains.merge!(cn.name.to_sym => {dcv:
+            cn.domain_control_validations.last_method.try(:method_for_api) ||
+                ApiCertificateCreate_v1_4::DEFAULT_DCV_METHOD })
         end
-        }
+      }
     elsif cc.csr
       api_domains.merge!(cc.csr.common_name.to_sym => {dcv: "#{last_dcv_sent ? last_dcv_sent.method_for_api : 'http_csr_hash'}"})
     end

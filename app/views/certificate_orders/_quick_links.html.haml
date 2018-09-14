@@ -3,7 +3,7 @@
     .heading
       %strong Quick Links
     %ul
-      - if Folder.show_folders?(current_user)
+      -if Folder.show_folders?(current_user)
         %li#lnk-folders-ql
           %i.fa.fa-folder-open
           =link_to "Explorer", folders_path(@ssl_slug), id: "lnk-co-folders"
@@ -19,8 +19,8 @@
           %li=link_to 'Billing Profiles', billing_profiles_path(ssl_slug: @ssl_slug)
         -if permitted_to?(:index, :site_seals)
           %li=link_to "Smart SeaLs", details_site_seals_url
-        -if current_user.is_account_admin?
-          %li=link_to "SSL Managers", registered_agents_path(ssl_slug: @ssl_slug)
+      -if permitted_to?(:index, :certificate_orders)
+        %li=link_to "SSL Managers", registered_agents_path(ssl_slug: @ssl_slug)
       -if current_user.can_manage_certificates?
         %li=link_to "Certificate Mgmt", admin_index_certificates_path
       %li &nbsp;
