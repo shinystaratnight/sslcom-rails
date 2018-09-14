@@ -80,7 +80,7 @@ class ValidationsController < ApplicationController
             # tmpCnt = 0
             # before = DateTime.now
             cc.certificate_names.find_by_domains(@ds.keys).each do |cn|
-              key,value=cn.name,@ds[cn.name].value
+              key,value=cn.name,@ds[cn.name]
               if value['status'].casecmp('validated') != 0
                 @all_validated = false if @all_validated
               else
