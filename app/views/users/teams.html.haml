@@ -72,7 +72,7 @@
           %td
             -if system_admins
               %a{style:"cursor: pointer;", onclick: "adjust_funds_ssl_account('#{t.ssl_slug}','#{t.get_team_name}')"} $#{t.funded_account.try :amount}
-            -else
+            -elsif !current_user.role_symbols(t).include?((Role::INDIVIDUAL_CERTIFICATE).to_sym)
               $#{t.funded_account.try :amount}
           %td#team-detail-links
             -permissions = team_index_permissions(current_user, t)

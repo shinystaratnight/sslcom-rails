@@ -117,6 +117,9 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
       options[:mapping] = options[:cc].ca || co.certificate.cas.default.last
 
       if res = SslcomCaApi.generate_for_certificate(options)
+        co_token = co.certificate_order_tokens.where(is_expired: false).first
+        co_token.update_attribute(:is_expired, true) if co_token
+
         @result.cert_results = res
       end
     else
@@ -203,26 +206,41 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
               identifier_list = []
               domain_ary = []
               domain_list = []
+              emailed_domains = []
+              successed_domains = []
+              failed_domains = []
               cnames.each do |cn|
                 dcv = cn.domain_control_validations.last
-                if dcv.email_address != email_for_identifier
-                  if domain_list.length>0
-                    domain_ary << domain_list
-                    email_list << email_for_identifier
-                    identifier_list << identifier
-                    domain_list = []
+                if dcv.dcv_method == 'emails'
+                  if dcv.email_address != email_for_identifier
+                    if domain_list.length>0
+                      domain_ary << domain_list
+                      email_list << email_for_identifier
+                      identifier_list << identifier
+                      domain_list = []
+                    end
+                    identifier = (SecureRandom.hex(8)+Time.now.to_i.to_s(32))[0..19]
+                    email_for_identifier = dcv.email_address
                   end
-                  identifier = (SecureRandom.hex(8)+Time.now.to_i.to_s(32))[0..19]
-                  email_for_identifier = dcv.email_address
+                  domain_list << cn.name
+                  emailed_domains << cn.name
+                  dcv.update_attribute(:identifier, identifier)
+                else
+                  if dcv_verify(dcv.dcv_method, true) == "true"
+                    successed_domains << cn.name
+                    dcv.satisfy! unless dcv.satisfied?
+                  else
+                    failed_domains << cn.name
+                  end
                 end
-                domain_list << cn.name
-                dcv.update_attribute(:identifier, identifier)
               end
-              domain_ary << domain_list
-              email_list << email_for_identifier
-              identifier_list << identifier
-              email_list.each_with_index do |value, key|
-                OrderNotifier.dcv_email_send(@acr, value, identifier_list[key], domain_ary[key]).deliver
+              unless identifier == ''
+                domain_ary << domain_list
+                email_list << email_for_identifier
+                identifier_list << identifier
+                email_list.each_with_index do |value, key|
+                  OrderNotifier.dcv_email_send(@acr, value, identifier_list[key], domain_ary[key]).deliver
+                end
               end
             end
 
@@ -1307,7 +1325,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
     @csr || @certificate_order.csr
   end
 
-  def dcv_verify(protocol)
+  def dcv_verify(protocol, against_ca = false)
     prepend=""
     begin
       Timeout.timeout(Surl::TIMEOUT_DURATION) do
@@ -1322,11 +1340,11 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
           txt = Resolv::DNS.open do |dns|
             records = dns.getresources(cname_origin, Resolv::DNS::Resource::IN::CNAME)
           end
-          return cname_destination==txt.last.name.to_s
+          return cname_destination(against_ca)==txt.last.name.to_s
         else
           r=open(dcv_url(false,prepend), redirect: false).read
         end
-        return true if !!(r =~ Regexp.new("^#{csr.sha2_hash}") && r =~ Regexp.new("^comodoca.com") &&
+        return true if !!(r =~ Regexp.new("^#{csr.sha2_hash}") && r =~ Regexp.new("^#{against_ca ? '' : 'comodoca'}.com") &&
             (csr.unique_value.blank? ? true : r =~ Regexp.new("^#{csr.unique_value}")))
       end
     rescue Exception=>e
@@ -1342,8 +1360,8 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
     "#{csr.dns_md5_hash}.#{non_wildcard_name}"
   end
 
-  def cname_destination
-    "#{csr.dns_sha2_hash}.comodoca.com"
+  def cname_destination(against_ca)
+    "#{csr.dns_sha2_hash}#{against_ca ? '' : '.comodoca'}.com"
   end
 
   def non_wildcard_name

@@ -13,10 +13,8 @@ class ManagedCsrsController < ApplicationController
 
   def create
     redirect_to new_managed_csr_path(@ssl_slug) and return unless current_user
-    logger.debug("##################{params.inspect}")
     @csr = ManagedCsr.new(params[:managed_csr])
     @csr.ssl_account_id = current_user.ssl_account.id
-    logger.debug("##################{@csr.inspect}")
     respond_to do |format|
       if @csr.save
         format.html {redirect_to managed_csrs_path(@ssl_slug)}

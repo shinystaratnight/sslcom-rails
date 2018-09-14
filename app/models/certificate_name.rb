@@ -26,6 +26,8 @@ class CertificateName < ActiveRecord::Base
 
   attr_accessor :csr
 
+  scope :find_by_domains, ->(domains){includes(:domain_control_validations).where{name>>domains}}
+
   #will_paginate
   cattr_accessor :per_page
   @@per_page = 10
@@ -163,7 +165,8 @@ class CertificateName < ActiveRecord::Base
     end
   end
 
-  def dcv_verify(protocol)
+  def
+  dcv_verify(protocol)
     prepend=""
     begin
       Timeout.timeout(Surl::TIMEOUT_DURATION) do

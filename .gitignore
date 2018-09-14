@@ -26,3 +26,7 @@ config/deploy.rb
 /Vagrantfile
 /config/deploy.rb
 /.idea/
+*.png
+app/assets/images/ui-bg_diagonals-thick_18_b81900_40x40.png
+*.png
+*.png

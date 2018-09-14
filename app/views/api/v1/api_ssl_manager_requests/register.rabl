@@ -5,6 +5,7 @@ if !@result.errors.blank?
   end
 else
   glue @result do
-    attributes :ref, :created_at, :updated_at
+    attributes :ref, :status
+    attribute :reason, :unless => lambda { |m| m.reason.nil? }
   end
 end

@@ -7,6 +7,11 @@
     =button_tag 'Search', :id=>'btn_cert_order_search'
     =button_tag 'Filters', :type=>'button', :id=>'btn_cert_order_filter'
 
+#send_notify.hidden
+  =form_tag nil, :id=>'send_notify_form', :method=>:post do
+    =hidden_field_tag :certificate_order_ref
+    =hidden_field_tag :notify_type
+
 %div.hidden#wrap_cert_order_filter
   .wrap_filter_items.clearfix
     .filter_items_col
@@ -330,7 +335,7 @@
             =select_tag :number_rows,
             options_for_select([[5, 5], [10, 10], [20, 20], [50, 50], [100, 100]], @per_page),
             :class=>'per_page'
-          %td(colspan='4')=will_paginate @certificate_orders
+          %td(colspan='5')=will_paginate @certificate_orders
     %caption
       SSL Certificates Management
       =will_paginate @certificate_orders

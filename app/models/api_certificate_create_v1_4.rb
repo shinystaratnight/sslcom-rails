@@ -141,8 +141,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
     if @certificate_order.is_a?(CertificateOrder)
       # CAA Checking for domains what has been validated and no passed for CAA.
       if caa_check_domains && caa_check_domains[0] != ''
-        caa_check_domains.each do |domain|
-          cn = @certificate_order.certificate_content.certificate_names.find_by_name(domain)
+        @certificate_order.certificate_content.certificate_names.find_by_domains(caa_check_domains).each do |cn|
           CaaCheck.pass?(@certificate_order.ref, cn, cn.certificate_content)
         end
       end
@@ -200,18 +199,19 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
     if @certificate_order.is_a?(CertificateOrder)
       # CAA Checking for domains what has been validated and no passed for CAA.
       if caa_check_domains && caa_check_domains[0] != ''
-        caa_check_domains.each do |domain|
-          cn = @certificate_order.certificate_content.certificate_names.find_by_name(domain)
+        @certificate_order.certificate_content.certificate_names.find_by_domains(caa_check_domains).each do |cn|
           CaaCheck.pass?(@certificate_order.ref, cn, cn.certificate_content)
         end
       end
 
-      @certificate_order.update_attribute(:external_order_number, self.ca_order_number) if (self.admin_submitted && self.ca_order_number)
+      @certificate_order.update_attribute(:external_order_number, self.ca_order_number) if # from API
+          (self.admin_submitted && self.ca_order_number)
       @certificate_order.update_attribute(:ext_customer_ref, self.external_order_number) if self.external_order_number
       # choose the right ca_certificate_id for submit to Comodo
       @certificate_order.is_test=self.test
       #assume updating domain validation, already sent to comodo
-      if @certificate_order.certificate_content && @certificate_order.certificate_content.pending_validation? && @certificate_order.external_order_number
+      if @certificate_order.certificate_content && @certificate_order.certificate_content.pending_validation? &&
+          (@certificate_order.external_order_number || !@certificate_order.certificate_content.ca.blank?)
         #set domains
         @certificate_order.certificate_content.update_attribute(:domains, self.domains.keys)
         @certificate_order.certificate_content.dcv_domains({domains: self.domains, emails: self.dcv_candidate_addresses})
@@ -306,11 +306,11 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
 
   # this update dcv method to comodo for each domain
   def comodo_auto_update_dcv(options={send_to_ca: true})
-    self.domains.keys.map do |domain|
+    names = options[:certificate_order].certificate_content.certificate_names.find_by_domains(self.domains.keys)
+    names.map do |name|
       # ComodoApi.delay.auto_update_dcv(dcv:
       ComodoApi.auto_update_dcv(dcv:
-        options[:certificate_order].certificate_content.certificate_names.find_by_name(domain).
-        domain_control_validations.last, send_to_ca: options[:send_to_ca])
+        name.domain_control_validations.last, send_to_ca: options[:send_to_ca])
     end
   end
 

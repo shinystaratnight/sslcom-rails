@@ -113,7 +113,7 @@ class SslcomCaApi
       "rfc822Name="
     elsif !cert.is_code_signing?
       (options[:san] ? options[:san].split(/\s+/) : options[:cc].all_domains).map{|d|"dNSName="+d.downcase}.join(",")
-    end
+    end || ""
     names << if cert.is_wildcard?
       ",dNSName=#{CertificateContent.non_wildcard_name(common_name)}"
     elsif cert.is_basic? or cert.is_high_assurance? or cert.is_free?
@@ -122,6 +122,8 @@ class SslcomCaApi
       else
         ",dNSName=www.#{common_name}"
       end
+    else
+      ""
     end
     names
   end

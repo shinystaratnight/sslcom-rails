@@ -29,6 +29,7 @@ class Csr < ActiveRecord::Base
       where{dcv_method >> ['http','https','email']}.last
     end
   end
+  has_many    :csr_unique_values, :dependent => :destroy
   has_one     :csr_override  #used for overriding csr fields - does not include a full csr
   belongs_to  :certificate_content
   belongs_to  :certificate_lookup
@@ -37,7 +38,6 @@ class Csr < ActiveRecord::Base
   serialize   :subject_alternative_names
   validates_presence_of :body
   validates_presence_of :common_name, :if=> "!body.blank?", :message=> "field blank. Invalid csr."
-  validates   :unique_value, uniqueness: { scope: :public_key_sha1 }
 
   #will_paginate
   cattr_accessor :per_page
@@ -94,6 +94,23 @@ class Csr < ActiveRecord::Base
   # def to_param
   #   ref
   # end
+
+  def unique_value
+    csr_unique_value.unique_value
+  end
+
+  def csr_unique_value
+    last_unique_value = csr_unique_values.last
+    if last_unique_value.nil?
+      last_unique_value = csr_unique_values.create(unique_value: SecureRandom.hex(5))
+    end
+
+    #if unique_value is expired, then new unique_value should be generated
+    if (Date.today-last_unique_value.created_at.to_date).to_i > 30
+      last_unique_value = csr_unique_values.create(unique_value: SecureRandom.hex(5))
+    end
+    last_unique_value
+  end
 
   def common_name
     SimpleIDN.to_unicode(read_attribute(:common_name)).gsub(/\x00/, '') unless read_attribute(:common_name).blank?
@@ -445,15 +462,15 @@ class Csr < ActiveRecord::Base
     SiteCheck.days_left(self.non_wildcard_name, true)
   end
 
-  def unique_value(ca="comodo")
-    if ca_certificate_requests.first and !ca_certificate_requests.first.unique_value.blank?
-      ca_certificate_requests.first.unique_value # comodo has returned a unique already
-    else
-      if read_attribute(:unique_value).blank?
-        write_attribute(:unique_value, SecureRandom.hex(5)) # generate our own
-        save unless new_record?
-      end
-      read_attribute(:unique_value)
-    end
-  end
+  # def unique_value(ca="comodo")
+  #   if ca_certificate_requests.first and !ca_certificate_requests.first.unique_value.blank?
+  #     ca_certificate_requests.first.unique_value # comodo has returned a unique already
+  #   else
+  #     if read_attribute(:unique_value).blank?
+  #       write_attribute(:unique_value, SecureRandom.hex(5)) # generate our own
+  #       save unless new_record?
+  #     end
+  #     read_attribute(:unique_value)
+  #   end
+  # end
 end

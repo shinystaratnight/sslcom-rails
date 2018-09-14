@@ -97,6 +97,59 @@ class SignedCertificate < ActiveRecord::Base
   scope :most_recent_expiring, lambda{|start, finish|
     find_by_sql("select * from signed_certificates as T where expiration_date between '#{start}' AND '#{finish}' AND created_at = ( select max(created_at) from signed_certificates where common_name like T.common_name )")}
 
+  scope :search_with_terms, lambda { |term|
+    term ||= ""
+    term = term.strip.split(/\s(?=(?:[^']|'[^']*')*$)/)
+    filters = { common_name: nil, sans: nil, effective_date: nil, expiration_date: nil, status: nil }
+
+    filters.each {|fn, fv|
+      term.delete_if { |s| s =~ Regexp.new(fn.to_s+"\\:\\'?([^']*)\\'?"); filters[fn] ||= $1; $1 }
+    }
+    term = term.empty? ? nil : term.join(" ")
+
+    return nil if [term, *(filters.values)].compact.empty?
+
+    result = self.all
+    unless term.blank?
+      result = result.where {
+                     (common_name =~ "%#{term}%") |
+                     (subject_alternative_names =~ "%#{term}%") |
+                     (status =~ "%#{term}%")}
+    end
+
+    %w(common_name).each do |field|
+      query = filters[field.to_sym]
+      result = result.where{ common_name =~ "%#{query}%" } if query
+    end
+
+    %w(sans).each do |field|
+      query = filters[field.to_sym]
+      result = result.where{ subject_alternative_names =~ "%#{query}%" } if query
+    end
+
+    %w(effective_date expiration_date).each do |field|
+      query = filters[field.to_sym]
+      if query
+        query = query.split("-")
+        start = Date.strptime query[0], "%m/%d/%Y"
+        finish = query[1] ? Date.strptime(query[1], "%m/%d/%Y") : start + 1.day
+
+        if field == "effective_date"
+          result = result.where{ (effective_date >> (start..finish)) }
+        elsif field == "expiration_date"
+          result = result.where{ (expiration_date >> (start..finish)) }
+        end
+      end
+    end
+
+    %w(status).each do |field|
+      query = filters[field.to_sym]
+      result = result.where{ status =~ "%#{query}%" } if query
+    end
+
+    result.uniq
+  }
+
   def self.renew(start, finish)
     cl = CertificateLookup.includes{signed_certificates}.
         most_recent_expiring(start,finish).map(&:signed_certificates).flatten.compact

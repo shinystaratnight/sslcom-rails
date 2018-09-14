@@ -26,32 +26,32 @@ class ValidationsController < ApplicationController
 
   def new
     url=nil
+    cc=@certificate_order.certificate_content
+    if cc.issued?
+      url=certificate_order_url(@certificate_order.ref)
     # if CS then go to doc upload
-    if @certificate_order.certificate.is_code_signing?
+    elsif @certificate_order.certificate.is_code_signing?
       url=document_upload_certificate_order_validation_url(certificate_order_id: @certificate_order.ref)
     else
-      if @certificate_order.certificate_content.contacts_provided?
-        @certificate_order.certificate_content.pend_validation!(host: request.host_with_port)
-
-        mdc_validation = ComodoApi.mdc_status(@certificate_order)
-        @ds = mdc_validation.domain_status
-        @all_validated = false
-        @validated_domains = ''
-      elsif @certificate_order.certificate_content.issued? # or @certificate_order.all_domains_validated?
+      if cc.issued? # or @certificate_order.all_domains_validated?
         checkout={checkout: "true"}
         flash.now[:notice] = "All domains have been validated, please wait for certificate issuance" if @certificate_order.all_domains_validated?
         respond_to do |format|
           format.html { redirect_to certificate_order_path({id: @certificate_order.ref}.merge!(checkout))}
         end
       else
+        if cc.contacts_provided? or cc.info_provided?
+          cc.pend_validation!(host: request.host_with_port)
+        end
+
         @all_validated = true
         @validated_domains = ''
         @caa_check_domains = ''
         validated_domain_arry = []
         caa_check_domain_arry = []
 
-        unless @certificate_order.certificate_content.ca_id.nil?
-          cnames = @certificate_order.certificate_content.certificate_names
+        unless cc.ca_id.nil?
+          cnames = cc.certificate_names
           team_cnames = current_user.ssl_account.certificate_names
 
           # Team level validation check
@@ -79,7 +79,8 @@ class ValidationsController < ApplicationController
           if @ds
             # tmpCnt = 0
             # before = DateTime.now
-            @ds.each do |key, value|
+            cc.certificate_names.find_by_domains(@ds.keys).each do |cn|
+              key,value=cn.name,@ds[cn.name].value
               if value['status'].casecmp('validated') != 0
                 @all_validated = false if @all_validated
               else
@@ -88,7 +89,6 @@ class ValidationsController < ApplicationController
                 cache = nil # Rails.cache.read(params[:certificate_order_id] + ':' + ext_order_number + ':' + key)
 
                 if cache.blank?
-                  cn = @certificate_order.certificate_content.certificate_names.find_by_name(key)
                   dcv = cn.blank? ? nil : cn.domain_control_validations.last
                   value['attempted_on'] = dcv.blank? ? 'n/a' : dcv.created_at
 
@@ -151,8 +151,10 @@ class ValidationsController < ApplicationController
       certificate_content = certificate_order.certificate_content
       certificate_names = certificate_content.certificate_names
 
+      certificate_names.find_by_domains(domain_name_arry).each do |cn_obj|
+
+      end
       domain_name_arry.each do |domain_name|
-        cn_obj = certificate_names.find_by_name(domain_name)
         next unless cn_obj
 
         res = ComodoApi.auto_remove_domain(domain_name: cn_obj, order_number: certificate_order.external_order_number)
@@ -179,7 +181,7 @@ class ValidationsController < ApplicationController
           # TODO: Remove cache for removed domain
           Rails.cache.delete(params[:certificate_order_id] + ':' + domain_name)
         else
-          result_obj[domain_name] = error_message.gsub("+", " ").gsub("%27", "'").gsub("%21", "!")
+          result_obj[cn_obj.name] = error_message.gsub("+", " ").gsub("%27", "'").gsub("%21", "!")
         end
       end
     else
@@ -211,128 +213,67 @@ class ValidationsController < ApplicationController
   end
 
   def get_asynch_domains
-    cache=nil
-    if cache.blank? or cache=="{}"
+    returnObj =
+
+    Rails.cache.fetch("#{(current_user.is_system_admins? ? CertificateOrder :
+        current_user.certificate_orders).find_by_ref(params[:certificate_order_id]).
+        certificate_content.certificate_names.find_by_name(params['domain_name']).
+        domain_control_validations.last.try(:cache_key)}/get_asynch_domains/#{params['domain_name']}") do
       co = (current_user.is_system_admins? ? CertificateOrder :
                 current_user.certificate_orders).find_by_ref(params[:certificate_order_id])
-      returnObj = {}
 
       if co
         cn = co.certificate_content.certificate_names.find_by_name(params['domain_name'])
+        ds = params['domain_status']
+        dcv = cn.domain_control_validations.last
 
-        if co.certificate_content.ca_id.nil?
-          ds = params['domain_status']
+        if dcv and co.certificate_content.ca
+          domain_status = dcv.identifier_found? ? "validated" : "pending"
+          domain_method = dcv.email_address ? dcv.email_address : dcv.dcv_method
+        else
+          domain_status = !ds.blank? && ds['status'] ? ds['status'] : nil
+          domain_method = !ds.blank? && ds['method'] ? ds['method'] : nil
+        end
 
-          domain_status = params['is_ucc'] == 'true' ? (ds && ds[cn.name] ? ds[cn.name]['status'] : nil) : (ds && ds.to_a[0] && ds.to_a[0][1] ? ds.to_a[0][1]['status'] : nil)
-          domain_method = params['is_ucc'] == 'true' ? (ds && ds[cn.name] ? ds[cn.name]['method'] : nil) : (ds && ds.to_a[0] && ds.to_a[0][1] ? ds.to_a[0][1]['method'] : nil)
-
-          if co.external_order_number
-            dcv = cn.domain_control_validations.last
-
-            if params['is_ucc'] == 'true'
-              if ds && ds[cn.name]
-                optionsObj = {}
-                addresses = params['domain_count'].to_i > Validation::COMODO_EMAIL_LOOKUP_THRESHHOLD ?
-                                DomainControlValidation.email_address_choices(cn.name) :
-                                ComodoApi.domain_control_email_choices(cn.name).email_address_choices
-                addresses.delete("none")
-
-                viaEmail = {}
-                viaCSR = {}
-
-                addresses.each do |addr|
-                  viaEmail[addr] = addr
-                end
-
-                viaCSR['http_csr_hash'] = 'CSR hash text file using http://'
-                viaCSR['https_csr_hash'] = 'CSR hash text file using https://'
-                viaCSR['cname_csr_hash'] = 'Add cname entry'
-
-                optionsObj['Validation via email'] = viaEmail
-                optionsObj['Validation via csr hash'] = viaCSR
-
-                returnObj = {
-                  'tr_info' => {
-                    'options' => optionsObj,
-                    'slt_option' => domain_method ?
-                                        domain_method.downcase.gsub('pre-validated %28', '').gsub('%29', '').gsub(' ', '_') : nil,
-                    'pretest' => 'n/a',
-                    'attempt' => domain_method ? domain_method.downcase.gsub('%28', ' ').gsub('%29', ' ') : '',
-                    'attempted_on' => dcv.blank? ? 'n/a' : dcv.created_at,
-                    'status' => domain_status ? domain_status.downcase : '',
-                    'caa_check' => ''
-                  },
-                  'tr_instruction' => false
-                }
-              end
+        addresses =
+            if co.certificate_content.ca.blank? and co.external_order_number
+              params['domain_count'].to_i > Validation::COMODO_EMAIL_LOOKUP_THRESHHOLD ?
+                  DomainControlValidation.email_address_choices(cn.name) :
+                  ComodoApi.domain_control_email_choices(cn.name).email_address_choices
             else
-              optionsObj = {}
-              addresses = params['domain_count'].to_i > Validation::COMODO_EMAIL_LOOKUP_THRESHHOLD ?
-                              DomainControlValidation.email_address_choices(cn.name) :
-                              ComodoApi.domain_control_email_choices(cn.name).email_address_choices
-              addresses.delete("none")
-
-              viaEmail = {}
-              viaCSR = {}
-
-              addresses.each do |addr|
-                viaEmail[addr] = addr
-              end
-
-              viaCSR['http_csr_hash'] = 'CSR hash text file using http://'
-              viaCSR['https_csr_hash'] = 'CSR hash text file using https://'
-              viaCSR['cname_csr_hash'] = 'Add cname entry'
-
-              optionsObj['Validation via email'] = viaEmail
-              optionsObj['Validation via csr hash'] = viaCSR
-
-              returnObj = {
-                'tr_info' => {
-                  'options' => optionsObj,
-                  'slt_option' => domain_method ?
-                                      domain_method.downcase.gsub('pre-validated %28', '').gsub('%29', '').gsub(' ', '_') : dcv.try(:dcv_method),
-                  'pretest' => 'n/a',
-                  'attempt' => domain_method ? domain_method.downcase.gsub('%28', '').gsub('%29', '') : '',
-                  'attempted_on' => dcv.blank? ? 'n/a' : dcv.created_at,
-                  'status' => domain_status ? domain_status.downcase : '',
-                  'caa_check' => ''
-                },
-                'tr_instruction' => false
-              }
+              DomainControlValidation.email_address_choices(cn.name)
             end
-          else
-            optionsObj = {}
-            addresses = DomainControlValidation.email_address_choices(cn.name)
+        addresses.delete("none")
 
-            viaEmail = {}
-            viaCSR = {}
+        optionsObj = {}
+        viaEmail = {}
+        viaCSR = {}
 
-            addresses.each do |addr|
-              viaEmail[addr] = addr
-            end
-
-            viaCSR['http_csr_hash'] = 'CSR hash text file using http://'
-            viaCSR['https_csr_hash'] = 'CSR hash text file using https://'
-            viaCSR['cname_csr_hash'] = 'Add cname entry'
-
-            optionsObj['Validation via email'] = viaEmail
-            optionsObj['Validation via csr hash'] = viaCSR
-
-            le = cn.domain_control_validations.last_emailed
-
-            returnObj = {
-              'tr_info' => {
-                'options' => optionsObj,
-                'slt_option' => le.blank? ? nil : le.email_address,
-                'pretest' => 'n/a',
-                'attempt' => 'validation not performed yet',
-                'attempted_on' => 'n/a',
-                'status' => 'waiting',
-                'caa_check' => ''
-              },
-              'tr_instruction' => false
-            }
+        if dcv or !ds.blank?
+          addresses.each do |addr|
+            viaEmail[addr] = addr
           end
+
+          viaCSR['http_csr_hash'] = 'CSR hash text file using http://'
+          viaCSR['https_csr_hash'] = 'CSR hash text file using https://'
+          viaCSR['cname_csr_hash'] = 'Add cname entry'
+
+          optionsObj['Validation via email'] = viaEmail
+          optionsObj['Validation via csr hash'] = viaCSR
+
+          {
+            'tr_info' => {
+              'options' => optionsObj,
+              'slt_option' => domain_method ?
+                                  domain_method.downcase.gsub('pre-validated %28', '').gsub('%29', '').gsub(' ', '_') : nil,
+              'pretest' => 'n/a',
+              'attempt' => domain_method ? domain_method.downcase.gsub('%28', ' ').gsub('%29', ' ') : '',
+              'attempted_on' => dcv.blank? ? 'n/a' : dcv.created_at,
+              'status' => domain_status ? domain_status.downcase : '',
+              'caa_check' => ''
+            },
+            'tr_instruction' => false
+          }
         else
           optionsObj = {}
           addresses = DomainControlValidation.email_address_choices(cn.name)
@@ -353,34 +294,23 @@ class ValidationsController < ApplicationController
 
           le = cn.domain_control_validations.last_emailed
 
-          returnObj = {
-            'tr_info' => {
-              'options' => optionsObj,
-              'slt_option' => le.blank? ? nil : le.email_address,
-              'pretest' => 'n/a',
-              'attempt' => 'validation not performed yet',
-              'attempted_on' => 'n/a',
-              'status' => 'waiting',
-              'caa_check' => ''
-            },
-            'tr_instruction' => false
+          {
+              'tr_info' => {
+                  'options' => optionsObj,
+                  'slt_option' => le.blank? ? nil : le.email_address,
+                  'pretest' => 'n/a',
+                  'attempt' => 'validation not performed yet',
+                  'attempted_on' => 'n/a',
+                  'status' => 'waiting',
+                  'caa_check' => ''
+              },
+              'tr_instruction' => false
           }
         end
       end
-
-      # # write_fragment(params[:certificate_order_id] + ':' + params['domain_name'], returnObj.to_json)
-      # if !returnObj.blank? and returnObj['tr_info']['status'] == 'validated'
-      #   Rails.cache.write(params[:certificate_order_id] + ':' + params[:ext_order_number] + ':' + params['domain_name'],
-      #                     returnObj.to_json, :expires_in => 30.days)
-      # # else
-      # #   Rails.cache.write(params[:certificate_order_id] + ':' + params[:ext_order_number] + ':' + params['domain_name'],
-      # #                     returnObj.to_json, :expires_in => 10.minutes)
-      # end
-
-      render :json => returnObj
-    else
-      render :json => JSON.parse(cache)
     end
+
+    render :json => returnObj
   end
 
   def index
@@ -591,9 +521,15 @@ class ValidationsController < ApplicationController
           is_validated = true
         else
           if vrs.all?(&:approved?)
-            cc.validate! unless cc.validated?
+            unless cc.validated?
+              cc.validate!
+              is_validated = true
+            end
           else
-            cc.pend_validation!(host: request.host_with_port) unless cc.pending_validation?
+            unless cc.pending_validation?
+              cc.pend_validation!(host: request.host_with_port)
+              is_validated = true
+            end
           end
         end
 

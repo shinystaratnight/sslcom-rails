@@ -240,12 +240,67 @@ jQuery(function($) {
         form.reset();
 
         if (data.is_validated == 'true') {
-          url = $('#link_to_generate_cert').val();
+          /*url = $('#link_to_generate_cert').val();
           link_to_generate_cert(url);
+          $('form#send_certificate_order_token').show();*/
+          location.reload(true);
         }
       }
     };
     $('form.edit_validation_ruling').ajaxForm(options);
+
+    /*var token_send_options = {
+      dataType: 'json',
+      success: function(data) {
+        if (data == 'success') {
+          alert('Successfully sent token link.');
+        } else if (data == 'not_found_ssl_account') {
+          alert('Not found team account. Please try again.');
+        } else if (data == 'session_expired') {
+          alert('The session has been expired. You need to login again.');
+          location.reload(true);
+        }
+      }
+    };
+    
+    $('#link_to_send_token').click(function(e) {
+      e.preventDefault();
+      $('form#send_certificate_order_token').ajaxSubmit(token_send_options);
+    });*/
+
+    var send_notify_options = {
+      dataType: 'json',
+      beforeSubmit: function() {
+        var notify_type = $('#notify_type').val();
+        var token_url = '<%= certificate_order_tokens_path(@ssl_slug)%>';
+        var request_url = '<%= request_token_certificate_order_tokens_path(@ssl_slug)%>';
+
+        if (notify_type == 'token') {
+          $(this).attr('url', token_url);
+        } else {
+          $(this).attr('url', request_url);
+        }
+      },
+      success: function(data) {
+        if (data == 'success') {
+          alert('Successfully sent notify email.');
+        } else if (data == 'not_found_ssl_account') {
+          alert('Not found team account. Please try again.');
+        } else if (data == 'session_expired') {
+          alert('The session has been expired. You need to login again.');
+          location.reload(true);
+        }
+      }
+    };
+
+    $('.link_to_send_notify').click(function(e) {
+      e.preventDefault();
+      var ref = $(this).attr('data-ref');
+      var notify_type = $(this).attr('data-type');
+      $('#certificate_order_ref').val(ref);
+      $('#notify_type').val(notify_type);
+      $('form#send_notify_form').ajaxSubmit(send_notify_options);
+    });
 
     $('input:checkbox[name*=publish_to_site_seal]').click(function(){
       $(this).parents().filter('form').ajaxSubmit();
@@ -603,6 +658,7 @@ jQuery(function($) {
             var total = domains.length;
             var validated_domains = '<%=@validated_domains%>'.split(',');
             var domain_status = JSON.parse('<%= raw @ds ? @ds.to_json : {}%>');
+            var domain_status_keys = Object.keys(domain_status);
             var unvalidated_domain_total = total - (validated_domains[0] == '' ? 0 : validated_domains.length);
             var unvalidated_domain_success_count = 0;
             var unvalidated_domain_failed_count = 0;
@@ -614,8 +670,12 @@ jQuery(function($) {
                   data: {
                     domain_name: value,
                     domain_count: total,
-                    domain_status: domain_status,
-                    is_ucc: '<%=is_ucc%>',
+                    domain_status: domain_status_keys.length > 0 ?
+                      ('<%=is_ucc%>' == 'true' ?
+                        domain_status[value] :
+                        domain_status[domain_status_keys[0]]
+                      ) :
+                      null,
                     ext_order_number: '<%=ext_order_number%>'
                   },
                   type: "POST",

@@ -45,8 +45,14 @@ SslCom::Application.routes.draw do
         # SSL Manager
         match '/ssl_manager' => 'api_ssl_manager_requests#register',
               as: :api_ssl_manager_register, via: [:options, :post]
-        match '/ssl_manager/:ref' => 'api_ssl_manager_requests#collection',
+        match '/ssl_manager/collection' => 'api_ssl_manager_requests#collection',
               as: :api_ssl_manager_collection, via: [:options, :post]
+        match '/ssl_managers' => 'api_ssl_manager_requests#delete',
+              as: :api_ssl_managers_delete, via: [:options, :delete]
+        match '/ssl_managers' => 'api_ssl_manager_requests#index',
+              as: :api_ssl_managers_index, via: [:options, :get]
+        match '/ssl_manager/collections' => 'api_ssl_manager_requests#collections',
+              as: :api_ssl_managers_collections, via: [:options, :get]
 
         # Code Signing.
         match '/generate_certificate' => 'api_certificate_requests#generate_certificate_v1_4',
@@ -167,6 +173,8 @@ SslCom::Application.routes.draw do
         match :dcv_all_validate, via: [:get, :post]
         match :remove_selected, via: [:get, :post]
         match :validate_selected, via: [:get, :post]
+        match :select_csr, via: [:get, :post]
+        match :validate_against_csr, via: [:get, :post]
       end
       member do
         match :validation_request, via: [:get, :post]
@@ -196,6 +204,12 @@ SslCom::Application.routes.draw do
         get  :duo
         post :duo_verify
         get  :duo_verify
+      end
+    end
+
+    resources :certificate_order_tokens do
+      collection do
+        post :request_token
       end
     end
 
@@ -298,6 +312,19 @@ SslCom::Application.routes.draw do
         post :scan_groups
         post :scan_individual_group
         post :check_duplicate
+      end
+    end
+
+    resources :registered_agents do
+      collection do
+        post :search
+        post :remove_agents
+      end
+
+      member do
+        get :managed_certificates
+        post :search_managed_certificates
+        post :remove_managed_certificates
       end
     end
 
@@ -500,6 +527,8 @@ SslCom::Application.routes.draw do
   match 'browser_compatibility' => 'site#compatibility', as: :browsers, via: [:get, :post]
   match 'acceptable-top-level-domains-tlds-for-ssl-certificates' => 'site#top_level_domains_tlds',
         as: :tlds, via: [:get, :post]
+  match '/certificate_order_token/:token/generate_cert' => 'certificate_orders#generate_cert', :as => :confirm, via: [:get]
+
   #match 'paid_cert_orders'=> 'site#paid_cert_orders'
   (Reseller::TARGETED+SiteController::STANDARD_PAGES).each do |i|
     send("get", i=>"site##{i}", :as => i.to_sym)
