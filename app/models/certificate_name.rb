@@ -26,6 +26,8 @@ class CertificateName < ActiveRecord::Base
 
   attr_accessor :csr
 
+  scope :find_by_domains, ->(domains){includes(:domain_control_validations).where{name>>domains}}
+
   #will_paginate
   cattr_accessor :per_page
   @@per_page = 10

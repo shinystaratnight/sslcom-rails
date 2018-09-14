@@ -91,15 +91,7 @@ class CertificateContent < ActiveRecord::Base
   
   CertificateNamesJob = Struct.new(:cc_id, :domains) do
     def perform
-      cc = CertificateContent.find cc_id
-      cc.domains.flatten.each_with_index do |domain, i|
-        if cc.certificate_names.find_by_name(domain).blank?
-          cc.certificate_names.create(name: domain, is_common_name: cc.csr.try(:common_name)==domain)
-        end
-      end
-
-      # Auto adding domains in case of certificate order has been included into some groups.
-      NotificationGroup.auto_manage_cert_name(cc, 'create')
+      CertificateContent.find(cc_id).certificate_names_from_domains
     end
   end
 
@@ -227,14 +219,13 @@ class CertificateContent < ActiveRecord::Base
     self.ca = (self.certificate.cas.ssl_account_or_general_default(ssl_account)).last
   end
 
-  def certificate_names_from_domains
+  def certificate_names_from_domains(domains=nil)
+    domains ||= all_domains
     if csr && certificate_names.find_by_name(csr.common_name).blank?
       certificate_names.create(name: csr.common_name, is_common_name: true)
     end
-    all_domains.flatten.each_with_index do |domain, i|
-      if certificate_names.find_by_name(domain).blank?
-        certificate_names.create(name: domain, is_common_name: csr.try(:common_name)==domain)
-      end
+    (domains-certificate_names.find_by_domains(domains).pluck(:name)).each_with_index do |domain, i|
+      certificate_names.create(name: domain, is_common_name: csr.try(:common_name)==domain)
     end
 
     # Auto adding domains in case of certificate order has been included into some groups.
@@ -298,7 +289,7 @@ class CertificateContent < ActiveRecord::Base
   end
 
   def certificate_names_by_domains
-    all_domains.map{|d|certificate_names.find_by_name(d)}.compact
+    certificate_names.find_by_domains(all_domains).compact
   end
 
   def callback(packaged_cert,options={})
@@ -312,29 +303,28 @@ class CertificateContent < ActiveRecord::Base
 
   def dcv_domains(options)
     i=0
-    options[:domains].each do |k,v|
+    certificate_names.find_by_domains(options[:domains].keys).each do |name|
+      k,v=name.name, options[:domains][name.name.to_sym]
       cur_email = options[:emails] ? options[:emails][k] : nil
       case v["dcv"]
-        when /https?/i, /cname/i
-          dcv=self.certificate_names.find_by_name(k).
-              domain_control_validations.create(dcv_method: v["dcv"], candidate_addresses: cur_email,
-                failure_action: v["dcv_failure_action"])
-          if (v["dcv_failure_action"]=="remove" || options[:dcv_failure_action]=="remove")
-            found=dcv.verify_http_csr_hash
-            self.domains.delete(k) unless found
-          end
-          # assume the first name is the common name
-          self.csr.domain_control_validations.
-              create(dcv_method: v["dcv"], candidate_addresses: cur_email,
-                failure_action: v["dcv_failure_action"]) if(i==0 && !certificate_order.certificate.is_ucc?)
-        else
-          self.certificate_names.find_by_name(k).
-              domain_control_validations.create(dcv_method: "email", email_address: v["dcv"],
-                failure_action: v["dcv_failure_action"], candidate_addresses: cur_email)
-          # assume the first name is the common name
-          self.csr.domain_control_validations.
-              create(dcv_method: "email", email_address: v["dcv"],
-                failure_action: v["dcv_failure_action"], candidate_addresses: cur_email) if(i==0 && !certificate_order.certificate.is_ucc?)
+      when /https?/i, /cname/i
+        dcv=name.domain_control_validations.create(dcv_method: v["dcv"], candidate_addresses: cur_email,
+                                              failure_action: v["dcv_failure_action"])
+        if (v["dcv_failure_action"]=="remove" || options[:dcv_failure_action]=="remove")
+          found=dcv.verify_http_csr_hash
+          self.domains.delete(k) unless found
+        end
+        # assume the first name is the common name
+        self.csr.domain_control_validations.
+            create(dcv_method: v["dcv"], candidate_addresses: cur_email,
+                   failure_action: v["dcv_failure_action"]) if(i==0 && !certificate_order.certificate.is_ucc?)
+      else
+        name.domain_control_validations.create(dcv_method: "email", email_address: v["dcv"],
+                                              failure_action: v["dcv_failure_action"], candidate_addresses: cur_email)
+        # assume the first name is the common name
+        self.csr.domain_control_validations.
+            create(dcv_method: "email", email_address: v["dcv"],
+                   failure_action: v["dcv_failure_action"], candidate_addresses: cur_email) if(i==0 && !certificate_order.certificate.is_ucc?)
       end
       i+=1
     end

@@ -96,7 +96,7 @@ class DomainsController < ApplicationController
   end
 
   def validate_selected
-    if params[:d_name_check]
+    if params[:d_name_id]
       send_validation_email(params)
       flash[:notice] = "DCV email sent."
       redirect_to domains_path

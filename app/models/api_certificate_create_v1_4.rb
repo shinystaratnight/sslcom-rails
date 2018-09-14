@@ -141,8 +141,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
     if @certificate_order.is_a?(CertificateOrder)
       # CAA Checking for domains what has been validated and no passed for CAA.
       if caa_check_domains && caa_check_domains[0] != ''
-        caa_check_domains.each do |domain|
-          cn = @certificate_order.certificate_content.certificate_names.find_by_name(domain)
+        @certificate_order.certificate_content.certificate_names.find_by_domains(caa_check_domains).each do |cn|
           CaaCheck.pass?(@certificate_order.ref, cn, cn.certificate_content)
         end
       end
@@ -200,8 +199,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
     if @certificate_order.is_a?(CertificateOrder)
       # CAA Checking for domains what has been validated and no passed for CAA.
       if caa_check_domains && caa_check_domains[0] != ''
-        caa_check_domains.each do |domain|
-          cn = @certificate_order.certificate_content.certificate_names.find_by_name(domain)
+        @certificate_order.certificate_content.certificate_names.find_by_domains(caa_check_domains).each do |cn|
           CaaCheck.pass?(@certificate_order.ref, cn, cn.certificate_content)
         end
       end
@@ -308,11 +306,11 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
 
   # this update dcv method to comodo for each domain
   def comodo_auto_update_dcv(options={send_to_ca: true})
-    self.domains.keys.map do |domain|
+    names = options[:certificate_order].certificate_content.certificate_names.find_by_domains(self.domains.keys)
+    names.map do |name|
       # ComodoApi.delay.auto_update_dcv(dcv:
       ComodoApi.auto_update_dcv(dcv:
-        options[:certificate_order].certificate_content.certificate_names.find_by_name(domain).
-        domain_control_validations.last, send_to_ca: options[:send_to_ca])
+        name.domain_control_validations.last, send_to_ca: options[:send_to_ca])
     end
   end
 

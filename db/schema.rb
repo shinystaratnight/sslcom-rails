@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180912022511) do
+ActiveRecord::Schema.define(version: 20180913183330) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        limit: 255
@@ -64,6 +64,8 @@ ActiveRecord::Schema.define(version: 20180912022511) do
     t.datetime "updated_at",                 null: false
     t.string   "roles",          limit: 255
   end
+
+  add_index "api_credentials", ["ssl_account_id"], name: "index_api_credentials_on_ssl_account_id", using: :btree
 
   create_table "apis", force: :cascade do |t|
     t.datetime "created_at"
@@ -541,6 +543,7 @@ ActiveRecord::Schema.define(version: 20180912022511) do
 
   add_index "csrs", ["certificate_content_id", "common_name"], name: "index_csrs_on_common_name_and_certificate_content_id", using: :btree
   add_index "csrs", ["certificate_content_id"], name: "index_csrs_on_certificate_content_id", using: :btree
+  add_index "csrs", ["common_name", "email", "sig_alg"], name: "index_csrs_on_3_cols", using: :btree
   add_index "csrs", ["common_name", "email", "sig_alg"], name: "index_csrs_on_common_name_and_email_and_sig_alg", using: :btree
   add_index "csrs", ["common_name"], name: "index_csrs_on_common_name", using: :btree
   add_index "csrs", ["organization"], name: "index_csrs_on_organization", using: :btree
@@ -1047,9 +1050,11 @@ ActiveRecord::Schema.define(version: 20180912022511) do
   end
 
   add_index "preferences", ["group_id", "group_type", "name", "owner_id", "owner_type"], name: "index_preferences_on_owner_and_name_and_preference", unique: true, using: :btree
+  add_index "preferences", ["group_id", "group_type", "owner_id", "owner_type", "value"], name: "index_preferences_on_5_cols", using: :btree
   add_index "preferences", ["id", "name", "owner_id", "owner_type", "value"], name: "index_preferences_on_owner_and_name_and_value", using: :btree
   add_index "preferences", ["id", "name", "value"], name: "index_preferences_on_name_and_value", using: :btree
   add_index "preferences", ["owner_id", "owner_type"], name: "index_preferences_on_owner_id_and_owner_type", using: :btree
+  add_index "preferences", ["owner_type", "owner_id"], name: "index_preferences_on_owner_type_and_owner_id", using: :btree
 
   create_table "product_orders", force: :cascade do |t|
     t.integer  "ssl_account_id",    limit: 4
@@ -1374,6 +1379,7 @@ ActiveRecord::Schema.define(version: 20180912022511) do
   end
 
   add_index "signed_certificates", ["ca_id"], name: "index_signed_certificates_on_ca_id", using: :btree
+  add_index "signed_certificates", ["common_name", "strength"], name: "index_signed_certificates_on_3_cols", using: :btree
   add_index "signed_certificates", ["common_name"], name: "index_signed_certificates_on_common_name", using: :btree
   add_index "signed_certificates", ["csr_id"], name: "index_signed_certificates_on_csr_id", using: :btree
 
@@ -1463,6 +1469,7 @@ ActiveRecord::Schema.define(version: 20180912022511) do
   end
 
   add_index "sub_order_items", ["id", "sub_itemable_id", "sub_itemable_type"], name: "index_sub_order_items_on_sub_itemable", using: :btree
+  add_index "sub_order_items", ["sub_itemable_id", "sub_itemable_type"], name: "index_sub_order_items_on_sub_itemable_id_and_sub_itemable_type", using: :btree
 
   create_table "surl_blacklists", force: :cascade do |t|
     t.string   "fingerprint", limit: 255

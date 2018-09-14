@@ -79,7 +79,8 @@ class ValidationsController < ApplicationController
           if @ds
             # tmpCnt = 0
             # before = DateTime.now
-            @ds.each do |key, value|
+            cc.certificate_names.find_by_domains(@ds.keys).each do |cn|
+              key,value=cn.name,@ds[cn.name].value
               if value['status'].casecmp('validated') != 0
                 @all_validated = false if @all_validated
               else
@@ -88,7 +89,6 @@ class ValidationsController < ApplicationController
                 cache = nil # Rails.cache.read(params[:certificate_order_id] + ':' + ext_order_number + ':' + key)
 
                 if cache.blank?
-                  cn = cc.certificate_names.find_by_name(key)
                   dcv = cn.blank? ? nil : cn.domain_control_validations.last
                   value['attempted_on'] = dcv.blank? ? 'n/a' : dcv.created_at
 
@@ -151,8 +151,10 @@ class ValidationsController < ApplicationController
       certificate_content = certificate_order.certificate_content
       certificate_names = certificate_content.certificate_names
 
+      certificate_names.find_by_domains(domain_name_arry).each do |cn_obj|
+
+      end
       domain_name_arry.each do |domain_name|
-        cn_obj = certificate_names.find_by_name(domain_name)
         next unless cn_obj
 
         res = ComodoApi.auto_remove_domain(domain_name: cn_obj, order_number: certificate_order.external_order_number)
@@ -179,7 +181,7 @@ class ValidationsController < ApplicationController
           # TODO: Remove cache for removed domain
           Rails.cache.delete(params[:certificate_order_id] + ':' + domain_name)
         else
-          result_obj[domain_name] = error_message.gsub("+", " ").gsub("%27", "'").gsub("%21", "!")
+          result_obj[cn_obj.name] = error_message.gsub("+", " ").gsub("%27", "'").gsub("%21", "!")
         end
       end
     else
