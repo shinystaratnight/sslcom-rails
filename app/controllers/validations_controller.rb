@@ -79,8 +79,8 @@ class ValidationsController < ApplicationController
           if @ds
             # tmpCnt = 0
             # before = DateTime.now
-            cc.certificate_names.find_by_domains(@ds.keys).each do |cn|
-              key,value=cn.name,@ds[cn.name]
+            names=cc.certificate_names.find_by_domains(@ds.keys)
+            @ds.each do |key, value|
               if value['status'].casecmp('validated') != 0
                 @all_validated = false if @all_validated
               else
@@ -89,10 +89,11 @@ class ValidationsController < ApplicationController
                 cache = nil # Rails.cache.read(params[:certificate_order_id] + ':' + ext_order_number + ':' + key)
 
                 if cache.blank?
+                  cn = names.find_by_name(key)
                   dcv = cn.blank? ? nil : cn.domain_control_validations.last
                   value['attempted_on'] = dcv.blank? ? 'n/a' : dcv.created_at
 
-                  if cn and cn.caa_passed
+                  if cn.caa_passed
                     value['caa_check'] = 'passed'
                   else
                     value['caa_check'] = 'failed'
