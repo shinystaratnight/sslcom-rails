@@ -9,7 +9,7 @@ namespace :cas do
       else
         "192.168.100.5"
       end
-    if ENV['RESET']
+    if ENV['RESET'] or ENV['PRODUCTS']
       CasCertificate.delete_all
       Ca.where{(ref!="0") & (ref!="0017d")}.delete_all
     end

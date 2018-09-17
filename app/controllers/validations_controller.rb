@@ -27,10 +27,7 @@ class ValidationsController < ApplicationController
   def new
     url=nil
     cc=@certificate_order.certificate_content
-    if cc.issued?
-      url=certificate_order_url(@certificate_order.ref)
-    # if CS then go to doc upload
-    elsif @certificate_order.certificate.is_code_signing?
+    if @certificate_order.certificate.is_code_signing?
       url=document_upload_certificate_order_validation_url(certificate_order_id: @certificate_order.ref)
     else
       if cc.issued? # or @certificate_order.all_domains_validated?
@@ -50,9 +47,9 @@ class ValidationsController < ApplicationController
         validated_domain_arry = []
         caa_check_domain_arry = []
 
-        unless cc.ca_id.nil?
-          cnames = cc.certificate_names
-          team_cnames = current_user.ssl_account.certificate_names
+        unless cc.ca.blank?
+          cnames = cc.certificate_names.includes(:domain_control_validations)
+          team_cnames = current_user.ssl_account.certificate_names.includes(:domain_control_validations)
 
           # Team level validation check
           cnames.each do |cn|
@@ -214,17 +211,13 @@ class ValidationsController < ApplicationController
   end
 
   def get_asynch_domains
-    returnObj =
+    co = (current_user.is_system_admins? ? CertificateOrder :
+              current_user.certificate_orders).find_by_ref(params[:certificate_order_id])
+    cn = co.certificate_content.certificate_names.find_by_name(params['domain_name']) if co
 
-    Rails.cache.fetch("#{(current_user.is_system_admins? ? CertificateOrder :
-        current_user.certificate_orders).find_by_ref(params[:certificate_order_id]).
-        certificate_content.certificate_names.find_by_name(params['domain_name']).
-        domain_control_validations.last.try(:cache_key)}/get_asynch_domains/#{params['domain_name']}") do
-      co = (current_user.is_system_admins? ? CertificateOrder :
-                current_user.certificate_orders).find_by_ref(params[:certificate_order_id])
-
-      if co
-        cn = co.certificate_content.certificate_names.find_by_name(params['domain_name'])
+    returnObj = Rails.cache.fetch("#{cn.domain_control_validations.
+        last.try(:cache_key)}/get_asynch_domains/#{params['domain_name']}") do
+      if cn
         ds = params['domain_status']
         dcv = cn.domain_control_validations.last
 

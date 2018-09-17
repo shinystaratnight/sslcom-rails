@@ -396,6 +396,7 @@ ActiveRecord::Schema.define(version: 20180914183330) do
   add_index "certificate_orders", ["validation_id"], name: "index_certificate_orders_on_validation_id", using: :btree
   add_index "certificate_orders", ["workflow_state", "is_expired", "is_test"], name: "index_certificate_orders_on_3_cols", using: :btree
   add_index "certificate_orders", ["workflow_state", "is_expired", "is_test"], name: "index_certificate_orders_on_ws_ie_it_ua", using: :btree
+  add_index "certificate_orders", ["workflow_state", "is_expired", "renewal_id"], name: "index_certificate_orders_on_ws_is_ri", using: :btree
 
   create_table "certificates", force: :cascade do |t|
     t.integer  "reseller_tier_id",      limit: 4
