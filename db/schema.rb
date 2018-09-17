@@ -1380,6 +1380,7 @@ ActiveRecord::Schema.define(version: 20180914183330) do
     t.integer  "registered_agent_id",       limit: 4
   end
 
+  add_index "signed_certificates", ["ca_id"], name: "index_signed_certificates_on_ca_id", using: :btree
   add_index "signed_certificates", ["common_name", "strength"], name: "index_signed_certificates_on_3_cols", using: :btree
   add_index "signed_certificates", ["common_name"], name: "index_signed_certificates_on_common_name", using: :btree
   add_index "signed_certificates", ["csr_id"], name: "index_signed_certificates_on_csr_id", using: :btree
@@ -1804,4 +1805,5 @@ ActiveRecord::Schema.define(version: 20180914183330) do
   end
 
   add_foreign_key "cdns", "certificate_orders"
+  add_foreign_key "signed_certificates", "cas"
 end
