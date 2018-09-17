@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180913183330) do
+ActiveRecord::Schema.define(version: 20180914183330) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        limit: 255
@@ -366,6 +366,7 @@ ActiveRecord::Schema.define(version: 20180913183330) do
   add_index "certificate_orders", ["is_test"], name: "index_certificate_orders_on_is_test", using: :btree
   add_index "certificate_orders", ["ref"], name: "index_certificate_orders_on_ref", using: :btree
   add_index "certificate_orders", ["site_seal_id"], name: "index_certificate_orders_site_seal_id", using: :btree
+  add_index "certificate_orders", ["ssl_account_id", "workflow_state", "id"], name: "index_certificate_orders_on_3_cols(2)", using: :btree
   add_index "certificate_orders", ["ssl_account_id", "workflow_state", "is_test", "updated_at"], name: "index_certificate_orders_on_4_cols", using: :btree
   add_index "certificate_orders", ["workflow_state", "is_expired", "is_test"], name: "index_certificate_orders_on_3_cols", using: :btree
 
@@ -1404,6 +1405,7 @@ ActiveRecord::Schema.define(version: 20180913183330) do
   add_index "ssl_accounts", ["acct_number", "company_name", "ssl_slug"], name: "index_ssl_accounts_on_acct_number_and_company_name_and_ssl_slug", using: :btree
   add_index "ssl_accounts", ["acct_number"], name: "index_ssl_account_on_acct_number", using: :btree
   add_index "ssl_accounts", ["id", "created_at"], name: "index_ssl_accounts_on_id_and_created_at", using: :btree
+  add_index "ssl_accounts", ["ssl_slug", "acct_number"], name: "index_ssl_accounts_on_ssl_slug_and_acct_number", using: :btree
 
   create_table "ssl_docs", force: :cascade do |t|
     t.integer  "folder_id",             limit: 4

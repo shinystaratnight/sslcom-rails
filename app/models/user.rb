@@ -90,7 +90,7 @@ class User < ActiveRecord::Base
   scope :search_sys_admin, ->{ joins{ roles }.where{ roles.name == Role::SYS_ADMIN } }
 
   def ssl_account(default_team=nil)
-    Rails.cache.fetch("#{cache_key}/ssl_account") do
+    Rails.cache.fetch("#{cache_key}/ssl_account/#{default_team || ''}") do
       default_ssl = default_ssl_account && is_approved_account?(default_ssl_account)
       main_ssl    = main_ssl_account && is_approved_account?(main_ssl_account)
 
