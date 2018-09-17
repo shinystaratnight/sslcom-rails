@@ -697,25 +697,26 @@ class CertificateOrder < ActiveRecord::Base
 
   # unit can be :days or :years
   def certificate_duration(unit=:as_is)
-    years=if migrated_from_v2? && !preferred_v2_line_items.blank?
-      preferred_v2_line_items.split('|').detect{|item|
-        item =~/years?/i || item =~/days?/i}.scan(/\d+.+?(?:ear|ay)s?/).last
-    else
-      unless certificate.is_ucc?
-        sub_order_items.map(&:product_variant_item).detect{|item|item.is_duration?}.try(:description)
-      else
-        d=sub_order_items.map(&:product_variant_item).detect{|item|item.is_domain?}.try(:description)
-        unless d.blank?
-          d=~/(\d years?)/i
-          $1
-        end
-      end
-    end
-    if unit==:years
-      years =~ /\A(\d+)/
-      $1
-    elsif unit==:days
-      case years.gsub(/[^\d]+/,"").to_i
+    Rails.cache.fetch("#{cache_key}/certificate_duration/#{unit.to_s}", expires_in: 24.hours) do
+      years=if migrated_from_v2? && !preferred_v2_line_items.blank?
+              preferred_v2_line_items.split('|').detect{|item|
+                item =~/years?/i || item =~/days?/i}.scan(/\d+.+?(?:ear|ay)s?/).last
+            else
+              unless certificate.is_ucc?
+                sub_order_items.map(&:product_variant_item).detect{|item|item.is_duration?}.try(:description)
+              else
+                d=sub_order_items.map(&:product_variant_item).detect{|item|item.is_domain?}.try(:description)
+                unless d.blank?
+                  d=~/(\d years?)/i
+                  $1
+                end
+              end
+            end
+      if unit==:years
+        years =~ /\A(\d+)/
+        $1
+      elsif unit==:days
+        case years.gsub(/[^\d]+/,"").to_i
         when 1
           365
         when 2
@@ -726,9 +727,9 @@ class CertificateOrder < ActiveRecord::Base
           1461
         when 5
           1826
-      end
-    elsif [:comodo_api,:sslcom_api].include? unit
-      case years.gsub(/[^\d]+/,"").to_i
+        end
+      elsif [:comodo_api,:sslcom_api].include? unit
+        case years.gsub(/[^\d]+/,"").to_i
         when 1
           365
         when 2
@@ -739,9 +740,10 @@ class CertificateOrder < ActiveRecord::Base
           30
         else #no ssl can go beyond 39 months. 36 months to make adding 1 or 2 years later easier
           SSL_MAX_DURATION
+        end
+      else
+        years
       end
-    else
-      years
     end
   end
 

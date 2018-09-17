@@ -1,7 +1,15 @@
 namespace :cas do
   desc "CA profiles that can be referenced"
   task seed_ejbca_profiles: :environment do
-    if ENV['RESET']
+    url=
+      if ENV['RAILS_ENV']=="production"
+        "192.168.5.17"
+      elsif ENV['RAILS_ENV']=="staging"
+        "192.168.5.19"
+      else
+        "192.168.100.5"
+      end
+    if ENV['RESET'] or ENV['PRODUCTS']
       CasCertificate.delete_all
       Ca.where{(ref!="0") & (ref!="0017d")}.delete_all
     end

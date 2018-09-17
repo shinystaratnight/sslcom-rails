@@ -221,9 +221,6 @@ class CertificateContent < ActiveRecord::Base
 
   def certificate_names_from_domains(domains=nil)
     domains ||= all_domains
-    if csr && certificate_names.find_by_name(csr.common_name).blank?
-      certificate_names.create(name: csr.common_name, is_common_name: true)
-    end
     (domains-certificate_names.find_by_domains(domains).pluck(:name)).each_with_index do |domain, i|
       certificate_names.create(name: domain, is_common_name: csr.try(:common_name)==domain)
     end
