@@ -1,18 +1,12 @@
 namespace :cas do
   desc "CA profiles that can be referenced"
   task seed_ejbca_profiles: :environment do
-    url=
+    url,shadow_url=
       if ENV['RAILS_ENV']=="production"
-        "192.168.5.17"
-      elsif ENV['RAILS_ENV']=="staging"
-        "192.168.5.19"
+        ["192.168.5.17","192.168.5.19"]
       else
-        "192.168.100.5"
+        ["192.168.100.5","192.168.100.5"]
       end
-    if ENV['RESET'] or ENV['PRODUCTS']
-      CasCertificate.delete_all
-      Ca.where{(ref!="0") & (ref!="0017d")}.delete_all
-    end
     Ca.find_or_initialize_by(ref: "1000").update_attributes(
       friendly_name: "CertLock SSL RSA 4096 (EV)",
       profile_name: "CertLock-SubCA-EV-SSL-RSA-4096",
@@ -21,8 +15,8 @@ namespace :cas do
       description: "",
       type: "SubCa",
       caa_issuers: ["ssl.com"],
-      host: "https://192.168.100.5:8442/restapi",
-      admin_host: "https://192.168.100.5:8443",
+      host: "https://#{url}:8442/restapi",
+      admin_host: "https://#{url}:8443",
       ekus: [Ca::EKUS[:server]],
       end_entity: Ca::END_ENTITY[:evssl],
       ca_name: Ca::CERTLOCK_CA
@@ -35,8 +29,8 @@ namespace :cas do
       description: "",
       type: "SubCa",
       caa_issuers: ["ssl.com"],
-      host: "https://192.168.100.5:8442/restapi",
-      admin_host: "https://192.168.100.5:8443",
+      host: "https://#{url}:8442/restapi",
+      admin_host: "https://#{url}:8443",
       ekus: [Ca::EKUS[:server]],
       end_entity: Ca::END_ENTITY[:dvssl],
       ca_name: Ca::CERTLOCK_CA
@@ -49,8 +43,8 @@ namespace :cas do
       description: "",
       type: "SubCa",
       caa_issuers: ["ssl.com"],
-      host: "https://192.168.100.5:8442/restapi",
-      admin_host: "https://192.168.100.5:8443",
+      host: "https://#{url}:8442/restapi",
+      admin_host: "https://#{url}:8443",
       ekus: [Ca::EKUS[:server]],
       end_entity: Ca::END_ENTITY[:ovssl],
       ca_name: Ca::CERTLOCK_CA
@@ -63,8 +57,8 @@ namespace :cas do
       description: "",
       type: "SubCa",
       caa_issuers: ["ssl.com"],
-      host: "https://192.168.100.5:8442/restapi",
-      admin_host: "https://192.168.100.5:8443",
+      host: "https://#{url}:8442/restapi",
+      admin_host: "https://#{url}:8443",
       ekus: [Ca::EKUS[:server]],
       end_entity: Ca::END_ENTITY[:dvssl],
       ca_name: Ca::CERTLOCK_CA
@@ -77,8 +71,8 @@ namespace :cas do
       description: "",
       type: "SubCa",
       caa_issuers: ["ssl.com"],
-      host: "https://192.168.100.5:8442/restapi",
-      admin_host: "https://192.168.100.5:8443",
+      host: "https://#{url}:8442/restapi",
+      admin_host: "https://#{url}:8443",
       ekus: [Ca::EKUS[:server]],
       end_entity: Ca::END_ENTITY[:ovssl],
       ca_name: Ca::CERTLOCK_CA
@@ -91,8 +85,8 @@ namespace :cas do
       description: "",
       type: "SubCa",
       caa_issuers: ["ssl.com"],
-      host: "https://192.168.100.5:8442/restapi",
-      admin_host: "https://192.168.100.5:8443",
+      host: "https://#{url}:8442/restapi",
+      admin_host: "https://#{url}:8443",
       ekus: [Ca::EKUS[:server]],
       end_entity: Ca::END_ENTITY[:evssl],
       ca_name: Ca::CERTLOCK_CA
@@ -105,8 +99,8 @@ namespace :cas do
       description: "",
       type: "RootCa",
       caa_issuers: ["ssl.com"],
-      host: "https://192.168.100.5:8442/restapi",
-      admin_host: "https://192.168.100.5:8443",
+      host: "https://#{url}:8442/restapi",
+      admin_host: "https://#{url}:8443",
       ca_name: Ca::CERTLOCK_CA
     )
     Ca.find_or_initialize_by(ref: "1007").update_attributes(
@@ -117,8 +111,8 @@ namespace :cas do
       description: "",
       type: "RootCa",
       caa_issuers: ["ssl.com"],
-      host: "https://192.168.100.5:8442/restapi",
-      admin_host: "https://192.168.100.5:8443",
+      host: "https://#{url}:8442/restapi",
+      admin_host: "https://#{url}:8443",
       ca_name: Ca::CERTLOCK_CA
     )
     Ca.find_or_initialize_by(ref: "1008").update_attributes(
@@ -129,8 +123,8 @@ namespace :cas do
       description: "",
       type: "RootCa",
       caa_issuers: ["ssl.com"],
-      host: "https://192.168.100.5:8442/restapi",
-      admin_host: "https://192.168.100.5:8443",
+      host: "https://#{url}:8442/restapi",
+      admin_host: "https://#{url}:8443",
       ca_name: Ca::CERTLOCK_CA
     )
     Ca.find_or_initialize_by(ref: "1009").update_attributes(
@@ -141,8 +135,8 @@ namespace :cas do
       description: "",
       type: "RootCa",
       caa_issuers: ["ssl.com"],
-      host: "https://192.168.100.5:8442/restapi",
-      admin_host: "https://192.168.100.5:8443",
+      host: "https://#{url}:8442/restapi",
+      admin_host: "https://#{url}:8443",
       ca_name: Ca::CERTLOCK_CA
     )
     Ca.find_or_initialize_by(ref: "1100").update_attributes(
@@ -153,8 +147,8 @@ namespace :cas do
       description: "",
       type: "RootCa",
       caa_issuers: ["ssl.com"],
-      host: "https://192.168.100.5:8442/restapi",
-      admin_host: "https://192.168.100.5:8443",
+      host: "https://#{url}:8442/restapi",
+      admin_host: "https://#{url}:8443",
       ca_name: Ca::ECOSSL_CA
     )
     Ca.find_or_initialize_by(ref: "1101").update_attributes(
@@ -165,8 +159,8 @@ namespace :cas do
       description: "",
       type: "RootCa",
       caa_issuers: ["ssl.com"],
-      host: "https://192.168.100.5:8442/restapi",
-      admin_host: "https://192.168.100.5:8443",
+      host: "https://#{url}:8442/restapi",
+      admin_host: "https://#{url}:8443",
       ca_name: Ca::ECOSSL_CA
     )
     Ca.find_or_initialize_by(ref: "1200").update_attributes(
@@ -177,8 +171,8 @@ namespace :cas do
       description: "",
       type: "RootCa",
       caa_issuers: ["ssl.com"],
-      host: "https://192.168.100.5:8442/restapi",
-      admin_host: "https://192.168.100.5:8443",
+      host: "https://#{url}:8442/restapi",
+      admin_host: "https://#{url}:8443",
       ca_name: Ca::MANAGEMENT_CA
     )
     Ca.find_or_initialize_by(ref: "0001").update_attributes(
@@ -189,8 +183,8 @@ namespace :cas do
       description: "",
       type: "SubCa",
       caa_issuers: ["ssl.com"],
-      host: "https://192.168.100.5:8442/restapi",
-      admin_host: "https://192.168.100.5:8443",
+      host: "https://#{url}:8442/restapi",
+      admin_host: "https://#{url}:8443",
       ekus: Ca::EKUS[:code_signing],
       end_entity: Ca::END_ENTITY[:evcs],
       ca_name: "SSL.com-EV-codeSigning-Intermediate-RSA-4096"
@@ -203,8 +197,8 @@ namespace :cas do
       description: "",
       type: "RootCa",
       caa_issuers: ["ssl.com"],
-      host: "https://192.168.100.5:8442/restapi",
-      admin_host: "https://192.168.100.5:8443",
+      host: "https://#{url}:8442/restapi",
+      admin_host: "https://#{url}:8443",
       ca_name: Ca::SSLCOM_CA
     )
     Ca.find_or_initialize_by(ref: "0003").update_attributes(
@@ -215,8 +209,8 @@ namespace :cas do
       description: "",
       type: "RootCa",
       caa_issuers: ["ssl.com"],
-      host: "https://192.168.100.5:8442/restapi",
-      admin_host: "https://192.168.100.5:8443",
+      host: "https://#{url}:8442/restapi",
+      admin_host: "https://#{url}:8443",
       ca_name: Ca::SSLCOM_CA
     )
     Ca.find_or_initialize_by(ref: "0004").update_attributes(
@@ -227,8 +221,8 @@ namespace :cas do
       description: "",
       type: "RootCa",
       caa_issuers: ["ssl.com"],
-      host: "https://192.168.100.5:8442/restapi",
-      admin_host: "https://192.168.100.5:8443",
+      host: "https://#{url}:8442/restapi",
+      admin_host: "https://#{url}:8443",
       ca_name: Ca::SSLCOM_CA
     )
     Ca.find_or_initialize_by(ref: "0005").update_attributes(
@@ -239,8 +233,8 @@ namespace :cas do
       description: "",
       type: "RootCa",
       caa_issuers: ["ssl.com"],
-      host: "https://192.168.100.5:8442/restapi",
-      admin_host: "https://192.168.100.5:8443",
+      host: "https://#{url}:8442/restapi",
+      admin_host: "https://#{url}:8443",
       ca_name: Ca::SSLCOM_CA
     )
     Ca.find_or_initialize_by(ref: "0006").update_attributes(
@@ -251,8 +245,8 @@ namespace :cas do
       description: "",
       type: "SubCa",
       caa_issuers: ["ssl.com"],
-      host: "https://192.168.100.5:8442/restapi",
-      admin_host: "https://192.168.100.5:8443",
+      host: "https://#{url}:8442/restapi",
+      admin_host: "https://#{url}:8443",
       ca_name: Ca::SSLCOM_CA,
       ekus: [Ca::EKUS[:server]],
       end_entity: Ca::END_ENTITY[:evssl]
@@ -265,8 +259,8 @@ namespace :cas do
       description: "",
       type: "SubCa",
       caa_issuers: ["ssl.com"],
-      host: "https://192.168.100.5:8442/restapi",
-      admin_host: "https://192.168.100.5:8443",
+      host: "https://#{url}:8442/restapi",
+      admin_host: "https://#{url}:8443",
       ca_name: Ca::SSLCOM_CA,
       ekus: [Ca::EKUS[:server]],
       end_entity: Ca::END_ENTITY[:dvssl]
@@ -279,8 +273,8 @@ namespace :cas do
       description: "",
       type: "SubCa",
       caa_issuers: ["ssl.com"],
-      host: "https://192.168.100.5:8442/restapi",
-      admin_host: "https://192.168.100.5:8443",
+      host: "https://#{url}:8442/restapi",
+      admin_host: "https://#{url}:8443",
       ca_name: Ca::SSLCOM_CA,
       ekus: [Ca::EKUS[:server]],
       end_entity: Ca::END_ENTITY[:ovssl]
@@ -293,8 +287,8 @@ namespace :cas do
       description: "",
       type: "RootCa",
       caa_issuers: ["ssl.com"],
-      host: "https://192.168.100.5:8442/restapi",
-      admin_host: "https://192.168.100.5:8443",
+      host: "https://#{url}:8442/restapi",
+      admin_host: "https://#{url}:8443",
       ca_name: Ca::SSLCOM_CA
     )
     Ca.find_or_initialize_by(ref: "0010").update_attributes(
@@ -305,8 +299,8 @@ namespace :cas do
       description: "",
       type: "RootCa",
       caa_issuers: ["ssl.com"],
-      host: "https://192.168.100.5:8442/restapi",
-      admin_host: "https://192.168.100.5:8443",
+      host: "https://#{url}:8442/restapi",
+      admin_host: "https://#{url}:8443",
       ca_name: Ca::SSLCOM_CA
     )
     Ca.find_or_initialize_by(ref: "0011").update_attributes(
@@ -317,8 +311,8 @@ namespace :cas do
       description: "",
       type: "RootCa",
       caa_issuers: ["ssl.com"],
-      host: "https://192.168.100.5:8442/restapi",
-      admin_host: "https://192.168.100.5:8443",
+      host: "https://#{url}:8442/restapi",
+      admin_host: "https://#{url}:8443",
       ca_name: Ca::SSLCOM_CA
     )
     Ca.find_or_initialize_by(ref: "0012").update_attributes(
@@ -329,8 +323,8 @@ namespace :cas do
       description: "",
       type: "RootCa",
       caa_issuers: ["ssl.com"],
-      host: "https://192.168.100.5:8442/restapi",
-      admin_host: "https://192.168.100.5:8443",
+      host: "https://#{url}:8442/restapi",
+      admin_host: "https://#{url}:8443",
       ca_name: Ca::SSLCOM_CA
     )
     Ca.find_or_initialize_by(ref: "0013").update_attributes(
@@ -341,8 +335,8 @@ namespace :cas do
       description: "",
       type: "SubCa",
       caa_issuers: ["ssl.com"],
-      host: "https://192.168.100.5:8442/restapi",
-      admin_host: "https://192.168.100.5:8443",
+      host: "https://#{url}:8442/restapi",
+      admin_host: "https://#{url}:8443",
       ca_name: "SSLcom-SubCA-CodeSigning-RSA-4096-R1",
       ekus: [Ca::EKUS[:code_signing]],
       end_entity: Ca::END_ENTITY[:cs]
@@ -355,8 +349,8 @@ namespace :cas do
       description: "",
       type: "SubCa",
       caa_issuers: ["ssl.com"],
-      host: "https://192.168.100.5:8442/restapi",
-      admin_host: "https://192.168.100.5:8443",
+      host: "https://#{url}:8442/restapi",
+      admin_host: "https://#{url}:8443",
       ca_name: "SSLcom-SubCA-EV-CodeSigning-RSA-4096-R2",
       ekus: [Ca::EKUS[:code_signing]],
       end_entity: Ca::END_ENTITY[:evcs]
@@ -369,8 +363,8 @@ namespace :cas do
       description: "",
       type: "SubCa",
       caa_issuers: ["ssl.com"],
-      host: "https://192.168.100.5:8442/restapi",
-      admin_host: "https://192.168.100.5:8443",
+      host: "https://#{url}:8442/restapi",
+      admin_host: "https://#{url}:8443",
       ca_name: Ca::SSLCOM_CA,
       ekus: [Ca::EKUS[:server]],
       end_entity: Ca::END_ENTITY[:evssl]
@@ -383,8 +377,8 @@ namespace :cas do
       description: "",
       type: "SubCa",
       caa_issuers: ["ssl.com"],
-      host: "https://192.168.100.5:8442/restapi",
-      admin_host: "https://192.168.100.5:8443",
+      host: "https://#{url}:8442/restapi",
+      admin_host: "https://#{url}:8443",
       ca_name: Ca::SSLCOM_CA,
       ekus: [Ca::EKUS[:time_stamping]]
     )
@@ -396,8 +390,8 @@ namespace :cas do
       description: "",
       type: "SubCa",
       caa_issuers: ["ssl.com"],
-      host: "https://192.168.100.5:8442/restapi",
-      admin_host: "https://192.168.100.5:8443",
+      host: "https://#{url}:8442/restapi",
+      admin_host: "https://#{url}:8443",
       ca_name: "SSLcom-SubCA-SSL-RSA-4096-R1",
       ekus: [Ca::EKUS[:server]],
       end_entity: Ca::END_ENTITY[:dvssl]
@@ -410,8 +404,8 @@ namespace :cas do
       description: "",
       type: "SubCa",
       caa_issuers: ["ssl.com"],
-      host: "https://192.168.100.5:8442/restapi",
-      admin_host: "https://192.168.100.5:8443",
+      host: "https://#{url}:8442/restapi",
+      admin_host: "https://#{url}:8443",
       ca_name: "SSLcom-SubCA-SSL-RSA-4096-R1",
       ekus: [Ca::EKUS[:server]],
       end_entity: Ca::END_ENTITY[:ovssl]
@@ -424,8 +418,8 @@ namespace :cas do
       description: "",
       type: "RootCa",
       caa_issuers: ["ssl.com"],
-      host: "https://192.168.100.5:8442/restapi",
-      admin_host: "https://192.168.100.5:8443",
+      host: "https://#{url}:8442/restapi",
+      admin_host: "https://#{url}:8443",
       ca_name: Ca::SSLCOM_CA
     )
     Ca.find_or_initialize_by(ref: "0020").update_attributes(
@@ -436,8 +430,8 @@ namespace :cas do
       description: "",
       type: "SubCa",
       caa_issuers: ["ssl.com"],
-      host: "https://192.168.100.5:8442/restapi",
-      admin_host: "https://192.168.100.5:8443",
+      host: "https://#{url}:8442/restapi",
+      admin_host: "https://#{url}:8443",
       ca_name: "SSLcomEVRSASSLsubCA",
       ekus: [Ca::EKUS[:server]],
       end_entity: Ca::END_ENTITY[:evssl]
@@ -450,9 +444,9 @@ namespace :cas do
       description: "",
       type: "SubCa",
       caa_issuers: ["ssl.com"],
-      host: "https://192.168.100.5:8442/restapi",
-      admin_host: "https://192.168.100.5:8443",
-      ca_name: Ca::SSLCOM_CA,
+      host: "https://#{url}:8442/restapi",
+      admin_host: "https://#{url}:8443",
+      ca_name: "SSLcom-SubCA-NAESB-clientAuth-RSA-4096-R1",
       ekus: [Ca::EKUS[:client]],
       end_entity: Ca::END_ENTITY[:ov_client]
     )
@@ -464,9 +458,9 @@ namespace :cas do
       description: "",
       type: "SubCa",
       caa_issuers: ["ssl.com"],
-      host: "https://192.168.100.5:8442/restapi",
-      admin_host: "https://192.168.100.5:8443",
-      ca_name: Ca::SSLCOM_CA,
+      host: "https://#{url}:8442/restapi",
+      admin_host: "https://#{url}:8443",
+      ca_name: "SSLcom-SubCA-NAESB-clientAuth-RSA-4096-R1",
       ekus: [Ca::EKUS[:client]],
       end_entity: Ca::END_ENTITY[:ov_client]
     )
@@ -478,8 +472,8 @@ namespace :cas do
       description: "",
       type: "SubCa",
       caa_issuers: ["ssl.com"],
-      host: "https://192.168.100.5:8442/restapi",
-      admin_host: "https://192.168.100.5:8443",
+      host: "https://#{url}:8442/restapi",
+      admin_host: "https://#{url}:8443",
       ca_name: Ca::SSLCOM_CA,
       ekus: [Ca::EKUS[:client]],
       end_entity: Ca::END_ENTITY[:ov_client]
@@ -492,8 +486,8 @@ namespace :cas do
       description: "",
       type: "SubCa",
       caa_issuers: ["ssl.com"],
-      host: "https://192.168.100.5:8442/restapi",
-      admin_host: "https://192.168.100.5:8443",
+      host: "https://#{url}:8442/restapi",
+      admin_host: "https://#{url}:8443",
       ca_name: Ca::SSLCOM_CA,
       ekus: [Ca::EKUS[:client]],
       end_entity: Ca::END_ENTITY[:ov_client]
@@ -507,8 +501,8 @@ namespace :cas do
       description: "",
       type: "SubCa",
       caa_issuers: ["ssl.com"],
-      host: "https://192.168.100.5:8442/restapi",
-      admin_host: "https://192.168.100.5:8443",
+      host: "https://#{shadow_url}:8442/restapi",
+      admin_host: "https://#{shadow_url}:8443",
       ca_name: "SSLcom-SubCA-CodeSigning-RSA-4096-R1",
       ekus: [Ca::EKUS[:code_signing]],
       end_entity: Ca::END_ENTITY[:cs]
@@ -521,8 +515,8 @@ namespace :cas do
       description: "",
       type: "SubCa",
       caa_issuers: ["ssl.com"],
-      host: "https://192.168.100.5:8442/restapi",
-      admin_host: "https://192.168.100.5:8443",
+      host: "https://#{shadow_url}:8442/restapi",
+      admin_host: "https://#{shadow_url}:8443",
       ca_name: "SSLcom-SubCA-EV-CodeSigning-RSA-4096-R2",
       ekus: [Ca::EKUS[:code_signing]],
       end_entity: Ca::END_ENTITY[:evcs]
@@ -535,8 +529,8 @@ namespace :cas do
       description: "",
       type: "SubCa",
       caa_issuers: ["ssl.com"],
-      host: "https://192.168.100.5:8442/restapi",
-      admin_host: "https://192.168.100.5:8443",
+      host: "https://#{shadow_url}:8442/restapi",
+      admin_host: "https://#{shadow_url}:8443",
       ca_name: Ca::SSLCOM_CA,
       ekus: [Ca::EKUS[:server]],
       end_entity: Ca::END_ENTITY[:evssl]
@@ -549,8 +543,8 @@ namespace :cas do
       description: "",
       type: "SubCa",
       caa_issuers: ["ssl.com"],
-      host: "https://192.168.100.5:8442/restapi",
-      admin_host: "https://192.168.100.5:8443",
+      host: "https://#{shadow_url}:8442/restapi",
+      admin_host: "https://#{shadow_url}:8443",
       ca_name: Ca::SSLCOM_CA,
       ekus: [Ca::EKUS[:time_stamping]]
     )
@@ -562,8 +556,8 @@ namespace :cas do
       description: "",
       type: "SubCa",
       caa_issuers: ["ssl.com"],
-      host: "https://192.168.100.5:8442/restapi",
-      admin_host: "https://192.168.100.5:8443",
+      host: "https://#{shadow_url}:8442/restapi",
+      admin_host: "https://#{shadow_url}:8443",
       ca_name: "SSLcom-SubCA-SSL-RSA-4096-R1",
       ekus: [Ca::EKUS[:server]],
       end_entity: Ca::END_ENTITY[:dvssl]
@@ -576,8 +570,8 @@ namespace :cas do
       description: "",
       type: "SubCa",
       caa_issuers: ["ssl.com"],
-      host: "https://192.168.100.5:8442/restapi",
-      admin_host: "https://192.168.100.5:8443",
+      host: "https://#{shadow_url}:8442/restapi",
+      admin_host: "https://#{shadow_url}:8443",
       ca_name: "SSLcom-SubCA-SSL-RSA-4096-R1",
       ekus: [Ca::EKUS[:server]],
       end_entity: Ca::END_ENTITY[:ovssl]
@@ -590,8 +584,8 @@ namespace :cas do
       description: "",
       type: "SubCa",
       caa_issuers: ["ssl.com"],
-      host: "https://192.168.100.5:8442/restapi",
-      admin_host: "https://192.168.100.5:8443",
+      host: "https://#{shadow_url}:8442/restapi",
+      admin_host: "https://#{shadow_url}:8443",
       ca_name: "SSLcomEVRSASSLsubCA",
       ekus: [Ca::EKUS[:server]],
       end_entity: Ca::END_ENTITY[:evssl]
@@ -604,9 +598,9 @@ namespace :cas do
       description: "",
       type: "SubCa",
       caa_issuers: ["ssl.com"],
-      host: "https://192.168.100.5:8442/restapi",
-      admin_host: "https://192.168.100.5:8443",
-      ca_name: Ca::SSLCOM_CA,
+      host: "https://#{shadow_url}:8442/restapi",
+      admin_host: "https://#{shadow_url}:8443",
+      ca_name: "SSLcom-SubCA-NAESB-clientAuth-RSA-4096-R1",
       ekus: [Ca::EKUS[:client]],
       end_entity: Ca::END_ENTITY[:ov_client]
     )
@@ -618,9 +612,9 @@ namespace :cas do
       description: "",
       type: "SubCa",
       caa_issuers: ["ssl.com"],
-      host: "https://192.168.100.5:8442/restapi",
-      admin_host: "https://192.168.100.5:8443",
-      ca_name: Ca::SSLCOM_CA,
+      host: "https://#{shadow_url}:8442/restapi",
+      admin_host: "https://#{shadow_url}:8443",
+      ca_name: "SSLcom-SubCA-NAESB-clientAuth-RSA-4096-R1",
       ekus: [Ca::EKUS[:client]],
       end_entity: Ca::END_ENTITY[:ov_client]
     )
@@ -632,9 +626,9 @@ namespace :cas do
       description: "",
       type: "SubCa",
       caa_issuers: ["ssl.com"],
-      host: "https://192.168.100.5:8442/restapi",
-      admin_host: "https://192.168.100.5:8443",
-      ca_name: Ca::SSLCOM_CA,
+      host: "https://#{shadow_url}:8442/restapi",
+      admin_host: "https://#{shadow_url}:8443",
+      ca_name: "SSLcom-SubCA-NAESB-clientAuth-RSA-4096-R1",
       ekus: [Ca::EKUS[:client]],
       end_entity: Ca::END_ENTITY[:ov_client]
     )
@@ -646,9 +640,9 @@ namespace :cas do
       description: "",
       type: "SubCa",
       caa_issuers: ["ssl.com"],
-      host: "https://192.168.100.5:8442/restapi",
-      admin_host: "https://192.168.100.5:8443",
-      ca_name: Ca::SSLCOM_CA,
+      host: "https://#{shadow_url}:8442/restapi",
+      admin_host: "https://#{shadow_url}:8443",
+      ca_name: "SSLcom-SubCA-NAESB-clientAuth-RSA-4096-R1",
       ekus: [Ca::EKUS[:client]],
       end_entity: Ca::END_ENTITY[:ov_client]
     )
@@ -700,26 +694,43 @@ namespace :cas do
       description: "",
       type: "EndEntityProfile"
     )
-    Certificate.all.each {|cert|
+    live=([]).tap do |certificates|
+      if ENV['LIVE']
+        if ENV['LIVE'].blank? or ENV['LIVE']=~/all/i
+          CasCertificate.delete_all
+        else
+          ENV['LIVE'].split(",").each do |prod_root|
+            Certificate.where{product =~ "%#{prod_root}%"}.cas_certificates.delete_all
+            certificates << Certificate.where{product =~ "%#{prod_root}%"}.all.to_a
+          end
+        end
+      end
+    end.flatten
+    (live.empty? ? Certificate : live).all.each {|cert|
       Ca.all.each {|ca|
-        status = ca.ref=~/d\Z/ ? CasCertificate::STATUS[:shadow] : CasCertificate::STATUS[:active]
+        status = ca.ref=~/d\Z/ ? :shadow : :active
         unless ca.is_a?(EndEntityProfile) or ca.is_a?(RootCa) or ca.ekus.blank?
           if cert.is_evcs? and ca.end_entity==(Ca::END_ENTITY[:evcs])
             cert.cas_certificates.create(ca_id: ca.id,
-               status: CasCertificate::STATUS[ca.ref=="0014" ? :default : status])
+             status: CasCertificate::STATUS[(ca.ref=="0014" and live.include?(cert)) ? :default : status])
           elsif cert.is_cs? and ca.end_entity==(Ca::END_ENTITY[:cs])
             cert.cas_certificates.create(ca_id: ca.id,
-               status: CasCertificate::STATUS[ca.ref=="0013" ? :default : status])
-          elsif  cert.is_dv? or cert.is_ov? or cert.is_ev?
+             status: CasCertificate::STATUS[(ca.ref=="0013" and live.include?(cert)) ? :default : status])
+          elsif cert.is_client? and ca.end_entity==(Ca::END_ENTITY[:ov_client])
+            if cert.product=~/naesb-basic/
+              cert.cas_certificates.create(ca_id: ca.id,
+                status: CasCertificate::STATUS[(ca.ref=="0022" and live.include?(cert)) ? :default : status])
+            end
+          elsif cert.is_dv? or cert.is_ov? or cert.is_ev?
             if ca.end_entity==(Ca::END_ENTITY[:dvssl])
               cert.cas_certificates.create(ca_id: ca.id,
-               status: CasCertificate::STATUS[(cert.is_ucc? and ca.ref=="0017") ? :default : status])
+             status: CasCertificate::STATUS[(ca.ref=="0017" and live.include?(cert) and cert.is_dv?) ? :default : status])
             elsif (cert.is_ov? or cert.is_ev?) and ca.end_entity==(Ca::END_ENTITY[:ovssl])
               cert.cas_certificates.create(ca_id: ca.id,
-               status: CasCertificate::STATUS[cert.is_ucc? ? status : status])
+             status: CasCertificate::STATUS[(ca.ref=="0018" and live.include?(cert) and cert.is_ov?) ? :default : status])
             elsif cert.is_ev? and ca.end_entity==(Ca::END_ENTITY[:evssl])
               cert.cas_certificates.create(ca_id: ca.id,
-               status: CasCertificate::STATUS[cert.is_ucc? ? status : status])
+             status: CasCertificate::STATUS[(ca.ref=="0015" and live.include?(cert)) ? :default : status])
             end
           end
         end
