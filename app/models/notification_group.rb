@@ -78,9 +78,9 @@ class NotificationGroup < ActiveRecord::Base
         else
           cc.certificate_names.each do |cn|
             if cud == 'create'
-              ngs.build(
+              ngs.find_or_create_by(
                   subjectable_type: 'CertificateName', subjectable_id: cn.id
-              ).save
+              )
             elsif cud == 'delete'
               ngs.where(subjectable_type: 'CertificateName', subjectable_id: cn.id, domain_name: nil).destroy_all
               ngs.where(subjectable_type: 'CertificateName', subjectable_id: domain.id)
