@@ -1,5 +1,12 @@
 namespace :cas do
   desc "CA profiles that can be referenced"
+  # RAILS_ENV - is this on production or development?
+  # LIVE - array of products to make default. If specified, will not delete other mappings (unless used with RESET).
+  #   If left blank, will delete all mappings and set no CA as default
+  # RESET - set to true to delete all cas_certificates mappings
+  #
+  # following example will make NAESB the default for ssl_account_id 492124 and recreate all other mappings
+  # LIVE=naesb SSL_ACCOUNT_IDS=492124 RESET=true
   task seed_ejbca_profiles: :environment do
     url,shadow_url=
       if ENV['RAILS_ENV']=="production"
@@ -696,43 +703,59 @@ namespace :cas do
     )
     live=([]).tap do |certificates|
       if ENV['LIVE']
-        if ENV['LIVE'].blank? or ENV['LIVE']=~/all/i
+        if ENV['LIVE'].blank? or ENV['LIVE']=~/all/i or ENV['RESET']="true"
           CasCertificate.delete_all
-        else
-          ENV['LIVE'].split(",").each do |prod_root|
-            Certificate.where{product =~ "%#{prod_root}%"}.cas_certificates.delete_all
+          certificates << Certificate.all.to_a if ENV['LIVE']=~/all/i
+        end
+        if ENV['LIVE'].split(",").each do |prod_root|
+            Certificate.where{product =~ "%#{prod_root}%"}.each{|cert|cert.cas_certificates.delete_all}
             certificates << Certificate.where{product =~ "%#{prod_root}%"}.all.to_a
           end
         end
       end
     end.flatten
-    (live.empty? ? Certificate : live).all.each {|cert|
-      Ca.all.each {|ca|
-        status = ca.ref=~/d\Z/ ? :shadow : :active
-        unless ca.is_a?(EndEntityProfile) or ca.is_a?(RootCa) or ca.ekus.blank?
-          if cert.is_evcs? and ca.end_entity==(Ca::END_ENTITY[:evcs])
+    cas_certificates = ->(ca,cert,ssl_account_id=nil){
+      status = ca.ref=~/d\Z/ ? :shadow : :active
+      unless ca.is_a?(EndEntityProfile) or ca.is_a?(RootCa) or ca.ekus.blank?
+        if cert.is_evcs? and ca.end_entity==(Ca::END_ENTITY[:evcs])
+          cert.cas_certificates.create(ca_id: ca.id,
+            status: CasCertificate::STATUS[(ca.ref=="0014" and live.include?(cert)) ? :default : status],
+                                       ssl_account_id: ssl_account_id)
+        elsif cert.is_cs? and ca.end_entity==(Ca::END_ENTITY[:cs])
+          cert.cas_certificates.create(ca_id: ca.id,
+            status: CasCertificate::STATUS[(ca.ref=="0013" and live.include?(cert)) ? :default : status],
+                                       ssl_account_id: ssl_account_id)
+        elsif cert.is_client? and ca.end_entity==(Ca::END_ENTITY[:ov_client])
+          if cert.product=~/naesb-basic/
             cert.cas_certificates.create(ca_id: ca.id,
-             status: CasCertificate::STATUS[(ca.ref=="0014" and live.include?(cert)) ? :default : status])
-          elsif cert.is_cs? and ca.end_entity==(Ca::END_ENTITY[:cs])
-            cert.cas_certificates.create(ca_id: ca.id,
-             status: CasCertificate::STATUS[(ca.ref=="0013" and live.include?(cert)) ? :default : status])
-          elsif cert.is_client? and ca.end_entity==(Ca::END_ENTITY[:ov_client])
-            if cert.product=~/naesb-basic/
-              cert.cas_certificates.create(ca_id: ca.id,
-                status: CasCertificate::STATUS[(ca.ref=="0022" and live.include?(cert)) ? :default : status])
-            end
-          elsif cert.is_dv? or cert.is_ov? or cert.is_ev?
-            if ca.end_entity==(Ca::END_ENTITY[:dvssl])
-              cert.cas_certificates.create(ca_id: ca.id,
-             status: CasCertificate::STATUS[(ca.ref=="0017" and live.include?(cert) and cert.is_dv?) ? :default : status])
-            elsif (cert.is_ov? or cert.is_ev?) and ca.end_entity==(Ca::END_ENTITY[:ovssl])
-              cert.cas_certificates.create(ca_id: ca.id,
-             status: CasCertificate::STATUS[(ca.ref=="0018" and live.include?(cert) and cert.is_ov?) ? :default : status])
-            elsif cert.is_ev? and ca.end_entity==(Ca::END_ENTITY[:evssl])
-              cert.cas_certificates.create(ca_id: ca.id,
-             status: CasCertificate::STATUS[(ca.ref=="0015" and live.include?(cert)) ? :default : status])
-            end
+              status: CasCertificate::STATUS[(ca.ref=="0022" and live.include?(cert)) ? :default : status],
+                                         ssl_account_id: ssl_account_id)
           end
+        elsif cert.is_dv? or cert.is_ov? or cert.is_ev?
+          if ca.end_entity==(Ca::END_ENTITY[:dvssl])
+            cert.cas_certificates.create(ca_id: ca.id,
+              status: CasCertificate::STATUS[(ca.ref=="0017" and live.include?(cert) and cert.is_dv?) ? :default : status],
+                                         ssl_account_id: ssl_account_id)
+          elsif (cert.is_ov? or cert.is_ev?) and ca.end_entity==(Ca::END_ENTITY[:ovssl])
+            cert.cas_certificates.create(ca_id: ca.id,
+              status: CasCertificate::STATUS[(ca.ref=="0018" and live.include?(cert) and cert.is_ov?) ? :default : status],
+                                         ssl_account_id: ssl_account_id)
+          elsif cert.is_ev? and ca.end_entity==(Ca::END_ENTITY[:evssl])
+            cert.cas_certificates.create(ca_id: ca.id,
+              status: CasCertificate::STATUS[(ca.ref=="0015" and live.include?(cert)) ? :default : status],
+                                         ssl_account_id: ssl_account_id)
+          end
+        end
+      end
+    }
+    ((live.empty? or ENV['RESET']="true") ? Certificate.all : live).each {|cert|
+      Ca.all.each {|ca|
+        if ENV['SSL_ACCOUNT_IDS']
+          ENV['SSL_ACCOUNT_IDS'].split(',').each do |ssl_account_id|
+            cas_certificates.call(ca,cert,ssl_account_id.to_i)
+          end
+        else
+          cas_certificates.call(ca,cert)
         end
       }
     }
