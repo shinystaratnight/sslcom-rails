@@ -9,7 +9,7 @@ class SslAccount < ActiveRecord::Base
             before_add: Proc.new { |p, d|
                 folder=Folder.find_by(default: true, ssl_account_id: p.id)
                 d.folder_id= folder.id unless folder.blank?
-                d.certificate_content.add_ca(p)
+                # d.certificate_content.add_ca(p)
             } do
     def current
       where{workflow_state >>['new']}.first

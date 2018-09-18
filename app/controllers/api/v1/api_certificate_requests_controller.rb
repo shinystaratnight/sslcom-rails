@@ -183,9 +183,10 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
       # we do this sloppy maneuver because the rabl template only reports errors
       @result = @result.csr_obj
     else
-      ext_order_number = CertificateOrder.find_by_ref(params[:ref]).external_order_number || 'eon'
+      # ext_order_number = CertificateOrder.find_by_ref(params[:ref]).external_order_number || 'eon'
       if @result.save #save the api request
         if @acr = @result.update_certificate_order
+          @csr = @acr.csr
           # successfully charged
           if @acr.is_a?(CertificateOrder) && @acr.errors.empty?
             if @acr.certificate_content.csr && @result.debug=="true"
@@ -207,37 +208,43 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
               domain_ary = []
               domain_list = []
               emailed_domains = []
-              successed_domains = []
-              failed_domains = []
+              # successed_domains = []
+              # failed_domains = []
+
               cnames.each do |cn|
                 dcv = cn.domain_control_validations.last
-                if dcv.dcv_method == 'emails'
-                  if dcv.email_address != email_for_identifier
-                    if domain_list.length>0
-                      domain_ary << domain_list
-                      email_list << email_for_identifier
-                      identifier_list << identifier
-                      domain_list = []
+                unless dcv.identifier_found
+                  if dcv.dcv_method == 'email'
+                    if dcv.email_address != email_for_identifier
+                      if domain_list.length>0
+                        domain_ary << domain_list
+                        email_list << email_for_identifier
+                        identifier_list << identifier
+                        domain_list = []
+                      end
+                      identifier = (SecureRandom.hex(8)+Time.now.to_i.to_s(32))[0..19]
+                      email_for_identifier = dcv.email_address
                     end
-                    identifier = (SecureRandom.hex(8)+Time.now.to_i.to_s(32))[0..19]
-                    email_for_identifier = dcv.email_address
-                  end
-                  domain_list << cn.name
-                  emailed_domains << cn.name
-                  dcv.update_attribute(:identifier, identifier)
-                else
-                  if dcv_verify(dcv.dcv_method, true) == "true"
-                    successed_domains << cn.name
-                    dcv.satisfy! unless dcv.satisfied?
+
+                    domain_list << cn.name
+                    emailed_domains << cn.name
+                    dcv.update_attribute(:identifier, identifier)
                   else
-                    failed_domains << cn.name
+                    if dcv_verify(dcv.dcv_method, true) == "true"
+                      dcv.satisfy! unless dcv.satisfied?
+                      # successed_domains << cn.name
+                    # else
+                    #   failed_domains << cn.name
+                    end
                   end
                 end
               end
+
               unless identifier == ''
                 domain_ary << domain_list
                 email_list << email_for_identifier
                 identifier_list << identifier
+
                 email_list.each_with_index do |value, key|
                   OrderNotifier.dcv_email_send(@acr, value, identifier_list[key], domain_ary[key]).deliver
                 end
@@ -1329,18 +1336,18 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
     prepend=""
     begin
       Timeout.timeout(Surl::TIMEOUT_DURATION) do
-        if protocol=="https"
+        if protocol=="https_csr_hash"
           uri = URI.parse(dcv_url(true,prepend))
           http = Net::HTTP.new(uri.host, uri.port)
           http.use_ssl = true
           http.verify_mode = OpenSSL::SSL::VERIFY_NONE
           request = Net::HTTP::Get.new(uri.request_uri)
           r = http.request(request).body
-        elsif protocol=="cname"
+        elsif protocol=="cname_csr_hash"
           txt = Resolv::DNS.open do |dns|
             records = dns.getresources(cname_origin, Resolv::DNS::Resource::IN::CNAME)
           end
-          return cname_destination(against_ca)==txt.last.name.to_s
+          return (txt.size > 0) ? (cname_destination(against_ca)==txt.last.name.to_s) : false
         else
           r=open(dcv_url(false,prepend), redirect: false).read
         end
