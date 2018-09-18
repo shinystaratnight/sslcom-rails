@@ -140,7 +140,7 @@ class OrderNotifier < ActionMailer::Base
     mail(
       to: contact,
       from: Settings.from_email.orders,
-      subject: "#{'(TEST) ' if certificate_order.is_test?}SSL.com #{certificate_order.certificate.description["certificate_type"]} Certificate Attached For #{@signed_certificate.common_name}"
+      subject: "#{'(TEST) ' if certificate_order.is_test?}SSL.com #{certificate_order.certificate.description["certificate_type"]} Certificate (#{@signed_certificate.validation_type.upcase}) Attached For #{@signed_certificate.common_name}"
     )
   end
 

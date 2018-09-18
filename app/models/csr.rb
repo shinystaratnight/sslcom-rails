@@ -96,7 +96,19 @@ class Csr < ActiveRecord::Base
   # end
 
   def unique_value
-    csr_unique_value.unique_value
+    unless certificate_content.ca.blank?
+      csr_unique_value.unique_value
+    else
+      if ca_certificate_requests.first and !ca_certificate_requests.first.unique_value.blank?
+        ca_certificate_requests.first.unique_value # comodo has returned a unique already
+      else
+        if read_attribute(:unique_value).blank?
+          write_attribute(:unique_value, SecureRandom.hex(5)) # generate our own
+          save unless new_record?
+        end
+        read_attribute(:unique_value)
+      end
+    end
   end
 
   def csr_unique_value
@@ -461,16 +473,4 @@ class Csr < ActiveRecord::Base
   def days_left
     SiteCheck.days_left(self.non_wildcard_name, true)
   end
-
-  # def unique_value(ca="comodo")
-  #   if ca_certificate_requests.first and !ca_certificate_requests.first.unique_value.blank?
-  #     ca_certificate_requests.first.unique_value # comodo has returned a unique already
-  #   else
-  #     if read_attribute(:unique_value).blank?
-  #       write_attribute(:unique_value, SecureRandom.hex(5)) # generate our own
-  #       save unless new_record?
-  #     end
-  #     read_attribute(:unique_value)
-  #   end
-  # end
 end
