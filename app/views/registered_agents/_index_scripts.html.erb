@@ -40,7 +40,7 @@
         $.each(chk_remove_list, function(idx, chk_remove) {
           if ($(chk_remove).prop('checked')) {
             if (chk_first_agent) {
-              chk_first_agent = false
+              chk_first_agent = false;
               confirmMsg = confirmMsg.concat('\r\n      ' + $(chk_remove).attr('data-agent-name'));
             } else {
               confirmMsg = confirmMsg.concat('\n      ' + $(chk_remove).attr('data-agent-name'));
@@ -49,7 +49,52 @@
         });
 
         if (confirm(confirmMsg)) {
-          this.form.submit();
+          var remove_ssl_managers_url = '<%=remove_agents_registered_agents_path%>';
+          $('#registered_agent_list').attr('action', remove_ssl_managers_url);
+          $('#registered_agent_list').submit();
+        }
+      });
+
+      $('.chk-approve').click(function() {
+        if ($(this).prop('checked')) {
+          $('#btn_approve_agents').attr('disabled', false);
+        } else {
+          var chk_approve_list = $('.chk-approve');
+          var exist_chk = false;
+
+          $.each(chk_approve_list, function(idx, chk_approve) {
+            if ($(chk_approve).prop('checked')) {
+              exist_chk = true;
+              return false;
+            }
+          });
+
+          exist_chk ? $('#btn_approve_agents').attr('disabled', false) : $('#btn_approve_agents').attr('disabled', true);
+        }
+      });
+
+      $('#btn_approve_agents').click(function(e) {
+        e.preventDefault();
+
+        var chk_approve_list = $('.chk-approve');
+        var confirmMsg = 'Are you sure you want to approve the following SSL Manager(s)?';
+        var chk_first_agent = true;
+
+        $.each(chk_approve_list, function(idx, chk_approve) {
+          if ($(chk_approve).prop('checked')) {
+            if (chk_first_agent) {
+              chk_first_agent = false;
+              confirmMsg = confirmMsg.concat('\r\n      ' + $(chk_approve).attr('data-agent-name'));
+            } else {
+              confirmMsg = confirmMsg.concat('\n      ' + $(chk_approve).attr('data-agent-name'));
+            }
+          }
+        });
+
+        if (confirm(confirmMsg)) {
+          var approve_ssl_managers_url = '<%=approve_ssl_managers_registered_agents_path%>';
+          $('#registered_agent_list').attr('action', approve_ssl_managers_url);
+          $('#registered_agent_list').submit();
         }
       });
 

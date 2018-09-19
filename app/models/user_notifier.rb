@@ -174,8 +174,10 @@ class UserNotifier < ActionMailer::Base
          to: user.email
   end
 
-  def register_ssl_manager_to_team(user, id, ssl_account)
-    @approval_url = approve_ssl_manager_url(id)
+  def register_ssl_manager_to_team(user, ref, ssl_account)
+    base_path = "https://" + Settings.community_domain
+    @approval_url = base_path + approve_ssl_manager_path(ref)
+
     mail subject: "Register SSL Manager to SSL.com team #{ssl_account.get_team_name}",
          from: Settings.from_email.activations,
          to: user.email

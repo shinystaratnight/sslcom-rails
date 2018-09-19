@@ -134,7 +134,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
 
   def replace_certificate_order
     @certificate_order = self.find_certificate_order
-    self.domains={self.csr_obj.common_name=>{"dcv"=>"http_csr_hash"}} if self.domains.blank?
+    self.domains = {self.csr_obj.common_name=>{"dcv"=>"http_csr_hash"}} if self.domains.blank?
     # caa_check_domains = parameters_to_hash["caa_check_domains"].split(',')
     caa_check_domains = self.caa_check_domains.split(',')
 
@@ -148,9 +148,10 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
 
       @certificate_order.update_attribute(:external_order_number, self.ca_order_number) if (self.admin_submitted && self.ca_order_number)
       @certificate_order.update_attribute(:ext_customer_ref, self.external_order_number) if self.external_order_number
-      @certificate_order.is_test=self.test
+      @certificate_order.is_test = self.test
 
-      if @certificate_order.certificate_content && @certificate_order.certificate_content.pending_validation? && @certificate_order.external_order_number
+      if @certificate_order.certificate_content && @certificate_order.certificate_content.pending_validation? &&
+          (@certificate_order.external_order_number || !@certificate_order.certificate_content.ca.blank?)
         cn_keys = self.cert_names.keys
         cn_vals = self.cert_names.map{|k, v|v}
 
@@ -162,6 +163,11 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
           # end
 
           if cn_keys.exclude? certificate_name.name
+            unless @certificate_order.certificate_content.ca_id.nil?
+              dcvs = certificate_name.domain_control_validations
+              dcvs.destroy_all if dcvs.size > 0
+            end
+
             certificate_name.destroy
 
             # Remove Domain from Notification Group
@@ -179,21 +185,23 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
         # domainDcvs = self.domains.keys.map{|k|"#{@certificate_order.certificate_content.certificate_names.find_by_name(k).try(:last_dcv_for_comodo)}"}.join(',')
 
         #send to comodo
-        comodo_auto_replace_ssl(
-          certificate_order: @certificate_order,
-          domainNames: cn_vals.join(',')
+        if @certificate_order.certificate_content.ca_id.nil?
+          comodo_auto_replace_ssl(
+              certificate_order: @certificate_order,
+              domainNames: cn_vals.join(',')
           # domainDcvs: domainDcvs
-        )
+          )
+        end
       end
+
       return @certificate_order
     end
     self
   end
 
   def update_certificate_order
-    @certificate_order=self.find_certificate_order
-    self.domains={self.csr_obj.common_name=>{"dcv"=>"http_csr_hash"}} if self.domains.blank?
-    # caa_check_domains = parameters_to_hash["caa_check_domains"].split(',')
+    @certificate_order = self.find_certificate_order
+    self.domains = {self.csr_obj.common_name=>{"dcv"=>"http_csr_hash"}} if self.domains.blank?
     caa_check_domains = self.caa_check_domains.split(',')
 
     if @certificate_order.is_a?(CertificateOrder)
@@ -208,13 +216,15 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
           (self.admin_submitted && self.ca_order_number)
       @certificate_order.update_attribute(:ext_customer_ref, self.external_order_number) if self.external_order_number
       # choose the right ca_certificate_id for submit to Comodo
-      @certificate_order.is_test=self.test
+      @certificate_order.is_test = self.test
+
       #assume updating domain validation, already sent to comodo
       if @certificate_order.certificate_content && @certificate_order.certificate_content.pending_validation? &&
           (@certificate_order.external_order_number || !@certificate_order.certificate_content.ca.blank?)
         #set domains
         @certificate_order.certificate_content.update_attribute(:domains, self.domains.keys)
         @certificate_order.certificate_content.dcv_domains({domains: self.domains, emails: self.dcv_candidate_addresses})
+
         #send to comodo if ca_id is nil
         if @certificate_order.certificate_content.ca_id.nil?
           comodo_auto_update_dcv(certificate_order: @certificate_order)
@@ -245,8 +255,10 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
           send_dcv(certificate_content)
         end
       end
+
       return @certificate_order
     end
+
     self
   end
 

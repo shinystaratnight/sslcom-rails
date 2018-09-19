@@ -319,6 +319,7 @@ SslCom::Application.routes.draw do
       collection do
         post :search
         post :remove_agents
+        post :approve_ssl_managers
       end
 
       member do

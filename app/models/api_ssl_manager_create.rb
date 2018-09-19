@@ -37,7 +37,7 @@ class ApiSslManagerCreate < ApiSslManagerRequest
             ssl_account_id: api_requestable.id,
             role_id: Role.get_role_id([Role::OWNER, Role::ACCOUNT_ADMIN])).map(&:user).uniq.compact.each do |user|
           user.deliver_register_ssl_manager_to_team!(
-              @registered_agent.id,
+              @registered_agent.ref,
               api_requestable,
               Settings.auto_approve_ssl_manager_register
           )

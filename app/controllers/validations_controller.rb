@@ -25,13 +25,14 @@ class ValidationsController < ApplicationController
   end
 
   def new
-    url=nil
-    cc=@certificate_order.certificate_content
+    url = nil
+    cc = @certificate_order.certificate_content
+
     if @certificate_order.certificate.is_code_signing?
-      url=document_upload_certificate_order_validation_url(certificate_order_id: @certificate_order.ref)
+      url = document_upload_certificate_order_validation_url(certificate_order_id: @certificate_order.ref)
     else
       if cc.issued? # or @certificate_order.all_domains_validated?
-        checkout={checkout: "true"}
+        checkout = {checkout: "true"}
         flash.now[:notice] = "All domains have been validated, please wait for certificate issuance" if @certificate_order.all_domains_validated?
         respond_to do |format|
           format.html { redirect_to certificate_order_path({id: @certificate_order.ref}.merge!(checkout))}
@@ -64,7 +65,7 @@ class ValidationsController < ApplicationController
                   team_level_validated = true
 
                   @ds[team_cn.name] = {}
-                  @ds[team_cn.name]['method'] = team_dcv.email_address ? team_dcv.email_address : team_dcv.dcv_method
+                  @ds[team_cn.name]['method'] = team_dcv.dcv_method
                   @ds[team_cn.name]['attempted_on'] = team_dcv.created_at
                   if team_cn.caa_passed
                     @ds[team_cn.name]['caa_check'] = 'passsed'
@@ -199,9 +200,7 @@ class ValidationsController < ApplicationController
           end
         else
           dcvs = cn_obj.domain_control_validations
-          if dcvs.size > 0
-            dcvs.destroy_all
-          end
+          dcvs.destroy_all if dcvs.size > 0
 
           # Remove Domain from Notification Group
           NotificationGroup.auto_manage_cert_name(certificate_content, 'delete', cn_obj)
@@ -261,13 +260,13 @@ class ValidationsController < ApplicationController
         end
 
         addresses =
-            if co.certificate_content.ca.blank? and co.external_order_number
-              params['domain_count'].to_i > Validation::COMODO_EMAIL_LOOKUP_THRESHHOLD ?
-                  DomainControlValidation.email_address_choices(cn.name) :
-                  ComodoApi.domain_control_email_choices(cn.name).email_address_choices
-            else
-              DomainControlValidation.email_address_choices(cn.name)
-            end
+          if co.certificate_content.ca.blank? and co.external_order_number
+            params['domain_count'].to_i > Validation::COMODO_EMAIL_LOOKUP_THRESHHOLD ?
+                DomainControlValidation.email_address_choices(cn.name) :
+                ComodoApi.domain_control_email_choices(cn.name).email_address_choices
+          else
+            DomainControlValidation.email_address_choices(cn.name)
+          end
         addresses.delete("none")
 
         optionsObj = {}
@@ -320,16 +319,16 @@ class ValidationsController < ApplicationController
           le = cn.domain_control_validations.last_emailed
 
           {
-              'tr_info' => {
-                  'options' => optionsObj,
-                  'slt_option' => le.blank? ? nil : le.email_address,
-                  'pretest' => 'n/a',
-                  'attempt' => 'validation not performed yet',
-                  'attempted_on' => 'n/a',
-                  'status' => 'waiting',
-                  'caa_check' => ''
-              },
-              'tr_instruction' => false
+            'tr_info' => {
+              'options' => optionsObj,
+              'slt_option' => le.blank? ? nil : le.email_address,
+              'pretest' => 'n/a',
+              'attempt' => 'validation not performed yet',
+              'attempted_on' => 'n/a',
+              'status' => 'waiting',
+              'caa_check' => ''
+            },
+            'tr_instruction' => false
           }
         end
       end

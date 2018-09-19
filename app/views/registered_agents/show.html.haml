@@ -3,7 +3,7 @@
 .registered_agent_container
   %h3
     Edit Registered Agent ( ##{@registered_agent.ref} )
-  =form_tag registered_agent_path(@ssl_slug, @registered_agent.id), :class => 'ra_form', :method => :put do
+  =form_tag registered_agent_path(@ssl_slug, @registered_agent.ref), :class => 'ra_form', :method => :put do
     #stylized.default_form
       .field_block.clearfix
         .field_label
