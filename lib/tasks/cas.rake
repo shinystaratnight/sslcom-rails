@@ -702,15 +702,14 @@ namespace :cas do
       type: "EndEntityProfile"
     )
     live=([]).tap do |certificates|
+      if ENV['LIVE'].blank? or ENV['LIVE']=~/all/i or ENV['RESET']="true"
+        CasCertificate.delete_all
+        certificates << Certificate.all.to_a if ENV['LIVE']=~/all/i
+      end
       if ENV['LIVE']
-        if ENV['LIVE'].blank? or ENV['LIVE']=~/all/i or ENV['RESET']="true"
-          CasCertificate.delete_all
-          certificates << Certificate.all.to_a if ENV['LIVE']=~/all/i
-        end
-        if ENV['LIVE'].split(",").each do |prod_root|
-            Certificate.where{product =~ "%#{prod_root}%"}.each{|cert|cert.cas_certificates.delete_all}
-            certificates << Certificate.where{product =~ "%#{prod_root}%"}.all.to_a
-          end
+        ENV['LIVE'].split(",").each do |prod_root|
+          Certificate.where{product =~ "%#{prod_root}%"}.each{|cert|cert.cas_certificates.delete_all}
+          certificates << Certificate.where{product =~ "%#{prod_root}%"}.all.to_a
         end
       end
     end.flatten
