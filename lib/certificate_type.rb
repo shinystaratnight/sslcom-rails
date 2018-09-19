@@ -52,7 +52,7 @@ module CertificateType
 
   # this covers both ev and non ev code signing
   def is_code_signing?
-    is_cs? or is_evcs?
+    is_cs? or is_evcs? or is_client? # is_client is temporary
   end
 
   def is_test_certificate?

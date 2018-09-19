@@ -90,7 +90,7 @@ class ValidationsController < ApplicationController
                   dcv = cn.blank? ? nil : cn.domain_control_validations.last
                   value['attempted_on'] = dcv.blank? ? 'n/a' : dcv.created_at
 
-                  if enable_caa && cn.try(:caa_passed)
+                  if Settings.enable_caa && cn.try(:caa_passed)
                     value['caa_check'] = 'passed'
                   else
                     value['caa_check'] = 'failed'

@@ -5,12 +5,12 @@ class Ca < ActiveRecord::Base
   serialize :caa_issuers
   serialize :ekus
 
-  scope :ssl_account, ->(ssl_account){where{cas_certificates.ssl_account_id==ssl_account.id}} #private PKI
+  scope :ssl_account, ->(ssl_account){where{cas_certificates.ssl_account_id==ssl_account.id}.uniq} #private PKI
   scope :ssl_account_or_general_default, ->(ssl_account){
     (ssl_account(ssl_account).empty? ? general : ssl_account(ssl_account)).default}
   scope :general, ->{where{cas_certificates.ssl_account_id==nil}} # Cas not assigned to any team (Public PKI)
-  scope :default, ->{where{cas_certificates.status==CasCertificate::STATUS[:default]}}
-  scope :shadow,  ->{where{cas_certificates.status==CasCertificate::STATUS[:shadow]}}
+  scope :default, ->{where{cas_certificates.status==CasCertificate::STATUS[:default]}.uniq}
+  scope :shadow,  ->{where{cas_certificates.status==CasCertificate::STATUS[:shadow]}.uniq}
 
   # Root CAs - determines the certificate chain used
   CERTLOCK_CA = "certlock"

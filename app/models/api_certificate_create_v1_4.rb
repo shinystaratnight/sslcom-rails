@@ -73,7 +73,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
       if self.csr # a single domain validation
         self.dcv_method ||= "http_csr_hash"
         self.csr_obj = Csr.new(body: self.csr) # this is only for validation and does not save
-        self.csr_obj.unique_value = unique_value unless unique_value.blank?
+        self.csr_obj.csr_unique_values.build(unique_value: unique_value) unless unique_value.blank?
         unless self.csr_obj.errors.empty?
           self.errors[:csr] << "has problems and or errors"
         end

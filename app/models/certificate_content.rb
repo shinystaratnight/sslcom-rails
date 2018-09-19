@@ -222,7 +222,7 @@ class CertificateContent < ActiveRecord::Base
   def certificate_names_from_domains(domains=nil)
     domains ||= all_domains
     (domains-certificate_names.find_by_domains(domains).pluck(:name)).each_with_index do |domain, i|
-      certificate_names.create(name: domain, is_common_name: csr.try(:common_name)==domain)
+      certificate_names.find_or_create_by(name: domain, is_common_name: csr.try(:common_name)==domain)
     end
 
     # Auto adding domains in case of certificate order has been included into some groups.
@@ -300,12 +300,12 @@ class CertificateContent < ActiveRecord::Base
 
   def dcv_domains(options)
     i=0
-    certificate_names.find_by_domains(options[:domains].keys).each do |name|
-      k,v=name.name, options[:domains][name.name.to_sym]
+    certificate_names.find_by_domains(options[:domains].keys).each do |cn|
+      k,v=cn.name, options[:domains][cn.name]
       cur_email = options[:emails] ? options[:emails][k] : nil
       case v["dcv"]
       when /https?/i, /cname/i
-        dcv=name.domain_control_validations.create(dcv_method: v["dcv"], candidate_addresses: cur_email,
+        dcv=cn.domain_control_validations.create(dcv_method: v["dcv"], candidate_addresses: cur_email,
                                               failure_action: v["dcv_failure_action"])
         if (v["dcv_failure_action"]=="remove" || options[:dcv_failure_action]=="remove")
           found=dcv.verify_http_csr_hash
@@ -316,7 +316,7 @@ class CertificateContent < ActiveRecord::Base
             create(dcv_method: v["dcv"], candidate_addresses: cur_email,
                    failure_action: v["dcv_failure_action"]) if(i==0 && !certificate_order.certificate.is_ucc?)
       else
-        name.domain_control_validations.create(dcv_method: "email", email_address: v["dcv"],
+        cn.domain_control_validations.create(dcv_method: "email", email_address: v["dcv"],
                                               failure_action: v["dcv_failure_action"], candidate_addresses: cur_email)
         # assume the first name is the common name
         self.csr.domain_control_validations.
