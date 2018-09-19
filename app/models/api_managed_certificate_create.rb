@@ -14,6 +14,7 @@ class ApiManagedCertificateCreate < ApiSslManagerRequest
       managed_certificate.body = cert
       managed_certificate.type = 'ManagedCertificate'
       managed_certificate.registered_agent = registered_agent
+      managed_certificate.status = managed_certificate.expired? ? "expired" : "valid"
       managed_certificate.save!
     end
 
