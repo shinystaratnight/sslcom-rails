@@ -30,7 +30,6 @@ class CertificateContent < ActiveRecord::Base
     ref_number = cc.to_ref
     cc.ref = ref_number
     cc.label = ref_number
-    cc.add_ca(cc.certificate_order.ssl_account) unless cc.certificate_order.ssl_account.blank?
   end
 
   SIGNING_REQUEST_REGEX = /\A[\w\-\/\s\n\+=]+\Z/

@@ -9,7 +9,6 @@ class SslAccount < ActiveRecord::Base
             before_add: Proc.new { |p, d|
                 folder=Folder.find_by(default: true, ssl_account_id: p.id)
                 d.folder_id= folder.id unless folder.blank?
-                # d.certificate_content.add_ca(p)
             } do
     def current
       where{workflow_state >>['new']}.first
@@ -197,14 +196,6 @@ class SslAccount < ActiveRecord::Base
 
   def self.top_paid_amounts(how_many=10)
     top_paid([:orders]).last(how_many).map(&:total_amount_paid).map(&:format)
-  end
-
-  def add_ca(certificate_content)
-    ca = certificate_content.certificate.cas.ssl_account_or_general_default(self)
-    if ca.try(:last)
-      certificate_content.ca = ca.last
-      certificate_content.save
-    end
   end
 
   def reseller_tier_label
@@ -1006,6 +997,9 @@ class SslAccount < ActiveRecord::Base
       order.line_items.each do |cert|
         self.certificate_orders << cert.sellable
         cert.sellable.pay!(true) unless cert.sellable.paid?
+        cc=cert.sellable.certificate_content
+        cc.add_ca(self)
+        cc.save unless cc.ca.blank?
       end
     end
   end
