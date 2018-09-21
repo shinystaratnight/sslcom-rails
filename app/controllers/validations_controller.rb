@@ -131,6 +131,9 @@ class ValidationsController < ApplicationController
             # if all_validated
             #   url=certificate_order_path(@ssl_slug, @certificate_order)
             # end
+          else
+            @all_validated = false
+            # flash[:error] = "Currently Comodoca API is under working, please try again after some minutes."
           end
         end
       end
