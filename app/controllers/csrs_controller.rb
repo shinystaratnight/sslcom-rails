@@ -35,13 +35,48 @@ class CsrsController < ApplicationController
 
   def verification_check
     http_or_s = false
+
     if cc = CertificateContent.find_by_ref(params[:ref])
+      is_ucc = cc.certificate_order.certificate.is_ucc?
       cn = cc.certificate_names.find_by_name(params[:dcv].split('__')[1])
-      http_or_s = 'false'
+
       if cn
         cn.new_name params['new_name']
         http_or_s = cn.dcv_verify(params[:protocol])
-        http_or_s = false if http_or_s.nil?
+        # http_or_s = true if params[:protocol] == 'cname'
+
+        if http_or_s.to_s == 'true'
+          if is_ucc
+            dcv = cn.domain_control_validations.last
+
+            if dcv && (dcv.dcv_method == params[:protocol])
+              dcv.satisfy! unless dcv.satisfied?
+            else
+              cn.domain_control_validations.create(
+                  dcv_method: params[:protocol],
+                  candidate_addresses: nil,
+                  failure_action: 'ignore',
+                  workflow_state: 'satisfied'
+              )
+            end
+          else
+            dcv = cc.csr.domain_control_validations.last
+
+            if dcv && (dcv.dcv_method == params[:protocol])
+              dcv.satisfy! unless dcv.satisfied?
+            else
+              cc.csr.domain_control_validations.create(
+                  dcv_method: params[:protocol],
+                  candidate_addresses: nil,
+                  failure_action: 'ignore',
+                  workflow_state: 'satisfied'
+              )
+            end
+          end
+        elsif http_or_s.nil?
+          http_or_s = false
+        end
+        # http_or_s = false if http_or_s.nil?
       end
     end
 

@@ -18,10 +18,7 @@
               =select_tag :ra_number_rows,
                       options_for_select([[5, 5], [10, 10], [20, 20], [50, 50], [100, 100]], @per_page),
                       :class=>'per_page'
-            -if roles.include?(Role::OWNER) || roles.include?(Role::ACCOUNT_ADMIN)
-              %td(colspan='8')=will_paginate @registered_agents
-            -else
-              %td(colspan='7')=will_paginate @registered_agents
+            %td(colspan='8')=will_paginate @registered_agents
       %caption
         SSL Managers Management
         =will_paginate @registered_agents
@@ -34,13 +31,9 @@
           %td(scope="col") Status
           %td(scope="col") Certificates
           %td(scope="col") Delete?
-          -if roles.include?(Role::OWNER) || roles.include?(Role::ACCOUNT_ADMIN)
-            %td(scope="col") Approve?
+          %td(scope="col") Status
         -else
-          -if roles.include?(Role::OWNER) || roles.include?(Role::ACCOUNT_ADMIN)
-            %td(scope="col" colspan="8") Agent
-          -else
-            %td(scope="col" colspan="7") Agent
+          %td(scope="col" colspan="8") Agent
       -if @registered_agents.size > 0
         -@registered_agents.each do |ra|
           %tr
@@ -57,22 +50,19 @@
                 ='0'
             %td
               =check_box_tag "remove_agents[]", ra.id, false, class: 'chk-remove', 'data-agent-name' => ra.friendly_name
-            -if roles.include?(Role::OWNER) || roles.include?(Role::ACCOUNT_ADMIN)
-              -if ra.workflow_status == 'active'
-                %td
+            %td
+              -if roles.include?(Role::OWNER) || roles.include?(Role::ACCOUNT_ADMIN)
+                -if ra.workflow_status == 'active'
                   =check_box_tag "approve_agents[]", ra.id, false, class: 'chk-approve', 'data-agent-name' => ra.friendly_name, :disabled => true
-              -else
-                -pending_ssl_managers_count += 1
-                %td
+                -else
+                  -pending_ssl_managers_count += 1
                   =check_box_tag "approve_agents[]", ra.id, false, class: 'chk-approve', 'data-agent-name' => ra.friendly_name
+              -else
+                =check_box_tag "approve_agents[]", ra.id, false, class: 'chk-approve', 'data-agent-name' => ra.friendly_name, :disabled => true
       -else
         %tr
-          -if roles.include?(Role::OWNER) || roles.include?(Role::ACCOUNT_ADMIN)
-            %td(colspan="8")
-              There are no registered SSL Managers.
-          -else
-            %td(colspan="7")
-              There are no registered SSL Managers.
+          %td(colspan="8")
+            There are no registered SSL Managers.
     -if @registered_agents.size > 0
       =submit_tag 'Delete', :id => 'btn_remove_agents', :disabled => true
       -if (roles.include?(Role::OWNER) || roles.include?(Role::ACCOUNT_ADMIN)) && pending_ssl_managers_count > 0
