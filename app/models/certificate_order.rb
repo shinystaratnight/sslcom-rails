@@ -930,6 +930,22 @@ class CertificateOrder < ActiveRecord::Base
     end
   end
 
+  def get_download_cert_email
+    if certificate.is_smime_or_client?
+      get_team_iv.email
+    else
+      certificate_content.locked_registrant.email
+    end
+  end
+
+  def get_download_cert_salutation
+    if certificate.is_smime_or_client?
+      [get_team_iv.first_name, get_team_iv.last_name].join(' ')
+    else
+      [locked_registrant.first_name, locked_registrant.last_name].join(' ')
+    end
+  end
+
   def copy_iv_ov_validation_history(type='iv')
     iv_exists = get_team_iv
     if assignee && iv_exists && iv_exists.validation_histories.any?
