@@ -180,7 +180,7 @@ class CertificateName < ActiveRecord::Base
           txt = Resolv::DNS.open do |dns|
             records = dns.getresources(cname_origin(true), Resolv::DNS::Resource::IN::CNAME)
           end
-          return (txt.size > 0) ? (cname_destination==txt.last.name.to_s) : false
+          return (txt.size > 0) ? (cname_destination.downcase==txt.last.name.to_s.downcase) : false
         else
           r=open(dcv_url(false,prepend, true), redirect: false).read
         end
