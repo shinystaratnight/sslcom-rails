@@ -112,7 +112,7 @@ module CertificateOrdersHelper
             elsif current_user.is_billing_only? || current_user.is_validations_only? || current_user.is_validations_and_billing_only?
               'n/a'
             else
-              if certificate_order.locked_registrant
+              if certificate_order.locked_registrant and certificate_order.certificate_content.ca
                 link_to 'send activation link to ' + certificate_order.locked_registrant.email,
                         nil, class: 'link_to_send_notify',
                         :data => { :ref => certificate_order.ref, :type => 'token' }

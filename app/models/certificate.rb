@@ -637,6 +637,12 @@ class Certificate < ActiveRecord::Base
       c.duplicate(options)}
   end
 
+  def self.list_default_cas
+    all.map do |cert|
+      [cert.product,cert.cas.general.default.map(&:id)] unless cert.cas.general.default.map(&:id).empty?
+    end.compact
+  end
+
   private
 
   # renames 'product' field for certificate including the reseller tiers

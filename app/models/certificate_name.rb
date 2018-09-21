@@ -165,8 +165,7 @@ class CertificateName < ActiveRecord::Base
     end
   end
 
-  def
-  dcv_verify(protocol)
+  def dcv_verify(protocol)
     prepend=""
     begin
       Timeout.timeout(Surl::TIMEOUT_DURATION) do
@@ -181,7 +180,7 @@ class CertificateName < ActiveRecord::Base
           txt = Resolv::DNS.open do |dns|
             records = dns.getresources(cname_origin(true), Resolv::DNS::Resource::IN::CNAME)
           end
-          return cname_destination==txt.last.name.to_s
+          return (txt.size > 0) ? (cname_destination==txt.last.name.to_s) : false
         else
           r=open(dcv_url(false,prepend, true), redirect: false).read
         end

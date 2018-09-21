@@ -198,14 +198,6 @@ class SslAccount < ActiveRecord::Base
     top_paid([:orders]).last(how_many).map(&:total_amount_paid).map(&:format)
   end
 
-  def add_ca(certificate_content)
-    ca = certificate_content.certificate.cas.ssl_account_or_general_default(self)
-    if ca.try(:last)
-      certificate_content.ca = ca.last
-      certificate_content.save
-    end
-  end
-
   def reseller_tier_label
     reseller.reseller_tier.label if (reseller && reseller.reseller_tier)
   end
@@ -1005,6 +997,9 @@ class SslAccount < ActiveRecord::Base
       order.line_items.each do |cert|
         self.certificate_orders << cert.sellable
         cert.sellable.pay!(true) unless cert.sellable.paid?
+        cc=cert.sellable.certificate_content
+        cc.add_ca(self)
+        cc.save unless cc.ca.blank?
       end
     end
   end

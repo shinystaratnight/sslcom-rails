@@ -19,9 +19,9 @@
       -if permitted_to? :create, :site_seals
         %span :
         =link_to "seal", certificate_order_site_seal_path(ssl_slug: @ssl_slug, certificate_order_id: co.ref), :title=>"get site seal for "+cn
-      -if current_user.is_system_admins?
+      -if current_user.is_system_admins? and order=co.orders.first
         %span :
-        =link_to "invoice", order_path(@ssl_slug, co.orders.first), :title=>"transaction information for "+cn
+        =link_to "invoice", order_path(@ssl_slug, order), :title=>"transaction information for "+cn
       -u=co.ssl_account.try(:primary_user)
       -unless u.blank?
         -if permitted_to? :admin_manage, u
