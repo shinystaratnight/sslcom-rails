@@ -190,19 +190,6 @@ class CertificateOrdersController < ApplicationController
     end
   end
 
-  def registrants_on_edit
-    setup_registrant
-    setup_registrant_from_locked if params[:registrant] == 'false'
-    if @csr
-      @registrant.company_name = @csr.organization
-      @registrant.department = @csr.organization_unit
-      @registrant.city = @csr.locality
-      @registrant.state = @csr.state
-      @registrant.email = @csr.email
-      @registrant.country = @csr.country
-    end
-  end
-
   # GET /certificate_orders/1/reprocess
   def reprocess
     @certificate_order = recert(CertificateOrder::REPROCESSING)
@@ -589,16 +576,43 @@ class CertificateOrdersController < ApplicationController
   end
 
   def admin_update
-    respond_to do |format|
-      if @certificate_order.update_attributes(params[:certificate_order])
-        format.js { render :json=>@certificate_order.to_json}
-      else
-        format.js { render :json=>@certificate_order.errors.to_json}
+    if params[:validate]
+      if @certificate_order.certificate.is_smime_or_client?
+        cc = @certificate_order.certificate_content
+        iv = @certificate_order.get_team_iv
+        ov = @certificate_order.locked_registrant
+
+        cc.validate! unless cc.validated?
+        iv.validate! if iv && !iv.validated?
+        ov.validate! if ov && !ov.validated?
+      end
+      redirect_to certificate_order_path(@ssl_slug, @certificate_order.ref), 
+        notice: "Certificate order was successfully validated!"
+    else
+      respond_to do |format|
+        if @certificate_order.update_attributes(params[:certificate_order])
+          format.js { render :json=>@certificate_order.to_json}
+        else
+          format.js { render :json=>@certificate_order.errors.to_json}
+        end
       end
     end
   end
 
   private
+
+  def registrants_on_edit
+    setup_registrant
+    setup_registrant_from_locked if params[:registrant] == 'false'
+    if @csr
+      @registrant.company_name = @csr.organization
+      @registrant.department = @csr.organization_unit
+      @registrant.city = @csr.locality
+      @registrant.state = @csr.state
+      @registrant.email = @csr.email
+      @registrant.country = @csr.country
+    end
+  end
 
   def invite_recipient
     ssl = @certificate_order.ssl_account
