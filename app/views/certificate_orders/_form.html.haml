@@ -44,6 +44,14 @@
           %label{for: 'registrant_type'}
             Registrant Type:
           =rf.select :registrant_type, Registrant::registrant_types.keys.map{|key| [key.capitalize, key]}, {selected: 'organization'}, {disabled: true}
+      
+      -if certificate.is_smime_or_client?
+        .clearfix
+          %label{for: 'save'}
+            Save Registrant:
+            %span.label_desc Save to use in future certificates.
+          = check_box_tag :save_for_later, 'save', false
+
       .clearfix
         %label{:for=>"company_name"}
           *Company:

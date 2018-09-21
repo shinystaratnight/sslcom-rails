@@ -738,9 +738,25 @@ class CertificateOrdersController < ApplicationController
 
       if cc.locked_registrant.blank?
         cc.create_locked_registrant(cc_params[:registrant_attributes])
-        # cc.locked_registrant.save!
+        cc.locked_registrant.save!
       elsif current_user.is_admin?
         cc.locked_registrant.update(cc_params[:registrant_attributes])
+      end
+
+      cur_lr = cc.locked_registrant
+      if params[:save_for_later] && cur_lr && cur_lr.persisted? && cur_lr.parent_id.nil?
+        attr = cur_lr.attributes.delete_if do |k,v|
+          %w{created_at updated_at id}.include?(k)
+        end
+        attr.merge!(
+          'contactable_id' => @certificate_order.ssl_account.id,
+          'contactable_type' => 'SslAccount',
+          'type' => 'Registrant'
+        )
+        reusable_registrant = Registrant.create(attr)
+        if reusable_registrant.persisted?
+          cc.locked_registrant.update_column(:parent_id, reusable_registrant.id)
+        end
       end
     end
   end
