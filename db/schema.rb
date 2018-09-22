@@ -1818,4 +1818,5 @@ ActiveRecord::Schema.define(version: 20180920032908) do
   end
 
   add_foreign_key "cdns", "certificate_orders"
+  add_foreign_key "signed_certificates", "cas"
 end
