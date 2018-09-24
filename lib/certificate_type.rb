@@ -52,7 +52,7 @@ module CertificateType
 
   # this covers both ev and non ev code signing
   def is_code_signing?
-    is_cs? or is_evcs? or is_client? # is_client is temporary
+    is_cs? or is_evcs?
   end
 
   def is_test_certificate?
@@ -74,6 +74,10 @@ module CertificateType
 
   def is_smime_or_client?
     is_smime? || is_client? || is_naesb?
+  end
+
+  def is_time_stamping?
+    false
   end
 
   def is_naesb?

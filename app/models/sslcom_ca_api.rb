@@ -138,6 +138,7 @@ class SslcomCaApi
   # create json parameter string for REST call to EJBCA
   def self.issue_cert_json(options)
     cert = options[:cc].certificate
+    co=options[:cc].certificate_order
     if options[:cc].csr
       dn={}
       if options[:collect_certificate]
@@ -150,7 +151,7 @@ class SslcomCaApi
           ca_name: options[:ca_name] || ca_name(options),
           certificate_profile: certificate_profile(options),
           end_entity_profile: end_entity_profile(options),
-          duration: "#{options[:cc].certificate_order.certificate_duration(:sslcom_api)}:0:0" || options[:duration]
+          duration: "#{[(options[:duration] || co.remaining_days),cert.max_duration].min}:0:0"
         dn.merge!(subject_alt_name: subject_alt_name(options)) unless cert.is_code_signing?
       end
       dn.merge!(request_type: "public_key",request_data: options[:cc].csr.public_key.to_s) if

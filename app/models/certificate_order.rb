@@ -436,8 +436,12 @@ class CertificateOrder < ActiveRecord::Base
   RENEWAL_DATE_CUTOFF = 45.days.ago
   RENEWAL_DATE_RANGE = 45.days.from_now
   ID_AND_TIMESTAMP=["id", "created_at", "updated_at"]
-  SSL_MAX_DURATION = 730
-  CS_MAX_DURATION = 1187
+  SSL_MAX_DURATION = 825
+  EV_SSL_MAX_DURATION = 730
+  CS_MAX_DURATION = 1095
+  CLIENT_MAX_DURATION = 1095
+  SMIME_MAX_DURATION = 1095
+  TS_MAX_DURATION = 4106
 
   # changed for the migration
   # unless MIGRATING_FROM_LEGACY
@@ -1148,7 +1152,7 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def exceeds_br_duration?
-    certificate_duration(:days).to_i > (certificate.is_code_signing? ? CS_MAX_DURATION : SSL_MAX_DURATION)
+    certificate_duration(:days).to_i > certificate.max_duration
   end
 
   def to_api_string(options={action: "update"})

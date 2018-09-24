@@ -463,7 +463,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
             @result.cert_details[:certificate_content][:fields][:decoded] = sc.decoded
           end
 
-          @result.cert_details[:in_limit] = (@acr.certificate_duration(:days).to_i > CertificateOrder::SSL_MAX_DURATION) && (@acr.created_at > Date.parse('Apr 1 2015'))
+          @result.cert_details[:in_limit] = (@acr.certificate_duration(:days).to_i > @acr.max_duration) && (@acr.created_at > Date.parse('Apr 1 2015'))
           @result.cert_details[:registrant] = @acr.certificate_content.registrant.to_api_query
 
           if @acr.certificate_content.issued? && !@acr.certificate_content.expired?
