@@ -164,17 +164,17 @@ class SslcomCaApi
     certificate = certificate_order.certificate
     options.merge! cc: cc = options[:certificate_content] || certificate_order.certificate_content
     options[:mapping] = Ca.find_by_ref(options[:send_to_ca]) if options[:send_to_ca]
-    approval_req, approval_res = SslcomCaApi.get_status(cc.csr)
+    approval_req, approval_res = SslcomCaApi.get_status(csr: cc.csr, mapping: options[:mapping])
     return cc.csr.sslcom_ca_requests.create(
       parameters: approval_req.body, method: "get", response: approval_res.body,
                                             ca: options[:ca]) if approval_res.try(:body)=~/WAITING FOR APPROVAL/
     if (certificate.is_ev? or certificate.is_evcs?) and
         (approval_res.try(:body).blank? or approval_res.try(:body)=~/EXPIRED AND NOTIFIED/)
       # create the user for EV order
-      host = Rails.application.secrets.sslcom_ca_host+"/v1/user"
+      host = ca_host(options[:mapping])+"/v1/user"
       options.merge! no_public_key: true, ca: Ca::SSLCOM_CA # create an ejbca user only
     else # collect ev cert
-      host = Rails.application.secrets.sslcom_ca_host+
+      host = ca_host(options[:mapping])+
           "/v1/certificate#{'/ev' if certificate.is_ev? or certificate.is_evcs?}/pkcs10"
       options.merge!(collect_certificate: true, username:
           cc.csr.sslcom_usernames.compact.first) if certificate.is_ev? or certificate.is_evcs?
@@ -202,9 +202,12 @@ class SslcomCaApi
     api_log_entry
   end
 
+  def self.ca_host(mapping=nil)
+    mapping ? mapping.host : Rails.application.secrets.sslcom_ca_host
+  end
+
   def self.generate_for_certificate(options={})
-    host = (options[:mapping] ? options[:mapping].host :
-                   Rails.application.secrets.sslcom_ca_host) + "/v1/certificate/pkcs10"
+    host = ca_host(options[:mapping]) + "/v1/certificate/pkcs10"
     req, res = call_ca(host, {}, issue_cert_json(options))
 
     api_log_entry = options[:cc].csr.sslcom_ca_requests.create(request_url: host, parameters: req.body,
@@ -222,7 +225,7 @@ class SslcomCaApi
 
   def self.revoke_ssl(signed_certificate, reason)
     if signed_certificate.is_sslcom_ca?
-      host = Rails.application.secrets.sslcom_ca_host+"/v1/certificate/revoke"
+      host = ca_host(signed_certificate.certificate_content.ca)+"/v1/certificate/revoke"
       req, res = call_ca(host, options, revoke_cert_json(signed_certificate, SslcomCaRevocationRequest::REASONS[0]))
       uri = URI.parse(host)
       api_log_entry=signed_certificate.sslcom_ca_revocation_requests.create(request_url: host,
@@ -236,15 +239,15 @@ class SslcomCaApi
     end
   end
 
-  def self.get_status(csr=nil,host_only=false)
-    unless csr.blank?
-      return if csr.sslcom_approval_ids.compact.first.blank?
-      query="status/#{csr.sslcom_approval_ids.compact.first}"
+  def self.get_status(options={csr: nil,host_only: false})
+    unless options[:csr].blank?
+      return if options[:csr].sslcom_approval_ids.compact.first.blank?
+      query="status/#{options[:csr].sslcom_approval_ids.compact.first}"
     else
       query="approvals"
     end
-    host = Rails.application.secrets.sslcom_ca_host+"/v1/#{query}"
-    if host_only
+    host = ca_host(options[:mapping])+"/v1/#{query}"
+    if options[:host_only]
       host
     else
       options={method: "get"}

@@ -12,13 +12,13 @@ module CertificateOrdersHelper
           reprocess_order    = @order && @order.reprocess_ucc_order?
           domains_adjustment = @order && @order.domains_adjustment? && !reprocess_order
           reprocess_domains  = @order.get_reprocess_domains if (reprocess_order || domains_adjustment)
-          
+
           quantity = (domains_adjustment || reprocess_order) ? reprocess_domains[:all].count : certificate_order.purchased_domains('all')
           unless certificate_order.certificate_contents.empty?
             d            = reprocess_order ? reprocess_domains[:all] : certificate_order.all_domains
             domains      = d.blank? ? "" : d.join(", ")
             wildcard_qty = reprocess_order ? reprocess_domains[:cur_wildcard] : certificate_order.purchased_domains('wildcard')
-            
+
             if email_template
               items << "domains - " +   (domains.empty? ? "" : "("+domains+")")
             elsif invoice
@@ -30,12 +30,12 @@ module CertificateOrdersHelper
                 (wildcard_qty==0 ? '' : " (#{pluralize(wildcard_qty, 'wildcard ssl domain')})")) +
                 (domains.empty? ? "" : content_tag(:dd,"("+domains+")"))
             end
-            
+
             if (reprocess_order && reprocess_domains[:new_domains_count] > 0) || domains_adjustment
               co_desc = invoice ? " For certificate order ##{certificate_order.ref}." : ''
               descr = if @order.invoice_description.blank?
-                "Prorated charge for #{reprocess_domains[:new_domains_count]} 
-                additional domains. (wildcard: #{reprocess_domains[:wildcard]}, 
+                "Prorated charge for #{reprocess_domains[:new_domains_count]}
+                additional domains. (wildcard: #{reprocess_domains[:wildcard]},
                 non wildcard: #{reprocess_domains[:non_wildcard]})"
               else
                 "#{@order.invoice_description} #{co_desc}"
@@ -69,7 +69,7 @@ module CertificateOrdersHelper
   def sandbox_notice
     flash[:sandbox] = "SSL.com Sandbox. This is a test environment for api orders. Transactions and orders are not live."
   end
-  
+
   def domains_adjust_billing?(certificate_order)
     return false if certificate_order.nil? || certificate_order.new?
     certificate_order.domains_adjust_billing?
@@ -96,7 +96,7 @@ module CertificateOrdersHelper
               permitted_to?(:update, certificate_order)
         when "contacts_provided", "pending_validation", "validated"
           certificate = certificate_order.certificate
-          if certificate_content.workflow_state == "validated" && 
+          if certificate_content.workflow_state == "validated" &&
             (certificate.is_cs? || certificate.is_smime_or_client?)
 
             if current_user.is_individual_certificate?
@@ -141,20 +141,25 @@ module CertificateOrdersHelper
                   permitted_to?(:show, certificate_order)
             else
               links =  "<li>#{link_to 'renew', renew_certificate_order_path(@ssl_slug, certificate_order)}</li>"
-              links << "<li> or #{link_to 'change domain(s)/rekey', reprocess_certificate_order_path(@ssl_slug, certificate_order)}</li>" if permitted_to?(:update, certificate_order)
+              links << "<li> or #{link_to 'change domain(s)/rekey', reprocess_certificate_order_path(@ssl_slug,
+                   certificate_order)}</li>" if permitted_to?(:update, certificate_order) and
+                  !certificate_content.expired?
               "<ul>#{links}</ul>".html_safe
             end
           else
             if certificate_order.certificate.is_free?
               links =  "<li>#{link_to 'upgrade', renew_certificate_order_path(@ssl_slug, certificate_order)}</li>"
-              links << "<li>or #{link_to 'change domain(s)/rekey', reprocess_certificate_order_path(@ssl_slug, certificate_order)}</li>" if permitted_to?(:update, certificate_order)
+              links << "<li>or #{link_to 'change domain(s)/rekey',
+                   reprocess_certificate_order_path(@ssl_slug, certificate_order)}</li>" if permitted_to?(:update,
+                      certificate_order) and !certificate_content.expired?
               "<ul>#{links}</ul>".html_safe
             else
               ("<ul>"+(current_page?(certificate_order_path(@ssl_slug, certificate_order)) ? "" :
                   "<li>#{link_to 'download', certificate_order_path(@ssl_slug, certificate_order)} or </li>")+
+                  ((permitted_to?(:read, certificate_order) and !certificate_content.expired?) ?
                   "<li>#{link_to 'change domain(s)/rekey',
-                  reprocess_certificate_order_path(@ssl_slug, certificate_order)}</li></ul>").html_safe if
-                  permitted_to?(:read, certificate_order)
+                  reprocess_certificate_order_path(@ssl_slug, certificate_order)}</li></ul>" : "")).html_safe
+
             end
           end
         when "canceled"
@@ -256,11 +261,11 @@ module CertificateOrdersHelper
      other: ["Other platforms", download_certificate_order_url(@ssl_slug, certificate_order), SignedCertificate::OTHER_INSTALL_LINK],
      bundle: ["CA bundle (intermediate certs)", server_bundle_csr_signed_certificate_url(@ssl_slug, csr, sc), SignedCertificate::OTHER_INSTALL_LINK]}
   end
-  
+
   # When validation instructions are generated for a certificate name,
-  # remove "www" for Basic SSL, High Assurance SSL, and Enterprise EV SSL certs 
+  # remove "www" for Basic SSL, High Assurance SSL, and Enterprise EV SSL certs
   # in the CN of the CSR
-  def render_domain_for_instructions(certificate_order, target_domain)  
+  def render_domain_for_instructions(certificate_order, target_domain)
     unless certificate_order.certificate.is_multi?
       target_domain = target_domain.remove(/\Awww./)
     end
