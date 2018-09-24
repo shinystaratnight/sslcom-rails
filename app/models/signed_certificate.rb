@@ -619,8 +619,12 @@ class SignedCertificate < ActiveRecord::Base
   end
 
   def revoke!(reason)
-    update_column(:status, "revoked") if ComodoApi.revoke_ssl(serial: self.serial, api_requestable: self,
-                                                             refund_reason: reason)
+    unless certificate_content.ca.blank?
+      response=SslcomCaApi.revoke_ssl(self,reason)
+      update_column(:status, "revoked") if response.is_a?(SslcomCaRevocationRequest) and response.response=="OK"
+    else
+      update_column(:status, "revoked") if ComodoApi.revoke_ssl(serial: self.serial, api_requestable: self, refund_reason: reason)
+    end
   end
 
   private

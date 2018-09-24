@@ -232,8 +232,6 @@ class SslcomCaApi
                                               parameters: req.body, method: "post", response: res.message, ca: "sslcom")
       unless api_log_entry.response=="OK"
         OrderNotifier.problem_ca_sending("support@ssl.com", signed_certificate.certificate_order,"sslcom").deliver
-      else
-        signed_certificate.revoke! reason
       end
       api_log_entry
     end
@@ -246,7 +244,7 @@ class SslcomCaApi
     else
       query="approvals"
     end
-    host = ca_host(options[:mapping])+"/v1/#{query}"
+    host = ca_host(options[:csr] ? options[:csr].certificate_content.ca : options[:mapping])+"/v1/#{query}"
     if options[:host_only]
       host
     else
