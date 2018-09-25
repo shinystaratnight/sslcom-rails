@@ -436,7 +436,8 @@ class CertificateOrder < ActiveRecord::Base
   RENEWAL_DATE_CUTOFF = 45.days.ago
   RENEWAL_DATE_RANGE = 45.days.from_now
   ID_AND_TIMESTAMP=["id", "created_at", "updated_at"]
-  SSL_MAX_DURATION = 825
+  COMODO_SSL_MAX_DURATION = 730
+  SSL_MAX_DURATION = 820
   EV_SSL_MAX_DURATION = 730
   CS_MAX_DURATION = 1095
   CLIENT_MAX_DURATION = 1095
@@ -1729,7 +1730,7 @@ class CertificateOrder < ActiveRecord::Base
             'primaryDomainName'=>csr.common_name.downcase,
             'maxSubjectCNs'=>1
           )
-          params.merge!('days' => "#{SSL_MAX_DURATION}") if params['days'].to_i > SSL_MAX_DURATION #Comodo doesn't support more than 3 years
+          params.merge!('days' => "#{COMODO_SSL_MAX_DURATION}") if params['days'].to_i > COMODO_SSL_MAX_DURATION #Comodo doesn't support more than 3 years
         end
       end
     end
