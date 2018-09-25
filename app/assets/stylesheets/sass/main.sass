@@ -6862,8 +6862,7 @@ span.notifications-teams
 .btn-update-invoice-item,
 #btn-update-invoice-item,
 .btn-cancel-invoice-item,
-.btn-refunds-detail,
-.btn-cert-validate
+.btn-refunds-detail
   background-color: grey
   border-radius: 3px
   color: #FFFFFF !important
@@ -6878,8 +6877,18 @@ span.notifications-teams
 .btn-team-links
   float: left
 
-.btn-team-links, 
+.li-cert-validate
+  padding: 0.3rem 0 !important
+
 .btn-cert-validate
+  border: none !important
+  color: $base_green !important
+  font-size: 1.18rem !important
+
+  &:hover
+    color: black !important
+
+.btn-team-links,
   background-color: white
   border: 1px solid $base_green
   color: $base_green !important
