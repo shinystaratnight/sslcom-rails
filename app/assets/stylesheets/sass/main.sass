@@ -6862,7 +6862,8 @@ span.notifications-teams
 .btn-update-invoice-item,
 #btn-update-invoice-item,
 .btn-cancel-invoice-item,
-.btn-refunds-detail
+.btn-refunds-detail,
+.btn-cert-validate
   background-color: grey
   border-radius: 3px
   color: #FFFFFF !important
@@ -6875,10 +6876,13 @@ span.notifications-teams
   margin: 0.1rem
 
 .btn-team-links
+  float: left
+
+.btn-team-links, 
+.btn-cert-validate
   background-color: white
   border: 1px solid $base_green
   color: $base_green !important
-  float: left
   margin: 0 0.5rem 0.5rem 0
   padding: 0 3px
 
@@ -7804,3 +7808,27 @@ span.notifications-teams
     color: white
     background: grey
     font-size: 1.3rem
+
+/*
+ * OV and IV uploads
+ */
+#iv-ov-file-upload
+  margin-left: 1rem
+  
+  p
+    font-size: 1.6rem
+    color: #5A79A5 !important
+    letter-spacing: 1px
+    font-weight: 600
+    margin-top: 2rem
+
+  #iv_multi_upload, #ov_multi_upload
+  
+  .MultiFile-remove
+    margin-left: 3rem !important
+
+  .MultiFile-title
+    color: #5A79A5 !important
+
+  .MultiFile-wrap
+    margin-left: 3rem

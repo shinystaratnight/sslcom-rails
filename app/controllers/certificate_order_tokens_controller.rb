@@ -22,14 +22,17 @@ class CertificateOrderTokensController < ApplicationController
 
           # Fiding and Setting Assignee to Certificate Order
           # and assign individual_certificate role to assignee in scope of the team.
-          email_address = co.certificate_content.locked_registrant.email
+          email_address = co.get_download_cert_email
           assignee = User.find_by_email(email_address)
-          co.update_attribute(:assignee, assignee) unless co.assignee == assignee
+          
+          unless co.certificate.is_smime_or_client?
+            co.update_attribute(:assignee, assignee) unless co.assignee == assignee
 
-          if assignee && !assignee.duplicate_role?(Role.get_individual_certificate_id, co.ssl_account)
-            assignee.ssl_accounts << co.ssl_account
-            assignee.ssl_account_users.where(ssl_account_id: co.ssl_account.id).first.update_attribute(:approved, true)
-            assignee.set_roles_for_account(co.ssl_account, [Role.get_individual_certificate_id])
+            if assignee && !assignee.duplicate_role?(Role.get_individual_certificate_id, co.ssl_account)
+              assignee.ssl_accounts << co.ssl_account
+              assignee.ssl_account_users.where(ssl_account_id: co.ssl_account.id).first.update_attribute(:approved, true)
+              assignee.set_roles_for_account(co.ssl_account, [Role.get_individual_certificate_id])
+            end
           end
 
           # create / update certificate order token table

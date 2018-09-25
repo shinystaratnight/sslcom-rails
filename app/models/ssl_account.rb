@@ -60,6 +60,7 @@ class SslAccount < ActiveRecord::Base
   has_many  :saved_contacts, as: :contactable, class_name: 'CertificateContact', dependent: :destroy
   has_many  :saved_registrants, as: :contactable, class_name: 'Registrant', dependent: :destroy
   has_many  :all_saved_contacts, as: :contactable, class_name: 'Contact', dependent: :destroy
+  has_many  :individual_validations, as: :contactable, class_name: 'IndividualValidation', dependent: :destroy
   has_many  :cdns
   has_many  :tags
   has_many  :folders, dependent: :destroy

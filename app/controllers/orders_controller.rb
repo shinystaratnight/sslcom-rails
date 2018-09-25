@@ -883,6 +883,7 @@ class OrdersController < ApplicationController
   end
 
   def find_order
-    @order = Order.unscoped{Order.find_by_reference_number(params[:id])}
+    @order = Order.unscoped{(current_user.is_system_admins? ? Order :
+                                 current_user.orders).find_by_reference_number(params[:id])}
   end
 end

@@ -643,6 +643,20 @@ class Certificate < ActiveRecord::Base
     end.compact
   end
 
+  def max_duration
+    if is_smime_or_client?
+      CertificateOrder::CLIENT_MAX_DURATION
+    elsif is_code_signing?
+      CertificateOrder::CS_MAX_DURATION
+    elsif is_ev?
+      CertificateOrder::EV_SSL_MAX_DURATION
+    elsif is_time_stamping?
+      CertificateOrder::TS_MAX_DURATION
+    else # assume non EV SSL
+      CertificateOrder::SSL_MAX_DURATION
+    end
+  end
+
   private
 
   # renames 'product' field for certificate including the reseller tiers

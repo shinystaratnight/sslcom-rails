@@ -71,7 +71,7 @@
                 %ul
                   %li
                     (for government entities) #{link_to "Sample Legal Letter for Verifying a Government Organization #{image_tag('pdf_icon.gif')}".html_safe, "http://support.ssl.com/default_import/Knowledgebase/Article/View/25/0/sample-legal-letter-for-verifying-a-government-organization"}
-          -else
+          -elsif !co.certificate.is_smime_or_client?
             %p
               If documents are required for this order, then #{Settings.community_name} will verify the existence of your business, the ownership of the domain(s)
               #{co.all_domains.join(", ")}, and your employment status or authority to
@@ -103,11 +103,34 @@
                         %li
                           %dt Simplified EV Authorization Form (#{link_to "click here to download form #{image_tag('pdf_icon.gif')}".html_safe, "https://support.ssl.com/index.php?_m=downloads&_a=downloadfile&downloaditemid=5"})
                           %dd This form should be used if one person is to act in all three roles, Certificate Requester, Certificate Approver and Contract (Subscriber Agreement) Signer.
-          %p
-            Up to 5 files can be uploaded. Zipped documents can also be uploaded, and
-            they will automatically be unpacked. The following file types are accepted:
-            #{ValidationHistory.acceptable_file_types}
-        =file_field_tag "filedata[]", :id=> "multi_upload"
+        - if co.certificate.is_smime_or_client?
+          #iv-ov-file-upload
+            - unless co.certificate.is_client_basic? || co.certificate.is_client_pro?
+              .clearfix
+                %h3
+                  Organization Validation documents are related to validating the identity of the organization or company
+                  "#{co.registrant.company_name}" such as a utility bill, articles or incorporation or organization,
+                  or any other document that proves the existence of the organization or company.
+                %p Identifying Documents for Registrant #{co.registrant.company_name}:
+                = file_field_tag "iv_filedata[]", id: "iv_multi_upload"
+
+            .clearfix
+              %h3
+                Individual Validation documents are related to validating the identity of the recipient
+                "#{co.get_team_iv.first_name} #{co.get_team_iv.last_name}" such as a an image of a passport,
+                driver's license, personal id, or a personal photo.
+              %p Identifying Documents for Recipient #{co.get_team_iv.first_name} #{co.get_team_iv.last_name}:
+              = file_field_tag "ov_filedata[]", id: "ov_multi_upload"
+          %br/
+        - else
+          = file_field_tag "filedata[]", id: "multi_upload"
+
+
+    %p
+      Up to 5 files can be uploaded. Zipped documents can also be uploaded, and
+      they will automatically be unpacked. The following file types are accepted:
+      #{ValidationHistory.acceptable_file_types}
+
     #upload_validations(style='width: 100%; text-align: center;')
       -if checkout_in_progress
         %input(type="button" class="shiny_blue_button" id="start_over" value="Cancel")
@@ -121,7 +144,7 @@
   :plain
     //# PLUGIN INTEGRATION
     jQuery(function($){
-      $('#multi_upload').MultiFile({
+      $('#multi_upload, #iv_multi_upload, #ov_multi_upload').MultiFile({
         max: 5,
         accept: '#{ValidationHistory.multi_upload_types}',
         STRING:{

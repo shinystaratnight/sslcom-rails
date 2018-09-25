@@ -112,6 +112,13 @@
                                   -if fields.is_SHA1?
                                     =link_to "(SHA2 upgrade)", reprocess_certificate_order_url(co)
                             %li.category_border
+                        -if @certificate_order.certificate.is_smime_or_client? && !@certificate_order.certificate_content.validated?
+                          %li
+                            %strong validation status
+                          %li
+                            = link_to 'VALIDATE',                                                                     |
+                              admin_update_certificate_order_path(@ssl_slug, @certificate_order.ref, validate: true), |
+                              method: :put, class: 'btn-cert-validate'
                         -unless @certificate_order.certificate.is_dv?
                           %li
                             %strong validation documentation

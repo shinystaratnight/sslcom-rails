@@ -736,13 +736,17 @@ namespace :cas do
               status: CasCertificate::STATUS[(ca.ref=="0017" and live.include?(cert) and cert.is_dv?) ? :default : status],
                                          ssl_account_id: ssl_account_id)
           elsif (cert.is_ov? or cert.is_ev?) and ca.end_entity==(Ca::END_ENTITY[:ovssl])
-            cert.cas_certificates.create(ca_id: ca.id,
-              status: CasCertificate::STATUS[(ca.ref=="0018" and live.include?(cert) and cert.is_ov?) ? :default : status],
-                                         ssl_account_id: ssl_account_id)
+            unless ENV["SHADOW"]=="DV" and status==:shadow
+              cert.cas_certificates.create(ca_id: ca.id,
+                status: CasCertificate::STATUS[(ca.ref=="0018" and live.include?(cert) and cert.is_ov?) ? :default : status],
+                                           ssl_account_id: ssl_account_id)
+            end
           elsif cert.is_ev? and ca.end_entity==(Ca::END_ENTITY[:evssl])
-            cert.cas_certificates.create(ca_id: ca.id,
-              status: CasCertificate::STATUS[(ca.ref=="0015" and live.include?(cert)) ? :default : status],
-                                         ssl_account_id: ssl_account_id)
+            unless ENV["SHADOW"]=="DV" and status==:shadow
+              cert.cas_certificates.create(ca_id: ca.id,
+                                           status: CasCertificate::STATUS[(ca.ref=="0015" and live.include?(cert)) ? :default : status],
+                                           ssl_account_id: ssl_account_id)
+            end
           end
         end
       end

@@ -202,7 +202,7 @@ class Csr < ActiveRecord::Base
   end
 
   def sslcom_outstanding_approvals
-    status=SslcomCaApi.get_status(self)[1].body
+    status=SslcomCaApi.get_status(csr: self, mapping: certificate_content.ca)[1].body
     if status=="[]" or status.blank?
       0
     else
