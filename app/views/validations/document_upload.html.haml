@@ -134,6 +134,8 @@
     #upload_validations(style='width: 100%; text-align: center;')
       -if checkout_in_progress
         %input(type="button" class="shiny_blue_button" id="start_over" value="Cancel")
+      -if co.certificate.is_smime_or_client?
+        =link_to 'Skip', certificate_order_path(@ssl_slug, co.ref), id: "upload_files_skip"
       =submit_tag "Submit", :id=>"upload_files", :disable_with=>"Submitting..."
       .clearfix
         =image_tag('waiting_bar_medium.gif', :id=>'waiting_bar', :style=>'display: none; vertical-align: middle;')
