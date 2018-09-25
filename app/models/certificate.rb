@@ -933,7 +933,7 @@ class Certificate < ActiveRecord::Base
               {serial_root: "personalpro",title: "Personal Pro",validation_type: "class 2",
                summary: "for authenticating and encrypting email and well as client services",
                product: "personal-pro",
-               price_adjusts:{sslcompersonalpro56ssl1yr: [7000, 8000, 9000],
+               price_adjusts:{sslcompersonalpro256ssl1yr: [7000, 8000, 9000],
                               sslcompersonalpro256ssl1yr1tr: [7000, 8000, 9000],
                               sslcompersonalpro256ssl1yr2tr: [7000, 8000, 9000],
                               sslcompersonalpro256ssl1yr3tr: [7000, 8000, 9000],
