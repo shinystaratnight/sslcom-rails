@@ -112,7 +112,7 @@
                   "#{co.registrant.company_name}" such as a utility bill, articles or incorporation or organization,
                   or any other document that proves the existence of the organization or company.
                 %p Identifying Documents for Registrant #{co.registrant.company_name}:
-                = file_field_tag "iv_filedata[]", id: "iv_multi_upload"
+                = file_field_tag "ov_filedata[]", id: "ov_multi_upload"  
 
             .clearfix
               %h3
@@ -120,7 +120,7 @@
                 "#{co.get_team_iv.first_name} #{co.get_team_iv.last_name}" such as a an image of a passport,
                 driver's license, personal id, or a personal photo.
               %p Identifying Documents for Recipient #{co.get_team_iv.first_name} #{co.get_team_iv.last_name}:
-              = file_field_tag "ov_filedata[]", id: "ov_multi_upload"
+              = file_field_tag "iv_filedata[]", id: "iv_multi_upload"
           %br/
         - else
           = file_field_tag "filedata[]", id: "multi_upload"
