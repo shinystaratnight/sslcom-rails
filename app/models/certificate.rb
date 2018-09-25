@@ -19,6 +19,7 @@ class Certificate < ActiveRecord::Base
   serialize   :description
   serialize   :display_order
   serialize   :title
+  serialize   :special_fields
   preference  :certificate_chain, :string
   
   accepts_nested_attributes_for :product_variant_groups, allow_destroy: false

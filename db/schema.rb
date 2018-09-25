@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180920032908) do
+ActiveRecord::Schema.define(version: 20180921225848) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        limit: 255
@@ -391,6 +391,7 @@ ActiveRecord::Schema.define(version: 20180920032908) do
     t.string   "roles",                 limit: 255,   default: "--- []"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "special_fields",        limit: 255,   default: "--- []"
   end
 
   create_table "certificates_products", force: :cascade do |t|
@@ -465,6 +466,7 @@ ActiveRecord::Schema.define(version: 20180920032908) do
     t.boolean  "saved_default",                     default: false
     t.integer  "status",                limit: 4
     t.integer  "user_id",               limit: 4
+    t.text     "special_fields",        limit: 65535
   end
 
   add_index "contacts", ["contactable_id", "contactable_type"], name: "index_contacts_on_contactable_id_and_contactable_type", using: :btree

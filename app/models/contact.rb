@@ -18,6 +18,8 @@ class Contact < ActiveRecord::Base
   
   attr_accessor :update_parent, :administrative_role, :billing_role, :technical_role, :validation_role
   
+  serialize :special_fields
+  
   ALIAS_FIELDS = {organization: :company_name, organization_unit: :department,
                   street_address_1: :address1, street_address_2: :address2,
                   street_address_3: :address3, locality: :city, state_or_province: :state, post_office_box: :po_box}

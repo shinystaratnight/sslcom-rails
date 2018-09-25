@@ -34,6 +34,7 @@ class CertificateOrdersController < ApplicationController
   before_filter :set_row_page, only: [:index, :search, :credits, :pending, :filter_by_scope, :order_by_csr, :filter_by,
                                       :incomplete, :reprocessing]
   before_filter :get_team_tags, only: [:index, :search]
+  before_filter :construct_special_fields, only: [:edit, :create, :update, :update_csr]
   in_place_edit_for :certificate_order, :notes
   in_place_edit_for :csr, :signed_certificate_by_text
 
@@ -698,6 +699,19 @@ class CertificateOrdersController < ApplicationController
     render 'site/404_not_found', status: 404 unless @certificate_order
   end
 
+  def construct_special_fields
+    if params[:certificate_order]
+      new_attributes = params[:certificate_order][:certificate_contents_attributes]['0'][:registrant_attributes]
+      cert_special_fields = @certificate_order.certificate.special_fields
+      if cert_special_fields.any?
+        special_fields = {}
+        new_attributes.each{|k, v| (special_fields[k] = v) if cert_special_fields.include?(k)}
+        new_attributes.delete_if {|rsp| cert_special_fields.include?(rsp)}
+        new_attributes.merge!('special_fields' => special_fields)
+      end
+    end
+  end
+
   def setup_registrant(registrant_params=nil)
     cc = @certificate_order.certificate_content
     @registrant = unless cc.registrant.blank?
@@ -729,6 +743,7 @@ class CertificateOrdersController < ApplicationController
       @registrant.phone = locked_registrant.phone
       @registrant.status = locked_registrant.status
       @registrant.parent_id = locked_registrant.parent_id
+      @registrant.special_fields = locked_registrant.special_fields
     end
   end
 

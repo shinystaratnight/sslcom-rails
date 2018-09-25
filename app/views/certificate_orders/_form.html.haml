@@ -57,6 +57,19 @@
           *Company:
           %span.label_desc organization
         =rf.text_field :company_name
+      
+      -if certificate.special_fields.any?
+        -sf_hash = {}
+        -certificate.special_fields.each {|sf| sf_hash[sf] = ''}
+        -special_fields = rf.object.special_fields
+        -special_fields = special_fields.blank? || special_fields.empty? ? sf_hash : special_fields
+        =rf.hidden_field :special_fields, value: special_fields
+        -special_fields.each do |key, elem|
+          .clearfix
+            %label{for: "#{key}"}
+              ="#{key.humanize}:"
+            =rf.text_field key, value: elem
+      
       .clearfix
         %label{:for=>"assumed_name"}
           DBA:
