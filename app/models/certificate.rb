@@ -952,6 +952,7 @@ class Certificate < ActiveRecord::Base
                }},
               {serial_root: "naesbbasic",title: "NAESB Basic",validation_type: "basic",
                summary: "for authenticating and encrypting email and well as client services",
+               special_fields: %w(entity\ code),
                product: "personal-naesb-basic",
                points:  "<div class='check'>Required for NAESB EIR and etag authentication</div>
                          <div class='check'>User for wesbsite authentication</div>
@@ -984,6 +985,7 @@ class Certificate < ActiveRecord::Base
       certs.each do |c|
         c.update_attributes title: title,
                             description: description,
+                            special_fields: p[:special_fields],
                             product: c.product.gsub(/\Ahigh_assurance/, p[:product]),
                             icons: c.icons.merge!("main"=> "gold_lock_lg.gif")
       end

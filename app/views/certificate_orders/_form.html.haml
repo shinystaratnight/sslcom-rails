@@ -58,7 +58,7 @@
           %span.label_desc organization
         =rf.text_field :company_name
       
-      -if certificate.special_fields.any?
+      -if certificate.special_fields.try("any?".to_sym)
         -sf_hash = {}
         -certificate.special_fields.each {|sf| sf_hash[sf] = ''}
         -special_fields = rf.object.special_fields

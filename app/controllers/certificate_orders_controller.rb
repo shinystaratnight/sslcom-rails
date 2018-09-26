@@ -163,7 +163,7 @@ class CertificateOrdersController < ApplicationController
 
   def edit
     unless @certificate_order.blank?
-      if @certificate_order.certificate.is_client_pro? || @certificate_order.certificate.is_client_pro?
+      if @certificate_order.certificate.is_client_pro? || @certificate_order.certificate.is_client_basic?
         redirect_to recipient_certificate_order_path(@ssl_slug, @certificate_order.ref)
       else
         @certificate = @certificate_order.mapped_certificate

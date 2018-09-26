@@ -370,7 +370,7 @@ ActiveRecord::Schema.define(version: 20180921225848) do
   add_index "certificate_orders", ["ssl_account_id", "workflow_state", "id"], name: "index_certificate_orders_on_3_cols(2)", using: :btree
   add_index "certificate_orders", ["ssl_account_id", "workflow_state", "is_test", "updated_at"], name: "index_certificate_orders_on_4_cols", using: :btree
   add_index "certificate_orders", ["ssl_account_id"], name: "index_certificate_orders_on_ssl_account_id", using: :btree
-  add_index "certificate_orders", ["validation_id"], name: "index_certificate_orders_on_validation_id", using: :btree
+  add_index "certificate_orders", ["workflow_state", "is_expired", "is_test"], name: "index_certificate_orders_on_3_cols", using: :btree
   add_index "certificate_orders", ["workflow_state", "is_expired", "is_test"], name: "index_certificate_orders_on_ws_ie_it_ua", using: :btree
   add_index "certificate_orders", ["workflow_state", "is_expired", "renewal_id"], name: "index_certificate_orders_on_ws_is_ri", using: :btree
 
@@ -446,7 +446,7 @@ ActiveRecord::Schema.define(version: 20180921225848) do
     t.string   "fax",                   limit: 255
     t.string   "notes",                 limit: 255
     t.string   "type",                  limit: 255
-    t.string   "roles",                 limit: 255, default: "--- []"
+    t.string   "roles",                 limit: 255,   default: "--- []"
     t.integer  "contactable_id",        limit: 4
     t.string   "contactable_type",      limit: 255
     t.datetime "created_at"
@@ -463,7 +463,7 @@ ActiveRecord::Schema.define(version: 20180921225848) do
     t.string   "company_number",        limit: 255
     t.string   "registration_service",  limit: 255
     t.integer  "parent_id",             limit: 4
-    t.boolean  "saved_default",                     default: false
+    t.boolean  "saved_default",                       default: false
     t.integer  "status",                limit: 4
     t.integer  "user_id",               limit: 4
     t.text     "special_fields",        limit: 65535
@@ -471,7 +471,6 @@ ActiveRecord::Schema.define(version: 20180921225848) do
 
   add_index "contacts", ["contactable_id", "contactable_type"], name: "index_contacts_on_contactable_id_and_contactable_type", using: :btree
   add_index "contacts", ["id", "parent_id"], name: "index_contacts_on_id_and_parent_id", using: :btree
-  add_index "contacts", ["parent_id"], name: "index_contacts_on_parent_id", using: :btree
   add_index "contacts", ["user_id"], name: "index_contacts_on_user_id", using: :btree
 
   create_table "countries", force: :cascade do |t|
