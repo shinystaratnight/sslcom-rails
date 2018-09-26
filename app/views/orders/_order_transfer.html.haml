@@ -1,4 +1,4 @@
-- other_orders = @order.new_record? ? [] : (@order.is_deposit? ? [] : @order.certificate_orders.uniq.last.orders)
+- other_orders = @order.new_record? ? [] : (@order.is_deposit? || @order.certificate_orders.empty? ? [] : @order.certificate_orders.uniq.last.orders)
 - sysadmins    = current_user.is_system_admins?
 - user_teams   = current_user.ssl_accounts
 
