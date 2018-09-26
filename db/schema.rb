@@ -140,6 +140,18 @@ ActiveRecord::Schema.define(version: 20180921225848) do
 
   add_index "billing_profiles", ["ssl_account_id"], name: "index_billing_profile_on_ssl_account_id", using: :btree
 
+  create_table "blocklist", force: :cascade do |t|
+    t.string   "type",        limit: 255
+    t.string   "domain",      limit: 255
+    t.integer  "validation",  limit: 4
+    t.string   "status",      limit: 255
+    t.string   "reason",      limit: 255
+    t.string   "description", limit: 255
+    t.text     "notes",       limit: 65535
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "blocklists", force: :cascade do |t|
     t.string   "type",        limit: 255
     t.string   "domain",      limit: 255
@@ -370,7 +382,7 @@ ActiveRecord::Schema.define(version: 20180921225848) do
   add_index "certificate_orders", ["ssl_account_id", "workflow_state", "id"], name: "index_certificate_orders_on_3_cols(2)", using: :btree
   add_index "certificate_orders", ["ssl_account_id", "workflow_state", "is_test", "updated_at"], name: "index_certificate_orders_on_4_cols", using: :btree
   add_index "certificate_orders", ["ssl_account_id"], name: "index_certificate_orders_on_ssl_account_id", using: :btree
-  add_index "certificate_orders", ["workflow_state", "is_expired", "is_test"], name: "index_certificate_orders_on_3_cols", using: :btree
+  add_index "certificate_orders", ["validation_id"], name: "index_certificate_orders_on_validation_id", using: :btree
   add_index "certificate_orders", ["workflow_state", "is_expired", "is_test"], name: "index_certificate_orders_on_ws_ie_it_ua", using: :btree
   add_index "certificate_orders", ["workflow_state", "is_expired", "renewal_id"], name: "index_certificate_orders_on_ws_is_ri", using: :btree
 
@@ -471,6 +483,7 @@ ActiveRecord::Schema.define(version: 20180921225848) do
 
   add_index "contacts", ["contactable_id", "contactable_type"], name: "index_contacts_on_contactable_id_and_contactable_type", using: :btree
   add_index "contacts", ["id", "parent_id"], name: "index_contacts_on_id_and_parent_id", using: :btree
+  add_index "contacts", ["parent_id"], name: "index_contacts_on_parent_id", using: :btree
   add_index "contacts", ["user_id"], name: "index_contacts_on_user_id", using: :btree
 
   create_table "countries", force: :cascade do |t|

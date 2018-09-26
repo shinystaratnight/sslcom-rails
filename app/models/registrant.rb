@@ -62,7 +62,7 @@ class Registrant < Contact
   end
 
   def reusable?
-    contactable.is_a?(SslAccount) && !registrant_type.nil?
+    contactable.is_a?(SslAccount)
   end
 
   def self.get_validated_registrants(team)

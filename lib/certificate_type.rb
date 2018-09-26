@@ -85,7 +85,8 @@ module CertificateType
   end
 
   def is_client_basic?
-    (self.is_a?(ApiCertificateRequest) ? target_certificate :  self).product_root=~/basic\z/
+    is_client? and !is_naesb? and
+        (self.is_a?(ApiCertificateRequest) ? target_certificate :  self).product_root=~/basic\z/
   end
 
   def is_client_pro?
