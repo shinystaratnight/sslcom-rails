@@ -382,10 +382,12 @@ class ValidationsController < ApplicationController
 
   #user can select to upload documents or do dcv (email or http) or do both
   def upload
-    i=0
-    error=[]
-    @zip_file_name = ""
+    @i = 0
+    @error = []
     @files = params[:filedata] || []
+    @files += params[:iv_filedata] if params[:iv_filedata]
+    @files += params[:ov_filedata] if params[:ov_filedata]
+
     unless params[:refer_to_others].blank? || params[:refer_to_others]=="false"
       attrs=%w(email_addresses other_party_requestable_type other_party_requestable_id preferred_sections preferred_show_order_number)
       @other_party_validation_request =
@@ -393,7 +395,7 @@ class ValidationsController < ApplicationController
             compact.flatten])
       current_user.other_party_requests << @other_party_validation_request
         unless @other_party_validation_request.valid?
-          error<<@other_party_validation_request.errors.full_messages
+          @error<<@other_party_validation_request.errors.full_messages
           flash[:opvr_error]=true
         end
         flash[:opvr]=true
@@ -404,12 +406,12 @@ class ValidationsController < ApplicationController
         @dcv = DomainControlValidation.find(params[:domain_control_validation_id])
         if params[:method]=="email" && params[:domain_control_validation_email]
           @dcv.send_to params[:domain_control_validation_email]
-          error<<'Please select a valid verification email address.' unless @dcv.errors.blank?
+          @error<<'Please select a valid verification email address.' unless @dcv.errors.blank?
         elsif params[:method]=="http"
           #verify http dcv
           http_or_s = @certificate_order.csr.dcv_verified?
           unless http_or_s
-            error<<"Please be sure #{@certificate_order.csr.dcv_url} (or https://) is publicly available"
+            @error<<"Please be sure #{@certificate_order.csr.dcv_url} (or https://) is publicly available"
           else
             @dcv.hash_satisfied(http_or_s)
             @certificate_order.validation.approve! unless
@@ -417,74 +419,19 @@ class ValidationsController < ApplicationController
           end
         end
       elsif hide_dcv? || @files.blank?
-        error<<'Please select one or more files to upload.'
+        @error<<'Please select one or more files to upload.'
       end
     end
-    @files.each do |file|
-      @created_releases = []
-      if (file.respond_to?(:content_type) && file.content_type.include?("zip")) ||
-          (file.respond_to?(:original_filename) && file.original_filename.include?("zip"))
-        logger.info "creating directory #{Rails.root}/tmp/zip/temp"
-        FileUtils.mkdir_p "#{Rails.root}/tmp/zip/temp" if !File.exist?("#{Rails.root}/tmp/zip/temp")
-        if file.size > Settings.max_content_size.to_i.megabytes
-          break error = <<-EOS
-            Too Large: zip file #{file.original_filename} is larger than
-            #{help.number_to_human_size(Settings.max_content_size.to_i.megabytes)}
-          EOS
-        end
-        @zip_file_name=file.original_filename
-        File.open("#{Rails.root}/tmp/zip/#{file.original_filename}", "wb") do |f|
-          f.write(file.read)
-        end
-        zf = Zip::ZipFile.open("#{Rails.root}/tmp/zip/#{file.original_filename}")
-        if zf.size > Settings.max_num_releases.to_i
-          break error = <<-EOS
-            Too Many Files: zip file #{file.original_filename} contains more than
-            #{Settings.max_num_releases.to_i} files.
-          EOS
-        end
-        zf.each do |entry|
-          begin
-            fpath = File.join("#{Rails.root}/tmp/zip/temp/",entry.name.downcase)
-            if(File.exists?(fpath))
-              File.delete(fpath)
-            end
-            zf.extract(entry, fpath)
-            @created_releases << create_with_attachment(LocalFile.new(fpath))
-            i+=1
-          rescue Errno::ENOENT, Errno::EISDIR
-            error = "Invalid contents: zip entries with directories not allowed"
-            break
-          ensure
-            if (File.exists?(fpath))
-              if File.directory?(fpath)
-                FileUtils.remove_dir fpath, :force=>true
-              else
-                FileUtils.remove_file fpath, :force=>true
-              end
-            end
-            @created_releases.each {|release| release.destroy} unless error.blank?
-          end
-        end
-        File.delete(zf.name) if (File.exists?(zf.name))
-        @created_releases.each do |doc|
-          doc.errors.each{|attr,msg|
-            error << "#{attr} #{msg}: " }
-        end
-      else
-        vh = create_with_attachment LocalFile.new(file.path, file.original_filename)
-        vh.errors.each{|attr,msg|
-          error << "#{attr} #{msg}: " }
-        i+=1 if vh
-        error << "Error: Document for #{file.original_filename} was not
-          created. Please notify system admin at #{Settings.support_email}" unless vh
-      end
-    end
+    
+    upload_documents(@files, :validation) if params[:filedata]
+    upload_documents(params[:iv_filedata], :iv_documents) if params[:iv_filedata]
+    upload_documents(params[:ov_filedata], :ov_documents) if params[:ov_filedata]
+
     respond_to do |format|
-      if error.blank? && (@other_party_validation_request.blank? ? true : @other_party_validation_request.valid?)
+      if @error.blank? && (@other_party_validation_request.blank? ? true : @other_party_validation_request.valid?)
         unless @files.blank?
-          files_were = (i > 1 or i==0)? "documents were" : "document was"
-          flash[:notice] = "#{i.in_words.capitalize} (#{i}) #{files_were}
+          files_were = (@i > 1 or @i==0)? "documents were" : "document was"
+          flash[:notice] = "#{@i.in_words.capitalize} (#{@i}) #{files_were}
             successfully saved."
           @certificate_order.confirmation_recipients.map{|r|r.split(" ")}.flatten.uniq.each do |c|
             OrderNotifier.validation_documents_uploaded(c, @certificate_order, @files).deliver
@@ -504,7 +451,7 @@ class ValidationsController < ApplicationController
           :status => :created,
           :location => @release }
       else
-        (flash[:error] = error.is_a?(Array) ? error.join(", ") : error) unless error.blank?
+        (flash[:error] = @error.is_a?(Array) ? @error.join(", ") : @error) unless @error.blank?
         format.html { redirect_to new_certificate_order_validation_path(
             @certificate_order) }
         format.xml { render :xml => @release.errors,
@@ -585,6 +532,73 @@ class ValidationsController < ApplicationController
 
   private
 
+  def upload_documents(files, type=:validation)
+    i=0
+    @zip_file_name = ""
+
+    files.each do |file|
+      @created_releases = []
+      if (file.respond_to?(:content_type) && file.content_type.include?("zip")) ||
+          (file.respond_to?(:original_filename) && file.original_filename.include?("zip"))
+        logger.info "creating directory #{Rails.root}/tmp/zip/temp"
+        FileUtils.mkdir_p "#{Rails.root}/tmp/zip/temp" if !File.exist?("#{Rails.root}/tmp/zip/temp")
+        if file.size > Settings.max_content_size.to_i.megabytes
+          break @error = <<-EOS
+            Too Large: zip file #{file.original_filename} is larger than
+            #{help.number_to_human_size(Settings.max_content_size.to_i.megabytes)}
+          EOS
+        end
+        @zip_file_name=file.original_filename
+        File.open("#{Rails.root}/tmp/zip/#{file.original_filename}", "wb") do |f|
+          f.write(file.read)
+        end
+        zf = Zip::ZipFile.open("#{Rails.root}/tmp/zip/#{file.original_filename}")
+        if zf.size > Settings.max_num_releases.to_i
+          break @error = <<-EOS
+            Too Many Files: zip file #{file.original_filename} contains more than
+            #{Settings.max_num_releases.to_i} files.
+          EOS
+        end
+        zf.each do |entry|
+          begin
+            fpath = File.join("#{Rails.root}/tmp/zip/temp/",entry.name.downcase)
+            if(File.exists?(fpath))
+              File.delete(fpath)
+            end
+            zf.extract(entry, fpath)
+            @created_releases << create_with_attachment(LocalFile.new(fpath), type)
+            i+=1
+          rescue Errno::ENOENT, Errno::EISDIR
+            @error = "Invalid contents: zip entries with directories not allowed"
+            break
+          ensure
+            if (File.exists?(fpath))
+              if File.directory?(fpath)
+                FileUtils.remove_dir fpath, :force=>true
+              else
+                FileUtils.remove_file fpath, :force=>true
+              end
+            end
+            @created_releases.each {|release| release.destroy} unless @error.blank?
+          end
+        end
+        File.delete(zf.name) if (File.exists?(zf.name))
+        @created_releases.each do |doc|
+          doc.errors.each{|attr,msg|
+            @error << "#{attr} #{msg}: " }
+        end
+      else
+        vh = create_with_attachment(LocalFile.new(file.path, file.original_filename), type)
+        vh.errors.each{|attr,msg|
+          @error << "#{attr} #{msg}: " }
+        i+=1 if vh
+        @error << "Error: Document for #{file.original_filename} was not
+          created. Please notify system admin at #{Settings.support_email}" unless vh
+      end
+    end
+    @i += i
+  end
+
   def validation_stage_checkout_in_progress?
     co.certificate_content.contacts_provided?
   end
@@ -593,12 +607,37 @@ class ValidationsController < ApplicationController
 
   end
 
-  def create_with_attachment file
-    @val_history = ValidationHistory.new(:document => file)
-    @certificate_order.validation.
-      validation_histories << @val_history
+  def create_with_attachment(file, type=:validation)
+    @val_history = ValidationHistory.new(document: file)
+    @certificate_order.validation.validation_histories << @val_history
     @val_history.save
+    create_iv_attachment if type == :iv_documents
+    create_ov_attachment if type == :ov_documents
     @val_history
+  end
+
+  def create_iv_attachment
+    if @val_history.valid?
+      iv_exists = @certificate_order.get_team_iv
+      if iv_exists
+        iv_exists.validation_histories << @val_history
+      end
+    end
+  end
+
+  def create_ov_attachment
+    if @val_history.valid?
+      lr = @certificate_order.certificate_content.locked_registrant
+      unless lr.nil?
+        lr.validation_histories << @val_history
+        if lr.parent_id
+          reusable_registrant = Registrant.find_by(id: lr.parent_id)
+        end
+        if reusable_registrant
+          reusable_registrant.validation_histories << @val_history
+        end
+      end
+    end
   end
 
   def find_validation

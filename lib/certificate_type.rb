@@ -52,7 +52,7 @@ module CertificateType
 
   # this covers both ev and non ev code signing
   def is_code_signing?
-    is_cs? or is_evcs? or is_client? # is_client is temporary
+    is_cs? or is_evcs?
   end
 
   def is_test_certificate?
@@ -64,15 +64,29 @@ module CertificateType
   end
 
   def is_smime?
-    (self.is_a?(ApiCertificateRequest) ? target_certificate :  self).product =~ /\Asmime/
+    # (self.is_a?(ApiCertificateRequest) ? target_certificate :  self).product =~ /\Asmime/
+    is_client?
   end
 
   def is_client?
     (self.is_a?(ApiCertificateRequest) ? target_certificate :  self).product.include?('personal')
   end
 
+  def is_smime_or_client?
+    is_smime? || is_client? || is_naesb?
+  end
+
+  def is_time_stamping?
+    false
+  end
+
+  def is_naesb?
+    (self.is_a?(ApiCertificateRequest) ? target_certificate :  self).product.include?('naesb')
+  end
+
   def is_client_basic?
-    (self.is_a?(ApiCertificateRequest) ? target_certificate :  self).product_root=~/basic\z/
+    is_client? and !is_naesb? and
+        (self.is_a?(ApiCertificateRequest) ? target_certificate :  self).product_root=~/basic\z/
   end
 
   def is_client_pro?
@@ -92,7 +106,12 @@ module CertificateType
   end
 
   def requires_company_info?
-    is_client_business? || is_client_enterprise? || is_server? || is_code_signing? || is_ov?
+    is_client_business? ||
+    is_client_enterprise? ||
+    is_server? ||
+    is_code_signing? ||
+    is_ov? ||
+    is_naesb?
   end
 
   def comodo_ca_id
@@ -102,6 +121,16 @@ module CertificateType
       Settings.ca_certificate_id_ov
     else
       Settings.ca_certificate_id_dv
+    end
+  end
+
+  def client_smime_validations
+    if is_ov_client? || is_naesb?
+      'iv_ov'
+    elsif is_client_pro?
+      'iv'
+    else
+      'none'
     end
   end
 

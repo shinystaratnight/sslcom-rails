@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180914183330) do
+ActiveRecord::Schema.define(version: 20180921225848) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        limit: 255
@@ -317,7 +317,6 @@ ActiveRecord::Schema.define(version: 20180914183330) do
 
   add_index "certificate_names", ["certificate_content_id"], name: "index_certificate_names_on_certificate_content_id", using: :btree
   add_index "certificate_names", ["name"], name: "index_certificate_names_on_name", using: :btree
-  add_index "certificate_names", ["ssl_account_id"], name: "index_certificate_names_on_ssl_account_id", using: :btree
 
   create_table "certificate_order_tokens", force: :cascade do |t|
     t.integer  "certificate_order_id", limit: 4
@@ -369,11 +368,7 @@ ActiveRecord::Schema.define(version: 20180914183330) do
   add_index "certificate_orders", ["site_seal_id"], name: "index_certificate_orders_site_seal_id", using: :btree
   add_index "certificate_orders", ["ssl_account_id", "workflow_state", "id"], name: "index_certificate_orders_on_3_cols(2)", using: :btree
   add_index "certificate_orders", ["ssl_account_id", "workflow_state", "is_test", "updated_at"], name: "index_certificate_orders_on_4_cols", using: :btree
-  add_index "certificate_orders", ["ssl_account_id"], name: "index_certificate_orders_on_ssl_account_id", using: :btree
-  add_index "certificate_orders", ["validation_id"], name: "index_certificate_orders_on_validation_id", using: :btree
-  add_index "certificate_orders", ["ssl_account_id", "workflow_state", "is_test", "updated_at"], name: "index_certificate_orders_on_4_cols", using: :btree
   add_index "certificate_orders", ["workflow_state", "is_expired", "is_test"], name: "index_certificate_orders_on_3_cols", using: :btree
-  add_index "certificate_orders", ["workflow_state", "is_expired", "renewal_id"], name: "index_certificate_orders_on_ws_is_ri", using: :btree
 
   create_table "certificates", force: :cascade do |t|
     t.integer  "reseller_tier_id",      limit: 4
@@ -392,6 +387,7 @@ ActiveRecord::Schema.define(version: 20180914183330) do
     t.string   "roles",                 limit: 255,   default: "--- []"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "special_fields",        limit: 255,   default: "--- []"
   end
 
   create_table "certificates_products", force: :cascade do |t|
@@ -415,6 +411,17 @@ ActiveRecord::Schema.define(version: 20180914183330) do
 
   add_index "client_applications", ["key"], name: "index_client_applications_on_key", unique: true, using: :btree
 
+  create_table "contact_validation_histories", force: :cascade do |t|
+    t.integer  "contact_id",            limit: 4, null: false
+    t.integer  "validation_history_id", limit: 4, null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "contact_validation_histories", ["contact_id", "validation_history_id"], name: "index_cont_val_histories_on_contact_id_and_validation_history_id", using: :btree
+  add_index "contact_validation_histories", ["contact_id"], name: "index_contact_validation_histories_on_contact_id", using: :btree
+  add_index "contact_validation_histories", ["validation_history_id"], name: "index_contact_validation_histories_on_validation_history_id", using: :btree
+
   create_table "contacts", force: :cascade do |t|
     t.string   "title",                 limit: 255
     t.string   "first_name",            limit: 255
@@ -435,13 +442,12 @@ ActiveRecord::Schema.define(version: 20180914183330) do
     t.string   "fax",                   limit: 255
     t.string   "notes",                 limit: 255
     t.string   "type",                  limit: 255
-    t.string   "roles",                 limit: 255, default: "--- []"
+    t.string   "roles",                 limit: 255,   default: "--- []"
     t.integer  "contactable_id",        limit: 4
     t.string   "contactable_type",      limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "registrant_type",       limit: 4
-    t.integer  "parent_id",             limit: 4
     t.string   "callback_method",       limit: 255
     t.date     "incorporation_date"
     t.string   "incorporation_country", limit: 255
@@ -452,12 +458,16 @@ ActiveRecord::Schema.define(version: 20180914183330) do
     t.string   "duns_number",           limit: 255
     t.string   "company_number",        limit: 255
     t.string   "registration_service",  limit: 255
-    t.boolean  "saved_default",                     default: false
+    t.integer  "parent_id",             limit: 4
+    t.boolean  "saved_default",                       default: false
+    t.integer  "status",                limit: 4
+    t.integer  "user_id",               limit: 4
+    t.text     "special_fields",        limit: 65535
   end
 
   add_index "contacts", ["contactable_id", "contactable_type"], name: "index_contacts_on_contactable_id_and_contactable_type", using: :btree
   add_index "contacts", ["id", "parent_id"], name: "index_contacts_on_id_and_parent_id", using: :btree
-  add_index "contacts", ["parent_id"], name: "index_contacts_on_parent_id", using: :btree
+  add_index "contacts", ["user_id"], name: "index_contacts_on_user_id", using: :btree
 
   create_table "countries", force: :cascade do |t|
     t.string  "iso1_code", limit: 255
@@ -1021,6 +1031,7 @@ ActiveRecord::Schema.define(version: 20180914183330) do
   add_index "preferences", ["id", "name", "owner_id", "owner_type", "value"], name: "index_preferences_on_owner_and_name_and_value", using: :btree
   add_index "preferences", ["id", "name", "value"], name: "index_preferences_on_name_and_value", using: :btree
   add_index "preferences", ["id", "owner_id", "owner_type"], name: "index_preferences_on_id_and_owner_id_and_owner_type", unique: true, using: :btree
+  add_index "preferences", ["id", "owner_id", "owner_type"], name: "index_preferences_on_owner_id_and_owner_type", unique: true, using: :btree
   add_index "preferences", ["owner_type", "owner_id"], name: "index_preferences_on_owner_type_and_owner_id", using: :btree
 
   create_table "product_orders", force: :cascade do |t|
@@ -1347,6 +1358,7 @@ ActiveRecord::Schema.define(version: 20180914183330) do
     t.integer  "registered_agent_id",       limit: 4
   end
 
+  add_index "signed_certificates", ["ca_id"], name: "fk_rails_d21ca532b7", using: :btree
   add_index "signed_certificates", ["ca_id"], name: "index_signed_certificates_on_ca_id", using: :btree
   add_index "signed_certificates", ["common_name", "strength"], name: "index_signed_certificates_on_3_cols", using: :btree
   add_index "signed_certificates", ["common_name"], name: "index_signed_certificates_on_common_name", using: :btree

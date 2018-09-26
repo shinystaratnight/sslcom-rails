@@ -18,6 +18,7 @@ class User < ActiveRecord::Base
   has_many  :ssl_account_users, dependent: :destroy
   has_many  :ssl_accounts, through: :ssl_account_users
   has_many  :certificate_orders, through: :ssl_accounts
+  has_many  :orders, through: :ssl_accounts
   has_many  :validation_histories, through: :certificate_orders
   has_many  :validations, through: :certificate_orders
   has_many  :approved_ssl_account_users, ->{where{(approved == true) & (user_enabled == true)}},

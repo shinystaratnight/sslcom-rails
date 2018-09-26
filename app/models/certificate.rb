@@ -19,6 +19,7 @@ class Certificate < ActiveRecord::Base
   serialize   :description
   serialize   :display_order
   serialize   :title
+  serialize   :special_fields
   preference  :certificate_chain, :string
   
   accepts_nested_attributes_for :product_variant_groups, allow_destroy: false
@@ -643,6 +644,20 @@ class Certificate < ActiveRecord::Base
     end.compact
   end
 
+  def max_duration
+    if is_smime_or_client?
+      CertificateOrder::CLIENT_MAX_DURATION
+    elsif is_code_signing?
+      CertificateOrder::CS_MAX_DURATION
+    elsif is_ev?
+      CertificateOrder::EV_SSL_MAX_DURATION
+    elsif is_time_stamping?
+      CertificateOrder::TS_MAX_DURATION
+    else # assume non EV SSL
+      CertificateOrder::SSL_MAX_DURATION
+    end
+  end
+
   private
 
   # renames 'product' field for certificate including the reseller tiers
@@ -918,7 +933,7 @@ class Certificate < ActiveRecord::Base
               {serial_root: "personalpro",title: "Personal Pro",validation_type: "class 2",
                summary: "for authenticating and encrypting email and well as client services",
                product: "personal-pro",
-               price_adjusts:{sslcompersonalpro56ssl1yr: [7000, 8000, 9000],
+               price_adjusts:{sslcompersonalpro256ssl1yr: [7000, 8000, 9000],
                               sslcompersonalpro256ssl1yr1tr: [7000, 8000, 9000],
                               sslcompersonalpro256ssl1yr2tr: [7000, 8000, 9000],
                               sslcompersonalpro256ssl1yr3tr: [7000, 8000, 9000],
@@ -937,6 +952,7 @@ class Certificate < ActiveRecord::Base
                }},
               {serial_root: "naesbbasic",title: "NAESB Basic",validation_type: "basic",
                summary: "for authenticating and encrypting email and well as client services",
+               special_fields: %w(entity\ code),
                product: "personal-naesb-basic",
                points:  "<div class='check'>Required for NAESB EIR and etag authentication</div>
                          <div class='check'>User for wesbsite authentication</div>
@@ -969,6 +985,7 @@ class Certificate < ActiveRecord::Base
       certs.each do |c|
         c.update_attributes title: title,
                             description: description,
+                            special_fields: p[:special_fields],
                             product: c.product.gsub(/\Ahigh_assurance/, p[:product]),
                             icons: c.icons.merge!("main"=> "gold_lock_lg.gif")
       end

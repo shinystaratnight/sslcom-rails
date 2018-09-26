@@ -19,7 +19,7 @@ class CertificateOrdersController < ApplicationController
   include OrdersHelper
   skip_before_filter :verify_authenticity_token, only: [:parse_csr]
   filter_access_to :all
-  filter_access_to :read, :update, :delete, :show, :edit, :developer
+  filter_access_to :read, :update, :delete, :show, :edit, :developer, :recipient
   filter_access_to :incomplete, :pending, :search, :reprocessing, :order_by_csr, :generate_cert, :require=>:read
   filter_access_to :credits, :filter_by, :filter_by_scope, :require=>:index
   filter_access_to :update_csr, require: [:update]
@@ -30,10 +30,11 @@ class CertificateOrdersController < ApplicationController
   filter_access_to :show_cert_order, :require=>:ajax
   before_filter :load_certificate_order,
                 only: [:show, :show_cert_order, :update, :edit, :download, :destroy, :delete, :update_csr, :auto_renew, :start_over,
-                       :change_ext_order_number, :admin_update, :developer, :sslcom_ca, :update_tags]
+                       :change_ext_order_number, :admin_update, :developer, :sslcom_ca, :update_tags, :recipient]
   before_filter :set_row_page, only: [:index, :search, :credits, :pending, :filter_by_scope, :order_by_csr, :filter_by,
                                       :incomplete, :reprocessing]
   before_filter :get_team_tags, only: [:index, :search]
+  before_filter :construct_special_fields, only: [:edit, :create, :update, :update_csr]
   in_place_edit_for :certificate_order, :notes
   in_place_edit_for :csr, :signed_certificate_by_text
 
@@ -164,37 +165,29 @@ class CertificateOrdersController < ApplicationController
 
   def edit
     unless @certificate_order.blank?
-      @certificate = @certificate_order.mapped_certificate
-      unless @certificate.admin_submit_csr?
-        if @certificate_order.is_unused_credit?
-          @certificate_order.has_csr=true
-          @certificate_content = @certificate_order.certificate_content
-          @certificate_content.agreement=true
-
-          # Getting all Notification Groups.
-          @notification_groups = current_user.ssl_account.notification_groups.pluck(:friendly_name, :ref)
-          @notification_groups.insert(0, ['none', 'none'])
-
-          return render '/certificates/buy', :layout=>'application'
-        end
-        unless @certificate_order.certificate_content.csr_submitted? or params[:registrant]
-          redirect_to certificate_order_path(@ssl_slug, @certificate_order)
-        else
-          @csr = @certificate_order.certificate_content.csr
-          setup_registrant()
-          setup_registrant_from_locked if params[:registrant] == 'false'
-          @registrant.company_name = @csr.organization
-          @registrant.department = @csr.organization_unit
-          @registrant.city = @csr.locality
-          @registrant.state = @csr.state
-          @registrant.email = @csr.email
-          @registrant.country = @csr.country
-        end
+      if @certificate_order.certificate.is_client_pro? || @certificate_order.certificate.is_client_basic?
+        redirect_to recipient_certificate_order_path(@ssl_slug, @certificate_order.ref)
       else
-        setup_registrant
-        setup_registrant_from_locked if params[:registrant] == 'false'
+        @certificate = @certificate_order.mapped_certificate
+
+        unless @certificate.admin_submit_csr?
+          if @certificate_order.is_unused_credit?
+            @certificate_order.has_csr=true
+            @certificate_content = @certificate_order.certificate_content
+            @certificate_content.agreement=true
+            return render '/certificates/buy', :layout=>'application'
+          end
+          unless @certificate_order.certificate_content.csr_submitted? or params[:registrant]
+            redirect_to certificate_order_path(@ssl_slug, @certificate_order)
+          else
+            @csr = @certificate_order.certificate_content.csr
+            registrants_on_edit
+          end
+        else
+          registrants_on_edit
+        end
+        @saved_registrants = current_user.ssl_account.saved_registrants
       end
-      @saved_registrants = current_user.ssl_account.saved_registrants
     else
       not_found
     end
@@ -258,6 +251,7 @@ class CertificateOrdersController < ApplicationController
   # PUT /certificate_orders/1.xml
   def update
     respond_to do |format|
+      is_smime_or_client = @certificate_order.certificate.is_smime_or_client?
       if @certificate_order.update_attributes(params[:certificate_order])
         cc = @certificate_order.certificate_content
 
@@ -266,6 +260,8 @@ class CertificateOrdersController < ApplicationController
             params[:certificate_order][:certificate_contents_attributes]['0'],
             cc
         ) if @certificate_order.certificate.is_code_signing? #TODO: For only CS case.
+        
+        setup_reusable_registrant(@certificate_order.registrant) if params[:save_for_later]
 
         if cc.csr_submitted? or cc.new?
           cc.provide_info!
@@ -275,27 +271,33 @@ class CertificateOrdersController < ApplicationController
               @deposit = @order.deducted_from
               @profile = @deposit.billing_profile
             end
-            CertificateContent::CONTACT_ROLES.each do |role|
-              c = CertificateContact.new
-              r = current_user.ssl_account.reseller
-              CertificateContent::RESELLER_FIELDS_TO_COPY.each do |field|
-                c.send((field+'=').to_sym, r.send(field.to_sym))
+            unless is_smime_or_client
+              CertificateContent::CONTACT_ROLES.each do |role|
+                c = CertificateContact.new
+                r = current_user.ssl_account.reseller
+                CertificateContent::RESELLER_FIELDS_TO_COPY.each do |field|
+                  c.send((field+'=').to_sym, r.send(field.to_sym))
+                end
+                c.company_name = r.organization
+                c.country = Country.find_by_name_caps(r.country.upcase).iso1_code if
+                    Country.find_by_name_caps(r.country.upcase)
+                c.clear_roles
+                c.add_role! role
+                cc.certificate_contacts << c
+                cc.update_attribute(role+"_checkbox", true) unless
+                  role==CertificateContent::ADMINISTRATIVE_ROLE
               end
-              c.company_name = r.organization
-              c.country = Country.find_by_name_caps(r.country.upcase).iso1_code if
-                  Country.find_by_name_caps(r.country.upcase)
-              c.clear_roles
-              c.add_role! role
-              cc.certificate_contacts << c
-              cc.update_attribute(role+"_checkbox", true) unless
-                role==CertificateContent::ADMINISTRATIVE_ROLE
+            else
+
             end
             unless @certificate_order.certificate.is_ev?
               cc.provide_contacts!
             end
           end
         end
-        if @certificate_order.is_express_signup? || @certificate_order.skip_contacts_step?
+        if is_smime_or_client
+          format.html { redirect_to recipient_certificate_order_path(@ssl_slug, @certificate_order.ref) }
+        elsif @certificate_order.is_express_signup? || @certificate_order.skip_contacts_step?
           format.html { redirect_to validation_destination(slug: @ssl_slug, certificate_order: @certificate_order) }
         else #assume ev full signup process
           format.html { redirect_to certificate_content_contacts_path(@ssl_slug, cc) }
@@ -309,6 +311,61 @@ class CertificateOrdersController < ApplicationController
         format.xml  { render :xml => @certificate_order.errors, :status => :unprocessable_entity }
       end
     end
+  end
+
+  def recipient
+    assignee_id = nil
+    @iv_exists = nil
+    if params[:add_recipient]
+      if params[:saved_contacts]
+        @iv_exists = @certificate_order.ssl_account.individual_validations
+          .find_by(id: params[:saved_contacts])
+        assignee_id = @iv_exists.user_id if @iv_exists
+      end
+      
+      if assignee_id
+        @certificate_order.update_column(:assignee_id, assignee_id)
+      else
+        invite_recipient
+      end
+      
+      # Local Registration Authority, validate IV
+      if @iv_exists && @iv_exists.persisted? && params[:lra]
+        @iv_exists.update_column(:status, Contact::statuses[:validated])
+      end
+
+      if @iv_exists.nil? && assignee_id.nil?
+        redirect_to :back, error: 'Something went wront, please try again'
+      else
+        client_smime_validate
+      end
+    else
+      render :recipient
+    end
+  end
+
+  def client_smime_validate
+    co = @certificate_order
+    validations = co.certificate.client_smime_validations
+    validated = if validations == 'iv_ov'
+      @iv_exists.validated? &&
+      (co.locked_registrant || co.registrant).validated?
+    elsif validations == 'iv'
+      @iv_exists.validated?
+    else
+      true
+    end
+    
+    if validated
+      co.certificate_content.validate! unless co.certificate_content.validated?
+      co.copy_iv_ov_validation_history(validations)
+      redirect_to certificate_order_path(@ssl_slug, co.ref)
+    else
+      co.certificate_content.pend_validation!
+      redirect_to document_upload_certificate_order_validation_path(
+        @ssl_slug, certificate_order_id: co.ref
+      )
+    end 
   end
 
   # PUT /certificate_orders/1
@@ -532,16 +589,89 @@ class CertificateOrdersController < ApplicationController
   end
 
   def admin_update
-    respond_to do |format|
-      if @certificate_order.update_attributes(params[:certificate_order])
-        format.js { render :json=>@certificate_order.to_json}
-      else
-        format.js { render :json=>@certificate_order.errors.to_json}
+    if params[:validate]
+      if @certificate_order.certificate.is_smime_or_client?
+        cc = @certificate_order.certificate_content
+        iv = @certificate_order.get_team_iv
+        ov = @certificate_order.locked_registrant
+
+        cc.validate! unless cc.validated?
+        iv.validate! if iv && !iv.validated?
+        ov.validate! if ov && !ov.validated?
+      end
+      redirect_to certificate_order_path(@ssl_slug, @certificate_order.ref), 
+        notice: "Certificate order was successfully validated!"
+    else
+      respond_to do |format|
+        if @certificate_order.update_attributes(params[:certificate_order])
+          format.js { render :json=>@certificate_order.to_json}
+        else
+          format.js { render :json=>@certificate_order.errors.to_json}
+        end
       end
     end
   end
 
   private
+
+  def registrants_on_edit
+    setup_registrant
+    setup_registrant_from_locked if params[:registrant] == 'false'
+    if @csr
+      @registrant.company_name = @csr.organization
+      @registrant.department = @csr.organization_unit
+      @registrant.city = @csr.locality
+      @registrant.state = @csr.state
+      @registrant.email = @csr.email
+      @registrant.country = @csr.country
+    end
+  end
+
+  def invite_recipient
+    ssl = @certificate_order.ssl_account
+    user_exists = User.find_by(email: params[:email])
+    if user_exists
+      user_exists_for_team = ssl.users.find_by(id: user_exists.id)
+      
+      if user_exists_for_team
+        @iv_exists = ssl.individual_validations.find_by(user_id: user_exists_for_team.id)
+      end
+
+      unless @iv_exists
+        # Add IV for user to team.
+        @iv_exists = ssl.individual_validations.create(
+          first_name: params[:first_name],
+          last_name: params[:last_name],
+          email: user_exists.email,
+          status: user_exists_for_team ? Contact::statuses[:validated] : Contact::statuses[:in_progress],
+          user_id: user_exists.id
+        )
+      end
+      
+      # Add user to team w/role individual_certificate
+      unless user_exists_for_team
+        user_exists.ssl_accounts << ssl
+        user_exists.set_roles_for_account(
+          ssl, [Role::get_individual_certificate_id]
+        )
+      end
+      @certificate_order.update_column(:assignee_id, user_exists.id)
+    else
+      invite_new_recipient
+    end
+  end
+
+  def invite_new_recipient
+    new_user = current_user.invite_new_user({user: {
+      email: params[:email],
+      first_name: params[:first_name],
+      last_name: params[:last_name],
+    }})
+    if new_user.persisted?
+      invite_recipient
+    end
+  end
+
   def set_row_page
     preferred_row_count = current_user.preferred_cert_order_row_count
     @per_page = params[:per_page] || preferred_row_count.or_else("10")
@@ -581,6 +711,23 @@ class CertificateOrdersController < ApplicationController
     render 'site/404_not_found', status: 404 unless @certificate_order
   end
 
+  def construct_special_fields
+    if params[:certificate_order]
+      new_attributes = params[:certificate_order][:certificate_contents_attributes]['0'][:registrant_attributes]
+      cert_special_fields = @certificate_order.certificate.special_fields
+      special_fields = {}
+      if cert_special_fields.any?
+        new_attributes.each do |k, v|
+          special_fields[k] = v if cert_special_fields.include?(k) && !v.blank?
+        end
+        new_attributes.delete_if {|rsp| cert_special_fields.include?(rsp)}
+      end
+      new_attributes.merge!(
+        'special_fields' => (special_fields.blank? ? nil : special_fields)
+      )
+    end
+  end
+
   def setup_registrant(registrant_params=nil)
     cc = @certificate_order.certificate_content
     @registrant = unless cc.registrant.blank?
@@ -589,6 +736,7 @@ class CertificateOrdersController < ApplicationController
     else
       registrant_params ? cc.build_registrant(registrant_params) : cc.build_registrant
     end
+    setup_reusable_registrant(@registrant)
   end
 
   def setup_registrant_from_locked
@@ -610,6 +758,9 @@ class CertificateOrdersController < ApplicationController
       @registrant.last_name = locked_registrant.last_name
       @registrant.email = locked_registrant.email
       @registrant.phone = locked_registrant.phone
+      @registrant.status = locked_registrant.status
+      @registrant.parent_id = locked_registrant.parent_id
+      @registrant.special_fields = locked_registrant.special_fields
     end
   end
 
@@ -619,9 +770,32 @@ class CertificateOrdersController < ApplicationController
 
       if cc.locked_registrant.blank?
         cc.create_locked_registrant(cc_params[:registrant_attributes])
-        # cc.locked_registrant.save!
+        cc.locked_registrant.save!
       elsif current_user.is_admin?
         cc.locked_registrant.update(cc_params[:registrant_attributes])
+      end
+      setup_reusable_registrant(cc.locked_registrant)
+    end
+  end
+
+  def setup_reusable_registrant(from_registrant)
+    if params[:save_for_later] &&
+      from_registrant &&
+      from_registrant.persisted? &&
+      from_registrant.parent_id.nil? &&
+      @reusable_registrant.nil?
+      
+      attr = from_registrant.attributes.delete_if do |k,v|
+        %w{created_at updated_at id}.include?(k)
+      end
+      attr.merge!(
+        'contactable_id' => @certificate_order.ssl_account.id,
+        'contactable_type' => 'SslAccount',
+        'type' => 'Registrant'
+      )
+      @reusable_registrant = Registrant.create(attr)
+      if @reusable_registrant.persisted?
+        from_registrant.update_column(:parent_id, @reusable_registrant.id)
       end
     end
   end

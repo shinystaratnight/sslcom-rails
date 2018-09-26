@@ -10,6 +10,7 @@ class CertificateContent < ActiveRecord::Base
   has_many    :signed_certificates, through: :csr
   has_one     :registrant, as: :contactable, dependent: :destroy
   has_one     :locked_registrant, :as => :contactable
+  has_one     :recipient, as: :contactable
   has_many    :certificate_contacts, :as => :contactable
   has_many    :certificate_names # used for dcv of each domain in a UCC or multi domain ssl
   has_many    :url_callbacks, as: :callbackable
@@ -144,6 +145,7 @@ class CertificateContent < ActiveRecord::Base
       event :cancel, :transitions_to => :canceled
       event :issue, :transitions_to => :issued
       event :reset, :transitions_to => :new
+      event :validate, :transitions_to => :validated
     end
 
     state :csr_submitted do
@@ -300,7 +302,7 @@ class CertificateContent < ActiveRecord::Base
   def dcv_domains(options)
     i = 0
     certificate_names.find_by_domains(options[:domains].keys).each do |name|
-      k, v = name.name, options[:domains][name.name.to_sym]
+      k, v = name.name, options[:domains][name.name]
       cur_email = options[:emails] ? options[:emails][k] : nil
 
       case v["dcv"]
@@ -662,23 +664,16 @@ class CertificateContent < ActiveRecord::Base
     dn = []
     if locked_registrant
       dn << "CN=#{locked_registrant.company_name}" unless locked_registrant.company_name.blank?
-      dn << "O=#{locked_registrant.company_name}" unless locked_registrant.company_name.blank?
+      if !locked_registrant.company_name.blank? and (!locked_registrant.city.blank? or !locked_registrant.city.blank?)
+        dn << "O=#{locked_registrant.company_name}"
+      end
       dn << "OU=#{locked_registrant.department}" unless locked_registrant.department.blank?
       dn << "L=#{locked_registrant.city}" unless locked_registrant.city.blank?
-      dn << "ST=#{locked_registrant.state}" unless locked_registrant.state.blank?
+      dn << "ST=#{locked_registrant.state}" unless locked_registrant.city.blank?
       dn << "C=#{locked_registrant.country}" unless locked_registrant.country.blank?
       # dn << "postalCode=#{locked_registrant.postal_code}" unless locked_registrant.postal_code.blank?
-    else
-      dn << "CN=#{registrant.company_name}" unless registrant.company_name.blank?
-      dn << "O=#{registrant.company_name}" unless registrant.company_name.blank?
-      dn << "OU=#{registrant.department}" unless registrant.department.blank?
-      dn << "L=#{registrant.city}" unless registrant.city.blank?
-      dn << "ST=#{registrant.state}" unless registrant.state.blank?
-      dn << "C=#{registrant.country}" unless registrant.country.blank?
-      # dn << "postalCode=#{locked_registrant.postal_code}" unless locked_registrant.postal_code.blank?
+      dn.map{|d|d.gsub(/\\/,'\\\\').gsub(',','\,')}.join(",")
     end
-
-    dn.map{|d|d.gsub(/\\/,'\\\\').gsub(',','\,')}.join(",")
   end
 
   def subject_dn(options={})

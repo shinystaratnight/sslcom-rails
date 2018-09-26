@@ -4237,7 +4237,10 @@ label.error
         margin-bottom: 0px
         width: 250px
 
-input#upload_files, input#start_over, input#validate_domains
+input#upload_files,
+input#start_over,
+input#validate_domains,
+#upload_files_skip
   margin: 1em
   float: none
   font-size: 1.8em
@@ -6926,10 +6929,23 @@ span.notifications-teams
   margin: 0.1rem
 
 .btn-team-links
+  float: left
+
+.li-cert-validate
+  padding: 0.3rem 0 !important
+
+.btn-cert-validate
+  border: none !important
+  color: $base_green !important
+  font-size: 1.18rem !important
+
+  &:hover
+    color: black !important
+
+.btn-team-links,
   background-color: white
   border: 1px solid $base_green
   color: $base_green !important
-  float: left
   margin: 0 0.5rem 0.5rem 0
   padding: 0 3px
 
@@ -7855,3 +7871,27 @@ span.notifications-teams
     color: white
     background: grey
     font-size: 1.3rem
+
+/*
+ * OV and IV uploads
+ */
+#iv-ov-file-upload
+  margin-left: 1rem
+  
+  p
+    font-size: 1.6rem
+    color: #5A79A5 !important
+    letter-spacing: 1px
+    font-weight: 600
+    margin-top: 2rem
+
+  #iv_multi_upload, #ov_multi_upload
+  
+  .MultiFile-remove
+    margin-left: 3rem !important
+
+  .MultiFile-title
+    color: #5A79A5 !important
+
+  .MultiFile-wrap
+    margin-left: 3rem

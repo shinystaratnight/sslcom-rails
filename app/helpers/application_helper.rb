@@ -404,6 +404,8 @@ module ApplicationHelper
       (co.order.reprocess_ucc_order? || params[:action] == "reprocess")))
       
       co.reprocess_ucc_process
+    elsif certificate && certificate.is_smime_or_client?
+      co.smime_client_process
     else
       skip_payment? ? co.prepaid_signup_process(certificate) : co.signup_process(certificate)
     end
@@ -414,9 +416,9 @@ module ApplicationHelper
       "padding: 0 #{0.5 + (sv ? added_padding : 0.0)}em"
     when CertificateOrder::PREPAID_EXPRESS_SIGNUP_PROCESS
       "padding: 0 #{2.9 + (sv ? added_padding : 0.0)}em"
-    when CertificateOrder::REPROCES_SIGNUP_W_PAYMENT,
+    when CertificateOrder::REPROCES_SIGNUP_W_PAYMENT, CertificateOrder::CLIENT_SMIME_VALIDATE
       "padding: 0 #{0.5 + (sv ? added_padding : 0.0)}em"
-    when CertificateOrder::REPROCES_SIGNUP_W_INVOICE
+    when CertificateOrder::REPROCES_SIGNUP_W_INVOICE, CertificateOrder::CLIENT_SMIME_VALIDATED
       "padding: 0 #{1.4 + (sv ? added_padding : 0.0)}em"
     end
     pages = sv ? process[:pages] - [CertificateOrder::VERIFICATION_STEP] : process[:pages]
