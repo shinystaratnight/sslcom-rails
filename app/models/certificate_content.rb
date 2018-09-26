@@ -664,12 +664,12 @@ class CertificateContent < ActiveRecord::Base
     dn = []
     if locked_registrant
       dn << "CN=#{locked_registrant.company_name}" unless locked_registrant.company_name.blank?
-      if !locked_registrant.company_name.blank? and (!locked_registrant.city.blank? or !locked_registrant.city.blank?)
+      if !locked_registrant.company_name.blank? and (!locked_registrant.city.blank? or !locked_registrant.state.blank?)
         dn << "O=#{locked_registrant.company_name}"
       end
       dn << "OU=#{locked_registrant.department}" unless locked_registrant.department.blank?
       dn << "L=#{locked_registrant.city}" unless locked_registrant.city.blank?
-      dn << "ST=#{locked_registrant.state}" unless locked_registrant.city.blank?
+      dn << "ST=#{locked_registrant.state}" unless locked_registrant.state.blank?
       dn << "C=#{locked_registrant.country}" unless locked_registrant.country.blank?
       # dn << "postalCode=#{locked_registrant.postal_code}" unless locked_registrant.postal_code.blank?
       dn.map{|d|d.gsub(/\\/,'\\\\').gsub(',','\,')}.join(",")
