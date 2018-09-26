@@ -51,14 +51,15 @@
           *Email Address:
         = text_field_tag :email, nil, required: true
 
-      .clearfix
-        %label{for: 'lra'}
-          Validate Recipient:
-          %span.label_desc
-            *Local Registration Authority:
-            %br/
-            I am authorized to validate recipient.
-        = check_box_tag :lra, 'lra_validation'
+      - unless @certificate_order.ssl_account.epki_agreement.blank?
+        .clearfix
+          %label{for: 'lra'}
+            Validate Recipient:
+            %span.label_desc
+              *Local Registration Authority:
+              %br/
+              I am authorized to validate recipient.
+          = check_box_tag :lra, 'lra_validation'
 
     #button_container
       #auto_adjust

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180921225848) do
+ActiveRecord::Schema.define(version: 20180926193514) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        limit: 255
@@ -1429,6 +1429,7 @@ ActiveRecord::Schema.define(version: 20180921225848) do
     t.string   "sec_type",               limit: 255
     t.integer  "default_folder_id",      limit: 4
     t.boolean  "no_limit",                           default: false
+    t.datetime "epki_agreement"
   end
 
   add_index "ssl_accounts", ["acct_number", "company_name", "ssl_slug"], name: "index_ssl_accounts_on_acct_number_and_company_name_and_ssl_slug", using: :btree
