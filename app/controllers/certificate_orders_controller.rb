@@ -707,7 +707,7 @@ class CertificateOrdersController < ApplicationController
       if new_attributes && new_attributes.any?
         cert_special_fields = @certificate_order.certificate.special_fields
         special_fields = {}
-        if cert_special_fields.any?
+        if cert_special_fields.is_a?(Array) && cert_special_fields.any?
           new_attributes.each do |k, v|
             special_fields[k] = v if cert_special_fields.include?(k) && !v.blank?
           end
