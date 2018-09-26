@@ -105,14 +105,14 @@
                           %dd This form should be used if one person is to act in all three roles, Certificate Requester, Certificate Approver and Contract (Subscriber Agreement) Signer.
         - if co.certificate.is_smime_or_client?
           #iv-ov-file-upload
-            - unless co.certificate.is_client_basic? || co.certificate.is_client_pro?
+            - unless (co.certificate.is_client_basic? && !co.certificate.is_naesb?) || co.certificate.is_client_pro?
               .clearfix
                 %h3
                   Organization Validation documents are related to validating the identity of the organization or company
                   "#{co.registrant.company_name}" such as a utility bill, articles or incorporation or organization,
                   or any other document that proves the existence of the organization or company.
                 %p Identifying Documents for Registrant #{co.registrant.company_name}:
-                = file_field_tag "iv_filedata[]", id: "iv_multi_upload"
+                = file_field_tag "ov_filedata[]", id: "ov_multi_upload"  
 
             .clearfix
               %h3
@@ -120,7 +120,7 @@
                 "#{co.get_team_iv.first_name} #{co.get_team_iv.last_name}" such as a an image of a passport,
                 driver's license, personal id, or a personal photo.
               %p Identifying Documents for Recipient #{co.get_team_iv.first_name} #{co.get_team_iv.last_name}:
-              = file_field_tag "ov_filedata[]", id: "ov_multi_upload"
+              = file_field_tag "iv_filedata[]", id: "iv_multi_upload"
           %br/
         - else
           = file_field_tag "filedata[]", id: "multi_upload"
@@ -134,6 +134,8 @@
     #upload_validations(style='width: 100%; text-align: center;')
       -if checkout_in_progress
         %input(type="button" class="shiny_blue_button" id="start_over" value="Cancel")
+      -if co.certificate.is_smime_or_client?
+        =link_to 'Skip', certificate_order_path(@ssl_slug, co.ref), id: "upload_files_skip"
       =submit_tag "Submit", :id=>"upload_files", :disable_with=>"Submitting..."
       .clearfix
         =image_tag('waiting_bar_medium.gif', :id=>'waiting_bar', :style=>'display: none; vertical-align: middle;')

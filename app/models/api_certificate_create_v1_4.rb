@@ -202,7 +202,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   def update_certificate_order
     @certificate_order = self.find_certificate_order
     self.domains = {self.csr_obj.common_name=>{"dcv"=>"http_csr_hash"}} if self.domains.blank?
-    caa_check_domains = self.caa_check_domains.split(',')
+    caa_check_domains = self.caa_check_domains.split(',') unless self.caa_check_domains.blank?
 
     if @certificate_order.is_a?(CertificateOrder)
       # CAA Checking for domains what has been validated and no passed for CAA.

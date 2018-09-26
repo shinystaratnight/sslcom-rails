@@ -436,7 +436,8 @@ class CertificateOrder < ActiveRecord::Base
   RENEWAL_DATE_CUTOFF = 45.days.ago
   RENEWAL_DATE_RANGE = 45.days.from_now
   ID_AND_TIMESTAMP=["id", "created_at", "updated_at"]
-  SSL_MAX_DURATION = 825
+  COMODO_SSL_MAX_DURATION = 730
+  SSL_MAX_DURATION = 820
   EV_SSL_MAX_DURATION = 730
   CS_MAX_DURATION = 1095
   CLIENT_MAX_DURATION = 1095
@@ -962,6 +963,15 @@ class CertificateOrder < ActiveRecord::Base
       new_vh = locked_registrant.validation_histories - validation.validation_histories
       validation.validation_histories << new_vh
     end
+  end
+
+  def can_validate_client_smime?(current_user)
+    sysadmin = current_user.is_system_admins?
+    acct_admins = current_user.is_owner? || current_user.is_account_admin?
+
+    certificate.is_smime_or_client? && 
+      !certificate_content.validated? &&
+      ( sysadmin || (acct_admins && ov_validated?) )
   end
 
   def reprocess_ucc_process
@@ -1720,7 +1730,7 @@ class CertificateOrder < ActiveRecord::Base
             'primaryDomainName'=>csr.common_name.downcase,
             'maxSubjectCNs'=>1
           )
-          params.merge!('days' => "#{SSL_MAX_DURATION}") if params['days'].to_i > SSL_MAX_DURATION #Comodo doesn't support more than 3 years
+          params.merge!('days' => "#{COMODO_SSL_MAX_DURATION}") if params['days'].to_i > COMODO_SSL_MAX_DURATION #Comodo doesn't support more than 3 years
         end
       end
     end

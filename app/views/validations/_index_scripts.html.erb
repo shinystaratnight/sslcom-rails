@@ -374,7 +374,7 @@ jQuery(function($) {
         }
       }
     });
-    <%if @certificate_order and !@certificate_order.certificate.is_code_signing?%>
+    <%if @certificate_order and !@certificate_order.certificate.is_code_signing? and @certificate_order.csr%>
       <%
         is_single = @certificate_order.certificate.is_single?
       %>

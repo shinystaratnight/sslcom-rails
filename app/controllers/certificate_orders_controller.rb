@@ -34,6 +34,7 @@ class CertificateOrdersController < ApplicationController
   before_filter :set_row_page, only: [:index, :search, :credits, :pending, :filter_by_scope, :order_by_csr, :filter_by,
                                       :incomplete, :reprocessing]
   before_filter :get_team_tags, only: [:index, :search]
+  before_filter :construct_special_fields, only: [:edit, :create, :update, :update_csr]
   in_place_edit_for :certificate_order, :notes
   in_place_edit_for :csr, :signed_certificate_by_text
 
@@ -162,7 +163,7 @@ class CertificateOrdersController < ApplicationController
 
   def edit
     unless @certificate_order.blank?
-      if @certificate_order.certificate.is_client_pro? || @certificate_order.certificate.is_client_pro?
+      if @certificate_order.certificate.is_client_pro? || @certificate_order.certificate.is_client_basic?
         redirect_to recipient_certificate_order_path(@ssl_slug, @certificate_order.ref)
       else
         @certificate = @certificate_order.mapped_certificate
@@ -257,6 +258,8 @@ class CertificateOrdersController < ApplicationController
             params[:certificate_order][:certificate_contents_attributes]['0'],
             cc
         ) if @certificate_order.certificate.is_code_signing? #TODO: For only CS case.
+        
+        setup_reusable_registrant(@certificate_order.registrant) if params[:save_for_later]
 
         if cc.csr_submitted? or cc.new?
           cc.provide_info!
@@ -344,7 +347,7 @@ class CertificateOrdersController < ApplicationController
     validations = co.certificate.client_smime_validations
     validated = if validations == 'iv_ov'
       @iv_exists.validated? &&
-      co.locked_registrant.validated?
+      (co.locked_registrant || co.registrant).validated?
     elsif validations == 'iv'
       @iv_exists.validated?
     else
@@ -698,6 +701,23 @@ class CertificateOrdersController < ApplicationController
     render 'site/404_not_found', status: 404 unless @certificate_order
   end
 
+  def construct_special_fields
+    if params[:certificate_order]
+      new_attributes = params[:certificate_order][:certificate_contents_attributes]['0'][:registrant_attributes]
+      cert_special_fields = @certificate_order.certificate.special_fields
+      special_fields = {}
+      if cert_special_fields.any?
+        new_attributes.each do |k, v|
+          special_fields[k] = v if cert_special_fields.include?(k) && !v.blank?
+        end
+        new_attributes.delete_if {|rsp| cert_special_fields.include?(rsp)}
+      end
+      new_attributes.merge!(
+        'special_fields' => (special_fields.blank? ? nil : special_fields)
+      )
+    end
+  end
+
   def setup_registrant(registrant_params=nil)
     cc = @certificate_order.certificate_content
     @registrant = unless cc.registrant.blank?
@@ -706,6 +726,7 @@ class CertificateOrdersController < ApplicationController
     else
       registrant_params ? cc.build_registrant(registrant_params) : cc.build_registrant
     end
+    setup_reusable_registrant(@registrant)
   end
 
   def setup_registrant_from_locked
@@ -729,6 +750,7 @@ class CertificateOrdersController < ApplicationController
       @registrant.phone = locked_registrant.phone
       @registrant.status = locked_registrant.status
       @registrant.parent_id = locked_registrant.parent_id
+      @registrant.special_fields = locked_registrant.special_fields
     end
   end
 
@@ -742,21 +764,28 @@ class CertificateOrdersController < ApplicationController
       elsif current_user.is_admin?
         cc.locked_registrant.update(cc_params[:registrant_attributes])
       end
+      setup_reusable_registrant(cc.locked_registrant)
+    end
+  end
 
-      cur_lr = cc.locked_registrant
-      if params[:save_for_later] && cur_lr && cur_lr.persisted? && cur_lr.parent_id.nil?
-        attr = cur_lr.attributes.delete_if do |k,v|
-          %w{created_at updated_at id}.include?(k)
-        end
-        attr.merge!(
-          'contactable_id' => @certificate_order.ssl_account.id,
-          'contactable_type' => 'SslAccount',
-          'type' => 'Registrant'
-        )
-        reusable_registrant = Registrant.create(attr)
-        if reusable_registrant.persisted?
-          cc.locked_registrant.update_column(:parent_id, reusable_registrant.id)
-        end
+  def setup_reusable_registrant(from_registrant)
+    if params[:save_for_later] &&
+      from_registrant &&
+      from_registrant.persisted? &&
+      from_registrant.parent_id.nil? &&
+      @reusable_registrant.nil?
+      
+      attr = from_registrant.attributes.delete_if do |k,v|
+        %w{created_at updated_at id}.include?(k)
+      end
+      attr.merge!(
+        'contactable_id' => @certificate_order.ssl_account.id,
+        'contactable_type' => 'SslAccount',
+        'type' => 'Registrant'
+      )
+      @reusable_registrant = Registrant.create(attr)
+      if @reusable_registrant.persisted?
+        from_registrant.update_column(:parent_id, @reusable_registrant.id)
       end
     end
   end

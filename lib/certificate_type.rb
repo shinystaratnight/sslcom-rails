@@ -105,7 +105,12 @@ module CertificateType
   end
 
   def requires_company_info?
-    is_client_business? || is_client_enterprise? || is_server? || is_code_signing? || is_ov?
+    is_client_business? ||
+    is_client_enterprise? ||
+    is_server? ||
+    is_code_signing? ||
+    is_ov? ||
+    is_naesb?
   end
 
   def comodo_ca_id

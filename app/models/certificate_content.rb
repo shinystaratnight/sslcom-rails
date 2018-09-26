@@ -302,7 +302,7 @@ class CertificateContent < ActiveRecord::Base
   def dcv_domains(options)
     i = 0
     certificate_names.find_by_domains(options[:domains].keys).each do |name|
-      k, v = name.name, options[:domains][name.name.to_sym]
+      k, v = name.name, options[:domains][name.name]
       cur_email = options[:emails] ? options[:emails][k] : nil
 
       case v["dcv"]
