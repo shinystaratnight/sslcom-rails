@@ -724,7 +724,7 @@ class CertificateOrdersController < ApplicationController
       end
       new_attributes.merge!(
         'special_fields' => (special_fields.blank? ? nil : special_fields)
-      )
+      ) if new_attributes
     end
   end
 
@@ -846,6 +846,9 @@ class CertificateOrdersController < ApplicationController
         ['49', '49'], ['50', '50'], ['51', '51'], ['52', '52'], ['53', '53'], ['54', '54'],
         ['55', '55'], ['56', '56'], ['57', '57'], ['58', '58'], ['59', '59']
     ]
+
+    @notification_groups = current_user.ssl_account.notification_groups.pluck(:friendly_name, :ref)
+    @notification_groups.insert(0, ['none', 'none'])
   end
 
   def schedule(params)
