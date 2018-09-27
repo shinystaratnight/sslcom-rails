@@ -704,17 +704,19 @@ class CertificateOrdersController < ApplicationController
   def construct_special_fields
     if params[:certificate_order]
       new_attributes = params[:certificate_order][:certificate_contents_attributes]['0'][:registrant_attributes]
-      cert_special_fields = @certificate_order.certificate.special_fields
-      special_fields = {}
-      if cert_special_fields.any?
-        new_attributes.each do |k, v|
-          special_fields[k] = v if cert_special_fields.include?(k) && !v.blank?
+      if new_attributes && new_attributes.any?
+        cert_special_fields = @certificate_order.certificate.special_fields
+        special_fields = {}
+        if cert_special_fields.is_a?(Array) && cert_special_fields.any?
+          new_attributes.each do |k, v|
+            special_fields[k] = v if cert_special_fields.include?(k) && !v.blank?
+          end
+          new_attributes.delete_if {|rsp| cert_special_fields.include?(rsp)}
         end
-        new_attributes.delete_if {|rsp| cert_special_fields.include?(rsp)}
+        new_attributes.merge!(
+          'special_fields' => (special_fields.blank? ? nil : special_fields)
+        )
       end
-      new_attributes.merge!(
-        'special_fields' => (special_fields.blank? ? nil : special_fields)
-      )
     end
   end
 
