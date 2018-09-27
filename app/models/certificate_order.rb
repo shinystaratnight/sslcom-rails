@@ -768,7 +768,7 @@ class CertificateOrder < ActiveRecord::Base
         when 30 #trial
           30
         else #no ssl can go beyond 39 months. 36 months to make adding 1 or 2 years later easier
-          SSL_MAX_DURATION
+          unit==:comodo_api ? COMODO_SSL_MAX_DURATION : SSL_MAX_DURATION
         end
       else
         years
@@ -1730,7 +1730,6 @@ class CertificateOrder < ActiveRecord::Base
             'primaryDomainName'=>csr.common_name.downcase,
             'maxSubjectCNs'=>1
           )
-          params.merge!('days' => "#{COMODO_SSL_MAX_DURATION}") if params['days'].to_i > COMODO_SSL_MAX_DURATION #Comodo doesn't support more than 3 years
         end
       end
     end

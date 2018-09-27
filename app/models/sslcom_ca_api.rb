@@ -146,7 +146,7 @@ class SslcomCaApi
       else
         dn.merge! subject_dn: (options[:action]=="send_to_ca" ? subject_dn(options) : # via RA form or shadow
           (options[:subject_dn] || options[:cc].subject_dn({mapping: options[:mapping]})))+
-            ",OU=#{options[:cc].csr.public_key_sha1}-#{DateTime.now.to_i}",
+            ",OU=#{options[:cc].csr.sha1_hash}-#{DateTime.now.to_i}",
           ca_name: options[:ca_name] || ca_name(options),
           certificate_profile: certificate_profile(options),
           end_entity_profile: end_entity_profile(options),
