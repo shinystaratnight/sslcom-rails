@@ -677,14 +677,17 @@ class CertificateContent < ActiveRecord::Base
   end
 
   def subject_dn(options={})
-    org=options[:o] || locked_registrant.company_name
-    state=options[:s] || locked_registrant.state
-    city=options[:l] || locked_registrant.city
-    country=options[:c] || locked_registrant.country
     cert = options[:certificate] || self.certificate
     dn=["CN=#{options[:common_name] || csr.common_name}"]
     if !(options[:mapping] ? options[:mapping].try(:profile_name) =~ /DV/ : cert.is_dv?)
+      # if ev or ov order, must have locked registrant
+      org=options[:o] || locked_registrant.company_name
+      ou=options[:ou] || locked_registrant.department
+      state=options[:s] || locked_registrant.state
+      city=options[:l] || locked_registrant.city
+      country=options[:c] || locked_registrant.country
       dn << "O=#{org}" if !org.blank? and (!city.blank? or !state.blank?)
+      dn << "OU=#{ou}" unless ou.blank?
       dn << "C=#{country}"
       dn << "L=#{city}" unless city.blank?
       dn << "ST=#{state}" unless state.blank?
