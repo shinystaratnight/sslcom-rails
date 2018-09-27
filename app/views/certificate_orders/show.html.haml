@@ -153,6 +153,16 @@
                         =render partial: "certificate_orders/duration_limit", locals:{co: @certificate_order}
                     .certificate_details_box
                       %ul
+                        -team_iv = co.get_team_iv
+                        -unless team_iv.nil?
+                          %li 
+                            %strong recipient (#{team_iv.status.humanize})
+                          %li #{team_iv.first_name}, #{team_iv.last_name}
+                          %li #{team_iv.email}
+                          %li
+                            =link_to 'edit recipient', recipient_certificate_order_path(@ssl_slug, @certificate_order.ref)
+                          %li 
+                            %br/
                         %li
                           %strong registrant
                         -unless @cc.registrant.blank?
