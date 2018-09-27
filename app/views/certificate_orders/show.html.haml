@@ -304,21 +304,21 @@
                 %tr
                   %td
                     = render partial: 'tags/certificate_order_tags'
-            %table(cellspacing="0")
-              %tbody
-                -@certificate_order.certificate_contents.order('created_at DESC').each do |c|
-                  -current = c==@certificate_order.certificate_content
-                  -csr = c.csr
-                  -sc = c.csr.try(:signed_certificate)
-                  %tr
-                    %td(colspan="5" style="text-align: left;")
-                      -unless co.certificate.is_code_signing?
-                        %span.previous_requests #{c!=@certificate_order.certificate_content ? "previous" : "current" }: #{c.ref}
-                        -if sc.try(:body).blank?
-                          (server software: #{c.server_software.try :title})
-                        -else
-                          (serial number: #{sc.serial})
-                  -unless csr.nil?
+            -unless @certificate_order.certificate_contents.count == 1 && @certificate_order.certificate_content.csr.nil?
+              %table(cellspacing="0")
+                %tbody
+                  -@certificate_order.certificate_contents.order('created_at DESC').each do |c|
+                    -current = c==@certificate_order.certificate_content
+                    -csr = c.csr
+                    -sc = c.csr.try(:signed_certificate)
+                    %tr
+                      %td(colspan="5" style="text-align: left;")
+                        -unless co.certificate.is_code_signing?
+                          %span.previous_requests #{c!=@certificate_order.certificate_content ? "previous" : "current" }: #{c.ref}
+                          -if sc.try(:body).blank?
+                            (server software: #{c.server_software.try :title})
+                          -else
+                            (serial number: #{sc.serial})
                     %tr
                       %td(colspan="5")
                         -if !@certificate_order.certificate.is_code_signing? # or current_user.is_system_admins?
