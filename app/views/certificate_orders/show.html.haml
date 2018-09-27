@@ -26,7 +26,9 @@
       %span.common_name
         #{cn}
       -if permitted_to?(:update, @certificate_order)
-        =link_to "[how do I use this page?]", "https://www.ssl.com/article/certificate-order-page-information/"
+        -team_iv = @certificate_order.get_team_iv
+        -link_text = team_iv.nil? ? " [how do I use this page?]" : " #{team_iv.first_name} #{team_iv.last_name}"
+        =link_to link_text, "https://www.ssl.com/article/certificate-order-page-information/"
     %tr.heading_row
       %th(scope="col") Subject
       %th(scope="col") Status
