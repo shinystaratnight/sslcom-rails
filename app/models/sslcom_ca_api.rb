@@ -150,7 +150,7 @@ class SslcomCaApi
           ca_name: options[:ca_name] || ca_name(options),
           certificate_profile: certificate_profile(options),
           end_entity_profile: end_entity_profile(options),
-          duration: "#{[(options[:duration] || co.remaining_days),cert.max_duration].min}:0:0"
+          duration: "#{[(options[:duration] || co.remaining_days),cert.max_duration].min.floor}:0:0"
         dn.merge!(subject_alt_name: subject_alt_name(options)) unless cert.is_code_signing?
       end
       dn.merge!(request_type: "public_key",request_data: options[:cc].csr.public_key.to_s) if
