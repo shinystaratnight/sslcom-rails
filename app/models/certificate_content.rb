@@ -234,6 +234,15 @@ class CertificateContent < ActiveRecord::Base
     signed_certificates.last
   end
 
+  def ejbca_certificate_chain(options={with_tags: true})
+    chain=SslcomCaRequest.where(username: self.ref).last
+    if options[:with_tags]
+      chain.x509_certificates.map(&:to_s)
+    else
+      chain.certificate_chain
+    end unless chain.blank?
+  end
+
   def certificate
     certificate_order.certificate
   end
@@ -679,7 +688,7 @@ class CertificateContent < ActiveRecord::Base
   def subject_dn(options={})
     cert = options[:certificate] || self.certificate
     dn=["CN=#{options[:common_name] || csr.common_name}"]
-    if !(options[:mapping] ? options[:mapping].try(:profile_name) =~ /DV/ : cert.is_dv?)
+    if !(options[:mapping] ? options[:mapping].try(:profile_name) =~ /DV/ : (cert.is_dv? or locked_registrant.blank?))
       # if ev or ov order, must have locked registrant
       org=options[:o] || locked_registrant.company_name
       ou=options[:ou] || locked_registrant.department
@@ -707,6 +716,8 @@ class CertificateContent < ActiveRecord::Base
     dn << options[:custom_fields] if options[:custom_fields]
     dn.map{|d|d.gsub(/\\/,'\\\\').gsub(',','\,')}.join(",")
   end
+
+
 
   def csr_certificate_name
     begin
