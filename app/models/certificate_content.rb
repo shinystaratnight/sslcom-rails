@@ -223,7 +223,7 @@ class CertificateContent < ActiveRecord::Base
   def certificate_names_from_domains(domains=nil)
     domains ||= all_domains
     (domains-certificate_names.find_by_domains(domains).pluck(:name)).each_with_index do |domain, i|
-      certificate_names.find_or_create_by(name: domain, is_common_name: csr.try(:common_name)==domain)
+      certificate_names.find_or_create_by(name: domain.downcase, is_common_name: csr.try(:common_name)==domain.downcase)
     end
 
     # Auto adding domains in case of certificate order has been included into some groups.
@@ -248,7 +248,7 @@ class CertificateContent < ActiveRecord::Base
 
   def domains=(names)
     unless names.blank?
-      names = names.split(/[\s+]+/).flatten.uniq.reject{|d|d.blank?}
+      names = names.split(/[\s+]+/).flatten.reject{|d|d.blank?}.map(&:downcase).uniq
     end
     write_attribute(:domains, names)
   end
@@ -677,11 +677,17 @@ class CertificateContent < ActiveRecord::Base
   end
 
   def subject_dn(options={})
+    org=options[:o] || locked_registrant.company_name
+    state=options[:s] || locked_registrant.state
+    city=options[:l] || locked_registrant.city
+    country=options[:c] || locked_registrant.country
     cert = options[:certificate] || self.certificate
     dn=["CN=#{options[:common_name] || csr.common_name}"]
     if !(options[:mapping] ? options[:mapping].try(:profile_name) =~ /DV/ : cert.is_dv?)
-      dn << "O=#{options[:o] || registrant.company_name}"
-      dn << "C=#{options[:c] || registrant.country}"
+      dn << "O=#{org}" if !org.blank? and (!city.blank? or !state.blank?)
+      dn << "C=#{country}"
+      dn << "L=#{city}" unless city.blank?
+      dn << "ST=#{state}" unless state.blank?
       if cert.is_ev?
         dn << "serialNumber=#{options[:serial_number] || certificate_order.jois.last.try(:company_number) ||
           ("11111111" if options[:ca_id]==Ca::ISSUER[:sslcom_shadow])}"
