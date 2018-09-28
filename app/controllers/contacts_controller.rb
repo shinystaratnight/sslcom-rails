@@ -97,7 +97,8 @@ class ContactsController < ApplicationController
         flash[:notice] = "#{@contact.type} was successfully updated."
         format.html { 
           redirect_to saved_contacts_contacts_path(
-            @ssl_slug, registrants: (@contact.is_a?(Registrant) ? true : nil)
+            (@ssl_slug || @contact.contactable.to_slug),
+            registrants: (@contact.is_a?(Registrant) ? true : nil)
           )
         }
         format.json { render json: @contact, status: :ok }
