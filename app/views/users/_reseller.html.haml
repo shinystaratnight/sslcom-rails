@@ -124,4 +124,5 @@
                         -if ssl_account && permitted_to?(:read, :contacts)
                           %li
                             %strong contacts/registrants
-                          %li=link_to 'manage', saved_contacts_contacts_path(ssl_slug: @ssl_slug)
+                          %li=link_to 'contacts', saved_contacts_contacts_path(ssl_slug: @ssl_slug)
+                          %li=link_to 'registrants', saved_contacts_contacts_path(ssl_slug: @ssl_slug, registrants: true)

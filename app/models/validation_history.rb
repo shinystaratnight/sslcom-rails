@@ -37,6 +37,14 @@ class ValidationHistory < ActiveRecord::Base
     attachment.instance.random_secret
   end
 
+  def registrant_document_url(registrant, style=nil)
+    if style.blank?
+      %{/#{self.class.name.tableize}/#{id}/documents/#{document_file_name}?registrant=#{registrant.id}}
+    else
+      %{/#{self.class.name.tableize}/#{id}/documents/#{document.styles[style].name}.#{document.styles[style].format}?registrant=#{registrant.id}}
+    end
+  end
+
   def document_url(style=nil)
     if style.blank?
       %{/#{self.class.name.tableize}/#{id}/documents/#{document_file_name}}

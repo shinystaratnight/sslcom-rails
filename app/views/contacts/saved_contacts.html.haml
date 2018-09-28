@@ -1,7 +1,10 @@
--if @all_contacts
+-saved_registrants = !params[:registrants].nil?
+-saved_contacts = params[:registrants].nil?
+
+-if current_user && @all_contacts
   -will_paginate @all_contacts
   #validations
-    %h3 Saved Contacts and Registrants
+    %h3 Saved #{saved_contacts ? 'Contacts' : 'Registrants'}
     %table{cellspacing: '0'}
       -if will_paginate @all_contacts
         %tfoot
@@ -14,12 +17,17 @@
       %tr.heading_row
         %th Name
         %th Company
-        %th Default
-        %th{colspan: 4} 
-          Default Notifications
-          %br
-          Administrative | Billing | Technical | Validation
-        %th Type
+        -if saved_registrants
+          %th Status
+          %th Documents
+          -if current_user.is_system_admins?
+            %th Change Status
+        - if saved_contacts
+          %th Default
+          %th{colspan: 4} 
+            Default Notifications
+            %br
+            Administrative | Billing | Technical | Validation
         %th{colspan: 3} Actions
       -@all_contacts.each do |c|
         -reg_type = c.registrant_type
@@ -28,22 +36,32 @@
         %tr
           %td= f_name.blank? && l_name.blank? ? '' : "#{l_name}, #{f_name}"
           %td #{c.company_name}
-          %td #{c.saved_default ? "&#x2713;".html_safe : ''}
-          -if c.type=='CertificateContact'
-            %td=check_box_tag :administrative, 'yes', (c.roles.include?('administrative')), disabled: true
-            %td=check_box_tag :billing, 'yes', (c.roles.include?('billing')), disabled: true
-            %td=check_box_tag :technical, 'yes', (c.roles.include?('technical')), disabled: true
-            %td=check_box_tag :validation, 'yes', (c.roles.include?('validation')), disabled: true
-          -else
-            %td{colspan: 4}
-          %td
-            %strong
-              #{c.type=='Registrant' ? c.type : 'Contact'}
-          %td=link_to "view", contact_path(@ssl_slug, c.id, saved_contact: true)
-          - if permitted_to?(:edit, c.becomes(Contact))
-            %td=link_to "edit", edit_contact_path(@ssl_slug, c.id, saved_contact: true)
-            -if c.saved_default
+          -if saved_registrants
+            %td.contacts-index-status{class: c.validated? ? 'contacts-index-validated' : ''}
+              #{c.status.nil? ? 'N/A' : c.status.humanize.downcase}
+            %td
+              %strong
+                #{c.validation_histories.count}
+            -if current_user.is_system_admins?
               %td
+                =form_tag admin_update_contact_path(c), method: :puts do
+                  =select_tag :status, options_for_select(Contact::statuses.keys.map{|s| [s.humanize.downcase, s]}, c.status), |
+                  class: 'btn-reg-update-status'
+
+          -if saved_contacts
+            %td #{c.saved_default ? "&#x2713;".html_safe : ''}
+            -if c.type=='CertificateContact'
+              %td=check_box_tag :administrative, 'yes', (c.roles.include?('administrative')), disabled: true
+              %td=check_box_tag :billing, 'yes', (c.roles.include?('billing')), disabled: true
+              %td=check_box_tag :technical, 'yes', (c.roles.include?('technical')), disabled: true
+              %td=check_box_tag :validation, 'yes', (c.roles.include?('validation')), disabled: true
             -else
-              %td=link_to "delete", contact_path(@ssl_slug, c.id, saved_contact: true), method: :delete, |
-          data: {confirm: 'Are you sure you want to delete this contact?'}
+              %td{colspan: 4}
+          %td#contacts-index-actions
+            -if permitted_to?(:show, c.becomes(Contact))
+              =link_to "<i class='fa fa-eye'></i> view".html_safe, contact_path(@ssl_slug, c.id, saved_contact: true)
+            -if permitted_to?(:edit, c.becomes(Contact))
+              =link_to "<i class='fa fa-edit'></i> edit".html_safe, edit_contact_path(@ssl_slug, c.id, saved_contact: true)
+            -if permitted_to?(:destroy, c.becomes(Contact))
+              =link_to "<i class='fa fa-trash'></i> delete".html_safe, contact_path(@ssl_slug, c.id, saved_contact: true), method: :delete, |
+              data: {confirm: 'Are you sure you want to delete this contact?'}, class: 'contacts-index-destroy'

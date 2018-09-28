@@ -51,6 +51,22 @@ class Contact < ActiveRecord::Base
     end
   end
   
+  def self.get_company_fields
+    [
+      'company_name',
+      'department',
+      'company_number',
+      'incorporation_date',
+      'incorporation_country',
+      'incorporation_state',
+      'incorporation_city',
+      'assumed_name',
+      'business_category',
+      'duns_number',
+      'registration_service',
+      'special_fields'
+    ]
+  end
   # Remove duplicate certificate contacts for current certificate content 
   # of passed certificate order.
   # Param certificate_order: object, object.id, array of objects, array of ids
@@ -73,6 +89,10 @@ class Contact < ActiveRecord::Base
     end
   end
   
+  def get_address_format
+    "#{address1}, #{city}, #{state} #{postal_code}, #{country}"
+  end
+
   def to_api_query
     {}.tap do |result|
       (ALIAS_FIELDS.keys+%w(postal_code country email)).each do |k,v|
