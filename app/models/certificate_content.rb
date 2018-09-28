@@ -237,12 +237,15 @@ class CertificateContent < ActiveRecord::Base
   # :with_tags (default), :x509, :without_tags
   def ejbca_certificate_chain(options={format: :with_tags})
     chain=SslcomCaRequest.where(username: self.ref).last
-    if options[:format]==:with_tags
-      chain.x509_certificates.map(&:to_s)
+    xcert = (chain.x509_certificates[0].to_text.include?(SignedCertificate::OID_EV)or
+            chain.x509_certificates[0].to_text.include?(SignedCertificate::OID_EVCS)) ?
+                Certificate::CERTUM_XSIGN_EV : Certificate::CERTUM_XSIGN
+    if options[:format]==:objects
+      chain.x509_certificates[0..-2]<<OpenSSL::X509::Certificate.new(SignedCertificate.enclose_with_tags(xcert))
     elsif options[:format]==:without_tags
-      chain.certificate_chain
+      chain.certificate_chain[0..-2]<<xcert
     else
-      chain.x509_certificates
+      chain.x509_certificates[0..-2].map(&:to_s)<<SignedCertificate.enclose_with_tags(xcert)
     end unless chain.blank?
   end
 
@@ -691,7 +694,7 @@ class CertificateContent < ActiveRecord::Base
   def subject_dn(options={})
     cert = options[:certificate] || self.certificate
     dn=["CN=#{options[:common_name] || csr.common_name}"]
-    if !(options[:mapping] ? options[:mapping].try(:profile_name) =~ /DV/ : (cert.is_dv? or locked_registrant.blank?))
+    if !locked_registrant.blank? and !(options[:mapping] ? options[:mapping].try(:profile_name) =~ /DV/ : cert.is_dv?)
       # if ev or ov order, must have locked registrant
       org=options[:o] || locked_registrant.company_name
       ou=options[:ou] || locked_registrant.department

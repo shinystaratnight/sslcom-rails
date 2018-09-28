@@ -58,7 +58,7 @@ class SslcomCaApi
     if options[:mapping]
       options[:mapping].ca_name
     elsif options[:cc] and options[:cc].ca
-      options[:cc].ca
+      options[:cc].ca.ca_name
     elsif options[:ca]==Ca::CERTLOCK_CA
       case options[:cc].certificate.product
         when /^ev/
@@ -148,7 +148,7 @@ class SslcomCaApi
       else
         dn.merge! subject_dn: (options[:action]=="send_to_ca" ? subject_dn(options) : # via RA form or shadow
           (options[:subject_dn] || options[:cc].subject_dn({mapping: options[:mapping]})))+
-            ",OU=#{options[:cc].csr.sha1_hash}-#{DateTime.now.to_i}",
+            ",OU=#{Digest::SHA1.hexdigest(options[:cc].csr.to_der+DateTime.now.to_i.to_s).upcase}",
           ca_name: options[:ca_name] || ca_name(options),
           certificate_profile: certificate_profile(options),
           end_entity_profile: end_entity_profile(options),

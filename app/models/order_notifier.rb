@@ -133,14 +133,16 @@ class OrderNotifier < ActionMailer::Base
 
   end
 
-  def processed_certificate_order(contact, certificate_order, file_path=nil, signed_certificate=nil)
-    (attachments[certificate_order.friendly_common_name+'.zip'] = File.read(file_path)) unless file_path.blank?
-    setup(contact, certificate_order)
-    @signed_certificate=signed_certificate || certificate_order.certificate_content.csr.signed_certificate
+  def processed_certificate_order(options) # contact, certificate_order, file_path=nil, signed_certificate=nil)
+    (attachments[options[:certificate_order].friendly_common_name+'.zip'] = File.read(options[:file_path])) unless options[:file_path].blank?
+    setup(options[:contact], options[:certificate_order])
+    @certificate_content = options[:certificate_content] unless options[:certificate_content].blank?
+    @signed_certificate=options[:signed_certificate] || @certificate_content ?
+        @certificate_content.signed_certificate : options[:certificate_order].signed_certificate
     mail(
-      to: contact,
+      to: options[:contact],
       from: Settings.from_email.orders,
-      subject: "#{'(TEST) ' if certificate_order.is_test?}SSL.com #{certificate_order.certificate.description["certificate_type"]} Certificate (#{@signed_certificate.validation_type.upcase}) Attached For #{@signed_certificate.common_name}"
+      subject: "#{'(TEST) ' if options[:certificate_order].is_test?}SSL.com #{options[:certificate_order].certificate.description["certificate_type"]} Certificate (#{@signed_certificate.validation_type.upcase}) Attached For #{@signed_certificate.common_name}"
     )
   end
 
