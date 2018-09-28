@@ -200,7 +200,7 @@ class NotificationGroupsController < ApplicationController
   end
 
   def check_duplicate
-    notification_group = NotificationGroup.find_by_friendly_name(params[:friendly_name])
+    notification_group = @ssl_account.notification_groups.find_by_friendly_name(params[:friendly_name])
     returnObj = {}
     returnObj['is_duplicated'] = notification_group ?
                                      (params[:ng_id] == '' ?
@@ -218,13 +218,15 @@ class NotificationGroupsController < ApplicationController
       notification_group.friendly_name = params[:friendly_name]
       notification_group.scan_port = params[:scan_port]
       notification_group.notify_all = params[:notify_all]
+      notification_group.status = params[:status]
     else
       # Saving notification group info
       notification_group = NotificationGroup.new(
           friendly_name: params[:friendly_name],
           scan_port: params[:scan_port],
           notify_all: params[:notify_all],
-          ssl_account: @ssl_account
+          ssl_account: @ssl_account,
+          status: params[:status]
       )
     end
 

@@ -140,18 +140,6 @@ ActiveRecord::Schema.define(version: 20180921225848) do
 
   add_index "billing_profiles", ["ssl_account_id"], name: "index_billing_profile_on_ssl_account_id", using: :btree
 
-  create_table "blocklist", force: :cascade do |t|
-    t.string   "type",        limit: 255
-    t.string   "domain",      limit: 255
-    t.integer  "validation",  limit: 4
-    t.string   "status",      limit: 255
-    t.string   "reason",      limit: 255
-    t.string   "description", limit: 255
-    t.text     "notes",       limit: 65535
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
   create_table "blocklists", force: :cascade do |t|
     t.string   "type",        limit: 255
     t.string   "domain",      limit: 255
@@ -549,10 +537,10 @@ ActiveRecord::Schema.define(version: 20180921225848) do
 
   add_index "csrs", ["certificate_content_id", "common_name"], name: "index_csrs_on_common_name_and_certificate_content_id", using: :btree
   add_index "csrs", ["certificate_content_id"], name: "index_csrs_on_certificate_content_id", using: :btree
-  add_index "csrs", ["common_name", "email", "sig_alg"], name: "index_csrs_on_3_cols", using: :btree
   add_index "csrs", ["common_name", "email", "sig_alg"], name: "index_csrs_on_common_name_and_email_and_sig_alg", using: :btree
   add_index "csrs", ["common_name"], name: "index_csrs_on_common_name", using: :btree
   add_index "csrs", ["organization"], name: "index_csrs_on_organization", using: :btree
+  add_index "csrs", ["public_key_sha1", "unique_value"], name: "index_csrs_on_public_key_sha1_and_unique_value", unique: true, using: :btree
   add_index "csrs", ["sig_alg", "common_name", "email"], name: "index_csrs_on_sig_alg_and_common_name_and_email", using: :btree
 
   create_table "dbs", force: :cascade do |t|
@@ -844,6 +832,7 @@ ActiveRecord::Schema.define(version: 20180921225848) do
     t.datetime "updated_at"
     t.string   "scan_port",      limit: 255, default: "443"
     t.boolean  "notify_all",                 default: true
+    t.boolean  "status"
   end
 
   add_index "notification_groups", ["ssl_account_id", "ref"], name: "index_notification_groups_on_ssl_account_id_and_ref", using: :btree
@@ -1271,6 +1260,8 @@ ActiveRecord::Schema.define(version: 20180921225848) do
     t.string   "scan_status",            limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.datetime "expiration_date"
+    t.integer  "scan_group",             limit: 4
   end
 
   add_index "scan_logs", ["notification_group_id"], name: "index_scan_logs_on_notification_group_id", using: :btree
