@@ -49,6 +49,10 @@ class CertificateOrder < ActiveRecord::Base
   has_many    :notification_groups_subjects, as: :subjectable
   has_many    :notification_groups, through: :notification_groups_subjects
   has_many    :certificate_order_tokens
+  has_many    :certificate_order_managed_csrs, dependent: :destroy
+  has_many    :managed_csrs, through: :certificate_order_managed_csrs
+  has_many    :certificate_order_domains, dependent: :destroy
+  has_many    :managed_domains, through: :certificate_order_domains, :source => :domain
 
   accepts_nested_attributes_for :certificate_contents, :allow_destroy => false
   attr_accessor :duration, :has_csr

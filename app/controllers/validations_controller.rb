@@ -86,6 +86,10 @@ class ValidationsController < ApplicationController
             end
           end
 
+          if @all_validated && cc.validated?
+            @certificate_order.apply_for_certificate
+          end
+
           @validated_domains = validated_domain_arry.join(',')
           @caa_check_domains = caa_check_domain_arry.join(',')
         else
@@ -157,6 +161,7 @@ class ValidationsController < ApplicationController
       end
       if all_validated
         cc.validate! unless cc.validated?
+        @certificate_order.apply_for_certificate unless @certificate_order.certificate_content.ca.blank?
       end
     end
   end

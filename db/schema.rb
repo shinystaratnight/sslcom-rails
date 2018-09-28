@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180926193514) do
+ActiveRecord::Schema.define(version: 20180928164544) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        limit: 255
@@ -317,6 +317,18 @@ ActiveRecord::Schema.define(version: 20180926193514) do
 
   add_index "certificate_names", ["certificate_content_id"], name: "index_certificate_names_on_certificate_content_id", using: :btree
   add_index "certificate_names", ["name"], name: "index_certificate_names_on_name", using: :btree
+
+  create_table "certificate_order_domains", force: :cascade do |t|
+    t.integer "certificate_order_id", limit: 4
+    t.integer "domain_id",            limit: 4
+  end
+
+  create_table "certificate_order_managed_csrs", force: :cascade do |t|
+    t.integer  "certificate_order_id", limit: 4
+    t.integer  "managed_csr_id",       limit: 4
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "certificate_order_tokens", force: :cascade do |t|
     t.integer  "certificate_order_id", limit: 4
