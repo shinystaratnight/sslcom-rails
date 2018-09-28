@@ -397,6 +397,7 @@ jQuery(function($) {
       $('#has_csr_switch').hide();
     <%end%>
 
+    $('#managed_domains').select2({ tags: true });
     $('#weekday_custom_list').select2({ tags: true });
     $('#month_custom_list').select2({ tags: true });
     $('#day_custom_list').select2({ tags: true });
@@ -411,6 +412,10 @@ jQuery(function($) {
       $('#schedule_simple_type option[value="2"]').attr('selected', true);
     }
 
+    $('#managed_domains').on('select2:opening select2:closing', function( event ) {
+      var $searchfield = $(this).parent().find('.select2-search__field');
+      $searchfield.prop('readonly', true);
+    });
     $('#weekday_custom_list').on('select2:opening select2:closing', function( event ) {
       var $searchfield = $(this).parent().find('.select2-search__field');
       $searchfield.prop('readonly', true);
