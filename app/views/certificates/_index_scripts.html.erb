@@ -396,6 +396,175 @@ jQuery(function($) {
     <%unless Settings.show_csr_submit_on_buy_page%>
       $('#has_csr_switch').hide();
     <%end%>
+
+    $('#weekday_custom_list').select2({ tags: true });
+    $('#month_custom_list').select2({ tags: true });
+    $('#day_custom_list').select2({ tags: true });
+    $('#hour_custom_list').select2({ tags: true });
+    $('#minute_custom_list').select2({ tags: true });
+
+    var url = window.location.pathname;
+    if (url.substr(url.lastIndexOf('/') + 1, url.length) == 'edit') {
+      $('.custom_selected_block').hide();
+      $('.custom_schedule').hide();
+
+      $('#schedule_simple_type option[value="2"]').attr('selected', true);
+    }
+
+    $('#weekday_custom_list').on('select2:opening select2:closing', function( event ) {
+      var $searchfield = $(this).parent().find('.select2-search__field');
+      $searchfield.prop('readonly', true);
+    });
+    $('#month_custom_list').on('select2:opening select2:closing', function( event ) {
+      var $searchfield = $(this).parent().find('.select2-search__field');
+      $searchfield.prop('readonly', true);
+    });
+    $('#day_custom_list').on('select2:opening select2:closing', function( event ) {
+      var $searchfield = $(this).parent().find('.select2-search__field');
+      $searchfield.prop('readonly', true);
+    });
+    $('#hour_custom_list').on('select2:opening select2:closing', function( event ) {
+      var $searchfield = $(this).parent().find('.select2-search__field');
+      $searchfield.prop('readonly', true);
+    });
+    $('#minute_custom_list').on('select2:opening select2:closing', function( event ) {
+      var $searchfield = $(this).parent().find('.select2-search__field');
+      $searchfield.prop('readonly', true);
+    });
+
+    $('input[name="schedule_type"]').change(function() {
+      if ($(this).val() == 'true') {
+        $('input[name="weekday_type"][value="true"]').prop('checked', true);
+        if ($('#weekday_custom_list').val() != null) {
+          $('#weekday_custom_list').val(null).trigger('change');
+        }
+
+        $('input[name="month_type"][value="true"]').prop('checked', true);
+        if ($('#month_custom_list').val() != null) {
+          $('#month_custom_list').val(null).trigger('change');
+        }
+
+        $('input[name="day_type"][value="true"]').prop('checked', true);
+        if ($('#day_custom_list').val() != null) {
+          $('#day_custom_list').val(null).trigger('change');
+        }
+
+        $('input[name="hour_type"][value="true"]').prop('checked', true);
+        if ($('#hour_custom_list').val() != null) {
+          $('#hour_custom_list').val(null).trigger('change');
+        }
+
+        $('input[name="minute_type"][value="true"]').prop('checked', true);
+        if ($('#minute_custom_list').val() != null) {
+          $('#minute_custom_list').val(null).trigger('change');
+        }
+
+        $('.custom_selected_block').hide();
+        $('.custom_schedule').hide();
+
+        $('#schedule_simple_type option[value="2"]').prop('selected', true);
+        $('.simple_schedule').show();
+      } else {
+        $('.custom_schedule').show();
+        $('.simple_schedule').hide();
+      }
+    });
+
+    $('input[name="weekday_type"]').change(function() {
+      if ($(this).val() == 'true') {
+        if ($('#weekday_custom_list').val() != null) {
+          $('#weekday_custom_list').val(null).trigger('change');
+        }
+        $('.block_weekday_custom').hide();
+      } else {
+        $('.block_weekday_custom').show();
+      }
+    });
+
+    $('input[name="month_type"]').change(function() {
+      if ($(this).val() == 'true') {
+        if ($('#month_custom_list').val() != null) {
+          $('#month_custom_list').val(null).trigger('change');
+        }
+        $('.block_month_custom').hide();
+      } else {
+        $('.block_month_custom').show();
+      }
+    });
+
+    $('input[name="day_type"]').change(function() {
+      if ($(this).val() == 'true') {
+        if ($('#day_custom_list').val() != null) {
+          $('#day_custom_list').val(null).trigger('change');
+        }
+        $('.block_day_custom').hide();
+      } else {
+        $('.block_day_custom').show();
+      }
+    });
+
+    $('input[name="hour_type"]').change(function() {
+      if ($(this).val() == 'true') {
+        if ($('#hour_custom_list').val() != null) {
+          $('#hour_custom_list').val(null).trigger('change');
+        }
+        $('.block_hour_custom').hide();
+      } else {
+        $('.block_hour_custom').show();
+      }
+    });
+
+    $('input[name="minute_type"]').change(function() {
+      if ($(this).val() == 'true') {
+        if ($('#minute_custom_list').val() != null) {
+          $('#minute_custom_list').val(null).trigger('change');
+        }
+        $('.block_minute_custom').hide();
+      } else {
+        $('.block_minute_custom').show();
+      }
+    });
+
+    $('#notification_group').change(function() {
+      if ($(this).val() == 'none') {
+        $('#schedule_simple_type option[value="2"]').prop('selected', true);
+        $('.simple_schedule').show();
+        $('.schedule_type').show();
+      } else {
+        $('input[name="weekday_type"][value="true"]').prop('checked', true);
+        if ($('#weekday_custom_list').val() != null) {
+          $('#weekday_custom_list').val(null).trigger('change');
+        }
+
+        $('input[name="month_type"][value="true"]').prop('checked', true);
+        if ($('#month_custom_list').val() != null) {
+          $('#month_custom_list').val(null).trigger('change');
+        }
+
+        $('input[name="day_type"][value="true"]').prop('checked', true);
+        if ($('#day_custom_list').val() != null) {
+          $('#day_custom_list').val(null).trigger('change');
+        }
+
+        $('input[name="hour_type"][value="true"]').prop('checked', true);
+        if ($('#hour_custom_list').val() != null) {
+          $('#hour_custom_list').val(null).trigger('change');
+        }
+
+        $('input[name="minute_type"][value="true"]').prop('checked', true);
+        if ($('#minute_custom_list').val() != null) {
+          $('#minute_custom_list').val(null).trigger('change');
+        }
+
+        $('.custom_selected_block').hide();
+        $('.custom_schedule').hide();
+
+        $('input[name="schedule_type"][value="true"]').prop('checked', true);
+        $('.simple_schedule').hide();
+        $('.schedule_type').hide();
+      }
+    });
+
   });
 });
 </script>
