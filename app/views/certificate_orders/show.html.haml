@@ -26,7 +26,9 @@
       %span.common_name
         #{cn}
       -if permitted_to?(:update, @certificate_order)
-        =link_to "[how do I use this page?]", "https://www.ssl.com/article/certificate-order-page-information/"
+        -team_iv = @certificate_order.get_team_iv
+        -link_text = team_iv.nil? ? " [how do I use this page?]" : " #{team_iv.first_name} #{team_iv.last_name}"
+        =link_to link_text, "https://www.ssl.com/article/certificate-order-page-information/"
     %tr.heading_row
       %th(scope="col") Subject
       %th(scope="col") Status
@@ -151,6 +153,16 @@
                         =render partial: "certificate_orders/duration_limit", locals:{co: @certificate_order}
                     .certificate_details_box
                       %ul
+                        -team_iv = co.get_team_iv
+                        -unless team_iv.nil?
+                          %li 
+                            %strong recipient (#{team_iv.status.humanize})
+                          %li #{team_iv.first_name}, #{team_iv.last_name}
+                          %li #{team_iv.email}
+                          %li
+                            =link_to 'edit recipient', recipient_certificate_order_path(@ssl_slug, @certificate_order.ref)
+                          %li 
+                            %br/
                         %li
                           %strong registrant
                         -unless @cc.registrant.blank?
@@ -304,21 +316,21 @@
                 %tr
                   %td
                     = render partial: 'tags/certificate_order_tags'
-            %table(cellspacing="0")
-              %tbody
-                -@certificate_order.certificate_contents.order('created_at DESC').each do |c|
-                  -current = c==@certificate_order.certificate_content
-                  -csr = c.csr
-                  -sc = c.csr.try(:signed_certificate)
-                  %tr
-                    %td(colspan="5" style="text-align: left;")
-                      -unless co.certificate.is_code_signing?
-                        %span.previous_requests #{c!=@certificate_order.certificate_content ? "previous" : "current" }: #{c.ref}
-                        -if sc.try(:body).blank?
-                          (server software: #{c.server_software.try :title})
-                        -else
-                          (serial number: #{sc.serial})
-                  -unless csr.nil?
+            -unless @certificate_order.certificate_contents.count == 1 && @certificate_order.certificate_content.csr.nil?
+              %table(cellspacing="0")
+                %tbody
+                  -@certificate_order.certificate_contents.order('created_at DESC').each do |c|
+                    -current = c==@certificate_order.certificate_content
+                    -csr = c.csr
+                    -sc = c.csr.try(:signed_certificate)
+                    %tr
+                      %td(colspan="5" style="text-align: left;")
+                        -unless co.certificate.is_code_signing?
+                          %span.previous_requests #{c!=@certificate_order.certificate_content ? "previous" : "current" }: #{c.ref}
+                          -if sc.try(:body).blank?
+                            (server software: #{c.server_software.try :title})
+                          -else
+                            (serial number: #{sc.serial})
                     %tr
                       %td(colspan="5")
                         -if !@certificate_order.certificate.is_code_signing? # or current_user.is_system_admins?

@@ -346,6 +346,7 @@ class CertificateOrdersController < ApplicationController
 
   def client_smime_validate
     co = @certificate_order
+    cc = co.certificate_content
     validations = co.certificate.client_smime_validations
     validated = if validations == 'iv_ov'
       @iv_exists.validated? &&
@@ -357,11 +358,11 @@ class CertificateOrdersController < ApplicationController
     end
     
     if validated
-      co.certificate_content.validate! unless co.certificate_content.validated?
+      cc.validate! unless cc.validated?
       co.copy_iv_ov_validation_history(validations)
       redirect_to certificate_order_path(@ssl_slug, co.ref)
     else
-      co.certificate_content.pend_validation!
+      cc.pend_validation! unless cc.pending_validation?
       redirect_to document_upload_certificate_order_validation_path(
         @ssl_slug, certificate_order_id: co.ref
       )
