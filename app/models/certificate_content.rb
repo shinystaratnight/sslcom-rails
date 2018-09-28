@@ -234,12 +234,15 @@ class CertificateContent < ActiveRecord::Base
     signed_certificates.last
   end
 
-  def ejbca_certificate_chain(options={with_tags: true})
+  # :with_tags (default), :x509, :without_tags
+  def ejbca_certificate_chain(options={format: :with_tags})
     chain=SslcomCaRequest.where(username: self.ref).last
-    if options[:with_tags]
+    if options[:format]==:with_tags
       chain.x509_certificates.map(&:to_s)
-    else
+    elsif options[:format]==:without_tags
       chain.certificate_chain
+    else
+      chain.x509_certificates
     end unless chain.blank?
   end
 
