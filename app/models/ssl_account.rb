@@ -758,7 +758,11 @@ class SslAccount < ActiveRecord::Base
             logger.info "Sending reminder"
             body = past ? Reminder.past_expired_digest_notice(d, interval) :
                        Reminder.digest_notice(d)
-            body.deliver unless body.to.empty?
+            begin
+              body.deliver unless body.to.empty?
+            rescue Exception=>e
+              logger.error e.backtrace.inspect
+            end
           end
           d[1].each do |ec|
             logger.info "create SentReminder"

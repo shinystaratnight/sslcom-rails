@@ -57,6 +57,8 @@ class SslcomCaApi
   def self.ca_name(options)
     if options[:mapping]
       options[:mapping].ca_name
+    elsif options[:cc] and options[:cc].ca
+      options[:cc].ca
     elsif options[:ca]==Ca::CERTLOCK_CA
       case options[:cc].certificate.product
         when /^ev/

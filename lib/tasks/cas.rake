@@ -1,6 +1,6 @@
 namespace :cas do
   desc "CA profiles that can be referenced"
-  # RAILS_ENV - is this on production or development?
+  # EJBCA_ENV - is this on production or development?
   # LIVE - array of products to make default. If specified, will not delete other mappings (unless used with RESET).
   #   If left blank, will delete all mappings and set no CA as default
   # RESET - set to true to delete all cas_certificates mappings
@@ -9,7 +9,7 @@ namespace :cas do
   # LIVE=naesb SSL_ACCOUNT_IDS=492124 RESET=true
   task seed_ejbca_profiles: :environment do
     url,shadow_url=
-      if ENV['RAILS_ENV']=="production"
+      if ENV['EJBCA_ENV']=="production"
         ["192.168.5.17","192.168.5.19"]
       else
         ["192.168.100.5","192.168.100.5"]
