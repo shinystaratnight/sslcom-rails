@@ -14,13 +14,13 @@
       -if registrant
         %div
           %span STATUS:
-          %strong #{@contact.status.humanize.upcase}
+          %strong #{@contact.status.humanize.upcase unless @contact.status.blank?}
         %div
           %span FILES:
           %strong #{documents.count}
         %div
           %span TYPE:
-          %strong #{@contact.registrant_type.capitalize}
+          %strong #{@contact.registrant_type.capitalize unless @contact.registrant_type.blank?}
       -else
         %div
           %span DEFAULT:
