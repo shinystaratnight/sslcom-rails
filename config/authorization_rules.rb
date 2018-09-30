@@ -31,6 +31,13 @@ authorization do
       :to => :sysadmin_manage
     has_permission_on :resellers,    to: [:create, :read, :update]
     has_permission_on :orders,       to: [:refund_merchant, :update_invoice, :revoke]
+    #
+    # Contacts
+    #
+    has_permission_on :contacts, to: :sysadmin_manage
+    #
+    # SslAccounts
+    #
     has_permission_on :ssl_accounts, to: [
       :create,
       :read,
@@ -112,15 +119,38 @@ authorization do
     includes :base
     
     #
-    # Contacts
+    # Contacts: CertificateContact
     #
     has_permission_on :contacts, to: [
       :edit,
       :update,
-      :show,
-      :destroy
-    ] do
-      if_attribute :contactable_id => is {user.ssl_account.id}
+      :show
+    ], join_by: :and do
+      if_attribute contactable: is {user.ssl_account}
+      if_attribute type: is {'CertificateContact'}
+    end
+    has_permission_on :contacts, to: :destroy, join_by: :and do
+      if_attribute contactable: is {user.ssl_account}
+      if_attribute type: is {'CertificateContact'}
+      if_attribute saved_default: is {false}
+    end
+    #
+    # Contacts: Registrant
+    #
+    has_permission_on :contacts, to: [
+      :show
+    ], join_by: :and do
+      if_attribute contactable: is {user.ssl_account}
+      if_attribute type: is {'Registrant'}
+    end
+    has_permission_on :contacts, to: [
+      :destroy,
+      :edit,
+      :update
+    ], join_by: :and do
+      if_attribute contactable: is {user.ssl_account}
+      if_attribute type: is {'Registrant'}
+      if_attribute 'validated?' => is {false}
     end
     #
     # SslAccounts
@@ -211,17 +241,6 @@ authorization do
     # SslAccounts
     #
     has_permission_on :ssl_accounts, :to => [:create, :validate_ssl_slug]
-    #
-    # Contacts
-    #
-    has_permission_on :contacts, to: [
-      :edit,
-      :update,
-      :show,
-      :destroy
-    ] do
-      if_attribute :contactable_id => is {user.ssl_account.id}
-    end
   end
 
   # ============================================================================
@@ -599,7 +618,8 @@ privileges do
     :duo_enable,
     :duo_own_used,
     :set_2fa_type,
-    :update_ssl_slug
+    :update_ssl_slug,
+    :saved_contacts
   ]
   privilege :sysadmin_manage, includes: [
     :admin_manage,
