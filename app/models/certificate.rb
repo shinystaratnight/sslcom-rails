@@ -950,6 +950,25 @@ class Certificate < ActiveRecord::Base
                               sslcompersonalenterprise256ssl1yr4tr: [24900, 49900, 59900],
                               sslcompersonalenterprise256ssl1yr5tr: [24900, 49900, 59900]
                }},
+              {serial_root: "documentsigning",title: "Document Signing",validation_type: "basic",
+               summary: "for signing and authenticating documents such as Adobe pdf, Microsoft Office, OpenOffice and LibreOffice",
+               product: "document-signing",
+               points:  "<div class='check'>Legally binding and complies with the U.S. Federal ESIGN Act</div>
+                         <div class='check'>Stored on USB etoken for 2 factor authentication</div>
+                         <div class='check'>No required plugins or software</div>
+                         <div class='check'>Customizable appearance of digital signature</div>
+                         <div class='check'>Shows signed by a person OR department</div>
+                         <div class='check'>30 day money-back guaranty </div>
+                         <div class='check'>24 hour 5-star support</div>",
+               price_adjusts:{sslcomdocumentsigning1yr: [349,649,849],
+                              sslcomdocumentsigning1yr1tr: [349,649,849],
+                              sslcomdocumentsigning1yr2tr: [12000,15000],
+                              sslcomdocumentsigning1yr3tr: [11250,15000],
+                              sslcomdocumentsigning1yr4tr: [10500,15000],
+                              sslcomdocumentsigning1yr5tr: [9000,15000],
+                              sslcomdocumentsigning1yr6tr: [7500,15000],
+                              sslcomdocumentsigning1yr7tr: [6000,15000]
+               }},
               {serial_root: "naesbbasic",title: "NAESB Basic",validation_type: "basic",
                summary: "for authenticating and encrypting email and well as client services",
                special_fields: %w(entity\ code),
