@@ -85,6 +85,11 @@ class DomainControlValidation < ActiveRecord::Base
     end
   end
 
+  def validated?(public_key_sha1=nil)
+    identifier_found && responded_at && responded_at < 30.days.ago &&
+        (email_address or (public_key_sha1 ? csr.public_key_sha1.downcase==public_key_sha1.downcase : true))
+  end
+
   def verify_http_csr_hash
     certificate_name.dcv_verified?
   end

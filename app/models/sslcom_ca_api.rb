@@ -163,8 +163,12 @@ class SslcomCaApi
 
   def self.apply_for_certificate(certificate_order, options={})
     certificate = certificate_order.certificate
+    if options[:send_to_ca]
+      options[:mapping] = Ca.find_by_ref(options[:send_to_ca])
+    elsif options[:mapping].blank?
+      options[:mapping] = certificate.cas.ssl_account_or_general_default(options[:current_user].ssl_account).last
+    end
     options.merge! cc: cc = options[:certificate_content] || certificate_order.certificate_content
-    options[:mapping] = Ca.find_by_ref(options[:send_to_ca]) if options[:send_to_ca]
     approval_req, approval_res = SslcomCaApi.get_status(csr: cc.csr, mapping: options[:mapping])
     return cc.csr.sslcom_ca_requests.create(
       parameters: approval_req.body, method: "get", response: approval_res.body,

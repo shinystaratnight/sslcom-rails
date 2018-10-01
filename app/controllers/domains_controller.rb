@@ -16,7 +16,7 @@ class DomainsController < ApplicationController
     unless params[:domain_names].nil?
       domain_names = params[:domain_names].split(/[\s,']/)
       domain_names.each do |d_name|
-        if @ssl_account.domain_names.include?(d_name)
+        if @ssl_account.domains.map(&:name).include?(d_name)
           exist_domain_names << d_name
         else
           @domain = Domain.new
@@ -98,7 +98,7 @@ class DomainsController < ApplicationController
   def validate_selected
     if params[:d_name_id]
       send_validation_email(params)
-      flash[:notice] = "DCV email sent."
+      flash[:notice] = "Proof of domain control validation email sent."
       redirect_to domains_path
     else
       @all_domains = []
@@ -109,9 +109,13 @@ class DomainsController < ApplicationController
         next if dcv && dcv.identifier_found
         @all_domains << dn
         standard_addresses = DomainControlValidation.email_address_choices(dn.name)
-        whois_addresses = WhoisLookup.email_addresses(Whois.whois(ActionDispatch::Http::URL.extract_domain(dn.name, 1)).inspect)
-        whois_addresses.each do |ad|
-          standard_addresses << ad unless ad.include? 'abuse@'
+        begin
+          whois_addresses = WhoisLookup.email_addresses(Whois.whois(ActionDispatch::Http::URL.extract_domain(dn.name, 1)).inspect)
+          whois_addresses.each do |ad|
+            standard_addresses << ad unless ad.include? 'abuse@'
+          end
+        rescue Exception=>e
+          logger.error e.backtrace.inspect
         end
         @address_choices << standard_addresses
       end
@@ -225,7 +229,7 @@ class DomainsController < ApplicationController
       domain_ary = []
       domain_list = []
       emailed_domains = []
-      successed_domains = []
+      succeeded_domains = []
       failed_domains = []
       cnames.each do |cn|
         dcv = cn.domain_control_validations.last
@@ -246,7 +250,7 @@ class DomainsController < ApplicationController
           dcv.send_dcv!
         else
           if domain_verify(dcv.dcv_method, cn.name, @csr) == "true"
-            successed_domains << cn.name
+            succeeded_domains << cn.name
             dcv.satisfy! unless dcv.satisfied?
           else
             failed_domains << cn.name
@@ -262,14 +266,14 @@ class DomainsController < ApplicationController
         end
       end
       notice_string = ""
-      unless successed_domains.blank?
-        notice_string += "DCV for #{successed_domains.join(", ")} successed. "
+      unless succeeded_domains.blank?
+        notice_string += "Domain Control Validation for #{succeeded_domains.join(", ")} succeeded. "
       end
       unless failed_domains.blank?
-        notice_string += "DCV for #{failed_domains.join(", ")} failed. "
+        notice_string += "Domain Control Validation for #{failed_domains.join(", ")} failed. "
       end
       unless emailed_domains.blank?
-        notice_string += "DCV email for #{emailed_domains.join(", ")} sent. "
+        notice_string += "Domain Control Validation email for #{emailed_domains.join(", ")} sent. "
       end
       flash[:notice] = notice_string
     end
@@ -322,29 +326,27 @@ class DomainsController < ApplicationController
   end
 
   def dcv_all_validate
-    dnames = current_user.ssl_account.domains
-    cnames = current_user.ssl_account.certificate_names
+    validated=[]
+    dnames = current_user.ssl_account.domains # directly scoped to the team
+    cnames = current_user.ssl_account.certificate_names # scoped to certificate_orders
     if(params['authenticity_token'])
       identifier = params['validate_code']
-      cnames.each do |cn|
+      (dnames+cnames).each do |cn|
         dcv = cn.domain_control_validations.last
-        if dcv && dcv.identifier == identifier
-          dcv.update_attribute(:identifier_found, true)
+        if dcv && dcv.identifier == identifier && dcv.responded_at.blank?
+          dcv.update_columns(identifier_found: true, responded_at: DateTime.now)
+          validated << cn.name
           unless dcv.satisfied?
             dcv.satisfy!
             CaaCheck.pass?(@ssl_account.acct_number + 'domains', cn, nil)
           end
         end
       end
-      dnames.each do |dn|
-        dcv = dn.domain_control_validations.last
-        if dcv && dcv.identifier == identifier
-          dcv.update_attribute(:identifier_found, true)
-          unless dcv.satisfied?
-            dcv.satisfy!
-            CaaCheck.pass?(@ssl_account.acct_number + 'domains', dn, nil)
-          end
-        end
+      unless validated.empty?
+        flash[:notice] = "The following are now validated: #{validated.join(" ,")}"
+        redirect_to domains_path
+      else
+        flash.now[:error] = "No domains have been validated."
       end
     end
   end

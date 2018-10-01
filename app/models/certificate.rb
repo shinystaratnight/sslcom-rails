@@ -640,7 +640,7 @@ class Certificate < ActiveRecord::Base
 
   def self.list_default_cas
     all.map do |cert|
-      [cert.product,cert.cas.general.default.map(&:id)] unless cert.cas.general.default.map(&:id).empty?
+      [cert.product,cert.cas.default.map(&:id)] unless cert.cas.default.map(&:id).empty?
     end.compact
   end
 
