@@ -82,7 +82,7 @@ module CertificateOrdersHelper
           link_to(certificate_order.certificate.admin_submit_csr?  ? 'provide info' :
                       'submit csr', edit_certificate_order_path(@ssl_slug, certificate_order))
     elsif certificate_order.expired?
-      'expired'
+      link_to 'renew', renew_certificate_order_path(@ssl_slug, certificate_order)
     else
       case certificate_content.workflow_state
         when "csr_submitted"

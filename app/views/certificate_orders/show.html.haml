@@ -400,9 +400,9 @@
                                 %div
                                   DECODED
                                 %textarea.selectAll{cols: 10, rows: 4}=sc.decoded
-                  %tr
-                    %td(colspan="5" style="text-align: left;")
-                      = render partial: '/tags/certificate_content_tags', locals: {taggable: c}
+                    %tr
+                      %td(colspan="5" style="text-align: left;")
+                        = render partial: '/tags/certificate_content_tags', locals: {taggable: c}
                 -if current_user.is_admin?
                   %tr
                     %td(colspan="5")

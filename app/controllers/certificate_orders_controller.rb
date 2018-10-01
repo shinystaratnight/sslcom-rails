@@ -705,7 +705,7 @@ class CertificateOrdersController < ApplicationController
   end
 
   def recert(action)
-    instance_variable_set("@"+action,CertificateOrder.find_by_ref(params[:id]))
+    instance_variable_set("@"+action,CertificateOrder.unscoped.find_by_ref(params[:id]))
     instance_variable_get("@"+action)
   end
 
