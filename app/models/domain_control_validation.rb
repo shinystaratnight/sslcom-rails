@@ -5,6 +5,8 @@ class DomainControlValidation < ActiveRecord::Base
   belongs_to :csr, touch: true # only for single domain certs
   belongs_to :csr_unique_value
   belongs_to :certificate_name, touch: true  # only for UCC or multi domain certs
+  # belongs_to :domain, class_name: "CertificateName"
+  # delegate   :ssl_account, to: :domain
   serialize :candidate_addresses
 
   # validate  :email_address_check, unless: lambda{|r| r.email_address.blank?}
@@ -85,15 +87,45 @@ class DomainControlValidation < ActiveRecord::Base
     end
   end
 
-  def self.validated?(ssl_account,domain)
-    ssl_account.where{(domains.domain_control_validations=~domain) or
-        (certificate_contents.certificate_names.domain_control_validations=~domain)}
+  def ssl_account(domain=nil)
+    if domain
+      SslAccount.unscoped.joins{certificate_names.domain_control_validations}.joins{certificate_contents.certificate_names.domain_control_validations}.where{(certificate_names.domain_control_validations.subject=~domain) or
+          (certificate_contents.certificate_names.domain_control_validations.subject=~domain)}
+    else
+      SslAccount.unscoped.joins{domains.domain_control_validations.outer}.where(domain_control_validations: {id: self.id})
+    end
+  end
+
+  def self.validated?(ssl_account,domains,public_key_sha1=nil)
+    domains.each do |name|
+      name=name.downcase
+      ssl_account.all_certificate_names.each do |cn|
+        dcv=cn.domain_control_validation.where{identifier_found==1}.last
+        if cn.name.downcase==name and dcv
+          dcv.validated?(name,public_key_sha1)
+        end
+      end
+    end
   end
 
   # to be validated, we need to examine the domain, ssl_account, and if need be the CSR
-  def validated?(public_key_sha1=nil)
-    identifier_found && responded_at && responded_at < 30.days.ago &&
-        (email_address or (public_key_sha1 ? csr.public_key_sha1.downcase==public_key_sha1.downcase : true))
+  def validated?(domain=nil,public_key_sha1=nil)
+    satisfied = ->(public_key_sha1){
+        identifier_found && responded_at && responded_at < 30.days.ago &&
+          (email_address or (public_key_sha1 ? csr.public_key_sha1.downcase==public_key_sha1.downcase : true))
+    }
+    unless domain
+      satisfied.call(public_key_sha1)
+    else
+      if ::PublicSuffix.valid?(domain)
+        d=::PublicSuffix.parse(certificate_name.name)
+        subdomains = d.trd ? d.trd.split(".") : []
+        subdomains.shift if subdomains[0]=="*" #remove wildcard
+        0.upto(subdomains.count) do |i|
+          return true if domain.include?((subdomains.slice(0,i)<<d.domain).join(".")) and satisfied.call(public_key_sha1)
+        end
+      end
+    end
   end
 
   def verify_http_csr_hash

@@ -474,6 +474,7 @@ GEM
     websocket (1.2.3)
     whenever (0.9.7)
       chronic (>= 0.6.3)
+    where-or (0.1.6)
     whois (4.0.7)
     wicked_pdf (1.1.0)
     will_paginate (3.1.5)
@@ -592,6 +593,7 @@ DEPENDENCIES
   uuidtools
   web-console (~> 2.0)
   whenever
+  where-or
   whois (~> 4.0)
   wicked_pdf
   will_paginate

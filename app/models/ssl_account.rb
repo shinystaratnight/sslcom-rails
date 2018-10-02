@@ -502,6 +502,11 @@ class SslAccount < ActiveRecord::Base
     domain_names
   end
 
+  # concatenate team (Domain) and order scoped certificate_names
+  def all_certificate_names
+    self.certificate_names+self.domains
+  end
+
   def validated_domains
     validated_domains = []
     cnames = self.certificate_names
