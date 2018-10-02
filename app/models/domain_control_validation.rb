@@ -35,7 +35,7 @@ class DomainControlValidation < ActiveRecord::Base
 
     state :satisfied do
       on_entry do
-        self.update_attribute :responded_at, DateTime.now
+        self.update_columns(identifier_found: true, responded_at: DateTime.now)
       end
     end
   end
@@ -85,6 +85,12 @@ class DomainControlValidation < ActiveRecord::Base
     end
   end
 
+  def self.validated?(ssl_account,domain)
+    ssl_account.where{(domains.domain_control_validations=~domain) or
+        (certificate_contents.certificate_names.domain_control_validations=~domain)}
+  end
+
+  # to be validated, we need to examine the domain, ssl_account, and if need be the CSR
   def validated?(public_key_sha1=nil)
     identifier_found && responded_at && responded_at < 30.days.ago &&
         (email_address or (public_key_sha1 ? csr.public_key_sha1.downcase==public_key_sha1.downcase : true))

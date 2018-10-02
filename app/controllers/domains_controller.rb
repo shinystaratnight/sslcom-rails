@@ -334,7 +334,7 @@ class DomainsController < ApplicationController
       (dnames+cnames).each do |cn|
         dcv = cn.domain_control_validations.last
         if dcv && dcv.identifier == identifier && dcv.responded_at.blank?
-          dcv.update_columns(identifier_found: true, responded_at: DateTime.now)
+          # dcv.update_columns(identifier_found: true, responded_at: DateTime.now)
           validated << cn.name
           unless dcv.satisfied?
             dcv.satisfy!
