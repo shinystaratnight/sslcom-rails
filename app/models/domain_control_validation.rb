@@ -128,6 +128,23 @@ class DomainControlValidation < ActiveRecord::Base
     end
   end
 
+  # this determines if a domain validation will satisfy another domain validation based on 2nd level subdomains and wildcards
+  def self.domain_in_subdomains?(domain,multi_level_subdomain)
+    if ::PublicSuffix.valid?(domain, default_rule: nil) and ::PublicSuffix.valid?(multi_level_subdomain, default_rule: nil)
+      d=::PublicSuffix.parse(multi_level_subdomain)
+      subdomains = d.trd ? d.trd.split(".").reverse : []
+      if subdomains[0]=="*" #remove wildcard
+        first,*base = domain.split(/\./)
+        return true if multi_level_subdomain[2..-1]==base.join(".")
+        subdomains.shift
+      end
+      0.upto(subdomains.count) do |i|
+        return true if ((subdomains.slice(0,i)<<d.domain).join("."))==domain
+      end
+    end
+    false
+  end
+
   def verify_http_csr_hash
     certificate_name.dcv_verified?
   end
