@@ -910,10 +910,7 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def ov_validated?
-    locked_registrants.where(
-      registrant_type: Registrant::registrant_types[:organization],
-      status: Registrant::statuses[:validated]
-    ).any?
+    locked_registrant && locked_registrant.validated?
   end
     
   def iv_ov_validated?

@@ -635,7 +635,7 @@ class ValidationsController < ApplicationController
 
   def create_ov_attachment
     if @val_history.valid?
-      lr = @certificate_order.certificate_content.locked_registrant
+      lr = @certificate_order.locked_registrant
       unless lr.nil?
         lr.validation_histories << @val_history
         if lr.parent_id

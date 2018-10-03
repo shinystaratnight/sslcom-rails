@@ -120,8 +120,20 @@
                           %li
                             %strong validation status
                           %li.li-cert-validate
-                            = link_to "<i class='fa fa-expeditedssl'></i> Change Recipient Status to Validated".html_safe, |
-                              admin_update_certificate_order_path(@ssl_slug, @certificate_order.ref, validate: true),      |
+                            -if current_user.is_system_admins?
+                              -if !@certificate_order.ov_validated?
+                                = link_to "<i class='fa fa-expeditedssl'></i> Validate OV".html_safe,                      |
+                                admin_update_certificate_order_path(@ssl_slug, @certificate_order.ref, validate_ov: true), |
+                                method: :put, class: 'btn-cert-validate'
+                                %br/
+                              -if !@certificate_order.iv_validated?
+                                = link_to "<i class='fa fa-expeditedssl'></i> Validate IV".html_safe,                      |
+                                admin_update_certificate_order_path(@ssl_slug, @certificate_order.ref, validate_iv: true), |
+                                method: :put, class: 'btn-cert-validate'
+                                %br/
+                            -else
+                              = link_to "<i class='fa fa-expeditedssl'></i> Change Recipient Status to Validated".html_safe, |
+                              admin_update_certificate_order_path(@ssl_slug, @certificate_order.ref, validate_iv: true),     |
                               method: :put, class: 'btn-cert-validate'
                         -unless @certificate_order.certificate.is_dv?
                           %li

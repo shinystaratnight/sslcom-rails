@@ -608,15 +608,18 @@ class CertificateOrdersController < ApplicationController
   end
 
   def admin_update
-    if params[:validate]
+    if params[:validate_iv] || params[:validate_ov]
       if @certificate_order.certificate.is_smime_or_client?
         cc = @certificate_order.certificate_content
         iv = @certificate_order.get_team_iv
         ov = @certificate_order.locked_registrant
 
-        cc.validate! unless cc.validated?
-        iv.validate! if iv && !iv.validated?
-        ov.validate! if ov && !ov.validated?
+        iv.validated! if (params[:validate_iv] && iv && !iv.validated?)
+        ov.validated! if (params[:validate_ov] && ov && !ov.validated?)
+
+        if @certificate_order.iv_ov_validated?
+          cc.validate! unless cc.validated?
+        end
       end
       redirect_to certificate_order_path(@ssl_slug, @certificate_order.ref), 
         notice: "Certificate order was successfully validated!"
