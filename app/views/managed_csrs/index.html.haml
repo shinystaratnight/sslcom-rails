@@ -11,7 +11,7 @@
             =select_tag :number_rows,
             options_for_select([[5, 5], [10, 10], [20, 20], [50, 50], [100, 100]], @per_page),
             :class=>'per_page'
-          %td(colspan='4')=will_paginate @csrs
+          %td(colspan='5')=will_paginate @csrs
     %caption
       =title
     -unless current_user.is_system_admins?
@@ -23,6 +23,7 @@
       %th(scope="col") Friendly Name
       %th(scope="col") Common Name
       %th(scope="col") Created At
+      %th(scope="col") Days Remaining
       %th(scope="col") Action
     -@csrs.each do |csr|
       %tr(alt="#{csr.id}")
@@ -32,6 +33,7 @@
         %td=csr.friendly_name
         %td=csr.common_name
         %td=csr.created_at.strftime("%b %d, %Y")
+        %td=csr.days_left
         %td
           =link_to('edit', edit_managed_csr_path(@ssl_slug, csr.id))
           -if csr.certificate_order.nil?

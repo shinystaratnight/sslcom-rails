@@ -179,10 +179,14 @@ class CertificateOrdersController < ApplicationController
             @notification_groups = current_user.ssl_account.notification_groups.pluck(:friendly_name, :ref)
             @notification_groups.insert(0, ['none', 'none'])
 
-            @managed_csrs = current_user.ssl_account.managed_csrs.pluck(:common_name, :ref)
+            @managed_csrs = (current_user.ssl_account.csrs + current_user.ssl_account.managed_csrs)
+                                .sort_by{|arr| arr.common_name}
+                                .uniq{|arr| arr.common_name}
+                                .map{|arr| [arr.common_name, arr.ref]}
+                                .delete_if{|arr| arr.second == nil}
             @managed_csrs.insert(0, ['none', 'none'])
 
-            @managed_domains = current_user.ssl_account.domains.pluck(:name, :id)
+            @managed_domains = current_user.ssl_account.domains.map{|arr| [arr.name, 'domain-' + arr.name]}
 
             return render '/certificates/buy', :layout=>'application'
           end
@@ -383,6 +387,13 @@ class CertificateOrdersController < ApplicationController
   # PUT /certificate_orders/1
   # PUT /certificate_orders/1.xml
   def update_csr
+    managed_domains = params[:managed_domains]
+    additional_domains = ''
+    managed_domains.each do |domain|
+      additional_domains.concat(domain.gsub('csr-', '').gsub('domain-', '') + ' ')
+    end
+    params[:certificate_order][:certificate_contents_attributes]['0'.to_sym][:additional_domains] = additional_domains.strip
+
     @certificate_content=CertificateContent.new(
       params[:certificate_order][:certificate_contents_attributes]['0'.to_sym]
         .merge(rekey_certificate: true)
@@ -932,6 +943,7 @@ class CertificateOrdersController < ApplicationController
         current_schedules = notification_group.schedules.pluck(:schedule_type)
         unless current_schedules.include? 'Simple'
           notification_group.schedules.destroy_all
+
           notification_group.schedules.build(
               schedule_type: 'Simple',
               schedule_value: params[:schedule_simple_type]
@@ -1067,7 +1079,28 @@ class CertificateOrdersController < ApplicationController
   end
 
   def setup_managed_csr_domains(params)
-    if params[:add_to_manager] == 'true'
+    # if params[:add_to_manager] && params[:add_to_manager] == 'true'
+    #   managed_csr = ManagedCsr.new
+    #   managed_csr.body = params[:certificate_order][:certificate_contents_attributes]['0'.to_sym][:signing_request]
+    #   managed_csr.friendly_name = managed_csr.common_name || managed_csr.sha1_hash
+    #   managed_csr.ssl_account_id = current_user.ssl_account.id
+    #
+    #   unless managed_csr.save
+    #     flash[:error] = "Some error occurs while adding this csr to the csr manager."
+    #     @certificate = @certificate_order.certificate
+    #
+    #     format.html { render '/certificates/buy', :layout=>'application' }
+    #   end
+    #
+    #   @certificate_order.managed_csrs << managed_csr
+    # end
+    #
+    # @certificate_order.managed_csrs << ManagedCsr.find_by_ref(params[:managed_csr]) if params[:managed_csr] != 'none'
+    # @certificate_order.managed_domains << Domain.where(id: params[:managed_domains]) if params[:managed_domains]
+
+    if params[:managed_csr] != 'none'
+      @certificate_order.managed_csrs << ManagedCsr.find_by_ref(params[:managed_csr])
+    elsif params[:add_to_manager] == 'true'
       managed_csr = ManagedCsr.new
       managed_csr.body = params[:certificate_order][:certificate_contents_attributes]['0'.to_sym][:signing_request]
       managed_csr.friendly_name = managed_csr.common_name || managed_csr.sha1_hash
@@ -1082,8 +1115,5 @@ class CertificateOrdersController < ApplicationController
 
       @certificate_order.managed_csrs << managed_csr
     end
-
-    @certificate_order.managed_csrs << ManagedCsr.find_by_ref(params[:managed_csr]) if params[:managed_csr] != 'none'
-    @certificate_order.managed_domains << Domain.where(id: params[:managed_domains]) if params[:managed_domains]
   end
 end

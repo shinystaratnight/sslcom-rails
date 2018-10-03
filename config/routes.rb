@@ -288,6 +288,7 @@ SslCom::Application.routes.draw do
       end
       collection do
         get :country_codes
+        post :all_domains
       end
 
       member do
