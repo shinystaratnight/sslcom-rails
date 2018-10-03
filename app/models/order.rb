@@ -315,6 +315,7 @@ class Order < ActiveRecord::Base
     end
       
     state :pending do
+      event :payment_invoiced, transitions_to: :invoiced
       event :give_away, transitions_to: :payment_not_required
       event :payment_authorized, transitions_to: :authorized
       event :transaction_declined, :transitions_to => :payment_declined
@@ -666,7 +667,18 @@ class Order < ActiveRecord::Base
   def number
     SecureRandom.base64(32)
   end
-  # END number
+  
+  def invoice_denied_order(ssl_account)
+    cur_invoice_id = Invoice.get_or_create_for_team(ssl_account).try(:id)
+    if cur_invoice_id
+      update(
+        state:      'invoiced',
+        invoice_id: cur_invoice_id,
+        approval:   'approved'
+      )
+      transactions.destroy_all
+    end
+  end
 
   # BEGIN purchase
   def purchase(credit_card, options = {})
@@ -680,8 +692,12 @@ class Order < ActiveRecord::Base
         if authorization.success?
           payment_authorized!
         else
-          transaction_declined!
-          errors[:base] << authorization.message
+          if !invoice_payment? && %w{insufficient_funds do_not_honor}.include?(authorization.params[:decline_code])
+            payment_invoiced! unless invoiced?
+          else
+            transaction_declined!
+            errors[:base] << authorization.message
+          end
         end
       end
       authorization

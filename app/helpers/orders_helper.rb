@@ -436,11 +436,20 @@ module OrdersHelper
           end
         end
         SystemAudit.create(
-            owner:  current_user,
-            target: @order,
-            action: "purchase successful",
-            notes:  get_order_notes
+          owner:  current_user,
+          target: @order,
+          action: "purchase successful",
+          notes:  get_order_notes
         )
+      elsif @order.invoiced?
+        flash[:notice] = "Order has been added to invoice due to transaction failure. #{@gateway_response.message}"
+        SystemAudit.create(
+          owner:  current_user,
+          target: @order,
+          action: "order added to invoice due to denied transaction",
+          notes: @gateway_response.message
+        )
+        return true
       else
         flash.now[:error] = if @gateway_response.message=~/no match/i
           "CVV code does not match"

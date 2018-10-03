@@ -492,8 +492,12 @@ class OrdersController < ApplicationController
       if (@user ? @user.valid? : true) && !too_many_declines &&
           order_reqs_valid? && purchase_successful?
         save_user unless current_user
-        save_billing_profile unless (params[:funding_source])
-        @order.billing_profile = @profile
+        if @order.invoiced?
+          @order.invoice_denied_order(current_user.ssl_account)
+        else
+          save_billing_profile unless (params[:funding_source])
+          @order.billing_profile = @profile
+        end
         current_user.ssl_account.orders << @order
         record_order_visit(@order)
         @order.credit_affiliate(cookies)
@@ -502,7 +506,7 @@ class OrdersController < ApplicationController
           format.html { redirect_to order_path(@ssl_slug, @order) }
         elsif @certificate_order
           current_user.ssl_account.certificate_orders << @certificate_order
-          @certificate_order.pay! @gateway_response.success?
+          @certificate_order.pay! @gateway_response.success? || @order.invoiced?
           format.html { redirect_to edit_certificate_order_path(@ssl_slug, @certificate_order)}
         end
       else
@@ -665,9 +669,13 @@ class OrdersController < ApplicationController
   def domains_adjust_hybrid_payment(params)
     if current_user && order_reqs_valid? && !@too_many_declines && purchase_successful?
       save_billing_profile unless (params[:funding_source])
-      @order.billing_profile = @profile
-      @certificate_order.add_reproces_order @order
-      withdraw_funded_account((@funded_amount * 100).to_i) if @funded_amount > 0
+      if @order.invoiced?
+        @order.invoice_denied_order(current_user.ssl_account)
+      else  
+        @order.billing_profile = @profile
+        @certificate_order.add_reproces_order @order
+        withdraw_funded_account((@funded_amount * 100).to_i) if @funded_amount > 0
+      end
       record_order_visit(@order)
       ucc_update_domain_counts
       redirect_to edit_certificate_order_path(@ssl_slug, @certificate_order)
