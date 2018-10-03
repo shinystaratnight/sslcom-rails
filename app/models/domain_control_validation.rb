@@ -87,7 +87,7 @@ class DomainControlValidation < ActiveRecord::Base
     end
   end
 
-  def ssl_account(domain=nil)
+  def self.ssl_account(domain=nil)
     if domain
       SslAccount.unscoped.joins{certificate_names.domain_control_validations}.joins{certificate_contents.certificate_names.domain_control_validations}.where{(certificate_names.domain_control_validations.subject=~domain) or
           (certificate_contents.certificate_names.domain_control_validations.subject=~domain)}
@@ -96,39 +96,28 @@ class DomainControlValidation < ActiveRecord::Base
     end
   end
 
-  def self.validated?(ssl_account,domains,public_key_sha1=nil)
-    domains.each do |name|
-      name=name.downcase
-      ssl_account.all_certificate_names.each do |cn|
-        dcv=cn.domain_control_validation.where{identifier_found==1}.last
-        if cn.name.downcase==name and dcv
-          dcv.validated?(name,public_key_sha1)
-        end
-      end
+  def self.validated?(ssl_account,domain,public_key_sha1=nil)
+    name=('%'+name[1..-1]) if domain[0]=="*" # wildcard
+    name=domain.downcase
+    DomainControlValidation.joins(:certificate_name).where{(identifier_found==1) &
+        (certificate_name.name=~"#{name}") &
+        (certificate_name_id >> [ssl_account.all_certificate_names.map(&:id)])}.each do |dcv|
+      return true if dcv.validated?(name,public_key_sha1)
     end
+    false
   end
 
   # to be validated, we need to examine the domain, ssl_account, and if need be the CSR
   def validated?(domain=nil,public_key_sha1=nil)
     satisfied = ->(public_key_sha1){
-        identifier_found && responded_at && responded_at < 30.days.ago &&
-          (email_address or (public_key_sha1 ? csr.public_key_sha1.downcase==public_key_sha1.downcase : true))
+        identifier_found && !responded_at.blank? && responded_at > 30.days.ago &&
+          (!email_address.blank? or (public_key_sha1 ? csr.public_key_sha1.downcase==public_key_sha1.downcase : true))
     }
-    unless domain
-      satisfied.call(public_key_sha1)
-    else
-      if ::PublicSuffix.valid?(domain)
-        d=::PublicSuffix.parse(certificate_name.name)
-        subdomains = d.trd ? d.trd.split(".") : []
-        subdomains.shift if subdomains[0]=="*" #remove wildcard
-        0.upto(subdomains.count) do |i|
-          return true if domain.include?((subdomains.slice(0,i)<<d.domain).join(".")) and satisfied.call(public_key_sha1)
-        end
-      end
-    end
+    DomainControlValidation.domain_in_subdomains?(domain,certificate_name.name) and satisfied.call(public_key_sha1)
   end
 
   # this determines if a domain validation will satisfy another domain validation based on 2nd level subdomains and wildcards
+  # BE VERY CAREFUL as this drives validation for the entire platform including Web and API
   def self.domain_in_subdomains?(domain,multi_level_subdomain)
     if ::PublicSuffix.valid?(domain, default_rule: nil) and ::PublicSuffix.valid?(multi_level_subdomain, default_rule: nil)
       d=::PublicSuffix.parse(multi_level_subdomain)
