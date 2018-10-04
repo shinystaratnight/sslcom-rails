@@ -96,6 +96,7 @@ class DomainControlValidation < ActiveRecord::Base
     SslAccount.unscoped.joins{domains.domain_control_validations.outer}.where(domain_control_validations: {id: self.id})
   end
 
+  # this will find multi-level subdomains from a more root level domain
   def self.satisfied_validation(ssl_account,domain,public_key_sha1=nil)
     name=domain.downcase
     name=('%'+name[1..-1]) if name[0]=="*" # wildcard
@@ -133,7 +134,7 @@ class DomainControlValidation < ActiveRecord::Base
         subdomains.shift
       end
       0.upto(subdomains.count) do |i|
-        return true if ((subdomains.slice(0,i)<<d.domain).join("."))==domain
+        return true if ((subdomains.slice(0,i).reverse<<d.domain).join("."))==domain
       end
     end
     false

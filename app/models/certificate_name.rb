@@ -28,6 +28,8 @@ class CertificateName < ActiveRecord::Base
 
   scope :find_by_domains, ->(domains){includes(:domain_control_validations).where{name>>domains}}
 
+  attr_accessor :js_dcv # js domain_control_validation
+
   #will_paginate
   cattr_accessor :per_page
   @@per_page = 10

@@ -110,7 +110,7 @@ class SslAccount < ActiveRecord::Base
 
   before_validation :b_create, on: :create
   after_create  :initial_setup
-  
+
   BILLING_METHODS = ['monthly', 'due_at_checkout', 'daily']
   PULL_RESELLER = "pull_from_reseller"
   PULL_ADMIN_TECH = "pull_from_admin_and_tech"
@@ -171,7 +171,7 @@ class SslAccount < ActiveRecord::Base
   def self.human_attribute_name(attr, options={})
      HUMAN_ATTRIBUTES[attr.to_sym] || super
   end
-  
+
   def generate_funded_account
     self.funded_account = FundedAccount.new(:cents=>0)
   end
@@ -226,10 +226,26 @@ class SslAccount < ActiveRecord::Base
   end
 
   def satisfy_related_dcvs(domain,dcv)
-    all_certificate_names.each do |certificate_name|
-      if certificate_name.name!=domain and
-          DomainControlValidation.domain_in_subdomains?(domain,certificate_name.name)
-        certificate_name.domain_control_validations.create(dcv.attributes.except(*CertificateOrder::ID_AND_TIMESTAMP))
+    [].tap do |satisfied_names|
+      all_certificate_names.each do |certificate_name|
+        if certificate_name.name!=domain and
+            DomainControlValidation.domain_in_subdomains?(domain,certificate_name.name)
+          certificate_name.domain_control_validations.create(dcv.attributes.except(*CertificateOrder::ID_AND_TIMESTAMP))
+          satisfied_names << certificate_name.name
+        end
+      end
+    end
+  end
+
+  def other_dcvs_satisfy_domain(certificate_name)
+    cnames = all_certificate_names
+    cnames.each do |cn|
+      if DomainControlValidation.domain_in_subdomains?(cn.name,certificate_name.name)
+        dcv = cn.domain_control_validations.last
+        if dcv && dcv.identifier_found
+          certificate_name.js_dcv=certificate_name.domain_control_validations.create(dcv.attributes.except(*CertificateOrder::ID_AND_TIMESTAMP))
+          break
+        end
       end
     end
   end
@@ -311,7 +327,7 @@ class SslAccount < ActiveRecord::Base
       end
     end
   end
-  
+
   def set_reseller_default_prefs
     self.preferred_reminder_include_cert_admin=false
     self.preferred_reminder_include_cert_tech=false
@@ -421,7 +437,7 @@ class SslAccount < ActiveRecord::Base
       migrate_orders_system_audit(params)
     end
   end
-  
+
   def self.migrate_orders_associations(params)
     list = []
     # Funded Account Withdrawal used to pay for order
@@ -434,10 +450,10 @@ class SslAccount < ActiveRecord::Base
     list = list.flatten.compact.uniq
     params[:to_sa].orders << list if list.any?
   end
-  
+
   def self.migrate_orders_system_audit(params)
     notes_ext = "from team acct ##{params[:from_sa].acct_number} to team acct ##{params[:to_sa].acct_number} on #{DateTime.now.strftime('%c')}"
-    
+
     params[:co_list].each do |co|
       SystemAudit.create(
         owner: params[:user],
@@ -455,7 +471,7 @@ class SslAccount < ActiveRecord::Base
       )
     end
   end
-  
+
   def self.migrate_orders_to_invoices(to_sa, orders_list=[])
     invoiced_orders = orders_list.select {|io| io.state == 'invoiced'}
     pending_invoice = nil
@@ -487,7 +503,7 @@ class SslAccount < ActiveRecord::Base
       !@@reserved_routes.include?(cur_ssl_slug) &&
       cur_ssl_slug.gsub(/([a-zA-Z]|_|-|\s|\d)/, '').length == 0
   end
-  
+
   def get_invoice_label
     return 'monthly' if billing_monthly?
     return 'daily' if billing_daily?
@@ -535,7 +551,7 @@ class SslAccount < ActiveRecord::Base
   def get_invoice_pmt_description
     billing_monthly? ? Order::MI_PAYMENT : Order::DI_PAYMENT
   end
-  
+
   def get_account_owner
     Assignment.where(
       role_id: [Role.get_owner_id, Role.get_reseller_id], ssl_account_id: id
@@ -792,21 +808,21 @@ class SslAccount < ActiveRecord::Base
       end
     end
   end
-  
+
   def billing_monthly?
     billing_method == 'monthly' || no_limit
   end
-  
+
   def billing_daily?
     billing_method == 'daily'
   end
-  
+
   def invoice_required?
     billing_monthly? || billing_daily? || no_limit
   end
-  
+
   protected
-  
+
   def create_folders
     archive_folder = Folder.find_or_create_by(
         name: 'archived', archived: true, ssl_account_id: self.id
@@ -830,7 +846,7 @@ class SslAccount < ActiveRecord::Base
 
     self.update_column(:default_folder_id, default_folder.id)
   end
-    
+
   private
 
   # creates dev db from production. NOTE: This will modify the db data so use this on a COPY of the production db
