@@ -97,8 +97,13 @@ class DomainsController < ApplicationController
 
   def validate_selected
     if params[:d_name_id]
-      send_validation_email(params)
-      flash[:notice] = "DCV email sent."
+      is_sent = send_validation_email(params)
+      if is_sent
+        flash[:notice] = "DCV email sent."
+      else
+        flash[:error] = "You have not choose validation email address for all domains."
+      end
+
       redirect_to domains_path
     else
       @all_domains = []
@@ -387,8 +392,15 @@ class DomainsController < ApplicationController
     domain_ary << domain_list
     email_list << email_for_identifier
     identifier_list << identifier
-    email_list.each_with_index do |value, key|
-      OrderNotifier.dcv_email_send(nil, value, identifier_list[key], domain_ary[key], nil, @ssl_slug, 'group').deliver
+
+    if email_list[0] != ''
+      email_list.each_with_index do |value, key|
+        OrderNotifier.dcv_email_send(nil, value, identifier_list[key], domain_ary[key], nil, @ssl_slug, 'group').deliver
+      end
+
+      return true
+    else
+      return false
     end
   end
 
