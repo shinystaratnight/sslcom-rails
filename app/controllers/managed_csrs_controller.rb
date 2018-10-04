@@ -4,7 +4,10 @@ class ManagedCsrsController < ApplicationController
   before_filter :set_row_page, only: [:index]
 
   def index
-    @csrs = (current_user.ssl_account.csrs + current_user.ssl_account.managed_csrs).paginate(@p)
+    # @csrs = (current_user.ssl_account.csrs + current_user.ssl_account.managed_csrs).paginate(@p)
+    all_csrs = (current_user.ssl_account.csrs.distinct + current_user.ssl_account.managed_csrs)
+                   .sort_by{|csr| csr.created_at}.uniq{|csr| csr.common_name}
+    @csrs = all_csrs.paginate(@p)
   end
 
   def new

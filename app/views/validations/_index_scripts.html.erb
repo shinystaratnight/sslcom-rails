@@ -151,9 +151,32 @@ jQuery(function($) {
     var status_bar=null;
     $.method_type();
     $("select#domain_control_validation_email option[value='none']").remove();
+
     $('input:checkbox#select_all').click(function(event) {  //on click
       $(".check_box").prop('checked', $(this).prop('checked'));
     });
+
+    // change the status for SelectAll checkbox by individual checkbox's status.
+    $(document).on('click', '.check_box', function() {
+      var chk_validate_type_list = $('.check_box');
+      var all_checked = true;
+
+      // check whether all individual checkbox has been checked.
+      $.each(chk_validate_type_list, function(idx, chk_validate_type) {
+        if (!$(chk_validate_type).prop('checked')) {
+          all_checked = false;
+          return false;
+        }
+      });
+
+      // change the check status for SelectAll checkbox by all individual checkbox status.
+      if (all_checked) {
+        $('input:checkbox#select_all').prop('checked', true);
+      } else {
+        $('input:checkbox#select_all').prop('checked', false);
+      }
+    });
+
     $('.dropdown, .validation_status_message, .expand, .subject_column > a').click(function(){
       if($(this).parents().filter('tr').next().css('display')!='none'){
         $(this).parents().filter('tr').next().css('display', 'none');
