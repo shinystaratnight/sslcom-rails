@@ -243,7 +243,7 @@ class SslAccount < ActiveRecord::Base
       if DomainControlValidation.domain_in_subdomains?(cn.name,certificate_name.name)
         dcv = cn.domain_control_validations.last
         if dcv && dcv.identifier_found
-          certificate_name.js_dcv=certificate_name.domain_control_validations.create(dcv.attributes.except(*CertificateOrder::ID_AND_TIMESTAMP))
+          certificate_name.domain_control_validations.create(dcv.attributes.except(*CertificateOrder::ID_AND_TIMESTAMP))
           break
         end
       end

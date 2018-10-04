@@ -48,7 +48,7 @@
             var new_row = "<tr>";
             new_row += "<td><input type='checkbox' name='d_name_check[]' id='d_name_check_" + value.domain.id + "' value='" + value.domain.id + "' class='d_name_check'></td>"
             new_row += "<td>" + value.domain.name + "</td>";
-            new_row += "<td>Team</td><td>"+(value.domain.js_dcv ? "Validated" : "<a href='<%=validate_selected_domains_path(@ssl_slug)%>?d_name_check%5B%5D="+ value.domain.id +"'>Pending Validation</a></td><td>n/a</td></tr>");
+            new_row += "<td>Team</td><td><a href='<%=validate_selected_domains_path(@ssl_slug)%>?d_name_check%5B%5D="+ value.domain.id +"'>Pending Validation</a></td><td>n/a</td></tr>";
             $(new_row).insertAfter($(".heading_row"));
           });
         }
