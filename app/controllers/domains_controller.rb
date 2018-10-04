@@ -340,6 +340,8 @@ class DomainsController < ApplicationController
             dcv.satisfy!
             CaaCheck.pass?(@ssl_account.acct_number + 'domains', cn, nil)
           end
+          # find all other non validated certificate_names and validate them
+          current_user.ssl_account.satisfy_related_dcvs(cn,dcv)
         end
       end
       unless validated.empty?

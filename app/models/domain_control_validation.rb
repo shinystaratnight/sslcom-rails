@@ -87,33 +87,38 @@ class DomainControlValidation < ActiveRecord::Base
     end
   end
 
-  def self.ssl_account(domain=nil)
-    if domain
-      SslAccount.unscoped.joins{certificate_names.domain_control_validations}.joins{certificate_contents.certificate_names.domain_control_validations}.where{(certificate_names.domain_control_validations.subject=~domain) or
-          (certificate_contents.certificate_names.domain_control_validations.subject=~domain)}
-    else
-      SslAccount.unscoped.joins{domains.domain_control_validations.outer}.where(domain_control_validations: {id: self.id})
+  def self.ssl_account(domain)
+    SslAccount.unscoped.joins{certificate_names.domain_control_validations}.joins{certificate_contents.certificate_names.domain_control_validations}.where{(certificate_names.domain_control_validations.subject=~domain) or
+        (certificate_contents.certificate_names.domain_control_validations.subject=~domain)}
+  end
+
+  def ssl_account
+    SslAccount.unscoped.joins{domains.domain_control_validations.outer}.where(domain_control_validations: {id: self.id})
+  end
+
+  def self.satisfied_validation(ssl_account,domain,public_key_sha1=nil)
+    name=domain.downcase
+    name=('%'+name[1..-1]) if name[0]=="*" # wildcard
+    DomainControlValidation.joins(:certificate_name).where{(identifier_found==1) &
+        (certificate_name.name=~"#{name}") &
+        (certificate_name_id >> [ssl_account.all_certificate_names.map(&:id)])}.each do |dcv|
+      return dcv if dcv.validated?(name,public_key_sha1)
     end
   end
 
   def self.validated?(ssl_account,domain,public_key_sha1=nil)
-    name=('%'+name[1..-1]) if domain[0]=="*" # wildcard
-    name=domain.downcase
-    DomainControlValidation.joins(:certificate_name).where{(identifier_found==1) &
-        (certificate_name.name=~"#{name}") &
-        (certificate_name_id >> [ssl_account.all_certificate_names.map(&:id)])}.each do |dcv|
-      return true if dcv.validated?(name,public_key_sha1)
-    end
-    false
+    satisfied_validation(ssl_account,domain,public_key_sha1=nil).blank? ? false : true
   end
 
-  # to be validated, we need to examine the domain, ssl_account, and if need be the CSR
+  # is this dcv validated?
+  # domain - similar domain can use this dcv to satisfy validation?
+  # public_key_sha1 - against a csr
   def validated?(domain=nil,public_key_sha1=nil)
     satisfied = ->(public_key_sha1){
         identifier_found && !responded_at.blank? && responded_at > 30.days.ago &&
           (!email_address.blank? or (public_key_sha1 ? csr.public_key_sha1.downcase==public_key_sha1.downcase : true))
     }
-    DomainControlValidation.domain_in_subdomains?(domain,certificate_name.name) and satisfied.call(public_key_sha1)
+    (domain ? true : DomainControlValidation.domain_in_subdomains?(domain,certificate_name.name)) and satisfied.call(public_key_sha1)
   end
 
   # this determines if a domain validation will satisfy another domain validation based on 2nd level subdomains and wildcards

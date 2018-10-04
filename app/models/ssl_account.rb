@@ -225,6 +225,15 @@ class SslAccount < ActiveRecord::Base
     end
   end
 
+  def satisfy_related_dcvs(domain,dcv)
+    all_certificate_names.each do |certificate_name|
+      if certificate_name.name!=domain and
+          DomainControlValidation.domain_in_subdomains?(domain,certificate_name.name)
+        certificate_name.domain_control_validations.create(dcv.attributes.except(*CertificateOrder::ID_AND_TIMESTAMP))
+      end
+    end
+  end
+
   def unique_signed_certificates
     ([]).tap do |result|
       tmp_certs={}
