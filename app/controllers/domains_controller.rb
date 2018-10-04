@@ -16,6 +16,8 @@ class DomainsController < ApplicationController
     unless params[:domain_names].nil?
       domain_names = params[:domain_names].split(/[\s,']/)
       domain_names.each do |d_name|
+        next if d_name.empty?
+
         if @ssl_account.domain_names.include?(d_name)
           exist_domain_names << d_name
         else

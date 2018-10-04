@@ -130,6 +130,7 @@ notify_address: "support@ssl.com"
 disable_links_banner: false
 auto_approve_ssl_manager_register: true
 activate_monitoring: false
+activate_domains_manager: false
 
 from_email:
   orders: 'orders@ssl.com'
