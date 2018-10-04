@@ -7,10 +7,13 @@ namespace :cas do
   #
   # following example will make NAESB the default for ssl_account_id 492124 and recreate all other mappings
   # LIVE=naesb SSL_ACCOUNT_IDS=492124 RESET=true
+  # LIVE=all SSL_ACCOUNT_IDS=49214 EJBCA_ENV=development RAILS_ENV=production # for sandbox
   task seed_ejbca_profiles: :environment do
     url,shadow_url=
       if ENV['EJBCA_ENV']=="production"
         ["192.168.5.17","192.168.5.19"]
+      elsif ENV['EJBCA_ENV']=="staging"
+        ["192.168.5.19","192.168.5.19"]
       else
         ["192.168.100.5","192.168.100.5"]
       end

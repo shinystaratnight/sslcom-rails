@@ -23,6 +23,7 @@ class DomainsController < ApplicationController
           @domain.name = d_name
           @domain.ssl_account_id = @ssl_account.id
           @domain.save()
+          current_user.ssl_account.other_dcvs_satisfy_domain(@domain)
           created_domains << @domain
         end
       end
@@ -340,10 +341,12 @@ class DomainsController < ApplicationController
             dcv.satisfy!
             CaaCheck.pass?(@ssl_account.acct_number + 'domains', cn, nil)
           end
+          # find all other non validated certificate_names and validate them
+          validated<<current_user.ssl_account.satisfy_related_dcvs(cn.name,dcv)
         end
       end
       unless validated.empty?
-        flash[:notice] = "The following are now validated: #{validated.join(" ,")}"
+        flash[:notice] = "The following are now validated: #{validated.flatten.join(" ,")}"
         redirect_to domains_path
       else
         flash.now[:error] = "No domains have been validated."
