@@ -114,7 +114,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
 
       options = {}
       options[:cc] = co.certificate_content
-      options[:mapping] = options[:cc].ca || co.certificate.cas.default.last
+      options[:mapping] = options[:cc].ca || co.certificate.cas.ssl_account_or_general_default(current_user.ssl_account).last
 
       if res = SslcomCaApi.generate_for_certificate(options)
         co_token = co.certificate_order_tokens.where(is_expired: false).first
@@ -262,7 +262,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
               domain_ary = []
               domain_list = []
               emailed_domains = []
-              # successed_domains = []
+              # succeeded_domains = []
               # failed_domains = []
 
               cnames.each do |cn|
@@ -286,7 +286,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
                   else
                     if dcv_verify(dcv.dcv_method, true) == "true"
                       dcv.satisfy! unless dcv.satisfied?
-                      # successed_domains << cn.name
+                      # succeeded_domains << cn.name
                     # else
                     #   failed_domains << cn.name
                     end

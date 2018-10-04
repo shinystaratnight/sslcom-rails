@@ -26,11 +26,11 @@
         =link_to 'Managed CSRs', managed_csrs_path(@ssl_slug)
         %ul(style="float: right; display: flex; list-style: none;" )
           %li(style="margin-right: 0.5rem" )
-            =submit_tag 'validate against CSR', formaction: "#{select_csr_domains_path(@ssl_slug)}", style: "padding: 0.5rem", id: "d_name_action_bind", disabled: 'true'
+            =submit_tag 'validate with CSR', formaction: "#{select_csr_domains_path(@ssl_slug)}", style: "padding: 0.5rem", id: "d_name_action_bind", disabled: 'true'
           %li(style="margin-right: 0.5rem" )
-            =submit_tag 'validate ', formaction: "#{validate_selected_domains_path(@ssl_slug)}", style: "padding: 0.5rem", id: "d_name_action_validate", disabled: 'true'
+            =submit_tag 'validate via email', formaction: "#{validate_selected_domains_path(@ssl_slug)}", style: "padding: 0.5rem", id: "d_name_action_validate", disabled: 'true'
           %li
-            =submit_tag 'remove ', formaction: "#{remove_selected_domains_path(@ssl_slug)}", style: "padding: 0.5rem", id: "d_name_action_remove", disabled: 'true'
+            =submit_tag 'remove', formaction: "#{remove_selected_domains_path(@ssl_slug)}", style: "padding: 0.5rem", id: "d_name_action_remove", disabled: 'true'
       %tr.heading_row
         %th
         %th.name(scope="col") Name

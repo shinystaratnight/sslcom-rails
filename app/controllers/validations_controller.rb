@@ -61,7 +61,7 @@ class ValidationsController < ApplicationController
               if team_cn.name == cn.name
                 team_dcv = team_cn.domain_control_validations.last
 
-                if team_dcv && team_dcv.identifier_found
+                if team_dcv && team_dcv.validated?(cc.csr.public_key_sha1)
                   team_level_validated = true
 
                   @ds[team_cn.name] = {}
@@ -86,8 +86,10 @@ class ValidationsController < ApplicationController
             end
           end
 
-          if @all_validated && cc.validated?
-            @certificate_order.apply_for_certificate
+          if @all_validated && cc.pending_validation?
+            cc.validate!
+            @certificate_order.
+                apply_for_certificate(mapping: @certificate_order.certificate.cas.ssl_account_or_general_default(current_user.ssl_account).last)
           end
 
           @validated_domains = validated_domain_arry.join(',')
@@ -161,7 +163,8 @@ class ValidationsController < ApplicationController
       end
       if all_validated
         cc.validate! unless cc.validated?
-        @certificate_order.apply_for_certificate unless @certificate_order.certificate_content.ca.blank?
+        @certificate_order.apply_for_certificate(mapping:
+           @certificate_order.certificate.cas.ssl_account_or_general_default(current_user.ssl_account).last) unless @certificate_order.certificate_content.ca.blank?
       end
     end
   end

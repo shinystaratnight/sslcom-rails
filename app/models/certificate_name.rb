@@ -18,7 +18,7 @@ class CertificateName < ActiveRecord::Base
     end
 
     def last_method
-      where{dcv_method >> ['http','https','email']}.last
+      where{dcv_method >> ['http','https','email','cname']}.last
     end
   end
   has_many    :notification_groups_subjects, as: :subjectable
@@ -27,6 +27,8 @@ class CertificateName < ActiveRecord::Base
   attr_accessor :csr
 
   scope :find_by_domains, ->(domains){includes(:domain_control_validations).where{name>>domains}}
+
+  attr_accessor :js_dcv # js domain_control_validation
 
   #will_paginate
   cattr_accessor :per_page
