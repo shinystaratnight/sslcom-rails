@@ -14,6 +14,7 @@ class DomainControlValidation < ActiveRecord::Base
   IS_INVALID  = "is an invalid email address choice"
   FAILURE_ACTION = %w(ignore reject)
   AUTHORITY_EMAIL_ADDRESSES = %w(admin@ administrator@ webmaster@ hostmaster@ postmaster@)
+  MAX_DURATION_DAYS={email: 820}
 
   include Workflow
   workflow do
@@ -116,7 +117,7 @@ class DomainControlValidation < ActiveRecord::Base
   # public_key_sha1 - against a csr
   def validated?(domain=nil,public_key_sha1=nil)
     satisfied = ->(public_key_sha1){
-        identifier_found && !responded_at.blank? && responded_at > 30.days.ago &&
+        identifier_found && !responded_at.blank? && responded_at > DomainControlValidation::MAX_DURATION_DAYS[:email].days.ago &&
           (!email_address.blank? or (public_key_sha1 ? csr.public_key_sha1.downcase==public_key_sha1.downcase : true))
     }
     (domain ? true : DomainControlValidation.domain_in_subdomains?(domain,certificate_name.name)) and satisfied.call(public_key_sha1)

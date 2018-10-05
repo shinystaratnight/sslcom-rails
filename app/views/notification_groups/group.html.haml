@@ -35,7 +35,7 @@
         #cos-container
           =select_tag :cos_list, options_for_select(cos_list, selected: slt_cos_list),
             multiple: true, data: {placeholder: "click here to list available certificate orders to monitor."}
-      .subheading Notify These Contacts on Expiration
+      .subheading Notify These Contacts
       .group_block.clearfix
         #contacts-container
           =select_tag :contacts_list, options_for_select(contacts_list, selected: slt_contacts_list),
