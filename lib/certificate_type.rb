@@ -115,6 +115,15 @@ module CertificateType
     is_naesb?
   end
 
+  def requires_locked_registrant?
+    is_code_signing? ||
+    is_ov? ||
+    is_ev? ||
+    is_client_business? ||
+    is_client_enterprise? ||
+    is_naesb?
+  end
+
   def comodo_ca_id
     if is_ev?
       Settings.ca_certificate_id_ev
