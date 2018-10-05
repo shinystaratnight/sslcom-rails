@@ -108,7 +108,8 @@ class DomainsController < ApplicationController
         flash[:error] = "You have not choose validation email address for all domains."
       end
 
-      redirect_to domains_path
+      @validation_url = dcv_all_validate_domains_url(params)
+      redirect_to dcv_all_validate_domains_url(ssl_slug: current_user.ssl_account.ssl_slug)
     else
       @all_domains = []
       @address_choices = []

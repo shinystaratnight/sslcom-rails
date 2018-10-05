@@ -114,20 +114,20 @@ class SslcomCaApi
     names=if cert.is_smime?
       "rfc822Name="
     elsif !cert.is_code_signing?
-      (options[:san] ? options[:san].split(/\s+/) : options[:cc].all_domains).map{|d|"dNSName="+d.downcase}.join(",")
+      (options[:san] ? options[:san].split(/\s+/) : options[:cc].all_domains).map{|d|d.downcase}
     end || ""
     names << if cert.is_wildcard?
-      ",dNSName=#{CertificateContent.non_wildcard_name(common_name)}"
+      "#{CertificateContent.non_wildcard_name(common_name)}"
     elsif cert.is_basic? or cert.is_high_assurance? or cert.is_free?
       if common_name=~/\Awww\./
-        ",dNSName=#{common_name[4..-1]}"
+        "#{common_name[4..-1]}"
       else
-        ",dNSName=www.#{common_name}"
+        "www.#{common_name}"
       end
     else
       ""
     end
-    names
+    ",dNSName=#{names.join(",dNSName=")}"
   end
 
   # revoke json parameter string for REST call to EJBCA
