@@ -270,11 +270,8 @@ class CertificateOrdersController < ApplicationController
 
         # TODO: Store LockedRegistrant Data in case of CS
         setup_locked_registrant(
-            params[:certificate_order][:certificate_contents_attributes]['0'],
-            cc
-        ) if @certificate_order.certificate.is_code_signing? or
-            @certificate_order.certificate.is_ov? or
-            @certificate_order.certificate.is_ev?
+          params[:certificate_order][:certificate_contents_attributes]['0'], cc
+        ) if @certificate_order.certificate.requires_locked_registrant?
         
         setup_reusable_registrant(@certificate_order.registrant) if params[:save_for_later]
 
