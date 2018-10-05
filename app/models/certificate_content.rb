@@ -146,6 +146,7 @@ class CertificateContent < ActiveRecord::Base
       event :issue, :transitions_to => :issued
       event :reset, :transitions_to => :new
       event :validate, :transitions_to => :validated
+      event :pend_validation, :transitions_to => :pending_validation
     end
 
     state :csr_submitted do
