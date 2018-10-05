@@ -41,7 +41,7 @@
         -dcv = d.domain_control_validations.last
         -validation_status = (dcv.try(:workflow_state)=='satisfied' || !d.signed_certificates.empty?) ? 'Validated' : 'Pending validation'
         -remaining = dcv.try(:responded_at) ? DomainControlValidation::MAX_DURATION_DAYS[:email]-(Date.today-dcv.responded_at.to_date).to_i : nil
-        -remaining = 0 if remaining<0
+        -remaining = 0 if remaining && remaining < 0
         -validity_period = (validation_status=='Pending validation' || remaining.nil?) ? 'n/a' : "#{remaining} days remaining"
         -order_ref = d.certificate_content ? d.certificate_content.certificate_order.ref : ((dcv && dcv.csr_unique_value) ? dcv.csr_unique_value.csr.ref : 'Team')
         -status_link = 'Validated'
