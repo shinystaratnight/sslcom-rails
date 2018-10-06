@@ -96,13 +96,13 @@ class User < ActiveRecord::Base
       main_ssl    = main_ssl_account && is_approved_account?(main_ssl_account)
 
       # Retrieve team that was manually set as default in Teams by user
-      return SslAccount.find(main_ssl_account).id if (default_team && main_ssl)
+      break main_ssl_account if (default_team && main_ssl)
 
       if default_ssl
-        SslAccount.find(default_ssl_account).id
+        default_ssl_account
       elsif !default_ssl && main_ssl
         set_default_ssl_account main_ssl_account
-        SslAccount.find(main_ssl_account).id
+        main_ssl_account
       else
         approved_account = get_first_approved_acct
         set_default_ssl_account(approved_account) if approved_account
