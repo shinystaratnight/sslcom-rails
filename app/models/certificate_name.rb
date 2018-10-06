@@ -2,7 +2,7 @@
 require 'resolv'
 
 class CertificateName < ActiveRecord::Base
-  belongs_to  :certificate_content
+  belongs_to  :certificate_content, touch: true
   has_many    :signed_certificates, through: :certificate_content
   has_many    :caa_checks, as: :checkable
   has_many    :ca_certificate_requests, as: :api_requestable, dependent: :destroy

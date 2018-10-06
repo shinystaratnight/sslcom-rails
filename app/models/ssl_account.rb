@@ -313,6 +313,16 @@ class SslAccount < ActiveRecord::Base
     certificate_orders.not_new.count > 0
   end
 
+  # do any default certificates map to SSL.com chained Roots
+  def show_domains_manager?
+    Rails.cache.fetch("#{cache_key}/show_domains_manager") do
+      cas_certificates.default.any?{|cc|cc.certificate.is_server?}
+    end or
+    Rails.cache.fetch(CasCertificate::GENERAL_DEFAULT_CACHE) do
+      CasCertificate.general.default.any?{|cc|cc.certificate.is_server?}
+    end
+  end
+
   %W(receipt confirmation).each do |et|
     define_method("#{et}_recipients") do
       [].tap do |addys|

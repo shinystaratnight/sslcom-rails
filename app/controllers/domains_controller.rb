@@ -103,7 +103,7 @@ class DomainsController < ApplicationController
       is_sent = send_validation_email(params)
 
       if is_sent
-        flash[:notice] = "Proof of domain control validation email sent."
+        flash[:notice] = "Please check your email for the validation code and submit it below to complete validation."
       else
         flash[:error] = "You have not choose validation email address for all domains."
       end

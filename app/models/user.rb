@@ -91,24 +91,24 @@ class User < ActiveRecord::Base
   scope :search_sys_admin, ->{ joins{ roles }.where{ roles.name == Role::SYS_ADMIN } }
 
   def ssl_account(default_team=nil)
-    Rails.cache.fetch("#{cache_key}/ssl_account/#{default_team || ''}") do
+    SslAccount.find(Rails.cache.fetch("#{cache_key}/ssl_account/#{default_team || ''}") do
       default_ssl = default_ssl_account && is_approved_account?(default_ssl_account)
       main_ssl    = main_ssl_account && is_approved_account?(main_ssl_account)
 
       # Retrieve team that was manually set as default in Teams by user
-      return SslAccount.find(main_ssl_account) if (default_team && main_ssl)
+      return SslAccount.find(main_ssl_account).id if (default_team && main_ssl)
 
       if default_ssl
-        SslAccount.find default_ssl_account
+        SslAccount.find(default_ssl_account).id
       elsif !default_ssl && main_ssl
         set_default_ssl_account main_ssl_account
-        SslAccount.find main_ssl_account
+        SslAccount.find(main_ssl_account).id
       else
         approved_account = get_first_approved_acct
         set_default_ssl_account(approved_account) if approved_account
-        approved_account
+        approved_account.id
       end
-    end
+    end)
   end
 
   def is_approved_account?(target_ssl)
@@ -603,8 +603,10 @@ class User < ActiveRecord::Base
   end
 
   def role_symbols(target_account=nil)
-    Role.where(id: roles_for_account(target_account || ssl_account))
-      .map{|role| role.name.underscore.to_sym}
+    Rails.cache.fetch("#{cache_key}/role_symbols/#{target_account.try(:cache_key) || ''}") do
+      Role.where(id: roles_for_account(target_account || ssl_account))
+          .map{|role| role.name.underscore.to_sym}
+    end
   end
 
   def role_symbols_all_accounts

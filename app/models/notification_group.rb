@@ -355,9 +355,9 @@ class NotificationGroup < ActiveRecord::Base
     end
   end
 
-  def ssl_domain_connect(url, default_port)
+  def ssl_domain_connect(url, default_port,timeout=10)
     context = OpenSSL::SSL::SSLContext.new
-    Timeout.timeout(30) do
+    Timeout.timeout(timeout) do
       domain, ori_port = url.split ":"
       tcp_client = TCPSocket.new(domain, ori_port || default_port)
       self.ssl_client = OpenSSL::SSL::SSLSocket.new tcp_client, context

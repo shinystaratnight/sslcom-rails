@@ -16,6 +16,8 @@ class DomainControlValidation < ActiveRecord::Base
   AUTHORITY_EMAIL_ADDRESSES = %w(admin@ administrator@ webmaster@ hostmaster@ postmaster@)
   MAX_DURATION_DAYS={email: 820}
 
+  EMAIL_CHOICE_CACHE_EXPIRES_DAYS=1
+
   include Workflow
   workflow do
     state :new do
@@ -150,7 +152,7 @@ class DomainControlValidation < ActiveRecord::Base
   end
 
   def self.email_address_choices(name)
-    Rails.cache.fetch("email_address_choices/#{name}", expires_in: 30.days) do
+    Rails.cache.fetch("email_address_choices/#{name}", expires_in: EMAIL_CHOICE_CACHE_EXPIRES_DAYS.days) do
       return [] unless ::PublicSuffix.valid?(name.downcase)
       d=::PublicSuffix.parse(name.downcase)
       subdomains = d.trd ? d.trd.split(".") : []
