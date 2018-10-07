@@ -724,6 +724,12 @@ class Order < ActiveRecord::Base
     temp_discounts=nil
   end
 
+  def cached_certificate_orders
+    CertificateOrder.find(Rails.cache.fetch("#{cache_key}/cached_certificate_orders") do
+      certificate_orders.pluck(:id)
+    end)
+  end
+
   def is_free?
     @is_free.try(:==, true) || (cents==0)
   end

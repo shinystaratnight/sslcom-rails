@@ -91,7 +91,7 @@ class User < ActiveRecord::Base
   scope :search_sys_admin, ->{ joins{ roles }.where{ roles.name == Role::SYS_ADMIN } }
 
   def ssl_account(default_team=nil)
-    SslAccount.find(Rails.cache.fetch("#{cache_key}/ssl_account/#{default_team || ''}") do
+    sa_id=Rails.cache.fetch("#{cache_key}/ssl_account/#{(default_team and default_team.cache_key) || ''}") do
       default_ssl = default_ssl_account && is_approved_account?(default_ssl_account)
       main_ssl    = main_ssl_account && is_approved_account?(main_ssl_account)
 
@@ -108,7 +108,8 @@ class User < ActiveRecord::Base
         set_default_ssl_account(approved_account) if approved_account
         approved_account
       end
-    end)
+    end
+    SslAccount.find(sa_id) if sa_id
   end
 
   def is_approved_account?(target_ssl)
@@ -382,14 +383,18 @@ class User < ActiveRecord::Base
   end
 
   def is_disabled?(target_ssl=nil)
-    ssl = target_ssl.nil? ? ssl_account : target_ssl
-    return true if ssl.nil?
-    ssl_account_users.where(ssl_account_id: ssl.id)
-      .map(&:user_enabled).include?(false)
+    Rails.cache.fetch("#{cache_key}/is_disabled/#{target_ssl.try(:cache_key)}") do
+      ssl = target_ssl || ssl_account
+      return true if ssl.nil?
+      ssl_account_users.where(ssl_account_id: ssl.id)
+          .map(&:user_enabled).include?(false)
+    end
   end
 
   def is_admin_disabled?
-    !ssl_account_users.map(&:user_enabled).include?(true)
+    Rails.cache.fetch("#{cache_key}/is_admin_disabled/#{target_ssl.try(:cache_key)}") do
+      !ssl_account_users.map(&:user_enabled).include?(true)
+    end
   end
 
   def deliver_auto_activation_confirmation!
@@ -560,18 +565,22 @@ class User < ActiveRecord::Base
 
   def self.get_user_accounts_roles(user)
     # e.g.: {17198:[4], 29:[17, 18], 15:[17, 18, 19, 20]}
-    user.ssl_accounts.inject({}) do |all, s|
-      all[s.id] = user.assignments.where(ssl_account_id: s.id).pluck(:role_id).uniq
-      all
+    Rails.cache.fetch("#{user.cache_key}/get_user_accounts_roles") do
+      user.ssl_accounts.inject({}) do |all, s|
+        all[s.id] = user.assignments.where(ssl_account_id: s.id).pluck(:role_id).uniq
+        all
+      end
     end
   end
 
   def self.get_user_accounts_roles_names(user)
     # e.g.: {'team_1': ['owner'], 'team_2': ['account_admin', 'installer']}
-    user.ssl_accounts.inject({}) do |all, s|
-      all[s.get_team_name] = user.assignments.where(ssl_account_id: s.id)
-        .map(&:role).uniq.map(&:name)
-      all
+    Rails.cache.fetch("#{user.cache_key}/get_user_accounts_roles_names") do
+      user.ssl_accounts.inject({}) do |all, s|
+        all[s.get_team_name] = user.assignments.where(ssl_account_id: s.id)
+                                   .map(&:role).uniq.map(&:name)
+        all
+      end
     end
   end
 
