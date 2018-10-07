@@ -124,8 +124,6 @@ class SslcomCaApi
       else
         "www.#{common_name}"
       end
-    else
-      ""
     end
     "dNSName=#{names.compact.uniq.join(",dNSName=")}"
   end
