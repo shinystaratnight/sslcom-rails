@@ -255,7 +255,7 @@ class OrdersController < ApplicationController
   
   def revoke
     if params[:revoke_all]
-      list = @order.certificate_orders
+      list = @order.cached_certificate_orders
       list.each {|co| co.revoke!(params[:revoke_reason], current_user)}
       
       SystemAudit.create(
@@ -286,7 +286,7 @@ class OrdersController < ApplicationController
         notify_ca(params["refund_reason"])
       else # partial refunds or cancel line item
         @target = @order.line_items.find {|li|li.sellable.try(:ref)==params["partial"]}
-        @target ||= @order.certificate_orders.find { |co| co.ref==params["partial"] }
+        @target ||= @order.cached_certificate_orders.find { |co| co.ref==params["partial"] }
         refund_partial_amount(params) if params["return_funds"]
         refund_partial_cancel(params) if params["cancel_only"]
       end
@@ -447,10 +447,10 @@ class OrdersController < ApplicationController
     if @order.description =~ /Deposit|Funded Account Withdrawal/i
       @deposit = @order
     elsif @order.line_items.count==1
-      @certificate_order = @order.certificate_orders.uniq.last
+      @certificate_order = @order.cached_certificate_orders.uniq.last
     else
       certificates=[]
-      @certificate_orders = @order.certificate_orders.uniq.map{|co|
+      @certificate_orders = @order.cached_certificate_orders.uniq.map{|co|
         unless certificates.include?(co.certificate)
           certificates<<co.certificate
           co
@@ -720,7 +720,7 @@ class OrdersController < ApplicationController
       )
       @order.add_certificate_orders([@certificate_order])
       if @order.save
-        @certificate_order = @order.certificate_orders.first
+        @certificate_order = @order.cached_certificate_orders.first
         @certificate_order.update(
           ssl_account_id: ssl_account_id, workflow_state: 'paid'
         )
@@ -730,7 +730,7 @@ class OrdersController < ApplicationController
       @order.billable_id = ssl_account_id
       @order.billable_type = 'SslAccount'
       if @order.save
-        @order.certificate_orders.update_all(
+        @order.cached_certificate_orders.update_all(
           ssl_account_id: ssl_account_id, workflow_state: 'paid'
         )
       end

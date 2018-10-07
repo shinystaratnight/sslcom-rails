@@ -339,7 +339,7 @@ class UserSessionsController < ApplicationController
         @duo_account = current_user.ssl_account(:default_team).duo_account
         @authenticated_user = Duo.verify_response(@duo_account ? @duo_account.duo_ikey : "", @duo_account ? @duo_account.duo_skey : "", @duo_account ? @duo_account.duo_akey : "", params['sig_response'])
       end
-    end
+    end if current_user
     
     if @authenticated_user
       session[:duo_auth] = true

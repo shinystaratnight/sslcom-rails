@@ -6,7 +6,7 @@ Date: <%=@order.created_at.strftime("%B %d, %Y %T")%>
 Reference Number: <%=@order.reference_number%>
 Description:
 
-<%@order.certificate_orders.each do |cert|-%>
+<%@order.cached_certificate_orders.each do |cert|-%>
 
   <%=cert.description+" ("+cert.quantity.to_s+" qty) ("+cert.price.format+" ea)"%>
   <%order_line_items(cert, true).each do |item|-%>
