@@ -765,8 +765,8 @@ namespace :cas do
         end
       }
     }
-  end
-  Rails.cache.fetch(CasCertificate::GENERAL_DEFAULT_CACHE) do
-    CasCertificate.general.default.any?{|cc|cc.certificate.is_server?}
+    Rails.cache.fetch(CasCertificate::GENERAL_DEFAULT_CACHE) do
+      CasCertificate.general.default.any?{|cc|cc.certificate.is_server?}
+    end
   end
 end

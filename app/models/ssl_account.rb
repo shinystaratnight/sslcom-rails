@@ -503,7 +503,7 @@ class SslAccount < ActiveRecord::Base
   end
 
   def primary_user
-    User.unscoped{users.first}
+    users.first
   end
 
   def self.ssl_slug_valid?(slug_str)

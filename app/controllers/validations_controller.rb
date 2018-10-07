@@ -175,8 +175,7 @@ class ValidationsController < ApplicationController
     if current_user
       domain_name_arry = params['domain_names'].split(',')
       # order_number = CertificateOrder.find_by_ref(params['certificate_order_id']).external_order_number
-      certificate_order = (current_user.is_system_admins? ? CertificateOrder :
-                               current_user.ssl_account.certificate_orders).find_by_ref(params[:certificate_order_id])
+      certificate_order = current_user.certificate_order_by_ref(params[:certificate_order_id])
       certificate_content = certificate_order.certificate_content
       certificate_names = certificate_content.certificate_names
 

@@ -645,21 +645,19 @@ class Order < ActiveRecord::Base
   
   def get_reprocess_orders
     result = {}
-    if certificate_orders.any?
-      certificate_orders.each do |co|
-        current = []
-        co.orders.order(created_at: :asc).each do |o|
-          if o.reprocess_ucc_order?
-            current << {
-              date:       o.created_at.strftime('%F'),
-              order_ref:  o.reference_number,
-              domains:    o.get_reprocess_domains,
-              amount:     o.get_full_reprocess_format
-            }
-          end
+    certificate_orders.each do |co|
+      current = []
+      co.orders.order(created_at: :asc).each do |o|
+        if o.reprocess_ucc_order?
+          current << {
+            date:       o.created_at.strftime('%F'),
+            order_ref:  o.reference_number,
+            domains:    o.get_reprocess_domains,
+            amount:     o.get_full_reprocess_format
+          }
         end
-        result[co.ref] = current if current.any?
       end
+      result[co.ref] = current if current.any?
     end
     result
   end

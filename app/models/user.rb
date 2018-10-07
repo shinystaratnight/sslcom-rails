@@ -169,23 +169,23 @@ class User < ActiveRecord::Base
   end
 
   def total_teams_owned(user_id=nil)
-    user = user_id ? User.find(user_id) : self
+    user = self_or_other(user_id)
     user.assignments.where(role_id: Role.get_owner_id).map(&:ssl_account).uniq.compact
   end
 
   def total_teams_can_manage_users(user_id=nil)
-    user = user_id ? User.find(user_id) : self
+    user = self_or_other(user_id)
     user.assignments.where(role_id: Role.can_manage_users).map(&:ssl_account).uniq.compact
   end
 
   def total_teams_cannot_manage_users(user_id=nil)
-    user = user_id ? User.find(user_id) : self
+    user = self_or_other(user_id)
     user.ssl_accounts - user.assignments.where(role_id: Role.cannot_be_managed)
       .map(&:ssl_account).uniq.compact
   end
 
   def max_teams_reached?(user_id=nil)
-    user = user_id ? User.find(user_id) : self
+    user = self_or_other(user_id)
     total_teams_owned(user.id).count >= user.max_teams
   end
 
@@ -560,7 +560,6 @@ class User < ActiveRecord::Base
 
   def self.get_user_accounts_roles(user)
     # e.g.: {17198:[4], 29:[17, 18], 15:[17, 18, 19, 20]}
-    mapped_roles = Role.all_cached.map{|r| [r.id, r.name]}.to_h
     user.ssl_accounts.inject({}) do |all, s|
       all[s.id] = user.assignments.where(ssl_account_id: s.id).pluck(:role_id).uniq
       all
@@ -569,7 +568,6 @@ class User < ActiveRecord::Base
 
   def self.get_user_accounts_roles_names(user)
     # e.g.: {'team_1': ['owner'], 'team_2': ['account_admin', 'installer']}
-    mapped_roles = Role.all_cached.map{|r| [r.id, r.name]}.to_h
     user.ssl_accounts.inject({}) do |all, s|
       all[s.get_team_name] = user.assignments.where(ssl_account_id: s.id)
         .map(&:role).uniq.map(&:name)
@@ -611,6 +609,13 @@ class User < ActiveRecord::Base
 
   def role_symbols_all_accounts
     roles.map{|role| role.name.underscore.to_sym}
+  end
+
+  def certificate_order_by_ref(ref)
+    Rails.cache.fetch("#{cache_key}/certificate_order_id/#{ref}") do
+      CertificateOrder.unscoped{(is_system_admins? ? CertificateOrder :
+                                     ssl_account.certificate_orders).find_by_ref(ref)}
+    end
   end
 
   # check for any SslAccount records do not have roles, users or an owner
@@ -954,7 +959,11 @@ class User < ActiveRecord::Base
   end
 
   private
-  
+
+  def self_or_other(user_id)
+    user = user_id ? User.find(user_id) : self
+  end
+
   def approve_account(params)
     ssl = get_ssl_acct_user_for_approval(params)
     ssl.update(approved: true, token_expires: nil, approval_token: nil) if ssl

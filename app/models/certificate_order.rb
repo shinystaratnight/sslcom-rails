@@ -679,8 +679,10 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def certificate
-    sub_order_items[0].product_variant_item.certificate if sub_order_items[0] &&
-        sub_order_items[0].product_variant_item
+    Rails.cache.fetch("#{cache_key}/certificate") do
+      sub_order_items[0].product_variant_item.certificate if sub_order_items[0] &&
+          sub_order_items[0].product_variant_item
+    end
   end
 
   def signed_certificate
