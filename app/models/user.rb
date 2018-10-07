@@ -392,7 +392,7 @@ class User < ActiveRecord::Base
   end
 
   def is_admin_disabled?
-    Rails.cache.fetch("#{cache_key}/is_admin_disabled/#{target_ssl.try(:cache_key)}") do
+    Rails.cache.fetch("#{cache_key}/is_admin_disabled}") do
       !ssl_account_users.map(&:user_enabled).include?(true)
     end
   end
