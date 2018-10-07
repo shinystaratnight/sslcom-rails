@@ -106,7 +106,7 @@ class User < ActiveRecord::Base
       else
         approved_account = get_first_approved_acct
         set_default_ssl_account(approved_account) if approved_account
-        approved_account.id
+        approved_account
       end
     end)
   end
