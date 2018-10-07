@@ -124,7 +124,7 @@
                     ][
                     %a{style:"cursor: pointer;", onclick: "adjust_funds_ssl_account('#{ssl_account.to_slug}','#{ssl_account.get_team_name}')"} $#{ssl_account.funded_account.try :amount}
                     ][
-                    =link_to "orders(#{ssl_account.certificate_orders_count})", certificate_orders_path(slug_params)
+                    =link_to "orders(#{ssl_account.cached_certificate_orders_count})", certificate_orders_path(slug_params)
                     ][
                     =link_to "transactions(#{ssl_account.orders.count})", orders_path(slug_params)
                     ][

@@ -574,6 +574,12 @@ class SslAccount < ActiveRecord::Base
     end))
   end
 
+  def cached_certificate_orders_count
+    CertificateOrder.unscoped.where(id: (Rails.cache.fetch("#{cache_key}/certificate_orders") do
+      certificate_orders.pluck(:id)
+    end))
+  end
+
   def cached_certificate_orders_pending
     CertificateOrder.unscoped.where(id: (Rails.cache.fetch("#{cache_key}/certificate_orders_pending") do
       certificate_orders.pending.pluck(:id)
