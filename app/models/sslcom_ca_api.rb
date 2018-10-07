@@ -127,7 +127,7 @@ class SslcomCaApi
     else
       ""
     end
-    ",dNSName=#{names.join(",dNSName=")}"
+    "dNSName=#{names.compact.uniq.join(",dNSName=")}"
   end
 
   # revoke json parameter string for REST call to EJBCA
