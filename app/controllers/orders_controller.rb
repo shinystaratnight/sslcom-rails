@@ -505,7 +505,7 @@ class OrdersController < ApplicationController
           clear_cart
           format.html { redirect_to order_path(@ssl_slug, @order) }
         elsif @certificate_order
-          current_user.ssl_account.certificate_orders << @certificate_order
+          current_user.ssl_account.cached_certificate_orders << @certificate_order
           @certificate_order.pay! @gateway_response.success? || @order.invoiced?
           format.html { redirect_to edit_certificate_order_path(@ssl_slug, @certificate_order)}
         end
@@ -575,7 +575,7 @@ class OrdersController < ApplicationController
           clear_cart
           format.html { redirect_to @order }
         elsif @certificate_order
-          current_user.ssl_account.certificate_orders << @certificate_order
+          current_user.ssl_account.cached_certificate_orders << @certificate_order
           @certificate_order.pay! true
           format.html { redirect_to edit_certificate_order_path(@certificate_order)}
         end
@@ -782,7 +782,7 @@ class OrdersController < ApplicationController
       @certificate_order = if current_user.is_system_admins?
         CertificateOrder.find_by(ref: params[:co_ref])
       else
-        current_user.ssl_account.certificate_orders.find_by(ref: params[:co_ref])
+        current_user.ssl_account.cached_certificate_orders.find_by(ref: params[:co_ref])
       end
       @ssl_account = @certificate_order.ssl_account
       @certificate_content = @certificate_order.certificate_contents.find_by(ref: params[:cc_ref])

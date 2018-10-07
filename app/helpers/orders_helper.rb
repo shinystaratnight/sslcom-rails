@@ -314,7 +314,7 @@ module OrdersHelper
     @target_amount       = (@charge_amount.blank? || @charge_amount == 0) ? @order_amount : @charge_amount
     
     if @reprocess_ucc || @renew_ucc || @ucc_csr_submit
-      @certificate_order   = @ssl_account.certificate_orders.find_by(ref: params[:order][:co_ref])
+      @certificate_order   = @ssl_account.cached_certificate_orders.find_by(ref: params[:order][:co_ref])
       @certificate_content = @certificate_order.certificate_contents.find_by(ref: params[:order][:cc_ref])
     end
   end

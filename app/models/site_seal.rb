@@ -158,6 +158,6 @@ class SiteSeal < ActiveRecord::Base
 
     # if want to search by domain, but may cause confusion
     # cn=certificate_order.common_name
-    # certificate_order.ssl_account.certificate_orders.search_with_csr(cn).last
+    # certificate_order.ssl_account.cached_certificate_orders.search_with_csr(cn).last
   end
 end

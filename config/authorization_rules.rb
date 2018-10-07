@@ -340,7 +340,7 @@ authorization do
     end
 
     has_permission_on :physical_tokens, :to => [:read] do
-      if_attribute certificate_order_id: is_in {user.ssl_account.certificate_orders.map(&:id).uniq
+      if_attribute certificate_order_id: is_in {user.ssl_account.cached_certificate_orders.map(&:id).uniq
       }
     end
 
@@ -389,7 +389,7 @@ authorization do
     end
 
     has_permission_on :physical_tokens, :to => [:read] do
-      if_attribute certificate_order_id: is_in {user.ssl_account.certificate_orders.map(&:id).uniq
+      if_attribute certificate_order_id: is_in {user.ssl_account.cached_certificate_orders.map(&:id).uniq
       }
     end
 

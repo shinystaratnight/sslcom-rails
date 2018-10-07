@@ -85,12 +85,12 @@ When /\A(?:he|she|I) applies the order to the reseller account\z/ do
     lambda{
       @browser.button(:src, /next_bl\.gif/).click
     }.should change {User.find_by_login(@current_user.login).ssl_account.funded_account.cents}.
-    by(-@current_user.ssl_account.certificate_orders.last.amount)
+    by(-@current_user.ssl_account.cached_certificate_orders.last.amount)
   end
 end
 
 When /\A(?:he|she|I) clicks the link to the current certificate order in progress\z/ do
-  co = @current_order || @current_user.ssl_account.certificate_orders.last
+  co = @current_order || @current_user.ssl_account.cached_certificate_orders.last
   @browser.link(:href, Regexp.new(certificate_order_path(co.ref))).click
 end
 
@@ -147,7 +147,7 @@ When /\A(?:he|she|I) (re)?submits? the variable ['"]([^'"]*)['"] as the signed c
 end
 
 When /\A(?:he|she|I) clicks? the action link for the currently displayed order\z/ do
-  co = @current_order || @current_user.ssl_account.certificate_orders.last
+  co = @current_order || @current_user.ssl_account.cached_certificate_orders.last
   @browser.link(:href, Regexp.new(edit_certificate_order_path(co.ref))).click
 end
 
@@ -229,7 +229,7 @@ Then /\Athere should ['"]([^'"]*)['"] be an (expiring|expired) indicator\z/ do |
 end
 
 Then /\A(?:he|she|I) should see line items for this order\z/ do
-  @browser.text.should include(order_line_items(@current_user.ssl_account.certificate_orders.last))
+  @browser.text.should include(order_line_items(@current_user.ssl_account.cached_certificate_orders.last))
 end
 
 Then /\A(?:her|his|my) cart should be empty\z/ do
@@ -294,13 +294,13 @@ end
 
 When /\A(?:he|she|I) request domain control validation be sent during checkout\z/ do
   @domain_control_validation_count = DomainControlValidation.count
-  visit(new_certificate_order_validation_path(@user.ssl_account.certificate_orders.last))
+  visit(new_certificate_order_validation_path(@user.ssl_account.cached_certificate_orders.last))
   find("#upload_files").click
 end
 
 When /\A(?:he|she|I) request domain control validation from (\S+)\z/ do |email|
   @domain_control_validation_count = DomainControlValidation.count
-  request_dcv_from_email(@user.ssl_account.certificate_orders.last, email)
+  request_dcv_from_email(@user.ssl_account.cached_certificate_orders.last, email)
 end
 
 When /\A(?:he|she|I) forward domain control validation request to (\S+)\z/ do |email|

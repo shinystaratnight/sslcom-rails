@@ -568,6 +568,48 @@ class SslAccount < ActiveRecord::Base
     ).map(&:user).first
   end
 
+  def cached_certificate_orders
+    CertificateOrder.unscoped.where(id: (Rails.cache.fetch("#{cache_key}/certificate_orders") do
+      certificate_orders.pluck(:id)
+    end))
+  end
+
+  def cached_certificate_orders_pending
+    CertificateOrder.unscoped.where(id: (Rails.cache.fetch("#{cache_key}/certificate_orders_pending") do
+      certificate_orders.pending.pluck(:id)
+    end))
+  end
+
+  def cached_certificate_orders_incomplete
+    CertificateOrder.unscoped.where(id: (Rails.cache.fetch("#{cache_key}/certificate_orders_incomplete") do
+      certificate_orders.incomplete.pluck(:id)
+    end))
+  end
+
+  def cached_certificate_orders_credits
+    CertificateOrder.unscoped.where(id: (Rails.cache.fetch("#{cache_key}/certificate_orders_credits") do
+      certificate_orders.credits.pluck(:id)
+    end))
+  end
+
+  def cached_certificate_orders_credits_count
+    Rails.cache.fetch("#{cache_key}/certificate_orders_credits_count") do
+      cached_certificate_orders_credits.count
+    end
+  end
+
+  def cached_certificate_orders_pending_count
+    Rails.cache.fetch("#{cache_key}/certificate_orders_pending_count") do
+      cached_certificate_orders_pending.count
+    end
+  end
+
+  def cached_certificate_orders_incomplete_count
+    Rails.cache.fetch("#{cache_key}/certificate_orders_incomplete_count") do
+      cached_certificate_orders_incomplete.count
+    end
+  end
+
   def get_team_name
     company_name || acct_number
   end

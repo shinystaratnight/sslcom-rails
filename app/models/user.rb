@@ -610,7 +610,7 @@ class User < ActiveRecord::Base
   end
 
   def role_symbols(target_account=nil)
-    Rails.cache.fetch("#{cache_key}/role_symbols/#{target_account.try(:cache_key) || ''}") do
+    Rails.cache.fetch("#{cache_key}/role_symbols/#{target_account.try(:cache_key)}") do
       Role.where(id: roles_for_account(target_account || ssl_account))
           .map{|role| role.name.underscore.to_sym}
     end
@@ -623,7 +623,7 @@ class User < ActiveRecord::Base
   def certificate_order_by_ref(ref)
     Rails.cache.fetch("#{cache_key}/certificate_order_id/#{ref}") do
       CertificateOrder.unscoped{(is_system_admins? ? CertificateOrder :
-                                     ssl_account.certificate_orders).find_by_ref(ref)}
+                                     ssl_account.cached_certificate_orders).find_by_ref(ref)}
     end
   end
 

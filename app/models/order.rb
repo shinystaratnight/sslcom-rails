@@ -725,9 +725,9 @@ class Order < ActiveRecord::Base
   end
 
   def cached_certificate_orders
-    CertificateOrder.find(Rails.cache.fetch("#{cache_key}/cached_certificate_orders") do
+    CertificateOrder.unscoped.where(id: (Rails.cache.fetch("#{cache_key}/cached_certificate_orders") do
       certificate_orders.pluck(:id)
-    end)
+    end))
   end
 
   def is_free?

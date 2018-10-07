@@ -153,7 +153,7 @@ class ApplicationController < ActionController::Base
 
   def free_qty_limit
     qty=current_user ?
-        Certificate::FREE_CERTS_CART_LIMIT - current_user.ssl_account.certificate_orders.unused_free_credits.count :
+        Certificate::FREE_CERTS_CART_LIMIT - current_user.ssl_account.cached_certificate_orders.unused_free_credits.count :
         Certificate::FREE_CERTS_CART_LIMIT
     (qty <= 0) ? 0 : qty
   end
@@ -233,27 +233,27 @@ class ApplicationController < ActionController::Base
       # (current_user.is_admin? ?
       #   (CertificateOrder.unscoped{
       #     (@ssl_account.try(:certificate_orders) || CertificateOrder).search_with_csr(params[:search], options)}) :
-      #       current_user.ssl_account.certificate_orders.search_with_csr(params[:search], options)).order(updated_at: :desc)
+      #       current_user.ssl_account.cached_certificate_orders.search_with_csr(params[:search], options)).order(updated_at: :desc)
 
       (current_user.is_admin? ?
            (CertificateOrder.unscoped{
              (@ssl_account.try(:certificate_orders) || CertificateOrder).search_with_csr(params[:search], options)
            }) :
            (current_user.role_symbols(current_user.ssl_account).join(',').split(',').include?(Role::INDIVIDUAL_CERTIFICATE) ?
-                 (current_user.ssl_account.certificate_orders.search_assigned(current_user.id).search_with_csr(params[:search], options)) :
-                 (current_user.ssl_account.certificate_orders.search_with_csr(params[:search], options))
+                 (current_user.ssl_account.cached_certificate_orders.search_assigned(current_user.id).search_with_csr(params[:search], options)) :
+                 (current_user.ssl_account.cached_certificate_orders.search_with_csr(params[:search], options))
            )
       ).order(updated_at: :desc)
     else
       # (current_user.is_admin? ?
       #     (@ssl_account.try(:certificate_orders) || CertificateOrder).not_test.not_new(options) :
-      #       current_user.ssl_account.certificate_orders.not_test.not_new(options)).order(updated_at: :desc)
+      #       current_user.ssl_account.cached_certificate_orders.not_test.not_new(options)).order(updated_at: :desc)
 
       (current_user.is_admin? ?
            (@ssl_account.try(:certificate_orders) || CertificateOrder).not_test.not_new(options) :
            (current_user.role_symbols(current_user.ssl_account).join(',').split(',').include?(Role::INDIVIDUAL_CERTIFICATE) ?
-                 (current_user.ssl_account.certificate_orders.not_test.not_new(options).search_assigned(current_user.id)) :
-                 (current_user.ssl_account.certificate_orders.not_test.not_new(options))
+                 (current_user.ssl_account.cached_certificate_orders.not_test.not_new(options).search_assigned(current_user.id)) :
+                 (current_user.ssl_account.cached_certificate_orders.not_test.not_new(options))
            )
       ).order(updated_at: :desc)
     end
@@ -333,7 +333,7 @@ class ApplicationController < ActionController::Base
 
   def parse_certificate_orders
     if params[:certificate_order]
-      @certificate_order = current_user.ssl_account.certificate_orders.current
+      @certificate_order = current_user.ssl_account.cached_certificate_orders.current
       @order = current_order
     else
       setup_orders

@@ -476,7 +476,7 @@ class CertificateOrdersController < ApplicationController
   def credits
     @certificate_orders = (current_user.is_admin? ?
       CertificateOrder.where{(workflow_state=='paid') & (certificate_contents.workflow_state == "new")} :
-        current_user.ssl_account.certificate_orders.credits).paginate(@p)
+        current_user.ssl_account.cached_certificate_orders_credits).paginate(@p)
 
     respond_to do |format|
       format.html { render :action=>:index}
@@ -487,7 +487,7 @@ class CertificateOrdersController < ApplicationController
   def pending
     @certificate_orders = (current_user.is_admin? ?
       CertificateOrder.pending :
-        current_user.ssl_account.certificate_orders.pending).paginate(@p)
+        current_user.ssl_account.cached_certificate_orders_pending).paginate(@p)
 
     respond_to do |format|
       format.html { render :action=>:index}
@@ -499,8 +499,8 @@ class CertificateOrdersController < ApplicationController
     @certificate_orders = (current_user.is_admin? ?
       CertificateOrder.send(params[:id].to_sym) :
       (current_user.role_symbols(current_user.ssl_account).join(',').split(',').include?(Role::INDIVIDUAL_CERTIFICATE) ?
-           (current_user.ssl_account.certificate_orders.search_assigned(current_user.id).send(params[:id].to_sym)) :
-           (current_user.ssl_account.certificate_orders.send(params[:id].to_sym))
+           (current_user.ssl_account.cached_certificate_orders.search_assigned(current_user.id).send(params[:id].to_sym)) :
+           (current_user.ssl_account.cached_certificate_orders.send(params[:id].to_sym))
       )).paginate(@p)
 
     respond_to do |format|
@@ -512,8 +512,8 @@ class CertificateOrdersController < ApplicationController
   def order_by_csr
     @certificate_orders = (current_user.is_admin? ?
       CertificateOrder.unscoped{CertificateOrder.not_test} :
-        current_user.ssl_account.certificate_orders.unscoped{
-          current_user.ssl_account.certificate_orders.not_test}).order_by_csr.paginate(@p)
+        current_user.ssl_account.cached_certificate_orders.unscoped{
+          current_user.ssl_account.cached_certificate_orders.not_test}).order_by_csr.paginate(@p)
 
     respond_to do |format|
       format.html { render :action=>:index}
@@ -523,7 +523,7 @@ class CertificateOrdersController < ApplicationController
 
   def filter_by
     @certificate_orders = current_user.is_admin? ?
-        (@ssl_account.try(:certificate_orders) || CertificateOrder) : current_user.ssl_account.certificate_orders
+        (@ssl_account.try(:certificate_orders) || CertificateOrder) : current_user.ssl_account.cached_certificate_orders
     @certificate_orders = @certificate_orders.not_test.not_new.filter_by(params[:id]).paginate(@p)
 
     respond_to do |format|
@@ -537,7 +537,7 @@ class CertificateOrdersController < ApplicationController
   def incomplete
     @certificate_orders = (current_user.is_admin? ?
       CertificateOrder.incomplete :
-      current_user.ssl_account.certificate_orders.incomplete).paginate(@p)
+      current_user.ssl_account.cached_certificate_orders_incomplete).paginate(@p)
 
     respond_to do |format|
       format.html { render :action=>:index}
@@ -550,7 +550,7 @@ class CertificateOrdersController < ApplicationController
   def reprocessing
     @certificate_orders = (current_user.is_admin? ?
       CertificateOrder.reprocessing :
-      current_user.ssl_account.certificate_orders.reprocessing).paginate(@p)
+      current_user.ssl_account.cached_certificate_orders.reprocessing).paginate(@p)
 
     respond_to do |format|
       format.html { render :action=>:index}

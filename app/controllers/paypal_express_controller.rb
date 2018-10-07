@@ -104,7 +104,7 @@ class PaypalExpressController < ApplicationController
       else
         auth_code = "#paidviapaypal#{purchase.authorization}"
         if @domains_adjustment
-          @certificate_order = @ssl_account.certificate_orders.find_by(ref: params[:co_ref])
+          @certificate_order = @ssl_account.cached_certificate_orders.find_by(ref: params[:co_ref])
           @certificate_content = @ssl_account.certificate_contents.find_by(ref: params[:cc_ref])
           domains_adjustment_order(purchase_params)
           funded_account_credit(purchase_params)
