@@ -499,8 +499,8 @@ class CertificateOrdersController < ApplicationController
     @certificate_orders = (current_user.is_admin? ?
       CertificateOrder.send(params[:id].to_sym) :
       (current_user.role_symbols(current_user.ssl_account).join(',').split(',').include?(Role::INDIVIDUAL_CERTIFICATE) ?
-           (current_user.ssl_account.cached_certificate_orders.search_assigned(current_user.id).send(params[:id].to_sym)) :
-           (current_user.ssl_account.cached_certificate_orders.send(params[:id].to_sym))
+           (current_user.ssl_account.cached_certificate_orders.joins{:certificate_contents}.search_assigned(current_user.id).send(params[:id].to_sym)) :
+           (current_user.ssl_account.cached_certificate_orders.joins{:certificate_contents}.send(params[:id].to_sym))
       )).paginate(@p)
 
     respond_to do |format|

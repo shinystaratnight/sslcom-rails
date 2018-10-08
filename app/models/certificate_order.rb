@@ -710,9 +710,11 @@ class CertificateOrder < ActiveRecord::Base
 
   def remaining_days(options={round: false, duration: :order})
     tot, used = total_days(options), used_days(options)
-    if tot && used
+    if tot && used && tot>used
       days = total_days(options)-used_days(options)
       (options[:round] ? days.round : days)
+    else
+      0
     end
   end
 
@@ -1101,7 +1103,7 @@ class CertificateOrder < ActiveRecord::Base
           options[:current_user].is_super_user?
     else
       ComodoApi.apply_for_certificate(self, options) if ca_name=="comodo"
-    end
+    end if remaining_days>0
   end
 
   def retrieve_ca_cert(email_customer=false)

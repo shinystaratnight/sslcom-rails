@@ -290,7 +290,9 @@ class SslAccount < ActiveRecord::Base
   end
 
   def is_registered_reseller?
-    has_role?('reseller') && reseller.try("complete?")
+    Rails.cache.fetch("#{cache_key}/is_registered_reseller") do
+      has_role?('reseller') && reseller.try("complete?")
+    end
   end
 
   def clear_new_certificate_orders
@@ -540,6 +542,10 @@ class SslAccount < ActiveRecord::Base
   # concatenate team (Domain) and order scoped certificate_names
   def all_certificate_names
     self.certificate_names+self.domains
+  end
+
+  def all_csrs
+    Csr.find_by_sql("SELECT `csrs`.* FROM `csrs` INNER JOIN `certificate_contents` ON `csrs`.`certificate_content_id` = `certificate_contents`.`id` INNER JOIN `certificate_orders` ON `certificate_contents`.`certificate_order_id` = `certificate_orders`.`id` WHERE `certificate_orders`.`ssl_account_id` = #{id} OR `csrs`.`ssl_account_id` = #{id}")
   end
 
   def validated_domains
