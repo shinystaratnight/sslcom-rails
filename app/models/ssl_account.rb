@@ -571,7 +571,7 @@ class SslAccount < ActiveRecord::Base
   def cached_certificate_orders
     CertificateOrder.unscoped.where(id: (Rails.cache.fetch("#{cache_key}/certificate_orders") do
       certificate_orders.pluck(:id)
-    end))
+    end)).order(created_at: :desc)
   end
 
   def cached_certificate_orders_count
@@ -583,19 +583,19 @@ class SslAccount < ActiveRecord::Base
   def cached_certificate_orders_pending
     CertificateOrder.unscoped.where(id: (Rails.cache.fetch("#{cache_key}/certificate_orders_pending") do
       certificate_orders.pending.pluck(:id)
-    end))
+    end)).order(created_at: :desc)
   end
 
   def cached_certificate_orders_incomplete
     CertificateOrder.unscoped.where(id: (Rails.cache.fetch("#{cache_key}/certificate_orders_incomplete") do
       certificate_orders.incomplete.pluck(:id)
-    end))
+    end)).order(created_at: :desc)
   end
 
   def cached_certificate_orders_credits
     CertificateOrder.unscoped.where(id: (Rails.cache.fetch("#{cache_key}/certificate_orders_credits") do
       certificate_orders.credits.pluck(:id)
-    end))
+    end)).order(created_at: :desc)
   end
 
   def cached_certificate_orders_credits_count

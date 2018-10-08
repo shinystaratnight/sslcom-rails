@@ -679,10 +679,11 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def certificate
-    Rails.cache.fetch("#{cache_key}/certificate") do
-      sub_order_items[0].product_variant_item.certificate if sub_order_items[0] &&
+    cid=Rails.cache.fetch("#{cache_key}/certificate") do
+      sub_order_items[0].product_variant_item.certificate.id if sub_order_items[0] &&
           sub_order_items[0].product_variant_item
     end
+    cid ? Certificate.unscoped.find(cid) : nil
   end
 
   def signed_certificate
