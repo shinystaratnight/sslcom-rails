@@ -35,6 +35,7 @@ module ContactsHelper
       c.attributes.each {|key, val| main_info["#{with_data ? 'data-' : ''}#{key}"] = val}
       main_info = main_info.delete_if {|k,v| remove.include?(k.remove 'data-')}
       option = if c.type == 'Registrant'
+        c.individual? ? "#{full_name} (individual)" : "#{company} (organization)"
       elsif c.type == 'IndividualValidation'
         [full_name, c.email].join(' | ')
       else

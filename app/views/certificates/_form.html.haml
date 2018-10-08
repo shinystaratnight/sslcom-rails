@@ -1,3 +1,11 @@
+-notification_groups = @notification_groups || []
+-schedule_simple_type = @schedule_simple_type || []
+-schedule_weekdays = @schedule_weekdays || []
+-schedule_months = @schedule_months || []
+-schedule_days = @schedule_days || []
+-schedule_hours = @schedule_hours || []
+-schedule_minutes = @schedule_minutes || []
+
 -reprocess_ucc = domains_adjust_billing?(@certificate_order)
 -if @certificate.is_ucc?
   -if @certificate.is_ev?
@@ -18,6 +26,7 @@
         %span.has_csr_container I will submit my CSR later or have someone else do it
 -else
   =f.hidden_field :has_csr
+
 =f.fields_for :certificate_contents, @certificate_content do |cert_form|
   -if Settings.show_csr_submit_on_buy_page || @certificate_order.is_unused_credit?
     #csr_section
@@ -106,6 +115,163 @@
             -ss=ServerSoftware.all.to_a-[ServerSoftware.find(1)]
             -other=[ServerSoftware.find(1)].map{|s|[s.title,s.id]}
             =select_field_for(cert_form, :server_software_id.to_s, other+ss.sort{|a,b|a.title<=>b.title}.collect{|s|[s.title,s.id]},{:no_label=>true}, {})
+      .clearfix.add_to_manager_block
+        %label
+          Save to CSR Manager:
+        =check_box_tag :add_to_manager, true, true
+      .clearfix
+        %label
+          Managed CSR:
+        =select_tag :managed_csr, options_for_select(@managed_csrs, selected: {}), :class => 'managed_csr'
+      .clearfix.managed_domains_block
+        %label
+          -if @certificate.is_ucc?
+            #domains_label_text
+              -if @certificate.is_premium_ssl?
+                Subdomains (3 max)
+              -else
+                Domains#{" (prorated)" if @certificate_order.signed_certificates.try(:last)}:
+                =link_to image_tag('question_mark.png'), '#what_are_domains', :rel => 'prettyPhoto', :id => 'what_are_domains_link'
+            %span.label_desc separated by space or new line
+            -unless reprocess_ucc
+              %span.label_break
+              %span.label_desc can skip and edit later
+            -unless @certificate.is_premium_ssl?
+              %span.label_break
+              %span.label_desc 2000 domains maximum
+              -unless reprocess_ucc
+                %span.label_break
+                %span.label_desc
+                  $
+                  %span#first_domain_tier_price>
+                    #{first.price.format}
+                  \ for first 3 non-wildcard domains
+                %span.label_break
+                %span.label_desc
+                  $
+                  %span#second_domain_tier_price>
+                    #{second.price.format}
+                  \ ea non-wildcard domain after 3rd
+                -unless @certificate.is_ev?
+                  %span.label_desc
+                    $
+                    %span#third_domain_tier_price>
+                      #{third.price.format}
+                    \ ea wildcard domain
+          -else
+            Domains:
+        .block_body
+          .schedule_container.clearfix
+            =select_tag :managed_domains, options_for_select(@managed_domains, selected: @managed_domains.collect {|arr| arr[1]}),
+                            multiple: true, data: {placeholder: "click here to list available domains to scan."}, :class => 'managed_domains'
+    -unless @certificate.is_browser_generated_capable?
+      .clearfix
+        %label
+          Schedule:
+          %span.label_desc for scan
+        .schedule_block_group
+          .notification_group_schedule
+            .schedule_block
+              .block_label
+                Notification Groups
+              .block_body.clearfix
+                =select_tag :notification_group, options_for_select(notification_groups, selected: {})
+          .schedule_type
+            .schedule_block
+              .block_body.clearfix
+                .block_item
+                  %span
+                    =radio_button_tag :schedule_type, true, true
+                    Simple
+                .block_item
+                  %span
+                    =radio_button_tag :schedule_type, false, false
+                    Custom
+          .simple_schedule
+            .schedule_block
+              .block_body.clearfix
+                =select_tag :schedule_simple_type, options_for_select(schedule_simple_type, selected: {})
+          .custom_schedule
+            .schedule_block
+              .block_label
+                WeekDays
+              .block_body.clearfix
+                .block_item
+                  %span
+                    =radio_button_tag :weekday_type, true, true
+                    All
+                .block_item
+                  %span
+                    =radio_button_tag :weekday_type, false, false
+                    Selected
+              .block_weekday_custom.custom_selected_block
+                .schedule_container.clearfix
+                  =select_tag :weekday_custom_list, options_for_select(schedule_weekdays, selected: {}),
+                          multiple: true, data: {placeholder: "click here to list available weekdays to scan."}
+            .schedule_block
+              .block_label
+                Months
+              .block_body.clearfix
+                .block_item
+                  %span
+                    =radio_button_tag :month_type, true, true
+                    All
+                .block_item
+                  %span
+                    =radio_button_tag :month_type, false, false
+                    Selected
+              .block_month_custom.custom_selected_block
+                .schedule_container.clearfix
+                  =select_tag :month_custom_list, options_for_select(schedule_months, selected: {}),
+                          multiple: true, data: {placeholder: "click here to list available months to scan."}
+            .schedule_block
+              .block_label
+                Days
+              .block_body.clearfix
+                .block_item
+                  %span
+                    =radio_button_tag :day_type, true, true
+                    All
+                .block_item
+                  %span
+                    =radio_button_tag :day_type, false, false
+                    Selected
+              .block_day_custom.custom_selected_block
+                .schedule_container.clearfix
+                  =select_tag :day_custom_list, options_for_select(schedule_days, selected: {}),
+                          multiple: true, data: {placeholder: "click here to list available days to scan."}
+            .schedule_block
+              .block_label
+                Hours
+              .block_body.clearfix
+                .block_item
+                  %span
+                    =radio_button_tag :hour_type, true, true
+                    All
+                .block_item
+                  %span
+                    =radio_button_tag :hour_type, false, false
+                    Selected
+              .block_hour_custom.custom_selected_block
+                .schedule_container.clearfix
+                  =select_tag :hour_custom_list, options_for_select(schedule_hours, selected: {}),
+                          multiple: true, data: {placeholder: "click here to list available hours to scan."}
+            .schedule_block
+              .block_label
+                Minutes
+              .block_body.clearfix
+                .block_item
+                  %span
+                    =radio_button_tag :minute_type, true, true
+                    All
+                .block_item
+                  %span
+                    =radio_button_tag :minute_type, false, false
+                    Selected
+              .block_minute_custom.custom_selected_block
+                .schedule_container.clearfix
+                  =select_tag :minute_custom_list, options_for_select(schedule_minutes, selected: {}),
+                          multiple: true, data: {placeholder: "click here to list available minutes to scan."}
   -else
     -if @certificate.is_code_signing?
       %p #{@certificate.title} Certificate Summary
@@ -198,7 +364,7 @@
         %li CAN use certificate on unlimited multiple servers concurrently
         -if @certificate.is_free?
           %li Only documentation support provided, does NOT come with technical support
-  -if @certificate.is_ucc?
+  -#-if @certificate.is_ucc?
     .clearfix
       %label{:for=>"certificate_order_certificate_contents_attributes_0_additional_domains"}
         #domains_label_text
@@ -234,6 +400,7 @@
                   #{third.price.format}
                 \ ea wildcard domain
       =cert_form.text_area :additional_domains, cols: 40, rows: 10, class: 'subject_alternative_names'
+
   -unless @certificate_order.is_unused_credit?
     .clearfix
       %label{:for=>"duration"}

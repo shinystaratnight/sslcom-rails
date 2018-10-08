@@ -241,8 +241,10 @@ class InvoicesController < ApplicationController
       flash[:notice] = "Succesfully paid for invoice #{@invoice.reference_number}."
       redirect_to_invoice
     else
-      if @too_many_declines
-        flash[:error] = 'Too many failed attempts, please wait 1 minute to try again!'
+      flash[:error] = if @too_many_declines
+        'Too many failed attempts, please wait 1 minute to try again!'
+      else
+        @gateway_response.message
       end
       redirect_new_payment
     end
@@ -286,7 +288,13 @@ class InvoicesController < ApplicationController
   end
   
   def redirect_new_payment
-    redirect_to new_payment_invoice_path(@ssl_slug, @invoice.reference_number)
+    new_params = {ssl_slug: @ssl_slug,id: @invoice.reference_number}
+    if params[:billing_profile]
+      new_params[:billing_profile] = params[:billing_profile].delete_if do |k, v|
+        %w{card_number security_code stripe_card_token}.include?(k)
+      end
+    end
+    redirect_to new_payment_invoice_path(new_params)
   end
   
   def redirect_to_invoice

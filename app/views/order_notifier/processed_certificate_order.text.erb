@@ -42,7 +42,12 @@ https://info.ssl.com/
 
 https://support.ssl.com/default_import/Tickets/Submit
 
-<%if @certificate_order.is_iis?%>
+<%if @certificate_content%>
+The certificates below are listed in this order:
+<%=@certificate_content.ejbca_certificate_chain(format: :objects).map(&:subject).join("\n")%>
+
+<%=@certificate_content.ejbca_certificate_chain.map(&:strip).join("\n")%>
+<%elsif @certificate_order.is_iis?%>
 <%=@signed_certificate.to_pkcs7%>
 <%elsif @certificate_order.is_nginx?-%>
 <%=@signed_certificate.to_nginx%>

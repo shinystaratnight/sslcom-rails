@@ -5,9 +5,11 @@ class CasCertificate < ActiveRecord::Base
             shadow: "shadow",
             hide: "hide"}
 
+  GENERAL_DEFAULT_CACHE="general_default_cache"
+
   belongs_to                    :ca
   belongs_to                    :certificate
-  belongs_to                    :ssl_account
+  belongs_to                    :ssl_account, touch: true
 
   scope :ssl_account, ->(ssl_account){where{ssl_account_id==ssl_account.id}.uniq}
   scope :ssl_account_or_general_default, ->(ssl_account){

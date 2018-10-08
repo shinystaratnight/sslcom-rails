@@ -2,7 +2,7 @@ class CertificateOrder < ActiveRecord::Base
   include V2MigrationProgressAddon
   #using_access_control
   acts_as_sellable :cents => :amount, :currency => false
-  belongs_to  :ssl_account
+  belongs_to  :ssl_account, touch: true
   belongs_to  :folder
   has_many    :users, through: :ssl_account
   belongs_to  :assignee, class_name: "User"
@@ -49,6 +49,10 @@ class CertificateOrder < ActiveRecord::Base
   has_many    :notification_groups_subjects, as: :subjectable
   has_many    :notification_groups, through: :notification_groups_subjects
   has_many    :certificate_order_tokens
+  has_many    :certificate_order_managed_csrs, dependent: :destroy
+  has_many    :managed_csrs, through: :certificate_order_managed_csrs
+  has_many    :certificate_order_domains, dependent: :destroy
+  has_many    :managed_domains, through: :certificate_order_domains, :source => :domain
 
   accepts_nested_attributes_for :certificate_contents, :allow_destroy => false
   attr_accessor :duration, :has_csr
@@ -675,8 +679,11 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def certificate
-    sub_order_items[0].product_variant_item.certificate if sub_order_items[0] &&
-        sub_order_items[0].product_variant_item
+    cid=Rails.cache.fetch("#{cache_key}/certificate") do
+      sub_order_items[0].product_variant_item.certificate.id if sub_order_items[0] &&
+          sub_order_items[0].product_variant_item
+    end
+    cid ? Certificate.unscoped.find(cid) : nil
   end
 
   def signed_certificate
@@ -906,10 +913,7 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def ov_validated?
-    locked_registrants.where(
-      registrant_type: Registrant::registrant_types[:organization],
-      status: Registrant::statuses[:validated]
-    ).any?
+    locked_registrant && locked_registrant.validated?
   end
     
   def iv_ov_validated?

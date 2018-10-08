@@ -17,8 +17,7 @@ class CertificateOrderTokensController < ApplicationController
         if team_account.blank?
           returnObj['status'] = 'not_found_ssl_account'
         else
-          co = (current_user.is_system_admins? ? CertificateOrder :
-                    current_user.ssl_account.certificate_orders).find_by_ref(params[:certificate_order_ref])
+          co = current_user.certificate_order_by_ref(params[:certificate_order_ref])
 
           # Fiding and Setting Assignee to Certificate Order
           # and assign individual_certificate role to assignee in scope of the team.
@@ -67,8 +66,7 @@ class CertificateOrderTokensController < ApplicationController
       returnObj = {}
 
       if current_user
-        co = (current_user.is_system_admins? ? CertificateOrder :
-                  current_user.ssl_account.certificate_orders).find_by_ref(params[:certificate_order_ref])
+        co = current_user.certificate_order_by_ref(params[:certificate_order_ref])
 
         # Sending Notify to SysAdmin role's users.
         sys_admins = User.search_sys_admin.uniq

@@ -277,9 +277,11 @@ class NotificationGroup < ActiveRecord::Base
     domains.concat CertificateName.where(id: notification_groups_subjects.where(subjectable_type: 'CertificateName')
                                                   .pluck(:subjectable_id)).pluck(:name)
 
+    last_group_number = scan_logs.maximum('scan_group')
     domains.uniq.each do |domain|
       unless except_certs.(domain, except_list)
         scan_status = 'expiring'
+        expiration_date = nil
         ssl_domain_connect(domain.gsub("*.", "www."), scan_port)
 
         if ssl_client
@@ -306,7 +308,6 @@ class NotificationGroup < ActiveRecord::Base
             scan_status = 'name_mismatch'
           end
 
-          # scanned_cert = ScannedCertificate.create body: cert.to_s, decoded: cert.to_text
           scanned_cert = ScannedCertificate.create_with(
               body: cert.to_s,
               decoded:cert.to_text
@@ -329,7 +330,9 @@ class NotificationGroup < ActiveRecord::Base
         scan_logs.build(
             scanned_certificate: scanned_cert,
             domain_name: domain,
-            scan_status: scan_status
+            scan_status: scan_status,
+            expiration_date: expiration_date,
+            scan_group: last_group_number ? (last_group_number + 1) : 1
         ).save
       end
     end
@@ -352,9 +355,9 @@ class NotificationGroup < ActiveRecord::Base
     end
   end
 
-  def ssl_domain_connect(url, default_port)
+  def ssl_domain_connect(url, default_port,timeout=10)
     context = OpenSSL::SSL::SSLContext.new
-    Timeout.timeout(30) do
+    Timeout.timeout(timeout) do
       domain, ori_port = url.split ":"
       tcp_client = TCPSocket.new(domain, ori_port || default_port)
       self.ssl_client = OpenSSL::SSL::SSLSocket.new tcp_client, context

@@ -26,7 +26,9 @@
       %span.common_name
         #{cn}
       -if permitted_to?(:update, @certificate_order)
-        =link_to "[how do I use this page?]", "https://www.ssl.com/article/certificate-order-page-information/"
+        -team_iv = @certificate_order.get_team_iv
+        -link_text = team_iv.nil? ? " [how do I use this page?]" : " #{team_iv.first_name} #{team_iv.last_name}"
+        =link_to link_text, "https://www.ssl.com/article/certificate-order-page-information/"
     %tr.heading_row
       %th(scope="col") Subject
       %th(scope="col") Status
@@ -64,7 +66,7 @@
                               contents
                           -if @cc.csr.blank?
                             %li
-                              %em waiting for csr
+                              %em waiting for input
                           -else
                             -unless @cc.csr.signed_certificate
                               -unless fields.organization.blank?
@@ -118,8 +120,20 @@
                           %li
                             %strong validation status
                           %li.li-cert-validate
-                            = link_to "<i class='fa fa-expeditedssl'></i> Change Recipient Status to Validated".html_safe, |
-                              admin_update_certificate_order_path(@ssl_slug, @certificate_order.ref, validate: true),      |
+                            -if current_user.is_system_admins?
+                              -if !@certificate_order.ov_validated?
+                                = link_to "<i class='fa fa-expeditedssl'></i> Validate OV".html_safe,                      |
+                                admin_update_certificate_order_path(@ssl_slug, @certificate_order.ref, validate_ov: true), |
+                                method: :put, class: 'btn-cert-validate'
+                                %br/
+                              -if !@certificate_order.iv_validated?
+                                = link_to "<i class='fa fa-expeditedssl'></i> Validate IV".html_safe,                      |
+                                admin_update_certificate_order_path(@ssl_slug, @certificate_order.ref, validate_iv: true), |
+                                method: :put, class: 'btn-cert-validate'
+                                %br/
+                            -else
+                              = link_to "<i class='fa fa-expeditedssl'></i> Change Recipient Status to Validated".html_safe, |
+                              admin_update_certificate_order_path(@ssl_slug, @certificate_order.ref, validate_iv: true),     |
                               method: :put, class: 'btn-cert-validate'
                         -unless @certificate_order.certificate.is_dv?
                           %li
@@ -151,6 +165,16 @@
                         =render partial: "certificate_orders/duration_limit", locals:{co: @certificate_order}
                     .certificate_details_box
                       %ul
+                        -team_iv = co.get_team_iv
+                        -unless team_iv.nil?
+                          %li 
+                            %strong recipient (#{team_iv.status.humanize})
+                          %li #{team_iv.first_name}, #{team_iv.last_name}
+                          %li #{team_iv.email}
+                          %li
+                            =link_to 'edit recipient', recipient_certificate_order_path(@ssl_slug, @certificate_order.ref)
+                          %li 
+                            %br/
                         %li
                           %strong registrant
                         -unless @cc.registrant.blank?
@@ -190,7 +214,7 @@
                               =link_to 'provide info (required)', edit_certificate_order_path(@certificate_order)
                             -else
                               none
-                        -if co.certificate.has_locked_registrant?
+                        -if co.certificate.has_locked_registrant? || co.locked_registrant
                           %li.category_border
                           %li
                             %strong locked registrant
@@ -304,21 +328,21 @@
                 %tr
                   %td
                     = render partial: 'tags/certificate_order_tags'
-            %table(cellspacing="0")
-              %tbody
-                -@certificate_order.certificate_contents.order('created_at DESC').each do |c|
-                  -current = c==@certificate_order.certificate_content
-                  -csr = c.csr
-                  -sc = c.csr.try(:signed_certificate)
-                  %tr
-                    %td(colspan="5" style="text-align: left;")
-                      -unless co.certificate.is_code_signing?
-                        %span.previous_requests #{c!=@certificate_order.certificate_content ? "previous" : "current" }: #{c.ref}
-                        -if sc.try(:body).blank?
-                          (server software: #{c.server_software.try :title})
-                        -else
-                          (serial number: #{sc.serial})
-                  -unless csr.nil?
+            -unless @certificate_order.certificate_contents.count == 1 && @certificate_order.certificate_content.csr.nil?
+              %table(cellspacing="0")
+                %tbody
+                  -@certificate_order.certificate_contents.order('created_at DESC').each do |c|
+                    -current = c==@certificate_order.certificate_content
+                    -csr = c.csr
+                    -sc = c.csr.try(:signed_certificate)
+                    %tr
+                      %td(colspan="5" style="text-align: left;")
+                        -unless co.certificate.is_code_signing?
+                          %span.previous_requests #{c!=@certificate_order.certificate_content ? "previous" : "current" }: #{c.ref}
+                          -if sc.try(:body).blank?
+                            (server software: #{c.server_software.try :title})
+                          -else
+                            (serial number: #{sc.serial})
                     %tr
                       %td(colspan="5")
                         -if !@certificate_order.certificate.is_code_signing? # or current_user.is_system_admins?
@@ -388,9 +412,9 @@
                                 %div
                                   DECODED
                                 %textarea.selectAll{cols: 10, rows: 4}=sc.decoded
-                  %tr
-                    %td(colspan="5" style="text-align: left;")
-                      = render partial: '/tags/certificate_content_tags', locals: {taggable: c}
+                    %tr
+                      %td(colspan="5" style="text-align: left;")
+                        = render partial: '/tags/certificate_content_tags', locals: {taggable: c}
                 -if current_user.is_admin?
                   %tr
                     %td(colspan="5")

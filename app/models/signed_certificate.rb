@@ -389,13 +389,13 @@ class SignedCertificate < ActiveRecord::Base
           else
             create_signed_cert_zip_bundle
           end
-      co=csr.certificate_content.certificate_order
-      co.site_seal.fully_activate! unless co.site_seal.fully_activated?
+      certificate_order.site_seal.fully_activate! unless certificate_order.site_seal.fully_activated?
       if email_customer
-        co.processed_recipients.map{|r|r.split(" ")}.flatten.uniq.each do |c|
+        certificate_order.processed_recipients.map{|r|r.split(" ")}.flatten.uniq.each do |c|
           begin
-            OrderNotifier.processed_certificate_order(c, co, zip_path).deliver
-            OrderNotifier.site_seal_approve(c, co).deliver
+            OrderNotifier.processed_certificate_order(contact: c,
+                                                      certificate_order: certificate_order, file_path: zip_path).deliver
+            OrderNotifier.site_seal_approve(c, certificate_order).deliver
           rescue Exception=>e
             logger.error e.backtrace.inspect
           end
@@ -405,9 +405,11 @@ class SignedCertificate < ActiveRecord::Base
     # for shadow certs, only send the certificate
     begin
       if certificate_order.certificate.cas.shadow.each do |shadow_ca|
-        co.apply_for_certificate(mapping: shadow_ca)
-        OrderNotifier.processed_certificate_order(Settings.shadow_certificate_recipient, co, nil,
-                                                  co.shadow_certificates.last).deliver
+        certificate_order.apply_for_certificate(mapping: shadow_ca)
+        OrderNotifier.processed_certificate_order(contact: Settings.shadow_certificate_recipient,
+                                              certificate_order: certificate_order,
+                                              certificate_content: certificate_content,
+                                              signed_certificate: certificate_order.shadow_certificates.last).deliver
       end
     end
     rescue Exception=>e
@@ -417,11 +419,12 @@ class SignedCertificate < ActiveRecord::Base
   end
 
   def friendly_common_name
-    common_name ? common_name.gsub('*', 'STAR').gsub('.', '_') : csr.common_name.gsub('*', 'STAR').gsub('.', '_')
+    (common_name || csr.common_name || certificate_content.ref).gsub('*', 'STAR').gsub('.', '_')
   end
 
   def nonidn_friendly_common_name
-    SimpleIDN.to_ascii(read_attribute(:common_name) || csr.common_name).gsub('*', 'STAR').gsub('.', '_')
+    SimpleIDN.to_ascii(read_attribute(:common_name) || csr.common_name||
+                           certificate_content.ref).gsub('*', 'STAR').gsub('.', '_')
   end
 
   def expiration_date_js

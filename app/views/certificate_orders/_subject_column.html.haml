@@ -1,17 +1,26 @@
 -single ||= false
 -co = certificate_order
+-cc = co.certificate_content
 -cn = co.is_unused? ? 'credit - '+co.certificate.description["certificate_type"]+' certificate' :  (co.certificate.is_code_signing? ? (co.registrant.try(:company_name) || co.certificate.description["certificate_type"]+' certificate') : co.common_name)
 -cn = "expired certificate" if co.is_expired_credit?
 .subject_column
   %a.common_name(title=cn)
-    =((co.is_test ? " (TEST) " : "") + (%w(refunded rejected charged_back).include?(co.workflow_state) ? " (#{co.workflow_state.upcase}) " : "") + cn.downcase).shorten(35, false)
+    -test_text = co.is_test ? " (TEST) " : ""
+    -if co.certificate.is_smime_or_client?
+      -team_iv = co.get_team_iv
+      -if team_iv
+        ="#{test_text} #{team_iv ? [team_iv.first_name, team_iv.last_name].join(', ') : nil}"
+      -else
+        ="#{test_text} #{co.certificate.title}"
+    -else 
+      =(test_text + (%w(refunded rejected charged_back).include?(co.workflow_state) ? " (#{co.workflow_state.upcase}) " : "") + cn.downcase).shorten(35, false)
   %span.expand_or_view_order
     -if !(single and co.is_expired_credit?) and permitted_to? :index, co
       %a.expand open
     -unless co.is_unused?
       -if permitted_to? :update, co
         %span :
-        =link_to co.certificate_content.issued? ? "download" : "details", certificate_order_path(@ssl_slug, co), :title=>"view order for "+cn
+        =link_to cc.issued? ? "download" : "details", certificate_order_path(@ssl_slug, co), :title=>"view order for "+cn
       -unless hide_validation?(co)
         -if permitted_to? :show, co.validation
           %span :

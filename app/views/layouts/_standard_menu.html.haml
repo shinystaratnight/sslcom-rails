@@ -16,7 +16,7 @@
     -permitted_to? :index, :certificate_orders do
       %li(id="#{(is_on?("certificate_orders",current_slug) && !@prev) ? 't-intro' : 'manage_certificate_orders' }")
         =link_to "Orders", is_sandbox? ? search_certificate_orders_path(search:'is_test:true') : certificate_orders_path(slug_params)
-    -if Settings.activate_domains_manager
+    -if current_user.ssl_account.show_domains_manager?
       -permitted_to? :index, :domains do
         %li(id="#{(is_on?("domains",current_slug) && !@prev) ? 't-intro' : 'manage_domains' }")
           =link_to "Domains", domains_path(slug_params)

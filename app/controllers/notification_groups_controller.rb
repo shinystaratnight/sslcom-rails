@@ -149,11 +149,11 @@ class NotificationGroupsController < ApplicationController
     certificate_names = @ssl_account.certificate_names.pluck(:name, :id)
     @subjects_list = remove_duplicate(certificate_names)
                          .map{ |arr| [arr[0], arr[0] + '---' + arr[1].to_s] }
-    @contacts_list = remove_duplicate(@ssl_account.certificate_orders.flatten.compact
+    @contacts_list = remove_duplicate(@ssl_account.cached_certificate_orders.flatten.compact
                                           .map(&:certificate_contents).flatten.compact
                                           .map(&:certificate_contacts).flatten.compact.map{ |cct| [cct.email, cct.id] })
                          .map{ |arr| [arr[0], arr[0] + '---' + arr[1].to_s] }
-    @cos_list = @ssl_account.certificate_orders.pluck(:ref, :id).uniq
+    @cos_list = @ssl_account.cached_certificate_orders.pluck(:ref, :id).uniq
     @title = 'New SSL Expiration Notification Group'
 
     render 'group'
@@ -162,7 +162,7 @@ class NotificationGroupsController < ApplicationController
   def edit
     @notification_group = @ssl_account.notification_groups.where(id: params[:id]).first
     slt_cert_orders = @notification_group.certificate_orders.flatten.compact
-    @cos_list = @ssl_account.certificate_orders.pluck(:ref, :id).uniq
+    @cos_list = @ssl_account.cached_certificate_orders.pluck(:ref, :id).uniq
     @slt_cos_list = slt_cert_orders.map(&:id)
 
     @slt_subjects_list = generate_slt_subjects
@@ -174,7 +174,7 @@ class NotificationGroupsController < ApplicationController
     @slt_contacts_list = generate_slt_contacts
     email_addresses = @notification_group.notification_groups_contacts.where(contactable_id: nil)
     @contacts_list = remove_duplicate(
-        @ssl_account.certificate_orders.flatten.compact
+        @ssl_account.cached_certificate_orders.flatten.compact
             .map(&:certificate_contents).flatten.compact
             .map(&:certificate_contacts).flatten.compact
             .map{ |cct| [cct.email, cct.id] }
@@ -200,7 +200,7 @@ class NotificationGroupsController < ApplicationController
   end
 
   def check_duplicate
-    notification_group = NotificationGroup.find_by_friendly_name(params[:friendly_name])
+    notification_group = @ssl_account.notification_groups.find_by_friendly_name(params[:friendly_name])
     returnObj = {}
     returnObj['is_duplicated'] = notification_group ?
                                      (params[:ng_id] == '' ?
@@ -218,13 +218,15 @@ class NotificationGroupsController < ApplicationController
       notification_group.friendly_name = params[:friendly_name]
       notification_group.scan_port = params[:scan_port]
       notification_group.notify_all = params[:notify_all]
+      notification_group.status = params[:status]
     else
       # Saving notification group info
       notification_group = NotificationGroup.new(
           friendly_name: params[:friendly_name],
           scan_port: params[:scan_port],
           notify_all: params[:notify_all],
-          ssl_account: @ssl_account
+          ssl_account: @ssl_account,
+          status: params[:status]
       )
     end
 
@@ -509,7 +511,7 @@ class NotificationGroupsController < ApplicationController
     contact_ids = []
 
     if params['cos'] && params['cos'].size > 0
-      certificate_contents = @ssl_account.certificate_orders.where(id: params['cos']).flatten.compact
+      certificate_contents = @ssl_account.cached_certificate_orders.where(id: params['cos']).flatten.compact
                                  .map(&:certificate_contents).flatten.compact
 
       removed_dup_cns = remove_duplicate(certificate_contents.map(&:certificate_names)
@@ -625,7 +627,7 @@ class NotificationGroupsController < ApplicationController
       slt_contact_ids = contacts.where(email_address: nil, contactable_type: 'CertificateContact')
                             .pluck(:contactable_id)
       from_cert_orders = remove_duplicate(
-          @ssl_account.certificate_orders.flatten.compact
+          @ssl_account.cached_certificate_orders.flatten.compact
               .map(&:certificate_contents).flatten.compact
               .map(&:certificate_contacts).flatten.compact
               .select{ |contact| slt_contact_ids.include?(contact.id) }

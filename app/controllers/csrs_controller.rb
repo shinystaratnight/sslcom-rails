@@ -1,7 +1,7 @@
 class CsrsController < ApplicationController
   before_filter :find_csr, only:[:http_dcv_file, :verification_check]
   filter_access_to :all, :attribute_check=>true
-  filter_access_to :country_codes, :http_dcv_file, :require=>[:create] #anyone can create read creates csrs, thus read this
+  filter_access_to :country_codes, :http_dcv_file, :all_domains, :require=>[:create] #anyone can create read creates csrs, thus read this
 
   # PUT /csrs/1
   # PUT /csrs/1.xml
@@ -84,6 +84,17 @@ class CsrsController < ApplicationController
     respond_to do |format|
       format.html { render inline: http_or_s.to_s }
     end
+  end
+
+  def all_domains
+    returnObj = {}
+    selected_csr = Csr.find_by_ref(params[:ref])
+    returnObj['common_name'] = selected_csr.common_name
+    returnObj['subject_alternative_names'] = selected_csr.subject_alternative_names
+    returnObj['csr_body'] = selected_csr.body
+    returnObj['days_left'] = selected_csr.days_left
+
+    render :json => returnObj
   end
 
   private

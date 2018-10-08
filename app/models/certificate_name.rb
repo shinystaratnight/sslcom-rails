@@ -2,7 +2,7 @@
 require 'resolv'
 
 class CertificateName < ActiveRecord::Base
-  belongs_to  :certificate_content
+  belongs_to  :certificate_content, touch: true
   has_many    :signed_certificates, through: :certificate_content
   has_many    :caa_checks, as: :checkable
   has_many    :ca_certificate_requests, as: :api_requestable, dependent: :destroy
@@ -18,7 +18,7 @@ class CertificateName < ActiveRecord::Base
     end
 
     def last_method
-      where{dcv_method >> ['http','https','email']}.last
+      where{dcv_method >> ['http','https','email','cname']}.last
     end
   end
   has_many    :notification_groups_subjects, as: :subjectable

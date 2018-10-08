@@ -57,6 +57,8 @@ class SslcomCaApi
   def self.ca_name(options)
     if options[:mapping]
       options[:mapping].ca_name
+    elsif options[:cc] and options[:cc].ca
+      options[:cc].ca.ca_name
     elsif options[:ca]==Ca::CERTLOCK_CA
       case options[:cc].certificate.product
         when /^ev/
@@ -112,20 +114,18 @@ class SslcomCaApi
     names=if cert.is_smime?
       "rfc822Name="
     elsif !cert.is_code_signing?
-      (options[:san] ? options[:san].split(/\s+/) : options[:cc].all_domains).map{|d|"dNSName="+d.downcase}.join(",")
+      (options[:san] ? options[:san].split(/\s+/) : options[:cc].all_domains).map{|d|d.downcase}
     end || ""
     names << if cert.is_wildcard?
-      ",dNSName=#{CertificateContent.non_wildcard_name(common_name)}"
+      "#{CertificateContent.non_wildcard_name(common_name)}"
     elsif cert.is_basic? or cert.is_high_assurance? or cert.is_free?
       if common_name=~/\Awww\./
-        ",dNSName=#{common_name[4..-1]}"
+        "#{common_name[4..-1]}"
       else
-        ",dNSName=www.#{common_name}"
+        "www.#{common_name}"
       end
-    else
-      ""
     end
-    names
+    "dNSName=#{names.compact.uniq.join(",dNSName=")}"
   end
 
   # revoke json parameter string for REST call to EJBCA
@@ -146,7 +146,7 @@ class SslcomCaApi
       else
         dn.merge! subject_dn: (options[:action]=="send_to_ca" ? subject_dn(options) : # via RA form or shadow
           (options[:subject_dn] || options[:cc].subject_dn({mapping: options[:mapping]})))+
-            ",OU=#{options[:cc].csr.sha1_hash}-#{DateTime.now.to_i}",
+            ",OU=#{Digest::SHA1.hexdigest(options[:cc].csr.to_der+DateTime.now.to_i.to_s).upcase}",
           ca_name: options[:ca_name] || ca_name(options),
           certificate_profile: certificate_profile(options),
           end_entity_profile: end_entity_profile(options),
@@ -161,8 +161,12 @@ class SslcomCaApi
 
   def self.apply_for_certificate(certificate_order, options={})
     certificate = certificate_order.certificate
+    if options[:send_to_ca]
+      options[:mapping] = Ca.find_by_ref(options[:send_to_ca])
+    elsif options[:mapping].blank?
+      options[:mapping] = certificate.cas.ssl_account_or_general_default(options[:current_user].ssl_account).last
+    end
     options.merge! cc: cc = options[:certificate_content] || certificate_order.certificate_content
-    options[:mapping] = Ca.find_by_ref(options[:send_to_ca]) if options[:send_to_ca]
     approval_req, approval_res = SslcomCaApi.get_status(csr: cc.csr, mapping: options[:mapping])
     return cc.csr.sslcom_ca_requests.create(
       parameters: approval_req.body, method: "get", response: approval_res.body,

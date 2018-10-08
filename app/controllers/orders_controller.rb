@@ -255,7 +255,7 @@ class OrdersController < ApplicationController
   
   def revoke
     if params[:revoke_all]
-      list = @order.certificate_orders
+      list = @order.cached_certificate_orders
       list.each {|co| co.revoke!(params[:revoke_reason], current_user)}
       
       SystemAudit.create(
@@ -286,7 +286,7 @@ class OrdersController < ApplicationController
         notify_ca(params["refund_reason"])
       else # partial refunds or cancel line item
         @target = @order.line_items.find {|li|li.sellable.try(:ref)==params["partial"]}
-        @target ||= @order.certificate_orders.find { |co| co.ref==params["partial"] }
+        @target ||= @order.cached_certificate_orders.find { |co| co.ref==params["partial"] }
         refund_partial_amount(params) if params["return_funds"]
         refund_partial_cancel(params) if params["cancel_only"]
       end
@@ -447,10 +447,10 @@ class OrdersController < ApplicationController
     if @order.description =~ /Deposit|Funded Account Withdrawal/i
       @deposit = @order
     elsif @order.line_items.count==1
-      @certificate_order = @order.certificate_orders.uniq.last
+      @certificate_order = @order.cached_certificate_orders.uniq.last
     else
       certificates=[]
-      @certificate_orders = @order.certificate_orders.uniq.map{|co|
+      @certificate_orders = @order.cached_certificate_orders.uniq.map{|co|
         unless certificates.include?(co.certificate)
           certificates<<co.certificate
           co
@@ -492,8 +492,12 @@ class OrdersController < ApplicationController
       if (@user ? @user.valid? : true) && !too_many_declines &&
           order_reqs_valid? && purchase_successful?
         save_user unless current_user
-        save_billing_profile unless (params[:funding_source])
-        @order.billing_profile = @profile
+        if @order.invoiced?
+          @order.invoice_denied_order(current_user.ssl_account)
+        else
+          save_billing_profile unless (params[:funding_source])
+          @order.billing_profile = @profile
+        end
         current_user.ssl_account.orders << @order
         record_order_visit(@order)
         @order.credit_affiliate(cookies)
@@ -501,8 +505,8 @@ class OrdersController < ApplicationController
           clear_cart
           format.html { redirect_to order_path(@ssl_slug, @order) }
         elsif @certificate_order
-          current_user.ssl_account.certificate_orders << @certificate_order
-          @certificate_order.pay! @gateway_response.success?
+          current_user.ssl_account.cached_certificate_orders << @certificate_order
+          @certificate_order.pay! @gateway_response.success? || @order.invoiced?
           format.html { redirect_to edit_certificate_order_path(@ssl_slug, @certificate_order)}
         end
       else
@@ -571,7 +575,7 @@ class OrdersController < ApplicationController
           clear_cart
           format.html { redirect_to @order }
         elsif @certificate_order
-          current_user.ssl_account.certificate_orders << @certificate_order
+          current_user.ssl_account.cached_certificate_orders << @certificate_order
           @certificate_order.pay! true
           format.html { redirect_to edit_certificate_order_path(@certificate_order)}
         end
@@ -665,9 +669,13 @@ class OrdersController < ApplicationController
   def domains_adjust_hybrid_payment(params)
     if current_user && order_reqs_valid? && !@too_many_declines && purchase_successful?
       save_billing_profile unless (params[:funding_source])
-      @order.billing_profile = @profile
-      @certificate_order.add_reproces_order @order
-      withdraw_funded_account((@funded_amount * 100).to_i) if @funded_amount > 0
+      if @order.invoiced?
+        @order.invoice_denied_order(current_user.ssl_account)
+      else  
+        @order.billing_profile = @profile
+        @certificate_order.add_reproces_order @order
+        withdraw_funded_account((@funded_amount * 100).to_i) if @funded_amount > 0
+      end
       record_order_visit(@order)
       ucc_update_domain_counts
       redirect_to edit_certificate_order_path(@ssl_slug, @certificate_order)
@@ -712,7 +720,7 @@ class OrdersController < ApplicationController
       )
       @order.add_certificate_orders([@certificate_order])
       if @order.save
-        @certificate_order = @order.certificate_orders.first
+        @certificate_order = @order.cached_certificate_orders.first
         @certificate_order.update(
           ssl_account_id: ssl_account_id, workflow_state: 'paid'
         )
@@ -722,7 +730,7 @@ class OrdersController < ApplicationController
       @order.billable_id = ssl_account_id
       @order.billable_type = 'SslAccount'
       if @order.save
-        @order.certificate_orders.update_all(
+        @order.cached_certificate_orders.update_all(
           ssl_account_id: ssl_account_id, workflow_state: 'paid'
         )
       end
@@ -774,7 +782,7 @@ class OrdersController < ApplicationController
       @certificate_order = if current_user.is_system_admins?
         CertificateOrder.find_by(ref: params[:co_ref])
       else
-        current_user.ssl_account.certificate_orders.find_by(ref: params[:co_ref])
+        current_user.ssl_account.cached_certificate_orders.find_by(ref: params[:co_ref])
       end
       @ssl_account = @certificate_order.ssl_account
       @certificate_content = @certificate_order.certificate_contents.find_by(ref: params[:cc_ref])

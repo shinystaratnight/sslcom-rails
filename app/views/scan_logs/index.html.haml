@@ -23,21 +23,29 @@
       %br
       %tr.heading_row
         -if @scan_history_list.size > 0
+          %td(scope="col") Scan Job
           %td(scope="col") Domain Name
-          %td(scope="col") Scan Status
+          %td(scope="col") TLS/SSL Status
           %td(scope="col") Created At
         -else
-          %td(scope="col" colspan='3') Domain Name
+          %td(scope="col" colspan='4') Domain Name
       -if @scan_history_list.size > 0
         -@scan_history_list.each do |scan|
           %tr
             %td
+              =scan.scan_group
+            %td
               =scan.domain_name
             %td
-              =scan.scan_status
+              -if scan.scan_status == 'expiring'
+                =scan.expiration_date ? "Valid until " + scan.expiration_date.strftime("%Y-%m-%d") : 'n/a'
+              -elsif scan.scan_status == 'expired'
+                =scan.expiration_date ? "Expired on " + scan.expiration_date.strftime("%Y-%m-%d") : 'n/a'
+              -else
+                =scan.scan_status
             %td
               =scan.created_at.strftime("%b %d %Y, %H:%M")
       -else
         %tr
-          %td(colspan='3')
+          %td(colspan='4')
             There are no Scan Logs

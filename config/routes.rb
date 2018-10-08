@@ -288,6 +288,7 @@ SslCom::Application.routes.draw do
       end
       collection do
         get :country_codes
+        post :all_domains
       end
 
       member do
@@ -519,6 +520,7 @@ SslCom::Application.routes.draw do
     end
   end
 
+  match "/contacts/:id/admin_update" => 'contacts#admin_update', as: :admin_update_contact, via: [:put, :post]
   match '/ssl_manager/:id/approve' => 'registered_agents#approve', :as => :approve_ssl_manager, via: [:get]
   match '/activate/:id' => 'activations#create', :as => :activate, via: [:get, :post]
   match '/register/:activation_code' => 'activations#new', :as => :register, via: [:get, :post]

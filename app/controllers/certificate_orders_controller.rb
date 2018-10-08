@@ -38,6 +38,8 @@ class CertificateOrdersController < ApplicationController
   in_place_edit_for :certificate_order, :notes
   in_place_edit_for :csr, :signed_certificate_by_text
 
+  before_action :set_schedule_value, only: [:edit]
+
   NUM_ROWS_LIMIT=2
 
   def update_tags
@@ -173,6 +175,19 @@ class CertificateOrdersController < ApplicationController
             @certificate_order.has_csr=true
             @certificate_content = @certificate_order.certificate_content
             @certificate_content.agreement=true
+
+            @notification_groups = current_user.ssl_account.notification_groups.pluck(:friendly_name, :ref)
+            @notification_groups.insert(0, ['none', 'none'])
+
+            @managed_csrs = (current_user.ssl_account.csrs + current_user.ssl_account.managed_csrs)
+                                .sort_by{|arr| arr.common_name}
+                                .uniq{|arr| arr.common_name}
+                                .map{|arr| [arr.common_name, arr.ref]}
+                                .delete_if{|arr| arr.second == nil}
+            @managed_csrs.insert(0, ['none', 'none'])
+
+            @managed_domains = current_user.ssl_account.domains.map{|arr| [arr.name, 'domain-' + arr.name]}
+
             return render '/certificates/buy', :layout=>'application'
           end
           unless @certificate_order.certificate_content.csr_submitted? or params[:registrant]
@@ -255,11 +270,8 @@ class CertificateOrdersController < ApplicationController
 
         # TODO: Store LockedRegistrant Data in case of CS
         setup_locked_registrant(
-            params[:certificate_order][:certificate_contents_attributes]['0'],
-            cc
-        ) if @certificate_order.certificate.is_code_signing? or
-            @certificate_order.certificate.is_ov? or
-            @certificate_order.certificate.is_ev?
+          params[:certificate_order][:certificate_contents_attributes]['0'], cc
+        ) if @certificate_order.certificate.requires_locked_registrant?
         
         setup_reusable_registrant(@certificate_order.registrant) if params[:save_for_later]
 
@@ -346,6 +358,7 @@ class CertificateOrdersController < ApplicationController
 
   def client_smime_validate
     co = @certificate_order
+    cc = co.certificate_content
     validations = co.certificate.client_smime_validations
     validated = if validations == 'iv_ov'
       @iv_exists.validated? &&
@@ -357,11 +370,11 @@ class CertificateOrdersController < ApplicationController
     end
     
     if validated
-      co.certificate_content.validate! unless co.certificate_content.validated?
+      cc.validate! unless cc.validated?
       co.copy_iv_ov_validation_history(validations)
       redirect_to certificate_order_path(@ssl_slug, co.ref)
     else
-      co.certificate_content.pend_validation!
+      cc.pend_validation! unless cc.pending_validation?
       redirect_to document_upload_certificate_order_validation_path(
         @ssl_slug, certificate_order_id: co.ref
       )
@@ -371,6 +384,13 @@ class CertificateOrdersController < ApplicationController
   # PUT /certificate_orders/1
   # PUT /certificate_orders/1.xml
   def update_csr
+    managed_domains = params[:managed_domains]
+    additional_domains = ''
+    managed_domains.each do |domain|
+      additional_domains.concat(domain.gsub('csr-', '').gsub('domain-', '') + ' ')
+    end
+    params[:certificate_order][:certificate_contents_attributes]['0'.to_sym][:additional_domains] = additional_domains.strip
+
     @certificate_content=CertificateContent.new(
       params[:certificate_order][:certificate_contents_attributes]['0'.to_sym]
         .merge(rekey_certificate: true)
@@ -378,7 +398,7 @@ class CertificateOrdersController < ApplicationController
     @certificate_order.has_csr=true #we are submitting a csr afterall
     @certificate_content.certificate_order=@certificate_order
     @certificate_content.preferred_reprocessing=true if eval("@#{CertificateOrder::REPROCESSING}")
-    
+
     da_billing     = @certificate_order.domains_adjust_billing?
     ucc_renew      = true if da_billing && @certificate_order.renew_billing?
     ucc_reprocess  = true if da_billing && !params[:reprocessing].blank?
@@ -388,6 +408,7 @@ class CertificateOrdersController < ApplicationController
     respond_to do |format|
       if @certificate_content.valid?
         cc = @certificate_order.transfer_certificate_content(@certificate_content)
+
         if domains_adjustment
           o = params[:order]
           order_params = {
@@ -403,11 +424,25 @@ class CertificateOrdersController < ApplicationController
             wildcard_count:     o[:wildcard_count].to_i,
             nonwildcard_count:  o[:nonwildcard_count].to_i
           }
+
+          # setting managed_csr and domains.
+          setup_managed_csr_domains(params)
+
+          # scheduling
+          schedule(params)
+
           format.html { redirect_to new_order_path(@ssl_slug, order_params) }
         else
           if cc.pending_validation?
             format.html { redirect_to certificate_order_path(@ssl_slug, @certificate_order) }
           end
+
+          # setting managed_csr and domains.
+          setup_managed_csr_domains(params)
+
+          # scheduling
+          schedule(params)
+
           format.html { redirect_to edit_certificate_order_path(@ssl_slug, @certificate_order) }
           format.xml  { head :ok }
         end
@@ -441,7 +476,7 @@ class CertificateOrdersController < ApplicationController
   def credits
     @certificate_orders = (current_user.is_admin? ?
       CertificateOrder.where{(workflow_state=='paid') & (certificate_contents.workflow_state == "new")} :
-        current_user.ssl_account.certificate_orders.credits).paginate(@p)
+        current_user.ssl_account.cached_certificate_orders_credits).paginate(@p)
 
     respond_to do |format|
       format.html { render :action=>:index}
@@ -452,7 +487,7 @@ class CertificateOrdersController < ApplicationController
   def pending
     @certificate_orders = (current_user.is_admin? ?
       CertificateOrder.pending :
-        current_user.ssl_account.certificate_orders.pending).paginate(@p)
+        current_user.ssl_account.cached_certificate_orders_pending).paginate(@p)
 
     respond_to do |format|
       format.html { render :action=>:index}
@@ -464,8 +499,8 @@ class CertificateOrdersController < ApplicationController
     @certificate_orders = (current_user.is_admin? ?
       CertificateOrder.send(params[:id].to_sym) :
       (current_user.role_symbols(current_user.ssl_account).join(',').split(',').include?(Role::INDIVIDUAL_CERTIFICATE) ?
-           (current_user.ssl_account.certificate_orders.search_assigned(current_user.id).send(params[:id].to_sym)) :
-           (current_user.ssl_account.certificate_orders.send(params[:id].to_sym))
+           (current_user.ssl_account.cached_certificate_orders.search_assigned(current_user.id).send(params[:id].to_sym)) :
+           (current_user.ssl_account.cached_certificate_orders.send(params[:id].to_sym))
       )).paginate(@p)
 
     respond_to do |format|
@@ -477,8 +512,8 @@ class CertificateOrdersController < ApplicationController
   def order_by_csr
     @certificate_orders = (current_user.is_admin? ?
       CertificateOrder.unscoped{CertificateOrder.not_test} :
-        current_user.ssl_account.certificate_orders.unscoped{
-          current_user.ssl_account.certificate_orders.not_test}).order_by_csr.paginate(@p)
+        current_user.ssl_account.cached_certificate_orders.unscoped{
+          current_user.ssl_account.cached_certificate_orders.not_test}).order_by_csr.paginate(@p)
 
     respond_to do |format|
       format.html { render :action=>:index}
@@ -488,7 +523,7 @@ class CertificateOrdersController < ApplicationController
 
   def filter_by
     @certificate_orders = current_user.is_admin? ?
-        (@ssl_account.try(:certificate_orders) || CertificateOrder) : current_user.ssl_account.certificate_orders
+        (@ssl_account.try(:certificate_orders) || CertificateOrder) : current_user.ssl_account.cached_certificate_orders
     @certificate_orders = @certificate_orders.not_test.not_new.filter_by(params[:id]).paginate(@p)
 
     respond_to do |format|
@@ -502,7 +537,7 @@ class CertificateOrdersController < ApplicationController
   def incomplete
     @certificate_orders = (current_user.is_admin? ?
       CertificateOrder.incomplete :
-      current_user.ssl_account.certificate_orders.incomplete).paginate(@p)
+      current_user.ssl_account.cached_certificate_orders_incomplete).paginate(@p)
 
     respond_to do |format|
       format.html { render :action=>:index}
@@ -515,7 +550,7 @@ class CertificateOrdersController < ApplicationController
   def reprocessing
     @certificate_orders = (current_user.is_admin? ?
       CertificateOrder.reprocessing :
-      current_user.ssl_account.certificate_orders.reprocessing).paginate(@p)
+      current_user.ssl_account.cached_certificate_orders.reprocessing).paginate(@p)
 
     respond_to do |format|
       format.html { render :action=>:index}
@@ -581,15 +616,18 @@ class CertificateOrdersController < ApplicationController
   end
 
   def admin_update
-    if params[:validate]
+    if params[:validate_iv] || params[:validate_ov]
       if @certificate_order.certificate.is_smime_or_client?
         cc = @certificate_order.certificate_content
         iv = @certificate_order.get_team_iv
         ov = @certificate_order.locked_registrant
 
-        cc.validate! unless cc.validated?
-        iv.validate! if iv && !iv.validated?
-        ov.validate! if ov && !ov.validated?
+        iv.validated! if (params[:validate_iv] && iv && !iv.validated?)
+        ov.validated! if (params[:validate_ov] && ov && !ov.validated?)
+
+        if @certificate_order.iv_ov_validated?
+          cc.validate! unless cc.validated?
+        end
       end
       redirect_to certificate_order_path(@ssl_slug, @certificate_order.ref), 
         notice: "Certificate order was successfully validated!"
@@ -678,25 +716,24 @@ class CertificateOrdersController < ApplicationController
   end
 
   def recert(action)
-    instance_variable_set("@"+action,CertificateOrder.find_by_ref(params[:id]))
+    instance_variable_set("@"+action,CertificateOrder.unscoped.find_by_ref(params[:id]))
     instance_variable_get("@"+action)
   end
 
   def load_certificate_order
     if current_user
-      @certificate_order=CertificateOrder.unscoped{
-        (current_user.is_system_admins? ? CertificateOrder :
-                current_user.ssl_account.certificate_orders).find_by_ref(params[:id])}
+      @certificate_order=current_user.certificate_order_by_ref(params[:id])
 
       if @certificate_order.nil?
         co = current_user.ssl_accounts.map(&:certificate_orders)
-          .flatten.find{|c| c.ref == params[:id]}
-        @certificate_order = co if co
-        if co && co.ssl_account != current_user.ssl_account &&
-          current_user.ssl_accounts.include?(co.ssl_account)
-          
-          current_user.set_default_ssl_account(co.ssl_account)
-          set_ssl_slug
+                 .flatten.find{|c| c.ref == params[:id]}
+        if co
+          @certificate_order = co
+          if co.ssl_account != current_user.ssl_account && current_user.ssl_accounts.include?(co.ssl_account)
+
+            current_user.set_default_ssl_account(co.ssl_account)
+            set_ssl_slug
+          end
         end
       end
     end
@@ -791,6 +828,291 @@ class CertificateOrdersController < ApplicationController
       if @reusable_registrant.persisted?
         from_registrant.update_column(:parent_id, @reusable_registrant.id)
       end
+    end
+  end
+
+  def set_schedule_value
+    @schedule_simple_type = [
+        ['Hourly', '1'],
+        ['Daily (at midnight)', '2'],
+        ['Weekly (on Sunday)', '3'],
+        ['Monthly (on the 1st)', '4'],
+        ['Yearly (on 1st Jan)', '5']
+    ]
+
+    @schedule_weekdays = [
+        ['Sunday', '0'], ['Monday', '1'], ['Tuesday', '2'], ['Wednesday', '3'],
+        ['Thursday', '4'], ['Friday', '5'], ['Saturday', '6']
+    ]
+
+    @schedule_months = [
+        ['January', '1'], ['Febrary', '2'], ['March', '3'], ['April', '4'], ['May', '5'], ['June', '6'],
+        ['July', '7'], ['August', '8'], ['September', '9'], ['October', '10'], ['November', '11'], ['December', '12']
+    ]
+
+    @schedule_days = [
+        ['1', '1'], ['2', '2'], ['3', '3'], ['4', '4'], ['5', '5'], ['6', '6'],
+        ['7', '7'], ['8', '8'], ['9', '9'], ['10', '10'], ['11', '11'], ['12', '12'],
+        ['13', '13'], ['14', '14'], ['15', '15'], ['16', '16'], ['17', '17'], ['18', '18'],
+        ['19', '19'], ['20', '20'], ['21', '21'], ['22', '22'], ['23', '23'], ['24', '24'],
+        ['25', '25'], ['26', '26'], ['27', '27'], ['28', '28'], ['29', '29'], ['30', '30'], ['31', '31']
+    ]
+
+    @schedule_hours = [
+        ['0', '0'], ['1', '1'], ['2', '2'], ['3', '3'], ['4', '4'], ['5', '5'], ['6', '6'],
+        ['7', '7'], ['8', '8'], ['9', '9'], ['10', '10'], ['11', '11'], ['12', '12'],
+        ['13', '13'], ['14', '14'], ['15', '15'], ['16', '16'], ['17', '17'], ['18', '18'],
+        ['19', '19'], ['20', '20'], ['21', '21'], ['22', '22'], ['23', '23']
+    ]
+
+    @schedule_minutes = [
+        ['0', '0'], ['1', '1'], ['2', '2'], ['3', '3'], ['4', '4'], ['5', '5'], ['6', '6'],
+        ['7', '7'], ['8', '8'], ['9', '9'], ['10', '10'], ['11', '11'], ['12', '12'],
+        ['13', '13'], ['14', '14'], ['15', '15'], ['16', '16'], ['17', '17'], ['18', '18'],
+        ['19', '19'], ['20', '20'], ['21', '21'], ['22', '22'], ['23', '23'], ['24', '24'],
+        ['25', '25'], ['26', '26'], ['27', '27'], ['28', '28'], ['29', '29'], ['30', '30'],
+        ['31', '31'], ['32', '32'], ['33', '33'], ['34', '34'], ['35', '35'], ['36', '36'],
+        ['37', '37'], ['38', '38'], ['39', '39'], ['40', '40'], ['41', '41'], ['42', '42'],
+        ['43', '43'], ['44', '44'], ['45', '45'], ['46', '46'], ['47', '47'], ['48', '48'],
+        ['49', '49'], ['50', '50'], ['51', '51'], ['52', '52'], ['53', '53'], ['54', '54'],
+        ['55', '55'], ['56', '56'], ['57', '57'], ['58', '58'], ['59', '59']
+    ]
+  end
+
+  def schedule(params)
+    # Create or Update notification group
+    if params[:notification_group] == 'none'
+      # Saving notification group info
+      notification_group = NotificationGroup.new(
+          friendly_name: 'ng-' + @certificate_order.ref,
+          scan_port: '443',
+          notify_all: true,
+          ssl_account: current_user.ssl_account
+      )
+
+      # Saving notification group triggers
+      ['60', '30', '15', '0', '-15'].uniq.sort{|a, b| a.to_i <=> b.to_i}.reverse.each_with_index do |rt, i|
+        notification_group.preferred_notification_group_triggers = rt.or_else(nil), ReminderTrigger.find(i + 1)
+      end
+
+      unless notification_group.save
+        flash[:error] = "Some error occurs while saving notification group data. Please try again."
+        @certificate = @certificate_order.certificate
+
+        format.html { render '/certificates/buy', :layout=>'application' }
+      end
+    else
+      notification_group = current_user.ssl_account.notification_groups.where(ref: params[:notification_group]).first
+
+      unless notification_group
+        flash[:error] = "Some error occurs while getting notification group data. Please try again."
+        @certificate = @certificate_order.certificate
+
+        format.html { render '/certificates/buy', :layout=>'application' }
+      end
+    end
+
+    # Saving certificate order tag
+    is_exist = notification_group.certificate_orders.where(id: @certificate_order.id)
+    notification_group.notification_groups_subjects.build(
+        subjectable_type: 'CertificateOrder', subjectable_id: @certificate_order.id
+    ).save if is_exist.empty?
+
+    # Saving subject tags
+    new_tags = @certificate_order.certificate_content.certificate_names.pluck(:id).map{ |val| val.to_s }
+    current_tags = notification_group.notification_groups_subjects
+                       .where(subjectable_type: ['CertificateName', nil]).pluck(:domain_name, :subjectable_id)
+                       .map{ |arr| arr[0].blank? ? arr[1].to_s : (arr[1].blank? ? arr[0] : (arr[0] + '---' + arr[1].to_s)) }
+    add_tags = new_tags - current_tags
+    add_tags.each do |subject|
+      notification_group.notification_groups_subjects.build(
+          subjectable_type: 'CertificateName', subjectable_id: subject
+      ).save
+    end
+
+    # Saving contact tags
+    current_tags = notification_group.notification_groups_contacts.where(email_address: current_user.email)
+    notification_group.notification_groups_contacts.build(
+        email_address: current_user.email
+    ).save if current_tags.empty?
+
+    # Saving schedule
+    if params[:notification_group] == 'none'
+      if params[:schedule_type] == 'true'
+        current_schedules = notification_group.schedules.pluck(:schedule_type)
+        unless current_schedules.include? 'Simple'
+          notification_group.schedules.destroy_all
+
+          notification_group.schedules.build(
+              schedule_type: 'Simple',
+              schedule_value: params[:schedule_simple_type]
+          ).save
+        end
+      else
+        current_schedules = notification_group.schedules.pluck(:schedule_type)
+        if current_schedules.include? 'Simple'
+          notification_group.schedules.destroy_all
+        end
+
+        # Weekday
+        current_schedules = notification_group.schedules.where(schedule_type: 'Weekday').pluck(:schedule_value)
+        if params[:weekday_type] == 'true'
+          unless current_schedules.include? 'All'
+            notification_group.schedules.where(schedule_type: 'Weekday').destroy_all
+            notification_group.schedules.build(
+                schedule_type: 'Weekday',
+                schedule_value: 'All'
+            ).save
+          end
+        else
+          params[:weekday_custom_list] ||= []
+          new_weekdays = params[:weekday_custom_list] - current_schedules
+          old_weekdays = current_schedules - params[:weekday_custom_list]
+
+          notification_group.schedules.where(schedule_type: 'Weekday', schedule_value: old_weekdays).destroy_all
+          new_weekdays.each do |weekday|
+            notification_group.schedules.build(
+                schedule_type: 'Weekday',
+                schedule_value: weekday
+            ).save
+          end
+        end
+
+        # Month
+        current_schedules = notification_group.schedules.where(schedule_type: 'Month').pluck(:schedule_value)
+        if params[:month_type] == 'true'
+          unless current_schedules.include? 'All'
+            notification_group.schedules.where(schedule_type: 'Month').destroy_all
+            notification_group.schedules.build(
+                schedule_type: 'Month',
+                schedule_value: 'All'
+            ).save
+          end
+        else
+          params[:month_custom_list] ||= []
+          new_months = params[:month_custom_list] - current_schedules
+          old_months = current_schedules - params[:month_custom_list]
+
+          notification_group.schedules.where(schedule_type: 'Month', schedule_value: old_months).destroy_all
+          new_months.each do |month|
+            notification_group.schedules.build(
+                schedule_type: 'Month',
+                schedule_value: month
+            ).save
+          end
+        end
+
+        # Day
+        current_schedules = notification_group.schedules.where(schedule_type: 'Day').pluck(:schedule_value)
+        if params[:day_type] == 'true'
+          unless current_schedules.include? 'All'
+            notification_group.schedules.where(schedule_type: 'Day').destroy_all
+            notification_group.schedules.build(
+                schedule_type: 'Day',
+                schedule_value: 'All'
+            ).save
+          end
+        else
+          params[:day_custom_list] ||= []
+          new_days = params[:day_custom_list] - current_schedules
+          old_days = current_schedules - params[:day_custom_list]
+
+          notification_group.schedules.where(schedule_type: 'Day', schedule_value: old_days).destroy_all
+          new_days.each do |day|
+            notification_group.schedules.build(
+                schedule_type: 'Day',
+                schedule_value: day
+            ).save
+          end
+        end
+
+        # Hour
+        current_schedules = notification_group.schedules.where(schedule_type: 'Hour').pluck(:schedule_value)
+        if params[:hour_type] == 'true'
+          unless current_schedules.include? 'All'
+            notification_group.schedules.where(schedule_type: 'Hour').destroy_all
+            notification_group.schedules.build(
+                schedule_type: 'Hour',
+                schedule_value: 'All'
+            ).save
+          end
+        else
+          params[:hour_custom_list] ||= []
+          new_hours = params[:hour_custom_list] - current_schedules
+          old_hours = current_schedules - params[:hour_custom_list]
+
+          notification_group.schedules.where(schedule_type: 'Hour', schedule_value: old_hours).destroy_all
+          new_hours.each do |hour|
+            notification_group.schedules.build(
+                schedule_type: 'Hour',
+                schedule_value: hour
+            ).save
+          end
+        end
+
+        # Minute
+        current_schedules = notification_group.schedules.where(schedule_type: 'Minute').pluck(:schedule_value)
+        if params[:minute_type] == 'true'
+          unless current_schedules.include? 'All'
+            notification_group.schedules.where(schedule_type: 'Minute').destroy_all
+            notification_group.schedules.build(
+                schedule_type: 'Minute',
+                schedule_value: 'All'
+            ).save
+          end
+        else
+          params[:minute_custom_list] ||= []
+          new_minutes = params[:minute_custom_list] - current_schedules
+          old_minutes = current_schedules - params[:minute_custom_list]
+
+          notification_group.schedules.where(schedule_type: 'Minute', schedule_value: old_minutes).destroy_all
+          new_minutes.each do |minute|
+            notification_group.schedules.build(
+                schedule_type: 'Minute',
+                schedule_value: minute
+            ).save
+          end
+        end
+      end
+    end
+  end
+
+  def setup_managed_csr_domains(params)
+    # if params[:add_to_manager] && params[:add_to_manager] == 'true'
+    #   managed_csr = ManagedCsr.new
+    #   managed_csr.body = params[:certificate_order][:certificate_contents_attributes]['0'.to_sym][:signing_request]
+    #   managed_csr.friendly_name = managed_csr.common_name || managed_csr.sha1_hash
+    #   managed_csr.ssl_account_id = current_user.ssl_account.id
+    #
+    #   unless managed_csr.save
+    #     flash[:error] = "Some error occurs while adding this csr to the csr manager."
+    #     @certificate = @certificate_order.certificate
+    #
+    #     format.html { render '/certificates/buy', :layout=>'application' }
+    #   end
+    #
+    #   @certificate_order.managed_csrs << managed_csr
+    # end
+    #
+    # @certificate_order.managed_csrs << ManagedCsr.find_by_ref(params[:managed_csr]) if params[:managed_csr] != 'none'
+    # @certificate_order.managed_domains << Domain.where(id: params[:managed_domains]) if params[:managed_domains]
+
+    if params[:managed_csr] != 'none'
+      @certificate_order.managed_csrs << ManagedCsr.find_by_ref(params[:managed_csr])
+    elsif params[:add_to_manager] == 'true'
+      managed_csr = ManagedCsr.new
+      managed_csr.body = params[:certificate_order][:certificate_contents_attributes]['0'.to_sym][:signing_request]
+      managed_csr.friendly_name = managed_csr.common_name || managed_csr.sha1_hash
+      managed_csr.ssl_account_id = current_user.ssl_account.id
+
+      unless managed_csr.save
+        flash[:error] = "Some error occurs while adding this csr to the csr manager."
+        @certificate = @certificate_order.certificate
+
+        format.html { render '/certificates/buy', :layout=>'application' }
+      end
+
+      @certificate_order.managed_csrs << managed_csr
     end
   end
 end

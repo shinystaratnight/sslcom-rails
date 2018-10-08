@@ -13,7 +13,7 @@
               *Send to CA:
             =select_tag :send_to_ca,
               options_for_select(@certificate_order.certificate.cas.map{|ca| [ca.friendly_name, ca.ref]},
-              @certificate_order.certificate.cas.default.last.try(:ref)), id: 'ca-mapping'
+              @certificate_order.certificate.cas.ssl_account_or_general_default(@certificate_order.ssl_account).last.try(:ref)), id: 'ca-mapping'
           .clearfix
             %label{for: 'cn'}
               *CN (Common name):

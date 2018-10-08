@@ -129,7 +129,7 @@ module ApplicationHelper
   def text_field_for(form, field,
       size=HTML_TEXT_FIELD_SIZE,
       maxlength=DB_STRING_MAX_LENGTH, options = {})
-    form_field = form.text_field field, :size => size, :maxlength => maxlength
+    form_field = form.text_field field, :size => size, :maxlength => maxlength, value: options[:value]
     label = form.label(field, "#{'*' if options.delete(:required)}#{field.humanize}:".gsub(/\b\w/) {|s| s.upcase }) unless options.delete(:no_label)
     append = yield if block_given?
     create_tags label, form_field, options, append

@@ -8,9 +8,12 @@
   another user to complete the validation step.
   =link_to "How do I use this page?", Settings.dv_explanation_link, target: "_blank"
 =form_tag('', method: :post, class: :domain_validate_request) do
+  -opt = [["Remove", "remove"]]
   %table#domains_validation
     %thead
       %th
+        =check_box_tag 'select_all', nil, false, {id: 'select_all'}
+        =select_tag('group_remove', options_for_select(opt), prompt: '--- None ---')
       %th domain
       %th email addresses
       %th
@@ -23,11 +26,12 @@
     %tbody.domain_list
       -@all_domains.each_with_index do |d, index|
         %tr.certificate_name
-          =hidden_field_tag "d_name_id[]", d.id
           %td
+            =hidden_field_tag "d_name_id[]", d.id
+            =check_box_tag 'checkbox_domain', nil, false, :class => 'check_box', :id => d.name
             =button_tag "Remove", :class => "btn_remove_domain", :type => "button"
           %td.center=d.name
-          %td.center
+          %td
             %select(name="dcv_address[]")
               %option select email address
               -@address_choices[index].each do |address|
@@ -43,7 +47,7 @@
         %tr
           %td
           %td
-          %td(colspan="4" )
+          %td(colspan="5" )
             Instructions:
             %span(style="background: yellow" class="dcv_instruction" )Please select email address
   #upload_validations(style='width: 100%; text-align: center')

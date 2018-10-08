@@ -146,6 +146,7 @@ class CertificateContent < ActiveRecord::Base
       event :issue, :transitions_to => :issued
       event :reset, :transitions_to => :new
       event :validate, :transitions_to => :validated
+      event :pend_validation, :transitions_to => :pending_validation
     end
 
     state :csr_submitted do
@@ -234,12 +235,23 @@ class CertificateContent < ActiveRecord::Base
     signed_certificates.last
   end
 
-  def ejbca_certificate_chain(options={with_tags: true})
+  # :with_tags (default), :x509, :without_tags
+  def ejbca_certificate_chain(options={format: :with_tags})
     chain=SslcomCaRequest.where(username: self.ref).last
-    if options[:with_tags]
-      chain.x509_certificates.map(&:to_s)
+    xcert = if "8875640296558310041" == chain.x509_certificates.last.serial #non EV serial
+              Certificate::CERTUM_XSIGN
+            elsif "6248227494352943350" == chain.x509_certificates.last.serial # EV serial
+              Certificate::CERTUM_XSIGN_EV
+            end
+    if options[:format]==:objects
+      certs=chain.x509_certificates
+      xcert ? certs : certs[0..-2]<<OpenSSL::X509::Certificate.new(SignedCertificate.enclose_with_tags(xcert))
+    elsif options[:format]==:without_tags
+      certs=chain.certificate_chain
+      xcert ? certs : certs[0..-2]<<xcert
     else
-      chain.certificate_chain
+      certs=chain.x509_certificates
+      xcert ? certs : certs[0..-2].map(&:to_s)<<SignedCertificate.enclose_with_tags(xcert)
     end unless chain.blank?
   end
 
@@ -688,7 +700,7 @@ class CertificateContent < ActiveRecord::Base
   def subject_dn(options={})
     cert = options[:certificate] || self.certificate
     dn=["CN=#{options[:common_name] || csr.common_name}"]
-    if !(options[:mapping] ? options[:mapping].try(:profile_name) =~ /DV/ : (cert.is_dv? or locked_registrant.blank?))
+    if !locked_registrant.blank? and !(options[:mapping] ? options[:mapping].try(:profile_name) =~ /DV/ : cert.is_dv?)
       # if ev or ov order, must have locked registrant
       org=options[:o] || locked_registrant.company_name
       ou=options[:ou] || locked_registrant.department

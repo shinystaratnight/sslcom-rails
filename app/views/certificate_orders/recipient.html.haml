@@ -3,6 +3,7 @@
 - certificate = @certificate_order.certificate
 - skip_registrant = certificate.is_client_pro? || certificate.is_client_basic?
 = order_progress_indicator((skip_registrant ? 1 : 2), certificate)
+- recipient = @certificate_order.get_team_iv
 
 .order_container
   %h3 Recipient Information for #{@certificate_order.description}
@@ -39,28 +40,29 @@
       .clearfix
         %label{for: 'first_name'}
           *First Name:
-        = text_field_tag :first_name, nil, required: true
+        = text_field_tag :first_name, (recipient ? recipient.first_name : nil), required: true
       
       .clearfix
         %label{for: 'last_name'}
           *Last Name:
-        = text_field_tag :last_name, nil, required: true
+        = text_field_tag :last_name, (recipient ? recipient.last_name : nil), required: true
       
       .clearfix
         %label{for: 'email'}
           *Email Address:
-        = text_field_tag :email, nil, required: true
+        = text_field_tag :email, (recipient ? recipient.email : nil), required: true
 
-      .clearfix
-        %label{for: 'lra'}
-          Validate Recipient:
-          %span.label_desc
-            *Local Registration Authority:
-            %br/
-            I am authorized to validate recipient.
-        = check_box_tag :lra, 'lra_validation'
+      - unless @certificate_order.ssl_account.epki_agreement.blank?
+        .clearfix
+          %label{for: 'lra'}
+            Validate Recipient:
+            %span.label_desc
+              *Local Registration Authority:
+              %br/
+              I am authorized to validate recipient.
+          = check_box_tag :lra, 'lra_validation'
 
     #button_container
       #auto_adjust
-        = image_tag "cancel_bl.gif", id: "start_over_redirect"
+        = link_to (image_tag "cancel_bl.gif"), certificate_order_path(@ssl_slug, @certificate_order.ref)
         = image_submit_tag "next_bl.gif", alt: "edit ssl certificate order"

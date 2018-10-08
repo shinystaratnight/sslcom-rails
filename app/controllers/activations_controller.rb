@@ -18,6 +18,9 @@ class ActivationsController < ApplicationController
       end
 
       @user.deliver_activation_confirmation!
+      if params[:tos] # Subscriber Agreement checked
+        @user.ssl_account.update_column(:epki_agreement, DateTime.now)
+      end
       flash[:notice] = "Your account has been activated."
       redirect_to account_path((@user.ssl_account ? @user.ssl_account.to_slug : {}))
     else

@@ -61,7 +61,7 @@ class ValidationsController < ApplicationController
               if team_cn.name == cn.name
                 team_dcv = team_cn.domain_control_validations.last
 
-                if team_dcv && team_dcv.identifier_found
+                if team_dcv && team_dcv.validated?(cc.csr.public_key_sha1)
                   team_level_validated = true
 
                   @ds[team_cn.name] = {}
@@ -84,6 +84,12 @@ class ValidationsController < ApplicationController
             else
               validated_domain_arry << cn.name
             end
+          end
+
+          if @all_validated && cc.pending_validation?
+            cc.validate!
+            @certificate_order.
+                apply_for_certificate(mapping: @certificate_order.certificate.cas.ssl_account_or_general_default(current_user.ssl_account).last)
           end
 
           @validated_domains = validated_domain_arry.join(',')
@@ -157,6 +163,8 @@ class ValidationsController < ApplicationController
       end
       if all_validated
         cc.validate! unless cc.validated?
+        @certificate_order.apply_for_certificate(mapping:
+           @certificate_order.certificate.cas.ssl_account_or_general_default(current_user.ssl_account).last) unless @certificate_order.certificate_content.ca.blank?
       end
     end
   end
@@ -167,8 +175,7 @@ class ValidationsController < ApplicationController
     if current_user
       domain_name_arry = params['domain_names'].split(',')
       # order_number = CertificateOrder.find_by_ref(params['certificate_order_id']).external_order_number
-      certificate_order = (current_user.is_system_admins? ? CertificateOrder :
-                               current_user.ssl_account.certificate_orders).find_by_ref(params[:certificate_order_id])
+      certificate_order = current_user.certificate_order_by_ref(params[:certificate_order_id])
       certificate_content = certificate_order.certificate_content
       certificate_names = certificate_content.certificate_names
 
@@ -346,12 +353,12 @@ class ValidationsController < ApplicationController
       if @search = params[:search]
        current_user.is_admin? ?
            (@ssl_account.try(:certificate_orders) || CertificateOrder).not_test.search_with_csr(params[:search]).unvalidated :
-        current_user.ssl_account.certificate_orders.not_test.
+        current_user.ssl_account.cached_certificate_orders.not_test.
           search(params[:search]).unvalidated
       else
         current_user.is_admin? ?
             (@ssl_account.try(:certificate_orders) || CertificateOrder).unvalidated :
-            current_user.ssl_account.certificate_orders.unvalidated
+            current_user.ssl_account.cached_certificate_orders.unvalidated
       end.paginate(p)
     respond_to do |format|
       format.html { render :action => :index }
@@ -627,7 +634,7 @@ class ValidationsController < ApplicationController
 
   def create_ov_attachment
     if @val_history.valid?
-      lr = @certificate_order.certificate_content.locked_registrant
+      lr = @certificate_order.locked_registrant
       unless lr.nil?
         lr.validation_histories << @val_history
         if lr.parent_id

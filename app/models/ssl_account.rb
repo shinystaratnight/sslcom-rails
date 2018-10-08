@@ -110,7 +110,7 @@ class SslAccount < ActiveRecord::Base
 
   before_validation :b_create, on: :create
   after_create  :initial_setup
-  
+
   BILLING_METHODS = ['monthly', 'due_at_checkout', 'daily']
   PULL_RESELLER = "pull_from_reseller"
   PULL_ADMIN_TECH = "pull_from_admin_and_tech"
@@ -171,7 +171,7 @@ class SslAccount < ActiveRecord::Base
   def self.human_attribute_name(attr, options={})
      HUMAN_ATTRIBUTES[attr.to_sym] || super
   end
-  
+
   def generate_funded_account
     self.funded_account = FundedAccount.new(:cents=>0)
   end
@@ -221,6 +221,31 @@ class SslAccount < ActiveRecord::Base
       tmp_certs
       tmp_certs.each do |k,v|
         result << tmp_certs[k].min{|a,b|a.created_at.to_i <=> b.created_at.to_i}
+      end
+    end
+  end
+
+  def satisfy_related_dcvs(domain,dcv)
+    [].tap do |satisfied_names|
+      all_certificate_names.each do |certificate_name|
+        if certificate_name.name!=domain and
+            DomainControlValidation.domain_in_subdomains?(domain,certificate_name.name)
+          certificate_name.domain_control_validations.create(dcv.attributes.except(*CertificateOrder::ID_AND_TIMESTAMP))
+          satisfied_names << certificate_name.name
+        end
+      end
+    end
+  end
+
+  def other_dcvs_satisfy_domain(certificate_name)
+    cnames = all_certificate_names
+    cnames.each do |cn|
+      if DomainControlValidation.domain_in_subdomains?(cn.name,certificate_name.name)
+        dcv = cn.domain_control_validations.last
+        if dcv && dcv.identifier_found
+          certificate_name.domain_control_validations.create(dcv.attributes.except(*CertificateOrder::ID_AND_TIMESTAMP))
+          break
+        end
       end
     end
   end
@@ -288,6 +313,16 @@ class SslAccount < ActiveRecord::Base
     certificate_orders.not_new.count > 0
   end
 
+  # do any default certificates map to SSL.com chained Roots
+  def show_domains_manager?
+    Rails.cache.fetch("#{cache_key}/show_domains_manager") do
+      cas_certificates.default.any?{|cc|cc.certificate.is_server?}
+    end or
+    Rails.cache.fetch(CasCertificate::GENERAL_DEFAULT_CACHE) do
+      CasCertificate.general.default.any?{|cc|cc.certificate.is_server?}
+    end
+  end
+
   %W(receipt confirmation).each do |et|
     define_method("#{et}_recipients") do
       [].tap do |addys|
@@ -302,7 +337,7 @@ class SslAccount < ActiveRecord::Base
       end
     end
   end
-  
+
   def set_reseller_default_prefs
     self.preferred_reminder_include_cert_admin=false
     self.preferred_reminder_include_cert_tech=false
@@ -412,7 +447,7 @@ class SslAccount < ActiveRecord::Base
       migrate_orders_system_audit(params)
     end
   end
-  
+
   def self.migrate_orders_associations(params)
     list = []
     # Funded Account Withdrawal used to pay for order
@@ -425,10 +460,10 @@ class SslAccount < ActiveRecord::Base
     list = list.flatten.compact.uniq
     params[:to_sa].orders << list if list.any?
   end
-  
+
   def self.migrate_orders_system_audit(params)
     notes_ext = "from team acct ##{params[:from_sa].acct_number} to team acct ##{params[:to_sa].acct_number} on #{DateTime.now.strftime('%c')}"
-    
+
     params[:co_list].each do |co|
       SystemAudit.create(
         owner: params[:user],
@@ -446,7 +481,7 @@ class SslAccount < ActiveRecord::Base
       )
     end
   end
-  
+
   def self.migrate_orders_to_invoices(to_sa, orders_list=[])
     invoiced_orders = orders_list.select {|io| io.state == 'invoiced'}
     pending_invoice = nil
@@ -468,7 +503,7 @@ class SslAccount < ActiveRecord::Base
   end
 
   def primary_user
-    User.unscoped{users.first}
+    users.first
   end
 
   def self.ssl_slug_valid?(slug_str)
@@ -478,7 +513,7 @@ class SslAccount < ActiveRecord::Base
       !@@reserved_routes.include?(cur_ssl_slug) &&
       cur_ssl_slug.gsub(/([a-zA-Z]|_|-|\s|\d)/, '').length == 0
   end
-  
+
   def get_invoice_label
     return 'monthly' if billing_monthly?
     return 'daily' if billing_daily?
@@ -502,6 +537,11 @@ class SslAccount < ActiveRecord::Base
     domain_names
   end
 
+  # concatenate team (Domain) and order scoped certificate_names
+  def all_certificate_names
+    self.certificate_names+self.domains
+  end
+
   def validated_domains
     validated_domains = []
     cnames = self.certificate_names
@@ -521,11 +561,59 @@ class SslAccount < ActiveRecord::Base
   def get_invoice_pmt_description
     billing_monthly? ? Order::MI_PAYMENT : Order::DI_PAYMENT
   end
-  
+
   def get_account_owner
     Assignment.where(
       role_id: [Role.get_owner_id, Role.get_reseller_id], ssl_account_id: id
     ).map(&:user).first
+  end
+
+  def cached_certificate_orders
+    CertificateOrder.unscoped.where(id: (Rails.cache.fetch("#{cache_key}/certificate_orders") do
+      certificate_orders.pluck(:id)
+    end)).order(created_at: :desc)
+  end
+
+  def cached_certificate_orders_count
+    CertificateOrder.unscoped.where(id: (Rails.cache.fetch("#{cache_key}/certificate_orders") do
+      certificate_orders.pluck(:id)
+    end))
+  end
+
+  def cached_certificate_orders_pending
+    CertificateOrder.unscoped.where(id: (Rails.cache.fetch("#{cache_key}/certificate_orders_pending") do
+      certificate_orders.pending.pluck(:id)
+    end)).order(created_at: :desc)
+  end
+
+  def cached_certificate_orders_incomplete
+    CertificateOrder.unscoped.where(id: (Rails.cache.fetch("#{cache_key}/certificate_orders_incomplete") do
+      certificate_orders.incomplete.pluck(:id)
+    end)).order(created_at: :desc)
+  end
+
+  def cached_certificate_orders_credits
+    CertificateOrder.unscoped.where(id: (Rails.cache.fetch("#{cache_key}/certificate_orders_credits") do
+      certificate_orders.credits.pluck(:id)
+    end)).order(created_at: :desc)
+  end
+
+  def cached_certificate_orders_credits_count
+    Rails.cache.fetch("#{cache_key}/certificate_orders_credits_count") do
+      cached_certificate_orders_credits.count
+    end
+  end
+
+  def cached_certificate_orders_pending_count
+    Rails.cache.fetch("#{cache_key}/certificate_orders_pending_count") do
+      cached_certificate_orders_pending.count
+    end
+  end
+
+  def cached_certificate_orders_incomplete_count
+    Rails.cache.fetch("#{cache_key}/certificate_orders_incomplete_count") do
+      cached_certificate_orders_incomplete.count
+    end
   end
 
   def get_team_name
@@ -758,7 +846,11 @@ class SslAccount < ActiveRecord::Base
             logger.info "Sending reminder"
             body = past ? Reminder.past_expired_digest_notice(d, interval) :
                        Reminder.digest_notice(d)
-            body.deliver unless body.to.empty?
+            begin
+              body.deliver unless body.to.empty?
+            rescue Exception=>e
+              logger.error e.backtrace.inspect
+            end
           end
           d[1].each do |ec|
             logger.info "create SentReminder"
@@ -774,21 +866,21 @@ class SslAccount < ActiveRecord::Base
       end
     end
   end
-  
+
   def billing_monthly?
     billing_method == 'monthly' || no_limit
   end
-  
+
   def billing_daily?
     billing_method == 'daily'
   end
-  
+
   def invoice_required?
     billing_monthly? || billing_daily? || no_limit
   end
-  
+
   protected
-  
+
   def create_folders
     archive_folder = Folder.find_or_create_by(
         name: 'archived', archived: true, ssl_account_id: self.id
@@ -812,7 +904,7 @@ class SslAccount < ActiveRecord::Base
 
     self.update_column(:default_folder_id, default_folder.id)
   end
-    
+
   private
 
   # creates dev db from production. NOTE: This will modify the db data so use this on a COPY of the production db

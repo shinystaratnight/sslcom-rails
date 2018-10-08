@@ -88,8 +88,6 @@
                           %li=link_to 'deposit funds', allocate_funds_url(ssl_slug: @ssl_slug)
                           -if ssl_account && permitted_to?(:index, :billing_profiles)
                             %li=link_to 'manage billing profiles', billing_profiles_path(ssl_slug: @ssl_slug)
-                          -if ssl_account && permitted_to?(:read, :contacts)
-                            %li=link_to 'manage saved contacts', saved_contacts_contacts_path(ssl_slug: @ssl_slug)
                           %li=link_to 'buy certificate', certificates_url
                           %li=link_to 'certificate pricing', reseller_tier_url(ssl_account.reseller.reseller_tier.id)
                           -if ssl_account && permitted_to?(:index, :invoices) && ssl_account.invoices.any?
@@ -124,4 +122,5 @@
                         -if ssl_account && permitted_to?(:read, :contacts)
                           %li
                             %strong contacts/registrants
-                          %li=link_to 'manage', saved_contacts_contacts_path(ssl_slug: @ssl_slug)
+                          %li=link_to 'contacts', saved_contacts_contacts_path(ssl_slug: @ssl_slug)
+                          %li=link_to 'registrants', saved_contacts_contacts_path(ssl_slug: @ssl_slug, registrants: true)

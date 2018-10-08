@@ -5,6 +5,8 @@ class DomainControlValidation < ActiveRecord::Base
   belongs_to :csr, touch: true # only for single domain certs
   belongs_to :csr_unique_value
   belongs_to :certificate_name, touch: true  # only for UCC or multi domain certs
+  # belongs_to :domain, class_name: "CertificateName"
+  # delegate   :ssl_account, to: :domain
   serialize :candidate_addresses
 
   # validate  :email_address_check, unless: lambda{|r| r.email_address.blank?}
@@ -12,6 +14,9 @@ class DomainControlValidation < ActiveRecord::Base
   IS_INVALID  = "is an invalid email address choice"
   FAILURE_ACTION = %w(ignore reject)
   AUTHORITY_EMAIL_ADDRESSES = %w(admin@ administrator@ webmaster@ hostmaster@ postmaster@)
+  MAX_DURATION_DAYS={email: 820}
+
+  EMAIL_CHOICE_CACHE_EXPIRES_DAYS=1
 
   include Workflow
   workflow do
@@ -35,7 +40,7 @@ class DomainControlValidation < ActiveRecord::Base
 
     state :satisfied do
       on_entry do
-        self.update_attribute :responded_at, DateTime.now
+        self.update_columns(identifier_found: true, responded_at: DateTime.now)
       end
     end
   end
@@ -85,6 +90,58 @@ class DomainControlValidation < ActiveRecord::Base
     end
   end
 
+  def self.ssl_account(domain)
+    SslAccount.unscoped.joins{certificate_names.domain_control_validations}.joins{certificate_contents.certificate_names.domain_control_validations}.where{(certificate_names.domain_control_validations.subject=~domain) or
+        (certificate_contents.certificate_names.domain_control_validations.subject=~domain)}
+  end
+
+  def ssl_account
+    SslAccount.unscoped.joins{domains.domain_control_validations.outer}.where(domain_control_validations: {id: self.id})
+  end
+
+  # this will find multi-level subdomains from a more root level domain
+  def self.satisfied_validation(ssl_account,domain,public_key_sha1=nil)
+    name=domain.downcase
+    name=('%'+name[1..-1]) if name[0]=="*" # wildcard
+    DomainControlValidation.joins(:certificate_name).where{(identifier_found==1) &
+        (certificate_name.name=~"#{name}") &
+        (certificate_name_id >> [ssl_account.all_certificate_names.map(&:id)])}.each do |dcv|
+      return dcv if dcv.validated?(name,public_key_sha1)
+    end
+  end
+
+  def self.validated?(ssl_account,domain,public_key_sha1=nil)
+    satisfied_validation(ssl_account,domain,public_key_sha1=nil).blank? ? false : true
+  end
+
+  # is this dcv validated?
+  # domain - similar domain can use this dcv to satisfy validation?
+  # public_key_sha1 - against a csr
+  def validated?(domain=nil,public_key_sha1=nil)
+    satisfied = ->(public_key_sha1){
+        identifier_found && !responded_at.blank? && responded_at > DomainControlValidation::MAX_DURATION_DAYS[:email].days.ago &&
+          (!email_address.blank? or (public_key_sha1 ? csr.public_key_sha1.downcase==public_key_sha1.downcase : true))
+    }
+    (domain ? true : DomainControlValidation.domain_in_subdomains?(domain,certificate_name.name)) and satisfied.call(public_key_sha1)
+  end
+
+  # this determines if a domain validation will satisfy another domain validation based on 2nd level subdomains and wildcards
+  # BE VERY CAREFUL as this drives validation for the entire platform including Web and API
+  def self.domain_in_subdomains?(subject,compare_with)
+    subject=subject[2..-1] if subject=~/\A\*\./
+    compare_with=compare_with[2..-1] if compare_with=~/\A\*\./
+    if ::PublicSuffix.valid?(subject, default_rule: nil) and ::PublicSuffix.valid?(compare_with, default_rule: nil)
+      sd=::PublicSuffix.parse(subject)
+      subject_subdomains = sd.trd ? sd.trd.split(".").reverse : []
+      d=::PublicSuffix.parse(compare_with)
+      compare_with_subdomains = d.trd ? d.trd.split(".").reverse : []
+      0.upto(compare_with_subdomains.count) do |i|
+        return true if ((compare_with_subdomains.slice(0,i).reverse<<d.domain).join("."))==subject
+      end
+    end
+    false
+  end
+
   def verify_http_csr_hash
     certificate_name.dcv_verified?
   end
@@ -95,7 +152,7 @@ class DomainControlValidation < ActiveRecord::Base
   end
 
   def self.email_address_choices(name)
-    Rails.cache.fetch("email_address_choices/#{name}", expires_in: 30.days) do
+    Rails.cache.fetch("email_address_choices/#{name}", expires_in: EMAIL_CHOICE_CACHE_EXPIRES_DAYS.days) do
       return [] unless ::PublicSuffix.valid?(name.downcase)
       d=::PublicSuffix.parse(name.downcase)
       subdomains = d.trd ? d.trd.split(".") : []

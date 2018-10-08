@@ -78,7 +78,7 @@ class ApiCertificateReprocess < ApiCertificateRequest
     co_params = {duration: period}
     co_params.merge!({is_test: self.test})
     co_params.merge!({domains: self.domains}) if(is_ucc? && self.domains)
-    certificate_order = current_user.ssl_account.certificate_orders.build(co_params)
+    certificate_order = current_user.ssl_account.cached_certificate_orders.build(co_params)
     certificate_content=certificate_order.certificate_contents.build(
         csr: self.csr_obj, server_software_id: self.server_software)
     certificate_content.certificate_order = certificate_order
