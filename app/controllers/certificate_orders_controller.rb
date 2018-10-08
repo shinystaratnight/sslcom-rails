@@ -638,6 +638,7 @@ class CertificateOrdersController < ApplicationController
       cc = @certificate_order.certificate_content
       iv = @certificate_order.get_team_iv
       ov = @certificate_order.locked_registrant
+      ov_iv = @certificate_order.certificate.requires_locked_registrant?
 
       iv.validated! if (params[:validate_iv] && iv && !iv.validated?)
       if params[:validate_ov] && ov && !ov.validated?
@@ -648,7 +649,7 @@ class CertificateOrdersController < ApplicationController
         end
       end
 
-      if @certificate_order.iv_ov_validated?
+      if (ov_iv && @certificate_order.iv_ov_validated?) || (!ov_iv && @certificate_order.iv_validated?)
         cc.validate! unless cc.validated?
       end
       
