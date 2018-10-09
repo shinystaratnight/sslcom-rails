@@ -243,15 +243,14 @@ class CertificateContent < ActiveRecord::Base
             elsif "6248227494352943350" == chain.x509_certificates.last.serial # EV serial
               Certificate::CERTUM_XSIGN_EV
             end
+    certs=chain.x509_certificates
     if options[:format]==:objects
-      certs=chain.x509_certificates
-      xcert ? certs : certs[0..-2]<<OpenSSL::X509::Certificate.new(SignedCertificate.enclose_with_tags(xcert))
+      xcert ? certs[0..-2]<<OpenSSL::X509::Certificate.new(SignedCertificate.enclose_with_tags(xcert)) : certs
     elsif options[:format]==:without_tags
       certs=chain.certificate_chain
-      xcert ? certs : certs[0..-2]<<xcert
+      xcert ? certs[0..-2]<<xcert : certs
     else
-      certs=chain.x509_certificates
-      xcert ? certs : certs[0..-2].map(&:to_s)<<SignedCertificate.enclose_with_tags(xcert)
+      xcert ? certs[0..-2].map(&:to_s)<<SignedCertificate.enclose_with_tags(xcert) : certs.map(&:to_s)
     end unless chain.blank?
   end
 

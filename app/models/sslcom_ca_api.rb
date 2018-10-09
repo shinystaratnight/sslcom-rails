@@ -266,11 +266,13 @@ class SslcomCaApi
 
   # body - parameters in JSON format
   def self.call_ca(host, options, body)
-    uri = URI.parse(host)
+    uri = URI.parse(host.gsub!("8442","8443"))
     req = (options[:method]=~/GET/i ? Net::HTTP::Get : Net::HTTP::Post).new(uri, 'Content-Type' => 'application/json')
     http = Net::HTTP.new(uri.host, uri.port)
     http.use_ssl = true
-    http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+    http.verify_mode = OpenSSL::SSL::VERIFY_PEER
+    http.cert = OpenSSL::X509::Certificate.new(File.read(Rails.application.secrets.ejbca_development_client_auth_cert))
+    http.key = OpenSSL::PKey::RSA.new(File.read(Rails.application.secrets.ejbca_development_client_auth_key))
     req.body = body
     res = http.request(req)
     return req, res
