@@ -360,7 +360,7 @@ module OldSite
         p "processed #{i.to_s} legacy users" if i%100==0
         user = c.migratable
         if user.is_a?(User) && user.ssl_account
-          if user.ssl_account.orders.count == c.orders.count
+          if user.ssl_account.cached_orders.count == c.orders.count
             #user.ssl_account.orders.each do |o|
             #  o
             #end

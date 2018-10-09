@@ -579,7 +579,7 @@ class Order < ActiveRecord::Base
   end
   
   # Get all orders for certificate orders or line items of main order.
-  def get_all_orders
+  def get_cached_orders
     certificate_orders.map(&:orders).inject([]) do |all, o|
       all << o if o != self
       all.flatten

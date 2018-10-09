@@ -2014,7 +2014,7 @@ class CertificateOrder < ActiveRecord::Base
   # notify can be "none", "success", or "all"
   def purchase_renewal(notify)
     bp=order.billing_profile
-    response=[bp, (ssl_account.orders.map(&:billing_profile)-[bp]).shift].compact.each do |bp|
+    response=[bp, (ssl_account.cached_orders.map(&:billing_profile)-[bp]).shift].compact.each do |bp|
       p "purchase using billing_profile_id==#{bp.id}"
       options={profile: bp, cvv: false}
       new_cert = self.dup

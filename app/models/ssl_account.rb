@@ -541,11 +541,15 @@ class SslAccount < ActiveRecord::Base
 
   # concatenate team (Domain) and order scoped certificate_names
   def all_certificate_names
-    self.certificate_names+self.domains
+    CertificateName.where(id: (Rails.cache.fetch("#{cache_key}/all_certificate_names") {
+      CertificateName.find_by_sql("SELECT `certificate_names`.`id` FROM `certificate_names` INNER JOIN `certificate_contents` ON `certificate_names`.`certificate_content_id` = `certificate_contents`.`id` INNER JOIN `certificate_orders` ON `certificate_contents`.`certificate_order_id` = `certificate_orders`.`id` WHERE `certificate_orders`.`ssl_account_id` = #{id} OR `certificate_names`.`ssl_account_id` = #{id}").map(&:id)
+    })).order(updated_at: :desc)
   end
 
   def all_csrs
-    Csr.find_by_sql("SELECT `csrs`.* FROM `csrs` INNER JOIN `certificate_contents` ON `csrs`.`certificate_content_id` = `certificate_contents`.`id` INNER JOIN `certificate_orders` ON `certificate_contents`.`certificate_order_id` = `certificate_orders`.`id` WHERE `certificate_orders`.`ssl_account_id` = #{id} OR `csrs`.`ssl_account_id` = #{id}")
+    Csr.where(id: (Rails.cache.fetch("#{cache_key}/all_csrs") {
+      Csr.find_by_sql("SELECT `csrs`.`id` FROM `csrs` INNER JOIN `certificate_contents` ON `csrs`.`certificate_content_id` = `certificate_contents`.`id` INNER JOIN `certificate_orders` ON `certificate_contents`.`certificate_order_id` = `certificate_orders`.`id` WHERE `certificate_orders`.`ssl_account_id` = #{id} OR `csrs`.`ssl_account_id` = #{id}").map(&:id)
+    }))
   end
 
   def validated_domains
@@ -574,9 +578,15 @@ class SslAccount < ActiveRecord::Base
     ).map(&:user).first
   end
 
+  def cached_orders
+    Order.unscoped.where(id: (Rails.cache.fetch("#{cache_key}/orders") do
+      orders.pluck(:id).uniq
+    end)).order(created_at: :desc)
+  end
+
   def cached_certificate_orders
     CertificateOrder.unscoped.where(id: (Rails.cache.fetch("#{cache_key}/certificate_orders") do
-      certificate_orders.pluck(:id)
+      certificate_orders.pluck(:id).uniq
     end)).order(created_at: :desc)
   end
 

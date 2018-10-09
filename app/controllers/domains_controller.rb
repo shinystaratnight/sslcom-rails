@@ -142,7 +142,7 @@ class DomainsController < ApplicationController
       if @selected_domains.blank?
         redirect_to domains_path(@ssl_slug)
       end
-      @csrs = current_user.ssl_account.csrs + current_user.ssl_account.managed_csrs
+      @csrs = current_user.ssl_account.all_csrs
     else
       redirect_to domains_path(@ssl_slug)
     end

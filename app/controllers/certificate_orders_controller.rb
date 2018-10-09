@@ -179,7 +179,7 @@ class CertificateOrdersController < ApplicationController
             @notification_groups = current_user.ssl_account.notification_groups.pluck(:friendly_name, :ref)
             @notification_groups.insert(0, ['none', 'none'])
 
-            @managed_csrs = (current_user.ssl_account.csrs + current_user.ssl_account.managed_csrs)
+            @managed_csrs = (current_user.ssl_account.all_csrs)
                                 .sort_by{|arr| arr.common_name}
                                 .uniq{|arr| arr.common_name}
                                 .map{|arr| [arr.common_name, arr.ref]}
