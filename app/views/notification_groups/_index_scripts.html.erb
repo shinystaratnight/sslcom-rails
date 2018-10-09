@@ -45,6 +45,7 @@
       $('#subjects_list').select2({
         tags: true,
         minimumResultsForSearch: -1,
+        tokenSeparators: [',', ' ', '\n', '\r\n'],
         templateSelection: function(data, container) {
           var value = data.element.value
           if ((!$.isNumeric(value)) && (value.split('---')[0].indexOf('|') == -1)) {
@@ -134,6 +135,7 @@
 
             $('#subjects_list').select2({
               tags: true,
+
               templateSelection: function(data, container) {
                 var value = data.element.value
                 if ((!$.isNumeric(value)) && (value.split('---')[0].indexOf('|') == -1)) {
@@ -368,6 +370,12 @@
           is_changed = true;
         }
 
+        obj = document.getElementById('status');
+        var note_group_status = obj.checked;
+        if (!is_changed && obj.checked != obj.defaultChecked) {
+          is_changed = true;
+        }
+
         var obj_list = document.getElementsByName('notification_group_triggers[]');
         $.each(obj_list, function(idx, obj) {
           if (!is_changed && obj.value != obj.defaultValue) {
@@ -484,13 +492,17 @@
           is_changed = true;
         }
 
-        var scanGroupUrl = '<%= scan_individual_group_notification_groups_path(@ssl_slug)%>';
-        if (is_changed) {
-          if (confirm("You are leaving the page with unsaved changes, do you want to continue?")) {
+        if (!note_group_status) {
+          var scanGroupUrl = '<%= scan_individual_group_notification_groups_path(@ssl_slug)%>';
+          if (is_changed) {
+            if (confirm("You are leaving the page with unsaved changes, do you want to continue?")) {
+              $('.ng_form').attr('action', scanGroupUrl).submit();
+            }
+          } else {
             $('.ng_form').attr('action', scanGroupUrl).submit();
           }
         } else {
-          $('.ng_form').attr('action', scanGroupUrl).submit();
+          alert('It can not be scan for disabled Notification Group.');
         }
       });
 
@@ -652,7 +664,7 @@
         }
       });
 
-      $('#btn_remove_groups').click(function(e) {
+      /*$('#btn_remove_groups').click(function(e) {
         e.preventDefault();
 
         var chk_remove_list = $('.chk-remove');
@@ -673,13 +685,112 @@
         if (confirm(confirmMsg)) {
           this.form.submit();
         }
-      });
+      });*/
 
       // Scanning notification groups
-      var scanGroupsUrl = '<%=scan_groups_notification_groups_path(@ssl_slug)%>';
+      /*var scanGroupsUrl = '< %=scan_groups_notification_groups_path(@ssl_slug)%>';
       $('#btn_scan_groups').click(function(e) {
         e.preventDefault();
         $('#notification_group_list').attr('action', scanGroupsUrl).submit();
+      });*/
+
+      // change the status for individual notification group checkboxes by SelectAll checkbox status
+      $('input:checkbox#select_all').click(function() {
+        $('.check_box').prop('checked', $(this).prop('checked'));
+      });
+
+      // change the status for SelectAll checkbox by individual notification group's status.
+      $('.check_box').click(function() {
+        var chk_list = $('.check_box');
+        var all_checked = true;
+
+        // check whether all individual notification group checkbox has been checked.
+        $.each(chk_list, function(idx, chk) {
+          if (!$(chk).prop('checked')) {
+            all_checked = false;
+            return false;
+          }
+        });
+
+        // change the check status for SelectAll checkbox by all individual notification group checkbox status.
+        if (all_checked) {
+          $('input:checkbox#select_all').prop('checked', true);
+        } else {
+          $('input:checkbox#select_all').prop('checked', false);
+        }
+      });
+
+      // Run Event for selected notification group(s).
+      $('#note_group_event_type').change(function() {
+        var slt_type = $(this).val();
+        $(this).val('');
+
+        var note_domain_list = $('.check_box');
+        var exist_checked = false;
+
+        var return_urls = {};
+        return_urls['scan'] = '<%=scan_groups_notification_groups_path(@ssl_slug)%>';
+        return_urls['enable'] = '<%=change_status_groups_notification_groups_path(@ssl_slug)%>';
+        return_urls['disable'] = '<%=change_status_groups_notification_groups_path(@ssl_slug)%>';
+
+        switch(slt_type) {
+          case 'scan':
+          case 'enable':
+          case 'disable':
+            $.each(note_domain_list, function(idx, note_domain) {
+              if ($(note_domain).prop('checked')) {
+                exist_checked = true;
+                return true;
+              }
+            });
+
+            if (exist_checked) {
+              if (slt_type == 'disable') {
+                $('#note_groups_status').val(true);
+              }
+
+              $('#notification_group_list').attr('action', return_urls[slt_type]).submit();
+            } else {
+              alert('There are no selected Notification Group(s) for ' + slt_type + '.');
+            }
+
+            break;
+          case 'delete':
+            var confirmMsg = 'Are you sure you want to delete the following Notification Group(s)?';
+            var chk_first_group = true;
+
+            $.each(note_domain_list, function(idx, note_domain) {
+              if ($(note_domain).prop('checked')) {
+                exist_checked = true;
+
+                if (chk_first_group) {
+                  chk_first_group = false;
+                  confirmMsg = confirmMsg.concat('\r\n      ' + $(note_domain).attr('data-group-name'));
+                } else {
+                  confirmMsg = confirmMsg.concat('\n      ' + $(note_domain).attr('data-group-name'));
+                }
+              }
+            });
+
+            if (exist_checked) {
+              if (confirm(confirmMsg)) {
+                this.form.submit();
+              } else {
+                // make checkbox status to false for all individual checkbox
+                $.each(note_domain_list, function(idx, note_domain) {
+                  $(note_domain).prop('checked', false);
+                });
+
+                // make checkbox status to false for SelectAll checkbox.
+                $('input:checkbox#select_all').prop('checked', false);
+              }
+            } else {
+              alert('There are no selected Notification Group(s) for delete.');
+            }
+
+            break;
+          default:
+        }
       });
 
     });

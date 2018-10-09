@@ -313,6 +313,7 @@ SslCom::Application.routes.draw do
         post :remove_groups
         post :scan_groups
         post :scan_individual_group
+        post :change_status_groups
         post :check_duplicate
       end
     end

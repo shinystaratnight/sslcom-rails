@@ -104,25 +104,15 @@
                 =link_to @certificate_order.parent.ref, @certificate_order.parent, target: "_blank"
             =text_area_tag :previous_csr_body, @certificate_order.most_recent_csr.body, style: "display: none"
         =cert_form.text_area :signing_request, :cols=>40, :rows=>10, :wrap=>'off'
-      -if @certificate.is_browser_generated_capable?
-        =cert_form.hidden_field :server_software_id, value: ServerSoftware.find(1).id
-      -else
-        -if Settings.require_server_software_w_csr_submit
-          .clearfix
-            %label{:for=>"certificate_order_certificate_contents_attributes_0_server_software_id"}
-              Server Software:
-              %span.label_desc for informational purposes only
-            -ss=ServerSoftware.all.to_a-[ServerSoftware.find(1)]
-            -other=[ServerSoftware.find(1)].map{|s|[s.title,s.id]}
-            =select_field_for(cert_form, :server_software_id.to_s, other+ss.sort{|a,b|a.title<=>b.title}.collect{|s|[s.title,s.id]},{:no_label=>true}, {})
       .clearfix.add_to_manager_block
         %label
           Save to CSR Manager:
         =check_box_tag :add_to_manager, true, true
-      .clearfix
+      .clearfix.managed_csrs_block
         %label
           Managed CSR:
         =select_tag :managed_csr, options_for_select(@managed_csrs, selected: {}), :class => 'managed_csr'
+        =link_to 'Go To CSR Manage', managed_csrs_path(@ssl_slug), {target: '_blank'}
       .clearfix.managed_domains_block
         %label
           -if @certificate.is_ucc?
@@ -162,31 +152,42 @@
             Domains:
         .block_body
           .schedule_container.clearfix
-            =select_tag :managed_domains, options_for_select(@managed_domains, selected: @managed_domains.collect {|arr| arr[1]}),
+            -#=select_tag :managed_domains, options_for_select(@managed_domains, selected: @managed_domains.collect {|arr| arr[1]}),
+            -#                multiple: true, data: {placeholder: "click here to list available domains to scan."}, :class => 'managed_domains'
+            =select_tag :managed_domains, options_for_select([], selected: []),
                             multiple: true, data: {placeholder: "click here to list available domains to scan."}, :class => 'managed_domains'
-    -unless @certificate.is_browser_generated_capable?
+      -if @certificate.is_browser_generated_capable?
+        =cert_form.hidden_field :server_software_id, value: ServerSoftware.find(1).id
+      -else
+        -if Settings.require_server_software_w_csr_submit
+          .clearfix
+            %label{:for=>"certificate_order_certificate_contents_attributes_0_server_software_id"}
+              Server Software:
+              %span.label_desc for informational purposes only
+            -ss=ServerSoftware.all.to_a-[ServerSoftware.find(1)]
+            -other=[ServerSoftware.find(1)].map{|s|[s.title,s.id]}
+            =select_field_for(cert_form, :server_software_id.to_s, other+ss.sort{|a,b|a.title<=>b.title}.collect{|s|[s.title,s.id]},{:no_label=>true}, {})
+    -if Settings.activate_monitoring && !@certificate.is_browser_generated_capable?
       .clearfix
         %label
-          Schedule:
-          %span.label_desc for scan
+          Schedule SSL Scans:
+          %span.label_desc expiration reminder notifications
         .schedule_block_group
-          .notification_group_schedule
-            .schedule_block
-              .block_label
-                Notification Groups
-              .block_body.clearfix
-                =select_tag :notification_group, options_for_select(notification_groups, selected: {})
           .schedule_type
             .schedule_block
               .block_body.clearfix
                 .block_item
                   %span
-                    =radio_button_tag :schedule_type, true, true
+                    =radio_button_tag :schedule_type, 'simple', true
                     Simple
                 .block_item
                   %span
-                    =radio_button_tag :schedule_type, false, false
+                    =radio_button_tag :schedule_type, 'custom', false
                     Custom
+                .block_item
+                  %span
+                    =radio_button_tag :schedule_type, 'none', false
+                    None
           .simple_schedule
             .schedule_block
               .block_body.clearfix
@@ -272,6 +273,12 @@
                 .schedule_container.clearfix
                   =select_tag :minute_custom_list, options_for_select(schedule_minutes, selected: {}),
                           multiple: true, data: {placeholder: "click here to list available minutes to scan."}
+          .notification_group_schedule
+            .schedule_block
+              .block_label
+                Notification Groups
+              .block_body.clearfix
+                =select_tag :notification_group, options_for_select(notification_groups, selected: {})
   -else
     -if @certificate.is_code_signing?
       %p #{@certificate.title} Certificate Summary
