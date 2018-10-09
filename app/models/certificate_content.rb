@@ -401,6 +401,12 @@ class CertificateContent < ActiveRecord::Base
     end
   end
 
+  def cached_certificate_order
+    CertificateOrder.unscoped.where(id: Rails.cache.fetch("#{cache_key}/cached_certificate_order")do
+      certificate_order
+    end)
+  end
+
   def expired?
     csr.signed_certificate.expired? if csr.try(:signed_certificate)
   end

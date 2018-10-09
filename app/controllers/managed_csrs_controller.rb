@@ -5,7 +5,7 @@ class ManagedCsrsController < ApplicationController
 
   def index
     # @csrs = (current_user.ssl_account.csrs + current_user.ssl_account.managed_csrs).paginate(@p)
-    all_csrs = (current_user.ssl_account.all_csrs).order(created_at: :desc).uniq{|csr| csr.common_name}
+    all_csrs = (current_user.ssl_account.all_csrs).to_a.uniq{|csr| csr.common_name}
     @csrs = all_csrs.paginate(@p)
   end
 

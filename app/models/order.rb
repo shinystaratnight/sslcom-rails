@@ -645,7 +645,7 @@ class Order < ActiveRecord::Base
   
   def get_reprocess_orders
     result = {}
-    certificate_orders.each do |co|
+    cached_certificate_orders.each do |co|
       current = []
       co.orders.order(created_at: :asc).each do |o|
         if o.reprocess_ucc_order?
@@ -922,7 +922,7 @@ class Order < ActiveRecord::Base
       if merchant_fully_refunded?
         full_refund! unless fully_refunded?
         if certificate_orders.any?
-          certificate_orders.each {|co| co.refund! unless co.refunded?}
+          cached_certificate_orders.each {|co| co.refund! unless co.refunded?}
         end
       else
         partial_refund! unless partially_refunded?

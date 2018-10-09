@@ -80,8 +80,7 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   default_scope{ where{(workflow_state << ['canceled','refunded','charged_back']) & (is_expired != true)}.
-      joins(:certificate_contents).order(updated_at: :desc).
-      references(:all).readonly(false)}
+      joins(:certificate_contents).order(created_at: :desc).references(:all).readonly(false)}
 
   scope :not_test, ->{where{(is_test == nil) | (is_test==false)}}
 
@@ -2067,7 +2066,7 @@ class CertificateOrder < ActiveRecord::Base
   #end
 
   def clone_for_renew(certificate_orders, order)
-    certificate_orders.each do |cert|
+    cached_certificate_orders.each do |cert|
       cert.quantity.times do |i|
         #could use cert.dup after >=3.1, but we are currently on 3.0.10 so we'll do this manually
         new_cert = cert.dup

@@ -274,17 +274,17 @@ end
 
 Then /\A(?:he|she|I) should see certificate order receipt recipients\z/ do
   @browser.text.should include(@current_user.ssl_account.
-      certificate_orders.last.receipt_recipients.join(", "))
+      cached_certificate_orders.last.receipt_recipients.join(", "))
 end
 
 Then /\A(?:he|she|I) should see certificate order confirmation recipients\z/ do
   @browser.text.should include(@current_user.ssl_account.
-      certificate_orders.last.confirmation_recipients.join(", "))
+      cached_certificate_orders.last.confirmation_recipients.join(", "))
 end
 
 Then /\A(?:he|she|I) should see processed certificates recipients\z/ do
   @browser.text.should include(@current_user.ssl_account.
-      certificate_orders.last.processed_recipients.join(", "))
+      cached_certificate_orders.last.processed_recipients.join(", "))
 end
 
 Then /\A(?:he|she|I) should be (?:directed to\s|at\s)the new certificate order path\z/ do

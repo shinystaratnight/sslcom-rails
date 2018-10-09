@@ -33,6 +33,7 @@ class Csr < ActiveRecord::Base
   has_one     :csr_override  #used for overriding csr fields - does not include a full csr
   belongs_to  :certificate_content
   belongs_to  :certificate_lookup
+  belongs_to  :ssl_account
   has_one    :certificate_order, :through=>:certificate_content
   has_many    :certificate_orders, :through=>:certificate_content # api_requestable.certificate_orders compatibility
   serialize   :subject_alternative_names

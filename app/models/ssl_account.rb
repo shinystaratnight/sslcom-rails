@@ -421,9 +421,9 @@ class SslAccount < ActiveRecord::Base
       orders_list = []
       co_list = []
       Order.where(reference_number: refs).each do |o|
-        to_sa.certificate_orders << o.certificate_orders
-        o.certificate_orders.each do |co|
-          co_orders = co.orders
+        to_sa.certificate_orders << o.cached_certificate_orders
+        o.cached_certificate_orders.each do |co|
+          co_orders = co.cached_orders
           to_sa.orders << co_orders
           orders_list << co_orders
           co_list << co
@@ -542,14 +542,14 @@ class SslAccount < ActiveRecord::Base
   # concatenate team (Domain) and order scoped certificate_names
   def all_certificate_names
     CertificateName.where(id: (Rails.cache.fetch("#{cache_key}/all_certificate_names") {
-      CertificateName.find_by_sql("SELECT `certificate_names`.`id` FROM `certificate_names` INNER JOIN `certificate_contents` ON `certificate_names`.`certificate_content_id` = `certificate_contents`.`id` INNER JOIN `certificate_orders` ON `certificate_contents`.`certificate_order_id` = `certificate_orders`.`id` WHERE `certificate_orders`.`ssl_account_id` = #{id} OR `certificate_names`.`ssl_account_id` = #{id}").map(&:id)
+      (self.certificate_names+self.domains).map(&:id)
     })).order(updated_at: :desc)
   end
 
   def all_csrs
     Csr.where(id: (Rails.cache.fetch("#{cache_key}/all_csrs") {
-      Csr.find_by_sql("SELECT `csrs`.`id` FROM `csrs` INNER JOIN `certificate_contents` ON `csrs`.`certificate_content_id` = `certificate_contents`.`id` INNER JOIN `certificate_orders` ON `certificate_contents`.`certificate_order_id` = `certificate_orders`.`id` WHERE `certificate_orders`.`ssl_account_id` = #{id} OR `csrs`.`ssl_account_id` = #{id}").map(&:id)
-    }))
+      (csrs + managed_csrs).map(&:id)
+    })).order(created_at: :desc)
   end
 
   def validated_domains
@@ -573,9 +573,11 @@ class SslAccount < ActiveRecord::Base
   end
 
   def get_account_owner
-    Assignment.where(
-      role_id: [Role.get_owner_id, Role.get_reseller_id], ssl_account_id: id
-    ).map(&:user).first
+    User.unscoped.find(Rails.cache.fetch("#{cache_key}/get_account_owner") do
+      Assignment.where(
+        role_id: [Role.get_owner_id, Role.get_reseller_id], ssl_account_id: id
+      ).map(&:user).first.id
+    end)
   end
 
   def cached_orders
@@ -591,8 +593,8 @@ class SslAccount < ActiveRecord::Base
   end
 
   def cached_certificate_orders_count
-    CertificateOrder.unscoped.where(id: (Rails.cache.fetch("#{cache_key}/certificate_orders") do
-      certificate_orders.pluck(:id)
+    CertificateOrder.unscoped.where(id: (Rails.cache.fetch("#{cache_key}/certificate_orders_count") do
+      cached_certificate_orders.count
     end))
   end
 
