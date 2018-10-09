@@ -193,7 +193,7 @@
                             %br/
                         %li
                           %strong registrant
-                        -unless @cc.registrant.blank?
+                        -unless @cc.registrant.blank? || (!current_user.is_system_admins? && @certificate_order.ov_validated?)
                           -r = @cc.registrant
                           %li
                             =r.company_name
