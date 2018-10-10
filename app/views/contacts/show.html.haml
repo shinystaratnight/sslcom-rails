@@ -25,43 +25,93 @@
         %div
           %span DEFAULT:
           %strong #{@contact.saved_default? ? 'YES' : 'NO'}
-  #dashboard
+
+  -if registrant
+    #contact-file-upload.hidden
+      .reseller_registration_profile
+        =form_tag upload_for_registrant_validations_path(@ssl_slug, registrant_id: @contact.id), {multipart: true} do
+          #stylized.default_form
+            %h2 Documents For #{@contact.company_name.blank? ? @contact.email: @contact.company_name}
+            #iv-ov-file-upload
+              .clearfix
+                %p.contact-file-desc
+                  -if @contact.organization?
+                    Organization Registrant documents are related to validating the identity of the organization or company
+                    such as a utility bill, articles or incorporation or organization,
+                    or any other document that proves the existence of the organization or company.
+                  -else
+                    Individual Registrant documents are related to validating the identity of
+                    "#{@contact.first_name} #{@contact.last_name}" such as a an image of a passport,
+                    driver's license, personal id, or a personal photo.
+                %p#document-limit
+                  %i{ class: 'fa fa-exclamation-circle' }
+                  Up to 5 files can be uploaded. Zipped documents can also be uploaded, and
+                  they will automatically be unpacked. The following file types are accepted:
+                  #{ValidationHistory.acceptable_file_types}
+                %p Identifying Documents for Registrant:
+              .clearfix
+                = file_field_tag 'filedata[]', id: 'multi_upload'
+          #button_container
+            #auto_adjust
+              = link_to "#{image_tag('cancel_bl.gif')}".html_safe, '#', id: 'btn-reg-upload-cancel'
+              = image_submit_tag 'bl_submit_button.gif'
+
+  #dashboard.contact-show-container
     %table.saved_contact{cellspacing: '0', align: 'left'}
-      %br
-      %tr
-        %td{colspan: '2'}
-          -if permitted_to?(:destroy, @contact.becomes(Contact))
-            =link_to 'Delete', contact_path(@ssl_slug, @contact.id, saved_contact: true), |
-            method: :delete, class: 'button_blue button_show', |
-            data: {confirm: 'Are you sure you want to delete this contact?'}
-          -if permitted_to?(:edit, @contact.becomes(Contact))
-            =link_to 'Edit', edit_contact_path(@ssl_slug, @contact.id, saved_contact: true), |
-            class: 'button_blue button_show'
       %tr.heading_row
-        %th{colspan: '2'} Contact Information
+        %th Actions
+        %tr
+          %td#contacts-show-actions
+            -if permitted_to?(:destroy, @contact.becomes(Contact))
+              =link_to "<i class='fa fa-trash'></i> Delete".html_safe,                    |
+              contact_path(@ssl_slug, @contact.id, saved_contact: true), method: :delete, |
+              data: {confirm: 'Are you sure you want to delete this contact?'}
+            
+            -if permitted_to?(:edit, @contact.becomes(Contact))
+              =link_to "<i class='fa fa-edit'></i> Edit".html_safe, |
+              edit_contact_path(@ssl_slug, @contact.id, saved_contact: true)
+            
+            -if registrant
+              =link_to "<i class='fa fa-upload'></i> Upload Documents".html_safe, '#', id: 'btn-reg-upload'
+              =link_to "<i class='fa fa-caret-left'></i> Back to Registrants".html_safe, |
+              saved_contacts_contacts_path(@ssl_slug, registrants: true)
+          
+
+    %table.saved_contact{cellspacing: '0', align: 'left'}
+      %tr.heading_row
+        %th{colspan: '2'} 
+          = "<i class='fa fa-user'></i> Contact Information".html_safe
       -list = %w{roles title first_name last_name email phone}
       -list -= ['roles'] if registrant
       -attributes.select{|k,v| list.include? k}.merge(address: @contact.get_address_format).each_with_index do |(k, v), i|
         %tr{class: (i.even? ? 'colored_row' : '')}
+          %td #{k.to_s.humanize}:
           %td
-            %strong #{k.to_s.humanize}:
-          %td #{k == 'roles' ? v.join(', ') : v}
+            %strong #{k == 'roles' ? v.join(', ') : v}
     
     %table.saved_contact{cellspacing: '0', align: 'left'}
       %br
       %tr.heading_row
-        %th{colspan: '2'} Company
+        %th{colspan: '2'}
+          = "<i class='fa fa-building'></i> Company".html_safe
       -attributes.select{|k,v| Contact::get_company_fields.include? k}.each_with_index do |(k, v), i|
         %tr{class: (i.even? ? 'colored_row' : '')}
+          %td #{k.humanize}:
           %td
-            %strong #{k.humanize}:
-          %td #{v}
+            -if k=='special_fields' && !v.nil?
+              - v.each do |vk, vv|
+                #{vk}: 
+                %strong #{vv}
+                %br/
+            -else
+              %strong #{v}
 
     -if documents.any? 
       %table.saved_contact{cellspacing: '0', align: 'left'}
         %br
         %tr.heading_row
-          %th{colspan: '2'} Documents ( #{documents.count} )
+          %th{colspan: '2'}
+            = "<i class='fa fa-file'></i> Documents ( #{documents.count} )".html_safe
           -documents.each do |vh|
             %tr
               %td
@@ -83,3 +133,19 @@
                     vh.registrant_document_url(@contact, :preview), :rel=>'prettyPhoto', class: 'preview_link'
                     =link_to image_tag('download.png', class: 'blue_icon')+'download', |
                     vh.registrant_document_url(@contact)
+
+-if registrant
+  :javascript
+    jQuery(function($){
+      $('#multi_upload').MultiFile({
+        max: 5,
+        accept: '#{ValidationHistory.multi_upload_types}',
+        STRING:{
+        remove: '#{image_tag('minus.gif')}'},
+        afterFileSelect:function(element,value,master){
+        }
+      });
+      $('#upload_files').click(function(){
+        $('#waiting_bar').show();
+      });
+    });
