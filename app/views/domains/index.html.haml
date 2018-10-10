@@ -44,8 +44,8 @@
         -remaining = 0 if remaining && remaining < 0
         -validity_period = (validation_status=='pending validation' || remaining.nil?) ? 'n/a' : "#{remaining} days remaining"
         -order_ref = d.certificate_content ? d.certificate_content.certificate_order.ref : ((dcv && dcv.csr_unique_value) ? dcv.csr_unique_value.csr.ref : 'Team')
-        -status_link = 'Validated'
-        -unless validation_status=='Validated'
+        -status_link = 'validated'
+        -unless validation_status=='validated'
           -if dcv.nil? || dcv.dcv_method == 'email'
             -status_link = link_to validation_status, validate_selected_domains_path(@ssl_slug, d_name_check: [d.id])
           -else

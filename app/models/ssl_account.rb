@@ -64,11 +64,6 @@ class SslAccount < ActiveRecord::Base
   has_many  :cdns
   has_many  :tags
   has_many  :folders, dependent: :destroy
-  has_many :certificate_names, through: :certificate_contents do
-    def sslcom
-      where.not certificate_contents: {ca_id: nil}
-    end
-  end
   has_many  :notification_groups
   has_many  :folders, dependent: :destroy
   has_many :certificate_names, through: :certificate_contents
@@ -542,7 +537,7 @@ class SslAccount < ActiveRecord::Base
   # concatenate team (Domain) and order scoped certificate_names
   def all_certificate_names
     CertificateName.where(id: (Rails.cache.fetch("#{cache_key}/all_certificate_names") {
-      (self.certificate_names+self.domains).map(&:id)
+      (self.certificate_names.sslcom+self.domains).map(&:id).uniq
     })).order(updated_at: :desc)
   end
 
@@ -573,63 +568,69 @@ class SslAccount < ActiveRecord::Base
   end
 
   def get_account_owner
-    User.unscoped.find(Rails.cache.fetch("#{cache_key}/get_account_owner") do
+    User.find(Rails.cache.fetch("#{cache_key}/get_account_owner") do
       Assignment.where(
         role_id: [Role.get_owner_id, Role.get_reseller_id], ssl_account_id: id
       ).map(&:user).first.id
     end)
   end
 
+  def cached_certificate_names
+    CertificateName.where(id: (Rails.cache.fetch("#{cache_key}/cached_certificate_names") do
+      certificate_names.pluck(:id).uniq
+    end))
+  end
+
   def cached_orders
-    Order.unscoped.where(id: (Rails.cache.fetch("#{cache_key}/orders") do
+    Order.where(id: (Rails.cache.fetch("#{cache_key}/cached_orders") do
       orders.pluck(:id).uniq
     end)).order(created_at: :desc)
   end
 
   def cached_certificate_orders
-    CertificateOrder.unscoped.where(id: (Rails.cache.fetch("#{cache_key}/certificate_orders") do
+    CertificateOrder.unscoped.where(id: (Rails.cache.fetch("#{cache_key}/cached_certificate_orders") do
       certificate_orders.pluck(:id).uniq
     end)).order(created_at: :desc)
   end
 
   def cached_certificate_orders_count
-    CertificateOrder.unscoped.where(id: (Rails.cache.fetch("#{cache_key}/certificate_orders_count") do
+    CertificateOrder.where(id: (Rails.cache.fetch("#{cache_key}/cached_certificate_orders_count") do
       cached_certificate_orders.count
     end))
   end
 
   def cached_certificate_orders_pending
-    CertificateOrder.unscoped.where(id: (Rails.cache.fetch("#{cache_key}/certificate_orders_pending") do
+    CertificateOrder.where(id: (Rails.cache.fetch("#{cache_key}/cached_certificate_orders_pending") do
       certificate_orders.pending.pluck(:id)
     end)).order(created_at: :desc)
   end
 
   def cached_certificate_orders_incomplete
-    CertificateOrder.unscoped.where(id: (Rails.cache.fetch("#{cache_key}/certificate_orders_incomplete") do
+    CertificateOrder.where(id: (Rails.cache.fetch("#{cache_key}/cached_certificate_orders_incomplete") do
       certificate_orders.incomplete.pluck(:id)
     end)).order(created_at: :desc)
   end
 
   def cached_certificate_orders_credits
-    CertificateOrder.unscoped.where(id: (Rails.cache.fetch("#{cache_key}/certificate_orders_credits") do
+    CertificateOrder.where(id: (Rails.cache.fetch("#{cache_key}/cached_certificate_orders_credits") do
       certificate_orders.credits.pluck(:id)
     end)).order(created_at: :desc)
   end
 
   def cached_certificate_orders_credits_count
-    Rails.cache.fetch("#{cache_key}/certificate_orders_credits_count") do
+    Rails.cache.fetch("#{cache_key}/cached_certificate_orders_credits_count") do
       cached_certificate_orders_credits.count
     end
   end
 
   def cached_certificate_orders_pending_count
-    Rails.cache.fetch("#{cache_key}/certificate_orders_pending_count") do
+    Rails.cache.fetch("#{cache_key}/cached_certificate_orders_pending_count") do
       cached_certificate_orders_pending.count
     end
   end
 
   def cached_certificate_orders_incomplete_count
-    Rails.cache.fetch("#{cache_key}/certificate_orders_incomplete_count") do
+    Rails.cache.fetch("#{cache_key}/cached_certificate_orders_incomplete_count") do
       cached_certificate_orders_incomplete.count
     end
   end

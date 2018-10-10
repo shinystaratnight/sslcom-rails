@@ -960,8 +960,8 @@ class Certificate < ActiveRecord::Base
                          <div class='check'>Shows signed by a person OR department</div>
                          <div class='check'>30 day money-back guaranty </div>
                          <div class='check'>24 hour 5-star support</div>",
-               price_adjusts:{sslcomdocumentsigning1yr: [349,649,849],
-                              sslcomdocumentsigning1yr1tr: [349,649,849],
+               price_adjusts:{sslcomdocumentsigning1yr: [34900,64900,84900],
+                              sslcomdocumentsigning1yr1tr: [34900,64900,84900],
                               sslcomdocumentsigning1yr2tr: [12000,15000],
                               sslcomdocumentsigning1yr3tr: [11250,15000],
                               sslcomdocumentsigning1yr4tr: [10500,15000],

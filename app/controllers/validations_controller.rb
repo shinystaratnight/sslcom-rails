@@ -47,10 +47,10 @@ class ValidationsController < ApplicationController
         @caa_check_domains = ''
         validated_domain_arry = []
         caa_check_domain_arry = []
-
+        public_key_sha1=cc.csr.public_key_sha1
         unless cc.ca.blank?
           cnames = cc.certificate_names.includes(:domain_control_validations)
-          team_cnames = current_user.ssl_account.certificate_names.includes(:domain_control_validations)
+          team_cnames = @certificate_order.ssl_account.all_certificate_names.includes(:domain_control_validations)
 
           # Team level validation check
           @ds = {}
@@ -61,7 +61,7 @@ class ValidationsController < ApplicationController
               if team_cn.name == cn.name
                 team_dcv = team_cn.domain_control_validations.last
 
-                if team_dcv && team_dcv.validated?(cc.csr.public_key_sha1)
+                if team_dcv && team_dcv.validated?(public_key_sha1)
                   team_level_validated = true
 
                   @ds[team_cn.name] = {}
@@ -80,14 +80,14 @@ class ValidationsController < ApplicationController
             end
 
             unless team_level_validated
-              @all_validated = false if @all_validated
+              @all_validated = false
             else
               validated_domain_arry << cn.name
             end
           end
 
-          if @all_validated && cc.pending_validation?
-            cc.validate!
+          if @all_validated and cc.signed_certificate.blank?
+            cc.validate! if cc.pending_validation?
             @certificate_order.
                 apply_for_certificate(mapping: @certificate_order.certificate.cas.ssl_account_or_general_default(current_user.ssl_account).last)
           end

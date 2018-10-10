@@ -319,6 +319,10 @@ class CertificateContent < ActiveRecord::Base
     uc.perform_callback(certificate_hook:packaged_cert) unless uc.blank?
   end
 
+  def dcv_suffix
+    ca ? "ssl.com" : "comodoca.com"
+  end
+
   def dcv_domains(options)
     i = 0
     certificate_names.find_by_domains(options[:domains].keys).each do |name|

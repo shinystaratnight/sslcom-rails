@@ -1094,11 +1094,47 @@ class CertificateOrder < ActiveRecord::Base
     orders.last
   end
 
+  # DRY this up with ValidationsController#new
+  def domains_validated?
+    all_validated = true
+    public_key_sha1=certificate_content.csr.public_key_sha1
+    cnames = certificate_content.certificate_names.includes(:domain_control_validations)
+    team_cnames = ssl_account.all_certificate_names.includes(:domain_control_validations)
+
+    # Team level validation check
+    cnames.each do |cn|
+      team_level_validated = false
+
+      team_cnames.each do |team_cn|
+        if team_cn.name == cn.name
+          team_dcv = team_cn.domain_control_validations.last
+
+          if team_dcv && team_dcv.validated?(public_key_sha1)
+            team_level_validated = true
+            break
+          end
+        end
+      end
+
+      unless team_level_validated
+        all_validated = false
+        break
+      end
+    end
+    all_validated
+  end
+
+  def caa_validated?
+    true
+  end
+
   def apply_for_certificate(options={})
     if [Ca::CERTLOCK_CA,Ca::SSLCOM_CA,Ca::MANAGEMENT_CA].include?(options[:ca]) or !certificate_content.ca.blank? or
         !options[:mapping].blank?
-      SslcomCaApi.apply_for_certificate(self, options) if options[:current_user].blank? or
-          options[:current_user].is_super_user?
+      if domains_validated? and caa_validated?
+        SslcomCaApi.apply_for_certificate(self, options) if options[:current_user].blank? or
+            options[:current_user].is_super_user?
+      end
     else
       ComodoApi.apply_for_certificate(self, options) if ca_name=="comodo"
     end if remaining_days>0

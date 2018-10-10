@@ -39,6 +39,7 @@ class Csr < ActiveRecord::Base
   serialize   :subject_alternative_names
   validates_presence_of :body
   validates_presence_of :common_name, :if=> "!body.blank?", :message=> "field blank. Invalid csr."
+  # validates_uniqueness_of :unique_value, scope: :public_key_sha1
 
   #will_paginate
   cattr_accessor :per_page
@@ -97,7 +98,7 @@ class Csr < ActiveRecord::Base
   # end
 
   def unique_value
-    unless certificate_content.ca.blank?
+    if certificate_content.blank? or certificate_content.ca.blank?
       csr_unique_value.unique_value
     else
       if ca_certificate_requests.first and !ca_certificate_requests.first.unique_value.blank?

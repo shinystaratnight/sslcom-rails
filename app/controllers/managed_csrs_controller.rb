@@ -5,8 +5,7 @@ class ManagedCsrsController < ApplicationController
 
   def index
     # @csrs = (current_user.ssl_account.csrs + current_user.ssl_account.managed_csrs).paginate(@p)
-    all_csrs = (current_user.ssl_account.all_csrs).to_a.uniq{|csr| csr.common_name}
-    @csrs = all_csrs.paginate(@p)
+    @csrs = (current_user.ssl_account.all_csrs).paginate(@p)
   end
 
   def new
@@ -19,8 +18,10 @@ class ManagedCsrsController < ApplicationController
     @csr.ssl_account_id = current_user.ssl_account.id
     respond_to do |format|
       if @csr.save
+        flash[:notice] = "Csr was successfully added."
         format.html {redirect_to managed_csrs_path(@ssl_slug)}
       else
+        flash[:error] = "There was a problem adding this CSR to the CSR Manager"
         format.html {redirect_to new_managed_csr_path(@ssl_slug)}
       end
     end

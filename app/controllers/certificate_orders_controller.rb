@@ -388,7 +388,7 @@ class CertificateOrdersController < ApplicationController
     additional_domains = ''
     managed_domains.each do |domain|
       additional_domains.concat(domain.gsub('csr-', '').gsub('domain-', '') + ' ')
-    end
+    end unless managed_domains.blank?
     params[:certificate_order][:certificate_contents_attributes]['0'.to_sym][:additional_domains] = additional_domains.strip
 
     @certificate_content=CertificateContent.new(
