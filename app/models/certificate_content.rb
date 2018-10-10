@@ -402,8 +402,8 @@ class CertificateContent < ActiveRecord::Base
   end
 
   def cached_certificate_order
-    CertificateOrder.unscoped.where(id: Rails.cache.fetch("#{cache_key}/cached_certificate_order")do
-      certificate_order
+    CertificateOrder.unscoped.find(Rails.cache.fetch("#{cache_key}/cached_certificate_order")do
+      certificate_order.id
     end)
   end
 
