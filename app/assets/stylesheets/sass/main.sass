@@ -6949,7 +6949,32 @@ span.notifications-teams
 
 /*
  * Teams Index Page
- */ 
+ */
+
+.teams-index-text-left
+  text-align: left !important
+
+#teams-user-roles
+  color: grey
+  font-size: 1.2rem
+  font-weight: 600
+  width: 13%
+  min-width: 13%
+  
+  i
+    margin-left: 0.5rem
+
+#team-action-items
+  font-size: 1rem
+  padding: 0
+  text-transform: uppercase
+  width: 10%
+
+  a:hover
+    color: black
+    border-bottom: 2px solid black
+
+
 #team-detail-links
   width: 45%
   div
@@ -7443,10 +7468,49 @@ span.notifications-teams
   input[type='checkbox']
     vertical-align: middle
 
+#add_user_ids_container
+  .select2,
+  .select2-results,
+  .select2-results__options,
+  .select2-dropdown
+    width: 230px !important
+
+  .select2-selection
+    background-color: #f0efef !important
+    width: 230px !important
+
+    .select2-selection__rendered
+      padding: 5px 5px 3px
+
+      li:first-child
+        .select2-search__field
+          margin-left: -5px
+          margin-right: 0px
+          padding-left: 10px
+          padding-right: 10px
+
+      .select2-selection__choice
+        background-color: #bfcfa4b0
+        border: 1px solid #6a9029
+        color: #3c3c3c
+        font-weight: 600
+        font-size: 1.15rem
+        margin-top: 0px
+        margin-bottom: 5px
+
+        .select2-selection__choice__remove
+          color: #3c3c3c
+          font-size: 1.7rem
+          font-weight: 700
+          padding: 0px 4px
+          margin-right: 2px
+          vertical-align: middle
+
 .schedule_container,
 #contacts-container,
 #subjects-container,
-#cos-container, #tags-container,
+#cos-container, 
+#tags-container,
 #ca-certificates-select
   margin: 0 !important
   
@@ -7483,8 +7547,6 @@ span.notifications-teams
           padding: 0px 4px
           margin-right: 2px
           vertical-align: middle
-
-      .select2-search
   
   #tags-co-input,
   #tags-cc-input

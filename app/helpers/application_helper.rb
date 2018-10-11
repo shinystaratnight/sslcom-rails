@@ -351,6 +351,25 @@ module ApplicationHelper
     column == params[:column] ? params[:direction] : ''
   end
   
+  def render_user_roles(roles_list)
+    final = []
+    roles_list.each do |role|
+      icon = case role
+        when :billing, 'billing' then 'dollar'
+        when :validations, 'validations' then 'expeditedssl'
+        when :installer, 'installer' then 'download'
+        when :users_manager, 'users_manager' then 'id-card'
+        when :individual_certificate, 'individual_certificate' then 'certificate'
+        when :owner, 'owner' then 'user-circle'
+        when :reseller, 'reseller' then 'window-restore'
+        else 'cog'
+      end
+      str_role = role == :individual_certificate ? 'indiv_certificate' : role.to_s
+      final << "<i class='fa fa-#{icon}'></i> #{str_role}<br/>"
+    end
+    final.join('').html_safe
+  end
+
   private
 
   def create_tags(label, form_field, options, append)
