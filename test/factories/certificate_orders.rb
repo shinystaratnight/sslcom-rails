@@ -4,7 +4,7 @@ FactoryGirl.define do
     ssl_account factory: [:ssl_account, :billing_profile]
     after(:build) do |co, evaluator|
       co.sub_order_items.build(product_variant_item:
-         create(:certificate, :uccssl).product_variant_groups.first.product_variant_items.first)
+         create(:certificate, :uccssl).cached_product_variant_items.first)
     end
     after(:create) do |co, evaluator|
       co.certificate_contents.create(csr: @nonwildcard_csr, certificate_order: co)

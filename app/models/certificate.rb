@@ -260,6 +260,12 @@ class Certificate < ActiveRecord::Base
     result
   end
 
+  def cached_product_variant_items
+    ProductVariantItem.unscoped.where(id: (Rails.cache.fetch("#{cache_key}/cached_product_variant_items") do
+      product_variant_items.pluck(:id)
+    end))
+  end
+
   def role_can_manage
     Role.get_role_id Role::RA_ADMIN
   end
@@ -275,7 +281,7 @@ class Certificate < ActiveRecord::Base
   end
 
   def items_by_duration
-    product_variant_groups.duration.map(&:product_variant_items).
+    product_variant_groups.duration.map(&:cached_product_variant_items).
         flatten.sort{|a,b|a.value.to_i <=> b.value.to_i}
   end
 
@@ -314,12 +320,12 @@ class Certificate < ActiveRecord::Base
         product_variant_groups.domains.map(&:product_variant_items).flatten
       else
         unless is_ev?
-          product_variant_items.where{serial=~"%yrdm%"}.flatten.zip(
-              product_variant_items.where{serial=~"%yradm%"}.flatten,
-              product_variant_items.where{serial=~"%yrwcdm%"}.flatten)
+          cached_product_variant_items.where{serial=~"%yrdm%"}.flatten.zip(
+              cached_product_variant_items.where{serial=~"%yradm%"}.flatten,
+              cached_product_variant_items.where{serial=~"%yrwcdm%"}.flatten)
         else
-          product_variant_items.where{serial=~"%yrdm%"}.flatten.zip(
-              product_variant_items.where{serial=~"%yradm%"}.flatten)
+          cached_product_variant_items.where{serial=~"%yrdm%"}.flatten.zip(
+              cached_product_variant_items.where{serial=~"%yradm%"}.flatten)
         end
       end
     end
@@ -355,11 +361,11 @@ class Certificate < ActiveRecord::Base
   end
 
   def first_duration
-    product_variant_groups.first.product_variant_items.first
+    cached_product_variant_items.first
   end
 
   def last_duration
-    product_variant_groups.first.product_variant_items.last
+    cached_product_variant_items.last
   end
 
   # is is true for SAN and EV SAN certs
@@ -1008,7 +1014,7 @@ class Certificate < ActiveRecord::Base
                             product: c.product.gsub(/\Ahigh_assurance/, p[:product]),
                             icons: c.icons.merge!("main"=> "gold_lock_lg.gif")
       end
-      certs.each{ |c| c.product_variant_items.where{display_order > 3}.destroy_all}
+      certs.each{ |c| c.cached_product_variant_items.where{display_order > 3}.destroy_all}
       p[:price_adjusts].each do |k,v|
         serials=[]
         num_years=v.count
@@ -1067,7 +1073,7 @@ class Certificate < ActiveRecord::Base
 
   def self.reduce_years(title="assureguard-dv%", days=1095)
     self.where{product =~ title}.each do |c|
-      c.product_variant_items.where{value > days}.each{|pvi|pvi.delete}
+      c.cached_product_variant_items.where{value > days}.each{|pvi|pvi.delete}
     end
   end
 
@@ -1080,10 +1086,10 @@ class Certificate < ActiveRecord::Base
 
   def self.change_prices(title="assureguard-dv", prices=[6800,11500,15200])
     self.where{product == title}.each do |c|
-      if c.product_variant_items.where{item_type == "duration"}.count>0 #assume non ucc
-        c.product_variant_items.where{item_type == "duration"}.each_with_index{|pvi,i| pvi.update_column :amount, prices[i]}
-      elsif c.product_variant_items.where{item_type == "ucc_domain"}.count>0 #assume ucc
-        c.product_variant_items.where{item_type == "ucc_domain"}.each{|pvi|
+      if c.cached_product_variant_items.where{item_type == "duration"}.count>0 #assume non ucc
+        c.cached_product_variant_items.where{item_type == "duration"}.each_with_index{|pvi,i| pvi.update_column :amount, prices[i]}
+      elsif c.cached_product_variant_items.where{item_type == "ucc_domain"}.count>0 #assume ucc
+        c.cached_product_variant_items.where{item_type == "ucc_domain"}.each{|pvi|
           i = pvi.value.to_i/365
           price = if pvi.description=~/3 domains/i
             prices[i-1][0]
