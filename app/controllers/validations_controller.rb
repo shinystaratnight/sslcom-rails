@@ -89,7 +89,9 @@ class ValidationsController < ApplicationController
           if @all_validated and cc.signed_certificate.blank?
             cc.validate! if cc.pending_validation?
             @certificate_order.
-                apply_for_certificate(mapping: @certificate_order.certificate.cas.ssl_account_or_general_default(current_user.ssl_account).last)
+                apply_for_certificate(mapping:
+                      @certificate_order.certificate_content.ca,
+                      current_user: current_user)
           end
 
           @validated_domains = validated_domain_arry.join(',')

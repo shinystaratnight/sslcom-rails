@@ -610,9 +610,9 @@ class User < ActiveRecord::Base
   end
 
   def role_symbols(target_account=nil)
-    Rails.cache.fetch("#{cache_key}/role_symbols/#{target_account.try(:cache_key)}") do
-      Role.where(id: roles_for_account(target_account || ssl_account))
-          .map{|role| role.name.underscore.to_sym}
+    sa = target_account || ssl_account
+    Rails.cache.fetch("#{cache_key}/role_symbols/#{sa.cache_key}") do
+      Role.where(id: roles_for_account(sa)).map{|role| role.name.underscore.to_sym}
     end
   end
 

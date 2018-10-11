@@ -1132,8 +1132,7 @@ class CertificateOrder < ActiveRecord::Base
     if [Ca::CERTLOCK_CA,Ca::SSLCOM_CA,Ca::MANAGEMENT_CA].include?(options[:ca]) or !certificate_content.ca.blank? or
         !options[:mapping].blank?
       if domains_validated? and caa_validated?
-        SslcomCaApi.apply_for_certificate(self, options) if options[:current_user].blank? or
-            options[:current_user].is_super_user?
+        SslcomCaApi.apply_for_certificate(self, options)
       end
     else
       ComodoApi.apply_for_certificate(self, options) if ca_name=="comodo"

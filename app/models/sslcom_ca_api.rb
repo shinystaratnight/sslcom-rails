@@ -164,7 +164,7 @@ class SslcomCaApi
     if options[:send_to_ca]
       options[:mapping] = Ca.find_by_ref(options[:send_to_ca])
     elsif options[:mapping].blank?
-      options[:mapping] = certificate.cas.ssl_account_or_general_default(options[:current_user].ssl_account).last
+      options[:mapping] = certificate_order.certificate_content.ca
     end
     options.merge! cc: cc = options[:certificate_content] || certificate_order.certificate_content
     approval_req, approval_res = SslcomCaApi.get_status(csr: cc.csr, mapping: options[:mapping])
