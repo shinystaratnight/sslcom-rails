@@ -4,7 +4,7 @@ class ScanLogsController < ApplicationController
 
   def index
     @notification_group = @ssl_account.notification_groups.find(params[:notification_group_id])
-    @scan_history_list = @notification_group.scan_logs.paginate(@p)
+    @scan_history_list = @notification_group.scan_logs.order('created_at desc').paginate(@p)
   end
 
   private

@@ -338,6 +338,7 @@ SslCom::Application.routes.draw do
     resources :validations, :only=>[:index, :update] do
       collection do
         get :search, :requirements, :domain_control, :ev, :organization
+        post :upload_for_registrant
       end
     end
     resources :site_seals, :only=>[:index, :update, :admin_update] do

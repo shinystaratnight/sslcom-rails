@@ -2,7 +2,7 @@
 require 'resolv'
 
 class CertificateName < ActiveRecord::Base
-  belongs_to  :certificate_content
+  belongs_to  :certificate_content, touch: true
   has_many    :signed_certificates, through: :certificate_content
   has_many    :caa_checks, as: :checkable
   has_many    :ca_certificate_requests, as: :api_requestable, dependent: :destroy
@@ -27,8 +27,7 @@ class CertificateName < ActiveRecord::Base
   attr_accessor :csr
 
   scope :find_by_domains, ->(domains){includes(:domain_control_validations).where{name>>domains}}
-
-  attr_accessor :js_dcv # js domain_control_validation
+  scope :sslcom, ->{joins{certificate_content}.where.not certificate_contents: {ca_id: nil}}
 
   #will_paginate
   cattr_accessor :per_page

@@ -314,7 +314,7 @@ module OrdersHelper
     @target_amount       = (@charge_amount.blank? || @charge_amount == 0) ? @order_amount : @charge_amount
     
     if @reprocess_ucc || @renew_ucc || @ucc_csr_submit
-      @certificate_order   = @ssl_account.certificate_orders.find_by(ref: params[:order][:co_ref])
+      @certificate_order   = @ssl_account.cached_certificate_orders.find_by(ref: params[:order][:co_ref])
       @certificate_content = @certificate_order.certificate_contents.find_by(ref: params[:order][:cc_ref])
     end
   end
@@ -436,11 +436,20 @@ module OrdersHelper
           end
         end
         SystemAudit.create(
-            owner:  current_user,
-            target: @order,
-            action: "purchase successful",
-            notes:  get_order_notes
+          owner:  current_user,
+          target: @order,
+          action: "purchase successful",
+          notes:  get_order_notes
         )
+      elsif @order.invoiced?
+        flash[:notice] = "Order has been added to invoice due to transaction failure. #{@gateway_response.message}"
+        SystemAudit.create(
+          owner:  current_user,
+          target: @order,
+          action: "order added to invoice due to denied transaction",
+          notes: @gateway_response.message
+        )
+        return true
       else
         flash.now[:error] = if @gateway_response.message=~/no match/i
           "CVV code does not match"

@@ -114,20 +114,18 @@ class SslcomCaApi
     names=if cert.is_smime?
       "rfc822Name="
     elsif !cert.is_code_signing?
-      (options[:san] ? options[:san].split(/\s+/) : options[:cc].all_domains).map{|d|"dNSName="+d.downcase}.join(",")
+      (options[:san] ? options[:san].split(/\s+/) : options[:cc].all_domains).map{|d|d.downcase}
     end || ""
     names << if cert.is_wildcard?
-      ",dNSName=#{CertificateContent.non_wildcard_name(common_name)}"
+      "#{CertificateContent.non_wildcard_name(common_name)}"
     elsif cert.is_basic? or cert.is_high_assurance? or cert.is_free?
       if common_name=~/\Awww\./
-        ",dNSName=#{common_name[4..-1]}"
+        "#{common_name[4..-1]}"
       else
-        ",dNSName=www.#{common_name}"
+        "www.#{common_name}"
       end
-    else
-      ""
     end
-    names
+    "dNSName=#{names.compact.uniq.join(",dNSName=")}"
   end
 
   # revoke json parameter string for REST call to EJBCA
@@ -268,11 +266,13 @@ class SslcomCaApi
 
   # body - parameters in JSON format
   def self.call_ca(host, options, body)
-    uri = URI.parse(host)
+    uri = URI.parse(host.gsub!("8442","8443"))
     req = (options[:method]=~/GET/i ? Net::HTTP::Get : Net::HTTP::Post).new(uri, 'Content-Type' => 'application/json')
     http = Net::HTTP.new(uri.host, uri.port)
     http.use_ssl = true
-    http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+    http.verify_mode = OpenSSL::SSL::VERIFY_PEER
+    http.cert = OpenSSL::X509::Certificate.new(File.read(Rails.application.secrets.ejbca_development_client_auth_cert))
+    http.key = OpenSSL::PKey::RSA.new(File.read(Rails.application.secrets.ejbca_development_client_auth_key))
     req.body = body
     res = http.request(req)
     return req, res

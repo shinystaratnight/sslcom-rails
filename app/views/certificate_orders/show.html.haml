@@ -66,7 +66,7 @@
                               contents
                           -if @cc.csr.blank?
                             %li
-                              %em waiting for csr
+                              %em waiting for input
                           -else
                             -unless @cc.csr.signed_certificate
                               -unless fields.organization.blank?
@@ -120,8 +120,36 @@
                           %li
                             %strong validation status
                           %li.li-cert-validate
-                            = link_to "<i class='fa fa-expeditedssl'></i> Change Recipient Status to Validated".html_safe, |
-                              admin_update_certificate_order_path(@ssl_slug, @certificate_order.ref, validate: true),      |
+                            -if current_user.is_system_admins?
+                              -require_ov = @certificate_order.certificate.requires_locked_registrant?
+                              -if require_ov && !@certificate_order.ov_validated?
+                                = link_to "<i class='fa fa-expeditedssl'></i> Validate OV".html_safe,                      |
+                                admin_update_certificate_order_path(@ssl_slug, @certificate_order.ref, validate_ov: true), |
+                                method: :put, class: 'btn-cert-validate'
+                                %br/
+                              -if require_ov && @certificate_order.ov_validated?
+                                - Contact::statuses.keys.each do |key|
+                                  - if key != 'validated'
+                                    = link_to "<i class='fa fa-expeditedssl'></i> OV #{key.humanize}".html_safe,                                       |
+                                    admin_update_certificate_order_path(@ssl_slug, @certificate_order.ref, unvalidate_ov: true, unvalidate_type: key), |
+                                    method: :put, class: 'btn-cert-validate'
+                                    %br/
+                                %br/
+                              -if !@certificate_order.iv_validated?
+                                = link_to "<i class='fa fa-expeditedssl'></i> Validate IV".html_safe,                      |
+                                admin_update_certificate_order_path(@ssl_slug, @certificate_order.ref, validate_iv: true), |
+                                method: :put, class: 'btn-cert-validate'
+                                %br/
+                              -if @certificate_order.iv_validated?
+                                - Contact::statuses.keys.each do |key|
+                                  - if key != 'validated'
+                                    = link_to "<i class='fa fa-expeditedssl'></i> IV #{key.humanize}".html_safe,                                       |
+                                    admin_update_certificate_order_path(@ssl_slug, @certificate_order.ref, unvalidate_iv: true, unvalidate_type: key), |
+                                    method: :put, class: 'btn-cert-validate'
+                                    %br/
+                            -else
+                              = link_to "<i class='fa fa-expeditedssl'></i> Change Recipient Status to Validated".html_safe, |
+                              admin_update_certificate_order_path(@ssl_slug, @certificate_order.ref, validate_iv: true),     |
                               method: :put, class: 'btn-cert-validate'
                         -unless @certificate_order.certificate.is_dv?
                           %li
@@ -165,7 +193,7 @@
                             %br/
                         %li
                           %strong registrant
-                        -unless @cc.registrant.blank?
+                        -unless @cc.registrant.blank? || (!current_user.is_system_admins? && @certificate_order.ov_validated?)
                           -r = @cc.registrant
                           %li
                             =r.company_name
@@ -202,7 +230,7 @@
                               =link_to 'provide info (required)', edit_certificate_order_path(@certificate_order)
                             -else
                               none
-                        -if co.certificate.has_locked_registrant?
+                        -if co.certificate.has_locked_registrant? || co.locked_registrant
                           %li.category_border
                           %li
                             %strong locked registrant

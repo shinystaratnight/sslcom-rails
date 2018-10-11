@@ -35,7 +35,7 @@
           -registrants_list = render_saved_registrants(saved_registrants, :with_data)
           %label{for: 'saved_registrant'}
             Saved Registrants:
-          =select_tag :saved_contacts, options_for_select(registrants_list), include_blank: true
+          =select_tag :saved_contacts, options_for_select(registrants_list, rf.object.parent_id), include_blank: true
           =rf.hidden_field :registrant_type, value: 'organization'
           =rf.hidden_field :parent_id, value: nil, id: 'saved_registrant_id'
           =rf.hidden_field :status, value: rf.object.status, id: 'saved_registrant_status'

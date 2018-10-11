@@ -179,8 +179,8 @@ class CertificateOrdersController < ApplicationController
             @notification_groups = current_user.ssl_account.notification_groups.pluck(:friendly_name, :ref)
             @notification_groups.insert(0, ['none', 'none']) if @notification_groups.empty?
 
-            @managed_csrs = (current_user.ssl_account.csrs + current_user.ssl_account.managed_csrs)
-                                .sort_by{|arr| arr.created_at}
+            @managed_csrs = (current_user.ssl_account.all_csrs)
+                                .sort_by{|arr| arr.common_name}
                                 .uniq{|arr| arr.common_name}
                                 .map{|arr| [arr.common_name, arr.ref]}
                                 .delete_if{|arr| arr.second == nil}
@@ -284,11 +284,8 @@ class CertificateOrdersController < ApplicationController
 
         # TODO: Store LockedRegistrant Data in case of CS
         setup_locked_registrant(
-            params[:certificate_order][:certificate_contents_attributes]['0'],
-            cc
-        ) if @certificate_order.certificate.is_code_signing? or
-            @certificate_order.certificate.is_ov? or
-            @certificate_order.certificate.is_ev?
+          params[:certificate_order][:certificate_contents_attributes]['0'], cc
+        ) if @certificate_order.certificate.requires_locked_registrant?
         
         setup_reusable_registrant(@certificate_order.registrant) if params[:save_for_later]
 
@@ -405,7 +402,8 @@ class CertificateOrdersController < ApplicationController
     additional_domains = ''
     managed_domains.each do |domain|
       additional_domains.concat(domain.gsub('csr-', '') + ' ')
-    end
+    end unless managed_domains.blank?
+
     params[:certificate_order][:certificate_contents_attributes]['0'.to_sym][:additional_domains] = additional_domains.strip
 
     @certificate_content=CertificateContent.new(
@@ -493,7 +491,7 @@ class CertificateOrdersController < ApplicationController
   def credits
     @certificate_orders = (current_user.is_admin? ?
       CertificateOrder.where{(workflow_state=='paid') & (certificate_contents.workflow_state == "new")} :
-        current_user.ssl_account.certificate_orders.credits).paginate(@p)
+        current_user.ssl_account.cached_certificate_orders_credits).paginate(@p)
 
     respond_to do |format|
       format.html { render :action=>:index}
@@ -504,7 +502,7 @@ class CertificateOrdersController < ApplicationController
   def pending
     @certificate_orders = (current_user.is_admin? ?
       CertificateOrder.pending :
-        current_user.ssl_account.certificate_orders.pending).paginate(@p)
+        current_user.ssl_account.cached_certificate_orders_pending).paginate(@p)
 
     respond_to do |format|
       format.html { render :action=>:index}
@@ -516,8 +514,8 @@ class CertificateOrdersController < ApplicationController
     @certificate_orders = (current_user.is_admin? ?
       CertificateOrder.send(params[:id].to_sym) :
       (current_user.role_symbols(current_user.ssl_account).join(',').split(',').include?(Role::INDIVIDUAL_CERTIFICATE) ?
-           (current_user.ssl_account.certificate_orders.search_assigned(current_user.id).send(params[:id].to_sym)) :
-           (current_user.ssl_account.certificate_orders.send(params[:id].to_sym))
+           (current_user.ssl_account.cached_certificate_orders.joins{:certificate_contents}.search_assigned(current_user.id).send(params[:id].to_sym)) :
+           (current_user.ssl_account.cached_certificate_orders.joins{:certificate_contents}.send(params[:id].to_sym))
       )).paginate(@p)
 
     respond_to do |format|
@@ -529,8 +527,8 @@ class CertificateOrdersController < ApplicationController
   def order_by_csr
     @certificate_orders = (current_user.is_admin? ?
       CertificateOrder.unscoped{CertificateOrder.not_test} :
-        current_user.ssl_account.certificate_orders.unscoped{
-          current_user.ssl_account.certificate_orders.not_test}).order_by_csr.paginate(@p)
+        current_user.ssl_account.cached_certificate_orders.unscoped{
+          current_user.ssl_account.cached_certificate_orders.not_test}).order_by_csr.paginate(@p)
 
     respond_to do |format|
       format.html { render :action=>:index}
@@ -540,7 +538,7 @@ class CertificateOrdersController < ApplicationController
 
   def filter_by
     @certificate_orders = current_user.is_admin? ?
-        (@ssl_account.try(:certificate_orders) || CertificateOrder) : current_user.ssl_account.certificate_orders
+        (@ssl_account.try(:certificate_orders) || CertificateOrder) : current_user.ssl_account.cached_certificate_orders
     @certificate_orders = @certificate_orders.not_test.not_new.filter_by(params[:id]).paginate(@p)
 
     respond_to do |format|
@@ -554,7 +552,7 @@ class CertificateOrdersController < ApplicationController
   def incomplete
     @certificate_orders = (current_user.is_admin? ?
       CertificateOrder.incomplete :
-      current_user.ssl_account.certificate_orders.incomplete).paginate(@p)
+      current_user.ssl_account.cached_certificate_orders_incomplete).paginate(@p)
 
     respond_to do |format|
       format.html { render :action=>:index}
@@ -567,7 +565,7 @@ class CertificateOrdersController < ApplicationController
   def reprocessing
     @certificate_orders = (current_user.is_admin? ?
       CertificateOrder.reprocessing :
-      current_user.ssl_account.certificate_orders.reprocessing).paginate(@p)
+      current_user.ssl_account.cached_certificate_orders.reprocessing).paginate(@p)
 
     respond_to do |format|
       format.html { render :action=>:index}
@@ -633,18 +631,10 @@ class CertificateOrdersController < ApplicationController
   end
 
   def admin_update
-    if params[:validate]
-      if @certificate_order.certificate.is_smime_or_client?
-        cc = @certificate_order.certificate_content
-        iv = @certificate_order.get_team_iv
-        ov = @certificate_order.locked_registrant
-
-        cc.validate! unless cc.validated?
-        iv.validate! if iv && !iv.validated?
-        ov.validate! if ov && !ov.validated?
-      end
-      redirect_to certificate_order_path(@ssl_slug, @certificate_order.ref), 
-        notice: "Certificate order was successfully validated!"
+    if params[:validate_iv] || params[:validate_ov]
+      admin_validate
+    elsif params[:unvalidate_iv] || params[:unvalidate_ov]
+      admin_unvalidate
     else
       respond_to do |format|
         if @certificate_order.update_attributes(params[:certificate_order])
@@ -657,6 +647,57 @@ class CertificateOrdersController < ApplicationController
   end
 
   private
+
+  def admin_validate
+    if @certificate_order.certificate.is_smime_or_client?
+      cc = @certificate_order.certificate_content
+      iv = @certificate_order.get_team_iv
+      ov = @certificate_order.locked_registrant
+      ov_iv = @certificate_order.certificate.requires_locked_registrant?
+
+      iv.validated! if (params[:validate_iv] && iv && !iv.validated?)
+      if params[:validate_ov] && ov && !ov.validated?
+        ov.validated!
+        unless ov.parent_id.nil?
+          parent = Contact.find(ov.parent_id)
+          parent.validated! if parent && !parent.validated?
+        end
+      end
+
+      if (ov_iv && @certificate_order.iv_ov_validated?) || (!ov_iv && @certificate_order.iv_validated?)
+        cc.validate! unless cc.validated?
+      end
+      
+      redirect_to certificate_order_path(@ssl_slug, @certificate_order.ref), 
+        notice: "Certificate order was successfully validated."
+    end
+  end
+
+  def admin_unvalidate
+    if @certificate_order.certificate.is_smime_or_client?
+      cc = @certificate_order.certificate_content
+      iv = @certificate_order.get_team_iv
+      ov = @certificate_order.locked_registrant
+      vt = params[:unvalidate_type]
+
+      iv.send("#{vt}!") if params[:unvalidate_iv] && vt && iv
+      
+      if params[:unvalidate_ov] && vt && ov
+        ov.send("#{vt}!")
+        unless ov.parent_id.nil?
+          parent = Contact.find(ov.parent_id)
+          parent.send("#{vt}!") if parent
+        end
+      end
+
+      unless @certificate_order.iv_ov_validated?
+        cc.pend_validation! unless cc.pending_validation?
+      end
+      
+      redirect_to certificate_order_path(@ssl_slug, @certificate_order.ref),
+        notice: "Certificate order was successfully updated."
+    end
+  end
 
   def registrants_on_edit
     setup_registrant
@@ -736,19 +777,18 @@ class CertificateOrdersController < ApplicationController
 
   def load_certificate_order
     if current_user
-      @certificate_order=CertificateOrder.unscoped{
-        (current_user.is_system_admins? ? CertificateOrder :
-                current_user.ssl_account.certificate_orders).find_by_ref(params[:id])}
+      @certificate_order=current_user.certificate_order_by_ref(params[:id])
 
       if @certificate_order.nil?
         co = current_user.ssl_accounts.map(&:certificate_orders)
-          .flatten.find{|c| c.ref == params[:id]}
-        @certificate_order = co if co
-        if co && co.ssl_account != current_user.ssl_account &&
-          current_user.ssl_accounts.include?(co.ssl_account)
-          
-          current_user.set_default_ssl_account(co.ssl_account)
-          set_ssl_slug
+                 .flatten.find{|c| c.ref == params[:id]}
+        if co
+          @certificate_order = co
+          if co.ssl_account != current_user.ssl_account && current_user.ssl_accounts.include?(co.ssl_account)
+
+            current_user.set_default_ssl_account(co.ssl_account)
+            set_ssl_slug
+          end
         end
       end
     end
@@ -813,6 +853,12 @@ class CertificateOrdersController < ApplicationController
   def setup_locked_registrant(cc_params=nil, cc)
     if cc_params && cc_params[:registrant_attributes]
       cc_params[:registrant_attributes].delete('id')
+      
+      unless params[:saved_contacts].blank?
+        cc_params[:registrant_attributes].merge(
+          {'parent_id' => params[:saved_contacts].to_i}
+        )
+      end
 
       if cc.locked_registrant.blank?
         cc.create_locked_registrant(cc_params[:registrant_attributes])

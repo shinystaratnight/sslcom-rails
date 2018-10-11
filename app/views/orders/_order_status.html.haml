@@ -14,7 +14,7 @@
         %th STATUS
         %th DETAIL
       
-      -@order.certificate_orders.each_with_index do |co, i|
+      -@order.cached_certificate_orders.each_with_index do |co, i|
         %tr
           %td.ref
             %strong #{co.ref}

@@ -64,11 +64,6 @@ class SslAccount < ActiveRecord::Base
   has_many  :cdns
   has_many  :tags
   has_many  :folders, dependent: :destroy
-  has_many :certificate_names, through: :certificate_contents do
-    def sslcom
-      where.not certificate_contents: {ca_id: nil}
-    end
-  end
   has_many  :notification_groups
   has_many  :folders, dependent: :destroy
   has_many :certificate_names, through: :certificate_contents
@@ -243,7 +238,7 @@ class SslAccount < ActiveRecord::Base
       if DomainControlValidation.domain_in_subdomains?(cn.name,certificate_name.name)
         dcv = cn.domain_control_validations.last
         if dcv && dcv.identifier_found
-          certificate_name.js_dcv=certificate_name.domain_control_validations.create(dcv.attributes.except(*CertificateOrder::ID_AND_TIMESTAMP))
+          certificate_name.domain_control_validations.create(dcv.attributes.except(*CertificateOrder::ID_AND_TIMESTAMP))
           break
         end
       end
@@ -290,7 +285,9 @@ class SslAccount < ActiveRecord::Base
   end
 
   def is_registered_reseller?
-    has_role?('reseller') && reseller.try("complete?")
+    Rails.cache.fetch("#{cache_key}/is_registered_reseller") do
+      has_role?('reseller') && reseller.try("complete?")
+    end
   end
 
   def clear_new_certificate_orders
@@ -311,6 +308,16 @@ class SslAccount < ActiveRecord::Base
 
   def has_certificate_orders?
     certificate_orders.not_new.count > 0
+  end
+
+  # do any default certificates map to SSL.com chained Roots
+  def show_domains_manager?
+    Rails.cache.fetch("#{cache_key}/show_domains_manager") do
+      cas_certificates.default.any?{|cc|cc.certificate.is_server?}
+    end or
+    Rails.cache.fetch(CasCertificate::GENERAL_DEFAULT_CACHE) do
+      CasCertificate.general.default.any?{|cc|cc.certificate.is_server?}
+    end
   end
 
   %W(receipt confirmation).each do |et|
@@ -409,9 +416,9 @@ class SslAccount < ActiveRecord::Base
       orders_list = []
       co_list = []
       Order.where(reference_number: refs).each do |o|
-        to_sa.certificate_orders << o.certificate_orders
-        o.certificate_orders.each do |co|
-          co_orders = co.orders
+        to_sa.certificate_orders << o.cached_certificate_orders
+        o.cached_certificate_orders.each do |co|
+          co_orders = co.cached_orders
           to_sa.orders << co_orders
           orders_list << co_orders
           co_list << co
@@ -493,7 +500,7 @@ class SslAccount < ActiveRecord::Base
   end
 
   def primary_user
-    User.unscoped{users.first}
+    users.first
   end
 
   def self.ssl_slug_valid?(slug_str)
@@ -529,7 +536,15 @@ class SslAccount < ActiveRecord::Base
 
   # concatenate team (Domain) and order scoped certificate_names
   def all_certificate_names
-    self.certificate_names+self.domains
+    CertificateName.where(id: (Rails.cache.fetch("#{cache_key}/all_certificate_names") {
+      (self.certificate_names.sslcom+self.domains).map(&:id).uniq
+    })).order(updated_at: :desc)
+  end
+
+  def all_csrs
+    Csr.where(id: (Rails.cache.fetch("#{cache_key}/all_csrs") {
+      (csrs.sslcom + managed_csrs).map(&:id)
+    })).order(created_at: :desc)
   end
 
   def validated_domains
@@ -553,9 +568,71 @@ class SslAccount < ActiveRecord::Base
   end
 
   def get_account_owner
-    Assignment.where(
-      role_id: [Role.get_owner_id, Role.get_reseller_id], ssl_account_id: id
-    ).map(&:user).first
+    User.find(Rails.cache.fetch("#{cache_key}/get_account_owner") do
+      Assignment.where(
+        role_id: [Role.get_owner_id, Role.get_reseller_id], ssl_account_id: id
+      ).map(&:user).first.id
+    end)
+  end
+
+  def cached_certificate_names
+    CertificateName.where(id: (Rails.cache.fetch("#{cache_key}/cached_certificate_names") do
+      certificate_names.pluck(:id).uniq
+    end))
+  end
+
+  def cached_orders
+    Order.where(id: (Rails.cache.fetch("#{cache_key}/cached_orders") do
+      orders.pluck(:id).uniq
+    end)).order(created_at: :desc)
+  end
+
+  def cached_certificate_orders
+    CertificateOrder.unscoped.where(id: (Rails.cache.fetch("#{cache_key}/cached_certificate_orders") do
+      certificate_orders.pluck(:id).uniq
+    end)).order(created_at: :desc)
+  end
+
+  def cached_certificate_orders_count
+    CertificateOrder.where(id: (Rails.cache.fetch("#{cache_key}/cached_certificate_orders_count") do
+      cached_certificate_orders.count
+    end))
+  end
+
+  def cached_certificate_orders_pending
+    CertificateOrder.where(id: (Rails.cache.fetch("#{cache_key}/cached_certificate_orders_pending") do
+      certificate_orders.pending.pluck(:id)
+    end)).order(created_at: :desc)
+  end
+
+  def cached_certificate_orders_incomplete
+    CertificateOrder.where(id: (Rails.cache.fetch("#{cache_key}/cached_certificate_orders_incomplete") do
+      certificate_orders.incomplete.pluck(:id)
+    end)).order(created_at: :desc)
+  end
+
+  def cached_certificate_orders_credits
+    CertificateOrder.where(id: (Rails.cache.fetch("#{cache_key}/cached_certificate_orders_credits") do
+      certificate_orders.credits.pluck(:id)
+    end)).order(created_at: :desc)
+  end
+
+  def cached_certificate_orders_credits_count
+    Rails.cache.fetch("#{cache_key}/cached_certificate_orders_credits_count") do
+      cached_certificate_orders_credits.count
+    end
+  end
+
+  def cached_certificate_orders_pending_count
+    Rails.cache.fetch("#{cache_key}/cached_certificate_orders_pending_count") do
+      cached_certificate_orders_pending.count
+    end
+  end
+
+  def cached_certificate_orders_incomplete_count
+    Rails.cache.fetch("#{cache_key}/cached_certificate_orders_incomplete_count") do
+      cached_certificate_orders_incomplete.count
+    end
   end
 
   def get_team_name

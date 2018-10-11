@@ -47,10 +47,10 @@ class ValidationsController < ApplicationController
         @caa_check_domains = ''
         validated_domain_arry = []
         caa_check_domain_arry = []
-
+        public_key_sha1=cc.csr.public_key_sha1
         unless cc.ca.blank?
           cnames = cc.certificate_names.includes(:domain_control_validations)
-          team_cnames = current_user.ssl_account.certificate_names.includes(:domain_control_validations)
+          team_cnames = @certificate_order.ssl_account.all_certificate_names.includes(:domain_control_validations)
 
           # Team level validation check
           @ds = {}
@@ -61,7 +61,7 @@ class ValidationsController < ApplicationController
               if team_cn.name == cn.name
                 team_dcv = team_cn.domain_control_validations.last
 
-                if team_dcv && team_dcv.validated?(cc.csr.public_key_sha1)
+                if team_dcv && team_dcv.validated?(public_key_sha1)
                   team_level_validated = true
 
                   @ds[team_cn.name] = {}
@@ -80,14 +80,14 @@ class ValidationsController < ApplicationController
             end
 
             unless team_level_validated
-              @all_validated = false if @all_validated
+              @all_validated = false
             else
               validated_domain_arry << cn.name
             end
           end
 
-          if @all_validated && cc.pending_validation?
-            cc.validate!
+          if @all_validated and cc.signed_certificate.blank?
+            cc.validate! if cc.pending_validation?
             @certificate_order.
                 apply_for_certificate(mapping: @certificate_order.certificate.cas.ssl_account_or_general_default(current_user.ssl_account).last)
           end
@@ -175,8 +175,7 @@ class ValidationsController < ApplicationController
     if current_user
       domain_name_arry = params['domain_names'].split(',')
       # order_number = CertificateOrder.find_by_ref(params['certificate_order_id']).external_order_number
-      certificate_order = (current_user.is_system_admins? ? CertificateOrder :
-                               current_user.ssl_account.certificate_orders).find_by_ref(params[:certificate_order_id])
+      certificate_order = current_user.certificate_order_by_ref(params[:certificate_order_id])
       certificate_content = certificate_order.certificate_content
       certificate_names = certificate_content.certificate_names
 
@@ -354,12 +353,12 @@ class ValidationsController < ApplicationController
       if @search = params[:search]
        current_user.is_admin? ?
            (@ssl_account.try(:certificate_orders) || CertificateOrder).not_test.search_with_csr(params[:search]).unvalidated :
-        current_user.ssl_account.certificate_orders.not_test.
+        current_user.ssl_account.cached_certificate_orders.not_test.
           search(params[:search]).unvalidated
       else
         current_user.is_admin? ?
             (@ssl_account.try(:certificate_orders) || CertificateOrder).unvalidated :
-            current_user.ssl_account.certificate_orders.unvalidated
+            current_user.ssl_account.cached_certificate_orders.unvalidated
       end.paginate(p)
     respond_to do |format|
       format.html { render :action => :index }
@@ -388,6 +387,29 @@ class ValidationsController < ApplicationController
     end
   end
 
+  
+  def upload_for_registrant
+    @i = 0
+    @error = []
+    @files = params[:filedata] || []
+    
+    if params[:filedata]
+      upload_documents(params[:filedata], :saved_registrant_documents)
+    end
+
+    if @error.blank?
+      if @files.blank?
+        flash[:error] = "Documents were not saved, please upload at least one file."
+      else
+        files_were = (@i > 1 || @i==0) ? "documents were" : "document was"
+        flash[:notice] = "#{@i.in_words.capitalize} (#{@i}) #{files_were} successfully saved."
+      end
+    else
+      flash[:error] = "Failed to upload documents due to errors: #{@error.join(', ')}"
+    end
+    redirect_to contact_path(@ssl_slug, @registrant.id, saved_contact: true)
+  end
+  
   #user can select to upload documents or do dcv (email or http) or do both
   def upload
     @i = 0
@@ -617,11 +639,35 @@ class ValidationsController < ApplicationController
 
   def create_with_attachment(file, type=:validation)
     @val_history = ValidationHistory.new(document: file)
-    @certificate_order.validation.validation_histories << @val_history
+    unless type == :saved_registrant_documents
+      @certificate_order.validation.validation_histories << @val_history
+    end
     @val_history.save
     create_iv_attachment if type == :iv_documents
     create_ov_attachment if type == :ov_documents
+    create_saved_registrant_attachment if type == :saved_registrant_documents
     @val_history
+  end
+
+  def create_saved_registrant_attachment
+    if @val_history.valid? && params[:registrant_id]
+      @registrant = Registrant.find params[:registrant_id]
+      if @registrant
+        @registrant.validation_histories << @val_history
+        contacts = LockedRegistrant.where(parent_id: @registrant.id)
+        if contacts.any?
+          # If client or s/mime certificate used this registrant, then add 
+          # documents to locked registrant and certificate order as well.
+          CertificateOrder.joins(certificate_contents: :locked_registrant)
+            .where("contacts.id IN (?)", contacts.ids).each do |co|
+              if co.certificate.is_smime_or_client?
+                co.locked_registrant.validation_histories << @val_history
+                co.validation.validation_histories << @val_history
+              end
+            end
+        end
+      end
+    end
   end
 
   def create_iv_attachment
@@ -635,7 +681,7 @@ class ValidationsController < ApplicationController
 
   def create_ov_attachment
     if @val_history.valid?
-      lr = @certificate_order.certificate_content.locked_registrant
+      lr = @certificate_order.locked_registrant
       unless lr.nil?
         lr.validation_histories << @val_history
         if lr.parent_id

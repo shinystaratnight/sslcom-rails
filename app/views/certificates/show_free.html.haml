@@ -16,7 +16,7 @@
     Class 1 validation and industry strength encryption at no cost
   .product_description_buy_certificate
     =link_to image_tag('get_bl.gif', :title=>'click to buy this certificate'), buy_certificate_url(@certificate.product_root)
-  -duration = @certificate.product_variant_groups.first.product_variant_items.first
+  -duration = @certificate.cached_product_variant_items.first
   .get_free_ssl
     #{duration.price.format}
 .bottom_product_desc

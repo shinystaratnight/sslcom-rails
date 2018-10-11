@@ -26,7 +26,7 @@
         -if @scan_history_list.size > 0
           %td(scope="col") Scan Job
           %td(scope="col") Domain Name
-          %td(scope="col") Scan Status
+          %td(scope="col") TLS/SSL Status
           %td(scope="col") Created At
         -else
           %td(scope="col" colspan='4') Domain Name
@@ -39,15 +39,9 @@
               =scan.domain_name
             %td
               -if scan.scan_status == 'expiring'
-                -if scan.expiration_date
-                  ="Valid until " + scan.expiration_date.strftime("%Y-%m-%d")
-                -else
-                  ="N/A"
+                =scan.expiration_date ? "Valid until " + scan.expiration_date.strftime("%Y-%m-%d") : 'n/a'
               -elsif scan.scan_status == 'expired'
-                -if scan.expiration_date
-                  ="Expired on " + scan.expiration_date.strftime("%Y-%m-%d")
-                -else
-                  ="N/A"
+                =scan.expiration_date ? "Expired on " + scan.expiration_date.strftime("%Y-%m-%d") : 'n/a'
               -else
                 =scan.scan_status
             %td

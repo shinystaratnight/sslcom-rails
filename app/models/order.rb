@@ -315,6 +315,7 @@ class Order < ActiveRecord::Base
     end
       
     state :pending do
+      event :payment_invoiced, transitions_to: :invoiced
       event :give_away, transitions_to: :payment_not_required
       event :payment_authorized, transitions_to: :authorized
       event :transaction_declined, :transitions_to => :payment_declined
@@ -578,7 +579,7 @@ class Order < ActiveRecord::Base
   end
   
   # Get all orders for certificate orders or line items of main order.
-  def get_all_orders
+  def get_cached_orders
     certificate_orders.map(&:orders).inject([]) do |all, o|
       all << o if o != self
       all.flatten
@@ -644,21 +645,19 @@ class Order < ActiveRecord::Base
   
   def get_reprocess_orders
     result = {}
-    if certificate_orders.any?
-      certificate_orders.each do |co|
-        current = []
-        co.orders.order(created_at: :asc).each do |o|
-          if o.reprocess_ucc_order?
-            current << {
-              date:       o.created_at.strftime('%F'),
-              order_ref:  o.reference_number,
-              domains:    o.get_reprocess_domains,
-              amount:     o.get_full_reprocess_format
-            }
-          end
+    cached_certificate_orders.each do |co|
+      current = []
+      co.orders.order(created_at: :asc).each do |o|
+        if o.reprocess_ucc_order?
+          current << {
+            date:       o.created_at.strftime('%F'),
+            order_ref:  o.reference_number,
+            domains:    o.get_reprocess_domains,
+            amount:     o.get_full_reprocess_format
+          }
         end
-        result[co.ref] = current if current.any?
       end
+      result[co.ref] = current if current.any?
     end
     result
   end
@@ -666,7 +665,18 @@ class Order < ActiveRecord::Base
   def number
     SecureRandom.base64(32)
   end
-  # END number
+  
+  def invoice_denied_order(ssl_account)
+    cur_invoice_id = Invoice.get_or_create_for_team(ssl_account).try(:id)
+    if cur_invoice_id
+      update(
+        state:      'invoiced',
+        invoice_id: cur_invoice_id,
+        approval:   'approved'
+      )
+      transactions.destroy_all
+    end
+  end
 
   # BEGIN purchase
   def purchase(credit_card, options = {})
@@ -680,8 +690,12 @@ class Order < ActiveRecord::Base
         if authorization.success?
           payment_authorized!
         else
-          transaction_declined!
-          errors[:base] << authorization.message
+          if !invoice_payment? && %w{insufficient_funds do_not_honor}.include?(authorization.params[:decline_code])
+            payment_invoiced! unless invoiced?
+          else
+            transaction_declined!
+            errors[:base] << authorization.message
+          end
         end
       end
       authorization
@@ -708,6 +722,12 @@ class Order < ActiveRecord::Base
       discounts<<Discount.viable.find(td)
     end unless temp_discounts.blank?
     temp_discounts=nil
+  end
+
+  def cached_certificate_orders
+    CertificateOrder.unscoped.where(id: (Rails.cache.fetch("#{cache_key}/cached_certificate_orders") do
+      certificate_orders.pluck(:id)
+    end)).order(created_at: :desc)
   end
 
   def is_free?
@@ -902,7 +922,7 @@ class Order < ActiveRecord::Base
       if merchant_fully_refunded?
         full_refund! unless fully_refunded?
         if certificate_orders.any?
-          certificate_orders.each {|co| co.refund! unless co.refunded?}
+          cached_certificate_orders.each {|co| co.refund! unless co.refunded?}
         end
       else
         partial_refund! unless partially_refunded?

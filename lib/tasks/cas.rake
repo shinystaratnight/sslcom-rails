@@ -7,7 +7,9 @@ namespace :cas do
   #
   # following example will make NAESB the default for ssl_account_id 492124 and recreate all other mappings
   # LIVE=naesb SSL_ACCOUNT_IDS=492124 RESET=true
-  # LIVE=all SSL_ACCOUNT_IDS=49214 EJBCA_ENV=development RAILS_ENV=production # for sandbox
+  #
+  # only set all prodicts live for these ssl_accounts but do not modify any other mappings
+  # LIVE=all SSL_ACCOUNT_IDS=49213,49214 EJBCA_ENV=development RAILS_ENV=production # for sandbox
   task seed_ejbca_profiles: :environment do
     url,shadow_url=
       if ENV['EJBCA_ENV']=="production"
@@ -765,5 +767,8 @@ namespace :cas do
         end
       }
     }
+    Rails.cache.fetch(CasCertificate::GENERAL_DEFAULT_CACHE) do
+      CasCertificate.general.default.any?{|cc|cc.certificate.is_server?}
+    end
   end
 end

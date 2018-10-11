@@ -33,16 +33,19 @@ class Csr < ActiveRecord::Base
   has_one     :csr_override  #used for overriding csr fields - does not include a full csr
   belongs_to  :certificate_content
   belongs_to  :certificate_lookup
+  belongs_to  :ssl_account
   has_one    :certificate_order, :through=>:certificate_content
   has_many    :certificate_orders, :through=>:certificate_content # api_requestable.certificate_orders compatibility
   serialize   :subject_alternative_names
   validates_presence_of :body
   validates_presence_of :common_name, :if=> "!body.blank?", :message=> "field blank. Invalid csr."
+  # validates_uniqueness_of :unique_value, scope: :public_key_sha1
 
   #will_paginate
   cattr_accessor :per_page
   @@per_page = 10
 
+  scope :sslcom, ->{joins{certificate_content}.where.not certificate_contents: {ca_id: nil}}
   scope :search, lambda {|term|
     where(csrs.common_name =~ "%#{term}%").includes{certificate_content.certificate_order}.references(:all)
   }
@@ -96,7 +99,7 @@ class Csr < ActiveRecord::Base
   # end
 
   def unique_value
-    unless certificate_content.ca.blank?
+    if certificate_content.blank? or certificate_content.ca.blank?
       csr_unique_value.unique_value
     else
       if ca_certificate_requests.first and !ca_certificate_requests.first.unique_value.blank?

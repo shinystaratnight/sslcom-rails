@@ -103,12 +103,13 @@ class DomainsController < ApplicationController
       is_sent = send_validation_email(params)
 
       if is_sent
-        flash[:notice] = "Proof of domain control validation email sent."
+        flash[:notice] = "Please check your email for the validation code and submit it below to complete validation."
       else
         flash[:error] = "You have not choose validation email address for all domains."
       end
 
-      redirect_to domains_path
+      @validation_url = dcv_all_validate_domains_url(params)
+      redirect_to dcv_all_validate_domains_url(ssl_slug: current_user.ssl_account.ssl_slug)
     else
       @all_domains = []
       @address_choices = []
@@ -141,7 +142,7 @@ class DomainsController < ApplicationController
       if @selected_domains.blank?
         redirect_to domains_path(@ssl_slug)
       end
-      @csrs = current_user.ssl_account.csrs + current_user.ssl_account.managed_csrs
+      @csrs = current_user.ssl_account.all_csrs
     else
       redirect_to domains_path(@ssl_slug)
     end

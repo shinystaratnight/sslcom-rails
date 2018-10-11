@@ -54,7 +54,7 @@
         %th Quantity
         %th Line Total
     %tbody
-      -order.certificate_orders.each do |cert|
+      -order.cached_certificate_orders.each do |cert|
         %tr
           %td
             .description
@@ -90,7 +90,7 @@
         -if domains_adjustment
           #{full_domains_adjust_format}
         -else
-          #{Money.new(order.certificate_orders.map(&:amount).sum).format}
+          #{Money.new(order.cached_certificate_orders.map(&:amount).sum).format}
     -if order.discounts.any?
       %tr
         %td#discount-lbl Discount (#{order.discounts.map(&:label).join(', ')})

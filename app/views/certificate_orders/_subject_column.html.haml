@@ -6,9 +6,12 @@
 .subject_column
   %a.common_name(title=cn)
     -test_text = co.is_test ? " (TEST) " : ""
-    -if co.certificate.is_smime_or_client? && !cc.issued? && !cc.validated?
+    -if co.certificate.is_smime_or_client?
       -team_iv = co.get_team_iv
-      ="#{test_text} #{team_iv ? [team_iv.first_name, team_iv.last_name].join(', ') : nil}"
+      -if team_iv
+        ="#{test_text} #{team_iv ? [team_iv.first_name, team_iv.last_name].join(' ') : nil}"
+      -else
+        ="#{test_text} #{co.certificate.title}"
     -else 
       =(test_text + (%w(refunded rejected charged_back).include?(co.workflow_state) ? " (#{co.workflow_state.upcase}) " : "") + cn.downcase).shorten(35, false)
   %span.expand_or_view_order

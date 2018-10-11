@@ -16,18 +16,8 @@ module Stripeable
   def create_charge(amount, card_token, options = {})
     begin
       charge = stripe_charge(amount, card_token, options)
-    rescue Stripe::CardError => e
-      log_failure(card_token, e, 'Stripe::CardError - card is declined.')
-    rescue Stripe::RateLimitError => e
-      log_failure(card_token, e, 'Stripe::RateLimitError - too many requests made to the API too quickly.')
-    rescue Stripe::InvalidRequestError => e
-      log_failure(card_token, e, 'Stripe::InvalidRequestError - invalid parameters were supplied.')
-    rescue Stripe::AuthenticationError => e
-      log_failure(card_token, e, 'Stripe::AuthenticationError - authentication with Stripes API failed.')
-    rescue Stripe::APIConnectionError => e
-      log_failure(card_token, e, 'Stripe::APIConnectionError - network communication with Stripe failed.')
-    rescue Stripe::StripeError => e
-      log_failure(card_token, e, 'Stripe::StripeError')
+    rescue => e
+      log_failure(e, card_token)
     else
       log_charge_response(charge)
     end
@@ -46,19 +36,26 @@ module Stripeable
   # Ceate Stripe card token if using an existing CC billing profile for purchase
   def create_card_token(credit_card, options = {})
     address = options[:billing_address]
-    Stripe::Token.create(
-      card: {
-        name:          "#{credit_card.first_name} #{credit_card.last_name}",
-        number:        credit_card.number,
-        exp_month:     credit_card.month,
-        exp_year:      credit_card.year,
-        cvc:           credit_card.verification_value,
-        address_line1: address[:street1],
-        address_city:  address[:locality],
-        address_state: address[:region],
-        address_zip:   address[:postal_code]
-      },
-    )
+    token = nil
+    begin
+      token = Stripe::Token.create(
+        card: {
+          name:          "#{credit_card.first_name} #{credit_card.last_name}",
+          number:        credit_card.number,
+          exp_month:     credit_card.month,
+          exp_year:      credit_card.year,
+          cvc:           credit_card.verification_value,
+          address_line1: address[:street1],
+          address_city:  address[:locality],
+          address_state: address[:region],
+          address_zip:   address[:postal_code]
+        },
+      )
+    rescue => e
+      log_failure(e, token)
+    else
+      token
+    end
   end
   
   def log_charge_response(charge)
@@ -85,31 +82,31 @@ module Stripeable
     }
   end
     
-  def log_failure(card_token, e, error_message)
+  def log_failure(e, card_token=nil)
     message = if e.class == Stripe::CardError
-      'This transaction has been declined.'
+      "This transaction has been declined. #{e.message}"
     else
       'Something went wrong! The card was not charged.'
     end
     self.success   = false
     self.reference = nil
     self.message   = message
-    self.params    = log_failure_error(e, error_message)
+    self.params    = log_failure_error(e)
     self.test      = stripe_test?(card_token)
   end
   
-  def log_failure_error(e, error_message)
-    err                   = e.json_body[:error]
-    params                = {}
-    params[:status]       = e.http_status
-    params[:type]         = err[:type]
-    params[:charge_id]    = err[:charge]
-    params[:code]         = err[:code]         if err[:code]
-    params[:decline_code] = err[:decline_code] if err[:decline_code]
-    params[:param]        = err[:param]        if err[:param]
-    params[:message]      = err[:message]      if err[:message]
-    params[:message_more] = error_message
-    params
+  def log_failure_error(e)
+    err = e.json_body[:error]
+    {
+      status:       e.http_status,
+      type:         err[:type],
+      charge_id:    err[:charge],
+      code:         err[:code],
+      decline_code: err[:decline_code],
+      param:        err[:param], 
+      message:      err[:message],
+      message_more: "#{e.class.to_s} - #{err[:code]}, #{err[:message]}"
+    }
   end
   
   def stripe_test?(stripe_object)

@@ -146,6 +146,7 @@ class CertificateContent < ActiveRecord::Base
       event :issue, :transitions_to => :issued
       event :reset, :transitions_to => :new
       event :validate, :transitions_to => :validated
+      event :pend_validation, :transitions_to => :pending_validation
     end
 
     state :csr_submitted do
@@ -242,15 +243,14 @@ class CertificateContent < ActiveRecord::Base
             elsif "6248227494352943350" == chain.x509_certificates.last.serial # EV serial
               Certificate::CERTUM_XSIGN_EV
             end
+    certs=chain.x509_certificates
     if options[:format]==:objects
-      certs=chain.x509_certificates
-      xcert ? certs : certs[0..-2]<<OpenSSL::X509::Certificate.new(SignedCertificate.enclose_with_tags(xcert))
+      xcert ? certs[0..-2]<<OpenSSL::X509::Certificate.new(SignedCertificate.enclose_with_tags(xcert)) : certs
     elsif options[:format]==:without_tags
       certs=chain.certificate_chain
-      xcert ? certs : certs[0..-2]<<xcert
+      xcert ? certs[0..-2]<<xcert : certs
     else
-      certs=chain.x509_certificates
-      xcert ? certs : certs[0..-2].map(&:to_s)<<SignedCertificate.enclose_with_tags(xcert)
+      xcert ? certs[0..-2].map(&:to_s)<<SignedCertificate.enclose_with_tags(xcert) : certs.map(&:to_s)
     end unless chain.blank?
   end
 
@@ -317,6 +317,10 @@ class CertificateContent < ActiveRecord::Base
       url_callbacks.last
     end
     uc.perform_callback(certificate_hook:packaged_cert) unless uc.blank?
+  end
+
+  def dcv_suffix
+    ca ? "ssl.com" : "comodoca.com"
   end
 
   def dcv_domains(options)
@@ -399,6 +403,12 @@ class CertificateContent < ActiveRecord::Base
     define_method("#{role}_contact") do
       send("#{role}_contacts").last
     end
+  end
+
+  def cached_certificate_order
+    CertificateOrder.unscoped.find(Rails.cache.fetch("#{cache_key}/cached_certificate_order")do
+      certificate_order.id
+    end)
   end
 
   def expired?

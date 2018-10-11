@@ -14,6 +14,9 @@ class DomainControlValidation < ActiveRecord::Base
   IS_INVALID  = "is an invalid email address choice"
   FAILURE_ACTION = %w(ignore reject)
   AUTHORITY_EMAIL_ADDRESSES = %w(admin@ administrator@ webmaster@ hostmaster@ postmaster@)
+  MAX_DURATION_DAYS={email: 820}
+
+  EMAIL_CHOICE_CACHE_EXPIRES_DAYS=1
 
   include Workflow
   workflow do
@@ -116,7 +119,7 @@ class DomainControlValidation < ActiveRecord::Base
   # public_key_sha1 - against a csr
   def validated?(domain=nil,public_key_sha1=nil)
     satisfied = ->(public_key_sha1){
-        identifier_found && !responded_at.blank? && responded_at > 30.days.ago &&
+        identifier_found && !responded_at.blank? && responded_at > DomainControlValidation::MAX_DURATION_DAYS[:email].days.ago &&
           (!email_address.blank? or (public_key_sha1 ? csr.public_key_sha1.downcase==public_key_sha1.downcase : true))
     }
     (domain ? true : DomainControlValidation.domain_in_subdomains?(domain,certificate_name.name)) and satisfied.call(public_key_sha1)
@@ -124,17 +127,16 @@ class DomainControlValidation < ActiveRecord::Base
 
   # this determines if a domain validation will satisfy another domain validation based on 2nd level subdomains and wildcards
   # BE VERY CAREFUL as this drives validation for the entire platform including Web and API
-  def self.domain_in_subdomains?(domain,multi_level_subdomain)
-    if ::PublicSuffix.valid?(domain, default_rule: nil) and ::PublicSuffix.valid?(multi_level_subdomain, default_rule: nil)
-      d=::PublicSuffix.parse(multi_level_subdomain)
-      subdomains = d.trd ? d.trd.split(".").reverse : []
-      if subdomains[0]=="*" #remove wildcard
-        first,*base = domain.split(/\./)
-        return true if multi_level_subdomain[2..-1]==base.join(".")
-        subdomains.shift
-      end
-      0.upto(subdomains.count) do |i|
-        return true if ((subdomains.slice(0,i).reverse<<d.domain).join("."))==domain
+  def self.domain_in_subdomains?(subject,compare_with)
+    subject=subject[2..-1] if subject=~/\A\*\./
+    compare_with=compare_with[2..-1] if compare_with=~/\A\*\./
+    if ::PublicSuffix.valid?(subject, default_rule: nil) and ::PublicSuffix.valid?(compare_with, default_rule: nil)
+      sd=::PublicSuffix.parse(subject)
+      subject_subdomains = sd.trd ? sd.trd.split(".").reverse : []
+      d=::PublicSuffix.parse(compare_with)
+      compare_with_subdomains = d.trd ? d.trd.split(".").reverse : []
+      0.upto(compare_with_subdomains.count) do |i|
+        return true if ((compare_with_subdomains.slice(0,i).reverse<<d.domain).join("."))==subject
       end
     end
     false
@@ -150,7 +152,7 @@ class DomainControlValidation < ActiveRecord::Base
   end
 
   def self.email_address_choices(name)
-    Rails.cache.fetch("email_address_choices/#{name}", expires_in: 30.days) do
+    Rails.cache.fetch("email_address_choices/#{name}", expires_in: EMAIL_CHOICE_CACHE_EXPIRES_DAYS.days) do
       return [] unless ::PublicSuffix.valid?(name.downcase)
       d=::PublicSuffix.parse(name.downcase)
       subdomains = d.trd ? d.trd.split(".") : []
