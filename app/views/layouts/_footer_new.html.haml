@@ -145,6 +145,15 @@
   a.async=true;a.type="text/javascript";b.parentNode.insertBefore(a,b)}, 1);
 :javascript
   jQuery(function($){
+    $('#btn-reg-upload-cancel').on('click', function() {
+      $('.contact-show-container').show();
+      $('#contact-file-upload').hide();
+    });
+    $('#btn-reg-upload').on('click', function(e) {
+      e.preventDefault();
+      $('.contact-show-container').hide();
+      $('#contact-file-upload').show();
+    });
     $('#live_chat').click(function(){
       olark('api.box.expand');
     });

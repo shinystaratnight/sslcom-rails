@@ -83,10 +83,13 @@ class ContactsController < ApplicationController
   def admin_update
     if @contact && params[:status]
       @contact.update_column(:status, Contact.statuses[params[:status]])
+      validate_certificate_orders
     end
+    notice_ext = @co_validated && @co_validated > 0 ? "And #{@co_validated} certificate order(s) were validated." : ""
     redirect_to saved_contacts_contacts_path(
-      @contact.contactable.to_slug, registrants: (@contact.is_a?(Registrant) ? true : nil)
-      ), notice: "Status has been successfully updated for #{@contact.company_name}."
+      @contact.contactable.to_slug,
+      registrants: (@contact.is_a?(Registrant) ? true : nil)
+    ), notice: "Status has been successfully updated for #{@contact.company_name}. #{notice_ext}"
   end
 
   def update
@@ -110,14 +113,39 @@ class ContactsController < ApplicationController
   end
   
   def destroy
-   @contact.destroy
-   respond_to do |format|
-     flash[:notice] = "Contact was successfully deleted."
-     format.html { redirect_to saved_contacts_contacts_path(@ssl_slug) }
-   end
+    @contact.destroy
+    redirect_to saved_contacts_contacts_path(
+      @contact.contactable.to_slug, 
+      registrants: (@contact.is_a?(Registrant) ? true : nil)
+    ), notice: "Contact was successfully deleted."
   end
   
   private
+
+  def validate_certificate_orders
+    # Update certificate order validation status if registrant was used in 
+    # any client or s/mime certificate order
+    if @contact.is_a?(Registrant) && params[:status] == 'validated'
+      contacts = Contact.where(parent_id: @contact.id)
+      if contacts
+        @co_validated = 0
+        CertificateOrder.joins(certificate_contents: :locked_registrant)
+          .where("contacts.id IN (?)", contacts.ids).each do |co|
+            if co.certificate.is_smime_or_client? && co.locked_registrant
+              co.locked_registrant.validated!
+              co.registrant.validated!
+              if co.iv_ov_validated?
+                cc = co.certificate_content
+                unless cc.validated?
+                  cc.validate!
+                  @co_validated += 1
+                end
+              end
+            end
+          end
+      end
+    end
+  end
 
   def find_contact
     if current_user

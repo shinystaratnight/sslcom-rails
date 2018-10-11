@@ -18,6 +18,7 @@
 
 $height_buf: 270px
 $base_green: #6b9029
+$table_border: #ccf
 
 /*---global common definitions---*/
 *
@@ -7939,6 +7940,10 @@ span.notifications-teams
   a
     margin-right: 0.9rem
 
+    &:hover
+      color: black
+      border-bottom: solid 2px black
+      
     &:last-child
       margin-right: 0
 
@@ -7957,7 +7962,9 @@ span.notifications-teams
   color: red
 
 .saved_contact
-  tr
+  border: 1px $table_border solid !important
+
+  tr, tbody, .heading_row
     border: none !important
 
   td
@@ -7973,3 +7980,28 @@ span.notifications-teams
 
   .doc_attribute
     width: 100%
+
+#contact-file-upload
+  h2
+    font-size: 1.7rem
+
+  .contact-file-desc
+    font-size: 1.3rem
+    color: black !important
+
+  #document-limit
+    font-size: 1.1rem
+    font-weight: 500
+    margin-top: 0
+
+#contacts-show-actions
+  font-size: 1.3rem
+  text-transform: uppercase
+  text-align: center !important
+
+  a
+    margin-right: 1.7rem
+
+    &:hover
+      color: black
+      border-bottom: solid 2px black

@@ -406,10 +406,10 @@ authorization do
     #
     # Validations
     #
-    # has_permission_on :validations, :to => [:create]
     has_permission_on :validations, :to => [:read, :update, :create, :dcv_validate] do
       if_attribute :users => contains {user}
     end
+    has_permission_on :validations, to: :upload_for_registrant
     #
     # ValidationHistories
     #
@@ -632,6 +632,7 @@ privileges do
     :set_default_team_max,
     :sslcom_ca,
     :update_roles,
-    :search_teams
+    :search_teams,
+    :upload_for_registrant
   ]
 end

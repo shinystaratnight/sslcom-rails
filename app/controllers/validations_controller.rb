@@ -387,6 +387,29 @@ class ValidationsController < ApplicationController
     end
   end
 
+  
+  def upload_for_registrant
+    @i = 0
+    @error = []
+    @files = params[:filedata] || []
+    
+    if params[:filedata]
+      upload_documents(params[:filedata], :saved_registrant_documents)
+    end
+
+    if @error.blank?
+      if @files.blank?
+        flash[:error] = "Documents were not saved, please upload at least one file."
+      else
+        files_were = (@i > 1 || @i==0) ? "documents were" : "document was"
+        flash[:notice] = "#{@i.in_words.capitalize} (#{@i}) #{files_were} successfully saved."
+      end
+    else
+      flash[:error] = "Failed to upload documents due to errors: #{@error.join(', ')}"
+    end
+    redirect_to contact_path(@ssl_slug, @registrant.id, saved_contact: true)
+  end
+  
   #user can select to upload documents or do dcv (email or http) or do both
   def upload
     @i = 0
@@ -616,11 +639,35 @@ class ValidationsController < ApplicationController
 
   def create_with_attachment(file, type=:validation)
     @val_history = ValidationHistory.new(document: file)
-    @certificate_order.validation.validation_histories << @val_history
+    unless type == :saved_registrant_documents
+      @certificate_order.validation.validation_histories << @val_history
+    end
     @val_history.save
     create_iv_attachment if type == :iv_documents
     create_ov_attachment if type == :ov_documents
+    create_saved_registrant_attachment if type == :saved_registrant_documents
     @val_history
+  end
+
+  def create_saved_registrant_attachment
+    if @val_history.valid? && params[:registrant_id]
+      @registrant = Registrant.find params[:registrant_id]
+      if @registrant
+        @registrant.validation_histories << @val_history
+        contacts = LockedRegistrant.where(parent_id: @registrant.id)
+        if contacts.any?
+          # If client or s/mime certificate used this registrant, then add 
+          # documents to locked registrant and certificate order as well.
+          CertificateOrder.joins(certificate_contents: :locked_registrant)
+            .where("contacts.id IN (?)", contacts.ids).each do |co|
+              if co.certificate.is_smime_or_client?
+                co.locked_registrant.validation_histories << @val_history
+                co.validation.validation_histories << @val_history
+              end
+            end
+        end
+      end
+    end
   end
 
   def create_iv_attachment
