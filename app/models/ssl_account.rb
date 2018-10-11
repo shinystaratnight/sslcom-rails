@@ -568,11 +568,12 @@ class SslAccount < ActiveRecord::Base
   end
 
   def get_account_owner
-    User.find(Rails.cache.fetch("#{cache_key}/get_account_owner") do
+    uid=Rails.cache.fetch("#{cache_key}/get_account_owner") do
       Assignment.where(
         role_id: [Role.get_owner_id, Role.get_reseller_id], ssl_account_id: id
-      ).map(&:user).first.id
-    end)
+      ).map(&:user).first.try(:id)
+    end
+    uid ? User.find(uid) : nil
   end
 
   def cached_certificate_names
@@ -594,9 +595,9 @@ class SslAccount < ActiveRecord::Base
   end
 
   def cached_certificate_orders_count
-    CertificateOrder.where(id: (Rails.cache.fetch("#{cache_key}/cached_certificate_orders_count") do
+    Rails.cache.fetch("#{cache_key}/cached_certificate_orders_count") do
       cached_certificate_orders.count
-    end))
+    end
   end
 
   def cached_certificate_orders_pending
