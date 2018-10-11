@@ -45,6 +45,7 @@ class Csr < ActiveRecord::Base
   cattr_accessor :per_page
   @@per_page = 10
 
+  scope :sslcom, ->{joins{certificate_content}.where.not certificate_contents: {ca_id: nil}}
   scope :search, lambda {|term|
     where(csrs.common_name =~ "%#{term}%").includes{certificate_content.certificate_order}.references(:all)
   }
