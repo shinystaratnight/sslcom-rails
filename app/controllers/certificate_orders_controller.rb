@@ -38,7 +38,7 @@ class CertificateOrdersController < ApplicationController
   in_place_edit_for :certificate_order, :notes
   in_place_edit_for :csr, :signed_certificate_by_text
 
-  before_action :set_schedule_value, only: [:edit]
+  before_action :set_schedule_value, only: [:edit, :reprocess]
 
   NUM_ROWS_LIMIT=2
 
@@ -230,6 +230,20 @@ class CertificateOrdersController < ApplicationController
             ruling.pend! unless ruling.pending?
           end
         end
+
+        @notification_groups = current_user.ssl_account.notification_groups.pluck(:friendly_name, :ref)
+        @notification_groups.insert(0, ['none', 'none']) #if @notification_groups.empty?
+
+        notification_group_subject = @certificate_order.notification_groups_subjects.where(created_page: 'csr').first
+        @slt_notification_group = [notification_group_subject.notification_group.ref] if notification_group_subject
+
+        @managed_csrs = (current_user.ssl_account.csrs + current_user.ssl_account.managed_csrs)
+                            .sort_by{|arr| arr.created_at}
+                            .uniq{|arr| arr.common_name}
+                            .map{|arr| [arr.common_name, arr.ref]}
+                            .delete_if{|arr| arr.second == nil}
+        @managed_csrs.insert(0, ['none', 'none'])
+
         return render '/certificates/buy', :layout=>'application'
       end
     else

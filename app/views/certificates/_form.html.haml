@@ -1,4 +1,5 @@
 -notification_groups = @notification_groups || []
+-slt_notification_group = @slt_notification_group || []
 -schedule_simple_type = @schedule_simple_type || []
 -schedule_weekdays = @schedule_weekdays || []
 -schedule_months = @schedule_months || []
@@ -151,7 +152,7 @@
           -else
             Domains:
         .block_body
-          .schedule_container.clearfix
+          .schedule_container.managed_domains_container.clearfix
             -#=select_tag :managed_domains, options_for_select(@managed_domains, selected: @managed_domains.collect {|arr| arr[1]}),
             -#                multiple: true, data: {placeholder: "click here to list available domains to scan."}, :class => 'managed_domains'
             =select_tag :managed_domains, options_for_select([], selected: []),
@@ -278,7 +279,7 @@
               .block_label
                 Notification Groups
               .block_body.clearfix
-                =select_tag :notification_group, options_for_select(notification_groups, selected: {})
+                =select_tag :notification_group, options_for_select(notification_groups, selected: slt_notification_group)
   -else
     -if @certificate.is_code_signing?
       %p #{@certificate.title} Certificate Summary

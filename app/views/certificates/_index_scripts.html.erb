@@ -163,6 +163,27 @@ jQuery(function($) {
       + ' available non wildcard domains.'
     );
   };
+
+  $.filteringDomainsByCOType = function(domains, type) {
+    var results = [];
+    $.each(domains, function(idx) {
+      if ($.inArray(domains[idx], results) == -1) {
+        results.push(domains[idx]);
+      }
+
+      if (domains[idx].indexOf('www.') > -1) {
+        if ($.inArray(domains[idx].substr(4), results) == -1) {
+          results.push(domains[idx].substr(4));
+        }
+      } else {
+        if ($.inArray('www.' + domains[idx], results) == -1) {
+          results.push('www.' + domains[idx]);
+        }
+      }
+    });
+
+    return results;
+  }
   
   $("textarea[name*=signing_request]").click(function(){
     $(this).select();
@@ -245,6 +266,19 @@ jQuery(function($) {
           <% end-%>
 
           all_domains = names.split(' ');
+          co_type = '';
+          <% if @certificate.is_basic?-%>
+            co_type = 'basic';
+          <% elsif @certificate.is_high_assurance?-%>
+            co_type = 'highAssurance';
+          <% elsif @certificate.is_ev?-%>
+            co_type = 'evSSL';
+          <% end-%>
+
+          if (co_type != '') {
+            all_domains = $.filteringDomainsByCOType(all_domains, co_type);
+          }
+
           if (all_domains.length > 0) {
             // remove domains what belongs to previous selected Managed CSR.
             $('.managed_domains').empty();
@@ -365,6 +399,20 @@ jQuery(function($) {
             $.unique(all_domains);*/
 
             all_domains = names.split(' ');
+
+            co_type = '';
+            <% if @certificate.is_basic?-%>
+              co_type = 'basic';
+            <% elsif @certificate.is_high_assurance?-%>
+              co_type = 'highAssurance';
+            <% elsif @certificate.is_ev?-%>
+              co_type = 'evSSL';
+            <% end-%>
+
+            if (co_type != '') {
+              all_domains = $.filteringDomainsByCOType(all_domains, co_type);
+            }
+
             $.each(all_domains, function(idx) {
               var optElement = $('<option></option>');
               optElement.attr('value', 'csr-' + all_domains[idx]);
@@ -622,7 +670,6 @@ jQuery(function($) {
     $('#managed_domains').select2({
       tags: true,
       tokenSeparators: [',', ' ', '\n', '\r\n'],
-      allowClear: false,
       templateSelection: function(data, container) {
         var value = data.element.value;
 
@@ -648,10 +695,54 @@ jQuery(function($) {
       $('#schedule_simple_type option[value="2"]').attr('selected', true);
     }
 
-    <%unless @certificate.is_ucc?%>
+    if (url.substr(url.lastIndexOf('/') + 1, url.length) == 'reprocess') {
+      $('.custom_selected_block').hide();
+      $('.custom_schedule').hide();
+      $('.notification_group_schedule').hide();
+
+      var slt_notification_group = '<%= @slt_notification_group ? @slt_notification_group.join(' ') : "" %>';
+      if (slt_notification_group != '') {
+        $('.custom_selected_block').hide();
+        $('.custom_schedule').hide();
+        $('.simple_schedule').hide();
+
+        $('.notification_group_schedule').show();
+        $('#schedule_type_none').prop('checked', true);
+      } else {
+        $('#schedule_simple_type option[value="2"]').attr('selected', true);
+      }
+    }
+
+    <%if @certificate.is_basic? || @certificate.is_high_assurance? || (@certificate.is_ev? && !@certificate.is_evucc?) || @certificate.is_wildcard?%>
       $('#managed_domains').on('select2:opening select2:closing', function( event ) {
         var $searchfield = $(this).parent().find('.select2-search__field');
         $searchfield.prop('readonly', true);
+      });
+      $('#managed_domains').on('select2:open', function() {
+        $('.select2-dropdown').hide();
+      });
+      $('.managed_domains_container').addClass('hidden_close_x');
+    <%elsif @certificate.is_premium_ssl?%>
+      $('#managed_domains').on('select2:opening select2:closing', function( event ) {
+        if ($('#managed_domains').val() != null && $('#managed_domains').val().length > 2) {
+          var $searchfield = $(this).parent().find('.select2-search__field');
+          $searchfield.prop('readonly', true);
+        } else {
+          var $searchfield = $(this).parent().find('.select2-search__field');
+          /*$searchfield.prop('readonly', false);*/
+          $searchfield.removeProp('readonly');
+        }
+      });
+      $('#managed_domains').on('select2:open', function() {
+        if ($('#managed_domains').val() != null && $('#managed_domains').val().length > 2) {
+          if (!$('.select2-dropdown').is(":hidden")) {
+            $('.select2-dropdown').hide();
+          }
+        } else {
+          if ($('.select2-dropdown').is(":hidden")) {
+            $('.select2-dropdown').show();
+          }
+        }
       });
     <%end%>
     $('#weekday_custom_list').on('select2:opening select2:closing', function( event ) {
@@ -741,8 +832,7 @@ jQuery(function($) {
 
         $('.custom_selected_block').hide();
         $('.custom_schedule').hide();
-
-        $('input[name="schedule_type"][value="true"]').prop('checked', true);
+        /*$('input[name="schedule_type"][value="true"]').prop('checked', true);*/
         $('.simple_schedule').hide();
 
         $('.notification_group_schedule').show();
