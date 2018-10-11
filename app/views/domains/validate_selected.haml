@@ -29,7 +29,8 @@
           %td
             =hidden_field_tag "d_name_id[]", d.id
             =check_box_tag 'checkbox_domain', nil, false, :class => 'check_box', :id => d.name
-            =button_tag "Remove", :class => "btn_remove_domain", :type => "button"
+            -if @all_domains.size > 1
+              =button_tag "Remove", :class => "btn_remove_domain", :type => "button"
           %td.center=d.name
           %td
             %select(name="dcv_address[]")

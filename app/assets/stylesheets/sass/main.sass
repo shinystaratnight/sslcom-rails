@@ -5585,6 +5585,21 @@ span#no_emails_accessible
     input
       margin-bottom: 0px !important
 
+  .managed_csrs_block a
+    font-size: 1.4em
+    padding-left: 20px
+    line-height: 45px
+    vertical-align: bottom
+    text-decoration: underline
+
+  .managed_domains_block .hidden_close_x .select2-selection__choice
+    line-height: 20px
+    vertical-align: middle
+
+    .select2-selection__choice__remove
+      display: none
+
+
 .schedule_block_group
   float: left
   font-size: 1.4em
@@ -5592,19 +5607,20 @@ span#no_emails_accessible
   margin-left: 10px
   width: 400px
 
-  .notification_group_schedule .block_body
-    margin-left: 0px !important
-
-  .schedule_type .block_body
-    margin-left: 0px !important
-
-  .simple_schedule
+  .notification_group_schedule
     margin-left: 10px
     .block_body
       margin-left: 0px !important
 
+  .schedule_type .block_body .block_item:first-child input[type=radio]
+    margin-left: 0px !important
+
+
+  .simple_schedule .block_body
+    margin-left: 0px !important
+
   .custom_schedule
-    margin-left: 20px
+    margin-left: 10px
     .block_body
       margin-left: 0px !important
 
@@ -5623,7 +5639,6 @@ span#no_emails_accessible
 
     .block_body
       margin-bottom: 8px
-      margin-left: 5px
 
       select
         font-size: 0.9em !important
@@ -7419,6 +7434,14 @@ span.notifications-teams
 #registered_agents input[type='submit'],
 #notification_groups input[type='submit']
   margin-top: 13px
+
+#notification_groups .note_group_event
+  width: 130px
+  select
+    width: 80px
+    font-size: 0.9em
+  input[type='checkbox']
+    vertical-align: middle
 
 .schedule_container,
 #contacts-container,

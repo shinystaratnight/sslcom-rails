@@ -38,7 +38,7 @@ class CertificateOrdersController < ApplicationController
   in_place_edit_for :certificate_order, :notes
   in_place_edit_for :csr, :signed_certificate_by_text
 
-  before_action :set_schedule_value, only: [:edit]
+  before_action :set_schedule_value, only: [:edit, :reprocess]
 
   NUM_ROWS_LIMIT=2
 
@@ -177,7 +177,7 @@ class CertificateOrdersController < ApplicationController
             @certificate_content.agreement=true
 
             @notification_groups = current_user.ssl_account.notification_groups.pluck(:friendly_name, :ref)
-            @notification_groups.insert(0, ['none', 'none'])
+            @notification_groups.insert(0, ['none', 'none']) if @notification_groups.empty?
 
             @managed_csrs = (current_user.ssl_account.all_csrs)
                                 .sort_by{|arr| arr.common_name}
@@ -186,7 +186,7 @@ class CertificateOrdersController < ApplicationController
                                 .delete_if{|arr| arr.second == nil}
             @managed_csrs.insert(0, ['none', 'none'])
 
-            @managed_domains = current_user.ssl_account.domains.map{|arr| [arr.name, 'domain-' + arr.name]}
+            # @managed_domains = current_user.ssl_account.domains.map{|arr| [arr.name, 'domain-' + arr.name]}
 
             return render '/certificates/buy', :layout=>'application'
           end
@@ -230,6 +230,20 @@ class CertificateOrdersController < ApplicationController
             ruling.pend! unless ruling.pending?
           end
         end
+
+        @notification_groups = current_user.ssl_account.notification_groups.pluck(:friendly_name, :ref)
+        @notification_groups.insert(0, ['none', 'none']) #if @notification_groups.empty?
+
+        notification_group_subject = @certificate_order.notification_groups_subjects.where(created_page: 'csr').first
+        @slt_notification_group = [notification_group_subject.notification_group.ref] if notification_group_subject
+
+        @managed_csrs = (current_user.ssl_account.csrs + current_user.ssl_account.managed_csrs)
+                            .sort_by{|arr| arr.created_at}
+                            .uniq{|arr| arr.common_name}
+                            .map{|arr| [arr.common_name, arr.ref]}
+                            .delete_if{|arr| arr.second == nil}
+        @managed_csrs.insert(0, ['none', 'none'])
+
         return render '/certificates/buy', :layout=>'application'
       end
     else
@@ -387,8 +401,9 @@ class CertificateOrdersController < ApplicationController
     managed_domains = params[:managed_domains]
     additional_domains = ''
     managed_domains.each do |domain|
-      additional_domains.concat(domain.gsub('csr-', '').gsub('domain-', '') + ' ')
+      additional_domains.concat(domain.gsub('csr-', '') + ' ')
     end unless managed_domains.blank?
+
     params[:certificate_order][:certificate_contents_attributes]['0'.to_sym][:additional_domains] = additional_domains.strip
 
     @certificate_content=CertificateContent.new(
@@ -927,13 +942,23 @@ class CertificateOrdersController < ApplicationController
 
   def schedule(params)
     # Create or Update notification group
-    if params[:notification_group] == 'none'
+    if params[:schedule_type] == 'none' && params[:notification_group] != 'none'
+      notification_group = current_user.ssl_account.notification_groups.where(ref: params[:notification_group]).first
+
+      unless notification_group
+        flash[:error] = "Some error occurs while getting notification group data. Please try again."
+        @certificate = @certificate_order.certificate
+
+        format.html { render '/certificates/buy', :layout=>'application' }
+      end
+    else
       # Saving notification group info
       notification_group = NotificationGroup.new(
           friendly_name: 'ng-' + @certificate_order.ref,
           scan_port: '443',
           notify_all: true,
-          ssl_account: current_user.ssl_account
+          ssl_account: current_user.ssl_account,
+          status: false,
       )
 
       # Saving notification group triggers
@@ -947,16 +972,39 @@ class CertificateOrdersController < ApplicationController
 
         format.html { render '/certificates/buy', :layout=>'application' }
       end
-    else
-      notification_group = current_user.ssl_account.notification_groups.where(ref: params[:notification_group]).first
-
-      unless notification_group
-        flash[:error] = "Some error occurs while getting notification group data. Please try again."
-        @certificate = @certificate_order.certificate
-
-        format.html { render '/certificates/buy', :layout=>'application' }
-      end
     end
+
+    # if params[:notification_group] == 'none'
+    #   # Saving notification group info
+    #   notification_group = NotificationGroup.new(
+    #       friendly_name: 'ng-' + @certificate_order.ref,
+    #       scan_port: '443',
+    #       notify_all: true,
+    #       ssl_account: current_user.ssl_account,
+    #       status: false,
+    #   )
+    #
+    #   # Saving notification group triggers
+    #   ['60', '30', '15', '0', '-15'].uniq.sort{|a, b| a.to_i <=> b.to_i}.reverse.each_with_index do |rt, i|
+    #     notification_group.preferred_notification_group_triggers = rt.or_else(nil), ReminderTrigger.find(i + 1)
+    #   end
+    #
+    #   unless notification_group.save
+    #     flash[:error] = "Some error occurs while saving notification group data. Please try again."
+    #     @certificate = @certificate_order.certificate
+    #
+    #     format.html { render '/certificates/buy', :layout=>'application' }
+    #   end
+    # else
+    #   notification_group = current_user.ssl_account.notification_groups.where(ref: params[:notification_group]).first
+    #
+    #   unless notification_group
+    #     flash[:error] = "Some error occurs while getting notification group data. Please try again."
+    #     @certificate = @certificate_order.certificate
+    #
+    #     format.html { render '/certificates/buy', :layout=>'application' }
+    #   end
+    # end
 
     # Saving certificate order tag
     is_exist = notification_group.certificate_orders.where(id: @certificate_order.id)
@@ -965,7 +1013,8 @@ class CertificateOrdersController < ApplicationController
     ).save if is_exist.empty?
 
     # Saving subject tags
-    new_tags = @certificate_order.certificate_content.certificate_names.pluck(:id).map{ |val| val.to_s }
+    # new_tags = @certificate_order.certificate_content.certificate_names.pluck(:id).map{ |val| val.to_s }
+    new_tags = @certificate_order.certificate_contents.map(&:certificate_names).flatten.compact.map{|cn| cn.id.to_s}
     current_tags = notification_group.notification_groups_subjects
                        .where(subjectable_type: ['CertificateName', nil]).pluck(:domain_name, :subjectable_id)
                        .map{ |arr| arr[0].blank? ? arr[1].to_s : (arr[1].blank? ? arr[0] : (arr[0] + '---' + arr[1].to_s)) }
@@ -983,144 +1032,281 @@ class CertificateOrdersController < ApplicationController
     ).save if current_tags.empty?
 
     # Saving schedule
-    if params[:notification_group] == 'none'
-      if params[:schedule_type] == 'true'
-        current_schedules = notification_group.schedules.pluck(:schedule_type)
-        unless current_schedules.include? 'Simple'
-          notification_group.schedules.destroy_all
+    if (params[:schedule_type] == 'none' && params[:notification_group] == 'none') || params[:schedule_type] == 'simple'
+      current_schedules = notification_group.schedules.pluck(:schedule_type)
+      unless current_schedules.include? 'Simple'
+        notification_group.schedules.destroy_all
 
+        notification_group.schedules.build(
+            schedule_type: 'Simple',
+            schedule_value: params[:schedule_simple_type]
+        ).save
+      end
+    elsif params[:schedule_type] == 'custom'
+      current_schedules = notification_group.schedules.pluck(:schedule_type)
+      if current_schedules.include? 'Simple'
+        notification_group.schedules.destroy_all
+      end
+
+      # Weekday
+      current_schedules = notification_group.schedules.where(schedule_type: 'Weekday').pluck(:schedule_value)
+      if params[:weekday_type] == 'true'
+        unless current_schedules.include? 'All'
+          notification_group.schedules.where(schedule_type: 'Weekday').destroy_all
           notification_group.schedules.build(
-              schedule_type: 'Simple',
-              schedule_value: params[:schedule_simple_type]
+              schedule_type: 'Weekday',
+              schedule_value: 'All'
           ).save
         end
       else
-        current_schedules = notification_group.schedules.pluck(:schedule_type)
-        if current_schedules.include? 'Simple'
-          notification_group.schedules.destroy_all
+        params[:weekday_custom_list] ||= []
+        new_weekdays = params[:weekday_custom_list] - current_schedules
+        old_weekdays = current_schedules - params[:weekday_custom_list]
+
+        notification_group.schedules.where(schedule_type: 'Weekday', schedule_value: old_weekdays).destroy_all
+        new_weekdays.each do |weekday|
+          notification_group.schedules.build(
+              schedule_type: 'Weekday',
+              schedule_value: weekday
+          ).save
         end
+      end
 
-        # Weekday
-        current_schedules = notification_group.schedules.where(schedule_type: 'Weekday').pluck(:schedule_value)
-        if params[:weekday_type] == 'true'
-          unless current_schedules.include? 'All'
-            notification_group.schedules.where(schedule_type: 'Weekday').destroy_all
-            notification_group.schedules.build(
-                schedule_type: 'Weekday',
-                schedule_value: 'All'
-            ).save
-          end
-        else
-          params[:weekday_custom_list] ||= []
-          new_weekdays = params[:weekday_custom_list] - current_schedules
-          old_weekdays = current_schedules - params[:weekday_custom_list]
-
-          notification_group.schedules.where(schedule_type: 'Weekday', schedule_value: old_weekdays).destroy_all
-          new_weekdays.each do |weekday|
-            notification_group.schedules.build(
-                schedule_type: 'Weekday',
-                schedule_value: weekday
-            ).save
-          end
+      # Month
+      current_schedules = notification_group.schedules.where(schedule_type: 'Month').pluck(:schedule_value)
+      if params[:month_type] == 'true'
+        unless current_schedules.include? 'All'
+          notification_group.schedules.where(schedule_type: 'Month').destroy_all
+          notification_group.schedules.build(
+              schedule_type: 'Month',
+              schedule_value: 'All'
+          ).save
         end
+      else
+        params[:month_custom_list] ||= []
+        new_months = params[:month_custom_list] - current_schedules
+        old_months = current_schedules - params[:month_custom_list]
 
-        # Month
-        current_schedules = notification_group.schedules.where(schedule_type: 'Month').pluck(:schedule_value)
-        if params[:month_type] == 'true'
-          unless current_schedules.include? 'All'
-            notification_group.schedules.where(schedule_type: 'Month').destroy_all
-            notification_group.schedules.build(
-                schedule_type: 'Month',
-                schedule_value: 'All'
-            ).save
-          end
-        else
-          params[:month_custom_list] ||= []
-          new_months = params[:month_custom_list] - current_schedules
-          old_months = current_schedules - params[:month_custom_list]
-
-          notification_group.schedules.where(schedule_type: 'Month', schedule_value: old_months).destroy_all
-          new_months.each do |month|
-            notification_group.schedules.build(
-                schedule_type: 'Month',
-                schedule_value: month
-            ).save
-          end
+        notification_group.schedules.where(schedule_type: 'Month', schedule_value: old_months).destroy_all
+        new_months.each do |month|
+          notification_group.schedules.build(
+              schedule_type: 'Month',
+              schedule_value: month
+          ).save
         end
+      end
 
-        # Day
-        current_schedules = notification_group.schedules.where(schedule_type: 'Day').pluck(:schedule_value)
-        if params[:day_type] == 'true'
-          unless current_schedules.include? 'All'
-            notification_group.schedules.where(schedule_type: 'Day').destroy_all
-            notification_group.schedules.build(
-                schedule_type: 'Day',
-                schedule_value: 'All'
-            ).save
-          end
-        else
-          params[:day_custom_list] ||= []
-          new_days = params[:day_custom_list] - current_schedules
-          old_days = current_schedules - params[:day_custom_list]
-
-          notification_group.schedules.where(schedule_type: 'Day', schedule_value: old_days).destroy_all
-          new_days.each do |day|
-            notification_group.schedules.build(
-                schedule_type: 'Day',
-                schedule_value: day
-            ).save
-          end
+      # Day
+      current_schedules = notification_group.schedules.where(schedule_type: 'Day').pluck(:schedule_value)
+      if params[:day_type] == 'true'
+        unless current_schedules.include? 'All'
+          notification_group.schedules.where(schedule_type: 'Day').destroy_all
+          notification_group.schedules.build(
+              schedule_type: 'Day',
+              schedule_value: 'All'
+          ).save
         end
+      else
+        params[:day_custom_list] ||= []
+        new_days = params[:day_custom_list] - current_schedules
+        old_days = current_schedules - params[:day_custom_list]
 
-        # Hour
-        current_schedules = notification_group.schedules.where(schedule_type: 'Hour').pluck(:schedule_value)
-        if params[:hour_type] == 'true'
-          unless current_schedules.include? 'All'
-            notification_group.schedules.where(schedule_type: 'Hour').destroy_all
-            notification_group.schedules.build(
-                schedule_type: 'Hour',
-                schedule_value: 'All'
-            ).save
-          end
-        else
-          params[:hour_custom_list] ||= []
-          new_hours = params[:hour_custom_list] - current_schedules
-          old_hours = current_schedules - params[:hour_custom_list]
-
-          notification_group.schedules.where(schedule_type: 'Hour', schedule_value: old_hours).destroy_all
-          new_hours.each do |hour|
-            notification_group.schedules.build(
-                schedule_type: 'Hour',
-                schedule_value: hour
-            ).save
-          end
+        notification_group.schedules.where(schedule_type: 'Day', schedule_value: old_days).destroy_all
+        new_days.each do |day|
+          notification_group.schedules.build(
+              schedule_type: 'Day',
+              schedule_value: day
+          ).save
         end
+      end
 
-        # Minute
-        current_schedules = notification_group.schedules.where(schedule_type: 'Minute').pluck(:schedule_value)
-        if params[:minute_type] == 'true'
-          unless current_schedules.include? 'All'
-            notification_group.schedules.where(schedule_type: 'Minute').destroy_all
-            notification_group.schedules.build(
-                schedule_type: 'Minute',
-                schedule_value: 'All'
-            ).save
-          end
-        else
-          params[:minute_custom_list] ||= []
-          new_minutes = params[:minute_custom_list] - current_schedules
-          old_minutes = current_schedules - params[:minute_custom_list]
+      # Hour
+      current_schedules = notification_group.schedules.where(schedule_type: 'Hour').pluck(:schedule_value)
+      if params[:hour_type] == 'true'
+        unless current_schedules.include? 'All'
+          notification_group.schedules.where(schedule_type: 'Hour').destroy_all
+          notification_group.schedules.build(
+              schedule_type: 'Hour',
+              schedule_value: 'All'
+          ).save
+        end
+      else
+        params[:hour_custom_list] ||= []
+        new_hours = params[:hour_custom_list] - current_schedules
+        old_hours = current_schedules - params[:hour_custom_list]
 
-          notification_group.schedules.where(schedule_type: 'Minute', schedule_value: old_minutes).destroy_all
-          new_minutes.each do |minute|
-            notification_group.schedules.build(
-                schedule_type: 'Minute',
-                schedule_value: minute
-            ).save
-          end
+        notification_group.schedules.where(schedule_type: 'Hour', schedule_value: old_hours).destroy_all
+        new_hours.each do |hour|
+          notification_group.schedules.build(
+              schedule_type: 'Hour',
+              schedule_value: hour
+          ).save
+        end
+      end
+
+      # Minute
+      current_schedules = notification_group.schedules.where(schedule_type: 'Minute').pluck(:schedule_value)
+      if params[:minute_type] == 'true'
+        unless current_schedules.include? 'All'
+          notification_group.schedules.where(schedule_type: 'Minute').destroy_all
+          notification_group.schedules.build(
+              schedule_type: 'Minute',
+              schedule_value: 'All'
+          ).save
+        end
+      else
+        params[:minute_custom_list] ||= []
+        new_minutes = params[:minute_custom_list] - current_schedules
+        old_minutes = current_schedules - params[:minute_custom_list]
+
+        notification_group.schedules.where(schedule_type: 'Minute', schedule_value: old_minutes).destroy_all
+        new_minutes.each do |minute|
+          notification_group.schedules.build(
+              schedule_type: 'Minute',
+              schedule_value: minute
+          ).save
         end
       end
     end
+
+    # if params[:notification_group] == 'none'
+    #   if params[:schedule_type] == 'true'
+    #     current_schedules = notification_group.schedules.pluck(:schedule_type)
+    #     unless current_schedules.include? 'Simple'
+    #       notification_group.schedules.destroy_all
+    #
+    #       notification_group.schedules.build(
+    #           schedule_type: 'Simple',
+    #           schedule_value: params[:schedule_simple_type]
+    #       ).save
+    #     end
+    #   else
+    #     current_schedules = notification_group.schedules.pluck(:schedule_type)
+    #     if current_schedules.include? 'Simple'
+    #       notification_group.schedules.destroy_all
+    #     end
+    #
+    #     # Weekday
+    #     current_schedules = notification_group.schedules.where(schedule_type: 'Weekday').pluck(:schedule_value)
+    #     if params[:weekday_type] == 'true'
+    #       unless current_schedules.include? 'All'
+    #         notification_group.schedules.where(schedule_type: 'Weekday').destroy_all
+    #         notification_group.schedules.build(
+    #             schedule_type: 'Weekday',
+    #             schedule_value: 'All'
+    #         ).save
+    #       end
+    #     else
+    #       params[:weekday_custom_list] ||= []
+    #       new_weekdays = params[:weekday_custom_list] - current_schedules
+    #       old_weekdays = current_schedules - params[:weekday_custom_list]
+    #
+    #       notification_group.schedules.where(schedule_type: 'Weekday', schedule_value: old_weekdays).destroy_all
+    #       new_weekdays.each do |weekday|
+    #         notification_group.schedules.build(
+    #             schedule_type: 'Weekday',
+    #             schedule_value: weekday
+    #         ).save
+    #       end
+    #     end
+    #
+    #     # Month
+    #     current_schedules = notification_group.schedules.where(schedule_type: 'Month').pluck(:schedule_value)
+    #     if params[:month_type] == 'true'
+    #       unless current_schedules.include? 'All'
+    #         notification_group.schedules.where(schedule_type: 'Month').destroy_all
+    #         notification_group.schedules.build(
+    #             schedule_type: 'Month',
+    #             schedule_value: 'All'
+    #         ).save
+    #       end
+    #     else
+    #       params[:month_custom_list] ||= []
+    #       new_months = params[:month_custom_list] - current_schedules
+    #       old_months = current_schedules - params[:month_custom_list]
+    #
+    #       notification_group.schedules.where(schedule_type: 'Month', schedule_value: old_months).destroy_all
+    #       new_months.each do |month|
+    #         notification_group.schedules.build(
+    #             schedule_type: 'Month',
+    #             schedule_value: month
+    #         ).save
+    #       end
+    #     end
+    #
+    #     # Day
+    #     current_schedules = notification_group.schedules.where(schedule_type: 'Day').pluck(:schedule_value)
+    #     if params[:day_type] == 'true'
+    #       unless current_schedules.include? 'All'
+    #         notification_group.schedules.where(schedule_type: 'Day').destroy_all
+    #         notification_group.schedules.build(
+    #             schedule_type: 'Day',
+    #             schedule_value: 'All'
+    #         ).save
+    #       end
+    #     else
+    #       params[:day_custom_list] ||= []
+    #       new_days = params[:day_custom_list] - current_schedules
+    #       old_days = current_schedules - params[:day_custom_list]
+    #
+    #       notification_group.schedules.where(schedule_type: 'Day', schedule_value: old_days).destroy_all
+    #       new_days.each do |day|
+    #         notification_group.schedules.build(
+    #             schedule_type: 'Day',
+    #             schedule_value: day
+    #         ).save
+    #       end
+    #     end
+    #
+    #     # Hour
+    #     current_schedules = notification_group.schedules.where(schedule_type: 'Hour').pluck(:schedule_value)
+    #     if params[:hour_type] == 'true'
+    #       unless current_schedules.include? 'All'
+    #         notification_group.schedules.where(schedule_type: 'Hour').destroy_all
+    #         notification_group.schedules.build(
+    #             schedule_type: 'Hour',
+    #             schedule_value: 'All'
+    #         ).save
+    #       end
+    #     else
+    #       params[:hour_custom_list] ||= []
+    #       new_hours = params[:hour_custom_list] - current_schedules
+    #       old_hours = current_schedules - params[:hour_custom_list]
+    #
+    #       notification_group.schedules.where(schedule_type: 'Hour', schedule_value: old_hours).destroy_all
+    #       new_hours.each do |hour|
+    #         notification_group.schedules.build(
+    #             schedule_type: 'Hour',
+    #             schedule_value: hour
+    #         ).save
+    #       end
+    #     end
+    #
+    #     # Minute
+    #     current_schedules = notification_group.schedules.where(schedule_type: 'Minute').pluck(:schedule_value)
+    #     if params[:minute_type] == 'true'
+    #       unless current_schedules.include? 'All'
+    #         notification_group.schedules.where(schedule_type: 'Minute').destroy_all
+    #         notification_group.schedules.build(
+    #             schedule_type: 'Minute',
+    #             schedule_value: 'All'
+    #         ).save
+    #       end
+    #     else
+    #       params[:minute_custom_list] ||= []
+    #       new_minutes = params[:minute_custom_list] - current_schedules
+    #       old_minutes = current_schedules - params[:minute_custom_list]
+    #
+    #       notification_group.schedules.where(schedule_type: 'Minute', schedule_value: old_minutes).destroy_all
+    #       new_minutes.each do |minute|
+    #         notification_group.schedules.build(
+    #             schedule_type: 'Minute',
+    #             schedule_value: minute
+    #         ).save
+    #       end
+    #     end
+    #   end
+    # end
   end
 
   def setup_managed_csr_domains(params)

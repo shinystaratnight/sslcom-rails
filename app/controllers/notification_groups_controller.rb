@@ -101,7 +101,7 @@ class NotificationGroupsController < ApplicationController
   end
 
   def remove_groups
-    group_ids = params[:remove_groups]
+    group_ids = params[:note_group_check]
 
     unless group_ids.blank?
       @ssl_account.notification_groups.where(id: group_ids).destroy_all
@@ -114,26 +114,44 @@ class NotificationGroupsController < ApplicationController
   end
 
   def scan_groups
-    group_ids = params[:scan_groups]
+    # group_ids = params[:scan_groups]
+    group_ids = params[:note_group_check]
 
-    if group_ids.blank?
-      groups = @ssl_account.notification_groups
-    else
-      groups = @ssl_account.notification_groups.where(id: group_ids)
-    end
+    # if group_ids.blank?
+    #   groups = @ssl_account.notification_groups
+    # else
+    #   groups = @ssl_account.notification_groups.where(id: group_ids, status: true)
+    # end
+
+    groups = @ssl_account.notification_groups.where(id: group_ids, status: false)
 
     # groups.includes(
     #     [:stored_preferences, {:certificate_orders =>
     #                                [:orders, :certificate_contents =>
     #                                    {:csr => :signed_certificates}]}]).find_in_batches(batch_size: 250) do |batch_list|
-    groups.find_in_batches(batch_size: 250) do |batch_list|
-      batch_list.each do |group|
-        # NotificationGroup.scan_notification_group(group)
-        group.scan_notification_group
+    if groups.size > 0
+      groups.find_in_batches(batch_size: 250) do |batch_list|
+        batch_list.each do |group|
+          # NotificationGroup.scan_notification_group(group)
+          group.scan_notification_group
+        end
       end
+
+      flash[:notice] = "Scan has been done successfully for only enabled Notification Groups."
+    else
+      flash[:error] = "It can not scan for disabled Notification Group(s)."
     end
 
-    flash[:notice] = "Scan has been done successfully."
+    redirect_to notification_groups_path(ssl_slug: @ssl_slug)
+  end
+
+  def change_status_groups
+    group_ids = params[:note_group_check]
+    note_group_status = params[:note_groups_status]
+
+    @ssl_account.notification_groups.where(id: group_ids).update_all(status: note_group_status == 'true')
+
+    flash[:notice] = "It has been updated status to " + note_group_status == 'true' ? 'Enable' : 'Disable' + " successfully."
     redirect_to notification_groups_path(ssl_slug: @ssl_slug)
   end
 
@@ -217,16 +235,16 @@ class NotificationGroupsController < ApplicationController
       notification_group = @ssl_account.notification_groups.where(ref: params[:format]).first
       notification_group.friendly_name = params[:friendly_name]
       notification_group.scan_port = params[:scan_port]
-      notification_group.notify_all = params[:notify_all]
-      notification_group.status = params[:status]
+      notification_group.notify_all = params[:notify_all] ? params[:notify_all] : false
+      notification_group.status = params[:status] ? params[:status] : false
     else
       # Saving notification group info
       notification_group = NotificationGroup.new(
           friendly_name: params[:friendly_name],
           scan_port: params[:scan_port],
-          notify_all: params[:notify_all],
+          notify_all: params[:notify_all] ? params[:notify_all] : false,
           ssl_account: @ssl_account,
-          status: params[:status]
+          status: params[:status] ? params[:status] : false
       )
     end
 

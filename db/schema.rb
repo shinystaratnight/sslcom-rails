@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181009161215) do
+ActiveRecord::Schema.define(version: 20181010164417) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        limit: 255
@@ -896,6 +896,7 @@ ActiveRecord::Schema.define(version: 20181009161215) do
     t.string   "subjectable_type",      limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "created_page",          limit: 255
   end
 
   add_index "notification_groups_subjects", ["notification_group_id"], name: "index_notification_groups_subjects_on_notification_group_id", using: :btree

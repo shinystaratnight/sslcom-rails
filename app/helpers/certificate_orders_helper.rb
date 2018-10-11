@@ -108,7 +108,9 @@ module CertificateOrdersHelper
                   link_to 'request certificate', nil, class: 'link_to_send_notify',
                           :data => { :ref => certificate_order.ref, :type => 'request' }
                 else
-                  link_to 'generate certificate', generate_cert_certificate_order_path(@ssl_slug, certificate_order.ref) if
+                  # link_to 'generate certificate', generate_cert_certificate_order_path(@ssl_slug, certificate_order.ref) if
+                  #     permitted_to?(:update, certificate_order.validation) # assume multi domain
+                  link_to 'generate certificate', confirm_path(certificate_order.certificate_order_token.token) if
                       permitted_to?(:update, certificate_order.validation) # assume multi domain
                 end
               end
