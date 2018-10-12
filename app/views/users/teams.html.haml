@@ -27,15 +27,14 @@
       %th.name(scope="col") Name
       %th(scope="col") Account #
       -unless system_admins
-        %th(scope="col") Default
-        %th(scope="col") Roles
+        %th(scope="col" class="teams-index-text-left") Roles
       -else
         %th(scope="col") Owner
       %th(scope="col") Funds
       %th(scope="col") Details
       %th(scope="col") Join Date
       -unless system_admins
-        %th(scope="col") Action
+        %th(scope="col" class="teams-index-text-left") Action
     -unless @team_invites.nil?
       -@team_invites.each do |t|
         -invite_ssl = SslAccount.find(t[:ssl_account_id])
@@ -55,8 +54,6 @@
       -cache([current_user,'teams_list', t], expires_in: 12.hours) do
         -account_owner = current_user.is_account_owner? t
         -main_account  = current_user.is_main_account? t
-        -if permitted_to? :set_default_team, current_user
-          -set_default_team = link_to 'set default', set_default_team_user_path(current_user, ssl_account_id: t.id), method: :put
         %tr
           %td
             -unless system_admins
@@ -65,8 +62,8 @@
               =t.get_team_name
           %td=t.acct_number
           -unless system_admins
-            %td= main_account ? "&#10003;".html_safe : set_default_team
-            %td=current_user.role_symbols(t)
+            %td#teams-user-roles.teams-index-text-left
+              =render_user_roles(current_user.role_symbols(t))
           -else
             %td=link_to(t.get_account_owner.try(:login).shorten(15,false),admin_show_user_path(t.get_account_owner), title: t.get_account_owner.try(:login)) if t.get_account_owner.try(:login)
           %td
@@ -110,7 +107,16 @@
 
           %td=t.created_at.strftime("%b %d, %Y")
           -unless system_admins
-            %td
-              [#{link_to "view", switch_default_ssl_account_user_path(current_user.id, ssl_account_id: t.id)}]
+            %td#team-action-items.teams-index-text-left
+              =link_to "<i class='fa fa-eye'></i> view".html_safe, |
+                switch_default_ssl_account_user_path(current_user.id, ssl_account_id: t.id)
               -unless account_owner || system_admins
-                [#{link_to "leave team", leave_team_user_path(current_user, ssl_account_id: t.id), data: {confirm: "Please confirm you want to leave team #{t.get_team_name}."}}]
+                %br/
+                =link_to "<i class='fa fa-user-times'></i> leave".html_safe, |
+                  leave_team_user_path(current_user, ssl_account_id: t.id),  |
+                  {data: {confirm: "Please confirm you want to leave team #{t.get_team_name}."}}
+              -if permitted_to?(:set_default_team, current_user) && !system_admins
+                %br/
+                = link_to "<i class='fa fa-certificate'></i> set default".html_safe, |
+                  set_default_team_user_path(current_user, ssl_account_id: t.id), method: :put
+

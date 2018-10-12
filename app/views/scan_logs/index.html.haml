@@ -16,9 +16,10 @@
               =select_tag :number_rows,
                       options_for_select([[5, 5], [10, 10], [20, 20], [50, 50], [100, 100]], @per_page),
                       :class=>'per_page'
-            %td(colspan='2')=will_paginate @scan_history_list
+            %td(colspan='3')=will_paginate @scan_history_list
       %caption
-        Notification Groups Scan History Logs
+        Notification Groups Scan History Logs for
+        =link_to @notification_group.friendly_name, edit_notification_group_path(@ssl_slug, @notification_group.id)
         =will_paginate @scan_history_list
       %br
       %tr.heading_row

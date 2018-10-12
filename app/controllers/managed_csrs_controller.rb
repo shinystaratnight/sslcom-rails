@@ -4,10 +4,7 @@ class ManagedCsrsController < ApplicationController
   before_filter :set_row_page, only: [:index]
 
   def index
-    # @csrs = (current_user.ssl_account.csrs + current_user.ssl_account.managed_csrs).paginate(@p)
-    all_csrs = (current_user.ssl_account.csrs.distinct + current_user.ssl_account.managed_csrs)
-                   .sort_by{|csr| csr.created_at}.uniq{|csr| csr.common_name}
-    @csrs = all_csrs.paginate(@p)
+    @csrs = (current_user.ssl_account.all_csrs).paginate(@p)
   end
 
   def new
@@ -20,21 +17,21 @@ class ManagedCsrsController < ApplicationController
     @csr.ssl_account_id = current_user.ssl_account.id
     respond_to do |format|
       if @csr.save
+        flash[:notice] = "Csr was successfully added."
         format.html {redirect_to managed_csrs_path(@ssl_slug)}
       else
+        flash[:error] = "There was a problem adding this CSR to the CSR Manager"
         format.html {redirect_to new_managed_csr_path(@ssl_slug)}
       end
     end
   end
 
   def edit
-    @csr = current_user.ssl_account.csrs.find_by(id: params[:id])
-    @csr = current_user.ssl_account.managed_csrs.find_by(id: params[:id]) if @csr.nil?
+    @csr = current_user.ssl_account.all_csrs.find_by(id: params[:id])
   end
 
   def update
-    @csr = current_user.ssl_account.csrs.find_by(id: params[:id])
-    @csr = current_user.ssl_account.managed_csrs.find_by(id: params[:id]) if @csr.nil?
+    @csr = current_user.ssl_account.all_csrs.find_by(id: params[:id])
     @csr.friendly_name = params[:csr][:friendly_name]
     @csr.body = params[:csr][:body]
     @csr.save
@@ -42,8 +39,7 @@ class ManagedCsrsController < ApplicationController
   end
 
   def destroy
-    @csr = current_user.ssl_account.csrs.find_by(id: params[:id])
-    @csr = current_user.ssl_account.managed_csrs.find_by(id: params[:id]) if @csr.nil?
+    @csr = current_user.ssl_account.all_csrs.find_by(id: params[:id])
     @csr.destroy
     respond_to do |format|
       flash[:notice] = "Csr was successfully deleted."
@@ -53,8 +49,7 @@ class ManagedCsrsController < ApplicationController
 
   def show_csr_detail
     if current_user
-      @csr = current_user.ssl_account.csrs.find_by(id: params[:id])
-      @csr = current_user.ssl_account.managed_csrs.find_by(id: params[:id]) if @csr.nil?
+      @csr = current_user.ssl_account.all_csrs.find_by(id: params[:id])
 
       render :partial=>'detailed_info', :locals=>{:csr=>@csr}
     else

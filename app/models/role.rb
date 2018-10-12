@@ -58,6 +58,14 @@ class Role < ActiveRecord::Base
     ])
   end
 
+  def self.can_auto_add_users
+    Role.get_role_ids([
+      ACCOUNT_ADMIN,
+      OWNER,
+      RESELLER
+    ])
+  end
+
   def self.can_manage_users
     Role.get_role_ids([
       ACCOUNT_ADMIN,

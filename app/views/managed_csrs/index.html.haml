@@ -23,7 +23,7 @@
       %th(scope="col") Friendly Name
       %th(scope="col") Common Name
       %th(scope="col") Created At
-      %th(scope="col") Days Remaining
+      %th(scope="col") Validity Period
       %th(scope="col") Action
     -@csrs.each do |csr|
       %tr(alt="#{csr.id}")
@@ -33,7 +33,7 @@
         %td=csr.friendly_name
         %td=csr.common_name
         %td=csr.created_at.strftime("%b %d, %Y")
-        %td=csr.days_left
+        %td=DomainControlValidation::MAX_DURATION_DAYS[:email]-(Date.today-csr.created_at.to_date).to_i
         %td
           =link_to('edit', edit_managed_csr_path(@ssl_slug, csr.id))
           -if csr.certificate_order.nil?

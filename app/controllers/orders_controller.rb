@@ -416,7 +416,7 @@ class OrdersController < ApplicationController
         Order.unscoped{Order.includes(:line_items).where{state >> states}.order("created_at desc")}
       else
         current_user.ssl_account.orders.unscoped{
-          current_user.ssl_account.orders.includes(:line_items).where{state >> states}.order(:created_at.desc)}
+          current_user.ssl_account.cached_orders.includes(:line_items).where{state >> states}.order(:created_at.desc)}
       end
     @orders = @unpaginated.paginate(@p)
 

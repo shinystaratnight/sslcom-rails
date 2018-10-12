@@ -19,7 +19,7 @@ class CertificateOrderTokensController < ApplicationController
         else
           co = current_user.certificate_order_by_ref(params[:certificate_order_ref])
 
-          # Fiding and Setting Assignee to Certificate Order
+          # Finding and Setting Assignee to Certificate Order
           # and assign individual_certificate role to assignee in scope of the team.
           email_address = co.get_download_cert_email
           assignee = User.find_by_email(email_address)

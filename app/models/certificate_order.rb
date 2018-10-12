@@ -80,8 +80,7 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   default_scope{ where{(workflow_state << ['canceled','refunded','charged_back']) & (is_expired != true)}.
-      joins(:certificate_contents).order(updated_at: :desc).
-      references(:all).readonly(false)}
+      joins(:certificate_contents).order(created_at: :desc).references(:all).readonly(false)}
 
   scope :not_test, ->{where{(is_test == nil) | (is_test==false)}}
 
@@ -710,9 +709,11 @@ class CertificateOrder < ActiveRecord::Base
 
   def remaining_days(options={round: false, duration: :order})
     tot, used = total_days(options), used_days(options)
-    if tot && used
+    if tot && used && tot>used
       days = total_days(options)-used_days(options)
       (options[:round] ? days.round : days)
+    else
+      0
     end
   end
 
@@ -972,10 +973,9 @@ class CertificateOrder < ActiveRecord::Base
   def can_validate_client_smime?(current_user)
     sysadmin = current_user.is_system_admins?
     acct_admins = current_user.is_owner? || current_user.is_account_admin?
+    acct_admins_can = !certificate_content.validated? && acct_admins && ov_validated?
 
-    certificate.is_smime_or_client? && 
-      !certificate_content.validated? &&
-      ( sysadmin || (acct_admins && ov_validated?) )
+    certificate.is_smime_or_client? && ( sysadmin || acct_admins_can )
   end
 
   def reprocess_ucc_process
@@ -1094,14 +1094,49 @@ class CertificateOrder < ActiveRecord::Base
     orders.last
   end
 
+  # DRY this up with ValidationsController#new
+  def domains_validated?
+    all_validated = true
+    public_key_sha1=certificate_content.csr.public_key_sha1
+    cnames = certificate_content.certificate_names.includes(:domain_control_validations)
+    team_cnames = ssl_account.all_certificate_names.includes(:domain_control_validations)
+
+    # Team level validation check
+    cnames.each do |cn|
+      team_level_validated = false
+
+      team_cnames.each do |team_cn|
+        if team_cn.name == cn.name
+          team_dcv = team_cn.domain_control_validations.last
+
+          if team_dcv && team_dcv.validated?(public_key_sha1)
+            team_level_validated = true
+            break
+          end
+        end
+      end
+
+      unless team_level_validated
+        all_validated = false
+        break
+      end
+    end
+    all_validated
+  end
+
+  def caa_validated?
+    true
+  end
+
   def apply_for_certificate(options={})
     if [Ca::CERTLOCK_CA,Ca::SSLCOM_CA,Ca::MANAGEMENT_CA].include?(options[:ca]) or !certificate_content.ca.blank? or
         !options[:mapping].blank?
-      SslcomCaApi.apply_for_certificate(self, options) if options[:current_user].blank? or
-          options[:current_user].is_super_user?
+      if domains_validated? and caa_validated?
+        SslcomCaApi.apply_for_certificate(self, options)
+      end
     else
       ComodoApi.apply_for_certificate(self, options) if ca_name=="comodo"
-    end
+    end if remaining_days>0
   end
 
   def retrieve_ca_cert(email_customer=false)
@@ -2012,7 +2047,7 @@ class CertificateOrder < ActiveRecord::Base
   # notify can be "none", "success", or "all"
   def purchase_renewal(notify)
     bp=order.billing_profile
-    response=[bp, (ssl_account.orders.map(&:billing_profile)-[bp]).shift].compact.each do |bp|
+    response=[bp, (ssl_account.cached_orders.map(&:billing_profile)-[bp]).shift].compact.each do |bp|
       p "purchase using billing_profile_id==#{bp.id}"
       options={profile: bp, cvv: false}
       new_cert = self.dup
@@ -2066,7 +2101,7 @@ class CertificateOrder < ActiveRecord::Base
   #end
 
   def clone_for_renew(certificate_orders, order)
-    certificate_orders.each do |cert|
+    cached_certificate_orders.each do |cert|
       cert.quantity.times do |i|
         #could use cert.dup after >=3.1, but we are currently on 3.0.10 so we'll do this manually
         new_cert = cert.dup

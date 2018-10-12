@@ -126,7 +126,7 @@
                     ][
                     =link_to "orders(#{ssl_account.cached_certificate_orders_count})", certificate_orders_path(slug_params)
                     ][
-                    =link_to "transactions(#{ssl_account.orders.count})", orders_path(slug_params)
+                    =link_to "transactions(#{ssl_account.cached_orders.count})", orders_path(slug_params)
                     ][
                     =link_to "billing profiles(#{ssl_account.billing_profiles.count})", billing_profiles_path(slug_params)
                     ][

@@ -165,6 +165,34 @@ class User < ActiveRecord::Base
     status
   end
 
+  def get_auto_add_users_teams
+    self.ssl_accounts.joins(:assignments).where(
+      assignments: {role_id: Role.can_auto_add_users}
+    ).uniq.compact
+  end
+
+  def get_auto_add_users
+    users = User.joins(:ssl_accounts)
+      .where(ssl_accounts: {id: get_auto_add_users_teams.map(&:id)})
+      .where.not(users: {id: id}).uniq.compact
+  end
+
+  def get_auto_add_user_roles(added_user)
+    role_ids = added_user.assignments.where(
+      ssl_account_id: get_auto_add_users_teams.map(&:id)
+    ).pluck(:role_id).uniq
+    
+    # If invited user has owner role or reseller role, then replace
+    # it with account admin role for the team they're invited to.
+    if role_ids.include?(Role.get_owner_id) || 
+      role_ids.include?(Role.get_reseller_id)
+      
+      # User cannot be account_admin and have other roles.
+      role_ids = [Role.get_account_admin_id]
+    end
+    role_ids.uniq
+  end
+
   def self.total_teams_owned(user_id)
     User.find(user_id).assignments.where(role_id: Role.get_owner_id).map(&:ssl_account).uniq.compact
   end
@@ -610,9 +638,9 @@ class User < ActiveRecord::Base
   end
 
   def role_symbols(target_account=nil)
-    Rails.cache.fetch("#{cache_key}/role_symbols/#{target_account.try(:cache_key)}") do
-      Role.where(id: roles_for_account(target_account || ssl_account))
-          .map{|role| role.name.underscore.to_sym}
+    sa = target_account || ssl_account
+    Rails.cache.fetch("#{cache_key}/role_symbols/#{sa.cache_key}") do
+      Role.where(id: roles_for_account(sa)).map{|role| role.name.underscore.to_sym}
     end
   end
 

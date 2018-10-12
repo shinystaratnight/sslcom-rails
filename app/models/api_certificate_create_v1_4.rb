@@ -97,7 +97,8 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
       co.preferred_payment_order = 'prepaid'
     end
     certificate_content=CertificateContent.new(
-        csr: csr, server_software_id: self.server_software, domains: get_domains)
+        csr: csr, server_software_id: self.server_software, domains: get_domains,
+        ca: certificate.cas.ssl_account_or_general_default(api_requestable).last)
     co.certificate_contents << certificate_content
     @certificate_order = Order.setup_certificate_order(
       certificate: certificate,

@@ -2,12 +2,17 @@ namespace :cas do
   desc "CA profiles that can be referenced"
   # EJBCA_ENV - is this on production or development?
   # LIVE - array of products to make default. If specified, will not delete other mappings (unless used with RESET).
-  #   If left blank, will delete all mappings and set no CA as default
+  #   If left blank, will delete all mappings and set no CA as default (ie all products will map to Comodo)
   # RESET - set to true to delete all cas_certificates mappings
   #
   # following example will make NAESB the default for ssl_account_id 492124 and recreate all other mappings
   # LIVE=naesb SSL_ACCOUNT_IDS=492124 RESET=true
-  # LIVE=all SSL_ACCOUNT_IDS=49214 EJBCA_ENV=development RAILS_ENV=production # for sandbox
+  #
+  # only set all products live for these ssl_accounts but do not modify any other mappings
+  # LIVE=all SSL_ACCOUNT_IDS=49213,49214 EJBCA_ENV=development RAILS_ENV=production # for sandbox
+  #
+  # set all products live for all ssl_accounts
+  # LIVE=all EJBCA_ENV=development RAILS_ENV=development # for development
   task seed_ejbca_profiles: :environment do
     url,shadow_url=
       if ENV['EJBCA_ENV']=="production"
@@ -747,8 +752,8 @@ namespace :cas do
           elsif cert.is_ev? and ca.end_entity==(Ca::END_ENTITY[:evssl])
             unless ENV["SHADOW"]=="DV" and status==:shadow
               cert.cas_certificates.create(ca_id: ca.id,
-                                           status: CasCertificate::STATUS[(ca.ref=="0015" and live.include?(cert)) ? :default : status],
-                                           ssl_account_id: ssl_account_id)
+                 status: CasCertificate::STATUS[(ca.ref=="0015" and live.include?(cert)) ? :default : status],
+                 ssl_account_id: ssl_account_id)
             end
           end
         end

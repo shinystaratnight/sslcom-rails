@@ -23,12 +23,12 @@
       %caption
         =title
         |
-        =link_to 'Managed CSRs', managed_csrs_path(@ssl_slug)
+        =link_to 'CSRs Manager', managed_csrs_path(@ssl_slug)
         %ul(style="float: right; display: flex; list-style: none;" )
           %li(style="margin-right: 0.5rem" )
-            =submit_tag 'validate with CSR', formaction: "#{select_csr_domains_path(@ssl_slug)}", style: "padding: 0.5rem", id: "d_name_action_bind", disabled: 'true'
+            =submit_tag 'validate by cname/file upload', formaction: "#{select_csr_domains_path(@ssl_slug)}", style: "padding: 0.5rem", id: "d_name_action_bind", disabled: 'true'
           %li(style="margin-right: 0.5rem" )
-            =submit_tag 'validate via email', formaction: "#{validate_selected_domains_path(@ssl_slug)}", style: "padding: 0.5rem", id: "d_name_action_validate", disabled: 'true'
+            =submit_tag 'validate by email code', formaction: "#{validate_selected_domains_path(@ssl_slug)}", style: "padding: 0.5rem", id: "d_name_action_validate", disabled: 'true'
           %li
             =submit_tag 'remove', formaction: "#{remove_selected_domains_path(@ssl_slug)}", style: "padding: 0.5rem", id: "d_name_action_remove", disabled: 'true'
       %tr.heading_row
@@ -39,13 +39,13 @@
         %th(scope="col") Validity Period
       -@domains.each do |d|
         -dcv = d.domain_control_validations.last
-        -validation_status = (dcv.try(:workflow_state)=='satisfied' || !d.signed_certificates.empty?) ? 'Validated' : 'Pending validation'
+        -validation_status = (dcv.try(:workflow_state)=='satisfied' || !d.signed_certificates.empty?) ? 'validated' : 'pending validation'
         -remaining = dcv.try(:responded_at) ? DomainControlValidation::MAX_DURATION_DAYS[:email]-(Date.today-dcv.responded_at.to_date).to_i : nil
         -remaining = 0 if remaining && remaining < 0
-        -validity_period = (validation_status=='Pending validation' || remaining.nil?) ? 'n/a' : "#{remaining} days remaining"
+        -validity_period = (validation_status=='pending validation' || remaining.nil?) ? 'n/a' : "#{remaining} days remaining"
         -order_ref = d.certificate_content ? d.certificate_content.certificate_order.ref : ((dcv && dcv.csr_unique_value) ? dcv.csr_unique_value.csr.ref : 'Team')
-        -status_link = 'Validated'
-        -unless validation_status=='Validated'
+        -status_link = 'validated'
+        -unless validation_status=='validated'
           -if dcv.nil? || dcv.dcv_method == 'email'
             -status_link = link_to validation_status, validate_selected_domains_path(@ssl_slug, d_name_check: [d.id])
           -else

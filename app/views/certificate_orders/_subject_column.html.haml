@@ -9,7 +9,7 @@
     -if co.certificate.is_smime_or_client?
       -team_iv = co.get_team_iv
       -if team_iv
-        ="#{test_text} #{team_iv ? [team_iv.first_name, team_iv.last_name].join(', ') : nil}"
+        ="#{test_text} #{team_iv ? [team_iv.first_name, team_iv.last_name].join(' ') : nil}"
       -else
         ="#{test_text} #{co.certificate.title}"
     -else 

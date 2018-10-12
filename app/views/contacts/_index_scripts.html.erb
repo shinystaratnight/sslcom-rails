@@ -217,7 +217,7 @@ jQuery(function($) {
     });
     
     $("#btn-cancel-contact").click(function() {
-      window.location.href = "<%= saved_contacts_contacts_url(ssl_slug: @ssl_slug) %>";
+      window.location.href = "<%= saved_contacts_contacts_url(ssl_slug: @ssl_slug, registrants: (@contact.is_a?(Registrant) ? true : nil)) %>";
     });
     
     // Toggle Contact form roles: if administrative THEN uncheck other roles and vice versa.

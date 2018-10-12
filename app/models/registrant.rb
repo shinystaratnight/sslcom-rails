@@ -3,6 +3,7 @@ class Registrant < Contact
   enum registrant_type: { individual: 0, organization: 1 }
   
   after_save :set_default_status
+  after_destroy :release_dependant_contacts
 
   validates_presence_of :contactable
   # validates_acceptance_of :validation,
@@ -71,5 +72,11 @@ class Registrant < Contact
       contactable_id: team.id,
       status: statuses[:validated]
     )
+  end
+
+  private
+
+  def release_dependant_contacts
+    Contact.where(parent_id: id).update_all(parent_id: nil)
   end
 end

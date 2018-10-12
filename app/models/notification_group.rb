@@ -438,7 +438,7 @@ class NotificationGroup < ActiveRecord::Base
           end
         end
 
-        group.scan_notification_group if run_scan
+        group.scan_notification_group if run_scan && !group.status
       end
     end
   end

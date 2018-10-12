@@ -108,7 +108,9 @@ module CertificateOrdersHelper
                   link_to 'request certificate', nil, class: 'link_to_send_notify',
                           :data => { :ref => certificate_order.ref, :type => 'request' }
                 else
-                  link_to 'generate certificate', generate_cert_certificate_order_path(@ssl_slug, certificate_order.ref) if
+                  # link_to 'generate certificate', generate_cert_certificate_order_path(@ssl_slug, certificate_order.ref) if
+                  #     permitted_to?(:update, certificate_order.validation) # assume multi domain
+                  link_to 'generate certificate', confirm_path(certificate_order.certificate_order_token.token) if
                       permitted_to?(:update, certificate_order.validation) # assume multi domain
                 end
               end
@@ -178,7 +180,7 @@ module CertificateOrdersHelper
 
   def certificate_order_status(certificate_content=nil)
     return if certificate_content.blank?
-    co=certificate_content.certificate_order
+    co=certificate_content.cached_certificate_order
     if co && certificate_content.new?
       co.is_expired? ? 'expired' : (co.certificate.admin_submit_csr? ? 'info required' : 'waiting for csr')
     elsif certificate_content.expired?
@@ -224,7 +226,7 @@ module CertificateOrdersHelper
         certificate_content.csr.blank? ||
       certificate_content.csr.signed_certificate.blank? ||
       certificate_content.csr.signed_certificate.expiration_date.blank?
-    if certificate_content.certificate_order
+    if certificate_content.cached_certificate_order
       sa = certificate_content.certificate_order.ssl_account
       ep = certificate_content.csr.signed_certificate.expiration_date
       if ep <= sa.preferred_reminder_notice_triggers(ReminderTrigger.find(1)).

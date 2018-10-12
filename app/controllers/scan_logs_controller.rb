@@ -3,8 +3,8 @@ class ScanLogsController < ApplicationController
   before_action :set_row_page, only: [:index]
 
   def index
-    @scan_history_list = @ssl_account.notification_groups.find(params[:notification_group_id]).
-        scan_logs.order('created_at desc').paginate(@p)
+    @notification_group = @ssl_account.notification_groups.find(params[:notification_group_id])
+    @scan_history_list = @notification_group.scan_logs.order('created_at desc').paginate(@p)
   end
 
   private

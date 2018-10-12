@@ -163,6 +163,27 @@ jQuery(function($) {
       + ' available non wildcard domains.'
     );
   };
+
+  $.filteringDomainsByCOType = function(domains, type) {
+    var results = [];
+    $.each(domains, function(idx) {
+      if ($.inArray(domains[idx], results) == -1) {
+        results.push(domains[idx]);
+      }
+
+      if (domains[idx].indexOf('www.') > -1) {
+        if ($.inArray(domains[idx].substr(4), results) == -1) {
+          results.push(domains[idx].substr(4));
+        }
+      } else {
+        if ($.inArray('www.' + domains[idx], results) == -1) {
+          results.push('www.' + domains[idx]);
+        }
+      }
+    });
+
+    return results;
+  }
   
   $("textarea[name*=signing_request]").click(function(){
     $(this).select();
@@ -181,13 +202,14 @@ jQuery(function($) {
       $('.add_to_manager_block').show();
 
       // remove domains what belongs to previous selected Managed CSR.
-      $('.managed_domains option').each(function() {
+      $('.managed_domains').empty();
+      /*$('.managed_domains option').each(function() {
         var value = $(this).val();
 
         if (value.indexOf('domain-') == -1) {
           $(this).remove();
         }
-      });
+      });*/
 
       $('#managed_domains').select2({
         tags: true,
@@ -195,7 +217,7 @@ jQuery(function($) {
         templateSelection: function(data, container) {
           var value = data.element.value;
 
-          if (value.indexOf('domain-') == -1) {
+          if (value.indexOf('csr-') == -1) {
             $(container).css("background-color", "#A4C000");
           }
 
@@ -244,15 +266,29 @@ jQuery(function($) {
           <% end-%>
 
           all_domains = names.split(' ');
+          co_type = '';
+          <% if @certificate.is_basic?-%>
+            co_type = 'basic';
+          <% elsif @certificate.is_high_assurance?-%>
+            co_type = 'highAssurance';
+          <% elsif @certificate.is_ev?-%>
+            co_type = 'evSSL';
+          <% end-%>
+
+          if (co_type != '') {
+            all_domains = $.filteringDomainsByCOType(all_domains, co_type);
+          }
+
           if (all_domains.length > 0) {
             // remove domains what belongs to previous selected Managed CSR.
-            $('.managed_domains option').each(function() {
+            $('.managed_domains').empty();
+            /*$('.managed_domains option').each(function() {
               var value = $(this).val();
 
               if (value.indexOf('domain-') == -1) {
                 $(this).remove();
               }
-            });
+            });*/
 
             // add domains what belongs to previous selected Managed CSR.
             select_obj = $('.managed_domains');
@@ -271,7 +307,7 @@ jQuery(function($) {
               templateSelection: function(data, container) {
                 var value = data.element.value;
 
-                if (value.indexOf('domain-') == -1) {
+                if (value.indexOf('csr-') == -1) {
                   $(container).css("background-color", "#A4C000");
                 }
 
@@ -346,13 +382,14 @@ jQuery(function($) {
             $('.managed_csr').val('none');
 
             // remove domains what belongs to previous pasted CSR.
-            $('.managed_domains option').each(function() {
+            $('.managed_domains').empty();
+            /*$('.managed_domains option').each(function() {
               var value = $(this).val();
 
               if (value.indexOf('domain-') == -1) {
                 $(this).remove();
               }
-            });
+            });*/
 
             // adding domains what belongs to current pasted CSR.
             select_obj = $('.managed_domains');
@@ -362,6 +399,20 @@ jQuery(function($) {
             $.unique(all_domains);*/
 
             all_domains = names.split(' ');
+
+            co_type = '';
+            <% if @certificate.is_basic?-%>
+              co_type = 'basic';
+            <% elsif @certificate.is_high_assurance?-%>
+              co_type = 'highAssurance';
+            <% elsif @certificate.is_ev?-%>
+              co_type = 'evSSL';
+            <% end-%>
+
+            if (co_type != '') {
+              all_domains = $.filteringDomainsByCOType(all_domains, co_type);
+            }
+
             $.each(all_domains, function(idx) {
               var optElement = $('<option></option>');
               optElement.attr('value', 'csr-' + all_domains[idx]);
@@ -377,7 +428,7 @@ jQuery(function($) {
               templateSelection: function(data, container) {
                 var value = data.element.value;
 
-                if (value.indexOf('domain-') == -1) {
+                if (value.indexOf('csr-') == -1) {
                   $(container).css("background-color", "#A4C000");
                 }
 
@@ -619,11 +670,10 @@ jQuery(function($) {
     $('#managed_domains').select2({
       tags: true,
       tokenSeparators: [',', ' ', '\n', '\r\n'],
-      allowClear: false,
       templateSelection: function(data, container) {
         var value = data.element.value;
 
-        if (value.indexOf('domain-') == -1) {
+        if (value.indexOf('csr-') == -1) {
           $(container).css("background-color", "#A4C000");
         }
 
@@ -640,14 +690,59 @@ jQuery(function($) {
     if (url.substr(url.lastIndexOf('/') + 1, url.length) == 'edit') {
       $('.custom_selected_block').hide();
       $('.custom_schedule').hide();
+      $('.notification_group_schedule').hide();
 
       $('#schedule_simple_type option[value="2"]').attr('selected', true);
     }
 
-    <%unless @certificate.is_ucc?%>
+    if (url.substr(url.lastIndexOf('/') + 1, url.length) == 'reprocess') {
+      $('.custom_selected_block').hide();
+      $('.custom_schedule').hide();
+      $('.notification_group_schedule').hide();
+
+      var slt_notification_group = '<%= @slt_notification_group ? @slt_notification_group.join(' ') : "" %>';
+      if (slt_notification_group != '') {
+        $('.custom_selected_block').hide();
+        $('.custom_schedule').hide();
+        $('.simple_schedule').hide();
+
+        $('.notification_group_schedule').show();
+        $('#schedule_type_none').prop('checked', true);
+      } else {
+        $('#schedule_simple_type option[value="2"]').attr('selected', true);
+      }
+    }
+
+    <%if @certificate.is_basic? || @certificate.is_high_assurance? || (@certificate.is_ev? && !@certificate.is_evucc?) || @certificate.is_wildcard?%>
       $('#managed_domains').on('select2:opening select2:closing', function( event ) {
         var $searchfield = $(this).parent().find('.select2-search__field');
         $searchfield.prop('readonly', true);
+      });
+      $('#managed_domains').on('select2:open', function() {
+        $('.select2-dropdown').hide();
+      });
+      $('.managed_domains_container').addClass('hidden_close_x');
+    <%elsif @certificate.is_premium_ssl?%>
+      $('#managed_domains').on('select2:opening select2:closing', function( event ) {
+        if ($('#managed_domains').val() != null && $('#managed_domains').val().length > 2) {
+          var $searchfield = $(this).parent().find('.select2-search__field');
+          $searchfield.prop('readonly', true);
+        } else {
+          var $searchfield = $(this).parent().find('.select2-search__field');
+          /*$searchfield.prop('readonly', false);*/
+          $searchfield.removeProp('readonly');
+        }
+      });
+      $('#managed_domains').on('select2:open', function() {
+        if ($('#managed_domains').val() != null && $('#managed_domains').val().length > 2) {
+          if (!$('.select2-dropdown').is(":hidden")) {
+            $('.select2-dropdown').hide();
+          }
+        } else {
+          if ($('.select2-dropdown').is(":hidden")) {
+            $('.select2-dropdown').show();
+          }
+        }
       });
     <%end%>
     $('#weekday_custom_list').on('select2:opening select2:closing', function( event ) {
@@ -672,7 +767,7 @@ jQuery(function($) {
     });
 
     $('input[name="schedule_type"]').change(function() {
-      if ($(this).val() == 'true') {
+      if ($(this).val() == 'simple') {
         $('input[name="weekday_type"][value="true"]').prop('checked', true);
         if ($('#weekday_custom_list').val() != null) {
           $('#weekday_custom_list').val(null).trigger('change');
@@ -700,12 +795,47 @@ jQuery(function($) {
 
         $('.custom_selected_block').hide();
         $('.custom_schedule').hide();
+        $('.notification_group_schedule').hide();
 
         $('#schedule_simple_type option[value="2"]').prop('selected', true);
         $('.simple_schedule').show();
-      } else {
-        $('.custom_schedule').show();
+      } else if ($(this).val() == 'custom') {
         $('.simple_schedule').hide();
+        $('.notification_group_schedule').hide();
+
+        $('.custom_schedule').show();
+      } else if ($(this).val() == 'none') {
+        $('input[name="weekday_type"][value="true"]').prop('checked', true);
+        if ($('#weekday_custom_list').val() != null) {
+          $('#weekday_custom_list').val(null).trigger('change');
+        }
+
+        $('input[name="month_type"][value="true"]').prop('checked', true);
+        if ($('#month_custom_list').val() != null) {
+          $('#month_custom_list').val(null).trigger('change');
+        }
+
+        $('input[name="day_type"][value="true"]').prop('checked', true);
+        if ($('#day_custom_list').val() != null) {
+          $('#day_custom_list').val(null).trigger('change');
+        }
+
+        $('input[name="hour_type"][value="true"]').prop('checked', true);
+        if ($('#hour_custom_list').val() != null) {
+          $('#hour_custom_list').val(null).trigger('change');
+        }
+
+        $('input[name="minute_type"][value="true"]').prop('checked', true);
+        if ($('#minute_custom_list').val() != null) {
+          $('#minute_custom_list').val(null).trigger('change');
+        }
+
+        $('.custom_selected_block').hide();
+        $('.custom_schedule').hide();
+        /*$('input[name="schedule_type"][value="true"]').prop('checked', true);*/
+        $('.simple_schedule').hide();
+
+        $('.notification_group_schedule').show();
       }
     });
 
@@ -764,7 +894,7 @@ jQuery(function($) {
       }
     });
 
-    $('#notification_group').change(function() {
+    /*$('#notification_group').change(function() {
       if ($(this).val() == 'none') {
         $('#schedule_simple_type option[value="2"]').prop('selected', true);
         $('.simple_schedule').show();
@@ -802,7 +932,7 @@ jQuery(function($) {
         $('.simple_schedule').hide();
         $('.schedule_type').hide();
       }
-    });
+    });*/
 
   });
 });

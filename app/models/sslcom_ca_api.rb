@@ -164,7 +164,7 @@ class SslcomCaApi
     if options[:send_to_ca]
       options[:mapping] = Ca.find_by_ref(options[:send_to_ca])
     elsif options[:mapping].blank?
-      options[:mapping] = certificate.cas.ssl_account_or_general_default(options[:current_user].ssl_account).last
+      options[:mapping] = certificate_order.certificate_content.ca
     end
     options.merge! cc: cc = options[:certificate_content] || certificate_order.certificate_content
     approval_req, approval_res = SslcomCaApi.get_status(csr: cc.csr, mapping: options[:mapping])
@@ -230,7 +230,6 @@ class SslcomCaApi
     if signed_certificate.is_sslcom_ca?
       host = ca_host(signed_certificate.certificate_content.ca)+"/v1/certificate/revoke"
       req, res = call_ca(host, options, revoke_cert_json(signed_certificate, SslcomCaRevocationRequest::REASONS[0]))
-      uri = URI.parse(host)
       api_log_entry=signed_certificate.sslcom_ca_revocation_requests.create(request_url: host,
                                               parameters: req.body, method: "post", response: res.message, ca: "sslcom")
       unless api_log_entry.response=="OK"
@@ -266,11 +265,13 @@ class SslcomCaApi
 
   # body - parameters in JSON format
   def self.call_ca(host, options, body)
-    uri = URI.parse(host)
+    uri = URI.parse(host.gsub!("8442","8443"))
     req = (options[:method]=~/GET/i ? Net::HTTP::Get : Net::HTTP::Post).new(uri, 'Content-Type' => 'application/json')
     http = Net::HTTP.new(uri.host, uri.port)
     http.use_ssl = true
-    http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+    http.verify_mode = OpenSSL::SSL::VERIFY_PEER
+    http.cert = OpenSSL::X509::Certificate.new(File.read(Rails.application.secrets.ejbca_development_client_auth_cert))
+    http.key = OpenSSL::PKey::RSA.new(File.read(Rails.application.secrets.ejbca_development_client_auth_key))
     req.body = body
     res = http.request(req)
     return req, res
