@@ -309,6 +309,14 @@
               %tbody
                 %tr
                   %td(colspan="5")
+                    -if current_user.is_system_admins?
+                      .notes_box
+                        =form_for @certificate_order, :url=>admin_update_certificate_order_url(@certificate_order) do |f|
+                          %ul
+                            %li
+                              %strong notes for admins only
+                            %li
+                              =f.text_area :notes, cols: 40, rows: 10
                     -unless @cc.certificate_contacts.blank?
                       -CertificateContent::CONTACT_ROLES.each do |role|
                         .contact_details_box
@@ -434,13 +442,6 @@
                 -if current_user.is_admin?
                   %tr
                     %td(colspan="5")
-                      .notes_box
-                        =form_for @certificate_order, :url=>admin_update_certificate_order_url(@certificate_order) do |f|
-                          %ul
-                            %li
-                              %strong notes for admins only
-                            %li
-                              =f.text_area :notes, cols: 40, rows: 10
                       .certificate_details_box
                         %strong audit log
                         -audits=(@certificate_order.system_audits.empty? ? "n/a" : "###")+"\n"
