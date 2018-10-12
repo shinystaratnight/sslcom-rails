@@ -165,6 +165,7 @@
       %th.name(scope="col") Description
       %th(scope="col" colspan="3") Date
       %th(scope="col") Order #
+      %th(scope="col") Invoice
       %th(scope="col") Amount
     -if @orders.size > 0
       -@orders.each do |o|
@@ -179,6 +180,11 @@
               %td.name=link_to [qualifier,o.description.shorten(45, false)].join(" "), order_path(@ssl_slug, o), :title=> o.description
             %td(colspan="3")=o.created_at.strftime("%b %d, %Y")
             %td=o.reference_number
+            %td
+              -if o.on_payable_invoice?
+                =link_to "\u21E9 PDF".html_safe, download_invoice_path(@ssl_slug, o.invoice.reference_number)
+              -else
+                =link_to "\u21E9 PDF".html_safe, invoice_order_path(@ssl_slug, o.reference_number)
             -if o.is_deposit?
               -amt = o.final_amount.format :with_currency
               %td=o.faw_order? ? "(#{amt})" : amt
