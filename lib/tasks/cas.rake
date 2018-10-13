@@ -752,8 +752,8 @@ namespace :cas do
           elsif cert.is_ev? and ca.end_entity==(Ca::END_ENTITY[:evssl])
             unless ENV["SHADOW"]=="DV" and status==:shadow
               cert.cas_certificates.create(ca_id: ca.id,
-                                           status: CasCertificate::STATUS[(ca.ref=="0015" and live.include?(cert)) ? :default : status],
-                                           ssl_account_id: ssl_account_id)
+                 status: CasCertificate::STATUS[(ca.ref=="0015" and live.include?(cert)) ? :default : status],
+                 ssl_account_id: ssl_account_id)
             end
           end
         end
