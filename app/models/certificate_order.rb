@@ -1136,7 +1136,7 @@ class CertificateOrder < ActiveRecord::Base
       end
     else
       ComodoApi.apply_for_certificate(self, options) if ca_name=="comodo"
-    end if remaining_days>0
+    end if signed_certificate.blank? or remaining_days>0
   end
 
   def retrieve_ca_cert(email_customer=false)
