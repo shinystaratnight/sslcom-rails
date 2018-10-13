@@ -979,21 +979,21 @@ class Certificate < ActiveRecord::Base
                summary: "for authenticating and encrypting email and well as client services",
                special_fields: %w(entity\ code),
                product: "personal-naesb-basic",
-               points:  "<div class='check'>Required for NAESB EIR and etag authentication</div>
+               points:  "<div class='check'>Requirorders_helper.rb:178ed for NAESB EIR and etag authentication</div>
                          <div class='check'>User for wesbsite authentication</div>
                          <div class='check'>Issued from SSL.com ACA</div>
                          <div class='check'>2048 bit public key encryption</div>
                          <div class='check'>quick issuance</div>
                          <div class='check'>30 day money-back guaranty </div>
                          <div class='check'>24 hour 5-star support</div>",
-               price_adjusts:{sslcomnaesbbasicclient1yr: [15000,15000],
-                              sslcomnaesbbasicclient1yr1tr: [15000,15000],
-                              sslcomnaesbbasicclient1yr2tr: [12000,15000],
-                              sslcomnaesbbasicclient1yr3tr: [11250,15000],
-                              sslcomnaesbbasicclient1yr4tr: [10500,15000],
-                              sslcomnaesbbasicclient1yr5tr: [9000,15000],
-                              sslcomnaesbbasicclient1yr6tr: [7500,15000],
-                              sslcomnaesbbasicclient1yr7tr: [6000,15000]
+               price_adjusts:{sslcomnaesbbasicclient1yr: [7500,15000],
+                              sslcomnaesbbasicclient1yr1tr: [7500,15000],
+                              sslcomnaesbbasicclient1yr2tr: [6000,12000],
+                              sslcomnaesbbasicclient1yr3tr: [5625,11250],
+                              sslcomnaesbbasicclient1yr4tr: [5025,10500],
+                              sslcomnaesbbasicclient1yr5tr: [4500,9000],
+                              sslcomnaesbbasicclient1yr6tr: [3750,7500],
+                              sslcomnaesbbasicclient1yr7tr: [2625,5250]
                }}]
     products.each do |p|
       c=Certificate.available.find_by_product "high_assurance"
