@@ -14,6 +14,8 @@ class User < ActiveRecord::Base
   has_many  :duplicate_v2_users
   has_many  :other_party_requests
   has_many  :client_applications
+  has_many  :owned_system_audits, as: :owner, class_name: "SystemAudit"
+  has_many  :target_system_audits, as: :target, class_name: "SystemAudit"
   has_many  :tokens, ->{order("authorized_at desc").includes(:client_application)}, :class_name => "OauthToken"
   has_many  :ssl_account_users, dependent: :destroy
   has_many  :ssl_accounts, through: :ssl_account_users
