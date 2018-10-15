@@ -260,9 +260,13 @@ class Certificate < ActiveRecord::Base
     result
   end
 
-  def cached_product_variant_items
-    ProductVariantItem.unscoped.where(id: (Rails.cache.fetch("#{cache_key}/cached_product_variant_items") do
-      product_variant_items.pluck(:id)
+  def cached_product_variant_items(options={})
+    ProductVariantItem.unscoped.where(id: (Rails.cache.fetch("#{cache_key}/cached_product_variant_items/#{options.to_s}") do
+      if options[:by_serial]
+        product_variant_items.where{serial=~"%#{options[:by_serial]}%"}.pluck(:id)
+      else
+        product_variant_items.pluck(:id)
+      end
     end))
   end
 
@@ -320,12 +324,12 @@ class Certificate < ActiveRecord::Base
         product_variant_groups.domains.map(&:product_variant_items).flatten
       else
         unless is_ev?
-          cached_product_variant_items.where{serial=~"%yrdm%"}.flatten.zip(
-              cached_product_variant_items.where{serial=~"%yradm%"}.flatten,
-              cached_product_variant_items.where{serial=~"%yrwcdm%"}.flatten)
+          cached_product_variant_items(serial: "yrdm").flatten.zip(
+              cached_product_variant_items(serial: "yradm").flatten,
+              cached_product_variant_items(serial: "yrwcdm").flatten)
         else
-          cached_product_variant_items.where{serial=~"%yrdm%"}.flatten.zip(
-              cached_product_variant_items.where{serial=~"%yradm%"}.flatten)
+          cached_product_variant_items(serial: "yrdm").flatten.zip(
+              cached_product_variant_items(serial: "yradm").flatten)
         end
       end
     end

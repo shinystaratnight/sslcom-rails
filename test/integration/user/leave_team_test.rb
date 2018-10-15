@@ -25,7 +25,7 @@ describe 'Leave team' do
       assert_equal 2, @billing_user.roles.count
       assert_equal 2, @billing_user.assignments.count
       assert_equal 2, @billing_user.get_all_approved_accounts.count
-      assert_equal 2, @owner_user.ssl_account.users.count
+      assert_equal 2, @owner_user.ssl_account.cached_users.count
       assert       @billing_user.roles.map(&:name).include? 'owner'
       assert       @billing_user.roles.map(&:name).include? 'billing'
 
@@ -85,7 +85,7 @@ describe 'Leave team' do
       assert_equal 1, @billing_user.roles.count
       assert_equal 1, @billing_user.assignments.count
       assert_equal 1, @billing_user.get_all_approved_accounts.count
-      assert_equal 1, @owner_user.ssl_account.users.count
+      assert_equal 1, @owner_user.ssl_account.cached_users.count
       assert       @billing_user.roles.map(&:name).include? 'owner'
       refute       @billing_user.roles.map(&:name).include? 'billing'
 
@@ -121,7 +121,7 @@ describe 'Leave team' do
       assert_equal 2, @billing_user.roles.count
       assert_equal 2, @billing_user.assignments.count
       assert_equal 2, @billing_user.get_all_approved_accounts.count
-      assert_equal 2, @owner_user.ssl_account.users.count
+      assert_equal 2, @owner_user.ssl_account.cached_users.count
       assert       @billing_user.roles.map(&:name).include? 'owner'
       assert       @billing_user.roles.map(&:name).include? 'billing'
 

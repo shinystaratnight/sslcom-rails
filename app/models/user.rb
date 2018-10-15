@@ -91,7 +91,7 @@ class User < ActiveRecord::Base
   scope :search_sys_admin, ->{ joins{ roles }.where{ roles.name == Role::SYS_ADMIN } }
 
   def ssl_account(default_team=nil)
-    sa_id=Rails.cache.fetch("#{cache_key}/ssl_account/#{default_team ? (default_team.is_a?(Symbol) ? default_team.to_s : default_team.cache_key) : ''}") do
+    sa_id=Rails.cache.fetch("#{cache_key}/ssl_account/#{default_team.is_a?(Symbol) ? default_team.to_s : default_team.try(:cache_key)}") do
       default_ssl = default_ssl_account && is_approved_account?(default_ssl_account)
       main_ssl    = main_ssl_account && is_approved_account?(main_ssl_account)
 
@@ -113,9 +113,10 @@ class User < ActiveRecord::Base
   end
 
   def is_approved_account?(target_ssl)
-    ssl = target_ssl.is_a?(SslAccount) ? target_ssl : SslAccount.find(target_ssl)
-    return false if ssl.nil?
-    ssl_account_users.where(ssl_account_id: ssl.id, user_enabled: true, approved: true).any?
+    Rails.cache.fetch("#{cache_key}/is_approved_account/#{target_ssl.try(:cache_key)}") do
+      return false unless SslAccount.exists?(target_ssl)
+      ssl_account_users.where(ssl_account_id: target_ssl, user_enabled: true, approved: true).any?
+    end
   end
   
   def is_main_account?(ssl_account)
@@ -395,7 +396,7 @@ class User < ActiveRecord::Base
   end
 
   def manageable_users
-    ssl_account.users
+    ssl_account.cached_users
   end
 
   def manageable_acs
@@ -1019,8 +1020,11 @@ class User < ActiveRecord::Base
   end
 
   def get_first_approved_acct
-    ssl = ssl_account_users.where(approved: true, user_enabled: true)
-    ssl.any? ? ssl_accounts.find(ssl.first.ssl_account_id) : nil
+    sa_id=Rails.cache.fetch("#{cache_key}/get_first_approved_acct") do
+      ssl = ssl_account_users.where(approved: true, user_enabled: true)
+      ssl.any? ? ssl.first.ssl_account_id : nil
+    end
+    ssl_accounts.find(sa_id) if sa_id
   end
 
   def self.change_login(old, new)

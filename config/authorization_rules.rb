@@ -107,7 +107,7 @@ authorization do
       :edit, :read, :remove_from_account, :update_roles
     ], join_by: :and do
       if_attribute id: is_not {user.id}
-      if_attribute id: is_in  {user.ssl_account.users.map(&:id).uniq}
+      if_attribute id: is_in  {user.ssl_account.cached_users.map(&:id).uniq}
       if_attribute :ssl_accounts => contains {user.ssl_account}
     end
   end
@@ -180,7 +180,7 @@ authorization do
       :edit, :read, :remove_from_account, :update_roles
     ], join_by: :and do
       if_attribute id: is_not {user.id}
-      if_attribute id: is_in  {user.ssl_account.users.map(&:id).uniq}
+      if_attribute id: is_in  {user.ssl_account.cached_users.map(&:id).uniq}
       if_attribute total_teams_owned: does_not_contain {user.ssl_account}
     end
     #
@@ -188,7 +188,7 @@ authorization do
     #
     has_permission_on :users, :to => [:enable_disable, :enable_disable_duo, :delete], join_by: :and do
       if_attribute id: is_not {user.id}
-      if_attribute id: is_in  {user.ssl_account.users.map(&:id).uniq}
+      if_attribute id: is_in  {user.ssl_account.cached_users.map(&:id).uniq}
       if_attribute total_teams_owned: does_not_contain {user.ssl_account}
     end
     #
@@ -221,7 +221,7 @@ authorization do
     ], join_by: :and do
       # cannot on users w/roles account_admin|owner|sysadmin|reseller OR self
       if_attribute id: is_not {user.id}
-      if_attribute id: is_in  {user.ssl_account.users.map(&:id).uniq}
+      if_attribute id: is_in  {user.ssl_account.cached_users.map(&:id).uniq}
       if_attribute total_teams_cannot_manage_users: contains {user.ssl_account}
     end
     #
@@ -230,7 +230,7 @@ authorization do
     has_permission_on :users, :to => [:create, :read]
     has_permission_on :users, :to => [:enable_disable, :enable_disable_duo, :delete], join_by: :and do
       if_attribute id: is_not {user.id}
-      if_attribute id: is_in  {user.ssl_account.users.map(&:id).uniq}
+      if_attribute id: is_in  {user.ssl_account.cached_users.map(&:id).uniq}
       if_attribute total_teams_cannot_manage_users: contains {user.ssl_account}
     end
     #
@@ -444,7 +444,7 @@ authorization do
     #
     has_permission_on :users, :to => :enable_disable, join_by: :and do
       if_attribute id: is_not {user.id}
-      if_attribute id: is_in {user.ssl_account.users.map(&:id).uniq}
+      if_attribute id: is_in {user.ssl_account.cached_users.map(&:id).uniq}
     end
     has_permission_on :users, :to => [:create, :show, :update] do
       if_attribute :id => is {user.id}

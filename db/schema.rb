@@ -208,22 +208,19 @@ ActiveRecord::Schema.define(version: 20181010164417) do
   end
 
   create_table "cas", force: :cascade do |t|
-    t.string  "ref",             limit: 255
-    t.string  "friendly_name",   limit: 255
-    t.string  "profile_name",    limit: 255
-    t.string  "algorithm",       limit: 255
-    t.integer "size",            limit: 4
-    t.string  "description",     limit: 255
-    t.string  "caa_issuers",     limit: 255
-    t.string  "host",            limit: 255
-    t.string  "admin_host",      limit: 255
-    t.string  "ekus",            limit: 255
-    t.string  "end_entity",      limit: 255
-    t.string  "ca_name",         limit: 255
-    t.string  "type",            limit: 255
-    t.string  "client_cert",     limit: 255
-    t.string  "client_key",      limit: 255
-    t.string  "client_password", limit: 255
+    t.string  "ref",           limit: 255
+    t.string  "friendly_name", limit: 255
+    t.string  "profile_name",  limit: 255
+    t.string  "algorithm",     limit: 255
+    t.integer "size",          limit: 4
+    t.string  "description",   limit: 255
+    t.string  "caa_issuers",   limit: 255
+    t.string  "host",          limit: 255
+    t.string  "admin_host",    limit: 255
+    t.string  "ekus",          limit: 255
+    t.string  "end_entity",    limit: 255
+    t.string  "ca_name",       limit: 255
+    t.string  "type",          limit: 255
   end
 
   create_table "cas_certificates", force: :cascade do |t|
@@ -580,7 +577,6 @@ ActiveRecord::Schema.define(version: 20181010164417) do
   add_index "csrs", ["common_name", "email", "sig_alg"], name: "index_csrs_on_common_name_and_email_and_sig_alg", using: :btree
   add_index "csrs", ["common_name"], name: "index_csrs_on_common_name", using: :btree
   add_index "csrs", ["organization"], name: "index_csrs_on_organization", using: :btree
-  add_index "csrs", ["ssl_account_id"], name: "index_csrs_on_ssl_account_id", using: :btree
 
   create_table "dbs", force: :cascade do |t|
     t.string "name",     limit: 255
@@ -1416,7 +1412,6 @@ ActiveRecord::Schema.define(version: 20181010164417) do
     t.integer  "registered_agent_id",       limit: 4
   end
 
-  add_index "signed_certificates", ["ca_id"], name: "index_signed_certificates_on_ca_id", using: :btree
   add_index "signed_certificates", ["common_name", "strength"], name: "index_signed_certificates_on_3_cols", using: :btree
   add_index "signed_certificates", ["common_name"], name: "index_signed_certificates_on_common_name", using: :btree
   add_index "signed_certificates", ["csr_id"], name: "index_signed_certificates_on_csr_id", using: :btree
@@ -1842,5 +1837,4 @@ ActiveRecord::Schema.define(version: 20181010164417) do
   end
 
   add_foreign_key "cdns", "certificate_orders"
-  add_foreign_key "signed_certificates", "cas"
 end
