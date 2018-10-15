@@ -28,7 +28,7 @@ class ValidationsController < ApplicationController
     url = nil
     cc = @certificate_order.certificate_content
 
-    if @certificate_order.certificate.is_code_signing?
+    if !@certificate_order.certificate.is_server?
       url = document_upload_certificate_order_validation_url(certificate_order_id: @certificate_order.ref)
     else
       if cc.issued? # or @certificate_order.all_domains_validated?
