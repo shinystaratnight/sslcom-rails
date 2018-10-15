@@ -76,7 +76,7 @@ class User < ActiveRecord::Base
     u.max_teams = OWNED_MAX_TEAMS unless u.max_teams
   end
 
-  default_scope        {where{status << ['disabled']}.order("created_at desc")}
+  default_scope        {where{status << ['disabled']}.order("users.created_at desc")}
   scope :with_role, -> (role){joins(:roles).where('lower(roles.name) LIKE (?)',
                         "%#{role.downcase.strip}%")}
   scope :search,    -> (term){joins{ssl_accounts.api_credentials}.where{
