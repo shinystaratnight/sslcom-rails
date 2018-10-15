@@ -42,7 +42,7 @@ https://info.ssl.com/
 
 https://support.ssl.com/default_import/Tickets/Submit
 
-<%if @certificate_content%>
+<%if @certificate_content.ca%>
 The certificates below are listed in this order:
 <%=@certificate_content.ejbca_certificate_chain(format: :objects).map(&:subject).join("\n")%>
 

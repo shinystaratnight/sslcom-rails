@@ -328,7 +328,7 @@
     -#.loader_wrap
     -#  .loader
     -#-if will_paginate @certificate_orders
-    -if @certificate_orders.size > 0
+    -unless @certificate_orders.empty?
       %tfoot
         %tr
           %td.wrap_number_rows(colspan='2')
@@ -351,7 +351,7 @@
       %th(scope="col") Order Date
       %th(scope="col") Expires
       %th(scope="col") Action
-    -if @certificate_orders.size > 0
+    -unless @certificate_orders.empty?
       -@certificate_orders.each do |co|
         -cache([current_user,'certificate_orders_list', co.certificate_content], expires_in: 12.hours) do
           -cc = co.certificate_content
@@ -364,7 +364,7 @@
               -if !co.is_expired_credit? and permitted_to?(:index, co)
                 =image_tag 'expand.png'
             %td.name
-              =render :partial=>'subject_column', :locals=>{:certificate_order=>co}
+              =render :partial=>'subject_column', :locals=>{certificate_order: co, certificate_content: cc, certificate: co.certificate}
             -if Folder.show_folders?(current_user)
               %td.co-folder-name
                 -if co.folder

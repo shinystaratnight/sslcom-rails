@@ -576,6 +576,12 @@ class SslAccount < ActiveRecord::Base
     uid ? User.find(uid) : nil
   end
 
+  def cached_users
+    User.where(id: (Rails.cache.fetch("#{cache_key}/cached_users") do
+      users.pluck(:id).uniq
+    end))
+  end
+
   def cached_certificate_names
     CertificateName.where(id: (Rails.cache.fetch("#{cache_key}/cached_certificate_names") do
       certificate_names.pluck(:id).uniq

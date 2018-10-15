@@ -80,7 +80,7 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   default_scope{ where{(workflow_state << ['canceled','refunded','charged_back']) & (is_expired != true)}.
-      joins(:certificate_contents).order(created_at: :desc).references(:all).readonly(false)}
+      includes(:certificate_contents).order(created_at: :desc).references(:all).readonly(false)}
 
   scope :not_test, ->{where{(is_test == nil) | (is_test==false)}}
 
@@ -678,11 +678,16 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def certificate
-    cid=Rails.cache.fetch("#{cache_key}/certificate") do
-      sub_order_items[0].product_variant_item.certificate.id if sub_order_items[0] &&
-          sub_order_items[0].product_variant_item
+    if new_record?
+        sub_order_items[0].product_variant_item.certificate if sub_order_items[0] &&
+            sub_order_items[0].product_variant_item
+    else
+      cid=Rails.cache.fetch("#{cache_key}/certificate") do
+        sub_order_items[0].product_variant_item.certificate.id if sub_order_items[0] &&
+            sub_order_items[0].product_variant_item
+      end
+      cid ? Certificate.unscoped.find(cid) : nil
     end
-    cid ? Certificate.unscoped.find(cid) : nil
   end
 
   def signed_certificate
@@ -991,6 +996,16 @@ class CertificateOrder < ActiveRecord::Base
       !signup_process[:label].scan(EXPRESS).blank?
   end
 
+  def cached_certificate_contents
+    if new_record?
+      certificate_contents
+    else
+      # CertificateContent.where(id: (Rails.cache.fetch("#{cache_key}/cached_certificate_contents") do
+        certificate_contents #.pluck(:id)
+      # end))
+    end
+  end
+
   def certificate_content
     certificate_contents.last
   end
@@ -1136,7 +1151,7 @@ class CertificateOrder < ActiveRecord::Base
       end
     else
       ComodoApi.apply_for_certificate(self, options) if ca_name=="comodo"
-    end if remaining_days>0
+    end if signed_certificate.blank? or remaining_days>0
   end
 
   def retrieve_ca_cert(email_customer=false)

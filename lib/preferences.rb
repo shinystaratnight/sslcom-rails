@@ -367,7 +367,6 @@ module Preferences
     #   user.write_preference(:color, 'blue')
     #   user.preferred(:color)            # => "blue"
     def preferred(name, group = nil)
-      Rails.cache.fetch("#{cache_key}/preferred/#{name}/#{group}")do
         name = name.to_s
         assert_valid_preference(name)
 
@@ -387,7 +386,6 @@ module Preferences
         definition = preference_definitions[name]
         value = definition.type_cast(value) unless value.nil?
         value
-      end
     end
     alias_method :prefers, :preferred
 

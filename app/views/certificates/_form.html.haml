@@ -6,7 +6,7 @@
 -schedule_days = @schedule_days || []
 -schedule_hours = @schedule_hours || []
 -schedule_minutes = @schedule_minutes || []
-
+-@managed_csrs ||=[]
 -reprocess_ucc = domains_adjust_billing?(@certificate_order)
 -if @certificate.is_ucc?
   -if @certificate.is_ev?
