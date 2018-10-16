@@ -355,12 +355,12 @@ class ValidationsController < ApplicationController
       if @search = params[:search]
        current_user.is_admin? ?
            (@ssl_account.try(:certificate_orders) || CertificateOrder).not_test.search_with_csr(params[:search]).unvalidated :
-        current_user.ssl_account.cached_certificate_orders.not_test.
+        current_user.ssl_account.certificate_orders.not_test.
           search(params[:search]).unvalidated
       else
         current_user.is_admin? ?
             (@ssl_account.try(:certificate_orders) || CertificateOrder).unvalidated :
-            current_user.ssl_account.cached_certificate_orders.unvalidated
+            current_user.ssl_account.certificate_orders.unvalidated
       end.paginate(p)
     respond_to do |format|
       format.html { render :action => :index }

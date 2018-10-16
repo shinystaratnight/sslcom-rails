@@ -236,9 +236,9 @@ class ApplicationController < ActionController::Base
       #       current_user.ssl_account.cached_certificate_orders.search_with_csr(params[:search], options)).order(updated_at: :desc)
 
       (current_user.is_admin? ?
-           (
+           (CertificateOrder.unscoped{
              (@ssl_account.try(:cached_certificate_orders) || CertificateOrder).search_with_csr(params[:search], options)
-           ) :
+           }) :
            (current_user.role_symbols(current_user.ssl_account).join(',').split(',').include?(Role::INDIVIDUAL_CERTIFICATE) ?
                  (current_user.ssl_account.cached_certificate_orders.search_assigned(current_user.id).search_with_csr(params[:search], options)) :
                  (current_user.ssl_account.cached_certificate_orders.search_with_csr(params[:search], options))

@@ -181,8 +181,8 @@ class CertificateOrdersController < ApplicationController
 
             @managed_csrs = (current_user.ssl_account.all_csrs)
                                 .sort_by{|arr| arr.common_name}
-                                .uniq{|arr| arr.common_name}
-                                .map{|arr| [arr.common_name, arr.ref]}
+                                .uniq{|arr| [arr.common_name, arr.public_key_sha1]}
+                                .map{|arr| [arr.common_name+' '+ arr.public_key_sha1, arr.ref]}
                                 .delete_if{|arr| arr.second == nil}
             @managed_csrs.insert(0, ['none', 'none'])
 
@@ -237,10 +237,10 @@ class CertificateOrdersController < ApplicationController
         notification_group_subject = @certificate_order.notification_groups_subjects.where(created_page: 'csr').first
         @slt_notification_group = [notification_group_subject.notification_group.ref] if notification_group_subject
 
-        @managed_csrs = (current_user.ssl_account.csrs + current_user.ssl_account.managed_csrs)
+        @managed_csrs = (current_user.ssl_account.all_csrs)
                             .sort_by{|arr| arr.created_at}
-                            .uniq{|arr| arr.common_name}
-                            .map{|arr| [arr.common_name, arr.ref]}
+                            .uniq{|arr| [arr.common_name, arr.public_key_sha1]}
+                            .map{|arr| [arr.common_name+' '+ arr.public_key_sha1, arr.ref]}
                             .delete_if{|arr| arr.second == nil}
         @managed_csrs.insert(0, ['none', 'none'])
 
