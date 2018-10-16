@@ -401,7 +401,7 @@ class CertificateOrdersController < ApplicationController
     managed_domains = params[:managed_domains]
     additional_domains = ''
     managed_domains.each do |domain|
-      additional_domains.concat(domain.gsub('csr-', '') + ' ')
+      additional_domains.concat(domain.gsub('csr-', '').gsub('validated-', '').gsub('manual-', '') + ' ')
     end unless managed_domains.blank?
 
     params[:certificate_order][:certificate_contents_attributes]['0'.to_sym][:additional_domains] = additional_domains.strip
@@ -621,13 +621,13 @@ class CertificateOrdersController < ApplicationController
   end
 
   def parse_csr
-    c=Certificate.for_sale.find_by_product(params[:certificate])
-    co=CertificateOrder.new(duration: 1)
-    @cc=co.certificate_contents.build(certificate_order: co, ajax_check_csr: true)
-    co=Order.setup_certificate_order(certificate: c, certificate_order: co)
-    @cc.csr=Csr.new(body: params[:csr])
+    c = Certificate.for_sale.find_by_product(params[:certificate])
+    co = CertificateOrder.new(duration: 1)
+    @cc = co.certificate_contents.build(certificate_order: co, ajax_check_csr: true)
+    co = Order.setup_certificate_order(certificate: c, certificate_order: co)
+    @cc.csr = Csr.new(body: params[:csr])
     @cc.valid?
-    rescue
+  rescue
   end
 
   def admin_update
