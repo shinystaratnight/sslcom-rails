@@ -543,7 +543,7 @@ class SslAccount < ActiveRecord::Base
 
   def all_csrs
     Csr.where(id: (Rails.cache.fetch("#{cache_key}/all_csrs") {
-      (csrs.sslcom + managed_csrs).map(&:id)
+      (csrs + managed_csrs).map(&:id)
     })).order(created_at: :desc)
   end
 
@@ -574,6 +574,12 @@ class SslAccount < ActiveRecord::Base
       ).map(&:user).first.try(:id)
     end
     uid ? User.find(uid) : nil
+  end
+
+  def cached_users
+    User.where(id: (Rails.cache.fetch("#{cache_key}/cached_users") do
+      users.pluck(:id).uniq
+    end))
   end
 
   def cached_certificate_names

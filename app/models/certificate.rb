@@ -260,9 +260,13 @@ class Certificate < ActiveRecord::Base
     result
   end
 
-  def cached_product_variant_items
-    ProductVariantItem.unscoped.where(id: (Rails.cache.fetch("#{cache_key}/cached_product_variant_items") do
-      product_variant_items.pluck(:id)
+  def cached_product_variant_items(options={})
+    ProductVariantItem.unscoped.where(id: (Rails.cache.fetch("#{cache_key}/cached_product_variant_items/#{options.to_s}") do
+      if options[:by_serial]
+        product_variant_items.where{serial=~"%#{options[:by_serial]}%"}.pluck(:id)
+      else
+        product_variant_items.pluck(:id)
+      end
     end))
   end
 
@@ -320,12 +324,12 @@ class Certificate < ActiveRecord::Base
         product_variant_groups.domains.map(&:product_variant_items).flatten
       else
         unless is_ev?
-          cached_product_variant_items.where{serial=~"%yrdm%"}.flatten.zip(
-              cached_product_variant_items.where{serial=~"%yradm%"}.flatten,
-              cached_product_variant_items.where{serial=~"%yrwcdm%"}.flatten)
+          cached_product_variant_items(serial: "yrdm").flatten.zip(
+              cached_product_variant_items(serial: "yradm").flatten,
+              cached_product_variant_items(serial: "yrwcdm").flatten)
         else
-          cached_product_variant_items.where{serial=~"%yrdm%"}.flatten.zip(
-              cached_product_variant_items.where{serial=~"%yradm%"}.flatten)
+          cached_product_variant_items(serial: "yrdm").flatten.zip(
+              cached_product_variant_items(serial: "yradm").flatten)
         end
       end
     end
@@ -979,21 +983,21 @@ class Certificate < ActiveRecord::Base
                summary: "for authenticating and encrypting email and well as client services",
                special_fields: %w(entity\ code),
                product: "personal-naesb-basic",
-               points:  "<div class='check'>Required for NAESB EIR and etag authentication</div>
+               points:  "<div class='check'>Requirorders_helper.rb:178ed for NAESB EIR and etag authentication</div>
                          <div class='check'>User for wesbsite authentication</div>
                          <div class='check'>Issued from SSL.com ACA</div>
                          <div class='check'>2048 bit public key encryption</div>
                          <div class='check'>quick issuance</div>
                          <div class='check'>30 day money-back guaranty </div>
                          <div class='check'>24 hour 5-star support</div>",
-               price_adjusts:{sslcomnaesbbasicclient1yr: [15000,15000],
-                              sslcomnaesbbasicclient1yr1tr: [15000,15000],
-                              sslcomnaesbbasicclient1yr2tr: [12000,15000],
-                              sslcomnaesbbasicclient1yr3tr: [11250,15000],
-                              sslcomnaesbbasicclient1yr4tr: [10500,15000],
-                              sslcomnaesbbasicclient1yr5tr: [9000,15000],
-                              sslcomnaesbbasicclient1yr6tr: [7500,15000],
-                              sslcomnaesbbasicclient1yr7tr: [6000,15000]
+               price_adjusts:{sslcomnaesbbasicclient1yr: [7500,15000],
+                              sslcomnaesbbasicclient1yr1tr: [7500,15000],
+                              sslcomnaesbbasicclient1yr2tr: [6000,12000],
+                              sslcomnaesbbasicclient1yr3tr: [5625,11250],
+                              sslcomnaesbbasicclient1yr4tr: [5025,10500],
+                              sslcomnaesbbasicclient1yr5tr: [4500,9000],
+                              sslcomnaesbbasicclient1yr6tr: [3750,7500],
+                              sslcomnaesbbasicclient1yr7tr: [2625,5250]
                }}]
     products.each do |p|
       c=Certificate.available.find_by_product "high_assurance"

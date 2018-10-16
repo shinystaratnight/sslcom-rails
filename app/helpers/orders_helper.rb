@@ -175,7 +175,7 @@ module OrdersHelper
   end
 
   def ssl_account
-    current_user.ssl_account
+    current_user.try(:ssl_account)
   end
 
   def reseller_initial_deposit?

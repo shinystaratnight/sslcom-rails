@@ -181,8 +181,8 @@ class CertificateOrdersController < ApplicationController
 
             @managed_csrs = (current_user.ssl_account.all_csrs)
                                 .sort_by{|arr| arr.common_name}
-                                .uniq{|arr| arr.common_name}
-                                .map{|arr| [arr.common_name, arr.ref]}
+                                .uniq{|arr| [arr.common_name, arr.public_key_sha1]}
+                                .map{|arr| [arr.common_name+' '+ arr.public_key_sha1, arr.ref]}
                                 .delete_if{|arr| arr.second == nil}
             @managed_csrs.insert(0, ['none', 'none'])
 
@@ -237,10 +237,10 @@ class CertificateOrdersController < ApplicationController
         notification_group_subject = @certificate_order.notification_groups_subjects.where(created_page: 'csr').first
         @slt_notification_group = [notification_group_subject.notification_group.ref] if notification_group_subject
 
-        @managed_csrs = (current_user.ssl_account.csrs + current_user.ssl_account.managed_csrs)
+        @managed_csrs = (current_user.ssl_account.all_csrs)
                             .sort_by{|arr| arr.created_at}
-                            .uniq{|arr| arr.common_name}
-                            .map{|arr| [arr.common_name, arr.ref]}
+                            .uniq{|arr| [arr.common_name, arr.public_key_sha1]}
+                            .map{|arr| [arr.common_name+' '+ arr.public_key_sha1, arr.ref]}
                             .delete_if{|arr| arr.second == nil}
         @managed_csrs.insert(0, ['none', 'none'])
 
@@ -1329,15 +1329,15 @@ class CertificateOrdersController < ApplicationController
     # @certificate_order.managed_csrs << ManagedCsr.find_by_ref(params[:managed_csr]) if params[:managed_csr] != 'none'
     # @certificate_order.managed_domains << Domain.where(id: params[:managed_domains]) if params[:managed_domains]
 
-    if params[:managed_csr] != 'none'
-      @certificate_order.managed_csrs << ManagedCsr.find_by_ref(params[:managed_csr])
-    elsif params[:add_to_manager] == 'true'
+    if params[:add_to_manager] == 'true' and !['none',nil].include? params[:managed_csr]
       managed_csr = ManagedCsr.new
       managed_csr.body = params[:certificate_order][:certificate_contents_attributes]['0'.to_sym][:signing_request]
       managed_csr.friendly_name = managed_csr.common_name || managed_csr.sha1_hash
       managed_csr.ssl_account_id = current_user.ssl_account.id
+      @certificate_order.managed_csrs << managed_csr unless
+          @certificate_order.managed_csrs.map(&:public_key_sha1).include? managed_csr.public_key_sha1
 
-      unless managed_csr.save
+      unless managed_csr.errors.blank?
         flash[:error] = "Some error occurs while adding this csr to the csr manager."
         @certificate = @certificate_order.certificate
 

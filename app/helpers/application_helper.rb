@@ -42,7 +42,9 @@ module ApplicationHelper
   end
 
   def is_sandbox?
-    Sandbox.exists?(request.try(:host))
+    Rails.cache.fetch("#{request.try(:host)}/is_sandbox") do
+      Sandbox.exists?(request.try(:host))
+    end
   end
 
   def is_sandbox_or_test?

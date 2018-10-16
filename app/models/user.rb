@@ -14,6 +14,8 @@ class User < ActiveRecord::Base
   has_many  :duplicate_v2_users
   has_many  :other_party_requests
   has_many  :client_applications
+  has_many  :owned_system_audits, as: :owner, class_name: "SystemAudit"
+  has_many  :target_system_audits, as: :target, class_name: "SystemAudit"
   has_many  :tokens, ->{order("authorized_at desc").includes(:client_application)}, :class_name => "OauthToken"
   has_many  :ssl_account_users, dependent: :destroy
   has_many  :ssl_accounts, through: :ssl_account_users
@@ -76,7 +78,7 @@ class User < ActiveRecord::Base
     u.max_teams = OWNED_MAX_TEAMS unless u.max_teams
   end
 
-  default_scope        {where{status << ['disabled']}.order("created_at desc")}
+  default_scope        {where{status << ['disabled']}.order("users.created_at desc")}
   scope :with_role, -> (role){joins(:roles).where('lower(roles.name) LIKE (?)',
                         "%#{role.downcase.strip}%")}
   scope :search,    -> (term){joins{ssl_accounts.api_credentials}.where{
@@ -91,7 +93,7 @@ class User < ActiveRecord::Base
   scope :search_sys_admin, ->{ joins{ roles }.where{ roles.name == Role::SYS_ADMIN } }
 
   def ssl_account(default_team=nil)
-    sa_id=Rails.cache.fetch("#{cache_key}/ssl_account/#{default_team ? (default_team.is_a?(Symbol) ? default_team.to_s : default_team.cache_key) : ''}") do
+    sa_id=Rails.cache.fetch("#{cache_key}/ssl_account/#{default_team.is_a?(Symbol) ? default_team.to_s : default_team.try(:cache_key)}") do
       default_ssl = default_ssl_account && is_approved_account?(default_ssl_account)
       main_ssl    = main_ssl_account && is_approved_account?(main_ssl_account)
 
@@ -113,9 +115,10 @@ class User < ActiveRecord::Base
   end
 
   def is_approved_account?(target_ssl)
-    ssl = target_ssl.is_a?(SslAccount) ? target_ssl : SslAccount.find(target_ssl)
-    return false if ssl.nil?
-    ssl_account_users.where(ssl_account_id: ssl.id, user_enabled: true, approved: true).any?
+    Rails.cache.fetch("#{cache_key}/is_approved_account/#{target_ssl.try(:cache_key)}") do
+      return false unless SslAccount.exists?(target_ssl)
+      ssl_account_users.where(ssl_account_id: target_ssl, user_enabled: true, approved: true).any?
+    end
   end
   
   def is_main_account?(ssl_account)
@@ -395,7 +398,7 @@ class User < ActiveRecord::Base
   end
 
   def manageable_users
-    ssl_account.users
+    ssl_account.cached_users
   end
 
   def manageable_acs
@@ -1019,8 +1022,11 @@ class User < ActiveRecord::Base
   end
 
   def get_first_approved_acct
-    ssl = ssl_account_users.where(approved: true, user_enabled: true)
-    ssl.any? ? ssl_accounts.find(ssl.first.ssl_account_id) : nil
+    sa_id=Rails.cache.fetch("#{cache_key}/get_first_approved_acct") do
+      ssl = ssl_account_users.where(approved: true, user_enabled: true)
+      ssl.any? ? ssl.first.ssl_account_id : nil
+    end
+    ssl_accounts.find(sa_id) if sa_id
   end
 
   def self.change_login(old, new)

@@ -120,7 +120,7 @@
                     name:
                     =link_to ssl_account.get_team_name, edit_ssl_account_path({update_company_name: true}.merge!(slug_params))
                     ][
-                    =link_to "users(#{ssl_account.users.count})", users_path(slug_params)
+                    =link_to "users(#{ssl_account.cached_users.count})", users_path(slug_params)
                     ][
                     %a{style:"cursor: pointer;", onclick: "adjust_funds_ssl_account('#{ssl_account.to_slug}','#{ssl_account.get_team_name}')"} $#{ssl_account.funded_account.try :amount}
                     ][

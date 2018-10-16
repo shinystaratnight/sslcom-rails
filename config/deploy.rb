@@ -35,7 +35,7 @@ set :branch, "staging"
 # extension ".pub".
 ssh_options[:keys] = [File.join(ENV["HOME"], ".ssh", "id_rsa")]
 
-server = "sandbox2"
+server = "production_api"
 case server
   when "sandbox"
     require "rvm/capistrano"
@@ -233,12 +233,7 @@ after 'deploy:publishing', 'deploy:restart'
 #before 'deploy', 'rvm:install_rvm'
 
 
-#whenever
+# # whenever
 # set :whenever_command, "bundle exec whenever"
-# disable this on production web
-#require "whenever/capistrano"
-
-#whenever
-# set :whenever_command, "bundle exec whenever"
-# disable this on production web
-#require "whenever/capistrano"
+# # disable this on production web
+# require "whenever/capistrano"
