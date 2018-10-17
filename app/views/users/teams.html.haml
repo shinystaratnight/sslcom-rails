@@ -104,6 +104,14 @@
                     class: 'team-sel-no-limit'
                   - if params[:page]
                     =hidden_field_tag :page, params[:page]
+              
+              #team-epki-switch
+                =form_tag ssl_account_path(ssl_slug: t.to_slug), id: 'frm-team-epki-switch',  method: :put do
+                  =label_tag 'EPKI:'
+                  =select_tag :epki_agreement, options_for_select([ ['ON', true], ['OFF', false] ], !t.epki_agreement.nil?), |
+                    class: 'team-sel-epki-switch'
+                  -if params[:page]
+                    =hidden_field_tag :page, params[:page]
 
           %td=t.created_at.strftime("%b %d, %Y")
           -unless system_admins

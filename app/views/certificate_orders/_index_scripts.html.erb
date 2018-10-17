@@ -546,6 +546,12 @@ jQuery(function($) {
         ['fax', 'fax'],
         ['ext', 'ext']
       ];
+      if ($(this).val()) {
+        $('#save_for_later').parents('.clearfix').hide();
+        $('#save_for_later').prop('checked', false);
+      } else {
+        $('#save_for_later').parents('.clearfix').show();
+      }
       $('#saved_registrant_id').val(
         $(this).find('option:selected').attr('value')
       );
