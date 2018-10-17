@@ -13,6 +13,10 @@ class SslcomCaApi
   RESPONSE_TYPE={"zip"=>0,"netscape"=>1, "pkcs7"=>2, "individually"=>3}
   RESPONSE_ENCODING={"base64"=>0,"binary"=>1}
 
+  PRODUCTION_IP = "192.168.5.17"
+  STAGING_IP = "192.168.5.19"
+  DEVELOPMENT_IP = "192.168.100.5"
+
   # using the csr, determine the algorithm used
   def self.sig_alg_parameter(csr)
     case csr.sig_alg
@@ -185,7 +189,7 @@ class SslcomCaApi
     req, res = call_ca(host, options, issue_cert_json(options))
     cc.create_csr(body: options[:csr]) if cc.csr.blank?
     api_log_entry=cc.csr.sslcom_ca_requests.create(request_url: host,
-      parameters: req.body, method: "post", response: res.try(:body), ca: options[:ca])
+      parameters: req.body, method: "post", response: res.try(:body), ca: options[:ca_name] || ca_name(options))
     if api_log_entry.username.blank?
       OrderNotifier.problem_ca_sending("support@ssl.com", cc.certificate_order,"sslcom").deliver
     elsif api_log_entry.certificate_chain # signed certificate is issued
@@ -214,7 +218,7 @@ class SslcomCaApi
     req, res = call_ca(host, {}, issue_cert_json(options))
 
     api_log_entry = options[:cc].csr.sslcom_ca_requests.create(request_url: host, parameters: req.body,
-                                               method: 'post', response: res.try(:body), ca: options[:ca])
+                                   method: 'post', response: res.try(:body), ca: options[:ca_name] || ca_name(options))
 
     unless api_log_entry.username
       OrderNotifier.problem_ca_sending("support@ssl.com", options[:cc].certificate_order,"sslcom").deliver
@@ -231,7 +235,7 @@ class SslcomCaApi
       host = ca_host(signed_certificate.certificate_content.ca)+"/v1/certificate/revoke"
       req, res = call_ca(host, options, revoke_cert_json(signed_certificate, SslcomCaRevocationRequest::REASONS[0]))
       api_log_entry=signed_certificate.sslcom_ca_revocation_requests.create(request_url: host,
-                                              parameters: req.body, method: "post", response: res.message, ca: "sslcom")
+                        parameters: req.body, method: "post", response: res.message, ca: "sslcom")
       unless api_log_entry.response=="OK"
         OrderNotifier.problem_ca_sending("support@ssl.com", signed_certificate.certificate_order,"sslcom").deliver
       end
@@ -266,12 +270,20 @@ class SslcomCaApi
   # body - parameters in JSON format
   def self.call_ca(host, options, body)
     uri = URI.parse(host.gsub!("8442","8443"))
+    client_auth= case uri.host
+                 when PRODUCTION_IP
+                   Rails.application.secrets.ejbca_production_client_auth_cert
+                 when DEVELOPMENT_IP
+                   Rails.application.secrets.ejbca_development_client_auth_cert
+                 when STAGING_IP
+                   Rails.application.secrets.ejbca_staging_client_auth_cert
+                 end
     req = (options[:method]=~/GET/i ? Net::HTTP::Get : Net::HTTP::Post).new(uri, 'Content-Type' => 'application/json')
     http = Net::HTTP.new(uri.host, uri.port)
     http.use_ssl = true
     http.verify_mode = OpenSSL::SSL::VERIFY_PEER
-    http.cert = OpenSSL::X509::Certificate.new(File.read(Rails.application.secrets.ejbca_development_client_auth_cert))
-    http.key = OpenSSL::PKey::RSA.new(File.read(Rails.application.secrets.ejbca_development_client_auth_key))
+    http.cert = OpenSSL::X509::Certificate.new(File.read(client_auth))
+    http.key = OpenSSL::PKey::RSA.new(File.read(client_auth))
     req.body = body
     res = http.request(req)
     return req, res
