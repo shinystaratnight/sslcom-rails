@@ -16,11 +16,11 @@ namespace :cas do
   task seed_ejbca_profiles: :environment do
     url,shadow_url=
       if ENV['EJBCA_ENV']=="production"
-        ["192.168.5.17","192.168.5.19"]
+        [SslcomCaApi::PRODUCTION_IP,SslcomCaApi::STAGING_IP]
       elsif ENV['EJBCA_ENV']=="staging"
-        ["192.168.5.19","192.168.5.19"]
+        [SslcomCaApi::STAGING_IP,SslcomCaApi::STAGING_IP]
       else
-        ["192.168.100.5","192.168.100.5"]
+        [SslcomCaApi::DEVELOPMENT_IP,SslcomCaApi::DEVELOPMENT_IP]
       end
     Ca.find_or_initialize_by(ref: "1000").update_attributes(
       friendly_name: "CertLock SSL RSA 4096 (EV)",
