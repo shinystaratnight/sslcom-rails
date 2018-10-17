@@ -1,17 +1,27 @@
 -single ||= false
 -co = certificate_order
--cn = co.is_unused_credit? ? 'credit - '+co.certificate.description["certificate_type"]+' certificate' :  (co.certificate.is_code_signing? ? (co.registrant.try(:company_name) || co.certificate.description["certificate_type"]+' certificate') : co.common_name)
+-certificate_content ||= co.certificate_content
+-certificate ||= co.certificate
+-cn = co.is_unused? ? 'credit - '+certificate.description["certificate_type"]+' certificate' :  (certificate.is_code_signing? ? (co.registrant.try(:company_name) || certificate.description["certificate_type"]+' certificate') : co.common_name)
 -cn = "expired certificate" if co.is_expired_credit?
 .subject_column
   %a.common_name(title=cn)
-    =((co.is_test ? " (TEST) " : "") + (%w(refunded rejected charged_back).include?(co.workflow_state) ? " (#{co.workflow_state.upcase})" : "") + cn.downcase).shorten(35, false)
+    -test_text = co.is_test ? " (TEST) " : ""
+    -if certificate.is_smime_or_client?
+      -team_iv = co.get_team_iv
+      -if team_iv
+        ="#{test_text} #{team_iv ? [team_iv.first_name, team_iv.last_name].join(' ') : nil}"
+      -else
+        ="#{test_text} #{certificate.title}"
+    -else
+      =(test_text + (%w(refunded rejected charged_back).include?(co.workflow_state) ? " (#{co.workflow_state.upcase}) " : "") + cn.downcase).shorten(35, false)
   %span.expand_or_view_order
     -if !(single and co.is_expired_credit?) and permitted_to? :index, co
       %a.expand open
-    -unless co.is_unused_credit?
+    -unless co.is_unused?
       -if permitted_to? :update, co
         %span :
-        =link_to co.certificate_content.issued? ? "download" : "details", certificate_order_path(@ssl_slug, co), :title=>"view order for "+cn
+        =link_to certificate_content.issued? ? "download" : "details", certificate_order_path(@ssl_slug, co), :title=>"view order for "+cn
       -unless hide_validation?(co)
         -if permitted_to? :show, co.validation
           %span :
@@ -19,13 +29,9 @@
       -if permitted_to? :create, :site_seals
         %span :
         =link_to "seal", certificate_order_site_seal_path(ssl_slug: @ssl_slug, certificate_order_id: co.ref), :title=>"get site seal for "+cn
-      -if permitted_to? :update, co
-        -if co.certificate_content.issued? && !co.certificate_content.expired?
-          %span :
-          =link_to 'rekey', reprocess_certificate_order_path(@ssl_slug, co)
-      -if co.orders.first and permitted_to?(:read, co.orders.first)
+      -if current_user.is_system_admins? and order=co.orders.first
         %span :
-        =link_to "invoice", order_path(@ssl_slug, co.orders.first), :title=>"transaction information for "+cn
+        =link_to "invoice", order_path(@ssl_slug, order), :title=>"transaction information for "+cn
       -u=co.ssl_account.try(:primary_user)
       -unless u.blank?
         -if permitted_to? :admin_manage, u
@@ -34,4 +40,4 @@
     -else
       -unless co.is_expired_credit?
         %span :
-        =link_to "finish processing", edit_certificate_order_path(@ssl_slug, co), :title=>"finishing processing "+co.certificate.description["certificate_type"]+' certificate'
+        =link_to "finish processing", edit_certificate_order_path(@ssl_slug, co), :title=>"finishing processing "+certificate.description["certificate_type"]+' certificate'

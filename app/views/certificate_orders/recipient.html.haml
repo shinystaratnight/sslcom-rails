@@ -1,0 +1,68 @@
+- content_for :title, "Applicant Information For Certificate Order #{@certificate_order.order.reference_number}"
+= render partial: '/certificate_orders/index_scripts'
+- certificate = @certificate_order.certificate
+- skip_registrant = certificate.is_client_pro? || certificate.is_client_basic?
+= order_progress_indicator((skip_registrant ? 1 : 2), certificate)
+- recipient = @certificate_order.get_team_iv
+
+.order_container
+  %h3 Recipient Information for #{@certificate_order.description}
+  %p Please fill out recipient information to complete your certificate order.
+  = error_messages_for :certificate_order, :registrant
+  
+  = form_tag recipient_certificate_order_path(@ssl_slug, @certificate_order.ref), method: :post  do
+    #stylized.default_form
+      %p.description
+        Please provide recipient information.
+      
+      = hidden_field_tag :add_recipient, true
+
+      - saved_ivs = @certificate_order.ssl_account.individual_validations
+      - if saved_ivs.any?
+        .clearfix
+          - list = render_saved_contacts(saved_ivs, with_data: true)
+          %label{for: 'recipients'}
+            Saved Recipients:
+            %span.label_desc
+              *Use previous recipients.
+          = select_tag :saved_contacts, options_for_select(list), include_blank: true
+
+      - unless skip_registrant
+        .clearfix
+          - reg_contact = @certificate_order.registrant
+          %label{for: 'registrant_contact'}
+            Registrant Contact:
+            %span.label_desc
+              *Use contact from Registrant.
+          = check_box_tag :registrant_contact, 'true', false, |
+            data: {first_name: reg_contact.first_name, last_name: reg_contact.last_name, email: reg_contact.email }
+
+      .clearfix
+        %label{for: 'first_name'}
+          *First Name:
+        = text_field_tag :first_name, (recipient ? recipient.first_name : nil), required: true
+      
+      .clearfix
+        %label{for: 'last_name'}
+          *Last Name:
+        = text_field_tag :last_name, (recipient ? recipient.last_name : nil), required: true
+      
+      .clearfix
+        %label{for: 'email'}
+          *Email Address:
+        = text_field_tag :email, (recipient ? recipient.email : nil), required: true
+
+      - unless @certificate_order.ssl_account.epki_agreement.blank?
+        .clearfix
+          %label{for: 'lra'}
+            Validate Recipient:
+            %span.label_desc
+              *Local Registration Authority:
+              %br/
+              I am authorized to validate recipient.
+          = check_box_tag :lra, 'lra_validation'
+
+    #button_container
+      #auto_adjust
+        = link_to (image_tag "cancel_bl.gif"), certificate_order_path(@ssl_slug, @certificate_order.ref)
+        = image_submit_tag "next_bl.gif", alt: "edit ssl certificate order"

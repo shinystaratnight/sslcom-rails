@@ -101,44 +101,44 @@
               %ul
                 %li
                   %strong teams #{link_to "manage", teams_user_path(u)}
-                - u.ssl_accounts.each do |ssl|
-                  -slug_params = {ssl_slug: ssl.to_slug}
-                  - status = ssl_account_status(u, ssl).first
+                - u.ssl_accounts.each do |ssl_account|
+                  -slug_params = {ssl_slug: ssl_account.to_slug}
+                  - status = ssl_account_status(u, ssl_account).first
                   %li
-                    =ssl.acct_number
+                    =ssl_account.acct_number
                     [ #{status}
                     - if status == 'token expired'
                       =link_to '&rarr; RESEND INVITE'.html_safe,
-                        resend_account_invite_user_path(u, ssl_account_id: ssl, from_user: current_user)
+                        resend_account_invite_user_path(u, ssl_account_id: ssl_account, from_user: current_user)
                     - if current_user.is_system_admins?
                       ][
                       =link_to 'dashboard', admin_show_user_path(u, slug_params)
                     ][
                     slug:
-                    =link_to(ssl.to_slug, edit_ssl_account_path({url_slug: true}.merge!(slug_params)))
+                    =link_to(ssl_account.to_slug, edit_ssl_account_path({url_slug: true}.merge!(slug_params)))
                     ][
                     name:
-                    =link_to ssl.get_team_name, edit_ssl_account_path({update_company_name: true}.merge!(slug_params))
+                    =link_to ssl_account.get_team_name, edit_ssl_account_path({update_company_name: true}.merge!(slug_params))
                     ][
-                    =link_to "users(#{ssl.users.count})", users_path(slug_params)
+                    =link_to "users(#{ssl_account.cached_users.count})", users_path(slug_params)
                     ][
-                    %a{style:"cursor: pointer;", onclick: "adjust_funds_ssl_account('#{ssl.to_slug}','#{ssl.get_team_name}')"} $#{ssl.funded_account.try :amount}
+                    %a{style:"cursor: pointer;", onclick: "adjust_funds_ssl_account('#{ssl_account.to_slug}','#{ssl_account.get_team_name}')"} $#{ssl_account.funded_account.try :amount}
                     ][
-                    =link_to "orders(#{ssl.certificate_orders.count})", certificate_orders_path(slug_params)
+                    =link_to "orders(#{ssl_account.cached_certificate_orders_count})", certificate_orders_path(slug_params)
                     ][
-                    =link_to "transactions(#{ssl.orders.count})", orders_path(slug_params)
+                    =link_to "transactions(#{ssl_account.cached_orders.count})", orders_path(slug_params)
                     ][
-                    =link_to "billing profiles(#{ssl.billing_profiles.count})", billing_profiles_path(slug_params)
+                    =link_to "billing profiles(#{ssl_account.billing_profiles.count})", billing_profiles_path(slug_params)
                     ][
-                    =link_to "validations(#{ssl.validations.count})", validations_path(slug_params)
+                    =link_to "validations(#{ssl_account.validations.count})", validations_path(slug_params)
                     ][
-                    =link_to "site seals(#{ssl.site_seals.count})", site_seals_path(slug_params)
+                    =link_to "site seals(#{ssl_account.site_seals.count})", site_seals_path(slug_params)
                     - if permitted_to? :update_roles, :managed_users
                       ][
                       roles:
-                      =link_to u.role_symbols(ssl).join('/'), edit_managed_user_path(u, slug_params)
-                    -unless ssl.get_account_owner == u
+                      =link_to u.role_symbols(ssl_account).join('/'), edit_managed_user_path(u, slug_params)
+                    -unless ssl_account.get_account_owner == u
                       ][
-                      =link_to "leave", remove_from_account_managed_user_path(u, slug_params.merge(ssl_account_id: ssl.id)),data:{confirm: "Remove #{u.login} from team #{ssl.company_name}?"}
+                      =link_to "leave", remove_from_account_managed_user_path(u, slug_params.merge(ssl_account_id: ssl_account.id)),data:{confirm: "Remove #{u.login} from team #{ssl_account.company_name}?"}
                     ]
                   %li &nbsp;

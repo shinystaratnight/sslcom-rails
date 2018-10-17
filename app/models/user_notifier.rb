@@ -20,6 +20,14 @@ class UserNotifier < ActionMailer::Base
               to: user.email
   end
 
+  def auto_activation_confirmation(user)
+    @account_url = account_url
+    @login = user.login
+    mail subject: "SSL.com user account auto activated",
+         from: Settings.from_email.activations,
+         to: user.email
+  end
+
   def password_reset_instructions(user)
     @edit_password_reset_url = edit_password_reset_url(user.perishable_token)
     mail  subject: "SSL.com user account password reset instructions",
@@ -158,6 +166,21 @@ class UserNotifier < ActionMailer::Base
     mail subject: "Processing SSL Certificate Request",
          from: Settings.from_email.activations,
          to: to_address
+  end
+
+  def auto_register_ssl_manager_to_team(user, ssl_account)
+    mail subject: "Auto Registered SSL Manager to SSL.com team #{ssl_account.get_team_name}",
+         from: Settings.from_email.activations,
+         to: user.email
+  end
+
+  def register_ssl_manager_to_team(user, ref, ssl_account)
+    base_path = "https://" + Settings.community_domain
+    @approval_url = base_path + approve_ssl_manager_path(ref)
+
+    mail subject: "Register SSL Manager to SSL.com team #{ssl_account.get_team_name}",
+         from: Settings.from_email.activations,
+         to: user.email
   end
 
   protected

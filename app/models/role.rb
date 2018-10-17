@@ -1,4 +1,5 @@
 class Role < ActiveRecord::Base
+  include ModelCachingExtension
   has_many                  :assignments, dependent: :destroy
   has_many                  :users, :through => :assignments
   has_and_belongs_to_many   :permissions
@@ -13,17 +14,21 @@ class Role < ActiveRecord::Base
   SYS_ADMIN     = 'sysadmin'
   USERS_MANAGER = 'users_manager'
   VALIDATIONS   = 'validations'
+  RA_ADMIN      = 'ra_admin'
+  INDIVIDUAL_CERTIFICATE  = 'individual_certificate'
   
   def self.get_role_id(role_name)
-    Role.find_by(name: role_name).id
+    Rails.cache.fetch(["get_role_id",role_name]) { Role.find_by(name: role_name).id }
   end
 
   def self.get_role_ids(role_names)
-    Role.where(name: role_names).ids.uniq.reject(&:blank?).compact
+    Rails.cache.fetch(["get_role_ids",role_names.join("_")]) {
+      Role.where(name: role_names).ids.uniq.reject(&:blank?).compact
+    }
   end
 
   def self.admin_role_ids
-    Role.get_role_ids([SYS_ADMIN, SUPER_USER, OWNER])
+    Role.get_role_ids([SYS_ADMIN, SUPER_USER, OWNER, RA_ADMIN])
   end
 
   def self.get_account_admin_id
@@ -37,9 +42,28 @@ class Role < ActiveRecord::Base
   def self.get_reseller_id
     Role.get_role_id(Role::RESELLER)
   end
+
+  def self.get_individual_certificate_id
+    Role.get_role_id(Role::INDIVIDUAL_CERTIFICATE)
+  end
   
   def self.get_select_ids_for_owner
-    Role.get_role_ids([ACCOUNT_ADMIN, BILLING, INSTALLER, VALIDATIONS, USERS_MANAGER])
+    Role.get_role_ids([
+      ACCOUNT_ADMIN,
+      BILLING,
+      INSTALLER,
+      VALIDATIONS,
+      USERS_MANAGER,
+      INDIVIDUAL_CERTIFICATE
+    ])
+  end
+
+  def self.can_auto_add_users
+    Role.get_role_ids([
+      ACCOUNT_ADMIN,
+      OWNER,
+      RESELLER
+    ])
   end
 
   def self.can_manage_users
@@ -82,11 +106,18 @@ class Role < ActiveRecord::Base
       RESELLER,
       SUPER_USER,
       SYS_ADMIN,
-      USERS_MANAGER
+      USERS_MANAGER,
+      RA_ADMIN
     ])
   end
 
   def self.cannot_be_invited
-    Role.get_role_ids([OWNER, RESELLER, SUPER_USER, SYS_ADMIN])
+    Role.get_role_ids([
+      OWNER,
+      RESELLER,
+      SUPER_USER,
+      SYS_ADMIN,
+      RA_ADMIN
+    ])
   end
 end

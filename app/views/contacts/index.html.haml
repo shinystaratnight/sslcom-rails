@@ -3,10 +3,10 @@
 =order_progress_indicator(pos, @certificate_order.certificate) if @certificate_content.info_provided?
 .reseller_registration_profile
   %h3
-    Create Contacts For #{@certificate_order.subject.downcase}
-    (order ref##{@certificate_order.ref})
+    Create #{@certificate_order.certificate.is_ov_client? ? "Certificate Recipients" : "Contacts"} For #{@certificate_order.subject.downcase}
+    (order ref# #{link_to @certificate_order.ref,@certificate_order})
   %p
-    Please provide point of contacts
+    #{@certificate_order.certificate.is_ov_client? ? "Enter who will be receiving their own personal certificate" : "Please provide point of contacts"}
     -if !@certificate_order.subject.blank?
       for #{@certificate_order.subject.downcase}.
     -partial = Contact.optional_contacts? ? 'optional' : 'required'

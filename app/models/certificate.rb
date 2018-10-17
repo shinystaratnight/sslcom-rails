@@ -1,12 +1,17 @@
 class Certificate < ActiveRecord::Base
   include CertificateType
+  include Filterable
+  include Sortable
+
   has_many    :product_variant_groups, :as => :variantable
   has_many    :product_variant_items, through: :product_variant_groups
+  has_many    :sub_order_items, through: :product_variant_items
   has_many    :validation_rulings, :as=>:validation_rulable
   has_many    :validation_rules, :through => :validation_rulings
   has_and_belongs_to_many :products
   has_many    :cas_certificates, dependent: :destroy
   has_many    :cas, through: :cas_certificates
+
   acts_as_publishable :live, :draft, :discontinue_sell
   belongs_to  :reseller_tier
 
@@ -14,6 +19,7 @@ class Certificate < ActiveRecord::Base
   serialize   :description
   serialize   :display_order
   serialize   :title
+  serialize   :special_fields
   preference  :certificate_chain, :string
   
   accepts_nested_attributes_for :product_variant_groups, allow_destroy: false
@@ -233,6 +239,41 @@ class Certificate < ActiveRecord::Base
     end
   end
 
+  def self.index_filter(params)
+    filters = {}
+    p = params
+    filters[:serial] = { 'LIKE' => p[:serial] } unless p[:serial].blank?
+    filters[:title] = { 'LIKE' => p[:title] } unless p[:title].blank?
+    filters[:product] = { 'LIKE' => p[:product] } unless p[:product].blank?
+    filters[:description] = { 'LIKE' => p[:description] } unless p[:description].blank?
+    unless p[:created_at_type].blank? || p[:created_at].blank?
+      operator = COMPARISON[p[:created_at_type].to_sym]
+      filters[:created_at] = { operator => DateTime.parse(p[:created_at]).beginning_of_day }
+    end
+    unless p[:updated_at_type].blank? || p[:updated_at].blank?
+      operator = COMPARISON[p[:updated_at_type].to_sym]
+      filters[:updated_at] = { operator => DateTime.parse(p[:updated_at]).end_of_day }
+    end
+    filters[:allow_wildcard_ucc] = { '=' => p[:wildcard] } unless p[:wildcard].blank?
+    filters[:reseller_tier_id] = { '=' => p[:reseller_tier_id] } unless p[:reseller_tier_id].blank?
+    result = filter(filters)
+    result
+  end
+
+  def cached_product_variant_items(options={})
+    ProductVariantItem.unscoped.where(id: (Rails.cache.fetch("#{cache_key}/cached_product_variant_items/#{options.to_s}") do
+      if options[:by_serial]
+        product_variant_items.where{serial=~"%#{options[:by_serial]}%"}.pluck(:id)
+      else
+        product_variant_items.pluck(:id)
+      end
+    end))
+  end
+
+  def role_can_manage
+    Role.get_role_id Role::RA_ADMIN
+  end
+
   def price=(amount)
     self.amount = amount.gsub(/\./,"").to_i
   end
@@ -283,12 +324,12 @@ class Certificate < ActiveRecord::Base
         product_variant_groups.domains.map(&:product_variant_items).flatten
       else
         unless is_ev?
-          product_variant_items.where{serial=~"%yrdm%"}.flatten.zip(
-              product_variant_items.where{serial=~"%yradm%"}.flatten,
-              product_variant_items.where{serial=~"%yrwcdm%"}.flatten)
+          cached_product_variant_items(serial: "yrdm").flatten.zip(
+              cached_product_variant_items(serial: "yradm").flatten,
+              cached_product_variant_items(serial: "yrwcdm").flatten)
         else
-          product_variant_items.where{serial=~"%yrdm%"}.flatten.zip(
-              product_variant_items.where{serial=~"%yradm%"}.flatten)
+          cached_product_variant_items(serial: "yrdm").flatten.zip(
+              cached_product_variant_items(serial: "yradm").flatten)
         end
       end
     end
@@ -324,11 +365,11 @@ class Certificate < ActiveRecord::Base
   end
 
   def first_duration
-    product_variant_groups.first.product_variant_items.first
+    cached_product_variant_items.first
   end
 
   def last_duration
-    product_variant_groups.first.product_variant_items.last
+    cached_product_variant_items.last
   end
 
   # is is true for SAN and EV SAN certs
@@ -342,35 +383,18 @@ class Certificate < ActiveRecord::Base
   end
 
   def admin_submit_csr?
-    is_evcs? or is_cs?
-  end
-
-  def is_client?
-    product.include?('personal')
-  end
-
-  def is_client_basic?
-    product_root=~/basic\z/
-  end
-
-  def is_client_pro?
-    product_root=~/pro\z/
-  end
-
-  def is_client_business?
-    product_root=~/business\z/
-  end
-
-  def is_client_enterprise?
-    product_root=~/enterprise\z/
-  end
-
-  def requires_company_info?
-    is_client_business? || is_client_enterprise? || is_server? || is_code_signing? || is_ov?
+    is_evcs? or
+    is_cs? or
+    is_smime? or
+    is_client? or
+    is_client_basic? or
+    is_client_business? or
+    is_client_enterprise? or
+    is_client_pro?
   end
 
   def is_server?
-    !(is_client? || is_code_signing?)
+    !(is_smime_or_client? || is_code_signing? || is_time_stamping?)
   end
 
   def is_wildcard?
@@ -379,6 +403,10 @@ class Certificate < ActiveRecord::Base
 
   def is_basic?
     product =~ /basic/
+  end
+
+  def is_high_assurance?
+    product =~ /high_assurance/
   end
 
   def is_browser_generated_capable?
@@ -569,25 +597,27 @@ class Certificate < ActiveRecord::Base
     self.product_variant_groups.each do |pvg|
       new_pvg = pvg.dup
       new_cert.product_variant_groups << new_pvg
-      pvg.product_variant_items.each do |pvi|
-        new_pvi=pvi.dup
-        if options[:old_pvi_serial] and options[:new_pvi_serial]
-          new_pvi.serial=pvi.serial.gsub(options[:old_pvi_serial], options[:new_pvi_serial])
-        elsif options[:reseller_tier_label]
-          if ProductVariantItem.find_by_serial("#{pvi.serial}-#{options[:reseller_tier_label]}tr") # adding reseller tier
-            new_pvi = ProductVariantItem.find_by_serial("#{pvi.serial}-#{options[:reseller_tier_label]}tr") # update
-          else
-            new_pvi.serial="#{pvi.serial}-#{options[:reseller_tier_label]}tr" # create reseller tier
+      pvg.product_variant_items.each_with_index do |pvi, i|
+        if i < options[:product][:price_adjusts].first[1].count
+          new_pvi=pvi.dup
+          if options[:old_pvi_serial] and options[:new_pvi_serial]
+            new_pvi.serial=pvi.serial.gsub(options[:old_pvi_serial], options[:new_pvi_serial])
+          elsif options[:reseller_tier_label]
+            if ProductVariantItem.find_by_serial("#{pvi.serial}-#{options[:reseller_tier_label]}tr") # adding reseller tier
+              new_pvi = ProductVariantItem.find_by_serial("#{pvi.serial}-#{options[:reseller_tier_label]}tr") # update
+            else
+              new_pvi.serial="#{pvi.serial}-#{options[:reseller_tier_label]}tr" # create reseller tier
+            end
           end
-        end
-        new_pvi.amount=((new_pvi.amount || 0)*options[:discount_rate]).ceil if options[:discount_rate]
-        new_pvg.product_variant_items << new_pvi
-        unless pvi.sub_order_item.blank?
-          if new_pvi.sub_order_item.blank?
-            new_pvi.sub_order_item=pvi.sub_order_item.dup
+          new_pvi.amount=((new_pvi.amount || 0)*options[:discount_rate]).ceil if options[:discount_rate]
+          new_pvg.product_variant_items << new_pvi
+          unless pvi.sub_order_item.blank?
+            if new_pvi.sub_order_item.blank?
+              new_pvi.sub_order_item=pvi.sub_order_item.dup
+            end
+            new_pvi.sub_order_item.amount=((new_pvi.sub_order_item.amount || 0)*options[:discount_rate]).ceil if options[:discount_rate]
+            new_pvi.sub_order_item.save
           end
-          new_pvi.sub_order_item.amount=((new_pvi.sub_order_item.amount || 0)*options[:discount_rate]).ceil if options[:discount_rate]
-          new_pvi.sub_order_item.save
         end
       end
     end
@@ -607,8 +637,7 @@ class Certificate < ActiveRecord::Base
   # this method duplicates the base certificate product along with all reseller_tiers
   def duplicate_w_tiers(options)
     sr = "#{self.serial_root}%"
-    Certificate.where{serial =~ sr}.map {|c|
-      c.duplicate(options)}
+    Certificate.where{serial =~ sr}.map {|c| c.duplicate(options)}
   end
 
   # this method duplicates the base certificate product along with all standard 5 reseller_tiers
@@ -617,6 +646,26 @@ class Certificate < ActiveRecord::Base
     custom = "#{self.serial_root}-%"
     Certificate.where{serial =~ standard}.where{serial !~ custom}.map {|c|
       c.duplicate(options)}
+  end
+
+  def self.list_default_cas
+    all.map do |cert|
+      [cert.product,cert.cas.default.map(&:id)] unless cert.cas.default.map(&:id).empty?
+    end.compact
+  end
+
+  def max_duration
+    if is_smime_or_client?
+      CertificateOrder::CLIENT_MAX_DURATION
+    elsif is_code_signing?
+      CertificateOrder::CS_MAX_DURATION
+    elsif is_ev?
+      CertificateOrder::EV_SSL_MAX_DURATION
+    elsif is_time_stamping?
+      CertificateOrder::TS_MAX_DURATION
+    else # assume non EV SSL
+      CertificateOrder::SSL_MAX_DURATION
+    end
   end
 
   private
@@ -651,7 +700,7 @@ class Certificate < ActiveRecord::Base
                                <div class='check'>2048 bit public key encryption</div>
                                <em style='color:#333;display:block;padding:5px 20px;'>also comes with the following</em>
                                <div class='check'>quick issuance</div>
-                               <div class='check'>30 day unconditional refund</div>
+                               <div class='check'>30 day money-back guaranty</div>
                                <div class='check'>24 hour support</div>
                                <div class='check'>unlimited reissuances</div>",
         "validation_level" => "domain",
@@ -726,7 +775,7 @@ class Certificate < ActiveRecord::Base
                                <div class='check'>2048 bit public key encryption</div>
                                <em style='color:#333;display:block;padding:5px 20px;'>also comes with the following</em>
                                <div class='check'>quick issuance</div>
-                               <div class='check'>30 day unconditional refund</div>
+                               <div class='check'>30 day money-back guaranty</div>
                                <div class='check'>24 hour support</div>
                                <div class='check'>unlimited reissuances</div>",
         "validation_level" => "domain",
@@ -767,7 +816,7 @@ class Certificate < ActiveRecord::Base
                                <div class='check'>2048 bit public key encryption</div>
                                <em style='color:#333;display:block;padding:5px 20px;'>also comes with the following</em>
                                <div class='check'>quick issuance</div>
-                               <div class='check'>30 day unconditional refund</div>
+                               <div class='check'>30 day money-back guaranty</div>
                                <div class='check'>24 hour support</div>
                                <div class='check'>unlimited reissuances</div>",
         "validation_level" => "organization",
@@ -820,11 +869,11 @@ class Certificate < ActiveRecord::Base
                   "points" => "<div class='check'>extended validation</div>
                                <div class='check'>results in higher sales conversion</div>
                                <div class='check'>$2 million USD insurance guaranty</div>
-                               <div class='check'>works with Microsfot Smartscreen</div>
+                               <div class='check'>works with Microsoft Smartscreen</div>
                                <div class='check'>2048 bit public key encryption</div>
                                <em style='color:#333;display:block;padding:5px 20px;'>also comes with the following</em>
                                <div class='check'>quick issuance</div>
-                               <div class='check'>30 day unconditional refund</div>
+                               <div class='check'>30 day money-back guaranty</div>
                                <div class='check'>stored on fips 140-2 USB token</div>
                                <div class='check'>24 hour support</div>",
         "validation_level" => "extended",
@@ -870,6 +919,7 @@ class Certificate < ActiveRecord::Base
   end
 
   def self.create_email_certs
+    Certificate.purge %w(personalbasic personalbusiness personalpro personalenterprise naesbbasic)
     products=[{serial_root: "personalbasic",title: "Personal Basic",validation_type: "class 1",
                summary: "for authenticating and encrypting email and well as client services",
                product: "personal-basic",
@@ -893,7 +943,7 @@ class Certificate < ActiveRecord::Base
               {serial_root: "personalpro",title: "Personal Pro",validation_type: "class 2",
                summary: "for authenticating and encrypting email and well as client services",
                product: "personal-pro",
-               price_adjusts:{sslcompersonalpro56ssl1yr: [7000, 8000, 9000],
+               price_adjusts:{sslcompersonalpro256ssl1yr: [7000, 8000, 9000],
                               sslcompersonalpro256ssl1yr1tr: [7000, 8000, 9000],
                               sslcompersonalpro256ssl1yr2tr: [7000, 8000, 9000],
                               sslcompersonalpro256ssl1yr3tr: [7000, 8000, 9000],
@@ -909,15 +959,54 @@ class Certificate < ActiveRecord::Base
                               sslcompersonalenterprise256ssl1yr3tr: [24900, 49900, 59900],
                               sslcompersonalenterprise256ssl1yr4tr: [24900, 49900, 59900],
                               sslcompersonalenterprise256ssl1yr5tr: [24900, 49900, 59900]
+               }},
+              {serial_root: "documentsigning",title: "Document Signing",validation_type: "basic",
+               summary: "for signing and authenticating documents such as Adobe pdf, Microsoft Office, OpenOffice and LibreOffice",
+               product: "document-signing",
+               points:  "<div class='check'>Legally binding and complies with the U.S. Federal ESIGN Act</div>
+                         <div class='check'>Stored on USB etoken for 2 factor authentication</div>
+                         <div class='check'>No required plugins or software</div>
+                         <div class='check'>Customizable appearance of digital signature</div>
+                         <div class='check'>Shows signed by a person OR department</div>
+                         <div class='check'>30 day money-back guaranty </div>
+                         <div class='check'>24 hour 5-star support</div>",
+               price_adjusts:{sslcomdocumentsigning1yr: [34900,64900,84900],
+                              sslcomdocumentsigning1yr1tr: [34900,64900,84900],
+                              sslcomdocumentsigning1yr2tr: [12000,15000],
+                              sslcomdocumentsigning1yr3tr: [11250,15000],
+                              sslcomdocumentsigning1yr4tr: [10500,15000],
+                              sslcomdocumentsigning1yr5tr: [9000,15000],
+                              sslcomdocumentsigning1yr6tr: [7500,15000],
+                              sslcomdocumentsigning1yr7tr: [6000,15000]
+               }},
+              {serial_root: "naesbbasic",title: "NAESB Basic",validation_type: "basic",
+               summary: "for authenticating and encrypting email and well as client services",
+               special_fields: %w(entity\ code),
+               product: "personal-naesb-basic",
+               points:  "<div class='check'>Requirorders_helper.rb:178ed for NAESB EIR and etag authentication</div>
+                         <div class='check'>User for wesbsite authentication</div>
+                         <div class='check'>Issued from SSL.com ACA</div>
+                         <div class='check'>2048 bit public key encryption</div>
+                         <div class='check'>quick issuance</div>
+                         <div class='check'>30 day money-back guaranty </div>
+                         <div class='check'>24 hour 5-star support</div>",
+               price_adjusts:{sslcomnaesbbasicclient1yr: [7500,15000],
+                              sslcomnaesbbasicclient1yr1tr: [7500,15000],
+                              sslcomnaesbbasicclient1yr2tr: [6000,12000],
+                              sslcomnaesbbasicclient1yr3tr: [5625,11250],
+                              sslcomnaesbbasicclient1yr4tr: [5025,10500],
+                              sslcomnaesbbasicclient1yr5tr: [4500,9000],
+                              sslcomnaesbbasicclient1yr6tr: [3750,7500],
+                              sslcomnaesbbasicclient1yr7tr: [2625,5250]
                }}]
     products.each do |p|
       c=Certificate.available.find_by_product "high_assurance"
-      certs = c.duplicate_w_tiers(new_serial: "#{p[:serial_root]}256sslcom",
+      certs = c.duplicate_w_tiers(product: p, new_serial: "#{p[:serial_root]}256sslcom",
                                 old_pvi_serial: "ov256ssl", new_pvi_serial: "#{p[:serial_root]}256ssl")
       title = p[:title]
       description={
           "certificate_type" => title,
-          "points" => "",
+          "points" => p[:points] || "",
           "validation_level" => p[:validation_type],
           "summary" => p[:summary],
           "abbr" => title
@@ -925,13 +1014,14 @@ class Certificate < ActiveRecord::Base
       certs.each do |c|
         c.update_attributes title: title,
                             description: description,
+                            special_fields: p[:special_fields],
                             product: c.product.gsub(/\Ahigh_assurance/, p[:product]),
                             icons: c.icons.merge!("main"=> "gold_lock_lg.gif")
       end
-      certs.each{ |c| c.product_variant_items.where{display_order > 3}.destroy_all}
+      certs.each{ |c| c.cached_product_variant_items.where{display_order > 3}.destroy_all}
       p[:price_adjusts].each do |k,v|
         serials=[]
-        num_years=3
+        num_years=v.count
         1.upto(num_years){|i|serials<<k.to_s.gsub(/1yr/, i.to_s+"yr")}
         serials.each_with_index {|s, i|
           if ProductVariantItem.find_by_serial(s)
@@ -949,21 +1039,24 @@ class Certificate < ActiveRecord::Base
               text_only_description: pvi.text_only_description.gsub(/\d/,years.to_s),
               display_order: years.to_s,
               item_type: pvi.item_type, value: 365*years, published_as: pvi.published_as)
+            pvg.product_variant_items.where{serial << serials}.delete_all
           end
         }
       end
     end
   end
 
-  def self.purge(serial_snippet)
-    Certificate.where{serial=~"%#{serial_snippet}%"}.each do |c|
-      c.product_variant_groups.each do |pvg|
-        pvg.product_variant_items.each do |pvi|
-          pvi.destroy
+  def self.purge(serial_snippets=[])
+    serial_snippets.each do |serial_snippet|
+      Certificate.where{serial=~"%#{serial_snippet}%"}.each do |c|
+        c.product_variant_groups.each do |pvg|
+          pvg.product_variant_items.each do |pvi|
+            pvi.destroy
+          end
+          pvg.destroy
         end
-        pvg.destroy
+        c.destroy
       end
-      c.destroy
     end
   end
 
@@ -984,7 +1077,7 @@ class Certificate < ActiveRecord::Base
 
   def self.reduce_years(title="assureguard-dv%", days=1095)
     self.where{product =~ title}.each do |c|
-      c.product_variant_items.where{value > days}.each{|pvi|pvi.delete}
+      c.cached_product_variant_items.where{value > days}.each{|pvi|pvi.delete}
     end
   end
 
@@ -997,10 +1090,10 @@ class Certificate < ActiveRecord::Base
 
   def self.change_prices(title="assureguard-dv", prices=[6800,11500,15200])
     self.where{product == title}.each do |c|
-      if c.product_variant_items.where{item_type == "duration"}.count>0 #assume non ucc
-        c.product_variant_items.where{item_type == "duration"}.each_with_index{|pvi,i| pvi.update_column :amount, prices[i]}
-      elsif c.product_variant_items.where{item_type == "ucc_domain"}.count>0 #assume ucc
-        c.product_variant_items.where{item_type == "ucc_domain"}.each{|pvi|
+      if c.cached_product_variant_items.where{item_type == "duration"}.count>0 #assume non ucc
+        c.cached_product_variant_items.where{item_type == "duration"}.each_with_index{|pvi,i| pvi.update_column :amount, prices[i]}
+      elsif c.cached_product_variant_items.where{item_type == "ucc_domain"}.count>0 #assume ucc
+        c.cached_product_variant_items.where{item_type == "ucc_domain"}.each{|pvi|
           i = pvi.value.to_i/365
           price = if pvi.description=~/3 domains/i
             prices[i-1][0]

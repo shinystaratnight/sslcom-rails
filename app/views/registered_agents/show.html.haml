@@ -1,0 +1,30 @@
+-content_for :title, "Edit SSL Manager"
+
+.registered_agent_container
+  %h3
+    Edit Registered Agent ( ##{@registered_agent.ref} )
+  =form_tag registered_agent_path(@ssl_slug, @registered_agent.ref), :class => 'ra_form', :method => :put do
+    #stylized.default_form
+      .field_block.clearfix
+        .field_label
+          %span="IP Address : "
+        .field_body
+          %span=@registered_agent.ip_address
+      .field_block.clearfix
+        .field_label
+          %span="MAC Address : "
+        .field_body
+          %span=@registered_agent.mac_address
+      .field_block.clearfix
+        .field_label
+          %span="Agent : "
+        .field_body
+          %span=@registered_agent.agent
+      .field_block.clearfix
+        .field_label
+          %span="Friendly Name : "
+        .field_body
+          =text_field_tag 'friendly_name', @registered_agent.friendly_name
+    #button_container
+      #registered_agent_auto_adjust.clearfix
+        =button_tag "Save", class: 'button_blue button_index save_registered_agent'

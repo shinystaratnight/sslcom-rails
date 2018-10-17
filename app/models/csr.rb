@@ -10,7 +10,7 @@ class Csr < ActiveRecord::Base
   
   has_many    :whois_lookups, :dependent => :destroy
   has_many    :signed_certificates, -> {SignedCertificate.live}, :dependent => :destroy
-  has_many    :shadow_certificates, -> {SignedCertificate.shadow}, :dependent => :destroy, class_name: "SignedCertificate"
+  has_many    :shadow_certificates
   has_many    :ca_certificate_requests, as: :api_requestable, dependent: :destroy
   has_many    :sslcom_ca_requests, as: :api_requestable
   has_many    :ca_api_requests, as: :api_requestable
@@ -29,16 +29,23 @@ class Csr < ActiveRecord::Base
       where{dcv_method >> ['http','https','email']}.last
     end
   end
+  has_many    :csr_unique_values, :dependent => :destroy
   has_one     :csr_override  #used for overriding csr fields - does not include a full csr
   belongs_to  :certificate_content
   belongs_to  :certificate_lookup
+  belongs_to  :ssl_account
   has_one    :certificate_order, :through=>:certificate_content
   has_many    :certificate_orders, :through=>:certificate_content # api_requestable.certificate_orders compatibility
   serialize   :subject_alternative_names
   validates_presence_of :body
   validates_presence_of :common_name, :if=> "!body.blank?", :message=> "field blank. Invalid csr."
-  validates   :unique_value, uniqueness: { scope: :public_key_sha1 }
+  # validates_uniqueness_of :unique_value, scope: :public_key_sha1
 
+  #will_paginate
+  cattr_accessor :per_page
+  @@per_page = 10
+
+  scope :sslcom, ->{joins{certificate_content}.where.not certificate_contents: {ca_id: nil}}
   scope :search, lambda {|term|
     where(csrs.common_name =~ "%#{term}%").includes{certificate_content.certificate_order}.references(:all)
   }
@@ -62,9 +69,65 @@ class Csr < ActiveRecord::Base
   BEGIN_NEW_TAG="-----BEGIN NEW CERTIFICATE REQUEST-----"
   END_NEW_TAG="-----END NEW CERTIFICATE REQUEST-----"
 
+  COMMAND=->(key_file){%x"openssl rsa -pubin -in #{key_file} -text -noout"}
+  TIMEOUT_DURATION=10
+
+  before_create do |csr|
+    csr.ref = 'csr-'+SecureRandom.hex(1)+Time.now.to_i.to_s(32)
+  end
+
+  after_create do |c|
+    tmp_file = "#{Rails.root}/tmp/csr_pub-#{DateTime.now.to_i}.key"
+    File.open(tmp_file, 'wb') do |f|
+      f.write c.public_key
+    end
+    modulus = timeout(TIMEOUT_DURATION) do
+      COMMAND.call tmp_file
+    end
+    c.update_column(:modulus, modulus)
+    File.delete(tmp_file) if File.exist?(tmp_file)
+  end
+
   after_save do |c|
     c.certificate_content.touch unless c.certificate_content.blank?
     c.certificate_order.touch unless c.certificate_content.blank?
+
+  end
+
+  # def to_param
+  #   ref
+  # end
+
+  def unique_value
+    if certificate_content.blank? or certificate_content.ca.blank?
+      csr_unique_value.unique_value
+    else
+      if ca_certificate_requests.first and !ca_certificate_requests.first.unique_value.blank?
+        ca_certificate_requests.first.unique_value # comodo has returned a unique already
+      else
+        if csr_unique_values.empty?
+          if new_record?
+            csr_unique_values.build(unique_value: SecureRandom.hex(5)) # generate our own
+          else
+            csr_unique_values.create(unique_value: SecureRandom.hex(5)) # generate our own
+          end
+        end
+        csr_unique_values.last.unique_value
+      end
+    end
+  end
+
+  def csr_unique_value
+    last_unique_value = csr_unique_values.last
+    if last_unique_value.nil?
+      last_unique_value = csr_unique_values.create(unique_value: SecureRandom.hex(5))
+    end
+
+    #if unique_value is expired, then new unique_value should be generated
+    if (Date.today-last_unique_value.created_at.to_date).to_i > 30
+      last_unique_value = csr_unique_values.create(unique_value: SecureRandom.hex(5))
+    end
+    last_unique_value
   end
 
   def common_name
@@ -142,7 +205,7 @@ class Csr < ActiveRecord::Base
   end
 
   def sslcom_outstanding_approvals
-    status=SslcomCaApi.get_status(self)[1].body
+    status=SslcomCaApi.get_status(csr: self, mapping: certificate_content.ca)[1].body
     if status=="[]" or status.blank?
       0
     else
@@ -349,7 +412,7 @@ class Csr < ActiveRecord::Base
   end
 
   def signed_certificate
-    signed_certificates.sort{|a,b|a.created_at<=>b.created_at}.last
+    signed_certificates.order(:created_at).last
   end
 
   def replace_csr(csr)
@@ -377,7 +440,7 @@ class Csr < ActiveRecord::Base
   end
 
   def sent_success(with_order_num=false)
-    ca_certificate_requests.select(:response).all.find{|cr|cr.success? && (with_order_num ? cr.order_number : true)}
+    ca_certificate_requests.all.find{|cr|cr.success? && (with_order_num ? cr.order_number : true)}
   end
 
   #TODO need to convert to dem - see http://support.citrix.com/article/CTX106631
@@ -415,17 +478,5 @@ class Csr < ActiveRecord::Base
 
   def days_left
     SiteCheck.days_left(self.non_wildcard_name, true)
-  end
-
-  def unique_value(ca="comodo")
-    if ca_certificate_requests.first and !ca_certificate_requests.first.unique_value.blank?
-      ca_certificate_requests.first.unique_value # comodo has returned a unique already
-    else
-      if read_attribute(:unique_value).blank?
-        write_attribute(:unique_value, SecureRandom.hex(5)) # generate our own
-        save unless new_record?
-      end
-      read_attribute(:unique_value)
-    end
   end
 end

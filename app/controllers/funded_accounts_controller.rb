@@ -22,7 +22,7 @@ class FundedAccountsController < ApplicationController
     @funded_account = current_user ? @ssl_account.funded_account : FundedAccount.new
     @funded_account.deduct_order = "true"
     if params[:id] == "certificate"
-      @certificate_order = @ssl_account.certificate_orders.current
+      @certificate_order = @ssl_account.cached_certificate_orders.current
       @funded_account.order_type = "certificate"
     elsif params[:id] == "order"
       certificates_from_cookie
@@ -44,7 +44,7 @@ class FundedAccountsController < ApplicationController
       redirect_to apply_funds_path(new_params.deep_symbolize_keys) and return
     end
     if @funded_account.order_type=='certificate'
-      @certificate_order = @ssl_account.certificate_orders.current
+      @certificate_order = @ssl_account.cached_certificate_orders.current
     elsif @funded_account.order_type=='order'
       setup_orders
     end
@@ -63,6 +63,7 @@ class FundedAccountsController < ApplicationController
     @funded_account.funding_source = FundedAccount::NEW_CREDIT_CARD if @funded_account.funding_source.blank?
     if @funded_account.valid?
       @account_total = account.funded_account(true)
+      @funded_original = @account_total.cents
       #if not deducting order, then it's a straight deposit since we don't deduct anything
       @order ||= (@funded_account.deduct_order?)? current_order :
         Order.new(:cents => 0, :deposit_mode => true)
@@ -171,6 +172,9 @@ class FundedAccountsController < ApplicationController
           @funded.destroy
           @account_total.cents = @funded_original # put original amount back on the funded account
         end
+        if @funded_account.valid? && !@funded_account.deduct_order?
+          @ssl_account.funded_account.update(cents: @funded_original)
+        end
         flash[:error] = @gateway_response.message if @gateway_response
         flash[:error] = 'Too many failed attempts, please wait 1 minute to try again!' if too_many_declines
       end
@@ -266,7 +270,7 @@ class FundedAccountsController < ApplicationController
     if params[:id]=='order'
       certificates_from_cookie
     else
-      @certificate_order = @ssl_account.certificate_orders.current
+      @certificate_order = @ssl_account.cached_certificate_orders.current
       check_for_current_certificate_order
     end
   end
@@ -281,7 +285,7 @@ class FundedAccountsController < ApplicationController
     @ssl_account.orders << @order
     OrderNotifier.certificate_order_prepaid(@ssl_account, @order).deliver
     @order.line_items.each do |cert|
-      @ssl_account.certificate_orders << cert.sellable
+      @ssl_account.cached_certificate_orders << cert.sellable
       cert.sellable.pay! true
     end
   end

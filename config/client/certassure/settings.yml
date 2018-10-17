@@ -25,7 +25,6 @@ closed_beta_mode: false
 track_visitors: false
 single_server_license_only: true
 show_csr_submit_on_buy_page: false
-enable_caa_test: true
 dynamic_contact_count: "on"
 send_api_calls: ""
 shadow_certificate_recipient: "shadow-cert@ssl.com" # for test SSL.com certificates parallel issuance
@@ -41,6 +40,7 @@ expiring_threshold: 90
 enable_caa: true
 captcha_threshold: 3
 require_signup_password: true
+folders: "hide"
 intermediate_certs_path: "<%=Rails.root%>/public/cert_bundles/"
 #header_phone_numbers: "toll free: 1-877-SSL-Secure (1-877-775-7328); intl: +1-SSL-Certificate (+1-775-237-8434)"
 header_phone_numbers: "+1-SSL-Certificate (+1-775-237-8434) or toll free 877-SSL-Secure"
@@ -128,6 +128,9 @@ sync_aid_li_and_cart: false
 browser_acceptance: "99.9%"
 notify_address: "support@ssl.com"
 disable_links_banner: false
+auto_approve_ssl_manager_register: true
+activate_monitoring: false
+activate_domains_manager: false
 
 from_email:
   orders: 'orders@ssl.com'

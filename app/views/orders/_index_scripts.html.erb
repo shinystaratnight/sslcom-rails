@@ -493,10 +493,10 @@ jQuery(function($) {
       id=$(this).attr("id").match(/\d+$/);
       $.line_item_total(id);
     });
-    $('#register_card_form').live('click', function(){
-      $(':radio[name=funding_source]').removeAttr('checked');
+    $('#register_card_form').on('click', function(){
+      $(':radio[name=funding_source]').prop('checked', false);
     });
-    $(':radio[name=funding_source]').live('click', function(){
+    $(':radio[name=funding_source]').on('click', function(){
       $('#register_card_form').fadeOut();
       $('img[id=toggle_billing_profile_form]').attr('src', "<%= asset_path('add_new_billing_profile.png') %>");
       profile_form_hidden = true;

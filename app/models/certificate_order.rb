@@ -2,8 +2,10 @@ class CertificateOrder < ActiveRecord::Base
   include V2MigrationProgressAddon
   #using_access_control
   acts_as_sellable :cents => :amount, :currency => false
-  belongs_to  :ssl_account
+  belongs_to  :ssl_account, touch: true
+  belongs_to  :folder
   has_many    :users, through: :ssl_account
+  belongs_to  :assignee, class_name: "User"
   belongs_to  :validation
   has_many    :validation_histories, through: :validation
   belongs_to  :site_seal
@@ -16,11 +18,16 @@ class CertificateOrder < ActiveRecord::Base
   has_many    :certificate_contents, :dependent => :destroy
   has_many    :certificate_names, through: :certificate_contents
   has_many    :registrants, through: :certificate_contents
+  has_many    :locked_registrants, through: :certificate_contents
   has_many    :certificate_contacts, through: :certificate_contents
   has_many    :domain_control_validations, through: :certificate_names
   has_many    :csrs, :through=>:certificate_contents
-  has_many    :signed_certificates, :through=>:csrs
-  has_many    :shadow_certificates, :through=>:csrs, class_name: "SignedCertificate"
+  has_many    :signed_certificates, :through=>:csrs do
+    def expired
+      where{expiration_date < Date.today}
+    end
+  end
+  has_many    :shadow_certificates, :through=>:csrs, class_name: "ShadowSignedCertificate"
   has_many    :ca_certificate_requests, :through=>:csrs
   has_many    :ca_api_requests, :through=>:csrs
   has_many    :sslcom_ca_requests, :through=>:csrs
@@ -41,6 +48,11 @@ class CertificateOrder < ActiveRecord::Base
   has_many    :tags, through: :taggings
   has_many    :notification_groups_subjects, as: :subjectable
   has_many    :notification_groups, through: :notification_groups_subjects
+  has_many    :certificate_order_tokens
+  has_many    :certificate_order_managed_csrs, dependent: :destroy
+  has_many    :managed_csrs, through: :certificate_order_managed_csrs
+  has_many    :certificate_order_domains, dependent: :destroy
+  has_many    :managed_domains, through: :certificate_order_domains, :source => :domain
 
   accepts_nested_attributes_for :certificate_contents, :allow_destroy => false
   attr_accessor :duration, :has_csr
@@ -68,8 +80,7 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   default_scope{ where{(workflow_state << ['canceled','refunded','charged_back']) & (is_expired != true)}.
-      joins(:certificate_contents).order(updated_at: :desc).
-      references(:all).readonly(false)}
+      joins(:certificate_contents).order(created_at: :desc).references(:all).readonly(false)}
 
   scope :not_test, ->{where{(is_test == nil) | (is_test==false)}}
 
@@ -92,6 +103,19 @@ class CertificateOrder < ActiveRecord::Base
     joins{certificate_contents.csr}.where{certificate_contents.csr.common_name =~ "%#{term}%"}
   }
 
+  scope :search_assigned, lambda { |term|
+    joins{ assignee }.where{ assignee.id == term }
+  }
+
+  scope :search_validated_not_assigned, lambda { |term|
+    joins{ certificate_contents }.
+        joins{ certificate_contents.locked_registrant }.
+        where{ (assignee_id == nil ) &
+        (certificate_contents.workflow_state == 'validated') &
+        (certificate_contents.locked_registrant.email == term)
+    }
+  }
+
   scope :search_with_csr, lambda {|term, options={}|
     term ||= ""
     term = term.strip.split(/\s(?=(?:[^']|'[^']*')*$)/)
@@ -99,7 +123,8 @@ class CertificateOrder < ActiveRecord::Base
                subject_alternative_names: nil, locality: nil, country:nil, signature: nil, fingerprint: nil, strength: nil,
                expires_at: nil, created_at: nil, login: nil, email: nil, account_number: nil, product: nil,
                decoded: nil, is_test: nil, order_by_csr: nil, physical_tokens: nil, issued_at: nil, notes: nil,
-               ref: nil, external_order_number: nil, status: nil, duration: nil, co_tags: nil, cc_tags: nil}
+               ref: nil, external_order_number: nil, status: nil, duration: nil, co_tags: nil, cc_tags: nil, 
+               folder_ids: nil}
     filters.each{|fn, fv|
       term.delete_if {|s|s =~ Regexp.new(fn.to_s+"\\:\\'?([^']*)\\'?"); filters[fn] ||= $1; $1}
     }
@@ -169,7 +194,7 @@ class CertificateOrder < ActiveRecord::Base
     end
     %w(ref).each do |field|
       query=filters[field.to_sym]
-      result = result.where(field.to_sym  >> query.split(',')) if query
+      result = result.where{ref >> query.split(',')} if query
     end
     %w(country strength).each do |field|
       query=filters[field.to_sym]
@@ -238,13 +263,19 @@ class CertificateOrder < ActiveRecord::Base
       if query
         cc_results = (@result_prior_co_tags || result)
           .joins(certificate_contents: [:tags]).where(tags: {name: query.split(',')})
-        
+
         result = if @result_prior_co_tags.nil?
           cc_results
         else
           # includes tags in BOTH certificate orders and certificate contents tags, not a union
           CertificateOrder.where(id: (result + cc_results).map(&:id).uniq)
         end
+      end
+    end
+    %w(folder_ids).each do |field|
+      query = filters[field.to_sym]
+      if query
+        result = result.where(folder_id: query.split(',')) if query
       end
     end
     result.uniq
@@ -309,8 +340,15 @@ class CertificateOrder < ActiveRecord::Base
 
   scope :free, ->{not_new.where(:amount => 0)}
 
-  scope :unused_credits, ->{where{(workflow_state=='paid') & (is_expired==false) &
-      (external_order_number == nil)}}
+  scope :unused_credits, ->{
+    unused = joins{}
+    where{(workflow_state=='paid') & (is_expired==false) & (id << unused.joins{certificate_contents.csr.signed_certificates.outer}.pluck(id).uniq)}
+  }
+
+  scope :used_credits, ->{
+    unused = where{(workflow_state=='paid') & (is_expired==false)}
+    where{id >> unused.joins{certificate_contents.csr.signed_certificates.outer}.pluck(id)}
+  }
 
   scope :unflagged_expired_credits, ->{unused_credits.
       where{created_at < Settings.cert_expiration_threshold_days.to_i.days.ago}}
@@ -344,6 +382,10 @@ class CertificateOrder < ActiveRecord::Base
   PREPAID_FULL = 'prepaid_full'
   PREPAID_EXPRESS = 'prepaid_express'
   VERIFICATION_STEP = 'Perform Validation'
+  CLIENT_SMIME_VALIDATE = 'client_smime_validate'
+  CLIENT_SMIME_VALIDATED = 'client_smime_validated'
+  CLIENT_SMIME_VALIDATED_SHORT = 'client_smime_validated_short'
+
   FULL_SIGNUP_PROCESS = {:label=>FULL, :pages=>%W(Submit\ CSR Payment
     Registrant Contacts #{VERIFICATION_STEP} Complete)}
   EXPRESS_SIGNUP_PROCESS = {:label=>EXPRESS,
@@ -358,7 +400,27 @@ class CertificateOrder < ActiveRecord::Base
     pages: FULL_SIGNUP_PROCESS[:pages]}
   REPROCES_SIGNUP_W_INVOICE = {label: PREPAID_EXPRESS,
     pages: FULL_SIGNUP_PROCESS[:pages] - %w(Payment)}
-    
+  CLIENT_SMIME_FULL = {
+    label: CLIENT_SMIME_VALIDATE,
+    pages: ['Registrant', 'Recipient', 'Upload Documents', 'Complete']
+  }
+  CLIENT_SMIME_IV_VALIDATE = {
+    label: CLIENT_SMIME_VALIDATE,
+    pages: ['Recipient', 'Upload Documents', 'Complete']
+  }
+  CLIENT_SMIME_IV_VALIDATED = {
+    label: CLIENT_SMIME_VALIDATE,
+    pages: ['Recipient', 'Complete']
+  }
+  CLIENT_SMIME_NO_DOCS = {
+    label: CLIENT_SMIME_VALIDATED,
+    pages: ['Registrant', 'Recipient', 'Complete']
+  }
+  CLIENT_SMIME_NO_IV_OV = {
+    label: CLIENT_SMIME_VALIDATED_SHORT,
+    pages: ['Recipient', 'Complete']
+  }
+  
   CSR_SUBMITTED = :csr_submitted
   INFO_PROVIDED = :info_provided
   REPROCESS_REQUESTED = :reprocess_requested
@@ -377,8 +439,13 @@ class CertificateOrder < ActiveRecord::Base
   RENEWAL_DATE_CUTOFF = 45.days.ago
   RENEWAL_DATE_RANGE = 45.days.from_now
   ID_AND_TIMESTAMP=["id", "created_at", "updated_at"]
-  SSL_MAX_DURATION = 730
-  CS_MAX_DURATION = 1187
+  COMODO_SSL_MAX_DURATION = 730
+  SSL_MAX_DURATION = 820
+  EV_SSL_MAX_DURATION = 730
+  CS_MAX_DURATION = 1095
+  CLIENT_MAX_DURATION = 1095
+  SMIME_MAX_DURATION = 1095
+  TS_MAX_DURATION = 4106
 
   # changed for the migration
   # unless MIGRATING_FROM_LEGACY
@@ -463,13 +530,13 @@ class CertificateOrder < ActiveRecord::Base
       event :refund, :transitions_to => :refunded
     end
   end
-  
+
   def get_audit_logs
     al = SystemAudit.where(target_id: id, target_type: 'CertificateOrder')
     al << SystemAudit.where(target_id: line_items.ids, target_type: 'LineItem')
     al.flatten.sort_by(&:created_at).reverse
   end
-  
+
 
   def domains_adjust_billing?
     certificate.is_ucc? && (certificate.is_premium_ssl? !=0) &&
@@ -486,7 +553,7 @@ class CertificateOrder < ActiveRecord::Base
       domain_amount - ( (used_days/total_duration) * domain_amount )
     end
   end
-  
+
   # Get pricing for each tier for a given duration,
   # used in calculating reprocessing amount for additional domains.
   def ucc_duration_amounts(years=1, reseller_tier=nil)
@@ -494,7 +561,7 @@ class CertificateOrder < ActiveRecord::Base
       durations = {}
       i = years-1
       cur_certificate = certificate
-      
+
       unless reseller_tier.blank?
         ssl_tier  = ssl_account.reseller_tier_label
         unless ssl_tier.blank?
@@ -504,18 +571,18 @@ class CertificateOrder < ActiveRecord::Base
           .find {|c| c.title == certificate.title}
         cur_certificate = certificate if cur_certificate.nil?
       end
-      
+
       cur_certificate.num_domain_tiers.times do |j|
         durations["tier_#{j+1}"] = (cur_certificate.items_by_domains(true)[i][j].price * ( (j==0) ? 3 : 1 )).cents
       end
       durations
     end
   end
-  
+
   def ucc_get_max_counts(certificate_content=nil)
     max_wildcard_count    = get_reprocess_max_wildcard(certificate_content).count
     max_nonwildcard_count = get_reprocess_max_nonwildcard(certificate_content).count
-    
+
     # check against counts of certificate's initial purchase
     if !wildcard_count.blank? && (wildcard_count > max_wildcard_count)
       max_wildcard_count = wildcard_count
@@ -523,15 +590,15 @@ class CertificateOrder < ActiveRecord::Base
     if !nonwildcard_count.blank? && (nonwildcard_count > max_nonwildcard_count)
       max_nonwildcard_count = nonwildcard_count
     end
-    
+
     {wildcard_count: max_wildcard_count, nonwildcard_count: max_nonwildcard_count}
   end
-    
+
   def ucc_prorated_amount(certificate_content, reseller_tier=nil)
     max = ucc_get_max_counts(certificate_content)
     max_wildcard_count    = max[:wildcard_count]
     max_nonwildcard_count = max[:nonwildcard_count]
-    
+
     # make sure NOT to charge for tier 1 domains (3 total)
     max_nonwildcard_count = (max_nonwildcard_count < 3) ? 3 : max_nonwildcard_count
     nonwildcard_cost      = ucc_prorated_domain(:nonwildcard, reseller_tier)
@@ -547,9 +614,9 @@ class CertificateOrder < ActiveRecord::Base
     addt_wildcard    = (addt_wildcard < 0) ? 0 : addt_wildcard
     (addt_nonwildcard * nonwildcard_cost) + (addt_wildcard * wildcard_cost)
   end
-  
-  # Retrieve certificate contents signed certificate (subject_alternative_names). 
-  # IF certificate content is passed, THEN consider ONLY certificate 
+
+  # Retrieve certificate contents signed certificate (subject_alternative_names).
+  # IF certificate content is passed, THEN consider ONLY certificate
   # contents prior to passed certificate content.
   def get_reprocess_cc_domains(cc_id=nil)
     cur_domains = []
@@ -573,7 +640,7 @@ class CertificateOrder < ActiveRecord::Base
     end
     cur_domains
   end
-  
+
   def get_reprocess_max_nonwildcard(cc_id=nil)
     max  = 0
     list = []
@@ -586,7 +653,7 @@ class CertificateOrder < ActiveRecord::Base
     end
     list
   end
-  
+
   def get_reprocess_max_wildcard(cc_id=nil)
     max  = 0
     list = []
@@ -609,30 +676,27 @@ class CertificateOrder < ActiveRecord::Base
       )
     end
   end
-      
+
   def certificate
-    sub_order_items[0].product_variant_item.certificate if sub_order_items[0] &&
-        sub_order_items[0].product_variant_item
+    if new_record?
+        sub_order_items[0].product_variant_item.certificate if sub_order_items[0] &&
+            sub_order_items[0].product_variant_item
+    else
+      cid=Rails.cache.fetch("#{cache_key}/certificate") do
+        sub_order_items[0].product_variant_item.certificate.id if sub_order_items[0] &&
+            sub_order_items[0].product_variant_item
+      end
+      cid ? Certificate.unscoped.find(cid) : nil
+    end
   end
 
   def signed_certificate
-    signed_certificates.sort{|a,b|a.created_at<=>b.created_at}.last
+    signed_certificates.order(:created_at).last
   end
 
   def comodo_ca_id
     (signed_certificate || certificate).comodo_ca_id
   end
-  # def signed_certificates(index=nil)
-  #   all_csrs = certificate_contents.map(&:csr).flatten.compact
-  #   unless all_csrs.blank?
-  #     case index
-  #       when nil
-  #         all_csrs.map(&:signed_certificates).flatten
-  #       else
-  #         all_csrs.map(&:signed_certificates).flatten[index]
-  #     end
-  #   end
-  # end
 
   # find the ratio remaining on the cert ie (today-effective_date/expiration_date-effective_date)
   def duration_remaining(options={duration: :order})
@@ -641,7 +705,7 @@ class CertificateOrder < ActiveRecord::Base
 
   def used_days(options={round: false})
     if signed_certificates && !signed_certificates.empty?
-      sum = (Time.now - signed_certificates.sort{|a,b|a.created_at<=>b.created_at}.first.effective_date)
+      sum = (Time.now - signed_certificates.sort{|a,b|a.created_at.to_i<=>b.created_at.to_i}.first.effective_date)
       (options[:round] ? sum.round : sum)/1.day
     else
       0
@@ -650,9 +714,11 @@ class CertificateOrder < ActiveRecord::Base
 
   def remaining_days(options={round: false, duration: :order})
     tot, used = total_days(options), used_days(options)
-    if tot && used
+    if tot && used && tot>used
       days = total_days(options)-used_days(options)
       (options[:round] ? days.round : days)
+    else
+      0
     end
   end
 
@@ -660,8 +726,8 @@ class CertificateOrder < ActiveRecord::Base
   def total_days(options={round: false, duration: :order})
     if options[:duration]== :actual
       if signed_certificates && !signed_certificates.empty?
-        sum = (signed_certificates.sort{|a,b|a.created_at<=>b.created_at}.last.expiration_date -
-            signed_certificates.sort{|a,b|a.created_at<=>b.created_at}.first.effective_date)
+        sum = (signed_certificates.sort{|a,b|a.created_at.to_i<=>b.created_at.to_i}.last.expiration_date -
+            signed_certificates.sort{|a,b|a.created_at.to_i<=>b.created_at.to_i}.first.effective_date)
         (options[:round] ? sum.round : sum)/1.day
       else
         0
@@ -673,25 +739,26 @@ class CertificateOrder < ActiveRecord::Base
 
   # unit can be :days or :years
   def certificate_duration(unit=:as_is)
-    years=if migrated_from_v2? && !preferred_v2_line_items.blank?
-      preferred_v2_line_items.split('|').detect{|item|
-        item =~/years?/i || item =~/days?/i}.scan(/\d+.+?(?:ear|ay)s?/).last
-    else
-      unless certificate.is_ucc?
-        sub_order_items.map(&:product_variant_item).detect{|item|item.is_duration?}.try(:description)
-      else
-        d=sub_order_items.map(&:product_variant_item).detect{|item|item.is_domain?}.try(:description)
-        unless d.blank?
-          d=~/(\d years?)/i
-          $1
-        end
-      end
-    end
-    if unit==:years
-      years =~ /\A(\d+)/
-      $1
-    elsif unit==:days
-      case years.gsub(/[^\d]+/,"").to_i
+    Rails.cache.fetch("#{cache_key}/certificate_duration/#{unit.to_s}", expires_in: 24.hours) do
+      years=if migrated_from_v2? && !preferred_v2_line_items.blank?
+              preferred_v2_line_items.split('|').detect{|item|
+                item =~/years?/i || item =~/days?/i}.scan(/\d+.+?(?:ear|ay)s?/).last
+            else
+              unless certificate.is_ucc?
+                sub_order_items.map(&:product_variant_item).detect{|item|item.is_duration?}.try(:description)
+              else
+                d=sub_order_items.map(&:product_variant_item).detect{|item|item.is_domain?}.try(:description)
+                unless d.blank?
+                  d=~/(\d years?)/i
+                  $1
+                end
+              end
+            end
+      if unit==:years
+        years =~ /\A(\d+)/
+        $1
+      elsif unit==:days
+        case years.gsub(/[^\d]+/,"").to_i
         when 1
           365
         when 2
@@ -702,9 +769,9 @@ class CertificateOrder < ActiveRecord::Base
           1461
         when 5
           1826
-      end
-    elsif [:comodo_api,:sslcom_api].include? unit
-      case years.gsub(/[^\d]+/,"").to_i
+        end
+      elsif [:comodo_api,:sslcom_api].include? unit
+        case years.gsub(/[^\d]+/,"").to_i
         when 1
           365
         when 2
@@ -714,10 +781,11 @@ class CertificateOrder < ActiveRecord::Base
         when 30 #trial
           30
         else #no ssl can go beyond 39 months. 36 months to make adding 1 or 2 years later easier
-          SSL_MAX_DURATION
+          unit==:comodo_api ? COMODO_SSL_MAX_DURATION : SSL_MAX_DURATION
+        end
+      else
+        years
       end
-    else
-      years
     end
   end
 
@@ -773,7 +841,9 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def migrated_from_v2?
-    order.try(:preferred_migrated_from_v2)
+    Rails.cache.fetch("#{cache_key}/migrated_from_v2") do
+      order.try(:preferred_migrated_from_v2)
+    end
   end
 
   def signup_process(cert=certificate)
@@ -799,10 +869,12 @@ class CertificateOrder < ActiveRecord::Base
   def skip_verification?
     self.certificate.skip_verification?
   end
-  
+
   def skip_contacts_step?
     return false if certificate_contents.count == 1
-    if Contact.optional_contacts?
+    if certificate && certificate.is_smime_or_client?
+      true
+    elsif Contact.optional_contacts?
       if signed_certificate.try('is_dv?'.to_sym) && Settings.exempt_dv_contacts
         true
       else
@@ -814,7 +886,7 @@ class CertificateOrder < ActiveRecord::Base
       (roles & req_roles).count == req_roles.count
     end
   end
-  
+
   def order_status
     if is_ev?
       "waiting for documents"
@@ -836,11 +908,85 @@ class CertificateOrder < ActiveRecord::Base
       PREPAID_FULL_SIGNUP_PROCESS
     end
   end
-  
+
+  def iv_validated?
+    if assignee
+      iv_exists = get_team_iv
+      iv_exists && iv_exists.validated?
+    else
+      false
+    end  
+  end
+
+  def ov_validated?
+    locked_registrant && locked_registrant.validated?
+  end
+    
+  def iv_ov_validated?
+    iv_validated? && ov_validated?
+  end
+
+  def smime_client_process
+    return CLIENT_SMIME_NO_DOCS if certificate.nil?
+    registrant_types = certificate.client_smime_validations
+    
+    if registrant_types == 'iv_ov'
+      iv_ov_validated? ? CLIENT_SMIME_NO_DOCS : CLIENT_SMIME_FULL
+    elsif registrant_types == 'iv'
+      iv_validated? ? CLIENT_SMIME_IV_VALIDATED : CLIENT_SMIME_IV_VALIDATE
+    else
+      CLIENT_SMIME_NO_IV_OV
+    end
+  end
+
+  def get_team_iv
+    if assignee
+      ssl_account.individual_validations.find_by(user_id: assignee.id)
+    end
+  end
+
+  def get_download_cert_email
+    if certificate.is_smime_or_client?
+      get_team_iv.email
+    else
+      certificate_content.locked_registrant.email
+    end
+  end
+
+  def get_download_cert_salutation
+    if certificate.is_smime_or_client?
+      [get_team_iv.first_name, get_team_iv.last_name].join(' ')
+    else
+      [locked_registrant.first_name, locked_registrant.last_name].join(' ')
+    end
+  end
+
+  def copy_iv_ov_validation_history(type='iv')
+    iv_exists = get_team_iv
+    if assignee && iv_exists && iv_exists.validation_histories.any?
+      new_vh = iv_exists.validation_histories - validation.validation_histories
+      validation.validation_histories << new_vh
+    end
+
+    if type == 'iv_ov' && locked_registrant &&
+      locked_registrant.validation_histories.any?
+      new_vh = locked_registrant.validation_histories - validation.validation_histories
+      validation.validation_histories << new_vh
+    end
+  end
+
+  def can_validate_client_smime?(current_user)
+    sysadmin = current_user.is_system_admins?
+    acct_admins = current_user.is_owner? || current_user.is_account_admin?
+    acct_admins_can = !certificate_content.validated? && acct_admins && ov_validated?
+
+    certificate.is_smime_or_client? && ( sysadmin || acct_admins_can )
+  end
+
   def reprocess_ucc_process
     ssl_account.invoice_required? ? REPROCES_SIGNUP_W_INVOICE : REPROCES_SIGNUP_W_PAYMENT
   end
-  
+
   def is_express_signup?
     !signup_process[:label].scan(EXPRESS).blank?
   end
@@ -850,12 +996,30 @@ class CertificateOrder < ActiveRecord::Base
       !signup_process[:label].scan(EXPRESS).blank?
   end
 
+  def cached_certificate_contents
+    if new_record?
+      certificate_contents
+    else
+      # CertificateContent.where(id: (Rails.cache.fetch("#{cache_key}/cached_certificate_contents") do
+        certificate_contents #.pluck(:id)
+      # end))
+    end
+  end
+
   def certificate_content
     certificate_contents.last
   end
 
+  def certificate_order_token
+    certificate_order_tokens.last
+  end
+
   def registrant
     certificate_content.registrant
+  end
+
+  def locked_registrant
+    certificate_content.locked_registrant
   end
 
   def csr
@@ -945,12 +1109,49 @@ class CertificateOrder < ActiveRecord::Base
     orders.last
   end
 
+  # DRY this up with ValidationsController#new
+  def domains_validated?
+    all_validated = true
+    public_key_sha1=certificate_content.csr.public_key_sha1
+    cnames = certificate_content.certificate_names.includes(:domain_control_validations)
+    team_cnames = ssl_account.all_certificate_names.includes(:domain_control_validations)
+
+    # Team level validation check
+    cnames.each do |cn|
+      team_level_validated = false
+
+      team_cnames.each do |team_cn|
+        if team_cn.name == cn.name
+          team_dcv = team_cn.domain_control_validations.last
+
+          if team_dcv && team_dcv.validated?(public_key_sha1)
+            team_level_validated = true
+            break
+          end
+        end
+      end
+
+      unless team_level_validated
+        all_validated = false
+        break
+      end
+    end
+    all_validated
+  end
+
+  def caa_validated?
+    true
+  end
+
   def apply_for_certificate(options={})
-    if [Ca::CERTLOCK_CA,Ca::SSLCOM_CA,Ca::MANAGEMENT_CA].include? options[:ca]
-      SslcomCaApi.apply_for_certificate(self, options) if options[:current_user].is_super_user?
+    if [Ca::CERTLOCK_CA,Ca::SSLCOM_CA,Ca::MANAGEMENT_CA].include?(options[:ca]) or !certificate_content.ca.blank? or
+        !options[:mapping].blank?
+      if domains_validated? and caa_validated?
+        SslcomCaApi.apply_for_certificate(self, options)
+      end
     else
       ComodoApi.apply_for_certificate(self, options) if ca_name=="comodo"
-    end
+    end if signed_certificate.blank? or remaining_days>0
   end
 
   def retrieve_ca_cert(email_customer=false)
@@ -1015,7 +1216,7 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def exceeds_br_duration?
-    certificate_duration(:days).to_i > (certificate.is_code_signing? ? CS_MAX_DURATION : SSL_MAX_DURATION)
+    certificate_duration(:days).to_i > certificate.max_duration
   end
 
   def to_api_string(options={action: "update"})
@@ -1124,14 +1325,13 @@ class CertificateOrder < ActiveRecord::Base
          country_name: r.country}
     api_domains = {}
     if !cc.domains.blank?
-      (cc.domains.flatten+[common_name]).each { |d|
-        cn=cc.certificate_names.find_by_name(d)
+      cc.certificate_names.find_by_domains(cc.domains.flatten+[common_name]).each {|cn|
         if cn
-          api_domains.merge!(d.to_sym => {dcv:
-                      cn.domain_control_validations.last_method.try(:method_for_api) ||
-                      ApiCertificateCreate_v1_4::DEFAULT_DCV_METHOD })
+          api_domains.merge!(cn.name.to_sym => {dcv:
+            cn.domain_control_validations.last_method.try(:method_for_api) ||
+                ApiCertificateCreate_v1_4::DEFAULT_DCV_METHOD })
         end
-        }
+      }
     elsif cc.csr
       api_domains.merge!(cc.csr.common_name.to_sym => {dcv: "#{last_dcv_sent ? last_dcv_sent.method_for_api : 'http_csr_hash'}"})
     end
@@ -1190,6 +1390,10 @@ class CertificateOrder < ActiveRecord::Base
 
   def is_unused_credit?
     certificate_content.try("new?") && workflow_state=='paid'
+  end
+
+  def is_unused?
+    certificate_content.try("new?") && (workflow_state=='paid' || workflow_state=='refunded')
   end
 
   def is_prepaid?
@@ -1580,7 +1784,6 @@ class CertificateOrder < ActiveRecord::Base
             'primaryDomainName'=>csr.common_name.downcase,
             'maxSubjectCNs'=>1
           )
-          params.merge!('days' => "#{SSL_MAX_DURATION}") if params['days'].to_i > SSL_MAX_DURATION #Comodo doesn't support more than 3 years
         end
       end
     end
@@ -1859,7 +2062,7 @@ class CertificateOrder < ActiveRecord::Base
   # notify can be "none", "success", or "all"
   def purchase_renewal(notify)
     bp=order.billing_profile
-    response=[bp, (ssl_account.orders.map(&:billing_profile)-[bp]).shift].compact.each do |bp|
+    response=[bp, (ssl_account.cached_orders.map(&:billing_profile)-[bp]).shift].compact.each do |bp|
       p "purchase using billing_profile_id==#{bp.id}"
       options={profile: bp, cvv: false}
       new_cert = self.dup
@@ -1913,7 +2116,7 @@ class CertificateOrder < ActiveRecord::Base
   #end
 
   def clone_for_renew(certificate_orders, order)
-    certificate_orders.each do |cert|
+    cached_certificate_orders.each do |cert|
       cert.quantity.times do |i|
         #could use cert.dup after >=3.1, but we are currently on 3.0.10 so we'll do this manually
         new_cert = cert.dup
@@ -1999,7 +2202,7 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   # cron job that flags unused certificate_order credits as expired after a period of time (1 year)
-  def self.expire_credits(options)
+  def self.expire_credits(options={})
     Website.sandbox_db.use_database if options[:db]=="sandbox"
     CertificateOrder.unflagged_expired_credits.update_all(is_expired: true)
     SystemAudit.create(owner: nil, target: nil,

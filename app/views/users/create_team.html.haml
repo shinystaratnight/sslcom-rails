@@ -15,7 +15,29 @@
         =text_field_tag :ssl_slug, nil, {maxlength: 20, size: 20, id: 'ssl_account_ssl_slug'}
       .clearfix.form_input
         #slug_validator{data: {validate_slug: validate_ssl_slug_ssl_account_path}}
+      %br/
+      %br/
+      - users_collection = current_user.get_auto_add_users
+      - if users_collection.any?
+        .clearfix.form_input
+          %label{for: :auto_add_user_ids}
+            Users
+            %span.label_desc optional
+          #add_user_ids_container
+            = select_tag :auto_add_user_ids,
+              options_from_collection_for_select(users_collection, :id, :email),
+              prompt: 'Select Users',
+              multiple: true,
+              size: 100,
+              required: false
     #button_container
       =submit_tag 'Create Team', class: 'button_blue', id: 'ssl_account_create_team'
 
-
+-content_for :js do
+  :javascript
+    jQuery(function($) {
+      $("#auto_add_user_ids").select2();
+      $(document).ready(function() {
+        $("#auto_add_user_ids").select2();
+      });
+    });

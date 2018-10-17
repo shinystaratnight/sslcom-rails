@@ -5,33 +5,41 @@
 -slt_subjects_list = @slt_subjects_list || []
 -cos_list = @cos_list || []
 -slt_cos_list = @slt_cos_list || []
+-slt_schedule_simple = @slt_schedule_simple || []
+-slt_schedule_weekdays = @slt_schedule_weekdays || []
+-slt_schedule_months = @slt_schedule_months || []
+-slt_schedule_days = @slt_schedule_days || []
+-slt_schedule_hours = @slt_schedule_hours || []
+-slt_schedule_minutes = @slt_schedule_minutes || []
 
 = render :partial => 'index_scripts'
 
 .note_group_container
   %h3
     \#{@title}
-  =form_tag register_notification_group_notification_groups_path(params[:ssl_slug], @notification_group), :method => :post do
-    -#=hidden_field_tag 'new_group', @notification_groups ? 'true' : 'false'
+  =form_tag register_notification_group_notification_groups_path(params[:ssl_slug], @notification_group), :class => 'ng_form', :method => :post do
+    =hidden_field_tag "notification_group_id", @notification_group ? @notification_group.id : ''
     #stylized.default_form
       .subheading Friendly Name
       .group_block.clearfix
         =text_field_tag "friendly_name", @notification_group ? @notification_group.friendly_name : ''
-      .subheading Contacts
-      .group_block.clearfix
-        #contacts-container
-          =select_tag :contacts_list, options_for_select(contacts_list, selected: slt_contacts_list),
-            multiple: true, data: {placeholder: "click here to add/remove/edit emails."}
-      .subheading Domains
+        .alert-warning.hidden
+          * This Friendly Name already exist
+      .subheading Monitor These Domains
       .group_block.clearfix
         #subjects-container
           =select_tag :subjects_list, options_for_select(subjects_list, selected: slt_subjects_list),
             multiple: true, data: {placeholder: "click here to add/remove/edit domains."}
-      .subheading Certificate Orders
+      .subheading Monitor These Certificates
       .group_block.clearfix
         #cos-container
           =select_tag :cos_list, options_for_select(cos_list, selected: slt_cos_list),
-            multiple: true, data: {placeholder: "click here to add/remove/edit certificate orders."}
+            multiple: true, data: {placeholder: "click here to list available certificate orders to monitor."}
+      .subheading Notify These Contacts
+      .group_block.clearfix
+        #contacts-container
+          =select_tag :contacts_list, options_for_select(contacts_list, selected: slt_contacts_list),
+            multiple: true, data: {placeholder: "click here to add/remove/edit email addresses or contacts."}
       .subheading Expiration Reminder
       -5.times do |i|
         -init_days = ['60', '30', '15', '1', '-15']
@@ -44,5 +52,129 @@
             =text_field_tag "notification_group_triggers[]", ngt , :size=>2, :max_size=>2, :class=>'reminder_days'
           .field_desc
             %em days from expiration
+      .subheading Scan
+      .group_block.clearfix
+        .block_label
+          Port :
+        .block_body
+          =number_field_tag "scan_port", @notification_group ? @notification_group.scan_port : '443', :class=>'port_number'
+      .group_block.clearfix
+        .block_label
+          =check_box_tag :notify_all, true, @notification_group ? @notification_group.notify_all : false
+        .block_body
+          %span Only notify me of expiring ssl/tls certificates ?
+      .group_block.clearfix
+        .block_label
+          =check_box_tag :status, true, @notification_group ? @notification_group.status : false
+        .block_body
+          %span Disabled ?
+      .subheading Schedule
+      .group_block
+        .schedule_type_block.clearfix
+          .block_label
+            Type :
+          .block_body
+            .block_item.clearfix
+              .block_item_type
+                %span
+                  =radio_button_tag :schedule_type, true, true
+                  Simple
+              .block_item_type
+                %span
+                  =radio_button_tag :schedule_type, false, false
+                  Custom
+            .block_item_simple
+              =select_tag :schedule_simple_type, options_for_select(@schedule_simple_type, selected: slt_schedule_simple)
+        .schedule_custom_block
+          .schedule_custom_item_block.clearfix
+            .block_label
+              WeekDays :
+            .block_body
+              .block_item.clearfix
+                .block_item_type
+                  %span
+                    =radio_button_tag :weekday_type, true, true
+                    All
+                .block_item_type
+                  %span
+                    =radio_button_tag :weekday_type, false, false
+                    Selected
+              .block_item_weekday_custom
+                .schedule_container
+                  =select_tag :weekday_custom_list, options_for_select(@schedule_weekdays, selected: slt_schedule_weekdays),
+                    multiple: true, data: {placeholder: "click here to list available weekdays to scan."}
+          .schedule_custom_item_block.clearfix
+            .block_label
+              Months :
+            .block_body
+              .block_item.clearfix
+                .block_item_type
+                  %span
+                    =radio_button_tag :month_type, true, true
+                    All
+                .block_item_type
+                  %span
+                    =radio_button_tag :month_type, false, false
+                    Selected
+              .block_item_month_custom
+                .schedule_container
+                  =select_tag :month_custom_list, options_for_select(@schedule_months, selected: slt_schedule_months),
+                    multiple: true, data: {placeholder: "click here to list available months to scan."}
+          .schedule_custom_item_block.clearfix
+            .block_label
+              Days :
+            .block_body
+              .block_item.clearfix
+                .block_item_type
+                  %span
+                    =radio_button_tag :day_type, true, true
+                    All
+                .block_item_type
+                  %span
+                    =radio_button_tag :day_type, false, false
+                    Selected
+              .block_item_day_custom
+                .schedule_container
+                  =select_tag :day_custom_list, options_for_select(@schedule_days, selected: slt_schedule_days),
+                    multiple: true, data: {placeholder: "click here to list available days to scan."}
+          .schedule_custom_item_block.clearfix
+            .block_label
+              Hours :
+            .block_body
+              .block_item.clearfix
+                .block_item_type
+                  %span
+                    =radio_button_tag :hour_type, true, true
+                    All
+                .block_item_type
+                  %span
+                    =radio_button_tag :hour_type, false, false
+                    Selected
+              .block_item_hour_custom
+                .schedule_container
+                  =select_tag :hour_custom_list, options_for_select(@schedule_hours, selected: slt_schedule_hours),
+                    multiple: true, data: {placeholder: "click here to list available hours to scan."}
+          .schedule_custom_item_block.clearfix
+            .block_label
+              Minutes :
+            .block_body
+              .block_item.clearfix
+                .block_item_type
+                  %span
+                    =radio_button_tag :minute_type, true, true
+                    All
+                .block_item_type
+                  %span
+                    =radio_button_tag :minute_type, false, false
+                    Selected
+              .block_item_minute_custom
+                .schedule_container
+                  =select_tag :minute_custom_list, options_for_select(@schedule_minutes, selected: slt_schedule_minutes),
+                    multiple: true, data: {placeholder: "click here to list available minutes to scan."}
     #button_container
-      #next_submit=image_submit_tag "bl_submit_button.gif", class: 'edit_setting_btn'
+      -##scan_now=image_submit_tag "bl_submit_button.gif", class: 'scan_notification_group'
+      -##prev_next_submit=image_submit_tag "bl_submit_button.gif", class: 'save_notification_group'
+      #notification_group_auto_adjust.clearfix
+        -if @notification_group
+          =button_tag "Scan now", type: 'button', class: 'button_blue button_index scan_notification_group'
+        =button_tag "Save", class: 'button_blue button_index save_notification_group'

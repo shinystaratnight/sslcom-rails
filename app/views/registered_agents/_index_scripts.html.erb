@@ -1,0 +1,156 @@
+<script type="text/javascript">
+  jQuery.noConflict();
+  jQuery(function($) {
+    $(document).ready(function () {
+      $('#ra_number_rows').change(function() {
+        $('#ra_per_page').val($(this).val());
+        $('#search_registered_agent_form').submit();
+      });
+
+      $('#mc_number_rows').change(function() {
+        $('#mc_per_page').val($(this).val());
+        $('#search_managed_certificate_form').submit();
+      });
+
+      $('.chk-remove').click(function() {
+        if ($(this).prop('checked')) {
+          $('#btn_remove_agents').attr('disabled', false);
+        } else {
+          var chk_remove_list = $('.chk-remove');
+          var exist_chk = false;
+
+          $.each(chk_remove_list, function(idx, chk_remove) {
+            if ($(chk_remove).prop('checked')) {
+              exist_chk = true;
+              return false;
+            }
+          });
+
+          exist_chk ? $('#btn_remove_agents').attr('disabled', false) : $('#btn_remove_agents').attr('disabled', true);
+        }
+      });
+
+      $('#btn_remove_agents').click(function(e) {
+        e.preventDefault();
+
+        var chk_remove_list = $('.chk-remove');
+        var confirmMsg = 'Are you sure you want to delete the following SSL Manager(s)?';
+        var chk_first_agent = true;
+
+        $.each(chk_remove_list, function(idx, chk_remove) {
+          if ($(chk_remove).prop('checked')) {
+            if (chk_first_agent) {
+              chk_first_agent = false;
+              confirmMsg = confirmMsg.concat('\r\n      ' + $(chk_remove).attr('data-agent-name'));
+            } else {
+              confirmMsg = confirmMsg.concat('\n      ' + $(chk_remove).attr('data-agent-name'));
+            }
+          }
+        });
+
+        if (confirm(confirmMsg)) {
+          var remove_ssl_managers_url = '<%=remove_agents_registered_agents_path%>';
+          $('#registered_agent_list').attr('action', remove_ssl_managers_url);
+          $('#registered_agent_list').submit();
+        }
+      });
+
+      $('.chk-approve').click(function() {
+        if ($(this).prop('checked')) {
+          $('#btn_approve_agents').attr('disabled', false);
+        } else {
+          var chk_approve_list = $('.chk-approve');
+          var exist_chk = false;
+
+          $.each(chk_approve_list, function(idx, chk_approve) {
+            if ($(chk_approve).prop('checked')) {
+              exist_chk = true;
+              return false;
+            }
+          });
+
+          exist_chk ? $('#btn_approve_agents').attr('disabled', false) : $('#btn_approve_agents').attr('disabled', true);
+        }
+      });
+
+      $('#btn_approve_agents').click(function(e) {
+        e.preventDefault();
+
+        var chk_approve_list = $('.chk-approve');
+        var confirmMsg = 'Are you sure you want to approve the following SSL Manager(s)?';
+        var chk_first_agent = true;
+
+        $.each(chk_approve_list, function(idx, chk_approve) {
+          if ($(chk_approve).prop('checked')) {
+            if (chk_first_agent) {
+              chk_first_agent = false;
+              confirmMsg = confirmMsg.concat('\r\n      ' + $(chk_approve).attr('data-agent-name'));
+            } else {
+              confirmMsg = confirmMsg.concat('\n      ' + $(chk_approve).attr('data-agent-name'));
+            }
+          }
+        });
+
+        if (confirm(confirmMsg)) {
+          var approve_ssl_managers_url = '<%=approve_ssl_managers_registered_agents_path%>';
+          $('#registered_agent_list').attr('action', approve_ssl_managers_url);
+          $('#registered_agent_list').submit();
+        }
+      });
+
+      $('.chk-mc-remove').click(function() {
+        if ($(this).prop('checked')) {
+          $('#btn_remove_managed_certs').attr('disabled', false);
+        } else {
+          var chk_remove_list = $('.chk-mc-remove');
+          var exist_chk = false;
+
+          $.each(chk_remove_list, function(idx, chk_remove) {
+            if ($(chk_remove).prop('checked')) {
+              exist_chk = true;
+              return false;
+            }
+          });
+
+          exist_chk ? $('#btn_remove_managed_certs').attr('disabled', false) : $('#btn_remove_managed_certs').attr('disabled', true);
+        }
+      });
+
+      $('#btn_remove_managed_certs').click(function(e) {
+        e.preventDefault();
+
+        var chk_remove_list = $('.chk-mc-remove');
+        var confirmMsg = 'Are you sure you want to delete the following Managed Certificate(s)?';
+        var chk_first_mc = true;
+
+        $.each(chk_remove_list, function(idx, chk_remove) {
+          if ($(chk_remove).prop('checked')) {
+            if (chk_first_mc) {
+              chk_first_mc = false
+              confirmMsg = confirmMsg.concat('\r\n      ' + $(chk_remove).attr('data-cert-name'));
+            } else {
+              confirmMsg = confirmMsg.concat('\n      ' + $(chk_remove).attr('data-cert-name'));
+            }
+          }
+        });
+
+        if (confirm(confirmMsg)) {
+          this.form.submit();
+        }
+      });
+
+      $('.dropdown').click(function() {
+        var currentElmt = $(this);
+
+        if (currentElmt.parents().filter('tr').next().is(":visible")) {
+          currentElmt.parents().filter('tr').next().hide();
+          currentElmt.parents().filter('tr').find('.dropdown img').attr('src',"<%= asset_path('expand.png') %>");
+        } else {
+          currentElmt.parents().filter('tr').next().show();
+          currentElmt.parents().filter('tr').find('.dropdown img').attr('src',"<%= asset_path('contract.png') %>");
+        }
+      });
+
+    });
+  });
+</script>

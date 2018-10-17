@@ -12,7 +12,15 @@ class ActivationsController < ApplicationController
     @user = User.find(params[:id])
     raise Exception if @user.active?
     if @user.activate!(params)
+      # Check Code Signing Certificate Order for assign as assignee.
+      CertificateOrder.unscoped.search_validated_not_assigned(@user.email).each do |cert_order|
+        cert_order.update_attribute(:assignee, @user)
+      end
+
       @user.deliver_activation_confirmation!
+      if params[:tos] # Subscriber Agreement checked
+        @user.ssl_account.update_column(:epki_agreement, DateTime.now)
+      end
       flash[:notice] = "Your account has been activated."
       redirect_to account_path((@user.ssl_account ? @user.ssl_account.to_slug : {}))
     else

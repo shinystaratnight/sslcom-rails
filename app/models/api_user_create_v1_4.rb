@@ -20,6 +20,12 @@ class ApiUserCreate_v1_4 < ApiUserRequest
       @user.create_ssl_account([Role.get_owner_id])
       @user.signup!({user: params})
       @user.activate!({user: params})
+
+      # Check Code Signing Certificate Order for assign as assignee.
+      CertificateOrder.unscoped.search_validated_not_assigned(@user.email).each do |cert_order|
+        cert_order.update_attribute(:assignee, @user)
+      end
+
       @user.deliver_activation_confirmation!
       @user_session = UserSession.create(@user)
       @current_user_session = @user_session

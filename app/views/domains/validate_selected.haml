@@ -1,0 +1,57 @@
+-content_for :title, "Validate all"
+=render :partial => 'dcv_all_scripts'
+%h2 Domain Validation
+%h3
+  Please select the appropriate address and then click the 'Validate' button.
+  Only after you click 'Validate' you will get actual validation url and validate code. You can also
+  =link_to "invite", new_managed_user_path({ssl_slug: @ssl_slug})
+  another user to complete the validation step.
+  =link_to "How do I use this page?", Settings.dv_explanation_link, target: "_blank"
+=form_tag('', method: :post, class: :domain_validate_request) do
+  -opt = [["Remove", "remove"]]
+  %table#domains_validation
+    %thead
+      %th
+        =check_box_tag 'select_all', nil, false, {id: 'select_all'}
+        =select_tag('group_remove', options_for_select(opt), prompt: '--- None ---')
+      %th domain
+      %th email addresses
+      %th
+        caa
+        %a{:href => "https://www.ssl.com/how-to/configure-caa-records-to-authorize-ssl-com/", :target => "_blank"}
+          %span.badge ?
+      %th previous attempt
+      %th attempted on
+      %th status
+    %tbody.domain_list
+      -@all_domains.each_with_index do |d, index|
+        %tr.certificate_name
+          %td
+            =hidden_field_tag "d_name_id[]", d.id
+            =check_box_tag 'checkbox_domain', nil, false, :class => 'check_box', :id => d.name
+            -if @all_domains.size > 1
+              =button_tag "Remove", :class => "btn_remove_domain", :type => "button"
+          %td.center=d.name
+          %td
+            %select(name="dcv_address[]")
+              %option select email address
+              -@address_choices[index].each do |address|
+                %option(value="#{address}" )=address
+          %td.caa_check
+            -if d.caa_passed
+              %div.passed passed
+            -else
+              %div.failed failed
+          %td.center n/a
+          %td.center validation not performed yet
+          %td.center waiting
+        %tr
+          %td
+          %td
+          %td(colspan="5" )
+            Instructions:
+            %span(style="background: yellow" class="dcv_instruction" )Please select email address
+  #upload_validations(style='width: 100%; text-align: center')
+    =submit_tag "Validate", :id=>"validate_domains", :disable_with=>"Submitting..."
+    .clearfix
+      =image_tag('waiting_bar_medium.gif', :id=>'waiting_bar', :style=>'display: none; vertical-align: middle;')

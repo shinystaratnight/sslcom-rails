@@ -3,7 +3,9 @@ class Website < ActiveRecord::Base
   belongs_to :db
 
   def self.current_site(domain)
-    self.where{(host == domain) | (api_host == domain)}.last
+    cs=Rails.cache.fetch("current_site/#{domain}",
+                      expires_in: 24.hours) {self.where{(host == domain) | (api_host == domain)}.last}
+    Website.find cs.id if cs
   end
 
   def use_database
@@ -18,22 +20,22 @@ class Website < ActiveRecord::Base
 
   # production api
   def api_domain
-    api_host
+    Rails.cache.fetch("api_domain/#{cache_key}") {api_host}
   end
 
   # production test api
   def test_api_domain
-    api_host
+    Rails.cache.fetch("test_api_domain/#{cache_key}") {api_host}
   end
 
   # development api
   def dev_api_domain
-    api_host
+    Rails.cache.fetch("dev_api_domain/#{cache_key}") {api_host}
   end
 
   #development text api
   def dev_test_api_domain
-    api_host
+    Rails.cache.fetch("dev_test_api_domain/#{cache_key}") {api_host}
   end
 
   private

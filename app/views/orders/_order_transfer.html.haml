@@ -1,8 +1,8 @@
-- other_orders = @order.is_deposit? ? [] : @order.certificate_orders.uniq.last.orders
+- other_orders = @order.new_record? ? [] : (@order.is_deposit? || @order.cached_certificate_orders.empty? ? [] : @order.cached_certificate_orders.uniq.last.orders)
 - sysadmins    = current_user.is_system_admins?
 - user_teams   = current_user.ssl_accounts
 
-- if sysadmins || (user_teams.count > 1)
+- if @order.persisted? && (sysadmins || (user_teams.count > 1))
   = link_to "<span>&#10144;</span> transfer to team".html_safe, '#', id: 'btn-transfer-order'
   #dialog-form
     %p Please select team to transfer order:
@@ -36,7 +36,7 @@
       position: { my: 'top center', at: 'top center', of: window },
       title: 'Transfer To Team',
       autoOpen: false,
-      height: 250,
+      height: 280,
       width: 300,
       modal: true,
       dialogClass: 'dl-transfer-team',

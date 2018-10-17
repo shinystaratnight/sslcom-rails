@@ -12,23 +12,32 @@ authorization do
   role :sysadmin do
     includes :user
     includes :owner
+    has_permission_on :certificates, to: [:admin_index, :new, :create]
     has_permission_on :certificates, to: [
-      :admin_index,
       :edit,
       :update,
       :show,
-      :new,
-      :manage_product_variants
-    ]
+      :manage_product_variants,
+      :destroy
+    ] do
+      if_attribute role_can_manage: is_in {user.roles.ids}
+    end
     has_permission_on :authorization_rules, :to => :read
     has_permission_on :site_seals, :validation_rules, :certificate_orders,
       :to => :sysadmin_manage, except: :delete
-    has_permission_on :affiliates, :certificate_orders, :cdns, :csrs, :orders, :signed_certificates, :surls, :physical_tokens,
+    has_permission_on :affiliates, :certificate_orders, :domains, :cdns, :csrs, :orders, :signed_certificates, :surls, :physical_tokens,
       :to => :manage
     has_permission_on :managed_users, :ssl_accounts, :validations, :validation_histories,
       :to => :sysadmin_manage
     has_permission_on :resellers,    to: [:create, :read, :update]
     has_permission_on :orders,       to: [:refund_merchant, :update_invoice, :revoke]
+    #
+    # Contacts
+    #
+    has_permission_on :contacts, to: :sysadmin_manage
+    #
+    # SslAccounts
+    #
     has_permission_on :ssl_accounts, to: [
       :create,
       :read,
@@ -57,6 +66,21 @@ authorization do
       :manage_items,
       :transfer_items
     ]
+    #
+    # Folders
+    #
+    has_permission_on :folders, to: [
+      :add_certificate_order,
+      :add_certificate_orders,
+      :add_to_folder,
+      :children,
+      :create,
+      :destroy,
+      :index,
+      :reset_to_system,
+      :update,
+      :recipient
+    ]
   end
 
   # ============================================================================
@@ -83,7 +107,7 @@ authorization do
       :edit, :read, :remove_from_account, :update_roles
     ], join_by: :and do
       if_attribute id: is_not {user.id}
-      if_attribute id: is_in  {user.ssl_account.users.map(&:id).uniq}
+      if_attribute id: is_in  {user.ssl_account.cached_users.map(&:id).uniq}
       if_attribute :ssl_accounts => contains {user.ssl_account}
     end
   end
@@ -95,15 +119,38 @@ authorization do
     includes :base
     
     #
-    # Contacts
+    # Contacts: CertificateContact
     #
     has_permission_on :contacts, to: [
       :edit,
       :update,
-      :show,
-      :destroy
-    ] do
-      if_attribute :contactable_id => is {user.ssl_account.id}
+      :show
+    ], join_by: :and do
+      if_attribute contactable: is {user.ssl_account}
+      if_attribute type: is {'CertificateContact'}
+    end
+    has_permission_on :contacts, to: :destroy, join_by: :and do
+      if_attribute contactable: is {user.ssl_account}
+      if_attribute type: is {'CertificateContact'}
+      if_attribute saved_default: is {false}
+    end
+    #
+    # Contacts: Registrant
+    #
+    has_permission_on :contacts, to: [
+      :show
+    ], join_by: :and do
+      if_attribute contactable: is {user.ssl_account}
+      if_attribute type: is {'Registrant'}
+    end
+    has_permission_on :contacts, to: [
+      :destroy,
+      :edit,
+      :update
+    ], join_by: :and do
+      if_attribute contactable: is {user.ssl_account}
+      if_attribute type: is {'Registrant'}
+      if_attribute 'validated?' => is {false}
     end
     #
     # SslAccounts
@@ -133,7 +180,7 @@ authorization do
       :edit, :read, :remove_from_account, :update_roles
     ], join_by: :and do
       if_attribute id: is_not {user.id}
-      if_attribute id: is_in  {user.ssl_account.users.map(&:id).uniq}
+      if_attribute id: is_in  {user.ssl_account.cached_users.map(&:id).uniq}
       if_attribute total_teams_owned: does_not_contain {user.ssl_account}
     end
     #
@@ -141,8 +188,22 @@ authorization do
     #
     has_permission_on :users, :to => [:enable_disable, :enable_disable_duo, :delete], join_by: :and do
       if_attribute id: is_not {user.id}
-      if_attribute id: is_in  {user.ssl_account.users.map(&:id).uniq}
+      if_attribute id: is_in  {user.ssl_account.cached_users.map(&:id).uniq}
       if_attribute total_teams_owned: does_not_contain {user.ssl_account}
+    end
+    #
+    # Folders
+    #
+    has_permission_on :folders, to: [:children, :index, :create]
+    has_permission_on :folders, to: [
+      :add_to_folder,
+      :add_certificate_order,
+      :add_certificate_orders,
+      :destroy,
+      :reset_to_system,
+      :update
+    ] do
+      if_attribute ssl_account_id: is {user.ssl_account.id}
     end
   end
 
@@ -160,7 +221,7 @@ authorization do
     ], join_by: :and do
       # cannot on users w/roles account_admin|owner|sysadmin|reseller OR self
       if_attribute id: is_not {user.id}
-      if_attribute id: is_in  {user.ssl_account.users.map(&:id).uniq}
+      if_attribute id: is_in  {user.ssl_account.cached_users.map(&:id).uniq}
       if_attribute total_teams_cannot_manage_users: contains {user.ssl_account}
     end
     #
@@ -169,7 +230,7 @@ authorization do
     has_permission_on :users, :to => [:create, :read]
     has_permission_on :users, :to => [:enable_disable, :enable_disable_duo, :delete], join_by: :and do
       if_attribute id: is_not {user.id}
-      if_attribute id: is_in  {user.ssl_account.users.map(&:id).uniq}
+      if_attribute id: is_in  {user.ssl_account.cached_users.map(&:id).uniq}
       if_attribute total_teams_cannot_manage_users: contains {user.ssl_account}
     end
     #
@@ -180,17 +241,6 @@ authorization do
     # SslAccounts
     #
     has_permission_on :ssl_accounts, :to => [:create, :validate_ssl_slug]
-    #
-    # Contacts
-    #
-    has_permission_on :contacts, to: [
-      :edit,
-      :update,
-      :show,
-      :destroy
-    ] do
-      if_attribute :contactable_id => is {user.ssl_account.id}
-    end
   end
 
   # ============================================================================
@@ -260,6 +310,46 @@ authorization do
   end
 
   # ============================================================================
+  # INDIVIDUAL_CERTIFICATE Role
+  # ============================================================================
+  role :individual_certificate do
+    includes :user
+    includes :validations
+
+    #
+    # CertificateOrders
+    #
+    has_permission_on :certificate_orders, to: [
+        :edit,
+        :delete,
+        :read,
+        :show,
+        :update
+    ] do
+      if_attribute ssl_account: is {user.ssl_account}
+    end
+
+    has_permission_on :contacts, :to => [:read, :update, :delete] do
+      if_attribute :contactable => is_in {user.ssl_account.certificate_contacts}
+    end
+
+    has_permission_on :signed_certificates, :to => [:show] do
+      if_attribute :csr => {:certificate_content => {:certificate_order => {
+          :ssl_account => is {user.ssl_account}}}
+      }
+    end
+
+    has_permission_on :physical_tokens, :to => [:read] do
+      if_attribute certificate_order_id: is_in {user.ssl_account.cached_certificate_orders.map(&:id).uniq
+      }
+    end
+
+    has_permission_on :site_seals, :certificate_contents, :to => [:read, :update] do
+      if_permitted_to :update, :certificate_order
+    end
+  end
+
+  # ============================================================================
   # INSTALLER Role
   # ============================================================================
   role :installer do
@@ -282,7 +372,8 @@ authorization do
       :delete,
       :read,
       :show,
-      :update
+      :update,
+      :recipient
     ] do
       if_attribute ssl_account: is {user.ssl_account}
     end
@@ -298,7 +389,7 @@ authorization do
     end
 
     has_permission_on :physical_tokens, :to => [:read] do
-      if_attribute certificate_order_id: is_in {user.ssl_account.certificate_orders.map(&:id).uniq
+      if_attribute certificate_order_id: is_in {user.ssl_account.cached_certificate_orders.map(&:id).uniq
       }
     end
 
@@ -315,10 +406,10 @@ authorization do
     #
     # Validations
     #
-    # has_permission_on :validations, :to => [:create]
-    has_permission_on :validations, :to => [:read, :update, :create, :dcv_email_validate] do
+    has_permission_on :validations, :to => [:read, :update, :create, :dcv_validate] do
       if_attribute :users => contains {user}
     end
+    has_permission_on :validations, to: :upload_for_registrant
     #
     # ValidationHistories
     #
@@ -353,7 +444,7 @@ authorization do
     #
     has_permission_on :users, :to => :enable_disable, join_by: :and do
       if_attribute id: is_not {user.id}
-      if_attribute id: is_in {user.ssl_account.users.map(&:id).uniq}
+      if_attribute id: is_in {user.ssl_account.cached_users.map(&:id).uniq}
     end
     has_permission_on :users, :to => [:create, :show, :update] do
       if_attribute :id => is {user.id}
@@ -436,6 +527,14 @@ authorization do
     has_permission_on :orders, to: [:update_invoice, :update_tags] do
       if_attribute billable_id: is_in {user.ssl_accounts.pluck(:id)}
     end
+    #
+    # Folders
+    #
+    has_permission_on :folders, to: [:children, :index]
+    #
+    # Domains
+    #
+    has_permission_on :domains, to: [:index]
   end
 
   # ============================================================================
@@ -486,7 +585,7 @@ end
 # ============================================================================ 
 privileges do
   privilege :manage, includes: [
-    :change_state, :create, :delete, :read, :refund, :update
+    :change_state, :create, :delete, :read, :refund, :update, :recipient
   ]
   privilege :read, includes: [
     :index, :invoice, :lookup_discount, :search, :show, :show_cart, :developer, :site_report, :ajax
@@ -519,7 +618,8 @@ privileges do
     :duo_enable,
     :duo_own_used,
     :set_2fa_type,
-    :update_ssl_slug
+    :update_ssl_slug,
+    :saved_contacts
   ]
   privilege :sysadmin_manage, includes: [
     :admin_manage,
@@ -532,6 +632,7 @@ privileges do
     :set_default_team_max,
     :sslcom_ca,
     :update_roles,
-    :search_teams
+    :search_teams,
+    :upload_for_registrant
   ]
 end

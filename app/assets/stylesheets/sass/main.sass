@@ -18,6 +18,7 @@
 
 $height_buf: 270px
 $base_green: #6b9029
+$table_border: #ccf
 
 /*---global common definitions---*/
 *
@@ -3453,10 +3454,22 @@ label.error
     cursor: pointer
     background: lightyellow
 
-#report, #reseller_tiers, #domain_pricing_popup, #certificate_listing,
-#dashboard, #certificate_orders, #validations, #resources, #resource-custom-domain-list,
-#popular-files, #resource-popular-location-list, #notification_groups,
-#certificates-admin-index
+#report,
+#reseller_tiers,
+#domain_pricing_popup,
+#certificate_listing,
+#dashboard,
+#certificate_orders,
+#validations,
+#resources,
+#resource-custom-domain-list,
+#popular-files,
+#resource-popular-location-list,
+#notification_groups,
+#notification_group_scan_his_logs,
+#certificates-admin-index,
+#registered_agents,
+#registered_agent_managed_certificates
   line-height: 1.5em
   font-size: 1.4em
   background: #fff
@@ -3680,6 +3693,44 @@ label.error
       th, td
         border-top: none
         padding-top: 0px
+
+#registered_agent_managed_certificate_list
+  & > table
+    border-bottom: 1px solid #ccf
+    border-top: none
+
+    th, td
+      border-bottom: none
+      border-top: 1px solid #ccf
+
+    tr.expanded
+      td
+        border: none
+        padding: 0px 8px
+        line-heigh: 30px
+        .extra_field_group
+          background-color: #eee
+          padding: 10px
+          .extra_field_block
+            float: left
+            width: 50%
+            ul
+              padding-left: 30px
+              text-align: left
+              list-style: none
+              font-size: 1em
+              li
+                padding-left: 10px
+                &.label
+                  padding-left: 0px
+                  padding-bottom: 5px
+                  text-decoration: underline
+                .item_key
+                  float: left
+                  width: 160px
+                .item_value
+                  float: left
+                  padding-left: 5px
 
 #certificate_orders > table
   width: 84%
@@ -3944,7 +3995,7 @@ label.error
     float: none
 
   //the following should be able to exist outside stylized
-  input[type=text], input[type=url], input[type=email], input[type=password], select, textarea
+  input[type=text], input[type=number], input[type=url], input[type=email], input[type=password], select, textarea
     font-size: 1.5em
     @include text-shadow(0px 1px 0px #fff)
     outline: none
@@ -4055,6 +4106,27 @@ label.error
     margin: 0 auto
     width: 550px
 
+    > .block_label
+      width: 110px
+      float: left
+      font-size: 1.4em
+      text-align: right
+      padding-top: 5px
+
+      > input[type="checkbox"]
+        float: right
+        height: 30px
+        margin-right: 0px
+
+    > .block_body
+      float: left
+      padding-left: 3px
+
+      > span
+        font-size: 1.4em
+        line-height: 38px
+        padding-left: 10px
+
     label
       width: 13.8em
 
@@ -4126,7 +4198,50 @@ label.error
     &.reminder_days
       margin-bottom: 20px
 
-input#upload_files, input#start_over, input#validate_domains
+    &.port_number
+      width: 60px
+
+  .group_block .alert-warning
+    padding-top: 10px
+    color: red
+    font-size: 13px
+  .group_block .warning-field
+    border-color: red
+    box-shadow: 0px 0px 5px red
+  .field_block
+    margin: 0 auto
+    width: 500px
+    font-size: 1.4em
+    padding-top: 18px
+    line-height: 20px
+
+    &:first-child
+      padding-top: 10px
+    &:last-child
+      padding-bottom: 10px
+
+    span
+      vertical-align: middle
+
+    .field_label
+      width: 150px
+      float: left
+      text-align: right
+
+    .field_body
+      float: left
+      padding-left: 20px
+
+      input[type=text]
+        font-size: 1em
+        margin-left: 0px !important
+        margin-bottom: 0px
+        width: 250px
+
+input#upload_files,
+input#start_over,
+input#validate_domains,
+#upload_files_skip
   margin: 1em
   float: none
   font-size: 1.8em
@@ -4334,13 +4449,20 @@ table#line_items_receipt
 
 .reseller_registration_select_tier, .reseller_registration_profile,
 .user_session_format, .reseller_tier_pricing_popup, .order_container,
-.upload_document_container, .default_container, .note_group_container
+.upload_document_container, .default_container, .note_group_container,
+.registered_agent_container
   margin: 2em auto
   width: 70%
   padding: 0px
 
   p
     font-size: 1.4em
+
+.registered_agent_container
+  label
+    line-height: 30px
+  .form_input:first-child
+    margin-top: 20px !important
 
 .default_container
   padding-bottom: 1em
@@ -4423,7 +4545,7 @@ table#line_items_receipt
       float: right
 
   #auto_adjust, #prev_next_submit, #next_submit, #click_to_load,  #shop_more_checkout,
-  #add_items, #skip_button
+  #add_items, #skip_button, #notification_group_auto_adjust
     margin: 2.5em auto 3em
     width: 340px
 
@@ -4442,6 +4564,16 @@ table#line_items_receipt
 
   #click_to_load
     width: 238px
+
+  #registered_agent_auto_adjust,
+  #notification_group_auto_adjust
+    text-align: center
+    button
+      margin: 0 1em
+      float: inherit
+      display: inline-block
+      padding: 8px 15px
+
 
 /* ----------- What is security code----------- */
 
@@ -4777,6 +4909,24 @@ img.blue_icon
   border: 1px solid #ccf
   #search
     width: 160px
+
+#add_domains_bar
+  padding: 0.5em
+  background: #eeffee
+  text-align: center
+  margin: 0 auto
+  margin-top: 1em
+  width: 400px
+  font-size: 1.4em
+  border: 1px solid #ccf
+
+  textarea
+    margin-top: 10px
+    margin-right: 5px
+    width: 295px
+
+  button
+    vertical-align: super
 
 #validation_requirements_box
   ul
@@ -5423,6 +5573,84 @@ span#no_emails_accessible
     &.error .ajax_info
       color: red
 
+  .managed_domains_block .block_body
+    float: left
+    width: 400px
+    margin-bottom: 20px
+
+    span.select2-selection
+      max-height: 150px
+      overflow-y: auto
+
+    input
+      margin-bottom: 0px !important
+
+  .managed_csrs_block a
+    font-size: 1.4em
+    padding-left: 20px
+    line-height: 45px
+    vertical-align: bottom
+    text-decoration: underline
+
+  .managed_domains_block .hidden_close_x .select2-selection__choice
+    line-height: 20px
+    vertical-align: middle
+
+    .select2-selection__choice__remove
+      display: none
+
+
+.schedule_block_group
+  float: left
+  font-size: 1.4em
+  margin-bottom: 12px
+  margin-left: 10px
+  width: 400px
+
+  .notification_group_schedule
+    margin-left: 10px
+    .block_body
+      margin-left: 0px !important
+
+  .schedule_type .block_body .block_item:first-child input[type=radio]
+    margin-left: 0px !important
+
+
+  .simple_schedule .block_body
+    margin-left: 0px !important
+
+  .custom_schedule
+    margin-left: 10px
+    .block_body
+      margin-left: 0px !important
+
+  .schedule_block
+    .custom_selected_block
+      margin-left: 10px
+      margin-bottom: 8px
+
+    input
+      margin-bottom: 0px !important
+      font-size: 0.9em !important
+
+    .block_label
+      margin-bottom: 8px
+      text-decoration: underline
+
+    .block_body
+      margin-bottom: 8px
+
+      select
+        font-size: 0.9em !important
+        margin-bottom: 0px !important
+
+      .block_item
+        float: left
+
+        span
+          line-height: 15px
+          padding-left: 5px
+
 #stylized
 
   button#apply_discount
@@ -5474,6 +5702,11 @@ span#no_emails_accessible
     list-style-type: none
 
 #certificate_orders
+  .name
+    width: 270px !important
+    min-width: 270px !important
+    max-width: 270px !important
+  
   .ssl_action
     a
       font-size: 1.1rem
@@ -5905,8 +6138,18 @@ span.notifications-teams
   padding: 5px 15px
   box-shadow: none
 
+#btn-folder-rename,
+#btn-folder-default,
+#btn-folder-certificates
+  background: -webkit-linear-gradient(#69B3FF, #334DFF)
+  background: -o-linear-gradient(#69B3FF, #334DFF)
+  background: -moz-linear-gradient(#69B3FF, #334DFF)
+  background: linear-gradient(#69B3FF, #334DFF)
+  border: 2px solid #334DFF
+
 .button-mo-invoice.btn-mo-destroy,
-.btn-pvg-destroy
+.btn-pvg-destroy,
+#btn-folder-destroy
   background: -webkit-linear-gradient(#cc0000, #990000)
   background: -o-linear-gradient(#cc0000, #990000)
   background: -moz-linear-gradient(#cc0000, #990000)
@@ -5914,7 +6157,9 @@ span.notifications-teams
   border: 2px solid #990000
 
 .button-mo-invoice.btn-mo-manage,
-.btn-pvg-create
+.btn-pvg-create,
+#btn-folder-create,
+#btn-folder-create-root
   background: -webkit-linear-gradient(#84b332, $base_green)
   background: -o-linear-gradient(#84b332, $base_green)
   background: -moz-linear-gradient(#84b332, $base_green)
@@ -6632,9 +6877,8 @@ span.notifications-teams
     &.removed_domain
       background-color: lightgrey
     &.certificate_name td
-      padding-bottom: 5px
-      padding-top: 5px
-      padding-left: 5px
+      padding: 3px
+      border-top: 1px solid grey
       &:first-child
         text-align: center
         padding-left: 0px
@@ -6642,6 +6886,18 @@ span.notifications-teams
           margin-left: 3px
       .check_box
         vertical-align: middle
+
+      &.pretest,
+      &.caa_check
+        text-align: center
+        div
+          padding: 5px
+          &.passed
+            background-color: green
+            color: white
+          &.failed
+            background-color: red
+            color: white
 
 .redirect_message_wrap
   position: absolute
@@ -6693,7 +6949,32 @@ span.notifications-teams
 
 /*
  * Teams Index Page
- */ 
+ */
+
+.teams-index-text-left
+  text-align: left !important
+
+#teams-user-roles
+  color: grey
+  font-size: 1.2rem
+  font-weight: 600
+  width: 13%
+  min-width: 13%
+  
+  i
+    margin-left: 0.5rem
+
+#team-action-items
+  font-size: 1rem
+  padding: 0
+  text-transform: uppercase
+  width: 10%
+
+  a:hover
+    color: black
+    border-bottom: 2px solid black
+
+
 #team-detail-links
   width: 45%
   div
@@ -6718,13 +6999,53 @@ span.notifications-teams
   border: 1px solid grey
   margin: 0.1rem
 
+.btn-team-links
+  float: left
+
+.li-cert-validate
+  padding: 0.3rem 0 !important
+
+.btn-cert-validate
+  border: none !important
+  color: $base_green !important
+  font-size: 1.18rem !important
+
+  &:hover
+    color: black !important
+
+.btn-team-links,
+  background-color: white
+  border: 1px solid $base_green
+  color: $base_green !important
+  margin: 0 0.5rem 0.5rem 0
+  padding: 0 3px
+
+  &:hover
+    color: white !important
+    background-color: $base_green
+
+
 .btn-refunds-detail
   background-color: grey
   border: 1px solid grey
   text-transform: uppercase
 
-#team-billing-method
-  margin-top: 0.5rem
+#team-billing-method,
+#team-no-limit
+  margin-top: 0.7rem
+  form
+    text-align: left
+
+    label
+      font-weight: 500
+      font-size: 1rem
+      width: 9em
+      text-transform: uppercase
+    
+  #frm-team-no-limit
+    label
+      margin-left: 1rem
+      width: 5em
   
 /*
  * Invoices details and index
@@ -6915,8 +7236,7 @@ span.notifications-teams
 
   .ui-dialog-buttonpane
     font-size: 1.4rem
-    background-color: #eeeeee
-    margin: 0 !important
+    margin-bottom: -3rem !important
 
   .ui-dialog-buttonset button:nth-child(2) 
     color: #ffffff
@@ -6929,6 +7249,7 @@ span.notifications-teams
     
   .ui-widget-header
     border: 1px solid grey
+    color: white
     background: grey
     font-size: 1.5rem
   
@@ -7037,7 +7358,8 @@ span.notifications-teams
 
 .btn-filter-clear,
 .btn-filter-search,
-.btn-cert-update
+.btn-cert-update,
+.btn-co-folders
   border-radius: 3px
   border: none
   font-size: 1.2rem
@@ -7048,7 +7370,7 @@ span.notifications-teams
   padding: 5px 7px
   text-transform: uppercase
   
-.btn-filter-clear
+.btn-filter, .btn-filter-clear
   border: 1px solid #334DFF
   background-color: white
   color: #334DFF !important
@@ -7057,6 +7379,22 @@ span.notifications-teams
   border: 1px solid #334DFF
   background-color: #334DFF
   font-size: 1rem
+
+.btn-co-folders
+  border: 1px solid $base_green
+  background-color: $base_green
+  font-size: 1rem
+
+.btn-co-folders.sub-actions
+  border: 1px solid $base_green
+  background-color: white
+  color: $base_green
+  font-size: 1rem
+  padding-top: 8px
+
+  &:hover
+    background-color: $base_green
+    color: white
 
 .btn-filter-search
   border: 1px solid #334DFF
@@ -7092,6 +7430,9 @@ span.notifications-teams
 /*
  * Tags Input Container
  */
+#co-folder-column
+  cursor: pointer
+
 .lnk-popular-tags
   background-color: $base_green
   border: 1px solid $base_green
@@ -7114,16 +7455,62 @@ span.notifications-teams
   margin-left: 2.1rem
   margin-bottom: -1.5rem
 
+#registered_agent_managed_certificates input[type='submit'],
+#registered_agents input[type='submit'],
 #notification_groups input[type='submit']
   margin-top: 13px
 
-#cos-container
-  .select2-search__field
-    display: none
+#notification_groups .note_group_event
+  width: 130px
+  select
+    width: 80px
+    font-size: 0.9em
+  input[type='checkbox']
+    vertical-align: middle
 
+#add_user_ids_container
+  .select2,
+  .select2-results,
+  .select2-results__options,
+  .select2-dropdown
+    width: 230px !important
+
+  .select2-selection
+    background-color: #f0efef !important
+    width: 230px !important
+
+    .select2-selection__rendered
+      padding: 5px 5px 3px
+
+      li:first-child
+        .select2-search__field
+          margin-left: -5px
+          margin-right: 0px
+          padding-left: 10px
+          padding-right: 10px
+
+      .select2-selection__choice
+        background-color: #bfcfa4b0
+        border: 1px solid #6a9029
+        color: #3c3c3c
+        font-weight: 600
+        font-size: 1.15rem
+        margin-top: 0px
+        margin-bottom: 5px
+
+        .select2-selection__choice__remove
+          color: #3c3c3c
+          font-size: 1.7rem
+          font-weight: 700
+          padding: 0px 4px
+          margin-right: 2px
+          vertical-align: middle
+
+.schedule_container,
 #contacts-container,
 #subjects-container,
-#cos-container, #tags-container,
+#cos-container, 
+#tags-container,
 #ca-certificates-select
   margin: 0 !important
   
@@ -7160,8 +7547,6 @@ span.notifications-teams
           padding: 0px 4px
           margin-right: 2px
           vertical-align: middle
-
-      .select2-search
   
   #tags-co-input,
   #tags-cc-input
@@ -7242,6 +7627,9 @@ span.notifications-teams
 /*
  * Certificates Index for Admins
  */
+.chk-folder-add-co
+  margin-left: 0.5rem
+
 #certificates-admin-index
   .serial
     font-weight: 600
@@ -7251,3 +7639,454 @@ span.notifications-teams
 
   .ca
     font-size: 1rem
+
+.schedule_type_block,
+.schedule_custom_block
+  .block_label
+    float: left
+    width: 110px
+    line-height: 20px
+    padding-right: 3px
+    text-align: right
+    font-size: 1.4em
+  .block_body
+    float: left
+    margin-bottom: 10px
+    width: 400px
+    .block_item
+      line-height: 20px
+      margin-bottom: 3px
+      .block_item_type
+        float: left
+        span
+          font-size: 1.4em
+          input[type='radio']
+            vertical-align: top
+            margin-top: 4px !important
+    .block_item_simple select
+      font-size: 1.2em !important
+      margin-bottom: 0px !important
+
+#wrap_note_group_filter
+  background: #EEE
+  border: 1px solid #CCF
+  font-size: 13px
+  color: #3c3c3c
+  padding: 1em
+  width: 610px
+  margin: 2em auto
+
+  #btn_note_group_search
+    margin: 10px 0px 0px 5px
+
+  .wrap_filter_block
+    border-bottom: 1px solid #ccc
+    padding: 8px 0px
+    width: 600px
+    margin: auto
+    .filter_block
+      line-height: 20px
+      .block_label
+        font-weight: bold
+      .filter_item
+        padding-right: 10px
+        input[type='radio']
+          vertical-align: middle
+    .horizontal_align
+      .block_label
+        float: left
+        padding-right: 10px
+      .block_cont
+        float: left
+        .filter_item
+          float: left
+    .vertical_align
+      float: left
+      &:first-child
+        padding-left: 10px
+      .block_label
+        padding-bottom: 5px
+        padding-left: 15px
+      .filter_item
+        padding-bottom: 5px
+        width: 85px
+        padding: 0px 15px
+        select
+          height: 120px
+
+#frm-cert-filter
+  select
+    float: left
+
+/*
+ * Folders Index
+ */
+#folders-index
+  width: 85%
+  margin: 1.5rem auto
+  
+  .jstree-grid-wrapper
+    border: 1px solid lightgrey
+    width: 100%
+    height: 650px
+    overflow-y: scroll
+    overflow-x: scroll
+
+  .folder-index-subject,
+  .folder-index-status,
+  .folder-index-expires,
+  .folder-index-action
+    font-size: 1.3rem
+  
+  .folder-index-action
+    font-weight: 600
+    color: $base_green
+    cursor: pointer
+
+  .folder-index-status
+    font-weight: 600
+  
+  .folder-index-name
+    border-right: 1px solid grey
+
+  .folder-index-subject-cell
+    color: grey
+    font-weight: 600
+
+  .jstree-grid-col-0
+    border-right: 1px solid lightgrey
+
+  .folder-index-header
+    background-color: white
+    color: grey
+    font-size: 1.3rem
+    padding: 0.5rem
+
+  #folders-tree
+  
+  i
+    font-size: 1.5rem
+  
+  #folders-header
+    margin-bottom: 0.5rem
+    height: 25px
+
+    #btn-folder-new-cert
+      border-radius: 3px
+      font-size: 1.3rem
+      float: right
+      letter-spacing: 0.5px
+      margin-right: 1rem
+      padding: 7px 4px 3px 4px
+      border: 1px solid $base_green
+      color: $base_green
+      float: right
+      height: 1.7rem
+
+      &:hover
+        color: white
+        background-color: $base_green
+
+    span
+      float: right
+      color: white
+      padding: 0.66rem
+      background-color: grey
+      margin-right: -0.6rem
+      border-top-left-radius: 3px
+      border-bottom-left-radius: 3px
+
+    p
+      float: left
+      font-size: 1.6rem
+      font-weight: 600
+      letter-spacing: 0.5px
+    
+    #folder-scan
+      margin-left: 0.5rem
+      float: right
+      margin-bottom: 2rem
+      border-top-left-radius: 0
+      border-bottom-left-radius: 0
+
+    #btn-folder-reset-sys
+      border: 1px solid grey
+      color: grey
+      float: right
+      height: 1.7rem
+
+      i
+        font-size: 1.7rem
+
+      &:hover
+        color: white
+        background-color: grey
+
+  #folders-action
+    padding: 1.2rem 0
+    text-align: center
+    background-color: #e6e6e6
+
+  .btn-folder-index
+    color: white
+    padding: 5px 10px
+    font-size: 1.2rem
+    font-weight: 500
+    letter-spacing: 1px
+    line-height: 2
+    border-radius: 3px
+    margin-right: 1rem
+
+  .jstree-folder-archive
+    color: #990000
+  
+  .jstree-co
+    color: grey !important
+
+/*
+ * Folders
+ */
+#folder-scan,
+#folder-scan-co
+  border: 1px solid darkgrey
+  border-radius: 3px
+  font-size: 1.2rem
+  padding: 0.6rem
+  margin-left: 1rem
+
+.jstree-node
+  font-size: 1.5rem
+
+#lnk-folders-ql
+  color: $base_green
+
+.icon-co-add-folder
+  color: $base_green
+  cursor: pointer
+
+#co-folders-container
+  margin: 0.8em 0 0.5em
+  
+  .folder-co-count
+    background-color: $base_green
+    border-radius: 8px
+    color: white
+    font-weight: 600
+    font-size: 0.9rem
+    padding: 2px 5px
+
+  #folder-tree-fixed
+    max-height: 250px
+    display: flex
+    flex-direction: row
+
+    #folders-tree-co,
+    #folder-co-list
+      justify-content: flex-start
+      max-height: 250px
+      overflow-y: scroll
+      overflow-x: scroll
+
+    #folders-tree-co
+      width: 60%
+
+    #folder-co-list
+      color: grey
+      width: 40%
+
+      #folder-co-list-cont
+        margin: 1rem
+        font-size: 1.4rem
+
+        .f-co-item
+          margin-top: 0.5rem
+          overflow: hidden
+          text-overflow: ellipsis
+          white-space: nowrap
+          width: 100%
+          display: inline-block
+          
+          &:hover
+            background-color: #beebff
+          
+          a
+            color: grey
+        
+
+  #folder-tree-actions
+    padding: 1.3rem
+    text-align: center
+
+    &.sub-menu
+      border-bottom: 1px solid #ccf
+    
+    i
+      font-size: 1.5rem
+ 
+    .btn-co-folders
+      margin-right: 1rem
+      font-size: 1rem
+      font-weight: 600
+
+  table
+    width: 84%
+    float: right
+    margin-bottom: 2em
+    border: 1px solid #ccf
+    border-top: none
+
+    .heading_row
+      background: #cfc
+      color: grey
+      font-size: 1.4rem
+      font-weight: 500
+      text-align: center
+
+      td
+        border-bottom: 1px solid #ccf
+        border-top: 1px solid #ccf
+        padding: 1rem
+
+        #co-folders-header
+          font-weight: 500
+          float: right
+          width: 97%
+
+          div:first-child
+            margin-top: -0.5rem
+            letter-spacing: 0.8px
+
+          div:last-child
+            margin-top: 0.5rem
+            font-size: 1.1rem
+            margin-bottom: -0.5rem
+
+        #folder-tree-actions-hdr
+          float: right
+          width: 3%
+          i
+            cursor: pointer
+            color: #888
+            font-size: 1.7rem
+
+/*
+ * Folders Dialog
+ */
+.dl-select-folder
+  .ui-dialog-buttonpane
+    font-size: 1.4rem
+
+  .ui-dialog-buttonset button:nth-child(2) 
+    color: #ffffff
+    background-color: $base_green
+    border-color: $base_green
+    border-radius: 3px
+        
+  .ui-widget-header
+    border: 1px solid grey
+    color: white
+    background: grey
+    font-size: 1.3rem
+
+/*
+ * OV and IV uploads
+ */
+#iv-ov-file-upload
+  margin-left: 1rem
+  
+  p
+    font-size: 1.6rem
+    color: #5A79A5 !important
+    letter-spacing: 1px
+    font-weight: 600
+    margin-top: 2rem
+
+  #iv_multi_upload, #ov_multi_upload
+  
+  .MultiFile-remove
+    margin-left: 3rem !important
+
+  .MultiFile-title
+    color: #5A79A5 !important
+
+  .MultiFile-wrap
+    margin-left: 3rem
+
+/*
+ * Contacts Index, Saved Contacts
+ */
+#contacts-index-actions
+  font-size: 1rem
+  padding: 0 !important
+  text-transform: uppercase
+  width: 17%
+  text-align: left !important
+
+  a
+    margin-right: 0.9rem
+
+    &:hover
+      color: black
+      border-bottom: solid 2px black
+      
+    &:last-child
+      margin-right: 0
+
+.contacts-index-status
+  text-transform: uppercase
+  color: grey
+  font-size: 1.1rem
+  font-weight: 500
+  letter-spacing: 1px
+
+.contacts-index-validated
+  color: $base_green
+  font-weight: 600
+
+.contacts-index-destroy
+  color: red
+
+.saved_contact
+  border: 1px $table_border solid !important
+
+  tr, tbody, .heading_row
+    border: none !important
+
+  td
+    text-align: left !important
+    border: none !important
+
+    &:first-child
+      padding-left: 1rem !important
+      width: 30%
+
+  .colored_row
+    background-color: #EEEEEE !important
+
+  .doc_attribute
+    width: 100%
+
+#contact-file-upload
+  h2
+    font-size: 1.7rem
+
+  .contact-file-desc
+    font-size: 1.3rem
+    color: black !important
+
+  #document-limit
+    font-size: 1.1rem
+    font-weight: 500
+    margin-top: 0
+
+#contacts-show-actions
+  font-size: 1.3rem
+  text-transform: uppercase
+  text-align: center !important
+
+  a
+    margin-right: 1.7rem
+
+    &:hover
+      color: black
+      border-bottom: solid 2px black

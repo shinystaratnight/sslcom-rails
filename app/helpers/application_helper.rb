@@ -42,7 +42,9 @@ module ApplicationHelper
   end
 
   def is_sandbox?
-    Sandbox.exists?(request.try(:host))
+    Rails.cache.fetch("#{request.try(:host)}/is_sandbox") do
+      Sandbox.exists?(request.try(:host))
+    end
   end
 
   def is_sandbox_or_test?
@@ -62,7 +64,7 @@ module ApplicationHelper
       if is_sandbox?
         Rails.env=~/production/i ? "https://#{api_source.test_api_domain}" : "https://#{api_source.dev_test_api_domain}:3000"
       else
-        Rails.env=~/production/i ? "https://#{api_source.api_domain}" : ""
+        Rails.env=~/production/i ? "https://#{api_source.api_domain}" : "https://#{api_source.dev_api_domain}:3000"
       end
     end
   end
@@ -129,7 +131,7 @@ module ApplicationHelper
   def text_field_for(form, field,
       size=HTML_TEXT_FIELD_SIZE,
       maxlength=DB_STRING_MAX_LENGTH, options = {})
-    form_field = form.text_field field, :size => size, :maxlength => maxlength
+    form_field = form.text_field field, :size => size, :maxlength => maxlength, value: options[:value]
     label = form.label(field, "#{'*' if options.delete(:required)}#{field.humanize}:".gsub(/\b\w/) {|s| s.upcase }) unless options.delete(:no_label)
     append = yield if block_given?
     create_tags label, form_field, options, append
@@ -351,6 +353,25 @@ module ApplicationHelper
     column == params[:column] ? params[:direction] : ''
   end
   
+  def render_user_roles(roles_list)
+    final = []
+    roles_list.each do |role|
+      icon = case role
+        when :billing, 'billing' then 'dollar'
+        when :validations, 'validations' then 'expeditedssl'
+        when :installer, 'installer' then 'download'
+        when :users_manager, 'users_manager' then 'id-card'
+        when :individual_certificate, 'individual_certificate' then 'certificate'
+        when :owner, 'owner' then 'user-circle'
+        when :reseller, 'reseller' then 'window-restore'
+        else 'cog'
+      end
+      str_role = role == :individual_certificate ? 'indiv_certificate' : role.to_s
+      final << "<i class='fa fa-#{icon}'></i> #{str_role}<br/>"
+    end
+    final.join('').html_safe
+  end
+
   private
 
   def create_tags(label, form_field, options, append)
@@ -404,6 +425,8 @@ module ApplicationHelper
       (co.order.reprocess_ucc_order? || params[:action] == "reprocess")))
       
       co.reprocess_ucc_process
+    elsif certificate && certificate.is_smime_or_client?
+      co.smime_client_process
     else
       skip_payment? ? co.prepaid_signup_process(certificate) : co.signup_process(certificate)
     end
@@ -414,9 +437,9 @@ module ApplicationHelper
       "padding: 0 #{0.5 + (sv ? added_padding : 0.0)}em"
     when CertificateOrder::PREPAID_EXPRESS_SIGNUP_PROCESS
       "padding: 0 #{2.9 + (sv ? added_padding : 0.0)}em"
-    when CertificateOrder::REPROCES_SIGNUP_W_PAYMENT,
+    when CertificateOrder::REPROCES_SIGNUP_W_PAYMENT, CertificateOrder::CLIENT_SMIME_VALIDATE
       "padding: 0 #{0.5 + (sv ? added_padding : 0.0)}em"
-    when CertificateOrder::REPROCES_SIGNUP_W_INVOICE
+    when CertificateOrder::REPROCES_SIGNUP_W_INVOICE, CertificateOrder::CLIENT_SMIME_VALIDATED
       "padding: 0 #{1.4 + (sv ? added_padding : 0.0)}em"
     end
     pages = sv ? process[:pages] - [CertificateOrder::VERIFICATION_STEP] : process[:pages]
@@ -526,6 +549,19 @@ module ApplicationHelper
   end
   
   def get_full_path(params)
-    send("#{params[:controller]}_path", params.except(:controller, :action))
+    path = params[:controller] == 'certificates' ? "admin_index_" : ''
+    send("#{path}#{params[:controller]}_path", params.except(:controller, :action))
+  end
+  
+  def co_folder_children(contents, options={})
+    output = []
+    contents.each do |f|
+      output << FolderTree.new(@ssl_account, f, @tree_type, []).full_tree
+    end
+    output.to_json.html_safe
+  end
+
+  def show_folders_container?
+    params[:folders] || (params[:search] && params[:search].include?('folder_ids'))
   end
 end

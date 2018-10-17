@@ -100,26 +100,40 @@ class OrderNotifier < ActionMailer::Base
 
   end
 
-  def dcv_email_send(certificate_order, email_address, identifier, domain_list)
-    @certificate_order = certificate_order
-    params      = {certificate_order_id: @certificate_order.ref, guid: identifier}
-    @validation_url = dcv_email_validate_certificate_order_validation_url(params)
+  def dcv_email_send(certificate_order, email_address, identifier, domain_list, domain_id = nil, ssl_slug = '', dcv_type = 'cert')
     @contact = email_address
     @domains = domain_list
     @identifier = identifier
-    mail subject: "Domain Control Validation for: #{certificate_order.subject} (Order ##{certificate_order.ref})",
+    subject="Domain Control Validation for: "
+    if dcv_type == 'cert'
+      @certificate_order = certificate_order
+      params      = {certificate_order_id: @certificate_order.ref}
+      @validation_url = dcv_validate_certificate_order_validation_url(params)
+      subject<<"#{certificate_order.subject} (Order ##{certificate_order.ref})"
+    elsif dcv_type == 'team'
+      params      = {ssl_slug: ssl_slug, id: domain_id}
+      @validation_url = dcv_validate_domain_url(params)
+      subject<<"#{domain_list[0]}"
+    else
+      params      = {ssl_slug: ssl_slug}
+      @validation_url = dcv_all_validate_domains_url(params)
+      subject<<"#{ssl_slug}"
+    end
+    mail subject: subject,
          from:  Settings.from_email.no_reply,
          to:    @contact
   end
 
-  def processed_certificate_order(contact, certificate_order, file_path=nil, signed_certificate=nil)
-    (attachments[certificate_order.friendly_common_name+'.zip'] = File.read(file_path)) unless file_path.blank?
-    setup(contact, certificate_order)
-    @signed_certificate=signed_certificate || certificate_order.certificate_content.csr.signed_certificate
+  def processed_certificate_order(options) # contact, certificate_order, file_path=nil, signed_certificate=nil)
+    (attachments[options[:certificate_order].friendly_common_name+'.zip'] = File.read(options[:file_path])) unless options[:file_path].blank?
+    setup(options[:contact], options[:certificate_order])
+    @certificate_content = options[:certificate_content] unless options[:certificate_content].blank?
+    @signed_certificate=options[:signed_certificate] || @certificate_content ?
+        @certificate_content.signed_certificate : options[:certificate_order].signed_certificate
     mail(
-      to: contact,
+      to: options[:contact],
       from: Settings.from_email.orders,
-      subject: "#{'(TEST) ' if certificate_order.is_test?}SSL.com #{certificate_order.certificate.description["certificate_type"]} Certificate Attached For #{@signed_certificate.common_name}"
+      subject: "#{'(TEST) ' if options[:certificate_order].is_test?}SSL.com #{options[:certificate_order].certificate.description["certificate_type"]} Certificate (#{@signed_certificate.validation_type.upcase}) Attached For #{@signed_certificate.common_name}"
     )
   end
 
@@ -235,6 +249,25 @@ class OrderNotifier < ActionMailer::Base
     mail  subject: "SSL.com api command executed (#{api_domain})",
           from: "noreply@ssl.com",
           to:    Settings.send_api_calls
+  end
+
+  def certificate_order_token_send(co, token)
+    @activation_link = confirm_url(token)
+    @certificate_order = co
+    @company_name = @certificate_order.locked_registrant ? @certificate_order.locked_registrant.company_name : ''
+
+    mail subject: "Certificate Activation Link",
+         from:  Settings.from_email.no_reply,
+         to:    co.get_download_cert_email
+  end
+
+  def request_token_send(co, user)
+    @certificate_order = co
+    @user = user
+
+    mail subject: "Certificate Activation Link",
+         from:  Settings.from_email.no_reply,
+         to:    user.email
   end
 
   protected

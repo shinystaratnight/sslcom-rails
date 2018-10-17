@@ -39,6 +39,21 @@ class BillingProfile < ActiveRecord::Base
     joins{orders.transactions}.where{orders.transactions.success==true}
   }
 
+  scope :search, lambda {|term|
+    joins{orders}.where{(first_name =~ "%#{term}%") |
+        (last_name =~ "%#{term}%") |
+        (address_1 =~ "%#{term}%") |
+        (address_2 =~ "%#{term}%") |
+        (country =~ "%#{term}%") |
+        (city =~ "%#{term}%") |
+        (state =~ "%#{term}%") |
+        (postal_code =~ "%#{term}%") |
+        (phone =~ "%#{term}%") |
+        (company =~ "%#{term}%") |
+        (last_digits =~ "%#{term}%") |
+        (orders.reference_number =~ "%#{term}%")}
+  }
+
   def verification_value?() false end
   
   def to_xml(options = {})

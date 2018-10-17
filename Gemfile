@@ -53,6 +53,7 @@ gem 'unscoped_associations'
 gem 'nokogiri'
 gem 'coffee-rails'
 gem 'jquery-rails'
+gem 'jquery-ui-rails'
 gem 'turbolinks'
 gem 'jbuilder'
 gem 'sdoc',          group: :doc
@@ -76,6 +77,9 @@ gem 'duo_web', '~> 1.0'
 # gem 'simple_captcha2', require: 'simple_captcha'
 gem 'recaptcha', require: 'recaptcha/rails'
 gem 'font-awesome-rails'
+gem 'acts_as_tree'
+gem 'whois', '~> 4.0'
+gem 'where-or'
 
 group :development do
   gem 'foreman'

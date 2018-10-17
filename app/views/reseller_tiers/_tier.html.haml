@@ -1,5 +1,5 @@
 -tier_reseller = "Tier #{tier.label} Reseller Partners"
--compare_tier = Certificate.base_products.available.map(&:product_variant_items).flatten
+-compare_tier = Certificate.base_products.available.map(&:cached_product_variant_items).flatten
 #reseller_tiers
   %table(cellspacing="0")
     %caption
@@ -10,7 +10,7 @@
       %th(scope="col") Pricing
       -unless tier.label == "1"
         %th(scope="col") Savings
-    -tier.certificates.available.map(&:product_variant_items).flatten.each_with_index do |item, i|
+    -tier.certificates.available.map(&:cached_product_variant_items).flatten.each_with_index do |item, i|
       -compare_item = compare_tier.find{|c|item.reseller_tier_of?(c)}
       -next if item.description =~ /server\slicense/
       %tr(class="#{(i.odd?) ? 'alt' : ''}")

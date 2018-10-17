@@ -104,7 +104,8 @@
                         -if ssl_account && permitted_to?(:read, :contacts)
                           %li
                             %strong contacts/registrants
-                          %li=link_to 'manage', saved_contacts_contacts_path(ssl_slug: @ssl_slug)
+                          %li=link_to 'contacts', saved_contacts_contacts_path(ssl_slug: @ssl_slug)
+                          %li=link_to 'registrants', saved_contacts_contacts_path(ssl_slug: @ssl_slug, registrants: true)
                     -unless is_sandbox?
                       .half_width_box
                         %ul
@@ -131,6 +132,6 @@
                           -unless user.is_validations? || user.is_billing?
                             %li
                               %strong
-                                =link_to "Api Credentials", api_credentials_path(ssl_slug: @ssl_slug)
+                                =link_to "api credentials", api_credentials_path(ssl_slug: @ssl_slug)
                           %li=link_to "developer tools", is_sandbox? ? developers_certificate_orders_url : "https://sandbox.ssl.com"
                           %li=link_to 'view documentation', "http://docs.sslcomapi.apiary.io/", target: "_new"

@@ -54,7 +54,7 @@ jQuery(function($) {
   function update_checkbox(checkbox_ids, update_type) {
     $.each( $(checkbox_ids), function(key, checkbox) {
       var cur = $('#'+checkbox.id);
-      (update_type == 'check') ? cur.attr('checked', true) : cur.removeAttr('checked');
+      cur.prop('checked', (update_type == 'check'));
     });
   }
 
@@ -167,5 +167,10 @@ jQuery(function($) {
       })
     );
     form.submit();
+  });
+
+  // Teams Index, Saved Contacts Index
+  $('.team-sel-billing-method, .team-sel-no-limit, .btn-reg-update-status').on('change', function() {
+    $(this).parent().submit();
   });
 });

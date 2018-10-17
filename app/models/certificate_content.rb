@@ -2,20 +2,21 @@ class CertificateContent < ActiveRecord::Base
   include V2MigrationProgressAddon
   include Workflow
   
-  belongs_to  :certificate_order, -> { unscope(where: [:workflow_state, :is_expired]) }
+  belongs_to  :certificate_order, -> { unscope(where: [:workflow_state, :is_expired]) }, touch: true
   has_one     :ssl_account, through: :certificate_order
-  has_one     :certificate, through: :certificate_order
   has_many    :users, through: :certificate_order
   belongs_to  :server_software
   has_one     :csr, :dependent => :destroy
   has_many    :signed_certificates, through: :csr
   has_one     :registrant, as: :contactable, dependent: :destroy
   has_one     :locked_registrant, :as => :contactable
+  has_one     :recipient, as: :contactable
   has_many    :certificate_contacts, :as => :contactable
   has_many    :certificate_names # used for dcv of each domain in a UCC or multi domain ssl
   has_many    :url_callbacks, as: :callbackable
   has_many    :taggings, as: :taggable
   has_many    :tags, through: :taggings
+  belongs_to  :ca
 
   accepts_nested_attributes_for :certificate_contacts, :allow_destroy => true
   accepts_nested_attributes_for :registrant, :allow_destroy => false
@@ -25,6 +26,12 @@ class CertificateContent < ActiveRecord::Base
   after_save   :certificate_names_from_domains, unless: :certificate_names_created?
   after_save   :transfer_existing_contacts
   before_destroy :preserve_certificate_contacts
+
+  before_create do |cc|
+    ref_number = cc.to_ref
+    cc.ref = ref_number
+    cc.label = ref_number
+  end
 
   SIGNING_REQUEST_REGEX = /\A[\w\-\/\s\n\+=]+\Z/
   MIN_KEY_SIZE = 2047 #thought would be 2048, be see
@@ -84,12 +91,7 @@ class CertificateContent < ActiveRecord::Base
   
   CertificateNamesJob = Struct.new(:cc_id, :domains) do
     def perform
-      cc = CertificateContent.find cc_id
-      cc.domains.flatten.each_with_index do |domain, i|
-        if cc.certificate_names.find_by_name(domain).blank?
-          cc.certificate_names.create(name: domain, is_common_name: cc.csr.try(:common_name)==domain)
-        end
-      end
+      CertificateContent.find(cc_id).certificate_names_from_domains
     end
   end
 
@@ -110,7 +112,32 @@ class CertificateContent < ActiveRecord::Base
       end
     end
   end
-  
+
+  def pre_validation(options)
+    if csr and !csr.sent_success #do not send if already sent successfully
+      options[:certificate_content] = self
+      if !self.infringement.empty? # possible trademark problems
+        OrderNotifier.potential_trademark(Settings.notify_address, certificate_order, self.infringement).deliver_now
+      elsif ca.blank?
+        certificate_order.apply_for_certificate(options)
+      end
+      if options[:host]
+        Delayed::Job.enqueue DcvSentNotifyJob.new(id, options[:host])
+      else
+        last_sent = unless certificate_order.certificate.is_ucc?
+                      csr.domain_control_validations.last_sent
+                    else
+                      certificate_names.map {|cn| cn.domain_control_validations.last_sent}.flatten.compact
+                    end
+        unless last_sent.blank?
+          certificate_order.valid_recipients_list.each do |c|
+            OrderNotifier.dcv_sent(c, certificate_order, last_sent).deliver!
+          end
+        end
+      end
+    end
+  end
+
   workflow do
     state :new do
       event :submit_csr, :transitions_to => :csr_submitted
@@ -118,6 +145,8 @@ class CertificateContent < ActiveRecord::Base
       event :cancel, :transitions_to => :canceled
       event :issue, :transitions_to => :issued
       event :reset, :transitions_to => :new
+      event :validate, :transitions_to => :validated
+      event :pend_validation, :transitions_to => :pending_validation
     end
 
     state :csr_submitted do
@@ -129,40 +158,24 @@ class CertificateContent < ActiveRecord::Base
     end
 
     state :info_provided do
+      event :validate, :transitions_to => :validated
       event :submit_csr, :transitions_to => :csr_submitted
       event :issue, :transitions_to => :issued
       event :provide_contacts, :transitions_to => :contacts_provided
       event :cancel, :transitions_to => :canceled
       event :reset, :transitions_to => :new
+      event :pend_validation, :transitions_to => :pending_validation do |options={}|
+        pre_validation(options)
+      end
     end
 
     state :contacts_provided do
+      event :validate, :transitions_to => :validated
       event :provide_contacts, transitions_to: :contacts_provided
       event :submit_csr, :transitions_to => :csr_submitted
       event :issue, :transitions_to => :issued
       event :pend_validation, :transitions_to => :pending_validation do |options={}|
-        if csr and !csr.sent_success #do not send if already sent successfully
-          options[:certificate_content]=self
-          unless self.infringement.empty? # possible trademark problems
-            OrderNotifier.potential_trademark(Settings.notify_address, certificate_order, self.infringement).deliver_now
-          else
-            certificate_order.apply_for_certificate(options)
-          end
-          if options[:host]
-            Delayed::Job.enqueue DcvSentNotifyJob.new(id, options[:host])
-          else
-            last_sent=unless certificate_order.certificate.is_ucc?
-              csr.domain_control_validations.last_sent
-            else
-              certificate_names.map{|cn|cn.domain_control_validations.last_sent}.flatten.compact
-            end
-            unless last_sent.blank?
-              certificate_order.valid_recipients_list.each do |c|
-                OrderNotifier.dcv_sent(c,certificate_order,last_sent).deliver!
-              end
-            end
-          end
-        end
+        pre_validation(options)
       end
       event :cancel, :transitions_to => :canceled
       event :reset, :transitions_to => :new
@@ -204,31 +217,41 @@ class CertificateContent < ActiveRecord::Base
     end
   end
 
-  before_create do |cc|
-    ref_number = cc.to_ref
-    self.ref = ref_number
-    self.label = ref_number
+  def add_ca(ssl_account)
+    self.ca = (self.certificate.cas.ssl_account_or_general_default(ssl_account)).last
   end
 
-  def certificate_names_from_domains
-    if csr && certificate_names.find_by_name(csr.common_name).blank?
-      certificate_names.create(name: csr.common_name, is_common_name: true)
+  def certificate_names_from_domains(domains=nil)
+    domains ||= all_domains
+    (domains-certificate_names.find_by_domains(domains).pluck(:name)).each_with_index do |domain, i|
+      certificate_names.find_or_create_by(name: domain.downcase, is_common_name: csr.try(:common_name)==domain.downcase)
     end
-    if all_domains.length <= DOMAIN_COUNT_OFFLOAD
-      all_domains.flatten.each_with_index do |domain, i|
-        if certificate_names.find_by_name(domain).blank?
-          certificate_names.create(name: domain, is_common_name: csr.try(:common_name)==domain)
-        end
-      end
-    else
-      all_domains.flatten.each_slice(100) do |domain_slice|
-        Delayed::Job.enqueue CertificateNamesJob.new(id, domain_slice)
-      end
-    end
+
+    # Auto adding domains in case of certificate order has been included into some groups.
+    NotificationGroup.auto_manage_cert_name(self, 'create')
   end
 
   def signed_certificate
     signed_certificates.last
+  end
+
+  # :with_tags (default), :x509, :without_tags
+  def ejbca_certificate_chain(options={format: :with_tags})
+    chain=SslcomCaRequest.where(username: self.ref).last
+    xcert = if "8875640296558310041" == chain.x509_certificates.last.serial #non EV serial
+              Certificate::CERTUM_XSIGN
+            elsif "6248227494352943350" == chain.x509_certificates.last.serial # EV serial
+              Certificate::CERTUM_XSIGN_EV
+            end
+    certs=chain.x509_certificates
+    if options[:format]==:objects
+      xcert ? certs[0..-2]<<OpenSSL::X509::Certificate.new(SignedCertificate.enclose_with_tags(xcert)) : certs
+    elsif options[:format]==:without_tags
+      certs=chain.certificate_chain
+      xcert ? certs[0..-2]<<xcert : certs
+    else
+      xcert ? certs[0..-2].map(&:to_s)<<SignedCertificate.enclose_with_tags(xcert) : certs.map(&:to_s)
+    end unless chain.blank?
   end
 
   def certificate
@@ -245,7 +268,7 @@ class CertificateContent < ActiveRecord::Base
 
   def domains=(names)
     unless names.blank?
-      names = names.split(/[\s+]+/).flatten.uniq.reject{|d|d.blank?}
+      names = names.split(/[\s+]+/).flatten.reject{|d|d.blank?}.map(&:downcase).uniq
     end
     write_attribute(:domains, names)
   end
@@ -284,7 +307,7 @@ class CertificateContent < ActiveRecord::Base
   end
 
   def certificate_names_by_domains
-    all_domains.map{|d|certificate_names.find_by_name(d)}.compact
+    certificate_names.find_by_domains(all_domains).compact
   end
 
   def callback(packaged_cert,options={})
@@ -296,31 +319,51 @@ class CertificateContent < ActiveRecord::Base
     uc.perform_callback(certificate_hook:packaged_cert) unless uc.blank?
   end
 
+  def dcv_suffix
+    ca ? "ssl.com" : "comodoca.com"
+  end
+
   def dcv_domains(options)
-    i=0
-    options[:domains].each do |k,v|
+    i = 0
+    certificate_names.find_by_domains(options[:domains].keys).each do |name|
+      k, v = name.name, options[:domains][name.name]
       cur_email = options[:emails] ? options[:emails][k] : nil
+
       case v["dcv"]
-        when /https?/i, /cname/i
-          dcv=self.certificate_names.find_by_name(k).
-              domain_control_validations.create(dcv_method: v["dcv"], candidate_addresses: cur_email,
-                failure_action: v["dcv_failure_action"])
-          if (v["dcv_failure_action"]=="remove" || options[:dcv_failure_action]=="remove")
-            found=dcv.verify_http_csr_hash
-            self.domains.delete(k) unless found
-          end
-          # assume the first name is the common name
-          self.csr.domain_control_validations.
-              create(dcv_method: v["dcv"], candidate_addresses: cur_email,
-                failure_action: v["dcv_failure_action"]) if(i==0 && !certificate_order.certificate.is_ucc?)
-        else
-          self.certificate_names.find_by_name(k).
-              domain_control_validations.create(dcv_method: "email", email_address: v["dcv"],
-                failure_action: v["dcv_failure_action"], candidate_addresses: cur_email)
-          # assume the first name is the common name
-          self.csr.domain_control_validations.
-              create(dcv_method: "email", email_address: v["dcv"],
-                failure_action: v["dcv_failure_action"], candidate_addresses: cur_email) if(i==0 && !certificate_order.certificate.is_ucc?)
+      when /https?/i, /cname/i
+        dcv = name.domain_control_validations.order(id: :asc).last
+        if !dcv || (dcv && !dcv.satisfied?)
+          dcv = name.domain_control_validations.create(
+              dcv_method: v["dcv"],
+              candidate_addresses: cur_email,
+              failure_action: v["dcv_failure_action"]
+          )
+        end
+
+        if (v["dcv_failure_action"]=="remove" || options[:dcv_failure_action]=="remove")
+          found = dcv.verify_http_csr_hash
+          self.domains.delete(k) unless found
+        end
+
+        # assume the first name is the common name
+        dcv = self.csr.domain_control_validations.order(id: :asc).last
+        if !dcv || (dcv && !dcv.satisfied? && (i == 0 && !certificate_order.certificate.is_ucc?))
+          self.csr.domain_control_validations.create(
+              dcv_method: v["dcv"],
+              candidate_addresses: cur_email,
+              failure_action: v["dcv_failure_action"]
+          )
+        end
+      else
+        name.domain_control_validations.create(dcv_method: "email", email_address: v["dcv"],
+                                              failure_action: v["dcv_failure_action"], candidate_addresses: cur_email)
+        # assume the first name is the common name
+        self.csr.domain_control_validations.create(
+            dcv_method: "email",
+            email_address: v["dcv"],
+            failure_action: v["dcv_failure_action"],
+            candidate_addresses: cur_email
+        ) if (i == 0 && !certificate_order.certificate.is_ucc?)
       end
       i+=1
     end
@@ -360,6 +403,12 @@ class CertificateContent < ActiveRecord::Base
     define_method("#{role}_contact") do
       send("#{role}_contacts").last
     end
+  end
+
+  def cached_certificate_order
+    CertificateOrder.unscoped.find(Rails.cache.fetch("#{cache_key}/cached_certificate_order")do
+      certificate_order.id
+    end)
   end
 
   def expired?
@@ -459,7 +508,8 @@ class CertificateContent < ActiveRecord::Base
     index = if cc.empty?
       0
     else
-      cc.pluck(:ref).map{ |r| r.split('-').last.to_i }.sort.last + 1
+      cc_ref=cc.order(:created_at).last.ref
+      cc_ref.blank? ? 0 : cc_ref.split('-').last.to_i + 1
     end
     "#{certificate_order.ref}-#{index}"
   end
@@ -644,31 +694,33 @@ class CertificateContent < ActiveRecord::Base
     dn = []
     if locked_registrant
       dn << "CN=#{locked_registrant.company_name}" unless locked_registrant.company_name.blank?
-      dn << "O=#{locked_registrant.company_name}" unless locked_registrant.company_name.blank?
+      if !locked_registrant.company_name.blank? and (!locked_registrant.city.blank? or !locked_registrant.state.blank?)
+        dn << "O=#{locked_registrant.company_name}"
+      end
       dn << "OU=#{locked_registrant.department}" unless locked_registrant.department.blank?
       dn << "L=#{locked_registrant.city}" unless locked_registrant.city.blank?
       dn << "ST=#{locked_registrant.state}" unless locked_registrant.state.blank?
       dn << "C=#{locked_registrant.country}" unless locked_registrant.country.blank?
       # dn << "postalCode=#{locked_registrant.postal_code}" unless locked_registrant.postal_code.blank?
-    else
-      dn << "CN=#{registrant.company_name}" unless registrant.company_name.blank?
-      dn << "O=#{registrant.company_name}" unless registrant.company_name.blank?
-      dn << "OU=#{registrant.department}" unless registrant.department.blank?
-      dn << "L=#{registrant.city}" unless registrant.city.blank?
-      dn << "ST=#{registrant.state}" unless registrant.state.blank?
-      dn << "C=#{registrant.country}" unless registrant.country.blank?
-      # dn << "postalCode=#{locked_registrant.postal_code}" unless locked_registrant.postal_code.blank?
+      dn.map{|d|d.gsub(/\\/,'\\\\').gsub(',','\,')}.join(",")
     end
-
-    dn.map{|d|d.gsub(/\\/,'\\\\').gsub(',','\,')}.join(",")
   end
 
   def subject_dn(options={})
     cert = options[:certificate] || self.certificate
     dn=["CN=#{options[:common_name] || csr.common_name}"]
-    unless cert.is_dv?
-      dn << "O=#{options[:o] || registrant.company_name}"
-      dn << "C=#{options[:c] || registrant.country}"
+    if !locked_registrant.blank? and !(options[:mapping] ? options[:mapping].try(:profile_name) =~ /DV/ : cert.is_dv?)
+      # if ev or ov order, must have locked registrant
+      org=options[:o] || locked_registrant.company_name
+      ou=options[:ou] || locked_registrant.department
+      state=options[:s] || locked_registrant.state
+      city=options[:l] || locked_registrant.city
+      country=options[:c] || locked_registrant.country
+      dn << "O=#{org}" if !org.blank? and (!city.blank? or !state.blank?)
+      dn << "OU=#{ou}" unless ou.blank?
+      dn << "C=#{country}"
+      dn << "L=#{city}" unless city.blank?
+      dn << "ST=#{state}" unless state.blank?
       if cert.is_ev?
         dn << "serialNumber=#{options[:serial_number] || certificate_order.jois.last.try(:company_number) ||
           ("11111111" if options[:ca_id]==Ca::ISSUER[:sslcom_shadow])}"
@@ -685,6 +737,8 @@ class CertificateContent < ActiveRecord::Base
     dn << options[:custom_fields] if options[:custom_fields]
     dn.map{|d|d.gsub(/\\/,'\\\\').gsub(',','\,')}.join(",")
   end
+
+
 
   def csr_certificate_name
     begin

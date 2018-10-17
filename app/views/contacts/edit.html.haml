@@ -18,7 +18,7 @@
   .reseller_registration_profile
     %h3
       Create Contacts For #{@certificate_order.subject.downcase}
-      (order ref##{@certificate_order.order.reference_number})
+      (order ref# #{link_to @certificate_order.order.reference_number, @certificate_order})
     %p
       Please fill out the required fields below for the Administrative Contact for
       \#{@certificate_order.subject.downcase}. Administrative contacts receive

@@ -13,6 +13,12 @@
 -if token.try("in_transit?".to_sym)
   -flash.now[:warning] = "Token #{token.name} has shipped with tracking number #{token.tracking_number}!" if co.certificate.is_evcs? and !co.physical_tokens.blank?
 =render :partial=>'quick_links'
+
+#send_notify.hidden
+  =form_tag nil, :id=>'send_notify_form', :method=>:post do
+    =hidden_field_tag :certificate_order_ref
+    =hidden_field_tag :notify_type
+
 #certificate_orders
   %table(cellspacing="0")
     %caption
@@ -20,7 +26,9 @@
       %span.common_name
         #{cn}
       -if permitted_to?(:update, @certificate_order)
-        =link_to "[how do I use this page?]", "https://www.ssl.com/article/certificate-order-page-information/"
+        -team_iv = @certificate_order.get_team_iv
+        -link_text = team_iv.nil? ? " [how do I use this page?]" : " #{team_iv.first_name} #{team_iv.last_name}"
+        =link_to link_text, "https://www.ssl.com/article/certificate-order-page-information/"
     %tr.heading_row
       %th(scope="col") Subject
       %th(scope="col") Status
@@ -51,13 +59,15 @@
                     .certificate_details_box
                       %ul
                         -unless co.certificate.admin_submit_csr?
+                          -fields = (@cc.csr.signed_certificate.blank?)? @cc.csr : @cc.csr.signed_certificate
                           %li
-                            %strong certificate contents
+                            %strong
+                              =fields.is_a?(Csr) ? "csr" : "certificate"
+                              contents
                           -if @cc.csr.blank?
                             %li
-                              %em waiting for csr
+                              %em waiting for input
                           -else
-                            -fields = (@cc.csr.signed_certificate.blank?)? @cc.csr : @cc.csr.signed_certificate
                             -unless @cc.csr.signed_certificate
                               -unless fields.organization.blank?
                                 %li
@@ -106,6 +116,41 @@
                                   -if fields.is_SHA1?
                                     =link_to "(SHA2 upgrade)", reprocess_certificate_order_url(co)
                             %li.category_border
+                        -if @certificate_order.can_validate_client_smime?(current_user)
+                          %li
+                            %strong validation status
+                          %li.li-cert-validate
+                            -if current_user.is_system_admins?
+                              -require_ov = @certificate_order.certificate.requires_locked_registrant?
+                              -if require_ov && !@certificate_order.ov_validated?
+                                = link_to "<i class='fa fa-expeditedssl'></i> Validate OV".html_safe,                      |
+                                admin_update_certificate_order_path(@ssl_slug, @certificate_order.ref, validate_ov: true), |
+                                method: :put, class: 'btn-cert-validate'
+                                %br/
+                              -if require_ov && @certificate_order.ov_validated?
+                                - Contact::statuses.keys.each do |key|
+                                  - if key != 'validated'
+                                    = link_to "<i class='fa fa-expeditedssl'></i> OV #{key.humanize}".html_safe,                                       |
+                                    admin_update_certificate_order_path(@ssl_slug, @certificate_order.ref, unvalidate_ov: true, unvalidate_type: key), |
+                                    method: :put, class: 'btn-cert-validate'
+                                    %br/
+                                %br/
+                              -if !@certificate_order.iv_validated?
+                                = link_to "<i class='fa fa-expeditedssl'></i> Validate IV".html_safe,                      |
+                                admin_update_certificate_order_path(@ssl_slug, @certificate_order.ref, validate_iv: true), |
+                                method: :put, class: 'btn-cert-validate'
+                                %br/
+                              -if @certificate_order.iv_validated?
+                                - Contact::statuses.keys.each do |key|
+                                  - if key != 'validated'
+                                    = link_to "<i class='fa fa-expeditedssl'></i> IV #{key.humanize}".html_safe,                                       |
+                                    admin_update_certificate_order_path(@ssl_slug, @certificate_order.ref, unvalidate_iv: true, unvalidate_type: key), |
+                                    method: :put, class: 'btn-cert-validate'
+                                    %br/
+                            -else
+                              = link_to "<i class='fa fa-expeditedssl'></i> Change Recipient Status to Validated".html_safe, |
+                              admin_update_certificate_order_path(@ssl_slug, @certificate_order.ref, validate_iv: true),     |
+                              method: :put, class: 'btn-cert-validate'
                         -unless @certificate_order.certificate.is_dv?
                           %li
                             %strong validation documentation
@@ -136,9 +181,19 @@
                         =render partial: "certificate_orders/duration_limit", locals:{co: @certificate_order}
                     .certificate_details_box
                       %ul
+                        -team_iv = co.get_team_iv
+                        -unless team_iv.nil?
+                          %li 
+                            %strong recipient (#{team_iv.status.humanize})
+                          %li #{team_iv.first_name}, #{team_iv.last_name}
+                          %li #{team_iv.email}
+                          %li
+                            =link_to 'edit recipient', recipient_certificate_order_path(@ssl_slug, @certificate_order.ref)
+                          %li 
+                            %br/
                         %li
                           %strong registrant
-                        -unless @cc.registrant.blank?
+                        -unless @cc.registrant.blank? || (!current_user.is_system_admins? && @certificate_order.ov_validated?)
                           -r = @cc.registrant
                           %li
                             =r.company_name
@@ -175,7 +230,7 @@
                               =link_to 'provide info (required)', edit_certificate_order_path(@certificate_order)
                             -else
                               none
-                        -if co.certificate.has_locked_registrant?
+                        -if co.certificate.has_locked_registrant? || co.locked_registrant
                           %li.category_border
                           %li
                             %strong locked registrant
@@ -289,92 +344,93 @@
                 %tr
                   %td
                     = render partial: 'tags/certificate_order_tags'
-            %table(cellspacing="0")
-              %tbody
-                -@certificate_order.certificate_contents.order('created_at DESC').each do |c|
-                  -current = c==@certificate_order.certificate_content
-                  -csr = c.csr
-                  -sc = c.csr.try(:signed_certificate)
-                  %tr
-                    %td(colspan="5" style="text-align: left;")
-                      -unless co.certificate.is_code_signing?
-                        %span.previous_requests #{c!=@certificate_order.certificate_content ? "previous" : "current" }: #{c.label}
-                        -if sc.try(:body).blank?
-                          (server software: #{c.server_software.try :title})
-                        -else
-                          (serial number: #{sc.serial})
-                  %tr
-                    %td(colspan="5")
-                      -if !@certificate_order.certificate.is_code_signing? # or current_user.is_system_admins?
-                        .certificate_details_box
-                          %strong certificate signing request
-                          -unless permitted_to?(:create, SignedCertificate.new) && current
-                            -unless csr.blank?
-                              %div
-                                submitted on #{c.csr.created_at.strftime("%b %d, %Y %R %Z")}
-                              =text_area_tag :csr, csr.body, :size=>"30x10"
-                            -else
-                              no certificate signing request found
+            -unless @certificate_order.certificate_contents.count == 1 && @certificate_order.certificate_content.csr.nil?
+              %table(cellspacing="0")
+                %tbody
+                  -@certificate_order.certificate_contents.order('created_at DESC').each do |c|
+                    -current = c==@certificate_order.certificate_content
+                    -csr = c.csr
+                    -sc = c.csr.try(:signed_certificate)
+                    %tr
+                      %td(colspan="5" style="text-align: left;")
+                        -unless co.certificate.is_code_signing?
+                          %span.previous_requests #{c!=@certificate_order.certificate_content ? "previous" : "current" }: #{c.ref}
+                          -if sc.try(:body).blank?
+                            (server software: #{c.server_software.try :title})
                           -else
-                            #csr_submitted_on
-                              %span.submitted_on
-                                -unless csr.try(:created_at).blank?
-                                  submitted on
-                                  \#{csr.created_at.strftime("%b %d, %Y %R %Z")}
-                                -else
-                                  &nbsp
-                            =form_for csr do |f|
-                              =f.text_area :body, :cols=>30, :rows=>10
-                              .clearfix
-                              =submit_tag 'Submit csr', :class=> 'submit_signed_certificate'
-                              =image_tag('waiting_bar_medium.gif', :id=>'waiting_on_csr', :style=>'display:none;vertical-align: middle;')
-                              #temporary_csr.hidden[csr, :new]
-                                =text_area_tag :tmp_csr, csr.try(:body)
-                        .certificate_details_box
-                          %strong signed certificate
-                          -unless permitted_to?(:create, SignedCertificate.new) && current
+                            (serial number: #{sc.serial})
+                    %tr
+                      %td(colspan="5")
+                        -if !@certificate_order.certificate.is_code_signing? # or current_user.is_system_admins?
+                          .certificate_details_box
+                            %strong certificate signing request
+                            -unless permitted_to?(:create, SignedCertificate.new) && current
+                              -unless csr.blank?
+                                %div
+                                  submitted on #{c.csr.created_at.strftime("%b %d, %Y %R %Z")}
+                                =text_area_tag :csr, csr.body, :size=>"30x10"
+                              -else
+                                no certificate signing request found
+                            -else
+                              #csr_submitted_on
+                                %span.submitted_on
+                                  -unless csr.try(:created_at).blank?
+                                    submitted on
+                                    \#{csr.created_at.strftime("%b %d, %Y %R %Z")}
+                                  -else
+                                    &nbsp
+                              =form_for csr do |f|
+                                =f.text_area :body, :cols=>30, :rows=>10
+                                .clearfix
+                                =submit_tag 'Submit csr', :class=> 'submit_signed_certificate'
+                                =image_tag('waiting_bar_medium.gif', :id=>'waiting_on_csr', :style=>'display:none;vertical-align: middle;')
+                                #temporary_csr.hidden[csr, :new]
+                                  =text_area_tag :tmp_csr, csr.try(:body)
+                          .certificate_details_box
+                            %strong signed certificate
+                            -unless permitted_to?(:create, SignedCertificate.new) && current
+                              -unless sc.try(:body).blank?
+                                %div
+                                  submitted on #{sc.created_at.strftime("%b %d, %Y %R %Z")}
+                                =text_area_tag :signed_certificate, sc.body, :size=>"30x10"
+                              -else
+                                %div
+                                  no signed certificate found
+                            -else
+                              #signed_certificate_submitted_on
+                                %span.submitted_on
+                                  -unless sc.try(:created_at).blank?
+                                    submitted on
+                                    \#{sc.created_at.strftime("%b %d, %Y %R %Z")}
+                                  -else
+                                    &nbsp
+                              =form_for SignedCertificate.new, :url=>csr_signed_certificates_path(csr) do |f|
+                                =f.text_area :body, :cols=>30, :rows=>10
+                                .clearfix
+                                  #{check_box_tag "email_customer", true, true}notify customer?
+                                =submit_tag 'Submit certificate', :class=> 'submit_signed_certificate'
+                                =image_tag('waiting_bar_medium.gif', :id=>'waiting_bar', :style=>'display:none;vertical-align: middle;')
+                                #temporary_signed_certificate.hidden[csr]
+                                  =text_area_tag :tmp_signed_certificate, sc.try(:body)
+                          .certificate_details_box
                             -unless sc.try(:body).blank?
-                              %div
-                                submitted on #{sc.created_at.strftime("%b %d, %Y %R %Z")}
-                              =text_area_tag :signed_certificate, sc.body, :size=>"30x10"
-                            -else
-                              %div
-                                no signed certificate found
-                          -else
-                            #signed_certificate_submitted_on
-                              %span.submitted_on
-                                -unless sc.try(:created_at).blank?
-                                  submitted on
-                                  \#{sc.created_at.strftime("%b %d, %Y %R %Z")}
-                                -else
-                                  &nbsp
-                            =form_for SignedCertificate.new, :url=>csr_signed_certificates_path(csr) do |f|
-                              =f.text_area :body, :cols=>30, :rows=>10
-                              .clearfix
-                                #{check_box_tag "email_customer", true, true}notify customer?
-                              =submit_tag 'Submit certificate', :class=> 'submit_signed_certificate'
-                              =image_tag('waiting_bar_medium.gif', :id=>'waiting_bar', :style=>'display:none;vertical-align: middle;')
-                              #temporary_signed_certificate.hidden[csr]
-                                =text_area_tag :tmp_signed_certificate, sc.try(:body)
-                        .certificate_details_box
-                          -unless sc.try(:body).blank?
-                            -if co.certificate.is_code_signing?
-                              %strong parsed certificate
-                              %div
-                                issued to: #{sc.common_name}
-                              %textarea.selectAll{cols: 30, rows: 10}=sc.decoded
-                            -else
-                              -san = sc.subject_alternative_names
-                              %strong parsed certificate
-                              %div
-                                =san ? "DOMAINS (#{san.count})" : 'DOMAINS'
-                              %textarea.selectAll{cols: 10, rows: 5}=san ? san.join("\n") : ""
-                              %div
-                                DECODED
-                              %textarea.selectAll{cols: 10, rows: 4}=sc.decoded
-                  %tr
-                    %td(colspan="5" style="text-align: left;")
-                      = render partial: '/tags/certificate_content_tags', locals: {taggable: c}
+                              -if co.certificate.is_code_signing?
+                                %strong parsed certificate
+                                %div
+                                  issued to: #{sc.common_name}
+                                %textarea.selectAll{cols: 30, rows: 10}=sc.decoded
+                              -else
+                                -san = sc.subject_alternative_names
+                                %strong parsed certificate
+                                %div
+                                  =san ? "DOMAINS (#{san.count})" : 'DOMAINS'
+                                %textarea.selectAll{cols: 10, rows: 5}=san ? san.join("\n") : ""
+                                %div
+                                  DECODED
+                                %textarea.selectAll{cols: 10, rows: 4}=sc.decoded
+                    %tr
+                      %td(colspan="5" style="text-align: left;")
+                        = render partial: '/tags/certificate_content_tags', locals: {taggable: c}
                 -if current_user.is_admin?
                   %tr
                     %td(colspan="5")

@@ -13,6 +13,19 @@ module ContactsHelper
       :contact_role=>role
   end
   
+  def render_saved_registrants(list, with_data=nil)
+    list.inject([]) do |registrants, r|
+      main_info = {}
+      remove = %w{id notes type contactable_id contactable_type created_at updated_at}
+      final = r.attributes.merge('status' => r.status)
+      final.each {|key, val| main_info["#{with_data ? 'data-' : ''}#{key}"] = val}
+      main_info = main_info.delete_if {|k,v| remove.include?(k.remove 'data-')}
+      option = "#{r.company_name} (#{r.status ? r.status.humanize : 'N/A'})"
+      registrants << [option, r.id, main_info]
+      registrants.sort
+    end
+  end
+
   def render_saved_contacts(list, with_data=nil)
     list.inject([]) do |contacts, c|
       main_info = {}
@@ -23,6 +36,8 @@ module ContactsHelper
       main_info = main_info.delete_if {|k,v| remove.include?(k.remove 'data-')}
       option = if c.type == 'Registrant'
         c.individual? ? "#{full_name} (individual)" : "#{company} (organization)"
+      elsif c.type == 'IndividualValidation'
+        [full_name, c.email].join(' | ')
       else
         [full_name, company].join(' | ')
       end

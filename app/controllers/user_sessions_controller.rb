@@ -339,7 +339,7 @@ class UserSessionsController < ApplicationController
         @duo_account = current_user.ssl_account(:default_team).duo_account
         @authenticated_user = Duo.verify_response(@duo_account ? @duo_account.duo_ikey : "", @duo_account ? @duo_account.duo_skey : "", @duo_account ? @duo_account.duo_akey : "", params['sig_response'])
       end
-    end
+    end if current_user
     
     if @authenticated_user
       session[:duo_auth] = true
@@ -388,7 +388,8 @@ private
       else
         {owner:  nil,
         target: nil,
-        action: "Failed login attempt by #{params[:user_session][:login]} from ip address #{request.remote_ip}",
+        action: "Failed login attempt by #{params[:user_session] ? params[:user_session][:login] :
+                                               params[:login]} from ip address #{request.remote_ip}",
         notes:  reason}
     end)
   end

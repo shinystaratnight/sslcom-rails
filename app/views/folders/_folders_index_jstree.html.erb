@@ -1,0 +1,188 @@
+<script>
+  jQuery(function($) {
+    $(document).ready(function() {
+      function foldersMenu(node) {
+        return {
+          renameFolder: {
+            label: 'Rename',
+            action: function(obj) {
+              $('#btn-folder-rename').click();
+            },
+            icon: "fa fa-edit"
+          },
+          defaultFolder: {
+            label: "Set To Default",
+            action: function(obj) {
+              $('#' + obj.reference[0].id.replace('_anchor','')).click();
+              $('#btn-folder-default').click();
+            },
+            icon: "fa fa-certificate"
+          },
+          createFolderInside: {
+            label: "Create Subfolder",
+            action: function(obj) {
+              $('#btn-folder-create').click();
+            },
+            icon: "fa fa-indent"
+          },
+          createFolderOutside: {
+            label: "Create Folder",
+            action: function(obj) {
+              $('#btn-folder-create-root').click();
+            },
+            icon: "fa fa-outdent"
+          },
+          deleteFolder: {
+            label: "Delete",
+            action: function(obj) {
+              $('#btn-folder-destroy').click();
+            },
+            icon: "fa fa-trash"
+          }
+        }
+      }
+      
+      function fileMenu(node) {
+        return {
+          fileDetails: {
+            label: 'Details',
+            action: function(obj) {
+              $('.jstree-grid-column-4').find(
+                $("[data-jstreegrid='" + node.id + "']")
+              ).click();
+            },
+            icon: "fa fa-file-text"
+          }
+        }
+      }
+
+      function newCertificateItem() {
+        return {
+          newCertificate: {
+            label: "New Certificate",
+            action: function(obj) {
+              window.location.href = "<%= is_sandbox? ? developers_certificate_orders_url : certificates_path %>";
+            },
+            icon: "fa fa-list-alt"
+          }
+        }
+      }
+
+      function customMenu(node) {
+        if (node.icon == "jstree-folder") {
+          return Object.assign(foldersMenu(node), newCertificateItem());
+        } else if (node.icon == "jstree-file") {
+          return Object.assign(fileMenu(node), newCertificateItem());
+        } else {
+          return newCertificateItem();
+        }
+      }
+
+      $("#folders-tree").jstree({
+        "core" : {
+          "check_callback" : function(operation, node, node_parent, node_position, more) {
+            var callback = true;
+            if (operation == 'move_node' || operation == 'delete_node') {
+              callback = node.data &&
+                !node.data['archived'] &&
+                !node.data['expired'] &&
+                !node.data['revoked'] &&
+                !node.data['active'];
+            }
+            if (operation == 'move_node' && node_parent.id == '#') {
+              callback = node.type !='file';
+            }
+            return callback;
+          },
+          "force_text" : true,
+          "themes" : {
+            "dots" : false
+          },
+          "data" : {
+            "url" : "<%= children_folders_path(@ssl_slug, tree_type: 'folders_index') %>",
+            "data" : function(node) {
+              return {"id" : node.id};
+            }
+          }
+        },
+        "grid" : {
+          "columns" : [
+            {
+              width: 250,
+              headerClass: "folder-index-header",
+              wideCellClass: "folder-index-name",
+              header: "Name"
+            },
+            {
+              width: 190,
+              headerClass: "folder-index-header",
+              wideCellClass: "folder-index-subject",
+              cellClass: "folder-index-subject-cell",
+              header: "Subject",
+              value: function(node) {
+                if (node.icon == 'jstree-file') {
+                  return(node.data.subject);
+                }
+              }
+            },
+            {
+              width: 120,
+              headerClass: "folder-index-header",
+              wideCellClass: "folder-index-status",
+              header: "Status",
+              value: function(node) {
+                if (node.icon == 'jstree-file') {
+                  return(node.data.status);
+                }
+              }
+            },
+            {
+              width: 120,
+              headerClass: "folder-index-header",
+              wideCellClass: "folder-index-expires",
+              header: "Expires",
+              value: function(node) {
+                if (node.icon == 'jstree-file') {
+                  return(node.data.expires);
+                }
+              }
+            },
+            {
+              width: 120,
+              headerClass: "folder-index-header",
+              wideCellClass: "folder-index-action",
+              header: "Action",
+              value: function(node) {
+                if (node.icon == 'jstree-file') {
+                  return("details");
+                }
+              }
+            }
+          ],
+          resizable: true
+        },
+        "contextmenu" : {
+          items : customMenu
+        },
+        "types" : {
+            "folder" : {
+              "icon" : "jstree-folder",
+              "valid_children" : ["folder", "file"]
+            },
+            "file" : {
+              "icon" : "jstree-file",
+              "valid_children" : []
+            }
+        },
+        "plugins" : [ 
+          "contextmenu",
+          "dnd",
+          "search",
+          "types",
+          "wholerow",
+          "grid"
+        ]
+      });
+    });
+  });
+</script>

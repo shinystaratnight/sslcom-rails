@@ -42,6 +42,18 @@ SslCom::Application.routes.draw do
         match '/users/set_default_team' => 'api_user_requests#set_default_team_v1_4',
           as: :api_user_set_default_team_v1_4, via: [:options, :put], set_default_team: /.+\/?/
 
+        # SSL Manager
+        match '/ssl_manager' => 'api_ssl_manager_requests#register',
+              as: :api_ssl_manager_register, via: [:options, :post]
+        match '/ssl_manager/collection' => 'api_ssl_manager_requests#collection',
+              as: :api_ssl_manager_collection, via: [:options, :post]
+        match '/ssl_managers' => 'api_ssl_manager_requests#delete',
+              as: :api_ssl_managers_delete, via: [:options, :delete]
+        match '/ssl_managers' => 'api_ssl_manager_requests#index',
+              as: :api_ssl_managers_index, via: [:options, :get]
+        match '/ssl_manager/collections' => 'api_ssl_manager_requests#collections',
+              as: :api_ssl_managers_collections, via: [:options, :get]
+
         # Code Signing.
         match '/generate_certificate' => 'api_certificate_requests#generate_certificate_v1_4',
               as: :api_certificate_generate_v1_4, via: [:options, :post]
@@ -144,6 +156,32 @@ SslCom::Application.routes.draw do
   end
 
   concern :teamable do
+    resources :folders, only: [:index, :create, :update, :destroy] do
+      collection do
+        put :reset_to_system
+        get :children
+      end
+      member do
+        put :add_certificate_order
+        put :add_certificate_orders
+      end
+    end
+
+    resources :domains, only: [:index, :create, :update, :destroy] do
+      collection do
+        match :validate_all, via: [:get, :post]
+        match :dcv_all_validate, via: [:get, :post]
+        match :remove_selected, via: [:get, :post]
+        match :validate_selected, via: [:get, :post]
+        match :select_csr, via: [:get, :post]
+        match :validate_against_csr, via: [:get, :post]
+      end
+      member do
+        match :validation_request, via: [:get, :post]
+        match :dcv_validate, via: [:get, :post]
+      end
+    end
+
     resources :invoices, only: [:index, :edit, :update, :show, :destroy] do
       member do
         get  :download
@@ -169,6 +207,12 @@ SslCom::Application.routes.draw do
       end
     end
 
+    resources :certificate_order_tokens do
+      collection do
+        post :request_token
+      end
+    end
+
     resources :certificate_orders do
       resources :physical_tokens do
         member do
@@ -191,6 +235,7 @@ SslCom::Application.routes.draw do
         get :update_csr, to: 'application#not_found', status: 404
         match :update_csr, via: [:put, :patch]
         match :update_tags, via: [:put, :post]
+        match :recipient, via: [:get, :post]
         get :download
         get :developer
         get :download_other
@@ -211,7 +256,7 @@ SslCom::Application.routes.draw do
         post :remove_domains
         post :get_email_addresses
         member do
-          match :dcv_email_validate, via: [:get, :post, :options]
+          match :dcv_validate, via: [:get, :post, :options]
           get :document_upload
         end
       end
@@ -243,6 +288,7 @@ SslCom::Application.routes.draw do
       end
       collection do
         get :country_codes
+        post :all_domains
       end
 
       member do
@@ -251,11 +297,38 @@ SslCom::Application.routes.draw do
       end
     end
 
+    resources :managed_csrs do
+      collection do
+        get :show_csr_detail
+      end
+    end
+
     resources :notification_groups do
+      resources :scan_logs, only: :index
+
       collection do
         get :certificate_orders_domains_contacts
+        post :search
         post :register_notification_group
         post :remove_groups
+        post :scan_groups
+        post :scan_individual_group
+        post :change_status_groups
+        post :check_duplicate
+      end
+    end
+
+    resources :registered_agents do
+      collection do
+        post :search
+        post :remove_agents
+        post :approve_ssl_managers
+      end
+
+      member do
+        get :managed_certificates
+        post :search_managed_certificates
+        post :remove_managed_certificates
       end
     end
 
@@ -265,6 +338,7 @@ SslCom::Application.routes.draw do
     resources :validations, :only=>[:index, :update] do
       collection do
         get :search, :requirements, :domain_control, :ev, :organization
+        post :upload_for_registrant
       end
     end
     resources :site_seals, :only=>[:index, :update, :admin_update] do
@@ -448,6 +522,8 @@ SslCom::Application.routes.draw do
     end
   end
 
+  match "/contacts/:id/admin_update" => 'contacts#admin_update', as: :admin_update_contact, via: [:put, :post]
+  match '/ssl_manager/:id/approve' => 'registered_agents#approve', :as => :approve_ssl_manager, via: [:get]
   match '/activate/:id' => 'activations#create', :as => :activate, via: [:get, :post]
   match '/register/:activation_code' => 'activations#new', :as => :register, via: [:get, :post]
   match '/sitemap.xml' => 'site#sitemap', :as => :sitemap, via: [:get, :post]
@@ -457,6 +533,8 @@ SslCom::Application.routes.draw do
   match 'browser_compatibility' => 'site#compatibility', as: :browsers, via: [:get, :post]
   match 'acceptable-top-level-domains-tlds-for-ssl-certificates' => 'site#top_level_domains_tlds',
         as: :tlds, via: [:get, :post]
+  match '/certificate_order_token/:token/generate_cert' => 'certificate_orders#generate_cert', :as => :confirm, via: [:get]
+
   #match 'paid_cert_orders'=> 'site#paid_cert_orders'
   (Reseller::TARGETED+SiteController::STANDARD_PAGES).each do |i|
     send("get", i=>"site##{i}", :as => i.to_sym)

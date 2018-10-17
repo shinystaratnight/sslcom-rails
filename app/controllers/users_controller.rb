@@ -106,9 +106,37 @@ class UsersController < ApplicationController
       )
 
       if Settings.require_signup_password
+        # Check Code Signing Certificate Order for assign as assignee.
+        CertificateOrder.unscoped.search_validated_not_assigned(params[:user][:email]).each do |cert_order|
+          cert_order.update_attribute(:assignee, @user)
+        end
+
         # TODO: New Logic for auto activation by signup with password.
+        @user.deliver_auto_activation_confirmation!
         notice = "Your account has been created."
         flash[:notice] = notice
+
+        # Auto Login after register
+        @user_session = UserSession.new({
+                                            login: params[:user][:login],
+                                            password: params[:user][:password],
+                                            failed_account: '0'
+                                        })
+        if @user_session.save
+          user = @user_session.user
+
+          cookies[:acct] = {
+              :value=>user.ssl_account.acct_number,
+              :path => "/",
+              :expires => Settings.cart_cookie_days.to_i.days.from_now
+          }
+
+          flash[:notice] = "Successfully logged in."
+
+          redirect_to (account_path(user.ssl_account(:default_team) ?
+                                                                 user.ssl_account(:default_team).to_slug :
+                                                                 {})) and return
+        end
       else
         # TODO: Original Logic for activation by email.
         @user.deliver_activation_instructions!
@@ -269,6 +297,8 @@ class UsersController < ApplicationController
         end
       end
       redirect_to login_path
+    else
+      redirect_to activation_notice_users_path
     end
   end
 
@@ -404,13 +434,41 @@ class UsersController < ApplicationController
   def create_team
     @user = User.find params[:id]
     if @user && !@user.max_teams_reached? && params[:create] && params[:team_name]
-      ssl = create_custom_ssl_acct(@user, params)
-      if ssl.persisted?
-        flash[:notice] = "Team #{ssl.company_name} has been successfully created."
+      @new_team = create_custom_ssl_acct(@user, params)
+      if @new_team.persisted?
+        flash[:notice] = "Team #{@new_team.company_name} has been successfully created."
+        autoadd_users_to_team
         redirect_to teams_user_path
       else
         flash[:error] = 'Failed to create new team, please try again.'
         redirect_to :back
+      end
+    end
+  end
+
+  def autoadd_users_to_team
+    if params[:auto_add_user_ids].any?
+      users = User.where(id: params[:auto_add_user_ids].map(&:to_i))
+      users.each do |user|
+        user.ssl_accounts << @new_team
+
+        # add roles from most recent team (shared w/current_user) they were added to
+        roles = current_user.get_auto_add_user_roles(user)
+        roles = [Role.get_individual_certificate_id] if roles.empty?
+        user.set_roles_for_account(@new_team, roles)
+        
+        # send invitation email
+        current_user.invite_existing_user(
+          user: {email: user.email, ssl_account_id: @new_team.id},
+          from_user: current_user
+        )
+        
+        SystemAudit.create(
+          owner:  current_user,
+          target: user,
+          action: 'Invite user to team (ManagedUsersController#create)',
+          notes:  "Ssl.com user #{user.login} was invited to team #{@new_team.get_team_name} by #{current_user.login}."
+        )
       end
     end
   end

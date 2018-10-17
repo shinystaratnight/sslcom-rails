@@ -1,4 +1,76 @@
 module OrdersHelper
+
+  def stats(unpaginated)
+    if current_user.is_admin?
+      # Invoiced orders
+      invoice_items = unpaginated.where(state: 'invoiced')
+
+      @payable_invoices = Invoice
+                              .where.not(billable_id: nil, type: nil)
+                              .where(id: invoice_items.map(&:invoice_id).uniq).joins(:orders)
+
+      @pending_payable_invoices = @payable_invoices
+                                      .where(status: 'pending')
+                                      .where(orders: {approval: 'approved'})
+                                      .map(&:orders).flatten.uniq
+                                      .select{|o| invoice_items.include?(o)}.sum(&:cents)
+
+      @paid_payable_invoices = @payable_invoices
+                                   .where(status: ['paid', 'partially_refunded'])
+                                   .where(orders: {approval: 'approved'})
+                                   .map(&:orders).flatten.uniq
+                                   .select{|o| invoice_items.include?(o)}.sum(&:cents)
+
+      @refunded_payable_invoices = @payable_invoices
+                                       .where(status: 'refunded')
+                                       .where(orders: {approval: 'approved'})
+                                       .map(&:orders).flatten.uniq
+                                       .select{|o| invoice_items.include?(o)}.sum(&:cents)
+
+      @partial_refunds_payable_invoices = @payable_invoices
+                                              .where(status: 'partially_refunded')
+                                              .where(orders: {approval: 'approved'})
+                                              .map(&:payment).map(&:refunds).flatten.uniq.sum(&:amount)
+
+      @paid_payable_invoices -= @partial_refunds_payable_invoices
+
+      @payable_invoices_count = @payable_invoices.uniq.count
+      @invoiced_orders_count = invoice_items.count
+
+      # Non invoiced orders
+      @negative = unpaginated
+                      .where(state: %w{charged_back canceled rejected payment_not_required payment_declined})
+                      .where.not(description: [Order::MI_PAYMENT, Order::DI_PAYMENT])  # exclude invoice payments (as order)
+                      .where.not(state: 'invoiced')                    # exclude invoice items (as order)
+                      .sum(:cents)
+
+      refunded = Refund.where(
+          order_id: unpaginated
+                        .where.not(description: [Order::MI_PAYMENT, Order::DI_PAYMENT])
+                        .where.not(state: 'invoiced')
+                        .where(state: ['partially_refunded', 'fully_refunded']).map(&:id)
+      ).where(status: 'success')
+
+      deposits = unpaginated.joins{ line_items.sellable(Deposit) }
+
+      orders = unpaginated.where.not(id: deposits.map(&:id))
+                   .where.not(description: [Order::MI_PAYMENT, Order::DI_PAYMENT])
+                   .where.not(state: 'invoiced')
+
+      # Funded Account Withdrawal
+      faw = unpaginated.where(description: Order::FAW).sum(:cents)
+
+      deposits = deposits.where.not(description: Order::FAW)
+
+      @refunded_amount = refunded.sum(:amount)
+      @refunded_count  = refunded.count
+      @deposits_amount = deposits.sum(:cents)
+      @deposits_count  = deposits.count
+      @total_amount    = orders.sum(:cents) - @negative - @refunded_amount - faw
+      @total_count     = orders.count
+    end
+  end
+
   def cart_items
     if current_user && current_user.ssl_account.has_role?('new_reseller')
       return [current_user.ssl_account.reseller.reseller_tier]
@@ -103,7 +175,7 @@ module OrdersHelper
   end
 
   def ssl_account
-    current_user.ssl_account
+    current_user.try(:ssl_account)
   end
 
   def reseller_initial_deposit?
@@ -242,7 +314,7 @@ module OrdersHelper
     @target_amount       = (@charge_amount.blank? || @charge_amount == 0) ? @order_amount : @charge_amount
     
     if @reprocess_ucc || @renew_ucc || @ucc_csr_submit
-      @certificate_order   = @ssl_account.certificate_orders.find_by(ref: params[:order][:co_ref])
+      @certificate_order   = @ssl_account.cached_certificate_orders.find_by(ref: params[:order][:co_ref])
       @certificate_content = @certificate_order.certificate_contents.find_by(ref: params[:order][:cc_ref])
     end
   end
@@ -334,6 +406,7 @@ module OrdersHelper
       @order.invoice_description = '' if @order.invoice_description.nil?
       @order.invoice_description << " Received credit for #{notes.join(' and ')}."
     end
+    @order.lock!
     @order.save
   end
   
@@ -363,11 +436,20 @@ module OrdersHelper
           end
         end
         SystemAudit.create(
-            owner:  current_user,
-            target: @order,
-            action: "purchase successful",
-            notes:  get_order_notes
+          owner:  current_user,
+          target: @order,
+          action: "purchase successful",
+          notes:  get_order_notes
         )
+      elsif @order.invoiced?
+        flash[:notice] = "Order has been added to invoice due to transaction failure. #{@gateway_response.message}"
+        SystemAudit.create(
+          owner:  current_user,
+          target: @order,
+          action: "order added to invoice due to denied transaction",
+          notes: @gateway_response.message
+        )
+        return true
       else
         flash.now[:error] = if @gateway_response.message=~/no match/i
           "CVV code does not match"

@@ -2,13 +2,23 @@ class Contact < ActiveRecord::Base
   include V2MigrationProgressAddon
   # include RefParam
 
+  enum status: {
+    in_progress: 1,
+    pending_validation: 5,
+    additional_info: 15,
+    validated: 20
+  }
+
   belongs_to :contactable, polymorphic: true
   has_many   :order_contacts, foreign_key: :parent_id, class_name: 'Contact'
-
-  has_many    :notification_groups_subjects, as: :subjectable
-  has_many    :notification_groups, through: :notification_groups_subjects
+  has_many   :notification_groups_subjects, as: :subjectable
+  has_many   :notification_groups, through: :notification_groups_subjects
+  has_many   :contact_validation_histories, dependent: :destroy
+  has_many   :validation_histories, through: :contact_validation_histories
   
   attr_accessor :update_parent, :administrative_role, :billing_role, :technical_role, :validation_role
+  
+  serialize :special_fields
   
   ALIAS_FIELDS = {organization: :company_name, organization_unit: :department,
                   street_address_1: :address1, street_address_2: :address2,
@@ -41,6 +51,22 @@ class Contact < ActiveRecord::Base
     end
   end
   
+  def self.get_company_fields
+    [
+      'company_name',
+      'department',
+      'company_number',
+      'incorporation_date',
+      'incorporation_country',
+      'incorporation_state',
+      'incorporation_city',
+      'assumed_name',
+      'business_category',
+      'duns_number',
+      'registration_service',
+      'special_fields'
+    ]
+  end
   # Remove duplicate certificate contacts for current certificate content 
   # of passed certificate order.
   # Param certificate_order: object, object.id, array of objects, array of ids
@@ -63,6 +89,10 @@ class Contact < ActiveRecord::Base
     end
   end
   
+  def get_address_format
+    "#{address1}, #{city}, #{state} #{postal_code}, #{country}"
+  end
+
   def to_api_query
     {}.tap do |result|
       (ALIAS_FIELDS.keys+%w(postal_code country email)).each do |k,v|

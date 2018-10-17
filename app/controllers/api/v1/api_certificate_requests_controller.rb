@@ -113,10 +113,13 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
       co.certificate_content.create_csr(body: params[:csr])
 
       options = {}
-      options[:ca] = Ca::MANAGEMENT_CA
       options[:cc] = co.certificate_content
+      options[:mapping] = options[:cc].ca || co.certificate.cas.ssl_account_or_general_default(current_user.ssl_account).last
 
       if res = SslcomCaApi.generate_for_certificate(options)
+        co_token = co.certificate_order_tokens.where(is_expired: false).first
+        co_token.update_attribute(:is_expired, true) if co_token
+
         @result.cert_results = res
       end
     else
@@ -130,12 +133,15 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
 
   def replace_v1_4
     set_template "replace_v1_4"
+
     if @result.csr_obj && !result.csr_obj.valid?
       @result = @result.csr_obj
     else
-      ext_order_number = CertificateOrder.find_by_ref(params[:ref]).external_order_number || 'eon'
+      # ext_order_number = CertificateOrder.find_by_ref(params[:ref]).external_order_number || 'eon'
       if @result.save
         if @acr = @result.replace_certificate_order
+          @csr = @acr.csr
+
           if @acr.is_a?(CertificateOrder) && @acr.errors.empty?
             if @acr.certificate_content.csr && @result.debug=="true"
               ccr = @acr.certificate_content.csr.ca_certificate_requests.last
@@ -146,24 +152,73 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
             # @result.eta=ccr.response_certificate_eta
             # @result.order_status = ccr.response_certificate_status
 
+            #Send validation email unless ca_id is nil
+            unless @acr.certificate_content.ca_id.nil?
+              cnames = @acr.certificate_content.certificate_names
+              email_for_identifier = ''
+              identifier = ''
+              email_list = []
+              identifier_list = []
+              domain_ary = []
+              domain_list = []
+              emailed_domains = []
+
+              cnames.each do |cn|
+                dcv = cn.domain_control_validations.last
+
+                unless dcv.identifier_found
+                  if dcv.dcv_method == 'email'
+                    if dcv.email_address != email_for_identifier
+                      if domain_list.length > 0
+                        domain_ary << domain_list
+                        email_list << email_for_identifier
+                        identifier_list << identifier
+                        domain_list = []
+                      end
+
+                      identifier = (SecureRandom.hex(8)+Time.now.to_i.to_s(32))[0..19]
+                      email_for_identifier = dcv.email_address
+                    end
+
+                    domain_list << cn.name
+                    emailed_domains << cn.name
+                    dcv.update_attribute(:identifier, identifier)
+                  else
+                    if dcv_verify(dcv.dcv_method, true) == "true"
+                      dcv.satisfy! unless dcv.satisfied?
+                    end
+                  end
+                end
+              end
+
+              unless identifier == ''
+                domain_ary << domain_list
+                email_list << email_for_identifier
+                identifier_list << identifier
+
+                email_list.each_with_index do |value, key|
+                  OrderNotifier.dcv_email_send(@acr, value, identifier_list[key], domain_ary[key]).deliver
+                end
+              end
+            end
+
             set_result_parameters(@result, @acr)
             @result.debug=(@result.parameters_to_hash["debug"]=="true") # && @acr.admin_submitted = true
           else
             @result = @acr #so that rabl can report errors
           end
 
-          unless @result.cert_names.blank?
-            @result.cert_names.keys.each do |key|
-              byebug
-              # expire_fragment(params[:ref] + ':' + key)
-              Rails.cache.delete(params[:ref] + ':' + ext_order_number + ':' + key)
-
-              # cache = Rails.cache.read(params[:ref] + ':' + ext_order_number + ':' + key)
-              # unless cache && JSON.parse(cache)['tr_info']['status'] == 'validated'
-              #   Rails.cache.delete(params[:ref] + ':' + ext_order_number + ':' + key)
-              # end
-            end
-          end
+          # unless @result.cert_names.blank?
+          #   @result.cert_names.keys.each do |key|
+          #     # expire_fragment(params[:ref] + ':' + key)
+          #     Rails.cache.delete(params[:ref] + ':' + ext_order_number + ':' + key)
+          #
+          #     # cache = Rails.cache.read(params[:ref] + ':' + ext_order_number + ':' + key)
+          #     # unless cache && JSON.parse(cache)['tr_info']['status'] == 'validated'
+          #     #   Rails.cache.delete(params[:ref] + ':' + ext_order_number + ':' + key)
+          #     # end
+          #   end
+          # end
 
         end
       else
@@ -177,13 +232,15 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
 
   def update_v1_4
     set_template "update_v1_4"
+
     if @result.csr_obj && !@result.csr_obj.valid?
       # we do this sloppy maneuver because the rabl template only reports errors
       @result = @result.csr_obj
     else
-      ext_order_number = CertificateOrder.find_by_ref(params[:ref]).external_order_number || 'eon'
+      # ext_order_number = CertificateOrder.find_by_ref(params[:ref]).external_order_number || 'eon'
       if @result.save #save the api request
         if @acr = @result.update_certificate_order
+          @csr = @acr.csr
           # successfully charged
           if @acr.is_a?(CertificateOrder) && @acr.errors.empty?
             if @acr.certificate_content.csr && @result.debug=="true"
@@ -194,34 +251,58 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
             # @result.error_message=ccr.response_error_message
             # @result.eta=ccr.response_certificate_eta
             # @result.order_status = ccr.response_certificate_status
-            cnames = @acr.certificate_content.certificate_names
-            random_source = [('a'..'z'), ('A'..'Z')].map(&:to_a).flatten
-            email_for_identifier = ''
-            identifier = ''
-            email_list = []
-            identifier_list = []
-            domain_ary = []
-            domain_list = []
-            cnames.each do |cn|
-              dcv = cn.domain_control_validations.last
-              if dcv.email_address != email_for_identifier
-                if domain_list.length>0
-                  domain_ary << domain_list
-                  email_list << email_for_identifier
-                  identifier_list << identifier
-                  domain_list = []
+
+            #Send validation email unless ca_id is nil
+            unless @acr.certificate_content.ca_id.nil?
+              cnames = @acr.certificate_content.certificate_names
+              email_for_identifier = ''
+              identifier = ''
+              email_list = []
+              identifier_list = []
+              domain_ary = []
+              domain_list = []
+              emailed_domains = []
+              # succeeded_domains = []
+              # failed_domains = []
+
+              cnames.each do |cn|
+                dcv = cn.domain_control_validations.last
+                unless dcv.identifier_found
+                  if dcv.dcv_method == 'email'
+                    if dcv.email_address != email_for_identifier
+                      if domain_list.length>0
+                        domain_ary << domain_list
+                        email_list << email_for_identifier
+                        identifier_list << identifier
+                        domain_list = []
+                      end
+                      identifier = (SecureRandom.hex(8)+Time.now.to_i.to_s(32))[0..19]
+                      email_for_identifier = dcv.email_address
+                    end
+
+                    domain_list << cn.name
+                    emailed_domains << cn.name
+                    dcv.update_attribute(:identifier, identifier)
+                  else
+                    if dcv_verify(dcv.dcv_method, true) == "true"
+                      dcv.satisfy! unless dcv.satisfied?
+                      # succeeded_domains << cn.name
+                    # else
+                    #   failed_domains << cn.name
+                    end
+                  end
                 end
-                identifier = (0..19).map { random_source[rand(random_source.length)] }.join
-                email_for_identifier = dcv.email_address
               end
-              domain_list << cn.name
-              dcv.update_attribute(:identifier, identifier)
-            end
-            domain_ary << domain_list
-            email_list << email_for_identifier
-            identifier_list << identifier
-            email_list.each_with_index do |value, key|
-              OrderNotifier.dcv_email_send(@acr, value, identifier_list[key], domain_ary[key]).deliver
+
+              unless identifier == ''
+                domain_ary << domain_list
+                email_list << email_for_identifier
+                identifier_list << identifier
+
+                email_list.each_with_index do |value, key|
+                  OrderNotifier.dcv_email_send(@acr, value, identifier_list[key], domain_ary[key]).deliver
+                end
+              end
             end
 
             set_result_parameters(@result, @acr)
@@ -230,18 +311,17 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
             @result = @acr #so that rabl can report errors
           end
 
-          unless @result.cert_names.blank?
-            @result.cert_names.keys.each do |key|
-              byebug
-              # expire_fragment(params[:ref] + ':' + key)
-              Rails.cache.delete(params[:ref] + ':' + ext_order_number + ':' + key)
-
-              # cache = Rails.cache.read(params[:ref] + ':' + ext_order_number + ':' + key)
-              # unless cache && JSON.parse(cache)['tr_info']['status'] == 'validated'
-              #   Rails.cache.delete(params[:ref] + ':' + ext_order_number + ':' + key)
-              # end
-            end
-          end
+          # unless @result.cert_names.blank?
+          #   @result.cert_names.keys.each do |key|
+          #     # expire_fragment(params[:ref] + ':' + key)
+          #     Rails.cache.delete(params[:ref] + ':' + ext_order_number + ':' + key)
+          #
+          #     # cache = Rails.cache.read(params[:ref] + ':' + ext_order_number + ':' + key)
+          #     # unless cache && JSON.parse(cache)['tr_info']['status'] == 'validated'
+          #     #   Rails.cache.delete(params[:ref] + ':' + ext_order_number + ':' + key)
+          #     # end
+          #   end
+          # end
 
         end
 
@@ -383,7 +463,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
             @result.cert_details[:certificate_content][:fields][:decoded] = sc.decoded
           end
 
-          @result.cert_details[:in_limit] = (@acr.certificate_duration(:days).to_i > CertificateOrder::SSL_MAX_DURATION) && (@acr.created_at > Date.parse('Apr 1 2015'))
+          @result.cert_details[:in_limit] = (@acr.certificate_duration(:days).to_i > @acr.max_duration) && (@acr.created_at > Date.parse('Apr 1 2015'))
           @result.cert_details[:registrant] = @acr.certificate_content.registrant.to_api_query
 
           if @acr.certificate_content.issued? && !@acr.certificate_content.expired?
@@ -1306,26 +1386,28 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
     @csr || @certificate_order.csr
   end
 
-  def dcv_verify(protocol)
-    prepend=""
+  def dcv_verify(protocol, against_ca = false)
+    prepend = ""
+
     begin
       Timeout.timeout(Surl::TIMEOUT_DURATION) do
-        if protocol=="https"
+        if protocol == "https_csr_hash"
           uri = URI.parse(dcv_url(true,prepend))
           http = Net::HTTP.new(uri.host, uri.port)
           http.use_ssl = true
           http.verify_mode = OpenSSL::SSL::VERIFY_NONE
           request = Net::HTTP::Get.new(uri.request_uri)
           r = http.request(request).body
-        elsif protocol=="cname"
+        elsif protocol == "cname_csr_hash"
           txt = Resolv::DNS.open do |dns|
             records = dns.getresources(cname_origin, Resolv::DNS::Resource::IN::CNAME)
           end
-          return cname_destination==txt.last.name.to_s
+          return (txt.size > 0) ? (cname_destination(against_ca)==txt.last.name.to_s) : false
         else
-          r=open(dcv_url(false,prepend), redirect: false).read
+          r = open(dcv_url(false, prepend), redirect: false).read
         end
-        return true if !!(r =~ Regexp.new("^#{csr.sha2_hash}") && r =~ Regexp.new("^comodoca.com") &&
+
+        return true if !!(r =~ Regexp.new("^#{csr.sha2_hash}") && r =~ Regexp.new("^#{against_ca ? '' : 'comodoca'}.com") &&
             (csr.unique_value.blank? ? true : r =~ Regexp.new("^#{csr.unique_value}")))
       end
     rescue Exception=>e
@@ -1341,8 +1423,8 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
     "#{csr.dns_md5_hash}.#{non_wildcard_name}"
   end
 
-  def cname_destination
-    "#{csr.dns_sha2_hash}.comodoca.com"
+  def cname_destination(against_ca)
+    "#{csr.dns_sha2_hash}#{against_ca ? '' : '.comodoca'}.com"
   end
 
   def non_wildcard_name

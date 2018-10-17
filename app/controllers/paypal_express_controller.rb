@@ -82,11 +82,11 @@ class PaypalExpressController < ApplicationController
           else
             setup_orders
           end
-          funded_account_credit(purchase_params)
           order_w_discount = discount.any? ? (@order.cents - discount.first[:amount].abs) : @order.cents
           if @ssl_account.funded_account.cents >= order_w_discount
+            funded_account_credit(purchase_params)
+            @ssl_account.funded_account.decrement! :cents, (order_w_discount - @funded_deduct_amt)
             @ssl_account.orders << @order
-            @ssl_account.funded_account.decrement! :cents, order_w_discount
             @order.finalize_sale(params: params, deducted_from: @deposit,
                                  visitor_token: @visitor_token, cookies: cookies)
             if initial_reseller_deposit?
@@ -104,7 +104,7 @@ class PaypalExpressController < ApplicationController
       else
         auth_code = "#paidviapaypal#{purchase.authorization}"
         if @domains_adjustment
-          @certificate_order = @ssl_account.certificate_orders.find_by(ref: params[:co_ref])
+          @certificate_order = @ssl_account.cached_certificate_orders.find_by(ref: params[:co_ref])
           @certificate_content = @ssl_account.certificate_contents.find_by(ref: params[:cc_ref])
           domains_adjustment_order(purchase_params)
           funded_account_credit(purchase_params)
@@ -119,7 +119,7 @@ class PaypalExpressController < ApplicationController
           setup_orders
           @order.notes = auth_code
         end
-        
+        @order.lock!
         @ssl_account.orders << @order
         @order.finalize_sale(
           params: params,
@@ -213,19 +213,24 @@ class PaypalExpressController < ApplicationController
     @payable_invoice = params[:monthly_invoice]
     @domains_adjustment = @reprocess_ucc || @renew_ucc || @ucc_csr_submit
   end
-    
+  
+  def get_funded_account_amt(purchase_params)
+    @funded_exists = purchase_params[:items].find {|i| i[:name]=='Funded Account'}
+    @funded_deduct_amt = @funded_exists ? @funded_exists[:amount].abs : 0
+  end
+
   def funded_account_credit(purchase_params)
-    funded_exists = purchase_params[:items].find {|i| i[:name]=='Funded Account'}
-    funded_amt    = funded_exists ? (funded_exists[:amount].abs * 100) : 0
+    get_funded_account_amt(purchase_params)
     names = [
       'Monthly Invoice Pmt',
       'Reprocess UCC Cert',
       'Renew UCC Cert',
-      'UCC Cert Adjustment'
+      'UCC Cert Adjustment',
+      'Deposit'
     ]
     order_amount = purchase_params[:items].find {|i| names.include?(i[:name])}[:amount]
-    if funded_exists && funded_amt > 0
-      withdraw_funded_account(funded_amt, order_amount)
+    if @funded_exists && @funded_deduct_amt > 0
+      withdraw_funded_account(@funded_deduct_amt, order_amount)
     end
   end
 end

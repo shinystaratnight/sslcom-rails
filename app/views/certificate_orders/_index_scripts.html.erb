@@ -207,6 +207,40 @@ jQuery(function($) {
       <%end%>
     }
 
+    var send_notify_options = {
+      dataType: 'json',
+      beforeSubmit: function() {
+        var notify_type = $('#notify_type').val();
+        var token_url = '<%= certificate_order_tokens_path(@ssl_slug)%>';
+        var request_url = '<%= request_token_certificate_order_tokens_path(@ssl_slug)%>';
+
+        if (notify_type == 'token') {
+          $(this).attr('url', token_url);
+        } else {
+          $(this).attr('url', request_url);
+        }
+      },
+      success: function(data) {
+        if (data == 'success') {
+          alert('Successfully sent notify email.');
+        } else if (data == 'not_found_ssl_account') {
+          alert('Not found team account. Please try again.');
+        } else if (data == 'session_expired') {
+          alert('The session has been expired. You need to login again.');
+          location.reload(true);
+        }
+      }
+    };
+
+    $('.link_to_send_notify').click(function(e) {
+      e.preventDefault();
+      var ref = $(this).attr('data-ref');
+      var notify_type = $(this).attr('data-type');
+      $('#certificate_order_ref').val(ref);
+      $('#notify_type').val(notify_type);
+      $('form#send_notify_form').ajaxSubmit(send_notify_options);
+    });
+
     $('#btn_cert_order_filter').click(function() {
       $('#wrap_cert_order_filter').show();
       $('#btn_cert_order_search').prop('disabled', true);
@@ -512,6 +546,13 @@ jQuery(function($) {
         ['fax', 'fax'],
         ['ext', 'ext']
       ];
+      $('#saved_registrant_id').val(
+        $(this).find('option:selected').attr('value')
+      );
+      $('#saved_registrant_status').val(
+        $(this).find('option:selected').data('status')
+      );
+      $('#registrant_contact').attr('checked', false);
       list.forEach(function(el) {
         populateContact(el[0], $('#saved_contacts option:selected').data(el[1]));
       });
@@ -545,7 +586,7 @@ jQuery(function($) {
         }
       } else {
         var cert_order_ref = currentElmt.parents().filter('tr').attr('alt');
-        var ajaxUrl = '<%=show_cert_order_certificate_orders_path%>';
+        var ajaxUrl = '<%=show_cert_order_certificate_orders_path(folders: show_folders_container?)%>';
 
         $.ajax({
           url: ajaxUrl,
@@ -577,9 +618,18 @@ jQuery(function($) {
     $('form[id^=edit_certificate_order] textarea').keyup(function(){
       $(this).parents().filter('form').ajaxSubmit();
     });
-
-    $('#certificate_orders').on('keyup', '#certificate_order_notes', function() {
-      $(this).parents().filter('form').ajaxSubmit();
+    
+    $('#registrant_contact').change(function() {
+      if(this.checked) {
+        $('#first_name').val($(this).data('first-name'));
+        $('#last_name').val($(this).data('last-name'));
+        $('#email').val($(this).data('email'));
+        $('#saved_contacts').val('');
+      } else {
+        $('#first_name').val(null);
+        $('#last_name').val(null);
+        $('#email').val(null);
+      }
     });
 
     // Cancel button
@@ -605,6 +655,9 @@ jQuery(function($) {
       <%end%>
     }
 
+    $('#certificate_orders').on('keyup', '#certificate_order_notes', function() {
+      $(this).parents().filter('form').ajaxSubmit();
+    });
   });
 });
 </script>

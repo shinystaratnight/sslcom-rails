@@ -3,7 +3,7 @@ require 'bigdecimal'
 
 class Order < ActiveRecord::Base
   include V2MigrationProgressAddon
-  belongs_to  :billable, :polymorphic => true
+  belongs_to  :billable, :polymorphic => true, touch: true
   belongs_to  :address
   belongs_to  :billing_profile, -> { unscope(where: [:status]) }
   belongs_to  :billing_profile_unscoped, foreign_key: :billing_profile_id, class_name: "BillingProfileUnscoped"
@@ -263,16 +263,10 @@ class Order < ActiveRecord::Base
 
   def apply_discounts(params)
     if (params[:discount_code])
-      self.temp_discounts =[]
+      self.temp_discounts = []
       general_discount = Discount.viable.general.find_by_ref(params[:discount_code])
-      if current_user and !current_user.is_system_admins?
-        if current_user.ssl_account.discounts.find_by_ref(params[:discount_code])
-          self.temp_discounts<<current_user.ssl_account.discounts.find_by_ref(params[:discount_code]).id
-        elsif general_discount
-          self.temp_discounts<<general_discount.id
-        end
-      elsif general_discount
-        self.temp_discounts<<general_discount.id
+      if general_discount
+        self.temp_discounts << general_discount.id
       end
     end
   end
@@ -298,8 +292,11 @@ class Order < ActiveRecord::Base
   end
     
   def total
-    unless reprocess_ucc_order? || invoice_payment? ||
-      on_payable_invoice? || domains_adjustment?
+    unless reprocess_ucc_order? || 
+      invoice_payment? ||
+      on_payable_invoice? || 
+      domains_adjustment? ||
+      no_limit_order?
       
       self.amount = line_items.inject(0.to_money) {|sum,l| sum + l.amount }
     end
@@ -318,6 +315,7 @@ class Order < ActiveRecord::Base
     end
       
     state :pending do
+      event :payment_invoiced, transitions_to: :invoiced
       event :give_away, transitions_to: :payment_not_required
       event :payment_authorized, transitions_to: :authorized
       event :transaction_declined, :transitions_to => :payment_declined
@@ -519,6 +517,10 @@ class Order < ActiveRecord::Base
   def merchant_fully_refunded?
     get_total_merchant_refunds == get_total_merchant_amount
   end
+
+  def no_limit_order?
+    state == 'invoiced'
+  end
   
   def on_payable_invoice?
     !invoice_id.blank? && state == 'invoiced'
@@ -577,7 +579,7 @@ class Order < ActiveRecord::Base
   end
   
   # Get all orders for certificate orders or line items of main order.
-  def get_all_orders
+  def get_cached_orders
     certificate_orders.map(&:orders).inject([]) do |all, o|
       all << o if o != self
       all.flatten
@@ -586,37 +588,39 @@ class Order < ActiveRecord::Base
   
   # Fetches all domain counts that were added during UCC domains adjustment
   def get_reprocess_domains
-    co           = certificate_orders.first
-    cc           = get_reprocess_cc(co)
-    cs           = cc.signed_certificate if cc
-    cc_domains   = (cc.nil? || (cc && cc.domains.blank?)) ? [] : cc.domains
-    cur_domains  = (cc && cs) ? cs.subject_alternative_names : cc_domains
-    non_wildcard = cur_domains.map {|d| d if !d.include?('*')}.compact
-    wildcard     = cur_domains.map {|d| d if d.include?('*')}.compact
-    
-    tot_non_wildcard = if cur_non_wildcard.blank?
-      non_wildcard.count - co.get_reprocess_max_nonwildcard(cc).count
-    else
-      cur_non_wildcard
+    Rails.cache.fetch("#{cache_key}/get_reprocess_domains") do
+      co           = certificate_orders.first
+      cc           = get_reprocess_cc(co)
+      cs           = cc.signed_certificate if cc
+      cc_domains   = (cc.nil? || (cc && cc.domains.blank?)) ? [] : cc.domains
+      cur_domains  = (cc && cs) ? cs.subject_alternative_names : cc_domains
+      non_wildcard = cur_domains.map {|d| d if !d.include?('*')}.compact
+      wildcard     = cur_domains.map {|d| d if d.include?('*')}.compact
+
+      tot_non_wildcard = if cur_non_wildcard.blank?
+                           non_wildcard.count - co.get_reprocess_max_nonwildcard(cc).count
+                         else
+                           cur_non_wildcard
+                         end
+
+      tot_wildcard = if cur_wildcard.blank?
+                       wildcard.count - co.get_reprocess_max_wildcard(cc).count
+                     else
+                       cur_wildcard
+                     end
+
+      tot_non_wildcard  = tot_non_wildcard < 0 ? 0 : tot_non_wildcard
+      tot_wildcard      = tot_wildcard < 0 ? 0 : tot_wildcard
+      new_domains_count = tot_non_wildcard + tot_wildcard
+
+      {
+          all:                cur_domains,
+          new_domains_count:  (new_domains_count < 0 ? 0 : new_domains_count),
+          cur_wildcard:       wildcard.count,
+          wildcard:           tot_wildcard,
+          non_wildcard:       tot_non_wildcard
+      }
     end
-    
-    tot_wildcard = if cur_wildcard.blank?
-      wildcard.count - co.get_reprocess_max_wildcard(cc).count
-    else
-      cur_wildcard
-    end
-    
-    tot_non_wildcard  = tot_non_wildcard < 0 ? 0 : tot_non_wildcard
-    tot_wildcard      = tot_wildcard < 0 ? 0 : tot_wildcard
-    new_domains_count = tot_non_wildcard + tot_wildcard
-    
-    {
-      all:                cur_domains,
-      new_domains_count:  (new_domains_count < 0 ? 0 : new_domains_count),
-      cur_wildcard:       wildcard.count,
-      wildcard:           tot_wildcard,
-      non_wildcard:       tot_non_wildcard
-    }
   end
   
   def get_ccref_from_notes
@@ -641,21 +645,19 @@ class Order < ActiveRecord::Base
   
   def get_reprocess_orders
     result = {}
-    if certificate_orders.any?
-      certificate_orders.each do |co|
-        current = []
-        co.orders.order(created_at: :asc).each do |o|
-          if o.reprocess_ucc_order?
-            current << {
-              date:       o.created_at.strftime('%F'),
-              order_ref:  o.reference_number,
-              domains:    o.get_reprocess_domains,
-              amount:     o.get_full_reprocess_format
-            }
-          end
+    cached_certificate_orders.each do |co|
+      current = []
+      co.orders.order(created_at: :asc).each do |o|
+        if o.reprocess_ucc_order?
+          current << {
+            date:       o.created_at.strftime('%F'),
+            order_ref:  o.reference_number,
+            domains:    o.get_reprocess_domains,
+            amount:     o.get_full_reprocess_format
+          }
         end
-        result[co.ref] = current if current.any?
       end
+      result[co.ref] = current if current.any?
     end
     result
   end
@@ -663,7 +665,18 @@ class Order < ActiveRecord::Base
   def number
     SecureRandom.base64(32)
   end
-  # END number
+  
+  def invoice_denied_order(ssl_account)
+    cur_invoice_id = Invoice.get_or_create_for_team(ssl_account).try(:id)
+    if cur_invoice_id
+      update(
+        state:      'invoiced',
+        invoice_id: cur_invoice_id,
+        approval:   'approved'
+      )
+      transactions.destroy_all
+    end
+  end
 
   # BEGIN purchase
   def purchase(credit_card, options = {})
@@ -677,8 +690,12 @@ class Order < ActiveRecord::Base
         if authorization.success?
           payment_authorized!
         else
-          transaction_declined!
-          errors[:base] << authorization.message
+          if !invoice_payment? && %w{insufficient_funds do_not_honor}.include?(authorization.params[:decline_code])
+            payment_invoiced! unless invoiced?
+          else
+            transaction_declined!
+            errors[:base] << authorization.message
+          end
         end
       end
       authorization
@@ -705,6 +722,12 @@ class Order < ActiveRecord::Base
       discounts<<Discount.viable.find(td)
     end unless temp_discounts.blank?
     temp_discounts=nil
+  end
+
+  def cached_certificate_orders
+    CertificateOrder.unscoped.where(id: (Rails.cache.fetch("#{cache_key}/cached_certificate_orders") do
+      certificate_orders.pluck(:id)
+    end)).order(created_at: :desc)
   end
 
   def is_free?
@@ -899,7 +922,7 @@ class Order < ActiveRecord::Base
       if merchant_fully_refunded?
         full_refund! unless fully_refunded?
         if certificate_orders.any?
-          certificate_orders.each {|co| co.refund! unless co.refunded?}
+          cached_certificate_orders.each {|co| co.refund! unless co.refunded?}
         end
       else
         partial_refund! unless partially_refunded?

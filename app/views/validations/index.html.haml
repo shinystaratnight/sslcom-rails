@@ -20,7 +20,7 @@
         %th.name(scope="col")Subject
         %th(scope="col" colspan="3") Validation Status
         %th(scope="col") Action
-      -@certificate_orders.each_with_index do |co, i|
+      -@certificate_orders.includes(:certificate_contents).each_with_index do |co, i|
         -@cert_order = co
         -cc = co.certificate_content
         -next if !co.is_unused_credit? && cc.csr.blank?

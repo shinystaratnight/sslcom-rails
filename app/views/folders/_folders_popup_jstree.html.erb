@@ -1,0 +1,32 @@
+<script>
+  jQuery(function($) {
+    $(document).ready(function() {
+      $("#folders-tree-modal").jstree({
+        "core" : {
+          "check_callback" : false,
+          "multiple" : false,
+          "themes" : {
+            "dots" : true
+          },  
+          "data" : {
+            "url" : "<%= children_folders_path(@ssl_slug, tree_type: 'co_folders_index_modal') %>",
+            "data" : function(node) {
+              return {"id" : node.id};
+            }
+          }
+        },
+        "checkbox" : {
+          "deselect_all" : true,
+          "three_state" : false,
+          "whole_node" : false,
+          "tie_selection" : false
+        },
+        "plugins" : [ 
+          "checkbox",
+          "sort",
+          "wholerow"
+        ]
+      });
+    });
+  });
+</script> 

@@ -14,10 +14,13 @@ class User < ActiveRecord::Base
   has_many  :duplicate_v2_users
   has_many  :other_party_requests
   has_many  :client_applications
+  has_many  :owned_system_audits, as: :owner, class_name: "SystemAudit"
+  has_many  :target_system_audits, as: :target, class_name: "SystemAudit"
   has_many  :tokens, ->{order("authorized_at desc").includes(:client_application)}, :class_name => "OauthToken"
   has_many  :ssl_account_users, dependent: :destroy
   has_many  :ssl_accounts, through: :ssl_account_users
   has_many  :certificate_orders, through: :ssl_accounts
+  has_many  :orders, through: :ssl_accounts
   has_many  :validation_histories, through: :certificate_orders
   has_many  :validations, through: :certificate_orders
   has_many  :approved_ssl_account_users, ->{where{(approved == true) & (user_enabled == true)}},
@@ -29,12 +32,16 @@ class User < ActiveRecord::Base
   has_one   :shopping_cart
   has_and_belongs_to_many :user_groups
   has_many  :notification_groups, through: :ssl_accounts
+  has_many  :certificate_order_tokens
 
+  preference  :managed_certificate_row_count, :string, :default=>"10"
+  preference  :registered_agent_row_count, :string, :default=>"10"
   preference  :cert_order_row_count, :string, :default=>"10"
   preference  :order_row_count, :string, :default=>"10"
   preference  :cdn_row_count, :string, :default=>"10"
   preference  :user_row_count, :string, :default => "10"
   preference  :note_group_row_count, :string, :default => "10"
+  preference  :scan_log_row_count, :string, :default => "10"
 
   #will_paginate
   cattr_accessor :per_page
@@ -71,7 +78,7 @@ class User < ActiveRecord::Base
     u.max_teams = OWNED_MAX_TEAMS unless u.max_teams
   end
 
-  default_scope        {where{status << ['disabled']}.order("created_at desc")}
+  default_scope        {where{status << ['disabled']}.order("users.created_at desc")}
   scope :with_role, -> (role){joins(:roles).where('lower(roles.name) LIKE (?)',
                         "%#{role.downcase.strip}%")}
   scope :search,    -> (term){joins{ssl_accounts.api_credentials}.where{
@@ -83,29 +90,35 @@ class User < ActiveRecord::Base
                         (ssl_accounts.api_credentials.secret_key =~ "%#{term}%") |
                         (ssl_accounts.acct_number =~ "%#{term}%")}.uniq}
 
+  scope :search_sys_admin, ->{ joins{ roles }.where{ roles.name == Role::SYS_ADMIN } }
+
   def ssl_account(default_team=nil)
-    default_ssl = default_ssl_account && is_approved_account?(default_ssl_account)
-    main_ssl    = main_ssl_account && is_approved_account?(main_ssl_account)
+    sa_id=Rails.cache.fetch("#{cache_key}/ssl_account/#{default_team.is_a?(Symbol) ? default_team.to_s : default_team.try(:cache_key)}") do
+      default_ssl = default_ssl_account && is_approved_account?(default_ssl_account)
+      main_ssl    = main_ssl_account && is_approved_account?(main_ssl_account)
 
-    # Retrieve team that was manually set as default in Teams by user
-    return SslAccount.find(main_ssl_account) if (default_team && main_ssl)
+      # Retrieve team that was manually set as default in Teams by user
+      break main_ssl_account if (default_team && main_ssl)
 
-    if default_ssl
-      SslAccount.find default_ssl_account
-    elsif !default_ssl && main_ssl
-      set_default_ssl_account main_ssl_account
-      SslAccount.find main_ssl_account
-    else
-      approved_account = get_first_approved_acct
-      set_default_ssl_account(approved_account) if approved_account
-      approved_account
+      if default_ssl
+        default_ssl_account
+      elsif !default_ssl && main_ssl
+        set_default_ssl_account main_ssl_account
+        main_ssl_account
+      else
+        approved_account = get_first_approved_acct
+        set_default_ssl_account(approved_account) if approved_account
+        approved_account
+      end
     end
+    SslAccount.find(sa_id) if sa_id
   end
 
   def is_approved_account?(target_ssl)
-    ssl = target_ssl.is_a?(SslAccount) ? target_ssl : SslAccount.find(target_ssl)
-    return false if ssl.nil?
-    ssl_account_users.where(ssl_account_id: ssl.id, user_enabled: true, approved: true).any?
+    Rails.cache.fetch("#{cache_key}/is_approved_account/#{target_ssl.try(:cache_key)}") do
+      return false unless SslAccount.exists?(target_ssl)
+      ssl_account_users.where(ssl_account_id: target_ssl, user_enabled: true, approved: true).any?
+    end
   end
   
   def is_main_account?(ssl_account)
@@ -127,7 +140,7 @@ class User < ActiveRecord::Base
       status = :accepted if active && ssl.approved
       status = :declined if ssl.declined_at || (!ssl.approved && ssl.token_expires.nil? && ssl.approval_token.nil?)
       status = :expired  if ssl.token_expires && (status != :declined) && (ssl.token_expires < DateTime.now)
-      status = :pending  if !active && (status != :declined) 
+      status = :pending  if !active && (status != :declined)
       status = :pending  if active && (!ssl.approved && ssl.token_expires && ssl.approval_token) && (ssl.token_expires > DateTime.now)
     end
     status
@@ -155,28 +168,56 @@ class User < ActiveRecord::Base
     status
   end
 
+  def get_auto_add_users_teams
+    self.ssl_accounts.joins(:assignments).where(
+      assignments: {role_id: Role.can_auto_add_users}
+    ).uniq.compact
+  end
+
+  def get_auto_add_users
+    users = User.joins(:ssl_accounts)
+      .where(ssl_accounts: {id: get_auto_add_users_teams.map(&:id)})
+      .where.not(users: {id: id}).uniq.compact
+  end
+
+  def get_auto_add_user_roles(added_user)
+    role_ids = added_user.assignments.where(
+      ssl_account_id: get_auto_add_users_teams.map(&:id)
+    ).pluck(:role_id).uniq
+    
+    # If invited user has owner role or reseller role, then replace
+    # it with account admin role for the team they're invited to.
+    if role_ids.include?(Role.get_owner_id) || 
+      role_ids.include?(Role.get_reseller_id)
+      
+      # User cannot be account_admin and have other roles.
+      role_ids = [Role.get_account_admin_id]
+    end
+    role_ids.uniq
+  end
+
   def self.total_teams_owned(user_id)
     User.find(user_id).assignments.where(role_id: Role.get_owner_id).map(&:ssl_account).uniq.compact
   end
 
   def total_teams_owned(user_id=nil)
-    user = user_id ? User.find(user_id) : self
+    user = self_or_other(user_id)
     user.assignments.where(role_id: Role.get_owner_id).map(&:ssl_account).uniq.compact
   end
 
   def total_teams_can_manage_users(user_id=nil)
-    user = user_id ? User.find(user_id) : self
+    user = self_or_other(user_id)
     user.assignments.where(role_id: Role.can_manage_users).map(&:ssl_account).uniq.compact
   end
 
   def total_teams_cannot_manage_users(user_id=nil)
-    user = user_id ? User.find(user_id) : self
+    user = self_or_other(user_id)
     user.ssl_accounts - user.assignments.where(role_id: Role.cannot_be_managed)
       .map(&:ssl_account).uniq.compact
   end
 
   def max_teams_reached?(user_id=nil)
-    user = user_id ? User.find(user_id) : self
+    user = self_or_other(user_id)
     total_teams_owned(user.id).count >= user.max_teams
   end
 
@@ -231,17 +272,19 @@ class User < ActiveRecord::Base
   end
 
   def roles_for_account(target_ssl=nil)
-    ssl = target_ssl.nil? ? ssl_account : target_ssl
-    if ssl_accounts.include?(ssl)
-      assignments.where(ssl_account_id: ssl).pluck(:role_id).uniq
-    else
-      []  
+    Rails.cache.fetch("#{cache_key}/roles_for_account/#{target_ssl ? target_ssl.cache_key : ''}") do
+      ssl = target_ssl.nil? ? ssl_account : target_ssl
+      if ssl_accounts.include?(ssl)
+        assignments.where(ssl_account_id: ssl).pluck(:role_id).uniq
+      else
+        []
+      end
     end
   end
 
   def get_roles_by_name(role_name)
-    role_id = Role.get_role_id(role_name)
-    role_id ? assignments.where(role_id: role_id) : []
+      role_id = Role.get_role_id(role_name)
+      role_id ? assignments.where(role_id: role_id) : []
   end
 
   def update_account_role(account, old_role, new_role)
@@ -255,8 +298,8 @@ class User < ActiveRecord::Base
 
   def duplicate_role?(role, target_ssl=nil)
     assignments.where(
-      ssl_account_id: (target_ssl.nil? ? ssl_account : target_ssl).id, 
-      role_id:        (role.is_a?(String) ? Role.get_role_id(role): Role.find(role))
+        ssl_account_id: (target_ssl.nil? ? ssl_account : target_ssl).id,
+        role_id:        (role.is_a?(String) ? Role.get_role_id(role): Role.find(role))
     ).any?
   end
 
@@ -275,6 +318,14 @@ class User < ActiveRecord::Base
       ssl = user.create_ssl_account([Role.get_owner_id])
       user.update_attribute(:main_ssl_account, ssl.id) if ssl
       user.update_attribute(:persist_notice, true)
+
+      # Check Code Signing Certificate Order for assign as assignee.
+      if Settings.require_signup_password
+        CertificateOrder.unscoped.search_validated_not_assigned(user.email).each do |cert_order|
+          cert_order.update_attribute(:assignee, user)
+        end
+      end
+
       user
     end
   end
@@ -347,7 +398,7 @@ class User < ActiveRecord::Base
   end
 
   def manageable_users
-    ssl_account.users
+    ssl_account.cached_users
   end
 
   def manageable_acs
@@ -363,14 +414,23 @@ class User < ActiveRecord::Base
   end
 
   def is_disabled?(target_ssl=nil)
-    ssl = target_ssl.nil? ? ssl_account : target_ssl
-    return true if ssl.nil?
-    ssl_account_users.where(ssl_account_id: ssl.id)
-      .map(&:user_enabled).include?(false)
+    Rails.cache.fetch("#{cache_key}/is_disabled/#{target_ssl.try(:cache_key)}") do
+      ssl = target_ssl || ssl_account
+      return true if ssl.nil?
+      ssl_account_users.where(ssl_account_id: ssl.id)
+          .map(&:user_enabled).include?(false)
+    end
   end
 
   def is_admin_disabled?
-    !ssl_account_users.map(&:user_enabled).include?(true)
+    Rails.cache.fetch("#{cache_key}/is_admin_disabled}") do
+      !ssl_account_users.map(&:user_enabled).include?(true)
+    end
+  end
+
+  def deliver_auto_activation_confirmation!
+    reset_perishable_token!
+    UserNotifier.auto_activation_confirmation(self).deliver
   end
 
   def deliver_activation_instructions!
@@ -443,6 +503,12 @@ class User < ActiveRecord::Base
 
   def deliver_generate_install_ssl!(resource_id, host_name, to_address)
     UserNotifier.generate_install_ssl(self, resource_id, host_name, to_address).deliver
+  end
+
+  def deliver_register_ssl_manager_to_team!(registered_agent_ref, ssl_account, auto_approve)
+    auto_approve ?
+        UserNotifier.auto_register_ssl_manager_to_team(self, ssl_account).deliver :
+        UserNotifier.register_ssl_manager_to_team(self, registered_agent_ref, ssl_account).deliver
   end
 
   def browsing_history(l_bound=nil, h_bound=nil, sort="asc")
@@ -530,20 +596,22 @@ class User < ActiveRecord::Base
 
   def self.get_user_accounts_roles(user)
     # e.g.: {17198:[4], 29:[17, 18], 15:[17, 18, 19, 20]}
-    mapped_roles = Role.all.map{|r| [r.id, r.name]}.to_h
-    user.ssl_accounts.inject({}) do |all, s|
-      all[s.id] = user.assignments.where(ssl_account_id: s.id).pluck(:role_id).uniq
-      all
+    Rails.cache.fetch("#{user.cache_key}/get_user_accounts_roles") do
+      user.ssl_accounts.inject({}) do |all, s|
+        all[s.id] = user.assignments.where(ssl_account_id: s.id).pluck(:role_id).uniq
+        all
+      end
     end
   end
 
   def self.get_user_accounts_roles_names(user)
     # e.g.: {'team_1': ['owner'], 'team_2': ['account_admin', 'installer']}
-    mapped_roles = Role.all.map{|r| [r.id, r.name]}.to_h
-    user.ssl_accounts.inject({}) do |all, s|
-      all[s.get_team_name] = user.assignments.where(ssl_account_id: s.id)
-        .map(&:role).uniq.map(&:name)
-      all
+    Rails.cache.fetch("#{user.cache_key}/get_user_accounts_roles_names") do
+      user.ssl_accounts.inject({}) do |all, s|
+        all[s.get_team_name] = user.assignments.where(ssl_account_id: s.id)
+                                   .map(&:role).uniq.map(&:name)
+        all
+      end
     end
   end
 
@@ -573,12 +641,21 @@ class User < ActiveRecord::Base
   end
 
   def role_symbols(target_account=nil)
-    Role.where(id: roles_for_account(target_account || ssl_account))
-      .map{|role| role.name.underscore.to_sym}
+    sa = target_account || ssl_account
+    Rails.cache.fetch("#{cache_key}/role_symbols/#{sa.cache_key}") do
+      Role.where(id: roles_for_account(sa)).map{|role| role.name.underscore.to_sym}
+    end
   end
 
   def role_symbols_all_accounts
     roles.map{|role| role.name.underscore.to_sym}
+  end
+
+  def certificate_order_by_ref(ref)
+    Rails.cache.fetch("#{cache_key}/certificate_order_id/#{ref}") do
+      CertificateOrder.unscoped{(is_system_admins? ? CertificateOrder :
+                                     ssl_account.cached_certificate_orders).find_by_ref(ref)}
+    end
   end
 
   # check for any SslAccount records do not have roles, users or an owner
@@ -600,12 +677,20 @@ class User < ActiveRecord::Base
     SslAccount.joins{assignments}.where{assignments.role_id==4}.count
   end
 
+  def can_manage_certificates?
+    is_system_admins? && is_ra_admin?
+  end
+
   def is_admin?
     role_symbols.include? Role::SYS_ADMIN.to_sym
   end
 
   def is_super_user?
     role_symbols.include? Role::SUPER_USER.to_sym
+  end
+
+  def is_ra_admin?
+    role_symbols.include? Role::RA_ADMIN.to_sym
   end
 
   def is_owner?(target_account=nil)
@@ -638,6 +723,20 @@ class User < ActiveRecord::Base
 
   def is_validations?
     role_symbols.include? Role::VALIDATIONS.to_sym
+  end
+
+  def is_validations_only?
+    role_symbols.include?(Role::VALIDATIONS.to_sym) && role_symbols.count == 1
+  end
+
+  def is_validations_and_billing_only?
+    role_symbols.include?(Role::VALIDATIONS.to_sym) &&
+        role_symbols.include?(Role::BILLING.to_sym) &&
+        role_symbols.count == 2
+  end
+
+  def is_individual_certificate?
+    role_symbols.include? Role::INDIVIDUAL_CERTIFICATE.to_sym
   end
 
   def is_users_manager?
@@ -900,7 +999,11 @@ class User < ActiveRecord::Base
   end
 
   private
-  
+
+  def self_or_other(user_id)
+    user = user_id ? User.find(user_id) : self
+  end
+
   def approve_account(params)
     ssl = get_ssl_acct_user_for_approval(params)
     ssl.update(approved: true, token_expires: nil, approval_token: nil) if ssl
@@ -919,8 +1022,11 @@ class User < ActiveRecord::Base
   end
 
   def get_first_approved_acct
-    ssl = ssl_account_users.where(approved: true, user_enabled: true)
-    ssl.any? ? ssl_accounts.find(ssl.first.ssl_account_id) : nil
+    sa_id=Rails.cache.fetch("#{cache_key}/get_first_approved_acct") do
+      ssl = ssl_account_users.where(approved: true, user_enabled: true)
+      ssl.any? ? ssl.first.ssl_account_id : nil
+    end
+    ssl_accounts.find(sa_id) if sa_id
   end
 
   def self.change_login(old, new)

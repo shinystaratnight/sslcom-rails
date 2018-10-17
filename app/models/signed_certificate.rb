@@ -11,6 +11,8 @@ class SignedCertificate < ActiveRecord::Base
   belongs_to :parent, :foreign_key=>:parent_id,
     :class_name=> 'SignedCertificate', :dependent=>:destroy
   belongs_to :csr
+  delegate :certificate_content, to: :csr
+  delegate :certificate_order, to: :certificate_content
   belongs_to :certificate_lookup
   validates_presence_of :body, :if=> Proc.new{|r| !r.parent_cert}
   validates :csr_id, :presence=>true, :on=>:save
@@ -18,6 +20,7 @@ class SignedCertificate < ActiveRecord::Base
     Proc.new{|r| !r.parent_cert && !r.body.blank?}
   has_many  :sslcom_ca_revocation_requests, as: :api_requestable
   #validate :same_as_previously_signed_certificate?, :if=> '!csr.blank?'
+  belongs_to  :registered_agent
 
   attr :parsed
   attr_accessor :email_customer
@@ -60,11 +63,11 @@ class SignedCertificate < ActiveRecord::Base
   end
 
   after_create do |s|
-    s.csr.certificate_content.issue! unless self.ca_id==Ca::ISSUER[:sslcom_shadow]
+    s.csr.certificate_content.issue! unless %w(ShadowSignedCertificate ManagedCertificate).include?(self.type)
   end
 
   after_save do |s|
-    unless self.ca_id==Ca::ISSUER[:sslcom_shadow]
+    unless %w(ShadowSignedCertificate ManagedCertificate).include?(self.type)
       s.send_processed_certificate
       cc=s.csr.certificate_content
       if cc.preferred_reprocessing?
@@ -89,12 +92,63 @@ class SignedCertificate < ActiveRecord::Base
     end
   end
 
-  scope :shadow, -> {where{ca_id >> [Ca::ISSUER[:sslcom_shadow]]}}
-
-  scope :live, -> {where{ca_id == nil}}
+  scope :live, -> {where{type == nil}}
 
   scope :most_recent_expiring, lambda{|start, finish|
     find_by_sql("select * from signed_certificates as T where expiration_date between '#{start}' AND '#{finish}' AND created_at = ( select max(created_at) from signed_certificates where common_name like T.common_name )")}
+
+  scope :search_with_terms, lambda { |term|
+    term ||= ""
+    term = term.strip.split(/\s(?=(?:[^']|'[^']*')*$)/)
+    filters = { common_name: nil, sans: nil, effective_date: nil, expiration_date: nil, status: nil }
+
+    filters.each {|fn, fv|
+      term.delete_if { |s| s =~ Regexp.new(fn.to_s+"\\:\\'?([^']*)\\'?"); filters[fn] ||= $1; $1 }
+    }
+    term = term.empty? ? nil : term.join(" ")
+
+    return nil if [term, *(filters.values)].compact.empty?
+
+    result = self.all
+    unless term.blank?
+      result = result.where {
+                     (common_name =~ "%#{term}%") |
+                     (subject_alternative_names =~ "%#{term}%") |
+                     (status =~ "%#{term}%")}
+    end
+
+    %w(common_name).each do |field|
+      query = filters[field.to_sym]
+      result = result.where{ common_name =~ "%#{query}%" } if query
+    end
+
+    %w(sans).each do |field|
+      query = filters[field.to_sym]
+      result = result.where{ subject_alternative_names =~ "%#{query}%" } if query
+    end
+
+    %w(effective_date expiration_date).each do |field|
+      query = filters[field.to_sym]
+      if query
+        query = query.split("-")
+        start = Date.strptime query[0], "%m/%d/%Y"
+        finish = query[1] ? Date.strptime(query[1], "%m/%d/%Y") : start + 1.day
+
+        if field == "effective_date"
+          result = result.where{ (effective_date >> (start..finish)) }
+        elsif field == "expiration_date"
+          result = result.where{ (expiration_date >> (start..finish)) }
+        end
+      end
+    end
+
+    %w(status).each do |field|
+      query = filters[field.to_sym]
+      result = result.where{ status =~ "%#{query}%" } if query
+    end
+
+    result.uniq
+  }
 
   def self.renew(start, finish)
     cl = CertificateLookup.includes{signed_certificates}.
@@ -103,7 +157,7 @@ class SignedCertificate < ActiveRecord::Base
     mre=self.most_recent_expiring(start,finish).each do |sc|
         # replace signed_certificate with one from lookups
         remove = cl.select{|c|c.common_name == sc.common_name}.
-            sort{|a,b|a.created_at <=> b.created_at}
+            sort{|a,b|a.created_at.to_i <=> b.created_at.to_i}
         if remove.last
           sc = cl.delete(remove.last)
           remove.each {|r| cl.delete(r)}
@@ -120,7 +174,7 @@ class SignedCertificate < ActiveRecord::Base
     end
     tmp_certs
     tmp_certs.each do |k,v|
-      result << tmp_certs[k].max{|a,b|a.created_at <=> b.created_at}
+      result << tmp_certs[k].max{|a,b|a.created_at.to_i <=> b.created_at.to_i}
     end
     expiring = (mre << result).flatten
     #expiring.each {|e|e.certificate_order.do_auto_renew}
@@ -176,7 +230,9 @@ class SignedCertificate < ActiveRecord::Base
         self[:effective_date] = parsed.not_before
         self[:expiration_date] = parsed.not_after
         self[:subject_alternative_names] = parsed.subject_alternative_names
-        self[:strength] = parsed.strength
+        #TODO ecdsa throws exception. Find better method
+        self[:strength] = parsed.public_key.instance_of?(OpenSSL::PKey::EC) ?
+                              parsed.to_text.match(/Public-Key\: \((\d+)/)[1] : parsed.strength
       end
     else
       ssl_util = Savon::Client.new Settings.certificate_parser_wsdl
@@ -333,22 +389,29 @@ class SignedCertificate < ActiveRecord::Base
           else
             create_signed_cert_zip_bundle
           end
-      co=csr.certificate_content.certificate_order
-      co.site_seal.fully_activate! unless co.site_seal.fully_activated?
+      certificate_order.site_seal.fully_activate! unless certificate_order.site_seal.fully_activated?
       if email_customer
-        co.processed_recipients.map{|r|r.split(" ")}.flatten.uniq.each do |c|
-          OrderNotifier.processed_certificate_order(c, co, zip_path).deliver
-          OrderNotifier.site_seal_approve(c, co).deliver
+        certificate_order.processed_recipients.map{|r|r.split(" ")}.flatten.uniq.each do |c|
+          begin
+            OrderNotifier.processed_certificate_order(contact: c,
+                                                      certificate_order: certificate_order, file_path: zip_path).deliver
+            OrderNotifier.site_seal_approve(c, certificate_order).deliver
+          rescue Exception=>e
+            logger.error e.backtrace.inspect
+          end
         end
       end
     end
     # for shadow certs, only send the certificate
     begin
-      if Settings.shadow_certificate_recipient
-        co.apply_for_certificate(ca_id: Ca::ISSUER[:sslcom_shadow], ca: Ca::MANAGEMENT_CA)
-        OrderNotifier.processed_certificate_order(Settings.shadow_certificate_recipient, co, nil,
-                                                  co.shadow_certificates.last).deliver
+      if certificate_order.certificate.cas.shadow.each do |shadow_ca|
+        certificate_order.apply_for_certificate(mapping: shadow_ca)
+        OrderNotifier.processed_certificate_order(contact: Settings.shadow_certificate_recipient,
+                                              certificate_order: certificate_order,
+                                              certificate_content: certificate_content,
+                                              signed_certificate: certificate_order.shadow_certificates.last).deliver
       end
+    end
     rescue Exception=>e
       logger.error e.message
       e.backtrace.each { |line| logger.error line }
@@ -356,15 +419,12 @@ class SignedCertificate < ActiveRecord::Base
   end
 
   def friendly_common_name
-    common_name ? common_name.gsub('*', 'STAR').gsub('.', '_') : csr.common_name.gsub('*', 'STAR').gsub('.', '_')
+    (common_name || csr.common_name || certificate_content.ref).gsub('*', 'STAR').gsub('.', '_')
   end
 
   def nonidn_friendly_common_name
-    SimpleIDN.to_ascii(read_attribute(:common_name) || csr.common_name).gsub('*', 'STAR').gsub('.', '_')
-  end
-
-  def certificate_order
-    csr.certificate_content.certificate_order
+    SimpleIDN.to_ascii(read_attribute(:common_name) || csr.common_name||
+                           certificate_content.ref).gsub('*', 'STAR').gsub('.', '_')
   end
 
   def expiration_date_js
@@ -562,8 +622,12 @@ class SignedCertificate < ActiveRecord::Base
   end
 
   def revoke!(reason)
-    update_column(:status, "revoked") if ComodoApi.revoke_ssl(serial: self.serial, api_requestable: self,
-                                                             refund_reason: reason)
+    unless certificate_content.ca.blank?
+      response=SslcomCaApi.revoke_ssl(self,reason)
+      update_column(:status, "revoked") if response.is_a?(SslcomCaRevocationRequest) and response.response=="OK"
+    else
+      update_column(:status, "revoked") if ComodoApi.revoke_ssl(serial: self.serial, api_requestable: self, refund_reason: reason)
+    end
   end
 
   private

@@ -147,7 +147,8 @@
 =render :partial=>'/certificate_orders/quick_links'
 #certificate_orders
   %table(cellspacing="0")
-    -if will_paginate @orders
+    -#-if will_paginate @orders
+    -if @orders.size > 0
       %tfoot
         %tr
           %td.wrap_number_rows
@@ -165,20 +166,25 @@
       %th(scope="col" colspan="3") Date
       %th(scope="col") Order #
       %th(scope="col") Amount
-    -@orders.each do |o|
-      -cache(['list', o]) do
-        %tr
-          -if o.is_reseller_tier?
-            %td Reseller Tier #{o.line_items.last.sellable.label} Discounting
-          -elsif o.description.blank?
-            %td.name=link_to 'nil', order_path(@ssl_slug, o), :title=> "transaction"
-          -else
-            -qualifier = o.display_state
-            %td.name=link_to [qualifier,o.description.shorten(45, false)].join(" "), order_path(@ssl_slug, o), :title=> o.description
-          %td(colspan="3")=o.created_at.strftime("%b %d, %Y")
-          %td=o.reference_number
-          -if o.is_deposit?
-            -amt = o.final_amount.format :with_currency
-            %td=o.faw_order? ? "(#{amt})" : amt
-          -else
-            %td (#{o.final_amount.format :with_currency})
+    -if @orders.size > 0
+      -@orders.each do |o|
+        -cache([current_user,'orders_list', o], expires_in: 12.hours) do
+          %tr
+            -if o.is_reseller_tier?
+              %td Reseller Tier #{o.line_items.last.sellable.label} Discounting
+            -elsif o.description.blank?
+              %td.name=link_to 'nil', order_path(@ssl_slug, o), :title=> "transaction"
+            -else
+              -qualifier = o.display_state
+              %td.name=link_to [qualifier,o.description.shorten(45, false)].join(" "), order_path(@ssl_slug, o), :title=> o.description
+            %td(colspan="3")=o.created_at.strftime("%b %d, %Y")
+            %td=o.reference_number
+            -if o.is_deposit?
+              -amt = o.final_amount.format :with_currency
+              %td=o.faw_order? ? "(#{amt})" : amt
+            -else
+              %td (#{o.final_amount.format :with_currency})
+    -else
+      %tr
+        %td(colspan='4')
+          There are no Orders

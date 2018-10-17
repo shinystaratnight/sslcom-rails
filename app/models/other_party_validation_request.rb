@@ -33,7 +33,7 @@ class OtherPartyValidationRequest < OtherPartyRequest
   def allowed_to_create
     emails=[]
     co = other_party_requestable
-    emails << co.ssl_account.users.map(&:email)
+    emails << co.ssl_account.cached_users.map(&:email)
     emails << co.other_party_validation_requests.map(&:email_addresses)
     unless emails.flatten.include?(user.email)
       errors[:base]<<"ooops, it looks like you do not have permission to send a request for validation on this order."

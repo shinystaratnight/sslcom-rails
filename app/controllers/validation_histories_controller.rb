@@ -44,7 +44,12 @@ class ValidationHistoriesController < ApplicationController
   end
     
   def documents
-    vh = (current_user.is_system_admins? ? ValidationHistory : current_user.validation_histories).find(params[:id])
+    vh = if params[:registrant]
+      r = Registrant.find_by(id: params[:registrant])
+      r.validation_histories.find_by(id: params[:id])
+    else
+      (current_user.is_system_admins? ? ValidationHistory : current_user.validation_histories).find(params[:id])
+    end
     if vh
       # => Use this if we want to store to the file system instead of s3.
       # Comment out the redirecto_to

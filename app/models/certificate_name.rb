@@ -2,7 +2,8 @@
 require 'resolv'
 
 class CertificateName < ActiveRecord::Base
-  belongs_to  :certificate_content
+  belongs_to  :certificate_content, touch: true
+  has_many    :signed_certificates, through: :certificate_content
   has_many    :caa_checks, as: :checkable
   has_many    :ca_certificate_requests, as: :api_requestable, dependent: :destroy
   has_many    :ca_dcv_requests, as: :api_requestable, dependent: :destroy
@@ -17,13 +18,20 @@ class CertificateName < ActiveRecord::Base
     end
 
     def last_method
-      where{dcv_method >> ['http','https','email']}.last
+      where{dcv_method >> ['http','https','email','cname']}.last
     end
   end
   has_many    :notification_groups_subjects, as: :subjectable
   has_many    :notification_groups, through: :notification_groups_subjects
 
   attr_accessor :csr
+
+  scope :find_by_domains, ->(domains){includes(:domain_control_validations).where{name>>domains}}
+  scope :sslcom, ->{joins{certificate_content}.where.not certificate_contents: {ca_id: nil}}
+
+  #will_paginate
+  cattr_accessor :per_page
+  @@per_page = 10
 
   def is_ip_address?
     name.index(/\A(?:[0-9]{1,3}\.){3}[0-9]{1,3}\z/)==0 if name
@@ -173,7 +181,7 @@ class CertificateName < ActiveRecord::Base
           txt = Resolv::DNS.open do |dns|
             records = dns.getresources(cname_origin(true), Resolv::DNS::Resource::IN::CNAME)
           end
-          return cname_destination==txt.last.name.to_s
+          return (txt.size > 0) ? (cname_destination.downcase==txt.last.name.to_s.downcase) : false
         else
           r=open(dcv_url(false,prepend, true), redirect: false).read
         end
@@ -181,10 +189,6 @@ class CertificateName < ActiveRecord::Base
             (csr.unique_value.blank? ? true : r =~ Regexp.new("^#{csr.unique_value}")))
       end
     rescue Exception=>e
-      if name=~/\A\*/ && prepend.blank? && protocol!="cname" #do another go round for wildcard by prepending www.
-        prepend="www."
-        retry
-      end
       return "false"
     end
   end

@@ -1,54 +1,55 @@
--last_sent = co.last_dcv_sent
-#proof_of_dcv_section
-  .subheading Proof of Domain Control (Choose only ONE method)
-  #dcv_box
-    -if last_sent.blank?  #assume dcv_http cannot get to here is already sent
-      =render partial: "dcv_choices"
-      #http_dcv
-        %p
-          =link_to image_tag('download.png', :class=>'blue_icon'), http_dcv_file_csr_path(co.csr)
-          =link_to "click here to download file #{co.csr.md5_hash}.txt", http_dcv_file_csr_path(co.csr)
-        %p
-          Upload the above file to your site root so that:
-        %p#http_dcv_url=current_user.is_admin? ? link_to(co.csr.dcv_url, co.csr.dcv_url, target: "_blank") : co.csr.dcv_url
-        %p
-          is publicly accessible (can also use https://).
-          %em Please leave the file on the server until the certificate has been issued.
-        %p Once this has been done, click the 'Submit' button below to complete this order.
+- unless co.certificate.is_smime_or_client? || co.certificate.is_code_signing?
+  -last_sent = co.last_dcv_sent
+  #proof_of_dcv_section
+    .subheading Proof of Domain Control (Choose only ONE method)
+    #dcv_box
+      -if last_sent.blank?  #assume dcv_http cannot get to here is already sent
+        =render partial: "dcv_choices"
+        #http_dcv
+          %p
+            =link_to image_tag('download.png', :class=>'blue_icon'), http_dcv_file_csr_path(co.csr.id)
+            =link_to "click here to download file #{co.csr.md5_hash}.txt", http_dcv_file_csr_path(co.csr.id)
+          %p
+            Upload the above file to your site root so that:
+          %p#http_dcv_url=current_user.is_admin? ? link_to(co.csr.dcv_url, co.csr.dcv_url, target: "_blank") : co.csr.dcv_url
+          %p
+            is publicly accessible (can also use https://).
+            %em Please leave the file on the server until the certificate has been issued.
+          %p Once this has been done, click the 'Submit' button below to complete this order.
 
-    #email_dcv
-      %p<
-        In order for #{Settings.community_name} to issue an SSL certificate for #{co.subject}, proof that you control the domain
-        #{co.subject} is a basic requirement that must be established.
-        -if last_sent && last_sent.is_eligible_to_resend?
-          A verification email has already been sent to the email address
-          %span#dcv_sent_to_address
-            #{last_sent.email_address}
-          \. If you would like to resend the email, simply choose an email address from
-          the options and click the send button.
-        -else
-          A verification email will be sent to the address selected below. Please follow and reply to the
-          verification email to complete this validation step.
-      .clearfix
-        %label
-          *Send Verification To
-          %span.label_desc whois and authority email addresses
-        .dcv_email_choices
-          .clearfix
-            -if co.validation_stage_checkout_in_progress?
-              =render partial: "validations/dcv_options", locals:{co: co}
-            -else
-              =form_tag send_dcv_email_certificate_order_validation_url(certificate_order_id: co.ref), id: 'send_dcv_email', remote: true, "data-type"=>"json" do
-                =render partial: "validations/dcv_options", locals:{co: co}
-      %p
-        %span#no_emails_accessible
-          Note: If none of the listed email addresses are accessible, you will be required to submit an authorization form filled out
-          by an authorized party of the owner of the domain #{co.subject} such as the individual owner or officer of the
-          organization.
-          =link_to "Click here to download the form.", "https://support.ssl.com/Knowledgebase/Article/View/28/6/domain-authorization-letter", target: "_blank"
-          Once the form is filled out and
-          signed by an authorized party, you may submit it through the
-          -if co.certificate_content.pending_validation?
-            form at the bottom of this page
+      #email_dcv
+        %p<
+          In order for #{Settings.community_name} to issue an SSL certificate for #{co.subject}, proof that you control the domain
+          #{co.subject} is a basic requirement that must be established.
+          -if last_sent && last_sent.is_eligible_to_resend?
+            A verification email has already been sent to the email address
+            %span#dcv_sent_to_address
+              #{last_sent.email_address}
+            \. If you would like to resend the email, simply choose an email address from
+            the options and click the send button.
           -else
-            validation tab once you've finished placing this order.
+            A verification email will be sent to the address selected below. Please follow and reply to the
+            verification email to complete this validation step.
+        .clearfix
+          %label
+            *Send Verification To
+            %span.label_desc whois and authority email addresses
+          .dcv_email_choices
+            .clearfix
+              -if co.validation_stage_checkout_in_progress?
+                =render partial: "validations/dcv_options", locals:{co: co}
+              -else
+                =form_tag send_dcv_email_certificate_order_validation_url(certificate_order_id: co.ref), id: 'send_dcv_email', remote: true, "data-type"=>"json" do
+                  =render partial: "validations/dcv_options", locals:{co: co}
+        %p
+          %span#no_emails_accessible
+            Note: If none of the listed email addresses are accessible, you will be required to submit an authorization form filled out
+            by an authorized party of the owner of the domain #{co.subject} such as the individual owner or officer of the
+            organization.
+            =link_to "Click here to download the form.", "https://support.ssl.com/Knowledgebase/Article/View/28/6/domain-authorization-letter", target: "_blank"
+            Once the form is filled out and
+            signed by an authorized party, you may submit it through the
+            -if co.certificate_content.pending_validation?
+              form at the bottom of this page
+            -else
+              validation tab once you've finished placing this order.

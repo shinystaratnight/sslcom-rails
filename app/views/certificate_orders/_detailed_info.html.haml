@@ -2,9 +2,9 @@
   -co = certificate_order
   -order=Order.unscoped{co.order}
   -cc=co.certificate_content
-  -cn = (co.is_unused_credit? || cc.csr.blank?) ? nil : cc.csr.common_name
+  -cn = (co.is_unused? || cc.csr.blank?) ? nil : cc.csr.common_name
   %tr.expanded
-    %td(colspan="6")
+    %td{colspan: show_folders_container? ? '8' : '7'}
       .certificate_details
         =render :partial=>'/certificate_orders/menu', :locals=>{:co=>co}
         =render :partial=>'/certificate_orders/co', :object=>co
@@ -22,7 +22,7 @@
                           -if cc.signed_certificate.blank?
                             -if cc.csr.blank?
                               %li
-                                %em waiting for csr
+                                %em waiting for input
                             -else
                               =render partial: "certificate_orders/registrant_fields", object: cc.csr
                           -else
@@ -53,26 +53,35 @@
                               =text_area_tag :audits, audits, :size=>"30x10"
                     .certificate_details_box
                       %ul
-                        %li
-                          %strong contacts
-                        -if cc.new?
+                        -team_iv = co.get_team_iv
+                        -unless team_iv.nil?
                           %li
-                            %em waiting for csr
+                            %strong recipient (#{team_iv.status.humanize})
+                          %li #{team_iv.first_name}, #{team_iv.last_name}
+                          %li #{team_iv.email}
+                          %li
+                            =link_to 'edit recipient', recipient_certificate_order_path(@ssl_slug, @certificate_order.ref)
                         -else
-                          -unless cc.blank? || cc.certificate_contacts.blank?
-                            -CertificateContent::CONTACT_ROLES.each do |role|
-                              %li
-                                \#{role}:
-                                -ct = cc.certificate_contacts.detect(&"is_#{role}?".to_sym)
-                                -unless ct.blank?
-                                  %ul
-                                    %li #{ct.first_name} #{ct.last_name}
-                                    %li=link_to "#{ct.email}","mailto:#{ct.email}"
-                                -else
-                                  none
-                          -unless  cc.blank?
+                          %li
+                            %strong contacts
+                          -if cc.new?
                             %li
-                              =link_to 'create/edit contacts', certificate_content_contacts_url(@ssl_slug, cc)
+                              %em waiting for input
+                          -else
+                            -unless cc.blank? || cc.certificate_contacts.blank?
+                              -CertificateContent::CONTACT_ROLES.each do |role|
+                                %li
+                                  \#{role}:
+                                  -ct = cc.certificate_contacts.detect(&"is_#{role}?".to_sym)
+                                  -unless ct.blank?
+                                    %ul
+                                      %li #{ct.first_name} #{ct.last_name}
+                                      %li=link_to "#{ct.email}","mailto:#{ct.email}"
+                                  -else
+                                    none
+                            -unless  cc.blank?
+                              %li
+                                =link_to 'create/edit contacts', certificate_content_contacts_url(@ssl_slug, cc)
                     .certificate_details_box
                       %ul
                         -if co.certificate_content.issued? && !co.certificate_content.expired?

@@ -7,6 +7,11 @@
     =button_tag 'Search', :id=>'btn_cert_order_search'
     =button_tag 'Filters', :type=>'button', :id=>'btn_cert_order_filter'
 
+#send_notify.hidden
+  =form_tag nil, :id=>'send_notify_form', :method=>:post do
+    =hidden_field_tag :certificate_order_ref
+    =hidden_field_tag :notify_type
+
 %div.hidden#wrap_cert_order_filter
   .wrap_filter_items.clearfix
     .filter_items_col
@@ -311,43 +316,81 @@
   =button_tag 'Cancel', :type=>'button', :id=>'btn_close_cert_order_filter'
 
 =render :partial=>'quick_links'
+
+-if Folder.show_folders?(current_user)
+  -if show_folders_container?
+    =render partial: 'folders/co_index_folders', locals: {container_type: 'expanded'}
+  -else
+    =render partial: 'folders/co_index_folders', locals: {container_type: 'closed'}
+
 #certificate_orders
   %table(cellspacing="0")
     -#.loader_wrap
     -#  .loader
-    -if will_paginate @certificate_orders
+    -#-if will_paginate @certificate_orders
+    -unless @certificate_orders.empty?
       %tfoot
         %tr
           %td.wrap_number_rows(colspan='2')
             =select_tag :number_rows,
             options_for_select([[5, 5], [10, 10], [20, 20], [50, 50], [100, 100]], @per_page),
             :class=>'per_page'
-          %td(colspan='4')=will_paginate @certificate_orders
+          %td(colspan='5')=will_paginate @certificate_orders
     %caption
       SSL Certificates Management
       =will_paginate @certificate_orders
     %tr.heading_row
+      -if Folder.show_folders?(current_user) && show_folders_container?
+        %th
+          %i.fa.fa-folder#co-folder-column
       %td
       %th.name(scope="col")Subject
+      - if Folder.show_folders?(current_user)
+        %th(scope="col") Folder
       %th(scope="col") Status
       %th(scope="col") Order Date
       %th(scope="col") Expires
       %th(scope="col") Action
-    -@certificate_orders.each do |co|
-      -cache(['list', co.certificate_content]) do
-        -cc = co.certificate_content
-        -cn = (co.is_unused_credit? || cc.csr.blank?) ? nil : cc.csr.common_name
-        %tr(alt="#{co.ref}")
-          %td.dropdown
-            -if !co.is_expired_credit? and permitted_to?(:index, co)
-              =image_tag 'expand.png'
-          %td.name
-            =render :partial=>'subject_column', :locals=>{:certificate_order=>co}
-          %td.status_message(class="#{status_class(cc)}")
-            #{certificate_order_status(cc)}
-          %td
-            =co.created_at.strftime("%b %d, %Y")
-          %td(class="#{expires_on_class(cc)}")
-            #{expires_on(cc)}
-          %td.ssl_action
-            #{action(co)}
+    -unless @certificate_orders.empty?
+      -@certificate_orders.includes([:certificate_contents,:sub_order_items]).each do |co|
+        -cache([current_user,'certificate_orders_list', co.certificate_content], expires_in: 12.hours) do
+          -cc = co.certificate_content
+          -cn = (co.is_unused_credit? || cc.csr.blank?) ? nil : cc.csr.common_name
+          %tr(alt="#{co.ref}")
+            -if Folder.show_folders?(current_user) && show_folders_container?
+              %td
+                =check_box_tag :folder_add_co, 'yes', false, id: co.ref, class: 'chk-folder-add-co'
+            %td.dropdown
+              -if !co.is_expired_credit? and permitted_to?(:index, co)
+                =image_tag 'expand.png'
+            %td.name
+              =render :partial=>'subject_column', :locals=>{certificate_order: co, certificate_content: cc, certificate: co.certificate}
+            -if Folder.show_folders?(current_user)
+              %td.co-folder-name
+                -if co.folder
+                  %i.fa.fa-folder-open.icon-co-add-folder{id: co.ref, |
+                    data: {folder_id: co.folder.try(:id), folder_name: co.folder.try(:name)}}
+                -else
+                  %i.fa.fa-plus.icon-co-add-folder{id: co.ref}
+            %td.status_message(class="#{status_class(cc)}")
+              #{certificate_order_status(cc)}
+            %td
+              =co.created_at.strftime("%b %d, %Y")
+            %td(class="#{expires_on_class(cc)}")
+              #{expires_on(cc)}
+            %td.ssl_action
+              #{action(co)}
+    -else
+      %tr
+        -if Folder.show_folders?(current_user) && show_folders_container?
+          %td(colspan='8')
+            There are no Certificate Orders
+        -elsif Folder.show_folders?(current_user)
+          %td(colspan='7')
+            There are no Certificate Orders
+        -else
+          %td(colspan='6')
+            There are no Certificate Orders
+
+-if Folder.show_folders?(current_user)
+  = render partial: '/folders/folder_tree_modal'

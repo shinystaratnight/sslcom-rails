@@ -1,0 +1,101 @@
+<script type="text/javascript">
+  jQuery.noConflict();
+  jQuery(function ($) {
+    $(document).ready(function () {
+      $("select[name='dcv_address[]']").on('change', function () {
+        if($(this).val().indexOf("@") == -1){
+          $(this).closest("tr").next().find(".dcv_instruction").html("Please select email address.");
+        } else {
+          $(this).closest("tr").next().find(".dcv_instruction").html("Validation email will be emailed to " + $(this).val() + ". Please follow those instructions.");
+        }
+      });
+
+      $(".btn_remove_domain").on('click', function () {
+        console.log('here');
+        $(this).closest("tr").next().remove();
+        $(this).closest("tr").remove();
+      });
+
+      // change the status for individual checkboxes by SelectAll checkbox status.
+      $('input:checkbox#select_all').click(function() {
+        $('.check_box').prop('checked', $(this).prop('checked'));
+      });
+
+      // change the status for SelectAll checkbox by individual checkbox's status.
+      $('.check_box').click(function() {
+        var chk_delete_list = $('.check_box');
+        var all_checked = true;
+
+        // check whether all individual checkbox has been checked.
+        $.each(chk_delete_list, function(idx, chk_delete) {
+          if (!$(chk_delete).prop('checked')) {
+            all_checked = false;
+            return false;
+          }
+        });
+
+        // change the check status for SelectAll checkbox by all individual checkbox status.
+        if (all_checked) {
+          $('input:checkbox#select_all').prop('checked', true);
+        } else {
+          $('input:checkbox#select_all').prop('checked', false);
+        }
+      });
+
+      // remove checked domains.
+      $('#group_remove').change(function() {
+        // get current value.
+        var slt_value = $(this).val();
+
+        // make to none for group remove.
+        $('#group_remove').val('');
+
+        if (slt_value == 'remove') {
+          var domain_names = [];
+          var chk_remove_list = $('.check_box');
+
+          // get checked domains for remove.
+          $.each(chk_remove_list, function(idx, chk_remove) {
+            if ($(chk_remove).prop('checked')) {
+              domain_names.push($(chk_remove).prop('id'));
+            }
+          });
+
+          // check whether exist checked domain for remove.
+          if (domain_names.length > 0) {
+            var confirmMsg = 'Are you sure you want to remove the following domains?';
+
+            // make confirmation message.
+            $.each(domain_names, function(idx, domain_name) {
+              confirmMsg = confirmMsg.concat('\r\n        - ' + domain_name);
+            });
+
+            // confiming remove selected domain(s).
+            if (confirm(confirmMsg)) {
+              // hide validate button in case of all domains has been checked for remove.
+              if (domain_names.length == chk_remove_list.length) {
+                $('#validate_domains').hide();
+              }
+
+              // remove checked domains.
+              $.each(domain_names, function(idx, domain_name) {
+                $('input:checkbox[id="'+ domain_name +'"]').closest('tr').next().remove();
+                $('input:checkbox[id="'+ domain_name +'"]').closest('tr').remove();
+              });
+            } else {
+              // make checkbox status to false for all individual checkbox
+              $.each(chk_remove_list, function(idx, chk_remove) {
+                $(chk_remove).prop('checked', false);
+              });
+            }
+
+            // make checkbox status to false for SelectAll checkbox.
+            $('input:checkbox#select_all').prop('checked', false);
+          } else {
+            alert('There are no selected domains for remove.');
+          }
+        }
+      });
+    });
+  });
+</script>

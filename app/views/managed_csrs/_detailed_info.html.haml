@@ -1,0 +1,6 @@
+-if csr
+  -csr = csr
+  %tr.expanded
+    %td{colspan: show_folders_container? ? '8' : '7'}
+      .certificate_details
+        =render :partial=>'/managed_csrs/csr', :object=>csr
