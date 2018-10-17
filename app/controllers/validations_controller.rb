@@ -389,7 +389,6 @@ class ValidationsController < ApplicationController
     end
   end
 
-  
   def upload_for_registrant
     @i = 0
     @error = []
@@ -411,7 +410,7 @@ class ValidationsController < ApplicationController
     end
     redirect_to contact_path(@ssl_slug, @registrant.id, saved_contact: true)
   end
-  
+
   #user can select to upload documents or do dcv (email or http) or do both
   def upload
     @i = 0
