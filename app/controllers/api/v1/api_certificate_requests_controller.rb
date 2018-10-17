@@ -1096,6 +1096,35 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
       if client_app
         render json: serialize_models(@results, meta: {orders_count: @orders.count, page: page, per_page: per_page})
       else
+        @default_fields = [
+          'ref',
+          'description',
+          'order_status',
+          'order_date',
+          'registrant',
+          'certificates',
+          'common_name',
+          'domains_qty_purchased',
+          'wildcard_qty_purchased',
+          'subject_alternative_names',
+          'validations',
+          'effective_date',
+          'expiration_date',
+          'algorithm',
+          'domains',
+          'site_seal_code',
+          'external_order_number'
+        ]
+
+        @fields = []
+        if params[:fields] && !params[:fields].empty?
+          params[:fields].split(',').each do |field|
+            @fields << field
+          end
+        else
+          @fields = @default_fields
+        end
+
         render(template: @template) and return
       end
     else
