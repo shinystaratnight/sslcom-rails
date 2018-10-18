@@ -123,7 +123,6 @@ class CsrsController < ApplicationController
       returnObj[domain] = exist_validated ? 'true' : 'false'
     end
 
-    returnObj['test.exam.com'] = "true" unless params[:public_key_sha1]
     render :json => returnObj
   end
 
