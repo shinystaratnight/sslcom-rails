@@ -1,33 +1,61 @@
-#folders-index
+#folders-index-search
+  #search_bar
+    =form_tag folders_path(@ssl_slug), id: 'search_form', method: :get do
+      #search-bar-container
+        #search-bar-input
+          = text_field_tag :search, @search
+        #search-bar-filters
+          = button_tag 'Search', id: 'btn_cert_order_search'
+          = button_tag 'Filters', type: 'button', id: 'btn_cert_order_filter'
   
+  =render partial: 'certificate_orders/search_filters'
+
+#folders-index
   #folders-header
-    %p Folders Explorer
-    
-    = text_field_tag :folder_search, nil, id: 'folder-scan'
-    %span
-      %i.fa.fa-search
-    = link_to "New Certificate", (is_sandbox? ? developers_certificate_orders_url : certificates_path), |
-      id: 'btn-folder-new-cert'
-    = link_to "<i class='fa fa-gears'></i> Auto Arrange".html_safe, |
-      reset_to_system_folders_path(@ssl_slug), method: :put,        |
-      id: 'btn-folder-reset-sys', class: 'btn-folder-index',        |
-      data: { confirm: "This will organize certificates into folders according to SSL.com default settings. Current certificate and folder organization will be overwritten. Proceed?" }
+    %h3 Folders Explorer
   %br/
   
-  #folders-action
-    = link_to "<i class='fa fa-plus'></i> Folder".html_safe, '#', |
-      id: 'btn-folder-create-root', class: 'btn-folder-index'
-    = link_to "<i class='fa fa-plus'></i> Subfolder".html_safe, '#', |
-      id: 'btn-folder-create', class: 'btn-folder-index'
-    = link_to "<i class='fa fa-trash'></i>".html_safe, '#', |
-      id: 'btn-folder-destroy', class: 'btn-folder-index'
-    = link_to "<i class='fa fa-edit'></i> Rename".html_safe, '#', |
-      id: 'btn-folder-rename', class: 'btn-folder-index'
-    = link_to "<i class='fa fa-certificate'></i> Default".html_safe, '#', |
-      id: 'btn-folder-default', class: 'btn-folder-index'
-    = link_to "<i class='fa fa-reply'></i> Orders".html_safe, |
-      certificate_orders_path(@ssl_slug, folders: true),      |
-      id: 'btn-folder-certificates', class: 'btn-folder-index'
+  #folders-actions-tabs
+    #main-tab
+      %p Folder Actions
+    #other-tab
+      %p Other
+
+  #folders-actions
+    #folders-action
+      %div
+        %span
+          %i.fa.fa-search
+        = text_field_tag :folder_search, nil, id: 'folder-scan'
+      %div
+        = link_to "<i class='fa fa-plus'></i> Folder".html_safe, '#', |
+        id: 'btn-folder-create-root', class: 'btn-folder-index'
+      %div
+        = link_to "<i class='fa fa-plus'></i> Subfolder".html_safe, '#', |
+        id: 'btn-folder-create', class: 'btn-folder-index'
+      %div
+        = link_to "<i class='fa fa-trash'></i>".html_safe, '#', |
+        id: 'btn-folder-destroy', class: 'btn-folder-index'
+      %div
+        = link_to "<i class='fa fa-edit'></i> Rename".html_safe, '#', |
+        id: 'btn-folder-rename', class: 'btn-folder-index'
+      %div
+        = link_to "<i class='fa fa-certificate'></i> Default".html_safe, '#', |
+        id: 'btn-folder-default', class: 'btn-folder-index'
+    
+    #folders-action-other
+      = link_to "<i class='fa fa-file'></i> New Certificate".html_safe,       |
+        (is_sandbox? ? developers_certificate_orders_url : certificates_path), |
+        id: 'btn-folder-new-cert', class: 'btn-folder-index-other'
+      %br/
+      = link_to "<i class='fa fa-gears'></i> Auto Arrange".html_safe, |
+        reset_to_system_folders_path(@ssl_slug), method: :put,        |
+        id: 'btn-folder-reset-sys', class: 'btn-folder-index-other',  |
+        data: { confirm: "This will organize certificates into folders according to SSL.com default settings. Current certificate and folder organization will be overwritten. Proceed?" }
+      %br/
+      = link_to "<i class='fa fa-reply'></i> Orders".html_safe, |
+        certificate_orders_path(@ssl_slug, folders: true),      |
+        id: 'btn-folder-certificates', class: 'btn-folder-index-other'
   
   #file-explorer
     #folders-tree
@@ -58,4 +86,5 @@
       html: {id: 'frm-folder-add-cert'} do |f|
       = f.text_field :certificate_order_id, value: nil
 
-= render partial: '/folders/folders_index_jstree.html'
+= render partial: '/folders/folders_index_jstree'
+= render partial: '/certificate_orders/index_scripts'
