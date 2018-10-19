@@ -76,6 +76,8 @@ class SslAccountsController < ApplicationController
       update_billing_method
     elsif params[:no_limit]
       update_no_limit
+    elsif params[:epki_agreement]
+      update_epki_agreement
     else
       update_reseller_profile
     end
@@ -214,6 +216,22 @@ class SslAccountsController < ApplicationController
     end  
     redirect_to teams_user_path(current_user, page: (params[:page] || 1))
   end  
+
+  def update_epki_agreement
+    if current_user.is_system_admins?
+      ssl_account = SslAccount.where(
+        'ssl_slug = ? OR acct_number = ?', params[:ssl_slug], params[:ssl_slug]
+      ).first
+      setting_type = params[:epki_agreement] == 'false' ? 'OFF' : 'ON'
+      ssl_account.update(
+        epki_agreement: (setting_type == 'OFF' ? nil : DateTime.now)
+      )
+      flash[:notice] = "Successfully turned #{setting_type} team #{params[:ssl_slug]} epki_agreement setting."
+    else
+      flash[:error] = "You are not authorized to perform this action."
+    end  
+    redirect_to teams_user_path(current_user, page: (params[:page] || 1))
+  end
 
   def update_billing_method
     if current_user.is_system_admins?

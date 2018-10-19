@@ -3364,13 +3364,14 @@ label.error
   padding: 0
   list-style: none
   background: #000
+  text-align: center
 
 #prog_nav li
-  float: left
-  margin: 0 1px 0 0
+  margin: 0 1px -2px 0
   padding: 0
-  font: 1.4em "Raleway",Arial !important
+  font: 1.4em "Raleway", Arial !important
   letter-spacing: .15em
+  display: inline-block
 
 #prog_nav a
   float: left
@@ -4777,10 +4778,15 @@ h3#certificate_crumbs
   width: 134px
 
   ul
+    list-style: none
     padding: 0 2px 0 0
 
     li
       padding: 4px 0
+
+      a:hover
+        color: #666666
+        font-weight: 600
 
   li.heading
     color: #666666
@@ -5584,6 +5590,9 @@ span#no_emails_accessible
 
     input
       margin-bottom: 0px !important
+
+  .managed_csrs_block .managed_csr
+    width: 230px
 
   .managed_csrs_block a
     font-size: 1.4em
@@ -7031,7 +7040,8 @@ span.notifications-teams
   text-transform: uppercase
 
 #team-billing-method,
-#team-no-limit
+#team-no-limit,
+#team-epki-switch
   margin-top: 0.7rem
   form
     text-align: left

@@ -228,6 +228,7 @@ class ApplicationController < ActionController::Base
     if is_sandbox? and @search.include?("is_test:true").blank?
       @search << " is_test:true"
     end
+    archived_folder = current_user.is_admin? || (params[:search] && params[:search].include?('folder_ids')) ? [true, false] : false
     if !@search.blank?
       #options.delete(:page) if options[:page].nil?
       # (current_user.is_admin? ?
@@ -236,14 +237,14 @@ class ApplicationController < ActionController::Base
       #       current_user.ssl_account.cached_certificate_orders.search_with_csr(params[:search], options)).order(updated_at: :desc)
 
       (current_user.is_admin? ?
-           (
+           (CertificateOrder.unscoped{
              (@ssl_account.try(:cached_certificate_orders) || CertificateOrder).search_with_csr(params[:search], options)
-           ) :
+           }) :
            (current_user.role_symbols(current_user.ssl_account).join(',').split(',').include?(Role::INDIVIDUAL_CERTIFICATE) ?
                  (current_user.ssl_account.cached_certificate_orders.search_assigned(current_user.id).search_with_csr(params[:search], options)) :
                  (current_user.ssl_account.cached_certificate_orders.search_with_csr(params[:search], options))
            )
-      ).order(created_at: :desc)
+      ).joins(:folder).where(folder: {archived: archived_folder}).order(created_at: :desc)
     else
       # (current_user.is_admin? ?
       #     (@ssl_account.try(:certificate_orders) || CertificateOrder).not_test.not_new(options) :
@@ -255,7 +256,7 @@ class ApplicationController < ActionController::Base
                  (current_user.ssl_account.cached_certificate_orders.not_test.not_new(options).search_assigned(current_user.id)) :
                  (current_user.ssl_account.cached_certificate_orders.not_test.not_new(options))
            )
-      ).order(updated_at: :desc)
+      ).joins(:folder).where(folder: {archived: archived_folder}).order(updated_at: :desc)
     end
   end
 

@@ -1,7 +1,7 @@
 class CsrsController < ApplicationController
   before_filter :find_csr, only:[:http_dcv_file, :verification_check]
   filter_access_to :all, :attribute_check=>true
-  filter_access_to :country_codes, :http_dcv_file, :all_domains, :require=>[:create] #anyone can create read creates csrs, thus read this
+  filter_access_to :country_codes, :http_dcv_file, :all_domains, :check_validation, :require=>[:create] #anyone can create read creates csrs, thus read this
 
   # PUT /csrs/1
   # PUT /csrs/1.xml
@@ -93,6 +93,35 @@ class CsrsController < ApplicationController
     returnObj['subject_alternative_names'] = selected_csr.subject_alternative_names
     returnObj['csr_body'] = selected_csr.body
     returnObj['days_left'] = selected_csr.days_left
+    returnObj['public_key_sha1'] = selected_csr.public_key_sha1
+
+    render :json => returnObj
+  end
+
+  def check_validation
+    domains = params[:domains]
+    public_key_sha1 = params[:public_key_sha1] || ''
+    returnObj = {}
+
+    domains.each do |domain|
+      exist_validated = false
+
+      CertificateName.find_by_domains(domain).each do |name|
+        last_dcv = name.domain_control_validations.last
+
+        if last_dcv && last_dcv.satisfied?
+          if last_dcv.dcv_method == 'email'
+            exist_validated = true
+            break
+          elsif last_dcv.csr && (last_dcv.csr.public_key_sha1 == public_key_sha1)
+            exist_validated = true
+            break
+          end
+        end
+      end
+
+      returnObj[domain] = exist_validated ? 'true' : 'false'
+    end
 
     render :json => returnObj
   end

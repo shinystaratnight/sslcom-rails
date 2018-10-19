@@ -181,8 +181,8 @@ class CertificateOrdersController < ApplicationController
 
             @managed_csrs = (current_user.ssl_account.all_csrs)
                                 .sort_by{|arr| arr.common_name}
-                                .uniq{|arr| arr.common_name}
-                                .map{|arr| [arr.common_name, arr.ref]}
+                                .uniq{|arr| [arr.common_name, arr.public_key_sha1]}
+                                .map{|arr| [arr.common_name+' '+ arr.public_key_sha1, arr.ref]}
                                 .delete_if{|arr| arr.second == nil}
             @managed_csrs.insert(0, ['none', 'none'])
 
@@ -237,10 +237,10 @@ class CertificateOrdersController < ApplicationController
         notification_group_subject = @certificate_order.notification_groups_subjects.where(created_page: 'csr').first
         @slt_notification_group = [notification_group_subject.notification_group.ref] if notification_group_subject
 
-        @managed_csrs = (current_user.ssl_account.csrs + current_user.ssl_account.managed_csrs)
+        @managed_csrs = (current_user.ssl_account.all_csrs)
                             .sort_by{|arr| arr.created_at}
-                            .uniq{|arr| arr.common_name}
-                            .map{|arr| [arr.common_name, arr.ref]}
+                            .uniq{|arr| [arr.common_name, arr.public_key_sha1]}
+                            .map{|arr| [arr.common_name+' '+ arr.public_key_sha1, arr.ref]}
                             .delete_if{|arr| arr.second == nil}
         @managed_csrs.insert(0, ['none', 'none'])
 
@@ -401,7 +401,7 @@ class CertificateOrdersController < ApplicationController
     managed_domains = params[:managed_domains]
     additional_domains = ''
     managed_domains.each do |domain|
-      additional_domains.concat(domain.gsub('csr-', '') + ' ')
+      additional_domains.concat(domain.gsub('csr-', '').gsub('validated-', '').gsub('manual-', '') + ' ')
     end unless managed_domains.blank?
 
     params[:certificate_order][:certificate_contents_attributes]['0'.to_sym][:additional_domains] = additional_domains.strip
@@ -621,13 +621,13 @@ class CertificateOrdersController < ApplicationController
   end
 
   def parse_csr
-    c=Certificate.for_sale.find_by_product(params[:certificate])
-    co=CertificateOrder.new(duration: 1)
-    @cc=co.certificate_contents.build(certificate_order: co, ajax_check_csr: true)
-    co=Order.setup_certificate_order(certificate: c, certificate_order: co)
-    @cc.csr=Csr.new(body: params[:csr])
+    c = Certificate.for_sale.find_by_product(params[:certificate])
+    co = CertificateOrder.new(duration: 1)
+    @cc = co.certificate_contents.build(certificate_order: co, ajax_check_csr: true)
+    co = Order.setup_certificate_order(certificate: c, certificate_order: co)
+    @cc.csr = Csr.new(body: params[:csr])
     @cc.valid?
-    rescue
+  rescue
   end
 
   def admin_update
