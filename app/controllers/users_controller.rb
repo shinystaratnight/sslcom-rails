@@ -26,6 +26,7 @@ class UsersController < ApplicationController
   filter_access_to  :consolidate, :dup_info, :require=>:update
   filter_access_to  :resend_activation, :activation_notice, :require=>:create
   filter_access_to  :edit_password, :edit_email, :cancel_reseller_signup, :teams, :require=>:edit
+  filter_access_to :show_user, :require => :ajax
 
   def new
   end
@@ -89,6 +90,15 @@ class UsersController < ApplicationController
     respond_to do |format|
       format.html { render :action => :index }
       format.xml  { render :xml => @users }
+    end
+  end
+
+  def show_user
+    if current_user
+      user = User.unscoped.find(params[:id])
+      render :partial => 'details', :locals => { :user => user }
+    else
+      render :json => 'no-user'
     end
   end
 
