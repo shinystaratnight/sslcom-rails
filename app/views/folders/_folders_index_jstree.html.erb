@@ -99,7 +99,7 @@
             "dots" : false
           },
           "data" : {
-            "url" : "<%= children_folders_path(@ssl_slug, tree_type: 'folders_index') %>",
+            "url" : "<%= children_folders_path(@ssl_slug, tree_type: 'folders_index', search: params[:search], folder_ids: @folder_ids) %>",
             "data" : function(node) {
               return {"id" : node.id};
             }

@@ -6149,7 +6149,6 @@ span.notifications-teams
 
 #btn-folder-rename,
 #btn-folder-default,
-#btn-folder-certificates
   background: -webkit-linear-gradient(#69B3FF, #334DFF)
   background: -o-linear-gradient(#69B3FF, #334DFF)
   background: -moz-linear-gradient(#69B3FF, #334DFF)
@@ -7731,6 +7730,57 @@ span.notifications-teams
 /*
  * Folders Index
  */
+#folders-index-search
+  #wrap_cert_order_filter
+    float: none !important
+    margin-left: auto
+    margin-right: auto
+
+    .filter_item
+      label
+        font-size: 13px !important
+
+  #search_bar
+    #search-bar-container
+      display: flex
+      flex-direction: row
+      justify-content: center
+
+    #search_form
+      width: 100%
+
+    #search-bar-input
+      margin-right: 0.5rem
+
+      #search
+        margin: 0 !important
+        border-top-left-radius: 0
+        border-bottom-left-radius: 0
+        border-left: none
+        border: 1px solid darkgrey
+        border-radius: 3px
+        font-size: 1.2rem
+        padding: 0.6rem
+        margin-left: 1rem
+    
+  #btn_cert_order_filter,
+  #btn_cert_order_filter_search,
+  #btn_close_cert_order_filter,
+  #btn_cert_order_search
+    background-color: white
+    border: 1px solid grey
+    border-radius: 3px
+    color: grey
+    font-size: 1.2rem
+    font-weight: 600
+    letter-spacing: 1px
+    line-height: 2
+    padding: 1px 8px
+
+    &:hover
+      color: white
+      background-color: grey
+
 #folders-index
   width: 85%
   margin: 1.5rem auto
@@ -7781,61 +7831,98 @@ span.notifications-teams
     margin-bottom: 0.5rem
     height: 25px
 
-    #btn-folder-new-cert
-      border-radius: 3px
-      font-size: 1.3rem
-      float: right
-      letter-spacing: 0.5px
-      margin-right: 1rem
-      padding: 7px 4px 3px 4px
-      border: 1px solid $base_green
-      color: $base_green
-      float: right
-      height: 1.7rem
+    h3
+      color: black !important
 
-      &:hover
-        color: white
-        background-color: $base_green
+  #folders-actions-tabs
+    display: flex
+    flex-direction: row
+    justify-content: center
 
-    span
-      float: right
-      color: white
-      padding: 0.66rem
-      background-color: grey
-      margin-right: -0.6rem
+    #main-tab
+      width: 80%
+      p
+        width: 16%
+
+    #other-tab
+      width: 20%
+      p
+        width: 21%
+    p
+      padding: 0.3rem 1rem
+      font-size: 1.2rem
+      background-color: #eeeeee
+      color: grey
+      letter-spacing: 1px
       border-top-left-radius: 3px
       border-bottom-left-radius: 3px
 
-    p
-      float: left
-      font-size: 1.6rem
-      font-weight: 600
-      letter-spacing: 0.5px
+  #folders-actions
+    display: flex
+    flex-direction: row
+    justify-content: center
     
-    #folder-scan
-      margin-left: 0.5rem
-      float: right
-      margin-bottom: 2rem
-      border-top-left-radius: 0
-      border-bottom-left-radius: 0
+    #folders-action,
+    #folders-action-other
+      background-color: #eeeeee
 
-    #btn-folder-reset-sys
-      border: 1px solid grey
-      color: grey
-      float: right
-      height: 1.7rem
+    #folders-action
+      padding-top: 4rem
+      display: flex
+      flex-direction: row
+      justify-content: center
+      width: 80%
 
-      i
-        font-size: 1.7rem
+      div:first-child
+        margin-top: -2px
 
-      &:hover
+      span
+        float: left
         color: white
+        padding: 0.65rem
         background-color: grey
+        border-top-left-radius: 3px
+        border-bottom-left-radius: 3px
 
-  #folders-action
-    padding: 1.2rem 0
-    text-align: center
-    background-color: #e6e6e6
+      #btn-folder-destroy
+        i
+          display: inherit
+
+      input
+        border-top-left-radius: unset
+        border-bottom-left-radius: unset
+        margin-right: 1rem !important
+        margin-left: 0
+        width: 100px
+        padding: 0.55rem
+        
+    
+    #folders-action-other
+      border-left: 1px solid lightgrey
+      padding: 1.2rem 0
+      width: 20%
+
+      .btn-folder-index-other
+        color: grey
+        font-size: 1.2rem
+        letter-spacing: 1px
+
+        a
+          margin-right: 0.5rem
+          background-color: none
+          color: black
+
+          &:hover
+            background-color: none
+            color: black
+
+        i
+          font-size: 1.3rem
+          margin-left: 2rem
+          margin-top: 0.5rem !important
+          
+          &:first-child
+            margin-top: 0
 
   .btn-folder-index
     color: white
