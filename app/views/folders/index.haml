@@ -7,6 +7,7 @@
         #search-bar-filters
           = button_tag 'Search', id: 'btn_cert_order_search'
           = button_tag 'Filters', type: 'button', id: 'btn_cert_order_filter'
+          = link_to 'Clear', folders_path(@ssl_slug), class: 'btn', id: 'btn_cert_order_clear'
   
   =render partial: 'certificate_orders/search_filters'
 
@@ -26,7 +27,7 @@
       %div
         %span
           %i.fa.fa-search
-        = text_field_tag :folder_search, nil, id: 'folder-scan'
+        = text_field_tag :folder_search, nil, id: 'folder-scan', placeholder: "Name Search"
       %div
         = link_to "<i class='fa fa-plus'></i> Folder".html_safe, '#', |
         id: 'btn-folder-create-root', class: 'btn-folder-index'
