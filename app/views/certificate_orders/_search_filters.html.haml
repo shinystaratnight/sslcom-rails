@@ -1,0 +1,302 @@
+%div.hidden#wrap_cert_order_filter
+  .wrap_filter_items.clearfix
+    .filter_items_col
+      %div.filter_item
+        .filter_evt.clearfix
+          %label
+            =check_box_tag :filter_login_chk, true, false, :class=>'filter_chk'
+            Login
+        .filter_label
+          .filter_cont.hidden{'data-type'=>'text'}
+            =text_field_tag :filter_login, nil, :class=>'filter_cont_text', 'data-field'=>'login'
+      %div.filter_item
+        .filter_evt.clearfix
+          %label
+            =check_box_tag :filter_email_chk, true, false, :class=>'filter_chk'
+            Email
+        .filter_label
+          .filter_cont.hidden{'data-type'=>'text'}
+            =email_field_tag :filter_email, nil, :class=>'filter_cont_text', 'data-field'=>'email'
+      %div.filter_item
+        .filter_evt.clearfix
+          %label
+            =check_box_tag :filter_account_chk, true, false, :class=>'filter_chk'
+            Account
+        .filter_label
+          .filter_cont.hidden{'data-type'=>'text'}
+            =text_field_tag :filter_account, nil, :class=>'filter_cont_text', 'data-field'=>'account'
+      %div.filter_item
+        .filter_evt.clearfix
+          %label
+            =check_box_tag :filter_ref_chk, true, false, :class=>'filter_chk'
+            Ref
+        .filter_label
+          .filter_cont.hidden{'data-type'=>'text'}
+            =text_field_tag :filter_ref, nil, :class=>'filter_cont_text', 'data-field'=>'ref', :placeholder=>'Comma Separater'
+      %div.filter_item
+        .filter_evt.clearfix
+          %label
+            =check_box_tag :filter_common_name_chk, true, false, :class=>'filter_chk'
+            Common Name
+        .filter_label
+          .filter_cont.hidden{'data-type'=>'text'}
+            =text_field_tag :filter_common_name, nil, :class=>'filter_cont_text', 'data-field'=>'common_name'
+      %div.filter_item
+        .filter_evt.clearfix
+          %label
+            =check_box_tag :filter_organization_chk, true, false, :class=>'filter_chk'
+            Organization
+        .filter_label
+          .filter_cont.hidden{'data-type'=>'text'}
+            =text_field_tag :filter_organization, nil, :class=>'filter_cont_text', 'data-field'=>'organization'
+      %div.filter_item
+        .filter_evt.clearfix
+          %label
+            =check_box_tag :filter_organization_unit_chk, true, false, :class=>'filter_chk'
+            Organization Unit
+        .filter_label
+          .filter_cont.hidden{'data-type'=>'text'}
+            =text_field_tag :filter_organization_unit, nil, :class=>'filter_cont_text', 'data-field'=>'organization_unit'
+      %div.filter_item
+        .filter_evt.clearfix
+          %label
+            =check_box_tag :filter_address_chk, true, false, :class=>'filter_chk'
+            Address
+        .filter_label
+          .filter_cont.hidden{'data-type'=>'text'}
+            =text_field_tag :filter_address, nil, :class=>'filter_cont_text', 'data-field'=>'address'
+      %div.filter_item
+        .filter_evt.clearfix
+          %label
+            =check_box_tag :filter_state_chk, true, false, :class=>'filter_chk'
+            State
+        .filter_label
+          .filter_cont.hidden{'data-type'=>'text'}
+            =text_field_tag :filter_state, nil, :class=>'filter_cont_text', 'data-field'=>'state'
+    .filter_items_col
+      %div.filter_item
+        .filter_evt.clearfix
+          %label
+            =check_box_tag :filter_postal_code_chk, true, false, :class=>'filter_chk'
+            Postal Code
+        .filter_label
+          .filter_cont.hidden{'data-type'=>'text'}
+            =text_field_tag :filter_postal_code, nil, :class=>'filter_cont_text', 'data-field'=>'postal_code'
+      %div.filter_item
+        .filter_evt.clearfix
+          %label
+            =check_box_tag :filter_status_chk, true, false, :class=>'filter_chk'
+            Status (Ctrl + Click)
+        .filter_label
+          .filter_cont.hidden{'data-type'=>'select-multi'}
+            =select_tag :filter_status,
+            options_for_select([['Contacts Provided', 'contacts_provided'],
+              ['CSR Submitted', 'csr_submitted'],
+              ['Info Provided', 'info_provided'],
+              ['Issued', 'issued'],
+              ['New', 'new'],
+              ['Pending Validation', 'pending_validation'],
+              ['Validated', 'validated'],
+              ['Rejected', 'rejected']]),
+            :class=>'filter_cont_slt slt-large', 'data-field'=>'status', :multiple=> true
+      %div.filter_item
+        .filter_evt.clearfix
+          %label
+            =check_box_tag :filter_subject_alternative_names_chk, true, false, :class=>'filter_chk'
+            Subject Alternative Names
+        .filter_label
+          .filter_cont.hidden{'data-type'=>'text'}
+            =text_field_tag :filter_subject_alternative_names, nil, :class=>'filter_cont_text', 'data-field'=>'subject_alternative_names'
+      %div.filter_item
+        .filter_evt.clearfix
+          %label
+            =check_box_tag :filter_locality_chk, true, false, :class=>'filter_chk'
+            Locality
+        .filter_label
+          .filter_cont.hidden{'data-type'=>'text'}
+            =text_field_tag :filter_locality, nil, :class=>'filter_cont_text', 'data-field'=>'locality'
+      %div.filter_item
+        .filter_evt.clearfix
+          %label
+            =check_box_tag :filter_country_chk, true, false, :class=>'filter_chk'
+            Country
+        .filter_label
+          .filter_cont.hidden{'data-type'=>'select'}
+            =select_tag :filter_country, options_for_select(Country::PRIORITY+[""], disabled: [""])+options_for_select(Country.approved.collect {|c| [ c.name, c.name ] }.sort{|x,y|x[0]<=>y[0]}), :class=>'filter_cont_slt', 'data-field'=>'country'
+      %div.filter_item
+        .filter_evt.clearfix
+          %label
+            =check_box_tag :filter_product_chk, true, false, :class=>'filter_chk'
+            Product (Ctrl + Click)
+        .filter_label
+          .filter_cont.hidden{'data-type'=>'select-multi'}
+            =select_tag :filter_product,
+            options_for_select([['Basic SSL (basicssl)', 'basicssl'],
+              ['Wildcard SSL (wildcard)', 'wildcard'],
+              ['Premium SSL (premiumssl)', 'premium'],
+              ['High Assurance', 'high-assurance'],
+              ['SAN SSL (ucc)', 'ucc'],
+              ['EV SAN SSL (evucc)', 'evucc'],
+              ['Code Signing (code-signing)', 'code-signing'],
+              ['EV Code Signing (ev-code-signing)', 'ev-code-signing']]),
+            :class=>'filter_cont_slt slt-large', 'data-field'=>'product', :multiple=> true
+      %div.filter_item
+        .filter_evt.clearfix
+          %label
+            =check_box_tag :filter_duration_chk, true, false, :class=>'filter_chk'
+            Duration (Ctrl + Click)
+        .filter_label
+          .filter_cont.hidden{'data-type'=>'select-multi'}
+            =select_tag :filter_duration,
+            options_for_select([['90 days', '90'],
+              ['365 days', '365'],
+              ['730 days', '730'],
+              ['1095 days', '1095'],
+              ['1461 days', '1461'],
+              ['1826 days', '1826']]),
+            :class=>'filter_cont_slt slt-large', 'data-field'=>'duration', :multiple=> true
+      %div.filter_item
+        .filter_evt.clearfix
+          %label
+            =check_box_tag :filter_signature_chk, true, false, :class=>'filter_chk'
+            Signature
+        .filter_label
+          .filter_cont.hidden{'data-type'=>'text'}
+            =text_field_tag :filter_signature, nil, :class=>'filter_cont_text', 'data-field'=>'signature'
+      %div.filter_item
+        .filter_evt.clearfix
+          %label
+            =check_box_tag :filter_fingerprint_chk, true, false, :class=>'filter_chk'
+            Fingerprint
+        .filter_label
+          .filter_cont.hidden{'data-type'=>'text'}
+            =text_field_tag :filter_fingerprint, nil, :class=>'filter_cont_text', 'data-field'=>'fingerprint'
+      %div.filter_item
+        .filter_evt.clearfix
+          %label
+            =check_box_tag :filter_strength_chk, true, false, :class=>'filter_chk'
+            Strength
+        .filter_label
+          .filter_cont.hidden.clearfix{'data-type'=>'mix', 'data-field'=>'strength'}
+            .filter_cont_item.clearfix
+              .filter_cont_item_evt
+                =check_box_tag :filter_1024_chk, true, false, 'data-field'=>'1024', :class=>'filter_cont_chk'
+              .filter_cont_item_label
+                1024
+            .filter_cont_item.clearfix
+              .filter_cont_item_evt
+                =check_box_tag :filter_2048_chk, true, false, 'data-field'=>'2048', :class=>'filter_cont_chk'
+              .filter_cont_item_label
+                2048
+            .filter_cont_item.clearfix
+              .filter_cont_item_evt
+                =check_box_tag :filter_4096_chk, true, false, 'data-field'=>'4096', :class=>'filter_cont_chk'
+              .filter_cont_item_label
+                4096
+            .filter_cont_item
+              =number_field_tag :filter_strength, nil, :class=>'filter_cont_text'
+              Other
+    .filter_items_col
+      %div.filter_item
+        .filter_evt.clearfix
+          %label
+            =check_box_tag :filter_created_at_chk, true, false, :class=>'filter_chk'
+            Created At
+        .filter_label
+          .filter_cont.hidden.clearfix{'data-type'=>'date'}
+            .filter_cont_item
+              =date_field_tag :filter_created_from, nil, :class=>'filter_cont_date', 'data-field'=>'created'
+            .filter_cont_item -
+            .filter_cont_item
+              =date_field_tag :filter_created_to, nil, :class=>'filter_cont_date', 'data-field'=>'created'
+      %div.filter_item
+        .filter_evt.clearfix
+          %label
+            =check_box_tag :filter_expires_at_chk, true, false, :class=>'filter_chk'
+            Expires At
+        .filter_label
+          .filter_cont.hidden.clearfix{'data-type'=>'date'}
+            .filter_cont_item
+              =date_field_tag :filter_expires_from, nil, :class=>'filter_cont_date', 'data-field'=>'expires'
+            .filter_cont_item -
+            .filter_cont_item
+              =date_field_tag :filter_expires_to, nil, :class=>'filter_cont_date', 'data-field'=>'expires'
+      %div.filter_item
+        .filter_evt.clearfix
+          %label
+            =check_box_tag :filter_issued_at_chk, true, false, :class=>'filter_chk'
+            Issued At
+        .filter_label
+          .filter_cont.hidden.clearfix{'data-type'=>'date'}
+            .filter_cont_item
+              =date_field_tag :filter_issued_from, nil, :class=>'filter_cont_date', 'data-field'=>'issued'
+            .filter_cont_item -
+            .filter_cont_item
+              =date_field_tag :filter_issued_to, nil, :class=>'filter_cont_date', 'data-field'=>'issued'
+      %div.filter_item
+        .filter_evt.clearfix
+          %label
+            =check_box_tag :filter_physical_token_chk, true, false, :class=>'filter_chk'
+            Physical Token
+        .filter_label
+          .filter_cont.hidden.clearfix{'data-type'=>'checkbox', 'data-field'=>'physical_token'}
+            .filter_cont_item.clearfix
+              .filter_cont_item_evt
+                =check_box_tag :filter_in_transit_chk, true, false, 'data-field'=>'in_transit', :class=>'filter_cont_chk'
+              .filter_cont_item_label
+                In Transit
+            .filter_cont_item.clearfix
+              .filter_cont_item_evt
+                =check_box_tag :filter_received_chk, true, false, 'data-field'=>'received', :class=>'filter_cont_chk'
+              .filter_cont_item_label
+                Received
+            .filter_cont_item.clearfix
+              .filter_cont_item_evt
+                =check_box_tag :filter_activated_chk, true, false, 'data-field'=>'in_possession', :class=>'filter_cont_chk'
+              .filter_cont_item_label
+                Activated
+      -if @team_tags.try("any?".to_sym)
+        %div.filter_item
+          .filter_evt.clearfix
+            %label
+              =check_box_tag :filter_co_tags_chk, true, false, :class=>'filter_chk'
+              Certificate Order Tags (Ctrl + Click)
+          .filter_label
+            .filter_cont.hidden{'data-type'=>'select-multi'}
+              =select_tag :filter_co_tags,                                     |
+              options_for_select(@team_tags.pluck(:name).sort_by(&:downcase)), |
+              class: 'filter_cont_slt slt-large', 'data-field': 'co_tags', multiple: true
+        %div.filter_item
+          .filter_evt.clearfix
+            %label
+              =check_box_tag :filter_cc_tags_chk, true, false, :class=>'filter_chk'
+              End-entity Certificate Tags (Ctrl + Click)
+          .filter_label
+            .filter_cont.hidden{'data-type'=>'select-multi'}
+              =select_tag :filter_cc_tags,                                     |
+              options_for_select(@team_tags.pluck(:name).sort_by(&:downcase)), |
+              class: 'filter_cont_slt slt-large', 'data-field': 'cc_tags', multiple: true
+      -if current_user.is_system_admins?
+        %div.filter_item
+          .filter_evt.clearfix
+            %label
+              =check_box_tag :filter_external_order_number_chk, true, false, :class=>'filter_chk'
+              External Order Number
+          .filter_label
+            .filter_cont.hidden{'data-type'=>'text'}
+              =text_field_tag :filter_external_order_number, nil, :class=>'filter_cont_text', 'data-field'=>'external_order_number'
+        %div.filter_item
+          .filter_evt.clearfix
+            %label
+              =check_box_tag :filter_notes_chk, true, false, :class=>'filter_chk'
+              Notes
+          .filter_label
+            .filter_cont.hidden{'data-type'=>'text'}
+              =text_field_tag :filter_notes, nil, :class=>'filter_cont_text', 'data-field'=>'notes'
+        %div.filter_item
+          .filter_evt.clearfix
+            %label
+              =check_box_tag :filter_is_test_chk, true, false, :class=>'filter_chk', 'data-field'=>'is_test'
+              Test
+  =button_tag 'Search', :type=>'button', :id=>'btn_cert_order_filter_search'
+  =button_tag 'Cancel', :type=>'button', :id=>'btn_close_cert_order_filter'

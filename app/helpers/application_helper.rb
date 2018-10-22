@@ -556,7 +556,14 @@ module ApplicationHelper
   def co_folder_children(contents, options={})
     output = []
     contents.each do |f|
-      output << FolderTree.new(@ssl_account, f, @tree_type, []).full_tree
+      output << FolderTree.new(
+        ssl_account_id: @ssl_account,
+        folder: f,
+        tree_type: @tree_type,
+        selected_ids: [],
+        certificate_order_ids: @certificate_order_ids,
+        folder_ids: params[:folder_ids]
+      ).full_tree
     end
     output.to_json.html_safe
   end

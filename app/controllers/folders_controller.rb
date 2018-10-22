@@ -15,9 +15,23 @@ class FoldersController < ApplicationController
     :destroy,
     :update
   ], attribute_check: true
-
+  
   def index
-    @folders = get_team_root_folders
+    @search = params[:search] || ""
+    if params[:search]
+      @certificate_orders = find_certificate_orders(source: 'folders')
+      @certificate_order_ids = @certificate_orders.pluck(:id)
+      @folders = if @certificate_order_ids.any?
+        Folder.joins(:certificate_orders).where(
+          certificate_orders: {id: @certificate_order_ids}
+        ).uniq
+        else
+          []
+        end
+    else
+      @folders = get_team_root_folders
+    end
+    @folder_ids = @folders.map(&:id)
   end
 
   def create
@@ -32,10 +46,21 @@ class FoldersController < ApplicationController
   end
   
   def children
-    @folders = if params[:id] == '#'
-      get_team_root_folders.order(name: :asc)
+    if params[:search]
+      @certificate_order_ids = find_certificate_orders(source: 'folders').pluck(:id)
+      @folders = if params[:id] == '#'
+        get_team_root_folders.where(id: params[:folder_ids]).order(name: :asc)
+      else
+        @ssl_account.folders.where(
+          parent_id: params[:id], id: params[:folder_ids]
+        ).order(name: :asc)
+      end
     else
-      @ssl_account.folders.where(parent_id: params[:id]).order(name: :asc)
+      @folders = if params[:id] == '#'
+        get_team_root_folders.order(name: :asc)
+      else
+        @ssl_account.folders.where(parent_id: params[:id]).order(name: :asc)
+      end
     end
     @tree_type = params[:tree_type]
     render partial: 'folder_children'
