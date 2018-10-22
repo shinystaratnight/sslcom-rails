@@ -479,6 +479,7 @@ SslCom::Application.routes.draw do
       get :cancel_reseller_signup
       match :enable_disable, via: [:put, :patch]
       match :enable_disable_duo, via: [:put, :patch]
+      get :show_user
     end
 
     member do

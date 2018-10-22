@@ -218,7 +218,7 @@ jQuery(function($) {
 
       $('#managed_domains').select2({
         tags: true,
-        tokenSeparators: [',', ' ', '\n', '\r\n'],
+        tokenSeparators: [',', ' '],
         templateSelection: function(data, container) {
           var value = data.element.value;
 
@@ -327,7 +327,7 @@ jQuery(function($) {
 
                 $('#managed_domains').select2({
                   tags: true,
-                  tokenSeparators: [',', ' ', '\n', '\r\n'],
+                  tokenSeparators: [',', ' '],
                   templateSelection: function(data, container) {
                     var value = data.element.value;
 
@@ -475,7 +475,7 @@ jQuery(function($) {
 
                 $('#managed_domains').select2({
                   tags: true,
-                  tokenSeparators: [',', ' ', '\n', '\r\n'],
+                  tokenSeparators: [',', ' '],
                   templateSelection: function(data, container) {
                     var value = data.element.value;
 
@@ -721,7 +721,7 @@ jQuery(function($) {
 
     $('#managed_domains').select2({
       tags: true,
-      tokenSeparators: [',', ' ', '\n', '\r\n'],
+      tokenSeparators: [',', ' '],
       templateSelection: function(data, container) {
         var value = data.element.value;
 
@@ -802,14 +802,31 @@ jQuery(function($) {
     <%end%>
     $('#managed_domains').on('change', function() {
       var changed_value = $(this).val();
+
       if (changed_value != null) {
         var needed_validate_list = [];
+
+        // getting new selected option's value
         $.each(changed_value, function(idx) {
-          if (changed_value[idx].indexOf('validated-') == -1 && changed_value[idx].indexOf('csr-') == -1) {
-            needed_validate_list.push(changed_value[idx]);
+          // checking new selected option or not
+          if (changed_value[idx].indexOf('validated-') == -1
+            && changed_value[idx].indexOf('csr-') == -1
+            && changed_value[idx].indexOf('manual-') == -1) {
+
+            // checking duplication
+            if ($.inArray(('validated-' + changed_value[idx]), changed_value) != -1
+              || $.inArray(('csr-' + changed_value[idx]), changed_value) != -1
+              || $.inArray(('manual-' + changed_value[idx]), changed_value) != -1) {
+              // remove duplicated option element
+              $('#managed_domains').find('option[value="' + changed_value[idx] + '"]').remove();
+            } else {
+              // adding option for checking validation
+              needed_validate_list.push(changed_value[idx]);
+            }
           }
         });
 
+        // checking validation if exist need to be checked.
         if (needed_validate_list.length > 0) {
           $.ajax({
             url: "<%= check_validation_csrs_path %>",
@@ -825,7 +842,7 @@ jQuery(function($) {
 
               $('#managed_domains').select2({
                 tags: true,
-                tokenSeparators: [',', ' ', '\n', '\r\n'],
+                tokenSeparators: [',', ' '],
                 templateSelection: function(data, container) {
                   var value = data.element.value;
 
