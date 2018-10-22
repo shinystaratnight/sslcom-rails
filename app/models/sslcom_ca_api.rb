@@ -270,20 +270,23 @@ class SslcomCaApi
   # body - parameters in JSON format
   def self.call_ca(host, options, body)
     uri = URI.parse(host.gsub!("8442","8443"))
-    client_auth= case uri.host
+    client_auth_cert,client_auth_key= case uri.host
                  when PRODUCTION_IP
-                   Rails.application.secrets.ejbca_production_client_auth_cert
+                   [Rails.application.secrets.ejbca_production_client_auth_cert,
+                       Rails.application.secrets.ejbca_production_client_auth_key]
                  when DEVELOPMENT_IP
-                   Rails.application.secrets.ejbca_development_client_auth_cert
+                   [Rails.application.secrets.ejbca_development_client_auth_cert,
+                       Rails.application.secrets.ejbca_development_client_auth_key]
                  when STAGING_IP
-                   Rails.application.secrets.ejbca_staging_client_auth_cert
+                   [Rails.application.secrets.ejbca_staging_client_auth_cert,
+                       Rails.application.secrets.ejbca_staging_client_auth_key]
                  end
     req = (options[:method]=~/GET/i ? Net::HTTP::Get : Net::HTTP::Post).new(uri, 'Content-Type' => 'application/json')
     http = Net::HTTP.new(uri.host, uri.port)
     http.use_ssl = true
     http.verify_mode = OpenSSL::SSL::VERIFY_PEER
-    http.cert = OpenSSL::X509::Certificate.new(File.read(client_auth))
-    http.key = OpenSSL::PKey::RSA.new(File.read(client_auth))
+    http.cert = OpenSSL::X509::Certificate.new(File.read(client_auth_cert))
+    http.key = OpenSSL::PKey::RSA.new(File.read(client_auth_key))
     req.body = body
     res = http.request(req)
     return req, res
