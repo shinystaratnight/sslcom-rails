@@ -1,6 +1,6 @@
 class FoldersController < ApplicationController
-  before_filter :find_ssl_account, except: :index
-  before_filter :set_ssl_slug, except: :index
+  before_filter :find_ssl_account
+  before_filter :set_ssl_slug
   before_filter :find_folder, only: [
     :update,
     :destroy,
@@ -189,6 +189,9 @@ class FoldersController < ApplicationController
   end
     
   def set_ssl_slug(target_user=nil)
+    if current_user && !params[:search].blank?
+      @ssl_account = current_user.ssl_account
+    end
     if current_user && @ssl_account
       @ssl_slug ||= (@ssl_account.ssl_slug || @ssl_account.acct_number)
     end
