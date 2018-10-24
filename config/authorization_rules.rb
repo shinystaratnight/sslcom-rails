@@ -420,6 +420,10 @@ authorization do
     # SiteSeals 
     #
     has_permission_on :site_seals, :to => [:create, :read, :update]
+    #
+    # SignedCertificates 
+    #
+    has_permission_on :signed_certificates, to: :revoke
   end
 
   # ============================================================================

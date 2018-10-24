@@ -308,8 +308,8 @@
             %table(cellspacing="0")
               %tbody
                 %tr
-                  %td(colspan="5")
-                    -if current_user.is_system_admins?
+                  -if current_user.is_system_admins?
+                    %td(colspan="4")
                       .notes_box
                         =form_for @certificate_order, :url=>admin_update_certificate_order_url(@certificate_order) do |f|
                           %ul
@@ -317,6 +317,14 @@
                               %strong notes for admins only
                             %li
                               =f.text_area :notes, cols: 40, rows: 10
+                    %td(colspan="5")  
+                      .certificate_details_box
+                        %strong audit log
+                        -audits=(@certificate_order.system_audits.empty? ? "n/a" : "###")+"\n"
+                        -@certificate_order.system_audits.each do |audit|
+                          -audits << "date: #{audit.created_at}\nuser: #{audit.owner.try :login}\naction: #{audit.action}\n###\n"
+                        =text_area_tag :audits, audits, :size=>"30x10"
+
                     -unless @cc.certificate_contacts.blank?
                       -CertificateContent::CONTACT_ROLES.each do |role|
                         .contact_details_box
@@ -367,6 +375,26 @@
                             (server software: #{c.server_software.try :title})
                           -else
                             (serial number: #{sc.serial})
+                    - unless sc.nil? || @certificate_order.certificate.is_code_signing?
+                      %tr#cert-content-status
+                        %td
+                          %div
+                            %strong 
+                              %i{class: 'fa fa-cogs'} 
+                              status:
+                            %span #{sc.status.upcase}
+                            - unless sc.revoked?
+                              = link_to "<i class='fa fa-times-circle'></i> REVOKE".html_safe, '#', id: 'btn-cert-content-revoke'
+                              #dialog-form
+                                %p Please select a reason for revoking:
+                                %br/
+                                .clearfix
+                                  = form_tag revoke_signed_certificate_path(@ssl_slug, sc.id), method: :put do
+                                    = select_tag :revoke_reason, options_for_select(SslcomCaRevocationRequest::REASONS), |
+                                      multiple: false, id: 'sel-cert-content-revoke', include_blank: false
+                                .clearfix
+                                  %br/
+                                  %p *Warning: Once revoked the status of this signed certificate cannot be reversed.
                     %tr
                       %td(colspan="5")
                         -if !@certificate_order.certificate.is_code_signing? # or current_user.is_system_admins?
@@ -439,12 +467,31 @@
                     %tr
                       %td(colspan="5" style="text-align: left;")
                         = render partial: '/tags/certificate_content_tags', locals: {taggable: c}
-                -if current_user.is_admin?
-                  %tr
-                    %td(colspan="5")
-                      .certificate_details_box
-                        %strong audit log
-                        -audits=(@certificate_order.system_audits.empty? ? "n/a" : "###")+"\n"
-                        -@certificate_order.system_audits.each do |audit|
-                          -audits << "date: #{audit.created_at}\nuser: #{audit.owner.try :login}\naction: #{audit.action}\n###\n"
-                        =text_area_tag :audits, audits, :size=>"30x10"
+
+:javascript
+  jQuery(function($) {
+    var curDialog = $('#dialog-form');
+    $("#sel-cert-content-revoke").select2();
+    function revokeSignedCertificate() {
+      curDialog.find('form').submit();
+    }
+    curDialog.dialog({
+      position: { my: 'top center', at: 'top center', of: window },
+      title: 'Revoke Signed Certificate',
+      autoOpen: false,
+      height: 240,
+      width: 300,
+      modal: true,
+      dialogClass: 'dl-transfer-team',
+      buttons: {
+        Cancel: function() {
+          curDialog.dialog('close');
+        },
+        'Revoke': revokeSignedCertificate,
+      }
+    });
+    $('#btn-cert-content-revoke').on('click', function(e) {
+      e.preventDefault();
+      curDialog.dialog('open');
+    });
+  });
