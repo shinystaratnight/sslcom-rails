@@ -28,6 +28,18 @@ class SignedCertificatesController < ApplicationController
     @signed_certificate.revoke!(params[:revoke_reason])
     
     if @signed_certificate.revoked?
+      cc = @signed_certificate.certificate_content
+      list = cc.signed_certificates.pluck(:status).uniq
+      if list.count == 1 && list.include?('revoked')
+        cc.revoke!
+        SystemAudit.create(
+          owner: current_user,
+          target: cc,
+          notes: "Revoked due to reason: #{params[:revoke_reason]}",
+          action: 'Revoked certificate content.'
+        )
+      end
+
       SystemAudit.create(
         owner: current_user,
         target: @signed_certificate,
