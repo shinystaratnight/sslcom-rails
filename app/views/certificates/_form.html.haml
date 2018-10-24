@@ -159,9 +159,11 @@
               =select_tag :managed_domains,
                 options_for_select(@certificate_content.domains.collect {|domain| [domain, 'validated-' + domain]}, selected: @certificate_content.domains.collect {|domain| 'validated-' + domain}),
                 multiple: true, data: {placeholder: "click here to list available domains to scan."}, :class => 'managed_domains'
+              =link_to 'Clear All Domains', '', {class: 'clear_domains'}
             -else
               =select_tag :managed_domains, options_for_select([], selected: []),
                 multiple: true, data: {placeholder: "click here to list available domains to scan."}, :class => 'managed_domains'
+              =link_to 'Clear All Domains', '', {class: 'clear_domains hidden'}
       -if @certificate.is_browser_generated_capable?
         =cert_form.hidden_field :server_software_id, value: ServerSoftware.find(1).id
       -else

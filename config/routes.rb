@@ -20,6 +20,8 @@ SslCom::Application.routes.draw do
   match '/' => 'site#index', :as => :root, via: [:get, :post]
   match 'login' => 'user_sessions#new', :as => :login, via: [:get, :post]
   match 'logout' => 'user_sessions#destroy', :as => :logout, via: [:get, :post]
+  match '(/team/:ssl_slug)/signed_certificates/:id/revoke' => 'signed_certificates#revoke', 
+    as: 'revoke_signed_certificate', via: [:put, :post]
 
   resources :unsubscribes, only: [:edit, :update]
   #resources :site_checks
@@ -479,6 +481,7 @@ SslCom::Application.routes.draw do
       get :cancel_reseller_signup
       match :enable_disable, via: [:put, :patch]
       match :enable_disable_duo, via: [:put, :patch]
+      get :show_user
     end
 
     member do

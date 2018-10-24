@@ -18,6 +18,18 @@ jQuery(function($) {
     });
     return result;
   };
+
+  $.checkDomain = function(str) {
+    var asterisk_counts = (str.match(/\*/g) || []).length;
+    if (asterisk_counts == 0) {
+      var ip_address_pattern = /\b(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b/;
+      return psl.isValid(str) || ip_address_pattern.test(str);
+    } else if (asterisk_counts == 1) {
+      return psl.isValid(str.substr(2));
+    } else if (asterisk_counts > 1) {
+      return false;
+    }
+  };
   
   /*$.domains = function(textArea){
     textArea.value = textArea.value.replace(/(\W)(\s+)/g, "$2").
@@ -167,22 +179,20 @@ jQuery(function($) {
   $.filteringDomainsByCOType = function(domains, type) {
     var results = [];
     $.each(domains, function(idx) {
-      if ($.inArray(domains[idx], results) == -1) {
-        results.push(domains[idx]);
+      var appendix = type == 'wildcard' ? '*.' : 'www.';
+      var domain = type == 'wildcard' ? domains[idx].replace('www.', '') : domains[idx];
+
+      if ($.inArray(domain, results) == -1) {
+        results.push(domain);
       }
 
-      var appendix = 'www.';
-      if (type == 'wildcard') {
-        appendix = '*.';
-      }
-
-      if (domains[idx].indexOf(appendix) > -1) {
-        if ($.inArray(domains[idx].substr(appendix.length), results) == -1) {
-          results.push(domains[idx].substr(appendix.length));
+      if (domain.indexOf(appendix) > -1) {
+        if ($.inArray(domain.substr(appendix.length), results) == -1) {
+          results.push(domain.substr(appendix.length));
         }
       } else {
-        if ($.inArray(appendix + domains[idx], results) == -1) {
-          results.push(appendix + domains[idx]);
+        if ($.inArray(appendix + domain, results) == -1) {
+          results.push(appendix + domain);
         }
       }
     });
@@ -207,7 +217,7 @@ jQuery(function($) {
       $('.add_to_manager_block').show();
 
       // remove domains what belongs to previous selected Managed CSR.
-      $('.managed_domains').empty();
+      /*$('.managed_domains').empty();*/
       /*$('.managed_domains option').each(function() {
         var value = $(this).val();
 
@@ -216,9 +226,9 @@ jQuery(function($) {
         }
       });*/
 
-      $('#managed_domains').select2({
+      /*$('#managed_domains').select2({
         tags: true,
-        tokenSeparators: [',', ' ', '\n', '\r\n'],
+        tokenSeparators: [',', ' '],
         templateSelection: function(data, container) {
           var value = data.element.value;
 
@@ -230,7 +240,7 @@ jQuery(function($) {
 
           return data.text;
         }
-      });
+      });*/
     } else {
       // hide checkbox for adding pasted CSR to Managed CSR.
       $('.add_to_manager_block').hide();
@@ -290,7 +300,7 @@ jQuery(function($) {
 
           if (all_domains.length > 0) {
             // remove domains what belongs to previous selected Managed CSR.
-            $('.managed_domains').empty();
+            /*$('.managed_domains').empty();*/
             /*$('.managed_domains option').each(function() {
               var value = $(this).val();
 
@@ -312,22 +322,37 @@ jQuery(function($) {
               type: "POST",
               success: function (obj) {
                 Object.keys(obj).map(function(key) {
-                  var optElement = $('<option></option>');
+                  var is_exist = false;
+                  var selected_value = $('.managed_domains').val();
 
-                  if (obj[key] == 'true') {
-                    optElement.attr('value', 'validated-' + key);
-                  } else {
-                    optElement.attr('value', 'csr-' + key);
+                  // checking duplication
+                  if ($.inArray(('validated-' + key), selected_value) != -1
+                    || $.inArray(('csr-' + key), selected_value) != -1
+                    || $.inArray(('manual-' + key), selected_value) != -1) {
+                    is_exist = true;
                   }
-                  optElement.attr('selected', true);
-                  optElement.append(key);
 
-                  select_obj.append(optElement);
+                  /*if (!is_exist && psl.isValid(key)) {*/
+                  if (!is_exist && $.checkDomain(key)) {
+                    var optElement = $('<option></option>');
+
+                    if (obj[key] == 'true') {
+                      optElement.attr('value', 'validated-' + key);
+                    } else {
+                      optElement.attr('value', 'csr-' + key);
+                    }
+                    optElement.attr('selected', true);
+                    optElement.append(key);
+
+                    select_obj.append(optElement);
+                  }
                 });
+
+                $('.clear_domains').show();
 
                 $('#managed_domains').select2({
                   tags: true,
-                  tokenSeparators: [',', ' ', '\n', '\r\n'],
+                  tokenSeparators: [',', ' '],
                   templateSelection: function(data, container) {
                     var value = data.element.value;
 
@@ -350,7 +375,7 @@ jQuery(function($) {
   
   <% unless @certificate.is_code_signing? || Rails.env.test? %>
     $("textarea[name*=signing_request]").bind("change keyup paste", function() {
-      if($(this).val()==""){
+      if ($(this).val() == "") {
         $(".flash_message").remove();
         return;
       }
@@ -360,26 +385,35 @@ jQuery(function($) {
         url: "<%=parse_csr_certificate_orders_path%>",
         data: {csr: $(this).val(), certificate: "<%=@certificate.product%>"},
         type: "POST",
-        success: function(data, status){
+        success: function(data, status) {
           $(".flash_message").remove();
+
           var ajax_errors="";
-          if((typeof data.certificate_content.csr.errors.base != 'undefined') && (data.certificate_content.csr.errors.base.length>0)){
-            $.each(data.certificate_content.csr.errors.base, function(key, value){
+          if ((typeof data.certificate_content.csr.errors.base != 'undefined')
+            && (data.certificate_content.csr.errors.base.length>0)) {
+            $.each(data.certificate_content.csr.errors.base, function(key, value) {
               ajax_errors+="<li>"+value+"</li>";
             });
           }
-          if((typeof data.certificate_content.errors.base != 'undefined') && (data.certificate_content.errors.base.length>0))
-            $.each(data.certificate_content.errors.base, function(key, value){
+
+          if ((typeof data.certificate_content.errors.base != 'undefined') &&
+            (data.certificate_content.errors.base.length>0)) {
+            $.each(data.certificate_content.errors.base, function(key, value) {
               ajax_errors+="<li>"+value+"</li>";
             });
-          if((typeof data.certificate_content.errors.signing_request != 'undefined') && (data.certificate_content.errors.signing_request.length>0))
-            $.each(data.certificate_content.errors.signing_request, function(key, value){
+          }
+
+          if ((typeof data.certificate_content.errors.signing_request != 'undefined')
+            && (data.certificate_content.errors.signing_request.length>0)) {
+            $.each(data.certificate_content.errors.signing_request, function(key, value) {
               ajax_errors+="<li>signing request "+value+"</li>";
             });
-          if(ajax_errors!="") {
+          }
+
+          if (ajax_errors!="") {
             $(".cert_reqs").after("<div class='flash_message error'><span><ul class='ajax_info'>" + ajax_errors + "</ul></span></div>");
           } else {
-            if((typeof data.certificate_content.csr.common_name != 'undefined')){
+            if ((typeof data.certificate_content.csr.common_name != 'undefined')) {
               <%if @certificate.product != "free" && @certificate_order.external_order_number.blank?%>
               var days_left = data.certificate_content.csr.days_left > 0 ? "<br><hr>"+data.certificate_content.csr.days_left+" free SSL.com Carryover days will be added from expiring SSL/TLS certificate" : "";
               <%else%>
@@ -387,12 +421,13 @@ jQuery(function($) {
               <%end%>
               $(".cert_reqs").after("<div class='flash_message notice'><span class='ajax_info'>common name field in csr is: "+data.certificate_content.csr.common_name+days_left+"</span></div>");
             }
+
             <%if @certificate.is_ucc?-%>
               if((typeof data.certificate_content.csr.subject_alternative_names != 'undefined')){
                 all_domains = $.unique($.merge(data.certificate_content.csr.subject_alternative_names, [data.certificate_content.csr.common_name]));
                 /*additional_domains = $("textarea[name*=additional_domains]").text() + " " + all_domains;
-                $("textarea[name*=additional_domains]").val($.uniqueStrings(additional_domains.split(/[\s,\n]+/)).join(" "));
-                $.adjustDomainPricing($("textarea[name*=additional_domains]")[0]);*/
+                 $("textarea[name*=additional_domains]").val($.uniqueStrings(additional_domains.split(/[\s,\n]+/)).join(" "));
+                 $.adjustDomainPricing($("textarea[name*=additional_domains]")[0]);*/
 
                 $.adjustDomainPricing(all_domains.join(' '));
               }
@@ -409,24 +444,24 @@ jQuery(function($) {
             $('.managed_csr').val('none');
 
             /*// remove domains what belongs to previous pasted CSR.
-            $('.managed_domains').empty();*/
+             $('.managed_domains').empty();*/
             /*$('.managed_domains option').each(function() {
-              var value = $(this).val();
+             var value = $(this).val();
 
-              if (value.indexOf('domain-') == -1) {
-                $(this).remove();
-              }
-            });*/
+             if (value.indexOf('domain-') == -1) {
+             $(this).remove();
+             }
+             });*/
 
             // show checkbox for adding this CSR to Managed CSR.
             $('.add_to_manager_block').show();
 
             /*// adding domains what belongs to current pasted CSR.
-            select_obj = $('.managed_domains');*/
+             select_obj = $('.managed_domains');*/
             /*common_name = data.certificate_content.csr.common_name;
-            sans = data.certificate_content.csr.subject_alternative_names;
-            all_domains = $.merge([common_name], sans);
-            $.unique(all_domains);*/
+             sans = data.certificate_content.csr.subject_alternative_names;
+             all_domains = $.merge([common_name], sans);
+             $.unique(all_domains);*/
 
             all_domains = names.split(' ');
 
@@ -454,28 +489,43 @@ jQuery(function($) {
               type: "POST",
               success: function (obj) {
                 // remove domains what belongs to previous pasted CSR.
-                $('.managed_domains').empty();
+                /*$('.managed_domains').empty();*/
 
                 // adding domains what belongs to current pasted CSR.
                 select_obj = $('.managed_domains');
 
                 Object.keys(obj).map(function(key) {
-                  var optElement = $('<option></option>');
+                  var is_exist = false;
+                  var selected_value = $('.managed_domains').val();
 
-                  if (obj[key] == 'true') {
-                    optElement.attr('value', 'validated-' + key);
-                  } else {
-                    optElement.attr('value', 'csr-' + key);
+                  // checking duplication
+                  if ($.inArray(('validated-' + key), selected_value) != -1
+                    || $.inArray(('csr-' + key), selected_value) != -1
+                    || $.inArray(('manual-' + key), selected_value) != -1) {
+                    is_exist = true;
                   }
-                  optElement.attr('selected', true);
-                  optElement.append(key);
 
-                  select_obj.append(optElement);
+                  /*if (!is_exist && psl.isValid(key)) {*/
+                  if (!is_exist && $.checkDomain(key)) {
+                    var optElement = $('<option></option>');
+
+                    if (obj[key] == 'true') {
+                      optElement.attr('value', 'validated-' + key);
+                    } else {
+                      optElement.attr('value', 'csr-' + key);
+                    }
+                    optElement.attr('selected', true);
+                    optElement.append(key);
+
+                    select_obj.append(optElement);
+                  }
                 });
+
+                $('.clear_domains').show();
 
                 $('#managed_domains').select2({
                   tags: true,
-                  tokenSeparators: [',', ' ', '\n', '\r\n'],
+                  tokenSeparators: [',', ' '],
                   templateSelection: function(data, container) {
                     var value = data.element.value;
 
@@ -721,7 +771,7 @@ jQuery(function($) {
 
     $('#managed_domains').select2({
       tags: true,
-      tokenSeparators: [',', ' ', '\n', '\r\n'],
+      tokenSeparators: [',', ' '],
       templateSelection: function(data, container) {
         var value = data.element.value;
 
@@ -802,14 +852,31 @@ jQuery(function($) {
     <%end%>
     $('#managed_domains').on('change', function() {
       var changed_value = $(this).val();
+
       if (changed_value != null) {
         var needed_validate_list = [];
+
+        // getting new selected option's value
         $.each(changed_value, function(idx) {
-          if (changed_value[idx].indexOf('validated-') == -1 && changed_value[idx].indexOf('csr-') == -1) {
-            needed_validate_list.push(changed_value[idx]);
+          // checking new selected option or not
+          if (changed_value[idx].indexOf('validated-') == -1
+            && changed_value[idx].indexOf('csr-') == -1
+            && changed_value[idx].indexOf('manual-') == -1) {
+            // checking duplication
+            if ($.inArray(('validated-' + changed_value[idx]), changed_value) != -1
+              || $.inArray(('csr-' + changed_value[idx]), changed_value) != -1
+              || $.inArray(('manual-' + changed_value[idx]), changed_value) != -1
+              || !$.checkDomain(changed_value[idx])) {
+              // remove duplicated option element
+              $('#managed_domains').find('option[value="' + changed_value[idx] + '"]').remove();
+            } else {
+              // adding option for checking validation
+              needed_validate_list.push(changed_value[idx]);
+            }
           }
         });
 
+        // checking validation if exist need to be checked.
         if (needed_validate_list.length > 0) {
           $.ajax({
             url: "<%= check_validation_csrs_path %>",
@@ -818,6 +885,8 @@ jQuery(function($) {
             },
             type: "POST",
             success: function (data) {
+              $('.clear_domains').show();
+
               Object.keys(data).map(function(key) {
                 var value = data[key] == 'true' ? 'validated-' : 'manual-';
                 $('#managed_domains').find('option[value="' + key + '"]').val(value + key);
@@ -825,7 +894,7 @@ jQuery(function($) {
 
               $('#managed_domains').select2({
                 tags: true,
-                tokenSeparators: [',', ' ', '\n', '\r\n'],
+                tokenSeparators: [',', ' '],
                 templateSelection: function(data, container) {
                   var value = data.element.value;
 
@@ -841,6 +910,8 @@ jQuery(function($) {
             }
           });
         }
+      } else {
+        $('.clear_domains').hide();
       }
     });
     $('#weekday_custom_list').on('select2:opening select2:closing', function( event ) {
@@ -1031,6 +1102,11 @@ jQuery(function($) {
         $('.schedule_type').hide();
       }
     });*/
+
+    $('.clear_domains').click(function(e) {
+      e.preventDefault();
+      $('#managed_domains').val(null).trigger('change');
+    });
 
   });
 });

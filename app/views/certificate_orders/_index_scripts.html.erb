@@ -243,7 +243,8 @@ jQuery(function($) {
 
     $('#btn_cert_order_filter').click(function() {
       $('#wrap_cert_order_filter').show();
-      $('#btn_cert_order_search').prop('disabled', true);
+      $('#search-bar-input #search').hide();
+      $('#btn_cert_order_search').hide();
 
       var filterItems = $('#search').val().split(/\s(?=(?:[^']|'[^']*')*$)/);
       $.each(filterItems, function(idx) {
@@ -304,7 +305,8 @@ jQuery(function($) {
 
     $('#btn_close_cert_order_filter').click(function() {
       $('#wrap_cert_order_filter').hide();
-      $('#btn_cert_order_search').prop('disabled', false);
+      $('#search-bar-input #search').show();
+      $('#btn_cert_order_search').show();
 
       $('.filter_chk').prop('checked', false);
       $('.filter_cont_text').val('');

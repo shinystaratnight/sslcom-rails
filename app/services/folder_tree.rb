@@ -1,15 +1,18 @@
 class FolderTree
   attr_reader :full_tree, :selected_ids
 
-  def initialize(ssl_account_id, folder, tree_type='folders_index', selected_ids=nil)
+  def initialize(params)
     @full_tree = []
-    @selected_ids = selected_ids.is_a?(Array) ? selected_ids : [selected_ids].compact
-    @folder = folder
-    @full_tree = build_subtree(@folder, tree_type)
+    @selected_ids = params[:selected_ids].is_a?(Array) ? params[:selected_ids] : [params[:selected_ids]].compact
+    @folder = params[:folder]
+    @certificate_order_ids = params[:certificate_order_ids]
+    @filtered_folder_ids = params[:folder_ids]
+    @full_tree = build_subtree(@folder, params[:tree_type])
   end
 
   def build_subtree(folder, tree_type)
-    children = folder.children ? folder.children.inject([]) {|all, child| all << build_subtree(child, tree_type) } : []
+    folder_children = get_folder_children(folder)
+    children = folder_children ? folder_children.inject([]) {|all, child| all << build_subtree(child, tree_type) } : []
     co_children = if %w{co_folders_index co_folders_index_modal}.include?(tree_type)
       []
     else
@@ -30,6 +33,14 @@ class FolderTree
     }
   end
 
+  def get_folder_children(folder)
+    filter_children = folder.children
+    if filter_children.any? && @filtered_folder_ids && @filtered_folder_ids.any?
+      filter_children = filter_children.where(id: @filtered_folder_ids)
+    end
+    filter_children
+  end
+
   def get_folder_name(folder, tree_type, options=nil)
     if tree_type == 'co_folders_index'
       "#{folder.name} <span class='folder-co-count'>#{options[:certificate_orders_count]}</span>".html_safe
@@ -40,8 +51,13 @@ class FolderTree
 
   def build_cert_orders(folder)
     files = []
-    cos = folder.certificate_orders.uniq
-    if cos.any?
+    cos = folder.cached_certificate_orders
+
+    if @certificate_order_ids && @certificate_order_ids.any?
+      cos = cos.where(id: @certificate_order_ids)
+    end
+      
+    if cos.uniq.any?
       cos.each do |co|
         files << {
           id: get_id_format(co),

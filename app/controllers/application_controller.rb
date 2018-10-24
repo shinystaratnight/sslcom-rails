@@ -228,8 +228,8 @@ class ApplicationController < ActionController::Base
     if is_sandbox? and @search.include?("is_test:true").blank?
       @search << " is_test:true"
     end
-    archived_folder = current_user.is_admin? || (params[:search] && params[:search].include?('folder_ids')) ? [true, false] : false
-    if !@search.blank?
+    
+    result = if !@search.blank?
       #options.delete(:page) if options[:page].nil?
       # (current_user.is_admin? ?
       #   (CertificateOrder.unscoped{
@@ -244,7 +244,7 @@ class ApplicationController < ActionController::Base
                  (current_user.ssl_account.cached_certificate_orders.search_assigned(current_user.id).search_with_csr(params[:search], options)) :
                  (current_user.ssl_account.cached_certificate_orders.search_with_csr(params[:search], options))
            )
-      ).joins(:folder).where(folder: {archived: archived_folder}).order(created_at: :desc)
+      ).order(created_at: :desc)
     else
       # (current_user.is_admin? ?
       #     (@ssl_account.try(:certificate_orders) || CertificateOrder).not_test.not_new(options) :
@@ -256,8 +256,13 @@ class ApplicationController < ActionController::Base
                  (current_user.ssl_account.cached_certificate_orders.not_test.not_new(options).search_assigned(current_user.id)) :
                  (current_user.ssl_account.cached_certificate_orders.not_test.not_new(options))
            )
-      ).joins(:folder).where(folder: {archived: archived_folder}).order(updated_at: :desc)
+      ).order(updated_at: :desc)
     end
+    unless options[:source] && options[:source] == 'folders'
+      archived_folder = current_user.is_admin? || (params[:search] && params[:search].include?('folder_ids')) ? [true, false] : false
+      result.joins(:folder).where(folder: {archived: archived_folder})
+    end
+    result
   end
 
   def find_certificate_orders_with_site_seals
@@ -334,7 +339,7 @@ class ApplicationController < ActionController::Base
 
   def parse_certificate_orders
     if params[:certificate_order]
-      @certificate_order = current_user.ssl_account.cached_certificate_orders.current
+      @certificate_order = current_user.ssl_account.certificate_orders.current
       @order = current_order
     else
       setup_orders

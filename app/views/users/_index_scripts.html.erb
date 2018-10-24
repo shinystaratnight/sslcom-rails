@@ -14,18 +14,51 @@ jQuery(function($) {
         return false;
       }
     });
-    $('.enable .dropdown, .enable .status_message, .enable .expand, .enable .subject_column > a, .enable .expandable').click(function(){
-      if($(this).parents().filter('tr').next().css('display')!='none'){
+    $('.enable .dropdown, .enable .status_message, .enable .expand, .enable .subject_column > a, .enable .expandable').click(function() {
+      /*if($(this).parents().filter('tr').next().css('display') != 'none'){
         $(this).parents().filter('tr').next().css('display', 'none');
-        $(this).parents().filter('tr').find('.dropdown img').attr('src',"<%= asset_path('expand.png') %>");
+        $(this).parents().filter('tr').find('.dropdown img').attr('src',"< %= asset_path('expand.png') %>");
         $(this).parents().filter('tr').find('.expand').text('expand');
         this.expanded = false;
       }
       else{
         this.expanded = true;
-        $(this).parents().filter('tr').find('.dropdown img').attr('src',"<%= asset_path('contract.png') %>");
+        $(this).parents().filter('tr').find('.dropdown img').attr('src',"< %= asset_path('contract.png') %>");
         $(this).parents().filter('tr').next().show();
         $(this).parents().filter('tr').find('.expand').text('close');
+      }*/
+
+      var currentElmt = $(this);
+
+      if (currentElmt.parents().filter('tr').next().hasClass('expanded') == true) {
+        if (currentElmt.parents().filter('tr').next().is(":visible")) {
+          currentElmt.parents().filter('tr').next().hide();
+          currentElmt.parents().filter('tr').find('.dropdown img').attr('src', "<%= asset_path('expand.png') %>");
+        } else {
+          currentElmt.parents().filter('tr').next().show();
+          currentElmt.parents().filter('tr').find('.dropdown img').attr('src', "<%= asset_path('contract.png') %>");
+        }
+      } else {
+        var user_id = currentElmt.parents().filter('tr').attr('alt');
+        var ajax_url = '<%=show_user_users_path%>';
+
+        $.ajax({
+          url: ajax_url,
+          data: {
+            id: user_id
+          },
+          type: 'GET',
+          dataType: 'html',
+          success: function(result) {
+            if (result == 'no-user') {
+              location.reload(true);
+            } else {
+              currentElmt.parents().filter('tr').after(result);
+              currentElmt.parents().filter('tr').find('.dropdown img').attr('src', '<%=asset_path('contract.png')%>');
+              currentElmt.parents().filter('tr').find('.expand').text('close');
+            }
+          }
+        });
       }
     });
     $('textarea').click(function(){
