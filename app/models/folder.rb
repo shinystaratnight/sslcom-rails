@@ -18,6 +18,14 @@ class Folder < ActiveRecord::Base
 
   attr_reader :total_certificate_orders
   
+  def cached_certificate_orders
+    Rails.cache.fetch("#{cache_key}/cached_certificate_orders") do
+      certificate_orders.includes(
+        {certificate_contents: [:signed_certificates, :registrant]}
+      )
+    end
+  end
+
   def get_folder_path
     if ancestors.any?
       ancestors.last.self_and_descendants.map(&:name).join('/')
