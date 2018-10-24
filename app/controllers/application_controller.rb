@@ -339,7 +339,7 @@ class ApplicationController < ActionController::Base
 
   def parse_certificate_orders
     if params[:certificate_order]
-      @certificate_order = current_user.ssl_account.cached_certificate_orders.current
+      @certificate_order = current_user.ssl_account.certificate_orders.current
       @order = current_order
     else
       setup_orders

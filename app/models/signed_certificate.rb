@@ -621,6 +621,10 @@ class SignedCertificate < ActiveRecord::Base
     end
   end
 
+  def revoked?
+    status == "revoked"
+  end
+
   def revoke!(reason)
     unless certificate_content.ca.blank?
       response=SslcomCaApi.revoke_ssl(self,reason)
