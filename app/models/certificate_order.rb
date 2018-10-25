@@ -132,7 +132,7 @@ class CertificateOrder < ActiveRecord::Base
     return nil if [term,*(filters.values)].compact.empty?
     result = not_new
     # if 'is_test' and 'order_by_csr' are the only search terms, keep it simple
-    result = result.joins{certificate_contents.outer}.joins{certificate_contents.csr.outer}.
+    result = result.includes(ssl_account: :users, certificate_contents: :signed_certificates).joins{certificate_contents.outer}.joins{certificate_contents.csr.outer}.
               joins{certificate_contents.signed_certificates.outer}.joins{ssl_account.outer}.
               joins{ssl_account.users.outer} unless (
                   term.blank? and
@@ -167,7 +167,7 @@ class CertificateOrder < ActiveRecord::Base
       query=filters[field.to_sym]
       if query.try("true?")
         result = result.send(field)
-      else
+      elsif query.try("false?")
         result = result.not_test
       end
     end
