@@ -850,6 +850,7 @@ jQuery(function($) {
         }
       });
     <%end%>
+
     $('#managed_domains').on('change', function() {
       var changed_value = $(this).val();
 
@@ -910,6 +911,13 @@ jQuery(function($) {
             }
           });
         }
+      } else {
+        $('.clear_domains').hide();
+      }
+    });
+    $('#managed_domains').on('select2:select select2:unselect', function() {
+      if ($('#managed_domains').val() != null && $('#managed_domains').val().length > 0) {
+        $('.clear_domains').show();
       } else {
         $('.clear_domains').hide();
       }
