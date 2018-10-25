@@ -18,6 +18,18 @@ jQuery(function($) {
     });
     return result;
   };
+
+  $.checkDomain = function(str) {
+    var asterisk_counts = (str.match(/\*/g) || []).length;
+    if (asterisk_counts == 0) {
+      var ip_address_pattern = /\b(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b/;
+      return psl.isValid(str) || ip_address_pattern.test(str);
+    } else if (asterisk_counts == 1) {
+      return psl.isValid(str.substr(2));
+    } else if (asterisk_counts > 1) {
+      return false;
+    }
+  };
   
   /*$.domains = function(textArea){
     textArea.value = textArea.value.replace(/(\W)(\s+)/g, "$2").
@@ -167,22 +179,20 @@ jQuery(function($) {
   $.filteringDomainsByCOType = function(domains, type) {
     var results = [];
     $.each(domains, function(idx) {
-      if ($.inArray(domains[idx], results) == -1) {
-        results.push(domains[idx]);
+      var appendix = type == 'wildcard' ? '*.' : 'www.';
+      var domain = type == 'wildcard' ? domains[idx].replace('www.', '') : domains[idx];
+
+      if ($.inArray(domain, results) == -1) {
+        results.push(domain);
       }
 
-      var appendix = 'www.';
-      if (type == 'wildcard') {
-        appendix = '*.';
-      }
-
-      if (domains[idx].indexOf(appendix) > -1) {
-        if ($.inArray(domains[idx].substr(appendix.length), results) == -1) {
-          results.push(domains[idx].substr(appendix.length));
+      if (domain.indexOf(appendix) > -1) {
+        if ($.inArray(domain.substr(appendix.length), results) == -1) {
+          results.push(domain.substr(appendix.length));
         }
       } else {
-        if ($.inArray(appendix + domains[idx], results) == -1) {
-          results.push(appendix + domains[idx]);
+        if ($.inArray(appendix + domain, results) == -1) {
+          results.push(appendix + domain);
         }
       }
     });
@@ -322,7 +332,8 @@ jQuery(function($) {
                     is_exist = true;
                   }
 
-                  if (!is_exist && psl.isValid(key)) {
+                  /*if (!is_exist && psl.isValid(key)) {*/
+                  if (!is_exist && $.checkDomain(key)) {
                     var optElement = $('<option></option>');
 
                     if (obj[key] == 'true') {
@@ -494,7 +505,8 @@ jQuery(function($) {
                     is_exist = true;
                   }
 
-                  if (!is_exist && psl.isValid(key)) {
+                  /*if (!is_exist && psl.isValid(key)) {*/
+                  if (!is_exist && $.checkDomain(key)) {
                     var optElement = $('<option></option>');
 
                     if (obj[key] == 'true') {
@@ -854,7 +866,7 @@ jQuery(function($) {
             if ($.inArray(('validated-' + changed_value[idx]), changed_value) != -1
               || $.inArray(('csr-' + changed_value[idx]), changed_value) != -1
               || $.inArray(('manual-' + changed_value[idx]), changed_value) != -1
-              || !psl.isValid(changed_value[idx])) {
+              || !$.checkDomain(changed_value[idx])) {
               // remove duplicated option element
               $('#managed_domains').find('option[value="' + changed_value[idx] + '"]').remove();
             } else {

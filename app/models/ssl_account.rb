@@ -65,7 +65,6 @@ class SslAccount < ActiveRecord::Base
   has_many  :tags
   has_many  :folders, dependent: :destroy
   has_many  :notification_groups
-  has_many  :folders, dependent: :destroy
   has_many :certificate_names, through: :certificate_contents
   has_many :domain_control_validations, through: :certificate_names do
     def sslcom

@@ -243,6 +243,7 @@ jQuery(function($) {
 
     $('#btn_cert_order_filter').click(function() {
       $('#wrap_cert_order_filter').show();
+      $('#search-bar-input #search').hide();
       $('#btn_cert_order_search').hide();
 
       var filterItems = $('#search').val().split(/\s(?=(?:[^']|'[^']*')*$)/);
@@ -304,6 +305,7 @@ jQuery(function($) {
 
     $('#btn_close_cert_order_filter').click(function() {
       $('#wrap_cert_order_filter').hide();
+      $('#search-bar-input #search').show();
       $('#btn_cert_order_search').show();
 
       $('.filter_chk').prop('checked', false);
