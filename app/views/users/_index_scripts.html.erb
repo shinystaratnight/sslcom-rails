@@ -70,6 +70,36 @@ jQuery(function($) {
     $('input:radio[name*=duo_enabled]').click(function(){
       $(this).parents().filter('form').ajaxSubmit();
     });
+
+    $(document).on('click', '.failed_login_count', function(e) {
+      e.preventDefault();
+
+      if (confirm("Are you sure you want to reset the count to 0?")) {
+        var currentElmt = $(this);
+        var ajax_url = '<%=reset_failed_login_count_users_path%>';
+        var user_id = $(this).data('ref');
+
+        $.ajax({
+          url: ajax_url,
+          data: {
+            id: user_id
+          },
+          type: 'GET',
+          success: function(result) {
+            if (result && result['status'] == 'no-user') {
+              location.reload(true);
+            } else if (result && result['status'] == 'success') {
+              var liElmt = currentElmt.parents().filter('li');
+              if (liElmt.length > 0) {
+                liElmt.empty();
+                liElmt.text('failed login count: 0');
+              }
+            }
+          }
+        });
+      }
+    });
+
   });
 });
 </script>

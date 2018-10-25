@@ -480,6 +480,7 @@ SslCom::Application.routes.draw do
       match :enable_disable, via: [:put, :patch]
       match :enable_disable_duo, via: [:put, :patch]
       get :show_user
+      get :reset_failed_login_count
     end
 
     member do

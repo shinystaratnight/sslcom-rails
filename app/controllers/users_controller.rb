@@ -26,7 +26,7 @@ class UsersController < ApplicationController
   filter_access_to  :consolidate, :dup_info, :require=>:update
   filter_access_to  :resend_activation, :activation_notice, :require=>:create
   filter_access_to  :edit_password, :edit_email, :cancel_reseller_signup, :teams, :require=>:edit
-  filter_access_to :show_user, :require => :ajax
+  filter_access_to :show_user, :reset_failed_login_count, :require => :ajax
 
   def new
   end
@@ -100,6 +100,21 @@ class UsersController < ApplicationController
     else
       render :json => 'no-user'
     end
+  end
+
+  def reset_failed_login_count
+    returnObj = {}
+
+    if current_user
+      user = User.unscoped.find(params[:id])
+      user.update_attribute('failed_login_count', 0)
+
+      returnObj['status'] = 'success'
+    else
+      returnObj['status'] = 'no-user'
+    end
+
+    render :json => returnObj
   end
 
   def create
