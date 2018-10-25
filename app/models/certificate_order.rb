@@ -132,7 +132,7 @@ class CertificateOrder < ActiveRecord::Base
     return nil if [term,*(filters.values)].compact.empty?
     result = not_new
     # if 'is_test' and 'order_by_csr' are the only search terms, keep it simple
-    result = result.includes(ssl_account: :users, certificate_contents: :signed_certificates).joins{certificate_contents.outer}.joins{certificate_contents.csr.outer}.
+    result = result.includes(ssl_account: :users, certificate_contents: :csr).joins{certificate_contents.outer}.joins{certificate_contents.csr.outer}.
               joins{certificate_contents.signed_certificates.outer}.joins{ssl_account.outer}.
               joins{ssl_account.users.outer} unless (
                   term.blank? and
@@ -331,6 +331,8 @@ class CertificateOrder < ActiveRecord::Base
     end
     (includes || self).where{workflow_state << ['new']}.uniq
   }
+
+  scope :is_new, lambda {where{workflow_state >> ['new']}.uniq}
 
   scope :unrenewed, ->{not_new.where(:renewal_id=>nil)}
 

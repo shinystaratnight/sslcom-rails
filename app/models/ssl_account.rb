@@ -290,11 +290,11 @@ class SslAccount < ActiveRecord::Base
   end
 
   def clear_new_certificate_orders
-    certificate_orders.find_all(&:new?).each(&:destroy)
+    certificate_orders.is_new.each(&:destroy)
   end
 
   def clear_new_product_orders
-    product_orders.find_all(&:new?).each(&:destroy)
+    product_orders.is_new.each(&:destroy)
   end
 
   def has_only_credits?
@@ -742,8 +742,7 @@ class SslAccount < ActiveRecord::Base
     logger.info "Sending SSL.com cert reminders. Type 'Q' and press Enter to exit this program"
     SslAccount.unscoped.order('created_at').includes(
         [:stored_preferences, {:certificate_orders =>
-                                   [:orders, :certificate_contents=>
-                                       {:csr=>:signed_certificates}]}]).find_in_batches(batch_size: 250) do |s|
+                                   [:orders]}]).find_in_batches(batch_size: 250) do |s|
       # find expired certs based on triggers.
       logger.info "filtering out expired certs"
       e_certs=s.map{|s|s.expiring_certificates}.reject{|e|e.empty?}.flatten

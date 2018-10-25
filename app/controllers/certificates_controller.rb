@@ -75,7 +75,7 @@ class CertificatesController < ApplicationController
     prep_purchase
     respond_to do |format|
       unless @certificate.blank?
-        format.html { render action: (@certificate.is_ucc? ? :buy : :buy)}
+        format.html { render action: :buy}
         format.xml  { render :xml => @certificate}
       else
         format.html {not_found}

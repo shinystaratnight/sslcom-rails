@@ -797,7 +797,7 @@ class CertificateOrdersController < ApplicationController
 
   def construct_special_fields
     if params[:certificate_order]
-      new_attributes = params[:certificate_order][:certificate_contents_attributes]['0'][:registrant_attributes]
+      new_attributes = params[:certificate_order][:certificate_contents_attributes]['0'][:registrant_attributes] if params[:certificate_order][:certificate_contents_attributes]
       if new_attributes && new_attributes.any?
         cert_special_fields = @certificate_order.certificate.special_fields
         special_fields = {}
