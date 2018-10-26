@@ -223,7 +223,7 @@ namespace :deploy do
     run "ln -nfs #{shared_path}/config/secrets.yml #{release_path}/config/secrets.yml"
     run "ln -nfs #{shared_path}/config/initializers/secret_token.rb #{release_path}/config/initializers/secret_token.rb"
     run "ln -nfs #{shared_path}/config/environments/production.rb #{release_path}/config/environments/production.rb"
-    run "ln -nfs #{shared_path}/config/cert #{release_path}/config/cert"
+    run "ln -nfs #{shared_path}/config/cert/ejbca_api #{release_path}/config/cert/ejbca_api"
   end
 
 end
@@ -234,7 +234,12 @@ after 'deploy:publishing', 'deploy:restart'
 #before 'deploy', 'rvm:install_rvm'
 
 
-# # whenever
+#whenever
 # set :whenever_command, "bundle exec whenever"
-# # disable this on production web
-# require "whenever/capistrano"
+# disable this on production web
+#require "whenever/capistrano"
+
+#whenever
+# set :whenever_command, "bundle exec whenever"
+# disable this on production web
+#require "whenever/capistrano"
