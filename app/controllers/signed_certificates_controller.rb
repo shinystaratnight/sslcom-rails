@@ -23,6 +23,36 @@ class SignedCertificatesController < ApplicationController
     end
   end
 
+  def revoke
+    @signed_certificate = SignedCertificate.find(params[:id])
+    @signed_certificate.revoke!(params[:revoke_reason])
+    
+    if @signed_certificate.revoked?
+      cc = @signed_certificate.certificate_content
+      list = cc.signed_certificates.pluck(:status).uniq
+      if list.count == 1 && list.include?('revoked')
+        cc.revoke!
+        SystemAudit.create(
+          owner: current_user,
+          target: cc,
+          notes: "Revoked due to reason: #{params[:revoke_reason]}",
+          action: 'Revoked certificate content.'
+        )
+      end
+
+      SystemAudit.create(
+        owner: current_user,
+        target: @signed_certificate,
+        notes: "Revoked due to reason: #{params[:revoke_reason]}",
+        action: 'Revoked signed certificate.'
+      )
+      flash[:notice] = "Signed Certificate was successfully revoked."  
+    else
+      flash[:error] = "Something went wront, please try again!"  
+    end
+    redirect_to certificate_order_path(@ssl_slug, @signed_certificate.certificate_order.ref)
+  end
+
   # POST /signed_certificates/1
   # POST /signed_certificates/1.xml
   def create

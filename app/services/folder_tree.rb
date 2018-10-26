@@ -51,7 +51,7 @@ class FolderTree
 
   def build_cert_orders(folder)
     files = []
-    cos = folder.certificate_orders
+    cos = folder.cached_certificate_orders
 
     if @certificate_order_ids && @certificate_order_ids.any?
       cos = cos.where(id: @certificate_order_ids)
