@@ -4,7 +4,5 @@ class AddClientAuthToCas < ActiveRecord::Migration
     add_column :cas, :client_key, :string
     add_column :cas, :client_password, :string
 
-    add_index :csrs, [:ssl_account_id]
-
   end
 end
