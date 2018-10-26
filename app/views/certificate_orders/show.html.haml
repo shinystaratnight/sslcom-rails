@@ -383,7 +383,7 @@
                               %i{class: 'fa fa-cogs'} 
                               status:
                             %span #{sc.status.upcase}
-                            - unless sc.revoked?
+                            - if current_user.is_system_admins? and !sc.revoked?
                               = link_to "<i class='fa fa-times-circle'></i> REVOKE".html_safe, '#', id: 'btn-cert-content-revoke'
                               #dialog-form
                                 %p Please select a reason for revoking:

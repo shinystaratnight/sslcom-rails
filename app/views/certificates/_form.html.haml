@@ -419,8 +419,7 @@
         %li CAN use certificate on unlimited multiple servers concurrently
         -if @certificate.is_free?
           %li Only documentation support provided, does NOT come with technical support
-
-  -if @certificate.is_ucc?
+  -#-if @certificate.is_ucc?
     .clearfix
       %label{:for=>"certificate_order_certificate_contents_attributes_0_additional_domains"}
         #domains_label_text
