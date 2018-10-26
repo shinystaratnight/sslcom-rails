@@ -30,6 +30,16 @@ jQuery(function($) {
       return false;
     }
   };
+
+  $.isWildcard = function(str) {
+    var asterisk_counts = (str.match(/\*/g) || []).length;
+
+    if (asterisk_counts == 0) {
+      return false;
+    } else {
+      return true;
+    }
+  }
   
   /*$.domains = function(textArea){
     textArea.value = textArea.value.replace(/(\W)(\s+)/g, "$2").
@@ -275,6 +285,13 @@ jQuery(function($) {
                $.adjustDomainPricing($("textarea[name*=additional_domains]")[0]);*/
 
               all_domains = $.unique($.merge(data['subject_alternative_names'], [data['common_name']]));
+
+              exist_domains = $('.managed_domains').val();
+              if (exist_domains) {
+                exist_domains = exist_domains.join(' ').replace(/validated-/g, '').replace(/manual-/g, '').replace(/csr-/g, '').split(' ');
+                all_domains = $.unique($.merge(all_domains, exist_domains));
+              }
+
               $.adjustDomainPricing(all_domains.join(' '));
             }
           <% else-%>
@@ -428,6 +445,12 @@ jQuery(function($) {
                 /*additional_domains = $("textarea[name*=additional_domains]").text() + " " + all_domains;
                  $("textarea[name*=additional_domains]").val($.uniqueStrings(additional_domains.split(/[\s,\n]+/)).join(" "));
                  $.adjustDomainPricing($("textarea[name*=additional_domains]")[0]);*/
+
+                exist_domains = $('.managed_domains').val();
+                if (exist_domains) {
+                  exist_domains = exist_domains.join(' ').replace(/validated-/g, '').replace(/manual-/g, '').replace(/csr-/g, '').split(' ');
+                  all_domains = $.unique($.merge(all_domains, exist_domains));
+                }
 
                 $.adjustDomainPricing(all_domains.join(' '));
               }
@@ -605,11 +628,12 @@ jQuery(function($) {
       <%end%>
       , "<%=ShoppingCart::DOMAINS%>" :
       <%if @certificate.is_ucc?%>
-      $.domains($('textarea[id$=domains]')[0]).join(" ")
+      $.domains($('.managed_domains').val() ? $('.managed_domains').val().join(' ') : '').join(" ")
       <%else%>
       "0"
       <%end%>
       , "<%=ShoppingCart::AFFILIATE%>" : $.get_affiliate()};
+    /*$.domains($('textarea[id$=domains]')[0]).join(" ")*/
   };
   $.change_cart_items = function(add_or_remove){
     add = (add_or_remove=="add") ? true : false;
@@ -642,7 +666,7 @@ jQuery(function($) {
       <%end -%>
     <%end%>
     $('.submit_csr_img_tag').click(function() {
-        var domains = $('.subject_alternative_names').val();
+        /*var domains = $('.subject_alternative_names').val();
 
         if (domains.indexOf('_') > -1) {
           var message_wrap_element = $('<div></div>');
@@ -671,7 +695,7 @@ jQuery(function($) {
           message_wrap_element.insertBefore($('#content').find('.inner').children().first());
 
           return false;
-        }
+        }*/
     });
     $('textarea[id$=domains]').keyup(function () {
       $.adjustDomainPricing(this);
@@ -762,7 +786,12 @@ jQuery(function($) {
     <%end%>
     <%if @certificate.is_ucc?-%>
       /*$.adjustDomainPricing($('textarea[id$=domains]')[0]);*/
-      $.adjustDomainPricing('');
+      // checking price for order
+      all_domains = $('.managed_domains').val();
+      all_domains = all_domains && all_domains.length > 0
+        ? all_domains.join(' ').replace(/validated-/g, '').replace(/manual-/g, '').replace(/csr-/g, '')
+        : '';
+      $.adjustDomainPricing(all_domains);
     <%end-%>
     $.update_order_pricing();
     <%unless Settings.show_csr_submit_on_buy_page%>
@@ -857,6 +886,12 @@ jQuery(function($) {
       if (changed_value != null) {
         var needed_validate_list = [];
 
+        // checking certificate type
+        var co_type = '';
+        <% if @certificate.is_evucc?-%>
+          co_type = 'evUCC';
+        <% end-%>
+
         // getting new selected option's value
         $.each(changed_value, function(idx) {
           // checking new selected option or not
@@ -867,7 +902,8 @@ jQuery(function($) {
             if ($.inArray(('validated-' + changed_value[idx]), changed_value) != -1
               || $.inArray(('csr-' + changed_value[idx]), changed_value) != -1
               || $.inArray(('manual-' + changed_value[idx]), changed_value) != -1
-              || !$.checkDomain(changed_value[idx])) {
+              || !$.checkDomain(changed_value[idx])
+              || (co_type != '' && $.isWildcard(changed_value[idx]))) {
               // remove duplicated option element
               $('#managed_domains').find('option[value="' + changed_value[idx] + '"]').remove();
             } else {
@@ -908,6 +944,13 @@ jQuery(function($) {
                   return data.text;
                 }
               });
+
+              // checking price for order
+              all_domains = $('.managed_domains').val();
+              all_domains = all_domains && all_domains.length > 0
+                ? all_domains.join(' ').replace(/validated-/g, '').replace(/manual-/g, '').replace(/csr-/g, '')
+                : '';
+              $.adjustDomainPricing(all_domains);
             }
           });
         }
@@ -921,6 +964,13 @@ jQuery(function($) {
       } else {
         $('.clear_domains').hide();
       }
+
+      // checking price for order
+      all_domains = $('.managed_domains').val();
+      all_domains = all_domains && all_domains.length > 0
+        ? all_domains.join(' ').replace(/validated-/g, '').replace(/manual-/g, '').replace(/csr-/g, '')
+        : '';
+      $.adjustDomainPricing(all_domains);
     });
     $('#weekday_custom_list').on('select2:opening select2:closing', function( event ) {
       var $searchfield = $(this).parent().find('.select2-search__field');
