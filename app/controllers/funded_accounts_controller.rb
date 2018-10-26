@@ -270,7 +270,7 @@ class FundedAccountsController < ApplicationController
     if params[:id]=='order'
       certificates_from_cookie
     else
-      @certificate_order = @ssl_account.cached_certificate_orders.current
+      @certificate_order = @ssl_account.certificate_orders.current
       check_for_current_certificate_order
     end
   end

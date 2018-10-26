@@ -37,7 +37,12 @@
                     %strong manage account
                   -if permitted_to? :admin_manage, u
                     %li login count: #{u.login_count}
-                    %li failed login count: #{u.failed_login_count}
+                    %li
+                      -if current_user.is_admin? && u.failed_login_count > 0
+                        failed login count:
+                        =link_to u.failed_login_count, '', {class: 'failed_login_count', 'data-ref': u.id}
+                      -else
+                        failed login count: #{u.failed_login_count}
                     %li last login ip: #{link_to(u.last_login_ip, "http://www.infosniper.net/index.php?ip_address=#{u.last_login_ip}&map_source=1&overview_map=1&lang=1&map_type=1&zoom_level=7", target: "_blank") if u.last_login_ip}
                     %li current login ip: #{link_to(u.current_login_ip, "http://www.infosniper.net/index.php?ip_address=#{u.current_login_ip}&map_source=1&overview_map=1&lang=1&map_type=1&zoom_level=7", target: "_blank") if u.current_login_ip}
                     %li=remote_login_link(u)

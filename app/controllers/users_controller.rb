@@ -26,7 +26,7 @@ class UsersController < ApplicationController
   filter_access_to  :consolidate, :dup_info, :require=>:update
   filter_access_to  :resend_activation, :activation_notice, :require=>:create
   filter_access_to  :edit_password, :edit_email, :cancel_reseller_signup, :teams, :require=>:edit
-  filter_access_to :show_user, :require => :ajax
+  filter_access_to :show_user, :reset_failed_login_count, :require => :ajax
 
   def new
   end
@@ -100,6 +100,21 @@ class UsersController < ApplicationController
     else
       render :json => 'no-user'
     end
+  end
+
+  def reset_failed_login_count
+    returnObj = {}
+
+    if current_user
+      user = User.unscoped.find(params[:id])
+      user.update_attribute('failed_login_count', 0)
+
+      returnObj['status'] = 'success'
+    else
+      returnObj['status'] = 'no-user'
+    end
+
+    render :json => returnObj
   end
 
   def create
@@ -457,7 +472,7 @@ class UsersController < ApplicationController
   end
 
   def autoadd_users_to_team
-    if params[:auto_add_user_ids].any?
+    if params[:auto_add_user_ids] && params[:auto_add_user_ids].any?
       users = User.where(id: params[:auto_add_user_ids].map(&:to_i))
       users.each do |user|
         user.ssl_accounts << @new_team
@@ -476,7 +491,7 @@ class UsersController < ApplicationController
         SystemAudit.create(
           owner:  current_user,
           target: user,
-          action: 'Invite user to team (ManagedUsersController#create)',
+          action: 'Invite user to team (Users#create_team)',
           notes:  "Ssl.com user #{user.login} was invited to team #{@new_team.get_team_name} by #{current_user.login}."
         )
       end

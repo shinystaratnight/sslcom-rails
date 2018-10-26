@@ -131,9 +131,9 @@ class ApiCertificateRequest < CaApiRequest
     co =
       if self.api_requestable.users.find(&:is_admin?)
         self.admin_submitted = true
-        CertificateOrder.not_new.send(is_test)
+        CertificateOrder.send(is_test)
       else
-        self.api_requestable.certificate_orders.not_new.send(is_test)
+        self.api_requestable.certificate_orders.send(is_test)
       end
       # end.offset(offset).limit(limit)
     co = co.search_with_csr(search,options) if search

@@ -22,7 +22,7 @@ class Folder < ActiveRecord::Base
     Rails.cache.fetch("#{cache_key}/cached_certificate_orders") do
       certificate_orders.includes(
         {certificate_contents: [:signed_certificates, :registrant]}
-      )
+      ).to_a
     end
   end
 

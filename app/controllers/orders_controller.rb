@@ -122,6 +122,17 @@ class OrdersController < ApplicationController
         unless params["prev.x".intern].nil?
           redirect_to buy_certificate_url(@certificate) and return
         end
+
+        managed_domains = params[:managed_domains]
+        additional_domains = ''
+        managed_domains.each do |domain|
+          additional_domains.concat(domain.gsub('csr-', '').gsub('validated-', '').gsub('manual-', '') + ' ')
+        end unless managed_domains.blank?
+
+        params[:certificate_order][:certificate_contents_attributes] = {}
+        params[:certificate_order][:certificate_contents_attributes]['0'.to_sym] = {}
+        params[:certificate_order][:certificate_contents_attributes]['0'.to_sym][:additional_domains] = additional_domains.strip
+
         render(:template => "/certificates/buy",
           :layout=>"application") and return unless certificate_order_steps
       else

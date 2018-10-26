@@ -52,6 +52,31 @@
               ).click();
             },
             icon: "fa fa-file-text"
+          },
+          copyRefNumber: {
+            label: "Copy Ref #",
+            action: function(obj) {
+              var $temp = $('<input>');
+              $('body').append($temp);
+              $temp.val(node.id.replace('_cert','')).select();
+              document.execCommand('copy');
+              $temp.remove();
+            },
+            icon: "fa fa-copy"
+          },
+          copySubject: {
+            label: "Copy Subject Line",
+            action: function(obj) {
+              var subject = $('.jstree-grid-column-1').find(
+                $("[data-jstreegrid='" + node.id + "']")
+              ).text();
+              var $temp = $('<input>');
+              $('body').append($temp);
+              $temp.val(subject).select();
+              document.execCommand('copy');
+              $temp.remove();
+            },
+            icon: "fa fa-copy"
           }
         }
       }

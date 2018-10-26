@@ -355,6 +355,46 @@
         -unless @certificate.is_ev?
           %li *.example.com
           %li *.apps.domain.co.uk
+      .clearfix.managed_renewal_domain_block
+        %label
+          #domains_label_text
+            -if @certificate.is_premium_ssl?
+              Subdomains (3 max)
+            -else
+              Domains#{" (prorated)" if @certificate_order.signed_certificates.try(:last)}:
+              =link_to image_tag('question_mark.png'), '#what_are_domains', :rel => 'prettyPhoto', :id => 'what_are_domains_link'
+            %span.label_desc separated by space or new line
+            -unless reprocess_ucc
+              %span.label_break
+              %span.label_desc can skip and edit later
+            -unless @certificate.is_premium_ssl?
+              %span.label_break
+              %span.label_desc 2000 domains maximum
+              -unless reprocess_ucc
+                %span.label_break
+                %span.label_desc
+                  $
+                  %span#first_domain_tier_price>
+                    #{first.price.format}
+                  \ for first 3 non-wildcard domains
+                %span.label_break
+                %span.label_desc
+                  $
+                  %span#second_domain_tier_price>
+                    #{second.price.format}
+                  \ ea non-wildcard domain after 3rd
+                -unless @certificate.is_ev?
+                  %span.label_desc
+                    $
+                    %span#third_domain_tier_price>
+                      #{third.price.format}
+                    \ ea wildcard domain
+        .block_body
+          .schedule_container.managed_domains_container.clearfix
+            =select_tag :managed_domains,
+              options_for_select(@certificate_content.domains.collect {|domain| [domain, 'validated-' + domain]}, selected: @certificate_content.domains.collect {|domain| 'validated-' + domain}),
+              multiple: true, data: {placeholder: "click here to list available domains to scan."}, :class => 'managed_domains'
+            =link_to 'Clear All Domains', '', {class: 'clear_domains'}
     -else
       %p
         %em Each domain the ssl certificate will secure conforms to the following:
