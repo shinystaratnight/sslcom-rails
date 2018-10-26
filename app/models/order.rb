@@ -691,7 +691,14 @@ class Order < ActiveRecord::Base
           payment_authorized!
         else
           if !invoice_payment? && %w{insufficient_funds do_not_honor}.include?(authorization.params[:decline_code])
-            payment_invoiced! unless invoiced?
+            unless invoiced?
+              OrderNotifier.invoice_declined_order(
+                order: self,
+                user_email: options[:owner_email],
+                decline_code: authorization.params[:decline_code]
+              ).deliver_now
+              payment_invoiced!
+            end
           else
             transaction_declined!
             errors[:base] << authorization.message

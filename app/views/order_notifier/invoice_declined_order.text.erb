@@ -1,0 +1,17 @@
+Order has been invoiced due to insufficient_funds or do_not_honor Stripe decline codes.
+
+Stripe Decline Code:
+
+    <%= @decline_code %>
+
+<% unless @user_email.nil? %>
+User email:
+
+    <%= @user_email %>
+<% end %>
+
+Order:
+
+    description: <%= @order.description %>
+    date: <%= DateTime.now.strftime('%F') %>
+    amount: <%= @order.amount.format %>
