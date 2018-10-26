@@ -10,6 +10,15 @@ class OrderNotifier < ActionMailer::Base
   end
   alias_method :something, :test
 
+  def invoice_declined_order(params)
+    @order = params[:order]
+    @decline_code = params[:decline_code]
+    @user_email = params[:user_email]
+    mail  subject: "Order was invoiced due to decline error from Stripe merchant.",
+          from:    Settings.from_email.orders,
+          to:      Settings.support_email
+  end
+
   def order_transferred(params)
     @order_list = params[:orders_list]
     @co_list    = params[:co_list]
