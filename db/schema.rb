@@ -186,19 +186,22 @@ ActiveRecord::Schema.define(version: 20181013194238) do
   end
 
   create_table "cas", force: :cascade do |t|
-    t.string  "ref",           limit: 255
-    t.string  "friendly_name", limit: 255
-    t.string  "profile_name",  limit: 255
-    t.string  "algorithm",     limit: 255
-    t.integer "size",          limit: 4
-    t.string  "description",   limit: 255
-    t.string  "caa_issuers",   limit: 255
-    t.string  "host",          limit: 255
-    t.string  "admin_host",    limit: 255
-    t.string  "ekus",          limit: 255
-    t.string  "end_entity",    limit: 255
-    t.string  "ca_name",       limit: 255
-    t.string  "type",          limit: 255
+    t.string  "ref",             limit: 255
+    t.string  "friendly_name",   limit: 255
+    t.string  "profile_name",    limit: 255
+    t.string  "algorithm",       limit: 255
+    t.integer "size",            limit: 4
+    t.string  "description",     limit: 255
+    t.string  "caa_issuers",     limit: 255
+    t.string  "host",            limit: 255
+    t.string  "admin_host",      limit: 255
+    t.string  "ekus",            limit: 255
+    t.string  "end_entity",      limit: 255
+    t.string  "ca_name",         limit: 255
+    t.string  "type",            limit: 255
+    t.string  "client_cert",     limit: 255
+    t.string  "client_key",      limit: 255
+    t.string  "client_password", limit: 255
   end
 
   create_table "cas_certificates", force: :cascade do |t|

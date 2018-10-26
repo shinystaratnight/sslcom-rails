@@ -956,6 +956,9 @@ jQuery(function($) {
         }
       } else {
         $('.clear_domains').hide();
+
+        // checking price for order
+        $.adjustDomainPricing('');
       }
     });
     $('#managed_domains').on('select2:select select2:unselect', function() {
