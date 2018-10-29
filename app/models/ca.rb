@@ -37,7 +37,18 @@ class Ca < ActiveRecord::Base
   ISSUER = {sslcom_shadow: 1}
   
   validates :ref, presence: true, uniqueness: true
-  
+
+  def downstep
+    down_name=
+        case profile_name
+        when /\AEV/
+          profile_name.gsub "EV","OV"
+        when /\AOV/
+          profile_name.gsub "OV","DV"
+        end
+    Ca.find_by(profile_name: down_name, host: host, ca_name: ca_name)
+  end
+
   private
 
 end

@@ -337,8 +337,8 @@ class DomainsController < ApplicationController
 
   def dcv_all_validate
     validated=[]
-    dnames = current_user.ssl_account.domains # directly scoped to the team
-    cnames = current_user.ssl_account.all_certificate_names # scoped to certificate_orders
+    dnames = @ssl_account.domains # directly scoped to the team
+    cnames = @ssl_account.all_certificate_names # scoped to certificate_orders
     if(params['authenticity_token'])
       identifier = params['validate_code']
       (dnames+cnames).each do |cn|
@@ -350,8 +350,10 @@ class DomainsController < ApplicationController
             dcv.satisfy!
             CaaCheck.pass?(@ssl_account.acct_number + 'domains', cn, nil)
           end
+          team_domain=@ssl_account.domains.create(Domain.last.attributes.except("id","certificate_content_id"))
+          team_domain.domain_control_validations.create(dcv.attributes.except("id"))
           # find all other non validated certificate_names and validate them
-          validated<<current_user.ssl_account.satisfy_related_dcvs(cn.name,dcv)
+          validated<<@ssl_account.satisfy_related_dcvs(cn.name,dcv)
         end
       end
       unless validated.empty?

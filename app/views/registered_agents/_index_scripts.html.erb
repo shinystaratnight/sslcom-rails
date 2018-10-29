@@ -12,7 +12,33 @@
         $('#search_managed_certificate_form').submit();
       });
 
-      $('.chk-remove').click(function() {
+      // change the status for individual registered agent checkboxes by SelectAll checkbox status
+      $('input:checkbox#select_all').click(function() {
+        $('.check_box').prop('checked', $(this).prop('checked'));
+      });
+
+      // change the status for SelectAll checkbox by individual registered agent's status.
+      $('.check_box').click(function() {
+        var chk_list = $('.check_box');
+        var all_checked = true;
+
+        // check whether all individual registered agent checkbox has been checked.
+        $.each(chk_list, function(idx, chk) {
+          if (!$(chk).prop('checked')) {
+            all_checked = false;
+            return false;
+          }
+        });
+
+        // change the check status for SelectAll checkbox by all individual registered agent checkbox status.
+        if (all_checked) {
+          $('input:checkbox#select_all').prop('checked', true);
+        } else {
+          $('input:checkbox#select_all').prop('checked', false);
+        }
+      });
+
+      /*$('.chk-remove').click(function() {
         if ($(this).prop('checked')) {
           $('#btn_remove_agents').attr('disabled', false);
         } else {
@@ -49,7 +75,7 @@
         });
 
         if (confirm(confirmMsg)) {
-          var remove_ssl_managers_url = '<%=remove_agents_registered_agents_path%>';
+          var remove_ssl_managers_url = '< %=remove_agents_registered_agents_path%>';
           $('#registered_agent_list').attr('action', remove_ssl_managers_url);
           $('#registered_agent_list').submit();
         }
@@ -84,17 +110,159 @@
           if ($(chk_approve).prop('checked')) {
             if (chk_first_agent) {
               chk_first_agent = false;
-              confirmMsg = confirmMsg.concat('\r\n      ' + $(chk_approve).attr('data-agent-name'));
+              confirmMsg = confirmMsg.concat('\r\n      ' + $(chk_approve).attr('data-agent-name') + ', '
+                + $(chk_approve).attr('data-mac-address') + ', '
+                + $(chk_approve).attr('data-ip-address'));
             } else {
-              confirmMsg = confirmMsg.concat('\n      ' + $(chk_approve).attr('data-agent-name'));
+              confirmMsg = confirmMsg.concat('\n      ' + $(chk_approve).attr('data-agent-name') + ', '
+                + $(chk_approve).attr('data-mac-address') + ', '
+                + $(chk_approve).attr('data-ip-address'));
             }
           }
         });
 
         if (confirm(confirmMsg)) {
-          var approve_ssl_managers_url = '<%=approve_ssl_managers_registered_agents_path%>';
+          var approve_ssl_managers_url = '< %=approve_ssl_managers_registered_agents_path%>';
           $('#registered_agent_list').attr('action', approve_ssl_managers_url);
           $('#registered_agent_list').submit();
+        }
+      });*/
+
+      $('#registered_agent_event_type').change(function() {
+        var slt_type = $(this).val();
+        $(this).val('');
+
+        var ssl_manager_list = $('.check_box');
+        var exist_checked = false;
+
+        switch(slt_type) {
+          case 'delete':
+            var confirmMsg = 'Are you sure you want to delete the following SSL Manager(s)?';
+            var chk_first_agent = true;
+
+            $.each(ssl_manager_list, function(idx, ssl_manager) {
+              if ($(ssl_manager).prop('checked')) {
+                exist_checked = true;
+
+                if (chk_first_agent) {
+                  chk_first_agent = false;
+                  confirmMsg = confirmMsg.concat('\r\n      ' + $(ssl_manager).attr('data-agent-name') + ', '
+                    + $(ssl_manager).attr('data-mac-address') + ', '
+                    + $(ssl_manager).attr('data-ip-address'));
+                } else {
+                  confirmMsg = confirmMsg.concat('\n      ' + $(ssl_manager).attr('data-agent-name') + ', '
+                    + $(ssl_manager).attr('data-mac-address') + ', '
+                    + $(ssl_manager).attr('data-ip-address'));
+                }
+              }
+            });
+
+            if (exist_checked) {
+              if (confirm(confirmMsg)) {
+                var remove_ssl_managers_url = '<%=remove_agents_registered_agents_path%>';
+                $('#registered_agent_list').attr('action', remove_ssl_managers_url);
+                $('#registered_agent_list').submit();
+              } else {
+                // make checkbox status to false for all individual checkbox
+                $.each(ssl_manager_list, function(idx, ssl_manager) {
+                  $(ssl_manager).prop('checked', false);
+                });
+
+                // make checkbox status to false for SelectAll checkbox.
+                $('input:checkbox#select_all').prop('checked', false);
+              }
+            } else {
+              alert('There are no selected SSL Manager(s) for ' + slt_type + '.');
+            }
+
+            break;
+          case 'approve':
+            var owner_account_admin = true;
+            var actived_ssl_manager_msg = '';
+            var inactived_ssl_manager_msg = '';
+            var actived_ssl_managers= [];
+
+            $.each(ssl_manager_list, function(idx, ssl_manager) {
+              if ($(ssl_manager).prop('checked')) {
+                exist_checked = true;
+
+                if ($(ssl_manager).attr('data-workflow-available') == 'already') {
+                  actived_ssl_manager_msg = actived_ssl_manager_msg
+                    .concat('\n      ' + $(ssl_manager).attr('data-agent-name') + ', '
+                    + $(ssl_manager).attr('data-mac-address') + ', '
+                    + $(ssl_manager).attr('data-ip-address'));
+                  actived_ssl_managers.push($(ssl_manager).attr('id'))
+                } else if ($(ssl_manager).attr('data-workflow-available') == 'available') {
+                  inactived_ssl_manager_msg = inactived_ssl_manager_msg
+                    .concat('\n      ' + $(ssl_manager).attr('data-agent-name') + ', '
+                      + $(ssl_manager).attr('data-mac-address') + ', '
+                      + $(ssl_manager).attr('data-ip-address'));
+                } else if ($(ssl_manager).attr('data-workflow-available') == 'not_available') {
+                  owner_account_admin = false;
+                  return true;
+                }
+              }
+            });
+
+            if (exist_checked) {
+              if (!owner_account_admin) {
+                alert('You have no permission to active SSL Manager(s).');
+
+                // make checkbox status to false for all individual checkbox
+                $.each(ssl_manager_list, function(idx, ssl_manager) {
+                  $(ssl_manager).prop('checked', false);
+                });
+
+                // make checkbox status to false for SelectAll checkbox.
+                $('input:checkbox#select_all').prop('checked', false);
+              } else {
+                if (inactived_ssl_manager_msg == '') {
+                  alert('All of the SSL Manager(s) what you have selected are already activated.');
+
+                  // make checkbox status to false for all individual checkbox
+                  $.each(ssl_manager_list, function(idx, ssl_manager) {
+                    $(ssl_manager).prop('checked', false);
+                  });
+
+                  // make checkbox status to false for SelectAll checkbox.
+                  $('input:checkbox#select_all').prop('checked', false);
+                } else {
+                  var confirm_msg = '';
+                  if (actived_ssl_manager_msg != '') {
+                    confirm_msg = 'The following SSL Manager(s) are already activated.';
+                    confirm_msg = confirm_msg.concat(actived_ssl_manager_msg);
+                    confirm_msg = confirm_msg.concat('\r\n');
+                  }
+
+                  confirm_msg = confirm_msg.concat('Are you sure you want to approve the following SSL Manager(s)?');
+                  confirm_msg = confirm_msg.concat(inactived_ssl_manager_msg);
+
+                  if (confirm(confirm_msg)) {
+                    // make checkbox status to false for already activated SSL Managers.
+                    $.each(actived_ssl_managers, function(idx, ssl_manager) {
+                      $('#' + ssl_manager).prop('checked', false);
+                    })
+
+                    var approve_ssl_managers_url = '<%=approve_ssl_managers_registered_agents_path%>';
+                    $('#registered_agent_list').attr('action', approve_ssl_managers_url);
+                    $('#registered_agent_list').submit();
+                  } else {
+                    // make checkbox status to false for all individual checkbox
+                    $.each(ssl_manager_list, function(idx, ssl_manager) {
+                      $(ssl_manager).prop('checked', false);
+                    });
+
+                    // make checkbox status to false for SelectAll checkbox.
+                    $('input:checkbox#select_all').prop('checked', false);
+                  }
+                }
+              }
+            } else {
+              alert('There are no selected SSL Manager(s) for ' + slt_type + '.');
+            }
+
+            break;
+          default:
         }
       });
 

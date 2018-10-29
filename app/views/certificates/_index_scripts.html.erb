@@ -39,7 +39,7 @@ jQuery(function($) {
     } else {
       return true;
     }
-  }
+  };
   
   /*$.domains = function(textArea){
     textArea.value = textArea.value.replace(/(\W)(\s+)/g, "$2").
@@ -666,6 +666,14 @@ jQuery(function($) {
       <%end -%>
     <%end%>
     $('.submit_csr_img_tag').click(function() {
+      var slt_value_list = $('#managed_domains').val();
+      if (slt_value_list && slt_value_list.length > 0) {
+        $.each(slt_value_list, function(idx) {
+          var ori_value = slt_value_list[idx].replace(/validated-/g, '').replace(/manual-/g, '').replace(/csr-/g, '');
+          $('#managed_domains').find('option[value="' + slt_value_list[idx] + '"]').val(ori_value);
+        });
+      }
+
         /*var domains = $('.subject_alternative_names').val();
 
         if (domains.indexOf('_') > -1) {
@@ -801,6 +809,22 @@ jQuery(function($) {
     $('#managed_domains').select2({
       tags: true,
       tokenSeparators: [',', ' '],
+      /*tokenizer: function(input, selection, callback) {
+        if (input.term == '')
+          return input;
+
+        var parts = input.term.split(/,| /);
+        for (var i = 0; i < parts.length; i++) {
+          var part = parts[i];
+          part = part.trim();
+
+          if (part != '') {
+            callback({id:part,text:part});
+          }
+        }
+
+        return
+      },*/
       templateSelection: function(data, container) {
         var value = data.element.value;
 
@@ -932,6 +956,22 @@ jQuery(function($) {
               $('#managed_domains').select2({
                 tags: true,
                 tokenSeparators: [',', ' '],
+                /*tokenizer: function(input, selection, callback) {
+                  if (input.term == '')
+                    return false;
+
+                  var parts = input.term.split(/,| /);
+                  for (var i = 0; i < parts.length; i++) {
+                    var part = parts[i];
+                    part = part.trim();
+
+                    if (part != '') {
+                      callback({id:part,text:part});
+                    }
+                  }
+
+                  return true;
+                },*/
                 templateSelection: function(data, container) {
                   var value = data.element.value;
 

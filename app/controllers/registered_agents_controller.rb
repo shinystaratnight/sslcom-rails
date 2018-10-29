@@ -29,7 +29,7 @@ class RegisteredAgentsController < ApplicationController
   end
 
   def remove_agents
-    agent_ids = params[:remove_agents]
+    agent_ids = params[:registered_agent_check]
 
     unless agent_ids.blank?
       @ssl_account.registered_agents.where(id: agent_ids).destroy_all
@@ -60,7 +60,7 @@ class RegisteredAgentsController < ApplicationController
   end
 
   def approve_ssl_managers
-    agent_ids = params[:approve_agents]
+    agent_ids = params[:registered_agent_check]
 
     unless agent_ids.blank?
       @ssl_account.registered_agents.where(id: agent_ids).each do |agent|
