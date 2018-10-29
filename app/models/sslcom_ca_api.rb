@@ -170,6 +170,11 @@ class SslcomCaApi
     elsif options[:mapping].blank?
       options[:mapping] = certificate_order.certificate_content.ca
     end
+
+    # does this need to be a DV if OV is required but not satisfied?
+    require_ov = certificate.requires_locked_registrant?
+    options[:mapping]=options[:mapping].downstep if require_ov && !certificate_order.ov_validated
+
     options.merge! cc: cc = options[:certificate_content] || certificate_order.certificate_content
     approval_req, approval_res = SslcomCaApi.get_status(csr: cc.csr, mapping: options[:mapping])
     return cc.csr.sslcom_ca_requests.create(
@@ -203,8 +208,6 @@ class SslcomCaApi
           notes:  "issued signed certificate for certificate order #{certificate_order.ref}",
           action: "SslcomCaApi#apply_for_certificate"
       )
-    else # still waiting for approval
-
     end
     api_log_entry
   end

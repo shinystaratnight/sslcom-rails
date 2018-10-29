@@ -233,30 +233,47 @@
                         -if co.certificate.has_locked_registrant? || co.locked_registrant
                           %li.category_border
                           %li
-                            %strong locked registrant
+                            %strong locked fields
                           -unless @cc.locked_registrant.blank?
                             -r = @cc.locked_registrant
                             %li
+                              O=
                               =r.company_name
                             -unless r.department.blank?
                               %li
+                                OU=
                                 =r.department
-                            -unless r.po_box.blank?
+                            -#-unless r.po_box.blank?
+                            -#  %li
+                            -#    postalCode=
+                            -#    =r.po_box
+                            -#-unless r.address1.blank?
+                            -#  %li
+                            -#    streetAddress=
+                            -#    =r.address1
+                            -#-unless r.address2.blank?
+                            -#  %li
+                            -#    streetAddress=
+                            -#    =r.address2
+                            -#-unless r.address3.blank?
+                            -#  %li
+                            -#    streetAddress=
+                            -#    =r.address3
+                            -unless r.city.blank?
                               %li
-                                =r.po_box
-                            -unless r.address1.blank?
+                                L=
+                                =r.city
+                            -unless r.state.blank?
                               %li
-                                =r.address1
-                            -unless r.address2.blank?
-                              %li
-                                =r.address2
-                            -unless r.address3.blank?
-                              %li
-                                =r.address3
-                            %li
-                              \#{[r.city, r.state, r.postal_code].join(', ')}
+                                ST=
+                                =r.state
+                            -#-unless r.postal_code.blank?
+                            -#  %li
+                            -#    postalAddress=
+                            -#    =r.postal_code
                             -unless r.country.blank?
                               %li
+                                C=
                                 =r.country
                             -unless r.email.blank?
                               %li
