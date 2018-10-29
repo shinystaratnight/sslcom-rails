@@ -53,7 +53,7 @@
         =yield(:header)
         =render :partial => '/layouts/standard'
       .push
-    -if is_sandbox?
+    -unless is_sandbox?
       #footer
         =render partial: '/layouts/footer_new'
         #swifttagcontainerwoyxz3g3q4
