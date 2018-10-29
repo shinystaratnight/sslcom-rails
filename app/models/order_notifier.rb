@@ -114,12 +114,12 @@ class OrderNotifier < ActionMailer::Base
     @domains = domain_list
     @identifier = identifier
     subject="Domain Control Validation for: "
-    if dcv_type == 'cert'
-      @certificate_order = certificate_order
-      params      = {certificate_order_id: @certificate_order.ref}
-      @validation_url = dcv_validate_certificate_order_validation_url(params)
-      subject<<"#{certificate_order.subject} (Order ##{certificate_order.ref})"
-    elsif dcv_type == 'team'
+    # if dcv_type == 'cert'
+    #   @certificate_order = certificate_order
+    #   params      = {certificate_order_id: @certificate_order.ref}
+    #   @validation_url = dcv_validate_certificate_order_validation_url(params)
+    #   subject<<"#{certificate_order.subject} (Order ##{certificate_order.ref})"
+    if dcv_type == 'team'
       params      = {ssl_slug: ssl_slug, id: domain_id}
       @validation_url = dcv_validate_domain_url(params)
       subject<<"#{domain_list[0]}"

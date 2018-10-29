@@ -1,4 +1,3 @@
-
 class ManagedCsrsController < ApplicationController
   before_filter :require_user
   before_filter :set_row_page, only: [:index]
