@@ -24,19 +24,39 @@
         =will_paginate @registered_agents
       %tr.heading_row
         -if @registered_agents.size > 0
+          %td.registered_agent_event(scope="col")
+            -opts = [['Delete', 'delete'], ['Approve', 'approve']]
+            -if @registered_agents.size > 0
+              =check_box_tag 'select_all', nil, false, {id: 'select_all'}
+              =select_tag('registered_agent_event_type', options_for_select(opts), prompt: 'Please select an option')
           %td(scope="col") IP Address
           %td(scope="col") Mac Address
           %td(scope="col") Agent
           %td(scope="col") Friendly Name
           %td(scope="col") Status
           %td(scope="col") Certificates
-          %td(scope="col") Delete?
-          %td(scope="col") Status
+          %td(scope="col") Reg. Date
+          -#%td(scope="col") Delete?
+          -#%td(scope="col") Status
         -else
           %td(scope="col" colspan="8") Agent
       -if @registered_agents.size > 0
         -@registered_agents.each do |ra|
           %tr
+            %td
+              -workflow_available = ''
+              -if roles.include?(Role::OWNER) || roles.include?(Role::ACCOUNT_ADMIN)
+                -if ra.workflow_status == 'active'
+                  -workflow_available = 'already'
+                -else
+                  -workflow_available = 'available'
+              -else
+                -workflow_available = 'not_available'
+              =check_box_tag 'registered_agent_check[]', ra.id, false, :class => 'check_box', :id => ra.id,
+                'data-agent-name' => ra.friendly_name,
+                'data-mac-address' => ra.mac_address,
+                'data-ip-address' => ra.ip_address,
+                'data-workflow-available' => workflow_available
             %td
               =link_to ra.ip_address, registered_agent_path(@ssl_slug, ra.ref)
             %td=ra.mac_address
@@ -48,22 +68,32 @@
                 =link_to ra.managed_certificates.size, managed_certificates_registered_agent_path(@ssl_slug, ra.ref)
               -else
                 ='0'
-            %td
+            %td=ra.approved_at.strftime("%b %d, %Y")
+            -#%td
               =check_box_tag "remove_agents[]", ra.id, false, class: 'chk-remove', 'data-agent-name' => ra.friendly_name
-            %td
+            -#%td
               -if roles.include?(Role::OWNER) || roles.include?(Role::ACCOUNT_ADMIN)
                 -if ra.workflow_status == 'active'
-                  =check_box_tag "approve_agents[]", ra.id, false, class: 'chk-approve', 'data-agent-name' => ra.friendly_name, :disabled => true
+                  =check_box_tag "approve_agents[]", ra.id, false, class: 'chk-approve', :disabled => true,
+                  'data-agent-name' => ra.friendly_name,
+                  'data-mac-address' => ra.mac_address,
+                  'data-ip-address' => ra.ip_address
                 -else
                   -pending_ssl_managers_count += 1
-                  =check_box_tag "approve_agents[]", ra.id, false, class: 'chk-approve', 'data-agent-name' => ra.friendly_name
+                  =check_box_tag "approve_agents[]", ra.id, false, class: 'chk-approve',
+                  'data-agent-name' => ra.friendly_name,
+                  'data-mac-address' => ra.mac_address,
+                  'data-ip-address' => ra.ip_address
               -else
-                =check_box_tag "approve_agents[]", ra.id, false, class: 'chk-approve', 'data-agent-name' => ra.friendly_name, :disabled => true
+                =check_box_tag "approve_agents[]", ra.id, false, class: 'chk-approve', :disabled => true,
+                'data-agent-name' => ra.friendly_name,
+                  'data-mac-address' => ra.mac_address,
+                  'data-ip-address' => ra.ip_address
       -else
         %tr
           %td(colspan="8")
             There are no registered SSL Managers.
-    -if @registered_agents.size > 0
+    -#-if @registered_agents.size > 0
       =submit_tag 'Delete', :id => 'btn_remove_agents', :disabled => true
       -if (roles.include?(Role::OWNER) || roles.include?(Role::ACCOUNT_ADMIN)) && pending_ssl_managers_count > 0
         =submit_tag 'Approve', :id => 'btn_approve_agents', :disabled => true

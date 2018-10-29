@@ -18,7 +18,7 @@
                       :class=>'per_page'
             %td(colspan='7')=will_paginate @managed_certificates
       %caption
-        Managed Certififes for ##{@registered_agent.ref}
+        Managed Certificates for ##{@registered_agent.ref} (#{link_to 'Go back to SSL Managers', registered_agents_path(ssl_slug: @ssl_slug)})
         =will_paginate @managed_certificates
       %tr.heading_row
         -if @managed_certificates.size > 0
