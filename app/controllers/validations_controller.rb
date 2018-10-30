@@ -33,7 +33,12 @@ class ValidationsController < ApplicationController
     else
       if cc.issued? # or @certificate_order.all_domains_validated?
         checkout = {checkout: "true"}
-        flash.now[:notice] = "All domains have been validated, please wait for certificate issuance" if @certificate_order.all_domains_validated?
+        if cc.signed_certificate
+          flash.now[:notice] = "SSL certificate has been issued"
+        elsif @certificate_order.all_domains_validated?
+          flash.now[:notice] = "All domains have been validated, please wait for certificate issuance"
+        end
+
         respond_to do |format|
           format.html { redirect_to certificate_order_path({id: @certificate_order.ref}.merge!(checkout))}
         end

@@ -226,7 +226,7 @@ class CertificateContent < ActiveRecord::Base
     (domains-certificate_names.find_by_domains(domains).pluck(:name)).each do |domain|
       new_certificate_name=certificate_names.find_or_create_by(name: domain.downcase,
                                                              is_common_name: csr.try(:common_name)==domain.downcase)
-      ssl_account.other_dcvs_satisfy_domain(new_certificate_name)
+      ssl_account.other_dcvs_satisfy_domain(new_certificate_name) if ssl_account
     end
 
     # Auto adding domains in case of certificate order has been included into some groups.

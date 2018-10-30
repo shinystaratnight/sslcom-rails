@@ -223,12 +223,17 @@ class SslAccount < ActiveRecord::Base
   # does this domain satisfy pending validations of other domains on this team? Return list of satisfied names
   # domain - the domain that has satisfied DV
   # dcv - the domain control validation method that was satisfied
-  def satisfy_related_dcvs(domain,dcv)
+  def satisfy_related_dcvs(domain)
+    dcv = cn.domain_control_validations.last
     [].tap do |satisfied_names|
       all_certificate_names.each do |certificate_name|
-        if certificate_name.name!=domain and
-            DomainControlValidation.domain_in_subdomains?(domain,certificate_name.name)
-          certificate_name.domain_control_validations.create(dcv.attributes.except(*CertificateOrder::ID_AND_TIMESTAMP))
+        if certificate_name.name!=domain.name and
+            DomainControlValidation.domain_in_subdomains?(domain.name,certificate_name.name) and
+            # team validated domain
+            (domain.certificate_content_id==nil or
+            # do they have the same public key
+            (domain.csr and certificate_name.csr and domain.csr.public_key_sha1==certificate_name.csr.public_key_sha1))
+          certificate_name.domain_control_validations.create(dcv.attributes.except("id"))
           satisfied_names << certificate_name.name
         end
       end
@@ -240,10 +245,14 @@ class SslAccount < ActiveRecord::Base
   def other_dcvs_satisfy_domain(certificate_name)
     cnames = all_certificate_names
     cnames.each do |cn|
-      if DomainControlValidation.domain_in_subdomains?(cn.name,certificate_name.name)
+      if DomainControlValidation.domain_in_subdomains?(cn.name,certificate_name.name) and
+          # team validated domain
+          (cn.certificate_content_id==nil or
+          # do they have the same public key
+          (cn.csr and certificate_name.csr and cn.csr.public_key_sha1==certificate_name.csr.public_key_sha1))
         dcv = cn.domain_control_validations.last
         if dcv && dcv.identifier_found
-          certificate_name.domain_control_validations.create(dcv.attributes.except(*CertificateOrder::ID_AND_TIMESTAMP))
+          certificate_name.domain_control_validations.create(dcv.attributes.except("id"))
           break
         end
       end

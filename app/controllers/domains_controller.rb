@@ -6,7 +6,7 @@ class DomainsController < ApplicationController
 
   def index
     cnames = @ssl_account.all_certificate_names.order(created_at: :desc)
-    @domains = (@ssl_account.domains.order(created_at: :desc) + cnames).paginate(@p)
+    @domains = (@ssl_account.domains.order(created_at: :desc) + cnames).uniq(&:id).paginate(@p)
   end
 
   def create
@@ -357,7 +357,7 @@ class DomainsController < ApplicationController
                   team_domain.domain_control_validations.empty? or
                   !team_domain.domain_control_validations.last.satisfied?
           # find all other non validated certificate_names and validate them
-          validated<<@ssl_account.satisfy_related_dcvs(cn.name,dcv)
+          validated<<@ssl_account.satisfy_related_dcvs(cn)
         end
       end
       unless validated.empty?

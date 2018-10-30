@@ -117,7 +117,7 @@ class CertificateName < ActiveRecord::Base
   end
 
   def csr
-    @csr || certificate_content.csr
+    @csr || certificate_content.try(:csr)
   end
 
   def new_name(new_name)
