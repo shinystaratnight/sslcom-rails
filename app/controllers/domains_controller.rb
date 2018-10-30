@@ -352,7 +352,9 @@ class DomainsController < ApplicationController
           end
           team_domain=@ssl_account.domains.find_by_name(cn.name) ||
               @ssl_account.domains.create(cn.attributes.except("id","certificate_content_id"))
-          team_domain.domain_control_validations.create(dcv.attributes.except("id"))
+          team_domain.domain_control_validations.create(dcv.attributes.except("id")) if
+                  team_domain.domain_control_validations.empty? or
+                  !team_domain.domain_control_validations.last.satisfied?
           # find all other non validated certificate_names and validate them
           validated<<@ssl_account.satisfy_related_dcvs(cn.name,dcv)
         end

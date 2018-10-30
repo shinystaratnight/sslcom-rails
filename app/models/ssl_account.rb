@@ -219,6 +219,9 @@ class SslAccount < ActiveRecord::Base
     end
   end
 
+  # does this domain satisfy pending validations of other domains on this team? Return list of satisfied names
+  # domain - the domain that has satisfied DV
+  # dcv - the domain control validation method that was satisfied
   def satisfy_related_dcvs(domain,dcv)
     [].tap do |satisfied_names|
       all_certificate_names.each do |certificate_name|
@@ -231,6 +234,8 @@ class SslAccount < ActiveRecord::Base
     end
   end
 
+  # is this domain's validation satisfied by an already validated domain. If so, create a dcv with satisfied status
+  # certificate_name - the domain we are looking up
   def other_dcvs_satisfy_domain(certificate_name)
     cnames = all_certificate_names
     cnames.each do |cn|
