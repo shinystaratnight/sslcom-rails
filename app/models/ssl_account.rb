@@ -104,6 +104,7 @@ class SslAccount < ActiveRecord::Base
 
   before_validation :b_create, on: :create
   after_create  :initial_setup
+  after_save { users.find_each(&:touch) }
 
   BILLING_METHODS = ['monthly', 'due_at_checkout', 'daily']
   PULL_RESELLER = "pull_from_reseller"

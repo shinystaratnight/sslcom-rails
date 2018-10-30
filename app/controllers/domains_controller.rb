@@ -350,7 +350,8 @@ class DomainsController < ApplicationController
             dcv.satisfy!
             CaaCheck.pass?(@ssl_account.acct_number + 'domains', cn, nil)
           end
-          team_domain=@ssl_account.domains.find_by_name(cn.name) ||
+          # find similar order scope domain (or create a new team scoped domain) and validate it
+          team_domain=@ssl_account.domains.where.not(certificate_content_id: nil).find_by_name(cn.name) ||
               @ssl_account.domains.create(cn.attributes.except("id","certificate_content_id"))
           team_domain.domain_control_validations.create(dcv.attributes.except("id")) if
                   team_domain.domain_control_validations.empty? or
