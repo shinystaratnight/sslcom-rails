@@ -119,10 +119,12 @@ class DomainControlValidation < ActiveRecord::Base
   # public_key_sha1 - against a csr
   def validated?(domain=nil,public_key_sha1=nil)
     satisfied = ->(public_key_sha1){
-        identifier_found && !responded_at.blank? && responded_at > DomainControlValidation::MAX_DURATION_DAYS[:email].days.ago &&
+        identifier_found && !responded_at.blank? &&
+            responded_at > DomainControlValidation::MAX_DURATION_DAYS[:email].days.ago &&
           (!email_address.blank? or (public_key_sha1 ? csr.public_key_sha1.downcase==public_key_sha1.downcase : true))
     }
-    (domain ? true : DomainControlValidation.domain_in_subdomains?(domain,certificate_name.name)) and satisfied.call(public_key_sha1)
+    (domain ? true : DomainControlValidation.domain_in_subdomains?(domain,certificate_name.name)) and
+        satisfied.call(public_key_sha1)
   end
 
   # this determines if a domain validation will satisfy another domain validation based on 2nd level subdomains and wildcards
