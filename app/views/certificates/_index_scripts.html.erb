@@ -922,7 +922,7 @@ jQuery(function($) {
       $('.managed_domains_container').addClass('hidden_close_x');*/
     <!--< %elsif @certificate.is_premium_ssl?%>-->
     <%if @certificate.is_premium_ssl?%>
-      $('#managed_domains').on('select2:opening select2:closing', function( event ) {
+      $('#managed_domains').on('select2:opening select2:closing', function() {
         if ($('#managed_domains').val() != null && $('#managed_domains').val().length > 2) {
           var $searchfield = $(this).parent().find('.select2-search__field');
           $searchfield.prop('readonly', true);
@@ -944,6 +944,12 @@ jQuery(function($) {
         }
       });
     <%end%>
+
+    $(document).on('blur', '.select2-search__field', function() {
+      setTimeout(function() {
+        $('.select2-search__field').focus();
+      }, 0);
+    });
 
     $('#managed_domains').on('change', function() {
       var changed_value = $(this).val();
