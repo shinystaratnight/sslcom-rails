@@ -369,7 +369,26 @@ jQuery(function($) {
 
                 $('#managed_domains').select2({
                   tags: true,
-                  tokenSeparators: [',', ' '],
+                  /*tokenSeparators: [',', ' '],*/
+                  tokenizer: function(input, selection, callback) {
+                    if (input.term.indexOf(',') == -1 && input.term.indexOf(' ') == -1)
+                      return input;
+
+                    var parts = input.term.split(/,| /);
+                    $.each(parts, function(idx) {
+                      var part = parts[idx];
+                      part = part.trim();
+
+                      if (part != '') {
+                        callback({
+                          id: part,
+                          text: part
+                        });
+                      }
+                    });
+
+                    return '';
+                  },
                   templateSelection: function(data, container) {
                     var value = data.element.value;
 
@@ -548,7 +567,26 @@ jQuery(function($) {
 
                 $('#managed_domains').select2({
                   tags: true,
-                  tokenSeparators: [',', ' '],
+                  /*tokenSeparators: [',', ' '],*/
+                  tokenizer: function(input, selection, callback) {
+                    if (input.term.indexOf(',') == -1 && input.term.indexOf(' ') == -1)
+                      return input;
+
+                    var parts = input.term.split(/,| /);
+                    $.each(parts, function(idx) {
+                      var part = parts[idx];
+                      part = part.trim();
+
+                      if (part != '') {
+                        callback({
+                          id: part,
+                          text: part
+                        });
+                      }
+                    });
+
+                    return '';
+                  },
                   templateSelection: function(data, container) {
                     var value = data.element.value;
 
@@ -808,23 +846,26 @@ jQuery(function($) {
 
     $('#managed_domains').select2({
       tags: true,
-      tokenSeparators: [',', ' '],
-      /*tokenizer: function(input, selection, callback) {
-        if (input.term == '')
+      /*tokenSeparators: [',', ' '],*/
+      tokenizer: function(input, selection, callback) {
+        if (input.term.indexOf(',') == -1 && input.term.indexOf(' ') == -1)
           return input;
 
         var parts = input.term.split(/,| /);
-        for (var i = 0; i < parts.length; i++) {
-          var part = parts[i];
+        $.each(parts, function(idx) {
+          var part = parts[idx];
           part = part.trim();
 
           if (part != '') {
-            callback({id:part,text:part});
+            callback({
+              id: part,
+              text: part
+            });
           }
-        }
+        });
 
-        return
-      },*/
+        return '';
+      },
       templateSelection: function(data, container) {
         var value = data.element.value;
 
@@ -881,7 +922,7 @@ jQuery(function($) {
       $('.managed_domains_container').addClass('hidden_close_x');*/
     <!--< %elsif @certificate.is_premium_ssl?%>-->
     <%if @certificate.is_premium_ssl?%>
-      $('#managed_domains').on('select2:opening select2:closing', function( event ) {
+      $('#managed_domains').on('select2:opening select2:closing', function() {
         if ($('#managed_domains').val() != null && $('#managed_domains').val().length > 2) {
           var $searchfield = $(this).parent().find('.select2-search__field');
           $searchfield.prop('readonly', true);
@@ -903,6 +944,12 @@ jQuery(function($) {
         }
       });
     <%end%>
+
+    $(document).on('blur', '.select2-search__field', function() {
+      setTimeout(function() {
+        $('.select2-search__field').focus();
+      }, 0);
+    });
 
     $('#managed_domains').on('change', function() {
       var changed_value = $(this).val();
@@ -955,23 +1002,26 @@ jQuery(function($) {
 
               $('#managed_domains').select2({
                 tags: true,
-                tokenSeparators: [',', ' '],
-                /*tokenizer: function(input, selection, callback) {
-                  if (input.term == '')
-                    return false;
+                /*tokenSeparators: [',', ' '],*/
+                tokenizer: function(input, selection, callback) {
+                  if (input.term.indexOf(',') == -1 && input.term.indexOf(' ') == -1)
+                    return input;
 
                   var parts = input.term.split(/,| /);
-                  for (var i = 0; i < parts.length; i++) {
-                    var part = parts[i];
+                  $.each(parts, function(idx) {
+                    var part = parts[idx];
                     part = part.trim();
 
                     if (part != '') {
-                      callback({id:part,text:part});
+                      callback({
+                        id: part,
+                        text: part
+                      });
                     }
-                  }
+                  });
 
-                  return true;
-                },*/
+                  return '';
+                },
                 templateSelection: function(data, container) {
                   var value = data.element.value;
 
