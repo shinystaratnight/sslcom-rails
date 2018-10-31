@@ -145,7 +145,7 @@ class DomainControlValidation < ActiveRecord::Base
   end
 
   def verify_http_csr_hash
-    certificate_name.dcv_verified?
+    certificate_name.dcv_verify
   end
 
   def email_address_choices

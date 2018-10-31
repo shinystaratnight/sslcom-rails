@@ -437,28 +437,7 @@ class ValidationsController < ApplicationController
         flash[:opvr]=true
         flash[:email_addresses]=params[:email_addresses]
     end
-    unless hide_both?
-      if hide_documents? || params[:domain_control_validation_id]
-        @dcv = DomainControlValidation.find(params[:domain_control_validation_id])
-        if params[:method]=="email" && params[:domain_control_validation_email]
-          @dcv.send_to params[:domain_control_validation_email]
-          @error<<'Please select a valid verification email address.' unless @dcv.errors.blank?
-        elsif params[:method]=="http"
-          #verify http dcv
-          http_or_s = @certificate_order.csr.dcv_verified?
-          unless http_or_s
-            @error<<"Please be sure #{@certificate_order.csr.dcv_url} (or https://) is publicly available"
-          else
-            @dcv.hash_satisfied(http_or_s)
-            @certificate_order.validation.approve! unless
-              (@certificate_order.validation.approved? || @certificate_order.validation.approved_through_override?)
-          end
-        end
-      elsif hide_dcv? || @files.blank?
-        @error<<'Please select one or more files to upload.'
-      end
-    end
-    
+
     upload_documents(@files, :validation) if params[:filedata]
     upload_documents(params[:iv_filedata], :iv_documents) if params[:iv_filedata]
     upload_documents(params[:ov_filedata], :ov_documents) if params[:ov_filedata]

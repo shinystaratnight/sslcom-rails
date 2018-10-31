@@ -510,25 +510,6 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
     end
   end
 
-  def verify_http_csr_hash
-    self.domains.each do |k,v|
-      if v["dcv"] =~ /https?/i
-        begin
-          cn = CertificateName.new(name: k, csr: csr_obj)
-          found=Thread.new { cn.dcv_verified? }.join(10)
-        rescue StandardError => e
-        ensure
-          unless found.try(:value)
-            if  (v["dcv_failure_action"]=="remove" ||
-                (v["dcv_failure_action"].blank? && self.options && self.options["dcv_failure_action"]=="remove"))
-              self.domains.delete k
-            end
-          end
-        end
-      end
-    end
-  end
-
   def validate_contacts
     if contacts
       if !contacts.is_a?(Hash)
