@@ -259,7 +259,7 @@ class DomainsController < ApplicationController
           dcv.update_attribute(:identifier, identifier)
           dcv.send_dcv!
         else
-          if dcv_verify(dcv.dcv_method, cn.name, @csr, "ssl.com")
+          if dcv_verify(dcv.dcv_method, cn.name, @csr)
             succeeded_domains << cn.name
             dcv.satisfy! unless dcv.satisfied?
           else
@@ -289,7 +289,7 @@ class DomainsController < ApplicationController
     end
   end
 
-  def dcv_verify(protocol, domain_name, csr, ca_tag="comodoca.com")
+  def dcv_verify(protocol, domain_name, csr)
     CertificateName.dcv_verify(protocol: protocol,
                                https_dcv_url: "https://#{domain_name}/.well-known/pki-validation/#{csr.md5_hash}.txt",
                                http_dcv_url: "http://#{domain_name}/.well-known/pki-validation/#{csr.md5_hash}.txt",

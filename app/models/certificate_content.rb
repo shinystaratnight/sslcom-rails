@@ -497,8 +497,9 @@ class CertificateContent < ActiveRecord::Base
     end
   end
 
-  def self.non_wildcard_name(name)
+  def self.non_wildcard_name(name,remove_www=false)
     name.gsub(/\A\*\./, "").downcase unless name.blank?
+    remove_www ? name.gsub("www.", "") : name
   end
 
   def self.is_fqdn?(name)

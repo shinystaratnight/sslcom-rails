@@ -75,7 +75,6 @@ class CsrsController < ApplicationController
         elsif http_or_s.nil?
           http_or_s = false
         end
-        # http_or_s = false if http_or_s.nil?
       end
     end
 
