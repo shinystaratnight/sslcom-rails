@@ -173,6 +173,7 @@ class SslcomCaApi
 
     # does this need to be a DV if OV is required but not satisfied?
     downstep = certificate.requires_locked_registrant? && !certificate_order.ov_validated?
+    previous_mapping=options[:mapping]
     options[:mapping]=options[:mapping].downstep if downstep
 
     options.merge! cc: cc = options[:certificate_content] || certificate_order.certificate_content
@@ -200,8 +201,7 @@ class SslcomCaApi
     elsif api_log_entry.certificate_chain # signed certificate is issued
       cc.update_column(:ref, api_log_entry.username) unless api_log_entry.blank?
       attrs = {body: api_log_entry.end_entity_certificate.to_s, ca_id: options[:mapping].id}
-      attrs.merge!(type: "ShadowSignedCertificate") if certificate.cas.shadow.include?(options[:mapping]) and
-          downstep.blank?
+      attrs.merge!(type: "ShadowSignedCertificate") if cc.cas.shadow.include?(previous_mapping)
       cc.csr.signed_certificates.create(attrs)
       SystemAudit.create(
           owner:  options[:current_user],
