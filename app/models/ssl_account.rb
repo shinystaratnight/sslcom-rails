@@ -557,7 +557,7 @@ class SslAccount < ActiveRecord::Base
 
   def all_csrs
     Csr.where(id: (Rails.cache.fetch("#{cache_key}/all_csrs") {
-      (csrs + managed_csrs).map(&:id)
+      (csrs + managed_csrs).uniq(&:public_key_sha1).map(&:id)
     })).order(created_at: :desc)
   end
 

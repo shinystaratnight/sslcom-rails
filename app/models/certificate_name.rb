@@ -104,7 +104,7 @@ class CertificateName < ActiveRecord::Base
   end
 
   def cname_destination
-    "#{csr.dns_sha2_hash}.#{ca_tag}"
+    csr.cname_destination
   end
 
   def non_wildcard_name(check_type=false)
@@ -112,8 +112,9 @@ class CertificateName < ActiveRecord::Base
         CertificateContent.non_wildcard_name(name).gsub("www.", "") : CertificateContent.non_wildcard_name(name)
   end
 
+  # requires csr not be blank
   def dcv_contents
-    "#{csr.sha2_hash}\ncomodoca.com#{"\n#{csr.unique_value}" unless csr.unique_value.blank?}"
+    csr.dcv_contents
   end
 
   def csr
@@ -130,8 +131,7 @@ class CertificateName < ActiveRecord::Base
   end
 
   def ca_tag
-    caa_issuers = certificate_content && certificate_content.ca.try(:caa_issuers)
-    (caa_issuers[0] unless caa_issuers.blank?) || 'comodoca.com'
+    csr.ca_tag
   end
 
   def dcv_verify(protocol)

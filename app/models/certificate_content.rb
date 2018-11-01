@@ -59,6 +59,8 @@ class CertificateContent < ActiveRecord::Base
     google\.com hamdami\.com mossad\.gov\.il sis\.gov\.uk microsoft\.com google\.com
     yahoo\.com login\.skype\.com mozilla\.org \.live\.com global\strustee)
 
+  WHITELIST = {492127=> %w((\.|^)ssl\.com$) }
+
   DOMAIN_COUNT_OFFLOAD=50
 
   #SSL.com=>Comodo

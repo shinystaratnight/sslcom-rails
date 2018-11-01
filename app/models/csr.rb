@@ -269,8 +269,21 @@ class Csr < ActiveRecord::Base
     "http#{'s' if secure}://#{domain || non_wildcard_name}/.well-known/pki-validation/#{md5_hash}.txt"
   end
 
+  def cname_destination
+    "#{dns_sha2_hash}.#{ca_tag}"
+  end
+
+  def ca_tag
+    if certificate_content.blank? # for prevalidating domain with csr
+      "ssl.com"
+    else
+      caa_issuers = certificate_content.ca.try(:caa_issuers)
+      (caa_issuers[0] unless caa_issuers.blank?) || 'comodoca.com'
+    end
+  end
+
   def dcv_contents
-    "#{sha2_hash}\ncomodoca.com#{"\n#{self.unique_value}" unless self.unique_value.blank?}"
+    "#{sha2_hash}\n#{ca_tag}#{"\n#{self.unique_value}" unless self.unique_value.blank?}"
   end
 
   def all_names(options={})

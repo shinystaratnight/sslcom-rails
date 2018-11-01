@@ -1217,6 +1217,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
           @result.md5_hash = @acr.csr.md5_hash
           @result.sha2_hash = @acr.csr.sha2_hash
           @result.dns_sha2_hash = @acr.csr.dns_sha2_hash
+          @result.ca_tag = @acr.csr.ca_tag
         end
         @acr.all_domains.each do |domain|
           @result.dcv_methods.merge! domain=>{}
@@ -1225,8 +1226,8 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
             @result.dcv_methods[domain].merge! "http_csr_hash"=>
                                                    {"http"=>"#{@acr.csr.dcv_url(false,domain)}",
                                                     "allow_https"=>"true",
-                                                    "contents"=>"#{@result.sha2_hash}\ncomodoca.com#{"\n#{@acr.csr.unique_value}" unless @acr.csr.unique_value.blank?}"}
-            @result.dcv_methods[domain].merge! "cname_csr_hash"=>{"cname"=>"#{@result.md5_hash}.#{domain}. CNAME #{@result.dns_sha2_hash}.comodoca.com.","name"=>"#{@result.md5_hash}.#{domain}","value"=>"#{@result.dns_sha2_hash}.comodoca.com."}
+                                                    "contents"=>"#{@result.sha2_hash}\n#{@result.ca_tag}#{"\n#{@acr.csr.unique_value}" unless @acr.csr.unique_value.blank?}"}
+            @result.dcv_methods[domain].merge! "cname_csr_hash"=>{"cname"=>"#{@result.md5_hash}.#{domain}. CNAME #{@result.dns_sha2_hash}.#{@result.ca_tag}.","name"=>"#{@result.md5_hash}.#{domain}","value"=>"#{@result.dns_sha2_hash}.#{@result.ca_tag}."}
           end
         end
       end
@@ -1261,6 +1262,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
               @result.sha2_hash = @acr.csr.sha2_hash
               @result.dns_md5_hash = @acr.csr.dns_md5_hash
               @result.dns_sha2_hash = @acr.csr.dns_sha2_hash
+              @result.ca_tag = @acr.csr.ca_tag
             end
 
             ([@acr.csr.common_name]+(@result.domains || [])).compact.map(&:downcase).uniq.each do |domain|
@@ -1270,15 +1272,16 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
                 @result.dcv_methods[domain].merge! "http_csr_hash"=>
                                                        {"http"=>"#{@acr.csr.dcv_url(false,domain)}",
                                                         "allow_https"=>"true",
-                                                        "contents"=>"#{@result.sha2_hash}\ncomodoca.com#{"\n#{@acr.csr.unique_value}" unless @acr.csr.unique_value.blank?}"}
-                @result.dcv_methods[domain].merge! "cname_csr_hash"=>{"cname"=>"#{@result.dns_md5_hash}.#{domain}. CNAME #{@result.dns_sha2_hash}.comodoca.com.","name"=>"#{@result.dns_md5_hash}.#{domain}","value"=>"#{@result.dns_sha2_hash}.comodoca.com."}
+                                                        "contents"=>"#{@result.sha2_hash}\n#{@result.ca_tag}#{"\n#{@acr.csr.unique_value}" unless @acr.csr.unique_value.blank?}"}
+                @result.dcv_methods[domain].merge! "cname_csr_hash"=>{"cname"=>"#{@result.dns_md5_hash}.#{domain}. CNAME #{@result.dns_sha2_hash}.#{@result.ca_tag}.","name"=>"#{@result.dns_md5_hash}.#{domain}","value"=>"#{@result.dns_sha2_hash}.#{@result.ca_tag}."}
               end
             end
 
             # Caching CSR Hashes for "Retrieve all validation methods based on hash of certificate signing request" API.
             ActiveRecord::Base.include_root_in_json = false
             cache_key = 'api-csr-hash-' + @result.md5_hash
-            Rails.cache.write(cache_key, @result.to_json(:methods => [:instructions, :md5_hash, :sha2_hash, :dns_md5_hash, :dns_sha2_hash, :dcv_methods]))
+            Rails.cache.write(cache_key, @result.to_json(:methods => [
+                :instructions, :md5_hash, :sha2_hash, :dns_md5_hash, :dns_sha2_hash, :dcv_methods, :ca_tag]))
           else
             @result.instructions = JSON.parse(cache)['instructions']
             @result.md5_hash = JSON.parse(cache)['md5_hash']
@@ -1286,6 +1289,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
             @result.dns_md5_hash = JSON.parse(cache)['dns_md5_hash']
             @result.dns_sha2_hash = JSON.parse(cache)['dns_sha2_hash']
             @result.dcv_methods = JSON.parse(cache)['dcv_methods']
+            @result.ca_tag = JSON.parse(cache)['ca_tag']
           end
         end
 
