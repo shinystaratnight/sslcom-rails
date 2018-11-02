@@ -404,14 +404,13 @@ class SignedCertificate < ActiveRecord::Base
     end
     # for shadow certs, only send the certificate
     begin
-      if certificate_order.certificate.cas.shadow.each do |shadow_ca|
+      certificate_order.certificate.cas.shadow.each do |shadow_ca|
         certificate_order.apply_for_certificate(mapping: shadow_ca)
         OrderNotifier.processed_certificate_order(contact: Settings.shadow_certificate_recipient,
                                               certificate_order: certificate_order,
                                               certificate_content: certificate_content,
                                               signed_certificate: certificate_order.shadow_certificates.last).deliver
       end
-    end
     rescue Exception=>e
       logger.error e.message
       e.backtrace.each { |line| logger.error line }

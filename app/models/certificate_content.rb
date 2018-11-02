@@ -59,6 +59,8 @@ class CertificateContent < ActiveRecord::Base
     google\.com hamdami\.com mossad\.gov\.il sis\.gov\.uk microsoft\.com google\.com
     yahoo\.com login\.skype\.com mozilla\.org \.live\.com global\strustee)
 
+  WHITELIST = {492127=> %w((\.|^)ssl\.com$) }
+
   DOMAIN_COUNT_OFFLOAD=50
 
   #SSL.com=>Comodo
@@ -226,7 +228,7 @@ class CertificateContent < ActiveRecord::Base
     (domains-certificate_names.find_by_domains(domains).pluck(:name)).each do |domain|
       new_certificate_name=certificate_names.find_or_create_by(name: domain.downcase,
                                                              is_common_name: csr.try(:common_name)==domain.downcase)
-      ssl_account.other_dcvs_satisfy_domain(new_certificate_name)
+      ssl_account.other_dcvs_satisfy_domain(new_certificate_name) if ssl_account
     end
 
     # Auto adding domains in case of certificate order has been included into some groups.
@@ -495,8 +497,9 @@ class CertificateContent < ActiveRecord::Base
     end
   end
 
-  def self.non_wildcard_name(name)
+  def self.non_wildcard_name(name,remove_www=false)
     name.gsub(/\A\*\./, "").downcase unless name.blank?
+    remove_www ? name.gsub("www.", "") : name
   end
 
   def self.is_fqdn?(name)

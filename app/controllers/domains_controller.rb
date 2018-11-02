@@ -6,7 +6,7 @@ class DomainsController < ApplicationController
 
   def index
     cnames = @ssl_account.all_certificate_names.order(created_at: :desc)
-    @domains = (@ssl_account.domains.order(created_at: :desc) + cnames).paginate(@p)
+    @domains = (@ssl_account.domains.order(created_at: :desc) + cnames).uniq(&:id).paginate(@p)
   end
 
   def create
@@ -259,7 +259,7 @@ class DomainsController < ApplicationController
           dcv.update_attribute(:identifier, identifier)
           dcv.send_dcv!
         else
-          if domain_verify(dcv.dcv_method, cn.name, @csr) == "true"
+          if dcv_verify(dcv.dcv_method, cn.name, @csr)
             succeeded_domains << cn.name
             dcv.satisfy! unless dcv.satisfied?
           else
@@ -289,34 +289,14 @@ class DomainsController < ApplicationController
     end
   end
 
-  def domain_verify(protocol, domain_name, csr)
-    begin
-      Timeout.timeout(Surl::TIMEOUT_DURATION) do
-        if protocol=="https_csr_hash"
-          url = "https://#{domain_name}/.well-known/pki-validation/#{csr.md5_hash}.txt"
-          uri = URI.parse(url)
-          http = Net::HTTP.new(uri.host, uri.port)
-          http.use_ssl = true
-          http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-          request = Net::HTTP::Get.new(uri.request_uri)
-          r = http.request(request).body
-        elsif protocol=="cname_csr_hash"
-          cname_destination = "#{csr.dns_sha2_hash}.com"
-          txt = Resolv::DNS.open do |dns|
-            cname_origin = "#{csr.dns_md5_hash}.#{domain_name}"
-            records = dns.getresources(cname_origin, Resolv::DNS::Resource::IN::CNAME)
-          end
-          return cname_destination==txt.last.name.to_s
-        else
-          url = "http://#{domain_name}/.well-known/pki-validation/#{csr.md5_hash}.txt"
-          r=open(url, redirect: false).read
-        end
-        return "true" if !!(r =~ Regexp.new("^#{csr.sha2_hash}") && r =~ Regexp.new("^.com") &&
-            (csr.unique_value.blank? ? true : r =~ Regexp.new("^#{csr.unique_value}")))
-      end
-    rescue Exception=>e
-      return "false"
-    end
+  def dcv_verify(protocol, domain_name, csr)
+    CertificateName.dcv_verify(protocol: protocol,
+                               https_dcv_url: "https://#{domain_name}/.well-known/pki-validation/#{csr.md5_hash}.txt",
+                               http_dcv_url: "http://#{domain_name}/.well-known/pki-validation/#{csr.md5_hash}.txt",
+                               cname_origin: "#{csr.dns_md5_hash}.#{domain_name}",
+                               cname_destination: "#{csr.cname_destination}",
+                               csr: csr,
+                               ca_tag: csr.ca_tag)
   end
 
   def dcv_validate
@@ -350,13 +330,14 @@ class DomainsController < ApplicationController
             dcv.satisfy!
             CaaCheck.pass?(@ssl_account.acct_number + 'domains', cn, nil)
           end
-          team_domain=@ssl_account.domains.find_by_name(cn.name) ||
+          # find similar order scope domain (or create a new team scoped domain) and validate it
+          team_domain=@ssl_account.domains.where.not(certificate_content_id: nil).find_by_name(cn.name) ||
               @ssl_account.domains.create(cn.attributes.except("id","certificate_content_id"))
           team_domain.domain_control_validations.create(dcv.attributes.except("id")) if
                   team_domain.domain_control_validations.empty? or
                   !team_domain.domain_control_validations.last.satisfied?
           # find all other non validated certificate_names and validate them
-          validated<<@ssl_account.satisfy_related_dcvs(cn.name,dcv)
+          validated<<@ssl_account.satisfy_related_dcvs(cn)
         end
       end
       unless validated.empty?

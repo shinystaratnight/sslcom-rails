@@ -269,79 +269,26 @@ class Csr < ActiveRecord::Base
     "http#{'s' if secure}://#{domain || non_wildcard_name}/.well-known/pki-validation/#{md5_hash}.txt"
   end
 
+  def cname_destination
+    "#{dns_sha2_hash}.#{ca_tag}"
+  end
+
+  def ca_tag
+    if certificate_content.blank? # for prevalidating domain with csr
+      "ssl.com"
+    else
+      caa_issuers = certificate_content.ca.try(:caa_issuers)
+      (caa_issuers[0] unless caa_issuers.blank?) || 'comodoca.com'
+    end
+  end
+
   def dcv_contents
-    "#{sha2_hash}\ncomodoca.com#{"\n#{self.unique_value}" unless self.unique_value.blank?}"
+    "#{sha2_hash}\n#{ca_tag}#{"\n#{self.unique_value}" unless self.unique_value.blank?}"
   end
 
   def all_names(options={})
     (subject_alternative_names and options[:san]) ? (subject_alternative_names.split(",") + [common_name]).flatten.uniq :
         [common_name]
-  end
-
-  def dcv_verified?
-    retries=2
-    begin
-      timeout(Surl::TIMEOUT_DURATION) do
-        r=""
-        http_or_s = "http"
-        if retries<2
-          http_or_s = "https"
-          uri = URI.parse(dcv_url(true))
-          http = Net::HTTP.new(uri.host, uri.port)
-          http.use_ssl = true
-          http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-          request = Net::HTTP::Get.new(uri.request_uri)
-          response = http.request(request)
-          r = response.body unless response.kind_of? Net::HTTPRedirection
-        else
-          r = open(dcv_url).read(redirect: false)
-        end
-        return http_or_s if !!(r =~ Regexp.new("^#{sha2_hash}") && r =~ Regexp.new("^comodoca.com") &&
-          (self.unique_value.blank? ? true : r =~ Regexp.new("^#{self.unique_value}")))
-      end
-    rescue Timeout::Error, OpenURI::HTTPError, RuntimeError
-      retries-=1
-      if retries==0
-        return false
-      else
-        retry
-      end
-    rescue Exception=>e
-      return false
-    end
-  end
-
-  def dcv_verify(protocol)
-    begin
-      timeout(Surl::TIMEOUT_DURATION) do
-        if protocol=="https"
-          uri = URI.parse(dcv_url(true))
-          http = Net::HTTP.new(uri.host, uri.port)
-          http.use_ssl = true
-          http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-          request = Net::HTTP::Get.new(uri.request_uri)
-          r = http.request(request).body
-        else
-          r=open(dcv_url).read
-        end
-        return "true" if !!(r =~ Regexp.new("^#{sha2_hash}") && r =~ Regexp.new("^comodoca.com") &&
-            (self.unique_value.blank? ? true : r =~ Regexp.new("^#{self.unique_value}")))
-      end
-    rescue Exception=>e
-      return "false"
-    end
-  end
-
-  def fetch_public_site
-    begin
-      timeout(Surl::TIMEOUT_DURATION) do
-        r=open("https://"+non_wildcard_name).read unless is_intranet?
-        !!(r =~ Regexp.new("^#{sha2_hash}") && r =~ Regexp.new("^comodoca.com") &&
-            (self.unique_value.blank? ? true : r =~ Regexp.new("^#{self.unique_value}")))
-      end
-    rescue Exception=>e
-      return false
-    end
   end
 
   def whois_lookup

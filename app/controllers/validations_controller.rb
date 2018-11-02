@@ -33,7 +33,12 @@ class ValidationsController < ApplicationController
     else
       if cc.issued? # or @certificate_order.all_domains_validated?
         checkout = {checkout: "true"}
-        flash.now[:notice] = "All domains have been validated, please wait for certificate issuance" if @certificate_order.all_domains_validated?
+        if cc.signed_certificate
+          flash.now[:notice] = "SSL certificate has been issued"
+        elsif @certificate_order.all_domains_validated?
+          flash.now[:notice] = "All domains have been validated, please wait for certificate issuance"
+        end
+
         respond_to do |format|
           format.html { redirect_to certificate_order_path({id: @certificate_order.ref}.merge!(checkout))}
         end
@@ -432,28 +437,7 @@ class ValidationsController < ApplicationController
         flash[:opvr]=true
         flash[:email_addresses]=params[:email_addresses]
     end
-    unless hide_both?
-      if hide_documents? || params[:domain_control_validation_id]
-        @dcv = DomainControlValidation.find(params[:domain_control_validation_id])
-        if params[:method]=="email" && params[:domain_control_validation_email]
-          @dcv.send_to params[:domain_control_validation_email]
-          @error<<'Please select a valid verification email address.' unless @dcv.errors.blank?
-        elsif params[:method]=="http"
-          #verify http dcv
-          http_or_s = @certificate_order.csr.dcv_verified?
-          unless http_or_s
-            @error<<"Please be sure #{@certificate_order.csr.dcv_url} (or https://) is publicly available"
-          else
-            @dcv.hash_satisfied(http_or_s)
-            @certificate_order.validation.approve! unless
-              (@certificate_order.validation.approved? || @certificate_order.validation.approved_through_override?)
-          end
-        end
-      elsif hide_dcv? || @files.blank?
-        @error<<'Please select one or more files to upload.'
-      end
-    end
-    
+
     upload_documents(@files, :validation) if params[:filedata]
     upload_documents(params[:iv_filedata], :iv_documents) if params[:iv_filedata]
     upload_documents(params[:ov_filedata], :ov_documents) if params[:ov_filedata]

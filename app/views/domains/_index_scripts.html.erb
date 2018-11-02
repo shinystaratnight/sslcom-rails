@@ -122,7 +122,6 @@
       });
       <%if @csr%>
         $(document).on('change', 'select[id=dcv_methods]', function() {
-          console.log("here");
           var dcv_select=$(this);
           var dt = new Date();
           var time = (dt.getMonth()+1) + "-"
@@ -149,7 +148,7 @@
           wwwfile=$(this).attr("alt").replace("*.", "www.").toLowerCase()+"/.well-known/pki-validation/"+$('.md5_hash').text()+".txt";
           wwwhttps = "https://"+wwwfile;
           wwwhttp = "http://"+wwwfile;
-          cname = $('.dns_md5_hash').text()+"."+domain+" -> "+$('.dns_sha2_hash').text()+".com";
+          cname = $('.dns_md5_hash').text()+"."+domain+" -> "+$('.cname_destination').text();
 
           if (methods[0] == 'Please select a validation method') {
             $(instruction).html("Please select a validation method");
@@ -162,13 +161,88 @@
           else if(/https/.test(methods[0])){
             instructions="Upload <a href='<%=http_dcv_file_csr_path(@ssl_slug, @csr.id)%>'>this file</a> to this location: <a href='"+https+"' target='_new'>"+https+"</a>";
             $(instruction).html(instructions);
+            $.ajax({url: '<%=verification_check_csr_path(@ssl_slug, @csr.id)%>?protocol=https&dcv='+
+                $(dcv_select).parents('tr').attr('id')+'&new_name='+$(dcv_select).attr('alt')+'&ref='+$(dcv_select).parents('tbody').attr('data-ref')}).done(
+              function(data){
+                if (data) {
+                  // Adding Hidden Tag for saving satisfied option.
+                  var hiddenElement = $('<input></input>');
+                  hiddenElement.attr('type', 'hidden');
+                  hiddenElement.attr('name', 'domains[' + $(dcv_select).attr("alt") + '][dcv]');
+                  hiddenElement.attr('value', $(dcv_select).val());
+                  $(dcv_select).parent().append(hiddenElement);
+
+                  // Changing Status to "Satisfied".
+                  $('td.status[class~="'+$(dcv_select).attr("alt")+'"]').html('satisfied');
+
+                  // Disable the option.
+                  $(dcv_select).attr('disabled', true);
+
+                  // Hidden the "Edit" button
+                  $(dcv_select).parents('tr').find('.btn_edit_domain').attr('disabled', true);
+
+                  // Hidden the "Checkbox" button
+                  $(dcv_select).parents('tr').find('.check_box').attr('disabled', true);
+                }
+                $('td.pretest[class~="'+$(dcv_select).attr("alt")+'"]').html((data ? "<div class='passed'>passed</div>" : "<div class='failed'>failed</div>"));
+              });
           }
           else if(/http/.test(methods[0])){
             instructions="Upload <a href='<%=http_dcv_file_csr_path(@ssl_slug, @csr.id)%>'>this file</a> to this location: <a href='"+http+"' target='_new'>"+http+"</a>";
             $(instruction).html(instructions);
+            $.ajax({url: '<%=verification_check_csr_path(@ssl_slug, @csr.id)%>?protocol=http&dcv='+
+                $(dcv_select).parents('tr').attr('id')+'&new_name='+$(dcv_select).attr('alt')+'&ref='+$(dcv_select).parents('tbody').attr('data-ref')}).done(
+              function(data){
+                if (data) {
+                  // Adding Hidden Tag for saving satisfied option.
+                  var hiddenElement = $('<input></input>');
+                  hiddenElement.attr('type', 'hidden');
+                  hiddenElement.attr('name', 'domains[' + $(dcv_select).attr("alt") + '][dcv]');
+                  hiddenElement.attr('value', $(dcv_select).val());
+                  $(dcv_select).parent().append(hiddenElement);
+
+                  // Changing Status to "Satisfied".
+                  $('td.status[class~="'+$(dcv_select).attr("alt")+'"]').html('satisfied');
+
+                  // Disable the option.
+                  $(dcv_select).attr('disabled', true);
+
+                  // Hidden the "Edit" button
+                  $(dcv_select).parents('tr').find('.btn_edit_domain').attr('disabled', true);
+
+                  // Hidden the "Checkbox" button
+                  $(dcv_select).parents('tr').find('.check_box').attr('disabled', true);
+                }
+                $('td.pretest[class~="'+$(dcv_select).attr("alt")+'"]').html((data ? "<div class='passed'>passed</div>" : "<div class='failed'>failed</div>"));
+              });
           }
           else if(/cname/.test(methods[0])){
             $(instruction).html("Create CNAME: "+cname);
+            $.ajax({url: '<%=verification_check_csr_path(@ssl_slug, @csr.id)%>?protocol=cname&dcv='+
+                $(dcv_select).parents('tr').attr('id')+'&new_name='+$(dcv_select).attr('alt')+'&ref='+$(dcv_select).parents('tbody').attr('data-ref')}).done(
+              function(data){
+                if (data) {
+                  // Adding Hidden Tag for saving satisfied option.
+                  var hiddenElement = $('<input></input>');
+                  hiddenElement.attr('type', 'hidden');
+                  hiddenElement.attr('name', 'domains[' + $(dcv_select).attr("alt") + '][dcv]');
+                  hiddenElement.attr('value', $(dcv_select).val());
+                  $(dcv_select).parent().append(hiddenElement);
+
+                  // Changing Status to "Satisfied".
+                  $('td.status[class~="'+$(dcv_select).attr("alt")+'"]').html('satisfied');
+
+                  // Disable the option.
+                  $(dcv_select).attr('disabled', true);
+
+                  // Hidden the "Edit" button
+                  $(dcv_select).parents('tr').find('.btn_edit_domain').attr('disabled', true);
+
+                  // Hidden the "Checkbox" button
+                  $(dcv_select).parents('tr').find('.check_box').attr('disabled', true);
+                }
+                $('td.pretest[class~="'+$(dcv_select).attr("alt")+'"]').html((data ? "<div class='passed'>passed</div>" : "<div class='failed'>failed</div>"));
+              });
           }
           $(instruction).css({ background: "yellow" });
         });

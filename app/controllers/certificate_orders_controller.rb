@@ -649,53 +649,74 @@ class CertificateOrdersController < ApplicationController
   private
 
   def admin_validate
+    cc = @certificate_order.certificate_content
+    ov = @certificate_order.locked_registrant
+
     if @certificate_order.certificate.is_smime_or_client?
-      cc = @certificate_order.certificate_content
       iv = @certificate_order.get_team_iv
-      ov = @certificate_order.locked_registrant
       ov_iv = @certificate_order.certificate.requires_locked_registrant?
 
       iv.validated! if (params[:validate_iv] && iv && !iv.validated?)
-      if params[:validate_ov] && ov && !ov.validated?
-        ov.validated!
-        unless ov.parent_id.nil?
-          parent = Contact.find(ov.parent_id)
-          parent.validated! if parent && !parent.validated?
-        end
-      end
-
+      admin_validate_ov(ov)
       if (ov_iv && @certificate_order.iv_ov_validated?) || (!ov_iv && @certificate_order.iv_validated?)
         cc.validate! unless cc.validated?
       end
-      
-      redirect_to certificate_order_path(@ssl_slug, @certificate_order.ref), 
-        notice: "Certificate order was successfully validated."
+    else  
+      admin_validate_ov(ov)
+      if ov.validated? && @certificate_order.all_domains_validated?
+        @certificate_order.apply_for_certificate(
+          mapping: @certificate_order.certificate_content.ca,
+          current_user: current_user
+        )
+      end
+    end
+    redirect_to certificate_order_path(@ssl_slug, @certificate_order.ref), 
+      notice: "Certificate order was successfully validated."
+  end
+
+  def admin_validate_ov(ov)
+    if params[:validate_ov] && ov && !ov.validated?
+      ov.validated!
+      unless ov.parent_id.nil?
+        parent = Contact.find(ov.parent_id)
+        parent.validated! if parent && !parent.validated?
+      end
     end
   end
 
   def admin_unvalidate
-    if @certificate_order.certificate.is_smime_or_client?
-      cc = @certificate_order.certificate_content
+    cc = @certificate_order.certificate_content
+    ov = @certificate_order.locked_registrant
+    vt = params[:unvalidate_type]
+
+    if @certificate_order.certificate.is_smime_or_client?      
       iv = @certificate_order.get_team_iv
-      ov = @certificate_order.locked_registrant
-      vt = params[:unvalidate_type]
-
       iv.send("#{vt}!") if params[:unvalidate_iv] && vt && iv
-      
-      if params[:unvalidate_ov] && vt && ov
-        ov.send("#{vt}!")
-        unless ov.parent_id.nil?
-          parent = Contact.find(ov.parent_id)
-          parent.send("#{vt}!") if parent
-        end
-      end
-
+      admin_unvalidate_ov(ov)
       unless @certificate_order.iv_ov_validated?
         cc.pend_validation! unless cc.pending_validation?
       end
-      
-      redirect_to certificate_order_path(@ssl_slug, @certificate_order.ref),
-        notice: "Certificate order was successfully updated."
+    else
+      admin_unvalidate_ov(ov)
+      if !ov.validated?
+        @certificate_order.apply_for_certificate(
+          mapping: @certificate_order.certificate_content.ca,
+          current_user: current_user
+        )
+      end
+    end
+    redirect_to certificate_order_path(@ssl_slug, @certificate_order.ref),
+      notice: "Certificate order was successfully updated."
+  end
+
+  def admin_unvalidate_ov(ov)
+    vt = params[:unvalidate_type]
+    if params[:unvalidate_ov] && vt && ov
+      ov.send("#{vt}!")
+      unless ov.parent_id.nil?
+        parent = Contact.find(ov.parent_id)
+        parent.send("#{vt}!") if parent
+      end
     end
   end
 

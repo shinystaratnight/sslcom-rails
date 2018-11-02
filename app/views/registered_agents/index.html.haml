@@ -68,7 +68,7 @@
                 =link_to ra.managed_certificates.size, managed_certificates_registered_agent_path(@ssl_slug, ra.ref)
               -else
                 ='0'
-            %td=ra.approved_at.strftime("%b %d, %Y")
+            %td=ra.approved_at ? ra.approved_at.strftime("%b %d, %Y") : 'n/a'
             -#%td
               =check_box_tag "remove_agents[]", ra.id, false, class: 'chk-remove', 'data-agent-name' => ra.friendly_name
             -#%td

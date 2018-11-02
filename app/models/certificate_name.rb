@@ -104,20 +104,21 @@ class CertificateName < ActiveRecord::Base
   end
 
   def cname_destination
-    "#{csr.dns_sha2_hash}.comodoca.com"
+    csr.cname_destination
   end
 
   def non_wildcard_name(check_type=false)
     check_type && self.certificate_content.certificate_order.certificate.is_single? ?
-        name.gsub(/\A\*\./, "").downcase.gsub("www.", "") : name.gsub(/\A\*\./, "").downcase
+        CertificateContent.non_wildcard_name(name,true) : CertificateContent.non_wildcard_name(name,false)
   end
 
+  # requires csr not be blank
   def dcv_contents
-    "#{csr.sha2_hash}\ncomodoca.com#{"\n#{csr.unique_value}" unless csr.unique_value.blank?}"
+    csr.dcv_contents
   end
 
   def csr
-    @csr || certificate_content.csr
+    @csr || certificate_content.try(:csr)
   end
 
   def new_name(new_name)
@@ -129,76 +130,42 @@ class CertificateName < ActiveRecord::Base
     @new_name ? (@new_name == ori_name ? ori_name : @new_name) : ori_name
   end
 
-  def dcv_verified?(options={})
-    # if blank then try both
-    if options[:http_or_s].blank?
-      http_or_s = "http"
-      retries=2
-    else
-      http_or_s = options[:http_or_s] # either 'http' or 'https'
-      retries=1
-    end
-    begin
-      timeout(Surl::TIMEOUT_DURATION) do
-        if retries<2
-          http_or_s = "https" if options[:http_or_s].blank?
-          uri = URI.parse(dcv_url(true))
-          http = Net::HTTP.new(uri.host, uri.port)
-          http.use_ssl = true
-          http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-          request = Net::HTTP::Get.new(uri.request_uri)
-          r = http.request(request).body
-        else
-          r=open(dcv_url).read
-        end
-        return http_or_s if !!(r =~ Regexp.new("^#{csr.sha2_hash}") && r =~ Regexp.new("^comodoca.com") &&
-            (csr.unique_value.blank? ? true : r =~ Regexp.new("^#{csr.unique_value}")))
-      end
-    rescue Timeout::Error, OpenURI::HTTPError, RuntimeError
-      retries-=1
-      if retries==0
-        return false
-      else
-        retry
-      end
-    rescue Exception=>e
-      return false
-    end
+  def ca_tag
+    csr.ca_tag
   end
 
   def dcv_verify(protocol)
     prepend=""
+    CertificateName.dcv_verify(protocol: protocol,
+                               https_dcv_url: dcv_url(true,prepend, true),
+                               http_dcv_url: dcv_url(false,prepend, true),
+                               cname_origin: cname_origin(true), 
+                               cname_destination: cname_destination,
+                               csr: csr,
+                               ca_tag: ca_tag)
+  end
+
+  def self.dcv_verify(options)
     begin
       Timeout.timeout(Surl::TIMEOUT_DURATION) do
-        if protocol=="https"
-          uri = URI.parse(dcv_url(true,prepend, true))
+        if options[:protocol]=~/https/
+          uri = URI.parse(options[:https_dcv_url])
           http = Net::HTTP.new(uri.host, uri.port)
           http.use_ssl = true
           http.verify_mode = OpenSSL::SSL::VERIFY_NONE
           request = Net::HTTP::Get.new(uri.request_uri)
           r = http.request(request).body
-        elsif protocol=="cname"
+        elsif options[:protocol]=~/cname/
           txt = Resolv::DNS.open do |dns|
-            records = dns.getresources(cname_origin(true), Resolv::DNS::Resource::IN::CNAME)
+            records = dns.getresources(options[:cname_origin], Resolv::DNS::Resource::IN::CNAME)
           end
-          return (txt.size > 0) ? (cname_destination.downcase==txt.last.name.to_s.downcase) : false
+          return (txt.size > 0) ? (options[:cname_destination].downcase==txt.last.name.to_s.downcase) : false
         else
-          r=open(dcv_url(false,prepend, true), redirect: false).read
+          r=open(options[:http_dcv_url], redirect: false).read
         end
-        return "true" if !!(r =~ Regexp.new("^#{csr.sha2_hash}") && r =~ Regexp.new("^comodoca.com") &&
-            (csr.unique_value.blank? ? true : r =~ Regexp.new("^#{csr.unique_value}")))
-      end
-    rescue Exception=>e
-      return "false"
-    end
-  end
-
-  def fetch_public_site
-    begin
-      timeout(Surl::TIMEOUT_DURATION) do
-        r=open("https://"+non_wildcard_name).read unless is_intranet?
-        !!(r =~ Regexp.new("^#{csr.sha2_hash}") && r =~ Regexp.new("^comodoca.com") &&
-            (csr.unique_value.blank? ? true : r =~ Regexp.new("^#{csr.unique_value}")))
+        return true if !!(r =~ Regexp.new("^#{options[:csr].sha2_hash}") &&
+            r =~ Regexp.new("^#{options[:ca_tag]}") &&
+            (options[:csr].unique_value.blank? ? true : r =~ Regexp.new("^#{options[:csr].unique_value}")))
       end
     rescue Exception=>e
       return false

@@ -43,7 +43,6 @@ class CsrsController < ApplicationController
       if cn
         cn.new_name params['new_name']
         http_or_s = cn.dcv_verify(params[:protocol])
-        # http_or_s = true if params[:protocol] == 'cname'
 
         if http_or_s.to_s == 'true'
           if is_ucc
@@ -76,7 +75,6 @@ class CsrsController < ApplicationController
         elsif http_or_s.nil?
           http_or_s = false
         end
-        # http_or_s = false if http_or_s.nil?
       end
     end
 

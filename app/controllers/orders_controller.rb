@@ -639,7 +639,7 @@ class OrdersController < ApplicationController
   private
   
   def single_cert_no_limit_order?
-    ssl_account && ssl_account.no_limit && request.referer.include?('certificates')
+    ssl_account && ssl_account.no_limit && request.referer && request.referer.include?('certificates')
   end
 
   def add_cents_to_funded_account(cents)
