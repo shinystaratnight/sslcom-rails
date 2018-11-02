@@ -68,7 +68,7 @@
             %td=link_to(t.get_account_owner.try(:login).shorten(15,false),admin_show_user_path(t.get_account_owner), title: t.get_account_owner.try(:login)) if t.get_account_owner.try(:login)
           %td
             -if system_admins
-              %a{style:"cursor: pointer;", onclick: "adjust_funds_ssl_account('#{t.ssl_slug}','#{t.get_team_name}')"} $#{t.funded_account.try :amount}
+              %a{style:"cursor: pointer;", onclick: "adjust_funds_ssl_account('#{t.to_slug}','#{t.get_team_name}')"} $#{t.funded_account.try :amount}
             -elsif !current_user.role_symbols(t).include?((Role::INDIVIDUAL_CERTIFICATE).to_sym)
               $#{t.funded_account.try :amount}
           %td#team-detail-links
@@ -104,7 +104,7 @@
                     class: 'team-sel-no-limit'
                   - if params[:page]
                     =hidden_field_tag :page, params[:page]
-              
+              %br/
               #team-epki-switch
                 =form_tag ssl_account_path(ssl_slug: t.to_slug), id: 'frm-team-epki-switch',  method: :put do
                   =label_tag 'EPKI:'
