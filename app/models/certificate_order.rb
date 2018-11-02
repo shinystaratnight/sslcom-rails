@@ -459,6 +459,8 @@ class CertificateOrder < ActiveRecord::Base
   # end
 
   before_create do |co|
+    default_folder = Folder.find_by(default: true, ssl_account_id: ssl_account_id)
+    co.folder_id = default_folder.id if default_folder
     co.ca = CA_CERTIFICATES[:SSLcomSHA2]
     co.is_expired=false
     co.ref='co-'+SecureRandom.hex(1)+Time.now.to_i.to_s(32)
