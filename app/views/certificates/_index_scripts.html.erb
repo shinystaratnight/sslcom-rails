@@ -410,200 +410,202 @@ jQuery(function($) {
   });
   
   <% unless @certificate.is_code_signing? || Rails.env.test? %>
-    $("textarea[name*=signing_request]").bind("change keyup paste", function() {
+    $("textarea[name*=signing_request]").bind("change paste", function() {
       if ($(this).val() == "") {
         $(".flash_message").remove();
         return;
       }
 
       // parsing pasted CSR and getting Domains from this.
-      $.ajax({
-        url: "<%=parse_csr_certificate_orders_path%>",
-        data: {csr: $(this).val(), certificate: "<%=@certificate.product%>"},
-        type: "POST",
-        success: function(data, status) {
-          $(".flash_message").remove();
+      if ( $(this).val().includes('-----END CERTIFICATE REQUEST-----') ) {
+        $.ajax({
+          url: "<%=parse_csr_certificate_orders_path%>",
+          data: {csr: $(this).val(), certificate: "<%=@certificate.product%>"},
+          type: "POST",
+          success: function(data, status) {
+            $(".flash_message").remove();
 
-          var ajax_errors="";
-          if ((typeof data.certificate_content.csr.errors.base != 'undefined')
-            && (data.certificate_content.csr.errors.base.length>0)) {
-            $.each(data.certificate_content.csr.errors.base, function(key, value) {
-              ajax_errors+="<li>"+value+"</li>";
-            });
-          }
-
-          if ((typeof data.certificate_content.errors.base != 'undefined') &&
-            (data.certificate_content.errors.base.length>0)) {
-            $.each(data.certificate_content.errors.base, function(key, value) {
-              ajax_errors+="<li>"+value+"</li>";
-            });
-          }
-
-          if ((typeof data.certificate_content.errors.signing_request != 'undefined')
-            && (data.certificate_content.errors.signing_request.length>0)) {
-            $.each(data.certificate_content.errors.signing_request, function(key, value) {
-              ajax_errors+="<li>signing request "+value+"</li>";
-            });
-          }
-
-          if (ajax_errors!="") {
-            $(".cert_reqs").after("<div class='flash_message error'><span><ul class='ajax_info'>" + ajax_errors + "</ul></span></div>");
-          } else {
-            if ((typeof data.certificate_content.csr.common_name != 'undefined')) {
-              <%if @certificate.product != "free" && @certificate_order.external_order_number.blank?%>
-              var days_left = data.certificate_content.csr.days_left > 0 ? "<br><hr>"+data.certificate_content.csr.days_left+" free SSL.com Carryover days will be added from expiring SSL/TLS certificate" : "";
-              <%else%>
-              var days_left = "";
-              <%end%>
-              $(".cert_reqs").after("<div class='flash_message notice'><span class='ajax_info'>common name field in csr is: "+data.certificate_content.csr.common_name+days_left+"</span></div>");
+            var ajax_errors="";
+            if ((typeof data.certificate_content.csr.errors.base != 'undefined')
+              && (data.certificate_content.csr.errors.base.length>0)) {
+              $.each(data.certificate_content.csr.errors.base, function(key, value) {
+                ajax_errors+="<li>"+value+"</li>";
+              });
             }
 
-            <%if @certificate.is_ucc?-%>
-              if((typeof data.certificate_content.csr.subject_alternative_names != 'undefined')){
-                all_domains = $.unique($.merge(data.certificate_content.csr.subject_alternative_names, [data.certificate_content.csr.common_name]));
-                /*additional_domains = $("textarea[name*=additional_domains]").text() + " " + all_domains;
-                 $("textarea[name*=additional_domains]").val($.uniqueStrings(additional_domains.split(/[\s,\n]+/)).join(" "));
-                 $.adjustDomainPricing($("textarea[name*=additional_domains]")[0]);*/
+            if ((typeof data.certificate_content.errors.base != 'undefined') &&
+              (data.certificate_content.errors.base.length>0)) {
+              $.each(data.certificate_content.errors.base, function(key, value) {
+                ajax_errors+="<li>"+value+"</li>";
+              });
+            }
 
-                exist_domains = $('.managed_domains').val();
-                if (exist_domains) {
-                  exist_domains = exist_domains.join(' ').replace(/validated-/g, '').replace(/manual-/g, '').replace(/csr-/g, '').split(' ');
-                  all_domains = $.unique($.merge(all_domains, exist_domains));
-                }
+            if ((typeof data.certificate_content.errors.signing_request != 'undefined')
+              && (data.certificate_content.errors.signing_request.length>0)) {
+              $.each(data.certificate_content.errors.signing_request, function(key, value) {
+                ajax_errors+="<li>signing request "+value+"</li>";
+              });
+            }
 
-                $.adjustDomainPricing(all_domains.join(' '));
+            if (ajax_errors!="") {
+              $(".cert_reqs").after("<div class='flash_message error'><span><ul class='ajax_info'>" + ajax_errors + "</ul></span></div>");
+            } else {
+              if ((typeof data.certificate_content.csr.common_name != 'undefined')) {
+                <%if @certificate.product != "free" && @certificate_order.external_order_number.blank?%>
+                var days_left = data.certificate_content.csr.days_left > 0 ? "<br><hr>"+data.certificate_content.csr.days_left+" free SSL.com Carryover days will be added from expiring SSL/TLS certificate" : "";
+                <%else%>
+                var days_left = "";
+                <%end%>
+                $(".cert_reqs").after("<div class='flash_message notice'><span class='ajax_info'>common name field in csr is: "+data.certificate_content.csr.common_name+days_left+"</span></div>");
               }
-            <%else-%>
-              common_name = data.certificate_content.csr.common_name;
+
+              <%if @certificate.is_ucc?-%>
+                if((typeof data.certificate_content.csr.subject_alternative_names != 'undefined')){
+                  all_domains = $.unique($.merge(data.certificate_content.csr.subject_alternative_names, [data.certificate_content.csr.common_name]));
+                  /*additional_domains = $("textarea[name*=additional_domains]").text() + " " + all_domains;
+                  $("textarea[name*=additional_domains]").val($.uniqueStrings(additional_domains.split(/[\s,\n]+/)).join(" "));
+                  $.adjustDomainPricing($("textarea[name*=additional_domains]")[0]);*/
+
+                  exist_domains = $('.managed_domains').val();
+                  if (exist_domains) {
+                    exist_domains = exist_domains.join(' ').replace(/validated-/g, '').replace(/manual-/g, '').replace(/csr-/g, '').split(' ');
+                    all_domains = $.unique($.merge(all_domains, exist_domains));
+                  }
+
+                  $.adjustDomainPricing(all_domains.join(' '));
+                }
+              <%else-%>
+                common_name = data.certificate_content.csr.common_name;
+                sans = data.certificate_content.csr.subject_alternative_names;
+                all_domains = $.merge([common_name], sans);
+                $.unique(all_domains);
+
+                names = all_domains.join(' ');
+              <%end-%>
+
+              // setting 'none' for Managed CSR
+              $('.managed_csr').val('none');
+
+              /*// remove domains what belongs to previous pasted CSR.
+              $('.managed_domains').empty();*/
+              /*$('.managed_domains option').each(function() {
+              var value = $(this).val();
+
+              if (value.indexOf('domain-') == -1) {
+              $(this).remove();
+              }
+              });*/
+
+              // show checkbox for adding this CSR to Managed CSR.
+              $('.add_to_manager_block').show();
+
+              /*// adding domains what belongs to current pasted CSR.
+              select_obj = $('.managed_domains');*/
+              /*common_name = data.certificate_content.csr.common_name;
               sans = data.certificate_content.csr.subject_alternative_names;
               all_domains = $.merge([common_name], sans);
-              $.unique(all_domains);
+              $.unique(all_domains);*/
 
-              names = all_domains.join(' ');
-            <%end-%>
+              all_domains = names.split(' ');
 
-            // setting 'none' for Managed CSR
-            $('.managed_csr').val('none');
+              co_type = '';
+              <% if @certificate.is_basic?-%>
+                co_type = 'basic';
+              <% elsif @certificate.is_high_assurance?-%>
+                co_type = 'highAssurance';
+              <% elsif @certificate.is_ev?-%>
+                co_type = 'evSSL';
+              <% elsif @certificate.is_wildcard?-%>
+                co_type = 'wildcard';
+              <% end-%>
 
-            /*// remove domains what belongs to previous pasted CSR.
-             $('.managed_domains').empty();*/
-            /*$('.managed_domains option').each(function() {
-             var value = $(this).val();
-
-             if (value.indexOf('domain-') == -1) {
-             $(this).remove();
-             }
-             });*/
-
-            // show checkbox for adding this CSR to Managed CSR.
-            $('.add_to_manager_block').show();
-
-            /*// adding domains what belongs to current pasted CSR.
-             select_obj = $('.managed_domains');*/
-            /*common_name = data.certificate_content.csr.common_name;
-             sans = data.certificate_content.csr.subject_alternative_names;
-             all_domains = $.merge([common_name], sans);
-             $.unique(all_domains);*/
-
-            all_domains = names.split(' ');
-
-            co_type = '';
-            <% if @certificate.is_basic?-%>
-              co_type = 'basic';
-            <% elsif @certificate.is_high_assurance?-%>
-              co_type = 'highAssurance';
-            <% elsif @certificate.is_ev?-%>
-              co_type = 'evSSL';
-            <% elsif @certificate.is_wildcard?-%>
-              co_type = 'wildcard';
-            <% end-%>
-
-            if (co_type != '') {
-              all_domains = $.filteringDomainsByCOType(all_domains, co_type);
-            }
-
-            $.ajax({
-              url: "<%= check_validation_csrs_path %>",
-              data: {
-                domains: all_domains,
-                public_key_sha1: data.certificate_content.csr.public_key_sha1
-              },
-              type: "POST",
-              success: function (obj) {
-                // remove domains what belongs to previous pasted CSR.
-                /*$('.managed_domains').empty();*/
-
-                // adding domains what belongs to current pasted CSR.
-                select_obj = $('.managed_domains');
-
-                Object.keys(obj).map(function(key) {
-                  var is_exist = false;
-                  var selected_value = $('.managed_domains').val();
-
-                  // checking duplication
-                  if ($.inArray(('validated-' + key), selected_value) != -1
-                    || $.inArray(('csr-' + key), selected_value) != -1
-                    || $.inArray(('manual-' + key), selected_value) != -1) {
-                    is_exist = true;
-                  }
-
-                  /*if (!is_exist && psl.isValid(key)) {*/
-                  if (!is_exist && $.checkDomain(key)) {
-                    var optElement = $('<option></option>');
-
-                    if (obj[key] == 'true') {
-                      optElement.attr('value', 'validated-' + key);
-                    } else {
-                      optElement.attr('value', 'csr-' + key);
-                    }
-                    optElement.attr('selected', true);
-                    optElement.append(key);
-
-                    select_obj.append(optElement);
-                  }
-                });
-
-                $('.clear_domains').show();
-
-                $('#managed_domains').select2({
-                  tags: true,
-                  /*tokenSeparators: [',', ' '],*/
-                  tokenizer: function(input, selection, callback) {
-                    if (input.term.indexOf(',') == -1 && input.term.indexOf(' ') == -1)
-                      return input;
-
-                    var parts = input.term.split(/,| /);
-                    $.each(parts, function(idx) {
-                      var part = parts[idx];
-                      part = part.trim();
-
-                      if (part != '') {
-                        callback({
-                          id: part,
-                          text: part
-                        });
-                      }
-                    });
-
-                    return '';
-                  },
-                  templateSelection: function(data, container) {
-                    var value = data.element.value;
-
-                    if (value.indexOf('csr-') == -1 && value.indexOf('validated-') == -1) {
-                      $(container).css("background-color", "#A4C000");
-                    } else if (value.indexOf('validated-') != -1) {
-                      $(container).css("background-color", "#ccffcc");
-                    }
-
-                    return data.text;
-                  }
-                });
+              if (co_type != '') {
+                all_domains = $.filteringDomainsByCOType(all_domains, co_type);
               }
-            });
+
+              $.ajax({
+                url: "<%= check_validation_csrs_path %>",
+                data: {
+                  domains: all_domains,
+                  public_key_sha1: data.certificate_content.csr.public_key_sha1
+                },
+                type: "POST",
+                success: function (obj) {
+                  // remove domains what belongs to previous pasted CSR.
+                  /*$('.managed_domains').empty();*/
+
+                  // adding domains what belongs to current pasted CSR.
+                  select_obj = $('.managed_domains');
+
+                  Object.keys(obj).map(function(key) {
+                    var is_exist = false;
+                    var selected_value = $('.managed_domains').val();
+
+                    // checking duplication
+                    if ($.inArray(('validated-' + key), selected_value) != -1
+                      || $.inArray(('csr-' + key), selected_value) != -1
+                      || $.inArray(('manual-' + key), selected_value) != -1) {
+                      is_exist = true;
+                    }
+
+                    /*if (!is_exist && psl.isValid(key)) {*/
+                    if (!is_exist && $.checkDomain(key)) {
+                      var optElement = $('<option></option>');
+
+                      if (obj[key] == 'true') {
+                        optElement.attr('value', 'validated-' + key);
+                      } else {
+                        optElement.attr('value', 'csr-' + key);
+                      }
+                      optElement.attr('selected', true);
+                      optElement.append(key);
+
+                      select_obj.append(optElement);
+                    }
+                  });
+
+                  $('.clear_domains').show();
+
+                  $('#managed_domains').select2({
+                    tags: true,
+                    /*tokenSeparators: [',', ' '],*/
+                    tokenizer: function(input, selection, callback) {
+                      if (input.term.indexOf(',') == -1 && input.term.indexOf(' ') == -1)
+                        return input;
+
+                      var parts = input.term.split(/,| /);
+                      $.each(parts, function(idx) {
+                        var part = parts[idx];
+                        part = part.trim();
+
+                        if (part != '') {
+                          callback({
+                            id: part,
+                            text: part
+                          });
+                        }
+                      });
+
+                      return '';
+                    },
+                    templateSelection: function(data, container) {
+                      var value = data.element.value;
+
+                      if (value.indexOf('csr-') == -1 && value.indexOf('validated-') == -1) {
+                        $(container).css("background-color", "#A4C000");
+                      } else if (value.indexOf('validated-') != -1) {
+                        $(container).css("background-color", "#ccffcc");
+                      }
+
+                      return data.text;
+                    }
+                  });
+                }
+              });
+            }
           }
-        }
-      });
+        });
+      }
     });
   <%end%>
   
