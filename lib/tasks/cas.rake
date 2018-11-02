@@ -710,14 +710,16 @@ namespace :cas do
       type: "EndEntityProfile"
     )
     live=([]).tap do |certificates|
-      if ENV['LIVE'].blank? or ENV['LIVE']=~/all/i or ENV['RESET']="true"
+      if ENV['RESET']=="true"
         CasCertificate.delete_all
-        certificates << Certificate.all.to_a if ENV['LIVE']=~/all/i
       end
       if ENV['LIVE']
-        ENV['LIVE'].split(",").each do |prod_root|
-          Certificate.where{product =~ "%#{prod_root}%"}.each{|cert|cert.cas_certificates.delete_all}
-          certificates << Certificate.where{product =~ "%#{prod_root}%"}.all.to_a
+        if ENV['LIVE'] == "all"
+          certificates << Certificate.all.to_a
+        else
+          ENV['LIVE'].split(",").each do |prod_root|
+            certificates << Certificate.where{product =~ "%#{prod_root}%"}.all.to_a
+          end
         end
       end
     end.flatten
@@ -763,6 +765,7 @@ namespace :cas do
       Ca.all.each {|ca|
         if ENV['SSL_ACCOUNT_IDS']
           ENV['SSL_ACCOUNT_IDS'].split(',').each do |ssl_account_id|
+            SslAccount.find(ssl_account_id.to_i).cas_certificates.delete_all
             cas_certificates.call(ca,cert,ssl_account_id.to_i)
           end
         else

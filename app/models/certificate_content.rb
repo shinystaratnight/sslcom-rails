@@ -120,7 +120,7 @@ class CertificateContent < ActiveRecord::Base
       options[:certificate_content] = self
       if !self.infringement.empty? # possible trademark problems
         OrderNotifier.potential_trademark(Settings.notify_address, certificate_order, self.infringement).deliver_now
-      elsif ca.blank?
+      else
         certificate_order.apply_for_certificate(options)
       end
       if options[:host]
