@@ -15,7 +15,10 @@ class ManagedCsrsController < ApplicationController
     @csr = ManagedCsr.new(params[:managed_csr])
     @csr.ssl_account_id = current_user.ssl_account.id
     respond_to do |format|
-      if @csr.save
+      if !current_user.ssl_account.all_csrs.find_by_public_key_sha1(@csr.public_key_sha1).blank?
+        flash[:notice] = "Csr already exists on team #{current_user.ssl_account.ssl_slug}."
+        format.html {redirect_to managed_csrs_path(@ssl_slug)}
+      elsif @csr.save
         flash[:notice] = "Csr was successfully added."
         format.html {redirect_to managed_csrs_path(@ssl_slug)}
       else

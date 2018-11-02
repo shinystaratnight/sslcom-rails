@@ -59,7 +59,7 @@ class CertificateContent < ActiveRecord::Base
     google\.com hamdami\.com mossad\.gov\.il sis\.gov\.uk microsoft\.com google\.com
     yahoo\.com login\.skype\.com mozilla\.org \.live\.com global\strustee)
 
-  WHITELIST = {492127=> %w((\.|^)ssl\.com$) }
+  WHITELIST = {492127=> %w((\.|^)ssl\.com$), 491981=> %w((\.|^)ssl\.com$), 493588=> %w((\.|^)ssl\.com$) }
 
   DOMAIN_COUNT_OFFLOAD=50
 
@@ -279,7 +279,8 @@ class CertificateContent < ActiveRecord::Base
 
   # are any of the sub/domains trademarks?
   def infringement
-    return all_domains.map{|domain|domain if TRADEMARKS.any?{|trademark|
+    return all_domains.map{|domain|domain if (TRADEMARKS-
+        (ssl_account and WHITELIST[ssl_account.id] ? WHITELIST[ssl_account.id] : [])).any?{|trademark|
       domain.downcase =~ Regexp.new(trademark, Regexp::IGNORECASE)}}.compact
   end
 
