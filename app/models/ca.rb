@@ -6,8 +6,12 @@ class Ca < ActiveRecord::Base
   serialize :ekus
 
   scope :ssl_account, ->(ssl_account){joins{cas_certificates}.where{cas_certificates.ssl_account_id==ssl_account.id}.uniq} #private PKI
+  scope :ssl_account_or_general, ->(ssl_account){
+    (ssl_account(ssl_account).empty? ? general : ssl_account(ssl_account))}
   scope :ssl_account_or_general_default, ->(ssl_account){
-    (ssl_account(ssl_account).empty? ? general : ssl_account(ssl_account)).default}
+    ssl_account_or_general(ssl_account).default}
+  scope :ssl_account_or_general_shadow, ->(ssl_account){
+    ssl_account_or_general(ssl_account).shadow}
   scope :general, ->{where{cas_certificates.ssl_account_id==nil}} # Cas not assigned to any team (Public PKI)
   scope :default, ->{where{cas_certificates.status==CasCertificate::STATUS[:default]}.uniq}
   scope :shadow,  ->{where{cas_certificates.status==CasCertificate::STATUS[:shadow]}.uniq}
