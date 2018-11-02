@@ -79,10 +79,16 @@ jQuery(function($) {
   };
   
   $('#previous_csr').change(function(){
-    if($(this).is(':checked'))
+    if($(this).is(':checked')) {
       $('#certificate_order_certificate_contents_attributes_0_signing_request').val($('#previous_csr_body').val());
-    else
+      $('.add_to_manager_block').hide();
+      $('.managed_csrs_block').hide();
+    } else {
       $('#certificate_order_certificate_contents_attributes_0_signing_request').val("");
+      $('.add_to_manager_block').show();
+      $('.managed_csrs_block').show();
+    }
+
     $('#certificate_order_certificate_contents_attributes_0_signing_request').change();
   });
   $('span.use_previous_csr').click(function(){
@@ -496,7 +502,11 @@ jQuery(function($) {
              });*/
 
             // show checkbox for adding this CSR to Managed CSR.
-            $('.add_to_manager_block').show();
+            if ($('#previous_csr').prop('checked')) {
+              $('.add_to_manager_block').hide();
+            } else {
+              $('.add_to_manager_block').show();
+            }
 
             /*// adding domains what belongs to current pasted CSR.
              select_obj = $('.managed_domains');*/
