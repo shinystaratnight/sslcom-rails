@@ -239,8 +239,8 @@ class CertificateOrdersController < ApplicationController
 
         @managed_csrs = (current_user.ssl_account.all_csrs)
                             .sort_by{|arr| arr.created_at}
-                            .uniq{|arr| [arr.common_name, arr.public_key_sha1]}
-                            .map{|arr| [arr.common_name+' '+ arr.public_key_sha1, arr.ref]}
+                            .uniq{|arr| [arr.public_key_sha1]}
+                            .map{|arr| [(arr.friendly_name || arr.common_name)+' '+ arr.public_key_sha1, arr.ref]}
                             .delete_if{|arr| arr.second == nil}
         @managed_csrs.insert(0, ['none', 'none'])
 
