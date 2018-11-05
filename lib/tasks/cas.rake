@@ -15,6 +15,9 @@ namespace :cas do
   #
   # set all products live for all ssl_accounts
   # LIVE=all EJBCA_ENV=development RAILS_ENV=development # for development
+  #
+  # set all products to staging for this team
+  # LIVE=all SSL_ACCOUNT_IDS=15 DEFAULT_ENV=staging EJBCA_ENV=production RAILS_ENV=production
   # TODO move `host` from Ca to CasCertificate
   task seed_ejbca_profiles: :environment do
     url,shadow_url=
@@ -741,6 +744,7 @@ namespace :cas do
       end
     end.flatten
     cas_certificates = ->(ca,cert,ssl_account_id=nil){
+      next if default and ca.host and !ca.host.include?(default)
       status = (ca.host and default and ca.host.include?(default)) ? :default : ca.ref=~/d\Z/ ? :shadow : :active
       unless ca.is_a?(EndEntityProfile) or ca.is_a?(RootCa) or ca.ekus.blank?
         if cert.is_evcs? and ca.end_entity==(Ca::END_ENTITY[:evcs])

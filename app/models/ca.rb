@@ -12,9 +12,9 @@ class Ca < ActiveRecord::Base
     ssl_account_or_general(ssl_account).default}
   scope :ssl_account_or_general_shadow, ->(ssl_account){
     ssl_account_or_general(ssl_account).shadow}
-  scope :general, ->{joins{cas_certificates}.where{cas_certificates.ssl_account_id==nil}} # Cas not assigned to any team (Public PKI)
-  scope :default, ->{joins{cas_certificates}.where{cas_certificates.status==CasCertificate::STATUS[:default]}.uniq}
-  scope :shadow,  ->{joins{cas_certificates}.where{cas_certificates.status==CasCertificate::STATUS[:shadow]}.uniq}
+  scope :general, ->{where{cas_certificates.ssl_account_id==nil}} # Cas not assigned to any team (Public PKI)
+  scope :default, ->{where{cas_certificates.status==CasCertificate::STATUS[:default]}.uniq}
+  scope :shadow,  ->{where{cas_certificates.status==CasCertificate::STATUS[:shadow]}.uniq}
 
   # Root CAs - determines the certificate chain used
   CERTLOCK_CA = "certlock"
