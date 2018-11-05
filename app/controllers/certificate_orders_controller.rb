@@ -398,13 +398,15 @@ class CertificateOrdersController < ApplicationController
   # PUT /certificate_orders/1
   # PUT /certificate_orders/1.xml
   def update_csr
-    managed_domains = params[:managed_domains]
-    additional_domains = ''
-    managed_domains.each do |domain|
-      additional_domains.concat(domain.gsub('csr-', '').gsub('validated-', '').gsub('manual-', '') + ' ')
-    end unless managed_domains.blank?
+    if Settings.csr_domains_ui
+      managed_domains = params[:managed_domains]
+      additional_domains = ''
+      managed_domains.each do |domain|
+        additional_domains.concat(domain.gsub('csr-', '').gsub('validated-', '').gsub('manual-', '') + ' ')
+      end unless managed_domains.blank?
 
-    params[:certificate_order][:certificate_contents_attributes]['0'.to_sym][:additional_domains] = additional_domains.strip
+      params[:certificate_order][:certificate_contents_attributes]['0'.to_sym][:additional_domains] = additional_domains.strip
+    end
 
     @certificate_content=CertificateContent.new(
       params[:certificate_order][:certificate_contents_attributes]['0'.to_sym]
