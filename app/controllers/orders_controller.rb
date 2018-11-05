@@ -506,9 +506,9 @@ class OrdersController < ApplicationController
         if @order.invoiced?
           @order.invoice_denied_order(current_user.ssl_account)
         else
-          save_billing_profile unless (params[:funding_source])
           @order.billing_profile = @profile
         end
+        save_billing_profile unless params[:funding_source]
         current_user.ssl_account.orders << @order
         record_order_visit(@order)
         @order.credit_affiliate(cookies)
