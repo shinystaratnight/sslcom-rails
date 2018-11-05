@@ -1,45 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="BookmarkManager">
-    <bookmark url="file://$PROJECT_DIR$/app/models/certificate_name.rb" line="51" mnemonic="4" />
-    <bookmark url="file://$PROJECT_DIR$/app/views/certificate_orders/show.html.haml" line="219" mnemonic="3" />
-    <bookmark url="file://$PROJECT_DIR$/app/models/certificate_content.rb" line="585" mnemonic="8" />
-    <bookmark url="file://$PROJECT_DIR$/app/models/sslcom_ca_api.rb" line="207" mnemonic="5" />
-    <bookmark url="file://$PROJECT_DIR$/app/models/sslcom_ca_api.rb" line="190" mnemonic="6" />
-    <bookmark url="file://$PROJECT_DIR$/app/models/sslcom_ca_api.rb" line="166" mnemonic="7" />
-    <bookmark url="file://$PROJECT_DIR$/app/models/certificate.rb" line="400" mnemonic="9" />
-    <bookmark url="file://$PROJECT_DIR$/app/controllers/certificate_orders_controller.rb" line="141" mnemonic="1" />
-    <bookmark url="file://$PROJECT_DIR$/app/controllers/certificate_orders_controller.rb" line="96" mnemonic="2" />
+    <bookmark url="file://$PROJECT_DIR$/app/models/sslcom_ca_api.rb" line="207" mnemonic="6" />
+    <bookmark url="file://$PROJECT_DIR$/app/models/certificate.rb" line="1024" mnemonic="7" />
+    <bookmark url="file://$PROJECT_DIR$/app/models/sandbox.rb" line="1" mnemonic="5" />
+    <bookmark url="file://$PROJECT_DIR$/app/models/api_certificate_request.rb" line="128" mnemonic="1" />
+    <bookmark url="file://$PROJECT_DIR$/app/controllers/application_controller.rb" line="224" mnemonic="2" />
+    <bookmark url="file://$PROJECT_DIR$/app/controllers/application_controller.rb" line="469" mnemonic="3" />
+    <bookmark url="file://$PROJECT_DIR$/app/models/certificate_order.rb" line="119" mnemonic="4" />
+    <bookmark url="file://$PROJECT_DIR$/app/models/sslcom_ca_api.rb" line="275" mnemonic="9" />
+    <bookmark url="file://$PROJECT_DIR$/app/models/sslcom_ca_api.rb" line="216" mnemonic="8" />
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b0bcf628-0f13-498f-b549-87a3b24d4ca9" name="Default" comment="fixes for views">
-      <change afterPath="$PROJECT_DIR$/app/controllers/api/v1/api_ssl_manager_requests_controller.rb" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/controllers/registered_agents_controller.rb" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/models/api_managed_certificate_create.rb" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/models/api_ssl_manager_create.rb" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/models/api_ssl_manager_request.rb" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/models/invalid_api_ssl_manager_request.rb" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/models/managed_certificate.rb" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/models/registered_agent.rb" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/views/api/v1/api_ssl_manager_requests/collection.rabl" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/views/api/v1/api_ssl_manager_requests/register.rabl" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/views/user_notifier/auto_register_ssl_manager_to_team.text.haml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/views/user_notifier/register_ssl_manager_to_team.text.haml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/db/migrate/20180820155859_create_registered_agents.rb" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/db/migrate/20180822094222_add_registered_agent_id_to_signed_certificate.rb" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/db/migrate/20180823073440_add_caa_passed_to_certificate_names.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.generators" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.generators" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.rakeTasks" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.rakeTasks" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/ssl_com_rails3.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/ssl_com_rails3.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/controllers/validations_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/validations_controller.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/models/caa_check.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/caa_check.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/models/signed_certificate.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/signed_certificate.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/models/ssl_account.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/ssl_account.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/models/user.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/user.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/models/user_notifier.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/user_notifier.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/client/certassure/settings.yml" beforeDir="false" afterPath="$PROJECT_DIR$/config/client/certassure/settings.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/routes.rb" beforeDir="false" afterPath="$PROJECT_DIR$/config/routes.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/db/schema.rb" beforeDir="false" afterPath="$PROJECT_DIR$/db/schema.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/models/sslcom_ca_api.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/sslcom_ca_api.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/tasks/cas.rake" beforeDir="false" afterPath="$PROJECT_DIR$/lib/tasks/cas.rake" afterDir="false" />
     </list>
     <ignored path="ssl_com_rails3.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -119,93 +98,91 @@
     <favorites_list name="ssl_com_rails3" />
   </component>
   <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="375">
-      <file leaf-file-name="certificate_orders_controller.rb" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/app/controllers/certificate_orders_controller.rb">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="600">
+      <file leaf-file-name="deploy.rb" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/config/deploy.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="187">
-              <caret line="101" column="5" selection-start-line="101" selection-start-column="5" selection-end-line="101" selection-end-column="5" />
+            <state relative-caret-position="6">
+              <caret line="25" column="30" lean-forward="true" selection-start-line="25" selection-start-column="30" selection-end-line="25" selection-end-column="30" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="application_controller.rb" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/controllers/application_controller.rb">
+      <file leaf-file-name="sslcom_ca_request.rb" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/models/sslcom_ca_request.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="4505">
-              <caret line="265" column="6" selection-start-line="265" selection-start-column="6" selection-end-line="265" selection-end-column="6" />
+            <state relative-caret-position="204">
+              <caret line="12" column="35" lean-forward="true" selection-start-line="12" selection-start-column="35" selection-end-line="12" selection-end-column="35" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="certificate_orders_helper.rb" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/helpers/certificate_orders_helper.rb">
+      <file leaf-file-name="cas.rake" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/lib/tasks/cas.rake">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1360">
-              <caret line="80" column="37" selection-start-line="80" selection-start-column="37" selection-end-line="80" selection-end-column="37" />
+            <state relative-caret-position="255">
+              <caret line="15" column="45" selection-start-line="15" selection-start-column="45" selection-end-line="15" selection-end-column="45" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="certificate_order.rb" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/models/certificate_order.rb">
+      <file leaf-file-name="signed_certificate.rb" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/models/signed_certificate.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="20366">
-              <caret line="1198" selection-start-line="1198" selection-end-line="1198" />
+            <state relative-caret-position="156">
+              <caret line="410" column="33" selection-start-line="410" selection-start-column="33" selection-end-line="410" selection-end-column="33" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="_subject_column.html.haml" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/views/certificate_orders/_subject_column.html.haml">
+      <file leaf-file-name="sslcom_ca_api.rb" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/models/sslcom_ca_api.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="221">
-              <caret line="13" column="40" selection-start-line="13" selection-start-column="40" selection-end-line="13" selection-end-column="40" />
+            <state relative-caret-position="-867" />
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ca_api_request.rb" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/models/ca_api_request.rb">
+          <provider selected="true" editor-type-id="text-editor">
+            <state>
+              <caret column="6" selection-start-column="6" selection-end-column="6" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="_detailed_info.html.haml" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/views/certificate_orders/_detailed_info.html.haml">
+      <file leaf-file-name="_standard_menu.html.haml" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/views/layouts/_standard_menu.html.haml">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="527">
-              <caret line="31" column="39" selection-start-line="31" selection-start-column="39" selection-end-line="31" selection-end-column="39" />
+            <state relative-caret-position="73">
+              <caret line="18" column="43" selection-start-line="18" selection-start-column="43" selection-end-line="18" selection-end-column="43" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="_small_admin_functions.html.haml" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/views/shared/_small_admin_functions.html.haml">
+      <file leaf-file-name="ssl_account.rb" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/models/ssl_account.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="357">
-              <caret line="21" column="59" selection-start-line="21" selection-start-column="59" selection-end-line="21" selection-end-column="59" />
+            <state relative-caret-position="17">
+              <caret line="327" column="6" selection-start-line="327" selection-start-column="6" selection-end-line="327" selection-end-column="6" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="application_helper.rb" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/helpers/application_helper.rb">
+      <file leaf-file-name="ca.rb" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/models/ca.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="9180">
-              <caret line="540" column="6" selection-start-line="540" selection-start-column="6" selection-end-line="540" selection-end-column="6" />
+            <state relative-caret-position="85">
+              <caret line="5" column="17" lean-forward="true" selection-start-line="5" selection-start-column="17" selection-end-line="5" selection-end-column="17" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="_menu.html.haml" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/views/certificate_orders/_menu.html.haml">
+      <file leaf-file-name="settings.yml" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/config/settings.yml">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="221">
-              <caret line="13" column="21" selection-start-line="13" selection-start-column="21" selection-end-line="13" selection-end-column="21" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="_co.html.haml" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/views/certificate_orders/_co.html.haml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="187">
-              <caret line="11" column="11" selection-start-line="11" selection-start-column="11" selection-end-line="11" selection-end-column="11" />
+            <state relative-caret-position="272">
+              <caret line="16" column="24" lean-forward="true" selection-start-line="16" selection-start-column="24" selection-end-line="16" selection-end-column="24" />
             </state>
           </provider>
         </entry>
@@ -221,48 +198,38 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>def is_evcs?</find>
-      <find>generate cer</find>
-      <find>admin_submit_csr?</find>
-      <find>def validation_type</find>
-      <find>def is_client</find>
-      <find>Perform Validation</find>
-      <find>Create Contacts For</find>
-      <find>Please provide point of contacts</find>
-      <find>is_client?</find>
-      <find>Create New Contact</find>
-      <find>Create Contact</find>
-      <find>@unpaginated</find>
-      <find>def new</find>
-      <find>REFUN</find>
-      <find>REFUNDED</find>
-      <find>invoice</find>
-      <find>is_unused_credit?</find>
-      <find>def is_unused?</find>
-      <find>def show_cert</find>
-      <find>certificate details</find>
-      <find>billing invoice</find>
-      <find>partial.*?menu</find>
-      <find>small_admin</find>
-      <find>unscoped</find>
-      <find>submit csr</find>
-      <find>view certificate</find>
-      <find>not_found</find>
-      <find>def show</find>
-      <find>is_unused</find>
-      <find>workflow_state</find>
+      <find>def dcv_all</find>
+      <find>dcv_email_send</find>
+      <find>admin@</find>
+      <find>sandbox</find>
+      <find>add_ca`</find>
+      <find>Regexp</find>
+      <find>.ca</find>
+      <find>sslcom_ap</find>
+      <find>uniq(</find>
+      <find>mapping</find>
+      <find>options[:mappin</find>
+      <find>self.call_</find>
+      <find>442</find>
+      <find>GENERAL_DEFAULT_CACHE</find>
+      <find>show_domains_manager?</find>
+      <find>shadow</find>
+      <find>#</find>
+      <find>&amp;&amp;</find>
+      <find>include?</find>
+      <find>url</find>
+      <find>ENV[&quot;SHADOW&quot;]</find>
+      <find>0014</find>
+      <find>0017</find>
+      <find>next</find>
+      <find>joins</find>
+      <find>delete_all</find>
+      <find>Domains</find>
+      <find>reset</find>
+      <find>uri.host</find>
+      <find>call_ca</find>
     </findStrings>
     <replaceStrings>
-      <replace>/</replace>
-      <replace>via: [:options, :</replace>
-      <replace>api_source</replace>
-      <replace>api_log_entry</replace>
-      <replace>.include?</replace>
-      <replace>options[:cc].</replace>
-      <replace>ref: &quot;2</replace>
-      <replace>end_entity_profile</replace>
-      <replace>ref: &quot;3</replace>
-      <replace>EV_SSL_PERIODS</replace>
       <replace>SignedCertificate::OID</replace>
       <replace>\A</replace>
       <replace>CertificateType</replace>
@@ -274,10 +241,30 @@
       <replace>*= require</replace>
       <replace>ssl_db</replace>
       <replace>@team_tags.try(&quot;any?&quot;.to_sym)</replace>
+      <replace>status</replace>
+      <replace>cc</replace>
+      <replace>cn</replace>
+      <replace>current_user.certificate_order_by_ref</replace>
+      <replace>order.cached_certificate_orders</replace>
+      <replace>ssl_account.cached_certificate_orders</replace>
+      <replace>ssl_account.cached_certificate_orders_pending_count</replace>
+      <replace>ssl_account.cached_certificate_orders_pending</replace>
+      <replace>cached_certificate_orders_incomplete_count</replace>
+      <replace>.cached_certificate_orders_incomplete</replace>
+      <replace>cached_certificate_orders_credits_count</replace>
+      <replace>cached_certificate_orders_credits</replace>
+      <replace>cached_orders</replace>
+      <replace>ssl_account</replace>
+      <replace>cached_product_variant_items</replace>
+      <replace>ssl_account.cached_users</replace>
+      <replace>certificate</replace>
+      <replace />
+      <replace>443</replace>
     </replaceStrings>
     <dirStrings>
       <dir>C:\Users\leo\RubymineProjects\sslcom-rails\db</dir>
       <dir>C:\Users\leo\RubymineProjects\sslcom-rails\db\migrate</dir>
+      <dir>C:\Users\leo\RubymineProjects\sslcom-rails\app\views\folders</dir>
     </dirStrings>
   </component>
   <component name="FindManager">
@@ -293,64 +280,64 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="staging" />
+        <entry key="$PROJECT_DIR$" value="sandbox3_ssl_com" />
       </map>
     </option>
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/app/models/order.rb" />
-        <option value="$PROJECT_DIR$/app/views/validations/_index_scripts.html.erb" />
-        <option value="$PROJECT_DIR$/config/database.yml" />
-        <option value="$PROJECT_DIR$/app/models/user_session.rb" />
-        <option value="$PROJECT_DIR$/config/initializers/recaptcha.rb" />
-        <option value="$PROJECT_DIR$/app/models/ca.rb" />
-        <option value="$PROJECT_DIR$/db/migrate/20180511172931_add_certificate_order_find_indexes.rb" />
-        <option value="$PROJECT_DIR$/app/views/layouts/_standard_menu.html.haml" />
-        <option value="$PROJECT_DIR$/app/views/users/_standard.html.haml" />
-        <option value="$PROJECT_DIR$/app/views/users/show.html.haml" />
-        <option value="$PROJECT_DIR$/app/views/users/_reseller.html.haml" />
-        <option value="$PROJECT_DIR$/app/views/ssl_accounts/_settings_form.html.haml" />
-        <option value="$PROJECT_DIR$/app/views/ssl_accounts/_sec_settings.html.haml" />
-        <option value="$PROJECT_DIR$/app/views/api_credentials/index.html.haml" />
-        <option value="$PROJECT_DIR$/app/views/tags/_popular_tags.html.haml" />
-        <option value="$PROJECT_DIR$/app/views/certificate_orders/show.html.haml" />
-        <option value="$PROJECT_DIR$/app/controllers/users_controller.rb" />
-        <option value="$PROJECT_DIR$/app/views/funded_accounts/success.html.haml" />
-        <option value="$PROJECT_DIR$/config/local_env.yml" />
-        <option value="$PROJECT_DIR$/app/helpers/application_helper.rb" />
-        <option value="$PROJECT_DIR$/app/models/user.rb" />
-        <option value="$PROJECT_DIR$/app/controllers/application_controller.rb" />
-        <option value="$PROJECT_DIR$/app/views/certificate_orders/index.html.haml" />
-        <option value="$PROJECT_DIR$/app/views/tags/_form.html.haml" />
-        <option value="$PROJECT_DIR$/app/controllers/user_sessions_controller.rb" />
-        <option value="$PROJECT_DIR$/app/models/system_audit.rb" />
-        <option value="$PROJECT_DIR$/app/views/api_credentials/_index_scripts.html.erb" />
-        <option value="$PROJECT_DIR$/app/views/orders/_order_report.html.haml" />
-        <option value="$PROJECT_DIR$/app/controllers/validations_controller.rb" />
-        <option value="$PROJECT_DIR$/bin/setup_team_folders.rb" />
-        <option value="$PROJECT_DIR$/app/models/ssl_account.rb" />
-        <option value="$PROJECT_DIR$/app/views/folders/index.haml" />
-        <option value="$PROJECT_DIR$/config/settings.yml" />
-        <option value="$PROJECT_DIR$/config/secrets.yml" />
-        <option value="$PROJECT_DIR$/app/models/certificate_name.rb" />
-        <option value="$PROJECT_DIR$/app/views/domains/index.html.haml" />
-        <option value="$PROJECT_DIR$/db/migrate/20180811165627_add_type_to_signed_certificate.rb" />
-        <option value="$PROJECT_DIR$/app/helpers/certificate_orders_helper.rb" />
-        <option value="$PROJECT_DIR$/app/models/csr.rb" />
-        <option value="$PROJECT_DIR$/app/views/certificate_orders/_form.html.haml" />
-        <option value="$PROJECT_DIR$/app/models/certificate.rb" />
-        <option value="$PROJECT_DIR$/lib/certificate_type.rb" />
-        <option value="$PROJECT_DIR$/app/views/contacts/index.html.haml" />
-        <option value="$PROJECT_DIR$/app/views/contacts/_index_selected.html.haml" />
         <option value="$PROJECT_DIR$/app/controllers/orders_controller.rb" />
-        <option value="$PROJECT_DIR$/config/deploy.rb" />
-        <option value="$PROJECT_DIR$/app/models/certificate_order.rb" />
-        <option value="$PROJECT_DIR$/app/views/certificate_orders/_detailed_info.html.haml" />
-        <option value="$PROJECT_DIR$/app/views/certificate_orders/_co.html.haml" />
+        <option value="$PROJECT_DIR$/app/models/certificate_content.rb" />
+        <option value="$PROJECT_DIR$/config/database.yml" />
+        <option value="$PROJECT_DIR$/app/views/users/_reseller.html.haml" />
+        <option value="$PROJECT_DIR$/app/views/contacts/show.html.haml" />
+        <option value="$PROJECT_DIR$/app/views/validations/_entry.html.haml" />
+        <option value="$PROJECT_DIR$/app/views/registered_agents/index.html.haml" />
+        <option value="$PROJECT_DIR$/app/models/notification_group.rb" />
+        <option value="$PROJECT_DIR$/app/views/layouts/_standard_menu.html.haml" />
+        <option value="$PROJECT_DIR$/app/controllers/domains_controller.rb" />
+        <option value="$PROJECT_DIR$/app/models/domain.rb" />
+        <option value="$PROJECT_DIR$/app/models/certificate_name.rb" />
+        <option value="$PROJECT_DIR$/app/models/domain_control_validation.rb" />
+        <option value="$PROJECT_DIR$/app/controllers/certificate_order_tokens_controller.rb" />
+        <option value="$PROJECT_DIR$/app/controllers/user_sessions_controller.rb" />
+        <option value="$PROJECT_DIR$/app/models/order.rb" />
+        <option value="$PROJECT_DIR$/app/views/users/_details.html.haml" />
+        <option value="$PROJECT_DIR$/app/views/certificate_orders/_quick_links.html.haml" />
+        <option value="$PROJECT_DIR$/app/models/csr_unique_value.rb" />
+        <option value="$PROJECT_DIR$/app/helpers/orders_helper.rb" />
+        <option value="$PROJECT_DIR$/app/models/website.rb" />
+        <option value="$PROJECT_DIR$/db/migrate/20181013194238_add_managed_csrs_index.rb" />
+        <option value="$PROJECT_DIR$/app/models/certificate.rb" />
+        <option value="$PROJECT_DIR$/app/models/country.rb" />
+        <option value="$PROJECT_DIR$/app/models/csr.rb" />
+        <option value="$PROJECT_DIR$/app/helpers/application_helper.rb" />
         <option value="$PROJECT_DIR$/app/views/certificate_orders/_subject_column.html.haml" />
+        <option value="$PROJECT_DIR$/app/models/user.rb" />
+        <option value="$PROJECT_DIR$/app/controllers/users_controller.rb" />
+        <option value="$PROJECT_DIR$/app/controllers/validations_controller.rb" />
+        <option value="$PROJECT_DIR$/app/views/validations/index.html.haml" />
+        <option value="$PROJECT_DIR$/app/views/users/index.html.haml" />
+        <option value="$PROJECT_DIR$/app/views/orders/index.html.haml" />
+        <option value="$PROJECT_DIR$/app/models/ssl_account.rb" />
         <option value="$PROJECT_DIR$/app/controllers/certificate_orders_controller.rb" />
+        <option value="$PROJECT_DIR$/app/views/certificate_orders/show.html.haml" />
+        <option value="$PROJECT_DIR$/app/controllers/folders_controller.rb" />
+        <option value="$PROJECT_DIR$/app/controllers/application_controller.rb" />
+        <option value="$PROJECT_DIR$/app/models/certificate_order.rb" />
+        <option value="$PROJECT_DIR$/app/models/api_certificate_request.rb" />
+        <option value="$PROJECT_DIR$/app/views/certificates/_form.html.haml" />
+        <option value="$PROJECT_DIR$/app/controllers/managed_csrs_controller.rb" />
+        <option value="$PROJECT_DIR$/app/views/certificate_orders/index.html.haml" />
+        <option value="$PROJECT_DIR$/app/models/order_notifier.rb" />
+        <option value="$PROJECT_DIR$/app/models/signed_certificate.rb" />
+        <option value="$PROJECT_DIR$/app/models/cas_certificate.rb" />
+        <option value="$PROJECT_DIR$/config/settings.yml" />
+        <option value="$PROJECT_DIR$/app/models/ca.rb" />
+        <option value="$PROJECT_DIR$/lib/tasks/cas.rake" />
+        <option value="$PROJECT_DIR$/app/models/sslcom_ca_api.rb" />
+        <option value="$PROJECT_DIR$/config/deploy.rb" />
       </list>
     </option>
   </component>
@@ -367,9 +354,12 @@
     <option name="FILTER_DEBUG" value="true" />
     <option name="CUSTOM_FILTER" />
   </component>
+  <component name="NodePackageJsonFileManager">
+    <packageJsonPaths />
+  </component>
   <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="680" />
-    <option name="y" value="225" />
+    <option name="y" value="224" />
     <option name="width" value="740" />
     <option name="height" value="980" />
   </component>
@@ -428,46 +418,14 @@
               <item name="sslcom-rails" type="b2602c69:ProjectViewProjectNode" />
               <item name="sslcom-rails" type="462c0819:PsiDirectoryNode" />
               <item name="app" type="462c0819:PsiDirectoryNode" />
-              <item name="controllers" type="462c0819:PsiDirectoryNode" />
+              <item name="views" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="sslcom-rails" type="b2602c69:ProjectViewProjectNode" />
               <item name="sslcom-rails" type="462c0819:PsiDirectoryNode" />
-              <item name="bin" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="sslcom-rails" type="b2602c69:ProjectViewProjectNode" />
-              <item name="sslcom-rails" type="462c0819:PsiDirectoryNode" />
-              <item name="db" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="sslcom-rails" type="b2602c69:ProjectViewProjectNode" />
-              <item name="sslcom-rails" type="462c0819:PsiDirectoryNode" />
-              <item name="db" type="462c0819:PsiDirectoryNode" />
-              <item name="migrate" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="sslcom-rails" type="b2602c69:ProjectViewProjectNode" />
-              <item name="sslcom-rails" type="462c0819:PsiDirectoryNode" />
-              <item name="script" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="sslcom-rails" type="b2602c69:ProjectViewProjectNode" />
-              <item name="sslcom-rails" type="462c0819:PsiDirectoryNode" />
-              <item name="test" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="sslcom-rails" type="b2602c69:ProjectViewProjectNode" />
-              <item name="sslcom-rails" type="462c0819:PsiDirectoryNode" />
-              <item name="test" type="462c0819:PsiDirectoryNode" />
-              <item name="integration" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="sslcom-rails" type="b2602c69:ProjectViewProjectNode" />
-              <item name="sslcom-rails" type="462c0819:PsiDirectoryNode" />
-              <item name="test" type="462c0819:PsiDirectoryNode" />
-              <item name="integration" type="462c0819:PsiDirectoryNode" />
-              <item name="certificate" type="462c0819:PsiDirectoryNode" />
+              <item name="app" type="462c0819:PsiDirectoryNode" />
+              <item name="views" type="462c0819:PsiDirectoryNode" />
+              <item name="folders" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="sslcom-rails" type="b2602c69:ProjectViewProjectNode" />
@@ -494,7 +452,6 @@
         </subPane>
       </pane>
       <pane id="RailsProjectView" />
-      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -533,23 +490,23 @@
     <property name="options.splitter.details.proportions" value="0.2" />
     <property name="options.splitter.main.proportions" value="0.3" />
     <property name="recentsLimit" value="5" />
-    <property name="settings.editor.selected.configurable" value="debugger.stepping" />
+    <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
     <property name="zeus.debugging.info.shown" value="true" />
   </component>
   <component name="RecentsManager">
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\Users\leo\RubymineProjects\sslcom-rails\app\views\api\v1" />
-      <recent name="C:\Users\leo\git\sslcom-rails\app\models" />
-      <recent name="C:\Users\leo\git\sslcom-rails\config\initializers" />
-      <recent name="C:\Users\leo\git\sslcom-rails\config" />
-      <recent name="C:\Users\leo\git\sslcom-rails\lib" />
-    </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\leo\RubymineProjects\sslcom-rails\db\migrate" />
       <recent name="C:\Users\leo\RubymineProjects\sslcom-rails\app\assets\stylesheets\sass" />
       <recent name="C:\Users\leo\RubymineProjects\sslcom-rails\app\views\physical_tokens" />
       <recent name="C:\Users\leo\RubymineProjects\sslcom-rails\lib\tasks" />
       <recent name="C:\Users\leo\RubymineProjects\sslcom-rails\app\models" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\leo\RubymineProjects\sslcom-rails\app\views\api\v1" />
+      <recent name="C:\Users\leo\git\sslcom-rails\app\models" />
+      <recent name="C:\Users\leo\git\sslcom-rails\config\initializers" />
+      <recent name="C:\Users\leo\git\sslcom-rails\config" />
+      <recent name="C:\Users\leo\git\sslcom-rails\lib" />
     </key>
   </component>
   <component name="RestClientSettings">
@@ -1643,6 +1600,145 @@
       </list>
     </option>
   </component>
+  <component name="RestoreUpdateTree" date="Moments ago" ActionInfo="_Update">
+    <UpdatedFiles>
+      <FILE-GROUP>
+        <option name="myUpdateName" value="Updated from server" />
+        <option name="myStatusName" value="Changed on server" />
+        <option name="mySupportsDeletion" value="false" />
+        <option name="myCanBeAbsent" value="false" />
+        <option name="myId" value="CHANGED_ON_SERVER" />
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Updated" />
+          <option name="myStatusName" value="Changed" />
+          <option name="mySupportsDeletion" value="false" />
+          <option name="myCanBeAbsent" value="false" />
+          <option name="myId" value="UPDATED" />
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/app/assets/stylesheets/sass/main.sass</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/app/controllers/api/v1/api_certificate_requests_controller.rb</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/app/controllers/certificate_orders_controller.rb</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/app/controllers/csrs_controller.rb</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/app/controllers/domains_controller.rb</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/app/controllers/managed_csrs_controller.rb</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/app/controllers/validations_controller.rb</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/app/helpers/application_helper.rb</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/app/models/api_certificate_create_v1_4.rb</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/app/models/api_dcv_methods.rb</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/app/models/ca.rb</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/app/models/certificate_content.rb</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/app/models/certificate_name.rb</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/app/models/certificate_order.rb</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/app/models/csr.rb</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/app/models/domain_control_validation.rb</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/app/models/signed_certificate.rb</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/app/models/ssl_account.rb</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/app/models/sslcom_ca_api.rb</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/app/views/api/v1/api_certificate_requests/dcv_methods_v1_4.rabl</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/app/views/certificate_orders/show.html.haml</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/app/views/certificates/_form.html.haml</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/app/views/certificates/_index_scripts.html.erb</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/app/views/domains/_dcv_all_scripts.html.erb</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/app/views/domains/_index_scripts.html.erb</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/app/views/domains/validate_against_csr.html.haml</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/app/views/registered_agents/index.html.haml</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/app/views/validations/_index_scripts.html.erb</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/app/views/validations/new.html.haml</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/lib/tasks/cas.rake</PATH>
+        </FILE-GROUP>
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Created" />
+          <option name="myStatusName" value="Created" />
+          <option name="mySupportsDeletion" value="false" />
+          <option name="myCanBeAbsent" value="false" />
+          <option name="myId" value="CREATED" />
+        </FILE-GROUP>
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Deleted" />
+          <option name="myStatusName" value="Deleted" />
+          <option name="mySupportsDeletion" value="false" />
+          <option name="myCanBeAbsent" value="true" />
+          <option name="myId" value="REMOVED_FROM_REPOSITORY" />
+        </FILE-GROUP>
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Restored" />
+          <option name="myStatusName" value="Will be restored" />
+          <option name="mySupportsDeletion" value="false" />
+          <option name="myCanBeAbsent" value="false" />
+          <option name="myId" value="RESTORED" />
+        </FILE-GROUP>
+      </FILE-GROUP>
+      <FILE-GROUP>
+        <option name="myUpdateName" value="Modified" />
+        <option name="myStatusName" value="Modified" />
+        <option name="mySupportsDeletion" value="false" />
+        <option name="myCanBeAbsent" value="false" />
+        <option name="myId" value="MODIFIED" />
+      </FILE-GROUP>
+      <FILE-GROUP>
+        <option name="myUpdateName" value="Skipped" />
+        <option name="myStatusName" value="Skipped" />
+        <option name="mySupportsDeletion" value="false" />
+        <option name="myCanBeAbsent" value="false" />
+        <option name="myId" value="SKIPPED" />
+      </FILE-GROUP>
+      <FILE-GROUP>
+        <option name="myUpdateName" value="Merged with conflicts" />
+        <option name="myStatusName" value="Will be merged with conflicts" />
+        <option name="mySupportsDeletion" value="false" />
+        <option name="myCanBeAbsent" value="false" />
+        <option name="myId" value="MERGED_WITH_CONFLICTS" />
+      </FILE-GROUP>
+      <FILE-GROUP>
+        <option name="myUpdateName" value="Merged with tree conflicts" />
+        <option name="myStatusName" value="Merged with tree conflicts" />
+        <option name="mySupportsDeletion" value="false" />
+        <option name="myCanBeAbsent" value="false" />
+        <option name="myId" value="MERGED_WITH_TREE_CONFLICT" />
+      </FILE-GROUP>
+      <FILE-GROUP>
+        <option name="myUpdateName" value="Merged with property conflicts" />
+        <option name="myStatusName" value="Will be merged with property conflicts" />
+        <option name="mySupportsDeletion" value="false" />
+        <option name="myCanBeAbsent" value="false" />
+        <option name="myId" value="MERGED_WITH_PROPERTY_CONFLICT" />
+      </FILE-GROUP>
+      <FILE-GROUP>
+        <option name="myUpdateName" value="Merged" />
+        <option name="myStatusName" value="Will be merged" />
+        <option name="mySupportsDeletion" value="false" />
+        <option name="myCanBeAbsent" value="false" />
+        <option name="myId" value="MERGED" />
+      </FILE-GROUP>
+      <FILE-GROUP>
+        <option name="myUpdateName" value="Not in repository" />
+        <option name="myStatusName" value="Not in repository" />
+        <option name="mySupportsDeletion" value="true" />
+        <option name="myCanBeAbsent" value="false" />
+        <option name="myId" value="UNKNOWN" />
+      </FILE-GROUP>
+      <FILE-GROUP>
+        <option name="myUpdateName" value="Locally added" />
+        <option name="myStatusName" value="Locally added" />
+        <option name="mySupportsDeletion" value="false" />
+        <option name="myCanBeAbsent" value="false" />
+        <option name="myId" value="LOCALLY_ADDED" />
+      </FILE-GROUP>
+      <FILE-GROUP>
+        <option name="myUpdateName" value="Locally removed" />
+        <option name="myStatusName" value="Locally removed" />
+        <option name="mySupportsDeletion" value="false" />
+        <option name="myCanBeAbsent" value="false" />
+        <option name="myId" value="LOCALLY_REMOVED" />
+      </FILE-GROUP>
+      <FILE-GROUP>
+        <option name="myUpdateName" value="Switched" />
+        <option name="myStatusName" value="Switched" />
+        <option name="mySupportsDeletion" value="false" />
+        <option name="myCanBeAbsent" value="false" />
+        <option name="myId" value="SWITCHED" />
+      </FILE-GROUP>
+    </UpdatedFiles>
+  </component>
   <component name="RunDashboard">
     <option name="ruleStates">
       <list>
@@ -1656,6 +1752,19 @@
     </option>
   </component>
   <component name="RunManager" selected="Capistrano.deploy:restart: ssl_com_rails3">
+    <configuration name="deploy:rollback: ssl_com_rails3" type="CapistranoRunConfigurationType" factoryName="Capistrano" temporary="true">
+      <module name="ssl_com_rails3" />
+      <CAPISTRANO_RUN_CONFIGURATION NAME="RUBY_ARGS" VALUE="-e $stdout.sync=true;$stderr.sync=true;load($0=ARGV.shift)" />
+      <CAPISTRANO_RUN_CONFIGURATION NAME="WORK DIR" VALUE="$MODULE_DIR$" />
+      <CAPISTRANO_RUN_CONFIGURATION NAME="SHOULD_USE_SDK" VALUE="false" />
+      <CAPISTRANO_RUN_CONFIGURATION NAME="ALTERN_SDK_NAME" VALUE="" />
+      <CAPISTRANO_RUN_CONFIGURATION NAME="myPassParentEnvs" VALUE="true" />
+      <EXTENSION ID="BundlerRunConfigurationExtension" bundleExecEnabled="false" />
+      <EXTENSION ID="JRubyRunConfigurationExtension" NailgunExecEnabled="false" />
+      <CAPISTRANO_RUN_CONFIG_SETTINGS_ID NAME="CAPISTRANO_TASK_NAME" VALUE="deploy:rollback" />
+      <CAPISTRANO_RUN_CONFIG_SETTINGS_ID NAME="CAPISTRANO_TASK_ARGS" VALUE="" />
+      <CAPISTRANO_RUN_CONFIG_SETTINGS_ID NAME="CAPISTRANO_STAGE" VALUE="" />
+    </configuration>
     <configuration name="memcached:flush: ssl_com_rails3" type="CapistranoRunConfigurationType" factoryName="Capistrano" temporary="true">
       <module name="ssl_com_rails3" />
       <CAPISTRANO_RUN_CONFIGURATION NAME="RUBY_ARGS" VALUE="-e $stdout.sync=true;$stderr.sync=true;load($0=ARGV.shift)" />
@@ -1710,13 +1819,13 @@
       <EXTENSION ID="BundlerRunConfigurationExtension" bundleExecEnabled="false" />
       <EXTENSION ID="JRubyRunConfigurationExtension" NailgunExecEnabled="false" />
       <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_NAME" VALUE="cas:seed_ejbca_profiles" />
-      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_ARGS" VALUE="RESET=true" />
+      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_ARGS" VALUE="LIVE=all SSL_ACCOUNT_IDS=15 EJBCA_ENV=production RAILS_ENV=production" />
       <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_ATTACHED_TEST_FRAMEWORKS" VALUE="" />
       <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_OPTION_TRACE" VALUE="false" />
       <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_OPTION_DRYRUN" VALUE="false" />
       <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_OPTION_PREREQS" VALUE="false" />
     </configuration>
-    <configuration name="db:seed: ssl_com_rails3" type="RakeRunConfigurationType" factoryName="Rake" temporary="true">
+    <configuration name="memcached:flush: ssl_com_rails3" type="RakeRunConfigurationType" factoryName="Rake" temporary="true">
       <module name="ssl_com_rails3" />
       <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RUBY_ARGS" VALUE="-e $stdout.sync=true;$stderr.sync=true;load($0=ARGV.shift)" />
       <RAKE_RUN_CONFIG_SETTINGS_ID NAME="WORK DIR" VALUE="$MODULE_DIR$" />
@@ -1725,23 +1834,7 @@
       <RAKE_RUN_CONFIG_SETTINGS_ID NAME="myPassParentEnvs" VALUE="true" />
       <EXTENSION ID="BundlerRunConfigurationExtension" bundleExecEnabled="false" />
       <EXTENSION ID="JRubyRunConfigurationExtension" NailgunExecEnabled="false" />
-      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_NAME" VALUE="db:seed" />
-      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_ARGS" VALUE="" />
-      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_ATTACHED_TEST_FRAMEWORKS" VALUE="" />
-      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_OPTION_TRACE" VALUE="false" />
-      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_OPTION_DRYRUN" VALUE="false" />
-      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_OPTION_PREREQS" VALUE="false" />
-    </configuration>
-    <configuration name="jobs:work: ssl_com_rails3" type="RakeRunConfigurationType" factoryName="Rake" temporary="true">
-      <module name="ssl_com_rails3" />
-      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RUBY_ARGS" VALUE="-e $stdout.sync=true;$stderr.sync=true;load($0=ARGV.shift)" />
-      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="WORK DIR" VALUE="$MODULE_DIR$" />
-      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="SHOULD_USE_SDK" VALUE="false" />
-      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="ALTERN_SDK_NAME" VALUE="" />
-      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="myPassParentEnvs" VALUE="true" />
-      <EXTENSION ID="BundlerRunConfigurationExtension" bundleExecEnabled="false" />
-      <EXTENSION ID="JRubyRunConfigurationExtension" NailgunExecEnabled="false" />
-      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_NAME" VALUE="jobs:work" />
+      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_NAME" VALUE="memcached:flush" />
       <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_ARGS" VALUE="" />
       <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_ATTACHED_TEST_FRAMEWORKS" VALUE="" />
       <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_OPTION_TRACE" VALUE="false" />
@@ -1777,158 +1870,10 @@
       <RTEST_RUN_CONFIG_SETTINGS_ID NAME="SPRING" VALUE="false" />
       <RTEST_RUN_CONFIG_SETTINGS_ID NAME="RUNNER_OPTIONS" VALUE="" />
     </configuration>
-    <configuration default="true" type="CucumberRunConfigurationType" factoryName="Cucumber">
-      <predefined_log_file id="RUBY_CUCUMBER" enabled="true" />
-      <module name="" />
-      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="RUBY_ARGS" VALUE="-e $stdout.sync=true;$stderr.sync=true;load($0=ARGV.shift)" />
-      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="WORK DIR" VALUE="" />
-      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="SHOULD_USE_SDK" VALUE="false" />
-      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="ALTERN_SDK_NAME" VALUE="" />
-      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="myPassParentEnvs" VALUE="true" />
-      <envs />
-      <EXTENSION ID="BundlerRunConfigurationExtension" bundleExecEnabled="false" />
-      <EXTENSION ID="JRubyRunConfigurationExtension" NailgunExecEnabled="false" />
-      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="TEST_FILE_MASK" VALUE="**/*.feature" />
-      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="TEST_TEST_TYPE" VALUE="TEST_SCRIPT" />
-      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="TESTS_FOLDER_PATH" VALUE="" />
-      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="TEST_SCRIPT_PATH" VALUE="" />
-      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="TEST_TAGS_FILTER" VALUE="" />
-      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="TEST_NAME_FILTER" VALUE="" />
-      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="CUCUMBER_ARGS" VALUE="--color -r features" />
-      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="RUNNER_VERSION" VALUE="" />
-      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="FULL_BACKTRACE" VALUE="false" />
-      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="VERBOSE_OPTION" VALUE="false" />
-      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="DRB" VALUE="false" />
-      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="ZEUS" VALUE="false" />
-      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="SPRING" VALUE="false" />
-      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="CUCUMBER_RUNNER_PATH" VALUE="" />
-      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="USE_CUSTOM_RUNNER" VALUE="false" />
-      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="SETTINGS_VERSION" VALUE="2" />
-      <method />
-    </configuration>
-    <configuration default="true" type="IrbRunConfigurationType" factoryName="IRB console">
-      <module name="" />
-      <IRB_RUN_CONFIG NAME="RUBY_ARGS" VALUE="-e $stdout.sync=true;$stderr.sync=true;load($0=ARGV.shift)" />
-      <IRB_RUN_CONFIG NAME="WORK DIR" VALUE="" />
-      <IRB_RUN_CONFIG NAME="SHOULD_USE_SDK" VALUE="false" />
-      <IRB_RUN_CONFIG NAME="ALTERN_SDK_NAME" VALUE="" />
-      <IRB_RUN_CONFIG NAME="myPassParentEnvs" VALUE="true" />
-      <envs />
-      <EXTENSION ID="BundlerRunConfigurationExtension" bundleExecEnabled="false" />
-      <EXTENSION ID="JRubyRunConfigurationExtension" NailgunExecEnabled="false" />
-      <IRB_RUN_CONFIG NAME="SCRIPT_PATH" VALUE="" />
-      <IRB_RUN_CONFIG NAME="SCRIPT_ARGS" VALUE="" />
-      <IRB_RUN_CONFIG NAME="IS_RAILS_CONSOLE" VALUE="false" />
-      <method />
-    </configuration>
-    <configuration default="true" type="JavascriptDebugType" factoryName="JavaScript Debug">
-      <method />
-    </configuration>
     <configuration default="true" type="NodeJSConfigurationType" factoryName="Node.js" path-to-node="project" working-dir="">
       <method />
     </configuration>
-    <configuration default="true" type="RSpecRunConfigurationType" factoryName="RSpec">
-      <predefined_log_file id="RUBY_RSPEC" enabled="true" />
-      <module name="" />
-      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="RUBY_ARGS" VALUE="-e $stdout.sync=true;$stderr.sync=true;load($0=ARGV.shift)" />
-      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="WORK DIR" VALUE="" />
-      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="SHOULD_USE_SDK" VALUE="false" />
-      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="ALTERN_SDK_NAME" VALUE="" />
-      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="myPassParentEnvs" VALUE="true" />
-      <envs />
-      <EXTENSION ID="BundlerRunConfigurationExtension" bundleExecEnabled="false" />
-      <EXTENSION ID="JRubyRunConfigurationExtension" NailgunExecEnabled="false" />
-      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="TESTS_FOLDER_PATH" VALUE="" />
-      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="TEST_SCRIPT_PATH" VALUE="" />
-      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="SPEC_RUNNER_PATH" VALUE="" />
-      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="TEST_FILE_MASK" VALUE="**/*_spec.rb" />
-      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="SPEC_EXAMPLE_NAME" VALUE="" />
-      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="TEST_TEST_TYPE" VALUE="TEST_SCRIPT" />
-      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="SPEC_ARGS" VALUE="" />
-      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="RUNNER_VERSION" VALUE="" />
-      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="USE_CUSTOM_SPEC_RUNNER" VALUE="false" />
-      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="DRB" VALUE="false" />
-      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="ZEUS" VALUE="false" />
-      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="SPRING" VALUE="false" />
-      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="FULL_BACKTRACE" VALUE="false" />
-      <method />
-    </configuration>
-    <configuration default="true" type="RakeRunConfigurationType" factoryName="Rake">
-      <module name="" />
-      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RUBY_ARGS" VALUE="-e $stdout.sync=true;$stderr.sync=true;load($0=ARGV.shift)" />
-      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="WORK DIR" VALUE="" />
-      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="SHOULD_USE_SDK" VALUE="false" />
-      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="ALTERN_SDK_NAME" VALUE="" />
-      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="myPassParentEnvs" VALUE="true" />
-      <envs />
-      <EXTENSION ID="BundlerRunConfigurationExtension" bundleExecEnabled="false" />
-      <EXTENSION ID="JRubyRunConfigurationExtension" NailgunExecEnabled="false" />
-      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_NAME" VALUE="" />
-      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_ARGS" VALUE="" />
-      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_ATTACHED_TEST_FRAMEWORKS" VALUE="" />
-      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_OPTION_TRACE" VALUE="false" />
-      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_OPTION_DRYRUN" VALUE="false" />
-      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_OPTION_PREREQS" VALUE="false" />
-      <method />
-    </configuration>
-    <configuration default="true" type="RubyRunConfigurationType" factoryName="Ruby">
-      <module name="" />
-      <RUBY_RUN_CONFIG NAME="RUBY_ARGS" VALUE="-e $stdout.sync=true;$stderr.sync=true;load($0=ARGV.shift)" />
-      <RUBY_RUN_CONFIG NAME="WORK DIR" VALUE="" />
-      <RUBY_RUN_CONFIG NAME="SHOULD_USE_SDK" VALUE="false" />
-      <RUBY_RUN_CONFIG NAME="ALTERN_SDK_NAME" VALUE="" />
-      <RUBY_RUN_CONFIG NAME="myPassParentEnvs" VALUE="true" />
-      <envs />
-      <EXTENSION ID="BundlerRunConfigurationExtension" bundleExecEnabled="false" />
-      <EXTENSION ID="JRubyRunConfigurationExtension" NailgunExecEnabled="false" />
-      <RUBY_RUN_CONFIG NAME="SCRIPT_PATH" VALUE="" />
-      <RUBY_RUN_CONFIG NAME="SCRIPT_ARGS" VALUE="" />
-      <method />
-    </configuration>
-    <configuration default="true" type="TestUnitRunConfigurationType" factoryName="Test::Unit/Shoulda/Minitest">
-      <predefined_log_file id="RUBY_TESTUNIT" enabled="true" />
-      <module name="" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="RUBY_ARGS" VALUE="-e $stdout.sync=true;$stderr.sync=true;load($0=ARGV.shift)" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="WORK DIR" VALUE="" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="SHOULD_USE_SDK" VALUE="false" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="ALTERN_SDK_NAME" VALUE="" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="myPassParentEnvs" VALUE="true" />
-      <envs />
-      <EXTENSION ID="BundlerRunConfigurationExtension" bundleExecEnabled="false" />
-      <EXTENSION ID="JRubyRunConfigurationExtension" NailgunExecEnabled="false" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TESTS_FOLDER_PATH" VALUE="" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TEST_SCRIPT_PATH" VALUE="" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TEST_FILE_MASK" VALUE="" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TEST_METHOD_NAME" VALUE="" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TEST_TEST_TYPE" VALUE="TEST_SCRIPT" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="DRB" VALUE="false" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="ZEUS" VALUE="false" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="SPRING" VALUE="false" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="RUNNER_OPTIONS" VALUE="" />
-      <method />
-    </configuration>
-    <configuration default="true" type="ZeusRunConfigurationType" factoryName="Zeus Server">
-      <module name="" />
-      <ZEUS_RUN_CONFIGURATION NAME="RUBY_ARGS" VALUE="-e $stdout.sync=true;$stderr.sync=true;load($0=ARGV.shift)" />
-      <ZEUS_RUN_CONFIGURATION NAME="WORK DIR" VALUE="" />
-      <ZEUS_RUN_CONFIGURATION NAME="SHOULD_USE_SDK" VALUE="false" />
-      <ZEUS_RUN_CONFIGURATION NAME="ALTERN_SDK_NAME" VALUE="" />
-      <ZEUS_RUN_CONFIGURATION NAME="myPassParentEnvs" VALUE="true" />
-      <envs />
-      <EXTENSION ID="BundlerRunConfigurationExtension" bundleExecEnabled="false" />
-      <EXTENSION ID="JRubyRunConfigurationExtension" NailgunExecEnabled="false" />
-      <ZEUS_RUN_CONFIG_SETTING NAME="ZEUS_COMMAND_NAME" VALUE="" />
-      <ZEUS_RUN_CONFIG_SETTING NAME="ZEUS_COMMAND_ARGS" VALUE="" />
-      <method />
-    </configuration>
     <configuration default="true" type="docker-deploy" factoryName="Docker Deployment">
-      <method />
-    </configuration>
-    <configuration default="true" type="js.build_tools.npm" factoryName="npm">
-      <command value="run-script" />
-      <scripts />
-      <node-interpreter value="project" />
-      <envs />
       <method />
     </configuration>
     <configuration default="true" type="mocha-javascript-test-runner" factoryName="Mocha">
@@ -1987,35 +1932,35 @@
       <item itemvalue="Cucumber.I want to be able to determine who receives ssl certs, receipts, reminders, and confirmations" />
       <item itemvalue="Cucumber.Status messages need to reflect the stage the certificate order is in" />
       <item itemvalue="Docker.docker-whale" />
-      <item itemvalue="RSpec.POST on /certificates/v1/apply" />
-      <item itemvalue="RSpec.SignedCertificate as an ssl.com signed certificate: ssl_com_rails3" />
-      <item itemvalue="RSpec.OrdersController POST #create successful transaction shows the certificate reference number: ssl_com_rails3" />
-      <item itemvalue="RSpec.ApiCertificateCreate version 1.3 places a valid order: ssl_com_rails3" />
       <item itemvalue="Rails.Development: ssl_com_rails3" />
       <item itemvalue="Rails.Production: ssl_com_rails3" />
       <item itemvalue="Rails.Test: ssl_com_rails3" />
       <item itemvalue="Rake.db:migrate: ssl_com_rails3" />
       <item itemvalue="Rake.rails:upgrade:routes: ssl_com_rails3" />
       <item itemvalue="Rake.routes: ssl_com_rails3" />
+      <item itemvalue="RSpec.POST on /certificates/v1/apply" />
+      <item itemvalue="RSpec.SignedCertificate as an ssl.com signed certificate: ssl_com_rails3" />
+      <item itemvalue="RSpec.OrdersController POST #create successful transaction shows the certificate reference number: ssl_com_rails3" />
+      <item itemvalue="RSpec.ApiCertificateCreate version 1.3 places a valid order: ssl_com_rails3" />
       <item itemvalue="Test::Unit/Shoulda/Minitest.All tests in billing: ssl_com_rails3" />
       <item itemvalue="Test::Unit/Shoulda/Minitest.All tests in integration: ssl_com_rails3" />
       <item itemvalue="Test::Unit/Shoulda/Minitest.Run test 'api_certificate_revoke_test': ssl_com_rails3" />
       <item itemvalue="Test::Unit/Shoulda/Minitest.Run test 'non_wildcard_test': ssl_com_rails3" />
       <item itemvalue="Test::Unit/Shoulda/Minitest.Run test 'wildcard_test': ssl_com_rails3" />
       <item itemvalue="Zeus Server.Start Zeus Server: ssl_com_rails3" />
-      <item itemvalue="Rake.db:seed: ssl_com_rails3" />
-      <item itemvalue="Rake.cas:seed_ejbca_profiles: ssl_com_rails3" />
+      <item itemvalue="Capistrano.deploy:rollback: ssl_com_rails3" />
       <item itemvalue="Capistrano.memcached:flush: ssl_com_rails3" />
-      <item itemvalue="Rake.jobs:work: ssl_com_rails3" />
       <item itemvalue="IRB console.Rails console: ssl_com_rails3" />
+      <item itemvalue="Rake.memcached:flush: ssl_com_rails3" />
+      <item itemvalue="Rake.cas:seed_ejbca_profiles: ssl_com_rails3" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="IRB console.Rails console: ssl_com_rails3" />
-        <item itemvalue="Rake.jobs:work: ssl_com_rails3" />
-        <item itemvalue="Capistrano.memcached:flush: ssl_com_rails3" />
         <item itemvalue="Rake.cas:seed_ejbca_profiles: ssl_com_rails3" />
-        <item itemvalue="Rake.db:seed: ssl_com_rails3" />
+        <item itemvalue="IRB console.Rails console: ssl_com_rails3" />
+        <item itemvalue="IRB console.Rails console: ssl_com_rails3" />
+        <item itemvalue="Capistrano.memcached:flush: ssl_com_rails3" />
+        <item itemvalue="Capistrano.deploy:rollback: ssl_com_rails3" />
       </list>
     </recent_temporary>
   </component>
@@ -2133,351 +2078,362 @@
       <workItem from="1528927273883" duration="13159000" />
       <workItem from="1534515384368" duration="33194000" />
       <workItem from="1535122125604" duration="4668000" />
+      <workItem from="1536006585520" duration="50488000" />
+      <workItem from="1536803452571" duration="6865000" />
+      <workItem from="1536851150360" duration="25657000" />
+      <workItem from="1537412014854" duration="694000" />
+      <workItem from="1537583852244" duration="9981000" />
+      <workItem from="1537646040770" duration="14993000" />
+      <workItem from="1539230196447" duration="3546000" />
+      <workItem from="1539268351620" duration="66060000" />
+      <workItem from="1539759572995" duration="14897000" />
+      <workItem from="1540349884577" duration="11916000" />
+      <workItem from="1540663213638" duration="38562000" />
     </task>
-    <task id="LOCAL-00452" summary="sysadmins can reprocess UCC">
-      <created>1519105802986</created>
-      <option name="number" value="00452" />
-      <option name="presentableId" value="LOCAL-00452" />
+    <task id="LOCAL-00508" summary="Roles rake task">
+      <created>1536469996720</created>
+      <option name="number" value="00508" />
+      <option name="presentableId" value="LOCAL-00508" />
       <option name="project" value="LOCAL" />
-      <updated>1519105802986</updated>
+      <updated>1536469996720</updated>
     </task>
-    <task id="LOCAL-00453" summary="redact credentials in email. Allow domains as an Array in api calls">
-      <created>1519662521094</created>
-      <option name="number" value="00453" />
-      <option name="presentableId" value="LOCAL-00453" />
+    <task id="LOCAL-00509" summary="logic for creating NAESB certs">
+      <created>1536592853138</created>
+      <option name="number" value="00509" />
+      <option name="presentableId" value="LOCAL-00509" />
       <option name="project" value="LOCAL" />
-      <updated>1519662521095</updated>
+      <updated>1536592853138</updated>
     </task>
-    <task id="LOCAL-00454" summary="url callback">
-      <created>1519747226749</created>
-      <option name="number" value="00454" />
-      <option name="presentableId" value="LOCAL-00454" />
+    <task id="LOCAL-00510" summary="UCC cert sets ejbca as default">
+      <created>1536640769986</created>
+      <option name="number" value="00510" />
+      <option name="presentableId" value="LOCAL-00510" />
       <option name="project" value="LOCAL" />
-      <updated>1519747226749</updated>
+      <updated>1536640769986</updated>
     </task>
-    <task id="LOCAL-00455" summary="fixes">
-      <created>1520023964789</created>
-      <option name="number" value="00455" />
-      <option name="presentableId" value="LOCAL-00455" />
+    <task id="LOCAL-00511" summary="speed improvements via cache and indexes">
+      <created>1536726680770</created>
+      <option name="number" value="00511" />
+      <option name="presentableId" value="LOCAL-00511" />
       <option name="project" value="LOCAL" />
-      <updated>1520023964789</updated>
+      <updated>1536726680771</updated>
     </task>
-    <task id="LOCAL-00456" summary="fixes for views">
-      <created>1520290117849</created>
-      <option name="number" value="00456" />
-      <option name="presentableId" value="LOCAL-00456" />
+    <task id="LOCAL-00512" summary="improved caching for asynch domains validation">
+      <created>1536731249381</created>
+      <option name="number" value="00512" />
+      <option name="presentableId" value="LOCAL-00512" />
       <option name="project" value="LOCAL" />
-      <updated>1520290117850</updated>
+      <updated>1536731249381</updated>
     </task>
-    <task id="LOCAL-00457" summary="validation page fixes">
-      <created>1520292158495</created>
-      <option name="number" value="00457" />
-      <option name="presentableId" value="LOCAL-00457" />
+    <task id="LOCAL-00513" summary="indexes">
+      <created>1536765073100</created>
+      <option name="number" value="00513" />
+      <option name="presentableId" value="LOCAL-00513" />
       <option name="project" value="LOCAL" />
-      <updated>1520292158498</updated>
+      <updated>1536765073100</updated>
     </task>
-    <task id="LOCAL-00458" summary="only allow sysadmins FIDO token access for now">
-      <created>1525283266210</created>
-      <option name="number" value="00458" />
-      <option name="presentableId" value="LOCAL-00458" />
+    <task id="LOCAL-00514" summary="DRY; SSL.com validation for SSL.com Root">
+      <created>1536849872650</created>
+      <option name="number" value="00514" />
+      <option name="presentableId" value="LOCAL-00514" />
       <option name="project" value="LOCAL" />
-      <updated>1525283266210</updated>
+      <updated>1536849872651</updated>
     </task>
-    <task id="LOCAL-00459" summary="remove site seals menu. remove billing invoice link for non SSL.com admins">
-      <created>1525283729432</created>
-      <option name="number" value="00459" />
-      <option name="presentableId" value="LOCAL-00459" />
+    <task id="LOCAL-00515" summary="fixes for views">
+      <created>1536977101177</created>
+      <option name="number" value="00515" />
+      <option name="presentableId" value="LOCAL-00515" />
       <option name="project" value="LOCAL" />
-      <updated>1525283729432</updated>
+      <updated>1536977101177</updated>
     </task>
-    <task id="LOCAL-00460" summary="fixes for $0 order">
-      <created>1525284765176</created>
-      <option name="number" value="00460" />
-      <option name="presentableId" value="LOCAL-00460" />
+    <task id="LOCAL-00516" summary="indexes">
+      <created>1537196593484</created>
+      <option name="number" value="00516" />
+      <option name="presentableId" value="LOCAL-00516" />
       <option name="project" value="LOCAL" />
-      <updated>1525284765176</updated>
+      <updated>1537196593487</updated>
     </task>
-    <task id="LOCAL-00461" summary="u2f for admins only">
-      <created>1525294675704</created>
-      <option name="number" value="00461" />
-      <option name="presentableId" value="LOCAL-00461" />
+    <task id="LOCAL-00517" summary="fixes for views">
+      <created>1537327348963</created>
+      <option name="number" value="00517" />
+      <option name="presentableId" value="LOCAL-00517" />
       <option name="project" value="LOCAL" />
-      <updated>1525294675704</updated>
+      <updated>1537327348963</updated>
     </task>
-    <task id="LOCAL-00462" summary="time limit crediting affiliates up to 1 minute on checkout page">
-      <created>1525455504913</created>
-      <option name="number" value="00462" />
-      <option name="presentableId" value="LOCAL-00462" />
+    <task id="LOCAL-00518" summary="form changes; removed validations on registrant">
+      <created>1537646095222</created>
+      <option name="number" value="00518" />
+      <option name="presentableId" value="LOCAL-00518" />
       <option name="project" value="LOCAL" />
-      <updated>1525455504913</updated>
+      <updated>1537646095223</updated>
     </task>
-    <task id="LOCAL-00463" summary="clean up">
-      <created>1525791388592</created>
-      <option name="number" value="00463" />
-      <option name="presentableId" value="LOCAL-00463" />
+    <task id="LOCAL-00519" summary="schema change">
+      <created>1537646220380</created>
+      <option name="number" value="00519" />
+      <option name="presentableId" value="LOCAL-00519" />
       <option name="project" value="LOCAL" />
-      <updated>1525791388592</updated>
+      <updated>1537646220380</updated>
     </task>
-    <task id="LOCAL-00464" summary="EV integration with EJBCA">
-      <created>1525895096074</created>
-      <option name="number" value="00464" />
-      <option name="presentableId" value="LOCAL-00464" />
+    <task id="LOCAL-00520" summary="revocation for SSL.com issued certs">
+      <created>1537884136617</created>
+      <option name="number" value="00520" />
+      <option name="presentableId" value="LOCAL-00520" />
       <option name="project" value="LOCAL" />
-      <updated>1525895096075</updated>
+      <updated>1537884136617</updated>
     </task>
-    <task id="LOCAL-00465" summary="remove vestigial instructions on validation page">
-      <created>1525985437320</created>
-      <option name="number" value="00465" />
-      <option name="presentableId" value="LOCAL-00465" />
+    <task id="LOCAL-00521" summary="round down for partial days">
+      <created>1538080280098</created>
+      <option name="number" value="00521" />
+      <option name="presentableId" value="LOCAL-00521" />
       <option name="project" value="LOCAL" />
-      <updated>1525985437321</updated>
+      <updated>1538080280098</updated>
     </task>
-    <task id="LOCAL-00466" summary="domains split \s and +">
-      <created>1525991976353</created>
-      <option name="number" value="00466" />
-      <option name="presentableId" value="LOCAL-00466" />
+    <task id="LOCAL-00522" summary="ejbca chain">
+      <created>1538108942046</created>
+      <option name="number" value="00522" />
+      <option name="presentableId" value="LOCAL-00522" />
       <option name="project" value="LOCAL" />
-      <updated>1525991976353</updated>
+      <updated>1538108942046</updated>
     </task>
-    <task id="LOCAL-00467" summary="added index for signed_certificates#common_name">
-      <created>1526054422534</created>
-      <option name="number" value="00467" />
-      <option name="presentableId" value="LOCAL-00467" />
+    <task id="LOCAL-00523" summary="fixed exception">
+      <created>1538267692229</created>
+      <option name="number" value="00523" />
+      <option name="presentableId" value="LOCAL-00523" />
       <option name="project" value="LOCAL" />
-      <updated>1526054422534</updated>
+      <updated>1538267692230</updated>
     </task>
-    <task id="LOCAL-00468" summary="index">
-      <created>1526055249412</created>
-      <option name="number" value="00468" />
-      <option name="presentableId" value="LOCAL-00468" />
+    <task id="LOCAL-00524" summary="doc signing certificate products; SSL Manager download link">
+      <created>1538408369451</created>
+      <option name="number" value="00524" />
+      <option name="presentableId" value="LOCAL-00524" />
       <option name="project" value="LOCAL" />
-      <updated>1526055249412</updated>
+      <updated>1538408369451</updated>
     </task>
-    <task id="LOCAL-00469" summary="indexes for optimization">
-      <created>1526058105923</created>
-      <option name="number" value="00469" />
-      <option name="presentableId" value="LOCAL-00469" />
+    <task id="LOCAL-00525" summary="single point of domain validation">
+      <created>1538489627510</created>
+      <option name="number" value="00525" />
+      <option name="presentableId" value="LOCAL-00525" />
       <option name="project" value="LOCAL" />
-      <updated>1526058105923</updated>
+      <updated>1538489627510</updated>
     </task>
-    <task id="LOCAL-00470" summary="sql indexes for better performance">
-      <created>1526074897287</created>
-      <option name="number" value="00470" />
-      <option name="presentableId" value="LOCAL-00470" />
+    <task id="LOCAL-00526" summary="domain validation engine; DRY up dcv email send logic">
+      <created>1538577932713</created>
+      <option name="number" value="00526" />
+      <option name="presentableId" value="LOCAL-00526" />
       <option name="project" value="LOCAL" />
-      <updated>1526074897287</updated>
+      <updated>1538577932713</updated>
     </task>
-    <task id="LOCAL-00471" summary="saving CA username to db">
-      <created>1526573398647</created>
-      <option name="number" value="00471" />
-      <option name="presentableId" value="LOCAL-00471" />
+    <task id="LOCAL-00527" summary="validate similar domains">
+      <created>1538672026334</created>
+      <option name="number" value="00527" />
+      <option name="presentableId" value="LOCAL-00527" />
       <option name="project" value="LOCAL" />
-      <updated>1526573398647</updated>
+      <updated>1538672026337</updated>
     </task>
-    <task id="LOCAL-00472" summary="fixes for views">
-      <created>1526922822894</created>
-      <option name="number" value="00472" />
-      <option name="presentableId" value="LOCAL-00472" />
+    <task id="LOCAL-00528" summary="caching improvements">
+      <created>1538867972649</created>
+      <option name="number" value="00528" />
+      <option name="presentableId" value="LOCAL-00528" />
       <option name="project" value="LOCAL" />
-      <updated>1526922822894</updated>
+      <updated>1538867972649</updated>
     </task>
-    <task id="LOCAL-00473" summary="gemfile update">
-      <created>1526924334272</created>
-      <option name="number" value="00473" />
-      <option name="presentableId" value="LOCAL-00473" />
+    <task id="LOCAL-00529" summary="fixes user.ssl_account">
+      <created>1538868560145</created>
+      <option name="number" value="00529" />
+      <option name="presentableId" value="LOCAL-00529" />
       <option name="project" value="LOCAL" />
-      <updated>1526924334272</updated>
+      <updated>1538868560145</updated>
     </task>
-    <task id="LOCAL-00474" summary="grammar correction">
-      <created>1527007435214</created>
-      <option name="number" value="00474" />
-      <option name="presentableId" value="LOCAL-00474" />
+    <task id="LOCAL-00530" summary="caching improvements">
+      <created>1538891830958</created>
+      <option name="number" value="00530" />
+      <option name="presentableId" value="LOCAL-00530" />
       <option name="project" value="LOCAL" />
-      <updated>1527007435214</updated>
+      <updated>1538891830958</updated>
     </task>
-    <task id="LOCAL-00475" summary="5 attempts for SSL.com Admins">
-      <created>1527284006253</created>
-      <option name="number" value="00475" />
-      <option name="presentableId" value="LOCAL-00475" />
+    <task id="LOCAL-00531" summary="revert duo &quot;fix&quot;">
+      <created>1538892092608</created>
+      <option name="number" value="00531" />
+      <option name="presentableId" value="LOCAL-00531" />
       <option name="project" value="LOCAL" />
-      <updated>1527284006253</updated>
+      <updated>1538892092608</updated>
     </task>
-    <task id="LOCAL-00476" summary="fixes for views">
-      <created>1527713814616</created>
-      <option name="number" value="00476" />
-      <option name="presentableId" value="LOCAL-00476" />
+    <task id="LOCAL-00532" summary="approved_account fix">
+      <created>1538892434803</created>
+      <option name="number" value="00532" />
+      <option name="presentableId" value="LOCAL-00532" />
       <option name="project" value="LOCAL" />
-      <updated>1527713814616</updated>
+      <updated>1538892434803</updated>
     </task>
-    <task id="LOCAL-00477" summary="captcha and db migrations">
-      <created>1528749369299</created>
-      <option name="number" value="00477" />
-      <option name="presentableId" value="LOCAL-00477" />
+    <task id="LOCAL-00533" summary="fixed user caching issues">
+      <created>1538939493277</created>
+      <option name="number" value="00533" />
+      <option name="presentableId" value="LOCAL-00533" />
       <option name="project" value="LOCAL" />
-      <updated>1528749369300</updated>
+      <updated>1538939493277</updated>
     </task>
-    <task id="LOCAL-00478" summary="2fa implementation">
-      <created>1528821723961</created>
-      <option name="number" value="00478" />
-      <option name="presentableId" value="LOCAL-00478" />
+    <task id="LOCAL-00534" summary="order.certificate_orders -&gt; order.cached_certificate_orders">
+      <created>1538940590784</created>
+      <option name="number" value="00534" />
+      <option name="presentableId" value="LOCAL-00534" />
       <option name="project" value="LOCAL" />
-      <updated>1528821723961</updated>
+      <updated>1538940590784</updated>
     </task>
-    <task id="LOCAL-00479" summary="clean up &quot;remove&quot; api credential">
-      <created>1528834643759</created>
-      <option name="number" value="00479" />
-      <option name="presentableId" value="LOCAL-00479" />
+    <task id="LOCAL-00535" summary="remove variable in user.is_admin_disabled?">
+      <created>1538940909456</created>
+      <option name="number" value="00535" />
+      <option name="presentableId" value="LOCAL-00535" />
       <option name="project" value="LOCAL" />
-      <updated>1528834643759</updated>
+      <updated>1538940909457</updated>
     </task>
-    <task id="LOCAL-00480" summary="fixes for views">
-      <created>1528844030149</created>
-      <option name="number" value="00480" />
-      <option name="presentableId" value="LOCAL-00480" />
+    <task id="LOCAL-00536" summary="compact and unique SAN names">
+      <created>1538941609489</created>
+      <option name="number" value="00536" />
+      <option name="presentableId" value="LOCAL-00536" />
       <option name="project" value="LOCAL" />
-      <updated>1528844030149</updated>
+      <updated>1538941609489</updated>
     </task>
-    <task id="LOCAL-00481" summary="missing variable returns nil">
-      <created>1528919715627</created>
-      <option name="number" value="00481" />
-      <option name="presentableId" value="LOCAL-00481" />
+    <task id="LOCAL-00537" summary="remove &quot;&quot; from SAN names">
+      <created>1538942140455</created>
+      <option name="number" value="00537" />
+      <option name="presentableId" value="LOCAL-00537" />
       <option name="project" value="LOCAL" />
-      <updated>1528919715627</updated>
+      <updated>1538942140455</updated>
     </task>
-    <task id="LOCAL-00482" summary="fix @team_tags.any?">
-      <created>1528920013073</created>
-      <option name="number" value="00482" />
-      <option name="presentableId" value="LOCAL-00482" />
+    <task id="LOCAL-00538" summary="more caching for performance">
+      <created>1538954215924</created>
+      <option name="number" value="00538" />
+      <option name="presentableId" value="LOCAL-00538" />
       <option name="project" value="LOCAL" />
-      <updated>1528920013073</updated>
+      <updated>1538954215924</updated>
     </task>
-    <task id="LOCAL-00483" summary="fixes for views">
-      <created>1528920456854</created>
-      <option name="number" value="00483" />
-      <option name="presentableId" value="LOCAL-00483" />
+    <task id="LOCAL-00539" summary="cache certificate_orders.count as cached_certificate_orders_count">
+      <created>1538955577899</created>
+      <option name="number" value="00539" />
+      <option name="presentableId" value="LOCAL-00539" />
       <option name="project" value="LOCAL" />
-      <updated>1528920456854</updated>
+      <updated>1538955577900</updated>
     </task>
-    <task id="LOCAL-00484" summary="caching on certificate_order prevents tags from being shown">
-      <created>1528922215761</created>
-      <option name="number" value="00484" />
-      <option name="presentableId" value="LOCAL-00484" />
+    <task id="LOCAL-00540" summary="caching improvements">
+      <created>1539093737286</created>
+      <option name="number" value="00540" />
+      <option name="presentableId" value="LOCAL-00540" />
       <option name="project" value="LOCAL" />
-      <updated>1528922215761</updated>
+      <updated>1539093737290</updated>
     </task>
-    <task id="LOCAL-00485" summary="duo for super_user role only">
-      <created>1528987336400</created>
-      <option name="number" value="00485" />
-      <option name="presentableId" value="LOCAL-00485" />
+    <task id="LOCAL-00541" summary="csr_unique_value scoped to CSR pub key sha1">
+      <created>1539217268231</created>
+      <option name="number" value="00541" />
+      <option name="presentableId" value="LOCAL-00541" />
       <option name="project" value="LOCAL" />
-      <updated>1528987336400</updated>
+      <updated>1539217268231</updated>
     </task>
-    <task id="LOCAL-00486" summary="disable caching. Centralize duo requirement for login">
-      <created>1528994530518</created>
-      <option name="number" value="00486" />
-      <option name="presentableId" value="LOCAL-00486" />
+    <task id="LOCAL-00542" summary="caching for performance">
+      <created>1539232804874</created>
+      <option name="number" value="00542" />
+      <option name="presentableId" value="LOCAL-00542" />
       <option name="project" value="LOCAL" />
-      <updated>1528994530518</updated>
+      <updated>1539232804875</updated>
     </task>
-    <task id="LOCAL-00487" summary="optimize transfer orders. Still more to do">
-      <created>1528995207141</created>
-      <option name="number" value="00487" />
-      <option name="presentableId" value="LOCAL-00487" />
+    <task id="LOCAL-00543" summary="fix caching">
+      <created>1539233358540</created>
+      <option name="number" value="00543" />
+      <option name="presentableId" value="LOCAL-00543" />
       <option name="project" value="LOCAL" />
-      <updated>1528995207141</updated>
+      <updated>1539233358541</updated>
     </task>
-    <task id="LOCAL-00488" summary="added &quot;searchable&quot; term">
-      <created>1529007680829</created>
-      <option name="number" value="00488" />
-      <option name="presentableId" value="LOCAL-00488" />
+    <task id="LOCAL-00544" summary="fixes for production CA">
+      <created>1539390528727</created>
+      <option name="number" value="00544" />
+      <option name="presentableId" value="LOCAL-00544" />
       <option name="project" value="LOCAL" />
-      <updated>1529007680830</updated>
+      <updated>1539390528728</updated>
     </task>
-    <task id="LOCAL-00489" summary="relabel search filters">
-      <created>1529079647847</created>
-      <option name="number" value="00489" />
-      <option name="presentableId" value="LOCAL-00489" />
+    <task id="LOCAL-00545" summary="caching fixes">
+      <created>1539606310827</created>
+      <option name="number" value="00545" />
+      <option name="presentableId" value="LOCAL-00545" />
       <option name="project" value="LOCAL" />
-      <updated>1529079647847</updated>
+      <updated>1539606310827</updated>
     </task>
-    <task id="LOCAL-00490" summary="redirect user to original destination">
-      <created>1529081159047</created>
-      <option name="number" value="00490" />
-      <option name="presentableId" value="LOCAL-00490" />
+    <task id="LOCAL-00546" summary="fixes">
+      <created>1539609879981</created>
+      <option name="number" value="00546" />
+      <option name="presentableId" value="LOCAL-00546" />
       <option name="project" value="LOCAL" />
-      <updated>1529081159047</updated>
+      <updated>1539609879982</updated>
     </task>
-    <task id="LOCAL-00491" summary="delete">
-      <created>1534457501195</created>
-      <option name="number" value="00491" />
-      <option name="presentableId" value="LOCAL-00491" />
+    <task id="LOCAL-00547" summary="user and ssl_account_user ambiguous https://sslcom.airbrake.io/projects/128852/groups/2326211282458723240?tab=overview">
+      <created>1539610732913</created>
+      <option name="number" value="00547" />
+      <option name="presentableId" value="LOCAL-00547" />
       <option name="project" value="LOCAL" />
-      <updated>1534457501195</updated>
+      <updated>1539610732913</updated>
     </task>
-    <task id="LOCAL-00492" summary="closing conditional">
-      <created>1534459321793</created>
-      <option name="number" value="00492" />
-      <option name="presentableId" value="LOCAL-00492" />
+    <task id="LOCAL-00548" summary="users optimization">
+      <created>1539634582136</created>
+      <option name="number" value="00548" />
+      <option name="presentableId" value="LOCAL-00548" />
       <option name="project" value="LOCAL" />
-      <updated>1534459321793</updated>
+      <updated>1539634582136</updated>
     </task>
-    <task id="LOCAL-00493" summary="remove www on dcv retry">
-      <created>1534521172084</created>
-      <option name="number" value="00493" />
-      <option name="presentableId" value="LOCAL-00493" />
+    <task id="LOCAL-00549" summary="display SHA1 in CSR picker">
+      <created>1539662826883</created>
+      <option name="number" value="00549" />
+      <option name="presentableId" value="LOCAL-00549" />
       <option name="project" value="LOCAL" />
-      <updated>1534521172084</updated>
+      <updated>1539662826883</updated>
     </task>
-    <task id="LOCAL-00494" summary="new certificate in sandbox">
-      <created>1534523503060</created>
-      <option name="number" value="00494" />
-      <option name="presentableId" value="LOCAL-00494" />
+    <task id="LOCAL-00550" summary="client auth env detection">
+      <created>1540218846943</created>
+      <option name="number" value="00550" />
+      <option name="presentableId" value="LOCAL-00550" />
       <option name="project" value="LOCAL" />
-      <updated>1534523503060</updated>
+      <updated>1540218846943</updated>
     </task>
-    <task id="LOCAL-00495" summary="shorten credit name">
-      <created>1534523994499</created>
-      <option name="number" value="00495" />
-      <option name="presentableId" value="LOCAL-00495" />
+    <task id="LOCAL-00551" summary="fixes for certificate orders search call for api">
+      <created>1540444219011</created>
+      <option name="number" value="00551" />
+      <option name="presentableId" value="LOCAL-00551" />
       <option name="project" value="LOCAL" />
-      <updated>1534523994499</updated>
+      <updated>1540444219012</updated>
     </task>
-    <task id="LOCAL-00496" summary="SMIME client certificate products in the sandbox">
-      <created>1534526562781</created>
-      <option name="number" value="00496" />
-      <option name="presentableId" value="LOCAL-00496" />
+    <task id="LOCAL-00552" summary="consolidate dcv">
+      <created>1540824532590</created>
+      <option name="number" value="00552" />
+      <option name="presentableId" value="LOCAL-00552" />
       <option name="project" value="LOCAL" />
-      <updated>1534526562781</updated>
+      <updated>1540824532592</updated>
     </task>
-    <task id="LOCAL-00497" summary="improved `def signed_certificate` function">
-      <created>1535044208111</created>
-      <option name="number" value="00497" />
-      <option name="presentableId" value="LOCAL-00497" />
+    <task id="LOCAL-00553" summary="allow mapping of team to different EJBCA env; reduce duplicates on &#10;shadow certs">
+      <created>1541353287803</created>
+      <option name="number" value="00553" />
+      <option name="presentableId" value="LOCAL-00553" />
       <option name="project" value="LOCAL" />
-      <updated>1535044208112</updated>
+      <updated>1541353287803</updated>
     </task>
-    <task id="LOCAL-00498" summary="fixes and detect if domain name belongs to an issued certificate order">
-      <created>1535047213822</created>
-      <option name="number" value="00498" />
-      <option name="presentableId" value="LOCAL-00498" />
+    <task id="LOCAL-00554" summary="allow mapping of different EJBCA env">
+      <created>1541353317660</created>
+      <option name="number" value="00554" />
+      <option name="presentableId" value="LOCAL-00554" />
       <option name="project" value="LOCAL" />
-      <updated>1535047213822</updated>
+      <updated>1541353317660</updated>
     </task>
-    <task id="LOCAL-00499" summary="client certificate product">
-      <created>1535063545640</created>
-      <option name="number" value="00499" />
-      <option name="presentableId" value="LOCAL-00499" />
+    <task id="LOCAL-00555" summary="allow for rerouting Cas">
+      <created>1541363673784</created>
+      <option name="number" value="00555" />
+      <option name="presentableId" value="LOCAL-00555" />
       <option name="project" value="LOCAL" />
-      <updated>1535063545640</updated>
+      <updated>1541363673784</updated>
     </task>
-    <task id="LOCAL-00500" summary="handle refunded cert orders better">
-      <created>1535126024528</created>
-      <option name="number" value="00500" />
-      <option name="presentableId" value="LOCAL-00500" />
+    <task id="LOCAL-00556" summary="cas.rake file with more flexibility">
+      <created>1541380941569</created>
+      <option name="number" value="00556" />
+      <option name="presentableId" value="LOCAL-00556" />
       <option name="project" value="LOCAL" />
-      <updated>1535126024528</updated>
+      <updated>1541380941569</updated>
     </task>
-    <option name="localTasksCounter" value="501" />
+    <option name="localTasksCounter" value="557" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -2513,50 +2469,37 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="1110386000" />
+    <option name="totallyTimeSpent" value="1446994000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-7" y="33" width="1550" height="838" extended-state="6" />
+    <frame x="-6" y="34" width="1513" height="973" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info anchor="bottom" id="TODO" order="3" sideWeight="0.49862638" weight="0.32913566" />
-      <window_info active="true" anchor="bottom" id="Event Log" order="9" sideWeight="0.561745" side_tool="true" visible="true" weight="0.50948906" />
+      <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.53489935" side_tool="true" weight="0.47883213" />
       <window_info anchor="bottom" id="Database Changes" order="10" sideWeight="0.49932885" weight="0.329927" />
-      <window_info anchor="bottom" id="Version Control" order="10" sideWeight="0.43489933" weight="0.50948906" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.561745" side_tool="true" weight="0.50948906" />
-      <window_info anchor="bottom" id="Terminal" order="8" sideWeight="0.45771813" weight="0.40437958" />
-      <window_info anchor="right" id="Remote Host" order="0" visible="true" weight="0.09261745" />
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.3065476" visible="true" weight="0.1852349" />
-      <window_info anchor="bottom" id="Docker" order="13" show_stripe_button="false" sideWeight="0.49862638" weight="0.32970807" />
+      <window_info anchor="bottom" id="Version Control" order="11" sideWeight="0.45360824" weight="0.51522535" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.5292096" side_tool="true" visible="true" weight="0.5127893" />
+      <window_info anchor="bottom" id="Terminal" order="8" sideWeight="0.4508591" weight="0.37393424" />
+      <window_info anchor="right" id="Remote Host" order="0" visible="true" weight="0.116838485" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.5775" visible="true" weight="0.22268042" />
+      <window_info anchor="bottom" id="Docker" order="14" show_stripe_button="false" sideWeight="0.49862638" weight="0.32970807" />
       <window_info anchor="right" id="Database" order="4" weight="0.072916664" />
-      <window_info anchor="bottom" id="Find" order="1" sideWeight="0.783029" weight="0.4091442" />
-      <window_info id="Structure" order="1" sideWeight="0.69345236" side_tool="true" visible="true" weight="0.1852349" />
+      <window_info anchor="bottom" id="Find" order="1" sideWeight="0.7821306" weight="0.40803897" />
+      <window_info id="Structure" order="1" sideWeight="0.4225" side_tool="true" visible="true" weight="0.22268042" />
       <window_info id="Favorites" order="2" side_tool="true" />
-      <window_info anchor="bottom" id="Debug" order="4" sideWeight="0.43825504" visible="true" weight="0.50948906" />
-      <window_info anchor="bottom" id="Thumbnails" order="12" weight="0.32965687" />
+      <window_info anchor="bottom" id="Debug" order="4" sideWeight="0.4707904" visible="true" weight="0.5127893" />
+      <window_info anchor="bottom" id="Thumbnails" order="13" weight="0.32965687" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="3" weight="0.25" />
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.3065476" visible="true" weight="0.1852349" />
-      <window_info anchor="bottom" id="Docker" order="13" show_stripe_button="false" sideWeight="0.49862638" weight="0.32970807" />
       <window_info anchor="bottom" id="Inspection" order="6" weight="0.4" />
-      <window_info anchor="right" id="Remote Host" order="0" visible="true" weight="0.09261745" />
-      <window_info anchor="bottom" id="Changes" order="7" sideWeight="0.4997227" weight="0.45833334" />
-      <window_info anchor="bottom" id="Terminal" order="8" sideWeight="0.45771813" weight="0.40437958" />
-      <window_info id="Structure" order="1" sideWeight="0.69345236" side_tool="true" visible="true" weight="0.1852349" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="1" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="2" weight="0.25" />
-      <window_info anchor="bottom" id="TODO" order="3" sideWeight="0.49862638" weight="0.32913566" />
-      <window_info anchor="bottom" id="Version Control" order="10" sideWeight="0.43489933" weight="0.50948906" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.561745" side_tool="true" visible="true" weight="0.50948906" />
-      <window_info anchor="bottom" id="Application Servers" order="14" />
-      <window_info anchor="bottom" id="REST Client" order="15" sideWeight="0.452739" weight="0.41100702" />
-      <window_info anchor="bottom" id="Database Changes" order="10" sideWeight="0.49932885" weight="0.329927" />
-      <window_info anchor="right" id="Database" order="4" weight="0.072916664" />
+      <window_info anchor="bottom" id="Changes" order="7" sideWeight="0.4997227" weight="0.45833334" />
+      <window_info anchor="bottom" id="Application Servers" order="15" />
+      <window_info anchor="bottom" id="REST Client" order="16" sideWeight="0.452739" weight="0.41100702" />
+      <window_info anchor="bottom" id="Messages" order="12" sideWeight="0.43436426" weight="0.5091352" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.53489935" side_tool="true" weight="0.47883213" />
       <window_info anchor="bottom" id="Cvs" order="5" weight="0.25" />
-      <window_info active="true" anchor="bottom" id="Debug" order="4" sideWeight="0.43825504" visible="true" weight="0.50948906" />
-      <window_info anchor="bottom" id="Find" order="1" sideWeight="0.783029" weight="0.4091442" />
-      <window_info anchor="bottom" id="Messages" order="11" sideWeight="0.4100671" weight="0.50948906" />
-      <window_info id="Favorites" order="2" side_tool="true" />
     </layout>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -2601,33 +2544,32 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CHECK_NEW_TODO" value="false" />
-    <option name="SHOW_ONLY_CHANGED_IN_SELECTION_DIFF" value="false" />
-    <MESSAGE value="grammar correction" />
-    <MESSAGE value="5 attempts for SSL.com Admins" />
-    <MESSAGE value="captcha and db migrations" />
-    <MESSAGE value="2fa implementation" />
-    <MESSAGE value="clean up &quot;remove&quot; api credential" />
-    <MESSAGE value="missing variable returns nil" />
-    <MESSAGE value="fix @team_tags.any?" />
-    <MESSAGE value="caching on certificate_order prevents tags from being shown" />
-    <MESSAGE value="duo for super_user role only" />
-    <MESSAGE value="disable caching. Centralize duo requirement for login" />
-    <MESSAGE value="optimize transfer orders. Still more to do" />
-    <MESSAGE value="added &quot;searchable&quot; term" />
-    <MESSAGE value="relabel search filters" />
-    <MESSAGE value="redirect user to original destination" />
-    <MESSAGE value="delete" />
-    <MESSAGE value="closing conditional" />
-    <MESSAGE value="remove www on dcv retry" />
-    <MESSAGE value="new certificate in sandbox" />
-    <MESSAGE value="shorten credit name" />
-    <MESSAGE value="SMIME client certificate products in the sandbox" />
-    <MESSAGE value="improved `def signed_certificate` function" />
-    <MESSAGE value="fixes and detect if domain name belongs to an issued certificate order" />
-    <MESSAGE value="client certificate product" />
-    <MESSAGE value="handle refunded cert orders better" />
-    <MESSAGE value="fixes for views" />
-    <option name="LAST_COMMIT_MESSAGE" value="fixes for views" />
+    <MESSAGE value="approved_account fix" />
+    <MESSAGE value="fixed user caching issues" />
+    <MESSAGE value="order.certificate_orders -&gt; order.cached_certificate_orders" />
+    <MESSAGE value="remove variable in user.is_admin_disabled?" />
+    <MESSAGE value="compact and unique SAN names" />
+    <MESSAGE value="remove &quot;&quot; from SAN names" />
+    <MESSAGE value="more caching for performance" />
+    <MESSAGE value="cache certificate_orders.count as cached_certificate_orders_count" />
+    <MESSAGE value="caching improvements" />
+    <MESSAGE value="csr_unique_value scoped to CSR pub key sha1" />
+    <MESSAGE value="caching for performance" />
+    <MESSAGE value="fix caching" />
+    <MESSAGE value="fixes for production CA" />
+    <MESSAGE value="caching fixes" />
+    <MESSAGE value="fixes" />
+    <MESSAGE value="user and ssl_account_user ambiguous https://sslcom.airbrake.io/projects/128852/groups/2326211282458723240?tab=overview" />
+    <MESSAGE value="users optimization" />
+    <MESSAGE value="display SHA1 in CSR picker" />
+    <MESSAGE value="client auth env detection" />
+    <MESSAGE value="fixes for certificate orders search call for api" />
+    <MESSAGE value="consolidate dcv" />
+    <MESSAGE value="allow mapping of team to different EJBCA env; reduce duplicates on &#10;shadow certs" />
+    <MESSAGE value="allow mapping of different EJBCA env" />
+    <MESSAGE value="allow for rerouting Cas" />
+    <MESSAGE value="cas.rake file with more flexibility" />
+    <option name="LAST_COMMIT_MESSAGE" value="cas.rake file with more flexibility" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -2643,9 +2585,14 @@
           <option name="timeStamp" value="18" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="ruby-line">
-          <url>file://$PROJECT_DIR$/app/models/certificate_order.rb</url>
-          <line>759</line>
-          <option name="timeStamp" value="2045" />
+          <url>file://$PROJECT_DIR$/app/models/csr.rb</url>
+          <line>170</line>
+          <option name="timeStamp" value="1912" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="ruby-line">
+          <url>file://$PROJECT_DIR$/app/models/csr.rb</url>
+          <line>166</line>
+          <option name="timeStamp" value="1913" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="ruby-line">
           <url>file://$USER_HOME$/.RubyMine2016.1/system/ruby_stubs/-1926413708/-332434372/bundler/gems/subdomain-fu-3752799a02c0/lib/subdomain_fu/url_rewriter.rb</url>
@@ -2654,7 +2601,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="ruby-line">
           <url>file://$PROJECT_DIR$/app/controllers/user_sessions_controller.rb</url>
-          <line>139</line>
+          <line>180</line>
           <option name="timeStamp" value="2103" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="ruby-line">
@@ -2693,514 +2640,648 @@
           <option name="timeStamp" value="2197" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="ruby-line">
-          <url>file://$PROJECT_DIR$/app/models/certificate_order.rb</url>
-          <line>1693</line>
-          <option name="timeStamp" value="2377" />
+          <url>file://$PROJECT_DIR$/app/models/duplicate_v2_user.rb</url>
+          <line>61</line>
+          <option name="timeStamp" value="2296" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="ruby-line">
-          <url>file://$PROJECT_DIR$/app/models/certificate_order.rb</url>
-          <line>1696</line>
-          <option name="timeStamp" value="2379" />
+          <url>file://$PROJECT_DIR$/app/views/api_certificate_requests/show_v1_4.rabl</url>
+          <option name="timeStamp" value="2339" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="ruby-line">
-          <url>file://$PROJECT_DIR$/app/models/certificate_order.rb</url>
-          <line>1711</line>
-          <option name="timeStamp" value="2384" />
+          <url>file://$PROJECT_DIR$/app/views/api_certificate_requests/show_v1_4.rabl</url>
+          <line>2</line>
+          <option name="timeStamp" value="2340" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="ruby-line">
-          <url>file://$USER_HOME$/.RubyMine2017.2/system/ruby_stubs/508573160/-705174119/gems/actionpack-4.2.7.1/lib/action_dispatch/middleware/params_parser.rb</url>
-          <line>50</line>
-          <option name="timeStamp" value="2429" />
+          <url>file://$PROJECT_DIR$/app/views/api_certificate_requests/show_v1_4.rabl</url>
+          <line>3</line>
+          <option name="timeStamp" value="2341" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="ruby-line">
-          <url>file://$USER_HOME$/.RubyMine2017.2/system/ruby_stubs/508573160/-705174119/gems/request_exception_handler-0.5.0/lib/request_exception_handler.rb</url>
-          <line>118</line>
-          <option name="timeStamp" value="2430" />
+          <url>file://$PROJECT_DIR$/app/views/api_certificate_requests/show_v1_4.rabl</url>
+          <line>6</line>
+          <option name="timeStamp" value="2342" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="ruby-line">
-          <url>file://$USER_HOME$/.RubyMine2017.2/system/ruby_stubs/508573160/-705174119/gems/request_exception_handler-0.5.0/lib/request_exception_handler.rb</url>
-          <line>122</line>
+          <url>file://$PROJECT_DIR$/app/views/api_certificate_requests/show_v1_4.rabl</url>
+          <line>7</line>
+          <option name="timeStamp" value="2343" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="ruby-line">
+          <url>file://$PROJECT_DIR$/app/views/api_certificate_requests/show_v1_4.rabl</url>
+          <line>1</line>
+          <option name="timeStamp" value="2350" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="ruby-line">
+          <url>file://$PROJECT_DIR$/app/controllers/validations_controller.rb</url>
+          <line>246</line>
+          <option name="timeStamp" value="2411" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="ruby-line">
+          <url>file://$PROJECT_DIR$/app/models/certificate_content.rb</url>
+          <line>493</line>
           <option name="timeStamp" value="2431" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="ruby-line">
-          <url>file://$PROJECT_DIR$/app/models/validation_history.rb</url>
-          <line>76</line>
+          <url>file://$PROJECT_DIR$/app/models/certificate_content.rb</url>
+          <line>492</line>
+          <option name="timeStamp" value="2432" />
+        </line-breakpoint>
+        <line-breakpoint type="ruby-line">
+          <url>file://$PROJECT_DIR$/app/views/certificates/_form.html.haml</url>
+          <line>476</line>
+          <option name="timeStamp" value="2439" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="ruby-line">
+          <condition expression="k==:sslcomnaesbbasicclient1yr" language="ruby" />
+          <url>file://$PROJECT_DIR$/app/models/certificate.rb</url>
+          <line>1027</line>
+          <option name="timeStamp" value="2444" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="ruby-line">
+          <url>file://$PROJECT_DIR$/app/models/certificate.rb</url>
+          <line>1028</line>
+          <option name="timeStamp" value="2446" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="ruby-line">
+          <url>file://$PROJECT_DIR$/app/models/certificate.rb</url>
+          <line>1030</line>
+          <option name="timeStamp" value="2447" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="ruby-line">
+          <url>file://$PROJECT_DIR$/app/models/certificate.rb</url>
+          <line>1032</line>
+          <option name="timeStamp" value="2448" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="ruby-line">
+          <url>file://$PROJECT_DIR$/app/models/certificate.rb</url>
+          <line>1033</line>
+          <option name="timeStamp" value="2449" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="ruby-line">
+          <url>file://$PROJECT_DIR$/app/models/certificate_content.rb</url>
+          <line>95</line>
+          <option name="timeStamp" value="2458" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="ruby-line">
+          <url>file://$PROJECT_DIR$/app/views/funded_accounts/_form.html.haml</url>
+          <line>12</line>
           <option name="timeStamp" value="2472" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="ruby-line">
-          <url>file://$PROJECT_DIR$/app/models/certificate_order.rb</url>
-          <line>1949</line>
-          <option name="timeStamp" value="2481" />
+          <url>file://$PROJECT_DIR$/app/models/notification_group.rb</url>
+          <line>379</line>
+          <option name="timeStamp" value="2502" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="ruby-line">
-          <url>file://$PROJECT_DIR$/app/views/validations/_index_scripts.html.erb</url>
-          <line>561</line>
-          <option name="timeStamp" value="2586" />
-        </line-breakpoint>
-        <line-breakpoint type="ruby-line">
-          <url>file://$PROJECT_DIR$/app/models/comodo_api.rb</url>
-          <line>286</line>
-          <option name="timeStamp" value="2590" />
+          <url>file://$PROJECT_DIR$/app/models/role.rb</url>
+          <line>25</line>
+          <option name="timeStamp" value="2511" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="ruby-line">
-          <url>file://$PROJECT_DIR$/app/models/sslcom_ca_api.rb</url>
-          <line>166</line>
+          <url>file://$PROJECT_DIR$/app/models/user.rb</url>
+          <line>199</line>
+          <option name="timeStamp" value="2515" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="ruby-line">
+          <url>file://$PROJECT_DIR$/app/models/user.rb</url>
+          <line>209</line>
+          <option name="timeStamp" value="2517" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="ruby-line">
+          <url>file://$PROJECT_DIR$/app/models/user.rb</url>
+          <line>214</line>
+          <option name="timeStamp" value="2518" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="ruby-line">
+          <url>file://$PROJECT_DIR$/app/controllers/certificate_orders_controller.rb</url>
+          <line>400</line>
+          <option name="timeStamp" value="2563" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="ruby-line">
+          <url>file://$PROJECT_DIR$/app/controllers/certificate_orders_controller.rb</url>
+          <line>279</line>
+          <option name="timeStamp" value="2564" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="ruby-line">
+          <url>file://$PROJECT_DIR$/app/controllers/validations_controller.rb</url>
+          <line>27</line>
+          <option name="timeStamp" value="2565" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="ruby-line">
+          <url>file://$PROJECT_DIR$/app/controllers/certificate_orders_controller.rb</url>
+          <line>473</line>
+          <option name="timeStamp" value="2572" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="ruby-line">
+          <url>file://$PROJECT_DIR$/app/controllers/certificate_orders_controller.rb</url>
+          <line>466</line>
+          <option name="timeStamp" value="2573" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="ruby-line">
+          <url>file://$PROJECT_DIR$/app/controllers/certificate_orders_controller.rb</url>
+          <line>468</line>
+          <option name="timeStamp" value="2574" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="ruby-line">
+          <url>file://$PROJECT_DIR$/app/models/website.rb</url>
+          <line>22</line>
+          <option name="timeStamp" value="2592" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="ruby-line">
+          <url>file://$PROJECT_DIR$/app/models/website.rb</url>
+          <line>27</line>
           <option name="timeStamp" value="2593" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="ruby-line">
-          <url>file://$PROJECT_DIR$/app/models/sslcom_ca_api.rb</url>
-          <line>190</line>
+          <url>file://$PROJECT_DIR$/app/models/website.rb</url>
+          <line>32</line>
           <option name="timeStamp" value="2594" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="ruby-line">
-          <url>file://$PROJECT_DIR$/app/models/sslcom_ca_api.rb</url>
-          <line>207</line>
+          <url>file://$PROJECT_DIR$/app/models/website.rb</url>
+          <line>37</line>
           <option name="timeStamp" value="2595" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="ruby-line">
-          <url>file://$PROJECT_DIR$/app/controllers/certificate_orders_controller.rb</url>
-          <line>156</line>
-          <option name="timeStamp" value="2633" />
+          <url>file://$PROJECT_DIR$/app/models/order_notifier.rb</url>
+          <line>100</line>
+          <option name="timeStamp" value="2626" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="ruby-line">
-          <url>file://$PROJECT_DIR$/app/controllers/certificate_orders_controller.rb</url>
-          <line>154</line>
-          <option name="timeStamp" value="2634" />
+          <url>file://$PROJECT_DIR$/app/models/order_notifier.rb</url>
+          <line>112</line>
+          <option name="timeStamp" value="2627" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="ruby-line">
-          <url>file://$PROJECT_DIR$/app/controllers/certificate_orders_controller.rb</url>
-          <line>147</line>
-          <option name="timeStamp" value="2636" />
+          <url>file://$PROJECT_DIR$/app/models/order_notifier.rb</url>
+          <line>116</line>
+          <option name="timeStamp" value="2628" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="ruby-line">
-          <url>file://$PROJECT_DIR$/app/controllers/certificate_orders_controller.rb</url>
-          <line>148</line>
-          <option name="timeStamp" value="2637" />
+          <url>file://$PROJECT_DIR$/app/models/order_notifier.rb</url>
+          <line>117</line>
+          <option name="timeStamp" value="2629" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="ruby-line">
+          <url>file://$PROJECT_DIR$/app/models/order_notifier.rb</url>
+          <line>118</line>
+          <option name="timeStamp" value="2630" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="ruby-line">
+          <url>file://$PROJECT_DIR$/app/models/order_notifier.rb</url>
+          <line>122</line>
+          <option name="timeStamp" value="2631" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="ruby-line">
+          <url>file://$PROJECT_DIR$/lib/tasks/cas.rake</url>
+          <line>753</line>
+          <option name="timeStamp" value="2647" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="ruby-line">
+          <url>file://$PROJECT_DIR$/lib/tasks/cas.rake</url>
+          <line>757</line>
+          <option name="timeStamp" value="2653" />
         </line-breakpoint>
       </breakpoints>
       <breakpoints-dialog>
         <breakpoints-dialog />
       </breakpoints-dialog>
-      <option name="time" value="2644" />
+      <option name="time" value="2654" />
     </breakpoint-manager>
     <watches-manager>
+      <configuration name="RakeRunConfigurationType">
+        <watch expression="ca.host and default and ca.host.include?(default)" />
+        <watch expression="ca.end_entity==(Ca::END_ENTITY[:evssl])" />
+        <watch expression="ca.end_entity" />
+        <watch expression="(ca.ref==&quot;0017&quot; and live.include?(cert) and cert.is_dv? and default.blank?)" />
+        <watch expression="CasCertificate::STATUS[(ca.ref==&quot;0017&quot; and live.include?(cert) and cert.is_dv? and default.blank?) ? :default : status]" />
+        <watch expression="ca.host" />
+        <watch expression="SslAccount.last.cas_certificates.count " language="ruby" />
+        <watch expression="Ca.count " language="ruby" />
+        <watch expression="ENV['SSL_ACCOUNT_IDS'].split(',')" />
+        <watch expression="if ENV['SSL_ACCOUNT_IDS']       ENV['SSL_ACCOUNT_IDS'].split(',').each do |ssl_account_id|         SslAccount.find(ssl_account_id.to_i).cas_certificates.delete_all       end     end " language="ruby" />
+        <watch expression="ca.ref" />
+        <watch expression="CasCertificate::STATUS[(ca.ref==&quot;0013&quot; and live.include?(cert) and default.blank?) ? :default : status]" />
+        <watch expression="ca.host" />
+      </configuration>
       <configuration name="IrbRunConfigurationType">
-        <watch expression="status.empty?" language="ruby" />
+        <watch expression="level_domain =~ /\A\*\./" language="ruby" />
+        <watch expression="d.domain" />
+        <watch expression="multi_level_subdomain[2..-1]" language="ruby" />
+        <watch expression="(subdomains.slice(0,i)&lt;&lt;d.domain).join(&quot;.&quot;)" />
+        <watch expression="subdomains.slice(0,2)" language="ruby" />
+        <watch expression="d.trd.split(&quot;.&quot;).reverse " language="ruby" />
       </configuration>
       <configuration name="RailsRunConfigurationType">
-        <watch expression="pkcs7_csr_signed_certificate_url(@ssl_slug, csr, sc)" />
+        <watch expression="self.api_requestable" />
+        <watch expression="co.search_with_csr(search,options).count " language="ruby" />
+        <watch expression="self.api_requestable.certificate_orders.not_new.send(is_test).filter_by(&quot;basicssl&quot;).count " language="ruby" />
+        <watch expression="self.filter_by(query).count " language="ruby" />
+        <watch expression="result.to_sql " language="ruby" />
+        <watch expression="result.filter_by(query).count " language="ruby" />
+        <watch expression="result.count " language="ruby" />
+        <watch expression=" dcv_all_validate_domains_url(params)" />
+        <watch expression="Sandbox.exists?(request.try(:host)" language="ruby" />
       </configuration>
     </watches-manager>
   </component>
   <component name="debuggerHistoryManager">
+    <expressions id="breakpointCondition">
+      <expression>
+        <expression-string>k==:sslcomnaesbbasicclient1yr</expression-string>
+        <language-id>ruby</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+    </expressions>
     <expressions id="watch">
       <expression>
-        <expression-string>u.is_disabled?</expression-string>
-        <language-id>Haml</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>u.login</expression-string>
-        <language-id>Haml</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>this_session.attributes</expression-string>
+        <expression-string>SslAccount.last.cas_certificates.count</expression-string>
         <language-id>ruby</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>orders.sum(:cents).to_sql</expression-string>
+        <expression-string>if ENV['SSL_ACCOUNT_IDS']       ENV['SSL_ACCOUNT_IDS'].split(',').each do |ssl_account_id|         SslAccount.find(ssl_account_id.to_i).cas_certificates.delete_all       end     end</expression-string>
         <language-id>ruby</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>orders.to_sql</expression-string>
+        <expression-string>SslAccount.last.cas.uniq.count</expression-string>
         <language-id>ruby</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>unpaginated.to_sql</expression-string>
+        <expression-string>Ca.count</expression-string>
         <language-id>ruby</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>approval_req.attributes</expression-string>
+        <expression-string>SslAccount.last.cas.count</expression-string>
         <language-id>ruby</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>approval_res.uri</expression-string>
+        <expression-string>Sandbox.exists?(request.try(:host)</expression-string>
         <language-id>ruby</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>approval_res.request_uri</expression-string>
+        <expression-string>result.count</expression-string>
         <language-id>ruby</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>approval_res.attributes</expression-string>
+        <expression-string>result.not_test.count</expression-string>
+        <language-id>ruby</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>result.to_sql</expression-string>
         <language-id>ruby</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
     </expressions>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/app/controllers/api/v1/api_certificate_requests_controller.rb">
+    <entry file="file://$PROJECT_DIR$/app/views/certificate_orders/_subject_column.html.haml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2788">
-          <caret line="164" column="15" selection-start-line="164" selection-start-column="15" selection-end-line="164" selection-end-column="15" />
+        <state relative-caret-position="221">
+          <caret line="13" column="11" lean-forward="true" selection-start-line="13" selection-start-column="11" selection-end-line="13" selection-end-column="11" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/certificate_orders/_api.html.haml">
+    <entry file="file://$USER_HOME$/.RubyMine2017.2/system/ruby_stubs/508573160/-705174119/gems/activerecord-4.2.7.1/lib/active_record/persistence.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2924">
-          <caret line="172" selection-start-line="172" selection-end-line="172" />
+        <state relative-caret-position="146">
+          <caret line="197" column="8" selection-start-line="197" selection-start-column="8" selection-end-line="197" selection-end-column="8" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Gemfile">
+    <entry file="file://$PROJECT_DIR$/app/views/users/_details.html.haml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="493">
-          <caret line="29" column="43" selection-start-line="29" selection-start-column="43" selection-end-line="29" selection-end-column="43" />
+        <state relative-caret-position="2278">
+          <caret line="134" column="57" selection-start-line="134" selection-start-column="57" selection-end-line="134" selection-end-column="57" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/validations_controller.rb">
+    <entry file="file://$PROJECT_DIR$/app/controllers/managed_users_controller.rb">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/user.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="12325">
-          <caret line="725" selection-start-line="725" selection-end-line="725" />
+        <state relative-caret-position="119">
+          <caret line="19" column="30" selection-start-line="19" selection-start-column="13" selection-end-line="19" selection-end-column="30" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/bin/setup_team_folders.rb">
+    <entry file="file://$PROJECT_DIR$/app/views/validations/index.html.haml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="374">
-          <caret line="22" selection-start-line="22" selection-end-line="22" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/folder.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="884">
-          <caret line="52" column="11" selection-start-line="52" selection-start-column="11" selection-end-line="52" selection-end-column="11" />
+        <state relative-caret-position="85">
+          <caret line="20" column="35" lean-forward="true" selection-start-line="20" selection-start-column="35" selection-end-line="20" selection-end-column="35" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/views/users/index.html.haml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="799">
-          <caret line="47" column="29" selection-start-line="47" selection-start-column="29" selection-end-line="47" selection-end-column="29" />
+        <state relative-caret-position="221">
+          <caret line="13" column="34" lean-forward="true" selection-start-line="13" selection-start-column="34" selection-end-line="13" selection-end-column="34" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/helpers/layouts_helper.rb">
+    <entry file="file://$PROJECT_DIR$/app/controllers/users_controller.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="6" selection-start-line="6" selection-end-line="6" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/caa_check.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="340">
-          <caret line="20" column="9" selection-start-line="20" selection-start-column="9" selection-end-line="20" selection-end-column="9" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lib/tasks/cas.rake">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="6987">
-          <caret line="411" column="19" selection-start-line="411" selection-start-column="19" selection-end-line="411" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/certificate_name.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="7" selection-start-line="3" selection-end-line="7" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/domains_controller.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="119">
-          <caret line="7" column="33" selection-start-line="7" selection-start-column="33" selection-end-line="7" selection-end-column="33" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/folders/index.haml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="15" column="2" selection-start-line="15" selection-start-column="2" selection-end-line="15" selection-end-column="2" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/config/routes.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2516">
-          <caret line="148" column="28" selection-start-line="148" selection-start-column="13" selection-end-line="148" selection-end-column="28" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/domains/index.html.haml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="136">
-          <caret line="37" column="56" selection-start-line="37" selection-start-column="56" selection-end-line="37" selection-end-column="56" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/db/migrate/20180820025703_add_ssl_account_to_csr.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="136">
-          <caret line="8" lean-forward="true" selection-start-line="8" selection-end-line="8" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/db/migrate/20180811165627_add_type_to_signed_certificate.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="68">
-          <caret line="4" column="3" lean-forward="true" selection-start-line="4" selection-start-column="3" selection-end-line="4" selection-end-column="3" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/certificates_controller.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="119">
-          <caret line="189" column="5" lean-forward="true" selection-start-line="189" selection-start-column="5" selection-end-line="189" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/.RubyMine2017.2/system/ruby_stubs/508573160/-705174119/gems/actionpack-4.2.7.1/lib/action_controller/metal/implicit_render.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="68">
-          <caret line="4" selection-start-line="4" selection-end-line="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/.RubyMine2017.2/system/ruby_stubs/508573160/-705174119/gems/haml-4.1.0.beta.1/lib/haml/helpers/action_view_mods.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="42" selection-start-line="42" selection-end-line="42" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/certificate_content.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1428">
-          <caret line="84" column="2" selection-start-line="84" selection-start-column="2" selection-end-line="84" selection-end-column="2" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/contacts/dynamic_contacts_add.html.haml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="6" column="35" selection-start-line="6" selection-start-column="35" selection-end-line="6" selection-end-column="35" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/contacts/index.html.haml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="153">
-          <caret line="9" column="42" selection-start-line="9" selection-start-column="42" selection-end-line="9" selection-end-column="42" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/certificate_orders/edit.html.haml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="11" column="48" selection-start-line="11" selection-start-column="48" selection-end-line="11" selection-end-column="48" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lib/certificate_type.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1513">
-          <caret line="89" column="5" selection-start-line="89" selection-start-column="5" selection-end-line="89" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/api_certificate_request.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3009">
-          <caret line="177" column="6" selection-start-line="177" selection-start-column="6" selection-end-line="177" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/certificate_orders/_form.html.haml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1581">
-          <caret line="93" column="24" selection-start-line="93" selection-start-column="24" selection-end-line="93" selection-end-column="24" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/contacts/_index_selected.html.haml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="115">
-          <caret line="39" column="10" lean-forward="true" selection-start-line="39" selection-start-column="10" selection-end-line="39" selection-end-column="10" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/certificate.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="394" selection-start-line="394" selection-end-line="394" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/sslcom_ca_api.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="215" selection-start-line="215" selection-end-line="215" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/orders_controller.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="27">
-          <caret line="410" column="26" lean-forward="true" selection-start-line="410" selection-start-column="26" selection-end-line="410" selection-end-column="26" />
+        <state relative-caret-position="197">
+          <caret line="82" column="31" lean-forward="true" selection-start-line="82" selection-start-column="31" selection-end-line="82" selection-end-column="31" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/models/order.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="153">
-          <caret line="779" column="29" lean-forward="true" selection-start-line="779" selection-start-column="29" selection-end-line="779" selection-end-column="29" />
+        <state relative-caret-position="357">
+          <caret line="21" column="39" lean-forward="true" selection-start-line="21" selection-start-column="39" selection-end-line="21" selection-end-column="39" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/config/settings.yml">
+    <entry file="file://$PROJECT_DIR$/app/views/orders/index.html.haml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="34">
-          <caret line="2" selection-start-line="2" selection-end-line="3" />
+        <state relative-caret-position="199">
+          <caret line="169" column="14" selection-start-line="169" selection-start-column="14" selection-end-line="169" selection-end-column="14" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/api_certificate_create_v1_4.rb">
+    <entry file="file://$USER_HOME$/.RubyMine2017.2/system/ruby_stubs/508573160/-705174119/gems/actionview-4.2.7.1/lib/action_view/helpers/form_options_helper.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="6273">
-          <caret line="369" column="18" selection-start-line="369" selection-start-column="18" selection-end-line="369" selection-end-column="18" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/validation.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="935">
-          <caret line="55" column="2" selection-start-line="55" selection-start-column="2" selection-end-line="55" selection-end-column="2" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/ssl_account.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="13413">
-          <caret line="790" selection-start-line="790" selection-end-line="790" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/config/deploy.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="680">
-          <caret line="40" column="28" selection-start-line="40" selection-start-column="28" selection-end-line="40" selection-end-column="28" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/csr.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="5542">
-          <caret line="354" column="12" selection-start-line="354" selection-start-column="12" selection-end-line="354" selection-end-column="12" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/config/secrets.yml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1768">
-          <caret line="104" selection-start-line="104" selection-end-line="104" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/config/environments/production.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1071">
-          <caret line="63" column="45" selection-start-line="63" selection-start-column="45" selection-end-line="63" selection-end-column="45" />
+        <state relative-caret-position="92">
+          <caret line="349" column="10" selection-start-line="349" selection-start-column="10" selection-end-line="349" selection-end-column="10" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/db/schema.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-123">
-          <caret line="335" column="4" selection-start-line="335" selection-start-column="4" selection-end-line="335" selection-end-column="4" />
+        <state relative-caret-position="2669">
+          <caret line="157" column="16" selection-start-line="157" selection-start-column="16" selection-end-line="157" selection-end-column="16" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/application_controller.rb">
+    <entry file="file://$PROJECT_DIR$/app/views/certificate_orders/_api.html.haml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4505">
-          <caret line="265" column="6" selection-start-line="265" selection-start-column="6" selection-end-line="265" selection-end-column="6" />
+        <state relative-caret-position="3060">
+          <caret line="180" column="210" selection-start-line="180" selection-start-column="185" selection-end-line="180" selection-end-column="210" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/helpers/certificate_orders_helper.rb">
+    <entry file="file://$PROJECT_DIR$/lib/certificate_type.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1360">
-          <caret line="80" column="37" selection-start-line="80" selection-start-column="37" selection-end-line="80" selection-end-column="37" />
+        <state relative-caret-position="143">
+          <caret line="117" column="6" selection-start-line="117" selection-start-column="6" selection-end-line="117" selection-end-column="6" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/certificate_order.rb">
+    <entry file="file://$PROJECT_DIR$/app/views/certificate_orders/show.html.haml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="20366">
-          <caret line="1198" selection-start-line="1198" selection-end-line="1198" />
+        <state relative-caret-position="2193">
+          <caret line="129" column="42" selection-start-line="129" selection-start-column="42" selection-end-line="129" selection-end-column="42" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/certificate_orders/_subject_column.html.haml">
+    <entry file="file://$PROJECT_DIR$/app/controllers/user_sessions_controller.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="221">
-          <caret line="13" column="40" selection-start-line="13" selection-start-column="40" selection-end-line="13" selection-end-column="40" />
+        <state relative-caret-position="6664">
+          <caret line="392" selection-start-line="390" selection-end-line="392" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/certificate_orders/_detailed_info.html.haml">
+    <entry file="file://$PROJECT_DIR$/app/views/folders/_folders_index_jstree.html.erb">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="527">
-          <caret line="31" column="39" selection-start-line="31" selection-start-column="39" selection-end-line="31" selection-end-column="39" />
+        <state relative-caret-position="-1050" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/certificate_orders/_index_scripts.html.erb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1819">
+          <caret line="73" column="25" selection-start-line="73" selection-start-column="14" selection-end-line="73" selection-end-column="25" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/shared/_small_admin_functions.html.haml">
+    <entry file="file://$PROJECT_DIR$/app/views/folders/index.haml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="357">
-          <caret line="21" column="59" selection-start-line="21" selection-start-column="59" selection-end-line="21" selection-end-column="59" />
+        <state relative-caret-position="510">
+          <caret line="90" column="45" selection-start-line="90" selection-start-column="45" selection-end-line="90" selection-end-column="45" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/helpers/application_helper.rb">
+    <entry file="file://$PROJECT_DIR$/app/views/folders/_co_index_folders.html.haml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="9180">
-          <caret line="540" column="6" selection-start-line="540" selection-start-column="6" selection-end-line="540" selection-end-column="6" />
+        <state relative-caret-position="-357" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/controllers/folders_controller.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="140">
+          <caret line="19" column="35" lean-forward="true" selection-start-line="19" selection-start-column="35" selection-end-line="19" selection-end-column="35" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/certificate_orders/_menu.html.haml">
+    <entry file="file://$PROJECT_DIR$/lib/middleware/catch_json_parse_errors.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="221">
-          <caret line="13" column="21" selection-start-line="13" selection-start-column="21" selection-end-line="13" selection-end-column="21" />
+        <state relative-caret-position="119">
+          <caret line="7" selection-start-line="7" selection-end-line="7" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/certificate_orders/_co.html.haml">
+    <entry file="file://$PROJECT_DIR$/app/models/api_certificate_request.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="11" column="11" selection-start-line="11" selection-start-column="11" selection-end-line="11" selection-end-column="11" />
+        <state relative-caret-position="2159">
+          <caret line="127" column="52" selection-start-line="127" selection-start-column="52" selection-end-line="127" selection-end-column="52" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/certificates/_form.html.haml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1955">
+          <caret line="115" column="44" selection-start-line="115" selection-end-line="116" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/controllers/orders_controller.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="13464">
+          <caret line="792" column="49" selection-start-line="792" selection-start-column="30" selection-end-line="792" selection-end-column="49" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/controllers/certificate_orders_controller.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="101" column="5" selection-start-line="101" selection-start-column="5" selection-end-line="101" selection-end-column="5" />
+        <state relative-caret-position="1734">
+          <caret line="102" column="34" selection-start-line="102" selection-start-column="34" selection-end-line="102" selection-end-column="34" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config/routes.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="7990">
+          <caret line="470" column="22" selection-start-line="470" selection-start-column="14" selection-end-line="470" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/managed_csrs/index.html.haml">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/controllers/application_controller.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="8857">
+          <caret line="521" column="6" selection-start-line="521" selection-start-column="6" selection-end-line="521" selection-end-column="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/controllers/managed_csrs_controller.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="136">
+          <caret line="8" column="9" selection-start-line="8" selection-start-column="9" selection-end-line="8" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/csr.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="68">
+          <caret line="373" column="16" lean-forward="true" selection-start-line="373" selection-start-column="16" selection-end-line="373" selection-end-column="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/folders/_folder_tree_modal.haml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-459" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/controllers/api/v1/api_certificate_requests_controller.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="132">
+          <caret line="1054" column="18" selection-start-line="1054" selection-start-column="18" selection-end-line="1054" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config/environments/production.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="160">
+          <caret line="79" column="26" selection-start-line="79" selection-start-column="26" selection-end-line="79" selection-end-column="26" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/controllers/domains_controller.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="149">
+          <caret line="301" selection-start-line="301" selection-end-line="301" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/controllers/validations_controller.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="251">
+          <caret line="157" column="50" selection-start-line="157" selection-start-column="50" selection-end-line="157" selection-end-column="50" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/order_notifier.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="102">
+          <caret line="117" column="4" selection-start-line="117" selection-start-column="4" selection-end-line="117" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/helpers/application_helper.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="149">
+          <caret line="20" selection-start-line="20" selection-end-line="20" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/certificate_orders/index.html.haml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="176">
+          <caret line="60" column="24" lean-forward="true" selection-start-line="60" selection-start-column="24" selection-end-line="60" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/certificate_order.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="217">
+          <caret line="1153" column="35" selection-start-line="1153" selection-start-column="35" selection-end-line="1153" selection-end-column="35" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/cas_certificate.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="102">
+          <caret line="6" lean-forward="true" selection-start-line="6" selection-end-line="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/signed_certificate.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="156">
+          <caret line="410" column="33" selection-start-line="410" selection-start-column="33" selection-end-line="410" selection-end-column="33" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config/settings.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="272">
+          <caret line="16" column="24" lean-forward="true" selection-start-line="16" selection-start-column="24" selection-end-line="16" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/ca.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="85">
+          <caret line="5" column="17" lean-forward="true" selection-start-line="5" selection-start-column="17" selection-end-line="5" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/layouts/_standard_menu.html.haml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="73">
+          <caret line="18" column="43" selection-start-line="18" selection-start-column="43" selection-end-line="18" selection-end-column="43" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/ssl_account.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="17">
+          <caret line="327" column="6" selection-start-line="327" selection-start-column="6" selection-end-line="327" selection-end-column="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/tasks/cas.rake">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="15" column="45" selection-start-line="15" selection-start-column="45" selection-end-line="15" selection-end-column="45" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config/deploy.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="6">
+          <caret line="25" column="30" lean-forward="true" selection-start-line="25" selection-start-column="30" selection-end-line="25" selection-end-column="30" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/sslcom_ca_request.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="204">
+          <caret line="12" column="35" lean-forward="true" selection-start-line="12" selection-start-column="35" selection-end-line="12" selection-end-column="35" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/sslcom_ca_api.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-867" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/ca_api_request.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret column="6" selection-start-column="6" selection-end-column="6" />
         </state>
       </provider>
     </entry>
