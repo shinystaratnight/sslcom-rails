@@ -313,7 +313,9 @@ jQuery(function($) {
             /*all_domains = names.split(' ');*/
 
             co_type = '';
-            <% if @certificate.is_basic?-%>
+            <% if @certificate.is_free?-%>
+              co_type = 'free';
+            <% elsif @certificate.is_basic?-%>
               co_type = 'basic';
             <% elsif @certificate.is_high_assurance?-%>
               co_type = 'highAssurance';
@@ -569,7 +571,9 @@ jQuery(function($) {
               /*all_domains = csr_names.split(' ');*/
 
               co_type = '';
-              <% if @certificate.is_basic?-%>
+              <% if @certificate.is_free?-%>
+                co_type = 'free';
+              <% elsif @certificate.is_basic?-%>
                 co_type = 'basic';
               <% elsif @certificate.is_high_assurance?-%>
                 co_type = 'highAssurance';
