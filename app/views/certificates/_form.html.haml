@@ -113,7 +113,7 @@
         %label
           Managed CSR:
         =select_tag :managed_csr, options_for_select(@managed_csrs, selected: {}), :class => 'managed_csr'
-        =link_to 'Go To CSR Manage', managed_csrs_path(@ssl_slug), {target: '_blank'}
+        =link_to 'Go To CSR Manager', managed_csrs_path(@ssl_slug || @certificate_order.ssl_account.to_slug), {target: '_blank'}
       .clearfix.managed_domains_block
         %label
           -if @certificate.is_ucc?
@@ -159,15 +159,15 @@
               =select_tag :managed_domains,
                 options_for_select(@certificate_content.domains.collect {|domain| [domain, 'validated-' + domain]}, selected: @certificate_content.domains.collect {|domain| 'validated-' + domain}),
                 multiple: true, data: {placeholder: "click here to list available domains to scan."}, :class => 'managed_domains'
-              %p.managed_domains_instruction
-                If enter domains individually, please click < SPACE > after each entry. Otherwise, please paste a list of domains separated by comma or space
-              =link_to 'Clear All Domains', '', {class: 'clear_domains'}
+              -hide=''
             -else
               =select_tag :managed_domains, options_for_select([], selected: []),
                 multiple: true, data: {placeholder: "click here to list available domains to scan."}, :class => 'managed_domains'
-              %p.managed_domains_instruction
-                If enter domains individually, please click < SPACE > after each entry. Otherwise, please paste a list of domains separated by comma or space
-              =link_to 'Clear All Domains', '', {class: 'clear_domains hidden'}
+              -hide='hidden'
+            %p.managed_domains_instruction
+              If entering domains individually, please click < SPACE > after each entry.
+              Otherwise, please paste a list of domains separated by comma or space
+            =link_to 'Clear All Domains', '', {class: "clear_domains #{hide}"}
       -if @certificate.is_browser_generated_capable?
         =cert_form.hidden_field :server_software_id, value: ServerSoftware.find(1).id
       -else

@@ -59,6 +59,8 @@ class CertificateContent < ActiveRecord::Base
     google\.com hamdami\.com mossad\.gov\.il sis\.gov\.uk microsoft\.com google\.com
     yahoo\.com login\.skype\.com mozilla\.org \.live\.com global\strustee)
 
+  WHITELIST = {492127=> %w((\.|^)ssl\.com$), 491981=> %w((\.|^)ssl\.com$), 493588=> %w((\.|^)ssl\.com$) }
+
   DOMAIN_COUNT_OFFLOAD=50
 
   #SSL.com=>Comodo
@@ -118,7 +120,7 @@ class CertificateContent < ActiveRecord::Base
       options[:certificate_content] = self
       if !self.infringement.empty? # possible trademark problems
         OrderNotifier.potential_trademark(Settings.notify_address, certificate_order, self.infringement).deliver_now
-      elsif ca.blank?
+      else
         certificate_order.apply_for_certificate(options)
       end
       if options[:host]
@@ -223,8 +225,10 @@ class CertificateContent < ActiveRecord::Base
 
   def certificate_names_from_domains(domains=nil)
     domains ||= all_domains
-    (domains-certificate_names.find_by_domains(domains).pluck(:name)).each_with_index do |domain, i|
-      certificate_names.find_or_create_by(name: domain.downcase, is_common_name: csr.try(:common_name)==domain.downcase)
+    (domains-certificate_names.find_by_domains(domains).pluck(:name)).each do |domain|
+      new_certificate_name=certificate_names.find_or_create_by(name: domain.downcase,
+                                                             is_common_name: csr.try(:common_name)==domain.downcase)
+      ssl_account.other_dcvs_satisfy_domain(new_certificate_name) if ssl_account
     end
 
     # Auto adding domains in case of certificate order has been included into some groups.
@@ -275,7 +279,8 @@ class CertificateContent < ActiveRecord::Base
 
   # are any of the sub/domains trademarks?
   def infringement
-    return all_domains.map{|domain|domain if TRADEMARKS.any?{|trademark|
+    return all_domains.map{|domain|domain if (TRADEMARKS-
+        (ssl_account and WHITELIST[ssl_account.id] ? WHITELIST[ssl_account.id] : [])).any?{|trademark|
       domain.downcase =~ Regexp.new(trademark, Regexp::IGNORECASE)}}.compact
   end
 
@@ -493,8 +498,9 @@ class CertificateContent < ActiveRecord::Base
     end
   end
 
-  def self.non_wildcard_name(name)
+  def self.non_wildcard_name(name,remove_www=false)
     name.gsub(/\A\*\./, "").downcase unless name.blank?
+    remove_www ? name.gsub("www.", "") : name
   end
 
   def self.is_fqdn?(name)

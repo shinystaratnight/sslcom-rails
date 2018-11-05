@@ -433,7 +433,7 @@ jQuery(function($) {
         wwwhttps = "https://"+wwwfile;
         wwwhttp = "http://"+wwwfile;
         /*cname = $('.dns_md5_hash').text()+"."+$(this).attr("alt").replace("*.", "").toLowerCase()+" -> "+$('.dns_sha2_hash').text()+".comodoca.com";*/
-        cname = $('.dns_md5_hash').text()+"."+domain+" -> "+$('.dns_sha2_hash').text()+".comodoca.com";
+        cname = $('.dns_md5_hash').text()+"."+domain+" -> "+$('.cname_destination').text();
 
         if (methods[0] == 'Please select a validation method') {
           $(instruction).html("Please select a validation method");

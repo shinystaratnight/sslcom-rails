@@ -15,7 +15,8 @@ class CertificateOrder < ActiveRecord::Base
   has_many    :renewal_attempts
   has_many    :renewal_notifications
   has_many    :cdns
-  has_many    :certificate_contents, :dependent => :destroy
+  has_many    :certificate_contents, :dependent => :destroy,
+                after_add: Proc.new { |co, cc| cc.add_ca(co.ssl_account) if co.ssl_account and cc.ca.blank?}
   has_many    :certificate_names, through: :certificate_contents
   has_many    :registrants, through: :certificate_contents
   has_many    :locked_registrants, through: :certificate_contents
@@ -977,12 +978,13 @@ class CertificateOrder < ActiveRecord::Base
     end
   end
 
-  def can_validate_client_smime?(current_user)
+  def can_validate_ov?(current_user)
     sysadmin = current_user.is_system_admins?
     acct_admins = current_user.is_owner? || current_user.is_account_admin?
     acct_admins_can = !certificate_content.validated? && acct_admins && ov_validated?
 
-    certificate.is_smime_or_client? && ( sysadmin || acct_admins_can )
+    (certificate.is_smime_or_client? && ( sysadmin || acct_admins_can )) ||
+    (certificate.is_ov? && sysadmin)
   end
 
   def reprocess_ucc_process

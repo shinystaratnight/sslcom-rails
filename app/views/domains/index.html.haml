@@ -36,7 +36,7 @@
         %th.name(scope="col") Name
         %th(scope="col") Scoped
         %th(scope="col") Status
-        %th(scope="col") Validity Period
+        %th(scope="col") Revalidation
       -@domains.each do |d|
         -dcv = d.domain_control_validations.last
         -validation_status = (dcv.try(:workflow_state)=='satisfied' || !d.signed_certificates.empty?) ? 'validated' : 'pending validation'
@@ -53,6 +53,6 @@
         %tr
           %td=(order_ref=='Team' || (dcv && dcv.csr_unique_value)) ? (check_box_tag "d_name_check[]",d.id, false, :id => "d_name_check_#{d.id}", :class => "d_name_check") : ''
           %td=d.name
-          %td=d.certificate_content ? (link_to order_ref, new_certificate_order_validation_path(@ssl_slug, d.certificate_content.certificate_order)) : ((dcv && dcv.csr_unique_value) ? (link_to order_ref, validate_against_csr_domains_path(@ssl_slug, unique_value: dcv.csr_unique_value.unique_value)) : 'Team')
+          %td=d.certificate_content ? (link_to order_ref, d.certificate_content.issued? ? certificate_order_path(d.certificate_content.certificate_order) : new_certificate_order_validation_path(@ssl_slug, d.certificate_content.certificate_order)) : ((dcv && dcv.csr_unique_value) ? (link_to order_ref, validate_against_csr_domains_path(@ssl_slug, unique_value: dcv.csr_unique_value.unique_value)) : 'Team')
           %td.d_name_status=status_link
           %td=validity_period
