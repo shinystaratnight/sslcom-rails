@@ -131,6 +131,7 @@ disable_links_banner: false
 auto_approve_ssl_manager_register: true
 activate_monitoring: false
 activate_domains_manager: false
+csr_domains_ui: false
 
 from_email:
   orders: 'orders@ssl.com'

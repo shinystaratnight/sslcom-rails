@@ -22,6 +22,8 @@ module ApplicationHelper
              Settings.actionmailer_host
            elsif is_sandbox_or_test?
              'sandbox.ssl.com'
+           elsif request.host_with_port=="sws.sslpki.com"
+             'www.ssl.com'
            else
              request.host_with_port
            end

@@ -224,7 +224,7 @@ class SslAccount < ActiveRecord::Base
   # domain - the domain that has satisfied DV
   # dcv - the domain control validation method that was satisfied
   def satisfy_related_dcvs(domain)
-    dcv = cn.domain_control_validations.last
+    dcv = domain.domain_control_validations.last
     [].tap do |satisfied_names|
       all_certificate_names.each do |certificate_name|
         if certificate_name.name!=domain.name and

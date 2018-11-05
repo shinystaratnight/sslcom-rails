@@ -1419,51 +1419,6 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
     @csr || @certificate_order.csr
   end
 
-  # def dcv_verify(protocol, against_ca = nil)
-  #   prepend = ""
-  #
-  #   begin
-  #     Timeout.timeout(Surl::TIMEOUT_DURATION) do
-  #       if protocol == "https_csr_hash"
-  #         uri = URI.parse(dcv_url(true,prepend))
-  #         http = Net::HTTP.new(uri.host, uri.port)
-  #         http.use_ssl = true
-  #         http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-  #         request = Net::HTTP::Get.new(uri.request_uri)
-  #         r = http.request(request).body
-  #       elsif protocol == "cname_csr_hash"
-  #         txt = Resolv::DNS.open do |dns|
-  #           records = dns.getresources(cname_origin, Resolv::DNS::Resource::IN::CNAME)
-  #         end
-  #         return (txt.size > 0) ? (cname_destination(against_ca)==txt.last.name.to_s) : false
-  #       else
-  #         r = open(dcv_url(false, prepend), redirect: false).read
-  #       end
-  #
-  #       return true if !!(r =~ Regexp.new("^#{csr.sha2_hash}") && r =~ Regexp.new("^#{against_ca || 'comodoca.com'}") &&
-  #           (csr.unique_value.blank? ? true : r =~ Regexp.new("^#{csr.unique_value}")))
-  #     end
-  #   rescue Exception=>e
-  #     return false
-  #   end
-  # end
-
-  def dcv_url(secure=false, prepend="")
-    "http#{'s' if secure}://#{prepend+non_wildcard_name}/.well-known/pki-validation/#{csr.md5_hash}.txt"
-  end
-
-  def cname_origin
-    "#{csr.dns_md5_hash}.#{non_wildcard_name}"
-  end
-
-  def cname_destination(against_ca)
-    "#{csr.dns_sha2_hash}#{against_ca ? '' : '.comodoca'}.com"
-  end
-
-  def non_wildcard_name
-    csr.non_wildcard_name
-  end
-
   def api_result_domain(certificate_order=nil)
     unless certificate_order.blank?
       if Rails.env=~/production/i

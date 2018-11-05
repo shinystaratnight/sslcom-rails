@@ -242,9 +242,9 @@ class CertificateContent < ActiveRecord::Base
   # :with_tags (default), :x509, :without_tags
   def ejbca_certificate_chain(options={format: :with_tags})
     chain=SslcomCaRequest.where(username: self.ref).last
-    xcert = if "8875640296558310041" == chain.x509_certificates.last.serial #non EV serial
+    xcert = if "8875640296558310041" == chain.x509_certificates.last.serial.to_s #non EV serial
               Certificate::CERTUM_XSIGN
-            elsif "6248227494352943350" == chain.x509_certificates.last.serial # EV serial
+            elsif "6248227494352943350" == chain.x509_certificates.last.serial.to_s # EV serial
               Certificate::CERTUM_XSIGN_EV
             end
     certs=chain.x509_certificates

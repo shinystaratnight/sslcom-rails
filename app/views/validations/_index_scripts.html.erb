@@ -66,13 +66,13 @@ jQuery(function($) {
   }
   var is_approved=function(x){
     return x=='<%=ValidationRuling::APPROVED%>';
-  }
+  };
   var is_unapproved=function(x){
     return x=='<%=ValidationRuling::UNAPPROVED%>';
-  }
+  };
   var is_requiring_more=function(x){
     return x=='<%=ValidationRuling::MORE_REQUIRED%>';
-  }
+  };
   $.get_selected_options=function(select, type){
     options=[];
     $(select).find(':selected').each(function(c, selected){
@@ -82,7 +82,7 @@ jQuery(function($) {
         options[c] = $(selected).val();
     });
     return options;
-  }
+  };
   $.get_selected_array_options=function(select, index, type){
     options=[];
     $($(select)[index]).find(':selected').each(function(c, selected){
@@ -92,21 +92,21 @@ jQuery(function($) {
         options[c] = $(selected).val();
     });
     return options;
-  }
+  };
   $.method_none_selected=function(methods){
     for(m=0; m<methods.length; m++){
       if(methods[m]=='<%=Validation::NONE_SELECTED%>')
         return true;
     }
     return false;
-  }
+  };
   $.unapprove_all_methods=function(methods, i){
     for(m=0; m<methods.length; m++){
       $('.method_'+i).removeClass("approved_validation_document")
         .removeClass('crossout');
       $('.method_'+i+' ul li').remove();
     }
-  }
+  };
   $.method_type=function(){
     if($(':radio[name=method]:checked').val()=="http"){
       $('#http_dcv').show();
@@ -126,7 +126,7 @@ jQuery(function($) {
         $('#email_dcv').show();
       }
     });
-  }
+  };
   jQuery.fn.refer_to_others_toggle=function(){
     if($(this).val()=="false"){
       $('#request_validation_from_others').hide();
@@ -146,7 +146,7 @@ jQuery(function($) {
       if(<%=!checkout_in_progress%>)
         $("#upload_validations").hide();
     }
-  }
+  };
   $(document).ready(function() {
     var status_bar=null;
     $.method_type();
@@ -446,88 +446,103 @@ jQuery(function($) {
         else if(/https/.test(methods[0])){
           instructions="Upload <a href='<%=http_dcv_file_csr_path(@ssl_slug, @certificate_order.csr.id)%>'>this file</a> to this location: <a href='"+https+"' target='_new'>"+https+"</a>";
           $(instruction).html(instructions);
-          $.ajax({url: '<%=verification_check_csr_path(@ssl_slug, @certificate_order.csr.id)%>?protocol=https&dcv='+
-            $(dcv_select).parents('tr').attr('id')+'&new_name='+$(dcv_select).attr('alt')+'&ref='+$(dcv_select).parents('tbody').attr('data-ref')}).done(
-              function(data){
-                if (data) {
-                  // Adding Hidden Tag for saving satisfied option.
-                  var hiddenElement = $('<input></input>');
-                  hiddenElement.attr('type', 'hidden');
-                  hiddenElement.attr('name', 'domains[' + $(dcv_select).attr("alt") + '][dcv]');
-                  hiddenElement.attr('value', $(dcv_select).val());
-                  $(dcv_select).parent().append(hiddenElement);
+          <%if @certificate_order.certificate_content.ca_id.nil?%>
+            $.ajax({url: '<%=verification_check_csr_path(@ssl_slug, @certificate_order.csr.id)%>?protocol=https&dcv='+
+              $(dcv_select).parents('tr').attr('id')+'&new_name='+$(dcv_select).attr('alt')+'&ref='+$(dcv_select).parents('tbody').attr('data-ref')}).done(
+                function(data){
+                  if (data) {
+                    // Adding Hidden Tag for saving satisfied option.
+                    var hiddenElement = $('<input></input>');
+                    hiddenElement.attr('type', 'hidden');
+                    hiddenElement.attr('name', 'domains[' + $(dcv_select).attr("alt") + '][dcv]');
+                    hiddenElement.attr('value', $(dcv_select).val());
+                    $(dcv_select).parent().append(hiddenElement);
 
-                  // Changing Status to "Satisfied".
-                  $('td.status[class~="'+$(dcv_select).attr("alt")+'"]').html('satisfied');
+                    // Changing Status to "Satisfied".
+                    $('td.status[class~="'+$(dcv_select).attr("alt")+'"]').html('satisfied');
 
-                  // Disable the option.
-                  $(dcv_select).attr('disabled', true);
+                    // Changing previous attempt to selected validation option
+                    $('td.attempt[class~="' + $(dcv_select).attr("alt") + '"]').html('validated');
 
-                  // Hidden the "Edit" button
-                  $(dcv_select).parents('tr').find('.btn_edit_domain').attr('disabled', true);
+                    // Disable the option.
+                    $(dcv_select).attr('disabled', true);
 
-                  // Hidden the "Checkbox" button
-                  $(dcv_select).parents('tr').find('.check_box').attr('disabled', true);
-                }
-                $('td.pretest[class~="'+$(dcv_select).attr("alt")+'"]').html((data ? "<div class='passed'>passed</div>" : "<div class='failed'>failed</div>"));
-              });
+                    // Hidden the "Edit" button
+                    $(dcv_select).parents('tr').find('.btn_edit_domain').attr('disabled', true);
+
+                    // Hidden the "Checkbox" button
+                    $(dcv_select).parents('tr').find('.check_box').attr('disabled', true);
+                  }
+                  $('td.pretest[class~="'+$(dcv_select).attr("alt")+'"]').html((data ? "<div class='passed'>passed</div>" : "<div class='failed'>failed</div>"));
+                });
+          <%end%>
         }
         else if(/http/.test(methods[0])){
           instructions="Upload <a href='<%=http_dcv_file_csr_path(@ssl_slug, @certificate_order.csr.id)%>'>this file</a> to this location: <a href='"+http+"' target='_new'>"+http+"</a>";
           $(instruction).html(instructions);
-          $.ajax({url: '<%=verification_check_csr_path(@ssl_slug, @certificate_order.csr.id)%>?protocol=http&dcv='+
-            $(dcv_select).parents('tr').attr('id')+'&new_name='+$(dcv_select).attr('alt')+'&ref='+$(dcv_select).parents('tbody').attr('data-ref')}).done(
-              function(data){
-                if (data) {
-                  // Adding Hidden Tag for saving satisfied option.
-                  var hiddenElement = $('<input></input>');
-                  hiddenElement.attr('type', 'hidden');
-                  hiddenElement.attr('name', 'domains[' + $(dcv_select).attr("alt") + '][dcv]');
-                  hiddenElement.attr('value', $(dcv_select).val());
-                  $(dcv_select).parent().append(hiddenElement);
+          <%if @certificate_order.certificate_content.ca_id.nil?%>
+            $.ajax({url: '<%=verification_check_csr_path(@ssl_slug, @certificate_order.csr.id)%>?protocol=http&dcv='+
+              $(dcv_select).parents('tr').attr('id')+'&new_name='+$(dcv_select).attr('alt')+'&ref='+$(dcv_select).parents('tbody').attr('data-ref')}).done(
+                function(data){
+                  if (data) {
+                    // Adding Hidden Tag for saving satisfied option.
+                    var hiddenElement = $('<input></input>');
+                    hiddenElement.attr('type', 'hidden');
+                    hiddenElement.attr('name', 'domains[' + $(dcv_select).attr("alt") + '][dcv]');
+                    hiddenElement.attr('value', $(dcv_select).val());
+                    $(dcv_select).parent().append(hiddenElement);
 
-                  // Changing Status to "Satisfied".
-                  $('td.status[class~="'+$(dcv_select).attr("alt")+'"]').html('satisfied');
+                    // Changing Status to "Satisfied".
+                    $('td.status[class~="'+$(dcv_select).attr("alt")+'"]').html('satisfied');
 
-                  // Disable the option.
-                  $(dcv_select).attr('disabled', true);
+                    // Changing previous attempt to selected validation option
+                    $('td.attempt[class~="' + $(dcv_select).attr("alt") + '"]').html('validated');
 
-                  // Hidden the "Edit" button
-                  $(dcv_select).parents('tr').find('.btn_edit_domain').attr('disabled', true);
+                    // Disable the option.
+                    $(dcv_select).attr('disabled', true);
 
-                  // Hidden the "Checkbox" button
-                  $(dcv_select).parents('tr').find('.check_box').attr('disabled', true);
-                }
-                $('td.pretest[class~="'+$(dcv_select).attr("alt")+'"]').html((data ? "<div class='passed'>passed</div>" : "<div class='failed'>failed</div>"));
-              });
+                    // Hidden the "Edit" button
+                    $(dcv_select).parents('tr').find('.btn_edit_domain').attr('disabled', true);
+
+                    // Hidden the "Checkbox" button
+                    $(dcv_select).parents('tr').find('.check_box').attr('disabled', true);
+                  }
+                  $('td.pretest[class~="'+$(dcv_select).attr("alt")+'"]').html((data ? "<div class='passed'>passed</div>" : "<div class='failed'>failed</div>"));
+                });
+          <%end%>
         }
         else if(/cname/.test(methods[0])){
           $(instruction).html("Create CNAME: "+cname);
-          $.ajax({url: '<%=verification_check_csr_path(@ssl_slug, @certificate_order.csr.id)%>?protocol=cname&dcv='+
-            $(dcv_select).parents('tr').attr('id')+'&new_name='+$(dcv_select).attr('alt')+'&ref='+$(dcv_select).parents('tbody').attr('data-ref')}).done(
-              function(data){
-                if (data) {
-                  // Adding Hidden Tag for saving satisfied option.
-                  var hiddenElement = $('<input></input>');
-                  hiddenElement.attr('type', 'hidden');
-                  hiddenElement.attr('name', 'domains[' + $(dcv_select).attr("alt") + '][dcv]');
-                  hiddenElement.attr('value', $(dcv_select).val());
-                  $(dcv_select).parent().append(hiddenElement);
+          <%if @certificate_order.certificate_content.ca_id.nil?%>
+            $.ajax({url: '<%=verification_check_csr_path(@ssl_slug, @certificate_order.csr.id)%>?protocol=cname&dcv='+
+              $(dcv_select).parents('tr').attr('id')+'&new_name='+$(dcv_select).attr('alt')+'&ref='+$(dcv_select).parents('tbody').attr('data-ref')}).done(
+                function(data){
+                  if (data) {
+                    // Adding Hidden Tag for saving satisfied option.
+                    var hiddenElement = $('<input></input>');
+                    hiddenElement.attr('type', 'hidden');
+                    hiddenElement.attr('name', 'domains[' + $(dcv_select).attr("alt") + '][dcv]');
+                    hiddenElement.attr('value', $(dcv_select).val());
+                    $(dcv_select).parent().append(hiddenElement);
 
-                  // Changing Status to "Satisfied".
-                  $('td.status[class~="'+$(dcv_select).attr("alt")+'"]').html('satisfied');
+                    // Changing Status to "Satisfied".
+                    $('td.status[class~="'+$(dcv_select).attr("alt")+'"]').html('satisfied');
 
-                  // Disable the option.
-                  $(dcv_select).attr('disabled', true);
+                    // Changing previous attempt to selected validation option
+                    $('td.attempt[class~="' + $(dcv_select).attr("alt") + '"]').html('validated');
 
-                  // Hidden the "Edit" button
-                  $(dcv_select).parents('tr').find('.btn_edit_domain').attr('disabled', true);
+                    // Disable the option.
+                    $(dcv_select).attr('disabled', true);
 
-                  // Hidden the "Checkbox" button
-                  $(dcv_select).parents('tr').find('.check_box').attr('disabled', true);
-                }
-                $('td.pretest[class~="'+$(dcv_select).attr("alt")+'"]').html((data ? "<div class='passed'>passed</div>" : "<div class='failed'>failed</div>"));
-              });
+                    // Hidden the "Edit" button
+                    $(dcv_select).parents('tr').find('.btn_edit_domain').attr('disabled', true);
+
+                    // Hidden the "Checkbox" button
+                    $(dcv_select).parents('tr').find('.check_box').attr('disabled', true);
+                  }
+                  $('td.pretest[class~="'+$(dcv_select).attr("alt")+'"]').html((data ? "<div class='passed'>passed</div>" : "<div class='failed'>failed</div>"));
+                });
+          <%end%>
         }
         $(instruction).css({ background: "yellow" });
       });
@@ -736,6 +751,7 @@ jQuery(function($) {
               is_premium_ssl = @certificate_order.certificate.is_premium_ssl?
               is_wildcard = @certificate_order.certificate.is_wildcard?
               ext_order_number = @certificate_order.external_order_number ? @certificate_order.external_order_number : 'eon'
+              is_ca = @certificate_order.certificate_content.ca_id.nil?
             %>
 
             var total = domains.length;
@@ -870,12 +886,14 @@ jQuery(function($) {
                             trElement.append(tdElement);
                           <%end%>
 
-                          tdElement = $('<td></td>');
-                          tdElement.attr('class', 'pretest ' + value);
-                          var divElement = $('<div></div>');
-                          divElement.append(result[key]['pretest']);
-                          tdElement.append(divElement);
-                          trElement.append(tdElement);
+                          <%if is_ca%>
+                            tdElement = $('<td></td>');
+                            tdElement.attr('class', 'pretest ' + value);
+                            var divElement = $('<div></div>');
+                            divElement.append(result[key]['pretest']);
+                            tdElement.append(divElement);
+                            trElement.append(tdElement);
+                          <%end%>
 
                           tdElement = $('<td></td>');
                           tdElement.append(result[key]['attempt']);
@@ -1017,12 +1035,14 @@ jQuery(function($) {
                   trElement.append(tdElement);
                 <%end%>
 
-                tdElement = $('<td></td>');
-                tdElement.attr('class', 'pretest ' + value);
-                var divElement = $('<div></div>');
-                divElement.append('n/a');
-                tdElement.append(divElement);
-                trElement.append(tdElement);
+                <%if is_ca%>
+                  tdElement = $('<td></td>');
+                  tdElement.attr('class', 'pretest ' + value);
+                  var divElement = $('<div></div>');
+                  divElement.append('n/a');
+                  tdElement.append(divElement);
+                  trElement.append(tdElement);
+                <%end%>
 
                 tdElement = $('<td></td>');
                 tdElement.append(domain_status[value]['method'].toLowerCase().replace('%28', '').replace('%29', ''));
@@ -1140,34 +1160,106 @@ jQuery(function($) {
 
         // Click Remove button per domain.
         $(document).on('click', '.btn_remove_domain', function() {
-          var domain_name = $(this).prev().prop('id');
-          $(this).parent().css('background-color', 'white');
+          // Removing flash message if exist.
+          if ($('#content').find('.inner').children().first().hasClass('flash_message')) {
+            $('#content').find('.inner').children().first().remove();
+          }
 
-          var ajaxRemoveDomainUrl = '<%=remove_domains_certificate_order_validation_path(@ssl_slug, @certificate_order)%>';
-          var confirmMsg = 'Are you sure you want to remove the following domain from this order?';
-          confirmMsg = confirmMsg.concat('\r\n      ' + domain_name);
+          var message_wrap_element = $('<div></div>');
+          var domain_list = $('tbody.domain_list').find('tr.certificate_name');
+          var validated_domain_list = $('tbody.domain_list').find('tr.certificate_name.validated');
 
-          if (confirm(confirmMsg)) {
-            $('[id="certificate_name__' + domain_name + '"]').next().hide();
-            $('[id="certificate_name__' + domain_name + '"]').hide();
+          // Messaging if try to remove last domain.
+          if (validated_domain_list.length == 0 && domain_list.length == 1) {
+            message_wrap_element.attr('class', 'flash_message error');
 
-            $.ajax({
-              url: ajaxRemoveDomainUrl,
-              data: {
-                domain_names: domain_name
-              },
-              type: "POST",
-              success: function (result) {
-                if (Object.keys(result).length > 0) {
-                  if ($.inArray('no-user', Object.keys(result)) == -1) {
-                    var message_wrap_element = $('<div></div>');
-                    message_wrap_element.attr('class', 'flash_message error');
+            var message_element = $('<span></span>');
+            message_element.append('The order must contain at least one domain.');
+            message_wrap_element.append(message_element);
+
+            var btn_element = $('<small></small>');
+            var close_btn_element = $('<div></div>');
+            close_btn_element.attr('class', 'close_flash_message');
+
+            var close_sign_element = $('<span></span>');
+            close_sign_element.append('X');
+
+            close_btn_element.append(close_sign_element);
+            close_btn_element.append('close');
+
+            btn_element.append(close_btn_element);
+            message_wrap_element.append(btn_element);
+
+            message_wrap_element.insertBefore($('#content').find('.inner').children().first());
+          } else {
+            $.each(domain_list, function(idx, domain) {
+              $(domain).find('.check_box').parent().css('background-color', 'white');
+            });
+
+            var domain_name = $(this).prev().prop('id');
+            var confirmMsg = 'Are you sure you want to remove the following domain from this order?';
+            confirmMsg = confirmMsg.concat('\r\n      ' + domain_name);
+            var ajaxRemoveDomainUrl = '<%=remove_domains_certificate_order_validation_path(@ssl_slug, @certificate_order)%>';
+
+            if (confirm(confirmMsg)) {
+              // Hiding validation button and showing loader.
+              $('#upload_validations').hide();
+              $('.domains_loader_wrap').show();
+
+              $.ajax({
+                url: ajaxRemoveDomainUrl,
+                data: {
+                  domain_names: domain_name
+                },
+                type: "POST",
+                success: function (result) {
+                  if (Object.keys(result).length > 0) {
+                    if ($.inArray('no-user', Object.keys(result)) == -1) {
+                      // Displaying flash message.
+                      message_wrap_element.attr('class', 'flash_message error');
+
+                      var message_element = $('<span></span>');
+                      Object.keys(result).map(function(key) {
+                        $('td:first-child', $('[id="certificate_name__' + key + '"]')).css('background-color', 'red');
+                        message_element.append(key + ' : ' + result[key] + '\r\n');
+                      });
+                      message_wrap_element.append(message_element);
+
+                      var btn_element = $('<small></small>');
+                      var close_btn_element = $('<div></div>');
+                      close_btn_element.attr('class', 'close_flash_message');
+
+                      var close_sign_element = $('<span></span>');
+                      close_sign_element.append('X');
+
+                      close_btn_element.append(close_sign_element);
+                      close_btn_element.append('close');
+
+                      btn_element.append(close_btn_element);
+                      message_wrap_element.append(btn_element);
+
+                      message_wrap_element.insertBefore($('#content').find('.inner').children().first());
+
+                      // Hiding loader and showing validation button.
+                      $('.domains_loader_wrap').hide();
+                      $('#upload_validations').show();
+                    } else {
+                      location.reload(true);
+                    }
+                  } else {
+                    // Remove domains from UI.
+                    $('[id="certificate_name__' + domain_name + '"]').next().remove();
+                    $('[id="certificate_name__' + domain_name + '"]').remove();
+
+                    var domain_str = $('#ori_domain_names_str').val();
+                    domain_str = domain_str.replace(',' + domain_name, '');
+                    $('#ori_domain_names_str').val(domain_str);
+
+                    // Displaying flash message.
+                    message_wrap_element.attr('class', 'flash_message notice');
 
                     var message_element = $('<span></span>');
-                    Object.keys(result).map(function(key) {
-                      $('td:first-child', $('[id="certificate_name__' + key + '"]')).css('background-color', 'red');
-                      message_element.append(key + ' : ' + result[key] + '\r\n');
-                    });
+                    message_element.html('The Domain <strong>' + domain_name + '</strong> has been removed successfully.');
                     message_wrap_element.append(message_element);
 
                     var btn_element = $('<small></small>');
@@ -1183,31 +1275,20 @@ jQuery(function($) {
                     btn_element.append(close_btn_element);
                     message_wrap_element.append(btn_element);
 
-                    if ($('#content').find('.inner').children().first().hasClass('flash_message')) {
-                      $('#content').find('.inner').children().first().remove();
-                    }
                     message_wrap_element.insertBefore($('#content').find('.inner').children().first());
 
-                    $('[id="certificate_name__' + domain_name + '"]').next().show();
-                    $('[id="certificate_name__' + domain_name + '"]').show();
-                  } else {
-                    location.reload(true);
-                  }
-                } else {
-                  $('[id="certificate_name__' + domain_name + '"]').next().remove();
-                  $('[id="certificate_name__' + domain_name + '"]').remove();
+                    // Hiding Loader
+                    $('.domains_loader_wrap').hide();
 
-                  var domain_str = $('#ori_domain_names_str').val();
-                  domain_str = domain_str.replace(',' + domain_name, '');
-                  $('#ori_domain_names_str').val(domain_str);
-
-                  if ($('tbody.domain_list').find('tr.certificate_name').length == 1 &&
-                    $('tbody.domain_list').find('tr.certificate_name.validated').length == 1) {
-                    $('#upload_validations').hide();
+                    // Checking remained domains are all validated.
+                    if ($('tbody.domain_list').find('tr.certificate_name').length !=
+                      $('tbody.domain_list').find('tr.certificate_name.validated').length) {
+                      $('#upload_validations').show();
+                    }
                   }
                 }
-              }
-            });
+              });
+            }
           }
         });
 
@@ -1413,80 +1494,182 @@ jQuery(function($) {
 
         // Select Items for selected all domains.
         $('#validation_common_type').change(function() {
+          // Removing flash message if exist.
+          if ($('#content').find('.inner').children().first().hasClass('flash_message')) {
+            $('#content').find('.inner').children().first().remove();
+          }
+
+          // Getting selected type value.
           var slt_type = $(this).val();
+
+          // Formatting validation common type to none.
           $(this).val('');
 
           var domain_list = $('tbody.domain_list').find('tr.certificate_name');
           $.each(domain_list, function(idx, domain) {
-            if (!$(domain).hasClass('removed_domain')) {
-              $(domain).find('.check_box').parent().css('background-color', 'white');
-            }
+            $(domain).find('.check_box').parent().css('background-color', 'white');
           });
 
-          switch (slt_type) {
-            case 'delete':
+          switch(slt_type) {
+            case 'delete' :
+              var confirmMsg = 'Are you sure you want to remove the following domain(s) from this order?';
               var domain_names = '';
 
               $.each(domain_list, function(idx, domain) {
-                if (!$(domain).hasClass('removed_domain')) {
-                  var is_checked = $(domain).find('.check_box').prop('checked');
-                  if (is_checked) {
-                    /*confirmMsg = confirmMsg.concat('\r\n      ' + $(domain).find('.check_box').prop('alt'));*/
-                    domain_names = domain_names.concat(',' + $(domain).find('.check_box').prop('id'));
-                  }
+                var is_checked = $(domain).find('.check_box').prop('checked');
+                if (is_checked) {
+                  confirmMsg = confirmMsg.concat('\r\n      ' + $(domain).find('.check_box').prop('id'));
+                  domain_names = domain_names.concat(',' + $(domain).find('.check_box').prop('id'));
                 }
               });
 
+              // Check whether there are no checked for delete.
               if (domain_names.length > 0) {
-                if ($('#content').find('.inner').children().first().hasClass('flash_message')) {
-                  $('#content').find('.inner').children().first().remove();
-                }
-
                 var message_wrap_element = $('<div></div>');
+
                 if (domain_names.substr(1).split(',').length == domain_list.length) {
+                  // Displaying flash message.
                   message_wrap_element.attr('class', 'flash_message error');
 
                   var message_element = $('<span></span>');
-                  message_element.append('The order must contain at least one domain.\r\n');
+                  message_element.append('The order must contain at least one domain.');
                   message_wrap_element.append(message_element);
+
+                  var btn_element = $('<small></small>');
+                  var close_btn_element = $('<div></div>');
+                  close_btn_element.attr('class', 'close_flash_message');
+
+                  var close_sign_element = $('<span></span>');
+                  close_sign_element.append('X');
+
+                  close_btn_element.append(close_sign_element);
+                  close_btn_element.append('close');
+
+                  btn_element.append(close_btn_element);
+                  message_wrap_element.append(btn_element);
+
+                  message_wrap_element.insertBefore($('#content').find('.inner').children().first());
                 } else {
-                  $.each(domain_names.substr(1).split(','), function(ids, domain) {
-                    $('[id="certificate_name__' + domain + '"]').addClass('removed_domain');
-                    $('td:first-child', $('[id="certificate_name__' + domain + '"]')).removeAttr('style');
-                    $('td:first-child', $('[id="certificate_name__' + domain + '"]')).empty();
-                    $('select', $('[id="certificate_name__' + domain + '"]')).remove();
-                    $('[id="certificate_name__' + domain + '"]').next().remove();
-                  });
+                  if (confirm(confirmMsg)) {
+                    // Hiding validation button and showing loader.
+                    $('#upload_validations').hide();
+                    $('.domains_loader_wrap').show();
 
-                  message_wrap_element.attr('class', 'flash_message warning');
+                    var ajaxRemoveDomainUrl = '<%=remove_domains_certificate_order_validation_path(@ssl_slug, @certificate_order)%>';
 
-                  var message_element = $('<span></span>');
-                  message_element.append('Changes will be committed after clicking the Validate button.\r\n');
-                  message_wrap_element.append(message_element);
+                    $.ajax({
+                      url: ajaxRemoveDomainUrl,
+                      data: {
+                        domain_names: domain_names.substr(1)
+                      },
+                      type: "POST",
+                      success: function (result) {
+                        var domain_str = $('#ori_domain_names_str').val();
+
+                        if (Object.keys(result).length > 0) {
+                          if ($.inArray('no-user', Object.keys(result)) != -1) {
+                            location.reload(true);
+                          } else {
+                            // Remove domains from UI what has been removed successfully
+                            $.each(domain_names.substr(1).split(','), function(ids, domain) {
+                              if ($.inArray(domain, Object.keys(result)) == -1) {
+                                domain_str = domain_str.replace(',' + domain, '');
+
+                                $('[id="certificate_name__' + domain + '"]').next().remove();
+                                $('[id="certificate_name__' + domain + '"]').remove();
+                              }
+                            });
+
+                            // Displaying error flash message for domains what failed to remove.
+                            message_wrap_element.attr('class', 'flash_message error');
+
+                            var message_element = $('<span></span>');
+                            Object.keys(result).map(function(key) {
+                              $('td:first-child', $('[id="certificate_name__' + key + '"]')).css('background-color', 'red');
+                              message_element.append(key + ' : ' + result[key] + '<br />');
+                            });
+                            message_wrap_element.html(message_element);
+
+                            var btn_element = $('<small></small>');
+                            var close_btn_element = $('<div></div>');
+                            close_btn_element.attr('class', 'close_flash_message');
+
+                            var close_sign_element = $('<span></span>');
+                            close_sign_element.append('X');
+
+                            close_btn_element.append(close_sign_element);
+                            close_btn_element.append('close');
+
+                            btn_element.append(close_btn_element);
+                            message_wrap_element.append(btn_element);
+
+                            message_wrap_element.insertBefore($('#content').find('.inner').children().first());
+
+                            // Hiding loader and showing validation button.
+                            $('.domains_loader_wrap').hide();
+                            $('#upload_validations').show();
+                          }
+                        } else {
+                          // Remove domains from UI what has been removed successfully
+                          $.each(domain_names.substr(1).split(','), function(ids, domain) {
+                            domain_str = domain_str.replace(',' + domain, '');
+
+                            $('[id="certificate_name__' + domain + '"]').next().remove();
+                            $('[id="certificate_name__' + domain + '"]').remove();
+                          });
+
+                          // Displaying flash message.
+                          message_wrap_element.attr('class', 'flash_message notice');
+
+                          var message_element = $('<span></span>');
+                          message_element.append('All of selected domain(s) has been removed successfully.');
+                          message_wrap_element.append(message_element);
+
+                          var btn_element = $('<small></small>');
+                          var close_btn_element = $('<div></div>');
+                          close_btn_element.attr('class', 'close_flash_message');
+
+                          var close_sign_element = $('<span></span>');
+                          close_sign_element.append('X');
+
+                          close_btn_element.append(close_sign_element);
+                          close_btn_element.append('close');
+
+                          btn_element.append(close_btn_element);
+                          message_wrap_element.append(btn_element);
+
+                          message_wrap_element.insertBefore($('#content').find('.inner').children().first());
+
+                          // Hiding loader
+                          $('.domains_loader_wrap').hide();
+
+                          // Checking remained domains are all validated.
+                          if ($('tbody.domain_list').find('tr.certificate_name').length !=
+                            $('tbody.domain_list').find('tr.certificate_name.validated').length) {
+                            $('#upload_validations').show();
+                          }
+                        }
+
+                        $('#ori_domain_names_str').val(domain_str);
+                      }
+                    });
+                  } else {
+                    // Making as unchecked for all checked domains.
+                    $.each(domain_list, function(idx, domain) {
+                      if ($(domain).find('.check_box').prop('checked')) {
+                        $(domain).find('.check_box').prop('checked', false);
+                      }
+                    });
+                  }
                 }
-
-                var btn_element = $('<small></small>');
-                var close_btn_element = $('<div></div>');
-                close_btn_element.attr('class', 'close_flash_message');
-
-                var close_sign_element = $('<span></span>');
-                close_sign_element.append('X');
-
-                close_btn_element.append(close_sign_element);
-                close_btn_element.append(' close');
-
-                btn_element.append(close_btn_element);
-                message_wrap_element.append(btn_element);
-
-                message_wrap_element.insertBefore($('#content').find('.inner').children().first());
               } else {
                 alert('There are no selected domains for delete.');
               }
 
               break;
-            case 'http_csr_hash':
-            case 'https_csr_hash':
-            case 'cname_csr_hash':
+            case 'http_csr_hash' :
+            case 'https_csr_hash' :
+            case 'cname_csr_hash' :
               var changed_count = 0;
               $.each(domain_list, function(idx, domain) {
                 if (!$(domain).hasClass('removed_domain')) {
