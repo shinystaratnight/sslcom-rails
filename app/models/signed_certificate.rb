@@ -324,7 +324,6 @@ class SignedCertificate < ActiveRecord::Base
 
   def zipped_whm_bundle(is_windows=false)
     is_windows=false unless Settings.allow_windows_cr #having issues with \r\n so stick with linux format
-    co=csr.certificate_content.certificate_order
     path="/tmp/"+friendly_common_name+".zip#{Time.now.to_i.to_s(32)}"
     ::Zip::ZipFile.open(path, Zip::ZipFile::CREATE) do |zos|
       file=File.new(ca_bundle(is_windows: is_windows), "r")
