@@ -76,20 +76,18 @@ class DomainControlValidation < ActiveRecord::Base
   # assume this belongs to a certificate_name which belongs to an ssl_account
   def hash_satisfied
     prepend=""
-    hash_csr=certificate_name ? hash_csr : csr
-    self.identifier,self.address_to_find_identifier=
+    self.identifier,self.address_to_find_identifier= certificate_name.blank? ? [false,false] :
     case dcv_method
     when /https/
-      ["#{hash_csr.sha2_hash}\n#{certificate_name.ca_tag}#{"\n#{hash_csr.unique_value}" unless
-          hash_csr.unique_value.blank?}",
+      ["#{certificate_name.csr.sha2_hash}\n#{certificate_name.ca_tag}#{"\n#{certificate_name.csr.unique_value}" unless
+          certificate_name.csr.unique_value.blank?}",
        certificate_name.dcv_url(true,prepend, true)]
     when /http/
-      ["#{hash_csr.sha2_hash}\n#{certificate_name.ca_tag}#{"\n#{hash_csr.unique_value}" unless hash_csr.unique_value.blank?}",
+      ["#{certificate_name.csr.sha2_hash}\n#{certificate_name.ca_tag}#{"\n#{certificate_name.csr.unique_value}" unless certificate_name.csr.unique_value.blank?}",
        certificate_name.dcv_url(false,prepend, true)]
     when /cname/
-      certificate_name ?
       [certificate_name.cname_destination,
-      certificate_name.cname_origin(true)] : [false,false]
+      certificate_name.cname_origin(true)]
     end
   end
 

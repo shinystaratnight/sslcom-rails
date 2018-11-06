@@ -113,6 +113,7 @@ class DomainsController < ApplicationController
     else
       @all_domains = []
       @address_choices = []
+      @domain_details = {}
       params[:d_name_check].each do |dn_name_id|
         dn = CertificateName.find_by_id(dn_name_id)
         dcv = dn.domain_control_validations.last
@@ -128,6 +129,12 @@ class DomainsController < ApplicationController
           logger.error e.backtrace.inspect
         end
         @address_choices << standard_addresses
+
+        @domain_details[dn.name] = {}
+        @domain_details[dn.name]['dcv_method'] = dcv ? dcv.email_address : ''
+        @domain_details[dn.name]['prev_attempt'] = dcv ? dcv.email_address : 'validation not performed yet'
+        @domain_details[dn.name]['attempted_on'] = dcv ? dcv.created_at.strftime('%Y-%m-%d %H:%M:%S') : 'n/a'
+        @domain_details[dn.name]['status'] = dcv ? 'pending' : 'waiting'
       end
     end
   end
@@ -149,9 +156,10 @@ class DomainsController < ApplicationController
   end
 
   def validate_against_csr
-    if params[:d_name_selected]
+    if params[:authenticity_token] && params[:d_name_selected]
       @selected_domains = []
       @address_choices = []
+      @domain_details = {}
       params[:d_name_selected].each do |d_id|
         dn = CertificateName.find_by_id(d_id)
         @selected_domains << dn
@@ -164,6 +172,23 @@ class DomainsController < ApplicationController
           redirect_to domains_path(@ssl_slug)
         end
         @address_choices << standard_addresses
+
+        @domain_details[dn.name] = {}
+        dcv_last = dn.domain_control_validations.last
+        @domain_details[dn.name]['dcv_method'] = dcv_last ?
+                       (dcv_last.email_address ?
+                            dcv_last.email_address
+                            : dcv_last.dcv_method)
+                       : ''
+        @domain_details[dn.name]['prev_attempt'] = dcv_last ?
+                       (dcv_last.satisfied? ?
+                            'validated' :
+                            (dcv_last.email_address ?
+                                 dcv_last.email_address
+                                 : dcv_last.dcv_method))
+                       : 'validation not performed yet'
+        @domain_details[dn.name]['attempted_on'] = dcv_last ? dcv_last.created_at : 'n/a'
+        @domain_details[dn.name]['status'] = dcv_last ? (dcv_last.satisfied? ? 'satisfied' : 'pending') : 'waiting'
       end
       @csr = Csr.find_by_id(params[:selected_csr])
       if @csr.nil?
@@ -181,13 +206,33 @@ class DomainsController < ApplicationController
           standard_addresses << ad unless ad.include? 'abuse@'
         end
         @address_choices << standard_addresses
+
+        @domain_details[dn.name] = {}
+        dcv_last = dn.domain_control_validations.last
+        @domain_details[dn.name]['dcv_method'] = dcv_last ?
+                                                     (dcv_last.email_address ?
+                                                          dcv_last.email_address
+                                                          : dcv_last.dcv_method)
+                                                     : ''
+        @domain_details[dn.name]['prev_attempt'] = dcv_last ?
+                                                       (dcv_last.satisfied? ?
+                                                            'validated' :
+                                                            (dcv_last.email_address ?
+                                                                 dcv_last.email_address
+                                                                 : dcv_last.dcv_method))
+                                                       : 'validation not performed yet'
+        @domain_details[dn.name]['attempted_on'] = dcv_last ? dcv_last.created_at.strftime('%Y-%m-%d %H:%M:%S') : 'n/a'
+        @domain_details[dn.name]['status'] = dcv_last ? (dcv_last.satisfied? ? 'satisfied' : 'pending') : 'waiting'
       end
-    elsif params[:unique_value]
+    elsif !params[:authenticity_token] && params[:unique_value]
       csr_unique_value = CsrUniqueValue.find_by_unique_value(params[:unique_value])
       @csr = csr_unique_value.csr
       dcvs = csr_unique_value.domain_control_validations
+
       @selected_domains = []
       @address_choices = []
+      @domain_details = {}
+
       dcvs.each do |dcv|
         next if dcv.workflow_state == 'satisfied'
         dn = CertificateName.find_by_id(dcv.certificate_name_id)
@@ -199,6 +244,23 @@ class DomainsController < ApplicationController
           standard_addresses << ad unless ad.include? 'abuse@'
         end
         @address_choices << standard_addresses
+
+        @domain_details[dn.name] = {}
+        dcv_last = dn.domain_control_validations.last
+        @domain_details[dn.name]['dcv_method'] = dcv_last ?
+                                                     (dcv_last.email_address ?
+                                                          dcv_last.email_address
+                                                          : dcv_last.dcv_method)
+                                                     : ''
+        @domain_details[dn.name]['prev_attempt'] = dcv_last ?
+                                                       (dcv_last.satisfied? ?
+                                                            'validated' :
+                                                            (dcv_last.email_address ?
+                                                                 dcv_last.email_address
+                                                                 : dcv_last.dcv_method))
+                                                       : 'validation not performed yet'
+        @domain_details[dn.name]['attempted_on'] = dcv_last ? dcv_last.created_at.strftime('%Y-%m-%d %H:%M:%S') : 'n/a'
+        @domain_details[dn.name]['status'] = dcv_last ? (dcv_last.satisfied? ? 'satisfied' : 'pending') : 'waiting'
       end
       if @selected_domains.blank?
         redirect_to domains_path(@ssl_slug)
@@ -208,6 +270,7 @@ class DomainsController < ApplicationController
       addresses = params[:dcv_address]
       @selected_domains = []
       @address_choices = []
+      @domain_details = {}
       @csr = Csr.find_by_id(params[:selected_csr])
       cnames = []
       d_name_ids.each_with_index do |id, index|
@@ -266,6 +329,22 @@ class DomainsController < ApplicationController
             failed_domains << cn.name
           end
         end
+
+        @domain_details[cn.name] = {}
+        @domain_details[cn.name]['dcv_method'] = dcv ?
+                                                     (dcv.email_address ?
+                                                          dcv.email_address
+                                                          : dcv.dcv_method)
+                                                     : ''
+        @domain_details[cn.name]['prev_attempt'] = dcv ?
+                                                       (dcv.satisfied? ?
+                                                            'validated' :
+                                                            (dcv.email_address ?
+                                                                 dcv.email_address
+                                                                 : dcv.dcv_method))
+                                                       : 'validation not performed yet'
+        @domain_details[cn.name]['attempted_on'] = dcv ? dcv.created_at.strftime('%Y-%m-%d %H:%M:%S') : 'n/a'
+        @domain_details[cn.name]['status'] = dcv ? (dcv.satisfied? ? 'satisfied' : 'pending') : 'waiting'
       end
       domain_ary << domain_list
       email_list << email_for_identifier

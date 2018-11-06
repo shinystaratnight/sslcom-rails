@@ -36,43 +36,70 @@ class CsrsController < ApplicationController
   def verification_check
     http_or_s = false
 
-    if cc = CertificateContent.find_by_ref(params[:ref])
-      is_ucc = cc.certificate_order.certificate.is_ucc?
-      cn = cc.certificate_names.find_by_name(params[:dcv].split('__')[1])
+    if params[:ref]
+      if cc = CertificateContent.find_by_ref(params[:ref])
+        is_ucc = cc.certificate_order.certificate.is_ucc?
+        cn = cc.certificate_names.find_by_name(params[:dcv].split('__')[1])
 
-      if cn
-        cn.new_name params['new_name']
-        http_or_s = cn.dcv_verify(params[:protocol])
+        if cn
+          cn.new_name params['new_name']
+          http_or_s = cn.dcv_verify(params[:protocol])
 
-        if http_or_s.to_s == 'true'
-          if is_ucc
-            dcv = cn.domain_control_validations.last
-
-            if dcv && (dcv.dcv_method == params[:protocol])
-              dcv.satisfy! unless dcv.satisfied?
+          if http_or_s.to_s == 'true'
+            if is_ucc
+              dcv = cn.domain_control_validations.last
+              if dcv && (dcv.dcv_method == params[:protocol])
+                dcv.satisfy! unless dcv.satisfied?
+              else
+                dcv=cn.domain_control_validations.create(
+                    dcv_method: params[:protocol],
+                    candidate_addresses: nil,
+                    failure_action: 'ignore')
+                dcv.satisfy!
+              end
             else
-              dcv=cn.domain_control_validations.create(
-                  dcv_method: params[:protocol],
-                  candidate_addresses: nil,
-                  failure_action: 'ignore')
-              dcv.satisfy!
+              dcv = cc.csr.domain_control_validations.last
+              if dcv && (dcv.dcv_method == params[:protocol])
+                dcv.satisfy! unless dcv.satisfied?
+              else
+                dcv=cc.csr.domain_control_validations.create(
+                    dcv_method: params[:protocol],
+                    candidate_addresses: nil,
+                    failure_action: 'ignore')
+                dcv.satisfy!
+              end
             end
-          else
-            dcv = cc.csr.domain_control_validations.last
-
-            if dcv && (dcv.dcv_method == params[:protocol])
-              dcv.satisfy! unless dcv.satisfied?
-            else
-              dcv=cc.csr.domain_control_validations.create(
-                  dcv_method: params[:protocol],
-                  candidate_addresses: nil,
-                  failure_action: 'ignore')
-              dcv.satisfy!
-            end
+          elsif http_or_s.nil?
+            http_or_s = false
           end
-        elsif http_or_s.nil?
-          http_or_s = false
         end
+      end
+    else
+      cn = CertificateName.find_by_id(params[:choose_cn])
+      csr = Csr.find_by_id(params[:selected_csr])
+
+      http_or_s = CertificateName.dcv_verify(protocol: params[:protocol],
+                                 https_dcv_url: "https://#{cn.name}/.well-known/pki-validation/#{csr.md5_hash}.txt",
+                                 http_dcv_url: "http://#{cn.name}/.well-known/pki-validation/#{csr.md5_hash}.txt",
+                                 cname_origin: "#{csr.dns_md5_hash}.#{cn.name}",
+                                 cname_destination: "#{csr.cname_destination}",
+                                 csr: csr,
+                                 ca_tag: csr.ca_tag)
+
+      if http_or_s.to_s == 'true'
+        dcv = cn.domain_control_validations.last
+
+        if dcv && (dcv.dcv_method == params[:protocol])
+          dcv.satisfy! unless dcv.satisfied?
+        else
+          dcv=cc.csr.domain_control_validations.create(
+              dcv_method: params[:protocol],
+              candidate_addresses: nil,
+              failure_action: 'ignore')
+          dcv.satisfy!
+        end
+      elsif http_or_s.nil?
+        http_or_s = false
       end
     end
 

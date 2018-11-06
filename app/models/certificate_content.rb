@@ -24,6 +24,7 @@ class CertificateContent < ActiveRecord::Base
 
   after_create :certificate_names_from_domains, unless: :certificate_names_created?
   after_save   :certificate_names_from_domains, unless: :certificate_names_created?
+  after_save   :add_ca
   after_save   :transfer_existing_contacts
   before_destroy :preserve_certificate_contacts
 
@@ -219,8 +220,9 @@ class CertificateContent < ActiveRecord::Base
     end
   end
 
-  def add_ca(ssl_account)
-    self.ca = (self.certificate.cas.ssl_account_or_general_default(ssl_account)).last
+  def add_ca
+    self.ca = (self.certificate.cas.ssl_account_or_general_default(ssl_account)).last if ca.blank? and
+        certificate and ssl_account
   end
 
   def certificate_names_from_domains(domains=nil)
@@ -239,14 +241,18 @@ class CertificateContent < ActiveRecord::Base
     signed_certificates.last
   end
 
+  def pkcs7
+    SslcomCaRequest.where(username: self.ref).last.pkcs7
+  end
+
+  def x509_certificates
+    SslcomCaRequest.where(username: self.ref).last.x509_certificates
+  end
+
   # :with_tags (default), :x509, :without_tags
   def ejbca_certificate_chain(options={format: :with_tags})
     chain=SslcomCaRequest.where(username: self.ref).last
-    xcert = if "8875640296558310041" == chain.x509_certificates.last.serial.to_s #non EV serial
-              Certificate::CERTUM_XSIGN
-            elsif "6248227494352943350" == chain.x509_certificates.last.serial.to_s # EV serial
-              Certificate::CERTUM_XSIGN_EV
-            end
+    xcert=Certificate.xcert_certum(chain.x509_certificates.last)
     certs=chain.x509_certificates
     if options[:format]==:objects
       xcert ? certs[0..-2]<<OpenSSL::X509::Certificate.new(SignedCertificate.enclose_with_tags(xcert)) : certs
@@ -259,7 +265,7 @@ class CertificateContent < ActiveRecord::Base
   end
 
   def certificate
-    certificate_order.certificate
+    certificate_order.try :certificate
   end
 
   def self.cli_domain=(cli_domain)
@@ -886,7 +892,7 @@ class CertificateContent < ActiveRecord::Base
   end
 
   def certificate_order_has_csr
-    certificate_order.has_csr=='true' || certificate_order.has_csr==true
+    ['true',true].any?{|t|t==certificate_order.try(:has_csr)}
   end
 
   def certificate_order_has_csr_and_signing_request
