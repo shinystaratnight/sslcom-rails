@@ -239,6 +239,14 @@ class CertificateContent < ActiveRecord::Base
     signed_certificates.last
   end
 
+  def pkcs7
+    SslcomCaRequest.where(username: self.ref).last.pkcs7
+  end
+
+  def x509_certificates
+    SslcomCaRequest.where(username: self.ref).last.x509_certificates
+  end
+
   # :with_tags (default), :x509, :without_tags
   def ejbca_certificate_chain(options={format: :with_tags})
     chain=SslcomCaRequest.where(username: self.ref).last

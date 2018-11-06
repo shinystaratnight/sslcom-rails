@@ -311,10 +311,18 @@ class SignedCertificate < ActiveRecord::Base
     co=csr.certificate_content.certificate_order
     path="/tmp/"+friendly_common_name+".zip#{Time.now.to_i.to_s(32)}"
     ::Zip::ZipFile.open(path, Zip::ZipFile::CREATE) do |zos|
-      co.bundled_cert_names(components: true).each do |file_name|
-        file=File.new(co.bundled_cert_dir+file_name.strip, "r")
-        zos.get_output_stream(file_name.strip) {|f|f.puts (options[:is_windows] ?
-            file.readlines.join("").gsub(/\n/, "\r\n") : file.readlines)}
+      if certificate_content.ca
+        certificate_content.x509_certificates.each do |x509_cert|
+          zos.get_output_stream(x509_cert.subject.common_name.gsub(/[\s\.\*\(\)]/,"_").upcase) {|f|
+            f.puts (options[:is_windows] ? x509_cert.to_s.join("").gsub(/\n/, "\r\n") : x509_cert.to_s)
+          }
+        end
+      else
+        co.bundled_cert_names(components: true).each do |file_name|
+          file=File.new(co.bundled_cert_dir+file_name.strip, "r")
+          zos.get_output_stream(file_name.strip) {|f|
+            f.puts (options[:is_windows] ? file.readlines.join("").gsub(/\n/, "\r\n") : file.readlines)}
+        end
       end
       cert = options[:is_windows] ? body.gsub(/\n/, "\r\n") : body
       zos.get_output_stream(nonidn_friendly_common_name+file_extension){|f| f.puts cert}
@@ -403,7 +411,7 @@ class SignedCertificate < ActiveRecord::Base
     end
     # for shadow certs, only send the certificate
     begin
-      if !certificate_content.ca.host.include?(SslcomCaApi::PRODUCTION_IP) # no shadow cert if this is production
+      if certificate_content.ca and !certificate_content.ca.host.include?(SslcomCaApi::PRODUCTION_IP) # no shadow cert if this is production
         certificate_order.certificate.cas.shadow.to_a.uniq{|ca|[ca.profile_name,ca.end_entity]}.each do |shadow_ca|
           certificate_order.apply_for_certificate(mapping: shadow_ca)
           OrderNotifier.processed_certificate_order(contact: Settings.shadow_certificate_recipient,
@@ -469,9 +477,15 @@ class SignedCertificate < ActiveRecord::Base
     tmp_file="#{Rails.root}/tmp/sc_int_#{id}.txt"
     File.open(tmp_file, 'wb') do |f|
       tmp=""
-      certificate_order.bundled_cert_names(options).each do |file_name|
-        file=File.new(certificate_order.bundled_cert_dir+file_name.strip, "r")
-        tmp << file.readlines.join("")
+      if certificate_content.ca
+        certificate_content.x509_certificates.each do |x509_cert|
+          tmp<<x509_cert.to_s
+        end
+      else
+        certificate_order.bundled_cert_names(options).each do |file_name|
+          file=File.new(certificate_order.bundled_cert_dir+file_name.strip, "r")
+          tmp << file.readlines.join("")
+        end
       end
       tmp.gsub!(/\n/, "\r\n") #if options[:is_windows]
       f.write tmp
@@ -482,10 +496,16 @@ class SignedCertificate < ActiveRecord::Base
 
   def to_nginx(is_windows=nil)
     "".tap do |tmp|
-      tmp << body+"\n"
-      certificate_order.bundled_cert_names(is_open_ssl: true, ascending_root: true).each do |file_name|
-        file=File.new(certificate_order.bundled_cert_dir+file_name.strip, "r")
-        tmp << file.readlines.join("")
+      if certificate_content.ca
+        certificate_content.x509_certificates.reverse.each do |x509_cert|
+          tmp<<x509_cert.to_s
+        end
+      else
+        tmp << body+"\n"
+        certificate_order.bundled_cert_names(is_open_ssl: true, ascending_root: true).each do |file_name|
+          file=File.new(certificate_order.bundled_cert_dir+file_name.strip, "r")
+          tmp << file.readlines.join("")
+        end
       end
       tmp.gsub!(/\n/, "\r\n") # if is_windows
     end
@@ -530,12 +550,16 @@ class SignedCertificate < ActiveRecord::Base
   end
 
   def to_pkcs7
-    comodo_cert = ComodoApi.collect_ssl(certificate_order, {response_type: "pkcs7"}).certificate
-    if comodo_cert
-      (BEGIN_PKCS7_TAG+"\n"+comodo_cert+END_PKCS7_TAG).gsub(/\n/, "\r\n") #temporary fix
+    if certificate_content.ca
+      certificate_content.pkcs7.to_s
     else
-      return body if body.starts_with?(BEGIN_PKCS7_TAG)
-      File.read(pkcs7_file) # TODO need to fix some bug. ending characters not matching comodo's certs
+      comodo_cert = ComodoApi.collect_ssl(certificate_order, {response_type: "pkcs7"}).certificate
+      if comodo_cert
+        (BEGIN_PKCS7_TAG+"\n"+comodo_cert+END_PKCS7_TAG).gsub(/\n/, "\r\n") #temporary fix
+      else
+        return body if body.starts_with?(BEGIN_PKCS7_TAG)
+        File.read(pkcs7_file) # TODO need to fix some bug. ending characters not matching comodo's certs
+      end
     end
   end
 
