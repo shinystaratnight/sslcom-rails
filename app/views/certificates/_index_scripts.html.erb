@@ -72,12 +72,22 @@ jQuery(function($) {
         textArea.value = textArea.value.replace(/(\*)[^\.]/g, "$1");
       <%end-%>
       domains = textArea.value.split(/\s/);
+      valid_domains = [];
+
+      $.each(domains, function(idx) {
+        if ($.checkDomain(domains[idx])) {
+          valid_domains.push(domains[idx]);
+        }
+      });
+
+      textArea.value = valid_domains.join(' ');
+
       <%if @certificate.is_premium_ssl?-%>
-        domains = domains.slice(0,3);
-        textArea.value = domains.join(' ');
+        valid_domains = valid_domains.slice(0, 3);
+        textArea.value = valid_domains.join(' ');
       <%end-%>
 
-      return domains.filter(Boolean);
+      return valid_domains.filter(Boolean);
     };
   <%end%>
   
@@ -879,8 +889,10 @@ jQuery(function($) {
         }*/
     });
 
-    $('textarea[id$=domains]').keyup(function () {
-      $.adjustDomainPricing(this);
+    $('textarea[id$=domains]').keypress(function (e) {
+      if (e.keyCode == 13 || e.keyCode == 32) {
+        $.adjustDomainPricing(this);
+      }
     });
 
     $(':radio[name*=duration]').click(function(){
