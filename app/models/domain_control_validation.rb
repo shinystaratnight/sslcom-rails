@@ -75,6 +75,7 @@ class DomainControlValidation < ActiveRecord::Base
 
   # assume this belongs to a certificate_name which belongs to an ssl_account
   def hash_satisfied
+    prepend=""
     hash_csr=certificate_name ? hash_csr : csr
     self.identifier,self.address_to_find_identifier=
     case dcv_method
