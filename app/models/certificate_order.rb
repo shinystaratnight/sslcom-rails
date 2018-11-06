@@ -506,7 +506,7 @@ class CertificateOrder < ActiveRecord::Base
           temp_cc=self.certificate_contents.create(duration: duration)
           # Do not delete the last one
           (self.certificate_contents-[temp_cc]).each do |cc|
-            cc.delete if ((cc.csr or cc.csr.signed_certificate.blank?) || complete)
+            cc.delete if ((cc.csr or cc.csr.try(:signed_certificate)) || complete)
           end
         end
       end

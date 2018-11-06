@@ -66,8 +66,7 @@ class CsrsController < ApplicationController
               dcv=cc.csr.domain_control_validations.create(
                   dcv_method: params[:protocol],
                   candidate_addresses: nil,
-                  failure_action: 'ignore',
-                  workflow_state: 'satisfied')
+                  failure_action: 'ignore')
               dcv.satisfy!
             end
           end
