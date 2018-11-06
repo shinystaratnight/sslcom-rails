@@ -33,18 +33,27 @@
               =button_tag "Remove", :class => "btn_remove_domain", :type => "button"
           %td.center=d.name
           %td
-            %select(name="dcv_address[]")
+            %select(name="dcv_address[]" id="dcv_methods")
               %option select email address
               -@address_choices[index].each do |address|
-                %option(value="#{address}" )=address
+                -if @domain_details[d.name]['dcv_method'] == address
+                  %option(value="#{address}" selected)=address
+                -else
+                  %option(value="#{address}" )=address
           %td.caa_check
             -if d.caa_passed
               %div.passed passed
             -else
               %div.failed failed
-          %td.center n/a
-          %td.center validation not performed yet
-          %td.center waiting
+          -#%td.center n/a
+          %td.center
+            =@domain_details[d.name]['prev_attempt']
+          -#%td.center validation not performed yet
+          %td.center
+            =@domain_details[d.name]['attempted_on']
+          -#%td.center waiting
+          %td.center
+            =@domain_details[d.name]['status']
         %tr
           %td
           %td
