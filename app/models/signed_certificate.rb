@@ -312,7 +312,8 @@ class SignedCertificate < ActiveRecord::Base
     path="/tmp/"+friendly_common_name+".zip#{Time.now.to_i.to_s(32)}"
     ::Zip::ZipFile.open(path, Zip::ZipFile::CREATE) do |zos|
       if certificate_content.ca
-        certificate_content.x509_certificates.each do |x509_cert|
+        certificate_content.x509_certificates.drop(1).each do |x509_cert|
+          x509_cert=Certificate.xcert_certum(x509_cert)
           zos.get_output_stream(x509_cert.subject.common_name.gsub(/[\s\.\*\(\)]/,"_").upcase) {|f|
             f.puts (options[:is_windows] ? x509_cert.to_s.join("").gsub(/\n/, "\r\n") : x509_cert.to_s)
           }
@@ -479,7 +480,7 @@ class SignedCertificate < ActiveRecord::Base
       tmp=""
       if certificate_content.ca
         certificate_content.x509_certificates.drop(1).each do |x509_cert|
-          tmp<<x509_cert.to_s
+          tmp<<Certificate.xcert_certum(x509_cert).to_s
         end
       else
         certificate_order.bundled_cert_names(options).each do |file_name|
@@ -497,8 +498,8 @@ class SignedCertificate < ActiveRecord::Base
   def to_nginx(is_windows=nil)
     "".tap do |tmp|
       if certificate_content.ca
-        certificate_content.x509_certificates.reverse.each do |x509_cert|
-          tmp<<x509_cert.to_s
+        certificate_content.x509_certificates.drop(1).reverse.each do |x509_cert|
+          tmp<<Certificate.xcert_certum(x509_cert).to_s
         end
       else
         tmp << body+"\n"
