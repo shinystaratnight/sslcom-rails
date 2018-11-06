@@ -22,7 +22,7 @@ class FundedAccountsController < ApplicationController
     @funded_account = current_user ? @ssl_account.funded_account : FundedAccount.new
     @funded_account.deduct_order = "true"
     if params[:id] == "certificate"
-      @certificate_order = @ssl_account.cached_certificate_orders.current
+      @certificate_order = @ssl_account.certificate_orders.current
       @funded_account.order_type = "certificate"
     elsif params[:id] == "order"
       certificates_from_cookie
@@ -44,7 +44,7 @@ class FundedAccountsController < ApplicationController
       redirect_to apply_funds_path(new_params.deep_symbolize_keys) and return
     end
     if @funded_account.order_type=='certificate'
-      @certificate_order = @ssl_account.cached_certificate_orders.current
+      @certificate_order = @ssl_account.certificate_orders.current
     elsif @funded_account.order_type=='order'
       setup_orders
     end
