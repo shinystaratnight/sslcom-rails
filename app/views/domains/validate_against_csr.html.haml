@@ -41,6 +41,8 @@
       %td(colspan="2") (* Any domain name removals or edits will require updating the unique value after clicking the Validate button.)
 =form_tag('', method: :post, class: :api_certificate_request) do
   =hidden_field_tag :selected_csr, @csr.id
+  .domains_loader_wrap
+    .domains_loader
   %table#domains_validation
     %thead
       %th domain
@@ -58,14 +60,32 @@
               %option Please select a validation method
               %optgroup(label="Validation via email" )
                 -@address_choices[index].each do |address|
-                  %option(value="#{address}" )=address
+                  -if @domain_details[d.name]['dcv_method'] == address
+                    %option(value="#{address}" selected)=address
+                  -else
+                    %option(value="#{address}")=address
               %optgroup(label="Validation via csr hash" )
-                %option(value="http_csr_hash" )CSR hash text file using http://
-                %option(value="https_csr_hash" )CSR hash text file using https://
-                %option(value="cname_csr_hash" )Add cname entry
-          %td.center validation not performed yet
-          %td.center n/a
-          %td.center waiting
+                -if @domain_details[d.name]['dcv_method'] == 'http_csr_hash'
+                  %option(value="http_csr_hash" selected)CSR hash text file using http://
+                -else
+                  %option(value="http_csr_hash")CSR hash text file using http://
+                -if @domain_details[d.name]['dcv_method'] == 'https_csr_hash'
+                  %option(value="https_csr_hash" selected)CSR hash text file using https://
+                -else
+                  %option(value="https_csr_hash")CSR hash text file using https://
+                -if @domain_details[d.name]['dcv_method'] == 'cname_csr_hash'
+                  %option(value="cname_csr_hash" selected)Add cname entry
+                -else
+                  %option(value="cname_csr_hash")Add cname entry
+          -#%td.center.prev_attempt validation not performed yet
+          %td.center.prev_attempt
+            =@domain_details[d.name]['prev_attempt']
+          -#%td.center n/a
+          %td.center
+            =@domain_details[d.name]['attempted_on']
+          -#%td.center.status waiting
+          %td.center.status
+            =@domain_details[d.name]['status']
         %tr
           %td
           %td(colspan="4" )

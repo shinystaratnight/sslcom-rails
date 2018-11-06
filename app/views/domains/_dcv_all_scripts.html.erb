@@ -95,6 +95,11 @@
           }
         }
       });
+
+      // get instruction for selected domain validation when loading page.
+      $('select[id=dcv_methods]:enabled').each(function(index, value){
+        $(this).change();
+      });
     });
   });
 </script>
