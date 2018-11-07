@@ -172,11 +172,13 @@
 
           if (methods[0] == 'Please select a validation method') {
             $(instruction).html("Please select a validation method");
-            $('td.pretest[class~="'+$(dcv_select).attr("alt")+'"]').html("n/a").css({ background: "white", color:"black" });
+            $(dcv_select).parent().siblings('td.pretest').html('n/a').css({ background: "white", color:"black" });
+            /*$('td.pretest[class~="'+$(dcv_select).attr("alt")+'"]').html("n/a").css({ background: "white", color:"black" });*/
           }
           else if(/@/.test(methods[0])){
-            $(instruction).html("Validation instructions will be emailed to "+methods[0]+". Please follow those instructions.")
-            $('td.pretest[class~="'+$(dcv_select).attr("alt")+'"]').html("n/a").css({ background: "white", color:"black" });
+            $(instruction).html("Validation instructions will be emailed to "+methods[0]+". Please follow those instructions.");
+            $(dcv_select).parent().siblings('td.pretest').html('n/a').css({ background: "white", color:"black" });
+            /*$('td.pretest[class~="'+$(dcv_select).attr("alt")+'"]').html("n/a").css({ background: "white", color:"black" });*/
           }
           else if(/https/.test(methods[0])){
             instructions="Upload <a href='<%=http_dcv_file_csr_path(@ssl_slug, @csr.id)%>'>this file</a> to this location: <a href='"+https+"' target='_new'>"+https+"</a>";
@@ -216,6 +218,7 @@
                   $('#upload_validations').show();
                 }
                 /*$('td.pretest[class~="'+$(dcv_select).attr("alt")+'"]').html((data ? "<div class='passed'>passed</div>" : "<div class='failed'>failed</div>"));*/
+                $(dcv_select).parent().siblings('td.pretest').html((data ? "<div class='passed'>passed</div>" : "<div class='failed'>failed</div>"));
               });
           }
           else if(/http/.test(methods[0])){
@@ -256,6 +259,7 @@
                   $('#upload_validations').show();
                 }
                 /*$('td.pretest[class~="'+$(dcv_select).attr("alt")+'"]').html((data ? "<div class='passed'>passed</div>" : "<div class='failed'>failed</div>"));*/
+                $(dcv_select).parent().siblings('td.pretest').html((data ? "<div class='passed'>passed</div>" : "<div class='failed'>failed</div>"));
               });
           }
           else if(/cname/.test(methods[0])){
@@ -295,6 +299,7 @@
                   $('#upload_validations').show();
                 }
                 /*$('td.pretest[class~="'+$(dcv_select).attr("alt")+'"]').html((data ? "<div class='passed'>passed</div>" : "<div class='failed'>failed</div>"));*/
+                $(dcv_select).parent().siblings('td.pretest').html((data ? "<div class='passed'>passed</div>" : "<div class='failed'>failed</div>"));
               });
           }
           $(instruction).css({ background: "yellow" });

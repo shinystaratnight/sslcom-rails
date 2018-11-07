@@ -16,10 +16,11 @@
         =select_tag('group_remove', options_for_select(opt), prompt: '--- None ---')
       %th domain
       %th email addresses
-      %th
-        caa
-        %a{:href => "https://www.ssl.com/how-to/configure-caa-records-to-authorize-ssl-com/", :target => "_blank"}
-          %span.badge ?
+      -if Settings.enable_caa
+        %th
+          caa
+          %a{:href => "https://www.ssl.com/how-to/configure-caa-records-to-authorize-ssl-com/", :target => "_blank"}
+            %span.badge ?
       %th previous attempt
       %th attempted on
       %th status
@@ -40,11 +41,12 @@
                   %option(value="#{address}" selected)=address
                 -else
                   %option(value="#{address}" )=address
-          %td.caa_check
-            -if d.caa_passed
-              %div.passed passed
-            -else
-              %div.failed failed
+          -if Settings.enable_caa
+            %td.caa_check
+              -if d.caa_passed
+                %div.passed passed
+              -else
+                %div.failed failed
           -#%td.center n/a
           %td.center
             =@domain_details[d.name]['prev_attempt']
