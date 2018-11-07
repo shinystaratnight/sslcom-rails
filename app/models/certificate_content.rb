@@ -24,7 +24,6 @@ class CertificateContent < ActiveRecord::Base
 
   after_create :certificate_names_from_domains, unless: :certificate_names_created?
   after_save   :certificate_names_from_domains, unless: :certificate_names_created?
-  after_save   :add_ca
   after_save   :transfer_existing_contacts
   before_destroy :preserve_certificate_contacts
 
@@ -220,9 +219,8 @@ class CertificateContent < ActiveRecord::Base
     end
   end
 
-  def add_ca
-    self.ca = (self.certificate.cas.ssl_account_or_general_default(ssl_account)).last if ca.blank? and
-        certificate and ssl_account and certificate_order.external_order_number.blank?
+  def add_ca(ssl_account)
+    self.ca = (self.certificate.cas.ssl_account_or_general_default(ssl_account)).last if ca.blank? and certificate
   end
 
   def certificate_names_from_domains(domains=nil)
