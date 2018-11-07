@@ -485,41 +485,42 @@ jQuery(function($) {
   });
   
   <% unless @certificate.is_code_signing? || Rails.env.test? %>
-    $("textarea[name*=signing_request]").bind("change keyup paste", function() {
+    $("textarea[name*=signing_request]").bind("change paste", function() {
       if ($(this).val() == "") {
         $(".flash_message").remove();
         return;
       }
 
       // parsing pasted CSR and getting Domains from this.
-      $.ajax({
-        url: "<%=parse_csr_certificate_orders_path%>",
-        data: {csr: $(this).val(), certificate: "<%=@certificate.product%>"},
-        type: "POST",
-        success: function(data, status) {
-          $(".flash_message").remove();
+      if ( $(this).val().includes('-----END CERTIFICATE REQUEST-----') ) {
+        $.ajax({
+          url: "<%=parse_csr_certificate_orders_path%>",
+          data: {csr: $(this).val(), certificate: "<%=@certificate.product%>"},
+          type: "POST",
+          success: function(data, status) {
+            $(".flash_message").remove();
 
-          var ajax_errors="";
-          if ((typeof data.certificate_content.csr.errors.base != 'undefined')
-            && (data.certificate_content.csr.errors.base.length>0)) {
-            $.each(data.certificate_content.csr.errors.base, function(key, value) {
-              ajax_errors+="<li>"+value+"</li>";
-            });
-          }
+            var ajax_errors="";
+            if ((typeof data.certificate_content.csr.errors.base != 'undefined')
+              && (data.certificate_content.csr.errors.base.length>0)) {
+              $.each(data.certificate_content.csr.errors.base, function(key, value) {
+                ajax_errors+="<li>"+value+"</li>";
+              });
+            }
 
-          if ((typeof data.certificate_content.errors.base != 'undefined') &&
-            (data.certificate_content.errors.base.length>0)) {
-            $.each(data.certificate_content.errors.base, function(key, value) {
-              ajax_errors+="<li>"+value+"</li>";
-            });
-          }
+            if ((typeof data.certificate_content.errors.base != 'undefined') &&
+              (data.certificate_content.errors.base.length>0)) {
+              $.each(data.certificate_content.errors.base, function(key, value) {
+                ajax_errors+="<li>"+value+"</li>";
+              });
+            }
 
-          if ((typeof data.certificate_content.errors.signing_request != 'undefined')
-            && (data.certificate_content.errors.signing_request.length>0)) {
-            $.each(data.certificate_content.errors.signing_request, function(key, value) {
-              ajax_errors+="<li>signing request "+value+"</li>";
-            });
-          }
+            if ((typeof data.certificate_content.errors.signing_request != 'undefined')
+              && (data.certificate_content.errors.signing_request.length>0)) {
+              $.each(data.certificate_content.errors.signing_request, function(key, value) {
+                ajax_errors+="<li>signing request "+value+"</li>";
+              });
+            }
 
           if (ajax_errors!="") {
             $(".cert_reqs").after("<div class='flash_message error'><span><ul class='ajax_info'>" + ajax_errors + "</ul></span></div>");

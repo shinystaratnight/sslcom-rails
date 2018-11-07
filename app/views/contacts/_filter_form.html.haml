@@ -1,0 +1,56 @@
+= form_tag(saved_contacts_contacts_path(@ssl_slug), method: :get, class: "filter-form", data: {display: params[:commit] == "Search"}) do
+  = hidden_field_tag :registrants, saved_registrants
+  %table
+    %tr
+      %td
+        .clearfix
+          - if saved_registrants
+            = label_tag(:status, "Status:")
+            = select_tag(:status,                                                          |
+              options_for_select(Contact::statuses.keys.map{|mi| [mi.gsub('_', ' '), mi]}, |
+              params[:status]), multiple: true, id: "contact-status")
+          - else
+            = label_tag(:roles, "Roles:")
+            = select_tag(:roles, |
+              options_for_select(Contact::ROLES, params[:roles]), multiple: true, id: "contact-roles")
+
+      %td
+        .clearfix
+          = label_tag(:company_name, "Company:")
+          = text_field_tag(:company_name, params[:company_name])
+
+        .clearfix
+          = label_tag(:first_name, "First:")
+          = text_field_tag(:first_name, params[:first_name])
+        
+        .clearfix
+          = label_tag(:last_name, "Last:")
+          = text_field_tag(:last_name, params[:last_name])
+
+      %td
+        -if is_system_admins
+          .clearfix
+            = label_tag(:team, "Team:")
+            = text_field_tag(:team, params[:team])
+
+        .clearfix
+          = label_tag(:email, "email:")
+          = text_field_tag(:email, params[:email])
+        
+        .clearfix
+          = label_tag(:phone, "phone:")
+          = text_field_tag(:phone, params[:phone])
+          
+    %tr
+      %td{colspan: '3'}
+        = link_to "Clear", saved_contacts_contacts_path(@ssl_slug, registrants: saved_registrants, commit: "Search"),  |
+          class: "btn-filter-clear"
+
+        = submit_tag "Search", class: "btn-filter-search"
+
+-content_for :js do
+  :javascript
+    $("#contact-status, #contact-roles").select2();
+    $(document).ready(function() {
+      $("#contact-status, #contact-roles").select2();
+    });

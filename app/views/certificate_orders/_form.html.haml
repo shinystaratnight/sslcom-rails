@@ -42,7 +42,7 @@
       -else
         .clearfix
           %label{for: 'registrant_type'}
-            Registrant Type:
+            Validated Identity Type:
           =rf.select :registrant_type, Registrant::registrant_types.keys.map{|key| [key.capitalize, key]}, {selected: 'organization'}, {disabled: true}
       
       -if certificate.is_smime_or_client?
