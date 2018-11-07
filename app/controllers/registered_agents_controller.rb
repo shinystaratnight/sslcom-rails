@@ -78,6 +78,22 @@ class RegisteredAgentsController < ApplicationController
     redirect_to registered_agents_path(ssl_slug: @ssl_slug) and return
   end
 
+  def approve_ssl_manager
+    returnObj = {}
+    registered_agent = @ssl_account.registered_agents.where(id: params[:registered_agent_id]).first
+
+    if registered_agent
+      registered_agent.workflow_status = 'active'
+      registered_agent.approver = current_user
+      registered_agent.approved_at = DateTime.now
+      registered_agent.save
+    end
+
+    returnObj['approved_at'] = registered_agent.approved_at.strftime("%b %d, %Y")
+
+    render :json => returnObj
+  end
+
   def approve
     registered_agent = RegisteredAgent.find_by_ref params[:id]
 

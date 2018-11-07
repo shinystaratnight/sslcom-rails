@@ -266,6 +266,26 @@
         }
       });
 
+      $('.ssl_manager_status').click(function(e) {
+        e.preventDefault();
+        var workflow_status = $(this);
+
+        if (confirm('Are  you sure to active this SSL Manager?')) {
+          $.ajax({
+            url: '<%=approve_ssl_manager_registered_agents_path%>',
+            data: {
+              registered_agent_id: $(this).data('id')
+            },
+            type: "POST",
+            success: function (result) {
+              $('#' + $(workflow_status).data('id')).attr('data-workflow-available', 'already');
+              $(workflow_status).parent().siblings('td.approved_date').html(result['approved_at']);
+              $(workflow_status).parent().html('Active');
+            }
+          });
+        }
+      });
+
       $('.chk-mc-remove').click(function() {
         if ($(this).prop('checked')) {
           $('#btn_remove_managed_certs').attr('disabled', false);
