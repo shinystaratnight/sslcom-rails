@@ -1,5 +1,6 @@
 class Contact < ActiveRecord::Base
   include V2MigrationProgressAddon
+  include Filterable
   # include RefParam
 
   enum status: {
@@ -31,6 +32,7 @@ class Contact < ActiveRecord::Base
     :email, :phone, :ext, :fax
   ]
   SYNC_FIELDS = SYNC_FIELDS_REQUIRED.dup.push(:roles)
+  ROLES = %w(administrative billing technical validation)
   
   before_validation :set_roles
   
@@ -89,6 +91,33 @@ class Contact < ActiveRecord::Base
     end
   end
   
+  def self.index_filter(params)
+    filters                = {}
+    p                      = params
+    filter_roles           = p[:roles]
+    filters[:status]       = { 'in' => p[:status].map{|s| statuses[s]} } unless p[:status].blank?
+    filters[:first_name]   = { 'LIKE' => p[:first_name] } unless p[:first_name].blank?
+    filters[:last_name]    = { 'LIKE' => p[:last_name] } unless p[:last_name].blank?
+    filters[:email]        = { 'LIKE' => p[:email] } unless p[:email].blank?
+    filters[:company_name] = { 'LIKE' => p[:company_name] } unless p[:company_name].blank?
+    filters[:phone]        = { 'LIKE' => p[:phone] } unless p[:phone].blank?
+    
+    if filter_roles && filter_roles.any?
+      filter_roles.each_with_index do |role, i|
+        filters["roles_#{i}".to_sym] = { 'LIKE' => role }
+      end
+    end
+    t = p[:team] 
+    if t.present?
+      found = SslAccount.where(
+        "ssl_slug = ? OR acct_number = ? OR id = ? OR company_name = ?", t, t, t, t
+      )
+      filters[:contactable_id] = { '=' => found.first.id } if found.any?
+    end
+    result = filter(filters)
+    result
+  end
+
   def get_address_format
     "#{address1}, #{city}, #{state} #{postal_code}, #{country}"
   end

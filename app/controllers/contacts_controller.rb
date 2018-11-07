@@ -21,12 +21,11 @@ class ContactsController < ApplicationController
 
   def saved_contacts
     if current_user
-      list = if params[:registrants]
-        @ssl_account.saved_registrants.includes(:validation_histories)
-      else
-        @ssl_account.saved_contacts
-      end
-      @all_contacts = list.order(:last_name).paginate(page: params[:page])
+      @registrants = params[:registrants] && (params[:registrants] == 'true')
+      @all_contacts = @registrants ? get_saved_registrants : get_saved_contacts
+      @all_contacts = @all_contacts.index_filter(params) if params[:commit]
+      @all_contacts = @all_contacts.order(:last_name)
+        .paginate(page: params[:page], per_page: 25)
     end
     respond_to :html
   end
@@ -121,6 +120,23 @@ class ContactsController < ApplicationController
   end
   
   private
+
+  def get_saved_contacts
+    if current_user.is_system_admins?
+      Contact.where(contactable_type: 'SslAccount', type: 'CertificateContact')
+    else
+      @ssl_account.saved_contacts
+    end
+  end
+
+  def get_saved_registrants
+    contacts = if current_user.is_system_admins?
+      Contact.where(contactable_type: 'SslAccount', type: 'Registrant')
+    else
+      @ssl_account.saved_registrants
+    end
+    contacts.includes(:validation_histories)
+  end
 
   def validate_certificate_orders
     # Update certificate order validation status if registrant was used in 
