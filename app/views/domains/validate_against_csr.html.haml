@@ -41,8 +41,8 @@
       %td(colspan="2") (* Any domain name removals or edits will require updating the unique value after clicking the Validate button.)
 =form_tag('', method: :post, class: :api_certificate_request) do
   =hidden_field_tag :selected_csr, @csr.id
-  .domains_loader_wrap
-    .domains_loader
+  .domains_loader_wrap.hidden
+    .domains_loader.hidden
   %table#domains_validation
     %thead
       %th domain

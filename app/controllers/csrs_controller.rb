@@ -1,7 +1,7 @@
 class CsrsController < ApplicationController
-  before_filter :find_csr, only:[:http_dcv_file, :verification_check]
+  before_filter :find_csr, only:[:http_dcv_file, :verification_check, :create_new_unique_value]
   filter_access_to :all, :attribute_check=>true
-  filter_access_to :country_codes, :http_dcv_file, :all_domains, :check_validation, :require=>[:create] #anyone can create read creates csrs, thus read this
+  filter_access_to :country_codes, :http_dcv_file, :all_domains, :check_validation, :create_new_unique_value, :require=>[:create] #anyone can create read creates csrs, thus read this
 
   # PUT /csrs/1
   # PUT /csrs/1.xml
@@ -145,6 +145,16 @@ class CsrsController < ApplicationController
 
       returnObj[domain] = exist_validated ? 'true' : 'false'
     end
+
+    render :json => returnObj
+  end
+
+  def create_new_unique_value
+    @csr.csr_unique_values.create(unique_value: params[:new_unique_value])
+
+    returnObj = {}
+    returnObj['cname_destination'] = @csr.cname_destination
+    returnObj['dns_sha2_hash'] = @csr.dns_sha2_hash
 
     render :json => returnObj
   end

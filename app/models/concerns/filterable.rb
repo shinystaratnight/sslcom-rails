@@ -45,7 +45,12 @@ module Filterable
       elsif filter_attr == :created_at
         "DATE(#{table_name}.#{filter_attr}) #{operator} #{format_sql_value(value)}"
       elsif operator == 'LIKE'
-        ["lower(#{table_name}.#{filter_attr}) #{operator} (?)", "%#{value.downcase}%"]
+        if filter_attr.to_s.include?('roles')
+          # search in serialized array
+          ["lower(#{table_name}.roles) #{operator} (?)", "% #{value}\n%"]
+        else
+          ["lower(#{table_name}.#{filter_attr}) #{operator} (?)", "%#{value.downcase}%"]
+        end
       else
         "#{table_name}.#{filter_attr} #{operator} #{format_sql_value(value)}"
       end

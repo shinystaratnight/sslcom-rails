@@ -18,10 +18,10 @@
     .clearfix
       %label{for: 'type'}
         Type:
-      =f.select :type, [['Contact', 'CertificateContact'], ['Registrant', 'Registrant']]
+      =f.select :type, [['Contact', 'CertificateContact'], ['Validated Identity', 'Registrant']]
     .clearfix.hidden
       %label{for: 'registrant_type'}
-        Registrant Type:
+        Validated Identity Type:
       =f.select :registrant_type, Registrant::registrant_types
   .clearfix
     %label{for: 'first_name'}

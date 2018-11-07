@@ -1,26 +1,33 @@
--saved_registrants = !params[:registrants].nil?
--saved_contacts = params[:registrants].nil?
+-saved_registrants = (!params[:registrants].blank? && !(params[:registrants] && params[:registrants] == 'false')) || @registrants
+-saved_contacts = !saved_registrants
+-is_system_admins = current_user && current_user.is_system_admins?
 
 -if current_user && @all_contacts
+  #validations
+    =render partial: 'filter_form', locals: {saved_registrants: saved_registrants, is_system_admins: is_system_admins}
+  
   -will_paginate @all_contacts
   #validations
-    %h3 Saved #{saved_contacts ? 'Contacts' : 'Registrants'}
+    %h3 Saved #{saved_contacts ? 'Contacts' : 'Validated Identities'}
     %table{cellspacing: '0'}
       -if will_paginate @all_contacts
         %tfoot
           %tr
             %td(colspan='6')=will_paginate @all_contacts
-      -if permitted_to?(:create, Contact.new)
+      -if !is_system_admins && permitted_to?(:create, Contact.new)
         %br
         %tr
           =link_to "New", new_contact_path(saved_contact: true), class: 'button_blue button_index'
       %tr.heading_row
         %th Name
         %th Company
+        -if is_system_admins
+          %th Team
         -if saved_registrants
-          %th Status
-          %th Documents
-          -if current_user.is_system_admins?
+          %th Validation Status
+          %th 
+            = is_system_admins ? 'Files' : 'Documents'
+          -if is_system_admins
             %th Change Status
         - if saved_contacts
           %th Default
@@ -36,13 +43,19 @@
         %tr
           %td= f_name.blank? && l_name.blank? ? '' : "#{l_name}, #{f_name}"
           %td #{c.company_name}
+          -if is_system_admins
+            %td
+              %strong
+                -team_name = c.contactable.get_team_name
+                =link_to team_name, saved_contacts_contacts_path(@ssl_slug, team: team_name, commit: 'Search', registrants: saved_registrants), |
+                  method: :get
           -if saved_registrants
             %td.contacts-index-status{class: c.validated? ? 'contacts-index-validated' : ''}
               #{c.status.nil? ? 'N/A' : c.status.humanize.downcase}
             %td
               %strong
                 #{c.validation_histories.count}
-            -if current_user.is_system_admins?
+            -if is_system_admins
               %td
                 =form_tag admin_update_contact_path(c), method: :puts do
                   =select_tag :status, options_for_select(Contact::statuses.keys.map{|s| [s.humanize.downcase, s]}, c.status), |

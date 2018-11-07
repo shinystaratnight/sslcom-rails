@@ -356,6 +356,17 @@ authorization do
     includes :user
     includes :validations
     #
+    # Folders
+    #
+    has_permission_on :folders, to: [
+      :add_certificate_order,
+      :add_certificate_orders,
+      :add_to_folder,
+      :children,
+      :create,
+      :index
+    ]
+    #
     # Csrs
     #
     has_permission_on :csrs, :to => :create

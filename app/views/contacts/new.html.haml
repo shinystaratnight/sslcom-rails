@@ -1,6 +1,6 @@
 -if permitted_to?(:new, @contact)
   .reseller_registration_profile
-    %h3 Create Contact or Registrant
+    %h3 Create Contact or Validated Identity
     =error_messages_for :contact
     =form_for @contact, html: {id: 'new_saved_contact'} do |f|
       #stylized.default_form
