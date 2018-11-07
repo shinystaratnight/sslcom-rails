@@ -165,6 +165,11 @@ class CertificateOrdersController < ApplicationController
 
   def edit
     unless @certificate_order.blank?
+      if @certificate_order.certificate_content.ca.blank?
+        cc=@certificate_order.certificate_content
+        cc.add_ca(@certificate_order.ssl_account)
+        cc.save
+      end
       if @certificate_order.certificate.is_client_pro? || @certificate_order.certificate.is_client_basic?
         redirect_to recipient_certificate_order_path(@ssl_slug, @certificate_order.ref)
       else
@@ -223,6 +228,7 @@ class CertificateOrdersController < ApplicationController
         )
         # @certificate_content.additional_domains = domains
         #reset dcv validation
+        @certificate_content.add_ca(@certificate_order.ssl_account)
         @certificate_content.agreement=true
         @certificate_order.validation.validation_rules.each do |vr|
           if vr.description=~/\Adomain/

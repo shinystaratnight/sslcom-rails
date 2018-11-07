@@ -47,6 +47,10 @@
     %thead
       %th domain
       %th options
+      %th
+        pre-test
+        %a{:href => "https://www.ssl.com/guide/failed-pre-test/", :target => "_blank"}
+          %span.badge ?
       %th previous attempt
       %th attempted on
       %th status
@@ -77,6 +81,7 @@
                   %option(value="cname_csr_hash" selected)Add cname entry
                 -else
                   %option(value="cname_csr_hash")Add cname entry
+          %td.center.pretest
           -#%td.center.prev_attempt validation not performed yet
           %td.center.prev_attempt
             =@domain_details[d.name]['prev_attempt']

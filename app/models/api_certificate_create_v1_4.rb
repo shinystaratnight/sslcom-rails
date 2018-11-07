@@ -339,6 +339,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   def setup_certificate_content(options)
     cc = options[:certificate_content]
     cc.registrant.destroy unless cc.registrant.blank?
+    cc.add_ca(options[:certificate_order].ssl_account)
     cc.create_registrant(
         company_name: self.organization_name,
         department: self.organization_unit_name,
