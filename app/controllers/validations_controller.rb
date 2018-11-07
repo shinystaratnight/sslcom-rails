@@ -310,7 +310,7 @@ class ValidationsController < ApplicationController
                                   domain_method.downcase.gsub('pre-validated %28', '').gsub('%29', '').gsub(' ', '_') : nil,
               'pretest' => 'n/a',
               'attempt' => domain_method ? domain_method.downcase.gsub('%28', ' ').gsub('%29', ' ') : '',
-              'attempted_on' => dcv.blank? ? 'n/a' : dcv.responded_at,
+              'attempted_on' => dcv.blank? ? 'n/a' : dcv.created_at.strftime('%Y-%m-%d %H:%M:%S'),
               'status' => domain_status ? domain_status.downcase : '',
               'caa_check' => ''
             },
