@@ -222,7 +222,7 @@ class CertificateContent < ActiveRecord::Base
 
   def add_ca
     self.ca = (self.certificate.cas.ssl_account_or_general_default(ssl_account)).last if ca.blank? and
-        certificate and ssl_account
+        certificate and ssl_account and certificate_order.external_order_number.blank?
   end
 
   def certificate_names_from_domains(domains=nil)
