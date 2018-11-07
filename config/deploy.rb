@@ -35,7 +35,7 @@ set :branch, "staging"
 # extension ".pub".
 ssh_options[:keys] = [File.join(ENV["HOME"], ".ssh", "id_rsa")]
 
-server = "production"
+server = "production_api"
 case server
   when "sandbox"
     require "rvm/capistrano"
@@ -223,7 +223,7 @@ namespace :deploy do
     run "ln -nfs #{shared_path}/config/secrets.yml #{release_path}/config/secrets.yml"
     run "ln -nfs #{shared_path}/config/initializers/secret_token.rb #{release_path}/config/initializers/secret_token.rb"
     run "ln -nfs #{shared_path}/config/environments/production.rb #{release_path}/config/environments/production.rb"
-    run "ln -nfs #{shared_path}/config/cert/ejbca_api #{release_path}/config/cert/ejbca_api"
+    run "ln -nfs #{shared_path}/config/cert/ejbca_api/* #{release_path}/config/cert/ejbca_api/"
   end
 
 end
