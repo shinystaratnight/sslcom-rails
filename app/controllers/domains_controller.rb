@@ -3,6 +3,7 @@ class DomainsController < ApplicationController
   before_filter :require_user, :except => [:dcv_validate, :dcv_all_validate]
   before_filter :find_ssl_account
   before_filter :set_row_page, only: [:index]
+  before_filter :set_csr_row_page, only: [:select_csr]
 
   def index
     cnames = @ssl_account.all_certificate_names.order(created_at: :desc)
@@ -149,7 +150,7 @@ class DomainsController < ApplicationController
       if @selected_domains.blank?
         redirect_to domains_path(@ssl_slug)
       end
-      @csrs = current_user.ssl_account.all_csrs
+      @csrs = current_user.ssl_account.all_csrs.paginate(@p)
     else
       redirect_to domains_path(@ssl_slug)
     end
@@ -485,6 +486,19 @@ class DomainsController < ApplicationController
 
     if @per_page != preferred_row_count
       current_user.preferred_domain_row_count = @per_page
+      current_user.save(validate: false)
+    end
+
+    @p = {page: (params[:page] || 1), per_page: @per_page}
+  end
+
+  def set_csr_row_page
+    preferred_row_count = current_user.preferred_domain_csr_row_count
+    @per_page = params[:per_page] || preferred_row_count.or_else("10")
+    Domain.csr_per_page = @per_page if Domain.csr_per_page != @per_page
+
+    if @per_page != preferred_row_count
+      current_user.preferred_domain_csr_row_count = @per_page
       current_user.save(validate: false)
     end
 
