@@ -62,13 +62,20 @@
             %td=ra.mac_address
             %td=ra.agent
             %td=ra.friendly_name
-            %td=ra.workflow_status == 'pending_registration' ? 'Pending' : 'Active'
+            %td
+              -if roles.include?(Role::OWNER) || roles.include?(Role::ACCOUNT_ADMIN)
+                -if ra.workflow_status == 'pending_registration'
+                  =link_to 'Pending', '', class: 'ssl_manager_status', 'data-id' => ra.id
+                -else
+                  Active
+              -else
+                =ra.workflow_status == 'pending_registration' ? 'Pending' : 'Active'
             %td
               -if ra.managed_certificates.size > 0
                 =link_to ra.managed_certificates.size, managed_certificates_registered_agent_path(@ssl_slug, ra.ref)
               -else
                 ='0'
-            %td=ra.approved_at ? ra.approved_at.strftime("%b %d, %Y") : 'n/a'
+            %td.approved_date=ra.approved_at ? ra.approved_at.strftime("%b %d, %Y") : 'n/a'
             -#%td
               =check_box_tag "remove_agents[]", ra.id, false, class: 'chk-remove', 'data-agent-name' => ra.friendly_name
             -#%td

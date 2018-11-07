@@ -297,6 +297,7 @@ SslCom::Application.routes.draw do
       member do
         get :http_dcv_file
         get :verification_check
+        post :create_new_unique_value
       end
     end
 
@@ -326,6 +327,7 @@ SslCom::Application.routes.draw do
         post :search
         post :remove_agents
         post :approve_ssl_managers
+        post :approve_ssl_manager
       end
 
       member do

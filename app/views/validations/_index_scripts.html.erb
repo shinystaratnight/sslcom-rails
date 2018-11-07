@@ -1695,6 +1695,59 @@ jQuery(function($) {
             default:
           }
         });
+
+        // Click New button for create new unique value
+        $(document).on('click', '.btn_new_unique_value', function() {
+          $('.current_unique_value_block').hide();
+          $('.btn_new_unique_value').hide();
+          $('.new_unique_value').show();
+          $('.btn_save_new_unique_value').show();
+          $('.btn_cancel_new_unique_value').show();
+        });
+
+        // Click Cancel button for new unique value
+        $(document).on('click', '.btn_cancel_new_unique_value', function() {
+          $('.new_unique_value').hide();
+          $('.btn_save_new_unique_value').hide();
+          $('.btn_cancel_new_unique_value').hide();
+          $('.btn_new_unique_value').show();
+          $('.current_unique_value_block').show();
+        });
+
+        // Click Save button for registering new unique value
+        $(document).on('click', '.btn_save_new_unique_value', function() {
+          var old_value = $('.current_unique_value_block').text().trim();
+          var new_value = $('.new_unique_value').val();
+
+          if (old_value != new_value) {
+            $.ajax({
+              url: '<%=create_new_unique_value_csr_path(@ssl_slug, @certificate_order.csr)%>',
+              data: {
+                new_unique_value: $('.new_unique_value').val()
+              },
+              type: "POST",
+              success: function (result) {
+                /*$('.cname_destination').empty();*/
+                $('.cname_destination').html(result['cname_destination']);
+
+                /*$('.dns_sha2_hash').empty();*/
+                $('.dns_sha2_hash').html(result['dns_sha2_hash']);
+
+                /*$('.current_unique_value_block').empty();*/
+                $('.current_unique_value_block').html($('.new_unique_value').val());
+
+                $('.new_unique_value').hide();
+                $('.btn_save_new_unique_value').hide();
+                $('.btn_cancel_new_unique_value').hide();
+                $('.btn_new_unique_value').show();
+                $('.current_unique_value_block').show();
+              }
+            });
+          } else {
+            alert('The same unique value can not be registered again.');
+          }
+        });
+
       <%end%>
     }
   });
