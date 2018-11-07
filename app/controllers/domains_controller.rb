@@ -479,8 +479,14 @@ class DomainsController < ApplicationController
   end
 
   def set_row_page
-    @per_page = params[:per_page] ? params[:per_page] : 10
-    CertificateName.per_page = @per_page if CertificateName.per_page != @per_page
+    preferred_row_count = current_user.preferred_domain_row_count
+    @per_page = params[:per_page] || preferred_row_count.or_else("10")
+    Domain.per_page = @per_page if Domain.per_page != @per_page
+
+    if @per_page != preferred_row_count
+      current_user.preferred_domain_row_count = @per_page
+      current_user.save(validate: false)
+    end
 
     @p = {page: (params[:page] || 1), per_page: @per_page}
   end

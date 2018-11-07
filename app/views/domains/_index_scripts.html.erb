@@ -3,11 +3,8 @@
   jQuery(function ($) {
     $(document).ready(function () {
       $('#number_rows').change(function() {
-        url = window.location.href;
-        if (url.indexOf('?')>0) {
-          url = url.substring(0, url.indexOf('?'))
-        }
-        window.location = url + "/?per_page=" + $(this).val();
+        $('#per_page').val($(this).val());
+        $('#hidden_form').submit();
       });
 
       $('form#add_domains').ajaxForm({
