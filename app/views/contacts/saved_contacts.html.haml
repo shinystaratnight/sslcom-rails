@@ -8,7 +8,7 @@
   
   -will_paginate @all_contacts
   #validations
-    %h3 Saved #{saved_contacts ? 'Contacts' : 'Registrants'}
+    %h3 Saved #{saved_contacts ? 'Contacts' : 'Validated Identities'}
     %table{cellspacing: '0'}
       -if will_paginate @all_contacts
         %tfoot
@@ -24,7 +24,7 @@
         -if is_system_admins
           %th Team
         -if saved_registrants
-          %th Status
+          %th Validation Status
           %th 
             = is_system_admins ? 'Files' : 'Documents'
           -if is_system_admins
