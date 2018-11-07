@@ -44,52 +44,54 @@ jQuery(function($) {
     $(this).select();
   });
   <% unless @certificate.is_code_signing? || Rails.env.test? %>
-    $("textarea[name*=signing_request]").bind("change keyup paste", function() {
+    $("textarea[name*=signing_request]").bind("change paste", function() {
       if($(this).val()==""){
         $(".flash_message").remove();
         return;
       }
-      $.ajax({
-        url: "<%=parse_csr_certificate_orders_path%>",
-        data: {csr: $(this).val(), certificate: "<%=@certificate.product%>"},
-        type: "POST",
-        success: function(data, status){
-          $(".flash_message").remove();
-          var ajax_errors="";
-          if((typeof data.certificate_content.csr.errors.base != 'undefined') && (data.certificate_content.csr.errors.base.length>0)){
-            $.each(data.certificate_content.csr.errors.base, function(key, value){
-              ajax_errors+="<li>"+value+"</li>";
-            });
-          }
-          if((typeof data.certificate_content.errors.base != 'undefined') && (data.certificate_content.errors.base.length>0))
-            $.each(data.certificate_content.errors.base, function(key, value){
-              ajax_errors+="<li>"+value+"</li>";
-            });
-          if((typeof data.certificate_content.errors.signing_request != 'undefined') && (data.certificate_content.errors.signing_request.length>0))
-            $.each(data.certificate_content.errors.signing_request, function(key, value){
-              ajax_errors+="<li>signing request "+value+"</li>";
-            });
-          if(ajax_errors!="")
-            $(".cert_reqs").after("<div class='flash_message error'><span><ul class='ajax_info'>"+ajax_errors+"</ul></span></div>");
-          else{
-            if((typeof data.certificate_content.csr.common_name != 'undefined')){
-              <%if @certificate.product != "free" && @certificate_order.external_order_number.blank?%>
-              var days_left = data.certificate_content.csr.days_left > 0 ? "<br><hr>"+data.certificate_content.csr.days_left+" free SSL.com Carryover days will be added from expiring SSL/TLS certificate" : "";
-              <%else%>
-              var days_left = "";
-              <%end%>
-              $(".cert_reqs").after("<div class='flash_message notice'><span class='ajax_info'>common name field in csr is: "+data.certificate_content.csr.common_name+days_left+"</span></div>");
+      if ( $(this).val().includes('-----END CERTIFICATE REQUEST-----') ) {
+        $.ajax({
+          url: "<%=parse_csr_certificate_orders_path%>",
+          data: {csr: $(this).val(), certificate: "<%=@certificate.product%>"},
+          type: "POST",
+          success: function(data, status){
+            $(".flash_message").remove();
+            var ajax_errors="";
+            if((typeof data.certificate_content.csr.errors.base != 'undefined') && (data.certificate_content.csr.errors.base.length>0)){
+              $.each(data.certificate_content.csr.errors.base, function(key, value){
+                ajax_errors+="<li>"+value+"</li>";
+              });
             }
-          <%if @certificate.is_ucc?-%>
-            if((typeof data.certificate_content.csr.subject_alternative_names != 'undefined')){
-              additional_domains = $("textarea[name*=additional_domains]").text() + " " + data.certificate_content.csr.subject_alternative_names;
-              $("textarea[name*=additional_domains]").val($.uniqueStrings(additional_domains.split(/[\s,\n]+/)).join(" "));
-              $.adjust_domain_pricing($("textarea[name*=additional_domains]")[0]);
+            if((typeof data.certificate_content.errors.base != 'undefined') && (data.certificate_content.errors.base.length>0))
+              $.each(data.certificate_content.errors.base, function(key, value){
+                ajax_errors+="<li>"+value+"</li>";
+              });
+            if((typeof data.certificate_content.errors.signing_request != 'undefined') && (data.certificate_content.errors.signing_request.length>0))
+              $.each(data.certificate_content.errors.signing_request, function(key, value){
+                ajax_errors+="<li>signing request "+value+"</li>";
+              });
+            if(ajax_errors!="")
+              $(".cert_reqs").after("<div class='flash_message error'><span><ul class='ajax_info'>"+ajax_errors+"</ul></span></div>");
+            else{
+              if((typeof data.certificate_content.csr.common_name != 'undefined')){
+                <%if @certificate.product != "free" && @certificate_order.external_order_number.blank?%>
+                var days_left = data.certificate_content.csr.days_left > 0 ? "<br><hr>"+data.certificate_content.csr.days_left+" free SSL.com Carryover days will be added from expiring SSL/TLS certificate" : "";
+                <%else%>
+                var days_left = "";
+                <%end%>
+                $(".cert_reqs").after("<div class='flash_message notice'><span class='ajax_info'>common name field in csr is: "+data.certificate_content.csr.common_name+days_left+"</span></div>");
+              }
+            <%if @certificate.is_ucc?-%>
+              if((typeof data.certificate_content.csr.subject_alternative_names != 'undefined')){
+                additional_domains = $("textarea[name*=additional_domains]").text() + " " + data.certificate_content.csr.subject_alternative_names;
+                $("textarea[name*=additional_domains]").val($.uniqueStrings(additional_domains.split(/[\s,\n]+/)).join(" "));
+                $.adjust_domain_pricing($("textarea[name*=additional_domains]")[0]);
+              }
+            <%end-%>
             }
-          <%end-%>
           }
-        }
-      });
+        });
+      }
     });
   <%end%>
   $.update_order_pricing = function(){

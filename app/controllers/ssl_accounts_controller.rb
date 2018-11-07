@@ -198,7 +198,11 @@ class SslAccountsController < ApplicationController
     SystemAudit.create(owner: current_user, target: @ssl_account.funded_account,
                        notes: "amount (in USD): #{amount.to_s}",
                        action: "FundedAccount#add_cents")
-    redirect_to admin_show_user_path(@ssl_account.get_account_owner)
+    if current_user.is_system_admins?
+      redirect_to teams_user_path(current_user)
+    else
+      redirect_to admin_show_user_path(@ssl_account.get_account_owner)
+    end
   end
   
   private

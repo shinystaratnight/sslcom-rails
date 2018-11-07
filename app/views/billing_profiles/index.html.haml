@@ -36,7 +36,8 @@
             -if profile.default_profile
               ="&#10003;".html_safe
             -else
-              =link_to "set default", billing_profile_path(@ssl_slug, profile.id, set_default: true), |
+              =link_to "set default", billing_profile_path(@ssl_slug, profile.id, set_default: true),      |
+              data: {confirm: "Change default billing profile to card ending in #{profile.last_digits}?"}, |
               method: :put, id: 'btn-bp-default'
           %td= destroy_credit_card_link(profile, id: 'btn-bp-delete')
 
