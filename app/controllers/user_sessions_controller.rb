@@ -8,6 +8,7 @@ class UserSessionsController < ApplicationController
   skip_before_action :require_no_authentication, only: [:duo_verify]
 
   def new
+    SignedCertificate.last.ca_bundle
     @failed_count = 0
     @user_session = UserSession.new
     session[:duo_auth] = false

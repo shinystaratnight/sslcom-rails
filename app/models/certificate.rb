@@ -551,6 +551,17 @@ class Certificate < ActiveRecord::Base
     false
   end
 
+  def self.xcert_certum(x509_certificate)
+    case x509_certificate.serial.to_s
+    when "8875640296558310041"
+      CERTUM_XSIGN
+    when "6248227494352943350"
+      CERTUM_XSIGN_EV
+    else
+      x509_certificate
+    end
+  end
+
   # options = {bundles: Certificate::BUNDLES[:comodo][:sha2_sslcom_2014]}
   def self.generate_ca_certificates(options)
     dir=Settings.intermediate_certs_path+options[:bundles][:dir]+"/"

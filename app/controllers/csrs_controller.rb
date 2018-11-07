@@ -48,29 +48,25 @@ class CsrsController < ApplicationController
           if http_or_s.to_s == 'true'
             if is_ucc
               dcv = cn.domain_control_validations.last
-
               if dcv && (dcv.dcv_method == params[:protocol])
                 dcv.satisfy! unless dcv.satisfied?
               else
-                cn.domain_control_validations.create(
+                dcv=cn.domain_control_validations.create(
                     dcv_method: params[:protocol],
                     candidate_addresses: nil,
-                    failure_action: 'ignore',
-                    workflow_state: 'satisfied'
-                )
+                    failure_action: 'ignore')
+                dcv.satisfy!
               end
             else
               dcv = cc.csr.domain_control_validations.last
-
               if dcv && (dcv.dcv_method == params[:protocol])
                 dcv.satisfy! unless dcv.satisfied?
               else
-                cc.csr.domain_control_validations.create(
+                dcv=cc.csr.domain_control_validations.create(
                     dcv_method: params[:protocol],
                     candidate_addresses: nil,
-                    failure_action: 'ignore',
-                    workflow_state: 'satisfied'
-                )
+                    failure_action: 'ignore')
+                dcv.satisfy!
               end
             end
           elsif http_or_s.nil?
@@ -96,12 +92,11 @@ class CsrsController < ApplicationController
         if dcv && (dcv.dcv_method == params[:protocol])
           dcv.satisfy! unless dcv.satisfied?
         else
-          cn.domain_control_validations.create(
+          dcv=cc.csr.domain_control_validations.create(
               dcv_method: params[:protocol],
               candidate_addresses: nil,
-              failure_action: 'ignore',
-              workflow_state: 'satisfied'
-          )
+              failure_action: 'ignore')
+          dcv.satisfy!
         end
       elsif http_or_s.nil?
         http_or_s = false

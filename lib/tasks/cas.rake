@@ -1,14 +1,20 @@
 namespace :cas do
   desc "CA profiles that can be referenced"
-  # EJBCA_ENV - is this on production RA or development RA?
+  # EJBCA_ENV - Setup CA mappings based on the RA environment
   # DEFAULT_ENV - map this team to a different EJBCA ENV than EJBCA_ENV (only works in ENV['EJBCA_ENV']="production")
   # LIVE - array of products to make default. If specified, will not delete other mappings (unless used with RESET).
   #   If left blank, will delete all mappings and set no CA as default (ie all products will map to Comodo)
   # RESET - set to true to delete all cas_certificates mappings
   # SHADOW - set to DV if you do not want OV or EV shadow certs
   #
-  # following example will make NAESB the default for ssl_account_id 492124 and recreate all other mappings
-  # LIVE=naesb SSL_ACCOUNT_IDS=492124 RESET=true
+  # following example will make NAESB the default for ssl_account_id 492124
+  # LIVE=naesb SSL_ACCOUNT_IDS=492124
+  #
+  # following example will remove all ca mappings for ssl_account_id 492124
+  # RESET=true SSL_ACCOUNT_IDS=492124
+  #
+  # delete all CasCertificates from all teams
+  # RESET=true
   #
   # only set all products live for these ssl_accounts but do not modify any other mappings
   # LIVE=all SSL_ACCOUNT_IDS=49213,49214 EJBCA_ENV=development RAILS_ENV=production # for sandbox
@@ -16,7 +22,7 @@ namespace :cas do
   # set all products live for all ssl_accounts
   # LIVE=all EJBCA_ENV=development RAILS_ENV=development # for development
   #
-  # set all products to staging for this team
+  # set all CA mappings for production all products to staging for SslAccount 15
   # LIVE=all SSL_ACCOUNT_IDS=15 DEFAULT_ENV=staging EJBCA_ENV=production RAILS_ENV=production
   # TODO move `host` from Ca to CasCertificate
   task seed_ejbca_profiles: :environment do
@@ -730,9 +736,6 @@ namespace :cas do
       )
     end
     live=([]).tap do |certificates|
-      if ENV['RESET']=="true"
-        CasCertificate.delete_all
-      end
       if ENV['LIVE']
         if ENV['LIVE'] == "all"
           certificates << Certificate.all.to_a
@@ -786,8 +789,10 @@ namespace :cas do
       ENV['SSL_ACCOUNT_IDS'].split(',').each do |ssl_account_id|
         SslAccount.find(ssl_account_id.to_i).cas_certificates.delete_all
       end
+    elsif ENV['RESET']=="true"
+      CasCertificate.delete_all
     end
-    ((live.empty? or ENV['RESET']="true") ? Certificate.all : live).each {|cert|
+    live.each {|cert|
       Ca.all.each {|ca|
         if ENV['SSL_ACCOUNT_IDS']
           ENV['SSL_ACCOUNT_IDS'].split(',').each do |ssl_account_id|

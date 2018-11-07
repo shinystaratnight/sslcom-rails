@@ -40,7 +40,19 @@ class DomainControlValidation < ActiveRecord::Base
 
     state :satisfied do
       on_entry do
-        self.update_columns(identifier_found: true, responded_at: DateTime.now)
+        hash_satisfied unless dcv_method=~/email/
+        self.validation_compliance_id=
+          case dcv_method
+          when /email/
+            2
+          when /http/
+            6
+          when /cname/
+            7
+          end
+        self.identifier_found=true
+        self.responded_at=DateTime.now
+        self.save
       end
     end
   end
@@ -61,9 +73,22 @@ class DomainControlValidation < ActiveRecord::Base
     end
   end
 
-  def hash_satisfied(http_or_s)
-    satisfy! unless satisfied?
-    update_attributes sent_at: DateTime.now, dcv_method: http_or_s
+  # assume this belongs to a certificate_name which belongs to an ssl_account
+  def hash_satisfied
+    prepend=""
+    self.identifier,self.address_to_find_identifier= certificate_name.blank? ? [false,false] :
+    case dcv_method
+    when /https/
+      ["#{certificate_name.csr.sha2_hash}\n#{certificate_name.ca_tag}#{"\n#{certificate_name.csr.unique_value}" unless
+          certificate_name.csr.unique_value.blank?}",
+       certificate_name.dcv_url(true,prepend, true)]
+    when /http/
+      ["#{certificate_name.csr.sha2_hash}\n#{certificate_name.ca_tag}#{"\n#{certificate_name.csr.unique_value}" unless certificate_name.csr.unique_value.blank?}",
+       certificate_name.dcv_url(false,prepend, true)]
+    when /cname/
+      [certificate_name.cname_destination,
+      certificate_name.cname_origin(true)]
+    end
   end
 
   # the 24 hour limit no longer applies, but will keep this in case we need it again
@@ -145,7 +170,7 @@ class DomainControlValidation < ActiveRecord::Base
   end
 
   def verify_http_csr_hash
-    certificate_name.dcv_verify
+    certificate_name.dcv_verify(dcv_method)
   end
 
   def email_address_choices

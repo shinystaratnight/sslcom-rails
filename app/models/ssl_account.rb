@@ -1130,7 +1130,6 @@ class SslAccount < ActiveRecord::Base
         self.certificate_orders << cert.sellable
         cert.sellable.pay!(true) unless cert.sellable.paid?
         cc=cert.sellable.certificate_content
-        cc.add_ca(self)
         cc.save unless cc.ca.blank?
       end
     end

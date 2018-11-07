@@ -274,6 +274,7 @@ class SslcomCaApi
 
   # body - parameters in JSON format
   def self.call_ca(host, options, body)
+    uri = URI.parse(host)
     client_auth_cert,client_auth_key= case uri.host
                  when PRODUCTION_IP
                    [Rails.application.secrets.ejbca_production_client_auth_cert,

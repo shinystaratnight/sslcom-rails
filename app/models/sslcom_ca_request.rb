@@ -12,8 +12,12 @@ class SslcomCaRequest < CaApiRequest
 
   scope :unexpired, ->{where{created_at > 48.hours.ago}}
 
+  def pkcs7
+    OpenSSL::PKCS7.new(SignedCertificate.enclose_with_tags certificate_chain)
+  end
+
   def x509_certificates
-    OpenSSL::PKCS7.new(SignedCertificate.enclose_with_tags certificate_chain).certificates
+    pkcs7.certificates
   end
 
   def end_entity_certificate

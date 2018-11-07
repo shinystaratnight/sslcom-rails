@@ -15,8 +15,7 @@ class CertificateOrder < ActiveRecord::Base
   has_many    :renewal_attempts
   has_many    :renewal_notifications
   has_many    :cdns
-  has_many    :certificate_contents, :dependent => :destroy,
-                after_add: Proc.new { |co, cc| cc.add_ca(co.ssl_account) if co.ssl_account and cc.ca.blank?}
+  has_many    :certificate_contents, :dependent => :destroy
   has_many    :certificate_names, through: :certificate_contents
   has_many    :registrants, through: :certificate_contents
   has_many    :locked_registrants, through: :certificate_contents
@@ -506,7 +505,7 @@ class CertificateOrder < ActiveRecord::Base
           temp_cc=self.certificate_contents.create(duration: duration)
           # Do not delete the last one
           (self.certificate_contents-[temp_cc]).each do |cc|
-            cc.delete if ((cc.csr or cc.csr.signed_certificate.blank?) || complete)
+            cc.delete if ((cc.csr or cc.csr.try(:signed_certificate)) || complete)
           end
         end
       end
@@ -772,6 +771,8 @@ class CertificateOrder < ActiveRecord::Base
           1461
         when 5
           1826
+        else # assume days
+          years.gsub(/[^\d]+/,"").to_i if years.include?("day")
         end
       elsif [:comodo_api,:sslcom_api].include? unit
         case years.gsub(/[^\d]+/,"").to_i
