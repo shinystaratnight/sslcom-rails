@@ -1153,7 +1153,9 @@ class CertificateOrder < ActiveRecord::Base
   def apply_for_certificate(options={})
     if [Ca::CERTLOCK_CA,Ca::SSLCOM_CA,Ca::MANAGEMENT_CA].include?(options[:ca]) or !certificate_content.ca.blank? or
         !options[:mapping].blank?
-      if domains_validated? and caa_validated?
+      if !certificate_content.infringement.empty? # possible trademark problems
+        OrderNotifier.potential_trademark(Settings.notify_address, self, certificate_content.infringement).deliver_now
+      elsif domains_validated? and caa_validated?
         SslcomCaApi.apply_for_certificate(self, options)
       end
     else
@@ -1161,7 +1163,7 @@ class CertificateOrder < ActiveRecord::Base
     end if signed_certificate.blank? or remaining_days>0
   end
 
-  def retrieve_ca_cert(email_customer=false)
+  def retrieve_ca_cert(email_customer=true)
     if external_order_number && certificate_content.ca.blank? &&
         !ca_certificate_requests.empty? && ca_certificate_requests.first.success? && !rejected?
       retrieve=ComodoApi.collect_ssl(self)

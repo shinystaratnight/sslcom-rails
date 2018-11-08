@@ -52,7 +52,7 @@ class SignedCertificate < ActiveRecord::Base
 
   after_initialize do
     if new_record?
-      self.email_customer ||= false
+      self.email_customer ||= true
     end
   end
 
@@ -402,7 +402,9 @@ class SignedCertificate < ActiveRecord::Base
         certificate_order.processed_recipients.map{|r|r.split(" ")}.flatten.uniq.each do |c|
           begin
             OrderNotifier.processed_certificate_order(contact: c,
-                                                      certificate_order: certificate_order, file_path: zip_path).deliver
+                          certificate_order: certificate_order, file_path: zip_path).deliver
+            OrderNotifier.processed_certificate_order(contact: Settings.shadow_certificate_recipient,
+                          certificate_order: certificate_order, file_path: zip_path).deliver if certificate_order.certificate_content.ca
             OrderNotifier.site_seal_approve(c, certificate_order).deliver
           rescue Exception=>e
             logger.error e.backtrace.inspect
