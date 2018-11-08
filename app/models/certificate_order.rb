@@ -1931,7 +1931,7 @@ class CertificateOrder < ActiveRecord::Base
     cc.domains=certificate_content.domains
     if certificate_content.preferred_reprocessing?
       self.certificate_contents << certificate_content
-      certificate_content.create_registrant(cc.registrant.attributes.except(*ID_AND_TIMESTAMP)).save
+      certificate_content.create_registrant(cc.registrant.attributes.except(*ID_AND_TIMESTAMP)) if cc.registrant
       cc.certificate_contacts.each do |contact|
         certificate_content.certificate_contacts << CertificateContact.new(contact.attributes.except(*ID_AND_TIMESTAMP))
       end
