@@ -1,10 +1,11 @@
 require 'public_suffix'
 
 class DomainControlValidation < ActiveRecord::Base
-  has_many :ca_dcv_requests, as: :api_requestable, dependent: :destroy
-  belongs_to :csr, touch: true # only for single domain certs
-  belongs_to :csr_unique_value
-  belongs_to :certificate_name, touch: true  # only for UCC or multi domain certs
+  has_many    :ca_dcv_requests, as: :api_requestable, dependent: :destroy
+  belongs_to  :csr, touch: true # only for single domain certs
+  belongs_to  :csr_unique_value
+  belongs_to  :certificate_name, touch: true  # only for UCC or multi domain certs
+  delegate    :certificate_content, to: :csr
   # belongs_to :domain, class_name: "CertificateName"
   # delegate   :ssl_account, to: :domain
   serialize :candidate_addresses

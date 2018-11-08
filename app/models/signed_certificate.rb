@@ -679,7 +679,13 @@ class SignedCertificate < ActiveRecord::Base
     subject.split(/\/(?=[\w\d\.]+\=)/).reject{|o|o.blank?}.map{|o|o.split(/(?<!\\)=/)}
   end
 
-  #openssl is very finicky and requires opening and ending tags with exactly 5(-----) dashes on each side
+  def self.remove_begin_end_tags(certificate)
+    certificate.gsub!(/-+BEGIN.+?CERTIFICATE-+/,"") if certificate =~ /-+BEGIN.+?CERTIFICATE-+/
+    certificate.gsub!(/-+END.+?CERTIFICATE-+/,"") if certificate =~ /-+END.+?CERTIFICATE-+/
+    certificate
+  end
+
+  # openssl is very finicky and requires opening and ending tags with exactly 5(-----) dashes on each side
   def self.enclose_with_tags(cert)
     if cert =~ /PKCS7/
       # it's PKCS7
