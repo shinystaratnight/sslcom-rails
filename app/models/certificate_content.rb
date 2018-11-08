@@ -47,11 +47,11 @@ class CertificateContent < ActiveRecord::Base
   # terms in this list that are submitted as domains for an ssl will be kicked back
   BARRED_SSL_TERMS = %w(\A\. \.onion\z \.local\z)
 
-  TRADEMARKS = %w(whatsapp google apple paypal github amazon cloudapp microsoft amzn ssltools certchat certlock \*\.\*\.com
-    \*\.\*\.org \*\.10million\.org \*\.android\.com \*\.aol\.com \*\.azadegi\.com \*\.balatarin\.com \*\.comodo\.com \*\.digicert\.com
-    \*\.globalsign\.com \*\.google\.com \*\.JanamFadayeRahbar\.com \*\.logmein\.com \*\.microsoft\.com \*\.mossad\.gov\.il
-    \*\.mozilla\.org \*\.RamzShekaneBozorg\.com \*\.SahebeDonyayeDigital\.com \*\.skype\.com \*\.startssl\.com
-    \*\.thawte\.com \*\.torproject\.org \*\.walla\.co\.il \*\.windowsupdate\.com \*\.wordpress\.com addons\.mozilla\.org
+  TRADEMARKS = %w(whatsapp google .*?\.apple\.com paypal .*?\.github\.com .*?\.amazon\.com cloudapp microsoft amzn ssltools certchat certlock
+    .*?\.10million\.org .*?\.android\.com .*?\.aol\.com .*?\.azadegi\.com .*?\.balatarin\.com .*?\.comodo\.com .*?\.digicert\.com
+    .*?\.globalsign\.com .*?\.google\.com .*?\.JanamFadayeRahbar\.com .*?\.logmein\.com .*?\.microsoft\.com .*?\.mossad\.gov\.il
+    .*?\.mozilla\.org .*?\.RamzShekaneBozorg\.com .*?\.SahebeDonyayeDigital\.com .*?\.skype\.com .*?\.startssl\.com
+    .*?\.thawte\.com .*?\.torproject\.org .*?\.walla\.co\.il .*?\.windowsupdate\.com .*?\.wordpress\.com addons\.mozilla\.org
     azadegi\.com Comodo\sRoot\sCA CyberTrust\sRoot\sCA DigiCert\sRoot\sCA Equifax\sRoot\sCA friends\.walla\.co\.il
     GlobalSign\sRoot\sCA login\.live\.com login\.yahoo\.com my\.screenname\.aol\.com secure\.logmein\.com
     Thawte\sRoot\sCA twitter\.com VeriSign\sRoot\sCA wordpress\.com www\.10million\.org www\.balatarin\.com
