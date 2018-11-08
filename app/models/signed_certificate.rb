@@ -313,7 +313,7 @@ class SignedCertificate < ActiveRecord::Base
     ::Zip::ZipFile.open(path, Zip::ZipFile::CREATE) do |zos|
       if certificate_content.ca
         certificate_content.x509_certificates.drop(1).each do |x509_cert|
-          x509_cert_to_s=Certificate.xcert_certum(x509_cert,true)
+          x509_cert_to_s=x509_cert
           zos.get_output_stream(x509_cert.subject.common_name.gsub(/[\s\.\*\(\)]/,"_").upcase+'.crt') {|f|
             f.puts (options[:is_windows] ? x509_cert_to_s.gsub(/\n/, "\r\n") : x509_cert_to_s)
           }
@@ -482,7 +482,7 @@ class SignedCertificate < ActiveRecord::Base
       tmp=""
       if certificate_content.ca
         certificate_content.x509_certificates.drop(1).each do |x509_cert|
-          tmp<<Certificate.xcert_certum(x509_cert,true)
+          tmp<<x509_cert
         end
       else
         certificate_order.bundled_cert_names(options).each do |file_name|
@@ -501,7 +501,7 @@ class SignedCertificate < ActiveRecord::Base
     "".tap do |tmp|
       if certificate_content.ca
         certificate_content.x509_certificates.drop(1).reverse.each do |x509_cert|
-          tmp<<Certificate.xcert_certum(x509_cert,true)
+          tmp<<x509_cert
         end
       else
         tmp << body+"\n"

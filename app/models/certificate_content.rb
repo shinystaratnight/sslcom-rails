@@ -239,8 +239,8 @@ class CertificateContent < ActiveRecord::Base
     signed_certificates.last
   end
 
-  def pkcs7(xcert=false)
-    SslcomCaRequest.where(username: self.ref).last.pkcs7(xcert)
+  def pkcs7
+    SslcomCaRequest.where(username: self.ref).last.pkcs7
   end
 
   def x509_certificates
