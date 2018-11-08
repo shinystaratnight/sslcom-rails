@@ -97,7 +97,7 @@
             }
           });
         }
-      })
+      });
 
       $(document).on('click', '.d_name_check', function () {
         if($('.d_name_check:checkbox:checked').length>0){
@@ -135,7 +135,7 @@
             return true;
         }
         return false;
-      }
+      };
 
       <%if @csr%>
         $(document).on('change', 'select[id=dcv_methods]', function() {

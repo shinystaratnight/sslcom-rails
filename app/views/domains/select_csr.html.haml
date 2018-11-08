@@ -1,5 +1,14 @@
 -title = "Validate Domains against CSR"
 -content_for :title, title
+=render :partial => 'csr_index_scripts'
+
+#csr_search_bar.hidden
+  =form_tag select_csr_domains_path(@ssl_slug), :id=>'hidden_form', :method=>:post do
+    =hidden_field_tag :per_page, @per_page
+    =hidden_field_tag :page, 1
+    -@selected_domains.each do |dn|
+      %input(type="hidden" name="d_name_check[]" value="#{dn.id}" )
+
 =form_tag "#{validate_against_csr_domains_path(@ssl_slug)}", id: "select_csr_form", method: :post do
   #search_bar
     -@selected_domains.each do |dn|
@@ -8,6 +17,13 @@
         %input(type="hidden" name="d_name_selected[]" value="#{dn.id}" )
   #validations
     %table(cellspacing="0")
+      %tfoot
+        %tr
+          %td.wrap_number_rows(colspan='2')
+            =select_tag :csr_number_rows,
+            options_for_select([[5, 5], [10, 10], [20, 20], [50, 50], [100, 100]], @per_page),
+            :class=>'per_page'
+          %td(colspan='5')=will_paginate @csrs
       %caption
         =title
       %tr.heading_row
@@ -16,14 +32,19 @@
         %th(scope="col") Friendly Name
         %th(scope="col") Common Name
         %th(scope="col") Created At
-      -@csrs.each do |csr|
-        %tr(alt="#{csr.id}")
-          %td
-            =radio_button_tag 'selected_csr', csr.id
-          %td=csr.md5_hash
-          %td=csr.friendly_name
-          %td=csr.common_name
-          %td=csr.created_at.strftime("%b %d, %Y")
+      -if @csrs && @csrs.length > 0
+        -@csrs.each do |csr|
+          %tr(alt="#{csr.id}")
+            %td
+              =radio_button_tag 'selected_csr', csr.id
+            %td=csr.md5_hash
+            %td=csr.friendly_name
+            %td=csr.common_name
+            %td=csr.created_at.strftime("%b %d, %Y")
+      -else
+        %tr
+          %td(colspan="5")
+            There are no csrs
   #button_container
     #auto_adjust
       =image_submit_tag 'bl_submit_button.gif'
