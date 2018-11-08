@@ -379,8 +379,8 @@ class DomainsController < ApplicationController
   end
 
   def dcv_validate
-    @domain = current_user.ssl_account.domains.find_by(id: params[:id])
-    @domain = current_user.ssl_account.all_certificate_names.find_by(id: params[:id]) if @domain.nil?
+    @domain = current_user.ssl_account.domains.find_by(id: params[:id]) ||
+        current_user.ssl_account.all_certificate_names.find_by(id: params[:id]) if @domain.nil?
     if(params['authenticity_token'])
       identifier = params['validate_code']
       dcv = @domain.domain_control_validations.last
@@ -407,7 +407,8 @@ class DomainsController < ApplicationController
           validated << cn.name
           unless dcv.satisfied?
             dcv.satisfy!
-            CaaCheck.pass?(@ssl_account.acct_number + 'domains', cn, nil)
+            cn.certificate_order.apply_for_certificate
+            # CaaCheck.pass?(@ssl_account.acct_number + 'domains', cn, nil)
           end
           # find similar order scope domain (or create a new team scoped domain) and validate it
           team_domain=@ssl_account.domains.where.not(certificate_content_id: nil).find_by_name(cn.name) ||

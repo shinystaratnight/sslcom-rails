@@ -234,6 +234,7 @@ class SslAccount < ActiveRecord::Base
             # do they have the same public key
             (domain.csr and certificate_name.csr and domain.csr.public_key_sha1==certificate_name.csr.public_key_sha1))
           certificate_name.domain_control_validations.create(dcv.attributes.except("id"))
+          certificate_name.certificate_order.apply_for_certificate
           satisfied_names << certificate_name.name
         end
       end
