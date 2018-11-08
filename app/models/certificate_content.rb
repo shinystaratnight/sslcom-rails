@@ -239,12 +239,16 @@ class CertificateContent < ActiveRecord::Base
     signed_certificates.last
   end
 
-  def pkcs7
-    SslcomCaRequest.where(username: self.ref).last.pkcs7
+  def pkcs7(xcert=false)
+    SslcomCaRequest.where(username: self.ref).last.pkcs7(xcert)
   end
 
   def x509_certificates
     SslcomCaRequest.where(username: self.ref).last.x509_certificates
+  end
+
+  def certificate_chain
+    SslcomCaRequest.where(username: self.ref).last.certificate_chain
   end
 
   # :with_tags (default), :x509, :without_tags
@@ -256,7 +260,7 @@ class CertificateContent < ActiveRecord::Base
       xcert ? certs[0..-2]<<OpenSSL::X509::Certificate.new(SignedCertificate.enclose_with_tags(xcert)) : certs
     elsif options[:format]==:without_tags
       certs=chain.certificate_chain
-      xcert ? certs[0..-2]<<xcert : certs
+      xcert ? certs[0..-2]<<SignedCertificate.remove_begin_end_tags(xcert).chop : certs
     else
       xcert ? certs[0..-2].map(&:to_s)<<SignedCertificate.enclose_with_tags(xcert) : certs.map(&:to_s)
     end unless chain.blank?
