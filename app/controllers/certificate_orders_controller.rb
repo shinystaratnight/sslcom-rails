@@ -27,10 +27,10 @@ class CertificateOrdersController < ApplicationController
                    :developers, :require=>[:update, :delete]
   filter_access_to :renew, :parse_csr, require: [:create]
   filter_access_to :auto_renew, require: [:admin_manage]
-  filter_access_to :show_cert_order, :require=>:ajax
+  filter_access_to :show_cert_order, :validate_issue, :require=>:ajax
   before_filter :load_certificate_order,
-                only: [:show, :show_cert_order, :update, :edit, :download, :destroy, :delete, :update_csr, :auto_renew, :start_over,
-                       :change_ext_order_number, :admin_update, :developer, :sslcom_ca, :update_tags, :recipient]
+                only: [:show, :show_cert_order, :validate_issue, :update, :edit, :download, :destroy, :delete, :update_csr, :auto_renew, :start_over,
+                       :change_ext_order_number, :admin_update, :developer, :sslcom_ca, :update_tags, :recipient, :validate_issue]
   before_filter :set_row_page, only: [:index, :search, :credits, :pending, :filter_by_scope, :order_by_csr, :filter_by,
                                       :incomplete, :reprocessing]
   before_filter :get_team_tags, only: [:index, :search]
@@ -122,6 +122,18 @@ class CertificateOrdersController < ApplicationController
         format.xml  { render :xml => @certificate_order }
       end
     end
+  end
+
+  def validate_issue
+    cc = @certificate_order.certificate_content
+    cc.validate! if cc.pending_validation?
+    @certificate_order.apply_for_certificate(
+        mapping: cc.ca,
+        current_user: current_user
+    )
+    cc.issue! unless cc.signed_certificate.blank?
+
+    render :json => cc.issued?
   end
 
   def auto_renew

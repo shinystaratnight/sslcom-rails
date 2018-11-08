@@ -446,103 +446,241 @@ jQuery(function($) {
         else if(/https/.test(methods[0])){
           instructions="Upload <a href='<%=http_dcv_file_csr_path(@ssl_slug, @certificate_order.csr.id)%>'>this file</a> to this location: <a href='"+https+"' target='_new'>"+https+"</a>";
           $(instruction).html(instructions);
-          <%if @certificate_order.certificate_content.ca_id.nil?%>
-            $.ajax({url: '<%=verification_check_csr_path(@ssl_slug, @certificate_order.csr.id)%>?protocol=https&dcv='+
-              $(dcv_select).parents('tr').attr('id')+'&new_name='+$(dcv_select).attr('alt')+'&ref='+$(dcv_select).parents('tbody').attr('data-ref')}).done(
-                function(data){
-                  if (data) {
-                    // Adding Hidden Tag for saving satisfied option.
-                    var hiddenElement = $('<input></input>');
-                    hiddenElement.attr('type', 'hidden');
-                    hiddenElement.attr('name', 'domains[' + $(dcv_select).attr("alt") + '][dcv]');
-                    hiddenElement.attr('value', $(dcv_select).val());
-                    $(dcv_select).parent().append(hiddenElement);
+          $.ajax({url: '<%=verification_check_csr_path(@ssl_slug, @certificate_order.csr.id)%>?protocol=https&dcv='+
+            $(dcv_select).parents('tr').attr('id')+'&new_name='+$(dcv_select).attr('alt')+'&ref='+$(dcv_select).parents('tbody').attr('data-ref')}).done(
+              function(data){
+                <%unless @certificate_order.certificate_content.ca_id.nil?%>
+                if (data) {
+                  // Adding Hidden Tag for saving satisfied option.
+                  var hiddenElement = $('<input></input>');
+                  hiddenElement.attr('type', 'hidden');
+                  hiddenElement.attr('name', 'domains[' + $(dcv_select).attr("alt") + '][dcv]');
+                  hiddenElement.attr('value', $(dcv_select).val());
+                  $(dcv_select).parent().append(hiddenElement);
 
-                    // Changing Status to "Satisfied".
-                    $('td.status[class~="'+$(dcv_select).attr("alt")+'"]').html('satisfied');
+                  // Changing Status to "Satisfied".
+                  $('td.status[class~="'+$(dcv_select).attr("alt")+'"]').html('satisfied');
 
-                    // Changing previous attempt to selected validation option
-                    $('td.attempt[class~="' + $(dcv_select).attr("alt") + '"]').html('validated');
+                  // Changing previous attempt to selected validation option
+                  $('td.attempt[class~="' + $(dcv_select).attr("alt") + '"]').html('validated');
 
-                    // Disable the option.
-                    $(dcv_select).attr('disabled', true);
+                  // Disable the option.
+                  $(dcv_select).attr('disabled', true);
 
-                    // Hidden the "Edit" button
-                    $(dcv_select).parents('tr').find('.btn_edit_domain').attr('disabled', true);
+                  // Hidden the "Edit" button
+                  $(dcv_select).parents('tr').find('.btn_edit_domain').attr('disabled', true);
 
-                    // Hidden the "Checkbox" button
-                    $(dcv_select).parents('tr').find('.check_box').attr('disabled', true);
+                  // Hidden the "Checkbox" button
+                  $(dcv_select).parents('tr').find('.check_box').attr('disabled', true);
+
+                  // Checking all domains has been validated.
+                  if ($('select[id^=domains]:enabled').length == 0) {
+                    // Hide Validate Button
+                    $('#upload_validations').hide();
+
+                    // Validate & issue.
+                    $.ajax({
+                      url: '<%=validate_issue_certificate_orders_path%>',
+                      data: {
+                        id: '<%=@certificate_order.ref%>'
+                      },
+                      type: 'POST',
+                      success: function (data) {
+                        // Show Message
+                        $('body').addClass('no_scroll_y');
+
+                        var redirectUrl = '<%=certificate_order_path(@ssl_slug, @certificate_order)%>';
+
+                        var redirect_message_wrap = $('<div></div>');
+                        redirect_message_wrap.attr('class', 'redirect_message_wrap');
+
+                        var redirect_message = $('<div></div>');
+                        redirect_message.attr('class', 'redirect_message');
+
+                        var span = $('<span></span>');
+                        if (data) {
+                          span.append('All domains has already been validated and certificate has been issued. \n');
+                        } else {
+                          span.append('All domains has already been validated. It will be issued soon. \n');
+                        }
+                        span.append('Redirecting to Certificate Order Page now ...');
+
+                        redirect_message.append(span);
+                        redirect_message_wrap.append(redirect_message);
+                        redirect_message_wrap.insertBefore($('#header'));
+
+                        // Redirect to Certificate Order Detail Page.
+                        var delay = 1000;
+                        window.setTimeout(function() {
+                          $('body').removeClass('no_scroll_y');
+                          window.location.href = redirectUrl;
+                        }, delay);
+                      }
+                    });
                   }
-                  $('td.pretest[class~="'+$(dcv_select).attr("alt")+'"]').html((data ? "<div class='passed'>passed</div>" : "<div class='failed'>failed</div>"));
-                });
-          <%end%>
+                }
+                <%end%>
+                $('td.pretest[class~="'+$(dcv_select).attr("alt")+'"]').html((data ? "<div class='passed'>passed</div>" : "<div class='failed'>failed</div>"));
+              });
         }
         else if(/http/.test(methods[0])){
           instructions="Upload <a href='<%=http_dcv_file_csr_path(@ssl_slug, @certificate_order.csr.id)%>'>this file</a> to this location: <a href='"+http+"' target='_new'>"+http+"</a>";
           $(instruction).html(instructions);
-          <%if @certificate_order.certificate_content.ca_id.nil?%>
-            $.ajax({url: '<%=verification_check_csr_path(@ssl_slug, @certificate_order.csr.id)%>?protocol=http&dcv='+
-              $(dcv_select).parents('tr').attr('id')+'&new_name='+$(dcv_select).attr('alt')+'&ref='+$(dcv_select).parents('tbody').attr('data-ref')}).done(
-                function(data){
-                  if (data) {
-                    // Adding Hidden Tag for saving satisfied option.
-                    var hiddenElement = $('<input></input>');
-                    hiddenElement.attr('type', 'hidden');
-                    hiddenElement.attr('name', 'domains[' + $(dcv_select).attr("alt") + '][dcv]');
-                    hiddenElement.attr('value', $(dcv_select).val());
-                    $(dcv_select).parent().append(hiddenElement);
+          $.ajax({url: '<%=verification_check_csr_path(@ssl_slug, @certificate_order.csr.id)%>?protocol=http&dcv='+
+            $(dcv_select).parents('tr').attr('id')+'&new_name='+$(dcv_select).attr('alt')+'&ref='+$(dcv_select).parents('tbody').attr('data-ref')}).done(
+              function(data){
+                <%unless @certificate_order.certificate_content.ca_id.nil?%>
+                if (data) {
+                  // Adding Hidden Tag for saving satisfied option.
+                  var hiddenElement = $('<input></input>');
+                  hiddenElement.attr('type', 'hidden');
+                  hiddenElement.attr('name', 'domains[' + $(dcv_select).attr("alt") + '][dcv]');
+                  hiddenElement.attr('value', $(dcv_select).val());
+                  $(dcv_select).parent().append(hiddenElement);
 
-                    // Changing Status to "Satisfied".
-                    $('td.status[class~="'+$(dcv_select).attr("alt")+'"]').html('satisfied');
+                  // Changing Status to "Satisfied".
+                  $('td.status[class~="'+$(dcv_select).attr("alt")+'"]').html('satisfied');
 
-                    // Changing previous attempt to selected validation option
-                    $('td.attempt[class~="' + $(dcv_select).attr("alt") + '"]').html('validated');
+                  // Changing previous attempt to selected validation option
+                  $('td.attempt[class~="' + $(dcv_select).attr("alt") + '"]').html('validated');
 
-                    // Disable the option.
-                    $(dcv_select).attr('disabled', true);
+                  // Disable the option.
+                  $(dcv_select).attr('disabled', true);
 
-                    // Hidden the "Edit" button
-                    $(dcv_select).parents('tr').find('.btn_edit_domain').attr('disabled', true);
+                  // Hidden the "Edit" button
+                  $(dcv_select).parents('tr').find('.btn_edit_domain').attr('disabled', true);
 
-                    // Hidden the "Checkbox" button
-                    $(dcv_select).parents('tr').find('.check_box').attr('disabled', true);
+                  // Hidden the "Checkbox" button
+                  $(dcv_select).parents('tr').find('.check_box').attr('disabled', true);
+
+                  // Checking all domains has been validated.
+                  if ($('select[id^=domains]:enabled').length == 0) {
+                    // Hide Validate Button
+                    $('#upload_validations').hide();
+
+                    // Validate & issue.
+                    $.ajax({
+                      url: '<%=validate_issue_certificate_orders_path%>',
+                      data: {
+                        id: '<%=@certificate_order.ref%>'
+                      },
+                      type: 'POST',
+                      success: function (data) {
+                        // Show Message
+                        $('body').addClass('no_scroll_y');
+
+                        var redirectUrl = '<%=certificate_order_path(@ssl_slug, @certificate_order)%>';
+
+                        var redirect_message_wrap = $('<div></div>');
+                        redirect_message_wrap.attr('class', 'redirect_message_wrap');
+
+                        var redirect_message = $('<div></div>');
+                        redirect_message.attr('class', 'redirect_message');
+
+                        var span = $('<span></span>');
+                        if (data) {
+                          span.append('All domains has already been validated. It will be issued soon. \n');
+                        } else {
+                          span.append('All domains has already been validated and certificate has been issued. \n');
+                        }
+                        span.append('Redirecting to Certificate Order Page now ...');
+
+                        redirect_message.append(span);
+                        redirect_message_wrap.append(redirect_message);
+                        redirect_message_wrap.insertBefore($('#header'));
+
+                        // Redirect to Certificate Order Detail Page.
+                        var delay = 1000;
+                        window.setTimeout(function() {
+                          $('body').removeClass('no_scroll_y');
+                          window.location.href = redirectUrl;
+                        }, delay);
+                      }
+                    });
                   }
-                  $('td.pretest[class~="'+$(dcv_select).attr("alt")+'"]').html((data ? "<div class='passed'>passed</div>" : "<div class='failed'>failed</div>"));
-                });
-          <%end%>
+                }
+                <%end%>
+                $('td.pretest[class~="'+$(dcv_select).attr("alt")+'"]').html((data ? "<div class='passed'>passed</div>" : "<div class='failed'>failed</div>"));
+              });
         }
         else if(/cname/.test(methods[0])){
           $(instruction).html("Create CNAME: "+cname);
-          <%if @certificate_order.certificate_content.ca_id.nil?%>
-            $.ajax({url: '<%=verification_check_csr_path(@ssl_slug, @certificate_order.csr.id)%>?protocol=cname&dcv='+
-              $(dcv_select).parents('tr').attr('id')+'&new_name='+$(dcv_select).attr('alt')+'&ref='+$(dcv_select).parents('tbody').attr('data-ref')}).done(
-                function(data){
-                  if (data) {
-                    // Adding Hidden Tag for saving satisfied option.
-                    var hiddenElement = $('<input></input>');
-                    hiddenElement.attr('type', 'hidden');
-                    hiddenElement.attr('name', 'domains[' + $(dcv_select).attr("alt") + '][dcv]');
-                    hiddenElement.attr('value', $(dcv_select).val());
-                    $(dcv_select).parent().append(hiddenElement);
+          $.ajax({url: '<%=verification_check_csr_path(@ssl_slug, @certificate_order.csr.id)%>?protocol=cname&dcv='+
+            $(dcv_select).parents('tr').attr('id')+'&new_name='+$(dcv_select).attr('alt')+'&ref='+$(dcv_select).parents('tbody').attr('data-ref')}).done(
+              function(data){
+                <%unless @certificate_order.certificate_content.ca_id.nil?%>
+                if (data) {
+                  // Adding Hidden Tag for saving satisfied option.
+                  var hiddenElement = $('<input></input>');
+                  hiddenElement.attr('type', 'hidden');
+                  hiddenElement.attr('name', 'domains[' + $(dcv_select).attr("alt") + '][dcv]');
+                  hiddenElement.attr('value', $(dcv_select).val());
+                  $(dcv_select).parent().append(hiddenElement);
 
-                    // Changing Status to "Satisfied".
-                    $('td.status[class~="'+$(dcv_select).attr("alt")+'"]').html('satisfied');
+                  // Changing Status to "Satisfied".
+                  $('td.status[class~="'+$(dcv_select).attr("alt")+'"]').html('satisfied');
 
-                    // Changing previous attempt to selected validation option
-                    $('td.attempt[class~="' + $(dcv_select).attr("alt") + '"]').html('validated');
+                  // Changing previous attempt to selected validation option
+                  $('td.attempt[class~="' + $(dcv_select).attr("alt") + '"]').html('validated');
 
-                    // Disable the option.
-                    $(dcv_select).attr('disabled', true);
+                  // Disable the option.
+                  $(dcv_select).attr('disabled', true);
 
-                    // Hidden the "Edit" button
-                    $(dcv_select).parents('tr').find('.btn_edit_domain').attr('disabled', true);
+                  // Hidden the "Edit" button
+                  $(dcv_select).parents('tr').find('.btn_edit_domain').attr('disabled', true);
 
-                    // Hidden the "Checkbox" button
-                    $(dcv_select).parents('tr').find('.check_box').attr('disabled', true);
+                  // Hidden the "Checkbox" button
+                  $(dcv_select).parents('tr').find('.check_box').attr('disabled', true);
+
+                  // Checking all domains has been validated.
+                  if ($('select[id^=domains]:enabled').length == 0) {
+                    // Hide Validate Button
+                    $('#upload_validations').hide();
+
+                    // Validate & issue.
+                    $.ajax({
+                      url: '<%=validate_issue_certificate_orders_path%>',
+                      data: {
+                        id: '<%=@certificate_order.ref%>'
+                      },
+                      type: 'POST',
+                      success: function (data) {
+                        // Show Message
+                        $('body').addClass('no_scroll_y');
+
+                        var redirectUrl = '<%=certificate_order_path(@ssl_slug, @certificate_order)%>';
+
+                        var redirect_message_wrap = $('<div></div>');
+                        redirect_message_wrap.attr('class', 'redirect_message_wrap');
+
+                        var redirect_message = $('<div></div>');
+                        redirect_message.attr('class', 'redirect_message');
+
+                        var span = $('<span></span>');
+                        if (data) {
+                          span.append('All domains has already been validated. It will be issued soon. \n');
+                        } else {
+                          span.append('All domains has already been validated and certificate has been issued. \n');
+                        }
+                        span.append('Redirecting to Certificate Order Page now ...');
+
+                        redirect_message.append(span);
+                        redirect_message_wrap.append(redirect_message);
+                        redirect_message_wrap.insertBefore($('#header'));
+
+                        // Redirect to Certificate Order Detail Page.
+                        var delay = 1000;
+                        window.setTimeout(function() {
+                          $('body').removeClass('no_scroll_y');
+                          window.location.href = redirectUrl;
+                        }, delay);
+                      }
+                    });
                   }
-                  $('td.pretest[class~="'+$(dcv_select).attr("alt")+'"]').html((data ? "<div class='passed'>passed</div>" : "<div class='failed'>failed</div>"));
-                });
-          <%end%>
+                }
+                <%end%>
+                $('td.pretest[class~="'+$(dcv_select).attr("alt")+'"]').html((data ? "<div class='passed'>passed</div>" : "<div class='failed'>failed</div>"));
+              });
         }
         $(instruction).css({ background: "yellow" });
       });
@@ -751,7 +889,6 @@ jQuery(function($) {
               is_premium_ssl = @certificate_order.certificate.is_premium_ssl?
               is_wildcard = @certificate_order.certificate.is_wildcard?
               ext_order_number = @certificate_order.external_order_number ? @certificate_order.external_order_number : 'eon'
-              is_ca = @certificate_order.certificate_content.ca_id.nil?
             %>
 
             var total = domains.length;
@@ -886,14 +1023,12 @@ jQuery(function($) {
                             trElement.append(tdElement);
                           <%end%>
 
-                          <%if is_ca%>
-                            tdElement = $('<td></td>');
-                            tdElement.attr('class', 'pretest ' + value);
-                            var divElement = $('<div></div>');
-                            divElement.append(result[key]['pretest']);
-                            tdElement.append(divElement);
-                            trElement.append(tdElement);
-                          <%end%>
+                          tdElement = $('<td></td>');
+                          tdElement.attr('class', 'pretest ' + value);
+                          var divElement = $('<div></div>');
+                          divElement.append(result[key]['pretest']);
+                          tdElement.append(divElement);
+                          trElement.append(tdElement);
 
                           tdElement = $('<td></td>');
                           tdElement.append(result[key]['attempt']);
@@ -1035,14 +1170,12 @@ jQuery(function($) {
                   trElement.append(tdElement);
                 <%end%>
 
-                <%if is_ca%>
-                  tdElement = $('<td></td>');
-                  tdElement.attr('class', 'pretest ' + value);
-                  var divElement = $('<div></div>');
-                  divElement.append('n/a');
-                  tdElement.append(divElement);
-                  trElement.append(tdElement);
-                <%end%>
+                tdElement = $('<td></td>');
+                tdElement.attr('class', 'pretest ' + value);
+                var divElement = $('<div></div>');
+                divElement.append('n/a');
+                tdElement.append(divElement);
+                trElement.append(tdElement);
 
                 tdElement = $('<td></td>');
                 tdElement.append(domain_status[value]['method'].toLowerCase().replace('%28', '').replace('%29', ''));
@@ -1714,39 +1847,41 @@ jQuery(function($) {
           $('.current_unique_value_block').show();
         });
 
-        // Click Save button for registering new unique value
-        $(document).on('click', '.btn_save_new_unique_value', function() {
-          var old_value = $('.current_unique_value_block').text().trim();
-          var new_value = $('.new_unique_value').val();
+        <%if @certificate_order && @certificate_order.csr%>
+          // Click Save button for registering new unique value
+          $(document).on('click', '.btn_save_new_unique_value', function() {
+            var old_value = $('.current_unique_value_block').text().trim();
+            var new_value = $('.new_unique_value').val();
 
-          if (old_value != new_value) {
-            $.ajax({
-              url: '<%=create_new_unique_value_csr_path(@ssl_slug, @certificate_order.csr)%>',
-              data: {
-                new_unique_value: $('.new_unique_value').val()
-              },
-              type: "POST",
-              success: function (result) {
-                /*$('.cname_destination').empty();*/
-                $('.cname_destination').html(result['cname_destination']);
+            if (old_value != new_value) {
+              $.ajax({
+                url: '<%=create_new_unique_value_csr_path(@ssl_slug, @certificate_order.csr)%>',
+                data: {
+                  new_unique_value: $('.new_unique_value').val()
+                },
+                type: "POST",
+                success: function (result) {
+                  /*$('.cname_destination').empty();*/
+                  $('.cname_destination').html(result['cname_destination']);
 
-                /*$('.dns_sha2_hash').empty();*/
-                $('.dns_sha2_hash').html(result['dns_sha2_hash']);
+                  /*$('.dns_sha2_hash').empty();*/
+                  $('.dns_sha2_hash').html(result['dns_sha2_hash']);
 
-                /*$('.current_unique_value_block').empty();*/
-                $('.current_unique_value_block').html($('.new_unique_value').val());
+                  /*$('.current_unique_value_block').empty();*/
+                  $('.current_unique_value_block').html($('.new_unique_value').val());
 
-                $('.new_unique_value').hide();
-                $('.btn_save_new_unique_value').hide();
-                $('.btn_cancel_new_unique_value').hide();
-                $('.btn_new_unique_value').show();
-                $('.current_unique_value_block').show();
-              }
-            });
-          } else {
-            alert('The same unique value can not be registered again.');
-          }
-        });
+                  $('.new_unique_value').hide();
+                  $('.btn_save_new_unique_value').hide();
+                  $('.btn_cancel_new_unique_value').hide();
+                  $('.btn_new_unique_value').show();
+                  $('.current_unique_value_block').show();
+                }
+              });
+            } else {
+              alert('The same unique value can not be registered again.');
+            }
+          });
+        <%end%>
 
       <%end%>
     }

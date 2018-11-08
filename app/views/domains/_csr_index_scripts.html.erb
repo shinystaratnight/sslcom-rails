@@ -1,0 +1,20 @@
+<script type="text/javascript">
+  jQuery.noConflict();
+  jQuery(function ($) {
+    $(document).ready(function () {
+      $('#csr_number_rows').change(function() {
+        $('#per_page').val($(this).val());
+        $('#hidden_form').submit();
+      });
+
+      $('.pagination > a').click(function(e) {
+        e.preventDefault();
+
+        var href = $(this).attr('href');
+        var page_num = href.substr(href.indexOf('?') + 1).split('=')[1];
+        $('#page').val(page_num);
+        $('#hidden_form').submit();
+      });
+    });
+  });
+</script>
