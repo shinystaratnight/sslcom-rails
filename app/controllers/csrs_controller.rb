@@ -43,7 +43,7 @@ class CsrsController < ApplicationController
 
         if cn
           cn.new_name params['new_name']
-          http_or_s = true # cn.dcv_verify(params[:protocol])
+          http_or_s = cn.dcv_verify(params[:protocol])
 
           if http_or_s.to_s == 'true'
             dcv = cn.domain_control_validations.last
