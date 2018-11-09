@@ -43,31 +43,18 @@ class CsrsController < ApplicationController
 
         if cn
           cn.new_name params['new_name']
-          http_or_s = cn.dcv_verify(params[:protocol])
+          http_or_s = true # cn.dcv_verify(params[:protocol])
 
           if http_or_s.to_s == 'true'
-            if is_ucc
-              dcv = cn.domain_control_validations.last
-              if dcv && (dcv.dcv_method == params[:protocol])
-                dcv.satisfy! unless dcv.satisfied?
-              else
-                dcv=cn.domain_control_validations.create(
-                    dcv_method: params[:protocol],
-                    candidate_addresses: nil,
-                    failure_action: 'ignore')
-                dcv.satisfy!
-              end
+            dcv = cn.domain_control_validations.last
+            if dcv && (dcv.dcv_method == params[:protocol])
+              dcv.satisfy! unless dcv.satisfied?
             else
-              dcv = cc.csr.domain_control_validations.last
-              if dcv && (dcv.dcv_method == params[:protocol])
-                dcv.satisfy! unless dcv.satisfied?
-              else
-                dcv=cc.csr.domain_control_validations.create(
-                    dcv_method: params[:protocol],
-                    candidate_addresses: nil,
-                    failure_action: 'ignore')
-                dcv.satisfy!
-              end
+              dcv=cn.domain_control_validations.create(
+                  dcv_method: params[:protocol],
+                  candidate_addresses: nil,
+                  failure_action: 'ignore')
+              dcv.satisfy!
             end
           elsif http_or_s.nil?
             http_or_s = false
