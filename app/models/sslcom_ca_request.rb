@@ -15,7 +15,7 @@ class SslcomCaRequest < CaApiRequest
   def pkcs7
     certs=OpenSSL::PKCS7.new(SignedCertificate.enclose_with_tags(certificate_chain))
     add_this=Certificate.xcert_certum(certs.certificates.last,true)
-    certs.certificates=certs.certificates.drop(1)+[OpenSSL::X509::Certificate.new(add_this)]
+    certs.certificates=certs.certificates[0..-2]+[OpenSSL::X509::Certificate.new(add_this)]
     certs
   end
 

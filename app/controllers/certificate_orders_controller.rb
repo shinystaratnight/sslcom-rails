@@ -126,7 +126,6 @@ class CertificateOrdersController < ApplicationController
 
   def validate_issue
     cc = @certificate_order.certificate_content
-    cc.validate! if cc.pending_validation?
     @certificate_order.apply_for_certificate(
         mapping: cc.ca,
         current_user: current_user
