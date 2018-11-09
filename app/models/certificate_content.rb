@@ -34,7 +34,7 @@ class CertificateContent < ActiveRecord::Base
   end
 
   SIGNING_REQUEST_REGEX = /\A[\w\-\/\s\n\+=]+\Z/
-  MIN_KEY_SIZE = 2047 #thought would be 2048, be see
+  MIN_KEY_SIZE = [2048, 3072, 4096, 6144, 8192] #thought would be 2048, be see
     #http://groups.google.com/group/mozilla.dev.security.policy/browse_thread/thread/7ceb6dd787e20da3# for details
   NOT_VALID_ISO_CODE="is not a valid 2 lettered ISO-3166 country code."
 
@@ -878,9 +878,9 @@ class CertificateContent < ActiveRecord::Base
           errors.add(:signing_request, "cannot begin with *. since the order does not allow wildcards")
         end
       end
-      errors.add(:signing_request, "must have a 2048 bit key size.
+      errors.add(:signing_request, "must be any of the following #{MIN_KEY_SIZE.join(', ')} key sizes.
         Please submit a new ssl.com certificate signing request with the proper key size.") if
-          csr.strength.blank? || (csr.strength < MIN_KEY_SIZE)
+          csr.strength.blank? || !MIN_KEY_SIZE.include?(csr.strength)
       #errors.add(:signing_request,
       #  "country code '#{csr.country}' #{NOT_VALID_ISO_CODE}") unless
       #    Country.accepted_countries.include?(csr.country)

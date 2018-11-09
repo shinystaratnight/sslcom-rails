@@ -141,15 +141,16 @@ class DomainControlValidation < ActiveRecord::Base
   end
 
   # is this dcv validated?
-  # domain - similar domain can use this dcv to satisfy validation?
+  # domain - against a domain that may or many not be satisfied by this validation
   # public_key_sha1 - against a csr
   def validated?(domain=nil,public_key_sha1=nil)
     satisfied = ->(public_key_sha1){
         identifier_found && !responded_at.blank? &&
             responded_at > DomainControlValidation::MAX_DURATION_DAYS[:email].days.ago &&
-          (!email_address.blank? or (public_key_sha1 ? csr.public_key_sha1.downcase==public_key_sha1.downcase : true))
+          (!email_address.blank? or (public_key_sha1 ? (csr || certificate_name.csr).
+              public_key_sha1.downcase==public_key_sha1.downcase : true))
     }
-    (domain ? true : DomainControlValidation.domain_in_subdomains?(domain,certificate_name.name)) and
+    (domain ? DomainControlValidation.domain_in_subdomains?(domain,certificate_name.name) : true) and
         satisfied.call(public_key_sha1)
   end
 
