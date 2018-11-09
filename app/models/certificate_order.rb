@@ -1126,7 +1126,7 @@ class CertificateOrder < ActiveRecord::Base
     cnames.each do |cn|
 
       # if the certificate_name scoped dcv is not satisfied, check the team level domain name
-      unless cn.domain_control_validations.last.try "satisfied?".to_sym
+      unless cn.domain_control_validations.any?(&"satisfied?".to_sym)
         # Team level validation check
         team_level_validated = false
         team_cnames.each do |team_cn|

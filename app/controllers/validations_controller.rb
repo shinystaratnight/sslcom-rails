@@ -97,7 +97,6 @@ class ValidationsController < ApplicationController
                 apply_for_certificate(mapping:
                       @certificate_order.certificate_content.ca,
                       current_user: current_user)
-            cc.issue!
           end
 
           @validated_domains = validated_domain_arry.join(',')
