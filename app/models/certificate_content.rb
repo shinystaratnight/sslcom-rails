@@ -244,15 +244,15 @@ class CertificateContent < ActiveRecord::Base
   end
 
   def pkcs7
-    sslcom_ca_request.last.pkcs7
+    sslcom_ca_request.pkcs7
   end
 
   def x509_certificates
-    sslcom_ca_request.last.x509_certificates
+    sslcom_ca_request.x509_certificates
   end
 
   def certificate_chain
-    sslcom_ca_request.last.certificate_chain
+    sslcom_ca_request.certificate_chain
   end
 
   # :with_tags (default), :x509, :without_tags

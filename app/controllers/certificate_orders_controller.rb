@@ -130,7 +130,7 @@ class CertificateOrdersController < ApplicationController
         mapping: cc.ca,
         current_user: current_user
     )
-    cc.issue! unless cc.signed_certificate.blank?
+    cc.issue! if cc.signed_certificate
 
     render :json => cc.issued?
   end
