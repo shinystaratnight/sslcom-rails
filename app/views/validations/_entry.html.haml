@@ -210,11 +210,12 @@
                       %strong domain validations
                     -co.certificate_content.certificate_names.each do |cn|
                       -dcv=cn.domain_control_validations.find(&"satisfied?".to_sym)
-                      -identifier = case dcv.dcv_method
-                        -when /email/
-                          -dcv.email_address
-                        -else
-                          -dcv.identifier
+                      -if dcv
+                        -identifier = case dcv.dcv_method
+                          -when /email/
+                            -dcv.email_address
+                          -else
+                            -dcv.identifier
                       %li
                         #{cn.name}
                         %ul
