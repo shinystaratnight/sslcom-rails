@@ -58,8 +58,9 @@
               =text_field_tag 'new_unique_value', co.csr.unique_value, class: 'new_unique_value hidden'
               =button_tag 'Save', id: 'btn_save_new_unique_value', class: 'btn_save_new_unique_value hidden'
               =button_tag 'Cancel', id: 'btn_cancel_new_unique_value', class: 'btn_cancel_new_unique_value hidden'
-      %tr
-        %td(colspan="2") (* Any domain name removals or edits will require updating the unique value after clicking the Validate button.)
+      -unless co.certificate_content.ca.blank?
+        %tr
+          %td(colspan="2") (* Any domain name removals or edits will require updating the unique value after clicking the Validate button.)
   =hidden_field_tag :ori_domain_names_str, co.certificate_content.certificate_names.pluck(:name).uniq.join(',')
   =form_tag('', method: :post, class: :api_certificate_request) do
     =hidden_field_tag :account_key, current_user.ssl_account.api_credential.account_key

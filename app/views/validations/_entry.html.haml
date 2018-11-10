@@ -201,3 +201,21 @@
                         =co.notes
                       -else
                         no notes found
+          %tr
+            %td(colspan="6")
+              .certificate_details_box
+                %ul
+                  #validation_requirements_box
+                    %li
+                      %strong domain validations
+                    -co.certificate_content.certificate_names.each do |cn|
+                      -dcv=cn.domain_control_validations.find(&"satisfied?".to_sym)
+                      -identifier = case dcv.dcv_method
+                        -when /email/
+                          -dcv.email_address
+                        -else
+                          -dcv.identifier
+                      %li
+                        #{cn.name}
+                        %ul
+                          %li #{dcv ? "validated by #{dcv.dcv_method} on #{dcv.responded_at.strftime("%b %d, %Y %R %Z")} with #{identifier}" : "pending validation"}
