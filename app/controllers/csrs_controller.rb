@@ -150,11 +150,18 @@ class CsrsController < ApplicationController
   end
 
   def create_new_unique_value
-    @csr.csr_unique_values.create(unique_value: params[:new_unique_value])
-
     returnObj = {}
-    returnObj['cname_destination'] = @csr.cname_destination
-    returnObj['dns_sha2_hash'] = @csr.dns_sha2_hash
+    same_exist = @csr.csr_unique_values.where(unique_value: params[:new_unique_value]).first
+
+    if same_exist
+      returnObj['same'] = true
+    else
+      @csr.csr_unique_values.create(unique_value: params[:new_unique_value])
+
+      returnObj['cname_destination'] = @csr.cname_destination
+      returnObj['dns_sha2_hash'] = @csr.dns_sha2_hash
+    end
+
 
     render :json => returnObj
   end

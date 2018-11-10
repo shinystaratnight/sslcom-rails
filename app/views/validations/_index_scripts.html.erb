@@ -1861,24 +1861,23 @@ jQuery(function($) {
                 },
                 type: "POST",
                 success: function (result) {
-                  /*$('.cname_destination').empty();*/
-                  $('.cname_destination').html(result['cname_destination']);
+                  if ($.inArray('same', Object.keys(result)) == -1) {
+                    $('.cname_destination').html(result['cname_destination']);
+                    $('.dns_sha2_hash').html(result['dns_sha2_hash']);
+                    $('.current_unique_value_block').html($('.new_unique_value').val());
 
-                  /*$('.dns_sha2_hash').empty();*/
-                  $('.dns_sha2_hash').html(result['dns_sha2_hash']);
-
-                  /*$('.current_unique_value_block').empty();*/
-                  $('.current_unique_value_block').html($('.new_unique_value').val());
-
-                  $('.new_unique_value').hide();
-                  $('.btn_save_new_unique_value').hide();
-                  $('.btn_cancel_new_unique_value').hide();
-                  $('.btn_new_unique_value').show();
-                  $('.current_unique_value_block').show();
+                    $('.new_unique_value').hide();
+                    $('.btn_save_new_unique_value').hide();
+                    $('.btn_cancel_new_unique_value').hide();
+                    $('.btn_new_unique_value').show();
+                    $('.current_unique_value_block').show();
+                  } else {
+                    alert('The same unique value has been already used before. Please use another unique value.');
+                  }
                 }
               });
             } else {
-              alert('The same unique value can not be registered again.');
+              alert('This unique value is same with current one.');
             }
           });
         <%end%>
