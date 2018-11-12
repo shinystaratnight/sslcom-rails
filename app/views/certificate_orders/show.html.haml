@@ -404,14 +404,17 @@
                               status:
                             %span #{sc.status.upcase}
                             - if current_user.is_system_admins? and !sc.revoked?
-                              = link_to "<i class='fa fa-times-circle'></i> REVOKE".html_safe, '#', id: 'btn-cert-content-revoke'
-                              #dialog-form
+                              - select_id = "sel-cert-content-revoke-#{sc.id}"
+                              - dialog_id = "dialog-form-#{sc.id}"
+                              = link_to "<i class='fa fa-times-circle'></i> REVOKE".html_safe, '#', |
+                                class: 'btn-cert-content-revoke', data: {select_id: select_id, dialog_id: dialog_id}
+                              %div{id: dialog_id, class: 'hidden'}
                                 %p Please select a reason for revoking:
                                 %br/
                                 .clearfix
                                   = form_tag revoke_signed_certificate_path(@ssl_slug, sc.id), method: :put do
                                     = select_tag :revoke_reason, options_for_select(SslcomCaRevocationRequest::REASONS), |
-                                      multiple: false, id: 'sel-cert-content-revoke', include_blank: false
+                                      multiple: false, id: select_id, include_blank: false
                                 .clearfix
                                   %br/
                                   %p *Warning: Once revoked the status of this signed certificate cannot be reversed.
@@ -490,28 +493,36 @@
 
 :javascript
   jQuery(function($) {
-    var curDialog = $('#dialog-form');
-    $("#sel-cert-content-revoke").select2();
+    var curDialog;
+
     function revokeSignedCertificate() {
       curDialog.find('form').submit();
     }
-    curDialog.dialog({
-      position: { my: 'top center', at: 'top center', of: window },
-      title: 'Revoke Signed Certificate',
-      autoOpen: false,
-      height: 240,
-      width: 300,
-      modal: true,
-      dialogClass: 'dl-transfer-team',
-      buttons: {
-        Cancel: function() {
-          curDialog.dialog('close');
-        },
-        'Revoke': revokeSignedCertificate,
-      }
-    });
-    $('#btn-cert-content-revoke').on('click', function(e) {
+    
+    function setupDialog(dialog_id) {
+      curDialog = $('#' + dialog_id);
+      curDialog.dialog({
+        position: { my: 'top center', at: 'top center', of: window },
+        title: 'Revoke Signed Certificate',
+        autoOpen: false,
+        height: 240,
+        width: 300,
+        modal: true,
+        dialogClass: 'dl-transfer-team',
+        buttons: {
+          Cancel: function() {
+            curDialog.dialog('close');
+          },
+          'Revoke': revokeSignedCertificate,
+        }
+      });
+    }
+    
+    $('.btn-cert-content-revoke').on('click', function(e) {
       e.preventDefault();
+      setupDialog($(this).data('dialog-id'));
+      $($(this).data('select-id')).select2();
+      
       curDialog.dialog('open');
     });
   });
