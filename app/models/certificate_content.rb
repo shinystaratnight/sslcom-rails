@@ -24,7 +24,6 @@ class CertificateContent < ActiveRecord::Base
 
   after_create :certificate_names_from_domains, unless: :certificate_names_created?
   after_save   :certificate_names_from_domains, unless: :certificate_names_created?
-  after_save   :add_ca
   after_save   :transfer_existing_contacts
   before_destroy :preserve_certificate_contacts
 
@@ -35,7 +34,7 @@ class CertificateContent < ActiveRecord::Base
   end
 
   SIGNING_REQUEST_REGEX = /\A[\w\-\/\s\n\+=]+\Z/
-  MIN_KEY_SIZE = 2047 #thought would be 2048, be see
+  MIN_KEY_SIZE = [2048, 3072, 4096, 6144, 8192] #thought would be 2048, be see
     #http://groups.google.com/group/mozilla.dev.security.policy/browse_thread/thread/7ceb6dd787e20da3# for details
   NOT_VALID_ISO_CODE="is not a valid 2 lettered ISO-3166 country code."
 
@@ -48,11 +47,11 @@ class CertificateContent < ActiveRecord::Base
   # terms in this list that are submitted as domains for an ssl will be kicked back
   BARRED_SSL_TERMS = %w(\A\. \.onion\z \.local\z)
 
-  TRADEMARKS = %w(whatsapp google apple paypal github amazon cloudapp microsoft amzn ssltools certchat certlock \*\.\*\.com
-    \*\.\*\.org \*\.10million\.org \*\.android\.com \*\.aol\.com \*\.azadegi\.com \*\.balatarin\.com \*\.comodo\.com \*\.digicert\.com
-    \*\.globalsign\.com \*\.google\.com \*\.JanamFadayeRahbar\.com \*\.logmein\.com \*\.microsoft\.com \*\.mossad\.gov\.il
-    \*\.mozilla\.org \*\.RamzShekaneBozorg\.com \*\.SahebeDonyayeDigital\.com \*\.skype\.com \*\.startssl\.com
-    \*\.thawte\.com \*\.torproject\.org \*\.walla\.co\.il \*\.windowsupdate\.com \*\.wordpress\.com addons\.mozilla\.org
+  TRADEMARKS = %w(whatsapp google .*?\.apple\.com paypal .*?\.github\.com .*?\.amazon\.com cloudapp microsoft amzn ssltools certchat certlock
+    .*?\.10million\.org .*?\.android\.com .*?\.aol\.com .*?\.azadegi\.com .*?\.balatarin\.com .*?\.comodo\.com .*?\.digicert\.com
+    .*?\.globalsign\.com .*?\.google\.com .*?\.JanamFadayeRahbar\.com .*?\.logmein\.com .*?\.microsoft\.com .*?\.mossad\.gov\.il
+    .*?\.mozilla\.org .*?\.RamzShekaneBozorg\.com .*?\.SahebeDonyayeDigital\.com .*?\.skype\.com .*?\.startssl\.com
+    .*?\.thawte\.com .*?\.torproject\.org .*?\.walla\.co\.il .*?\.windowsupdate\.com .*?\.wordpress\.com addons\.mozilla\.org
     azadegi\.com Comodo\sRoot\sCA CyberTrust\sRoot\sCA DigiCert\sRoot\sCA Equifax\sRoot\sCA friends\.walla\.co\.il
     GlobalSign\sRoot\sCA login\.live\.com login\.yahoo\.com my\.screenname\.aol\.com secure\.logmein\.com
     Thawte\sRoot\sCA twitter\.com VeriSign\sRoot\sCA wordpress\.com www\.10million\.org www\.balatarin\.com
@@ -220,9 +219,8 @@ class CertificateContent < ActiveRecord::Base
     end
   end
 
-  def add_ca
-    self.ca = (self.certificate.cas.ssl_account_or_general_default(ssl_account)).last if ca.blank? and
-        certificate and ssl_account and certificate_order.external_order_number.blank?
+  def add_ca(ssl_account)
+    self.ca = (self.certificate.cas.ssl_account_or_general_default(ssl_account)).last if ca.blank? and certificate
   end
 
   def certificate_names_from_domains(domains=nil)
@@ -241,24 +239,32 @@ class CertificateContent < ActiveRecord::Base
     signed_certificates.last
   end
 
+  def sslcom_ca_request
+    SslcomCaRequest.where(username: self.ref).last
+  end
+
   def pkcs7
-    SslcomCaRequest.where(username: self.ref).last.pkcs7
+    sslcom_ca_request.pkcs7
   end
 
   def x509_certificates
-    SslcomCaRequest.where(username: self.ref).last.x509_certificates
+    sslcom_ca_request.x509_certificates
+  end
+
+  def certificate_chain
+    sslcom_ca_request.certificate_chain
   end
 
   # :with_tags (default), :x509, :without_tags
   def ejbca_certificate_chain(options={format: :with_tags})
-    chain=SslcomCaRequest.where(username: self.ref).last
+    chain=sslcom_ca_request.last
     xcert=Certificate.xcert_certum(chain.x509_certificates.last)
     certs=chain.x509_certificates
     if options[:format]==:objects
       xcert ? certs[0..-2]<<OpenSSL::X509::Certificate.new(SignedCertificate.enclose_with_tags(xcert)) : certs
     elsif options[:format]==:without_tags
       certs=chain.certificate_chain
-      xcert ? certs[0..-2]<<xcert : certs
+      xcert ? certs[0..-2]<<SignedCertificate.remove_begin_end_tags(xcert).chop : certs
     else
       xcert ? certs[0..-2].map(&:to_s)<<SignedCertificate.enclose_with_tags(xcert) : certs.map(&:to_s)
     end unless chain.blank?
@@ -366,15 +372,19 @@ class CertificateContent < ActiveRecord::Base
           )
         end
       else
-        name.domain_control_validations.create(dcv_method: "email", email_address: v["dcv"],
-                                              failure_action: v["dcv_failure_action"], candidate_addresses: cur_email)
-        # assume the first name is the common name
-        self.csr.domain_control_validations.create(
-            dcv_method: "email",
-            email_address: v["dcv"],
-            failure_action: v["dcv_failure_action"],
-            candidate_addresses: cur_email
-        ) if (i == 0 && !certificate_order.certificate.is_ucc?)
+        candidate_addresses=name.candidate_email_addresses
+        if candidate_addresses.include?(v["dcv"])
+          name.domain_control_validations.create(dcv_method: "email", email_address: v["dcv"],
+                                                 failure_action: v["dcv_failure_action"],
+                                                 candidate_addresses: candidate_addresses)
+          # assume the first name is the common name
+          self.csr.domain_control_validations.create(
+              dcv_method: "email",
+              email_address: v["dcv"],
+              failure_action: v["dcv_failure_action"],
+              candidate_addresses: candidate_addresses
+          ) if (i == 0 && !certificate_order.certificate.is_ucc?)
+        end
       end
       i+=1
     end
@@ -872,9 +882,9 @@ class CertificateContent < ActiveRecord::Base
           errors.add(:signing_request, "cannot begin with *. since the order does not allow wildcards")
         end
       end
-      errors.add(:signing_request, "must have a 2048 bit key size.
+      errors.add(:signing_request, "must be any of the following #{MIN_KEY_SIZE.join(', ')} key sizes.
         Please submit a new ssl.com certificate signing request with the proper key size.") if
-          csr.strength.blank? || (csr.strength < MIN_KEY_SIZE)
+          csr.strength.blank? || !MIN_KEY_SIZE.include?(csr.strength)
       #errors.add(:signing_request,
       #  "country code '#{csr.country}' #{NOT_VALID_ISO_CODE}") unless
       #    Country.accepted_countries.include?(csr.country)

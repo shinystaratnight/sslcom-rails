@@ -3,7 +3,7 @@
 -skip_registrant = co.certificate.is_client_basic? || co.certificate.is_client_pro?
 -unless skip_registrant
   -cn = co.certificate.is_code_signing? or co.certificate.is_smime_or_client? ? co.registrant.company_name : cc.csr.common_name
-  -to_reminder = cc.locked_registrant.email if co.certificate.is_code_signing? 
+  -#-to_reminder = cc.locked_registrant.email if co.certificate.is_code_signing?
 -v = co.validation
 -status=certificate_order_status(cc)
 %tr.expanded(class="#{'hidden' if current_page?(:validations) or current_page?(:search_validations)}")
@@ -201,3 +201,22 @@
                         =co.notes
                       -else
                         no notes found
+          %tr
+            %td(colspan="6")
+              .certificate_details_box
+                %ul
+                  #validation_requirements_box
+                    %li
+                      %strong domain validations
+                    -co.certificate_content.certificate_names.each do |cn|
+                      -dcv=cn.domain_control_validations.find(&"satisfied?".to_sym)
+                      -if dcv
+                        -identifier = case dcv.dcv_method
+                          -when /email/
+                            -dcv.email_address
+                          -else
+                            -dcv.identifier
+                      %li
+                        #{cn.name}
+                        %ul
+                          %li #{dcv ? "validated by #{dcv.dcv_method} on #{dcv.responded_at.strftime("%b %d, %Y %R %Z") if dcv.responded_at} with #{identifier}" : "pending validation"}

@@ -73,7 +73,7 @@ class Csr < ActiveRecord::Base
   TIMEOUT_DURATION=10
 
   before_create do |csr|
-    csr.ref = 'csr-'+SecureRandom.hex(1)+Time.now.to_i.to_s(32)
+    csr.ref = generate_ref
   end
 
   after_create do |c|
@@ -425,5 +425,17 @@ class Csr < ActiveRecord::Base
 
   def days_left
     SiteCheck.days_left(self.non_wildcard_name, true)
+  end
+
+  def generate_ref
+    'csr-'+SecureRandom.hex(1)+Time.now.to_i.to_s(32)
+  end
+
+  def ref
+    if read_attribute(:ref).blank?
+      write_attribute(:ref, generate_ref)
+      save unless new_record?
+    end
+    read_attribute(:ref)
   end
 end

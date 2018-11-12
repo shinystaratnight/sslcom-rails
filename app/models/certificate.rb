@@ -558,7 +558,7 @@ class Certificate < ActiveRecord::Base
     when "6248227494352943350"
       tagged_xcert ? SignedCertificate.enclose_with_tags(CERTUM_XSIGN_EV) : CERTUM_XSIGN_EV
     else
-      x509_certificate
+      x509_certificate.to_s
     end
   end
 

@@ -66,7 +66,7 @@ class ValidationsController < ApplicationController
               if team_cn.name == cn.name
                 team_dcv = team_cn.domain_control_validations.last
 
-                if team_dcv && team_dcv.validated?(public_key_sha1)
+                if team_dcv && team_dcv.validated?(nil,public_key_sha1)
                   team_level_validated = true
 
                   @ds[team_cn.name] = {}
@@ -97,7 +97,6 @@ class ValidationsController < ApplicationController
                 apply_for_certificate(mapping:
                       @certificate_order.certificate_content.ca,
                       current_user: current_user)
-            cc.issue!
           end
 
           @validated_domains = validated_domain_arry.join(',')
@@ -244,7 +243,7 @@ class ValidationsController < ApplicationController
     returnObj = {}
     if current_user
       addresses = params['total_domains'].to_i > Validation::COMODO_EMAIL_LOOKUP_THRESHHOLD ?
-                      DomainControlValidation.email_address_choices(params['domain_name']) :
+                      CertificateName.candidate_email_addresses(params['domain_name']) :
                       ComodoApi.domain_control_email_choices(params['domain_name']).email_address_choices
       addresses.delete("none")
 
@@ -283,10 +282,10 @@ class ValidationsController < ApplicationController
         addresses =
           if co.certificate_content.ca.blank? and co.external_order_number
             params['domain_count'].to_i > Validation::COMODO_EMAIL_LOOKUP_THRESHHOLD ?
-                DomainControlValidation.email_address_choices(cn.name) :
+                CertificateName.candidate_email_addresses(cn.name) :
                 ComodoApi.domain_control_email_choices(cn.name).email_address_choices
           else
-            DomainControlValidation.email_address_choices(cn.name)
+            cn.candidate_email_addresses
           end
         addresses.delete("none")
 
@@ -321,7 +320,7 @@ class ValidationsController < ApplicationController
           }
         else
           optionsObj = {}
-          addresses = DomainControlValidation.email_address_choices(cn.name)
+          addresses ||= cn.candidate_email_addresses
 
           viaEmail = {}
           viaCSR = {}

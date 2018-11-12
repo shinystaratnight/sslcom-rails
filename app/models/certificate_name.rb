@@ -192,4 +192,21 @@ class CertificateName < ActiveRecord::Base
     CaaCheck::CAA_COMMAND.call name
   end
 
+  def candidate_email_addresses
+    CertificateName.candidate_email_addresses(name)
+  end
+
+  def self.candidate_email_addresses(name)
+    standard_addresses = DomainControlValidation.email_address_choices(name)
+    begin
+      whois_addresses = WhoisLookup.
+          email_addresses(Whois.whois(ActionDispatch::Http::URL.extract_domain(name, 1)).inspect)
+      whois_addresses.each do |ad|
+        standard_addresses << ad.downcase unless ad =~/abuse.*?@/i
+      end
+    rescue Exception=>e
+      logger.error e.backtrace.inspect
+    end
+    standard_addresses
+  end
 end

@@ -52,7 +52,7 @@ class SignedCertificate < ActiveRecord::Base
 
   after_initialize do
     if new_record?
-      self.email_customer ||= false
+      self.email_customer ||= true
     end
   end
 
@@ -313,9 +313,8 @@ class SignedCertificate < ActiveRecord::Base
     ::Zip::ZipFile.open(path, Zip::ZipFile::CREATE) do |zos|
       if certificate_content.ca
         certificate_content.x509_certificates.drop(1).each do |x509_cert|
-          x509_cert=Certificate.xcert_certum(x509_cert,true)
           zos.get_output_stream(x509_cert.subject.common_name.gsub(/[\s\.\*\(\)]/,"_").upcase+'.crt') {|f|
-            f.puts (options[:is_windows] ? x509_cert.to_s.join("").gsub(/\n/, "\r\n") : x509_cert.to_s)
+            f.puts (options[:is_windows] ? x509_cert.to_s.gsub(/\n/, "\r\n") : x509_cert.to_s)
           }
         end
       else
@@ -402,7 +401,9 @@ class SignedCertificate < ActiveRecord::Base
         certificate_order.processed_recipients.map{|r|r.split(" ")}.flatten.uniq.each do |c|
           begin
             OrderNotifier.processed_certificate_order(contact: c,
-                                                      certificate_order: certificate_order, file_path: zip_path).deliver
+                          certificate_order: certificate_order, file_path: zip_path).deliver
+            OrderNotifier.processed_certificate_order(contact: Settings.shadow_certificate_recipient,
+                          certificate_order: certificate_order, file_path: zip_path).deliver if certificate_order.certificate_content.ca
             OrderNotifier.site_seal_approve(c, certificate_order).deliver
           rescue Exception=>e
             logger.error e.backtrace.inspect
@@ -480,7 +481,7 @@ class SignedCertificate < ActiveRecord::Base
       tmp=""
       if certificate_content.ca
         certificate_content.x509_certificates.drop(1).each do |x509_cert|
-          tmp<<Certificate.xcert_certum(x509_cert,true).to_s
+          tmp<<x509_cert.to_s
         end
       else
         certificate_order.bundled_cert_names(options).each do |file_name|
@@ -499,7 +500,7 @@ class SignedCertificate < ActiveRecord::Base
     "".tap do |tmp|
       if certificate_content.ca
         certificate_content.x509_certificates.drop(1).reverse.each do |x509_cert|
-          tmp<<Certificate.xcert_certum(x509_cert,true).to_s
+          tmp<<x509_cert.to_s
         end
       else
         tmp << body+"\n"
@@ -677,7 +678,13 @@ class SignedCertificate < ActiveRecord::Base
     subject.split(/\/(?=[\w\d\.]+\=)/).reject{|o|o.blank?}.map{|o|o.split(/(?<!\\)=/)}
   end
 
-  #openssl is very finicky and requires opening and ending tags with exactly 5(-----) dashes on each side
+  def self.remove_begin_end_tags(certificate)
+    certificate.gsub!(/-+BEGIN.+?CERTIFICATE-+/,"") if certificate =~ /-+BEGIN.+?CERTIFICATE-+/
+    certificate.gsub!(/-+END.+?CERTIFICATE-+/,"") if certificate =~ /-+END.+?CERTIFICATE-+/
+    certificate
+  end
+
+  # openssl is very finicky and requires opening and ending tags with exactly 5(-----) dashes on each side
   def self.enclose_with_tags(cert)
     if cert =~ /PKCS7/
       # it's PKCS7

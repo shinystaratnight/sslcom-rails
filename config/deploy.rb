@@ -35,7 +35,7 @@ set :branch, "staging"
 # extension ".pub".
 ssh_options[:keys] = [File.join(ENV["HOME"], ".ssh", "id_rsa")]
 
-server = "production_api"
+server = "production"
 case server
   when "sandbox"
     require "rvm/capistrano"

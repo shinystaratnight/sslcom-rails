@@ -1,10 +1,11 @@
 require 'public_suffix'
 
 class DomainControlValidation < ActiveRecord::Base
-  has_many :ca_dcv_requests, as: :api_requestable, dependent: :destroy
-  belongs_to :csr, touch: true # only for single domain certs
-  belongs_to :csr_unique_value
-  belongs_to :certificate_name, touch: true  # only for UCC or multi domain certs
+  has_many    :ca_dcv_requests, as: :api_requestable, dependent: :destroy
+  belongs_to  :csr, touch: true # only for single domain certs
+  belongs_to  :csr_unique_value
+  belongs_to  :certificate_name, touch: true  # only for UCC or multi domain certs
+  delegate    :certificate_content, to: :csr
   # belongs_to :domain, class_name: "CertificateName"
   # delegate   :ssl_account, to: :domain
   serialize :candidate_addresses
@@ -140,15 +141,16 @@ class DomainControlValidation < ActiveRecord::Base
   end
 
   # is this dcv validated?
-  # domain - similar domain can use this dcv to satisfy validation?
+  # domain - against a domain that may or many not be satisfied by this validation
   # public_key_sha1 - against a csr
   def validated?(domain=nil,public_key_sha1=nil)
     satisfied = ->(public_key_sha1){
         identifier_found && !responded_at.blank? &&
             responded_at > DomainControlValidation::MAX_DURATION_DAYS[:email].days.ago &&
-          (!email_address.blank? or (public_key_sha1 ? csr.public_key_sha1.downcase==public_key_sha1.downcase : true))
+          (!email_address.blank? or (public_key_sha1 ? (csr || certificate_name.csr).
+              public_key_sha1.downcase==public_key_sha1.downcase : true))
     }
-    (domain ? true : DomainControlValidation.domain_in_subdomains?(domain,certificate_name.name)) and
+    (domain ? DomainControlValidation.domain_in_subdomains?(domain,certificate_name.name) : true) and
         satisfied.call(public_key_sha1)
   end
 
@@ -175,7 +177,7 @@ class DomainControlValidation < ActiveRecord::Base
 
   def email_address_choices
     name = (csr.blank? ? certificate_name.name : csr.common_name)
-    DomainControlValidation.email_address_choices(name)
+    CertificateName.candidate_email_addresses(name)
   end
 
   def self.email_address_choices(name)

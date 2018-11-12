@@ -1123,25 +1123,28 @@ class CertificateOrder < ActiveRecord::Base
     cnames = certificate_content.certificate_names.includes(:domain_control_validations)
     team_cnames = ssl_account.all_certificate_names.includes(:domain_control_validations)
 
-    # Team level validation check
     cnames.each do |cn|
-      team_level_validated = false
 
-      team_cnames.each do |team_cn|
-        if team_cn.name == cn.name
-          team_dcv = team_cn.domain_control_validations.last
+      # if the certificate_name scoped dcv is not satisfied, check the team level domain name
+      unless cn.domain_control_validations.any?(&"satisfied?".to_sym)
+        # Team level validation check
+        team_level_validated = false
+        team_cnames.each do |team_cn|
+          if team_cn.name == cn.name
+            team_dcv = team_cn.domain_control_validations.last
 
-          if team_dcv && team_dcv.validated?(public_key_sha1)
-            team_level_validated = true
+            if team_dcv && team_dcv.validated?(public_key_sha1)
+              team_level_validated = true
+              break
+            end
+          end
+          unless team_level_validated
+            all_validated = false
             break
           end
         end
       end
 
-      unless team_level_validated
-        all_validated = false
-        break
-      end
     end
     all_validated
   end
@@ -1153,7 +1156,9 @@ class CertificateOrder < ActiveRecord::Base
   def apply_for_certificate(options={})
     if [Ca::CERTLOCK_CA,Ca::SSLCOM_CA,Ca::MANAGEMENT_CA].include?(options[:ca]) or !certificate_content.ca.blank? or
         !options[:mapping].blank?
-      if domains_validated? and caa_validated?
+      if !certificate_content.infringement.empty? # possible trademark problems
+        OrderNotifier.potential_trademark(Settings.notify_address, self, certificate_content.infringement).deliver_now
+      elsif domains_validated? and caa_validated?
         SslcomCaApi.apply_for_certificate(self, options)
       end
     else
@@ -1161,8 +1166,9 @@ class CertificateOrder < ActiveRecord::Base
     end if signed_certificate.blank? or remaining_days>0
   end
 
-  def retrieve_ca_cert(email_customer=false)
-    if external_order_number && !ca_certificate_requests.empty? && ca_certificate_requests.first.success? && !rejected?
+  def retrieve_ca_cert(email_customer=true)
+    if external_order_number && certificate_content.ca.blank? &&
+        !ca_certificate_requests.empty? && ca_certificate_requests.first.success? && !rejected?
       retrieve=ComodoApi.collect_ssl(self)
       if retrieve.response_code==2
         csr.signed_certificates.create(body: retrieve.certificate, email_customer: email_customer)
@@ -1928,7 +1934,7 @@ class CertificateOrder < ActiveRecord::Base
     cc.domains=certificate_content.domains
     if certificate_content.preferred_reprocessing?
       self.certificate_contents << certificate_content
-      certificate_content.create_registrant(cc.registrant.attributes.except(*ID_AND_TIMESTAMP)).save
+      certificate_content.create_registrant(cc.registrant.attributes.except(*ID_AND_TIMESTAMP)) if cc.registrant
       cc.certificate_contacts.each do |contact|
         certificate_content.certificate_contacts << CertificateContact.new(contact.attributes.except(*ID_AND_TIMESTAMP))
       end
