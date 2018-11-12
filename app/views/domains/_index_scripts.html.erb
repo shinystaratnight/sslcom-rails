@@ -137,6 +137,17 @@
         return false;
       };
 
+      function uploadInstructionsLink(link) {
+        return (
+          "Upload <a href='"
+          + '<%= http_dcv_file_csr_path(@ssl_slug, @csr.id) %>'
+          + "' class='lnk-upload-thisfile'>"
+          + "THIS FILE</a> to this location: "
+          + "<i class='fa fa-external-link fa-ssl-custom'></i>"
+          + "<a href='" + link + "' target='_new'>" + link + "</a>"
+        );
+      }
+
       <%if @csr%>
         $(document).on('change', 'select[id=dcv_methods]', function() {
           var dcv_select=$(this);
@@ -178,7 +189,7 @@
             /*$('td.pretest[class~="'+$(dcv_select).attr("alt")+'"]').html("n/a").css({ background: "white", color:"black" });*/
           }
           else if(/https/.test(methods[0])){
-            instructions="Upload <a href='<%=http_dcv_file_csr_path(@ssl_slug, @csr.id)%>'>this file</a> to this location: <a href='"+https+"' target='_new'>"+https+"</a>";
+            instructions = uploadInstructionsLink(https);
             $(instruction).html(instructions);
 
             $('#upload_validations').hide();
@@ -219,7 +230,7 @@
               });
           }
           else if(/http/.test(methods[0])){
-            instructions="Upload <a href='<%=http_dcv_file_csr_path(@ssl_slug, @csr.id)%>'>this file</a> to this location: <a href='"+http+"' target='_new'>"+http+"</a>";
+            instructions = uploadInstructionsLink(http);
             $(instruction).html(instructions);
 
             $('#upload_validations').hide();
