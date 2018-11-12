@@ -244,7 +244,7 @@ class CertificateOrdersController < ApplicationController
         notification_group_subject = @certificate_order.notification_groups_subjects.where(created_page: 'csr').first
         @slt_notification_group = [notification_group_subject.notification_group.ref] if notification_group_subject
 
-        @managed_csrs = (@ssl_account.all_csrs)
+        @managed_csrs = (@certificate_order.ssl_account.all_csrs)
                             .sort_by{|arr| arr.common_name}
                             .map{|arr| [(arr.friendly_name || arr.common_name)+' '+ arr.public_key_sha1, arr.ref]}
                             .delete_if{|arr| arr.second == nil}
