@@ -110,7 +110,7 @@ class DomainsController < ApplicationController
       if is_sent
         flash[:notice] = "Please check your email for the validation code and submit it below to complete validation."
       else
-        flash[:error] = "You have not choose validation email address for all domains."
+        flash[:error] = "Please select a valid email address."
       end
 
       @validation_url = dcv_all_validate_domains_url(params)

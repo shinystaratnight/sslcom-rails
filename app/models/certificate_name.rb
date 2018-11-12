@@ -202,7 +202,7 @@ class CertificateName < ActiveRecord::Base
       whois_addresses = WhoisLookup.
           email_addresses(Whois.whois(ActionDispatch::Http::URL.extract_domain(name, 1)).inspect)
       whois_addresses.each do |ad|
-        standard_addresses << ad.downcase unless ad =~/abuse@/i
+        standard_addresses << ad.downcase unless ad =~/abuse.*?@/i
       end
     rescue Exception=>e
       logger.error e.backtrace.inspect
