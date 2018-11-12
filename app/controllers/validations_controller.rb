@@ -240,7 +240,7 @@ class ValidationsController < ApplicationController
     returnObj = {}
     if current_user
       addresses = params['total_domains'].to_i > Validation::COMODO_EMAIL_LOOKUP_THRESHHOLD ?
-                      DomainControlValidation.email_address_choices(params['domain_name']) :
+                      CertificateName.candidate_email_addresses(params['domain_name']) :
                       ComodoApi.domain_control_email_choices(params['domain_name']).email_address_choices
       addresses.delete("none")
 
@@ -279,7 +279,7 @@ class ValidationsController < ApplicationController
         addresses =
           if co.certificate_content.ca.blank? and co.external_order_number
             params['domain_count'].to_i > Validation::COMODO_EMAIL_LOOKUP_THRESHHOLD ?
-                DomainControlValidation.email_address_choices(cn.name) :
+                CertificateName.candidate_email_addresses(cn.name) :
                 ComodoApi.domain_control_email_choices(cn.name).email_address_choices
           else
             cn.candidate_email_addresses

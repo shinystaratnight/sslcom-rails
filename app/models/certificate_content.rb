@@ -372,15 +372,19 @@ class CertificateContent < ActiveRecord::Base
           )
         end
       else
-        name.domain_control_validations.create(dcv_method: "email", email_address: v["dcv"],
-                                              failure_action: v["dcv_failure_action"], candidate_addresses: cur_email)
-        # assume the first name is the common name
-        self.csr.domain_control_validations.create(
-            dcv_method: "email",
-            email_address: v["dcv"],
-            failure_action: v["dcv_failure_action"],
-            candidate_addresses: cur_email
-        ) if (i == 0 && !certificate_order.certificate.is_ucc?)
+        candidate_addresses=name.candidate_email_addresses
+        if candidate_addresses.include?(v["dcv"])
+          name.domain_control_validations.create(dcv_method: "email", email_address: v["dcv"],
+                                                 failure_action: v["dcv_failure_action"],
+                                                 candidate_addresses: candidate_addresses)
+          # assume the first name is the common name
+          self.csr.domain_control_validations.create(
+              dcv_method: "email",
+              email_address: v["dcv"],
+              failure_action: v["dcv_failure_action"],
+              candidate_addresses: candidate_addresses
+          ) if (i == 0 && !certificate_order.certificate.is_ucc?)
+        end
       end
       i+=1
     end

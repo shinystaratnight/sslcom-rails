@@ -192,8 +192,11 @@ class CertificateName < ActiveRecord::Base
     CaaCheck::CAA_COMMAND.call name
   end
 
-  # cached expires in 1 hour in case the domain name registration is changed
   def candidate_email_addresses
+    CertificateName.candidate_email_addresses(name)
+  end
+
+  def self.candidate_email_addresses(name)
     standard_addresses = DomainControlValidation.email_address_choices(name)
     begin
       whois_addresses = WhoisLookup.

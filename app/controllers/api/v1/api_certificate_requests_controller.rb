@@ -168,21 +168,23 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
 
                 unless dcv.identifier_found
                   if dcv.dcv_method == 'email'
-                    if dcv.email_address != email_for_identifier
-                      if domain_list.length > 0
-                        domain_ary << domain_list
-                        email_list << email_for_identifier
-                        identifier_list << identifier
-                        domain_list = []
+                    if dcv.candidate_addresses.include?(dcv.email_address)
+                      if dcv.email_address != email_for_identifier
+                        if domain_list.length > 0
+                          domain_ary << domain_list
+                          email_list << email_for_identifier
+                          identifier_list << identifier
+                          domain_list = []
+                        end
+
+                        identifier = (SecureRandom.hex(8)+Time.now.to_i.to_s(32))[0..19]
+                        email_for_identifier = dcv.email_address
                       end
 
-                      identifier = (SecureRandom.hex(8)+Time.now.to_i.to_s(32))[0..19]
-                      email_for_identifier = dcv.email_address
+                      domain_list << cn.name
+                      emailed_domains << cn.name
+                      dcv.update_attribute(:identifier, identifier)
                     end
-
-                    domain_list << cn.name
-                    emailed_domains << cn.name
-                    dcv.update_attribute(:identifier, identifier)
                   else
                     if cn.dcv_verify(dcv.dcv_method)
                       dcv.satisfy! unless dcv.satisfied?
@@ -269,20 +271,22 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
                 dcv = cn.domain_control_validations.last
                 unless dcv.identifier_found
                   if dcv.dcv_method == 'email'
-                    if dcv.email_address != email_for_identifier
-                      if domain_list.length>0
-                        domain_ary << domain_list
-                        email_list << email_for_identifier
-                        identifier_list << identifier
-                        domain_list = []
+                    if dcv.candidate_addresses.include?(dcv.email_address)
+                      if dcv.email_address != email_for_identifier
+                        if domain_list.length>0
+                          domain_ary << domain_list
+                          email_list << email_for_identifier
+                          identifier_list << identifier
+                          domain_list = []
+                        end
+                        identifier = (SecureRandom.hex(8)+Time.now.to_i.to_s(32))[0..19]
+                        email_for_identifier = dcv.email_address
                       end
-                      identifier = (SecureRandom.hex(8)+Time.now.to_i.to_s(32))[0..19]
-                      email_for_identifier = dcv.email_address
-                    end
 
-                    domain_list << cn.name
-                    emailed_domains << cn.name
-                    dcv.update_attribute(:identifier, identifier)
+                      domain_list << cn.name
+                      emailed_domains << cn.name
+                      dcv.update_attribute(:identifier, identifier)
+                    end
                   else
                     if cn.dcv_verify(dcv.dcv_method)
                       dcv.satisfy! unless dcv.satisfied?
