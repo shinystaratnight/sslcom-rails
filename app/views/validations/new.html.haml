@@ -61,6 +61,8 @@
       %tr
         %td(colspan="2") (* Any domain name removals or edits will require updating the unique value after clicking the Validate button.)
   =hidden_field_tag :ori_domain_names_str, co.certificate_content.certificate_names.pluck(:name).uniq.join(',')
+  =hidden_field_tag :exist_removed_domain, 'false'
+
   =form_tag('', method: :post, class: :api_certificate_request) do
     =hidden_field_tag :account_key, current_user.ssl_account.api_credential.account_key
     =hidden_field_tag :secret_key, current_user.ssl_account.api_credential.secret_key

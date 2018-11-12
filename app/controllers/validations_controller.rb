@@ -208,6 +208,9 @@ class ValidationsController < ApplicationController
             NotificationGroup.auto_manage_cert_name(certificate_content, 'delete', cn_obj)
 
             # Remove Domain Object
+            dcvs = cn_obj.domain_control_validations
+            dcvs.destroy_all if dcvs.size > 0
+
             cn_obj.destroy
 
             # TODO: Remove cache for removed domain
