@@ -402,7 +402,14 @@
                             %strong 
                               %i{class: 'fa fa-cogs'} 
                               status:
-                            %span #{sc.status.upcase}
+                            - if sc.revoked?
+                              - sys_log = sc.system_audits.where("system_audits.notes LIKE ?", "%revoked%").last
+                              - if sys_log
+                                %span REVOKED on #{sys_log.created_at.strftime('%F')} by #{sys_log.owner.email}
+                            
+                            - unless sys_log
+                              %span #{sc.status.upcase}
+
                             - if current_user.is_system_admins? and !sc.revoked?
                               - select_id = "sel-cert-content-revoke-#{sc.id}"
                               - dialog_id = "dialog-form-#{sc.id}"
