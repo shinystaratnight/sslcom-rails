@@ -19,11 +19,9 @@ class Folder < ActiveRecord::Base
   attr_reader :total_certificate_orders
   
   def cached_certificate_orders
-    Rails.cache.fetch("#{cache_key}/cached_certificate_orders") do
-      certificate_orders.includes(
-        {certificate_contents: [:signed_certificates, :registrant]}
-      ).to_a
-    end
+    CertificateOrder.where(id: (Rails.cache.fetch("#{cache_key}/cached_certificate_orders") do
+      certificate_orders.pluck(:id)
+    end)).includes({certificate_contents: [:signed_certificates, :registrant]}).order(created_at: :desc)
   end
 
   def get_folder_path

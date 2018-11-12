@@ -282,7 +282,7 @@ class ValidationsController < ApplicationController
                 DomainControlValidation.email_address_choices(cn.name) :
                 ComodoApi.domain_control_email_choices(cn.name).email_address_choices
           else
-            DomainControlValidation.email_address_choices(cn.name)
+            cn.candidate_email_addresses
           end
         addresses.delete("none")
 
@@ -317,7 +317,7 @@ class ValidationsController < ApplicationController
           }
         else
           optionsObj = {}
-          addresses = DomainControlValidation.email_address_choices(cn.name)
+          addresses ||= cn.candidate_email_addresses
 
           viaEmail = {}
           viaCSR = {}

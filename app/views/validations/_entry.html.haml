@@ -219,4 +219,4 @@
                       %li
                         #{cn.name}
                         %ul
-                          %li #{dcv ? "validated by #{dcv.dcv_method} on #{dcv.responded_at.strftime("%b %d, %Y %R %Z")} with #{identifier}" : "pending validation"}
+                          %li #{dcv ? "validated by #{dcv.dcv_method} on #{dcv.responded_at.strftime("%b %d, %Y %R %Z") if dcv.responded_at} with #{identifier}" : "pending validation"}

@@ -184,36 +184,28 @@ class CertificateOrdersController < ApplicationController
       else
         @certificate = @certificate_order.mapped_certificate
 
-        unless @certificate.admin_submit_csr?
-          if @certificate_order.is_unused_credit?
-            @certificate_order.has_csr=true
-            @certificate_content = @certificate_order.certificate_content
-            @certificate_content.agreement=true
+        if @certificate_order.is_unused_credit?
+          @certificate_order.has_csr=true
+          @certificate_content = @certificate_order.certificate_content
+          @certificate_content.agreement=true
 
-            @notification_groups = current_user.ssl_account.notification_groups.pluck(:friendly_name, :ref)
-            @notification_groups.insert(0, ['none', 'none']) if @notification_groups.empty?
+          @notification_groups = @ssl_account.notification_groups.pluck(:friendly_name, :ref)
+          @notification_groups.insert(0, ['none', 'none']) if @notification_groups.empty?
 
-            @managed_csrs = (current_user.ssl_account.all_csrs)
-                                .sort_by{|arr| arr.common_name}
-                                .uniq{|arr| [arr.common_name, arr.public_key_sha1]}
-                                .map{|arr| [arr.common_name+' '+ arr.public_key_sha1, arr.ref]}
-                                .delete_if{|arr| arr.second == nil}
-            @managed_csrs.insert(0, ['none', 'none'])
-
-            # @managed_domains = current_user.ssl_account.domains.map{|arr| [arr.name, 'domain-' + arr.name]}
-
-            return render '/certificates/buy', :layout=>'application'
-          end
-          unless @certificate_order.certificate_content.csr_submitted? or params[:registrant]
-            redirect_to certificate_order_path(@ssl_slug, @certificate_order)
-          else
-            @csr = @certificate_order.certificate_content.csr
-            registrants_on_edit
-          end
+          @managed_csrs = (@certificate_order.ssl_account.all_csrs)
+                              .sort_by{|arr| arr.common_name}
+                              .map{|arr| [(arr.friendly_name || arr.common_name)+' '+ arr.public_key_sha1, arr.ref]}
+                              .delete_if{|arr| arr.second == nil}
+          @managed_csrs.insert(0, ['none', 'none'])
+          return render '/certificates/buy', :layout=>'application'
+        end
+        unless @certificate_order.certificate_content.csr_submitted? or params[:registrant]
+          redirect_to certificate_order_path(@ssl_slug, @certificate_order)
         else
+          @csr = @certificate_order.certificate_content.csr
           registrants_on_edit
         end
-        @saved_registrants = current_user.ssl_account.saved_registrants
+        @saved_registrants = @ssl_account.saved_registrants
       end
     else
       not_found
@@ -252,9 +244,8 @@ class CertificateOrdersController < ApplicationController
         notification_group_subject = @certificate_order.notification_groups_subjects.where(created_page: 'csr').first
         @slt_notification_group = [notification_group_subject.notification_group.ref] if notification_group_subject
 
-        @managed_csrs = (current_user.ssl_account.all_csrs)
-                            .sort_by{|arr| arr.created_at}
-                            .uniq{|arr| [arr.public_key_sha1]}
+        @managed_csrs = (@ssl_account.all_csrs)
+                            .sort_by{|arr| arr.common_name}
                             .map{|arr| [(arr.friendly_name || arr.common_name)+' '+ arr.public_key_sha1, arr.ref]}
                             .delete_if{|arr| arr.second == nil}
         @managed_csrs.insert(0, ['none', 'none'])
