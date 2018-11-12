@@ -45,6 +45,7 @@
         %tr
           %td(colspan="5")
             There are no csrs
-  #button_container
-    #auto_adjust
-      =submit_tag "Validate", :id=>"validate_domains", :disable_with=>"Submitting..."
+  -if @csrs && @csrs.length > 0
+    #button_container
+      #auto_adjust
+        =submit_tag "Validate", :id=>"validate_domains", :disable_with=>"Submitting..."

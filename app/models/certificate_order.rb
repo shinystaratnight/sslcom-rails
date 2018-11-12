@@ -133,7 +133,8 @@ class CertificateOrder < ActiveRecord::Base
     result = not_new
     # if 'is_test' and 'order_by_csr' are the only search terms, keep it simple
     result = result.includes(ssl_account: :users, certificate_contents: :csr).joins{certificate_contents.outer}.joins{certificate_contents.csr.outer}.
-              joins{certificate_contents.signed_certificates.outer} unless (
+              joins{certificate_contents.signed_certificates.outer}.joins{ssl_account.outer}.
+              joins{ssl_account.users.outer} unless (
                   term.blank? and
                   !filters.map{|k,v|k.to_s unless v.blank?}.compact.empty? and
                   (filters.map{|k,v|k.to_s unless v.blank?}.compact - %w(is_test order_by_csr ref)).empty?)

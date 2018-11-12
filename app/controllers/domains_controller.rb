@@ -52,15 +52,19 @@ class DomainsController < ApplicationController
       redirect_to domains_path(@ssl_slug)
       return
     end
-    @addresses = DomainControlValidation.email_address_choices(@domain.name)
+    @addresses = CertificateName.candidate_email_addresses(@domain.name)
     if params[:authenticity_token]
       if params[:dcv_address]=~EmailValidator::EMAIL_FORMAT
-        identifier = (SecureRandom.hex(8)+Time.now.to_i.to_s(32))[0..19]
-        @domain.domain_control_validations.create(dcv_method: "email", email_address: params[:dcv_address],
-                                                  identifier: identifier, failure_action: "ignore", candidate_addresses: @addresses)
-        OrderNotifier.dcv_email_send(nil, params[:dcv_address], identifier, [@domain.name], @domain.id, @ssl_slug, 'team').deliver
-        @domain.domain_control_validations.last.send_dcv!
-        flash[:notice] = "Validation email has been sent."
+        if @addresses.include?(params[:dcv_address])
+          identifier = (SecureRandom.hex(8)+Time.now.to_i.to_s(32))[0..19]
+          @domain.domain_control_validations.create(dcv_method: "email", email_address: params[:dcv_address],
+                                                    identifier: identifier, failure_action: "ignore", candidate_addresses: @addresses)
+          OrderNotifier.dcv_email_send(nil, params[:dcv_address], identifier, [@domain.name], @domain.id, @ssl_slug, 'team').deliver
+          @domain.domain_control_validations.last.send_dcv!
+          flash[:notice] = "Validation email has been sent."
+        else
+          flash[:notice] = "Invalid recipient email address."
+        end
       end
     end
   end
@@ -76,14 +80,14 @@ class DomainsController < ApplicationController
       dcv = cn.domain_control_validations.last
       next if dcv && dcv.identifier_found
       @all_domains << cn
-      @address_choices << DomainControlValidation.email_address_choices(cn.name)
+      @address_choices << CertificateName.candidate_email_addresses(cn.name)
     end
     @domains = @ssl_account.domains.order(created_at: :desc)
     @domains.each do |dn|
       dcv = dn.domain_control_validations.last
       next if dcv && dcv.identifier_found
       @all_domains << dn
-      @address_choices << DomainControlValidation.email_address_choices(dn.name)
+      @address_choices << CertificateName.candidate_email_addresses(dn.name)
     end
   end
 
@@ -106,7 +110,7 @@ class DomainsController < ApplicationController
       if is_sent
         flash[:notice] = "Please check your email for the validation code and submit it below to complete validation."
       else
-        flash[:error] = "You have not choose validation email address for all domains."
+        flash[:error] = "Please select a valid email address."
       end
 
       @validation_url = dcv_all_validate_domains_url(params)
@@ -120,16 +124,7 @@ class DomainsController < ApplicationController
         dcv = dn.domain_control_validations.last
         next if dcv && dcv.identifier_found
         @all_domains << dn
-        standard_addresses = DomainControlValidation.email_address_choices(dn.name)
-        begin
-          whois_addresses = WhoisLookup.email_addresses(Whois.whois(ActionDispatch::Http::URL.extract_domain(dn.name, 1)).inspect)
-          whois_addresses.each do |ad|
-            standard_addresses << ad unless ad.include? 'abuse@'
-          end
-        rescue Exception=>e
-          logger.error e.backtrace.inspect
-        end
-        @address_choices << standard_addresses
+        @address_choices << dn.candidate_email_addresses
 
         @domain_details[dn.name] = {}
         @domain_details[dn.name]['dcv_method'] = dcv ? dcv.email_address : ''
@@ -164,15 +159,10 @@ class DomainsController < ApplicationController
       params[:d_name_selected].each do |d_id|
         dn = CertificateName.find_by_id(d_id)
         @selected_domains << dn
-        standard_addresses = DomainControlValidation.email_address_choices(dn.name)
-        whois_addresses = WhoisLookup.email_addresses(Whois.whois(ActionDispatch::Http::URL.extract_domain(dn.name, 1)).inspect)
-        whois_addresses.each do |ad|
-          standard_addresses << ad unless ad.include? 'abuse@'
-        end
         if @selected_domains.blank?
           redirect_to domains_path(@ssl_slug)
         end
-        @address_choices << standard_addresses
+        @address_choices << dn.candidate_email_addresses
 
         @domain_details[dn.name] = {}
         dcv_last = dn.domain_control_validations.last
@@ -192,7 +182,7 @@ class DomainsController < ApplicationController
         @domain_details[dn.name]['status'] = dcv_last ? (dcv_last.satisfied? ? 'satisfied' : 'pending') : 'waiting'
       end
       @csr = Csr.find_by_id(params[:selected_csr])
-      if @csr.nil?
+      if @csr.blank?
         redirect_to domains_path(@ssl_slug)
       end
       dcvs = @csr.csr_unique_value.domain_control_validations
@@ -201,12 +191,7 @@ class DomainsController < ApplicationController
         dn = CertificateName.find_by_id(dcv.certificate_name_id)
         next if @selected_domains.include?(dn)
         @selected_domains << dn
-        standard_addresses = DomainControlValidation.email_address_choices(dn.name)
-        whois_addresses = WhoisLookup.email_addresses(Whois.whois(ActionDispatch::Http::URL.extract_domain(dn.name, 1)).inspect)
-        whois_addresses.each do |ad|
-          standard_addresses << ad unless ad.include? 'abuse@'
-        end
-        @address_choices << standard_addresses
+        @address_choices << dn.candidate_email_addresses
 
         @domain_details[dn.name] = {}
         dcv_last = dn.domain_control_validations.last
@@ -239,12 +224,7 @@ class DomainsController < ApplicationController
         dn = CertificateName.find_by_id(dcv.certificate_name_id)
         next if @selected_domains.include?(dn)
         @selected_domains << dn
-        standard_addresses = DomainControlValidation.email_address_choices(dn.name)
-        whois_addresses = WhoisLookup.email_addresses(Whois.whois(ActionDispatch::Http::URL.extract_domain(dn.name, 1)).inspect)
-        whois_addresses.each do |ad|
-          standard_addresses << ad unless ad.include? 'abuse@'
-        end
-        @address_choices << standard_addresses
+        @address_choices << dn.candidate_email_addresses
 
         @domain_details[dn.name] = {}
         dcv_last = dn.domain_control_validations.last
@@ -277,14 +257,11 @@ class DomainsController < ApplicationController
       d_name_ids.each_with_index do |id, index|
         cn = CertificateName.find_by_id(id)
         @selected_domains << cn
-        standard_addresses = DomainControlValidation.email_address_choices(cn.name)
-        whois_addresses = WhoisLookup.email_addresses(Whois.whois(ActionDispatch::Http::URL.extract_domain(cn.name, 1)).inspect)
-        whois_addresses.each do |ad|
-          standard_addresses << ad unless ad.include? 'abuse@'
-        end
-        @address_choices << standard_addresses
+        @address_choices << cn.candidate_email_addresses
         if addresses[index]=~EmailValidator::EMAIL_FORMAT
-          cn.domain_control_validations.create(dcv_method: "email", email_address: addresses[index], csr_unique_value_id: @csr.csr_unique_value.id)
+          cn.domain_control_validations.create(dcv_method: "email", email_address: addresses[index],
+                                               candidate_addresses: @address_choices, csr_unique_value_id:
+                                               @csr.csr_unique_value.id) if @address_choices.include?(addresses[index])
         elsif addresses[index] == 'http_csr_hash'
           cn.domain_control_validations.create(dcv_method: "http_csr_hash", failure_action: "ignore", csr_unique_value_id: @csr.csr_unique_value.id)
         elsif addresses[index] == 'https_csr_hash'
@@ -308,20 +285,22 @@ class DomainsController < ApplicationController
       cnames.each do |cn|
         dcv = cn.domain_control_validations.last
         if dcv.dcv_method == 'email'
-          if dcv.email_address != email_for_identifier
-            if domain_list.length>0
-              domain_ary << domain_list
-              email_list << email_for_identifier
-              identifier_list << identifier
-              domain_list = []
+          if dcv.candidate_addresses.include?(dcv.email_address)
+            if dcv.email_address != email_for_identifier
+              if domain_list.length>0
+                domain_ary << domain_list
+                email_list << email_for_identifier
+                identifier_list << identifier
+                domain_list = []
+              end
+              identifier = (SecureRandom.hex(8)+Time.now.to_i.to_s(32))[0..19]
+              email_for_identifier = dcv.email_address
             end
-            identifier = (SecureRandom.hex(8)+Time.now.to_i.to_s(32))[0..19]
-            email_for_identifier = dcv.email_address
+            domain_list << cn.name
+            emailed_domains << cn.name
+            dcv.update_attribute(:identifier, identifier)
+            dcv.send_dcv!
           end
-          domain_list << cn.name
-          emailed_domains << cn.name
-          dcv.update_attribute(:identifier, identifier)
-          dcv.send_dcv!
         else
           if dcv_verify(dcv.dcv_method, cn.name, @csr)
             succeeded_domains << cn.name
@@ -408,7 +387,7 @@ class DomainsController < ApplicationController
           validated << cn.name
           unless dcv.satisfied?
             dcv.satisfy!
-            cn.certificate_order.apply_for_certificate
+            cn.certificate_content.certificate_order.apply_for_certificate if cn.certificate_content
             # CaaCheck.pass?(@ssl_account.acct_number + 'domains', cn, nil)
           end
           # find similar order scope domain (or create a new team scoped domain) and validate it
@@ -439,7 +418,8 @@ class DomainsController < ApplicationController
     d_name_ids.each_with_index do |id, index|
       if addresses[index] =~ EmailValidator::EMAIL_FORMAT
         cn = CertificateName.find_by_id(id)
-        cn.domain_control_validations.create(dcv_method: "email", email_address: addresses[index])
+        cn.domain_control_validations.create(dcv_method: "email", email_address: addresses[index],
+                                             candidate_addresses: cn.candidate_email_addresses)
         cnames << cn
       end
     end
@@ -451,19 +431,21 @@ class DomainsController < ApplicationController
     domain_list = []
     cnames.each do |cn|
       dcv = cn.domain_control_validations.last
-      if dcv.email_address != email_for_identifier
-        if domain_list.length > 0
-          domain_ary << domain_list
-          email_list << email_for_identifier
-          identifier_list << identifier
-          domain_list = []
+      if dcv.candidate_addresses.include?(dcv.email_address)
+        if dcv.email_address != email_for_identifier
+          if domain_list.length > 0
+            domain_ary << domain_list
+            email_list << email_for_identifier
+            identifier_list << identifier
+            domain_list = []
+          end
+          identifier = (SecureRandom.hex(8) + Time.now.to_i.to_s(32))[0..19]
+          email_for_identifier = dcv.email_address
         end
-        identifier = (SecureRandom.hex(8) + Time.now.to_i.to_s(32))[0..19]
-        email_for_identifier = dcv.email_address
+        domain_list << cn.name
+        dcv.update_attribute(:identifier, identifier)
+        dcv.send_dcv!
       end
-      domain_list << cn.name
-      dcv.update_attribute(:identifier, identifier)
-      dcv.send_dcv!
     end
     domain_ary << domain_list
     email_list << email_for_identifier
