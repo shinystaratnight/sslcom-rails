@@ -59,7 +59,7 @@ class CertificateContent < ActiveRecord::Base
     google\.com hamdami\.com mossad\.gov\.il sis\.gov\.uk microsoft\.com google\.com
     yahoo\.com login\.skype\.com mozilla\.org \.live\.com global\strustee)
 
-  WHITELIST = {492127=> %w((\.|^)ssl\.com$), 491981=> %w((\.|^)ssl\.com$), 493588=> %w((\.|^)ssl\.com$) }
+  WHITELIST = {492127=> %w((\.|^)ssl\.com$), 491981=> %w((\.|^)ssl\.com$), 493588=> %w((\.|^)ssl\.com$), 464808 => %w((\.|^)ssl\.com$)}
 
   DOMAIN_COUNT_OFFLOAD=50
 
