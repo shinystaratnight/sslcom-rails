@@ -385,12 +385,7 @@ class Certificate < ActiveRecord::Base
   def admin_submit_csr?
     is_evcs? or
     is_cs? or
-    is_smime? or
-    is_client? or
-    is_client_basic? or
-    is_client_business? or
-    is_client_enterprise? or
-    is_client_pro?
+    is_smime_or_client?
   end
 
   def is_server?
