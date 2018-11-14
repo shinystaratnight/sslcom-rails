@@ -21,6 +21,10 @@ class SslAccount < ActiveRecord::Base
     def revoked
       joins{signed_certificates}.where{signed_certificates.status=="revoked"}
     end
+
+    def unused
+      joins(:certificate_contents).where{certificate_contents.workflow_state == 'new'}
+    end
   end
   has_many  :validations, through: :certificate_orders
   has_many  :site_seals, through: :certificate_orders

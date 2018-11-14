@@ -51,6 +51,79 @@ jQuery(function($) {
       }
 
     });
+
+    // Show / Hide CSR field for past own CSR.
+    $('.own_csr').click(function() {
+      if ($(this).prop('checked')) {
+        $('#csr').val('');
+        $('.csr_wrap').show();
+        $('.generate_cert').prop('disabled', true);
+        $('.generate_wrap').hide();
+        $('#upload_validations').hide();
+      } else {
+        $('.csr_wrap').hide();
+        $('.generate_cert').prop('disabled', false);
+        $('.generate_wrap').show();
+        $('#upload_validations').hide();
+      }
+    });
+
+    // Show / Hide Validate button only if CSR value exist.
+    $(document).on('blur keyup', '#csr', function() {
+      if ($(this).val() == '') {
+        $('#upload_validations').hide();
+      } else {
+        $('#upload_validations').show();
+      }
+    });
+
+    // Generate CSR based on inputted Common Info and SANs.
+    $('.generate_cert').click(function() {
+      // Adding loading bar while generate CSR, Private Key and Certificate.
+      var page_loader_wrap = $('<div></div>');
+      page_loader_wrap.attr('class', 'page_loader_wrap');
+
+      var page_loader = $('<div></div>');
+      page_loader.attr('class', 'page_loader');
+
+      page_loader_wrap.append(page_loader);
+
+      window.scrollTo(0, 0);
+      $('body').addClass('no_scroll_y');
+      page_loader_wrap.insertBefore($('#header'));
+
+      // Getting Common Info
+      const info = {};
+      info['commonname'] = $('#commonname').val();
+      info['email'] = $('#email').val();
+      info['organization'] = $('#organization').val();
+      info['organizationalunit'] = $('#organizationalunit').val();
+      info['address'] = $('#address').val();
+      info['locality'] = $('#locality').val();
+      info['state'] = $('#state').val();
+      info['country'] = $('#country').val();
+      info['zipcode'] = $('#zipcode').val();
+
+      // Getting SANs array
+      var sans = [];
+      var sans_str = $('#sans').val();
+      if (sans_str != '') {
+        sans_str = sans_str.replace(/,/g, ' ').replace(/\s\s+/g, ' ').replace(/(\r\n|\n|\r)/gm, ' ');
+        sans = sans_str.split(' ');
+      }
+
+      // Generate CSR.
+      generateCSR(info, sans, undefined, function(csr, pkey) {
+        $('#csr').val(csr);
+        $('.generate_wrap').hide();
+        $('.csr_wrap').show();
+        $('#upload_validations').show();
+
+        $('.page_loader_wrap').hide();
+        $('body').removeClass('no_scroll_y');
+      });
+    });
+
   });
 });
 </script>
