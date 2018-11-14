@@ -7,6 +7,7 @@
     =submit_tag 'search'
 #validations
   %table(cellspacing='0')
+    -profiles_list = @billing_profiles.reject{|bp|bp.expired?}
     -if will_paginate @billing_profiles
       %tfoot
         %tr
@@ -20,32 +21,38 @@
       %th(scope='col')Added
       %th(scope='col')Default
       %th(scope='col')
-    -@billing_profiles.reject{|bp|bp.expired?}.each do |profile|
-      -if permitted_to?(:edit, profile) || current_user.is_system_admins?
-        %tr[profile]
-          %td#card-name
-            =profile.credit_card
-          %td
-            =current_user.is_super_user? ? profile.card_number : profile.masked_card_number
-          %td
-            %strong
-              ="%02d/%04d" % [profile.expiration_month, profile.expiration_year]
-          %td
-            =profile.created_at.strftime('%F')
-          %td
-            -if profile.default_profile
-              ="&#10003;".html_safe
-            -else
-              =link_to "set default", billing_profile_path(@ssl_slug, profile.id, set_default: true),      |
-              data: {confirm: "Change default billing profile to card ending in #{profile.last_digits}?"}, |
-              method: :put, id: 'btn-bp-default'
-          %td= destroy_credit_card_link(profile, id: 'btn-bp-delete')
+    -if profiles_list.any?
+      -profiles_list.each do |profile|
+        -if permitted_to?(:edit, profile) || current_user.is_system_admins?
+          %tr[profile]
+            %td#card-name
+              =profile.credit_card
+            %td
+              =current_user.is_super_user? ? profile.card_number : profile.masked_card_number
+            %td
+              %strong
+                ="%02d/%04d" % [profile.expiration_month, profile.expiration_year]
+            %td
+              =profile.created_at.strftime('%F')
+            %td
+              -if profile.default_profile
+                ="&#10003;".html_safe
+              -else
+                =link_to "set default", billing_profile_path(@ssl_slug, profile.id, set_default: true),      |
+                data: {confirm: "Change default billing profile to card ending in #{profile.last_digits}?"}, |
+                method: :put, id: 'btn-bp-default'
+            %td= destroy_credit_card_link(profile, id: 'btn-bp-delete')
+    -else
+      %tr
+        %td{colspan: '6'} Empty
 
 -if permitted_to? :index, :billing_profiles
   %a#expand_register_card{href: 'javascript:void(0);'}
     =image_tag 'add_new_billing_profile.png', alt: 'click here to add a new credit card', id: 'toggle_billing_profile_form'
-  #stylized.billing_index_form
-    #register_card_form{initial_display?}
+  %br/
+  %br/
+  #register_card_form.billing_index_form{initial_display?}
+    #stylized
       =error_messages_for 'billing_profile'
       =form_for @billing_profile do |form|
         =hidden_field_tag :manage_billing_profiles, true
