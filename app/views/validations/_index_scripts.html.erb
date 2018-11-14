@@ -397,6 +397,18 @@ jQuery(function($) {
         }
       }
     });
+
+    function uploadInstructionsLink(link) {
+      return (
+        "Upload <a href='"
+        + '<%= http_dcv_file_csr_path(@ssl_slug, @certificate_order.csr.id) %>'
+        + "' class='lnk-upload-thisfile'>"
+        + "THIS FILE</a> to this location: "
+        + "<i class='fa fa-external-link fa-ssl-custom'></i>"
+        + "<a href='" + link + "' target='_new'>" + link + "</a>"
+      );
+    }
+
     <%if @certificate_order and !@certificate_order.certificate.is_code_signing? and @certificate_order.csr%>
       <%
         is_single = @certificate_order.certificate.is_single?
@@ -444,7 +456,7 @@ jQuery(function($) {
           $('td.pretest[class~="'+$(dcv_select).attr("alt")+'"]').html("n/a");
         }
         else if(/https/.test(methods[0])){
-          instructions="Upload <a href='<%=http_dcv_file_csr_path(@ssl_slug, @certificate_order.csr.id)%>'>this file</a> to this location: <a href='"+https+"' target='_new'>"+https+"</a>";
+          instructions = uploadInstructionsLink(https);
           $(instruction).html(instructions);
           $.ajax({url: '<%=verification_check_csr_path(@ssl_slug, @certificate_order.csr.id)%>?protocol=https&dcv='+
             $(dcv_select).parents('tr').attr('id')+'&new_name='+$(dcv_select).attr('alt')+'&ref='+$(dcv_select).parents('tbody').attr('data-ref')}).done(
@@ -524,7 +536,7 @@ jQuery(function($) {
               });
         }
         else if(/http/.test(methods[0])){
-          instructions="Upload <a href='<%=http_dcv_file_csr_path(@ssl_slug, @certificate_order.csr.id)%>'>this file</a> to this location: <a href='"+http+"' target='_new'>"+http+"</a>";
+          instructions = uploadInstructionsLink(http);
           $(instruction).html(instructions);
           $.ajax({url: '<%=verification_check_csr_path(@ssl_slug, @certificate_order.csr.id)%>?protocol=http&dcv='+
             $(dcv_select).parents('tr').attr('id')+'&new_name='+$(dcv_select).attr('alt')+'&ref='+$(dcv_select).parents('tbody').attr('data-ref')}).done(

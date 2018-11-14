@@ -234,7 +234,7 @@ class SslAccount < ActiveRecord::Base
             # do they have the same public key
             (domain.csr and certificate_name.csr and domain.csr.public_key_sha1==certificate_name.csr.public_key_sha1))
           certificate_name.domain_control_validations.create(dcv.attributes.except("id"))
-          certificate_name.certificate_order.apply_for_certificate
+          certificate_name.certificate_content.certificate_order.apply_for_certificate if certificate_name.certificate_content
           satisfied_names << certificate_name.name
         end
       end
@@ -246,15 +246,16 @@ class SslAccount < ActiveRecord::Base
   def other_dcvs_satisfy_domain(certificate_name)
     cnames = all_certificate_names
     cnames.each do |cn|
-      if DomainControlValidation.domain_in_subdomains?(cn.name,certificate_name.name) and
-          # team validated domain
-          (cn.certificate_content_id==nil or
-          # do they have the same public key
-          (cn.csr and certificate_name.csr and cn.csr.public_key_sha1==certificate_name.csr.public_key_sha1))
+      if cn.id!=certificate_name.id and DomainControlValidation.domain_in_subdomains?(cn.name,certificate_name.name)
         dcv = cn.domain_control_validations.last
         if dcv && dcv.identifier_found
-          certificate_name.domain_control_validations.create(dcv.attributes.except("id"))
-          break
+          # email validation
+          if dcv.dcv_method =~ /email/ or
+          # http/s or cname must have the same public key
+              (cn.csr and certificate_name.csr and cn.csr.public_key_sha1==certificate_name.csr.public_key_sha1)
+            certificate_name.domain_control_validations.create(dcv.attributes.except("id"))
+            break
+          end
         end
       end
     end
@@ -433,7 +434,7 @@ class SslAccount < ActiveRecord::Base
       Order.where(reference_number: refs).each do |o|
         to_sa.certificate_orders << o.cached_certificate_orders
         o.cached_certificate_orders.each do |co|
-          co_orders = co.cached_orders
+          co_orders = co.orders
           to_sa.orders << co_orders
           orders_list << co_orders
           co_list << co

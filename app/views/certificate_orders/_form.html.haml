@@ -11,7 +11,8 @@
     - if @saved_registrants.try "any?".to_sym
       .clearfix
         -saved_contacts = render_saved_contacts(@saved_registrants, :with_data)
-        =label_tag 'saved_registrants'
+        %label{for: 'saved_registrants'}
+          Saved Registrants:
         =select_tag :saved_contacts, options_for_select(saved_contacts), include_blank: true
     .clearfix
       %label{:for=>"common_name"}
@@ -40,17 +41,13 @@
           =rf.hidden_field :parent_id, value: nil, id: 'saved_registrant_id'
           =rf.hidden_field :status, value: rf.object.status, id: 'saved_registrant_status'
       -else
-        .clearfix
-          %label{for: 'registrant_type'}
-            Validated Identity Type:
-          =rf.select :registrant_type, Registrant::registrant_types.keys.map{|key| [key.capitalize, key]}, {selected: 'organization'}, {disabled: true}
+        =rf.hidden_field :registrant_type, value: 'organization'
       
-      -if certificate.is_smime_or_client?
-        .clearfix
-          %label{for: 'save'}
-            Save Registrant:
-            %span.label_desc Save to use in future certificates.
-          = check_box_tag :save_for_later, 'save', false
+      .clearfix
+        %label{for: 'save'}
+          Save Registrant:
+          %span.label_desc Save to use in future certificates.
+        = check_box_tag :save_for_later, 'save', false
 
       .clearfix
         %label{:for=>"company_name"}
