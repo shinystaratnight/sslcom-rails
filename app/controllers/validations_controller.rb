@@ -267,9 +267,9 @@ class ValidationsController < ApplicationController
         ds = params['domain_status']
         dcv = cn.domain_control_validations.last
 
-        if co.certificate_content.ca
+        if dcv and co.certificate_content.ca
           domain_status =
-              if dcv and dcv.identifier_found?
+              if dcv.identifier_found?
                 "validated"
               else
                 co.ssl_account.other_dcvs_satisfy_domain(cn)
