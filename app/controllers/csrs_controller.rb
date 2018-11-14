@@ -79,7 +79,7 @@ class CsrsController < ApplicationController
         if dcv && (dcv.dcv_method == params[:protocol])
           dcv.satisfy! unless dcv.satisfied?
         else
-          dcv=cc.csr.domain_control_validations.create(
+          dcv=csr.domain_control_validations.create(
               dcv_method: params[:protocol],
               candidate_addresses: nil,
               failure_action: 'ignore')

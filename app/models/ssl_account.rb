@@ -434,7 +434,7 @@ class SslAccount < ActiveRecord::Base
       Order.where(reference_number: refs).each do |o|
         to_sa.certificate_orders << o.cached_certificate_orders
         o.cached_certificate_orders.each do |co|
-          co_orders = co.cached_orders
+          co_orders = co.orders
           to_sa.orders << co_orders
           orders_list << co_orders
           co_list << co

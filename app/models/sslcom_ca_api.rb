@@ -238,7 +238,7 @@ class SslcomCaApi
   def self.revoke_ssl(signed_certificate, reason)
     if signed_certificate.is_sslcom_ca?
       host = ca_host(signed_certificate.certificate_content.ca)+"/v1/certificate/revoke"
-      req, res = call_ca(host, options, revoke_cert_json(signed_certificate, SslcomCaRevocationRequest::REASONS[0]))
+      req, res = call_ca(host, {}, revoke_cert_json(signed_certificate, SslcomCaRevocationRequest::REASONS[0]))
       api_log_entry=signed_certificate.sslcom_ca_revocation_requests.create(request_url: host,
                         parameters: req.body, method: "post", response: res.message, ca: "sslcom")
       unless api_log_entry.response=="OK"
