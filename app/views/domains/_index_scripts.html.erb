@@ -137,6 +137,7 @@
         return false;
       };
 
+      <%if @csr%>
       function uploadInstructionsLink(link) {
         return (
           "Upload <a href='"
@@ -148,8 +149,7 @@
         );
       }
 
-      <%if @csr%>
-        $(document).on('change', 'select[id=dcv_methods]', function() {
+      $(document).on('change', 'select[id=dcv_methods]', function() {
           var dcv_select=$(this);
           var dt = new Date();
           var time = (dt.getMonth()+1) + "-"
