@@ -1,20 +1,94 @@
 -title = 'Edit Csr'
 -content_for :title, title
-.reseller_registration_profile
-  %h3=title
-  %p
-    Please enter the csr string.
-  =form_for @csr, url: managed_csr_path(@ssl_slug, @csr.id), method: :put do |f|
-    =f.error_messages
-    #stylized.default_form
-      .subheading Csr
-      =render :partial => "form", :object => f
-    #button_container
-      =f.submit 'Update', class: 'button_blue'
+-#.reseller_registration_profile
+-#  %h3=title
+-#  %p
+-#    Please enter the csr string.
+-#  =form_for @csr, url: managed_csr_path(@ssl_slug, @csr.id), method: :put do |f|
+-#    =f.error_messages
+-#    #stylized.default_form
+-#      .subheading Csr
+-#      =render :partial => "form", :object => f
+-#    #button_container
+-#      =f.submit 'Update', class: 'button_blue'
+-#
+-#-content_for :js do
+-#  :javascript
+-#    $("#user_ssl_account_ids").select2();
+-#    $(document).ready(function() {
+-#      $("#user_ssl_account_ids").select2();
+-#    });
 
--content_for :js do
-  :javascript
-    $("#user_ssl_account_ids").select2();
-    $(document).ready(function() {
-      $("#user_ssl_account_ids").select2();
-    });
+= render :partial => 'index_scripts'
+= javascript_include_tag "promise.min", "webcrypto-liner.shim", "asmcrypto.min", "elliptic.min", "bundle.umd.min", "bundle.pkcs.umd.min"
+= stylesheet_link_tag 'bootstrap_style', :media => 'all'
+%div{:style => 'width: 100%'}
+= form_tag managed_csr_path(@ssl_slug, @csr.id), method: :put, id: 'edit_csr_form' do
+  .row.pt-3
+    .col-md-6
+      = button_tag 'Generate CSR', type: 'button', class: 'generate_cert right', disabled: true
+    .col-md-6{:style=>'font-size: 15px'}
+      %input.own_csr.mr-3{:type=>'checkbox', :style=>'height: 20px; vertical-align: bottom;', :checked => true}  I have my own CSR
+  .row.pt-4
+    .col-md-2
+    .col-md-8
+      .csr_wrap
+        .form-group
+          %label  CSR :
+          = text_area_tag 'csr', @csr.body, class: 'form-control', rows: '5', value: @csr.body
+      .generate_wrap.hidden
+        .row
+          .col-md-6
+            .form-group
+              %label  Common Name :
+              = text_field_tag 'commonname', @csr.common_name, class: 'form-control', placeholder: 'ssl.com'
+          .col-md-6
+            .form-group
+              %label  Email Address :
+              = text_field_tag 'email', @csr.email, class: 'form-control', placeholder: 'support@ssl.com'
+        .row
+          .col-md-6
+            .form-group
+              %label  Organization :
+              = text_field_tag 'organization', @csr.organization, class: 'form-control', placeholder: 'SSL Corp'
+          .col-md-6
+            .form-group
+              %label  Organizational Unit :
+              = text_field_tag 'organizationalunit', @csr.organization_unit, class: 'form-control', placeholder: 'Customer Support'
+        .form-group
+          %label  Address :
+          = text_field_tag 'address', nil, class: 'form-control', placeholder: '3100 Richmond Ave Ste 503'
+        .row
+          .col-md-6
+            .form-group
+              %label  City / Locality :
+              = text_field_tag 'locality', @csr.locality, class: 'form-control', placeholder: 'Hoston'
+          .col-md-6
+            .form-group
+              %label  State / Region :
+              = text_field_tag 'state', @csr.state, class: 'form-control', placeholder: 'Texas'
+        .row
+          .col-md-6
+            .form-group
+              %label  Country (2 letters) :
+              = text_field_tag 'country', @csr.country, class: 'form-control', placeholder: 'US'
+          .col-md-6
+            .form-group
+              %label  Zip Code :
+              = text_field_tag 'zipcode', nil, class: 'form-control', placeholder: '77098'
+        .form-group
+          %label  SANs :
+          = text_area_tag 'sans', @csr.subject_alternative_names.join(' '), class: 'form-control', rows: '2'
+      .form-group
+        %label  Friendly Name :
+        = text_field_tag 'friendly_name', @csr.friendly_name, class: 'form-control'
+      -#.cert_orders_wrap
+        .form-group
+          %label  Certificate Orders :
+          = select_tag 'cert_order', options_for_select(@cert_orders), class: 'form-control'
+    .col-md-2
+  .row.pt-3
+    .col-md-2
+    .col-md-8
+      #upload_validations(style='width: 100%; text-align: center;')
+        =submit_tag "Add", :id=>"validate_domains", :disable_with=>"Submitting..."

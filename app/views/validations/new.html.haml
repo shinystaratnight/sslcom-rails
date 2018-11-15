@@ -5,11 +5,19 @@
   -i=adjusted_position(5, co)
   =order_progress_indicator(i, co.certificate)
 %h3
-  Validation #{'Documentation' unless checkout_in_progress} for
+  -#Validation #{'Documentation' unless checkout_in_progress} for
+  -#-if other_party_request(@certificate_order)
+  -#  Certificate Order ##{@certificate_order.ref}
+  -#-else
+  -#  =link_to "Certificate Order ##{@certificate_order.ref}", certificate_order_path(@ssl_slug, @certificate_order)
+
+  Domain Validations for
   -if other_party_request(@certificate_order)
+    = certificate_type(@certificate_order)
     Certificate Order ##{@certificate_order.ref}
   -else
-    =link_to "Certificate Order ##{@certificate_order.ref}", certificate_order_path(@ssl_slug, @certificate_order)
+    =link_to "#{certificate_type(@certificate_order)} Certificate Order ##{@certificate_order.ref}", certificate_order_path(@ssl_slug, @certificate_order)
+
   =error_messages_for :validation, :dcv, :other_party_validation_request
 -if true #co.certificate.is_ucc?
   .error{style: "display: none;"}
@@ -62,6 +70,8 @@
         %tr
           %td(colspan="2") (* Any domain name removals or edits will require updating the unique value after clicking the Validate button.)
   =hidden_field_tag :ori_domain_names_str, co.certificate_content.certificate_names.pluck(:name).uniq.join(',')
+  =hidden_field_tag :exist_removed_domain, 'false'
+
   =form_tag('', method: :post, class: :api_certificate_request) do
     =hidden_field_tag :account_key, current_user.ssl_account.api_credential.account_key
     =hidden_field_tag :secret_key, current_user.ssl_account.api_credential.secret_key

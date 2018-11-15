@@ -319,7 +319,20 @@ jQuery(function($) {
             names = all_domains.join(' ');*/
           <% end-%>
 
-          <%if Settings.csr_domains_ui%>
+          <%if !Settings.csr_domains_ui%>
+            <%if @certificate.is_basic? || @certificate.is_free? || @certificate.is_high_assurance?%>
+              $('#hidden_www_domain').val('');
+              var domains= [];
+
+              $.each(csr_names, function(index, csr_name) {
+                if ((csr_name.indexOf('www.') == -1) && ($.inArray('www.' + csr_name, domains) == -1)) {
+                  domains.push('www.' + csr_name);
+                }
+              });
+
+              $('#hidden_www_domain').val(domains.join(' '));
+            <%end%>
+          <%else%>
             /*all_domains = names.split(' ');*/
 
             co_type = '';
@@ -578,7 +591,20 @@ jQuery(function($) {
                 $('.add_to_manager_block').show();
               }
 
-              <%if Settings.csr_domains_ui%>
+              <%if !Settings.csr_domains_ui%>
+                <%if @certificate.is_basic? || @certificate.is_free? || @certificate.is_high_assurance?%>
+                  $('#hidden_www_domain').val('');
+                  var domains= [];
+
+                  $.each(csr_names, function(index, csr_name) {
+                    if ((csr_name.indexOf('www.') == -1) && ($.inArray('www.' + csr_name, domains) == -1)) {
+                      domains.push('www.' + csr_name);
+                    }
+                  });
+
+                  $('#hidden_www_domain').val(domains.join(' '));
+                <%end%>
+              <%else%>
                 /*all_domains = csr_names.split(' ');*/
 
                 co_type = '';

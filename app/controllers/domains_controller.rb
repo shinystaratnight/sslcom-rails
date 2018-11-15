@@ -14,6 +14,9 @@ class DomainsController < ApplicationController
     res_Obj = {}
     exist_domain_names = []
     created_domains = []
+    created_domain_validated_status = {}
+    validated_domains_remains = {}
+
     unless params[:domain_names].nil?
       domain_names = params[:domain_names].split(/[\s,']/)
       domain_names.each do |d_name|
@@ -28,10 +31,19 @@ class DomainsController < ApplicationController
           @domain.save()
           current_user.ssl_account.other_dcvs_satisfy_domain(@domain)
           created_domains << @domain
+
+          dcv = @domain.domain_control_validations.last
+          created_domain_validated_status[d_name] = dcv && dcv.satisfied? ? 'true' : 'false'
+
+          validated_domains_remains[d_name] = dcv && dcv.responded_at ?
+                                                  DomainControlValidation::MAX_DURATION_DAYS[:email] - (Date.today - dcv.responded_at.to_date).to_i :
+                                                  0
         end
       end
     end
     res_Obj['domains'] = created_domains
+    res_Obj['domains_status'] = created_domain_validated_status
+    res_Obj['remain_days'] = validated_domains_remains
     res_Obj['exist_domains'] = exist_domain_names
     render :json => res_Obj
   end

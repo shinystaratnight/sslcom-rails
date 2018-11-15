@@ -24,12 +24,14 @@ class ComodoApi
 
   def self.auto_replace_ssl(options={})
     cc = options[:certificate_order].certificate_content
+    last_unique_value = cc.csr.csr_unique_values.create(unique_value: SecureRandom.hex(5))
     options[:send_to_ca]=true unless options[:send_to_ca]==false
     comodo_params = {
         'orderNumber'=>options[:certificate_order].external_order_number,
         'domainNames'=>options[:domainNames],
         # 'dcvEmailAddresses'=>options[:domainDcvs],
-        'isCustomerValidated'=>'N'
+        'isCustomerValidated'=>'N',
+        'uniqueValue' => last_unique_value.unique_value
     }
     comodo_params = comodo_params.merge(CREDENTIALS).map{|k,v|"#{k}=#{v}"}.join("&")
 
