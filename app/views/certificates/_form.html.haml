@@ -46,9 +46,9 @@
           certificate.
         %ul(style="font-size:1.4em; margin-bottom:20px")
           %li
-            try the
-            =link_to "online csr and private key generator", "/online-csr-and-key-generator", target: "_blank"
-            , or
+            generate the CSR through your
+            =link_to "CSR Manager,", new_managed_csr_path(@ssl_slug), target: "_blank"
+            or
           %li
             for Microsoft Windows try the
             =link_to "SSLTools Manager", "http://www.ssltools.com/manager", target: "_blank"
