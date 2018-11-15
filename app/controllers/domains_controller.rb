@@ -131,7 +131,7 @@ class DomainsController < ApplicationController
         @domain_details[dn.name]['prev_attempt'] = dcv ? dcv.email_address : 'validation not performed yet'
         @domain_details[dn.name]['attempted_on'] = dcv ? dcv.created_at.strftime('%Y-%m-%d %H:%M:%S') : 'n/a'
         @domain_details[dn.name]['status'] = dcv ? 'pending' : 'waiting'
-      end
+      end unless params[:d_name_check].blank?
     end
   end
 
@@ -272,7 +272,7 @@ class DomainsController < ApplicationController
           next
         end
         cnames << cn
-      end
+      end unless d_name_ids.blank?
       email_for_identifier = ''
       identifier = ''
       email_list = []
@@ -299,7 +299,7 @@ class DomainsController < ApplicationController
             domain_list << cn.name
             emailed_domains << cn.name
             dcv.update_attribute(:identifier, identifier)
-            dcv.send_dcv!
+            dcv.send_dcv! unless dcv.satisfied?
           end
         else
           if dcv_verify(dcv.dcv_method, cn.name, @csr)
