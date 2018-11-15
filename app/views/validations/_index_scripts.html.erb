@@ -892,16 +892,31 @@ jQuery(function($) {
           var domain_str = $('#ori_domain_names_str').val();
           var domains = [];
           if (domain_str.length > 0) {
-            domains = domain_str.split(',');
             var ajaxDomainUrl = '<%=get_asynch_domains_certificate_order_validation_path(@ssl_slug, @certificate_order)%>';
 
             <%
+              is_basic = @certificate_order.certificate.is_basic?
+              is_free = @certificate_order.certificate.is_free?
+              is_high_assurance = @certificate_order.certificate.is_high_assurance?
+
               is_ucc = @certificate_order.certificate.is_ucc?
               is_evucc = @certificate_order.certificate.is_evucc?
               is_premium_ssl = @certificate_order.certificate.is_premium_ssl?
               is_wildcard = @certificate_order.certificate.is_wildcard?
               ext_order_number = @certificate_order.external_order_number ? @certificate_order.external_order_number : 'eon'
             %>
+
+            var total_domains = domain_str.split(',');
+            var cert_type = '<%= (is_basic || is_free || is_high_assurance) ? true : false%>';
+            if (cert_type == 'true') {
+              $.each(total_domains, function(idx, value) {
+                if (value.indexOf('www.') == -1) {
+                  domains.push(value);
+                }
+              });
+            } else {
+              domains = total_domains;
+            }
 
             var total = domains.length;
             var validated_domains = '<%=@validated_domains%>'.split(',');
@@ -911,6 +926,7 @@ jQuery(function($) {
             var unvalidated_domain_success_count = 0;
             var unvalidated_domain_failed_count = 0;
             var is_error = false;
+
             $.each(domains, function(idx, value) {
               if ($.inArray(value, validated_domains) == -1) {
                 $.ajax({
