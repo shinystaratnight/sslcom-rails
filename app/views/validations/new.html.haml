@@ -54,7 +54,7 @@
             =co.csr.unique_value
           -unless co.certificate_content.ca.blank?
             .new_unique_value_block
-              =button_tag 'New', id: 'btn_new_unique_value', class: 'btn_new_unique_value'
+              =button_tag 'Change', id: 'btn_new_unique_value', class: 'btn_new_unique_value'
               =text_field_tag 'new_unique_value', co.csr.unique_value, class: 'new_unique_value hidden'
               =button_tag 'Save', id: 'btn_save_new_unique_value', class: 'btn_save_new_unique_value hidden'
               =button_tag 'Cancel', id: 'btn_cancel_new_unique_value', class: 'btn_cancel_new_unique_value hidden'

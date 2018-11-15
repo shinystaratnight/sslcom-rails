@@ -73,7 +73,7 @@ class ValidationsController < ApplicationController
                   @ds[team_cn.name]['method'] = team_dcv.dcv_method
                   @ds[team_cn.name]['attempted_on'] = team_dcv.created_at
                   if team_cn.caa_passed
-                    @ds[team_cn.name]['caa_check'] = 'passsed'
+                    @ds[team_cn.name]['caa_check'] = 'passed'
                   else
                     @ds[team_cn.name]['caa_check'] = 'failed'
                     caa_check_domain_arry << team_cn.name
@@ -93,9 +93,8 @@ class ValidationsController < ApplicationController
 
           if @all_validated and cc.signed_certificate.blank? and !cc.issued?
             cc.validate! if cc.pending_validation?
-            @certificate_order.
-                apply_for_certificate(mapping:
-                      @certificate_order.certificate_content.ca,
+            @certificate_order.apply_for_certificate(
+                mapping: @certificate_order.certificate_content.ca,
                       current_user: current_user)
           end
 
@@ -272,7 +271,14 @@ class ValidationsController < ApplicationController
         dcv = cn.domain_control_validations.last
 
         if dcv and co.certificate_content.ca
-          domain_status = dcv.identifier_found? ? "validated" : "pending"
+          domain_status =
+              if dcv.identifier_found?
+                "validated"
+              else
+                co.ssl_account.other_dcvs_satisfy_domain(cn)
+                dcv = cn.domain_control_validations.last
+                dcv and dcv.identifier_found? ? "validated" : "pending"
+              end
           domain_method = dcv.email_address ? dcv.email_address : dcv.dcv_method
         else
           domain_status = !ds.blank? && ds['status'] ? ds['status'] : nil
