@@ -567,7 +567,7 @@ class SignedCertificate < ActiveRecord::Base
 
   def to_format(options={})
     if certificate_content.ca
-      to_pkcs7
+      SignedCertificate.remove_begin_end_tags(certificate_content.pkcs7.to_s)
     else
       ComodoApi.collect_ssl(certificate_order, options).certificate
     end
@@ -683,8 +683,8 @@ class SignedCertificate < ActiveRecord::Base
   end
 
   def self.remove_begin_end_tags(certificate)
-    certificate.gsub!(/-+BEGIN.+?CERTIFICATE-+/,"") if certificate =~ /-+BEGIN.+?CERTIFICATE-+/
-    certificate.gsub!(/-+END.+?CERTIFICATE-+/,"") if certificate =~ /-+END.+?CERTIFICATE-+/
+    certificate.gsub!(/-+BEGIN.+?(CERTIFICATE|PKCS7)-+/,"") if certificate =~ /-+BEGIN.+?(CERTIFICATE|PKCS7)-+/
+    certificate.gsub!(/-+END.+?(CERTIFICATE|PKCS7)-+/,"") if certificate =~ /-+END.+?(CERTIFICATE|PKCS7)-+/
     certificate
   end
 
