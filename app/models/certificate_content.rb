@@ -514,8 +514,9 @@ class CertificateContent < ActiveRecord::Base
     end
   end
 
+  # TODO rename this to include www function, or break this up into 2 functions
   def self.non_wildcard_name(name,remove_www=false)
-    name.gsub(/\A\*\./, "").downcase unless name.blank?
+    name=name.gsub(/\A\*\./, "").downcase unless name.blank?
     remove_www ? name.gsub("www.", "") : name
   end
 
