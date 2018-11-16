@@ -23,6 +23,7 @@
 = javascript_include_tag "promise.min", "webcrypto-liner.shim", "asmcrypto.min", "elliptic.min", "bundle.umd.min", "bundle.pkcs.umd.min"
 = stylesheet_link_tag 'bootstrap_style', :media => 'all'
 %div{:style => 'width: 100%'}
+= hidden_field_tag :csr_id, @csr.id
 = form_tag managed_csr_path(@ssl_slug, @csr.id), method: :put, id: 'edit_csr_form' do
   .row.pt-3
     .col-md-6
@@ -32,10 +33,6 @@
   .row.pt-4
     .col-md-2
     .col-md-8
-      .csr_wrap
-        .form-group
-          %label  CSR :
-          = text_area_tag 'csr', @csr.body, class: 'form-control', rows: '5', value: @csr.body
       .generate_wrap.hidden
         .row
           .col-md-6
@@ -82,6 +79,17 @@
       .form-group
         %label  Friendly Name :
         = text_field_tag 'friendly_name', @csr.friendly_name, class: 'form-control'
+      .csr_wrap
+        .form-group
+          %label  CSR :
+          = text_area_tag 'csr', @csr.body, class: 'form-control', rows: '5', value: @csr.body
+      .private_key_wrap.hidden
+        .form-group
+          %label Private Key :
+          = text_area_tag 'private_key', nil, class: 'form-control', rows: '5'
+      .clipboard_wrap.hidden
+        .form-group
+          = button_tag 'Copy Private Key', type: 'button', id: 'clipboard_pkey_btn', class: 'btn btn-primary'
       -#.cert_orders_wrap
         .form-group
           %label  Certificate Orders :
