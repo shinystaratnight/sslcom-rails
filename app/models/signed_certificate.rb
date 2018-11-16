@@ -566,7 +566,11 @@ class SignedCertificate < ActiveRecord::Base
   end
 
   def to_format(options={})
-    ComodoApi.collect_ssl(certificate_order, options).certificate
+    if certificate_content.ca
+      to_pkcs7
+    else
+      ComodoApi.collect_ssl(certificate_order, options).certificate
+    end
   end
 
   def file_extension
