@@ -85,11 +85,8 @@
             -unless @certificate.allow_wildcard_ucc?
               %li It CANNOT represent a wildcard domain name (i.e. *.domain.com)
             %li It MUST represent your fully-qualified domain name (i.e. submit.domain.com)
-            -if @certificate.is_ucc?
-              %li Or, it MUST represent the name of your server (i.e. localhost or bizserver)
           -else
             %li It MUST represent a wildcard domain name by starting with an asterisk (i.e. *.domain.com)
-          %li It CANNOT not represent an ip address (i.e. 58.123.123.123 or 127.0.0.1 - #{link_to "see deprecated names", "https://info.ssl.com/new-ssl-server-rules-taking-effect-nov-1/", target: "_blank"})
       .clearfix
         %label{:for=>"certificate_order_certificate_content_server_software"}
           *CSR:

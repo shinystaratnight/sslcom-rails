@@ -295,7 +295,7 @@ class CertificateOrder < ActiveRecord::Base
   # }
   #
   scope :order_by_csr, lambda {
-    joins{certificate_contents.csr.outer}.order("csrs.updated_at desc") #.uniq #- breaks order by csr
+    joins{certificate_contents.csr.outer}.order("csrs.created_at desc") #.uniq #- breaks order by csr
   }
 
   scope :filter_by, lambda { |term|
