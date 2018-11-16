@@ -398,6 +398,8 @@ jQuery(function($) {
       }
     });
 
+    <%if @certificate_order and !@certificate_order.certificate.is_code_signing? and @certificate_order.csr%>
+
     function uploadInstructionsLink(link) {
       return (
         "Upload <a href='"
@@ -409,10 +411,9 @@ jQuery(function($) {
       );
     }
 
-    <%if @certificate_order and !@certificate_order.certificate.is_code_signing? and @certificate_order.csr%>
-      <%
-        is_single = @certificate_order.certificate.is_single?
-      %>
+    <%
+      is_single = @certificate_order.certificate.is_single?
+    %>
       $(document).on('change', 'select[id^=domains]', function() {
       //$('select[id^=domains]').change(function(){
         var dcv_select=$(this);
