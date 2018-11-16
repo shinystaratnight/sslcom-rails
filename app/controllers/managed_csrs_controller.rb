@@ -51,6 +51,37 @@ class ManagedCsrsController < ApplicationController
     end
   end
 
+  def add_generated_csr
+    returnObj = {}
+
+    if params[:csr_id]
+      @csr = current_user.ssl_account.all_csrs.find_by(id: params[:csr_id])
+      @csr.body = params[:csr]
+      @csr.friendly_name = params[:friendly_name]
+
+      if @csr.save
+        returnObj['status'] = 'true'
+      else
+        returnObj['status'] = 'There was a problem adding this CSR to the CSR Manager.'
+      end
+    else
+      @csr = ManagedCsr.new
+      @csr.friendly_name = params[:friendly_name]
+      @csr.body = params[:csr]
+      @csr.ssl_account_id = current_user.ssl_account.id
+
+      if !current_user.ssl_account.all_csrs.find_by_public_key_sha1(@csr.public_key_sha1).blank?
+        returnObj['status'] = 'CSR already exists on team' + current_user.ssl_account.ssl_slug + '.'
+      elsif @csr.save
+        returnObj['status'] = 'true'
+      else
+        returnObj['status'] = 'There was a problem adding this CSR to the CSR Manager.'
+      end
+    end
+
+    render :json => returnObj
+  end
+
   def edit
     @csr = current_user.ssl_account.all_csrs.find_by(id: params[:id])
   end
