@@ -270,16 +270,21 @@ class ValidationsController < ApplicationController
         ds = params['domain_status']
         dcv = cn.domain_control_validations.last
 
-        if dcv and co.certificate_content.ca
+        if co.certificate_content.ca
           domain_status =
-              if dcv.identifier_found?
+              if dcv and dcv.identifier_found?
                 "validated"
               else
                 co.ssl_account.other_dcvs_satisfy_domain(cn)
                 dcv = cn.domain_control_validations.last
                 dcv and dcv.identifier_found? ? "validated" : "pending"
               end
-          domain_method = dcv.email_address ? dcv.email_address : dcv.dcv_method
+          if dcv
+            domain_method = dcv.email_address ? dcv.email_address : dcv.dcv_method
+          else
+            domain_status = !ds.blank? && ds['status'] ? ds['status'] : nil
+            domain_method = !ds.blank? && ds['method'] ? ds['method'] : nil
+          end
         else
           domain_status = !ds.blank? && ds['status'] ? ds['status'] : nil
           domain_method = !ds.blank? && ds['method'] ? ds['method'] : nil
