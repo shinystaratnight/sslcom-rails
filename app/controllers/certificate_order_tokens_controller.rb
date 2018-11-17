@@ -100,8 +100,8 @@ class CertificateOrderTokensController < ApplicationController
       elsif co_token.due_date < DateTime.now
         flash[:error] = "The page has expired or is no longer valid"
         co_token.update_attribute(:is_expired, true)
-      elsif co_token.user != current_user
-        flash[:error] = "The current user can not access to the page."
+      elsif co_token.user != current_user or co_token.certificate_order.get_download_cert_email!=current_user.email
+        flash[:error] = "Access to this page is denied"
       else
         ssl_slug = co_token.certificate_order.ssl_account.acct_number || co_token.certificate_order.ssl_account.ssl_slug
         redirect_to generate_cert_certificate_order_path(ssl_slug, co_token.certificate_order.ref) and return

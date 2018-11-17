@@ -58,9 +58,9 @@ class CertificateOrdersController < ApplicationController
     is_expired = false
 
     if co_token
-      if co_token.user != current_user
+      if co_token.user != current_user or co_token.certificate_order.get_download_cert_email!=current_user.email
         is_expired = true
-        flash[:error] = "The current user can not access to the page."
+        flash[:error] = "Access to this page is denied."
       elsif co_token.is_expired
         is_expired = true
         flash[:error] = "The page has expired or is no longer valid."
