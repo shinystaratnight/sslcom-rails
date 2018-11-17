@@ -55,10 +55,13 @@ class CertificateOrdersController < ApplicationController
 
   def generate_cert
     co_token = CertificateOrderToken.find_by_token(params[:token])
+    if co_token.user.blank? and co_token.certificate_order.get_download_cert_email==current_user.email
+      co_token.update_column :user_id, current_user.id
+    end
     is_expired = false
 
     if co_token
-      if co_token.user != current_user or co_token.certificate_order.get_download_cert_email!=current_user.email
+      if co_token.user != current_user
         is_expired = true
         flash[:error] = "Access to this page is denied."
       elsif co_token.is_expired

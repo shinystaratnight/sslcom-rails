@@ -94,6 +94,10 @@ class CertificateOrderTokensController < ApplicationController
 
   def confirm
     co_token = CertificateOrderToken.find_by_token(params[:token])
+    if co_token.user.blank? and co_token.certificate_order.get_download_cert_email==current_user.email
+      co_token.update_column :user_id, current_user.id
+    end
+
     if co_token
       if co_token.is_expired
         flash[:error] = "The page has expired or is no longer valid"
