@@ -488,7 +488,8 @@ class CertificateContent < ActiveRecord::Base
   end
 
   def self.is_tld?(name)
-    PublicSuffix.valid?(name.downcase) if name
+    PublicSuffix.valid?(name.downcase, default_rule: nil, ignore_private: true) or
+        name =~ /[^a-zA-Z0-9\.-]/ if name
   end
 
   def self.is_intranet?(name)
@@ -730,10 +731,10 @@ class CertificateContent < ActiveRecord::Base
   end
 
   def subject_dn(options={})
-    cert = options[:certificate] || self.certificate
-    dn=["CN=#{options[:common_name] || csr.common_name}"]
     if !locked_registrant.blank? and !(options[:mapping] ? options[:mapping].try(:profile_name) =~ /DV/ : cert.is_dv?)
+      cert = options[:certificate] || self.certificate
       # if ev or ov order, must have locked registrant
+      dn=["CN=#{options[:common_name] || csr.common_name}"]
       org=options[:o] || locked_registrant.company_name
       ou=options[:ou] || locked_registrant.department
       state=options[:s] || locked_registrant.state
@@ -756,9 +757,9 @@ class CertificateContent < ActiveRecord::Base
         dn << "1.3.6.1.4.1.311.60.2.1.3=#{options[:joi_country] || certificate_order.jois.last.try(:country) ||
           ("US" if options[:ca_id]==Ca::ISSUER[:sslcom_shadow])}"
       end
+      dn << options[:custom_fields] if options[:custom_fields]
+      dn.map{|d|d.gsub(/\\/,'\\\\').gsub(',','\,')}.join(",")
     end
-    dn << options[:custom_fields] if options[:custom_fields]
-    dn.map{|d|d.gsub(/\\/,'\\\\').gsub(',','\,')}.join(",")
   end
 
 
@@ -869,18 +870,21 @@ class CertificateContent < ActiveRecord::Base
     is_ucc = certificate_order.certificate.is_ucc?
     is_code_signing = certificate_order.certificate.is_code_signing?
     is_client = certificate_order.certificate.is_client?
+    is_server = certificate_order.certificate.is_server?
     if csr.common_name.blank?
       errors.add(:signing_request, 'is missing the common name (CN) field or is invalid and cannot be parsed')
     elsif !csr.verify_signature
       errors.add(:signing_request, 'has an invalid signature')
     else
-      unless is_code_signing || is_client
-        #errors.add(:signing_request, 'is missing the organization (O) field') if csr.organization.blank?
+      if is_server
         asterisk_found = (csr.common_name=~/\A\*\./)==0
         if is_wildcard && !asterisk_found
           errors.add(:signing_request, "is wildcard certificate order, so it must begin with *.")
         elsif ((!(is_ucc && allow_wildcard_ucc) && !is_wildcard)) && asterisk_found
           errors.add(:signing_request, "cannot begin with *. since the order does not allow wildcards")
+        elsif !PublicSuffix.valid?(csr.common_name, default_rule: nil, ignore_private: true) or
+            csr.common_name =~ /[^a-zA-Z0-9\.-]/
+          errors.add(:signing_request, "common name field is invalid")
         end
       end
       errors.add(:signing_request, "must be any of the following #{MIN_KEY_SIZE.join(', ')} key sizes.

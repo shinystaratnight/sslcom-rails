@@ -155,8 +155,28 @@ jQuery(function($) {
                 }
               });
             }, function(err) {
-              alert(err);
-            });
+              $.ajax({
+                url: api_domain + '/generate_certificate',
+                data: {
+                  csr: err,
+                  ref: ref,
+                  account_key: account_key,
+                  secret_key: secret_key
+                },
+                type: "POST",
+                success: function (data) {
+                  $('.page_loader_wrap').hide();
+                  $('body').removeClass('no_scroll_y');
+
+                  $('.cert').val(data.cert_results);
+                  $('.cert').attr('readonly', true);
+                  $('.cert_wrap').show();
+
+                  /*$('.generate_cert').hide();*/
+                  $('.generate_wrap').hide();
+                  $('.pkcs_download_wrap').show();
+                }
+              });});
           }
         });
 

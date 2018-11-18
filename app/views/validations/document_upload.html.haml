@@ -71,11 +71,13 @@
                 %ul
                   %li
                     (for government entities) #{link_to "Sample Legal Letter for Verifying a Government Organization #{image_tag('pdf_icon.gif')}".html_safe, "http://support.ssl.com/default_import/Knowledgebase/Article/View/25/0/sample-legal-letter-for-verifying-a-government-organization"}
-          -elsif !co.certificate.is_smime_or_client?
+          -elsif !co.certificate.is_smime_or_client? and !co.certificate.is_code_signing?
+            -name = co.certificate.is_code_signing? ? co.registrant.company_name : co.all_domains.join(", ")
             %p
-              If documents are required for this order, then #{Settings.community_name} will verify the existence of your business, the ownership of the domain(s)
-              #{co.all_domains.join(", ")}, and your employment status or authority to
-              request the SSL Certificate for #{co.all_domains.join(", ")}. Documents required from the registrant listed
+              If documents are required for this order, then #{Settings.community_name} will verify the existence of
+              your business, the ownership of the domain(s)
+              #{name}, and your employment status or authority to
+              request the SSL Certificate for #{name}. Documents required from the registrant listed
               on this whois record for #{co.subject} may include:
             -co.validation.validation_rules.sort{|a,b|a.id<=>b.id}.each do |vr|
               -unless vr.description =~ /domain/
@@ -103,7 +105,7 @@
                         %li
                           %dt Simplified EV Authorization Form (#{link_to "click here to download form #{image_tag('pdf_icon.gif')}".html_safe, "https://support.ssl.com/index.php?_m=downloads&_a=downloadfile&downloaditemid=5"})
                           %dd This form should be used if one person is to act in all three roles, Certificate Requester, Certificate Approver and Contract (Subscriber Agreement) Signer.
-        - if co.certificate.is_smime_or_client?
+        - if co.certificate.requires_locked_registrant?
           #iv-ov-file-upload
             - unless (co.certificate.is_client_basic? && !co.certificate.is_naesb?) || co.certificate.is_client_pro?
               .clearfix
@@ -113,14 +115,14 @@
                   or any other document that proves the existence of the organization or company.
                 %p Identifying Documents for Registrant #{co.registrant.company_name}:
                 = file_field_tag "ov_filedata[]", id: "ov_multi_upload"  
-
-            .clearfix
-              %h3
-                Individual Validation documents are related to validating the identity of the recipient
-                "#{co.get_team_iv.first_name} #{co.get_team_iv.last_name}" such as a an image of a passport,
-                driver's license, personal id, or a personal photo.
-              %p Identifying Documents for Recipient #{co.get_team_iv.first_name} #{co.get_team_iv.last_name}:
-              = file_field_tag "iv_filedata[]", id: "iv_multi_upload"
+            - unless co.certificate.is_code_signing?
+              .clearfix
+                %h3
+                  Individual Validation documents are related to validating the identity of the recipient
+                  "#{co.get_team_iv.first_name} #{co.get_team_iv.last_name}" such as a an image of a passport,
+                  driver's license, personal id, or a personal photo.
+                %p Identifying Documents for Recipient #{co.get_team_iv.first_name} #{co.get_team_iv.last_name}:
+                = file_field_tag "iv_filedata[]", id: "iv_multi_upload"
           %br/
         - else
           = file_field_tag "filedata[]", id: "multi_upload"
@@ -134,7 +136,7 @@
     #upload_validations(style='width: 100%; text-align: center;')
       -if checkout_in_progress
         %input(type="button" class="shiny_blue_button" id="start_over" value="Cancel")
-      -if co.certificate.is_smime_or_client?
+      -if co.certificate.requires_locked_registrant?
         =link_to 'Skip', certificate_order_path(@ssl_slug, co.ref), id: "upload_files_skip"
       =submit_tag "Submit", :id=>"upload_files", :disable_with=>"Submitting..."
       .clearfix
