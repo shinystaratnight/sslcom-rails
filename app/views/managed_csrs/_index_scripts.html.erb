@@ -81,9 +81,20 @@ jQuery(function($) {
         $('#upload_validations').hide();
       } else {
         $('.csr_wrap').hide();
-        $('.generate_cert').prop('disabled', false);
+        if ($('#commonname').val() != '') {
+          $('.generate_cert').prop('disabled', false);
+        }
         $('.generate_wrap').show();
         $('#upload_validations').hide();
+      }
+    });
+
+    // Enable / Disable Generate CSR Button if ONLY commonname has value.
+    $(document).on('blur keyup', '#commonname', function() {
+      if ($(this).val() == '') {
+        $('.generate_cert').prop('disabled', true);
+      } else {
+        $('.generate_cert').prop('disabled', false);
       }
     });
 

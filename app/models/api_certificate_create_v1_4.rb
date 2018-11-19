@@ -154,7 +154,6 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
       if @certificate_order.certificate_content && @certificate_order.certificate_content.pending_validation? &&
           (@certificate_order.external_order_number || !@certificate_order.certificate_content.ca.blank?)
         cn_keys = self.cert_names.keys
-        cn_vals = self.cert_names.map{|k, v|v}
 
         @certificate_order.certificate_content.certificate_names.each do |certificate_name|
           # if cn_keys.include? certificate_name.id.to_s
@@ -174,10 +173,17 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
             # Remove Domain from Notification Group
             NotificationGroup.auto_manage_cert_name(@certificate_order.certificate_content, 'delete', certificate_name)
           elsif self.cert_names[certificate_name.name] != certificate_name.name
-            certificate_name.update_column(:name, self.cert_names[certificate_name.name])
-            NotificationGroup.auto_manage_cert_name(@certificate_order.certificate_content, 'update', certificate_name)
+            dcv = certificate_name.domain_control_validations.last
+            if !dcv || (dcv && !dcv.satisfied?)
+              certificate_name.update_column(:name, self.cert_names[certificate_name.name])
+              NotificationGroup.auto_manage_cert_name(@certificate_order.certificate_content, 'update', certificate_name)
+            elsif dcv && dcv.satisfied?
+              self.cert_names[certificate_name.name] = certificate_name.name
+            end
           end
         end
+        cn_vals = self.cert_names.map{|k, v|v}
+
         # @certificate_order.certificate_content.update_attribute(:domains, self.domains.keys)
         @certificate_order.certificate_content.update_attribute(:domains, cn_vals)
         @certificate_order.certificate_content.dcv_domains({domains: self.domains, emails: self.dcv_candidate_addresses})
