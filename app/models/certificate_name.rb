@@ -130,6 +130,12 @@ class CertificateName < ActiveRecord::Base
     @new_name ? (@new_name == ori_name ? ori_name : @new_name) : ori_name
   end
 
+  # if the domain has been validated, do not allow changing it's name
+  def name=(name)
+    dcv=self.domain_control_validations.last
+    super unless (dcv and dcv.satisfied?)
+  end
+
   def ca_tag
     csr.ca_tag
   end
