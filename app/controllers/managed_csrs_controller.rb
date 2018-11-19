@@ -30,7 +30,7 @@ class ManagedCsrsController < ApplicationController
 
     redirect_to new_managed_csr_path(@ssl_slug) and return unless current_user
     @csr = ManagedCsr.new
-    @csr.friendly_name = params[:friendly_name]
+    @csr.friendly_name = params[:friendly_name] && !params[:friendly_name].empty? ? params[:friendly_name] : nil
     @csr.body = params[:csr]
     @csr.ssl_account_id = current_user.ssl_account.id
 
@@ -57,7 +57,7 @@ class ManagedCsrsController < ApplicationController
     if params[:csr_id]
       @csr = current_user.ssl_account.all_csrs.find_by(id: params[:csr_id])
       @csr.body = params[:csr]
-      @csr.friendly_name = params[:friendly_name]
+      @csr.friendly_name = params[:friendly_name] && !params[:friendly_name].empty? ? params[:friendly_name] : nil
 
       if @csr.save
         returnObj['status'] = 'true'
@@ -66,7 +66,7 @@ class ManagedCsrsController < ApplicationController
       end
     else
       @csr = ManagedCsr.new
-      @csr.friendly_name = params[:friendly_name]
+      @csr.friendly_name = params[:friendly_name] && !params[:friendly_name].empty? ? params[:friendly_name] : nil
       @csr.body = params[:csr]
       @csr.ssl_account_id = current_user.ssl_account.id
 
@@ -91,7 +91,7 @@ class ManagedCsrsController < ApplicationController
     # @csr.friendly_name = params[:csr][:friendly_name]
     # @csr.body = params[:csr][:body]
     @csr.body = params[:csr]
-    @csr.friendly_name = params[:friendly_name]
+    @csr.friendly_name = params[:friendly_name] && !params[:friendly_name].empty? ? params[:friendly_name] : nil
     @csr.save
 
     redirect_to managed_csrs_path(@ssl_slug)
