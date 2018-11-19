@@ -62,6 +62,8 @@ class User < ActiveRecord::Base
   }
   accepts_nested_attributes_for :assignments
 
+  acts_as_messageable
+
   acts_as_authentic do |c|
     c.logged_in_timeout = 30.minutes
     c.validate_email_field = false
