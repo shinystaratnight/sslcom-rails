@@ -74,6 +74,7 @@ jQuery(function($) {
       if ($(this).prop('checked')) {
         $('#csr').val('');
         $('.csr_wrap').show();
+        $('.generate_cert').removeClass('btn-primary');
         $('.generate_cert').prop('disabled', true);
         $('.generate_wrap').hide();
         $('.private_key_wrap').hide();
@@ -82,6 +83,7 @@ jQuery(function($) {
       } else {
         $('.csr_wrap').hide();
         if ($('#commonname').val() != '') {
+          $('.generate_cert').addClass('btn-primary');
           $('.generate_cert').prop('disabled', false);
         }
         $('.generate_wrap').show();
@@ -92,8 +94,10 @@ jQuery(function($) {
     // Enable / Disable Generate CSR Button if ONLY commonname has value.
     $(document).on('blur keyup', '#commonname', function() {
       if ($(this).val() == '') {
+        $('.generate_cert').removeClass('btn-primary');
         $('.generate_cert').prop('disabled', true);
       } else {
+        $('.generate_cert').addClass('btn-primary');
         $('.generate_cert').prop('disabled', false);
       }
     });
