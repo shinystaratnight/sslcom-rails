@@ -731,10 +731,11 @@ class CertificateContent < ActiveRecord::Base
   end
 
   def subject_dn(options={})
+    cert = options[:certificate] || self.certificate
+    dn=["CN=#{options[:common_name] || certificate_names.first.name}"] if certificate.is_server?
     if !locked_registrant.blank? and !(options[:mapping] ? options[:mapping].try(:profile_name) =~ /DV/ : cert.is_dv?)
-      cert = options[:certificate] || self.certificate
       # if ev or ov order, must have locked registrant
-      dn=["CN=#{options[:common_name] || csr.common_name}"]
+      dn=["CN=#{options[:common_name] || locked_registrant.company_name}"] if !certificate.is_server?
       org=options[:o] || locked_registrant.company_name
       ou=options[:ou] || locked_registrant.department
       state=options[:s] || locked_registrant.state
@@ -757,9 +758,9 @@ class CertificateContent < ActiveRecord::Base
         dn << "1.3.6.1.4.1.311.60.2.1.3=#{options[:joi_country] || certificate_order.jois.last.try(:country) ||
           ("US" if options[:ca_id]==Ca::ISSUER[:sslcom_shadow])}"
       end
-      dn << options[:custom_fields] if options[:custom_fields]
-      dn.map{|d|d.gsub(/\\/,'\\\\').gsub(',','\,')}.join(",")
     end
+    dn << options[:custom_fields] if options[:custom_fields]
+    dn.map{|d|d.gsub(/\\/,'\\\\').gsub(',','\,')}.join(",")
   end
 
 

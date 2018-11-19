@@ -197,16 +197,24 @@ class CertificateName < ActiveRecord::Base
   end
 
   def self.candidate_email_addresses(name)
-    standard_addresses = DomainControlValidation.email_address_choices(name)
-    begin
-      whois_addresses = WhoisLookup.
-          email_addresses(Whois.whois(ActionDispatch::Http::URL.extract_domain(name, 1)).inspect)
-      whois_addresses.each do |ad|
-        standard_addresses << ad.downcase unless ad =~/abuse.*?@/i
+    Rails.cache.fetch("CertificateName.candidate_email_addresses/#{name}",
+                      expires_in: DomainControlValidation::EMAIL_CHOICE_CACHE_EXPIRES_DAYS.days) do
+      standard_addresses = DomainControlValidation.email_address_choices(name)
+      begin
+        whois=Rails.cache.fetch("CertificateName.candidate_email_addresses/whois/#{name}",
+                          expires_in: DomainControlValidation::EMAIL_CHOICE_CACHE_EXPIRES_DAYS.days) do
+          d=::PublicSuffix.parse(name)
+          Whois.whois(ActionDispatch::Http::URL.extract_domain(d.domain, 1)).inspect
+        end
+        whois_addresses = WhoisLookup.
+            email_addresses(whois)
+        whois_addresses.each do |ad|
+          standard_addresses << ad.downcase unless ad =~/abuse.*?@/i
+        end
+      rescue Exception=>e
+        logger.error e.backtrace.inspect
       end
-    rescue Exception=>e
-      logger.error e.backtrace.inspect
+      standard_addresses
     end
-    standard_addresses
   end
 end
