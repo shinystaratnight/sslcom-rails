@@ -488,7 +488,7 @@ class CertificateContent < ActiveRecord::Base
   end
 
   def self.is_tld?(name)
-    DomainNameValidator.valid?(name.downcase,false) if name
+    DomainNameValidator.valid?(name.downcase) if name
   end
 
   def self.is_intranet?(name)
@@ -576,17 +576,15 @@ class CertificateContent < ActiveRecord::Base
   # each domain needs to go through this
   def domain_validation(domain)
     is_wildcard = certificate_order.certificate.allow_wildcard_ucc?
-    is_free = certificate_order.certificate.is_free?
     is_ucc = certificate_order.certificate.is_ucc?
-    is_code_signing = certificate_order.certificate.is_code_signing?
-    is_client = certificate_order.certificate.is_client?
+    is_server = certificate_order.certificate.is_server?
     is_premium_ssl = certificate_order.certificate.is_premium_ssl?
     invalid_chars_msg = "#{domain} has invalid characters. Only the following characters
           are allowed [A-Za-z0-9.-#{'*' if(is_ucc || is_wildcard)}] in the domain or subject"
     if CertificateContent.is_ip_address?(domain) && CertificateContent.is_intranet?(domain)
       errors.add(:domain, " #{domain} must be an Internet-accessible IP Address")
     else
-      unless is_code_signing || is_client
+      if is_server
         #errors.add(:signing_request, 'is missing the organization (O) field') if csr.organization.blank?
         asterisk_found = (domain=~/\A\*\./)==0
         if ((!is_ucc && !is_wildcard) || is_premium_ssl) && asterisk_found
@@ -868,8 +866,6 @@ class CertificateContent < ActiveRecord::Base
     allow_wildcard_ucc=certificate_order.certificate.allow_wildcard_ucc?
     is_wildcard = certificate_order.certificate.is_wildcard?
     is_ucc = certificate_order.certificate.is_ucc?
-    is_code_signing = certificate_order.certificate.is_code_signing?
-    is_client = certificate_order.certificate.is_client?
     is_server = certificate_order.certificate.is_server?
     if csr.common_name.blank?
       errors.add(:signing_request, 'is missing the common name (CN) field or is invalid and cannot be parsed')
