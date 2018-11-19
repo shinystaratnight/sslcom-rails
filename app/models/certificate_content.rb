@@ -488,8 +488,7 @@ class CertificateContent < ActiveRecord::Base
   end
 
   def self.is_tld?(name)
-    PublicSuffix.valid?(name.downcase, default_rule: nil, ignore_private: true) or
-        name =~ /[^a-zA-Z0-9\.-]/ if name
+    DomainNameValidator.valid?(name.downcase,false) if name
   end
 
   def self.is_intranet?(name)
@@ -883,8 +882,7 @@ class CertificateContent < ActiveRecord::Base
           errors.add(:signing_request, "is wildcard certificate order, so it must begin with *.")
         elsif ((!(is_ucc && allow_wildcard_ucc) && !is_wildcard)) && asterisk_found
           errors.add(:signing_request, "cannot begin with *. since the order does not allow wildcards")
-        elsif !PublicSuffix.valid?(csr.common_name, default_rule: nil, ignore_private: true) or
-            csr.common_name =~ /[^a-zA-Z0-9\.-]/
+        elsif !DomainNameValidator.valid?(csr.common_name)
           errors.add(:signing_request, "common name field is invalid")
         end
       end

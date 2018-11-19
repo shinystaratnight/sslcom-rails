@@ -4,13 +4,16 @@ class DomainNameValidator < ActiveModel::EachValidator
     if value.is_a? Array
       value.each do |val|
         record.errors[attribute] << (options[:message] || "#{val} is not a valid domain name") unless
-            PublicSuffix.valid?(val, default_rule: nil, ignore_private: true) or
-                val =~ /[^a-zA-Z0-9\.-]/
+            DomainNameValidator.valid?(val)
       end
     else
       record.errors[attribute] << (options[:message] || "#{value} is not a valid domain name") unless
-          PublicSuffix.valid?(value, default_rule: nil, ignore_private: true) or
-              value =~ /[^a-zA-Z0-9\.-]/
+          DomainNameValidator.valid?(value)
     end
+  end
+
+  def self.valid?(domain,wildcard=true)
+    regex = wildcard ? /[^a-zA-Z0-9\.\*-]+/ : /[^a-zA-Z0-9\.-]+/
+    PublicSuffix.valid?(domain, default_rule: nil, ignore_private: true) and !(domain =~ regex)
   end
 end
