@@ -26,7 +26,7 @@
 = form_tag :managed_csrs, method: :post, id: 'add_csr_form' do
   .row.pt-3
     .col-md-6
-      = button_tag 'Generate CSR', type: 'button', class: 'generate_cert right btn btn-primary'
+      = button_tag 'Generate CSR', type: 'button', class: 'generate_cert right btn btn-primary', disabled: true
     .col-md-6{:style=>'font-size: 15px'}
       %input.own_csr.mr-3{:type=>'checkbox', :style=>'height: 20px; vertical-align: bottom;'}  I have my own CSR
   .row.pt-4
