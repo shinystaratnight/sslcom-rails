@@ -6,9 +6,11 @@
       %th locality
       %th state
       %th organization
+      %th SANs
     %tr.alt
       %td= csr.email
       %td= csr.country
       %td= csr.locality
       %td= csr.state
       %td= csr.organization
+      %td= csr.subject_alternative_names.join(' ')

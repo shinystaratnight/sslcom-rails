@@ -923,6 +923,14 @@ jQuery(function($) {
       }
     });
 
+    $('textarea[id$=domains]').on('paste', function () {
+      var $this = $(this);
+
+      setTimeout(function() {
+        $.adjustDomainPricing($this[0]);
+      }, 0);
+    });
+
     $(':radio[name*=duration]').click(function(){
       duration_index = $(':radio[name*=duration]:checked').val();
       $.update_order_pricing();

@@ -129,31 +129,31 @@ jQuery(function($) {
       // Getting Common Info
       const info = {};
       if ($('#commonname').val() != '') {
-        info['commonname'] = $('#commonname').val();
+        info['commonname'] = $('#commonname').val().trim();
       }
       if ($('#email').val() != '') {
-        info['email'] = $('#email').val();
+        info['email'] = $('#email').val().trim();
       }
       if ($('#organization').val() != '') {
-        info['organization'] = $('#organization').val();
+        info['organization'] = $('#organization').val().trim();
       }
       if ($('#organizationalunit').val() != '') {
-        info['organizationalunit'] = $('#organizationalunit').val();
+        info['organizationalunit'] = $('#organizationalunit').val().trim();
       }
       if ($('#address').val() != '') {
-        info['address'] = $('#address').val();
+        info['address'] = $('#address').val().trim();
       }
       if ($('#locality').val() != '') {
-        info['locality'] = $('#locality').val();
+        info['locality'] = $('#locality').val().trim();
       }
       if ($('#state').val() != '') {
-        info['state'] = $('#state').val();
+        info['state'] = $('#state').val().trim();
       }
       if ($('#country').val() != '') {
-        info['country'] = $('#country').val();
+        info['country'] = $('#country').val().trim();
       }
       if ($('#zipcode').val() != '') {
-        info['zipcode'] = $('#zipcode').val();
+        info['zipcode'] = $('#zipcode').val().trim();
       }
 
       // Getting SANs array
@@ -208,8 +208,21 @@ jQuery(function($) {
               message_wrap_element.insertBefore($('#content').find('.inner').children().first());
 
               try {
-                var priKey = $('#private_key').val().replace(/(-----(BEGIN|END) PRIVATE KEY-----|\n)/g, '');
-                pkey_download(priKey);
+                pkey_download($('#private_key').val());
+
+                $('#commonname').val('');
+                $('#email').val('');
+                $('#organization').val('');
+                $('#organizationalunit').val('');
+                $('#address').val('');
+                $('#locality').val('');
+                $('#state').val('');
+                $('#country').val('');
+                $('#zipcode').val('');
+                $('#sans').val('');
+                $('#friendly_name').val('');
+                $('#csr').val('');
+                $('#private_key').val('');
               } catch (err) {
                 $('#private_key').attr('readonly', true);
                 $('.private_key_wrap').show();
@@ -238,8 +251,11 @@ jQuery(function($) {
                 message_wrap_element.insertBefore($('#content').find('.inner').children().first());
               }
 
+              $('.generate_cert').removeClass('btn-primary');
+              $('.generate_cert').prop('disabled', true);
+
               $('.page_loader_wrap').hide();
-               $('body').removeClass('no_scroll_y');
+              $('body').removeClass('no_scroll_y');
             } else {
               var message_wrap_element = $('<div></div>');
               message_wrap_element.attr('class', 'flash_message error');
@@ -268,10 +284,6 @@ jQuery(function($) {
             }
           }
         });
-
-        /*$('.generate_wrap').hide();*/
-        /*$('.csr_wrap').show();*/
-        /*$('#upload_validations').show();*/
       }, function(error) {
         var message_wrap_element = $('<div></div>');
         message_wrap_element.attr('class', 'flash_message error');
