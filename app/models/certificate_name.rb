@@ -200,22 +200,18 @@ class CertificateName < ActiveRecord::Base
 
   WhoisJob = Struct.new(:dname) do
     def perform
-      Rails.cache.write("CertificateName.candidate_email_addresses/#{dname}") do
-        standard_addresses = DomainControlValidation.email_address_choices(dname)
-        begin
-          d=::PublicSuffix.parse(dname)
-          whois=Whois.whois(ActionDispatch::Http::URL.extract_domain(d.domain, 1)).inspect
-          whois_addresses = WhoisLookup.email_addresses(whois)
-          whois_addresses.each do |ad|
-            standard_addresses << ad.downcase unless ad =~/abuse.*?@/i
-          end
-        rescue Exception=>e
-          logger.error e.backtrace.inspect
-        else
-          standard_addresses
+      standard_addresses = DomainControlValidation.email_address_choices(dname)
+      begin
+        d=::PublicSuffix.parse(dname)
+        whois=Whois.whois(ActionDispatch::Http::URL.extract_domain(d.domain, 1)).inspect
+        whois_addresses = WhoisLookup.email_addresses(whois)
+        whois_addresses.each do |ad|
+          standard_addresses << ad.downcase unless ad =~/abuse.*?@/i
         end
-        standard_addresses
+      rescue Exception=>e
+        logger.error e.backtrace.inspect
       end
+      Rails.cache.write("CertificateName.candidate_email_addresses/#{dname}",standard_addresses)
     end
   end
 
