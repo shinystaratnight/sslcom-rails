@@ -223,12 +223,18 @@ class CertificateContent < ActiveRecord::Base
     self.ca = (self.certificate.cas.ssl_account_or_general_default(ssl_account)).last if ca.blank? and certificate
   end
 
+  OtherDcvsSatisyJob = Struct.new(:ssl_account,:new_certificate_name) do
+    def perform
+      ssl_account.other_dcvs_satisfy_domain(new_certificate_name)
+    end
+  end
+
   def certificate_names_from_domains(domains=nil)
     domains ||= all_domains
     (domains-certificate_names.find_by_domains(domains).pluck(:name)).each do |domain|
       new_certificate_name=certificate_names.find_or_create_by(name: domain.downcase,
                                                              is_common_name: csr.try(:common_name)==domain.downcase)
-      ssl_account.other_dcvs_satisfy_domain(new_certificate_name) if ssl_account
+      Delayed::Job.enqueue OtherDcvsSatisyJob.new(ssl_account,new_certificate_name) if ssl_account
     end
 
     # Auto adding domains in case of certificate order has been included into some groups.

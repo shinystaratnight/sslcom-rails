@@ -198,7 +198,7 @@ class CertificateName < ActiveRecord::Base
     CaaCheck::CAA_COMMAND.call name
   end
 
-  WhoisJob = Struct.new(:dname,:certificate_name) do
+  WhoisJob = Struct.new(:dname) do
     def perform
       standard_addresses = DomainControlValidation.email_address_choices(dname)
       begin
@@ -208,24 +208,21 @@ class CertificateName < ActiveRecord::Base
         whois_addresses.each do |ad|
           standard_addresses << ad.downcase unless ad =~/abuse.*?@/i
         end
-        Rails.cache.delete("#{certificate_name.domain_control_validations.
-            last.try(:cache_key)}/get_asynch_domains/#{certificate_name.name}") if certificate_name
         Rails.cache.write("CertificateName.candidate_email_addresses/#{dname}",standard_addresses)
       rescue Exception=>e
-        certificate_name.logger.error e.backtrace.inspect if certificate_name
         raise e
       end
     end
   end
 
   def candidate_email_addresses
-    CertificateName.candidate_email_addresses(name,self)
+    CertificateName.candidate_email_addresses(name)
   end
 
-  def self.candidate_email_addresses(name,certificate_name=nil)
+  def self.candidate_email_addresses(name)
     Rails.cache.fetch("CertificateName.candidate_email_addresses/#{name}",
                       expires_in: DomainControlValidation::EMAIL_CHOICE_CACHE_EXPIRES_DAYS.days) do
-      Delayed::Job.enqueue WhoisJob.new(name,certificate_name)
+      Delayed::Job.enqueue WhoisJob.new(name)
       DomainControlValidation.email_address_choices(name)
     end
   end
