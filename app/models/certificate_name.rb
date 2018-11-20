@@ -208,12 +208,13 @@ class CertificateName < ActiveRecord::Base
         whois_addresses.each do |ad|
           standard_addresses << ad.downcase unless ad =~/abuse.*?@/i
         end
+        Rails.cache.delete("#{certificate_name.domain_control_validations.
+            last.try(:cache_key)}/get_asynch_domains/#{certificate_name.name}") if certificate_name
+        Rails.cache.write("CertificateName.candidate_email_addresses/#{dname}",standard_addresses)
       rescue Exception=>e
-        logger.error e.backtrace.inspect
+        certificate_name.logger.error e.backtrace.inspect if certificate_name
+        raise e
       end
-      Rails.cache.delete("#{certificate_name.domain_control_validations.
-          last.try(:cache_key)}/get_asynch_domains/#{certificate_name.name}") if certificate_name
-      Rails.cache.write("CertificateName.candidate_email_addresses/#{dname}",standard_addresses)
     end
   end
 
