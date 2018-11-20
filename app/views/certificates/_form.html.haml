@@ -46,9 +46,9 @@
           certificate.
         %ul(style="font-size:1.4em; margin-bottom:20px")
           %li
-            try the
-            =link_to "online csr and private key generator", "/online-csr-and-key-generator", target: "_blank"
-            , or
+            generate the CSR through your
+            =link_to "CSR Manager,", new_managed_csr_path(@ssl_slug), target: "_blank"
+            or
           %li
             for Microsoft Windows try the
             =link_to "SSLTools Manager", "http://www.ssltools.com/manager", target: "_blank"
@@ -85,11 +85,8 @@
             -unless @certificate.allow_wildcard_ucc?
               %li It CANNOT represent a wildcard domain name (i.e. *.domain.com)
             %li It MUST represent your fully-qualified domain name (i.e. submit.domain.com)
-            -if @certificate.is_ucc?
-              %li Or, it MUST represent the name of your server (i.e. localhost or bizserver)
           -else
             %li It MUST represent a wildcard domain name by starting with an asterisk (i.e. *.domain.com)
-          %li It CANNOT not represent an ip address (i.e. 58.123.123.123 or 127.0.0.1 - #{link_to "see deprecated names", "https://info.ssl.com/new-ssl-server-rules-taking-effect-nov-1/", target: "_blank"})
       .clearfix
         %label{:for=>"certificate_order_certificate_content_server_software"}
           *CSR:
@@ -105,6 +102,7 @@
                 =link_to @certificate_order.parent.ref, @certificate_order.parent, target: "_blank"
             =text_area_tag :previous_csr_body, @certificate_order.most_recent_csr.body, style: "display: none"
         =cert_form.text_area :signing_request, :cols=>40, :rows=>10, :wrap=>'off'
+        =hidden_field_tag :hidden_www_domain, class: 'hidden_www_domain'
       .clearfix.add_to_manager_block
         %label
           Save to CSR Manager:

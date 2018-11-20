@@ -47,7 +47,7 @@ class CertificateContent < ActiveRecord::Base
   # terms in this list that are submitted as domains for an ssl will be kicked back
   BARRED_SSL_TERMS = %w(\A\. \.onion\z \.local\z)
 
-  TRADEMARKS = %w(whatsapp google .*?\.apple\.com paypal .*?\.github\.com .*?\.amazon\.com cloudapp microsoft amzn ssltools certchat certlock
+  TRADEMARKS = %w(whatsapp google .*?\.apple\.com .*?\.paypal\.com .*?\.github\.com .*?\.amazon\.com cloudapp microsoft amzn ssltools certchat certlock
     .*?\.10million\.org .*?\.android\.com .*?\.aol\.com .*?\.azadegi\.com .*?\.balatarin\.com .*?\.comodo\.com .*?\.digicert\.com
     .*?\.globalsign\.com .*?\.google\.com .*?\.JanamFadayeRahbar\.com .*?\.logmein\.com .*?\.microsoft\.com .*?\.mossad\.gov\.il
     .*?\.mozilla\.org .*?\.RamzShekaneBozorg\.com .*?\.SahebeDonyayeDigital\.com .*?\.skype\.com .*?\.startssl\.com
@@ -223,12 +223,18 @@ class CertificateContent < ActiveRecord::Base
     self.ca = (self.certificate.cas.ssl_account_or_general_default(ssl_account)).last if ca.blank? and certificate
   end
 
+  OtherDcvsSatisyJob = Struct.new(:ssl_account,:new_certificate_name) do
+    def perform
+      ssl_account.other_dcvs_satisfy_domain(new_certificate_name)
+    end
+  end
+
   def certificate_names_from_domains(domains=nil)
     domains ||= all_domains
     (domains-certificate_names.find_by_domains(domains).pluck(:name)).each do |domain|
       new_certificate_name=certificate_names.find_or_create_by(name: domain.downcase,
                                                              is_common_name: csr.try(:common_name)==domain.downcase)
-      ssl_account.other_dcvs_satisfy_domain(new_certificate_name) if ssl_account
+      Delayed::Job.enqueue OtherDcvsSatisyJob.new(ssl_account,new_certificate_name) if ssl_account
     end
 
     # Auto adding domains in case of certificate order has been included into some groups.
@@ -488,7 +494,7 @@ class CertificateContent < ActiveRecord::Base
   end
 
   def self.is_tld?(name)
-    PublicSuffix.valid?(name.downcase) if name
+    DomainNameValidator.valid?(name.downcase) if name
   end
 
   def self.is_intranet?(name)
@@ -514,8 +520,9 @@ class CertificateContent < ActiveRecord::Base
     end
   end
 
+  # TODO rename this to include www function, or break this up into 2 functions
   def self.non_wildcard_name(name,remove_www=false)
-    name.gsub(/\A\*\./, "").downcase unless name.blank?
+    name=name.gsub(/\A\*\./, "").downcase unless name.blank?
     remove_www ? name.gsub("www.", "") : name
   end
 
@@ -575,17 +582,15 @@ class CertificateContent < ActiveRecord::Base
   # each domain needs to go through this
   def domain_validation(domain)
     is_wildcard = certificate_order.certificate.allow_wildcard_ucc?
-    is_free = certificate_order.certificate.is_free?
     is_ucc = certificate_order.certificate.is_ucc?
-    is_code_signing = certificate_order.certificate.is_code_signing?
-    is_client = certificate_order.certificate.is_client?
+    is_server = certificate_order.certificate.is_server?
     is_premium_ssl = certificate_order.certificate.is_premium_ssl?
     invalid_chars_msg = "#{domain} has invalid characters. Only the following characters
           are allowed [A-Za-z0-9.-#{'*' if(is_ucc || is_wildcard)}] in the domain or subject"
     if CertificateContent.is_ip_address?(domain) && CertificateContent.is_intranet?(domain)
       errors.add(:domain, " #{domain} must be an Internet-accessible IP Address")
     else
-      unless is_code_signing || is_client
+      if is_server
         #errors.add(:signing_request, 'is missing the organization (O) field') if csr.organization.blank?
         asterisk_found = (domain=~/\A\*\./)==0
         if ((!is_ucc && !is_wildcard) || is_premium_ssl) && asterisk_found
@@ -730,9 +735,10 @@ class CertificateContent < ActiveRecord::Base
 
   def subject_dn(options={})
     cert = options[:certificate] || self.certificate
-    dn=["CN=#{options[:common_name] || csr.common_name}"]
+    dn=["CN=#{options[:common_name] || certificate_names.first.name}"] if certificate.is_server?
     if !locked_registrant.blank? and !(options[:mapping] ? options[:mapping].try(:profile_name) =~ /DV/ : cert.is_dv?)
       # if ev or ov order, must have locked registrant
+      dn=["CN=#{options[:common_name] || locked_registrant.company_name}"] if !certificate.is_server?
       org=options[:o] || locked_registrant.company_name
       ou=options[:ou] || locked_registrant.department
       state=options[:s] || locked_registrant.state
@@ -866,20 +872,20 @@ class CertificateContent < ActiveRecord::Base
     allow_wildcard_ucc=certificate_order.certificate.allow_wildcard_ucc?
     is_wildcard = certificate_order.certificate.is_wildcard?
     is_ucc = certificate_order.certificate.is_ucc?
-    is_code_signing = certificate_order.certificate.is_code_signing?
-    is_client = certificate_order.certificate.is_client?
+    is_server = certificate_order.certificate.is_server?
     if csr.common_name.blank?
       errors.add(:signing_request, 'is missing the common name (CN) field or is invalid and cannot be parsed')
     elsif !csr.verify_signature
       errors.add(:signing_request, 'has an invalid signature')
     else
-      unless is_code_signing || is_client
-        #errors.add(:signing_request, 'is missing the organization (O) field') if csr.organization.blank?
+      if is_server
         asterisk_found = (csr.common_name=~/\A\*\./)==0
         if is_wildcard && !asterisk_found
           errors.add(:signing_request, "is wildcard certificate order, so it must begin with *.")
         elsif ((!(is_ucc && allow_wildcard_ucc) && !is_wildcard)) && asterisk_found
           errors.add(:signing_request, "cannot begin with *. since the order does not allow wildcards")
+        elsif !DomainNameValidator.valid?(csr.common_name)
+          errors.add(:signing_request, "common name field is invalid")
         end
       end
       errors.add(:signing_request, "must be any of the following #{MIN_KEY_SIZE.join(', ')} key sizes.

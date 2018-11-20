@@ -398,6 +398,8 @@ jQuery(function($) {
       }
     });
 
+    <%if @certificate_order and !@certificate_order.certificate.is_code_signing? and @certificate_order.csr%>
+
     function uploadInstructionsLink(link) {
       return (
         "Upload <a href='"
@@ -409,10 +411,9 @@ jQuery(function($) {
       );
     }
 
-    <%if @certificate_order and !@certificate_order.certificate.is_code_signing? and @certificate_order.csr%>
-      <%
-        is_single = @certificate_order.certificate.is_single?
-      %>
+    <%
+      is_single = @certificate_order.certificate.is_single?
+    %>
       $(document).on('change', 'select[id^=domains]', function() {
       //$('select[id^=domains]').change(function(){
         var dcv_select=$(this);
@@ -511,9 +512,9 @@ jQuery(function($) {
 
                         var span = $('<span></span>');
                         if (data) {
-                          span.append('All domains has already been validated and certificate has been issued. \n');
+                          span.append('All domains have been validated, and the certificate has been issued. \n');
                         } else {
-                          span.append('All domains has already been validated. It will be issued soon. \n');
+                          span.append('All domains have been validated, and the certificate will be issued soon. \n');
                         }
                         span.append('Redirecting to Certificate Order Page now ...');
 
@@ -591,9 +592,9 @@ jQuery(function($) {
 
                         var span = $('<span></span>');
                         if (data) {
-                          span.append('All domains has already been validated. It will be issued soon. \n');
+                          span.append('All domains have been validated, and the certificate will be issued soon. \n');
                         } else {
-                          span.append('All domains has already been validated and certificate has been issued. \n');
+                          span.append('All domains have been validated, and certificate has been issued. \n');
                         }
                         span.append('Redirecting to Certificate Order Page now ...');
 
@@ -892,16 +893,31 @@ jQuery(function($) {
           var domain_str = $('#ori_domain_names_str').val();
           var domains = [];
           if (domain_str.length > 0) {
-            domains = domain_str.split(',');
             var ajaxDomainUrl = '<%=get_asynch_domains_certificate_order_validation_path(@ssl_slug, @certificate_order)%>';
 
             <%
+              is_basic = @certificate_order.certificate.is_basic?
+              is_free = @certificate_order.certificate.is_free?
+              is_high_assurance = @certificate_order.certificate.is_high_assurance?
+
               is_ucc = @certificate_order.certificate.is_ucc?
               is_evucc = @certificate_order.certificate.is_evucc?
               is_premium_ssl = @certificate_order.certificate.is_premium_ssl?
               is_wildcard = @certificate_order.certificate.is_wildcard?
               ext_order_number = @certificate_order.external_order_number ? @certificate_order.external_order_number : 'eon'
             %>
+
+            var total_domains = domain_str.split(',');
+            var cert_type = '<%= (is_basic || is_free || is_high_assurance) ? true : false%>';
+            if (cert_type == 'true') {
+              $.each(total_domains, function(idx, value) {
+                if (value.indexOf('www.') == -1) {
+                  domains.push(value);
+                }
+              });
+            } else {
+              domains = total_domains;
+            }
 
             var total = domains.length;
             var validated_domains = '<%=@validated_domains%>'.split(',');
@@ -911,6 +927,7 @@ jQuery(function($) {
             var unvalidated_domain_success_count = 0;
             var unvalidated_domain_failed_count = 0;
             var is_error = false;
+
             $.each(domains, function(idx, value) {
               if ($.inArray(value, validated_domains) == -1) {
                 $.ajax({
@@ -1217,6 +1234,7 @@ jQuery(function($) {
             var domain_list = $('tbody.domain_list').find('tr.certificate_name');
             var ori_domain_names_str = $('#ori_domain_names_str').val().split(',');
             var domain_names_str = '';
+            var exist_removed_domain = $('#exist_removed_domain').val() == 'true' ? 'true' : 'false';
 
             var enable_caa = '<%=Settings.enable_caa%>';
             var all_passed_caa_check = true;
@@ -1254,7 +1272,10 @@ jQuery(function($) {
             var update_dcv = '<%=api_certificate_update_v1_4_path(@certificate_order.ref)%>';
             var replace_ssl = '<%=api_certificate_replace_v1_4_path(@certificate_order.ref)%>';
 
-            if ($(ori_domain_names_str).not(domain_names_str).length == 0 && $(domain_names_str).not(ori_domain_names_str).length == 0) {
+            if ((exist_removed_domain == 'false') && (
+                $(ori_domain_names_str).not(domain_names_str).length == 0 &&
+                $(domain_names_str).not(ori_domain_names_str).length == 0
+              )) {
               $(this).attr('url', api_domain + update_dcv);
             } else {
               $(this).attr('url', api_domain + replace_ssl);
@@ -1399,6 +1420,7 @@ jQuery(function($) {
                     var domain_str = $('#ori_domain_names_str').val();
                     domain_str = domain_str.replace(',' + domain_name, '');
                     $('#ori_domain_names_str').val(domain_str);
+                    $('#exist_removed_domain').val('true');
 
                     // Displaying flash message.
                     message_wrap_element.attr('class', 'flash_message notice');
@@ -1722,6 +1744,8 @@ jQuery(function($) {
 
                                 $('[id="certificate_name__' + domain + '"]').next().remove();
                                 $('[id="certificate_name__' + domain + '"]').remove();
+
+                                $('#exist_removed_domain').val('true');
                               }
                             });
 
@@ -1762,6 +1786,8 @@ jQuery(function($) {
                             $('[id="certificate_name__' + domain + '"]').next().remove();
                             $('[id="certificate_name__' + domain + '"]').remove();
                           });
+
+                          $('#exist_removed_domain').val('true');
 
                           // Displaying flash message.
                           message_wrap_element.attr('class', 'flash_message notice');
@@ -1873,24 +1899,23 @@ jQuery(function($) {
                 },
                 type: "POST",
                 success: function (result) {
-                  /*$('.cname_destination').empty();*/
-                  $('.cname_destination').html(result['cname_destination']);
+                  if ($.inArray('same', Object.keys(result)) == -1) {
+                    $('.cname_destination').html(result['cname_destination']);
+                    $('.dns_sha2_hash').html(result['dns_sha2_hash']);
+                    $('.current_unique_value_block').html($('.new_unique_value').val());
 
-                  /*$('.dns_sha2_hash').empty();*/
-                  $('.dns_sha2_hash').html(result['dns_sha2_hash']);
-
-                  /*$('.current_unique_value_block').empty();*/
-                  $('.current_unique_value_block').html($('.new_unique_value').val());
-
-                  $('.new_unique_value').hide();
-                  $('.btn_save_new_unique_value').hide();
-                  $('.btn_cancel_new_unique_value').hide();
-                  $('.btn_new_unique_value').show();
-                  $('.current_unique_value_block').show();
+                    $('.new_unique_value').hide();
+                    $('.btn_save_new_unique_value').hide();
+                    $('.btn_cancel_new_unique_value').hide();
+                    $('.btn_new_unique_value').show();
+                    $('.current_unique_value_block').show();
+                  } else {
+                    alert('The same unique value has been already used before. Please use another unique value.');
+                  }
                 }
               });
             } else {
-              alert('The same unique value can not be registered again.');
+              alert('This unique value is same with current one.');
             }
           });
         <%end%>

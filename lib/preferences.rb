@@ -184,7 +184,9 @@ module Preferences
 
       # Reader
       define_method("preferred_#{name}") do |*group|
-        preferred(name, group.first)
+        Rails.cache.fetch("#{cache_key}preferred_#{name}") do
+          preferred(name, group.first)
+        end
       end
       alias_method "prefers_#{name}", "preferred_#{name}"
 

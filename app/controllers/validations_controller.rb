@@ -31,7 +31,7 @@ class ValidationsController < ApplicationController
     if !@certificate_order.certificate.is_server?
       url = document_upload_certificate_order_validation_url(certificate_order_id: @certificate_order.ref)
     else
-      if cc.issued? # or @certificate_order.all_domains_validated?
+      if cc.issued?
         checkout = {checkout: "true"}
         if cc.signed_certificate
           flash.now[:notice] = "SSL certificate has been issued"
@@ -47,7 +47,7 @@ class ValidationsController < ApplicationController
           cc.pend_validation!(host: request.host_with_port)
         end
 
-        @all_validated = true
+        # @all_validated = true
         @validated_domains = ''
         @caa_check_domains = ''
         validated_domain_arry = []
@@ -84,13 +84,10 @@ class ValidationsController < ApplicationController
               end
             end
 
-            unless team_level_validated
-              @all_validated = false
-            else
-              validated_domain_arry << cn.name
-            end
+            (validated_domain_arry << cn.name) if cn.domain_control_validations.last and cn.domain_control_validations.last.satisfied?
           end
 
+          @all_validated=@certificate_order.domains_validated?
           if @all_validated and cc.signed_certificate.blank? and !cc.issued?
             cc.validate! if cc.pending_validation?
             @certificate_order.apply_for_certificate(
@@ -206,6 +203,9 @@ class ValidationsController < ApplicationController
             NotificationGroup.auto_manage_cert_name(certificate_content, 'delete', cn_obj)
 
             # Remove Domain Object
+            dcvs = cn_obj.domain_control_validations
+            dcvs.destroy_all if dcvs.size > 0
+
             cn_obj.destroy
 
             # TODO: Remove cache for removed domain
@@ -262,7 +262,7 @@ class ValidationsController < ApplicationController
     cn = co.certificate_content.certificate_names.find_by_name(params['domain_name']) if co
 
     returnObj = Rails.cache.fetch("#{cn.domain_control_validations.
-        last.try(:cache_key)}/get_asynch_domains/#{params['domain_name']}") do
+        last.try(:cache_key)}/get_asynch_domains}") do
       if cn
         ds = params['domain_status']
         dcv = cn.domain_control_validations.last
@@ -276,7 +276,12 @@ class ValidationsController < ApplicationController
                 dcv = cn.domain_control_validations.last
                 dcv and dcv.identifier_found? ? "validated" : "pending"
               end
-          domain_method = dcv.email_address ? dcv.email_address : dcv.dcv_method
+          if dcv
+            domain_method = dcv.email_address ? dcv.email_address : dcv.dcv_method
+          else
+            domain_status = !ds.blank? && ds['status'] ? ds['status'] : nil
+            domain_method = !ds.blank? && ds['method'] ? ds['method'] : nil
+          end
         else
           domain_status = !ds.blank? && ds['status'] ? ds['status'] : nil
           domain_method = !ds.blank? && ds['method'] ? ds['method'] : nil
@@ -517,7 +522,7 @@ class ValidationsController < ApplicationController
         else
           if vrs.all?(&:approved?)
             unless cc.validated?
-              cc.validate!
+              cc.validate! if !cc.issued?
               is_validated = true
             end
           else
@@ -697,8 +702,8 @@ class ValidationsController < ApplicationController
 
   def notify_customer(validation_rulings)
     recips = [@co.certificate_content.administrative_contact]
-    recips << @co.certificate_content.validation_contact unless
-      @co.certificate_content.validation_contact.email.downcase==
+    recips << @co.certificate_content.validation_contact if
+        @co.certificate_content.validation_contact and @co.certificate_content.validation_contact.email.downcase!=
       @co.certificate_content.administrative_contact.email.downcase
     recips.each do |c|
       if validation_rulings.all?(&:approved?)

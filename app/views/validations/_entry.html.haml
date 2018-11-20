@@ -56,10 +56,9 @@
                                   %ul
                                     %li=text_area_tag "ruling_reason_#{vrl.id}"
                             %ul
-                              -if co.certificate.is_code_signing?
+                              -if co.certificate.requires_locked_registrant?
                                 %li.validation_complete
                                   #{check_box_tag "validation_complete", true, false, :alt=>"#{i}"}validation complete
-                              -else
                                 %li.email_customer
                                   #{check_box_tag "email_customer", true, false, :alt=>"#{i}"}notify customer?
                               %li.approve_submit=submit_tag 'submit'
@@ -201,22 +200,23 @@
                         =co.notes
                       -else
                         no notes found
-          %tr
-            %td(colspan="6")
-              .certificate_details_box
-                %ul
-                  #validation_requirements_box
-                    %li
-                      %strong domain validations
-                    -co.certificate_content.certificate_names.each do |cn|
-                      -dcv=cn.domain_control_validations.find(&"satisfied?".to_sym)
-                      -if dcv
-                        -identifier = case dcv.dcv_method
-                          -when /email/
-                            -dcv.email_address
-                          -else
-                            -dcv.identifier
+          -if co.certificate.is_server?
+            %tr
+              %td(colspan="6")
+                .certificate_details_box
+                  %ul
+                    #validation_requirements_box
                       %li
-                        #{cn.name}
-                        %ul
-                          %li #{dcv ? "validated by #{dcv.dcv_method} on #{dcv.responded_at.strftime("%b %d, %Y %R %Z") if dcv.responded_at} with #{identifier}" : "pending validation"}
+                        %strong domain validations
+                      -co.certificate_content.certificate_names.each do |cn|
+                        -dcv=cn.domain_control_validations.find(&"satisfied?".to_sym)
+                        -if dcv
+                          -identifier = case dcv.dcv_method
+                            -when /email/
+                              -dcv.email_address
+                            -else
+                              -dcv.identifier
+                        %li
+                          #{cn.name}
+                          %ul
+                            %li #{dcv ? "validated by #{dcv.dcv_method} on #{dcv.responded_at.strftime("%b %d, %Y %R %Z") if dcv.responded_at} with #{identifier}" : "pending validation"}

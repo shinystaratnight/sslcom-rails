@@ -130,6 +130,12 @@ class CertificateName < ActiveRecord::Base
     @new_name ? (@new_name == ori_name ? ori_name : @new_name) : ori_name
   end
 
+  # if the domain has been validated, do not allow changing it's name
+  def name=(name)
+    dcv=self.domain_control_validations.last
+    super unless (dcv and dcv.satisfied?)
+  end
+
   def ca_tag
     csr.ca_tag
   end
@@ -192,21 +198,32 @@ class CertificateName < ActiveRecord::Base
     CaaCheck::CAA_COMMAND.call name
   end
 
+  WhoisJob = Struct.new(:dname) do
+    def perform
+      standard_addresses = DomainControlValidation.email_address_choices(dname)
+      begin
+        d=::PublicSuffix.parse(dname)
+        whois=Whois.whois(ActionDispatch::Http::URL.extract_domain(d.domain, 1)).inspect
+        whois_addresses = WhoisLookup.email_addresses(whois)
+        whois_addresses.each do |ad|
+          standard_addresses << ad.downcase unless ad =~/abuse.*?@/i
+        end
+        Rails.cache.write("CertificateName.candidate_email_addresses/#{dname}",standard_addresses)
+      rescue Exception=>e
+        raise e
+      end
+    end
+  end
+
   def candidate_email_addresses
     CertificateName.candidate_email_addresses(name)
   end
 
   def self.candidate_email_addresses(name)
-    standard_addresses = DomainControlValidation.email_address_choices(name)
-    begin
-      whois_addresses = WhoisLookup.
-          email_addresses(Whois.whois(ActionDispatch::Http::URL.extract_domain(name, 1)).inspect)
-      whois_addresses.each do |ad|
-        standard_addresses << ad.downcase unless ad =~/abuse.*?@/i
-      end
-    rescue Exception=>e
-      logger.error e.backtrace.inspect
+    Rails.cache.fetch("CertificateName.candidate_email_addresses/#{name}",
+                      expires_in: DomainControlValidation::EMAIL_CHOICE_CACHE_EXPIRES_DAYS.days) do
+      Delayed::Job.enqueue WhoisJob.new(name)
+      DomainControlValidation.email_address_choices(name)
     end
-    standard_addresses
   end
 end

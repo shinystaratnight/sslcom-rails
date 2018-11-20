@@ -55,12 +55,15 @@ class CertificateOrdersController < ApplicationController
 
   def generate_cert
     co_token = CertificateOrderToken.find_by_token(params[:token])
+    if co_token.user.blank? and co_token.certificate_order.get_download_cert_email==current_user.email
+      co_token.update_column :user_id, current_user.id
+    end
     is_expired = false
 
     if co_token
       if co_token.user != current_user
         is_expired = true
-        flash[:error] = "The current user can not access to the page."
+        flash[:error] = "Access to this page is denied."
       elsif co_token.is_expired
         is_expired = true
         flash[:error] = "The page has expired or is no longer valid."
@@ -406,6 +409,13 @@ class CertificateOrdersController < ApplicationController
       end unless managed_domains.blank?
 
       params[:certificate_order][:certificate_contents_attributes]['0'.to_sym][:additional_domains] = additional_domains.strip
+    else
+      if (@certificate_order.certificate.is_basic? ||
+          @certificate_order.certificate.is_free? ||
+          @certificate_order.certificate.is_high_assurance?) &&
+          !params[:hidden_www_domain].empty?
+        params[:certificate_order][:certificate_contents_attributes]['0'.to_sym][:additional_domains] = params[:hidden_www_domain].strip
+      end
     end
 
     @certificate_content=CertificateContent.new(

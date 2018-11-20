@@ -3,13 +3,14 @@
 = javascript_include_tag "promise.min", "webcrypto-liner.shim", "asmcrypto.min", "elliptic.min", "bundle.umd.min", "bundle.pkcs.umd.min"
 =stylesheet_link_tag 'bootstrap_style', :media => 'all'
 %div{:style=>"width: 100%"}
+  %h2 Generate Certificate Signing Request and Submit for Signing
   -is_cs = @certificate_order.certificate.is_code_signing?
   -is_client = @certificate_order.certificate.is_smime_or_client?
   %input.cs_subject_dn{:type=>'hidden', :value=>"#{is_cs || is_client ? @certificate_order.certificate_content.locked_subject_dn : @certificate_order.certificate_content.subject_dn}"}
   .generate_wrap
     .row.pt-3
       .col-md-6
-        %input.generate_cert.right{:type=>'button', :value=>'Generate Certificate'}
+        %input.generate_cert.right{:type=>'button', :value=>'Generate Certificate', :class=>'btn btn-primary'}
       .col-md-6{:style=>'font-size: 15px'}
         %input.own_csr{:type=>'checkbox', :style=>'height: 20px; vertical-align: bottom; margin-right: 10px'} I have my own CSR
   .csr_wrap.hidden
@@ -31,14 +32,15 @@
       .col-md-9
         %textarea.cert{:cols=>80, :rows=>10}
   .pkcs_download_wrap.hidden
+    Create a downloadable pfx file by setting a password and providing the private key (your private key is not sent to SSL.com or any other site)
     .row.pt-5
       .col-md-3{:style=>"text-align: right"}
         Password :
       .col-md-4
         %input.pkcs_password{:type=>'text', :style=>'width: 100%'}
       .col-md-5
-        %input.pkcs_download{:type=>'button', :value=>'Download'}
+        %input.pkcs_download{:type=>'button', :value=>'Download', :class=>'btn btn-primary'}
   .cert_download_wrap.pt-5.hidden
-    %input.cert_download{:type=>'button', :value=>'Download', :style=>'display:block; margin: auto'}
+    %input.cert_download{:type=>'button', :value=>'Download', :style=>'display:block; margin: auto', :class=>'btn btn-primary'}
     -#%a.user_cert_download{:download=>'sslcom_cert.crt'} Download File
 

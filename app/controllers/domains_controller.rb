@@ -1,6 +1,6 @@
 
 class DomainsController < ApplicationController
-  before_filter :require_user, :except => [:dcv_validate, :dcv_all_validate]
+  before_filter :require_user
   before_filter :find_ssl_account
   before_filter :set_row_page, only: [:index]
   before_filter :set_csr_row_page, only: [:select_csr]
@@ -14,6 +14,9 @@ class DomainsController < ApplicationController
     res_Obj = {}
     exist_domain_names = []
     created_domains = []
+    created_domain_validated_status = {}
+    validated_domains_remains = {}
+
     unless params[:domain_names].nil?
       domain_names = params[:domain_names].split(/[\s,']/)
       domain_names.each do |d_name|
@@ -28,10 +31,19 @@ class DomainsController < ApplicationController
           @domain.save()
           current_user.ssl_account.other_dcvs_satisfy_domain(@domain)
           created_domains << @domain
+
+          dcv = @domain.domain_control_validations.last
+          created_domain_validated_status[d_name] = dcv && dcv.satisfied? ? 'true' : 'false'
+
+          validated_domains_remains[d_name] = dcv && dcv.responded_at ?
+                                                  DomainControlValidation::MAX_DURATION_DAYS[:email] - (Date.today - dcv.responded_at.to_date).to_i :
+                                                  0
         end
       end
     end
     res_Obj['domains'] = created_domains
+    res_Obj['domains_status'] = created_domain_validated_status
+    res_Obj['remain_days'] = validated_domains_remains
     res_Obj['exist_domains'] = exist_domain_names
     render :json => res_Obj
   end
@@ -131,7 +143,7 @@ class DomainsController < ApplicationController
         @domain_details[dn.name]['prev_attempt'] = dcv ? dcv.email_address : 'validation not performed yet'
         @domain_details[dn.name]['attempted_on'] = dcv ? dcv.created_at.strftime('%Y-%m-%d %H:%M:%S') : 'n/a'
         @domain_details[dn.name]['status'] = dcv ? 'pending' : 'waiting'
-      end
+      end unless params[:d_name_check].blank?
     end
   end
 
@@ -272,7 +284,7 @@ class DomainsController < ApplicationController
           next
         end
         cnames << cn
-      end
+      end unless d_name_ids.blank?
       email_for_identifier = ''
       identifier = ''
       email_list = []
@@ -299,7 +311,7 @@ class DomainsController < ApplicationController
             domain_list << cn.name
             emailed_domains << cn.name
             dcv.update_attribute(:identifier, identifier)
-            dcv.send_dcv!
+            dcv.send_dcv! unless dcv.satisfied?
           end
         else
           if dcv_verify(dcv.dcv_method, cn.name, @csr)

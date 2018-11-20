@@ -182,7 +182,7 @@ class DomainControlValidation < ActiveRecord::Base
 
   def self.email_address_choices(name)
     Rails.cache.fetch("email_address_choices/#{name}", expires_in: EMAIL_CHOICE_CACHE_EXPIRES_DAYS.days) do
-      return [] unless ::PublicSuffix.valid?(name.downcase)
+      return [] unless DomainNameValidator.valid?(name,false)
       d=::PublicSuffix.parse(name.downcase)
       subdomains = d.trd ? d.trd.split(".") : []
       subdomains.shift if subdomains[0]=="*" #remove wildcard

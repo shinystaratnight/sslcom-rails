@@ -532,160 +532,160 @@ namespace :cas do
           ekus: [Ca::EKUS[:client]],
           end_entity: Ca::END_ENTITY[:ov_client]
       )
-      # Dev ejbca mappings
-      Ca.find_or_initialize_by(ref: "0013d").update_attributes(
-          friendly_name: "SSL.com CS RSA 4096 (dev)",
-          profile_name: "RSA_CS_CERT",
-          algorithm: "rsa",
-          size: 4096,
-          description: "",
-          type: "SubCa",
-          caa_issuers: ["ssl.com"],
-          host: "https://#{shadow_url}:8443/restapi",
-          admin_host: "https://#{shadow_url}:8443",
-          ca_name: "SSLcom-SubCA-CodeSigning-RSA-4096-R1",
-          ekus: [Ca::EKUS[:code_signing]],
-          end_entity: Ca::END_ENTITY[:cs]
-      )
-      Ca.find_or_initialize_by(ref: "0014d").update_attributes(
-          friendly_name: "SSL.com EV CS RSA 4096 R2 (dev)",
-          profile_name: "EV_RSA_CS_CERT",
-          algorithm: "rsa",
-          size: 4096,
-          description: "",
-          type: "SubCa",
-          caa_issuers: ["ssl.com"],
-          host: "https://#{shadow_url}:8443/restapi",
-          admin_host: "https://#{shadow_url}:8443",
-          ca_name: "SSLcom-SubCA-EV-CodeSigning-RSA-4096-R2",
-          ekus: [Ca::EKUS[:code_signing]],
-          end_entity: Ca::END_ENTITY[:evcs]
-      )
-      Ca.find_or_initialize_by(ref: "0015d").update_attributes(
-          friendly_name: "SSL.com SSL RSA 4096 R2 (EV) (dev)",
-          profile_name: "SSLcom-SubCA-EV-SSL-RSA-4096-R2",
-          algorithm: "rsa",
-          size: 4096,
-          description: "",
-          type: "SubCa",
-          caa_issuers: ["ssl.com"],
-          host: "https://#{shadow_url}:8443/restapi",
-          admin_host: "https://#{shadow_url}:8443",
-          ca_name: Ca::SSLCOM_CA,
-          ekus: [Ca::EKUS[:server]],
-          end_entity: Ca::END_ENTITY[:evssl]
-      )
-      Ca.find_or_initialize_by(ref: "0016d").update_attributes(
-          friendly_name: "SSL.com EV TimeStamping RSA 4096 (dev)",
-          profile_name: "SSLcom-SubCA-EV-TimeStamping-RSA-4096-R1",
-          algorithm: "rsa",
-          size: 4096,
-          description: "",
-          type: "SubCa",
-          caa_issuers: ["ssl.com"],
-          host: "https://#{shadow_url}:8443/restapi",
-          admin_host: "https://#{shadow_url}:8443",
-          ca_name: Ca::SSLCOM_CA,
-          ekus: [Ca::EKUS[:time_stamping]]
-      )
-      Ca.find_or_initialize_by(ref: "0017d").update_attributes(
-          friendly_name: "SSL.com SSL RSA 4096 (DV) (dev)",
-          profile_name: "DV_RSA_SERVER_CERT",
-          algorithm: "rsa",
-          size: 4096,
-          description: "",
-          type: "SubCa",
-          caa_issuers: ["ssl.com"],
-          host: "https://#{shadow_url}:8443/restapi",
-          admin_host: "https://#{shadow_url}:8443",
-          ca_name: "SSLcom-SubCA-SSL-RSA-4096-R1",
-          ekus: [Ca::EKUS[:server]],
-          end_entity: Ca::END_ENTITY[:dvssl]
-      )
-      Ca.find_or_initialize_by(ref: "0018d").update_attributes(
-          friendly_name: "SSL.com SSL RSA 4096 (OV) (dev)",
-          profile_name: "OV_RSA_SERVER_CERT",
-          algorithm: "rsa",
-          size: 4096,
-          description: "",
-          type: "SubCa",
-          caa_issuers: ["ssl.com"],
-          host: "https://#{shadow_url}:8443/restapi",
-          admin_host: "https://#{shadow_url}:8443",
-          ca_name: "SSLcom-SubCA-SSL-RSA-4096-R1",
-          ekus: [Ca::EKUS[:server]],
-          end_entity: Ca::END_ENTITY[:ovssl]
-      )
-      Ca.find_or_initialize_by(ref: "0020d").update_attributes(
-          friendly_name: "SSLcomEVRSASSLsubCA (dev)",
-          profile_name: "EV_RSA_SERVER_CERT",
-          algorithm: "rsa",
-          size: 4096,
-          description: "",
-          type: "SubCa",
-          caa_issuers: ["ssl.com"],
-          host: "https://#{shadow_url}:8443/restapi",
-          admin_host: "https://#{shadow_url}:8443",
-          ca_name: "SSLcomEVRSASSLsubCA",
-          ekus: [Ca::EKUS[:server]],
-          end_entity: Ca::END_ENTITY[:evssl]
-      )
-      Ca.find_or_initialize_by(ref: "0021d").update_attributes(
-          friendly_name: "NAESB Client Cert Rudimentary Assurance (dev)",
-          profile_name: "OV_RSA_NAESB_RA_CERT",
-          algorithm: "rsa",
-          size: 4096,
-          description: "",
-          type: "SubCa",
-          caa_issuers: ["ssl.com"],
-          host: "https://#{shadow_url}:8443/restapi",
-          admin_host: "https://#{shadow_url}:8443",
-          ca_name: "SSLcom-SubCA-NAESB-clientAuth-RSA-4096-R1",
-          ekus: [Ca::EKUS[:client]],
-          end_entity: Ca::END_ENTITY[:ov_client]
-      )
-      Ca.find_or_initialize_by(ref: "0022d").update_attributes(
-          friendly_name: "NAESB Client Cert Basic Assurance (dev)",
-          profile_name: "OV_RSA_NAESB_BA_CERT",
-          algorithm: "rsa",
-          size: 4096,
-          description: "",
-          type: "SubCa",
-          caa_issuers: ["ssl.com"],
-          host: "https://#{shadow_url}:8443/restapi",
-          admin_host: "https://#{shadow_url}:8443",
-          ca_name: "SSLcom-SubCA-NAESB-clientAuth-RSA-4096-R1",
-          ekus: [Ca::EKUS[:client]],
-          end_entity: Ca::END_ENTITY[:ov_client]
-      )
-      Ca.find_or_initialize_by(ref: "0023d").update_attributes(
-          friendly_name: "NAESB RSA Client Cert High Assurance (dev)",
-          profile_name: "OV_RSA_NAESB_HA_CERT",
-          algorithm: "rsa",
-          size: 4096,
-          description: "",
-          type: "SubCa",
-          caa_issuers: ["ssl.com"],
-          host: "https://#{shadow_url}:8443/restapi",
-          admin_host: "https://#{shadow_url}:8443",
-          ca_name: "SSLcom-SubCA-NAESB-clientAuth-RSA-4096-R1",
-          ekus: [Ca::EKUS[:client]],
-          end_entity: Ca::END_ENTITY[:ov_client]
-      )
-      Ca.find_or_initialize_by(ref: "0024d").update_attributes(
-          friendly_name: "NAESB RSA Client Cert Medium Assurance (dev)",
-          profile_name: "OV_RSA_NAESB_MA_CERT",
-          algorithm: "rsa",
-          size: 4096,
-          description: "",
-          type: "SubCa",
-          caa_issuers: ["ssl.com"],
-          host: "https://#{shadow_url}:8443/restapi",
-          admin_host: "https://#{shadow_url}:8443",
-          ca_name: "SSLcom-SubCA-NAESB-clientAuth-RSA-4096-R1",
-          ekus: [Ca::EKUS[:client]],
-          end_entity: Ca::END_ENTITY[:ov_client]
-      )
+      # # Dev ejbca mappings
+      # Ca.find_or_initialize_by(ref: "0013d").update_attributes(
+      #     friendly_name: "SSL.com CS RSA 4096 (dev)",
+      #     profile_name: "RSA_CS_CERT",
+      #     algorithm: "rsa",
+      #     size: 4096,
+      #     description: "",
+      #     type: "SubCa",
+      #     caa_issuers: ["ssl.com"],
+      #     host: "https://#{shadow_url}:8443/restapi",
+      #     admin_host: "https://#{shadow_url}:8443",
+      #     ca_name: "SSLcom-SubCA-CodeSigning-RSA-4096-R1",
+      #     ekus: [Ca::EKUS[:code_signing]],
+      #     end_entity: Ca::END_ENTITY[:cs]
+      # )
+      # Ca.find_or_initialize_by(ref: "0014d").update_attributes(
+      #     friendly_name: "SSL.com EV CS RSA 4096 R2 (dev)",
+      #     profile_name: "EV_RSA_CS_CERT",
+      #     algorithm: "rsa",
+      #     size: 4096,
+      #     description: "",
+      #     type: "SubCa",
+      #     caa_issuers: ["ssl.com"],
+      #     host: "https://#{shadow_url}:8443/restapi",
+      #     admin_host: "https://#{shadow_url}:8443",
+      #     ca_name: "SSLcom-SubCA-EV-CodeSigning-RSA-4096-R2",
+      #     ekus: [Ca::EKUS[:code_signing]],
+      #     end_entity: Ca::END_ENTITY[:evcs]
+      # )
+      # Ca.find_or_initialize_by(ref: "0015d").update_attributes(
+      #     friendly_name: "SSL.com SSL RSA 4096 R2 (EV) (dev)",
+      #     profile_name: "SSLcom-SubCA-EV-SSL-RSA-4096-R2",
+      #     algorithm: "rsa",
+      #     size: 4096,
+      #     description: "",
+      #     type: "SubCa",
+      #     caa_issuers: ["ssl.com"],
+      #     host: "https://#{shadow_url}:8443/restapi",
+      #     admin_host: "https://#{shadow_url}:8443",
+      #     ca_name: Ca::SSLCOM_CA,
+      #     ekus: [Ca::EKUS[:server]],
+      #     end_entity: Ca::END_ENTITY[:evssl]
+      # )
+      # Ca.find_or_initialize_by(ref: "0016d").update_attributes(
+      #     friendly_name: "SSL.com EV TimeStamping RSA 4096 (dev)",
+      #     profile_name: "SSLcom-SubCA-EV-TimeStamping-RSA-4096-R1",
+      #     algorithm: "rsa",
+      #     size: 4096,
+      #     description: "",
+      #     type: "SubCa",
+      #     caa_issuers: ["ssl.com"],
+      #     host: "https://#{shadow_url}:8443/restapi",
+      #     admin_host: "https://#{shadow_url}:8443",
+      #     ca_name: Ca::SSLCOM_CA,
+      #     ekus: [Ca::EKUS[:time_stamping]]
+      # )
+      # Ca.find_or_initialize_by(ref: "0017d").update_attributes(
+      #     friendly_name: "SSL.com SSL RSA 4096 (DV) (dev)",
+      #     profile_name: "DV_RSA_SERVER_CERT",
+      #     algorithm: "rsa",
+      #     size: 4096,
+      #     description: "",
+      #     type: "SubCa",
+      #     caa_issuers: ["ssl.com"],
+      #     host: "https://#{shadow_url}:8443/restapi",
+      #     admin_host: "https://#{shadow_url}:8443",
+      #     ca_name: "SSLcom-SubCA-SSL-RSA-4096-R1",
+      #     ekus: [Ca::EKUS[:server]],
+      #     end_entity: Ca::END_ENTITY[:dvssl]
+      # )
+      # Ca.find_or_initialize_by(ref: "0018d").update_attributes(
+      #     friendly_name: "SSL.com SSL RSA 4096 (OV) (dev)",
+      #     profile_name: "OV_RSA_SERVER_CERT",
+      #     algorithm: "rsa",
+      #     size: 4096,
+      #     description: "",
+      #     type: "SubCa",
+      #     caa_issuers: ["ssl.com"],
+      #     host: "https://#{shadow_url}:8443/restapi",
+      #     admin_host: "https://#{shadow_url}:8443",
+      #     ca_name: "SSLcom-SubCA-SSL-RSA-4096-R1",
+      #     ekus: [Ca::EKUS[:server]],
+      #     end_entity: Ca::END_ENTITY[:ovssl]
+      # )
+      # Ca.find_or_initialize_by(ref: "0020d").update_attributes(
+      #     friendly_name: "SSLcomEVRSASSLsubCA (dev)",
+      #     profile_name: "EV_RSA_SERVER_CERT",
+      #     algorithm: "rsa",
+      #     size: 4096,
+      #     description: "",
+      #     type: "SubCa",
+      #     caa_issuers: ["ssl.com"],
+      #     host: "https://#{shadow_url}:8443/restapi",
+      #     admin_host: "https://#{shadow_url}:8443",
+      #     ca_name: "SSLcomEVRSASSLsubCA",
+      #     ekus: [Ca::EKUS[:server]],
+      #     end_entity: Ca::END_ENTITY[:evssl]
+      # )
+      # Ca.find_or_initialize_by(ref: "0021d").update_attributes(
+      #     friendly_name: "NAESB Client Cert Rudimentary Assurance (dev)",
+      #     profile_name: "OV_RSA_NAESB_RA_CERT",
+      #     algorithm: "rsa",
+      #     size: 4096,
+      #     description: "",
+      #     type: "SubCa",
+      #     caa_issuers: ["ssl.com"],
+      #     host: "https://#{shadow_url}:8443/restapi",
+      #     admin_host: "https://#{shadow_url}:8443",
+      #     ca_name: "SSLcom-SubCA-NAESB-clientAuth-RSA-4096-R1",
+      #     ekus: [Ca::EKUS[:client]],
+      #     end_entity: Ca::END_ENTITY[:ov_client]
+      # )
+      # Ca.find_or_initialize_by(ref: "0022d").update_attributes(
+      #     friendly_name: "NAESB Client Cert Basic Assurance (dev)",
+      #     profile_name: "OV_RSA_NAESB_BA_CERT",
+      #     algorithm: "rsa",
+      #     size: 4096,
+      #     description: "",
+      #     type: "SubCa",
+      #     caa_issuers: ["ssl.com"],
+      #     host: "https://#{shadow_url}:8443/restapi",
+      #     admin_host: "https://#{shadow_url}:8443",
+      #     ca_name: "SSLcom-SubCA-NAESB-clientAuth-RSA-4096-R1",
+      #     ekus: [Ca::EKUS[:client]],
+      #     end_entity: Ca::END_ENTITY[:ov_client]
+      # )
+      # Ca.find_or_initialize_by(ref: "0023d").update_attributes(
+      #     friendly_name: "NAESB RSA Client Cert High Assurance (dev)",
+      #     profile_name: "OV_RSA_NAESB_HA_CERT",
+      #     algorithm: "rsa",
+      #     size: 4096,
+      #     description: "",
+      #     type: "SubCa",
+      #     caa_issuers: ["ssl.com"],
+      #     host: "https://#{shadow_url}:8443/restapi",
+      #     admin_host: "https://#{shadow_url}:8443",
+      #     ca_name: "SSLcom-SubCA-NAESB-clientAuth-RSA-4096-R1",
+      #     ekus: [Ca::EKUS[:client]],
+      #     end_entity: Ca::END_ENTITY[:ov_client]
+      # )
+      # Ca.find_or_initialize_by(ref: "0024d").update_attributes(
+      #     friendly_name: "NAESB RSA Client Cert Medium Assurance (dev)",
+      #     profile_name: "OV_RSA_NAESB_MA_CERT",
+      #     algorithm: "rsa",
+      #     size: 4096,
+      #     description: "",
+      #     type: "SubCa",
+      #     caa_issuers: ["ssl.com"],
+      #     host: "https://#{shadow_url}:8443/restapi",
+      #     admin_host: "https://#{shadow_url}:8443",
+      #     ca_name: "SSLcom-SubCA-NAESB-clientAuth-RSA-4096-R1",
+      #     ekus: [Ca::EKUS[:client]],
+      #     end_entity: Ca::END_ENTITY[:ov_client]
+      # )
       Ca.find_or_initialize_by(ref: "3000").update_attributes(
           friendly_name: "DV_SERVER_CERT_EE",
           profile_name: "DV_SERVER_CERT_EE",

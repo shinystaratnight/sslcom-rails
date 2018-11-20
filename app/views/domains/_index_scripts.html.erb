@@ -11,7 +11,10 @@
         dataType: "json",
         success: function(data, status){
           var domains = data['domains'];
-          var exist_domains = data['exist_domains']
+          var domains_status = data['domains_status'];
+          var remain_days = data['remain_days'];
+          var exist_domains = data['exist_domains'];
+
           if(exist_domains.length>0){
             var message_wrap_element = $('<div></div>');
             message_wrap_element.attr('class', 'flash_message notice');
@@ -45,7 +48,13 @@
             var new_row = "<tr>";
             new_row += "<td><input type='checkbox' name='d_name_check[]' id='d_name_check_" + value.domain.id + "' value='" + value.domain.id + "' class='d_name_check'></td>"
             new_row += "<td>" + value.domain.name + "</td>";
-            new_row += "<td>Team</td><td><a href='<%=validate_selected_domains_path(@ssl_slug)%>?d_name_check%5B%5D="+ value.domain.id +"'>Pending Validation</a></td><td>n/a</td></tr>";
+
+            if (domains_status[value.domain.name] == 'true') {
+              new_row += "<td>Team</td><td class='d_name_status'>Validated</td><td>" + remain_days[value.domain.name] + " days remaining</td></tr>";
+            } else {
+              new_row += "<td>Team</td><td class='d_name_status'><a href='<%=validate_selected_domains_path(@ssl_slug)%>?d_name_check%5B%5D="+ value.domain.id +"'>Pending Validation</a></td><td>n/a</td></tr>";
+            }
+
             $(new_row).insertAfter($(".heading_row"));
           });
         }
