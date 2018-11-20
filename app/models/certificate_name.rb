@@ -198,6 +198,27 @@ class CertificateName < ActiveRecord::Base
     CaaCheck::CAA_COMMAND.call name
   end
 
+  WhoisJob = Struct.new(:dname) do
+    def perform
+      Rails.cache.write("CertificateName.candidate_email_addresses/#{dname}") do
+        standard_addresses = DomainControlValidation.email_address_choices(dname)
+        begin
+          d=::PublicSuffix.parse(dname)
+          whois=Whois.whois(ActionDispatch::Http::URL.extract_domain(d.domain, 1)).inspect
+          whois_addresses = WhoisLookup.email_addresses(whois)
+          whois_addresses.each do |ad|
+            standard_addresses << ad.downcase unless ad =~/abuse.*?@/i
+          end
+        rescue Exception=>e
+          logger.error e.backtrace.inspect
+        else
+          standard_addresses
+        end
+        standard_addresses
+      end
+    end
+  end
+
   def candidate_email_addresses
     CertificateName.candidate_email_addresses(name)
   end
@@ -205,22 +226,8 @@ class CertificateName < ActiveRecord::Base
   def self.candidate_email_addresses(name)
     Rails.cache.fetch("CertificateName.candidate_email_addresses/#{name}",
                       expires_in: DomainControlValidation::EMAIL_CHOICE_CACHE_EXPIRES_DAYS.days) do
-      standard_addresses = DomainControlValidation.email_address_choices(name)
-      begin
-        whois=Rails.cache.fetch("CertificateName.candidate_email_addresses/whois/#{name}",
-                          expires_in: DomainControlValidation::EMAIL_CHOICE_CACHE_EXPIRES_DAYS.days) do
-          d=::PublicSuffix.parse(name)
-          Whois.whois(ActionDispatch::Http::URL.extract_domain(d.domain, 1)).inspect
-        end
-        whois_addresses = WhoisLookup.
-            email_addresses(whois)
-        whois_addresses.each do |ad|
-          standard_addresses << ad.downcase unless ad =~/abuse.*?@/i
-        end
-      rescue Exception=>e
-        logger.error e.backtrace.inspect
-      end
-      standard_addresses
+      Delayed::Job.enqueue WhoisJob.new(name)
+      DomainControlValidation.email_address_choices(name)
     end
   end
 end

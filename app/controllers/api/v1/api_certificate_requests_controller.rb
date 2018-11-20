@@ -1465,7 +1465,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
       out_file.close
     elsif type === 'nginx'
       data = certificate_order.signed_certificate.to_nginx
-      path += certificate_order.signed_certificate.nonidn_friendly_common_name + '.chained.crt'
+      path += certificate_order.signed_certificate.nonidn_friendly_common_name + '.crt'
       out_file = File.new(path, 'w')
       out_file.puts(data)
       out_file.close
