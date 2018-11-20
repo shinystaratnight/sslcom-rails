@@ -758,8 +758,8 @@ class OrdersController < ApplicationController
     )
     record_order_visit(@order)
 
-    flash[:notice] = "Order in the amount of #{@order.amount.format} 
-        will appear on the #{ssl_account.get_invoice_label} invoice."
+    # flash[:notice] = "Order in the amount of #{@order.amount.format}
+    #     will appear on the #{ssl_account.get_invoice_label} invoice."
     if single_certificate
       redirect_to edit_certificate_order_path(@ssl_slug, @certificate_order.ref)
     else
@@ -818,8 +818,8 @@ class OrdersController < ApplicationController
     if @ssl_account.invoice_required? || @amount == 0
       if @ssl_account.invoice_required? && @amount > 0 # Invoice Order, do not charge
         add_to_payable_invoice(params)
-        flash[:notice] = "The domains adjustment amount of #{@order.amount.format} 
-          will appear on the #{@ssl_account.get_invoice_label} invoice."
+        # flash[:notice] = "The domains adjustment amount of #{@order.amount.format}
+        #   will appear on the #{@ssl_account.get_invoice_label} invoice."
       end
       redirect_to edit_certificate_order_path(@ssl_slug, @certificate_order)
     else
@@ -846,8 +846,8 @@ class OrdersController < ApplicationController
       
       if @ssl_account.invoice_required? && @amount > 0 # Invoice Order, do not charge
         add_to_payable_invoice(params)
-        flash[:notice] = "This UCC reprocess in the amount of #{Money.new(@amount).format} 
-          will appear on the #{@ssl_account.get_invoice_label} invoice."
+        # flash[:notice] = "This UCC reprocess in the amount of #{Money.new(@amount).format}
+        #   will appear on the #{@ssl_account.get_invoice_label} invoice."
       end
       redirect_to edit_certificate_order_path(@ssl_slug, @certificate_order)
     else

@@ -1116,6 +1116,7 @@ class CertificateOrder < ActiveRecord::Base
     orders.last
   end
 
+  # SSL.com chained Root call
   # DRY this up with ValidationsController#new
   def domains_validated?
     all_validated = true
@@ -1985,6 +1986,7 @@ class CertificateOrder < ActiveRecord::Base
     return validated
   end
 
+  # Comodo chained certs
   def all_domains_validated?
     return true if domains_validated.count==validating_domains.count
   end
