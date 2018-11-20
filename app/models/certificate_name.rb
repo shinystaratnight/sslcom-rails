@@ -198,12 +198,17 @@ class CertificateName < ActiveRecord::Base
     CaaCheck::CAA_COMMAND.call name
   end
 
-  WhoisJob = Struct.new(:name) do
-    def perform
+  def candidate_email_addresses
+    CertificateName.candidate_email_addresses(name)
+  end
+
+  def self.candidate_email_addresses(name)
+    Rails.cache.fetch("CertificateName.candidate_email_addresses/#{name}",
+                      expires_in: DomainControlValidation::EMAIL_CHOICE_CACHE_EXPIRES_DAYS.days) do
       standard_addresses = DomainControlValidation.email_address_choices(name)
       begin
         whois=Rails.cache.fetch("CertificateName.candidate_email_addresses/whois/#{name}",
-                                expires_in: DomainControlValidation::EMAIL_CHOICE_CACHE_EXPIRES_DAYS.days) do
+                          expires_in: DomainControlValidation::EMAIL_CHOICE_CACHE_EXPIRES_DAYS.days) do
           d=::PublicSuffix.parse(name)
           Whois.whois(ActionDispatch::Http::URL.extract_domain(d.domain, 1)).inspect
         end
@@ -216,17 +221,6 @@ class CertificateName < ActiveRecord::Base
         logger.error e.backtrace.inspect
       end
       standard_addresses
-    end
-  end
-
-  def candidate_email_addresses
-    CertificateName.candidate_email_addresses(name)
-  end
-
-  def self.candidate_email_addresses(name)
-    Rails.cache.fetch("CertificateName.candidate_email_addresses/#{name}",
-                      expires_in: DomainControlValidation::EMAIL_CHOICE_CACHE_EXPIRES_DAYS.days) do
-      Delayed::Job.enqueue DcvSentNotifyJob.new(id, options[:host])
     end
   end
 end

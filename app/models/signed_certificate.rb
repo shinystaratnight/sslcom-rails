@@ -499,7 +499,7 @@ class SignedCertificate < ActiveRecord::Base
   def to_nginx(is_windows=nil)
     "".tap do |tmp|
       if certificate_content.ca
-        certificate_content.x509_certificates.reverse.each do |x509_cert|
+        certificate_content.x509_certificates.each do |x509_cert|
           tmp<<x509_cert.to_s
         end
       else
