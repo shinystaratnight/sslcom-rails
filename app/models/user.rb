@@ -1,5 +1,6 @@
 class User < ActiveRecord::Base
   include V2MigrationProgressAddon
+  include UserMessageable
 #  using_access_control
 
   OWNED_MAX_TEAMS = 3

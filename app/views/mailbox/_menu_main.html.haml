@@ -1,0 +1,15 @@
+#mailbox-menu-main
+  #mailbox-menu-main__compose
+    = link_to "<i class='fa fa-plus'></i> Compose".html_safe, |
+    mail_compose_path(@ssl_slug), method: :get, id: 'btn-mailbox-compose'
+  
+  #mailbox-menu-main__list
+    - inbox_label = "Inbox <span id='menu-main-unread-count'>#{@unread_messages}</span>"
+    %div{class: "#{@email_type == :inbox ? 'menu-main-item__selected' : ''}"}
+      = link_to "<i class='fa fa-inbox'></i> #{inbox_label}".html_safe, mail_inbox_path(@ssl_slug)
+    
+    %div{class: "#{@email_type == :sent ? 'menu-main-item__selected' : ''}"}
+      = link_to "<i class='fa fa-arrow-circle-right'></i> Sent".html_safe, mail_sent_path(@ssl_slug)
+    
+    %div{class: "#{@email_type == :trash ? 'menu-main-item__selected' : ''}"}
+      = link_to "<i class='fa fa-trash'></i> Trash".html_safe, mail_trash_path(@ssl_slug)

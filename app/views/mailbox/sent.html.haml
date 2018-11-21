@@ -1,0 +1,12 @@
+- title = 'SSL.com Mail: Sent'
+- content_for :title, title
+
+#mailbox-container
+  = render partial: 'menu_main'
+  #mailbox-main-content
+    = render partial: 'menu_top'
+
+    - if @emails.any?
+      = render partial: 'emails_list'
+    - else
+      %p{class: 'mailbox-container-empty'} Empty
