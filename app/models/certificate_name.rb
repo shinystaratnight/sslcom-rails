@@ -210,7 +210,7 @@ class CertificateName < ActiveRecord::Base
         end
         Rails.cache.write("CertificateName.candidate_email_addresses/#{dname}",standard_addresses)
       rescue Exception=>e
-        raise e
+        Logger.new(STDOUT).error e.backtrace.inspect
       end
     end
   end

@@ -315,28 +315,38 @@ class Csr < ActiveRecord::Base
   end
 
   def openssl_request
-    OpenSSL::X509::Request.new(body)
+    begin
+      OpenSSL::X509::Request.new(body)
+    rescue Exception=>e
+      logger.error e.backtrace.inspect
+      nil
+    end
   end
 
   def public_key
-    openssl_request.public_key
+    openssl_request.public_key if openssl_request
   end
 
   def verify_signature
-    openssl_request.verify public_key
+    openssl_request.verify public_key if openssl_request
   end
 
   def public_key_sha1
-    if read_attribute(:public_key_sha1).blank?
-      write_attribute(:public_key_sha1, OpenSSL::Digest::SHA1.new(public_key.to_der).to_s)
-      save unless new_record?
+    begin
+      if read_attribute(:public_key_sha1).blank?
+        write_attribute(:public_key_sha1, OpenSSL::Digest::SHA1.new(public_key.to_der).to_s)
+        save unless new_record?
+      end
+      read_attribute(:public_key_sha1)
+    rescue Exception=>e
+      logger.error e.backtrace.inspect
+      nil
     end
-    read_attribute(:public_key_sha1)
   end
 
   def decode
     begin
-      openssl_request.to_text if body
+      openssl_request.to_text if body and openssl_request
     rescue Exception
     end
   end
