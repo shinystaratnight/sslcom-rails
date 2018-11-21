@@ -3,7 +3,7 @@ class MailboxController < ApplicationController
   before_action :get_mailbox
   before_action :unread_messages_count
 
-  filter_access_to :all #, attribute_check: true
+  filter_access_to :all
 
   def inbox
     @emails = @mailbox.inbox
