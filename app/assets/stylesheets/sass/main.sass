@@ -8356,16 +8356,18 @@ i.fa-external-link.fa-ssl-custom
     
     #menu-main-unread-count
       margin-left: 1rem
-
+    
     .menu-main-item__selected
-      background-color: #f0808052
-      border-bottom-right-radius: 12px
-      border-top-right-radius: 12px
-      margin-right: 2rem
-      
+      background-color: #f0808052 
       a
         color: red !important
         font-weight: 600 !important
+
+    .menu-main-item__unselected,
+    .menu-main-item__selected
+      border-bottom-right-radius: 12px
+      border-top-right-radius: 12px
+      margin-right: 2rem
 
   #mailbox-main-content
     min-height: 500px
