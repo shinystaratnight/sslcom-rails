@@ -91,7 +91,7 @@ class SslcomCaApi
   end
 
   def self.subject_dn(options={})
-    dn=["CN=#{options[:cn]}"]
+    dn=["CN=#{options[:cn].downcase}"]
     dn << "OU=#{options[:ou]}" unless options[:ou].blank?
     unless options[:mapping].profile_name =~ /DV/
       dn << "O=#{options[:o]}" unless options[:o].blank?
@@ -122,14 +122,14 @@ class SslcomCaApi
     end || ""
     names << if cert.is_wildcard?
       "#{CertificateContent.non_wildcard_name(common_name)}"
-    elsif cert.is_basic? or cert.is_high_assurance? or cert.is_free?
+    elsif cert.is_single?
       if common_name=~/\Awww\./
         "#{common_name[4..-1]}"
       else
         "www.#{common_name}"
       end
     end
-    "dNSName=#{names.compact.uniq.join(",dNSName=")}"
+    "dNSName=#{names.compact.map(&:downcase).uniq.join(",dNSName=")}"
   end
 
   # revoke json parameter string for REST call to EJBCA
