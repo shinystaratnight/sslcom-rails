@@ -410,17 +410,22 @@ class CertificateOrdersController < ApplicationController
 
       params[:certificate_order][:certificate_contents_attributes]['0'.to_sym][:additional_domains] = additional_domains.strip
     else
-      if (@certificate_order.certificate.is_basic? ||
-          @certificate_order.certificate.is_free? ||
-          @certificate_order.certificate.is_high_assurance?) &&
+      if @certificate_order.certificate.is_single? &&
           !params[:hidden_www_domain].empty?
         params[:certificate_order][:certificate_contents_attributes]['0'.to_sym][:additional_domains] = params[:hidden_www_domain].strip
       end
     end
 
+    params[:certificate_order][:certificate_contents_attributes]['0'.to_sym][:additional_domains]=
+        if @certificate_order.certificate.is_single?
+          []
+        elsif @certificate_order.certificate.is_premium?
+          params[:certificate_order][:certificate_contents_attributes]['0'.to_sym][:additional_domains][0..2]
+        end
+
     @certificate_content=CertificateContent.new(
-      params[:certificate_order][:certificate_contents_attributes]['0'.to_sym]
-        .merge(rekey_certificate: true)
+    params[:certificate_order][:certificate_contents_attributes]['0'.to_sym]
+      .merge(rekey_certificate: true)
     )
     @certificate_order.has_csr=true #we are submitting a csr afterall
     @certificate_content.certificate_order=@certificate_order

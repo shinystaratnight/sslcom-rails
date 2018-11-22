@@ -910,11 +910,7 @@ jQuery(function($) {
             var total_domains = domain_str.split(',');
             var cert_type = '<%= (is_basic || is_free || is_high_assurance) ? true : false%>';
             if (cert_type == 'true') {
-              $.each(total_domains, function(idx, value) {
-                if (value.indexOf('www.') == -1) {
-                  domains.push(value);
-                }
-              });
+              domains = total_domains;
             } else {
               domains = total_domains;
             }

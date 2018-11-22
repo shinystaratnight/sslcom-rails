@@ -231,9 +231,10 @@ class CertificateContent < ActiveRecord::Base
 
   def certificate_names_from_domains(domains=nil)
     domains ||= all_domains
-    (domains-certificate_names.find_by_domains(domains).pluck(:name)).each do |domain|
+    (domains-certificate_names.find_by_domains(domains).pluck(:name)).each_with_index do |domain,i|
+      domain = CertificateContent.non_wildcard_name(domain,true) if certificate.is_single?
       new_certificate_name=certificate_names.find_or_create_by(name: domain.downcase,
-                                                             is_common_name: csr.try(:common_name)==domain.downcase)
+                                                           is_common_name: csr.try(:common_name)==domain.downcase)
       Delayed::Job.enqueue OtherDcvsSatisyJob.new(ssl_account,new_certificate_name) if ssl_account
     end
 
