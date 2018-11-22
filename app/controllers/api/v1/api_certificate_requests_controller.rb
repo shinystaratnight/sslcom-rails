@@ -275,7 +275,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
 
               cnames.each do |cn|
                 dcv = cn.domain_control_validations.last
-                unless dcv.identifier_found
+                if !dcv.nil? && !dcv.identifier_found
                   if dcv.dcv_method == 'email'
                     if dcv.candidate_addresses.include?(dcv.email_address)
                       if dcv.email_address != email_for_identifier

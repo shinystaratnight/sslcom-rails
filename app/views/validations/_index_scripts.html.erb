@@ -896,9 +896,9 @@ jQuery(function($) {
             var ajaxDomainUrl = '<%=get_asynch_domains_certificate_order_validation_path(@ssl_slug, @certificate_order)%>';
 
             <%
-              is_basic = @certificate_order.certificate.is_basic?
-              is_free = @certificate_order.certificate.is_free?
-              is_high_assurance = @certificate_order.certificate.is_high_assurance?
+              # is_basic = @certificate_order.certificate.is_basic?
+              # is_free = @certificate_order.certificate.is_free?
+              # is_high_assurance = @certificate_order.certificate.is_high_assurance?
 
               is_ucc = @certificate_order.certificate.is_ucc?
               is_evucc = @certificate_order.certificate.is_evucc?
@@ -907,18 +907,26 @@ jQuery(function($) {
               ext_order_number = @certificate_order.external_order_number ? @certificate_order.external_order_number : 'eon'
             %>
 
-            var total_domains = domain_str.split(',');
-            var cert_type = '<%= (is_basic || is_free || is_high_assurance) ? true : false%>';
+            /*var total_domains = domain_str.split(',');
+            var cert_type = '< %= (is_basic || is_free || is_high_assurance) ? true : false%>';
             if (cert_type == 'true') {
               $.each(total_domains, function(idx, value) {
                 if (value.indexOf('www.') == -1) {
-                  domains.push(value);
+                  if ($.inArray(value, domains) == -1) {
+                    domains.push(value);
+                  }
+                } else {
+                  if ($.inArray(value.substr(4), domains) == -1) {
+                    domains.push(value);
+                  }
                 }
               });
+              $('#ori_domain_names_str').val(domains.join(','));
             } else {
               domains = total_domains;
-            }
+            }*/
 
+            var domains = domain_str.split(',');
             var total = domains.length;
             var validated_domains = '<%=@validated_domains%>'.split(',');
             var domain_status = JSON.parse('<%= raw @ds ? @ds.to_json : {}%>');

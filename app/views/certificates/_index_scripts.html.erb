@@ -319,9 +319,9 @@ jQuery(function($) {
             names = all_domains.join(' ');*/
           <% end-%>
 
-          <%if !Settings.csr_domains_ui%>
-            <%if @certificate.is_basic? || @certificate.is_free? || @certificate.is_high_assurance?%>
-              $('#hidden_www_domain').val('');
+          <!--< %if !Settings.csr_domains_ui%>-->
+            <!--< %if @certificate.is_basic? || @certificate.is_free? || @certificate.is_high_assurance?%>-->
+              /*$('#hidden_www_domain').val('');
               var domains= [];
 
               $.each(csr_names, function(index, csr_name) {
@@ -330,9 +330,10 @@ jQuery(function($) {
                 }
               });
 
-              $('#hidden_www_domain').val(domains.join(' '));
-            <%end%>
-          <%else%>
+              $('#hidden_www_domain').val(domains.join(' '));*/
+            <!--< %end%>-->
+
+          <%if Settings.csr_domains_ui%>
             /*all_domains = names.split(' ');*/
 
             co_type = '';
@@ -591,9 +592,9 @@ jQuery(function($) {
                 $('.add_to_manager_block').show();
               }
 
-              <%if !Settings.csr_domains_ui%>
-                <%if @certificate.is_basic? || @certificate.is_free? || @certificate.is_high_assurance?%>
-                  $('#hidden_www_domain').val('');
+              <!--< %if !Settings.csr_domains_ui%>-->
+                <!--< %if @certificate.is_basic? || @certificate.is_free? || @certificate.is_high_assurance?%>-->
+                  /*$('#hidden_www_domain').val('');
                   var domains= [];
 
                   $.each(csr_names, function(index, csr_name) {
@@ -602,9 +603,9 @@ jQuery(function($) {
                     }
                   });
 
-                  $('#hidden_www_domain').val(domains.join(' '));
-                <%end%>
-              <%else%>
+                  $('#hidden_www_domain').val(domains.join(' '));*/
+                <!--< %end%>-->
+              <%if Settings.csr_domains_ui%>
                 /*all_domains = csr_names.split(' ');*/
 
                 co_type = '';
