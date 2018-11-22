@@ -268,7 +268,7 @@ class UsersController < ApplicationController
 
   def update
     @user ||= @current_user # makes our views "cleaner" and more consistent
-    edit_email = (params[:edit_action] == 'edit_email')? true : false
+    edit_email = params[:edit_action] == 'edit_email'
     unless edit_email
       @user.changing_password = true #nonelegant hack to trigger validations of password
       @user.errors[:base]<<(
@@ -286,7 +286,8 @@ class UsersController < ApplicationController
       end
       redirect_to admin_op? ? users_url : edit_account_url
     elsif edit_email
-      render :action => :edit_email
+      flash[:error] = "Email is not a valid email."
+      redirect_to edit_email_users_path
     else
       @chpwd = !admin_op?
       render :edit_password
