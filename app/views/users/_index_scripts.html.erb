@@ -64,10 +64,10 @@ jQuery(function($) {
     $('textarea').click(function(){
       $(this).select();
     });
-    $('input:radio[name*=status]').click(function(){
+    $(document).on('click', 'input:radio[name*=status]', function() {
       $(this).parents().filter('form').ajaxSubmit();
     });
-    $('input:radio[name*=duo_enabled]').click(function(){
+    $(document).on('click', 'input:radio[name*=duo_enabled]', function() {
       $(this).parents().filter('form').ajaxSubmit();
     });
 
