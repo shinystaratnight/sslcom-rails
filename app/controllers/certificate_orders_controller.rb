@@ -408,20 +408,21 @@ class CertificateOrdersController < ApplicationController
         additional_domains.concat(domain.gsub('csr-', '').gsub('validated-', '').gsub('manual-', '') + ' ')
       end unless managed_domains.blank?
 
-      params[:certificate_order][:certificate_contents_attributes]['0'.to_sym][:additional_domains] = additional_domains.strip
+      params[:certificate_order][:certificate_contents_attributes]['0'.to_sym][:additional_domains] =
+          additional_domains.strip
     else
-      if @certificate_order.certificate.is_single? &&
-          !params[:hidden_www_domain].empty?
-        params[:certificate_order][:certificate_contents_attributes]['0'.to_sym][:additional_domains] = params[:hidden_www_domain].strip
+      if @certificate_order.certificate.is_single? &&  !params[:hidden_www_domain].empty?
+        params[:certificate_order][:certificate_contents_attributes]['0'.to_sym][:additional_domains] =
+            params[:hidden_www_domain].strip
       end
     end
 
-    params[:certificate_order][:certificate_contents_attributes]['0'.to_sym][:additional_domains]=
-        if @certificate_order.certificate.is_single?
-          []
-        elsif @certificate_order.certificate.is_premium?
+    if @certificate_order.certificate.is_single?
+      params[:certificate_order][:certificate_contents_attributes]['0'.to_sym][:additional_domains]=[]
+    elsif @certificate_order.certificate.is_premium_ssl?
+      params[:certificate_order][:certificate_contents_attributes]['0'.to_sym][:additional_domains]=
           params[:certificate_order][:certificate_contents_attributes]['0'.to_sym][:additional_domains][0..2]
-        end
+    end
 
     @certificate_content=CertificateContent.new(
     params[:certificate_order][:certificate_contents_attributes]['0'.to_sym]
