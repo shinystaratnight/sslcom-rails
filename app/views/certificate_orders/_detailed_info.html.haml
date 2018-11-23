@@ -1,125 +1,126 @@
 -if certificate_order
-  -co = certificate_order
-  -order=Order.unscoped{co.order}
-  -cc=co.certificate_content
-  -cn = (co.is_unused? || cc.csr.blank?) ? nil : cc.csr.common_name
-  %tr.expanded
-    %td{colspan: show_folders_container? ? '8' : '7'}
-      .certificate_details
-        =render :partial=>'/certificate_orders/menu', :locals=>{:co=>co}
-        =render :partial=>'/certificate_orders/co', :object=>co
-        -if permitted_to?(:update, co)
-          %table(cellspacing="0")
-            %tbody
-              %tr
-                %td(colspan="6")
-                  -unless co.is_expired_credit?
-                    .certificate_details_box
-                      %ul
-                        %li
-                          %strong certificate contents
-                        -unless cc.blank? or co.certificate.is_evcs?
-                          -if cc.signed_certificate.blank?
-                            -if cc.csr.blank?
+  -cache([current_user,'certificate_order/detailed_info', certificate_order], expires_in: 12.hours) do
+    -co = certificate_order
+    -order=Order.unscoped{co.order}
+    -cc=co.certificate_content
+    -cn = (co.is_unused? || cc.csr.blank?) ? nil : cc.csr.common_name
+    %tr.expanded
+      %td{colspan: show_folders_container? ? '8' : '7'}
+        .certificate_details
+          =render :partial=>'/certificate_orders/menu', :locals=>{:co=>co}
+          =render :partial=>'/certificate_orders/co', :object=>co
+          -if permitted_to?(:update, co)
+            %table(cellspacing="0")
+              %tbody
+                %tr
+                  %td(colspan="6")
+                    -unless co.is_expired_credit?
+                      .certificate_details_box
+                        %ul
+                          %li
+                            %strong certificate contents
+                          -unless cc.blank? or co.certificate.is_evcs?
+                            -if cc.signed_certificate.blank?
+                              -if cc.csr.blank?
+                                %li
+                                  %em waiting for input
+                              -else
+                                =render partial: "certificate_orders/registrant_fields", object: cc.csr
+                            -else
+                              =render partial: "certificate_orders/registrant_fields", object: cc.signed_certificate
+                              =render partial: "certificate_orders/duration_limit", locals:{co: co}
+                          -unless co.is_unused_credit? || !permitted_to?(:show, co)
+                            %li=link_to "view certificate details", certificate_order_path(@ssl_slug, co)
+                          -if current_user.is_system_admins?
+                            %li=link_to "view order transaction", order_path(@ssl_slug, order)
+                          %li.category_border
+                          %li
+                            %strong for developers
+                          %li=link_to "preformatted api strings", developer_certificate_order_path(@ssl_slug, co)
+                          %li=link_to "developer tools", is_sandbox? ? developers_certificate_orders_url : "https://sandbox.ssl.com"
+                          -if current_user.is_admin?
+                            %li
+                              .notes_box
+                                =form_for co, :url=>admin_update_certificate_order_url(co) do |f|
+                                  %li
+                                    %strong notes for admins only
+                                  %li
+                                    =f.text_area :notes, cols: 40, rows: 10
+                              .certificate_details_box
+                                %strong audit log
+                                -audits=(co.system_audits.empty? ? "n/a" : "###")+"\n"
+                                -co.system_audits.each do |audit|
+                                  -audits << "date: #{audit.created_at}\nuser: #{audit.owner.try :login}\naction: #{audit.action}\n###\n"
+                                =text_area_tag :audits, audits, :size=>"30x10"
+                      .certificate_details_box
+                        %ul
+                          -team_iv = co.get_team_iv
+                          -unless team_iv.nil?
+                            %li
+                              %strong recipient (#{team_iv.status.humanize})
+                            %li #{team_iv.first_name}, #{team_iv.last_name}
+                            %li #{team_iv.email}
+                            %li
+                              =link_to 'edit recipient', recipient_certificate_order_path(@ssl_slug, @certificate_order.ref)
+                          -else
+                            %li
+                              %strong contacts
+                            -if cc.new?
                               %li
                                 %em waiting for input
                             -else
-                              =render partial: "certificate_orders/registrant_fields", object: cc.csr
-                          -else
-                            =render partial: "certificate_orders/registrant_fields", object: cc.signed_certificate
-                            =render partial: "certificate_orders/duration_limit", locals:{co: co}
-                        -unless co.is_unused_credit? || !permitted_to?(:show, co)
-                          %li=link_to "view certificate details", certificate_order_path(@ssl_slug, co)
-                        -if current_user.is_system_admins?
-                          %li=link_to "view order transaction", order_path(@ssl_slug, order)
-                        %li.category_border
-                        %li
-                          %strong for developers
-                        %li=link_to "preformatted api strings", developer_certificate_order_path(@ssl_slug, co)
-                        %li=link_to "developer tools", is_sandbox? ? developers_certificate_orders_url : "https://sandbox.ssl.com"
-                        -if current_user.is_admin?
-                          %li
-                            .notes_box
-                              =form_for co, :url=>admin_update_certificate_order_url(co) do |f|
-                                %li
-                                  %strong notes for admins only
-                                %li
-                                  =f.text_area :notes, cols: 40, rows: 10
-                            .certificate_details_box
-                              %strong audit log
-                              -audits=(co.system_audits.empty? ? "n/a" : "###")+"\n"
-                              -co.system_audits.each do |audit|
-                                -audits << "date: #{audit.created_at}\nuser: #{audit.owner.try :login}\naction: #{audit.action}\n###\n"
-                              =text_area_tag :audits, audits, :size=>"30x10"
-                    .certificate_details_box
-                      %ul
-                        -team_iv = co.get_team_iv
-                        -unless team_iv.nil?
-                          %li
-                            %strong recipient (#{team_iv.status.humanize})
-                          %li #{team_iv.first_name}, #{team_iv.last_name}
-                          %li #{team_iv.email}
-                          %li
-                            =link_to 'edit recipient', recipient_certificate_order_path(@ssl_slug, @certificate_order.ref)
-                        -else
-                          %li
-                            %strong contacts
-                          -if cc.new?
-                            %li
-                              %em waiting for input
-                          -else
-                            -unless cc.blank? || cc.certificate_contacts.blank?
-                              -CertificateContent::CONTACT_ROLES.each do |role|
-                                %li
-                                  \#{role}:
-                                  -ct = cc.certificate_contacts.detect(&"is_#{role}?".to_sym)
-                                  -unless ct.blank?
-                                    %ul
-                                      %li #{ct.first_name} #{ct.last_name}
-                                      %li=link_to "#{ct.email}","mailto:#{ct.email}"
-                                  -else
-                                    none
-                            -unless  cc.blank?
-                              %li
-                                =link_to 'create/edit contacts', certificate_content_contacts_url(@ssl_slug, cc)
-                    .certificate_details_box
-                      %ul
-                        -if co.certificate_content.issued? && !co.certificate_content.expired?
-                          =render partial: 'download', locals: {co: co}
-                        -unless cc.csr.blank? || hide_validation?(co)
-                          -if cc.pending_validation?
-                            %li
-                              %strong domain validation
-                            =render partial: 'validations/dcv', locals: {co: co}
-                          -unless co.certificate.is_dv_or_basic?
-                            %li
-                              %strong validation documentation
-                            -if co.description['validation_level'] == 'Class 1'
-                              %li
-                                %em n/a
-                            -else
-                              -unless co.validation.validation_histories.blank?
-                                -co.validation.validation_histories.each do |vh|
+                              -unless cc.blank? || cc.certificate_contacts.blank?
+                                -CertificateContent::CONTACT_ROLES.each do |role|
                                   %li
-                                    =link_to image_tag('preview.png', :class=>'blue_icon'), URI.encode(vh.document_url(:preview)), :rel=>'prettyPhoto'
-                                    =link_to image_tag('download.png', :class=>'blue_icon'), URI.encode(vh.document_url), target: "_blank"
-                                    =vh.document_file_name.shorten(20, false)
-                              -else
+                                    \#{role}:
+                                    -ct = cc.certificate_contacts.detect(&"is_#{role}?".to_sym)
+                                    -unless ct.blank?
+                                      %ul
+                                        %li #{ct.first_name} #{ct.last_name}
+                                        %li=link_to "#{ct.email}","mailto:#{ct.email}"
+                                    -else
+                                      none
+                              -unless  cc.blank?
                                 %li
-                                  %em none submitted
-                              %li.category_border
-                                -unless cc.blank? || cc.new? || cc.csr_submitted? || cc.info_provided? || co.expired?
-                                  -unless co.validation_rules_satisfied? || co.certificate_content.expired?
-                                    -ul=link_to 'upload', document_upload_certificate_order_validation_url(certificate_order_id: co.ref)
-                                  -unless co.validation.validation_histories.blank?
-                                    -m=link_to 'manage', edit_certificate_order_validation_url(certificate_order_id: co.ref)
-                                  -s=link_to 'status', certificate_order_validation_url(certificate_order_id: co.ref)
-                                  =link_cluster([ul,m,s])
-                        -if cn  and !co.certificate.is_code_signing?
-                          =render partial: 'visit', locals: {cn: cn}
-                        -if cc.server_software
-                          %li
-                            %strong server software
-                          %li.category_border
-                            #{cc.server_software.title}
-                        =render partial: 'shared/small_admin_functions', locals: {co: co}
+                                  =link_to 'create/edit contacts', certificate_content_contacts_url(@ssl_slug, cc)
+                      .certificate_details_box
+                        %ul
+                          -if co.certificate_content.issued? && !co.certificate_content.expired?
+                            =render partial: 'download', locals: {co: co}
+                          -unless cc.csr.blank? || hide_validation?(co)
+                            -if cc.pending_validation?
+                              %li
+                                %strong domain validation
+                              =render partial: 'validations/dcv', locals: {co: co}
+                            -unless co.certificate.is_dv_or_basic?
+                              %li
+                                %strong validation documentation
+                              -if co.description['validation_level'] == 'Class 1'
+                                %li
+                                  %em n/a
+                              -else
+                                -unless co.validation.validation_histories.blank?
+                                  -co.validation.validation_histories.each do |vh|
+                                    %li
+                                      =link_to image_tag('preview.png', :class=>'blue_icon'), URI.encode(vh.document_url(:preview)), :rel=>'prettyPhoto'
+                                      =link_to image_tag('download.png', :class=>'blue_icon'), URI.encode(vh.document_url), target: "_blank"
+                                      =vh.document_file_name.shorten(20, false)
+                                -else
+                                  %li
+                                    %em none submitted
+                                %li.category_border
+                                  -unless cc.blank? || cc.new? || cc.csr_submitted? || cc.info_provided? || co.expired?
+                                    -unless co.validation_rules_satisfied? || co.certificate_content.expired?
+                                      -ul=link_to 'upload', document_upload_certificate_order_validation_url(certificate_order_id: co.ref)
+                                    -unless co.validation.validation_histories.blank?
+                                      -m=link_to 'manage', edit_certificate_order_validation_url(certificate_order_id: co.ref)
+                                    -s=link_to 'status', certificate_order_validation_url(certificate_order_id: co.ref)
+                                    =link_cluster([ul,m,s])
+                          -if cn  and !co.certificate.is_code_signing?
+                            =render partial: 'visit', locals: {cn: cn}
+                          -if cc.server_software
+                            %li
+                              %strong server software
+                            %li.category_border
+                              #{cc.server_software.title}
+                          =render partial: 'shared/small_admin_functions', locals: {co: co}
