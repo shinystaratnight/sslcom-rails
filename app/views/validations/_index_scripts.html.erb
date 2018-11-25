@@ -967,7 +967,8 @@ jQuery(function($) {
                           } else {
                             trElement.attr('class', 'certificate_name validated');
                           }
-                          trElement.attr('id', 'certificate_name__' + value);
+                          /*trElement.attr('id', 'certificate_name__' + value);*/
+                          trElement.attr('id', 'certificate_name:' + value);
 
                           $('.domain_list').append(trElement);
 
@@ -1175,7 +1176,8 @@ jQuery(function($) {
               } else {
                 var trElement = $('<tr></tr>');
                 trElement.attr('class', 'certificate_name validated');
-                trElement.attr('id', 'certificate_name__' + value);
+                /*trElement.attr('id', 'certificate_name__' + value);*/
+                trElement.attr('id', 'certificate_name:' + value);
 
                 $('.domain_list').append(trElement);
 

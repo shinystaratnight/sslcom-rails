@@ -924,6 +924,10 @@ jQuery(function($) {
       }
     });
 
+    $('textarea[id$=domains]').blur(function() {
+      $.adjustDomainPricing(this);
+    });
+
     $('textarea[id$=domains]').on('paste', function () {
       var $this = $(this);
 
