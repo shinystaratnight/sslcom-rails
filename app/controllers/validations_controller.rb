@@ -262,7 +262,7 @@ class ValidationsController < ApplicationController
     cn = co.certificate_content.certificate_names.find_by_name(params['domain_name']) if co
 
     returnObj = Rails.cache.fetch("#{cn.domain_control_validations.
-        last.try(:cache_key)}/get_asynch_domains}") do
+        last.try(:cache_key)}/get_asynch_domains/#{params['domain_name']}") do
       if cn
         ds = params['domain_status']
         dcv = cn.domain_control_validations.last

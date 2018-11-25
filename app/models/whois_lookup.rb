@@ -1,7 +1,9 @@
 class WhoisLookup < ActiveRecord::Base
   belongs_to  :csr
   before_create :query_whois
-  
+
+  WHOIS=->(domain){%x"whois #{domain}"}
+
   def query_whois
     if csr.top_level_domain && Whois.find(csr.top_level_domain).try(:valid?)
       self.raw = whois = Whois.find(csr.top_level_domain)
