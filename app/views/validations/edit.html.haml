@@ -10,7 +10,5 @@
   #stylized.default_form.clearfix
     -unless co.certificate.is_dv?
       =render partial: '/validations/refer_to_others', locals: {co: co}
-    -unless hide_dcv?
-      =render partial: '/validations/proof_of_dcv', locals: {co: co}
     =render partial: "/validations/manage_docs", locals: {co: co}
 =render :partial => '/validations/index_scripts'

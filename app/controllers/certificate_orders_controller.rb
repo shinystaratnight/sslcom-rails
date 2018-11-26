@@ -168,7 +168,7 @@ class CertificateOrdersController < ApplicationController
     unless @certificate_order.blank?
       if @certificate_order.certificate_content.ca.blank?
         cc=@certificate_order.certificate_content
-        cc.add_ca(@certificate_order.ssl_account)
+        cc.add_ca(@certificate_order.ssl_account) if @certificate_order.external_order_number.blank?
         cc.save
       end
       if @certificate_order.certificate.is_client_pro? || @certificate_order.certificate.is_client_basic?
@@ -226,7 +226,7 @@ class CertificateOrdersController < ApplicationController
         )
         # @certificate_content.additional_domains = domains
         #reset dcv validation
-        @certificate_content.add_ca(@certificate_order.ssl_account)
+        @certificate_content.add_ca(@certificate_order.ssl_account) if @certificate_order.external_order_number.blank?
         @certificate_content.agreement=true
         @certificate_order.validation.validation_rules.each do |vr|
           if vr.description=~/\Adomain/
@@ -408,19 +408,25 @@ class CertificateOrdersController < ApplicationController
         additional_domains.concat(domain.gsub('csr-', '').gsub('validated-', '').gsub('manual-', '') + ' ')
       end unless managed_domains.blank?
 
-      params[:certificate_order][:certificate_contents_attributes]['0'.to_sym][:additional_domains] = additional_domains.strip
+      params[:certificate_order][:certificate_contents_attributes]['0'.to_sym][:additional_domains] =
+          additional_domains.strip
     else
-      if (@certificate_order.certificate.is_basic? ||
-          @certificate_order.certificate.is_free? ||
-          @certificate_order.certificate.is_high_assurance?) &&
-          !params[:hidden_www_domain].empty?
-        params[:certificate_order][:certificate_contents_attributes]['0'.to_sym][:additional_domains] = params[:hidden_www_domain].strip
+      if @certificate_order.certificate.is_single? &&  !params[:hidden_www_domain].empty?
+        params[:certificate_order][:certificate_contents_attributes]['0'.to_sym][:additional_domains] =
+            params[:hidden_www_domain].strip
       end
     end
 
+    if @certificate_order.certificate.is_single?
+      params[:certificate_order][:certificate_contents_attributes]['0'.to_sym][:additional_domains]=[]
+    elsif @certificate_order.certificate.is_premium_ssl?
+      params[:certificate_order][:certificate_contents_attributes]['0'.to_sym][:additional_domains]=
+          params[:certificate_order][:certificate_contents_attributes]['0'.to_sym][:additional_domains][0..2]
+    end
+
     @certificate_content=CertificateContent.new(
-      params[:certificate_order][:certificate_contents_attributes]['0'.to_sym]
-        .merge(rekey_certificate: true)
+    params[:certificate_order][:certificate_contents_attributes]['0'.to_sym]
+      .merge(rekey_certificate: true)
     )
     @certificate_order.has_csr=true #we are submitting a csr afterall
     @certificate_content.certificate_order=@certificate_order

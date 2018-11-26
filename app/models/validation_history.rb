@@ -23,8 +23,9 @@ class ValidationHistory < ActiveRecord::Base
   CONTENT_TYPES =   [['image/jpeg', 'jpg, jpeg, jpe, jfif'], ['image/png','png'],
     ['application/pdf', 'pdf'], ['image/tiff', 'tif, tiff'],
     ['image/gif', 'gif'], ['image/bmp', 'bmp'],
-    ['application/zip', 'zip'],
-    ['application/msword', 'doc'], ['audio/mpeg', 'mp3'], ['text/plain', 'txt, text']]
+    ['application/zip', 'zip'], ['application/vnd.oasis.opendocument.text', 'odt'],
+    ['application/msword', 'doc'], ['application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'docx'],
+    ['audio/mpeg', 'mp3'], ['text/plain', 'txt, text']]
 
   # validates_attachment_presence :document
 #   validates_attachment_size :document, :less_than => 50.megabytes

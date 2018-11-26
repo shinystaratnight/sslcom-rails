@@ -15,7 +15,6 @@
     -if checkout_in_progress and !co.certificate.is_code_signing?
       -unless co.certificate.is_dv?
         =render partial: 'refer_to_others', locals: {co: co, hide_options: !checkout_in_progress}
-      =render partial: 'proof_of_dcv', locals: {co: co}
       -unless (co.certificate.is_dv_or_basic? && checkout_in_progress)
         #documents_upload_heading
           .subheading Documentation
@@ -115,7 +114,7 @@
                   or any other document that proves the existence of the organization or company.
                 %p Identifying Documents for Registrant #{co.registrant.company_name}:
                 = file_field_tag "ov_filedata[]", id: "ov_multi_upload"  
-            - unless co.certificate.is_code_signing?
+            - if co.certificate.is_smime_or_client?
               .clearfix
                 %h3
                   Individual Validation documents are related to validating the identity of the recipient

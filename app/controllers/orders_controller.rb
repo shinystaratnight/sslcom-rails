@@ -5,7 +5,8 @@ class OrdersController < ApplicationController
   #resource_controller
   helper_method :cart_items_from_model_and_id
   before_filter :finish_reseller_signup, :only => [:new], if: "current_user"
-  before_filter :find_order, :only => [:show, :invoice, :update_invoice, :refund, :refund_merchant, :change_state, :revoke, :edit, :update, :transfer_order, :update_tags]
+  before_filter :find_order, :only => [:show, :invoice, :update_invoice, :refund, :refund_merchant, :change_state, :edit, :update, :transfer_order, :update_tags]
+  before_filter :find_scoped_order, :only => [:revoke]
   before_filter :set_prev_flag, only: [:create, :create_free_ssl, :create_multi_free_ssl]
   before_filter :prep_certificate_orders_instances, only: [:create, :create_free_ssl]
   before_filter :go_prev, :parse_certificate_orders, only: [:create_multi_free_ssl]
@@ -905,5 +906,9 @@ class OrdersController < ApplicationController
 
   def find_order
     @order = Order.unscoped{Order.find_by_reference_number(params[:id])}
+  end
+
+  def find_scoped_order
+    @order = (current_user.is_system_admins? ? Order : current_user.orders).find_by_reference_number(params[:id])
   end
 end
