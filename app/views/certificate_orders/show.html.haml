@@ -121,7 +121,7 @@
                           %li
                             %strong validation status
                           %li.li-cert-validate
-                            -if current_user.is_system_admins?
+                            -if current_user.is_super_user?
                               -require_ov = @certificate_order.certificate.requires_locked_registrant?
                               -if require_ov && !@certificate_order.ov_validated?
                                 = link_to "<i class='fa fa-expeditedssl'></i> Validate OV".html_safe,                      |

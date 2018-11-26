@@ -102,7 +102,7 @@
                 =link_to @certificate_order.parent.ref, @certificate_order.parent, target: "_blank"
             =text_area_tag :previous_csr_body, @certificate_order.most_recent_csr.body, style: "display: none"
         =cert_form.text_area :signing_request, :cols=>40, :rows=>10, :wrap=>'off'
-        =hidden_field_tag :hidden_www_domain, class: 'hidden_www_domain'
+        -#=hidden_field_tag :hidden_www_domain, class: 'hidden_www_domain'
       .clearfix.add_to_manager_block
         %label
           Save to CSR Manager:

@@ -7,6 +7,8 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
   before_filter :current_user_ssl_account, only: [:generate_certificate_v1_4]
   after_filter :notify_saved_result, except: [:create_v1_4, :download_v1_4]
 
+  before_filter :current_user_ssl_account, only: [:update_v1_4, :replace_v1_4]
+
   # parameters listed here made available as attributes in @result
   wrap_parameters ApiCertificateRequest, include: [*( 
     ApiCertificateRequest::ACCESSORS+
@@ -111,19 +113,20 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
 
     if @result.valid? && @result.save
       co = @result.find_certificate_order
-      co.certificate_content.create_csr(body: params[:csr])
+      # if co.ov_validated?
+        co.certificate_content.create_csr(body: params[:csr])
 
-      options = {}
-      options[:cc] = co.certificate_content
-      # options[:mapping] = options[:cc].ca || co.certificate.cas.ssl_account_or_general_default(current_user.ssl_account).last
-      options[:mapping] = options[:cc].ca || co.certificate.cas.ssl_account_or_general_default(@current_ssl_account).last
+        options = {}
+        options[:cc] = co.certificate_content
+        options[:mapping] = options[:cc].ca || co.certificate.cas.ssl_account_or_general_default(@current_ssl_account).last
 
-      if res = SslcomCaApi.generate_for_certificate(options)
-        co_token = co.certificate_order_tokens.where(is_expired: false).first
-        co_token.update_attribute(:is_expired, true) if co_token
+        if res = SslcomCaApi.generate_for_certificate(options)
+          co_token = co.certificate_order_tokens.where(is_expired: false).first
+          co_token.update_attribute(:is_expired, true) if co_token
 
-        @result.cert_results = res
-      end
+          @result.cert_results = res
+        end
+      # end
     else
       InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
     end
@@ -196,12 +199,14 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
               end
 
               unless identifier == ''
+                ssl_slug = @current_ssl_account.ssl_slug || @current_ssl_account.acct_number
+
                 domain_ary << domain_list
                 email_list << email_for_identifier
                 identifier_list << identifier
 
                 email_list.each_with_index do |value, key|
-                  OrderNotifier.dcv_email_send(@acr, value, identifier_list[key], domain_ary[key]).deliver
+                  OrderNotifier.dcv_email_send(@acr, value, identifier_list[key], domain_ary[key], nil, ssl_slug).deliver
                 end
               end
             end
@@ -271,7 +276,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
 
               cnames.each do |cn|
                 dcv = cn.domain_control_validations.last
-                unless dcv.identifier_found
+                if !dcv.nil? && !dcv.identifier_found
                   if dcv.dcv_method == 'email'
                     if dcv.candidate_addresses.include?(dcv.email_address)
                       if dcv.email_address != email_for_identifier
@@ -301,12 +306,14 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
               end
 
               unless identifier == ''
+                ssl_slug = @current_ssl_account.ssl_slug || @current_ssl_account.acct_number
+
                 domain_ary << domain_list
                 email_list << email_for_identifier
                 identifier_list << identifier
 
                 email_list.each_with_index do |value, key|
-                  OrderNotifier.dcv_email_send(@acr, value, identifier_list[key], domain_ary[key]).deliver
+                  OrderNotifier.dcv_email_send(@acr, value, identifier_list[key], domain_ary[key], nil, ssl_slug).deliver
                 end
               end
             end

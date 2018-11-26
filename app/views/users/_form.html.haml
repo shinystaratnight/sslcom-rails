@@ -5,39 +5,41 @@
 .clearfix
   = form.label :email, "Email<span class='label_desc'>receives notification</span>".html_safe
   = form.text_field :email, :size=>HTML_TEXT_FIELD_SIZE, required:true
--if Settings.require_signup_password
-  .clearfix
-    = form.label :password, "Password<span class='label_desc'>min. 8 chars</span>".html_safe
-    = form.password_field :password, required:true
-  .activation-pass-hint
-    %div
-      %strong
-        *#{(@chpwd) ? 'New p' : 'P'}assword requires:
-      minimum of 8 characters which must include a minimum of:
-      %br
-    %div
-      %br
-      1 lower case letter [a-z] and
-      %br
-      1 upper case letter [A-Z] and
-      %br
-      1 numeric character [0-9] and
-      %br
-      1 special character: ~`!@#$%^&*()-+={}[]|\;:"<>,./?
-  -#.clearfix.form_input
-  .clearfix
-    = form.label :password_confirmation, "Password again<span class='label_desc'>type the password again</span>".html_safe
-    = form.password_field :password_confirmation, required:true
-  .activation-tos
-    .tos-check
-      =check_box_tag :tos
-    .tos-desc
-      -link = link_to 'Subscriber Agreement', Certificate::SSLCOM_SUBSCRIBER_AGREEMENT, target: :blank
-      By accepting the invitation to join this Team at SSL.com you are agreeing to
-      abide by the terms and conditions of the SSL.com #{"<strong>#{link}</strong>".html_safe}.
-      Any actions that you perform while in your role will directly affect your active Team.
-      Be sure to verify which Team is active by checking the "CURRENT TEAM" listing in the header
-      section of the user portal.
-      %br
-      %br
-      ="If you have any questions please contact <strong>#{mail_to 'support@ssl.com'}</strong> for assistance.".html_safe
+
+-unless action_name == 'edit_email'
+  -if Settings.require_signup_password
+    .clearfix
+      = form.label :password, "Password<span class='label_desc'>min. 8 chars</span>".html_safe
+      = form.password_field :password, required:true
+    .activation-pass-hint
+      %div
+        %strong
+          *#{(@chpwd) ? 'New p' : 'P'}assword requires:
+        minimum of 8 characters which must include a minimum of:
+        %br
+      %div
+        %br
+        1 lower case letter [a-z] and
+        %br
+        1 upper case letter [A-Z] and
+        %br
+        1 numeric character [0-9] and
+        %br
+        1 special character: ~`!@#$%^&*()-+={}[]|\;:"<>,./?
+    -#.clearfix.form_input
+    .clearfix
+      = form.label :password_confirmation, "Password again<span class='label_desc'>type the password again</span>".html_safe
+      = form.password_field :password_confirmation, required:true
+    .activation-tos
+      .tos-check
+        =check_box_tag :tos
+      .tos-desc
+        -link = link_to 'Subscriber Agreement', Certificate::SSLCOM_SUBSCRIBER_AGREEMENT, target: :blank
+        By accepting the invitation to join this Team at SSL.com you are agreeing to
+        abide by the terms and conditions of the SSL.com #{"<strong>#{link}</strong>".html_safe}.
+        Any actions that you perform while in your role will directly affect your active Team.
+        Be sure to verify which Team is active by checking the "CURRENT TEAM" listing in the header
+        section of the user portal.
+        %br
+        %br
+        ="If you have any questions please contact <strong>#{mail_to 'support@ssl.com'}</strong> for assistance.".html_safe

@@ -38,7 +38,7 @@ class CsrsController < ApplicationController
 
     if params[:ref]
       if cc = CertificateContent.find_by_ref(params[:ref])
-        cn = cc.certificate_names.find_by_name(params[:dcv].split('__')[1])
+        cn = cc.certificate_names.find_by_name(params[:dcv].split(':')[1])
 
         if cn
           cn.new_name params['new_name']

@@ -19,6 +19,8 @@ class DomainControlValidation < ActiveRecord::Base
 
   EMAIL_CHOICE_CACHE_EXPIRES_DAYS=1
 
+  default_scope{ order("id asc")}
+
   include Workflow
   workflow do
     state :new do
