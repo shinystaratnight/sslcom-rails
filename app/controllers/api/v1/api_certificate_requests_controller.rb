@@ -7,6 +7,8 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
   before_filter :current_user_ssl_account, only: [:generate_certificate_v1_4]
   after_filter :notify_saved_result, except: [:create_v1_4, :download_v1_4]
 
+  before_filter :current_user_ssl_account, only: [:update_v1_4, :replace_v1_4]
+
   # parameters listed here made available as attributes in @result
   wrap_parameters ApiCertificateRequest, include: [*( 
     ApiCertificateRequest::ACCESSORS+
@@ -196,12 +198,14 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
               end
 
               unless identifier == ''
+                ssl_slug = @current_ssl_account.ssl_slug || @current_ssl_account.acct_number
+
                 domain_ary << domain_list
                 email_list << email_for_identifier
                 identifier_list << identifier
 
                 email_list.each_with_index do |value, key|
-                  OrderNotifier.dcv_email_send(@acr, value, identifier_list[key], domain_ary[key]).deliver
+                  OrderNotifier.dcv_email_send(@acr, value, identifier_list[key], domain_ary[key], nil, ssl_slug).deliver
                 end
               end
             end
@@ -271,7 +275,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
 
               cnames.each do |cn|
                 dcv = cn.domain_control_validations.last
-                unless dcv.identifier_found
+                if !dcv.nil? && !dcv.identifier_found
                   if dcv.dcv_method == 'email'
                     if dcv.candidate_addresses.include?(dcv.email_address)
                       if dcv.email_address != email_for_identifier
@@ -301,12 +305,14 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
               end
 
               unless identifier == ''
+                ssl_slug = @current_ssl_account.ssl_slug || @current_ssl_account.acct_number
+
                 domain_ary << domain_list
                 email_list << email_for_identifier
                 identifier_list << identifier
 
                 email_list.each_with_index do |value, key|
-                  OrderNotifier.dcv_email_send(@acr, value, identifier_list[key], domain_ary[key]).deliver
+                  OrderNotifier.dcv_email_send(@acr, value, identifier_list[key], domain_ary[key], nil, ssl_slug).deliver
                 end
               end
             end

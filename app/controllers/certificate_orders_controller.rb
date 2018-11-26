@@ -408,13 +408,7 @@ class CertificateOrdersController < ApplicationController
         additional_domains.concat(domain.gsub('csr-', '').gsub('validated-', '').gsub('manual-', '') + ' ')
       end unless managed_domains.blank?
 
-      params[:certificate_order][:certificate_contents_attributes]['0'.to_sym][:additional_domains] =
-          additional_domains.strip
-    else
-      if @certificate_order.certificate.is_single? &&  !params[:hidden_www_domain].empty?
-        params[:certificate_order][:certificate_contents_attributes]['0'.to_sym][:additional_domains] =
-            params[:hidden_www_domain].strip
-      end
+      params[:certificate_order][:certificate_contents_attributes]['0'.to_sym][:additional_domains] = additional_domains.strip
     end
 
     if @certificate_order.certificate.is_single?
@@ -425,8 +419,8 @@ class CertificateOrdersController < ApplicationController
     end
 
     @certificate_content=CertificateContent.new(
-    params[:certificate_order][:certificate_contents_attributes]['0'.to_sym]
-      .merge(rekey_certificate: true)
+      params[:certificate_order][:certificate_contents_attributes]['0'.to_sym]
+        .merge(rekey_certificate: true)
     )
     @certificate_order.has_csr=true #we are submitting a csr afterall
     @certificate_content.certificate_order=@certificate_order
