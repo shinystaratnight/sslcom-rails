@@ -108,7 +108,7 @@ class ApiCertificateReprocess < ApiCertificateRequest
   def setup_certificate_content(options)
     certificate_order= options[:certificate_order]
     cc = options[:certificate_content]
-    cc.add_ca(options[:certificate_order].ssl_account)
+    cc.add_ca(options[:certificate_order].ssl_account) if options[:certificate_order].external_order_number.blank?
     cc.create_registrant(
         company_name: self.organization_name,
         department: self.organization_unit_name,

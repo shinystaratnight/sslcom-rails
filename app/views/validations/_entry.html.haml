@@ -200,7 +200,7 @@
                         =co.notes
                       -else
                         no notes found
-          -if co.certificate.is_server?
+          -if co.certificate.is_server? and !cc.ca.blank?
             %tr
               %td(colspan="6")
                 .certificate_details_box

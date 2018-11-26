@@ -168,7 +168,7 @@ class CertificateOrdersController < ApplicationController
     unless @certificate_order.blank?
       if @certificate_order.certificate_content.ca.blank?
         cc=@certificate_order.certificate_content
-        cc.add_ca(@certificate_order.ssl_account)
+        cc.add_ca(@certificate_order.ssl_account) if @certificate_order.external_order_number.blank?
         cc.save
       end
       if @certificate_order.certificate.is_client_pro? || @certificate_order.certificate.is_client_basic?
@@ -226,7 +226,7 @@ class CertificateOrdersController < ApplicationController
         )
         # @certificate_content.additional_domains = domains
         #reset dcv validation
-        @certificate_content.add_ca(@certificate_order.ssl_account)
+        @certificate_content.add_ca(@certificate_order.ssl_account) if @certificate_order.external_order_number.blank?
         @certificate_content.agreement=true
         @certificate_order.validation.validation_rules.each do |vr|
           if vr.description=~/\Adomain/
