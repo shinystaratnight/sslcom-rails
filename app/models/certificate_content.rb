@@ -220,7 +220,9 @@ class CertificateContent < ActiveRecord::Base
   end
 
   def add_ca(ssl_account)
-    self.ca = (self.certificate.cas.ssl_account_or_general_default(ssl_account)).last if ca.blank? and certificate
+    unless [467564,16077].include?(ssl_account.id)
+      self.ca = (self.certificate.cas.ssl_account_or_general_default(ssl_account)).last if ca.blank? and certificate
+    end
   end
 
   OtherDcvsSatisyJob = Struct.new(:ssl_account,:new_certificate_name) do

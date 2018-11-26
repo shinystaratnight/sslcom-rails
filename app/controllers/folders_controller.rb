@@ -99,13 +99,11 @@ class FoldersController < ApplicationController
 
   def add_certificate_order
     if @folder
-      co = CertificateOrder.find_by(ref: params[:folder][:certificate_order_id])
+      co = CertificateOrder.unscoped.find_by(ref: params[:folder][:certificate_order_id])
     end
 
     if @folder && co
-      CertificateOrder.record_timestamps = false
-      if co.update(folder_id: @folder.id)
-        CertificateOrder.record_timestamps = true
+      if co.update_column(:folder_id, @folder.id)
         render json: { message: "Certificate has been successfully moved." }, status: :ok
       else
         render_try_again_error
@@ -118,7 +116,7 @@ class FoldersController < ApplicationController
   def add_certificate_orders
     co_refs = params[:folder][:folder_certificate_order_ids].split(',')
     if @folder && co_refs.any?
-      certificate_orders = CertificateOrder.where(ref: co_refs)
+      certificate_orders = CertificateOrder.unscoped.where(ref: co_refs)
     end
     if @folder && certificate_orders && certificate_orders.any?
       certificate_orders.update_all(folder_id: @folder.id)
