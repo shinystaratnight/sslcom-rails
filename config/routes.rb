@@ -364,6 +364,7 @@ SslCom::Application.routes.draw do
       collection do
         get :checkout, action: "new" # this shows the discount code prompt
         get :show_cart
+        post :add_cart
         get :search
         get :visitor_trackings
         post :create_free_ssl, :create_multi_free_ssl, :lookup_discount

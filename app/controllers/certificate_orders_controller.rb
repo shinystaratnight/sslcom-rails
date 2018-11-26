@@ -405,16 +405,11 @@ class CertificateOrdersController < ApplicationController
       managed_domains = params[:managed_domains]
       additional_domains = ''
       managed_domains.each do |domain|
-        additional_domains.concat(domain.gsub('csr-', '').gsub('validated-', '').gsub('manual-', '') + ' ')
+        additional_domains.concat(domain.gsub('csr-', '') + ' ')
       end unless managed_domains.blank?
 
       params[:certificate_order][:certificate_contents_attributes]['0'.to_sym][:additional_domains] =
           additional_domains.strip
-    # else
-    #   if @certificate_order.certificate.is_single? &&  !params[:hidden_www_domain].empty?
-    #     params[:certificate_order][:certificate_contents_attributes]['0'.to_sym][:additional_domains] =
-    #         params[:hidden_www_domain].strip
-    #   end
     end
 
     if @certificate_order.certificate.is_single?

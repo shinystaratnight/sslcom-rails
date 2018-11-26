@@ -32,7 +32,10 @@
       .col-md-9
         %textarea.cert{:cols=>80, :rows=>10}
   .pkcs_download_wrap.hidden
-    Create a downloadable pfx file by setting a password and providing the private key (your private key is not sent to SSL.com or any other site)
+    .row.pt-0
+      .col-md-3
+      .col-md-6
+        Create a downloadable pfx file by setting a password and providing the private key (your private key is not sent to SSL.com or any other site)
     .row.pt-5
       .col-md-3{:style=>"text-align: right"}
         Password :
@@ -42,5 +45,6 @@
         %input.pkcs_download{:type=>'button', :value=>'Download', :class=>'btn btn-primary'}
   .cert_download_wrap.pt-5.hidden
     %input.cert_download{:type=>'button', :value=>'Download', :style=>'display:block; margin: auto', :class=>'btn btn-primary'}
+    = hidden_field_tag :cert_common_name, ''
     -#%a.user_cert_download{:download=>'sslcom_cert.crt'} Download File
 

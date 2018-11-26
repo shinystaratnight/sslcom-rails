@@ -103,7 +103,41 @@ class OrdersController < ApplicationController
       redirect_to show_cart_orders_path(id: guid)
     end
     setup_orders
-  end  
+  end
+
+  def add_cart
+    cart = params[:cart]
+    guid = cookies[:cart_guid]
+    db_cart = ShoppingCart.find_by_guid(guid)
+
+    if current_user
+      if current_user.shopping_cart
+        guid = current_user.shopping_cart.guid
+        cookies[:cart_guid] = {:value=>guid, :path => "/",
+                               :expires => Settings.cart_cookie_days.to_i.days.from_now} # reset guid
+
+        # Get stored cart info
+        content = JSON.parse(current_user.shopping_cart.content)
+        content = shopping_cart_content(content, cart)
+        current_user.shopping_cart.update_attribute :content, content.to_json
+      else # each user should 'own' a db_cart
+        guid = UUIDTools::UUID.random_create.to_s
+        cookies[:cart_guid] = {:value=>guid, :path => "/", :expires => Settings.cart_cookie_days.to_i.days.from_now}
+        current_user.create_shopping_cart(guid: guid, content: [cart].to_json)
+      end
+    elsif guid && db_cart #assume user is not logged in
+      # Get stored cart info
+      content = JSON.parse(db_cart.content)
+      content = shopping_cart_content(content, cart)
+      db_cart.update_attribute :content, content.to_json
+    else
+      guid = UUIDTools::UUID.random_create.to_s
+      cookies[:cart_guid] = {:value=>guid, :path => "/", :expires => Settings.cart_cookie_days.to_i.days.from_now}
+      ShoppingCart.create(guid: guid, content: [cart].to_json)
+    end
+
+    render :json => {'guid' => guid}
+  end
 
   def add
     add_to_cart @line_item = ActiveRecord::Base.find_from_model_and_id(param)
@@ -910,5 +944,40 @@ class OrdersController < ApplicationController
 
   def find_scoped_order
     @order = (current_user.is_system_admins? ? Order : current_user.orders).find_by_reference_number(params[:id])
+  end
+
+  def shopping_cart_content(content, cart)
+    match = true
+    idx = -1
+
+    # Check to exist same info
+    content.each_with_index do |cookie, i|
+      match = true
+      cookie.keys.each do |key|
+        if key != ShoppingCart::QUANTITY && key != ShoppingCart::AFFILIATE && cookie[key] != cart[key]
+          match = false
+          break
+        end
+      end
+
+      if match
+        idx = i
+        break
+      end
+    end
+
+    # Update content based on existing same one.
+    if idx == -1
+      cart[ShoppingCart::QUANTITY] = 1
+      if content.kind_of?(Array)
+        content << cart
+      else
+        content = [cart]
+      end
+    else
+      content[idx][ShoppingCart::QUANTITY] += 1
+    end
+
+    return content
   end
 end

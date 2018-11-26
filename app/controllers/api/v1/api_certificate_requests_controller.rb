@@ -117,14 +117,14 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
 
       options = {}
       options[:cc] = co.certificate_content
-      # options[:mapping] = options[:cc].ca || co.certificate.cas.ssl_account_or_general_default(current_user.ssl_account).last
       options[:mapping] = options[:cc].ca || co.certificate.cas.ssl_account_or_general_default(@current_ssl_account).last
 
       if res = SslcomCaApi.generate_for_certificate(options)
         co_token = co.certificate_order_tokens.where(is_expired: false).first
         co_token.update_attribute(:is_expired, true) if co_token
 
-        @result.cert_results = res
+        @result.cert_results = res.to_s
+        @result.cert_common_name = res.subject.common_name.gsub(/[\s\.\*\(\)]/,"_").downcase + '.crt'
       end
     else
       InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
