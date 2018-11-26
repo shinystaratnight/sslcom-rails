@@ -216,7 +216,7 @@ class CertificateName < ActiveRecord::Base
   end
 
   def candidate_email_addresses
-    CertificateName.candidate_email_addresses(name)
+    CertificateName.candidate_email_addresses(non_wildcard_name)
   end
 
   def self.candidate_email_addresses(name)

@@ -6,14 +6,21 @@ class Country < ActiveRecord::Base
   scope :approved, ->{where{iso1_code << Country::BLACKLIST}}
 
   def to_param
-    iso1_code
+    Rails.cache.fetch("#{cache_key}/to_param") do
+      iso1_code
+    end
   end
 
   def self.iso1_codes
-    select(:iso1_code).map(&:iso1_code)
+    Rails.cache.fetch("Country/iso1_codes") do
+      select(:iso1_code).map(&:iso1_code)
+    end
+
   end
 
   def self.accepted_countries
-    iso1_codes-BLACKLIST
+    Rails.cache.fetch("Country/accepted_countries") do
+      iso1_codes-BLACKLIST
+    end
   end
 end
