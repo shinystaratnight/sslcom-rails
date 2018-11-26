@@ -220,7 +220,7 @@ class CertificateContent < ActiveRecord::Base
   end
 
   def add_ca(ssl_account)
-    unless [467564,16077].include?(ssl_account.id)
+    unless [467564,16077,475670,484141,473857].include?(ssl_account.id)
       self.ca = (self.certificate.cas.ssl_account_or_general_default(ssl_account)).last if ca.blank? and certificate
     end
   end
@@ -293,7 +293,7 @@ class CertificateContent < ActiveRecord::Base
 
   def domains=(names)
     unless names.blank?
-      names = names.split(/[\s+]+/).flatten.reject{|d|d.blank?}.map(&:downcase).uniq
+      names = names.split(Certificate::DOMAINS_TEXTAREA_SEPARATOR).flatten.reject{|d|d.blank?}.map(&:downcase).uniq
     end
     write_attribute(:domains, names)
   end

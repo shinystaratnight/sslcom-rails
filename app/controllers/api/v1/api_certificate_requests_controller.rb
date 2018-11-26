@@ -117,7 +117,6 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
 
       options = {}
       options[:cc] = co.certificate_content
-      # options[:mapping] = options[:cc].ca || co.certificate.cas.ssl_account_or_general_default(current_user.ssl_account).last
       options[:mapping] = options[:cc].ca || co.certificate.cas.ssl_account_or_general_default(@current_ssl_account).last
 
       if res = SslcomCaApi.generate_for_certificate(options)
