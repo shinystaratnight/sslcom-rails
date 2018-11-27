@@ -967,7 +967,6 @@ jQuery(function($) {
                           } else {
                             trElement.attr('class', 'certificate_name validated');
                           }
-                          /*trElement.attr('id', 'certificate_name__' + value);*/
                           trElement.attr('id', 'certificate_name:' + value);
 
                           $('.domain_list').append(trElement);
@@ -1176,7 +1175,6 @@ jQuery(function($) {
               } else {
                 var trElement = $('<tr></tr>');
                 trElement.attr('class', 'certificate_name validated');
-                /*trElement.attr('id', 'certificate_name__' + value);*/
                 trElement.attr('id', 'certificate_name:' + value);
 
                 $('.domain_list').append(trElement);
@@ -1396,7 +1394,6 @@ jQuery(function($) {
 
                       var message_element = $('<span></span>');
                       Object.keys(result).map(function(key) {
-                        /*$('td:first-child', $('[id="certificate_name__' + key + '"]')).css('background-color', 'red');*/
                         $('td:first-child', $('[id="certificate_name:' + key + '"]')).css('background-color', 'red');
                         message_element.append(key + ' : ' + result[key] + '\r\n');
                       });
@@ -1425,8 +1422,6 @@ jQuery(function($) {
                     }
                   } else {
                     // Remove domains from UI.
-                    /*$('[id="certificate_name__' + domain_name + '"]').next().remove();
-                    $('[id="certificate_name__' + domain_name + '"]').remove();*/
                     $('[id="certificate_name:' + domain_name + '"]').next().remove();
                     $('[id="certificate_name:' + domain_name + '"]').remove();
 
@@ -1755,8 +1750,6 @@ jQuery(function($) {
                               if ($.inArray(domain, Object.keys(result)) == -1) {
                                 domain_str = domain_str.replace(',' + domain, '');
 
-                                /*$('[id="certificate_name__' + domain + '"]').next().remove();
-                                $('[id="certificate_name__' + domain + '"]').remove();*/
                                 $('[id="certificate_name:' + domain + '"]').next().remove();
                                 $('[id="certificate_name:' + domain + '"]').remove();
 
@@ -1769,7 +1762,6 @@ jQuery(function($) {
 
                             var message_element = $('<span></span>');
                             Object.keys(result).map(function(key) {
-                              /*$('td:first-child', $('[id="certificate_name__' + key + '"]')).css('background-color', 'red');*/
                               $('td:first-child', $('[id="certificate_name:' + key + '"]')).css('background-color', 'red');
                               message_element.append(key + ' : ' + result[key] + '<br />');
                             });
@@ -1799,8 +1791,6 @@ jQuery(function($) {
                           $.each(domain_names.substr(1).split(','), function(ids, domain) {
                             domain_str = domain_str.replace(',' + domain, '');
 
-                            /*$('[id="certificate_name__' + domain + '"]').next().remove();
-                            $('[id="certificate_name__' + domain + '"]').remove();*/
                             $('[id="certificate_name:' + domain + '"]').next().remove();
                             $('[id="certificate_name:' + domain + '"]').remove();
                           });
