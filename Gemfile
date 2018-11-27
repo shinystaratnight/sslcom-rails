@@ -80,6 +80,7 @@ gem 'font-awesome-rails'
 gem 'acts_as_tree'
 gem 'whois', '~> 4.0'
 gem 'where-or'
+gem 'mailboxer'
 
 group :development do
   gem 'foreman'

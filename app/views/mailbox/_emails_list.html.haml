@@ -1,0 +1,27 @@
+%table#mailbox-mail-list
+  %tbody
+    - @emails.each do |conversation|
+      - email = conversation.receipts_for(current_user)
+      - tr_class = email.first.is_unread? ? 'mail-item mail-item-unread' : 'mail-item'
+      - conversation_id = conversation.try(:id)
+      - path = mail_read_path(@ssl_slug, conversation_id: conversation_id)
+      
+      %tr{class: tr_class, data: {read: path}}
+        %td.mail-checkbox
+          = check_box_tag 'mail_selected', 'selected', false, |
+          class: 'mail-selected', id: conversation_id
+
+        %td.mail-sender
+          #{conversation.last_sender.mailboxer_name}
+        
+        %td.mail-subject
+          #{truncate(conversation.subject, length: 70)}
+        
+        %td.mail-actions
+          - unless @email_type == :trash
+            = link_to "<i class='fa fa-trash'></i>".html_safe,                    |
+            mail_move_to_trash_path(@ssl_slug, conversation_id: conversation_id), |
+            method: :put, data: {confirm: "Are you sure you want to move this email to trash?"}
+
+        %td.mail-date
+          #{conversation.created_at.strftime("%I:%M %p")}

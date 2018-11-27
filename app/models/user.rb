@@ -1,5 +1,6 @@
 class User < ActiveRecord::Base
   include V2MigrationProgressAddon
+  include UserMessageable
 #  using_access_control
 
   OWNED_MAX_TEAMS = 3
@@ -61,6 +62,8 @@ class User < ActiveRecord::Base
     message: "must be at least 8 characters long and include at least 1 of each of the following: uppercase, lowercase, number and special character such as ~`!@#$%^&*()-+={}[]|\;:\"<>,./?."
   }
   accepts_nested_attributes_for :assignments
+
+  acts_as_messageable
 
   acts_as_authentic do |c|
     c.logged_in_timeout = 30.minutes
