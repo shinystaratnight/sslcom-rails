@@ -77,7 +77,7 @@ class ApiCertificateRequest < CaApiRequest
     if new_record?
       self.ca ||= "ssl.com"
     end
-  enddeploy
+  end
 
   def api_credential
     (self.account_key && self.secret_key) ?
