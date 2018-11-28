@@ -147,7 +147,7 @@ class ApiCertificateRequest < CaApiRequest
   end
 
   def ref
-    read_attribute(:ref) || JSON.parse(self.parameters)["ref"]
+    read_attribute(:ref) || @ref || JSON.parse(self.parameters)["ref"]
   end
 
   def validations_from_comodo(co) #if named 'validations', it's executed twice
