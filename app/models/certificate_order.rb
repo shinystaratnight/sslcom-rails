@@ -1131,7 +1131,7 @@ class CertificateOrder < ActiveRecord::Base
         # Team level validation check
         team_level_validated = false
         team_cnames.each do |team_cn|
-          if team_cn.name == cn.name
+          if team_cn.non_wildcard_name == cn.non_wildcard_name
             team_dcv = team_cn.domain_control_validations.last
 
             if team_dcv && team_dcv.validated?(public_key_sha1)
@@ -1139,13 +1139,16 @@ class CertificateOrder < ActiveRecord::Base
               break
             end
           end
-          unless team_level_validated
-            all_validated = false
-            break
-          end
         end
+      else
+        # this certificate_name is validated so continue to the next certificate_name
+        next
       end
-
+      unless team_level_validated
+        # this domain is not satisfied, no point in continuing
+        all_validated = false
+        break
+      end
     end
     all_validated
   end

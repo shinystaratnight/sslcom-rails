@@ -255,8 +255,8 @@ class ApplicationController < ActionController::Base
       )
     end.order(created_at: :desc)
     unless options[:source] && options[:source] == 'folders'
-      archived_folder = current_user.is_admin? || (params[:search] && params[:search].include?('folder_ids')) ? [true, false] : false
-      result=result.joins(:folder).where(folder: {archived: archived_folder})
+      archived_folder = current_user.is_admin? || (params[:search] && params[:search].include?('folder_ids')) ? [true, false, nil] : [false, nil]
+      result=result.includes(:folder).where(folder: {archived: archived_folder})
     end
     result
   end
