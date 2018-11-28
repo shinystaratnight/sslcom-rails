@@ -266,7 +266,7 @@ class CertificateContent < ActiveRecord::Base
 
   # :with_tags (default), :x509, :without_tags
   def ejbca_certificate_chain(options={format: :with_tags})
-    chain=sslcom_ca_request.last
+    chain=sslcom_ca_request
     xcert=Certificate.xcert_certum(chain.x509_certificates.last)
     certs=chain.x509_certificates
     if options[:format]==:objects
@@ -892,8 +892,8 @@ class CertificateContent < ActiveRecord::Base
         end
       end
       errors.add(:signing_request, "must be any of the following #{MIN_KEY_SIZE.join(', ')} key sizes.
-        Please submit a new ssl.com certificate signing request with the proper key size.") if
-          csr.strength.blank? || !MIN_KEY_SIZE.include?(csr.strength)
+        Please submit a new certificate signing request with the proper key size.") if
+          csr.sig_alg=~/WithRSAEncryption/i && (csr.strength.blank? || !MIN_KEY_SIZE.include?(csr.strength))
       #errors.add(:signing_request,
       #  "country code '#{csr.country}' #{NOT_VALID_ISO_CODE}") unless
       #    Country.accepted_countries.include?(csr.country)
