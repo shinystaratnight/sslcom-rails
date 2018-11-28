@@ -1,6 +1,7 @@
 require 'domain_constraint'
 
 SslCom::Application.routes.draw do
+  mount Delayed::Web::Engine, at: '/certificate_orders/jobs'
   resources :oauth_clients
 
   match '/oauth/test_request',  :to => 'oauth#test_request',  :as => :test_request, via: [:get, :post]
@@ -568,4 +569,8 @@ SslCom::Application.routes.draw do
   #match "*path" => redirect("/?utm_source=any&utm_medium=any&utm_campaign=404_error")
 
   get '/certificate-download' => 'api/v1/api_certificate_requests#download_v1_4'
+end
+
+Delayed::Web::Engine.middleware.use Rack::Auth::Basic do |username, password|
+  username == '!as09bv#f9' && password == 'a$gdP12@_'
 end
