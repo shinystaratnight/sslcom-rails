@@ -172,7 +172,7 @@ class SslcomCaApi
     end
 
     # does this need to be a DV if OV is required but not satisfied?
-    if options[:mapping]=~/OV/
+    if options[:mapping]=~/OV/ or options[:mapping]=~/EV/
       downstep = certificate.requires_locked_registrant? && !certificate_order.ov_validated?
       previous_mapping=options[:mapping]
       options[:mapping]=options[:mapping].downstep if downstep
