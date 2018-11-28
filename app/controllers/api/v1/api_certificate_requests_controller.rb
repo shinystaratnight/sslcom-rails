@@ -6,8 +6,6 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
   before_filter :set_test, :record_parameters, except: [:scan, :analyze, :download_v1_4]
   after_filter :notify_saved_result, except: [:create_v1_4, :download_v1_4]
 
-  before_filter :current_user_ssl_account, only: [:update_v1_4, :replace_v1_4, :generate_certificate_v1_4]
-
   # parameters listed here made available as attributes in @result
   wrap_parameters ApiCertificateRequest, include: [*( 
     ApiCertificateRequest::ACCESSORS+
