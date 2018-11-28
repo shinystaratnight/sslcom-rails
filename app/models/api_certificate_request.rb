@@ -85,6 +85,7 @@ class ApiCertificateRequest < CaApiRequest
   end
 
   def find_certificate_order(field=:ref)
+    Rails.cache.clear # temp fix because people are getting weird results from the API
     if defined?(field) && self.send(field)
       if self.api_requestable.users.find(&:is_admin?)
         self.admin_submitted = true
@@ -146,7 +147,7 @@ class ApiCertificateRequest < CaApiRequest
   end
 
   def ref
-    read_attribute(:ref) || @ref || JSON.parse(self.parameters)["ref"]
+    read_attribute(:ref) || JSON.parse(self.parameters)["ref"]
   end
 
   def validations_from_comodo(co) #if named 'validations', it's executed twice

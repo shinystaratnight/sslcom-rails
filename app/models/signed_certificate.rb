@@ -402,8 +402,8 @@ class SignedCertificate < ActiveRecord::Base
           begin
             OrderNotifier.processed_certificate_order(contact: c,
                           certificate_order: certificate_order, file_path: zip_path).deliver
-            OrderNotifier.processed_certificate_order(contact: Settings.shadow_certificate_recipient,
-                          certificate_order: certificate_order, file_path: zip_path).deliver if certificate_order.certificate_content.ca
+            # OrderNotifier.processed_certificate_order(contact: Settings.shadow_certificate_recipient,
+            #               certificate_order: certificate_order, file_path: zip_path).deliver if certificate_order.certificate_content.ca
             OrderNotifier.site_seal_approve(c, certificate_order).deliver
           rescue Exception=>e
             logger.error e.backtrace.inspect

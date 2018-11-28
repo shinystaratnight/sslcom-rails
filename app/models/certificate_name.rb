@@ -198,6 +198,10 @@ class CertificateName < ActiveRecord::Base
     CaaCheck::CAA_COMMAND.call name
   end
 
+  def get_asynch_cache_label
+    "#{domain_control_validations.last.try(:cache_key)}/get_asynch_domains/#{name}"
+  end
+
   WhoisJob = Struct.new(:dname, :certificate_name) do
     def perform
       standard_addresses = DomainControlValidation.email_address_choices(dname)
@@ -211,6 +215,7 @@ class CertificateName < ActiveRecord::Base
         if certificate_name
           dcv=certificate_name.domain_control_validations.last
           dcv.update_column(:candidate_addresses, standard_addresses) if dcv
+          Rails.cache.delete(certificate_name.get_asynch_cache_label)
         end
         Rails.cache.write("CertificateName.candidate_email_addresses/#{dname}",standard_addresses)
       rescue Exception=>e
@@ -219,7 +224,8 @@ class CertificateName < ActiveRecord::Base
     end
   end
 
-  def candidate_email_addresses
+  def candidate_email_addresses(clear_cache=false)
+    Rails.cache.delete("CertificateName.candidate_email_addresses/#{non_wildcard_name}") if clear_cache
     standard_addresses=CertificateName.candidate_email_addresses(non_wildcard_name,self)
     dcv=domain_control_validations.last
     dcv.update_column(:candidate_addresses, standard_addresses) if dcv
