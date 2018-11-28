@@ -1,3 +1,4 @@
+-show_folders = current_user && Folder.show_folders?(current_user)
 -title = "SSL Certificate For #{@certificate_order.subject}"
 -co = @certificate_order
 -cn = co.subject
@@ -31,6 +32,8 @@
         =link_to link_text, "https://www.ssl.com/article/certificate-order-page-information/"
     %tr.heading_row
       %th(scope="col") Subject
+      -if show_folders
+        %th(scope="col") Folder
       %th(scope="col") Status
       %th(scope="col") Order Date
       %th(scope="col") Expires
@@ -39,6 +42,13 @@
       %td.name.not_expandable
         .subject_column.center_subject
           =render :partial=>'/certificate_orders/subject_column', :locals=>{:certificate_order=>@certificate_order, :single=>true}
+      -if show_folders
+        %td.co-folder-name
+          -if co.folder
+            %i.fa.fa-folder-open.icon-co-add-folder{id: co.ref, |
+              data: {folder_id: co.folder.try(:id), folder_name: co.folder.try(:name)}}
+          -else
+            %i.fa.fa-plus.icon-co-add-folder{id: co.ref}
       %td(class="#{status_class(@cc)}")
         #{certificate_order_status(@cc)}
       %td
@@ -47,7 +57,7 @@
         %span.expires_on=expires_on(@cc)
       %td.ssl_action=action(@certificate_order)
     %tr.expanded
-      %td(colspan="5")
+      %td(colspan="#{show_folders ? 6 : 5}")
         .certificate_details
           =render :partial=>'/certificate_orders/menu', :locals=>{:co=>@certificate_order}
           =render :partial=>'/certificate_orders/co', :object=>@certificate_order
@@ -533,3 +543,6 @@
       curDialog.dialog('open');
     });
   });
+
+-if show_folders
+  = render partial: '/folders/folder_tree_modal'
