@@ -154,7 +154,8 @@ class SslcomCaApi
           ca_name: options[:ca_name] || ca_name(options),
           certificate_profile: certificate_profile(options),
           end_entity_profile: end_entity_profile(options),
-          duration: "#{[(options[:duration] || co.remaining_days),cert.max_duration].min.floor}:0:0"
+          duration: "#{[(options[:duration] || co.remaining_days+options[:cc].csr.days_left).to_i,
+              cert.max_duration].min.floor}:0:0"
         dn.merge!(subject_alt_name: subject_alt_name(options)) unless cert.is_code_signing?
       end
       dn.merge!(request_type: "public_key",request_data: options[:cc].csr.public_key.to_s) if
@@ -173,7 +174,7 @@ class SslcomCaApi
 
     # does this need to be a DV if OV is required but not satisfied?
     if options[:mapping].profile_name=~/OV/ or options[:mapping].profile_name=~/EV/
-      downstep = certificate.requires_locked_registrant? && !certificate_order.ov_validated?
+      downstep = !certificate_order.ov_validated?
       options[:mapping]=options[:mapping].downstep if downstep
     end
 
