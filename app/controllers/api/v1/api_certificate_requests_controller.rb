@@ -197,7 +197,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
               end
 
               unless identifier == ''
-                ssl_slug = @current_ssl_account.ssl_slug || @current_ssl_account.acct_number
+                ssl_slug = @result.api_credential.ssl_account.ssl_slug || @result.api_credential.ssl_account.acct_number
 
                 domain_ary << domain_list
                 email_list << email_for_identifier
@@ -306,7 +306,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
               end
 
               unless identifier == ''
-                ssl_slug = @current_ssl_account.ssl_slug || @current_ssl_account.acct_number
+                ssl_slug = @result.api_credential.ssl_account.ssl_slug || @result.api_credential.ssl_account.acct_number
 
                 domain_ary << domain_list
                 email_list << email_for_identifier
