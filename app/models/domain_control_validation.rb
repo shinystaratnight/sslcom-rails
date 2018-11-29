@@ -183,6 +183,7 @@ class DomainControlValidation < ActiveRecord::Base
   end
 
   def self.email_address_choices(name)
+    name=CertificateContent.non_wildcard_name(name)
     Rails.cache.fetch("email_address_choices/#{name}", expires_in: EMAIL_CHOICE_CACHE_EXPIRES_DAYS.days) do
       return [] unless DomainNameValidator.valid?(name,false)
       d=::PublicSuffix.parse(name.downcase)

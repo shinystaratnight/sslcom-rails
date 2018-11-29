@@ -76,14 +76,6 @@ class Api::V1::APIController < ActionController::API
     !@team.nil?
   end
 
-  def current_user_ssl_account
-    account_key = params[:account_key]
-    secret_key = params[:secret_key]
-
-    @current_ssl_account = SslAccount.joins(:api_credentials)
-                               .where(api_credentials: {account_key: account_key, secret_key: secret_key}).last
-  end
-  
   def set_default_request_format
     request.format = :json
   end

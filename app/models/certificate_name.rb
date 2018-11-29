@@ -204,8 +204,8 @@ class CertificateName < ActiveRecord::Base
 
   WhoisJob = Struct.new(:dname, :certificate_name) do
     def perform
-      standard_addresses = DomainControlValidation.email_address_choices(dname)
       begin
+        standard_addresses = DomainControlValidation.email_address_choices(dname)
         d=::PublicSuffix.parse(dname)
         whois=Whois.whois(ActionDispatch::Http::URL.extract_domain(d.domain, 1)).inspect
         whois_addresses = WhoisLookup.email_addresses(whois)
@@ -225,8 +225,8 @@ class CertificateName < ActiveRecord::Base
   end
 
   def candidate_email_addresses(clear_cache=false)
-    Rails.cache.delete("CertificateName.candidate_email_addresses/#{non_wildcard_name}") if clear_cache
-    standard_addresses=CertificateName.candidate_email_addresses(non_wildcard_name,self)
+    Rails.cache.delete("CertificateName.candidate_email_addresses/#{name}") if clear_cache
+    standard_addresses=CertificateName.candidate_email_addresses(name,self)
     dcv=domain_control_validations.last
     dcv.update_column(:candidate_addresses, standard_addresses) if dcv
     standard_addresses

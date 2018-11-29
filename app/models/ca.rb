@@ -52,7 +52,7 @@ class Ca < ActiveRecord::Base
     down_name=
         case profile_name
         when /\AEV/
-          profile_name.gsub "EV","OV"
+          profile_name.gsub "EV","DV"
         when /\AOV/
           profile_name.gsub "OV","DV"
         end
