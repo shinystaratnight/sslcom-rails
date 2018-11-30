@@ -92,9 +92,9 @@ class SslcomCaApi
 
   def self.subject_dn(options={})
     dn=["CN=#{options[:cn].downcase}"]
-    dn << "OU=#{options[:ou]}" unless options[:ou].blank?
     unless options[:mapping].profile_name =~ /DV/
       dn << "O=#{options[:o]}" unless options[:o].blank?
+      dn << "OU=#{options[:ou]}" unless options[:ou].blank?
       dn << "C=#{options[:country]}" unless options[:country].blank?
       dn << "L=#{options[:city]}" unless options[:city].blank?
       dn << "ST=#{options[:state]}" unless options[:state].blank?

@@ -206,13 +206,13 @@ class CertificateName < ActiveRecord::Base
     def perform
       begin
         standard_addresses = DomainControlValidation.email_address_choices(dname)
-        d=::PublicSuffix.parse(dname)
-        whois=Whois.whois(ActionDispatch::Http::URL.extract_domain(d.domain, 1)).inspect
+        whois=WhoisLookup.use_gem(dname)
         whois_addresses = WhoisLookup.email_addresses(whois)
         whois_addresses.each do |ad|
           standard_addresses << ad.downcase unless ad =~/abuse.*?@/i
         end
         if certificate_name
+          certificate_name.update_column(:candidate_addresses, standard_addresses)
           dcv=certificate_name.domain_control_validations.last
           dcv.update_column(:candidate_addresses, standard_addresses) if dcv
           Rails.cache.delete(certificate_name.get_asynch_cache_label)
