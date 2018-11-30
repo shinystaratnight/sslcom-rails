@@ -117,7 +117,9 @@ class OrdersController < ApplicationController
                                :expires => Settings.cart_cookie_days.to_i.days.from_now} # reset guid
 
         # Get stored cart info
-        content = JSON.parse(current_user.shopping_cart.content)
+        content = current_user.shopping_cart.content ?
+                      JSON.parse(current_user.shopping_cart.content) :
+                      []
         content = shopping_cart_content(content, cart)
         current_user.shopping_cart.update_attribute :content, content.to_json
       else # each user should 'own' a db_cart
@@ -127,7 +129,7 @@ class OrdersController < ApplicationController
       end
     elsif guid && db_cart #assume user is not logged in
       # Get stored cart info
-      content = JSON.parse(db_cart.content)
+      content = db_cart.content ? JSON.parse(db_cart.content) : []
       content = shopping_cart_content(content, cart)
       db_cart.update_attribute :content, content.to_json
     else

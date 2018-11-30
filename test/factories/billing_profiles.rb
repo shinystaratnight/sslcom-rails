@@ -12,7 +12,14 @@ FactoryGirl.define do
     card_number       {BillingProfile.gateway_stripe? ? '4242424242424242' : '4007000000027'}
     expiration_month  1
     expiration_year   {(Date.today + 3.years).year}
-    security_code     '900' 
+    security_code     '900'
+    default_profile   0
+    status            ''
+    tax               ''
+    encrypted_card_number ''
+    encrypted_card_number_salt ''
+    encrypted_card_number_iv ''
+    association :ssl_account, factory: :ssl_account
   end
   
   trait :expired do
