@@ -212,9 +212,9 @@ class CertificateName < ActiveRecord::Base
           standard_addresses << ad.downcase unless ad =~/abuse.*?@/i
         end
         if certificate_name
-          certificate_name.update_column(:candidate_addresses, standard_addresses)
           dcv=certificate_name.domain_control_validations.last
-          dcv.update_column(:candidate_addresses, standard_addresses) if dcv
+          dcv ? dcv.update_column(:candidate_addresses, standard_addresses) :
+               certificate_name.domain_control_validations.create(:candidate_addresses, standard_addresses)
           Rails.cache.delete(certificate_name.get_asynch_cache_label)
         end
         Rails.cache.write("CertificateName.candidate_email_addresses/#{dname}",standard_addresses)
