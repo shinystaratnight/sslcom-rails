@@ -198,15 +198,24 @@ class CertificateName < ActiveRecord::Base
     CaaCheck::CAA_COMMAND.call name
   end
 
-  WhoisJob = Struct.new(:dname) do
+  def get_asynch_cache_label
+    "#{domain_control_validations.last.try(:cache_key)}/get_asynch_domains/#{name}"
+  end
+
+  WhoisJob = Struct.new(:dname, :certificate_name) do
     def perform
-      standard_addresses = DomainControlValidation.email_address_choices(dname)
       begin
-        d=::PublicSuffix.parse(dname)
-        whois=Whois.whois(ActionDispatch::Http::URL.extract_domain(d.domain, 1)).inspect
+        standard_addresses = DomainControlValidation.email_address_choices(dname)
+        whois=WhoisLookup.use_gem(dname)
         whois_addresses = WhoisLookup.email_addresses(whois)
         whois_addresses.each do |ad|
           standard_addresses << ad.downcase unless ad =~/abuse.*?@/i
+        end
+        if certificate_name
+          dcv=certificate_name.domain_control_validations.last
+          dcv ? dcv.update_column(:candidate_addresses, standard_addresses) :
+               certificate_name.domain_control_validations.create(:candidate_addresses, standard_addresses)
+          Rails.cache.delete(certificate_name.get_asynch_cache_label)
         end
         Rails.cache.write("CertificateName.candidate_email_addresses/#{dname}",standard_addresses)
       rescue Exception=>e
@@ -215,14 +224,19 @@ class CertificateName < ActiveRecord::Base
     end
   end
 
-  def candidate_email_addresses
-    CertificateName.candidate_email_addresses(name)
+  def candidate_email_addresses(clear_cache=false)
+    Rails.cache.delete("CertificateName.candidate_email_addresses/#{name}") if clear_cache
+    standard_addresses=CertificateName.candidate_email_addresses(name,self)
+    dcv=domain_control_validations.last
+    dcv.update_column(:candidate_addresses, standard_addresses) if dcv
+    standard_addresses
   end
 
-  def self.candidate_email_addresses(name)
+  # certificate_name in the event the domain_control_validations candidate addresses need to be updated
+  def self.candidate_email_addresses(name,certificate_name=nil)
     Rails.cache.fetch("CertificateName.candidate_email_addresses/#{name}",
                       expires_in: DomainControlValidation::EMAIL_CHOICE_CACHE_EXPIRES_DAYS.days) do
-      Delayed::Job.enqueue WhoisJob.new(name)
+      Delayed::Job.enqueue WhoisJob.new(name,certificate_name)
       DomainControlValidation.email_address_choices(name)
     end
   end

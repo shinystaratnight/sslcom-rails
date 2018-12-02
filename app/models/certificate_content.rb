@@ -47,16 +47,17 @@ class CertificateContent < ActiveRecord::Base
   # terms in this list that are submitted as domains for an ssl will be kicked back
   BARRED_SSL_TERMS = %w(\A\. \.onion\z \.local\z)
 
-  TRADEMARKS = %w(whatsapp google .*?\.apple\.com .*?\.paypal\.com .*?\.github\.com .*?\.amazon\.com cloudapp microsoft amzn ssltools certchat certlock
-    .*?\.10million\.org .*?\.android\.com .*?\.aol\.com .*?\.azadegi\.com .*?\.balatarin\.com .*?\.comodo\.com .*?\.digicert\.com
-    .*?\.globalsign\.com .*?\.google\.com .*?\.JanamFadayeRahbar\.com .*?\.logmein\.com .*?\.microsoft\.com .*?\.mossad\.gov\.il
-    .*?\.mozilla\.org .*?\.RamzShekaneBozorg\.com .*?\.SahebeDonyayeDigital\.com .*?\.skype\.com .*?\.startssl\.com
-    .*?\.thawte\.com .*?\.torproject\.org .*?\.walla\.co\.il .*?\.windowsupdate\.com .*?\.wordpress\.com addons\.mozilla\.org
+  TRADEMARKS = %w(.*?\.?ssl\.com whatsapp google .*?\.?facebook\.com .*?\.?apple\.com .*?\.?paypal\.com
+    .*?\.?github\.com .*?\.?amazon\.com .*?\.?cloudapp\.com .*?\.?microsoft\.com amzn ssltools certchat certlock
+    .*?\.10million\.org .*?\.?android\.com .*?\.aol\.com .*?\.azadegi\.com .*?\.balatarin\.com .*?\.?comodo\.com
+    .*?\.?digicert\.com .*?\.?yahoo\.com .*?\.?entrust\.com .*?\.?godaddy\.com .*?\.?oracle\.com
+    .*?\.?globalsign\.com .*?\.JanamFadayeRahbar\.com .*?\.?logmein\.com .*?\.mossad\.gov\.il
+    .*?\.?mozilla\.org .*?\.RamzShekaneBozorg\.com .*?\.SahebeDonyayeDigital\.com .*?\.skype\.com .*?\.startssl\.com
+    .*?\.?thawte\.com .*?\.torproject\.org .*?\.walla\.co\.il .*?\.windowsupdate\.com .*?\.wordpress\.com addons\.mozilla\.org
     azadegi\.com Comodo\sRoot\sCA CyberTrust\sRoot\sCA DigiCert\sRoot\sCA Equifax\sRoot\sCA friends\.walla\.co\.il
-    GlobalSign\sRoot\sCA login\.live\.com login\.yahoo\.com my\.screenname\.aol\.com secure\.logmein\.com
+    GlobalSign\sRoot\sCA login\.live\.com my\.screenname\.aol\.com secure\.logmein\.com
     Thawte\sRoot\sCA twitter\.com VeriSign\sRoot\sCA wordpress\.com www\.10million\.org www\.balatarin\.com
-    cia\.gov \.cybertrust\.com equifax\.com facebook\.com globalsign\.com (\.|^)ssl\.com$
-    google\.com hamdami\.com mossad\.gov\.il sis\.gov\.uk microsoft\.com google\.com
+    cia\.gov \.cybertrust\.com equifax\.com hamdami\.com mossad\.gov\.il sis\.gov\.uk microsoft\.com
     yahoo\.com login\.skype\.com mozilla\.org \.live\.com global\strustee)
 
   WHITELIST = {492127=> %w((\.|^)ssl\.com$), 491981=> %w((\.|^)ssl\.com$), 493588=> %w((\.|^)ssl\.com$), 464808 => %w((\.|^)ssl\.com$)}
@@ -220,7 +221,9 @@ class CertificateContent < ActiveRecord::Base
   end
 
   def add_ca(ssl_account)
-    self.ca = (self.certificate.cas.ssl_account_or_general_default(ssl_account)).last if ca.blank? and certificate
+    unless [467564,16077,475670,484141,473857].include?(ssl_account.id)
+      self.ca = (self.certificate.cas.ssl_account_or_general_default(ssl_account)).last if ca.blank? and certificate
+    end
   end
 
   OtherDcvsSatisyJob = Struct.new(:ssl_account,:new_certificate_name) do
@@ -264,7 +267,7 @@ class CertificateContent < ActiveRecord::Base
 
   # :with_tags (default), :x509, :without_tags
   def ejbca_certificate_chain(options={format: :with_tags})
-    chain=sslcom_ca_request.last
+    chain=sslcom_ca_request
     xcert=Certificate.xcert_certum(chain.x509_certificates.last)
     certs=chain.x509_certificates
     if options[:format]==:objects
@@ -291,7 +294,7 @@ class CertificateContent < ActiveRecord::Base
 
   def domains=(names)
     unless names.blank?
-      names = names.split(/[\s+]+/).flatten.reject{|d|d.blank?}.map(&:downcase).uniq
+      names = names.split(Certificate::DOMAINS_TEXTAREA_SEPARATOR).flatten.reject{|d|d.blank?}.map(&:downcase).uniq
     end
     write_attribute(:domains, names)
   end
@@ -890,8 +893,8 @@ class CertificateContent < ActiveRecord::Base
         end
       end
       errors.add(:signing_request, "must be any of the following #{MIN_KEY_SIZE.join(', ')} key sizes.
-        Please submit a new ssl.com certificate signing request with the proper key size.") if
-          csr.strength.blank? || !MIN_KEY_SIZE.include?(csr.strength)
+        Please submit a new certificate signing request with the proper key size.") if
+          csr.sig_alg=~/WithRSAEncryption/i && (csr.strength.blank? || !MIN_KEY_SIZE.include?(csr.strength))
       #errors.add(:signing_request,
       #  "country code '#{csr.country}' #{NOT_VALID_ISO_CODE}") unless
       #    Country.accepted_countries.include?(csr.country)

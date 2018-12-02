@@ -81,7 +81,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
       @acr = @result.find_signed_certificates(co)
       if @acr.is_a?(Array) && @result.errors.empty?
         if @result.serials.blank? #revoke the entire order
-          co.revoke!(@result.reason)
+          co.revoke!(@result.reason,@result.api_credential)
         else #revoke specific certs
           @acr.each do |signed_certificate|
             SystemAudit.create(
@@ -110,6 +110,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
 
     if @result.valid? && @result.save
       co = @result.find_certificate_order
+      # if co.ov_validated?
       co.certificate_content.create_csr(body: params[:csr])
 
       options = {}
@@ -123,6 +124,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
         @result.cert_results = res.end_entity_certificate.to_s
         @result.cert_common_name = res.end_entity_certificate.subject.common_name.gsub(/[\s\.\*\(\)]/,"_").downcase + '.crt'
       end
+      # end
     else
       InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
     end
@@ -274,7 +276,9 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
                 dcv = cn.domain_control_validations.last
                 if !dcv.nil? && !dcv.identifier_found
                   if dcv.dcv_method == 'email'
-                    if dcv.candidate_addresses.include?(dcv.email_address)
+                    if dcv.candidate_addresses.blank?
+                      cn.candidate_email_addresses
+                    elsif dcv.candidate_addresses.include?(dcv.email_address)
                       if dcv.email_address != email_for_identifier
                         if domain_list.length>0
                           domain_ary << domain_list

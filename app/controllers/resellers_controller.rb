@@ -106,7 +106,7 @@ private
     elsif @reseller.enter_billing_information?
       redirect_to (current_user.ssl_account.has_role?('new_reseller')) ?
         allocate_funds_url :
-        allocate_funds_for_order_url
+        allocate_funds_for_order_url(:order)
     elsif @reseller.complete?
     end
   end

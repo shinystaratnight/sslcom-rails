@@ -270,7 +270,7 @@
         e.preventDefault();
         var workflow_status = $(this);
 
-        if (confirm('Are  you sure to active this SSL Manager?')) {
+        if (confirm('Confirm adding this SSL Manager instance to your account?')) {
           $.ajax({
             url: '<%=approve_ssl_manager_registered_agents_path%>',
             data: {

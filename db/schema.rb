@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181013194238) do
+ActiveRecord::Schema.define(version: 20181119181804) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        limit: 255
@@ -140,6 +140,18 @@ ActiveRecord::Schema.define(version: 20181013194238) do
 
   add_index "billing_profiles", ["ssl_account_id"], name: "index_billing_profile_on_ssl_account_id", using: :btree
 
+  create_table "blocklist", force: :cascade do |t|
+    t.string   "type",        limit: 255
+    t.string   "domain",      limit: 255
+    t.integer  "validation",  limit: 4
+    t.string   "status",      limit: 255
+    t.string   "reason",      limit: 255
+    t.string   "description", limit: 255
+    t.text     "notes",       limit: 65535
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "blocklists", force: :cascade do |t|
     t.string   "type",        limit: 255
     t.string   "domain",      limit: 255
@@ -174,6 +186,16 @@ ActiveRecord::Schema.define(version: 20181013194238) do
   add_index "ca_api_requests", ["id", "api_requestable_id", "api_requestable_type", "type", "created_at"], name: "index_ca_api_requests_on_type_and_api_requestable_and_created_at", using: :btree
   add_index "ca_api_requests", ["id", "api_requestable_id", "api_requestable_type", "type"], name: "index_ca_api_requests_on_type_and_api_requestable", unique: true, using: :btree
   add_index "ca_api_requests", ["username", "approval_id"], name: "index_ca_api_requests_on_username_and_approval_id", unique: true, using: :btree
+
+  create_table "caa_check", force: :cascade do |t|
+    t.integer  "checkable_id",   limit: 4
+    t.string   "checkable_type", limit: 255
+    t.string   "domain",         limit: 255
+    t.string   "request",        limit: 255
+    t.text     "result",         limit: 65535
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "caa_checks", force: :cascade do |t|
     t.integer  "checkable_id",   limit: 4
@@ -320,6 +342,7 @@ ActiveRecord::Schema.define(version: 20181013194238) do
 
   add_index "certificate_names", ["certificate_content_id"], name: "index_certificate_names_on_certificate_content_id", using: :btree
   add_index "certificate_names", ["name"], name: "index_certificate_names_on_name", using: :btree
+  add_index "certificate_names", ["ssl_account_id"], name: "index_certificate_names_on_ssl_account_id", using: :btree
 
   create_table "certificate_order_domains", force: :cascade do |t|
     t.integer "certificate_order_id", limit: 4
@@ -376,14 +399,19 @@ ActiveRecord::Schema.define(version: 20181013194238) do
   add_index "certificate_orders", ["created_at"], name: "index_certificate_orders_on_created_at", using: :btree
   add_index "certificate_orders", ["id", "is_test"], name: "index_certificate_orders_on_test", using: :btree
   add_index "certificate_orders", ["id", "ref", "ssl_account_id"], name: "index_certificate_orders_on_id_and_ref_and_ssl_account_id", using: :btree
+  add_index "certificate_orders", ["id", "workflow_state", "is_expired", "is_test"], name: "05122018_index_certificate_orders_on_4_cols", unique: true, using: :btree
   add_index "certificate_orders", ["id", "workflow_state", "is_expired", "is_test"], name: "index_certificate_orders_on_workflow_state", unique: true, using: :btree
   add_index "certificate_orders", ["is_expired"], name: "index_certificate_orders_on_is_expired", using: :btree
   add_index "certificate_orders", ["is_test"], name: "index_certificate_orders_on_is_test", using: :btree
   add_index "certificate_orders", ["ref"], name: "index_certificate_orders_on_ref", using: :btree
   add_index "certificate_orders", ["site_seal_id"], name: "index_certificate_orders_site_seal_id", using: :btree
   add_index "certificate_orders", ["ssl_account_id", "workflow_state", "id"], name: "index_certificate_orders_on_3_cols(2)", using: :btree
-  add_index "certificate_orders", ["ssl_account_id", "workflow_state", "is_test", "updated_at"], name: "index_certificate_orders_on_4_cols", using: :btree
+  add_index "certificate_orders", ["ssl_account_id", "workflow_state", "is_test"], name: "index_certificate_orders_on_3_cols2", using: :btree
+  add_index "certificate_orders", ["ssl_account_id"], name: "index_certificate_orders_on_ssl_account_id", using: :btree
+  add_index "certificate_orders", ["validation_id"], name: "index_certificate_orders_on_validation_id", using: :btree
   add_index "certificate_orders", ["workflow_state", "is_expired", "is_test"], name: "index_certificate_orders_on_3_cols", using: :btree
+  add_index "certificate_orders", ["workflow_state", "is_expired", "is_test"], name: "index_certificate_orders_on_ws_ie_it_ua", using: :btree
+  add_index "certificate_orders", ["workflow_state", "is_expired", "renewal_id"], name: "index_certificate_orders_on_ws_is_ri", using: :btree
 
   create_table "certificates", force: :cascade do |t|
     t.integer  "reseller_tier_id",      limit: 4
@@ -482,6 +510,7 @@ ActiveRecord::Schema.define(version: 20181013194238) do
 
   add_index "contacts", ["contactable_id", "contactable_type"], name: "index_contacts_on_contactable_id_and_contactable_type", using: :btree
   add_index "contacts", ["id", "parent_id"], name: "index_contacts_on_id_and_parent_id", using: :btree
+  add_index "contacts", ["parent_id"], name: "index_contacts_on_parent_id", using: :btree
   add_index "contacts", ["user_id"], name: "index_contacts_on_user_id", using: :btree
 
   create_table "countries", force: :cascade do |t|
@@ -551,7 +580,6 @@ ActiveRecord::Schema.define(version: 20181013194238) do
   add_index "csrs", ["common_name", "email", "sig_alg"], name: "index_csrs_on_common_name_and_email_and_sig_alg", using: :btree
   add_index "csrs", ["common_name"], name: "index_csrs_on_common_name", using: :btree
   add_index "csrs", ["organization"], name: "index_csrs_on_organization", using: :btree
-  add_index "csrs", ["sig_alg", "common_name", "email"], name: "index_csrs_on_sig_alg_and_common_name_and_email", using: :btree
   add_index "csrs", ["ssl_account_id"], name: "index_csrs_on_ssl_account_id", using: :btree
 
   create_table "dbs", force: :cascade do |t|
@@ -802,11 +830,68 @@ ActiveRecord::Schema.define(version: 20181013194238) do
     t.integer "qty",                   limit: 4
   end
 
+  add_index "line_items", ["order_id", "sellable_id", "sellable_type"], name: "05122018_index_line_items_on_order_id_and_sellable_id_and_type", using: :btree
   add_index "line_items", ["order_id", "sellable_id", "sellable_type"], name: "index_line_items_on_order_id_and_sellable_id_and_sellable_type", using: :btree
   add_index "line_items", ["order_id"], name: "index_line_items_on_order_id", using: :btree
   add_index "line_items", ["sellable_id", "sellable_type"], name: "index_line_items_on_sellable_id_and_sellable_type", using: :btree
   add_index "line_items", ["sellable_id"], name: "index_line_items_on_sellable_id", using: :btree
   add_index "line_items", ["sellable_type"], name: "index_line_items_on_sellable_type", using: :btree
+
+  create_table "mailboxer_conversation_opt_outs", force: :cascade do |t|
+    t.integer "unsubscriber_id",   limit: 4
+    t.string  "unsubscriber_type", limit: 255
+    t.integer "conversation_id",   limit: 4
+  end
+
+  add_index "mailboxer_conversation_opt_outs", ["conversation_id"], name: "index_mailboxer_conversation_opt_outs_on_conversation_id", using: :btree
+  add_index "mailboxer_conversation_opt_outs", ["unsubscriber_id", "unsubscriber_type"], name: "index_mailboxer_conversation_opt_outs_on_unsubscriber_id_type", using: :btree
+
+  create_table "mailboxer_conversations", force: :cascade do |t|
+    t.string   "subject",    limit: 255, default: ""
+    t.datetime "created_at",                          null: false
+    t.datetime "updated_at",                          null: false
+  end
+
+  create_table "mailboxer_notifications", force: :cascade do |t|
+    t.string   "type",                 limit: 255
+    t.text     "body",                 limit: 65535
+    t.string   "subject",              limit: 255,   default: ""
+    t.integer  "sender_id",            limit: 4
+    t.string   "sender_type",          limit: 255
+    t.integer  "conversation_id",      limit: 4
+    t.boolean  "draft",                              default: false
+    t.string   "notification_code",    limit: 255
+    t.integer  "notified_object_id",   limit: 4
+    t.string   "notified_object_type", limit: 255
+    t.string   "attachment",           limit: 255
+    t.datetime "updated_at",                                         null: false
+    t.datetime "created_at",                                         null: false
+    t.boolean  "global",                             default: false
+    t.datetime "expires"
+  end
+
+  add_index "mailboxer_notifications", ["conversation_id"], name: "index_mailboxer_notifications_on_conversation_id", using: :btree
+  add_index "mailboxer_notifications", ["notified_object_id", "notified_object_type"], name: "index_mailboxer_notifications_on_notified_object_id_and_type", using: :btree
+  add_index "mailboxer_notifications", ["sender_id", "sender_type"], name: "index_mailboxer_notifications_on_sender_id_and_sender_type", using: :btree
+  add_index "mailboxer_notifications", ["type"], name: "index_mailboxer_notifications_on_type", using: :btree
+
+  create_table "mailboxer_receipts", force: :cascade do |t|
+    t.integer  "receiver_id",     limit: 4
+    t.string   "receiver_type",   limit: 255
+    t.integer  "notification_id", limit: 4,                   null: false
+    t.boolean  "is_read",                     default: false
+    t.boolean  "trashed",                     default: false
+    t.boolean  "deleted",                     default: false
+    t.string   "mailbox_type",    limit: 25
+    t.datetime "created_at",                                  null: false
+    t.datetime "updated_at",                                  null: false
+    t.boolean  "is_delivered",                default: false
+    t.string   "delivery_method", limit: 255
+    t.string   "message_id",      limit: 255
+  end
+
+  add_index "mailboxer_receipts", ["notification_id"], name: "index_mailboxer_receipts_on_notification_id", using: :btree
+  add_index "mailboxer_receipts", ["receiver_id", "receiver_type"], name: "index_mailboxer_receipts_on_receiver_id_and_receiver_type", using: :btree
 
   create_table "malware_hashes", force: :cascade do |t|
     t.string "url", limit: 32, null: false
@@ -1014,6 +1099,19 @@ ActiveRecord::Schema.define(version: 20181013194238) do
     t.datetime "updated_at",              null: false
   end
 
+  create_table "physical_token", force: :cascade do |t|
+    t.integer  "certificate_order_id",  limit: 4
+    t.integer  "signed_certificate_id", limit: 4
+    t.string   "tracking_number",       limit: 255
+    t.string   "shipping_method",       limit: 255
+    t.string   "activation_pin",        limit: 255
+    t.string   "manufacturer",          limit: 255
+    t.string   "model_number",          limit: 255
+    t.string   "serial_number",         limit: 255
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "physical_tokens", force: :cascade do |t|
     t.integer  "certificate_order_id",  limit: 4
     t.integer  "signed_certificate_id", limit: 4
@@ -1047,8 +1145,7 @@ ActiveRecord::Schema.define(version: 20181013194238) do
   add_index "preferences", ["group_id", "group_type", "owner_id", "owner_type", "value"], name: "index_preferences_on_5_cols", using: :btree
   add_index "preferences", ["id", "name", "owner_id", "owner_type", "value"], name: "index_preferences_on_owner_and_name_and_value", using: :btree
   add_index "preferences", ["id", "name", "value"], name: "index_preferences_on_name_and_value", using: :btree
-  add_index "preferences", ["id", "owner_id", "owner_type"], name: "index_preferences_on_id_and_owner_id_and_owner_type", unique: true, using: :btree
-  add_index "preferences", ["id", "owner_id", "owner_type"], name: "index_preferences_on_owner_id_and_owner_type", unique: true, using: :btree
+  add_index "preferences", ["owner_id", "owner_type"], name: "index_preferences_on_owner_id_and_owner_type", using: :btree
   add_index "preferences", ["owner_type", "owner_id"], name: "index_preferences_on_owner_type_and_owner_id", using: :btree
 
   create_table "product_orders", force: :cascade do |t|
@@ -1375,12 +1472,10 @@ ActiveRecord::Schema.define(version: 20181013194238) do
     t.integer  "registered_agent_id",       limit: 4
   end
 
-  add_index "signed_certificates", ["ca_id"], name: "fk_rails_d21ca532b7", using: :btree
   add_index "signed_certificates", ["ca_id"], name: "index_signed_certificates_on_ca_id", using: :btree
   add_index "signed_certificates", ["common_name", "strength"], name: "index_signed_certificates_on_3_cols", using: :btree
   add_index "signed_certificates", ["common_name"], name: "index_signed_certificates_on_common_name", using: :btree
   add_index "signed_certificates", ["csr_id"], name: "index_signed_certificates_on_csr_id", using: :btree
-  add_index "signed_certificates", ["strength"], name: "index_signed_certificates_on_strength", using: :btree
 
   create_table "site_checks", force: :cascade do |t|
     t.text     "url",                   limit: 65535
@@ -1803,5 +1898,8 @@ ActiveRecord::Schema.define(version: 20181013194238) do
   end
 
   add_foreign_key "cdns", "certificate_orders"
+  add_foreign_key "mailboxer_conversation_opt_outs", "mailboxer_conversations", column: "conversation_id", name: "mb_opt_outs_on_conversations_id"
+  add_foreign_key "mailboxer_notifications", "mailboxer_conversations", column: "conversation_id", name: "notifications_on_conversation_id"
+  add_foreign_key "mailboxer_receipts", "mailboxer_notifications", column: "notification_id", name: "receipts_on_notification_id"
   add_foreign_key "signed_certificates", "cas"
 end

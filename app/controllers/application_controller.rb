@@ -246,10 +246,6 @@ class ApplicationController < ActionController::Base
            )
       )
     else
-      # (current_user.is_admin? ?
-      #     (@ssl_account.try(:certificate_orders) || CertificateOrder).not_test.not_new(options) :
-      #       current_user.ssl_account.cached_certificate_orders.not_test.not_new(options)).order(updated_at: :desc)
-
       (current_user.is_admin? ?
            (@ssl_account.try(:cached_certificate_orders) || CertificateOrder).not_test.not_new(options) :
            (current_user.role_symbols(current_user.ssl_account).join(',').split(',').include?(Role::INDIVIDUAL_CERTIFICATE) ?
@@ -259,8 +255,9 @@ class ApplicationController < ActionController::Base
       )
     end.order(created_at: :desc)
     unless options[:source] && options[:source] == 'folders'
-      archived_folder = current_user.is_admin? || (params[:search] && params[:search].include?('folder_ids')) ? [true, false] : false
-      result.joins(:folder).where(folder: {archived: archived_folder})
+      archived_folder = current_user.is_admin? || (params[:search] && params[:search].include?('folder_ids')) ?
+                            [true, false, nil] : [false, nil]
+      result=result.includes(:folder).where(folders: {archived: archived_folder})
     end
     result
   end

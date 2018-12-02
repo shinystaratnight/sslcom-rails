@@ -61,7 +61,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   validates :unique_value, format: {with: /[a-zA-Z0-9]{1,20}/}, unless: lambda{|c|c.unique_value.blank?}
   # use code instead of serial allows attribute changes without affecting the cert name
   validate :verify_dcv, on: :create, if: "!domains.blank?"
-  validate :validate_contacts, if: "api_requestable && api_requestable.reseller.blank? && !csr.blank?"
+  # validate :validate_contacts, if: "api_requestable && api_requestable.reseller.blank? && !csr.blank?"
   validate :validate_callback, unless: lambda{|c|c.callback.blank?}
   validate :renewal_exists, if: lambda{|c|c.renewal_id}
 
@@ -361,7 +361,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   def setup_certificate_content(options)
     cc = options[:certificate_content]
     cc.registrant.destroy unless cc.registrant.blank?
-    cc.add_ca(options[:certificate_order].ssl_account)
+    cc.add_ca(options[:certificate_order].ssl_account) if options[:certificate_order].external_order_number.blank?
     cc.create_registrant(
         company_name: self.organization_name,
         department: self.organization_unit_name,
@@ -398,7 +398,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
                     options[:contacts][(options[:contacts][role] ? role : :all)].to_utf8,
                     %w(company_name department)
                 ))
-              else
+              elsif api_requestable.reseller
                 attributes = api_requestable.reseller.attributes.select do |attr, value|
                   (CertificateContact.column_names-%w(id created_at)).include?(attr.to_s)
                 end
@@ -406,14 +406,16 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
                 contact.assign_attributes(attributes, without_protection: true)
                 contact
               end
-          c.clear_roles
-          c.add_role! role
-          unless c.valid?
-            errors[:contacts] << {role.to_sym => c.errors}
-          else
-            cc.certificate_contacts << c
-            cc.update_attribute(role+"_checkbox", true) unless
-                role==CertificateContent::ADMINISTRATIVE_ROLE
+          unless c.blank?
+            c.clear_roles
+            c.add_role! role
+            unless c.valid?
+              errors[:contacts] << {role.to_sym => c.errors}
+            else
+              cc.certificate_contacts << c
+              cc.update_attribute(role+"_checkbox", true) unless
+                  role==CertificateContent::ADMINISTRATIVE_ROLE
+            end
           end
         end
       end

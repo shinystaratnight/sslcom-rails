@@ -184,7 +184,7 @@ module Preferences
 
       # Reader
       define_method("preferred_#{name}") do |*group|
-        Rails.cache.fetch("#{cache_key}preferred_#{name}") do
+        Rails.cache.fetch("#{cache_key}/preferred_#{name}/group_#{group.map(&:cache_key)}") do
           preferred(name, group.first)
         end
       end

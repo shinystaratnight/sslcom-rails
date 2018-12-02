@@ -129,7 +129,8 @@ class ApiCertificateRequest < CaApiRequest
   def find_certificate_orders(search,options={})
     is_test = self.test ? "is_test" : "not_test"
     co =
-      if self.api_requestable.users.find(&:is_admin?)
+      # TODO if ApiCredential.roles include? Role.find(6) super_user
+      if false # self.api_requestable.users.find(&:is_admin?)
         self.admin_submitted = true
         CertificateOrder.send(is_test)
       else
