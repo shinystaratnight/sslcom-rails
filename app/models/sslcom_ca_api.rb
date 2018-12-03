@@ -92,9 +92,9 @@ class SslcomCaApi
 
   def self.subject_dn(options={})
     dn=["CN=#{options[:cn].downcase}"]
-    dn << "OU=#{options[:ou]}" unless options[:ou].blank?
     unless options[:mapping].profile_name =~ /DV/
       dn << "O=#{options[:o]}" unless options[:o].blank?
+      dn << "OU=#{options[:ou]}" unless options[:ou].blank?
       dn << "C=#{options[:country]}" unless options[:country].blank?
       dn << "L=#{options[:city]}" unless options[:city].blank?
       dn << "ST=#{options[:state]}" unless options[:state].blank?
@@ -144,6 +144,7 @@ class SslcomCaApi
     cert = options[:cc].certificate
     co=options[:cc].certificate_order
     if options[:cc].csr
+      options[:mapping]=options[:mapping].ecc_profile if options[:cc].csr.sig_alg_parameter=~/ecc/i
       dn={}
       if options[:collect_certificate]
         dn.merge! user_name: options[:username]
@@ -158,7 +159,7 @@ class SslcomCaApi
               cert.max_duration].min.floor}:0:0"
         dn.merge!(subject_alt_name: subject_alt_name(options)) unless cert.is_code_signing?
       end
-      dn.merge!(request_type: "public_key",request_data: options[:cc].csr.public_key.to_s) if
+      dn.merge!(request_type: "public_key",request_data: options[:cc].csr.public_key.to_pem) if
           options[:collect_certificate] or options[:no_public_key].blank?
       dn.to_json
     end

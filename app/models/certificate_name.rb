@@ -214,7 +214,8 @@ class CertificateName < ActiveRecord::Base
         end
         if certificate_name
           dcv=certificate_name.domain_control_validations.last
-          dcv.update_column(:candidate_addresses, standard_addresses) if dcv
+          dcv ? dcv.update_column(:candidate_addresses, standard_addresses) :
+              certificate_name.domain_control_validations.create(candidate_addresses: standard_addresses)
           Rails.cache.delete(certificate_name.get_asynch_cache_label)
         end
         Rails.cache.write("CertificateName.candidate_email_addresses/#{dname}",standard_addresses)
@@ -225,11 +226,8 @@ class CertificateName < ActiveRecord::Base
   end
 
   def candidate_email_addresses(clear_cache=false)
-    Rails.cache.delete("CertificateName.candidate_email_addresses/#{name}") if clear_cache
-    standard_addresses=CertificateName.candidate_email_addresses(name,self)
-    dcv=domain_control_validations.last
-    dcv.update_column(:candidate_addresses, standard_addresses) if dcv
-    standard_addresses
+    Rails.cache.delete("CertificateName.candidate_email_addresses/#{non_wildcard_name}") if clear_cache
+    CertificateName.candidate_email_addresses(non_wildcard_name,self)
   end
 
   # certificate_name in the event the domain_control_validations candidate addresses need to be updated
