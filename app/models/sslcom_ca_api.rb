@@ -159,7 +159,7 @@ class SslcomCaApi
               cert.max_duration].min.floor}:0:0"
         dn.merge!(subject_alt_name: subject_alt_name(options)) unless cert.is_code_signing?
       end
-      dn.merge!(request_type: "public_key",request_data: options[:cc].csr.public_key.to_s) if
+      dn.merge!(request_type: "public_key",request_data: options[:cc].csr.public_key.to_pem) if
           options[:collect_certificate] or options[:no_public_key].blank?
       dn.to_json
     end
