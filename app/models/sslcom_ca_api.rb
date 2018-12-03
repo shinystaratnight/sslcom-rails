@@ -144,7 +144,7 @@ class SslcomCaApi
     cert = options[:cc].certificate
     co=options[:cc].certificate_order
     if options[:cc].csr
-      options[:mapping]=options[:mapping].ecc_profile if options[:cc].csr.algorithm=="ecc"
+      options[:mapping]=options[:mapping].ecc_profile if options[:cc].csr.sig_alg_parameter=~/ecc/i
       dn={}
       if options[:collect_certificate]
         dn.merge! user_name: options[:username]

@@ -380,6 +380,10 @@ class Csr < ActiveRecord::Base
         certificate_content.pending_validation?
   end
 
+  def sig_alg_parameter
+    SslcomCaApi.sig_alg_parameter(self)
+  end
+
   def options_for_ca_dcv
     {}.tap do |options|
         options.merge!(
