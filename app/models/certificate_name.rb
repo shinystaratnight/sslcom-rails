@@ -167,7 +167,9 @@ class CertificateName < ActiveRecord::Base
           end
           return (txt.size > 0) ? (options[:cname_destination].downcase==txt.last.name.to_s.downcase) : false
         else
-          r=open(options[:http_dcv_url], redirect: false).read
+          r=open(options[:http_dcv_url], "User-Agent" =>
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246",
+             redirect: false).read
         end
         return true if !!(r =~ Regexp.new("^#{options[:csr].sha2_hash}") &&
             r =~ Regexp.new("^#{options[:ca_tag]}") &&

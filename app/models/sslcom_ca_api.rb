@@ -143,6 +143,7 @@ class SslcomCaApi
   def self.issue_cert_json(options)
     cert = options[:cc].certificate
     co=options[:cc].certificate_order
+    carry_over = co.certificate.is_free? ? 0 : options[:cc].csr.days_left
     if options[:cc].csr
       options[:mapping]=options[:mapping].ecc_profile if options[:cc].csr.sig_alg_parameter=~/ecc/i
       dn={}
@@ -155,7 +156,7 @@ class SslcomCaApi
           ca_name: options[:ca_name] || ca_name(options),
           certificate_profile: certificate_profile(options),
           end_entity_profile: end_entity_profile(options),
-          duration: "#{[(options[:duration] || co.remaining_days+options[:cc].csr.days_left).to_i,
+          duration: "#{[(options[:duration] || co.remaining_days+carry_over).to_i,
               cert.max_duration].min.floor}:0:0"
         dn.merge!(subject_alt_name: subject_alt_name(options)) unless cert.is_code_signing?
       end
