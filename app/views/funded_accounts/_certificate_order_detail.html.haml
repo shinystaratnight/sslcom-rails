@@ -1,5 +1,7 @@
 -cert ||= @certificate_order ? [@certificate_order] : @certificate_orders
 -order ||= @order || current_order
+-if order.fully_refunded?
+  -cert ||= order.certificate_orders
 -invoiced = order.on_payable_invoice?
 
 %table#order_details_section(class="#{order.receipt ? 'receipt' : ''}")
