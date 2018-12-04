@@ -47,7 +47,7 @@ class CertificateContent < ActiveRecord::Base
   # terms in this list that are submitted as domains for an ssl will be kicked back
   BARRED_SSL_TERMS = %w(\A\. \.onion\z \.local\z)
 
-  TRADEMARKS = %w(.*?\.?ssl\.com whatsapp google .*?\.?facebook\.com .*?\.?apple\.com .*?\.?paypal\.com
+  TRADEMARKS = %w(.*?\.ssl\.com ssl\.com whatsapp google .*?\.?facebook\.com .*?\.?apple\.com .*?\.?paypal\.com
     .*?\.?github\.com .*?\.?amazon\.com .*?\.?cloudapp\.com .*?\.?microsoft\.com amzn ssltools certchat certlock
     .*?\.10million\.org .*?\.?android\.com .*?\.aol\.com .*?\.azadegi\.com .*?\.balatarin\.com .*?\.?comodo\.com
     .*?\.?digicert\.com .*?\.?yahoo\.com .*?\.?entrust\.com .*?\.?godaddy\.com .*?\.?oracle\.com

@@ -626,11 +626,8 @@ class SignedCertificate < ActiveRecord::Base
   end
 
   def signature_algorithm
-    if is_SHA2?
-      "SHA2"
-    else
-      "SHA1"
-    end
+    matched=decoded.match(/Signature Algorithm: (.*?)\n/)
+    matched[1] if matched
   end
 
   def self.decode_all
