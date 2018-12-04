@@ -1,5 +1,7 @@
 -fully_refunded = @order.get_total_merchant_refunds == @order.get_total_merchant_amount
--@order.cached_certificate_orders.each_with_index do |co, index|
+-line_items = @order.fully_refunded? ? @order.certificate_orders : @order.cached_certificate_orders
+
+-line_items.each_with_index do |co, index|
   %tr.line_item
     %td.line-index
       =index+1
