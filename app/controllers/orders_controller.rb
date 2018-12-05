@@ -293,8 +293,9 @@ class OrdersController < ApplicationController
       unless params["partial"] # full refund
         @target = @order
         if params["return_funds"]
-          add_cents_to_funded_account(@order.make_available_total)
-          @performed << " and made #{Money.new(@order.make_available_total).format} available to customer."
+          @full_refund_cents = @order.make_available_total
+          add_cents_to_funded_account(@full_refund_cents)
+          @performed << " and made #{Money.new(@full_refund_cents).format} available to customer."
         end
         @order.full_refund!
         notify_ca(params["refund_reason"])
