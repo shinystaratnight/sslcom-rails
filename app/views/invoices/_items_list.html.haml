@@ -50,7 +50,24 @@
         %td
           %strong
             =o.amount.format
-    -if approved_list  
+        
+        -# Voidied order detail
+        -if o.voided_on_payable_invoice?
+          %tr.invoice-order-void
+            %td{colspan: '3'}
+            %td
+              %strong
+                %i.fa.fa-minus
+                Order ##{o.reference_number} has been #{o.state.humanize.upcase}.
+            %td
+              %strong
+                -if o.partially_refunded? || o.fully_refunded?
+                  ="-#{Money.new(o.get_full_refund_amount).format}"
+                -else
+                  ="-$0.00"
+
+    -if approved_list
+      - voided_amt_cents = @invoice.get_voided_cents
       -if @order
         %tr.order-subtotal
           %td.description.total_row{colspan: '4'} Subtotal:
@@ -60,6 +77,10 @@
           %tr.order-funded
             %td.description.total_row{colspan: '4'} Funded Account Credit:
             %td.price.total_row -#{Money.new(funded_amount).format}
+        -if voided_amt_cents > 0
+          %tr.order-funded
+            %td.description.total_row{colspan: '4'} Refunded Line Items:
+            %td.price.total_row -#{Money.new(voided_amt_cents).format}
         %tr.order-total
           %td.description.total_row{colspan: '4'} Total:
           %td.price.total_row
