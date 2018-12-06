@@ -232,7 +232,7 @@ class SignedCertificate < ActiveRecord::Base
         self[:subject_alternative_names] = parsed.subject_alternative_names
         #TODO ecdsa throws exception. Find better method
         self[:strength] = parsed.public_key.instance_of?(OpenSSL::PKey::EC) ?
-                              parsed.to_text.match(/Public-Key\: \((\d+)/)[1] : parsed.strength
+                              (matched[1] if matched=parsed.to_text.match(/Private-Key\: \((\d+)/)) : parsed.strength
       end
     else
       ssl_util = Savon::Client.new Settings.certificate_parser_wsdl
@@ -626,11 +626,8 @@ class SignedCertificate < ActiveRecord::Base
   end
 
   def signature_algorithm
-    if is_SHA2?
-      "SHA2"
-    else
-      "SHA1"
-    end
+    matched=decoded.match(/Signature Algorithm: (.*?)\n/)
+    matched[1] if matched
   end
 
   def self.decode_all

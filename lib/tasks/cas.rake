@@ -16,6 +16,9 @@ namespace :cas do
   # delete all CasCertificates from all teams
   # RESET=true
   #
+  # create or update CAs
+  # EJBCA_ENV=development RAILS_ENV=production # for sandbox
+  #
   # only set all products live for these ssl_accounts but do not modify any other mappings
   # LIVE=all SSL_ACCOUNT_IDS=49213,49214 EJBCA_ENV=development RAILS_ENV=production # for sandbox
   #
@@ -307,7 +310,7 @@ namespace :cas do
       )
       Ca.find_or_initialize_by(ref: "0008").update_attributes(
           friendly_name: "SSL.com SSL ECC 384 (OV)",
-          profile_name: "DV_ECC_SERVER_CERT",
+          profile_name: "OV_ECC_SERVER_CERT",
           algorithm: "ecc",
           size: 384,
           description: Ca::SSLCOM_CA,

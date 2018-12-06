@@ -167,7 +167,9 @@ class CertificateName < ActiveRecord::Base
           end
           return (txt.size > 0) ? (options[:cname_destination].downcase==txt.last.name.to_s.downcase) : false
         else
-          r=open(options[:http_dcv_url], redirect: false).read
+          r=open(options[:http_dcv_url], "User-Agent" =>
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246",
+             redirect: false).read
         end
         return true if !!(r =~ Regexp.new("^#{options[:csr].sha2_hash}") &&
             r =~ Regexp.new("^#{options[:ca_tag]}") &&
@@ -206,7 +208,8 @@ class CertificateName < ActiveRecord::Base
     def perform
       begin
         standard_addresses = DomainControlValidation.email_address_choices(dname)
-        whois=WhoisLookup.use_gem(dname)
+        d=::PublicSuffix.parse(dname)
+        whois=Whois.whois(ActionDispatch::Http::URL.extract_domain(d.domain, 1)).inspect
         whois_addresses = WhoisLookup.email_addresses(whois)
         whois_addresses.each do |ad|
           standard_addresses << ad.downcase unless ad =~/abuse.*?@/i
@@ -214,7 +217,7 @@ class CertificateName < ActiveRecord::Base
         if certificate_name
           dcv=certificate_name.domain_control_validations.last
           dcv ? dcv.update_column(:candidate_addresses, standard_addresses) :
-               certificate_name.domain_control_validations.create(:candidate_addresses, standard_addresses)
+              certificate_name.domain_control_validations.create(candidate_addresses: standard_addresses)
           Rails.cache.delete(certificate_name.get_asynch_cache_label)
         end
         Rails.cache.write("CertificateName.candidate_email_addresses/#{dname}",standard_addresses)
@@ -225,11 +228,8 @@ class CertificateName < ActiveRecord::Base
   end
 
   def candidate_email_addresses(clear_cache=false)
-    Rails.cache.delete("CertificateName.candidate_email_addresses/#{name}") if clear_cache
-    standard_addresses=CertificateName.candidate_email_addresses(name,self)
-    dcv=domain_control_validations.last
-    dcv.update_column(:candidate_addresses, standard_addresses) if dcv
-    standard_addresses
+    Rails.cache.delete("CertificateName.candidate_email_addresses/#{non_wildcard_name}") if clear_cache
+    CertificateName.candidate_email_addresses(non_wildcard_name,self)
   end
 
   # certificate_name in the event the domain_control_validations candidate addresses need to be updated

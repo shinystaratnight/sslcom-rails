@@ -45,7 +45,7 @@ class Ca < ActiveRecord::Base
   validates :ref, presence: true, uniqueness: true
 
   def ecc_profile
-    Ca.find_by(end_entity: end_entity, ca_name: ca_name, algorithm: "ecc" )
+    Ca.find_by(end_entity: end_entity, description: description, algorithm: "ecc" )
   end
 
   def downstep
