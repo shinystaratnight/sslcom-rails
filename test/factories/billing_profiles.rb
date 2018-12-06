@@ -13,12 +13,9 @@ FactoryGirl.define do
     expiration_month  1
     expiration_year   {(Date.today + 3.years).year}
     security_code     '900'
-    default_profile   0
+    default_profile   1
     status            ''
     tax               ''
-    encrypted_card_number ''
-    encrypted_card_number_salt ''
-    encrypted_card_number_iv ''
     association :ssl_account, factory: :ssl_account
   end
   

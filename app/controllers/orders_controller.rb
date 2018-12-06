@@ -977,7 +977,7 @@ class OrdersController < ApplicationController
         content = [cart]
       end
     else
-      content[idx][ShoppingCart::QUANTITY] += 1
+      content[idx][ShoppingCart::QUANTITY] = content[idx][ShoppingCart::QUANTITY].to_i + 1
     end
 
     return content
