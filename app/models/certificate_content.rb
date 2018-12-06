@@ -47,8 +47,9 @@ class CertificateContent < ActiveRecord::Base
   # terms in this list that are submitted as domains for an ssl will be kicked back
   BARRED_SSL_TERMS = %w(\A\. \.onion\z \.local\z)
 
-  TRADEMARKS = %w(.*?\.ssl\.com\z \Assl\.com\z .*?\.google\.com\z \Agoogle\.com\z whatsapp .*?\.?facebook\.com
-    .*?\.apple\.com\z \Aapple\.com\z .*?\.microsoft\.com\z \Amicrosoft\.com\z .*?\.?paypal\.com
+  TRADEMARKS = %w(.*?\.ssl\.com\z \Assl\.com\z .*?\.google\.com\z \Agoogle\.com\z .*?\.whatsapp\.com\z \Awhatsapp\.com\z
+    .*?\.?facebook\.com \Afacebook\.com\z
+    .*?\.apple\.com\z \Aapple\.com\z .*?\.microsoft\.com\z \Amicrosoft\.com\z .*?\.paypal\.com\z \Apaypal\.com\z
     .*?\.mozilla\.com\z \Amozilla\.com\z .*?\.gmail\.com\z \Agmail\.com\z .*?\.goog\.com\z \Agoog\.com\z
     .*?\.?github\.com .*?\.?amazon\.com .*?\.?cloudapp\.com amzn ssltools certchat certlock
     .*?\.10million\.org .*?\.?android\.com .*?\.aol\.com .*?\.azadegi\.com .*?\.balatarin\.com .*?\.?comodo\.com
