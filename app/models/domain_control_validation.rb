@@ -8,7 +8,8 @@ class DomainControlValidation < ActiveRecord::Base
   delegate    :certificate_content, to: :csr
   # belongs_to :domain, class_name: "CertificateName"
   # delegate   :ssl_account, to: :domain
-  serialize :candidate_addresses
+  serialize   :candidate_addresses
+  belongs_to  :validation_compliance
 
   # validate  :email_address_check, unless: lambda{|r| r.email_address.blank?}
 
@@ -183,6 +184,7 @@ class DomainControlValidation < ActiveRecord::Base
   end
 
   def self.email_address_choices(name)
+    name=CertificateContent.non_wildcard_name(name)
     Rails.cache.fetch("email_address_choices/#{name}", expires_in: EMAIL_CHOICE_CACHE_EXPIRES_DAYS.days) do
       return [] unless DomainNameValidator.valid?(name,false)
       d=::PublicSuffix.parse(name.downcase)

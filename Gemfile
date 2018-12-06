@@ -46,6 +46,7 @@ gem 'attr_encrypted', '>= 3.0.3'
 gem 'delayed_job_active_record'
 gem "daemons"
 gem 'delayed_job_groups_plugin'
+gem 'delayed-web'
 gem 'public_suffix'
 gem 'rack-cors', :require => 'rack/cors'
 gem 'cancan'

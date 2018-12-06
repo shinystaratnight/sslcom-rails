@@ -261,8 +261,7 @@ class ValidationsController < ApplicationController
               current_user.certificate_orders).find_by_ref(params[:certificate_order_id])
     cn = co.certificate_content.certificate_names.find_by_name(params['domain_name']) if co
 
-    returnObj = Rails.cache.fetch("#{cn.domain_control_validations.
-        last.try(:cache_key)}/get_asynch_domains/#{params['domain_name']}") do
+    returnObj = Rails.cache.fetch(cn.get_asynch_cache_label) do
       if cn
         ds = params['domain_status']
         dcv = cn.domain_control_validations.last
@@ -290,7 +289,7 @@ class ValidationsController < ApplicationController
         addresses =
           if co.certificate_content.ca.blank? and co.external_order_number
             params['domain_count'].to_i > Validation::COMODO_EMAIL_LOOKUP_THRESHHOLD ?
-                CertificateName.candidate_email_addresses(cn.name) :
+                cn.candidate_email_addresses :
                 ComodoApi.domain_control_email_choices(cn.name).email_address_choices
           else
             cn.candidate_email_addresses

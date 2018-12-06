@@ -34,7 +34,9 @@ class Ca < ActiveRecord::Base
           ov_client:    'OV_CLIENTAUTH_CERT_EE',
           dvssl:        'DV_SERVER_CERT_EE',
           ovssl:        'OV_SERVER_CERT_EE',
-          evssl:        'EV_SERVER_CERT_EE'
+          evssl:        'EV_SERVER_CERT_EE',
+          dvclient:     'DV_CLIENT_CERT_EE',
+          ovclient:     'OV_CLIENT_CERT_EE'
   }
   
   # issuer (entity and purpose)
@@ -42,11 +44,15 @@ class Ca < ActiveRecord::Base
   
   validates :ref, presence: true, uniqueness: true
 
+  def ecc_profile
+    Ca.find_by(end_entity: end_entity, description: description, algorithm: "ecc" )
+  end
+
   def downstep
     down_name=
         case profile_name
         when /\AEV/
-          profile_name.gsub "EV","OV"
+          profile_name.gsub "EV","DV"
         when /\AOV/
           profile_name.gsub "OV","DV"
         end

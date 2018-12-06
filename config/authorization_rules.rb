@@ -365,7 +365,9 @@ authorization do
       :children,
       :create,
       :index
-    ]
+    ] do
+      if_attribute ssl_account_id: is {user.ssl_account.id}
+    end
     #
     # Csrs
     #
@@ -560,6 +562,13 @@ authorization do
     # Folders
     #
     has_permission_on :folders, to: [:children, :index]
+    has_permission_on :folders, to: [
+      :add_to_folder,
+      :add_certificate_order,
+      :add_certificate_orders
+    ] do
+      if_attribute ssl_account_id: is {user.ssl_account.id}
+    end
     #
     # Domains
     #

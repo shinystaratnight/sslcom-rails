@@ -92,9 +92,9 @@ class SslcomCaApi
 
   def self.subject_dn(options={})
     dn=["CN=#{options[:cn].downcase}"]
-    dn << "OU=#{options[:ou]}" unless options[:ou].blank?
     unless options[:mapping].profile_name =~ /DV/
       dn << "O=#{options[:o]}" unless options[:o].blank?
+      dn << "OU=#{options[:ou]}" unless options[:ou].blank?
       dn << "C=#{options[:country]}" unless options[:country].blank?
       dn << "L=#{options[:city]}" unless options[:city].blank?
       dn << "ST=#{options[:state]}" unless options[:state].blank?
@@ -143,7 +143,9 @@ class SslcomCaApi
   def self.issue_cert_json(options)
     cert = options[:cc].certificate
     co=options[:cc].certificate_order
+    carry_over = co.certificate.is_free? ? 0 : options[:cc].csr.days_left
     if options[:cc].csr
+      options[:mapping]=options[:mapping].ecc_profile if options[:cc].csr.sig_alg_parameter=~/ecc/i
       dn={}
       if options[:collect_certificate]
         dn.merge! user_name: options[:username]
@@ -154,10 +156,11 @@ class SslcomCaApi
           ca_name: options[:ca_name] || ca_name(options),
           certificate_profile: certificate_profile(options),
           end_entity_profile: end_entity_profile(options),
-          duration: "#{[(options[:duration] || co.remaining_days),cert.max_duration].min.floor}:0:0"
+          duration: "#{[(options[:duration] || co.remaining_days+carry_over).to_i,
+              cert.max_duration].min.floor}:0:0"
         dn.merge!(subject_alt_name: subject_alt_name(options)) unless cert.is_code_signing?
       end
-      dn.merge!(request_type: "public_key",request_data: options[:cc].csr.public_key.to_s) if
+      dn.merge!(request_type: "public_key",request_data: options[:cc].csr.public_key.to_pem) if
           options[:collect_certificate] or options[:no_public_key].blank?
       dn.to_json
     end
@@ -172,25 +175,26 @@ class SslcomCaApi
     end
 
     # does this need to be a DV if OV is required but not satisfied?
-    downstep = certificate.requires_locked_registrant? && !certificate_order.ov_validated?
-    previous_mapping=options[:mapping]
-    options[:mapping]=options[:mapping].downstep if downstep
+    if options[:mapping].profile_name=~/OV/ or options[:mapping].profile_name=~/EV/
+      downstep = !certificate_order.ov_validated?
+      options[:mapping]=options[:mapping].downstep if downstep
+    end
 
     options.merge! cc: cc = options[:certificate_content] || certificate_order.certificate_content
     approval_req, approval_res = SslcomCaApi.get_status(csr: cc.csr, mapping: options[:mapping])
     return cc.csr.sslcom_ca_requests.create(
       parameters: approval_req.body, method: "get", response: approval_res.body,
                                             ca: options[:ca]) if approval_res.try(:body)=~/WAITING FOR APPROVAL/
-    if (certificate.is_ev? or certificate.is_evcs?) and
+    if options[:mapping].profile_name=~/EV/ and
         (approval_res.try(:body).blank? or approval_res.try(:body)=~/EXPIRED AND NOTIFIED/)
       # create the user for EV order
       host = ca_host(options[:mapping])+"/v1/user"
       options.merge! no_public_key: true, ca: Ca::SSLCOM_CA # create an ejbca user only
     else # collect ev cert
       host = ca_host(options[:mapping])+
-          "/v1/certificate#{'/ev' if certificate.is_ev? or certificate.is_evcs?}/pkcs10"
+          "/v1/certificate#{'/ev' if options[:mapping].profile_name=~/EV/}/pkcs10"
       options.merge!(collect_certificate: true, username:
-          cc.csr.sslcom_usernames.compact.first) if certificate.is_ev? or certificate.is_evcs?
+          cc.csr.sslcom_usernames.compact.first) if options[:mapping].profile_name=~/EV/
     end
     req, res = call_ca(host, options, issue_cert_json(options))
     cc.create_csr(body: options[:csr]) if cc.csr.blank?

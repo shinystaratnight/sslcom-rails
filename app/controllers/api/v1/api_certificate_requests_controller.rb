@@ -7,8 +7,6 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
   before_filter :current_user_ssl_account, only: [:generate_certificate_v1_4]
   after_filter :notify_saved_result, except: [:create_v1_4, :download_v1_4]
 
-  before_filter :current_user_ssl_account, only: [:update_v1_4, :replace_v1_4]
-
   # parameters listed here made available as attributes in @result
   wrap_parameters ApiCertificateRequest, include: [*( 
     ApiCertificateRequest::ACCESSORS+
@@ -118,7 +116,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
 
         options = {}
         options[:cc] = co.certificate_content
-        options[:mapping] = options[:cc].ca || co.certificate.cas.ssl_account_or_general_default(@current_ssl_account).last
+        options[:mapping] = options[:cc].ca || co.certificate.cas.ssl_account_or_general_default(@result.api_credential.ssl_account).last
 
         if res = SslcomCaApi.generate_for_certificate(options)
           co_token = co.certificate_order_tokens.where(is_expired: false).first
@@ -199,7 +197,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
               end
 
               unless identifier == ''
-                ssl_slug = @current_ssl_account.ssl_slug || @current_ssl_account.acct_number
+                ssl_slug = @result.api_credential.ssl_account.ssl_slug || @result.api_credential.ssl_account.acct_number
 
                 domain_ary << domain_list
                 email_list << email_for_identifier
@@ -308,7 +306,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
               end
 
               unless identifier == ''
-                ssl_slug = @current_ssl_account.ssl_slug || @current_ssl_account.acct_number
+                ssl_slug = @result.api_credential.ssl_account.ssl_slug || @result.api_credential.ssl_account.acct_number
 
                 domain_ary << domain_list
                 email_list << email_for_identifier

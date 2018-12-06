@@ -21,10 +21,12 @@
       
       function updateIconInfo() {
         checked = $('#folders-tree-modal').jstree("get_checked", true)[0];
+        co_row = iconClicked.parents('tr');
         iconClicked.removeClass('fa-plus');
         iconClicked.addClass('fa-folder-open');
         iconClicked.data('folder-name', checked.text);
         iconClicked.data('folder-id', checked.id.replace('_folder', ''));
+        (checked.text == 'archived') && ("#{action_name}" != 'show') ? co_row.hide() : co_row.show();
       }
 
       function removeFromFolderExplorer() {

@@ -10,7 +10,7 @@ class SignedCertificate < ActiveRecord::Base
   serialize :subject_alternative_names
   belongs_to :parent, :foreign_key=>:parent_id,
     :class_name=> 'SignedCertificate', :dependent=>:destroy
-  belongs_to :csr
+  belongs_to :csr, touch: true
   delegate :certificate_content, to: :csr
   delegate :certificate_order, to: :certificate_content
   belongs_to :certificate_lookup
@@ -202,7 +202,7 @@ class SignedCertificate < ActiveRecord::Base
                     self[:body]=pkcs7.to_s
                     pkcs7.certificates.first
                   else
-                    OpenSSL::X509::Certificate.new(self[:body])
+                    OpenSSL::X509::Certificate.new(self[:body].strip)
                   end
       rescue Exception => ex
         logger.error ex
@@ -232,7 +232,7 @@ class SignedCertificate < ActiveRecord::Base
         self[:subject_alternative_names] = parsed.subject_alternative_names
         #TODO ecdsa throws exception. Find better method
         self[:strength] = parsed.public_key.instance_of?(OpenSSL::PKey::EC) ?
-                              parsed.to_text.match(/Public-Key\: \((\d+)/)[1] : parsed.strength
+                              (matched[1] if matched=parsed.to_text.match(/Private-Key\: \((\d+)/)) : parsed.strength
       end
     else
       ssl_util = Savon::Client.new Settings.certificate_parser_wsdl
@@ -402,8 +402,8 @@ class SignedCertificate < ActiveRecord::Base
           begin
             OrderNotifier.processed_certificate_order(contact: c,
                           certificate_order: certificate_order, file_path: zip_path).deliver
-            OrderNotifier.processed_certificate_order(contact: Settings.shadow_certificate_recipient,
-                          certificate_order: certificate_order, file_path: zip_path).deliver if certificate_order.certificate_content.ca
+            # OrderNotifier.processed_certificate_order(contact: Settings.shadow_certificate_recipient,
+            #               certificate_order: certificate_order, file_path: zip_path).deliver if certificate_order.certificate_content.ca
             OrderNotifier.site_seal_approve(c, certificate_order).deliver
           rescue Exception=>e
             logger.error e.backtrace.inspect
@@ -589,7 +589,7 @@ class SignedCertificate < ActiveRecord::Base
 
   def openssl_x509
     begin
-      OpenSSL::X509::Certificate.new(body)
+      OpenSSL::X509::Certificate.new(body.strip)
     rescue Exception
     end
   end
@@ -626,11 +626,8 @@ class SignedCertificate < ActiveRecord::Base
   end
 
   def signature_algorithm
-    if is_SHA2?
-      "SHA2"
-    else
-      "SHA1"
-    end
+    matched=decoded.match(/Signature Algorithm: (.*?)\n/)
+    matched[1] if matched
   end
 
   def self.decode_all
