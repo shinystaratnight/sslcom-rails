@@ -61,6 +61,7 @@ class ManagedCsrsController < ApplicationController
 
       if @csr.save
         returnObj['status'] = 'true'
+        returnObj['hash'] = @csr.public_key_sha1
       else
         returnObj['status'] = 'There was a problem adding this CSR to the CSR Manager.'
       end
@@ -74,6 +75,7 @@ class ManagedCsrsController < ApplicationController
         returnObj['status'] = 'CSR already exists on team' + current_user.ssl_account.ssl_slug + '.'
       elsif @csr.save
         returnObj['status'] = 'true'
+        returnObj['hash'] = @csr.public_key_sha1
       else
         returnObj['status'] = 'There was a problem adding this CSR to the CSR Manager.'
       end
