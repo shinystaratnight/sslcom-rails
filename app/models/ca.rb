@@ -45,18 +45,18 @@ class Ca < ActiveRecord::Base
   validates :ref, presence: true, uniqueness: true
 
   def ecc_profile
-    Ca.find_by(end_entity: end_entity, ca_name: ca_name, algorithm: "ecc" )
+    Ca.find_by(end_entity: end_entity, description: description, algorithm: "ecc" )
   end
 
   def downstep
-    down_name=
+    down_profile,down_entity=
         case profile_name
         when /\AEV/
-          profile_name.gsub "EV","DV"
+          [profile_name,end_entity].map{|field|field.gsub "EV","DV"}
         when /\AOV/
-          profile_name.gsub "OV","DV"
+          [profile_name,end_entity].map{|field|field.gsub "OV","DV"}
         end
-    Ca.find_by(profile_name: down_name, host: host, ca_name: ca_name)
+    Ca.find_by(profile_name: down_profile, host: host, end_entity: down_entity)
   end
 
   private

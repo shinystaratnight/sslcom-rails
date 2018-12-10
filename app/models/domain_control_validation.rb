@@ -8,7 +8,8 @@ class DomainControlValidation < ActiveRecord::Base
   delegate    :certificate_content, to: :csr
   # belongs_to :domain, class_name: "CertificateName"
   # delegate   :ssl_account, to: :domain
-  serialize :candidate_addresses
+  serialize   :candidate_addresses
+  belongs_to  :validation_compliance
 
   # validate  :email_address_check, unless: lambda{|r| r.email_address.blank?}
 
