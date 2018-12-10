@@ -51,7 +51,7 @@ class CertificateContent < ActiveRecord::Base
     .*?\.?facebook\.com \Afacebook\.com\z
     .*?\.apple\.com\z \Aapple\.com\z .*?\.microsoft\.com\z \Amicrosoft\.com\z .*?\.paypal\.com\z \Apaypal\.com\z
     .*?\.mozilla\.com\z \Amozilla\.com\z .*?\.gmail\.com\z \Agmail\.com\z .*?\.goog\.com\z \Agoog\.com\z
-    .*?\.?github\.com .*?\.?amazon\.com .*?\.?cloudapp\.com amzn ssltools certchat certlock
+    .*?\.?github\.com .*?\.?amazon\.com .*?\.?cloudapp\.com amzn ssltools certchat .*?\.certlock\.com\z \Acertlock\.com\z
     .*?\.10million\.org .*?\.?android\.com .*?\.aol\.com .*?\.azadegi\.com .*?\.balatarin\.com .*?\.?comodo\.com
     .*?\.?digicert\.com .*?\.?yahoo\.com .*?\.?entrust\.com .*?\.?godaddy\.com .*?\.?oracle\.com
     .*?\.?globalsign\.com .*?\.JanamFadayeRahbar\.com .*?\.?logmein\.com .*?\.mossad\.gov\.il
@@ -63,8 +63,10 @@ class CertificateContent < ActiveRecord::Base
     cia\.gov \.cybertrust\.com equifax\.com hamdami\.com mossad\.gov\.il sis\.gov\.uk microsoft\.com
     yahoo\.com login\.skype\.com mozilla\.org \.live\.com global\strustee)
 
-  WHITELIST = {492127=> %w(.*?\.ssl\.com\z \Assl\.com\z), 491981=> %w(.*?\.ssl\.com\z \Assl\.com\z),
-               493588=> %w(.*?\.ssl\.com\z \Assl\.com\z), 464808 => %w(.*?\.ssl\.com\z \Assl\.com\z)}
+  WHITELIST = {492127=> %w(.*?\.ssl\.com\z \Assl\.com\z .*?\.certlock\.com\z \Acertlock\.com\z),
+               491981=> %w(.*?\.ssl\.com\z \Assl\.com\z .*?\.certlock\.com\z \Acertlock\.com\z),
+               493588=> %w(.*?\.ssl\.com\z \Assl\.com\z .*?\.certlock\.com\z \Acertlock\.com\z),
+               464808=> %w(.*?\.ssl\.com\z \Assl\.com\z .*?\.certlock\.com\z \Acertlock\.com\z)}
 
   DOMAIN_COUNT_OFFLOAD=50
 
