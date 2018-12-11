@@ -340,7 +340,7 @@ module ApiSetupHelper
     assert_includes ca_request_2.response, 'errorCode=0'
     assert_includes ca_request_2.response, 'orderNumber='
     assert_match 'CaCertificateRequest', ca_request_2.type
-    assert_match 'https://secure.comodo.net/products/!AutoApplySSL', ca_request_2.request_url
+    assert_match 'https://secure.trust-provider.com/products/!AutoApplySSL', ca_request_2.request_url
   end
   
   def api_assert_non_wildcard_csr
