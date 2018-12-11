@@ -143,6 +143,7 @@ class SslcomCaApi
   def self.issue_cert_json(options)
     cert = options[:cc].certificate
     co=options[:cc].certificate_order
+    carry_over = co.certificate.is_free? ? 0 : options[:cc].csr.days_left
     if options[:cc].csr
       options[:mapping]=options[:mapping].ecc_profile if options[:cc].csr.sig_alg_parameter=~/ecc/i
       dn={}
@@ -155,7 +156,7 @@ class SslcomCaApi
           ca_name: options[:ca_name] || ca_name(options),
           certificate_profile: certificate_profile(options),
           end_entity_profile: end_entity_profile(options),
-          duration: "#{[(options[:duration] || co.remaining_days+options[:cc].csr.days_left).to_i,
+          duration: "#{[(options[:duration] || co.remaining_days+carry_over).to_i,
               cert.max_duration].min.floor}:0:0"
         dn.merge!(subject_alt_name: subject_alt_name(options)) unless cert.is_code_signing?
       end
@@ -184,16 +185,16 @@ class SslcomCaApi
     return cc.csr.sslcom_ca_requests.create(
       parameters: approval_req.body, method: "get", response: approval_res.body,
                                             ca: options[:ca]) if approval_res.try(:body)=~/WAITING FOR APPROVAL/
-    if (certificate.is_ev? or certificate.is_evcs?) and
+    if options[:mapping].profile_name=~/EV/ and
         (approval_res.try(:body).blank? or approval_res.try(:body)=~/EXPIRED AND NOTIFIED/)
       # create the user for EV order
       host = ca_host(options[:mapping])+"/v1/user"
       options.merge! no_public_key: true, ca: Ca::SSLCOM_CA # create an ejbca user only
     else # collect ev cert
       host = ca_host(options[:mapping])+
-          "/v1/certificate#{'/ev' if certificate.is_ev? or certificate.is_evcs?}/pkcs10"
+          "/v1/certificate#{'/ev' if options[:mapping].profile_name=~/EV/}/pkcs10"
       options.merge!(collect_certificate: true, username:
-          cc.csr.sslcom_usernames.compact.first) if certificate.is_ev? or certificate.is_evcs?
+          cc.csr.sslcom_usernames.compact.first) if options[:mapping].profile_name=~/EV/
     end
     req, res = call_ca(host, options, issue_cert_json(options))
     cc.create_csr(body: options[:csr]) if cc.csr.blank?

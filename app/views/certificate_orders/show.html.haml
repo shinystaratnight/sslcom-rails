@@ -442,21 +442,23 @@
                             %strong certificate signing request
                             -unless permitted_to?(:create, SignedCertificate.new) && current
                               -unless csr.blank?
-                                %div
-                                  submitted on #{c.csr.created_at.strftime("%b %d, %Y %R %Z")}
+                                %div submitted on #{csr.created_at.strftime("%b %d, %Y %R %Z")}
                                 =text_area_tag :csr, csr.body, :size=>"30x10"
+                                signature algorithm: #{csr.sig_alg}
                               -else
                                 no certificate signing request found
                             -else
                               #csr_submitted_on
                                 %span.submitted_on
                                   -unless csr.try(:created_at).blank?
-                                    submitted on
-                                    \#{csr.created_at.strftime("%b %d, %Y %R %Z")}
+                                    submitted on #{csr.created_at.strftime("%b %d, %Y %R %Z")}
                                   -else
                                     &nbsp
                               =form_for csr do |f|
                                 =f.text_area :body, :cols=>30, :rows=>10
+                                -if csr.try :sig_alg
+                                  %div signature algorithm:
+                                  %div=csr.sig_alg
                                 .clearfix
                                 =submit_tag 'Submit csr', :class=> 'submit_signed_certificate'
                                 =image_tag('waiting_bar_medium.gif', :id=>'waiting_on_csr', :style=>'display:none;vertical-align: middle;')
@@ -469,6 +471,9 @@
                                 %div
                                   submitted on #{sc.created_at.strftime("%b %d, %Y %R %Z")}
                                 =text_area_tag :signed_certificate, sc.body, :size=>"30x10"
+                                -if sc.try :signature_algorithm
+                                  %div signature algorithm:
+                                  %div=sc.signature_algorithm
                               -else
                                 %div
                                   no signed certificate found
@@ -476,12 +481,14 @@
                               #signed_certificate_submitted_on
                                 %span.submitted_on
                                   -unless sc.try(:created_at).blank?
-                                    submitted on
-                                    \#{sc.created_at.strftime("%b %d, %Y %R %Z")}
+                                    submitted on #{sc.created_at.strftime("%b %d, %Y %R %Z")}
                                   -else
                                     &nbsp
                               =form_for SignedCertificate.new, :url=>csr_signed_certificates_path(csr) do |f|
                                 =f.text_area :body, :cols=>30, :rows=>10
+                                -if sc.try :signature_algorithm
+                                  %div signature algorithm:
+                                  %div=sc.signature_algorithm
                                 .clearfix
                                   #{check_box_tag "email_customer", true, true}notify customer?
                                 =submit_tag 'Submit certificate', :class=> 'submit_signed_certificate'
