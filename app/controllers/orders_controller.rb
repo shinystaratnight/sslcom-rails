@@ -302,6 +302,9 @@ class OrdersController < ApplicationController
       else # partial refunds or cancel line item
         @target = @order.line_items.find {|li|li.sellable.try(:ref)==params["partial"]}
         @target ||= @order.cached_certificate_orders.find { |co| co.ref==params["partial"] }
+        # certificate order has been cancelled but not refunded
+        @target ||= @order.certificate_orders.unscoped.find_by(ref: params[:partial])
+
         refund_partial_amount(params) if params["return_funds"]
         refund_partial_cancel(params) if params["cancel_only"]
       end
