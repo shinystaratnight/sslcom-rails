@@ -891,8 +891,13 @@ class OrdersController < ApplicationController
 
   # admin user cancels line item
   def refund_partial_cancel(params)
-    @performed = "Cancelled partial order #{@target.sellable.ref}, credit or refund were NOT issued."
-    @target.sellable.cancel! @target
+    if @order.line_items.count == 1 #order has only one item, cencel entire order
+      @target = @order
+      cancel_entire_order
+    else  
+      @performed = "Cancelled partial order #{@target.sellable.ref}, credit or refund were NOT issued."
+      @target.sellable.cancel! @target
+    end
   end
 
   # admin user cancels entire order and all of it's line items
