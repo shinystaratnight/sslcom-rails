@@ -118,7 +118,7 @@ class SslcomCaApi
     names=if cert.is_smime?
       "rfc822Name="
     elsif !cert.is_code_signing?
-      (options[:san] ? options[:san].split(/\s+/) : options[:cc].all_domains).map{|d|d.downcase}
+      (options[:san] ? options[:san].split(/\s+/) : options[:cc].domains).map{|d|d.downcase}
     end || ""
     names << if cert.is_wildcard?
       "#{CertificateContent.non_wildcard_name(common_name)}"
@@ -166,20 +166,22 @@ class SslcomCaApi
     end
   end
 
-  def self.apply_for_certificate(certificate_order, options={})
-    certificate = certificate_order.certificate
-    if options[:send_to_ca]
-      options[:mapping] = Ca.find_by_ref(options[:send_to_ca])
-    elsif options[:mapping].blank?
-      options[:mapping] = certificate_order.certificate_content.ca
-    end
+  def self.set_mapping(certificate_order,options)
+    options[:mapping] = if options[:send_to_ca]
+                          Ca.find_by_ref(options[:send_to_ca])
+                        elsif options[:mapping].blank?
+                          certificate_order.certificate_content.ca
+                        end
 
     # does this need to be a DV if OV is required but not satisfied?
     if options[:mapping].profile_name=~/OV/ or options[:mapping].profile_name=~/EV/
       downstep = !certificate_order.ov_validated?
       options[:mapping]=options[:mapping].downstep if downstep
     end
+  end
 
+  def self.apply_for_certificate(certificate_order, options={})
+    set_mapping(certificate_order, options)
     options.merge! cc: cc = options[:certificate_content] || certificate_order.certificate_content
     approval_req, approval_res = SslcomCaApi.get_status(csr: cc.csr, mapping: options[:mapping])
     return cc.csr.sslcom_ca_requests.create(
