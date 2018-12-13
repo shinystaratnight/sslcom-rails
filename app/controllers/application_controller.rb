@@ -429,7 +429,11 @@ class ApplicationController < ActionController::Base
   end
 
   def find_ssl_account
-    if current_user.blank?
+    if params[:action]=="dcv_all_validate" and params[:ssl_slug]
+      @ssl_account = SslAccount.find_by_acct_number(params[:ssl_slug]) ||
+          SslAccount.find_by_ssl_slug(params[:ssl_slug])
+      not_found if @ssl_account.blank?
+    elsif current_user.blank?
       not_found
     else  
       @ssl_account =

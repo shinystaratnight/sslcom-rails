@@ -32,7 +32,7 @@ class Certificate < ActiveRecord::Base
 
   FREE_CERTS_CART_LIMIT=5
 
-  DOMAINS_TEXTAREA_SEPARATOR=/[\s\n\,]+/
+  DOMAINS_TEXTAREA_SEPARATOR=/[\s\n\,\+]+/
 
   USERTRUST_EV_SUBSCRIBER_AGREEMENT="https://cdn.ssl.com/app/uploads/2015/07/ssl_certificate_subscriber_agreement.pdf"
   USERTRUST_EV_AUTHORIZATION="https://cdn.ssl.com/app/uploads/2015/07/ev-request-form-simplified.pdf"

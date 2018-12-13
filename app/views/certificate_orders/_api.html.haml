@@ -173,19 +173,17 @@
 -if (current_user && current_user.is_system_admins?)
   .full_width_box
     %ul
-      -if co.csr
+      -if co.csr and co.certificate_content.ca
         %li
           %strong SSL.com CA API Issue Command
         %li
           %textarea.selectAll{style: "width:95%;"}
-            ='curl -k -H "Accept: application/json" -H "Content-type: application/json" -X POST -d '+"'#{SslcomCaApi.issue_cert_json(cc: co.certificate_content)}' "+SslcomCaApi.ca_host(co.certificate_content.ca)+"/v1/certificate/pkcs10"
+            -options={cc: co.certificate_content}
+            -SslcomCaApi.set_mapping(co,options)
+            ='curl -k -H "Accept: application/json" -H "Content-type: application/json" -X POST -d '+"'#{SslcomCaApi.issue_cert_json(options)}' "+SslcomCaApi.ca_host(co.certificate_content.ca)+"/v1/certificate/pkcs10"
       -if co.signed_certificate and co.signed_certificate.is_sslcom_ca?
         %li
           %strong SSL.com CA API Revoke Command
         %li
           %textarea.selectAll{style: "width:95%;"}
             ='curl -k -H "Accept: application/json" -H "Content-type: application/json" -X POST -d "'+SslcomCaApi.revoke_cert_json(co.signed_certificate, "reason").gsub('"', '\"')+'" \''+SslcomCaApi.ca_host(co.certificate_content.ca)+"/v1/certificate/revoke"+'\''
-        %li
-          %strong SSL.com CA API Retrieve Command
-        %li
-          %textarea.selectAll='curl -k -H "Accept: application/json" -H "Content-type: application/json" -X POST -d "'+ComodoApi.params_collect(co).gsub('"', '\"')+'" \''+ComodoApi::COLLECT_SSL_URL+'\''
