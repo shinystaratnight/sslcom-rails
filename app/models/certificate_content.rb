@@ -227,7 +227,7 @@ class CertificateContent < ActiveRecord::Base
   end
 
   def add_ca(ssl_account)
-    unless [467564,16077,475670,484141,473857].include?(ssl_account.id)
+    unless [467564,16077,475670,484141,473857,204730].include?(ssl_account.id)
       self.ca = (self.certificate.cas.ssl_account_or_general_default(ssl_account)).last if ca.blank? and certificate
     end
   end
@@ -745,20 +745,35 @@ class CertificateContent < ActiveRecord::Base
 
   def subject_dn(options={})
     cert = options[:certificate] || self.certificate
-    dn=["CN=#{options[:common_name] || certificate_names.first.name}"] if certificate.is_server?
+    dn=["CN=#{options[:common_name] || options[:cn] || certificate_names.first.name}"] if certificate.is_server?
     if !locked_registrant.blank? and !(options[:mapping] ? options[:mapping].try(:profile_name) =~ /DV/ : cert.is_dv?)
       # if ev or ov order, must have locked registrant
-      dn=["CN=#{options[:common_name] || locked_registrant.company_name}"] if !certificate.is_server?
+      dn=["CN=#{options[:common_name] || options[:cn]}"]
+
+      if dn.blank?
+        dn= if certificate.is_code_signing?
+              ["CN=#{locked_registrant.company_name}"]
+            elsif certificate.is_smime_or_client?
+              ["CN=#{[certificate_order.assignee.first_name,certificate_order.assignee.last_name].join(" ")}"]
+            end
+      end
       org=options[:o] || locked_registrant.company_name
       ou=options[:ou] || locked_registrant.department
       state=options[:s] || locked_registrant.state
       city=options[:l] || locked_registrant.city
       country=options[:c] || locked_registrant.country
+      postal_code=options[:postal_code] || locked_registrant.postal_code
+      postal_address=options[:postal_address] || locked_registrant.postal_address
+      street_address=options[:street_address] ||
+          [locked_registrant.address1,locked_registrant.address2,locked_registrant.address3].join(" ")
       dn << "O=#{org}" if !org.blank? and (!city.blank? or !state.blank?)
       dn << "OU=#{ou}" unless ou.blank?
       dn << "C=#{country}"
       dn << "L=#{city}" unless city.blank?
       dn << "ST=#{state}" unless state.blank?
+      dn << "postalCode=#{postal_code}" unless postal_code.blank?
+      dn << "postalAddress=#{postal_address}" unless postal_address.blank?
+      dn << "streetAddress=#{street_address}" unless street_address.blank?
       if cert.is_ev?
         dn << "serialNumber=#{options[:serial_number] || certificate_order.jois.last.try(:company_number) ||
           ("11111111" if options[:ca_id]==Ca::ISSUER[:sslcom_shadow])}"

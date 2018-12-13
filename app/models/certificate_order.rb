@@ -1162,7 +1162,7 @@ class CertificateOrder < ActiveRecord::Base
         !options[:mapping].blank?
       if !certificate_content.infringement.empty? # possible trademark problems
         OrderNotifier.potential_trademark(Settings.notify_address, self, certificate_content.infringement).deliver_now
-      elsif domains_validated? and caa_validated?
+      elsif !certificate.is_server? or (domains_validated? and caa_validated?)
         SslcomCaApi.apply_for_certificate(self, options)
       end
     else

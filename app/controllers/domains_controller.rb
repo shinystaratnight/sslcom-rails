@@ -67,7 +67,8 @@ class DomainsController < ApplicationController
     @addresses = CertificateName.candidate_email_addresses(@domain.name)
     if params[:authenticity_token]
       if params[:dcv_address]=~EmailValidator::EMAIL_FORMAT
-        if @addresses.include?(params[:dcv_address])
+        if @addresses.include?(params[:dcv_address]) or
+            @domain.domain_control_validations.last.candidate_addresses.include?(params[:dcv_address])
           identifier = (SecureRandom.hex(8)+Time.now.to_i.to_s(32))[0..19]
           @domain.domain_control_validations.create(dcv_method: "email", email_address: params[:dcv_address],
                                                     identifier: identifier, failure_action: "ignore", candidate_addresses: @addresses)

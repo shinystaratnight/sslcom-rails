@@ -27,30 +27,30 @@
               %label{for: 'o'}
                 *O (Organization):
                 %span.label_desc organization or company name
-              =text_field_tag :o, @certificate_order.registrant.company_name
+              =text_field_tag :o, @certificate_order.locked_registrant.company_name
             .clearfix
               %label{for: 'ou'}
                 OU (Organizational Unit):
-              =text_field_tag :ou, @certificate_order.registrant.department
+              =text_field_tag :ou, @certificate_order.locked_registrant.department
             .clearfix
               %label{for: 'city'}
                 *Locality:
                 %span.label_desc * if city registered
-              =text_field_tag :city, @certificate_order.registrant.city
+              =text_field_tag :city, @certificate_order.locked_registrant.city
             .clearfix
               %label{for: 'state'}
                 *Province:
                 %span.label_desc * if state, province, or county registered
-              =text_field_tag :state, @certificate_order.registrant.department
+              =text_field_tag :state, @certificate_order.locked_registrant.state
             .clearfix
               %label{for: 'country'}
                 *Country:
-              =select_tag :country, options_for_select(Country.approved.collect {|c| [ c.name, c.iso1_code ] }.sort{|x,y|x[0]<=>y[0]},@certificate_order.registrant.country)
+              =select_tag :country, options_for_select(Country.approved.collect {|c| [ c.name, c.iso1_code ] }.sort{|x,y|x[0]<=>y[0]},@certificate_order.locked_registrant.country)
             .clearfix
               %label{for: 'postal_code'}
                 Postal Code:
                 %span.label_desc postal code or zip
-              =text_field_tag :postal_code, @certificate_order.registrant.postal_code
+              =text_field_tag :postal_code, @certificate_order.locked_registrant.postal_code
             -if for_ov? or for_ev? or for_evcs?
               .clearfix
                 %label{for: 'postal_address'}
@@ -61,7 +61,7 @@
               %label{for: 'street_address'}
                 Street Address:
                 %span.label_desc street address
-              =text_field_tag :street_address
+              =text_field_tag :street_address, @certificate_order.locked_registrant.address1
           -if for_evcs? or for_ev?
             .clearfix
               %label{for: 'business_category'}
