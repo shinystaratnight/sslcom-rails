@@ -437,6 +437,16 @@ class CertificateOrdersController < ApplicationController
       if @certificate_content.valid?
         cc = @certificate_order.transfer_certificate_content(@certificate_content)
 
+        if params[:common_name] && !params[:common_name].empty?
+          domains = cc.domains
+          unless domains.include? params[:common_name]
+            domains << params[:common_name]
+            cc.update_attribute(:domains, domains.join(' '))
+          end
+          cc.certificate_names.where(is_common_name: true).first.update_attribute(:is_common_name, false)
+          cc.certificate_names.find_by_name(params[:common_name]).update_attribute(:is_common_name, true)
+        end
+
         if domains_adjustment
           o = params[:order]
           order_params = {
