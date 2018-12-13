@@ -148,7 +148,7 @@ class SslcomCaApi
     cert = options[:cc].certificate
     co=options[:cc].certificate_order
     csr=options[:csr] ? Csr.new(body: options[:csr]) : options[:cc].csr
-    carry_over = !co.certificate.is_server? or co.certificate.is_free? ? 0 : csr.days_left
+    carry_over = (!co.certificate.is_server? or co.certificate.is_free?) ? 0 : csr.days_left
     if csr
       options[:mapping]=options[:mapping].ecc_profile if csr.sig_alg_parameter=~/ecc/i
       dn={}
@@ -171,11 +171,8 @@ class SslcomCaApi
   end
 
   def self.set_mapping(certificate_order,options)
-    options[:mapping] = if options[:send_to_ca]
-                          Ca.find_by_ref(options[:send_to_ca])
-                        elsif options[:mapping].blank?
-                          certificate_order.certificate_content.ca
-                        end
+    options[:mapping] = Ca.find_by_ref(options[:send_to_ca]) if options[:send_to_ca]
+    options[:mapping] = certificate_order.certificate_content.ca if options[:mapping].blank?
 
     # does this need to be a DV if OV is required but not satisfied?
     if options[:mapping].profile_name=~/OV/ or options[:mapping].profile_name=~/EV/

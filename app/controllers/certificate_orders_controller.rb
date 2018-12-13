@@ -735,14 +735,17 @@ class CertificateOrdersController < ApplicationController
 
   def registrants_on_edit
     setup_registrant
-    setup_registrant_from_locked if params[:registrant] == 'false'
-    if @csr
-      @registrant.company_name = @csr.organization
-      @registrant.department = @csr.organization_unit
-      @registrant.city = @csr.locality
-      @registrant.state = @csr.state
-      @registrant.email = @csr.email
-      @registrant.country = @csr.country
+    if params[:registrant] == 'false'
+      setup_registrant_from_locked
+    else
+      if @csr
+        @registrant.company_name = @csr.organization unless @csr.organization.blank?
+        @registrant.department = @csr.organization_unit unless @csr.organization_unit.blank?
+        @registrant.city = @csr.locality unless @csr.locality.blank?
+        @registrant.state = @csr.state unless @csr.state.blank?
+        @registrant.email = @csr.email unless @csr.email.blank?
+        @registrant.country = @csr.country unless @csr.country.blank?
+      end
     end
   end
 

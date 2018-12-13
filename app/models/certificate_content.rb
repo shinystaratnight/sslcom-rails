@@ -762,11 +762,18 @@ class CertificateContent < ActiveRecord::Base
       state=options[:s] || locked_registrant.state
       city=options[:l] || locked_registrant.city
       country=options[:c] || locked_registrant.country
+      postal_code=options[:postal_code] || locked_registrant.postal_code
+      postal_address=options[:postal_address] || locked_registrant.postal_address
+      street_address=options[:street_address] ||
+          [locked_registrant.address1,locked_registrant.address2,locked_registrant.address3].join(" ")
       dn << "O=#{org}" if !org.blank? and (!city.blank? or !state.blank?)
       dn << "OU=#{ou}" unless ou.blank?
       dn << "C=#{country}"
       dn << "L=#{city}" unless city.blank?
       dn << "ST=#{state}" unless state.blank?
+      dn << "postalCode=#{postal_code}" unless postal_code.blank?
+      dn << "postalAddress=#{postal_address}" unless postal_address.blank?
+      dn << "streetAddress=#{street_address}" unless street_address.blank?
       if cert.is_ev?
         dn << "serialNumber=#{options[:serial_number] || certificate_order.jois.last.try(:company_number) ||
           ("11111111" if options[:ca_id]==Ca::ISSUER[:sslcom_shadow])}"
