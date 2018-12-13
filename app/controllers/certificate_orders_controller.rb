@@ -391,7 +391,7 @@ class CertificateOrdersController < ApplicationController
       co.copy_iv_ov_validation_history(validations)
       redirect_to certificate_order_path(@ssl_slug, co.ref)
     else
-      cc.pend_validation! unless cc.pending_validation?
+      cc.pend_validation! if !(cc.pending_validation? or cc.issued?)
       redirect_to document_upload_certificate_order_validation_path(
         @ssl_slug, certificate_order_id: co.ref
       )
@@ -672,7 +672,7 @@ class CertificateOrdersController < ApplicationController
       iv.validated! if (params[:validate_iv] && iv && !iv.validated?)
       admin_validate_ov(ov)
       if (ov_iv && @certificate_order.iv_ov_validated?) || (!ov_iv && @certificate_order.iv_validated?)
-        cc.validate! unless cc.validated?
+        cc.validate! if !(cc.pending_validation? or cc.issued?)
       end
     else  
       admin_validate_ov(ov)

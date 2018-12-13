@@ -114,22 +114,26 @@ class SslcomCaApi
 
   def self.subject_alt_name(options)
     cert = options[:cc].certificate
-    common_name=options[:cc].csr.common_name
-    names=if cert.is_smime?
-      "rfc822Name="
-    elsif !cert.is_code_signing?
-      (options[:san] ? options[:san].split(/\s+/) : options[:cc].domains).map{|d|d.downcase}
-    end || ""
-    names << if cert.is_wildcard?
-      "#{CertificateContent.non_wildcard_name(common_name)}"
-    elsif cert.is_single?
-      if common_name=~/\Awww\./
-        "#{common_name[4..-1]}"
-      else
-        "www.#{common_name}"
-      end
+    common_name=options[:cn] || (options[:csr] ? Csr.new(body: options[:csr]) : options[:cc].csr).common_name
+    names=if cert.is_smime_or_client?
+            "" # "rfc822Name=#{options[:cc].certificate_order.assignee.email}"
+          elsif cert.is_server?
+            (options[:san] ? options[:san].split(/\s+/) : options[:cc].domains).map{|d|d.downcase}
+          end || ""
+    if cert.is_server?
+      names <<  if cert.is_wildcard?
+                  "#{CertificateContent.non_wildcard_name(common_name)}"
+                elsif cert.is_single?
+                  if common_name=~/\Awww\./
+                    "#{common_name[4..-1]}"
+                  else
+                    "www.#{common_name}"
+                  end
+                end
+      "dNSName=#{names.compact.map(&:downcase).uniq.join(",dNSName=")}"
+    else
+      names
     end
-    "dNSName=#{names.compact.map(&:downcase).uniq.join(",dNSName=")}"
   end
 
   # revoke json parameter string for REST call to EJBCA
@@ -143,16 +147,16 @@ class SslcomCaApi
   def self.issue_cert_json(options)
     cert = options[:cc].certificate
     co=options[:cc].certificate_order
-    carry_over = co.certificate.is_free? ? 0 : options[:cc].csr.days_left
-    if options[:cc].csr
-      options[:mapping]=options[:mapping].ecc_profile if options[:cc].csr.sig_alg_parameter=~/ecc/i
+    csr=options[:csr] ? Csr.new(body: options[:csr]) : options[:cc].csr
+    carry_over = !co.certificate.is_server? or co.certificate.is_free? ? 0 : csr.days_left
+    if csr
+      options[:mapping]=options[:mapping].ecc_profile if csr.sig_alg_parameter=~/ecc/i
       dn={}
       if options[:collect_certificate]
         dn.merge! user_name: options[:username]
       else
-        dn.merge! subject_dn: (options[:action]=="send_to_ca" ? subject_dn(options) : # via RA form or shadow
-          (options[:subject_dn] || options[:cc].subject_dn({mapping: options[:mapping]})))+
-            ",OU=#{Digest::SHA1.hexdigest(options[:cc].csr.to_der+DateTime.now.to_i.to_s).upcase}",
+        dn.merge! subject_dn: (options[:subject_dn] || options[:cc].subject_dn(options))+
+            ",OU=#{Digest::SHA1.hexdigest(csr.to_der+DateTime.now.to_i.to_s).upcase}",
           ca_name: options[:ca_name] || ca_name(options),
           certificate_profile: certificate_profile(options),
           end_entity_profile: end_entity_profile(options),
@@ -160,7 +164,7 @@ class SslcomCaApi
               cert.max_duration].min.floor}:0:0"
         dn.merge!(subject_alt_name: subject_alt_name(options)) unless cert.is_code_signing?
       end
-      dn.merge!(request_type: "public_key",request_data: options[:cc].csr.public_key.to_pem) if
+      dn.merge!(request_type: "public_key",request_data: csr.public_key.to_pem) if
           options[:collect_certificate] or options[:no_public_key].blank?
       dn.to_json
     end

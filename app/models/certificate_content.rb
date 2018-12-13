@@ -745,10 +745,18 @@ class CertificateContent < ActiveRecord::Base
 
   def subject_dn(options={})
     cert = options[:certificate] || self.certificate
-    dn=["CN=#{options[:common_name] || certificate_names.first.name}"] if certificate.is_server?
+    dn=["CN=#{options[:common_name] || options[:cn] || certificate_names.first.name}"] if certificate.is_server?
     if !locked_registrant.blank? and !(options[:mapping] ? options[:mapping].try(:profile_name) =~ /DV/ : cert.is_dv?)
       # if ev or ov order, must have locked registrant
-      dn=["CN=#{options[:common_name] || locked_registrant.company_name}"] if !certificate.is_server?
+      dn=["CN=#{options[:common_name] || options[:cn]}"]
+
+      if dn.blank?
+        dn= if certificate.is_code_signing?
+              ["CN=#{locked_registrant.company_name}"]
+            elsif certificate.is_smime_or_client?
+              ["CN=#{[certificate_order.assignee.first_name,certificate_order.assignee.last_name].join(" ")}"]
+            end
+      end
       org=options[:o] || locked_registrant.company_name
       ou=options[:ou] || locked_registrant.department
       state=options[:s] || locked_registrant.state
