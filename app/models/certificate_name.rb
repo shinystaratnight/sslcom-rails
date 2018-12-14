@@ -209,10 +209,9 @@ class CertificateName < ActiveRecord::Base
       begin
         standard_addresses = DomainControlValidation.email_address_choices(dname)
         d=::PublicSuffix.parse(dname)
-        whois=Whois.whois(ActionDispatch::Http::URL.extract_domain(d.domain, 1)).inspect
-        whois_addresses = WhoisLookup.email_addresses(whois)
-        whois_addresses.each do |ad|
-          standard_addresses << ad.downcase unless ad =~/abuse.*?@/i
+        parser=Whois.whois(ActionDispatch::Http::URL.extract_domain(d.domain, 1)).parser
+        [parser.registrant_contacts, parser.admin_contacts, parser.technical_contacts].flatten.map(&:email).uniq.each do |ad|
+          standard_addresses << ad.downcase
         end
         if certificate_name
           dcv=certificate_name.domain_control_validations.last
