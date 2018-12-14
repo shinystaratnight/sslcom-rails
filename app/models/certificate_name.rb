@@ -201,7 +201,7 @@ class CertificateName < ActiveRecord::Base
   end
 
   def get_asynch_cache_label
-    "#{domain_control_validations.last.try(:cache_key)}/get_asynch_domains/#{name}"
+    "#{domain_control_validations.last.try(:cache_key)}/get_asynch_domains/#{non_wildcard_name}"
   end
 
   WhoisJob = Struct.new(:dname, :certificate_name) do
