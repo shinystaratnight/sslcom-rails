@@ -748,8 +748,6 @@ class CertificateContent < ActiveRecord::Base
     dn=["CN=#{options[:common_name] || options[:cn] || certificate_names.first.name}"] if certificate.is_server?
     if !locked_registrant.blank? and !(options[:mapping] ? options[:mapping].try(:profile_name) =~ /DV/ : cert.is_dv?)
       # if ev or ov order, must have locked registrant
-      dn=["CN=#{options[:common_name] || options[:cn]}"]
-
       if dn.blank?
         dn= if certificate.is_code_signing?
               ["CN=#{locked_registrant.company_name}"]
@@ -763,7 +761,7 @@ class CertificateContent < ActiveRecord::Base
       city=options[:l] || locked_registrant.city
       country=options[:c] || locked_registrant.country
       postal_code=options[:postal_code] || locked_registrant.postal_code
-      postal_address=options[:postal_address] || locked_registrant.postal_address
+      postal_address=options[:postal_address] || locked_registrant.po_box
       street_address=options[:street_address] ||
           [locked_registrant.address1,locked_registrant.address2,locked_registrant.address3].join(" ")
       dn << "O=#{org}" if !org.blank? and (!city.blank? or !state.blank?)
