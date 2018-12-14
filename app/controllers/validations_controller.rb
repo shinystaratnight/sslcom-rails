@@ -90,9 +90,13 @@ class ValidationsController < ApplicationController
           @all_validated=@certificate_order.domains_validated?
           if @all_validated and cc.signed_certificate.blank? and !cc.issued?
             cc.validate! if cc.pending_validation?
-            @certificate_order.apply_for_certificate(
+            api_log_entry=@certificate_order.apply_for_certificate(
                 mapping: @certificate_order.certificate_content.ca,
                       current_user: current_user)
+            if api_log_entry.response=~/Check CAA/
+              flash[:error] =
+                  "CAA validation failed. See https://www.ssl.com/how-to/configure-caa-records-to-authorize-ssl-com/"
+            end
           end
 
           @validated_domains = validated_domain_arry.join(',')
