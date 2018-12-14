@@ -114,11 +114,13 @@ class SslcomCaApi
 
   def self.subject_alt_name(options)
     cert = options[:cc].certificate
-    common_name=options[:cn] || (options[:csr] ? Csr.new(body: options[:csr]) : options[:cc].csr).common_name
+    common_name=options[:common_name] || options[:cn] ||
+        (options[:csr] ? Csr.new(body: options[:csr]) : options[:cc].csr).common_name
     names=if cert.is_smime_or_client?
             "" # "rfc822Name=#{options[:cc].certificate_order.assignee.email}"
           elsif cert.is_server?
-            (options[:san] ? options[:san].split(/\s+/) : options[:cc].domains).map{|d|d.downcase}
+            ([common_name]+(options[:san] ?
+                options[:san].split(Certificate::DOMAINS_TEXTAREA_SEPARATOR) : options[:cc].domains)).uniq.map{|d|d.downcase}
           end || ""
     if cert.is_server?
       names <<  if cert.is_wildcard?

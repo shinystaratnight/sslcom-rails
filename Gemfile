@@ -80,6 +80,7 @@ gem 'recaptcha', require: 'recaptcha/rails'
 gem 'font-awesome-rails'
 gem 'acts_as_tree'
 gem 'whois', '~> 4.0'
+gem 'whois-parser'
 gem 'where-or'
 
 group :development do
