@@ -39,7 +39,7 @@
         -elsif current_user.ssl_account.is_registered_reseller? && !@order.on_payable_invoice?
           %span funded account
         -else
-          -if @order.on_payable_invoice?
+          -if @order.on_payable_invoice? || @order.voided_on_payable_invoice?
             -invoice = @order.invoice
             %span
               %strong

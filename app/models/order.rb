@@ -295,6 +295,7 @@ class Order < ActiveRecord::Base
     unless reprocess_ucc_order? || 
       invoice_payment? ||
       on_payable_invoice? || 
+      voided_on_payable_invoice? ||
       domains_adjustment? ||
       no_limit_order?
       
@@ -312,6 +313,29 @@ class Order < ActiveRecord::Base
   workflow do
     state :invoiced do
       event :invoice_paid!, transitions_to: :paid_by_invoice
+      event :full_refund, transitions_to: :fully_refunded do |complete=true|
+        line_items.each {|li|li.sellable.refund! if(
+          li.sellable.respond_to?("refund!".to_sym) && !li.sellable.refunded?)} if complete
+      end
+      event :partial_refund, transitions_to: :partially_refunded do |ref|
+        li = line_items.find {|li| li.sellable.try(:ref) == ref}
+        if li
+          decrement! :cents, li.cents
+          if (li.sellable.respond_to?("refund!".to_sym) && !li.sellable.refunded?)
+            li.sellable.refund!
+          end
+        end
+      end
+      event :reject, transitions_to: :rejected do |complete=true|
+        line_items.each {|li| li.sellable.reject!} if complete
+      end
+      event :cancel, transitions_to: :canceled do |complete=true|
+        line_items.each {|li| li.sellable.cancel!} if complete
+        update_attribute :canceled_at, Time.now
+      end
+      event :charge_back, transitions_to: :charged_back do |complete=true|
+        line_items.each {|li| li.sellable.charge_back!} if complete
+      end
     end
       
     state :pending do
@@ -522,6 +546,16 @@ class Order < ActiveRecord::Base
     state == 'invoiced'
   end
   
+  def voided_on_payable_invoice?
+    !invoice_id.blank? && (
+      fully_refunded? ||
+      partially_refunded? ||
+      canceled? ||
+      rejected? ||
+      charged_back?
+    )
+  end
+
   def on_payable_invoice?
     !invoice_id.blank? && state == 'invoiced'
   end
