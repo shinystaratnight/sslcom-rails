@@ -338,6 +338,9 @@ class OrdersController < ApplicationController
       else # partial refunds or cancel line item
         @target = @order.line_items.find {|li|li.sellable.try(:ref)==params["partial"]}
         @target ||= @order.cached_certificate_orders.find { |co| co.ref==params["partial"] }
+        # certificate order has been cancelled but not refunded
+        @target ||= @order.certificate_orders.unscoped.find_by(ref: params[:partial])
+
         refund_partial_amount(params) if params["return_funds"]
         refund_partial_cancel(params) if params["cancel_only"]
       end
@@ -927,8 +930,22 @@ class OrdersController < ApplicationController
 
   # admin user cancels line item
   def refund_partial_cancel(params)
-    @performed = "Cancelled partial order #{@target.sellable.ref}, credit or refund were NOT issued."
-    @target.sellable.cancel! @target
+    if @order.line_items.count == 1 #order has only one item, cencel entire order
+      @target = @order
+      cancel_entire_order
+    else  
+      @performed = "Cancelled partial order #{@target.sellable.ref}, credit or refund were NOT issued."
+      @target.sellable.cancel! @target
+    end
+  end
+
+  # admin user cancels entire order and all of it's line items
+  def cancel_entire_order
+    @performed = "Cancelled entire order #{@target.reference_number}, credit or refund were NOT issued."
+    @target.cancel!
+    if @target.canceled? && @target.invoice
+      @target.update(invoice_id: nil)
+    end
   end
 
   # admin user cancels entire order and all of it's line items

@@ -64,10 +64,11 @@ class DomainsController < ApplicationController
       redirect_to domains_path(@ssl_slug)
       return
     end
-    @addresses = CertificateName.candidate_email_addresses(@domain.name)
+    @addresses = CertificateName.candidate_email_addresses(@domain.non_wildcard_name)
     if params[:authenticity_token]
       if params[:dcv_address]=~EmailValidator::EMAIL_FORMAT
-        if @addresses.include?(params[:dcv_address])
+        if @addresses.include?(params[:dcv_address]) or
+            @domain.domain_control_validations.last.candidate_addresses.include?(params[:dcv_address])
           identifier = (SecureRandom.hex(8)+Time.now.to_i.to_s(32))[0..19]
           @domain.domain_control_validations.create(dcv_method: "email", email_address: params[:dcv_address],
                                                     identifier: identifier, failure_action: "ignore", candidate_addresses: @addresses)
@@ -92,14 +93,14 @@ class DomainsController < ApplicationController
       dcv = cn.domain_control_validations.last
       next if dcv && dcv.identifier_found
       @all_domains << cn
-      @address_choices << CertificateName.candidate_email_addresses(cn.name)
+      @address_choices << CertificateName.candidate_email_addresses(cn.non_wildcard_name)
     end
     @domains = @ssl_account.domains.order(created_at: :desc)
     @domains.each do |dn|
       dcv = dn.domain_control_validations.last
       next if dcv && dcv.identifier_found
       @all_domains << dn
-      @address_choices << CertificateName.candidate_email_addresses(dn.name)
+      @address_choices << CertificateName.candidate_email_addresses(dn.non_wildcard_name)
     end
   end
 
@@ -413,8 +414,8 @@ class DomainsController < ApplicationController
         end
       end
       unless validated.empty?
-        flash[:notice] = "The following are now validated: #{validated.flatten.join(" ,")}"
-        redirect_to domains_path
+        flash[:notice] = "The following domains are now validated: #{validated.flatten.join(" ,")}"
+        redirect_to(domains_path) if current_user
       else
         flash.now[:error] = "No domains have been validated."
       end
