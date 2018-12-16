@@ -4,7 +4,6 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
   helper SiteSealsHelper
   before_filter :set_database, if: "request.host=~/^sandbox/ || request.host=~/^sws-test/ || request.host=~/ssl.local$/"
   before_filter :set_test, :record_parameters, except: [:scan, :analyze, :download_v1_4]
-  before_filter :current_user_ssl_account, only: [:generate_certificate_v1_4]
   after_filter :notify_saved_result, except: [:create_v1_4, :download_v1_4]
 
   # parameters listed here made available as attributes in @result
@@ -112,18 +111,19 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
     if @result.valid? && @result.save
       co = @result.find_certificate_order
       # if co.ov_validated?
-        co.certificate_content.create_csr(body: params[:csr])
+      co.certificate_content.create_csr(body: params[:csr])
 
-        options = {}
-        options[:cc] = co.certificate_content
-        options[:mapping] = options[:cc].ca || co.certificate.cas.ssl_account_or_general_default(@result.api_credential.ssl_account).last
+      options = {}
+      options[:cc] = co.certificate_content
+      options[:mapping] = options[:cc].ca || co.certificate.cas.ssl_account_or_general_default(@result.api_credential.ssl_account).last
 
-        if res = SslcomCaApi.generate_for_certificate(options)
-          co_token = co.certificate_order_tokens.where(is_expired: false).first
-          co_token.update_attribute(:is_expired, true) if co_token
+      if res = SslcomCaApi.apply_for_certificate(co, options)
+        co_token = co.certificate_order_tokens.where(is_expired: false).first
+        co_token.update_attribute(:is_expired, true) if co_token
 
-          @result.cert_results = res
-        end
+        @result.cert_results = res.end_entity_certificate.to_s
+        @result.cert_common_name = res.end_entity_certificate.subject.common_name.gsub(/[\s\.\*\(\)]/,"_").downcase + '.crt'
+      end
       # end
     else
       InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"

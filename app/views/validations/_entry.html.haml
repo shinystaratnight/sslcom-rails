@@ -130,7 +130,7 @@
                   %li
                     %strong(class="val_docs_list_#{i}" alt="#{v.validation_histories.count}") validation documents
                   -if co.validation.validation_histories.empty?
-                    -if co.is_express_validation? || co.validation_rules_satisfied?
+                    -if co.is_express_validation?
                       %li
                         %em none required
                     -else
@@ -171,9 +171,8 @@
                                     =f.select :satisfies_validation_methods, options_for_select(o, selected),{}, {:multiple=>true, :size=>3, :alt=>"#{i}_#{h.id}"}
                     %li
                       =link_to 'manage', edit_certificate_order_validation_url(certificate_order_id: co.ref)
-                      -unless co.validation_rules_satisfied?
-                        |
-                        =link_to 'upload', document_upload_certificate_order_validation_url(certificate_order_id: co.ref)
+                      |
+                      =link_to 'upload', document_upload_certificate_order_validation_url(certificate_order_id: co.ref)
               .certificate_details_box
                 %ul
                   -if cn and !co.certificate.is_code_signing?

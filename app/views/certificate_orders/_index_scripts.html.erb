@@ -12,10 +12,10 @@ function destroy_cert_download_link(event) {
   document.body.removeChild(event.target);
 }
 
-function cert_download(cert) {
+function cert_download(cert, name) {
   var certAsBlob = new Blob([cert], { type: "application/x-x509-user-cert" });
   var downloadLink = document.createElement('a');
-  downloadLink.download = 'sslcom_cert.crt';
+  downloadLink.download = name;
   downloadLink.innerHTML = "Download File";
 
   downloadLink.href = window.URL.createObjectURL(certAsBlob);
@@ -43,14 +43,12 @@ jQuery(function($) {
           if ($(this).prop('checked')) {
             if (is_cs == '') {
               $('.csr_wrap').show();
-              /*$('.pri_key_wrap').show();*/
             } else {
               $('.csr_wrap').show();
             }
           } else {
             if (is_cs == '') {
               $('.csr_wrap').hide();
-              /*$('.pri_key_wrap').hide();*/
             } else {
               $('.csr_wrap').hide();
             }
@@ -76,7 +74,6 @@ jQuery(function($) {
           var ref = '<%= @certificate_order.ref %>';
           var api_domain = '<%=api_domain%>';
 
-          /*if (is_cs == '' && $('.csr').val() != '') {*/
           if ($('.csr').val() != '') {
             $.ajax({
               url: api_domain + '/generate_certificate',
@@ -96,9 +93,9 @@ jQuery(function($) {
                 $('.cert').attr('readonly', true);
                 $('.cert_wrap').show();
 
-                /*$('.generate_cert').hide();*/
                 $('.generate_wrap').hide();
                 $('.cert_download_wrap').show();
+                $('#cert_common_name').val(data.cert_common_name);
               }
             });
           } else {
@@ -149,7 +146,6 @@ jQuery(function($) {
                   $('.cert').attr('readonly', true);
                   $('.cert_wrap').show();
 
-                  /*$('.generate_cert').hide();*/
                   $('.generate_wrap').hide();
                   $('.pkcs_download_wrap').show();
                 }
@@ -202,31 +198,8 @@ jQuery(function($) {
         });
 
         $('.cert_download').click(function() {
-          cert_download($('.cert').val());
+          cert_download($('.cert').val(), $('#cert_common_name').val());
         });
-
-        /*$('.cs_generate_cert').click(function() {
-          $('.cs_generate_cert').attr('disabled', true);
-
-          var account_key = '< %= @certificate_order.ssl_account.api_credential.account_key %>';
-          var secret_key = '< %= @certificate_order.ssl_account.api_credential.secret_key %>';
-          var ref = '< %= @certificate_order.ref %>';
-          var csr = $('.csr').val();
-
-          $.ajax({
-            url: '/generate_certificate',
-            data: {
-              csr: csr,
-              ref: ref,
-              account_key: account_key,
-              secret_key: secret_key
-            },
-            type: "POST",
-            success: function (data) {
-              $('.cert').val(data.cert_results);
-            }
-          });
-        });*/
       <%end%>
     }
 
@@ -590,19 +563,6 @@ jQuery(function($) {
     });
     
     $('.dropdown, .status_message, .expand, .subject_column > a').click(function(){
-      /*if($(this).parents().filter('tr').next().css('display')!='none'){
-        $(this).parents().filter('tr').next().css('display', 'none');
-        $(this).parents().filter('tr').find('.dropdown img').attr('src',"< %= asset_path('expand.png') %>");
-        $(this).parents().filter('tr').find('.expand').text('open');
-        this.expanded = false;
-      }
-      else{
-        this.expanded = true;
-        $(this).parents().filter('tr').find('.dropdown img').attr('src',"< %= asset_path('contract.png') %>");
-        $(this).parents().filter('tr').next().show();
-        $(this).parents().filter('tr').find('.expand').text('close');
-      }*/
-
       var currentElmt = $(this);
 
       if (currentElmt.parents().filter('tr').next().hasClass('expanded') == true) {

@@ -234,7 +234,7 @@ class SslcomCaApi
       # options[:cc].csr.signed_certificates.create body: api_log_entry.end_entity_certificate.to_s, ca_id: options[:ca_id]
     end
 
-    api_log_entry.end_entity_certificate.to_s
+    api_log_entry.end_entity_certificate
   end
 
   def self.revoke_ssl(signed_certificate, reason)
