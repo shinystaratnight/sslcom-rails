@@ -767,6 +767,7 @@ class CertificateContent < ActiveRecord::Base
           [locked_registrant.address1,locked_registrant.address2,locked_registrant.address3].join(" ")
       dn << "O=#{org}" if !org.blank? and (!city.blank? or !state.blank?)
       dn << "OU=#{ou}" unless ou.blank?
+      dn << "OU=#{locked_registrant.special_fields["PSE"]}" if certificate.is_naesb?
       dn << "C=#{country}"
       dn << "L=#{city}" unless city.blank?
       dn << "ST=#{state}" unless state.blank?
