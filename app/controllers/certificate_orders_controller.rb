@@ -391,7 +391,7 @@ class CertificateOrdersController < ApplicationController
       co.copy_iv_ov_validation_history(validations)
       redirect_to certificate_order_path(@ssl_slug, co.ref)
     else
-      cc.pend_validation! unless cc.pending_validation?
+      cc.pend_validation! if !(cc.pending_validation? or cc.issued?)
       redirect_to document_upload_certificate_order_validation_path(
         @ssl_slug, certificate_order_id: co.ref
       )
@@ -682,7 +682,7 @@ class CertificateOrdersController < ApplicationController
       iv.validated! if (params[:validate_iv] && iv && !iv.validated?)
       admin_validate_ov(ov)
       if (ov_iv && @certificate_order.iv_ov_validated?) || (!ov_iv && @certificate_order.iv_validated?)
-        cc.validate! unless cc.validated?
+        cc.validate! if !(cc.pending_validation? or cc.issued?)
       end
     else  
       admin_validate_ov(ov)
@@ -745,14 +745,17 @@ class CertificateOrdersController < ApplicationController
 
   def registrants_on_edit
     setup_registrant
-    setup_registrant_from_locked if params[:registrant] == 'false'
-    if @csr
-      @registrant.company_name = @csr.organization
-      @registrant.department = @csr.organization_unit
-      @registrant.city = @csr.locality
-      @registrant.state = @csr.state
-      @registrant.email = @csr.email
-      @registrant.country = @csr.country
+    if params[:registrant] == 'false'
+      setup_registrant_from_locked
+    else
+      if @csr
+        @registrant.company_name = @csr.organization unless @csr.organization.blank?
+        @registrant.department = @csr.organization_unit unless @csr.organization_unit.blank?
+        @registrant.city = @csr.locality unless @csr.locality.blank?
+        @registrant.state = @csr.state unless @csr.state.blank?
+        @registrant.email = @csr.email unless @csr.email.blank?
+        @registrant.country = @csr.country unless @csr.country.blank?
+      end
     end
   end
 

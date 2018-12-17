@@ -950,4 +950,30 @@ namespace :cas do
       CasCertificate.general.default.any?{|cc|cc.certificate.is_server?}
     end
   end
+
+  desc "Change the ip address of the host for failover"
+  # EJBCA_ENV - Which EJBCA mappings do we want to change?
+  # HOST - To which host or ip address do we want to change to?
+  # REVERT - Revert to the original settings based on environment (EJBCA-ENV)?
+
+  task change_host: :environment do
+    ip_address=
+        case ENV['EJBCA_ENV']
+        when "production"
+          SslcomCaApi::PRODUCTION_IP
+        when "staging"
+          SslcomCaApi::STAGING_IP
+        when "development"
+          SslcomCaApi::DEVELOPMENT_IP
+        end
+    if ENV['REVERT']
+      Ca.where{host=~"%#{ENV['HOST']}%"}.each{|ca|
+        ca.update_columns(host: ca.host.gsub(ENV['HOST'],ip_address),
+                          admin_host: ca.admin_host.gsub(ENV['HOST'],ip_address))}
+    else
+      Ca.where{host=~"%#{ip_address}%"}.each{|ca|
+        ca.update_columns(host: ca.host.gsub(ip_address,ENV['HOST']),
+                          admin_host: ca.admin_host.gsub(ip_address,ENV['HOST']))}
+    end if ENV['HOST']
+  end
 end

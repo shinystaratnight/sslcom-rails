@@ -213,8 +213,14 @@ class Invoice < ActiveRecord::Base
     if %w{paypal stripe authnet}.include?(payment.get_merchant)
       payment.get_total_merchant_amount
     else
-      get_cents - payment.get_funded_account_amount
+      get_cents - payment.get_funded_account_amount - get_voided_cents
     end
+  end
+
+  def get_voided_cents
+    get_approved_items.where(
+      state: %w{fully_refunded partially_refunded}
+    ).uniq.pluck(:cents).sum
   end
   
   def funded_account_credit?

@@ -201,7 +201,7 @@ class CertificateName < ActiveRecord::Base
   end
 
   def get_asynch_cache_label
-    "#{domain_control_validations.last.try(:cache_key)}/get_asynch_domains/#{name}"
+    "#{domain_control_validations.last.try(:cache_key)}/get_asynch_domains/#{non_wildcard_name}"
   end
 
   WhoisJob = Struct.new(:dname, :certificate_name) do
@@ -209,7 +209,7 @@ class CertificateName < ActiveRecord::Base
       begin
         standard_addresses = DomainControlValidation.email_address_choices(dname)
         d=::PublicSuffix.parse(dname)
-        whois=Whois.whois(ActionDispatch::Http::URL.extract_domain(d.domain, 1)).inspect
+        whois=Whois.whois(ActionDispatch::Http::URL.extract_domain(d.domain, 1)).to_s
         whois_addresses = WhoisLookup.email_addresses(whois)
         whois_addresses.each do |ad|
           standard_addresses << ad.downcase unless ad =~/abuse.*?@/i
