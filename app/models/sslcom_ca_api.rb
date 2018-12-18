@@ -90,28 +90,6 @@ class SslcomCaApi
     end unless options[:cc].certificate.blank?
   end
 
-  def self.subject_dn(options={})
-    dn=["CN=#{options[:cn].downcase}"]
-    unless options[:mapping].profile_name =~ /DV/
-      dn << "O=#{options[:o]}" unless options[:o].blank?
-      dn << "OU=#{options[:ou]}" unless options[:ou].blank?
-      dn << "C=#{options[:country]}" unless options[:country].blank?
-      dn << "L=#{options[:city]}" unless options[:city].blank?
-      dn << "ST=#{options[:state]}" unless options[:state].blank?
-      dn << "postalCode=#{options[:postal_code]}" unless options[:postal_code].blank?
-      dn << "postalAddress=#{options[:postal_address]}" unless options[:postal_address].blank?
-      dn << "streetAddress=#{options[:street_address]}" unless options[:street_address].blank?
-      dn << "serialNumber=#{options[:serial_number]}" unless options[:serial_number].blank?
-      dn << "2.5.4.15=#{options[:business_category]}" unless options[:business_category].blank?
-      dn << "1.3.6.1.4.1.311.60.2.1.1=#{options[:joi_locality]}" unless options[:joi_locality].blank?
-      dn << "1.3.6.1.4.1.311.60.2.1.2=#{options[:joi_state]}" unless options[:joi_state].blank?
-      dn << "1.3.6.1.4.1.311.60.2.1.3=#{options[:joi_country]}" unless options[:joi_country].blank?
-        # =text_area_tag :csr, @certificate_order.certificate_content.csr.body
-        #    =text_area_tag :san, @certificate_order.all_domains.join("\n"),readonly: true
-    end
-    dn.map{|d|d.gsub(/\\/,'\\\\').gsub(',','\,')}.join(",")
-  end
-
   def self.subject_alt_name(options)
     cert = options[:cc].certificate
     common_name=options[:common_name] || options[:cn] ||
@@ -120,7 +98,8 @@ class SslcomCaApi
             "" # "rfc822Name=#{options[:cc].certificate_order.assignee.email}"
           elsif cert.is_server?
             ([common_name]+(options[:san] ?
-                options[:san].split(Certificate::DOMAINS_TEXTAREA_SEPARATOR) : options[:cc].domains)).uniq.map{|d|d.downcase}
+                options[:san].split(Certificate::DOMAINS_TEXTAREA_SEPARATOR) :
+                                options[:cc].certificate_names.map(&:name))).uniq.map{|d|d.downcase}
           end || ""
     if cert.is_server?
       names <<  if cert.is_wildcard?
@@ -150,13 +129,15 @@ class SslcomCaApi
     cert = options[:cc].certificate
     co=options[:cc].certificate_order
     csr=options[:csr] ? Csr.new(body: options[:csr]) : options[:cc].csr
-    carry_over = (!co.certificate.is_server? or co.certificate.is_free?) ? 0 : csr.days_left
+    carry_over = (!cert.is_server? or cert.is_free?) ? 0 : csr.days_left
     if csr
       options[:mapping]=options[:mapping].ecc_profile if csr.sig_alg_parameter=~/ecc/i
       dn={}
       if options[:collect_certificate]
         dn.merge! user_name: options[:username]
       else
+        options[:common_name]=options[:common_name] || options[:cn] ||
+            options[:cc].certificate_names.last.name if cert.is_server?
         dn.merge! subject_dn: (options[:subject_dn] || options[:cc].subject_dn(options))+
             ",OU=#{Digest::SHA1.hexdigest(csr.to_der+DateTime.now.to_i.to_s).upcase}",
           ca_name: options[:ca_name] || ca_name(options),

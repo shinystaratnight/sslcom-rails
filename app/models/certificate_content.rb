@@ -241,9 +241,9 @@ class CertificateContent < ActiveRecord::Base
   def certificate_names_from_domains(domains=nil)
     domains ||= all_domains
     (domains-certificate_names.find_by_domains(domains).pluck(:name)).each do |domain|
-      domain = CertificateContent.non_wildcard_name(domain,true) if certificate.is_single?
-      new_certificate_name=certificate_names.find_or_create_by(name: domain.downcase,
-                                                           is_common_name: csr.try(:common_name)==domain.downcase)
+      non_wildcard_domain = CertificateContent.non_wildcard_name(domain,true) if certificate.is_single?
+      new_certificate_name=certificate_names.find_or_create_by(name: non_wildcard_domain.downcase,
+                                                           is_common_name: csr.try(:common_name)==domain)
       new_certificate_name.candidate_email_addresses
       Delayed::Job.enqueue OtherDcvsSatisyJob.new(ssl_account,new_certificate_name) if ssl_account
     end
@@ -746,7 +746,7 @@ class CertificateContent < ActiveRecord::Base
 
   def subject_dn(options={})
     cert = options[:certificate] || self.certificate
-    dn=["CN=#{options[:common_name] || options[:cn] || certificate_names.first.name}"] if certificate.is_server?
+    dn=["CN=#{options[:common_name]}"] if certificate.is_server?
     if !locked_registrant.blank? and !(options[:mapping] ? options[:mapping].try(:profile_name) =~ /DV/ : cert.is_dv?)
       # if ev or ov order, must have locked registrant
       if dn.blank?
@@ -767,7 +767,7 @@ class CertificateContent < ActiveRecord::Base
           [locked_registrant.address1,locked_registrant.address2,locked_registrant.address3].join(" ")
       dn << "O=#{org}" if !org.blank? and (!city.blank? or !state.blank?)
       dn << "OU=#{ou}" unless ou.blank?
-      dn << "OU=#{locked_registrant.special_fields["PSE"]}" if certificate.is_naesb?
+      dn << "OU=#{locked_registrant.special_fields["entity_code"]}" if certificate.is_naesb?
       dn << "C=#{country}"
       dn << "L=#{city}" unless city.blank?
       dn << "ST=#{state}" unless state.blank?

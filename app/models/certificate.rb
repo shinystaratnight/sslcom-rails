@@ -989,7 +989,7 @@ class Certificate < ActiveRecord::Base
                }},
               {serial_root: "naesbbasic",title: "NAESB Basic",validation_type: "basic",
                summary: "for authenticating and encrypting email and well as client services",
-               special_fields: %w(entity\ code),
+               special_fields: %w(entity_code),
                product: "personal-naesb-basic",
                points:  "<div class='check'>Requirorders_helper.rb:178ed for NAESB EIR and etag authentication</div>
                          <div class='check'>User for wesbsite authentication</div>
@@ -1026,7 +1026,7 @@ class Certificate < ActiveRecord::Base
                             product: c.product.gsub(/\Ahigh_assurance/, p[:product]),
                             icons: c.icons.merge!("main"=> "gold_lock_lg.gif")
       end
-      certs.each{ |c| c.cached_product_variant_items.where{display_order > 3}.destroy_all}
+      certs.each{ |c| c.product_variant_items.where{display_order > 3}.destroy_all}
       p[:price_adjusts].each do |k,v|
         serials=[]
         num_years=v.count
