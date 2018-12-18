@@ -7,6 +7,120 @@
         $('#hidden_form').submit();
       });
 
+      $.checkDomain = function(str) {
+        var asterisk_counts = (str.match(/\*/g) || []).length;
+        if (asterisk_counts == 0) {
+          return psl.isValid(str);
+        } else if (asterisk_counts == 1) {
+          return psl.isValid(str.substr(2));
+        } else if (asterisk_counts > 1) {
+          return false;
+        }
+      };
+
+      $(document).on('click', '#btn_add_domains', function(e) {
+        e.preventDefault();
+
+        var domains = $('#domain_names').val().split(/[\s,']/);
+        var non_domains = [];
+        $.each(domains, function(key, value) {
+          var is_valid = $.checkDomain(value);
+          if (!is_valid) {
+            non_domains.push(value);
+          }
+        });
+
+        if (non_domains.length > 0) {
+          var message_wrap_element = $('<div></div>');
+          message_wrap_element.attr('class', 'flash_message error');
+
+          var message_element = $('<span></span>');
+          var message = "It is not allowed to add invalid domain(s) as following :";
+          $.each(non_domains, function(key, value) {
+            message += "<br />" + value;
+          });
+
+          message_element.html(message);
+          message_wrap_element.append(message_element);
+
+          var btn_element = $('<small></small>');
+          var close_btn_element = $('<div></div>');
+          close_btn_element.attr('class', 'close_flash_message');
+
+          var close_sign_element = $('<span></span>');
+          close_sign_element.append('X');
+
+          close_btn_element.append(close_sign_element);
+          close_btn_element.append('close');
+
+          btn_element.append(close_btn_element);
+          message_wrap_element.append(btn_element);
+
+          if ($('#content').find('.inner').children().first().hasClass('flash_message')) {
+            $('#content').find('.inner').children().first().remove();
+          }
+          message_wrap_element.insertBefore($('#content').find('.inner').children().first());
+        } else {
+          var form_data = $('form#add_domains').serialize();
+          var submit_url = $('form#add_domains').attr("action");
+
+          $.ajax({
+            url: submit_url,
+            data: form_data,
+            type: 'POST',
+            success: function (data) {
+              var domains = data['domains'];
+              var domains_status = data['domains_status'];
+              var remain_days = data['remain_days'];
+              var exist_domains = data['exist_domains'];
+
+              if(exist_domains.length>0){
+                var message_wrap_element = $('<div></div>');
+                message_wrap_element.attr('class', 'flash_message notice');
+
+                var message_element = $('<span></span>');
+                var message = exist_domains.join(', ');
+                message += " already exist";
+                message += exist_domains.length>1 ? "" : "s";
+                message_element.append(message);
+                message_wrap_element.append(message_element);
+
+                var btn_element = $('<small></small>');
+                var close_btn_element = $('<div></div>');
+                close_btn_element.attr('class', 'close_flash_message');
+
+                var close_sign_element = $('<span></span>');
+                close_sign_element.append('X');
+
+                close_btn_element.append(close_sign_element);
+                close_btn_element.append('close');
+
+                btn_element.append(close_btn_element);
+                message_wrap_element.append(btn_element);
+
+                if ($('#content').find('.inner').children().first().hasClass('flash_message')) {
+                  $('#content').find('.inner').children().first().remove();
+                }
+                message_wrap_element.insertBefore($('#content').find('.inner').children().first());
+              }
+              $.each(domains, function (key, value) {
+                var new_row = "<tr>";
+                new_row += "<td><input type='checkbox' name='d_name_check[]' id='d_name_check_" + value.domain.id + "' value='" + value.domain.id + "' class='d_name_check'></td>"
+                new_row += "<td>" + value.domain.name + "</td>";
+
+                if (domains_status[value.domain.name] == 'true') {
+                  new_row += "<td>Team</td><td class='d_name_status'>Validated</td><td>" + remain_days[value.domain.name] + " days remaining</td></tr>";
+                } else {
+                  new_row += "<td>Team</td><td class='d_name_status'><a href='<%=validate_selected_domains_path(@ssl_slug)%>?d_name_check%5B%5D="+ value.domain.id +"'>Pending Validation</a></td><td>n/a</td></tr>";
+                }
+
+                $(new_row).insertAfter($(".heading_row"));
+              });
+            }
+          });
+        }
+      });
+
       $('form#add_domains').ajaxForm({
         dataType: "json",
         success: function(data, status){
