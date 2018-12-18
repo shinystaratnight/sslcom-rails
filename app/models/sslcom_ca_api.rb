@@ -292,6 +292,10 @@ class SslcomCaApi
                  when STAGING_IP
                    [Rails.application.secrets.ejbca_staging_client_auth_cert,
                        Rails.application.secrets.ejbca_staging_client_auth_key]
+                else
+                  [Rails.application.secrets.ejbca_production_client_auth_cert,
+                   Rails.application.secrets.ejbca_production_client_auth_key]
+
                  end
     req = (options[:method]=~/GET/i ? Net::HTTP::Get : Net::HTTP::Post).new(uri, 'Content-Type' => 'application/json')
     http = Net::HTTP.new(uri.host, uri.port)
