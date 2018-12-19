@@ -66,7 +66,7 @@ class CertificateContent < ActiveRecord::Base
   WHITELIST = {492127=> %w(.*?\.ssl\.com\z \Assl\.com\z .*?\.certlock\.com\z \Acertlock\.com\z),
                491981=> %w(.*?\.ssl\.com\z \Assl\.com\z .*?\.certlock\.com\z \Acertlock\.com\z),
                # temporary for sandbox
-               76634=> %w(.*?\.ssl\.com\z \Assl\.com\z .*?\.certlock\.com\z \Acertlock\.com\z),
+               474187=> %w(.*?\.ssl\.com\z \Assl\.com\z .*?\.certlock\.com\z \Acertlock\.com\z),
                493588=> %w(.*?\.ssl\.com\z \Assl\.com\z .*?\.certlock\.com\z \Acertlock\.com\z),
                464808=> %w(.*?\.ssl\.com\z \Assl\.com\z .*?\.certlock\.com\z \Acertlock\.com\z)}
 
@@ -243,8 +243,8 @@ class CertificateContent < ActiveRecord::Base
   def certificate_names_from_domains(domains=nil)
     domains ||= all_domains
     (domains-certificate_names.find_by_domains(domains).pluck(:name)).each do |domain|
-      non_wildcard_domain = CertificateContent.non_wildcard_name(domain,true) if certificate.is_single?
-      new_certificate_name=certificate_names.find_or_create_by(name: non_wildcard_domain.downcase,
+      cn_domain = certificate.is_single? ? CertificateContent.non_wildcard_name(domain,true) : domain
+      new_certificate_name=certificate_names.find_or_create_by(name: cn_domain.downcase,
                                                            is_common_name: csr.try(:common_name)==domain)
       new_certificate_name.candidate_email_addresses
       Delayed::Job.enqueue OtherDcvsSatisyJob.new(ssl_account,new_certificate_name) if ssl_account

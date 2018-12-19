@@ -175,7 +175,7 @@ class SslcomCaApi
         (approval_res.try(:body).blank? or approval_res.try(:body)=~/EXPIRED AND NOTIFIED/)
       # create the user for EV order
       host = ca_host(options[:mapping])+"/v1/user"
-      options.merge! no_public_key: true, ca: Ca::SSLCOM_CA # create an ejbca user only
+      options.merge! no_public_key: true
     else # collect ev cert
       host = ca_host(options[:mapping])+
           "/v1/certificate#{'/ev' if options[:mapping].profile_name=~/EV/}/pkcs10"
