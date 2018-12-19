@@ -215,13 +215,13 @@ class CertificateName < ActiveRecord::Base
         whois_addresses.each do |ad|
           standard_addresses << ad.downcase unless ad =~/abuse.*?@/i
         end
+        Rails.cache.write("CertificateName.candidate_email_addresses/#{dname}",standard_addresses)
         if certificate_name
           dcv=certificate_name.domain_control_validations.last
           dcv ? dcv.update_column(:candidate_addresses, standard_addresses) :
               certificate_name.domain_control_validations.create(candidate_addresses: standard_addresses)
           Rails.cache.delete(certificate_name.get_asynch_cache_label)
         end
-        Rails.cache.write("CertificateName.candidate_email_addresses/#{dname}",standard_addresses)
       rescue Exception=>e
         Logger.new(STDOUT).error e.backtrace.inspect
       end
@@ -230,11 +230,12 @@ class CertificateName < ActiveRecord::Base
 
   def candidate_email_addresses(clear_cache=false)
     Rails.cache.delete("CertificateName.candidate_email_addresses/#{non_wildcard_name}") if clear_cache
-    CertificateName.candidate_email_addresses(non_wildcard_name,self)
+    CertificateName.candidate_email_addresses(name,self)
   end
 
   # certificate_name in the event the domain_control_validations candidate addresses need to be updated
   def self.candidate_email_addresses(name,certificate_name=nil)
+    name=CertificateContent.non_wildcard_name(name,false)
     Rails.cache.fetch("CertificateName.candidate_email_addresses/#{name}",
                       expires_in: DomainControlValidation::EMAIL_CHOICE_CACHE_EXPIRES_DAYS.days) do
       Delayed::Job.enqueue WhoisJob.new(name,certificate_name)
