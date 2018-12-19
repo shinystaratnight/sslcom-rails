@@ -65,6 +65,8 @@ class CertificateContent < ActiveRecord::Base
 
   WHITELIST = {492127=> %w(.*?\.ssl\.com\z \Assl\.com\z .*?\.certlock\.com\z \Acertlock\.com\z),
                491981=> %w(.*?\.ssl\.com\z \Assl\.com\z .*?\.certlock\.com\z \Acertlock\.com\z),
+               # temporary for sandbox
+               474187=> %w(.*?\.ssl\.com\z \Assl\.com\z .*?\.certlock\.com\z \Acertlock\.com\z),
                493588=> %w(.*?\.ssl\.com\z \Assl\.com\z .*?\.certlock\.com\z \Acertlock\.com\z),
                464808=> %w(.*?\.ssl\.com\z \Assl\.com\z .*?\.certlock\.com\z \Acertlock\.com\z)}
 
@@ -227,7 +229,7 @@ class CertificateContent < ActiveRecord::Base
   end
 
   def add_ca(ssl_account)
-    unless [467564,16077,475670,484141,473857,204730].include?(ssl_account.id)
+    unless [467564,16077,475670,484141,204730].include?(ssl_account.id)
       self.ca = (self.certificate.cas.ssl_account_or_general_default(ssl_account)).last if ca.blank? and certificate
     end
   end
@@ -241,9 +243,9 @@ class CertificateContent < ActiveRecord::Base
   def certificate_names_from_domains(domains=nil)
     domains ||= all_domains
     (domains-certificate_names.find_by_domains(domains).pluck(:name)).each do |domain|
-      domain = CertificateContent.non_wildcard_name(domain,true) if certificate.is_single?
-      new_certificate_name=certificate_names.find_or_create_by(name: domain.downcase,
-                                                           is_common_name: csr.try(:common_name)==domain.downcase)
+      cn_domain = certificate.is_single? ? CertificateContent.non_wildcard_name(domain,true) : domain
+      new_certificate_name=certificate_names.find_or_create_by(name: cn_domain.downcase,
+                                                           is_common_name: csr.try(:common_name)==domain)
       new_certificate_name.candidate_email_addresses
       Delayed::Job.enqueue OtherDcvsSatisyJob.new(ssl_account,new_certificate_name) if ssl_account
     end
@@ -746,7 +748,7 @@ class CertificateContent < ActiveRecord::Base
 
   def subject_dn(options={})
     cert = options[:certificate] || self.certificate
-    dn=["CN=#{options[:common_name] || options[:cn] || certificate_names.first.name}"] if certificate.is_server?
+    dn=["CN=#{options[:common_name]}"] if certificate.is_server?
     if !locked_registrant.blank? and !(options[:mapping] ? options[:mapping].try(:profile_name) =~ /DV/ : cert.is_dv?)
       # if ev or ov order, must have locked registrant
       if dn.blank?
@@ -767,6 +769,7 @@ class CertificateContent < ActiveRecord::Base
           [locked_registrant.address1,locked_registrant.address2,locked_registrant.address3].join(" ")
       dn << "O=#{org}" if !org.blank? and (!city.blank? or !state.blank?)
       dn << "OU=#{ou}" unless ou.blank?
+      dn << "OU=#{locked_registrant.special_fields["entity_code"]}" if certificate.is_naesb?
       dn << "C=#{country}"
       dn << "L=#{city}" unless city.blank?
       dn << "ST=#{state}" unless state.blank?

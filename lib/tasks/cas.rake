@@ -475,7 +475,7 @@ namespace :cas do
           caa_issuers: ["ssl.com"],
           host: "https://#{url}:8443/restapi",
           admin_host: "https://#{url}:8443",
-          ca_name: "SSLcomEVRSASSLsubCA",
+          ca_name: "SSLcom-SubCA-EV-SSL-RSA-4096-R2",
           ekus: [Ca::EKUS[:server]],
           end_entity: Ca::END_ENTITY[:evssl]
       )
@@ -706,7 +706,7 @@ namespace :cas do
       # )
       # Ca.find_or_initialize_by(ref: "0015d").update_attributes(
       #     friendly_name: "SSL.com SSL RSA 4096 R2 (EV) (dev)",
-      #     profile_name: "SSLcom-SubCA-EV-SSL-RSA-4096-R2",
+      #     profile_name: "EV_RSA_SERVER_CERT",
       #     algorithm: "rsa",
       #     size: 4096,
       #     description: Ca::SSLCOM_CA,
@@ -714,7 +714,7 @@ namespace :cas do
       #     caa_issuers: ["ssl.com"],
       #     host: "https://#{shadow_url}:8443/restapi",
       #     admin_host: "https://#{shadow_url}:8443",
-      #     ca_name: Ca::SSLCOM_CA,
+      #     ca_name: "SSLcom-SubCA-EV-SSL-RSA-4096-R2",
       #     ekus: [Ca::EKUS[:server]],
       #     end_entity: Ca::END_ENTITY[:evssl]
       # )
@@ -949,5 +949,31 @@ namespace :cas do
     Rails.cache.fetch(CasCertificate::GENERAL_DEFAULT_CACHE) do
       CasCertificate.general.default.any?{|cc|cc.certificate.is_server?}
     end
+  end
+
+  desc "Change the ip address of the host for failover"
+  # EJBCA_ENV - Which EJBCA mappings do we want to change?
+  # HOST - To which host or ip address do we want to change to?
+  # REVERT - Revert to the original settings based on environment (EJBCA-ENV)?
+
+  task change_host: :environment do
+    ip_address=
+        case ENV['EJBCA_ENV']
+        when "production"
+          SslcomCaApi::PRODUCTION_IP
+        when "staging"
+          SslcomCaApi::STAGING_IP
+        when "development"
+          SslcomCaApi::DEVELOPMENT_IP
+        end
+    if ENV['REVERT']
+      Ca.where{host=~"%#{ENV['HOST']}%"}.each{|ca|
+        ca.update_columns(host: ca.host.gsub(ENV['HOST'],ip_address),
+                          admin_host: ca.admin_host.gsub(ENV['HOST'],ip_address))}
+    else
+      Ca.where{host=~"%#{ip_address}%"}.each{|ca|
+        ca.update_columns(host: ca.host.gsub(ip_address,ENV['HOST']),
+                          admin_host: ca.admin_host.gsub(ip_address,ENV['HOST']))}
+    end if ENV['HOST']
   end
 end

@@ -987,7 +987,7 @@ class CertificateOrder < ActiveRecord::Base
     acct_admins_can = !certificate_content.validated? && acct_admins && ov_validated?
 
     (certificate.is_smime_or_client? && ( sysadmin || acct_admins_can )) ||
-    (certificate.is_ov? && sysadmin)
+    ((certificate.is_ov? or certificate.is_ev?)  && sysadmin)
   end
 
   def reprocess_ucc_process

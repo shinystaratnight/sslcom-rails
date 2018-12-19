@@ -21,7 +21,7 @@
         if(return_funds==true)
           window.location = '#{refund_order_url(id: @order.reference_number, return_funds: true)}&refund_reason='+encodeURIComponent(reason);
         else
-          window.location = '#{refund_order_url(id: @order.reference_number)}?refund_reason='+encodeURIComponent(reason);
+          window.location = '#{refund_order_url(id: @order.reference_number, cancel_only: true)}&refund_reason='+encodeURIComponent(reason);
     }
 
     function change_state(state){

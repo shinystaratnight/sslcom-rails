@@ -293,14 +293,18 @@ class OrdersController < ApplicationController
       unless params["partial"] # full refund
         @target = @order
         if params["return_funds"]
-          add_cents_to_funded_account(@order.make_available_total)
-          @performed << " and made #{Money.new(@order.make_available_total).format} available to customer."
+          @full_refund_cents = @order.make_available_total
+          add_cents_to_funded_account(@full_refund_cents)
+          @performed << " and made #{Money.new(@full_refund_cents).format} available to customer."
         end
-        @order.full_refund!
+        params['cancel_only'] ? cancel_entire_order : @order.full_refund!
         notify_ca(params["refund_reason"])
       else # partial refunds or cancel line item
         @target = @order.line_items.find {|li|li.sellable.try(:ref)==params["partial"]}
         @target ||= @order.cached_certificate_orders.find { |co| co.ref==params["partial"] }
+        # certificate order has been cancelled but not refunded
+        @target ||= @order.certificate_orders.unscoped.find_by(ref: params[:partial])
+
         refund_partial_amount(params) if params["return_funds"]
         refund_partial_cancel(params) if params["cancel_only"]
       end
@@ -890,8 +894,22 @@ class OrdersController < ApplicationController
 
   # admin user cancels line item
   def refund_partial_cancel(params)
-    @performed = "Cancelled partial order #{@target.sellable.ref}, credit or refund were NOT issued."
-    @target.sellable.cancel! @target
+    if @order.line_items.count == 1 #order has only one item, cencel entire order
+      @target = @order
+      cancel_entire_order
+    else  
+      @performed = "Cancelled partial order #{@target.sellable.ref}, credit or refund were NOT issued."
+      @target.sellable.cancel! @target
+    end
+  end
+
+  # admin user cancels entire order and all of it's line items
+  def cancel_entire_order
+    @performed = "Cancelled entire order #{@target.reference_number}, credit or refund were NOT issued."
+    @target.cancel!
+    if @target.canceled? && @target.invoice
+      @target.update(invoice_id: nil)
+    end
   end
 
   def certificate_order_steps

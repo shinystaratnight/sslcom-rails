@@ -27,6 +27,7 @@ class CertificateName < ActiveRecord::Base
   attr_accessor :csr
 
   scope :find_by_domains, ->(domains){includes(:domain_control_validations).where{name>>domains}}
+  scope :validated, ->{joins(:domain_control_validations).where{domain_control_validations.workflow_state=="satisfied"}}
   scope :sslcom, ->{joins{certificate_content}.where.not certificate_contents: {ca_id: nil}}
 
   #will_paginate

@@ -1,6 +1,9 @@
 -cert ||= @certificate_order ? [@certificate_order] : @certificate_orders
 -order ||= @order || current_order
--invoiced = order.on_payable_invoice?
+-invoiced_void = order.voided_on_payable_invoice?
+-invoiced = order.on_payable_invoice? || invoiced_void
+-if cert.blank? && invoiced
+  -cert = order.certificate_orders
 
 %table#order_details_section(class="#{order.receipt ? 'receipt' : ''}")
   %tbody
@@ -37,7 +40,7 @@
         %td{colspan: '2'}
           .order-detail-actions
             %emp Pay: 
-            - unless invoice.refunded? || invoice.partially_refunded?
+            - unless invoice.refunded? || invoice.partially_refunded? || invoiced_void
               = link_to "this invoice #{invoice.get_amount_format}",           |
                 new_payment_invoice_path(@ssl_slug, invoice.reference_number), |
                 class: 'btn-pay-invoices', method: :get
