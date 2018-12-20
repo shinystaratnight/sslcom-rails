@@ -99,7 +99,8 @@ module CertificateOrdersHelper
           if certificate_content.workflow_state == "validated" &&
             (certificate.is_cs? || certificate.is_smime_or_client?)
 
-            if current_user.is_individual_certificate?
+            if current_user.is_individual_certificate? or
+                (certificate_order.assignee and certificate_order.assignee.email==current_user.email)
               if certificate_order.certificate_order_token.blank? or certificate_order.certificate_order_token.is_expired
                 link_to 'request certificate', nil, class: 'link_to_send_notify',
                         :data => { :ref => certificate_order.ref, :type => 'request' }
