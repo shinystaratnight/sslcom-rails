@@ -99,20 +99,16 @@ module CertificateOrdersHelper
           if certificate_content.workflow_state == "validated" &&
             (certificate.is_cs? || certificate.is_smime_or_client?)
 
-            if current_user.is_individual_certificate?
-              if certificate_order.certificate_order_token.blank?
+            if current_user.is_individual_certificate? or
+                (certificate_order.assignee and certificate_order.assignee.email==current_user.email)
+              if certificate_order.certificate_order_token.blank? or certificate_order.certificate_order_token.is_expired
                 link_to 'request certificate', nil, class: 'link_to_send_notify',
                         :data => { :ref => certificate_order.ref, :type => 'request' }
               else
-                if certificate_order.certificate_order_token.is_expired
-                  link_to 'request certificate', nil, class: 'link_to_send_notify',
-                          :data => { :ref => certificate_order.ref, :type => 'request' }
-                else
-                  # link_to 'generate certificate', generate_cert_certificate_order_path(@ssl_slug, certificate_order.ref) if
-                  #     permitted_to?(:update, certificate_order.validation) # assume multi domain
-                  link_to 'generate certificate', confirm_path(certificate_order.certificate_order_token.token) if
-                      permitted_to?(:update, certificate_order.validation) # assume multi domain
-                end
+                # link_to 'generate certificate', generate_cert_certificate_order_path(@ssl_slug, certificate_order.ref) if
+                #     permitted_to?(:update, certificate_order.validation) # assume multi domain
+                link_to 'generate certificate', confirm_path(certificate_order.certificate_order_token.token) if
+                    permitted_to?(:update, certificate_order.validation) # assume multi domain
               end
             elsif current_user.is_billing_only? || current_user.is_validations_only? || current_user.is_validations_and_billing_only?
               'n/a'
@@ -280,7 +276,8 @@ module CertificateOrdersHelper
 
   # EV SSL can downstep to OV
   def for_ov?
-    (@certificate_order.certificate.is_ov? unless ["dv"].include?(params[:downstep])) or downstepped_to_ov?
+    ((@certificate_order.certificate.is_ov? or @certificate_order.certificate.is_naesb?) unless ["dv"].
+        include?(params[:downstep])) or downstepped_to_ov?
   end
 
   # EV and OV SSL can downstep to DV
