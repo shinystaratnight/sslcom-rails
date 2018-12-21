@@ -7,7 +7,8 @@ class DomainsController < ApplicationController
 
   def index
     cnames = @ssl_account.all_certificate_names.order(created_at: :desc)
-    @domains = (@ssl_account.domains.order(created_at: :desc) + cnames).uniq(&:id).paginate(@p)
+    # @domains = (@ssl_account.domains.order(created_at: :desc) + cnames).uniq(&:id).paginate(@p)
+    @domains = (@ssl_account.domains.order(created_at: :desc) + cnames).uniq(&:id).uniq(&:name).paginate(@p)
   end
 
   def create
