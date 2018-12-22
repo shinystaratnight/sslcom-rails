@@ -68,6 +68,9 @@ class CertificateContent < ActiveRecord::Base
                # temporary for sandbox
                474187=> %w(.*?\.ssl\.com\z \Assl\.com\z .*?\.certlock\.com\z \Acertlock\.com\z),
                493588=> %w(.*?\.ssl\.com\z \Assl\.com\z .*?\.certlock\.com\z \Acertlock\.com\z),
+               # Nick (next 2)
+               492759=> %w(.*?\.ssl\.com\z \Assl\.com\z .*?\.certlock\.com\z \Acertlock\.com\z),
+               497080=> %w(.*?\.ssl\.com\z \Assl\.com\z .*?\.certlock\.com\z \Acertlock\.com\z),
                464808=> %w(.*?\.ssl\.com\z \Assl\.com\z .*?\.certlock\.com\z \Acertlock\.com\z)}
 
   DOMAIN_COUNT_OFFLOAD=50
@@ -773,9 +776,9 @@ class CertificateContent < ActiveRecord::Base
       dn << "C=#{country}"
       dn << "L=#{city}" unless city.blank?
       dn << "ST=#{state}" unless state.blank?
-      dn << "postalCode=#{postal_code}" unless postal_code.blank?
-      dn << "postalAddress=#{postal_address}" unless postal_address.blank?
-      dn << "streetAddress=#{street_address}" unless street_address.blank?
+      # dn << "postalCode=#{postal_code}" unless postal_code.blank?
+      # dn << "postalAddress=#{postal_address}" unless postal_address.blank?
+      # dn << "streetAddress=#{street_address}" unless street_address.blank?
       if cert.is_ev?
         dn << "serialNumber=#{options[:serial_number] || certificate_order.jois.last.try(:company_number) ||
           ("11111111" if options[:ca_id]==Ca::ISSUER[:sslcom_shadow])}"

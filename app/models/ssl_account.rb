@@ -555,7 +555,7 @@ class SslAccount < ActiveRecord::Base
   end
 
   # concatenate team (Domain) and order scoped certificate_names
-  def all_certificate_names(scope=nil)
+  def all_certificate_names(scope="sslcom")
     CertificateName.where(id: (Rails.cache.fetch("#{cache_key}/all_certificate_names/#{scope}") {
       ((scope=="sslcom" ? self.certificate_names.sslcom : self.certificate_names)+self.domains).map(&:id).uniq
     })).order(updated_at: :desc)
