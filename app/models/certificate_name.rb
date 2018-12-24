@@ -122,6 +122,22 @@ class CertificateName < ActiveRecord::Base
     @csr || certificate_content.try(:csr)
   end
 
+  def cached_csr_public_key_sha1
+    if @csr
+      @csr.public_key_sha1
+    else
+      certificate_content.cached_csr_public_key_sha1
+    end
+  end
+
+  def cached_csr_public_key_md5
+    if @csr
+      @csr.public_key_md5
+    else
+      certificate_content.cached_csr_public_key_md5
+    end
+  end
+
   def new_name(new_name)
     @new_name = new_name.downcase if new_name
   end
@@ -218,8 +234,7 @@ class CertificateName < ActiveRecord::Base
         Rails.cache.write("CertificateName.candidate_email_addresses/#{dname}",standard_addresses)
         if certificate_name
           dcv=certificate_name.domain_control_validations.last
-          dcv ? dcv.update_column(:candidate_addresses, standard_addresses) :
-              certificate_name.domain_control_validations.create(candidate_addresses: standard_addresses)
+          dcv.update_column(:candidate_addresses, standard_addresses) if dcv
           Rails.cache.delete(certificate_name.get_asynch_cache_label)
         end
       rescue Exception=>e

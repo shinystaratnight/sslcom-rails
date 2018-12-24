@@ -796,7 +796,17 @@ class CertificateContent < ActiveRecord::Base
     dn.map{|d|d.gsub(/\\/,'\\\\').gsub(',','\,')}.join(",")
   end
 
+  def cached_csr_public_key_sha1
+    Rails.cache.fetch("#{cache_key}/cached_csr_public_key_sha1") do
+      csr.public_key_sha1
+    end
+  end
 
+  def cached_csr_public_key_md5
+    Rails.cache.fetch("#{cache_key}/cached_csr_public_key_md5") do
+      csr.public_key_md5
+    end
+  end
 
   def csr_certificate_name
     begin

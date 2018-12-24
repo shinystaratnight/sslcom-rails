@@ -230,13 +230,14 @@ class SslAccount < ActiveRecord::Base
   def satisfy_related_dcvs(domain)
     dcv = domain.domain_control_validations.last
     [].tap do |satisfied_names|
-      all_certificate_names.each do |certificate_name|
+      all_certificate_names.includes(:domain_control_validations).each do |certificate_name|
         if certificate_name.name!=domain.name and
             DomainControlValidation.domain_in_subdomains?(domain.name,certificate_name.name) and
             # team validated domain
             (domain.certificate_content_id==nil or
             # do they have the same public key
-            (domain.csr and certificate_name.csr and domain.csr.public_key_sha1==certificate_name.csr.public_key_sha1))
+            (domain.csr and certificate_name.csr and
+                domain.cached_csr_public_key_sha1==certificate_name.cached_csr_public_key_sha1))
           certificate_name.domain_control_validations.create(dcv.attributes.except("id"))
           certificate_name.certificate_content.certificate_order.apply_for_certificate if certificate_name.certificate_content
           satisfied_names << certificate_name.name
@@ -248,15 +249,15 @@ class SslAccount < ActiveRecord::Base
   # is this domain's validation satisfied by an already validated domain. If so, create a dcv with satisfied status
   # certificate_name - the domain we are looking up
   def other_dcvs_satisfy_domain(certificate_name)
-    cnames = all_certificate_names
-    cnames.each do |cn|
+    all_certificate_names.includes(:domain_control_validations).each do |cn|
       if cn.id!=certificate_name.id and DomainControlValidation.domain_in_subdomains?(cn.name,certificate_name.name)
         dcv = cn.domain_control_validations.last
         if dcv && dcv.identifier_found
           # email validation
           if dcv.dcv_method =~ /email/ or
           # http/s or cname must have the same public key
-              (cn.csr and certificate_name.csr and cn.csr.public_key_sha1==certificate_name.csr.public_key_sha1)
+              (cn.csr and certificate_name.csr and
+                  cn.cached_csr_public_key_sha1==certificate_name.cached_csr_public_key_sha1)
             certificate_name.domain_control_validations.create(dcv.attributes.except("id"))
             break
           end
