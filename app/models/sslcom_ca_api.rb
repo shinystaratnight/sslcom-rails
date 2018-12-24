@@ -138,8 +138,7 @@ class SslcomCaApi
       else
         options[:common_name]=options[:common_name] || options[:cn] ||
             options[:cc].certificate_names.last.name if cert.is_server?
-        dn.merge! subject_dn: (options[:subject_dn] || options[:cc].subject_dn(options))+
-            ",OU=#{Digest::SHA1.hexdigest(csr.to_der+DateTime.now.to_i.to_s).upcase}",
+        dn.merge! subject_dn: (options[:subject_dn] || options[:cc].subject_dn(options)),
           ca_name: options[:ca_name] || ca_name(options),
           certificate_profile: certificate_profile(options),
           end_entity_profile: end_entity_profile(options),

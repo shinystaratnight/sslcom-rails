@@ -991,7 +991,7 @@ class Certificate < ActiveRecord::Base
                summary: "for authenticating and encrypting email and well as client services",
                special_fields: %w(entity_code),
                product: "personal-naesb-basic",
-               points:  "<div class='check'>Requirorders_helper.rb:178ed for NAESB EIR and etag authentication</div>
+               points:  "<div class='check'>Required for NAESB EIR and etag authentication</div>
                          <div class='check'>User for wesbsite authentication</div>
                          <div class='check'>Issued from SSL.com ACA</div>
                          <div class='check'>2048 bit public key encryption</div>

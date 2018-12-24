@@ -1120,7 +1120,7 @@ class CertificateOrder < ActiveRecord::Base
   # DRY this up with ValidationsController#new
   def domains_validated?
     all_validated = true
-    public_key_sha1=certificate_content.csr.public_key_sha1
+    public_key_sha1=certificate_content.cached_csr_public_key_sha1
     cnames = certificate_content.certificate_names.includes(:domain_control_validations)
     team_cnames = ssl_account.all_certificate_names.includes(:domain_control_validations)
 
