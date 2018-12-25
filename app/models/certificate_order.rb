@@ -1890,18 +1890,6 @@ class CertificateOrder < ActiveRecord::Base
     self.certificate_content.destroy if self.certificate_contents.count > 1
   end
 
-  # Get the most recent order_number as the one
-  def external_order_number
-    return read_attribute(:external_order_number) unless read_attribute(:external_order_number).blank?
-    unless csrs.compact.blank?
-      sent_success_map = csrs.compact.map {|c|c.sent_success(true)}
-      sent_success_map.flatten.compact.uniq.first.order_number if
-          csrs && !sent_success_map.blank? &&
-              sent_success_map.flatten.compact.uniq.first
-      #all_csrs.sent_success.order_number if all_csrs && all_csrs.sent_success
-    end
-  end
-
   def external_order_number_meta(options={})
     if notes =~ /(DV|EV|OV)\#\d+/
       if options[:external_order_number] && m = notes.match(/(DV|EV|OV)\##{options[:external_order_number]}/)
