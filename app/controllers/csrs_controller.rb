@@ -122,7 +122,7 @@ class CsrsController < ApplicationController
           if last_dcv.dcv_method == 'email'
             exist_validated = true
             break
-          elsif last_dcv.csr && (last_dcv.csr.public_key_sha1 == public_key_sha1)
+          elsif last_dcv.csr && (last_dcv.cached_csr_public_key_sha1 == public_key_sha1)
             exist_validated = true
             break
           end

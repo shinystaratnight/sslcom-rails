@@ -4,11 +4,11 @@ There was a problem sending <%=Settings.community_name%> order <%=@certificate_o
 
 Reason:
 <%ccr=@certificate_order.ca_api_requests.first%>
-<%=ccr.request_url%>
-<%=ccr.redacted_parameters%>
-<%=ccr.method%>
-<%=ccr.response%>
-<%=ccr.ca%>
+Request URL: <%=ccr.request_url%>
+Redacted Parameters: <%=ccr.redacted_parameters%>
+Method: <%=ccr.method%>
+Response: <%=ccr.response%>
+CA: <%=ccr.ca%>
 
 <%="Error: #{@error.message}"unless @error.blank?%>
 Regards,

@@ -332,15 +332,12 @@ class Csr < ActiveRecord::Base
   end
 
   def public_key_sha1
-    begin
-      if read_attribute(:public_key_sha1).blank?
-        write_attribute(:public_key_sha1, OpenSSL::Digest::SHA1.new(public_key.to_der).to_s)
-        save unless new_record?
+    if new_record?
+      public_key_hash(false)
+    else
+      Rails.cache.fetch("#{cache_key}/public_key_sha1") do
+        public_key_hash(true)
       end
-      read_attribute(:public_key_sha1)
-    rescue Exception=>e
-      logger.error e.backtrace.inspect
-      nil
     end
   end
 
@@ -453,5 +450,20 @@ class Csr < ActiveRecord::Base
       save unless new_record?
     end
     read_attribute(:ref)
+  end
+
+  private
+
+  def public_key_hash(save_to_db=false)
+    begin
+      if read_attribute(:public_key_sha1).blank?
+        write_attribute(:public_key_sha1, OpenSSL::Digest::SHA1.new(public_key.to_der).to_s)
+        save if save_to_db
+      end
+      read_attribute(:public_key_sha1)
+    rescue Exception => e
+      logger.error e.backtrace.inspect
+      nil
+    end
   end
 end

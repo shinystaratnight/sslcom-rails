@@ -3,7 +3,9 @@
 = javascript_include_tag "promise.min", "webcrypto-liner.shim", "asmcrypto.min", "elliptic.min", "bundle.umd.min", "bundle.pkcs.umd.min"
 =stylesheet_link_tag 'bootstrap_style', :media => 'all'
 %div{:style=>"width: 100%"}
-  %h2 Generate Certificate Signing Request and Submit for Signing
+  %h2
+    Generate Request and Signing For
+    =link_to @certificate_order.ref
   -is_cs = @certificate_order.certificate.is_code_signing?
   -is_client = @certificate_order.certificate.is_smime_or_client?
   %input.cs_subject_dn{:type=>'hidden', :value=>"#{is_cs || is_client ? @certificate_order.certificate_content.locked_subject_dn : @certificate_order.certificate_content.subject_dn}"}

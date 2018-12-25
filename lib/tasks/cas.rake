@@ -475,7 +475,7 @@ namespace :cas do
           caa_issuers: ["ssl.com"],
           host: "https://#{url}:8443/restapi",
           admin_host: "https://#{url}:8443",
-          ca_name: "SSLcomEVRSASSLsubCA",
+          ca_name: "SSLcom-SubCA-EV-SSL-RSA-4096-R2",
           ekus: [Ca::EKUS[:server]],
           end_entity: Ca::END_ENTITY[:evssl]
       )
@@ -706,7 +706,7 @@ namespace :cas do
       # )
       # Ca.find_or_initialize_by(ref: "0015d").update_attributes(
       #     friendly_name: "SSL.com SSL RSA 4096 R2 (EV) (dev)",
-      #     profile_name: "SSLcom-SubCA-EV-SSL-RSA-4096-R2",
+      #     profile_name: "EV_RSA_SERVER_CERT",
       #     algorithm: "rsa",
       #     size: 4096,
       #     description: Ca::SSLCOM_CA,
@@ -714,7 +714,7 @@ namespace :cas do
       #     caa_issuers: ["ssl.com"],
       #     host: "https://#{shadow_url}:8443/restapi",
       #     admin_host: "https://#{shadow_url}:8443",
-      #     ca_name: Ca::SSLCOM_CA,
+      #     ca_name: "SSLcom-SubCA-EV-SSL-RSA-4096-R2",
       #     ekus: [Ca::EKUS[:server]],
       #     end_entity: Ca::END_ENTITY[:evssl]
       # )

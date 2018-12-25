@@ -987,7 +987,7 @@ class CertificateOrder < ActiveRecord::Base
     acct_admins_can = !certificate_content.validated? && acct_admins && ov_validated?
 
     (certificate.is_smime_or_client? && ( sysadmin || acct_admins_can )) ||
-    (certificate.is_ov? && sysadmin)
+    ((certificate.is_ov? or certificate.is_ev?)  && sysadmin)
   end
 
   def reprocess_ucc_process
@@ -1120,7 +1120,7 @@ class CertificateOrder < ActiveRecord::Base
   # DRY this up with ValidationsController#new
   def domains_validated?
     all_validated = true
-    public_key_sha1=certificate_content.csr.public_key_sha1
+    public_key_sha1=certificate_content.cached_csr_public_key_sha1
     cnames = certificate_content.certificate_names.includes(:domain_control_validations)
     team_cnames = ssl_account.all_certificate_names.includes(:domain_control_validations)
 
@@ -1888,18 +1888,6 @@ class CertificateOrder < ActiveRecord::Base
   # Removes the last certificate_content in the event it was a mistake
   def remove_last_certificate_content
     self.certificate_content.destroy if self.certificate_contents.count > 1
-  end
-
-  # Get the most recent order_number as the one
-  def external_order_number
-    return read_attribute(:external_order_number) unless read_attribute(:external_order_number).blank?
-    unless csrs.compact.blank?
-      sent_success_map = csrs.compact.map {|c|c.sent_success(true)}
-      sent_success_map.flatten.compact.uniq.first.order_number if
-          csrs && !sent_success_map.blank? &&
-              sent_success_map.flatten.compact.uniq.first
-      #all_csrs.sent_success.order_number if all_csrs && all_csrs.sent_success
-    end
   end
 
   def external_order_number_meta(options={})

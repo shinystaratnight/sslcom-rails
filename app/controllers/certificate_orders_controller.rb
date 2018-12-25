@@ -676,12 +676,12 @@ class CertificateOrdersController < ApplicationController
       end
     else  
       admin_validate_ov(ov)
-      if ov.validated? && @certificate_order.all_domains_validated?
-        @certificate_order.apply_for_certificate(
-          mapping: @certificate_order.certificate_content.ca,
-          current_user: current_user
-        )
-      end
+      # if ov.validated? && @certificate_order.domains_validated?
+      #   @certificate_order.apply_for_certificate(
+      #     mapping: @certificate_order.certificate_content.ca,
+      #     current_user: current_user
+      #   )
+      # end
     end
     redirect_to certificate_order_path(@ssl_slug, @certificate_order.ref), 
       notice: "Certificate order was successfully validated."
