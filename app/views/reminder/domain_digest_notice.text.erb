@@ -6,7 +6,7 @@ Domain: <%=@result.domain%>
 Expires: <%=@result.expire%>
 Reminder Type: <%=@result.reminder_type%>
 
-To modify the reminders or disable them, please visit <%=link_to @notification_group.friendly_name, edit_notification_group_path(@ssl_slug, @notification_group.id) %>
+To modify the reminders or disable them, please visit <%=edit_notification_group_url(@ssl_slug, @notification_group.id)%>
 
 Thank you for choosing SSL.com!
 
