@@ -287,6 +287,12 @@ class NotificationGroup < ActiveRecord::Base
         if ssl_client
           cert = domain_certificate
           # expiration_date = cert.not_after unless cert.blank?
+          scanned_cert = ScannedCertificate.create_with(
+              body: cert.to_s,
+              decoded:cert.to_text
+          ).find_or_create_by(
+              serial: cert.serial.to_s
+          )
           expiration_date = cert.blank? ? nil : cert.not_after
 
           if expiration_date
@@ -295,7 +301,8 @@ class NotificationGroup < ActiveRecord::Base
                   (expiration_date < ed.to_i.days.from_now) &&
                   (expiration_date >= exp_dates[i + 1].days.from_now) &&
                   (expiration_date >= DateTime.now.to_date)
-                results << Struct::Notification.new(ed, exp_dates[i + 1], domain, expiration_date, scan_status)
+                results << Struct::Notification.new(ed, exp_dates[i + 1],
+                                                    domain, expiration_date, scan_status, scanned_cert)
               end
             end
           end
@@ -308,22 +315,15 @@ class NotificationGroup < ActiveRecord::Base
             scan_status = 'name_mismatch'
           end
 
-          scanned_cert = ScannedCertificate.create_with(
-              body: cert.to_s,
-              decoded:cert.to_text
-          ).find_or_create_by(
-              serial: cert.serial.to_s
-          )
-
           if notify_all.nil? && scan_status != 'expiring'
-            results << Struct::Notification.new(nil, nil, domain, expiration_date, scan_status)
+            results << Struct::Notification.new(nil, nil, domain, expiration_date, scan_status, scanned_cert)
           end
         else
           scan_status = 'not_found'
           scanned_cert = nil
 
           if notify_all.nil?
-            results << Struct::Notification.new(nil, nil, domain, nil, scan_status)
+            results << Struct::Notification.new(nil, nil, domain, nil, scan_status, scanned_cert)
           end
         end
 
