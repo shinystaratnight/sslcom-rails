@@ -339,18 +339,24 @@ class NotificationGroup < ActiveRecord::Base
 
     unless results.empty? or contacts.empty?
       results.each do |result|
-        logger.info "Sending reminder"
-        d = [",," + contacts.uniq.join(";")]
-        body = Reminder.domain_digest_notice(d, result.reminder_type)
-        body.deliver unless body.to.empty?
+        unless SentReminder.exists?(trigger_value: [result.before, result.after].join(", "),
+                                    expires_at: result.expire,
+                                    subject: result.domain,
+                                    recipients: contacts.uniq.join(";"),
+                                    reminder_type: result.reminder_type)
+          logger.info "Sending reminder"
+          d = [",," + contacts.uniq.join(";")]
+          body = Reminder.domain_digest_notice(d, result, self)
+          body.deliver unless body.to.empty?
 
-        logger.info "create SentReminder"
-        SentReminder.create(trigger_value: [result.before, result.after].join(", "),
-                            expires_at: result.expire,
-                            subject: result.domain,
-                            body: body,
-                            recipients: contacts.uniq.join(";"),
-                            reminder_type: result.reminder_type)
+          logger.info "create SentReminder"
+          SentReminder.create(trigger_value: [result.before, result.after].join(", "),
+                              expires_at: result.expire,
+                              subject: result.domain,
+                              body: body,
+                              recipients: contacts.uniq.join(";"),
+                              reminder_type: result.reminder_type)
+        end
       end
     end
   end
@@ -385,7 +391,7 @@ class NotificationGroup < ActiveRecord::Base
     hour = current.strftime("%H").to_i.to_s
     minute = current.strftime("%M").to_i.to_s
 
-    NotificationGroup.order('created_at').find_in_batches(batch_size: 250) do |batch_list|
+    NotificationGroup.find_in_batches(batch_size: 250) do |batch_list|
       batch_list.each do |group|
         schedules = {}
         group.schedules.pluck(:schedule_type, :schedule_value).each do |arr|
