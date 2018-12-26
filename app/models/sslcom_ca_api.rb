@@ -258,26 +258,29 @@ class SslcomCaApi
     JSON.parse(res.body).select{|approval|approval[1]==approval_id.to_i}.first[0] unless res.body.blank?
   end
 
+  def self.client_certs(host)
+    case host
+    when PRODUCTION_IP
+      [Rails.application.secrets.ejbca_production_client_auth_cert,
+       Rails.application.secrets.ejbca_production_client_auth_key]
+    when DEVELOPMENT_IP
+      [Rails.application.secrets.ejbca_development_client_auth_cert,
+       Rails.application.secrets.ejbca_development_client_auth_key]
+    when STAGING_IP
+      [Rails.application.secrets.ejbca_staging_client_auth_cert,
+       Rails.application.secrets.ejbca_staging_client_auth_key]
+    else
+      [Rails.application.secrets.ejbca_production_client_auth_cert,
+       Rails.application.secrets.ejbca_production_client_auth_key]
+    end
+  end
+
   private
 
   # body - parameters in JSON format
   def self.call_ca(host, options, body)
     uri = URI.parse(host)
-    client_auth_cert,client_auth_key= case uri.host
-                 when PRODUCTION_IP
-                   [Rails.application.secrets.ejbca_production_client_auth_cert,
-                       Rails.application.secrets.ejbca_production_client_auth_key]
-                 when DEVELOPMENT_IP
-                   [Rails.application.secrets.ejbca_development_client_auth_cert,
-                       Rails.application.secrets.ejbca_development_client_auth_key]
-                 when STAGING_IP
-                   [Rails.application.secrets.ejbca_staging_client_auth_cert,
-                       Rails.application.secrets.ejbca_staging_client_auth_key]
-                else
-                  [Rails.application.secrets.ejbca_production_client_auth_cert,
-                   Rails.application.secrets.ejbca_production_client_auth_key]
-
-                 end
+    client_auth_cert,client_auth_key=client_certs(uri.host)
     req = (options[:method]=~/GET/i ? Net::HTTP::Get : Net::HTTP::Post).new(uri, 'Content-Type' => 'application/json')
     http = Net::HTTP.new(uri.host, uri.port)
     http.use_ssl = true
