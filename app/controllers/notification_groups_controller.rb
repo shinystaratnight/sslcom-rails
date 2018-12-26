@@ -382,7 +382,9 @@ class NotificationGroupsController < ApplicationController
     # Saving schedule
     if params[:schedule_type] == 'true'
       current_schedules = notification_group.schedules.pluck(:schedule_type)
-      unless current_schedules.include? 'Simple'
+      if current_schedules.include? 'Simple'
+        notification_group.schedules.last.update_attribute(:schedule_value, params[:schedule_simple_type])
+      else
         notification_group.schedules.destroy_all
         notification_group.schedules.build(
             schedule_type: 'Simple',

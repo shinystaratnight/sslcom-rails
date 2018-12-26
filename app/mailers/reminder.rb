@@ -28,6 +28,9 @@ class Reminder < ActionMailer::Base
     subject = "SSL.com notification group #{notification_group.friendly_name ||
         notification_group.friendly_name.ref} scan for #{result.domain}"
     @reminder_type = result.reminder_type
+    @result=result
+    @notification_group=notification_group
+    @ssl_slug=notification_group.ssl_account.to_slug if notification_group.ssl_account
     mail(:to => @to, :subject => subject)
   end
 

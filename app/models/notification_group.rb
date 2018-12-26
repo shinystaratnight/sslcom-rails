@@ -448,4 +448,15 @@ class NotificationGroup < ActiveRecord::Base
       end
     end
   end
+
+  def set_schedule_to_daily_scan
+    current_schedules = schedules.pluck(:schedule_type)
+    schedules.create(schedule_type: 'Simple', schedule_value: 2) if current_schedules.blank?
+    # if current_schedules.include? 'Simple'
+    #   schedules.last.update_attribute(:schedule_value, 2) unless schedules.last.schedule_value == 2
+    # else
+    #   schedules.destroy_all
+    #   schedules.build(schedule_type: 'Simple', schedule_value: 2).save
+    # end
+  end
 end
