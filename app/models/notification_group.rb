@@ -348,7 +348,6 @@ class NotificationGroup < ActiveRecord::Base
           d = [",," + contacts.uniq.join(";")]
           body = Reminder.domain_digest_notice(d, result, self)
           body.deliver unless body.to.empty?
-
           logger.info "create SentReminder"
           SentReminder.create(trigger_value: [result.before, result.after].join(", "),
                               expires_at: result.expire,
@@ -450,8 +449,8 @@ class NotificationGroup < ActiveRecord::Base
   end
 
   def set_schedule_to_daily_scan
-    current_schedules = schedules.pluck(:schedule_type)
-    schedules.create(schedule_type: 'Simple', schedule_value: 2) if current_schedules.blank?
+    schedules.create(schedule_type: 'Simple', schedule_value: 2) if schedules.blank?
+    # current_schedules = schedules.pluck(:schedule_type)
     # if current_schedules.include? 'Simple'
     #   schedules.last.update_attribute(:schedule_value, 2) unless schedules.last.schedule_value == 2
     # else
