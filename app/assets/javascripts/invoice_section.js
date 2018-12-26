@@ -65,6 +65,20 @@ $(function($) {
     }
   });
   
+  // Monthly Invoice
+  $('#dlg-wire-transfer-info').on('click', function(e) {
+    e.preventDefault();
+    $('#dlg-invoice-transfer').dialog();
+    $('#dlg-invoice-transfer').dialog({
+      title: 'Wire Transfer Information',
+      buttons: {
+        Close: function() {
+          $(this).dialog('close');
+        }
+      }
+    });
+  });
+
   // Sysadmin Section in Monthly Invoice
   $('#invoice-container-admin').hide();
   $('#invoice-container-credit').hide();
