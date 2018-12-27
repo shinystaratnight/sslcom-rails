@@ -5,6 +5,7 @@ require 'openssl'
 
 class SignedCertificate < ActiveRecord::Base
   include CertificateType
+  include CertificateProperties
 #  using_access_control
   serialize :organization_unit
   serialize :subject_alternative_names
@@ -585,17 +586,6 @@ class SignedCertificate < ActiveRecord::Base
 
   def file_type
     body.starts_with?(BEGIN_PKCS7_TAG) ? 'PKCS#7' : 'X.509'
-  end
-
-  def openssl_x509
-    begin
-      OpenSSL::X509::Certificate.new(body.strip)
-    rescue Exception
-    end
-  end
-
-  def issuer_dn
-    openssl_x509.issuer.to_s(OpenSSL::X509::Name::RFC2253)
   end
 
   def decode

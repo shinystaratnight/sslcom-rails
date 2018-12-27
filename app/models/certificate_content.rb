@@ -761,14 +761,14 @@ class CertificateContent < ActiveRecord::Base
               ["CN=#{[certificate_order.assignee.first_name,certificate_order.assignee.last_name].join(" ")}"]
             end
       end
-      org=options[:o] || locked_registrant.company_name
-      ou=options[:ou] || locked_registrant.department
-      state=options[:s] || locked_registrant.state
-      city=options[:l] || locked_registrant.city
-      country=options[:c] || locked_registrant.country
-      postal_code=options[:postal_code] || locked_registrant.postal_code
-      postal_address=options[:postal_address] || locked_registrant.po_box
-      street_address=options[:street_address] ||
+      org=locked_registrant.company_name
+      ou=locked_registrant.department
+      state=locked_registrant.state
+      city=locked_registrant.city
+      country=locked_registrant.country
+      postal_code=locked_registrant.postal_code
+      postal_address=locked_registrant.po_box
+      street_address=
           [locked_registrant.address1,locked_registrant.address2,locked_registrant.address3].join(" ")
       dn << "O=#{org}" if !org.blank? and (!city.blank? or !state.blank?)
       dn << "OU=#{ou}" unless ou.blank?
