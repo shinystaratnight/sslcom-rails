@@ -7,9 +7,12 @@
   %li
     department:
     %ul
-      - registrant_fields.organization_unit.each do |ou|
-        %li
-          %span{title: ou} #{ou.truncate(26)}
+      - if registrant_fields.organization_unit.is_a?(String)
+        %li #{registrant_fields.organization_unit}
+      - else
+        - registrant_fields.organization_unit.each do |ou|
+          %li
+            %span{title: ou} #{ou.truncate(26)}
 -unless registrant_fields.locality.blank?
   %li
     city:

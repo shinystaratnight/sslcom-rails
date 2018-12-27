@@ -991,10 +991,11 @@ class Certificate < ActiveRecord::Base
                summary: "for authenticating and encrypting email and well as client services",
                special_fields: %w(entity_code),
                product: "personal-naesb-basic",
-               points:  "<div class='check'>Required for NAESB EIR and etag authentication</div>
-                         <div class='check'>User for wesbsite authentication</div>
-                         <div class='check'>Issued from SSL.com ACA</div>
+               points:  "<div class='check'>Required for NAESB EIR, OASIS and e-Tagging applications</div>
+                         <div class='check'>Used for Energy Industry website client authentications</div>
+                         <div class='check'>Issued from NAESB ACA SSL.com</div>
                          <div class='check'>2048 bit public key encryption</div>
+                         <div class='check'>RSA and ECC supported</div>
                          <div class='check'>quick issuance</div>
                          <div class='check'>30 day money-back guaranty </div>
                          <div class='check'>24 hour 5-star support</div>",

@@ -10,8 +10,9 @@
               %th{colspan: 2} CURRENT TEAM
             -unless is_sandbox?
               -if current_user.is_validations? || permitted_to?(:update, :certificate_orders)
-                %th.validations=link_to "INCOMPLETE", incomplete_certificate_orders_path
-                %th.certificate_status=link_to "PROCESSING", filter_by_scope_certificate_orders_path(@ssl_slug, "pending")
+                -permitted_to? :index, :certificate_orders do
+                  %th.validations=link_to "INCOMPLETE", incomplete_certificate_orders_path
+                  %th.certificate_status=link_to "PROCESSING", filter_by_scope_certificate_orders_path(@ssl_slug, "pending")
               -unless funded_account.blank? || !permitted_to?(:allocate_funds, funded_account)
                 %th.certificate_status=link_to "AVAILABLE FUNDS", allocate_funds_url
               -if current_user.ssl_account.has_credits?
