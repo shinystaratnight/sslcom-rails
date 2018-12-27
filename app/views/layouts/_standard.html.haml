@@ -27,8 +27,9 @@
               %td
             -unless is_sandbox?
               -if current_user.is_validations? || permitted_to?(:update, :certificate_orders)
-                %td.validations=link_to current_user.ssl_account.cached_certificate_orders_incomplete_count, incomplete_certificate_orders_path
-                %td.certificate_status=link_to current_user.ssl_account.cached_certificate_orders_pending_count, filter_by_scope_certificate_orders_path(@ssl_slug, "pending")
+                -permitted_to? :index, :certificate_orders do
+                  %td.validations=link_to current_user.ssl_account.cached_certificate_orders_incomplete_count, incomplete_certificate_orders_path
+                  %td.certificate_status=link_to current_user.ssl_account.cached_certificate_orders_pending_count, filter_by_scope_certificate_orders_path(@ssl_slug, "pending")
               -unless funded_account.blank? || !permitted_to?(:allocate_funds, funded_account)
                 %td.certificate_status=link_to funded_account.amount(true).format(:with_currency=>false), allocate_funds_url(ssl_slug: @ssl_slug)
               -if current_user.ssl_account.has_credits?
