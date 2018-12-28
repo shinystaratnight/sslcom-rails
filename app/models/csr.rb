@@ -31,7 +31,7 @@ class Csr < ActiveRecord::Base
   end
   has_many    :csr_unique_values, :dependent => :destroy
   has_one     :csr_override  #used for overriding csr fields - does not include a full csr
-  belongs_to  :certificate_content
+  belongs_to  :certificate_content, touch: true
   belongs_to  :certificate_lookup
   belongs_to  :ssl_account, touch: true
   has_one    :certificate_order, :through=>:certificate_content
