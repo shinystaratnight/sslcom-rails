@@ -3,7 +3,7 @@ Hello,
 SSL.com Notification Group <%=@notification_group.friendly_name || @notification_group.ref%> scan results:
 
 Reminder Type: <%=@result.reminder_type%>
-Domain: <%=@result.domain%>
+Scanned Domain: <%=@result.domain%>
 SSL Certificate Expires: <%=@result.expire%>
 <% unless @result.scanned_certificate_id.blank?
   scanned_certificate=ScannedCertificate.find(@result.scanned_certificate_id)-%>
