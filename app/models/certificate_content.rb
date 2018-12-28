@@ -7,6 +7,7 @@ class CertificateContent < ActiveRecord::Base
   has_many    :users, through: :certificate_order
   belongs_to  :server_software
   has_one     :csr, :dependent => :destroy
+  has_many    :csrs, :dependent => :destroy
   has_many    :signed_certificates, through: :csr
   has_one     :registrant, as: :contactable, dependent: :destroy
   has_one     :locked_registrant, :as => :contactable
@@ -213,6 +214,7 @@ class CertificateContent < ActiveRecord::Base
 
     state :issued do
       event :reprocess, :transitions_to => :csr_submitted
+      event :validate, :transitions_to => :validated
       event :cancel, :transitions_to => :canceled
       event :revoke, :transitions_to => :revoked
       event :issue, :transitions_to => :issued
