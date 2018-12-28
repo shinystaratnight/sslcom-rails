@@ -302,7 +302,7 @@ class NotificationGroup < ActiveRecord::Base
                   (expiration_date >= exp_dates[i + 1].days.from_now) &&
                   (expiration_date >= DateTime.now.to_date)
                 results << Struct::Notification.new(ed, exp_dates[i + 1],
-                                                    domain, expiration_date, scan_status, scanned_cert)
+                                                    domain, expiration_date, scan_status, scanned_cert.id)
               end
             end
           end
@@ -316,7 +316,7 @@ class NotificationGroup < ActiveRecord::Base
           end
 
           if notify_all.nil? && scan_status != 'expiring'
-            results << Struct::Notification.new(nil, nil, domain, expiration_date, scan_status, scanned_cert)
+            results << Struct::Notification.new(nil, nil, domain, expiration_date, scan_status, scanned_cert.id)
           end
         else
           scan_status = 'not_found'

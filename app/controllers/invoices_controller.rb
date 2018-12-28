@@ -226,7 +226,7 @@ class InvoicesController < ApplicationController
     else
       current_user.ssl_account.invoices.where.not(status: 'archived')
     end
-    base.includes(:orders).uniq.sort_with(params)
+    base.joins(:orders).uniq.sort_with(params)
   end
   
   def payment_hybrid
