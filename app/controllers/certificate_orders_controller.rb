@@ -17,6 +17,7 @@
 class CertificateOrdersController < ApplicationController
   layout 'application'
   include OrdersHelper
+  include Skylight::Helpers
   skip_before_filter :verify_authenticity_token, only: [:parse_csr]
   filter_access_to :all
   filter_access_to :read, :update, :delete, :show, :edit, :developer, :recipient
@@ -85,6 +86,7 @@ class CertificateOrdersController < ApplicationController
     end
   end
 
+  instrument_method
   def show_cert_order
     if current_user
       render :partial=>'detailed_info', :locals=>{:certificate_order=>@certificate_order}
@@ -93,6 +95,7 @@ class CertificateOrdersController < ApplicationController
     end
   end
 
+  instrument_method
   def search
     index
   end

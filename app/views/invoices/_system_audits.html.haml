@@ -13,7 +13,7 @@
           %tr.divider
             %td{colspan: '5'}
         %tbody
-          -@invoice.system_audits.order(created_at: :asc).each do |sa|
+          -@invoice.system_audits.includes{owner(User)}.order(created_at: :asc).each do |sa|
             %tr
               %td
                 =sa.created_at

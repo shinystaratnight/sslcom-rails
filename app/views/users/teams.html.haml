@@ -53,7 +53,6 @@
     -@teams.each do |t|
       -cache([current_user,'teams_list', t], expires_in: 12.hours) do
         -account_owner = current_user.is_account_owner? t
-        -main_account  = current_user.is_main_account? t
         %tr
           %td
             -unless system_admins
