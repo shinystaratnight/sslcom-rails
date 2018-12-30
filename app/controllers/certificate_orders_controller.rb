@@ -41,7 +41,8 @@ class CertificateOrdersController < ApplicationController
 
   before_action :set_schedule_value, only: [:edit, :reprocess]
 
-  instrument_method :search, :show_cert_order
+  instrument_method :search
+  instrument_method :show_cert_order
 
   NUM_ROWS_LIMIT=2
 
