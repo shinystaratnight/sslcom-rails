@@ -318,6 +318,7 @@ class NotificationGroup < ActiveRecord::Base
           if notify_all.nil? && scan_status != 'expiring'
             results << Struct::Notification.new(nil, nil, domain, expiration_date, scan_status, scanned_cert.id)
           end
+          ssl_client.close
         else
           scan_status = 'not_found'
           scanned_cert = nil
@@ -367,6 +368,7 @@ class NotificationGroup < ActiveRecord::Base
       tcp_client = TCPSocket.new(domain, ori_port || default_port)
       self.ssl_client = OpenSSL::SSL::SSLSocket.new tcp_client, context
       self.ssl_client.hostname = domain
+      self.ssl_client.sync_close=true
       self.ssl_client.connect
     end
   rescue

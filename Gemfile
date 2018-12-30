@@ -97,6 +97,7 @@ group :development do
 end
 
 group :development, :test do
+  gem "skylight"
   gem 'builder'
   gem 'factory_girl_rails'
   gem 'launchy'

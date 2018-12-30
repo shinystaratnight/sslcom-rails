@@ -626,7 +626,7 @@ class Certificate < ActiveRecord::Base
             new_pvi.sub_order_item.amount=((new_pvi.sub_order_item.amount || 0)*options[:discount_rate]).ceil if options[:discount_rate]
             new_pvi.sub_order_item.save
           end
-        end
+        end if options[:product]
       end
     end
     new_cert
