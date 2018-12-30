@@ -820,7 +820,7 @@ class CertificateOrdersController < ApplicationController
       @certificate_order=current_user.certificate_order_by_ref(params[:id])
 
       if @certificate_order.nil?
-        co = current_user.ssl_accounts.map(&:certificate_orders)
+        co = current_user.ssl_accounts.includes(:certificate_orders).map(&:certificate_orders)
                  .flatten.find{|c| c.ref == params[:id]}
         if co
           @certificate_order = co

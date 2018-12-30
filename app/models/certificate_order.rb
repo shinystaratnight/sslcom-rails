@@ -21,7 +21,7 @@ class CertificateOrder < ActiveRecord::Base
   has_many    :locked_registrants, through: :certificate_contents
   has_many    :certificate_contacts, through: :certificate_contents
   has_many    :domain_control_validations, through: :certificate_names
-  has_many    :csrs, :through=>:certificate_contents
+  has_many    :csrs, :through=>:certificate_contents, :source=>"csr"
   has_many    :signed_certificates, :through=>:csrs do
     def expired
       where{expiration_date < Date.today}
