@@ -361,7 +361,7 @@ class NotificationGroup < ActiveRecord::Base
     end
   end
 
-  def ssl_domain_connect(url, default_port,timeout=10)
+  def ssl_domain_connect(url, default_port,timeout=3)
     context = OpenSSL::SSL::SSLContext.new
     Timeout.timeout(timeout) do
       domain, ori_port = url.split ":"
@@ -392,61 +392,59 @@ class NotificationGroup < ActiveRecord::Base
     hour = current.strftime("%H").to_i.to_s
     minute = current.strftime("%M").to_i.to_s
 
-    NotificationGroup.find_in_batches(batch_size: 250) do |batch_list|
-      batch_list.each do |group|
-        schedules = {}
-        group.schedules.pluck(:schedule_type, :schedule_value).each do |arr|
-          if schedules[arr[0]].blank?
-            schedules[arr[0]] = arr[1]
-          else
-            schedules[arr[0]] = (schedules[arr[0]] + '|' + arr[1].to_s).split('|').sort.join('|')
-          end
-        end
-
-        run_scan = true
-        if schedules['Simple']
-          if (schedules['Simple'] == '1' && minute != '0') ||
-              (schedules['Simple'] == '2' && hour != '0' && minute != '0') ||
-              (schedules['Simple'] == '3' && week_day != '0' && hour != '0' && minute != '0') ||
-              (schedules['Simple'] == '4' && day != '1' && week_day != '0' && hour != '0' && minute != '0') ||
-              (schedules['Simple'] == '5' && month != '1' && day != '1' && week_day != '0' && hour != '0' && minute != '0')
-            run_scan = false
-          end
+    NotificationGroup.includes(:schedules).find_each do |group|
+      schedules = {}
+      group.schedules.each do |arr|
+        if schedules[arr.schedule_type].blank?
+          schedules[arr.schedule_type] = arr.schedule_value
         else
-          if schedules['Hour']
-            run_scan = (schedules['Hour'] == 'All' || schedules['Hour'].split('|').include?(hour))
-          else
-            run_scan = (hour == '0') unless schedules['Minute']
+          schedules[arr.schedule_type] = (schedules[arr.schedule_type] + '|' + arr.schedule_value.to_s).split('|').sort.join('|')
+        end
+      end
+
+      run_scan = true
+      if schedules['Simple']
+        if (schedules['Simple'] == '1' && minute != '0') ||
+            (schedules['Simple'] == '2' && hour != '0' && minute != '0') ||
+            (schedules['Simple'] == '3' && week_day != '0' && hour != '0' && minute != '0') ||
+            (schedules['Simple'] == '4' && day != '1' && week_day != '0' && hour != '0' && minute != '0') ||
+            (schedules['Simple'] == '5' && month != '1' && day != '1' && week_day != '0' && hour != '0' && minute != '0')
+          run_scan = false
+        end
+      else
+        if schedules['Hour']
+          run_scan = (schedules['Hour'] == 'All' || schedules['Hour'].split('|').include?(hour))
+        else
+          run_scan = (hour == '0') unless schedules['Minute']
+        end
+
+        if run_scan && schedules['Minute']
+          run_scan = (schedules['Minute'] == 'All' || schedules['Minute'].split('|').include?(minute))
+        elsif run_scan && !schedules['Minute']
+          run_scan = (minute == '0')
+        end
+
+        if run_scan
+          run_scan_week_day = false
+          if schedules['Weekday']
+            run_scan_week_day = (schedules['Weekday'] == 'All' || schedules['Weekday'].split('|').include?(week_day))
           end
 
-          if run_scan && schedules['Minute']
-            run_scan = (schedules['Minute'] == 'All' || schedules['Minute'].split('|').include?(minute))
-          elsif run_scan && !schedules['Minute']
-            run_scan = (minute == '0')
-          end
-
-          if run_scan
-            run_scan_week_day = false
-            if schedules['Weekday']
-              run_scan_week_day = (schedules['Weekday'] == 'All' || schedules['Weekday'].split('|').include?(week_day))
+          unless run_scan_week_day
+            if schedules['Month']
+              run_scan = (schedules['Month'] == 'All' || schedules['Month'].split('|').include?(month))
             end
 
-            unless run_scan_week_day
-              if schedules['Month']
-                run_scan = (schedules['Month'] == 'All' || schedules['Month'].split('|').include?(month))
-              end
-
-              if run_scan && schedules['Day']
-                run_scan = (schedules['Day'] == 'All' || schedules['Day'].split('|').include?(day))
-              elsif run_scan && !schedules['Day']
-                run_scan = (day == '1') unless schedules['Hour'] && schedules['Minute']
-              end
+            if run_scan && schedules['Day']
+              run_scan = (schedules['Day'] == 'All' || schedules['Day'].split('|').include?(day))
+            elsif run_scan && !schedules['Day']
+              run_scan = (day == '1') unless schedules['Hour'] && schedules['Minute']
             end
           end
         end
-
-        group.scan_notification_group if run_scan && !group.status
       end
+
+      group.scan_notification_group if run_scan && !group.status
     end
   end
 

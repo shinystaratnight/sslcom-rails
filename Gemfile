@@ -82,6 +82,7 @@ gem 'acts_as_tree'
 gem 'whois', '~> 4.0'
 gem 'whois-parser'
 gem 'where-or'
+gem "skylight"
 
 group :development do
   gem 'foreman'
@@ -97,7 +98,6 @@ group :development do
 end
 
 group :development, :test do
-  gem "skylight"
   gem 'builder'
   gem 'factory_girl_rails'
   gem 'launchy'
