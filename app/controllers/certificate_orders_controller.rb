@@ -17,6 +17,7 @@
 class CertificateOrdersController < ApplicationController
   layout 'application'
   include OrdersHelper
+  include Skylight::Helpers
   skip_before_filter :verify_authenticity_token, only: [:parse_csr]
   filter_access_to :all
   filter_access_to :read, :update, :delete, :show, :edit, :developer, :recipient
@@ -39,6 +40,8 @@ class CertificateOrdersController < ApplicationController
   in_place_edit_for :csr, :signed_certificate_by_text
 
   before_action :set_schedule_value, only: [:edit, :reprocess]
+
+  instrument_method :search, :show_cert_order
 
   NUM_ROWS_LIMIT=2
 
