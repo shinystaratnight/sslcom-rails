@@ -41,9 +41,6 @@ class CertificateOrdersController < ApplicationController
 
   before_action :set_schedule_value, only: [:edit, :reprocess]
 
-  instrument_method :search
-  instrument_method :show_cert_order
-
   NUM_ROWS_LIMIT=2
 
   def update_tags
@@ -89,6 +86,7 @@ class CertificateOrdersController < ApplicationController
     end
   end
 
+  instrument_method
   def show_cert_order
     if current_user
       render :partial=>'detailed_info', :locals=>{:certificate_order=>@certificate_order}
@@ -97,6 +95,7 @@ class CertificateOrdersController < ApplicationController
     end
   end
 
+  instrument_method
   def search
     index
   end
