@@ -48,7 +48,7 @@ module CertificateOrdersHelper
     end
     if DEPLOYMENT_CLIENT=="ssl.com" && !(certificate_order.certificate.is_client? || certificate_order.certificate.is_code_signing?)
       items << "SSL.com Secured Seal"
-      items << "SSL.com daily site monitoring"
+      items << link_to("SSL.com daily site monitoring", notification_groups_path({ssl_slug: @ssl_slug}))
     end
     items
   end
@@ -77,6 +77,7 @@ module CertificateOrdersHelper
 
   def action(certificate_order)
     certificate_content = certificate_order.certificate_content
+    certificate = certificate_order.certificate
     if certificate_content.new?
       certificate_order.expired? ? "expired" :
           link_to(certificate_order.certificate.admin_submit_csr?  ? 'provide info' :
@@ -85,54 +86,83 @@ module CertificateOrdersHelper
       link_to 'renew', renew_certificate_order_path(@ssl_slug, certificate_order)
     else
       case certificate_content.workflow_state
-        when "csr_submitted"
-          link_to('provide info', edit_certificate_order_path(@ssl_slug, certificate_order)) if
-              permitted_to?(:update, certificate_order)
-        when "info_provided"
-          link_to('provide contacts', certificate_content_contacts_path(@ssl_slug, certificate_content)) if
-              permitted_to?(:update, certificate_order)
-        when "reprocess_requested"
-          link_to('submit csr', edit_certificate_order_path(@ssl_slug, certificate_order)) if
-              permitted_to?(:update, certificate_order)
-        when "contacts_provided", "pending_validation", "validated"
-          certificate = certificate_order.certificate
-          if certificate_content.workflow_state == "validated" &&
+      when "csr_submitted"
+        link_to('provide info', edit_certificate_order_path(@ssl_slug, certificate_order)) if
+            permitted_to?(:update, certificate_order)
+      when "info_provided"
+        link_to('provide contacts', certificate_content_contacts_path(@ssl_slug, certificate_content)) if
+            permitted_to?(:update, certificate_order)
+      when "reprocess_requested"
+        link_to('submit csr', edit_certificate_order_path(@ssl_slug, certificate_order)) if
+            permitted_to?(:update, certificate_order)
+      when "contacts_provided", "pending_validation", "validated"
+        if certificate_content.workflow_state == "validated" &&
             (certificate.is_cs? || certificate.is_smime_or_client?)
-
-            if current_user.is_individual_certificate? or
-                (certificate_order.assignee and certificate_order.assignee.email==current_user.email)
-              if certificate_order.certificate_order_token.blank? or certificate_order.certificate_order_token.is_expired
-                link_to 'request certificate', nil, class: 'link_to_send_notify',
-                        :data => { :ref => certificate_order.ref, :type => 'request' }
-              else
-                # link_to 'generate certificate', generate_cert_certificate_order_path(@ssl_slug, certificate_order.ref) if
-                #     permitted_to?(:update, certificate_order.validation) # assume multi domain
-                link_to 'generate certificate', confirm_path(certificate_order.certificate_order_token.token) if
-                    permitted_to?(:update, certificate_order.validation) # assume multi domain
-              end
-            elsif current_user.is_billing_only? || current_user.is_validations_only? || current_user.is_validations_and_billing_only?
-              'n/a'
+          if current_user.is_individual_certificate? or
+              (certificate_order.assignee and certificate_order.assignee.email==current_user.email)
+            if certificate_order.certificate_order_token.blank? or certificate_order.certificate_order_token.is_expired
+              link_to 'request certificate', nil, class: 'link_to_send_notify',
+                      :data => { :ref => certificate_order.ref, :type => 'request' }
             else
-              if certificate.is_smime_or_client? && certificate_order.assignee
-                iv = Contact.find_by(user_id: certificate_order.assignee.id)
-                link_to 'send activation link to ' + iv.email,
-                  nil, class: 'link_to_send_notify',
-                  data: { ref: certificate_order.ref, type: 'token' }
-              elsif certificate_order.locked_registrant and certificate_order.certificate_content.ca
-                link_to 'send activation link to ' + certificate_order.locked_registrant.email,
-                        nil, class: 'link_to_send_notify',
-                        :data => { :ref => certificate_order.ref, :type => 'token' }
-              else
-                'n/a'
-              end
+              # link_to 'generate certificate', generate_cert_certificate_order_path(@ssl_slug, certificate_order.ref) if
+              #     permitted_to?(:update, certificate_order.validation) # assume multi domain
+              link_to 'generate certificate', confirm_path(certificate_order.certificate_order_token.token) if
+                  permitted_to?(:update, certificate_order.validation) # assume multi domain
             end
-            # link_to 'generate certificate', generate_cert_certificate_order_path(@ssl_slug, certificate_order.ref) if
-            #     permitted_to?(:update, certificate_order.validation) # assume multi domain
+          elsif current_user.is_billing_only? || current_user.is_validations_only? || current_user.is_validations_and_billing_only?
+            'n/a'
           else
-            link_to certificate_order.certificate.admin_submit_csr? ? 'upload documents' : 'perform validation', new_certificate_order_validation_path(@ssl_slug, certificate_order) if
-                permitted_to?(:update, certificate_order.validation) # assume multi domain
+            if certificate.is_smime_or_client? && certificate_order.assignee
+              iv = Contact.find_by(user_id: certificate_order.assignee.id)
+              link_to 'send activation link to ' + iv.email,
+                      nil, class: 'link_to_send_notify',
+                      data: { ref: certificate_order.ref, type: 'token' }
+            elsif certificate_order.locked_registrant and certificate_order.certificate_content.ca
+              link_to 'send activation link to ' + certificate_order.locked_registrant.email,
+                      nil, class: 'link_to_send_notify',
+                      :data => { :ref => certificate_order.ref, :type => 'token' }
+            else
+              'n/a'
+            end
           end
-        when "issued"
+          # link_to 'generate certificate', generate_cert_certificate_order_path(@ssl_slug, certificate_order.ref) if
+          #     permitted_to?(:update, certificate_order.validation) # assume multi domain
+        else
+          link_to certificate_order.certificate.admin_submit_csr? ? 'upload documents' : 'perform validation', new_certificate_order_validation_path(@ssl_slug, certificate_order) if
+              permitted_to?(:update, certificate_order.validation) # assume multi domain
+        end
+      when "issued"
+        if(certificate.is_cs? || certificate.is_smime_or_client?)
+          if current_user.is_individual_certificate? or
+              (certificate_order.assignee and certificate_order.assignee.email==current_user.email)
+            if certificate_order.certificate_order_token.blank? or certificate_order.certificate_order_token.is_expired
+              link_to 'request rekey', nil, class: 'link_to_send_notify',
+                      :data => { :ref => certificate_order.ref, :type => 'request' }
+            else
+              # link_to 'generate certificate', generate_cert_certificate_order_path(@ssl_slug, certificate_order.ref) if
+              #     permitted_to?(:update, certificate_order.validation) # assume multi domain
+              link_to 'generate certificate', confirm_path(certificate_order.certificate_order_token.token) if
+                  permitted_to?(:update, certificate_order.validation) # assume multi domain
+            end
+          elsif current_user.is_billing_only? || current_user.is_validations_only? || current_user.is_validations_and_billing_only?
+            'n/a'
+          else
+            if certificate.is_smime_or_client? && certificate_order.assignee
+              iv = Contact.find_by(user_id: certificate_order.assignee.id)
+              link_to 'send activation link to ' + iv.email,
+                      nil, class: 'link_to_send_notify',
+                      data: { ref: certificate_order.ref, type: 'token' }
+            elsif certificate_order.locked_registrant and certificate_order.certificate_content.ca
+              link_to 'send activation link to ' + certificate_order.locked_registrant.email,
+                      nil, class: 'link_to_send_notify',
+                      :data => { :ref => certificate_order.ref, :type => 'token' }
+            else
+              'n/a'
+            end
+          end
+          # link_to 'generate certificate', generate_cert_certificate_order_path(@ssl_slug, certificate_order.ref) if
+          #     permitted_to?(:update, certificate_order.validation) # assume multi domain
+        else
           if certificate_content.expiring?
             if certificate_order.renewal && certificate_order.renewal.paid?
               link_to('see renewal', certificate_order_path(@ssl_slug, certificate_order.renewal)) if
@@ -140,7 +170,7 @@ module CertificateOrdersHelper
             else
               links =  "<li>#{link_to 'renew', renew_certificate_order_path(@ssl_slug, certificate_order)}</li>"
               links << "<li> or #{link_to 'change domain(s)/rekey', reprocess_certificate_order_path(@ssl_slug,
-                   certificate_order)}</li>" if permitted_to?(:update, certificate_order) and
+                                                                                                     certificate_order)}</li>" if permitted_to?(:update, certificate_order) and
                   !certificate_content.expired?
               "<ul>#{links}</ul>".html_safe
             end
@@ -148,19 +178,20 @@ module CertificateOrdersHelper
             if certificate_order.certificate.is_free?
               links =  "<li>#{link_to 'upgrade', renew_certificate_order_path(@ssl_slug, certificate_order)}</li>"
               links << "<li>or #{link_to 'change domain(s)/rekey',
-                   reprocess_certificate_order_path(@ssl_slug, certificate_order)}</li>" if permitted_to?(:update,
-                      certificate_order) and !certificate_content.expired?
+                                         reprocess_certificate_order_path(@ssl_slug, certificate_order)}</li>" if permitted_to?(:update,
+                                                                                                                                certificate_order) and !certificate_content.expired?
               "<ul>#{links}</ul>".html_safe
             else
               ("<ul>"+(current_page?(certificate_order_path(@ssl_slug, certificate_order)) ? "" :
-                  "<li>#{link_to 'download', certificate_order_path(@ssl_slug, certificate_order)} or </li>")+
+                           "<li>#{link_to 'download', certificate_order_path(@ssl_slug, certificate_order)} or </li>")+
                   ((permitted_to?(:read, certificate_order) and !certificate_content.expired?) ?
-                  "<li>#{link_to 'change domain(s)/rekey',
-                  reprocess_certificate_order_path(@ssl_slug, certificate_order)}</li></ul>" : "")).html_safe
+                       "<li>#{link_to 'change domain(s)/rekey',
+                                      reprocess_certificate_order_path(@ssl_slug, certificate_order)}</li></ul>" : "")).html_safe
 
             end
           end
-        when "canceled"
+        end
+      when "canceled"
       end
     end
   end

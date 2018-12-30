@@ -31,7 +31,7 @@ class Csr < ActiveRecord::Base
   end
   has_many    :csr_unique_values, :dependent => :destroy
   has_one     :csr_override  #used for overriding csr fields - does not include a full csr
-  belongs_to  :certificate_content
+  belongs_to  :certificate_content, touch: true
   belongs_to  :certificate_lookup
   belongs_to  :ssl_account, touch: true
   has_one    :certificate_order, :through=>:certificate_content
@@ -332,15 +332,12 @@ class Csr < ActiveRecord::Base
   end
 
   def public_key_sha1
-    begin
-      if read_attribute(:public_key_sha1).blank?
-        write_attribute(:public_key_sha1, OpenSSL::Digest::SHA1.new(public_key.to_der).to_s)
-        save unless new_record?
+    if new_record?
+      public_key_hash(false)
+    else
+      Rails.cache.fetch("#{cache_key}/public_key_sha1") do
+        public_key_hash(true)
       end
-      read_attribute(:public_key_sha1)
-    rescue Exception=>e
-      logger.error e.backtrace.inspect
-      nil
     end
   end
 
@@ -453,5 +450,20 @@ class Csr < ActiveRecord::Base
       save unless new_record?
     end
     read_attribute(:ref)
+  end
+
+  private
+
+  def public_key_hash(save_to_db=false)
+    begin
+      if read_attribute(:public_key_sha1).blank?
+        write_attribute(:public_key_sha1, OpenSSL::Digest::SHA1.new(public_key.to_der).to_s)
+        save if save_to_db
+      end
+      read_attribute(:public_key_sha1)
+    rescue Exception => e
+      logger.error e.backtrace.inspect
+      nil
+    end
   end
 end

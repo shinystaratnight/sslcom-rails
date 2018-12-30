@@ -7,6 +7,7 @@ class CertificateContent < ActiveRecord::Base
   has_many    :users, through: :certificate_order
   belongs_to  :server_software
   has_one     :csr, :dependent => :destroy
+  has_many    :csrs, :dependent => :destroy
   has_many    :signed_certificates, through: :csr
   has_one     :registrant, as: :contactable, dependent: :destroy
   has_one     :locked_registrant, :as => :contactable
@@ -68,6 +69,9 @@ class CertificateContent < ActiveRecord::Base
                # temporary for sandbox
                474187=> %w(.*?\.ssl\.com\z \Assl\.com\z .*?\.certlock\.com\z \Acertlock\.com\z),
                493588=> %w(.*?\.ssl\.com\z \Assl\.com\z .*?\.certlock\.com\z \Acertlock\.com\z),
+               # Nick (next 2)
+               492759=> %w(.*?\.ssl\.com\z \Assl\.com\z .*?\.certlock\.com\z \Acertlock\.com\z),
+               497080=> %w(.*?\.ssl\.com\z \Assl\.com\z .*?\.certlock\.com\z \Acertlock\.com\z),
                464808=> %w(.*?\.ssl\.com\z \Assl\.com\z .*?\.certlock\.com\z \Acertlock\.com\z)}
 
   DOMAIN_COUNT_OFFLOAD=50
@@ -210,6 +214,7 @@ class CertificateContent < ActiveRecord::Base
 
     state :issued do
       event :reprocess, :transitions_to => :csr_submitted
+      event :validate, :transitions_to => :validated
       event :cancel, :transitions_to => :canceled
       event :revoke, :transitions_to => :revoked
       event :issue, :transitions_to => :issued
@@ -758,14 +763,14 @@ class CertificateContent < ActiveRecord::Base
               ["CN=#{[certificate_order.assignee.first_name,certificate_order.assignee.last_name].join(" ")}"]
             end
       end
-      org=options[:o] || locked_registrant.company_name
-      ou=options[:ou] || locked_registrant.department
-      state=options[:s] || locked_registrant.state
-      city=options[:l] || locked_registrant.city
-      country=options[:c] || locked_registrant.country
-      postal_code=options[:postal_code] || locked_registrant.postal_code
-      postal_address=options[:postal_address] || locked_registrant.po_box
-      street_address=options[:street_address] ||
+      org=locked_registrant.company_name
+      ou=locked_registrant.department
+      state=locked_registrant.state
+      city=locked_registrant.city
+      country=locked_registrant.country
+      postal_code=locked_registrant.postal_code
+      postal_address=locked_registrant.po_box
+      street_address=
           [locked_registrant.address1,locked_registrant.address2,locked_registrant.address3].join(" ")
       dn << "O=#{org}" if !org.blank? and (!city.blank? or !state.blank?)
       dn << "OU=#{ou}" unless ou.blank?
@@ -773,9 +778,9 @@ class CertificateContent < ActiveRecord::Base
       dn << "C=#{country}"
       dn << "L=#{city}" unless city.blank?
       dn << "ST=#{state}" unless state.blank?
-      dn << "postalCode=#{postal_code}" unless postal_code.blank?
-      dn << "postalAddress=#{postal_address}" unless postal_address.blank?
-      dn << "streetAddress=#{street_address}" unless street_address.blank?
+      # dn << "postalCode=#{postal_code}" unless postal_code.blank?
+      # dn << "postalAddress=#{postal_address}" unless postal_address.blank?
+      # dn << "streetAddress=#{street_address}" unless street_address.blank?
       if cert.is_ev?
         dn << "serialNumber=#{options[:serial_number] || certificate_order.jois.last.try(:company_number) ||
           ("11111111" if options[:ca_id]==Ca::ISSUER[:sslcom_shadow])}"
@@ -793,7 +798,17 @@ class CertificateContent < ActiveRecord::Base
     dn.map{|d|d.gsub(/\\/,'\\\\').gsub(',','\,')}.join(",")
   end
 
+  def cached_csr_public_key_sha1
+    Rails.cache.fetch("#{cache_key}/cached_csr_public_key_sha1") do
+      csr.public_key_sha1
+    end
+  end
 
+  def cached_csr_public_key_md5
+    Rails.cache.fetch("#{cache_key}/cached_csr_public_key_md5") do
+      csr.public_key_md5
+    end
+  end
 
   def csr_certificate_name
     begin

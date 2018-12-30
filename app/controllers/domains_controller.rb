@@ -6,8 +6,7 @@ class DomainsController < ApplicationController
   before_filter :set_csr_row_page, only: [:select_csr]
 
   def index
-    cnames = @ssl_account.all_certificate_names.order(created_at: :desc)
-    # @domains = (@ssl_account.domains.order(created_at: :desc) + cnames).uniq(&:id).paginate(@p)
+    cnames = @ssl_account.all_certificate_names.includes(:domain_control_validations).order(created_at: :desc)
     @domains = (@ssl_account.domains.order(created_at: :desc) + cnames).uniq(&:id).uniq(&:name).paginate(@p)
   end
 
@@ -89,7 +88,7 @@ class DomainsController < ApplicationController
     end
     @all_domains = []
     @address_choices = []
-    @cnames = @ssl_account.all_certificate_names.order(created_at: :desc)
+    @cnames = @ssl_account.all_certificate_names.includes(:domain_control_validations).order(created_at: :desc)
     @cnames.each do |cn|
       dcv = cn.domain_control_validations.last
       next if dcv && dcv.identifier_found
@@ -373,8 +372,8 @@ class DomainsController < ApplicationController
   end
 
   def dcv_validate
-    @domain = current_user.ssl_account.domains.find_by(id: params[:id]) ||
-        current_user.ssl_account.all_certificate_names.find_by(id: params[:id]) if @domain.nil?
+    @domain = current_user.ssl_account.domains.includes(:domain_control_validations).find_by(id: params[:id]) ||
+        current_user.ssl_account.all_certificate_names.includes(:domain_control_validations).find_by(id: params[:id]) if @domain.nil?
     if(params['authenticity_token'])
       identifier = params['validate_code']
       dcv = @domain.domain_control_validations.last
@@ -390,8 +389,8 @@ class DomainsController < ApplicationController
 
   def dcv_all_validate
     validated=[]
-    dnames = @ssl_account.domains # directly scoped to the team
-    cnames = @ssl_account.all_certificate_names # scoped to certificate_orders
+    dnames = @ssl_account.domains.includes(:domain_control_validations) # directly scoped to the team
+    cnames = @ssl_account.all_certificate_names.includes(:domain_control_validations) # scoped to certificate_orders
     if(params['authenticity_token'])
       identifier = params['validate_code']
       (dnames+cnames).each do |cn|

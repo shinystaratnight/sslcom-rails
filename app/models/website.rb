@@ -4,11 +4,8 @@ class Website < ActiveRecord::Base
 
   def self.current_site(domain)
     cs=Rails.cache.fetch("current_site/#{domain}",
-                      expires_in: 24.hours) do
-      last=self.where{(host == domain) | (api_host == domain)}.last
-      last.id if last
-    end
-    Website.find cs if cs
+                      expires_in: 24.hours) {self.where{(host == domain) | (api_host == domain)}.last}
+    Website.find cs.id if cs
   end
 
   def use_database

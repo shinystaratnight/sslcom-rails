@@ -1,9 +1,14 @@
-Hi,
+Hello,
 
-You are receiving this courtesy email because you have scheduled or scaned your notification group(s) from SSL.com.
-This is s reminder that the domain are expiring.
+SSL.com Notification Group <%=@notification_group.friendly_name || @notification_group.ref%> scan results:
 
-Thank you for choosing SSL.com - we look forward to continuing to provide you with the most cost-effective certificates in the market.
+Domain: <%=@result.domain%>
+SSL Certificate Expires: <%=@result.expire%>
+Reminder Type: <%=@result.reminder_type%>
+
+To modify the SSL/TLS reminders or disable them, please visit <%=edit_notification_group_url(@ssl_slug, @notification_group.id)%>
+
+Thank you for choosing SSL.com!
 
 Kind Regards,
 

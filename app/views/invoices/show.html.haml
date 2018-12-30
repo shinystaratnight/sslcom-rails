@@ -98,14 +98,39 @@
     Actions
   #invoice-container
     #btn-invoice-dwnl
-      #{link_to "\u21E9 Download".html_safe, download_invoice_path(@ssl_slug, invoice_ref), class: 'button-mo-invoice'}
+      =link_to "\u21E9 Download".html_safe, |
+      download_invoice_path(@ssl_slug, invoice_ref), class: 'button-mo-invoice'
+    
     #btn-invoice-update
-      #{link_to "&#x2631; Change Address".html_safe, '#', id: 'lnk-update-invoice', class: 'button-mo-invoice'}
+      =link_to "&#x2631; Change Address".html_safe, '#', |
+      id: 'lnk-update-invoice', class: 'button-mo-invoice'
+    
     -if @invoice.show_payment_actions?
+      #dlg-invoice-transfer.hidden
+        %div
+          Please use information below if you want to pay by wire transfer:
+          %br/  
+          %br/
+          %strong JPMorgan Chase Bank, N.A.
+          %br/
+          %br/
+          Routing:
+          %strong #{Rails.application.secrets.ssl_routing_number}
+          %br/
+          Account:
+          %strong #{Rails.application.secrets.ssl_account_number}
+          %br/
+          SWIFT:
+          %strong CHASUS33TEX
+
       #btn-invoice-generate
-        =link_to "Make Payment".html_safe,                  |
-          new_payment_invoice_path(@ssl_slug, invoice_ref), |
-          class: 'button-mo-invoice', method: :get
+        =link_to "Make Payment",                          |
+        new_payment_invoice_path(@ssl_slug, invoice_ref), |
+        class: 'button-mo-invoice', method: :get
+      
+      #btn-invoice-generate    
+        =link_to "Wire Transfer".html_safe, '#', |
+        id: 'dlg-wire-transfer-info', class: 'button-mo-invoice'
   
   #invoice-container-errors
   
