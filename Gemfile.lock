@@ -146,7 +146,7 @@ GEM
       compass (~> 1.0.0)
       sass-rails (< 5.1)
       sprockets (< 4.0)
-    concurrent-ruby (1.0.2)
+    concurrent-ruby (1.1.4)
     config (1.3.0)
       activesupport (>= 3.0)
       deep_merge (~> 1.1.1)
@@ -339,7 +339,7 @@ GEM
     public_suffix (2.0.5)
     rabl (0.13.1)
       activesupport (>= 2.3.14)
-    rack (1.6.8)
+    rack (1.6.11)
     rack-cors (0.4.0)
     rack-ssl-enforcer (0.2.9)
     rack-test (0.6.3)
@@ -436,7 +436,7 @@ GEM
       activesupport (>= 4.2)
     spring-commands-testunit (1.0.1)
       spring (>= 0.9.1)
-    sprockets (3.7.0)
+    sprockets (3.7.2)
       concurrent-ruby (~> 1.0)
       rack (> 1, < 3)
     sprockets-rails (3.2.0)
@@ -592,7 +592,7 @@ DEPENDENCIES
   skylight
   spring
   spring-commands-testunit
-  sprockets
+  sprockets (>= 3.7.2)
   squeel
   stripe
   terminal-notifier-guard
