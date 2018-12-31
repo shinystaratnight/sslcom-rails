@@ -1,4 +1,5 @@
 class FoldersController < ApplicationController
+  include Skylight::Helpers
   before_filter :find_ssl_account
   before_filter :set_ssl_slug
   before_filter :find_folder, only: [
