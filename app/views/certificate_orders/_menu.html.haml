@@ -1,17 +1,18 @@
--cn=co.subject || ''
-%table(cellspacing="0")
-  %tbody
-    %tr.order_menu
-      -if permitted_to?(:show, co)
-        %td=link_to("certificate details", certificate_order_path(@ssl_slug, co), :title=>"view order for "+cn)
-      -unless hide_validation?(co)
-        -if permitted_to?(:show, co.validation)
-          %td=link_to("validation status", certificate_order_validation_path(ssl_slug: @ssl_slug, certificate_order_id: co.ref), :title=>"view validation status for "+cn)
-      -unless co.certificate.is_code_signing?
-        -if permitted_to?(:show, co.site_seal)
-          %td=link_to("smart seal", certificate_order_site_seal_path(ssl_slug: @ssl_slug, certificate_order_id: co.ref), :title=>"get smart seal for "+cn)
-      -if current_user.is_system_admins?
-        %td=link_to("billing invoice", order_path(@ssl_slug, co.orders.first), :title=>"transaction information for "+cn)
-      -if current_user.is_super_user? and co.registrant
-        -if (co.certificate.is_smime_or_client? and co.ov_validated?) or !co.certificate.is_smime_or_client?
-          %td=link_to("SSL.com CA", sslcom_ca_certificate_order_path(@ssl_slug, co.ref), :title=>"send #"+co.ref+" to SSL.com CA")
+-cache([current_user,'_menu', co], expires_in: 12.hours) do
+  -cn=co.subject || ''
+  %table(cellspacing="0")
+    %tbody
+      %tr.order_menu
+        -if permitted_to?(:show, co)
+          %td=link_to("certificate details", certificate_order_path(@ssl_slug, co), :title=>"view order for "+cn)
+        -unless hide_validation?(co)
+          -if permitted_to?(:show, co.validation)
+            %td=link_to("validation status", certificate_order_validation_path(ssl_slug: @ssl_slug, certificate_order_id: co.ref), :title=>"view validation status for "+cn)
+        -unless co.certificate.is_code_signing?
+          -if permitted_to?(:show, co.site_seal)
+            %td=link_to("smart seal", certificate_order_site_seal_path(ssl_slug: @ssl_slug, certificate_order_id: co.ref), :title=>"get smart seal for "+cn)
+        -if current_user.is_system_admins?
+          %td=link_to("billing invoice", order_path(@ssl_slug, co.orders.first), :title=>"transaction information for "+cn)
+        -if current_user.is_super_user? and co.registrant
+          -if (co.certificate.is_smime_or_client? and co.ov_validated?) or !co.certificate.is_smime_or_client?
+            %td=link_to("SSL.com CA", sslcom_ca_certificate_order_path(@ssl_slug, co.ref), :title=>"send #"+co.ref+" to SSL.com CA")

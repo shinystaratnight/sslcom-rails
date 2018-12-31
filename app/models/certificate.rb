@@ -606,7 +606,7 @@ class Certificate < ActiveRecord::Base
       new_pvg = pvg.dup
       new_cert.product_variant_groups << new_pvg
       pvg.product_variant_items.each_with_index do |pvi, i|
-        if i < options[:product][:price_adjusts].first[1].count
+        if options[:product].blank? or i < options[:product][:price_adjusts].first[1].count
           new_pvi=pvi.dup
           if options[:old_pvi_serial] and options[:new_pvi_serial]
             new_pvi.serial=pvi.serial.gsub(options[:old_pvi_serial], options[:new_pvi_serial])
@@ -626,7 +626,7 @@ class Certificate < ActiveRecord::Base
             new_pvi.sub_order_item.amount=((new_pvi.sub_order_item.amount || 0)*options[:discount_rate]).ceil if options[:discount_rate]
             new_pvi.sub_order_item.save
           end
-        end if options[:product]
+        end
       end
     end
     new_cert

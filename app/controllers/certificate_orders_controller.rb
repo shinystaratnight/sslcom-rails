@@ -86,7 +86,6 @@ class CertificateOrdersController < ApplicationController
     end
   end
 
-  instrument_method
   def show_cert_order
     if current_user
       render :partial=>'detailed_info', :locals=>{:certificate_order=>@certificate_order}
@@ -95,7 +94,6 @@ class CertificateOrdersController < ApplicationController
     end
   end
 
-  instrument_method
   def search
     index
   end
@@ -820,7 +818,7 @@ class CertificateOrdersController < ApplicationController
       @certificate_order=current_user.certificate_order_by_ref(params[:id])
 
       if @certificate_order.nil?
-        co = current_user.ssl_accounts.map(&:certificate_orders)
+        co = current_user.ssl_accounts.includes(:certificate_orders).map(&:certificate_orders)
                  .flatten.find{|c| c.ref == params[:id]}
         if co
           @certificate_order = co
