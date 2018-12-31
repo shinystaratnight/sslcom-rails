@@ -1,4 +1,5 @@
 class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
+  include Skylight::Helpers
   prepend_view_path "app/views/api/v1/api_certificate_requests"
   include ActionController::Helpers
   helper SiteSealsHelper
