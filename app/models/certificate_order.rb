@@ -3,7 +3,7 @@ class CertificateOrder < ActiveRecord::Base
   #using_access_control
   acts_as_sellable :cents => :amount, :currency => false
   belongs_to  :ssl_account, touch: true
-  belongs_to  :folder
+  belongs_to  :folder, touch: true
   has_many    :users, through: :ssl_account
   belongs_to  :assignee, class_name: "User"
   belongs_to  :validation

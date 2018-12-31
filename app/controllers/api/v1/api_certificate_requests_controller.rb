@@ -231,6 +231,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
     render_500_error e
   end
 
+  instrument_method
   def update_v1_4
     set_template "update_v1_4"
 

@@ -86,7 +86,6 @@ class CertificateOrdersController < ApplicationController
     end
   end
 
-  instrument_method
   def show_cert_order
     if current_user
       render :partial=>'detailed_info', :locals=>{:certificate_order=>@certificate_order}
@@ -95,7 +94,6 @@ class CertificateOrdersController < ApplicationController
     end
   end
 
-  instrument_method
   def search
     index
   end

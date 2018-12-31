@@ -44,7 +44,8 @@ class FoldersController < ApplicationController
       render json: @folder.errors.messages, status: :unprocessable_entity
     end
   end
-  
+
+  instrument_method
   def children
     if params[:search]
       @certificate_order_ids = find_certificate_orders(source: 'folders').pluck(:id)
