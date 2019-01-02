@@ -49,8 +49,7 @@ class Registrant < Contact
       )
     }
 
-  validates_presence_of :business_category, :incorporation_city, :incorporation_state,
-                        :company_number, :incorporation_country,
+  validates_presence_of :business_category, :company_number, :incorporation_country,
     if: Proc.new{|r|
       !r.reusable? && r.contactable && r.contactable.certificate_order.certificate.is_ev?
     }

@@ -124,12 +124,12 @@
           =rf.select :business_category, options_for_select(Joi::BUSINESS_CATEGORY.values)
         .clearfix
           %label{:for=>"incorporation_city"}
-            *Registered City:
+            Registered City:
             %span.label_desc jurisdiction of incorporation city
           =rf.text_field :incorporation_city
         .clearfix
           %label{:for=>"incorporation_state"}
-            *Registered State:
+            Registered State:
             %span.label_desc jurisdiction of incorporation state
           =rf.text_field :incorporation_state
         .clearfix
