@@ -782,15 +782,15 @@ class CertificateContent < ActiveRecord::Base
       # dn << "postalAddress=#{postal_address}" unless postal_address.blank?
       # dn << "streetAddress=#{street_address}" unless street_address.blank?
       if cert.is_ev?
-        dn << "serialNumber=#{options[:serial_number] || certificate_order.jois.last.try(:company_number) ||
+        dn << "serialNumber=#{options[:serial_number] || locked_registrant.company_number ||
           ("11111111" if options[:ca_id]==Ca::ISSUER[:sslcom_shadow])}"
-        dn << "2.5.4.15=#{options[:business_category] || certificate_order.jois.last.try(:business_category) ||
+        dn << "2.5.4.15=#{options[:business_category] || locked_registrant.business_category ||
           ("Private Organization" if options[:ca_id]==Ca::ISSUER[:sslcom_shadow])}"
-        dn << "1.3.6.1.4.1.311.60.2.1.1=#{options[:joi_locality] || certificate_order.jois.last.try(:city) ||
+        dn << "1.3.6.1.4.1.311.60.2.1.1=#{options[:joi_locality] || locked_registrant.incorporation_city ||
           ("Houston" if options[:ca_id]==Ca::ISSUER[:sslcom_shadow])}"
-        dn << "1.3.6.1.4.1.311.60.2.1.2=#{options[:joi_state] || certificate_order.jois.last.try(:state) ||
+        dn << "1.3.6.1.4.1.311.60.2.1.2=#{options[:joi_state] || locked_registrant.incorporation_state ||
           ("Texas" if options[:ca_id]==Ca::ISSUER[:sslcom_shadow])}"
-        dn << "1.3.6.1.4.1.311.60.2.1.3=#{options[:joi_country] || certificate_order.jois.last.try(:country) ||
+        dn << "1.3.6.1.4.1.311.60.2.1.3=#{options[:joi_country] || locked_registrant.incorporation_country ||
           ("US" if options[:ca_id]==Ca::ISSUER[:sslcom_shadow])}"
       end
     end

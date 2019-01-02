@@ -742,14 +742,18 @@ ActiveRecord::Schema.define(version: 20181230194446) do
     t.boolean  "revoked",                    default: false
   end
 
+  add_index "folders", ["active"], name: "index_folders_on_active", using: :btree
   add_index "folders", ["archived", "name", "ssl_account_id"], name: "index_folders_on_archived_and_name_and_ssl_account_id", using: :btree
+  add_index "folders", ["archived"], name: "index_folders_on_archived", using: :btree
   add_index "folders", ["default", "archived", "name", "ssl_account_id", "expired", "active", "revoked"], name: "index_folder_statuses", using: :btree
   add_index "folders", ["default", "name", "ssl_account_id"], name: "index_folders_on_default_and_name_and_ssl_account_id", using: :btree
+  add_index "folders", ["expired"], name: "index_folders_on_expired", using: :btree
   add_index "folders", ["name", "ssl_account_id", "active", "revoked"], name: "index_folders_on_name_and_ssl_account_id_and_active_and_revoked", using: :btree
   add_index "folders", ["name", "ssl_account_id", "expired"], name: "index_folders_on_name_and_ssl_account_id_and_expired", using: :btree
   add_index "folders", ["name", "ssl_account_id", "revoked"], name: "index_folders_on_name_and_ssl_account_id_and_revoked", using: :btree
   add_index "folders", ["name"], name: "index_folders_on_name", using: :btree
   add_index "folders", ["parent_id"], name: "index_folders_on_parent_id", using: :btree
+  add_index "folders", ["revoked"], name: "index_folders_on_revoked", using: :btree
   add_index "folders", ["ssl_account_id"], name: "index_folders_on_ssl_account_id", using: :btree
 
   create_table "funded_accounts", force: :cascade do |t|
