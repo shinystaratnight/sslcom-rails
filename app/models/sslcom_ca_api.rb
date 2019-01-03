@@ -158,7 +158,8 @@ class SslcomCaApi
     options[:mapping] = certificate_order.certificate_content.ca if options[:mapping].blank?
 
     # does this need to be a DV if OV is required but not satisfied?
-    if options[:mapping].profile_name=~/OV/ or options[:mapping].profile_name=~/EV/
+    if certificate_order.certificate.is_server? and
+        (options[:mapping].profile_name=~/OV/ or options[:mapping].profile_name=~/EV/)
       downstep = !certificate_order.ov_validated?
       options[:mapping]=options[:mapping].downstep if downstep
     end
@@ -171,7 +172,7 @@ class SslcomCaApi
     return cc.csr.sslcom_ca_requests.create(
       parameters: approval_req.body, method: "get", response: approval_res.body,
                                             ca: options[:ca]) if approval_res.try(:body)=~/WAITING FOR APPROVAL/
-    if options[:mapping].profile_name=~/EV/ and (approval_res.try(:body).blank? or
+    if options[:mapping].profile_name=~/EV/ and (approval_res.try(:body).blank? or approval_res.try(:body)=="[]" or
         (approval_res.try(:body)=~/EXPIRED AND NOTIFIED/ and !cc.csr.sslcom_ca_requests.first=~/WAITING FOR APPROVAL/))
       # create the user for EV order
       host = ca_host(options[:mapping])+"/v1/user"
