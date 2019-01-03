@@ -52,7 +52,7 @@ class ValidationsController < ApplicationController
         @caa_check_domains = ''
         validated_domain_arry = []
         caa_check_domain_arry = []
-        public_key_sha1=cc.csr.public_key_sha1
+        public_key_sha1=cc.cached_csr_public_key_sha1
         unless cc.ca.blank?
           cnames = cc.certificate_names.includes(:domain_control_validations)
           team_cnames = @certificate_order.ssl_account.all_certificate_names.includes(:domain_control_validations)
@@ -90,9 +90,13 @@ class ValidationsController < ApplicationController
           @all_validated=@certificate_order.domains_validated?
           if @all_validated and cc.signed_certificate.blank? and !cc.issued?
             cc.validate! if cc.pending_validation?
-            @certificate_order.apply_for_certificate(
+            api_log_entry=@certificate_order.apply_for_certificate(
                 mapping: @certificate_order.certificate_content.ca,
                       current_user: current_user)
+            if api_log_entry.response=~/Check CAA/
+              flash[:error] =
+                  "CAA validation failed. See https://www.ssl.com/how-to/configure-caa-records-to-authorize-ssl-com/"
+            end
           end
 
           @validated_domains = validated_domain_arry.join(',')
@@ -179,7 +183,7 @@ class ValidationsController < ApplicationController
       domain_name_arry = params['domain_names'].split(',')
       # order_number = CertificateOrder.find_by_ref(params['certificate_order_id']).external_order_number
       certificate_order = current_user.certificate_order_by_ref(params[:certificate_order_id])
-      certificate_content = certificate_order.certificate_content
+      certificate_content = certificate_order.certificate_content.includes(:certificate_names)
       certificate_names = certificate_content.certificate_names
 
       certificate_names.where{ name >> domain_name_arry }.each do |cn_obj|
@@ -238,9 +242,7 @@ class ValidationsController < ApplicationController
   def get_email_addresses
     returnObj = {}
     if current_user
-      addresses = params['total_domains'].to_i > Validation::COMODO_EMAIL_LOOKUP_THRESHHOLD ?
-                      CertificateName.candidate_email_addresses(params['domain_name']) :
-                      ComodoApi.domain_control_email_choices(params['domain_name']).email_address_choices
+      addresses = CertificateName.candidate_email_addresses(params['domain_name'])
       addresses.delete("none")
 
       returnObj['caa_check'] = ''
@@ -288,9 +290,7 @@ class ValidationsController < ApplicationController
 
         addresses =
           if co.certificate_content.ca.blank? and co.external_order_number
-            params['domain_count'].to_i > Validation::COMODO_EMAIL_LOOKUP_THRESHHOLD ?
-                cn.candidate_email_addresses :
-                ComodoApi.domain_control_email_choices(cn.name).email_address_choices
+            ComodoApi.domain_control_email_choices(cn.name).email_address_choices
           else
             cn.candidate_email_addresses
           end

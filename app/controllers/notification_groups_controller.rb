@@ -156,7 +156,7 @@ class NotificationGroupsController < ApplicationController
   end
 
   def scan_individual_group
-    notification_group = @ssl_account.notification_groups.find(params[:notification_group_id])
+    notification_group = @ssl_account.notification_groups.includes(:notification_groups_subjects).find(params[:notification_group_id])
     notification_group.scan_notification_group
 
     flash[:notice] = "Scan has been done successfully."
@@ -178,7 +178,7 @@ class NotificationGroupsController < ApplicationController
   end
 
   def edit
-    @notification_group = @ssl_account.notification_groups.where(id: params[:id]).first
+    @notification_group = @ssl_account.notification_groups.includes(:notification_groups_subjects).where(id: params[:id]).first
     slt_cert_orders = @notification_group.certificate_orders.flatten.compact
     @cos_list = @ssl_account.cached_certificate_orders.pluck(:ref, :id).uniq
     @slt_cos_list = slt_cert_orders.map(&:id)
@@ -232,7 +232,7 @@ class NotificationGroupsController < ApplicationController
   def register_notification_group
     if params[:format]
       # Saving notification group info
-      notification_group = @ssl_account.notification_groups.where(ref: params[:format]).first
+      notification_group = @ssl_account.notification_groups.includes(:notification_groups_subjects).where(ref: params[:format]).first
       notification_group.friendly_name = params[:friendly_name]
       notification_group.scan_port = params[:scan_port]
       notification_group.notify_all = params[:notify_all] ? params[:notify_all] : false
@@ -382,7 +382,9 @@ class NotificationGroupsController < ApplicationController
     # Saving schedule
     if params[:schedule_type] == 'true'
       current_schedules = notification_group.schedules.pluck(:schedule_type)
-      unless current_schedules.include? 'Simple'
+      if current_schedules.include? 'Simple'
+        notification_group.schedules.last.update_attribute(:schedule_value, params[:schedule_simple_type])
+      else
         notification_group.schedules.destroy_all
         notification_group.schedules.build(
             schedule_type: 'Simple',

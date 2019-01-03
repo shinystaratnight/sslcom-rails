@@ -146,7 +146,7 @@ GEM
       compass (~> 1.0.0)
       sass-rails (< 5.1)
       sprockets (< 4.0)
-    concurrent-ruby (1.0.2)
+    concurrent-ruby (1.1.4)
     config (1.3.0)
       activesupport (>= 3.0)
       deep_merge (~> 1.1.1)
@@ -339,7 +339,7 @@ GEM
     public_suffix (2.0.5)
     rabl (0.13.1)
       activesupport (>= 2.3.14)
-    rack (1.6.8)
+    rack (1.6.11)
     rack-cors (0.4.0)
     rack-ssl-enforcer (0.2.9)
     rack-test (0.6.3)
@@ -426,13 +426,17 @@ GEM
     sexp_processor (4.7.0)
     shellany (0.0.1)
     simpleidn (0.0.7)
+    skylight (3.1.2)
+      skylight-core (= 3.1.2)
+    skylight-core (3.1.2)
+      activesupport (>= 4.2.0)
     slop (3.6.0)
     socksify (1.7.0)
     spring (2.0.0)
       activesupport (>= 4.2)
     spring-commands-testunit (1.0.1)
       spring (>= 0.9.1)
-    sprockets (3.7.0)
+    sprockets (3.7.2)
       concurrent-ruby (~> 1.0)
       rack (> 1, < 3)
     sprockets-rails (3.2.0)
@@ -478,6 +482,9 @@ GEM
       chronic (>= 0.6.3)
     where-or (0.1.6)
     whois (4.0.7)
+    whois-parser (1.1.0)
+      activesupport (>= 4)
+      whois (>= 4.0.6)
     wicked_pdf (1.1.0)
     will_paginate (3.1.5)
     wkhtmltopdf-binary (0.12.3.1)
@@ -582,9 +589,10 @@ DEPENDENCIES
   select2-rails
   selenium-webdriver
   simpleidn
+  skylight
   spring
   spring-commands-testunit
-  sprockets
+  sprockets (>= 3.7.2)
   squeel
   stripe
   terminal-notifier-guard
@@ -598,6 +606,7 @@ DEPENDENCIES
   whenever
   where-or
   whois (~> 4.0)
+  whois-parser
   wicked_pdf
   will_paginate
   wkhtmltopdf-binary

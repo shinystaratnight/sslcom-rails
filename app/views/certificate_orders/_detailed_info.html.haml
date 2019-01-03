@@ -1,8 +1,8 @@
 -if certificate_order
   -cache([current_user,'certificate_order/detailed_info', certificate_order], expires_in: 12.hours) do
     -co = certificate_order
-    -order=Order.unscoped{co.order}
-    -cc=co.certificate_content
+    -order = Order.unscoped{co.order}
+    -cc = co.certificate_content
     -cn = (co.is_unused? || cc.csr.blank?) ? nil : cc.csr.common_name
     %tr.expanded
       %td{colspan: show_folders_container? ? '8' : '7'}
@@ -49,7 +49,7 @@
                               .certificate_details_box
                                 %strong audit log
                                 -audits=(co.system_audits.empty? ? "n/a" : "###")+"\n"
-                                -co.system_audits.each do |audit|
+                                -co.system_audits.includes{owner(User)}.each do |audit|
                                   -audits << "date: #{audit.created_at}\nuser: #{audit.owner.try :login}\naction: #{audit.action}\n###\n"
                                 =text_area_tag :audits, audits, :size=>"30x10"
                       .certificate_details_box

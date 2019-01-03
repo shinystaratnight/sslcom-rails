@@ -27,8 +27,6 @@ class ValidationHistory < ActiveRecord::Base
     ['application/msword', 'doc'], ['application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'docx'],
     ['audio/mpeg', 'mp3'], ['text/plain', 'txt, text']]
 
-  # validates_attachment_presence :document
-#   validates_attachment_size :document, :less_than => 50.megabytes
   validates_attachment_content_type :document, :content_type =>  ValidationHistory::CONTENT_TYPES.transpose[0]
 
   preference  :viewing_method, :string, :default=>"download" #or thumbnail

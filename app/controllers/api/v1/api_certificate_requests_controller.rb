@@ -1,4 +1,5 @@
 class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
+  include Skylight::Helpers
   prepend_view_path "app/views/api/v1/api_certificate_requests"
   include ActionController::Helpers
   helper SiteSealsHelper
@@ -111,20 +112,15 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
     if @result.valid? && @result.save
       co = @result.find_certificate_order
       # if co.ov_validated?
-      co.certificate_content.create_csr(body: params[:csr])
 
-      options = {}
-      options[:cc] = co.certificate_content
-      options[:mapping] = options[:cc].ca || co.certificate.cas.ssl_account_or_general_default(@result.api_credential.ssl_account).last
-
-      if res = SslcomCaApi.apply_for_certificate(co, options)
+      options={csr: params[:csr]}
+      if res = SslcomCaApi.apply_for_certificate(co,options).end_entity_certificate
         co_token = co.certificate_order_tokens.where(is_expired: false).first
         co_token.update_attribute(:is_expired, true) if co_token
 
-        @result.cert_results = res.end_entity_certificate.to_s
-        @result.cert_common_name = res.end_entity_certificate.subject.common_name.gsub(/[\s\.\*\(\)]/,"_").downcase + '.crt'
+        @result.cert_results = res.to_s
+        @result.cert_common_name = res.subject.common_name.gsub(/[\s\.\*\(\)]/,"_").downcase + '.crt'
       end
-      # end
     else
       InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
     end
@@ -237,6 +233,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
     render_500_error e
   end
 
+  instrument_method
   def update_v1_4
     set_template "update_v1_4"
 

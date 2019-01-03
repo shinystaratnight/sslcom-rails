@@ -7,6 +7,7 @@ class CertificateContent < ActiveRecord::Base
   has_many    :users, through: :certificate_order
   belongs_to  :server_software
   has_one     :csr, :dependent => :destroy
+  has_many    :csrs, :dependent => :destroy
   has_many    :signed_certificates, through: :csr
   has_one     :registrant, as: :contactable, dependent: :destroy
   has_one     :locked_registrant, :as => :contactable
@@ -65,7 +66,12 @@ class CertificateContent < ActiveRecord::Base
 
   WHITELIST = {492127=> %w(.*?\.ssl\.com\z \Assl\.com\z .*?\.certlock\.com\z \Acertlock\.com\z),
                491981=> %w(.*?\.ssl\.com\z \Assl\.com\z .*?\.certlock\.com\z \Acertlock\.com\z),
+               # temporary for sandbox
+               474187=> %w(.*?\.ssl\.com\z \Assl\.com\z .*?\.certlock\.com\z \Acertlock\.com\z),
                493588=> %w(.*?\.ssl\.com\z \Assl\.com\z .*?\.certlock\.com\z \Acertlock\.com\z),
+               # Nick (next 2)
+               492759=> %w(.*?\.ssl\.com\z \Assl\.com\z .*?\.certlock\.com\z \Acertlock\.com\z),
+               497080=> %w(.*?\.ssl\.com\z \Assl\.com\z .*?\.certlock\.com\z \Acertlock\.com\z),
                464808=> %w(.*?\.ssl\.com\z \Assl\.com\z .*?\.certlock\.com\z \Acertlock\.com\z)}
 
   DOMAIN_COUNT_OFFLOAD=50
@@ -208,6 +214,7 @@ class CertificateContent < ActiveRecord::Base
 
     state :issued do
       event :reprocess, :transitions_to => :csr_submitted
+      event :validate, :transitions_to => :validated
       event :cancel, :transitions_to => :canceled
       event :revoke, :transitions_to => :revoked
       event :issue, :transitions_to => :issued
@@ -227,7 +234,7 @@ class CertificateContent < ActiveRecord::Base
   end
 
   def add_ca(ssl_account)
-    unless [467564,16077,475670,484141,473857,204730].include?(ssl_account.id)
+    unless [467564,16077,484141,204730].include?(ssl_account.id)
       self.ca = (self.certificate.cas.ssl_account_or_general_default(ssl_account)).last if ca.blank? and certificate
     end
   end
@@ -241,9 +248,10 @@ class CertificateContent < ActiveRecord::Base
   def certificate_names_from_domains(domains=nil)
     domains ||= all_domains
     (domains-certificate_names.find_by_domains(domains).pluck(:name)).each do |domain|
-      domain = CertificateContent.non_wildcard_name(domain,true) if certificate.is_single?
-      new_certificate_name=certificate_names.find_or_create_by(name: domain.downcase,
-                                                           is_common_name: csr.try(:common_name)==domain.downcase)
+      cn_domain = certificate.is_single? ? CertificateContent.non_wildcard_name(domain,true) : domain
+      new_certificate_name=certificate_names.find_or_create_by(name: cn_domain.downcase,
+                                                           is_common_name: csr.try(:common_name)==domain)
+      new_certificate_name.candidate_email_addresses
       Delayed::Job.enqueue OtherDcvsSatisyJob.new(ssl_account,new_certificate_name) if ssl_account
     end
 
@@ -256,7 +264,7 @@ class CertificateContent < ActiveRecord::Base
   end
 
   def sslcom_ca_request
-    SslcomCaRequest.where(username: self.ref).last
+    SslcomCaRequest.where(username: self.ref).first
   end
 
   def pkcs7
@@ -745,30 +753,44 @@ class CertificateContent < ActiveRecord::Base
 
   def subject_dn(options={})
     cert = options[:certificate] || self.certificate
-    dn=["CN=#{options[:common_name] || certificate_names.first.name}"] if certificate.is_server?
+    dn=["CN=#{options[:common_name]}"] if certificate.is_server?
     if !locked_registrant.blank? and !(options[:mapping] ? options[:mapping].try(:profile_name) =~ /DV/ : cert.is_dv?)
       # if ev or ov order, must have locked registrant
-      dn=["CN=#{options[:common_name] || locked_registrant.company_name}"] if !certificate.is_server?
-      org=options[:o] || locked_registrant.company_name
-      ou=options[:ou] || locked_registrant.department
-      state=options[:s] || locked_registrant.state
-      city=options[:l] || locked_registrant.city
-      country=options[:c] || locked_registrant.country
+      if dn.blank?
+        dn= if certificate.is_code_signing?
+              ["CN=#{locked_registrant.company_name}"]
+            elsif certificate.is_smime_or_client?
+              ["CN=#{[certificate_order.assignee.first_name,certificate_order.assignee.last_name].join(" ")}"]
+            end
+      end
+      org=locked_registrant.company_name
+      ou=locked_registrant.department
+      state=locked_registrant.state
+      city=locked_registrant.city
+      country=locked_registrant.country
+      postal_code=locked_registrant.postal_code
+      postal_address=locked_registrant.po_box
+      street_address=
+          [locked_registrant.address1,locked_registrant.address2,locked_registrant.address3].join(" ")
       dn << "O=#{org}" if !org.blank? and (!city.blank? or !state.blank?)
       dn << "OU=#{ou}" unless ou.blank?
+      dn << "OU=#{locked_registrant.special_fields["entity_code"]}" if certificate.is_naesb?
       dn << "C=#{country}"
       dn << "L=#{city}" unless city.blank?
       dn << "ST=#{state}" unless state.blank?
-      if cert.is_ev?
-        dn << "serialNumber=#{options[:serial_number] || certificate_order.jois.last.try(:company_number) ||
+      # dn << "postalCode=#{postal_code}" unless postal_code.blank?
+      # dn << "postalAddress=#{postal_address}" unless postal_address.blank?
+      # dn << "streetAddress=#{street_address}" unless street_address.blank?
+      if cert.is_ev? or cert.is_evcs?
+        dn << "serialNumber=#{locked_registrant.company_number ||
           ("11111111" if options[:ca_id]==Ca::ISSUER[:sslcom_shadow])}"
-        dn << "2.5.4.15=#{options[:business_category] || certificate_order.jois.last.try(:business_category) ||
+        dn << "2.5.4.15=#{locked_registrant.business_category ||
           ("Private Organization" if options[:ca_id]==Ca::ISSUER[:sslcom_shadow])}"
-        dn << "1.3.6.1.4.1.311.60.2.1.1=#{options[:joi_locality] || certificate_order.jois.last.try(:city) ||
+        dn << "1.3.6.1.4.1.311.60.2.1.1=#{locked_registrant.incorporation_city ||
           ("Houston" if options[:ca_id]==Ca::ISSUER[:sslcom_shadow])}"
-        dn << "1.3.6.1.4.1.311.60.2.1.2=#{options[:joi_state] || certificate_order.jois.last.try(:state) ||
+        dn << "1.3.6.1.4.1.311.60.2.1.2=#{locked_registrant.incorporation_state ||
           ("Texas" if options[:ca_id]==Ca::ISSUER[:sslcom_shadow])}"
-        dn << "1.3.6.1.4.1.311.60.2.1.3=#{options[:joi_country] || certificate_order.jois.last.try(:country) ||
+        dn << "1.3.6.1.4.1.311.60.2.1.3=#{locked_registrant.incorporation_country ||
           ("US" if options[:ca_id]==Ca::ISSUER[:sslcom_shadow])}"
       end
     end
@@ -776,7 +798,17 @@ class CertificateContent < ActiveRecord::Base
     dn.map{|d|d.gsub(/\\/,'\\\\').gsub(',','\,')}.join(",")
   end
 
+  def cached_csr_public_key_sha1
+    Rails.cache.fetch("#{cache_key}/cached_csr_public_key_sha1") do
+      csr.public_key_sha1
+    end
+  end
 
+  def cached_csr_public_key_md5
+    Rails.cache.fetch("#{cache_key}/cached_csr_public_key_md5") do
+      csr.public_key_md5
+    end
+  end
 
   def csr_certificate_name
     begin

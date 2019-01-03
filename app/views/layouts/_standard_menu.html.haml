@@ -10,6 +10,9 @@
     -#%li
     -#  =link_to "Contacts", saved_contacts_contacts_path(slug_params)
     -unless is_sandbox?
+      -permitted_to? :read, :validations do
+        %li(id="#{(is_on?("validations",current_slug) && !@prev) ? 't-intro' : 'manage_validations'}")
+          =link_to "Validations", validations_path(slug_params)
       -unless current_user.ssl_account.affiliate.blank?
         %li(id="#{current_page?(affiliate_path(current_user.ssl_account.affiliate)) ? 't-intro' : 'manage_affiliate'}")
           =link_to "Affiliate", affiliate_path(current_user.ssl_account.affiliate)
@@ -28,9 +31,6 @@
     -permitted_to? :read, :users do
       %li(id="#{(is_on?("users",current_slug) && !@prev) ? 't-intro' : 'manage_users'}")
         =link_to "Users", users_path(slug_params)
-    -permitted_to? :edit_settings, current_user.ssl_account do
-      %li(id="#{is_on?("edit_settings_ssl_account",current_slug) ? 't-intro' : 'manage_settings'}")
-        =link_to "Settings", edit_settings_ssl_account_path(slug_params)
     %li(id="#{is_on?("cdns",current_slug) ? 't-intro' : 'manage_cdns'}")
       =link_to "CDN", cdns_path(slug_params)
     -if Settings.activate_monitoring

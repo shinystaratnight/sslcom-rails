@@ -1,7 +1,9 @@
 source 'http://rubygems.org'
 
 gem 'rails', '~> 4.2.7.1'
-gem 'sprockets'
+
+
+gem "sprockets", ">= 3.7.2"
 gem 'protected_attributes'
 gem 'responders', '~> 2.0'
 gem 'dynamic_form'
@@ -80,7 +82,9 @@ gem 'recaptcha', require: 'recaptcha/rails'
 gem 'font-awesome-rails'
 gem 'acts_as_tree'
 gem 'whois', '~> 4.0'
+gem 'whois-parser'
 gem 'where-or'
+gem "skylight"
 
 group :development do
   gem 'foreman'
