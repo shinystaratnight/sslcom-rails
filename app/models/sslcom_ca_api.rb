@@ -171,8 +171,7 @@ class SslcomCaApi
     return cc.csr.sslcom_ca_requests.create(
       parameters: approval_req.body, method: "get", response: approval_res.body,
                                             ca: options[:ca]) if approval_res.try(:body)=~/WAITING FOR APPROVAL/
-    if options[:mapping].profile_name=~/EV/ and
-        (approval_res.try(:body).blank? or approval_res.try(:body)=~/EXPIRED AND NOTIFIED/)
+    if options[:mapping].profile_name=~/EV/ and approval_res.try(:body).blank? # or approval_res.try(:body)=~/EXPIRED AND NOTIFIED/)
       # create the user for EV order
       host = ca_host(options[:mapping])+"/v1/user"
       options.merge! no_public_key: true
@@ -183,13 +182,15 @@ class SslcomCaApi
           cc.csr.sslcom_usernames.compact.first) if options[:mapping].profile_name=~/EV/
     end
     req, res = call_ca(host, options, issue_cert_json(options))
-    cc.create_csr(body: options[:csr]) if cc.csr.blank?
+    cc.create_csr(body: options[:csr])
     api_log_entry=cc.csr.sslcom_ca_requests.create(request_url: host,
       parameters: req.body, method: "post", response: res.try(:body), ca: options[:ca_name] || ca_name(options))
-    if api_log_entry.username.blank?
+    if (!options[:mapping].profile_name=~/EV/ and api_log_entry.username.blank?) or
+        (options[:mapping].profile_name=~/EV/ and api_log_entry.request_username.blank?)
       OrderNotifier.problem_ca_sending("support@ssl.com", cc.certificate_order,"sslcom").deliver
     elsif api_log_entry.certificate_chain # signed certificate is issued
-      cc.update_column(:ref, api_log_entry.username) unless api_log_entry.blank?
+      cc.update_column(:ref, options[:mapping].profile_name=~/EV/ ? api_log_entry.request_username :
+                                 api_log_entry.username) unless api_log_entry.blank?
       attrs = {body: api_log_entry.end_entity_certificate.to_s, ca_id: options[:mapping].id}
       cc.csr.signed_certificates.create(attrs)
       SystemAudit.create(
@@ -255,7 +256,8 @@ class SslcomCaApi
 
   def self.unique_id(approval_id)
     req,res = get_status
-    JSON.parse(res.body).select{|approval|approval[1]==approval_id.to_i}.first[0] unless res.body.blank?
+    body=JSON.parse(res.body)
+    body.select{|approval|approval[1]==approval_id.to_i}.first[0] unless body.blank?
   end
 
   def self.client_certs(host)

@@ -29,7 +29,11 @@ class SslcomCaRequest < CaApiRequest
 
   def username
     read_attribute(:username) || ((JSON.parse(self.response)["user_name"] ||
-        JSON.parse(self.response)["username"]) unless self.response.blank?)
+        JSON.parse(self.response)["username"] || JSON.parse(self.parameters)["user_name"]) unless self.response.blank?)
+  end
+
+  def request_username
+    JSON.parse(self.parameters)["user_name"] unless self.parameters.blank?
   end
 
   def approval_id
