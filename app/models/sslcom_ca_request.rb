@@ -33,7 +33,7 @@ class SslcomCaRequest < CaApiRequest
   end
 
   def request_username
-    JSON.parse(self.parameters)["user_name"] unless self.parameters.blank?
+    (JSON.parse(self.parameters)["user_name"] || JSON.parse(self.response)["username"]) unless self.parameters.blank?
   end
 
   def approval_id

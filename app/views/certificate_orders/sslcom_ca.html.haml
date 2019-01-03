@@ -17,7 +17,7 @@
           .clearfix
             %label{for: 'cn'}
               Duration in Days:
-            =text_field_tag :duration, @certificate_order.remaining_days
+            =text_field_tag :duration, @certificate_order.remaining_days(round: true)
           .clearfix
             %label{for: 'cn'}
               *CN (Common name):
