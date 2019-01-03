@@ -171,7 +171,8 @@ class SslcomCaApi
     return cc.csr.sslcom_ca_requests.create(
       parameters: approval_req.body, method: "get", response: approval_res.body,
                                             ca: options[:ca]) if approval_res.try(:body)=~/WAITING FOR APPROVAL/
-    if options[:mapping].profile_name=~/EV/ and (approval_res.try(:body).blank? or approval_res.try(:body)=~/EXPIRED AND NOTIFIED/)
+    if options[:mapping].profile_name=~/EV/ and (approval_res.try(:body).blank? or
+        (approval_res.try(:body)=~/EXPIRED AND NOTIFIED/ and !cc.csr.sslcom_ca_requests.first=~/WAITING FOR APPROVAL/))
       # create the user for EV order
       host = ca_host(options[:mapping])+"/v1/user"
       options.merge! no_public_key: true
@@ -186,7 +187,8 @@ class SslcomCaApi
     api_log_entry=cc.csr.sslcom_ca_requests.create(request_url: host,
       parameters: req.body, method: "post", response: res.try(:body), ca: options[:ca_name] || ca_name(options))
     if (!options[:mapping].profile_name=~/EV/ and api_log_entry.username.blank?) or
-        (options[:mapping].profile_name=~/EV/ and api_log_entry.request_username.blank?)
+        (options[:mapping].profile_name=~/EV/ and api_log_entry.username.blank? and
+            api_log_entry.request_username.blank?)
       OrderNotifier.problem_ca_sending("support@ssl.com", cc.certificate_order,"sslcom").deliver
     elsif api_log_entry.certificate_chain # signed certificate is issued
       cc.update_column(:ref, options[:mapping].profile_name=~/EV/ ? api_log_entry.request_username :

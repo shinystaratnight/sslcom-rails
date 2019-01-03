@@ -7,6 +7,10 @@ class SslcomCaRequest < CaApiRequest
       self.username = parsed["user_name"] || parsed["username"]
       self.approval_id = parsed["approval_id"]
       self.certificate_chain = parsed["certificate_chain"]
+      if self.username.blank? and !self.parameters.blank?
+        parsed_req=JSON.parse(self.parameters)
+        self.username = parsed_req["user_name"] || parsed_req["username"]
+      end
     end
   end
 
@@ -29,7 +33,7 @@ class SslcomCaRequest < CaApiRequest
 
   def username
     read_attribute(:username) || ((JSON.parse(self.response)["user_name"] ||
-        JSON.parse(self.response)["username"] || JSON.parse(self.parameters)["user_name"]) unless self.response.blank?)
+        JSON.parse(self.response)["username"]) unless self.response.blank?)
   end
 
   def request_username
