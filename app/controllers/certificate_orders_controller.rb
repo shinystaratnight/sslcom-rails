@@ -191,6 +191,11 @@ class CertificateOrdersController < ApplicationController
                                 .map{|arr| [(arr.friendly_name || arr.common_name)+' '+ arr.public_key_sha1, arr.ref]}
                                 .delete_if{|arr| arr.second == nil}
             @managed_csrs.insert(0, ['none', 'none'])
+
+            if params[:csr_ref]
+              @generated_csr = params[:csr_ref]
+            end
+
             return render '/certificates/buy', :layout=>'application'
           end
           unless @certificate_order.certificate_content.csr_submitted? or params[:registrant]

@@ -880,6 +880,10 @@ jQuery(function($) {
       });
     <%end%>
 
+    <%if @generated_csr%>
+      $('.managed_csr').val('<%= @generated_csr %>').trigger('change');
+    <%end%>
+
     $('#weekday_custom_list').select2({ tags: true });
     $('#month_custom_list').select2({ tags: true });
     $('#day_custom_list').select2({ tags: true });
