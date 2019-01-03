@@ -49,6 +49,11 @@ class Registrant < Contact
       )
     }
 
+  validates_presence_of :business_category, :company_number, :incorporation_country,
+    if: Proc.new{|r|
+      !r.reusable? && r.contactable && r.contactable.certificate_order.certificate.is_ev?
+    }
+
   validates :city, :state, :country, :email, presence: true,
     if: proc { |r| r.reusable? && (r.organization? || r.individual?) }
   validates :company_name, :phone, presence: true, if: proc { |r| r.reusable? && r.organization? }

@@ -1,6 +1,5 @@
 -title = "Domains"
 -content_for :title, title
--system_admins = current_user.is_system_admins?
 =render :partial => 'index_scripts'
 
 #search_bar.hidden
@@ -54,7 +53,7 @@
           -unless validation_status=='validated'
             -if dcv.nil? || dcv.dcv_method == 'email'
               -status_link = link_to validation_status, validate_selected_domains_path(@ssl_slug, d_name_check: [d.id])
-            -else
+            -elsif dcv.csr_unique_value
               -status_link = d.certificate_content ? (link_to validation_status, new_certificate_order_validation_path(@ssl_slug, d.certificate_content.certificate_order)) : (link_to validation_status, validate_against_csr_domains_path(@ssl_slug, unique_value: dcv.csr_unique_value.unique_value))
           %tr
             %td=(order_ref=='Team' || (dcv && dcv.csr_unique_value)) ? (check_box_tag "d_name_check[]",d.id, false, :id => "d_name_check_#{d.id}", :class => "d_name_check") : ''
