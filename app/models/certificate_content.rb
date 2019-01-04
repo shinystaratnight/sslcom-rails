@@ -234,7 +234,7 @@ class CertificateContent < ActiveRecord::Base
   end
 
   def add_ca(ssl_account)
-    unless [467564,16077,484141,204730].include?(ssl_account.id)
+    unless [467564,16077,204730].include?(ssl_account.id)
       self.ca = (self.certificate.cas.ssl_account_or_general_default(ssl_account)).last if ca.blank? and certificate
     end
   end
@@ -781,17 +781,14 @@ class CertificateContent < ActiveRecord::Base
       # dn << "postalCode=#{postal_code}" unless postal_code.blank?
       # dn << "postalAddress=#{postal_address}" unless postal_address.blank?
       # dn << "streetAddress=#{street_address}" unless street_address.blank?
-      if cert.is_ev? or cert.is_evcs?
-        dn << "serialNumber=#{locked_registrant.company_number ||
-          ("11111111" if options[:ca_id]==Ca::ISSUER[:sslcom_shadow])}"
-        dn << "2.5.4.15=#{locked_registrant.business_category ||
-          ("Private Organization" if options[:ca_id]==Ca::ISSUER[:sslcom_shadow])}"
-        dn << "1.3.6.1.4.1.311.60.2.1.1=#{locked_registrant.incorporation_city ||
-          ("Houston" if options[:ca_id]==Ca::ISSUER[:sslcom_shadow])}"
-        dn << "1.3.6.1.4.1.311.60.2.1.2=#{locked_registrant.incorporation_state ||
-          ("Texas" if options[:ca_id]==Ca::ISSUER[:sslcom_shadow])}"
-        dn << "1.3.6.1.4.1.311.60.2.1.3=#{locked_registrant.incorporation_country ||
-          ("US" if options[:ca_id]==Ca::ISSUER[:sslcom_shadow])}"
+      if cert.is_ev?
+        dn << "serialNumber=#{locked_registrant.company_number}"
+        dn << "2.5.4.15=#{locked_registrant.business_category}"
+        dn << "1.3.6.1.4.1.311.60.2.1.1=#{locked_registrant.incorporation_city}" unless
+            locked_registrant.incorporation_city.blank?
+        dn << "1.3.6.1.4.1.311.60.2.1.2=#{locked_registrant.incorporation_state}" unless
+            locked_registrant.incorporation_state.blank?
+        dn << "1.3.6.1.4.1.311.60.2.1.3=#{locked_registrant.incorporation_country}"
       end
     end
     dn << options[:custom_fields] if options[:custom_fields]
