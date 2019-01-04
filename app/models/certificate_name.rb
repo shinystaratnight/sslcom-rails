@@ -189,7 +189,7 @@ class CertificateName < ActiveRecord::Base
              redirect: true).read
         end
         return true if !!(r =~ Regexp.new("^#{options[:csr].sha2_hash}") &&
-            r =~ Regexp.new("^#{options[:ca_tag]}") &&
+            (options[:ca_tag]=="ssl.com" ? true : r =~ Regexp.new("^#{options[:ca_tag]}")) &&
             (options[:csr].unique_value.blank? ? true : r =~ Regexp.new("^#{options[:csr].unique_value}")))
       end
     rescue Exception=>e

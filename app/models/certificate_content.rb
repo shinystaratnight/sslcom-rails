@@ -226,7 +226,6 @@ class CertificateContent < ActiveRecord::Base
     state :revoked
   end
 
-
   after_initialize do
     if new_record?
       self.ajax_check_csr ||= false
@@ -265,7 +264,7 @@ class CertificateContent < ActiveRecord::Base
   end
 
   def sslcom_ca_request
-    SslcomCaRequest.where(username: self.ref).last
+    SslcomCaRequest.where(username: self.ref).first
   end
 
   def pkcs7
