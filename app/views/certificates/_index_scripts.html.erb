@@ -676,6 +676,56 @@ jQuery(function($) {
       <%end%>
     });
 
+    $.manage_common_name = function() {
+      var old_common_name = $('#old_common_name').val();
+      var current_common_name = $('#common_name').val().toLowerCase();
+
+      if (current_common_name != old_common_name) {
+        var domain_names = $('textarea[id$=domains]').val().toLowerCase();
+
+        if (current_common_name == '') {
+          if (domain_names.search(old_common_name) != -1) {
+            domain_names = domain_names.replace(old_common_name, '');
+            $('textarea[id$=domains]').val(domain_names);
+            $('#old_common_name').val('');
+
+            $.adjustDomainPricing($('textarea[id$=domains]')[0]);
+          }
+        } else {
+          if (domain_names.search(current_common_name) != -1) {
+            if (domain_names.search(old_common_name) != -1) {
+              domain_names = domain_names.replace(old_common_name, '');
+              $('textarea[id$=domains]').val(domain_names);
+              $('#old_common_name').val(current_common_name);
+
+              $.adjustDomainPricing($('textarea[id$=domains]')[0]);
+            }
+          } else {
+            if (domain_names.search(old_common_name) != -1) {
+              domain_names = domain_names.replace(old_common_name, '');
+              $('#old_common_name').val(current_common_name);
+            }
+
+            domain_names = domain_names + ' ' + current_common_name;
+            $('textarea[id$=domains]').val(domain_names);
+
+            $.adjustDomainPricing($('textarea[id$=domains]')[0]);
+          }
+        }
+      }
+    };
+
+    $('#common_name').keypress(function(e) {
+      if (e.keyCode == 13 || e.keyCode == 32) {
+        e.preventDefault();
+        $.manage_common_name();
+      }
+    });
+
+    $('#common_name').blur(function() {
+      $.manage_common_name();
+    });
+
     $('textarea[id$=domains]').keypress(function (e) {
       if (e.keyCode == 13 || e.keyCode == 32) {
         $.adjustDomainPricing(this);

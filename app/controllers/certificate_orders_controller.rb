@@ -439,13 +439,29 @@ class CertificateOrdersController < ApplicationController
         cc = @certificate_order.transfer_certificate_content(@certificate_content)
 
         if params[:common_name] && !params[:common_name].empty?
-          domains = cc.domains
-          unless domains.include? params[:common_name]
-            domains << params[:common_name]
-            cc.update_attribute(:domains, domains.join(' '))
+          if @certificate_order.certificate.is_single?
+            cert_single_name = cc.certificate_names.where(is_common_name: true).first
+
+            if cert_single_name.name.downcase != params[:common_name].downcase
+              domains = cc.domains
+              unless domains.include? params[:common_name]
+                domains << params[:common_name]
+                cc.update_attribute(:domains, domains.join(' '))
+              end
+
+              cc.certificate_names.find_by_name(params[:common_name]).update_attribute(:is_common_name, true)
+              cert_single_name.destroy
+            end
+          else
+            domains = cc.domains
+            unless domains.include? params[:common_name]
+              domains << params[:common_name]
+              cc.update_attribute(:domains, domains.join(' '))
+            end
+
+            cc.certificate_names.where(is_common_name: true).first.update_attribute(:is_common_name, false)
+            cc.certificate_names.find_by_name(params[:common_name]).update_attribute(:is_common_name, true)
           end
-          cc.certificate_names.where(is_common_name: true).first.update_attribute(:is_common_name, false)
-          cc.certificate_names.find_by_name(params[:common_name]).update_attribute(:is_common_name, true)
         end
 
         if domains_adjustment
