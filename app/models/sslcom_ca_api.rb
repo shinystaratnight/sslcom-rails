@@ -184,7 +184,7 @@ class SslcomCaApi
           cc.csr.sslcom_usernames.compact.first) if options[:mapping].profile_name=~/EV/
     end
     req, res = call_ca(host, options, issue_cert_json(options))
-    cc.create_csr(body: options[:csr])
+    cc.create_csr(body: options[:csr]) if cc.csr.blank?
     api_log_entry=cc.csr.sslcom_ca_requests.create(request_url: host,
       parameters: req.body, method: "post", response: res.try(:body), ca: options[:ca_name] || ca_name(options))
     if (!options[:mapping].profile_name=~/EV/ and api_log_entry.username.blank?) or

@@ -397,7 +397,7 @@ class CertificateContent < ActiveRecord::Base
         end
       else
         candidate_addresses=name.candidate_email_addresses
-        if candidate_addresses.include?(v["dcv"])
+        if DomainControlValidation.approved_email_address? candidate_addresses, v["dcv"]
           name.domain_control_validations.create(dcv_method: "email", email_address: v["dcv"],
                                                  failure_action: v["dcv_failure_action"],
                                                  candidate_addresses: candidate_addresses)
