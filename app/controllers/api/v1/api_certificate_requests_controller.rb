@@ -166,7 +166,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
 
                 unless dcv.identifier_found
                   if dcv.dcv_method == 'email'
-                    if dcv.candidate_addresses.include?(dcv.email_address)
+                    if DomainControlValidation.approved_email_address? dcv.candidate_addresses, dcv.email_address
                       if dcv.email_address != email_for_identifier
                         if domain_list.length > 0
                           domain_ary << domain_list
@@ -274,7 +274,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
                   if dcv.dcv_method == 'email'
                     if dcv.candidate_addresses.blank?
                       cn.candidate_email_addresses
-                    elsif dcv.candidate_addresses.include?(dcv.email_address)
+                    elsif DomainControlValidation.approved_email_address? dcv.candidate_addresses, dcv.email_address
                       if dcv.email_address != email_for_identifier
                         if domain_list.length>0
                           domain_ary << domain_list
@@ -1182,7 +1182,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
           cache = Rails.cache.read('api-email-addresses-' + domain)
 
           if cache.blank?
-            @result.email_addresses.merge! domain => ComodoApi.domain_control_email_choices(domain).email_address_choices
+            @result.email_addresses.merge! domain => CertificateName.candidate_email_addresses(domain)
 
             # Caching Certificate order for "Retrieve an SSL Certificate" API.
             cache_key = 'api-email-addresses-' + domain

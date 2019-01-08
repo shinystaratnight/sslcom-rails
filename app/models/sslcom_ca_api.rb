@@ -184,7 +184,7 @@ class SslcomCaApi
           cc.csr.sslcom_usernames.compact.first) if options[:mapping].profile_name=~/EV/
     end
     req, res = call_ca(host, options, issue_cert_json(options))
-    cc.create_csr(body: options[:csr])
+    cc.create_csr(body: options[:csr]) if cc.csr.blank?
     api_log_entry=cc.csr.sslcom_ca_requests.create(request_url: host,
       parameters: req.body, method: "post", response: res.try(:body), ca: options[:ca_name] || ca_name(options))
     if (!options[:mapping].profile_name=~/EV/ and api_log_entry.username.blank?) or
@@ -289,6 +289,7 @@ class SslcomCaApi
     req = (options[:method]=~/GET/i ? Net::HTTP::Get : Net::HTTP::Post).new(uri, 'Content-Type' => 'application/json')
     http = Net::HTTP.new(uri.host, uri.port)
     http.use_ssl = true
+    http.read_timeout = 300 # Default is 60 seconds
     http.verify_mode = OpenSSL::SSL::VERIFY_PEER
     http.cert = OpenSSL::X509::Certificate.new(File.read(client_auth_cert))
     http.key = OpenSSL::PKey::RSA.new(File.read(client_auth_key))
