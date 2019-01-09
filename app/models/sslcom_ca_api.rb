@@ -260,7 +260,8 @@ class SslcomCaApi
   def self.unique_id(approval_id)
     req,res = get_status
     body=JSON.parse(res.body)
-    body.select{|approval|approval[1]==approval_id.to_i}.first[0] unless body.blank?
+    id=body.select{|approval|approval[1]==approval_id.to_i} unless body.blank?
+    id.first[0] unless id.blank?
   end
 
   def self.client_certs(host)
