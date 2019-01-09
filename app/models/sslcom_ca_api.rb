@@ -173,7 +173,7 @@ class SslcomCaApi
       parameters: approval_req.body, method: "get", response: approval_res.body,
                                             ca: options[:ca]) if approval_res.try(:body)=~/WAITING FOR APPROVAL/
     if options[:mapping].profile_name=~/EV/ and (approval_res.try(:body).blank? or approval_res.try(:body)=="[]" or
-        (approval_res.try(:body)=~/EXPIRED AND NOTIFIED/ and !cc.csr.sslcom_ca_requests.first=~/WAITING FOR APPROVAL/))
+        (!approval_res.try(:body)=~/WAITING FOR APPROVAL/))
       # create the user for EV order
       host = ca_host(options[:mapping])+"/v1/user"
       options.merge! no_public_key: true
@@ -260,7 +260,8 @@ class SslcomCaApi
   def self.unique_id(approval_id)
     req,res = get_status
     body=JSON.parse(res.body)
-    body.select{|approval|approval[1]==approval_id.to_i}.first[0] unless body.blank?
+    id=body.select{|approval|approval[1]==approval_id.to_i} unless body.blank?
+    id.first[0] unless id.blank?
   end
 
   def self.client_certs(host)
