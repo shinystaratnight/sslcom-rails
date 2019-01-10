@@ -234,7 +234,8 @@ class CertificateContent < ActiveRecord::Base
   end
 
   def add_ca(ssl_account)
-    unless [467564,16077,204730].include?(ssl_account.id)
+    # dtnt comodo chained is 492703
+    unless [467564,16077,204730,492703].include?(ssl_account.id)
       self.ca = (self.certificate.cas.ssl_account_or_general_default(ssl_account)).last if ca.blank? and certificate
     end
   end
