@@ -166,7 +166,8 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
 
                 unless dcv.identifier_found
                   if dcv.dcv_method == 'email'
-                    if DomainControlValidation.approved_email_address? dcv.candidate_addresses, dcv.email_address
+                    if DomainControlValidation.approved_email_address? CertificateName.candidate_email_addresses(
+                        cn.non_wildcard_name), dcv.email_address
                       if dcv.email_address != email_for_identifier
                         if domain_list.length > 0
                           domain_ary << domain_list
@@ -272,9 +273,8 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
                 dcv = cn.domain_control_validations.last
                 if !dcv.nil? && !dcv.identifier_found
                   if dcv.dcv_method == 'email'
-                    if dcv.candidate_addresses.blank?
-                      cn.candidate_email_addresses
-                    elsif DomainControlValidation.approved_email_address? dcv.candidate_addresses, dcv.email_address
+                    if DomainControlValidation.approved_email_address? CertificateName.candidate_email_addresses(
+                        cn.non_wildcard_name), dcv.email_address
                       if dcv.email_address != email_for_identifier
                         if domain_list.length>0
                           domain_ary << domain_list

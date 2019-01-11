@@ -67,8 +67,8 @@ class DomainsController < ApplicationController
     @addresses = CertificateName.candidate_email_addresses(@domain.non_wildcard_name)
     if params[:authenticity_token]
       if params[:dcv_address]=~EmailValidator::EMAIL_FORMAT
-        if DomainControlValidation.approved_email_address? (@domain.domain_control_validations.last.candidate_addresses+
-                                                               @addresses).uniq, params[:dcv_address]
+        if DomainControlValidation.approved_email_address? CertificateName.candidate_email_addresses(
+            @domain.non_wildcard_name), params[:dcv_address]
           identifier = (SecureRandom.hex(8)+Time.now.to_i.to_s(32))[0..19]
           @domain.domain_control_validations.create(dcv_method: "email", email_address: params[:dcv_address],
                                                     identifier: identifier, failure_action: "ignore", candidate_addresses: @addresses)
@@ -298,7 +298,8 @@ class DomainsController < ApplicationController
       cnames.each do |cn|
         dcv = cn.domain_control_validations.last
         if dcv.dcv_method == 'email'
-          if DomainControlValidation.approved_email_address? dcv.candidate_addresses, dcv.email_address
+          if DomainControlValidation.approved_email_address? CertificateName.candidate_email_addresses(
+              cn.non_wildcard_name), dcv.email_address
             if dcv.email_address != email_for_identifier
               if domain_list.length>0
                 domain_ary << domain_list
@@ -444,7 +445,8 @@ class DomainsController < ApplicationController
     domain_list = []
     cnames.each do |cn|
       dcv = cn.domain_control_validations.last
-      if DomainControlValidation.approved_email_address? cn.candidate_email_addresses, dcv.email_address
+      if DomainControlValidation.approved_email_address? CertificateName.candidate_email_addresses(
+          cn.non_wildcard_name), dcv.email_address
         if dcv.email_address != email_for_identifier
           if domain_list.length > 0
             domain_ary << domain_list
