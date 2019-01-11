@@ -234,7 +234,8 @@ class CertificateContent < ActiveRecord::Base
   end
 
   def add_ca(ssl_account)
-    unless [467564,16077,204730].include?(ssl_account.id)
+    # dtnt comodo chained is 492703
+    unless [467564,16077,204730,492703].include?(ssl_account.id)
       self.ca = (self.certificate.cas.ssl_account_or_general_default(ssl_account)).last if ca.blank? and certificate
     end
   end
@@ -251,7 +252,7 @@ class CertificateContent < ActiveRecord::Base
       cn_domain = certificate.is_single? ? CertificateContent.non_wildcard_name(domain,true) : domain
       new_certificate_name=certificate_names.find_or_create_by(name: cn_domain.downcase,
                                                            is_common_name: csr.try(:common_name)==domain)
-      new_certificate_name.candidate_email_addresses
+      new_certificate_name.candidate_email_addresses # start the queued job running
       Delayed::Job.enqueue OtherDcvsSatisyJob.new(ssl_account,new_certificate_name) if ssl_account
     end
 
@@ -396,17 +397,19 @@ class CertificateContent < ActiveRecord::Base
           )
         end
       else
-        candidate_addresses=name.candidate_email_addresses
-        if DomainControlValidation.approved_email_address? candidate_addresses, v["dcv"]
+        if DomainControlValidation.approved_email_address? CertificateName.candidate_email_addresses(
+            name.non_wildcard_name), v["dcv"]
           name.domain_control_validations.create(dcv_method: "email", email_address: v["dcv"],
                                                  failure_action: v["dcv_failure_action"],
-                                                 candidate_addresses: candidate_addresses)
+                                                 candidate_addresses: CertificateName.candidate_email_addresses(
+                                                     name.non_wildcard_name))
           # assume the first name is the common name
           self.csr.domain_control_validations.create(
               dcv_method: "email",
               email_address: v["dcv"],
               failure_action: v["dcv_failure_action"],
-              candidate_addresses: candidate_addresses
+              candidate_addresses: CertificateName.candidate_email_addresses(
+                  name.non_wildcard_name)
           ) if (i == 0 && !certificate_order.certificate.is_ucc?)
         end
       end
