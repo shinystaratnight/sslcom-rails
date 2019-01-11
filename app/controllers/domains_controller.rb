@@ -137,7 +137,7 @@ class DomainsController < ApplicationController
         dcv = dn.domain_control_validations.last
         next if dcv && dcv.identifier_found
         @all_domains << dn
-        @address_choices << dn.candidate_email_addresses
+        @address_choices << CertificateName.candidate_email_addresses(dn.non_wildcard_name)
 
         @domain_details[dn.name] = {}
         @domain_details[dn.name]['dcv_method'] = dcv ? dcv.email_address : ''
@@ -175,7 +175,7 @@ class DomainsController < ApplicationController
         if @selected_domains.blank?
           redirect_to domains_path(@ssl_slug)
         end
-        @address_choices << dn.candidate_email_addresses
+        @address_choices << CertificateName.candidate_email_addresses(dn.non_wildcard_name)
 
         @domain_details[dn.name] = {}
         dcv_last = dn.domain_control_validations.last
@@ -204,7 +204,7 @@ class DomainsController < ApplicationController
         dn = CertificateName.find_by_id(dcv.certificate_name_id)
         next if @selected_domains.include?(dn)
         @selected_domains << dn
-        @address_choices << dn.candidate_email_addresses
+        @address_choices << CertificateName.candidate_email_addresses(dn.non_wildcard_name)
 
         @domain_details[dn.name] = {}
         dcv_last = dn.domain_control_validations.last
@@ -237,7 +237,7 @@ class DomainsController < ApplicationController
         dn = CertificateName.find_by_id(dcv.certificate_name_id)
         next if @selected_domains.include?(dn)
         @selected_domains << dn
-        @address_choices << dn.candidate_email_addresses
+        @address_choices << CertificateName.candidate_email_addresses(dn.non_wildcard_name)
 
         @domain_details[dn.name] = {}
         dcv_last = dn.domain_control_validations.last
@@ -270,7 +270,7 @@ class DomainsController < ApplicationController
       d_name_ids.each_with_index do |id, index|
         cn = CertificateName.find_by_id(id)
         @selected_domains << cn
-        @address_choices << cn.candidate_email_addresses
+        @address_choices << CertificateName.candidate_email_addresses(cn.non_wildcard_name)
         if addresses[index]=~EmailValidator::EMAIL_FORMAT
           cn.domain_control_validations.create(dcv_method: "email", email_address: addresses[index],
                                                candidate_addresses: @address_choices, csr_unique_value_id:
@@ -433,7 +433,7 @@ class DomainsController < ApplicationController
       if addresses[index] =~ EmailValidator::EMAIL_FORMAT
         cn = CertificateName.find_by_id(id)
         cn.domain_control_validations.create(dcv_method: "email", email_address: addresses[index],
-                                             candidate_addresses: cn.candidate_email_addresses)
+                                   candidate_addresses: CertificateName.candidate_email_addresses(cn.non_wildcard_name))
         cnames << cn
       end
     end
