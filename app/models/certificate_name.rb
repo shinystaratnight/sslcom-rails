@@ -237,7 +237,7 @@ class CertificateName < ActiveRecord::Base
           dcv.update_column(:candidate_addresses, standard_addresses) if dcv
           Rails.cache.delete(certificate_name.get_asynch_cache_label)
         else
-          CertificateName.where{name==dname}.each{|cn| Rails.cache.delete(cn.get_asynch_cache_label)}
+          CertificateName.where{name=~"%#{dname}"}.each{|cn| Rails.cache.delete(cn.get_asynch_cache_label)}
         end
       rescue Exception=>e
         Logger.new(STDOUT).error e.backtrace.inspect
