@@ -232,12 +232,10 @@ class CertificateName < ActiveRecord::Base
           standard_addresses << ad.downcase unless ad =~/abuse.*?@/i
         end
         Rails.cache.write("CertificateName.candidate_email_addresses/#{dname}",standard_addresses)
+        CertificateName.where{name=~"%#{dname}"}.each{|cn| cn.touch; Rails.cache.delete(cn.get_asynch_cache_label)}
         if certificate_name
           dcv=certificate_name.domain_control_validations.last
           dcv.update_column(:candidate_addresses, standard_addresses) if dcv
-          Rails.cache.delete(certificate_name.get_asynch_cache_label)
-        else
-          CertificateName.where{name=~"%#{dname}"}.each{|cn| Rails.cache.delete(cn.get_asynch_cache_label)}
         end
       rescue Exception=>e
         Logger.new(STDOUT).error e.backtrace.inspect
