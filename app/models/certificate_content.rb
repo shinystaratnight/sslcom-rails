@@ -61,7 +61,7 @@ class CertificateContent < ActiveRecord::Base
     azadegi\.com Comodo\sRoot\sCA CyberTrust\sRoot\sCA DigiCert\sRoot\sCA Equifax\sRoot\sCA friends\.walla\.co\.il
     GlobalSign\sRoot\sCA login\.live\.com my\.screenname\.aol\.com secure\.logmein\.com
     Thawte\sRoot\sCA twitter\.com VeriSign\sRoot\sCA wordpress\.com www\.10million\.org www\.balatarin\.com
-    cia\.gov \.cybertrust\.com equifax\.com hamdami\.com mossad\.gov\.il sis\.gov\.uk microsoft\.com
+    cia\.gov \.cybertrust\.com equifax\.com hamdami\.com mossad\.gov\.il sis\.gov\.uk
     yahoo\.com login\.skype\.com mozilla\.org \.live\.com global\strustee)
 
   WHITELIST = {492127=> %w(.*?\.ssl\.com\z \Assl\.com\z .*?\.certlock\.com\z \Acertlock\.com\z),
