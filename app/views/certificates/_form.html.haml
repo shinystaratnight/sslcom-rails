@@ -112,6 +112,11 @@
           Managed CSR:
         =select_tag :managed_csr, options_for_select(@managed_csrs, selected: {}), :class => 'managed_csr'
         =link_to 'Go To CSR Manager', managed_csrs_path(@ssl_slug || @certificate_order.ssl_account.to_slug)
+      .clearfix.manage_cn_block
+        %label
+          Common Name:
+        =text_field_tag :common_name
+        =hidden_field_tag :old_common_name
       -if Settings.csr_domains_ui
         .clearfix.managed_domains_block
           %label

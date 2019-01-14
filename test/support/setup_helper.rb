@@ -48,6 +48,8 @@ module SetupHelper
     create(:certificate, :wcssl)      # 105 Wildcard SSL (wc256sslcom), 1-domain, unlimited-subdomains, wildcard
     create(:certificate, :basicssl)   # 106 Basic SSL (basic256sslcom), 1-domain, non-wildcard
     create(:certificate, :premiumssl) # 107 Premium SSL (premium256sslcom), 1-domain, 3-subdomains, non-wildcard
+    create(:certificate, :codesigningssl) # 350 Code Signing (codesigning256sslcom)
+    create(:certificate, :evcodesigningssl) # 360 EV Code Signing (evcodesigning256sslcom)
   end
 
   def initialize_server_software

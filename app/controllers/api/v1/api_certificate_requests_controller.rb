@@ -112,14 +112,15 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
     if @result.valid? && @result.save
       co = @result.find_certificate_order
       # if co.ov_validated?
-        options={csr: params[:csr]}
-        if res = SslcomCaApi.apply_for_certificate(co,options).end_entity_certificate.to_s
-          co_token = co.certificate_order_tokens.where(is_expired: false).first
-          co_token.update_attribute(:is_expired, true) if co_token
 
-          @result.cert_results = res
-        end
-      # end
+      options={csr: params[:csr]}
+      if res = SslcomCaApi.apply_for_certificate(co,options).end_entity_certificate
+        co_token = co.certificate_order_tokens.where(is_expired: false).first
+        co_token.update_attribute(:is_expired, true) if co_token
+
+        @result.cert_results = res.to_s
+        @result.cert_common_name = res.subject.common_name.gsub(/[\s\.\*\(\)]/,"_").downcase + '.crt'
+      end
     else
       InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
     end
