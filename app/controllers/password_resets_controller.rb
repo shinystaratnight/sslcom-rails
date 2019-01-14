@@ -53,7 +53,7 @@ class PasswordResetsController < ApplicationController
         end
       end
     else
-      flash[:notice] = "It failed to verify as human."
+      flash[:notice] = "Are you human?"
       render :action => :new
     end
   end

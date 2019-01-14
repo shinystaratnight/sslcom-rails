@@ -10,15 +10,15 @@ class ComodoApi
 
   CODE_SIGNING_PRODUCT={"1"=>"x_PPP=1511", "2"=>"x_PPP=1512", "3"=>"x_PPP=1509"}
   SIGNATURE_HASH = %w(NO_PREFERENCE INFER_FROM_CSR PREFER_SHA2 PREFER_SHA1 REQUIRE_SHA2)
-  REPLACE_SSL_URL="https://secure.comodo.net/products/!AutoReplaceSSL"
-  APPLY_SSL_URL="https://secure.comodo.net/products/!AutoApplySSL"
-  PLACE_ORDER_URL="https://secure.comodo.net/products/!PlaceOrder"
-  RESEND_DCV_URL="https://secure.comodo.net/products/!ResendDCVEmail"
-  AUTO_UPDATE_URL="https://secure.comodo.net/products/!AutoUpdateDCV"
-  AUTO_REMOVE_URL="https://secure.comodo.net/products/!AutoRemoveMDCDomain"
-  REVOKE_SSL_URL="https://secure.comodo.net/products/!AutoRevokeSSL"
-  COLLECT_SSL_URL="https://secure.comodo.net/products/download/CollectSSL"
-  GET_MDC_DETAILS="https://secure.comodo.net/products/!GetMDCDomainDetails"
+  REPLACE_SSL_URL="https://secure.trust-provider.com/products/!AutoReplaceSSL"
+  APPLY_SSL_URL="https://secure.trust-provider.com/products/!AutoApplySSL"
+  PLACE_ORDER_URL="https://secure.trust-provider.com/products/!PlaceOrder"
+  RESEND_DCV_URL="https://secure.trust-provider.com/products/!ResendDCVEmail"
+  AUTO_UPDATE_URL="https://secure.trust-provider.com/products/!AutoUpdateDCV"
+  AUTO_REMOVE_URL="https://secure.trust-provider.com/products/!AutoRemoveMDCDomain"
+  REVOKE_SSL_URL="https://secure.trust-provider.com/products/!AutoRevokeSSL"
+  COLLECT_SSL_URL="https://secure.trust-provider.com/products/download/CollectSSL"
+  GET_MDC_DETAILS="https://secure.trust-provider.com/products/!GetMDCDomainDetails"
   RESPONSE_TYPE={"zip"=>0,"netscape"=>1, "pkcs7"=>2, "individually"=>3}
   RESPONSE_ENCODING={"base64"=>0,"binary"=>1}
 
@@ -89,7 +89,7 @@ class ComodoApi
     is_a_obj = (obj_or_domain.is_a?(Csr) or obj_or_domain.is_a?(CertificateName)) ? true : false
     comodo_options = {'domainName' => is_a_obj ? obj_or_domain.try(:common_name) : obj_or_domain}.
         merge(CREDENTIALS).map{|k,v|"#{k}=#{v}"}.join("&")
-    host = "https://secure.comodo.net/products/!GetDCVEmailAddressList"
+    host = "https://secure.trust-provider.com/products/!GetDCVEmailAddressList"
     res = send_comodo(host, comodo_options)
     attr = {request_url: host,
       parameters: comodo_options, method: "post", response: res.body, ca: "comodo"}

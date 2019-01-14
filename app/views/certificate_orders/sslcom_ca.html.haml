@@ -17,7 +17,7 @@
           .clearfix
             %label{for: 'cn'}
               Duration in Days:
-            =text_field_tag :duration, @certificate_order.remaining_days
+            =text_field_tag :duration, @certificate_order.remaining_days(round: true)
           .clearfix
             %label{for: 'cn'}
               *CN (Common name):
@@ -27,66 +27,66 @@
               %label{for: 'o'}
                 *O (Organization):
                 %span.label_desc organization or company name
-              =text_field_tag :o, @certificate_order.registrant.company_name
+              =text_field_tag :o, @certificate_order.locked_registrant.company_name
             .clearfix
               %label{for: 'ou'}
                 OU (Organizational Unit):
-              =text_field_tag :ou, @certificate_order.registrant.department
+              =text_field_tag :ou, @certificate_order.locked_registrant.department
             .clearfix
               %label{for: 'city'}
                 *Locality:
                 %span.label_desc * if city registered
-              =text_field_tag :city, @certificate_order.registrant.city
+              =text_field_tag :city, @certificate_order.locked_registrant.city
             .clearfix
               %label{for: 'state'}
                 *Province:
                 %span.label_desc * if state, province, or county registered
-              =text_field_tag :state, @certificate_order.registrant.department
+              =text_field_tag :state, @certificate_order.locked_registrant.state
             .clearfix
               %label{for: 'country'}
                 *Country:
-              =select_tag :country, options_for_select(Country.approved.collect {|c| [ c.name, c.iso1_code ] }.sort{|x,y|x[0]<=>y[0]},@certificate_order.registrant.country)
+              =select_tag :country, options_for_select(Country.approved.collect {|c| [ c.name, c.iso1_code ] }.sort{|x,y|x[0]<=>y[0]},@certificate_order.locked_registrant.country)
             .clearfix
               %label{for: 'postal_code'}
                 Postal Code:
                 %span.label_desc postal code or zip
-              =text_field_tag :postal_code, @certificate_order.registrant.postal_code
+              =text_field_tag :postal_code, @certificate_order.locked_registrant.postal_code
             -if for_ov? or for_ev? or for_evcs?
               .clearfix
                 %label{for: 'postal_address'}
                   Postal Address:
                   %span.label_desc postal address
-                =text_field_tag :postal_address
+                =text_field_tag :po_box
             .clearfix
               %label{for: 'street_address'}
                 Street Address:
                 %span.label_desc street address
-              =text_field_tag :street_address
+              =text_field_tag :street_address, @certificate_order.locked_registrant.address1
           -if for_evcs? or for_ev?
             .clearfix
               %label{for: 'business_category'}
                 *Business Category:
-              =select_tag :business_category, options_for_select(Joi::BUSINESS_CATEGORY.values)
+              =select_tag :business_category, options_for_select(Joi::BUSINESS_CATEGORY.values,@certificate_order.locked_registrant.business_category)
             .clearfix
               %label{for: 'serial_number'}
                 *Serial Number:
                 %span.label_desc company registration number
-              =text_field_tag :serial_number
+              =text_field_tag :company_number, @certificate_order.locked_registrant.company_number
             .clearfix
               %label{for: 'joi_locality'}
                 Jurisdiction Locality:
                 %span.label_desc joi city
-              =text_field_tag :postal_locality
+              =text_field_tag :incorporation_city, @certificate_order.locked_registrant.incorporation_city
             .clearfix
               %label{for: 'joi_province'}
                 Jurisdiction Province:
                 %span.label_desc joi province, state or country
-              =text_field_tag :joi_state
+              =text_field_tag :incorporation_state, @certificate_order.locked_registrant.incorporation_state
             .clearfix
               %label{for: 'joi_country'}
                 *Jurisdiction Country:
                 %span.label_desc joi country
-              =select_tag :joi_country, options_for_select(Country::PRIORITY+[""], disabled: [""])+options_for_select(Country.approved.collect {|c| [ c.name, c.iso1_code ] }.sort{|x,y|x[0]<=>y[0]})
+              =select_tag :incorporation_country, options_for_select(Country::PRIORITY+[""], disabled: [""])+options_for_select(Country.approved.collect {|c| [ c.name, c.iso1_code ] }.sort{|x,y|x[0]<=>y[0]}, @certificate_order.locked_registrant.incorporation_state)
           .clearfix
             %label{for: 'csr'}
               *CSR (Certificate Signing Request):

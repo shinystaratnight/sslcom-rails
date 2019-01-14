@@ -90,46 +90,31 @@ class SslcomCaApi
     end unless options[:cc].certificate.blank?
   end
 
-  def self.subject_dn(options={})
-    dn=["CN=#{options[:cn].downcase}"]
-    unless options[:mapping].profile_name =~ /DV/
-      dn << "O=#{options[:o]}" unless options[:o].blank?
-      dn << "OU=#{options[:ou]}" unless options[:ou].blank?
-      dn << "C=#{options[:country]}" unless options[:country].blank?
-      dn << "L=#{options[:city]}" unless options[:city].blank?
-      dn << "ST=#{options[:state]}" unless options[:state].blank?
-      dn << "postalCode=#{options[:postal_code]}" unless options[:postal_code].blank?
-      dn << "postalAddress=#{options[:postal_address]}" unless options[:postal_address].blank?
-      dn << "streetAddress=#{options[:street_address]}" unless options[:street_address].blank?
-      dn << "serialNumber=#{options[:serial_number]}" unless options[:serial_number].blank?
-      dn << "2.5.4.15=#{options[:business_category]}" unless options[:business_category].blank?
-      dn << "1.3.6.1.4.1.311.60.2.1.1=#{options[:joi_locality]}" unless options[:joi_locality].blank?
-      dn << "1.3.6.1.4.1.311.60.2.1.2=#{options[:joi_state]}" unless options[:joi_state].blank?
-      dn << "1.3.6.1.4.1.311.60.2.1.3=#{options[:joi_country]}" unless options[:joi_country].blank?
-        # =text_area_tag :csr, @certificate_order.certificate_content.csr.body
-        #    =text_area_tag :san, @certificate_order.all_domains.join("\n"),readonly: true
-    end
-    dn.map{|d|d.gsub(/\\/,'\\\\').gsub(',','\,')}.join(",")
-  end
-
   def self.subject_alt_name(options)
     cert = options[:cc].certificate
-    common_name=options[:cc].csr.common_name
-    names=if cert.is_smime?
-      "rfc822Name="
-    elsif !cert.is_code_signing?
-      (options[:san] ? options[:san].split(/\s+/) : options[:cc].all_domains).map{|d|d.downcase}
-    end || ""
-    names << if cert.is_wildcard?
-      "#{CertificateContent.non_wildcard_name(common_name)}"
-    elsif cert.is_single?
-      if common_name=~/\Awww\./
-        "#{common_name[4..-1]}"
-      else
-        "www.#{common_name}"
-      end
+    common_name=options[:common_name] || options[:cn] ||
+        (options[:csr] ? Csr.new(body: options[:csr]) : options[:cc].csr).common_name
+    names=if cert.is_smime_or_client?
+            "" # "rfc822Name=#{options[:cc].certificate_order.assignee.email}"
+          elsif cert.is_server?
+            ([common_name]+(options[:san] ?
+                options[:san].split(Certificate::DOMAINS_TEXTAREA_SEPARATOR) :
+                                options[:cc].certificate_names.map(&:name))).uniq.map{|d|d.downcase}
+          end || ""
+    if cert.is_server?
+      names <<  if cert.is_wildcard?
+                  "#{CertificateContent.non_wildcard_name(common_name)}"
+                elsif cert.is_single?
+                  if common_name=~/\Awww\./
+                    "#{common_name[4..-1]}"
+                  else
+                    "www.#{common_name}"
+                  end
+                end
+      "dNSName=#{names.compact.map(&:downcase).uniq.join(",dNSName=")}"
+    else
+      names
     end
-    "dNSName=#{names.compact.map(&:downcase).uniq.join(",dNSName=")}"
   end
 
   # revoke json parameter string for REST call to EJBCA
@@ -143,16 +128,18 @@ class SslcomCaApi
   def self.issue_cert_json(options)
     cert = options[:cc].certificate
     co=options[:cc].certificate_order
-    carry_over = co.certificate.is_free? ? 0 : options[:cc].csr.days_left
-    if options[:cc].csr
-      options[:mapping]=options[:mapping].ecc_profile if options[:cc].csr.sig_alg_parameter=~/ecc/i
+    csr=options[:csr] ? Csr.new(body: options[:csr]) : options[:cc].csr
+    carry_over = (!cert.is_server? or cert.is_free?) ? 0 : csr.days_left
+    if csr
+      options[:mapping]=options[:mapping].ecc_profile if csr.sig_alg_parameter=~/ecc/i
       dn={}
       if options[:collect_certificate]
         dn.merge! user_name: options[:username]
       else
-        dn.merge! subject_dn: (options[:action]=="send_to_ca" ? subject_dn(options) : # via RA form or shadow
-          (options[:subject_dn] || options[:cc].subject_dn({mapping: options[:mapping]})))+
-            ",OU=#{Digest::SHA1.hexdigest(options[:cc].csr.to_der+DateTime.now.to_i.to_s).upcase}",
+        options[:common_name]=options[:common_name] || options[:cn] ||
+          options[:cc].certificate_names.find{|cn|cn.is_common_name==true}.try(:name) ||
+          options[:cc].certificate_names.last.name if cert.is_server?
+        dn.merge! subject_dn: (options[:subject_dn] || options[:cc].subject_dn(options)),
           ca_name: options[:ca_name] || ca_name(options),
           certificate_profile: certificate_profile(options),
           end_entity_profile: end_entity_profile(options),
@@ -160,36 +147,36 @@ class SslcomCaApi
               cert.max_duration].min.floor}:0:0"
         dn.merge!(subject_alt_name: subject_alt_name(options)) unless cert.is_code_signing?
       end
-      dn.merge!(request_type: "public_key",request_data: options[:cc].csr.public_key.to_pem) if
+      dn.merge!(request_type: "public_key",request_data: csr.public_key.to_pem) if
           options[:collect_certificate] or options[:no_public_key].blank?
       dn.to_json
     end
   end
 
-  def self.apply_for_certificate(certificate_order, options={})
-    certificate = certificate_order.certificate
-    if options[:send_to_ca]
-      options[:mapping] = Ca.find_by_ref(options[:send_to_ca])
-    elsif options[:mapping].blank?
-      options[:mapping] = certificate_order.certificate_content.ca
-    end
+  def self.set_mapping(certificate_order,options)
+    options[:mapping] = Ca.find_by_ref(options[:send_to_ca]) if options[:send_to_ca]
+    options[:mapping] = certificate_order.certificate_content.ca if options[:mapping].blank?
 
     # does this need to be a DV if OV is required but not satisfied?
-    if options[:mapping].profile_name=~/OV/ or options[:mapping].profile_name=~/EV/
+    if certificate_order.certificate.is_server? and
+        (options[:mapping].profile_name=~/OV/ or options[:mapping].profile_name=~/EV/)
       downstep = !certificate_order.ov_validated?
       options[:mapping]=options[:mapping].downstep if downstep
     end
+  end
 
+  def self.apply_for_certificate(certificate_order, options={})
+    set_mapping(certificate_order, options)
     options.merge! cc: cc = options[:certificate_content] || certificate_order.certificate_content
     approval_req, approval_res = SslcomCaApi.get_status(csr: cc.csr, mapping: options[:mapping])
     return cc.csr.sslcom_ca_requests.create(
       parameters: approval_req.body, method: "get", response: approval_res.body,
                                             ca: options[:ca]) if approval_res.try(:body)=~/WAITING FOR APPROVAL/
-    if options[:mapping].profile_name=~/EV/ and
-        (approval_res.try(:body).blank? or approval_res.try(:body)=~/EXPIRED AND NOTIFIED/)
+    if options[:mapping].profile_name=~/EV/ and (approval_res.try(:body).blank? or approval_res.try(:body)=="[]" or
+        (!approval_res.try(:body)=~/WAITING FOR APPROVAL/))
       # create the user for EV order
       host = ca_host(options[:mapping])+"/v1/user"
-      options.merge! no_public_key: true, ca: Ca::SSLCOM_CA # create an ejbca user only
+      options.merge! no_public_key: true
     else # collect ev cert
       host = ca_host(options[:mapping])+
           "/v1/certificate#{'/ev' if options[:mapping].profile_name=~/EV/}/pkcs10"
@@ -200,10 +187,13 @@ class SslcomCaApi
     cc.create_csr(body: options[:csr]) if cc.csr.blank?
     api_log_entry=cc.csr.sslcom_ca_requests.create(request_url: host,
       parameters: req.body, method: "post", response: res.try(:body), ca: options[:ca_name] || ca_name(options))
-    if api_log_entry.username.blank?
+    if (!options[:mapping].profile_name=~/EV/ and api_log_entry.username.blank?) or
+        (options[:mapping].profile_name=~/EV/ and api_log_entry.username.blank? and
+            api_log_entry.request_username.blank?)
       OrderNotifier.problem_ca_sending("support@ssl.com", cc.certificate_order,"sslcom").deliver
     elsif api_log_entry.certificate_chain # signed certificate is issued
-      cc.update_column(:ref, api_log_entry.username) unless api_log_entry.blank?
+      cc.update_column(:ref, options[:mapping].profile_name=~/EV/ ? api_log_entry.request_username :
+                                 api_log_entry.username) unless api_log_entry.blank?
       attrs = {body: api_log_entry.end_entity_certificate.to_s, ca_id: options[:mapping].id}
       cc.csr.signed_certificates.create(attrs)
       SystemAudit.create(
@@ -269,7 +259,26 @@ class SslcomCaApi
 
   def self.unique_id(approval_id)
     req,res = get_status
-    JSON.parse(res.body).select{|approval|approval[1]==approval_id.to_i}.first[0] unless res.body.blank?
+    body=JSON.parse(res.body)
+    id=body.select{|approval|approval[1]==approval_id.to_i} unless body.blank?
+    id.first[0] unless id.blank?
+  end
+
+  def self.client_certs(host)
+    case host
+    when PRODUCTION_IP
+      [Rails.application.secrets.ejbca_production_client_auth_cert,
+       Rails.application.secrets.ejbca_production_client_auth_key]
+    when DEVELOPMENT_IP
+      [Rails.application.secrets.ejbca_development_client_auth_cert,
+       Rails.application.secrets.ejbca_development_client_auth_key]
+    when STAGING_IP
+      [Rails.application.secrets.ejbca_staging_client_auth_cert,
+       Rails.application.secrets.ejbca_staging_client_auth_key]
+    else
+      [Rails.application.secrets.ejbca_production_client_auth_cert,
+       Rails.application.secrets.ejbca_production_client_auth_key]
+    end
   end
 
   private
@@ -277,20 +286,11 @@ class SslcomCaApi
   # body - parameters in JSON format
   def self.call_ca(host, options, body)
     uri = URI.parse(host)
-    client_auth_cert,client_auth_key= case uri.host
-                 when PRODUCTION_IP
-                   [Rails.application.secrets.ejbca_production_client_auth_cert,
-                       Rails.application.secrets.ejbca_production_client_auth_key]
-                 when DEVELOPMENT_IP
-                   [Rails.application.secrets.ejbca_development_client_auth_cert,
-                       Rails.application.secrets.ejbca_development_client_auth_key]
-                 when STAGING_IP
-                   [Rails.application.secrets.ejbca_staging_client_auth_cert,
-                       Rails.application.secrets.ejbca_staging_client_auth_key]
-                 end
+    client_auth_cert,client_auth_key=client_certs(uri.host)
     req = (options[:method]=~/GET/i ? Net::HTTP::Get : Net::HTTP::Post).new(uri, 'Content-Type' => 'application/json')
     http = Net::HTTP.new(uri.host, uri.port)
     http.use_ssl = true
+    http.read_timeout = 1200 # Default is 60 seconds
     http.verify_mode = OpenSSL::SSL::VERIFY_PEER
     http.cert = OpenSSL::X509::Certificate.new(File.read(client_auth_cert))
     http.key = OpenSSL::PKey::RSA.new(File.read(client_auth_key))

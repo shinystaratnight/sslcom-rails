@@ -14,6 +14,7 @@ class DomainNameValidator < ActiveModel::EachValidator
 
   def self.valid?(domain,wildcard=true)
     regex = wildcard ? /[^a-zA-Z0-9\.\*-]+/ : /[^a-zA-Z0-9\.-]+/
-    PublicSuffix.valid?(domain, default_rule: nil, ignore_private: true) and !(domain =~ regex)
+    (CertificateContent.is_ip_address?(domain) ||
+        PublicSuffix.valid?(domain, default_rule: nil, ignore_private: true)) and !(domain =~ regex)
   end
 end

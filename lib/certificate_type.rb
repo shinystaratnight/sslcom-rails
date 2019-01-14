@@ -155,6 +155,8 @@ module CertificateType
       "ev"
     elsif is_ov?
       "ov"
+    elsif is_smime_or_client?
+      "iv"
     end
   end
 

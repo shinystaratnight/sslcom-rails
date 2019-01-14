@@ -49,14 +49,14 @@ class Ca < ActiveRecord::Base
   end
 
   def downstep
-    down_name=
+    down_profile,down_entity=
         case profile_name
         when /\AEV/
-          profile_name.gsub "EV","DV"
+          [profile_name,end_entity].map{|field|field.gsub "EV","DV"}
         when /\AOV/
-          profile_name.gsub "OV","DV"
+          [profile_name,end_entity].map{|field|field.gsub "OV","DV"}
         end
-    Ca.find_by(profile_name: down_name, host: host, ca_name: ca_name)
+    Ca.find_by(profile_name: down_profile, host: host, end_entity: down_entity)
   end
 
   private

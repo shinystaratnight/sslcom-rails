@@ -51,6 +51,7 @@ class CertificateOrderTokensController < ApplicationController
 
           # Notifying to assignee
           OrderNotifier.certificate_order_token_send(co, co_token.token).deliver
+          co.certificate_content.validate! if co.certificate_content.issued?
           returnObj['status'] = 'success'
         end
       else

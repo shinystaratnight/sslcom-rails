@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181119181804) do
+ActiveRecord::Schema.define(version: 20181230194446) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        limit: 255
@@ -65,6 +65,7 @@ ActiveRecord::Schema.define(version: 20181119181804) do
     t.string   "roles",          limit: 255
   end
 
+  add_index "api_credentials", ["account_key", "secret_key"], name: "index_api_credentials_on_account_key_and_secret_key", unique: true, using: :btree
   add_index "api_credentials", ["ssl_account_id"], name: "index_api_credentials_on_ssl_account_id", using: :btree
 
   create_table "apis", force: :cascade do |t|
@@ -741,14 +742,18 @@ ActiveRecord::Schema.define(version: 20181119181804) do
     t.boolean  "revoked",                    default: false
   end
 
+  add_index "folders", ["active"], name: "index_folders_on_active", using: :btree
   add_index "folders", ["archived", "name", "ssl_account_id"], name: "index_folders_on_archived_and_name_and_ssl_account_id", using: :btree
+  add_index "folders", ["archived"], name: "index_folders_on_archived", using: :btree
   add_index "folders", ["default", "archived", "name", "ssl_account_id", "expired", "active", "revoked"], name: "index_folder_statuses", using: :btree
   add_index "folders", ["default", "name", "ssl_account_id"], name: "index_folders_on_default_and_name_and_ssl_account_id", using: :btree
+  add_index "folders", ["expired"], name: "index_folders_on_expired", using: :btree
   add_index "folders", ["name", "ssl_account_id", "active", "revoked"], name: "index_folders_on_name_and_ssl_account_id_and_active_and_revoked", using: :btree
   add_index "folders", ["name", "ssl_account_id", "expired"], name: "index_folders_on_name_and_ssl_account_id_and_expired", using: :btree
   add_index "folders", ["name", "ssl_account_id", "revoked"], name: "index_folders_on_name_and_ssl_account_id_and_revoked", using: :btree
   add_index "folders", ["name"], name: "index_folders_on_name", using: :btree
   add_index "folders", ["parent_id"], name: "index_folders_on_parent_id", using: :btree
+  add_index "folders", ["revoked"], name: "index_folders_on_revoked", using: :btree
   add_index "folders", ["ssl_account_id"], name: "index_folders_on_ssl_account_id", using: :btree
 
   create_table "funded_accounts", force: :cascade do |t|
@@ -837,62 +842,6 @@ ActiveRecord::Schema.define(version: 20181119181804) do
   add_index "line_items", ["sellable_id"], name: "index_line_items_on_sellable_id", using: :btree
   add_index "line_items", ["sellable_type"], name: "index_line_items_on_sellable_type", using: :btree
 
-  create_table "mailboxer_conversation_opt_outs", force: :cascade do |t|
-    t.integer "unsubscriber_id",   limit: 4
-    t.string  "unsubscriber_type", limit: 255
-    t.integer "conversation_id",   limit: 4
-  end
-
-  add_index "mailboxer_conversation_opt_outs", ["conversation_id"], name: "index_mailboxer_conversation_opt_outs_on_conversation_id", using: :btree
-  add_index "mailboxer_conversation_opt_outs", ["unsubscriber_id", "unsubscriber_type"], name: "index_mailboxer_conversation_opt_outs_on_unsubscriber_id_type", using: :btree
-
-  create_table "mailboxer_conversations", force: :cascade do |t|
-    t.string   "subject",    limit: 255, default: ""
-    t.datetime "created_at",                          null: false
-    t.datetime "updated_at",                          null: false
-  end
-
-  create_table "mailboxer_notifications", force: :cascade do |t|
-    t.string   "type",                 limit: 255
-    t.text     "body",                 limit: 65535
-    t.string   "subject",              limit: 255,   default: ""
-    t.integer  "sender_id",            limit: 4
-    t.string   "sender_type",          limit: 255
-    t.integer  "conversation_id",      limit: 4
-    t.boolean  "draft",                              default: false
-    t.string   "notification_code",    limit: 255
-    t.integer  "notified_object_id",   limit: 4
-    t.string   "notified_object_type", limit: 255
-    t.string   "attachment",           limit: 255
-    t.datetime "updated_at",                                         null: false
-    t.datetime "created_at",                                         null: false
-    t.boolean  "global",                             default: false
-    t.datetime "expires"
-  end
-
-  add_index "mailboxer_notifications", ["conversation_id"], name: "index_mailboxer_notifications_on_conversation_id", using: :btree
-  add_index "mailboxer_notifications", ["notified_object_id", "notified_object_type"], name: "index_mailboxer_notifications_on_notified_object_id_and_type", using: :btree
-  add_index "mailboxer_notifications", ["sender_id", "sender_type"], name: "index_mailboxer_notifications_on_sender_id_and_sender_type", using: :btree
-  add_index "mailboxer_notifications", ["type"], name: "index_mailboxer_notifications_on_type", using: :btree
-
-  create_table "mailboxer_receipts", force: :cascade do |t|
-    t.integer  "receiver_id",     limit: 4
-    t.string   "receiver_type",   limit: 255
-    t.integer  "notification_id", limit: 4,                   null: false
-    t.boolean  "is_read",                     default: false
-    t.boolean  "trashed",                     default: false
-    t.boolean  "deleted",                     default: false
-    t.string   "mailbox_type",    limit: 25
-    t.datetime "created_at",                                  null: false
-    t.datetime "updated_at",                                  null: false
-    t.boolean  "is_delivered",                default: false
-    t.string   "delivery_method", limit: 255
-    t.string   "message_id",      limit: 255
-  end
-
-  add_index "mailboxer_receipts", ["notification_id"], name: "index_mailboxer_receipts_on_notification_id", using: :btree
-  add_index "mailboxer_receipts", ["receiver_id", "receiver_type"], name: "index_mailboxer_receipts_on_receiver_id_and_receiver_type", using: :btree
-
   create_table "malware_hashes", force: :cascade do |t|
     t.string "url", limit: 32, null: false
   end
@@ -956,6 +905,7 @@ ActiveRecord::Schema.define(version: 20181119181804) do
   end
 
   add_index "notification_groups_subjects", ["notification_group_id"], name: "index_notification_groups_subjects_on_notification_group_id", using: :btree
+  add_index "notification_groups_subjects", ["subjectable_id", "subjectable_type"], name: "index_notification_groups_subjects_on_two_fields", using: :btree
 
   create_table "oauth_nonces", force: :cascade do |t|
     t.string   "nonce",      limit: 255
@@ -1437,6 +1387,8 @@ ActiveRecord::Schema.define(version: 20181119181804) do
     t.datetime "updated_at",                     null: false
   end
 
+  add_index "shopping_carts", ["guid"], name: "index_shopping_carts_on_guid", using: :btree
+
   create_table "signed_certificates", force: :cascade do |t|
     t.integer  "csr_id",                    limit: 4
     t.integer  "parent_id",                 limit: 4
@@ -1472,7 +1424,6 @@ ActiveRecord::Schema.define(version: 20181119181804) do
     t.integer  "registered_agent_id",       limit: 4
   end
 
-  add_index "signed_certificates", ["ca_id"], name: "index_signed_certificates_on_ca_id", using: :btree
   add_index "signed_certificates", ["common_name", "strength"], name: "index_signed_certificates_on_3_cols", using: :btree
   add_index "signed_certificates", ["common_name"], name: "index_signed_certificates_on_common_name", using: :btree
   add_index "signed_certificates", ["csr_id"], name: "index_signed_certificates_on_csr_id", using: :btree
@@ -1898,8 +1849,4 @@ ActiveRecord::Schema.define(version: 20181119181804) do
   end
 
   add_foreign_key "cdns", "certificate_orders"
-  add_foreign_key "mailboxer_conversation_opt_outs", "mailboxer_conversations", column: "conversation_id", name: "mb_opt_outs_on_conversations_id"
-  add_foreign_key "mailboxer_notifications", "mailboxer_conversations", column: "conversation_id", name: "notifications_on_conversation_id"
-  add_foreign_key "mailboxer_receipts", "mailboxer_notifications", column: "notification_id", name: "receipts_on_notification_id"
-  add_foreign_key "signed_certificates", "cas"
 end

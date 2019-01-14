@@ -82,7 +82,7 @@ class CertCreateWithCsrTest < ActionDispatch::IntegrationTest
       assert_match 'ApiCertificateCreate_v1_4', ca_request_1.type
       assert_match 'comodo', ca_request_2.ca
       assert_match 'CaCertificateRequest', ca_request_2.type
-      assert_match 'https://secure.comodo.net/products/!AutoApplySSL', ca_request_2.request_url
+      assert_match 'https://secure.trust-provider.com/products/!AutoApplySSL', ca_request_2.request_url
     end
 
     # includes params:
@@ -157,7 +157,7 @@ class CertCreateWithCsrTest < ActionDispatch::IntegrationTest
       assert_match 'ApiCertificateCreate_v1_4', ca_request_1.type
       assert_match 'comodo', ca_request_2.ca
       assert_match 'CaCertificateRequest', ca_request_2.type
-      assert_match 'https://secure.comodo.net/products/!AutoApplySSL', ca_request_2.request_url
+      assert_match 'https://secure.trust-provider.com/products/!AutoApplySSL', ca_request_2.request_url
     end
 
   end

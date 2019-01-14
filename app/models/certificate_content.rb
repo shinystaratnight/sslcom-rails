@@ -7,6 +7,7 @@ class CertificateContent < ActiveRecord::Base
   has_many    :users, through: :certificate_order
   belongs_to  :server_software
   has_one     :csr, :dependent => :destroy
+  has_many    :csrs, :dependent => :destroy
   has_many    :signed_certificates, through: :csr
   has_one     :registrant, as: :contactable, dependent: :destroy
   has_one     :locked_registrant, :as => :contactable
@@ -51,7 +52,7 @@ class CertificateContent < ActiveRecord::Base
     .*?\.?facebook\.com \Afacebook\.com\z
     .*?\.apple\.com\z \Aapple\.com\z .*?\.microsoft\.com\z \Amicrosoft\.com\z .*?\.paypal\.com\z \Apaypal\.com\z
     .*?\.mozilla\.com\z \Amozilla\.com\z .*?\.gmail\.com\z \Agmail\.com\z .*?\.goog\.com\z \Agoog\.com\z
-    .*?\.?github\.com .*?\.?amazon\.com .*?\.?cloudapp\.com amzn ssltools certchat certlock
+    .*?\.?github\.com .*?\.?amazon\.com .*?\.?cloudapp\.com amzn ssltools certchat .*?\.certlock\.com\z \Acertlock\.com\z
     .*?\.10million\.org .*?\.?android\.com .*?\.aol\.com .*?\.azadegi\.com .*?\.balatarin\.com .*?\.?comodo\.com
     .*?\.?digicert\.com .*?\.?yahoo\.com .*?\.?entrust\.com .*?\.?godaddy\.com .*?\.?oracle\.com
     .*?\.?globalsign\.com .*?\.JanamFadayeRahbar\.com .*?\.?logmein\.com .*?\.mossad\.gov\.il
@@ -60,11 +61,18 @@ class CertificateContent < ActiveRecord::Base
     azadegi\.com Comodo\sRoot\sCA CyberTrust\sRoot\sCA DigiCert\sRoot\sCA Equifax\sRoot\sCA friends\.walla\.co\.il
     GlobalSign\sRoot\sCA login\.live\.com my\.screenname\.aol\.com secure\.logmein\.com
     Thawte\sRoot\sCA twitter\.com VeriSign\sRoot\sCA wordpress\.com www\.10million\.org www\.balatarin\.com
-    cia\.gov \.cybertrust\.com equifax\.com hamdami\.com mossad\.gov\.il sis\.gov\.uk microsoft\.com
+    cia\.gov \.cybertrust\.com equifax\.com hamdami\.com mossad\.gov\.il sis\.gov\.uk
     yahoo\.com login\.skype\.com mozilla\.org \.live\.com global\strustee)
 
-  WHITELIST = {492127=> %w(.*?\.ssl\.com\z \Assl\.com\z), 491981=> %w(.*?\.ssl\.com\z \Assl\.com\z),
-               493588=> %w(.*?\.ssl\.com\z \Assl\.com\z), 464808 => %w(.*?\.ssl\.com\z \Assl\.com\z)}
+  WHITELIST = {492127=> %w(.*?\.ssl\.com\z \Assl\.com\z .*?\.certlock\.com\z \Acertlock\.com\z),
+               491981=> %w(.*?\.ssl\.com\z \Assl\.com\z .*?\.certlock\.com\z \Acertlock\.com\z),
+               # temporary for sandbox
+               474187=> %w(.*?\.ssl\.com\z \Assl\.com\z .*?\.certlock\.com\z \Acertlock\.com\z),
+               493588=> %w(.*?\.ssl\.com\z \Assl\.com\z .*?\.certlock\.com\z \Acertlock\.com\z),
+               # Nick (next 2)
+               492759=> %w(.*?\.ssl\.com\z \Assl\.com\z .*?\.certlock\.com\z \Acertlock\.com\z),
+               497080=> %w(.*?\.ssl\.com\z \Assl\.com\z .*?\.certlock\.com\z \Acertlock\.com\z),
+               464808=> %w(.*?\.ssl\.com\z \Assl\.com\z .*?\.certlock\.com\z \Acertlock\.com\z)}
 
   DOMAIN_COUNT_OFFLOAD=50
 
@@ -206,6 +214,7 @@ class CertificateContent < ActiveRecord::Base
 
     state :issued do
       event :reprocess, :transitions_to => :csr_submitted
+      event :validate, :transitions_to => :validated
       event :cancel, :transitions_to => :canceled
       event :revoke, :transitions_to => :revoked
       event :issue, :transitions_to => :issued
@@ -225,7 +234,8 @@ class CertificateContent < ActiveRecord::Base
   end
 
   def add_ca(ssl_account)
-    unless [467564,16077,475670,484141,473857].include?(ssl_account.id)
+    # dtnt comodo chained is 492703
+    unless [467564,16077,204730,492703].include?(ssl_account.id)
       self.ca = (self.certificate.cas.ssl_account_or_general_default(ssl_account)).last if ca.blank? and certificate
     end
   end
@@ -239,9 +249,10 @@ class CertificateContent < ActiveRecord::Base
   def certificate_names_from_domains(domains=nil)
     domains ||= all_domains
     (domains-certificate_names.find_by_domains(domains).pluck(:name)).each do |domain|
-      domain = CertificateContent.non_wildcard_name(domain,true) if certificate.is_single?
-      new_certificate_name=certificate_names.find_or_create_by(name: domain.downcase,
-                                                           is_common_name: csr.try(:common_name)==domain.downcase)
+      cn_domain = certificate.is_single? ? CertificateContent.non_wildcard_name(domain,true) : domain
+      new_certificate_name=certificate_names.find_or_create_by(name: cn_domain.downcase,
+                                                           is_common_name: csr.try(:common_name)==domain)
+      new_certificate_name.candidate_email_addresses # start the queued job running
       Delayed::Job.enqueue OtherDcvsSatisyJob.new(ssl_account,new_certificate_name) if ssl_account
     end
 
@@ -254,7 +265,7 @@ class CertificateContent < ActiveRecord::Base
   end
 
   def sslcom_ca_request
-    SslcomCaRequest.where(username: self.ref).last
+    SslcomCaRequest.where(username: self.ref).first
   end
 
   def pkcs7
@@ -386,17 +397,19 @@ class CertificateContent < ActiveRecord::Base
           )
         end
       else
-        candidate_addresses=name.candidate_email_addresses
-        if candidate_addresses.include?(v["dcv"])
+        if DomainControlValidation.approved_email_address? CertificateName.candidate_email_addresses(
+            name.non_wildcard_name), v["dcv"]
           name.domain_control_validations.create(dcv_method: "email", email_address: v["dcv"],
                                                  failure_action: v["dcv_failure_action"],
-                                                 candidate_addresses: candidate_addresses)
+                                                 candidate_addresses: CertificateName.candidate_email_addresses(
+                                                     name.non_wildcard_name))
           # assume the first name is the common name
           self.csr.domain_control_validations.create(
               dcv_method: "email",
               email_address: v["dcv"],
               failure_action: v["dcv_failure_action"],
-              candidate_addresses: candidate_addresses
+              candidate_addresses: CertificateName.candidate_email_addresses(
+                  name.non_wildcard_name)
           ) if (i == 0 && !certificate_order.certificate.is_ucc?)
         end
       end
@@ -743,38 +756,59 @@ class CertificateContent < ActiveRecord::Base
 
   def subject_dn(options={})
     cert = options[:certificate] || self.certificate
-    dn=["CN=#{options[:common_name] || certificate_names.first.name}"] if certificate.is_server?
+    dn=["CN=#{options[:common_name]}"] if certificate.is_server?
     if !locked_registrant.blank? and !(options[:mapping] ? options[:mapping].try(:profile_name) =~ /DV/ : cert.is_dv?)
       # if ev or ov order, must have locked registrant
-      dn=["CN=#{options[:common_name] || locked_registrant.company_name}"] if !certificate.is_server?
-      org=options[:o] || locked_registrant.company_name
-      ou=options[:ou] || locked_registrant.department
-      state=options[:s] || locked_registrant.state
-      city=options[:l] || locked_registrant.city
-      country=options[:c] || locked_registrant.country
+      if dn.blank?
+        dn= if certificate.is_code_signing?
+              ["CN=#{locked_registrant.company_name}"]
+            elsif certificate.is_smime_or_client?
+              ["CN=#{[certificate_order.assignee.first_name,certificate_order.assignee.last_name].join(" ")}"]
+            end
+      end
+      org=locked_registrant.company_name
+      ou=locked_registrant.department
+      state=locked_registrant.state
+      city=locked_registrant.city
+      country=locked_registrant.country
+      postal_code=locked_registrant.postal_code
+      postal_address=locked_registrant.po_box
+      street_address=
+          [locked_registrant.address1,locked_registrant.address2,locked_registrant.address3].join(" ")
       dn << "O=#{org}" if !org.blank? and (!city.blank? or !state.blank?)
       dn << "OU=#{ou}" unless ou.blank?
+      dn << "OU=#{locked_registrant.special_fields["entity_code"]}" if certificate.is_naesb?
       dn << "C=#{country}"
       dn << "L=#{city}" unless city.blank?
       dn << "ST=#{state}" unless state.blank?
+      # dn << "postalCode=#{postal_code}" unless postal_code.blank?
+      # dn << "postalAddress=#{postal_address}" unless postal_address.blank?
+      # dn << "streetAddress=#{street_address}" unless street_address.blank?
       if cert.is_ev?
-        dn << "serialNumber=#{options[:serial_number] || certificate_order.jois.last.try(:company_number) ||
-          ("11111111" if options[:ca_id]==Ca::ISSUER[:sslcom_shadow])}"
-        dn << "2.5.4.15=#{options[:business_category] || certificate_order.jois.last.try(:business_category) ||
-          ("Private Organization" if options[:ca_id]==Ca::ISSUER[:sslcom_shadow])}"
-        dn << "1.3.6.1.4.1.311.60.2.1.1=#{options[:joi_locality] || certificate_order.jois.last.try(:city) ||
-          ("Houston" if options[:ca_id]==Ca::ISSUER[:sslcom_shadow])}"
-        dn << "1.3.6.1.4.1.311.60.2.1.2=#{options[:joi_state] || certificate_order.jois.last.try(:state) ||
-          ("Texas" if options[:ca_id]==Ca::ISSUER[:sslcom_shadow])}"
-        dn << "1.3.6.1.4.1.311.60.2.1.3=#{options[:joi_country] || certificate_order.jois.last.try(:country) ||
-          ("US" if options[:ca_id]==Ca::ISSUER[:sslcom_shadow])}"
+        dn << "serialNumber=#{locked_registrant.company_number}"
+        dn << "2.5.4.15=#{locked_registrant.business_category}"
+        dn << "1.3.6.1.4.1.311.60.2.1.1=#{locked_registrant.incorporation_city}" unless
+            locked_registrant.incorporation_city.blank?
+        dn << "1.3.6.1.4.1.311.60.2.1.2=#{locked_registrant.incorporation_state}" unless
+            locked_registrant.incorporation_state.blank?
+        dn << "1.3.6.1.4.1.311.60.2.1.3=#{locked_registrant.incorporation_country}"
       end
     end
     dn << options[:custom_fields] if options[:custom_fields]
     dn.map{|d|d.gsub(/\\/,'\\\\').gsub(',','\,')}.join(",")
   end
 
+  def cached_csr_public_key_sha1
+    Rails.cache.fetch("#{cache_key}/cached_csr_public_key_sha1") do
+      csr.public_key_sha1
+    end
+  end
 
+  def cached_csr_public_key_md5
+    Rails.cache.fetch("#{cache_key}/cached_csr_public_key_md5") do
+      csr.public_key_md5
+    end
+  end
 
   def csr_certificate_name
     begin
