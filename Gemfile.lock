@@ -600,7 +600,7 @@ DEPENDENCIES
   skylight
   spring
   spring-commands-testunit
-  sprockets (>= 3.7.2)
+  sprockets
   squeel
   stripe
   terminal-notifier-guard
