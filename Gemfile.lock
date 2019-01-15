@@ -68,6 +68,8 @@ GEM
       activesupport (>= 3.2, < 5.1)
       request_store (~> 1.0)
       scrypt (>= 1.2, < 4.0)
+    authy (2.7.4)
+      httpclient (>= 2.5.3.3)
     autoprefixer-rails (7.2.1)
       execjs
     awesome_print (1.7.0)
@@ -228,6 +230,7 @@ GEM
     http_parser.rb (0.6.0)
     httparty (0.15.6)
       multi_xml (>= 0.5.2)
+    httpclient (2.8.3)
     httpi (2.4.2)
       rack
       socksify
@@ -508,6 +511,7 @@ DEPENDENCIES
   api-pagination
   attr_encrypted (>= 3.0.3)
   authlogic
+  authy
   awesome_print
   aws-sdk (~> 2.0)
   better_errors

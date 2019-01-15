@@ -125,6 +125,9 @@
                                           %li.applied_doc.tree-connect(alt="#{name}_#{i}_#{vh.id}")
                                             applied: #{name}
                           =render partial: 'validations/dcv', locals: {co: co}
+                  %li.send_callback_section
+                    - if co.ov_validated?
+                      =link_to 'Send Callback', nil, id: 'link_to_send_callback'
               .certificate_details_box
                 %ul
                   %li

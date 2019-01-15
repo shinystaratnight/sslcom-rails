@@ -11,13 +11,14 @@ class ValidationsController < ApplicationController
   before_filter :find_certificate_order, only: [:new, :edit, :show, :upload, :document_upload]
 
   filter_access_to :all
-  filter_access_to [:upload, :document_upload], :require=>:update
+  filter_access_to [:upload, :document_upload, :email_verification, :email_verification_check, :automated_call,
+                    :phone_verification_check], :require=>:update
   filter_access_to :requirements, :send_dcv_email, :domain_control, :ev, :organization, require: :read
   filter_access_to :update, :new, :attribute_check=>true
   filter_access_to :edit, :show, :attribute_check=>true
   filter_access_to :admin_manage, :attribute_check=>true
   filter_access_to :send_to_ca, require: :sysadmin_manage
-  filter_access_to :get_asynch_domains, :remove_domains, :get_email_addresses, :require=>:ajax
+  filter_access_to :get_asynch_domains, :remove_domains, :get_email_addresses, :send_callback, :require=>:ajax
   in_place_edit_for :validation_history, :notes
 
   def search
@@ -553,6 +554,148 @@ class ValidationsController < ApplicationController
       format.js {render :json=>{:result=>render_to_string(:partial=>
           'sent_ca_result', locals: {ca_response: result})}}
     end
+  end
+
+  def send_callback
+    returnObj = {}
+    @certificate_order = CertificateOrder.find_by_ref(params['certificate_order_id'])
+
+    if current_user
+      if @certificate_order
+        # Generate Token
+        co_token = CertificateOrderToken.new
+        co_token.certificate_order = @certificate_order
+        co_token.ssl_account = @certificate_order.ssl_account
+        co_token.user = current_user
+        co_token.is_expired = false
+        co_token.due_date = 7.days.from_now
+        co_token.token = (SecureRandom.hex(8)+Time.now.to_i.to_s(32))[0..19]
+        co_token.phone_verification_count = 0
+        co_token.status = CertificateOrderToken::PENDING_STATUS
+        co_token.save!
+
+        # Send callback email
+        OrderNotifier.callback_send(@certificate_order, co_token.token).deliver
+
+        returnObj['status'] = 'success'
+      end
+    else
+      returnObj['status'] = 'no-user'
+    end
+
+    render :json => returnObj
+  end
+
+  def email_verification_check
+    returnObj = {}
+
+    if current_user
+      co_token = CertificateOrderToken.where(
+          token: params[:email_verification_code],
+          status: CertificateOrderToken::PENDING_STATUS
+      ).first
+
+      if co_token
+        if co_token.user.blank? and co_token.certificate_order.get_download_cert_email==current_user.email
+          co_token.update_column :user_id, current_user.id
+        end
+
+        if co_token.is_expired || (co_token.due_date < DateTime.now)
+          co_token.update_column :is_expired, true if !co_token.is_expired && co_token.due_date < DateTime.now
+          returnObj['status'] = 'expired'
+        elsif co_token.user != current_user or co_token.certificate_order.get_download_cert_email != current_user.email
+          returnObj['status'] = 'no-permission'
+        else
+          passed_token = (SecureRandom.hex(8)+params[:email_verification_code])[0..19]
+          co_token.update_column :passed_token, passed_token
+
+          returnObj['token'] = passed_token
+          returnObj['status'] = 'correct'
+        end
+      else
+        returnObj['status'] = 'incorrect'
+      end
+    else
+      returnObj['status'] = 'no-user'
+    end
+
+    render :json => returnObj
+  end
+
+  def automated_call
+    returnObj = {}
+
+    if current_user
+      co_token = CertificateOrderToken.where(
+          token: params[:token],
+          passed_token: params[:passed_token],
+          status: CertificateOrderToken::PENDING_STATUS
+      ).first
+
+      if co_token
+        if co_token.phone_verification_count.to_i > 2
+          returnObj['status'] = 'reached_to_max'
+        else
+          phone_verification_count = co_token.phone_verification_count + 1
+          co_token.update_column :phone_verification_count, phone_verification_count
+          phone_number = co_token.certificate_order.locked_registrant.phone
+
+          @response = Authy::PhoneVerification.start(
+              via: params[:method],
+              country_code: params[:country_code],
+              phone_number: phone_number
+          )
+
+          if @response.ok?
+            returnObj['status'] = 'success'
+          else
+            returnObj['status'] = 'failed'
+          end
+        end
+      else
+        returnObj['status'] = 'incorrect-token'
+      end
+    else
+      returnObj['status'] = 'no-user'
+    end
+
+    render :json => returnObj
+  end
+
+  def phone_verification_check
+    returnObj = {}
+
+    if current_user
+      co_token = CertificateOrderToken.where(
+          token: params[:token],
+          passed_token: params[:passed_token],
+          status: CertificateOrderToken::PENDING_STATUS
+      ).first
+
+      if co_token
+        phone_number = co_token.certificate_order.locked_registrant.phone
+
+        @response = Authy::PhoneVerification.check(
+            verification_code: params[:phone_verification_code],
+            country_code: params[:country_code],
+            phone_number: phone_number
+        )
+        if @response.ok?
+          co_token.update_column :status, CertificateOrderToken::DONE_STATUS
+          co_token.certificate_order.certificate_content.issue!
+
+          returnObj['status'] = 'success'
+        else
+          returnObj['status'] = 'failed'
+        end
+      else
+        returnObj['status'] = 'incorrect-token'
+      end
+    else
+      returnObj['status'] = 'no-user'
+    end
+
+    render :json => returnObj
   end
 
   private
