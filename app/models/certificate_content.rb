@@ -61,7 +61,7 @@ class CertificateContent < ActiveRecord::Base
     azadegi\.com Comodo\sRoot\sCA CyberTrust\sRoot\sCA DigiCert\sRoot\sCA Equifax\sRoot\sCA friends\.walla\.co\.il
     GlobalSign\sRoot\sCA login\.live\.com my\.screenname\.aol\.com secure\.logmein\.com
     Thawte\sRoot\sCA twitter\.com VeriSign\sRoot\sCA wordpress\.com www\.10million\.org www\.balatarin\.com
-    cia\.gov \.cybertrust\.com equifax\.com hamdami\.com mossad\.gov\.il sis\.gov\.uk microsoft\.com
+    cia\.gov \.cybertrust\.com equifax\.com hamdami\.com mossad\.gov\.il sis\.gov\.uk
     yahoo\.com login\.skype\.com mozilla\.org \.live\.com global\strustee)
 
   WHITELIST = {492127=> %w(.*?\.ssl\.com\z \Assl\.com\z .*?\.certlock\.com\z \Acertlock\.com\z),
@@ -234,7 +234,8 @@ class CertificateContent < ActiveRecord::Base
   end
 
   def add_ca(ssl_account)
-    unless [467564,16077,484141,204730].include?(ssl_account.id)
+    # dtnt comodo chained is 492703
+    unless [467564,16077,204730,492703].include?(ssl_account.id)
       self.ca = (self.certificate.cas.ssl_account_or_general_default(ssl_account)).last if ca.blank? and certificate
     end
   end
@@ -251,7 +252,7 @@ class CertificateContent < ActiveRecord::Base
       cn_domain = certificate.is_single? ? CertificateContent.non_wildcard_name(domain,true) : domain
       new_certificate_name=certificate_names.find_or_create_by(name: cn_domain.downcase,
                                                            is_common_name: csr.try(:common_name)==domain)
-      new_certificate_name.candidate_email_addresses
+      new_certificate_name.candidate_email_addresses # start the queued job running
       Delayed::Job.enqueue OtherDcvsSatisyJob.new(ssl_account,new_certificate_name) if ssl_account
     end
 
@@ -396,17 +397,19 @@ class CertificateContent < ActiveRecord::Base
           )
         end
       else
-        candidate_addresses=name.candidate_email_addresses
-        if candidate_addresses.include?(v["dcv"])
+        if DomainControlValidation.approved_email_address? CertificateName.candidate_email_addresses(
+            name.non_wildcard_name), v["dcv"]
           name.domain_control_validations.create(dcv_method: "email", email_address: v["dcv"],
                                                  failure_action: v["dcv_failure_action"],
-                                                 candidate_addresses: candidate_addresses)
+                                                 candidate_addresses: CertificateName.candidate_email_addresses(
+                                                     name.non_wildcard_name))
           # assume the first name is the common name
           self.csr.domain_control_validations.create(
               dcv_method: "email",
               email_address: v["dcv"],
               failure_action: v["dcv_failure_action"],
-              candidate_addresses: candidate_addresses
+              candidate_addresses: CertificateName.candidate_email_addresses(
+                  name.non_wildcard_name)
           ) if (i == 0 && !certificate_order.certificate.is_ucc?)
         end
       end
@@ -781,17 +784,14 @@ class CertificateContent < ActiveRecord::Base
       # dn << "postalCode=#{postal_code}" unless postal_code.blank?
       # dn << "postalAddress=#{postal_address}" unless postal_address.blank?
       # dn << "streetAddress=#{street_address}" unless street_address.blank?
-      if cert.is_ev? or cert.is_evcs?
-        dn << "serialNumber=#{locked_registrant.company_number ||
-          ("11111111" if options[:ca_id]==Ca::ISSUER[:sslcom_shadow])}"
-        dn << "2.5.4.15=#{locked_registrant.business_category ||
-          ("Private Organization" if options[:ca_id]==Ca::ISSUER[:sslcom_shadow])}"
-        dn << "1.3.6.1.4.1.311.60.2.1.1=#{locked_registrant.incorporation_city ||
-          ("Houston" if options[:ca_id]==Ca::ISSUER[:sslcom_shadow])}"
-        dn << "1.3.6.1.4.1.311.60.2.1.2=#{locked_registrant.incorporation_state ||
-          ("Texas" if options[:ca_id]==Ca::ISSUER[:sslcom_shadow])}"
-        dn << "1.3.6.1.4.1.311.60.2.1.3=#{locked_registrant.incorporation_country ||
-          ("US" if options[:ca_id]==Ca::ISSUER[:sslcom_shadow])}"
+      if cert.is_ev?
+        dn << "serialNumber=#{locked_registrant.company_number}"
+        dn << "2.5.4.15=#{locked_registrant.business_category}"
+        dn << "1.3.6.1.4.1.311.60.2.1.1=#{locked_registrant.incorporation_city}" unless
+            locked_registrant.incorporation_city.blank?
+        dn << "1.3.6.1.4.1.311.60.2.1.2=#{locked_registrant.incorporation_state}" unless
+            locked_registrant.incorporation_state.blank?
+        dn << "1.3.6.1.4.1.311.60.2.1.3=#{locked_registrant.incorporation_country}"
       end
     end
     dn << options[:custom_fields] if options[:custom_fields]

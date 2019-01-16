@@ -173,7 +173,7 @@ class SslcomCaApi
       parameters: approval_req.body, method: "get", response: approval_res.body,
                                             ca: options[:ca]) if approval_res.try(:body)=~/WAITING FOR APPROVAL/
     if options[:mapping].profile_name=~/EV/ and (approval_res.try(:body).blank? or approval_res.try(:body)=="[]" or
-        (approval_res.try(:body)=~/EXPIRED AND NOTIFIED/ and !cc.csr.sslcom_ca_requests.first=~/WAITING FOR APPROVAL/))
+        (!approval_res.try(:body)=~/WAITING FOR APPROVAL/))
       # create the user for EV order
       host = ca_host(options[:mapping])+"/v1/user"
       options.merge! no_public_key: true
@@ -184,7 +184,7 @@ class SslcomCaApi
           cc.csr.sslcom_usernames.compact.first) if options[:mapping].profile_name=~/EV/
     end
     req, res = call_ca(host, options, issue_cert_json(options))
-    cc.create_csr(body: options[:csr])
+    cc.create_csr(body: options[:csr]) if cc.csr.blank?
     api_log_entry=cc.csr.sslcom_ca_requests.create(request_url: host,
       parameters: req.body, method: "post", response: res.try(:body), ca: options[:ca_name] || ca_name(options))
     if (!options[:mapping].profile_name=~/EV/ and api_log_entry.username.blank?) or
@@ -260,7 +260,8 @@ class SslcomCaApi
   def self.unique_id(approval_id)
     req,res = get_status
     body=JSON.parse(res.body)
-    body.select{|approval|approval[1]==approval_id.to_i}.first[0] unless body.blank?
+    id=body.select{|approval|approval[1]==approval_id.to_i} unless body.blank?
+    id.first[0] unless id.blank?
   end
 
   def self.client_certs(host)
@@ -289,6 +290,7 @@ class SslcomCaApi
     req = (options[:method]=~/GET/i ? Net::HTTP::Get : Net::HTTP::Post).new(uri, 'Content-Type' => 'application/json')
     http = Net::HTTP.new(uri.host, uri.port)
     http.use_ssl = true
+    http.read_timeout = 1200 # Default is 60 seconds
     http.verify_mode = OpenSSL::SSL::VERIFY_PEER
     http.cert = OpenSSL::X509::Certificate.new(File.read(client_auth_cert))
     http.key = OpenSSL::PKey::RSA.new(File.read(client_auth_key))

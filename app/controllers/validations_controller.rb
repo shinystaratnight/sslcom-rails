@@ -183,7 +183,7 @@ class ValidationsController < ApplicationController
       domain_name_arry = params['domain_names'].split(',')
       # order_number = CertificateOrder.find_by_ref(params['certificate_order_id']).external_order_number
       certificate_order = current_user.certificate_order_by_ref(params[:certificate_order_id])
-      certificate_content = certificate_order.certificate_content.includes(:certificate_names)
+      certificate_content = certificate_order.certificate_content
       certificate_names = certificate_content.certificate_names
 
       certificate_names.where{ name >> domain_name_arry }.each do |cn_obj|
@@ -292,7 +292,7 @@ class ValidationsController < ApplicationController
           if co.certificate_content.ca.blank? and co.external_order_number
             ComodoApi.domain_control_email_choices(cn.name).email_address_choices
           else
-            cn.candidate_email_addresses
+            CertificateName.candidate_email_addresses(cn.non_wildcard_name)
           end
         addresses.delete("none")
 
@@ -327,7 +327,7 @@ class ValidationsController < ApplicationController
           }
         else
           optionsObj = {}
-          addresses ||= cn.candidate_email_addresses
+          addresses ||= CertificateName.candidate_email_addresses(cn.non_wildcard_name)
 
           viaEmail = {}
           viaCSR = {}

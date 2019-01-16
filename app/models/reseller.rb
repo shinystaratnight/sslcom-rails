@@ -57,6 +57,7 @@ class Reseller < ActiveRecord::Base
     state :new do
       event :profile_submitted, :transitions_to => :select_tier
       event :back, :transitions_to => :new
+      event :completed, :transitions_to => :complete
     end
 
     state :select_tier do
