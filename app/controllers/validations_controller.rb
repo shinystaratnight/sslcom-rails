@@ -292,7 +292,7 @@ class ValidationsController < ApplicationController
           if co.certificate_content.ca.blank? and co.external_order_number
             ComodoApi.domain_control_email_choices(cn.name).email_address_choices
           else
-            cn.candidate_email_addresses
+            CertificateName.candidate_email_addresses(cn.non_wildcard_name)
           end
         addresses.delete("none")
 
@@ -327,7 +327,7 @@ class ValidationsController < ApplicationController
           }
         else
           optionsObj = {}
-          addresses ||= cn.candidate_email_addresses
+          addresses ||= CertificateName.candidate_email_addresses(cn.non_wildcard_name)
 
           viaEmail = {}
           viaCSR = {}

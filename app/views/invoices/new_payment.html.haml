@@ -74,7 +74,13 @@
                 ="#{remaining_amt.format.gsub(/,/, '')}"
           
     #button_container
-      =render partial: 'shared/prev_next_buttons'
+      #auto_adjust
+        =link_to image_tag("prev_bl.gif"), invoice_path(ssl_slug, @invoice.try(:reference_number))
+        =image_submit_tag "next_bl.gif", name: "next", alt: "submit", class: "order_next"
+        =link_to image_tag("next_bl.gif", alt: "paypal"), |
+        paypal_express_checkout_path(ssl_slug: ssl_slug), |
+        style: "display: none", name: "paypal"
+    
     .waiting_bar.clearfix
       =image_tag('waiting_bar_medium.gif', id: 'waiting_bar', style: 'display: none; vertical-align: middle;')
 =render partial: 'orders/index_scripts'

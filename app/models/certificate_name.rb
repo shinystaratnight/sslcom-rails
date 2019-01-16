@@ -189,7 +189,7 @@ class CertificateName < ActiveRecord::Base
              redirect: true).read
         end
         return true if !!(r =~ Regexp.new("^#{options[:csr].sha2_hash}") &&
-            r =~ Regexp.new("^#{options[:ca_tag]}") &&
+            (options[:ca_tag]=="ssl.com" ? true : r =~ Regexp.new("^#{options[:ca_tag]}")) &&
             (options[:csr].unique_value.blank? ? true : r =~ Regexp.new("^#{options[:csr].unique_value}")))
       end
     rescue Exception=>e
@@ -232,10 +232,10 @@ class CertificateName < ActiveRecord::Base
           standard_addresses << ad.downcase unless ad =~/abuse.*?@/i
         end
         Rails.cache.write("CertificateName.candidate_email_addresses/#{dname}",standard_addresses)
+        CertificateName.where{name=~"%#{dname}"}.each{|cn| cn.touch; Rails.cache.delete(cn.get_asynch_cache_label)}
         if certificate_name
           dcv=certificate_name.domain_control_validations.last
           dcv.update_column(:candidate_addresses, standard_addresses) if dcv
-          Rails.cache.delete(certificate_name.get_asynch_cache_label)
         end
       rescue Exception=>e
         Logger.new(STDOUT).error e.backtrace.inspect

@@ -25,10 +25,9 @@ class ValidationHistory < ActiveRecord::Base
     ['image/gif', 'gif'], ['image/bmp', 'bmp'],
     ['application/zip', 'zip'], ['application/vnd.oasis.opendocument.text', 'odt'],
     ['application/msword', 'doc'], ['application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'docx'],
-    ['audio/mpeg', 'mp3'], ['text/plain', 'txt, text']]
+    ['audio/mpeg', 'mp3'], ['audio/x-mpeg', 'mp3'], ['audio/mp3', 'mp3'], ['audio/x-mp3', 'mp3'], ['audio/mpeg3', 'mp3'],
+    ['audio/x-mpeg3', 'mp3'], ['audio/mpg', 'mp3'], ['audio/x-mpg', 'mp3'], ['audio/x-mpegaudio', 'mp3'], ['text/plain', 'txt, text']]
 
-  # validates_attachment_presence :document
-#   validates_attachment_size :document, :less_than => 50.megabytes
   validates_attachment_content_type :document, :content_type =>  ValidationHistory::CONTENT_TYPES.transpose[0]
 
   preference  :viewing_method, :string, :default=>"download" #or thumbnail

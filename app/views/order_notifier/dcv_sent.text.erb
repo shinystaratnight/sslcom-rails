@@ -5,7 +5,7 @@ Dear Customer,
 <%end -%>
 
 <%unless @last_sent.is_a?(Array) -%>
-An <%=Settings.community_name%> certificate order has been placed for <%=@certificate_order.certificate_content.csr.common_name%>
+An <%=Settings.community_name%> certificate order has been placed for <%=@certificate_order.certificate_content.common_name%>
 
 Please respond to the email validation request sent to: <%=@last_sent.email_address%>.
 <%else -%>

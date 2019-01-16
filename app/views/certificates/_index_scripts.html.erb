@@ -429,20 +429,20 @@ jQuery(function($) {
             } else {
               var csr_names = [];
 
-              if ((typeof data.certificate_content.csr.common_name != 'undefined')) {
+              if ((typeof data.certificate_content.common_name != 'undefined')) {
                 <%if @certificate.product != "free" && @certificate_order.external_order_number.blank?%>
                   var days_left = data.certificate_content.csr.days_left > 0 ? "<br><hr>"+data.certificate_content.csr.days_left+" free SSL.com Carryover days will be added from expiring SSL/TLS certificate" : "";
                 <%else%>
                   var days_left = "";
                 <%end%>
-                $(".cert_reqs").after("<div class='flash_message notice'><span class='ajax_info'>common name field in csr is: "+data.certificate_content.csr.common_name+days_left+"</span></div>");
-                $('#common_name').val(data.certificate_content.csr.common_name);
+                $(".cert_reqs").after("<div class='flash_message notice'><span class='ajax_info'>common name field in csr is: "+data.certificate_content.common_name+days_left+"</span></div>");
+                $('#common_name').val(data.certificate_content.common_name);
               }
 
               <%if @certificate.is_ucc?-%>
                 if((typeof data.certificate_content.csr.subject_alternative_names != 'undefined')){
                   <%if Settings.csr_domains_ui%>
-                    csr_names = $.unique($.merge(data.certificate_content.csr.subject_alternative_names, [data.certificate_content.csr.common_name]));
+                    csr_names = $.unique($.merge(data.certificate_content.csr.subject_alternative_names, [data.certificate_content.common_name]));
 
                     exist_domains = $('.managed_domains').val();
                     if (exist_domains) {
@@ -454,7 +454,7 @@ jQuery(function($) {
 
                     $.adjustDomainPricing(all_domains.join(' '));
                   <%else%>
-                    all_domains = $.unique($.merge(data.certificate_content.csr.subject_alternative_names, [data.certificate_content.csr.common_name]));
+                    all_domains = $.unique($.merge(data.certificate_content.csr.subject_alternative_names, [data.certificate_content.common_name]));
                     additional_domains = $("textarea[name*=additional_domains]").text() + " " + all_domains;
                     $("textarea[name*=additional_domains]").val($.uniqueStrings(additional_domains.split(/[\s,\n]+/)).join(" "));
 
@@ -462,7 +462,7 @@ jQuery(function($) {
                   <%end%>
                 }
               <%else-%>
-                common_name = data.certificate_content.csr.common_name;
+                common_name = data.certificate_content.common_name;
                 sans = data.certificate_content.csr.subject_alternative_names;
                 all_domains = $.merge([common_name], sans);
                 csr_names = $.unique(all_domains);
@@ -674,6 +674,56 @@ jQuery(function($) {
           });
         }
       <%end%>
+    });
+
+    $.manage_common_name = function() {
+      var old_common_name = $('#old_common_name').val();
+      var current_common_name = $('#common_name').val().toLowerCase();
+
+      if (current_common_name != old_common_name) {
+        var domain_names = $('textarea[id$=domains]').val().toLowerCase();
+
+        if (current_common_name == '') {
+          if (domain_names.search(old_common_name) != -1) {
+            domain_names = domain_names.replace(old_common_name, '');
+            $('textarea[id$=domains]').val(domain_names);
+            $('#old_common_name').val('');
+
+            $.adjustDomainPricing($('textarea[id$=domains]')[0]);
+          }
+        } else {
+          if (domain_names.search(current_common_name) != -1) {
+            if (domain_names.search(old_common_name) != -1) {
+              domain_names = domain_names.replace(old_common_name, '');
+              $('textarea[id$=domains]').val(domain_names);
+              $('#old_common_name').val(current_common_name);
+
+              $.adjustDomainPricing($('textarea[id$=domains]')[0]);
+            }
+          } else {
+            if (domain_names.search(old_common_name) != -1) {
+              domain_names = domain_names.replace(old_common_name, '');
+              $('#old_common_name').val(current_common_name);
+            }
+
+            domain_names = domain_names + ' ' + current_common_name;
+            $('textarea[id$=domains]').val(domain_names);
+
+            $.adjustDomainPricing($('textarea[id$=domains]')[0]);
+          }
+        }
+      }
+    };
+
+    $('#common_name').keypress(function(e) {
+      if (e.keyCode == 13 || e.keyCode == 32) {
+        e.preventDefault();
+        $.manage_common_name();
+      }
+    });
+
+    $('#common_name').blur(function() {
+      $.manage_common_name();
     });
 
     $('textarea[id$=domains]').keypress(function (e) {

@@ -3,8 +3,8 @@ class Certificate < ActiveRecord::Base
   include Filterable
   include Sortable
 
-  has_many    :product_variant_groups, :as => :variantable
-  has_many    :product_variant_items, through: :product_variant_groups
+  has_many    :product_variant_groups, :as => :variantable, dependent: :destroy
+  has_many    :product_variant_items, through: :product_variant_groups, dependent: :destroy
   has_many    :sub_order_items, through: :product_variant_items
   has_many    :validation_rulings, :as=>:validation_rulable
   has_many    :validation_rules, :through => :validation_rulings
@@ -606,7 +606,7 @@ class Certificate < ActiveRecord::Base
       new_pvg = pvg.dup
       new_cert.product_variant_groups << new_pvg
       pvg.product_variant_items.each_with_index do |pvi, i|
-        if i < options[:product][:price_adjusts].first[1].count
+        if options[:product].blank? or i < options[:product][:price_adjusts].first[1].count
           new_pvi=pvi.dup
           if options[:old_pvi_serial] and options[:new_pvi_serial]
             new_pvi.serial=pvi.serial.gsub(options[:old_pvi_serial], options[:new_pvi_serial])
@@ -991,10 +991,11 @@ class Certificate < ActiveRecord::Base
                summary: "for authenticating and encrypting email and well as client services",
                special_fields: %w(entity_code),
                product: "personal-naesb-basic",
-               points:  "<div class='check'>Required for NAESB EIR and etag authentication</div>
-                         <div class='check'>User for wesbsite authentication</div>
-                         <div class='check'>Issued from SSL.com ACA</div>
+               points:  "<div class='check'>Required for NAESB EIR, OASIS and e-Tagging applications</div>
+                         <div class='check'>Used for Energy Industry website client authentications</div>
+                         <div class='check'>Issued from NAESB ACA SSL.com</div>
                          <div class='check'>2048 bit public key encryption</div>
+                         <div class='check'>RSA and ECC supported</div>
                          <div class='check'>quick issuance</div>
                          <div class='check'>30 day money-back guaranty </div>
                          <div class='check'>24 hour 5-star support</div>",

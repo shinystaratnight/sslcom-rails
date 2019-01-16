@@ -11,26 +11,28 @@ class FolderTree
   end
 
   def build_subtree(folder, tree_type)
-    folder_children = get_folder_children(folder)
-    children = folder_children ? folder_children.inject([]) {|all, child| all << build_subtree(child, tree_type) } : []
-    co_children = if %w{co_folders_index co_folders_index_modal}.include?(tree_type)
-      []
-    else
-      build_cert_orders(folder)
+    Rails.cache.fetch("#{folder.cache_key}/#{tree_type}/build_subtree") do
+      folder_children = get_folder_children(folder)
+      children = folder_children ? folder_children.inject([]) {|all, child| all << build_subtree(child, tree_type) } : []
+      co_children = if %w{co_folders_index co_folders_index_modal}.include?(tree_type)
+                      []
+                    else
+                      build_cert_orders(folder)
+                    end
+
+      data = get_data(folder, tree_type)
+
+      return {
+          id:       get_id_format(folder),
+          icon:     get_icon(folder),
+          text:     get_folder_name(folder, tree_type, data),
+          type:     'folder',
+          li_attr:  get_li_attr(folder),
+          data:     data,
+          state:    { opened: false },
+          children: (children + co_children).flatten
+      }
     end
-    
-    data = get_data(folder, tree_type)
-    
-    return {
-      id:       get_id_format(folder),
-      icon:     get_icon(folder),
-      text:     get_folder_name(folder, tree_type, data),
-      type:     'folder',
-      li_attr:  get_li_attr(folder),
-      data:     data,
-      state:    { opened: false },
-      children: (children + co_children).flatten
-    }
   end
 
   def get_folder_children(folder)

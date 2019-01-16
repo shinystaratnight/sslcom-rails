@@ -101,7 +101,7 @@
                           %ul
                             %li
                               -audits=(u.system_audits.empty? ? "n/a" : "###")+"\n"
-                              -u.system_audits.each do |audit|
+                              -u.system_audits.includes{owner(User)}.each do |audit|
                                 -audits << "date: #{audit.created_at}\nuser: #{audit.owner.try :login}\naction: #{audit.action}\n###\n"
                               =text_area_tag :audits, audits, :size=>"30x10"
               -if current_user.is_system_admins?

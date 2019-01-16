@@ -73,13 +73,13 @@ jQuery(function($) {
             if(ajax_errors!="")
               $(".cert_reqs").after("<div class='flash_message error'><span><ul class='ajax_info'>"+ajax_errors+"</ul></span></div>");
             else{
-              if((typeof data.certificate_content.csr.common_name != 'undefined')){
+              if((typeof data.certificate_content.common_name != 'undefined')){
                 <%if @certificate.product != "free" && @certificate_order.external_order_number.blank?%>
                 var days_left = data.certificate_content.csr.days_left > 0 ? "<br><hr>"+data.certificate_content.csr.days_left+" free SSL.com Carryover days will be added from expiring SSL/TLS certificate" : "";
                 <%else%>
                 var days_left = "";
                 <%end%>
-                $(".cert_reqs").after("<div class='flash_message notice'><span class='ajax_info'>common name field in csr is: "+data.certificate_content.csr.common_name+days_left+"</span></div>");
+                $(".cert_reqs").after("<div class='flash_message notice'><span class='ajax_info'>common name field in csr is: "+data.certificate_content.common_name+days_left+"</span></div>");
               }
             <%if @certificate.is_ucc?-%>
               if((typeof data.certificate_content.csr.subject_alternative_names != 'undefined')){

@@ -63,7 +63,7 @@ class DomainControlValidation < ActiveRecord::Base
 
   def email_address_check
     errors.add(:email_address, "'#{email_address}' "+IS_INVALID) unless
-      candidate_addresses.include?(email_address)
+        DomainControlValidation.approved_email_address? candidate_addresses, email_address
   end
 
   def send_to(address)
@@ -212,6 +212,10 @@ class DomainControlValidation < ActiveRecord::Base
         end
       end.flatten
     end
+  end
+
+  def self.approved_email_address?(choices, selection)
+    choices.include? selection
   end
 
   def comodo_email_address_choices

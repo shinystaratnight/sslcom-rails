@@ -158,7 +158,8 @@ class SslcomCaApi
     options[:mapping] = certificate_order.certificate_content.ca if options[:mapping].blank?
 
     # does this need to be a DV if OV is required but not satisfied?
-    if options[:mapping].profile_name=~/OV/ or options[:mapping].profile_name=~/EV/
+    if certificate_order.certificate.is_server? and
+        (options[:mapping].profile_name=~/OV/ or options[:mapping].profile_name=~/EV/)
       downstep = !certificate_order.ov_validated?
       options[:mapping]=options[:mapping].downstep if downstep
     end
@@ -171,8 +172,8 @@ class SslcomCaApi
     return cc.csr.sslcom_ca_requests.create(
       parameters: approval_req.body, method: "get", response: approval_res.body,
                                             ca: options[:ca]) if approval_res.try(:body)=~/WAITING FOR APPROVAL/
-    if options[:mapping].profile_name=~/EV/ and
-        (approval_res.try(:body).blank? or approval_res.try(:body)=~/EXPIRED AND NOTIFIED/)
+    if options[:mapping].profile_name=~/EV/ and (approval_res.try(:body).blank? or approval_res.try(:body)=="[]" or
+        (!approval_res.try(:body)=~/WAITING FOR APPROVAL/))
       # create the user for EV order
       host = ca_host(options[:mapping])+"/v1/user"
       options.merge! no_public_key: true
@@ -186,10 +187,13 @@ class SslcomCaApi
     cc.create_csr(body: options[:csr]) if cc.csr.blank?
     api_log_entry=cc.csr.sslcom_ca_requests.create(request_url: host,
       parameters: req.body, method: "post", response: res.try(:body), ca: options[:ca_name] || ca_name(options))
-    if api_log_entry.username.blank?
+    if (!options[:mapping].profile_name=~/EV/ and api_log_entry.username.blank?) or
+        (options[:mapping].profile_name=~/EV/ and api_log_entry.username.blank? and
+            api_log_entry.request_username.blank?)
       OrderNotifier.problem_ca_sending("support@ssl.com", cc.certificate_order,"sslcom").deliver
     elsif api_log_entry.certificate_chain # signed certificate is issued
-      cc.update_column(:ref, api_log_entry.username) unless api_log_entry.blank?
+      cc.update_column(:ref, options[:mapping].profile_name=~/EV/ ? api_log_entry.request_username :
+                                 api_log_entry.username) unless api_log_entry.blank?
       attrs = {body: api_log_entry.end_entity_certificate.to_s, ca_id: options[:mapping].id}
       cc.csr.signed_certificates.create(attrs)
       SystemAudit.create(
@@ -255,7 +259,26 @@ class SslcomCaApi
 
   def self.unique_id(approval_id)
     req,res = get_status
-    JSON.parse(res.body).select{|approval|approval[1]==approval_id.to_i}.first[0] unless res.body.blank?
+    body=JSON.parse(res.body)
+    id=body.select{|approval|approval[1]==approval_id.to_i} unless body.blank?
+    id.first[0] unless id.blank?
+  end
+
+  def self.client_certs(host)
+    case host
+    when PRODUCTION_IP
+      [Rails.application.secrets.ejbca_production_client_auth_cert,
+       Rails.application.secrets.ejbca_production_client_auth_key]
+    when DEVELOPMENT_IP
+      [Rails.application.secrets.ejbca_development_client_auth_cert,
+       Rails.application.secrets.ejbca_development_client_auth_key]
+    when STAGING_IP
+      [Rails.application.secrets.ejbca_staging_client_auth_cert,
+       Rails.application.secrets.ejbca_staging_client_auth_key]
+    else
+      [Rails.application.secrets.ejbca_production_client_auth_cert,
+       Rails.application.secrets.ejbca_production_client_auth_key]
+    end
   end
 
   private
@@ -263,24 +286,11 @@ class SslcomCaApi
   # body - parameters in JSON format
   def self.call_ca(host, options, body)
     uri = URI.parse(host)
-    client_auth_cert,client_auth_key= case uri.host
-                 when PRODUCTION_IP
-                   [Rails.application.secrets.ejbca_production_client_auth_cert,
-                       Rails.application.secrets.ejbca_production_client_auth_key]
-                 when DEVELOPMENT_IP
-                   [Rails.application.secrets.ejbca_development_client_auth_cert,
-                       Rails.application.secrets.ejbca_development_client_auth_key]
-                 when STAGING_IP
-                   [Rails.application.secrets.ejbca_staging_client_auth_cert,
-                       Rails.application.secrets.ejbca_staging_client_auth_key]
-                else
-                  [Rails.application.secrets.ejbca_production_client_auth_cert,
-                   Rails.application.secrets.ejbca_production_client_auth_key]
-
-                 end
+    client_auth_cert,client_auth_key=client_certs(uri.host)
     req = (options[:method]=~/GET/i ? Net::HTTP::Get : Net::HTTP::Post).new(uri, 'Content-Type' => 'application/json')
     http = Net::HTTP.new(uri.host, uri.port)
     http.use_ssl = true
+    http.read_timeout = 1200 # Default is 60 seconds
     http.verify_mode = OpenSSL::SSL::VERIFY_PEER
     http.cert = OpenSSL::X509::Certificate.new(File.read(client_auth_cert))
     http.key = OpenSSL::PKey::RSA.new(File.read(client_auth_key))

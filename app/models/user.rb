@@ -657,10 +657,10 @@ class User < ActiveRecord::Base
   end
 
   def certificate_order_by_ref(ref)
-    Rails.cache.fetch("#{cache_key}/certificate_order_id/#{ref}") do
+    CertificateOrder.unscoped.includes(:certificate_contents).find(Rails.cache.fetch("#{cache_key}/certificate_order_id/#{ref}") do
       CertificateOrder.unscoped{(is_system_admins? ? CertificateOrder :
-                                     ssl_account.cached_certificate_orders).find_by_ref(ref)}
-    end
+                                     ssl_account.cached_certificate_orders).find_by_ref(ref)}.id
+    end)
   end
 
   # check for any SslAccount records do not have roles, users or an owner

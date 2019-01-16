@@ -139,18 +139,20 @@ class SiteSeal < ActiveRecord::Base
   end
 
   def all_certificate_orders # includes renewals
-    certs=[certificate_orders.last]
-    find_renewal = ->(co){ CertificateOrder.unscoped{co.renewal} if co }
-    renewal = find_renewal.call(certificate_order)
-    loop do
-      if renewal
-        certs<<renewal
-        renewal = find_renewal.call(renewal)
-      else
-        break
-      end
-    end
-    certs
+    CertificateOrder.unscoped.find(Rails.cache.fetch("#{cache_key}/all_certificate_orders") do
+                                    certs=[certificate_orders.last]
+                                    find_renewal = ->(co){ CertificateOrder.unscoped{co.renewal} if co }
+                                    renewal = find_renewal.call(certificate_order)
+                                    loop do
+                                      if renewal
+                                        certs<<renewal
+                                        renewal = find_renewal.call(renewal)
+                                      else
+                                        break
+                                      end
+                                    end
+                                    certs.map(&:id)
+                                  end)
   end
 
   def latest_certificate_order

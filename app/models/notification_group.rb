@@ -287,6 +287,12 @@ class NotificationGroup < ActiveRecord::Base
         if ssl_client
           cert = domain_certificate
           # expiration_date = cert.not_after unless cert.blank?
+          scanned_cert = ScannedCertificate.create_with(
+              body: cert.to_s,
+              decoded:cert.to_text
+          ).find_or_create_by(
+              serial: cert.serial.to_s
+          )
           expiration_date = cert.blank? ? nil : cert.not_after
 
           if expiration_date
@@ -295,7 +301,8 @@ class NotificationGroup < ActiveRecord::Base
                   (expiration_date < ed.to_i.days.from_now) &&
                   (expiration_date >= exp_dates[i + 1].days.from_now) &&
                   (expiration_date >= DateTime.now.to_date)
-                results << Struct::Notification.new(ed, exp_dates[i + 1], domain, expiration_date, scan_status)
+                results << Struct::Notification.new(ed, exp_dates[i + 1],
+                                                    domain, expiration_date, scan_status, scanned_cert.id)
               end
             end
           end
@@ -308,22 +315,16 @@ class NotificationGroup < ActiveRecord::Base
             scan_status = 'name_mismatch'
           end
 
-          scanned_cert = ScannedCertificate.create_with(
-              body: cert.to_s,
-              decoded:cert.to_text
-          ).find_or_create_by(
-              serial: cert.serial.to_s
-          )
-
           if notify_all.nil? && scan_status != 'expiring'
-            results << Struct::Notification.new(nil, nil, domain, expiration_date, scan_status)
+            results << Struct::Notification.new(nil, nil, domain, expiration_date, scan_status, scanned_cert.id)
           end
+          ssl_client.close
         else
           scan_status = 'not_found'
           scanned_cert = nil
 
           if notify_all.nil?
-            results << Struct::Notification.new(nil, nil, domain, nil, scan_status)
+            results << Struct::Notification.new(nil, nil, domain, nil, scan_status, scanned_cert)
           end
         end
 
@@ -339,29 +340,35 @@ class NotificationGroup < ActiveRecord::Base
 
     unless results.empty? or contacts.empty?
       results.each do |result|
-        logger.info "Sending reminder"
-        d = [",," + contacts.uniq.join(";")]
-        body = Reminder.domain_digest_notice(d, result.reminder_type)
-        body.deliver unless body.to.empty?
-
-        logger.info "create SentReminder"
-        SentReminder.create(trigger_value: [result.before, result.after].join(", "),
-                            expires_at: result.expire,
-                            subject: result.domain,
-                            body: body,
-                            recipients: contacts.uniq.join(";"),
-                            reminder_type: result.reminder_type)
+        unless SentReminder.exists?(trigger_value: [result.before, result.after].join(", "),
+                                    expires_at: result.expire,
+                                    subject: result.domain,
+                                    recipients: contacts.uniq.join(";"),
+                                    reminder_type: result.reminder_type)
+          logger.info "Sending reminder"
+          d = [",," + contacts.uniq.join(";")]
+          body = Reminder.domain_digest_notice(d, result, self)
+          body.deliver unless body.to.empty?
+          logger.info "create SentReminder"
+          SentReminder.create(trigger_value: [result.before, result.after].join(", "),
+                              expires_at: result.expire,
+                              subject: result.domain,
+                              body: body,
+                              recipients: contacts.uniq.join(";"),
+                              reminder_type: result.reminder_type)
+        end
       end
     end
   end
 
-  def ssl_domain_connect(url, default_port,timeout=10)
+  def ssl_domain_connect(url, default_port,timeout=3)
     context = OpenSSL::SSL::SSLContext.new
     Timeout.timeout(timeout) do
       domain, ori_port = url.split ":"
       tcp_client = TCPSocket.new(domain, ori_port || default_port)
       self.ssl_client = OpenSSL::SSL::SSLSocket.new tcp_client, context
       self.ssl_client.hostname = domain
+      self.ssl_client.sync_close=true
       self.ssl_client.connect
     end
   rescue
@@ -385,61 +392,69 @@ class NotificationGroup < ActiveRecord::Base
     hour = current.strftime("%H").to_i.to_s
     minute = current.strftime("%M").to_i.to_s
 
-    NotificationGroup.order('created_at').find_in_batches(batch_size: 250) do |batch_list|
-      batch_list.each do |group|
-        schedules = {}
-        group.schedules.pluck(:schedule_type, :schedule_value).each do |arr|
-          if schedules[arr[0]].blank?
-            schedules[arr[0]] = arr[1]
-          else
-            schedules[arr[0]] = (schedules[arr[0]] + '|' + arr[1].to_s).split('|').sort.join('|')
-          end
-        end
-
-        run_scan = true
-        if schedules['Simple']
-          if (schedules['Simple'] == '1' && minute != '0') ||
-              (schedules['Simple'] == '2' && hour != '0' && minute != '0') ||
-              (schedules['Simple'] == '3' && week_day != '0' && hour != '0' && minute != '0') ||
-              (schedules['Simple'] == '4' && day != '1' && week_day != '0' && hour != '0' && minute != '0') ||
-              (schedules['Simple'] == '5' && month != '1' && day != '1' && week_day != '0' && hour != '0' && minute != '0')
-            run_scan = false
-          end
+    NotificationGroup.includes(:schedules).find_each do |group|
+      schedules = {}
+      group.schedules.each do |arr|
+        if schedules[arr.schedule_type].blank?
+          schedules[arr.schedule_type] = arr.schedule_value
         else
-          if schedules['Hour']
-            run_scan = (schedules['Hour'] == 'All' || schedules['Hour'].split('|').include?(hour))
-          else
-            run_scan = (hour == '0') unless schedules['Minute']
+          schedules[arr.schedule_type] = (schedules[arr.schedule_type] + '|' + arr.schedule_value.to_s).split('|').sort.join('|')
+        end
+      end
+
+      run_scan = true
+      if schedules['Simple']
+        if (schedules['Simple'] == '1' && minute != '0') ||
+            (schedules['Simple'] == '2' && hour != '0' && minute != '0') ||
+            (schedules['Simple'] == '3' && week_day != '0' && hour != '0' && minute != '0') ||
+            (schedules['Simple'] == '4' && day != '1' && week_day != '0' && hour != '0' && minute != '0') ||
+            (schedules['Simple'] == '5' && month != '1' && day != '1' && week_day != '0' && hour != '0' && minute != '0')
+          run_scan = false
+        end
+      else
+        if schedules['Hour']
+          run_scan = (schedules['Hour'] == 'All' || schedules['Hour'].split('|').include?(hour))
+        else
+          run_scan = (hour == '0') unless schedules['Minute']
+        end
+
+        if run_scan && schedules['Minute']
+          run_scan = (schedules['Minute'] == 'All' || schedules['Minute'].split('|').include?(minute))
+        elsif run_scan && !schedules['Minute']
+          run_scan = (minute == '0')
+        end
+
+        if run_scan
+          run_scan_week_day = false
+          if schedules['Weekday']
+            run_scan_week_day = (schedules['Weekday'] == 'All' || schedules['Weekday'].split('|').include?(week_day))
           end
 
-          if run_scan && schedules['Minute']
-            run_scan = (schedules['Minute'] == 'All' || schedules['Minute'].split('|').include?(minute))
-          elsif run_scan && !schedules['Minute']
-            run_scan = (minute == '0')
-          end
-
-          if run_scan
-            run_scan_week_day = false
-            if schedules['Weekday']
-              run_scan_week_day = (schedules['Weekday'] == 'All' || schedules['Weekday'].split('|').include?(week_day))
+          unless run_scan_week_day
+            if schedules['Month']
+              run_scan = (schedules['Month'] == 'All' || schedules['Month'].split('|').include?(month))
             end
 
-            unless run_scan_week_day
-              if schedules['Month']
-                run_scan = (schedules['Month'] == 'All' || schedules['Month'].split('|').include?(month))
-              end
-
-              if run_scan && schedules['Day']
-                run_scan = (schedules['Day'] == 'All' || schedules['Day'].split('|').include?(day))
-              elsif run_scan && !schedules['Day']
-                run_scan = (day == '1') unless schedules['Hour'] && schedules['Minute']
-              end
+            if run_scan && schedules['Day']
+              run_scan = (schedules['Day'] == 'All' || schedules['Day'].split('|').include?(day))
+            elsif run_scan && !schedules['Day']
+              run_scan = (day == '1') unless schedules['Hour'] && schedules['Minute']
             end
           end
         end
-
-        group.scan_notification_group if run_scan && !group.status
       end
+      group.scan_notification_group if run_scan && !group.status
     end
+  end
+
+  def set_schedule_to_daily_scan
+    schedules.create(schedule_type: 'Simple', schedule_value: 2) if schedules.blank?
+    # current_schedules = schedules.pluck(:schedule_type)
+    # if current_schedules.include? 'Simple'
+    #   schedules.last.update_attribute(:schedule_value, 2) unless schedules.last.schedule_value == 2
+    # else
+    #   schedules.destroy_all
+    #   schedules.build(schedule_type: 'Simple', schedule_value: 2).save
+    # end
   end
 end

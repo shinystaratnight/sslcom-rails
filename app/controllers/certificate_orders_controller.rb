@@ -17,6 +17,7 @@
 class CertificateOrdersController < ApplicationController
   layout 'application'
   include OrdersHelper
+  include Skylight::Helpers
   skip_before_filter :verify_authenticity_token, only: [:parse_csr]
   filter_access_to :all
   filter_access_to :read, :update, :delete, :show, :edit, :developer, :recipient
@@ -438,13 +439,22 @@ class CertificateOrdersController < ApplicationController
         cc = @certificate_order.transfer_certificate_content(@certificate_content)
 
         if params[:common_name] && !params[:common_name].empty?
-          domains = cc.domains
-          unless domains.include? params[:common_name]
-            domains << params[:common_name]
-            cc.update_attribute(:domains, domains.join(' '))
+          if @certificate_order.certificate.is_single?
+            cert_single_name = cc.certificate_names.where(is_common_name: true).first
+
+            if cert_single_name.name.downcase != params[:common_name].downcase
+              cert_single_name.update_column :name,  params[:common_name].downcase
+            end
+          else
+            domains = cc.domains
+            unless domains.include? params[:common_name]
+              domains << params[:common_name]
+              cc.update_attribute(:domains, domains.join(' '))
+            end
+
+            cc.certificate_names.where(is_common_name: true).first.update_attribute(:is_common_name, false)
+            cc.certificate_names.find_by_name(params[:common_name]).update_attribute(:is_common_name, true)
           end
-          cc.certificate_names.where(is_common_name: true).first.update_attribute(:is_common_name, false)
-          cc.certificate_names.find_by_name(params[:common_name]).update_attribute(:is_common_name, true)
         end
 
         if domains_adjustment
@@ -827,7 +837,7 @@ class CertificateOrdersController < ApplicationController
       @certificate_order=current_user.certificate_order_by_ref(params[:id])
 
       if @certificate_order.nil?
-        co = current_user.ssl_accounts.map(&:certificate_orders)
+        co = current_user.ssl_accounts.includes(:certificate_orders).map(&:certificate_orders)
                  .flatten.find{|c| c.ref == params[:id]}
         if co
           @certificate_order = co

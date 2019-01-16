@@ -67,6 +67,6 @@
             %tr
               %td
                 -audits=(@order.system_audits.empty? ? "n/a" : "###")+"\n"
-                -@order.system_audits.each do |audit|
+                -@order.system_audits.includes{owner(User)}.each do |audit|
                   -audits << "date: #{audit.created_at}\nuser: #{audit.owner.try :login}\naction: #{audit.action}\n###\n"
                 =text_area_tag :audits, audits, :size=>"30x10"

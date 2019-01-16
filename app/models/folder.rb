@@ -1,5 +1,6 @@
 class Folder < ActiveRecord::Base
-  belongs_to :ssl_account  
+  belongs_to :ssl_account
+  belongs_to :parent, foreign_key: "parent_id", class_name: "Folder"
   has_many   :certificate_orders
   
   acts_as_tree dependent: :destroy, order: :name
