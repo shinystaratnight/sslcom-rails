@@ -1,0 +1,46 @@
+.mailbox-read-container
+  - @receipts.each do |receipt|
+    - message = receipt.message
+    - message_id = message.try(:id)
+    - form_reply_cont = "frm-reply-id-#{message_id}"
+    
+    .mailbox-read-panel
+      .mailbox-read-subject
+        = message.subject
+      
+      .mailbox-read-details
+        .mailbox-read-sender
+          - sender_email = message.sender.email
+          - user_email = current_user.email          
+          %strong
+            = message.sender.mailboxer_name
+          = "<#{sender_email}>"
+          %br/
+          to 
+          = sender_email == user_email ? current_user.mailboxer_fetch_recipients(message) : 'me'
+        
+        .mailbox-read-timestamp
+          = message.created_at.strftime("%A, %b %d, %Y at %I:%M%p")
+      
+      .mailbox-read-message
+        = message.body
+
+      .mailbox-read-frm-reply.hidden{id: form_reply_cont}
+        - form_id = "frm-reply-conversation-#{message_id}"
+        %div
+          %i.fa.fa-reply
+          %strong
+            = message.sender.mailboxer_name
+          = "<#{message.sender.email}>"
+        %div  
+          = form_tag mail_reply_path(@ssl_slug, conversation_id: message_id), method: :put, id: form_id do
+            = text_area_tag :body, nil, placeholder: "Reply Message", rows: 5, class: 'txt-mail-reply-body'
+        %div
+          = link_to "Send", '#', class: 'btn-reply-send', data: {form_id: form_id}
+          = link_to "Cancel", '#', class: 'btn-reply-cancel', |
+          data: {form_container_id: form_reply_cont}
+
+      .mailbox-read-buttons
+        = link_to "<i class='fa fa-reply'></i> Reply".html_safe, '#', |
+        class: 'btn-mail-reply', data: {form_container_id: form_reply_cont}
+        =# link_to "<i class='fa fa-forward'></i> Forward".html_safe, '#', class: 'btn-forward'

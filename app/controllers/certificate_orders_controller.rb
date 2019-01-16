@@ -443,14 +443,8 @@ class CertificateOrdersController < ApplicationController
             cert_single_name = cc.certificate_names.where(is_common_name: true).first
 
             if cert_single_name.name.downcase != params[:common_name].downcase
-              domains = cc.domains
-              unless domains.include? params[:common_name]
-                domains << params[:common_name]
-                cc.update_attribute(:domains, domains.join(' '))
-              end
-
-              cc.certificate_names.find_by_name(params[:common_name]).update_attribute(:is_common_name, true)
-              cert_single_name.destroy
+              cert_single_name.update_column :name,
+                                             CertificateContent.non_wildcard_name(params[:common_name].downcase,true)
             end
           else
             domains = cc.domains

@@ -486,6 +486,20 @@ authorization do
   # ============================================================================
   role :user do
     # 
+    # Mailbox
+    #
+    has_permission_on :mailbox, to: [
+      :inbox,
+      :sent,
+      :trash,
+      :compose,
+      :read,
+      :reply,
+      :move_to_trash
+    ] do
+      if_attribute messageable: is {user}
+    end
+    # 
     # Users
     # 
     has_permission_on :users, :to => [

@@ -8313,3 +8313,273 @@ i.fa-external-link.fa-ssl-custom
     &:hover
       color: black
       border-bottom: solid 2px black
+
+/*
+ * Mailbox
+ */
+#mailbox-container
+  display: flex
+  flex-direction: row
+  flex-wrap: nowrap
+  justify-content: flex-start
+  margin-top: 2rem
+  
+  .mailbox-container-empty
+    text-align: center
+    font-size: 1.4rem
+    color: lightgrey
+
+  #mailbox-menu-main
+    width: 15%
+    #mailbox-menu-main__compose
+      margin-top: 15px
+      margin-bottom: 15px
+
+      #btn-mailbox-compose
+        padding: 15px
+        border: 1px solid #6b9029
+        border-radius: 24px
+        font-size: 1.3rem
+        font-weight: 600
+        letter-spacing: 1px
+        &:hover
+          color: white
+          background-color: #6b9029
+
+    #mailbox-menu-main__list
+      margin-top: 3rem
+      div
+        padding: 0.5rem 0
+
+        &:hover
+          background-color: lightgrey
+      i
+        margin-right: 1.1rem
+        margin-left: 1.5rem
+      a
+        margin-top: 1rem
+        color: grey
+        font-size: 1.4rem !important
+        letter-spacing: 0.5px !important
+    
+    #menu-main-unread-count
+      margin-left: 1rem
+    
+    .menu-main-item__selected
+      background-color: #f0808052 
+      a
+        color: red !important
+        font-weight: 600 !important
+
+    .menu-main-item__unselected,
+    .menu-main-item__selected
+      border-bottom-right-radius: 12px
+      border-top-right-radius: 12px
+      margin-right: 2rem
+
+  #mailbox-main-content
+    min-height: 500px
+    width: 85%
+    border-top: 0.5px solid lightgrey
+    border-bottom: 0.5px solid lightgrey
+    margin-bottom: 1rem
+
+  #mailbox-menu-top
+    border-collapse: collapse
+    width: 100%
+
+    td
+      height: 3rem
+      font-size: 1.3rem
+
+    #mailbox-new-message
+      background-color: #2d2d2f
+      color: white
+      letter-spacing: 1.5px
+      padding-left: 1rem
+
+    #mailbox-select-all
+      text-align: center
+      width: 3%
+    
+    #mailbox-refresh,
+    #mailbox-read-actions
+      font-size: 1.9rem
+      a
+        color: grey
+        margin-left: 1rem
+    
+    #mailbox-read-actions
+      height: 2.5rem
+
+      a:hover
+        background-color: #f2f2f2
+        padding: 0.5rem
+        border-radius: 10px
+
+.mailbox-read-container
+  overflow: scroll
+
+#mailbox-compose-container
+  width: 100%
+  
+  span.compose-label
+    font-size: 1.1rem
+    font-weight: 600
+    text-transform: uppercase
+    padding-bottom: 1rem
+
+  form, table, td, 
+  .select2-selection.select2-selection--multiple
+    width: 100% !important
+  
+  .select2
+    width: 95% !important
+
+  #mail-body,
+  #mail-subject
+    width: 95% !important
+    margin-left: 1rem
+
+  td
+    padding: 1rem
+  
+  #mail-body,
+  #mail-subject,
+  .select2-selection
+    border: 0.5px solid lightgrey
+
+  #mail-subject
+    height: 3rem
+
+  #mailbox-compose-actions
+    i
+      margin-right: 0.4rem
+    a, #btn-compose-send
+      border: 1px solid $base_green
+      border-radius: 4px
+      font-size: 1.4rem
+      font-weight: 600
+      padding: 0.8rem 1rem
+      margin-right: 1rem
+      letter-spacing: 0.5px
+      color: $base_green
+
+      &:hover
+        background-color: $base_green
+        color: white
+
+
+.mailbox-read-panel
+  border-top: 1px solid #f2f2f2
+  margin-top: 3.5rem
+  margin-left: 3rem
+  min-height: 200px
+  width: 85%
+  padding-right: 1rem
+
+  .mailbox-read-subject
+    font-size: 2rem
+    padding-bottom: 2rem
+
+  .mailbox-read-details
+    color: grey
+    font-size: 1.2rem
+    display: flex
+    flex-direction: row
+    justify-content: space-between
+
+  .mailbox-read-message
+    font-size: 1.45rem
+    padding-top: 2rem
+    padding-left: 1.5rem
+  
+  .mailbox-read-buttons
+    margin-top: 4rem
+    i
+      margin-right: 0.4rem
+    a
+      border: 1px solid $base_green
+      border-radius: 4px
+      font-size: 1.4rem
+      padding: 0.8rem 1rem
+      margin-right: 1rem
+      letter-spacing: 0.5px
+
+      &:hover
+        background-color: $base_green
+        color: white
+
+  .mailbox-read-frm-reply
+    border: 1px solid #f2f2f2
+    border-radius: 5px
+    margin-top: 2rem
+    padding: 1rem
+
+    div:first-child
+      border-bottom: 1px solid #f2f2f2
+      padding-bottom: 1rem
+      margin-bottom: 1rem
+    
+    div:nth-child(2)
+      margin-bottom: 1rem
+
+    div:last-child
+      margin-bottom: 1rem
+    
+    .txt-mail-reply-body
+      width: 100%
+      border: none
+      border-bottom: 1px solid #f2f2f2
+    
+    .btn-reply-send,
+    .btn-reply-cancel
+      border: 1px solid $base_green
+      background-color: $base_green
+      color: white
+      border-radius: 4px
+      font-size: 1.2rem
+      padding: 0.5rem 1rem
+      margin-right: 1rem
+      letter-spacing: 0.5px
+    
+    .btn-reply-cancel
+      background-color: white
+      color: $base_green
+
+#mailbox-mail-list
+  border-collapse: collapse
+  width: 100%
+  
+  tr
+    border-bottom: 1px solid #f2f2f2
+    cursor: pointer
+    
+    &:hover
+      background-color: #f2f2f2
+      border: 1px solid lightgrey
+      height: 2.8rem
+      font-weight: 600
+      box-shadow: 0.5px 1px lightgrey
+    td
+      height: 2.6rem
+      font-size: 1.3rem
+  
+  .mail-item-unread
+    font-weight: 600
+
+  .mail-checkbox
+    text-align: center
+    width: 3%
+
+  .mail-sender
+    width: 25%
+
+  .mail-subject
+    width: 60%
+  
+  .mail-actions
+    width: 4%
+    a
+      color: grey !important
+      font-size: 1.5rem

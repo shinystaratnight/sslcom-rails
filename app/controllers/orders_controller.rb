@@ -948,6 +948,15 @@ class OrdersController < ApplicationController
     end
   end
 
+  # admin user cancels entire order and all of it's line items
+  def cancel_entire_order
+    @performed = "Cancelled entire order #{@target.reference_number}, credit or refund were NOT issued."
+    @target.cancel!
+    if @target.canceled? && @target.invoice
+      @target.update(invoice_id: nil)
+    end
+  end
+
   def certificate_order_steps
     certificate_order=CertificateOrder.new(params[:certificate_order])
     @certificate_order=Order.setup_certificate_order(certificate: @certificate, certificate_order: certificate_order)

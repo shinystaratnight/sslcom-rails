@@ -1,0 +1,23 @@
+%table#mailbox-menu-top
+  - if @email_type == :read
+    %tr
+      %td
+        #mailbox-read-actions
+          #read-actions
+            = link_to "<i class='fa fa-arrow-left'></i>".html_safe, mail_inbox_path(@ssl_slug)
+            = link_to "<i class='fa fa-trash'></i>".html_safe,                           |
+            mail_move_to_trash_path(@ssl_slug, conversation_id: @conversation.try(:id)), |
+            method: :put, data: {confirm: "Are you sure you want to move this email to trash?"}
+          #pagination
+  
+  - elsif @email_type == :compose
+    %tr
+      %td#mailbox-new-message New Message
+
+  - else
+    %tr
+      %td#mailbox-select-all
+        = check_box_tag 'all_mail_selected', 'selected'
+      %td#mailbox-refresh
+        = link_to "<i class='fa fa-refresh'></i>".html_safe, get_mailbox_folder_path
+
