@@ -496,6 +496,10 @@ class CertificateContent < ActiveRecord::Base
     COMODO_SERVER_SOFTWARE_MAPPINGS[server_software ? server_software.id : -1]
   end
 
+  def common_name
+    certificate_names.find_by_is_common_name(true).try(:name) || csr.common_name
+  end
+
   def has_all_contacts?
     if Contact.optional_contacts?
       if certificate_order.certificate.is_dv? and Settings.exempt_dv_contacts

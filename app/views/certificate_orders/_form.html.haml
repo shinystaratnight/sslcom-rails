@@ -26,7 +26,7 @@
       -if certificate.is_code_signing?
         =csr.text_field :common_name
       -else
-        .displayed_csr_field=@certificate_content.csr.common_name
+        .displayed_csr_field=@certificate_content.common_name
   =cc.fields_for :registrant, @registrant do |rf|
     -if certificate.requires_company_info?
       -saved_registrants = @certificate_order.ssl_account.saved_registrants
