@@ -566,5 +566,108 @@ FactoryGirl.define do
         end
       end
     end
+
+    # 350 Code Signing SSL (codesigning256sslcom)
+    # ==========================================================================
+    trait :codesigningssl do
+      reseller_tier_id      nil
+      title                 'Code Signing'
+      summary               nil
+      text_only_summary     nil
+      text_only_description nil
+      allow_wildcard_ucc    nil
+      serial                'codesigning256sslcom'
+      product               'code-signing'
+      icons                 {{main: 'gold_lock_lg.gif'}}
+      display_order         {{all: 3, index: 2}}
+      description           {{certificate_type: "Code Signing",
+                              points:           "<div class='check'>organization validation</div>\n<div class='check'>results in higher sales conversion</div>\n<div class='check'>$150,000 USD insurance guarranty</div>\n<div class='check'>activates SSL Secure Site Seal</div>\n<div class='check'>2048 bit public key encryption</div>\n<em style='color:#333;display:block;padding:5px 20px;'>also comes with the following</em>\n<div class='check'>quick issuance</div>\n<div class='check'>30 day unconditional refund</div>\n<div class='check'>24 hour support</div>\n<div class='check'>unlimited reissuances</div>",
+                              validation_level: "organization",
+                              summary:          "for securing installable apps and plugins",
+                              abbr:             "Code Signing"
+      }.with_indifferent_access}
+
+      after(:create) do |certificate|
+        value = 2190
+        group_duration = certificate.product_variant_groups.create(
+            title:                 'Duration',
+            status:                'live',
+            description:           'Duration',
+            text_only_description: 'Duration',
+            display_order:          1,
+            serial:                 nil,
+            published_as:           'live',
+        )
+
+        (6..10).to_a.each do |n|
+          ProductVariantItem.create(
+              product_variant_group_id: group_duration.id,
+              title:                    "#{n} Years",
+              status:                   "live",
+              description:              "#{n} years",
+              text_only_description:    "#{n} years",
+              amount:                   value*10.7,
+              display_order:            n,
+              item_type:                'duration',
+              value:                    value,
+              serial:                   "sslcomcodesigning256ssl#{n}yr",
+              published_as:             "live",
+          )
+          value += 365
+        end
+      end
+    end
+
+    # 360 EV Code Signing SSL (evcodesigning256sslcom)
+    # ==========================================================================
+    trait :evcodesigningssl do
+      reseller_tier_id      nil
+      title                 'EV Code Signing'
+      summary               nil
+      text_only_summary     nil
+      text_only_description nil
+      allow_wildcard_ucc    nil
+      serial                'evcodesigning256sslcom'
+      product               'ev-code-signing'
+      icons                 {{main: 'gold_lock_lg.gif'}}
+      display_order         {{all: 3, index: 2}}
+      description           {{certificate_type: "EV Code Signing",
+                              points:           "<div class='check'>extended validation</div>\n<div class='check'>results in higher sales conversion</div>\n<div class='check'>$2 million USD insurance guarranty</div>\n<div class='check'>works with Microsfot Smartscreen</div>\n<div class='check'>2048 bit public key encryption</div>\n<em style='color:#333;display:block;padding:5px 20px;'>also comes with the following</em>\n<div class='check'>quick issuance</div>\n<div class='check'>30 day unconditional refund</div>\n<div class='check'>stored on fips 140-2 USB token</div>\n<div class='check'>24 hour support</div>",
+                              validation_level: "extended",
+                              summary:          "for securing installable apps and plugins",
+                              abbr:             "EV Code Signing"
+      }.with_indifferent_access}
+
+      after(:create) do |certificate|
+        value = 365
+        group_duration = certificate.product_variant_groups.create(
+            title:                 'Duration',
+            status:                'live',
+            description:           'Duration',
+            text_only_description: 'Duration',
+            display_order:          1,
+            serial:                 nil,
+            published_as:           'live',
+        )
+
+        (1..3).to_a.each do |n|
+          ProductVariantItem.create(
+              product_variant_group_id: group_duration.id,
+              title:                    "#{n} Years",
+              status:                   "live",
+              description:              "#{n} years",
+              text_only_description:    "#{n} years",
+              amount:                   value*10.7,
+              display_order:            n,
+              item_type:                'duration',
+              value:                    value,
+              serial:                   "sslcomevcodesigning256ssl#{n}yr",
+              published_as:             "live",
+          )
+          value += 365
+        end
+      end
+    end
+
   end
 end

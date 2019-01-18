@@ -4,7 +4,7 @@
 .reseller_registration_profile
   %h3
     Create #{@certificate_order.certificate.is_ov_client? ? "Certificate Recipients" : "Contacts"} For #{@certificate_order.subject.downcase}
-    (order ref# #{link_to @certificate_order.ref,@certificate_order})
+    (order ref# #{link_to @certificate_order.ref, certificate_order_path(@ssl_slug, @certificate_order.ref)})
   %p
     #{@certificate_order.certificate.is_ov_client? ? "Enter who will be receiving their own personal certificate" : "Please provide point of contacts"}
     -if !@certificate_order.subject.blank?

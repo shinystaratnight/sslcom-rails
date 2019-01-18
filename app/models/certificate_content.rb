@@ -255,15 +255,16 @@ class CertificateContent < ActiveRecord::Base
   end
 
   def certificate_names_from_domains(domains=nil)
-    domains ||= all_domains
-    (domains-certificate_names.find_by_domains(domains).pluck(:name)).each do |domain|
-      cn_domain = certificate.is_single? ? CertificateContent.non_wildcard_name(domain,true) : domain
-      new_certificate_name=certificate_names.find_or_create_by(name: cn_domain.downcase,
-                                                           is_common_name: csr.try(:common_name)==domain)
-      new_certificate_name.candidate_email_addresses # start the queued job running
-      Delayed::Job.enqueue OtherDcvsSatisyJob.new(ssl_account,new_certificate_name) if ssl_account
+    unless certificate.is_single? and certificate_names.count > 0
+      domains ||= all_domains
+      (domains-certificate_names.find_by_domains(domains).pluck(:name)).each do |domain|
+        cn_domain = certificate.is_single? ? CertificateContent.non_wildcard_name(domain,true) : domain
+        new_certificate_name=certificate_names.find_or_create_by(name: cn_domain.downcase,
+                                                                 is_common_name: csr.try(:common_name)==domain)
+        new_certificate_name.candidate_email_addresses # start the queued job running
+        Delayed::Job.enqueue OtherDcvsSatisyJob.new(ssl_account,new_certificate_name) if ssl_account
+      end
     end
-
     # Auto adding domains in case of certificate order has been included into some groups.
     NotificationGroup.auto_manage_cert_name(self, 'create')
   end
@@ -502,6 +503,10 @@ class CertificateContent < ActiveRecord::Base
 
   def comodo_server_software_id
     COMODO_SERVER_SOFTWARE_MAPPINGS[server_software ? server_software.id : -1]
+  end
+
+  def common_name
+    certificate_names.find_by_is_common_name(true).try(:name) || csr.common_name
   end
 
   def has_all_contacts?

@@ -486,6 +486,20 @@ authorization do
   # ============================================================================
   role :user do
     # 
+    # Mailbox
+    #
+    has_permission_on :mailbox, to: [
+      :inbox,
+      :sent,
+      :trash,
+      :compose,
+      :read,
+      :reply,
+      :move_to_trash
+    ] do
+      if_attribute messageable: is {user}
+    end
+    # 
     # Users
     # 
     has_permission_on :users, :to => [
@@ -581,7 +595,8 @@ authorization do
       :create_free_ssl,
       :create_multi_free_ssl, 
       :lookup_discount,
-      :show_cart
+      :show_cart,
+      :add_cart
     ]
     has_permission_on :contacts, to: [
       :new,
@@ -612,7 +627,7 @@ privileges do
     :change_state, :create, :delete, :read, :refund, :update, :recipient
   ]
   privilege :read, includes: [
-    :index, :invoice, :lookup_discount, :search, :show, :show_cart, :developer, :site_report, :ajax
+    :index, :invoice, :lookup_discount, :search, :show, :show_cart, :add_cart, :developer, :site_report, :ajax
   ]
   privilege :update, includes: [
     :edit, :edit_email, :edit_update, :verification_check

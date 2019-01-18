@@ -406,7 +406,7 @@ class CertificateOrdersController < ApplicationController
       managed_domains = params[:managed_domains]
       additional_domains = ''
       managed_domains.each do |domain|
-        additional_domains.concat(domain.gsub('csr-', '').gsub('validated-', '').gsub('manual-', '') + ' ')
+        additional_domains.concat(domain.gsub('csr-', '') + ' ')
       end unless managed_domains.blank?
 
       params[:certificate_order][:certificate_contents_attributes]['0'.to_sym][:additional_domains] = additional_domains.strip
@@ -437,6 +437,26 @@ class CertificateOrdersController < ApplicationController
     respond_to do |format|
       if @certificate_content.valid?
         cc = @certificate_order.transfer_certificate_content(@certificate_content)
+
+        if params[:common_name] && !params[:common_name].empty?
+          if @certificate_order.certificate.is_single?
+            cert_single_name = cc.certificate_names.where(is_common_name: true).first
+
+            if cert_single_name.name.downcase != params[:common_name].downcase
+              cert_single_name.update_column(:name,
+                                             CertificateContent.non_wildcard_name(params[:common_name].downcase,false))
+            end
+          else
+            domains = cc.domains
+            unless domains.include? params[:common_name]
+              domains << params[:common_name]
+              cc.update_attribute(:domains, domains.join(' '))
+            end
+
+            cc.certificate_names.where(is_common_name: true).first.update_attribute(:is_common_name, false)
+            cc.certificate_names.find_by_name(params[:common_name]).update_attribute(:is_common_name, true)
+          end
+        end
 
         if domains_adjustment
           o = params[:order]

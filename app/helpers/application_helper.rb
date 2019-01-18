@@ -374,6 +374,17 @@ module ApplicationHelper
     final.join('').html_safe
   end
 
+  def get_mailbox_folder_path
+    case @email_type
+      when :inbox
+        mail_inbox_path(@ssl_slug)
+      when :sent
+        mail_sent_path(@ssl_slug)
+      else
+        mail_trash_path(@ssl_slug)
+    end
+  end  
+
   private
 
   def create_tags(label, form_field, options, append)
