@@ -52,7 +52,7 @@ jQuery(function($) {
         names = names.replace(/(\*)[^\.]/g, "$1");
       <%end-%>
 
-      domains = names.split(/\s/);
+      domains = $.uniqueStrings(names.split(/\s/));
       <%if @certificate.is_premium_ssl?-%>
         domains = domains.slice(0,3);
         names = domains.join(' ');
@@ -70,7 +70,7 @@ jQuery(function($) {
         textArea.value = textArea.value.replace(/(\w)\*/g, "$1");
         textArea.value = textArea.value.replace(/(\*)[^\.]/g, "$1");
       <%end-%>
-      domains = textArea.value.split(/\s/);
+      domains = $.uniqueStrings(textArea.value.split(/\s/));
       valid_domains = [];
 
       $.each(domains, function(idx) {
@@ -677,41 +677,112 @@ jQuery(function($) {
     });
 
     $.manage_common_name = function() {
+      <%
+        is_basic = @certificate_order.certificate.is_basic?
+        is_evucc = @certificate_order.certificate.is_evucc?
+        is_premium_ssl = @certificate_order.certificate.is_premium_ssl?
+        is_high_assurance = @certificate_order.certificate.is_high_assurance?
+      %>
+
       var old_common_name = $('#old_common_name').val();
       var current_common_name = $('#common_name').val().toLowerCase();
+      var is_allowed_wildcard_domain = true;
+      var is_valid_domain = $.checkDomain(current_common_name);
 
-      if (current_common_name != old_common_name) {
-        var domain_names = $('textarea[id$=domains]').val().toLowerCase();
+      if (current_common_name.includes('*')) {
+        <%if is_basic || is_evucc || is_premium_ssl || is_high_assurance%>
+          is_allowed_wildcard_domain = false;
+        <%end%>
+      }
 
-        if (current_common_name == '') {
-          if (domain_names.search(old_common_name) != -1) {
-            domain_names = domain_names.replace(old_common_name, '');
-            $('textarea[id$=domains]').val(domain_names);
+      if (is_valid_domain && is_allowed_wildcard_domain) {
+        if ($('#content').find('.inner').children().first().hasClass('flash_message')) {
+          $('#content').find('.inner').children().first().remove();
+        }
+
+        if (current_common_name != old_common_name) {
+          var domain_names = $('textarea[id$=domains]').val().toLowerCase();
+          var domain_names_ary = domain_names.split(/\s/);
+
+          if (current_common_name == '') {
+            var index = $.inArray(old_common_name, domain_names_ary);
             $('#old_common_name').val('');
 
-            $.adjustDomainPricing($('textarea[id$=domains]')[0]);
-          }
-        } else {
-          if (domain_names.search(current_common_name) != -1) {
-            if (domain_names.search(old_common_name) != -1) {
-              domain_names = domain_names.replace(old_common_name, '');
-              $('textarea[id$=domains]').val(domain_names);
-              $('#old_common_name').val(current_common_name);
+            if (index != -1) {
+              /*domain_names_ary[index] = '';*/
+              domain_names_ary.splice(index, 1);
+              $('textarea[id$=domains]').val(domain_names_ary.join(' '));
 
               $.adjustDomainPricing($('textarea[id$=domains]')[0]);
             }
           } else {
-            if (domain_names.search(old_common_name) != -1) {
-              domain_names = domain_names.replace(old_common_name, '');
-              $('#old_common_name').val(current_common_name);
+            var index = $.inArray(old_common_name, domain_names_ary);
+            $('#old_common_name').val(current_common_name);
+
+            if ($.inArray(current_common_name, domain_names_ary) != -1) {
+              if (index != -1) {
+                domain_names_ary.splice(index, 1);
+                $('textarea[id$=domains]').val(domain_names_ary.join(' '));
+
+                $.adjustDomainPricing($('textarea[id$=domains]')[0]);
+              }
+            } else {
+              if (index != -1) {
+                domain_names_ary.splice(index, 1);
+              }
+
+              domain_names = domain_names_ary.join(' ') + ' ' + current_common_name;
+              $('textarea[id$=domains]').val(domain_names);
+
+              $.adjustDomainPricing($('textarea[id$=domains]')[0]);
             }
-
-            domain_names = domain_names + ' ' + current_common_name;
-            $('textarea[id$=domains]').val(domain_names);
-
-            $.adjustDomainPricing($('textarea[id$=domains]')[0]);
           }
         }
+      } else {
+        var domain_names = $('textarea[id$=domains]').val().toLowerCase();
+        var domain_names_ary = domain_names.split(/\s/);
+        var index = $.inArray(old_common_name, domain_names_ary);
+
+        if (index != -1) {
+          domain_names_ary.splice(index, 1);
+          $('textarea[id$=domains]').val(domain_names_ary.join(' '));
+
+          $.adjustDomainPricing($('textarea[id$=domains]')[0]);
+        }
+
+        $('#old_common_name').val('');
+        $('#common_name').val('');
+
+        var message_wrap_element = $('<div></div>');
+        message_wrap_element.attr('class', 'flash_message error');
+
+        var message_element = $('<span></span>');
+        if (!is_valid_domain) {
+          message_element.append('The common name is invalid one. Please input valid common name.');
+        } else {
+          message_element.append('It is not allowed wildcard domain for this certificate order.');
+        }
+        message_wrap_element.append(message_element);
+
+        var btn_element = $('<small></small>');
+        var close_btn_element = $('<div></div>');
+        close_btn_element.attr('class', 'close_flash_message');
+
+        var close_sign_element = $('<span></span>');
+        close_sign_element.append('X');
+
+        close_btn_element.append(close_sign_element);
+        close_btn_element.append('close');
+
+        btn_element.append(close_btn_element);
+        message_wrap_element.append(btn_element);
+
+        if ($('#content').find('.inner').children().first().hasClass('flash_message')) {
+          $('#content').find('.inner').children().first().remove();
+        }
+        message_wrap_element.insertBefore($('#content').find('.inner').children().first());
+
+        window.scrollTo(0, 0);
       }
     };
 
