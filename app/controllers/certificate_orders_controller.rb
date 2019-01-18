@@ -439,7 +439,7 @@ class CertificateOrdersController < ApplicationController
         cc = @certificate_order.transfer_certificate_content(@certificate_content)
 
         if params[:common_name] && !params[:common_name].empty?
-          if @certificate_order.certificate.is_single?
+          if @certificate_order.certificate.is_single? or @certificate_order.certificate.is_wildcard?
             cert_single_name = cc.certificate_names.where(is_common_name: true).first
 
             if cert_single_name.name.downcase != params[:common_name].downcase

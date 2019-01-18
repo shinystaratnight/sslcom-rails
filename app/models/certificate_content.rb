@@ -255,7 +255,7 @@ class CertificateContent < ActiveRecord::Base
   end
 
   def certificate_names_from_domains(domains=nil)
-    unless certificate.is_single? and certificate_names.count > 0
+    unless (certificate.is_single? or certificate.is_wildcard?) and certificate_names.count > 0
       domains ||= all_domains
       (domains-certificate_names.find_by_domains(domains).pluck(:name)).each do |domain|
         cn_domain = certificate.is_single? ? CertificateContent.non_wildcard_name(domain,true) : domain
