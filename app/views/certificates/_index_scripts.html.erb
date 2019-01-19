@@ -52,7 +52,7 @@ jQuery(function($) {
         names = names.replace(/(\*)[^\.]/g, "$1");
       <%end-%>
 
-      domains = $.uniqueStrings(names.split(/\s/));
+      domains = $.uniqueStrings(names.toLowerCase().split(/\s/));
       <%if @certificate.is_premium_ssl?-%>
         domains = domains.slice(0,3);
         names = domains.join(' ');
@@ -70,7 +70,7 @@ jQuery(function($) {
         textArea.value = textArea.value.replace(/(\w)\*/g, "$1");
         textArea.value = textArea.value.replace(/(\*)[^\.]/g, "$1");
       <%end-%>
-      domains = $.uniqueStrings(textArea.value.split(/\s/));
+      domains = $.uniqueStrings(textArea.value.toLowerCase().split(/\s/));
       valid_domains = [];
 
       $.each(domains, function(idx) {
@@ -686,6 +686,8 @@ jQuery(function($) {
 
       var old_common_name = $('#old_common_name').val();
       var current_common_name = $('#common_name').val().toLowerCase();
+      $('#common_name').val(current_common_name);
+
       var is_allowed_wildcard_domain = true;
       var is_valid_domain = $.checkDomain(current_common_name);
 
