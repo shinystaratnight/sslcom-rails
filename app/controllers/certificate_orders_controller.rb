@@ -444,11 +444,19 @@ class CertificateOrdersController < ApplicationController
 
             if cert_single_name.name.downcase != params[:common_name].downcase
               cert_single_name.update_column(:name,
-                                             CertificateContent.non_wildcard_name(params[:common_name].downcase,false))
+                                   CertificateContent.non_wildcard_name(params[:common_name].downcase,false))
               cert_single_name.domain_control_validations.delete_all # remove any previous validations
               cert_single_name.candidate_email_addresses # start the queued job running
               Delayed::Job.enqueue CertificateContent::OtherDcvsSatisyJob.new(@certificate_order.ssl_account,
                                                           cert_single_name) if @certificate_order.ssl_account
+              # Basic and High Assurance includes domain minus www
+              if CertificateContent.non_wildcard_name(params[:common_name].downcase,true) != cert_single_name.name
+                no_www=cc.certificate_names.create(is_common_name: false, name:
+                                   CertificateContent.non_wildcard_name(params[:common_name].downcase,true))
+                no_www.candidate_email_addresses # start the queued job running
+                Delayed::Job.enqueue CertificateContent::OtherDcvsSatisyJob.new(@certificate_order.ssl_account,
+                                                                              no_www) if @certificate_order.ssl_account
+              end
             end
           else
             domains = cc.domains
