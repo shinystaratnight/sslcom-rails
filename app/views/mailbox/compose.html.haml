@@ -1,0 +1,44 @@
+- title = 'SSL.com Mail: Compose'
+- content_for :title, title
+
+#mailbox-container
+  = render partial: 'menu_main'
+  #mailbox-main-content
+    = render partial: 'menu_top'
+
+    #mailbox-compose-container
+      = form_tag mail_compose_path(@ssl_slug), method: :post do
+        %table
+          %tr
+            %td#mailbox-compose-to
+              %span.compose-label To
+              %br/
+              %br/
+              = select_tag :mail_recipients,                              |
+              options_for_select(current_user.mailboxer_recipients, nil), |
+              multiple: true, id: "mail-to", required: true
+          %tr
+            %td#mailbox-compose-subject
+              %span.compose-label Subject
+              %br/
+              %br/
+              = text_field_tag :mail_subject, nil, id: "mail-subject", required: true
+          %tr
+            %td#mailbox-compose-body
+              %span.compose-label Message
+              %br/
+              %br/
+              = text_area_tag :mail_body, nil, id: "mail-body", rows: 6, required: true
+          %tr  
+            %td#mailbox-compose-actions
+              = submit_tag 'Send', id: 'btn-compose-send'
+              = link_to "Cancel", mail_inbox_path(@ssl_slug),
+              data: {confirm: "Are you sure you want to discard all changes and leave page?"}
+
+-content_for :js do
+  :javascript
+    $("#mail-to").select2();
+    $(document).ready(function() {
+      $("#mail-to").select2();
+    });
+

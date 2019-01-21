@@ -52,10 +52,9 @@ jQuery(function($) {
         names = names.replace(/(\*)[^\.]/g, "$1");
       <%end-%>
 
-      domains = names.split(/\s/);
+      domains = $.uniqueStrings(names.toLowerCase().split(/\s/));
       <%if @certificate.is_premium_ssl?-%>
         domains = domains.slice(0,3);
-        /*all_domains = domains.join(' ');*/
         names = domains.join(' ');
       <%end-%>
 
@@ -71,7 +70,7 @@ jQuery(function($) {
         textArea.value = textArea.value.replace(/(\w)\*/g, "$1");
         textArea.value = textArea.value.replace(/(\*)[^\.]/g, "$1");
       <%end-%>
-      domains = textArea.value.split(/\s/);
+      domains = $.uniqueStrings(textArea.value.toLowerCase().split(/\s/));
       valid_domains = [];
 
       $.each(domains, function(idx) {
@@ -246,24 +245,6 @@ jQuery(function($) {
 
       // show checkbox for adding pasted CSR to Managed CSR.
       $('.add_to_manager_block').show();
-
-      // remove domains what belongs to previous selected Managed CSR.
-      /*$('.managed_domains').empty();
-      $('#managed_domains').select2({
-        tags: true,
-        tokenSeparators: [',', ' '],
-        templateSelection: function(data, container) {
-          var value = data.element.value;
-
-          if (value.indexOf('csr-') == -1 && value.indexOf('validated-') == -1) {
-            $(container).css("background-color", "#A4C000");
-          } else if (value.indexOf('validated-') != -1) {
-            $(container).css("background-color", "#ccffcc");
-          }
-
-          return data.text;
-        }
-      });*/
     } else {
       // hide checkbox for adding pasted CSR to Managed CSR.
       $('.add_to_manager_block').hide();
@@ -290,6 +271,8 @@ jQuery(function($) {
           $(".cert_reqs").after("<div class='flash_message notice'><span class='ajax_info'>common name field in csr is: "
             + data['common_name'] + days_left + "</span></div>");
 
+          $('#common_name').val(data['common_name']);
+
           var csr_names = [];
           // adjust domain price.
           <% if @certificate.is_ucc?-%>
@@ -301,6 +284,8 @@ jQuery(function($) {
                 if (exist_domains) {
                   exist_domains = exist_domains.join(' ').replace(/validated-/g, '').replace(/manual-/g, '').replace(/csr-/g, '').split(' ');
                   all_domains = $.unique($.merge(exist_domains, csr_names));
+                } else {
+                  all_domains = csr_names
                 }
 
                 $.adjustDomainPricing(all_domains.join(' '));
@@ -315,27 +300,9 @@ jQuery(function($) {
             }
           <% else-%>
             csr_names = $.unique($.merge([data['common_name']], data['subject_alternative_names']));
-            /*all_domains = $.unique($.merge([data['common_name']], data['subject_alternative_names']));
-            names = all_domains.join(' ');*/
           <% end-%>
 
-          <!--< %if !Settings.csr_domains_ui%>-->
-            <!--< %if @certificate.is_basic? || @certificate.is_free? || @certificate.is_high_assurance?%>-->
-              /*$('#hidden_www_domain').val('');
-              var domains= [];
-
-              $.each(csr_names, function(index, csr_name) {
-                if ((csr_name.indexOf('www.') == -1) && ($.inArray('www.' + csr_name, domains) == -1)) {
-                  domains.push('www.' + csr_name);
-                }
-              });
-
-              $('#hidden_www_domain').val(domains.join(' '));*/
-            <!--< %end%>-->
-
           <%if Settings.csr_domains_ui%>
-            /*all_domains = names.split(' ');*/
-
             co_type = '';
             <% if @certificate.is_free?-%>
               co_type = 'free';
@@ -354,9 +321,6 @@ jQuery(function($) {
             }
 
             if (all_domains.length > 0) {
-              // remove domains what belongs to previous selected Managed CSR.
-              /*$('.managed_domains').empty();*/
-
               // add domains what belongs to previous selected Managed CSR.
               select_obj = $('.managed_domains');
 
@@ -385,7 +349,6 @@ jQuery(function($) {
 
                 $('#managed_domains').select2({
                   tags: true,
-                  /*tokenSeparators: [',', ' '],*/
                   tokenizer: function(input, selection, callback) {
                     if (input.term.indexOf(',') == -1 && input.term.indexOf(' ') == -1)
                       return input;
@@ -416,81 +379,6 @@ jQuery(function($) {
                   }
                 });
               });
-
-              // check validations for all domains
-              /*$.ajax({
-                url: "< %= check_validation_csrs_path %>",
-                data: {
-                  domains: all_domains,
-                  public_key_sha1: data['public_key_sha1']
-                },
-                type: "POST",
-                success: function (obj) {
-                  Object.keys(obj).map(function(key) {
-                    var is_exist = false;
-                    var selected_value = $('.managed_domains').val();
-
-                    // checking duplication
-                    if ($.inArray(('validated-' + key), selected_value) != -1
-                      || $.inArray(('csr-' + key), selected_value) != -1
-                      || $.inArray(('manual-' + key), selected_value) != -1) {
-                      is_exist = true;
-                    }
-
-                    /!*if (!is_exist && psl.isValid(key)) {*!/
-                    if (!is_exist && $.checkDomain(key)) {
-                      var optElement = $('<option></option>');
-
-                      if (obj[key] == 'true') {
-                        optElement.attr('value', 'validated-' + key);
-                      } else {
-                        optElement.attr('value', 'csr-' + key);
-                      }
-                      optElement.attr('selected', true);
-                      optElement.append(key);
-
-                      select_obj.append(optElement);
-                    }
-                  });
-
-                  $('.clear_domains').show();
-
-                  $('#managed_domains').select2({
-                    tags: true,
-                    /!*tokenSeparators: [',', ' '],*!/
-                    tokenizer: function(input, selection, callback) {
-                      if (input.term.indexOf(',') == -1 && input.term.indexOf(' ') == -1)
-                        return input;
-
-                      var parts = input.term.split(/,| /);
-                      $.each(parts, function(idx) {
-                        var part = parts[idx];
-                        part = part.trim();
-
-                        if (part != '') {
-                          callback({
-                            id: part,
-                            text: part
-                          });
-                        }
-                      });
-
-                      return '';
-                    },
-                    templateSelection: function(data, container) {
-                      var value = data.element.value;
-
-                      if (value.indexOf('csr-') == -1 && value.indexOf('validated-') == -1) {
-                        $(container).css("background-color", "#A4C000");
-                      } else if (value.indexOf('validated-') != -1) {
-                        $(container).css("background-color", "#ccffcc");
-                      }
-
-                      return data.text;
-                    }
-                  });
-                }
-              });*/
             }
           <%end%>
         }
@@ -548,6 +436,7 @@ jQuery(function($) {
                   var days_left = "";
                 <%end%>
                 $(".cert_reqs").after("<div class='flash_message notice'><span class='ajax_info'>common name field in csr is: "+data.certificate_content.csr.common_name+days_left+"</span></div>");
+                $('#common_name').val(data.certificate_content.csr.common_name);
               }
 
               <%if @certificate.is_ucc?-%>
@@ -559,6 +448,8 @@ jQuery(function($) {
                     if (exist_domains) {
                       exist_domains = exist_domains.join(' ').replace(/validated-/g, '').replace(/manual-/g, '').replace(/csr-/g, '').split(' ');
                       all_domains = $.unique($.merge(exist_domains, csr_names));
+                    } else {
+                      all_domains = csr_names;
                     }
 
                     $.adjustDomainPricing(all_domains.join(' '));
@@ -575,15 +466,10 @@ jQuery(function($) {
                 sans = data.certificate_content.csr.subject_alternative_names;
                 all_domains = $.merge([common_name], sans);
                 csr_names = $.unique(all_domains);
-
-                /*csr_names = all_domains.join(' ');*/
               <%end-%>
 
               // setting 'none' for Managed CSR
               $('.managed_csr').val('none');
-
-              /*// remove domains what belongs to previous pasted CSR.
-              $('.managed_domains').empty();*/
 
               // show checkbox for adding this CSR to Managed CSR.
               if ($('#previous_csr').prop('checked')) {
@@ -592,22 +478,7 @@ jQuery(function($) {
                 $('.add_to_manager_block').show();
               }
 
-              <!--< %if !Settings.csr_domains_ui%>-->
-                <!--< %if @certificate.is_basic? || @certificate.is_free? || @certificate.is_high_assurance?%>-->
-                  /*$('#hidden_www_domain').val('');
-                  var domains= [];
-
-                  $.each(csr_names, function(index, csr_name) {
-                    if ((csr_name.indexOf('www.') == -1) && ($.inArray('www.' + csr_name, domains) == -1)) {
-                      domains.push('www.' + csr_name);
-                    }
-                  });
-
-                  $('#hidden_www_domain').val(domains.join(' '));*/
-                <!--< %end%>-->
               <%if Settings.csr_domains_ui%>
-                /*all_domains = csr_names.split(' ');*/
-
                 co_type = '';
                 <% if @certificate.is_free?-%>
                   co_type = 'free';
@@ -653,7 +524,6 @@ jQuery(function($) {
 
                   $('#managed_domains').select2({
                     tags: true,
-                    /*tokenSeparators: [',', ' '],*/
                     tokenizer: function(input, selection, callback) {
                       if (input.term.indexOf(',') == -1 && input.term.indexOf(' ') == -1)
                         return input;
@@ -684,87 +554,6 @@ jQuery(function($) {
                     }
                   });
                 });
-
-                // check validations for all domains
-                /*$.ajax({
-                    url: "< %= check_validation_csrs_path %>",
-                    data: {
-                      domains: all_domains,
-                      public_key_sha1: data.certificate_content.csr.public_key_sha1
-                    },
-                    type: "POST",
-                    success: function (obj) {
-                      // remove domains what belongs to previous pasted CSR.
-                      /!*$('.managed_domains').empty();*!/
-
-                      // adding domains what belongs to current pasted CSR.
-                      select_obj = $('.managed_domains');
-
-                      Object.keys(obj).map(function(key) {
-                        var is_exist = false;
-                        var selected_value = $('.managed_domains').val();
-
-                        // checking duplication
-                        if ($.inArray(('validated-' + key), selected_value) != -1
-                          || $.inArray(('csr-' + key), selected_value) != -1
-                          || $.inArray(('manual-' + key), selected_value) != -1) {
-                          is_exist = true;
-                        }
-
-                        /!*if (!is_exist && psl.isValid(key)) {*!/
-                        if (!is_exist && $.checkDomain(key)) {
-                          var optElement = $('<option></option>');
-
-                          if (obj[key] == 'true') {
-                            optElement.attr('value', 'validated-' + key);
-                          } else {
-                            optElement.attr('value', 'csr-' + key);
-                          }
-                          optElement.attr('selected', true);
-                          optElement.append(key);
-
-                          select_obj.append(optElement);
-                        }
-                      });
-
-                      $('.clear_domains').show();
-
-                      $('#managed_domains').select2({
-                        tags: true,
-                        /!*tokenSeparators: [',', ' '],*!/
-                        tokenizer: function(input, selection, callback) {
-                          if (input.term.indexOf(',') == -1 && input.term.indexOf(' ') == -1)
-                            return input;
-
-                          var parts = input.term.split(/,| /);
-                          $.each(parts, function(idx) {
-                            var part = parts[idx];
-                            part = part.trim();
-
-                            if (part != '') {
-                              callback({
-                                id: part,
-                                text: part
-                              });
-                            }
-                          });
-
-                          return '';
-                        },
-                        templateSelection: function(data, container) {
-                          var value = data.element.value;
-
-                          if (value.indexOf('csr-') == -1 && value.indexOf('validated-') == -1) {
-                            $(container).css("background-color", "#A4C000");
-                          } else if (value.indexOf('validated-') != -1) {
-                            $(container).css("background-color", "#ccffcc");
-                          }
-
-                          return data.text;
-                        }
-                      });
-                    }
-                  });*/
               <%end%>
             }
           }
@@ -772,17 +561,17 @@ jQuery(function($) {
       }
     });
   <%end%>
-  
+
   $.updateUccReprocessAmount = function(nonwildcard_count, wildcard_count) {
     var wildcard         = $('#ucc-wildcard-amount'),
         wildcard_cost    = (wildcard.length ? wildcard.data('cost') : 0),
         nonwildcard_cost = $('#ucc-nonwildcard-amount').data('cost'),
         final_amount     = (nonwildcard_count * nonwildcard_cost) + (wildcard_count * wildcard_cost);
-    
+
     $('#order_adjustment_amount').val(final_amount.toFixed(2));
     $('#calculated_reprocess_price').text('$' + final_amount.toFixed(2) + " USD");
   };
-  
+
   $.update_order_pricing = function(){
     domains_cost = 0.0
     server_license_cost = 0.0;
@@ -885,37 +674,129 @@ jQuery(function($) {
           });
         }
       <%end%>
+    });
 
-        /*var domains = $('.subject_alternative_names').val();
+    $.manage_common_name = function() {
+      <%
+        is_basic = @certificate_order.certificate.is_basic?
+        is_evucc = @certificate_order.certificate.is_evucc?
+        is_premium_ssl = @certificate_order.certificate.is_premium_ssl?
+        is_high_assurance = @certificate_order.certificate.is_high_assurance?
+      %>
 
-        if (domains.indexOf('_') > -1) {
-          var message_wrap_element = $('<div></div>');
-          message_wrap_element.attr('class', 'flash_message error');
+      var old_common_name = $('#old_common_name').val();
+      var current_common_name = $('#common_name').val().toLowerCase();
+      $('#common_name').val(current_common_name);
 
-          var message_element = $('<span></span>');
-          message_element.append("Domain names can not contains '_' underline letter.");
-          message_wrap_element.append(message_element);
+      var is_allowed_wildcard_domain = true;
+      var is_valid_domain = $.checkDomain(current_common_name);
 
-          var btn_element = $('<small></small>');
-          var close_btn_element = $('<div></div>');
-          close_btn_element.attr('class', 'close_flash_message');
+      if (current_common_name.includes('*')) {
+        <%if is_basic || is_evucc || is_premium_ssl || is_high_assurance%>
+          is_allowed_wildcard_domain = false;
+        <%end%>
+      }
 
-          var close_sign_element = $('<span></span>');
-          close_sign_element.append('X');
+      if (is_valid_domain && is_allowed_wildcard_domain) {
+        if ($('#content').find('.inner').children().first().hasClass('flash_message')) {
+          $('#content').find('.inner').children().first().remove();
+        }
 
-          close_btn_element.append(close_sign_element);
-          close_btn_element.append('close');
+        if (current_common_name != old_common_name) {
+          var domain_names = $('textarea[id$=domains]').val().toLowerCase();
+          var domain_names_ary = domain_names.split(/\s/);
 
-          btn_element.append(close_btn_element);
-          message_wrap_element.append(btn_element);
+          if (current_common_name == '') {
+            var index = $.inArray(old_common_name, domain_names_ary);
+            $('#old_common_name').val('');
 
-          if ($('#content').find('.inner').children().first().hasClass('flash_message')) {
-            $('#content').find('.inner').children().first().remove();
+            if (index != -1) {
+              /*domain_names_ary[index] = '';*/
+              domain_names_ary.splice(index, 1);
+              $('textarea[id$=domains]').val(domain_names_ary.join(' '));
+
+              $.adjustDomainPricing($('textarea[id$=domains]')[0]);
+            }
+          } else {
+            var index = $.inArray(old_common_name, domain_names_ary);
+            $('#old_common_name').val(current_common_name);
+
+            if ($.inArray(current_common_name, domain_names_ary) != -1) {
+              if (index != -1) {
+                domain_names_ary.splice(index, 1);
+                $('textarea[id$=domains]').val(domain_names_ary.join(' '));
+
+                $.adjustDomainPricing($('textarea[id$=domains]')[0]);
+              }
+            } else {
+              if (index != -1) {
+                domain_names_ary.splice(index, 1);
+              }
+
+              domain_names = domain_names_ary.join(' ') + ' ' + current_common_name;
+              $('textarea[id$=domains]').val(domain_names);
+
+              $.adjustDomainPricing($('textarea[id$=domains]')[0]);
+            }
           }
-          message_wrap_element.insertBefore($('#content').find('.inner').children().first());
+        }
+      } else {
+        var domain_names = $('textarea[id$=domains]').val().toLowerCase();
+        var domain_names_ary = domain_names.split(/\s/);
+        var index = $.inArray(old_common_name, domain_names_ary);
 
-          return false;
-        }*/
+        if (index != -1) {
+          domain_names_ary.splice(index, 1);
+          $('textarea[id$=domains]').val(domain_names_ary.join(' '));
+
+          $.adjustDomainPricing($('textarea[id$=domains]')[0]);
+        }
+
+        $('#old_common_name').val('');
+        $('#common_name').val('');
+
+        var message_wrap_element = $('<div></div>');
+        message_wrap_element.attr('class', 'flash_message error');
+
+        var message_element = $('<span></span>');
+        if (!is_valid_domain) {
+          message_element.append('The common name is invalid one. Please input valid common name.');
+        } else {
+          message_element.append('It is not allowed wildcard domain for this certificate order.');
+        }
+        message_wrap_element.append(message_element);
+
+        var btn_element = $('<small></small>');
+        var close_btn_element = $('<div></div>');
+        close_btn_element.attr('class', 'close_flash_message');
+
+        var close_sign_element = $('<span></span>');
+        close_sign_element.append('X');
+
+        close_btn_element.append(close_sign_element);
+        close_btn_element.append('close');
+
+        btn_element.append(close_btn_element);
+        message_wrap_element.append(btn_element);
+
+        if ($('#content').find('.inner').children().first().hasClass('flash_message')) {
+          $('#content').find('.inner').children().first().remove();
+        }
+        message_wrap_element.insertBefore($('#content').find('.inner').children().first());
+
+        window.scrollTo(0, 0);
+      }
+    };
+
+    $('#common_name').keypress(function(e) {
+      if (e.keyCode == 13 || e.keyCode == 32) {
+        e.preventDefault();
+        $.manage_common_name();
+      }
+    });
+
+    $('#common_name').blur(function() {
+      $.manage_common_name();
     });
 
     $('textarea[id$=domains]').keypress(function (e) {
@@ -1010,11 +891,48 @@ jQuery(function($) {
         //add to cart if csr is not ready
         if ($(':radio[name*=has_csr]').length!=0 && $(':radio[name*=has_csr]:checked').val()=="false") {
           $('textarea[name*=signing_request]').remove();
-          $.change_cart_items("add");
+
           if ($.noLimitAccount()) {
             return true;
           } else {
-            window.location = "<%=show_cart_orders_url%>";
+            var ajaxAddCartUrl = "<%=add_cart_orders_url%>";
+            $.ajax({
+              url: ajaxAddCartUrl,
+              data: {
+                cart: {
+                  "<%=ShoppingCart::PRODUCT_CODE%>" : $('#certificate_product').val() ,
+                  "<%=ShoppingCart::DURATION%>" : $(':radio[name*=duration]:checked').val(),
+                  <%if instance_variable_get('@'+CertificateOrder::RENEWING)-%>
+                    "<%=ShoppingCart::RENEWAL_ORDER%>" : '<%=instance_variable_get('@'+CertificateOrder::RENEWING).ref%>',
+                  <%end-%>
+                  "<%=ShoppingCart::LICENSES%>" :
+                    <%if @certificate.is_ucc? || @certificate.is_wildcard?-%>
+                      $('#certificate_order_server_licenses').val()
+                    <%else%>
+                    "0"
+                    <%end%>
+                  , "<%=ShoppingCart::DOMAINS%>" :
+                    <%if @certificate.is_ucc?%>
+                      <%if Settings.csr_domains_ui%>
+                        $.domains($('.managed_domains').val() ? $('.managed_domains').val().join(' ') : '').join(" ")
+                      <%else%>
+                        $.domains($('textarea[id$=domains]')[0]).join(" ")
+                      <%end%>
+                    <%else%>
+                      "0"
+                    <%end%>
+                  , "<%=ShoppingCart::AFFILIATE%>" : $.get_affiliate()
+                  , "<%=ShoppingCart::QUANTITY%>" : 1
+                }
+              },
+              type: "POST",
+              success: function (result) {
+                if (result['guid'] != '') {
+                  window.location = "<%=show_cart_orders_url%>" + '?id=' + result['guid'];
+                }
+              }
+            });
+
             return false;
           }
         }
@@ -1054,7 +972,6 @@ jQuery(function($) {
     <%if Settings.csr_domains_ui%>
       $('#managed_domains').select2({
         tags: true,
-        /*tokenSeparators: [',', ' '],*/
         tokenizer: function(input, selection, callback) {
           if (input.term.indexOf(',') == -1 && input.term.indexOf(' ') == -1)
             return input;
@@ -1077,11 +994,6 @@ jQuery(function($) {
         templateSelection: function(data, container) {
           var value = data.element.value;
 
-          /*if (value.indexOf('csr-') == -1 && value.indexOf('validated-') == -1) {
-            $(container).css("background-color", "#A4C000");
-          } else if (value.indexOf('validated-') != -1) {
-            $(container).css("background-color", "#ccffcc");
-          }*/
           if (value.indexOf('csr-') == -1) {
             $(container).css("background-color", "#A4C000");
           }
@@ -1124,16 +1036,6 @@ jQuery(function($) {
       }
     }
 
-    <!--< %if @certificate.is_basic? || @certificate.is_high_assurance? || (@certificate.is_ev? && !@certificate.is_evucc?) || @certificate.is_wildcard?%>-->
-      /*$('#managed_domains').on('select2:opening select2:closing', function( event ) {
-        var $searchfield = $(this).parent().find('.select2-search__field');
-        $searchfield.prop('readonly', true);
-      });
-      $('#managed_domains').on('select2:open', function() {
-        $('.select2-dropdown').hide();
-      });
-      $('.managed_domains_container').addClass('hidden_close_x');*/
-    <!--< %elsif @certificate.is_premium_ssl?%>-->
     <%if Settings.csr_domains_ui && @certificate.is_premium_ssl?%>
       $('#managed_domains').on('select2:opening select2:closing', function() {
         if ($('#managed_domains').val() != null && $('#managed_domains').val().length > 2) {
@@ -1364,7 +1266,6 @@ jQuery(function($) {
 
         $('.custom_selected_block').hide();
         $('.custom_schedule').hide();
-        /*$('input[name="schedule_type"][value="true"]').prop('checked', true);*/
         $('.simple_schedule').hide();
 
         $('.notification_group_schedule').show();
@@ -1425,46 +1326,6 @@ jQuery(function($) {
         $('.block_minute_custom').show();
       }
     });
-
-    /*$('#notification_group').change(function() {
-      if ($(this).val() == 'none') {
-        $('#schedule_simple_type option[value="2"]').prop('selected', true);
-        $('.simple_schedule').show();
-        $('.schedule_type').show();
-      } else {
-        $('input[name="weekday_type"][value="true"]').prop('checked', true);
-        if ($('#weekday_custom_list').val() != null) {
-          $('#weekday_custom_list').val(null).trigger('change');
-        }
-
-        $('input[name="month_type"][value="true"]').prop('checked', true);
-        if ($('#month_custom_list').val() != null) {
-          $('#month_custom_list').val(null).trigger('change');
-        }
-
-        $('input[name="day_type"][value="true"]').prop('checked', true);
-        if ($('#day_custom_list').val() != null) {
-          $('#day_custom_list').val(null).trigger('change');
-        }
-
-        $('input[name="hour_type"][value="true"]').prop('checked', true);
-        if ($('#hour_custom_list').val() != null) {
-          $('#hour_custom_list').val(null).trigger('change');
-        }
-
-        $('input[name="minute_type"][value="true"]').prop('checked', true);
-        if ($('#minute_custom_list').val() != null) {
-          $('#minute_custom_list').val(null).trigger('change');
-        }
-
-        $('.custom_selected_block').hide();
-        $('.custom_schedule').hide();
-
-        $('input[name="schedule_type"][value="true"]').prop('checked', true);
-        $('.simple_schedule').hide();
-        $('.schedule_type').hide();
-      }
-    });*/
 
     <%if Settings.csr_domains_ui%>
     $('.clear_domains').click(function(e) {

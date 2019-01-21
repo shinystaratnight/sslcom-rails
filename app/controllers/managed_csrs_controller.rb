@@ -99,9 +99,13 @@ class ManagedCsrsController < ApplicationController
 
   def destroy
     @csr = current_user.ssl_account.all_csrs.find_by(id: params[:id])
-    @csr.destroy
-    respond_to do |format|
+    if @csr
+      @csr.destroy
       flash[:notice] = "Csr was successfully deleted."
+    else
+      flash[:error] = "Csr not found."
+    end
+    respond_to do |format|
       format.html { redirect_to managed_csrs_path(@ssl_slug) }
     end
   end

@@ -1,5 +1,5 @@
 <%last_sent= @renewal ? nil : @certificate_order.certificate_content.csr.domain_control_validations.last_sent%>
-<%common_name = @renewal ? @certificate_order.parent.common_name : @certificate_order.certificate_content.csr.common_name%>
+<%common_name = @renewal ? @certificate_order.parent.common_name : @certificate_order.certificate_content.common_name%>
 <%if @contact.is_a? Contact -%>
 Dear <%=[@contact.first_name, @contact.last_name].join(" ")%>,
 <%else-%>
