@@ -678,10 +678,10 @@ jQuery(function($) {
 
     $.manage_common_name = function() {
       <%
-        is_basic = @certificate_order.certificate.is_basic?
-        is_evucc = @certificate_order.certificate.is_evucc?
-        is_premium_ssl = @certificate_order.certificate.is_premium_ssl?
-        is_high_assurance = @certificate_order.certificate.is_high_assurance?
+        is_basic = @certificate.is_basic?
+        is_evucc = @certificate.is_evucc?
+        is_premium_ssl = @certificate.is_premium_ssl?
+        is_high_assurance = @certificate.is_high_assurance?
       %>
 
       var old_common_name = $('#old_common_name').val();
