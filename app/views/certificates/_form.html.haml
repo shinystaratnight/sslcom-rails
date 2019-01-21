@@ -114,7 +114,7 @@
         =link_to 'Go To CSR Manager', managed_csrs_path(@ssl_slug || @certificate_order.ssl_account.to_slug)
       .clearfix.manage_cn_block
         %label
-          Common Name:
+          Common Name (CN):
         =text_field_tag :common_name
         =hidden_field_tag :old_common_name
       -if Settings.csr_domains_ui
