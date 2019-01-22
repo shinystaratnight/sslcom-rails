@@ -465,7 +465,8 @@ class CertificateOrdersController < ApplicationController
               cc.update_attribute(:domains, domains.join(' '))
             end
 
-            cc.certificate_names.where(is_common_name: true).first.update_attribute(:is_common_name, false)
+            common_name_domain = cc.certificate_names.where(is_common_name: true).first
+            common_name_domain.update_attribute(:is_common_name, false) if common_name_domain
             cc.certificate_names.find_by_name(params[:common_name]).update_attribute(:is_common_name, true)
           end
         end
