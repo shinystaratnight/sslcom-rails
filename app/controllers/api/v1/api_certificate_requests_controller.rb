@@ -294,9 +294,6 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
                   else
                     if cn.dcv_verify(dcv.dcv_method)
                       dcv.satisfy! unless dcv.satisfied?
-                      # succeeded_domains << cn.name
-                    # else
-                    #   failed_domains << cn.name
                     end
                   end
                 end
