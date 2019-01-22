@@ -61,7 +61,7 @@ class CertificateContent < ActiveRecord::Base
     azadegi\.com Comodo\sRoot\sCA CyberTrust\sRoot\sCA DigiCert\sRoot\sCA Equifax\sRoot\sCA friends\.walla\.co\.il
     GlobalSign\sRoot\sCA login\.live\.com my\.screenname\.aol\.com secure\.logmein\.com
     Thawte\sRoot\sCA twitter\.com VeriSign\sRoot\sCA wordpress\.com www\.10million\.org www\.balatarin\.com
-    cia\.gov \.cybertrust\.com equifax\.com hamdami\.com mossad\.gov\.il sis\.gov\.uk microsoft\.com
+    cia\.gov \.cybertrust\.com equifax\.com hamdami\.com mossad\.gov\.il sis\.gov\.uk
     yahoo\.com login\.skype\.com mozilla\.org \.live\.com global\strustee)
 
   WHITELIST = {492127=> %w(.*?\.ssl\.com\z \Assl\.com\z .*?\.certlock\.com\z \Acertlock\.com\z),
@@ -207,6 +207,14 @@ class CertificateContent < ActiveRecord::Base
 
     state :validated do
       event :pend_validation, :transitions_to => :pending_validation
+      event :pend_issuance, :transitions_to => :pending_issuance
+      event :issue, :transitions_to => :issued
+      event :cancel, :transitions_to => :canceled
+      event :reset, :transitions_to => :new
+    end
+
+    state :pending_issuance do
+      event :pend_validation, :transitions_to => :pending_validation
       event :issue, :transitions_to => :issued
       event :cancel, :transitions_to => :canceled
       event :reset, :transitions_to => :new
@@ -234,7 +242,8 @@ class CertificateContent < ActiveRecord::Base
   end
 
   def add_ca(ssl_account)
-    unless [467564,16077,204730].include?(ssl_account.id)
+    # dtnt comodo chained is 492703
+    unless [467564,16077,204730,492703].include?(ssl_account.id)
       self.ca = (self.certificate.cas.ssl_account_or_general_default(ssl_account)).last if ca.blank? and certificate
     end
   end
@@ -246,15 +255,16 @@ class CertificateContent < ActiveRecord::Base
   end
 
   def certificate_names_from_domains(domains=nil)
-    domains ||= all_domains
-    (domains-certificate_names.find_by_domains(domains).pluck(:name)).each do |domain|
-      cn_domain = certificate.is_single? ? CertificateContent.non_wildcard_name(domain,true) : domain
-      new_certificate_name=certificate_names.find_or_create_by(name: cn_domain.downcase,
-                                                           is_common_name: csr.try(:common_name)==domain)
-      new_certificate_name.candidate_email_addresses
-      Delayed::Job.enqueue OtherDcvsSatisyJob.new(ssl_account,new_certificate_name) if ssl_account
+    unless (certificate.is_single? or certificate.is_wildcard?) and certificate_names.count > 0
+      domains ||= all_domains
+      (domains-certificate_names.find_by_domains(domains).pluck(:name)).each do |domain|
+        cn_domain = certificate.is_single? ? CertificateContent.non_wildcard_name(domain,true) : domain
+        new_certificate_name=certificate_names.find_or_create_by(name: cn_domain.downcase)
+        new_certificate_name.update_column(:is_common_name, csr.try(:common_name)==domain)
+        new_certificate_name.candidate_email_addresses # start the queued job running
+        Delayed::Job.enqueue OtherDcvsSatisyJob.new(ssl_account,new_certificate_name) if ssl_account
+      end
     end
-
     # Auto adding domains in case of certificate order has been included into some groups.
     NotificationGroup.auto_manage_cert_name(self, 'create')
   end
@@ -396,17 +406,19 @@ class CertificateContent < ActiveRecord::Base
           )
         end
       else
-        candidate_addresses=name.candidate_email_addresses
-        if DomainControlValidation.approved_email_address? candidate_addresses, v["dcv"]
+        if DomainControlValidation.approved_email_address? CertificateName.candidate_email_addresses(
+            name.non_wildcard_name), v["dcv"]
           name.domain_control_validations.create(dcv_method: "email", email_address: v["dcv"],
                                                  failure_action: v["dcv_failure_action"],
-                                                 candidate_addresses: candidate_addresses)
+                                                 candidate_addresses: CertificateName.candidate_email_addresses(
+                                                     name.non_wildcard_name))
           # assume the first name is the common name
           self.csr.domain_control_validations.create(
               dcv_method: "email",
               email_address: v["dcv"],
               failure_action: v["dcv_failure_action"],
-              candidate_addresses: candidate_addresses
+              candidate_addresses: CertificateName.candidate_email_addresses(
+                  name.non_wildcard_name)
           ) if (i == 0 && !certificate_order.certificate.is_ucc?)
         end
       end
@@ -491,6 +503,10 @@ class CertificateContent < ActiveRecord::Base
 
   def comodo_server_software_id
     COMODO_SERVER_SOFTWARE_MAPPINGS[server_software ? server_software.id : -1]
+  end
+
+  def common_name
+    certificate_names.find_by_is_common_name(true).try(:name) || csr.common_name
   end
 
   def has_all_contacts?

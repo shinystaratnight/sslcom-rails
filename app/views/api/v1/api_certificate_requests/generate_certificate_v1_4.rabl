@@ -5,6 +5,6 @@ unless @result.errors.blank?
   end
 else
   glue @result do
-    attributes :cert_results
+    attributes :cert_results, :cert_common_name
   end
 end

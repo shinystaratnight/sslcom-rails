@@ -16,3 +16,4 @@
 //= require vakata-jstree/jstree
 //= require deitch-jstree-grid/jstreegrid
 //= require folders
+//= require mailbox

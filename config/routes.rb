@@ -367,6 +367,7 @@ SslCom::Application.routes.draw do
       collection do
         get :checkout, action: "new" # this shows the discount code prompt
         get :show_cart
+        post :add_cart
         get :search
         get :visitor_trackings
         post :create_free_ssl, :create_multi_free_ssl, :lookup_discount
@@ -472,6 +473,15 @@ SslCom::Application.routes.draw do
     match "paypal_express/purchase", via: [:get, :post]
 
     match "/site_seals/:id/site_report'," => 'site_seals#site_report', via: :get
+
+    # mailbox
+    get "mail/inbox" => "mailbox#inbox", as: :mail_inbox
+    get "mail/sent" => "mailbox#sent", as: :mail_sent
+    get "mail/trash" => "mailbox#trash", as: :mail_trash
+    match "mail/compose" => "mailbox#compose", as: :mail_compose, via: [:get, :post]
+    get "mail/read" => "mailbox#read", as: :mail_read
+    put "mail/reply" => "mailbox#reply", as: :mail_reply
+    put "mail/move_to_trash" => "mailbox#move_to_trash", as: :mail_move_to_trash
   end
 
   scope '(/team/:ssl_slug)', module: false do

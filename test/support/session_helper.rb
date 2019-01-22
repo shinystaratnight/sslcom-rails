@@ -39,28 +39,51 @@ module SessionHelper
   end
 
   def fill_in_cert_registrant
+    # Fill Registrant Infos
     registrant_id = 'certificate_order_certificate_contents_attributes_0_registrant_attributes'
     fill_in "#{registrant_id}_company_name", with: 'EZOPS Inc'
     fill_in "#{registrant_id}_address1",     with: '123 H St.'
     fill_in "#{registrant_id}_city",         with: 'Houston'
     fill_in "#{registrant_id}_state",        with: 'TX'
     fill_in "#{registrant_id}_postal_code",  with: '12345'
+
+    fill_in "#{registrant_id}_title",  with: 'title'
+    fill_in "#{registrant_id}_first_name",  with: 'first_name'
+    fill_in "#{registrant_id}_last_name",  with: 'last_name'
+    fill_in "#{registrant_id}_email",  with: 'test_registrant@domain.com'
+    fill_in "#{registrant_id}_phone",  with: '122333444455555'
+
+    # Click for going to contact page
     find('input[alt="edit ssl certificate order"]').click
   end
 
   def fill_in_cert_contacts
-    contacts_id = 'certificate_content_certificate_contacts_attributes_0'
-    fill_in "#{contacts_id}_first_name", with: 'first'
-    fill_in "#{contacts_id}_last_name",  with: 'last'
-    fill_in "#{contacts_id}_email",      with: 'test_contact@domain.com'
-    fill_in "#{contacts_id}_phone",      with: '1233334444'
-    find('input[alt="Bl submit button"]').click
+    # Click for Create New Contact
+    find("#btn_create_new_contact").click
+
+    # Check for Administrative
+    find("#chk-administrative-role").click
+
+    # Fill some infos for contact
+    fill_in 'contact_first_name', with: 'first'
+    fill_in 'contact_last_name',  with: 'last'
+    fill_in 'contact_email',      with: 'test_contact@domain.com'
+    fill_in 'contact_phone',      with: '1233334444'
+
+    # Click Submit Button for creating new contact.
+    find('#btn_create_role_contact').click
+
+    # Check whether contact has been created or not by ajax call
+    page.must_have_content("Remove")
+
+    # Click for going to validation page.
+    find('input[alt="Next bl"]').click
   end
-  
+
   def issue_certificate(csr_id)
     create(
       :signed_certificate,
-      :nonwildcard_certificate_sslcom,
+      :nonwildcard_csr,
       csr_id: csr_id
     )
   end

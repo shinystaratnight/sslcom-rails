@@ -406,7 +406,7 @@ class CertificateOrdersController < ApplicationController
       managed_domains = params[:managed_domains]
       additional_domains = ''
       managed_domains.each do |domain|
-        additional_domains.concat(domain.gsub('csr-', '').gsub('validated-', '').gsub('manual-', '') + ' ')
+        additional_domains.concat(domain.gsub('csr-', '') + ' ')
       end unless managed_domains.blank?
 
       params[:certificate_order][:certificate_contents_attributes]['0'.to_sym][:additional_domains] = additional_domains.strip
@@ -437,6 +437,39 @@ class CertificateOrdersController < ApplicationController
     respond_to do |format|
       if @certificate_content.valid?
         cc = @certificate_order.transfer_certificate_content(@certificate_content)
+
+        if params[:common_name] && !params[:common_name].empty?
+          if @certificate_order.certificate.is_single? or @certificate_order.certificate.is_wildcard?
+            cert_single_name = cc.certificate_names.where(is_common_name: true).first
+
+            if cert_single_name.name.downcase != params[:common_name].downcase
+              cert_single_name.update_column(:name,
+                                   CertificateContent.non_wildcard_name(params[:common_name].downcase,false))
+              cert_single_name.domain_control_validations.delete_all # remove any previous validations
+              cert_single_name.candidate_email_addresses # start the queued job running
+              Delayed::Job.enqueue CertificateContent::OtherDcvsSatisyJob.new(@certificate_order.ssl_account,
+                                                          cert_single_name) if @certificate_order.ssl_account
+              # Basic and High Assurance includes domain minus www
+              if CertificateContent.non_wildcard_name(params[:common_name].downcase,true) != cert_single_name.name
+                no_www=cc.certificate_names.create(is_common_name: false, name:
+                                   CertificateContent.non_wildcard_name(params[:common_name].downcase,true))
+                no_www.candidate_email_addresses # start the queued job running
+                Delayed::Job.enqueue CertificateContent::OtherDcvsSatisyJob.new(@certificate_order.ssl_account,
+                                                                              no_www) if @certificate_order.ssl_account
+              end
+            end
+          else
+            domains = cc.domains
+            unless domains.include? params[:common_name]
+              domains << params[:common_name]
+              cc.update_attribute(:domains, domains.join(' '))
+            end
+
+            common_name_domain = cc.certificate_names.where(is_common_name: true).first
+            common_name_domain.update_attribute(:is_common_name, false) if common_name_domain
+            cc.certificate_names.find_by_name(params[:common_name]).update_attribute(:is_common_name, true)
+          end
+        end
 
         if domains_adjustment
           o = params[:order]

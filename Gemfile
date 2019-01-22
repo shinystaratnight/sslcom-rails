@@ -1,9 +1,7 @@
 source 'http://rubygems.org'
 
 gem 'rails', '~> 4.2.7.1'
-
-
-gem "sprockets", ">= 3.7.2"
+gem 'sprockets'
 gem 'protected_attributes'
 gem 'responders', '~> 2.0'
 gem 'dynamic_form'
@@ -86,6 +84,7 @@ gem 'whois-parser'
 gem 'where-or'
 gem "skylight"
 gem 'authy'
+gem 'mailboxer'
 
 group :development do
   gem 'foreman'

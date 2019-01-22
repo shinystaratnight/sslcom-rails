@@ -3,8 +3,8 @@ class Certificate < ActiveRecord::Base
   include Filterable
   include Sortable
 
-  has_many    :product_variant_groups, :as => :variantable
-  has_many    :product_variant_items, through: :product_variant_groups
+  has_many    :product_variant_groups, :as => :variantable, dependent: :destroy
+  has_many    :product_variant_items, through: :product_variant_groups, dependent: :destroy
   has_many    :sub_order_items, through: :product_variant_items
   has_many    :validation_rulings, :as=>:validation_rulable
   has_many    :validation_rules, :through => :validation_rulings

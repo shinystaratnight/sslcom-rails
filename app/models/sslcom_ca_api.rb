@@ -224,7 +224,7 @@ class SslcomCaApi
       # options[:cc].csr.signed_certificates.create body: api_log_entry.end_entity_certificate.to_s, ca_id: options[:ca_id]
     end
 
-    api_log_entry.end_entity_certificate.to_s
+    api_log_entry.end_entity_certificate
   end
 
   def self.revoke_ssl(signed_certificate, reason)
@@ -290,7 +290,7 @@ class SslcomCaApi
     req = (options[:method]=~/GET/i ? Net::HTTP::Get : Net::HTTP::Post).new(uri, 'Content-Type' => 'application/json')
     http = Net::HTTP.new(uri.host, uri.port)
     http.use_ssl = true
-    http.read_timeout = 300 # Default is 60 seconds
+    http.read_timeout = 1200 # Default is 60 seconds
     http.verify_mode = OpenSSL::SSL::VERIFY_PEER
     http.cert = OpenSSL::X509::Certificate.new(File.read(client_auth_cert))
     http.key = OpenSSL::PKey::RSA.new(File.read(client_auth_key))
