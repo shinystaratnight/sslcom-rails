@@ -241,7 +241,7 @@ module CertificateOrdersHelper
         'validation_waiting'
       #give the green indicator. pondering on setting
       #validated to validation_waiting
-      when "validated", "issued"
+      when "validated", "issued", "pending_issuance"
         'validation_approved'
       else
         ''

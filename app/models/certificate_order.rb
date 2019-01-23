@@ -1164,14 +1164,14 @@ class CertificateOrder < ActiveRecord::Base
         OrderNotifier.potential_trademark(Settings.notify_address, self, certificate_content.infringement).deliver_now
       elsif !certificate.is_server? or (domains_validated? and caa_validated?)
         # queue this job due to CAA lookups
-        # if certificate_names.count > 10 and !options[:mapping].profile_name=~/EV/
-        #   unless certificate_content.pending_issuance?
-        #     SslcomCaApi.delay.apply_for_certificate(self, options)
-        #     certificate_content.pend_issuance!
-        #   end
-        # else
+        if certificate_names.count > 10 and not options[:mapping].profile_name=~/EV/
+          unless certificate_content.pending_issuance?
+            SslcomCaApi.delay.apply_for_certificate(self, options)
+            certificate_content.pend_issuance!
+          end
+        else
           SslcomCaApi.apply_for_certificate(self, options)
-        # end
+        end
       end
     else
       ComodoApi.apply_for_certificate(self, options) if ca_name=="comodo"

@@ -243,7 +243,7 @@ class CertificateContent < ActiveRecord::Base
 
   def add_ca(ssl_account)
     # dtnt comodo chained is 492703
-    unless [467564,16077,204730,492703].include?(ssl_account.id)
+    unless [467564,16077,204730,492703,21291].include?(ssl_account.id)
       self.ca = (self.certificate.cas.ssl_account_or_general_default(ssl_account)).last if ca.blank? and certificate
     end
   end
@@ -353,7 +353,7 @@ class CertificateContent < ActiveRecord::Base
 
   def all_domains
     parse_unique_domains(
-      (domains.blank? ? [] : domains) + [csr.try(:all_names)] + certificate_names.map(&:name)
+      (domains.blank? ? [] : domains) + certificate_names.map(&:name)
     )
   end
 
