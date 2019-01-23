@@ -1106,11 +1106,15 @@ class CertificateOrdersController < ApplicationController
     if (params[:schedule_type] == 'none' && params[:notification_group] == 'none') || params[:schedule_type] == 'simple'
       current_schedules = notification_group.schedules.pluck(:schedule_type)
       unless current_schedules.include? 'Simple'
-        notification_group.schedules.destroy_all
+        schedule_value_value =
+            params[:schedule_type] == 'none' ?
+                '2' :
+                (params[:schedule_simple_type] ? params[:schedule_simple_type] : '2')
 
+        notification_group.schedules.destroy_all
         notification_group.schedules.build(
             schedule_type: 'Simple',
-            schedule_value: params[:schedule_simple_type]
+            schedule_value: schedule_value_value
         ).save
       end
     elsif params[:schedule_type] == 'custom'
