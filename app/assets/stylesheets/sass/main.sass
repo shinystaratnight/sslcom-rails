@@ -8601,3 +8601,77 @@ i.fa-external-link.fa-ssl-custom
     a
       color: grey !important
       font-size: 1.5rem
+
+.email-modal
+  display: none
+  position: fixed
+  z-index: 1
+  padding-top: 100px
+  left: 0
+  top: 0
+  width: 100%
+  height: 100%
+  overflow: auto
+  background-color: rgb(0,0,0)
+  background-color: rgba(0,0,0,0.5)
+
+  .modal-content
+    position: relative
+    background-color: #fefefe
+    margin: auto
+    padding: 0
+    border: 1px solid #888
+    width: 500px
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19)
+    -webkit-animation-name: animatetop
+    -webkit-animation-duration: 0.5s
+    animation-name: animatetop
+    animation-duration: 0.5s
+
+    .modal-header
+      padding: 18px 10px 10px
+      background-color: white
+      color: black
+      font-size: 20px
+      text-align: center
+
+    .modal-body
+      padding: 0px 10px
+
+      #required-field,
+      #required-valid
+        padding-left: 10px
+        display: none
+        color: red
+        font-size: 12px
+
+      #callback_emails
+        width: 474px
+        box-shadow: 0px 0px 10px 0 rgba(0, 0, 0, 0.18)
+
+      &.error-required #callback_emails,
+      &.error-invalid #callback_emails
+        border-color: red
+
+      &.error-invalid #required-valid,
+      &.error-required #required-field
+        display: block
+
+    .modal-footer
+      padding: 3px 10px 10px 10px
+      background-color: white
+      color: black
+      text-align: right
+
+    .close
+      color: black
+      float: right
+      font-size: 20px
+      font-weight: bold
+      margin-top: -12px
+
+      &:hover,
+      &:focus
+        color: #888
+        text-decoration: none
+        cursor: pointer

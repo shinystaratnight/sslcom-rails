@@ -274,13 +274,12 @@ class OrderNotifier < ActionMailer::Base
          to:    user.email
   end
 
-  def callback_send(co, token)
-    @token = token
-    @validation_link = email_verification_url
+  def callback_send(co, token, email)
+    @validation_link = email_verification_url(token)
 
     mail subject: "Email Verification For OV",
          from: Settings.from_email.no_reply,
-         to: co.locked_registrant.email
+         to: email
   end
 
   protected

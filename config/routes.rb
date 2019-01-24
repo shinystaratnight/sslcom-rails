@@ -556,8 +556,8 @@ SslCom::Application.routes.draw do
   match 'acceptable-top-level-domains-tlds-for-ssl-certificates' => 'site#top_level_domains_tlds',
         as: :tlds, via: [:get, :post]
   match '/certificate_order_token/:token/generate_cert' => 'certificate_orders#generate_cert', :as => :confirm, via: [:get]
-  match '/validation/email_verification' => 'validations#email_verification', :as => :email_verification, via: [:get]
   match '/validation/email_verification_check' => 'validations#email_verification_check', :as => :email_verification_check, via: [:post]
+  match '/callback/:token' => 'validations#verification', :as => :email_verification, via: [:get]
   match '/validation/automated_call' => 'validations#automated_call', :as => :automated_call, via: [:post]
   match '/validation/phone_verification_check' => 'validations#phone_verification_check', :as => :phone_verification_check, via: [:post]
 

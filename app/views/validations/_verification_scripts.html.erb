@@ -28,10 +28,9 @@
         $.ajax({
           url: phone_verification_url,
           data: {
+            token: $('#token').val(),
             passed_token: $('#passed_token').val(),
-            token: $('#email_verification_code').val(),
             phone_verification_code: $('#phone_verification_code').val(),
-            country_code: $("input[name='country_code']").val()
           },
           type: 'POST',
           success: function (data) {
@@ -47,11 +46,13 @@
 
               var message_element = $('<span></span>');
               if (data['status'] == 'success') {
-                message_element.append('Congratulation! Your certificate order has been issued.');
+                message_element.append('Congratulation! It has been verified successfully.');
               } else if (data['status'] == 'incorrect-token') {
-                message_element.append('You are trying to do verification with wrong tokens.');
+                message_element.append('You have tried to do verification with wrong tokens.');
               } else if (data['status'] == 'failed') {
-                message_element.append('The phone verification code what you have inputted are wrong. Please try again with correct one.');
+                message_element.append('The phone verification code what you have inputted are wrong. Please try with correct one again.');
+              } else if (data['status'] == 'reached_to_max') {
+                message_element.append('You have tried to do verification too many times. You need to do verification from start with new email verification code.');
               }
               message_wrap_element.append(message_element);
 
@@ -76,15 +77,13 @@
               if (data['status'] == 'incorrect-token') {
                 $('#phone-verification-code').val('');
                 $('#passed_token').val('');
-                $('#email_verification_code').val('');
+                $('.btn-phone-verification').removeClass('btn-primary');
+                $('.btn-phone-verification').prop('disabled', true);
 
                 $('.phone-verification-block').hide();
-                $('.phone-call-block').hide();
-                $('.email-verification-block').show();
-              } else if (data['status'] == 'failed') {
-                $('#phone-verification-code').val('');
-                $('.phone-verification-block').hide();
                 $('.phone-call-block').show();
+              } else if (data['status'] == 'success' || data['status'] == 'reached_to_max') {
+                $('.automated-call-verification').remove();
               }
             }
           }
@@ -97,14 +96,13 @@
         $.ajax({
           url: automated_call_url,
           data: {
-            passed_token: $('#passed_token').val(),
-            token: $('#email_verification_code').val(),
-            country_code: $("input[name='country_code']").val(),
+            token: $('#token').val(),
             method: $("input[name='method']:checked").val()
           },
           type: 'POST',
           success: function (data) {
             if (data['status'] == 'success') {
+              $('#passed_token').val(data['passed_token']);
               $('.phone-call-block').hide();
               $('.phone-verification-block').show();
             } else {
@@ -118,9 +116,9 @@
                 if (data['status'] == 'failed') {
                   message_element.append('Phone call is failed. Please try again.');
                 } else if (data['status'] == 'incorrect-token') {
-                  message_element.append('You need to do verification with verification code in email what you have received.');
+                  message_element.append('You need to do verification with correct verification code in email what you have received.');
                 } else if (data['status'] == 'reached_to_max') {
-                  message_element.append('You are trying to do verification too many times. You need to do verification from start with email verification.');
+                  message_element.append('You are trying to do call too many times. You need to do verification from start with new email verification code.');
                 }
                 message_wrap_element.append(message_element);
 
@@ -142,17 +140,10 @@
                 }
                 message_wrap_element.insertBefore($('#content').find('.inner').children().first());
 
-                if ((data['status'] == 'incorrect-token') || (data['status'] == 'reached_to_max')) {
-                  $('#email_verification_code').val('');
-                  $('#btn-email-verification').prop('disabled', true);
-                  $('#btn-email-verification').removeClass('btn-primary');
-                  $('#passed_token').val('');
-
-                  $('.email-verification-block').show();
-                  $('.phone-call-block').hide();
+                if (data['status'] == 'reached_to_max') {
+                  $('.automated-call-verification').remove();
                 }
               }
-
             }
           }
         });

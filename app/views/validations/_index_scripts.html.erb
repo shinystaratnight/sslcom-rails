@@ -127,6 +127,15 @@ jQuery(function($) {
       }
     });
   };
+  $.validate_email = function(email) {
+    var filter = /^([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
+    if (filter.test(email)) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
   jQuery.fn.refer_to_others_toggle=function(){
     if($(this).val()=="false"){
       $('#request_validation_from_others').hide();
@@ -1944,44 +1953,97 @@ jQuery(function($) {
     $(document).on('click', '#link_to_send_callback', function(e) {
       e.preventDefault();
 
-      $.ajax({
-        url: '<%=send_callback_certificate_order_validation_path(@ssl_slug, @certificate_order.ref)%>',
-        data: {
-          certificate_order_id: '<%=@certificate_order.ref%>'
-        },
-        type: 'POST',
-        success: function (data) {
-          if (data['status' == 'no-user']) {
-            location.reload(true);
-          } else {
-            var message_wrap_element = $('<div></div>');
-            message_wrap_element.attr('class', 'flash_message notice');
+      $('#email_modal_body').removeClass('error-invalid');
+      $('#email_modal_body').removeClass('error-required');
+      $('#callback_emails').val('');
 
-            var message_element = $('<span></span>');
-            message_element.append('Callback Email has been sent successfully.');
-            message_wrap_element.append(message_element);
-
-            var btn_element = $('<small></small>');
-            var close_btn_element = $('<div></div>');
-            close_btn_element.attr('class', 'close_flash_message');
-
-            var close_sign_element = $('<span></span>');
-            close_sign_element.append('X');
-
-            close_btn_element.append(close_sign_element);
-            close_btn_element.append('close');
-
-            btn_element.append(close_btn_element);
-            message_wrap_element.append(btn_element);
-
-            if ($('#content').find('.inner').children().first().hasClass('flash_message')) {
-              $('#content').find('.inner').children().first().remove();
-            }
-            message_wrap_element.insertBefore($('#content').find('.inner').children().first());
-          }
-        }
-      });
+      $('#email_modal').show();
     });
+
+    $(document).on('click', '#email_modal_close', function() {
+      $('#email_modal').hide();
+    });
+
+    $(document).on('click', '.btn-cancel-send-emails', function() {
+      $('#email_modal').hide();
+    });
+
+    $(document).on('click', '.btn-ok-send-emails', function(e) {
+      e.preventDefault();
+
+      $('#email_modal_body').removeClass('error-invalid');
+      $('#email_modal_body').removeClass('error-required');
+
+      var emails_str = $('#callback_emails').val();
+      var all_validated = true;
+
+      if ($.trim(emails_str) == '') {
+        $('#email_modal_body').addClass('error-required');
+        $('#email_modal_body').removeClass('error-invalid');
+
+        all_validated = false;
+      } else {
+        var emails = emails_str.split(/\s/);
+        $.each(emails, function(key, value) {
+          if (!$.validate_email(value)) {
+            $('#email_modal_body').addClass('error-invalid');
+            $('#email_modal_body').removeClass('error-required');
+
+            all_validated = false;
+            return false;
+          }
+        });
+      }
+
+      if (all_validated) {
+        $.ajax({
+          url: '<%=send_callback_certificate_order_validation_path(@ssl_slug, @certificate_order.ref)%>',
+          data: {
+            certificate_order_id: '<%=@certificate_order.ref%>',
+            emails: emails_str.split(/\s/)
+          },
+          type: 'POST',
+          success: function (data) {
+            if (data['status' == 'no-user']) {
+              location.reload(true);
+            } else {
+              $('#email_modal').hide();
+
+              var message_wrap_element = $('<div></div>');
+              message_wrap_element.attr('class', 'flash_message notice');
+
+              var message_element = $('<span></span>');
+              message_element.append('Callback Email has been sent successfully.');
+              message_wrap_element.append(message_element);
+
+              var btn_element = $('<small></small>');
+              var close_btn_element = $('<div></div>');
+              close_btn_element.attr('class', 'close_flash_message');
+
+              var close_sign_element = $('<span></span>');
+              close_sign_element.append('X');
+
+              close_btn_element.append(close_sign_element);
+              close_btn_element.append('close');
+
+              btn_element.append(close_btn_element);
+              message_wrap_element.append(btn_element);
+
+              if ($('#content').find('.inner').children().first().hasClass('flash_message')) {
+                $('#content').find('.inner').children().first().remove();
+              }
+              message_wrap_element.insertBefore($('#content').find('.inner').children().first());
+            }
+          }
+        });
+      }
+    });
+
+    window.onclick = function(event) {
+      if (event.target == $('#email_modal')[0]) {
+        $('#email_modal').hide();
+      }
+    }
   });
 });
 </script>

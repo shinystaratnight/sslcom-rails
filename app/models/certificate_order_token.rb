@@ -3,6 +3,10 @@ class CertificateOrderToken < ActiveRecord::Base
   belongs_to :ssl_account
   belongs_to :user
 
-  DONE_STATUS = 'done'
   PENDING_STATUS = 'pending'
+  EXPIRED_STATUS = 'expired'
+  FAILED_STATUS = 'failed'
+  DONE_STATUS = 'done'
+  PHONE_VERIFICATION_LIMIT_MAX_COUNT = 3
+  PHONE_CALL_LIMIT_MAX_COUNT = 3
 end

@@ -126,8 +126,10 @@
                                             applied: #{name}
                           =render partial: 'validations/dcv', locals: {co: co}
                   %li.send_callback_section
-                    - if co.ov_validated?
-                      =link_to 'Send Callback', nil, id: 'link_to_send_callback'
+                    -#-TODO: After add info_verified state to workflow on certificate content,
+                    -#-TODO: below if statement should be commented out and "perform callback" link should be inside if statement.
+                    -#- if @cert_order.certificate_content.info_verified?
+                    =link_to 'Perform Callback', nil, id: 'link_to_send_callback'
               .certificate_details_box
                 %ul
                   %li
@@ -222,3 +224,20 @@
                           #{cn.name}
                           %ul
                             %li #{dcv ? "validated by #{dcv.dcv_method} on #{dcv.responded_at.strftime("%b %d, %Y %R %Z") if dcv.responded_at} with #{identifier}" : "pending validation"}
+
+
+#email_modal.email-modal
+  #email_modal_content.modal-content
+    #email_modal_header.modal-header
+      %span#email_modal_close.close
+        &times;
+      %p
+        Callback Email Addresses
+    #email_modal_body.modal-body
+      = text_area_tag 'callback_emails', nil, :rows => '5'
+      #required-field
+        * Email Address is required!
+      #required-valid
+        * All Email Addresses should be valid!
+    #email_modal_footer.modal-footer
+      = button_tag 'Send', :type => 'button', :class => 'btn btn-grey btn-ok-send-emails'
