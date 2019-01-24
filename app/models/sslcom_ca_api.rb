@@ -136,9 +136,9 @@ class SslcomCaApi
       if options[:collect_certificate]
         dn.merge! user_name: options[:username]
       else
-        options[:common_name]=options[:common_name] || options[:cn] ||
+        (options[:common_name]=options[:common_name] || options[:cn] ||
           options[:cc].certificate_names.find{|cn|cn.is_common_name==true}.try(:name) ||
-          options[:cc].certificate_names.last.name if cert.is_server?
+          options[:cc].certificate_names.last.name) if cert.is_server?
         options[:common_name]=options[:common_name].downcase if options[:common_name]
         dn.merge! subject_dn: (options[:subject_dn] || options[:cc].subject_dn(options)),
           ca_name: options[:ca_name] || ca_name(options),

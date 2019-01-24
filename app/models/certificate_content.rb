@@ -353,7 +353,7 @@ class CertificateContent < ActiveRecord::Base
 
   def all_domains
     parse_unique_domains(
-      (domains.blank? ? [] : domains) + certificate_names.map(&:name)
+      (domains.blank? ? [] : domains) + [csr.try(:all_names)] + certificate_names.map(&:name)
     )
   end
 

@@ -442,7 +442,7 @@ class CertificateOrdersController < ApplicationController
           if @certificate_order.certificate.is_single? or @certificate_order.certificate.is_wildcard?
             cert_single_name = cc.certificate_names.where(is_common_name: true).first
 
-            if cert_single_name.name.downcase != params[:common_name].downcase
+            if cert_single_name and cert_single_name.name.downcase != params[:common_name].downcase
               cert_single_name.update_column(:name,
                                    CertificateContent.non_wildcard_name(params[:common_name].downcase,false))
               cert_single_name.domain_control_validations.delete_all # remove any previous validations
