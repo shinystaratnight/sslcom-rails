@@ -655,10 +655,6 @@ class ValidationsController < ApplicationController
         # Get dial code from country.
         country_code = ISO3166::Country.new(country).country_code
 
-        # TMP
-        phone_number = '0966819533'
-        country_code = '855'
-
         @response = Authy::PhoneVerification.start(
             via: params[:method],
             country_code: country_code,
@@ -712,10 +708,6 @@ class ValidationsController < ApplicationController
 
         # Get dial code for country
         country_code = ISO3166::Country.new(country).country_code
-
-        # TMP
-        phone_number = '0966819533'
-        country_code = '855'
 
         @response = Authy::PhoneVerification.check(
             verification_code: params[:phone_verification_code],
