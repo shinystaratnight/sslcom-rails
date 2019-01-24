@@ -1,16 +1,27 @@
 %table(cellspacing="0")
   %tbody
     %tr.alt
-      %th email
+      %th{:style => 'width: 25%'} email
       %th country
       %th locality
       %th state
       %th organization
-      %th SANs
+      -#%th SANs
     %tr.alt
       %td= csr.email
       %td= csr.country
       %td= csr.locality
       %td= csr.state
       %td= csr.organization
-      %td= csr.subject_alternative_names.join(' ')
+      -#%td= csr.subject_alternative_names.join(' ')
+    %tr.alt.csr-manager-info
+      %td(colspan="2")
+        %p.label SANs
+        - sans = csr.subject_alternative_names
+        - if sans.size > 0
+          %ul.cont
+            - sans.each do |san|
+              %li #{san}
+      %td(colspan="3")
+        %p.label CSR
+        = text_area_tag 'managed_csr_cont', csr.body
