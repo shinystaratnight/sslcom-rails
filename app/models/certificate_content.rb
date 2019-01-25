@@ -777,7 +777,8 @@ class CertificateContent < ActiveRecord::Base
         dn= if certificate.is_code_signing?
               ["CN=#{locked_registrant.company_name}"]
             elsif certificate.is_smime_or_client?
-              ["CN=#{[certificate_order.assignee.first_name,certificate_order.assignee.last_name].join(" ")}"]
+              person=ssl_account.individual_validations.find_by_email(certificate_order.assignee.email)
+              ["CN=#{[person.first_name,person.last_name].join(" ")}"]
             end
       end
       org=locked_registrant.company_name
