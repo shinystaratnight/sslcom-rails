@@ -7,6 +7,7 @@ class ManagedCsrsController < ApplicationController
   end
 
   def new
+    @cert_ref = params[:cert_ref] if params[:cert_ref]
     @csr = ManagedCsr.new
     @cert_orders = current_user.ssl_account.certificate_orders.unused.map{|cert_order| [cert_order.ref, cert_order.id]}
   end
@@ -61,6 +62,7 @@ class ManagedCsrsController < ApplicationController
 
       if @csr.save
         returnObj['status'] = 'true'
+        returnObj['csr_ref'] = @csr.ref
       else
         returnObj['status'] = 'There was a problem adding this CSR to the CSR Manager.'
       end
@@ -74,6 +76,7 @@ class ManagedCsrsController < ApplicationController
         returnObj['status'] = 'CSR already exists on team' + current_user.ssl_account.ssl_slug + '.'
       elsif @csr.save
         returnObj['status'] = 'true'
+        returnObj['csr_ref'] = @csr.ref
       else
         returnObj['status'] = 'There was a problem adding this CSR to the CSR Manager.'
       end
