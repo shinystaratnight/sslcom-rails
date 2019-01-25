@@ -201,6 +201,7 @@ class CertificateContent < ActiveRecord::Base
       event :validate, :transitions_to => :validated do
         self.preferred_reprocessing = false if self.preferred_reprocessing?
       end
+      event :pend_issuance, :transitions_to => :pending_issuance
       event :cancel, :transitions_to => :canceled
       event :reset, :transitions_to => :new
     end
