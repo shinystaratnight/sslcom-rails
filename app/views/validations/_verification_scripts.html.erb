@@ -46,9 +46,9 @@
 
               var message_element = $('<span></span>');
               if (data['status'] == 'success') {
-                message_element.append('Congratulation! It has been verified successfully.');
+                message_element.append('Callback verification completed successfully.');
               } else if (data['status'] == 'incorrect-token') {
-                message_element.append('You have tried to do verification with wrong tokens.');
+                message_element.append('Verification attempted with the wrong token.');
               } else if (data['status'] == 'failed') {
                 message_element.append('The phone verification code what you have inputted are wrong. Please try with correct one again.');
               } else if (data['status'] == 'reached_to_max') {
@@ -114,7 +114,7 @@
 
                 var message_element = $('<span></span>');
                 if (data['status'] == 'failed') {
-                  message_element.append('Phone call is failed. Please try again.');
+                  message_element.append('Phone call attempt failed. Please try again.');
                 } else if (data['status'] == 'incorrect-token') {
                   message_element.append('You need to do verification with correct verification code in email what you have received.');
                 } else if (data['status'] == 'reached_to_max') {
