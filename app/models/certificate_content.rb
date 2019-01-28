@@ -201,6 +201,7 @@ class CertificateContent < ActiveRecord::Base
       event :validate, :transitions_to => :validated do
         self.preferred_reprocessing = false if self.preferred_reprocessing?
       end
+      event :pend_issuance, :transitions_to => :pending_issuance
       event :cancel, :transitions_to => :canceled
       event :reset, :transitions_to => :new
     end
@@ -776,7 +777,8 @@ class CertificateContent < ActiveRecord::Base
         dn= if certificate.is_code_signing?
               ["CN=#{locked_registrant.company_name}"]
             elsif certificate.is_smime_or_client?
-              ["CN=#{[certificate_order.assignee.first_name,certificate_order.assignee.last_name].join(" ")}"]
+              person=ssl_account.individual_validations.find_by_email(certificate_order.assignee.email)
+              ["CN=#{[person.first_name,person.last_name].join(" ")}"]
             end
       end
       org=locked_registrant.company_name
@@ -790,7 +792,8 @@ class CertificateContent < ActiveRecord::Base
           [locked_registrant.address1,locked_registrant.address2,locked_registrant.address3].join(" ")
       dn << "O=#{org}" if !org.blank? and (!city.blank? or !state.blank?)
       dn << "OU=#{ou}" unless ou.blank?
-      dn << "OU=#{locked_registrant.special_fields["entity_code"]}" if certificate.is_naesb?
+      dn << "OU=#{locked_registrant.special_fields["entity_code"]}" if certificate.is_naesb? and
+          !co.locked_registrant.special_fields.blank?
       dn << "C=#{country}"
       dn << "L=#{city}" unless city.blank?
       dn << "ST=#{state}" unless state.blank?

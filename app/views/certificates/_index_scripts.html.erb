@@ -718,26 +718,42 @@ jQuery(function($) {
               $.adjustDomainPricing($('textarea[id$=domains]')[0]);
             }
           } else {
-            var index = $.inArray(old_common_name, domain_names_ary);
-            $('#old_common_name').val(current_common_name);
+            <%if is_premium_ssl%>
+              var parsed = psl.parse(current_common_name);
+              var root_domain = parsed.domain;
+              var diff_domains_ary = [current_common_name];
 
-            if ($.inArray(current_common_name, domain_names_ary) != -1) {
-              if (index != -1) {
-                domain_names_ary.splice(index, 1);
-                $('textarea[id$=domains]').val(domain_names_ary.join(' '));
+              $.each(domain_names_ary, function(key, value) {
+                var parsed_sub = psl.parse(value);
+                if (value != old_common_name && parsed_sub.domain == root_domain) {
+                  diff_domains_ary.push(value);
+                }
+                $('textarea[id$=domains]').val(diff_domains_ary.join(' '));
+
+                $.adjustDomainPricing($('textarea[id$=domains]')[0]);
+              });
+            <%else%>
+              var index = $.inArray(old_common_name, domain_names_ary);
+              $('#old_common_name').val(current_common_name);
+
+              if ($.inArray(current_common_name, domain_names_ary) != -1) {
+                if (index != -1) {
+                  domain_names_ary.splice(index, 1);
+                  $('textarea[id$=domains]').val(domain_names_ary.join(' '));
+
+                  $.adjustDomainPricing($('textarea[id$=domains]')[0]);
+                }
+              } else {
+                if (index != -1) {
+                  domain_names_ary.splice(index, 1);
+                }
+
+                domain_names = domain_names_ary.join(' ') + ' ' + current_common_name;
+                $('textarea[id$=domains]').val(domain_names);
 
                 $.adjustDomainPricing($('textarea[id$=domains]')[0]);
               }
-            } else {
-              if (index != -1) {
-                domain_names_ary.splice(index, 1);
-              }
-
-              domain_names = domain_names_ary.join(' ') + ' ' + current_common_name;
-              $('textarea[id$=domains]').val(domain_names);
-
-              $.adjustDomainPricing($('textarea[id$=domains]')[0]);
-            }
+            <%end%>
           }
         }
       } else {
@@ -1001,6 +1017,10 @@ jQuery(function($) {
           return data.text;
         }
       });
+    <%end%>
+
+    <%if @generated_csr%>
+      $('.managed_csr').val('<%= @generated_csr %>').trigger('change');
     <%end%>
 
     $('#weekday_custom_list').select2({ tags: true });

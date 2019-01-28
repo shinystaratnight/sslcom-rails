@@ -7584,6 +7584,14 @@ i.fa-external-link.fa-ssl-custom
   input[type='checkbox']
     vertical-align: middle
 
+#cos-container .select2-selection__choice
+  cursor: pointer
+  background-image: image-url('external_link.png')
+  background-position: 95% 1px
+  background-repeat: no-repeat no-repeat
+  background-size: 16px
+  padding-right: 25px
+
 #add_user_ids_container
   .select2,
   .select2-results,
@@ -8323,7 +8331,7 @@ i.fa-external-link.fa-ssl-custom
   flex-wrap: nowrap
   justify-content: flex-start
   margin-top: 2rem
-  
+
   .mailbox-container-empty
     text-align: center
     font-size: 1.4rem
@@ -8361,12 +8369,12 @@ i.fa-external-link.fa-ssl-custom
         color: grey
         font-size: 1.4rem !important
         letter-spacing: 0.5px !important
-    
+
     #menu-main-unread-count
       margin-left: 1rem
-    
+
     .menu-main-item__selected
-      background-color: #f0808052 
+      background-color: #f0808052
       a
         color: red !important
         font-weight: 600 !important
@@ -8401,14 +8409,14 @@ i.fa-external-link.fa-ssl-custom
     #mailbox-select-all
       text-align: center
       width: 3%
-    
+
     #mailbox-refresh,
     #mailbox-read-actions
       font-size: 1.9rem
       a
         color: grey
         margin-left: 1rem
-    
+
     #mailbox-read-actions
       height: 2.5rem
 
@@ -8422,17 +8430,17 @@ i.fa-external-link.fa-ssl-custom
 
 #mailbox-compose-container
   width: 100%
-  
+
   span.compose-label
     font-size: 1.1rem
     font-weight: 600
     text-transform: uppercase
     padding-bottom: 1rem
 
-  form, table, td, 
+  form, table, td,
   .select2-selection.select2-selection--multiple
     width: 100% !important
-  
+
   .select2
     width: 95% !important
 
@@ -8443,7 +8451,7 @@ i.fa-external-link.fa-ssl-custom
 
   td
     padding: 1rem
-  
+
   #mail-body,
   #mail-subject,
   .select2-selection
@@ -8493,7 +8501,7 @@ i.fa-external-link.fa-ssl-custom
     font-size: 1.45rem
     padding-top: 2rem
     padding-left: 1.5rem
-  
+
   .mailbox-read-buttons
     margin-top: 4rem
     i
@@ -8520,18 +8528,18 @@ i.fa-external-link.fa-ssl-custom
       border-bottom: 1px solid #f2f2f2
       padding-bottom: 1rem
       margin-bottom: 1rem
-    
+
     div:nth-child(2)
       margin-bottom: 1rem
 
     div:last-child
       margin-bottom: 1rem
-    
+
     .txt-mail-reply-body
       width: 100%
       border: none
       border-bottom: 1px solid #f2f2f2
-    
+
     .btn-reply-send,
     .btn-reply-cancel
       border: 1px solid $base_green
@@ -8542,7 +8550,7 @@ i.fa-external-link.fa-ssl-custom
       padding: 0.5rem 1rem
       margin-right: 1rem
       letter-spacing: 0.5px
-    
+
     .btn-reply-cancel
       background-color: white
       color: $base_green
@@ -8550,11 +8558,11 @@ i.fa-external-link.fa-ssl-custom
 #mailbox-mail-list
   border-collapse: collapse
   width: 100%
-  
+
   tr
     border-bottom: 1px solid #f2f2f2
     cursor: pointer
-    
+
     &:hover
       background-color: #f2f2f2
       border: 1px solid lightgrey
@@ -8564,7 +8572,7 @@ i.fa-external-link.fa-ssl-custom
     td
       height: 2.6rem
       font-size: 1.3rem
-  
+
   .mail-item-unread
     font-weight: 600
 
@@ -8577,9 +8585,18 @@ i.fa-external-link.fa-ssl-custom
 
   .mail-subject
     width: 60%
-  
+
   .mail-actions
     width: 4%
     a
       color: grey !important
       font-size: 1.5rem
+a.back_to_csr_page
+  padding: 0.75rem
+  border-color: #007bff
+  border-radius: 0.25rem
+  color: white !important
+  background-color: #007bff
+
+  &:hover
+    text-decoration: none

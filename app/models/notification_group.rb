@@ -328,13 +328,13 @@ class NotificationGroup < ActiveRecord::Base
           end
         end
 
-        scan_logs.build(
+        scan_logs.create(
             scanned_certificate: scanned_cert,
             domain_name: domain,
             scan_status: scan_status,
             expiration_date: expiration_date,
             scan_group: last_group_number ? (last_group_number + 1) : 1
-        ).save
+        )
       end
     end
 

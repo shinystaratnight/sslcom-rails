@@ -80,6 +80,7 @@ jQuery(function($) {
         $('.private_key_wrap').hide();
         $('.clipboard_wrap').hide();
         $('#upload_validations').hide();
+        $('#back_to_csr_page').hide();
       } else {
         $('.csr_wrap').hide();
         if ($('#commonname').val() != '') {
@@ -88,6 +89,7 @@ jQuery(function($) {
         }
         $('.generate_wrap').show();
         $('#upload_validations').hide();
+        $('#back_to_csr_page').hide();
       }
     });
 
@@ -256,6 +258,11 @@ jQuery(function($) {
 
               $('.page_loader_wrap').hide();
               $('body').removeClass('no_scroll_y');
+
+              if ($('.back_to_csr_page')[0]) {
+                $('.back_to_csr_page').attr('href', $('.back_to_csr_page').attr('href') + '?csr_ref=' + data['csr_ref']);
+                $('#back_to_csr_page').show();
+              }
             } else {
               var message_wrap_element = $('<div></div>');
               message_wrap_element.attr('class', 'flash_message error');
