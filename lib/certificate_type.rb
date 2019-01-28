@@ -77,6 +77,10 @@ module CertificateType
     is_smime? || is_client? || is_naesb?
   end
 
+  def is_csr_last_step?
+    is_smime_or_client? || is_code_signing?
+  end
+
   def is_time_stamping?
     false
   end
