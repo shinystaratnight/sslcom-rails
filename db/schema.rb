@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190123152553) do
+ActiveRecord::Schema.define(version: 20190125154611) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        limit: 255
@@ -376,6 +376,7 @@ ActiveRecord::Schema.define(version: 20190123152553) do
     t.integer  "nonwildcard_count",     limit: 4
     t.integer  "folder_id",             limit: 4
     t.integer  "assignee_id",           limit: 4
+    t.datetime "expires_at"
   end
 
   add_index "certificate_orders", ["created_at"], name: "index_certificate_orders_on_created_at", using: :btree

@@ -3,7 +3,7 @@ class ApiCertificateRequest < CaApiRequest
   attr_accessor :csr_obj, :current_user, :test, :action, :admin_submitted
 
   ORDER_STATUS = ["waiting for domain control validation",
-                "waiting for documents", "pending validation", "validated", "issued", "revoked", "canceled"]
+        "waiting for documents", "pending validation", "validated", "pending issuance", "issued", "revoked", "canceled"]
 
   PRODUCTS = Settings.api_product_codes.to_hash.stringify_keys
 

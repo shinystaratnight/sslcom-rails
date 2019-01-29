@@ -192,6 +192,11 @@ class CertificateOrdersController < ApplicationController
                                 .map{|arr| [(arr.friendly_name || arr.common_name)+' '+ arr.public_key_sha1, arr.ref]}
                                 .delete_if{|arr| arr.second == nil}
             @managed_csrs.insert(0, ['none', 'none'])
+
+            if params[:csr_ref]
+              @generated_csr = params[:csr_ref]
+            end
+
             return render '/certificates/buy', :layout=>'application'
           end
           unless @certificate_order.certificate_content.csr_submitted? or params[:registrant]
@@ -442,7 +447,7 @@ class CertificateOrdersController < ApplicationController
           if @certificate_order.certificate.is_single? or @certificate_order.certificate.is_wildcard?
             cert_single_name = cc.certificate_names.where(is_common_name: true).first
 
-            if cert_single_name.name.downcase != params[:common_name].downcase
+            if cert_single_name and cert_single_name.name.downcase != params[:common_name].downcase
               cert_single_name.update_column(:name,
                                    CertificateContent.non_wildcard_name(params[:common_name].downcase,false))
               cert_single_name.domain_control_validations.delete_all # remove any previous validations
@@ -1106,11 +1111,15 @@ class CertificateOrdersController < ApplicationController
     if (params[:schedule_type] == 'none' && params[:notification_group] == 'none') || params[:schedule_type] == 'simple'
       current_schedules = notification_group.schedules.pluck(:schedule_type)
       unless current_schedules.include? 'Simple'
-        notification_group.schedules.destroy_all
+        schedule_value_value =
+            params[:schedule_type] == 'none' ?
+                '2' :
+                (params[:schedule_simple_type] ? params[:schedule_simple_type] : '2')
 
+        notification_group.schedules.destroy_all
         notification_group.schedules.build(
             schedule_type: 'Simple',
-            schedule_value: params[:schedule_simple_type]
+            schedule_value: schedule_value_value
         ).save
       end
     elsif params[:schedule_type] == 'custom'

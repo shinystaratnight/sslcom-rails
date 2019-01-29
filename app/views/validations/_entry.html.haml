@@ -183,7 +183,7 @@
                   -if cn and !co.certificate.is_code_signing?
                     =render partial: 'certificate_orders/visit', locals: {cn: cn}
                   =render partial: 'shared/small_admin_functions', locals: {co: co}
-                -if current_user.try("is_admin?")
+                -if current_user.try("is_admin?") and co.certificate.is_server?
                   %ul#send_to_ca_box
                     %li
                       %strong

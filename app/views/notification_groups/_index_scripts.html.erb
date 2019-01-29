@@ -10,6 +10,13 @@
         $searchfield.prop('readonly', true);
       });
 
+      $(document).on('click', '#cos-container .select2-selection__choice', function() {
+        var ref = $(this).attr('title');
+        var redirect_url = '<%= certificate_orders_path(@ssl_slug) %>' + '/' + ref;
+
+        window.open(redirect_url, '_blank');
+      });
+
       $('#contacts_list').select2({
         tags: true,
         minimumResultsForSearch: -1,
