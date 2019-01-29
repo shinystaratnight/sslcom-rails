@@ -15,10 +15,18 @@ class ValidationHistory < ActiveRecord::Base
     # Comment out the remainder parameters
 #    :path => ":Rails.root/attachments/:class/:id/:attachment/:style.:extension",
 #    :styles=>{:thumb=>['100x100#', :png], :preview=>['400x400#', :png]}
-    styles: {:thumb=>['100x100#', :png], :preview=>['400x400#', :png]},
+#     styles: {:thumb=>['100x100#', :png], :preview=>['400x400#', :png]},
+    styles: lambda { |a|
+      a.instance.is_image? ? {:thumb=>['100x100#', :png], :preview=>['400x400#', :png]} : {}
+    },
     s3_permissions: :private,
     s3_protocol:    'http',
     path:           ":id_partition/:random_secret/:style.:extension"
+
+  # has_attached_file :document, :url => "/public/images/validations/:class/:id/:attachment/:style.:extension",
+  #                       styles: lambda { |a|
+  #                         a.instance.is_image? ? {:thumb=>['100x100#', :png], :preview=>['400x400#', :png]} : {}
+  #                       }
 
   CONTENT_TYPES =   [['image/jpeg', 'jpg, jpeg, jpe, jfif'], ['image/png','png'],
     ['application/pdf', 'pdf'], ['image/tiff', 'tif, tiff'],
@@ -37,8 +45,12 @@ class ValidationHistory < ActiveRecord::Base
     attachment.instance.random_secret
   end
 
+  def is_image?
+    document.content_type =~ %r(image)
+  end
+
   def registrant_document_url(registrant, style=nil)
-    if style.blank?
+    if style.blank? || document_content_type =~ %r(audio)
       %{/#{self.class.name.tableize}/#{id}/documents/#{document_file_name}?registrant=#{registrant.id}}
     else
       %{/#{self.class.name.tableize}/#{id}/documents/#{document.styles[style].name}.#{document.styles[style].format}?registrant=#{registrant.id}}
@@ -46,7 +58,7 @@ class ValidationHistory < ActiveRecord::Base
   end
 
   def document_url(style=nil)
-    if style.blank?
+    if style.blank? || document_content_type =~ %r(audio)
       %{/#{self.class.name.tableize}/#{id}/documents/#{document_file_name}}
     else
       %{/#{self.class.name.tableize}/#{id}/documents/#{document.styles[style].name}.#{document.styles[style].format}}
