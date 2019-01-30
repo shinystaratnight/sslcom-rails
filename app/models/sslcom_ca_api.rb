@@ -128,10 +128,15 @@ class SslcomCaApi
   def self.issue_cert_json(options)
     cert = options[:cc].certificate
     co=options[:cc].certificate_order
-    csr=options[:csr] ? Csr.new(body: options[:csr]) : options[:cc].csr
-    carry_over = (!cert.is_server? or cert.is_free?) ? 0 : csr.days_left
-    if csr
+    public_key=unless options[:public_key]
+      csr=options[:csr] ? Csr.new(body: options[:csr]) : options[:cc].csr
+      carry_over=(!cert.is_server? or cert.is_free?) ? 0 : csr.days_left
       options[:mapping]=options[:mapping].ecc_profile if csr.sig_alg_parameter=~/ecc/i
+      csr.public_key
+    else
+      options[:public_key]
+    end
+    if public_key
       dn={}
       if options[:collect_certificate]
         dn.merge! user_name: options[:username]
@@ -144,11 +149,11 @@ class SslcomCaApi
           ca_name: options[:ca_name] || ca_name(options),
           certificate_profile: certificate_profile(options),
           end_entity_profile: end_entity_profile(options),
-          duration: "#{[(options[:duration] || co.remaining_days+carry_over).to_i,
+          duration: "#{[(options[:duration] || co.remaining_days+(carry_over || 0)).to_i,
               cert.max_duration].min.floor}:0:0"
-        dn.merge!(subject_alt_name: subject_alt_name(options)) unless cert.is_code_signing?
+        dn.merge!(subject_alt_name: subject_alt_name(options)) if cert.is_server?
       end
-      dn.merge!(request_type: "public_key",request_data: csr.public_key.to_pem) if
+      dn.merge!(request_type: "public_key",request_data: public_key.to_pem) if
           options[:collect_certificate] or options[:no_public_key].blank?
       dn.to_json
     end
