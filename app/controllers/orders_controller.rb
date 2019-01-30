@@ -74,8 +74,11 @@ class OrdersController < ApplicationController
   def show_cart
     @cart = ShoppingCart.find_by_guid(params[:id]) if params[:id]
     if @cart # manually overwrite owned shopping_cart in favor or url specified
-      cookies[:cart] = {:value=>(@cart.content.blank? ? @cart.content : CGI.unescape(@cart.content)), :path => "/",
-                        :expires => Settings.cart_cookie_days.to_i.days.from_now}
+      # cookies[:cart] = {:value=>(@cart.content.blank? ? @cart.content : CGI.unescape(@cart.content)), :path => "/",
+      #                   :expires => Settings.cart_cookie_days.to_i.days.from_now}
+
+      cookies[:cart_guid] = {:value=>@cart.guid, :path => "/",
+                             :expires => Settings.cart_cookie_days.to_i.days.from_now} # reset guid
     else
       cart = cookies[:cart]
       guid = cookies[:cart_guid]
