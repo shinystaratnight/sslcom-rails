@@ -82,6 +82,13 @@ jQuery(function($) {
     $('.flash_message_more').remove();
   });
 
+  $(document).on('click', '.flash_message .close_flash_message', function() {
+    var message_element = $(this).parent().parent();
+    if (message_element[0]) {
+      message_element.remove();
+    }
+  });
+
   $('#activate_user').submit(function(e) {
     if (!$('input#tos').is(':checked')) {
       $('input#tos').css('outline', '2px solid red');
