@@ -19,11 +19,12 @@ class NotificationGroup < ActiveRecord::Base
 
   preference  :notification_group_triggers, :string
 
-  validates :friendly_name, allow_nil: false, allow_blank: false,
-            length: { minimum: 1, maximum: 255 }
+  # validates :friendly_name, allow_nil: false, allow_blank: false,
+  #           length: { minimum: 1, maximum: 255 }
 
   before_create do |ng|
     ng.ref = 'ng-' + SecureRandom.hex(1) + Time.now.to_i.to_s(32)
+    ng.friendly_name = ng.ref if ng.friendly_name.blank?
   end
 
   # will_paginate

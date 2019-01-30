@@ -218,14 +218,19 @@ class NotificationGroupsController < ApplicationController
   end
 
   def check_duplicate
-    notification_group = @ssl_account.notification_groups.find_by_friendly_name(params[:friendly_name])
     returnObj = {}
-    returnObj['is_duplicated'] = notification_group ?
-                                     (params[:ng_id] == '' ?
-                                          'true' :
-                                          (notification_group.id.to_s == params[:ng_id] ?
-                                               'false' : 'true'))
-                                     : 'false'
+    if params[:friendly_name].blank?
+      returnObj['is_duplicated'] = 'false'
+    else
+      notification_group = @ssl_account.notification_groups.find_by_friendly_name(params[:friendly_name])
+      returnObj['is_duplicated'] = notification_group ?
+                                       (params[:ng_id] == '' ?
+                                            'true' :
+                                            (notification_group.id.to_s == params[:ng_id] ?
+                                                 'false' : 'true'))
+                                       : 'false'
+    end
+
     render :json => returnObj
   end
 
@@ -233,7 +238,7 @@ class NotificationGroupsController < ApplicationController
     if params[:format]
       # Saving notification group info
       notification_group = @ssl_account.notification_groups.includes(:notification_groups_subjects).where(ref: params[:format]).first
-      notification_group.friendly_name = params[:friendly_name]
+      notification_group.friendly_name = params[:friendly_name] unless params[:friendly_name].blank?
       notification_group.scan_port = params[:scan_port]
       notification_group.notify_all = params[:notify_all] ? params[:notify_all] : false
       notification_group.status = params[:status] ? params[:status] : false

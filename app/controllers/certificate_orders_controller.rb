@@ -1029,13 +1029,17 @@ class CertificateOrdersController < ApplicationController
       end
     else
       # Saving notification group info
-      notification_group = NotificationGroup.new(
-          friendly_name: 'ng-' + @certificate_order.ref,
-          scan_port: '443',
-          notify_all: true,
-          ssl_account: current_user.ssl_account,
-          status: false,
-      )
+      notification_group = current_user.ssl_account.notification_groups.find_by_friendly_name('ng-' + @certificate_order.ref)
+
+      if notification_group.nil?
+        notification_group = NotificationGroup.new(
+            friendly_name: 'ng-' + @certificate_order.ref,
+            scan_port: '443',
+            notify_all: true,
+            ssl_account: current_user.ssl_account,
+            status: false,
+        )
+      end
 
       # Saving notification group triggers
       ['60', '30', '15', '0', '-15'].uniq.sort{|a, b| a.to_i <=> b.to_i}.reverse.each_with_index do |rt, i|
