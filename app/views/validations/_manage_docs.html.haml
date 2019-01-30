@@ -17,7 +17,8 @@
           #documents_entry.clearfix
             %dl
               %dd.img
-                =link_to image_tag(vh.document_url(:thumb)), vh.document_url(:preview), :class=>'img_preview', :rel=>'prettyPhoto'
+                - if vh.document_content_type =~ %r(image)
+                  =link_to image_tag(vh.document_url(:thumb)), vh.document_url(:preview), :class=>'img_preview', :rel=>'prettyPhoto'
             .documents_list_notes
               %div
                 .doc_attribute
@@ -30,7 +31,8 @@
                 .doc_attribute
                   modified on:
                   #{vh.updated_at.strftime("%b %d, %Y")}
-                =link_to image_tag('preview.png', :class=>'blue_icon')+'preview', vh.document_url(:preview), :rel=>'prettyPhoto', :class=>'preview_link'
+                - if vh.document_content_type =~ %r(image)
+                  =link_to image_tag('preview.png', :class=>'blue_icon')+'preview', vh.document_url(:preview), :rel=>'prettyPhoto', :class=>'preview_link'
                 =link_to image_tag('download.png', :class=>'blue_icon')+'download', vh.document_url
             .public_settings
               =form_for vh do |f|
