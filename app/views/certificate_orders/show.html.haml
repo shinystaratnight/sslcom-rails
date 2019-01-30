@@ -45,8 +45,7 @@
       -if show_folders
         %td.co-folder-name
           -if co.folder
-            %i.fa.fa-folder-open.icon-co-add-folder{id: co.ref, |
-              data: {folder_id: co.folder.try(:id), folder_name: co.folder.try(:name)}}
+            %i.fa.fa-folder-open.icon-co-add-folder{id: co.ref, data: {folder_id: co.folder.try(:id), folder_name: co.folder.try(:name)}}
           -else
             %i.fa.fa-plus.icon-co-add-folder{id: co.ref}
       %td(class="#{status_class(@cc)}")
@@ -170,7 +169,8 @@
                           -unless @certificate_order.validation.validation_histories.blank?
                             -@certificate_order.validation.validation_histories.each do |vh|
                               %li
-                                =link_to image_tag('preview.png', :class=>'blue_icon'), vh.document_url(:preview), :rel=>'prettyPhoto'
+                                - if vh.document_content_type =~ %r(image)
+                                  =link_to image_tag('preview.png', :class=>'blue_icon'), vh.document_url(:preview), :rel=>'prettyPhoto'
                                 =link_to image_tag('download.png', :class=>'blue_icon'), vh.document_url
                                 =vh.document_file_name.shorten(20, false)
                           -else

@@ -526,7 +526,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
                   @acr.validation.validation_histories.each do |vh|
                     tmp = {}
                     tmp[:id] = vh.id
-                    tmp[:preview] = getDocumentsPath(vh, vh.document_url(:preview))
+                    tmp[:preview] = getDocumentsPath(vh, vh.document_url(:preview)) if vh.document_content_type =~ %r(image)
                     tmp[:doc_url] = getDocumentsPath(vh, vh.document_url)
                     tmp[:file_name] = vh.document_file_name.shorten(25, false)
 
@@ -690,8 +690,8 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
           validation_histories.each do |validation|
             tmp = {}
             tmp[:id] = validation.id
-            tmp[:thumb] = getDocumentsPath(validation, validation.document_url(:thumb))
-            tmp[:preview] = getDocumentsPath(validation, validation.document_url(:preview))
+            tmp[:thumb] = getDocumentsPath(validation, validation.document_url(:thumb)) if validation.document_content_type =~ %r(image)
+            tmp[:preview] = getDocumentsPath(validation, validation.document_url(:preview)) if validation.document_content_type =~ %r(image)
             tmp[:doc_url] = getDocumentsPath(validation, validation.document_url)
             tmp[:file_name] = validation.document_file_name.shorten(25, false)
             tmp[:file_size] = bytesToSize(Integer(validation.document_file_size))

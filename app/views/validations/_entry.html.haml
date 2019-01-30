@@ -142,7 +142,8 @@
                     -co.validation.validation_histories.each_with_index do |h, hi|
                       .validation_history
                         %li
-                          =link_to image_tag('preview.png', :class=>'blue_icon'), h.document_url(:preview), :rel=>'prettyPhoto'
+                          - if h.document_content_type =~ %r(image)
+                            =link_to image_tag('preview.png', :class=>'blue_icon'), h.document_url(:preview), :rel=>'prettyPhoto'
                           =link_to image_tag('download.png', :class=>'blue_icon'), h.document_url
                           %span.doc_filename(alt="#{h.document_file_name}")=link_to h.document_file_name.shorten(20,false), edit_certificate_order_validation_url(certificate_order_id: co.ref)
                           -unless current_user.try("is_admin?") || h.satisfies_validation_methods.blank?
