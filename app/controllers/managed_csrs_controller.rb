@@ -66,6 +66,7 @@ class ManagedCsrsController < ApplicationController
       if @csr.save
         returnObj['status'] = 'true'
         returnObj['csr_ref'] = @csr.ref
+        returnObj['hash'] = @csr.public_key_sha1
       else
         returnObj['status'] = 'There was a problem adding this CSR to the CSR Manager.'
       end
@@ -80,6 +81,7 @@ class ManagedCsrsController < ApplicationController
       elsif @csr.save
         returnObj['status'] = 'true'
         returnObj['csr_ref'] = @csr.ref
+        returnObj['hash'] = @csr.public_key_sha1
       else
         returnObj['status'] = 'There was a problem adding this CSR to the CSR Manager.'
       end
