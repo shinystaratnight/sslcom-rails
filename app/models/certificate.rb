@@ -552,7 +552,7 @@ class Certificate < ActiveRecord::Base
     case x509_certificate.serial.to_s
     when "8875640296558310041"
       tagged_xcert ? SignedCertificate.enclose_with_tags(CERTUM_XSIGN) : CERTUM_XSIGN
-    when "6248227494352943350"
+    when "6248227494352943350","5688664355526928916"
       tagged_xcert ? SignedCertificate.enclose_with_tags(CERTUM_XSIGN_EV) : CERTUM_XSIGN_EV
     else
       x509_certificate.to_s
