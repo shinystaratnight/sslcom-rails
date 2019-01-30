@@ -481,7 +481,7 @@ namespace :cas do
       )
       Ca.find_or_initialize_by(ref: "0021").update_attributes(
           friendly_name: "NAESB Client Cert Rudimentary Assurance RSA",
-          profile_name: "OV_RSA_NAESB_RA_CERT",
+          profile_name: "RSA_NAESB_RA_CLIENT_CERT",
           algorithm: "rsa",
           size: 4096,
           description: Ca::SSLCOM_CA,
@@ -495,7 +495,7 @@ namespace :cas do
       )
       Ca.find_or_initialize_by(ref: "0022").update_attributes(
           friendly_name: "NAESB Client Cert Basic Assurance RSA",
-          profile_name: "OV_RSA_NAESB_BA_CERT",
+          profile_name: "RSA_NAESB_BA_CLIENT_CERT",
           algorithm: "rsa",
           size: 4096,
           description: Ca::SSLCOM_CA,
@@ -509,7 +509,7 @@ namespace :cas do
       )
       Ca.find_or_initialize_by(ref: "0023").update_attributes(
           friendly_name: "NAESB Client Cert High Assurance RSA",
-          profile_name: "OV_RSA_NAESB_HA_CERT",
+          profile_name: "RSA_NAESB_HA_CLIENT_CERT",
           algorithm: "rsa",
           size: 4096,
           description: Ca::SSLCOM_CA,
@@ -523,7 +523,7 @@ namespace :cas do
       )
       Ca.find_or_initialize_by(ref: "0024").update_attributes(
           friendly_name: "NAESB Client Cert Medium Assurance RSA",
-          profile_name: "OV_RSA_NAESB_MA_CERT",
+          profile_name: "RSA_NAESB_MA_CLIENT_CERT",
           algorithm: "rsa",
           size: 4096,
           description: Ca::SSLCOM_CA,
@@ -775,7 +775,7 @@ namespace :cas do
       # )
       # Ca.find_or_initialize_by(ref: "0021d").update_attributes(
       #     friendly_name: "NAESB Client Cert Rudimentary Assurance (dev)",
-      #     profile_name: "OV_RSA_NAESB_RA_CERT",
+      #     profile_name: "RSA_NAESB_RA_CLIENT_CERT",
       #     algorithm: "rsa",
       #     size: 4096,
       #     description: Ca::SSLCOM_CA,
@@ -789,7 +789,7 @@ namespace :cas do
       # )
       # Ca.find_or_initialize_by(ref: "0022d").update_attributes(
       #     friendly_name: "NAESB Client Cert Basic Assurance (dev)",
-      #     profile_name: "OV_RSA_NAESB_BA_CERT",
+      #     profile_name: "RSA_NAESB_BA_CLIENT_CERT",
       #     algorithm: "rsa",
       #     size: 4096,
       #     description: Ca::SSLCOM_CA,
@@ -803,7 +803,7 @@ namespace :cas do
       # )
       # Ca.find_or_initialize_by(ref: "0023d").update_attributes(
       #     friendly_name: "NAESB RSA Client Cert High Assurance (dev)",
-      #     profile_name: "OV_RSA_NAESB_HA_CERT",
+      #     profile_name: "RSA_NAESB_HA_CLIENT_CERT",
       #     algorithm: "rsa",
       #     size: 4096,
       #     description: Ca::SSLCOM_CA,
@@ -817,7 +817,7 @@ namespace :cas do
       # )
       # Ca.find_or_initialize_by(ref: "0024d").update_attributes(
       #     friendly_name: "NAESB RSA Client Cert Medium Assurance (dev)",
-      #     profile_name: "OV_RSA_NAESB_MA_CERT",
+      #     profile_name: "RSA_NAESB_MA_CLIENT_CERT",
       #     algorithm: "rsa",
       #     size: 4096,
       #     description: Ca::SSLCOM_CA,
