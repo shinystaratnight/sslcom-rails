@@ -1021,6 +1021,13 @@ class CertificateOrder < ActiveRecord::Base
     certificate_order_tokens.last
   end
 
+  def phone_verified?
+    certificate_order_tokens.where(
+        status: CertificateOrderToken::DONE_STATUS,
+        phone_number: locked_registrant.phone
+    ).first
+  end
+
   def registrant
     certificate_content.registrant
   end

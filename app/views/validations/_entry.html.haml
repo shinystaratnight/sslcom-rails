@@ -129,7 +129,10 @@
                     -#-TODO: After add info_verified state to workflow on certificate content,
                     -#-TODO: below if statement should be commented out and "perform callback" link should be inside if statement.
                     -#- if @cert_order.certificate_content.info_verified?
-                    =link_to 'Perform Callback', nil, id: 'link_to_send_callback'
+                    - if @cert_order.phone_verified?
+                      Verification completed for #{@cert_order.locked_registrant.phone}
+                    - else
+                      =link_to 'Perform Callback', nil, id: 'link_to_send_callback'
               .certificate_details_box
                 %ul
                   %li
@@ -240,4 +243,4 @@
       #required-valid
         * All Email Addresses should be valid!
     #email_modal_footer.modal-footer
-      = button_tag 'Send', :type => 'button', :class => 'btn btn-grey btn-ok-send-emails'
+      = button_tag 'Send', :type => 'button', :class => 'btn btn-grey btn-ok-send-emails', :disabled => true

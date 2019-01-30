@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190125154611) do
+ActiveRecord::Schema.define(version: 20190130091703) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        limit: 255
@@ -347,6 +347,7 @@ ActiveRecord::Schema.define(version: 20190125154611) do
     t.integer  "phone_verification_count", limit: 4
     t.string   "status",                   limit: 255
     t.integer  "phone_call_count",         limit: 4
+    t.string   "phone_number",             limit: 255
   end
 
   create_table "certificate_orders", force: :cascade do |t|

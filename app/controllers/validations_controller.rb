@@ -716,7 +716,7 @@ class ValidationsController < ApplicationController
         )
 
         if @response.ok?
-          co_token.update_column :status, CertificateOrderToken::DONE_STATUS
+          co_token.update_columns(status: CertificateOrderToken::DONE_STATUS, phone_number: phone_number)
           # TODO: After add info_verified state to workflow on certificate content, it should be commented out.
           # co_token.certificate_order.certificate_content.validate!
 
