@@ -287,6 +287,9 @@ class CertificateOrdersController < ApplicationController
   # PUT /certificate_orders/1.xml
   def update
     respond_to do |format|
+      params[:certificate_order][:certificate_contents_attributes]['0'][:registrant_attributes][:country_code] =
+          params[:country_code] if params[:country_code]
+
       is_smime_or_client = @certificate_order.certificate.is_smime_or_client?
       if @certificate_order.update_attributes(params[:certificate_order])
         cc = @certificate_order.certificate_content
@@ -920,6 +923,7 @@ class CertificateOrdersController < ApplicationController
       @registrant.last_name = locked_registrant.last_name
       @registrant.email = locked_registrant.email
       @registrant.phone = locked_registrant.phone
+      @registrant.country_code = locked_registrant.country_code
       @registrant.status = locked_registrant.status
       @registrant.parent_id = locked_registrant.parent_id
       @registrant.special_fields = locked_registrant.special_fields

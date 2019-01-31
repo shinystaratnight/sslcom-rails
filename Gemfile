@@ -85,7 +85,7 @@ gem 'where-or'
 gem "skylight"
 gem 'authy'
 gem 'mailboxer'
-gem 'countries'
+# gem 'countries'
 
 group :development do
   gem 'foreman'

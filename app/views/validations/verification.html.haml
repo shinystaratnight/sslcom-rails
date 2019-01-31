@@ -1,8 +1,8 @@
 -content_for :title, "Verify email verification code"
 = render :partial => 'verification_scripts'
-= javascript_include_tag "form.authy.min"
+= javascript_include_tag "form.authy"
 = stylesheet_link_tag 'bootstrap_style', :media => 'all'
-= stylesheet_link_tag 'form.authy.min'
+= stylesheet_link_tag 'form.authy'
 = stylesheet_link_tag 'flags.authy'
 - if @status
   %div.pt-3.automated-call-verification

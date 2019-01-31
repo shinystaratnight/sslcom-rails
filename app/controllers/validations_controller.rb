@@ -650,10 +650,10 @@ class ValidationsController < ApplicationController
 
         # Get phone number and country from locked_registrant of certificate_order.
         phone_number = co_token.certificate_order.locked_registrant.phone || ''
-        country = co_token.certificate_order.locked_registrant.country || 'US'
+        country_code = co_token.certificate_order.locked_registrant.country_code || '1'
 
-        # Get dial code from country.
-        country_code = ISO3166::Country.new(country).country_code
+        # # Get dial code from country.
+        # country_code = ISO3166::Country.new(country).country_code
 
         @response = Authy::PhoneVerification.start(
             via: params[:method],
@@ -704,10 +704,10 @@ class ValidationsController < ApplicationController
 
         # Get phone number and country from locked_registrant of certificate_order.
         phone_number = co_token.certificate_order.locked_registrant.phone || ''
-        country = co_token.certificate_order.locked_registrant.country || 'US'
+        country_code = co_token.certificate_order.locked_registrant.country_code || '1'
 
-        # Get dial code for country
-        country_code = ISO3166::Country.new(country).country_code
+        # # Get dial code for country
+        # country_code = ISO3166::Country.new(country).country_code
 
         @response = Authy::PhoneVerification.check(
             verification_code: params[:phone_verification_code],
@@ -716,12 +716,14 @@ class ValidationsController < ApplicationController
         )
 
         if @response.ok?
+          phone_number = '+' + country_code + '-' + phone_number
           co_token.update_columns(status: CertificateOrderToken::DONE_STATUS, phone_number: phone_number)
           # TODO: After add info_verified state to workflow on certificate content, it should be commented out.
           # co_token.certificate_order.certificate_content.validate!
 
           returnObj['status'] = 'success'
         else
+          returnObj['passed_token'] = passed_token
           returnObj['status'] = 'failed'
         end
       end

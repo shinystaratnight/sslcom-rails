@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190130091703) do
+ActiveRecord::Schema.define(version: 20190130212834) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        limit: 255
@@ -486,6 +486,7 @@ ActiveRecord::Schema.define(version: 20190130091703) do
     t.integer  "user_id",               limit: 4
     t.text     "special_fields",        limit: 65535
     t.text     "domains",               limit: 65535
+    t.string   "country_code",          limit: 255
   end
 
   add_index "contacts", ["contactable_id", "contactable_type"], name: "index_contacts_on_contactable_id_and_contactable_type", using: :btree

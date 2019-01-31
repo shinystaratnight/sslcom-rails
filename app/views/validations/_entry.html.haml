@@ -130,7 +130,10 @@
                     -#-TODO: below if statement should be commented out and "perform callback" link should be inside if statement.
                     -#- if @cert_order.certificate_content.info_verified?
                     - if @cert_order.phone_verified?
-                      Verification completed for #{@cert_order.locked_registrant.phone}
+                      - if @cert_order.locked_registrant.country_code
+                        Verification completed for #{'+' + @cert_order.locked_registrant.country_code + '-' + @cert_order.locked_registrant.phone}
+                      - else
+                        Verification completed for #{@cert_order.locked_registrant.phone}
                     - else
                       =link_to 'Perform Callback', nil, id: 'link_to_send_callback'
               .certificate_details_box
@@ -235,7 +238,7 @@
       %span#email_modal_close.close
         &times;
       %p
-        Send callback link to email addresses (newline separated):
+        Send callback link to email addresses (newline and whitespace separated):
     #email_modal_body.modal-body
       = text_area_tag 'callback_emails', nil, :rows => '5'
       #required-field

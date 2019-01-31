@@ -1024,7 +1024,9 @@ class CertificateOrder < ActiveRecord::Base
   def phone_verified?
     certificate_order_tokens.where(
         status: CertificateOrderToken::DONE_STATUS,
-        phone_number: locked_registrant.phone
+        phone_number: locked_registrant.country_code ?
+                          ('+' + locked_registrant.country_code + '-' + locked_registrant.phone) :
+                          locked_registrant.phone
     ).first
   end
 

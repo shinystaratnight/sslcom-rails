@@ -84,6 +84,8 @@
                 $('.phone-call-block').show();
               } else if (data['status'] == 'success' || data['status'] == 'reached_to_max') {
                 $('.automated-call-verification').remove();
+              } else if (data['status'] == 'failed') {
+                $('#passed_token').val(data['passed_token']);
               }
             }
           }
