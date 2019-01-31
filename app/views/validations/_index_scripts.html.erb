@@ -1955,6 +1955,7 @@ jQuery(function($) {
 
       $('#email_modal_body').removeClass('error-invalid');
       $('#email_modal_body').removeClass('error-required');
+      $('.btn-ok-send-emails').prop('disabled', true);
       $('#callback_emails').val('');
 
       $('#email_modal').show();
@@ -2000,6 +2001,7 @@ jQuery(function($) {
       }*/
 
       var emails_str = $('#callback_emails').val();
+      $('.btn-ok-send-emails').prop('disabled', true);
 
       $.ajax({
         url: '<%=send_callback_certificate_order_validation_path(@ssl_slug, @certificate_order.ref)%>',

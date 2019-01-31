@@ -23,7 +23,12 @@
       });
 
       $(document).on('click', '.btn-phone-verification', function() {
+        $('.btn-phone-verification').prop('disabled', true);
         var phone_verification_url = '<%= phone_verification_check_url %>';
+
+        if ($('#content').find('.inner').children().first().hasClass('flash_message')) {
+          $('#content').find('.inner').children().first().remove();
+        }
 
         $.ajax({
           url: phone_verification_url,
@@ -69,10 +74,8 @@
               btn_element.append(close_btn_element);
               message_wrap_element.append(btn_element);
 
-              if ($('#content').find('.inner').children().first().hasClass('flash_message')) {
-                $('#content').find('.inner').children().first().remove();
-              }
               message_wrap_element.insertBefore($('#content').find('.inner').children().first());
+              $('.btn-phone-verification').prop('disabled', false);
 
               if (data['status'] == 'incorrect-token') {
                 $('#phone-verification-code').val('');
@@ -93,7 +96,12 @@
       });
 
       $(document).on('click', '.btn-automated-callback', function() {
+        $('.btn-automated-callback').prop('disabled', true);
         var automated_call_url = '<%= automated_call_url %>';
+
+        if ($('#content').find('.inner').children().first().hasClass('flash_message')) {
+          $('#content').find('.inner').children().first().remove();
+        }
 
         $.ajax({
           url: automated_call_url,
@@ -105,6 +113,7 @@
           success: function (data) {
             if (data['status'] == 'success') {
               $('#passed_token').val(data['passed_token']);
+              $('.btn-automated-callback').prop('disabled', false);
               $('.phone-call-block').hide();
               $('.phone-verification-block').show();
             } else {
@@ -137,10 +146,8 @@
                 btn_element.append(close_btn_element);
                 message_wrap_element.append(btn_element);
 
-                if ($('#content').find('.inner').children().first().hasClass('flash_message')) {
-                  $('#content').find('.inner').children().first().remove();
-                }
                 message_wrap_element.insertBefore($('#content').find('.inner').children().first());
+                $('.btn-automated-callback').prop('disabled', false);
 
                 if (data['status'] == 'reached_to_max') {
                   $('.automated-call-verification').remove();

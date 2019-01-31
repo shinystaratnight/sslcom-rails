@@ -130,10 +130,10 @@
                     -#-TODO: below if statement should be commented out and "perform callback" link should be inside if statement.
                     -#- if @cert_order.certificate_content.info_verified?
                     - if @cert_order.phone_verified?
-                      - if @cert_order.locked_registrant.country_code
-                        Verification completed for #{'+' + @cert_order.locked_registrant.country_code + '-' + @cert_order.locked_registrant.phone}
+                      - if @cert_order.locked_registrant.country_code.blank?
+                        Verification completed for #{'+1-' + @cert_order.locked_registrant.phone}
                       - else
-                        Verification completed for #{@cert_order.locked_registrant.phone}
+                        Verification completed for #{'+' + @cert_order.locked_registrant.country_code + '-' + @cert_order.locked_registrant.phone}
                     - else
                       =link_to 'Perform Callback', nil, id: 'link_to_send_callback'
               .certificate_details_box
