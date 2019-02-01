@@ -131,9 +131,9 @@
                     -#- if @cert_order.certificate_content.info_verified?
                     - if @cert_order.phone_verified?
                       - if @cert_order.locked_registrant.country_code.blank?
-                        Verification completed for #{'+1-' + @cert_order.locked_registrant.phone}
+                        callback verification completed for #{'+1-' + @cert_order.locked_registrant.phone}
                       - else
-                        Verification completed for #{'+' + @cert_order.locked_registrant.country_code + '-' + @cert_order.locked_registrant.phone}
+                        callback verification completed for #{'+' + @cert_order.locked_registrant.country_code + '-' + @cert_order.locked_registrant.phone}
                     - else
                       =link_to 'Perform Callback', nil, id: 'link_to_send_callback'
               .certificate_details_box
