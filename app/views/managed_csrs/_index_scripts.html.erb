@@ -2,10 +2,10 @@
 function destroy_pkey_download_link(event) {
   document.body.removeChild(event.target);
 }
-function pkey_download(pkey) {
+function pkey_download(hash, pkey) {
   var pkeyAsBlob = new Blob([pkey], { type: "application/pkcs8" });
   var downloadLink = document.createElement('a');
-  downloadLink.download = 'pkey.key';
+  downloadLink.download = hash + '.key';
   downloadLink.innerHTML = "Download File";
 
   downloadLink.href = window.URL.createObjectURL(pkeyAsBlob);
@@ -210,7 +210,7 @@ jQuery(function($) {
               message_wrap_element.insertBefore($('#content').find('.inner').children().first());
 
               try {
-                pkey_download($('#private_key').val());
+                pkey_download(data['hash'], $('#private_key').val());
 
                 $('#commonname').val('');
                 $('#email').val('');

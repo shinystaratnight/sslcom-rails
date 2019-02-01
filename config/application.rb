@@ -149,3 +149,5 @@ SQL_LIKE = db_adapter == 'postgresql' ? 'ilike' : 'like'
 #uncomment to track down bugs on heroku production
 #ActiveRecord::Base.logger.level = 0 # at any time
 ActiveMerchant::Billing::CreditCard.require_verification_value=false
+PublicSuffix::List.default =
+    PublicSuffix::List.parse(File.read(PublicSuffix::List::DEFAULT_LIST_PATH), private_domains: false)

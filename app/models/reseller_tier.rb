@@ -79,7 +79,7 @@ class ResellerTier < ActiveRecord::Base
   def update_prices(options)
     options.each {|k,v|
       if k.is_a?(Hash)
-        ResellerTier.last.product_variant_items.where{(title==k[:pvi_title]) &
+        product_variant_items.where{(title==k[:pvi_title]) &
             (product_variant_groups.title==k[:pvg_title])}.find{|pvi|
               pvi.product_variant_group.variantable(Certificate).title==k[:variantable_title]}.
                 update_column :amount, k[:pvi_amount]
@@ -103,8 +103,9 @@ class ResellerTier < ActiveRecord::Base
 
   # sample commands to create a new tier and update pricing
   #
-  # ResellerTier.generate_tier(label: "dtntcomodoca", description: {:name=>"dtnt comodoca tier"}, discount_rate: 0.167)
-  # ResellerTier.find_by_label("dtntcomodoca").prices_matrix
+  # rt=ResellerTier.generate_tier(label: "dtntcomodoca", description: {:name=>"dtnt comodoca tier"}, discount_rate: 0.167)
+  # rt=ResellerTier.find_by_label("dtntcomodoca")
+  # rt.prices_matrix
   # options= {11108=>["Enterprise EV Multi-domain UCC SSL", "Domains", "1 Year Domain For 3 Domains (ea domain)", 5000],
   #           11109=>["Enterprise EV Multi-domain UCC SSL", "Domains", "1 Year Domain For Domains 4-200 (ea domain)", 5000],
   #           11110=>["Enterprise EV Multi-domain UCC SSL", "Domains", "2 Year Domain For 3 Domains (ea domain)", 10000],
@@ -199,7 +200,7 @@ class ResellerTier < ActiveRecord::Base
   #           11199=>["Document Signing", "Duration", "3 Years", 14179],
   #           11200=>["NAESB Basic", "Duration", "1 Years", 1253],
   #           11201=>["NAESB Basic", "Duration", "2 Years", 2505]}
-  # ResellerTier.find_by_label("dtntcomodoca").update_prices(options)
+  # rt.update_prices(options)
   # sa = SslAccount.find_by_acct_number "a0a-1dpi0uq"
   # sa.adjust_reseller_tier "dtntcomodoca"
 end

@@ -481,7 +481,7 @@ class SignedCertificate < ActiveRecord::Base
     File.open(tmp_file, 'wb') do |f|
       tmp=""
       if certificate_content.ca
-        certificate_content.x509_certificates.each do |x509_cert|
+        certificate_content.x509_certificates.drop(1).each do |x509_cert|
           tmp<<x509_cert.to_s
         end
       else

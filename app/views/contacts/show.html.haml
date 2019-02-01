@@ -115,7 +115,8 @@
           -documents.each do |vh|
             %tr
               %td
-                =link_to image_tag(vh.registrant_document_url(@contact, :thumb)), vh.registrant_document_url(@contact, :preview), :class=>'img_preview', :rel=>'prettyPhoto'
+                - if vh.document_content_type =~ %r(image)
+                  =link_to image_tag(vh.registrant_document_url(@contact, :thumb)), vh.registrant_document_url(@contact, :preview), :class=>'img_preview', :rel=>'prettyPhoto'
               %td      
                 .documents_list_notes
                   %div
@@ -129,8 +130,9 @@
                     .doc_attribute
                       modified on:
                       #{vh.updated_at.strftime("%b %d, %Y")}
-                    =link_to image_tag('preview.png', class: 'blue_icon')+'preview', |
-                    vh.registrant_document_url(@contact, :preview), :rel=>'prettyPhoto', class: 'preview_link'
+                    - if vh.document_content_type =~ %r(image)
+                      =link_to image_tag('preview.png', class: 'blue_icon')+'preview', |
+                      vh.registrant_document_url(@contact, :preview), :rel=>'prettyPhoto', class: 'preview_link'
                     =link_to image_tag('download.png', class: 'blue_icon')+'download', |
                     vh.registrant_document_url(@contact)
 

@@ -170,10 +170,10 @@
           REQUIRE_SHA2
         %li
           INFER_FROM_CSR
--if (current_user && current_user.is_system_admins?)
+-if (current_user && current_user.is_system_admins?) and co.certificate_content.ca and !co.certificate_content.new?
   .full_width_box
     %ul
-      -if co.csr and co.certificate_content.ca
+      -if co.csr or !co.certificate.is_server?
         %li
           %strong SSL.com CA API Issue Command
         %li
@@ -181,6 +181,7 @@
             -options={cc: co.certificate_content}
             -SslcomCaApi.set_mapping(co,options)
             -client_auth_cert,client_auth_key=SslcomCaApi.client_certs(URI.parse(options[:mapping].host).host)
+            -options[:public_key]=OpenSSL::PKey::RSA.new(2048).public_key if co.csr.blank? # assume late csr
             ='curl -k -v --cert '+client_auth_cert+' --key '+client_auth_key+' -H "Accept: application/json" -H "Content-type: application/json" -X POST -d '+"'#{SslcomCaApi.issue_cert_json(options)}' "+SslcomCaApi.ca_host(co.certificate_content.ca)+"/v1/certificate/pkcs10"
       -if co.signed_certificate and co.signed_certificate.is_sslcom_ca?
         %li

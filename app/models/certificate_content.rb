@@ -793,7 +793,7 @@ class CertificateContent < ActiveRecord::Base
       dn << "O=#{org}" if !org.blank? and (!city.blank? or !state.blank?)
       dn << "OU=#{ou}" unless ou.blank?
       dn << "OU=#{locked_registrant.special_fields["entity_code"]}" if certificate.is_naesb? and
-          !co.locked_registrant.special_fields.blank?
+          !certificate_order.locked_registrant.special_fields.blank?
       dn << "C=#{country}"
       dn << "L=#{city}" unless city.blank?
       dn << "ST=#{state}" unless state.blank?

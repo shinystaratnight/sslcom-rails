@@ -127,7 +127,8 @@ class ApplicationController < ActionController::Base
   # returns the cart cookie with reseller tier as an array
   def cart_contents
     find_tier
-    cart = cookies[:cart]
+    shopping_cart = ShoppingCart.find_by_guid(cookies[:cart_guid])
+    cart = shopping_cart ? shopping_cart.content : cookies[:cart]
     cart.blank? ? {} : JSON.parse(cart).each{|i|i['pr']=i['pr']+@tier if(i && i['pr'] && !i['pr'].ends_with?(@tier) && @tier)}
   end
 
