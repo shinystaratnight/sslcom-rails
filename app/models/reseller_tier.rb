@@ -84,7 +84,14 @@ class ResellerTier < ActiveRecord::Base
               pvi.product_variant_group.variantable(Certificate).title==k[:variantable_title]}.
                 update_column :amount, k[:pvi_amount]
       else
-        product_variant_items.find(k).update_column :amount, v.last
+        if options[:index]
+          product_variant_items.find(k).update_column :amount, v.last
+        else
+          product_variant_items.where{(title==v[2]) &
+              (product_variant_groups.title==v[1])}.find{|pvi|
+            pvi.product_variant_group.variantable(Certificate).title==v[0]}.
+              update_column :amount, v[3]
+        end
       end
     }
   end

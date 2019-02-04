@@ -167,10 +167,14 @@ module CertificateOrdersHelper
             if certificate_order.renewal && certificate_order.renewal.paid?
               link_to('see renewal', certificate_order_path(@ssl_slug, certificate_order.renewal)) if
                   permitted_to?(:show, certificate_order)
+            elsif certificate_order.signed_certificate_duration_delta > 1
+              link_to('change domain(s)/rekey', reprocess_certificate_order_path(@ssl_slug,
+                  certificate_order)) if permitted_to?(:update, certificate_order) and
+                  !certificate_content.expired?
             else
               links =  "<li>#{link_to 'renew', renew_certificate_order_path(@ssl_slug, certificate_order)}</li>"
               links << "<li> or #{link_to 'change domain(s)/rekey', reprocess_certificate_order_path(@ssl_slug,
-                                                                                                     certificate_order)}</li>" if permitted_to?(:update, certificate_order) and
+                  certificate_order)}</li>" if permitted_to?(:update, certificate_order) and
                   !certificate_content.expired?
               "<ul>#{links}</ul>".html_safe
             end
@@ -178,8 +182,8 @@ module CertificateOrdersHelper
             if certificate_order.certificate.is_free?
               links =  "<li>#{link_to 'upgrade', renew_certificate_order_path(@ssl_slug, certificate_order)}</li>"
               links << "<li>or #{link_to 'change domain(s)/rekey',
-                                         reprocess_certificate_order_path(@ssl_slug, certificate_order)}</li>" if permitted_to?(:update,
-                                                                                                                                certificate_order) and !certificate_content.expired?
+                   reprocess_certificate_order_path(@ssl_slug, certificate_order)}</li>" if permitted_to?(:update,
+                  certificate_order) and !certificate_content.expired?
               "<ul>#{links}</ul>".html_safe
             else
               ("<ul>"+(current_page?(certificate_order_path(@ssl_slug, certificate_order)) ? "" :

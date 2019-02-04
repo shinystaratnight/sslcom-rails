@@ -234,7 +234,6 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
     render_500_error e
   end
 
-  instrument_method
   def update_v1_4
     set_template "update_v1_4"
 
@@ -248,6 +247,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
           @csr = @acr.csr
           # successfully charged
           if @acr.is_a?(CertificateOrder) && @acr.errors.empty?
+            @acr.unchain_comodo if @acr.signed_certificate_duration_delta > 1
             if @acr.certificate_content.csr && @result.debug=="true"
               ccr = @acr.certificate_content.csr.ca_certificate_requests.first
               @result.api_request=ccr.parameters
