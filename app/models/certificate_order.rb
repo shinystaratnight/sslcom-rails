@@ -731,7 +731,8 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def unchain_comodo
-    update_column(:external_order_number, nil) unless external_order_number.blank?
+    # update_column(:external_order_number, nil) unless external_order_number.blank?
+    update_column(:external_order_number, '') unless external_order_number.blank?
     certificate_content.add_ca(ssl_account) if certificate_content.ca_id.blank?
   end
 
