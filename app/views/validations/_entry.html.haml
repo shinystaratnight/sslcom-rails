@@ -125,6 +125,17 @@
                                           %li.applied_doc.tree-connect(alt="#{name}_#{i}_#{vh.id}")
                                             applied: #{name}
                           =render partial: 'validations/dcv', locals: {co: co}
+                  %li.send_callback_section
+                    -#-TODO: After add info_verified state to workflow on certificate content,
+                    -#-TODO: below if statement should be commented out and "perform callback" link should be inside if statement.
+                    -#- if @cert_order.certificate_content.info_verified?
+                    - if @cert_order.phone_verified?
+                      - if @cert_order.locked_registrant.country_code.blank?
+                        callback verification completed for #{'+1-' + @cert_order.locked_registrant.phone}
+                      - else
+                        callback verification completed for #{'+' + @cert_order.locked_registrant.country_code + '-' + @cert_order.locked_registrant.phone}
+                    - else
+                      =link_to 'Perform Callback', nil, id: 'link_to_send_callback'
               .certificate_details_box
                 %ul
                   %li
@@ -220,3 +231,20 @@
                           #{cn.name}
                           %ul
                             %li #{dcv ? "validated by #{dcv.dcv_method} on #{dcv.responded_at.strftime("%b %d, %Y %R %Z") if dcv.responded_at} with #{identifier}" : "pending validation"}
+
+
+#email_modal.email-modal
+  #email_modal_content.modal-content
+    #email_modal_header.modal-header
+      %span#email_modal_close.close
+        &times;
+      %p
+        Send callback link to email addresses (newline and whitespace separated):
+    #email_modal_body.modal-body
+      = text_area_tag 'callback_emails', nil, :rows => '5'
+      #required-field
+        * Email Address is required!
+      #required-valid
+        * All Email Addresses should be valid!
+    #email_modal_footer.modal-footer
+      = button_tag 'Send', :type => 'button', :class => 'btn btn-grey btn-ok-send-emails', :disabled => true

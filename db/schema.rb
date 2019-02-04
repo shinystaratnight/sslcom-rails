@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190125154611) do
+ActiveRecord::Schema.define(version: 20190130212834) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        limit: 255
@@ -321,7 +321,6 @@ ActiveRecord::Schema.define(version: 20190125154611) do
 
   add_index "certificate_names", ["certificate_content_id"], name: "index_certificate_names_on_certificate_content_id", using: :btree
   add_index "certificate_names", ["name"], name: "index_certificate_names_on_name", using: :btree
-  add_index "certificate_names", ["ssl_account_id"], name: "index_certificate_names_on_ssl_account_id", using: :btree
 
   create_table "certificate_order_domains", force: :cascade do |t|
     t.integer "certificate_order_id", limit: 4
@@ -348,6 +347,7 @@ ActiveRecord::Schema.define(version: 20190125154611) do
     t.integer  "phone_verification_count", limit: 4
     t.string   "status",                   limit: 255
     t.integer  "phone_call_count",         limit: 4
+    t.string   "phone_number",             limit: 255
   end
 
   create_table "certificate_orders", force: :cascade do |t|
@@ -390,11 +390,8 @@ ActiveRecord::Schema.define(version: 20190125154611) do
   add_index "certificate_orders", ["ref"], name: "index_certificate_orders_on_ref", using: :btree
   add_index "certificate_orders", ["site_seal_id"], name: "index_certificate_orders_site_seal_id", using: :btree
   add_index "certificate_orders", ["ssl_account_id", "workflow_state", "id"], name: "index_certificate_orders_on_3_cols(2)", using: :btree
-  add_index "certificate_orders", ["ssl_account_id", "workflow_state", "is_test"], name: "index_certificate_orders_on_3_cols2", using: :btree
-  add_index "certificate_orders", ["ssl_account_id"], name: "index_certificate_orders_on_ssl_account_id", using: :btree
-  add_index "certificate_orders", ["validation_id"], name: "index_certificate_orders_on_validation_id", using: :btree
+  add_index "certificate_orders", ["ssl_account_id", "workflow_state", "is_test", "updated_at"], name: "index_certificate_orders_on_4_cols", using: :btree
   add_index "certificate_orders", ["workflow_state", "is_expired", "is_test"], name: "index_certificate_orders_on_3_cols", using: :btree
-  add_index "certificate_orders", ["workflow_state", "is_expired", "is_test"], name: "index_certificate_orders_on_ws_ie_it_ua", using: :btree
 
   create_table "certificates", force: :cascade do |t|
     t.integer  "reseller_tier_id",      limit: 4
@@ -490,11 +487,11 @@ ActiveRecord::Schema.define(version: 20190125154611) do
     t.integer  "user_id",               limit: 4
     t.text     "special_fields",        limit: 65535
     t.text     "domains",               limit: 65535
+    t.string   "country_code",          limit: 255
   end
 
   add_index "contacts", ["contactable_id", "contactable_type"], name: "index_contacts_on_contactable_id_and_contactable_type", using: :btree
   add_index "contacts", ["id", "parent_id"], name: "index_contacts_on_id_and_parent_id", using: :btree
-  add_index "contacts", ["parent_id"], name: "index_contacts_on_parent_id", using: :btree
   add_index "contacts", ["user_id"], name: "index_contacts_on_user_id", using: :btree
 
   create_table "countries", force: :cascade do |t|
@@ -819,7 +816,6 @@ ActiveRecord::Schema.define(version: 20190125154611) do
     t.integer "qty",                   limit: 4
   end
 
-  add_index "line_items", ["order_id", "sellable_id", "sellable_type"], name: "05122018_index_line_items_on_order_id_and_sellable_id_and_type", using: :btree
   add_index "line_items", ["order_id", "sellable_id", "sellable_type"], name: "index_line_items_on_order_id_and_sellable_id_and_sellable_type", using: :btree
   add_index "line_items", ["order_id"], name: "index_line_items_on_order_id", using: :btree
   add_index "line_items", ["sellable_id", "sellable_type"], name: "index_line_items_on_sellable_id_and_sellable_type", using: :btree
@@ -1122,7 +1118,8 @@ ActiveRecord::Schema.define(version: 20190125154611) do
   add_index "preferences", ["group_id", "group_type", "owner_id", "owner_type", "value"], name: "index_preferences_on_5_cols", using: :btree
   add_index "preferences", ["id", "name", "owner_id", "owner_type", "value"], name: "index_preferences_on_owner_and_name_and_value", using: :btree
   add_index "preferences", ["id", "name", "value"], name: "index_preferences_on_name_and_value", using: :btree
-  add_index "preferences", ["owner_id", "owner_type"], name: "index_preferences_on_owner_id_and_owner_type", using: :btree
+  add_index "preferences", ["id", "owner_id", "owner_type"], name: "index_preferences_on_id_and_owner_id_and_owner_type", unique: true, using: :btree
+  add_index "preferences", ["id", "owner_id", "owner_type"], name: "index_preferences_on_owner_id_and_owner_type", unique: true, using: :btree
   add_index "preferences", ["owner_type", "owner_id"], name: "index_preferences_on_owner_type_and_owner_id", using: :btree
 
   create_table "product_orders", force: :cascade do |t|

@@ -1,3 +1,6 @@
+= javascript_include_tag "form.authy"
+= stylesheet_link_tag 'form.authy'
+= stylesheet_link_tag 'flags.authy'
 - certificate = @certificate_order.certificate
 =f.fields_for :certificate_contents, @certificate_content do |cc|
   =cc.fields_for :csr, @csr do |csr|
@@ -165,6 +168,7 @@
       .clearfix
         %label{:for=>"phone"}
           *Phone:
+        = select_tag 'authy-countries', nil, name: 'country_code', 'data-show-as': 'number', 'data-value': @registrant.country_code
         =rf.text_field :phone
     -#-if current_user.ssl_account.has_role? 'reseller'
     -#  .clearfix
