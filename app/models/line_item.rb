@@ -17,6 +17,14 @@ class LineItem < ActiveRecord::Base
     self.affiliate_payout_rate ||= 0.0
   end
 
+  def sellable_unscoped
+    if sellable_type == 'CertificateOrder'
+      CertificateOrder.unscoped.find(sellable_id)
+    else
+      sellable
+    end
+  end
+
   def affiliate_commission
     Money.new(affiliate_commission_price)
   end
