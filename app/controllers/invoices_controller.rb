@@ -41,6 +41,7 @@ class InvoicesController < ApplicationController
         Invoice.find_by(reference_number: params[:invoice])
       end
       orders.update_all(invoice_id: invoice.id)
+      @invoice.destroy unless @invoice.orders.any?
       flash[:notice] = "All #{orders_count} order(s) have been successfully transferred to invoice ##{invoice.reference_number}."
       redirect_to invoice_path(@ssl_slug, invoice.reference_number)
     else
