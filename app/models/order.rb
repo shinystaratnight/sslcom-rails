@@ -463,9 +463,7 @@ class Order < ActiveRecord::Base
 
     state :canceled do
       event :full_refund, transitions_to: :fully_refunded do |complete=true|
-        if li.sellable_unscoped.respond_to?("refund!".to_sym)}
-          line_items.each {|li|li.sellable_unscoped.refund!
-        end
+        line_items.each {|li|li.sellable_unscoped.refund! if li.sellable_unscoped.respond_to?("refund!".to_sym)} if complete
       end
       event :cancel, transitions_to: :canceled do |complete=true|
         cancel_order
