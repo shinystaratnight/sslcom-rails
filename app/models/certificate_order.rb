@@ -726,6 +726,15 @@ class CertificateOrder < ActiveRecord::Base
     end
   end
 
+  def signed_certificate_duration_delta
+    remaining_days - remaining_days(duration: :actual)
+  end
+
+  def unchain_comodo
+    update_column(:external_order_number, nil) unless external_order_number.blank?
+    certificate_content.add_ca(ssl_account) if certificate_content.ca_id.blank?
+  end
+
   # :actual is based on the duration of the signed cert, :order is the duration based on the certificate order
   def total_days(options={round: false, duration: :order})
     if options[:duration]== :actual
@@ -1019,6 +1028,16 @@ class CertificateOrder < ActiveRecord::Base
 
   def certificate_order_token
     certificate_order_tokens.last
+  end
+
+  def phone_verified?
+    certificate_order_tokens.where(
+        status: CertificateOrderToken::DONE_STATUS,
+        phone_number: locked_registrant.country_code.blank? ?
+                          ('+1-' + locked_registrant.phone) :
+                          ('+' + locked_registrant.country_code + '-' + locked_registrant.phone)
+
+    ).first
   end
 
   def registrant

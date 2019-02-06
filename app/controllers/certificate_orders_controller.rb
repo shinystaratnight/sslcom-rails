@@ -218,6 +218,7 @@ class CertificateOrdersController < ApplicationController
   # GET /certificate_orders/1/reprocess
   def reprocess
     @certificate_order = recert(CertificateOrder::REPROCESSING)
+    @certificate_order.unchain_comodo if @certificate_order.signed_certificate_duration_delta > 1
     @tier = find_tier
     unless @certificate_order.blank?
       if @certificate_order.certificate_content.workflow_state == 'pending_validation' &&
@@ -287,6 +288,9 @@ class CertificateOrdersController < ApplicationController
   # PUT /certificate_orders/1.xml
   def update
     respond_to do |format|
+      params[:certificate_order][:certificate_contents_attributes]['0'][:registrant_attributes][:country_code] =
+          params[:country_code] if params[:country_code]
+
       is_smime_or_client = @certificate_order.certificate.is_smime_or_client?
       if @certificate_order.update_attributes(params[:certificate_order])
         cc = @certificate_order.certificate_content
@@ -920,6 +924,7 @@ class CertificateOrdersController < ApplicationController
       @registrant.last_name = locked_registrant.last_name
       @registrant.email = locked_registrant.email
       @registrant.phone = locked_registrant.phone
+      @registrant.country_code = locked_registrant.country_code
       @registrant.status = locked_registrant.status
       @registrant.parent_id = locked_registrant.parent_id
       @registrant.special_fields = locked_registrant.special_fields
@@ -1029,13 +1034,17 @@ class CertificateOrdersController < ApplicationController
       end
     else
       # Saving notification group info
-      notification_group = NotificationGroup.new(
-          friendly_name: 'ng-' + @certificate_order.ref,
-          scan_port: '443',
-          notify_all: true,
-          ssl_account: current_user.ssl_account,
-          status: false,
-      )
+      notification_group = current_user.ssl_account.notification_groups.find_by_friendly_name('ng-' + @certificate_order.ref)
+
+      if notification_group.nil?
+        notification_group = NotificationGroup.new(
+            friendly_name: 'ng-' + @certificate_order.ref,
+            scan_port: '443',
+            notify_all: true,
+            ssl_account: current_user.ssl_account,
+            status: false,
+        )
+      end
 
       # Saving notification group triggers
       ['60', '30', '15', '0', '-15'].uniq.sort{|a, b| a.to_i <=> b.to_i}.reverse.each_with_index do |rt, i|

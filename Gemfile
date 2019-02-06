@@ -83,7 +83,9 @@ gem 'whois', '~> 4.0'
 gem 'whois-parser'
 gem 'where-or'
 gem "skylight"
+gem 'authy'
 gem 'mailboxer'
+# gem 'countries'
 
 group :development do
   gem 'foreman'

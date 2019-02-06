@@ -41,6 +41,10 @@ class Ca < ActiveRecord::Base
   
   # issuer (entity and purpose)
   ISSUER = {sslcom_shadow: 1}
+  SSL_ACCOUNT_MAPPING = {"a30-1e3mjj3" =>
+                          {"SSLcom-SubCA-SSL-RSA-4096-R1" => "DTNT-Intermediate-SSL-RSA-4096-R1",
+                          "SSLcom-SubCA-CodeSigning-RSA-4096-R1" => "DTNT-Intermediate-codeSigning-RSA-4096-R1",
+                          "SSLcom-SubCA-EV-SSL-RSA-4096-R2" => "DTNT-Intermediate-EV-SSL-RSA-4096-R1"}}
   
   validates :ref, presence: true, uniqueness: true
 

@@ -59,35 +59,39 @@ class SslcomCaApi
   end
 
   def self.ca_name(options)
-    if options[:mapping]
-      options[:mapping].ca_name
-    elsif options[:cc] and options[:cc].ca
-      options[:cc].ca.ca_name
-    elsif options[:ca]==Ca::CERTLOCK_CA
-      case options[:cc].certificate.product
-        when /^ev/
-          sig_alg_parameter(options[:cc].csr) =~ /rsa/i ? 'CertLock-SubCA-EV-SSL-RSA-4096' :
-              'CertLockEVECCSSLsubCA'
-        else
-          sig_alg_parameter(options[:cc].csr) =~ /rsa/i ? 'CertLock-SubCA-SSL-RSA-4096' :
-              'CertLockECCSSLsubCA'
-      end
-    elsif options[:ca]==Ca::SSLCOM_CA
-      case options[:cc].certificate.validation_type
-        when "ev"
-          sig_alg_parameter(options[:cc].csr) =~ /rsa/i ? 'SSLcom-SubCA-EV-SSL-RSA-4096-R2' :
-              'SSLcom-SubCA-EV-SSL-ECC-384-R1'
-        when "evcs"
-          'SSLcom-SubCA-EV-CodeSigning-RSA-4096-R2'
-        when "cs"
-          'SSLcom-SubCA-CodeSigning-RSA-4096-R1'
-        else
-          sig_alg_parameter(options[:cc].csr) =~ /rsa/i ? 'CertLock-SubCA-SSL-RSA-4096' :
-              'SSLcom-SubCA-SSL-ECC-384-R1'
-      end
-    else
-      'ManagementCA'
-    end unless options[:cc].certificate.blank?
+    unless options[:cc].certificate.blank?
+      ca_name=if options[:mapping]
+                options[:mapping].ca_name
+              elsif options[:cc] and options[:cc].ca
+                options[:cc].ca.ca_name
+              elsif options[:ca]==Ca::CERTLOCK_CA
+                case options[:cc].certificate.product
+                when /^ev/
+                  sig_alg_parameter(options[:cc].csr) =~ /rsa/i ? 'CertLock-SubCA-EV-SSL-RSA-4096' :
+                      'CertLockEVECCSSLsubCA'
+                else
+                  sig_alg_parameter(options[:cc].csr) =~ /rsa/i ? 'CertLock-SubCA-SSL-RSA-4096' :
+                      'CertLockECCSSLsubCA'
+                end
+              elsif options[:ca]==Ca::SSLCOM_CA
+                case options[:cc].certificate.validation_type
+                when "ev"
+                  sig_alg_parameter(options[:cc].csr) =~ /rsa/i ? 'SSLcom-SubCA-EV-SSL-RSA-4096-R2' :
+                      'SSLcom-SubCA-EV-SSL-ECC-384-R1'
+                when "evcs"
+                  'SSLcom-SubCA-EV-CodeSigning-RSA-4096-R2'
+                when "cs"
+                  'SSLcom-SubCA-CodeSigning-RSA-4096-R1'
+                else
+                  sig_alg_parameter(options[:cc].csr) =~ /rsa/i ? 'CertLock-SubCA-SSL-RSA-4096' :
+                      'SSLcom-SubCA-SSL-ECC-384-R1'
+                end
+              else
+                'ManagementCA'
+              end
+      Ca::SSL_ACCOUNT_MAPPING[options[:cc].ssl_account.acct_number] ?
+        Ca::SSL_ACCOUNT_MAPPING[options[:cc].ssl_account.acct_number][ca_name] : ca_name
+    end
   end
 
   def self.subject_alt_name(options)
@@ -128,6 +132,7 @@ class SslcomCaApi
   def self.issue_cert_json(options)
     cert = options[:cc].certificate
     co=options[:cc].certificate_order
+    carry_over=0
     public_key=unless options[:public_key]
       csr=options[:csr] ? Csr.new(body: options[:csr]) : options[:cc].csr
       carry_over=(!cert.is_server? or cert.is_free?) ? 0 : csr.days_left

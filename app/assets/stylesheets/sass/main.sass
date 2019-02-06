@@ -8322,6 +8322,24 @@ i.fa-external-link.fa-ssl-custom
       color: black
       border-bottom: solid 2px black
 
+.email-verification-block,
+.phone-call-block,
+.phone-verification-block
+  label
+    line-height: 24px
+    margin-bottom: 0px
+
+  input[type="radio"]
+    margin-right: 20px
+    height: 24px
+
+.phone-verification-block #phone_verification_code,
+.email-verification-block #email_verification_code
+  width: 100%
+
+.phone-call-block .verification-method label
+  width: 30px
+
 /*
  * Mailbox
  */
@@ -8331,7 +8349,7 @@ i.fa-external-link.fa-ssl-custom
   flex-wrap: nowrap
   justify-content: flex-start
   margin-top: 2rem
-
+  
   .mailbox-container-empty
     text-align: center
     font-size: 1.4rem
@@ -8369,12 +8387,12 @@ i.fa-external-link.fa-ssl-custom
         color: grey
         font-size: 1.4rem !important
         letter-spacing: 0.5px !important
-
+    
     #menu-main-unread-count
       margin-left: 1rem
-
+    
     .menu-main-item__selected
-      background-color: #f0808052
+      background-color: #f0808052 
       a
         color: red !important
         font-weight: 600 !important
@@ -8409,14 +8427,14 @@ i.fa-external-link.fa-ssl-custom
     #mailbox-select-all
       text-align: center
       width: 3%
-
+    
     #mailbox-refresh,
     #mailbox-read-actions
       font-size: 1.9rem
       a
         color: grey
         margin-left: 1rem
-
+    
     #mailbox-read-actions
       height: 2.5rem
 
@@ -8430,17 +8448,17 @@ i.fa-external-link.fa-ssl-custom
 
 #mailbox-compose-container
   width: 100%
-
+  
   span.compose-label
     font-size: 1.1rem
     font-weight: 600
     text-transform: uppercase
     padding-bottom: 1rem
 
-  form, table, td,
+  form, table, td, 
   .select2-selection.select2-selection--multiple
     width: 100% !important
-
+  
   .select2
     width: 95% !important
 
@@ -8451,7 +8469,7 @@ i.fa-external-link.fa-ssl-custom
 
   td
     padding: 1rem
-
+  
   #mail-body,
   #mail-subject,
   .select2-selection
@@ -8501,7 +8519,7 @@ i.fa-external-link.fa-ssl-custom
     font-size: 1.45rem
     padding-top: 2rem
     padding-left: 1.5rem
-
+  
   .mailbox-read-buttons
     margin-top: 4rem
     i
@@ -8528,18 +8546,18 @@ i.fa-external-link.fa-ssl-custom
       border-bottom: 1px solid #f2f2f2
       padding-bottom: 1rem
       margin-bottom: 1rem
-
+    
     div:nth-child(2)
       margin-bottom: 1rem
 
     div:last-child
       margin-bottom: 1rem
-
+    
     .txt-mail-reply-body
       width: 100%
       border: none
       border-bottom: 1px solid #f2f2f2
-
+    
     .btn-reply-send,
     .btn-reply-cancel
       border: 1px solid $base_green
@@ -8550,7 +8568,7 @@ i.fa-external-link.fa-ssl-custom
       padding: 0.5rem 1rem
       margin-right: 1rem
       letter-spacing: 0.5px
-
+    
     .btn-reply-cancel
       background-color: white
       color: $base_green
@@ -8558,11 +8576,11 @@ i.fa-external-link.fa-ssl-custom
 #mailbox-mail-list
   border-collapse: collapse
   width: 100%
-
+  
   tr
     border-bottom: 1px solid #f2f2f2
     cursor: pointer
-
+    
     &:hover
       background-color: #f2f2f2
       border: 1px solid lightgrey
@@ -8572,7 +8590,7 @@ i.fa-external-link.fa-ssl-custom
     td
       height: 2.6rem
       font-size: 1.3rem
-
+  
   .mail-item-unread
     font-weight: 600
 
@@ -8585,12 +8603,87 @@ i.fa-external-link.fa-ssl-custom
 
   .mail-subject
     width: 60%
-
+  
   .mail-actions
     width: 4%
     a
       color: grey !important
       font-size: 1.5rem
+
+.email-modal
+  display: none
+  position: fixed
+  z-index: 1
+  padding-top: 100px
+  left: 0
+  top: 0
+  width: 100%
+  height: 100%
+  overflow: auto
+  background-color: rgb(0,0,0)
+  background-color: rgba(0,0,0,0.5)
+
+  .modal-content
+    position: relative
+    background-color: #fefefe
+    margin: auto
+    padding: 0
+    border: 1px solid #888
+    width: 500px
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19)
+    -webkit-animation-name: animatetop
+    -webkit-animation-duration: 0.5s
+    animation-name: animatetop
+    animation-duration: 0.5s
+
+    .modal-header
+      padding: 18px 10px 10px
+      background-color: white
+      color: black
+      font-size: 20px
+      text-align: center
+
+    .modal-body
+      padding: 0px 10px
+
+      #required-field,
+      #required-valid
+        padding-left: 10px
+        display: none
+        color: red
+        font-size: 12px
+
+      #callback_emails
+        width: 474px
+        box-shadow: 0px 0px 10px 0 rgba(0, 0, 0, 0.18)
+
+      &.error-required #callback_emails,
+      &.error-invalid #callback_emails
+        border-color: red
+
+      &.error-invalid #required-valid,
+      &.error-required #required-field
+        display: block
+
+    .modal-footer
+      padding: 3px 10px 10px 10px
+      background-color: white
+      color: black
+      text-align: right
+
+    .close
+      color: black
+      float: right
+      font-size: 20px
+      font-weight: bold
+      margin-top: -12px
+
+      &:hover,
+      &:focus
+        color: #888
+        text-decoration: none
+        cursor: pointer
+
 a.back_to_csr_page
   padding: 0.75rem
   border-color: #007bff
@@ -8600,3 +8693,24 @@ a.back_to_csr_page
 
   &:hover
     text-decoration: none
+
+.countries-input
+  width: 50px
+
+.alt.csr-manager-info
+  td
+    text-align: left !important
+    padding-left: 30px !important
+    padding-top: 5px !important
+    border-top: 1px solid #ddd !important
+    vertical-align: top
+    p
+      color: #999
+      font-weight: bold
+    ul
+      list-style-type: none
+      padding-left: 10px
+    textarea
+      width: 90% !important
+      height: 50px
+      margin-left: 10px
