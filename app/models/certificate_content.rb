@@ -800,7 +800,7 @@ class CertificateContent < ActiveRecord::Base
       # dn << "postalCode=#{postal_code}" unless postal_code.blank?
       # dn << "postalAddress=#{postal_address}" unless postal_address.blank?
       # dn << "streetAddress=#{street_address}" unless street_address.blank?
-      if cert.is_ev?
+      if cert.is_ev? or cert.is_evcs?
         dn << "serialNumber=#{locked_registrant.company_number}"
         dn << "2.5.4.15=#{locked_registrant.business_category}"
         dn << "1.3.6.1.4.1.311.60.2.1.1=#{locked_registrant.incorporation_city}" unless
