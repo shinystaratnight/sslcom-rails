@@ -73,6 +73,8 @@ class CertificateOrdersController < ApplicationController
         flash[:error] = "The page has expired or is no longer valid."
       else
         @certificate_order = co_token.certificate_order
+        @token = params[:token]
+        @managed_csr = Csr.find_by_ref(params[:csr_ref]) unless params[:csr_ref].blank?
       end
     else
       is_expired = true

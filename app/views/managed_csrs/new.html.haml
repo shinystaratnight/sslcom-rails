@@ -32,7 +32,7 @@
       .col-md-6
         = button_tag 'Generate CSR', type: 'button', class: 'generate_cert right btn', disabled: true
       .col-md-6{:style=>'font-size: 15px'}
-        - unless @cert_ref
+        - if !@cert_ref && !@cert_token
           %input.own_csr.mr-3{:type=>'checkbox', :style=>'height: 20px; vertical-align: bottom;'}  I have my own CSR
     .row.pt-4
       .col-md-2
@@ -105,6 +105,13 @@
         .col-md-8
           #back_to_csr_page(style='width: 100%; text-align: center; display: none;')
             = link_to 'Back To CSR Submit Page', edit_certificate_order_path(@ssl_slug || @certificate_order.ssl_account.to_slug, @cert_ref), class: 'back_to_csr_page'
+        .col-md-2
+    - if @cert_token
+      .row.pt-3
+        .col-md-2
+        .col-md-8
+          #back_to_generate_cert_page(style='width: 100%; text-align: center; display: none;')
+            = link_to 'Back To Generate Cert Page', confirm_path(@cert_token), class: 'back_to_generate_cert_page'
         .col-md-2
     .row.pt-3
       .col-md-2

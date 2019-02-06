@@ -200,6 +200,15 @@ jQuery(function($) {
         $('.cert_download').click(function() {
           cert_download($('.cert').val(), $('#cert_common_name').val());
         });
+
+        $('.create_csr').click(function() {
+          var link_url = "<%= new_managed_csr_path(@certificate_order.ssl_account.to_slug, cert_token: @token)%>";
+          window.location.href = link_url;
+        });
+      <%end%>
+
+      <%unless @managed_csr.blank?%>
+        $('.own_csr').trigger('click');
       <%end%>
     }
 
