@@ -1031,6 +1031,7 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def phone_verified?
+    return false if locked_registrant.blank?
     certificate_order_tokens.where(
         status: CertificateOrderToken::DONE_STATUS,
         phone_number: locked_registrant.country_code.blank? ?
