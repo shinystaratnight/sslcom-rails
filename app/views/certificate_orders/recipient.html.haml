@@ -13,7 +13,7 @@
   = form_tag recipient_certificate_order_path(@ssl_slug, @certificate_order.ref), method: :post  do
     #stylized.default_form
       %p.description
-        Please provide recipient information.
+        Who's name will be in the certificate?
       
       = hidden_field_tag :add_recipient, true
 
