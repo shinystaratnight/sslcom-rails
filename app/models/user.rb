@@ -328,6 +328,7 @@ class User < ActiveRecord::Base
       if Settings.require_signup_password
         CertificateOrder.unscoped.search_validated_not_assigned(user.email).each do |cert_order|
           cert_order.update_attribute(:assignee, user)
+          LockedRecipient.create_for_co(cert_order)
         end
       end
 

@@ -11,12 +11,14 @@ class CertificateOrder < ActiveRecord::Base
   belongs_to  :site_seal
   belongs_to  :parent, class_name: 'CertificateOrder', :foreign_key=>:renewal_id
   has_one     :renewal, class_name: 'CertificateOrder', :foreign_key=>:renewal_id,
-    :dependent=>:destroy #represents a child renewal
+              :dependent=>:destroy #represents a child renewal
   has_many    :renewal_attempts
   has_many    :renewal_notifications
   has_many    :cdns
   has_many    :certificate_contents, :dependent => :destroy
   has_many    :certificate_names, through: :certificate_contents
+  has_one     :locked_recipient, class_name: 'LockedRecipient',
+              as: :contactable, dependent: :destroy
   has_many    :registrants, through: :certificate_contents
   has_many    :locked_registrants, through: :certificate_contents
   has_many    :certificate_contacts, through: :certificate_contents
@@ -535,6 +537,14 @@ class CertificateOrder < ActiveRecord::Base
     end
   end
 
+  def get_recipient
+    recipient = locked_recipient
+    if locked_recipient.nil? && assignee 
+      recipient = LockedRecipient.create_for_co(self)
+    end
+    recipient
+  end
+
   def get_audit_logs
     al = SystemAudit.where(target_id: id, target_type: 'CertificateOrder')
     al << SystemAudit.where(target_id: line_items.ids, target_type: 'LineItem')
@@ -925,7 +935,7 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def iv_validated?
-    if assignee
+    if get_recipient
       iv_exists = get_team_iv
       iv_exists && iv_exists.validated?
     else
@@ -954,9 +964,12 @@ class CertificateOrder < ActiveRecord::Base
     end
   end
 
-  def get_team_iv
-    if assignee
-      ssl_account.individual_validations.find_by(user_id: assignee.id)
+  def get_team_iv(for_assignee=nil)
+    recipient = for_assignee ? assignee : get_recipient
+    if recipient
+      ssl_account.individual_validations.find_by(
+        user_id: (recipient.is_a?(User) ? recipient.id : recipient.user_id)
+      )
     end
   end
 
@@ -978,8 +991,12 @@ class CertificateOrder < ActiveRecord::Base
 
   def copy_iv_ov_validation_history(type='iv')
     iv_exists = get_team_iv
-    if assignee && iv_exists && iv_exists.validation_histories.any?
+
+    if get_recipient && iv_exists && iv_exists.validation_histories.any?
       new_vh = iv_exists.validation_histories - validation.validation_histories
+      if locked_recipient
+        locked_recipient.validation_histories << new_vh
+      end
       validation.validation_histories << new_vh
     end
 

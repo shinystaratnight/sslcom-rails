@@ -194,14 +194,27 @@
                         =render partial: "certificate_orders/duration_limit", locals:{co: @certificate_order}
                     .certificate_details_box
                       %ul
-                        -team_iv = co.get_team_iv
+                        -team_iv = co.get_team_iv(:for_assignee)
+                        -team_lr = co.locked_recipient
                         -unless team_iv.nil?
-                          %li 
+                          %li
                             %strong recipient (#{team_iv.status.humanize})
                           %li #{team_iv.first_name}, #{team_iv.last_name}
                           %li #{team_iv.email}
                           %li
                             =link_to 'edit recipient', recipient_certificate_order_path(@ssl_slug, @certificate_order.ref)
+                          -if team_lr
+                            %li
+                              %br/
+                            %li
+                              %strong locked recipient (#{team_lr.status.humanize})
+                            %li
+                              #{team_lr.first_name}, #{team_lr.last_name}
+                            %li
+                              #{team_lr.email}
+                            -if current_user.is_system_admins?
+                              %li
+                                =link_to 'edit locked recipient', recipient_certificate_order_path(@ssl_slug, @certificate_order.ref, locked_recipient: true)
                           %li 
                             %br/
                         %li
