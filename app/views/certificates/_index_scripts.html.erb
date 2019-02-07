@@ -640,7 +640,7 @@ jQuery(function($) {
   };
 
   $.noLimitAccount = function() {
-    return <%= current_user && current_user.ssl_account && current_user.ssl_account.no_limit %>;
+    return false; // <%= current_user && current_user.ssl_account && current_user.ssl_account.no_limit %>;
   };
 
   $(document).ready(function() {

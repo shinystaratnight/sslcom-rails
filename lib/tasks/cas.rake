@@ -620,8 +620,8 @@ namespace :cas do
           end_entity: Ca::END_ENTITY[:evcs]
       )
       Ca.find_or_initialize_by(ref: "0032").update_attributes(
-          friendly_name: "SSL.com DV Client RSA",
-          profile_name: "DV_RSA_Client_CERT",
+          friendly_name: "SSL.com MySSL Basic RSA",
+          profile_name: "MYSSL_RSA_SMIME_CERT",
           algorithm: "rsa",
           size: 4096,
           description: Ca::SSLCOM_CA,
@@ -630,12 +630,12 @@ namespace :cas do
           host: "https://#{url}:8443/restapi",
           admin_host: "https://#{url}:8443",
           ca_name: "SSLcom-SubCA-Client-RSA-4096-R1",
-          ekus: [Ca::EKUS[:code_signing]],
-          end_entity: Ca::END_ENTITY[:dvclient]
+          ekus: [Ca::EKUS[:client]],
+          end_entity: "MYSSL_BASIC_PRO_SMIME_CERT_EE"
       )
       Ca.find_or_initialize_by(ref: "0033").update_attributes(
-          friendly_name: "SSL.com OV Client RSA",
-          profile_name: "OV_RSA_Client_CERT",
+          friendly_name: "SSL.com MySSL Pro RSA",
+          profile_name: "MYSSL_RSA_SMIME_DOCSIGNING_CERT",
           algorithm: "rsa",
           size: 4096,
           description: Ca::SSLCOM_CA,
@@ -644,12 +644,12 @@ namespace :cas do
           host: "https://#{url}:8443/restapi",
           admin_host: "https://#{url}:8443",
           ca_name: "SSLcom-SubCA-Client-RSA-4096-R1",
-          ekus: [Ca::EKUS[:code_signing]],
-          end_entity: Ca::END_ENTITY[:ovclient]
+          ekus: [Ca::EKUS[:client]],
+          end_entity: "MYSSL_BASIC_PRO_SMIME_CERT_EE"
       )
       Ca.find_or_initialize_by(ref: "0034").update_attributes(
-          friendly_name: "SSL.com DV Client ECC",
-          profile_name: "DV_RSA_Client_CERT",
+          friendly_name: "SSL.com MySSL Basic ECC",
+          profile_name: "MYSSL_ECC_SMIME_CERT",
           algorithm: "ecc",
           size: 384,
           description: Ca::SSLCOM_CA,
@@ -658,12 +658,12 @@ namespace :cas do
           host: "https://#{url}:8443/restapi",
           admin_host: "https://#{url}:8443",
           ca_name: "SSLcom-SubCA-Client-ECC-384-R1",
-          ekus: [Ca::EKUS[:code_signing]],
-          end_entity: Ca::END_ENTITY[:dvclient]
+          ekus: [Ca::EKUS[:client]],
+          end_entity: "MYSSL_BASIC_PRO_SMIME_CERT_EE"
       )
       Ca.find_or_initialize_by(ref: "0035").update_attributes(
-          friendly_name: "SSL.com OV Client ECC",
-          profile_name: "OV_RSA_Client_CERT",
+          friendly_name: "SSL.com MySSL Pro ECC",
+          profile_name: "MYSSL_ECC_SMIME_DOCSIGNING_CERT",
           algorithm: "ecc",
           size: 384,
           description: Ca::SSLCOM_CA,
@@ -672,8 +672,36 @@ namespace :cas do
           host: "https://#{url}:8443/restapi",
           admin_host: "https://#{url}:8443",
           ca_name: "SSLcom-SubCA-Client-ECC-384-R1",
-          ekus: [Ca::EKUS[:code_signing]],
-          end_entity: Ca::END_ENTITY[:ovclient]
+          ekus: [Ca::EKUS[:client]],
+          end_entity: "MYSSL_BASIC_PRO_SMIME_CERT_EE"
+      )
+      Ca.find_or_initialize_by(ref: "0036").update_attributes(
+          friendly_name: "SSL.com MySSL Business ECC",
+          profile_name: "MYSSL_RSA_SMIME_DOCSIGNING_CERT",
+          algorithm: "rsa",
+          size: 4096,
+          description: Ca::SSLCOM_CA,
+          type: "SubCa",
+          caa_issuers: ["ssl.com"],
+          host: "https://#{url}:8443/restapi",
+          admin_host: "https://#{url}:8443",
+          ca_name: "SSLcom-SubCA-Client-RSA-4096-R1",
+          ekus: [Ca::EKUS[:client]],
+          end_entity: "MYSSL_BUSINESS_SMIME_CERT_EE"
+      )
+      Ca.find_or_initialize_by(ref: "0037").update_attributes(
+          friendly_name: "SSL.com MySSL Business ECC",
+          profile_name: "MYSSL_ECC_SMIME_DOCSIGNING_CERT",
+          algorithm: "ecc",
+          size: 384,
+          description: Ca::SSLCOM_CA,
+          type: "SubCa",
+          caa_issuers: ["ssl.com"],
+          host: "https://#{url}:8443/restapi",
+          admin_host: "https://#{url}:8443",
+          ca_name: "SSLcom-SubCA-Client-ECC-384-R1",
+          ekus: [Ca::EKUS[:client]],
+          end_entity: "MYSSL_BUSINESS_SMIME_CERT_EE"
       )
       # # Dev ejbca mappings
       # Ca.find_or_initialize_by(ref: "0013d").update_attributes(
