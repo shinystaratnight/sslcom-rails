@@ -935,6 +935,18 @@ namespace :cas do
               status: CasCertificate::STATUS[(ca.ref=="0022" and live.include?(cert) and default.blank?) ? :default : status],
                                          ssl_account_id: ssl_account_id)
           end
+        elsif cert.is_client_basic?
+          cert.cas_certificates.create(ca_id: ca.id,
+            status: CasCertificate::STATUS[(ca.ref=="0032" and live.include?(cert) and default.blank?) ? :default : status],
+                                       ssl_account_id: ssl_account_id)
+        elsif cert.is_client_pro?
+          cert.cas_certificates.create(ca_id: ca.id,
+            status: CasCertificate::STATUS[(ca.ref=="0033" and live.include?(cert) and default.blank?) ? :default : status],
+                                       ssl_account_id: ssl_account_id)
+        elsif cert.is_client_business?
+          cert.cas_certificates.create(ca_id: ca.id,
+            status: CasCertificate::STATUS[(ca.ref=="0036" and live.include?(cert) and default.blank?) ? :default : status],
+                                       ssl_account_id: ssl_account_id)
         elsif cert.is_dv? or cert.is_ov? or cert.is_ev?
           if ca.end_entity==(Ca::END_ENTITY[:dvssl])
             cert.cas_certificates.create(ca_id: ca.id,
