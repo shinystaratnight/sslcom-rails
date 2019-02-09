@@ -28,8 +28,10 @@
     .row.pt-4
       .col-md-3{:style=>"text-align: right"}
         Private Key :
-      .col-md-9
+      .col-md-9.pri_key_block
         %textarea.pri_key{:cols=>80, :rows=>10}
+        .error_msg
+          * It requires private key
   .cert_wrap.hidden
     .row.pt-4
       .col-md-3{:style=>"text-align: right"}
@@ -44,10 +46,12 @@
     .row.pt-5
       .col-md-3{:style=>"text-align: right"}
         Password :
-      .col-md-4
-        %input.pkcs_password{:type=>'text', :style=>'width: 100%'}
+      .col-md-4.pkcs_password_block
+        %input.pkcs_password{:type=>'password', :style=>'width: 100%'}
+        .notice_msg
+          * It must contains 6 letters at least
       .col-md-5
-        %input.pkcs_download{:type=>'button', :value=>'Download', :class=>'btn btn-primary'}
+        %input.pkcs_download{:type=>'button', :value=>'Download', :class=>'btn', :disabled=>'disabled'}
   .cert_download_wrap.pt-5.hidden
     %input.cert_download{:type=>'button', :value=>'Download', :style=>'display:block; margin: auto', :class=>'btn btn-primary'}
     = hidden_field_tag :cert_common_name, ''

@@ -1,6 +1,5 @@
 <script type="text/javascript">
-function activate_physical_token(certificate_order_ref, physical_token_id, name)
-{
+function activate_physical_token(certificate_order_ref, physical_token_id, name) {
   var serial = prompt("Please enter the serial number of token "+name, '');
   if (serial == null || serial=="")
     return;
@@ -181,19 +180,28 @@ jQuery(function($) {
 
         $('.pkcs_download').click(function() {
           if ($('.pri_key').val() == '') {
-            alert('Please input your own Private Key.');
+            $('.pri_key_block').addClass('error_required');
           } else {
-            window.scrollTo(0, 0);
-            $('body').addClass('no_scroll_y');
-            $('.page_loader_wrap').show();
-
+            $('.pri_key_block').removeClass('error_required');
             var password = $('.pkcs_password').val();
-            var certificate = $('.cert').val().replace(/(-----(BEGIN|END) CERTIFICATE-----|\n)/g, '');
-            var priKey = $('.pri_key').val().replace(/(-----(BEGIN|END) PRIVATE KEY-----|\n)/g, '');
-            passwordBasedIntegrity([certificate], priKey, password, function() {
-              $('.page_loader_wrap').hide();
-              $('body').removeClass('no_scroll_y');
-            });
+
+            if ($.trim(password).length > 5) {
+              window.scrollTo(0, 0);
+              $('body').addClass('no_scroll_y');
+              $('.page_loader_wrap').show();
+
+              var certificate = $('.cert').val().replace(/(-----(BEGIN|END) CERTIFICATE-----|\n)/g, '');
+              var priKey = $('.pri_key').val().replace(/(-----(BEGIN|END) PRIVATE KEY-----|\n)/g, '');
+
+              passwordBasedIntegrity([certificate], priKey, password, function() {
+                $('.page_loader_wrap').hide();
+                $('body').removeClass('no_scroll_y');
+              });
+            } else {
+              $('.pkcs_download').prop('disabled', true);
+              $('.pkcs_download').removeClass('btn-primary');
+              $('.pkcs_password_block').addClass('error_require_min_length');
+            }
           }
         });
 
@@ -202,8 +210,22 @@ jQuery(function($) {
         });
 
         $('.create_csr').click(function() {
-          var link_url = "<%= new_managed_csr_path(@certificate_order.ssl_account.to_slug, cert_token: @token)%>";
+          var link_url = "<%= new_managed_csr_path(@certificate_order.ssl_account.to_slug)%>?cert_token=<%= @token%>&is_server=<%= @certificate_order.certificate.is_server?%>";
           window.location.href = link_url;
+        });
+
+        $(document).on('keyup', '.pkcs_password', function(e) {
+          e.preventDefault();
+
+          if ($.trim($(this).val()).length > 5 ) {
+            $('.pkcs_download').prop('disabled', false);
+            $('.pkcs_download').addClass('btn-primary');
+            $('.pkcs_password_block').removeClass('error_require_min_length');
+          } else {
+            $('.pkcs_download').prop('disabled', true);
+            $('.pkcs_download').removeClass('btn-primary');
+            $('.pkcs_password_block').addClass('error_require_min_length');
+          }
         });
       <%end%>
 

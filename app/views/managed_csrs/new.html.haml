@@ -40,9 +40,13 @@
         .generate_wrap
           .row
             .col-md-6
-              .form-group
+              .form-group.cn-group
                 %label  Common Name :
                 = text_field_tag 'commonname', nil, class: 'form-control', placeholder: 'yourdomain.com'
+                .error-no-domain-msg
+                  * It can not be domain for this certificate order "#{@error_cert_ref}"
+                .error-require-domain-msg
+                  * It requires valid domain.
             .col-md-6
               .form-group
                 %label  Email Address :
@@ -118,3 +122,4 @@
       .col-md-8
         #upload_validations(style='width: 100%; text-align: center; display: none;')
           =submit_tag "Add", :id=>"validate_domains", :disable_with=>"Submitting..."
+= javascript_include_tag 'psl.min'

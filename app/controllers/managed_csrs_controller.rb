@@ -11,7 +11,10 @@ class ManagedCsrsController < ApplicationController
       @cert_ref = params[:cert_ref]
       @certificate_order=current_user.ssl_account.certificate_orders.find_by_ref(@cert_ref)
     elsif params[:cert_token]
+      @is_server = params[:is_server]
       @cert_token = params[:cert_token]
+      co_token = CertificateOrderToken.find_by_token(params[:cert_token])
+      @error_cert_ref = co_token.certificate_order.ref
     end
     @csr = ManagedCsr.new
     @cert_orders = current_user.ssl_account.certificate_orders.unused.map{|cert_order| [cert_order.ref, cert_order.id]}

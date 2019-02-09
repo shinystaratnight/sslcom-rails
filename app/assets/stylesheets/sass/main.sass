@@ -8716,5 +8716,47 @@ a.back_to_generate_cert_page
       height: 50px
       margin-left: 10px
 
-.generate_wrap .row .create_csr_block
-  display: flex
+.generate_wrap
+  .row .create_csr_block
+    display: flex
+
+  .form-group .error-no-domain-msg,
+  .form-group .error-require-domain-msg
+    display: none
+    font-size: 10px
+    color: red
+    padding-left: 5px
+
+  .form-group.error-no-domain-block,
+  .form-group.error-require-domain-block
+    input
+      border-color: red
+
+  .form-group.error-no-domain-block .error-no-domain-msg,
+  .form-group.error-require-domain-block .error-require-domain-msg
+    display: block
+
+.pkcs_password_block
+  .notice_msg
+    font-size: 10px
+    padding-left: 5px
+    padding-top: 3px
+
+  &.error_require_min_length
+    .pkcs_password
+      border-color: red
+    .notice_msg
+      color: red
+
+.pri_key_block
+  .error_msg
+    font-size: 10px
+    padding-left: 5px
+    color: red
+    display: none
+
+  &.error_required
+    .pri_key
+      border-color: red
+    .error_msg
+      display: block
