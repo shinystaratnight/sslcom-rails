@@ -852,6 +852,10 @@ class ValidationsController < ApplicationController
       iv_exists = @certificate_order.get_team_iv
       if iv_exists
         iv_exists.validation_histories << @val_history
+        lrc = @certificate_order.locked_recipient
+        if lrc && (lrc.user_id == iv_exists.user_id)
+          lrc.validation_histories << @val_history
+        end 
       end
     end
   end

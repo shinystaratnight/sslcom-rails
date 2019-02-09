@@ -134,6 +134,7 @@ class UsersController < ApplicationController
         # Check Code Signing Certificate Order for assign as assignee.
         CertificateOrder.unscoped.search_validated_not_assigned(params[:user][:email]).each do |cert_order|
           cert_order.update_attribute(:assignee, @user)
+          LockedRecipient.create_for_co(cert_order)
         end
 
         # TODO: New Logic for auto activation by signup with password.
