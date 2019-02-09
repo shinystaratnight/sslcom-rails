@@ -186,6 +186,11 @@
                               =link_cluster([u,m,s])
                         -if cn and !co.certificate.is_csr_last_step?
                           =render partial: 'certificate_orders/visit', locals: {cn: cn}
+                        -if current_user.is_system_admins? && (!co.external_order_number.blank? || co.certificate_content.ca_id.blank?)
+                          %li
+                            %strong switch from comodo
+                          %li.category_border
+                            =link_to "convert to SSL.com chain", nil, :class => "switch_from_comodo"
                         %li.category_border
                         %li
                           %strong for developers
