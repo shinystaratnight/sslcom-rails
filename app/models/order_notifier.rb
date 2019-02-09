@@ -277,7 +277,7 @@ class OrderNotifier < ActionMailer::Base
   def callback_send(co, token, email)
     @validation_link = email_verification_url(token)
 
-    mail subject: "Email Verification For OV",
+    mail subject: "SSL.com callback verification for certificate ref #{co.ref}",
          from: Settings.from_email.no_reply,
          to: email
   end

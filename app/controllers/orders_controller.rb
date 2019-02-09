@@ -952,7 +952,7 @@ class OrdersController < ApplicationController
   # admin user cancels entire order and all of it's line items
   def cancel_entire_order
     @performed = "Cancelled entire order #{@target.reference_number}, credit or refund were NOT issued."
-    @target.cancel!
+    @target.cancel! unless @target.canceled?
     if @target.canceled? && @target.invoice
       @target.update(invoice_id: nil)
     end
