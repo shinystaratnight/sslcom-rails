@@ -1,5 +1,6 @@
 class Certificate < ActiveRecord::Base
   include CertificateType
+  include PriceView
   include Filterable
   include Sortable
 
@@ -674,6 +675,24 @@ class Certificate < ActiveRecord::Base
     else # assume non EV SSL
       CertificateOrder::SSL_MAX_DURATION
     end
+  end
+
+  # use this function to update prices via ResellerTier#update_prices
+  def prices_matrix(indexed=true)
+    if indexed
+      prices={}
+      product_variant_items.includes{product_variant_group}.map do |pvi|
+        prices.merge!(pvi.id=>[pvi.product_variant_group.variantable(Certificate).title,
+                               pvi.product_variant_group.title, pvi.title, pvi.amount])
+      end
+    else
+      prices=[]
+      product_variant_items.includes{product_variant_group}.map do |pvi|
+        prices<<{variantable_title: pvi.product_variant_group.variantable(Certificate).title,
+                 pvg_title: pvi.product_variant_group.title, pvi_title: pvi.title, pvi_amount: pvi.amount}
+      end
+    end
+    prices
   end
 
   private

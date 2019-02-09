@@ -343,10 +343,4 @@ class InvoicesController < ApplicationController
       end
     end
   end
-  
-  def set_ssl_slug(target_user=nil)
-    if current_user && @ssl_account
-      @ssl_slug ||= (@ssl_account.ssl_slug || @ssl_account.acct_number)
-    end
-  end
 end
