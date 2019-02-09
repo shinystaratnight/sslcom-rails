@@ -629,7 +629,7 @@ namespace :cas do
           caa_issuers: ["ssl.com"],
           host: "https://#{url}:8443/restapi",
           admin_host: "https://#{url}:8443",
-          ca_name: "SSLcom-SubCA-Client-RSA-4096-R1",
+          ca_name: "SSLcom-SubCA-clientCert-RSA-4096-R1",
           ekus: [Ca::EKUS[:client]],
           end_entity: "MYSSL_BASIC_PRO_SMIME_CERT_EE"
       )
@@ -643,7 +643,7 @@ namespace :cas do
           caa_issuers: ["ssl.com"],
           host: "https://#{url}:8443/restapi",
           admin_host: "https://#{url}:8443",
-          ca_name: "SSLcom-SubCA-Client-RSA-4096-R1",
+          ca_name: "SSLcom-SubCA-clientCert-RSA-4096-R1",
           ekus: [Ca::EKUS[:client]],
           end_entity: "MYSSL_BASIC_PRO_SMIME_CERT_EE"
       )
@@ -657,7 +657,7 @@ namespace :cas do
           caa_issuers: ["ssl.com"],
           host: "https://#{url}:8443/restapi",
           admin_host: "https://#{url}:8443",
-          ca_name: "SSLcom-SubCA-Client-ECC-384-R1",
+          ca_name: "SSLcom-SubCA-clientCert-ECC-384-R1",
           ekus: [Ca::EKUS[:client]],
           end_entity: "MYSSL_BASIC_PRO_SMIME_CERT_EE"
       )
@@ -671,7 +671,7 @@ namespace :cas do
           caa_issuers: ["ssl.com"],
           host: "https://#{url}:8443/restapi",
           admin_host: "https://#{url}:8443",
-          ca_name: "SSLcom-SubCA-Client-ECC-384-R1",
+          ca_name: "SSLcom-SubCA-clientCert-ECC-384-R1",
           ekus: [Ca::EKUS[:client]],
           end_entity: "MYSSL_BASIC_PRO_SMIME_CERT_EE"
       )
@@ -685,7 +685,7 @@ namespace :cas do
           caa_issuers: ["ssl.com"],
           host: "https://#{url}:8443/restapi",
           admin_host: "https://#{url}:8443",
-          ca_name: "SSLcom-SubCA-Client-RSA-4096-R1",
+          ca_name: "SSLcom-SubCA-clientCert-RSA-4096-R1",
           ekus: [Ca::EKUS[:client]],
           end_entity: "MYSSL_BUSINESS_SMIME_CERT_EE"
       )
@@ -699,7 +699,7 @@ namespace :cas do
           caa_issuers: ["ssl.com"],
           host: "https://#{url}:8443/restapi",
           admin_host: "https://#{url}:8443",
-          ca_name: "SSLcom-SubCA-Client-ECC-384-R1",
+          ca_name: "SSLcom-SubCA-clientCert-ECC-384-R1",
           ekus: [Ca::EKUS[:client]],
           end_entity: "MYSSL_BUSINESS_SMIME_CERT_EE"
       )
