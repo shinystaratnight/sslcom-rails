@@ -51,9 +51,9 @@ jQuery(function($) {
         indx=index;
       }
     });
-    if(quantity>0)
+    if(quantity>0) {
       cart[indx]["<%=ShoppingCart::QUANTITY%>"]=quantity;
-    else{
+    } else {
       count.remove(indx);
       cart.remove(indx);
     }

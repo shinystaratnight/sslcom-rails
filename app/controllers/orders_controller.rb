@@ -81,6 +81,7 @@ class OrdersController < ApplicationController
 
       cookies[:cart_guid] = {:value=>@cart.guid, :path => "/",
                              :expires => Settings.cart_cookie_days.to_i.days.from_now} # reset guid
+      cookies[:cart] = @cart.content
     else
       cart = cookies[:cart]
       guid = cookies[:cart_guid]
