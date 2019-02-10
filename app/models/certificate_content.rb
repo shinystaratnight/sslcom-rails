@@ -789,6 +789,7 @@ class CertificateContent < ActiveRecord::Base
       postal_address=locked_registrant.po_box
       street_address=
           [locked_registrant.address1,locked_registrant.address2,locked_registrant.address3].join(" ")
+      dn << "emailAddress=#{certificate_order.assignee.email}" if certificate.is_smime?
       dn << "O=#{org}" if !org.blank? and (!city.blank? or !state.blank?)
       dn << "OU=#{ou}" unless ou.blank?
       dn << "OU=#{locked_registrant.special_fields["entity_code"]}" if certificate.is_naesb? and
