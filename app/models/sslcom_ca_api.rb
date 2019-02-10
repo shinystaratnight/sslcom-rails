@@ -83,7 +83,7 @@ class SslcomCaApi
                 when "cs"
                   'SSLcom-SubCA-CodeSigning-RSA-4096-R1'
                 else
-                  sig_alg_parameter(options[:cc].csr) =~ /rsa/i ? 'CertLock-SubCA-SSL-RSA-4096' :
+                  sig_alg_parameter(options[:cc].csr) =~ /rsa/i ? 'SSLcom-SubCA-SSL-RSA-4096' :
                       'SSLcom-SubCA-SSL-ECC-384-R1'
                 end
               else
@@ -98,8 +98,8 @@ class SslcomCaApi
     cert = options[:cc].certificate
     common_name=(options[:common_name] || options[:cn] ||
         (options[:csr] ? Csr.new(body: options[:csr]) : options[:cc].csr).common_name).downcase
-    names=if cert.is_smime_or_client?
-            "" # "rfc822Name=#{options[:cc].certificate_order.assignee.email}"
+    names=if cert.is_smime?
+            "rfc822Name=#{options[:cc].certificate_order.assignee.email}"
           elsif cert.is_server?
             ([common_name]+(options[:san] ?
                 options[:san].split(Certificate::DOMAINS_TEXTAREA_SEPARATOR) :
@@ -154,9 +154,10 @@ class SslcomCaApi
           ca_name: options[:ca_name] || ca_name(options),
           certificate_profile: certificate_profile(options),
           end_entity_profile: end_entity_profile(options),
+          subject_alt_name: subject_alt_name(options),
           duration: "#{[(options[:duration] || co.remaining_days+(carry_over || 0)).to_i,
               cert.max_duration].min.floor}:0:0"
-        dn.merge!(subject_alt_name: subject_alt_name(options)) if cert.is_server?
+        dn.merge!(email_address: options[:cc].certificate_order.assignee.email) if cert.is_smime?
       end
       dn.merge!(request_type: "public_key",request_data: public_key.to_pem) if
           options[:collect_certificate] or options[:no_public_key].blank?
@@ -184,7 +185,7 @@ class SslcomCaApi
       parameters: approval_req.body, method: "get", response: approval_res.body,
                                             ca: options[:ca]) if approval_res.try(:body)=~/WAITING FOR APPROVAL/
     if options[:mapping].profile_name=~/EV/ and (approval_res.try(:body).blank? or approval_res.try(:body)=="[]" or
-        (!approval_res.try(:body)=~/WAITING FOR APPROVAL/))
+        (!approval_res.try(:body)=~/WAITING FOR APPROVAL/) or approval_res.try(:body)=~/EXPIRED AND NOTIFIED/)
       # create the user for EV order
       host = ca_host(options[:mapping])+"/v1/user"
       options.merge! no_public_key: true

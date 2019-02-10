@@ -24,7 +24,7 @@ class CertificateOrdersController < ApplicationController
   filter_access_to :incomplete, :pending, :search, :reprocessing, :order_by_csr, :generate_cert, :require=>:read
   filter_access_to :credits, :filter_by, :filter_by_scope, :require=>:index
   filter_access_to :update_csr, require: [:update]
-  filter_access_to :download, :start_over, :reprocess, :admin_update, :change_ext_order_number,
+  filter_access_to :download, :start_over, :reprocess, :admin_update, :change_ext_order_number, :switch_from_comodo,
                    :developers, :require=>[:update, :delete]
   filter_access_to :renew, :parse_csr, require: [:create]
   filter_access_to :auto_renew, require: [:admin_manage]
@@ -64,7 +64,7 @@ class CertificateOrdersController < ApplicationController
     if co_token
       if co_token.user != current_user
         is_expired = true
-        flash[:error] = "Access to this page is denied."
+        flash[:error] = "Access to this page is denied. Please log in as the correct user for this token."
       elsif co_token.is_expired
         is_expired = true
         flash[:error] = "The page has expired or is no longer valid."
@@ -702,6 +702,25 @@ class CertificateOrdersController < ApplicationController
         end
       end
     end
+  end
+
+  def switch_from_comodo
+    returnObj = {}
+
+    if current_user
+      co = CertificateOrder.find_by_ref(params[:certificate_order_id])
+
+      if co
+        co.unchain_comodo
+        returnObj['status'] = 'success'
+      else
+        returnObj['status'] = 'no-exist-cert-order'
+      end
+    else
+      returnObj['status'] = 'no-user'
+    end
+
+    render :json => returnObj
   end
 
   private

@@ -65,8 +65,7 @@ module CertificateType
   end
 
   def is_smime?
-    # (self.is_a?(ApiCertificateRequest) ? target_certificate :  self).product =~ /\Asmime/
-    is_client?
+    is_client_basic? || is_client_pro? || is_client_business? || is_client_enterprise?
   end
 
   def is_client?
@@ -91,23 +90,27 @@ module CertificateType
 
   def is_client_basic?
     is_client? and !is_naesb? and
-        (self.is_a?(ApiCertificateRequest) ? target_certificate :  self).product_root=~/basic\z/
+        (self.is_a?(ApiCertificateRequest) ? target_certificate :  self).product_root=~/personal.*?basic\z/
   end
 
   def is_client_pro?
-    (self.is_a?(ApiCertificateRequest) ? target_certificate :  self).product_root=~/pro\z/
+    (self.is_a?(ApiCertificateRequest) ? target_certificate :  self).product_root=~/personal.*?pro\z/
   end
 
   def is_client_business?
-    (self.is_a?(ApiCertificateRequest) ? target_certificate :  self).product_root=~/business\z/
+    (self.is_a?(ApiCertificateRequest) ? target_certificate :  self).product_root=~/personal.*?business\z/
   end
 
   def is_client_enterprise?
-    (self.is_a?(ApiCertificateRequest) ? target_certificate :  self).product_root=~/enterprise\z/
+    (self.is_a?(ApiCertificateRequest) ? target_certificate :  self).product_root=~/personal.*?enterprise\z/
   end
 
   def is_ov_client?
     is_client_enterprise? or is_client_business?
+  end
+
+  def is_document_signing?
+    is_client_pro? || is_client_business? || is_client_enterprise?
   end
 
   def requires_company_info?

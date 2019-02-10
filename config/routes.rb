@@ -233,6 +233,7 @@ SslCom::Application.routes.draw do
         match :parse_csr, via: [:post, :options]
         get :show_cert_order
         post :validate_issue
+        post :switch_from_comodo
       end
 
       member do

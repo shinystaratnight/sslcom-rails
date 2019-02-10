@@ -680,6 +680,82 @@ jQuery(function($) {
     $('#certificate_orders').on('keyup', '#certificate_order_notes', function() {
       $(this).parents().filter('form').ajaxSubmit();
     });
+
+    <%if current_user.is_system_admins? && @certificate_order && @certificate_order.certificate_content && @certificate_order.certificate_content.ca.blank?%>
+      $(document).on('click', '.switch_from_comodo', function(e) {
+        e.preventDefault();
+
+        // Adding loading bar.
+        var page_loader_wrap = $('<div></div>');
+        page_loader_wrap.attr('class', 'page_loader_wrap');
+
+        var page_loader = $('<div></div>');
+        page_loader.attr('class', 'page_loader');
+
+        page_loader_wrap.append(page_loader);
+
+        // Showing loading bar when click switch link.
+        window.scrollTo(0, 0);
+        $('body').addClass('no_scroll_y');
+        page_loader_wrap.insertBefore($('#header'));
+
+        var ajax_url = "<%=switch_from_comodo_certificate_orders_path%>";
+        var cert_id = "<%=@certificate_order.ref%>";
+
+        $.ajax({
+          url: ajax_url,
+          data: {
+            certificate_order_id: cert_id
+          },
+          type: "POST",
+          success: function (data) {
+            if (data['status'] == 'no-user') {
+              location.reload(true);
+            } else {
+              // Removing flash message if exist.
+              if ($('#content').find('.inner').children().first().hasClass('flash_message')) {
+                $('#content').find('.inner').children().first().remove();
+              }
+
+              // Displaying flash message.
+              var message_wrap_element = $('<div></div>')
+
+              if (data['status'] == 'success') {
+                message_wrap_element.attr('class', 'flash_message notice');
+              } else if (data['status'] == 'no-exist-cert-order') {
+                message_wrap_element.attr('class', 'flash_message error');
+              }
+
+              var message_element = $('<span></span>');
+              if (data['status'] == 'success') {
+                message_element.append('It has been switched from comodo successfully.');
+              } else if (data['status'] == 'no-exist-cert-order') {
+                message_element.append('It does not exist proper certificate order. Please try again.');
+              }
+              message_wrap_element.append(message_element);
+
+              var btn_element = $('<small></small>');
+              var close_btn_element = $('<div></div>');
+              close_btn_element.attr('class', 'close_flash_message');
+
+              var close_sign_element = $('<span></span>');
+              close_sign_element.append('X');
+
+              close_btn_element.append(close_sign_element);
+              close_btn_element.append('close');
+
+              btn_element.append(close_btn_element);
+              message_wrap_element.append(btn_element);
+
+              message_wrap_element.insertBefore($('#content').find('.inner').children().first());
+            }
+
+            $('.page_loader_wrap').hide();
+            $('body').removeClass('no_scroll_y');
+          }
+        });
+      });
+    <%end%>
   });
 });
 </script>

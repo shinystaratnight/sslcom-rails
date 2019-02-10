@@ -34,9 +34,7 @@ class Ca < ActiveRecord::Base
           ov_client:    'OV_CLIENTAUTH_CERT_EE',
           dvssl:        'DV_SERVER_CERT_EE',
           ovssl:        'OV_SERVER_CERT_EE',
-          evssl:        'EV_SERVER_CERT_EE',
-          dvclient:     'DV_CLIENT_CERT_EE',
-          ovclient:     'OV_CLIENT_CERT_EE'
+          evssl:        'EV_SERVER_CERT_EE'
   }
   
   # issuer (entity and purpose)
