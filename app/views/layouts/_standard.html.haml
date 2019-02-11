@@ -8,7 +8,7 @@
             -funded_account = current_user.ssl_account.funded_account
             -if show_teams
               %th{colspan: 2} CURRENT TEAM
-            -unless is_sandbox?
+            -unless is_sandbox? || current_user.role_symbols==[:individual_certificate]
               -if current_user.is_validations? || permitted_to?(:update, :certificate_orders)
                 -permitted_to? :index, :certificate_orders do
                   %th.validations=link_to "INCOMPLETE", incomplete_certificate_orders_path
@@ -25,7 +25,7 @@
             -if show_teams
               =render partial: 'shared/ssl_accounts'
               %td
-            -unless is_sandbox?
+            -unless is_sandbox? || current_user.role_symbols==[:individual_certificate]
               -if current_user.is_validations? || permitted_to?(:update, :certificate_orders)
                 -permitted_to? :index, :certificate_orders do
                   %td.validations=link_to current_user.ssl_account.cached_certificate_orders_incomplete_count, incomplete_certificate_orders_path

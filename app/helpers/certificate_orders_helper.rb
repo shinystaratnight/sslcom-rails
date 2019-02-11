@@ -99,7 +99,7 @@ module CertificateOrdersHelper
         if certificate_content.workflow_state == "validated" &&
             (certificate.is_cs? || certificate.is_smime_or_client?)
           if current_user.is_individual_certificate? or
-              (certificate_order.assignee and certificate_order.assignee.email==current_user.email)
+              (certificate_order.get_recipient and certificate_order.get_recipient.email==current_user.email)
             if certificate_order.certificate_order_token.blank? or certificate_order.certificate_order_token.is_expired
               link_to 'request certificate', nil, class: 'link_to_send_notify',
                       :data => { :ref => certificate_order.ref, :type => 'request' }
@@ -112,8 +112,9 @@ module CertificateOrdersHelper
           elsif current_user.is_billing_only? || current_user.is_validations_only? || current_user.is_validations_and_billing_only?
             'n/a'
           else
-            if certificate.is_smime_or_client? && certificate_order.assignee
-              iv = Contact.find_by(user_id: certificate_order.assignee.id)
+            if certificate.is_smime_or_client? && certificate_order.get_recipient
+              recipient = certificate_order.get_recipient
+              iv = Contact.find_by(user_id: (recipient.user_id || recipient.id))
               link_to 'send activation link to ' + iv.email,
                       nil, class: 'link_to_send_notify',
                       data: { ref: certificate_order.ref, type: 'token' }
@@ -134,7 +135,7 @@ module CertificateOrdersHelper
       when "issued"
         if(certificate.is_cs? || certificate.is_smime_or_client?)
           if current_user.is_individual_certificate? or
-              (certificate_order.assignee and certificate_order.assignee.email==current_user.email)
+              (certificate_order.get_recipient and certificate_order.get_recipient.email==current_user.email)
             if certificate_order.certificate_order_token.blank? or certificate_order.certificate_order_token.is_expired
               link_to 'request rekey', nil, class: 'link_to_send_notify',
                       :data => { :ref => certificate_order.ref, :type => 'request' }
@@ -147,8 +148,9 @@ module CertificateOrdersHelper
           elsif current_user.is_billing_only? || current_user.is_validations_only? || current_user.is_validations_and_billing_only?
             'n/a'
           else
-            if certificate.is_smime_or_client? && certificate_order.assignee
-              iv = Contact.find_by(user_id: certificate_order.assignee.id)
+            if certificate.is_smime_or_client? && certificate_order.get_recipient
+              recipient = certificate_order.get_recipient
+              iv = Contact.find_by(user_id: (recipient.user_id || recipient.id))
               link_to 'send activation link to ' + iv.email,
                       nil, class: 'link_to_send_notify',
                       data: { ref: certificate_order.ref, type: 'token' }

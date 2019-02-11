@@ -2,14 +2,14 @@
 -current_slug = params[:ssl_slug] ? slug_params : {}
 #prog_nav_container
   %ul(id="prog_nav")
-    -unless is_sandbox?
+    -unless is_sandbox? || current_user.role_symbols==[:individual_certificate]
       %li(id="#{current_page?(certificates_url) ? 't-intro' : 'manage_certificates'}" style="color:green")
         =link_to "BUY", certificates_path
     %li(id="#{is_on?("account",current_slug) ? 't-intro' : 'dashboard' }")
       =link_to "Dashboard", account_path(slug_params)  
     -#%li
     -#  =link_to "Contacts", saved_contacts_contacts_path(slug_params)
-    -unless is_sandbox?
+    -unless is_sandbox? || current_user.role_symbols==[:individual_certificate]
       -permitted_to? :read, :validations do
         %li(id="#{(is_on?("validations",current_slug) && !@prev) ? 't-intro' : 'manage_validations'}")
           =link_to "Validations", validations_path(slug_params)
@@ -19,7 +19,7 @@
     -permitted_to? :index, :certificate_orders do
       %li(id="#{(is_on?("certificate_orders",current_slug) && !@prev) ? 't-intro' : 'manage_certificate_orders' }")
         =link_to "Orders", is_sandbox? ? search_certificate_orders_path(search:'is_test:true') : certificate_orders_path(slug_params)
-    -if current_user.ssl_account.show_domains_manager?
+    -if current_user.ssl_account.show_domains_manager? and current_user.role_symbols!=[:individual_certificate]
       -permitted_to? :index, :domains do
         %li(id="#{(is_on?("domains",current_slug) && !@prev) ? 't-intro' : 'manage_domains' }")
           =link_to "Domains", domains_path(slug_params)
@@ -31,8 +31,9 @@
     -permitted_to? :read, :users do
       %li(id="#{(is_on?("users",current_slug) && !@prev) ? 't-intro' : 'manage_users'}")
         =link_to "Users", users_path(slug_params)
-    %li(id="#{is_on?("cdns",current_slug) ? 't-intro' : 'manage_cdns'}")
-      =link_to "CDN", cdns_path(slug_params)
-    -if Settings.activate_monitoring
-      %li(id="#{is_on?("notification_groups", current_slug) ? 't-intro' : 'manage_domains'}")
-        =link_to "Monitoring", notification_groups_path(slug_params)
+    -if current_user.role_symbols!=[:individual_certificate]
+      %li(id="#{is_on?("cdns",current_slug) ? 't-intro' : 'manage_cdns'}")
+        =link_to "CDN", cdns_path(slug_params)
+      -if Settings.activate_monitoring
+        %li(id="#{is_on?("notification_groups", current_slug) ? 't-intro' : 'manage_domains'}")
+          =link_to "Monitoring", notification_groups_path(slug_params)

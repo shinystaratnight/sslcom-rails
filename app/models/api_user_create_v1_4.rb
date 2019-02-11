@@ -24,6 +24,7 @@ class ApiUserCreate_v1_4 < ApiUserRequest
       # Check Code Signing Certificate Order for assign as assignee.
       CertificateOrder.unscoped.search_validated_not_assigned(@user.email).each do |cert_order|
         cert_order.update_attribute(:assignee, @user)
+        LockedRecipient.create_for_co(cert_order)
       end
 
       @user.deliver_activation_confirmation!

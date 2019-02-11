@@ -13,8 +13,9 @@
     =hidden_field_tag :certificate_order_ref
     =hidden_field_tag :notify_type
 
-=render :partial=>'search_filters'
-=render :partial=>'quick_links'
+-unless current_user.is_individual_certificate_only?
+  =render :partial=>'search_filters'
+  =render :partial=>'quick_links'
 
 -if show_folders
   -if show_folders_container?

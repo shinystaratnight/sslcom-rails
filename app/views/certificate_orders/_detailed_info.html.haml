@@ -54,7 +54,7 @@
                                 =text_area_tag :audits, audits, :size=>"30x10"
                       .certificate_details_box
                         %ul
-                          -team_iv = co.get_team_iv
+                          -team_iv = co.get_team_iv(:for_assignee)
                           -unless team_iv.nil?
                             %li
                               %strong recipient (#{team_iv.status.humanize})
