@@ -661,7 +661,7 @@ class User < ActiveRecord::Base
     CertificateOrder.unscoped.includes(:certificate_contents).find(
         Rails.cache.fetch("#{cache_key}/certificate_order_id/#{ref}") do
           CertificateOrder.unscoped{(is_system_admins? ?
-                                         CertificateOrder : ssl_account.cached_certificate_orders).find_by_ref(ref)}.id
+             CertificateOrder : certificate_orders).find_by_ref(ref)}.id
         end)
   end
 
@@ -686,6 +686,10 @@ class User < ActiveRecord::Base
 
   def can_manage_certificates?
     is_system_admins? && is_ra_admin?
+  end
+
+  def can_perform_accounting?
+    is_billing? || is_owner? || is_account_admin?
   end
 
   def is_admin?
@@ -744,6 +748,10 @@ class User < ActiveRecord::Base
 
   def is_individual_certificate?
     role_symbols.include? Role::INDIVIDUAL_CERTIFICATE.to_sym
+  end
+
+  def is_individual_certificate_only?
+    role_symbols==[Role::INDIVIDUAL_CERTIFICATE.to_sym]
   end
 
   def is_users_manager?

@@ -64,7 +64,7 @@ class CertificateOrdersController < ApplicationController
     if co_token
       if co_token.user != current_user
         is_expired = true
-        flash[:error] = "Access to this page is denied. Please log in as the correct user for this token."
+        flash[:error] = "Access to this page is denied. Please log in as the user assigned to this token."
       elsif co_token.is_expired
         is_expired = true
         flash[:error] = "The page has expired or is no longer valid."
@@ -101,8 +101,6 @@ class CertificateOrdersController < ApplicationController
   # GET /certificate_orders
   # GET /certificate_orders.xml
   def index
-#    expire_fragment('admin_header_certs_status') if
-#      fragment_exist?('admin_header_certs_status')
 
     @certificate_orders = find_certificate_orders.paginate(@p)
 
@@ -358,7 +356,7 @@ class CertificateOrdersController < ApplicationController
     edit_locked_recipient = params[:edit_locked_recipient] == 'true'
 
     if params[:add_recipient]
-      if params[:saved_contacts]
+      unless params[:saved_contacts].blank?
         @iv_exists = @certificate_order.ssl_account.individual_validations
           .find_by(id: params[:saved_contacts])
         assignee_id = @iv_exists.user_id if @iv_exists

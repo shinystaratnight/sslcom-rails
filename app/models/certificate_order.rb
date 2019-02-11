@@ -1087,18 +1087,18 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def subject
-    return "" unless certificate_content.try(:csr)
-    csr = certificate_content.csr
-    csr.signed_certificate.try(:common_name) || csr.common_name
+    csr=csrs.includes(:signed_certificates).last
+    return "" if csr.blank?
+    csr.signed_certificates.last.try(:common_name) || csr.try(:common_name) || ""
   end
   alias :common_name :subject
 
   def display_subject
-    return unless certificate_content.try(:csr)
-    csr = certificate_content.csr
-    names=csr.signed_certificate.subject_alternative_names unless csr.signed_certificate.blank?
+    csr = csrs.includes(:signed_certificates).last
+    return if csr.blank?
+    names=csr.signed_certificates.last.subject_alternative_names unless csr.signed_certificates.last.blank?
     names=names.join(", ") unless names.blank?
-    names || csr.signed_certificate.try(:common_name) || csr.common_name
+    names || csr.signed_certificates.last.try(:common_name) || csr.common_name
   end
 
   def domains
@@ -1762,7 +1762,7 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def friendly_common_name
-    certificate_content.csr.signed_certificate.nonidn_friendly_common_name
+    signed_certificate.nonidn_friendly_common_name
   end
 
   def request_csr_from

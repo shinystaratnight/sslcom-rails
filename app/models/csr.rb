@@ -9,7 +9,7 @@ class Csr < ActiveRecord::Base
   include Encodable
   
   has_many    :whois_lookups, :dependent => :destroy
-  has_many    :signed_certificates, -> {SignedCertificate.live}, :dependent => :destroy
+  has_many    :signed_certificates #, -> {SignedCertificate.live}, :dependent => :destroy
   has_many    :shadow_certificates
   has_many    :ca_certificate_requests, as: :api_requestable, dependent: :destroy
   has_many    :sslcom_ca_requests, as: :api_requestable

@@ -8,10 +8,12 @@ class ProductVariantItem < ActiveRecord::Base
   validates_presence_of :product_variant_group
 
   def certificate
-    product_variant_group.variantable if
-      product_variant_group &&
-      product_variant_group.variantable &&
-      product_variant_group.variantable.is_a?(Certificate)
+    Certificate.unscoped.find(Rails.cache.fetch("#{cache_key}/certificate") do
+      product_variant_group.variantable.id if
+          product_variant_group &&
+              product_variant_group.variantable &&
+              product_variant_group.variantable.is_a?(Certificate)
+    end)
   end
 
   def is_domain?

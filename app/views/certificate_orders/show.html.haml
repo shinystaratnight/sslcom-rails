@@ -203,12 +203,12 @@
                         -team_lr = co.locked_recipient
                         -unless team_iv.nil?
                           %li
-                            %strong recipient (#{team_iv.status.humanize})
+                            %strong recipient
                           %li #{team_iv.first_name}, #{team_iv.last_name}
                           %li #{team_iv.email}
                           %li
                             =link_to 'edit recipient', recipient_certificate_order_path(@ssl_slug, @certificate_order.ref)
-                          -if team_lr
+                          -if team_lr and current_user.is_system_admins?
                             %li
                               %br/
                             %li
@@ -261,63 +261,17 @@
                               =link_to 'provide info (required)', edit_certificate_order_path(@certificate_order)
                             -else
                               none
-                        -if co.certificate.has_locked_registrant? || co.locked_registrant
+                        -if co.certificate_content.subject_dn
                           %li.category_border
                           %li
-                            %strong locked fields
-                          -unless @cc.locked_registrant.blank?
-                            -r = @cc.locked_registrant
-                            %li
-                              O=
-                              =r.company_name
-                            -unless r.department.blank?
-                              %li
-                                OU=
-                                =r.department
-                            -#-unless r.po_box.blank?
-                            -#  %li
-                            -#    postalCode=
-                            -#    =r.po_box
-                            -#-unless r.address1.blank?
-                            -#  %li
-                            -#    streetAddress=
-                            -#    =r.address1
-                            -#-unless r.address2.blank?
-                            -#  %li
-                            -#    streetAddress=
-                            -#    =r.address2
-                            -#-unless r.address3.blank?
-                            -#  %li
-                            -#    streetAddress=
-                            -#    =r.address3
-                            -unless r.city.blank?
-                              %li
-                                L=
-                                =r.city
-                            -unless r.state.blank?
-                              %li
-                                ST=
-                                =r.state
-                            -#-unless r.postal_code.blank?
-                            -#  %li
-                            -#    postalAddress=
-                            -#    =r.postal_code
-                            -unless r.country.blank?
-                              %li
-                                C=
-                                =r.country
-                            -unless r.email.blank?
-                              %li
-                                =r.email
-                            -if current_user.is_system_admins?
-                              %li
-                                =link_to 'edit locked registrant', edit_certificate_order_url(id: @certificate_order.ref, registrant: false)
-                          -else
-                            %li
-                              -if @cc.workflow_state=="csr_submitted"
-                                none
-                              -elsif current_user.is_system_admins?
-                                =link_to 'edit locked registrant', edit_certificate_order_url(id: @certificate_order.ref, registrant: false)
+                            %strong subject dn
+                          -co.certificate_content.subject_dn.split(',').each do |s|
+                            %li=s
+                          %li
+                            -if @cc.workflow_state=="csr_submitted"
+                              none
+                            -elsif current_user.is_system_admins?
+                              =link_to 'edit locked registrant', edit_certificate_order_url(id: @certificate_order.ref, registrant: false)
                         -unless @certificate_order.physical_tokens.active.blank?
                           %li.category_border
                           %li

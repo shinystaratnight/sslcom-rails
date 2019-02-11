@@ -180,7 +180,7 @@ class UsersController < ApplicationController
   end
 
   def show
-    if @user.ssl_account.has_credits?
+    if @user.ssl_account.has_credits? and @user.can_perform_accounting?
       flash.now[:warning] = "You have unused ssl certificate credits. %s"
       flash.now[:warning_item] = "Click here to view the list of credits.",
         credits_certificate_orders_path
