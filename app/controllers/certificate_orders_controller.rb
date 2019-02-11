@@ -353,7 +353,7 @@ class CertificateOrdersController < ApplicationController
   def recipient
     assignee_id = nil
     @iv_exists = nil
-    edit_locked_recipient = params[:edit_locked_recipient] == 'true'
+    edit_locked_recipient = current_user.is_system_admins? && (params[:edit_locked_recipient] == 'true')
 
     if params[:add_recipient]
       unless params[:saved_contacts].blank?
@@ -849,7 +849,7 @@ class CertificateOrdersController < ApplicationController
         )
       end
 
-      unless params[:edit_locked_recipient] == 'true'
+      unless current_user.is_system_admins? && (params[:edit_locked_recipient] == 'true')
         @certificate_order.update_column(:assignee_id, user_exists.id)
       end
     else
