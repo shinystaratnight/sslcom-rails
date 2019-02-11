@@ -676,7 +676,7 @@ namespace :cas do
           end_entity: "MYSSL_BASIC_PRO_SMIME_CERT_EE"
       )
       Ca.find_or_initialize_by(ref: "0036").update_attributes(
-          friendly_name: "SSL.com MySSL Business ECC",
+          friendly_name: "SSL.com MySSL Business RSA",
           profile_name: "MYSSL_RSA_SMIME_DOCSIGNING_CERT",
           algorithm: "rsa",
           size: 4096,
