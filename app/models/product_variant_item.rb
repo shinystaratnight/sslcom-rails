@@ -8,7 +8,7 @@ class ProductVariantItem < ActiveRecord::Base
   validates_presence_of :product_variant_group
 
   def certificate
-    Certificate.unscoped.find(Rails.cache.fetch("#{cache_key}/certificate") do
+    @pvi_certificate ||= Certificate.unscoped.find(Rails.cache.fetch("#{cache_key}/certificate") do
       product_variant_group.variantable.id if
           product_variant_group &&
               product_variant_group.variantable &&

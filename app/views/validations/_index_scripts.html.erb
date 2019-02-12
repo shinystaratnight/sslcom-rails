@@ -1975,7 +1975,7 @@ jQuery(function($) {
       var emails_str = $('#callback_emails').val();
       $('.btn-ok-send-emails').prop('disabled', true);
 
-      <%if @certificate_order && @certificate_order.csr%>
+      <%if @certificate_order%>
         $.ajax({
         url: '<%=send_callback_certificate_order_validation_path(@ssl_slug, @certificate_order.ref)%>',
         data: {

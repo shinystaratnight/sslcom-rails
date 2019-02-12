@@ -88,7 +88,7 @@ class OrdersController < ApplicationController
         # remove domains str from cookies content for cookie size.
         content = JSON.parse(@cart.content)
         content.each do |cookie|
-          cookie.delete 'do'
+          cookie.delete 'do' if cookie
         end
 
         cookies[:cart] = content.to_json

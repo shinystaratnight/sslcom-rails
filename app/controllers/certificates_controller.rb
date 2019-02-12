@@ -267,12 +267,12 @@ class CertificatesController < ApplicationController
 
   def find_certificate
     prod = params[:id]=='mssl' ? 'high_assurance' : params[:id]
-    @certificate = Certificate.for_sale.find_by_product(prod+@tier)
+    @certificate = Certificate.includes(:product_variant_items).for_sale.find_by_product(prod+@tier)
   end
 
   def find_certificate_by_id
     cur_id = params[:certificate] ? params[:certificate][:id] : params[:id]
-    @certificate = Certificate.find cur_id
+    @certificate = Certificate.includes(:product_variant_items).find cur_id
   end
 
   def parse_params

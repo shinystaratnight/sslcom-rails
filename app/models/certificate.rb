@@ -264,12 +264,13 @@ class Certificate < ActiveRecord::Base
   end
 
   def cached_product_variant_items(options={})
-    ProductVariantItem.unscoped.where(id: (Rails.cache.fetch("#{cache_key}/cached_product_variant_items/#{options.to_s}") do
-      if options[:by_serial]
-        product_variant_items.where{serial=~"%#{options[:by_serial]}%"}.pluck(:id)
-      else
-        product_variant_items.pluck(:id)
-      end
+    @cpvi ||= ProductVariantItem.unscoped.where(id:
+      (Rails.cache.fetch("#{cache_key}/cached_product_variant_items/#{options.to_s}") do
+        if options[:by_serial]
+          product_variant_items.where{serial=~"%#{options[:by_serial]}%"}.pluck(:id)
+        else
+          product_variant_items.pluck(:id)
+        end
     end))
   end
 
