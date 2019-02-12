@@ -96,10 +96,9 @@ class SslcomCaApi
 
   def self.subject_alt_name(options)
     cert = options[:cc].certificate
-    common_name=(options[:common_name] || options[:cn] ||
-        (options[:csr] ? Csr.new(body: options[:csr]) : options[:cc].csr).common_name).downcase
-    names=if cert.is_smime_or_client?
-            "" # "rfc822Name=#{options[:cc].certificate_order.assignee.email}"
+    common_name=options[:common_name]
+    names=if cert.is_smime?
+            "rfc822Name=#{options[:cc].certificate_order.assignee.email}"
           elsif cert.is_server?
             ([common_name]+(options[:san] ?
                 options[:san].split(Certificate::DOMAINS_TEXTAREA_SEPARATOR) :
@@ -146,7 +145,7 @@ class SslcomCaApi
       if options[:collect_certificate]
         dn.merge! user_name: options[:username]
       else
-        (options[:common_name]=options[:common_name] || options[:cn] ||
+        (options[:common_name] ||= options[:cn] ||
           options[:cc].certificate_names.find{|cn|cn.is_common_name==true}.try(:name) ||
           options[:cc].certificate_names.last.name) if cert.is_server?
         options[:common_name]=options[:common_name].downcase if options[:common_name]
@@ -154,9 +153,10 @@ class SslcomCaApi
           ca_name: options[:ca_name] || ca_name(options),
           certificate_profile: certificate_profile(options),
           end_entity_profile: end_entity_profile(options),
+          subject_alt_name: subject_alt_name(options),
           duration: "#{[(options[:duration] || co.remaining_days+(carry_over || 0)).to_i,
               cert.max_duration].min.floor}:0:0"
-        dn.merge!(subject_alt_name: subject_alt_name(options)) if cert.is_server?
+        dn.merge!(email_address: options[:cc].certificate_order.assignee.email) if cert.is_smime?
       end
       dn.merge!(request_type: "public_key",request_data: public_key.to_pem) if
           options[:collect_certificate] or options[:no_public_key].blank?

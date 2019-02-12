@@ -61,7 +61,7 @@ class FoldersController < ApplicationController
       @folders = if params[:id] == '#'
         get_team_root_folders.order(name: :asc)
       else
-        @ssl_account.folders.where(parent_id: params[:id]).order(name: :asc)
+        @ssl_account.folders.includes{certificate_orders}.where(parent_id: params[:id]).order(name: :asc)
       end
     end
     @tree_type = params[:tree_type]
@@ -185,7 +185,7 @@ class FoldersController < ApplicationController
   end
 
   def get_team_root_folders
-    @ssl_account.folders.roots
+    @ssl_account.folders.includes{certificate_orders}.roots
   end
     
   def set_ssl_slug(target_user=nil)

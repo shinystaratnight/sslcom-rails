@@ -65,8 +65,7 @@ module CertificateType
   end
 
   def is_smime?
-    # (self.is_a?(ApiCertificateRequest) ? target_certificate :  self).product =~ /\Asmime/
-    is_client?
+    is_client_basic? || is_client_pro? || is_client_business? || is_client_enterprise?
   end
 
   def is_client?

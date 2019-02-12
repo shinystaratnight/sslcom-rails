@@ -326,16 +326,12 @@ authorization do
         :show,
         :update
     ] do
-      if_attribute ssl_account: is {user.ssl_account}
-    end
-
-    has_permission_on :contacts, :to => [:read, :update, :delete] do
-      if_attribute :contactable => is_in {user.ssl_account.certificate_contacts}
+      if_attribute assignee_id: is {user.id}
     end
 
     has_permission_on :signed_certificates, :to => [:show] do
       if_attribute :csr => {:certificate_content => {:certificate_order => {
-          :ssl_account => is {user.ssl_account}}}
+          :assignee_id => is {user.id}}}
       }
     end
 

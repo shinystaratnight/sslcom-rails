@@ -34,7 +34,7 @@
     -if certificate.requires_company_info?
       -saved_registrants = @certificate_order.ssl_account.saved_registrants
       
-      -if certificate.is_smime_or_client? && saved_registrants.any?
+      -if saved_registrants.any?
         .clearfix
           -registrants_list = render_saved_registrants(saved_registrants, :with_data)
           %label{for: 'saved_registrant'}

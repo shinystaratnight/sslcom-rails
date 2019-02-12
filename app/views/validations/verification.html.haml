@@ -5,6 +5,9 @@
 = stylesheet_link_tag 'form.authy'
 = stylesheet_link_tag 'flags.authy'
 - if @status
+  %h2
+    Callback Verification for Certificate Order
+    =link_to @certificate_order.ref, @certificate_order
   %div.pt-3.automated-call-verification
     .row
       .col-md-3
