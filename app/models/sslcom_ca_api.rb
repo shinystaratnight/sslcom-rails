@@ -180,33 +180,48 @@ class SslcomCaApi
     set_mapping(certificate_order, options)
     options.merge! cc: cc = options[:certificate_content] || certificate_order.certificate_content
     approval_req, approval_res = SslcomCaApi.get_status(csr: cc.csr, mapping: options[:mapping])
+
     return cc.csr.sslcom_ca_requests.create(
-      parameters: approval_req.body, method: "get", response: approval_res.body,
-                                            ca: options[:ca]) if approval_res.try(:body)=~/WAITING FOR APPROVAL/
-    if options[:mapping].profile_name=~/EV/ and (approval_res.try(:body).blank? or approval_res.try(:body)=="[]" or
-        (!approval_res.try(:body)=~/WAITING FOR APPROVAL/) or approval_res.try(:body)=~/EXPIRED AND NOTIFIED/)
+      parameters: approval_req.body,
+      method: "get",
+      response: approval_res.body,
+      ca: options[:ca]) if approval_res.try(:body)=~/WAITING FOR APPROVAL/
+
+    if options[:mapping] && options[:mapping].profile_name && options[:mapping].profile_name=~/EV/ and
+        (approval_res.try(:body).blank? or
+            approval_res.try(:body)=="[]" or
+            (!approval_res.try(:body)=~/WAITING FOR APPROVAL/) or
+            approval_res.try(:body)=~/EXPIRED AND NOTIFIED/)
       # create the user for EV order
       host = ca_host(options[:mapping])+"/v1/user"
       options.merge! no_public_key: true
     else # collect ev cert
       host = ca_host(options[:mapping])+
-          "/v1/certificate#{'/ev' if options[:mapping].profile_name=~/EV/}/pkcs10"
+          "/v1/certificate#{'/ev' if options[:mapping] && options[:mapping].profile_name=~/EV/}/pkcs10"
       options.merge!(collect_certificate: true, username:
-          cc.csr.sslcom_usernames.compact.first) if options[:mapping].profile_name=~/EV/
+          cc.csr.sslcom_usernames.compact.first) if options[:mapping] && options[:mapping].profile_name=~/EV/
     end
+
     req, res = call_ca(host, options, issue_cert_json(options))
     cc.create_csr(body: options[:csr]) if cc.csr.blank?
+
     api_log_entry=cc.csr.sslcom_ca_requests.create(request_url: host,
       parameters: req.body, method: "post", response: res.try(:body), ca: options[:ca_name] || ca_name(options))
-    if (!options[:mapping].profile_name=~/EV/ and api_log_entry.username.blank?) or
-        (options[:mapping].profile_name=~/EV/ and api_log_entry.username.blank? and
+
+    if (options[:mapping] && !options[:mapping].profile_name=~/EV/ and api_log_entry.username.blank?) or
+        (options[:mapping] && options[:mapping].profile_name=~/EV/ and
+            api_log_entry.username.blank? and
             api_log_entry.request_username.blank?)
       OrderNotifier.problem_ca_sending("support@ssl.com", cc.certificate_order,"sslcom").deliver
     elsif api_log_entry.certificate_chain # signed certificate is issued
-      cc.update_column(:ref, options[:mapping].profile_name=~/EV/ ? api_log_entry.request_username :
-                                 api_log_entry.username) unless api_log_entry.blank?
-      attrs = {body: api_log_entry.end_entity_certificate.to_s, ca_id: options[:mapping].id}
+      cc.update_column(:ref, options[:mapping] && options[:mapping].profile_name=~/EV/ ?
+                                 api_log_entry.request_username : api_log_entry.username) unless api_log_entry.blank?
+      attrs = {
+          body: api_log_entry.end_entity_certificate.to_s,
+          ca_id: options[:mapping] && options[:mapping].id ? options[:mapping].id : nil
+      }
       cc.csr.signed_certificates.create(attrs)
+
       SystemAudit.create(
           owner:  options[:current_user],
           target: api_log_entry,
@@ -214,6 +229,7 @@ class SslcomCaApi
           action: "SslcomCaApi#apply_for_certificate"
       )
     end
+
     api_log_entry
   end
 

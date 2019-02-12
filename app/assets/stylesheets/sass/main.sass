@@ -7002,6 +7002,35 @@ i.fa-external-link.fa-ssl-custom
           background-color: red
           color: white
 
+.generate_pfx_loader_wrap
+  position: absolute
+  background-color: rgba(0, 0, 0, .5)
+  width: 100%
+  height: 100%
+  z-index: 100
+
+  .generate_pfx_loader
+    position: absolute
+    background-color: white
+    width: 500px
+    height: 100px
+    line-height: 110px
+    top: 0
+    right: 0
+    bottom: 0
+    left: 0
+    margin: auto
+    border-radius: 10px
+    text-align: center
+
+    span
+      font-family: Raleway, Arial
+      font-size: 16px
+      font-weight: bold
+      display: inline-block
+      vertical-align: middle
+      line-height: 30px
+
 .redirect_message_wrap
   position: absolute
   background-color: rgba(0, 0, 0, .5)
@@ -8760,3 +8789,9 @@ a.back_to_generate_cert_page
       border-color: red
     .error_msg
       display: block
+
+.pkcs_download_instruction
+  font-size: 12px
+  font-style: italic
+  font-weight: bold
+  color: #555

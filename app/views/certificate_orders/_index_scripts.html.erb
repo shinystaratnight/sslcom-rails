@@ -147,6 +147,7 @@ jQuery(function($) {
 
                   $('.generate_wrap').hide();
                   $('.pkcs_download_wrap').show();
+                  $('#cert_common_name').val(data.cert_common_name);
                 }
               });
             }, function(err) {
@@ -186,15 +187,29 @@ jQuery(function($) {
             var password = $('.pkcs_password').val();
 
             if ($.trim(password).length > 5) {
+              // Adding loading bar while generating pfx file.
+              var generate_pfx_loader_wrap = $('<div></div>');
+              generate_pfx_loader_wrap.attr('class', 'generate_pfx_loader_wrap');
+
+              var generate_pfx_loader = $('<div></div>');
+              generate_pfx_loader.attr('class', 'generate_pfx_loader');
+
+              var span = $('<span></span>');
+              span.append('Generating pfx file, please wait.');
+
+              generate_pfx_loader.append(span);
+              generate_pfx_loader_wrap.append(generate_pfx_loader);
+
               window.scrollTo(0, 0);
               $('body').addClass('no_scroll_y');
-              $('.page_loader_wrap').show();
+              generate_pfx_loader_wrap.insertBefore($('#header'));
 
               var certificate = $('.cert').val().replace(/(-----(BEGIN|END) CERTIFICATE-----|\n)/g, '');
               var priKey = $('.pri_key').val().replace(/(-----(BEGIN|END) PRIVATE KEY-----|\n)/g, '');
+              var pfxFileName = $('#cert_common_name').val();
 
-              passwordBasedIntegrity([certificate], priKey, password, function() {
-                $('.page_loader_wrap').hide();
+              passwordBasedIntegrity([certificate], priKey, password, pfxFileName, function() {
+                $('.generate_pfx_loader_wrap').remove();
                 $('body').removeClass('no_scroll_y');
               });
             } else {
