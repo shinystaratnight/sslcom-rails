@@ -462,10 +462,10 @@ jQuery(function($) {
       $.line_item_total(id);
       $.change_cart_items_qty(qty, id);
 
-      $.prettyLoader().disabled
       var ajaxChangeQuantityInCartUrl = "<%=change_quantity_in_cart_orders_path%>";
       $.ajax({
         url: ajaxChangeQuantityInCartUrl,
+        global: false,
         data: {},
         type: "POST",
         success: function(result) {
