@@ -653,9 +653,11 @@ class User < ActiveRecord::Base
 
   def role_symbols(target_account=nil)
     sa = target_account || ssl_account
-    Rails.cache.fetch("#{cache_key}/role_symbols/#{sa.cache_key}") do
-      Role.where(id: roles_for_account(sa)).map{|role| role.name.underscore.to_sym}
-    end
+    instance_variable_set("@#{sa.model_and_id}",
+      Rails.cache.fetch("#{cache_key}/role_symbols/#{sa.cache_key}") do
+        Role.where(id: roles_for_account(sa)).map{|role| role.name.underscore.to_sym}
+      end) if instance_variable_get("@#{sa.model_and_id}").blank?
+    instance_variable_get("@#{sa.model_and_id}")
   end
 
   def role_symbols_all_accounts
@@ -663,11 +665,14 @@ class User < ActiveRecord::Base
   end
 
   def certificate_order_by_ref(ref)
+    instance_variable_set("@certificate_order_by_ref_#{ref}",
     CertificateOrder.unscoped.includes(:certificate_contents).find(
         Rails.cache.fetch("#{cache_key}/certificate_order_id/#{ref}") do
           CertificateOrder.unscoped{(is_system_admins? ?
              CertificateOrder : certificate_orders).find_by_ref(ref)}.id
-        end)
+        end)) unless instance_variable_get("@certificate_order_by_ref_#{ref}")
+    instance_variable_get("@certificate_order_by_ref_#{ref}")
+
   end
 
   # check for any SslAccount records do not have roles, users or an owner

@@ -133,7 +133,7 @@ class FolderTree
 
   def get_data_certificates(folder)
     data = {certificate_orders: []}
-    list = folder.certificate_orders.includes(:certificate_contents,:registrants).uniq
+    list = folder.certificate_orders.uniq
     list.each do |co|
       data[:certificate_orders].push co_common_name(co)
     end
