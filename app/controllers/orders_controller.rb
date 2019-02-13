@@ -81,14 +81,14 @@ class OrdersController < ApplicationController
 
       cookies[:cart_guid] = {:value=>@cart.guid, :path => "/",
                              :expires => Settings.cart_cookie_days.to_i.days.from_now} # reset guid
-
       if @cart.content.blank?
         cookies[:cart] = @cart.content
       else
         # remove domains str from cookies content for cookie size.
         content = JSON.parse(@cart.content)
         content.each do |cookie|
-          cookie.delete 'do'
+          # cookie.delete 'do'
+          cookie['do'] = cookie['do'].length
         end
 
         cookies[:cart] = content.to_json
@@ -156,6 +156,32 @@ class OrdersController < ApplicationController
     render :json => {'guid' => guid}
   end
 
+  def change_quantity_in_cart
+    returnObj = {}
+
+    # Getting Shopping Cart Info
+    if cookies[:cart_guid].blank?
+      returnObj['status'] = 'expired'
+    else
+      shopping_cart = ShoppingCart.find_by_guid(cookies[:cart_guid])
+
+      if shopping_cart
+        content = shopping_cart.content.blank? ? [] : JSON.parse(shopping_cart.content)
+        cart = cookies[:cart].blank? ? [] : JSON.parse(cookies[:cart])
+
+        # Changing the quantity if change the quantity
+        content = checkout_shopping_cart_content(content, cart)
+        shopping_cart.update_attribute :content, content.blank? ? nil : content.to_json
+
+        returnObj['status'] = 'success'
+      else
+        returnObj['status'] = 'no-exist'
+      end
+    end
+
+    render :json => returnObj
+  end
+
   def add
     add_to_cart @line_item = ActiveRecord::Base.find_from_model_and_id(param)
     session[:cart_items].uniq!
@@ -195,11 +221,11 @@ class OrdersController < ApplicationController
 
         if shopping_cart
           content = shopping_cart.content.blank? ? [] : JSON.parse(shopping_cart.content)
-          cart = JSON.parse(cookies[:cart])
+          cart = cookies[:cart].blank? ? [] : JSON.parse(cookies[:cart])
 
           # Changing the quantity if change the quantity
           content = checkout_shopping_cart_content(content, cart)
-          shopping_cart.update_attribute :content, content.to_json
+          shopping_cart.update_attribute :content, content.blank? ? nil : content.to_json
 
           certificates_from_cookie
         end
@@ -1006,14 +1032,21 @@ class OrdersController < ApplicationController
     new_contents = []
     # Check to be same the quantity
     cart.each do |cookie|
-      same = content.detect{|cont| cont[ShoppingCart::PRODUCT_CODE] == cookie[ShoppingCart::PRODUCT_CODE] &&
-          cont[ShoppingCart::RENEWAL_ORDER] == cookie[ShoppingCart::RENEWAL_ORDER]}
+      same = content.detect{|cont| cont[ShoppingCart::LICENSES] == cookie[ShoppingCart::LICENSES] &&
+          cont[ShoppingCart::DOMAINS].length == cookie[ShoppingCart::DOMAINS].to_i &&
+          cont[ShoppingCart::DURATION] == cookie[ShoppingCart::DURATION] &&
+          cont[ShoppingCart::PRODUCT_CODE] == cookie[ShoppingCart::PRODUCT_CODE] &&
+          cont[ShoppingCart::SUB_PRODUCT_CODE] == cookie[ShoppingCart::SUB_PRODUCT_CODE] &&
+          cont[ShoppingCart::RENEWAL_ORDER] == cookie[ShoppingCart::RENEWAL_ORDER] &&
+          cont[ShoppingCart::AFFILIATE] == cookie[ShoppingCart::AFFILIATE]
+      }
 
       same[ShoppingCart::QUANTITY] = cookie[ShoppingCart::QUANTITY].to_i if !same.blank? &&
           same[ShoppingCart::QUANTITY].to_i != cookie[ShoppingCart::QUANTITY].to_i
 
       new_contents << same
     end
+    new_contents = '' if new_contents.size == 0
 
     return new_contents
   end
