@@ -216,11 +216,11 @@ class Csr < ActiveRecord::Base
   def self.enclose_with_tags(csr)
     csr=remove_begin_end_tags(csr)
     unless (csr =~ Regexp.new(BEGIN_TAG))
-      csr.gsub!(/-+BEGIN CERTIFICATE REQUEST-+/,"")
+      csr.gsub!(/-+BEGIN (NEW )?CERTIFICATE REQUEST-+/,"")
       csr = BEGIN_TAG + "\n" + csr.strip
     end
     unless (csr =~ Regexp.new(END_TAG))
-      csr.gsub!(/-+END CERTIFICATE REQUEST-+/,"")
+      csr.gsub!(/-+END (NEW )?CERTIFICATE REQUEST-+/,"")
       csr = csr + "\n" unless csr=~/\n\Z\z/
       csr = csr + END_TAG + "\n"
     end

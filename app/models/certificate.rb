@@ -289,7 +289,7 @@ class Certificate < ActiveRecord::Base
   end
 
   def items_by_duration
-    product_variant_groups.duration.map(&:product_variant_items).
+    product_variant_groups.includes(:product_variant_items).duration.map(&:product_variant_items).
         flatten.sort{|a,b|a.value.to_i <=> b.value.to_i}
   end
 
@@ -369,11 +369,11 @@ class Certificate < ActiveRecord::Base
   end
 
   def first_duration
-    cached_product_variant_items.first
+    @fcpvi ||= cached_product_variant_items.first
   end
 
   def last_duration
-    cached_product_variant_items.last
+    @lcpvi ||= cached_product_variant_items.last
   end
 
   # is is true for SAN and EV SAN certs

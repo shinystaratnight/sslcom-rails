@@ -76,23 +76,8 @@ class OrdersController < ApplicationController
   def show_cart
     @cart = ShoppingCart.find_by_guid(params[:id]) if params[:id]
     if @cart # manually overwrite owned shopping_cart in favor or url specified
-      # cookies[:cart] = {:value=>(@cart.content.blank? ? @cart.content : CGI.unescape(@cart.content)), :path => "/",
-      #                   :expires => Settings.cart_cookie_days.to_i.days.from_now}
-
-      cookies[:cart_guid] = {:value=>@cart.guid, :path => "/",
-                             :expires => Settings.cart_cookie_days.to_i.days.from_now} # reset guid
-
-      if @cart.content.blank?
-        cookies[:cart] = @cart.content
-      else
-        # remove domains str from cookies content for cookie size.
-        content = JSON.parse(@cart.content)
-        content.each do |cookie|
-          cookie.delete 'do' if cookie
-        end
-
-        cookies[:cart] = content.to_json
-      end
+      cookies[:cart] = {:value=>(@cart.content.blank? ? @cart.content : CGI.unescape(@cart.content)), :path => "/",
+                        :expires => Settings.cart_cookie_days.to_i.days.from_now}
     else
       cart = cookies[:cart]
       guid = cookies[:cart_guid]
@@ -134,7 +119,7 @@ class OrdersController < ApplicationController
                                :expires => Settings.cart_cookie_days.to_i.days.from_now} # reset guid
 
         # Get stored cart info
-        content = current_user.shopping_cart.content.blank? ? [] : JSON.parse(current_user.shopping_cart.content)
+        content = JSON.parse(current_user.shopping_cart.content)
         content = shopping_cart_content(content, cart)
         current_user.shopping_cart.update_attribute :content, content.to_json
       else # each user should 'own' a db_cart
@@ -144,7 +129,7 @@ class OrdersController < ApplicationController
       end
     elsif guid && db_cart #assume user is not logged in
       # Get stored cart info
-      content = db_cart.content ? JSON.parse(db_cart.content) : []
+      content = JSON.parse(db_cart.content)
       content = shopping_cart_content(content, cart)
       db_cart.update_attribute :content, content.to_json
     else
@@ -190,19 +175,7 @@ class OrdersController < ApplicationController
         render(:template => "/certificates/buy",
           :layout=>"application") and return unless certificate_order_steps
       else
-        # Getting Shopping Cart Info
-        shopping_cart = ShoppingCart.find_by_guid(cookies[:cart_guid])
-
-        if shopping_cart
-          content = shopping_cart.content.blank? ? [] : JSON.parse(shopping_cart.content)
-          cart = JSON.parse(cookies[:cart])
-
-          # Changing the quantity if change the quantity
-          content = checkout_shopping_cart_content(content, cart)
-          shopping_cart.update_attribute :content, content.to_json
-
-          certificates_from_cookie
-        end
+        certificates_from_cookie
       end
       if current_user
         if @certificate_orders && is_order_free?
@@ -1002,28 +975,12 @@ class OrdersController < ApplicationController
     @order = (current_user.is_system_admins? ? Order : current_user.orders).find_by_reference_number(params[:id])
   end
 
-  def checkout_shopping_cart_content(content, cart)
-    new_contents = []
-    # Check to be same the quantity
-    cart.each do |cookie|
-      same = content.detect{|cont| cont[ShoppingCart::PRODUCT_CODE] == cookie[ShoppingCart::PRODUCT_CODE] &&
-          cont[ShoppingCart::RENEWAL_ORDER] == cookie[ShoppingCart::RENEWAL_ORDER]}
-
-      same[ShoppingCart::QUANTITY] = cookie[ShoppingCart::QUANTITY].to_i if !same.blank? &&
-          same[ShoppingCart::QUANTITY].to_i != cookie[ShoppingCart::QUANTITY].to_i
-
-      new_contents << same
-    end
-
-    return new_contents
-  end
-
   def shopping_cart_content(content, cart)
     match = true
     idx = -1
 
     # Check to exist same info
-    content.each_with_index do |cookie, i|
+    content.compact.each_with_index do |cookie, i|
       match = true
       cookie.keys.each do |key|
         if key != ShoppingCart::QUANTITY && key != ShoppingCart::AFFILIATE && cookie[key] != cart[key]
@@ -1047,7 +1004,7 @@ class OrdersController < ApplicationController
         content = [cart]
       end
     else
-      content[idx][ShoppingCart::QUANTITY] = content[idx][ShoppingCart::QUANTITY].to_i + 1
+      content[idx][ShoppingCart::QUANTITY] += 1 if content[idx]
     end
 
     return content
