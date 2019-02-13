@@ -1035,7 +1035,9 @@ class OrdersController < ApplicationController
     # Check to be same the quantity
     cart.each do |cookie|
       same = content.detect{|cont| cont[ShoppingCart::LICENSES] == cookie[ShoppingCart::LICENSES] &&
-          cont[ShoppingCart::DOMAINS] == cookie[ShoppingCart::DOMAINS] &&
+          cont[ShoppingCart::DOMAINS].split(Certificate::DOMAINS_TEXTAREA_SEPARATOR).size == cookie[ShoppingCart::DOMAINS].split(Certificate::DOMAINS_TEXTAREA_SEPARATOR).size &&
+          (cont[ShoppingCart::DOMAINS].split(Certificate::DOMAINS_TEXTAREA_SEPARATOR) &
+              cookie[ShoppingCart::DOMAINS].split(Certificate::DOMAINS_TEXTAREA_SEPARATOR)).size == cont[ShoppingCart::DOMAINS].split(Certificate::DOMAINS_TEXTAREA_SEPARATOR).size &&
           cont[ShoppingCart::DURATION] == cookie[ShoppingCart::DURATION] &&
           cont[ShoppingCart::PRODUCT_CODE] == cookie[ShoppingCart::PRODUCT_CODE] &&
           cont[ShoppingCart::SUB_PRODUCT_CODE] == cookie[ShoppingCart::SUB_PRODUCT_CODE] &&
