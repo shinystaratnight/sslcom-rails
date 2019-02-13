@@ -81,18 +81,20 @@ class OrdersController < ApplicationController
 
       cookies[:cart_guid] = {:value=>@cart.guid, :path => "/",
                              :expires => Settings.cart_cookie_days.to_i.days.from_now} # reset guid
-      if @cart.content.blank?
-        cookies[:cart] = @cart.content
-      else
-        # remove domains str from cookies content for cookie size.
-        content = JSON.parse(@cart.content)
-        content.each do |cookie|
-          # cookie.delete 'do'
-          cookie['do'] = cookie['do'].length
-        end
+      cookies[:cart] = @cart.content
 
-        cookies[:cart] = content.to_json
-      end
+      # if @cart.content.blank?
+      #   cookies[:cart] = @cart.content
+      # else
+      #   # remove domains str from cookies content for cookie size.
+      #   content = JSON.parse(@cart.content)
+      #   content.each do |cookie|
+      #     # cookie.delete 'do'
+      #     cookie['do'] = cookie['do'].length
+      #   end
+      #
+      #   cookies[:cart] = content.to_json
+      # end
     else
       cart = cookies[:cart]
       guid = cookies[:cart_guid]
@@ -1033,7 +1035,7 @@ class OrdersController < ApplicationController
     # Check to be same the quantity
     cart.each do |cookie|
       same = content.detect{|cont| cont[ShoppingCart::LICENSES] == cookie[ShoppingCart::LICENSES] &&
-          cont[ShoppingCart::DOMAINS].length == cookie[ShoppingCart::DOMAINS].to_i &&
+          cont[ShoppingCart::DOMAINS].length == cookie[ShoppingCart::DOMAINS].length &&
           cont[ShoppingCart::DURATION] == cookie[ShoppingCart::DURATION] &&
           cont[ShoppingCart::PRODUCT_CODE] == cookie[ShoppingCart::PRODUCT_CODE] &&
           cont[ShoppingCart::SUB_PRODUCT_CODE] == cookie[ShoppingCart::SUB_PRODUCT_CODE] &&
