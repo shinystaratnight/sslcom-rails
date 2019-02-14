@@ -116,11 +116,11 @@ class User < ActiveRecord::Base
         set_default_ssl_account(approved_account) if approved_account
         approved_account
       end
-    end
+    end if @default_team != default_team or @ssl_account.blank?
     if @default_team != default_team
-      @ssl_account = SslAccount.find(sa_id) if sa_id # refresh
+      @ssl_account = SslAccount.includes{assignments}.find(sa_id) # refresh
     else
-      @ssl_account ||= SslAccount.find(sa_id) if sa_id
+      @ssl_account ||= SslAccount.includes{assignments}.find(sa_id)
     end
   end
 
@@ -653,11 +653,9 @@ class User < ActiveRecord::Base
 
   def role_symbols(target_account=nil)
     sa = target_account || ssl_account
-    instance_variable_set("@#{sa.model_and_id}",
-      Rails.cache.fetch("#{cache_key}/role_symbols/#{sa.cache_key}") do
-        Role.where(id: roles_for_account(sa)).map{|role| role.name.underscore.to_sym}
-      end) if instance_variable_get("@#{sa.model_and_id}").blank?
-    instance_variable_get("@#{sa.model_and_id}")
+    Rails.cache.fetch("#{cache_key}/role_symbols/#{sa.cache_key}") do
+      Role.where(id: roles_for_account(sa)).map{|role| role.name.underscore.to_sym}
+    end
   end
 
   def role_symbols_all_accounts
@@ -665,14 +663,11 @@ class User < ActiveRecord::Base
   end
 
   def certificate_order_by_ref(ref)
-    instance_variable_set("@certificate_order_by_ref_#{ref}",
     CertificateOrder.unscoped.includes(:certificate_contents).find(
         Rails.cache.fetch("#{cache_key}/certificate_order_id/#{ref}") do
           CertificateOrder.unscoped{(is_system_admins? ?
              CertificateOrder : certificate_orders).find_by_ref(ref)}.id
-        end)) unless instance_variable_get("@certificate_order_by_ref_#{ref}")
-    instance_variable_get("@certificate_order_by_ref_#{ref}")
-
+        end)
   end
 
   # check for any SslAccount records do not have roles, users or an owner
