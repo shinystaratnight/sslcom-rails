@@ -17,22 +17,27 @@
   %input.cs_subject_dn{:type=>'hidden', :value=>"#{is_cs || is_client ? @certificate_order.certificate_content.locked_subject_dn : @certificate_order.certificate_content.subject_dn}"}
   .generate_wrap
     .row.pt-3
-      .col-md-6
+      .col-md-5
         %input.generate_cert.right{:type=>'button', :value=>'Generate Certificate', :class=>'btn btn-primary'}
-      .col-md-6{:style=>'font-size: 15px'}
+      .col-md-2.create_csr_block
+        %input.create_csr.center{:type=>'button', :value=>'Create CSR', :class=>'btn btn-primary'}
+      .col-md-5{:style=>'font-size: 15px'}
         %input.own_csr{:type=>'checkbox', :style=>'height: 20px; vertical-align: bottom; margin-right: 10px'} I have my own CSR
   .csr_wrap.hidden
     .row.pt-4
       .col-md-3{:style=>"text-align: right"}
         CSR :
       .col-md-9
-        %textarea.csr{:cols=>80, :rows=>10}
+        = text_area_tag 'csr_body', @managed_csr.blank? ? nil : @managed_csr.body, class: 'csr', cols: '80', rows: '10'
+        -#%textarea.csr{:cols=>80, :rows=>10}
   .pri_key_wrap.hidden
     .row.pt-4
       .col-md-3{:style=>"text-align: right"}
         Private Key :
-      .col-md-9
+      .col-md-9.pri_key_block
         %textarea.pri_key{:cols=>80, :rows=>10}
+        .error_msg
+          * It requires private key
   .cert_wrap.hidden
     .row.pt-4
       .col-md-3{:style=>"text-align: right"}
@@ -42,15 +47,17 @@
   .pkcs_download_wrap.hidden
     .row.pt-0
       .col-md-3
-      .col-md-6
+      .col-md-6.pt-4.pkcs_download_instruction
         Create a downloadable pfx file by setting a password and providing the private key (your private key is not sent to SSL.com or any other site)
-    .row.pt-5
+    .row.pt-3
       .col-md-3{:style=>"text-align: right"}
         Password :
-      .col-md-4
-        %input.pkcs_password{:type=>'text', :style=>'width: 100%'}
+      .col-md-4.pkcs_password_block
+        %input.pkcs_password{:type=>'password', :style=>'width: 100%'}
+        .notice_msg
+          * It must contains 6 letters at least
       .col-md-5
-        %input.pkcs_download{:type=>'button', :value=>'Download', :class=>'btn btn-primary'}
+        %input.pkcs_download{:type=>'button', :value=>'Download', :class=>'btn', :disabled=>'disabled'}
   .cert_download_wrap.pt-5.hidden
     %input.cert_download{:type=>'button', :value=>'Download', :style=>'display:block; margin: auto', :class=>'btn btn-primary'}
     = hidden_field_tag :cert_common_name, ''

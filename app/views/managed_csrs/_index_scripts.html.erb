@@ -93,14 +93,53 @@ jQuery(function($) {
       }
     });
 
+    // Checking domain
+    $.checkDomain = function(str) {
+      var asterisk_counts = (str.match(/\*/g) || []).length;
+
+      if (asterisk_counts == 0) {
+        return psl.isValid(str);
+      } else if (asterisk_counts == 1) {
+        return psl.isValid(str.substr(2));
+      } else if (asterisk_counts > 1) {
+        return false;
+      }
+    };
+
     // Enable / Disable Generate CSR Button if ONLY commonname has value.
     $(document).on('blur keyup', '#commonname', function() {
-      if ($(this).val() == '') {
+      if ($.trim($(this).val()) == '') {
+        $('.cn-group').removeClass('error-no-domain-block');
+        $('.cn-group').removeClass('error-require-domain-block');
+
         $('.generate_cert').removeClass('btn-primary');
         $('.generate_cert').prop('disabled', true);
       } else {
-        $('.generate_cert').addClass('btn-primary');
-        $('.generate_cert').prop('disabled', false);
+        <%if @is_server.blank? || @is_server == 'true'%>
+          if ($.checkDomain($.trim($(this).val()))) {
+            $('.cn-group').removeClass('error-require-domain-block');
+
+            $('.generate_cert').addClass('btn-primary');
+            $('.generate_cert').prop('disabled', false);
+          } else {
+            $('.generate_cert').removeClass('btn-primary');
+            $('.generate_cert').prop('disabled', true);
+
+            $('.cn-group').addClass('error-require-domain-block');
+          }
+        <%else%>
+          if ($.checkDomain($.trim($(this).val()))) {
+            $('.generate_cert').removeClass('btn-primary');
+            $('.generate_cert').prop('disabled', true);
+
+            $('.cn-group').addClass('error-no-domain-block');
+          } else {
+            $('.cn-group').removeClass('error-no-domain-block');
+
+            $('.generate_cert').addClass('btn-primary');
+            $('.generate_cert').prop('disabled', false);
+          }
+        <%end%>
       }
     });
 
@@ -262,6 +301,11 @@ jQuery(function($) {
               if ($('.back_to_csr_page')[0]) {
                 $('.back_to_csr_page').attr('href', $('.back_to_csr_page').attr('href') + '?csr_ref=' + data['csr_ref']);
                 $('#back_to_csr_page').show();
+              }
+
+              if ($('.back_to_generate_cert_page')[0]) {
+                $('.back_to_generate_cert_page').attr('href', $('.back_to_generate_cert_page').attr('href') + '?csr_ref=' + data['csr_ref']);
+                $('#back_to_generate_cert_page').show();
               }
             } else {
               var message_wrap_element = $('<div></div>');

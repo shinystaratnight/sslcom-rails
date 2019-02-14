@@ -7002,6 +7002,35 @@ i.fa-external-link.fa-ssl-custom
           background-color: red
           color: white
 
+.generate_pfx_loader_wrap
+  position: absolute
+  background-color: rgba(0, 0, 0, .5)
+  width: 100%
+  height: 100%
+  z-index: 100
+
+  .generate_pfx_loader
+    position: absolute
+    background-color: white
+    width: 500px
+    height: 100px
+    line-height: 110px
+    top: 0
+    right: 0
+    bottom: 0
+    left: 0
+    margin: auto
+    border-radius: 10px
+    text-align: center
+
+    span
+      font-family: Raleway, Arial
+      font-size: 16px
+      font-weight: bold
+      display: inline-block
+      vertical-align: middle
+      line-height: 30px
+
 .redirect_message_wrap
   position: absolute
   background-color: rgba(0, 0, 0, .5)
@@ -8684,7 +8713,8 @@ i.fa-external-link.fa-ssl-custom
         text-decoration: none
         cursor: pointer
 
-a.back_to_csr_page
+a.back_to_csr_page,
+a.back_to_generate_cert_page
   padding: 0.75rem
   border-color: #007bff
   border-radius: 0.25rem
@@ -8714,3 +8744,54 @@ a.back_to_csr_page
       width: 90% !important
       height: 50px
       margin-left: 10px
+
+.generate_wrap
+  .row .create_csr_block
+    display: flex
+
+  .form-group .error-no-domain-msg,
+  .form-group .error-require-domain-msg
+    display: none
+    font-size: 10px
+    color: red
+    padding-left: 5px
+
+  .form-group.error-no-domain-block,
+  .form-group.error-require-domain-block
+    input
+      border-color: red
+
+  .form-group.error-no-domain-block .error-no-domain-msg,
+  .form-group.error-require-domain-block .error-require-domain-msg
+    display: block
+
+.pkcs_password_block
+  .notice_msg
+    font-size: 10px
+    padding-left: 5px
+    padding-top: 3px
+
+  &.error_require_min_length
+    .pkcs_password
+      border-color: red
+    .notice_msg
+      color: red
+
+.pri_key_block
+  .error_msg
+    font-size: 10px
+    padding-left: 5px
+    color: red
+    display: none
+
+  &.error_required
+    .pri_key
+      border-color: red
+    .error_msg
+      display: block
+
+.pkcs_download_instruction
+  font-size: 12px
+  font-style: italic
+  font-weight: bold
+  color: #555
