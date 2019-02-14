@@ -351,19 +351,15 @@ class CertificateOrdersController < ApplicationController
   end
 
   def recipient
-    assignee_id = nil
+    @assignee_id = nil
     @iv_exists = nil
     edit_locked_recipient = current_user.is_system_admins? && (params[:edit_locked_recipient] == 'true')
 
-    if params[:add_recipient]
-      unless params[:saved_contacts].blank?
-        @iv_exists = @certificate_order.ssl_account.individual_validations
-          .find_by(id: params[:saved_contacts])
-        assignee_id = @iv_exists.user_id if @iv_exists
-      end
-      
-      if assignee_id && !edit_locked_recipient
-        @certificate_order.update_column(:assignee_id, assignee_id)
+    if params[:add_recipient] == 'true'
+      find_team_iv
+
+      if @assignee_id && !edit_locked_recipient
+        @certificate_order.update_column(:assignee_id, @assignee_id)
       else
         invite_recipient
       end
@@ -373,11 +369,12 @@ class CertificateOrdersController < ApplicationController
           for_assignee = edit_locked_recipient ? @iv_exists.user_id : nil
           LockedRecipient.create_for_co(@certificate_order, for_assignee)
         end
+        edit_locked_recipient ? update_recipient(:locked) : update_recipient
         # Local Registration Authority, validate IV
         @iv_exists.update_column(:status, Contact::statuses[:validated]) if params[:lra]
       end
 
-      if @iv_exists.nil? && assignee_id.nil?
+      if @iv_exists.nil? && @assignee_id.nil?
         redirect_to :back, error: 'Something went wront, please try again'
       else
         client_smime_validate
@@ -738,7 +735,7 @@ class CertificateOrdersController < ApplicationController
 
       if (params[:validate_iv] && iv && !iv.validated?)
         iv.validated!
-        lr.validated!
+        lr.validated! if lr && (iv.email == lr.email)
       end
 
       admin_validate_ov(ov)
@@ -771,11 +768,15 @@ class CertificateOrdersController < ApplicationController
   def admin_unvalidate
     cc = @certificate_order.certificate_content
     ov = @certificate_order.locked_registrant
+    lr = @certificate_order.locked_recipient
     vt = params[:unvalidate_type]
 
     if @certificate_order.certificate.is_smime_or_client?      
       iv = @certificate_order.get_team_iv
-      iv.send("#{vt}!") if params[:unvalidate_iv] && vt && iv
+      if params[:unvalidate_iv] && vt && iv && lr && (iv.email == lr.email)
+        iv.send("#{vt}!")
+      end
+      lr.send("#{vt}!") if params[:unvalidate_iv] && lr
       admin_unvalidate_ov(ov)
       unless @certificate_order.iv_ov_validated?
         cc.pend_validation! unless cc.pending_validation?
@@ -865,6 +866,30 @@ class CertificateOrdersController < ApplicationController
     }})
     if new_user.persisted?
       invite_recipient
+    end
+  end
+
+  def find_team_iv
+    attrs = {}
+    attrs[:id] = params[:saved_contacts] unless params[:saved_contacts].blank?
+    attrs[:email] = params[:email].strip if attrs.empty? && !params[:email].blank?
+    unless attrs.empty?
+      @iv_exists = @certificate_order.ssl_account
+        .individual_validations.find_by(attrs)
+    end  
+    @assignee_id = @iv_exists.user_id if @iv_exists
+  end
+
+  def update_recipient(locked=nil)
+    @certificate_order.reload
+    current_recipient = locked ? @certificate_order.locked_recipient : @iv_exists
+    if current_recipient
+      current_recipient.update(
+        %w{first_name last_name email}.inject({}) do |all, key|
+          all[key.to_sym] = params[key.to_sym] unless params[key.to_sym].blank?
+          all
+        end
+      )
     end
   end
 
