@@ -2022,36 +2022,34 @@ jQuery(function($) {
     $(document).on('keyup', '#callback_emails', function(e) {
       e.preventDefault();
 
-      if (e.keyCode == 13 || e.keyCode == 32) {
-        var emails_str = $(this).val();
-        var is_validated = true;
+      var emails_str = $(this).val();
+      var is_validated = true;
 
-        if ($.trim(emails_str) == '') {
-          $('#email_modal_body').addClass('error-required');
-          $('#email_modal_body').removeClass('error-invalid');
+      if ($.trim(emails_str) == '') {
+        $('#email_modal_body').addClass('error-required');
+        $('#email_modal_body').removeClass('error-invalid');
 
-          is_validated = false;
-        } else {
-          var emails = emails_str.split(/\s/).filter(Boolean);
-          $.each(emails, function(key, value) {
-            if ($.trim(value) != '' && !$.validate_email(value)) {
-              $('#email_modal_body').addClass('error-invalid');
-              $('#email_modal_body').removeClass('error-required');
+        is_validated = false;
+      } else {
+        var emails = emails_str.split(/\s/).filter(Boolean);
+        $.each(emails, function(key, value) {
+          if ($.trim(value) != '' && !$.validate_email(value)) {
+            $('#email_modal_body').addClass('error-invalid');
+            $('#email_modal_body').removeClass('error-required');
 
-              is_validated = false;
-              return false;
-            }
-          });
-        }
+            is_validated = false;
+            return false;
+          }
+        });
+      }
 
-        if (is_validated) {
-          $('#email_modal_body').removeClass('error-invalid');
-          $('#email_modal_body').removeClass('error-required');
+      if (is_validated) {
+        $('#email_modal_body').removeClass('error-invalid');
+        $('#email_modal_body').removeClass('error-required');
 
-          $('.btn-ok-send-emails').prop('disabled', false);
-        } else {
-          $('.btn-ok-send-emails').prop('disabled', true);
-        }
+        $('.btn-ok-send-emails').prop('disabled', false);
+      } else {
+        $('.btn-ok-send-emails').prop('disabled', true);
       }
     });
 

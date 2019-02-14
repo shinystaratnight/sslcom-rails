@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190130212834) do
+ActiveRecord::Schema.define(version: 20190207225048) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        limit: 255
@@ -383,7 +383,6 @@ ActiveRecord::Schema.define(version: 20190130212834) do
   add_index "certificate_orders", ["created_at"], name: "index_certificate_orders_on_created_at", using: :btree
   add_index "certificate_orders", ["id", "is_test"], name: "index_certificate_orders_on_test", using: :btree
   add_index "certificate_orders", ["id", "ref", "ssl_account_id"], name: "index_certificate_orders_on_id_and_ref_and_ssl_account_id", using: :btree
-  add_index "certificate_orders", ["id", "workflow_state", "is_expired", "is_test"], name: "05122018_index_certificate_orders_on_4_cols", unique: true, using: :btree
   add_index "certificate_orders", ["id", "workflow_state", "is_expired", "is_test"], name: "index_certificate_orders_on_workflow_state", unique: true, using: :btree
   add_index "certificate_orders", ["is_expired"], name: "index_certificate_orders_on_is_expired", using: :btree
   add_index "certificate_orders", ["is_test"], name: "index_certificate_orders_on_is_test", using: :btree
@@ -492,6 +491,7 @@ ActiveRecord::Schema.define(version: 20190130212834) do
 
   add_index "contacts", ["contactable_id", "contactable_type"], name: "index_contacts_on_contactable_id_and_contactable_type", using: :btree
   add_index "contacts", ["id", "parent_id"], name: "index_contacts_on_id_and_parent_id", using: :btree
+  add_index "contacts", ["type", "contactable_type"], name: "index_contacts_on_type_and_contactable_type", using: :btree
   add_index "contacts", ["user_id"], name: "index_contacts_on_user_id", using: :btree
 
   create_table "countries", force: :cascade do |t|
@@ -1448,6 +1448,7 @@ ActiveRecord::Schema.define(version: 20190130212834) do
     t.integer  "registered_agent_id",       limit: 4
   end
 
+  add_index "signed_certificates", ["ca_id"], name: "fk_rails_d21ca532b7", using: :btree
   add_index "signed_certificates", ["ca_id"], name: "index_signed_certificates_on_ca_id", using: :btree
   add_index "signed_certificates", ["common_name", "strength"], name: "index_signed_certificates_on_3_cols", using: :btree
   add_index "signed_certificates", ["common_name"], name: "index_signed_certificates_on_common_name", using: :btree
