@@ -1105,7 +1105,7 @@ class Order < ActiveRecord::Base
   
   # this builds non-deep certificate_orders(s) from the cookie params
   def self.certificates_order(options)
-    options[:certificates].each do |c|
+    options[:certificates].compact.each do |c|
       next if c[ShoppingCart::PRODUCT_CODE]=~/\Areseller_tier/
       if certificate = Certificate.for_sale.find_by_product(c[ShoppingCart::PRODUCT_CODE])
         if certificate.is_free?

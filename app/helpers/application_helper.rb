@@ -568,7 +568,7 @@ module ApplicationHelper
   
   def co_folder_children(contents, options={})
     output = []
-    contents.each do |f|
+    contents.includes{certificate_orders.certificate_contents}.each do |f|
       output << FolderTree.new(
         ssl_account_id: @ssl_account,
         folder: f,
