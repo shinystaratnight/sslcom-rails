@@ -42,6 +42,7 @@ class SslAccount < ActiveRecord::Base
     end
   end
   has_many  :certificate_contacts, through: :certificate_contents
+  has_many  :registrants, through: :certificate_contents
   has_one   :reseller, :dependent => :destroy
   accepts_nested_attributes_for :reseller, :allow_destroy=>false
   has_one   :affiliate, :dependent => :destroy
