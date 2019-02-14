@@ -373,6 +373,7 @@ SslCom::Application.routes.draw do
         get :visitor_trackings
         post :create_free_ssl, :create_multi_free_ssl, :lookup_discount
         post :ucc_domains_adjust_create
+        post :change_quantity_in_cart
       end
       member do
         get :invoice

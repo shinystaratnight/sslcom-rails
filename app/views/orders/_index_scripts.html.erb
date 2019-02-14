@@ -461,6 +461,19 @@ jQuery(function($) {
       id=$(this).attr("id").match(/\d+$/)[0];
       $.line_item_total(id);
       $.change_cart_items_qty(qty, id);
+
+      var ajaxChangeQuantityInCartUrl = "<%=change_quantity_in_cart_orders_path%>";
+      $.ajax({
+        url: ajaxChangeQuantityInCartUrl,
+        global: false,
+        data: {},
+        type: "POST",
+        success: function(result) {
+          if (result['status'] != 'success') {
+            location.reload(true);
+          }
+        }
+      });
     });
     $('span[id^=remove_]').click(function(event, no_cart_qty_update){
       id=$(this).attr("id").match(/\d+$/)[0];
@@ -473,6 +486,18 @@ jQuery(function($) {
           $('span#clear_cart').triggerHandler('click');
         else
           $.update_cart_qty_display();
+
+        var ajaxChangeQuantityInCartUrl = "<%=change_quantity_in_cart_orders_path%>";
+        $.ajax({
+          url: ajaxChangeQuantityInCartUrl,
+          data: {},
+          type: "POST",
+          success: function(result) {
+            if (result['status'] != 'success') {
+              location.reload(true);
+            }
+          }
+        });
       }
     });
     $('span#clear_cart').click(function(){
@@ -486,6 +511,18 @@ jQuery(function($) {
       $('.empty_cart_desc').show();
       $.empty_out_cart();
       $.update_cart_qty_display();
+
+      var ajaxChangeQuantityInCartUrl = "<%=change_quantity_in_cart_orders_path%>";
+      $.ajax({
+        url: ajaxChangeQuantityInCartUrl,
+        data: {},
+        type: "POST",
+        success: function(result) {
+          if (result['status'] != 'success') {
+            location.reload(true);
+          }
+        }
+      });
     });
     $('select[id^=qty_]').each(function(index, value){
       //used for mapping when line items get deleted
