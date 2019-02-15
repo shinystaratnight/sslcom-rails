@@ -366,9 +366,7 @@ class Csr < ActiveRecord::Base
   end
 
   def signed_certificate
-    SignedCertificate.unscoped.where(id: (Rails.cache.fetch("#{cache_key}/signed_certificate") do
-      signed_certificates.order(:created_at).pluck(:id).last
-    end)).last
+    @cached_signed_certificate ||= signed_certificates.order(:created_at).last
   end
 
   def replace_csr(csr)

@@ -66,6 +66,7 @@ class CertificateOrder < ActiveRecord::Base
   #will_paginate
   cattr_accessor :per_page
   @@per_page = 10
+  @@cached_certificates={}
 
   #used to temporarily determine lineitem qty
   attr_accessor :quantity
@@ -692,15 +693,17 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def certificate
+    return @@cached_certificates[Rails.cache.fetch("#{cache_key}/certificate")] unless
+        @@cached_certificates[Rails.cache.fetch("#{cache_key}/certificate")].blank?
     if new_record?
         sub_order_items[0].product_variant_item.certificate if sub_order_items[0] &&
             sub_order_items[0].product_variant_item
     else
-      cid=Rails.cache.fetch("#{cache_key}/certificate") do
-        sub_order_items[0].product_variant_item.certificate.id if sub_order_items[0] &&
-            sub_order_items[0].product_variant_item
-      end
-      cid ? Certificate.unscoped.find(cid) : nil
+      @@cached_certificates[Rails.cache.fetch("#{cache_key}/certificate")]=
+          Certificate.unscoped.find_by_id(Rails.cache.fetch("#{cache_key}/certificate") do
+            sub_order_items[0].product_variant_item.certificate.id if sub_order_items[0] &&
+                sub_order_items[0].product_variant_item
+          end)
     end
   end
 
@@ -1087,11 +1090,11 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def subject
-    Rails.cache.fetch("#{cache_key}/subject") do
-      csr=csrs.includes(:signed_certificates).last
-      return "" if csr.blank?
-      csr.signed_certificates.last.try(:common_name) || csr.try(:common_name) || ""
-    end
+    @cached_subject ||= Rails.cache.fetch("#{cache_key}/subject") do
+                          csr=csrs.includes(:signed_certificates).last
+                          return "" if csr.blank?
+                          csr.signed_certificates.last.try(:common_name) || csr.try(:common_name) || ""
+                        end
   end
   alias :common_name :subject
 
