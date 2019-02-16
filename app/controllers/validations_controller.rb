@@ -187,6 +187,19 @@ class ValidationsController < ApplicationController
       certificate_content = certificate_order.certificate_content
       certificate_names = certificate_content.certificate_names
 
+      unless certificate_content.ca_id.nil?
+        domains = certificate_content.domains
+        domains_from_cert_names = certificate_names.pluck(:name)
+
+        if domains.size == domains_from_cert_names.size && (domains & domains_from_cert_names).size == domains.size
+          remain_domains = domains - domain_name_arry
+        else
+          remain_domains = domains_from_cert_names - domain_name_arry
+        end
+
+        certificate_content.update_column :domains, remain_domains
+      end
+
       certificate_names.where{ name >> domain_name_arry }.each do |cn_obj|
         if certificate_content.ca_id.nil?
           res = ComodoApi.auto_remove_domain(domain_name: cn_obj, order_number: certificate_order.external_order_number)
