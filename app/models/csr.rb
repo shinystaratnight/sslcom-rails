@@ -6,10 +6,11 @@ require 'net/https'
 require 'uri'
 
 class Csr < ActiveRecord::Base
+  extend Memoist
   include Encodable
   
   has_many    :whois_lookups, :dependent => :destroy
-  has_many    :signed_certificates, -> {SignedCertificate.live}, :dependent => :destroy
+  has_many    :signed_certificates #, -> {SignedCertificate.live}, :dependent => :destroy
   has_many    :shadow_certificates
   has_many    :ca_certificate_requests, as: :api_requestable, dependent: :destroy
   has_many    :sslcom_ca_requests, as: :api_requestable
@@ -116,6 +117,7 @@ class Csr < ActiveRecord::Base
       end
     end
   end
+  memoize :unique_value
 
   def csr_unique_value
     last_unique_value = csr_unique_values.last
@@ -129,6 +131,7 @@ class Csr < ActiveRecord::Base
     end
     last_unique_value
   end
+  memoize :csr_unique_value
 
   def common_name
     SimpleIDN.to_unicode(read_attribute(:common_name)).gsub(/\x00/, '') unless read_attribute(:common_name).blank?
@@ -216,11 +219,11 @@ class Csr < ActiveRecord::Base
   def self.enclose_with_tags(csr)
     csr=remove_begin_end_tags(csr)
     unless (csr =~ Regexp.new(BEGIN_TAG))
-      csr.gsub!(/-+BEGIN CERTIFICATE REQUEST-+/,"")
+      csr.gsub!(/-+BEGIN (NEW )?CERTIFICATE REQUEST-+/,"")
       csr = BEGIN_TAG + "\n" + csr.strip
     end
     unless (csr =~ Regexp.new(END_TAG))
-      csr.gsub!(/-+END CERTIFICATE REQUEST-+/,"")
+      csr.gsub!(/-+END (NEW )?CERTIFICATE REQUEST-+/,"")
       csr = csr + "\n" unless csr=~/\n\Z\z/
       csr = csr + END_TAG + "\n"
     end
@@ -366,10 +369,9 @@ class Csr < ActiveRecord::Base
   end
 
   def signed_certificate
-    SignedCertificate.unscoped.where(id: (Rails.cache.fetch("#{cache_key}/signed_certificate") do
-      signed_certificates.order(:created_at).pluck(:id).last
-    end)).last
+    signed_certificates.order(:created_at).last
   end
+  memoize :signed_certificate
 
   def replace_csr(csr)
     update_attribute :body, csr
@@ -423,6 +425,7 @@ class Csr < ActiveRecord::Base
   def dns_sha2_hash
     "#{sha2_hash[0..31]}.#{sha2_hash[32..63]}#{".#{self.unique_value}" unless self.unique_value.blank?}"
   end
+  memoize :dns_sha2_hash
 
   def to_der
     to_openssl.to_der

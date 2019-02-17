@@ -326,16 +326,12 @@ authorization do
         :show,
         :update
     ] do
-      if_attribute ssl_account: is {user.ssl_account}
-    end
-
-    has_permission_on :contacts, :to => [:read, :update, :delete] do
-      if_attribute :contactable => is_in {user.ssl_account.certificate_contacts}
+      if_attribute assignee_id: is {user.id}
     end
 
     has_permission_on :signed_certificates, :to => [:show] do
       if_attribute :csr => {:certificate_content => {:certificate_order => {
-          :ssl_account => is {user.ssl_account}}}
+          :assignee_id => is {user.id}}}
       }
     end
 
@@ -596,7 +592,8 @@ authorization do
       :create_multi_free_ssl, 
       :lookup_discount,
       :show_cart,
-      :add_cart
+      :add_cart,
+      :change_quantity_in_cart
     ]
     has_permission_on :contacts, to: [
       :new,
@@ -627,7 +624,7 @@ privileges do
     :change_state, :create, :delete, :read, :refund, :update, :recipient
   ]
   privilege :read, includes: [
-    :index, :invoice, :lookup_discount, :search, :show, :show_cart, :add_cart, :developer, :site_report, :ajax
+    :index, :invoice, :lookup_discount, :search, :show, :show_cart, :add_cart, :change_quantity_in_cart, :developer, :site_report, :ajax
   ]
   privilege :update, includes: [
     :edit, :edit_email, :edit_update, :verification_check

@@ -134,6 +134,7 @@ class UsersController < ApplicationController
         # Check Code Signing Certificate Order for assign as assignee.
         CertificateOrder.unscoped.search_validated_not_assigned(params[:user][:email]).each do |cert_order|
           cert_order.update_attribute(:assignee, @user)
+          LockedRecipient.create_for_co(cert_order)
         end
 
         # TODO: New Logic for auto activation by signup with password.
@@ -179,7 +180,7 @@ class UsersController < ApplicationController
   end
 
   def show
-    if @user.ssl_account.has_credits?
+    if @user.ssl_account.has_credits? and @user.can_perform_accounting?
       flash.now[:warning] = "You have unused ssl certificate credits. %s"
       flash.now[:warning_item] = "Click here to view the list of credits.",
         credits_certificate_orders_path

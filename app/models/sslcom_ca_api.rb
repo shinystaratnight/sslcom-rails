@@ -83,7 +83,7 @@ class SslcomCaApi
                 when "cs"
                   'SSLcom-SubCA-CodeSigning-RSA-4096-R1'
                 else
-                  sig_alg_parameter(options[:cc].csr) =~ /rsa/i ? 'CertLock-SubCA-SSL-RSA-4096' :
+                  sig_alg_parameter(options[:cc].csr) =~ /rsa/i ? 'SSLcom-SubCA-SSL-RSA-4096' :
                       'SSLcom-SubCA-SSL-ECC-384-R1'
                 end
               else
@@ -96,10 +96,9 @@ class SslcomCaApi
 
   def self.subject_alt_name(options)
     cert = options[:cc].certificate
-    common_name=(options[:common_name] || options[:cn] ||
-        (options[:csr] ? Csr.new(body: options[:csr]) : options[:cc].csr).common_name).downcase
-    names=if cert.is_smime_or_client?
-            "" # "rfc822Name=#{options[:cc].certificate_order.assignee.email}"
+    common_name=options[:common_name]
+    names=if cert.is_smime?
+            "rfc822Name=#{options[:cc].certificate_order.assignee.email}"
           elsif cert.is_server?
             ([common_name]+(options[:san] ?
                 options[:san].split(Certificate::DOMAINS_TEXTAREA_SEPARATOR) :
@@ -146,7 +145,7 @@ class SslcomCaApi
       if options[:collect_certificate]
         dn.merge! user_name: options[:username]
       else
-        (options[:common_name]=options[:common_name] || options[:cn] ||
+        (options[:common_name] ||= options[:cn] ||
           options[:cc].certificate_names.find{|cn|cn.is_common_name==true}.try(:name) ||
           options[:cc].certificate_names.last.name) if cert.is_server?
         options[:common_name]=options[:common_name].downcase if options[:common_name]
@@ -154,9 +153,10 @@ class SslcomCaApi
           ca_name: options[:ca_name] || ca_name(options),
           certificate_profile: certificate_profile(options),
           end_entity_profile: end_entity_profile(options),
+          subject_alt_name: subject_alt_name(options),
           duration: "#{[(options[:duration] || co.remaining_days+(carry_over || 0)).to_i,
               cert.max_duration].min.floor}:0:0"
-        dn.merge!(subject_alt_name: subject_alt_name(options)) if cert.is_server?
+        dn.merge!(email_address: options[:cc].certificate_order.assignee.email) if cert.is_smime?
       end
       dn.merge!(request_type: "public_key",request_data: public_key.to_pem) if
           options[:collect_certificate] or options[:no_public_key].blank?
@@ -180,33 +180,48 @@ class SslcomCaApi
     set_mapping(certificate_order, options)
     options.merge! cc: cc = options[:certificate_content] || certificate_order.certificate_content
     approval_req, approval_res = SslcomCaApi.get_status(csr: cc.csr, mapping: options[:mapping])
+
     return cc.csr.sslcom_ca_requests.create(
-      parameters: approval_req.body, method: "get", response: approval_res.body,
-                                            ca: options[:ca]) if approval_res.try(:body)=~/WAITING FOR APPROVAL/
-    if options[:mapping].profile_name=~/EV/ and (approval_res.try(:body).blank? or approval_res.try(:body)=="[]" or
-        (!approval_res.try(:body)=~/WAITING FOR APPROVAL/))
+      parameters: approval_req.body,
+      method: "get",
+      response: approval_res.body,
+      ca: options[:ca]) if approval_res.try(:body)=~/WAITING FOR APPROVAL/
+
+    if options[:mapping] && options[:mapping].profile_name && options[:mapping].profile_name=~/EV/ and
+        (approval_res.try(:body).blank? or
+            approval_res.try(:body)=="[]" or
+            (!approval_res.try(:body)=~/WAITING FOR APPROVAL/) or
+            approval_res.try(:body)=~/EXPIRED AND NOTIFIED/)
       # create the user for EV order
       host = ca_host(options[:mapping])+"/v1/user"
       options.merge! no_public_key: true
     else # collect ev cert
       host = ca_host(options[:mapping])+
-          "/v1/certificate#{'/ev' if options[:mapping].profile_name=~/EV/}/pkcs10"
+          "/v1/certificate#{'/ev' if options[:mapping] && options[:mapping].profile_name=~/EV/}/pkcs10"
       options.merge!(collect_certificate: true, username:
-          cc.csr.sslcom_usernames.compact.first) if options[:mapping].profile_name=~/EV/
+          cc.csr.sslcom_usernames.compact.first) if options[:mapping] && options[:mapping].profile_name=~/EV/
     end
+
     req, res = call_ca(host, options, issue_cert_json(options))
     cc.create_csr(body: options[:csr]) if cc.csr.blank?
+
     api_log_entry=cc.csr.sslcom_ca_requests.create(request_url: host,
       parameters: req.body, method: "post", response: res.try(:body), ca: options[:ca_name] || ca_name(options))
-    if (!options[:mapping].profile_name=~/EV/ and api_log_entry.username.blank?) or
-        (options[:mapping].profile_name=~/EV/ and api_log_entry.username.blank? and
+
+    if (options[:mapping] && !options[:mapping].profile_name=~/EV/ and api_log_entry.username.blank?) or
+        (options[:mapping] && options[:mapping].profile_name=~/EV/ and
+            api_log_entry.username.blank? and
             api_log_entry.request_username.blank?)
       OrderNotifier.problem_ca_sending("support@ssl.com", cc.certificate_order,"sslcom").deliver
     elsif api_log_entry.certificate_chain # signed certificate is issued
-      cc.update_column(:ref, options[:mapping].profile_name=~/EV/ ? api_log_entry.request_username :
-                                 api_log_entry.username) unless api_log_entry.blank?
-      attrs = {body: api_log_entry.end_entity_certificate.to_s, ca_id: options[:mapping].id}
+      cc.update_column(:ref, options[:mapping] && options[:mapping].profile_name=~/EV/ ?
+                                 api_log_entry.request_username : api_log_entry.username) unless api_log_entry.blank?
+      attrs = {
+          body: api_log_entry.end_entity_certificate.to_s,
+          ca_id: options[:mapping] && options[:mapping].id ? options[:mapping].id : nil
+      }
       cc.csr.signed_certificates.create(attrs)
+
       SystemAudit.create(
           owner:  options[:current_user],
           target: api_log_entry,
@@ -214,6 +229,7 @@ class SslcomCaApi
           action: "SslcomCaApi#apply_for_certificate"
       )
     end
+
     api_log_entry
   end
 

@@ -1,5 +1,6 @@
 class Certificate < ActiveRecord::Base
   include CertificateType
+  include PriceView
   include Filterable
   include Sortable
 
@@ -263,12 +264,13 @@ class Certificate < ActiveRecord::Base
   end
 
   def cached_product_variant_items(options={})
-    ProductVariantItem.unscoped.where(id: (Rails.cache.fetch("#{cache_key}/cached_product_variant_items/#{options.to_s}") do
-      if options[:by_serial]
-        product_variant_items.where{serial=~"%#{options[:by_serial]}%"}.pluck(:id)
-      else
-        product_variant_items.pluck(:id)
-      end
+    @cpvi ||= ProductVariantItem.unscoped.where(id:
+      (Rails.cache.fetch("#{cache_key}/cached_product_variant_items/#{options.to_s}") do
+        if options[:by_serial]
+          product_variant_items.where{serial=~"%#{options[:by_serial]}%"}.pluck(:id)
+        else
+          product_variant_items.pluck(:id)
+        end
     end))
   end
 
@@ -287,7 +289,7 @@ class Certificate < ActiveRecord::Base
   end
 
   def items_by_duration
-    product_variant_groups.duration.map(&:product_variant_items).
+    @items_by_duration ||= product_variant_groups.includes(:product_variant_items).duration.map(&:product_variant_items).
         flatten.sort{|a,b|a.value.to_i <=> b.value.to_i}
   end
 
@@ -367,11 +369,11 @@ class Certificate < ActiveRecord::Base
   end
 
   def first_duration
-    cached_product_variant_items.first
+    @fcpvi ||= cached_product_variant_items.first
   end
 
   def last_duration
-    cached_product_variant_items.last
+    @lcpvi ||= cached_product_variant_items.last
   end
 
   # is is true for SAN and EV SAN certs
@@ -676,6 +678,24 @@ class Certificate < ActiveRecord::Base
     end
   end
 
+  # use this function to update prices via ResellerTier#update_prices
+  def prices_matrix(indexed=true)
+    if indexed
+      prices={}
+      product_variant_items.includes{product_variant_group}.map do |pvi|
+        prices.merge!(pvi.id=>[pvi.product_variant_group.variantable(Certificate).title,
+                               pvi.product_variant_group.title, pvi.title, pvi.amount])
+      end
+    else
+      prices=[]
+      product_variant_items.includes{product_variant_group}.map do |pvi|
+        prices<<{variantable_title: pvi.product_variant_group.variantable(Certificate).title,
+                 pvg_title: pvi.product_variant_group.title, pvi_title: pvi.title, pvi_amount: pvi.amount}
+      end
+    end
+    prices
+  end
+
   private
 
   # renames 'product' field for certificate including the reseller tiers
@@ -702,13 +722,13 @@ class Certificate < ActiveRecord::Base
         "certificate_type" => "Premium SSL",
                   "points" => "<div class='check'>quick domain validation</div>
                                <div class='check'>results in higher sales conversion</div>
-                               <div class='check'>$10,000 USD insurance guaranty</div>
+                               <div class='check'>$10,000 USD insurance guarantee</div>
                                <div class='check'>works on MS Exchange or OWA</div>
                                <div class='check'>activates SSL Secure Site Seal</div>
                                <div class='check'>2048 bit public key encryption</div>
                                <em style='color:#333;display:block;padding:5px 20px;'>also comes with the following</em>
                                <div class='check'>quick issuance</div>
-                               <div class='check'>30 day money-back guaranty</div>
+                               <div class='check'>30 day money-back guarantee</div>
                                <div class='check'>24 hour support</div>
                                <div class='check'>unlimited reissuances</div>",
         "validation_level" => "domain",
@@ -778,12 +798,12 @@ class Certificate < ActiveRecord::Base
         "certificate_type" => "Basic SSL",
                   "points" => "<div class='check'>quick domain validation</div>
                                <div class='check'>results in higher sales conversion</div>
-                               <div class='check'>$10,000 USD insurance guaranty</div>
+                               <div class='check'>$10,000 USD insurance guarantee</div>
                                <div class='check'>activates SSL Secure Site Seal</div>
                                <div class='check'>2048 bit public key encryption</div>
                                <em style='color:#333;display:block;padding:5px 20px;'>also comes with the following</em>
                                <div class='check'>quick issuance</div>
-                               <div class='check'>30 day money-back guaranty</div>
+                               <div class='check'>30 day money-back guarantee</div>
                                <div class='check'>24 hour support</div>
                                <div class='check'>unlimited reissuances</div>",
         "validation_level" => "domain",
@@ -819,12 +839,12 @@ class Certificate < ActiveRecord::Base
         "certificate_type" => title,
                   "points" => "<div class='check'>organization validation</div>
                                <div class='check'>results in higher sales conversion</div>
-                               <div class='check'>$150,000 USD insurance guaranty</div>
+                               <div class='check'>$150,000 USD insurance guarantee</div>
                                <div class='check'>activates SSL Secure Site Seal</div>
                                <div class='check'>2048 bit public key encryption</div>
                                <em style='color:#333;display:block;padding:5px 20px;'>also comes with the following</em>
                                <div class='check'>quick issuance</div>
-                               <div class='check'>30 day money-back guaranty</div>
+                               <div class='check'>30 day money-back guarantee</div>
                                <div class='check'>24 hour support</div>
                                <div class='check'>unlimited reissuances</div>",
         "validation_level" => "organization",
@@ -876,12 +896,12 @@ class Certificate < ActiveRecord::Base
         "certificate_type" => title,
                   "points" => "<div class='check'>extended validation</div>
                                <div class='check'>results in higher sales conversion</div>
-                               <div class='check'>$2 million USD insurance guaranty</div>
+                               <div class='check'>$2 million USD insurance guarantee</div>
                                <div class='check'>works with Microsoft Smartscreen</div>
                                <div class='check'>2048 bit public key encryption</div>
                                <em style='color:#333;display:block;padding:5px 20px;'>also comes with the following</em>
                                <div class='check'>quick issuance</div>
-                               <div class='check'>30 day money-back guaranty</div>
+                               <div class='check'>30 day money-back guarantee</div>
                                <div class='check'>stored on fips 140-2 USB token</div>
                                <div class='check'>24 hour support</div>",
         "validation_level" => "extended",
@@ -976,7 +996,7 @@ class Certificate < ActiveRecord::Base
                          <div class='check'>No required plugins or software</div>
                          <div class='check'>Customizable appearance of digital signature</div>
                          <div class='check'>Shows signed by a person OR department</div>
-                         <div class='check'>30 day money-back guaranty </div>
+                         <div class='check'>30 day money-back guarantee </div>
                          <div class='check'>24 hour 5-star support</div>",
                price_adjusts:{sslcomdocumentsigning1yr: [34900,64900,84900],
                               sslcomdocumentsigning1yr1tr: [34900,64900,84900],
@@ -996,8 +1016,8 @@ class Certificate < ActiveRecord::Base
                          <div class='check'>Issued from NAESB ACA SSL.com</div>
                          <div class='check'>2048 bit public key encryption</div>
                          <div class='check'>RSA and ECC supported</div>
-                         <div class='check'>quick issuance</div>
-                         <div class='check'>30 day money-back guaranty </div>
+                         <div class='check'>Quick issuance</div>
+                         <div class='check'>30 day money-back guarantee </div>
                          <div class='check'>24 hour 5-star support</div>",
                price_adjusts:{sslcomnaesbbasicclient1yr: [7500,15000],
                               sslcomnaesbbasicclient1yr1tr: [7500,15000],

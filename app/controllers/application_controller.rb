@@ -66,6 +66,7 @@ class ApplicationController < ActionController::Base
     # Check Code Signing Certificate Order for assign as assignee.
     CertificateOrder.unscoped.search_validated_not_assigned(@user.email).each do |cert_order|
       cert_order.update_attribute(:assignee, @user)
+      LockedRecipient.create_for_co(cert_order)
     end
 
     @user.deliver_activation_confirmation!
@@ -127,8 +128,7 @@ class ApplicationController < ActionController::Base
   # returns the cart cookie with reseller tier as an array
   def cart_contents
     find_tier
-    shopping_cart = ShoppingCart.find_by_guid(cookies[:cart_guid])
-    cart = shopping_cart ? shopping_cart.content : cookies[:cart]
+    cart = cookies[:cart]
     cart.blank? ? {} : JSON.parse(cart).each{|i|i['pr']=i['pr']+@tier if(i && i['pr'] && !i['pr'].ends_with?(@tier) && @tier)}
   end
 

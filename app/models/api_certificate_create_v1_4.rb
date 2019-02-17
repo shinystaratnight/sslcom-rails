@@ -155,7 +155,8 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
           (@certificate_order.external_order_number || !@certificate_order.certificate_content.ca.blank?)
         cn_keys = self.cert_names.keys
 
-        @certificate_order.certificate_content.certificate_names.each do |certificate_name|
+        @certificate_order.certificate_content.certificate_names.includes{:domain_control_validations}.
+            each do |certificate_name|
           # if cn_keys.include? certificate_name.id.to_s
           #   certificate_name.update_column(:name, self.cert_names[certificate_name.id.to_s])
           # else

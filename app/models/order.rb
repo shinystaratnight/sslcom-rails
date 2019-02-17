@@ -2,6 +2,7 @@ require 'monitor'
 require 'bigdecimal'
 
 class Order < ActiveRecord::Base
+  extend Memoist
   include V2MigrationProgressAddon
   belongs_to  :billable, :polymorphic => true, touch: true
   belongs_to  :address
@@ -302,6 +303,7 @@ class Order < ActiveRecord::Base
       self.amount = line_items.inject(0.to_money) {|sum,l| sum + l.amount }
     end
   end
+  memoize :total
 
   def final_amount
     Money.new(amount.cents)-discount_amount
@@ -770,6 +772,7 @@ class Order < ActiveRecord::Base
       certificate_orders.pluck(:id)
     end)).order(created_at: :desc)
   end
+  memoize :cached_certificate_orders
 
   def is_free?
     @is_free.try(:==, true) || (cents==0)
@@ -1105,7 +1108,7 @@ class Order < ActiveRecord::Base
   
   # this builds non-deep certificate_orders(s) from the cookie params
   def self.certificates_order(options)
-    options[:certificates].each do |c|
+    options[:certificates].compact.each do |c|
       next if c[ShoppingCart::PRODUCT_CODE]=~/\Areseller_tier/
       if certificate = Certificate.for_sale.find_by_product(c[ShoppingCart::PRODUCT_CODE])
         if certificate.is_free?

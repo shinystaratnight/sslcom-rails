@@ -8,10 +8,11 @@ class ProductVariantItem < ActiveRecord::Base
   validates_presence_of :product_variant_group
 
   def certificate
-    product_variant_group.variantable if
-      product_variant_group &&
-      product_variant_group.variantable &&
-      product_variant_group.variantable.is_a?(Certificate)
+    @pvi_certificate ||=
+      product_variant_group.variantable if
+          product_variant_group &&
+              product_variant_group.variantable &&
+              product_variant_group.variantable.is_a?(Certificate)
   end
 
   def is_domain?

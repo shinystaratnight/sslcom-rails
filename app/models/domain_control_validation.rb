@@ -21,6 +21,7 @@ class DomainControlValidation < ActiveRecord::Base
   EMAIL_CHOICE_CACHE_EXPIRES_DAYS=1
 
   default_scope{ order("id asc")}
+  scope :global, -> {where{(certificate_name_id==nil) & (csr_id==nil)}}
 
   include Workflow
   workflow do
@@ -191,7 +192,7 @@ class DomainControlValidation < ActiveRecord::Base
   end
 
   def email_address_choices
-    name = (csr.blank? ? certificate_name.name : csr.common_name)
+    name = (csr.blank? ? certificate_name_id.nil? ? subject : certificate_name.name : csr.common_name)
     CertificateName.candidate_email_addresses(name)
   end
 

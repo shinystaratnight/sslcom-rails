@@ -1,4 +1,5 @@
 class CertificateOrder < ActiveRecord::Base
+  extend Memoist
   include V2MigrationProgressAddon
   #using_access_control
   acts_as_sellable :cents => :amount, :currency => false
@@ -11,12 +12,14 @@ class CertificateOrder < ActiveRecord::Base
   belongs_to  :site_seal
   belongs_to  :parent, class_name: 'CertificateOrder', :foreign_key=>:renewal_id
   has_one     :renewal, class_name: 'CertificateOrder', :foreign_key=>:renewal_id,
-    :dependent=>:destroy #represents a child renewal
+              :dependent=>:destroy #represents a child renewal
   has_many    :renewal_attempts
   has_many    :renewal_notifications
   has_many    :cdns
   has_many    :certificate_contents, :dependent => :destroy
   has_many    :certificate_names, through: :certificate_contents
+  has_one     :locked_recipient, class_name: 'LockedRecipient',
+              as: :contactable, dependent: :destroy
   has_many    :registrants, through: :certificate_contents
   has_many    :locked_registrants, through: :certificate_contents
   has_many    :certificate_contacts, through: :certificate_contents
@@ -64,6 +67,7 @@ class CertificateOrder < ActiveRecord::Base
   #will_paginate
   cattr_accessor :per_page
   @@per_page = 10
+  @@cached_certificates={}
 
   #used to temporarily determine lineitem qty
   attr_accessor :quantity
@@ -535,6 +539,14 @@ class CertificateOrder < ActiveRecord::Base
     end
   end
 
+  def get_recipient
+    recipient = locked_recipient
+    if locked_recipient.nil? && assignee 
+      recipient = LockedRecipient.create_for_co(self)
+    end
+    recipient
+  end
+
   def get_audit_logs
     al = SystemAudit.where(target_id: id, target_type: 'CertificateOrder')
     al << SystemAudit.where(target_id: line_items.ids, target_type: 'LineItem')
@@ -682,15 +694,17 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def certificate
+    return @@cached_certificates[Rails.cache.fetch("#{cache_key}/certificate")] unless
+        @@cached_certificates[Rails.cache.fetch("#{cache_key}/certificate")].blank?
     if new_record?
         sub_order_items[0].product_variant_item.certificate if sub_order_items[0] &&
             sub_order_items[0].product_variant_item
     else
-      cid=Rails.cache.fetch("#{cache_key}/certificate") do
-        sub_order_items[0].product_variant_item.certificate.id if sub_order_items[0] &&
-            sub_order_items[0].product_variant_item
-      end
-      cid ? Certificate.unscoped.find(cid) : nil
+      @@cached_certificates[Rails.cache.fetch("#{cache_key}/certificate")]=
+          Certificate.unscoped.find_by_id(Rails.cache.fetch("#{cache_key}/certificate") do
+            sub_order_items[0].product_variant_item.certificate.id if sub_order_items[0] &&
+                sub_order_items[0].product_variant_item
+          end)
     end
   end
 
@@ -803,6 +817,7 @@ class CertificateOrder < ActiveRecord::Base
       end
     end
   end
+  memoize :certificate_duration
 
   def renewal_certificate
     if migrated_from_v2?
@@ -860,6 +875,7 @@ class CertificateOrder < ActiveRecord::Base
       order.try(:preferred_migrated_from_v2)
     end
   end
+  memoize "migrated_from_v2?".to_sym
 
   def signup_process(cert=certificate)
     unless skip_payment?
@@ -925,7 +941,7 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def iv_validated?
-    if assignee
+    if get_recipient
       iv_exists = get_team_iv
       iv_exists && iv_exists.validated?
     else
@@ -954,9 +970,12 @@ class CertificateOrder < ActiveRecord::Base
     end
   end
 
-  def get_team_iv
-    if assignee
-      ssl_account.individual_validations.find_by(user_id: assignee.id)
+  def get_team_iv(for_assignee=nil)
+    recipient = for_assignee ? assignee : get_recipient
+    if recipient
+      ssl_account.individual_validations.find_by(
+        user_id: (recipient.is_a?(User) ? recipient.id : recipient.user_id)
+      )
     end
   end
 
@@ -978,8 +997,12 @@ class CertificateOrder < ActiveRecord::Base
 
   def copy_iv_ov_validation_history(type='iv')
     iv_exists = get_team_iv
-    if assignee && iv_exists && iv_exists.validation_histories.any?
+
+    if get_recipient && iv_exists && iv_exists.validation_histories.any?
       new_vh = iv_exists.validation_histories - validation.validation_histories
+      if locked_recipient
+        locked_recipient.validation_histories << new_vh
+      end
       validation.validation_histories << new_vh
     end
 
@@ -1012,25 +1035,17 @@ class CertificateOrder < ActiveRecord::Base
       !signup_process[:label].scan(EXPRESS).blank?
   end
 
-  def cached_certificate_contents
-    if new_record?
-      certificate_contents
-    else
-      # CertificateContent.where(id: (Rails.cache.fetch("#{cache_key}/cached_certificate_contents") do
-        certificate_contents #.pluck(:id)
-      # end))
-    end
-  end
-
   def certificate_content
     certificate_contents.last
   end
+  memoize :certificate_content
 
   def certificate_order_token
     certificate_order_tokens.last
   end
 
   def phone_verified?
+    return false if locked_registrant.blank?
     certificate_order_tokens.where(
         status: CertificateOrderToken::DONE_STATUS,
         phone_number: locked_registrant.country_code.blank? ?
@@ -1069,18 +1084,21 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def subject
-    return "" unless certificate_content.try(:csr)
-    csr = certificate_content.csr
-    csr.signed_certificate.try(:common_name) || csr.common_name
+    Rails.cache.fetch("#{cache_key}/subject") do
+      csr=csrs.includes(:signed_certificates).last
+      return "" if csr.blank?
+      csr.signed_certificates.last.try(:common_name) || csr.try(:common_name) || ""
+    end
   end
   alias :common_name :subject
+  memoize :subject
 
   def display_subject
-    return unless certificate_content.try(:csr)
-    csr = certificate_content.csr
-    names=csr.signed_certificate.subject_alternative_names unless csr.signed_certificate.blank?
+    csr = csrs.includes(:signed_certificates).last
+    return if csr.blank?
+    names=csr.signed_certificates.last.subject_alternative_names unless csr.signed_certificates.last.blank?
     names=names.join(", ") unless names.blank?
-    names || csr.signed_certificate.try(:common_name) || csr.common_name
+    names || csr.signed_certificates.last.try(:common_name) || csr.common_name
   end
 
   def domains
@@ -1744,7 +1762,7 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def friendly_common_name
-    certificate_content.csr.signed_certificate.nonidn_friendly_common_name
+    signed_certificate.nonidn_friendly_common_name
   end
 
   def request_csr_from

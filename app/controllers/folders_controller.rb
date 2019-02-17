@@ -61,7 +61,8 @@ class FoldersController < ApplicationController
       @folders = if params[:id] == '#'
         get_team_root_folders.order(name: :asc)
       else
-        @ssl_account.folders.where(parent_id: params[:id]).order(name: :asc)
+        @ssl_account.folders.includes{certificate_orders.certificate_contents.csrs}.
+            where(parent_id: params[:id]).order(name: :asc)
       end
     end
     @tree_type = params[:tree_type]

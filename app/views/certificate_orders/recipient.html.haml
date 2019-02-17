@@ -2,8 +2,9 @@
 = render partial: '/certificate_orders/index_scripts'
 - certificate = @certificate_order.certificate
 - skip_registrant = certificate.is_client_pro? || certificate.is_client_basic?
+- locked_recipient = params[:locked_recipient] && current_user.is_system_admins?
+- recipient = locked_recipient ? @certificate_order.locked_recipient : @certificate_order.get_team_iv(:for_assignee)
 = order_progress_indicator((skip_registrant ? 1 : 2), certificate)
-- recipient = @certificate_order.get_team_iv
 
 .order_container
   %h3 Recipient Information for #{@certificate_order.description}
@@ -13,10 +14,11 @@
   = form_tag recipient_certificate_order_path(@ssl_slug, @certificate_order.ref), method: :post  do
     #stylized.default_form
       %p.description
-        Please provide recipient information.
+        Who's name will be in the certificate?
       
       = hidden_field_tag :add_recipient, true
-
+      - if locked_recipient
+        = hidden_field_tag :edit_locked_recipient, !params[:locked_recipient].blank?
       - saved_ivs = @certificate_order.ssl_account.individual_validations
       - if saved_ivs.any?
         .clearfix

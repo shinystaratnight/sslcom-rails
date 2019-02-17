@@ -5,8 +5,10 @@ class OrdersController < ApplicationController
   #resource_controller
   helper_method :cart_items_from_model_and_id
   before_filter :finish_reseller_signup, :only => [:new], if: "current_user"
-  before_filter :find_order, :only => [:show, :invoice, :update_invoice, :refund, :refund_merchant, :change_state, :edit, :update, :transfer_order, :update_tags]
+  before_filter :find_order, :only => [:show, :invoice, :update_invoice, :refund, :refund_merchant, :change_state,
+                                       :edit, :update, :transfer_order, :update_tags]
   before_filter :find_scoped_order, :only => [:revoke]
+  before_filter :set_ssl_slug, only: :show
   before_filter :set_prev_flag, only: [:create, :create_free_ssl, :create_multi_free_ssl]
   before_filter :prep_certificate_orders_instances, only: [:create, :create_free_ssl]
   before_filter :go_prev, :parse_certificate_orders, only: [:create_multi_free_ssl]
@@ -79,6 +81,20 @@ class OrdersController < ApplicationController
 
       cookies[:cart_guid] = {:value=>@cart.guid, :path => "/",
                              :expires => Settings.cart_cookie_days.to_i.days.from_now} # reset guid
+      cookies[:cart] = @cart.content
+
+      # if @cart.content.blank?
+      #   cookies[:cart] = @cart.content
+      # else
+      #   # remove domains str from cookies content for cookie size.
+      #   content = JSON.parse(@cart.content)
+      #   content.each do |cookie|
+      #     # cookie.delete 'do'
+      #     cookie['do'] = cookie['do'].length
+      #   end
+      #
+      #   cookies[:cart] = content.to_json
+      # end
     else
       cart = cookies[:cart]
       guid = cookies[:cart_guid]
@@ -142,6 +158,32 @@ class OrdersController < ApplicationController
     render :json => {'guid' => guid}
   end
 
+  def change_quantity_in_cart
+    returnObj = {}
+
+    # Getting Shopping Cart Info
+    if cookies[:cart_guid].blank?
+      returnObj['status'] = 'expired'
+    else
+      shopping_cart = ShoppingCart.find_by_guid(cookies[:cart_guid])
+
+      if shopping_cart
+        content = shopping_cart.content.blank? ? [] : JSON.parse(shopping_cart.content)
+        cart = cookies[:cart].blank? ? [] : JSON.parse(cookies[:cart])
+
+        # Changing the quantity if change the quantity
+        content = checkout_shopping_cart_content(content, cart)
+        shopping_cart.update_attribute :content, content.blank? ? nil : content.to_json
+
+        returnObj['status'] = 'success'
+      else
+        returnObj['status'] = 'no-exist'
+      end
+    end
+
+    render :json => returnObj
+  end
+
   def add
     add_to_cart @line_item = ActiveRecord::Base.find_from_model_and_id(param)
     session[:cart_items].uniq!
@@ -176,7 +218,19 @@ class OrdersController < ApplicationController
         render(:template => "/certificates/buy",
           :layout=>"application") and return unless certificate_order_steps
       else
-        certificates_from_cookie
+        # Getting Shopping Cart Info
+        shopping_cart = ShoppingCart.find_by_guid(cookies[:cart_guid])
+
+        if shopping_cart
+          content = shopping_cart.content.blank? ? [] : JSON.parse(shopping_cart.content)
+          cart = cookies[:cart].blank? ? [] : JSON.parse(cookies[:cart])
+
+          # Changing the quantity if change the quantity
+          content = checkout_shopping_cart_content(content, cart)
+          shopping_cart.update_attribute :content, content.blank? ? nil : content.to_json
+
+          certificates_from_cookie
+        end
       end
       if current_user
         if @certificate_orders && is_order_free?
@@ -450,7 +504,7 @@ class OrdersController < ApplicationController
         end
       else
         if current_user.is_system_admins?
-          (@ssl_account.try(:orders) ? Order.unscoped{@ssl_account.try(:orders)} : Order.unscoped).where{state << ['payment_declined']}.order("created_at desc").not_test
+          (@ssl_account.try(:orders) ? Order.unscoped{@ssl_account.try(:orders)} : Order.unscoped).where{state << ['payment_declined']}.order("orders.created_at desc").not_test
         else
           current_user.ssl_account.orders.not_test
         end
@@ -468,10 +522,10 @@ class OrdersController < ApplicationController
     states = [params[:id]]
     @unpaginated =
       if current_user.is_admin?
-        Order.unscoped{Order.includes(:line_items).where{state >> states}.order("created_at desc")}
+        Order.unscoped{Order.includes(:line_items).where{state >> states}.order("orders.created_at desc")}
       else
         current_user.ssl_account.orders.unscoped{
-          current_user.ssl_account.cached_orders.includes(:line_items).where{state >> states}.order(:created_at.desc)}
+          current_user.ssl_account.cached_orders.includes(:line_items).where{state >> states}.order("orders.created_at desc")}
       end
     @orders = @unpaginated.paginate(@p)
 
@@ -952,7 +1006,7 @@ class OrdersController < ApplicationController
   # admin user cancels entire order and all of it's line items
   def cancel_entire_order
     @performed = "Cancelled entire order #{@target.reference_number}, credit or refund were NOT issued."
-    @target.cancel!
+    @target.cancel! unless @target.canceled?
     if @target.canceled? && @target.invoice
       @target.update(invoice_id: nil)
     end
@@ -974,6 +1028,31 @@ class OrdersController < ApplicationController
 
   def find_scoped_order
     @order = (current_user.is_system_admins? ? Order : current_user.orders).find_by_reference_number(params[:id])
+  end
+
+  def checkout_shopping_cart_content(content, cart)
+    new_contents = []
+    # Check to be same the quantity
+    cart.each do |cookie|
+      same = content.detect{|cont| cont[ShoppingCart::LICENSES] == cookie[ShoppingCart::LICENSES] &&
+          cont[ShoppingCart::DOMAINS].split(Certificate::DOMAINS_TEXTAREA_SEPARATOR).size == cookie[ShoppingCart::DOMAINS].split(Certificate::DOMAINS_TEXTAREA_SEPARATOR).size &&
+          (cont[ShoppingCart::DOMAINS].split(Certificate::DOMAINS_TEXTAREA_SEPARATOR) &
+              cookie[ShoppingCart::DOMAINS].split(Certificate::DOMAINS_TEXTAREA_SEPARATOR)).size == cont[ShoppingCart::DOMAINS].split(Certificate::DOMAINS_TEXTAREA_SEPARATOR).size &&
+          cont[ShoppingCart::DURATION] == cookie[ShoppingCart::DURATION] &&
+          cont[ShoppingCart::PRODUCT_CODE] == cookie[ShoppingCart::PRODUCT_CODE] &&
+          cont[ShoppingCart::SUB_PRODUCT_CODE] == cookie[ShoppingCart::SUB_PRODUCT_CODE] &&
+          cont[ShoppingCart::RENEWAL_ORDER] == cookie[ShoppingCart::RENEWAL_ORDER] &&
+          cont[ShoppingCart::AFFILIATE] == cookie[ShoppingCart::AFFILIATE]
+      }
+
+      same[ShoppingCart::QUANTITY] = cookie[ShoppingCart::QUANTITY].to_i if !same.blank? &&
+          same[ShoppingCart::QUANTITY].to_i != cookie[ShoppingCart::QUANTITY].to_i
+
+      new_contents << same
+    end
+    new_contents = '' if new_contents.size == 0
+
+    return new_contents
   end
 
   def shopping_cart_content(content, cart)

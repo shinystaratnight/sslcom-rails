@@ -233,6 +233,7 @@ SslCom::Application.routes.draw do
         match :parse_csr, via: [:post, :options]
         get :show_cert_order
         post :validate_issue
+        post :switch_from_comodo
       end
 
       member do
@@ -372,6 +373,7 @@ SslCom::Application.routes.draw do
         get :visitor_trackings
         post :create_free_ssl, :create_multi_free_ssl, :lookup_discount
         post :ucc_domains_adjust_create
+        post :change_quantity_in_cart
       end
       member do
         get :invoice

@@ -21,7 +21,7 @@ class ContactsController < ApplicationController
 
   def saved_contacts
     if current_user
-      @registrants = params[:registrants] && (params[:registrants] == 'true')
+      @registrants = params[:registrants] == 'true'
       @all_contacts = @registrants ? get_saved_registrants : get_saved_contacts
       @all_contacts = @all_contacts.index_filter(params) if params[:commit]
       @all_contacts = @all_contacts.order(:last_name)
@@ -135,7 +135,6 @@ class ContactsController < ApplicationController
     else
       @ssl_account.saved_registrants
     end
-    contacts.includes(:validation_histories)
   end
 
   def validate_certificate_orders

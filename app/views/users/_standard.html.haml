@@ -131,9 +131,9 @@
                     -if ssl_account.api_credentials
                       .half_width_box
                         %ul
-                          -unless user.is_validations? || user.is_billing?
+                          -if user.is_account_admin? || user.is_owner? || user.is_installer?
                             %li
                               %strong
                                 =link_to "api credentials", api_credentials_path(ssl_slug: @ssl_slug)
-                          %li=link_to "developer tools", is_sandbox? ? developers_certificate_orders_url : "https://sandbox.ssl.com"
-                          %li=link_to 'view documentation', "http://docs.sslcomapi.apiary.io/", target: "_new"
+                            %li=link_to "developer tools", is_sandbox? ? developers_certificate_orders_url : "https://sandbox.ssl.com"
+                            %li=link_to 'view documentation', "http://docs.sslcomapi.apiary.io/", target: "_new"

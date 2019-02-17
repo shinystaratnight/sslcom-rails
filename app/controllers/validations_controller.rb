@@ -187,6 +187,19 @@ class ValidationsController < ApplicationController
       certificate_content = certificate_order.certificate_content
       certificate_names = certificate_content.certificate_names
 
+      unless certificate_content.ca_id.nil?
+        domains = certificate_content.domains
+        domains_from_cert_names = certificate_names.pluck(:name)
+
+        if domains.size == domains_from_cert_names.size && (domains & domains_from_cert_names).size == domains.size
+          remain_domains = domains - domain_name_arry
+        else
+          remain_domains = domains_from_cert_names - domain_name_arry
+        end
+
+        certificate_content.update_column :domains, remain_domains
+      end
+
       certificate_names.where{ name >> domain_name_arry }.each do |cn_obj|
         if certificate_content.ca_id.nil?
           res = ComodoApi.auto_remove_domain(domain_name: cn_obj, order_number: certificate_order.external_order_number)
@@ -594,21 +607,21 @@ class ValidationsController < ApplicationController
     @token = params[:token]
 
     # Get CertificateOrderToken Object using emailed token url.
-    co_token = CertificateOrderToken.find_by_token(params[:token])
+    @certificate_order = CertificateOrderToken.find_by_token(params[:token])
 
-    if co_token
-      if co_token.status == CertificateOrderToken::EXPIRED_STATUS
+    if @certificate_order
+      if @certificate_order.status == CertificateOrderToken::EXPIRED_STATUS
         @status = false
         flash[:error] = 'This token has been expired.'
-      elsif co_token.status == CertificateOrderToken::FAILED_STATUS
+      elsif @certificate_order.status == CertificateOrderToken::FAILED_STATUS
         @status = false
         flash[:error] = 'This token has been failed.'
-      elsif co_token.status == CertificateOrderToken::DONE_STATUS
+      elsif @certificate_order.status == CertificateOrderToken::DONE_STATUS
         @status = false
         flash[:error] = 'This token has been used before.'
       else
-        if co_token.due_date < DateTime.now
-          co_token.update_columns(
+        if @certificate_order.due_date < DateTime.now
+          @certificate_order.update_columns(
               is_expired: true,
               status: CertificateOrderToken::EXPIRED_STATUS
           )
@@ -616,7 +629,7 @@ class ValidationsController < ApplicationController
           flash[:error] = 'This token has been expired.'
         else
           passed_token = (SecureRandom.hex(8)+params[:token])[0..19]
-          co_token.update_column :passed_token, passed_token
+          @certificate_order.update_column :passed_token, passed_token
         end
       end
     else
@@ -852,6 +865,10 @@ class ValidationsController < ApplicationController
       iv_exists = @certificate_order.get_team_iv
       if iv_exists
         iv_exists.validation_histories << @val_history
+        lrc = @certificate_order.locked_recipient
+        if lrc && (lrc.user_id == iv_exists.user_id)
+          lrc.validation_histories << @val_history
+        end 
       end
     end
   end

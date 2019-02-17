@@ -1,4 +1,5 @@
 class SslAccount < ActiveRecord::Base
+  extend Memoist
   using_access_control
   acts_as_billable
   easy_roles :roles
@@ -42,6 +43,8 @@ class SslAccount < ActiveRecord::Base
     end
   end
   has_many  :certificate_contacts, through: :certificate_contents
+  has_many  :registrants, through: :certificate_contents
+  has_one   :epki_registrant, as: :contactable
   has_one   :reseller, :dependent => :destroy
   accepts_nested_attributes_for :reseller, :allow_destroy=>false
   has_one   :affiliate, :dependent => :destroy
@@ -621,54 +624,63 @@ class SslAccount < ActiveRecord::Base
       orders.pluck(:id).uniq
     end)).order(created_at: :desc)
   end
+  memoize :cached_orders
 
   def cached_certificate_orders
     CertificateOrder.unscoped.where(id: (Rails.cache.fetch("#{cache_key}/cached_certificate_orders") do
       certificate_orders.pluck(:id).uniq
     end)).order(created_at: :desc)
   end
+  memoize :cached_certificate_orders
 
   def cached_certificate_orders_count
     Rails.cache.fetch("#{cache_key}/cached_certificate_orders_count") do
       cached_certificate_orders.count
     end
   end
+  memoize :cached_certificate_orders_count
 
   def cached_certificate_orders_pending
     CertificateOrder.where(id: (Rails.cache.fetch("#{cache_key}/cached_certificate_orders_pending") do
       certificate_orders.pending.pluck(:id)
     end)).order(created_at: :desc)
   end
+  memoize :cached_certificate_orders_pending
 
   def cached_certificate_orders_incomplete
     CertificateOrder.where(id: (Rails.cache.fetch("#{cache_key}/cached_certificate_orders_incomplete") do
       certificate_orders.incomplete.pluck(:id)
     end)).order(created_at: :desc)
   end
+  memoize :cached_certificate_orders_incomplete
 
   def cached_certificate_orders_credits
     CertificateOrder.where(id: (Rails.cache.fetch("#{cache_key}/cached_certificate_orders_credits") do
       certificate_orders.credits.pluck(:id)
     end)).order(created_at: :desc)
   end
+  memoize :cached_certificate_orders_credits
 
   def cached_certificate_orders_credits_count
     Rails.cache.fetch("#{cache_key}/cached_certificate_orders_credits_count") do
       cached_certificate_orders_credits.count
     end
   end
+  memoize :cached_certificate_orders_credits_count
 
   def cached_certificate_orders_pending_count
     Rails.cache.fetch("#{cache_key}/cached_certificate_orders_pending_count") do
       cached_certificate_orders_pending.count
     end
   end
+  memoize :cached_certificate_orders_pending_count
 
   def cached_certificate_orders_incomplete_count
     Rails.cache.fetch("#{cache_key}/cached_certificate_orders_incomplete_count") do
       cached_certificate_orders_incomplete.count
     end
   end
+  memoize :cached_certificate_orders_incomplete_count
 
   def get_team_name
     company_name || acct_number

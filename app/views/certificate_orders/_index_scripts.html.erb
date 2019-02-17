@@ -1,6 +1,5 @@
 <script type="text/javascript">
-function activate_physical_token(certificate_order_ref, physical_token_id, name)
-{
+function activate_physical_token(certificate_order_ref, physical_token_id, name) {
   var serial = prompt("Please enter the serial number of token "+name, '');
   if (serial == null || serial=="")
     return;
@@ -148,6 +147,7 @@ jQuery(function($) {
 
                   $('.generate_wrap').hide();
                   $('.pkcs_download_wrap').show();
+                  $('#cert_common_name').val(data.cert_common_name);
                 }
               });
             }, function(err) {
@@ -181,25 +181,71 @@ jQuery(function($) {
 
         $('.pkcs_download').click(function() {
           if ($('.pri_key').val() == '') {
-            alert('Please input your own Private Key.');
+            $('.pri_key_block').addClass('error_required');
           } else {
-            window.scrollTo(0, 0);
-            $('body').addClass('no_scroll_y');
-            $('.page_loader_wrap').show();
-
+            $('.pri_key_block').removeClass('error_required');
             var password = $('.pkcs_password').val();
-            var certificate = $('.cert').val().replace(/(-----(BEGIN|END) CERTIFICATE-----|\n)/g, '');
-            var priKey = $('.pri_key').val().replace(/(-----(BEGIN|END) PRIVATE KEY-----|\n)/g, '');
-            passwordBasedIntegrity([certificate], priKey, password, function() {
-              $('.page_loader_wrap').hide();
-              $('body').removeClass('no_scroll_y');
-            });
+
+            if ($.trim(password).length > 5) {
+              // Adding loading bar while generating pfx file.
+              var generate_pfx_loader_wrap = $('<div></div>');
+              generate_pfx_loader_wrap.attr('class', 'generate_pfx_loader_wrap');
+
+              var generate_pfx_loader = $('<div></div>');
+              generate_pfx_loader.attr('class', 'generate_pfx_loader');
+
+              var span = $('<span></span>');
+              span.append('Generating pfx file, please wait.');
+
+              generate_pfx_loader.append(span);
+              generate_pfx_loader_wrap.append(generate_pfx_loader);
+
+              window.scrollTo(0, 0);
+              $('body').addClass('no_scroll_y');
+              generate_pfx_loader_wrap.insertBefore($('#header'));
+
+              var certificate = $('.cert').val().replace(/(-----(BEGIN|END) CERTIFICATE-----|\n)/g, '');
+              var priKey = $('.pri_key').val().replace(/(-----(BEGIN|END) PRIVATE KEY-----|\n)/g, '');
+              var pfxFileName = $('#cert_common_name').val();
+
+              passwordBasedIntegrity([certificate], priKey, password, pfxFileName, function() {
+                $('.generate_pfx_loader_wrap').remove();
+                $('body').removeClass('no_scroll_y');
+              });
+            } else {
+              $('.pkcs_download').prop('disabled', true);
+              $('.pkcs_download').removeClass('btn-primary');
+              $('.pkcs_password_block').addClass('error_require_min_length');
+            }
           }
         });
 
         $('.cert_download').click(function() {
           cert_download($('.cert').val(), $('#cert_common_name').val());
         });
+
+        $('.create_csr').click(function() {
+          var link_url = "<%= new_managed_csr_path(@certificate_order.ssl_account.to_slug)%>?cert_token=<%= @token%>&is_server=<%= @certificate_order.certificate.is_server?%>";
+          window.location.href = link_url;
+        });
+
+        $(document).on('keyup', '.pkcs_password', function(e) {
+          e.preventDefault();
+
+          if ($.trim($(this).val()).length > 5 ) {
+            $('.pkcs_download').prop('disabled', false);
+            $('.pkcs_download').addClass('btn-primary');
+            $('.pkcs_password_block').removeClass('error_require_min_length');
+          } else {
+            $('.pkcs_download').prop('disabled', true);
+            $('.pkcs_download').removeClass('btn-primary');
+            $('.pkcs_password_block').addClass('error_require_min_length');
+          }
+        });
+      <%end%>
+
+      <%unless @managed_csr.blank?%>
+        $('.own_csr').trigger('click');
       <%end%>
     }
 
@@ -649,6 +695,82 @@ jQuery(function($) {
     $('#certificate_orders').on('keyup', '#certificate_order_notes', function() {
       $(this).parents().filter('form').ajaxSubmit();
     });
+
+    <%if current_user.is_system_admins? && @certificate_order && @certificate_order.certificate_content && @certificate_order.certificate_content.ca.blank?%>
+      $(document).on('click', '.switch_from_comodo', function(e) {
+        e.preventDefault();
+
+        // Adding loading bar.
+        var page_loader_wrap = $('<div></div>');
+        page_loader_wrap.attr('class', 'page_loader_wrap');
+
+        var page_loader = $('<div></div>');
+        page_loader.attr('class', 'page_loader');
+
+        page_loader_wrap.append(page_loader);
+
+        // Showing loading bar when click switch link.
+        window.scrollTo(0, 0);
+        $('body').addClass('no_scroll_y');
+        page_loader_wrap.insertBefore($('#header'));
+
+        var ajax_url = "<%=switch_from_comodo_certificate_orders_path%>";
+        var cert_id = "<%=@certificate_order.ref%>";
+
+        $.ajax({
+          url: ajax_url,
+          data: {
+            certificate_order_id: cert_id
+          },
+          type: "POST",
+          success: function (data) {
+            if (data['status'] == 'no-user') {
+              location.reload(true);
+            } else {
+              // Removing flash message if exist.
+              if ($('#content').find('.inner').children().first().hasClass('flash_message')) {
+                $('#content').find('.inner').children().first().remove();
+              }
+
+              // Displaying flash message.
+              var message_wrap_element = $('<div></div>')
+
+              if (data['status'] == 'success') {
+                message_wrap_element.attr('class', 'flash_message notice');
+              } else if (data['status'] == 'no-exist-cert-order') {
+                message_wrap_element.attr('class', 'flash_message error');
+              }
+
+              var message_element = $('<span></span>');
+              if (data['status'] == 'success') {
+                message_element.append('It has been switched from comodo successfully.');
+              } else if (data['status'] == 'no-exist-cert-order') {
+                message_element.append('It does not exist proper certificate order. Please try again.');
+              }
+              message_wrap_element.append(message_element);
+
+              var btn_element = $('<small></small>');
+              var close_btn_element = $('<div></div>');
+              close_btn_element.attr('class', 'close_flash_message');
+
+              var close_sign_element = $('<span></span>');
+              close_sign_element.append('X');
+
+              close_btn_element.append(close_sign_element);
+              close_btn_element.append('close');
+
+              btn_element.append(close_btn_element);
+              message_wrap_element.append(btn_element);
+
+              message_wrap_element.insertBefore($('#content').find('.inner').children().first());
+            }
+
+            $('.page_loader_wrap').hide();
+            $('body').removeClass('no_scroll_y');
+          }
+        });
+      });
+    <%end%>
   });
 });
 </script>

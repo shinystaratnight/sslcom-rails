@@ -24,7 +24,7 @@ class CertificateOrdersController < ApplicationController
   filter_access_to :incomplete, :pending, :search, :reprocessing, :order_by_csr, :generate_cert, :require=>:read
   filter_access_to :credits, :filter_by, :filter_by_scope, :require=>:index
   filter_access_to :update_csr, require: [:update]
-  filter_access_to :download, :start_over, :reprocess, :admin_update, :change_ext_order_number,
+  filter_access_to :download, :start_over, :reprocess, :admin_update, :change_ext_order_number, :switch_from_comodo,
                    :developers, :require=>[:update, :delete]
   filter_access_to :renew, :parse_csr, require: [:create]
   filter_access_to :auto_renew, require: [:admin_manage]
@@ -64,7 +64,7 @@ class CertificateOrdersController < ApplicationController
     if co_token
       if co_token.user != current_user
         is_expired = true
-        flash[:error] = "Access to this page is denied."
+        flash[:error] = "Access to this page is denied. Please log in as the user assigned to this token."
       elsif co_token.is_expired
         is_expired = true
         flash[:error] = "The page has expired or is no longer valid."
@@ -73,6 +73,8 @@ class CertificateOrdersController < ApplicationController
         flash[:error] = "The page has expired or is no longer valid."
       else
         @certificate_order = co_token.certificate_order
+        @token = params[:token]
+        @managed_csr = Csr.find_by_ref(params[:csr_ref]) unless params[:csr_ref].blank?
       end
     else
       is_expired = true
@@ -101,8 +103,6 @@ class CertificateOrdersController < ApplicationController
   # GET /certificate_orders
   # GET /certificate_orders.xml
   def index
-#    expire_fragment('admin_header_certs_status') if
-#      fragment_exist?('admin_header_certs_status')
 
     @certificate_orders = find_certificate_orders.paginate(@p)
 
@@ -353,27 +353,30 @@ class CertificateOrdersController < ApplicationController
   end
 
   def recipient
-    assignee_id = nil
+    @assignee_id = nil
     @iv_exists = nil
-    if params[:add_recipient]
-      if params[:saved_contacts]
-        @iv_exists = @certificate_order.ssl_account.individual_validations
-          .find_by(id: params[:saved_contacts])
-        assignee_id = @iv_exists.user_id if @iv_exists
-      end
-      
-      if assignee_id
-        @certificate_order.update_column(:assignee_id, assignee_id)
+    edit_locked_recipient = current_user.is_system_admins? && (params[:edit_locked_recipient] == 'true')
+
+    if params[:add_recipient] == 'true'
+      find_team_iv
+
+      if @assignee_id && !edit_locked_recipient
+        @certificate_order.update_column(:assignee_id, @assignee_id)
       else
         invite_recipient
       end
-      
-      # Local Registration Authority, validate IV
-      if @iv_exists && @iv_exists.persisted? && params[:lra]
-        @iv_exists.update_column(:status, Contact::statuses[:validated])
+
+      if @iv_exists && @iv_exists.persisted?
+        if @certificate_order.locked_recipient.nil? || edit_locked_recipient
+          for_assignee = edit_locked_recipient ? @iv_exists.user_id : nil
+          LockedRecipient.create_for_co(@certificate_order, for_assignee)
+        end
+        edit_locked_recipient ? update_recipient(:locked) : update_recipient
+        # Local Registration Authority, validate IV
+        @iv_exists.update_column(:status, Contact::statuses[:validated]) if params[:lra]
       end
 
-      if @iv_exists.nil? && assignee_id.nil?
+      if @iv_exists.nil? && @assignee_id.nil?
         redirect_to :back, error: 'Something went wront, please try again'
       else
         client_smime_validate
@@ -381,31 +384,6 @@ class CertificateOrdersController < ApplicationController
     else
       render :recipient
     end
-  end
-
-  def client_smime_validate
-    co = @certificate_order
-    cc = co.certificate_content
-    validations = co.certificate.client_smime_validations
-    validated = if validations == 'iv_ov'
-      @iv_exists.validated? &&
-      (co.locked_registrant || co.registrant).validated?
-    elsif validations == 'iv'
-      @iv_exists.validated?
-    else
-      true
-    end
-    
-    if validated
-      cc.validate! unless cc.validated?
-      co.copy_iv_ov_validation_history(validations)
-      redirect_to certificate_order_path(@ssl_slug, co.ref)
-    else
-      cc.pend_validation! if !(cc.pending_validation? or cc.issued?)
-      redirect_to document_upload_certificate_order_validation_path(
-        @ssl_slug, certificate_order_id: co.ref
-      )
-    end 
   end
 
   # PUT /certificate_orders/1
@@ -687,32 +665,85 @@ class CertificateOrdersController < ApplicationController
   end
 
   def admin_update
-    if params[:validate_iv] || params[:validate_ov]
-      admin_validate
-    elsif params[:unvalidate_iv] || params[:unvalidate_ov]
-      admin_unvalidate
-    else
-      respond_to do |format|
-        if @certificate_order.update_attributes(params[:certificate_order])
-          format.js { render :json=>@certificate_order.to_json}
-        else
-          format.js { render :json=>@certificate_order.errors.to_json}
+    if current_user.is_system_admins? or
+        (!current_user.ssl_account.epki_agreement.blank? and
+            current_user.ssl_account.epki_registrant.applies_to_certificate_order?(@certificate_order))
+      if params[:validate_iv] || params[:validate_ov]
+        admin_validate
+      elsif params[:unvalidate_iv] || params[:unvalidate_ov]
+        admin_unvalidate
+      else
+        respond_to do |format|
+          if @certificate_order.update_attributes(params[:certificate_order])
+            format.js { render :json=>@certificate_order.to_json}
+          else
+            format.js { render :json=>@certificate_order.errors.to_json}
+          end
         end
       end
     end
   end
 
+  def switch_from_comodo
+    returnObj = {}
+
+    if current_user
+      co = CertificateOrder.find_by_ref(params[:certificate_order_id])
+
+      if co
+        co.unchain_comodo
+        returnObj['status'] = 'success'
+      else
+        returnObj['status'] = 'no-exist-cert-order'
+      end
+    else
+      returnObj['status'] = 'no-user'
+    end
+
+    render :json => returnObj
+  end
+
   private
+
+  def client_smime_validate
+    co = @certificate_order
+    cc = co.certificate_content
+    validations = co.certificate.client_smime_validations
+    validated = if validations == 'iv_ov'
+      @iv_exists.validated? &&
+      (co.locked_registrant || co.registrant).validated?
+    elsif validations == 'iv'
+      @iv_exists.validated?
+    else
+      true
+    end
+    
+    if validated
+      cc.validate! unless cc.validated?
+      co.copy_iv_ov_validation_history(validations)
+      redirect_to certificate_order_path(@ssl_slug, co.ref)
+    else
+      cc.pend_validation! if !(cc.pending_validation? or cc.issued?)
+      redirect_to document_upload_certificate_order_validation_path(
+        @ssl_slug, certificate_order_id: co.ref
+      )
+    end 
+  end
 
   def admin_validate
     cc = @certificate_order.certificate_content
     ov = @certificate_order.locked_registrant
+    lr = @certificate_order.locked_recipient
 
     if @certificate_order.certificate.is_smime_or_client?
       iv = @certificate_order.get_team_iv
       ov_iv = @certificate_order.certificate.requires_locked_registrant?
 
-      iv.validated! if (params[:validate_iv] && iv && !iv.validated?)
+      if (params[:validate_iv] && iv && !iv.validated?)
+        iv.validated!
+        lr.validated! if lr && (iv.email == lr.email)
+      end
+
       admin_validate_ov(ov)
       if (ov_iv && @certificate_order.iv_ov_validated?) || (!ov_iv && @certificate_order.iv_validated?)
         cc.validate! if !(cc.pending_validation? or cc.issued?)
@@ -743,11 +774,15 @@ class CertificateOrdersController < ApplicationController
   def admin_unvalidate
     cc = @certificate_order.certificate_content
     ov = @certificate_order.locked_registrant
+    lr = @certificate_order.locked_recipient
     vt = params[:unvalidate_type]
 
     if @certificate_order.certificate.is_smime_or_client?      
       iv = @certificate_order.get_team_iv
-      iv.send("#{vt}!") if params[:unvalidate_iv] && vt && iv
+      if params[:unvalidate_iv] && vt && iv && lr && (iv.email == lr.email)
+        iv.send("#{vt}!")
+      end
+      lr.send("#{vt}!") if params[:unvalidate_iv] && lr
       admin_unvalidate_ov(ov)
       unless @certificate_order.iv_ov_validated?
         cc.pend_validation! unless cc.pending_validation?
@@ -820,7 +855,10 @@ class CertificateOrdersController < ApplicationController
           ssl, [Role::get_individual_certificate_id]
         )
       end
-      @certificate_order.update_column(:assignee_id, user_exists.id)
+
+      unless current_user.is_system_admins? && (params[:edit_locked_recipient] == 'true')
+        @certificate_order.update_column(:assignee_id, user_exists.id)
+      end
     else
       invite_new_recipient
     end
@@ -834,6 +872,30 @@ class CertificateOrdersController < ApplicationController
     }})
     if new_user.persisted?
       invite_recipient
+    end
+  end
+
+  def find_team_iv
+    attrs = {}
+    attrs[:id] = params[:saved_contacts] unless params[:saved_contacts].blank?
+    attrs[:email] = params[:email].strip if attrs.empty? && !params[:email].blank?
+    unless attrs.empty?
+      @iv_exists = @certificate_order.ssl_account
+        .individual_validations.find_by(attrs)
+    end  
+    @assignee_id = @iv_exists.user_id if @iv_exists
+  end
+
+  def update_recipient(locked=nil)
+    @certificate_order.reload
+    current_recipient = locked ? @certificate_order.locked_recipient : @iv_exists
+    if current_recipient
+      current_recipient.update(
+        %w{first_name last_name email}.inject({}) do |all, key|
+          all[key.to_sym] = params[key.to_sym] unless params[key.to_sym].blank?
+          all
+        end
+      )
     end
   end
 
