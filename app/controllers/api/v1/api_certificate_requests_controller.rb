@@ -1215,8 +1215,6 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
     set_template "dcv_methods_v1_4"
     if @result.save  #save the api request
       @acr = @result.find_certificate_order
-      if @acr.is_a?(CertificateOrder) && @acr.errors.empty?
-      end
       @result.dcv_methods={}
       if @acr.all_domains
         @result.instructions = ApiDcvMethods::INSTRUCTIONS
@@ -1228,7 +1226,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
         end
         @acr.all_domains.each do |domain|
           @result.dcv_methods.merge! domain=>{}
-          @result.dcv_methods[domain].merge! "email_addresses"=>ComodoApi.domain_control_email_choices(domain).email_address_choices
+          @result.dcv_methods[domain].merge! "email_addresses"=>CertificateName.candidate_email_addresses(domain)
           unless @acr.csr.blank?
             @result.dcv_methods[domain].merge! "http_csr_hash"=>
                                                    {"http"=>"#{@acr.csr.dcv_url(false,domain)}",

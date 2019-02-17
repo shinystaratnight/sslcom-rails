@@ -85,7 +85,6 @@ class ApiCertificateRequest < CaApiRequest
   end
 
   def find_certificate_order(field=:ref)
-    Rails.cache.clear
     if defined?(field) && self.send(field)
       if self.api_requestable.users.find_all(&:active?).find(&:is_admin?)
         self.admin_submitted = true

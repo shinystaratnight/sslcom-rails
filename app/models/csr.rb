@@ -6,6 +6,7 @@ require 'net/https'
 require 'uri'
 
 class Csr < ActiveRecord::Base
+  extend Memoist
   include Encodable
   
   has_many    :whois_lookups, :dependent => :destroy
@@ -116,6 +117,7 @@ class Csr < ActiveRecord::Base
       end
     end
   end
+  memoize :unique_value
 
   def csr_unique_value
     last_unique_value = csr_unique_values.last
@@ -129,6 +131,7 @@ class Csr < ActiveRecord::Base
     end
     last_unique_value
   end
+  memoize :csr_unique_value
 
   def common_name
     SimpleIDN.to_unicode(read_attribute(:common_name)).gsub(/\x00/, '') unless read_attribute(:common_name).blank?
@@ -366,8 +369,9 @@ class Csr < ActiveRecord::Base
   end
 
   def signed_certificate
-    @cached_signed_certificate ||= signed_certificates.order(:created_at).last
+    signed_certificates.order(:created_at).last
   end
+  memoize :signed_certificate
 
   def replace_csr(csr)
     update_attribute :body, csr
@@ -421,6 +425,7 @@ class Csr < ActiveRecord::Base
   def dns_sha2_hash
     "#{sha2_hash[0..31]}.#{sha2_hash[32..63]}#{".#{self.unique_value}" unless self.unique_value.blank?}"
   end
+  memoize :dns_sha2_hash
 
   def to_der
     to_openssl.to_der

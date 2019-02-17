@@ -6,7 +6,7 @@ class DomainsController < ApplicationController
   before_filter :set_csr_row_page, only: [:select_csr]
 
   def index
-    cnames = @ssl_account.all_certificate_names.includes(:domain_control_validations).order(created_at: :desc)
+    cnames = @ssl_account.all_certificate_names.includes(:domain_control_validations,:signed_certificates).order(created_at: :desc)
     @domains = (@ssl_account.domains.order(created_at: :desc) + cnames).uniq(&:id).paginate(@p)
   end
 

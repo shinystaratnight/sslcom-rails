@@ -219,7 +219,7 @@
                     #validation_requirements_box
                       %li
                         %strong domain validations
-                      -co.certificate_content.certificate_names.each do |cn|
+                      -co.certificate_content.certificate_names.includes{:domain_control_validations}.each do |cn|
                         -dcv=cn.domain_control_validations.find(&"satisfied?".to_sym)
                         -if dcv
                           -identifier = case dcv.dcv_method
