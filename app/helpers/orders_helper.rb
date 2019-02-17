@@ -7,7 +7,7 @@ module OrdersHelper
 
       @payable_invoices = Invoice
                               .where.not(billable_id: nil, type: nil)
-                              .where(id: invoice_items.map(&:invoice_id).uniq).joins(:orders)
+                              .where(id: invoice_items.pluck(:invoice_id).uniq).joins(:orders).includes(:orders)
 
       @pending_payable_invoices = @payable_invoices
                                       .where(status: 'pending')

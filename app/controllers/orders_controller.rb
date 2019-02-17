@@ -504,7 +504,7 @@ class OrdersController < ApplicationController
         end
       else
         if current_user.is_system_admins?
-          (@ssl_account.try(:orders) ? Order.unscoped{@ssl_account.try(:orders)} : Order.unscoped).where{state << ['payment_declined']}.order("created_at desc").not_test
+          (@ssl_account.try(:orders) ? Order.unscoped{@ssl_account.try(:orders)} : Order.unscoped).where{state << ['payment_declined']}.order("orders.created_at desc").not_test
         else
           current_user.ssl_account.orders.not_test
         end
@@ -522,10 +522,10 @@ class OrdersController < ApplicationController
     states = [params[:id]]
     @unpaginated =
       if current_user.is_admin?
-        Order.unscoped{Order.includes(:line_items).where{state >> states}.order("created_at desc")}
+        Order.unscoped{Order.includes(:line_items).where{state >> states}.order("orders.created_at desc")}
       else
         current_user.ssl_account.orders.unscoped{
-          current_user.ssl_account.cached_orders.includes(:line_items).where{state >> states}.order(:created_at.desc)}
+          current_user.ssl_account.cached_orders.includes(:line_items).where{state >> states}.order("orders.created_at desc")}
       end
     @orders = @unpaginated.paginate(@p)
 
