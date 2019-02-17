@@ -1,4 +1,5 @@
 class User < ActiveRecord::Base
+  extend Memoist
   include V2MigrationProgressAddon
   include UserMessageable
 #  using_access_control
@@ -98,7 +99,7 @@ class User < ActiveRecord::Base
   scope :search_sys_admin, ->{ joins{ roles }.where{ roles.name == Role::SYS_ADMIN } }
 
   def ssl_account(default_team=nil)
-    sa_id=Rails.cache.fetch("#{cache_key}/ssl_account/#{default_team.is_a?(Symbol) ? default_team.to_s : default_team.try(:cache_key)}") do
+    SslAccount.find_by_id(Rails.cache.fetch("#{cache_key}/ssl_account/#{default_team.is_a?(Symbol) ? default_team.to_s : default_team.try(:cache_key)}") do
       default_ssl = default_ssl_account && is_approved_account?(default_ssl_account)
       main_ssl    = main_ssl_account && is_approved_account?(main_ssl_account)
 
@@ -115,9 +116,9 @@ class User < ActiveRecord::Base
         set_default_ssl_account(approved_account) if approved_account
         approved_account
       end
-    end
-    (defined?(@ssl_account) and sa_id==@ssl_account.id) ? @ssl_account : @ssl_account ||= SslAccount.find(sa_id)
+    end)
   end
+  memoize :ssl_account
 
   def is_approved_account?(target_ssl)
     Rails.cache.fetch("#{cache_key}/is_approved_account/#{target_ssl.try(:cache_key)}") do
@@ -277,15 +278,14 @@ class User < ActiveRecord::Base
   end
 
   def roles_for_account(target_ssl=nil)
-    Rails.cache.fetch("#{cache_key}/roles_for_account/#{target_ssl ? target_ssl.cache_key : ''}") do
-      ssl = target_ssl.nil? ? ssl_account : target_ssl
-      if ssl_accounts.include?(ssl)
-        assignments.where(ssl_account_id: ssl).pluck(:role_id).uniq
-      else
-        []
-      end
+    ssl = target_ssl.nil? ? ssl_account : target_ssl
+    if ssl_accounts.include?(ssl)
+      assignments.where(ssl_account_id: ssl).pluck(:role_id).uniq
+    else
+      []
     end
   end
+  memoize :roles_for_account
 
   def get_roles_by_name(role_name)
       role_id = Role.get_role_id(role_name)
@@ -592,34 +592,41 @@ class User < ActiveRecord::Base
     ).destroy_all
   end
 
-  def self.roles_list_for_user(user, exclude_roles=nil)
-    exclude_roles ||= []
-    unless user.is_system_admins?
-      exclude_roles << Role.where.not(id: Role.get_select_ids_for_owner).map(&:id).uniq
+  class << self
+    extend Memoist
+    def roles_list_for_user(user, exclude_roles=nil)
+      exclude_roles ||= []
+      unless user.is_system_admins?
+        exclude_roles << Role.where.not(id: Role.get_select_ids_for_owner).map(&:id).uniq
+      end
+      exclude_roles.any? ? Role.where.not(id: exclude_roles.flatten) : Role.all
     end
-    exclude_roles.any? ? Role.where.not(id: exclude_roles.flatten) : Role.all
-  end
+    memoize :roles_list_for_user
 
-  def self.get_user_accounts_roles(user)
-    # e.g.: {17198:[4], 29:[17, 18], 15:[17, 18, 19, 20]}
-    Rails.cache.fetch("#{user.cache_key}/get_user_accounts_roles") do
-      user.ssl_accounts.inject({}) do |all, s|
-        all[s.id] = user.assignments.where(ssl_account_id: s.id).pluck(:role_id).uniq
-        all
+    def get_user_accounts_roles(user)
+      # e.g.: {17198:[4], 29:[17, 18], 15:[17, 18, 19, 20]}
+      Rails.cache.fetch("#{user.cache_key}/get_user_accounts_roles") do
+        user.ssl_accounts.inject({}) do |all, s|
+          all[s.id] = user.assignments.where(ssl_account_id: s.id).pluck(:role_id).uniq
+          all
+        end
       end
     end
-  end
+    memoize :get_user_accounts_roles
 
-  def self.get_user_accounts_roles_names(user)
-    # e.g.: {'team_1': ['owner'], 'team_2': ['account_admin', 'installer']}
-    Rails.cache.fetch("#{user.cache_key}/get_user_accounts_roles_names") do
-      user.ssl_accounts.inject({}) do |all, s|
-        all[s.get_team_name] = user.assignments.where(ssl_account_id: s.id)
-                                   .map(&:role).uniq.map(&:name)
-        all
+    def get_user_accounts_roles_names(user)
+      # e.g.: {'team_1': ['owner'], 'team_2': ['account_admin', 'installer']}
+      Rails.cache.fetch("#{user.cache_key}/get_user_accounts_roles_names") do
+        user.ssl_accounts.inject({}) do |all, s|
+          all[s.get_team_name] = user.assignments.where(ssl_account_id: s.id)
+                                     .map(&:role).uniq.map(&:name)
+          all
+        end
       end
     end
+    memoize :get_user_accounts_roles_names
   end
+
 
   # the second will take care of setting any data that you want to happen
   # at activation. at the very least this will be setting active to true
@@ -652,6 +659,7 @@ class User < ActiveRecord::Base
       Role.where(id: roles_for_account(sa)).map{|role| role.name.underscore.to_sym}
     end
   end
+  memoize :role_symbols
 
   def role_symbols_all_accounts
     roles.map{|role| role.name.underscore.to_sym}

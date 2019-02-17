@@ -74,7 +74,7 @@
             -permissions = team_index_permissions(current_user, t)
             %div
               -if system_admins || permissions.include?(:orders)
-                =link_to "<i class='fa fa-file-text'></i> orders: #{t.certificate_orders.count}".html_safe, |
+                =link_to "<i class='fa fa-file-text'></i> orders: #{t.cached_certificate_orders_count}".html_safe, |
                   certificate_orders_path(ssl_slug: t.to_slug), class: 'btn-team-links'
               -if system_admins || permissions.include?(:transactions)
                 =link_to "<i class='fa fa-credit-card'></i> transactions: #{t.orders.count}".html_safe, |

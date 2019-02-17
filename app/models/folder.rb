@@ -1,4 +1,6 @@
 class Folder < ActiveRecord::Base
+  extend Memoist
+
   belongs_to :ssl_account
   belongs_to :parent, foreign_key: "parent_id", class_name: "Folder"
   has_many   :certificate_orders
@@ -24,6 +26,7 @@ class Folder < ActiveRecord::Base
       certificate_orders.pluck(:id)
     end)).includes({certificate_contents: [:signed_certificates, :registrant]}).order(created_at: :desc)
   end
+  memoize :cached_certificate_orders
 
   def get_folder_path
     if ancestors.any?
@@ -52,6 +55,7 @@ class Folder < ActiveRecord::Base
     end
     contents.join(',')
   end
+  memoize :folder_contents
 
   def can_destroy?
     !archived? && !expired? && !active? && !revoked?

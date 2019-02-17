@@ -1,4 +1,5 @@
 class CertificateOrder < ActiveRecord::Base
+  extend Memoist
   include V2MigrationProgressAddon
   #using_access_control
   acts_as_sellable :cents => :amount, :currency => false
@@ -816,6 +817,7 @@ class CertificateOrder < ActiveRecord::Base
       end
     end
   end
+  memoize :certificate_duration
 
   def renewal_certificate
     if migrated_from_v2?
@@ -873,6 +875,7 @@ class CertificateOrder < ActiveRecord::Base
       order.try(:preferred_migrated_from_v2)
     end
   end
+  memoize "migrated_from_v2?".to_sym
 
   def signup_process(cert=certificate)
     unless skip_payment?
@@ -1032,19 +1035,10 @@ class CertificateOrder < ActiveRecord::Base
       !signup_process[:label].scan(EXPRESS).blank?
   end
 
-  def cached_certificate_contents
-    if new_record?
-      certificate_contents
-    else
-      # CertificateContent.where(id: (Rails.cache.fetch("#{cache_key}/cached_certificate_contents") do
-        certificate_contents #.pluck(:id)
-      # end))
-    end
-  end
-
   def certificate_content
     certificate_contents.last
   end
+  memoize :certificate_content
 
   def certificate_order_token
     certificate_order_tokens.last
@@ -1090,13 +1084,14 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def subject
-    @cached_subject ||= Rails.cache.fetch("#{cache_key}/subject") do
-                          csr=csrs.includes(:signed_certificates).last
-                          return "" if csr.blank?
-                          csr.signed_certificates.last.try(:common_name) || csr.try(:common_name) || ""
-                        end
+    Rails.cache.fetch("#{cache_key}/subject") do
+      csr=csrs.includes(:signed_certificates).last
+      return "" if csr.blank?
+      csr.signed_certificates.last.try(:common_name) || csr.try(:common_name) || ""
+    end
   end
   alias :common_name :subject
+  memoize :subject
 
   def display_subject
     csr = csrs.includes(:signed_certificates).last

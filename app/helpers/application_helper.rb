@@ -1,7 +1,9 @@
 # Methods added to this helper will be available to all templates in the application.
 module ApplicationHelper
+  require 'memoist'
   require 'string'
   require 'object'
+  extend Memoist
 
   # from Dan Webb's MinusMOR plugin
   def js(data)
@@ -44,10 +46,11 @@ module ApplicationHelper
   end
 
   def is_sandbox?
-    Rails.cache.fetch("#{request.try(:host)}/is_sandbox") do
-      Sandbox.exists?(request.try(:host))
-    end
+    @is_sandbox ||= Rails.cache.fetch("#{request.try(:host)}/is_sandbox") do
+                      Sandbox.exists?(request.try(:host))
+                    end
   end
+  # memoize "is_sandbox?".to_sym
 
   def is_sandbox_or_test?
     is_sandbox? or ActionMailer::Base.default_url_options[:host]=~/^sandbox\./ or

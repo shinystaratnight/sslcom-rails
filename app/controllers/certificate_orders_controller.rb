@@ -665,16 +665,20 @@ class CertificateOrdersController < ApplicationController
   end
 
   def admin_update
-    if params[:validate_iv] || params[:validate_ov]
-      admin_validate
-    elsif params[:unvalidate_iv] || params[:unvalidate_ov]
-      admin_unvalidate
-    else
-      respond_to do |format|
-        if @certificate_order.update_attributes(params[:certificate_order])
-          format.js { render :json=>@certificate_order.to_json}
-        else
-          format.js { render :json=>@certificate_order.errors.to_json}
+    if current_user.is_system_admins? or
+        (!current_user.ssl_account.epki_agreement.blank? and
+            current_user.ssl_account.epki_registrant.applies_to_certificate_order?(@certificate_order))
+      if params[:validate_iv] || params[:validate_ov]
+        admin_validate
+      elsif params[:unvalidate_iv] || params[:unvalidate_ov]
+        admin_unvalidate
+      else
+        respond_to do |format|
+          if @certificate_order.update_attributes(params[:certificate_order])
+            format.js { render :json=>@certificate_order.to_json}
+          else
+            format.js { render :json=>@certificate_order.errors.to_json}
+          end
         end
       end
     end

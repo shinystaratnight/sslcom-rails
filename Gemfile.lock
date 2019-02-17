@@ -273,6 +273,7 @@ GEM
     mailboxer (0.14.0)
       carrierwave (>= 0.5.8)
       rails (>= 4.2.0)
+    memoist (0.16.0)
     metaclass (0.0.4)
     method_source (0.8.2)
     mime-types (3.1)
@@ -565,6 +566,7 @@ DEPENDENCIES
   launchy
   libv8 (~> 3.16.14.0)
   mailboxer
+  memoist
   minitest-focus
   minitest-rails
   minitest-reporters

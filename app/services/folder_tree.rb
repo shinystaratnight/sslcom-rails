@@ -1,4 +1,6 @@
 class FolderTree
+  extend Memoist
+
   attr_reader :full_tree, :selected_ids
 
   def initialize(params)
@@ -34,6 +36,7 @@ class FolderTree
       }
     end
   end
+  memoize :build_subtree
 
   def get_folder_children(folder)
     filter_children = folder.children
@@ -74,6 +77,7 @@ class FolderTree
     end
     files
   end
+  memoize :build_cert_orders
 
   def get_icon(object)
     if object.is_a?(Folder)
@@ -139,6 +143,7 @@ class FolderTree
     end
     data.merge(certificate_orders_count: list.count)
   end
+  memoize :get_data_certificates
 
   def get_data_certificate(co)
     return {
@@ -148,6 +153,7 @@ class FolderTree
       expires: co_expires_on(co)
     }
   end
+  memoize :get_data_certificate
 
   def co_status(co)
     return if co.certificate_content.blank?
