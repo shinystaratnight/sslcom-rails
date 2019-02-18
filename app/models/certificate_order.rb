@@ -67,7 +67,6 @@ class CertificateOrder < ActiveRecord::Base
   #will_paginate
   cattr_accessor :per_page
   @@per_page = 10
-  @@cached_certificates={}
 
   #used to temporarily determine lineitem qty
   attr_accessor :quantity
@@ -694,19 +693,17 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def certificate
-    return @@cached_certificates[Rails.cache.fetch("#{cache_key}/certificate")] unless
-        @@cached_certificates[Rails.cache.fetch("#{cache_key}/certificate")].blank?
     if new_record?
         sub_order_items[0].product_variant_item.certificate if sub_order_items[0] &&
             sub_order_items[0].product_variant_item
     else
-      @@cached_certificates[Rails.cache.fetch("#{cache_key}/certificate")]=
-          Certificate.unscoped.find_by_id(Rails.cache.fetch("#{cache_key}/certificate") do
-            sub_order_items[0].product_variant_item.certificate.id if sub_order_items[0] &&
-                sub_order_items[0].product_variant_item
-          end)
+      Certificate.unscoped.find_by_id(Rails.cache.fetch("#{cache_key}/certificate") do
+        sub_order_items[0].product_variant_item.certificate.id if sub_order_items[0] &&
+            sub_order_items[0].product_variant_item
+      end)
     end
   end
+  memoize :certificate
 
   def signed_certificate
     signed_certificates.order(:created_at).last
