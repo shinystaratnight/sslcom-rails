@@ -1035,7 +1035,7 @@ class CertificateOrder < ActiveRecord::Base
   def certificate_content
     certificate_contents.last
   end
-  memoize :certificate_content
+  # memoize :certificate_content
 
   def certificate_order_token
     certificate_order_tokens.last
