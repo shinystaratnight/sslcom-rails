@@ -506,7 +506,8 @@ class CertificateContent < ActiveRecord::Base
   end
 
   def common_name
-    certificate_names.find_by_is_common_name(true).try(:name) || csr.common_name
+    (certificate_names.find_by_is_common_name(true).try(:name) ||
+        certificate_names.last.name || csr.common_name).downcase
   end
 
   def has_all_contacts?
@@ -769,7 +770,7 @@ class CertificateContent < ActiveRecord::Base
 
   def subject_dn(options={})
     cert = options[:certificate] || self.certificate
-    dn=["CN=#{options[:common_name]}"] if certificate.is_server?
+    dn=["CN=#{options[:common_name] || common_name}"] if certificate.is_server?
     if !locked_registrant.blank? and !(options[:mapping] ? options[:mapping].try(:profile_name) =~ /DV/ : cert.is_dv?)
       # if ev or ov order, must have locked registrant
       if dn.blank?
