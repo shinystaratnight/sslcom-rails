@@ -126,7 +126,8 @@ class User < ActiveRecord::Base
       ssl_account_users.where(ssl_account_id: target_ssl, user_enabled: true, approved: true).any?
     end
   end
-  
+  memoize "is_approved_account?".to_sym
+
   def is_main_account?(ssl_account)
     return false if main_ssl_account.nil?
     ssl_account.id == main_ssl_account
@@ -202,25 +203,24 @@ class User < ActiveRecord::Base
     role_ids.uniq
   end
 
-  def self.total_teams_owned(user_id)
-    User.find(user_id).assignments.where(role_id: Role.get_owner_id).map(&:ssl_account).uniq.compact
-  end
-
   def total_teams_owned(user_id=nil)
     user = self_or_other(user_id)
-    user.assignments.where(role_id: Role.get_owner_id).map(&:ssl_account).uniq.compact
+    user.assignments.includes(:ssl_account).where(role_id: Role.get_owner_id).map(&:ssl_account).uniq.compact
   end
+  memoize :total_teams_owned
 
   def total_teams_can_manage_users(user_id=nil)
     user = self_or_other(user_id)
-    user.assignments.where(role_id: Role.can_manage_users).map(&:ssl_account).uniq.compact
+    user.assignments.includes(:ssl_account).where(role_id: Role.can_manage_users).map(&:ssl_account).uniq.compact
   end
+  memoize :total_teams_can_manage_users
 
   def total_teams_cannot_manage_users(user_id=nil)
     user = self_or_other(user_id)
     user.ssl_accounts - user.assignments.where(role_id: Role.cannot_be_managed)
       .map(&:ssl_account).uniq.compact
   end
+  memoize :total_teams_cannot_manage_users
 
   def max_teams_reached?(user_id=nil)
     user = self_or_other(user_id)
@@ -625,6 +625,11 @@ class User < ActiveRecord::Base
       end
     end
     memoize :get_user_accounts_roles_names
+
+    def total_teams_owned(user_id)
+      User.find(user_id).assignments.includes(:ssl_account).where(role_id: Role.get_owner_id).map(&:ssl_account).uniq.compact
+    end
+    memoize :total_teams_owned
   end
 
 

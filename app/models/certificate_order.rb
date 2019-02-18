@@ -67,7 +67,6 @@ class CertificateOrder < ActiveRecord::Base
   #will_paginate
   cattr_accessor :per_page
   @@per_page = 10
-  @@cached_certificates={}
 
   #used to temporarily determine lineitem qty
   attr_accessor :quantity
@@ -694,19 +693,17 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def certificate
-    return @@cached_certificates[Rails.cache.fetch("#{cache_key}/certificate")] unless
-        @@cached_certificates[Rails.cache.fetch("#{cache_key}/certificate")].blank?
     if new_record?
         sub_order_items[0].product_variant_item.certificate if sub_order_items[0] &&
             sub_order_items[0].product_variant_item
     else
-      @@cached_certificates[Rails.cache.fetch("#{cache_key}/certificate")]=
-          Certificate.unscoped.find_by_id(Rails.cache.fetch("#{cache_key}/certificate") do
-            sub_order_items[0].product_variant_item.certificate.id if sub_order_items[0] &&
-                sub_order_items[0].product_variant_item
-          end)
+      Certificate.unscoped.find_by_id(Rails.cache.fetch("#{cache_key}/certificate") do
+        sub_order_items[0].product_variant_item.certificate.id if sub_order_items[0] &&
+            sub_order_items[0].product_variant_item
+      end)
     end
   end
+  memoize :certificate
 
   def signed_certificate
     signed_certificates.order(:created_at).last
@@ -772,9 +769,9 @@ class CertificateOrder < ActiveRecord::Base
                 item =~/years?/i || item =~/days?/i}.scan(/\d+.+?(?:ear|ay)s?/).last
             else
               unless certificate.is_ucc?
-                sub_order_items.map(&:product_variant_item).detect{|item|item.is_duration?}.try(:description)
+                sub_order_items.includes(:product_variant_item).map(&:product_variant_item).detect{|item|item.is_duration?}.try(:description)
               else
-                d=sub_order_items.map(&:product_variant_item).detect{|item|item.is_domain?}.try(:description)
+                d=sub_order_items.includes(:product_variant_item).map(&:product_variant_item).detect{|item|item.is_domain?}.try(:description)
                 unless d.blank?
                   d=~/(\d years?)/i
                   $1
@@ -1096,10 +1093,12 @@ class CertificateOrder < ActiveRecord::Base
   def display_subject
     csr = csrs.includes(:signed_certificates).last
     return if csr.blank?
-    names=csr.signed_certificates.last.subject_alternative_names unless csr.signed_certificates.last.blank?
+    last_signed_certificate=csr.signed_certificates.last
+    names=last_signed_certificate.subject_alternative_names unless last_signed_certificate.blank?
     names=names.join(", ") unless names.blank?
-    names || csr.signed_certificates.last.try(:common_name) || csr.common_name
+    names || last_signed_certificate.try(:common_name) || csr.common_name
   end
+  memoize :display_subject
 
   def domains
     if certificate_contents.first.domains.kind_of?(Array)
