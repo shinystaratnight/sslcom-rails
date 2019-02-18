@@ -35,6 +35,35 @@ class Contact < ActiveRecord::Base
   ROLES = %w(administrative billing technical validation)
   
   before_validation :set_roles
+
+  include Workflow
+  workflow do
+    state :new do
+      event :provide_info, :transitions_to => :info_provided
+      event :cancel, :transitions_to => :canceled
+      event :issue, :transitions_to => :issued
+      event :reset, :transitions_to => :new
+      event :validate, :transitions_to => :validated
+      event :pend_validation, :transitions_to => :pending_validation
+    end
+
+    state :pending_validation do
+      event :validate, :transitions_to => :validated
+      event :reject, :transitions_to => :rejected
+      event :refund, :transitions_to => :refunded
+      event :charge_back, :transitions_to => :charged_back
+    end
+
+    state :pending_callback do
+      event :callback, :transitions_to => :callback_satisfied
+      event :validate, :transitions_to => :validated
+      event :pend_validation, :transitions_to => :pending_validation
+      event :reject, :transitions_to => :rejected
+    end
+
+    state :callback_satisfied do
+    end
+  end
   
   ALIAS_FIELDS.each do |k,v|
     alias_attribute k, v

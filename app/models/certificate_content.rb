@@ -770,7 +770,7 @@ class CertificateContent < ActiveRecord::Base
 
   def subject_dn(options={})
     cert = options[:certificate] || self.certificate
-    dn=["CN=#{options[:common_name] || common_name}"] if certificate.is_server?
+    dn=certificate.is_server? ? ["CN=#{options[:common_name] || common_name}"] : []
     if !locked_registrant.blank? and !(options[:mapping] ? options[:mapping].try(:profile_name) =~ /DV/ : cert.is_dv?)
       # if ev or ov order, must have locked registrant
       if dn.blank?
