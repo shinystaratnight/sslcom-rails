@@ -44,7 +44,7 @@ class Folder < ActiveRecord::Base
     contents = []
     @total_certificate_orders = 0
     if self.descendants.count > 0
-      self.self_and_descendants.each do |child_folder|
+      self.self_and_descendants.includes(:certificate_orders).each do |child_folder|
         certificate_orders = child_folder.certificate_orders.count
         contents << child_folder.id if certificate_orders > 0
         @total_certificate_orders +=certificate_orders

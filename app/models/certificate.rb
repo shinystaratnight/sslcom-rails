@@ -1,4 +1,5 @@
 class Certificate < ActiveRecord::Base
+  extend Memoist
   include CertificateType
   include PriceView
   include Filterable
@@ -325,7 +326,7 @@ class Certificate < ActiveRecord::Base
   def items_by_domains(multi_dim=false)
     if is_ucc?
       unless multi_dim
-        product_variant_groups.domains.map(&:product_variant_items).flatten
+        product_variant_groups.domains.includes(:product_variant_items).map(&:product_variant_items).flatten
       else
         unless is_ev?
           product_variant_items.where{serial=~"%yrdm%"}.flatten.zip(
@@ -338,11 +339,13 @@ class Certificate < ActiveRecord::Base
       end
     end
   end
+  memoize :items_by_domains
 
   def items_by_server_licenses
-    product_variant_groups.server_licenses.map(&:product_variant_items).flatten if
+    product_variant_groups.server_licenses.includes(:product_variant_items).map(&:product_variant_items).flatten if
       (is_ucc? || is_wildcard?)
   end
+  memoize :items_by_server_licenses
 
   def first_domains_tiers
     if is_ucc?

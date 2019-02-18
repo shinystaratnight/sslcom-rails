@@ -772,9 +772,9 @@ class CertificateOrder < ActiveRecord::Base
                 item =~/years?/i || item =~/days?/i}.scan(/\d+.+?(?:ear|ay)s?/).last
             else
               unless certificate.is_ucc?
-                sub_order_items.map(&:product_variant_item).detect{|item|item.is_duration?}.try(:description)
+                sub_order_items.includes(:product_variant_item).map(&:product_variant_item).detect{|item|item.is_duration?}.try(:description)
               else
-                d=sub_order_items.map(&:product_variant_item).detect{|item|item.is_domain?}.try(:description)
+                d=sub_order_items.includes(:product_variant_item).map(&:product_variant_item).detect{|item|item.is_domain?}.try(:description)
                 unless d.blank?
                   d=~/(\d years?)/i
                   $1
@@ -1096,10 +1096,12 @@ class CertificateOrder < ActiveRecord::Base
   def display_subject
     csr = csrs.includes(:signed_certificates).last
     return if csr.blank?
-    names=csr.signed_certificates.last.subject_alternative_names unless csr.signed_certificates.last.blank?
+    last_signed_certificate=csr.signed_certificates.last
+    names=last_signed_certificate.subject_alternative_names unless last_signed_certificate.blank?
     names=names.join(", ") unless names.blank?
-    names || csr.signed_certificates.last.try(:common_name) || csr.common_name
+    names || last_signed_certificate.try(:common_name) || csr.common_name
   end
+  memoize :display_subject
 
   def domains
     if certificate_contents.first.domains.kind_of?(Array)
