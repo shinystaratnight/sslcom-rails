@@ -76,7 +76,7 @@ module CertificateOrdersHelper
   end
 
   def action(certificate_order)
-    certificate_content = certificate_order.certificate_content
+    certificate_content = certificate_order.certificate_contents.last
     certificate = certificate_order.certificate
     if certificate_content.new?
       certificate_order.expired? ? "expired" :
