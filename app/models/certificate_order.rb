@@ -16,7 +16,7 @@ class CertificateOrder < ActiveRecord::Base
   has_many    :renewal_attempts
   has_many    :renewal_notifications
   has_many    :cdns
-  has_many    :certificate_contents, :dependent => :destroy
+  has_many    :certificate_contents, :dependent => :destroy, after_add: Proc.new { |p, d| p.certificate_content(true)}
   has_many    :certificate_names, through: :certificate_contents
   has_one     :locked_recipient, class_name: 'LockedRecipient',
               as: :contactable, dependent: :destroy
@@ -1035,7 +1035,7 @@ class CertificateOrder < ActiveRecord::Base
   def certificate_content
     certificate_contents.last
   end
-  # memoize :certificate_content
+  memoize :certificate_content
 
   def certificate_order_token
     certificate_order_tokens.last
