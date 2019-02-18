@@ -214,6 +214,7 @@ module OrdersHelper
   end
   
   def confirm_affiliate_sale
+    # @order.reload
     if !@order.domains_adjustment? && !@order.invoice_payment? && !@order.on_payable_invoice?
         !@order.ext_affiliate_credited? && (@order.persisted? ? @order.created_at > 1.minute.ago : true )
       @order.toggle! :ext_affiliate_credited

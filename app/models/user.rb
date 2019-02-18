@@ -673,8 +673,9 @@ class User < ActiveRecord::Base
   def certificate_order_by_ref(ref)
     CertificateOrder.unscoped.includes(:certificate_contents).find(
         Rails.cache.fetch("#{cache_key}/certificate_order_id/#{ref}") do
-          CertificateOrder.unscoped{(is_system_admins? ?
-             CertificateOrder : certificate_orders).find_by_ref(ref)}.id
+          co=CertificateOrder.unscoped{(is_system_admins? ?
+             CertificateOrder : certificate_orders).find_by_ref(ref)}
+          co.id unless co.blank?
         end)
   end
 

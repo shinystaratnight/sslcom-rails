@@ -607,21 +607,21 @@ class ValidationsController < ApplicationController
     @token = params[:token]
 
     # Get CertificateOrderToken Object using emailed token url.
-    @certificate_order = CertificateOrderToken.find_by_token(params[:token])
+    @certificate_order_token = CertificateOrderToken.find_by_token(params[:token])
 
-    if @certificate_order
-      if @certificate_order.status == CertificateOrderToken::EXPIRED_STATUS
+    if @certificate_order_token
+      if @certificate_order_token.status == CertificateOrderToken::EXPIRED_STATUS
         @status = false
         flash[:error] = 'This token has been expired.'
-      elsif @certificate_order.status == CertificateOrderToken::FAILED_STATUS
+      elsif @certificate_order_token.status == CertificateOrderToken::FAILED_STATUS
         @status = false
         flash[:error] = 'This token has been failed.'
-      elsif @certificate_order.status == CertificateOrderToken::DONE_STATUS
+      elsif @certificate_order_token.status == CertificateOrderToken::DONE_STATUS
         @status = false
         flash[:error] = 'This token has been used before.'
       else
-        if @certificate_order.due_date < DateTime.now
-          @certificate_order.update_columns(
+        if @certificate_order_token.due_date < DateTime.now
+          @certificate_order_token.update_columns(
               is_expired: true,
               status: CertificateOrderToken::EXPIRED_STATUS
           )
@@ -629,7 +629,7 @@ class ValidationsController < ApplicationController
           flash[:error] = 'This token has been expired.'
         else
           passed_token = (SecureRandom.hex(8)+params[:token])[0..19]
-          @certificate_order.update_column :passed_token, passed_token
+          @certificate_order_token.update_column :passed_token, passed_token
         end
       end
     else
