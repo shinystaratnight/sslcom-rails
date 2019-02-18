@@ -25,7 +25,7 @@
 %div{:style => 'width: 100%'}
   %h2
     Generate Certificate Signing Request and Save to
-    =link_to 'CSR Manager', managed_csrs_path(@ssl_slug || @certificate_order.ssl_account.to_slug)
+    =link_to 'CSR Manager', managed_csrs_path(@ssl_slug)
   %h3.center Be sure to save the private key. It will be required for use with signed certificate.
   = form_tag :managed_csrs, method: :post, id: 'add_csr_form' do
     .row.pt-3

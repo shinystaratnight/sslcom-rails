@@ -28,7 +28,7 @@
               %tbody
                 %tr
                   %td(colspan="5")
-                    .full_width_box
+                    .half_width_box
                       %ul
                         %li
                           %strong
@@ -41,3 +41,10 @@
                         %li=link_to 'change password', edit_password_users_url
                         -permitted_to? :edit_settings, current_user.ssl_account do
                           %li=link_to "settings", edit_settings_ssl_account_path(ssl_slug: @ssl_slug)
+                    .half_width_box
+                      %ul
+                        -if ssl_account && permitted_to?(:read, :contacts)
+                          %li
+                            %strong contacts/identities
+                          %li=link_to 'contacts', saved_contacts_contacts_path(ssl_slug: @ssl_slug)
+                          %li=link_to 'validated identities', saved_contacts_contacts_path(ssl_slug: @ssl_slug, registrants: true)
