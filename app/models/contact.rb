@@ -1,6 +1,7 @@
 class Contact < ActiveRecord::Base
   include V2MigrationProgressAddon
   include Filterable
+  include Workflow
   # include RefParam
 
   enum status: {
@@ -35,8 +36,7 @@ class Contact < ActiveRecord::Base
   ROLES = %w(administrative billing technical validation)
   
   before_validation :set_roles
-
-  include Workflow
+  
   workflow do
     state :new do
       event :provide_info, :transitions_to => :info_provided
@@ -139,7 +139,7 @@ class Contact < ActiveRecord::Base
     t = p[:team] 
     if t.present?
       found = SslAccount.where(
-        "ssl_slug = ? OR acct_number = ? OR id = ? OR company_name = ?", t, t, t, t
+        "ssl_slug = ? OR acct_number = ? OR id = ? OR LOWER(company_name) LIKE LOWER(?)", t, t, t, "%#{t}%"
       )
       filters[:contactable_id] = { '=' => found.first.id } if found.any?
     end
