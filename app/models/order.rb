@@ -316,14 +316,16 @@ class Order < ActiveRecord::Base
     state :invoiced do
       event :invoice_paid!, transitions_to: :paid_by_invoice
       event :full_refund, transitions_to: :fully_refunded do |complete=true|
-        line_items.each {|li|li.sellable.refund! if(
-          li.sellable.respond_to?("refund!".to_sym) && !li.sellable.refunded?)} if complete
+        if original_order?
+          line_items.each {|li|li.sellable.refund! if(
+            li.sellable.respond_to?("refund!".to_sym) && !li.sellable.refunded?)} if complete
+        end
       end
       event :partial_refund, transitions_to: :partially_refunded do |ref|
         li = line_items.find {|li| li.sellable.try(:ref) == ref}
         if li
           decrement! :cents, li.cents
-          if (li.sellable.respond_to?("refund!".to_sym) && !li.sellable.refunded?)
+          if original_order? && li.sellable.respond_to?("refund!".to_sym) && !li.sellable.refunded?
             li.sellable.refund!
           end
         end
@@ -1253,6 +1255,10 @@ class Order < ActiveRecord::Base
     else
       []
     end
+  end
+  
+  def original_order?
+    self.class == Order
   end
   
   private

@@ -11,7 +11,7 @@
     %td.price
       =Money.new(@order.domains_adjustment? ? @order.get_full_reprocess_amount : co.amount).format
   
-  -if co.refunded? && (@order.fully_refunded? || @order.partially_refunded?)
+  -if co.refunded? || !@order.original_order? && (@order.fully_refunded? || @order.partially_refunded?)
     %tr.line_item.line-item-refunded
       %td.line-index
       %td.description
@@ -72,7 +72,7 @@
             -unless co.canceled? || co.refunded?
               %div
                 =link_to("CANCEL", '#', onclick:  "refund_reason_#{co.id}(false)", id: 'btn-order-cancel')
-            -if co.price.cents > 0 && !co.refunded? && !@order.reprocess_ucc_free? 
+            -if co.price.cents > 0 && !co.refunded? && !@order.reprocess_ucc_free? && !@order.fully_refunded?
               %div
                 =link_to("CREDIT #{Money.new(@order.make_available_line(co)).format}", '#', onclick:  "refund_reason_#{co.id}(true)", id: 'btn-order-credit')
               -unless fully_refunded || @order.on_payable_invoice? || @order.voided_on_payable_invoice?
