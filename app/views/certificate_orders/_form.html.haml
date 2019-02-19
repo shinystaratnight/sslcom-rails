@@ -11,12 +11,6 @@
         Company Details
     %p.description
       Please provide information about the applicant of this certificate. Address and contact information will not be publicly visible
-    - if @saved_registrants.try "any?".to_sym
-      .clearfix
-        -saved_contacts = render_saved_contacts(@saved_registrants, :with_data)
-        %label{for: 'saved_registrants'}
-          Saved Registrants:
-        =select_tag :saved_contacts, options_for_select(saved_contacts), include_blank: true
     .clearfix
       %label{:for=>"common_name"}
         -if certificate.is_code_signing?
