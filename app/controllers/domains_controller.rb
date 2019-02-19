@@ -415,7 +415,7 @@ class DomainsController < ApplicationController
         end
       end
       unless validated.empty?
-        flash[:notice] = "The following domains are now validated: #{validated.flatten.join(" ,")}"
+        flash[:notice] = "The following domains are now validated: #{validated.flatten.uniq.join(" ,")}"
         redirect_to(domains_path) if current_user
       else
         flash.now[:error] = "No domains have been validated."

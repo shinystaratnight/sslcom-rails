@@ -8,7 +8,7 @@
   
   -will_paginate @all_contacts
   #validations
-    %h3 Saved #{saved_contacts ? 'Contacts' : 'Validated Identities'}
+    %h3 Saved #{saved_contacts ? 'Contacts' : 'Identities'}
     %table{cellspacing: '0'}
       -if will_paginate @all_contacts
         %tfoot

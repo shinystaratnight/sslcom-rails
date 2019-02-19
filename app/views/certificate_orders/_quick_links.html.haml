@@ -26,8 +26,8 @@
             %li=link_to "CSRs Manager", managed_csrs_path(@ssl_slug)
         -if permitted_to?(:index, :certificate_orders)
           %li=link_to "SSL Managers", registered_agents_path(ssl_slug: @ssl_slug)
-          %li=link_to 'Contacts', saved_contacts_contacts_path(ssl_slug: @ssl_slug)
-          %li=link_to 'Validated Identities', saved_contacts_contacts_path(ssl_slug: @ssl_slug, registrants: true)
+          %li=link_to 'Contacts Manager', saved_contacts_contacts_path(ssl_slug: @ssl_slug)
+          %li=link_to 'Identity Manager', saved_contacts_contacts_path(ssl_slug: @ssl_slug, registrants: true)
       -else
         -if current_user.can_manage_certificates?
           %li=link_to "Certificate Mgmt", admin_index_certificates_path

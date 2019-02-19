@@ -552,7 +552,7 @@ jQuery(function($) {
       }
     });
 
-    <%if current_user.ssl_account.is_registered_reseller?%>
+    <%if current_user and current_user.ssl_account.is_registered_reseller?%>
       $('#next_submit').click(function(){
         if(!$('input[id$=validation]').attr('checked')){
           alert('Please click the validated checkbox to proceed with order placement.');
@@ -696,7 +696,7 @@ jQuery(function($) {
       $(this).parents().filter('form').ajaxSubmit();
     });
 
-    <%if current_user.is_system_admins? && @certificate_order && @certificate_order.certificate_content && @certificate_order.certificate_content.ca.blank?%>
+    <%if current_user && current_user.is_system_admins? && @certificate_order && @certificate_order.certificate_content && @certificate_order.certificate_content.ca.blank?%>
       $(document).on('click', '.switch_from_comodo', function(e) {
         e.preventDefault();
 
