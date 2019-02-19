@@ -8,7 +8,8 @@ class Contact < ActiveRecord::Base
     in_progress: 1,
     pending_validation: 5,
     additional_info: 15,
-    validated: 20
+    validated: 20,
+    epki_agreement: 25
   }
 
   belongs_to :contactable, polymorphic: true
