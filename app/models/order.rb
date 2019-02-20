@@ -316,27 +316,26 @@ class Order < ActiveRecord::Base
     state :invoiced do
       event :invoice_paid!, transitions_to: :paid_by_invoice
       event :full_refund, transitions_to: :fully_refunded do |complete=true|
-        line_items.each {|li|li.sellable.refund! if(
-          li.sellable.respond_to?("refund!".to_sym) && !li.sellable.refunded?)} if complete
+        line_items.each {|li|li.sellable_unscoped.refund! if(
+          li.sellable_unscoped.respond_to?("refund!".to_sym) && !li.sellable_unscoped.refunded?)} if complete
       end
       event :partial_refund, transitions_to: :partially_refunded do |ref|
-        li = line_items.find {|li| li.sellable.try(:ref) == ref}
+        li = line_items.find {|li| li.sellable_unscoped.try(:ref) == ref}
         if li
           decrement! :cents, li.cents
-          if (li.sellable.respond_to?("refund!".to_sym) && !li.sellable.refunded?)
-            li.sellable.refund!
+          if (li.sellable_unscoped.respond_to?("refund!".to_sym) && !li.sellable_unscoped.refunded?)
+            li.sellable_unscoped.refund!
           end
         end
       end
       event :reject, transitions_to: :rejected do |complete=true|
-        line_items.each {|li| li.sellable.reject!} if complete
+        line_items.each {|li| li.sellable_unscoped.reject!} if complete
       end
       event :cancel, transitions_to: :canceled do |complete=true|
-        line_items.each {|li| li.sellable.cancel!} if complete
-        update_attribute :canceled_at, Time.now
+        cancel_order
       end
       event :charge_back, transitions_to: :charged_back do |complete=true|
-        line_items.each {|li| li.sellable.charge_back!} if complete
+        line_items.each {|li| li.sellable_unscoped.charge_back!} if complete
       end
     end
       
@@ -346,7 +345,7 @@ class Order < ActiveRecord::Base
       event :payment_authorized, transitions_to: :authorized
       event :transaction_declined, :transitions_to => :payment_declined
       event :reject, :transitions_to => :rejected do |complete=true|
-        line_items.each {|li|li.sellable.reject!} if complete
+        line_items.each {|li|li.sellable_unscoped.reject!} if complete
       end
     end
 
@@ -354,31 +353,30 @@ class Order < ActiveRecord::Base
       event :payment_captured, transitions_to: :paid
       event :transaction_declined, transitions_to: :authorized
       event :reject, :transitions_to => :rejected do |complete=true|
-        line_items.each {|li|li.sellable.reject!} if complete
+        line_items.each {|li|li.sellable_unscoped.reject!} if complete
       end
     end
 
     state :paid do
       event :full_refund, transitions_to: :fully_refunded do |complete=true|
-        line_items.each {|li|li.sellable.refund! if(
-          li.sellable.respond_to?("refund!".to_sym) && !li.sellable.refunded?)} if complete
+        line_items.each {|li|li.sellable_unscoped.refund! if(
+          li.sellable_unscoped.respond_to?("refund!".to_sym) && !li.sellable_unscoped.refunded?)} if complete
       end
       event :partial_refund, transitions_to: :partially_refunded do |ref|
-        li=line_items.find {|li|li.sellable.try(:ref)==ref}
+        li=line_items.find {|li|li.sellable_unscoped.try(:ref)==ref}
         if li
           decrement! :cents, li.cents
-          li.sellable.refund! if (li.sellable.respond_to?("refund!".to_sym) && !li.sellable.refunded?)
+          li.sellable_unscoped.refund! if (li.sellable_unscoped.respond_to?("refund!".to_sym) && !li.sellable_unscoped.refunded?)
         end
       end
-        event :reject, :transitions_to => :rejected do |complete=true|
-          line_items.each {|li|li.sellable.reject!} if complete
-        end
-        event :cancel, transitions_to: :canceled do |complete=true|
-        line_items.each {|li|li.sellable.cancel!} if complete
-        update_attribute :canceled_at, Time.now
+      event :reject, :transitions_to => :rejected do |complete=true|
+        line_items.each {|li|li.sellable_unscoped.reject!} if complete
+      end
+      event :cancel, transitions_to: :canceled do |complete=true|
+        cancel_order
       end
       event :charge_back, transitions_to: :charged_back do |complete=true|
-        line_items.each {|li|li.sellable.charge_back!} if complete
+        line_items.each {|li|li.sellable_unscoped.charge_back!} if complete
       end
     end
 
@@ -388,7 +386,7 @@ class Order < ActiveRecord::Base
           CertificateOrder.unscoped.find(li.sellable_id).unrefund! if li.sellable_type=="CertificateOrder"} if complete
       end
       event :charge_back, transitions_to: :charged_back do |complete=true|
-        line_items.each {|li|li.sellable.charge_back!} if complete
+        line_items.each {|li|li.sellable_unscoped.charge_back!} if complete
       end
       event :reject, :transitions_to => :rejected do |complete=true|
         line_items.each {|li|
@@ -398,7 +396,7 @@ class Order < ActiveRecord::Base
 
     state :partially_refunded do
       event :partial_refund, transitions_to: :partially_refunded do |ref, amount=nil|
-        item =line_items.find {|li|li.sellable.try(:ref)==ref} || certificate_orders.find {|co| co.try(:ref)==ref}
+        item =line_items.find {|li|li.sellable_unscoped.try(:ref)==ref} || certificate_orders.find {|co| co.try(:ref)==ref}
         if item
           decrement! :cents, (amount ? amount : item.cents)
           to_refund = item.is_a?(LineItem) ? item.sellable : item
@@ -406,15 +404,15 @@ class Order < ActiveRecord::Base
         end
       end
       event :full_refund, transitions_to: :fully_refunded do |complete=true|
-        line_items.each {|li|li.sellable.refund! if(
-          li.sellable.respond_to?("refund!".to_sym) && !li.sellable.refunded?)} if complete
+        line_items.each {|li|li.sellable_unscoped.refund! if(
+          li.sellable_unscoped.respond_to?("refund!".to_sym) && !li.sellable_unscoped.refunded?)} if complete
       end
       event :unrefund, transitions_to: :paid do |complete=true|
         line_items.each {|li|
           CertificateOrder.unscoped.find(li.sellable_id).unrefund! if li.sellable_type=="CertificateOrder"} if complete
       end
       event :charge_back, transitions_to: :charged_back do |complete=true|
-        line_items.each {|li|li.sellable.charge_back!} if complete
+        line_items.each {|li|li.sellable_unscoped.charge_back!} if complete
       end
       event :reject, :transitions_to => :rejected do |complete=true|
         line_items.each {|li|
@@ -426,7 +424,7 @@ class Order < ActiveRecord::Base
 
     state :rejected do
       event :partial_refund, transitions_to: :partially_refunded do |ref, amount=nil|
-        item =line_items.find {|li|li.sellable.try(:ref)==ref} || certificate_orders.find {|co| co.try(:ref)==ref}
+        item =line_items.find {|li|li.sellable_unscoped.try(:ref)==ref} || certificate_orders.find {|co| co.try(:ref)==ref}
         if item
           decrement! :cents, (amount ? amount : item.cents)
           to_refund = item.is_a?(LineItem) ? item.sellable : item
@@ -434,12 +432,15 @@ class Order < ActiveRecord::Base
         end
       end
       event :full_refund, transitions_to: :fully_refunded do |complete=true|
-        line_items.each {|li|li.sellable.refund! if(
-          li.sellable.respond_to?("refund!".to_sym) && !li.sellable.refunded?)} if complete
+        line_items.each {|li|li.sellable_unscoped.refund! if(
+          li.sellable_unscoped.respond_to?("refund!".to_sym) && !li.sellable_unscoped.refunded?)} if complete
       end
       event :unreject, transitions_to: :paid do |complete=true|
         line_items.each {|li|
           CertificateOrder.unscoped.find(li.sellable_id).unreject! if li.sellable_type=="CertificateOrder"} if complete
+      end
+      event :cancel, transitions_to: :canceled do |complete=true|
+        cancel_order
       end
     end
 
@@ -452,20 +453,28 @@ class Order < ActiveRecord::Base
 
     state :payment_not_required do
       event :full_refund, transitions_to: :fully_refunded do |complete=true|
-        line_items.each {|li|li.sellable.refund! if li.sellable.respond_to?("refund!".to_sym)} if complete
+        line_items.each {|li|li.sellable_unscoped.refund! if li.sellable_unscoped.respond_to?("refund!".to_sym)} if complete
       end
       event :cancel, transitions_to: :canceled do |complete=true|
-        line_items.each {|li|li.sellable.cancel!} if complete
-        update_attribute :canceled_at, Time.now
+        cancel_order
       end
       event :reject, :transitions_to => :rejected do |complete=true|
-        line_items.each {|li|li.sellable.reject!} if complete
+        line_items.each {|li|li.sellable_unscoped.reject!} if complete
       end
     end
 
     state :canceled do
+      event :full_refund, transitions_to: :fully_refunded do |complete=true|
+        line_items.each {|li|li.sellable_unscoped.refund! if li.sellable_unscoped.respond_to?("refund!".to_sym)} if complete
+      end
+      event :cancel, transitions_to: :canceled do |complete=true|
+        cancel_order
+      end
       event :charge_back, transitions_to: :charged_back do |complete=true|
-        line_items.each {|li|li.sellable.charge_back!} if complete
+        line_items.each {|li|li.sellable_unscoped.charge_back!} if complete
+      end
+      event :reject, :transitions_to => :rejected do |complete=true|
+        line_items.each {|li|li.sellable_unscoped.reject!} if complete
       end
     end
   end
@@ -857,11 +866,11 @@ class Order < ActiveRecord::Base
   end
 
   def is_deposit?
-    Deposit == line_items.first.sellable.class if line_items.first
+    Deposit == line_items.first.sellable_unscoped.class if line_items.first
   end
 
   def is_reseller_tier?
-    ResellerTier == line_items.first.sellable.class if line_items.first
+    ResellerTier == line_items.first.sellable_unscoped.class if line_items.first
   end
 
   def migrated_from
@@ -1282,5 +1291,14 @@ class Order < ActiveRecord::Base
     #causing issues with size of description for larger orders
 #    self.description ||= self.certificate_orders.
 #      map(&:description).join(" : ")
+  end
+
+  def cancel_order
+    current_invoice = invoice
+    line_items.each {|li| li.sellable_unscoped.cancel!}
+    update(canceled_at: Time.now, invoice_id: nil)
+    if current_invoice && current_invoice.orders.empty?
+      current_invoice.destroy
+    end
   end
 end

@@ -138,11 +138,11 @@ $(function($) {
       amount = $('#items-selected-amt strong').data('amount');
       
     if ($(this).is(':checked')) {
-      amount += $(this).data('amount');
+      amount += parseFloat($(this).data('amount'));
       count  += 1;
       $(this).parents('tr').css('background-color', 'rgb(204, 255, 204)');
     } else {
-      amount -= $(this).data('amount');
+      amount -= parseFloat($(this).data('amount'));
       count  -= 1;
       $(this).parents('tr').css('background-color', '#ffffff');
     }
@@ -166,7 +166,7 @@ $(function($) {
   });
   
   $('#mi_all_items').on('click', function() {
-    var amount = $('#items-selected-amt strong').data('total').toFixed(2),
+    var amount = parseFloat($('#items-selected-amt strong').data('total')).toFixed(2),
       checked = $(this).is(':checked'),
       bc = checked ? 'rgb(204, 255, 204)' : '#ffffff',
       amount = checked ? amount : 0,
