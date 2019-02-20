@@ -122,7 +122,7 @@ class ContactsController < ApplicationController
   private
 
   def get_saved_contacts
-    if current_user.is_system_admins?
+    if @ssl_account.blank? and current_user.is_system_admins?
       Contact.where(contactable_type: 'SslAccount', type: 'CertificateContact')
     else
       @ssl_account.saved_contacts
@@ -130,7 +130,7 @@ class ContactsController < ApplicationController
   end
 
   def get_saved_registrants
-    if current_user.is_system_admins?
+    if @ssl_account.blank? and current_user.is_system_admins?
       Contact.where(contactable_type: 'SslAccount', type: 'Registrant')
     else
       @ssl_account.saved_registrants

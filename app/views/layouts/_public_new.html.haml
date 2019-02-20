@@ -43,7 +43,7 @@
                 %a#live_chat{:href => "#"} Live Chat
         / end of top_navigation
         .bottom_navigation
-          -if !is_new_order_page? and !is_sandbox?
+          -if !is_new_order_page? and !is_sandbox? and !current_page?(action: "generate_cert")
             %ul#nav
               %li
                 %a(href="#{account_url}")

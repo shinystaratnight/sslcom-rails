@@ -575,7 +575,7 @@ authorization do
   # GUEST Role
   # ============================================================================ 
   role :guest do
-    has_permission_on :csrs, :certificate_orders, :orders,  :to => :create
+    has_permission_on :csrs, :certificate_orders, :orders,  :to => [:create]
     has_permission_on :certificates,  :to => :buy_renewal
     has_permission_on :site_seals, :to => [:site_report]
     has_permission_on :users, :ssl_accounts, :resellers,    :to => [:create, :update]
@@ -629,7 +629,7 @@ privileges do
   privilege :update, includes: [
     :edit, :edit_email, :edit_update, :verification_check
   ]
-  privilege :create, includes: :new
+  privilege :create, includes: [:new, :generate_cert]
   privilege :delete, includes: :destroy
   privilege :admin_manage, includes: [
     :admin_activate,

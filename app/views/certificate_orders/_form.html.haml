@@ -48,9 +48,9 @@
       
       .clearfix
         %label{for: 'save'}
-          Save Registrant:
-          %span.label_desc Save to use in future certificates.
-        = check_box_tag :save_for_later, 'save', false
+          Save to Identity Manager:
+          %span.label_desc Reuse this identity in future certificates.
+        = check_box_tag :save_for_later, 'save', true
 
       .clearfix
         %label{:for=>"company_name"}
