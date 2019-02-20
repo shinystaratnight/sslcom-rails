@@ -29,14 +29,18 @@ module ContactsHelper
   def render_saved_contacts(list, with_data=nil)
     list.inject([]) do |contacts, c|
       main_info = {}
+      recipient = c.type == 'IndividualValidation'
       full_name = "#{c.last_name}, #{c.first_name}"
       company   = c.company_name
       remove    = %w{id notes type contactable_id contactable_type created_at updated_at}
-      c.attributes.each {|key, val| main_info["#{with_data ? 'data-' : ''}#{key}"] = val}
+      c.attributes.each do |key, val|
+        cur_val = (recipient && (key == 'status')) ? c.status : val
+        main_info["#{with_data ? 'data-' : ''}#{key}"] = cur_val
+      end
       main_info = main_info.delete_if {|k,v| remove.include?(k.remove 'data-')}
       option = if c.type == 'Registrant'
         c.individual? ? "#{full_name} (individual)" : "#{company} (organization)"
-      elsif c.type == 'IndividualValidation'
+      elsif recipient
         [full_name, c.email].join(' | ')
       else
         [full_name, company].join(' | ')

@@ -807,6 +807,34 @@
       if (!countriesInput) {
         return;
       }
+      document.getElementById("saved_contacts").onchange = function(e) {
+        var activeElement, caId, countriesArr, contacts, i;
+        caId = "countries-autocomplete-" + listId;
+        countriesArr = document.getElementById(caId).getElementsByTagName("li");
+        contacts = document.getElementById("saved_contacts");
+        selectedCode = contacts.options[contacts.selectedIndex].getAttribute("data-country_code");
+        i = countriesArr.length - 1;
+        
+        if (selectedCode == null 
+          || (typeof selectedCode === "undefined")
+          || (selectedCode && (selectedCode.trim().length == 0 || selectedCode.trim().length == 10))
+        ) {
+          selectedCode = countriesList[0].code;
+        }  
+        if (selectedCode) {
+          while (i >= 0) {
+            countryCode = countriesArr[i].getAttribute("rel");
+            if (selectedCode === countryCode) {
+              activeElement = countriesArr[i]
+              setActive(activeElement);
+              self.autocomplete(activeElement, false);
+              return false;
+            }
+            i--;
+          }
+        }
+      };
+
       countriesInput.onblur = function(event) {
         return processKey13(listId);
       };
