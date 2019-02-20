@@ -114,7 +114,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
       # if co.ov_validated?
 
       options={csr: params[:csr]}
-      if res = SslcomCaApi.apply_for_certificate(co,options).end_entity_certificate
+      if res = SslcomCaApi.apply_for_certificate(co,options).x509_certificates
         co_token = co.certificate_order_tokens.where(is_expired: false).first
         co_token.update_attribute(:is_expired, true) if co_token
 

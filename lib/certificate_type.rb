@@ -65,11 +65,19 @@ module CertificateType
   end
 
   def is_smime?
-    is_client_basic? || is_client_pro? || is_client_business? || is_client_enterprise?
+    if self.is_a? SignedCertificate
+      !!(decoded.include?("E-mail Protection"))
+    else
+      is_client_basic? || is_client_pro? || is_client_business? || is_client_enterprise?
+    end
   end
 
   def is_client?
-    (self.is_a?(ApiCertificateRequest) ? target_certificate :  self).product.include?('personal')
+    if self.is_a? SignedCertificate
+      !!(decoded.include?("TLS Web Client Authentication"))
+    else
+      (self.is_a?(ApiCertificateRequest) ? target_certificate :  self).product.include?('personal')
+    end
   end
 
   def is_smime_or_client?
@@ -110,7 +118,11 @@ module CertificateType
   end
 
   def is_document_signing?
-    is_client_pro? || is_client_business? || is_client_enterprise?
+    if self.is_a? SignedCertificate
+      !!(decoded.include?(SignedCertificate::OID_DOC_SIGNING))
+    else
+      is_client_pro? || is_client_business? || is_client_enterprise?
+    end
   end
 
   def requires_company_info?
