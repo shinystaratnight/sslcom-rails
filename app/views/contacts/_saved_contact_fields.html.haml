@@ -18,10 +18,10 @@
     .clearfix
       %label{for: 'type'}
         Type:
-      =f.select :type, [['Contact', 'CertificateContact'], ['Validated Identity', 'Registrant']]
+      =f.select :type, [['Contact', 'CertificateContact'], ['Identity', 'Registrant']]
     .clearfix.hidden
       %label{for: 'registrant_type'}
-        Validated Identity Type:
+        Identity Type:
       =f.select :registrant_type, Registrant::registrant_types
   .clearfix
     %label{for: 'first_name'}
@@ -39,6 +39,10 @@
     %label{for: 'department'}
       Department:
     =f.text_field :department
+  .clearfix
+    %label{for: 'duns_number'}
+      DUNS Number:
+    =f.text_field :duns_number
   .clearfix
     %label{for: 'email'}
       *Email:

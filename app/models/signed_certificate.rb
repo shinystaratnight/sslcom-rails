@@ -49,6 +49,7 @@ class SignedCertificate < ActiveRecord::Base
   OID_EV = "2.23.140.1.1"
   OID_EVCS = "2.23.140.1.3"
   OID_CS = "2.23.140.1.4.1"
+  OID_DOC_SIGNING = "1.3.6.1.4.1.311.10.3.12"
   OID_TEST = "2.23.140.2.1"
 
   after_initialize do

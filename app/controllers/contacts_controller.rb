@@ -68,14 +68,12 @@ class ContactsController < ApplicationController
       contactable_type: 'SslAccount'
     )
     @contact = registrant ? Registrant.new(new_params) : CertificateContact.new(new_params)
-    respond_to do |format|
-      if @contact.save
-        flash[:notice] = 'Contact was successfully created.'
-        format.html { redirect_to saved_contacts_contacts_path(@ssl_slug) }
-      else
-        @contact = @contact.becomes(Contact)
-        format.html { render :new }
-      end
+    if @contact.save
+      flash[:notice] = "Contact was successfully created."
+      redirect_to_index
+    else
+      @contact = @contact.becomes(Contact)
+      render :new
     end
   end
   
@@ -85,10 +83,8 @@ class ContactsController < ApplicationController
       validate_certificate_orders
     end
     notice_ext = @co_validated && @co_validated > 0 ? "And #{@co_validated} certificate order(s) were validated." : ""
-    redirect_to saved_contacts_contacts_path(
-      @contact.contactable.to_slug,
-      registrants: (@contact.is_a?(Registrant) ? true : nil)
-    ), notice: "Status has been successfully updated for #{@contact.company_name}. #{notice_ext}"
+    flash[:notice] = "Status has been successfully updated for #{@contact.company_name}. #{notice_ext}"
+    redirect_to_index
   end
 
   def update
@@ -97,12 +93,7 @@ class ContactsController < ApplicationController
       type = new_params[:type] == 'CertificateContact' ? CertificateContact : Registrant
       if @contact.becomes(type).update_attributes(new_params)
         flash[:notice] = "#{@contact.type} was successfully updated."
-        format.html { 
-          redirect_to saved_contacts_contacts_path(
-            (@ssl_slug || @contact.contactable.to_slug),
-            registrants: (@contact.is_a?(Registrant) ? true : nil)
-          )
-        }
+        format.html { redirect_to_index }
         format.json { render json: @contact, status: :ok }
       else
         format.html { render :edit }
@@ -112,17 +103,23 @@ class ContactsController < ApplicationController
   end
   
   def destroy
-    @contact.destroy
-    redirect_to saved_contacts_contacts_path(
-      @contact.contactable.to_slug, 
-      registrants: (@contact.is_a?(Registrant) ? true : nil)
-    ), notice: "Contact was successfully deleted."
+    if @contact.destroy
+      flash[:notice] = "Contact was successfully deleted."
+      redirect_to_index
+    end
   end
   
   private
 
+  def redirect_to_index
+    redirect_to saved_contacts_contacts_path(
+      @contact.contactable.to_slug,
+      registrants: (@contact.is_a?(Registrant) ? true : nil)
+    )
+  end
+
   def get_saved_contacts
-    if current_user.is_system_admins?
+    if @ssl_account.blank? and current_user.is_system_admins?
       Contact.where(contactable_type: 'SslAccount', type: 'CertificateContact')
     else
       @ssl_account.saved_contacts
@@ -130,7 +127,7 @@ class ContactsController < ApplicationController
   end
 
   def get_saved_registrants
-    if current_user.is_system_admins?
+    if @ssl_account.blank? and current_user.is_system_admins?
       Contact.where(contactable_type: 'SslAccount', type: 'Registrant')
     else
       @ssl_account.saved_registrants

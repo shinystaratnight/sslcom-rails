@@ -19,14 +19,14 @@ class CertificateOrdersController < ApplicationController
   include OrdersHelper
   include Skylight::Helpers
   skip_before_filter :verify_authenticity_token, only: [:parse_csr]
-  filter_access_to :all
+  filter_access_to :all, except: [:generate_cert]
   filter_access_to :read, :update, :delete, :show, :edit, :developer, :recipient
-  filter_access_to :incomplete, :pending, :search, :reprocessing, :order_by_csr, :generate_cert, :require=>:read
+  filter_access_to :incomplete, :pending, :search, :reprocessing, :order_by_csr, :require=>:read
   filter_access_to :credits, :filter_by, :filter_by_scope, :require=>:index
   filter_access_to :update_csr, require: [:update]
   filter_access_to :download, :start_over, :reprocess, :admin_update, :change_ext_order_number, :switch_from_comodo,
                    :developers, :require=>[:update, :delete]
-  filter_access_to :renew, :parse_csr, require: [:create]
+  filter_access_to :renew, :parse_csr, :generate_cert, require: [:create]
   filter_access_to :auto_renew, require: [:admin_manage]
   filter_access_to :show_cert_order, :validate_issue, :require=>:ajax
   before_filter :load_certificate_order,
@@ -56,13 +56,14 @@ class CertificateOrdersController < ApplicationController
 
   def generate_cert
     co_token = CertificateOrderToken.find_by_token(params[:token])
-    if co_token.user.blank? and co_token.certificate_order.get_download_cert_email==current_user.email
+    if co_token.user.blank? and co_token.certificate_order.get_download_cert_email==current_user.email and
+        Settings.require_login_smime_claim==true
       co_token.update_column :user_id, current_user.id
     end
     is_expired = false
 
     if co_token
-      if co_token.user != current_user
+      if co_token.user != current_user and Settings.require_login_smime_claim==true
         is_expired = true
         flash[:error] = "Access to this page is denied. Please log in as the user assigned to this token."
       elsif co_token.is_expired

@@ -552,7 +552,7 @@ jQuery(function($) {
       }
     });
 
-    <%if current_user.ssl_account.is_registered_reseller?%>
+    <%if current_user and current_user.ssl_account.is_registered_reseller?%>
       $('#next_submit').click(function(){
         if(!$('input[id$=validation]').attr('checked')){
           alert('Please click the validated checkbox to proceed with order placement.');
@@ -566,6 +566,17 @@ jQuery(function($) {
         $("label[for='" + label + "']").siblings('select').val(data);  
       } else {
         $("label[for='" + label + "']").siblings('input').val(data);
+      }
+    }
+
+    function toggleValidateRecipient() {
+      status = $('#saved_contacts').find('option:selected').data('status');
+      lra = $('#lra').parent('.clearfix');
+      if (status && (status == 'validated')) {
+        $('#lra').prop('checked', false);
+        lra.hide();
+      } else {
+        lra.show();
       }
     }
     
@@ -606,6 +617,7 @@ jQuery(function($) {
       list.forEach(function(el) {
         populateContact(el[0], $('#saved_contacts option:selected').data(el[1]));
       });
+      toggleValidateRecipient();
     });
     
     $('.dropdown, .status_message, .expand, .subject_column > a').click(function(){
@@ -696,7 +708,7 @@ jQuery(function($) {
       $(this).parents().filter('form').ajaxSubmit();
     });
 
-    <%if current_user.is_system_admins? && @certificate_order && @certificate_order.certificate_content && @certificate_order.certificate_content.ca.blank?%>
+    <%if current_user && current_user.is_system_admins? && @certificate_order && @certificate_order.certificate_content && @certificate_order.certificate_content.ca.blank?%>
       $(document).on('click', '.switch_from_comodo', function(e) {
         e.preventDefault();
 
