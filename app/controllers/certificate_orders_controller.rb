@@ -667,7 +667,7 @@ class CertificateOrdersController < ApplicationController
 
   def admin_update
     if current_user.is_system_admins? or
-        (!current_user.ssl_account.epki_agreement.blank? and
+        (current_user.ssl_account.epki_registrant and
             current_user.ssl_account.epki_registrant.applies_to_certificate_order?(@certificate_order))
       if params[:validate_iv] || params[:validate_ov]
         admin_validate
@@ -713,7 +713,7 @@ class CertificateOrdersController < ApplicationController
     validated = if validations == 'iv_ov'
                   if @iv_exists.validated?
                     if co.registrant.status=="epki_agreement"
-                      co.registrant.applies_to_certificate_order?(co)
+                      co.registrant.parent.applies_to_certificate_order?(co)
                     else
                       (co.locked_registrant || co.registrant).validated?
                     end
@@ -752,7 +752,7 @@ class CertificateOrdersController < ApplicationController
 
       admin_validate_ov(ov)
       if (ov_iv && @certificate_order.iv_ov_validated?) || (!ov_iv && @certificate_order.iv_validated?)
-        cc.validate! if !(cc.pending_validation? or cc.issued?)
+        cc.validate! if !(cc.validated? or cc.pending_validation? or cc.issued?)
       end
     else  
       admin_validate_ov(ov)

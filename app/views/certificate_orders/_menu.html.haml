@@ -8,9 +8,8 @@
         -unless hide_validation?(co)
           -if permitted_to?(:show, co.validation)
             %td=link_to("validation status", certificate_order_validation_path(ssl_slug: @ssl_slug, certificate_order_id: co.ref), :title=>"view validation status for "+cn)
-        -unless co.certificate.is_code_signing?
-          -if permitted_to?(:show, co.site_seal)
-            %td=link_to("smart seal", certificate_order_site_seal_path(ssl_slug: @ssl_slug, certificate_order_id: co.ref), :title=>"get smart seal for "+cn)
+        -if co.certificate.is_server? and permitted_to?(:show, co.site_seal)
+          %td=link_to("smart seal", certificate_order_site_seal_path(ssl_slug: @ssl_slug, certificate_order_id: co.ref), :title=>"get smart seal for "+cn)
         -if current_user.is_system_admins?
           %td=link_to("billing invoice", order_path(@ssl_slug, co.orders.first), :title=>"transaction information for "+cn)
         -if current_user.is_super_user? and co.registrant

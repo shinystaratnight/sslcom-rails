@@ -36,15 +36,17 @@
       %li &nbsp;
       %li Filter Orders:
       -is_test=is_sandbox? ? " is_test:true" : ""
-      %li=link_to Certificate.find_by_serial("basic256sslcom").title, search_certificate_orders_path(@ssl_slug, search: "product:basicssl#{is_test}")
+      %li=link_to "Basic SSL", search_certificate_orders_path(@ssl_slug, search: "product:basicssl#{is_test}")
       %li=link_to "UCC/SAN SSL", search_certificate_orders_path(@ssl_slug, search: "product:ucc#{is_test}")
       %li=link_to "Premium SSL", search_certificate_orders_path(@ssl_slug, search: "product:premiumssl#{is_test}")
       %li=link_to "Wildcard SSL", search_certificate_orders_path(@ssl_slug, search: "product:wildcard#{is_test}")
-      %li=link_to Certificate.find_by_serial("codesigning256sslcom").title, search_certificate_orders_path(@ssl_slug, search: "product:code-signing#{is_test}")
+      %li=link_to "Code Signing", search_certificate_orders_path(@ssl_slug, search: "product:code-signing#{is_test}")
       %li=link_to "EV SSL", search_certificate_orders_path(@ssl_slug, search: "product:ev#{is_test}")
       %li=link_to "EV UCC/SAN SSL", search_certificate_orders_path(@ssl_slug, search: "product:evucc#{is_test}")
-      %li=link_to Certificate.find_by_serial("evcodesigning256sslcom").title, search_certificate_orders_path(@ssl_slug, search: "product:ev-code-signing#{is_test}")
+      %li=link_to "EV Code Signing", search_certificate_orders_path(@ssl_slug, search: "product:ev-code-signing#{is_test}")
       %li=link_to "Physical Tokens", search_certificate_orders_path(@ssl_slug, search: "physical_tokens:in_transit,received,in_possession#{is_test}")
+      %li=link_to "Client/SMIME Pro", search_certificate_orders_path(@ssl_slug, search: "product:personal-pro#{is_test}")
+      %li=link_to "Client/SMIME Business", search_certificate_orders_path(@ssl_slug, search: "product:personal-business#{is_test}")
       -unless current_user.is_system_admins?
         %li &nbsp;
         %li Developers:
