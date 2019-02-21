@@ -106,7 +106,7 @@
                           %dd This form should be used if one person is to act in all three roles, Certificate Requester, Certificate Approver and Contract (Subscriber Agreement) Signer.
         - if co.certificate.requires_locked_registrant?
           #iv-ov-file-upload
-            - unless (co.certificate.is_client_basic? && !co.certificate.is_naesb?) || co.certificate.is_client_pro?
+            - unless ["validated","epki_agreement"].include? co.registrant.status
               .clearfix
                 %h3
                   Organization Validation documents are related to validating the identity of the organization or company

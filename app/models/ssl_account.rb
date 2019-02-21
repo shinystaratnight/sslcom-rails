@@ -627,7 +627,7 @@ class SslAccount < ActiveRecord::Base
   memoize :cached_orders
 
   def cached_certificate_orders
-    CertificateOrder.unscoped.where(id: (Rails.cache.fetch("#{cache_key}/cached_certificate_orders") do
+    CertificateOrder.where(id: (Rails.cache.fetch("#{cache_key}/cached_certificate_orders") do
       certificate_orders.pluck(:id).uniq
     end)).order(created_at: :desc)
   end
