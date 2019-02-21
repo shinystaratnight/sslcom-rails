@@ -72,7 +72,7 @@ class CertificateOrderTokensController < ApplicationController
         # Sending Notify to SysAdmin role's users.
         sys_admins = User.search_sys_admin.uniq
         sys_admins.each do |sys_admin|
-          OrderNotifier.request_token_send(co, sys_admin).deliver
+          OrderNotifier.request_token_send(co, sys_admin, current_user).deliver
         end
 
         # Sending Notify to TeamAdmin role's users.
@@ -80,7 +80,7 @@ class CertificateOrderTokensController < ApplicationController
         unless team_account.blank?
           team_admins = team_account.users.with_role(Role::ACCOUNT_ADMIN).uniq
           team_admins.each do |team_admin|
-            OrderNotifier.request_token_send(co, team_admin).deliver
+            OrderNotifier.request_token_send(co, team_admin, current_user).deliver
           end
         end
 

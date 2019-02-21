@@ -71,6 +71,7 @@ jQuery(function($) {
           var account_key = '<%= @certificate_order.ssl_account.api_credential.account_key %>';
           var secret_key = '<%= @certificate_order.ssl_account.api_credential.secret_key %>';
           var ref = '<%= @certificate_order.ref %>';
+          var token = '<%= @token%>';
           var api_domain = '<%=api_domain%>';
 
           if ($('.csr').val() != '') {
@@ -79,6 +80,7 @@ jQuery(function($) {
               data: {
                 csr: $('.csr').val(),
                 ref: ref,
+                token: token,
                 account_key: account_key,
                 secret_key: secret_key
               },
@@ -133,6 +135,7 @@ jQuery(function($) {
                 data: {
                   csr: csr,
                   ref: ref,
+                  token: token,
                   account_key: account_key,
                   secret_key: secret_key
                 },
@@ -204,11 +207,16 @@ jQuery(function($) {
               $('body').addClass('no_scroll_y');
               generate_pfx_loader_wrap.insertBefore($('#header'));
 
-              var certificate = $('.cert').val().replace(/(-----(BEGIN|END) CERTIFICATE-----|\n)/g, '');
+              var certificates_list = $('.cert').val().split('-----BEGIN CERTIFICATE-----').filter(Boolean);
+              var certs = [];
+              $.each(certificates_list, function(idx, cert) {
+                certs.push(cert.replace(/(-----(BEGIN|END) CERTIFICATE-----|\n)/g, ''));
+              });
+
               var priKey = $('.pri_key').val().replace(/(-----(BEGIN|END) PRIVATE KEY-----|\n)/g, '');
               var pfxFileName = $('#cert_common_name').val();
 
-              passwordBasedIntegrity([certificate], priKey, password, pfxFileName, function() {
+              passwordBasedIntegrity(certs, priKey, password, pfxFileName, function() {
                 $('.generate_pfx_loader_wrap').remove();
                 $('body').removeClass('no_scroll_y');
               });

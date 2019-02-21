@@ -1,5 +1,8 @@
-Dear <%[@user.first_name, @user.last_name].join(" ")%>,
+Hello,
 
-It has been requested to send the certificate order token for the certificate <%=@certificate_order.ref%>
+<%=@requestor.email%> has requested an activation token request for <%=@certificate_order.certificate.product_root.humanize%> certificate <%=@certificate_order.ref%>
+
+Please go here to send the activation token:
+<%=certificate_order_url(id: @certificate_order.ref)%>
 
 Thank you.

@@ -265,12 +265,13 @@ class OrderNotifier < ActionMailer::Base
          to:    co.get_download_cert_email
   end
 
-  def request_token_send(co, user)
+  def request_token_send(co, user, requestor)
     @certificate_order = co
     @user = user
+    @requestor = requestor
 
     mail subject: "Certificate Activation Link",
-         from:  Settings.from_email.no_reply,
+         from:  requestor.email,
          to:    user.email
   end
 
