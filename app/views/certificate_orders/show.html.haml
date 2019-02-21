@@ -145,13 +145,14 @@
                                     method: :put, class: 'btn-cert-validate'
                                     %br/
                                 %br/
+                            -if current_user.is_super_user? or (current_user.is_account_admin? and @certificate_order.registrant.status=="epki_agreement")
                               -if is_smime_or_client
                                 -if !@certificate_order.iv_validated?
                                   = link_to "<i class='fa fa-expeditedssl'></i> Validate IV".html_safe,                      |
                                   admin_update_certificate_order_path(@ssl_slug, @certificate_order.ref, validate_iv: true), |
                                   method: :put, class: 'btn-cert-validate'
                                   %br/
-                                -if @certificate_order.iv_validated?
+                                -else
                                   - Contact::statuses.keys.each do |key|
                                     - if key != 'validated'
                                       = link_to "<i class='fa fa-expeditedssl'></i> IV #{key.humanize}".html_safe,                                       |

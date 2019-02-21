@@ -562,11 +562,17 @@ class UsersController < ApplicationController
   end
 
   def find_user
-    if params[:id] and current_user.is_system_admins?
-      @user=User.unscoped.find(params[:id])
-    else
-      @user=current_user
-    end
+    @user=if current_user.is_system_admins?
+            if params[:id]
+              User.unscoped.find(params[:id])
+            elsif @ssl_account
+              @ssl_account.get_account_owner
+            else
+              current_user
+            end
+          else
+            current_user
+          end
   end
 
   def admin_op?

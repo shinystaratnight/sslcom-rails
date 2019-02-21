@@ -711,13 +711,18 @@ class CertificateOrdersController < ApplicationController
     cc = co.certificate_content
     validations = co.certificate.client_smime_validations
     validated = if validations == 'iv_ov'
-      @iv_exists.validated? &&
-      (co.locked_registrant || co.registrant).validated?
-    elsif validations == 'iv'
-      @iv_exists.validated?
-    else
-      true
-    end
+                  if @iv_exists.validated?
+                    if co.registrant.status=="epki_agreement"
+                      co.registrant.applies_to_certificate_order?(co)
+                    else
+                      (co.locked_registrant || co.registrant).validated?
+                    end
+                  end
+                elsif validations == 'iv'
+                  @iv_exists.validated?
+                else
+                  true
+                end
     
     if validated
       cc.validate! unless cc.validated?

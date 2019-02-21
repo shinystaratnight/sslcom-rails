@@ -59,6 +59,14 @@ class Registrant < Contact
   validates :company_name, :phone, presence: true, if: proc { |r| r.reusable? && r.organization? }
   validates :first_name, :last_name, presence: true, if: proc { |r| r.reusable? && r.individual? }
 
+  def applies_to_certificate_order?(certificate_order)
+    domains.any? do |domain|
+      if certificate_order.certificate.is_smime_or_client?
+        DomainControlValidation.domain_in_subdomains?(certificate_order.get_recipient.email.split("@")[1],domain)
+      end
+    end unless domains.blank?
+  end
+
   protected
   
   def set_default_status

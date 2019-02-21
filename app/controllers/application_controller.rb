@@ -231,12 +231,6 @@ class ApplicationController < ActionController::Base
     end
     
     result = if !@search.blank?
-      #options.delete(:page) if options[:page].nil?
-      # (current_user.is_admin? ?
-      #   (CertificateOrder.unscoped{
-      #     (@ssl_account.try(:certificate_orders) || CertificateOrder).search_with_csr(params[:search], options)}) :
-      #       current_user.ssl_account.cached_certificate_orders.search_with_csr(params[:search], options)).order(updated_at: :desc)
-
       (current_user.is_admin? ?
            (CertificateOrder.unscoped{
              (@ssl_account.try(:cached_certificate_orders) || CertificateOrder).search_with_csr(params[:search], options)
