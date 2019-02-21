@@ -559,6 +559,10 @@ class Certificate < ActiveRecord::Base
       tagged_xcert ? SignedCertificate.enclose_with_tags(CERTUM_XSIGN) : CERTUM_XSIGN
     when "6248227494352943350","5688664355526928916"
       tagged_xcert ? SignedCertificate.enclose_with_tags(CERTUM_XSIGN_EV) : CERTUM_XSIGN_EV
+    when "8495723813297216424"
+      tagged_xcert ? SignedCertificate.enclose_with_tags(RSA_TO_ECC_XSIGN) : RSA_TO_ECC_XSIGN
+    when "3182246526754555285"
+      tagged_xcert ? SignedCertificate.enclose_with_tags(RSA_TO_ECC_EV_XSIGN) : RSA_TO_ECC_EV_XSIGN
     else
       x509_certificate.to_s
     end
