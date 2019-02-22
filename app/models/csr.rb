@@ -39,7 +39,7 @@ class Csr < ActiveRecord::Base
   has_many    :certificate_orders, :through=>:certificate_content # api_requestable.certificate_orders compatibility
   serialize   :subject_alternative_names
   validates_presence_of :body
-  validates_presence_of :common_name, :if=> "!body.blank?", :message=> "field blank. Invalid csr."
+  # validates_presence_of :common_name, :if=> "!body.blank?", :message=> "field blank. Invalid csr."
   # validates_uniqueness_of :unique_value, scope: :public_key_sha1
 
   #will_paginate
