@@ -202,7 +202,11 @@ class SslcomCaApi
     end
 
     req, res = call_ca(host, options, issue_cert_json(options))
-    cc.create_csr(body: options[:csr]) if cc.csr.blank?
+    if cc.csr.blank?
+      cc.create_csr(body: options[:csr])
+    else
+      cc.csr.save if cc.csr.new_record?
+    end
 
     api_log_entry=cc.csr.sslcom_ca_requests.create(request_url: host,
       parameters: req.body, method: "post", response: res.try(:body), ca: options[:ca_name] || ca_name(options))
