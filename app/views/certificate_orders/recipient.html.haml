@@ -54,7 +54,7 @@
           *Email Address:
         = text_field_tag :email, (recipient ? recipient.email : nil), required: true
 
-      - unless @certificate_order.ssl_account.epki_agreement.blank?
+      - if @certificate_order.ssl_account.epki_agreement.try("validated?") or @certificate_order.registrant.epki_agreement?
         .clearfix
           %label{for: 'lra'}
             Validate Recipient:
