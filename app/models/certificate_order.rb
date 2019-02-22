@@ -1153,6 +1153,13 @@ class CertificateOrder < ActiveRecord::Base
     orders.last
   end
 
+  def clean_up_mappings
+    cac=certificate.cas_certificates.select{|c|c.ca.friendly_name =~/MySSL Basic/}
+    certificate.cas_certificates.where{id << cac.map(&:id)}.delete_all
+    # test
+    # certificate.cas.ssl_account_or_general_default(ssl_account)
+  end
+
   # SSL.com chained Root call
   # DRY this up with ValidationsController#new
   def domains_validated?
