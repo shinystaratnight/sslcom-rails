@@ -272,11 +272,11 @@ jQuery(function($) {
       },
       success: function(data) {
         if (data == 'success') {
-          alert('Successfully sent notify email.');
+          alert('Request email successfully sent.');
         } else if (data == 'not_found_ssl_account') {
-          alert('Not found team account. Please try again.');
+          alert('Team account not found. Please try again.');
         } else if (data == 'session_expired') {
-          alert('The session has been expired. You need to login again.');
+          alert('The session has been expired. Please login again.');
           location.reload(true);
         }
       }
