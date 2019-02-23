@@ -235,7 +235,7 @@ class ApplicationController < ActionController::Base
            (CertificateOrder.unscoped{
              (@ssl_account.try(:cached_certificate_orders) || CertificateOrder).search_with_csr(params[:search], options)
            }) :
-           (current_user.role_symbols(current_user.ssl_account).join(',').split(',').include?(Role::INDIVIDUAL_CERTIFICATE) ?
+           (current_user.role_symbols(current_user.ssl_account)==[Role::INDIVIDUAL_CERTIFICATE.to_sym] ?
                  (current_user.ssl_account.cached_certificate_orders.search_assigned(current_user.id).search_with_csr(params[:search], options)) :
                  (current_user.ssl_account.cached_certificate_orders.search_with_csr(params[:search], options))
            )
@@ -243,7 +243,7 @@ class ApplicationController < ActionController::Base
     else
       (current_user.is_admin? ?
            (@ssl_account.try(:cached_certificate_orders) || CertificateOrder).not_test.not_new(options) :
-           (current_user.role_symbols(current_user.ssl_account).join(',').split(',').include?(Role::INDIVIDUAL_CERTIFICATE) ?
+           (current_user.role_symbols(current_user.ssl_account)==[Role::INDIVIDUAL_CERTIFICATE.to_sym] ?
                  (current_user.ssl_account.cached_certificate_orders.not_test.not_new(options).search_assigned(current_user.id)) :
                  (current_user.ssl_account.cached_certificate_orders.not_test.not_new(options))
            )

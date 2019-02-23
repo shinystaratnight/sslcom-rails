@@ -124,7 +124,8 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
         end
 
         @result.cert_results = cert_chain
-        @result.cert_common_name = res.first.subject.common_name.gsub(/[\s\.\*\(\)]/,"_").downcase + '.crt'
+        @result.cert_common_name = (res.first.subject.common_name || res.first.serial.to_s).
+            gsub(/[\s\.\*\(\)]/,"_").downcase + '.crt'
       end
     else
       InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
