@@ -315,7 +315,8 @@ class SignedCertificate < ActiveRecord::Base
     ::Zip::ZipFile.open(path, Zip::ZipFile::CREATE) do |zos|
       if certificate_content.ca
         certificate_content.x509_certificates.drop(1).each do |x509_cert|
-          zos.get_output_stream(x509_cert.subject.common_name.gsub(/[\s\.\*\(\)]/,"_").upcase+'.crt') {|f|
+            zos.get_output_stream((x509_cert.subject.common_name || certificate_content.ref).
+              gsub(/[\s\.\*\(\)]/,"_").upcase+'.crt') {|f|
             f.puts (options[:is_windows] ? x509_cert.to_s.gsub(/\n/, "\r\n") : x509_cert.to_s)
           }
         end
