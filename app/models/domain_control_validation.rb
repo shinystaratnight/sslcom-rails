@@ -22,6 +22,7 @@ class DomainControlValidation < ActiveRecord::Base
 
   default_scope{ order("id asc")}
   scope :global, -> {where{(certificate_name_id==nil) & (csr_id==nil)}}
+  scope :whois_threshold, -> {where(updated_at: 1.hour.ago..DateTime.now)}
 
   include Workflow
   workflow do
