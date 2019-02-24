@@ -225,8 +225,8 @@ class CertificateName < ActiveRecord::Base
   WhoisJob = Struct.new(:dname, :certificate_name) do
     def perform
       begin
-        if DomainControlValidation.global.find_by_subject(dname)
-          standard_addresses = DomainControlValidation.global.find_by_subject(dname).candidate_addresses
+        if dcv=DomainControlValidation.global.whois_threshold.find_by_subject(dname)
+          standard_addresses = dcv.candidate_addresses
         else
           standard_addresses = DomainControlValidation.email_address_choices(dname)
           d=::PublicSuffix.parse(dname)
@@ -235,7 +235,7 @@ class CertificateName < ActiveRecord::Base
           whois_addresses.each do |ad|
            standard_addresses << ad.downcase unless ad =~/abuse.*?@/i
           end
-          DomainControlValidation.create(candidate_addresses: standard_addresses, subject: dname)
+          DomainControlValidation.find_or_create_by(subject: dname).update_column(:candidate_addresses, standard_addresses)
         end
         Rails.cache.write("CertificateName.candidate_email_addresses/#{dname}",standard_addresses,
                           expires_in: DomainControlValidation::EMAIL_CHOICE_CACHE_EXPIRES_DAYS.days)
@@ -260,7 +260,7 @@ class CertificateName < ActiveRecord::Base
     name=CertificateContent.non_wildcard_name(name,false)
     Rails.cache.read("CertificateName.candidate_email_addresses/#{name}") ||
       (Delayed::Job.enqueue(WhoisJob.new(name,certificate_name))
-      DomainControlValidation.global.find_by_subject(name).candidate_addresses ||
+      DomainControlValidation.global.whois_threshold.find_by_subject(name).try(:candidate_addresses) ||
       DomainControlValidation.email_address_choices(name))
   end
 end
