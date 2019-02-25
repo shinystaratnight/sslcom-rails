@@ -515,7 +515,8 @@ class CertificateOrdersController < ApplicationController
   end
 
   def change_ext_order_number
-    @certificate_order.update_column :external_order_number, params[:num]
+    @certificate_order.update_column :external_order_number, (params[:num].blank? ? nil : params[:num])
+    @certificate_order.unchain_comodo if params[:num].blank?
     SystemAudit.create(owner: current_user, target: @certificate_order,
                        action: "changed external order number to #{params[:num]}")
     redirect_to certificate_order_path(@ssl_slug, @certificate_order)
