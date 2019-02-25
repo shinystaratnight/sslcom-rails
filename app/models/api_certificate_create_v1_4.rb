@@ -4,7 +4,8 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   include CertificateType
   attr_accessor :csr_obj, # temporary csr object
     :certificate_url, :receipt_url, :smart_seal_url, :validation_url, :order_number, :order_amount, :order_status,
-    :api_request, :api_response, :error_code, :error_message, :eta, :send_to_ca, :ref, :renewal_id, :saved_registrant
+    :api_request, :api_response, :error_code, :error_message, :eta, :send_to_ca, :ref, :renewal_id, :saved_registrant,
+    :certificates
 
   DCV_FAILURE_ACTIONS = %w(remove ignore)
 

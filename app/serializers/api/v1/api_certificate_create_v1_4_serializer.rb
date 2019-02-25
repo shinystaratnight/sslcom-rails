@@ -13,7 +13,8 @@ class Api::V1::ApiCertificateCreate_v1_4Serializer < Api::V1::BaseSerializer
   attribute :api_response
   attribute :debug
   attribute :external_order_number
-  
+  attribute :certificates
+
   def attributes
     attrs = super
     if object.debug.nil?

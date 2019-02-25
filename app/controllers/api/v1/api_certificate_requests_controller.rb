@@ -46,7 +46,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
     result.validation_url  = domain+certificate_order_validation_path(ssl_slug, acr)
     result.registrant      = acr.certificate_content.registrant.to_api_query if
         (acr.certificate_content && acr.certificate_content.registrant)
-    result.certificates    = acr.certificate_content.x509_certificates if acr.certificate_content.x509_certificates
+    result.certificates    = acr.certificate_content.x509_certificates.map(&:to_s).join("\n") if acr.certificate_content.x509_certificates
   end
 
   def create_v1_4
