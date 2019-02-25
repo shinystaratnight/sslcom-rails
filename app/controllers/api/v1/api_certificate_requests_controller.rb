@@ -36,7 +36,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
   def set_result_parameters(result, acr)
     ssl_slug               = acr.ssl_account.to_slug
     result.ref             = acr.ref
-    result.order_status    = acr.status
+    result.order_status    ||= acr.status # using ||= because status might have been set from CAA problems
     result.order_amount    = acr.order.amount.format
     domain = api_result_domain(acr)
     result.external_order_number = acr.ext_customer_ref

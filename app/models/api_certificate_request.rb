@@ -1,4 +1,5 @@
 class ApiCertificateRequest < CaApiRequest
+  extend Memoist
   include CertificateType
   attr_accessor :csr_obj, :current_user, :test, :action, :admin_submitted
 
@@ -83,6 +84,7 @@ class ApiCertificateRequest < CaApiRequest
     (self.account_key && self.secret_key) ?
         ApiCredential.find_by_account_key_and_secret_key(self.account_key, self.secret_key) : nil
   end
+  memoize :api_credential
 
   def find_certificate_order(field=:ref)
     if defined?(field) && self.send(field)

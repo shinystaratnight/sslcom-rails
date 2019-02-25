@@ -282,7 +282,7 @@ class CertificateContent < ActiveRecord::Base
   end
 
   def x509_certificates
-    sslcom_ca_request.x509_certificates
+    sslcom_ca_request.try(:x509_certificates)
   end
 
   def certificate_chain
