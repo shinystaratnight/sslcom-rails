@@ -234,7 +234,7 @@ class CertificateName < ActiveRecord::Base
           whois_addresses = WhoisLookup.email_addresses(whois)
           whois_addresses.each do |ad|
            standard_addresses << ad.downcase unless ad =~/abuse.*?@/i
-          end
+          end unless whois_addresses.blank?
           DomainControlValidation.find_or_create_by(subject: dname).update_column(:candidate_addresses, standard_addresses)
         end
         Rails.cache.write("CertificateName.candidate_email_addresses/#{dname}",standard_addresses,
@@ -245,6 +245,9 @@ class CertificateName < ActiveRecord::Base
           dcv.update_column(:candidate_addresses, standard_addresses) if dcv
         end
       rescue Exception=>e
+        Rails.cache.write("CertificateName.candidate_email_addresses/#{dname}",
+                          DomainControlValidation.email_address_choices(dname),
+                          expires_in: DomainControlValidation::EMAIL_CHOICE_CACHE_EXPIRES_DAYS.days)
         Logger.new(STDOUT).error e.backtrace.inspect
       end
     end

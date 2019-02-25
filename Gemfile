@@ -58,7 +58,7 @@ gem 'jquery-ui-rails'
 gem 'turbolinks'
 gem 'jbuilder'
 gem 'sdoc',          group: :doc
-gem 'airbrake'
+gem 'airbrake', '~> 8.1'
 gem 'rails-observers'
 gem 'actionpack-action_caching', '~> 1.1', '>= 1.1.1'
 gem 'sass-rails'
