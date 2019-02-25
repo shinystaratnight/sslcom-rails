@@ -606,6 +606,7 @@ class SslAccount < ActiveRecord::Base
     end
     uid ? User.find(uid) : nil
   end
+  memoize :get_account_owner
 
   def cached_users
     User.where(id: (Rails.cache.fetch("#{cache_key}/cached_users") do
