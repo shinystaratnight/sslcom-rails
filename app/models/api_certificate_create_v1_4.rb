@@ -422,8 +422,18 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
       end
       cc.provide_contacts!
       options[:certificate_order].orphaned_certificate_contents remove: true
-      # if debugging, we want to see response from Comodo
-      send_dcv(cc)
+      if options[:certificate_order].domains_validated?
+        options[:certificate_order].validate!
+        api_log_entry=options[:certificate_order].apply_for_certificate(mapping: cc.ca)
+        if api_log_entry and api_log_entry.instance_of?(SslcomCaRequest) and api_log_entry.response=~/Check CAA/
+          flash[:error] =
+              "CAA validation failed. See https://www.ssl.com/how-to/configure-caa-records-to-authorize-ssl-com/"
+        end
+
+        # set to issued and assign certificates
+      else
+        send_dcv(cc)
+      end
     end
   end
 

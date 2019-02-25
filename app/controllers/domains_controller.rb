@@ -382,7 +382,7 @@ class DomainsController < ApplicationController
         dcv.update_attribute(:identifier_found, true)
         unless dcv.satisfied?
           dcv.satisfy!
-          CaaCheck.pass?(@ssl_account.acct_number + 'domains', @domain, nil)
+          # CaaCheck.pass?(@ssl_account.acct_number + 'domains', @domain, nil)
         end
       end
     end

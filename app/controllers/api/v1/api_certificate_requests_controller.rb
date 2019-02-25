@@ -44,7 +44,9 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
     result.receipt_url     = domain+order_path(ssl_slug, acr.order)
     result.smart_seal_url  = domain+certificate_order_site_seal_path(ssl_slug, acr.ref)
     result.validation_url  = domain+certificate_order_validation_path(ssl_slug, acr)
-    result.registrant      = acr.certificate_content.registrant.to_api_query if (acr.certificate_content && acr.certificate_content.registrant)
+    result.registrant      = acr.certificate_content.registrant.to_api_query if
+        (acr.certificate_content && acr.certificate_content.registrant)
+    result.certificates    = acr.certificate_content.x509_certificates if acr.certificate_content.x509_certificates
   end
 
   def create_v1_4
@@ -1350,7 +1352,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
     result.order_status = acr.status
     result.registrant = acr.certificate_content.registrant.to_api_query if (acr.certificate_content && acr.certificate_content.registrant)
     result.contacts = acr.certificate_content.certificate_contacts if (acr.certificate_content && acr.certificate_content.certificate_contacts)
-    result.validations = result.validations_from_comodo(acr) #'validations' kept executing twice so it was renamed to 'validations_from_comodo'
+    result.validations = result.validations_from_comodo(acr) if acr.certificate_content.ca.blank? #'validations' kept executing twice so it was renamed to 'validations_from_comodo'
     result.description = acr.description
     result.product = acr.certificate.api_product_code
     result.product_name = acr.certificate.product
