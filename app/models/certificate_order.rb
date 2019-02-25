@@ -744,7 +744,10 @@ class CertificateOrder < ActiveRecord::Base
 
   def unchain_comodo
     update_column(:external_order_number, nil) unless external_order_number.blank?
-    certificate_content.add_ca(ssl_account) if certificate_content.ca_id.blank?
+    if certificate_content.ca_id.blank?
+      certificate_content.add_ca(ssl_account)
+      certificate_content.save
+    end
   end
 
   # :actual is based on the duration of the signed cert, :order is the duration based on the certificate order
