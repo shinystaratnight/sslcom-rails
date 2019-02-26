@@ -2,10 +2,7 @@
   function change_ext_order_#{co.id}()
   {
     var num = prompt("New external order number?", '');
-    if (num == null || num=="")
-      return;
-    else
-      window.location = '#{change_ext_order_number_certificate_order_path(@ssl_slug, co)}?num='+encodeURIComponent(num);
+    window.location = '#{change_ext_order_number_certificate_order_path(@ssl_slug, co)}?num='+encodeURIComponent(num);
   }
 -csr=co.csr
 -if current_user && current_user.is_admin?

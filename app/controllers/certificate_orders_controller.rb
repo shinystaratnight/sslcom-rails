@@ -237,6 +237,7 @@ class CertificateOrdersController < ApplicationController
         #reset dcv validation
         @certificate_content.add_ca(@certificate_order.ssl_account) if @certificate_order.external_order_number.blank?
         @certificate_content.agreement=true
+        @certificate_content.save
         @certificate_order.validation.validation_rules.each do |vr|
           if vr.description=~/\Adomain/
             ruling=@certificate_order.validation.validation_rulings.detect{|vrl| vrl.validation_rule == vr}
@@ -516,7 +517,11 @@ class CertificateOrdersController < ApplicationController
   end
 
   def change_ext_order_number
-    @certificate_order.update_column :external_order_number, params[:num]
+    if params[:num].blank?
+      @certificate_order.unchain_comodo
+    else
+      @certificate_order.update_column :external_order_number, params[:num]
+    end
     SystemAudit.create(owner: current_user, target: @certificate_order,
                        action: "changed external order number to #{params[:num]}")
     redirect_to certificate_order_path(@ssl_slug, @certificate_order)

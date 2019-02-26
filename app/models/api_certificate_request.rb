@@ -1,4 +1,5 @@
 class ApiCertificateRequest < CaApiRequest
+  extend Memoist
   include CertificateType
   attr_accessor :csr_obj, :current_user, :test, :action, :admin_submitted
 
@@ -19,7 +20,7 @@ class ApiCertificateRequest < CaApiRequest
       :registered_state_or_province_name, :registered_country_name, :incorporation_date,
       :assumed_name, :business_category, :email_address, :contact_email_address, :dcv_email_address,
       :ca_certificate_id, :is_customer_validated, :hide_certificate_reference, :external_order_number,
-      :dcv_candidate_addresses, :dcv_method, :ref, :contacts, :options, :renewal_id, :billing_profile]
+      :dcv_candidate_addresses, :dcv_method, :ref, :contacts, :options, :renewal_id, :billing_profile, :certificates]
 
   UPDATE_ACCESSORS_1_4 = [:cert_names, :caa_check_domains]
 
@@ -83,6 +84,7 @@ class ApiCertificateRequest < CaApiRequest
     (self.account_key && self.secret_key) ?
         ApiCredential.find_by_account_key_and_secret_key(self.account_key, self.secret_key) : nil
   end
+  memoize :api_credential
 
   def find_certificate_order(field=:ref)
     if defined?(field) && self.send(field)
