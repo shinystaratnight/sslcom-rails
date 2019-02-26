@@ -42,15 +42,31 @@ jQuery(function($) {
           if ($(this).prop('checked')) {
             if (is_cs == '') {
               $('.csr_wrap').show();
+              $('.algorithm_wrap').hide();
             } else {
               $('.csr_wrap').show();
+              $('.algorithm_wrap').hide();
             }
           } else {
             if (is_cs == '') {
               $('.csr_wrap').hide();
+              $('.algorithm_wrap').show();
             } else {
               $('.csr_wrap').hide();
+              $('.algorithm_wrap').show();
             }
+          }
+        });
+
+        $(document).on('change', '#sign_algorithm', function(e) {
+          e.preventDefault();
+
+          if ($(this).find(':selected').text().indexOf('RSA') != -1) {
+            $('.rsa_key_size').show();
+            $('.ecc_key_size').hide();
+          } else {
+            $('.rsa_key_size').hide();
+            $('.ecc_key_size').show();
           }
         });
 
@@ -95,6 +111,7 @@ jQuery(function($) {
                 $('.cert_wrap').show();
 
                 $('.generate_wrap').hide();
+                $('.algorithm_wrap').hide();
                 $('.cert_download_wrap').show();
                 $('#cert_common_name').val(data.cert_common_name);
               }
@@ -120,8 +137,26 @@ jQuery(function($) {
               }
             });
 
+            // Getting Options for generating csr and key
+            var hash_alg = $('#hash_algorithm').find(':selected').text();
+            var sign_alg = $('#sign_algorithm').find(':selected').text();
+            var key_size = '';
+
+            if (sign_alg.indexOf('RSA') !== -1) {
+              key_size = $('#rsa_key_size').find(':selected').text();
+            } else {
+              key_size = $('#ecc_key_size').find(':selected').text();
+            }
+
+            var options = {
+              digestAlgorithm: 'SHA-1',
+              hashAlgorithm: hash_alg,
+              signAlgorithm: sign_alg,
+              keySize: key_size
+            };
+
             // Generating CSR, Private Key and Certificate
-            generateCSR(info, [], undefined, function(csr, pkey) {
+            generateCSR(info, [], options, function(csr, pkey) {
               $('.csr').val(csr);
               $('.csr').attr('readonly', true);
               $('.csr_wrap').show();
@@ -149,6 +184,7 @@ jQuery(function($) {
                   $('.cert_wrap').show();
 
                   $('.generate_wrap').hide();
+                  $('.algorithm_wrap').hide();
                   $('.pkcs_download_wrap').show();
                   $('#cert_common_name').val(data.cert_common_name);
                 }
@@ -216,7 +252,11 @@ jQuery(function($) {
               var priKey = $('.pri_key').val().replace(/(-----(BEGIN|END) PRIVATE KEY-----|\n)/g, '');
               var pfxFileName = $('#cert_common_name').val();
 
-              passwordBasedIntegrity(certs, priKey, password, pfxFileName, function() {
+              /*passwordBasedIntegrity(certs, priKey, password, pfxFileName, function() {
+                $('.generate_pfx_loader_wrap').remove();
+                $('body').removeClass('no_scroll_y');
+              });*/
+              openSSLLike(certs, priKey, password, pfxFileName, function() {
                 $('.generate_pfx_loader_wrap').remove();
                 $('body').removeClass('no_scroll_y');
               });
