@@ -40,6 +40,8 @@ class ValidationHistory < ActiveRecord::Base
 
   preference  :viewing_method, :string, :default=>"download" #or thumbnail
 
+  default_scope{ where{id << [3126]}} # temporary https://www.ssl.com/certificate_orders/co-141e6s5s9/validation/edit
+
   # interpolate in paperclip
   Paperclip.interpolates :random_secret  do |attachment, style|
     attachment.instance.random_secret
