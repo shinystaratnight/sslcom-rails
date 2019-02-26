@@ -19,7 +19,7 @@
     .row.pt-3
       - if current_user.blank?
         .col-md-6
-          %input.generate_cert.right{:type=>'bu_tton', :value=>'Generate Certificate', :class=>'btn btn-primary'}
+          %input.generate_cert.right{:type=>'button', :value=>'Generate Certificate', :class=>'btn btn-primary'}
         .col-md-6{:style=>'font-size: 15px'}
           %input.own_csr{:type=>'checkbox', :style=>'height: 20px; vertical-align: bottom; margin-right: 10px'} I have my own CSR
       - else
