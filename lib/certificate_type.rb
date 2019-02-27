@@ -14,7 +14,7 @@ module CertificateType
     else
       (self.is_a?(ApiCertificateRequest) ? target_certificate :
            self).product =~ /\A(wildcard|high_assurance|ucc|premiumssl)/ ||
-          is_client_enterprise? || is_client_business? || is_client_pro?
+          is_client_enterprise? || is_client_business?
     end
   end
   
