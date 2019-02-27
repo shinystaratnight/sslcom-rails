@@ -40,6 +40,7 @@ class CertificateOrdersController < ApplicationController
   in_place_edit_for :csr, :signed_certificate_by_text
 
   before_action :set_schedule_value, only: [:edit, :reprocess]
+  before_action :set_algorithm_and_size, only: [:generate_cert]
 
   NUM_ROWS_LIMIT=2
 
@@ -1508,5 +1509,33 @@ class CertificateOrdersController < ApplicationController
 
       @certificate_order.managed_csrs << managed_csr
     end
+  end
+
+  def set_algorithm_and_size
+    @hash_algorithm = [
+        ['SHA-256', 'SHA-256'],
+        ['SHA-384', 'SHA-384'],
+        ['SHA-512', 'SHA-512']
+    ]
+
+    @sign_algorithm = [
+        ['RSASSA-PKCS1-v1_5', 'RSASSA-PKCS1-v1_5'],
+        ['ECDSA', 'ECDSA'],
+        ['RSA-PSS', 'RSA-PSS']
+    ]
+
+    @rsa_key_size = [
+        ['2048', '2048'],
+        ['3072', '3072'],
+        ['4096', '4096'],
+        ['6144', '6144'],
+        ['8192', '8192']
+    ]
+
+    @ecc_key_size = [
+        ['256', '256'],
+        ['384', '384'],
+        ['521', '521']
+    ]
   end
 end
