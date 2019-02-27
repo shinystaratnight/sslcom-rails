@@ -77,6 +77,25 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
     render_500_error e
   end
 
+  def retrieve_signed_certificates
+    set_template "retreive_signed_certificates"
+
+    if @result.valid? && @result.save
+      @result.signed_certificates = []
+      @acr = @result.find_signed_certificates_by_public_key
+
+      @acr.each do |sc|
+        @result.signed_certificates << sc.as_json['signed_certificate']
+      end
+    else
+      InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
+    end
+
+    render_200_status
+  rescue => e
+    render_500_error e
+  end
+
   def revoke_v1_4
     set_template 'revoke_v1_4'
     if @result.valid? && @result.save
@@ -1399,6 +1418,8 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
               when "retrieve_v1_3", "show_v1_4", "index_v1_4", "detail_v1_4", "view_upload_v1_4", "upload_v1_4",
                   "update_site_seal_v1_4", "generate_certificate_v1_4","callback_v1_4"
                 ApiCertificateRetrieve
+              when "retrieve_signed_certificates"
+                ApiSignedCertificateRequest
               when "api_parameters_v1_4"
                 ApiParameters
               when "quote"

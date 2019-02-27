@@ -72,6 +72,10 @@ SslCom::Application.routes.draw do
           as: :api_team_saved_contacts, via: :get
         match '/teams/saved_registrants' => 'teams#saved_registrants',
           as: :api_team_saved_registrants, via: :get
+
+        # Signed Certificates
+        match '/signed_certificates' => 'api_certificate_requests#retrieve_signed_certificates',
+              as: :api_signed_certificates_retrieve, via: [:post]
             
         # Certificates
         match '/certificates' => 'api_certificate_requests#create_v1_4',
