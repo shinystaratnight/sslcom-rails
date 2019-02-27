@@ -1210,13 +1210,13 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def apply_for_certificate(options={})
-    if [Ca::CERTLOCK_CA,Ca::SSLCOM_CA,Ca::MANAGEMENT_CA].include?(options[:ca]) or !certificate_content.ca.blank? or
+    if [Ca::CERTLOCK_CA,Ca::SSLCOM_CA,Ca::MANAGEMENT_CA].include?(options[:ca]) or certificate_content.ca or
         !options[:mapping].blank?
       if !certificate_content.infringement.empty? # possible trademark problems
         OrderNotifier.potential_trademark(Settings.notify_address, self, certificate_content.infringement).deliver_now
       elsif !certificate.is_server? or (domains_validated? and caa_validated?)
         # queue this job due to CAA lookups
-        if certificate_names.count > 10 and not options[:mapping].profile_name=~/EV/
+        if certificate_names.count > 10 and not options[:mapping].try(:profile_name)=~/EV/
           unless certificate_content.pending_issuance?
             SslcomCaApi.delay.apply_for_certificate(self, options)
             certificate_content.pend_issuance!
@@ -1227,7 +1227,7 @@ class CertificateOrder < ActiveRecord::Base
       end
     else
       ComodoApi.apply_for_certificate(self, options) if ca_name=="comodo"
-    end if signed_certificate.blank? or remaining_days>0
+    end if remaining_days>0
   end
 
   def retrieve_ca_cert(email_customer=true)
