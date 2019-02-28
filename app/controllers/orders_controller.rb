@@ -275,7 +275,7 @@ class OrdersController < ApplicationController
       @orders = (current_user.is_system_admins? ? @order.billable : current_user.ssl_account).orders.where(
         state: 'paid',
         created_at: start..finish,
-        description: 'SSL Certificate Order'
+        description: 'SSL.com Certificate Order'
       )
     end
     

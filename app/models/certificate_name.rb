@@ -225,7 +225,7 @@ class CertificateName < ActiveRecord::Base
   WhoisJob = Struct.new(:dname, :certificate_name) do
     def perform
       begin
-        if dcv=DomainControlValidation.global.whois_threshold.find_by_subject(dname)
+        if dcv=DomainControlValidation.global.find_by_subject(dname)
           standard_addresses = dcv.candidate_addresses
         else
           standard_addresses = DomainControlValidation.email_address_choices(dname)
@@ -261,9 +261,13 @@ class CertificateName < ActiveRecord::Base
   # certificate_name in the event the domain_control_validations candidate addresses need to be updated
   def self.candidate_email_addresses(name,certificate_name=nil)
     name=CertificateContent.non_wildcard_name(name,false)
-    Rails.cache.read("CertificateName.candidate_email_addresses/#{name}") ||
-      (Delayed::Job.enqueue(WhoisJob.new(name,certificate_name))
-      DomainControlValidation.global.whois_threshold.find_by_subject(name).try(:candidate_addresses) ||
-      DomainControlValidation.email_address_choices(name))
+    result=Rails.cache.read("CertificateName.candidate_email_addresses/#{name}")
+    if result
+      result
+    else
+      Delayed::Job.enqueue(WhoisJob.new(name,certificate_name))
+      DomainControlValidation.global.find_by_subject(name).try(:candidate_addresses) ||
+        DomainControlValidation.email_address_choices(name)
+    end
   end
 end

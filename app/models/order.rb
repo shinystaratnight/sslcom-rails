@@ -51,7 +51,7 @@ class Order < ActiveRecord::Base
   
   FAW                = "Funded Account Withdrawal"
   DOMAINS_ADJUSTMENT = "Domains Adjustment"
-  SSL_CERTIFICATE    = "SSL Certificate Order"
+  SSL_CERTIFICATE    = "SSL.com Certificate Order"
   MI_PAYMENT         = "Monthly Invoice Payment"
   DI_PAYMENT         = "Daily Invoice Payment"
   
