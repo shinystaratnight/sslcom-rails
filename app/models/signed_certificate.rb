@@ -411,7 +411,7 @@ class SignedCertificate < ActiveRecord::Base
                           certificate_order: certificate_order, file_path: zip_path).deliver
             # OrderNotifier.processed_certificate_order(contact: Settings.shadow_certificate_recipient,
             #               certificate_order: certificate_order, file_path: zip_path).deliver if certificate_order.certificate_content.ca
-            OrderNotifier.site_seal_approve(c, certificate_order).deliver
+            OrderNotifier.site_seal_approve(c, certificate_order).deliver if certificate_order.certificate.is_server?
           rescue Exception=>e
             logger.error e.backtrace.inspect
           end

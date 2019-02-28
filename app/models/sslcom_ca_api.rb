@@ -114,6 +114,7 @@ class SslcomCaApi
                     "www.#{common_name}"
                   end
                 end
+      # replace dNSName= with iPAddress:1.2.3.4 for ip address
       "dNSName=#{names.compact.map(&:downcase).uniq.join(",dNSName=")}"
     else
       names
