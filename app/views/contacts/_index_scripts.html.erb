@@ -187,7 +187,15 @@ jQuery(function($) {
         hideIndivFields();
       }
     }
-    
+    function epkiAgreementRequired() {
+      if ( (epki_contact == 'true') && !$('#contact_epki_agreement_request').is(':checked') ) {
+        alert("Please check 'Service Agreement' checkbox if you agree with 'SSL.com Enterprise PKI Service Agreement'");
+        return false;
+      } else {
+        return true;
+      }
+    }
+
     $('.saved_contacts').change(function() {
       copyContactFields($(this));
     });
@@ -213,6 +221,10 @@ jQuery(function($) {
       showIndivFields();
       showOrgFields();
     }
+
+    $('form').on('submit', function() {
+      return epkiAgreementRequired();
+    });
 
     $('#new_saved_contact #contact_type, #edit_saved_contact #contact_type').change(function() {
       if ($(this).val()=='Registrant') {
