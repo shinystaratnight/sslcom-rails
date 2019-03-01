@@ -97,7 +97,7 @@
     -country = f.object.country if f.object
     =f.select :country, options_for_select(Country::PRIORITY+[""], disabled: [""], )+options_for_select(Country.approved.collect {|c| [ c.name, c.iso1_code ] }.sort{|x,y|x[0]<=>y[0]}, required: true, selected: (country || 'US'))
   
-  - if params[:epki_registrant] || @epki_registrant
+  - if params[:epki_registrant] || @render_epki_registrant
     .saved-contact-fields EPKI Agreement
     .clearfix
       %label{for: 'EPKI Agreement '}

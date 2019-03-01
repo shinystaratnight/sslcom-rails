@@ -64,7 +64,7 @@ class ContactsController < ApplicationController
   end
 
   def edit
-    @epki_registrant = @contact.show_domains?
+    @render_epki_registrant = @contact.show_domains?
   end
   
   def create
@@ -110,9 +110,11 @@ class ContactsController < ApplicationController
     new_params = epki_registrant ? get_epki_registrant_params : set_registrant_type(params)
     
     respond_to do |format|
+      @render_epki_registrant = @contact.show_domains?
       type = new_params[:type] == 'CertificateContact' ? CertificateContact : Registrant
       if @contact.becomes(type).update_attributes(new_params)
         flash[:notice] = "#{@contact.type} was successfully updated."
+        update_epki_registrant
         format.html { redirect_to_index }
         format.json { render json: @contact, status: :ok }
       else
@@ -145,15 +147,34 @@ class ContactsController < ApplicationController
     new_params
   end
 
+  def update_epki_registrant
+    if @render_epki_registrant
+      flash[:notice] = "EPKI Agreement was successfully updated. Please wait for SSL.com Administrator to approve this identity."
+      team_name = current_user.ssl_account.get_team_name
+      SystemAudit.create(
+        owner:  current_user,
+        target: @contact,
+        action: "Existing EPKI Agreement update request for #{team_name}",
+        notes:  "User #{current_user.email} has requested changes to existing EPKI Registrant for team #{team_name}."
+      )
+    end
+  end
+
   def create_epki_registrant
     new_params = get_epki_registrant_params
-    new_params.delete("epki_registrant")
     @contact = Registrant.new(new_params)
     if @contact.save
       flash[:notice] = "EPKI Agreement was successfully created. Please wait for SSL.com Administrator to approve this identity."
+      team_name = current_user.ssl_account.get_team_name
+      SystemAudit.create(
+        owner:  current_user,
+        target: @contact,
+        action: "New EPKI Agreement Request for #{team_name}",
+        notes:  "User #{current_user.email} has requested new EPKI Registrant for team #{team_name}."
+      )
       redirect_to_index
     else
-      @epki_registrant = true
+      @render_epki_registrant = true
       @contact = @contact.becomes(Contact)
       render :new
     end
