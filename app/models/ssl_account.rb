@@ -44,9 +44,9 @@ class SslAccount < ActiveRecord::Base
   end
   has_many  :certificate_contacts, through: :certificate_contents
   has_many  :registrants, through: :certificate_contents
-  has_one   :epki_registrant, as: :contactable
+  has_one   :epki_registrant, -> { where(status: Contact::statuses[:epki_agreement]) },
+            as: :contactable, class_name: 'Registrant', dependent: :destroy
   has_one   :reseller, :dependent => :destroy
-  accepts_nested_attributes_for :reseller, :allow_destroy=>false
   has_one   :affiliate, :dependent => :destroy
   has_one   :funded_account, :dependent => :destroy
   has_many  :orders, :as=>:billable, :after_add=>:build_line_items
@@ -83,6 +83,8 @@ class SslAccount < ActiveRecord::Base
   has_many  :cas_certificates
   has_many  :cas, through: :cas_certificates
   has_many  :certificate_order_tokens
+
+  accepts_nested_attributes_for :reseller, :allow_destroy=>false
 
   unless MIGRATING_FROM_LEGACY
     #has_many  :orders, :as=>:billable, :after_add=>:build_line_items

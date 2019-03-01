@@ -1,0 +1,107 @@
+<script>
+  jQuery.noConflict();
+  jQuery(function($) {
+    $(document).ready(function() {
+      var domains, durations;
+      domains = [];
+      durations = new Array(<%= @certificate.num_durations %>);
+
+      <% @certificate.num_durations.times do |i| -%>
+          durations[<%= i %>] = <%= @certificate.items_by_duration[i].price %>;
+      <% end -%>
+
+      updateOrderPricing = function() {
+        var domainsCost, itemCost, durationIndex, durationCost, emailsCount, totalCost;
+        domainsCost = 0.0;
+        durationIndex = $(":radio[name*=duration]:checked").val();
+        durationCost = durations[durationIndex - 1];
+        emailsCount = Number( $("#validated-sc-emails").data("all-sc-emails") );
+        itemCost = (parseFloat(durationCost) + parseFloat(domainsCost)).toFixed(2);
+        totalCost = (itemCost * emailsCount).toFixed(2);
+
+        $("#calculated_price").text("$" +
+          totalCost + " USD " + "( $" +
+          itemCost + " X " +
+          emailsCount + " emails )"
+        );
+      };
+
+      validEmail = function(email) {
+        var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        return re.test(email);
+      };
+
+      getEpkiValidatedEmails = function(emails) {
+        var curEmail,
+          domains = $("#text-sc-emails").data("epki-domains").split(","),
+          validateEmails = [],
+          pendingEmails = [];
+        
+        for (var di = 0; di < domains.length; di++) {
+          for (var i = 0; i < emails.length; i++) {
+            curEmail = emails[i];
+            if (curEmail.split("@").pop() == domains[di].trim().toLowerCase()) {
+              validateEmails.push(curEmail);
+            } else {
+              pendingEmails.push(curEmail);
+            }
+          }
+        }
+
+        $("#validated-sc-emails").data("validated-sc-emails", validateEmails.length);
+        $("#pending-sc-emails").data("pending-sc-emails", pendingEmails.length);
+        $("#validated-sc-emails span").text(validateEmails.length);
+        $("#pending-sc-emails span").text(pendingEmails.length);
+        updateOrderPricing();
+      };
+
+      parseEmails = function() {
+        var allEmails, finalEmails, tempEmail;
+        allEmails = $("#text-sc-emails").val().split(/[ ,]+/);
+        finalEmails = [];
+
+        for (var i = 0; i < allEmails.length; i++) {
+          tempEmail = allEmails[i].trim().toLowerCase();
+          if ( validEmail(tempEmail) ) { finalEmails.push(tempEmail); }
+        }
+        if (finalEmails.length > 0) { 
+          $("#validated-sc-emails").data("all-sc-emails", finalEmails.length);
+          getEpkiValidatedEmails(finalEmails); 
+        }
+      };
+
+      updateCertificateDuration = function(type) {
+        var data = $("#frm-smime-client-enrollment").serialize();
+        $.ajax({
+          type: "GET",
+          url: $("#frm-smime-client-enrollment").attr("action"),
+          data: data.concat("&get_duration=true"),
+          dataType: "JSON"
+        }).success(function(json) {
+          $("#duration-container-sc").html(json.content);
+        });
+      };
+      
+      updateOrderPricing();
+      
+      $("#text-sc-emails").on("keypress", function (e) {
+        if (e.keyCode == 13 || e.keyCode == 32) { parseEmails(); }
+      });
+      
+      $("#text-sc-emails").on("focusout", function () {
+        parseEmails();
+      });
+
+      $(document).on("click", ":radio[name*=duration]", function() {
+        parseEmails();
+        updateOrderPricing();
+      });
+      
+      $("#sel-sc-certificate").on("change", function() {
+        updateCertificateDuration();
+        parseEmails();
+        updateOrderPricing();
+      });
+    });
+  });
+</script>

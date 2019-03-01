@@ -235,10 +235,11 @@ SslCom::Application.routes.draw do
         get :reprocessing
         get :search
         get :developers
-        match :parse_csr, via: [:post, :options]
         get :show_cert_order
         post :validate_issue
         post :switch_from_comodo
+        match :parse_csr, via: [:post, :options]
+        match :smime_client_enrollment, via: [:get, :post]
       end
 
       member do
@@ -376,7 +377,10 @@ SslCom::Application.routes.draw do
         post :add_cart
         get :search
         get :visitor_trackings
-        post :create_free_ssl, :create_multi_free_ssl, :lookup_discount
+        post :create_free_ssl
+        post :create_multi_free_ssl
+        post :lookup_discount
+        post :smime_client_enroll_create
         post :ucc_domains_adjust_create
         post :change_quantity_in_cart
       end

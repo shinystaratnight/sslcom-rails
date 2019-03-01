@@ -235,6 +235,14 @@ class Certificate < ActiveRecord::Base
   scope :available, ->{where{(product != 'mssl') & (serial =~ "%sslcom%") & (title << Settings.excluded_titles)}}
   scope :sitemap, ->{where{(product != 'mssl') & (product !~ '%tr')}}
   scope :for_sale, ->{where{(product != 'mssl') & (serial =~ "%sslcom%")}}
+  
+  def self.get_smime_client_products(tier=nil)
+    cur_tier = tier ? "#{tier}tr" : ""
+    Certificate.available.where(
+      "product REGEXP ?",
+      "^personal.*(basic|pro|business|enterprise)#{cur_tier}$"
+    )
+  end
 
   def self.map_to_legacy(description, mapping=nil)
     [MAP_TO_TRIAL,MAP_TO_OV,MAP_TO_EV,MAP_TO_WILDCARD,MAP_TO_UCC].each do |m|
