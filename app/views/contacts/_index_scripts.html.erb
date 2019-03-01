@@ -5,7 +5,7 @@ jQuery(function($) {
     <%js_roles = CertificateContent::CONTACT_ROLES.dclone%>
     var form_types = ["<%=js_roles.map{|role|role.insert(0,"#certificate_content_")}.join("_form\", \"").html_safe%>_form"];
     var check_boxes = ["<%=(js_roles-%w(administrative)).join("_checkbox\", \"").html_safe%>_checkbox"];
-    var epki_contact = "<%= (params[:epki_registrant]).html_safe %>";
+    var epki_contact = "<%= (params[:epki_registrant] || @epki_registrant || "false") %>";
 
     $(':checkbox[id*=checkbox]').click(function(){
       to = $(this).attr('id').length - '_checkbox'.length;
@@ -208,6 +208,7 @@ jQuery(function($) {
     if (epki_contact == "true") {
       hideSavedContactFields();
       hideElement($('#contact_type').parent());
+      hideElement($('#contact_registrant_type').parent());
       addressRequired();
       showIndivFields();
       showOrgFields();

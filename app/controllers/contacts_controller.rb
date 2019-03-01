@@ -64,7 +64,7 @@ class ContactsController < ApplicationController
   end
 
   def edit
-
+    @epki_registrant = @contact.show_domains?
   end
   
   def create
@@ -86,25 +86,6 @@ class ContactsController < ApplicationController
       end
     end
   end
-  
-  def create_epki_registrant
-      new_params = set_registrant_type(params).merge(
-        contactable_id: current_user.ssl_account.id,
-        contactable_type: "SslAccount",
-        status: Contact::statuses[:pending_epki],
-        registrant_type: Registrant::registrant_types[:organization],
-        type: "Registrant"
-      )
-      new_params.delete("epki_registrant")
-      @contact = Registrant.new(new_params)
-      if @contact.save
-        flash[:notice] = "EPKI Agreement was successfully created. Please wait for SSL.com Administrator to approve this identity."
-        redirect_to_index
-      else
-        @contact = @contact.becomes(Contact)
-        render :new
-      end
-  end
 
   def admin_update
     if @contact && params[:status]
@@ -125,7 +106,9 @@ class ContactsController < ApplicationController
   end
 
   def update
-    new_params = set_registrant_type params
+    epki_registrant = params[:contact][:epki_registrant]
+    new_params = epki_registrant ? get_epki_registrant_params : set_registrant_type(params)
+    
     respond_to do |format|
       type = new_params[:type] == 'CertificateContact' ? CertificateContact : Registrant
       if @contact.becomes(type).update_attributes(new_params)
@@ -147,6 +130,34 @@ class ContactsController < ApplicationController
   end
   
   private
+
+  def get_epki_registrant_params
+    domains = params[:contact][:domains].strip.split(/[\s,]+/).map(&:strip)
+    new_params = set_registrant_type(params).merge(
+      contactable_id: current_user.ssl_account.id,
+      contactable_type: "SslAccount",
+      status: Contact::statuses[:pending_epki],
+      registrant_type: Registrant::registrant_types[:organization],
+      type: "Registrant",
+      domains: domains
+    )
+    new_params.delete("epki_registrant")
+    new_params
+  end
+
+  def create_epki_registrant
+    new_params = get_epki_registrant_params
+    new_params.delete("epki_registrant")
+    @contact = Registrant.new(new_params)
+    if @contact.save
+      flash[:notice] = "EPKI Agreement was successfully created. Please wait for SSL.com Administrator to approve this identity."
+      redirect_to_index
+    else
+      @epki_registrant = true
+      @contact = @contact.becomes(Contact)
+      render :new
+    end
+  end
 
   def redirect_to_index
     redirect_to saved_contacts_contacts_path(

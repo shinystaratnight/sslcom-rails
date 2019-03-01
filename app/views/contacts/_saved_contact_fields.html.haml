@@ -97,7 +97,7 @@
     -country = f.object.country if f.object
     =f.select :country, options_for_select(Country::PRIORITY+[""], disabled: [""], )+options_for_select(Country.approved.collect {|c| [ c.name, c.iso1_code ] }.sort{|x,y|x[0]<=>y[0]}, required: true, selected: (country || 'US'))
   
-  - if params[:epki_registrant]
+  - if params[:epki_registrant] || @epki_registrant
     .saved-contact-fields EPKI Agreement
     .clearfix
       %label{for: 'EPKI Agreement '}
@@ -108,9 +108,10 @@
       target: :_blank, id: "chk-epki-service-agree"
       =f.hidden_field :epki_registrant, value: true
     .clearfix
-      %label{for: 'EPKI Agreement '}
+      - domains = f.object.new_record? ? '' : f.object.domains.join(' ')
+      %label{for: 'EPKI Agreement'}
         *EPKI Domains:
-      =f.text_area :domains, cols: 40, rows: 5
+      =f.text_area :domains, value: domains, cols: 40, rows: 5
 
   -unless new_contact == :new_contact
     .clearfix

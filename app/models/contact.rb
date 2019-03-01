@@ -11,7 +11,6 @@ class Contact < ActiveRecord::Base
     validated: 20,
     epki_agreement: 25,
     pending_epki: 30
-
   }
 
   belongs_to :contactable, polymorphic: true
@@ -181,5 +180,9 @@ class Contact < ActiveRecord::Base
   
   def self.optional_contacts?
     Settings.dynamic_contact_count == "on"
+  end
+
+  def show_domains?
+    epki_agreement? || pending_epki?
   end
 end
