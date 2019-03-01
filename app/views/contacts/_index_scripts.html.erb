@@ -5,6 +5,7 @@ jQuery(function($) {
     <%js_roles = CertificateContent::CONTACT_ROLES.dclone%>
     var form_types = ["<%=js_roles.map{|role|role.insert(0,"#certificate_content_")}.join("_form\", \"").html_safe%>_form"];
     var check_boxes = ["<%=(js_roles-%w(administrative)).join("_checkbox\", \"").html_safe%>_checkbox"];
+    var epki_contact = "<%= (params[:epki_registrant]).html_safe %>";
 
     $(':checkbox[id*=checkbox]').click(function(){
       to = $(this).attr('id').length - '_checkbox'.length;
@@ -204,6 +205,14 @@ jQuery(function($) {
       showRegistrantFields();
     }
     
+    if (epki_contact == "true") {
+      hideSavedContactFields();
+      hideElement($('#contact_type').parent());
+      addressRequired();
+      showIndivFields();
+      showOrgFields();
+    }
+
     $('#new_saved_contact #contact_type, #edit_saved_contact #contact_type').change(function() {
       if ($(this).val()=='Registrant') {
         $('#contact_registrant_type').parent().removeClass('hidden');
