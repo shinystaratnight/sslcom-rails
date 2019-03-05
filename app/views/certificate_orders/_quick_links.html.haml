@@ -47,6 +47,7 @@
       %li=link_to "Physical Tokens", search_certificate_orders_path(@ssl_slug, search: "physical_tokens:in_transit,received,in_possession#{is_test}")
       %li=link_to "Client/SMIME Pro", search_certificate_orders_path(@ssl_slug, search: "product:personal-pro#{is_test}")
       %li=link_to "Client/SMIME Business", search_certificate_orders_path(@ssl_slug, search: "product:personal-business#{is_test}")
+      %li=link_to "NAESB Client", search_certificate_orders_path(@ssl_slug, search: "product:personal-naesb-basic#{is_test}")
       -unless current_user.is_system_admins?
         %li &nbsp;
         %li Developers:

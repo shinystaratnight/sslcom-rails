@@ -1,19 +1,16 @@
-SSL Certificate Order Confirmation (#<%=@order.reference_number%>)
+SSL.com Certificate Order Confirmation (#<%=@order.reference_number%>)
 
-The following SSL certificate order has been placed:
+The following certificate order has been placed:
 
 Date: <%=@order.created_at.strftime("%B %d, %Y %T")%>
 Reference Number: <%=@order.reference_number%>
-Description:
 
 <%@order.cached_certificate_orders.each do |cert|-%>
 
-  <%=cert.description+" ("+cert.quantity.to_s+" qty) ("+cert.price.format+" ea)"%>
+  <%=cert.description+" ("+cert.quantity.to_s+" qty)"%>
   <%order_line_items(cert, true).each do |item|-%>
-        - <%=item%>
+        - <%=item.html_safe%>
   <%end-%>
 <%end-%>
       
-Order Amount: <%=@order.final_amount.format%>
-
 <%=render(:partial=>"support_contact")%>

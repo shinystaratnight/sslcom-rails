@@ -110,7 +110,7 @@ class ProductsController < ApplicationController
   def notify_customer
     @co.processed_recipients.map{|r|r.split(" ")}.flatten.uniq.each do |c|
       if @site_seal.fully_activated?
-        OrderNotifier.site_seal_approve(c, @co).deliver
+        OrderNotifier.site_seal_approve(c, @co).deliver if @co.certificate.is_server?
       else
         OrderNotifier.site_seal_unapprove(c, @co).deliver
       end

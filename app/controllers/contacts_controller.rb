@@ -79,7 +79,15 @@ class ContactsController < ApplicationController
   
   def admin_update
     if @contact && params[:status]
+      previous_status = @contact.status
       @contact.update_column(:status, Contact.statuses[params[:status]])
+      SystemAudit.create(
+        owner:  current_user,
+        target: @contact,
+        notes:  "Saved Identity #{@contact.email} status was updated from 
+          '#{previous_status}' to '#{@contact.status}' by #{current_user.email}.",
+        action: "Saved Identity #{@contact.email} status update."
+      )
       validate_certificate_orders
     end
     notice_ext = @co_validated && @co_validated > 0 ? "And #{@co_validated} certificate order(s) were validated." : ""

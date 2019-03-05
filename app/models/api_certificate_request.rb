@@ -32,7 +32,7 @@ class ApiCertificateRequest < CaApiRequest
       :assumed_name, :business_category, :email_address, :contact_email_address, :dcv_email_address,
       :ca_certificate_id, :is_customer_validated, :hide_certificate_reference, :external_order_number,
       :dcv_candidate_addresses, :dcv_method, :dcv_methods, :certificate_ref, :contacts, :admin_funded,
-      :ca_order_number, :debug, :api_call, :billing_profile, :callback, :unique_value]
+      :ca_order_number, :debug, :api_call, :billing_profile, :callback, :unique_value, :pub_key, :signed_certificates]
 
   REPROCESS_ACCESSORS = [:account_key, :secret_key, :server_count, :server_software, :domains,
       :domain, :common_names_flag, :csr, :organization_name, :organization_unit_name, :post_office_box,
@@ -125,6 +125,21 @@ class ApiCertificateRequest < CaApiRequest
       else
         certs<<klass
       end
+    end
+  end
+
+  # find signed certificates based on the `public_key` api parameter
+  def find_signed_certificates_by_public_key
+    public_key = JSON.parse(self.parameters)["pub_key"]
+
+    total_signed_certs = self.api_requestable.users.flatten.compact
+        .map(&:certificate_orders).flatten.compact
+        .map(&:signed_certificates).flatten.compact.map{|sc| sc.id}
+
+    if total_signed_certs.empty?
+      []
+    else
+      SignedCertificate.unscoped.where(id: total_signed_certs).by_public_key(public_key.gsub("\r\n", "\n")).flatten.compact
     end
   end
 

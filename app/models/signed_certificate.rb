@@ -99,6 +99,10 @@ class SignedCertificate < ActiveRecord::Base
   scope :most_recent_expiring, lambda{|start, finish|
     find_by_sql("select * from signed_certificates as T where expiration_date between '#{start}' AND '#{finish}' AND created_at = ( select max(created_at) from signed_certificates where common_name like T.common_name )")}
 
+  scope :by_public_key, lambda { |pubKey|
+    where{replace(replace(decoded, ' ', ''), '\r\n', '\n') =~ '%' + pubKey + '%'}
+  }
+
   scope :search_with_terms, lambda { |term|
     term ||= ""
     term = term.strip.split(/\s(?=(?:[^']|'[^']*')*$)/)
@@ -407,7 +411,7 @@ class SignedCertificate < ActiveRecord::Base
                           certificate_order: certificate_order, file_path: zip_path).deliver
             # OrderNotifier.processed_certificate_order(contact: Settings.shadow_certificate_recipient,
             #               certificate_order: certificate_order, file_path: zip_path).deliver if certificate_order.certificate_content.ca
-            OrderNotifier.site_seal_approve(c, certificate_order).deliver
+            OrderNotifier.site_seal_approve(c, certificate_order).deliver if certificate_order.certificate.is_server?
           rescue Exception=>e
             logger.error e.backtrace.inspect
           end

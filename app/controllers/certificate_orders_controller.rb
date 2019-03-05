@@ -190,8 +190,9 @@ class CertificateOrdersController < ApplicationController
             @notification_groups.insert(0, ['none', 'none']) if @notification_groups.empty?
 
             @managed_csrs = (@certificate_order.ssl_account.all_csrs)
-                                .sort_by{|arr| arr.common_name}
-                                .map{|arr| [(arr.friendly_name || arr.common_name)+' '+ arr.public_key_sha1, arr.ref]}
+                                .sort_by{|arr| arr.try(:common_name)}
+                                .map{|arr| [(arr.friendly_name || arr.try(:common_name))+' '+ arr.public_key_sha1,
+                                            arr.ref]}
                                 .delete_if{|arr| arr.second == nil}
             @managed_csrs.insert(0, ['none', 'none'])
 
@@ -521,6 +522,7 @@ class CertificateOrdersController < ApplicationController
       @certificate_order.unchain_comodo
     else
       @certificate_order.update_column :external_order_number, params[:num]
+      @certificate_order.certificate_content.last.update_column :ca_id, nil
     end
     SystemAudit.create(owner: current_user, target: @certificate_order,
                        action: "changed external order number to #{params[:num]}")
