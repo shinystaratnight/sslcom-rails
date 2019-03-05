@@ -809,6 +809,7 @@ class OrdersController < ApplicationController
         withdraw_funded_account((@funded_amount * 100).to_i) if @funded_amount > 0
       end
       record_order_visit(@order)
+      smime_client_enrollment_registrants
       redirect_to order_path(@ssl_slug, @order)
     else
       if @too_many_declines
@@ -819,6 +820,21 @@ class OrdersController < ApplicationController
     rescue Payment::AuthorizationError => error
       flash[:error] = error.message
       smime_client_redirect_back
+  end
+
+  def smime_client_enrollment_registrants
+    registrant_params = @ssl_account.epki_registrant.attributes
+      .except(*%w{id created_at updated_at type domains roles})
+      .merge({
+        'parent_id' => @ssl_account.epki_registrant.id,
+        'status' => Contact::statuses[:validated]
+      })
+    ccs = CertificateContent.joins(certificate_order: :orders)
+      .where(orders: {id: @order.id})
+    ccs.each do |cc|
+      cc.create_registrant(registrant_params)
+      cc.create_locked_registrant(registrant_params)
+    end
   end
 
   def smime_client_enrollment_funded
@@ -836,7 +852,7 @@ class OrdersController < ApplicationController
       record_order_visit(@order)
       @order.lock!
       @order.save
-      
+      smime_client_enrollment_registrants
       flash[:notice] = "Succesfully paid full amount of #{withdraw_amount_str} from funded account for order."
       redirect_to order_path(@ssl_slug, @order)
     else
