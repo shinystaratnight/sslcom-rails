@@ -699,7 +699,7 @@ class CertificateOrder < ActiveRecord::Base
             sub_order_items[0].product_variant_item
     else
       Certificate.unscoped.find_by_id(Rails.cache.fetch("#{cache_key}/certificate") do
-        sub_order_items[0].product_variant_item.certificate.id if sub_order_items[0] &&
+        sub_order_items[0].product_variant_item.cached_certificate_id if sub_order_items[0] &&
             sub_order_items[0].product_variant_item
       end)
     end
