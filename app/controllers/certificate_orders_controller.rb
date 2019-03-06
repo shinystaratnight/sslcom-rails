@@ -1514,6 +1514,11 @@ class CertificateOrdersController < ApplicationController
   end
 
   def set_algorithm_and_size
+    @integrated_algorithm = [
+        ['RSA', 'RSASSA-PKCS1-v1_5'],
+        ['ECC', 'ECDSA']
+    ]
+
     @hash_algorithm = [
         ['SHA-256', 'SHA-256'],
         ['SHA-384', 'SHA-384'],
@@ -1528,16 +1533,12 @@ class CertificateOrdersController < ApplicationController
 
     @rsa_key_size = [
         ['2048', '2048'],
-        ['3072', '3072'],
-        ['4096', '4096'],
-        ['6144', '6144'],
-        ['8192', '8192']
+        ['4096', '4096']
     ]
 
     @ecc_key_size = [
         ['256', '256'],
-        ['384', '384'],
-        ['521', '521']
+        ['384', '384']
     ]
   end
 end

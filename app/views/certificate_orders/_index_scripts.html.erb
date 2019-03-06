@@ -25,6 +25,23 @@ function cert_download(cert, name) {
   downloadLink.click();
 }
 
+function pfx_download(p12b64, name) {
+  var downloadLink = document.createElement('a');
+  if (name === '') {
+    downloadLink.download = 'sslcom_cert.p12';
+  } else {
+    downloadLink.download = name.substr(0, name.length - 4) + '.p12';
+  }
+  downloadLink.innerHTML = "Download File";
+
+  downloadLink.href = 'data:application/x-pkcs12;base64,' + p12b64;
+  downloadLink.onclick = destroy_cert_download_link;
+  downloadLink.style.display = "none";
+  document.body.appendChild(downloadLink);
+
+  downloadLink.click();
+}
+
 jQuery.noConflict();
 jQuery(function($) {
   $(document).ready(function() {
@@ -42,18 +59,20 @@ jQuery(function($) {
           if ($(this).prop('checked')) {
             if (is_cs == '') {
               $('.csr_wrap').show();
+              $('.integrated_algorithm_wrap').hide();
               $('.algorithm_wrap').hide();
             } else {
               $('.csr_wrap').show();
+              $('.integrated_algorithm_wrap').hide();
               $('.algorithm_wrap').hide();
             }
           } else {
             if (is_cs == '') {
               $('.csr_wrap').hide();
-              $('.algorithm_wrap').show();
+              $('.integrated_algorithm_wrap').show();
             } else {
               $('.csr_wrap').hide();
-              $('.algorithm_wrap').show();
+              $('.integrated_algorithm_wrap').show();
             }
           }
         });
@@ -68,6 +87,20 @@ jQuery(function($) {
             $('.rsa_key_size').hide();
             $('.ecc_key_size').show();
           }
+        });
+
+        $(document).on('click', '.toggle_show_btn', function(e) {
+          e.preventDefault();
+
+          $('.integrated_algorithm_wrap').hide();
+          $('.algorithm_wrap').show();
+        });
+
+        $(document).on('click', '.toggle_hidden_btn', function(e) {
+          e.preventDefault();
+
+          $('.algorithm_wrap').hide();
+          $('.integrated_algorithm_wrap').show();
         });
 
         $('.generate_cert').click(function() {
@@ -139,14 +172,33 @@ jQuery(function($) {
 
             // Getting Options for generating csr and key
             var hash_alg = $('#hash_algorithm').find(':selected').text();
-            var sign_alg = $('#sign_algorithm').find(':selected').text();
+            var sign_alg = '';
+            var key_size = '';
+
+            if ($('.algorithm_wrap').is(':visible') && !$('.algorithm_wrap').is(':hidden')) {
+              sign_alg = $('#sign_algorithm').find(':selected').val();
+              if (sign_alg.indexOf('RSA') !== -1) {
+                key_size = $('#rsa_key_size').find(':selected').text();
+              } else {
+                key_size = $('#ecc_key_size').find(':selected').text();
+              }
+            } else {
+              sign_alg = $('#integrated_algorithm').find(':selected').val();
+              if (sign_alg.indexOf('RSA') != -1) {
+                key_size = 2048;
+              } else {
+                key_size = 384;
+              }
+            }
+
+            /*var sign_alg = $('#sign_algorithm').find(':selected').text();
             var key_size = '';
 
             if (sign_alg.indexOf('RSA') !== -1) {
               key_size = $('#rsa_key_size').find(':selected').text();
             } else {
               key_size = $('#ecc_key_size').find(':selected').text();
-            }
+            }*/
 
             var options = {
               digestAlgorithm: 'SHA-1',
@@ -246,20 +298,34 @@ jQuery(function($) {
               var certificates_list = $('.cert').val().split('-----BEGIN CERTIFICATE-----').filter(Boolean);
               var certs = [];
               $.each(certificates_list, function(idx, cert) {
-                certs.push(cert.replace(/(-----(BEGIN|END) CERTIFICATE-----|\n)/g, ''));
+                certs.push('-----BEGIN CERTIFICATE-----' + cert);
+                /*certs.push(cert.replace(/(-----(BEGIN|END) CERTIFICATE-----|\n)/g, ''));*/
               });
 
-              var priKey = $('.pri_key').val().replace(/(-----(BEGIN|END) PRIVATE KEY-----|\n)/g, '');
-              var pfxFileName = $('#cert_common_name').val();
+              /*var priKey = $('.pri_key').val().replace(/(-----(BEGIN|END) PRIVATE KEY-----|\n)/g, '');
+              var pfxFileName = $('#cert_common_name').val();*/
 
               /*passwordBasedIntegrity(certs, priKey, password, pfxFileName, function() {
                 $('.generate_pfx_loader_wrap').remove();
                 $('body').removeClass('no_scroll_y');
               });*/
-              openSSLLike(certs, priKey, password, pfxFileName, function() {
+              /*openSSLLike(certs, priKey, password, pfxFileName, function() {
                 $('.generate_pfx_loader_wrap').remove();
                 $('body').removeClass('no_scroll_y');
+              });*/
+
+              var pkeyObj = forge.pki.privateKeyFromPem($('.pri_key').val());
+              var certsObj = certs.map(function(cert) {
+                return forge.pki.certificateFromPem(cert);
               });
+              var pkcs12Asn1 = forge.pkcs12.toPkcs12Asn1(pkeyObj, certsObj, password, { algorithm: '3des' });
+              var pkcs12 = forge.asn1.toDer(pkcs12Asn1).getBytes();
+              var pkcs12b64 = forge.util.encode64(pkcs12);
+
+              pfx_download(pkcs12b64, $('#cert_common_name').val());
+
+              $('.generate_pfx_loader_wrap').remove();
+              $('body').removeClass('no_scroll_y');
             } else {
               $('.pkcs_download').prop('disabled', true);
               $('.pkcs_download').removeClass('btn-primary');
