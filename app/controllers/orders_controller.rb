@@ -809,6 +809,7 @@ class OrdersController < ApplicationController
         withdraw_funded_account((@funded_amount * 100).to_i) if @funded_amount > 0
       end
       record_order_visit(@order)
+      smime_client_enrollment_co_paid
       smime_client_enrollment_registrants
       smime_client_enrollment_validate
       redirect_to order_path(@ssl_slug, @order)
@@ -854,12 +855,13 @@ class OrdersController < ApplicationController
     
     if current_user && @order.valid? &&
       ((@ssl_account.funded_account.cents + withdraw_amount) == @funded_account_init)
-      @order.billing_profile_id = nil
-      @order.deducted_from_id = nil
-      @order.state = 'paid'
+      @order.update(
+        billing_profile_id: nil,
+        deducted_from_id: nil,
+        state: 'paid'
+      )
       record_order_visit(@order)
-      @order.lock!
-      @order.save
+      smime_client_enrollment_co_paid
       smime_client_enrollment_registrants
       smime_client_enrollment_validate
       flash[:notice] = "Succesfully paid full amount of #{withdraw_amount_str} from funded account for order."
@@ -890,12 +892,14 @@ class OrdersController < ApplicationController
   def smime_client_enrollment_nolimit
     @order.state = 'invoiced'
     @order.invoice_id = Invoice.get_or_create_for_team(@ssl_account).try(:id)
-    if @order.save
-      @order.cached_certificate_orders.update_all(
-        ssl_account_id: @ssl_account.try(:id), workflow_state: 'paid'
-      )
-    end
+    smime_client_enrollment_co_paid if @order.save
     redirect_to order_path(@ssl_slug, @order)
+  end
+
+  def smime_client_enrollment_co_paid
+    @order.cached_certificate_orders.update_all(
+      ssl_account_id: @ssl_account.try(:id), workflow_state: 'paid'
+    )
   end
   # ============================================================================
   # UCC Certificate reprocess/rekey helper methods for 
