@@ -32,3 +32,5 @@
   = javascript_include_tag "jquery.bgiframe.pack"
 /[if lt IE 9]
   = javascript_include_tag "//html5shim.googlecode.com/svn/trunk/html5.js"
+-if current_page?(action: "generate_cert")
+  = javascript_include_tag "https://cdn.jsdelivr.net/npm/node-forge@0.8.1/dist/forge.min.js"
