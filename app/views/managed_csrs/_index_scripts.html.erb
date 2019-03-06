@@ -76,6 +76,7 @@ jQuery(function($) {
         $('.csr_wrap').show();
         $('.generate_cert').removeClass('btn-primary');
         $('.generate_cert').prop('disabled', true);
+        $('.algorithm_wrap').hide();
         $('.generate_wrap').hide();
         $('.private_key_wrap').hide();
         $('.clipboard_wrap').hide();
@@ -87,6 +88,7 @@ jQuery(function($) {
           $('.generate_cert').addClass('btn-primary');
           $('.generate_cert').prop('disabled', false);
         }
+        $('.algorithm_wrap').show();
         $('.generate_wrap').show();
         $('#upload_validations').hide();
         $('#back_to_csr_page').hide();
@@ -145,11 +147,13 @@ jQuery(function($) {
 
     // Show / Hide Validate button only if CSR value exist.
     $(document).on('blur keyup', '#csr', function() {
-      if ($(this).val() == '') {
-        $('#upload_validations').hide();
-      } else {
-        $('#upload_validations').show();
-      }
+      <% unless current_user.blank? %>
+        if ($(this).val() == '') {
+          $('#upload_validations').hide();
+        } else {
+          $('#upload_validations').show();
+        }
+      <%end%>
     });
 
     // Generate CSR based on inputted Common Info and SANs.
@@ -205,13 +209,30 @@ jQuery(function($) {
         sans = sans_str.split(' ');
       }
 
+      // Getting Options
+      var sign_alg = $('#sign_algorithm').find(':selected').text();
+      var key_size = '';
+      if (sign_alg.indexOf('RSA') != -1) {
+        key_size = $('#rsa_key_size').find(':selected').text();
+      } else {
+        key_size = $('#ec_key_size').find(':selected').text();
+      }
+
+      const options = {
+        signAlgorithm: sign_alg,
+        keySize: key_size
+      };
+
       // Generate CSR.
-      generateCSR(info, sans, undefined, function(csr, pkey) {
+      generateCSR(info, sans, options, function(csr, pkey) {
         $('#private_key').val(pkey);
+        $('#csr').val(csr);
+        <% is_logged_in = !current_user.blank? %>
 
         $.ajax({
           url: '<%= add_generated_csr_managed_csrs_path%>',
           data: {
+            is_logged_in: '<%= is_logged_in%>',
             csr_id: $('#csr_id').val(),
             csr: csr,
             friendly_name: $('#friendly_name').val()
@@ -223,11 +244,15 @@ jQuery(function($) {
               message_wrap_element.attr('class', 'flash_message notice');
 
               var message_element = $('<span></span>');
-              if ($('#csr_id').val() == '') {
-                message_element.append('The CSR has been generated and added to the CSR Manager successfully');
-              } else {
-                message_element.append('The CSR has been generated and updated in the CSR Manager successfully');
-              }
+              <%if is_logged_in%>
+                if ($('#csr_id').val() == undefined) {
+                  message_element.append('The CSR has been generated and added to the CSR Manager successfully');
+                } else {
+                  message_element.append('The CSR has been generated and updated in the CSR Manager successfully');
+                }
+              <%else%>
+                message_element.append('The CSR has been generated successfully. Please copy using "Copy CSR" button for save.');
+              <%end%>
               message_wrap_element.append(message_element);
 
               var btn_element = $('<small></small>');
@@ -262,18 +287,39 @@ jQuery(function($) {
                 $('#zipcode').val('');
                 $('#sans').val('');
                 $('#friendly_name').val('');
-                $('#csr').val('');
+
+                <%if is_logged_in%>
+                  $('#csr').val('');
+                <%else%>
+                  $('#csr').attr('readonly', true);
+                  $('.csr_wrap').show();
+
+                  $('#clipboard_pkey_btn').hide();
+                  $('.clipboard_wrap').show();
+                <%end%>
+
                 $('#private_key').val('');
+                $('#sign_algorithm option:eq(0)').attr('selected', 'selected');
+                $('#sign_algorithm').trigger('change');
               } catch (err) {
+                <%unless is_logged_in%>
+                  $('#csr').attr('readonly', true);
+                  $('.csr_wrap').show();
+                <%end%>
+
                 $('#private_key').attr('readonly', true);
                 $('.private_key_wrap').show();
+
+                <%if is_logged_in%>
+                  $('#clipboard_csr_btn').hide();
+                <%end%>
                 $('.clipboard_wrap').show();
 
                 var message_wrap_element = $('<div></div>');
                 message_wrap_element.attr('class', 'flash_message error');
 
                 var message_element = $('<span></span>');
-                message_element.append('It has been failed to download Private Key. Please copy using "Copy Private Key" button for download.');
+                message_element.append('It has been failed to download Private Key. Please copy using "Copy Private Key" button for save.');
                 message_wrap_element.append(message_element);
 
                 var btn_element = $('<small></small>');
@@ -307,6 +353,8 @@ jQuery(function($) {
                 $('.back_to_generate_cert_page').attr('href', $('.back_to_generate_cert_page').attr('href') + '?csr_ref=' + data['csr_ref']);
                 $('#back_to_generate_cert_page').show();
               }
+            } else if (data['status'] == 'no_user') {
+              window.location.href = data['url']
             } else {
               var message_wrap_element = $('<div></div>');
               message_wrap_element.attr('class', 'flash_message error');
@@ -366,6 +414,24 @@ jQuery(function($) {
     $('#clipboard_pkey_btn').click(function() {
       $('#private_key').select();
       document.execCommand('copy');
+    });
+
+    $('#clipboard_csr_btn').click(function() {
+      $('#csr').select();
+      document.execCommand('copy');
+    });
+
+    // Show / Hide proper key list based on sign algorithm.
+    $(document).on('change', '#sign_algorithm', function(e) {
+      e.preventDefault();
+
+      if ($(this).find(':selected').text().indexOf('RSA') != -1) {
+        $('.rsa_key_wrap').show();
+        $('.ec_key_wrap').hide();
+      } else {
+        $('.rsa_key_wrap').hide();
+        $('.ec_key_wrap').show();
+      }
     });
 
   });
