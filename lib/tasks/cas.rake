@@ -601,7 +601,7 @@ namespace :cas do
           caa_issuers: ["ssl.com"],
           host: "https://#{url}:8443/restapi",
           admin_host: "https://#{url}:8443",
-          ca_name: "SSLcom-SubCA-CodeSigning-ECC-4096-R1",
+          ca_name: "SSLcom-SubCA-CodeSigning-ECC-384-R1",
           ekus: [Ca::EKUS[:code_signing]],
           end_entity: Ca::END_ENTITY[:cs]
       )
