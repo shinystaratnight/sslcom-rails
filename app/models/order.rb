@@ -4,6 +4,8 @@ require 'bigdecimal'
 class Order < ActiveRecord::Base
   extend Memoist
   include V2MigrationProgressAddon
+  include SmimeClientEnrollable
+
   belongs_to  :billable, :polymorphic => true, touch: true
   belongs_to  :address
   belongs_to  :billing_profile, -> { unscope(where: [:status]) }
@@ -222,6 +224,20 @@ class Order < ActiveRecord::Base
   end
 
   preference :migrated_from_v2, :default=>false
+
+  SmimeClientEnrollValidate = Struct.new(:user_id, :order_id) do
+    def perform
+      user = User.find user_id
+      order = Order.find order_id
+      if user && order
+        order.smime_client_enroll_recipients(user_id)
+      end
+    end
+  end
+
+  def smime_client_enrollment_validate(user_id)
+    Delayed::Job.enqueue SmimeClientEnrollValidate.new(user_id, id)
+  end
 
   def self.range_amount(start, finish)
     amount = BigDecimal.new(range(start, finish).amount.to_s)

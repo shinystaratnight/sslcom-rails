@@ -810,6 +810,7 @@ class OrdersController < ApplicationController
       end
       record_order_visit(@order)
       smime_client_enrollment_registrants
+      smime_client_enrollment_validate
       redirect_to order_path(@ssl_slug, @order)
     else
       if @too_many_declines
@@ -834,6 +835,13 @@ class OrdersController < ApplicationController
     ccs.each do |cc|
       cc.create_registrant(registrant_params)
       cc.create_locked_registrant(registrant_params)
+      cc.save
+    end
+  end
+
+  def smime_client_enrollment_validate
+    if current_user && @order && @order.persisted?
+      @order.smime_client_enrollment_validate(current_user.id)
     end
   end
 
@@ -853,6 +861,7 @@ class OrdersController < ApplicationController
       @order.lock!
       @order.save
       smime_client_enrollment_registrants
+      smime_client_enrollment_validate
       flash[:notice] = "Succesfully paid full amount of #{withdraw_amount_str} from funded account for order."
       redirect_to order_path(@ssl_slug, @order)
     else
