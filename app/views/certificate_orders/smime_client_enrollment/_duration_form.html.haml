@@ -1,0 +1,29 @@
+.clearfix
+  %label{for: :duration}
+    *Duration:
+    %span.label_desc certificate expires in
+  
+  .radio_choices
+    - @certificate.items_by_duration.each_with_index do |item, i|
+      - first = @certificate.items_by_duration[0]
+      - if !@certificate.is_naesb? or (@certificate.is_naesb? and i==1)
+        .radio_w_desc.clearfix
+          = radio_button_tag :duration, i+1, id: item.model_and_id
+          = item.title
+          #{(item.price / (i+1)).format}#{'/yr' unless i==0}
+          - if i > 0
+            - p = 1.0-(item.price.cents.to_f / (first.price.cents * (i+1)).to_f)
+            - unless @certificate.is_naesb?
+              %span.save
+                (
+                %em> save #{Integer((p*100).ceil)}%
+                )
+  
+.clearfix
+  %label{for: :expense_amount}
+    Order Amount:
+    %span.label_desc total cost of order
+  #order_amount
+    %span#calculated_price $0.0
+
+= render partial: '/certificate_orders/smime_client_enrollment/index_scripts'

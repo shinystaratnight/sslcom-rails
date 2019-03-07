@@ -43,6 +43,16 @@ class CertificateOrdersController < ApplicationController
 
   NUM_ROWS_LIMIT=2
 
+  def smime_client_enrollment
+    if params[:get_duration]
+      smime_client_duration
+    elsif params[:smime_client_create]
+      smime_client_create
+    else
+      smime_client_init
+    end
+  end
+
   def update_tags
     if @certificate_order
       @taggable = @certificate_order
@@ -712,14 +722,54 @@ class CertificateOrdersController < ApplicationController
 
   private
 
+  def smime_client_create
+    @certificate = Certificate.find params[:certificate_id]
+    smime_client_parse_emails
+    
+    if @certificate && @emails.any?
+      redirect_to new_order_path(@ssl_slug,
+        emails: @emails,
+        certificate: @certificate,
+        smime_client_enrollment: true
+      )
+    else
+      flash[:error] = "Please enter at least one valid email."
+      render :smime_client_enrollment
+    end
+  end
+
+  def smime_client_init
+    @certificates = Certificate.get_smime_client_products(@tier)
+    @certificate = @certificates.first
+
+    co = CertificateOrder.new(
+      duration: 2,
+      ssl_account: (current_user.blank? ? nil : current_user.ssl_account),
+      has_csr: false
+    )
+    co.certificate_contents << CertificateContent.new(domains: [])
+    @certificate_order = Order.setup_certificate_order(
+      certificate: @certificate, certificate_order: co
+    )
+  end
+
+  def smime_client_duration
+    @certificate = Certificate.find params[:certificate_id]
+    partial = render_to_string(
+      partial: 'certificate_orders/smime_client_enrollment/duration_form',
+      layout: false
+    )
+    render json: {content: partial}, status: :ok
+  end
+
   def client_smime_validate
     co = @certificate_order
     cc = co.certificate_content
     validations = co.certificate.client_smime_validations
     validated = if validations == 'iv_ov'
                   if @iv_exists.validated?
-                    if co.registrant.status=="epki_agreement"
-                      co.registrant.parent.applies_to_certificate_order?(co)
+                    if co.registrant.epki_agreement?
+                      co.registrant.applies_to_certificate_order?(co)
                     else
                       (co.locked_registrant || co.registrant).validated?
                     end

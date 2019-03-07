@@ -24,11 +24,12 @@ module Stripeable
   end
   
   def stripe_charge(amount, card_token, options = {})
+    description = options[:description]
     Stripe::Charge.create(
       source:               card_token,
       amount:               amount.cents,
-      description:          options[:description],
-      statement_descriptor: options[:description],
+      description:          description,
+      statement_descriptor: description[0..21], # can only be 22 chars long
       currency:             'usd',
       receipt_email:        'sales@ssl.com' #options[:owner_email]
     )
