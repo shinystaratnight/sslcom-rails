@@ -17,7 +17,6 @@
 class CertificateOrdersController < ApplicationController
   layout 'application'
   include OrdersHelper
-  include Skylight::Helpers
   skip_before_filter :verify_authenticity_token, only: [:parse_csr]
   filter_access_to :all, except: [:generate_cert]
   filter_access_to :read, :update, :delete, :show, :edit, :developer, :recipient

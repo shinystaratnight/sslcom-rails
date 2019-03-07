@@ -82,7 +82,7 @@ gem 'acts_as_tree'
 gem 'whois', '~> 4.0'
 gem 'whois-parser'
 gem 'where-or'
-gem "skylight"
+# gem "skylight"
 gem 'authy'
 gem 'mailboxer'
 gem 'memoist'
