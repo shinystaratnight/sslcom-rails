@@ -43,7 +43,7 @@
             -invoice = @order.invoice
             %span
               %strong
-                =link_to "#{invoice.billable.get_invoice_label} invoice (#{invoice.status})", invoice_path(@ssl_slug, invoice.reference_number)
+                =link_to "invoice (#{invoice.status})", invoice_path(@ssl_slug, invoice.reference_number)
           -else
             %span=@order.state.humanize.downcase
   =render :partial=>'/funded_accounts/certificate_order_detail'
