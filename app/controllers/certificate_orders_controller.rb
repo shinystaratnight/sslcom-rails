@@ -1516,14 +1516,14 @@ class CertificateOrdersController < ApplicationController
   def set_algorithm_and_size
     @integrated_algorithm = [
         ['RSA', 'RSASSA-PKCS1-v1_5'],
-        ['ECC', 'ECDSA']
+        ['ECDSA', 'ECDSA']
     ]
 
-    @hash_algorithm = [
-        ['SHA-256', 'SHA-256'],
-        ['SHA-384', 'SHA-384'],
-        ['SHA-512', 'SHA-512']
-    ]
+    # @hash_algorithm = [
+    #     ['SHA-256', 'SHA-256'],
+    #     ['SHA-384', 'SHA-384'],
+    #     ['SHA-512', 'SHA-512']
+    # ]
 
     @sign_algorithm = [
         ['RSASSA-PKCS1-v1_5', 'RSASSA-PKCS1-v1_5'],

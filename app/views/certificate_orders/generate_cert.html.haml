@@ -15,6 +15,7 @@
       -@certificate_order.certificate_content.subject_dn.split(',').each do |s|
         %dt=s
   %input.cs_subject_dn{:type=>'hidden', :value=>"#{is_cs || is_client ? @certificate_order.certificate_content.locked_subject_dn : @certificate_order.certificate_content.subject_dn}"}
+  %input.sign_alg_type{:type => 'hidden', :value => 'rsa'}
   .generate_wrap
     .row.pt-3
       - if current_user.blank?
@@ -40,11 +41,11 @@
       .col-md-8
         %input.toggle_show_btn{:type=>'button', :value=>'Show Advanced Option', :class=>'btn btn-primary'}
   .algorithm_wrap.hidden
-    .row.pt-4
-      .col-md-3{:style=>"text-align: right"}
-        Hash Algorithm :
-      .col-md-8
-        = select_tag 'hash_algorithm', options_for_select(@hash_algorithm), include_blank: false, class: 'form-control'
+    -#.row.pt-4
+    -#  .col-md-3{:style=>"text-align: right"}
+    -#    Hash Algorithm :
+    -#  .col-md-8
+    -#    = select_tag 'hash_algorithm', options_for_select(@hash_algorithm), include_blank: false, class: 'form-control'
     .row.pt-4
       .col-md-3{:style=>"text-align: right"}
         Sign Algorithm :
@@ -103,4 +104,3 @@
     %input.cert_download{:type=>'button', :value=>'Download', :style=>'display:block; margin: auto', :class=>'btn btn-primary'}
     = hidden_field_tag :cert_common_name, ''
     -#%a.user_cert_download{:download=>'sslcom_cert.crt'} Download File
-
