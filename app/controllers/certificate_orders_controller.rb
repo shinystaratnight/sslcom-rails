@@ -238,7 +238,6 @@ class CertificateOrdersController < ApplicationController
         #reset dcv validation
         @certificate_content.add_ca(@certificate_order.ssl_account) if @certificate_order.external_order_number.blank?
         @certificate_content.agreement=true
-        @certificate_content.save
         @certificate_order.validation.validation_rules.each do |vr|
           if vr.description=~/\Adomain/
             ruling=@certificate_order.validation.validation_rulings.detect{|vrl| vrl.validation_rule == vr}

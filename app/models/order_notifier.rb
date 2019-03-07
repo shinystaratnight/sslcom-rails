@@ -49,7 +49,7 @@ class OrderNotifier < ActionMailer::Base
     @team    = @invoice.billable
     @invoice_type = @invoice.get_type_format.downcase
     
-    mail  subject: "You have a new #{@invoice_type} invoice for team #{@team.get_team_name}.",
+    mail  subject: "You have a new invoice for team #{@team.get_team_name}.",
           from:    Settings.from_email.orders,
           to:      @user.email
   end
@@ -61,7 +61,7 @@ class OrderNotifier < ActionMailer::Base
     @team    = @invoice.billable
     @invoice_type = @invoice.get_type_format.downcase
     
-    mail  subject: "Payment has been submitted for #{@invoice_type} invoice ##{@invoice.reference_number} for team #{@team.get_team_name}.",
+    mail  subject: "Payment has been submitted for invoice ##{@invoice.reference_number} for team #{@team.get_team_name}.",
           from:    Settings.from_email.orders,
           to:      @user.email
   end
