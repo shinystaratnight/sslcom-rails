@@ -28,6 +28,7 @@ SslCom::Application.routes.draw do
   #resources :site_checks
   match 'site_check' => 'site_checks#new', :as => :site_check, via: [:get, :post]
   match 'site_checks' => 'site_checks#create', :as => :site_checks, via: [:get, :post]
+  match 'enterprise_pki_service_agreement' => 'contacts#enterprise_pki_service_agreement', via: :get 
 
   # api: If version is not specified then use the default version in APIConstraint
   constraints DomainConstraint.new(

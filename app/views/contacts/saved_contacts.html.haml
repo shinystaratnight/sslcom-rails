@@ -18,6 +18,8 @@
         %br
         %tr
           =link_to "New", new_contact_path(saved_contact: true), class: 'button_blue button_index'
+        %tr
+          =link_to "New EPKI", new_contact_path(saved_contact: true, epki_registrant: true), class: 'button_blue button_index'
       %tr.heading_row
         %th Name
         %th Company

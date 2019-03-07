@@ -9,7 +9,8 @@ class Contact < ActiveRecord::Base
     pending_validation: 5,
     additional_info: 15,
     validated: 20,
-    epki_agreement: 25
+    epki_agreement: 25,
+    pending_epki: 30
   }
 
   belongs_to :contactable, polymorphic: true
@@ -20,7 +21,7 @@ class Contact < ActiveRecord::Base
   has_many   :validation_histories, through: :contact_validation_histories
   belongs_to  :parent, class_name: "Contact"
 
-  attr_accessor :update_parent, :administrative_role, :billing_role, :technical_role, :validation_role
+  attr_accessor :update_parent, :administrative_role, :billing_role, :technical_role, :validation_role, :epki_agreement_request
   
   serialize :special_fields
   serialize :domains
@@ -179,5 +180,9 @@ class Contact < ActiveRecord::Base
   
   def self.optional_contacts?
     Settings.dynamic_contact_count == "on"
+  end
+
+  def show_domains?
+    epki_agreement? || pending_epki?
   end
 end

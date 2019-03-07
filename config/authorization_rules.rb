@@ -546,7 +546,8 @@ authorization do
     has_permission_on :contacts, to: [
       :new,
       :create,
-      :saved_contacts
+      :saved_contacts,
+      :enterprise_pki_service_agreement
     ]
     # 
     # Orders

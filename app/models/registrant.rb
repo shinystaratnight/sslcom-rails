@@ -59,6 +59,8 @@ class Registrant < Contact
   validates :company_name, :phone, presence: true, if: proc { |r| r.reusable? && r.organization? }
   validates :first_name, :last_name, presence: true, if: proc { |r| r.reusable? && r.individual? }
 
+  after_save :set_one_epki_agreement
+
   def applies_to_certificate_order?(certificate_order)
     domains.any? do |domain|
       if certificate_order.certificate.is_smime_or_client?
@@ -89,6 +91,15 @@ class Registrant < Contact
 
   private
 
+  def set_one_epki_agreement
+    if epki_agreement? && contactable.is_a?(SslAccount)
+      other_epki = contactable.all_saved_contacts
+        .where.not(id: self.id)
+        .where(status: Contact::statuses[:epki_agreement])
+      other_epki.update(:status, Contact::statuses[:validated]) if other_epki.any?
+    end
+  end
+  
   def release_dependant_contacts
     Contact.where(parent_id: id).update_all(parent_id: nil)
   end
