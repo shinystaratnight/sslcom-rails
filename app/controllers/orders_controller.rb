@@ -196,6 +196,8 @@ class OrdersController < ApplicationController
   def new
     if params[:reprocess_ucc] || params[:renew_ucc] || params[:ucc_csr_submit]
       ucc_domains_adjust
+    elsif params[:smime_client_enrollment]
+      smime_client_enrollment
     else
       if params[:certificate_order] && !single_cert_no_limit_order?
         @certificate = Certificate.for_sale.find_by_product(params[:certificate][:product])
@@ -734,6 +736,18 @@ class OrdersController < ApplicationController
     end
   end
 
+  def smime_client_enroll_create
+    ucc_or_invoice_params
+    smime_client_enrollment_base
+    if @funded_amount > 0 && (@order_amount <= @funded_amount)
+      # All amount covered by credit from funded account
+      smime_client_enrollment_funded
+    else
+      # Pay full or partial payment by CC or Paypal
+      smime_client_enrollment_hybrid_payment
+    end
+  end
+
   private
   
   def single_cert_no_limit_order?
@@ -743,7 +757,150 @@ class OrdersController < ApplicationController
   def add_cents_to_funded_account(cents)
     @order.get_team_to_credit.funded_account.add_cents(cents)
   end
-  
+  # ============================================================================
+  # S/MIME OR CLIENT ENROLLMENT ORDER
+  # ============================================================================
+  def smime_client_enrollment
+    if current_user
+      smime_client_enrollment_base
+      if @ssl_account.invoice_required?
+        smime_client_enrollment_nolimit
+      else
+        render :smime_client_enrollment
+      end
+    else
+      redirect_to login_url and return
+    end
+  end
+
+  def smime_client_enrollment_base
+    @emails = params[:emails] || params[:smime_client_enrollment_order][:emails]
+    @emails = smime_client_parse_emails(@emails)
+    product = params[:certificate] || params[:smime_client_enrollment_order][:certificate]
+    @certificate = Certificate.find_by(product: product)
+    certificate_orders = smime_client_enrollment_items
+    
+    @order = SmimeClientEnrollmentOrder.new(
+      state: 'new',
+      approval: 'approved',
+      invoice_description: smime_client_enrollment_notes(certificate_orders.count),
+      description: Order::S_OR_C_ENROLLMENT,
+      billable_id: certificate_orders.first.ssl_account.try(:id),
+      billable_type: 'SslAccount'
+    )
+    @order.add_certificate_orders(certificate_orders)
+  end
+
+  def smime_client_redirect_back
+    redirect_to new_order_path(@ssl_slug,
+      emails: params[:emails],
+      certificate: params[:certificate],
+      smime_client_enrollment: true
+    )
+  end
+
+  def smime_client_enrollment_hybrid_payment
+    if current_user && order_reqs_valid? && !@too_many_declines && purchase_successful?
+      save_billing_profile unless (params[:funding_source])
+      if @order.invoiced?
+        @order.invoice_denied_order(current_user.ssl_account)
+      else  
+        @order.update(billing_profile_id: @profile.try(:id))
+        withdraw_funded_account((@funded_amount * 100).to_i) if @funded_amount > 0
+      end
+      record_order_visit(@order)
+      smime_client_enrollment_co_paid
+      smime_client_enrollment_registrants
+      smime_client_enrollment_validate
+      redirect_to order_path(@ssl_slug, @order)
+    else
+      if @too_many_declines
+        flash[:error] = 'Too many failed attempts, please wait 1 minute to try again!'
+      end
+      smime_client_redirect_back
+    end
+    rescue Payment::AuthorizationError => error
+      flash[:error] = error.message
+      smime_client_redirect_back
+  end
+
+  def smime_client_enrollment_registrants
+    registrant_params = @ssl_account.epki_registrant.attributes
+      .except(*%w{id created_at updated_at type domains roles})
+      .merge({
+        'parent_id' => @ssl_account.epki_registrant.id,
+        'status' => Contact::statuses[:validated]
+      })
+    ccs = CertificateContent.joins(certificate_order: :orders)
+      .where(orders: {id: @order.id})
+    ccs.each do |cc|
+      cc.create_registrant(registrant_params)
+      cc.create_locked_registrant(registrant_params)
+      cc.save
+    end
+  end
+
+  def smime_client_enrollment_validate
+    if current_user && @order && @order.persisted?
+      @order.smime_client_enrollment_validate(current_user.id)
+    end
+  end
+
+  def smime_client_enrollment_funded
+    withdraw_amount = @order_amount < @funded_amount ? @order_amount : @funded_amount
+    withdraw_amount = (withdraw_amount * 100).to_i
+    withdraw_amount_str = Money.new(withdraw_amount).format
+    
+    withdraw_funded_account(withdraw_amount)
+    
+    if current_user && @order.valid? &&
+      ((@ssl_account.funded_account.cents + withdraw_amount) == @funded_account_init)
+      @order.update(
+        billing_profile_id: nil,
+        deducted_from_id: nil,
+        state: 'paid'
+      )
+      record_order_visit(@order)
+      smime_client_enrollment_co_paid
+      smime_client_enrollment_registrants
+      smime_client_enrollment_validate
+      flash[:notice] = "Succesfully paid full amount of #{withdraw_amount_str} from funded account for order."
+      redirect_to order_path(@ssl_slug, @order)
+    else
+      flash[:error] = "Something went wrong, did not withdraw #{withdraw_amount_str} from funded account!"
+      smime_client_redirect_back
+    end
+  end
+
+  def smime_client_enrollment_items
+    if @certificate
+      @emails.inject([]) do |cos, email|
+        co = CertificateOrder.new(
+          has_csr: false, ssl_account: @ssl_account, duration: params[:duration]
+        )
+        co.certificate_contents << CertificateContent.new(domains: [email])
+        cos << Order.setup_certificate_order(
+          certificate: @certificate, certificate_order: co
+        )
+        cos
+      end
+    else
+      []
+    end
+  end
+
+  def smime_client_enrollment_nolimit
+    @order.state = 'invoiced'
+    @order.invoice_id = Invoice.get_or_create_for_team(@ssl_account).try(:id)
+    smime_client_enrollment_co_paid if @order.save
+    redirect_to order_path(@ssl_slug, @order)
+  end
+
+  def smime_client_enrollment_co_paid
+    @order.cached_certificate_orders.update_all(
+      ssl_account_id: @ssl_account.try(:id), workflow_state: 'paid'
+    )
+  end
   # ============================================================================
   # UCC Certificate reprocess/rekey helper methods for 
   #   Invoiced Order:       will be added to monthly invoice to be charged later
@@ -991,15 +1148,6 @@ class OrdersController < ApplicationController
     else  
       @performed = "Cancelled partial order #{@target.sellable.ref}, credit or refund were NOT issued."
       @target.sellable.cancel! @target
-    end
-  end
-
-  # admin user cancels entire order and all of it's line items
-  def cancel_entire_order
-    @performed = "Cancelled entire order #{@target.reference_number}, credit or refund were NOT issued."
-    @target.cancel!
-    if @target.canceled? && @target.invoice
-      @target.update(invoice_id: nil)
     end
   end
 

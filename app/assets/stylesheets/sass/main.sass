@@ -8799,3 +8799,51 @@ a.back_to_generate_cert_page
 .integrated_algorithm_wrap select,
 .algorithm_wrap select
   width: 500px
+
+#add_csr_form
+  .algorithm_wrap
+    border-bottom: 1px solid #ddd
+    margin-bottom: 1rem
+
+  textarea
+    margin-bottom: 1rem
+
+
+#chk-epki-service-agree
+  margin-left: 1rem
+  font-size: 1.3rem
+  font-weight: 600
+
+/*
+ * SMIME Client Enrollment Page 
+ */
+.frm-sc-enroll
+  #emails
+    background: none
+
+  .sub-hdr-sc-enroll
+    background-color: #DCDCDC
+    margin-bottom: 1rem
+    text-align: center
+
+    h3
+      padding: 3px 0
+
+  #stats-sc-enroll
+    border: 1px dashed lightgrey
+    border-radius: 5px
+    margin: auto
+    margin-bottom: 1.3rem
+    padding: 1rem
+    text-align: center
+    width: 20%
+
+    #validated-sc-emails,
+    #pending-sc-emails
+      font-size: 1.4rem
+      span
+        font-weight: 600
+        font-size: 1.5rem
+
+    #pending-sc-emails
+      margin-top: 1rem

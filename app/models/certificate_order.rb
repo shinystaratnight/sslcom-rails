@@ -699,7 +699,7 @@ class CertificateOrder < ActiveRecord::Base
             sub_order_items[0].product_variant_item
     else
       Certificate.unscoped.find_by_id(Rails.cache.fetch("#{cache_key}/certificate") do
-        sub_order_items[0].product_variant_item.certificate.id if sub_order_items[0] &&
+        sub_order_items[0].product_variant_item.cached_certificate_id if sub_order_items[0] &&
             sub_order_items[0].product_variant_item
       end)
     end
@@ -1156,8 +1156,8 @@ class CertificateOrder < ActiveRecord::Base
     orders.last
   end
 
-  def clean_up_mappings
-    cac=certificate.cas_certificates.select{|c|c.ca.friendly_name =~/MySSL Basic/}
+  def clean_up_mappings(friendly_name)
+    cac=certificate.cas_certificates.select{|c|c.ca.friendly_name =~ Regexp.new(friendly_name)}
     certificate.cas_certificates.where{id << cac.map(&:id)}.delete_all
     # test
     # certificate.cas.ssl_account_or_general_default(ssl_account)

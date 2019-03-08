@@ -168,7 +168,7 @@
       %th(scope="col") Invoice
       %th(scope="col") Amount
     -if @orders.size > 0
-      -@orders.includes(line_items: :sellable).includes(:discounts).each do |o|
+      -@orders.includes(:discounts, line_items: :sellable).each do |o|
         -cache([current_user,'orders_list', o], expires_in: 12.hours) do
           %tr
             -if o.is_reseller_tier?

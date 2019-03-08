@@ -1,0 +1,57 @@
+- epki_registrant = @ssl_account ? @ssl_account.epki_registrant : nil
+- content_for :title, "Enrollment For S/MIME Or Client Certificate"
+
+- if epki_registrant
+  .order_container
+    %h3 Enrollment For S/MIME Or Client Certificate
+    %p Please fill out the required fields below to complete your certificate orders.
+    
+    = form_tag smime_client_enrollment_certificate_orders_path(ssl_slug: @ssl_slug), id: "frm-smime-client-enrollment" do |f|
+      #stylized.default_form.frm-sc-enroll
+        .clearfix
+          #sc-errors
+          = hidden_field_tag :smime_client_create, true
+
+          .sub-hdr-sc-enroll
+            %h3 Step 1: Select Product
+
+        .clearfix
+          %label{for: :emails}
+            *Certificate:
+          = select_tag :certificate_id,                                       |
+            options_from_collection_for_select(@certificates, "id", "title"), |
+            id: "sel-sc-certificate", include_blank: false
+
+        .clearfix
+          .sub-hdr-sc-enroll
+            %h3 Step 2: Enter Emails
+
+        .clearfix
+          %label{for: :emails}
+            *Emails List:
+            %span.label_desc Enter emails seperated by space or comma
+          = text_area_tag :emails, nil, id: "text-sc-emails", cols: 40, rows: 15, |
+            data: { epki_domains: epki_registrant.domains.join(",") }
+
+        .clearfix
+          .sub-hdr-sc-enroll
+            %h3 Step 3: Verify Emails
+        
+          #stats-sc-enroll
+            #validated-sc-emails{ data: {validated_sc_emails: 0, all_sc_emails: 0} }
+              EPKI Validated
+              %span 0
+            #pending-sc-emails{ data: {pending_sc_emails: 0} }
+              Pending
+              %span 0
+
+        .sub-hdr-sc-enroll
+          %h3 Step 4: Select Duration
+
+        #duration-container-sc
+          = render partial: "/certificate_orders/smime_client_enrollment/duration_form"
+
+      #button_container
+        #auto_adjust
+          = image_tag "cancel_bl.gif", id: ""
+          = image_submit_tag "next_bl.gif", alt: "Submit"

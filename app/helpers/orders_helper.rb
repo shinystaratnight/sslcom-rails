@@ -125,7 +125,7 @@ module OrdersHelper
       order
     end
   end
-  
+
   def is_current_order_affordable?
     current_user.ssl_account.funded_account.amount.cents >=
       current_order.amount.cents
@@ -265,6 +265,18 @@ module OrdersHelper
     end
   end
 
+  def smime_client_parse_emails(emails=nil)
+    emails_list = emails || params[:emails]
+    if emails_list.is_a? Array
+      @emails = emails_list
+    else
+      unless emails_list.strip.blank?
+        @emails = emails_list
+          .strip.split(/[\s,]+/).map(&:strip).map(&:downcase)
+      end
+    end
+  end
+
   def delay_transaction?
     fa       = current_user.ssl_account.funded_account if current_user
     declined = fa && fa.card_recently_declined? if fa
@@ -290,7 +302,13 @@ module OrdersHelper
     "Reprocess UCC (certificate order: #{@certificate_order.ref}, certificate content: #{@certificate_content.ref})"
   end
   
+  def smime_client_enrollment_notes(emails_count=nil)
+    "S/MIME or Client enrollment for #{emails_count} emails."
+  end
+
   def ucc_or_invoice_params
+    order = params[:order] || params[:smime_client_enrollment_order]
+
     unless @payable_invoice
       @ssl_account = if current_user.is_system_admins?
         CertificateOrder.find_by(ref: params[:order][:co_ref]).ssl_account
@@ -304,9 +322,9 @@ module OrdersHelper
       existing_card = @ssl_account.billing_profiles.find(params[:funding_source])
     end
     
-    @funded_amount       = params[:order][:funded_amount].to_f
-    @order_amount        = params[:order][:order_amount].to_f
-    @charge_amount       = params[:order][:charge_amount].to_f
+    @funded_amount       = order[:funded_amount].to_f
+    @order_amount        = order[:order_amount].to_f
+    @charge_amount       = order[:charge_amount].to_f
     @too_many_declines   = delay_transaction? && (params[:payment_method] == 'credit_card')
     @billing_profile     = BillingProfile.new(params[:billing_profile]) if params[:billing_profile]
     @profile             = existing_card || @billing_profile
@@ -315,8 +333,8 @@ module OrdersHelper
     @target_amount       = (@charge_amount.blank? || @charge_amount == 0) ? @order_amount : @charge_amount
     
     if @reprocess_ucc || @renew_ucc || @ucc_csr_submit
-      @certificate_order   = @ssl_account.cached_certificate_orders.find_by(ref: params[:order][:co_ref])
-      @certificate_content = @certificate_order.certificate_contents.find_by(ref: params[:order][:cc_ref])
+      @certificate_order   = @ssl_account.cached_certificate_orders.find_by(ref: order[:co_ref])
+      @certificate_content = @certificate_order.certificate_contents.find_by(ref: order[:cc_ref])
     end
   end
   
@@ -353,12 +371,14 @@ module OrdersHelper
     return order_invoice_notes if @payable_invoice
     return renew_ucc_notes if @renew_ucc
     return ucc_csr_submit_notes if @ucc_csr_submit
+    return smime_client_enrollment_notes('') if @order.is_a?SmimeClientEnrollmentOrder
     ''
   end
   
   def get_order_descriptions
     return Order::DOMAINS_ADJUSTMENT if @reprocess_ucc || @renew_ucc || @ucc_csr_submit
     return (@ssl_account.get_invoice_pmt_description) if @payable_invoice
+    return Order::S_OR_C_ENROLLMENT if @order.is_a?SmimeClientEnrollmentOrder
     Order::SSL_CERTIFICATE
   end
   
@@ -466,7 +486,6 @@ module OrdersHelper
   end
 
   def order_reqs_valid?
-    @objects_valid ||=
     @order.valid? && (params[:funding_source] ? @profile.valid? :
       @billing_profile.valid?) && (current_user || @user.valid?)
   end

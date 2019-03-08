@@ -56,6 +56,7 @@ function setPayPalButton() {
       $('[name*=paypal]').show();
       $('[name*=next], [name*=load_funds], #credit_card_form').hide();
     }
+    $.profileRequiredToggle('disable');
     $('form#new_order').attr('action', paypalCheckoutUrl());
   } else {
     setStandardButton();
@@ -64,6 +65,7 @@ function setPayPalButton() {
 }
 
 function setStandardButton() {
+  $.profileRequiredToggle('disable');
   $('[name*=next], [name*=load_funds], #credit_card_form').show();
   $('[name*=paypal]').hide();
   $('form#new_order').attr('action', initial_url);
