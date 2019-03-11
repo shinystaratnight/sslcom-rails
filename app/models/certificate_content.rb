@@ -779,7 +779,7 @@ class CertificateContent < ActiveRecord::Base
     end
     if locked_registrant and !(options[:mapping] ? options[:mapping].try(:profile_name) =~ /DV/ : cert.is_dv?)
       # if ev or ov order, must have locked registrant
-      dn= ["CN=#{locked_registrant.company_name}"] if certificate.is_code_signing?
+      dn= ["CN=#{common_name}"] if certificate.is_code_signing?
       org=locked_registrant.company_name
       ou=locked_registrant.department
       state=locked_registrant.state
