@@ -798,7 +798,7 @@ class CertificateOrder < ActiveRecord::Base
         when 5
           1826
         else # assume days
-          years.gsub(/[^\d]+/,"").to_i if years.include?("day")
+          years.gsub(/[^\d]+/,"").to_i * 365
         end
       elsif [:comodo_api,:sslcom_api].include? unit
         case years.gsub(/[^\d]+/,"").to_i

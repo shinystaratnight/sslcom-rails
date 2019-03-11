@@ -657,6 +657,12 @@ class SignedCertificate < ActiveRecord::Base
     end
   end
 
+  def ejbca_certificate
+    host = "https://192.168.100.5:8443/v1/certificate/pkcs10"
+    options={username: "testdv1.ssl.com1551117126063"}
+    req, res = SslcomCaApi.call_ca(host, options, options.to_json)
+  end
+
   private
 
   def proper_certificate?
