@@ -3740,8 +3740,19 @@ label.error
 #certificate_orders > table
   width: 84%
 
-#validations > table
-  width: 100%
+#validations
+  padding-top: 10px
+
+  &> table
+    width: 100%
+
+    .delete_csr
+      padding-left: 10px
+      padding-right: 10px
+
+  .delete_checkbox_csrs
+    margin-right: 10px
+
 
 #dashboard > table
   float: none
@@ -8799,6 +8810,9 @@ a.back_to_generate_cert_page
 .integrated_algorithm_wrap select,
 .algorithm_wrap select
   width: 500px
+
+.managed_csr.algorithm_wrap select
+  width: 100%
 
 #add_csr_form
   .algorithm_wrap
