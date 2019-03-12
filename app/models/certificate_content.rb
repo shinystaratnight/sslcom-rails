@@ -771,17 +771,15 @@ class CertificateContent < ActiveRecord::Base
 
   def subject_dn(options={})
     cert = options[:certificate] || self.certificate
-    dn=["CN=#{options[:common_name]}"] if certificate.is_server?
-    if !locked_registrant.blank? and !(options[:mapping] ? options[:mapping].try(:profile_name) =~ /DV/ : cert.is_dv?)
+    dn=certificate.is_server? ? ["CN=#{options[:common_name] || common_name}"] : []
+    dn << "emailAddress=#{certificate_order.assignee.email}" if certificate.is_smime?
+    if certificate.is_smime_or_client? and !certificate.is_client_basic?
+      person=ssl_account.individual_validations.find_by_email(certificate_order.get_recipient.email)
+      dn << "CN=#{[person.first_name,person.last_name].join(" ")}"
+    end
+    if locked_registrant and !(options[:mapping] ? options[:mapping].try(:profile_name) =~ /DV/ : cert.is_dv?)
       # if ev or ov order, must have locked registrant
-      if dn.blank?
-        dn= if certificate.is_code_signing?
-              ["CN=#{locked_registrant.company_name}"]
-            elsif certificate.is_smime_or_client?
-              person=ssl_account.individual_validations.find_by_email(certificate_order.get_recipient.email)
-              ["CN=#{[person.first_name,person.last_name].join(" ")}"]
-            end
-      end
+      dn= ["CN=#{locked_registrant.company_name}"] if certificate.is_code_signing?
       org=locked_registrant.company_name
       ou=locked_registrant.department
       state=locked_registrant.state
@@ -791,7 +789,6 @@ class CertificateContent < ActiveRecord::Base
       postal_address=locked_registrant.po_box
       street_address=
           [locked_registrant.address1,locked_registrant.address2,locked_registrant.address3].join(" ")
-      dn << "emailAddress=#{certificate_order.assignee.email}" if certificate.is_smime?
       dn << "O=#{org}" if !org.blank? and (!city.blank? or !state.blank?)
       dn << "OU=#{ou}" unless ou.blank?
       dn << "OU=#{locked_registrant.special_fields["entity_code"]}" if certificate.is_naesb? and
