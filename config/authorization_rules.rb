@@ -286,6 +286,7 @@ authorization do
     #
     # CertificateOrders
     #
+    has_permission_on :certificate_orders, to: :smime_client_enrollment
     has_permission_on :certificate_orders, :to => [:create, :read, :show] do
       if_attribute ssl_account: is {user.ssl_account}
     end
@@ -301,6 +302,7 @@ authorization do
         :create_free_ssl,
         :create_multi_free_ssl,
         :ucc_domains_adjust_create,
+        :smime_client_enroll_create,
         :delete,
         :read,
         :update
@@ -376,6 +378,7 @@ authorization do
     #
     # CertificateOrders
     #
+    has_permission_on :certificate_orders, to: :smime_client_enrollment
     has_permission_on :certificate_orders, to: [
       :edit,
       :delete,
@@ -546,7 +549,8 @@ authorization do
     has_permission_on :contacts, to: [
       :new,
       :create,
-      :saved_contacts
+      :saved_contacts,
+      :enterprise_pki_service_agreement
     ]
     # 
     # Orders
@@ -655,7 +659,8 @@ privileges do
     :duo_own_used,
     :set_2fa_type,
     :update_ssl_slug,
-    :saved_contacts
+    :saved_contacts,
+    :smime_client_enrollment
   ]
   privilege :sysadmin_manage, includes: [
     :admin_manage,

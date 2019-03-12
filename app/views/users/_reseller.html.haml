@@ -89,6 +89,7 @@
                           -if ssl_account && permitted_to?(:index, :billing_profiles)
                             %li=link_to 'manage billing profiles', billing_profiles_path(ssl_slug: @ssl_slug)
                           %li=link_to 'buy certificate', certificates_url
+                          %li=link_to "s/mime or slient enrollment", smime_client_enrollment_certificate_orders_path(ssl_slug: @ssl_slug)
                           %li=link_to 'certificate pricing', reseller_tier_url(ssl_account.reseller.reseller_tier.id)
                           -if ssl_account && permitted_to?(:index, :invoices) && ssl_account.invoices.any?
                             %li=link_to 'monthly and daily invoices', invoices_path(@ssl_slug)

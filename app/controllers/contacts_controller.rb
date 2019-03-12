@@ -30,6 +30,12 @@ class ContactsController < ApplicationController
     respond_to :html
   end
 
+  def enterprise_pki_service_agreement
+    filename = "SSLcom Enterprise PKI Service Agreement 1.0.pdf"
+    send_file File.join("public", "agreements", "enterprise_pki_agreement_1.0.pdf"),
+      type: "application/pdf", filename: filename, disposition: 'inline'
+  end
+
   def show
     if params[:saved_contact]
       find_contact
@@ -58,28 +64,40 @@ class ContactsController < ApplicationController
   end
 
   def edit
-
+    @render_epki_registrant = @contact.show_domains?
   end
   
   def create
-    registrant = params[:contact][:type]=='Registrant'
-    new_params = set_registrant_type(params).merge(
-      contactable_id: current_user.ssl_account.id,
-      contactable_type: 'SslAccount'
-    )
-    @contact = registrant ? Registrant.new(new_params) : CertificateContact.new(new_params)
-    if @contact.save
-      flash[:notice] = "Contact was successfully created."
-      redirect_to_index
+    if params[:contact][:epki_registrant]
+      create_epki_registrant
     else
-      @contact = @contact.becomes(Contact)
-      render :new
+      registrant = params[:contact][:type]=='Registrant'
+      new_params = set_registrant_type(params).merge(
+        contactable_id: current_user.ssl_account.id,
+        contactable_type: 'SslAccount'
+      )
+      @contact = registrant ? Registrant.new(new_params) : CertificateContact.new(new_params)
+      if @contact.save
+        flash[:notice] = "Contact was successfully created."
+        redirect_to_index
+      else
+        @contact = @contact.becomes(Contact)
+        render :new
+      end
     end
   end
-  
+
   def admin_update
     if @contact && params[:status]
+      previous_status = @contact.status
       @contact.update_column(:status, Contact.statuses[params[:status]])
+      SystemAudit.create(
+        owner:  current_user,
+        target: @contact,
+        notes:  "Saved Identity #{@contact.email} status was updated from 
+          '#{previous_status}' to '#{@contact.status}' by #{current_user.email}.",
+        action: "Saved Identity #{@contact.email} status update."
+      )
       validate_certificate_orders
     end
     notice_ext = @co_validated && @co_validated > 0 ? "And #{@co_validated} certificate order(s) were validated." : ""
@@ -88,11 +106,15 @@ class ContactsController < ApplicationController
   end
 
   def update
-    new_params = set_registrant_type params
+    epki_registrant = params[:contact][:epki_registrant]
+    new_params = epki_registrant ? get_epki_registrant_params : set_registrant_type(params)
+    
     respond_to do |format|
+      @render_epki_registrant = @contact.show_domains?
       type = new_params[:type] == 'CertificateContact' ? CertificateContact : Registrant
       if @contact.becomes(type).update_attributes(new_params)
         flash[:notice] = "#{@contact.type} was successfully updated."
+        update_epki_registrant
         format.html { redirect_to_index }
         format.json { render json: @contact, status: :ok }
       else
@@ -110,6 +132,53 @@ class ContactsController < ApplicationController
   end
   
   private
+
+  def get_epki_registrant_params
+    domains = params[:contact][:domains].strip.split(/[\s,]+/).map(&:strip)
+    new_params = set_registrant_type(params).merge(
+      contactable_id: current_user.ssl_account.id,
+      contactable_type: "SslAccount",
+      status: Contact::statuses[:pending_epki],
+      registrant_type: Registrant::registrant_types[:organization],
+      type: "Registrant",
+      domains: domains
+    )
+    new_params.delete("epki_registrant")
+    new_params
+  end
+
+  def update_epki_registrant
+    if @render_epki_registrant
+      flash[:notice] = "EPKI Agreement was successfully updated. Please wait for SSL.com Administrator to approve this identity."
+      team_name = current_user.ssl_account.get_team_name
+      SystemAudit.create(
+        owner:  current_user,
+        target: @contact,
+        action: "Existing EPKI Agreement update request for #{team_name}",
+        notes:  "User #{current_user.email} has requested changes to existing EPKI Registrant for team #{team_name}."
+      )
+    end
+  end
+
+  def create_epki_registrant
+    new_params = get_epki_registrant_params
+    @contact = Registrant.new(new_params)
+    if @contact.save
+      flash[:notice] = "EPKI Agreement was successfully created. Please wait for SSL.com Administrator to approve this identity."
+      team_name = current_user.ssl_account.get_team_name
+      SystemAudit.create(
+        owner:  current_user,
+        target: @contact,
+        action: "New EPKI Agreement Request for #{team_name}",
+        notes:  "User #{current_user.email} has requested new EPKI Registrant for team #{team_name}."
+      )
+      redirect_to_index
+    else
+      @render_epki_registrant = true
+      @contact = @contact.becomes(Contact)
+      render :new
+    end
+  end
 
   def redirect_to_index
     redirect_to saved_contacts_contacts_path(

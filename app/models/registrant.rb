@@ -6,14 +6,6 @@ class Registrant < Contact
   after_destroy :release_dependant_contacts
 
   validates_presence_of :contactable
-  # validates_acceptance_of :validation,
-  #   if: Proc.new {|r|
-  #     !r.reusable? && (
-  #       r.contactable &&
-  #       r.contactable.certificate_order &&
-  #       r.contactable.certificate_order.ssl_account.has_role?("reseller")
-  #     )
-  #   }
   validates_presence_of :company_name, :address1, :city, :state, :postal_code, :country,
     if: Proc.new{|r|
       !r.reusable? && r.contactable && 
@@ -59,10 +51,12 @@ class Registrant < Contact
   validates :company_name, :phone, presence: true, if: proc { |r| r.reusable? && r.organization? }
   validates :first_name, :last_name, presence: true, if: proc { |r| r.reusable? && r.individual? }
 
+  after_save :set_one_epki_agreement
+
   def applies_to_certificate_order?(certificate_order)
     domains.any? do |domain|
       if certificate_order.certificate.is_smime_or_client?
-        DomainControlValidation.domain_in_subdomains?(certificate_order.get_recipient.email.split("@")[1],domain)
+        email_in_subdomain?(certificate_order.get_recipient.email, domain)
       end
     end unless domains.blank?
   end
@@ -87,7 +81,38 @@ class Registrant < Contact
     )
   end
 
+  def filter_approved_domains(filter_domains)
+    approved = []
+    filter_domains.any? do |filter_domain|
+      domains.any? do |domain|
+        if email_in_subdomain?(filter_domain, domain)
+          approved << filter_domain
+        end
+      end
+    end
+    approved
+  end
+  
+  def filter_pending_domains(filter_domains)
+    filter_domains - filter_approved_domains(filter_domains)
+  end
+
   private
+
+  def set_one_epki_agreement
+    if epki_agreement? && contactable.is_a?(SslAccount)
+      other_epki = contactable.all_saved_contacts
+        .where.not(id: self.id)
+        .where(status: Contact::statuses[:epki_agreement])
+      other_epki.update(:status, Contact::statuses[:validated]) if other_epki.any?
+    end
+  end
+  
+  def email_in_subdomain?(target_email, compare_with)
+    DomainControlValidation.domain_in_subdomains?(
+      target_email.split('@').last, compare_with
+    )
+  end
 
   def release_dependant_contacts
     Contact.where(parent_id: id).update_all(parent_id: nil)

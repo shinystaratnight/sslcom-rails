@@ -4,6 +4,8 @@ require 'bigdecimal'
 class Order < ActiveRecord::Base
   extend Memoist
   include V2MigrationProgressAddon
+  include SmimeClientEnrollable
+
   belongs_to  :billable, :polymorphic => true, touch: true
   belongs_to  :address
   belongs_to  :billing_profile, -> { unscope(where: [:status]) }
@@ -51,9 +53,10 @@ class Order < ActiveRecord::Base
   
   FAW                = "Funded Account Withdrawal"
   DOMAINS_ADJUSTMENT = "Domains Adjustment"
-  SSL_CERTIFICATE    = "SSL Certificate Order"
+  SSL_CERTIFICATE    = "SSL.com Certificate Order"
   MI_PAYMENT         = "Monthly Invoice Payment"
   DI_PAYMENT         = "Daily Invoice Payment"
+  S_OR_C_ENROLLMENT  = "S/MIME or Client Enrollment"
   
   # If team's billing_method is set to 'monthly', grab all orders w/'approved' approval
   # when running charges at the end of the month for orders from ucc reprocessing.
@@ -222,6 +225,20 @@ class Order < ActiveRecord::Base
 
   preference :migrated_from_v2, :default=>false
 
+  SmimeClientEnrollValidate = Struct.new(:user_id, :order_id) do
+    def perform
+      user = User.find user_id
+      order = Order.find order_id
+      if user && order
+        order.smime_client_enroll_recipients(user_id)
+      end
+    end
+  end
+
+  def smime_client_enrollment_validate(user_id)
+    Delayed::Job.enqueue SmimeClientEnrollValidate.new(user_id, id)
+  end
+
   def self.range_amount(start, finish)
     amount = BigDecimal.new(range(start, finish).amount.to_s)
     rounded = (amount * 100).round / 100
@@ -314,6 +331,7 @@ class Order < ActiveRecord::Base
 
   workflow do
     state :invoiced do
+      event :payment_authorized, transitions_to: :authorized
       event :invoice_paid!, transitions_to: :paid_by_invoice
       event :full_refund, transitions_to: :fully_refunded do |complete=true|
         if original_order?

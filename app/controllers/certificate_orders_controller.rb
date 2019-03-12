@@ -17,7 +17,6 @@
 class CertificateOrdersController < ApplicationController
   layout 'application'
   include OrdersHelper
-  include Skylight::Helpers
   skip_before_filter :verify_authenticity_token, only: [:parse_csr]
   filter_access_to :all, except: [:generate_cert]
   filter_access_to :read, :update, :delete, :show, :edit, :developer, :recipient
@@ -40,8 +39,19 @@ class CertificateOrdersController < ApplicationController
   in_place_edit_for :csr, :signed_certificate_by_text
 
   before_action :set_schedule_value, only: [:edit, :reprocess]
+  before_action :set_algorithm_and_size, only: [:generate_cert]
 
   NUM_ROWS_LIMIT=2
+
+  def smime_client_enrollment
+    if params[:get_duration]
+      smime_client_duration
+    elsif params[:smime_client_create]
+      smime_client_create
+    else
+      smime_client_init
+    end
+  end
 
   def update_tags
     if @certificate_order
@@ -189,8 +199,9 @@ class CertificateOrdersController < ApplicationController
             @notification_groups.insert(0, ['none', 'none']) if @notification_groups.empty?
 
             @managed_csrs = (@certificate_order.ssl_account.all_csrs)
-                                .sort_by{|arr| arr.common_name}
-                                .map{|arr| [(arr.friendly_name || arr.common_name)+' '+ arr.public_key_sha1, arr.ref]}
+                                .sort_by{|arr| arr.try(:common_name)}
+                                .map{|arr| [(arr.friendly_name || arr.try(:common_name))+' '+ arr.public_key_sha1,
+                                            arr.ref]}
                                 .delete_if{|arr| arr.second == nil}
             @managed_csrs.insert(0, ['none', 'none'])
 
@@ -236,7 +247,6 @@ class CertificateOrdersController < ApplicationController
         #reset dcv validation
         @certificate_content.add_ca(@certificate_order.ssl_account) if @certificate_order.external_order_number.blank?
         @certificate_content.agreement=true
-        @certificate_content.save
         @certificate_order.validation.validation_rules.each do |vr|
           if vr.description=~/\Adomain/
             ruling=@certificate_order.validation.validation_rulings.detect{|vrl| vrl.validation_rule == vr}
@@ -520,6 +530,7 @@ class CertificateOrdersController < ApplicationController
       @certificate_order.unchain_comodo
     else
       @certificate_order.update_column :external_order_number, params[:num]
+      @certificate_order.certificate_content.last.update_column :ca_id, nil
     end
     SystemAudit.create(owner: current_user, target: @certificate_order,
                        action: "changed external order number to #{params[:num]}")
@@ -711,14 +722,54 @@ class CertificateOrdersController < ApplicationController
 
   private
 
+  def smime_client_create
+    @certificate = Certificate.find params[:certificate_id]
+    smime_client_parse_emails
+    
+    if @certificate && @emails.any?
+      redirect_to new_order_path(@ssl_slug,
+        emails: @emails,
+        certificate: @certificate,
+        smime_client_enrollment: true
+      )
+    else
+      flash[:error] = "Please enter at least one valid email."
+      render :smime_client_enrollment
+    end
+  end
+
+  def smime_client_init
+    @certificates = Certificate.get_smime_client_products(@tier)
+    @certificate = @certificates.first
+
+    co = CertificateOrder.new(
+      duration: 2,
+      ssl_account: (current_user.blank? ? nil : current_user.ssl_account),
+      has_csr: false
+    )
+    co.certificate_contents << CertificateContent.new(domains: [])
+    @certificate_order = Order.setup_certificate_order(
+      certificate: @certificate, certificate_order: co
+    )
+  end
+
+  def smime_client_duration
+    @certificate = Certificate.find params[:certificate_id]
+    partial = render_to_string(
+      partial: 'certificate_orders/smime_client_enrollment/duration_form',
+      layout: false
+    )
+    render json: {content: partial}, status: :ok
+  end
+
   def client_smime_validate
     co = @certificate_order
     cc = co.certificate_content
     validations = co.certificate.client_smime_validations
     validated = if validations == 'iv_ov'
                   if @iv_exists.validated?
-                    if co.registrant.status=="epki_agreement"
-                      co.registrant.parent.applies_to_certificate_order?(co)
+                    if co.registrant.epki_agreement?
+                      co.registrant.applies_to_certificate_order?(co)
                     else
                       (co.locked_registrant || co.registrant).validated?
                     end
@@ -1508,5 +1559,34 @@ class CertificateOrdersController < ApplicationController
 
       @certificate_order.managed_csrs << managed_csr
     end
+  end
+
+  def set_algorithm_and_size
+    @integrated_algorithm = [
+        ['RSA', 'RSASSA-PKCS1-v1_5'],
+        ['ECDSA', 'ECDSA']
+    ]
+
+    # @hash_algorithm = [
+    #     ['SHA-256', 'SHA-256'],
+    #     ['SHA-384', 'SHA-384'],
+    #     ['SHA-512', 'SHA-512']
+    # ]
+
+    @sign_algorithm = [
+        ['RSASSA-PKCS1-v1_5', 'RSASSA-PKCS1-v1_5'],
+        ['ECDSA', 'ECDSA'],
+        ['RSA-PSS', 'RSA-PSS']
+    ]
+
+    @rsa_key_size = [
+        ['2048', '2048'],
+        ['4096', '4096']
+    ]
+
+    @ecc_key_size = [
+        ['256', '256'],
+        ['384', '384']
+    ]
   end
 end

@@ -225,7 +225,7 @@ class CertificateName < ActiveRecord::Base
   WhoisJob = Struct.new(:dname, :certificate_name) do
     def perform
       begin
-        if dcv=DomainControlValidation.global.whois_threshold.find_by_subject(dname)
+        if dcv=DomainControlValidation.global.find_by_subject(dname)
           standard_addresses = dcv.candidate_addresses
         else
           standard_addresses = DomainControlValidation.email_address_choices(dname)
@@ -235,7 +235,8 @@ class CertificateName < ActiveRecord::Base
           whois_addresses.each do |ad|
            standard_addresses << ad.downcase unless ad =~/abuse.*?@/i
           end unless whois_addresses.blank?
-          DomainControlValidation.find_or_create_by(subject: dname).update_column(:candidate_addresses, standard_addresses)
+          DomainControlValidation.global.find_or_create_by(subject: dname).update_column(:candidate_addresses,
+                                                                                         standard_addresses)
         end
         Rails.cache.write("CertificateName.candidate_email_addresses/#{dname}",standard_addresses,
                           expires_in: DomainControlValidation::EMAIL_CHOICE_CACHE_EXPIRES_DAYS.days)
@@ -245,9 +246,11 @@ class CertificateName < ActiveRecord::Base
           dcv.update_column(:candidate_addresses, standard_addresses) if dcv
         end
       rescue Exception=>e
-        Rails.cache.write("CertificateName.candidate_email_addresses/#{dname}",
-                          DomainControlValidation.email_address_choices(dname),
+        standard_addresses = DomainControlValidation.email_address_choices(dname)
+        Rails.cache.write("CertificateName.candidate_email_addresses/#{dname}", standard_addresses,
                           expires_in: DomainControlValidation::EMAIL_CHOICE_CACHE_EXPIRES_DAYS.days)
+        DomainControlValidation.global.find_or_create_by(subject: dname).
+            update_column(:candidate_addresses, standard_addresses)
         Logger.new(STDOUT).error e.backtrace.inspect
       end
     end
@@ -261,9 +264,13 @@ class CertificateName < ActiveRecord::Base
   # certificate_name in the event the domain_control_validations candidate addresses need to be updated
   def self.candidate_email_addresses(name,certificate_name=nil)
     name=CertificateContent.non_wildcard_name(name,false)
-    Rails.cache.read("CertificateName.candidate_email_addresses/#{name}") ||
-      (Delayed::Job.enqueue(WhoisJob.new(name,certificate_name))
-      DomainControlValidation.global.whois_threshold.find_by_subject(name).try(:candidate_addresses) ||
-      DomainControlValidation.email_address_choices(name))
+    result=Rails.cache.read("CertificateName.candidate_email_addresses/#{name}")
+    if result
+      result
+    else
+      Delayed::Job.enqueue(WhoisJob.new(name,certificate_name))
+      DomainControlValidation.global.find_by_subject(name).try(:candidate_addresses) ||
+        DomainControlValidation.email_address_choices(name)
+    end
   end
 end

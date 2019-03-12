@@ -37,6 +37,19 @@
     .row.pt-4
       .col-md-2
       .col-md-8
+        .algorithm_wrap
+          .row
+            .col-md-6
+              .form-group
+                %label Sign Algorithm :
+                = select_tag 'sign_algorithm', options_for_select(@sign_alg), class: 'form-control'
+            .col-md-6
+              .form-group.rsa_key_wrap
+                %label Key Size :
+                = select_tag 'rsa_key_size', options_for_select(@rsa_key_size), class: 'form-control'
+              .form-group.ec_key_wrap.hidden
+                %label Key Size :
+                = select_tag 'ec_key_size', options_for_select(@ec_key_size), class: 'form-control'
         .generate_wrap
           .row
             .col-md-6
@@ -97,6 +110,7 @@
             = text_area_tag 'private_key', nil, class: 'form-control', rows: '5'
         .clipboard_wrap.hidden
           .form-group
+            = button_tag 'Copy CSR', type: 'button', id: 'clipboard_csr_btn', class: 'btn btn-primary'
             = button_tag 'Copy Private Key', type: 'button', id: 'clipboard_pkey_btn', class: 'btn btn-primary'
         -#.cert_orders_wrap
           .form-group

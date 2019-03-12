@@ -15,6 +15,12 @@ class ProductVariantItem < ActiveRecord::Base
               product_variant_group.variantable.is_a?(Certificate)
   end
 
+  def cached_certificate_id
+    Rails.cache.fetch("#{cache_key}/cached_certificate_id") do
+      certificate.id if certificate
+    end
+  end
+
   def is_domain?
     item_type=='ucc_domain'
   end

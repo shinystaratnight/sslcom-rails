@@ -8,6 +8,8 @@
           %li#lnk-folders-ql
             %i.fa.fa-folder-open
             =link_to "Explorer", folders_path(@ssl_slug), id: "lnk-co-folders"
+          %li
+            =link_to "S/MIME or Client enrollment", smime_client_enrollment_certificate_orders_path(ssl_slug: @ssl_slug)
         -unless is_sandbox?
           %li=link_to 'Buy Certificate', certificates_url
           %li=link_to 'Deposit Funds', allocate_funds_url(ssl_slug: @ssl_slug)
@@ -47,6 +49,7 @@
       %li=link_to "Physical Tokens", search_certificate_orders_path(@ssl_slug, search: "physical_tokens:in_transit,received,in_possession#{is_test}")
       %li=link_to "Client/SMIME Pro", search_certificate_orders_path(@ssl_slug, search: "product:personal-pro#{is_test}")
       %li=link_to "Client/SMIME Business", search_certificate_orders_path(@ssl_slug, search: "product:personal-business#{is_test}")
+      %li=link_to "NAESB Client", search_certificate_orders_path(@ssl_slug, search: "product:personal-naesb-basic#{is_test}")
       -unless current_user.is_system_admins?
         %li &nbsp;
         %li Developers:

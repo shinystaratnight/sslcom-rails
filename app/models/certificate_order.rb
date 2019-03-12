@@ -699,7 +699,7 @@ class CertificateOrder < ActiveRecord::Base
             sub_order_items[0].product_variant_item
     else
       Certificate.unscoped.find_by_id(Rails.cache.fetch("#{cache_key}/certificate") do
-        sub_order_items[0].product_variant_item.certificate.id if sub_order_items[0] &&
+        sub_order_items[0].product_variant_item.cached_certificate_id if sub_order_items[0] &&
             sub_order_items[0].product_variant_item
       end)
     end
@@ -798,7 +798,7 @@ class CertificateOrder < ActiveRecord::Base
         when 5
           1826
         else # assume days
-          years.gsub(/[^\d]+/,"").to_i if years.include?("day")
+          years.gsub(/[^\d]+/,"").to_i * 365
         end
       elsif [:comodo_api,:sslcom_api].include? unit
         case years.gsub(/[^\d]+/,"").to_i
@@ -1156,8 +1156,8 @@ class CertificateOrder < ActiveRecord::Base
     orders.last
   end
 
-  def clean_up_mappings
-    cac=certificate.cas_certificates.select{|c|c.ca.friendly_name =~/MySSL Basic/}
+  def clean_up_mappings(friendly_name)
+    cac=certificate.cas_certificates.select{|c|c.ca.friendly_name =~ Regexp.new(friendly_name)}
     certificate.cas_certificates.where{id << cac.map(&:id)}.delete_all
     # test
     # certificate.cas.ssl_account_or_general_default(ssl_account)
@@ -1210,24 +1210,24 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def apply_for_certificate(options={})
-    if [Ca::CERTLOCK_CA,Ca::SSLCOM_CA,Ca::MANAGEMENT_CA].include?(options[:ca]) or !certificate_content.ca.blank? or
+    if [Ca::CERTLOCK_CA,Ca::SSLCOM_CA,Ca::MANAGEMENT_CA].include?(options[:ca]) or certificate_content.ca or
         !options[:mapping].blank?
       if !certificate_content.infringement.empty? # possible trademark problems
         OrderNotifier.potential_trademark(Settings.notify_address, self, certificate_content.infringement).deliver_now
       elsif !certificate.is_server? or (domains_validated? and caa_validated?)
-        # queue this job due to CAA lookups
-        if certificate_names.count > 10 and not options[:mapping].profile_name=~/EV/
-          unless certificate_content.pending_issuance?
-            SslcomCaApi.delay.apply_for_certificate(self, options)
-            certificate_content.pend_issuance!
-          end
-        else
+        # # queue this job due to CAA lookups
+        # if certificate_names.count > 10 and not options[:mapping].try(:profile_name)=~/EV/
+        #   unless certificate_content.pending_issuance?
+        #     SslcomCaApi.delay.apply_for_certificate(self, options)
+        #     certificate_content.pend_issuance!
+        #   end
+        # else
           SslcomCaApi.apply_for_certificate(self, options)
-        end
+        # end
       end
     else
       ComodoApi.apply_for_certificate(self, options) if ca_name=="comodo"
-    end if signed_certificate.blank? or remaining_days>0
+    end if remaining_days>0
   end
 
   def retrieve_ca_cert(email_customer=true)

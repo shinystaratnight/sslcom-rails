@@ -243,7 +243,8 @@ class CertificateContent < ActiveRecord::Base
 
   def add_ca(ssl_account)
     # dtnt comodo chained is 492703
-    unless [467564,16077,204730,492703,21291].include?(ssl_account.id)
+    # 499740 using Azure. Remove once we are in Azure
+    unless [467564,16077,204730,492703,21291,499740].include?(ssl_account.id)
       self.ca = (self.certificate.cas.ssl_account_or_general_default(ssl_account)).last if ca.blank? and certificate
     end
   end
@@ -507,7 +508,7 @@ class CertificateContent < ActiveRecord::Base
 
   def common_name
     (certificate_names.find_by_is_common_name(true).try(:name) ||
-        certificate_names.last.name || csr.common_name).downcase
+        certificate_names.last.name || csr.try(:common_name)).downcase
   end
 
   def has_all_contacts?
@@ -770,15 +771,17 @@ class CertificateContent < ActiveRecord::Base
 
   def subject_dn(options={})
     cert = options[:certificate] || self.certificate
-    dn=certificate.is_server? ? ["CN=#{options[:common_name] || common_name}"] : []
-    dn << "emailAddress=#{certificate_order.assignee.email}" if certificate.is_smime?
-    if certificate.is_smime_or_client? and !certificate.is_client_basic?
-      person=ssl_account.individual_validations.find_by_email(certificate_order.get_recipient.email)
-      dn << "CN=#{[person.first_name,person.last_name].join(" ")}"
-    end
-    if locked_registrant and !(options[:mapping] ? options[:mapping].try(:profile_name) =~ /DV/ : cert.is_dv?)
+    dn=["CN=#{options[:common_name]}"] if certificate.is_server?
+    if !locked_registrant.blank? and !(options[:mapping] ? options[:mapping].try(:profile_name) =~ /DV/ : cert.is_dv?)
       # if ev or ov order, must have locked registrant
-      dn= ["CN=#{locked_registrant.company_name}"] if certificate.is_code_signing?
+      if dn.blank?
+        dn= if certificate.is_code_signing?
+              ["CN=#{locked_registrant.company_name}"]
+            elsif certificate.is_smime_or_client?
+              person=ssl_account.individual_validations.find_by_email(certificate_order.get_recipient.email)
+              ["CN=#{[person.first_name,person.last_name].join(" ")}"]
+            end
+      end
       org=locked_registrant.company_name
       ou=locked_registrant.department
       state=locked_registrant.state
@@ -788,6 +791,7 @@ class CertificateContent < ActiveRecord::Base
       postal_address=locked_registrant.po_box
       street_address=
           [locked_registrant.address1,locked_registrant.address2,locked_registrant.address3].join(" ")
+      dn << "emailAddress=#{certificate_order.assignee.email}" if certificate.is_smime?
       dn << "O=#{org}" if !org.blank? and (!city.blank? or !state.blank?)
       dn << "OU=#{ou}" unless ou.blank?
       dn << "OU=#{locked_registrant.special_fields["entity_code"]}" if certificate.is_naesb? and

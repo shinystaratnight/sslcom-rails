@@ -15,6 +15,7 @@
       -@certificate_order.certificate_content.subject_dn.split(',').each do |s|
         %dt=s
   %input.cs_subject_dn{:type=>'hidden', :value=>"#{is_cs || is_client ? @certificate_order.certificate_content.locked_subject_dn : @certificate_order.certificate_content.subject_dn}"}
+  %input.sign_alg_type{:type => 'hidden', :value => 'rsa'}
   .generate_wrap
     .row.pt-3
       - if current_user.blank?
@@ -29,6 +30,41 @@
           %input.create_csr.center{:type=>'button', :value=>'Create CSR', :class=>'btn btn-primary'}
         .col-md-5{:style=>'font-size: 15px'}
           %input.own_csr{:type=>'checkbox', :style=>'height: 20px; vertical-align: bottom; margin-right: 10px'} I have my own CSR
+  .integrated_algorithm_wrap
+    .row.pt-4
+      .col-md-3{:style=>"text-align: right"}
+        Algorithm :
+      .col-md-8
+        = select_tag 'integrated_algorithm', options_for_select(@integrated_algorithm), include_blank: false, class: 'form-control'
+    .row.pt-4.pb-4
+      .col-md-3
+      .col-md-8
+        %input.toggle_show_btn{:type=>'button', :value=>'Show Advanced Option', :class=>'btn btn-primary'}
+  .algorithm_wrap.hidden
+    -#.row.pt-4
+    -#  .col-md-3{:style=>"text-align: right"}
+    -#    Hash Algorithm :
+    -#  .col-md-8
+    -#    = select_tag 'hash_algorithm', options_for_select(@hash_algorithm), include_blank: false, class: 'form-control'
+    .row.pt-4
+      .col-md-3{:style=>"text-align: right"}
+        Sign Algorithm :
+      .col-md-8
+        = select_tag 'sign_algorithm', options_for_select(@sign_algorithm), include_blank: false, class: 'form-control'
+    .row.pt-4.rsa_key_size
+      .col-md-3{:style=>"text-align: right"}
+        Key Size :
+      .col-md-8
+        = select_tag 'rsa_key_size', options_for_select(@rsa_key_size), include_blank: false, class: 'form-control'
+    .row.pt-4.ecc_key_size{:style=>"display: none"}
+      .col-md-3{:style=>"text-align: right"}
+        Key Size :
+      .col-md-8
+        = select_tag 'ecc_key_size', options_for_select(@ecc_key_size), include_blank: false, class: 'form-control'
+    .row.pt-4.pb-4
+      .col-md-3
+      .col-md-8
+        %input.toggle_hidden_btn{:type=>'button', :value=>'Hide Advanced Option', :class=>'btn btn-primary'}
   .csr_wrap.hidden
     .row.pt-4
       .col-md-3{:style=>"text-align: right"}
@@ -68,4 +104,3 @@
     %input.cert_download{:type=>'button', :value=>'Download', :style=>'display:block; margin: auto', :class=>'btn btn-primary'}
     = hidden_field_tag :cert_common_name, ''
     -#%a.user_cert_download{:download=>'sslcom_cert.crt'} Download File
-

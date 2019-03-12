@@ -28,6 +28,7 @@ SslCom::Application.routes.draw do
   #resources :site_checks
   match 'site_check' => 'site_checks#new', :as => :site_check, via: [:get, :post]
   match 'site_checks' => 'site_checks#create', :as => :site_checks, via: [:get, :post]
+  match 'enterprise_pki_service_agreement' => 'contacts#enterprise_pki_service_agreement', via: :get 
 
   # api: If version is not specified then use the default version in APIConstraint
   constraints DomainConstraint.new(
@@ -72,6 +73,10 @@ SslCom::Application.routes.draw do
           as: :api_team_saved_contacts, via: :get
         match '/teams/saved_registrants' => 'teams#saved_registrants',
           as: :api_team_saved_registrants, via: :get
+
+        # Signed Certificates
+        match '/signed_certificates' => 'api_certificate_requests#retrieve_signed_certificates',
+              as: :api_signed_certificates_retrieve, via: [:post]
             
         # Certificates
         match '/certificates' => 'api_certificate_requests#create_v1_4',
@@ -230,10 +235,11 @@ SslCom::Application.routes.draw do
         get :reprocessing
         get :search
         get :developers
-        match :parse_csr, via: [:post, :options]
         get :show_cert_order
         post :validate_issue
         post :switch_from_comodo
+        match :parse_csr, via: [:post, :options]
+        match :smime_client_enrollment, via: [:get, :post]
       end
 
       member do
@@ -371,7 +377,10 @@ SslCom::Application.routes.draw do
         post :add_cart
         get :search
         get :visitor_trackings
-        post :create_free_ssl, :create_multi_free_ssl, :lookup_discount
+        post :create_free_ssl
+        post :create_multi_free_ssl
+        post :lookup_discount
+        post :smime_client_enroll_create
         post :ucc_domains_adjust_create
         post :change_quantity_in_cart
       end

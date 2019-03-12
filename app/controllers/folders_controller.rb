@@ -1,5 +1,4 @@
 class FoldersController < ApplicationController
-  include Skylight::Helpers
   before_filter :find_ssl_account
   before_filter :set_ssl_slug
   before_filter :find_folder, only: [
@@ -46,7 +45,6 @@ class FoldersController < ApplicationController
     end
   end
 
-  instrument_method
   def children
     if params[:search]
       @certificate_order_ids = find_certificate_orders(source: 'folders').pluck(:id)
