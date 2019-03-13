@@ -530,7 +530,7 @@ class CertificateOrdersController < ApplicationController
       @certificate_order.unchain_comodo
     else
       @certificate_order.update_column :external_order_number, params[:num]
-      @certificate_order.certificate_content.last.update_column :ca_id, nil
+      @certificate_order.certificate_contents.last.update_column :ca_id, nil
     end
     SystemAudit.create(owner: current_user, target: @certificate_order,
                        action: "changed external order number to #{params[:num]}")
