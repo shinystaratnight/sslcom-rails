@@ -66,7 +66,7 @@ class CertificateOrdersController < ApplicationController
 
   def generate_cert
     co_token = CertificateOrderToken.find_by_token(params[:token])
-    if co_token.user.blank? and co_token.certificate_order.get_download_cert_email==current_user.email and
+    if co_token.user.blank? and co_token.certificate_order.get_download_cert_email==current_user.try(:email) and
         Settings.require_login_smime_claim==true
       co_token.update_column :user_id, current_user.id
     end
