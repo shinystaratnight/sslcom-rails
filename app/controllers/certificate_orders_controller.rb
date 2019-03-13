@@ -66,7 +66,7 @@ class CertificateOrdersController < ApplicationController
 
   def generate_cert
     co_token = CertificateOrderToken.find_by_token(params[:token])
-    if co_token.user.blank? and co_token.certificate_order.get_download_cert_email==current_user.email and
+    if co_token.user.blank? and co_token.certificate_order.get_download_cert_email==current_user.try(:email) and
         Settings.require_login_smime_claim==true
       co_token.update_column :user_id, current_user.id
     end
@@ -530,7 +530,7 @@ class CertificateOrdersController < ApplicationController
       @certificate_order.unchain_comodo
     else
       @certificate_order.update_column :external_order_number, params[:num]
-      @certificate_order.certificate_content.last.update_column :ca_id, nil
+      @certificate_order.certificate_contents.last.update_column :ca_id, nil
     end
     SystemAudit.create(owner: current_user, target: @certificate_order,
                        action: "changed external order number to #{params[:num]}")
