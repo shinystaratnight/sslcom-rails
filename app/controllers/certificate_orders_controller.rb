@@ -27,7 +27,7 @@ class CertificateOrdersController < ApplicationController
                    :developers, :require=>[:update, :delete]
   filter_access_to :renew, :parse_csr, :generate_cert, require: [:create]
   filter_access_to :auto_renew, require: [:admin_manage]
-  filter_access_to :show_cert_order, :validate_issue, :require=>:ajax
+  filter_access_to :show_cert_order, :validate_issue, :register_domains, :require=>:ajax
   before_filter :load_certificate_order,
                 only: [:show, :show_cert_order, :validate_issue, :update, :edit, :download, :destroy, :delete, :update_csr, :auto_renew, :start_over,
                        :change_ext_order_number, :admin_update, :developer, :sslcom_ca, :update_tags, :recipient, :validate_issue]
@@ -713,6 +713,20 @@ class CertificateOrdersController < ApplicationController
       else
         returnObj['status'] = 'no-exist-cert-order'
       end
+    else
+      returnObj['status'] = 'no-user'
+    end
+
+    render :json => returnObj
+  end
+
+  def register_domains
+    returnObj = {}
+    @certificate_order = CertificateOrder.find_by_ref(params['id'])
+
+    if current_user
+      @certificate_order.certificate_content.locked_registrant.update_attribute(:domains, params['domains']) if @certificate_order
+      returnObj['status'] = 'success'
     else
       returnObj['status'] = 'no-user'
     end

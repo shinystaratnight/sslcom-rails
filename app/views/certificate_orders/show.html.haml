@@ -6,6 +6,7 @@
 -@meta = [["ROBOTS", "NOINDEX, NOFOLLOW"]]
 =render 'index_scripts'
 =render 'show_scripts'
+= javascript_include_tag 'psl.min'
 -content_for :title, title
 -if params[:checkout] && co.certificate_content.pending_validation?
   -i=adjusted_position(7, co)
@@ -267,6 +268,18 @@
                               none
                             -elsif current_user.is_system_admins?
                               =link_to 'edit locked registrant', edit_certificate_order_url(id: @certificate_order.ref, registrant: false)
+                        -if current_user.is_admin? && @cc.locked_registrant
+                          %li.category_border
+                          %li.domains_category
+                            %strong domains
+                            =text_field_tag 'hidden_locked_reg_domains', @cc.locked_registrant.domains ? @cc.locked_registrant.domains.join(' ') : '', :type => 'hidden'
+                          -if @cc.locked_registrant.domains
+                            -@cc.locked_registrant.domains.each do |domain|
+                              %li.domains_category_domain=domain
+                          -else
+                            %li.domains_category_domain none
+                          %li.domains_category_action
+                            =link_to 'edit domains', register_domains_certificate_order_path(@ssl_slug, @certificate_order.ref), :class => 'edit_locked_registrant_domains'
                         -unless @certificate_order.physical_tokens.active.blank?
                           %li.category_border
                           %li
@@ -520,3 +533,17 @@
 
 -if show_folders
   = render partial: '/folders/folder_tree_modal'
+
+#domain_modal.domain-modal
+  #domain_modal_content.modal-content
+    #domain_modal_header.modal-header
+      %span#domain_modal_close.close
+        &times;
+      %p
+        Domains (newline and whitespace separated)
+    #domain_modal_body.modal-body
+      = text_area_tag 'locked_reg_domains', nil, :rows => '5'
+      #required-valid
+        * All Domains should be valid!
+    #domain_modal_footer.modal-footer
+      = button_tag 'Save', :type => 'button', :class => 'btn btn-grey btn-save-domains', :disabled => true

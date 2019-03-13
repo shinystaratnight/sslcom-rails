@@ -526,6 +526,18 @@ toPkcs12Asn1 = function(key, cert, password, options) {
 
 jQuery.noConflict();
 jQuery(function($) {
+  $.checkDomain = function(str) {
+    var asterisk_counts = (str.match(/\*/g) || []).length;
+    if (asterisk_counts == 0) {
+      var ip_address_pattern = /\b(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b/;
+      return psl.isValid(str) || ip_address_pattern.test(str);
+    } else if (asterisk_counts == 1) {
+      return psl.isValid(str.substr(2));
+    } else if (asterisk_counts > 1) {
+      return false;
+    }
+  };
+
   $(document).ready(function() {
     $('#number_rows').change(function() {
       $('#per_page').val($(this).val());
@@ -1390,6 +1402,110 @@ jQuery(function($) {
         });
       });
     <%end%>
+
+    $(document).on('click', '.edit_locked_registrant_domains', function(e) {
+      e.preventDefault();
+
+      $('#domain_modal_body').removeClass('error-invalid');
+      $('.btn-save-domains').prop('disabled', true);
+      $('#locked_reg_domains').val($('#hidden_locked_reg_domains').val());
+
+      $('#domain_modal').show();
+    });
+
+    $(document).on('click', '#domain_modal_close', function() {
+      $('#domain_modal').hide();
+    });
+
+    $(document).on('keyup', '#locked_reg_domains', function(e) {
+      e.preventDefault();
+
+      var domains_str = $(this).val();
+      var is_validated = true;
+
+      if ($.trim(domains_str) != '') {
+        var domains = domains_str.split(/\s/).filter(Boolean);
+        $.each(domains, function(key, value) {
+          if ($.trim(value) != '' && !$.checkDomain(value)) {
+            $('#domain_modal_body').addClass('error-invalid');
+
+            is_validated = false;
+            return false;
+          }
+        });
+      }
+
+      if (is_validated) {
+        $('#domain_modal_body').removeClass('error-invalid');
+        $('.btn-save-domains').prop('disabled', false);
+      } else {
+        $('.btn-save-domains').prop('disabled', true);
+      }
+    });
+
+    $(document).on('click', '.btn-save-domains', function(e) {
+      e.preventDefault();
+
+      var domains_str = $('#locked_reg_domains').val();
+      $(this).prop('disabled', true);
+
+      $.ajax({
+        url: $('.edit_locked_registrant_domains').prop('href'),
+        data: {
+          domains: domains_str.split(/\s/).filter(Boolean)
+        },
+        type: 'POST',
+        success: function(data) {
+          if (data['status'] == 'no-user') {
+            location.reload(true);
+          } else {
+            $('.domains_category_domain').remove();
+
+            $.each(domains_str.split(/\s/).filter(Boolean), function(key, value) {
+              var liElement = $('<li></li>');
+              liElement.attr('class', 'domains_category_domain');
+              liElement.append(value);
+
+              liElement.insertBefore($('.domains_category_action'));
+            });
+
+            $('#domain_modal').hide();
+
+            var message_wrap_element = $('<div></div>');
+            message_wrap_element.attr('class', 'flash_message notice');
+
+            var message_element = $('<span></span>');
+            message_element.append('It has been saved domains successfully.');
+            message_wrap_element.append(message_element);
+
+            var btn_element = $('<small></small>');
+            var close_btn_element = $('<div></div>');
+            close_btn_element.attr('class', 'close_flash_message');
+
+            var close_sign_element = $('<span></span>');
+            close_sign_element.append('X');
+
+            close_btn_element.append(close_sign_element);
+            close_btn_element.append('close');
+
+            btn_element.append(close_btn_element);
+            message_wrap_element.append(btn_element);
+
+            if ($('#content').find('.inner').children().first().hasClass('flash_message')) {
+              $('#content').find('.inner').children().first().remove();
+            }
+            message_wrap_element.insertBefore($('#content').find('.inner').children().first());
+          }
+        }
+      });
+    });
+
+    window.onclick = function(event) {
+      if (event.target == $('#domain_modal')[0]) {
+        $('#domain_modal').hide();
+      }
+    }
+
   });
 });
 </script>
