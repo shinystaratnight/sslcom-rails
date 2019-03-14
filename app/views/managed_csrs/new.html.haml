@@ -24,8 +24,10 @@
 = stylesheet_link_tag 'bootstrap_style', :media => 'all'
 %div{:style => 'width: 100%'}
   %h2
-    Generate Certificate Signing Request and Save to
-    =link_to 'CSR Manager', managed_csrs_path(@ssl_slug)
+    Generate Certificate Signing Request
+    -unless current_user.blank?
+      and Save to
+      =link_to 'CSR Manager', managed_csrs_path(@ssl_slug)
   %h3.center Be sure to save the private key. It will be required for use with signed certificate.
   = form_tag :managed_csrs, method: :post, id: 'add_csr_form' do
     .row.pt-3
@@ -37,7 +39,7 @@
     .row.pt-4
       .col-md-2
       .col-md-8
-        .algorithm_wrap
+        .managed_csr.algorithm_wrap
           .row
             .col-md-6
               .form-group
