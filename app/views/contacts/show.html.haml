@@ -90,6 +90,20 @@
             %td
               %strong #{k == 'roles' ? v.join(', ') : v}
     
+    -if @contact.show_domains?
+      -domains_count = @contact.domains.blank? ? 0 : @contact.domains.count
+      %table.saved_contact{cellspacing: '0', align: 'left'}
+        %tr.heading_row
+          %th{colspan: '2'} 
+            = "<i class='fa fa-cubes'></i> Domains ( #{domains_count} )".html_safe
+        -if domains_count > 0    
+          -@contact.domains.each_with_index do |domain, i|
+            %tr{class: (i.even? ? 'colored_row' : '')}
+              %td #{domain}
+        -else
+          %tr
+            %td None
+
     %table.saved_contact{cellspacing: '0', align: 'left'}
       %br
       %tr.heading_row
