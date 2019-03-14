@@ -51,6 +51,7 @@ class Registrant < Contact
   validates :company_name, :phone, presence: true, if: proc { |r| r.reusable? && r.organization? }
   validates :first_name, :last_name, presence: true, if: proc { |r| r.reusable? && r.individual? }
 
+  before_validation :set_default_title
   after_save :set_one_epki_agreement
 
   def applies_to_certificate_order?(certificate_order)
@@ -98,6 +99,10 @@ class Registrant < Contact
   end
 
   private
+
+  def set_default_title
+    self.title = 'Mr' if title.blank?
+  end
 
   def set_one_epki_agreement
     if epki_agreement? && contactable.is_a?(SslAccount)
