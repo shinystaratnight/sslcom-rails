@@ -83,11 +83,12 @@
           = "<i class='fa fa-user'></i> Contact Information".html_safe
       -list = %w{roles title first_name last_name email phone}
       -list -= ['roles'] if registrant
-      -attributes.select{|k,v| list.include? k}.merge(address: @contact.get_address_format).each_with_index do |(k, v), i|
-        %tr{class: (i.even? ? 'colored_row' : '')}
-          %td #{k.to_s.humanize}:
-          %td
-            %strong #{k == 'roles' ? v.join(', ') : v}
+      -unless @contact.contact_iv?
+        -attributes.select{|k,v| list.include? k}.merge(address: @contact.get_address_format).each_with_index do |(k, v), i|
+          %tr{class: (i.even? ? 'colored_row' : '')}
+            %td #{k.to_s.humanize}:
+            %td
+              %strong #{k == 'roles' ? v.join(', ') : v}
     
     %table.saved_contact{cellspacing: '0', align: 'left'}
       %br
