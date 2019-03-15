@@ -135,7 +135,8 @@ class CertificateOrder < ActiveRecord::Base
     return nil if [term,*(filters.values)].compact.empty?
     result = not_new
     # if 'is_test' and 'order_by_csr' are the only search terms, keep it simple
-    result = result.includes(ssl_account: :users, certificate_contents: :csr).joins{certificate_contents.outer}.joins{certificate_contents.csr.outer}.
+    result = result.includes(ssl_account: :users, certificate_contents: :csr).joins{certificate_contents.outer}.
+              joins{certificate_contents.csr.outer}.
               joins{certificate_contents.signed_certificates.outer}.joins{ssl_account.outer}.
               joins{ssl_account.users.outer} unless (
                   term.blank? and
@@ -161,7 +162,6 @@ class CertificateOrder < ActiveRecord::Base
                          (certificate_contents.csrs.email =~ "%#{term}%") |
                          (certificate_contents.csrs.sig_alg =~ "%#{term}%") |
                          (certificate_contents.csrs.subject_alternative_names =~ "%#{term}%") |
-                         (certificate_contents.csr.signed_certificates.strength =~ "%#{term}%") |
                          (certificate_contents.csr.signed_certificates.common_name =~ "%#{term}%") |
                          (certificate_contents.csr.signed_certificates.subject_alternative_names =~ "%#{term}%")}
                end
@@ -211,7 +211,13 @@ class CertificateOrder < ActiveRecord::Base
         (certificate_contents.send(:workflow_state) >> query.split(',')) |
             (workflow_state >> query.split(','))} if query
     end
-    %w(common_name organization organization_unit state subject_alternative_names locality decoded).each do |field|
+    search_fields=%w(common_name organization organization_unit state subject_alternative_names locality decoded)
+    if (filters.select{|k,v|!v.blank?}.keys.map(&:to_s)-search_fields).empty? and term.blank?
+      result = not_new.includes(certificate_contents: :csr).joins{certificate_contents.outer}.
+          joins{certificate_contents.csr.outer}.
+          joins{certificate_contents.signed_certificates.outer}
+    end
+    search_fields.each do |field|
       query=filters[field.to_sym]
       result = result.where{
         (certificate_contents.csr.signed_certificates.send(field.to_sym) =~ "%#{query}%") |
@@ -277,9 +283,7 @@ class CertificateOrder < ActiveRecord::Base
     end
     %w(folder_ids).each do |field|
       query = filters[field.to_sym]
-      if query
-        result = result.where(folder_id: query.split(',')) if query
-      end
+      result = result.where(folder_id: query.split(',')) if query
     end
     result.uniq
   }
