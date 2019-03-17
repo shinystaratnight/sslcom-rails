@@ -2,6 +2,7 @@ class CreateRevocations < ActiveRecord::Migration
   def change
     create_table :revocations do |t|
       t.string                  :fingerprint
+      t.string                  :replacement_fingerprint
       t.string                  :status
       t.message_before_revoked  :text
       t.message_after_revoked   :text
