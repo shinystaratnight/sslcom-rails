@@ -295,7 +295,7 @@
                     .certificate_details_box
                       %ul
                         -if co.certificate_content.issued? && !co.certificate_content.expired?
-                          =render partial: 'download', locals: {co: co}
+                          =render partial: 'download', locals: {csr: co.csr, signed_certificate: co.signed_certificate}
                         -unless @cc.csr.blank? || hide_validation?(co)
                           -if @cc.pending_validation?
                             %li
@@ -363,125 +363,130 @@
                   -@certificate_order.certificate_contents.order('created_at DESC').each do |c|
                     -current = c==@certificate_order.certificate_content
                     -csr = c.csr
-                    -sc = c.csr.try(:signed_certificate)
-                    %tr
-                      %td(colspan="5" style="text-align: left;")
-                        -unless co.certificate.is_csr_last_step?
-                          %span.previous_requests #{c!=@certificate_order.certificate_content ? "previous" : "current" }: #{c.ref}
-                          -if sc.try(:body).blank?
-                            (server software: #{c.server_software.try :title})
-                          -else
-                            (serial number: #{sc.serial})
-                    - unless sc.nil? || @certificate_order.certificate.is_csr_last_step?
-                      %tr#cert-content-status
-                        %td
-                          %div
-                            %strong 
-                              %i{class: 'fa fa-cogs'} 
-                              status:
-                            - if sc.revoked?
-                              - sys_log = sc.system_audits.where("system_audits.notes LIKE ?", "%revoked%").last
-                              - if sys_log
-                                %span REVOKED on #{sys_log.created_at.strftime('%F')} by #{sys_log.owner.email}
-                            
-                            - unless sys_log
-                              %span #{sc.status.upcase}
-
-                            - if current_user.is_system_admins? and !sc.revoked?
-                              - select_id = "sel-cert-content-revoke-#{sc.id}"
-                              - dialog_id = "dialog-form-#{sc.id}"
-                              = link_to "<i class='fa fa-times-circle'></i> REVOKE".html_safe, '#', |
-                                class: 'btn-cert-content-revoke', data: {select_id: select_id, dialog_id: dialog_id}
-                              %div{id: dialog_id, class: 'hidden'}
-                                %p Please select a reason for revoking:
-                                %br/
-                                .clearfix
-                                  = form_tag revoke_signed_certificate_path(@ssl_slug, sc.id), method: :put do
-                                    = select_tag :revoke_reason, options_for_select(SslcomCaRevocationRequest::REASONS), |
-                                      multiple: false, id: select_id, include_blank: false
-                                .clearfix
-                                  %br/
-                                  %p *Warning: Once revoked the status of this signed certificate cannot be reversed.
                     -if csr
-                      %tr
-                        %td(colspan="5")
-                          .certificate_details_box
-                            %strong certificate signing request
-                            -unless permitted_to?(:create, SignedCertificate.new) && current
-                              -unless csr.blank?
-                                %div submitted on #{csr.created_at.strftime("%b %d, %Y %R %Z")}
-                                =text_area_tag :csr, csr.body, :size=>"30x10"
-                                signature algorithm: #{csr.sig_alg}
+                      -csr.signed_certificates.each do |sc|
+                        %tr
+                          %td(colspan="5" style="text-align: left;")
+                            -unless co.certificate.is_csr_last_step?
+                              %span.previous_requests #{c!=@certificate_order.certificate_content ? "previous" : "current" }: #{c.ref}
+                              -if sc.try(:body).blank?
+                                (server software: #{c.server_software.try :title})
                               -else
-                                no certificate signing request found
-                            -else
-                              #csr_submitted_on
-                                %span.submitted_on
-                                  -unless csr.try(:created_at).blank?
-                                    submitted on #{csr.created_at.strftime("%b %d, %Y %R %Z")}
-                                  -else
-                                    &nbsp
-                              =form_for csr do |f|
-                                =f.text_area :body, :cols=>30, :rows=>10
-                                -if csr.try :sig_alg
-                                  %div signature algorithm:
-                                  %div=csr.sig_alg
-                                .clearfix
-                                =submit_tag 'Submit csr', :class=> 'submit_signed_certificate'
-                                =image_tag('waiting_bar_medium.gif', :id=>'waiting_on_csr', :style=>'display:none;vertical-align: middle;')
-                                #temporary_csr.hidden[csr, :new]
-                                  =text_area_tag :tmp_csr, csr.try(:body)
-                          .certificate_details_box
-                            %strong signed certificate
-                            -unless permitted_to?(:create, SignedCertificate.new) && current
-                              -unless sc.try(:body).blank?
-                                %div
-                                  submitted on #{sc.created_at.strftime("%b %d, %Y %R %Z")}
-                                =text_area_tag :signed_certificate, sc.body, :size=>"30x10"
-                                -if sc.try :signature_algorithm
-                                  %div signature algorithm:
-                                  %div=sc.signature_algorithm
-                              -else
-                                %div
-                                  no signed certificate found
-                            -else
-                              #signed_certificate_submitted_on
-                                %span.submitted_on
-                                  -unless sc.try(:created_at).blank?
-                                    submitted on #{sc.created_at.strftime("%b %d, %Y %R %Z")}
-                                  -else
-                                    &nbsp
-                              =form_for SignedCertificate.new, :url=>csr_signed_certificates_path(csr) do |f|
-                                =f.text_area :body, :cols=>30, :rows=>10
-                                -if sc.try :signature_algorithm
-                                  %div signature algorithm:
-                                  %div=sc.signature_algorithm
-                                .clearfix
-                                  #{check_box_tag "email_customer", true, true}notify customer?
-                                =submit_tag 'Submit certificate', :class=> 'submit_signed_certificate'
-                                =image_tag('waiting_bar_medium.gif', :id=>'waiting_bar', :style=>'display:none;vertical-align: middle;')
-                                #temporary_signed_certificate.hidden[csr]
-                                  =text_area_tag :tmp_signed_certificate, sc.try(:body)
-                          .certificate_details_box
-                            -unless sc.try(:body).blank?
-                              -if co.certificate.is_csr_last_step?
-                                %strong parsed certificate
-                                %div
-                                  issued to: #{sc.common_name}
-                                %textarea.selectAll{cols: 30, rows: 10}=sc.decoded
-                              -else
-                                -san = sc.subject_alternative_names
-                                %strong parsed certificate
-                                %div
-                                  =san ? "DOMAINS (#{san.count})" : 'DOMAINS'
-                                %textarea.selectAll{cols: 10, rows: 5}=san ? san.join("\n") : ""
-                                %div
-                                  DECODED
-                                %textarea.selectAll{cols: 10, rows: 4}=sc.decoded
-                    %tr
-                      %td(colspan="5" style="text-align: left;")
-                        = render partial: '/tags/certificate_content_tags', locals: {taggable: c}
+                                (serial number: #{sc.serial})
+                        - unless sc.nil? || @certificate_order.certificate.is_csr_last_step?
+                          %tr#cert-content-status
+                            %td
+                              %div
+                                %strong
+                                  %i{class: 'fa fa-cogs'}
+                                  status:
+                                - if sc.revoked?
+                                  - sys_log = sc.system_audits.where("system_audits.notes LIKE ?", "%revoked%").last
+                                  - if sys_log
+                                    %span REVOKED on #{sys_log.created_at.strftime('%F')} by #{sys_log.owner.email}
 
+                                - unless sys_log
+                                  %span #{sc.status.upcase}
+
+                                - if !sc.revoked?
+                                  - select_id = "sel-cert-content-revoke-#{sc.id}"
+                                  - dialog_id = "dialog-form-#{sc.id}"
+                                  = link_to "<i class='fa fa-times-circle'></i> REVOKE".html_safe, '#', |
+                                    class: 'btn-cert-content-revoke', data: {select_id: select_id, dialog_id: dialog_id}
+                                  %div{id: dialog_id, class: 'hidden'}
+                                    %p Please select a reason for revoking:
+                                    %br/
+                                    .clearfix
+                                      = form_tag revoke_signed_certificate_path(@ssl_slug, sc.id), method: :put do
+                                        = select_tag :revoke_reason, options_for_select(SslcomCaRevocationRequest::REASONS), |
+                                          multiple: false, id: select_id, include_blank: false
+                                    .clearfix
+                                      %br/
+                                      %p *Warning: Once revoked the status of this signed certificate cannot be reversed.
+                        -if csr
+                          %tr
+                            %td(colspan="5")
+                              .certificate_details_box
+                                %strong certificate signing request
+                                -unless permitted_to?(:create, SignedCertificate.new) && current
+                                  -unless csr.blank?
+                                    %div submitted on #{csr.created_at.strftime("%b %d, %Y %R %Z")}
+                                    =text_area_tag :csr, csr.body, :size=>"30x10"
+                                    signature algorithm: #{csr.sig_alg}
+                                  -else
+                                    no certificate signing request found
+                                -else
+                                  #csr_submitted_on
+                                    %span.submitted_on
+                                      -unless csr.try(:created_at).blank?
+                                        submitted on #{csr.created_at.strftime("%b %d, %Y %R %Z")}
+                                      -else
+                                        &nbsp
+                                  =form_for csr do |f|
+                                    =f.text_area :body, :cols=>30, :rows=>10
+                                    -if csr.try :sig_alg
+                                      %div signature algorithm:
+                                      %div=csr.sig_alg
+                                    .clearfix
+                                    =submit_tag 'Submit csr', :class=> 'submit_signed_certificate'
+                                    =image_tag('waiting_bar_medium.gif', :id=>'waiting_on_csr', :style=>'display:none;vertical-align: middle;')
+                                    #temporary_csr.hidden[csr, :new]
+                                      =text_area_tag :tmp_csr, csr.try(:body)
+                              .certificate_details_box
+                                -unless co.certificate_content.ca_id.blank?
+                                  %ul
+                                    -if co.certificate_content.issued? && !co.certificate_content.expired?
+                                      =render partial: 'download', locals: {csr: csr, signed_certificate: sc}
+                                -else
+                                  %strong signed certificate
+                                  -unless permitted_to?(:create, SignedCertificate.new) && current
+                                    -unless sc.try(:body).blank?
+                                      %div
+                                        submitted on #{sc.created_at.strftime("%b %d, %Y %R %Z")}
+                                      =text_area_tag :signed_certificate, sc.body, :size=>"30x10"
+                                      -if sc.try :signature_algorithm
+                                        %div signature algorithm:
+                                        %div=sc.signature_algorithm
+                                    -else
+                                      %div
+                                        no signed certificate found
+                                  -else
+                                    #signed_certificate_submitted_on
+                                      %span.submitted_on
+                                        -unless sc.try(:created_at).blank?
+                                          submitted on #{sc.created_at.strftime("%b %d, %Y %R %Z")}
+                                        -else
+                                          &nbsp
+                                    =form_for SignedCertificate.new, :url=>csr_signed_certificates_path(csr) do |f|
+                                      =f.text_area :body, :cols=>30, :rows=>10
+                                      -if sc.try :signature_algorithm
+                                        %div signature algorithm:
+                                        %div=sc.signature_algorithm
+                                      .clearfix
+                                        #{check_box_tag "email_customer", true, true}notify customer?
+                                      =submit_tag 'Submit certificate', :class=> 'submit_signed_certificate'
+                                      =image_tag('waiting_bar_medium.gif', :id=>'waiting_bar', :style=>'display:none;vertical-align: middle;')
+                                      #temporary_signed_certificate.hidden[csr]
+                                        =text_area_tag :tmp_signed_certificate, sc.try(:body)
+                              .certificate_details_box
+                                -unless sc.try(:body).blank?
+                                  -if co.certificate.is_csr_last_step?
+                                    %strong parsed certificate
+                                    %div
+                                      issued to: #{sc.common_name}
+                                    %textarea.selectAll{cols: 30, rows: 10}=sc.decoded
+                                  -else
+                                    -san = sc.subject_alternative_names
+                                    %strong parsed certificate
+                                    %div
+                                      =san ? "DOMAINS (#{san.count})" : 'DOMAINS'
+                                    %textarea.selectAll{cols: 10, rows: 5}=san ? san.join("\n") : ""
+                                    %div
+                                      DECODED
+                                    %textarea.selectAll{cols: 10, rows: 4}=sc.decoded
+                        %tr
+                          %td(colspan="5" style="text-align: left;")
+                            = render partial: '/tags/certificate_content_tags', locals: {taggable: c}
 :javascript
   jQuery(function($) {
     var curDialog;
