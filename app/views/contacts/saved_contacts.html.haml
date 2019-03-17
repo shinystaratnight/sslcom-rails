@@ -30,6 +30,7 @@
           %th 
             = is_system_admins ? 'Files' : 'Documents'
           -if is_system_admins
+            %th IV/OV
             %th Change Status
         - if saved_contacts
           %th Default
@@ -57,6 +58,8 @@
               %strong
                 #{c.validation_histories.count}
             -if is_system_admins
+              %td
+                =c.contact_ov? ? 'OV' : 'IV'
               %td
                 =form_tag admin_update_contact_path(c), method: :puts do
                   =select_tag :status, options_for_select(Contact::statuses.keys.map{|s| [s.humanize.downcase, s]}, c.status), |

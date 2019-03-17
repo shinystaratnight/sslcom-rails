@@ -151,6 +151,14 @@ class Contact < ActiveRecord::Base
     result
   end
 
+  def contact_iv?
+    type == 'IndividualValidation' && contactable_type == 'SslAccount'
+  end
+
+  def contact_ov?
+    type == 'Registrant' && contactable_type == 'SslAccount'
+  end
+
   def get_address_format
     "#{address1}, #{city}, #{state} #{postal_code}, #{country}"
   end

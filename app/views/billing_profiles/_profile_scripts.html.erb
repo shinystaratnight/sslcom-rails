@@ -1,6 +1,7 @@
 var profile_id = "",
     profile_form_hidden = <%=!initial_display?.empty?%>,
-    initial_url = $('form#new_order').attr('action');
+    initial_url = $('form#new_order').attr('action'),
+    smime_client_enrollment_order = $('#smime_client_enrollment_order_order_amount').length;
 $.last_delete_clicked=function(){
   if($('.delete_billing_profile').size() <= 1)
     $('.funding_sources_head, #existing_credit_cards').empty();
@@ -35,7 +36,11 @@ function getOrderAmount() {
     charge_amount = parseFloat($('#funded_account_target_amount').val());
   }
   if ($('#reprocess_ucc_amount').length) {
-    charge_amount = parseFloat($('#order_order_amount').val());
+    if ($('#order_order_amount').length) {
+      charge_amount = parseFloat($('#order_order_amount').val());
+    } else {
+      charge_amount = parseFloat($('#smime_client_enrollment_order_order_amount').val());
+    }
   }
   if ($('#order_amount').length) {
     charge_amount = parseFloat($('#order_amount').val());
@@ -74,7 +79,9 @@ function setStandardButton() {
 function paypalCheckoutUrl() {
   var url = "<%= paypal_express_checkout_url(ssl_slug: params[:ssl_slug]) %>",
       discount = $('span#discount_applied'),
-      reprocess_ucc = $('#reprocess_ucc_amount');
+      reprocess_ucc = $('#reprocess_ucc_amount'),
+      amount = $('#order_order_amount').val();
+
   
   if ($('.edit_funded_account').length) {
     url = "<%= paypal_express_checkout_url(ssl_slug: params[:ssl_slug], make_deposit: true, order_type: (@funded_account ? @funded_account.order_type : nil), deduct_order: (@funded_account ? @funded_account.deduct_order : nil)) %>";
@@ -85,12 +92,20 @@ function paypalCheckoutUrl() {
     url +='?discount='+discount.data('discount')+'&discount_code='+discount.data('discount_code');
   }
   
+  if (smime_client_enrollment_order) {
+    amount = $('#smime_client_enrollment_order_order_amount').val();
+  }
+
   if (reprocess_ucc.length) {
-    url +='?amount=' + $('#order_order_amount').val() 
+    url +='?amount=' + amount 
         + '&deduct_order=true' + '&order_type=order';
     if (reprocess_ucc.data('monthly-invoice')) {
       url += '&monthly_invoice=true'
         + '&invoice_ref=' + reprocess_ucc.data('monthly-ref');
+    } else if (smime_client_enrollment_order){
+      url += '&emails=' + $('#smime_client_enrollment_order_emails').val()
+        + '&smime_client_order=true'
+        + '&certificate=' + $('#smime_client_enrollment_order_certificate').val();
     } else {
       url += '&' + paypalDomAdjustmentType() + '=true'
         + '&co_ref=' + reprocess_ucc.data('co-ref')
@@ -119,6 +134,9 @@ function reprocessUccAmounts() {
         funded     = parseFloat($('#order_funded_amount').val()),
         amount     = parseFloat($('#order_order_amount').val()),
         total      = parseFloat($('#order_charge_amount').data('charge-initial'));
+    if (smime_client_enrollment_order) {
+      amount = parseFloat($('#smime_client_enrollment_order_order_amount').val());
+    }
     if (funded > funded_max) {
       funded = funded_max;
       $('#order_funded_amount').val(funded.toFixed(2));

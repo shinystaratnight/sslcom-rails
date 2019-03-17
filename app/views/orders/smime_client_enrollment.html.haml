@@ -14,7 +14,7 @@
       This charge will appear as #{Settings.merchant_name} on your credit card statement.
   = error_messages_for :user, :billing_profile, :credit_card, object_name: 'transaction'
   
-  = form_for @order, url: smime_client_enroll_create_orders_path(@ssl_slug) do |f|
+  = form_for @order, url: smime_client_enroll_create_orders_path(@ssl_slug), id: "new_order" do |f|
     = f.hidden_field :co_ref, value: params[:co_ref]
     = f.hidden_field :certificate, value: @certificate.product
     = f.hidden_field :emails, value: @emails

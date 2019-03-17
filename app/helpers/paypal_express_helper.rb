@@ -21,6 +21,14 @@ module PaypalExpressHelper
         monthly_invoice: true
       })
     end
+
+    if params[:smime_client_order]
+      @return_url_params.merge!({
+        certificate: params[:certificate],
+        emails: params[:emails],
+        smime_client_order: true
+      })
+    end
       
     return to_cents(@total), {
       ip:                request.remote_ip,
@@ -102,6 +110,13 @@ module PaypalExpressHelper
         quantity: 1,
         amount: get_amount(params[:amount])
       }]
+    elsif params[:smime_client_order]
+      [{
+        name: "S/MIME Client Enroll",
+        number: "enrollment order",
+        quantity: 1,
+        amount: get_amount(params[:amount])
+      }]
     else  
       cart.line_items.collect do |line_item|
         if line_item.sellable.is_a?(Deposit)
@@ -148,7 +163,7 @@ module PaypalExpressHelper
   end
 
   def get_totals(cart, params)
-    subtotal = if params[:reprocess_ucc] || params[:monthly_invoice]
+    subtotal = if params[:reprocess_ucc] || params[:monthly_invoice] || params[:smime_client_order]
       get_amount(params[:amount])
     else
       cart.amount.cents
@@ -201,7 +216,7 @@ module PaypalExpressHelper
   end
 
   def get_surplus_deposit(params)
-    special_order = params[:monthly_invoice] || params[:reprocess_ucc]
+    special_order = params[:monthly_invoice] || params[:reprocess_ucc] || params[:smime_client_order]
     funded        = params[:funded_target]
     final_total   = params[:amount].to_i - get_amount(params[:discount]) - get_amount(params[:funded_account])
     (funded && !special_order) ? get_amount(funded) - final_total : 0

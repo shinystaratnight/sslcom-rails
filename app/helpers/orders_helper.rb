@@ -490,6 +490,54 @@ module OrdersHelper
       @billing_profile.valid?) && (current_user || @user.valid?)
   end
 
+  # ============================================================================
+  # S/MIME OR CLIENT ENROLLMENT ORDER
+  # ============================================================================
+  def smime_client_enrollment_co_paid
+    @order.cached_certificate_orders.update_all(
+      ssl_account_id: @ssl_account.try(:id), workflow_state: 'paid'
+    )
+  end
+
+  def smime_client_enrollment_registrants
+    registrant_params = @ssl_account.epki_registrant.attributes
+      .except(*%w{id created_at updated_at type domains roles})
+      .merge({
+        'parent_id' => @ssl_account.epki_registrant.id,
+        'status' => Contact::statuses[:validated]
+      })
+    ccs = CertificateContent.joins(certificate_order: :orders)
+      .where(orders: {id: @order.id})
+    ccs.each do |cc|
+      cc.create_registrant(registrant_params)
+      cc.create_locked_registrant(registrant_params)
+      cc.save
+    end
+  end
+
+  def smime_client_enrollment_validate
+    if current_user && @order && @order.persisted?
+      @order.smime_client_enrollment_validate(current_user.id)
+    end
+  end
+
+  def smime_client_enrollment_items
+    if @certificate
+      @emails.inject([]) do |cos, email|
+        co = CertificateOrder.new(
+          has_csr: false, ssl_account: @ssl_account, duration: params[:duration]
+        )
+        co.certificate_contents << CertificateContent.new(domains: [email])
+        cos << Order.setup_certificate_order(
+          certificate: @certificate, certificate_order: co
+        )
+        cos
+      end
+    else
+      []
+    end
+  end
+
 =begin
   def setup_certificate_order
     #adjusting duration to reflect number of days validity

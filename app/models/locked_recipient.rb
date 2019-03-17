@@ -14,6 +14,7 @@ class LockedRecipient < Contact
         user_id: assignee.id,
         contactable_type: co.class,
         contactable_id: co.id,
+        parent_id: iv ? iv.id : nil,
         status: (iv ? Contact::statuses[iv.status] : Contact::statuses[:in_progress])
       }
       temp_lr = LockedRecipient.new(params)
