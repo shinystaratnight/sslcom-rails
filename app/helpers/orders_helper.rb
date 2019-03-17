@@ -265,18 +265,6 @@ module OrdersHelper
     end
   end
 
-  def smime_client_parse_emails(emails=nil)
-    emails_list = emails || params[:emails]
-    if emails_list.is_a? Array
-      @emails = emails_list
-    else
-      unless emails_list.strip.blank?
-        @emails = emails_list
-          .strip.split(/[\s,]+/).map(&:strip).map(&:downcase)
-      end
-    end
-  end
-
   def delay_transaction?
     fa       = current_user.ssl_account.funded_account if current_user
     declined = fa && fa.card_recently_declined? if fa
@@ -493,6 +481,19 @@ module OrdersHelper
   # ============================================================================
   # S/MIME OR CLIENT ENROLLMENT ORDER
   # ============================================================================
+  def smime_client_parse_emails(emails=nil)
+    emails_list = emails || params[:emails]
+    if emails_list.is_a? Array
+      @emails = emails_list
+    else
+      unless emails_list.strip.blank?
+        @emails = emails_list
+          .strip.split(/[\s,]+/).map(&:strip).map(&:downcase)
+        @emails.select {|e| e =~ URI::MailTo::EMAIL_REGEXP}
+      end
+    end
+  end
+
   def smime_client_enrollment_co_paid
     @order.cached_certificate_orders.update_all(
       ssl_account_id: @ssl_account.try(:id), workflow_state: 'paid'
