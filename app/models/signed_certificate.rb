@@ -663,6 +663,13 @@ class SignedCertificate < ActiveRecord::Base
     req, res = SslcomCaApi.call_ca(host, options, options.to_json)
   end
 
+  def self.revoke_and_reissue(fingerprints)
+    SignedCertificate.live.includes(:csr).where{fingerprint >> fingerprints.map(&:downcase)}.
+        find_each{|sc|
+      p sc.id
+    }
+  end
+
   private
 
   def proper_certificate?
