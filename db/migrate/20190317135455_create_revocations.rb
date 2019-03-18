@@ -4,8 +4,8 @@ class CreateRevocations < ActiveRecord::Migration
       t.string                  :fingerprint
       t.string                  :replacement_fingerprint
       t.string                  :status
-      t.message_before_revoked  :text
-      t.message_after_revoked   :text
+      t.text                    :message_before_revoked
+      t.text                    :message_after_revoked
       t.datetime                :revoked_on
       t.timestamps null: false
     end

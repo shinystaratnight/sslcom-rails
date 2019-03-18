@@ -47,4 +47,8 @@ class SslcomCaRequest < CaApiRequest
   def certificate_chain
     read_attribute(:certificate_chain) || (JSON.parse(self.response)["certificate_chain"] unless self.response.blank?)
   end
+
+  def rerun
+
+  end
 end

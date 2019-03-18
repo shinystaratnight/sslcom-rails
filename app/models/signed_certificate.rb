@@ -666,7 +666,7 @@ class SignedCertificate < ActiveRecord::Base
   def self.revoke_and_reissue(fingerprints)
     SignedCertificate.live.includes(:csr).where{fingerprint >> fingerprints.map(&:downcase)}.
         find_each{|sc|
-      p sc.id
+      # revoke and reissue sc
     }
   end
 

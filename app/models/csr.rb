@@ -455,6 +455,10 @@ class Csr < ActiveRecord::Base
     read_attribute(:ref)
   end
 
+  def run_last_ca_api
+    sslcom_ca_requests.last.parameters
+  end
+
   private
 
   def public_key_hash(save_to_db=false)
