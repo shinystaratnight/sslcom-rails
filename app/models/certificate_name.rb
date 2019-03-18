@@ -266,4 +266,13 @@ class CertificateName < ActiveRecord::Base
           DomainControlValidation.email_address_choices(name)
     end
   end
+
+  def self.add_email_address_candidate(dname,email_address)
+    Rails.cache.delete("CertificateName.candidate_email_addresses/#{dname}")
+    CertificateName.where("name LIKE ?", "%#{dname}").each{|cn| cn.touch; Rails.cache.delete(cn.get_asynch_cache_label)}
+    standard_addresses=CertificateName.candidate_email_addresses(dname)
+    standard_addresses << email_address
+    DomainControlValidation.global.find_or_create_by(subject: dname).update_column(
+        :candidate_addresses, standard_addresses)
+  end
 end

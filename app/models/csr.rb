@@ -456,7 +456,12 @@ class Csr < ActiveRecord::Base
   end
 
   def run_last_ca_api
-    sslcom_ca_requests.last.parameters
+    scr=sslcom_ca_requests.first
+    req,res=scr.call_again
+    # api_log_entry=sslcom_ca_requests.create(request_url: scr.request_url, parameters: req.body,
+    #                           method: 'post', response: res.try(:body), ca: scr.ca)
+    # attrs = {body: api_log_entry.end_entity_certificate.to_s, ca_id: options[:mapping].id}
+    # cc.csr.signed_certificates.create(attrs)
   end
 
   private
