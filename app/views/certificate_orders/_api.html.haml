@@ -183,9 +183,15 @@
             -client_auth_cert,client_auth_key=SslcomCaApi.client_certs(URI.parse(options[:mapping].host).host)
             -options[:public_key]=OpenSSL::PKey::RSA.new(2048).public_key if co.csr.blank? # assume late csr
             ='curl -k -v --cert '+client_auth_cert+' --key '+client_auth_key+' -H "Accept: application/json" -H "Content-type: application/json" -X POST -d '+"'#{SslcomCaApi.issue_cert_json(options)}' "+SslcomCaApi.ca_host(co.certificate_content.ca)+"/v1/certificate/pkcs10"
+      -if co.signed_certificate and co.signed_certificate.ejbca_username
+        %li
+          %strong SSL.com CA API Retrieve Command
+        %li
+          %textarea.selectAll{style: "width:95%;"}
+            ='curl -k -v --cert '+client_auth_cert+' --key '+client_auth_key+' -H "Accept: application/json" -H "Content-type: application/json" -X POST -d "'+SslcomCaApi.retrieve_cert_json(user_name: co.signed_certificate.ejbca_username).gsub('"', '\"')+'" \''+SslcomCaApi.ca_host(co.certificate_content.ca)+"/v1/certificates"+'\''
       -if co.signed_certificate and co.signed_certificate.is_sslcom_ca?
         %li
           %strong SSL.com CA API Revoke Command
         %li
           %textarea.selectAll{style: "width:95%;"}
-            ='curl -k -H "Accept: application/json" -H "Content-type: application/json" -X POST -d "'+SslcomCaApi.revoke_cert_json(co.signed_certificate, "reason").gsub('"', '\"')+'" \''+SslcomCaApi.ca_host(co.certificate_content.ca)+"/v1/certificate/revoke"+'\''
+            ='curl -k -v --cert '+client_auth_cert+' --key '+client_auth_key+' -H "Accept: application/json" -H "Content-type: application/json" -X POST -d "'+SslcomCaApi.revoke_cert_json(co.signed_certificate, "reason").gsub('"', '\"')+'" \''+SslcomCaApi.ca_host(co.certificate_content.ca)+"/v1/certificate/revoke"+'\''

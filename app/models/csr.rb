@@ -468,6 +468,18 @@ class Csr < ActiveRecord::Base
     sc.sslcom_ca_requests << api_log_entry
   end
 
+  def get_ejbca_certificate(user_name)
+    url=SslcomCaApi.ca_host + "/v1/certificates"
+    req,res=SslcomCaApi.call_ca(url,{},
+                        SslcomCaApi.retrieve_cert_json(user_name: user_name))
+    api_log_entry=sslcom_ca_requests.create(request_url: url, parameters: req.body,
+                                         method: 'post', response: res.try(:body))
+    if res.message=="OK"
+      attrs = {body: api_log_entry.end_entity_certificate.to_s, username: user_name}
+      signed_certificates.create(attrs)
+    end
+  end
+
   private
 
   def public_key_hash(save_to_db=false)

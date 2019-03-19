@@ -165,6 +165,7 @@ class SslAccount < ActiveRecord::Base
   def api_credential
     api_credentials.last
   end
+  memoize :api_credential
 
   def create_api_credential
     @ac = ApiCredential.new

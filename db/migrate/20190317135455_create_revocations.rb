@@ -10,5 +10,8 @@ class CreateRevocations < ActiveRecord::Migration
       t.timestamps null: false
     end
     add_column :signed_certificates, :ejbca_username, :string
+
+    add_index :revocations, [:fingerprint]
+    add_index :revocations, [:replacement_fingerprint]
   end
 end
