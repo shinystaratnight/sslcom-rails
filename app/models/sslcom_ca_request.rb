@@ -6,7 +6,7 @@ class SslcomCaRequest < CaApiRequest
       parsed=JSON.parse(self.response)
       self.username = parsed["user_name"] || parsed["username"]
       self.approval_id = parsed["approval_id"]
-      self.certificate_chain = parsed["certificate_chain"]
+      self.certificate_chain = parsed["certificate_chain"] || parsed["certificates"]
       if self.username.blank? and !self.parameters.blank?
         parsed_req=JSON.parse(self.parameters)
         self.username = parsed_req["user_name"] || parsed_req["username"]

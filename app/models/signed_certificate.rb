@@ -658,6 +658,10 @@ class SignedCertificate < ActiveRecord::Base
     end
   end
 
+  def ejbca_username
+    read_attribute(:ejbca_username) or csr.sslcom_ca_requests.first.username
+  end
+
   def ejbca_certificate
     host = "https://192.168.100.5:8443/v1/certificate/pkcs10"
     options={username: "testdv1.ssl.com1551117126063"}

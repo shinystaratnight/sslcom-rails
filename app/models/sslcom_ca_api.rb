@@ -128,6 +128,15 @@ class SslcomCaApi
      revocation_reason: reason}.to_json
   end
 
+  # retrieve json parameter string for REST call to EJBCA
+  # valid_only false means return also revoked and expired certs along with valid certs.
+  # true means only return valid certs
+  def self.retrieve_cert_json(options)
+    options[:valid_only] ||= true
+    {user_name: options[:user_name],
+     valid_only: options[:valid_only]}.to_json
+  end
+
   # create json parameter string for REST call to EJBCA
   def self.issue_cert_json(options)
     cert = options[:cc].certificate
