@@ -455,13 +455,17 @@ class Csr < ActiveRecord::Base
     read_attribute(:ref)
   end
 
-  def run_last_ca_api
+  def run_last_ca_request
     scr=sslcom_ca_requests.first
     req,res=scr.call_again
-    # api_log_entry=sslcom_ca_requests.create(request_url: scr.request_url, parameters: req.body,
-    #                           method: 'post', response: res.try(:body), ca: scr.ca)
-    # attrs = {body: api_log_entry.end_entity_certificate.to_s, ca_id: options[:mapping].id}
-    # cc.csr.signed_certificates.create(attrs)
+    api_log_entry=SslcomCaRequest.create(request_url: scr.request_url, parameters: req.body,
+                              method: 'post', response: res.try(:body), ca: scr.ca)
+    branded_sub_ca=nil
+    Ca::SSL_ACCOUNT_MAPPING.each{|k,v|v.map{|k,v|branded_sub_ca=k; break if v==scr.ca}}
+    ca = Ca.find_by_ca_name(branded_sub_ca || scr.ca)
+    attrs = {body: api_log_entry.end_entity_certificate.to_s, ca_id: ca.id}
+    sc=signed_certificates.create(attrs)
+    sc.sslcom_ca_requests << api_log_entry
   end
 
   private

@@ -20,6 +20,7 @@ class SignedCertificate < ActiveRecord::Base
   validate :proper_certificate?, :if=>
     Proc.new{|r| !r.parent_cert && !r.body.blank?}
   has_many  :sslcom_ca_revocation_requests, as: :api_requestable
+  has_many  :sslcom_ca_requests, as: :api_requestable
   #validate :same_as_previously_signed_certificate?, :if=> '!csr.blank?'
   belongs_to  :registered_agent
 
