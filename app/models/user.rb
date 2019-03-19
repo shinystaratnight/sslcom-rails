@@ -434,6 +434,11 @@ class User < ActiveRecord::Base
     end
   end
 
+  def deliver_activation_confirmation_by_sysadmin!(password)
+    reset_perishable_token!
+    UserNotifier.activation_confirmation_by_sysadmin(self, password).deliver
+  end
+
   def deliver_auto_activation_confirmation!
     reset_perishable_token!
     UserNotifier.auto_activation_confirmation(self).deliver

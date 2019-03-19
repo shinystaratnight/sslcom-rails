@@ -547,7 +547,11 @@ class UsersController < ApplicationController
     @user.activate!(params)
     if @user.valid?
       @user.approve_all_accounts(:log_invite)
-      flash[:notice] = "User #{@user.login} has been successfully activated!"
+
+      # Send activation email to user by system admin
+      @user.deliver_activation_confirmation_by_sysadmin!(params[:user][:password])
+
+      flash[:notice] = "User #{@user.login} has been successfully activated and sent email to " + params[:user][:login]
       redirect_to users_path
     else
       flash[:error] = "Unable to activate user due to errors. #{@user.errors.full_messages.join(', ')}"

@@ -55,6 +55,16 @@ class UserNotifier < ActionMailer::Base
                 to: user.email
   end
 
+  def activation_confirmation_by_sysadmin(user, password)
+    @account_url = account_url
+    @login = user.login
+    @password = password
+
+    mail subject: "SSL.com user account activated by system admin",
+         from: Settings.from_email.activations,
+         to: user.email
+  end
+
   def signup_invitation(user, current_user, base_url, invited_teams)
     @user          = user
     @current_user  = current_user
