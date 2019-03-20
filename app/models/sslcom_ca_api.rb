@@ -132,9 +132,7 @@ class SslcomCaApi
   # valid_only false means return also revoked and expired certs along with valid certs.
   # true means only return valid certs
   def self.retrieve_cert_json(options)
-    options[:valid_only] ||= true
-    {user_name: options[:user_name],
-     valid_only: options[:valid_only]}.to_json
+    {user_name: options[:user_name]}.to_json
   end
 
   # create json parameter string for REST call to EJBCA
