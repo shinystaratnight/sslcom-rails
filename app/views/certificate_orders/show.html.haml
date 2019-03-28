@@ -368,14 +368,24 @@
                         -unless co.certificate.is_csr_last_step?
                           %span.previous_requests reference: #{c.ref}
                         -if csr
-                          -csr.signed_certificates.order('created_at DESC').each do |sc|
+                          -csr.signed_certificates.includes(:revocation).order('created_at DESC').each do |sc|
                             - unless sc.nil? || @certificate_order.certificate.is_csr_last_step?
                               %tr#cert-content-status
                                 %td
+                                  -if sc.revocation
+                                    %p.align-left.error
+                                      !IMPORTANT! Certificate with
+                                      %a{:href => "##{sc.serial}"}
+                                        (serial: #{sc.serial})
+                                      will be revoked on April 4, 2019. Please install renewal certificate
+                                      %a{:href => "##{sc.replacement.serial}"}
+                                        (serial: #{sc.replacement.serial})
+                                      immediately to avoid downtime.
                                   -if sc.try(:body).blank?
                                     (server software: #{c.server_software.try :title})
                                   -else
-                                    (serial number: #{sc.serial})
+                                    %a{:name => "#{sc.serial}"}
+                                      (serial number: #{sc.serial})
                                   %div
                                     %strong
                                       %i{class: 'fa fa-cogs'}
