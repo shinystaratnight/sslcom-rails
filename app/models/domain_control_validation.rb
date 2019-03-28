@@ -194,7 +194,7 @@ class DomainControlValidation < ActiveRecord::Base
 
   def email_address_choices
     name = (csr.blank? ? certificate_name_id.nil? ? subject : certificate_name.name : csr.common_name)
-    CertificateName.candidate_email_addresses(name)
+    DomainControlValidation.email_address_choices(name)
   end
 
   def self.email_address_choices(name)

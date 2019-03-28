@@ -79,7 +79,7 @@ class SslcomCaApi
                   sig_alg_parameter(options[:cc].csr) =~ /rsa/i ? 'SSLcom-SubCA-EV-SSL-RSA-4096-R2' :
                       'SSLcom-SubCA-EV-SSL-ECC-384-R1'
                 when "evcs"
-                  'SSLcom-SubCA-EV-CodeSigning-RSA-4096-R2'
+                  'SSLcom-SubCA-EV-CodeSigning-RSA-4096-R3'
                 when "cs"
                   'SSLcom-SubCA-CodeSigning-RSA-4096-R1'
                 else

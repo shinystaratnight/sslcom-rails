@@ -625,7 +625,7 @@ class CertificateContent < ActiveRecord::Base
     is_premium_ssl = certificate_order.certificate.is_premium_ssl?
     invalid_chars_msg = "#{domain} has invalid characters. Only the following characters
           are allowed [A-Za-z0-9.-#{'*' if(is_ucc || is_wildcard)}] in the domain or subject"
-    if CertificateContent.is_ip_address?(domain) && CertificateContent.is_intranet?(domain)
+    if CertificateContent.is_ip_address?(domain) && false # CertificateContent.is_intranet?(domain)
       errors.add(:domain, " #{domain} must be an Internet-accessible IP Address")
     else
       if is_server
@@ -633,9 +633,6 @@ class CertificateContent < ActiveRecord::Base
         asterisk_found = (domain=~/\A\*\./)==0
         if ((!is_ucc && !is_wildcard) || is_premium_ssl) && asterisk_found
           errors.add(:domain, "cannot begin with *. since the order does not allow wildcards")
-        elsif CertificateContent.is_intranet?(domain)
-          errors.add(:domain,
-                     "#{domain} was determined to be for an intranet or internal site. These have been phased out and are no longer allowed.")
         elsif certificate_order.certificate.is_dv? && CertificateContent.is_ip_address?(domain)
           errors.add(:domain, "#{domain} was determined to be for an ip address. This is only allowed on OV or EV ssl orders.")
         elsif !!(domain=~Regexp.new("\\.("+Country::BLACKLIST.join("|")+")$",true))
