@@ -25,7 +25,7 @@ class SignedCertificate < ActiveRecord::Base
   belongs_to  :registered_agent
   has_one   :revocation, :class_name => "Revocation", :foreign_key => "revoked_signed_certificate_id"
   has_one   :replacement, through: :revocation, class_name: "SignedCertificate",
-            source: "replacement_signed_certificates", foreign_key: "replacement_signed_certificate_id"
+            source: "replacement_signed_certificate", foreign_key: "replacement_signed_certificate_id"
 
 
   attr :parsed
@@ -317,13 +317,18 @@ class SignedCertificate < ActiveRecord::Base
     issuer.include?("O=SSL Corporation") || issuer.include?("O=EJBCA Sample")
   end
 
+  def x509_certificates
+    SslcomCaRequest.where(username: ejbca_username).first.try(:x509_certificates) ||
+      certificate_content.x509_certificates
+  end
+
   def create_signed_cert_zip_bundle(options={})
     options[:is_windows]=false unless Settings.allow_windows_cr #having issues with \r\n so stick with linux format
     co=csr.certificate_content.certificate_order
     path="/tmp/"+friendly_common_name+".zip#{Time.now.to_i.to_s(32)}"
     ::Zip::ZipFile.open(path, Zip::ZipFile::CREATE) do |zos|
       if certificate_content.ca
-        certificate_content.x509_certificates.drop(1).each do |x509_cert|
+        x509_certificates.drop(1).each do |x509_cert|
             zos.get_output_stream((x509_cert.subject.common_name || x509_cert.serial.to_s).
               gsub(/[\s\.\*\(\)]/,"_").upcase+'.crt') {|f|
             f.puts (options[:is_windows] ? x509_cert.to_s.gsub(/\n/, "\r\n") : x509_cert.to_s)
@@ -492,7 +497,7 @@ class SignedCertificate < ActiveRecord::Base
     File.open(tmp_file, 'wb') do |f|
       tmp=""
       if certificate_content.ca
-        certificate_content.x509_certificates.drop(1).each do |x509_cert|
+        x509_certificates.drop(1).each do |x509_cert|
           tmp<<x509_cert.to_s
         end
       else
@@ -511,7 +516,7 @@ class SignedCertificate < ActiveRecord::Base
   def to_nginx(is_windows=nil)
     "".tap do |tmp|
       if certificate_content.ca
-        certificate_content.x509_certificates.each do |x509_cert|
+        x509_certificates.each do |x509_cert|
           tmp<<x509_cert.to_s
         end
       else

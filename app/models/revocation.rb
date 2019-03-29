@@ -4,6 +4,7 @@ class Revocation < ActiveRecord::Base
 
   def revoked_signed_certificate
     if read_attribute(:revoked_signed_certificate_id).blank?
+      return nil if fingerprint.blank?
       sc=SignedCertificate.find_by_fingerprint(fingerprint)
       unless sc.blank?
         write_attribute(:revoked_signed_certificate_id, sc.id)
@@ -17,6 +18,7 @@ class Revocation < ActiveRecord::Base
 
   def replacement_signed_certificate
     if read_attribute(:replacement_signed_certificate_id).blank?
+      return nil if replacement_fingerprint.blank?
       sc=SignedCertificate.find_by_fingerprint(replacement_fingerprint)
       unless sc.blank?
         write_attribute(:replacement_signed_certificate_id, sc.id)
@@ -45,13 +47,19 @@ class Revocation < ActiveRecord::Base
   def self.load_revocations(file_name)
     File.open(file_name, "r").each_line do |line|
       data=line.split(",")
-      sc=SignedCertificate.find_by_fingerprint(data[0].downcase) # fingerprint
-      replacement_cert=sc.csr.get_ejbca_certificate(data[1]) # ejbca username
-      Revocation.find_or_create_by(fingerprint: fingerprint.downcase,
-                        replacement_fingerprint: replacement_cert.fingerprint.downcase,
-                        revoked_signed_certificate_id: sc.id,
-                        replacement_signed_certificate_id: replacement_cert.id,
-                        status: "replacement_issued")
+      revocation=Revocation.find_or_initialize_by(fingerprint: data[0].downcase)
+      attr={}
+      sc=SignedCertificate.find_by_fingerprint(data[0].downcase)
+      if sc
+        attr.merge!({revoked_signed_certificate_id: sc.id, status: "revoke_cert_found"})
+        replacement_cert=revocation.replacement_signed_certificate || sc.csr.get_ejbca_certificate(data[1])
+        if replacement_cert
+          attr.merge!({replacement_fingerprint: replacement_cert.fingerprint.downcase,
+                       replacement_signed_certificate_id: replacement_cert.id,
+                       status: "replacement_issued"})
+        end
+      end
+      Revocation.find_or_initialize_by(fingerprint: data[0].downcase).update_attributes(attr)
     end
   end
 end
