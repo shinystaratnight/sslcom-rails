@@ -290,7 +290,14 @@ class Invoice < ActiveRecord::Base
   end
   
   private
-  
+
+  def fix_missing_certificate_order
+    o=Order.where(invoice_id: self.id)
+    missing=o.find_all{|order|order.certificate_orders.empty?}.last
+    co=CertificateOrder.find_by_ref("ref from the notes in missing")
+    missing.line_items.last.update_columns sellable_type: "CertificateOrder",  sellable_id: co.id
+  end
+
   def self.get_team(ssl_account)
     ssl_account.is_a?(Integer) ? SslAccount.find(ssl_account) : ssl_account
   end

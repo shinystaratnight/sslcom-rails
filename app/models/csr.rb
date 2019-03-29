@@ -478,6 +478,7 @@ class Csr < ActiveRecord::Base
       attrs = {body: api_log_entry.end_entity_certificate.to_s, ejbca_username: user_name}
       sc=signed_certificates.create(attrs)
       sc.sslcom_ca_requests << api_log_entry
+      sc
     end
   end
 

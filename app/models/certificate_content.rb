@@ -617,6 +617,13 @@ class CertificateContent < ActiveRecord::Base
     end
   end
 
+  def emergency_contact_emails
+    (certificate_order.ssl_account.get_account_admins.map(&:email) +
+      [certificate_order.ssl_account.get_account_owner.email] +
+      administrative_contacts.map(&:email) +
+      technical_contacts.map(&:email)).compact.uniq
+  end
+
   # each domain needs to go through this
   def domain_validation(domain)
     is_wildcard = certificate_order.certificate.allow_wildcard_ucc?

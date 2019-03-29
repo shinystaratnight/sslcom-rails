@@ -77,7 +77,7 @@ class SslcomCaApi
                 case options[:cc].certificate.validation_type
                 when "ev"
                   sig_alg_parameter(options[:cc].csr) =~ /rsa/i ? 'SSLcom-SubCA-EV-SSL-RSA-4096-R2' :
-                      'SSLcom-SubCA-EV-SSL-ECC-384-R1'
+                      'SSLcom-SubCA-EV-SSL-ECC-384-R2'
                 when "evcs"
                   'SSLcom-SubCA-EV-CodeSigning-RSA-4096-R3'
                 when "cs"
