@@ -83,12 +83,27 @@
           = "<i class='fa fa-user'></i> Contact Information".html_safe
       -list = %w{roles title first_name last_name email phone}
       -list -= ['roles'] if registrant
-      -attributes.select{|k,v| list.include? k}.merge(address: @contact.get_address_format).each_with_index do |(k, v), i|
-        %tr{class: (i.even? ? 'colored_row' : '')}
-          %td #{k.to_s.humanize}:
-          %td
-            %strong #{k == 'roles' ? v.join(', ') : v}
+      -unless @contact.contact_iv?
+        -attributes.select{|k,v| list.include? k}.merge(address: @contact.get_address_format).each_with_index do |(k, v), i|
+          %tr{class: (i.even? ? 'colored_row' : '')}
+            %td #{k.to_s.humanize}:
+            %td
+              %strong #{k == 'roles' ? v.join(', ') : v}
     
+    -if @contact.show_domains?
+      -domains_count = @contact.domains.blank? ? 0 : @contact.domains.count
+      %table.saved_contact{cellspacing: '0', align: 'left'}
+        %tr.heading_row
+          %th{colspan: '2'} 
+            = "<i class='fa fa-cubes'></i> Domains ( #{domains_count} )".html_safe
+        -if domains_count > 0    
+          -@contact.domains.each_with_index do |domain, i|
+            %tr{class: (i.even? ? 'colored_row' : '')}
+              %td #{domain}
+        -else
+          %tr
+            %td None
+
     %table.saved_contact{cellspacing: '0', align: 'left'}
       %br
       %tr.heading_row

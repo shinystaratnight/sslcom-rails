@@ -265,18 +265,6 @@ module OrdersHelper
     end
   end
 
-  def smime_client_parse_emails(emails=nil)
-    emails_list = emails || params[:emails]
-    if emails_list.is_a? Array
-      @emails = emails_list
-    else
-      unless emails_list.strip.blank?
-        @emails = emails_list
-          .strip.split(/[\s,]+/).map(&:strip).map(&:downcase)
-      end
-    end
-  end
-
   def delay_transaction?
     fa       = current_user.ssl_account.funded_account if current_user
     declined = fa && fa.card_recently_declined? if fa
@@ -488,6 +476,67 @@ module OrdersHelper
   def order_reqs_valid?
     @order.valid? && (params[:funding_source] ? @profile.valid? :
       @billing_profile.valid?) && (current_user || @user.valid?)
+  end
+
+  # ============================================================================
+  # S/MIME OR CLIENT ENROLLMENT ORDER
+  # ============================================================================
+  def smime_client_parse_emails(emails=nil)
+    emails_list = emails || params[:emails]
+    if emails_list.is_a? Array
+      @emails = emails_list
+    else
+      unless emails_list.strip.blank?
+        @emails = emails_list
+          .strip.split(/[\s,]+/).map(&:strip).map(&:downcase)
+        @emails.select {|e| e =~ URI::MailTo::EMAIL_REGEXP}
+      end
+    end
+  end
+
+  def smime_client_enrollment_co_paid
+    @order.cached_certificate_orders.update_all(
+      ssl_account_id: @ssl_account.try(:id), workflow_state: 'paid'
+    )
+  end
+
+  def smime_client_enrollment_registrants
+    registrant_params = @ssl_account.epki_registrant.attributes
+      .except(*%w{id created_at updated_at type domains roles})
+      .merge({
+        'parent_id' => @ssl_account.epki_registrant.id,
+        'status' => Contact::statuses[:validated]
+      })
+    ccs = CertificateContent.joins(certificate_order: :orders)
+      .where(orders: {id: @order.id})
+    ccs.each do |cc|
+      cc.create_registrant(registrant_params)
+      cc.create_locked_registrant(registrant_params)
+      cc.save
+    end
+  end
+
+  def smime_client_enrollment_validate
+    if current_user && @order && @order.persisted?
+      @order.smime_client_enrollment_validate(current_user.id)
+    end
+  end
+
+  def smime_client_enrollment_items
+    if @certificate
+      @emails.inject([]) do |cos, email|
+        co = CertificateOrder.new(
+          has_csr: false, ssl_account: @ssl_account, duration: params[:duration]
+        )
+        co.certificate_contents << CertificateContent.new(domains: [email])
+        cos << Order.setup_certificate_order(
+          certificate: @certificate, certificate_order: co
+        )
+        cos
+      end
+    else
+      []
+    end
   end
 
 =begin

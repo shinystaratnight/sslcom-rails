@@ -824,28 +824,6 @@ class OrdersController < ApplicationController
       smime_client_redirect_back
   end
 
-  def smime_client_enrollment_registrants
-    registrant_params = @ssl_account.epki_registrant.attributes
-      .except(*%w{id created_at updated_at type domains roles})
-      .merge({
-        'parent_id' => @ssl_account.epki_registrant.id,
-        'status' => Contact::statuses[:validated]
-      })
-    ccs = CertificateContent.joins(certificate_order: :orders)
-      .where(orders: {id: @order.id})
-    ccs.each do |cc|
-      cc.create_registrant(registrant_params)
-      cc.create_locked_registrant(registrant_params)
-      cc.save
-    end
-  end
-
-  def smime_client_enrollment_validate
-    if current_user && @order && @order.persisted?
-      @order.smime_client_enrollment_validate(current_user.id)
-    end
-  end
-
   def smime_client_enrollment_funded
     withdraw_amount = @order_amount < @funded_amount ? @order_amount : @funded_amount
     withdraw_amount = (withdraw_amount * 100).to_i
@@ -872,34 +850,11 @@ class OrdersController < ApplicationController
     end
   end
 
-  def smime_client_enrollment_items
-    if @certificate
-      @emails.inject([]) do |cos, email|
-        co = CertificateOrder.new(
-          has_csr: false, ssl_account: @ssl_account, duration: params[:duration]
-        )
-        co.certificate_contents << CertificateContent.new(domains: [email])
-        cos << Order.setup_certificate_order(
-          certificate: @certificate, certificate_order: co
-        )
-        cos
-      end
-    else
-      []
-    end
-  end
-
   def smime_client_enrollment_nolimit
     @order.state = 'invoiced'
     @order.invoice_id = Invoice.get_or_create_for_team(@ssl_account).try(:id)
     smime_client_enrollment_co_paid if @order.save
     redirect_to order_path(@ssl_slug, @order)
-  end
-
-  def smime_client_enrollment_co_paid
-    @order.cached_certificate_orders.update_all(
-      ssl_account_id: @ssl_account.try(:id), workflow_state: 'paid'
-    )
   end
   # ============================================================================
   # UCC Certificate reprocess/rekey helper methods for 

@@ -290,7 +290,7 @@ namespace :cas do
           caa_issuers: ["ssl.com"],
           host: "https://#{url}:8443/restapi",
           admin_host: "https://#{url}:8443",
-          ca_name: "SSLcom-SubCA-EV-SSL-ECC-384-R1",
+          ca_name: "SSLcom-SubCA-EV-SSL-ECC-384-R2",
           ekus: [Ca::EKUS[:server]],
           end_entity: Ca::END_ENTITY[:evssl]
       )
@@ -394,7 +394,7 @@ namespace :cas do
           caa_issuers: ["ssl.com"],
           host: "https://#{url}:8443/restapi",
           admin_host: "https://#{url}:8443",
-          ca_name: "SSLcom-SubCA-EV-CodeSigning-RSA-4096-R2",
+          ca_name: "SSLcom-SubCA-EV-CodeSigning-RSA-4096-R3",
           ekus: [Ca::EKUS[:code_signing]],
           end_entity: Ca::END_ENTITY[:evcs]
       )
@@ -629,7 +629,7 @@ namespace :cas do
           caa_issuers: ["ssl.com"],
           host: "https://#{url}:8443/restapi",
           admin_host: "https://#{url}:8443",
-          ca_name: "SSLcom-SubCA-clientCert-RSA-4096-R1",
+          ca_name: "SSLcom-SubCA-clientCert-RSA-4096-R2",
           ekus: [Ca::EKUS[:client]],
           end_entity: "MYSSL_BASIC_PRO_SMIME_CERT_EE"
       )
@@ -643,7 +643,7 @@ namespace :cas do
           caa_issuers: ["ssl.com"],
           host: "https://#{url}:8443/restapi",
           admin_host: "https://#{url}:8443",
-          ca_name: "SSLcom-SubCA-clientCert-RSA-4096-R1",
+          ca_name: "SSLcom-SubCA-clientCert-RSA-4096-R2",
           ekus: [Ca::EKUS[:client]],
           end_entity: "MYSSL_BASIC_PRO_SMIME_CERT_EE"
       )
@@ -685,7 +685,7 @@ namespace :cas do
           caa_issuers: ["ssl.com"],
           host: "https://#{url}:8443/restapi",
           admin_host: "https://#{url}:8443",
-          ca_name: "SSLcom-SubCA-clientCert-RSA-4096-R1",
+          ca_name: "SSLcom-SubCA-clientCert-RSA-4096-R2",
           ekus: [Ca::EKUS[:client]],
           end_entity: "MYSSL_BUSINESS_SMIME_CERT_EE"
       )
@@ -728,7 +728,7 @@ namespace :cas do
       #     caa_issuers: ["ssl.com"],
       #     host: "https://#{shadow_url}:8443/restapi",
       #     admin_host: "https://#{shadow_url}:8443",
-      #     ca_name: "SSLcom-SubCA-EV-CodeSigning-RSA-4096-R2",
+      #     ca_name: "SSLcom-SubCA-EV-CodeSigning-RSA-4096-R3",
       #     ekus: [Ca::EKUS[:code_signing]],
       #     end_entity: Ca::END_ENTITY[:evcs]
       # )
@@ -922,43 +922,43 @@ namespace :cas do
       status = (ca.host and default and ca.host.include?(default)) ? :default : ca.ref=~/d\Z/ ? :shadow : :active
       unless ca.is_a?(EndEntityProfile) or ca.is_a?(RootCa) or ca.ekus.blank?
         if cert.is_evcs? and ca.end_entity==(Ca::END_ENTITY[:evcs])
-          cert.cas_certificates.create(ca_id: ca.id,
+          cert.cas_certificates.find_or_initialize_by(ca_id: ca.id).update_attributes(
             status: CasCertificate::STATUS[(ca.ref=="0014" and live.include?(cert) and default.blank?) ? :default : status],
                                        ssl_account_id: ssl_account_id)
         elsif cert.is_cs? and ca.end_entity==(Ca::END_ENTITY[:cs])
-          cert.cas_certificates.create(ca_id: ca.id,
+          cert.cas_certificates.find_or_initialize_by(ca_id: ca.id).update_attributes(
             status: CasCertificate::STATUS[(ca.ref=="0013" and live.include?(cert) and default.blank?) ? :default : status],
                                        ssl_account_id: ssl_account_id)
         elsif cert.product=~/naesb-basic/
-            cert.cas_certificates.create(ca_id: ca.id,
+            cert.cas_certificates.find_or_initialize_by(ca_id: ca.id).update_attributes(
               status: CasCertificate::STATUS[(ca.ref=="0022" and live.include?(cert) and default.blank?) ? :default : status],
                                          ssl_account_id: ssl_account_id)
         elsif cert.is_client_basic?
-          cert.cas_certificates.create(ca_id: ca.id,
+          cert.cas_certificates.find_or_initialize_by(ca_id: ca.id).update_attributes(
             status: CasCertificate::STATUS[(ca.ref=="0032" and live.include?(cert) and default.blank?) ? :default : status],
                                        ssl_account_id: ssl_account_id)
         elsif cert.is_client_pro?
-          cert.cas_certificates.create(ca_id: ca.id,
+          cert.cas_certificates.find_or_initialize_by(ca_id: ca.id).update_attributes(
             status: CasCertificate::STATUS[(ca.ref=="0033" and live.include?(cert) and default.blank?) ? :default : status],
                                        ssl_account_id: ssl_account_id)
         elsif cert.is_client_business?
-          cert.cas_certificates.create(ca_id: ca.id,
+          cert.cas_certificates.find_or_initialize_by(ca_id: ca.id).update_attributes(
             status: CasCertificate::STATUS[(ca.ref=="0036" and live.include?(cert) and default.blank?) ? :default : status],
                                        ssl_account_id: ssl_account_id)
           elsif cert.is_server? and (cert.is_dv? or cert.is_ov? or cert.is_ev?)
           if ca.end_entity==(Ca::END_ENTITY[:dvssl])
-            cert.cas_certificates.create(ca_id: ca.id,
+            cert.cas_certificates.find_or_initialize_by(ca_id: ca.id).update_attributes(
               status: CasCertificate::STATUS[(ca.ref=="0017" and live.include?(cert) and cert.is_dv? and default.blank?) ? :default : status],
                                          ssl_account_id: ssl_account_id)
           elsif (cert.is_ov? or cert.is_ev?) and ca.end_entity==(Ca::END_ENTITY[:ovssl])
             unless ENV["SHADOW"]=="DV" and status==:shadow
-              cert.cas_certificates.create(ca_id: ca.id,
+              cert.cas_certificates.find_or_initialize_by(ca_id: ca.id).update_attributes(
                 status: CasCertificate::STATUS[(ca.ref=="0018" and live.include?(cert) and cert.is_ov? and default.blank?) ? :default : status],
                                            ssl_account_id: ssl_account_id)
             end
           elsif cert.is_ev? and ca.end_entity==(Ca::END_ENTITY[:evssl])
             unless ENV["SHADOW"]=="DV" and status==:shadow
-              cert.cas_certificates.create(ca_id: ca.id,
+              cert.cas_certificates.find_or_initialize_by(ca_id: ca.id).update_attributes(
                  status: CasCertificate::STATUS[(ca.ref=="0015" and live.include?(cert) and default.blank?) ? :default : status],
                  ssl_account_id: ssl_account_id)
             end

@@ -135,7 +135,8 @@ class CertificateOrder < ActiveRecord::Base
     return nil if [term,*(filters.values)].compact.empty?
     result = not_new
     # if 'is_test' and 'order_by_csr' are the only search terms, keep it simple
-    result = result.includes(ssl_account: :users, certificate_contents: :csr).joins{certificate_contents.outer}.joins{certificate_contents.csr.outer}.
+    result = result.includes(ssl_account: :users, certificate_contents: :csr).joins{certificate_contents.outer}.
+              joins{certificate_contents.csr.outer}.
               joins{certificate_contents.signed_certificates.outer}.joins{ssl_account.outer}.
               joins{ssl_account.users.outer} unless (
                   term.blank? and
@@ -161,7 +162,6 @@ class CertificateOrder < ActiveRecord::Base
                          (certificate_contents.csrs.email =~ "%#{term}%") |
                          (certificate_contents.csrs.sig_alg =~ "%#{term}%") |
                          (certificate_contents.csrs.subject_alternative_names =~ "%#{term}%") |
-                         (certificate_contents.csr.signed_certificates.strength =~ "%#{term}%") |
                          (certificate_contents.csr.signed_certificates.common_name =~ "%#{term}%") |
                          (certificate_contents.csr.signed_certificates.subject_alternative_names =~ "%#{term}%")}
                end
@@ -211,7 +211,13 @@ class CertificateOrder < ActiveRecord::Base
         (certificate_contents.send(:workflow_state) >> query.split(',')) |
             (workflow_state >> query.split(','))} if query
     end
-    %w(common_name organization organization_unit state subject_alternative_names locality decoded).each do |field|
+    search_fields=%w(common_name organization organization_unit state subject_alternative_names locality decoded)
+    if (filters.select{|k,v|!v.blank?}.keys.map(&:to_s)-search_fields).empty? and term.blank?
+      result = not_new.includes(certificate_contents: :csr).joins{certificate_contents.outer}.
+          joins{certificate_contents.csr.outer}.
+          joins{certificate_contents.signed_certificates.outer}
+    end
+    search_fields.each do |field|
       query=filters[field.to_sym]
       result = result.where{
         (certificate_contents.csr.signed_certificates.send(field.to_sym) =~ "%#{query}%") |
@@ -277,9 +283,7 @@ class CertificateOrder < ActiveRecord::Base
     end
     %w(folder_ids).each do |field|
       query = filters[field.to_sym]
-      if query
-        result = result.where(folder_id: query.split(',')) if query
-      end
+      result = result.where(folder_id: query.split(',')) if query
     end
     result.uniq
   }
@@ -302,8 +306,9 @@ class CertificateOrder < ActiveRecord::Base
   }
 
   scope :filter_by, lambda { |term|
+    terms = term.split(',').map{|t|t+'%'}
     joins{sub_order_items.product_variant_item.product_variant_group.
-        variantable(Certificate)}.where{certificates.product >> term.split(',')}
+      variantable(Certificate)}.where(('certificates.product like ?@' * terms.count).split('@').join(' OR '), *terms)
   }
 
   scope :filter_by_duration, lambda { |term|
@@ -797,8 +802,10 @@ class CertificateOrder < ActiveRecord::Base
           1461
         when 5
           1826
-        else # assume days
+        when 6,7,8,9,10
           years.gsub(/[^\d]+/,"").to_i * 365
+        else # assume days
+          years.gsub(/[^\d]+/,"").to_i if years.include?("day")
         end
       elsif [:comodo_api,:sslcom_api].include? unit
         case years.gsub(/[^\d]+/,"").to_i
@@ -1426,6 +1433,7 @@ class CertificateOrder < ActiveRecord::Base
     end
     return api_contacts, api_domains, cc, registrant_params
   end
+  memoize :base_api_params
 
   def add_renewal(ren)
     unless ren.blank?
@@ -1877,8 +1885,9 @@ class CertificateOrder < ActiveRecord::Base
     if certificate.is_ucc?
       dcv_methods_for_comodo=[]
       domains_for_comodo=(options[:certificate_content] || self.certificate_content).all_domains
-      domains_for_comodo.each do |d|
-        last = certificate_contents.first.certificate_names.find_by_name(d).try(:last_dcv_for_comodo)
+      certificate_contents.first.certificate_names.
+          includes(:domain_control_validations).where{name >> domains_for_comodo}.each do |cn|
+        last = cn.try(:last_dcv_for_comodo)
         dcv_methods_for_comodo << (last.blank? ? ApiCertificateCreate_v1_4::DEFAULT_DCV_METHOD_COMODO : last)
       end
       params.merge!('domainNames' => domains_for_comodo.join(","))

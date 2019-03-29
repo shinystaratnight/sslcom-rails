@@ -259,11 +259,13 @@ class CertificateContent < ActiveRecord::Base
     unless (certificate.is_single? or certificate.is_wildcard?) and certificate_names.count > 0
       domains ||= all_domains
       (domains-certificate_names.find_by_domains(domains).pluck(:name)).each do |domain|
-        cn_domain = certificate.is_single? ? CertificateContent.non_wildcard_name(domain,true) : domain
-        new_certificate_name=certificate_names.find_or_create_by(name: cn_domain.downcase)
-        new_certificate_name.update_column(:is_common_name, csr.try(:common_name)==domain)
-        new_certificate_name.candidate_email_addresses # start the queued job running
-        Delayed::Job.enqueue OtherDcvsSatisyJob.new(ssl_account,new_certificate_name) if ssl_account
+        unless domain=~/,/
+          cn_domain = certificate.is_single? ? CertificateContent.non_wildcard_name(domain,true) : domain
+          new_certificate_name=certificate_names.find_or_create_by(name: cn_domain.downcase)
+          new_certificate_name.update_column(:is_common_name, csr.try(:common_name)==domain)
+          new_certificate_name.candidate_email_addresses # start the queued job running
+          Delayed::Job.enqueue OtherDcvsSatisyJob.new(ssl_account,new_certificate_name) if ssl_account
+        end
       end
     end
     # Auto adding domains in case of certificate order has been included into some groups.
@@ -615,6 +617,13 @@ class CertificateContent < ActiveRecord::Base
     end
   end
 
+  def emergency_contact_emails
+    (certificate_order.ssl_account.get_account_admins.map(&:email) +
+      [certificate_order.ssl_account.get_account_owner.email] +
+      administrative_contacts.map(&:email) +
+      technical_contacts.map(&:email)).compact.uniq
+  end
+
   # each domain needs to go through this
   def domain_validation(domain)
     is_wildcard = certificate_order.certificate.allow_wildcard_ucc?
@@ -623,7 +632,7 @@ class CertificateContent < ActiveRecord::Base
     is_premium_ssl = certificate_order.certificate.is_premium_ssl?
     invalid_chars_msg = "#{domain} has invalid characters. Only the following characters
           are allowed [A-Za-z0-9.-#{'*' if(is_ucc || is_wildcard)}] in the domain or subject"
-    if CertificateContent.is_ip_address?(domain) && CertificateContent.is_intranet?(domain)
+    if CertificateContent.is_ip_address?(domain) && false # CertificateContent.is_intranet?(domain)
       errors.add(:domain, " #{domain} must be an Internet-accessible IP Address")
     else
       if is_server
@@ -631,9 +640,6 @@ class CertificateContent < ActiveRecord::Base
         asterisk_found = (domain=~/\A\*\./)==0
         if ((!is_ucc && !is_wildcard) || is_premium_ssl) && asterisk_found
           errors.add(:domain, "cannot begin with *. since the order does not allow wildcards")
-        elsif CertificateContent.is_intranet?(domain)
-          errors.add(:domain,
-                     "#{domain} was determined to be for an intranet or internal site. These have been phased out and are no longer allowed.")
         elsif certificate_order.certificate.is_dv? && CertificateContent.is_ip_address?(domain)
           errors.add(:domain, "#{domain} was determined to be for an ip address. This is only allowed on OV or EV ssl orders.")
         elsif !!(domain=~Regexp.new("\\.("+Country::BLACKLIST.join("|")+")$",true))

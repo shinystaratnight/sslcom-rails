@@ -77,9 +77,9 @@ class SslcomCaApi
                 case options[:cc].certificate.validation_type
                 when "ev"
                   sig_alg_parameter(options[:cc].csr) =~ /rsa/i ? 'SSLcom-SubCA-EV-SSL-RSA-4096-R2' :
-                      'SSLcom-SubCA-EV-SSL-ECC-384-R1'
+                      'SSLcom-SubCA-EV-SSL-ECC-384-R2'
                 when "evcs"
-                  'SSLcom-SubCA-EV-CodeSigning-RSA-4096-R2'
+                  'SSLcom-SubCA-EV-CodeSigning-RSA-4096-R3'
                 when "cs"
                   'SSLcom-SubCA-CodeSigning-RSA-4096-R1'
                 else
@@ -126,6 +126,13 @@ class SslcomCaApi
     {issuer_dn: signed_certificate.openssl_x509.issuer.to_s.split("/").reject(&:empty?).join(","),
      certificate_serial_number: signed_certificate.openssl_x509.serial.to_s(16).downcase,
      revocation_reason: reason}.to_json
+  end
+
+  # retrieve json parameter string for REST call to EJBCA
+  # valid_only false means return also revoked and expired certs along with valid certs.
+  # true means only return valid certs
+  def self.retrieve_cert_json(options)
+    {user_name: options[:user_name]}.to_json
   end
 
   # create json parameter string for REST call to EJBCA

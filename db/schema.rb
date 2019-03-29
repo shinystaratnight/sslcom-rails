@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190218225636) do
+ActiveRecord::Schema.define(version: 20190314173012) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        limit: 255
@@ -612,10 +612,10 @@ ActiveRecord::Schema.define(version: 20190218225636) do
   end
 
   create_table "delayed_jobs", force: :cascade do |t|
-    t.integer  "priority",     limit: 4,     default: 0
-    t.integer  "attempts",     limit: 4,     default: 0
-    t.text     "handler",      limit: 65535
-    t.text     "last_error",   limit: 65535
+    t.integer  "priority",     limit: 4,          default: 0
+    t.integer  "attempts",     limit: 4,          default: 0
+    t.text     "handler",      limit: 4294967295,                 null: false
+    t.text     "last_error",   limit: 4294967295
     t.datetime "run_at"
     t.datetime "locked_at"
     t.datetime "failed_at"
@@ -623,11 +623,13 @@ ActiveRecord::Schema.define(version: 20190218225636) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "queue",        limit: 255
-    t.boolean  "blocked",                    default: false, null: false
+    t.boolean  "blocked",                         default: false, null: false
     t.integer  "job_group_id", limit: 4
   end
 
   add_index "delayed_jobs", ["job_group_id"], name: "index_delayed_jobs_on_job_group_id", using: :btree
+  add_index "delayed_jobs", ["priority", "run_at", "locked_by"], name: "index_delayed_jobs_on_priority_and_run_at_and_locked_by", using: :btree
+  add_index "delayed_jobs", ["queue"], name: "delayed_jobs_queue", using: :btree
 
   create_table "deposits", force: :cascade do |t|
     t.float    "amount",         limit: 24

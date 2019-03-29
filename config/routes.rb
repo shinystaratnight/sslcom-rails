@@ -297,6 +297,7 @@ SslCom::Application.routes.draw do
           get :nginx
           get :apache_zip
           get :amazon_zip
+          get :download
         end
       end
       collection do

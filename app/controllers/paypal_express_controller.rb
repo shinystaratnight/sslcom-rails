@@ -102,22 +102,25 @@ class PaypalExpressController < ApplicationController
           end
         end
       else
-        auth_code = "#paidviapaypal#{purchase.authorization}"
+        @auth_code = "#paidviapaypal#{purchase.authorization}"
         if @domains_adjustment
           @certificate_order = @ssl_account.cached_certificate_orders.find_by(ref: params[:co_ref])
           @certificate_content = @ssl_account.certificate_contents.find_by(ref: params[:cc_ref])
           domains_adjustment_order(purchase_params)
           funded_account_credit(purchase_params)
-          @order.notes += " #{auth_code}"
+          @order.notes += " #{@auth_code}"
           @certificate_order.add_reproces_order @order
+        elsif params[:smime_client_order]
+          smime_client_enrollment_order(purchase_params)
+          funded_account_credit(purchase_params)
         elsif params[:monthly_invoice]
           @invoice = Invoice.find_by(reference_number: params[:invoice_ref])
           setup_monthly_invoice_order(purchase_params)
           funded_account_credit(purchase_params)
-          @order.notes += " #{auth_code}"
+          @order.notes += " #{@auth_code}"
         else
           setup_orders
-          @order.notes = auth_code
+          @order.notes = @auth_code
         end
         @order.lock!
         @ssl_account.orders << @order
@@ -138,6 +141,10 @@ class PaypalExpressController < ApplicationController
     if @domains_adjustment
       flash[:notice] = "Succesfully paid for UCC domains adjustment order."
       redirect_to edit_certificate_order_path(@ssl_slug, @certificate_order)
+    elsif params[:smime_client_order]
+      @order.update(state: 'paid') if @order.persisted? && @order.state == 'invoiced'
+      flash[:notice] = "Succesfully paid S/MIME or Client Enrollment."
+      redirect_to order_path(@ssl_slug, @order)
     elsif params[:monthly_invoice]
       flash[:notice] = "Succesfully paid for invoice #{@invoice.reference_number}."
       redirect_to invoice_path(@ssl_slug, @invoice.reference_number)
@@ -147,6 +154,30 @@ class PaypalExpressController < ApplicationController
   end
 
   private
+  
+  def smime_client_enrollment_order(purchase_params)
+    @emails = params[:emails]
+    @emails = smime_client_parse_emails(@emails)
+    product = params[:certificate]
+    @certificate = Certificate.find_by(product: product)
+    certificate_orders = smime_client_enrollment_items
+    
+    @order = SmimeClientEnrollmentOrder.new(
+      state: 'new',
+      approval: 'approved',
+      invoice_description: smime_client_enrollment_notes(certificate_orders.count),
+      description: Order::S_OR_C_ENROLLMENT,
+      billable_id: certificate_orders.first.ssl_account.try(:id),
+      billable_type: 'SslAccount',
+      notes: @auth_code
+    )
+    @order.add_certificate_orders(certificate_orders)
+    if @order.save
+      smime_client_enrollment_co_paid
+      smime_client_enrollment_registrants
+      smime_client_enrollment_validate
+    end
+  end
   
   def domains_adjustment_order(purchase_params)
     order_params = { 
@@ -226,7 +257,8 @@ class PaypalExpressController < ApplicationController
       'Reprocess UCC Cert',
       'Renew UCC Cert',
       'UCC Cert Adjustment',
-      'Deposit'
+      'Deposit',
+      'S/MIME Client Enroll'
     ]
     order_amount = purchase_params[:items].find {|i| names.include?(i[:name])}[:amount]
     if @funded_exists && @funded_deduct_amt > 0

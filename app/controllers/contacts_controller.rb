@@ -107,11 +107,21 @@ class ContactsController < ApplicationController
 
   def update
     epki_registrant = params[:contact][:epki_registrant]
-    new_params = epki_registrant ? get_epki_registrant_params : set_registrant_type(params)
+    new_params = if epki_registrant
+      get_epki_registrant_params
+    else
+      @contact.contact_iv? ? set_iv_type : set_registrant_type(params)
+    end
     
     respond_to do |format|
       @render_epki_registrant = @contact.show_domains?
-      type = new_params[:type] == 'CertificateContact' ? CertificateContact : Registrant
+
+      type = if @contact.contact_iv?
+        IndividualValidation
+      else 
+        new_params[:type] == 'CertificateContact' ? CertificateContact : Registrant
+      end  
+
       if @contact.becomes(type).update_attributes(new_params)
         flash[:notice] = "#{@contact.type} was successfully updated."
         update_epki_registrant
@@ -183,12 +193,12 @@ class ContactsController < ApplicationController
   def redirect_to_index
     redirect_to saved_contacts_contacts_path(
       @contact.contactable.to_slug,
-      registrants: (@contact.is_a?(Registrant) ? true : nil)
+      registrants: (@contact.contact_ov? || @contact.contact_iv?  ? true : nil)
     )
   end
 
   def get_saved_contacts
-    if @ssl_account.blank? and current_user.is_system_admins?
+    if current_user.is_system_admins?
       Contact.where(contactable_type: 'SslAccount', type: 'CertificateContact')
     else
       @ssl_account.saved_contacts
@@ -196,8 +206,8 @@ class ContactsController < ApplicationController
   end
 
   def get_saved_registrants
-    if @ssl_account.blank? and current_user.is_system_admins?
-      Contact.where(contactable_type: 'SslAccount', type: 'Registrant')
+    if current_user.is_system_admins?
+      Contact.where(contactable_type: 'SslAccount', type: ['Registrant', 'IndividualValidation'])
     else
       @ssl_account.saved_registrants
     end
@@ -238,6 +248,13 @@ class ContactsController < ApplicationController
     end
   end
   
+  def set_iv_type
+    contact = params[:contact]
+    contact[:registrant_type] = nil
+    contact[:type] = 'IndividualValidation'
+    contact
+  end
+
   def set_registrant_type(params)
     contact = params[:contact]
     contact[:registrant_type] = nil if (contact[:type] == 'CertificateContact')

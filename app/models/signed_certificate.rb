@@ -20,8 +20,13 @@ class SignedCertificate < ActiveRecord::Base
   validate :proper_certificate?, :if=>
     Proc.new{|r| !r.parent_cert && !r.body.blank?}
   has_many  :sslcom_ca_revocation_requests, as: :api_requestable
+  has_many  :sslcom_ca_requests, as: :api_requestable
   #validate :same_as_previously_signed_certificate?, :if=> '!csr.blank?'
   belongs_to  :registered_agent
+  has_one   :revocation, :class_name => "Revocation", :foreign_key => "revoked_signed_certificate_id"
+  has_one   :replacement, through: :revocation, class_name: "SignedCertificate",
+            source: "replacement_signed_certificates", foreign_key: "replacement_signed_certificate_id"
+
 
   attr :parsed
   attr_accessor :email_customer
@@ -657,10 +662,21 @@ class SignedCertificate < ActiveRecord::Base
     end
   end
 
+  def ejbca_username
+    read_attribute(:ejbca_username) or csr.sslcom_ca_requests.first.try :username
+  end
+
   def ejbca_certificate
     host = "https://192.168.100.5:8443/v1/certificate/pkcs10"
     options={username: "testdv1.ssl.com1551117126063"}
     req, res = SslcomCaApi.call_ca(host, options, options.to_json)
+  end
+
+  def self.revoke_and_reissue(fingerprints)
+    SignedCertificate.live.includes(:csr).where{fingerprint >> fingerprints.map(&:downcase)}.
+        find_each{|sc|
+      # revoke and reissue sc
+    }
   end
 
   private

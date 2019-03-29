@@ -284,16 +284,15 @@ module CertificateOrdersHelper
     end
   end
 
-  def certificate_formats(certificate_order)
-    csr, sc = certificate_order.csr, certificate_order.signed_certificate
+  def certificate_formats(csr, sc)
     {iis7: ["Microsoft IIS (*.p7b)", pkcs7_csr_signed_certificate_url(@ssl_slug, csr, sc), SignedCertificate::IIS_INSTALL_LINK],
      cpanel: ["WHM/cpanel", whm_zip_csr_signed_certificate_url(@ssl_slug, csr, sc), SignedCertificate::CPANEL_INSTALL_LINK],
      apache: ["Apache", apache_zip_csr_signed_certificate_url(@ssl_slug, csr, sc), SignedCertificate::APACHE_INSTALL_LINK],
      amazon: ["Amazon", amazon_zip_csr_signed_certificate_url(@ssl_slug, csr, sc), SignedCertificate::AMAZON_INSTALL_LINK],
      nginx: ["Nginx", nginx_csr_signed_certificate_url(@ssl_slug, csr, sc), SignedCertificate::NGINX_INSTALL_LINK],
      v8_nodejs: ["V8+Node.js", nginx_csr_signed_certificate_url(@ssl_slug, csr, sc), SignedCertificate::V8_NODEJS_INSTALL_LINK],
-     java: ["Java/Tomcat", download_certificate_order_url(@ssl_slug, certificate_order), SignedCertificate::JAVA_INSTALL_LINK],
-     other: ["Other platforms", download_certificate_order_url(@ssl_slug, certificate_order), SignedCertificate::OTHER_INSTALL_LINK],
+     java: ["Java/Tomcat", download_csr_signed_certificate_url(@ssl_slug, csr, sc), SignedCertificate::JAVA_INSTALL_LINK],
+     other: ["Other platforms", download_csr_signed_certificate_url(@ssl_slug, csr, sc), SignedCertificate::OTHER_INSTALL_LINK],
      bundle: ["CA bundle (intermediate certs)", server_bundle_csr_signed_certificate_url(@ssl_slug, csr, sc), SignedCertificate::OTHER_INSTALL_LINK]}
   end
 

@@ -103,7 +103,7 @@
     .clearfix
       %label{for: 'epki_agreement_request'}
         *Service Agreement:
-      =f.check_box :epki_agreement_request
+      =f.check_box :epki_agreement_request, checked: f.object.persisted?
       =link_to 'SSL.com Enterprise PKI Service Agreement', |
       enterprise_pki_service_agreement_path,               |
       target: :_blank, id: "chk-epki-service-agree"

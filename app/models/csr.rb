@@ -455,6 +455,33 @@ class Csr < ActiveRecord::Base
     read_attribute(:ref)
   end
 
+  def run_last_ca_request
+    scr=sslcom_ca_requests.first
+    req,res=scr.call_again
+    api_log_entry=SslcomCaRequest.create(request_url: scr.request_url, parameters: req.body,
+                              method: 'post', response: res.try(:body), ca: scr.ca)
+    branded_sub_ca=nil
+    Ca::SSL_ACCOUNT_MAPPING.each{|k,v|v.map{|k,v|branded_sub_ca=k; break if v==scr.ca}}
+    ca = Ca.find_by_ca_name(branded_sub_ca || scr.ca)
+    attrs = {body: api_log_entry.end_entity_certificate.to_s, ca_id: ca.id}
+    sc=signed_certificates.create(attrs)
+    sc.sslcom_ca_requests << api_log_entry
+  end
+
+  def get_ejbca_certificate(user_name)
+    url=SslcomCaApi.ca_host + "/v1/certificate_chain"
+    req,res=SslcomCaApi.call_ca(url,{},
+                        SslcomCaApi.retrieve_cert_json(user_name: user_name))
+    api_log_entry=SslcomCaRequest.create(request_url: url, parameters: req.body,
+                                         method: 'post', response: res.try(:body))
+    if res.message=="OK"
+      attrs = {body: api_log_entry.end_entity_certificate.to_s, ejbca_username: user_name}
+      sc=signed_certificates.create(attrs)
+      sc.sslcom_ca_requests << api_log_entry
+      sc
+    end
+  end
+
   private
 
   def public_key_hash(save_to_db=false)

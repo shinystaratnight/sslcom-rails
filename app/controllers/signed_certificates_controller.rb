@@ -1,7 +1,7 @@
 class SignedCertificatesController < ApplicationController
   before_filter :new_signed_certificate_from_params, :on=>:create
   filter_access_to :all, :attribute_check=>true
-  filter_access_to :server_bundle, :pkcs7, :whm_zip, :nginx, :apache_zip, :amazon_zip, :require=>:show
+  filter_access_to :server_bundle, :pkcs7, :whm_zip, :nginx, :apache_zip, :amazon_zip, :download, :require=>:show
 
   # DELETE /signed_certificates/1
   # DELETE /signed_certificates/1.xml
@@ -110,6 +110,15 @@ class SignedCertificatesController < ApplicationController
     @signed_certificate = SignedCertificate.find(params[:id])
     send_file @signed_certificate.zipped_amazon_bundle(is_client_windows?), :type => 'text', :disposition => 'attachment',
               :filename =>"#{@signed_certificate.nonidn_friendly_common_name}.zip"
+  end
+
+  def download
+    @signed_certificate = SignedCertificate.find(params[:id])
+    t=File.new(@signed_certificate.create_signed_cert_zip_bundle(
+        {components: true, is_windows: is_client_windows?}), "r")
+    send_file t.path, :type => 'application/zip', :disposition => 'attachment',
+              :filename => @signed_certificate.nonidn_friendly_common_name+'.zip'
+    t.close
   end
 
   protected

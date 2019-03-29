@@ -240,7 +240,7 @@ class Certificate < ActiveRecord::Base
     cur_tier = tier ? "#{tier}tr" : ""
     Certificate.available.where(
       "product REGEXP ?",
-      "^personal.*(basic|pro|business|enterprise)#{cur_tier}$"
+      "^personal.*(basic|pro|business|enterprise|naesb-basic)#{cur_tier}$"
     )
   end
 
