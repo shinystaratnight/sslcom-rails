@@ -123,8 +123,7 @@
                 %p Identifying Documents for Recipient #{co.get_team_iv.first_name} #{co.get_team_iv.last_name}:
                 = file_field_tag "iv_filedata[]", id: "iv_multi_upload"
           %br/
-        - else
-          = file_field_tag "filedata[]", id: "multi_upload"
+        = file_field_tag "filedata[]", id: "multi_upload"
 
 
     %p

@@ -306,8 +306,9 @@ class CertificateOrder < ActiveRecord::Base
   }
 
   scope :filter_by, lambda { |term|
+    terms = term.split(',').map{|t|t+'%'}
     joins{sub_order_items.product_variant_item.product_variant_group.
-        variantable(Certificate)}.where{certificates.product >> term.split(',')}
+      variantable(Certificate)}.where(('certificates.product like ?@' * terms.count).split('@').join(' OR '), *terms)
   }
 
   scope :filter_by_duration, lambda { |term|

@@ -163,4 +163,5 @@ class ResellerTier < ActiveRecord::Base
   # rt.update_prices(options)
   # sa = SslAccount.find_by_acct_number "a0a-1dpi0uq"
   # sa.adjust_reseller_tier "dtntcomodoca"
+  # bundle exec rake cas:seed_ejbca_profiles LIVE=all EJBCA_ENV=production RAILS_ENV=production # create mappings
 end
