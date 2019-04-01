@@ -132,7 +132,7 @@ module CertificateOrdersHelper
           link_to certificate_order.certificate.admin_submit_csr? ? 'upload documents' : 'perform validation', new_certificate_order_validation_path(@ssl_slug, certificate_order) if
               permitted_to?(:update, certificate_order.validation) # assume multi domain
         end
-      when "issued"
+      when "issued","revoked"
         if(certificate.is_cs? || certificate.is_smime_or_client?)
           if current_user.is_individual_certificate? or
               (certificate_order.get_recipient and certificate_order.get_recipient.email==current_user.email)

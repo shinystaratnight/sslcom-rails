@@ -1,0 +1,28 @@
+Hello,
+
+ONE OR MORE OF YOUR SSL/TLS CERTIFICATES ARE SCHEDULED FOR REVOCATION AND REPLACEMENT BY APRIL 6, 2019. DO NOT IGNORE THIS MESSAGE.
+
+The following replacement links are provided:
+
+<%replacement_notification.fingerprints.each do |fp| %>
+Replace this certificate (fingerprint: <%=fp[0] %>)<%=link_to SignedCertificate.find_by_fingerprint(fp[0]).certificate_order, anchor: ""%>
+With this certificate (fingerprint: <%=fp[1] %>)<%=link_to SignedCertificate.find_by_fingerprint(fp[1]).certificate_order, anchor: ""%>
+
+<%-end %>
+WHY AM I RECEIVING THIS MESSAGE?
+
+You are receiving this message it means that we have identified a certificate ordered by you which was impacted by a recently discovered technical issue. You do not need to take any actions for SSL.com to renew your certificate, and the new certificate is now available to you via the link above.
+
+This technical issue affects certificates issued by multiple Certificate Authorities, including Apple, GoDaddy and SSL.com. This issue is NOT considered to pose a security risk in any way, and any certificates affected by this issue which you are currently using DO perform as designed to protect and authenticate your communications.
+
+However, the issue does mean that a percentage of the certificates impacted by this issue do not meet technical requirements established by the CA/Browser Forum. In order to fully meet and exceed these requirements, and to make sure that you have the best possible product protecting your site and data, SSL.com is renewing all impacted certificates for the full duration of the order, at no cost to you.
+
+You WILL need to replace your existing certificate with the new certificate we have provided as soon as possible. We have scheduled revocation of your current certificate to take place by [11:59pm CST Thursday April 4 2019].
+
+We sincerely regret any difficulties this issue might cause and will be happy to assist you with the installation of your renewed certificate. Just contact us by email at support@ssl.com, via live chat at www.ssl.com, or call us at 1-SSL-Certificate (+1-775-237-8434).
+
+Regards,
+
+SSL.com
+
+

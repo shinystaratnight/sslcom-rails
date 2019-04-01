@@ -30,22 +30,6 @@ class Revocation < ActiveRecord::Base
     end
   end
 
-  def self.revocation_notification
-    # get hash of {email: [to_be_revoked_signed_certificates, replacement_signed_certificates]}
-    notifications={}
-    Revocation.find_each do |revocation|
-      sc=SignedCertificate.find_by_fingerprint(revocation.fingerprint.downcase)
-      next if sc.blank?
-      cc=sc.certificate_content
-      next if cc.blank?
-      cc.emergency_contact_emails.each {|email|
-        notifications[email] ||= []
-        notifications[email] << [revocation.fingerprint,revocation.replacement_fingerprint]
-      }
-      # get all account admin contacts and certificate_order contacts into the hash
-    end
-  end
-
   def self.load_revocations(file_name)
     File.open(file_name, "r").each_line do |line|
       data=line.split(",")
