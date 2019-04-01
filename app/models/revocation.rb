@@ -48,11 +48,13 @@ class Revocation < ActiveRecord::Base
     File.open(file_name, "r").each_line do |line|
       data=line.split(",")
       revocation=Revocation.find_or_initialize_by(fingerprint: data[0].downcase)
+      next if revocation.status=="replacement_issued" or (revocation.status.blank? and !revocation.new_record?)
       attr={}
       sc=SignedCertificate.find_by_fingerprint(data[0].downcase)
-      if sc
+      if sc and sc.csr.certificate_content
         attr.merge!({revoked_signed_certificate_id: sc.id, status: "revoke_cert_found"})
-        replacement_cert=revocation.replacement_signed_certificate || sc.csr.get_ejbca_certificate(data[1])
+        replacement_cert=revocation.replacement_signed_certificate ||
+            sc.csr.get_ejbca_certificate(data[1].gsub(/\n\z/,''))
         if replacement_cert
           attr.merge!({replacement_fingerprint: replacement_cert.fingerprint.downcase,
                        replacement_signed_certificate_id: replacement_cert.id,

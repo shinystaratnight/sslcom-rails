@@ -63,8 +63,9 @@ class ResellerTier < ActiveRecord::Base
 
   # sample commands to create a new tier and update pricing
   #
-  # rt=ResellerTier.generate_tier(label: "dtntcomodoca", description: {:name=>"dtnt comodoca tier"}, discount_rate: 0.167)
-  # rt=ResellerTier.find_by_label("dtntcomodoca")
+  # label="dtntcomodoca"
+  # rt=ResellerTier.generate_tier(label: label, description: {:name=>"#{label} tier"}, discount_rate: 0.167)
+  # rt=ResellerTier.find_by_label(label)
   # rt.prices_matrix
   # options= {11108=>["Enterprise EV Multi-domain UCC SSL", "Domains", "1 Year Domain For 3 Domains (ea domain)", 5000],
   #           11109=>["Enterprise EV Multi-domain UCC SSL", "Domains", "1 Year Domain For Domains 4-200 (ea domain)", 5000],

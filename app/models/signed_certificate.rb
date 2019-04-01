@@ -59,7 +59,7 @@ class SignedCertificate < ActiveRecord::Base
 
   after_initialize do
     if new_record?
-      self.email_customer ||= true
+      self.email_customer ||= ejbca_username.blank? ? false : true
     end
   end
 
@@ -70,7 +70,12 @@ class SignedCertificate < ActiveRecord::Base
   end
 
   after_create do |s|
-    s.csr.certificate_content.issue! unless %w(ShadowSignedCertificate ManagedCertificate).include?(self.type)
+    # begin
+      s.csr.certificate_content.issue! unless %w(ShadowSignedCertificate ManagedCertificate).include?(self.type)
+    # rescue
+    #   p s.id
+    #   p s.csr.id
+    # end
   end
 
   after_save do |s|
@@ -668,7 +673,7 @@ class SignedCertificate < ActiveRecord::Base
   end
 
   def ejbca_username
-    read_attribute(:ejbca_username) or csr.sslcom_ca_requests.first.try :username
+    read_attribute(:ejbca_username) or (csr.blank? ? nil : csr.sslcom_ca_requests.first.try(:username))
   end
 
   def ejbca_certificate

@@ -244,7 +244,7 @@ class CertificateContent < ActiveRecord::Base
   def add_ca(ssl_account)
     # dtnt comodo chained is 492703
     # 499740 using Azure. Remove once we are in Azure
-    unless [467564,16077,204730,492703,21291,499740].include?(ssl_account.id)
+    unless [467564,16077,204730,492703,21291,499740,490782].include?(ssl_account.id)
       self.ca = (self.certificate.cas.ssl_account_or_general_default(ssl_account)).last if ca.blank? and certificate
     end
   end
