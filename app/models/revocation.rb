@@ -35,10 +35,12 @@ class Revocation < ActiveRecord::Base
     notifications={}
     Revocation.find_each do |revocation|
       sc=SignedCertificate.find_by_fingerprint(revocation.fingerprint.downcase)
-      co=sc.certificate_order
+      next if sc.blank?
       cc=sc.certificate_content
+      next if cc.blank?
       cc.emergency_contact_emails.each {|email|
-        notifications[email] << [revocation.revoked_signed_certificate,revocation.replacement_signed_certificate]
+        notifications[email] ||= []
+        notifications[email] << [revocation.fingerprint,revocation.replacement_fingerprint]
       }
       # get all account admin contacts and certificate_order contacts into the hash
     end

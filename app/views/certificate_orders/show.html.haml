@@ -381,6 +381,8 @@
                                       %a{:href => "##{sc.replacement.serial}"}
                                         (serial: #{sc.replacement.serial})
                                       immediately to avoid downtime.
+                                      %br
+                                      Please refer to this #{link_to "serial number entropy FAQ", "https://www.ssl.com/faqs/faq-what-is-the-serial-number-entropy-issue-im-hearing-about/"} for more details.
                                   -if sc.try(:body).blank?
                                     (server software: #{c.server_software.try :title})
                                   -else
