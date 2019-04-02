@@ -20,4 +20,11 @@ class RevocationNotification < ActiveRecord::Base
       # get all account admin contacts and certificate_order contacts into the hash
     end
   end
+
+  def self.send_serial_number_entropy_notifications
+    RevocationNotification.find_each do |rn|
+      OrderNotifier.serial_number_entropy(rn).deliver
+      rn.update_column :status, rn.status+"+serial number entropy on 04/01/2019"
+    end
+  end
 end

@@ -575,7 +575,7 @@ class SignedCertificate < ActiveRecord::Base
 
   def to_pkcs7
     if certificate_content.ca
-      certificate_content.pkcs7.to_s
+      (SslcomCaRequest.where(username: ejbca_username).first.try(:pkcs7) || certificate_content.pkcs7).to_s
     else
       comodo_cert = ComodoApi.collect_ssl(certificate_order, {response_type: "pkcs7"}).certificate
       if comodo_cert
@@ -589,7 +589,7 @@ class SignedCertificate < ActiveRecord::Base
 
   def to_format(options={})
     if certificate_content.ca
-      SignedCertificate.remove_begin_end_tags(certificate_content.pkcs7.to_s)
+      SignedCertificate.remove_begin_end_tags(to_pkcs7)
     else
       ComodoApi.collect_ssl(certificate_order, options).certificate
     end
