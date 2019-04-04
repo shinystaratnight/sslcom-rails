@@ -40,10 +40,17 @@ class Ca < ActiveRecord::Base
   # issuer (entity and purpose)
   ISSUER = {sslcom_shadow: 1}
   SSL_ACCOUNT_MAPPING = {"a30-1e3mjj3" =>
-                          {"SSLcom-SubCA-SSL-RSA-4096-R1" => "DTNT-Intermediate-SSL-RSA-4096-R1",
-                          "SSLcom-SubCA-CodeSigning-RSA-4096-R1" => "DTNT-Intermediate-codeSigning-RSA-4096-R1",
-                          "SSLcom-SubCA-EV-SSL-RSA-4096-R2" => "DTNT-Intermediate-EV-SSL-RSA-4096-R1"}}
-  
+                          {"SSLcom-SubCA-SSL-RSA-4096-R1" => "DTNT-Intermediate-SSL-RSA-4096-R2",
+                          "SSLcom-SubCA-CodeSigning-RSA-4096-R1" => "DTNT-Intermediate-codeSigning-RSA-4096-R2",
+                          "SSLcom-SubCA-EV-SSL-RSA-4096-R3" => "DTNT-Intermediate-EV-SSL-RSA-4096-R2"},
+                        "ade-1e41it0" =>
+                          {"SSLcom-SubCA-SSL-RSA-4096-R1" => "MilleniumSign-Intermediate-SSL-RSA-4096-R2",
+                          "SSLcom-SubCA-SSL-ECC-384-R1" => "MilleniumSign-Intermediate-SSL-ECC-384-R2",
+                          "SSLcom-SubCA-CodeSigning-RSA-4096-R1" => "MilleniumSign-Intermediate-codeSigning-RSA-4096-R3",
+                          "SSLcom-SubCA-clientCert-RSA-4096-R2" => "MilleniumSign-Intermediate-clientCert-RSA-4096-R3",
+                          "SSLcom-SubCA-clientCert-ECC-384-R2" => "MilleniumSign-Intermediate-clientCert-ECC-384-R3",
+                          "SSLcom-SubCA-EV-SSL-RSA-4096-R3" => "MilleniumSign-Intermediate-EV-SSL-RSA-4096-R3"}}
+
   validates :ref, presence: true, uniqueness: true
 
   def ecc_profile

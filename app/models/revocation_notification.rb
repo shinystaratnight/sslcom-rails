@@ -24,7 +24,7 @@ class RevocationNotification < ActiveRecord::Base
   def self.send_serial_number_entropy_notifications
     RevocationNotification.find_each do |rn|
       OrderNotifier.serial_number_entropy(rn).deliver
-      rn.update_column :status, rn.status+"+serial number entropy on 04/01/2019"
+      rn.update_column :status, rn.status+"+2nd serial number entropy on 04/02/2019"
     end
   end
 end

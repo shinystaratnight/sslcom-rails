@@ -1,27 +1,34 @@
 Hello,
 
-ONE OR MORE OF YOUR SSL/TLS CERTIFICATES ARE SCHEDULED FOR REVOCATION AND REPLACEMENT BY APRIL 6, 2019. DO NOT IGNORE THIS MESSAGE.
+ONE OR MORE OF YOUR SSL/TLS CERTIFICATES ARE SCHEDULED FOR REVOCATION AND REPLACEMENT BY APRIL 6, 2019.
+
+(PLEASE DISREGARD IF YOU HAVE ALREADY TAKEN ACTION TO ADDRESS THIS ISSUE)
 
 The following replacement links are provided:
 
 <%@revocation_notification.fingerprints.each do |fp| -%>
   <%revoking=SignedCertificate.find_by_fingerprint(fp[0])-%>
   <%replacement=SignedCertificate.find_by_fingerprint(fp[1])-%>
-  Replace this certificate (fingerprint: <%=fp[0] %>)
+  Replace this certificate (CN: <%=revoking.common_name || ''%>, fingerprint: <%=fp[0] %>)
     <%=certificate_order_url(id: revoking.certificate_order.ref, anchor: revoking.serial)%>
-  With this certificate (fingerprint: <%=fp[1] %>)
+  With this certificate (CN: <%=replacement.common_name || ''%>, fingerprint: <%=fp[1] %>)
     <%==certificate_order_url(id: replacement.certificate_order, anchor: replacement.serial)%>
 
 <%end -%>
 WHY AM I RECEIVING THIS MESSAGE?
 
-You are receiving this message it means that we have identified a certificate ordered by you which was impacted by a recently discovered technical issue. You do not need to take any actions for SSL.com to renew your certificate, and the new certificate is now available to you via the link above. The replacement certificate is valid for the FULL TERM of the original order.
+If you have begun (or completed) addressing this issue, please ignore this 2nd notice. You are receiving this message it means that we have identified a certificate ordered by you which was impacted by a recently discovered technical issue. You do not need to take any actions for SSL.com to renew your certificate, and the new certificate is now available to you via the link above. The replacement certificate is valid for the FULL TERM of the original order.
 
 This technical issue affects certificates issued by multiple Certificate Authorities, including Apple, GoDaddy and SSL.com. This issue is NOT considered to pose a security risk in any way, and any certificates affected by this issue which you are currently using DO perform as designed to protect and authenticate your communications.
 
 However, the issue does mean that a percentage of the certificates impacted by this issue do not meet technical requirements established by the CA/Browser Forum. In order to fully meet and exceed these requirements, and to make sure that you have the best possible product protecting your site and data, SSL.com is renewing all impacted certificates for the full duration of the order, at no cost to you.
 
-You WILL need to replace your existing certificate with the new certificate we have provided as soon as possible. We have scheduled revocation of your current certificate to take place by [11:59pm CST Thursday April 6 2019].
+You WILL need to replace your existing certificate with the new certificate we have provided as soon as possible. We have scheduled revocation of your current certificate to take place by [11:59pm CST Saturday April 6 2019].
+
+Please refer to following links for more detailed information.
+
+https://www.ssl.com/faqs/faq-what-is-the-serial-number-entropy-issue-im-hearing-about/
+https://wiki.mozilla.org/CA/Incident_Dashboard
 
 We sincerely regret any difficulties this issue might cause and will be happy to assist you with the installation of your renewed certificate. Just contact us by email at support@ssl.com, via live chat at www.ssl.com, or call us at 1-SSL-Certificate (+1-775-237-8434).
 
