@@ -896,11 +896,30 @@ jQuery(function($) {
         }
       },
       success: function(data) {
-        if (data == 'success') {
+        /*if (data == 'success') {
           alert('Request email successfully sent.');
         } else if (data == 'not_found_ssl_account') {
           alert('Team account not found. Please try again.');
         } else if (data == 'session_expired') {
+          alert('The session has been expired. Please login again.');
+          location.reload(true);
+        }*/
+
+        if (data.status == 'success') {
+          if ($('#notify_type').val() == 'token') {
+            if (data.send_email == 'true') {
+              alert('Activation link email successfully sent.');
+            }
+
+            if (data.act_link != 'false') {
+              window.open(data.act_link, '_blalnk');
+            }
+          } else {
+            alert('Request email successfully sent.');
+          }
+        } else if (data.status == 'not_found_ssl_account') {
+          alert('Team account not found. Please try again.');
+        } else if (data.status == 'session_expired') {
           alert('The session has been expired. Please login again.');
           location.reload(true);
         }
@@ -913,8 +932,75 @@ jQuery(function($) {
       var notify_type = $(this).attr('data-type');
       $('#certificate_order_ref').val(ref);
       $('#notify_type').val(notify_type);
+
+      if (notify_type == 'token') {
+        if ($('#is_epki_admin').val() == 'true') {
+          $('.chk_send_label').text($(this).text().charAt(0).toUpperCase() + $(this).text().slice(1));
+          $('.epki_admin_modal').show();
+        } else {
+          $('form#send_notify_form').ajaxSubmit(send_notify_options);
+        }
+      } else {
+        $('form#send_notify_form').ajaxSubmit(send_notify_options);
+      }
+    });
+
+    $(document).on('click', '#epki_modal_close', function() {
+      $('#chk_send_email').prop('checked', true);
+      $('#chk_copy_link').prop('checked', false);
+
+      $('#epki_admin_modal_body').removeClass('error-required');
+      $('#epki_admin_modal_footer .btn-ok').prop('disabled', false);
+
+      $('#epki_admin_modal').hide();
+    });
+
+    $(document).on('click', '.chk_method', function() {
+      var check_boxes = $('.chk_method');
+      var exist_checked = false;
+
+      $.each(check_boxes, function(key, value) {
+        if ($(value).prop('checked')) {
+          exist_checked = true;
+          return false;
+        }
+      });
+
+      if (exist_checked) {
+        $('#epki_admin_modal_body').removeClass('error-required');
+        $('#epki_admin_modal_footer .btn-ok').prop('disabled', false);
+      } else {
+        $('#epki_admin_modal_body').addClass('error-required');
+        $('#epki_admin_modal_footer .btn-ok').prop('disabled', true);
+      }
+    });
+
+    $(document).on('click', '.btn-ok', function() {
+      $('#send_email_link').val($('#chk_send_email').prop('checked'));
+      $('#copy_act_link').val($('#chk_copy_link').prop('checked'));
+
+      $('#chk_send_email').prop('checked', true);
+      $('#chk_copy_link').prop('checked', false);
+
+      $('#epki_admin_modal_body').removeClass('error-required');
+      $('#epki_admin_modal_footer .btn-ok').prop('disabled', false);
+
+      $('#epki_admin_modal').hide();
+
       $('form#send_notify_form').ajaxSubmit(send_notify_options);
     });
+
+    window.onclick = function(event) {
+      if (event.target == $('#epki_admin_modal')[0]) {
+        $('#chk_send_email').prop('checked', true);
+        $('#chk_copy_link').prop('checked', false);
+
+        $('#epki_admin_modal_body').removeClass('error-required');
+        $('#epki_admin_modal_footer .btn-ok').prop('disabled', false);
+
+        $('#epki_admin_modal').hide();
+      }
+    };
 
     $('#btn_cert_order_filter').click(function() {
       $('#wrap_cert_order_filter').show();

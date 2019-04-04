@@ -49,16 +49,30 @@ class CertificateOrderTokensController < ApplicationController
             co_token.save!
           end
 
-          # Notifying to assignee
-          OrderNotifier.certificate_order_token_send(co, co_token.token).deliver
+          if params['send_email_link'].blank? || (!params['send_email_link'].blank? && params['send_email_link'] == 'true')
+            # Notifying to assignee
+            OrderNotifier.certificate_order_token_send(co, co_token.token).deliver
+            returnObj['send_email'] = 'true'
+          else
+            returnObj['send_email'] = 'false'
+          end
+
+          if !params['copy_act_link'].blank? && (params['copy_act_link'] == 'true')
+            returnObj['act_link'] = confirm_url(co_token.token)
+          else
+            returnObj['act_link'] = 'false'
+          end
+
           co.certificate_content.validate! if co.certificate_content.issued?
+
           returnObj['status'] = 'success'
         end
       else
         returnObj['status'] = 'session_expired'
       end
 
-      format.js { render :json => returnObj['status'].to_json }
+      # format.js { render :json => returnObj['status'].to_json }
+      format.js { render :json => returnObj.to_json }
     end
   end
 
