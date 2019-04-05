@@ -1,6 +1,7 @@
 source 'http://rubygems.org'
 
 gem 'rails', '~> 4.2.7.1'
+gem 'bootsnap', require: false
 gem 'sprockets'
 gem 'protected_attributes'
 gem 'responders', '~> 2.0'
