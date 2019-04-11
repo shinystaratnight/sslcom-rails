@@ -121,13 +121,11 @@ class Csr < ActiveRecord::Base
 
   def csr_unique_value
     last_unique_value = csr_unique_values.last
-    if last_unique_value.nil?
-      last_unique_value = csr_unique_values.create(unique_value: SecureRandom.hex(5))
-    end
-
     #if unique_value is expired, then new unique_value should be generated
-    if (Date.today-last_unique_value.created_at.to_date).to_i > 30
-      last_unique_value = csr_unique_values.create(unique_value: SecureRandom.hex(5))
+    if last_unique_value.nil? or (Date.today-last_unique_value.created_at.to_date).to_i > 30
+      last_unique_value = new_record? ?
+                              csr_unique_values.build(unique_value: SecureRandom.hex(5)) :
+                              csr_unique_values.create(unique_value: SecureRandom.hex(5))
     end
     last_unique_value
   end

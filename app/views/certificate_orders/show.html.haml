@@ -390,7 +390,7 @@
                                       !IMPORTANT! Certificate with
                                       %a{:href => "##{sc.serial}"}
                                         (serial: #{sc.serial})
-                                      will be revoked on April 6, 2019. Please install renewal certificate
+                                      has been revoked on April 6, 2019. Please install renewal certificate
                                       %a{:href => "##{sc.replacement.serial}"}
                                         (serial: #{sc.replacement.serial})
                                       immediately to avoid downtime.
@@ -413,8 +413,6 @@
                                     - unless sys_log
                                       %span
                                         =sc.status.upcase
-                                        -if sc.revocation
-                                          %strong.red (REVOCATION SCHEDULED ON APRIL 6, 2019)
 
                                     - if !sc.revoked?
                                       - select_id = "sel-cert-content-revoke-#{sc.id}"

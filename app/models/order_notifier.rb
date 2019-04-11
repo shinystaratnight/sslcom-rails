@@ -267,7 +267,7 @@ class OrderNotifier < ActionMailer::Base
 
   def serial_number_entropy(revocation_notification)
     @revocation_notification = revocation_notification
-    mail subject: "SSL.com Certificate Replacement Due to Serial Number Entropy (2nd Notice)",
+    mail subject: "SSL.com Certificate Replacement Due to Serial Number Entropy",
          from:  Settings.from_email.no_reply,
          to:    revocation_notification.email
   end

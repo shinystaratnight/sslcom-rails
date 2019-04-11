@@ -45,7 +45,7 @@ class Ca < ActiveRecord::Base
                           "SSLcom-SubCA-EV-SSL-RSA-4096-R3" => "DTNT-Intermediate-EV-SSL-RSA-4096-R2"},
                         "ade-1e41it0" =>
                           {"SSLcom-SubCA-SSL-RSA-4096-R1" => "MilleniumSign-Intermediate-SSL-RSA-4096-R2",
-                          "SSLcom-SubCA-SSL-ECC-384-R1" => "MilleniumSign-Intermediate-SSL-ECC-384-R2",
+                          "SSLcom-SubCA-SSL-ECC-384-R2" => "MilleniumSign-Intermediate-SSL-ECC-384-R2",
                           "SSLcom-SubCA-CodeSigning-RSA-4096-R1" => "MilleniumSign-Intermediate-codeSigning-RSA-4096-R3",
                           "SSLcom-SubCA-clientCert-RSA-4096-R2" => "MilleniumSign-Intermediate-clientCert-RSA-4096-R3",
                           "SSLcom-SubCA-clientCert-ECC-384-R2" => "MilleniumSign-Intermediate-clientCert-ECC-384-R3",

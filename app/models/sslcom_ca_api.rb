@@ -6,7 +6,7 @@ class SslcomCaApi
 
   # DV_ECC_SERVER_CERT is linked to the
   # CertLockECCSSLsubCA
-  # SSLcom-SubCA-SSL-ECC-384-R1
+  # SSLcom-SubCA-SSL-ECC-384-R2
   # ManagementCA
 
   SIGNATURE_HASH = %w(NO_PREFERENCE INFER_FROM_CSR PREFER_SHA2 PREFER_SHA1 REQUIRE_SHA2)
@@ -84,7 +84,7 @@ class SslcomCaApi
                   'SSLcom-SubCA-CodeSigning-RSA-4096-R1'
                 else
                   sig_alg_parameter(options[:cc].csr) =~ /rsa/i ? 'SSLcom-SubCA-SSL-RSA-4096' :
-                      'SSLcom-SubCA-SSL-ECC-384-R1'
+                      'SSLcom-SubCA-SSL-ECC-384-R2'
                 end
               else
                 'ManagementCA'

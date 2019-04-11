@@ -389,7 +389,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
         @result.callback_hook=res.body
         @result.response=res
       else
-        @result = @acr #so that rabl can report errors
+        @result = @acr unless @acr.blank? # if @acr is blank then order not found
       end
 
     else

@@ -304,7 +304,7 @@ namespace :cas do
           caa_issuers: ["ssl.com"],
           host: "https://#{url}:8443/restapi",
           admin_host: "https://#{url}:8443",
-          ca_name: "SSLcom-SubCA-SSL-ECC-384-R1",
+          ca_name: "SSLcom-SubCA-SSL-ECC-384-R2",
           ekus: [Ca::EKUS[:server]],
           end_entity: Ca::END_ENTITY[:dvssl]
       )
@@ -318,7 +318,7 @@ namespace :cas do
           caa_issuers: ["ssl.com"],
           host: "https://#{url}:8443/restapi",
           admin_host: "https://#{url}:8443",
-          ca_name: "SSLcom-SubCA-SSL-ECC-384-R1",
+          ca_name: "SSLcom-SubCA-SSL-ECC-384-R2",
           ekus: [Ca::EKUS[:server]],
           end_entity: Ca::END_ENTITY[:ovssl]
       )
