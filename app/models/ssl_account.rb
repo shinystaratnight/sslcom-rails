@@ -142,7 +142,19 @@ class SslAccount < ActiveRecord::Base
   validates :ssl_slug, uniqueness: {case_sensitive: false}, length: {in: 2..20}, allow_nil: true
   validates :company_name, length: {in: 2..20}, allow_nil: true
 
-  default_scope ->{order("ssl_accounts.created_at desc")}
+  # default_scope ->{order("ssl_accounts.created_at desc")}
+  default_scope{where{workflow_state << ['archived']}.order("ssl_accounts.created_at desc")}
+
+  include Workflow
+  workflow do
+    state :active do
+      event :archive, :transitions_to => :archived
+    end
+
+    state :archived do
+      event :retrieve, :transitions_to => :active
+    end
+  end
 
   #before create function
   def b_create

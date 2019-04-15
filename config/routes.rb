@@ -539,6 +539,8 @@ SslCom::Application.routes.draw do
       get   :dont_show_again
       get   :duo
       match :duo_verify, via: [:get, :post]
+      get   :archive_team
+      get   :retrieve_team
     end
   end
 

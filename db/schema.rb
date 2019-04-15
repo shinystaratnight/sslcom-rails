@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190317135455) do
+ActiveRecord::Schema.define(version: 20190412184907) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        limit: 255
@@ -314,6 +314,7 @@ ActiveRecord::Schema.define(version: 20190317135455) do
     t.string   "approval",             limit: 255
     t.integer  "ca_id",                limit: 4
     t.datetime "expires_at"
+    t.string   "url_callback",         limit: 255
   end
 
   add_index "certificate_contents", ["certificate_order_id"], name: "index_certificate_contents_on_certificate_order_id", using: :btree
@@ -403,6 +404,7 @@ ActiveRecord::Schema.define(version: 20190317135455) do
     t.integer  "folder_id",             limit: 4
     t.integer  "assignee_id",           limit: 4
     t.datetime "expires_at"
+    t.text     "requester_emails",      limit: 65535
   end
 
   add_index "certificate_orders", ["created_at"], name: "index_certificate_orders_on_created_at", using: :btree
@@ -1372,16 +1374,27 @@ ActiveRecord::Schema.define(version: 20190317135455) do
     t.datetime "updated_at"
   end
 
-  create_table "revocations", force: :cascade do |t|
-    t.string   "fingerprint",             limit: 255
-    t.string   "replacement_fingerprint", limit: 255
-    t.string   "status",                  limit: 255
-    t.text     "message_before_revoked",  limit: 65535
-    t.text     "message_after_revoked",   limit: 65535
-    t.datetime "revoked_on"
-    t.datetime "created_at",                            null: false
-    t.datetime "updated_at",                            null: false
+  create_table "revocation_notifications", force: :cascade do |t|
+    t.string "email",        limit: 255
+    t.text   "fingerprints", limit: 65535
+    t.string "status",       limit: 255
   end
+
+  create_table "revocations", force: :cascade do |t|
+    t.string   "fingerprint",                       limit: 255
+    t.string   "replacement_fingerprint",           limit: 255
+    t.integer  "revoked_signed_certificate_id",     limit: 4
+    t.integer  "replacement_signed_certificate_id", limit: 4
+    t.string   "status",                            limit: 255
+    t.text     "message_before_revoked",            limit: 65535
+    t.text     "message_after_revoked",             limit: 65535
+    t.datetime "revoked_on"
+    t.datetime "created_at",                                      null: false
+    t.datetime "updated_at",                                      null: false
+  end
+
+  add_index "revocations", ["fingerprint"], name: "index_revocations_on_fingerprint", using: :btree
+  add_index "revocations", ["replacement_fingerprint"], name: "index_revocations_on_replacement_fingerprint", using: :btree
 
   create_table "roles", force: :cascade do |t|
     t.string   "name",           limit: 255
@@ -1509,6 +1522,7 @@ ActiveRecord::Schema.define(version: 20190317135455) do
   add_index "signed_certificates", ["common_name", "strength"], name: "index_signed_certificates_on_3_cols", using: :btree
   add_index "signed_certificates", ["common_name"], name: "index_signed_certificates_on_common_name", using: :btree
   add_index "signed_certificates", ["csr_id"], name: "index_signed_certificates_on_csr_id", using: :btree
+  add_index "signed_certificates", ["fingerprint"], name: "index_signed_certificates_on_fingerprint", using: :btree
   add_index "signed_certificates", ["strength"], name: "index_signed_certificates_on_strength", using: :btree
 
   create_table "site_checks", force: :cascade do |t|
@@ -1564,6 +1578,7 @@ ActiveRecord::Schema.define(version: 20190317135455) do
     t.integer  "default_folder_id",      limit: 4
     t.boolean  "no_limit",                           default: false
     t.datetime "epki_agreement"
+    t.string   "workflow_state",         limit: 255, default: "active"
   end
 
   add_index "ssl_accounts", ["acct_number", "company_name", "ssl_slug"], name: "index_ssl_accounts_on_acct_number_and_company_name_and_ssl_slug", using: :btree
