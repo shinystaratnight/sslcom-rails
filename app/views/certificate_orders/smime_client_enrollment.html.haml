@@ -30,7 +30,7 @@
           *Emails List:
           %span.label_desc Enter emails seperated by space or comma
         = text_area_tag :emails, nil, id: "text-sc-emails", cols: 40, rows: 15, |
-          data: { epki_domains: epki_registrant ? epki_registrant.domains.join(",") : "" }
+          data: { epki_domains: epki_registrant ? epki_registrant.domains.map(&:strip).join(",").downcase : "" }
 
       .clearfix
         .sub-hdr-sc-enroll
