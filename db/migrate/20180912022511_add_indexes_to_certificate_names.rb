@@ -1,7 +1,7 @@
 class AddIndexesToCertificateNames < ActiveRecord::Migration
   def change
     add_index :certificate_names, [:certificate_content_id]
-    add_index :certificate_names, [:name]
+    add_index :certificate_names, [:name], type: :fulltext
     add_index :certificate_names, [:ssl_account_id,]
     add_index :certificate_orders, [:ssl_account_id]
     add_index :certificate_orders, [:workflow_state,:is_expired,:is_test],

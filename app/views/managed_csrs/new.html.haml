@@ -26,7 +26,10 @@
   %h2
     Generate Certificate Signing Request and Save to
     =link_to 'CSR Manager', managed_csrs_path(@ssl_slug)
-  %h3.center Be sure to save the private key. It will be required for use with signed certificate.
+  %h3.center
+    Be sure to save the private key. It will be required for use with signed certificate.
+    Note: Your private key will be generated on your own computer by your web browser.
+    SSL.com will never see or handle your private keys.
   = form_tag :managed_csrs, method: :post, id: 'add_csr_form' do
     .row.pt-3
       .col-md-6
