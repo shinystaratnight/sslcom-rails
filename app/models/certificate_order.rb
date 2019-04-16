@@ -692,8 +692,8 @@ class CertificateOrder < ActiveRecord::Base
     target_order.save unless target_order.persisted?
     target_order.line_items.destroy_all
     if target_order.valid?
-      line_items << LineItem.create(
-        order_id: target_order.id, cents: target_order.cents, amount: target_order.amount, currency: 'USD'
+      line_items.create(
+          order_id: target_order.id, cents: target_order.cents, amount: target_order.amount, currency: 'USD'
       )
     end
   end
