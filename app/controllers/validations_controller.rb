@@ -6,7 +6,8 @@ require 'tempfile'
 include Open3
 
 class ValidationsController < ApplicationController
-  before_filter :require_user, only: [:index, :new, :edit, :show, :upload, :document_upload, :get_asynch_domains]
+  before_filter :require_user, only: [:index, :new, :edit, :show, :upload, :document_upload, :get_asynch_domains,
+                                      :cancel_validation_process]
   before_filter :find_validation, only: [:update, :new]
   before_filter :find_certificate_order, only: [:new, :edit, :show, :upload, :document_upload]
 
@@ -18,7 +19,8 @@ class ValidationsController < ApplicationController
   filter_access_to :edit, :show, :attribute_check=>true
   filter_access_to :admin_manage, :attribute_check=>true
   filter_access_to :send_to_ca, require: :sysadmin_manage
-  filter_access_to :get_asynch_domains, :remove_domains, :get_email_addresses, :send_callback, :require=>:ajax
+  filter_access_to :get_asynch_domains, :remove_domains, :get_email_addresses, :send_callback,
+                   :cancel_validation_process, :require=>:ajax
   in_place_edit_for :validation_history, :notes
 
   def search
@@ -746,6 +748,30 @@ class ValidationsController < ApplicationController
     # else
     #   returnObj['status'] = 'no-user'
     # end
+
+    render :json => returnObj
+  end
+
+  def cancel_validation_process
+    returnObj = {}
+    co = (current_user.is_system_admins? ? CertificateOrder :
+              current_user.certificate_orders).find_by_ref(params[:certificate_order_id])
+
+    if co
+      if co.certificate_contents.size == 0
+        returnObj['status'] = 'no-exist-cert-content'
+      elsif co.certificate_contents.size == 1
+        co.certificate_content.reset!
+        co.certificate_content.csr.delete
+        returnObj['status'] = 'success'
+      elsif co.certificate_contents.size > 1
+        co.certificate_content.delete
+        co.certificate_content.csr.delete
+        returnObj['status'] = 'success'
+      end
+    else
+      returnObj['status'] = 'no-exist-cert-order'
+    end
 
     render :json => returnObj
   end

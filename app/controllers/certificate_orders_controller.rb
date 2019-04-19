@@ -131,7 +131,7 @@ class CertificateOrdersController < ApplicationController
     else
       @taggable = @certificate_order
       get_team_tags
-      redirect_to edit_certificate_order_path(@ssl_slug, @certificate_order) and return if @certificate_order.certificate_content.new?
+      redirect_to edit_certificate_order_path(@ssl_slug, @certificate_order) and return if @certificate_order.certificate_content && @certificate_order.certificate_content.new?
       respond_to do |format|
         format.html # show.html.erb
         format.xml  { render :xml => @certificate_order }

@@ -104,6 +104,7 @@
       %tbody.domain_list{'data-ref' => co.certificate_content.ref}
     #upload_validations(style='width: 100%; text-align: center; display: none;')
       =submit_tag "Validate", :id=>"validate_domains", :disable_with=>"Submitting..."
+      =button_tag "Start Over", :id=>"start_over_process", :type=>"button", :disable_with=>"Submitting..."
       .clearfix
         =image_tag('waiting_bar_medium.gif', :id=>'waiting_bar', :style=>'display: none; vertical-align: middle;')
 -else
@@ -190,6 +191,7 @@
       #button_container(style='display : none')
         #skip_button=link_to image_tag("skip_bl.gif"), co
 =render :partial => 'index_scripts'
+= javascript_include_tag 'psl.min'
 %script{:type=>"text/javascript"}
   :plain
     //# PLUGIN INTEGRATION
