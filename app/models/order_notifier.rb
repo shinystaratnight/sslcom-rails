@@ -278,7 +278,7 @@ class OrderNotifier < ActionMailer::Base
     @requestor = requestor
 
     mail subject: "Certificate Activation Link",
-         from:  requestor.email,
+         from:  "no-reply@ssl.com",
          to:    user.email
   end
 

@@ -191,10 +191,12 @@ class SslcomCaApi
     else
       cc.csr.save if cc.csr.new_record?
     end
-    approval_req, approval_res = SslcomCaApi.get_status(csr: cc.csr, mapping: options[:mapping])
-    return cc.csr.sslcom_ca_requests.create(
-      parameters: approval_req.body, method: "get", response: approval_res.body,
-                                            ca: options[:ca]) if approval_res.try(:body)=~/WAITING FOR APPROVAL/
+    if options[:mapping].profile_name=~/EV/
+      approval_req, approval_res = SslcomCaApi.get_status(csr: cc.csr, mapping: options[:mapping])
+      return cc.csr.sslcom_ca_requests.create(
+          parameters: approval_req.body, method: "get", response: approval_res.body,
+          ca: options[:ca]) if approval_res.try(:body)=~/WAITING FOR APPROVAL/
+    end
     if options[:mapping].profile_name=~/EV/ and (approval_res.try(:body).blank? or approval_res.try(:body)=="[]" or
         (!approval_res.try(:body)=~/WAITING FOR APPROVAL/) or approval_res.try(:body)=~/EXPIRED AND NOTIFIED/)
       # create the user for EV order
