@@ -261,8 +261,8 @@ class CertificateOrdersController < ApplicationController
         @slt_notification_group = [notification_group_subject.notification_group.ref] if notification_group_subject
 
         @managed_csrs = (@certificate_order.ssl_account.all_csrs)
-                            .sort_by{|arr| arr.common_name}
-                            .map{|arr| [(arr.friendly_name || arr.common_name)+' '+ arr.public_key_sha1, arr.ref]}
+                            .sort_by{|arr| arr.common_name || ""}
+                            .map{|arr| [(arr.friendly_name || arr.common_name || "")+' '+ arr.public_key_sha1, arr.ref]}
                             .delete_if{|arr| arr.second == nil}
         @managed_csrs.insert(0, ['none', 'none'])
 

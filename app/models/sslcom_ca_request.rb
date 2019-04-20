@@ -19,7 +19,14 @@ class SslcomCaRequest < CaApiRequest
   def pkcs7
     certs=OpenSSL::PKCS7.new(SignedCertificate.enclose_with_tags(certificate_chain))
     add_this=Certificate.xcert_certum(certs.certificates.last,true)
-    certs.certificates=certs.certificates[0..-2]+[OpenSSL::X509::Certificate.new(add_this)]
+    add_certum=add_this!=certs.certificates.last.to_s
+    appended_certificates=if add_certum
+      [OpenSSL::X509::Certificate.new(add_this),
+       OpenSSL::X509::Certificate.new(SignedCertificate.enclose_with_tags(Certificate::CERTUM_ROOT))]
+    else
+      [OpenSSL::X509::Certificate.new(add_this)]
+    end
+    certs.certificates=certs.certificates[0..-2]+appended_certificates
     certs
   end
 
