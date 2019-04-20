@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190314173012) do
+ActiveRecord::Schema.define(version: 20190415204615) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        limit: 255
@@ -708,6 +708,7 @@ ActiveRecord::Schema.define(version: 20190314173012) do
   add_index "domain_control_validations", ["certificate_name_id", "email_address", "dcv_method"], name: "index_domain_control_validations_on_3_cols", using: :btree
   add_index "domain_control_validations", ["csr_id", "email_address", "dcv_method"], name: "index_domain_control_validations_on_3_cols(2)", using: :btree
   add_index "domain_control_validations", ["id", "csr_id"], name: "index_domain_control_validations_on_id_csr_id", using: :btree
+  add_index "domain_control_validations", ["subject"], name: "index_domain_control_validations_on_subject", using: :btree
 
   create_table "duo_accounts", force: :cascade do |t|
     t.integer  "ssl_account_id",              limit: 4
@@ -1372,6 +1373,28 @@ ActiveRecord::Schema.define(version: 20190314173012) do
     t.datetime "updated_at"
   end
 
+  create_table "revocation_notifications", force: :cascade do |t|
+    t.string "email",        limit: 255
+    t.text   "fingerprints", limit: 65535
+    t.string "status",       limit: 255
+  end
+
+  create_table "revocations", force: :cascade do |t|
+    t.string   "fingerprint",                       limit: 255
+    t.string   "replacement_fingerprint",           limit: 255
+    t.integer  "revoked_signed_certificate_id",     limit: 4
+    t.integer  "replacement_signed_certificate_id", limit: 4
+    t.string   "status",                            limit: 255
+    t.text     "message_before_revoked",            limit: 65535
+    t.text     "message_after_revoked",             limit: 65535
+    t.datetime "revoked_on"
+    t.datetime "created_at",                                      null: false
+    t.datetime "updated_at",                                      null: false
+  end
+
+  add_index "revocations", ["fingerprint"], name: "index_revocations_on_fingerprint", using: :btree
+  add_index "revocations", ["replacement_fingerprint"], name: "index_revocations_on_replacement_fingerprint", using: :btree
+
   create_table "roles", force: :cascade do |t|
     t.string   "name",           limit: 255
     t.datetime "created_at"
@@ -1491,12 +1514,15 @@ ActiveRecord::Schema.define(version: 20190314173012) do
     t.datetime "revoked_at"
     t.string   "type",                      limit: 255
     t.integer  "registered_agent_id",       limit: 4
+    t.string   "ejbca_username",            limit: 255
   end
 
   add_index "signed_certificates", ["ca_id"], name: "index_signed_certificates_on_ca_id", using: :btree
   add_index "signed_certificates", ["common_name", "strength"], name: "index_signed_certificates_on_3_cols", using: :btree
   add_index "signed_certificates", ["common_name"], name: "index_signed_certificates_on_common_name", using: :btree
   add_index "signed_certificates", ["csr_id"], name: "index_signed_certificates_on_csr_id", using: :btree
+  add_index "signed_certificates", ["ejbca_username"], name: "index_signed_certificates_on_ejbca_username", using: :btree
+  add_index "signed_certificates", ["fingerprint"], name: "index_signed_certificates_on_fingerprint", using: :btree
 
   create_table "site_checks", force: :cascade do |t|
     t.text     "url",                   limit: 65535

@@ -42,10 +42,10 @@ class UrlCallback < ActiveRecord::Base
   end
 
   def perform_callback(options={})
-    UrlCallback::perform_callback(options,self)
+    UrlCallback.perform_callback(self,options)
   end
 
-  def self.perform_callback(options,url_callback)
+  def self.perform_callback(url_callback,options)
     begin
       uri = URI.parse(url_callback.url)
       req = url_callback.method==METHODS[:post] ? Net::HTTP::Post.new(uri, 'Content-Type' =>

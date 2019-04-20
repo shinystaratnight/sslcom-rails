@@ -265,13 +265,20 @@ class OrderNotifier < ActionMailer::Base
          to:    co.get_download_cert_email
   end
 
+  def serial_number_entropy(revocation_notification)
+    @revocation_notification = revocation_notification
+    mail subject: "SSL.com Certificate Replacement Due to Serial Number Entropy",
+         from:  Settings.from_email.no_reply,
+         to:    revocation_notification.email
+  end
+
   def request_token_send(co, user, requestor)
     @certificate_order = co
     @user = user
     @requestor = requestor
 
     mail subject: "Certificate Activation Link",
-         from:  requestor.email,
+         from:  "no-reply@ssl.com",
          to:    user.email
   end
 

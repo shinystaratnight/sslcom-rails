@@ -1,6 +1,7 @@
 source 'http://rubygems.org'
 
 gem 'rails', '~> 4.2.7.1'
+gem 'bootsnap', require: false
 gem 'sprockets'
 gem 'protected_attributes'
 gem 'responders', '~> 2.0'
@@ -58,7 +59,7 @@ gem 'jquery-ui-rails'
 gem 'turbolinks'
 gem 'jbuilder'
 gem 'sdoc',          group: :doc
-gem 'airbrake', '~> 8.1'
+gem 'airbrake', '~> 8.3.2'
 gem 'rails-observers'
 gem 'actionpack-action_caching', '~> 1.1', '>= 1.1.1'
 gem 'sass-rails'

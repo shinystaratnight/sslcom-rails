@@ -249,6 +249,14 @@ class CertificateName < ActiveRecord::Base
         dcv.update_column(:candidate_addresses, standard_addresses) if dcv
       end
     end
+
+    def max_attempts
+      1
+    end
+
+    def max_run_time
+      5 # seconds
+    end
   end
 
   def candidate_email_addresses(clear_cache=false)

@@ -27,7 +27,7 @@ class ApiCertificateRetrieve < ApiCertificateRequest
 
   def initialize(attributes = {})
     super
-    self.query_type ||= "order_status_only"
+    self.query_type ||= "all_certificates"
     self.response_type ||= "individually"
     self.response_encoding ||= "base64"
   end

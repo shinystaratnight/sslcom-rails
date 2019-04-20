@@ -109,7 +109,7 @@ module SslCom
     config.sass.preferred_syntax = :sass
     config.sass.line_comments = false
     config.sass.cache = false
-    config.action_mailer.default_url_options = { :host => "www.ssl.com" }
+    config.action_mailer.default_url_options = { host: "www.ssl.com", protocol: "https" }
     self.paths['config/database'] = 'config/client/certassure/database.yml' if DEPLOYMENT_CLIENT=~/certassure/i && Rails.root.to_s=~/Development/
   end
 end

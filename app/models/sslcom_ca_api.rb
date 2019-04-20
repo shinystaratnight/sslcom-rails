@@ -6,7 +6,7 @@ class SslcomCaApi
 
   # DV_ECC_SERVER_CERT is linked to the
   # CertLockECCSSLsubCA
-  # SSLcom-SubCA-SSL-ECC-384-R1
+  # SSLcom-SubCA-SSL-ECC-384-R2
   # ManagementCA
 
   SIGNATURE_HASH = %w(NO_PREFERENCE INFER_FROM_CSR PREFER_SHA2 PREFER_SHA1 REQUIRE_SHA2)
@@ -76,7 +76,7 @@ class SslcomCaApi
               elsif options[:ca]==Ca::SSLCOM_CA
                 case options[:cc].certificate.validation_type
                 when "ev"
-                  sig_alg_parameter(options[:cc].csr) =~ /rsa/i ? 'SSLcom-SubCA-EV-SSL-RSA-4096-R2' :
+                  sig_alg_parameter(options[:cc].csr) =~ /rsa/i ? 'SSLcom-SubCA-EV-SSL-RSA-4096-R3' :
                       'SSLcom-SubCA-EV-SSL-ECC-384-R2'
                 when "evcs"
                   'SSLcom-SubCA-EV-CodeSigning-RSA-4096-R3'
@@ -84,7 +84,7 @@ class SslcomCaApi
                   'SSLcom-SubCA-CodeSigning-RSA-4096-R1'
                 else
                   sig_alg_parameter(options[:cc].csr) =~ /rsa/i ? 'SSLcom-SubCA-SSL-RSA-4096' :
-                      'SSLcom-SubCA-SSL-ECC-384-R1'
+                      'SSLcom-SubCA-SSL-ECC-384-R2'
                 end
               else
                 'ManagementCA'
@@ -191,10 +191,12 @@ class SslcomCaApi
     else
       cc.csr.save if cc.csr.new_record?
     end
-    approval_req, approval_res = SslcomCaApi.get_status(csr: cc.csr, mapping: options[:mapping])
-    return cc.csr.sslcom_ca_requests.create(
-      parameters: approval_req.body, method: "get", response: approval_res.body,
-                                            ca: options[:ca]) if approval_res.try(:body)=~/WAITING FOR APPROVAL/
+    if options[:mapping].profile_name=~/EV/
+      approval_req, approval_res = SslcomCaApi.get_status(csr: cc.csr, mapping: options[:mapping])
+      return cc.csr.sslcom_ca_requests.create(
+          parameters: approval_req.body, method: "get", response: approval_res.body,
+          ca: options[:ca]) if approval_res.try(:body)=~/WAITING FOR APPROVAL/
+    end
     if options[:mapping].profile_name=~/EV/ and (approval_res.try(:body).blank? or approval_res.try(:body)=="[]" or
         (!approval_res.try(:body)=~/WAITING FOR APPROVAL/) or approval_res.try(:body)=~/EXPIRED AND NOTIFIED/)
       # create the user for EV order

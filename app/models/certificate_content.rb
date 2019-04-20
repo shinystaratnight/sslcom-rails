@@ -244,7 +244,7 @@ class CertificateContent < ActiveRecord::Base
   def add_ca(ssl_account)
     # dtnt comodo chained is 492703
     # 499740 using Azure. Remove once we are in Azure
-    unless [467564,16077,204730,492703,21291,499740].include?(ssl_account.id)
+    unless [467564,16077,204730,492703,21291,499740,490782].include?(ssl_account.id)
       self.ca = (self.certificate.cas.ssl_account_or_general_default(ssl_account)).last if ca.blank? and certificate
     end
   end
@@ -780,8 +780,8 @@ class CertificateContent < ActiveRecord::Base
     dn=certificate.is_server? ? ["CN=#{options[:common_name] || common_name}"] : []
     dn << "emailAddress=#{certificate_order.assignee.email}" if certificate.is_smime?
     if certificate.is_smime_or_client? and !certificate.is_client_basic?
-      person=ssl_account.individual_validations.find_by_email(certificate_order.get_recipient.email)
-      dn << "CN=#{[person.first_name,person.last_name].join(" ")}"
+      person=certificate_order.locked_recipient
+      dn << "CN=#{[person.first_name,person.last_name].join(" ").strip}"
     end
     if locked_registrant and !(options[:mapping] ? options[:mapping].try(:profile_name) =~ /DV/ : cert.is_dv?)
       # if ev or ov order, must have locked registrant

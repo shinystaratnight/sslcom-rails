@@ -552,6 +552,18 @@ toPkcs12Asn1 = function(key, cert, password, options) {
 
 jQuery.noConflict();
 jQuery(function($) {
+  $.checkDomain = function(str) {
+    var asterisk_counts = (str.match(/\*/g) || []).length;
+    if (asterisk_counts == 0) {
+      var ip_address_pattern = /\b(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b/;
+      return psl.isValid(str) || ip_address_pattern.test(str);
+    } else if (asterisk_counts == 1) {
+      return psl.isValid(str.substr(2));
+    } else if (asterisk_counts > 1) {
+      return false;
+    }
+  };
+
   $(document).ready(function() {
     $('#number_rows').change(function() {
       $('#per_page').val($(this).val());
@@ -896,11 +908,30 @@ jQuery(function($) {
         }
       },
       success: function(data) {
-        if (data == 'success') {
+        /*if (data == 'success') {
           alert('Request email successfully sent.');
         } else if (data == 'not_found_ssl_account') {
           alert('Team account not found. Please try again.');
         } else if (data == 'session_expired') {
+          alert('The session has been expired. Please login again.');
+          location.reload(true);
+        }*/
+
+        if (data.status == 'success') {
+          if ($('#notify_type').val() == 'token') {
+            if (data.send_email == 'true') {
+              alert('Activation link email successfully sent.');
+            }
+
+            if (data.act_link != 'false') {
+              window.open(data.act_link, '_blalnk');
+            }
+          } else {
+            alert('Request email successfully sent.');
+          }
+        } else if (data.status == 'not_found_ssl_account') {
+          alert('Team account not found. Please try again.');
+        } else if (data.status == 'session_expired') {
           alert('The session has been expired. Please login again.');
           location.reload(true);
         }
@@ -913,8 +944,75 @@ jQuery(function($) {
       var notify_type = $(this).attr('data-type');
       $('#certificate_order_ref').val(ref);
       $('#notify_type').val(notify_type);
+
+      if (notify_type == 'token') {
+        if ($('#is_epki_admin').val() == 'true') {
+          $('.chk_send_label').text($(this).text().charAt(0).toUpperCase() + $(this).text().slice(1));
+          $('.epki_admin_modal').show();
+        } else {
+          $('form#send_notify_form').ajaxSubmit(send_notify_options);
+        }
+      } else {
+        $('form#send_notify_form').ajaxSubmit(send_notify_options);
+      }
+    });
+
+    $(document).on('click', '#epki_modal_close', function() {
+      $('#chk_send_email').prop('checked', true);
+      $('#chk_copy_link').prop('checked', false);
+
+      $('#epki_admin_modal_body').removeClass('error-required');
+      $('#epki_admin_modal_footer .btn-ok').prop('disabled', false);
+
+      $('#epki_admin_modal').hide();
+    });
+
+    $(document).on('click', '.chk_method', function() {
+      var check_boxes = $('.chk_method');
+      var exist_checked = false;
+
+      $.each(check_boxes, function(key, value) {
+        if ($(value).prop('checked')) {
+          exist_checked = true;
+          return false;
+        }
+      });
+
+      if (exist_checked) {
+        $('#epki_admin_modal_body').removeClass('error-required');
+        $('#epki_admin_modal_footer .btn-ok').prop('disabled', false);
+      } else {
+        $('#epki_admin_modal_body').addClass('error-required');
+        $('#epki_admin_modal_footer .btn-ok').prop('disabled', true);
+      }
+    });
+
+    $(document).on('click', '.btn-ok', function() {
+      $('#send_email_link').val($('#chk_send_email').prop('checked'));
+      $('#copy_act_link').val($('#chk_copy_link').prop('checked'));
+
+      $('#chk_send_email').prop('checked', true);
+      $('#chk_copy_link').prop('checked', false);
+
+      $('#epki_admin_modal_body').removeClass('error-required');
+      $('#epki_admin_modal_footer .btn-ok').prop('disabled', false);
+
+      $('#epki_admin_modal').hide();
+
       $('form#send_notify_form').ajaxSubmit(send_notify_options);
     });
+
+    window.onclick = function(event) {
+      if (event.target == $('#epki_admin_modal')[0]) {
+        $('#chk_send_email').prop('checked', true);
+        $('#chk_copy_link').prop('checked', false);
+
+        $('#epki_admin_modal_body').removeClass('error-required');
+        $('#epki_admin_modal_footer .btn-ok').prop('disabled', false);
+
+        $('#epki_admin_modal').hide();
+      }
+    };
 
     $('#btn_cert_order_filter').click(function() {
       $('#wrap_cert_order_filter').show();
@@ -1416,6 +1514,110 @@ jQuery(function($) {
         });
       });
     <%end%>
+
+    $(document).on('click', '.edit_locked_registrant_domains', function(e) {
+      e.preventDefault();
+
+      $('#domain_modal_body').removeClass('error-invalid');
+      $('.btn-save-domains').prop('disabled', true);
+      $('#locked_reg_domains').val($('#hidden_locked_reg_domains').val());
+
+      $('#domain_modal').show();
+    });
+
+    $(document).on('click', '#domain_modal_close', function() {
+      $('#domain_modal').hide();
+    });
+
+    $(document).on('keyup', '#locked_reg_domains', function(e) {
+      e.preventDefault();
+
+      var domains_str = $(this).val();
+      var is_validated = true;
+
+      if ($.trim(domains_str) != '') {
+        var domains = domains_str.split(/\s/).filter(Boolean);
+        $.each(domains, function(key, value) {
+          if ($.trim(value) != '' && !$.checkDomain(value)) {
+            $('#domain_modal_body').addClass('error-invalid');
+
+            is_validated = false;
+            return false;
+          }
+        });
+      }
+
+      if (is_validated) {
+        $('#domain_modal_body').removeClass('error-invalid');
+        $('.btn-save-domains').prop('disabled', false);
+      } else {
+        $('.btn-save-domains').prop('disabled', true);
+      }
+    });
+
+    $(document).on('click', '.btn-save-domains', function(e) {
+      e.preventDefault();
+
+      var domains_str = $('#locked_reg_domains').val();
+      $(this).prop('disabled', true);
+
+      $.ajax({
+        url: $('.edit_locked_registrant_domains').prop('href'),
+        data: {
+          domains: domains_str.split(/\s/).filter(Boolean)
+        },
+        type: 'POST',
+        success: function(data) {
+          if (data['status'] == 'no-user') {
+            location.reload(true);
+          } else {
+            $('.domains_category_domain').remove();
+
+            $.each(domains_str.split(/\s/).filter(Boolean), function(key, value) {
+              var liElement = $('<li></li>');
+              liElement.attr('class', 'domains_category_domain');
+              liElement.append(value);
+
+              liElement.insertBefore($('.domains_category_action'));
+            });
+
+            $('#domain_modal').hide();
+
+            var message_wrap_element = $('<div></div>');
+            message_wrap_element.attr('class', 'flash_message notice');
+
+            var message_element = $('<span></span>');
+            message_element.append('It has been saved domains successfully.');
+            message_wrap_element.append(message_element);
+
+            var btn_element = $('<small></small>');
+            var close_btn_element = $('<div></div>');
+            close_btn_element.attr('class', 'close_flash_message');
+
+            var close_sign_element = $('<span></span>');
+            close_sign_element.append('X');
+
+            close_btn_element.append(close_sign_element);
+            close_btn_element.append('close');
+
+            btn_element.append(close_btn_element);
+            message_wrap_element.append(btn_element);
+
+            if ($('#content').find('.inner').children().first().hasClass('flash_message')) {
+              $('#content').find('.inner').children().first().remove();
+            }
+            message_wrap_element.insertBefore($('#content').find('.inner').children().first());
+          }
+        }
+      });
+    });
+
+    window.onclick = function(event) {
+      if (event.target == $('#domain_modal')[0]) {
+        $('#domain_modal').hide();
+      }
+    }
+
   });
 });
 </script>

@@ -33,7 +33,7 @@ set :branch, "staging"
 # NOTE: for some reason Capistrano requires you to have both the public and
 # the private key in the same folder, the public key should have the
 # extension ".pub".
-ssh_options[:keys] = [File.join(ENV["HOME"], ".ssh", "id_rsa")]
+ssh_options[:keys] = [File.join(ENV["HOME"], ".ssh", "id_rsa_2019")]
 
 server = "sandbox"
 case server
