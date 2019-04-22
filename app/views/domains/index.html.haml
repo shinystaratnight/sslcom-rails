@@ -43,18 +43,19 @@
         %th(scope="col") Revalidation
       -if @domains && @domains.length > 0
         -@domains.each do |d|
+          -satisfied = d.domain_control_validations.where{workflow_state=="satisfied"}.last
           -dcv = d.domain_control_validations.last
-          -validation_status = (dcv.try(:workflow_state)=='satisfied' || !d.signed_certificates.empty?) ? 'validated' : 'pending validation'
+          -validation_status = satisfied ? 'validated' : 'pending validation'
           -remaining = dcv.try(:responded_at) ? DomainControlValidation::MAX_DURATION_DAYS[:email]-(Date.today-dcv.responded_at.to_date).to_i : nil
           -remaining = 0 if remaining && remaining < 0
           -validity_period = (validation_status=='pending validation' || remaining.nil?) ? 'n/a' : "#{remaining} days remaining"
           -order_ref = d.certificate_content ? d.certificate_content.certificate_order.ref : ((dcv && dcv.csr_unique_value) ? dcv.csr_unique_value.csr.ref : 'Team')
-          -status_link = 'validated'
+          -status_link = validation_status
           -unless validation_status=='validated'
-            -if dcv.nil? || dcv.dcv_method == 'email'
-              -status_link = link_to validation_status, validate_selected_domains_path(@ssl_slug, d_name_check: [d.id])
-            -elsif dcv.csr_unique_value
+            -if dcv.csr_unique_value
               -status_link = d.certificate_content ? (link_to validation_status, new_certificate_order_validation_path(@ssl_slug, d.certificate_content.certificate_order)) : (link_to validation_status, validate_against_csr_domains_path(@ssl_slug, unique_value: dcv.csr_unique_value.unique_value))
+            -else
+              -status_link = link_to validation_status, validate_selected_domains_path(@ssl_slug, d_name_check: [d.id])
           %tr
             %td=(order_ref=='Team' || (dcv && dcv.csr_unique_value)) ? (check_box_tag "d_name_check[]",d.id, false, :id => "d_name_check_#{d.id}", :class => "d_name_check") : ''
             %td=d.name
