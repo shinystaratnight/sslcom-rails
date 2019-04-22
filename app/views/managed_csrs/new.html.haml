@@ -44,20 +44,20 @@
           .row
             .col-md-6
               .form-group
-                %label Sign Algorithm :
+                %label Sign Algorithm:
                 = select_tag 'sign_algorithm', options_for_select(@sign_alg), class: 'form-control'
             .col-md-6
               .form-group.rsa_key_wrap
-                %label Key Size :
+                %label Key Size:
                 = select_tag 'rsa_key_size', options_for_select(@rsa_key_size), class: 'form-control'
               .form-group.ec_key_wrap.hidden
-                %label Key Size :
+                %label Key Size:
                 = select_tag 'ec_key_size', options_for_select(@ec_key_size), class: 'form-control'
         .generate_wrap
           .row
             .col-md-6
               .form-group.cn-group
-                %label  Common Name :
+                %label  Common Name:
                 = text_field_tag 'commonname', nil, class: 'form-control', placeholder: 'yourdomain.com'
                 .error-no-domain-msg
                   * It can not be domain for this certificate order "#{@error_cert_ref}"
@@ -65,51 +65,51 @@
                   * It requires valid domain.
             .col-md-6
               .form-group
-                %label  Email Address :
+                %label  Email Address:
                 = text_field_tag 'email', nil, class: 'form-control', placeholder: 'email@yourdomain.com'
           .row
             .col-md-6
               .form-group
-                %label  Organization :
+                %label  Organization:
                 = text_field_tag 'organization', nil, class: 'form-control', placeholder: 'Your Company'
             .col-md-6
               .form-group
-                %label  Organizational Unit :
+                %label  Organizational Unit:
                 = text_field_tag 'organizationalunit', nil, class: 'form-control', placeholder: 'Customer Support'
           .form-group
-            %label  Address :
+            %label  Address:
             = text_field_tag 'address', nil, class: 'form-control', placeholder: '3100 Richmond Ave Ste 503'
           .row
             .col-md-6
               .form-group
-                %label  City / Locality :
-                = text_field_tag 'locality', nil, class: 'form-control', placeholder: 'Hoston'
+                %label  City / Locality:
+                = text_field_tag 'locality', nil, class: 'form-control', placeholder: 'Houston'
             .col-md-6
               .form-group
-                %label  State / Region :
+                %label  State / Region:
                 = text_field_tag 'state', nil, class: 'form-control', placeholder: 'Texas'
           .row
             .col-md-6
               .form-group
-                %label  Country (2 letters) :
+                %label  Country (2 letters):
                 = text_field_tag 'country', nil, class: 'form-control', placeholder: 'US'
             .col-md-6
               .form-group
-                %label  Zip Code :
+                %label  Zip Code:
                 = text_field_tag 'zipcode', nil, class: 'form-control', placeholder: '77098'
           .form-group
-            %label  SANs :
+            %label  SANs:
           = text_area_tag 'sans', nil, class: 'form-control', rows: '2'
         .form-group
-          %label  Friendly Name :
+          %label  Friendly Name:
           = text_field_tag 'friendly_name', nil, class: 'form-control'
         .csr_wrap.hidden
           .form-group
-            %label  CSR :
+            %label  CSR:
             = text_area_tag 'csr', nil, class: 'form-control', rows: '5'
         .private_key_wrap.hidden
           .form-group
-            %label Private Key :
+            %label Private Key:
             = text_area_tag 'private_key', nil, class: 'form-control', rows: '5'
         .clipboard_wrap.hidden
           .form-group
@@ -117,7 +117,7 @@
             = button_tag 'Copy Private Key', type: 'button', id: 'clipboard_pkey_btn', class: 'btn btn-primary'
         -#.cert_orders_wrap
           .form-group
-            %label  Certificate Orders :
+            %label  Certificate Orders:
             = select_tag 'cert_order', options_for_select(@cert_orders), class: 'form-control'
       .col-md-2
     - if @cert_ref
