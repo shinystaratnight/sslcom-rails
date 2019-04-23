@@ -14,7 +14,8 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
     ApiCertificateRequest::DETAILED_ACCESSORS+
     ApiCertificateRequest::REPROCESS_ACCESSORS+
     ApiCertificateRequest::REVOKE_ACCESSORS+
-    ApiCertificateRequest::DCV_EMAILS_ACCESSORS
+    ApiCertificateRequest::DCV_EMAILS_ACCESSORS+
+    ApiCertificateRequest::CERTIFICATE_ENROLLMENT_ACCESSORS
   ).uniq]
 
   ORDERS_DOMAIN = "https://#{Settings.community_domain}"
@@ -146,6 +147,24 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
         @result.cert_results = cert_chain
         @result.cert_common_name = (res.first.subject.common_name || res.first.serial.to_s).
             gsub(/[\s\.\*\(\)]/,"_").downcase + '.crt'
+      end
+    else
+      InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
+    end
+
+    render_200_status
+  rescue => e
+    render_500_error e
+  end
+
+  def certificate_enrollment_order
+    set_template "certificate_enrollment_order"
+
+    if @result.valid? && @result.save
+      if @result.certificate_enrollment
+        @result.is_ordered = true
+      else
+        @result.is_ordered = false
       end
     else
       InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
@@ -1417,6 +1436,8 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
               when "retrieve_v1_3", "show_v1_4", "index_v1_4", "detail_v1_4", "view_upload_v1_4", "upload_v1_4",
                   "update_site_seal_v1_4", "generate_certificate_v1_4","callback_v1_4"
                 ApiCertificateRetrieve
+              when "certificate_enrollment_order"
+                ApiCertificateEnrollment
               when "retrieve_signed_certificates"
                 ApiSignedCertificateRequest
               when "api_parameters_v1_4"

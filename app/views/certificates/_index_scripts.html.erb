@@ -898,7 +898,7 @@ jQuery(function($) {
       }
     });
 
-    <%if !@certificate_order.is_unused_credit?%>
+    <%if !@certificate_order.is_unused_credit? && !@request %>
       $('form').submit(function(){
         //add to cart if csr is not ready
         if ($(':radio[name*=has_csr]').length!=0 && $(':radio[name*=has_csr]:checked').val()=="false") {
@@ -943,11 +943,15 @@ jQuery(function($) {
           return false;
         }
       });
-      if($(':radio[name*=has_csr]:checked').val()=="false"){
-        show_csr=false;
-        $('#csr_section').hide();
-        $('#form_progress_indicator').hide();
-      }
+      
+      <% if !@request %>
+        if($(':radio[name*=has_csr]:checked').val()=="false"){
+          show_csr=false;
+          $('#csr_section').hide();
+          $('#form_progress_indicator').hide();
+        }
+      <% end %>
+      
       $('.add_to_cart_button').click(function(){
         $.change_cart_items("add");
       });

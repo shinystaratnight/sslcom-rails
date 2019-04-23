@@ -1,0 +1,68 @@
+- if @request && @certificate
+  - epki_registrant = @ssl_account ? @ssl_account.epki_registrant : nil
+  - rd = @request.domains
+  - domains = rd && rd.is_a?(Array) ? rd.join(", ") : rd
+
+  - if @certificate.is_smime_or_client?
+    .reseller_registration_profile
+      = form_for @request, html: { id: "frm-smime-client-enrollment" } do |f|
+        #stylized.default_form.frm-sc-enroll
+          = f.hidden_field :duration, value: @duration
+          = f.hidden_field :certificate_id, value: @certificate.try(:id)
+          = f.hidden_field :ssl_slug, value: @ssl_slug
+
+          .clearfix
+            .sub-hdr-sc-enroll
+              %h3 Step 1: Enter Emails
+
+          .clearfix
+            %label{for: :domains}
+              *Email Address List:
+              %span.label_desc separate entries by space or comma
+            = f.text_area :domains, value: domains, id: "text-sc-emails", cols: 40, rows: 15, |
+              data: { epki_domains: epki_registrant ? epki_registrant.domains.map(&:strip).join(",").downcase : "" }
+
+          .clearfix
+            .sub-hdr-sc-enroll
+              %h3 Step 2: Email Status
+
+            #stats-sc-enroll
+              #validated-sc-emails{ data: {validated_sc_emails: 0, all_sc_emails: 0} }
+                EPKI Validated
+                %span 0
+              #pending-sc-emails{ data: {pending_sc_emails: 0} }
+                Pending
+                %span 0
+        
+        #button_container
+          #auto_adjust
+            = link_to certificate_enrollment_requests_path(@ssl_slug) do
+              = image_tag "cancel_bl.gif"
+            = image_submit_tag "next_bl.gif", alt: "Submit"
+
+    = render partial: "/certificate_orders/smime_client_enrollment/index_scripts"
+  
+  - else
+    .hidden
+      = form_for @request, html: { id: "frm-sslcom-cert-enroll" } do |f|
+        = f.hidden_field :duration, value: @duration
+        = f.hidden_field :certificate_id, value: @certificate.try(:id)
+        = f.hidden_field :ssl_slug, value: @ssl_slug
+        = f.hidden_field :common_name, value: nil
+        = f.hidden_field :signing_request, value: nil
+        = f.hidden_field :server_software_id, value: nil
+        = f.hidden_field :additional_domains, value: nil
+      
+    .reseller_registration_profile
+      = form_for @certificate_order do |f|
+        #stylized.default_form
+          = render partial: "certificates/form", locals: { f: f }
+
+    = render partial: "/certificates/index_scripts"
+
+    #button_container
+      #auto_adjust
+        = link_to enrollment_links_certificate_enrollment_requests_path(@ssl_slug) do
+          = image_tag "cancel_bl.gif"
+        = image_tag "next_bl.gif", id: "btn-brandable-enroll"
+  

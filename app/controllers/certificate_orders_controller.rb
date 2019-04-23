@@ -17,6 +17,8 @@
 class CertificateOrdersController < ApplicationController
   layout 'application'
   include OrdersHelper
+  include CertificateOrdersHelper
+  
   skip_before_filter :verify_authenticity_token, only: [:parse_csr]
   filter_access_to :all, except: [:generate_cert]
   filter_access_to :read, :update, :delete, :show, :edit, :developer, :recipient
@@ -44,19 +46,9 @@ class CertificateOrdersController < ApplicationController
 
   NUM_ROWS_LIMIT=2
 
-  def enrollment_links
-
-  end
-
-  def enrollment
-    @duration=(params[:duration].to_i/365).to_i
-    smime_client_enrollment
-    render :smime_client_enrollment
-  end
-
   def smime_client_enrollment
     if params[:get_duration]
-      smime_client_duration
+      render_certificate_durations
     elsif params[:smime_client_create]
       smime_client_create
     else
@@ -765,6 +757,7 @@ class CertificateOrdersController < ApplicationController
   end
 
   def smime_client_init
+    find_tier
     @certificates = Certificate.get_smime_client_products(@tier)
     @certificate ||= @certificates.first
 
@@ -777,15 +770,6 @@ class CertificateOrdersController < ApplicationController
     @certificate_order = Order.setup_certificate_order(
       certificate: @certificate, certificate_order: co
     )
-  end
-
-  def smime_client_duration
-    @certificate = Certificate.find params[:certificate_id]
-    partial = render_to_string(
-      partial: 'certificate_orders/smime_client_enrollment/duration_form',
-      layout: false
-    )
-    render json: {content: partial}, status: :ok
   end
 
   def client_smime_validate

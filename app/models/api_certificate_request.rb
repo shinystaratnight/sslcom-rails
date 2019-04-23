@@ -61,8 +61,20 @@ class ApiCertificateRequest < CaApiRequest
 
   PRETEST_ACCESSOR = [:is_passed]
 
+  CERTIFICATE_ENROLLMENT_ACCESSORS = [:certificate_id, :domains, :duration, :approver_id, :is_ordered]
+
   # be sure to review wrap_parameters in ApiCertificateRequestsController when modifying attr_accessor below
-  attr_accessor *(ACCESSORS+RETRIEVE_ACCESSORS+DCV_EMAILS_ACCESSORS+REVOKE_ACCESSORS+PRETEST_ACCESSOR+DETAILED_ACCESSORS+UPLOAD_ACCESSORS+UPDATE_ACCESSORS_1_4).uniq
+  attr_accessor *(
+    ACCESSORS +
+    RETRIEVE_ACCESSORS +
+    DCV_EMAILS_ACCESSORS +
+    REVOKE_ACCESSORS +
+    PRETEST_ACCESSOR +
+    DETAILED_ACCESSORS +
+    UPLOAD_ACCESSORS +
+    UPDATE_ACCESSORS_1_4 +
+    CERTIFICATE_ENROLLMENT_ACCESSORS
+  ).uniq
 
   before_validation(on: :create) do
     ac=api_credential

@@ -1,4 +1,15 @@
 module CertificateOrdersHelper
+
+  def render_certificate_durations
+    certificate_id = params[:certificate_id] || params[:certificate_enrollment_invite][:certificate_id]
+    @certificate = Certificate.find certificate_id
+    partial = render_to_string(
+      partial: 'certificate_orders/smime_client_enrollment/duration_form',
+      layout: false
+    )
+    render json: {content: partial}, status: :ok
+  end
+
   def order_line_items(certificate_order, email_template=false, invoice=false)
     items = []
     if certificate_order.certificate.is_ucc? || certificate_order.certificate.is_wildcard?
