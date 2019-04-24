@@ -1,6 +1,9 @@
 -content_for :title, "Verify email verification code"
 = render :partial => 'verification_scripts'
 = javascript_include_tag "form.authy"
+= javascript_include_tag "jquery.timepicker.min"
+= javascript_include_tag "jstz.min"
+= stylesheet_link_tag "jquery.timepicker.min"
 = stylesheet_link_tag 'bootstrap_style', :media => 'all'
 = stylesheet_link_tag 'form.authy'
 = stylesheet_link_tag 'flags.authy'
@@ -12,18 +15,57 @@
     .row
       .col-md-3
         = hidden_field_tag 'token', @token
-        = hidden_field_tag 'passed_token', nil
+        = hidden_field_tag 'passed_token', @callback_method == 'none' ? nil : @certificate_order_token.passed_token
       .col-md-6
-        .row.pt-3.phone-call-block
-          .col-md-6
-            .row.verification-method.pull-right
-              = label_tag 'method_sms', 'SMS: '
-              = radio_button_tag 'method', 'sms'
-              = label_tag 'method_call',  'Call: '
-              = radio_button_tag 'method', 'call', true
+        .row.pt-3.pb-3.phone-callback-option
+          .col-md-5
+            .row.callback-method.pull-right
+              Callback Methods :
           .col-md-4
-            = button_tag 'Call Now', :type => 'button', :class => 'btn btn-automated-callback btn-primary'
-        .row.pt-3.phone-verification-block{:style => 'display: none'}
+            = select_tag 'callback_method', options_for_select([['Callback Now', 'callback'],['Schedule Callback', 'schedule'], ['Manual Callback','manual']], @callback_method), :class => 'form-control', :disabled => @callback_method == 'none' ? false : true
+          .col-md-3
+        - if @callback_method == 'none'
+          .row.pt-3.phone-call-block
+            .col-md-7
+              .row.verification-method.pull-right
+                = label_tag 'method_sms', 'SMS: '
+                = radio_button_tag 'method', 'sms'
+                = label_tag 'method_call',  'Call: '
+                = radio_button_tag 'method', 'call', true
+            .col-md-4
+              = button_tag 'Call Now', :type => 'button', :class => 'btn btn-automated-callback btn-primary'
+          .row.pt-3.phone-callback-date-block{:style => 'display: none'}
+            .col-md-9
+              .row.pb-3.timezone-block
+                .col-md-6
+                  .row.pull-right
+                    = label_tag 'timezone', '* Timezone: '
+                .col-md-6
+                  -#= select_tag 'callback_time_zone', options_for_select(ActiveSupport::TimeZone.all.sort.map{|tz| [tz.to_s, tz.tzinfo.name]}), :class => 'form-control'
+                  = select_tag 'callback_time_zone', options_for_select(ActiveSupport::TimeZone.all.sort.map{|tz| [tz.to_s, tz.utc_offset / 3600]}), :class => 'form-control'
+              .row.pb-3.date-block
+                .col-md-6
+                  .row.pull-right
+                    = label_tag 'date', '* Date: '
+                .col-md-6
+                  = text_field_tag 'callback_date', nil, :class => 'form-control date-picker', :readonly => true
+                  .error-block.pt-1
+                    * It is required field.
+              .row.pb-3.time-block
+                .col-md-6
+                  .row.pull-right
+                    = label_tag 'time', '* Time: '
+                .col-md-6
+                  = text_field_tag 'callback_time', nil, :class => 'form-control time-picker', :readonly => true
+                  .error-block.pt-1
+                    * It is required field.
+              .row.pt-3.submit-date-block
+                .col-md-6
+                .col-md-6
+                  .row.pull-right
+                    = button_tag 'Submit', :type => 'button', :class => 'btn btn-callback-date btn-primary'
+            .col-md-3
+        .row.pt-3.phone-verification-block{:style => @callback_method == 'none' ? 'display: none' : 'display: ""'}
           .col-md-4
             Phone Verification Code :
           .col-md-5

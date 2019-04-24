@@ -570,9 +570,12 @@ SslCom::Application.routes.draw do
         as: :tlds, via: [:get, :post]
   match '/certificate_order_token/:token/generate_cert' => 'certificate_orders#generate_cert', :as => :confirm, via: [:get]
   match '/validation/email_verification_check' => 'validations#email_verification_check', :as => :email_verification_check, via: [:post]
+
+  # Callback
   match '/callback/:token' => 'validations#verification', :as => :email_verification, via: [:get]
   match '/validation/automated_call' => 'validations#automated_call', :as => :automated_call, via: [:post]
   match '/validation/phone_verification_check' => 'validations#phone_verification_check', :as => :phone_verification_check, via: [:post]
+  match '/validation/register_callback' => 'validations#register_callback', :as => :register_callback, via: [:post]
 
   #match 'paid_cert_orders'=> 'site#paid_cert_orders'
   (Reseller::TARGETED+SiteController::STANDARD_PAGES).each do |i|

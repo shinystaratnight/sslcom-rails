@@ -12,7 +12,7 @@ class ValidationsController < ApplicationController
 
   filter_access_to :all
   filter_access_to [:upload, :document_upload, :verification, :email_verification_check, :automated_call,
-                    :phone_verification_check], :require=>:update
+                    :phone_verification_check, :register_callback], :require=>:update
   filter_access_to :requirements, :send_dcv_email, :domain_control, :ev, :organization, require: :read
   filter_access_to :update, :new, :attribute_check=>true
   filter_access_to :edit, :show, :attribute_check=>true
@@ -630,6 +630,16 @@ class ValidationsController < ApplicationController
         else
           passed_token = (SecureRandom.hex(8)+params[:token])[0..19]
           @certificate_order_token.update_column :passed_token, passed_token
+
+          if @certificate_order_token.callback_type == CertificateOrderToken::CALLBACK_SCHEDULE
+            @callback_method = 'schedule'
+            flash[:notice] = 'It has been already scheduled automated callback.'
+          elsif @certificate_order_token.callback_type == CertificateOrderToken::CALLBACK_MANUAL
+            @callback_method = 'manual'
+            flash[:notice] = 'It has been already scheduled manual callback.'
+          else
+            @callback_method = 'none'
+          end
         end
       end
     else
@@ -746,6 +756,41 @@ class ValidationsController < ApplicationController
     # else
     #   returnObj['status'] = 'no-user'
     # end
+
+    render :json => returnObj
+  end
+
+  def register_callback
+    returnObj = {}
+
+    co_token = CertificateOrderToken.where(
+        token: params[:token],
+        status: CertificateOrderToken::PENDING_STATUS
+    ).first
+
+    dtz = DateTime.strptime(
+        params[:callback_date] + ' ' + params[:callback_time] + ' ' + (params[:callback_timezone].include?('-') ? '' : '+') + params[:callback_timezone],
+        '%m/%d/%Y %I:%M %p %z'
+    )
+
+    if co_token
+      co_token.update_columns(
+          callback_type: params[:callback_type],
+          callback_timezone: params[:callback_timezone],
+          callback_datetime: dtz,
+          is_callback_done: (params[:callback_type] == CertificateOrderToken::CALLBACK_MANUAL ? nil : false)
+      )
+
+      if params[:callback_type] == CertificateOrderToken::CALLBACK_MANUAL
+        OrderNotifier.manual_callback_send(co_token.certificate_order, dtz.strftime('%Y-%m-%d %I:%M %p %z')).deliver
+        returnObj['status'] = 'success-manual'
+      else
+        returnObj['status'] = 'success-schedule'
+      end
+
+    else
+      returnObj['status'] = 'incorrect-token'
+    end
 
     render :json => returnObj
   end

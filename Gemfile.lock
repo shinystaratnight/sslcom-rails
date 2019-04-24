@@ -94,6 +94,8 @@ GEM
       autoprefixer-rails (>= 6.0.3)
       popper_js (~> 1.11.1)
       sass (>= 3.4.19)
+    bootstrap-datepicker-rails (1.8.0.1)
+      railties (>= 3.0)
     builder (3.2.3)
     byebug (9.1.0)
     cancan (1.6.10)
@@ -470,6 +472,7 @@ GEM
     thor (0.19.4)
     thread_safe (0.3.6)
     tilt (2.0.5)
+    timezone (1.3.4)
     turbolinks (5.0.1)
       turbolinks-source (~> 5)
     turbolinks-source (5.0.0)
@@ -527,6 +530,7 @@ DEPENDENCIES
   binding_of_caller
   bootsnap
   bootstrap
+  bootstrap-datepicker-rails
   builder
   byebug
   cancan
@@ -612,6 +616,7 @@ DEPENDENCIES
   stripe
   terminal-notifier-guard
   therubyracer (~> 0.12.0)
+  timezone (~> 1.0)
   turbolinks
   u2f
   uglifier (= 4.1.8)

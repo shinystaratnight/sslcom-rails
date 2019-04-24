@@ -2,6 +2,14 @@
   jQuery.noConflict();
   jQuery(function($) {
     $(document).ready(function () {
+      // Getting browser timezone
+      var tz = jstz.determine();
+      var tz_offset = tz.timezoneOffset() * (-1);
+
+      if ($('#callback_time_zone').length) {
+        $('#callback_time_zone option[value="'+ tz_offset / 60 +'"]').attr('selected', true);
+      }
+
       $(document).on('keyup', '#email_verification_code', function() {
         if ($(this).val() == '') {
           $('.btn-email-verification').removeClass('btn-primary');
@@ -78,13 +86,15 @@
               $('.btn-phone-verification').prop('disabled', false);
 
               if (data['status'] == 'incorrect-token') {
-                $('#phone-verification-code').val('');
-                $('#passed_token').val('');
-                $('.btn-phone-verification').removeClass('btn-primary');
-                $('.btn-phone-verification').prop('disabled', true);
+                if ($('.phone-call-block').length) {
+                  $('#phone-verification-code').val('');
+                  $('#passed_token').val('');
+                  $('.btn-phone-verification').removeClass('btn-primary');
+                  $('.btn-phone-verification').prop('disabled', true);
 
-                $('.phone-verification-block').hide();
-                $('.phone-call-block').show();
+                  $('.phone-verification-block').hide();
+                  $('.phone-call-block').show();
+                }
               } else if (data['status'] == 'success' || data['status'] == 'reached_to_max') {
                 $('.automated-call-verification').remove();
               } else if (data['status'] == 'failed') {
@@ -205,6 +215,132 @@
                 $('#content').find('.inner').children().first().remove();
               }
               message_wrap_element.insertBefore($('#content').find('.inner').children().first());
+            }
+          }
+        });
+      });
+
+      $(document).on('click', '#callback_method', function() {
+        if ($(this).val() == 'callback') {
+          $('.phone-call-block').show();
+          $('.phone-callback-date-block').hide();
+        } else if ($(this).val() == 'schedule' || $(this).val() == 'manual') {
+          $('.phone-call-block').hide();
+          $('.phone-callback-date-block').show();
+        }
+      });
+
+      // Init Datepicker
+      $(document).on('focus', '.date-picker', function() {
+        $(this).datepicker({
+          autoclose: true,
+          format: "yyyy-mm-dd"
+        });
+      });
+
+      // Init Timepicker
+      $(document).on('focus', '.time-picker', function () {
+        $(this).timepicker({
+          timeFormat: 'h:mm p',
+          startTime: '00:00',
+          minTime: '00',
+          maxTime: '11:00pm',
+          interval: 60,
+          dynamic: false,
+          dropdown: true,
+          scrollbar: true
+        });
+      });
+
+      $(document).on('click', '.btn-callback-date', function(e) {
+        e.preventDefault();
+
+        if ($('.date-picker').val() == '') {
+          $('.date-block').addClass('error-required');
+          return false;
+        } else {
+          $('.date-block').removeClass('error-required');
+        }
+
+        if ($('.time-picker').val() == '') {
+          $('.time-block').addClass('error-required');
+          return false;
+        } else {
+          $('.time-block').removeClass('error-required');
+        }
+
+        $(this).prop('disabled', true);
+        var register_callback_url = '<%= register_callback_url %>';
+
+        if ($('#content').find('.inner').children().first().hasClass('flash_message')) {
+          $('#content').find('.inner').children().first().remove();
+        }
+
+        $.ajax({
+          url: register_callback_url,
+          data: {
+            token: $('#token').val(),
+            callback_type: $("#callback_method").val(),
+            callback_timezone: $('#callback_time_zone').val(),
+            callback_date: $('#callback_date').val(),
+            callback_time: $('#callback_time').val()
+          },
+          type: 'POST',
+          success: function (data) {
+            var message_wrap_element = $('<div></div>');
+
+            if (data['status'] == 'success-manual' || data['status'] == 'success-schedule') {
+              $('#callback_method').prop('disabled', true);
+              $('.phone-call-block').remove();
+              $('.phone-callback-date-block').remove();
+              $('.phone-verification-block').remove();
+
+              message_wrap_element.attr('class', 'flash_message notice');
+
+              var message_element = $('<span></span>');
+              if (data['status'] == 'success-manual') {
+                message_element.append('It has been sent email successfully. SSL.com employee will call you at specified date and time.');
+              } else if (data['status'] == 'success-schedule') {
+                message_element.append('It has been sent email successfully. It will call you at specified date and time automatically.');
+              }
+              message_wrap_element.append(message_element);
+
+              var btn_element = $('<small></small>');
+              var close_btn_element = $('<div></div>');
+              close_btn_element.attr('class', 'close_flash_message');
+
+              var close_sign_element = $('<span></span>');
+              close_sign_element.append('X');
+
+              close_btn_element.append(close_sign_element);
+              close_btn_element.append('close');
+
+              btn_element.append(close_btn_element);
+              message_wrap_element.append(btn_element);
+
+              message_wrap_element.insertBefore($('#content').find('.inner').children().first());
+            } else if (data['status'] == 'incorrect-token') {
+              message_wrap_element.attr('class', 'flash_message error');
+
+              var message_element = $('<span></span>');
+              message_element.append('Verification attempted with the wrong token.');
+              message_wrap_element.append(message_element);
+
+              var btn_element = $('<small></small>');
+              var close_btn_element = $('<div></div>');
+              close_btn_element.attr('class', 'close_flash_message');
+
+              var close_sign_element = $('<span></span>');
+              close_sign_element.append('X');
+
+              close_btn_element.append(close_sign_element);
+              close_btn_element.append('close');
+
+              btn_element.append(close_btn_element);
+              message_wrap_element.append(btn_element);
+
+              message_wrap_element.insertBefore($('#content').find('.inner').children().first());
+              $('.btn-callback-date').prop('disabled', false);
             }
           }
         });
