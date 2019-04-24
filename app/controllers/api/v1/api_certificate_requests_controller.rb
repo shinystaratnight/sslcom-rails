@@ -1080,7 +1080,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
               result.expiration_date = sc ? sc.expiration_date : nil
             else
               result.registrant = cc.registrant.to_api_query if (cc && cc.registrant)
-              result.validations = result.validations_from_comodo(acr) #'validations' kept executing twice so it was renamed to 'validations_from_comodo'
+              result.validations = result.validations_from_comodo(acr)  if acr.external_order_number #'validations' kept executing twice so it was renamed to 'validations_from_comodo'
 
               if c.is_ucc?
                 result.domains_qty_purchased = acr.purchased_domains('all').to_s
@@ -1370,7 +1370,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
     result.order_status = acr.status
     result.registrant = acr.certificate_content.registrant.to_api_query if (acr.certificate_content && acr.certificate_content.registrant)
     result.contacts = acr.certificate_content.certificate_contacts if (acr.certificate_content && acr.certificate_content.certificate_contacts)
-    result.validations = result.validations_from_comodo(acr) if acr.certificate_content.ca.blank? #'validations' kept executing twice so it was renamed to 'validations_from_comodo'
+    result.validations = result.validations_from_comodo(acr) if acr.external_order_number #'validations' kept executing twice so it was renamed to 'validations_from_comodo'
     result.description = acr.description
     result.product = acr.certificate.api_product_code
     result.product_name = acr.certificate.product
