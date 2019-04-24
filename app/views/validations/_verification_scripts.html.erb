@@ -63,9 +63,9 @@
               } else if (data['status'] == 'incorrect-token') {
                 message_element.append('Verification attempted with the wrong token.');
               } else if (data['status'] == 'failed') {
-                message_element.append('The phone verification code what you have inputted are wrong. Please try with correct one again.');
+                message_element.append('Phone call attempt failed. Please try again.');
               } else if (data['status'] == 'reached_to_max') {
-                message_element.append('You have tried to do verification too many times. You need to do verification from start with new email verification code.');
+                message_element.append('Too many attempts performed with this code. Please obtain a new email verification code.');
               }
               message_wrap_element.append(message_element);
 
@@ -137,9 +137,9 @@
                 if (data['status'] == 'failed') {
                   message_element.append('Phone call attempt failed. Please try again.');
                 } else if (data['status'] == 'incorrect-token') {
-                  message_element.append('You need to do verification with correct verification code in email what you have received.');
+                  message_element.append('The phone verification code is invalid. Please try again with the correct code.');
                 } else if (data['status'] == 'reached_to_max') {
-                  message_element.append('You are trying to do call too many times. You need to do verification from start with new email verification code.');
+                  message_element.append('Too many attempts performed with this code. Please obtain a new email verification code.');
                 }
                 message_wrap_element.append(message_element);
 
@@ -299,9 +299,9 @@
 
               var message_element = $('<span></span>');
               if (data['status'] == 'success-manual') {
-                message_element.append('It has been sent email successfully. SSL.com employee will call you at specified date and time.');
+                message_element.append('Thank you. An SSL.com vetting agent will call you at specified date and time.');
               } else if (data['status'] == 'success-schedule') {
-                message_element.append('It has been sent email successfully. It will call you at specified date and time automatically.');
+                message_element.append('Thank you. A call or sms will be made to you at specified date and time automatically.');
               }
               message_wrap_element.append(message_element);
 
