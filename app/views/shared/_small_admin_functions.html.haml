@@ -9,6 +9,11 @@
   %li
     %strong admin functions
   -u = co.ssl_account.try(:get_account_owner)
+  -ssl_account=co.ssl_account
+  -slug_params = {ssl_slug: ssl_account.to_slug}
+  %li=link_to "#{ssl_account.to_slug} orders(#{ssl_account.cached_certificate_orders_count})", certificate_orders_path(slug_params)
+  %li=link_to "#{ssl_account.to_slug} transactions(#{ssl_account.cached_orders.count})", orders_path(slug_params)
+  %li=link_to "#{ssl_account.to_slug} billing profiles(#{ssl_account.billing_profiles.count})", billing_profiles_path(slug_params)
   -unless u.blank?
     %li=remote_login_link(u)
     %li=link_to 'user dashboard', admin_show_user_path(u)

@@ -2056,7 +2056,7 @@ class CertificateOrder < ActiveRecord::Base
     result.order_status = self.status
     result.registrant = self.certificate_content.registrant.to_api_query if (self.certificate_content && self.certificate_content.registrant)
     result.contacts = self.certificate_content.certificate_contacts if (self.certificate_content && self.certificate_content.certificate_contacts)
-    result.validations = result.validations_from_comodo(self) #'validations' kept executing twice so it was renamed to 'validations_from_comodo'
+    result.validations = result.validations_from_comodo(self) if external_order_number #'validations' kept executing twice so it was renamed to 'validations_from_comodo'
     result.description = self.description
     result.product = self.certificate.api_product_code
     result.product_name = self.certificate.product
