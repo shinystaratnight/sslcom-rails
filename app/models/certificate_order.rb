@@ -1095,7 +1095,11 @@ class CertificateOrder < ActiveRecord::Base
     Rails.cache.fetch("#{cache_key}/subject") do
       csr=csrs.includes(:signed_certificates).last
       return "" if csr.blank?
-      csr.signed_certificates.last.try(:common_name) || csr.try(:common_name) || ""
+      if certificate_content.issued?
+        csr.signed_certificates.last.try(:common_name)
+      else
+        certificate_content.certificates_names.where{is_common_name==true}.last.try(:name) || csr.try(:common_name) || ""
+      end
     end
   end
   alias :common_name :subject
