@@ -18,7 +18,7 @@ class ValidationsController < ApplicationController
   filter_access_to :edit, :show, :attribute_check=>true
   filter_access_to :admin_manage, :attribute_check=>true
   filter_access_to :send_to_ca, require: :sysadmin_manage
-  filter_access_to :get_asynch_domains, :remove_domains, :get_email_addresses, :send_callback, :require=>:ajax
+  filter_access_to :get_asynch_domains, :remove_domains, :get_email_addresses, :send_callback, :add_super_user_email, :require=>:ajax
   in_place_edit_for :validation_history, :notes
 
   def search
@@ -265,6 +265,22 @@ class ValidationsController < ApplicationController
       addresses.each do |addr|
         returnObj['new_emails'][addr] = addr
       end
+    else
+      returnObj['no-user'] = "true"
+    end
+
+    render :json => returnObj
+  end
+
+  def add_super_user_email
+    returnObj = {}
+
+    if current_user
+      params['domain_emails'].each do |domain_email|
+        CertificateName.add_email_address_candidate(domain_email.split('|')[0], domain_email.split('|')[1])
+      end
+
+      returnObj['status'] = "true"
     else
       returnObj['no-user'] = "true"
     end

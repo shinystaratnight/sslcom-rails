@@ -553,7 +553,12 @@ jQuery(function($) {
           $('td.pretest[class~="'+$(dcv_select).attr("alt")+'"]').html("n/a");
         }
         else if(/@/.test(methods[0])){
-          $(instruction).html("Validation instructions will be emailed to "+methods[0]+". Please follow those instructions.")
+          if (methods[0].indexOf(':') == -1) {
+            $(instruction).html("Validation instructions will be emailed to "+methods[0]+". Please follow those instructions.");
+          } else {
+            email_addr = methods[0].substr(methods[0].indexOf(':') + 2);
+            $(instruction).html("Validation instructions will be emailed to "+email_addr+". Please follow those instructions.");
+          }
           $('td.pretest[class~="'+$(dcv_select).attr("alt")+'"]').html("n/a");
         }
         else if(/https/.test(methods[0])){
@@ -1143,6 +1148,22 @@ jQuery(function($) {
                           trElement.append(tdElement);
                           $('[name="domains[' + value + '][dcv]"]').val(result[key]['slt_option']);
 
+                          <%if current_user.is_super_user?%>
+                            $('[name="domains[' + value + '][dcv]"]').customComboBox({
+                              tipText: "Super User's Email",
+                              tipClass: "super_user_email",
+                              allowed: /[A-Za-z0-9\_\-\.\@\s]/,
+                              notallowed: /[\<\>]/,
+                              index: 'first',
+                              prefix: 'Your Email: ',
+                              onKeyDown: function(el, character, fulltext) {
+                                if (character.charCodeAt(0) == 32) {
+                                  $(el).trigger('change');
+                                }
+                              }
+                            });
+                          <%end%>
+
                           <%if Settings.enable_caa%>
                             tdElement = $('<td></td>');
                             if (result[key]['caa_check'] == 'failed') {
@@ -1337,6 +1358,41 @@ jQuery(function($) {
           }
         }
 
+        $(document).on('click', '#validate_domains', function(e) {
+          e.preventDefault();
+          domains_emails = [];
+
+          $.each($('.domain_list').find('select[id^=domains]'), function(key, value) {
+            if ($(value).val().indexOf('@') > -1 && $(value).find("option:selected").text().indexOf(':') >  -1) {
+              domains_emails.push($(value).attr('alt') + "|" + $(value).val().trim());
+            }
+          });
+
+          if (domains_emails.length > 0) {
+            if (confirm('Proceed to save manual email(s)?')) {
+              $('#waiting_bar').show();
+              var ajaxAddEmailCandidateUrl = '<%=add_super_user_email_certificate_order_validation_path%>';
+
+              $.ajax({
+                url: ajaxAddEmailCandidateUrl,
+                data: {
+                  domain_emails: domains_emails
+                },
+                type: "POST",
+                success: function (result) {
+                  if (result['no-user']) {
+                    location.reload(true);
+                  } else {
+                    $('form.api_certificate_request').submit();
+                  }
+                }
+              });
+            }
+          } else {
+            $('form.api_certificate_request').submit();
+          }
+        });
+
         // Form Submit by AJAX
         $('form.api_certificate_request').ajaxForm({
           dataType: "json",
@@ -1394,6 +1450,8 @@ jQuery(function($) {
             confirmed = confirm('Proceed with validation?');
             if(confirmed){
               $('#waiting_bar').show();
+            } else {
+              $('#waiting_bar').hide();
             }
             return confirmed;
           },
