@@ -23,7 +23,7 @@ class ApplicationController < ActionController::Base
                 if: "Settings.track_visitors"
   before_filter :finish_reseller_signup, if: "current_user"
   before_filter :team_base, if: "params[:ssl_slug] && current_user"
-  before_filter :set_ssl_slug, :load_notifications
+  before_filter :set_ssl_slug, :load_notifications, except: [:enrollment_links, :enrollment]
   after_filter :set_access_control_headers#need to move parse_csr to api, if: "request.subdomain=='sws' || request.subdomain=='sws-test'"
 
   # Bonus - add view_path
@@ -221,6 +221,11 @@ class ApplicationController < ActionController::Base
         certificate_order = certificate_order
       @certificate_orders << certificate_order if certificate_order.valid?
     end
+  end
+
+  def find_certificate
+    prod = params[:id]=='mssl' ? 'high_assurance' : params[:id]
+    @certificate = Certificate.includes(:product_variant_items).for_sale.find_by_product(prod+(@tier || ''))
   end
 
   def find_certificate_orders(options={})
