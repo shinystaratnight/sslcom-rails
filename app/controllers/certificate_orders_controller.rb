@@ -28,6 +28,7 @@ class CertificateOrdersController < ApplicationController
   filter_access_to :renew, :parse_csr, :generate_cert, require: [:create]
   filter_access_to :auto_renew, require: [:admin_manage]
   filter_access_to :show_cert_order, :validate_issue, :register_domains, :require=>:ajax
+  before_filter :find_certificate, only: [:enrollment]
   before_filter :load_certificate_order,
                 only: [:show, :show_cert_order, :validate_issue, :update, :edit, :download, :destroy, :delete, :update_csr, :auto_renew, :start_over,
                        :change_ext_order_number, :admin_update, :developer, :sslcom_ca, :update_tags, :recipient, :validate_issue]
@@ -42,6 +43,15 @@ class CertificateOrdersController < ApplicationController
   before_action :set_algorithm_and_size, only: [:generate_cert]
 
   NUM_ROWS_LIMIT=2
+
+  def enrollment_links
+
+  end
+
+  def enrollment
+    @duration=(params[:duration].to_i/365).to_i
+    render 'smime_client_enrollment'
+  end
 
   def smime_client_enrollment
     if params[:get_duration]
@@ -755,7 +765,7 @@ class CertificateOrdersController < ApplicationController
 
   def smime_client_init
     @certificates = Certificate.get_smime_client_products(@tier)
-    @certificate = @certificates.first
+    @certificate ||= @certificates.first
 
     co = CertificateOrder.new(
       duration: 2,

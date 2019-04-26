@@ -466,6 +466,8 @@ SslCom::Application.routes.draw do
       end
     end
 
+    get '/enrollment_links' => 'certificate_orders#enrollment_links'
+    get '/enrollment/:id/:duration' => 'certificate_orders#enrollment', as: :enrollment, duration: /\d+\/?/
     get '/orders/filter_by_state/:id' => 'orders#filter_by_state', as: :filter_by_state_orders
     match '/validation_histories/:id/documents/:style.:extension' =>
               'validation_histories#documents', :as => :validation_document, style: /.+/i, via: [:get, :post]
