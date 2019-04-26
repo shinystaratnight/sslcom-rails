@@ -104,7 +104,7 @@
                         %li
                           %dt Simplified EV Authorization Form (#{link_to "click here to download form #{image_tag('pdf_icon.gif')}".html_safe, "https://support.ssl.com/index.php?_m=downloads&_a=downloadfile&downloaditemid=5"})
                           %dd This form should be used if one person is to act in all three roles, Certificate Requester, Certificate Approver and Contract (Subscriber Agreement) Signer.
-        - if co.certificate.requires_locked_registrant?
+        - if co.certificate.requires_locked_registrant? and co.registrant
           #iv-ov-file-upload
             - unless ["validated","epki_agreement"].include? co.registrant.status
               .clearfix

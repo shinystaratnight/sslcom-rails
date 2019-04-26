@@ -1100,7 +1100,7 @@ class CertificateOrder < ActiveRecord::Base
       else
         certificate_content.certificate_names.where{is_common_name==true}.last.try(:name) || csr.try(:common_name) || ""
       end
-    end
+    end || ""
   end
   alias :common_name :subject
   memoize :subject
