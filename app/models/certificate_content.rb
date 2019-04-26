@@ -510,7 +510,7 @@ class CertificateContent < ActiveRecord::Base
 
   def common_name
     (certificate_names.find_by_is_common_name(true).try(:name) ||
-        certificate_names.last.name || csr.try(:common_name)).downcase
+        certificate_names.last.try(:name) || csr.try(:common_name)).downcase
   end
 
   def has_all_contacts?
