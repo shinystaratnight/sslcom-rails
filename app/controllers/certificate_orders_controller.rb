@@ -178,12 +178,13 @@ class CertificateOrdersController < ApplicationController
 
   def edit
     unless @certificate_order.blank?
+
       if @certificate_order.certificate_content.ca.blank?
         cc=@certificate_order.certificate_content
         cc.add_ca(@certificate_order.ssl_account) if @certificate_order.external_order_number.blank?
         cc.save
       end
-      if @certificate_order.certificate.is_client_pro? || @certificate_order.certificate.is_client_basic?
+      if @certificate_order.certificate.is_smime_or_client? && !@certificate_order.certificate_content.validated?
         redirect_to recipient_certificate_order_path(@ssl_slug, @certificate_order.ref)
       else
         @certificate = @certificate_order.mapped_certificate

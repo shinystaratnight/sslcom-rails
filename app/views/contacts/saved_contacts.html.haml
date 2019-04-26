@@ -53,7 +53,8 @@
                   method: :get
           -if saved_registrants
             %td.contacts-index-status{class: c.validated? ? 'contacts-index-validated' : ''}
-              #{c.status.nil? ? 'N/A' : c.status.humanize.downcase}
+              -icon = c.status && c.epki_agreement? ? "<i class='fa fa-cog'></i> " : ''
+              =c.status.nil? ? 'N/A' : "<strong>#{icon}#{c.status.humanize.downcase}</strong>".html_safe
             %td
               %strong
                 #{c.validation_histories.count}
