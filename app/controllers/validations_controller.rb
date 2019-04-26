@@ -631,6 +631,16 @@ class ValidationsController < ApplicationController
           passed_token = (SecureRandom.hex(8)+params[:token])[0..19]
           @certificate_order_token.update_column :passed_token, passed_token
 
+          # Get phone number and country from locked_registrant of certificate_order.
+          phone_number = @certificate_order_token.certificate_order.locked_registrant.phone || ''
+          country_code = @certificate_order_token.certificate_order.locked_registrant.country_code || '1'
+          @mobile_number = "(+" + country_code + ") " + phone_number
+
+          # Get all timezone
+          @time_zones = ActiveSupport::TimeZone.all
+                            .map{|tz| ["(GMT#{formatted_offset(Timezone[tz.tzinfo.name].utc_offset)}) #{tz.name}" , Timezone[tz.tzinfo.name].utc_offset / 3600]}
+                            .sort_by{|e| e[1]}
+
           if @certificate_order_token.callback_type == CertificateOrderToken::CALLBACK_SCHEDULE
             @callback_method = 'schedule'
             flash[:notice] = 'It has been already scheduled automated callback.'
@@ -796,6 +806,15 @@ class ValidationsController < ApplicationController
   end
 
   private
+
+  def formatted_offset(seconds)
+    format = '%s%02d:%02d'
+
+    sign = (seconds < 0 ? '-' : '+')
+    hours = seconds.abs / 3600
+    minutes = (seconds.abs % 3600) / 60
+    format % [sign, hours, minutes]
+  end
 
   def upload_documents(files, type=:validation)
     i=0

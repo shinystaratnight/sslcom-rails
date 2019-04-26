@@ -17,6 +17,13 @@
         = hidden_field_tag 'token', @token
         = hidden_field_tag 'passed_token', @callback_method == 'none' ? nil : @certificate_order_token.passed_token
       .col-md-6
+        .row.pt-3.phone-number-block
+          .col-md-5
+            .row.callback-number.pull-right
+              Phone Number :
+          .col-md-4
+            = @mobile_number
+          .col-md-3
         .row.pt-3.pb-3.phone-callback-option
           .col-md-5
             .row.callback-method.pull-right
@@ -42,7 +49,8 @@
                     = label_tag 'timezone', '* Timezone: '
                 .col-md-6
                   -#= select_tag 'callback_time_zone', options_for_select(ActiveSupport::TimeZone.all.sort.map{|tz| [tz.to_s, tz.tzinfo.name]}), :class => 'form-control'
-                  = select_tag 'callback_time_zone', options_for_select(ActiveSupport::TimeZone.all.sort.map{|tz| [tz.to_s, tz.utc_offset / 3600]}), :class => 'form-control'
+                  -#= select_tag 'callback_time_zone', options_for_select(ActiveSupport::TimeZone.all.sort.map{|tz| [tz.to_s, tz.utc_offset / 3600]}), :class => 'form-control'
+                  = select_tag 'callback_time_zone', options_for_select(@time_zones), :class => 'form-control'
               .row.pb-3.date-block
                 .col-md-6
                   .row.pull-right
