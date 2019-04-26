@@ -1098,7 +1098,7 @@ class CertificateOrder < ActiveRecord::Base
       if certificate_content.issued?
         csr.signed_certificates.last.try(:common_name)
       else
-        certificate_content.certificates_names.where{is_common_name==true}.last.try(:name) || csr.try(:common_name) || ""
+        certificate_content.certificate_names.where{is_common_name==true}.last.try(:name) || csr.try(:common_name) || ""
       end
     end
   end
