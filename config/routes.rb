@@ -268,6 +268,7 @@ SslCom::Application.routes.draw do
         post :remove_domains
         post :get_email_addresses
         post :send_callback
+        post :add_super_user_email
 
         member do
           match :dcv_validate, via: [:get, :post, :options]

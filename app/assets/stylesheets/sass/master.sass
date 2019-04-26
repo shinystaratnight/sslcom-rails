@@ -119,19 +119,26 @@ a
   .content
     .logo
       float: left
-      padding: 0px 150px 20px 0
+      //padding: 0px 150px 20px 0
       margin-right: 15px
       background: image-url("big-logo.png") no-repeat
+      width: 260px
+      height: 61px
     .navigation
-      float: left
-      width: 580px
+      //float: left
+      //width: 580px
+      float: right
+      width: 650px
       .top_navigation
-        width: 580px
+        //width: 580px
+        width: 100%
         padding: 12px 0px 13px 30px
         margin-left: 1px
       .bottom_navigation
-        width: 580px
-        padding: 17px 30px 0px
+        //width: 580px
+        width: 100%
+        //padding: 17px 30px 0px
+        padding: 7px 0px 0px
 
 .top_navigation
   a
@@ -187,8 +194,10 @@ a
       margin-left: -41px
     > ul
       top: 32px
-      left: 40px
+      //left: 40px
+      left: 60px
       background: #212121
+      z-index: 1
     &:hover ul, &.over ul
       display: block
       list-style: none

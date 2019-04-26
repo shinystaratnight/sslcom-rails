@@ -48,7 +48,6 @@ Airbrake.configure do |c|
   # replaced.
   # https://github.com/airbrake/airbrake-ruby#blacklist_keys
   c.blacklist_keys = [/password/i]
-  c.performance_stats = true
 end
 
 # If Airbrake doesn't send any expected exceptions, we suggest to uncomment the

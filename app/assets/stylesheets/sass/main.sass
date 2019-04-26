@@ -6971,6 +6971,11 @@ i.fa-external-link.fa-ssl-custom
     &.certificate_name td
       padding: 3px
       border-top: 1px solid grey
+
+      .super_user_email
+        font-weight: bold
+        color: red
+
       &:first-child
         text-align: center
         padding-left: 0px
@@ -8870,6 +8875,9 @@ a.back_to_generate_cert_page
 .integrated_algorithm_wrap select,
 .algorithm_wrap select
   width: 500px
+
+.managed_csr.algorithm_wrap select
+  width: 100%
 
 #add_csr_form
   .algorithm_wrap

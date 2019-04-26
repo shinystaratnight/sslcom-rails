@@ -1095,7 +1095,11 @@ class CertificateOrder < ActiveRecord::Base
     Rails.cache.fetch("#{cache_key}/subject") do
       csr=csrs.includes(:signed_certificates).last
       return "" if csr.blank?
-      csr.signed_certificates.last.try(:common_name) || csr.try(:common_name) || ""
+      if certificate_content.issued?
+        csr.signed_certificates.last.try(:common_name)
+      else
+        certificate_content.certificates_names.where{is_common_name==true}.last.try(:name) || csr.try(:common_name) || ""
+      end
     end
   end
   alias :common_name :subject
@@ -2056,7 +2060,7 @@ class CertificateOrder < ActiveRecord::Base
     result.order_status = self.status
     result.registrant = self.certificate_content.registrant.to_api_query if (self.certificate_content && self.certificate_content.registrant)
     result.contacts = self.certificate_content.certificate_contacts if (self.certificate_content && self.certificate_content.certificate_contacts)
-    result.validations = result.validations_from_comodo(self) #'validations' kept executing twice so it was renamed to 'validations_from_comodo'
+    result.validations = result.validations_from_comodo(self) if external_order_number #'validations' kept executing twice so it was renamed to 'validations_from_comodo'
     result.description = self.description
     result.product = self.certificate.api_product_code
     result.product_name = self.certificate.product

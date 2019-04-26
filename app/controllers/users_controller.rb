@@ -330,7 +330,7 @@ class UsersController < ApplicationController
   end
 
   def switch_default_ssl_account
-    old_ssl_slug       = @ssl_slug
+    old_ssl_slug = @ssl_slug
     @switch_ssl_account = params[:ssl_account_id]
     session[:switch_ssl_account] = @switch_ssl_account
     session[:old_ssl_slug] = old_ssl_slug
@@ -339,10 +339,10 @@ class UsersController < ApplicationController
       redirect_to duo_user_path(@user.id, ssl_slug: @ssl_slug)
     else
       if @switch_ssl_account && @user.get_all_approved_accounts.map(&:id).include?(@switch_ssl_account.to_i)
+        @ssl_slug = SslAccount.find(@switch_ssl_account).to_slug
         @user.set_default_ssl_account(@switch_ssl_account)
-        flash[:notice]      = "You have switched to team %s."
-        flash[:notice_item] = "<strong>#{@user.ssl_account.get_team_name}</strong>"
-        set_ssl_slug(@user)
+        flash[:notice] = "You have switched to team %s."
+        flash[:notice_item] = "<strong>#{SslAccount.find(@user.default_ssl_account).get_team_name}</strong>"
       else
         flash[:error] = "Something went wrong. Please try again!"
       end

@@ -36,15 +36,13 @@
           domains = $("#text-sc-emails").data("epki-domains").split(","),
           validateEmails = [],
           pendingEmails = [];
-        
-        for (var di = 0; di < domains.length; di++) {
-          for (var i = 0; i < emails.length; i++) {
-            curEmail = emails[i];
-            if (curEmail.split("@").pop() == domains[di].trim().toLowerCase()) {
-              validateEmails.push(curEmail);
-            } else {
-              pendingEmails.push(curEmail);
-            }
+          
+        for (var ei = 0; ei < emails.length; ei++) {
+          curEmail = emails[ei].split("@").pop();
+          if ( domains.includes(curEmail.trim().toLowerCase()) ) {
+            validateEmails.push(curEmail);
+          } else {
+            pendingEmails.push(curEmail);
           }
         }
 
