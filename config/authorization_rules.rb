@@ -579,7 +579,8 @@ authorization do
   # GUEST Role
   # ============================================================================ 
   role :guest do
-    has_permission_on :csrs, :certificate_orders, :orders,  :to => [:create, :enrollment_links, :enrollment]
+    has_permission_on :csrs, :certificate_orders, :orders,  :to => [:create, :smime_client_enrollment,
+                                                                    :enrollment_links, :enrollment]
     has_permission_on :certificates,  :to => :buy_renewal
     has_permission_on :site_seals, :to => [:site_report]
     has_permission_on :users, :ssl_accounts, :resellers,    :to => [:create, :update]

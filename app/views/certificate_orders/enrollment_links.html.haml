@@ -1,6 +1,6 @@
 %h1 Enrollment Links For Team #{params[:ssl_slug]}
 
--Certificate.available.base_products.each do |certificate|
+-Certificate.get_smime_client_products.base_products.each do |certificate|
   -unless certificate.is_free?
     %h3=certificate.title
     %dl

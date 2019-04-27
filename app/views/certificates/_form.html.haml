@@ -115,6 +115,7 @@
       .clearfix.manage_cn_block
         %label
           Common Name (CN):
+          %span.label_desc primary domain name
         =text_field_tag :common_name
         =hidden_field_tag :old_common_name
       -if Settings.csr_domains_ui

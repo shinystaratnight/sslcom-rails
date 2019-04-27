@@ -23,12 +23,12 @@
 
       .clearfix
         .sub-hdr-sc-enroll
-          %h3 Step 2: Enter Emails
+          %h3 Step 2: Enter Email Addresses
 
       .clearfix
         %label{for: :emails}
-          *Emails List:
-          %span.label_desc Enter emails seperated by space or comma
+          *Email Address List:
+          %span.label_desc separate entries by space or comma
         = text_area_tag :emails, nil, id: "text-sc-emails", cols: 40, rows: 15, |
           data: { epki_domains: epki_registrant ? epki_registrant.domains.map(&:strip).join(",").downcase : "" }
 
