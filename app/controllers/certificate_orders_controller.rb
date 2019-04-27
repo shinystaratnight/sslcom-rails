@@ -50,7 +50,8 @@ class CertificateOrdersController < ApplicationController
 
   def enrollment
     @duration=(params[:duration].to_i/365).to_i
-    render 'smime_client_enrollment'
+    smime_client_enrollment
+    render :smime_client_enrollment
   end
 
   def smime_client_enrollment

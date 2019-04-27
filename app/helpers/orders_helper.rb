@@ -72,7 +72,7 @@ module OrdersHelper
   end
 
   def cart_items
-    if current_user && current_user.ssl_account.has_role?('new_reseller')
+    if current_user && current_user.ssl_account.has_role?('new_reseller') && current_user.ssl_account.reseller
       return [current_user.ssl_account.reseller.reseller_tier]
     elsif !@certificate_order.blank?
       return [@certificate_order]

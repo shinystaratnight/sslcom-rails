@@ -18,7 +18,7 @@
         %label{for: :emails}
           *Certificate:
         = select_tag :certificate_id,                                       |
-          options_from_collection_for_select(@certificates, "id", "title"), |
+          options_from_collection_for_select(@certificates, "id", "title", @certificate.try(:id)), |
           id: "sel-sc-certificate", include_blank: false
 
       .clearfix

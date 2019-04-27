@@ -8,7 +8,7 @@
       - first = @certificate.items_by_duration[0]
       - if !@certificate.is_naesb? or (@certificate.is_naesb? and i==1)
         .radio_w_desc.clearfix
-          = radio_button_tag :duration, i+1, id: item.model_and_id
+          = radio_button_tag :duration, i+1, @duration==i+1, id: item.model_and_id
           = item.title
           #{(item.price / (i+1)).format}#{'/yr' unless i==0}
           - if i > 0
