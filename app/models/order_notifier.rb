@@ -11,7 +11,7 @@ class OrderNotifier < ActionMailer::Base
   alias_method :something, :test
 
   def enrollment_request_for_team(team, request, team_admin)
-    @url = certificate_enrollment_requests_path(
+    @url = certificate_enrollment_requests_url(
       team.to_slug, commit: true, id: request.try(:id)
     )
     
