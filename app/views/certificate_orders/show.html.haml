@@ -405,7 +405,7 @@
                                   -if sc.try(:body).blank?
                                     (server software: #{c.server_software.try :title})
                                   -else
-                                    %a{:name => "#{sc.serial}"}
+                                    %a{:name => "#{sc.serial}", :href => "##{sc.serial}"}
                                       (serial number: #{sc.serial})
                                   %div
                                     %strong

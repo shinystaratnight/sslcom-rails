@@ -1,4 +1,4 @@
-- title = "Enrollment Links For Team #{ @ssl_slug }"
+- title = "Enrollment Links For Team #{ @ssl_account.to_slug }"
 - content_for :title, title
 
 .enrollment-links-container
@@ -14,5 +14,5 @@
         - ranges.each do |days|
           .enrollment-links__days #{ days } days | #{ pluralize((days/365), "year") }
           .enrollment-links__link
-            - link = new_certificate_enrollment_request_url(@ssl_slug, product: c.product, duration: days)
+            - link = new_certificate_enrollment_request_url(@ssl_account.to_slug, product: c.product, duration: days)
             = link_to link, link
