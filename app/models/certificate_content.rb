@@ -52,7 +52,7 @@ class CertificateContent < ActiveRecord::Base
     .*?\.apple\.com\z \Aapple\.com\z .*?\.microsoft\.com\z \Amicrosoft\.com\z .*?\.paypal\.com\z \Apaypal\.com\z
     .*?\.mozilla\.com\z \Amozilla\.com\z .*?\.gmail\.com\z \Agmail\.com\z .*?\.goog\.com\z \Agoog\.com\z
     .*?\.?github\.com .*?\.?amazon\.com .*?\.?cloudapp\.com amzn ssltools certchat .*?\.certlock\.com\z \Acertlock\.com\z
-    .*?\.10million\.org .*?\.?android\.com .*?\.aol\.com .*?\.azadegi\.com .*?\.balatarin\.com .*?\.?comodo\.com
+    .*?\.10million\.org .*?\.android\.com\z \Aandroid\.com\z .*?\.aol\.com .*?\.azadegi\.com .*?\.balatarin\.com .*?\.?comodo\.com
     .*?\.?digicert\.com .*?\.?yahoo\.com .*?\.?entrust\.com .*?\.?godaddy\.com .*?\.?oracle\.com
     .*?\.?globalsign\.com .*?\.JanamFadayeRahbar\.com .*?\.?logmein\.com .*?\.mossad\.gov\.il
     .*?\.?mozilla\.org .*?\.RamzShekaneBozorg\.com .*?\.SahebeDonyayeDigital\.com .*?\.skype\.com .*?\.startssl\.com
@@ -328,7 +328,7 @@ class CertificateContent < ActiveRecord::Base
 
   # are any of the sub/domains trademarks?
   def infringement
-    return all_domains.map{|domain|domain if (TRADEMARKS-
+    return ca_id.blank? ? [] : all_domains.map{|domain|domain if (TRADEMARKS-
         (ssl_account and WHITELIST[ssl_account.id] ? WHITELIST[ssl_account.id] : [])).any?{|trademark|
       domain.downcase =~ Regexp.new(trademark, Regexp::IGNORECASE)}}.compact
   end
