@@ -20,6 +20,12 @@
   =form_tag nil, :id=>'send_notify_form', :method=>:post do
     =hidden_field_tag :certificate_order_ref
     =hidden_field_tag :notify_type
+    - if current_user.is_standard? && current_user.ssl_account.epki_registrant && @certificate_order.ssl_account.epki_registrant
+      =hidden_field_tag :is_epki_admin, true
+      =hidden_field_tag :send_email_link
+      =hidden_field_tag :copy_act_link
+    - else
+      =hidden_field_tag :is_epki_admin, false
 
 #certificate_orders
   %table(cellspacing="0")
@@ -381,35 +387,7 @@
                         -unless co.certificate.is_csr_last_step?
                           %span.previous_requests reference: #{c.ref}
                         -if csr
-                          %tr
-                            %td(colspan="5")
-                              .certificate_details_box
-                                %strong certificate signing request
-                                -unless permitted_to?(:create, SignedCertificate.new) && current
-                                  -unless csr.blank?
-                                    %div submitted on #{csr.created_at.strftime("%b %d, %Y %R %Z")}
-                                    =text_area_tag :csr, csr.body, :size=>"30x10"
-                                    signature algorithm: #{csr.sig_alg}
-                                  -else
-                                    no certificate signing request found
-                                -else
-                                  #csr_submitted_on
-                                    %span.submitted_on
-                                      -unless csr.try(:created_at).blank?
-                                        submitted on #{csr.created_at.strftime("%b %d, %Y %R %Z")}
-                                      -else
-                                        &nbsp
-                                  =form_for csr do |f|
-                                    =f.text_area :body, :cols=>30, :rows=>10
-                                    -if csr.try :sig_alg
-                                      %div signature algorithm:
-                                      %div=csr.sig_alg
-                                    .clearfix
-                                    =submit_tag 'Submit csr', :class=> 'submit_signed_certificate'
-                                    =image_tag('waiting_bar_medium.gif', :id=>'waiting_on_csr', :style=>'display:none;vertical-align: middle;')
-                                    #temporary_csr.hidden[csr, :new]
-                                      =text_area_tag :tmp_csr, csr.try(:body)
-                          -csr.signed_certificates.includes(:revocation).order('created_at DESC').each do |sc|
+                          -show_block = ->(sc) do
                             - unless sc.nil? || @certificate_order.certificate.is_csr_last_step?
                               %tr#cert-content-status
                                 %td
@@ -457,60 +435,94 @@
                                         .clearfix
                                           %br/
                                           %p *Warning: Once revoked the status of this signed certificate cannot be reversed.
-                              .certificate_details_box
-                                %strong signed certificate
-                                -unless co.certificate_content.ca_id.blank?
-                                  %ul
-                                    -if sc && !sc.expired?
-                                      %div
-                                        submitted on #{sc.created_at.strftime("%b %d, %Y %R %Z")}
-                                      =render partial: 'download', locals: {csr: csr, signed_certificate: sc}
-                                -else
+                            %tr
+                              %td(colspan="5")
+                                .certificate_details_box
+                                  %strong certificate signing request
                                   -unless permitted_to?(:create, SignedCertificate.new) && current
-                                    -unless sc.try(:body).blank?
-                                      %div
-                                        submitted on #{sc.created_at.strftime("%b %d, %Y %R %Z")}
-                                      =text_area_tag :signed_certificate, sc.body, :size=>"30x10"
-                                      -if sc.try :signature_algorithm
-                                        %div signature algorithm:
-                                        %div=sc.signature_algorithm
+                                    -unless csr.blank?
+                                      %div submitted on #{csr.created_at.strftime("%b %d, %Y %R %Z")}
+                                      =text_area_tag :csr, csr.body, :size=>"30x10"
+                                      signature algorithm: #{csr.sig_alg}
                                     -else
-                                      %div
-                                        no signed certificate found
+                                      no certificate signing request found
                                   -else
-                                    #signed_certificate_submitted_on
+                                    #csr_submitted_on
                                       %span.submitted_on
-                                        -unless sc.try(:created_at).blank?
-                                          submitted on #{sc.created_at.strftime("%b %d, %Y %R %Z")}
+                                        -unless csr.try(:created_at).blank?
+                                          submitted on #{csr.created_at.strftime("%b %d, %Y %R %Z")}
                                         -else
                                           &nbsp
-                                    =form_for SignedCertificate.new, :url=>csr_signed_certificates_path(csr) do |f|
+                                    =form_for csr do |f|
                                       =f.text_area :body, :cols=>30, :rows=>10
-                                      -if sc.try :signature_algorithm
+                                      -if csr.try :sig_alg
                                         %div signature algorithm:
-                                        %div=sc.signature_algorithm
+                                        %div=csr.sig_alg
                                       .clearfix
-                                        #{check_box_tag "email_customer", true, true}notify customer?
-                                      =submit_tag 'Submit certificate', :class=> 'submit_signed_certificate'
-                                      =image_tag('waiting_bar_medium.gif', :id=>'waiting_bar', :style=>'display:none;vertical-align: middle;')
-                                      #temporary_signed_certificate.hidden[csr]
-                                        =text_area_tag :tmp_signed_certificate, sc.try(:body)
-                              .certificate_details_box
-                                -unless sc.try(:body).blank?
-                                  -if co.certificate.is_csr_last_step?
-                                    %strong parsed certificate
-                                    %div
-                                      issued to: #{sc.common_name}
-                                    %textarea.selectAll{cols: 30, rows: 10}=sc.decoded
+                                      =submit_tag 'Submit csr', :class=> 'submit_signed_certificate'
+                                      =image_tag('waiting_bar_medium.gif', :id=>'waiting_on_csr', :style=>'display:none;vertical-align: middle;')
+                                      #temporary_csr.hidden[csr, :new]
+                                        =text_area_tag :tmp_csr, csr.try(:body)
+                                .certificate_details_box
+                                  %strong signed certificate
+                                  -unless co.certificate_content.ca_id.blank?
+                                    %ul
+                                      -if sc && !sc.expired?
+                                        %div
+                                          submitted on #{sc.created_at.strftime("%b %d, %Y %R %Z")}
+                                        =render partial: 'download', locals: {csr: csr, signed_certificate: sc}
                                   -else
-                                    -san = sc.subject_alternative_names
-                                    %strong parsed certificate
-                                    %div
-                                      =san ? "DOMAINS (#{san.count})" : 'DOMAINS'
-                                    %textarea.selectAll{cols: 10, rows: 5}=san ? san.join("\n") : ""
-                                    %div
-                                      DECODED
-                                    %textarea.selectAll{cols: 10, rows: 4}=sc.decoded
+                                    -unless permitted_to?(:create, SignedCertificate.new) && current
+                                      -unless sc.try(:body).blank?
+                                        %div
+                                          submitted on #{sc.created_at.strftime("%b %d, %Y %R %Z")}
+                                        =text_area_tag :signed_certificate, sc.body, :size=>"30x10"
+                                        -if sc.try :signature_algorithm
+                                          %div signature algorithm:
+                                          %div=sc.signature_algorithm
+                                      -else
+                                        %div
+                                          no signed certificate found
+                                    -else
+                                      #signed_certificate_submitted_on
+                                        %span.submitted_on
+                                          -unless sc.try(:created_at).blank?
+                                            submitted on #{sc.created_at.strftime("%b %d, %Y %R %Z")}
+                                          -else
+                                            &nbsp
+                                      =form_for SignedCertificate.new, :url=>csr_signed_certificates_path(csr) do |f|
+                                        =f.text_area :body, :cols=>30, :rows=>10
+                                        -if sc.try :signature_algorithm
+                                          %div signature algorithm:
+                                          %div=sc.signature_algorithm
+                                        .clearfix
+                                          #{check_box_tag "email_customer", true, true}notify customer?
+                                        =submit_tag 'Submit certificate', :class=> 'submit_signed_certificate'
+                                        =image_tag('waiting_bar_medium.gif', :id=>'waiting_bar', :style=>'display:none;vertical-align: middle;')
+                                        #temporary_signed_certificate.hidden[csr]
+                                          =text_area_tag :tmp_signed_certificate, sc.try(:body)
+                                .certificate_details_box
+                                  -unless sc.try(:body).blank?
+                                    -if co.certificate.is_csr_last_step?
+                                      %strong parsed certificate
+                                      %div
+                                        issued to: #{sc.common_name}
+                                      %textarea.selectAll{cols: 30, rows: 10}=sc.decoded
+                                    -else
+                                      -san = sc.subject_alternative_names
+                                      %strong parsed certificate
+                                      %div
+                                        =san ? "DOMAINS (#{san.count})" : 'DOMAINS'
+                                      %textarea.selectAll{cols: 10, rows: 5}=san ? san.join("\n") : ""
+                                      %div
+                                        DECODED
+                                      %textarea.selectAll{cols: 10, rows: 4}=sc.decoded
+                          -certs=csr.signed_certificates.includes(:revocation).order('created_at DESC')
+                          -if certs.blank?
+                            -show_block.call(nil)
+                          -else
+                            -csr.signed_certificates.includes(:revocation).order('created_at DESC').each do |sc|
+                              -show_block.call(sc)
                         %tr
                           %td(colspan="5" style="text-align: left;")
                             = render partial: '/tags/certificate_content_tags', locals: {taggable: c}
@@ -566,3 +578,26 @@
         * All Domains should be valid!
     #domain_modal_footer.modal-footer
       = button_tag 'Save', :type => 'button', :class => 'btn btn-grey btn-save-domains', :disabled => true
+
+#epki_admin_modal.epki_admin_modal
+  #epki_admin_modal_content.modal-content
+    #epki_admin_modal_header.modal-header
+      %span#epki_modal_close.close
+        &times;
+      %p
+        Please choose options
+    #epki_admin_modal_body.modal-body
+      .method_block.send_email_method.clearfix
+        .block_chk
+          = check_box_tag 'chk_send_email', true, true, :class => 'chk_method'
+        .block_label
+          %span.chk_send_label
+      .method_block.copy_link_method.clearfix
+        .block_chk
+          = check_box_tag 'chk_copy_link', true, false, :class => 'chk_method'
+        .block_label
+          %span View and copy activation link
+      #required-field
+        * It needs to choose one method at least!
+    #epki_admin_modal_footer.modal-footer
+      = button_tag 'OK', :type => 'button', :class => 'btn btn-grey btn-ok'
