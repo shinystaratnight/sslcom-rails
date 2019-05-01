@@ -471,6 +471,9 @@
                                         %div
                                           submitted on #{sc.created_at.strftime("%b %d, %Y %R %Z")}
                                         =render partial: 'download', locals: {csr: csr, signed_certificate: sc}
+                                      -else
+                                        %div
+                                          no signed certificate found
                                   -else
                                     -unless permitted_to?(:create, SignedCertificate.new) && current
                                       -unless sc.try(:body).blank?
