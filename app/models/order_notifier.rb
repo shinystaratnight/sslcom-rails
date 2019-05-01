@@ -10,6 +10,16 @@ class OrderNotifier < ActionMailer::Base
   end
   alias_method :something, :test
 
+  def enrollment_request_for_team(team, request, team_admin)
+    @url = certificate_enrollment_requests_url(
+      team.to_slug, commit: true, id: request.try(:id)
+    )
+    
+    mail subject: "New Certificate Enrollment Request",
+         from: Settings.from_email.orders,
+         to: team_admin.email
+  end
+
   def invoice_declined_order(params)
     @order = params[:order]
     @decline_code = params[:decline_code]
@@ -314,7 +324,10 @@ class OrderNotifier < ActionMailer::Base
   end
   
   def to_valid_list(list)
-    return list.map(&:split).compact.flatten.uniq if list.is_a? Array
+    if list.is_a? Array
+      list.delete(true)
+      return list.map(&:split).compact.flatten.uniq
+    end
     return list.split.uniq if list.is_a? String
   end
 end

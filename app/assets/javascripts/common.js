@@ -17,3 +17,4 @@
 //= require deitch-jstree-grid/jstreegrid
 //= require folders
 //= require mailbox
+//= require certificate_enrollment

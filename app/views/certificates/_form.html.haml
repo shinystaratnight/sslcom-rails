@@ -13,7 +13,7 @@
     -first, second = @certificate.items_by_domains(true).transpose[0]
   -else
     -first, second, third = @certificate.items_by_domains(true).transpose[0]
--unless @certificate_order.is_unused_credit?
+-unless @certificate_order.is_unused_credit? || @request
   .clearfix#has_csr_switch
     %label{:for=>"has_csr"}
       *Do you have your CSR?:
@@ -29,7 +29,7 @@
   =f.hidden_field :has_csr
 
 =f.fields_for :certificate_contents, @certificate_content do |cert_form|
-  -if Settings.show_csr_submit_on_buy_page || @certificate_order.is_unused_credit?
+  -if Settings.show_csr_submit_on_buy_page || @certificate_order.is_unused_credit? || @request
     #csr_section
       -if @certificate.is_browser_generated_capable?
         %p
@@ -103,15 +103,16 @@
             =text_area_tag :previous_csr_body, @certificate_order.most_recent_csr.body, style: "display: none"
         =cert_form.text_area :signing_request, :cols=>40, :rows=>10, :wrap=>'off'
         -#=hidden_field_tag :hidden_www_domain, class: 'hidden_www_domain'
-      .clearfix.add_to_manager_block
-        %label
-          Save to CSR Manager:
-        =check_box_tag :add_to_manager, true, true
-      .clearfix.managed_csrs_block
-        %label
-          Managed CSR:
-        =select_tag :managed_csr, options_for_select(@managed_csrs), :class => 'managed_csr'
-        =link_to 'Create CSR', new_managed_csr_path(@ssl_slug || @certificate_order.ssl_account.to_slug, cert_ref: @certificate_order.ref)
+      - unless @request
+        .clearfix.add_to_manager_block
+          %label
+            Save to CSR Manager:
+          =check_box_tag :add_to_manager, true, true
+        .clearfix.managed_csrs_block
+          %label
+            Managed CSR:
+          =select_tag :managed_csr, options_for_select(@managed_csrs), :class => 'managed_csr'
+          =link_to 'Create CSR', new_managed_csr_path(@ssl_slug || @certificate_order.ssl_account.to_slug, cert_ref: @certificate_order.ref)
       .clearfix.manage_cn_block
         %label
           Common Name (CN):
@@ -184,7 +185,7 @@
             -ss=ServerSoftware.all.to_a-[ServerSoftware.find(1)]
             -other=[ServerSoftware.find(1)].map{|s|[s.title,s.id]}
             =select_field_for(cert_form, :server_software_id.to_s, other+ss.sort{|a,b|a.title<=>b.title}.collect{|s|[s.title,s.id]},{:no_label=>true}, {})
-    -if Settings.activate_monitoring && !@certificate.is_browser_generated_capable?
+    -if Settings.activate_monitoring && !@certificate.is_browser_generated_capable? && !@request
       .clearfix
         %label
           Schedule SSL Scans:
@@ -468,7 +469,7 @@
                 \ ea wildcard domain
       =cert_form.text_area :additional_domains, cols: 40, rows: 10, class: 'subject_alternative_names'
 
-  -unless @certificate_order.is_unused_credit?
+  -unless @certificate_order.is_unused_credit? || @request
     .clearfix
       %label{:for=>"duration"}
         *Duration:

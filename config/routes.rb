@@ -28,7 +28,7 @@ SslCom::Application.routes.draw do
   #resources :site_checks
   match 'site_check' => 'site_checks#new', :as => :site_check, via: [:get, :post]
   match 'site_checks' => 'site_checks#create', :as => :site_checks, via: [:get, :post]
-  match 'enterprise_pki_service_agreement' => 'contacts#enterprise_pki_service_agreement', via: :get 
+  match 'enterprise_pki_service_agreement' => 'contacts#enterprise_pki_service_agreement', via: :get
 
   # api: If version is not specified then use the default version in APIConstraint
   constraints DomainConstraint.new(
@@ -77,7 +77,11 @@ SslCom::Application.routes.draw do
         # Signed Certificates
         match '/signed_certificates' => 'api_certificate_requests#retrieve_signed_certificates',
               as: :api_signed_certificates_retrieve, via: [:post]
-            
+        
+        # Certificate Enrollment
+        match '/certificate_enrollment' => 'api_certificate_requests#certificate_enrollment_order',
+          as: :api_certificate_enrollment, via: :post
+
         # Certificates
         match '/certificates' => 'api_certificate_requests#create_v1_4',
           as: :api_certificate_create_v1_4, via: [:options, :post]
@@ -164,6 +168,11 @@ SslCom::Application.routes.draw do
   end
 
   concern :teamable do
+    match '/enrollment/:product/:duration' => 'certificate_enrollment_requests#new',
+      as: 'new_certificate_enrollment_request', via: [:get, :post], duration: /\d+\/?/
+    match '/enrollment_links' => 'certificate_enrollment_requests#enrollment_links',
+      as: 'enrollment_links_certificate_enrollment_requests', via: :get
+
     resources :folders, only: [:index, :create, :update, :destroy] do
       collection do
         put :reset_to_system
@@ -172,6 +181,12 @@ SslCom::Application.routes.draw do
       member do
         put :add_certificate_order
         put :add_certificate_orders
+      end
+    end
+    
+    resources :certificate_enrollment_requests, except: [:edit, :new, :update, :show] do
+      member do
+        match :reject, via: [:put, :post]
       end
     end
 
@@ -466,8 +481,6 @@ SslCom::Application.routes.draw do
       end
     end
 
-    get '/enrollment_links' => 'certificate_orders#enrollment_links'
-    get '/enrollment/:id/:duration' => 'certificate_orders#enrollment', as: :enrollment, duration: /\d+\/?/
     get '/orders/filter_by_state/:id' => 'orders#filter_by_state', as: :filter_by_state_orders
     match '/validation_histories/:id/documents/:style.:extension' =>
               'validation_histories#documents', :as => :validation_document, style: /.+/i, via: [:get, :post]

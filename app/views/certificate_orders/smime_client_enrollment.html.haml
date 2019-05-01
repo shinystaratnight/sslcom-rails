@@ -15,7 +15,7 @@
           %h3 Step 1: Select Product
 
       .clearfix
-        %label{for: :emails}
+        %label{for: :certificate_id}
           *Certificate:
         = select_tag :certificate_id,                                       |
           options_from_collection_for_select(@certificates, "id", "title", @certificate.try(:id)), |
