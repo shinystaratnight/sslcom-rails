@@ -437,7 +437,7 @@ class ApplicationController < ActionController::Base
   end
 
   def find_ssl_account
-    ssl_acct_slug = params[:ssl_slug] || params[:acct_number]
+    ssl_acct_slug = params[:ssl_slug] || params[:acct_number] || params[:certificate_enrollment_request][:ssl_slug]
     if params[:action]=="dcv_all_validate" and ssl_acct_slug
       @ssl_account = SslAccount.find_by_acct_number(ssl_acct_slug) ||
         SslAccount.find_by_ssl_slug(ssl_acct_slug)

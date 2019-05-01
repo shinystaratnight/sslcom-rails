@@ -2,7 +2,7 @@ class CertificateEnrollmentRequestsController < ApplicationController
   include OrdersHelper
   before_action :require_user, except: [:new, :create, :enrollment_links]
   before_action :find_request, only: [:reject, :destroy]
-  before_action :find_ssl_account_by_slug, only: [:new, :create, :enrollment_links]
+  before_action :find_ssl_account, only: [:new, :create, :enrollment_links]
   filter_access_to :all, except: [:new, :create, :enrollment_links]
 
   def index

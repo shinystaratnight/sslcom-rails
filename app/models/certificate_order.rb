@@ -693,7 +693,7 @@ class CertificateOrder < ActiveRecord::Base
   def add_reproces_order(target_order)
     target_order.save unless target_order.persisted?
     self.with_lock do
-      target_order.line_items.delete_all
+      target_order.line_items.destroy_all
       if target_order.valid?
         line_items.create(
             order_id: target_order.id, cents: target_order.cents, amount: target_order.amount, currency: 'USD'
