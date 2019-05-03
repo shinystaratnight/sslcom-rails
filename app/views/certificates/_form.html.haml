@@ -47,7 +47,7 @@
         %ul(style="font-size:1.4em; margin-bottom:20px")
           %li
             generate the CSR through your
-            =link_to "CSR Manager,", new_managed_csr_path(@ssl_slug), target: "_blank"
+            =link_to "CSR Manager,", new_managed_csr_path(@ssl_slug || @certificate_order.ssl_account.to_slug, cert_ref: @certificate_order.ref)
             or
           %li
             for Microsoft Windows try the

@@ -1368,6 +1368,7 @@ jQuery(function($) {
             }
           });
 
+          <%if controller_name=="validations" %>
           if (domains_emails.length > 0) {
             if (confirm('Proceed to save manual email(s)?')) {
               $('#waiting_bar').show();
@@ -1391,6 +1392,7 @@ jQuery(function($) {
           } else {
             $('form.api_certificate_request').submit();
           }
+          <%end %>
         });
 
         // Form Submit by AJAX
