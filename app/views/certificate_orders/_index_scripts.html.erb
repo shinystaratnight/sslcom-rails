@@ -942,18 +942,38 @@ jQuery(function($) {
       e.preventDefault();
       var ref = $(this).attr('data-ref');
       var notify_type = $(this).attr('data-type');
-      $('#certificate_order_ref').val(ref);
-      $('#notify_type').val(notify_type);
+      var done = $(this).attr('data-done');
 
-      if (notify_type == 'token') {
-        if ($('#is_epki_admin').val() == 'true') {
-          $('.chk_send_label').text($(this).text().charAt(0).toUpperCase() + $(this).text().slice(1));
-          $('.epki_admin_modal').show();
+      if (done == 'true') {
+        if (notify_type == 'token') {
+          confirmed = confirm('Are you sure you want to resend the activation link again?');
+        } else {
+          confirmed = confirm('Are you sure you want to resend the activation request email again?');
+        }
+      } else {
+        $(this).attr('data-done', 'true');
+
+        if (notify_type == 'token') {
+          $(this).text('activation link sent. Resend?');
+        } else {
+          $(this).text('activation request sent. Request again?');
+        }
+      }
+
+      if (done == 'false' || (done == 'true' && confirmed)) {
+        $('#certificate_order_ref').val(ref);
+        $('#notify_type').val(notify_type);
+
+        if (notify_type == 'token') {
+          if ($('#is_epki_admin').val() == 'true') {
+            $('.chk_send_label').text($(this).text().charAt(0).toUpperCase() + $(this).text().slice(1));
+            $('.epki_admin_modal').show();
+          } else {
+            $('form#send_notify_form').ajaxSubmit(send_notify_options);
+          }
         } else {
           $('form#send_notify_form').ajaxSubmit(send_notify_options);
         }
-      } else {
-        $('form#send_notify_form').ajaxSubmit(send_notify_options);
       }
     });
 

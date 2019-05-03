@@ -35,7 +35,7 @@ class CertificateOrderTokensController < ApplicationController
           end
 
           # create / update certificate order token table
-          co_token = co.certificate_order_tokens.where(is_expired: false).first
+          co_token = co.certificate_order_tokens.where(status: nil, is_expired: false).first
           if co_token
             co_token.update_attributes(due_date: 7.days.from_now, user: assignee)
           else
@@ -103,7 +103,7 @@ class CertificateOrderTokensController < ApplicationController
         returnObj['status'] = 'session_expired'
       end
 
-      format.js { render :json => returnObj['status'].to_json }
+      format.js { render :json => returnObj.to_json }
     end
   end
 

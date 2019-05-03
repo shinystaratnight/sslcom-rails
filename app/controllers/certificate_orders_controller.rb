@@ -84,6 +84,8 @@ class CertificateOrdersController < ApplicationController
         flash[:error] = "The page has expired or is no longer valid."
       elsif co_token.due_date < DateTime.now
         is_expired = true
+        co_token.update_attribute(:is_expired, true)
+
         flash[:error] = "The page has expired or is no longer valid."
       else
         @certificate_order = co_token.certificate_order
