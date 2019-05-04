@@ -111,6 +111,13 @@ module CertificateOrdersHelper
             (certificate.is_cs? || certificate.is_smime_or_client?)
           if current_user.is_individual_certificate? or
               (certificate_order.get_recipient and certificate_order.get_recipient.email==current_user.email)
+
+            if certificate_order.generate_certificate_order_token &&
+                !certificate_order.generate_certificate_order_token.is_expired &&
+                certificate_order.generate_certificate_order_token.due_date < DateTime.now
+              certificate_order.generate_certificate_order_token.update_attribute(:is_expired, true)
+            end
+
             if certificate_order.generate_certificate_order_token.blank? or certificate_order.generate_certificate_order_token.is_expired
               link_to 'request certificate', nil, class: 'link_to_send_notify',
                       :data => { :ref => certificate_order.ref, :type => 'request', :done => 'false' }
@@ -147,6 +154,13 @@ module CertificateOrdersHelper
         if(certificate.is_cs? || certificate.is_smime_or_client?)
           if current_user.is_individual_certificate? or
               (certificate_order.get_recipient and certificate_order.get_recipient.email==current_user.email)
+
+            if certificate_order.generate_certificate_order_token &&
+                !certificate_order.generate_certificate_order_token.is_expired &&
+                certificate_order.generate_certificate_order_token.due_date < DateTime.now
+              certificate_order.generate_certificate_order_token.update_attribute(:is_expired, true)
+            end
+
             if certificate_order.generate_certificate_order_token.blank? or certificate_order.generate_certificate_order_token.is_expired
               link_to 'request rekey', nil, class: 'link_to_send_notify',
                       :data => { :ref => certificate_order.ref, :type => 'request', :done => 'false' }

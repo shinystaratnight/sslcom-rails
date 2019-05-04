@@ -24,10 +24,10 @@ class CertificateOrdersController < ApplicationController
   filter_access_to :read, :update, :delete, :show, :edit, :developer, :recipient
   filter_access_to :incomplete, :pending, :search, :reprocessing, :order_by_csr, :require=>:read
   filter_access_to :credits, :filter_by, :filter_by_scope, :require=>:index
-  filter_access_to :update_csr, require: [:update]
+  filter_access_to :update_csr, :generate_cert, require: [:update]
   filter_access_to :download, :start_over, :reprocess, :admin_update, :change_ext_order_number, :switch_from_comodo,
                    :developers, :require=>[:update, :delete]
-  filter_access_to :renew, :parse_csr, :generate_cert, require: [:create]
+  filter_access_to :renew, :parse_csr, require: [:create]
   filter_access_to :auto_renew, require: [:admin_manage]
   filter_access_to :show_cert_order, :validate_issue, :register_domains, :require=>:ajax
   before_filter :find_certificate, only: [:enrollment]
@@ -82,11 +82,11 @@ class CertificateOrdersController < ApplicationController
       elsif co_token.is_expired
         is_expired = true
         flash[:error] = "The page has expired or is no longer valid."
-      elsif co_token.due_date < DateTime.now
-        is_expired = true
-        co_token.update_attribute(:is_expired, true)
-
-        flash[:error] = "The page has expired or is no longer valid."
+      # elsif co_token.due_date < DateTime.now
+      #   is_expired = true
+      #   # co_token.update_attribute(:is_expired, true)
+      #
+      #   flash[:error] = "The page has expired or is no longer valid."
       else
         @certificate_order = co_token.certificate_order
         @token = params[:token]

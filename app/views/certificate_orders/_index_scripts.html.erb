@@ -921,6 +921,12 @@ jQuery(function($) {
           if ($('#notify_type').val() == 'token') {
             if (data.send_email == 'true') {
               alert('Activation link email successfully sent.');
+
+              if ($('[data-ref="'+ $('#certificate_order_ref').val() +'"]').attr('data-done') == 'false') {
+                $('[data-ref="'+ $('#certificate_order_ref').val() +'"]').attr('data-done', 'true');
+                $('[data-ref="'+ $('#certificate_order_ref').val() +'"]').attr('data-ori-text', $('[data-ref="'+ $('#certificate_order_ref').val() +'"]').text());
+                $('[data-ref="'+ $('#certificate_order_ref').val() +'"]').text('activation link sent. Resend?');
+              }
             }
 
             if (data.act_link != 'false') {
@@ -928,6 +934,11 @@ jQuery(function($) {
             }
           } else {
             alert('Request email successfully sent.');
+
+            if ($('[data-ref="'+ $('#certificate_order_ref').val() +'"]').attr('data-done') == 'false') {
+              $('[data-ref="'+ $('#certificate_order_ref').val() +'"]').attr('data-done', 'true');
+              $('[data-ref="'+ $('#certificate_order_ref').val() +'"]').text('activation request sent. Request again?');
+            }
           }
         } else if (data.status == 'not_found_ssl_account') {
           alert('Team account not found. Please try again.');
@@ -950,14 +961,6 @@ jQuery(function($) {
         } else {
           confirmed = confirm('Are you sure you want to resend the activation request email again?');
         }
-      } else {
-        $(this).attr('data-done', 'true');
-
-        if (notify_type == 'token') {
-          $(this).text('activation link sent. Resend?');
-        } else {
-          $(this).text('activation request sent. Request again?');
-        }
       }
 
       if (done == 'false' || (done == 'true' && confirmed)) {
@@ -966,7 +969,11 @@ jQuery(function($) {
 
         if (notify_type == 'token') {
           if ($('#is_epki_admin').val() == 'true') {
-            $('.chk_send_label').text($(this).text().charAt(0).toUpperCase() + $(this).text().slice(1));
+            if (done == 'false') {
+              $('.chk_send_label').text($(this).text().charAt(0).toUpperCase() + $(this).text().slice(1));
+            } else {
+              $('.chk_send_label').text($(this).attr('data-ori-text').charAt(0).toUpperCase() + $(this).attr('data-ori-text').slice(1));
+            }
             $('.epki_admin_modal').show();
           } else {
             $('form#send_notify_form').ajaxSubmit(send_notify_options);
@@ -1031,6 +1038,10 @@ jQuery(function($) {
         $('#epki_admin_modal_footer .btn-ok').prop('disabled', false);
 
         $('#epki_admin_modal').hide();
+      }
+
+      if (event.target == $('#domain_modal')[0]) {
+        $('#domain_modal').hide();
       }
     };
 
@@ -1631,13 +1642,6 @@ jQuery(function($) {
         }
       });
     });
-
-    window.onclick = function(event) {
-      if (event.target == $('#domain_modal')[0]) {
-        $('#domain_modal').hide();
-      }
-    }
-
   });
 });
 </script>
