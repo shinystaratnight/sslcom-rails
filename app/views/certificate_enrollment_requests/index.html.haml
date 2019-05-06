@@ -1,0 +1,90 @@
+- title = "Certificate Enrollment Requests"
+- will_paginate @requests
+- content_for :title, title
+- system_admins = current_user.is_system_admins?
+
+#validations
+  -# =render partial: "filter_form"
+  
+#validations.invoices-index
+  %table{cellspacing: "0"}
+    -if will_paginate @requests
+      %tfoot
+        %tr
+          %td{colspan: "7"}
+            = will_paginate @requests
+    %caption
+      %strong
+        = title
+      = will_paginate @requests
+
+    %thead
+      %tr.heading_row
+        %th Certificate
+        %th
+          = sort_link("duration", get_col_direction("duration", params), "Duration")
+        %th Order
+        - if system_admins
+          %th Team
+        %th Domains
+        %th CSR
+        -# %th Approver
+        %th Created At
+        %th Status
+        %th Actions
+
+    %tbody
+      = form_tag "#{api_domain}#{api_certificate_enrollment_path}", method: :post, id: "frm-admin-approve-request", class: "hidden" do
+        = hidden_field_tag :account_key, @ssl_account.api_credential.account_key
+        = hidden_field_tag :secret_key, @ssl_account.api_credential.secret_key
+        = hidden_field_tag :approver_id, current_user.try(:id)
+
+      - @requests.each do |r|
+        %tr
+          %td #{r.certificate.title}
+          
+          %td #{r.duration}
+          
+          %td 
+            - if r.order
+              = link_to r.order.reference_number, order_path(@ssl_slug, r.order)
+            - else
+              N/A
+          
+          - if system_admins
+            - team_name = r.ssl_account.get_team_name
+            %td
+              = link_to team_name, |
+              invoices_path(@ssl_slug, team: team_name, commit: "Search"), method: :get
+          
+          %td #{r.domains ? r.domains.count : 0}
+
+          %td #{r.signing_request ? "YES" : "NO" }
+
+          -# %td #{r.user ? user.email : "N/A" }
+          
+          %td #{r.created_at.strftime("%F")}
+          
+          %td #{r.status.upcase}
+          
+          %td#team-action-items.teams-index-text-left
+            - unless r.approved? || r.order
+              - domains = r.domains.blank? ? nil : r.domains.split(", ")
+              - data = { certificate_id: r.certificate.try(:id), duration: r.duration, domains: domains.flatten, request_id: r.id }
+              - unless r.certificate.is_smime_or_client?
+                - data = data.merge(api_url: "#{api_domain}#{api_certificate_create_v1_4_path}")
+              = link_to "<i class='fa fa-check-square'></i> approve".html_safe, "#",  |
+              class: "btn-admin-cert-enroll-approve", data: data
+              %br/
+            
+            - unless r.rejected? || r.approved?
+              = link_to "<i class='fa fa-times-circle'></i> reject".html_safe, |
+              reject_certificate_enrollment_request_path(@ssl_slug, r),        |
+              method: :put, data: {confirm: "Are you sure you want to REJECT this request?"}
+              %br/
+            
+            = link_to "<i class='fa fa-trash'></i> delete".html_safe,           |
+            certificate_enrollment_request_path(@ssl_slug, r), method: :delete, |
+            data: {confirm: "Are you sure you want to delete this request?"}
+
+          

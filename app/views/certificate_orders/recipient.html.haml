@@ -34,10 +34,12 @@
           - reg_contact = @certificate_order.registrant
           %label{for: 'registrant_contact'}
             Registrant Contact:
-            %span.label_desc
-              *Use contact from Registrant.
-          = check_box_tag :registrant_contact, 'true', false, |
-            data: {first_name: reg_contact.first_name, last_name: reg_contact.last_name, email: reg_contact.email }
+            -if reg_contact
+              %span.label_desc
+                *Use contact from Registrant.
+          -if reg_contact
+            = check_box_tag :registrant_contact, 'true', false, |
+              data: {first_name: reg_contact.first_name, last_name: reg_contact.last_name, email: reg_contact.email }
 
       .clearfix
         %label{for: 'first_name'}

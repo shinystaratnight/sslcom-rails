@@ -92,7 +92,7 @@ class CertificateOrderTokensController < ApplicationController
         # Sending Notify to TeamAdmin role's users.
         team_account = current_user.ssl_account
         unless team_account.blank?
-          team_admins = team_account.users.with_role(Role::ACCOUNT_ADMIN).uniq
+          team_admins = team_account.get_account_admins
           team_admins.each do |team_admin|
             OrderNotifier.request_token_send(co, team_admin, current_user).deliver
           end

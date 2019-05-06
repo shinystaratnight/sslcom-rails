@@ -51,12 +51,13 @@ class Order < ActiveRecord::Base
     self.non_wildcard_cents = 0 if self.non_wildcard_cents.blank?
   end
   
-  FAW                = "Funded Account Withdrawal"
-  DOMAINS_ADJUSTMENT = "Domains Adjustment"
-  SSL_CERTIFICATE    = "SSL.com Certificate Order"
-  MI_PAYMENT         = "Monthly Invoice Payment"
-  DI_PAYMENT         = "Daily Invoice Payment"
-  S_OR_C_ENROLLMENT  = "S/MIME or Client Enrollment"
+  FAW                    = "Funded Account Withdrawal"
+  DOMAINS_ADJUSTMENT     = "Domains Adjustment"
+  SSL_CERTIFICATE        = "SSL.com Certificate Order"
+  MI_PAYMENT             = "Monthly Invoice Payment"
+  DI_PAYMENT             = "Daily Invoice Payment"
+  S_OR_C_ENROLLMENT      = "S/MIME or Client Enrollment"
+  CERTIFICATE_ENROLLMENT = "Certificate Enrollment"
   
   # If team's billing_method is set to 'monthly', grab all orders w/'approved' approval
   # when running charges at the end of the month for orders from ucc reprocessing.

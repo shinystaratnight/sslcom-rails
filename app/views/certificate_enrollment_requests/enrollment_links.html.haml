@@ -1,0 +1,18 @@
+- title = "Enrollment Links For Team #{ @ssl_account.to_slug }"
+- content_for :title, title
+
+.enrollment-links-container
+  .enrollment-links
+    .enrollment-links__main-title #{ title }
+      
+    - @certificates.each do |c|
+      - unless c.is_free?
+        .enrollment-links__title #{ c.title }
+        
+        - ranges = [365, 730]
+        - ranges << 1095 unless c.is_server?
+        - ranges.each do |days|
+          .enrollment-links__days #{ days } days | #{ pluralize((days/365), "year") }
+          .enrollment-links__link
+            - link = new_certificate_enrollment_request_url(@ssl_account.to_slug, product: c.product, duration: days)
+            = link_to link, link

@@ -30,6 +30,11 @@
           %li=link_to "SSL Managers", registered_agents_path(ssl_slug: @ssl_slug)
           %li=link_to 'Contacts Manager', saved_contacts_contacts_path(ssl_slug: @ssl_slug)
           %li=link_to 'Identity Manager', saved_contacts_contacts_path(ssl_slug: @ssl_slug, registrants: true)
+        -if permitted_to? :index, :certificate_enrollment_requests
+          %br/
+          %li Orders:
+          %li=link_to 'Enrollment Links', enrollment_links_certificate_enrollment_requests_path(@ssl_slug)
+          %li=link_to 'Enrollment Requests', certificate_enrollment_requests_path(@ssl_slug)
       -else
         -if current_user.can_manage_certificates?
           %li=link_to "Certificate Mgmt", admin_index_certificates_path
@@ -47,8 +52,9 @@
       %li=link_to "EV UCC/SAN SSL", search_certificate_orders_path(@ssl_slug, search: "product:evucc#{is_test}")
       %li=link_to "EV Code Signing", search_certificate_orders_path(@ssl_slug, search: "product:ev-code-signing#{is_test}")
       %li=link_to "Physical Tokens", search_certificate_orders_path(@ssl_slug, search: "physical_tokens:in_transit,received,in_possession#{is_test}")
-      %li=link_to "Client/SMIME Pro", search_certificate_orders_path(@ssl_slug, search: "product:personal-pro#{is_test}")
-      %li=link_to "Client/SMIME Business", search_certificate_orders_path(@ssl_slug, search: "product:personal-business#{is_test}")
+      %li=link_to "Personal Basic", search_certificate_orders_path(@ssl_slug, search: "product:personal-basic#{is_test}")
+      %li=link_to "Personal Pro", search_certificate_orders_path(@ssl_slug, search: "product:personal-pro#{is_test}")
+      %li=link_to "Personal Business", search_certificate_orders_path(@ssl_slug, search: "product:personal-business#{is_test}")
       %li=link_to "NAESB Client", search_certificate_orders_path(@ssl_slug, search: "product:personal-naesb-basic#{is_test}")
       -unless current_user.is_system_admins?
         %li &nbsp;

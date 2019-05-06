@@ -83,6 +83,7 @@ class SslAccount < ActiveRecord::Base
   has_many  :cas_certificates
   has_many  :cas, through: :cas_certificates
   has_many  :certificate_order_tokens
+  has_many  :certificate_enrollment_requests
 
   accepts_nested_attributes_for :reseller, :allow_destroy=>false
 
@@ -600,6 +601,13 @@ class SslAccount < ActiveRecord::Base
   def get_invoice_pmt_description
     billing_monthly? ? Order::MI_PAYMENT : Order::DI_PAYMENT
   end
+
+  def get_account_admins
+    Rails.cache.fetch("#{cache_key}/get_account_admins") do
+      users.with_role(Role::ACCOUNT_ADMIN).uniq
+    end
+  end
+  memoize :get_account_admins
 
   def get_account_owner
     uid=Rails.cache.fetch("#{cache_key}/get_account_owner") do

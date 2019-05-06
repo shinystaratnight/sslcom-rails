@@ -1150,8 +1150,8 @@ jQuery(function($) {
 
                           <%if current_user.is_super_user?%>
                             $('[name="domains[' + value + '][dcv]"]').customComboBox({
-                              tipText: "Super User's Email",
-                              tipClass: "super_user_email",
+                              tipText: "Enter New Email Address",
+                              tipClass: "enter new aemail address",
                               allowed: /[A-Za-z0-9\_\-\.\@\s]/,
                               notallowed: /[\<\>]/,
                               index: 'first',
@@ -1368,6 +1368,7 @@ jQuery(function($) {
             }
           });
 
+          <%if controller_name=="validations" %>
           if (domains_emails.length > 0) {
             if (confirm('Proceed to save manual email(s)?')) {
               $('#waiting_bar').show();
@@ -1391,6 +1392,7 @@ jQuery(function($) {
           } else {
             $('form.api_certificate_request').submit();
           }
+          <%end %>
         });
 
         // Form Submit by AJAX

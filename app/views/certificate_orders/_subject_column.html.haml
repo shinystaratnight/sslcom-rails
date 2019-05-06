@@ -4,6 +4,7 @@
 -certificate ||= co.certificate
 -cn = co.is_unused? ? 'credit - '+certificate.description["certificate_type"]+' certificate' :  (certificate.is_code_signing? ? (co.registrant.try(:company_name) || certificate.description["certificate_type"]+' certificate') : co.common_name)
 -cn = "expired certificate" if co.is_expired_credit?
+-cn ||= ""
 .subject_column
   %a.common_name(title=cn)
     -test_text = co.is_test ? " (TEST) " : ""

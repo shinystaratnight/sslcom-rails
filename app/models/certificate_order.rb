@@ -25,6 +25,7 @@ class CertificateOrder < ActiveRecord::Base
   has_many    :certificate_contacts, through: :certificate_contents
   has_many    :domain_control_validations, through: :certificate_names
   has_many    :csrs, :through=>:certificate_contents, :source=>"csr"
+  has_many    :csr_unique_values, through: :csrs
   has_many    :signed_certificates, :through=>:csrs do
     def expired
       where{expiration_date < Date.today}
@@ -137,8 +138,7 @@ class CertificateOrder < ActiveRecord::Base
     # if 'is_test' and 'order_by_csr' are the only search terms, keep it simple
     result = result.includes(ssl_account: :users, certificate_contents: :csr).joins{certificate_contents.outer}.
               joins{certificate_contents.csr.outer}.
-              joins{certificate_contents.signed_certificates.outer}.joins{ssl_account.outer}.
-              joins{ssl_account.users.outer} unless (
+              joins{certificate_contents.signed_certificates.outer} unless (
                   term.blank? and
                   !filters.map{|k,v|k.to_s unless v.blank?}.compact.empty? and
                   (filters.map{|k,v|k.to_s unless v.blank?}.compact - %w(is_test order_by_csr ref)).empty?)
@@ -150,7 +150,7 @@ class CertificateOrder < ActiveRecord::Base
                          (external_order_number =~ "%#{term}%") |
                          (notes =~ "%#{term}%")}
                  else
-                   result.where{
+                   result.joins{ssl_account.outer}.joins{ssl_account.users.outer}.where{
                      (notes =~ "%#{term}%") |
                      (ssl_account.acct_number =~ "%#{term}%") |
                          (ssl_account.company_name =~ "%#{term}%") |
@@ -197,7 +197,8 @@ class CertificateOrder < ActiveRecord::Base
     end
     %w(ref).each do |field|
       query=filters[field.to_sym]
-      result = result.where{ref >> query.split(',')} if query
+      result = result.joins{certificate_contents}.where{(ref >> query.split(',')) |
+          (certificate_contents.send(field.to_sym) >> query.split(','))} if query
     end
     %w(country strength).each do |field|
       query=filters[field.to_sym]
@@ -212,16 +213,17 @@ class CertificateOrder < ActiveRecord::Base
             (workflow_state >> query.split(','))} if query
     end
     search_fields=%w(common_name organization organization_unit state subject_alternative_names locality decoded)
-    if (filters.select{|k,v|!v.blank?}.keys.map(&:to_s)-search_fields).empty? and term.blank?
+    intersect=filters.select{|k,v|!v.blank?}.keys.map(&:to_s) & search_fields
+    if !intersect.empty? and term.blank?
       result = not_new.includes(certificate_contents: :csr).joins{certificate_contents.outer}.
           joins{certificate_contents.csr.outer}.
           joins{certificate_contents.signed_certificates.outer}
-    end
-    search_fields.each do |field|
-      query=filters[field.to_sym]
-      result = result.where{
-        (certificate_contents.csr.signed_certificates.send(field.to_sym) =~ "%#{query}%") |
-            (certificate_contents.csrs.send(field.to_sym) =~ "%#{query}%") } if query
+      intersect.each do |field|
+        query=filters[field.to_sym]
+        result = result.where{
+          (certificate_contents.csr.signed_certificates.send(field.to_sym) =~ "%#{query}%") |
+              (certificate_contents.csrs.send(field.to_sym) =~ "%#{query}%") } if query
+      end
     end
     %w(address).each do |field|
       query=filters[field.to_sym]
@@ -231,12 +233,12 @@ class CertificateOrder < ActiveRecord::Base
     end
     %w(login email).each do |field|
       query=filters[field.to_sym]
-      result = result.where{
+      result = result.joins{ssl_account.users.outer}.where{
         (ssl_account.users.send(field.to_sym) =~ "%#{query}%")} if query
     end
     %w(account_number).each do |field|
       query=filters[field.to_sym]
-      result = result.where{
+      result = result.joins{ssl_account.outer}.where{
         (ssl_account.send(field.to_sym) =~ "%#{query}%")} if query
     end
     %w(address).each do |field|
@@ -690,11 +692,13 @@ class CertificateOrder < ActiveRecord::Base
 
   def add_reproces_order(target_order)
     target_order.save unless target_order.persisted?
-    target_order.line_items.destroy_all
-    if target_order.valid?
-      line_items.create(
-          order_id: target_order.id, cents: target_order.cents, amount: target_order.amount, currency: 'USD'
-      )
+    self.with_lock do
+      target_order.line_items.destroy_all
+      if target_order.valid?
+        line_items.create(
+            order_id: target_order.id, cents: target_order.cents, amount: target_order.amount, currency: 'USD'
+        )
+      end
     end
   end
 
@@ -1098,9 +1102,9 @@ class CertificateOrder < ActiveRecord::Base
       if certificate_content.issued?
         csr.signed_certificates.last.try(:common_name)
       else
-        certificate_content.certificates_names.where{is_common_name==true}.last.try(:name) || csr.try(:common_name) || ""
+        certificate_content.certificate_names.where{is_common_name==true}.last.try(:name) || csr.try(:common_name) || ""
       end
-    end
+    end || ""
   end
   alias :common_name :subject
   memoize :subject

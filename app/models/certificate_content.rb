@@ -52,7 +52,7 @@ class CertificateContent < ActiveRecord::Base
     .*?\.apple\.com\z \Aapple\.com\z .*?\.microsoft\.com\z \Amicrosoft\.com\z .*?\.paypal\.com\z \Apaypal\.com\z
     .*?\.mozilla\.com\z \Amozilla\.com\z .*?\.gmail\.com\z \Agmail\.com\z .*?\.goog\.com\z \Agoog\.com\z
     .*?\.?github\.com .*?\.?amazon\.com .*?\.?cloudapp\.com amzn ssltools certchat .*?\.certlock\.com\z \Acertlock\.com\z
-    .*?\.10million\.org .*?\.?android\.com .*?\.aol\.com .*?\.azadegi\.com .*?\.balatarin\.com .*?\.?comodo\.com
+    .*?\.10million\.org .*?\.android\.com\z \Aandroid\.com\z .*?\.aol\.com .*?\.azadegi\.com .*?\.balatarin\.com .*?\.?comodo\.com
     .*?\.?digicert\.com .*?\.?yahoo\.com .*?\.?entrust\.com .*?\.?godaddy\.com .*?\.?oracle\.com
     .*?\.?globalsign\.com .*?\.JanamFadayeRahbar\.com .*?\.?logmein\.com .*?\.mossad\.gov\.il
     .*?\.?mozilla\.org .*?\.RamzShekaneBozorg\.com .*?\.SahebeDonyayeDigital\.com .*?\.skype\.com .*?\.startssl\.com
@@ -68,9 +68,10 @@ class CertificateContent < ActiveRecord::Base
                # temporary for sandbox
                474187=> %w(.*?\.ssl\.com\z \Assl\.com\z .*?\.certlock\.com\z \Acertlock\.com\z),
                493588=> %w(.*?\.ssl\.com\z \Assl\.com\z .*?\.certlock\.com\z \Acertlock\.com\z),
-               # Nick (next 2)
+               # Nick (next 3)
                492759=> %w(.*?\.ssl\.com\z \Assl\.com\z .*?\.certlock\.com\z \Acertlock\.com\z),
                497080=> %w(.*?\.ssl\.com\z \Assl\.com\z .*?\.certlock\.com\z \Acertlock\.com\z),
+               474299=> %w(.*?\.ssl\.com\z \Assl\.com\z .*?\.certlock\.com\z \Acertlock\.com\z),
                464808=> %w(.*?\.ssl\.com\z \Assl\.com\z .*?\.certlock\.com\z \Acertlock\.com\z)}
 
   DOMAIN_COUNT_OFFLOAD=50
@@ -328,7 +329,7 @@ class CertificateContent < ActiveRecord::Base
 
   # are any of the sub/domains trademarks?
   def infringement
-    return all_domains.map{|domain|domain if (TRADEMARKS-
+    return ca_id.blank? ? [] : all_domains.map{|domain|domain if (TRADEMARKS-
         (ssl_account and WHITELIST[ssl_account.id] ? WHITELIST[ssl_account.id] : [])).any?{|trademark|
       domain.downcase =~ Regexp.new(trademark, Regexp::IGNORECASE)}}.compact
   end
@@ -510,7 +511,7 @@ class CertificateContent < ActiveRecord::Base
 
   def common_name
     (certificate_names.find_by_is_common_name(true).try(:name) ||
-        certificate_names.last.name || csr.try(:common_name)).downcase
+        certificate_names.last.try(:name) || csr.try(:common_name)).downcase
   end
 
   def has_all_contacts?
