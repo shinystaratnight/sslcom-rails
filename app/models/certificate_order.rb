@@ -691,8 +691,8 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def add_reproces_order(target_order)
-    target_order.save unless target_order.persisted?
     self.with_lock do
+      target_order.save unless target_order.persisted?
       target_order.line_items.destroy_all
       if target_order.valid?
         line_items.create(
