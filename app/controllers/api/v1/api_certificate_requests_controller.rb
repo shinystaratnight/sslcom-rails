@@ -1266,18 +1266,21 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
         unless @acr.csr.blank?
           @result.md5_hash = @acr.csr.md5_hash
           @result.sha2_hash = @acr.csr.sha2_hash
+          @result.dns_md5_hash = @acr.csr.dns_md5_hash
           @result.dns_sha2_hash = @acr.csr.dns_sha2_hash
           @result.ca_tag = @acr.csr.ca_tag
         end
         @acr.all_domains.each do |domain|
           @result.dcv_methods.merge! domain=>{}
-          @result.dcv_methods[domain].merge! "email_addresses"=>CertificateName.candidate_email_addresses(domain)
+          @result.dcv_methods[domain].merge! "email_addresses"=> @acr.certificate_content.ca_id.nil? ?
+                                              ComodoApi.domain_control_email_choices(domain).email_address_choices :
+                                              CertificateName.candidate_email_addresses(domain)
           unless @acr.csr.blank?
             @result.dcv_methods[domain].merge! "http_csr_hash"=>
                                                    {"http"=>"#{@acr.csr.dcv_url(false,domain)}",
                                                     "allow_https"=>"true",
                                                     "contents"=>"#{@result.sha2_hash}\n#{@result.ca_tag}#{"\n#{@acr.csr.unique_value}" unless @acr.csr.unique_value.blank?}"}
-            @result.dcv_methods[domain].merge! "cname_csr_hash"=>{"cname"=>"#{@result.md5_hash}.#{domain}. CNAME #{@result.dns_sha2_hash}.#{@result.ca_tag}.","name"=>"#{@result.md5_hash}.#{domain}","value"=>"#{@result.dns_sha2_hash}.#{@result.ca_tag}."}
+            @result.dcv_methods[domain].merge! "cname_csr_hash"=>{"cname"=>"#{@result.dns_md5_hash}.#{domain}. CNAME #{@result.dns_sha2_hash}.#{@result.ca_tag}.","name"=>"#{@result.dns_md5_hash}.#{domain}","value"=>"#{@result.dns_sha2_hash}.#{@result.ca_tag}."}
           end
         end
       end
@@ -1317,7 +1320,9 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
 
             ([@acr.csr.common_name]+(@result.domains || [])).compact.map(&:downcase).uniq.each do |domain|
               @result.dcv_methods.merge! domain=>{}
-              @result.dcv_methods[domain].merge! "email_addresses"=>ComodoApi.domain_control_email_choices(domain).email_address_choices
+              @result.dcv_methods[domain].merge! "email_addresses"=> @acr.certificate_content.ca_id.nil? ?
+                                                  ComodoApi.domain_control_email_choices(domain).email_address_choices :
+                                                  CertificateName.candidate_email_addresses(domain)
               unless @acr.csr.blank?
                 @result.dcv_methods[domain].merge! "http_csr_hash"=>
                                                        {"http"=>"#{@acr.csr.dcv_url(false,domain)}",

@@ -870,12 +870,12 @@ class SslAccount < ActiveRecord::Base
           end
           d[1].each do |ec|
             logger.info "create SentReminder"
-            SentReminder.create(trigger_value: ec.year,
+            SentReminder.find_or_initialize_by(trigger_value: ec.year,
                                 expires_at: ec.cert.expiration_date,
                                 signed_certificate_id: ec.cert.id,
                                 subject: ec.cert.common_name,
                                 body: body,
-                                recipients: d[0].split(",").last)
+                                recipients: d[0].split(",").last).save
           end
         rescue Exception=>e
           logger.error e.backtrace.inspect
