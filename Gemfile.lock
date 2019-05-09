@@ -513,7 +513,6 @@ PLATFORMS
 
 DEPENDENCIES
   actionpack-action_caching (~> 1.1, >= 1.1.1)
-  actionview (>= 4.2.11.1)
   activemerchant
   acts_as_tree
   airbrake (~> 8.3.2)
