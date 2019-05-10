@@ -377,7 +377,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
         country: self.country_name || csr_obj.country)
     if cc.csr_submitted?
       cc.provide_info!
-      if Contact.optional_contacts? && contacts[:saved_contacts]
+      if Contact.optional_contacts? && contacts && contacts[:saved_contacts]
         sc = contacts[:saved_contacts]
         if sc && sc.is_a?(Array) && sc.any?
           sc.each do |c_id|

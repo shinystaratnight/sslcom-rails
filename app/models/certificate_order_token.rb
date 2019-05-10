@@ -16,7 +16,7 @@ class CertificateOrderToken < ActiveRecord::Base
     where{(status == PENDING_STATUS) &
         (callback_type == CALLBACK_SCHEDULE) &
         (is_callback_done == false) &
-        (callback_datetime < DateTime.current().utc)
+        (callback_datetime < DateTime.current())
     }
   }
 end

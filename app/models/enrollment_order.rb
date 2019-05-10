@@ -1,0 +1,3 @@
+class EnrollmentOrder < Order
+
+end

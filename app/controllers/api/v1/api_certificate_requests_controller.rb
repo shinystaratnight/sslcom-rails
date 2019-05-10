@@ -14,7 +14,8 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
     ApiCertificateRequest::DETAILED_ACCESSORS+
     ApiCertificateRequest::REPROCESS_ACCESSORS+
     ApiCertificateRequest::REVOKE_ACCESSORS+
-    ApiCertificateRequest::DCV_EMAILS_ACCESSORS
+    ApiCertificateRequest::DCV_EMAILS_ACCESSORS+
+    ApiCertificateRequest::CERTIFICATE_ENROLLMENT_ACCESSORS
   ).uniq]
 
   ORDERS_DOMAIN = "https://#{Settings.community_domain}"
@@ -146,6 +147,24 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
         @result.cert_results = cert_chain
         @result.cert_common_name = (res.first.subject.common_name || res.first.serial.to_s).
             gsub(/[\s\.\*\(\)]/,"_").downcase + '.crt'
+      end
+    else
+      InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
+    end
+
+    render_200_status
+  rescue => e
+    render_500_error e
+  end
+
+  def certificate_enrollment_order
+    set_template "certificate_enrollment_order"
+
+    if @result.valid? && @result.save
+      if @result.certificate_enrollment
+        @result.is_ordered = true
+      else
+        @result.is_ordered = false
       end
     else
       InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
@@ -1247,18 +1266,21 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
         unless @acr.csr.blank?
           @result.md5_hash = @acr.csr.md5_hash
           @result.sha2_hash = @acr.csr.sha2_hash
+          @result.dns_md5_hash = @acr.csr.dns_md5_hash
           @result.dns_sha2_hash = @acr.csr.dns_sha2_hash
           @result.ca_tag = @acr.csr.ca_tag
         end
         @acr.all_domains.each do |domain|
           @result.dcv_methods.merge! domain=>{}
-          @result.dcv_methods[domain].merge! "email_addresses"=>CertificateName.candidate_email_addresses(domain)
+          @result.dcv_methods[domain].merge! "email_addresses"=> @acr.certificate_content.ca_id.nil? ?
+                                              ComodoApi.domain_control_email_choices(domain).email_address_choices :
+                                              CertificateName.candidate_email_addresses(domain)
           unless @acr.csr.blank?
             @result.dcv_methods[domain].merge! "http_csr_hash"=>
                                                    {"http"=>"#{@acr.csr.dcv_url(false,domain)}",
                                                     "allow_https"=>"true",
                                                     "contents"=>"#{@result.sha2_hash}\n#{@result.ca_tag}#{"\n#{@acr.csr.unique_value}" unless @acr.csr.unique_value.blank?}"}
-            @result.dcv_methods[domain].merge! "cname_csr_hash"=>{"cname"=>"#{@result.md5_hash}.#{domain}. CNAME #{@result.dns_sha2_hash}.#{@result.ca_tag}.","name"=>"#{@result.md5_hash}.#{domain}","value"=>"#{@result.dns_sha2_hash}.#{@result.ca_tag}."}
+            @result.dcv_methods[domain].merge! "cname_csr_hash"=>{"cname"=>"#{@result.dns_md5_hash}.#{domain}. CNAME #{@result.dns_sha2_hash}.#{@result.ca_tag}.","name"=>"#{@result.dns_md5_hash}.#{domain}","value"=>"#{@result.dns_sha2_hash}.#{@result.ca_tag}."}
           end
         end
       end
@@ -1298,7 +1320,9 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
 
             ([@acr.csr.common_name]+(@result.domains || [])).compact.map(&:downcase).uniq.each do |domain|
               @result.dcv_methods.merge! domain=>{}
-              @result.dcv_methods[domain].merge! "email_addresses"=>ComodoApi.domain_control_email_choices(domain).email_address_choices
+              @result.dcv_methods[domain].merge! "email_addresses"=> @acr.certificate_content.ca_id.nil? ?
+                                                  ComodoApi.domain_control_email_choices(domain).email_address_choices :
+                                                  CertificateName.candidate_email_addresses(domain)
               unless @acr.csr.blank?
                 @result.dcv_methods[domain].merge! "http_csr_hash"=>
                                                        {"http"=>"#{@acr.csr.dcv_url(false,domain)}",
@@ -1417,6 +1441,8 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
               when "retrieve_v1_3", "show_v1_4", "index_v1_4", "detail_v1_4", "view_upload_v1_4", "upload_v1_4",
                   "update_site_seal_v1_4", "generate_certificate_v1_4","callback_v1_4"
                 ApiCertificateRetrieve
+              when "certificate_enrollment_order"
+                ApiCertificateEnrollment
               when "retrieve_signed_certificates"
                 ApiSignedCertificateRequest
               when "api_parameters_v1_4"

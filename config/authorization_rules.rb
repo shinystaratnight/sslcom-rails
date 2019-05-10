@@ -205,6 +205,17 @@ authorization do
     ] do
       if_attribute ssl_account_id: is {user.ssl_account.id}
     end
+    #
+    # CertificateEnrollmentRequestRequests
+    #
+    has_permission_on :certificate_enrollment_requests, to: [:enrollment_links, :index]
+    has_permission_on :certificate_enrollment_requests, to: [
+      :update,
+      :destroy,
+      :reject
+    ] do
+      if_attribute ssl_account_id: is {user.ssl_account.id}
+    end
   end
 
   # ============================================================================
@@ -573,13 +584,17 @@ authorization do
     # Domains
     #
     has_permission_on :domains, to: [:index]
+    #
+    # CertificateEnrollmentRequests
+    #
+    has_permission_on :certificate_enrollment_requests, to: :create
   end
 
   # ============================================================================
   # GUEST Role
   # ============================================================================ 
   role :guest do
-    has_permission_on :csrs, :certificate_orders, :orders,  :to => [:create]
+    has_permission_on :csrs, :certificate_orders, :orders,  :to => [:create, :smime_client_enrollment]
     has_permission_on :certificates,  :to => :buy_renewal
     has_permission_on :site_seals, :to => [:site_report]
     has_permission_on :users, :ssl_accounts, :resellers,    :to => [:create, :update]
@@ -617,6 +632,10 @@ authorization do
     # Ajax
     has_permission_on :certificate_orders, :to => :ajax
     has_permission_on :validations, :to => :ajax
+    #
+    # CertificateEnrollmentRequests
+    #
+    has_permission_on :certificate_enrollment_requests, to: [:create, :new, :enrollment_links]
   end
 end
 

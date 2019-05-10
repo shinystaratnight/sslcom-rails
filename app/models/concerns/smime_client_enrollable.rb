@@ -10,10 +10,9 @@ module SmimeClientEnrollable
       @sce_co = co
       @sce_email = @sce_co.certificate_content.domains.first
       @sce_iv_exists = @sce_ssl.individual_validations.find_by(email: @sce_email)
-      assignee_id = @sce_iv_exists.user_id if @sce_iv_exists
-
-      if assignee_id
-        @sce_co.update_column(:assignee_id, assignee_id)
+      
+      if @sce_iv_exists && User.find_by(id: @sce_iv_exists.user_id)
+        @sce_co.update_column(:assignee_id, @sce_iv_exists.user_id)
       else
         smime_client_enroll_invite_recipient
       end
@@ -31,14 +30,15 @@ module SmimeClientEnrollable
       user_exists_for_team = @sce_ssl.users.find_by(id: user_exists.id)
       
       if user_exists_for_team
-        @sce_iv_exists = @sce_ssl.individual_validations.find_by(user_id: user_exists_for_team.id)
+        @sce_iv_exists = @sce_ssl.individual_validations.find_by(email: user_exists_for_team.email)
+        smime_client_enroll_sync_user_iv(user_exists_for_team.id)
       end
 
       unless @sce_iv_exists
         # Add IV for user to team.
         @sce_iv_exists = @sce_ssl.individual_validations.create(
-          first_name: '',
-          last_name: '',
+          first_name: (user_exists.first_name || ''),
+          last_name: (user_exists.last_name || ''),
           email: user_exists.email,
           status: user_exists_for_team ? Contact::statuses[:validated] : Contact::statuses[:in_progress],
           user_id: user_exists.id
@@ -68,6 +68,12 @@ module SmimeClientEnrollable
     end
   end
 
+  def smime_client_enroll_sync_user_iv(user_id)
+    unless user_id == @sce_iv_exists.user_id
+      @sce_iv_exists.update_column(:user_id, user_id)
+    end
+  end
+
   def smime_client_enroll_validate
     require_ov_iv = @sce_co.certificate.requires_locked_registrant?
     ov = @sce_co.locked_registrant
@@ -78,7 +84,7 @@ module SmimeClientEnrollable
       ov.validated! if require_ov_iv && !ov.validated?
       lr.validated! unless lr.validated?
       @sce_iv_exists.validated! unless @sce_iv_exists.validated?
-      cc.validate!
+      cc.validate! unless cc.validated?
     else
       ov.pending_validation! if require_ov_iv && !ov.pending_validation?
       lr.pending_validation! unless lr.pending_validation?

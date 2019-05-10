@@ -1,7 +1,7 @@
 class ManagedCsrsController < ApplicationController
   before_filter :require_user, :set_ssl_slug, except: [:new, :add_generated_csr]
   before_filter :set_row_page, only: [:index]
-  before_filter :set_sign_hash_algorithms, only: [:new]
+  before_filter :set_sign_hash_algorithms, :find_ssl_account, only: [:new]
 
   def index
     @csrs = (current_user.ssl_account.all_csrs).paginate(@p)
@@ -10,7 +10,7 @@ class ManagedCsrsController < ApplicationController
   def new
     if params[:cert_ref]
       @cert_ref = params[:cert_ref]
-      @certificate_order=current_user.ssl_account.certificate_orders.find_by_ref(@cert_ref)
+      @certificate_order=@ssl_account.certificate_orders.find_by_ref(@cert_ref)
     elsif params[:cert_token]
       @is_server = params[:is_server]
       @cert_token = params[:cert_token]

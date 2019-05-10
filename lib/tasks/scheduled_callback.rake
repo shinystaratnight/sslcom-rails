@@ -17,16 +17,16 @@ namespace 'scheduled_callback' do
         phone_number = co_token.certificate_order.locked_registrant.phone || ''
         country_code = co_token.certificate_order.locked_registrant.country_code || '1'
 
-        # Call by SMS
-        @response = Authy::PhoneVerification.start(
-            via: 'sms',
-            country_code: country_code,
-            phone_number: phone_number
-        )
+        if co_token.callback_method == 'sms'
+          # Call by SMS
+          @response = Authy::PhoneVerification.start(
+              via: 'sms',
+              country_code: country_code,
+              phone_number: phone_number
+          )
 
-        if @response.ok?
           # Update is_callback_done
-          co_token.update_column :is_callback_done, true
+          co_token.update_column :is_callback_done, true if @response.ok?
         else
           # Call by Voice
           @response = Authy::PhoneVerification.start(

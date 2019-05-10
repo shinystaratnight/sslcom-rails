@@ -7,7 +7,7 @@
       var tz_offset = tz.timezoneOffset() * (-1);
 
       if ($('#callback_time_zone').length) {
-        $('#callback_time_zone option[value="'+ tz_offset / 60 +'"]').attr('selected', true);
+        $('#callback_time_zone option[value*="'+ tz_offset / 60 +'"]').attr('selected', true);
       }
 
       $(document).on('keyup', '#email_verification_code', function() {
@@ -220,12 +220,19 @@
         });
       });
 
-      $(document).on('click', '#callback_method', function() {
+      $(document).on('click', '#callback_type', function() {
         if ($(this).val() == 'callback') {
           $('.phone-call-block').show();
           $('.phone-callback-date-block').hide();
+          $('.callback-method').hide();
         } else if ($(this).val() == 'schedule' || $(this).val() == 'manual') {
           $('.phone-call-block').hide();
+
+          if ($(this).val() == 'schedule') {
+            $('.callback-method').show();
+          } else {
+            $('.callback-method').hide();
+          }
           $('.phone-callback-date-block').show();
         }
       });
@@ -276,11 +283,14 @@
           $('#content').find('.inner').children().first().remove();
         }
 
+        callback_method = $("#callback_type").val() == 'manual' ? 'call' : $("input[name='callback_type_method']:checked").val();
+
         $.ajax({
           url: register_callback_url,
           data: {
             token: $('#token').val(),
-            callback_type: $("#callback_method").val(),
+            callback_method: callback_method,
+            callback_type: $("#callback_type").val(),
             callback_timezone: $('#callback_time_zone').val(),
             callback_date: $('#callback_date').val(),
             callback_time: $('#callback_time').val()
@@ -290,10 +300,16 @@
             var message_wrap_element = $('<div></div>');
 
             if (data['status'] == 'success-manual' || data['status'] == 'success-schedule') {
-              $('#callback_method').prop('disabled', true);
+              $('#callback_type').prop('disabled', true);
               $('.phone-call-block').remove();
               $('.phone-callback-date-block').remove();
               $('.phone-verification-block').remove();
+
+              $('.callback-method-desc').text(data['callback_method']);
+              $('.callback-datetime-desc').text(data['callback_datetime']);
+
+              $('.phone-callback-method-desc').show();
+              $('.phone-callback-datetime-desc').show();
 
               message_wrap_element.attr('class', 'flash_message notice');
 
@@ -301,7 +317,11 @@
               if (data['status'] == 'success-manual') {
                 message_element.append('Thank you. An SSL.com vetting agent will call you at specified date and time.');
               } else if (data['status'] == 'success-schedule') {
-                message_element.append('Thank you. A call or sms will be made to you at specified date and time automatically.');
+                if (callback_method == 'sms') {
+                  message_element.append('Thank you. A sms will be made to you at specified date and time automatically.');
+                } else {
+                  message_element.append('Thank you. A call will be made to you at specified date and time automatically.');
+                }
               }
               message_wrap_element.append(message_element);
 

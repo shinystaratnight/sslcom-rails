@@ -204,7 +204,7 @@ class SslAccountsController < ApplicationController
       redirect_to admin_show_user_path(@ssl_account.get_account_owner)
     end
   end
-  
+
   private
   
   def update_no_limit

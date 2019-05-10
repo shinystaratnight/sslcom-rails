@@ -17,6 +17,8 @@
 class CertificateOrdersController < ApplicationController
   layout 'application'
   include OrdersHelper
+  include CertificateOrdersHelper
+  
   skip_before_filter :verify_authenticity_token, only: [:parse_csr]
   filter_access_to :all, except: [:generate_cert]
   filter_access_to :read, :update, :delete, :show, :edit, :developer, :recipient
@@ -28,6 +30,7 @@ class CertificateOrdersController < ApplicationController
   filter_access_to :renew, :parse_csr, :generate_cert, require: [:create]
   filter_access_to :auto_renew, require: [:admin_manage]
   filter_access_to :show_cert_order, :validate_issue, :register_domains, :require=>:ajax
+  before_filter :find_certificate, only: [:enrollment]
   before_filter :load_certificate_order,
                 only: [:show, :show_cert_order, :validate_issue, :update, :edit, :download, :destroy, :delete, :update_csr, :auto_renew, :start_over,
                        :change_ext_order_number, :admin_update, :developer, :sslcom_ca, :update_tags, :recipient, :validate_issue]
@@ -45,7 +48,7 @@ class CertificateOrdersController < ApplicationController
 
   def smime_client_enrollment
     if params[:get_duration]
-      smime_client_duration
+      render_certificate_durations
     elsif params[:smime_client_create]
       smime_client_create
     else
@@ -183,7 +186,8 @@ class CertificateOrdersController < ApplicationController
         cc.add_ca(@certificate_order.ssl_account) if @certificate_order.external_order_number.blank?
         cc.save
       end
-      if @certificate_order.certificate.is_client_pro? || @certificate_order.certificate.is_client_basic?
+      if (@certificate_order.certificate.is_client_pro? || @certificate_order.certificate.is_client_basic?) &&
+          !@certificate_order.certificate_content.validated?
         redirect_to recipient_certificate_order_path(@ssl_slug, @certificate_order.ref)
       else
         @certificate = @certificate_order.mapped_certificate
@@ -753,8 +757,9 @@ class CertificateOrdersController < ApplicationController
   end
 
   def smime_client_init
+    find_tier
     @certificates = Certificate.get_smime_client_products(@tier)
-    @certificate = @certificates.first
+    @certificate ||= @certificates.first
 
     co = CertificateOrder.new(
       duration: 2,
@@ -765,15 +770,6 @@ class CertificateOrdersController < ApplicationController
     @certificate_order = Order.setup_certificate_order(
       certificate: @certificate, certificate_order: co
     )
-  end
-
-  def smime_client_duration
-    @certificate = Certificate.find params[:certificate_id]
-    partial = render_to_string(
-      partial: 'certificate_orders/smime_client_enrollment/duration_form',
-      layout: false
-    )
-    render json: {content: partial}, status: :ok
   end
 
   def client_smime_validate

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190423103116) do
+ActiveRecord::Schema.define(version: 20190510161052) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        limit: 255
@@ -322,6 +322,26 @@ ActiveRecord::Schema.define(version: 20190423103116) do
   add_index "certificate_contents", ["ref"], name: "index_certificate_contents_on_ref", using: :btree
   add_index "certificate_contents", ["workflow_state"], name: "index_certificate_contents_on_workflow_state", using: :btree
 
+  create_table "certificate_enrollment_requests", force: :cascade do |t|
+    t.integer  "certificate_id",     limit: 4,     null: false
+    t.integer  "ssl_account_id",     limit: 4,     null: false
+    t.integer  "user_id",            limit: 4
+    t.integer  "order_id",           limit: 4
+    t.integer  "duration",           limit: 4,     null: false
+    t.text     "domains",            limit: 65535, null: false
+    t.text     "common_name",        limit: 65535
+    t.text     "signing_request",    limit: 65535
+    t.integer  "server_software_id", limit: 4
+    t.integer  "status",             limit: 4
+    t.datetime "created_at",                       null: false
+    t.datetime "updated_at",                       null: false
+  end
+
+  add_index "certificate_enrollment_requests", ["certificate_id"], name: "index_certificate_enrollment_requests_on_certificate_id", using: :btree
+  add_index "certificate_enrollment_requests", ["order_id"], name: "index_certificate_enrollment_requests_on_order_id", using: :btree
+  add_index "certificate_enrollment_requests", ["ssl_account_id"], name: "index_certificate_enrollment_requests_on_ssl_account_id", using: :btree
+  add_index "certificate_enrollment_requests", ["user_id"], name: "index_certificate_enrollment_requests_on_user_id", using: :btree
+
   create_table "certificate_lookups", force: :cascade do |t|
     t.text     "certificate", limit: 65535
     t.string   "serial",      limit: 255
@@ -378,6 +398,7 @@ ActiveRecord::Schema.define(version: 20190423103116) do
     t.string   "callback_timezone",        limit: 255
     t.datetime "callback_datetime"
     t.boolean  "is_callback_done"
+    t.string   "callback_method",          limit: 255
   end
 
   create_table "certificate_orders", force: :cascade do |t|

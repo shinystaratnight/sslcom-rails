@@ -83,6 +83,7 @@ class SslAccount < ActiveRecord::Base
   has_many  :cas_certificates
   has_many  :cas, through: :cas_certificates
   has_many  :certificate_order_tokens
+  has_many  :certificate_enrollment_requests
 
   accepts_nested_attributes_for :reseller, :allow_destroy=>false
 
@@ -601,6 +602,13 @@ class SslAccount < ActiveRecord::Base
     billing_monthly? ? Order::MI_PAYMENT : Order::DI_PAYMENT
   end
 
+  def get_account_admins
+    Rails.cache.fetch("#{cache_key}/get_account_admins") do
+      users.with_role(Role::ACCOUNT_ADMIN).uniq
+    end
+  end
+  memoize :get_account_admins
+
   def get_account_owner
     uid=Rails.cache.fetch("#{cache_key}/get_account_owner") do
       Assignment.where(
@@ -862,12 +870,12 @@ class SslAccount < ActiveRecord::Base
           end
           d[1].each do |ec|
             logger.info "create SentReminder"
-            SentReminder.create(trigger_value: ec.year,
+            SentReminder.find_or_initialize_by(trigger_value: ec.year,
                                 expires_at: ec.cert.expiration_date,
                                 signed_certificate_id: ec.cert.id,
                                 subject: ec.cert.common_name,
                                 body: body,
-                                recipients: d[0].split(",").last)
+                                recipients: d[0].split(",").last).save
           end
         rescue Exception=>e
           logger.error e.backtrace.inspect

@@ -61,9 +61,9 @@ class UrlCallback < ActiveRecord::Base
       req.body = if url_callback.parameters['certificate_hook']
         cert_param = url_callback.parameters['certificate_hook'] || "certificate_hook"
         url_callback.parameters.delete('certificate_hook')
-        url_callback.parameters.merge(cert_param=>options[:certificate_hook])
+        url_callback.parameters.merge(cert_param=>eval(options[:certificate_hook].gsub!("null","nil")))
       else
-        url_callback.parameters.merge(certificate_hook: options[:certificate_hook])
+        url_callback.parameters.merge(certificate_hook: eval(options[:certificate_hook].gsub!("null","nil")))
       end.to_json
       res = http.request(req)
       if res.code == "301"

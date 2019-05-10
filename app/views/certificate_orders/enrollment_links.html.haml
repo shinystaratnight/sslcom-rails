@@ -1,0 +1,12 @@
+%h1 Enrollment Links For Team #{params[:ssl_slug]}
+
+-Certificate.get_smime_client_products.base_products.each do |certificate|
+  -unless certificate.is_free?
+    %h3=certificate.title
+    %dl
+      -ranges=[365, 730]
+      -ranges<<1095 unless certificate.is_server?
+      -ranges.each do |days|
+        -enroll=enrollment_url(ssl_slug: params[:ssl_slug], id: certificate.product, duration: days)
+        %dt #{days} days
+        %dd #{link_to enroll, enroll}

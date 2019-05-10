@@ -6971,6 +6971,11 @@ i.fa-external-link.fa-ssl-custom
     &.certificate_name td
       padding: 3px
       border-top: 1px solid grey
+
+      .super_user_email
+        font-weight: bold
+        color: red
+
       &:first-child
         text-align: center
         padding-left: 0px
@@ -8353,7 +8358,8 @@ i.fa-external-link.fa-ssl-custom
 
 .email-verification-block,
 .phone-call-block,
-.phone-verification-block
+.phone-verification-block,
+.phone-callback-date-block
   label
     line-height: 24px
     margin-bottom: 0px
@@ -8365,13 +8371,16 @@ i.fa-external-link.fa-ssl-custom
 .phone-callback-option
   border-bottom: 1px solid #CCC
 
-  .callback-method
+  .callback-type
     line-height: 24px
 
 .phone-callback-date-block
   label
     width: 6em
     line-height: 24px
+
+    &.callback_type_method_lbl
+      width: 3em
 
   .submit-date-block button
     margin-right: 15px
@@ -8384,6 +8393,10 @@ i.fa-external-link.fa-ssl-custom
   .date-block.error-required .error-block,
   .time-block.error-required .error-block
     display: block
+
+  .callback-type-method
+    margin-left: 0px
+    margin-right: 0px
 
 .phone-verification-block #phone_verification_code,
 .email-verification-block #email_verification_code
@@ -8894,6 +8907,9 @@ a.back_to_generate_cert_page
 .algorithm_wrap select
   width: 500px
 
+.managed_csr.algorithm_wrap select
+  width: 100%
+
 #add_csr_form
   .algorithm_wrap
     border-bottom: 1px solid #ddd
@@ -9032,3 +9048,34 @@ a.back_to_generate_cert_page
         color: #888
         text-decoration: none
         cursor: pointer
+
+/*
+ * Enrollment Links
+ */
+.enrollment-links-container
+  width: 900px
+
+  .enrollment-links
+    margin: 1rem auto
+    width: 700px
+
+    &__main-title
+      font-size: 1.9rem
+      font-weight: 600
+      letter-spacing: 0.5px
+      line-height: 4rem
+      text-align: center
+      margin-bottom: 1rem
+    
+    &__days, &__link
+      font-size: 1.25rem
+      margin: 0.5rem
+
+    &__title
+      font-size: 1.5rem
+      font-weight: 600
+      letter-spacing: 0.5px
+      margin-top: 1.2rem
+    
+    &__link:last-child
+      margin-bottom: 2rem

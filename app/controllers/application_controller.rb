@@ -103,6 +103,8 @@ class ApplicationController < ActionController::Base
     elsif cookies[:r_tier]
       @tier = ResellerTier.tier_suffix(cookies[:r_tier])
     end
+    @tier = nil if @tier.blank?
+    @tier
   end
 
   def add_to_cart line_item
@@ -223,6 +225,11 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def find_certificate
+    prod = params[:id]=='mssl' ? 'high_assurance' : params[:id]
+    @certificate = Certificate.includes(:product_variant_items).for_sale.find_by_product(prod+(@tier || ''))
+  end
+
   def find_certificate_orders(options={})
     return CertificateOrder.none unless current_user # returns null set. Rails 4 is CertificateOrder.none
     @search = params[:search] || ""
@@ -283,6 +290,7 @@ class ApplicationController < ActionController::Base
                     end
                   end
     end
+    guest_enrollment if user.nil?
   end
 
   def not_found
@@ -290,6 +298,12 @@ class ApplicationController < ActionController::Base
   end
 
   protected
+  
+  def guest_enrollment
+    if %w[enrollment_links].include? action_name
+      @ssl_slug = params[:ssl_slug]
+    end
+  end
 
   def set_prev_flag
     @prev=true if params["prev.x".intern]
@@ -423,22 +437,23 @@ class ApplicationController < ActionController::Base
   end
 
   def find_ssl_account
-    if params[:action]=="dcv_all_validate" and params[:ssl_slug]
-      @ssl_account = SslAccount.find_by_acct_number(params[:ssl_slug]) ||
-          SslAccount.find_by_ssl_slug(params[:ssl_slug])
+    ssl_acct_slug = params[:ssl_slug] || params[:acct_number] ||
+        (params[:certificate_enrollment_request][:ssl_slug] if params[:certificate_enrollment_request])
+    if params[:action]=="dcv_all_validate" and ssl_acct_slug
+      @ssl_account = SslAccount.find_by_acct_number(ssl_acct_slug) ||
+        SslAccount.find_by_ssl_slug(ssl_acct_slug)
       not_found if @ssl_account.blank?
     elsif current_user.blank?
       not_found
     else  
-      @ssl_account =
-          if params[:ssl_slug] and request[:action]!="validate_ssl_slug"
-           (current_user.is_system_admins? ? SslAccount : current_user.ssl_accounts).find_by_acct_number(params[:ssl_slug]) ||
-               (current_user.is_system_admins? ? SslAccount : current_user.ssl_accounts).find_by_ssl_slug(params[:ssl_slug])
-          else
-           current_user.ssl_account
-          end
+      @ssl_account = if ssl_acct_slug and request[:action]!="validate_ssl_slug"
+        ssls = current_user.is_system_admins? ? SslAccount : current_user.ssl_accounts
+        ssls.find_by_acct_number(ssl_acct_slug) || ssls.find_by_ssl_slug(ssl_acct_slug)
+      else
+        current_user.ssl_account
+      end
       not_found if @ssl_account.blank?
-    end  
+    end
   end
 
   def load_notifications

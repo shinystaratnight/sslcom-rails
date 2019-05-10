@@ -20,6 +20,12 @@
   =form_tag nil, :id=>'send_notify_form', :method=>:post do
     =hidden_field_tag :certificate_order_ref
     =hidden_field_tag :notify_type
+    - if current_user.is_standard? && current_user.ssl_account.epki_registrant && @certificate_order.ssl_account.epki_registrant
+      =hidden_field_tag :is_epki_admin, true
+      =hidden_field_tag :send_email_link
+      =hidden_field_tag :copy_act_link
+    - else
+      =hidden_field_tag :is_epki_admin, false
 
 #certificate_orders
   %table(cellspacing="0")
@@ -381,7 +387,7 @@
                         -unless co.certificate.is_csr_last_step?
                           %span.previous_requests reference: #{c.ref}
                         -if csr
-                          -csr.signed_certificates.includes(:revocation).order('created_at DESC').each do |sc|
+                          -show_block = ->(sc) do
                             - unless sc.nil? || @certificate_order.certificate.is_csr_last_step?
                               %tr#cert-content-status
                                 %td
@@ -399,7 +405,7 @@
                                   -if sc.try(:body).blank?
                                     (server software: #{c.server_software.try :title})
                                   -else
-                                    %a{:name => "#{sc.serial}"}
+                                    %a{:name => "#{sc.serial}", :href => "##{sc.serial}"}
                                       (serial number: #{sc.serial})
                                   %div
                                     %strong
@@ -417,14 +423,14 @@
                                     - if !sc.revoked?
                                       - select_id = "sel-cert-content-revoke-#{sc.id}"
                                       - dialog_id = "dialog-form-#{sc.id}"
-                                      = link_to "<i class='fa fa-times-circle'></i> REVOKE".html_safe, '#', |
+                                      = link_to "<i class='fa fa-times-circle'></i> REVOKE".html_safe, '#',
                                         class: 'btn-cert-content-revoke', data: {select_id: select_id, dialog_id: dialog_id}
                                       %div{id: dialog_id, class: 'hidden'}
                                         %p Please select a reason for revoking:
                                         %br/
                                         .clearfix
                                           = form_tag revoke_signed_certificate_path(@ssl_slug, sc.id), method: :put do
-                                            = select_tag :revoke_reason, options_for_select(SslcomCaRevocationRequest::REASONS), |
+                                            = select_tag :revoke_reason, options_for_select(SslcomCaRevocationRequest::REASONS),
                                               multiple: false, id: select_id, include_blank: false
                                         .clearfix
                                           %br/
@@ -465,6 +471,9 @@
                                         %div
                                           submitted on #{sc.created_at.strftime("%b %d, %Y %R %Z")}
                                         =render partial: 'download', locals: {csr: csr, signed_certificate: sc}
+                                      -else
+                                        %div
+                                          no signed certificate found
                                   -else
                                     -unless permitted_to?(:create, SignedCertificate.new) && current
                                       -unless sc.try(:body).blank?
@@ -511,6 +520,12 @@
                                       %div
                                         DECODED
                                       %textarea.selectAll{cols: 10, rows: 4}=sc.decoded
+                          -certs=csr.signed_certificates.includes(:revocation).order('created_at DESC')
+                          -if certs.blank?
+                            -show_block.call(nil)
+                          -else
+                            -csr.signed_certificates.includes(:revocation).order('created_at DESC').each do |sc|
+                              -show_block.call(sc)
                         %tr
                           %td(colspan="5" style="text-align: left;")
                             = render partial: '/tags/certificate_content_tags', locals: {taggable: c}
@@ -566,3 +581,26 @@
         * All Domains should be valid!
     #domain_modal_footer.modal-footer
       = button_tag 'Save', :type => 'button', :class => 'btn btn-grey btn-save-domains', :disabled => true
+
+#epki_admin_modal.epki_admin_modal
+  #epki_admin_modal_content.modal-content
+    #epki_admin_modal_header.modal-header
+      %span#epki_modal_close.close
+        &times;
+      %p
+        Please choose options
+    #epki_admin_modal_body.modal-body
+      .method_block.send_email_method.clearfix
+        .block_chk
+          = check_box_tag 'chk_send_email', true, true, :class => 'chk_method'
+        .block_label
+          %span.chk_send_label
+      .method_block.copy_link_method.clearfix
+        .block_chk
+          = check_box_tag 'chk_copy_link', true, false, :class => 'chk_method'
+        .block_label
+          %span View and copy activation link
+      #required-field
+        * It needs to choose one method at least!
+    #epki_admin_modal_footer.modal-footer
+      = button_tag 'OK', :type => 'button', :class => 'btn btn-grey btn-ok'

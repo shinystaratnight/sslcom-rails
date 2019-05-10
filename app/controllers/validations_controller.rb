@@ -18,7 +18,7 @@ class ValidationsController < ApplicationController
   filter_access_to :edit, :show, :attribute_check=>true
   filter_access_to :admin_manage, :attribute_check=>true
   filter_access_to :send_to_ca, require: :sysadmin_manage
-  filter_access_to :get_asynch_domains, :remove_domains, :get_email_addresses, :send_callback, :require=>:ajax
+  filter_access_to :get_asynch_domains, :remove_domains, :get_email_addresses, :send_callback, :add_super_user_email, :require=>:ajax
   in_place_edit_for :validation_history, :notes
 
   def search
@@ -265,6 +265,22 @@ class ValidationsController < ApplicationController
       addresses.each do |addr|
         returnObj['new_emails'][addr] = addr
       end
+    else
+      returnObj['no-user'] = "true"
+    end
+
+    render :json => returnObj
+  end
+
+  def add_super_user_email
+    returnObj = {}
+
+    if current_user
+      params['domain_emails'].each do |domain_email|
+        CertificateName.add_email_address_candidate(domain_email.split('|')[0], domain_email.split('|')[1])
+      end
+
+      returnObj['status'] = "true"
     else
       returnObj['no-user'] = "true"
     end
@@ -638,17 +654,21 @@ class ValidationsController < ApplicationController
 
           # Get all timezone
           @time_zones = ActiveSupport::TimeZone.all
-                            .map{|tz| ["(GMT#{formatted_offset(Timezone[tz.tzinfo.name].utc_offset)}) #{tz.name}" , Timezone[tz.tzinfo.name].utc_offset / 3600]}
-                            .sort_by{|e| e[1]}
+                            .map{|tz| ["(GMT#{formatted_offset(Timezone[tz.tzinfo.name].utc_offset)}) #{tz.name}" , (Timezone[tz.tzinfo.name].utc_offset / 3600).to_s + ':' + tz.tzinfo.name]}
+                            .sort_by{|e| e[1].split(':')[0].to_i}
 
           if @certificate_order_token.callback_type == CertificateOrderToken::CALLBACK_SCHEDULE
-            @callback_method = 'schedule'
+            @callback_type = 'schedule'
+            @callback_method = @certificate_order_token.callback_method.upcase
+            @callback_datetime = @certificate_order_token.callback_datetime.in_time_zone(@certificate_order_token.callback_timezone.split(':')[1]).strftime('%Y-%m-%d %I:%M %p %:z')
             flash[:notice] = 'It has been already scheduled automated callback.'
           elsif @certificate_order_token.callback_type == CertificateOrderToken::CALLBACK_MANUAL
-            @callback_method = 'manual'
+            @callback_type = 'manual'
+            @callback_method = @certificate_order_token.callback_method.upcase
+            @callback_datetime = @certificate_order_token.callback_datetime.in_time_zone(@certificate_order_token.callback_timezone.split(':')[1]).strftime('%Y-%m-%d %I:%M %p %:z')
             flash[:notice] = 'It has been already scheduled manual callback.'
           else
-            @callback_method = 'none'
+            @callback_type = 'none'
           end
         end
       end
@@ -779,12 +799,13 @@ class ValidationsController < ApplicationController
     ).first
 
     dtz = DateTime.strptime(
-        params[:callback_date] + ' ' + params[:callback_time] + ' ' + (params[:callback_timezone].include?('-') ? '' : '+') + params[:callback_timezone],
-        '%m/%d/%Y %I:%M %p %z'
+        params[:callback_date] + ' ' + params[:callback_time] + ' ' + (params[:callback_timezone].split(':')[0].include?('-') ? '' : '+') + params[:callback_timezone].split(':')[0],
+        '%m/%d/%Y %I:%M %p %:z'
     )
 
     if co_token
       co_token.update_columns(
+          callback_method: params[:callback_method],
           callback_type: params[:callback_type],
           callback_timezone: params[:callback_timezone],
           callback_datetime: dtz,
@@ -797,6 +818,9 @@ class ValidationsController < ApplicationController
       else
         returnObj['status'] = 'success-schedule'
       end
+
+      returnObj['callback_method'] = params[:callback_method].upcase
+      returnObj['callback_datetime'] = dtz.strftime('%Y-%m-%d %I:%M %p %:z')
 
     else
       returnObj['status'] = 'incorrect-token'
