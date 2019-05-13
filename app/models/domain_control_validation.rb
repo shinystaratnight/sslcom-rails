@@ -20,7 +20,7 @@ class DomainControlValidation < ActiveRecord::Base
 
   EMAIL_CHOICE_CACHE_EXPIRES_DAYS=1
 
-  default_scope{ order("id asc")}
+  default_scope{ order("domain_control_validations.created_at asc")}
   scope :global, -> {where{(certificate_name_id==nil) & (csr_id==nil)}}
   scope :whois_threshold, -> {where(updated_at: 1.hour.ago..DateTime.now)}
 

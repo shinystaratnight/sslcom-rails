@@ -2059,7 +2059,7 @@ class CertificateOrder < ActiveRecord::Base
     return true if domains_validated.count==validating_domains.count
   end
 
-  def to_api_retrieve(result)
+  def to_api_retrieve(result, options)
     result.order_date = self.created_at
     result.order_status = self.status
     result.registrant = self.certificate_content.registrant.to_api_query if (self.certificate_content && self.certificate_content.registrant)
@@ -2081,7 +2081,7 @@ class CertificateOrder < ActiveRecord::Base
     end
 
     if (self.signed_certificate && result.query_type != "order_status_only")
-      result.certificates =
+      result.certificates = options[:platform]=="nginx" ? self.signed_certificate.to_nginx :
           self.signed_certificate.to_format(response_type: result.response_type, #assume comodo issued cert
                                            response_encoding: result.response_encoding) || self.signed_certificate.to_nginx
       result.common_name = self.signed_certificate.common_name
