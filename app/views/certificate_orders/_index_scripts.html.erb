@@ -906,34 +906,70 @@ jQuery(function($) {
         } else {
           $(this).attr('url', request_url);
         }
+
+        if ($('#content').find('.inner').children().first().hasClass('flash_message')) {
+          $('#content').find('.inner').children().first().remove();
+        }
       },
       success: function(data) {
-        /*if (data == 'success') {
-          alert('Request email successfully sent.');
-        } else if (data == 'not_found_ssl_account') {
-          alert('Team account not found. Please try again.');
-        } else if (data == 'session_expired') {
-          alert('The session has been expired. Please login again.');
-          location.reload(true);
-        }*/
-
         if (data.status == 'success') {
           if ($('#notify_type').val() == 'token') {
-            if (data.send_email == 'true') {
-              alert('Activation link email successfully sent.');
-
-              if ($('[data-ref="'+ $('#certificate_order_ref').val() +'"]').attr('data-done') == 'false') {
-                $('[data-ref="'+ $('#certificate_order_ref').val() +'"]').attr('data-done', 'true');
-                $('[data-ref="'+ $('#certificate_order_ref').val() +'"]').attr('data-ori-text', $('[data-ref="'+ $('#certificate_order_ref').val() +'"]').text());
-                $('[data-ref="'+ $('#certificate_order_ref').val() +'"]').text('activation link sent. Resend?');
-              }
+            if (data.act_link != 'false') {
+              $('#activation_link').val(data.act_link);
+              $('.epki_activation_link_modal').show();
             }
 
-            if (data.act_link != 'false') {
-              window.open(data.act_link, '_blalnk');
+            if (data.send_email == 'true') {
+              var message_wrap_element = $('<div></div>');
+              message_wrap_element.attr('class', 'flash_message notice');
+
+              var message_element = $('<span></span>');
+              message_element.append('Activation link email successfully sent.');
+              message_wrap_element.append(message_element);
+
+              var btn_element = $('<small></small>');
+              var close_btn_element = $('<div></div>');
+              close_btn_element.attr('class', 'close_flash_message');
+
+              var close_sign_element = $('<span></span>');
+              close_sign_element.append('X');
+
+              close_btn_element.append(close_sign_element);
+              close_btn_element.append('close');
+
+              btn_element.append(close_btn_element);
+              message_wrap_element.append(btn_element);
+
+              message_wrap_element.insertBefore($('#content').find('.inner').children().first());
+            }
+
+            if ($('[data-ref="'+ $('#certificate_order_ref').val() +'"]').attr('data-done') == 'false') {
+              $('[data-ref="'+ $('#certificate_order_ref').val() +'"]').attr('data-done', 'true');
+              $('[data-ref="'+ $('#certificate_order_ref').val() +'"]').attr('data-ori-text', $('[data-ref="'+ $('#certificate_order_ref').val() +'"]').text());
+              $('[data-ref="'+ $('#certificate_order_ref').val() +'"]').text('activation link sent. Resend?');
             }
           } else {
-            alert('Request email successfully sent.');
+            var message_wrap_element = $('<div></div>');
+            message_wrap_element.attr('class', 'flash_message notice');
+
+            var message_element = $('<span></span>');
+            message_element.append('Request email successfully sent.');
+            message_wrap_element.append(message_element);
+
+            var btn_element = $('<small></small>');
+            var close_btn_element = $('<div></div>');
+            close_btn_element.attr('class', 'close_flash_message');
+
+            var close_sign_element = $('<span></span>');
+            close_sign_element.append('X');
+
+            close_btn_element.append(close_sign_element);
+            close_btn_element.append('close');
+
+            btn_element.append(close_btn_element);
+            message_wrap_element.append(btn_element);
+
+            message_wrap_element.insertBefore($('#content').find('.inner').children().first());
 
             if ($('[data-ref="'+ $('#certificate_order_ref').val() +'"]').attr('data-done') == 'false') {
               $('[data-ref="'+ $('#certificate_order_ref').val() +'"]').attr('data-done', 'true');
@@ -941,10 +977,53 @@ jQuery(function($) {
             }
           }
         } else if (data.status == 'not_found_ssl_account') {
-          alert('Team account not found. Please try again.');
+          var message_wrap_element = $('<div></div>');
+          message_wrap_element.attr('class', 'flash_message error');
+
+          var message_element = $('<span></span>');
+          message_element.append('Team account not found. Please try again.');
+          message_wrap_element.append(message_element);
+
+          var btn_element = $('<small></small>');
+          var close_btn_element = $('<div></div>');
+          close_btn_element.attr('class', 'close_flash_message');
+
+          var close_sign_element = $('<span></span>');
+          close_sign_element.append('X');
+
+          close_btn_element.append(close_sign_element);
+          close_btn_element.append('close');
+
+          btn_element.append(close_btn_element);
+          message_wrap_element.append(btn_element);
+
+          message_wrap_element.insertBefore($('#content').find('.inner').children().first());
         } else if (data.status == 'session_expired') {
-          alert('The session has been expired. Please login again.');
-          location.reload(true);
+          var message_wrap_element = $('<div></div>');
+          message_wrap_element.attr('class', 'flash_message error');
+
+          var message_element = $('<span></span>');
+          message_element.append('The session has been expired. Please login again.');
+          message_wrap_element.append(message_element);
+
+          var btn_element = $('<small></small>');
+          var close_btn_element = $('<div></div>');
+          close_btn_element.attr('class', 'close_flash_message');
+
+          var close_sign_element = $('<span></span>');
+          close_sign_element.append('X');
+
+          close_btn_element.append(close_sign_element);
+          close_btn_element.append('close');
+
+          btn_element.append(close_btn_element);
+          message_wrap_element.append(btn_element);
+
+          message_wrap_element.insertBefore($('#content').find('.inner').children().first());
+
+          setTimeout(function() {
+            location.reload(true);
+          }, 500);
         }
       }
     };
@@ -984,7 +1063,7 @@ jQuery(function($) {
       }
     });
 
-    $(document).on('click', '#epki_modal_close', function() {
+    $(document).on('click', '#epki_admin_modal_close', function() {
       $('#chk_send_email').prop('checked', true);
       $('#chk_copy_link').prop('checked', false);
 
@@ -992,6 +1071,11 @@ jQuery(function($) {
       $('#epki_admin_modal_footer .btn-ok').prop('disabled', false);
 
       $('#epki_admin_modal').hide();
+    });
+
+    $(document).on('click', '#epki_activation_link_modal_close', function() {
+      $('#activation_link').val('');
+      $('#epki_activation_link_modal').hide();
     });
 
     $(document).on('click', '.chk_method', function() {
@@ -1029,6 +1113,16 @@ jQuery(function($) {
       $('form#send_notify_form').ajaxSubmit(send_notify_options);
     });
 
+    $(document).on('click', '.btn-activation-link-ok', function() {
+      $('#activation_link').val('');
+      $('#epki_activation_link_modal').hide();
+    });
+
+    $(document).on('click', '.copy_activation_link', function() {
+      $('#activation_link').select();
+      console.log("Copied ? : " + document.execCommand('copy'));
+    });
+
     window.onclick = function(event) {
       if (event.target == $('#epki_admin_modal')[0]) {
         $('#chk_send_email').prop('checked', true);
@@ -1042,6 +1136,11 @@ jQuery(function($) {
 
       if (event.target == $('#domain_modal')[0]) {
         $('#domain_modal').hide();
+      }
+
+      if (event.target == $('#epki_activation_link_modal')[0]) {
+        $('#activation_link').val('');
+        $('#epki_activation_link_modal').hide();
       }
     };
 

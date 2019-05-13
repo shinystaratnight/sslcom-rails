@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190423103116) do
+ActiveRecord::Schema.define(version: 20190511133942) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        limit: 255
@@ -398,6 +398,7 @@ ActiveRecord::Schema.define(version: 20190423103116) do
     t.string   "callback_timezone",        limit: 255
     t.datetime "callback_datetime"
     t.boolean  "is_callback_done"
+    t.string   "callback_method",          limit: 255
   end
 
   create_table "certificate_orders", force: :cascade do |t|
@@ -429,6 +430,7 @@ ActiveRecord::Schema.define(version: 20190423103116) do
     t.integer  "assignee_id",           limit: 4
     t.datetime "expires_at"
     t.text     "requester_emails",      limit: 65535
+    t.string   "request_status",        limit: 255
   end
 
   add_index "certificate_orders", ["created_at"], name: "index_certificate_orders_on_created_at", using: :btree

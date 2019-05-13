@@ -585,7 +585,7 @@
 #epki_admin_modal.epki_admin_modal
   #epki_admin_modal_content.modal-content
     #epki_admin_modal_header.modal-header
-      %span#epki_modal_close.close
+      %span#epki_admin_modal_close.close
         &times;
       %p
         Please choose options
@@ -599,8 +599,23 @@
         .block_chk
           = check_box_tag 'chk_copy_link', true, false, :class => 'chk_method'
         .block_label
-          %span View and copy activation link
+          %span View activation link
       #required-field
         * It needs to choose one method at least!
     #epki_admin_modal_footer.modal-footer
       = button_tag 'OK', :type => 'button', :class => 'btn btn-grey btn-ok'
+
+#epki_activation_link_modal.epki_activation_link_modal
+  #epki_activation_link_modal_content.modal-content
+    #epki_activation_link_modal_header.modal-header
+      %span#epki_activation_link_modal_close.close
+        &times;
+      %p
+        Activation Link
+    #epki_activation_link_modal_body.modal-body
+      .method_block.clearfix
+        = text_field_tag :activation_link, '', :readonly => true
+        %span.copy_activation_link{:title => 'Clipboard'}
+          %i.fa.fa-clipboard
+    #epki_activation_link_modal_footer.modal-footer
+      = button_tag 'OK', :type => 'button', :class => 'btn btn-grey btn-activation-link-ok'

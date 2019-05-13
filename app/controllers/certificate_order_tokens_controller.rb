@@ -82,6 +82,7 @@ class CertificateOrderTokensController < ApplicationController
 
       if current_user
         co = current_user.certificate_order_by_ref(params[:certificate_order_ref])
+        co.update_attribute(:request_status, 'done')
 
         # Sending Notify to SysAdmin role's users.
         sys_admins = User.search_sys_admin.uniq
