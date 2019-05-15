@@ -517,6 +517,20 @@ class SignedCertificate < ActiveRecord::Base
     tmp_file
   end
 
+  def revoked_by
+    SignedCertificate.where{serial =~ "%"}.last.system_audits.where{action=="revoked"}.last.owner.login
+  end
+
+  def self.print_revoked_by(serials)
+    serials.each do |serial_prefix|
+      sc=SignedCertificate.where{(serial =~ "#{serial_prefix}%") & (status=="revoked")}.last
+      audit=sc.system_audits.where{action=="revoked"}.last
+      p [sc.common_name,
+         serial_prefix,
+         audit.owner.login,
+         audit.created_at.strftime('%Y-%m-%d %H:%M:%S')]
+    end
+  end
 
   def to_nginx(is_windows=nil, options={})
     options[:reverse_order] ||= false
