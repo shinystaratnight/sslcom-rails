@@ -303,6 +303,13 @@ class OrderNotifier < ActionMailer::Base
          to: email
   end
 
+  def manual_callback_send(co, datetime)
+    @date_time = datetime
+    mail subject: "Manual Callback for certificate ref : \"#{co.ref}\"",
+         from: Settings.from_email.no_reply,
+         to: Settings.support_email
+  end
+
   protected
   def setup_email(user)
     @recipients  = "#{user.email}"

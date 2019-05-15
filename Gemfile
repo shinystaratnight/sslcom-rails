@@ -88,6 +88,8 @@ gem 'authy'
 gem 'mailboxer'
 gem 'memoist'
 # gem 'countries'
+gem 'bootstrap-datepicker-rails'
+gem 'timezone', '~> 1.0'
 
 group :development do
   gem 'foreman'

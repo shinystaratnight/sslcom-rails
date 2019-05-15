@@ -12,7 +12,7 @@ class ValidationsController < ApplicationController
 
   filter_access_to :all
   filter_access_to [:upload, :document_upload, :verification, :email_verification_check, :automated_call,
-                    :phone_verification_check], :require=>:update
+                    :phone_verification_check, :register_callback], :require=>:update
   filter_access_to :requirements, :send_dcv_email, :domain_control, :ev, :organization, require: :read
   filter_access_to :update, :new, :attribute_check=>true
   filter_access_to :edit, :show, :attribute_check=>true
@@ -646,6 +646,30 @@ class ValidationsController < ApplicationController
         else
           passed_token = (SecureRandom.hex(8)+params[:token])[0..19]
           @certificate_order_token.update_column :passed_token, passed_token
+
+          # Get phone number and country from locked_registrant of certificate_order.
+          phone_number = @certificate_order_token.certificate_order.locked_registrant.phone || ''
+          country_code = @certificate_order_token.certificate_order.locked_registrant.country_code || '1'
+          @mobile_number = "(+" + country_code + ") " + phone_number
+
+          # Get all timezone
+          @time_zones = ActiveSupport::TimeZone.all
+                            .map{|tz| ["(GMT#{formatted_offset(Timezone[tz.tzinfo.name].utc_offset)}) #{tz.name}" , (Timezone[tz.tzinfo.name].utc_offset / 3600).to_s + ':' + tz.tzinfo.name]}
+                            .sort_by{|e| e[1].split(':')[0].to_i}
+
+          if @certificate_order_token.callback_type == CertificateOrderToken::CALLBACK_SCHEDULE
+            @callback_type = 'schedule'
+            @callback_method = @certificate_order_token.callback_method.upcase
+            @callback_datetime = @certificate_order_token.callback_datetime.in_time_zone(@certificate_order_token.callback_timezone.split(':')[1]).strftime('%Y-%m-%d %I:%M %p %:z')
+            flash[:notice] = 'It has been already scheduled automated callback.'
+          elsif @certificate_order_token.callback_type == CertificateOrderToken::CALLBACK_MANUAL
+            @callback_type = 'manual'
+            @callback_method = @certificate_order_token.callback_method.upcase
+            @callback_datetime = @certificate_order_token.callback_datetime.in_time_zone(@certificate_order_token.callback_timezone.split(':')[1]).strftime('%Y-%m-%d %I:%M %p %:z')
+            flash[:notice] = 'It has been already scheduled manual callback.'
+          else
+            @callback_type = 'none'
+          end
         end
       end
     else
@@ -766,7 +790,55 @@ class ValidationsController < ApplicationController
     render :json => returnObj
   end
 
+  def register_callback
+    returnObj = {}
+
+    co_token = CertificateOrderToken.where(
+        token: params[:token],
+        status: CertificateOrderToken::PENDING_STATUS
+    ).first
+
+    dtz = DateTime.strptime(
+        params[:callback_date] + ' ' + params[:callback_time] + ' ' + (params[:callback_timezone].split(':')[0].include?('-') ? '' : '+') + params[:callback_timezone].split(':')[0],
+        '%m/%d/%Y %I:%M %p %:z'
+    )
+
+    if co_token
+      co_token.update_columns(
+          callback_method: params[:callback_method],
+          callback_type: params[:callback_type],
+          callback_timezone: params[:callback_timezone],
+          callback_datetime: dtz,
+          is_callback_done: (params[:callback_type] == CertificateOrderToken::CALLBACK_MANUAL ? nil : false)
+      )
+
+      if params[:callback_type] == CertificateOrderToken::CALLBACK_MANUAL
+        OrderNotifier.manual_callback_send(co_token.certificate_order, dtz.strftime('%Y-%m-%d %I:%M %p %z')).deliver
+        returnObj['status'] = 'success-manual'
+      else
+        returnObj['status'] = 'success-schedule'
+      end
+
+      returnObj['callback_method'] = params[:callback_method].upcase
+      returnObj['callback_datetime'] = dtz.strftime('%Y-%m-%d %I:%M %p %:z')
+
+    else
+      returnObj['status'] = 'incorrect-token'
+    end
+
+    render :json => returnObj
+  end
+
   private
+
+  def formatted_offset(seconds)
+    format = '%s%02d:%02d'
+
+    sign = (seconds < 0 ? '-' : '+')
+    hours = seconds.abs / 3600
+    minutes = (seconds.abs % 3600) / 60
+    format % [sign, hours, minutes]
+  end
 
   def upload_documents(files, type=:validation)
     i=0
