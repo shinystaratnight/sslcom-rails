@@ -70,7 +70,7 @@ GEM
       scrypt (>= 1.2, < 4.0)
     authy (2.7.4)
       httpclient (>= 2.5.3.3)
-    autoprefixer-rails (9.5.1.1)
+    autoprefixer-rails (7.2.1)
       execjs
     awesome_print (1.7.0)
     aws-sdk (2.11.13)
@@ -89,10 +89,10 @@ GEM
       debug_inspector (>= 0.0.1)
     bootsnap (1.4.2)
       msgpack (~> 1.0)
-    bootstrap (4.3.1)
-      autoprefixer-rails (>= 9.1.0)
-      popper_js (>= 1.14.3, < 2)
-      sassc-rails (>= 2.0.0)
+    bootstrap (4.0.0.beta)
+      autoprefixer-rails (>= 6.0.3)
+      popper_js (~> 1.11.1)
+      sass (>= 3.4.19)
     bootstrap-datepicker-rails (1.8.0.1)
       railties (>= 3.0)
     builder (3.2.3)
@@ -421,15 +421,6 @@ GEM
       sprockets (>= 2.8, < 4.0)
       sprockets-rails (>= 2.0, < 4.0)
       tilt (>= 1.1, < 3)
-    sassc (2.0.1)
-      ffi (~> 1.9)
-      rake
-    sassc-rails (2.1.1)
-      railties (>= 4.0.0)
-      sassc (>= 2.0)
-      sprockets (> 3.0)
-      sprockets-rails
-      tilt
     savon (2.11.1)
       akami (~> 1.2)
       builder (>= 2.1.2)
@@ -538,7 +529,7 @@ DEPENDENCIES
   better_errors
   binding_of_caller
   bootsnap
-  bootstrap (>= 4.3.1)
+  bootstrap
   bootstrap-datepicker-rails
   builder
   byebug

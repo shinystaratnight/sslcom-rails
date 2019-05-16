@@ -63,7 +63,7 @@ gem 'airbrake', '~> 8.3.2'
 gem 'rails-observers'
 gem 'actionpack-action_caching', '~> 1.1', '>= 1.1.1'
 gem 'sass-rails'
-gem "bootstrap", ">= 4.3.1"
+gem 'bootstrap'
 gem 'compass-rails'
 gem 'select2-rails'
 gem 'stripe'
