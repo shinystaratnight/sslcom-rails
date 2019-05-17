@@ -41,7 +41,6 @@ gem "therubyracer", '~> 0.12.0', platform: :ruby
 gem "libv8", '~> 3.16.14.0'
 # gem 'request_exception_handler'
 gem 'rvm-capistrano'
-gem 'newrelic_rpm'
 gem 'dalli'
 gem 'attr_encrypted', '>= 3.0.3'
 gem 'delayed_job_active_record'
