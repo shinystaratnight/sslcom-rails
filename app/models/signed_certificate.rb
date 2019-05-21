@@ -96,7 +96,7 @@ class SignedCertificate < ActiveRecord::Base
       last_sent.satisfy! if(last_sent && !last_sent.satisfied?)
       unless cc.url_callbacks.blank?
         cert = ApiCertificateRetrieve.new(query_type: "all_certificates")
-        co.to_api_retrieve cert, platform: "nginx"
+        co.to_api_retrieve cert, format: "nginx", reverse_order: true
         co_json = Rabl::Renderer.json(cert,File.join("api","v1","api_certificate_requests", "show_v1_4"),
                                       view_path: 'app/views', locals: {result:cert})
         cc.callback(co_json)
@@ -517,11 +517,26 @@ class SignedCertificate < ActiveRecord::Base
     tmp_file
   end
 
+  def revoked_by
+    SignedCertificate.where{serial =~ "%"}.last.system_audits.where{action=="revoked"}.last.owner.login
+  end
 
-  def to_nginx(is_windows=nil)
+  def self.print_revoked_by(serials)
+    serials.each do |serial_prefix|
+      sc=SignedCertificate.where{(serial =~ "#{serial_prefix}%") & (status=="revoked")}.last
+      audit=sc.system_audits.where{action=="revoked"}.last
+      p [sc.common_name,
+         serial_prefix,
+         audit.owner.login,
+         audit.created_at.strftime('%Y-%m-%d %H:%M:%S')]
+    end
+  end
+
+  def to_nginx(is_windows=nil, options={})
+    options[:reverse_order] ||= false
     "".tap do |tmp|
       if certificate_content.ca
-        x509_certificates.each do |x509_cert|
+        (options[:reverse_order] ? x509_certificates.reverse : x509_certificates).each do |x509_cert|
           tmp<<x509_cert.to_s
         end
       else
@@ -531,7 +546,7 @@ class SignedCertificate < ActiveRecord::Base
           tmp << file.readlines.join("")
         end
       end
-      tmp.gsub!(/\n/, "\r\n") # if is_windows
+      tmp.gsub!(/\n/, "\r\n") if is_windows
     end
   end
 

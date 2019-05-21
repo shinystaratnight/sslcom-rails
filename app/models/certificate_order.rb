@@ -691,14 +691,12 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def add_reproces_order(target_order)
-    self.with_lock do
-      target_order.save unless target_order.persisted?
-      target_order.line_items.destroy_all
-      if target_order.valid?
-        line_items.create(
-            order_id: target_order.id, cents: target_order.cents, amount: target_order.amount, currency: 'USD'
-        )
-      end
+    target_order.save unless target_order.persisted?
+    # target_order.line_items.destroy_all
+    if target_order.valid?
+      line_items.create(
+          order_id: target_order.id, cents: target_order.cents, amount: target_order.amount, currency: 'USD'
+      )
     end
   end
 
@@ -2081,9 +2079,16 @@ class CertificateOrder < ActiveRecord::Base
     end
 
     if (self.signed_certificate && result.query_type != "order_status_only")
-      result.certificates = options[:platform]=="nginx" ? self.signed_certificate.to_nginx :
-          self.signed_certificate.to_format(response_type: result.response_type, #assume comodo issued cert
-                                           response_encoding: result.response_encoding) || self.signed_certificate.to_nginx
+      result.certificates =
+          case options[:format]
+          when "end_entity"
+            self.signed_certificate.x509_certificates.first.to_s
+          when "nginx"
+            self.signed_certificate.to_nginx(false,reverse_order: options[:reverse_order])
+          else
+            self.signed_certificate.to_format(response_type: result.response_type, #assume comodo issued cert
+                                              response_encoding: result.response_encoding) || self.signed_certificate.to_nginx
+          end
       result.common_name = self.signed_certificate.common_name
       result.subject_alternative_names = self.signed_certificate.subject_alternative_names
       result.effective_date = self.signed_certificate.effective_date

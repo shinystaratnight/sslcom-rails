@@ -255,7 +255,7 @@ class ApplicationController < ActionController::Base
                  (current_user.ssl_account.cached_certificate_orders.not_test.not_new(options))
            )
       )
-    end.order(created_at: :desc)
+    end.order(params[:order]=="by_csr" ? "csrs.created_at desc" : "certificate_orders.created_at desc")
     unless options[:source] && options[:source] == 'folders'
       archived_folder = current_user.is_admin? || (params[:search] && params[:search].include?('folder_ids')) ?
                             [true, false, nil] : [false, nil]

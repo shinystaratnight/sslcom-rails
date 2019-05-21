@@ -8358,14 +8358,45 @@ i.fa-external-link.fa-ssl-custom
 
 .email-verification-block,
 .phone-call-block,
-.phone-verification-block
+.phone-verification-block,
+.phone-callback-date-block
   label
     line-height: 24px
     margin-bottom: 0px
 
   input[type="radio"]
-    margin-right: 20px
+    margin-right: 25px
     height: 24px
+
+.phone-callback-option
+  border-bottom: 1px solid #CCC
+
+  .callback-type
+    line-height: 24px
+
+.phone-callback-date-block
+  label
+    width: 6em
+    line-height: 24px
+
+    &.callback_type_method_lbl
+      width: 3em
+
+  .submit-date-block button
+    margin-right: 15px
+
+  .error-block
+    display: none
+    color: red
+    font-size: 10px
+
+  .date-block.error-required .error-block,
+  .time-block.error-required .error-block
+    display: block
+
+  .callback-type-method
+    margin-left: 0px
+    margin-right: 0px
 
 .phone-verification-block #phone_verification_code,
 .email-verification-block #email_verification_code
