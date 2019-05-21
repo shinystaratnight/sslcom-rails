@@ -35,8 +35,9 @@ class CertificateOrderTokensController < ApplicationController
           end
 
           # create / update certificate order token table
-          co_token = co.certificate_order_tokens.where(status: nil, is_expired: false).first
-          if co_token
+          # co_token = co.certificate_order_tokens.where(status: nil, is_expired: false).last
+          co_token = co.generate_certificate_order_token
+          if co_token && !co_token.is_expired
             co_token.update_attributes(due_date: 7.days.from_now, user: assignee)
           else
             co_token = CertificateOrderToken.new
