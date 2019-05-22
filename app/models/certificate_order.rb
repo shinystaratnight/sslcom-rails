@@ -529,6 +529,7 @@ class CertificateOrder < ActiveRecord::Base
       event :refund, :transitions_to => :refunded
       event :reject, :transitions_to => :rejected
       event :charge_back, :transitions_to => :charged_back
+      event :cancel, :transitions_to => :canceled
     end
 
     state :refunded do #only refund a canceled order
@@ -692,7 +693,6 @@ class CertificateOrder < ActiveRecord::Base
 
   def add_reproces_order(target_order)
     target_order.save unless target_order.persisted?
-    # target_order.line_items.destroy_all
     if target_order.valid?
       line_items.create(
           order_id: target_order.id, cents: target_order.cents, amount: target_order.amount, currency: 'USD'

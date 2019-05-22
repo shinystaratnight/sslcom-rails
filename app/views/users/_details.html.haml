@@ -114,7 +114,7 @@
                         -slug_params = {ssl_slug: ssl_account.to_slug}
                         - status = ssl_account_status(u, ssl_account).first
                         %li
-                          =ssl_account.acct_number
+                          =link_to(ssl_account.acct_number, teams_user_path(current_user,team: ssl_account.acct_number))
                           [ #{status}
                           - if status == 'token expired'
                             =link_to '&rarr; RESEND INVITE'.html_safe,
