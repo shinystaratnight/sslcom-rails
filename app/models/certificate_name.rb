@@ -219,7 +219,7 @@ class CertificateName < ActiveRecord::Base
   end
 
   def get_asynch_cache_label
-    "#{cache_key}/get_asynch_domains/#{non_wildcard_name}"
+    "get_asynch_domains/#{non_wildcard_name}"
   end
 
   WhoisJob = Struct.new(:dname, :certificate_name) do
@@ -243,7 +243,7 @@ class CertificateName < ActiveRecord::Base
       end
       Rails.cache.write("CertificateName.candidate_email_addresses/#{dname}",standard_addresses,
                         expires_in: DomainControlValidation::EMAIL_CHOICE_CACHE_EXPIRES_DAYS.days)
-      CertificateName.where("name LIKE ?", "%#{dname}").each{|cn| cn.touch; Rails.cache.delete(cn.get_asynch_cache_label)}
+      CertificateName.where("name LIKE ?", "%#{dname}").each{|cn| Rails.cache.delete(cn.get_asynch_cache_label)}
       if certificate_name
         dcv=certificate_name.domain_control_validations.last
         dcv.update_column(:candidate_addresses, standard_addresses) if dcv
@@ -277,7 +277,7 @@ class CertificateName < ActiveRecord::Base
 
   def self.add_email_address_candidate(dname,email_address)
     Rails.cache.delete("CertificateName.candidate_email_addresses/#{dname}")
-    CertificateName.where("name LIKE ?", "%#{dname}").each{|cn| cn.touch; Rails.cache.delete(cn.get_asynch_cache_label)}
+    CertificateName.where("name LIKE ?", "%#{dname}").each{|cn| Rails.cache.delete(cn.get_asynch_cache_label)}
     standard_addresses=CertificateName.candidate_email_addresses(dname)
     standard_addresses << email_address
     DomainControlValidation.global.find_or_create_by(subject: dname).update_column(

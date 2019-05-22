@@ -346,7 +346,7 @@ class Invoice < ActiveRecord::Base
   def notify_admin_billing
     Assignment.users_can_manage_invoice(billable).each do |u|
       OrderNotifier.payable_invoice_new(user: u, invoice: self).deliver_now
-    end
+    end if Settings.invoice_notify
   end
   
   def set_address

@@ -1292,7 +1292,7 @@ class Order < ActiveRecord::Base
   private
   
   def domains_adjustment_notice
-    if domains_adjustment?
+    if domains_adjustment? and Settings.invoice_notify
       Assignment.users_can_manage_invoice(billable).each do |u|
         OrderNotifier.domains_adjustment_new(user: u, order: self).deliver_now
       end
