@@ -120,6 +120,7 @@ class CertificateOrder < ActiveRecord::Base
     }
   }
 
+  # deprecated - delete soon
   scope :search_with_csr2, lambda {|term, options={}|
     term ||= ""
     term = term.strip.split(/\s(?=(?:[^']|'[^']*')*$)/)
