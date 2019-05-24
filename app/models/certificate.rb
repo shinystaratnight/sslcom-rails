@@ -403,10 +403,6 @@ class Certificate < ActiveRecord::Base
     is_smime_or_client?
   end
 
-  def is_server?
-    !(is_smime_or_client? || is_code_signing? || is_time_stamping?)
-  end
-
   def is_wildcard?
     product =~ /wildcard/
   end

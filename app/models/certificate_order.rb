@@ -120,7 +120,8 @@ class CertificateOrder < ActiveRecord::Base
     }
   }
 
-  scope :search_with_csr, lambda {|term, options={}|
+  # deprecated - delete soon
+  scope :search_with_csr2, lambda {|term, options={}|
     term ||= ""
     term = term.strip.split(/\s(?=(?:[^']|'[^']*')*$)/)
     filters = {common_name: nil, organization: nil, organization_unit: nil, address: nil, state: nil, postal_code: nil,
@@ -290,6 +291,179 @@ class CertificateOrder < ActiveRecord::Base
     result.uniq
   }
 
+  scope :search_with_csr, lambda {|term, options={}|
+    term ||= ""
+    term = term.strip.split(/\s(?=(?:[^']|'[^']*')*$)/)
+    filters = {common_name: nil, organization: nil, organization_unit: nil, address: nil, state: nil, postal_code: nil,
+               subject_alternative_names: nil, locality: nil, country:nil, signature: nil, fingerprint: nil, strength: nil,
+               expires_at: nil, created_at: nil, login: nil, email: nil, account_number: nil, product: nil,
+               decoded: nil, is_test: nil, order_by_csr: nil, physical_tokens: nil, issued_at: nil, notes: nil,
+               ref: nil, external_order_number: nil, status: nil, duration: nil, co_tags: nil, cc_tags: nil,
+               folder_ids: nil}
+    filters.each{|fn, fv|
+      term.delete_if {|s|s =~ Regexp.new(fn.to_s+"\\:\\'?([^']*)\\'?"); filters[fn] ||= $1; $1}
+    }
+    term = term.empty? ? nil : term.join(" ")
+    return nil if [term,*(filters.values)].compact.empty?
+    result = not_new
+    keys=filters.map{|f|f[0] if !f[1].blank?}.compact
+    unless term.blank?
+      # if 'is_test' and 'order_by_csr' are the only search terms, keep it simple
+      result = case term
+               when /co-\w/i
+                 result.where{
+                   (ref =~ "%#{term}%") |
+                       (notes =~ "%#{term}%")}
+               when /\d{7,8}/
+                 result.where{
+                   (external_order_number =~ "%#{term}%") |
+                       (notes =~ "%#{term}%")}
+               else
+                 result.joins{ssl_account.outer}.joins{ssl_account.users.outer}.joins{certificate_contents.outer}.
+                     joins{certificate_contents.csr.outer}.
+                     joins{certificate_contents.signed_certificates.outer}.where{
+                   (notes =~ "%#{term}%") |
+                       (ssl_account.acct_number =~ "%#{term}%") |
+                       (ssl_account.company_name =~ "%#{term}%") |
+                       (ssl_account.ssl_slug =~ "%#{term}%") |
+                       (users.login =~ "%#{term}%") |
+                       (users.email =~ "%#{term}%") |
+                       (certificate_contents.domains =~ "%#{term}%") |
+                       (certificate_contents.csrs.common_name =~ "%#{term}%") |
+                       (certificate_contents.csrs.email =~ "%#{term}%") |
+                       (certificate_contents.csrs.sig_alg =~ "%#{term}%") |
+                       (certificate_contents.csrs.subject_alternative_names =~ "%#{term}%") |
+                       (certificate_contents.csr.signed_certificates.common_name =~ "%#{term}%") |
+                       (certificate_contents.csr.signed_certificates.subject_alternative_names =~ "%#{term}%")}
+               end
+    end
+    result=result.joins{ssl_account.outer} unless (keys & [:account_number]).empty?
+    result=result.joins{ssl_account.users.outer} unless (keys & [:login, :email]).empty?
+    result=result.joins{certificate_contents} unless (keys & [:ref,:status]).empty?
+    result=result.joins{certificate_contents.csrs} unless
+        (keys & [:country, :strength, :common_name, :organization, :organization_unit, :state,
+                :subject_alternative_names, :locality, :decoded]).empty?
+    result=result.joins{certificate_contents.csr.signed_certificates} unless
+        (keys & [:country, :strength, :postal_code, :signature, :fingerprint, :expires_at, :created_at, :issued_at,
+                 :common_name, :organization, :organization_unit, :state, :subject_alternative_names, :locality,
+                 :decoded, :address]).empty?
+    %w(is_test).each do |field|
+      query=filters[field.to_sym]
+      if query.try("true?")
+        result = result.send(field)
+      elsif query.try("false?")
+        result = result.not_test
+      end
+    end
+    %w(order_by_csr).each do |field|
+      query=filters[field.to_sym]
+      result = result.send(field) if query.try("true?")
+    end
+    %w(physical_tokens).each do |field|
+      query=filters[field.to_sym]
+      result = result.search_physical_tokens(query) if query
+    end
+    %w(postal_code signature fingerprint).each do |field|
+      query=filters[field.to_sym]
+      result = result.where{
+        (certificate_contents.csr.signed_certificates.send(field.to_sym) =~ "%#{query}%")} if query
+    end
+    %w(product).each do |field|
+      query=filters[field.to_sym]
+      result = result.filter_by(query) if query
+    end
+    %w(duration).each do |field|
+      query=filters[field.to_sym]
+      result = result.filter_by_duration(query) if query
+    end
+    %w(ref).each do |field|
+      query=filters[field.to_sym]
+      result = result.where{(ref >> query.split(',')) |
+          (certificate_contents.send(field.to_sym) >> query.split(','))} if query
+    end
+    %w(country strength).each do |field|
+      query=filters[field.to_sym]
+      result = result.where{
+        (certificate_contents.csr.signed_certificates.send(field.to_sym) >> query.split(',')) |
+            (certificate_contents.csrs.send(field.to_sym) >> query.split(','))} if query
+    end
+    %w(status).each do |field|
+      query=filters[field.to_sym]
+      result = result.where{
+        (certificate_contents.send(:workflow_state) >> query.split(',')) |
+            (workflow_state >> query.split(','))} if query
+    end
+    %w(common_name organization organization_unit state subject_alternative_names locality decoded).each do |field|
+        query=filters[field.to_sym]
+        result = result.where{
+          (certificate_contents.csr.signed_certificates.send(field.to_sym) =~ "%#{query}%") |
+              (certificate_contents.csrs.send(field.to_sym) =~ "%#{query}%") } if query
+    end
+    %w(address).each do |field|
+      query=filters[field.to_sym]
+      result = result.where{
+        (certificate_contents.csr.signed_certificates.address1 =~ "%#{query}%") |
+        (certificate_contents.csr.signed_certificates.address2 =~ "%#{query}%")} if query
+    end
+    %w(login email).each do |field|
+      query=filters[field.to_sym]
+      result = result.where{
+        (ssl_account.users.send(field.to_sym) =~ "%#{query}%")} if query
+    end
+    %w(account_number).each do |field|
+      query=filters[field.to_sym]
+      result = result.where{
+        (ssl_account.send(field.to_sym) =~ "%#{query}%")} if query
+    end
+    %w(address).each do |field|
+      query=filters[field.to_sym]
+      result = result.where{
+        (certificate_contents.csr.signed_certificates.address1 =~ "%#{query}%") |
+        (certificate_contents.csr.signed_certificates.address2 =~ "%#{query}%")} if query
+    end
+    %w(expires_at created_at issued_at).each do |field|
+      query=filters[field.to_sym]
+      if query
+        query=query.split("-")
+        start = Date.strptime query[0], "%m/%d/%Y"
+        finish = query[1] ? Date.strptime(query[1], "%m/%d/%Y") : start+1.day
+        if(field=="expires_at")
+          result = result.where{(certificate_contents.csr.signed_certificates.expiration_date >> (start..finish))}
+        elsif(field=="issued_at")
+          result = result.where{(certificate_contents.csr.signed_certificates.created_at >> (start..finish))}
+        else
+          result = result.where{created_at >> (start..finish)}
+        end
+      end
+    end
+    %w(co_tags).each do |field|
+      query = filters[field.to_sym]
+      if query
+        @result_prior_co_tags = result
+        result = result.joins(:tags).where(tags: {name: query.split(',')})
+      end
+    end
+    %w(cc_tags).each do |field|
+      query = filters[field.to_sym]
+      if query
+        cc_results = (@result_prior_co_tags || result)
+          .joins(certificate_contents: [:tags]).where(tags: {name: query.split(',')})
+
+        result = if @result_prior_co_tags.nil?
+          cc_results
+        else
+          # includes tags in BOTH certificate orders and certificate contents tags, not a union
+          CertificateOrder.where(id: (result + cc_results).map(&:id).uniq)
+        end
+      end
+    end
+    %w(folder_ids).each do |field|
+      query = filters[field.to_sym]
+      result = result.where(folder_id: query.split(',')) if query
+    end
+    result.uniq
+  }
+
   # scope :reprocessing, lambda {
   #   cids=Preference.select("owner_id").joins{owner(CertificateContent)}.
   #       where{(name=="reprocessing") & (value==1)}.map(&:owner_id)
@@ -314,7 +488,7 @@ class CertificateOrder < ActiveRecord::Base
   }
 
   scope :filter_by_duration, lambda { |term|
-    where{certificate_contents.duration >> term.split(',')}
+    joins{certificate_contents}.where{certificate_contents.duration >> term.split(',')}
   }
 
   scope :unvalidated, ->{where{(is_expired==false) &

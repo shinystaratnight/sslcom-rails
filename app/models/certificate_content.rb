@@ -232,7 +232,9 @@ class CertificateContent < ActiveRecord::Base
 
     state :canceled
 
-    state :revoked
+    state :revoked do
+      event :revoke, :transitions_to => :revoked
+    end
   end
 
   after_initialize do

@@ -19,7 +19,7 @@ class CertificateOrdersController < ApplicationController
   include OrdersHelper
   include CertificateOrdersHelper
   
-  skip_before_filter :verify_authenticity_token, only: [:parse_csr]
+  skip_before_action :verify_authenticity_token, only: [:parse_csr]
   filter_access_to :all, except: [:generate_cert]
   filter_access_to :read, :update, :delete, :show, :edit, :developer, :recipient
   filter_access_to :incomplete, :pending, :search, :reprocessing, :order_by_csr, :require=>:read

@@ -153,7 +153,7 @@ class FundedAccountsController < ApplicationController
           account.reseller.finish_signup immutable_cart_item
         end
         log_deposit
-        OrderNotifier.deposit_completed(account, @deposit).deliver
+        OrderNotifier.deposit_completed(account, @deposit).deliver if Settings.invoice_notify
         if @certificate_order
           @certificate_order.pay! @gateway_response.success?
           route ||= "edit"
