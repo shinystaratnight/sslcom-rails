@@ -1,5 +1,9 @@
 module CertificateType
 
+  def is_server?
+    !(is_smime_or_client? || is_code_signing? || is_time_stamping?)
+  end
+
   def is_dv?
     if self.is_a? SignedCertificate
       !!(decoded.include?(SignedCertificate::OID_DV))

@@ -41,7 +41,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   validates :server_software, presence: true, format: {with: /\d+/}, inclusion:
       {in: ServerSoftware.pluck(:id).map(&:to_s),
       message: "needs to be one of the following: #{ServerSoftware.pluck(:id).map(&:to_s).join(', ')}"},
-            if: "csr and Settings.require_server_software_w_csr_submit"
+            if: "csr and Settings.require_server_software_w_csr_submit",if: lambda{|c|c.is_server?}
   validates :organization_name, presence: true, if: lambda{|c|c.csr && (!c.is_dv? && c.csr_obj.organization.blank?)}
   validates :post_office_box, presence: {message: "is required if street_address_1 is not specified"},
             if: lambda{|c|!c.is_dv? && c.street_address_1.blank? && c.csr} #|| c.parsed_field("POST_OFFICE_BOX").blank?}
@@ -435,7 +435,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
         end
       else
         send_dcv(cc)
-      end
+      end if options[:certificate_order].certificate.is_server?
     end
   end
 

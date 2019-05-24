@@ -93,7 +93,7 @@ class ManagedUsersController < ApplicationController
       @user.touch
       redirect_to users_path(ssl_slug: @ssl_slug), notice: notice
     end
-  end
+  endf
 
   def remove_from_account
     @user   = User.find(params[:id])

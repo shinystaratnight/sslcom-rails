@@ -8,7 +8,8 @@ class Api::V1::APIController < ActionController::API
   include ActionController::Rendering
   include ActionController::ImplicitRender
   include ActionView::Rendering
-  
+
+  skip_before_action :verify_authenticity_token
   before_filter :activate_authlogic
   before_filter :set_default_request_format
   after_filter  :set_access_control_headers
