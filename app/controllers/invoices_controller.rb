@@ -285,7 +285,7 @@ class InvoicesController < ApplicationController
   def invoice_paid
     if @order.persisted?
       @invoice.update(order_id: @order.id, status: 'paid')
-      @invoice.notify_invoice_paid(current_user)
+      @invoice.notify_invoice_paid(current_user) if Settings.invoice_notify
     end
   end
   
