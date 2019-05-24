@@ -41,7 +41,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   validates :server_software, presence: true, format: {with: /\d+/}, inclusion:
       {in: ServerSoftware.pluck(:id).map(&:to_s),
       message: "needs to be one of the following: #{ServerSoftware.pluck(:id).map(&:to_s).join(', ')}"},
-            if: "csr and Settings.require_server_software_w_csr_submit",if: lambda{|c|c.is_server?}
+            if: lambda{|c|c.is_server? && c.csr && Settings.require_server_software_w_csr_submit}
   validates :organization_name, presence: true, if: lambda{|c|c.csr && (!c.is_dv? && c.csr_obj.organization.blank?)}
   validates :post_office_box, presence: {message: "is required if street_address_1 is not specified"},
             if: lambda{|c|!c.is_dv? && c.street_address_1.blank? && c.csr} #|| c.parsed_field("POST_OFFICE_BOX").blank?}
@@ -72,6 +72,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
     self.product = product.to_s unless product.blank?
     if new_record?
       if self.csr # a single domain validation
+        self.server_software ||= ServerSoftware::OTHER
         self.dcv_method ||= "http_csr_hash"
         self.csr_obj = Csr.new(body: self.csr) # this is only for validation and does not save
         self.csr_obj.csr_unique_values.build(unique_value: unique_value) unless unique_value.blank?
