@@ -584,6 +584,8 @@ class CertificateOrdersController < ApplicationController
       CertificateOrder.unscoped{CertificateOrder.not_test} :
         current_user.ssl_account.cached_certificate_orders.unscoped{
           current_user.ssl_account.cached_certificate_orders.not_test}).order_by_csr.paginate(@p)
+    id=@ssl_account.id if @ssl_account
+    @certificate_orders = @certificate_orders.where{ssl_account_id==id} if current_user.is_admin?
 
     respond_to do |format|
       format.html { render :action=>:index}
