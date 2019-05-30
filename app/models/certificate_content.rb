@@ -382,7 +382,7 @@ class CertificateContent < ActiveRecord::Base
   end
 
   def dcv_suffix
-    ca ? "ssl.com" : "comodoca.com"
+    ca_id ? "ssl.com" : "comodoca.com"
   end
 
   def manually_validate_cname

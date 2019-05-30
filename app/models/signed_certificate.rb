@@ -96,7 +96,7 @@ class SignedCertificate < ActiveRecord::Base
       last_sent.satisfy! if(last_sent && !last_sent.satisfied?)
       unless cc.url_callbacks.blank?
         cert = ApiCertificateRetrieve.new(query_type: "all_certificates")
-        co.to_api_retrieve cert, format: "nginx", reverse_order: true
+        co.to_api_retrieve cert, format: "nginx"
         co_json = Rabl::Renderer.json(cert,File.join("api","v1","api_certificate_requests", "show_v1_4"),
                                       view_path: 'app/views', locals: {result:cert})
         cc.callback(co_json)
