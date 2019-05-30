@@ -385,7 +385,11 @@
                     %tr
                       %td(colspan="5" style="text-align: left;")
                         -unless co.certificate.is_csr_last_step?
-                          %span.previous_requests reference: #{c.ref}
+                          %span.previous_requests
+                            reference: #{c.ref}
+                            -if current_user.is_admin? and c.ca_id
+                              %br
+                              ejbca_username: #{c.label}
                         -if csr
                           -show_block = ->(sc) do
                             - unless sc.nil? || @certificate_order.certificate.is_csr_last_step?

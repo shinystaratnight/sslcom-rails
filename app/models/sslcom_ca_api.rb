@@ -216,7 +216,7 @@ class SslcomCaApi
             api_log_entry.request_username.blank?)
       OrderNotifier.problem_ca_sending("support@ssl.com", cc.certificate_order,"sslcom").deliver
     elsif api_log_entry.certificate_chain # signed certificate is issued
-      cc.update_column(:ref, options[:mapping].profile_name=~/EV/ ? api_log_entry.request_username :
+      cc.update_column(:label, options[:mapping].profile_name=~/EV/ ? api_log_entry.request_username :
                                  api_log_entry.username) unless api_log_entry.blank?
       attrs = {body: api_log_entry.end_entity_certificate.to_s, ca_id: options[:mapping].id}
       cc.csr.signed_certificates.create(attrs)

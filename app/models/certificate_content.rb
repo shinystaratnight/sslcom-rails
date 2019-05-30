@@ -12,7 +12,12 @@ class CertificateContent < ActiveRecord::Base
   has_one     :registrant, as: :contactable, dependent: :destroy
   has_one     :locked_registrant, :as => :contactable
   has_many    :certificate_contacts, :as => :contactable
-  has_many    :certificate_names # used for dcv of each domain in a UCC or multi domain ssl
+  has_many    :certificate_names do # used for dcv of each domain in a UCC or multi domain ssl
+    def validated
+      joins{domain_control_validations}.where{domain_control_validations.workflow_state=="satisfied"}.uniq
+    end
+  end
+  has_many    :domain_control_validations, through: :certificate_names
   has_many    :url_callbacks, as: :callbackable
   has_many    :taggings, as: :taggable
   has_many    :tags, through: :taggings
@@ -377,7 +382,13 @@ class CertificateContent < ActiveRecord::Base
   end
 
   def dcv_suffix
-    ca ? "ssl.com" : "comodoca.com"
+    ca_id ? "ssl.com" : "comodoca.com"
+  end
+
+  def manually_validate_cname
+    (certificate_names-certificate_names.validated).each do |name|
+      p [name.name,name.dcv_verify("cname",ignore_unique_value: true)]
+    end
   end
 
   def dcv_domains(options)
