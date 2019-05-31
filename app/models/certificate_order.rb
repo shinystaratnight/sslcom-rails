@@ -2262,7 +2262,7 @@ class CertificateOrder < ActiveRecord::Base
           when "end_entity"
             self.signed_certificate.x509_certificates.first.to_s
           when "nginx"
-            self.signed_certificate.to_nginx(false,reverse_order: options[:reverse_order])
+            self.signed_certificate.to_nginx(false,order: options[:order])
           else
             self.signed_certificate.to_format(response_type: result.response_type, #assume comodo issued cert
                                               response_encoding: result.response_encoding) || self.signed_certificate.to_nginx
