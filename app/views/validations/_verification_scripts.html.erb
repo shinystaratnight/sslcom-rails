@@ -117,11 +117,15 @@
           url: automated_call_url,
           data: {
             token: $('#token').val(),
-            method: $("input[name='method']:checked").val()
+            method: $("input[name='method']:checked").val(),
+            locale: $('#callback_locale').val()
           },
           type: 'POST',
           success: function (data) {
             if (data['status'] == 'success') {
+              $('#callback_type').prop('disabled', true);
+              $('#callback_locale').prop('disabled', true);
+
               $('#passed_token').val(data['passed_token']);
               $('.btn-automated-callback').prop('disabled', false);
               $('.phone-call-block').hide();
@@ -293,7 +297,8 @@
             callback_type: $("#callback_type").val(),
             callback_timezone: $('#callback_time_zone').val(),
             callback_date: $('#callback_date').val(),
-            callback_time: $('#callback_time').val()
+            callback_time: $('#callback_time').val(),
+            locale: $('#callback_locale').val()
           },
           type: 'POST',
           success: function (data) {
@@ -301,6 +306,8 @@
 
             if (data['status'] == 'success-manual' || data['status'] == 'success-schedule') {
               $('#callback_type').prop('disabled', true);
+              $('#callback_locale').prop('disabled', true);
+
               $('.phone-call-block').remove();
               $('.phone-callback-date-block').remove();
               $('.phone-verification-block').remove();

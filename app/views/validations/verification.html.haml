@@ -38,6 +38,12 @@
           .col-md-4.callback-datetime-desc
             - unless @callback_type == 'none'
               = @callback_datetime
+        .row.pt-3.phone-callback-locale
+          .col-md-5
+            .row.callback-locale-lbl.pull-right
+              Language :
+          .col-md-4.callback-local-desc
+            = select_tag 'callback_locale', options_for_select(@supported_languages, @callback_locale), :class => 'form-control', :disabled => @callback_type == 'none' ? false : true
         .row.pt-3.pb-3.phone-callback-option
           .col-md-5
             .row.callback-type.pull-right
