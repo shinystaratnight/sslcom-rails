@@ -156,7 +156,11 @@ class User < ActiveRecord::Base
   end
 
   def owned_ssl_account
-    assignments.where{role_id = Role.get_owner_id}.first.try :ssl_account
+    owned_ssl_accounts.first
+  end
+
+  def owned_ssl_accounts
+    assignments.includes(:ssl_account).where{role_id == Role.get_owner_id}.uniq.map(&:ssl_account)
   end
 
   def team_status(team)

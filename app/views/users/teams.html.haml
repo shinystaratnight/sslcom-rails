@@ -138,11 +138,11 @@
                   =link_to "<i class='fa fa-user-times'></i> leave".html_safe, |
                       leave_team_user_path(current_user, ssl_account_id: t.id),
                     {data: {confirm: "Please confirm you want to leave team #{t.get_team_name}."}}
-                -if permitted_to?(:set_default_team, current_user) && !system_admins
+                -if permitted_to?(:set_default_team, current_user) && !system_admins && current_user.default_ssl_account != t.id
                   %br/
                   = link_to "<i class='fa fa-certificate'></i> set default".html_safe,
                     set_default_team_user_path(current_user, ssl_account_id: t.id), method: :put
-              - if (account_owner || account_admin) && !current_user.is_first_approved_acct?(t)
+              - if account_owner and current_user.owned_ssl_accounts.count > 1
                 =link_to "<i class='fa fa-chevron-circle-down'></i> archive".html_safe,
                   archive_team_user_path(current_user.id, ssl_account_id: t.id),
                   {data: {confirm: "Please confirm you want to archive team \"#{t.get_team_name}\"."}}
