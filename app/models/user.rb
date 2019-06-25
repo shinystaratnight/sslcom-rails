@@ -29,6 +29,8 @@ class User < ActiveRecord::Base
             dependent: :destroy, class_name: "SslAccountUser"
   has_many  :approved_ssl_accounts,
             foreign_key: :ssl_account_id, source: "ssl_account", through: :approved_ssl_account_users
+  has_many  :approved_teams, -> {unscope(where: [:workflow_state])},
+            foreign_key: :ssl_account_id, source: "ssl_account", through: :approved_ssl_account_users
   has_many  :refunds
   has_many  :discounts, as: :benefactor, dependent: :destroy
   has_one   :shopping_cart
@@ -137,6 +139,22 @@ class User < ActiveRecord::Base
     total_teams_owned.include?(ssl_account)
   end
 
+  def is_account_team_admin?(ssl_account)
+    total_teams_admin.include?(ssl_account)
+  end
+
+  def is_team_owner_admin?(ssl_account)
+    assignments.where(role_id: [Role.get_owner_id, Role.get_account_admin_id], ssl_account_id: ssl_account.id).size > 0
+  end
+
+  def role_symbols_archived_team(ssl_account)
+    assignments.includes(:role).where(ssl_account_id: ssl_account.id).map{|assign| assign.role.name.to_sym}.uniq.compact
+  end
+
+  def is_first_approved_acct?(ssl_account)
+    ssl_account == get_first_approved_acct
+  end
+
   def owned_ssl_account
     assignments.where{role_id = Role.get_owner_id}.first.try :ssl_account
   end
@@ -208,6 +226,12 @@ class User < ActiveRecord::Base
     user.assignments.includes(:ssl_account).where(role_id: Role.get_owner_id).map(&:ssl_account).uniq.compact
   end
   memoize :total_teams_owned
+
+  def total_teams_admin(user_id = nil)
+    user = self_or_other(user_id)
+    user.assignments.includes(:ssl_account).where(role_id: Role.get_account_admin_id).map(&:ssl_account).uniq.compact
+  end
+  memoize :total_teams_admin
 
   def total_teams_can_manage_users(user_id=nil)
     user = self_or_other(user_id)
@@ -970,6 +994,10 @@ class User < ActiveRecord::Base
 
   def get_all_approved_accounts
     (self.is_system_admins? ? SslAccount.unscoped : self.approved_ssl_accounts).order("created_at desc")
+  end
+
+  def get_all_approved_teams
+    (self.is_system_admins? ? SslAccount.unscoped : self.approved_teams).order("created_at desc")
   end
 
   def user_approved_invite?(params)

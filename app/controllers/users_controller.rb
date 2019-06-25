@@ -7,7 +7,7 @@ class UsersController < ApplicationController
     :show, :edit, :update, :cancel_reseller_signup, 
     :approve_account_invite, :resend_account_invite,
     :switch_default_ssl_account, :enable_disable, :teams,
-    :index, :admin_show, :search_teams
+    :index, :admin_show, :search_teams, :archive_team, :retrieve_team
   ]
   before_filter :finish_reseller_signup, :only => [:show]
   before_filter :new_user, :only=>[:create, :new]
@@ -21,8 +21,8 @@ class UsersController < ApplicationController
   filter_access_to  :update, :admin_update, :enable_disable,
     :switch_default_ssl_account, :decline_account_invite,
     :approve_account_invite, :create_team, :set_default_team,
-    :index, :edit_email, :edit_password, :leave_team, :dont_show_again, attribute_check: true
-  filter_access_to  :consolidate, :dup_info, :require=>:update
+    :index, :edit_email, :edit_password, :leave_team, :dont_show_again, :archive_team, :retrieve_team, attribute_check: true
+  filter_access_to  :consolidate, :dup_info, :archive_team, :retrieve_team, :require=>:update
   filter_access_to  :resend_activation, :activation_notice, :require=>:create
   filter_access_to  :edit_password, :edit_email, :cancel_reseller_signup, :teams, :require=>:edit
   filter_access_to :show_user, :reset_failed_login_count, :require => :ajax
@@ -449,12 +449,29 @@ class UsersController < ApplicationController
   def teams
     p = {page: params[:page]}
     team = params[:team]
-    @teams = @user.get_all_approved_accounts
+    # @teams = @user.get_all_approved_accounts
+    @teams = @user.get_all_approved_teams
     unless team.blank?
       team = team.strip.downcase
       @teams = @teams.where("acct_number = ? OR ssl_slug = ? OR company_name = ?", team, team, team)
     end
     @teams = @teams.paginate(p)
+  end
+
+  def archive_team
+    team = (current_user.is_system_admins? ? SslAccount.unscoped : current_user.ssl_accounts).find(params[:ssl_account_id])
+    team.archive! if team.active?
+
+    flash[:notice] = 'Your team "#' + team.to_slug + '" has been archived. You can retrieve later again.'
+    redirect_to teams_user_path(current_user)
+  end
+
+  def retrieve_team
+    team = SslAccount.unscoped.find(params[:ssl_account_id])
+    team.retrieve! if team.archived?
+
+    flash[:notice] = 'Your team "#' + team.to_slug + '" has been retrieved.'
+    redirect_to teams_user_path(current_user)
   end
 
   def create_team
