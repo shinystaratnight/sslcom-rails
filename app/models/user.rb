@@ -29,7 +29,7 @@ class User < ActiveRecord::Base
             dependent: :destroy, class_name: "SslAccountUser"
   has_many  :approved_ssl_accounts,
             foreign_key: :ssl_account_id, source: "ssl_account", through: :approved_ssl_account_users
-  has_many  :approved_teams, -> {unscope(where: [:workflow_state])},
+  has_many  :approved_teams,
             foreign_key: :ssl_account_id, source: "ssl_account", through: :approved_ssl_account_users
   has_many  :refunds
   has_many  :discounts, as: :benefactor, dependent: :destroy
@@ -156,11 +156,7 @@ class User < ActiveRecord::Base
   end
 
   def owned_ssl_account
-    owned_ssl_accounts.first
-  end
-
-  def owned_ssl_accounts
-    assignments.includes(:ssl_account).where{role_id == Role.get_owner_id}.uniq.map(&:ssl_account)
+    total_teams_owned.first
   end
 
   def team_status(team)

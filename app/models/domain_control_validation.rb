@@ -206,7 +206,11 @@ class DomainControlValidation < ActiveRecord::Base
       subdomains.shift if subdomains[0]=="*" #remove wildcard
       [].tap {|s|
         0.upto(subdomains.count) do |i|
-          s << (subdomains.slice(0,i)<<d.domain).join(".")
+          if i==0
+            s << d.domain
+          else
+            s << (subdomains.slice(-i,subdomains.count)<<d.domain).join(".")
+          end
         end
       }.map do |e|
         AUTHORITY_EMAIL_ADDRESSES.map do |ae|

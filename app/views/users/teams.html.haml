@@ -142,7 +142,7 @@
                   %br/
                   = link_to "<i class='fa fa-certificate'></i> set default".html_safe,
                     set_default_team_user_path(current_user, ssl_account_id: t.id), method: :put
-              - if account_owner and current_user.owned_ssl_accounts.count > 1
+              - if account_owner and current_user.total_teams_owned.count > 1
                 =link_to "<i class='fa fa-chevron-circle-down'></i> archive".html_safe,
                   archive_team_user_path(current_user.id, ssl_account_id: t.id),
                   {data: {confirm: "Please confirm you want to archive team \"#{t.get_team_name}\"."}}
@@ -162,7 +162,7 @@
             %td=t.created_at.strftime("%b %d, %Y")
             %td#team-action-items.teams-index-text-left
               - if account_owner_admin || system_admins
-                =link_to "<i class='fa fa-chevron-circle-up'></i> retrieve".html_safe,
+                =link_to "<i class='fa fa-chevron-circle-up'></i> unarchive".html_safe,
                     retrieve_team_user_path(current_user.id, ssl_account_id: t.id)
 
 
