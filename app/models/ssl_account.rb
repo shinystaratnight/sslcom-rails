@@ -615,9 +615,10 @@ class SslAccount < ActiveRecord::Base
   end
 
   def get_account_admins
-    Rails.cache.fetch("#{cache_key}/get_account_admins") do
-      users.with_role(Role::ACCOUNT_ADMIN).uniq
+    uid=Rails.cache.fetch("#{cache_key}/get_account_admins") do
+      users.with_role(Role::ACCOUNT_ADMIN).pluck(:user_id).uniq
     end
+    uid ? User.find(uid) : nil
   end
   memoize :get_account_admins
 
@@ -631,16 +632,16 @@ class SslAccount < ActiveRecord::Base
   end
   memoize :get_account_owner
 
-  def get_account_admins
-    uid=Rails.cache.fetch("#{cache_key}/get_account_admins") do
-      Assignment.where(
-        role_id: [Role.get_account_admin_id], ssl_account_id: id
-      ).pluck(:user_id)
-    end
-    uid ? User.find(uid) : nil
-  end
-  memoize :get_account_admins
-
+  # def get_account_admins
+  #   uid=Rails.cache.fetch("#{cache_key}/get_account_admins") do
+  #     Assignment.where(
+  #       role_id: [Role.get_account_admin_id], ssl_account_id: id
+  #     ).pluck(:user_id)
+  #   end
+  #   uid ? User.find(uid) : nil
+  # end
+  # memoize :get_account_admins
+  #
   def cached_users
     User.where(id: (Rails.cache.fetch("#{cache_key}/cached_users") do
       users.pluck(:id).uniq
