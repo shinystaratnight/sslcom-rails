@@ -760,13 +760,13 @@ class ValidationsController < ApplicationController
     if co
       if co.certificate_contents.size == 0
         returnObj['status'] = 'no-exist-cert-content'
-      elsif co.certificate_contents.size == 1
-        co.certificate_content.reset!
-        co.certificate_content.csr.delete
-        returnObj['status'] = 'success'
-      elsif co.certificate_contents.size > 1
-        co.certificate_content.delete
-        co.certificate_content.csr.delete
+      else
+        co.certificate_content.destroy
+        if co.certificate_contents.size == 0
+          cc=CertificateContent.new
+          cc.certificate_order=co
+          cc.save
+        end
         returnObj['status'] = 'success'
       end
     else

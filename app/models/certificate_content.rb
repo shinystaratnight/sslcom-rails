@@ -9,12 +9,12 @@ class CertificateContent < ActiveRecord::Base
   has_one     :csr, :dependent => :destroy
   has_many    :csrs, :dependent => :destroy
   has_many    :signed_certificates, through: :csr
-  has_one     :registrant, as: :contactable, dependent: :destroy
+  has_one     :registrant, as: :contactable
   has_one     :locked_registrant, :as => :contactable
   has_many    :certificate_contacts, :as => :contactable
-  has_many    :certificate_names # used for dcv of each domain in a UCC or multi domain ssl
-  has_many    :url_callbacks, as: :callbackable
-  has_many    :taggings, as: :taggable
+  has_many    :certificate_names, :dependent => :destroy # used for dcv of each domain in a UCC or multi domain ssl
+  has_many    :url_callbacks, :dependent => :destroy, as: :callbackable
+  has_many    :taggings, :dependent => :destroy, as: :taggable
   has_many    :tags, through: :taggings
   belongs_to  :ca
 
