@@ -830,7 +830,7 @@ class CertificateContent < ActiveRecord::Base
       end
     end
     dn << options[:custom_fields] if options[:custom_fields]
-    dn.map{|d|d.gsub(/\\/,'\\\\').gsub(',','\,')}.join(",")
+    dn.map{|d|d.gsub(/\\/,'\\\\').gsub(',',' ')}.join(",")
   end
 
   def cached_csr_public_key_sha1

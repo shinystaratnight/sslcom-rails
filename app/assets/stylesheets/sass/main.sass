@@ -8859,7 +8859,8 @@ a.back_to_generate_cert_page
   .form-group .error-no-domain-msg,
   .form-group .error-require-domain-msg
     display: none
-    font-size: 10px
+    //font-size: 10px
+    font-size: 1.3em
     color: red
     padding-left: 5px
 
@@ -8872,11 +8873,18 @@ a.back_to_generate_cert_page
   .form-group.error-require-domain-block .error-require-domain-msg
     display: block
 
+  input[type="button"]
+    height: 35px
+    font-size: 1.5em
+
 .pkcs_password_block
   .notice_msg
-    font-size: 10px
+    font-size: 1.3em
     padding-left: 5px
     padding-top: 3px
+
+  .pkcs_password
+    font-size: 1.5em
 
   &.error_require_min_length
     .pkcs_password
@@ -8886,7 +8894,8 @@ a.back_to_generate_cert_page
 
 .pri_key_block
   .error_msg
-    font-size: 10px
+    //font-size: 10px
+    font-size: 1.3em
     padding-left: 5px
     color: red
     display: none
@@ -8898,7 +8907,8 @@ a.back_to_generate_cert_page
       display: block
 
 .pkcs_download_instruction
-  font-size: 12px
+  //font-size: 12px
+  font-size: 1.3em
   font-style: italic
   font-weight: bold
   color: #555
@@ -8906,6 +8916,31 @@ a.back_to_generate_cert_page
 .integrated_algorithm_wrap select,
 .algorithm_wrap select
   width: 500px
+  height: 35px !important
+  font-size: 1.5em
+
+
+.algorithm_wrap,
+.integrated_algorithm_wrap,
+.csr_wrap,
+.pri_key_wrap,
+.cert_wrap,
+.pkcs_download_wrap,
+.cert_download_wrap
+  input[type="button"]
+    height: 35px
+    font-size: 1.5em
+
+  .col-md-3
+    line-height: 35px
+    vertical-align: middle
+    font-size: 1.5em
+
+.csr_wrap,
+.pri_key_wrap,
+.cert_wrap
+  .col-md-3
+    line-height: 160px
 
 .managed_csr.algorithm_wrap select
   width: 100%
@@ -9079,3 +9114,38 @@ a.back_to_generate_cert_page
     
     &__link:last-child
       margin-bottom: 2rem
+
+.gen_cert_head
+  font-weight: bold
+
+  fieldset
+    border: 1px solid #ddd
+    margin: 0
+    padding: 15px
+    position: relative
+    border-radius: 5px
+    background-color: #f5f5f5
+
+    legend
+      font-size: 1.5em
+      font-weight: bold
+      margin-bottom: 0px
+      width: 115px
+      border: 1px solid #ddd
+      border-radius: 5px
+      padding: 5px 5px 5px 15px
+      background-color: #ffffff
+
+    .subject_dn_info
+      font-size: 1.3em
+
+      .subject_dn_label,
+      .subject_dn_value
+        float: left
+
+      .subject_dn_label
+        width: 30%
+        text-align: right
+
+      .subject_dn_value
+        padding-left: 10px

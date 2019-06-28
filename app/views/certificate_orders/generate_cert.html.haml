@@ -11,7 +11,22 @@
     SSL.com will never see or handle your private keys.
   -is_cs = @certificate_order.certificate.is_code_signing?
   -is_client = @certificate_order.certificate.is_smime_or_client?
-  -if @certificate_order.certificate_content.subject_dn
+  - if @certificate_order.certificate_content.subject_dn
+    .gen_cert_head
+      .row.pt-5.pb-5
+        .col-md-3
+        .col-md-6
+          %fieldset.gen_cert_head
+            %legend
+              Subject DN
+            - @certificate_order.certificate_content.subject_dn.split(',').each do |s|
+              .subject_dn_info.clearfix
+                .subject_dn_label.right
+                  =s.split('=')[0] + '  : '
+                .subject_dn_value
+                  =s.split('=')[1]
+
+  -#-if @certificate_order.certificate_content.subject_dn
     %dl.center
       %dt
         %strong subject dn
@@ -24,15 +39,15 @@
       - if current_user.blank?
         .col-md-6
           %input.generate_cert.right{:type=>'button', :value=>'Generate Certificate', :class=>'btn btn-primary'}
-        .col-md-6{:style=>'font-size: 15px'}
-          %input.own_csr{:type=>'checkbox', :style=>'height: 20px; vertical-align: bottom; margin-right: 10px'} I have my own CSR
+        .col-md-6{:style=>'font-size: 1.5em'}
+          %input.own_csr{:type=>'checkbox', :style=>'height: 35px; width: 20px; vertical-align: middle; margin-right: 10px'} I have my own CSR
       - else
         .col-md-5
           %input.generate_cert.right{:type=>'button', :value=>'Generate Certificate', :class=>'btn btn-primary'}
         .col-md-2.create_csr_block
           %input.create_csr.center{:type=>'button', :value=>'Create CSR', :class=>'btn btn-primary'}
-        .col-md-5{:style=>'font-size: 15px'}
-          %input.own_csr{:type=>'checkbox', :style=>'height: 20px; vertical-align: bottom; margin-right: 10px'} I have my own CSR
+        .col-md-5{:style=>'font-size: 1.5em'}
+          %input.own_csr{:type=>'checkbox', :style=>'height: 35px; width: 20px; vertical-align: middle; margin-right: 10px'} I have my own CSR
   .integrated_algorithm_wrap
     .row.pt-4
       .col-md-3{:style=>"text-align: right"}
@@ -98,7 +113,7 @@
       .col-md-3{:style=>"text-align: right"}
         Password :
       .col-md-4.pkcs_password_block
-        %input.pkcs_password{:type=>'password', :style=>'width: 100%'}
+        %input.pkcs_password.form-control{:type=>'password', :style=>'width: 100%'}
         .notice_msg
           * minimum of 6 characters required
       .col-md-5
