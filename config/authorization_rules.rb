@@ -92,7 +92,7 @@ authorization do
     #
     # SslAccounts
     #
-    has_permission_on :ssl_accounts, :to => :create
+    has_permission_on :ssl_accounts, :to => [:create, :update]
     has_permission_on :ssl_accounts, :to => :admin_manage do
       if_attribute get_account_owner: is {user}
     end
@@ -155,7 +155,7 @@ authorization do
     #
     # SslAccounts
     #
-    has_permission_on :ssl_accounts, :to => [:create, :validate_ssl_slug]
+    has_permission_on :ssl_accounts, :to => [:create, :validate_ssl_slug, :update]
     has_permission_on :ssl_accounts, :to => :update_ssl_slug, join_by: :and do
       if_attribute :id => is {user.ssl_account.id},
                    ssl_slug: is {nil}

@@ -319,7 +319,7 @@ class SignedCertificate < ActiveRecord::Base
   end
 
   def is_sslcom_ca?
-    issuer.include?("O=SSL Corporation") || issuer.include?("O=EJBCA Sample")
+    ca_id != nil || issuer.include?("O=EJBCA Sample")
   end
 
   def x509_certificates
@@ -533,10 +533,16 @@ class SignedCertificate < ActiveRecord::Base
   end
 
   def to_nginx(is_windows=nil, options={})
-    options[:reverse_order] ||= false
     "".tap do |tmp|
-      if certificate_content.ca
-        (options[:reverse_order] ? x509_certificates.reverse : x509_certificates).each do |x509_cert|
+      if certificate_content.ca_id
+        x509_certs=if options[:order]=="reverse"
+                     x509_certificates.reverse
+                   elsif options[:order]=="rotate"
+                     x509_certificates.rotate
+                   else
+                     x509_certificates
+                   end
+        x509_certs.each do |x509_cert|
           tmp<<x509_cert.to_s
         end
       else
