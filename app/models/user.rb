@@ -48,6 +48,8 @@ class User < ActiveRecord::Base
   preference  :scan_log_row_count, :string, :default => "10"
   preference  :domain_row_count, :string, :default => "10"
   preference  :domain_csr_row_count, :string, :default => "10"
+  preference  :team_row_count, :string, :default => "10"
+  preference  :validate_row_count, :string, :default => "10"
 
   #will_paginate
   cattr_accessor :per_page
