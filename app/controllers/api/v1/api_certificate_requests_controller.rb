@@ -623,7 +623,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
 
           @result.cert_details[:api_commands][:products] = []
           serial_list = ['evucc256sslcom', 'ucc256sslcom', 'ov256sslcom', 'ev256sslcom', 'dv256sslcom', 'wc256sslcom', 'basic256sslcom']
-          serial_list.push('premium256sslcom') if DEPLOYMENT_CLIENT=~/www.ssl.com/
+          serial_list.push('premium256sslcom') if DEPLOYMENT_CLIENT =~ Regexp.new(Settings.portal_domain)
           serial_list.each do |serial|
             c = Certificate.find_by_serial(serial)
             @result.cert_details[:api_commands][:products].push('"' + c.api_product_code + '"' + ' - ' + c.title)

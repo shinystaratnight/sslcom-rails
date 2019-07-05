@@ -1,6 +1,6 @@
 SslCom::Application.configure do
   # Settings specified here will take precedence over those in config/environment.rb
-  APP_URL = "https://www.ssl.com"
+  APP_URL = "https://#{Settings.portal_domain}"
   MIGRATING_FROM_LEGACY = false
 
   # The production environment is meant for finished, "live" apps.

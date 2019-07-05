@@ -25,7 +25,7 @@ module ApplicationHelper
            elsif is_sandbox_or_test?
              'sandbox.ssl.com'
            elsif request.host_with_port=="sws.sslpki.com"
-             'www.ssl.com'
+             'ra.ssl.com'
            else
              request.host_with_port
            end
