@@ -702,7 +702,7 @@ class Order < ActiveRecord::Base
       cc  = if str.nil?
         []
       else  
-        co.certificate_contents.where("ref = ? OR label = ? OR id = ?", str, str, str)
+        co.certificate_contents.where("ref = ? OR id = ?", str, str)
       end
       cc  = cc.any? ? cc.first : nil
     end

@@ -23,6 +23,7 @@ class DomainControlValidation < ActiveRecord::Base
   default_scope{ order("domain_control_validations.created_at asc")}
   scope :global, -> {where{(certificate_name_id==nil) & (csr_id==nil)}}
   scope :whois_threshold, -> {where(updated_at: 1.hour.ago..DateTime.now)}
+  scope :satisfied, -> {where(workflow_state: "satisfied")}
 
   include Workflow
   workflow do
