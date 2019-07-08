@@ -295,10 +295,10 @@ class UserSessionsController < ApplicationController
           @user_session = current_user_session
 
           if current_user.is_duo_required?
-            flash[:notice] = "Duo 2-factor authentication setup." unless request.xhr?
-            format.js   {render :json=>url_for_js(current_user)}
-            format.html {redirect_to(duo_user_session_url)}
-          else
+          #   flash[:notice] = "Duo 2-factor authentication setup." unless request.xhr?
+          #   format.js   {render :json=>url_for_js(current_user)}
+          #   format.html {redirect_to(duo_user_session_url)}
+          # else
             if current_user.ssl_account(:default_team).sec_type == 'duo'
               if current_user.ssl_account(:default_team).duo_enabled && (Settings.duo_auto_enabled || Settings.duo_custom_enabled) && current_user.duo_enabled
                 flash[:notice] = "Duo 2-factor authentication setup." unless request.xhr?

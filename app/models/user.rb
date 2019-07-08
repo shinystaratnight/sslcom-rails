@@ -100,6 +100,8 @@ class User < ActiveRecord::Base
 
   scope :search_sys_admin, ->{ joins{ roles }.where{ roles.name == Role::SYS_ADMIN } }
 
+  scope :search_super_user, -> {joins{roles}.where{roles.name == Role::SUPER_USER}}
+
   def ssl_account(default_team=nil)
     SslAccount.find_by_id(Rails.cache.fetch("#{cache_key}/ssl_account/#{default_team.is_a?(Symbol) ? default_team.to_s : default_team.try(:cache_key)}") do
       default_ssl = default_ssl_account && is_approved_account?(default_ssl_account)

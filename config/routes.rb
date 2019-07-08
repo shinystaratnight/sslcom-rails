@@ -284,6 +284,7 @@ SslCom::Application.routes.draw do
         post :get_email_addresses
         post :send_callback
         post :add_super_user_email
+        post :request_approve_phone_number
 
         member do
           match :dcv_validate, via: [:get, :post, :options]
