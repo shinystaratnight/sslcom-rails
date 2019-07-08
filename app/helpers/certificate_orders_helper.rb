@@ -182,8 +182,7 @@ module CertificateOrdersHelper
                   permitted_to?(:show, certificate_order)
             elsif certificate_order.signed_certificate_duration_delta > 1
               link_to('change domain(s)/rekey', reprocess_certificate_order_path(@ssl_slug,
-                  certificate_order)) if permitted_to?(:update, certificate_order) and
-                  !certificate_content.expired?
+                  certificate_order)) if permitted_to?(:update, certificate_order)
             else
               links =  "<li>#{link_to 'renew', renew_certificate_order_path(@ssl_slug, certificate_order)}</li>"
               links << "<li> or #{link_to 'change domain(s)/rekey', reprocess_certificate_order_path(@ssl_slug,
