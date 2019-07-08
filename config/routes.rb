@@ -334,6 +334,7 @@ SslCom::Application.routes.draw do
       collection do
         get :show_csr_detail
         post :add_generated_csr
+        post :remove_managed_csrs
       end
     end
 
