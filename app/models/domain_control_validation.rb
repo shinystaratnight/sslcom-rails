@@ -178,8 +178,6 @@ class DomainControlValidation < ActiveRecord::Base
     subject=subject[2..-1] if subject=~/\A\*\./
     compare_with=compare_with[2..-1] if compare_with=~/\A\*\./
     if ::PublicSuffix.valid?(subject, default_rule: nil) and ::PublicSuffix.valid?(compare_with, default_rule: nil)
-      sd=::PublicSuffix.parse(subject)
-      subject_subdomains = sd.trd ? sd.trd.split(".").reverse : []
       d=::PublicSuffix.parse(compare_with)
       compare_with_subdomains = d.trd ? d.trd.split(".").reverse : []
       0.upto(compare_with_subdomains.count) do |i|
