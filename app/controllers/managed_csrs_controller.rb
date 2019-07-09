@@ -140,6 +140,16 @@ class ManagedCsrsController < ApplicationController
     end
   end
 
+  def remove_managed_csrs
+    csr_ids = params['checkbox_csrs']
+    csr_ids.each do |csr_id|
+      csr = current_user.ssl_account.all_csrs.find_by(id: csr_id)
+      csr.destroy unless csr.blank?
+    end
+
+    render :json => 'success'
+  end
+
   def show_csr_detail
     if current_user
       @csr = current_user.ssl_account.all_csrs.find_by(id: params[:id])

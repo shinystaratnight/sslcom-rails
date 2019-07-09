@@ -20,6 +20,10 @@ class CertificateName < ActiveRecord::Base
     def last_method
       where{dcv_method >> ['http','https','email','cname']}.last
     end
+
+    def validated
+      where{workflow_state=="satisfied"}.last
+    end
   end
   has_many    :notification_groups_subjects, as: :subjectable
   has_many    :notification_groups, through: :notification_groups_subjects
@@ -191,7 +195,7 @@ class CertificateName < ActiveRecord::Base
         end
         return true if !!(r =~ Regexp.new("^#{options[:csr].sha2_hash}") &&
             (options[:ca_tag]=="ssl.com" ? true : r =~ Regexp.new("^#{options[:ca_tag]}")) &&
-            (options[:csr].unique_value.blank? ? true : r =~ Regexp.new("^#{options[:csr].unique_value}")))
+            ((options[:csr].unique_value.blank? or options[:ignore_unique_value]) ? true : r =~ Regexp.new("^#{options[:csr].unique_value}")))
       end
     rescue Exception=>e
       return false

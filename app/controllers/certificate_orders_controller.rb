@@ -408,7 +408,7 @@ class CertificateOrdersController < ApplicationController
       end
 
       if @iv_exists.nil? && @assignee_id.nil?
-        redirect_to :back, error: 'Something went wront, please try again'
+        redirect_to :back, error: 'Something went wrong, please try again'
       else
         client_smime_validate
       end

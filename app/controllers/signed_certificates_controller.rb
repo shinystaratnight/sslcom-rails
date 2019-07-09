@@ -48,7 +48,7 @@ class SignedCertificatesController < ApplicationController
       )
       flash[:notice] = "Signed Certificate was successfully revoked."  
     else
-      flash[:error] = "Something went wront, please try again!"  
+      flash[:error] = "Something went wrong, please try again!"
     end
     redirect_to certificate_order_path(@ssl_slug, @signed_certificate.certificate_order.ref)
   end
