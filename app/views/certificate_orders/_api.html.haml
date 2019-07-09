@@ -44,10 +44,11 @@
         %strong=link_to "List DCV Methods w/o CSR", "http://docs.sslcomapi.apiary.io/#get-%2Fcertificate%2F%7Bref%7D%2Fvalidations%2Fmethods%7B%3Faccount_key%2Csecret_key%7D", target: "_blank"
       %li
         %textarea.selectAll{style: "width:95%;"}=co.to_api_string(action: "dcv_methods_wo_csr", current_user: current_user, domain_override: api_domain(co))
-      %li
-        %strong=link_to "List DCV Methods w/ CSR", "http://docs.sslcomapi.apiary.io/#post-%2Fcertificates%2Fvalidations%2Fcsr_hash", target: "_blank"
-      %li
-        %textarea.selectAll{style: "width:95%;"}=co.to_api_string(action: "dcv_methods_w_csr", current_user: current_user, domain_override: api_domain(co))
+      -if co.csr
+        %li
+          %strong=link_to "List DCV Methods w/ CSR", "http://docs.sslcomapi.apiary.io/#post-%2Fcertificates%2Fvalidations%2Fcsr_hash", target: "_blank"
+        %li
+          %textarea.selectAll{style: "width:95%;"}=co.to_api_string(action: "dcv_methods_w_csr", current_user: current_user, domain_override: api_domain(co))
       %li
         %strong=link_to "Update DCV", "http://docs.sslcomapi.apiary.io/#put-%2Fcertificate%2F%7Bref%7D", target: "_blank"
       %li
