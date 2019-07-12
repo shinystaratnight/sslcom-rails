@@ -581,6 +581,7 @@ class SslAccount < ActiveRecord::Base
       ((scope=="sslcom" ? self.certificate_names.sslcom : self.certificate_names)+self.domains).map(&:id).uniq
     })).order(updated_at: :desc)
   end
+  memoize :all_certificate_names
 
   def all_csrs
     Csr.where(id: (Rails.cache.fetch("#{cache_key}/all_csrs") {

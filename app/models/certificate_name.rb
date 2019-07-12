@@ -248,8 +248,9 @@ class CertificateName < ActiveRecord::Base
       Rails.cache.write("CertificateName.candidate_email_addresses/#{dname}",standard_addresses,
                         expires_in: DomainControlValidation::EMAIL_CHOICE_CACHE_EXPIRES_DAYS.days)
       cert_names=CertificateName.where("name LIKE ?", "%#{dname}")
-      cert_names.each{|cn| cn.touch; Rails.cache.delete(cn.get_asynch_cache_label)}
-      cert_names.map(&:certificate_content).uniq.compact.each{|cc|cc.touch}
+      cert_names.update_all(updated_at: Time.now)
+      cert_names.each{|cn| Rails.cache.delete(cn.get_asynch_cache_label)}
+      CertificateContent.where{id >> cert_names.map(&:certificate_content_id)}.update_all(updated_at: Time.now)
       if certificate_name
         dcv=certificate_name.domain_control_validations.last
         dcv.update_column(:candidate_addresses, standard_addresses) if dcv
@@ -284,8 +285,9 @@ class CertificateName < ActiveRecord::Base
   def self.add_email_address_candidate(dname,email_address)
     Rails.cache.delete("CertificateName.candidate_email_addresses/#{dname}")
     cert_names=CertificateName.where("name LIKE ?", "%#{dname}")
-    cert_names.each{|cn| cn.touch; Rails.cache.delete(cn.get_asynch_cache_label)}
-    cert_names.map(&:certificate_content).uniq.compact.each{|cc|cc.touch}
+    cert_names.update_all(updated_at: Time.now)
+    cert_names.each{|cn| Rails.cache.delete(cn.get_asynch_cache_label)}
+    CertificateContent.where{id >> cert_names.map(&:certificate_content_id)}.update_all(updated_at: Time.now)
     standard_addresses=CertificateName.candidate_email_addresses(dname)
     standard_addresses << email_address
     DomainControlValidation.global.find_or_create_by(subject: dname).update_column(

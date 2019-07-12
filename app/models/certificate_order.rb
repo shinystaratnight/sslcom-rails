@@ -1375,7 +1375,6 @@ class CertificateOrder < ActiveRecord::Base
               team_level_validated = true
               break
             else
-              ssl_account.other_dcvs_satisfy_domain(cn)
               if cn.domain_control_validations.any?(&"satisfied?".to_sym)
                 team_level_validated = true
                 break
