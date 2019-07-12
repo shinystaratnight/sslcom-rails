@@ -315,7 +315,7 @@ class CertificateOrdersController < ApplicationController
       is_smime_or_client = @certificate_order.certificate.is_smime_or_client?
       if @certificate_order.update_attributes(params[:certificate_order])
         cc = @certificate_order.certificate_content
-        original_state_phone_approve = cc.locked_registrant.phone_number_approved
+        original_state_phone_approve = cc.locked_registrant.blank? ? false : cc.locked_registrant.phone_number_approved
 
         # TODO: Store LockedRegistrant Data in case of CS
         setup_locked_registrant(
