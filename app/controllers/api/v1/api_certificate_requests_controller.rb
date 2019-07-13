@@ -1119,11 +1119,12 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
                 result.effective_date = sc.effective_date
                 result.expiration_date = sc.expiration_date
                 result.algorithm = sc.is_SHA2? ? 'SHA256' : 'SHA1'
-                result.site_seal_code = ERB::Util.json_escape(render_to_string(
-                                                                  partial: 'site_seals/site_seal_code.html.haml',
-                                                                  locals: {co: acr},
-                                                                  layout: false)
-                )
+                # below is forcing nginx to return content_type: html which is breaking SSL Manager
+                # result.site_seal_code = ERB::Util.json_escape(render_to_string(
+                #                                                   partial: 'site_seals/site_seal_code.html.haml',
+                #                                                   locals: {co: acr},
+                #                                                   layout: false)
+                # )
               end
             end
 
