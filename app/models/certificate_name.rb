@@ -247,7 +247,7 @@ class CertificateName < ActiveRecord::Base
       end
       Rails.cache.write("CertificateName.candidate_email_addresses/#{dname}",standard_addresses,
                         expires_in: DomainControlValidation::EMAIL_CHOICE_CACHE_EXPIRES_DAYS.days)
-      cert_names=CertificateName.where("name LIKE ?", "%#{dname}")
+      cert_names=CertificateName.where("name = ? OR name = ?", "*.#{dname}", "#{dname}")
       cert_names.update_all(updated_at: Time.now)
       cert_names.each{|cn| Rails.cache.delete(cn.get_asynch_cache_label)}
       CertificateContent.where{id >> cert_names.map(&:certificate_content_id)}.update_all(updated_at: Time.now)
@@ -258,11 +258,11 @@ class CertificateName < ActiveRecord::Base
     end
 
     def max_attempts
-      1
+      3
     end
 
     def max_run_time
-      5 # seconds
+      300 # seconds
     end
   end
 
@@ -273,7 +273,7 @@ class CertificateName < ActiveRecord::Base
 
   # certificate_name in the event the domain_control_validations candidate addresses need to be updated
   def self.candidate_email_addresses(name,certificate_name=nil)
-    name=CertificateContent.non_wildcard_name(name,false)
+    # name=CertificateContent.non_wildcard_name(name,false)
     Rails.cache.fetch("CertificateName.candidate_email_addresses/#{name}",
                       expires_in: DomainControlValidation::EMAIL_CHOICE_CACHE_EXPIRES_DAYS.days) do
       Delayed::Job.enqueue WhoisJob.new(name,certificate_name)
@@ -284,7 +284,7 @@ class CertificateName < ActiveRecord::Base
 
   def self.add_email_address_candidate(dname,email_address)
     Rails.cache.delete("CertificateName.candidate_email_addresses/#{dname}")
-    cert_names=CertificateName.where("name LIKE ?", "%#{dname}")
+    cert_names=CertificateName.where("name = ? OR name = ?", "*.#{dname}", "#{dname}")
     cert_names.update_all(updated_at: Time.now)
     cert_names.each{|cn| Rails.cache.delete(cn.get_asynch_cache_label)}
     CertificateContent.where{id >> cert_names.map(&:certificate_content_id)}.update_all(updated_at: Time.now)
