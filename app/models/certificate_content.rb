@@ -22,6 +22,8 @@ class CertificateContent < ActiveRecord::Base
   has_many    :taggings, as: :taggable
   has_many    :tags, through: :taggings
   belongs_to  :ca
+  has_many    :sslcom_ca_requests, as: :api_requestable
+  has_many    :public_key_certificates
 
   accepts_nested_attributes_for :certificate_contacts, :allow_destroy => true
   accepts_nested_attributes_for :registrant, :allow_destroy => false
@@ -283,6 +285,10 @@ class CertificateContent < ActiveRecord::Base
 
   def signed_certificate
     signed_certificates.last
+  end
+
+  def public_key_certificate
+    public_key_certificates.last
   end
 
   def sslcom_ca_request
@@ -861,6 +867,10 @@ class CertificateContent < ActiveRecord::Base
     unless cc.nil?
       certificate_contacts.update_all(contactable_id: cc.id)
     end
+  end
+
+  def sslcom_approval_ids
+    sslcom_ca_requests.unexpired.map(&:approval_id)
   end
 
   private

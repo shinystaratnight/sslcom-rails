@@ -306,6 +306,18 @@ module CertificateOrdersHelper
      bundle: ["CA bundle (intermediate certs)", server_bundle_csr_signed_certificate_url(@ssl_slug, csr, sc), SignedCertificate::OTHER_INSTALL_LINK]}
   end
 
+  def cs_certificate_formats(cc, pkc)
+    {iis7: ["Microsoft IIS (*.p7b)", pkcs7_certificate_content_public_key_certificate_url(@ssl_slug, cc, pkc), SignedCertificate::IIS_INSTALL_LINK],
+     cpanel: ["WHM/cpanel", whm_zip_certificate_content_public_key_certificate_url(@ssl_slug, cc, pkc), SignedCertificate::CPANEL_INSTALL_LINK],
+     apache: ["Apache", apache_zip_certificate_content_public_key_certificate_url(@ssl_slug, cc, pkc), SignedCertificate::APACHE_INSTALL_LINK],
+     amazon: ["Amazon", amazon_zip_certificate_content_public_key_certificate_url(@ssl_slug, cc, pkc), SignedCertificate::AMAZON_INSTALL_LINK],
+     nginx: ["Nginx", nginx_certificate_content_public_key_certificate_url(@ssl_slug, cc, pkc), SignedCertificate::NGINX_INSTALL_LINK],
+     v8_nodejs: ["V8+Node.js", nginx_certificate_content_public_key_certificate_url(@ssl_slug, cc, pkc), SignedCertificate::V8_NODEJS_INSTALL_LINK],
+     java: ["Java/Tomcat", download_certificate_content_public_key_certificate_url(@ssl_slug, cc, pkc), SignedCertificate::JAVA_INSTALL_LINK],
+     other: ["Other platforms", download_certificate_content_public_key_certificate_url(@ssl_slug, cc, pkc), SignedCertificate::OTHER_INSTALL_LINK],
+     bundle: ["CA bundle (intermediate certs)", server_bundle_certificate_content_public_key_certificate_url(@ssl_slug, cc, pkc), SignedCertificate::OTHER_INSTALL_LINK]}
+  end
+
   # When validation instructions are generated for a certificate name,
   # remove "www" for Basic SSL, High Assurance SSL, and Enterprise EV SSL certs
   # in the CN of the CSR

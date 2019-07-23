@@ -17,7 +17,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
 
   validates :account_key, :secret_key, presence: true
   validates :ref, presence: true, if: lambda{|c|['update_v1_4', 'show_v1_4'].include?(c.action)}
-  validates :csr, presence: true, unless: "ref.blank? || is_processing?"
+  validates :csr, presence: true, unless: "ref.blank? || is_processing? || is_attestation_processing?"
   validates :period, presence: true, format: /\d+/,
     inclusion: {in: ApiCertificateRequest::NON_EV_SSL_PERIODS,
     message: "needs to be one of the following: #{NON_EV_SSL_PERIODS.join(', ')}"}, if: lambda{|c| (c.is_dv? || c.is_ov?) &&
@@ -254,6 +254,16 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
         #send to comodo if ca_id is nil
         if @certificate_order.certificate_content.ca_id.nil?
           comodo_auto_update_dcv(certificate_order: @certificate_order)
+        end
+      elsif is_attestation_processing?
+        unless self.is_cert_valid? && @certificate_order.certificate_content.validated!
+          cert_body = SignedCertificate.enclose_with_tags(attestation_certificate.strip)
+          parsed = OpenSSL::X509::Certificate.new(cert_body)
+
+          api_log_entry = SslcomCaApi.apply_for_attestation(@certificate_order, parsed, nil)
+          if api_log_entry.message.blank? && !api_log_entry.username.blank?
+            SslcomCaApi.apply_for_attestation(@certificate_order, parsed, api_log_entry.username)
+          end
         end
       else
         if self.csr_obj
@@ -716,5 +726,36 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   
   def permit_contact_fields
     CertificateContent::RESELLER_FIELDS_TO_COPY + %w(organization organization_unit country saved_contact)
+  end
+
+  def attestation_certificate
+    @attestation_certificate || parameters_to_hash["attestation_certificate"]
+  end
+
+  def attestation_issuer_certificate
+    @attestation_issuer_certificate || parameters_to_hash["attestation_issuer_certificate"]
+  end
+
+  def is_attestation_processing?
+    attestation_certificate.blank? && attestation_issuer_certificate.blank? ? false : true
+  end
+
+  def is_cert_valid?
+    cert_body = SignedCertificate.enclose_with_tags(attestation_certificate.strip)
+    cert = OpenSSL::X509::Certificate.new(cert_body)
+
+    # is_valid = store.verify(cert)
+    return store.verify(cert)
+
+    # return is_valid
+  end
+
+  def store
+    @store ||= OpenSSL::X509::Store.new.tap do |store|
+      store.set_default_paths
+      store.add_cert(OpenSSL::X509::Certificate.new(
+          SignedCertificate.enclose_with_tags(attestation_issuer_certificate.strip))
+      )
+    end
   end
 end

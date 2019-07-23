@@ -295,6 +295,17 @@ SslCom::Application.routes.draw do
     end
 
     resources :certificate_contents do
+      resources :public_key_certificates do
+        member do
+          get :server_bundle
+          get :pkcs7
+          get :whm_zip
+          get :nginx
+          get :apache_zip
+          get :amazon_zip
+          get :download
+        end
+      end
       resources :contacts, only: :index
       match :update_tags, via: [:put, :post], on: :member
     end
