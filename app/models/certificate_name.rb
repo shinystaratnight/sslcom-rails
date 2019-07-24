@@ -273,16 +273,11 @@ class CertificateName < ActiveRecord::Base
 
   # certificate_name in the event the domain_control_validations candidate addresses need to be updated
   def self.candidate_email_addresses(name,certificate_name=nil)
-    # name=CertificateContent.non_wildcard_name(name,false)
-    if APP_URL=~/sws\.sslpki\.com/ # prevent delayed_job from running on the ra
-      Rails.cache.fetch("CertificateName.candidate_email_addresses/#{name}",
-                        expires_in: DomainControlValidation::EMAIL_CHOICE_CACHE_EXPIRES_DAYS.days) do
-        Delayed::Job.enqueue WhoisJob.new(name,certificate_name)
-        DomainControlValidation.global.find_by_subject(name).try(:candidate_addresses) ||
-            DomainControlValidation.email_address_choices(name)
-      end
-    else # cannot sync cache with sws-a1 so no caching
-      DomainControlValidation.global.find_by_subject(name).try(:candidapp/models/certificate_content.rb:527ate_addresses) ||
+    name=CertificateContent.non_wildcard_name(name,false)
+    Rails.cache.fetch("CertificateName.candidate_email_addresses/#{name}",
+                      expires_in: DomainControlValidation::EMAIL_CHOICE_CACHE_EXPIRES_DAYS.days) do
+      Delayed::Job.enqueue WhoisJob.new(name,certificate_name)
+      DomainControlValidation.global.find_by_subject(name).try(:candidate_addresses) ||
           DomainControlValidation.email_address_choices(name)
     end
   end
