@@ -42,6 +42,7 @@ gem "libv8", '~> 3.16.14.0'
 # gem 'request_exception_handler'
 gem 'rvm-capistrano'
 gem 'dalli'
+gem 'dalli-elasticache'
 gem 'attr_encrypted', '>= 3.0.3'
 gem 'delayed_job_active_record'
 gem "daemons"

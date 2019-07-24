@@ -247,7 +247,7 @@ class CertificateName < ActiveRecord::Base
       end
       Rails.cache.write("CertificateName.candidate_email_addresses/#{dname}",standard_addresses,
                         expires_in: DomainControlValidation::EMAIL_CHOICE_CACHE_EXPIRES_DAYS.days)
-      cert_names=CertificateName.where("name = ? OR name = ?", "*.#{dname}", "#{dname}")
+      cert_names=CertificateName.where("name = ?", "#{dname}")
       cert_names.update_all(updated_at: Time.now)
       cert_names.each{|cn| Rails.cache.delete(cn.get_asynch_cache_label)}
       CertificateContent.where{id >> cert_names.map(&:certificate_content_id)}.update_all(updated_at: Time.now)
@@ -274,17 +274,22 @@ class CertificateName < ActiveRecord::Base
   # certificate_name in the event the domain_control_validations candidate addresses need to be updated
   def self.candidate_email_addresses(name,certificate_name=nil)
     # name=CertificateContent.non_wildcard_name(name,false)
-    Rails.cache.fetch("CertificateName.candidate_email_addresses/#{name}",
-                      expires_in: DomainControlValidation::EMAIL_CHOICE_CACHE_EXPIRES_DAYS.days) do
-      Delayed::Job.enqueue WhoisJob.new(name,certificate_name)
-      DomainControlValidation.global.find_by_subject(name).try(:candidate_addresses) ||
+    if APP_URL=~/sws\.sslpki\.com/ # prevent delayed_job from running on the ra
+      Rails.cache.fetch("CertificateName.candidate_email_addresses/#{name}",
+                        expires_in: DomainControlValidation::EMAIL_CHOICE_CACHE_EXPIRES_DAYS.days) do
+        Delayed::Job.enqueue WhoisJob.new(name,certificate_name)
+        DomainControlValidation.global.find_by_subject(name).try(:candidate_addresses) ||
+            DomainControlValidation.email_address_choices(name)
+      end
+    else # cannot sync cache with sws-a1 so no caching
+      DomainControlValidation.global.find_by_subject(name).try(:candidapp/models/certificate_content.rb:527ate_addresses) ||
           DomainControlValidation.email_address_choices(name)
     end
   end
 
   def self.add_email_address_candidate(dname,email_address)
     Rails.cache.delete("CertificateName.candidate_email_addresses/#{dname}")
-    cert_names=CertificateName.where("name = ? OR name = ?", "*.#{dname}", "#{dname}")
+    cert_names=CertificateName.where("name = ?", "#{dname}")
     cert_names.update_all(updated_at: Time.now)
     cert_names.each{|cn| Rails.cache.delete(cn.get_asynch_cache_label)}
     CertificateContent.where{id >> cert_names.map(&:certificate_content_id)}.update_all(updated_at: Time.now)
