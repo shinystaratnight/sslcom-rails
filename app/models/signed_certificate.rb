@@ -319,7 +319,7 @@ class SignedCertificate < ActiveRecord::Base
   end
 
   def is_sslcom_ca?
-    ca_id != nil || issuer.include?("O=EJBCA Sample")
+    ca_id != nil || ejbca_username != nil || issuer.include?("O=EJBCA Sample")
   end
 
   def x509_certificates

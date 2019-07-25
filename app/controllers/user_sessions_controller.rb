@@ -34,11 +34,40 @@ class UserSessionsController < ApplicationController
 
           #we'll know what tier the user is even if s/he is not logged in
           cookies.delete(:r_tier)
-          cookies[:cart] = {
-              :value=>user.shopping_cart.content,
-              :path => "/",
-              :expires => Settings.cart_cookie_days.to_i.days.from_now
-          } if user.shopping_cart
+
+          if user.shopping_cart
+            if cookies[:cart].blank?
+              cookies[:cart] = {
+                  :value => user.shopping_cart.content,
+                  :path => "/",
+                  :expires => Settings.cart_cookie_days.to_i.days.from_now
+              }
+            else
+              if !cookies[:cart_guid].blank? && cookies[:cart_guid] == user.shopping_cart.guid
+                cookies[:cart] = {
+                    :value => cookies[:cart],
+                    :path => "/",
+                    :expires => Settings.cart_cookie_days.to_i.days.from_now
+                }
+              else
+                content = user.shopping_cart.content.blank? ? [] : JSON.parse(user.shopping_cart.content)
+                content = shopping_cart_content(content, JSON.parse(cookies[:cart]))
+                user.shopping_cart.update_attribute :content, content
+
+                cookies[:cart] = {
+                    :value => content,
+                    :path => "/",
+                    :expires => Settings.cart_cookie_days.to_i.days.from_now
+                }
+              end
+            end
+          end
+
+          # cookies[:cart] = {
+          #     :value=>user.shopping_cart.content,
+          #     :path => "/",
+          #     :expires => Settings.cart_cookie_days.to_i.days.from_now
+          # } if user.shopping_cart
 
           if user.ssl_account.is_registered_reseller?
             cookies[:r_tier] = {
@@ -60,11 +89,41 @@ class UserSessionsController < ApplicationController
 
         #we'll know what tier the user is even if s/he is not logged in
         cookies.delete(:r_tier)
-        cookies[:cart] = {
-            :value=>user.shopping_cart.content,
-            :path => "/",
-            :expires => Settings.cart_cookie_days.to_i.days.from_now
-        } if user.shopping_cart
+
+        if user.shopping_cart
+          if cookies[:cart].blank?
+            cookies[:cart] = {
+                :value => user.shopping_cart.content,
+                :path => "/",
+                :expires => Settings.cart_cookie_days.to_i.days.from_now
+            }
+          else
+            if !cookies[:cart_guid].blank? && cookies[:cart_guid] == user.shopping_cart.guid
+              cookies[:cart] = {
+                  :value => cookies[:cart],
+                  :path => "/",
+                  :expires => Settings.cart_cookie_days.to_i.days.from_now
+              }
+            else
+              content = user.shopping_cart.content.blank? ? [] : JSON.parse(user.shopping_cart.content)
+              content = shopping_cart_content(content, JSON.parse(cookies[:cart]))
+              user.shopping_cart.update_attribute :content, content
+
+              cookies[:cart] = {
+                  :value => content,
+                  :path => "/",
+                  :expires => Settings.cart_cookie_days.to_i.days.from_now
+              }
+            end
+          end
+        end
+
+        # cookies[:cart] = {
+        #     :value=>user.shopping_cart.content,
+        #     :path => "/",
+        #     :expires => Settings.cart_cookie_days.to_i.days.from_now
+        # } if user.shopping_cart
+
         if user.ssl_account.is_registered_reseller?
           cookies[:r_tier] = {
               :value=>user.ssl_account.reseller.reseller_tier.label,
@@ -140,11 +199,40 @@ class UserSessionsController < ApplicationController
 
           #we'll know what tier the user is even if s/he is not logged in
           cookies.delete(:r_tier)
-          cookies[:cart] = {
-              :value=>user.shopping_cart.content,
-              :path => "/",
-              :expires => Settings.cart_cookie_days.to_i.days.from_now
-          } if user.shopping_cart
+
+          if user.shopping_cart
+            if cookies[:cart].blank?
+              cookies[:cart] = {
+                  :value => user.shopping_cart.content,
+                  :path => "/",
+                  :expires => Settings.cart_cookie_days.to_i.days.from_now
+              }
+            else
+              if !cookies[:cart_guid].blank? && cookies[:cart_guid] == user.shopping_cart.guid
+                cookies[:cart] = {
+                    :value => cookies[:cart],
+                    :path => "/",
+                    :expires => Settings.cart_cookie_days.to_i.days.from_now
+                }
+              else
+                content = user.shopping_cart.content.blank? ? [] : JSON.parse(user.shopping_cart.content)
+                content = shopping_cart_content(content, JSON.parse(cookies[:cart]))
+                user.shopping_cart.update_attribute :content, content
+                
+                cookies[:cart] = {
+                    :value => content,
+                    :path => "/",
+                    :expires => Settings.cart_cookie_days.to_i.days.from_now
+                }
+              end
+            end
+          end
+
+          # cookies[:cart] = {
+          #     :value=>user.shopping_cart.content,
+          #     :path => "/",
+          #     :expires => Settings.cart_cookie_days.to_i.days.from_now
+          # } if user.shopping_cart
 
           if user.ssl_account.is_registered_reseller?
             cookies[:r_tier] = {
@@ -367,7 +455,7 @@ class UserSessionsController < ApplicationController
     end
   end
 
-private
+  private
 
   def url_for_js(user)
     redirect = create_ssl_certificate_route(user)
@@ -392,5 +480,38 @@ private
                                                params[:login]} from ip address #{request.remote_ip}",
         notes:  reason}
     end)
+  end
+
+  def shopping_cart_content(content, cart)
+    cart.each_with_index do |i_cart, i|
+      idx = -1
+
+      content.each_with_index do |j_content, j|
+        match = true
+        i_cart.keys.each do |key|
+          if key != ShoppingCart::QUANTITY && key != ShoppingCart::AFFILIATE && i_cart[key] != j_content[key]
+            match = false
+            break
+          end
+        end
+
+        if match
+          idx = j
+          break
+        end
+      end
+
+      if idx == -1
+        if content.kind_of?(Array)
+          content << i_cart
+        else
+          content = [i_cart]
+        end
+      else
+        content[idx][ShoppingCart::QUANTITY] = content[idx][ShoppingCart::QUANTITY].to_i + i_cart[ShoppingCart::QUANTITY].to_i
+      end
+    end
+
+    return content.to_json
   end
 end

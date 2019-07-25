@@ -82,6 +82,7 @@ end
 set :scm, :git
 set :repository, "git@github.com:SSLcom/sslcom-rails.git"
 set :deploy_via, :remote_cache
+# set :ssh_options, {:forward_agent => true}
 
 set :use_sudo, false
 
@@ -182,6 +183,7 @@ after "deploy:stop",    "delayed_job:stop"
 after "deploy:start",   "delayed_job:start"
 after "deploy:restart", "delayed_job:restart"
 after "deploy:restart", "deploy:cleanup"
+
 namespace :delayed_job do
   desc "Stop the delayed_job process"
   task :stop, :roles => :app do

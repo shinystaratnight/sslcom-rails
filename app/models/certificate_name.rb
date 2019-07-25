@@ -20,6 +20,10 @@ class CertificateName < ActiveRecord::Base
     def last_method
       where{dcv_method >> ['http','https','email','cname']}.last
     end
+
+    def validated
+      where{workflow_state=="satisfied"}.last
+    end
   end
   has_many    :notification_groups_subjects, as: :subjectable
   has_many    :notification_groups, through: :notification_groups_subjects
@@ -191,7 +195,7 @@ class CertificateName < ActiveRecord::Base
         end
         return true if !!(r =~ Regexp.new("^#{options[:csr].sha2_hash}") &&
             (options[:ca_tag]=="ssl.com" ? true : r =~ Regexp.new("^#{options[:ca_tag]}")) &&
-            (options[:csr].unique_value.blank? ? true : r =~ Regexp.new("^#{options[:csr].unique_value}")))
+            ((options[:csr].unique_value.blank? or options[:ignore_unique_value]) ? true : r =~ Regexp.new("^#{options[:csr].unique_value}")))
       end
     rescue Exception=>e
       return false
@@ -243,9 +247,10 @@ class CertificateName < ActiveRecord::Base
       end
       Rails.cache.write("CertificateName.candidate_email_addresses/#{dname}",standard_addresses,
                         expires_in: DomainControlValidation::EMAIL_CHOICE_CACHE_EXPIRES_DAYS.days)
-      cert_names=CertificateName.where("name LIKE ?", "%#{dname}")
-      cert_names.each{|cn| cn.touch; Rails.cache.delete(cn.get_asynch_cache_label)}
-      cert_names.map(&:certificate_content).uniq.compact.each{|cc|cc.touch}
+      cert_names=CertificateName.where("name = ?", "#{dname}")
+      cert_names.update_all(updated_at: Time.now)
+      cert_names.each{|cn| Rails.cache.delete(cn.get_asynch_cache_label)}
+      CertificateContent.where{id >> cert_names.map(&:certificate_content_id)}.update_all(updated_at: Time.now)
       if certificate_name
         dcv=certificate_name.domain_control_validations.last
         dcv.update_column(:candidate_addresses, standard_addresses) if dcv
@@ -253,11 +258,11 @@ class CertificateName < ActiveRecord::Base
     end
 
     def max_attempts
-      1
+      3
     end
 
     def max_run_time
-      5 # seconds
+      300 # seconds
     end
   end
 
@@ -279,9 +284,10 @@ class CertificateName < ActiveRecord::Base
 
   def self.add_email_address_candidate(dname,email_address)
     Rails.cache.delete("CertificateName.candidate_email_addresses/#{dname}")
-    cert_names=CertificateName.where("name LIKE ?", "%#{dname}")
-    cert_names.each{|cn| cn.touch; Rails.cache.delete(cn.get_asynch_cache_label)}
-    cert_names.map(&:certificate_content).uniq.compact.each{|cc|cc.touch}
+    cert_names=CertificateName.where("name = ?", "#{dname}")
+    cert_names.update_all(updated_at: Time.now)
+    cert_names.each{|cn| Rails.cache.delete(cn.get_asynch_cache_label)}
+    CertificateContent.where{id >> cert_names.map(&:certificate_content_id)}.update_all(updated_at: Time.now)
     standard_addresses=CertificateName.candidate_email_addresses(dname)
     standard_addresses << email_address
     DomainControlValidation.global.find_or_create_by(subject: dname).update_column(

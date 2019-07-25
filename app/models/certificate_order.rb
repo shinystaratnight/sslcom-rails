@@ -1375,7 +1375,6 @@ class CertificateOrder < ActiveRecord::Base
               team_level_validated = true
               break
             else
-              ssl_account.other_dcvs_satisfy_domain(cn)
               if cn.domain_control_validations.any?(&"satisfied?".to_sym)
                 team_level_validated = true
                 break
@@ -2289,7 +2288,18 @@ class CertificateOrder < ActiveRecord::Base
     ucc = co.certificate.is_ucc? && (co.certificate.is_premium_ssl? !=0)
     ucc && co.certificate_content.expiring? && co.renewal && co.renewal.paid?
   end
-  
+
+  def certificate_contents_ref_label_switch
+    certificate_contents.each{|cc|
+      unless cc.ref=~/^co-/
+        ref = cc.ref
+        cc.ref=cc.label
+        cc.label=ref
+        cc.save
+      end
+    }
+  end
+
   private
 
   def fill_csr_fields(options, obj)

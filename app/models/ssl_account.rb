@@ -268,8 +268,10 @@ class SslAccount < ActiveRecord::Base
 
   # is this domain's validation satisfied by an already validated domain. If so, create a dcv with satisfied status
   # certificate_name - the domain we are looking up
+  # TODO create all_root_cerificate_names that search for the base root domain of certificate_name; no need to load all domains
   def other_dcvs_satisfy_domain(certificate_name)
-    all_certificate_names.includes(:domain_control_validations).each do |cn|
+    all_certificate_names(CertificateContent.non_wildcard_name(certificate_name.name)).
+        includes(:domain_control_validations).each do |cn|
       if cn.id!=certificate_name.id and DomainControlValidation.domain_in_subdomains?(cn.name,certificate_name.name)
         dcv = cn.domain_control_validations.last
         if dcv && dcv.identifier_found
@@ -576,11 +578,20 @@ class SslAccount < ActiveRecord::Base
   end
 
   # concatenate team (Domain) and order scoped certificate_names
-  def all_certificate_names(scope="sslcom")
-    CertificateName.where(id: (Rails.cache.fetch("#{cache_key}/all_certificate_names/#{scope}") {
-      ((scope=="sslcom" ? self.certificate_names.sslcom : self.certificate_names)+self.domains).map(&:id).uniq
-    })).order(updated_at: :desc)
+  def all_certificate_names(root=nil,scope="sslcom")
+    if root
+      d=::PublicSuffix.parse(root)
+      CertificateName.where(id: (Rails.cache.fetch("#{cache_key}/all_certificate_names/#{scope}/#{d.domain}") {
+        ((scope=="sslcom" ? self.certificate_names.sslcom : self.certificate_names).where{name=~"%."+d.domain}+
+            self.domains.where{name=~"%."+d.domain}).map(&:id).uniq
+      })).order(updated_at: :desc)
+    else
+      CertificateName.where(id: (Rails.cache.fetch("#{cache_key}/all_certificate_names/#{scope}") {
+        ((scope=="sslcom" ? self.certificate_names.sslcom : self.certificate_names)+self.domains).map(&:id).uniq
+      })).order(updated_at: :desc)
+    end
   end
+  memoize :all_certificate_names
 
   def all_csrs
     Csr.where(id: (Rails.cache.fetch("#{cache_key}/all_csrs") {

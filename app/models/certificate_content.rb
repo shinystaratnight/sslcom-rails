@@ -77,6 +77,7 @@ class CertificateContent < ActiveRecord::Base
                492759=> %w(.*?\.ssl\.com\z \Assl\.com\z .*?\.certlock\.com\z \Acertlock\.com\z),
                497080=> %w(.*?\.ssl\.com\z \Assl\.com\z .*?\.certlock\.com\z \Acertlock\.com\z),
                474299=> %w(.*?\.ssl\.com\z \Assl\.com\z .*?\.certlock\.com\z \Acertlock\.com\z),
+               477317=> %w(.*?\.ssl\.com\z \Assl\.com\z .*?\.certlock\.com\z \Acertlock\.com\z),
                464808=> %w(.*?\.ssl\.com\z \Assl\.com\z .*?\.certlock\.com\z \Acertlock\.com\z)}
 
   DOMAIN_COUNT_OFFLOAD=50
@@ -792,7 +793,7 @@ class CertificateContent < ActiveRecord::Base
   def subject_dn(options={})
     cert = options[:certificate] || self.certificate
     dn=certificate.is_server? ? ["CN=#{options[:common_name] || common_name}"] : []
-    dn << "emailAddress=#{certificate_order.assignee.email}" if certificate.is_smime? && certificate_order.assignee
+    dn << "emailAddress=#{certificate_order.get_recipient.email}" if certificate.is_smime? && certificate_order.get_recipient.email
     if certificate.is_smime_or_client? and !certificate.is_client_basic?
       person=certificate_order.locked_recipient
       dn << "CN=#{[person.first_name,person.last_name].join(" ").strip}"
