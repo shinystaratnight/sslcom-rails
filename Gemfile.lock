@@ -70,7 +70,7 @@ GEM
       scrypt (>= 1.2, < 4.0)
     authy (2.7.4)
       httpclient (>= 2.5.3.3)
-    autoprefixer-rails (9.6.1)
+    autoprefixer-rails (7.2.1)
       execjs
     awesome_print (1.7.0)
     aws-sdk (2.11.13)
@@ -89,10 +89,10 @@ GEM
       debug_inspector (>= 0.0.1)
     bootsnap (1.4.2)
       msgpack (~> 1.0)
-    bootstrap (4.3.1)
-      autoprefixer-rails (>= 9.1.0)
-      popper_js (>= 1.14.3, < 2)
-      sassc-rails (>= 2.0.0)
+    bootstrap (4.0.0.beta)
+      autoprefixer-rails (>= 6.0.3)
+      popper_js (~> 1.11.1)
+      sass (>= 3.4.19)
     bootstrap-datepicker-rails (1.8.0.1)
       railties (>= 3.0)
     builder (3.2.3)
@@ -265,7 +265,7 @@ GEM
     jwt (1.5.6)
     launchy (2.4.3)
       addressable (~> 2.3)
-    libv8 (3.16.14.17-x86_64-linux)
+    libv8 (3.16.14.17)
     listen (3.1.5)
       rb-fsevent (~> 0.9, >= 0.9.4)
       rb-inotify (~> 0.9, >= 0.9.7)
@@ -342,7 +342,7 @@ GEM
       terrapin (~> 0.6.0)
     polyamorous (1.1.0)
       activerecord (>= 3.0)
-    popper_js (1.14.5)
+    popper_js (1.11.1)
     protected_attributes (1.1.3)
       activemodel (>= 4.0.1, < 5.0)
     pry (0.10.4)
@@ -415,22 +415,13 @@ GEM
     rubyzip (1.2.2)
     rvm-capistrano (1.5.6)
       capistrano (~> 2.15.4)
-    sass (3.4.25)
+    sass (3.4.22)
     sass-rails (5.0.6)
       railties (>= 4.0.0, < 6)
       sass (~> 3.1)
       sprockets (>= 2.8, < 4.0)
       sprockets-rails (>= 2.0, < 4.0)
       tilt (>= 1.1, < 3)
-    sassc (2.0.1)
-      ffi (~> 1.9)
-      rake
-    sassc-rails (2.1.2)
-      railties (>= 4.0.0)
-      sassc (>= 2.0)
-      sprockets (> 3.0)
-      sprockets-rails
-      tilt
     savon (2.11.1)
       akami (~> 1.2)
       builder (>= 2.1.2)
@@ -594,6 +585,7 @@ DEPENDENCIES
   oauth-plugin (>= 0.4.0.pre1)
   openssl-extensions
   paperclip (~> 5.3.0)
+  popper_js (~> 1.11.1)
   protected_attributes
   pry-rails
   pry-remote
