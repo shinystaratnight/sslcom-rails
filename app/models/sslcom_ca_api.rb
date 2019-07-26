@@ -98,7 +98,7 @@ class SslcomCaApi
     cert = options[:cc].certificate
     common_name=options[:common_name]
     names=if cert.is_smime?
-            "rfc822Name=#{options[:cc].certificate_order.assignee.email}"
+            "rfc822Name=#{options[:cc].certificate_order.get_recipient.email}"
           elsif cert.is_server?
             ([common_name]+(options[:san] ?
                 options[:san].split(Certificate::DOMAINS_TEXTAREA_SEPARATOR) :
@@ -163,7 +163,7 @@ class SslcomCaApi
           subject_alt_name: subject_alt_name(options),
           duration: "#{[(options[:duration] || co.remaining_days+(carry_over || 0)).to_i,
               cert.max_duration].min.floor}:0:0"
-        dn.merge!(email_address: options[:cc].certificate_order.assignee.email) if cert.is_smime?
+        dn.merge!(email_address: options[:cc].certificate_order.get_recipient.email) if cert.is_smime?
       end
       dn.merge!(request_type: "public_key",request_data: public_key.to_pem) if
           options[:collect_certificate] or options[:no_public_key].blank?
@@ -198,7 +198,7 @@ class SslcomCaApi
           ca: options[:ca]) if approval_res.try(:body)=~/WAITING FOR APPROVAL/
     end
     if options[:mapping].profile_name=~/EV/ and (approval_res.try(:body).blank? or approval_res.try(:body)=="[]" or
-        (!approval_res.try(:body)=~/WAITING FOR APPROVAL/) or approval_res.try(:body)=~/EXPIRED AND NOTIFIED/)
+        !approval_res.try(:body)=~/WAITING FOR APPROVAL/)
       # create the user for EV order
       host = ca_host(options[:mapping])+"/v1/user"
       options.merge! no_public_key: true
