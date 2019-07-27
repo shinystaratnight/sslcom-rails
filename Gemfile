@@ -91,7 +91,7 @@ gem 'memoist'
 # gem 'countries'
 gem 'bootstrap-datepicker-rails'
 gem 'timezone', '~> 1.0'
-gem 'wkhtmltopdf-installer'
+# gem 'wkhtmltopdf-installer'
 
 group :development do
   gem 'foreman'
