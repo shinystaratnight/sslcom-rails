@@ -73,7 +73,7 @@ gem 'rails-api'
 gem 'jsonapi-serializers'
 gem 'api-pagination'
 gem 'rubyzip', '~> 1.2.2'
-gem 'wkhtmltopdf-binary'
+# gem 'wkhtmltopdf-binary' see config/initializers/wicked_pdf.rb for installation instructions
 gem 'wicked_pdf'
 gem 'u2f'
 gem 'duo_web', '~> 1.0'
@@ -91,7 +91,6 @@ gem 'memoist'
 # gem 'countries'
 gem 'bootstrap-datepicker-rails'
 gem 'timezone', '~> 1.0'
-# gem 'wkhtmltopdf-installer'
 
 group :development do
   gem 'foreman'
