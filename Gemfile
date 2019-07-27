@@ -24,7 +24,7 @@ gem 'rb-inotify', :require => false
 gem 'aws-sdk', '~> 2.0'
 gem "paperclip", '~> 5.3.0'
 gem 'xml-simple'
-gem 'json', '~> 1.8.1'
+gem 'json', '~> 1.8.6'
 gem 'easy_roles'
 gem 'squeel'
 gem 'yui-compressor'
@@ -37,7 +37,7 @@ gem 'whenever', require: false
 gem 'openssl-extensions', :require => 'openssl-extensions/all'
 gem 'simpleidn'
 gem "oauth-plugin", ">= 0.4.0.pre1"
-gem "therubyracer", '~> 0.12.0', platform: :ruby
+gem "therubyracer", '~> 0.12.3', platform: :ruby
 gem "libv8", '~> 3.16.14.0'
 # gem 'request_exception_handler'
 gem 'rvm-capistrano'

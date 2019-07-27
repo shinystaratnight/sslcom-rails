@@ -391,7 +391,7 @@ module SurlsToSslGs
                       post_date: s.created_at,
                       title: "Get paid to shorten and share links at ssl.gs",
                       views: 0,
-                      earned: BigDecimal.new(0),
+                      earned: BigDecimal(0),
                       user: 0
         )
       }

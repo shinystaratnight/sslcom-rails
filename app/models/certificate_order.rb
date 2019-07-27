@@ -1361,7 +1361,6 @@ class CertificateOrder < ActiveRecord::Base
     public_key_sha1=certificate_content.cached_csr_public_key_sha1
     cnames = certificate_content.certificate_names.includes(:domain_control_validations)
     team_cnames = ssl_account.all_certificate_names.includes(:domain_control_validations)
-
     cnames.each do |cn|
       # if the certificate_name scoped dcv is not satisfied, check the team level domain name
       unless cn.domain_control_validations.any?(&"satisfied?".to_sym)
