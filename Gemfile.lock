@@ -504,6 +504,7 @@ GEM
     wicked_pdf (1.1.0)
     will_paginate (3.1.5)
     wkhtmltopdf-binary (0.12.3.1)
+    wkhtmltopdf-installer (0.12.5.3)
     workflow (1.2.0)
     xml-simple (1.1.5)
     xpath (2.0.0)
@@ -632,6 +633,7 @@ DEPENDENCIES
   wicked_pdf
   will_paginate
   wkhtmltopdf-binary
+  wkhtmltopdf-installer
   workflow
   xml-simple
   yui-compressor
