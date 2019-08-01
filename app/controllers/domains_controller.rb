@@ -388,6 +388,7 @@ class DomainsController < ApplicationController
     end
   end
 
+  # TODO rewrite this so we extract only certificate_names with satisfied domain_control_validations
   def dcv_all_validate
     validated=[]
     dnames = @ssl_account.domains.includes(:domain_control_validations) # directly scoped to the team

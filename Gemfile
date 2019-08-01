@@ -24,7 +24,7 @@ gem 'rb-inotify', :require => false
 gem 'aws-sdk', '~> 2.0'
 gem "paperclip", '~> 5.3.0'
 gem 'xml-simple'
-gem 'json', '~> 1.8.6'
+gem 'json' #, '~> 1.8.6'
 gem 'easy_roles'
 gem 'squeel'
 gem 'yui-compressor'

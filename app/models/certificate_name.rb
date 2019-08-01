@@ -218,6 +218,10 @@ class CertificateName < ActiveRecord::Base
     certificate_content.certificate_order.ca_mdc_statuses.last.domain_status[name]
   end
 
+  def validate_via_cname
+    domain_control_validations.create(dcv_method: "cname").satisfy!
+  end
+
   def caa_lookup
     CaaCheck::CAA_COMMAND.call name
   end

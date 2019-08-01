@@ -246,11 +246,12 @@ class SslAccount < ActiveRecord::Base
 
   # does this domain satisfy pending validations of other domains on this team? Return list of satisfied names
   # domain - the domain that has satisfied DV
-  # dcv - the domain control validation method that was satisfied
   def satisfy_related_dcvs(domain)
+    # the satisfied domain control validation method
     dcv = domain.domain_control_validations.last
     [].tap do |satisfied_names|
-      all_certificate_names.includes(:domain_control_validations).each do |certificate_name|
+      # TODO find only unvalidated domains or validated domains with older/different timestamp
+      all_certificate_names(domain).includes(:domain_control_validations).each do |certificate_name|
         if certificate_name.name!=domain.name and
             DomainControlValidation.domain_in_subdomains?(domain.name,certificate_name.name) and
             # team validated domain
@@ -266,13 +267,13 @@ class SslAccount < ActiveRecord::Base
     end
   end
 
-  # is this domain's validation satisfied by an already validated domain. If so, create a dcv with satisfied status
+  # does already validated domain validate `certificate_name`? If so, create a dcv with satisfied status
   # certificate_name - the domain we are looking up
-  # TODO create all_root_cerificate_names that search for the base root domain of certificate_name; no need to load all domains
   def other_dcvs_satisfy_domain(certificate_name)
+    # TODO find only validated domains
     all_certificate_names(certificate_name.name).includes(:domain_control_validations).each do |cn|
       if cn.id!=certificate_name.id and DomainControlValidation.domain_in_subdomains?(cn.name,certificate_name.name)
-        dcv = cn.domain_control_validations.last
+        dcv = cn.domain_control_validations.last # TODO find dcv.satisfied?
         if dcv && dcv.identifier_found
           # email validation
           if dcv.dcv_method =~ /email/ or
