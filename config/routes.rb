@@ -198,6 +198,7 @@ SslCom::Application.routes.draw do
         match :validate_selected, via: [:get, :post]
         match :select_csr, via: [:get, :post]
         match :validate_against_csr, via: [:get, :post]
+        get :search
       end
       member do
         match :validation_request, via: [:get, :post]

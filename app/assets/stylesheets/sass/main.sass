@@ -3740,6 +3740,10 @@ label.error
 #certificate_orders > table
   width: 84%
 
+#domains_list #validations
+  padding-top: 0px
+  margin-top: 0px
+
 #validations
   padding-top: 10px
 
@@ -6433,6 +6437,12 @@ span.notifications-teams
               max-width: 310px
 
 
+#wrap_domain_filter
+  margin: 0.8em auto !important
+  float: none !important
+  width: 415px !important
+
+#wrap_domain_filter,
 #wrap_cert_order_filter,
 #wrap_order_filter
   margin: 0.8em 0 0.5em
@@ -8728,11 +8738,13 @@ i.fa-external-link.fa-ssl-custom
         color: red
         font-size: 12px
 
-      #locked_reg_domains
+      #locked_reg_domains,
+      #domain_names
         width: 474px
         box-shadow: 0px 0px 10px 0 rgba(0, 0, 0, 0.18)
 
-      &.error-invalid #locked_reg_domains
+      &.error-invalid #locked_reg_domains,
+      &.error-invalid #domain_names
         border-color: red
 
       &.error-invalid #required-valid
