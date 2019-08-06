@@ -88,14 +88,15 @@ class DomainsController < ApplicationController
     end
     @all_domains = []
     @address_choices = []
-    @cnames = @ssl_account.all_certificate_names.includes(:domain_control_validations).order(created_at: :desc)
+    @cnames = @ssl_account.all_certificate_names(nil,"unvalidated").
+        includes(:domain_control_validations).order(created_at: :desc)
     @cnames.each do |cn|
       dcv = cn.domain_control_validations.last
       next if dcv && dcv.identifier_found
       @all_domains << cn
       @address_choices << CertificateName.candidate_email_addresses(cn.non_wildcard_name)
     end
-    @domains = @ssl_account.domains.includes(:domain_control_validations).order(created_at: :desc)
+    @domains = @ssl_account.domains(nil,"unvalidated").includes(:domain_control_validations).order(created_at: :desc)
     @domains.each do |dn|
       dcv = dn.domain_control_validations.last
       next if dcv && dcv.identifier_found
