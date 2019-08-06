@@ -16,7 +16,7 @@ gem 'money', '2.1.0'
 gem 'rack-ssl-enforcer'
 gem 'will_paginate'
 gem 'haml', '>= 3.1.alpha.50'
-gem 'declarative_authorization'
+gem 'declarative_authorization', git: 'git@github.com:Xymist/declarative_authorization.git', :branch => 'allow_rails_5'
 gem "authlogic"
 gem "savon", '~> 2.0'
 gem 'zip-zip'
@@ -37,9 +37,10 @@ gem 'whenever', require: false
 gem 'openssl-extensions', :require => 'openssl-extensions/all'
 gem 'simpleidn'
 gem "oauth-plugin", ">= 0.4.0.pre1"
-gem "therubyracer", '~> 0.12.3', platform: :ruby
-gem "libv8", '~> 3.16.14.0'
-# gem 'request_exception_handler'
+# gem "therubyracer", '~> 0.12.3', platform: :ruby
+gem 'mini_racer', platforms: :ruby
+gem "libv8"
+gem 'request_exception_handler'
 gem 'rvm-capistrano'
 gem 'dalli'
 gem 'dalli-elasticache'

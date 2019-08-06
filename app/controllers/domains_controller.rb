@@ -95,7 +95,7 @@ class DomainsController < ApplicationController
       @all_domains << cn
       @address_choices << CertificateName.candidate_email_addresses(cn.non_wildcard_name)
     end
-    @domains = @ssl_account.domains.order(created_at: :desc)
+    @domains = @ssl_account.domains.includes(:domain_control_validations).order(created_at: :desc)
     @domains.each do |dn|
       dcv = dn.domain_control_validations.last
       next if dcv && dcv.identifier_found
