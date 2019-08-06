@@ -36,7 +36,7 @@ When /\AI login as (.+) with (\S+)\z/ do |user, password|
   When "I fill in login details with #{user} and #{password}"
   find("#next_submit").find("input[type=image]").click
   page.should have_no_content("error prohibited this user session")
-  #UserSession.create(@user)
+  #UserSession.create(@user.to_h)
 end
 
 When /\AI fill in login details with (.+) and (.+)\z/ do |user, password|
@@ -91,6 +91,6 @@ end
 
 When /\AI'm logged in as (.*)\z/ do |login|
   @user = User.find_by_login(login)
-  UserSession.create(@user)
+  UserSession.create(@user.to_h)
   Then "I should be logged in as #{login}"
 end

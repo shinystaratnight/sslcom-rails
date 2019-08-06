@@ -170,7 +170,7 @@ class UserSessionsController < ApplicationController
       @user_session = UserSession.new(params[:user_session].to_h)
     else
       if current_user.is_admin? && params[:login]
-        @user_session = UserSession.new((User.find_by_login params[:login]).to_h)
+        @user_session = UserSession.new((User.find_by_login params[:login]))
         @user_session.id = :shadow
         clear_cart
       end

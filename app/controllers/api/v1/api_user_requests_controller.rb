@@ -36,7 +36,7 @@ class Api::V1::ApiUserRequestsController < Api::V1::APIController
   def show_v1_4
     set_template "show_v1_4"
     if @result.save
-      if @obj = UserSession.create(params).user
+      if @obj = UserSession.create(params.to_h).user
         # successfully charged
         if @obj.is_a?(User) && @obj.errors.empty?
           set_result_parameters(@result, @obj, @template)
@@ -60,7 +60,7 @@ class Api::V1::ApiUserRequestsController < Api::V1::APIController
   def get_teams_v1_4
     set_template "list_teams_v1_4"
     if @result.save
-      if @obj = UserSession.create(params).user
+      if @obj = UserSession.create(params.to_h).user
         @results = []
         if @obj.is_a?(User) && @obj.errors.empty?
           @obj.ssl_accounts.each do |team|
@@ -97,7 +97,7 @@ class Api::V1::ApiUserRequestsController < Api::V1::APIController
   def set_default_team_v1_4
     set_template "set_default_team_v1_4"
     if @result.save
-      if @obj = UserSession.create(params).user
+      if @obj = UserSession.create(params.to_h).user
         @results = []
         if @obj.is_a?(User) && @obj.errors.empty?
           @ssl_account = SslAccount.find_by(acct_number: params[:acct_number])

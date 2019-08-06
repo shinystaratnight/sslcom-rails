@@ -7,7 +7,7 @@ gem 'protected_attributes'
 gem 'responders', '~> 2.0'
 gem 'dynamic_form'
 gem 'mysql2'
-gem 'workflow'
+gem 'workflow', '~> 1.2'
 gem "rabl"
 gem 'pry-rails'
 gem 'awesome_print'
