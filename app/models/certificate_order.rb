@@ -86,6 +86,16 @@ class CertificateOrder < ActiveRecord::Base
   default_scope{ where{(workflow_state << ['canceled','refunded','charged_back']) & (is_expired != true)}.
       joins(:certificate_contents).order(created_at: :desc).references(:all).readonly(false)}
 
+  scope :with_counts, -> {
+    select <<~SQL
+      certificate_orders.*,
+      (
+        SELECT COUNT(certificate_contents.id) FROM certificate_contents
+        WHERE certificate_order_id = certificate_orders.id
+      ) AS certificate_contents_count
+    SQL
+  }
+
   scope :not_test, ->{where{(is_test == nil) | (is_test==false)}}
 
   scope :is_test, ->{where{is_test==true}}
