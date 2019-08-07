@@ -51,7 +51,7 @@ class PaypalExpressController < ApplicationController
       return
     end
     if ::Rails.env.test?
-      UserSession.create(User.first.to_h, true)
+      UserSession.create(User.first, true)
       current_user = Authorization.current_user = User.first
       @ssl_account = current_user.ssl_account
     end

@@ -70,7 +70,7 @@ class ApplicationController < ActionController::Base
     end
 
     @user.deliver_activation_confirmation!
-    @user_session = UserSession.create(@user.to_h)
+    @user_session = UserSession.create(@user)
     @current_user_session = @user_session
     Authorization.current_user = @current_user = @user_session.record
   end
