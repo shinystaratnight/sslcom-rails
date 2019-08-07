@@ -88,14 +88,15 @@ class DomainsController < ApplicationController
     end
     @all_domains = []
     @address_choices = []
-    @cnames = @ssl_account.all_certificate_names.includes(:domain_control_validations).order(created_at: :desc)
+    @cnames = @ssl_account.all_certificate_names(nil,"unvalidated").
+        includes(:domain_control_validations).order(created_at: :desc)
     @cnames.each do |cn|
       dcv = cn.domain_control_validations.last
       next if dcv && dcv.identifier_found
       @all_domains << cn
       @address_choices << CertificateName.candidate_email_addresses(cn.non_wildcard_name)
     end
-    @domains = @ssl_account.domains.order(created_at: :desc)
+    @domains = @ssl_account.domains(nil,"unvalidated").includes(:domain_control_validations).order(created_at: :desc)
     @domains.each do |dn|
       dcv = dn.domain_control_validations.last
       next if dcv && dcv.identifier_found
@@ -388,11 +389,13 @@ class DomainsController < ApplicationController
     end
   end
 
-  # TODO rewrite this so we extract only certificate_names with satisfied domain_control_validations
+  # TODO rewrite this so we extract only certificate_names with no satisfied domain_control_validations
   def dcv_all_validate
     validated=[]
-    dnames = @ssl_account.domains.includes(:domain_control_validations) # directly scoped to the team
-    cnames = @ssl_account.all_certificate_names.includes(:domain_control_validations) # scoped to certificate_orders
+    # directly scoped to the team
+    dnames = @ssl_account.domains.includes(:domain_control_validations)
+    # scoped to certificate_orders
+    cnames = @ssl_account.all_certificate_names.includes(:domain_control_validations)
     if(params['authenticity_token'])
       identifier = params['validate_code']
       (dnames+cnames).each do |cn|

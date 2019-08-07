@@ -1,7 +1,7 @@
 module SessionHelper
   def login_as(user, cookies=nil)
     # User Login through Authlogic and Declarative Authorization
-    UserSession.create(user, true)
+    UserSession.create(user.to_h, true)
     Authorization.current_user = user
     unless cookies.nil?
       # selenium requires to load page before cookies can be set

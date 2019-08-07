@@ -635,7 +635,7 @@ namespace :cas do
       )
       Ca.find_or_initialize_by(ref: "0033").update_attributes(
           friendly_name: "SSL.com MySSL Pro RSA",
-          profile_name: "MYSSL_RSA_SMIME_DOCSIGNING_CERT",
+          profile_name: "MYSSL_IV_RSA_SMIME_CERT",
           algorithm: "rsa",
           size: 4096,
           description: Ca::SSLCOM_CA,
@@ -663,7 +663,7 @@ namespace :cas do
       )
       Ca.find_or_initialize_by(ref: "0035").update_attributes(
           friendly_name: "SSL.com MySSL Pro ECC",
-          profile_name: "MYSSL_ECC_SMIME_DOCSIGNING_CERT",
+          profile_name: "MYSSL_IV_ECC_SMIME_CERT",
           algorithm: "ecc",
           size: 384,
           description: Ca::SSLCOM_CA,

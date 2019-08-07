@@ -70,7 +70,7 @@ class ApplicationController < ActionController::Base
     end
 
     @user.deliver_activation_confirmation!
-    @user_session = UserSession.create(@user)
+    @user_session = UserSession.create(@user.to_h)
     @current_user_session = @user_session
     Authorization.current_user = @current_user = @user_session.record
   end
@@ -765,7 +765,7 @@ class ApplicationController < ActionController::Base
           Please contact support@ssl.com for assistance or more information." unless request.xhr?
         if is_new_session
           DuplicateV2UserMailer.attempted_login_by(@dup).deliver
-          @user_session = UserSession.new(:login=>is_new_session[u.to_sym])
+          @user_session = UserSession.new(:login=>is_new_session[u.to_sym].to_h)
         else
           DuplicateV2UserMailer.duplicates_found(@dup, u).deliver
         end
