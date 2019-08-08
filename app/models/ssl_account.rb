@@ -251,7 +251,7 @@ class SslAccount < ActiveRecord::Base
     dcv = domain.domain_control_validations.last
     [].tap do |satisfied_names|
       # TODO find only unvalidated domains or validated domains with older/different timestamp
-      all_certificate_names(domain,"unvalidated").includes(:domain_control_validations).each do |certificate_name|
+      all_certificate_names(domain.name,"unvalidated").includes(:domain_control_validations).each do |certificate_name|
         if certificate_name.name!=domain.name and
             DomainControlValidation.domain_in_subdomains?(domain.name,certificate_name.name) and
             # team validated domain
