@@ -662,7 +662,7 @@ class CertificateOrder < ActiveRecord::Base
   def get_reprocess_cc_domains(cc_id=nil)
     cur_domains = []
     if certificate_contents.any?
-      cur_domains = certificate_contents.where(workflow_state: 'issued')
+      cur_domains = certificate_contents.includes(:signed_certificates).where(workflow_state: 'issued')
       end_target  = certificate_contents.find_by(id: cc_id) unless cc_id.nil?
       if end_target
         cur_domains = cur_domains.where(
@@ -671,8 +671,7 @@ class CertificateOrder < ActiveRecord::Base
       end
     end
     if cur_domains.any?
-      cur_domains = cur_domains.joins(:signed_certificates)
-        .map(&:signed_certificates).compact
+      cur_domains = cur_domains.map(&:signed_certificates).compact
         .reject{ |sc| sc.empty? }.flatten.map(&:subject_alternative_names)
     end
 
@@ -681,6 +680,7 @@ class CertificateOrder < ActiveRecord::Base
     end
     cur_domains
   end
+  memoize :get_reprocess_cc_domains
 
   def get_reprocess_max_nonwildcard(cc_id=nil)
     max  = 0
@@ -940,10 +940,10 @@ class CertificateOrder < ActiveRecord::Base
       if signed_certificate.try('is_dv?'.to_sym) && Settings.exempt_dv_contacts
         true
       else
-        certificate_contents.map(&:certificate_contacts).flatten.any?
+        certificate_contents.includes(:certificate_contacts).map(&:certificate_contacts).flatten.any?
       end
     else
-      roles = co.certificate_contacts.map(&:roles).flatten.uniq
+      roles = co.certificate_contacts.includes(:roles).map(&:roles).flatten.uniq
       req_roles = CertificateContent::CONTACT_ROLES
       (roles & req_roles).count == req_roles.count
     end
@@ -1099,7 +1099,7 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def most_recent_csr
-    certificate_contents.map(&:csr).compact.last || parent.try(:most_recent_csr)
+    csrs.last || parent.try(:most_recent_csr)
   end
 
   def effective_date
@@ -1934,14 +1934,14 @@ class CertificateOrder < ActiveRecord::Base
   # useful in the event Comodo take forever to make changes to an existing order (and sometimes cannot) so we
   # just create a new one and have the old one refunded
   def reset_ext_ca_order
-    certificate_contents.map(&:csr).compact.map(&:sent_success).flatten.compact.uniq.each{|a|a.delete}
+    csrs.compact.map(&:sent_success).flatten.uniq.each{|a|a.delete}
     cc=certificate_content
     cc.preferred_reprocessing = false
     cc.save validation: false
   end
 
   def change_ext_ca_order(new_number)
-    ss=certificate_contents.map(&:csr).compact.map(&:sent_success).flatten.compact.last
+    ss=csrs.compact.map(&:sent_success).flatten.last
     ss.update_column :response, ss.response.gsub(external_order_number, new_number.to_s)
     update_column :external_order_number, new_number
   end
@@ -1998,20 +1998,18 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def sent_success_count
-    all_csrs = certificate_contents.map(&:csr)
-    sent_success_map = all_csrs.map(&:sent_success)
+    sent_success_map = csrs.map(&:sent_success)
     sent_success_map.flatten.compact.uniq.count if
-        all_csrs && !sent_success_map.blank?
+        csrs && !sent_success_map.blank?
   end
 
   # Get the most recent certificate_id (useful for UCC replacements)
   def external_certificate_id
-    all_csrs = certificate_contents.map(&:csr)
-    sent_success_map = all_csrs.map(&:sent_success)
+    sent_success_map = csrs.map(&:sent_success)
     sent_success_map.flatten.compact.uniq.first.certificate_id if
-        all_csrs && !sent_success_map.blank? &&
+        csrs && !sent_success_map.blank? &&
         sent_success_map.flatten.compact.uniq.first
-    #all_csrs.sent_success.order_number if all_csrs && all_csrs.sent_success
+    # csrs.sent_success.order_number if csrs && csrs.sent_success
   end
 
   def transfer_certificate_content(certificate_content)

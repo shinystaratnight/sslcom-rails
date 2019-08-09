@@ -5,6 +5,7 @@ class User < ActiveRecord::Base
 #  using_access_control
 
   OWNED_MAX_TEAMS = 3
+  PASSWORD_SPECIAL_CHARS = '~`!@#\$%^&*()-+={}[]|;:"<>,./?'
 
   has_many  :u2fs
   has_many  :assignments, dependent: :destroy
@@ -62,7 +63,7 @@ class User < ActiveRecord::Base
     format: {with: /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i, on: :create}
   validates :password, format: {
     with: /\A(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[\W]).{8,}\z/, if: :validate_password?,
-    message: "must be at least 8 characters long and include at least 1 of each of the following: uppercase, lowercase, number and special character such as ~`!@#$%^&*()-+={}[]|\;:\"<>,./?."
+    message: "must be at least 8 characters long and include at least 1 of each of the following: uppercase, lowercase, number and special character such as #{User::PASSWORD_SPECIAL_CHARS}"
   }
   accepts_nested_attributes_for :assignments
 
