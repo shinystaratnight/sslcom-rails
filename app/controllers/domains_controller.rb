@@ -2,12 +2,31 @@
 class DomainsController < ApplicationController
   before_filter :require_user, :except => [:dcv_validate, :dcv_all_validate]
   before_filter :find_ssl_account
-  before_filter :set_row_page, only: [:index]
+  before_filter :set_row_page, only: [:index, :search]
   before_filter :set_csr_row_page, only: [:select_csr]
 
+  def search
+    index
+  end
+
   def index
-    cnames = @ssl_account.all_certificate_names.includes(:domain_control_validations,:signed_certificates).order(created_at: :desc)
-    @domains = (@ssl_account.domains.order(created_at: :desc) + cnames).uniq(&:id).paginate(@p)
+    @search = params[:search] || ""
+
+    if @search.blank?
+      cnames = @ssl_account.all_certificate_names.includes(:domain_control_validations,:signed_certificates).order(created_at: :desc)
+      total_domains = (@ssl_account.domains.order(created_at: :desc) + cnames).uniq(&:id)
+    else
+      cnames = @ssl_account.all_certificate_names.includes(:domain_control_validations,:signed_certificates).search_domains(params[:search])
+      domains = @ssl_account.domains.search_domains(params[:search])
+      total_domains = (domains + cnames).uniq(&:id)
+    end
+
+    @domains = total_domains.paginate(@p)
+
+    respond_to do |format|
+      format.html { render :action => :index }
+      format.xml { render :xml => @domains }
+    end
   end
 
   def create

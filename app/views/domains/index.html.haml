@@ -2,16 +2,14 @@
 -content_for :title, title
 =render :partial => 'index_scripts'
 
-#search_bar.hidden
-  =form_tag domains_path(@ssl_slug), :id=>'hidden_form', :method=>:get do
+#search_bar
+  =form_tag :search_domains, :id=>'search_form', :method=>:get do
+    =text_field_tag :search, @search
     =hidden_field_tag :per_page, @per_page
+    =button_tag 'Search', :id=>'btn_domain_search'
+    =button_tag 'Filters', :type=>'button', :id=>'btn_domain_filter'
 
-#add_domains_bar
-  =form_tag domains_path, id: 'add_domains', method: :post do
-    Input domain name(s) (separated by commas or spaces)
-    -#=text_field_tag :domain_names, params[:domains]
-    =text_area_tag :domain_names, params[:domains], :rows => '2'
-    =button_tag 'Add', id: 'btn_add_domains'
+=render :partial=>'search_filters'
 
 =form_tag '', id: 'domains_list', method: :post do
   #validations
@@ -27,14 +25,16 @@
         =title
         |
         =link_to 'CSRs Manager', managed_csrs_path(@ssl_slug)
-        %ul(style="float: right; display: flex; list-style: none;" )
+        %ul(style="float: right; display: flex; list-style: none;")
           -unless current_user.ssl_account.all_csrs.blank?
-            %li(style="margin-right: 0.5rem" )
+            %li(style="margin-right: 0.5rem")
               =submit_tag 'validate by cname/file upload', formaction: "#{select_csr_domains_path(@ssl_slug)}", style: "padding: 0.5rem", id: "d_name_action_bind", disabled: 'true'
-          %li(style="margin-right: 0.5rem" )
+          %li(style="margin-right: 0.5rem")
             =submit_tag 'validate by email code', formaction: "#{validate_selected_domains_path(@ssl_slug)}", style: "padding: 0.5rem", id: "d_name_action_validate", disabled: 'true'
+          %li(style="margin-right: 0.5rem")
+            =submit_tag 'remove', style: "padding: 0.5rem", id: "d_name_action_remove", disabled: 'true'
           %li
-            =submit_tag 'remove', formaction: "#{remove_selected_domains_path(@ssl_slug)}", style: "padding: 0.5rem", id: "d_name_action_remove", disabled: 'true'
+            =button_tag 'add', :type => 'button', style: "padding: 0.5rem", id: "d_name_action_add"
       %tr.heading_row
         %th
         %th.name(scope="col") Name
@@ -68,3 +68,17 @@
             There are no domains
 
 = javascript_include_tag 'psl.min'
+
+#domain_modal.domain-modal
+  #domain_modal_content.modal-content
+    #domain_modal_header.modal-header
+      %span#domain_modal_close.close
+        &times;
+      %p
+        Input domain name(s) (separated by commas or spaces)
+    #domain_modal_body.modal-body
+      = text_area_tag 'domain_names', nil, :rows => '5'
+      #required-valid
+        * All Domains should be valid!
+    #domain_modal_footer.modal-footer
+      = button_tag 'Save', :type => 'button', :class => 'btn btn-grey btn-save-domains', :disabled => true

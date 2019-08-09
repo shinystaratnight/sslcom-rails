@@ -203,6 +203,11 @@ class SslcomCaApi
       host = ca_host(options[:mapping])+"/v1/user"
       options.merge! no_public_key: true
     else # collect cert
+      if cc.pending_issuance?
+        return
+      else
+        cc.pend_issuance!
+      end
       host = ca_host(options[:mapping])+
           "/v1/certificate#{'/ev' if options[:mapping].profile_name=~/EV/}/pkcs10"
       options.merge!(collect_certificate: true, username:
@@ -226,6 +231,7 @@ class SslcomCaApi
           notes:  "issued signed certificate for certificate order #{certificate_order.ref}",
           action: "SslcomCaApi#apply_for_certificate"
       )
+      cc.issue! if cc.pending_issuance?
     end
     api_log_entry
   end
