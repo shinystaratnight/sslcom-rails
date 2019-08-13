@@ -9,7 +9,7 @@ class UsersController < ApplicationController
     :switch_default_ssl_account, :enable_disable, :teams,
     :index, :admin_show, :search_teams, :archive_team, :retrieve_team
   ]
-  before_filter :finish_reseller_signup, :only => [:show]
+  # before_filter :finish_reseller_signup, :only => [:show]
   before_filter :new_user, :only=>[:create, :new]
   before_filter :find_ssl_account, only: [:show, :admin_show]
   before_filter :find_user, :set_admin_flag, :only=>[:edit_email,
