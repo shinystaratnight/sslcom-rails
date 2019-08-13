@@ -229,7 +229,6 @@ class CertificateOrder < ActiveRecord::Base
     %w(status).each do |field|
       query=filters[field.to_sym]
       if query
-        result = result.where{workflow_state >> query.split(',')}
         cc_query = cc_query.where{workflow_state >> query.split(',')}
       end
     end
