@@ -1000,11 +1000,12 @@ class OrdersController < ApplicationController
     
   def ucc_domains_adjust
     if current_user
-      @certificate_order = if current_user.is_system_admins?
-        CertificateOrder.find_by(ref: params[:co_ref])
-      else
-        current_user.ssl_account.cached_certificate_orders.find_by(ref: params[:co_ref])
-      end
+      @certificate_order =
+        if current_user.is_system_admins?
+          CertificateOrder.find_by(ref: params[:co_ref])
+        else
+          current_user.ssl_account.cached_certificate_orders.find_by(ref: params[:co_ref])
+        end
       @ssl_account = @certificate_order.ssl_account
       @certificate_content = @certificate_order.certificate_contents.find_by(ref: params[:cc_ref])
 
