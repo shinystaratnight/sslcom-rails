@@ -21,7 +21,7 @@ class DomainsController < ApplicationController
       total_domains = (domains + cnames).uniq(&:id)
     end
 
-    @domains = total_domains.paginate(@p)
+    @domains = total_domains.uniq{|cn| [cn.name, cn.certificate_content_id, cn.ssl_account_id]}.paginate(@p)
 
     respond_to do |format|
       format.html { render :action => :index }
