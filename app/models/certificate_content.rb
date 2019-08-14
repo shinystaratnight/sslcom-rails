@@ -229,6 +229,7 @@ class CertificateContent < ActiveRecord::Base
 
     state :issued do
       event :reprocess, :transitions_to => :csr_submitted
+      event :pend_issuance, :transitions_to => :pending_issuance
       event :validate, :transitions_to => :validated
       event :cancel, :transitions_to => :canceled
       event :revoke, :transitions_to => :revoked
