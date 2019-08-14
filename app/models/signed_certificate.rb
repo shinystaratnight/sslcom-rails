@@ -610,7 +610,13 @@ class SignedCertificate < ActiveRecord::Base
 
   def to_format(options={})
     if certificate_content.ca
-      SignedCertificate.remove_begin_end_tags(to_pkcs7)
+      if options[:response_type]=="individually"
+        to_nginx
+      elsif options[:response_type]=="pkcs7"
+        to_pkcs7
+      else
+        SignedCertificate.remove_begin_end_tags(to_pkcs7)
+      end
     else
       ComodoApi.collect_ssl(certificate_order, options).certificate
     end

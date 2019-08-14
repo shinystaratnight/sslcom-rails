@@ -4,7 +4,7 @@ class OrdersController < ApplicationController
   include OrdersHelper
   #resource_controller
   helper_method :cart_items_from_model_and_id
-  before_filter :finish_reseller_signup, :only => [:new], if: "current_user"
+  # before_filter :finish_reseller_signup, :only => [:new], if: "current_user"
   before_filter :find_order, :only => [:show, :invoice, :update_invoice, :refund, :refund_merchant, :change_state,
                                        :edit, :update, :transfer_order, :update_tags]
   before_filter :find_scoped_order, :only => [:revoke]
@@ -1000,11 +1000,12 @@ class OrdersController < ApplicationController
     
   def ucc_domains_adjust
     if current_user
-      @certificate_order = if current_user.is_system_admins?
-        CertificateOrder.find_by(ref: params[:co_ref])
-      else
-        current_user.ssl_account.cached_certificate_orders.find_by(ref: params[:co_ref])
-      end
+      @certificate_order =
+        if current_user.is_system_admins?
+          CertificateOrder.find_by(ref: params[:co_ref])
+        else
+          current_user.ssl_account.cached_certificate_orders.find_by(ref: params[:co_ref])
+        end
       @ssl_account = @certificate_order.ssl_account
       @certificate_content = @certificate_order.certificate_contents.find_by(ref: params[:cc_ref])
 

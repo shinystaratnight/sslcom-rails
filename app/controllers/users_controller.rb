@@ -2,6 +2,7 @@ class UsersController < ApplicationController
   # fix for https://sslcom.airbrake.io/projects/128852/groups/2108774376847787256?resolved=any&tab=overview
   skip_before_action :require_no_authentication, :only => [:duo_verify]
   skip_before_action :verify_authenticity_token
+  skip_before_filter :finish_reseller_signup, only: [:cancel_reseller_signup]
   before_filter :require_no_user, :only => [:new, :create]
   before_filter :require_user, only: [
     :show, :edit, :update, :cancel_reseller_signup, 
@@ -9,7 +10,7 @@ class UsersController < ApplicationController
     :switch_default_ssl_account, :enable_disable, :teams,
     :index, :admin_show, :search_teams, :archive_team, :retrieve_team
   ]
-  before_filter :finish_reseller_signup, :only => [:show]
+  # before_filter :finish_reseller_signup, :only => [:show]
   before_filter :new_user, :only=>[:create, :new]
   before_filter :find_ssl_account, only: [:show, :admin_show]
   before_filter :find_user, :set_admin_flag, :only=>[:edit_email,

@@ -330,7 +330,7 @@ class ProductOrder < ActiveRecord::Base
   end
 
   def most_recent_csr
-    certificate_contents.map(&:csr).compact.last || parent.try(:most_recent_csr)
+    csrs.compact.last || parent.try(:most_recent_csr)
   end
 
   def effective_date
@@ -1011,14 +1011,14 @@ class ProductOrder < ActiveRecord::Base
   # useful in the event Comodo take forever to make changes to an existing order (and sometimes cannot) so we
   # just create a new one and have the old one refunded
   def reset_ext_ca_order
-    certificate_contents.map(&:csr).compact.map(&:sent_success).flatten.compact.uniq.each{|a|a.delete}
+    csrs.compact.map(&:sent_success).flatten.compact.uniq.each{|a|a.delete}
     cc=certificate_content
     cc.preferred_reprocessing = false
     cc.save validation: false
   end
 
   def change_ext_ca_order(new_number)
-    ss=certificate_contents.map(&:csr).compact.map(&:sent_success).flatten.compact.last
+    ss=csrs.compact.map(&:sent_success).flatten.compact.last
     ss.update_column :response, ss.response.gsub(external_order_number, new_number.to_s)
     update_column :external_order_number, new_number
   end
@@ -1074,10 +1074,9 @@ class ProductOrder < ActiveRecord::Base
   end
 
   def sent_success_count
-    all_csrs = certificate_contents.map(&:csr)
-    sent_success_map = all_csrs.map(&:sent_success)
+    sent_success_map = csrs.map(&:sent_success)
     sent_success_map.flatten.compact.uniq.count if
-        all_csrs && !sent_success_map.blank?
+        csrs && !sent_success_map.blank?
   end
 
   # Get the most recent certificate_id (useful for UCC replacements)

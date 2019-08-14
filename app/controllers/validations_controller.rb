@@ -55,8 +55,9 @@ class ValidationsController < ApplicationController
         caa_check_domain_arry = []
         public_key_sha1=cc.cached_csr_public_key_sha1
         unless cc.ca.blank?
-          cnames = cc.certificate_names.includes(:domain_control_validations)
-          team_cnames = @certificate_order.ssl_account.all_certificate_names.includes(:domain_control_validations)
+          cnames = cc.certificate_names.includes(domain_control_validations: :csr).where{domain_control_validations.workflow_state=="satisfied"}.references(:domain_control_validations)
+          team_cnames = @certificate_order.ssl_account.all_certificate_names(nil,"validated").
+              includes(domain_control_validations: :csr).where{domain_control_validations.workflow_state=="satisfied"}.references(:domain_control_validations)
 
           # Team level validation check
           @ds = {}
@@ -85,7 +86,7 @@ class ValidationsController < ApplicationController
               end
             end
 
-            (validated_domain_arry << cn.name) if cn.domain_control_validations.last and cn.domain_control_validations.last.satisfied?
+            (validated_domain_arry << cn.name) if cn.domain_control_validations.validated
           end
 
           @all_validated=@certificate_order.domains_validated?

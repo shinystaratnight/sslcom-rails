@@ -578,7 +578,7 @@ class ApplicationController < ActionController::Base
 
   def finish_reseller_signup
     blocked = %w(certificate_orders orders site_seals validations ssl_accounts users)
-    if current_user.ssl_account
+    if current_user.is_reseller? and current_user.ssl_account.is_new_reseller?
       redirect_to new_account_reseller_url and return if
           (current_user.ssl_account.reseller ?
               # following line avoids loop with last condition in ResellersController#new comparing reseller.complete?

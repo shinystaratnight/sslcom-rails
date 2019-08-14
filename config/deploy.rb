@@ -22,6 +22,7 @@ set :bundle_cmd, 'ruby -S bundle'
 # Delayed Job
 require 'delayed/recipes'
 
+
 # Options necessary to make Ubuntu’s SSH happy
 ssh_options[:paranoid] = false
 default_run_options[:pty] = true
@@ -35,7 +36,7 @@ set :branch, "staging"
 # extension ".pub".
 ssh_options[:keys] = [File.join(ENV["HOME"], ".ssh", "id_rsa_2019")]
 
-server = "production"
+server = "production_api"
 case server
   when "sandbox"
     require "rvm/capistrano"
