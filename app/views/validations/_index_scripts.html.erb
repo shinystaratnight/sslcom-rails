@@ -1185,7 +1185,7 @@ jQuery(function($) {
 
                           tdElement.append(sltElement);
                           trElement.append(tdElement);
-                          $('[name="domains[' + value + '][dcv]"]').val(result[key]['slt_option'].toLowerCase());
+                          $('[name="domains[' + value + '][dcv]"]').val(result[key]['slt_option'] == null ? null : result[key]['slt_option'].toLowerCase());
 
                           <%if Settings.enable_caa%>
                             tdElement = $('<td></td>');
