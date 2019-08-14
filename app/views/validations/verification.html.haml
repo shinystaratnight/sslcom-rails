@@ -13,10 +13,10 @@
     =link_to @token, @certificate_order_token
   %div.pt-3.automated-call-verification
     .row
-      .col-md-3
+      .col-md-2
         = hidden_field_tag 'token', @token
         = hidden_field_tag 'passed_token', @callback_type == 'none' ? nil : @certificate_order_token.passed_token
-      .col-md-6
+      .col-md-8
         .row.pt-3.phone-number-block
           .col-md-5
             .row.callback-number.pull-right
@@ -99,13 +99,13 @@
                     = button_tag 'Submit', :type => 'button', :class => 'btn btn-callback-date btn-primary'
             .col-md-3
         .row.pt-3.phone-verification-block{:style => @callback_type == 'none' ? 'display: none' : 'display: ""'}
-          .col-md-4
+          .col-md-4{:style => 'text-align: right; line-height: 33px'}
             Phone Verification Code :
           .col-md-5
-            = text_field_tag 'phone_verification_code', nil
+            = text_field_tag 'phone_verification_code', nil, :class => 'form-control'
           .col-md-3
             = button_tag 'Verify Phone', :type => 'button', :class => 'btn btn-phone-verification', :disabled => 'disabled'
-      .col-md-3
+      .col-md-2
 
 
 
