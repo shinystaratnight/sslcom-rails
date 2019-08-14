@@ -21,7 +21,7 @@ class ApplicationController < ActionController::Base
   before_filter :verify_duo_authentication, except: [:duo, :duo_verify, :login, :logout]
   before_filter :identify_visitor, :record_visit,
                 if: "Settings.track_visitors"
-  # before_filter :finish_reseller_signup, if: "current_user"
+  before_filter :finish_reseller_signup, if: "current_user"
   before_filter :team_base, if: "params[:ssl_slug] && current_user"
   before_filter :set_ssl_slug, :load_notifications
   after_filter :set_access_control_headers#need to move parse_csr to api, if: "request.subdomain=='sws' || request.subdomain=='sws-test'"
@@ -578,7 +578,7 @@ class ApplicationController < ActionController::Base
 
   def finish_reseller_signup
     blocked = %w(certificate_orders orders site_seals validations ssl_accounts users)
-    if current_user.ssl_account
+    if current_user.is_reseller? and current_user.ssl_account.is_new_reseller?
       redirect_to new_account_reseller_url and return if
           (current_user.ssl_account.reseller ?
               # following line avoids loop with last condition in ResellersController#new comparing reseller.complete?

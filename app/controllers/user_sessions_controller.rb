@@ -2,7 +2,7 @@ class UserSessionsController < ApplicationController
   before_filter :require_no_user, only: [:new]
   before_filter :find_dup_login, only: [:create]
   before_filter :require_user, only: [:destroy, :duo]
-  skip_filter :finish_reseller_signup, only: [:destroy]
+  skip_before_filter :finish_reseller_signup, only: [:destroy]
   skip_before_action :verify_authenticity_token
   skip_before_action :verify_duo_authentication, only: [:new, :create, :destroy]
   skip_before_action :require_no_authentication, only: [:duo_verify]

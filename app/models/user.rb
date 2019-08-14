@@ -82,6 +82,8 @@ class User < ActiveRecord::Base
       :if => '(has_no_credentials? && !admin_update) || changing_password'}
   end
 
+  before_save :should_reset_perishable_token
+
   before_create do |u|
     u.status='enabled'
     u.max_teams = OWNED_MAX_TEAMS unless u.max_teams
@@ -1062,6 +1064,19 @@ class User < ActiveRecord::Base
   end
 
   private
+
+  # https://github.com/binarylogic/authlogic/issues/81
+  def should_record_timestamps?
+    changed_keys = self.changes.keys - ["last_request_at", "perishable_token", "updated_at", "created_at"]
+    changed_keys.present? && super
+  end
+
+  # https://github.com/binarylogic/authlogic/issues/485
+  def should_reset_perishable_token
+    if changed? && changed_attributes.keys != ['last_request_at']
+      reset_perishable_token
+    end
+  end
 
   def self_or_other(user_id)
     user = user_id ? User.find(user_id) : self

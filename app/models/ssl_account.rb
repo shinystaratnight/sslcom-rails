@@ -334,6 +334,12 @@ class SslAccount < ActiveRecord::Base
     end
   end
 
+  def is_new_reseller?
+    Rails.cache.fetch("#{cache_key}/is_new_reseller") do
+      has_role?('new_reseller')
+    end
+  end
+
   def clear_new_certificate_orders
     certificate_orders.is_new.each(&:destroy)
   end
