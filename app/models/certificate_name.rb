@@ -8,6 +8,10 @@ class CertificateName < ActiveRecord::Base
   has_many    :ca_certificate_requests, as: :api_requestable, dependent: :destroy
   has_many    :ca_dcv_requests, as: :api_requestable, dependent: :destroy
   has_many    :ca_dcv_resend_requests, as: :api_requestable, dependent: :destroy
+  has_many    :validated_domain_control_validations, -> { where(workflow_state: "satisfied")},
+              class_name: "DomainControlValidation"
+  has_many    :last_sent_domain_control_validations, -> { where{email_address !~ 'null'}},
+              class_name: "DomainControlValidation"
   has_many    :domain_control_validations, dependent: :destroy do
     def last_sent
       where{email_address !~ 'null'}.last

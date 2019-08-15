@@ -146,6 +146,13 @@ class SslAccount < ActiveRecord::Base
   # default_scope ->{order("ssl_accounts.created_at desc")}
   default_scope{where{workflow_state << ['archived']}.order("ssl_accounts.created_at desc")}
 
+  scope :search_team, -> (term){joins{users}.where{
+        (acct_number =~ "%#{term}%") |
+        (ssl_slug =~ "%#{term}%") |
+        (company_name =~ "%#{term}%") |
+        (users.first_name =~ "%#{term}%") |
+        (users.last_name =~ "%#{term}%")}}
+
   include Workflow
   workflow do
     state :active do
@@ -272,9 +279,9 @@ class SslAccount < ActiveRecord::Base
   # certificate_name - the domain we are looking up
   def other_dcvs_satisfy_domain(certificate_name)
     # TODO find only validated domains
-    all_certificate_names(certificate_name.name,"validated").includes(:domain_control_validations).each do |cn|
+    all_certificate_names(certificate_name.name,"validated").includes(:validated_domain_control_validations).each do |cn|
       if cn.id!=certificate_name.id and DomainControlValidation.domain_in_subdomains?(cn.name,certificate_name.name)
-        dcv = cn.domain_control_validations.validated # TODO find dcv.satisfied?
+        dcv = cn.validated_domain_control_validations.last # TODO find dcv.satisfied?
         if dcv && dcv.identifier_found
           # email validation
           if dcv.dcv_method =~ /email/ or
@@ -624,7 +631,7 @@ class SslAccount < ActiveRecord::Base
   def validated_domains
     validated_domains = []
     cnames = self.certificate_names
-    cnames.each do |cn|
+    cnames.includes(:domain_control_validations).each do |cn|
       dcv = cn.domain_control_validations.last
       if dcv && dcv.identifier_found
         validated_domains << cn.name unless validated_domains.include?(cn.name)
@@ -643,7 +650,7 @@ class SslAccount < ActiveRecord::Base
 
   def get_account_admins
     uid=Rails.cache.fetch("#{cache_key}/get_account_admins") do
-      users.with_role(Role::ACCOUNT_ADMIN).pluck(:user_id).uniq
+      users.with_role(Role::ACCOUNT_ADMIN).pluck(:id).uniq
     end
     uid ? User.find(uid) : nil
   end

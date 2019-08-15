@@ -60,7 +60,7 @@ class NotificationGroup < ActiveRecord::Base
     notification_groups = cc.certificate_order.notification_groups
 
     if notification_groups
-      notification_groups.each do |group|
+      notification_groups.includes(:notification_groups_subjects).each do |group|
         ngs = group.notification_groups_subjects
 
         if domain

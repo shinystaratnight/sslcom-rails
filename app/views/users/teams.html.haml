@@ -2,19 +2,29 @@
 -will_paginate @teams
 -content_for :title, title
 -system_admins = current_user.is_system_admins?
+=render :partial => 'team_scripts'
 
 #search_bar
   =form_tag teams_user_path, id: 'search_form', method: :get do
     name, account #, or slug
     =text_field_tag :team, params[:team]
+    =hidden_field_tag :per_page, @per_page
     =button_tag 'Search', id: 'btn_teams_search'
 
 #validations
   %table(cellspacing="0")
-    -if will_paginate @teams
+    -unless @teams.empty?
       %tfoot
         %tr
-          %td(colspan='6')=will_paginate @teams
+          %td.wrap_number_rows(colspan='2')
+            =select_tag :number_rows,
+            options_for_select([[5, 5], [10, 10], [20, 20], [50, 50], [100, 100]], @per_page),
+            :class=>'per_page'
+          %td(colspan='5')=will_paginate @teams
+    -#-if will_paginate @teams
+      %tfoot
+        %tr
+          %td(colspan='7')=will_paginate @teams
     %caption
       =title
       [learn about #{link_to "teams", "https://www.ssl.com/article/introducing-teams-ssl-com-multiuser-accounts/", target: "_blank"}]
@@ -51,118 +61,121 @@
             =link_to "accept", t[:accept]
             %br
             =link_to "decline", t[:decline], {style: 'color:red;'}
-    -@teams.each do |t|
-      -cache([current_user,'teams_list', t], expires_in: 12.hours) do
-        -if t.active?
-          -account_owner = current_user.is_account_owner? t
-          -account_admin = current_user.is_account_team_admin? t
-          %tr
-            %td
+    -if @teams.size > 0
+      -@teams.each do |t|
+        -cache([current_user,'teams_list', t], expires_in: 12.hours) do
+          -if t.active?
+            -account_owner = current_user.is_account_owner? t
+            -account_admin = current_user.is_account_team_admin? t
+            %tr
+              %td
+                -unless system_admins
+                  =link_to t.get_team_name, switch_default_ssl_account_user_path(current_user.id, ssl_account_id: t.id)
+                -else
+                  =t.get_team_name
+              %td=t.acct_number
               -unless system_admins
-                =link_to t.get_team_name, switch_default_ssl_account_user_path(current_user.id, ssl_account_id: t.id)
+                %td#teams-user-roles.teams-index-text-left
+                  =render_user_roles(current_user.role_symbols(t))
               -else
-                =t.get_team_name
-            %td=t.acct_number
-            -unless system_admins
-              %td#teams-user-roles.teams-index-text-left
-                =render_user_roles(current_user.role_symbols(t))
-            -else
-              %td=link_to(t.get_account_owner.try(:login).shorten(15,false),admin_show_user_path(t.get_account_owner), title: t.get_account_owner.try(:login)) if t.get_account_owner.try(:login)
-            %td
-              -if system_admins
-                %a{style:"cursor: pointer;", onclick: "adjust_funds_ssl_account('#{t.to_slug}','#{t.get_team_name}')"} $#{t.funded_account.try :amount}
-              -elsif !current_user.role_symbols(t).include?((Role::INDIVIDUAL_CERTIFICATE).to_sym)
-                $#{t.funded_account.try :amount}
-            %td#team-detail-links
-              -permissions = team_index_permissions(current_user, t)
-              %div
-                -if system_admins || permissions.include?(:orders)
-                  =link_to "<i class='fa fa-file-text'></i> orders: #{t.cached_certificate_orders_count}".html_safe, |
-                    certificate_orders_path(ssl_slug: t.to_slug), class: 'btn-team-links'
-                -if system_admins || permissions.include?(:transactions)
-                  =link_to "<i class='fa fa-credit-card'></i> transactions: #{t.orders.count}".html_safe, |
-                    orders_path(ssl_slug: t.to_slug), class: 'btn-team-links'
-                -if system_admins || permissions.include?(:validations)
-                  =link_to "<i class='fa fa-expeditedssl'></i> validations: #{t.validations.count}".html_safe, |
-                    validations_path(ssl_slug: t.to_slug), class: 'btn-team-links'
-                -if system_admins || permissions.include?(:users)
-                  =link_to "<i class='fa fa-user-circle-o'></i> users: #{t.users.count}".html_safe, |
-                    users_path(ssl_slug: t.to_slug), class: 'btn-team-links'
+                %td=link_to(t.get_account_owner.try(:login).shorten(15,false),admin_show_user_path(t.get_account_owner), title: t.get_account_owner.try(:login)) if t.get_account_owner.try(:login)
+              %td
+                -if system_admins
+                  %a{style:"cursor: pointer;", onclick: "adjust_funds_ssl_account('#{t.to_slug}','#{t.get_team_name}')"} $#{t.funded_account.try :amount}
+                -elsif !current_user.role_symbols(t).include?((Role::INDIVIDUAL_CERTIFICATE).to_sym)
+                  $#{t.funded_account.try :amount}
+              %td#team-detail-links
+                -permissions = team_index_permissions(current_user, t)
+                %div
+                  -if system_admins || permissions.include?(:orders)
+                    =link_to "<i class='fa fa-file-text'></i> orders: #{t.cached_certificate_orders_count}".html_safe,
+                      certificate_orders_path(ssl_slug: t.to_slug), class: 'btn-team-links'
+                  -if system_admins || permissions.include?(:transactions)
+                    =link_to "<i class='fa fa-credit-card'></i> transactions: #{t.orders.count}".html_safe,
+                      orders_path(ssl_slug: t.to_slug), class: 'btn-team-links'
+                  -if system_admins || permissions.include?(:validations)
+                    =link_to "<i class='fa fa-expeditedssl'></i> validations: #{t.validations.count}".html_safe,
+                      validations_path(ssl_slug: t.to_slug), class: 'btn-team-links'
+                  -if system_admins || permissions.include?(:users)
+                    =link_to "<i class='fa fa-user-circle-o'></i> users: #{t.users.count}".html_safe,
+                      users_path(ssl_slug: t.to_slug), class: 'btn-team-links'
 
-              -if system_admins
-                #team-billing-method
-                  =form_tag ssl_account_path(ssl_slug: t.to_slug), id: 'frm-team-billing-method',  method: :put do
-                    =label_tag 'BILLING METHOD:'
-                    =select_tag :billing_method,                                                                           |
-                      options_for_select(SslAccount::BILLING_METHODS.map{|bm| [bm.gsub('_', ' '), bm]}, t.billing_method), |
-                      class: 'team-sel-billing-method'
-                    - if params[:page]
-                      =hidden_field_tag :page, params[:page]
+                -if system_admins
+                  #team-billing-method
+                    =form_tag ssl_account_path(ssl_slug: t.to_slug), id: 'frm-team-billing-method',  method: :put do
+                      =label_tag 'BILLING METHOD:'
+                      =select_tag :billing_method,                                                                           |
+                        options_for_select(SslAccount::BILLING_METHODS.map{|bm| [bm.gsub('_', ' '), bm]}, t.billing_method),
+                        class: 'team-sel-billing-method'
+                      - if params[:page]
+                        =hidden_field_tag :page, params[:page]
 
-                #team-no-limit
-                  =form_tag ssl_account_path(ssl_slug: t.to_slug), id: 'frm-team-no-limit',  method: :put do
-                    =label_tag 'NO LIMIT:'
-                    =select_tag :no_limit, options_for_select([ ['ON', true], ['OFF', false] ], t.no_limit), |
-                      class: 'team-sel-no-limit'
-                    - if params[:page]
-                      =hidden_field_tag :page, params[:page]
-                %br/
-                #team-epki-switch
-                  =form_tag ssl_account_path(ssl_slug: t.to_slug), id: 'frm-team-epki-switch',  method: :put do
-                    =label_tag 'EPKI:'
-                    =select_tag :epki_agreement, options_for_select([ ['ON', true], ['OFF', false] ], !t.epki_agreement.nil?), |
-                      class: 'team-sel-epki-switch'
-                    -if params[:page]
-                      =hidden_field_tag :page, params[:page]
+                  #team-no-limit
+                    =form_tag ssl_account_path(ssl_slug: t.to_slug), id: 'frm-team-no-limit',  method: :put do
+                      =label_tag 'NO LIMIT:'
+                      =select_tag :no_limit, options_for_select([ ['ON', true], ['OFF', false] ], t.no_limit),
+                        class: 'team-sel-no-limit'
+                      - if params[:page]
+                        =hidden_field_tag :page, params[:page]
+                  %br/
+                  #team-epki-switch
+                    =form_tag ssl_account_path(ssl_slug: t.to_slug), id: 'frm-team-epki-switch',  method: :put do
+                      =label_tag 'EPKI:'
+                      =select_tag :epki_agreement, options_for_select([ ['ON', true], ['OFF', false] ], !t.epki_agreement.nil?),
+                        class: 'team-sel-epki-switch'
+                      -if params[:page]
+                        =hidden_field_tag :page, params[:page]
 
-            %td=t.created_at.strftime("%b %d, %Y")
-            -#-unless system_admins
+              %td=t.created_at.strftime("%b %d, %Y")
+              -#-unless system_admins
+                %td#team-action-items.teams-index-text-left
+                  =link_to "<i class='fa fa-eye'></i> view".html_safe, |
+                    switch_default_ssl_account_user_path(current_user.id, ssl_account_id: t.id)
+                  -unless account_owner || system_admins
+                    %br/
+                    =link_to "<i class='fa fa-user-times'></i> leave".html_safe, |
+                      leave_team_user_path(current_user, ssl_account_id: t.id),  |
+                      {data: {confirm: "Please confirm you want to leave team #{t.get_team_name}."}}
+                  -if permitted_to?(:set_default_team, current_user) && !system_admins
+                    %br/
+                    = link_to "<i class='fa fa-certificate'></i> set default".html_safe, |
+                      set_default_team_user_path(current_user, ssl_account_id: t.id), method: :put
               %td#team-action-items.teams-index-text-left
-                =link_to "<i class='fa fa-eye'></i> view".html_safe, |
-                  switch_default_ssl_account_user_path(current_user.id, ssl_account_id: t.id)
-                -unless account_owner || system_admins
-                  %br/
-                  =link_to "<i class='fa fa-user-times'></i> leave".html_safe, |
-                    leave_team_user_path(current_user, ssl_account_id: t.id),  |
-                    {data: {confirm: "Please confirm you want to leave team #{t.get_team_name}."}}
-                -if permitted_to?(:set_default_team, current_user) && !system_admins
-                  %br/
-                  = link_to "<i class='fa fa-certificate'></i> set default".html_safe, |
-                    set_default_team_user_path(current_user, ssl_account_id: t.id), method: :put
-            %td#team-action-items.teams-index-text-left
-              -unless system_admins
-                =link_to "<i class='fa fa-eye'></i> view".html_safe,
-                  switch_default_ssl_account_user_path(current_user.id, ssl_account_id: t.id)
-                -unless account_owner || system_admins
-                  %br/
-                  =link_to "<i class='fa fa-user-times'></i> leave".html_safe, |
+                -unless system_admins
+                  =link_to "<i class='fa fa-eye'></i> view".html_safe,
+                    switch_default_ssl_account_user_path(current_user.id, ssl_account_id: t.id)
+                  -unless account_owner || system_admins
+                    %br/
+                    =link_to "<i class='fa fa-user-times'></i> leave".html_safe,
                       leave_team_user_path(current_user, ssl_account_id: t.id),
-                    {data: {confirm: "Please confirm you want to leave team #{t.get_team_name}."}}
-                -if permitted_to?(:set_default_team, current_user) && !system_admins && current_user.default_ssl_account != t.id
-                  %br/
-                  = link_to "<i class='fa fa-certificate'></i> set default".html_safe,
-                    set_default_team_user_path(current_user, ssl_account_id: t.id), method: :put
-              - if account_owner and current_user.total_teams_owned.count > 1
-                =link_to "<i class='fa fa-chevron-circle-down'></i> archive".html_safe,
-                  archive_team_user_path(current_user.id, ssl_account_id: t.id),
-                  {data: {confirm: "Please confirm you want to archive team \"#{t.get_team_name}\"."}}
-        -else
-          -account_owner_admin = current_user.is_team_owner_admin? t
-          %tr
-            %td=t.get_team_name
-            %td=t.acct_number
-            -unless system_admins
-              %td#teams-user-roles.teams-index-text-left
-                =render_user_roles(current_user.role_symbols_archived_team(t))
-            -else
-              %td=link_to(t.get_account_owner.try(:login).shorten(15,false),admin_show_user_path(t.get_account_owner), title: t.get_account_owner.try(:login)) if t.get_account_owner.try(:login)
-            %td
-              $#{t.funded_account.try :amount}
-            %td#team-detail-links
-            %td=t.created_at.strftime("%b %d, %Y")
-            %td#team-action-items.teams-index-text-left
-              - if account_owner_admin || system_admins
-                =link_to "<i class='fa fa-chevron-circle-up'></i> unarchive".html_safe,
-                    retrieve_team_user_path(current_user.id, ssl_account_id: t.id)
-
-
+                      {data: {confirm: "Please confirm you want to leave team #{t.get_team_name}."}}
+                  -if permitted_to?(:set_default_team, current_user) && !system_admins && current_user.default_ssl_account != t.id
+                    %br/
+                    = link_to "<i class='fa fa-certificate'></i> set default".html_safe,
+                      set_default_team_user_path(current_user, ssl_account_id: t.id), method: :put
+                - if account_owner and current_user.total_teams_owned.count > 1
+                  =link_to "<i class='fa fa-chevron-circle-down'></i> archive".html_safe,
+                    archive_team_user_path(current_user.id, ssl_account_id: t.id),
+                    {data: {confirm: "Please confirm you want to archive team \"#{t.get_team_name}\"."}}
+          -else
+            -account_owner_admin = current_user.is_team_owner_admin? t
+            %tr
+              %td=t.get_team_name
+              %td=t.acct_number
+              -unless system_admins
+                %td#teams-user-roles.teams-index-text-left
+                  =render_user_roles(current_user.role_symbols_archived_team(t))
+              -else
+                %td=link_to(t.get_account_owner.try(:login).shorten(15,false),admin_show_user_path(t.get_account_owner), title: t.get_account_owner.try(:login)) if t.get_account_owner.try(:login)
+              %td
+                $#{t.funded_account.try :amount}
+              %td#team-detail-links
+              %td=t.created_at.strftime("%b %d, %Y")
+              %td#team-action-items.teams-index-text-left
+                - if account_owner_admin || system_admins
+                  =link_to "<i class='fa fa-chevron-circle-up'></i> unarchive".html_safe,
+                      retrieve_team_user_path(current_user.id, ssl_account_id: t.id)
+    -else
+      %tr
+        %td(colspan="7")
+          There are no teams.

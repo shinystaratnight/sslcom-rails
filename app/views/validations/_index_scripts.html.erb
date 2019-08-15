@@ -157,6 +157,11 @@ jQuery(function($) {
     }
   };
   $(document).ready(function() {
+    $('#number_rows').change(function () {
+      $('#per_page').val($(this).val());
+      $('#search_form').submit();
+    });
+
     var status_bar=null;
     $.method_type();
     $("select#domain_control_validation_email option[value='none']").remove();
@@ -1185,7 +1190,7 @@ jQuery(function($) {
 
                           tdElement.append(sltElement);
                           trElement.append(tdElement);
-                          $('[name="domains[' + value + '][dcv]"]').val(result[key]['slt_option'].toLowerCase());
+                          $('[name="domains[' + value + '][dcv]"]').val(result[key]['slt_option'] == null ? null : result[key]['slt_option'].toLowerCase());
 
                           <%if Settings.enable_caa%>
                             tdElement = $('<td></td>');
