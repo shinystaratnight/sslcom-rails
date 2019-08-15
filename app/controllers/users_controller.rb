@@ -28,7 +28,7 @@ class UsersController < ApplicationController
   filter_access_to  :consolidate, :dup_info, :archive_team, :retrieve_team, :require=>:update
   filter_access_to  :resend_activation, :activation_notice, :require=>:create
   filter_access_to  :edit_password, :edit_email, :cancel_reseller_signup, :teams, :require=>:edit
-  filter_access_to :show_user, :reset_failed_login_count, :require => :ajax
+  filter_access_to  :show_user, :reset_failed_login_count, :require => :ajax
 
   def new
   end

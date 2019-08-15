@@ -650,7 +650,7 @@ class SslAccount < ActiveRecord::Base
 
   def get_account_admins
     uid=Rails.cache.fetch("#{cache_key}/get_account_admins") do
-      users.with_role(Role::ACCOUNT_ADMIN).pluck(:user_id).uniq
+      users.with_role(Role::ACCOUNT_ADMIN).pluck(:id).uniq
     end
     uid ? User.find(uid) : nil
   end
