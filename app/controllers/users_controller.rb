@@ -17,6 +17,8 @@ class UsersController < ApplicationController
     :edit_password, :update, :login_as, :admin_update, :admin_show,
     :consolidate, :dup_info, :adjust_funds, :change_login, 
     :switch_default_ssl_account, :index, :admin_activate, :show, :teams]
+  before_filter :set_row_page, only: [:teams]
+
  # before_filter :index, :only=>:search
   filter_access_to  :all
   filter_access_to  :update, :admin_update, :enable_disable,
@@ -448,15 +450,16 @@ class UsersController < ApplicationController
   end
 
   def teams
-    p = {page: params[:page]}
+    # p = {page: params[:page]}
     team = params[:team]
     # @teams = @user.get_all_approved_accounts
     @teams = @user.get_all_approved_teams
     unless team.blank?
       team = team.strip.downcase
-      @teams = @teams.where("acct_number = ? OR ssl_slug = ? OR company_name = ?", team, team, team)
+      # @teams = @teams.where("acct_number = ? OR ssl_slug = ? OR company_name = ?", team, team, team)
+      @teams = @teams.search_team(team)
     end
-    @teams = @teams.paginate(p)
+    @teams = @teams.paginate(@p)
   end
 
   def archive_team
@@ -577,6 +580,19 @@ class UsersController < ApplicationController
   end
 
   private
+
+  def set_row_page
+    preferred_row_count = current_user.preferred_team_row_count
+    @per_page = params[:per_page] || preferred_row_count.or_else("10")
+    SslAccount.per_page = @per_page if SslAccount.per_page != @per_page
+
+    if @per_page != preferred_row_count
+      current_user.preferred_team_row_count = @per_page
+      current_user.save(validate: false)
+    end
+
+    @p = {page: (params[:page] || 1), per_page: @per_page}
+  end
 
   def new_user
     @user = User.new

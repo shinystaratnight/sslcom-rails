@@ -146,6 +146,13 @@ class SslAccount < ActiveRecord::Base
   # default_scope ->{order("ssl_accounts.created_at desc")}
   default_scope{where{workflow_state << ['archived']}.order("ssl_accounts.created_at desc")}
 
+  scope :search_team, -> (term){joins{users}.where{
+        (acct_number =~ "%#{term}%") |
+        (ssl_slug =~ "%#{term}%") |
+        (company_name =~ "%#{term}%") |
+        (users.first_name =~ "%#{term}%") |
+        (users.last_name =~ "%#{term}%")}}
+
   include Workflow
   workflow do
     state :active do

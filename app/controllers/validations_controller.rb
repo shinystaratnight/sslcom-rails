@@ -9,6 +9,7 @@ class ValidationsController < ApplicationController
   before_filter :require_user, only: [:index, :new, :edit, :show, :upload, :document_upload, :get_asynch_domains]
   before_filter :find_validation, only: [:update, :new]
   before_filter :find_certificate_order, only: [:new, :edit, :show, :upload, :document_upload]
+  before_filter :set_row_page, only: [:index, :search]
 
   filter_access_to :all
   filter_access_to [:upload, :document_upload, :verification, :email_verification_check, :automated_call,
@@ -396,18 +397,21 @@ class ValidationsController < ApplicationController
   end
 
   def index
-    p = {:page => params[:page]}
+    # p = {:page => params[:page]}
     @certificate_orders =
-      if @search = params[:search]
+      if !params[:search].blank? && (@search = params[:search])
        current_user.is_admin? ?
-           (@ssl_account.try(:certificate_orders) || CertificateOrder).not_test.search_with_csr(params[:search]).unvalidated :
-        current_user.ssl_account.certificate_orders.not_test.
-          search(params[:search]).unvalidated
+           (@ssl_account.try(:certificate_orders) || CertificateOrder)
+               .not_test.search_with_csr(params[:search]).unvalidated.not_csr_blank :
+        current_user.ssl_account.certificate_orders.not_test.search(params[:search]).unvalidated.not_csr_blank
       else
         current_user.is_admin? ?
-            (@ssl_account.try(:certificate_orders) || CertificateOrder).unvalidated :
-            current_user.ssl_account.certificate_orders.unvalidated
-      end.paginate(p)
+            (@ssl_account.try(:certificate_orders) || CertificateOrder).unvalidated.not_csr_blank :
+            current_user.ssl_account.certificate_orders.unvalidated.not_csr_blank
+      end
+
+    @certificate_orders = @certificate_orders.paginate(@p)
+
     respond_to do |format|
       format.html { render :action => :index }
       format.xml  { render :xml => @certificate_orders }
@@ -831,6 +835,19 @@ class ValidationsController < ApplicationController
   end
 
   private
+
+  def set_row_page
+    preferred_row_count = current_user.preferred_validate_row_count
+    @per_page = params[:per_page] || preferred_row_count.or_else("10")
+    CertificateOrder.per_page = @per_page if CertificateOrder.per_page != @per_page
+
+    if @per_page != preferred_row_count
+      current_user.preferred_validate_row_count = @per_page
+      current_user.save(validate: false)
+    end
+
+    @p = {page: (params[:page] || 1), per_page: @per_page}
+  end
 
   def formatted_offset(seconds)
     format = '%s%02d:%02d'

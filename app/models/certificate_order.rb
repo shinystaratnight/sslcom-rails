@@ -337,6 +337,8 @@ class CertificateOrder < ActiveRecord::Base
     (certificate_contents.workflow_state >> ['pending_validation', 'contacts_provided'])}.
       order("certificate_contents.updated_at asc")}
 
+  scope :not_csr_blank, ->{joins{certificate_contents.csr}.where{certificate_contents.csr.id!=nil}}
+
   scope :incomplete, ->{not_test.where{(is_expired==false) &
     (certificate_contents.workflow_state >> ['csr_submitted', 'info_provided', 'contacts_provided'])}.
       order("certificate_contents.updated_at asc")}
