@@ -27,7 +27,7 @@
     %br
     1 numeric character [0-9] and
     %br
-    1 special character: ~`!@#$%^&*()-+={}[]|\;:"<>,./?
+    1 special character: #{User::PASSWORD_SPECIAL_CHARS}
 .clearfix
   = form.label :password_confirmation, "#{(@chpwd) ? 'New p' : 'P'}assword again<span class='label_desc'>type the password again</span>".html_safe
   = form.password_field :password_confirmation, required: true

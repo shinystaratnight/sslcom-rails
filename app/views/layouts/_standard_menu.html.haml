@@ -23,9 +23,11 @@
       -permitted_to? :index, :domains do
         %li(id="#{(is_on?("domains",current_slug) && !@prev) ? 't-intro' : 'manage_domains' }")
           =link_to "Domains", domains_path(slug_params)
-    -if current_user.get_all_approved_accounts.length > 0
+    -#-if current_user.get_all_approved_accounts.length > 0
+    -if current_user.get_all_approved_teams.length > 0
       %li(id="#{current_page?(teams_user_path(current_user)) ? 't-intro' : 'manage_teams'}")
-        =link_to "Teams(#{current_user.get_all_approved_accounts.count})", teams_user_path(current_user)
+        -#=link_to "Teams(#{current_user.get_all_approved_accounts.count})", teams_user_path(current_user)
+        =link_to "Teams(#{current_user.get_all_approved_teams.count})", teams_user_path(current_user)
         -unless @team_invites.nil?
           %span.notifications-teams=@team_invites.count
     -permitted_to? :read, :users do

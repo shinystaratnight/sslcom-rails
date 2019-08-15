@@ -78,7 +78,7 @@
                   %td
                     =file['uri']
                   %td
-                    =number_to_human_size(file['byte'])
+                    =number_to_human_size(file['bytes'])
                   %td
                     =file['hits']
                   %td
@@ -260,14 +260,14 @@
                     Generate and install SSL
                   %div.col-md-3.col-sm-3.col-lg-4
                     =check_box_tag :generate_install_ssl_chk, false
-              -#%hr.gen-install-ssl-divider
+              %hr.gen-install-ssl-divider
               %div.container-fluid
-                =form_tag :update_custom_domain_cdn, :id=>'custom_domain_modal_form', :class=>'hidden' do
+                =form_tag :update_custom_domain_cdn, :id=>'custom_domain_modal_form' do
                   =hidden_field_tag :api_key, @current_user_api_key
                   =hidden_field_tag :host_name
                   =hidden_field_tag :custom_domain_ref
                   =hidden_field_tag :action_type, 'modify'
-                  =hidden_field_tag :generate_type, 'auto'
+                  =hidden_field_tag :generate_type, 'manual'
                   %div.row
                     %div.col-md-4.col-sm-4.col-lg-3
                       Certificate
@@ -285,4 +285,4 @@
                     =button_tag 'Delete Host Name', 'class ' => 'delete-custom-domain', 'type' => 'button'
                   %div.col-8
                     =button_tag 'Save', 'class' => 'modify-custom-domain float-right', 'type' => 'button', 'disabled' => 'disabled'
-                    =button_tag 'Cancel', 'class' => 'float-right mr-1', 'data-dismiss' => 'modal', 'type' => 'button'
+                    =button_tag 'Cancel', 'class' => 'cancel-custom-domain float-right mr-1', 'data-dismiss' => 'modal', 'type' => 'button'

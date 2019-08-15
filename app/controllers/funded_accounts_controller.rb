@@ -8,7 +8,7 @@ class FundedAccountsController < ApplicationController
   before_filter :require_user, :only => [:allocate_funds_for_order,
     :deposit_funds, :allocate_funds, :apply_funds, :confirm_funds]
   before_filter :find_ssl_account
-  skip_filter :finish_reseller_signup
+  skip_before_filter :finish_reseller_signup
   filter_access_to :all
 
   def allocate_funds
@@ -153,7 +153,7 @@ class FundedAccountsController < ApplicationController
           account.reseller.finish_signup immutable_cart_item
         end
         log_deposit
-        OrderNotifier.deposit_completed(account, @deposit).deliver
+        OrderNotifier.deposit_completed(account, @deposit).deliver if Settings.invoice_notify
         if @certificate_order
           @certificate_order.pay! @gateway_response.success?
           route ||= "edit"

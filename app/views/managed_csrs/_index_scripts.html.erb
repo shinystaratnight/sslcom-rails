@@ -434,6 +434,75 @@ jQuery(function($) {
       }
     });
 
+    $(document).on('click', '#select_all', function() {
+      if ($(this).prop('checked')) {
+        $('.checkbox_csr').prop('checked', true);
+        $('.delete_checkbox_csrs').show();
+      } else {
+        $('.checkbox_csr').prop('checked', false);
+        $('.delete_checkbox_csrs').hide();
+      }
+    });
+
+    $(document).on('click', '.checkbox_csr', function() {
+      var csr_chk_list = $('.checkbox_csr');
+      var all_checked = true;
+      var exist_checked = false;
+
+      $.each(csr_chk_list, function(idx, csr_chk) {
+        if (!$(csr_chk).prop('checked') && all_checked) {
+          all_checked = false;
+        } else if ($(csr_chk).prop('checked') && !exist_checked) {
+          exist_checked = true;
+        }
+      });
+
+      // change the check status for SelectAll checkbox by all individual checkbox status.
+      if (all_checked) {
+        $('input:checkbox#select_all').prop('checked', true);
+      } else {
+        $('input:checkbox#select_all').prop('checked', false);
+      }
+
+      // Show / Hide the Delete button.
+      if (exist_checked) {
+        $('.delete_checkbox_csrs').show();
+      } else {
+        $('.delete_checkbox_csrs').hide();
+      }
+    });
+
+    $(document).on('click', '.delete_checkbox_csrs', function(e) {
+      e.preventDefault();
+
+      var confirmMsg = 'Are you sure you want to remove the selected CSR(s)?';
+      if (confirm(confirmMsg)) {
+        var ajaxUrl = $(this).attr('href');
+        var csr_chk_list = $('.checkbox_csr');
+        var csr_ids = [];
+
+        $.each(csr_chk_list, function(idx, csr_chk) {
+          if ($(csr_chk).prop('checked')) {
+            csr_ids.push($(csr_chk).val());
+          }
+        });
+
+        $.ajax({
+          url: ajaxUrl,
+          data: {
+            checkbox_csrs: csr_ids
+          },
+          type: 'POST',
+          dataType: 'html',
+          success: function(result) {
+            if (result == 'success') {
+              location.reload(true);
+            }
+          }
+        });
+      }
+    });
+
   });
 });
 </script>

@@ -82,7 +82,7 @@ class Csr < ActiveRecord::Base
     File.open(tmp_file, 'wb') do |f|
       f.write c.public_key
     end
-    modulus = timeout(TIMEOUT_DURATION) do
+    modulus = Timeout.timeout(TIMEOUT_DURATION) do
       COMMAND.call tmp_file
     end
     c.update_column(:modulus, modulus)
@@ -341,6 +341,7 @@ class Csr < ActiveRecord::Base
       end
     end
   end
+  memoize :public_key_sha1
 
   def decode
     begin

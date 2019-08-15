@@ -96,7 +96,7 @@ class SignedCertificate < ActiveRecord::Base
       last_sent.satisfy! if(last_sent && !last_sent.satisfied?)
       unless cc.url_callbacks.blank?
         cert = ApiCertificateRetrieve.new(query_type: "all_certificates")
-        co.to_api_retrieve cert
+        co.to_api_retrieve cert, format: "nginx"
         co_json = Rabl::Renderer.json(cert,File.join("api","v1","api_certificate_requests", "show_v1_4"),
                                       view_path: 'app/views', locals: {result:cert})
         cc.callback(co_json)
@@ -319,7 +319,7 @@ class SignedCertificate < ActiveRecord::Base
   end
 
   def is_sslcom_ca?
-    issuer.include?("O=SSL Corporation") || issuer.include?("O=EJBCA Sample")
+    ca_id != nil || ejbca_username != nil || issuer.include?("O=EJBCA Sample")
   end
 
   def x509_certificates
@@ -517,11 +517,32 @@ class SignedCertificate < ActiveRecord::Base
     tmp_file
   end
 
+  def revoked_by
+    SignedCertificate.where{serial =~ "%"}.last.system_audits.where{action=="revoked"}.last.owner.login
+  end
 
-  def to_nginx(is_windows=nil)
+  def self.print_revoked_by(serials)
+    serials.each do |serial_prefix|
+      sc=SignedCertificate.where{(serial =~ "#{serial_prefix}%") & (status=="revoked")}.last
+      audit=sc.system_audits.where{action=="revoked"}.last
+      p [sc.common_name,
+         serial_prefix,
+         audit.owner.login,
+         audit.created_at.strftime('%Y-%m-%d %H:%M:%S')]
+    end
+  end
+
+  def to_nginx(is_windows=nil, options={})
     "".tap do |tmp|
-      if certificate_content.ca
-        x509_certificates.each do |x509_cert|
+      if certificate_content.ca_id
+        x509_certs=if options[:order]=="reverse"
+                     x509_certificates.reverse
+                   elsif options[:order]=="rotate"
+                     x509_certificates.rotate
+                   else
+                     x509_certificates
+                   end
+        x509_certs.each do |x509_cert|
           tmp<<x509_cert.to_s
         end
       else
@@ -531,7 +552,7 @@ class SignedCertificate < ActiveRecord::Base
           tmp << file.readlines.join("")
         end
       end
-      tmp.gsub!(/\n/, "\r\n") # if is_windows
+      tmp.gsub!(/\n/, "\r\n") if is_windows
     end
   end
 
@@ -589,7 +610,13 @@ class SignedCertificate < ActiveRecord::Base
 
   def to_format(options={})
     if certificate_content.ca
-      SignedCertificate.remove_begin_end_tags(to_pkcs7)
+      if options[:response_type]=="individually"
+        to_nginx
+      elsif options[:response_type]=="pkcs7"
+        to_pkcs7
+      else
+        SignedCertificate.remove_begin_end_tags(to_pkcs7)
+      end
     else
       ComodoApi.collect_ssl(certificate_order, options).certificate
     end

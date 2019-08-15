@@ -860,7 +860,7 @@ module OldSite
       um=OldSite::Certificate.unmigrated_signed_certificates
       umm=um.map{|u|V2MigrationProgress.find_by_source(u)}
       nc=umm.map(&:migratable)
-      csrs=nc.map(&:csr)
+      csrs=nc.csrs
       csr_ids=csrs.compact.map(&:id)
       bsc=SignedCertificate.where(:csr_id + csr_ids)
       existing=bsc.map(&:csr_id)

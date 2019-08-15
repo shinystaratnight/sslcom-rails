@@ -3740,8 +3740,23 @@ label.error
 #certificate_orders > table
   width: 84%
 
-#validations > table
-  width: 100%
+#domains_list #validations
+  padding-top: 0px
+  margin-top: 0px
+
+#validations
+  padding-top: 10px
+
+  &> table
+    width: 100%
+
+    .delete_csr
+      padding-left: 10px
+      padding-right: 10px
+
+  .delete_checkbox_csrs
+    margin-right: 10px
+
 
 #dashboard > table
   float: none
@@ -6422,6 +6437,12 @@ span.notifications-teams
               max-width: 310px
 
 
+#wrap_domain_filter
+  margin: 0.8em auto !important
+  float: none !important
+  width: 415px !important
+
+#wrap_domain_filter,
 #wrap_cert_order_filter,
 #wrap_order_filter
   margin: 0.8em 0 0.5em
@@ -6968,6 +6989,17 @@ i.fa-external-link.fa-ssl-custom
   tbody tr
     &.removed_domain
       background-color: lightgrey
+
+    &.certificate_name .dcv_list
+      width: 150px
+      height: 15px
+
+    &.certificate_name .own_email
+      display: none
+      position: absolute
+      width: 130px
+      height: 9px
+
     &.certificate_name td
       padding: 3px
       border-top: 1px solid grey
@@ -8358,14 +8390,45 @@ i.fa-external-link.fa-ssl-custom
 
 .email-verification-block,
 .phone-call-block,
-.phone-verification-block
+.phone-verification-block,
+.phone-callback-date-block
   label
     line-height: 24px
     margin-bottom: 0px
 
   input[type="radio"]
-    margin-right: 20px
+    margin-right: 25px
     height: 24px
+
+.phone-callback-option
+  border-bottom: 1px solid #CCC
+
+  .callback-type
+    line-height: 24px
+
+.phone-callback-date-block
+  label
+    width: 6em
+    line-height: 24px
+
+    &.callback_type_method_lbl
+      width: 3em
+
+  .submit-date-block button
+    margin-right: 15px
+
+  .error-block
+    display: none
+    color: red
+    font-size: 10px
+
+  .date-block.error-required .error-block,
+  .time-block.error-required .error-block
+    display: block
+
+  .callback-type-method
+    margin-left: 0px
+    margin-right: 0px
 
 .phone-verification-block #phone_verification_code,
 .email-verification-block #email_verification_code
@@ -8686,11 +8749,13 @@ i.fa-external-link.fa-ssl-custom
         color: red
         font-size: 12px
 
-      #locked_reg_domains
+      #locked_reg_domains,
+      #domain_names
         width: 474px
         box-shadow: 0px 0px 10px 0 rgba(0, 0, 0, 0.18)
 
-      &.error-invalid #locked_reg_domains
+      &.error-invalid #locked_reg_domains,
+      &.error-invalid #domain_names
         border-color: red
 
       &.error-invalid #required-valid
@@ -8828,7 +8893,8 @@ a.back_to_generate_cert_page
   .form-group .error-no-domain-msg,
   .form-group .error-require-domain-msg
     display: none
-    font-size: 10px
+    //font-size: 10px
+    font-size: 1.3em
     color: red
     padding-left: 5px
 
@@ -8841,11 +8907,18 @@ a.back_to_generate_cert_page
   .form-group.error-require-domain-block .error-require-domain-msg
     display: block
 
+  input[type="button"]
+    height: 35px
+    font-size: 1.5em
+
 .pkcs_password_block
   .notice_msg
-    font-size: 10px
+    font-size: 1.3em
     padding-left: 5px
     padding-top: 3px
+
+  .pkcs_password
+    font-size: 1.5em
 
   &.error_require_min_length
     .pkcs_password
@@ -8855,7 +8928,8 @@ a.back_to_generate_cert_page
 
 .pri_key_block
   .error_msg
-    font-size: 10px
+    //font-size: 10px
+    font-size: 1.3em
     padding-left: 5px
     color: red
     display: none
@@ -8867,7 +8941,8 @@ a.back_to_generate_cert_page
       display: block
 
 .pkcs_download_instruction
-  font-size: 12px
+  //font-size: 12px
+  font-size: 1.3em
   font-style: italic
   font-weight: bold
   color: #555
@@ -8875,6 +8950,34 @@ a.back_to_generate_cert_page
 .integrated_algorithm_wrap select,
 .algorithm_wrap select
   width: 500px
+  height: 35px !important
+  font-size: 1.5em
+
+
+.algorithm_wrap,
+.integrated_algorithm_wrap,
+.csr_wrap,
+.pri_key_wrap,
+.cert_wrap,
+.pkcs_download_wrap,
+.cert_download_wrap
+  input[type="button"]
+    height: 35px
+    font-size: 1.5em
+
+  .col-md-3
+    line-height: 35px
+    vertical-align: middle
+    font-size: 1.5em
+
+.csr_wrap,
+.pri_key_wrap,
+.cert_wrap
+  .col-md-3
+    line-height: 160px
+
+.managed_csr.algorithm_wrap select
+  width: 100%
 
 .managed_csr.algorithm_wrap select
   width: 100%
@@ -9063,3 +9166,38 @@ a.back_to_generate_cert_page
     
     &__link:last-child
       margin-bottom: 2rem
+
+.gen_cert_head
+  font-weight: bold
+
+  fieldset
+    border: 1px solid #ddd
+    margin: 0
+    padding: 15px
+    position: relative
+    border-radius: 5px
+    background-color: #f5f5f5
+
+    legend
+      font-size: 1.5em
+      font-weight: bold
+      margin-bottom: 0px
+      width: 115px
+      border: 1px solid #ddd
+      border-radius: 5px
+      padding: 5px 5px 5px 15px
+      background-color: #ffffff
+
+    .subject_dn_info
+      font-size: 1.3em
+
+      .subject_dn_label,
+      .subject_dn_value
+        float: left
+
+      .subject_dn_label
+        width: 30%
+        text-align: right
+
+      .subject_dn_value
+        padding-left: 10px

@@ -35,7 +35,7 @@ SslCom::Application.routes.draw do
     (%w(sws.sslpki.com sws.sslpki.local)+Website.pluck(:api_host)+Sandbox.pluck(:host)).uniq
   ) do
     scope module: :api do
-      scope module: :v1, constraints: APIConstraint.new(version: 1) do
+      scope module: :v1, constraints: APIConstraint.new(version: 1), defaults: {format: 'json'} do
         # Users
         match '/users' => 'api_user_requests#create_v1_4',
           as: :api_user_create_v1_4, via: [:options, :post]
@@ -84,7 +84,7 @@ SslCom::Application.routes.draw do
 
         # Certificates
         match '/certificates' => 'api_certificate_requests#create_v1_4',
-          as: :api_certificate_create_v1_4, via: [:options, :post]
+          as: :api_certificate_create_v1_4, via: [:post]
         match '/certificate/:ref' => 'api_certificate_requests#update_v1_4',
           as: :api_certificate_update_v1_4, via: [:options, :put, :patch, :post], ref: /[a-z0-9\-]+/
         match '/certificate/:ref/replace' => 'api_certificate_requests#replace_v1_4',
@@ -108,8 +108,8 @@ SslCom::Application.routes.draw do
 
         match '/certificate/:ref' => 'api_certificate_requests#revoke_v1_4',
           as: :api_certificate_revoke_v1_4, via: [:options, :delete]
-        match '/certificates/' => 'api_certificate_requests#index_v1_4',
-          as: :api_certificate_index_v1_4, via: [:options, :get, :post]
+        match '/certificates' => 'api_certificate_requests#index_v1_4',
+          as: :api_certificate_index_v1_4, via: [:get]
         match '/certificates/validations/email' => 'api_certificate_requests#dcv_emails_v1_3',
           as: :api_dcv_emails_v1_4, via: [:options, :get]
         match '/certificate/:ref/validations/methods' => 'api_certificate_requests#dcv_methods_v1_4',
@@ -198,6 +198,7 @@ SslCom::Application.routes.draw do
         match :validate_selected, via: [:get, :post]
         match :select_csr, via: [:get, :post]
         match :validate_against_csr, via: [:get, :post]
+        get :search
       end
       member do
         match :validation_request, via: [:get, :post]
@@ -334,6 +335,7 @@ SslCom::Application.routes.draw do
       collection do
         get :show_csr_detail
         post :add_generated_csr
+        post :remove_managed_csrs
       end
     end
 
@@ -555,6 +557,8 @@ SslCom::Application.routes.draw do
       get   :dont_show_again
       get   :duo
       match :duo_verify, via: [:get, :post]
+      get   :archive_team
+      get   :retrieve_team
     end
   end
 
@@ -586,9 +590,12 @@ SslCom::Application.routes.draw do
         as: :tlds, via: [:get, :post]
   match '/certificate_order_token/:token/generate_cert' => 'certificate_orders#generate_cert', :as => :confirm, via: [:get]
   match '/validation/email_verification_check' => 'validations#email_verification_check', :as => :email_verification_check, via: [:post]
+
+  # Callback
   match '/callback/:token' => 'validations#verification', :as => :email_verification, via: [:get]
   match '/validation/automated_call' => 'validations#automated_call', :as => :automated_call, via: [:post]
   match '/validation/phone_verification_check' => 'validations#phone_verification_check', :as => :phone_verification_check, via: [:post]
+  match '/validation/register_callback' => 'validations#register_callback', :as => :register_callback, via: [:post]
 
   #match 'paid_cert_orders'=> 'site#paid_cert_orders'
   (Reseller::TARGETED+SiteController::STANDARD_PAGES).each do |i|

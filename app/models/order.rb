@@ -241,7 +241,7 @@ class Order < ActiveRecord::Base
   end
 
   def self.range_amount(start, finish)
-    amount = BigDecimal.new(range(start, finish).amount.to_s)
+    amount = BigDecimal(range(start, finish).amount.to_s)
     rounded = (amount * 100).round / 100
     '%.02f' % rounded
   end
@@ -702,7 +702,7 @@ class Order < ActiveRecord::Base
       cc  = if str.nil?
         []
       else  
-        co.certificate_contents.where("ref = ? OR label = ? OR id = ?", str, str, str)
+        co.certificate_contents.where("ref = ? OR id = ?", str, str)
       end
       cc  = cc.any? ? cc.first : nil
     end
@@ -1292,7 +1292,7 @@ class Order < ActiveRecord::Base
   private
   
   def domains_adjustment_notice
-    if domains_adjustment?
+    if domains_adjustment? and Settings.invoice_notify
       Assignment.users_can_manage_invoice(billable).each do |u|
         OrderNotifier.domains_adjustment_new(user: u, order: self).deliver_now
       end

@@ -19,7 +19,7 @@ class CertificateOrdersController < ApplicationController
   include OrdersHelper
   include CertificateOrdersHelper
   
-  skip_before_filter :verify_authenticity_token, only: [:parse_csr]
+  skip_before_action :verify_authenticity_token, only: [:parse_csr]
   filter_access_to :all, except: [:generate_cert]
   filter_access_to :read, :update, :delete, :show, :edit, :developer, :recipient
   filter_access_to :incomplete, :pending, :search, :reprocessing, :order_by_csr, :require=>:read
@@ -395,7 +395,7 @@ class CertificateOrdersController < ApplicationController
       end
 
       if @iv_exists.nil? && @assignee_id.nil?
-        redirect_to :back, error: 'Something went wront, please try again'
+        redirect_to :back, error: 'Something went wrong, please try again'
       else
         client_smime_validate
       end
@@ -586,6 +586,8 @@ class CertificateOrdersController < ApplicationController
       CertificateOrder.unscoped{CertificateOrder.not_test} :
         current_user.ssl_account.cached_certificate_orders.unscoped{
           current_user.ssl_account.cached_certificate_orders.not_test}).order_by_csr.paginate(@p)
+    id=@ssl_account.id if @ssl_account
+    @certificate_orders = @certificate_orders.where{ssl_account_id==id} if(current_user.is_admin? and id)
 
     respond_to do |format|
       format.html { render :action=>:index}
@@ -1160,7 +1162,7 @@ class CertificateOrdersController < ApplicationController
   def schedule(params)
     # Create or Update notification group
     if params[:schedule_type] == 'none' && params[:notification_group] != 'none'
-      notification_group = current_user.ssl_account.notification_groups.where(ref: params[:notification_group]).first
+      notification_group = current_user.ssl_account.notification_groups.includes{:notification_groups_subjects}.where(ref: params[:notification_group]).first
 
       unless notification_group
         flash[:error] = "Some error occurs while getting notification group data. Please try again."
@@ -1170,7 +1172,7 @@ class CertificateOrdersController < ApplicationController
       end
     else
       # Saving notification group info
-      notification_group = current_user.ssl_account.notification_groups.find_by_friendly_name('ng-' + @certificate_order.ref)
+      notification_group = current_user.ssl_account.notification_groups.includes{:notification_groups_subjects}.find_by_friendly_name('ng-' + @certificate_order.ref)
 
       if notification_group.nil?
         notification_group = NotificationGroup.new(

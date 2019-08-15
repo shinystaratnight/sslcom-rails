@@ -57,7 +57,7 @@ module CertificateOrdersHelper
         end
       end
     end
-    if DEPLOYMENT_CLIENT=="ssl.com" && !(certificate_order.certificate.is_client? || certificate_order.certificate.is_code_signing?)
+    if !(certificate_order.certificate.is_client? || certificate_order.certificate.is_code_signing?)
       items << "SSL.com Secured Seal"
       items << link_to("SSL.com daily site monitoring", notification_groups_path({ssl_slug: @ssl_slug}))
     end
@@ -260,8 +260,7 @@ module CertificateOrdersHelper
                   permitted_to?(:show, certificate_order)
             elsif certificate_order.signed_certificate_duration_delta > 1
               link_to('change domain(s)/rekey', reprocess_certificate_order_path(@ssl_slug,
-                  certificate_order)) if permitted_to?(:update, certificate_order) and
-                  !certificate_content.expired?
+                  certificate_order)) if permitted_to?(:update, certificate_order)
             else
               links =  "<li>#{link_to 'renew', renew_certificate_order_path(@ssl_slug, certificate_order)}</li>"
               links << "<li> or #{link_to 'change domain(s)/rekey', reprocess_certificate_order_path(@ssl_slug,

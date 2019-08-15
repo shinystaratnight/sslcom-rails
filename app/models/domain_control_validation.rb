@@ -20,9 +20,10 @@ class DomainControlValidation < ActiveRecord::Base
 
   EMAIL_CHOICE_CACHE_EXPIRES_DAYS=1
 
-  default_scope{ order("id asc")}
+  default_scope{ order("domain_control_validations.created_at asc")}
   scope :global, -> {where{(certificate_name_id==nil) & (csr_id==nil)}}
   scope :whois_threshold, -> {where(updated_at: 1.hour.ago..DateTime.now)}
+  scope :satisfied, -> {where(workflow_state: "satisfied")}
 
   include Workflow
   workflow do
@@ -136,9 +137,9 @@ class DomainControlValidation < ActiveRecord::Base
     name=('%'+name[1..-1]) if name[0]=="*" # wildcard
     DomainControlValidation.joins(:certificate_name).where{(identifier_found==1) &
         (certificate_name.name=~"#{name}") &
-        (certificate_name_id >> [ssl_account.all_certificate_names.map(&:id)])}.each do |dcv|
-      return dcv if dcv.validated?(name,public_key_sha1)
-    end
+        (certificate_name_id >> [ssl_account.all_certificate_names(name,"validated").map(&:id)])}.each do |dcv|
+          return dcv if dcv.validated?(name,public_key_sha1)
+        end
   end
 
   def self.validated?(ssl_account,domain,public_key_sha1=nil)
@@ -177,8 +178,6 @@ class DomainControlValidation < ActiveRecord::Base
     subject=subject[2..-1] if subject=~/\A\*\./
     compare_with=compare_with[2..-1] if compare_with=~/\A\*\./
     if ::PublicSuffix.valid?(subject, default_rule: nil) and ::PublicSuffix.valid?(compare_with, default_rule: nil)
-      sd=::PublicSuffix.parse(subject)
-      subject_subdomains = sd.trd ? sd.trd.split(".").reverse : []
       d=::PublicSuffix.parse(compare_with)
       compare_with_subdomains = d.trd ? d.trd.split(".").reverse : []
       0.upto(compare_with_subdomains.count) do |i|
@@ -206,7 +205,11 @@ class DomainControlValidation < ActiveRecord::Base
       subdomains.shift if subdomains[0]=="*" #remove wildcard
       [].tap {|s|
         0.upto(subdomains.count) do |i|
-          s << (subdomains.slice(0,i)<<d.domain).join(".")
+          if i==0
+            s << d.domain
+          else
+            s << (subdomains.slice(-i,subdomains.count)<<d.domain).join(".")
+          end
         end
       }.map do |e|
         AUTHORITY_EMAIL_ADDRESSES.map do |ae|

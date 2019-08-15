@@ -16,11 +16,6 @@ Description:
       - <%=item%>
 <%end-%>
       
-Order Amount: <%=@certificate_order.order.final_amount.format%>
-
-Your SSL account has been debited <%=@certificate_order.order.final_amount.format%>.
-<%if last_sent && !last_sent.satisfied?-%>
-
 Please respond the email validation request sent to: <%=last_sent.email_address%>.
 If you would prefer the request be sent to a different address, please visit <%=new_certificate_order_validation_url(certificate_order_id: @certificate_order.ref)%> to change the address.
 <%end-%>

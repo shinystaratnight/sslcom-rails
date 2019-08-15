@@ -12,7 +12,12 @@ class CertificateContent < ActiveRecord::Base
   has_one     :registrant, as: :contactable, dependent: :destroy
   has_one     :locked_registrant, :as => :contactable
   has_many    :certificate_contacts, :as => :contactable
-  has_many    :certificate_names # used for dcv of each domain in a UCC or multi domain ssl
+  has_many    :certificate_names do # used for dcv of each domain in a UCC or multi domain ssl
+    def validated
+      joins{domain_control_validations}.where{domain_control_validations.workflow_state=="satisfied"}.uniq
+    end
+  end
+  has_many    :domain_control_validations, through: :certificate_names
   has_many    :url_callbacks, as: :callbackable
   has_many    :taggings, as: :taggable
   has_many    :tags, through: :taggings
@@ -53,7 +58,7 @@ class CertificateContent < ActiveRecord::Base
     .*?\.mozilla\.com\z \Amozilla\.com\z .*?\.gmail\.com\z \Agmail\.com\z .*?\.goog\.com\z \Agoog\.com\z
     .*?\.?github\.com .*?\.?amazon\.com .*?\.?cloudapp\.com amzn ssltools certchat .*?\.certlock\.com\z \Acertlock\.com\z
     .*?\.10million\.org .*?\.android\.com\z \Aandroid\.com\z .*?\.aol\.com .*?\.azadegi\.com .*?\.balatarin\.com .*?\.?comodo\.com
-    .*?\.?digicert\.com .*?\.?yahoo\.com .*?\.?entrust\.com .*?\.?godaddy\.com .*?\.?oracle\.com
+    .*?\.?digicert\.com .*?\.?yahoo\.com .*?\.?entrust\.com .*?\.?godaddy\.com .*?\.oracle\.com\z \Aoracle\.com\z
     .*?\.?globalsign\.com .*?\.JanamFadayeRahbar\.com .*?\.?logmein\.com .*?\.mossad\.gov\.il
     .*?\.?mozilla\.org .*?\.RamzShekaneBozorg\.com .*?\.SahebeDonyayeDigital\.com .*?\.skype\.com .*?\.startssl\.com
     .*?\.?thawte\.com .*?\.torproject\.org .*?\.walla\.co\.il .*?\.windowsupdate\.com .*?\.wordpress\.com addons\.mozilla\.org
@@ -72,6 +77,7 @@ class CertificateContent < ActiveRecord::Base
                492759=> %w(.*?\.ssl\.com\z \Assl\.com\z .*?\.certlock\.com\z \Acertlock\.com\z),
                497080=> %w(.*?\.ssl\.com\z \Assl\.com\z .*?\.certlock\.com\z \Acertlock\.com\z),
                474299=> %w(.*?\.ssl\.com\z \Assl\.com\z .*?\.certlock\.com\z \Acertlock\.com\z),
+               477317=> %w(.*?\.ssl\.com\z \Assl\.com\z .*?\.certlock\.com\z \Acertlock\.com\z),
                464808=> %w(.*?\.ssl\.com\z \Assl\.com\z .*?\.certlock\.com\z \Acertlock\.com\z)}
 
   DOMAIN_COUNT_OFFLOAD=50
@@ -223,6 +229,7 @@ class CertificateContent < ActiveRecord::Base
 
     state :issued do
       event :reprocess, :transitions_to => :csr_submitted
+      event :pend_issuance, :transitions_to => :pending_issuance
       event :validate, :transitions_to => :validated
       event :cancel, :transitions_to => :canceled
       event :revoke, :transitions_to => :revoked
@@ -232,7 +239,9 @@ class CertificateContent < ActiveRecord::Base
 
     state :canceled
 
-    state :revoked
+    state :revoked do
+      event :revoke, :transitions_to => :revoked
+    end
   end
 
   after_initialize do
@@ -375,7 +384,13 @@ class CertificateContent < ActiveRecord::Base
   end
 
   def dcv_suffix
-    ca ? "ssl.com" : "comodoca.com"
+    ca_id ? "ssl.com" : "comodoca.com"
+  end
+
+  def manually_validate_cname
+    (certificate_names-certificate_names.validated).each do |name|
+      p [name.name,name.dcv_verify("cname",ignore_unique_value: true)]
+    end
   end
 
   def dcv_domains(options)
@@ -779,7 +794,7 @@ class CertificateContent < ActiveRecord::Base
   def subject_dn(options={})
     cert = options[:certificate] || self.certificate
     dn=certificate.is_server? ? ["CN=#{options[:common_name] || common_name}"] : []
-    dn << "emailAddress=#{certificate_order.assignee.email}" if certificate.is_smime? && certificate_order.assignee
+    dn << "emailAddress=#{certificate_order.get_recipient.email}" if certificate.is_smime? && certificate_order.get_recipient.email
     if certificate.is_smime_or_client? and !certificate.is_client_basic?
       person=certificate_order.locked_recipient
       dn << "CN=#{[person.first_name,person.last_name].join(" ").strip}"

@@ -1005,7 +1005,7 @@ class OrdersController < ApplicationController
       else
         current_user.ssl_account.cached_certificate_orders.find_by(ref: params[:co_ref])
       end
-      @ssl_account = @certificate_order.ssl_account
+      @ssl_account = @certificate_order.try(:ssl_account)
       @certificate_content = @certificate_order.certificate_contents.find_by(ref: params[:cc_ref])
 
       @amount = if params[:renew_ucc] || params[:ucc_csr_submit]
@@ -1138,6 +1138,7 @@ class OrdersController < ApplicationController
     # Check to be same the quantity
     cart.each do |cookie|
       same = content.detect{|cont| cont[ShoppingCart::LICENSES] == cookie[ShoppingCart::LICENSES] &&
+          !cont[ShoppingCart::DOMAINS].blank? && !cookie[ShoppingCart::DOMAINS].blank? &&
           cont[ShoppingCart::DOMAINS].split(Certificate::DOMAINS_TEXTAREA_SEPARATOR).size == cookie[ShoppingCart::DOMAINS].split(Certificate::DOMAINS_TEXTAREA_SEPARATOR).size &&
           (cont[ShoppingCart::DOMAINS].split(Certificate::DOMAINS_TEXTAREA_SEPARATOR) &
               cookie[ShoppingCart::DOMAINS].split(Certificate::DOMAINS_TEXTAREA_SEPARATOR)).size == cont[ShoppingCart::DOMAINS].split(Certificate::DOMAINS_TEXTAREA_SEPARATOR).size &&
@@ -1151,7 +1152,7 @@ class OrdersController < ApplicationController
       same[ShoppingCart::QUANTITY] = cookie[ShoppingCart::QUANTITY].to_i if !same.blank? &&
           same[ShoppingCart::QUANTITY].to_i != cookie[ShoppingCart::QUANTITY].to_i
 
-      new_contents << same
+      new_contents << (same.blank? ? cookie : same)
     end
     new_contents = '' if new_contents.size == 0
 

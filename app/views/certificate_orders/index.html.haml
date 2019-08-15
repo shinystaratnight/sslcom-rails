@@ -1,6 +1,7 @@
 -content_for :title, "Certificate Order Management"
 -show_folders = current_user && Folder.show_folders?(current_user)
 =render :partial => 'index_scripts'
+-pagination=will_paginate @certificate_orders
 #search_bar
   =form_tag :search_certificate_orders, :id=>'search_form', :method=>:get do
     =text_field_tag :search, @search
@@ -12,7 +13,7 @@
   =form_tag nil, :id=>'send_notify_form', :method=>:post do
     =hidden_field_tag :certificate_order_ref
     =hidden_field_tag :notify_type
-    - if current_user.ssl_account.epki_registrant
+    - if current_user.is_standard? && current_user.ssl_account.epki_registrant
       =hidden_field_tag :is_epki_admin, true
       =hidden_field_tag :send_email_link
       =hidden_field_tag :copy_act_link
@@ -41,10 +42,10 @@
             =select_tag :number_rows,
             options_for_select([[5, 5], [10, 10], [20, 20], [50, 50], [100, 100]], @per_page),
             :class=>'per_page'
-          %td(colspan='5')=will_paginate @certificate_orders
+          %td(colspan='5')=pagination
     %caption
       SSL Certificates Management
-      =will_paginate @certificate_orders
+      =pagination
     %tr.heading_row
       -if show_folders && show_folders_container?
         %th
@@ -58,10 +59,10 @@
       %th(scope="col") Expires
       %th(scope="col") Action
     -unless @certificate_orders.empty?
-      -@certificate_orders.includes([:folder,:certificate_contents,:sub_order_items, :ssl_account]).each do |co| # add :renewal once index is created
-        -cache([current_user.id,'certificate_orders_list', co.certificate_content.cache_key], expires_in: 12.hours) do
+      -@certificate_orders.includes(:folder,:validation, :ssl_account, :certificate_contents, sub_order_items: :product_variant_item).each do |co| # add :renewal once index is created
+        -cache([current_user.id,'certificate_orders_list', co.certificate_content.cache_key], expires_in: 24.hours) do
           -cc = co.certificate_content
-          -cn = (co.is_unused_credit? || cc.csr.blank?) ? nil : cc.csr.common_name
+          -#-cn = (co.is_unused_credit? || cc.csr.blank?) ? nil : cc.csr.common_name
           %tr(alt="#{co.ref}")
             -if show_folders && show_folders_container?
               %td

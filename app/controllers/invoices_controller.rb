@@ -222,8 +222,9 @@ class InvoicesController < ApplicationController
   private
   
   def invoices_base_query
-    base = if current_user && current_user.is_system_admins?
-      Invoice.where.not(billable_id: nil, type: nil)
+    base = if current_user.is_system_admins?
+      (@ssl_account.try(:invoices) ? Invoice.unscoped{@ssl_account.try(:invoices).where.not(status: 'archived')} :
+           Invoice.where.not(billable_id: nil, type: nil))
     else
       current_user.ssl_account.invoices.where.not(status: 'archived')
     end
@@ -284,7 +285,7 @@ class InvoicesController < ApplicationController
   def invoice_paid
     if @order.persisted?
       @invoice.update(order_id: @order.id, status: 'paid')
-      @invoice.notify_invoice_paid(current_user)
+      @invoice.notify_invoice_paid(current_user) if Settings.invoice_notify
     end
   end
   

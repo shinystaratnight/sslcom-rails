@@ -5,6 +5,7 @@ class User < ActiveRecord::Base
 #  using_access_control
 
   OWNED_MAX_TEAMS = 3
+  PASSWORD_SPECIAL_CHARS = '~`!@#\$%^&*()-+={}[]|;:"<>,./?'
 
   has_many  :u2fs
   has_many  :assignments, dependent: :destroy
@@ -29,6 +30,8 @@ class User < ActiveRecord::Base
             dependent: :destroy, class_name: "SslAccountUser"
   has_many  :approved_ssl_accounts,
             foreign_key: :ssl_account_id, source: "ssl_account", through: :approved_ssl_account_users
+  has_many  :approved_teams,
+            foreign_key: :ssl_account_id, source: "ssl_account", through: :approved_ssl_account_users
   has_many  :refunds
   has_many  :discounts, as: :benefactor, dependent: :destroy
   has_one   :shopping_cart
@@ -46,6 +49,8 @@ class User < ActiveRecord::Base
   preference  :scan_log_row_count, :string, :default => "10"
   preference  :domain_row_count, :string, :default => "10"
   preference  :domain_csr_row_count, :string, :default => "10"
+  preference  :team_row_count, :string, :default => "10"
+  preference  :validate_row_count, :string, :default => "10"
 
   #will_paginate
   cattr_accessor :per_page
@@ -60,7 +65,7 @@ class User < ActiveRecord::Base
     format: {with: /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i, on: :create}
   validates :password, format: {
     with: /\A(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[\W]).{8,}\z/, if: :validate_password?,
-    message: "must be at least 8 characters long and include at least 1 of each of the following: uppercase, lowercase, number and special character such as ~`!@#$%^&*()-+={}[]|\;:\"<>,./?."
+    message: "must be at least 8 characters long and include at least 1 of each of the following: uppercase, lowercase, number and special character such as #{User::PASSWORD_SPECIAL_CHARS}"
   }
   accepts_nested_attributes_for :assignments
 
@@ -78,6 +83,8 @@ class User < ActiveRecord::Base
       {:on => :update, :minimum => 8,
       :if => '(has_no_credentials? && !admin_update) || changing_password'}
   end
+
+  before_save :should_reset_perishable_token
 
   before_create do |u|
     u.status='enabled'
@@ -137,8 +144,24 @@ class User < ActiveRecord::Base
     total_teams_owned.include?(ssl_account)
   end
 
+  def is_account_team_admin?(ssl_account)
+    total_teams_admin.include?(ssl_account)
+  end
+
+  def is_team_owner_admin?(ssl_account)
+    assignments.where(role_id: [Role.get_owner_id, Role.get_account_admin_id], ssl_account_id: ssl_account.id).size > 0
+  end
+
+  def role_symbols_archived_team(ssl_account)
+    assignments.includes(:role).where(ssl_account_id: ssl_account.id).map{|assign| assign.role.name.to_sym}.uniq.compact
+  end
+
+  def is_first_approved_acct?(ssl_account)
+    ssl_account == get_first_approved_acct
+  end
+
   def owned_ssl_account
-    assignments.where{role_id = Role.get_owner_id}.first.try :ssl_account
+    total_teams_owned.first
   end
 
   def team_status(team)
@@ -208,6 +231,12 @@ class User < ActiveRecord::Base
     user.assignments.includes(:ssl_account).where(role_id: Role.get_owner_id).map(&:ssl_account).uniq.compact
   end
   memoize :total_teams_owned
+
+  def total_teams_admin(user_id = nil)
+    user = self_or_other(user_id)
+    user.assignments.includes(:ssl_account).where(role_id: Role.get_account_admin_id).map(&:ssl_account).uniq.compact
+  end
+  memoize :total_teams_admin
 
   def total_teams_can_manage_users(user_id=nil)
     user = self_or_other(user_id)
@@ -972,6 +1001,10 @@ class User < ActiveRecord::Base
     (self.is_system_admins? ? SslAccount.unscoped : self.approved_ssl_accounts).order("created_at desc")
   end
 
+  def get_all_approved_teams
+    (self.is_system_admins? ? SslAccount.unscoped : self.approved_teams).order("created_at desc")
+  end
+
   def user_approved_invite?(params)
     ssl = get_ssl_acct_user_for_approval(params)
     ssl && ssl.approved && ssl.token_expires.nil? && ssl.approval_token.nil?
@@ -1033,6 +1066,19 @@ class User < ActiveRecord::Base
   end
 
   private
+
+  # https://github.com/binarylogic/authlogic/issues/81
+  def should_record_timestamps?
+    changed_keys = self.changes.keys - ["last_request_at", "perishable_token", "updated_at", "created_at"]
+    changed_keys.present? && super
+  end
+
+  # https://github.com/binarylogic/authlogic/issues/485
+  def should_reset_perishable_token
+    if changed? && changed_attributes.keys != ['last_request_at']
+      reset_perishable_token
+    end
+  end
 
   def self_or_other(user_id)
     user = user_id ? User.find(user_id) : self

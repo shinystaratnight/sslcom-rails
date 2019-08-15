@@ -1,32 +1,34 @@
 class UsersController < ApplicationController
   # fix for https://sslcom.airbrake.io/projects/128852/groups/2108774376847787256?resolved=any&tab=overview
-  skip_before_filter :verify_authenticity_token, :only => [:create]
   skip_before_action :require_no_authentication, :only => [:duo_verify]
   skip_before_action :verify_authenticity_token
+  skip_before_filter :finish_reseller_signup, only: [:cancel_reseller_signup]
   before_filter :require_no_user, :only => [:new, :create]
   before_filter :require_user, only: [
     :show, :edit, :update, :cancel_reseller_signup, 
     :approve_account_invite, :resend_account_invite,
     :switch_default_ssl_account, :enable_disable, :teams,
-    :index, :admin_show, :search_teams
+    :index, :admin_show, :search_teams, :archive_team, :retrieve_team
   ]
-  before_filter :finish_reseller_signup, :only => [:show]
+  # before_filter :finish_reseller_signup, :only => [:show]
   before_filter :new_user, :only=>[:create, :new]
   before_filter :find_ssl_account, only: [:show, :admin_show]
   before_filter :find_user, :set_admin_flag, :only=>[:edit_email,
     :edit_password, :update, :login_as, :admin_update, :admin_show,
     :consolidate, :dup_info, :adjust_funds, :change_login, 
     :switch_default_ssl_account, :index, :admin_activate, :show, :teams]
+  before_filter :set_row_page, only: [:teams]
+
  # before_filter :index, :only=>:search
   filter_access_to  :all
   filter_access_to  :update, :admin_update, :enable_disable,
     :switch_default_ssl_account, :decline_account_invite,
     :approve_account_invite, :create_team, :set_default_team,
-    :index, :edit_email, :edit_password, :leave_team, :dont_show_again, attribute_check: true
-  filter_access_to  :consolidate, :dup_info, :require=>:update
+    :index, :edit_email, :edit_password, :leave_team, :dont_show_again, :archive_team, :retrieve_team, attribute_check: true
+  filter_access_to  :consolidate, :dup_info, :archive_team, :retrieve_team, :require=>:update
   filter_access_to  :resend_activation, :activation_notice, :require=>:create
   filter_access_to  :edit_password, :edit_email, :cancel_reseller_signup, :teams, :require=>:edit
-  filter_access_to :show_user, :reset_failed_login_count, :require => :ajax
+  filter_access_to  :show_user, :reset_failed_login_count, :require => :ajax
 
   def new
   end
@@ -195,12 +197,12 @@ class UsersController < ApplicationController
     owner_role = Role.get_owner_id
     if current_user.role_symbols.include? Role::RESELLER.to_sym
       ssl.remove_role! 'new_reseller'
-      ssl.reseller.destroy unless ssl.reseller.blank?
+      ssl.reseller.destroy unless (ssl.is_reseller? or ssl.reseller.blank?)
       current_user.update_account_role(ssl, Role::RESELLER, Role::OWNER)
     end
     current_user.set_roles_for_account(ssl, [owner_role]) unless current_user.duplicate_role?(owner_role)
     flash[:notice] = "reseller signup has been canceled"
-    @user = current_user #for rable object reference
+    @user = current_user #for rabl object reference
   end
 
   def admin_show
@@ -448,14 +450,32 @@ class UsersController < ApplicationController
   end
 
   def teams
-    p = {page: params[:page]}
+    # p = {page: params[:page]}
     team = params[:team]
-    @teams = @user.get_all_approved_accounts
+    # @teams = @user.get_all_approved_accounts
+    @teams = @user.get_all_approved_teams
     unless team.blank?
       team = team.strip.downcase
-      @teams = @teams.where("acct_number = ? OR ssl_slug = ? OR company_name = ?", team, team, team)
+      # @teams = @teams.where("acct_number = ? OR ssl_slug = ? OR company_name = ?", team, team, team)
+      @teams = @teams.search_team(team)
     end
-    @teams = @teams.paginate(p)
+    @teams = @teams.paginate(@p)
+  end
+
+  def archive_team
+    team = (current_user.is_system_admins? ? SslAccount.unscoped : current_user.ssl_accounts).find(params[:ssl_account_id])
+    team.archive! if team.active?
+
+    flash[:notice] = 'Your team "#' + team.to_slug + '" has been archived. You can retrieve later again.'
+    redirect_to teams_user_path(current_user)
+  end
+
+  def retrieve_team
+    team = SslAccount.unscoped.find(params[:ssl_account_id])
+    team.retrieve! if team.archived?
+
+    flash[:notice] = 'Your team "#' + team.to_slug + '" has been retrieved.'
+    redirect_to teams_user_path(current_user)
   end
 
   def create_team
@@ -560,6 +580,19 @@ class UsersController < ApplicationController
   end
 
   private
+
+  def set_row_page
+    preferred_row_count = current_user.preferred_team_row_count
+    @per_page = params[:per_page] || preferred_row_count.or_else("10")
+    SslAccount.per_page = @per_page if SslAccount.per_page != @per_page
+
+    if @per_page != preferred_row_count
+      current_user.preferred_team_row_count = @per_page
+      current_user.save(validate: false)
+    end
+
+    @p = {page: (params[:page] || 1), per_page: @per_page}
+  end
 
   def new_user
     @user = User.new

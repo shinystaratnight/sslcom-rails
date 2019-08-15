@@ -131,7 +131,7 @@ class ApplicationController < ActionController::Base
   def cart_contents
     find_tier
     cart = cookies[:cart]
-    cart.blank? ? {} : JSON.parse(cart).each{|i|i['pr']=i['pr']+@tier if(i && i['pr'] && !i['pr'].ends_with?(@tier) && @tier)}
+    cart.blank? ? {} : JSON.parse(cart).each{|i|i['pr']=i['pr']+@tier if(i && @tier && i['pr'] && !i['pr'].ends_with?(@tier))}
   end
 
   def cart_products
@@ -255,7 +255,8 @@ class ApplicationController < ActionController::Base
                  (current_user.ssl_account.cached_certificate_orders.not_test.not_new(options))
            )
       )
-    end.order(created_at: :desc)
+    end.order(params[:order]=="by_csr" ? "csrs.created_at desc" : "certificate_orders.created_at desc")
+    result=result.joins{certificate_contents.csr} if params[:order]=="by_csr"
     unless options[:source] && options[:source] == 'folders'
       archived_folder = current_user.is_admin? || (params[:search] && params[:search].include?('folder_ids')) ?
                             [true, false, nil] : [false, nil]
@@ -577,7 +578,7 @@ class ApplicationController < ActionController::Base
 
   def finish_reseller_signup
     blocked = %w(certificate_orders orders site_seals validations ssl_accounts users)
-    if current_user.ssl_account
+    if current_user.is_reseller? and current_user.ssl_account.is_new_reseller?
       redirect_to new_account_reseller_url and return if
           (current_user.ssl_account.reseller ?
               # following line avoids loop with last condition in ResellersController#new comparing reseller.complete?
@@ -764,7 +765,7 @@ class ApplicationController < ActionController::Base
           Please contact support@ssl.com for assistance or more information." unless request.xhr?
         if is_new_session
           DuplicateV2UserMailer.attempted_login_by(@dup).deliver
-          @user_session = UserSession.new(:login=>is_new_session[u.to_sym])
+          @user_session = UserSession.new(:login=>is_new_session[u.to_sym].to_h)
         else
           DuplicateV2UserMailer.duplicates_found(@dup, u).deliver
         end

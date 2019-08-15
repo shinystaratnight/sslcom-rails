@@ -90,6 +90,7 @@ class ManagedUsersController < ApplicationController
       end
       notice =  "#{@user.email} roles have been updated for teams: #{ssl_update.map(&:get_team_name).join(', ')}."
       notice << " And, invited to teams: #{@ssl_accounts.map(&:get_team_name).join(', ')}." unless @ssl_accounts.empty?
+      @user.touch
       redirect_to users_path(ssl_slug: @ssl_slug), notice: notice
     end
   end

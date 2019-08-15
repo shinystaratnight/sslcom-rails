@@ -5,7 +5,7 @@ require 'timeout'
 class SurlsController < ApplicationController
   before_filter :find_surl_by_identifier, only: [:show, :login]
   before_filter :find_surl_by_guid, only: [:edit, :destroy, :update]
-  skip_filter   :record_visit
+  skip_before_filter   :record_visit
   after_filter  :record_surl_visit, only: [:show]
   filter_access_to  :edit, :destroy, :update, attribute_check: true
   filter_access_to  :admin_index

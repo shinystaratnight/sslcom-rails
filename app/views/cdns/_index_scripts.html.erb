@@ -26,17 +26,29 @@
       });
       $("#generate_install_ssl_chk").change(function() {
         if ($(this).prop('checked')) {
-          /*$("#custom_domain_modal_form").hide();
+          $("#custom_domain_modal_form").hide();
           $(".gen-install-ssl-divider").hide();
-          $("#generate_type").val("auto");*/
+          $("#generate_type").val("auto");
+
           $('.modify-custom-domain').attr('disabled', false);
         } else {
-          /*$("#custom_domain_modal_form").show();
+          $("#custom_domain_modal_form").show();
           $(".gen-install-ssl-divider").show();
-          $("#generate_type").val("manual");*/
-          $('.modify-custom-domain').attr('disabled', true);
+          $("#generate_type").val("manual");
+
+          /*$('.modify-custom-domain').attr('disabled', true);*/
+          $.check_manual_ssl();
         }
       });
+
+      $.check_manual_ssl = function() {
+        if ($('#certificate_value').val() == "" && $('#private_key').val() == "") {
+          $('.modify-custom-domain').attr('disabled', true);
+        } else {
+          $('.modify-custom-domain').attr('disabled', false);
+        }
+      };
+
       $('#private_key').bind('cut copy', function (e) {
         e.preventDefault();
       });
@@ -44,8 +56,22 @@
         return false;
       });
 
+      $('#certificate_value').bind('change paste', function() {
+        $.check_manual_ssl();
+      });
+      $('#certificate_value').blur(function() {
+        $.check_manual_ssl();
+      });
+
+      $('#private_key').bind('change paste', function() {
+        $.check_manual_ssl();
+      });
+      $('#private_key').blur(function() {
+        $.check_manual_ssl();
+      });
+
       $('#purge_all_btn').click(function() {
-        $('form #purge_all').val(true)
+        $('form #purge_all').val(true);
         $('#purge_form').submit();
       });
 
@@ -116,6 +142,11 @@
         $('.modify-custom-domain').attr('disabled', true);
         $('.cancel-custom-domain').attr('disabled', true);
         $('.delete-custom-domain').attr('disabled', true);
+
+        if ($("#generate_install_ssl_chk").prop('checked')) {
+          $('#certificate_value').val('');
+          $('#private_key').val('');
+        }
 
         $('form#custom_domain_modal_form').submit();
       });
