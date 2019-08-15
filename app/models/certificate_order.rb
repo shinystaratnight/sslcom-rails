@@ -1205,23 +1205,18 @@ class CertificateOrder < ActiveRecord::Base
     public_key_sha1=certificate_content.cached_csr_public_key_sha1
     cnames = certificate_content.certificate_names.includes(:domain_control_validations)
     team_cnames = ssl_account.all_certificate_names.includes(:domain_control_validations)
-    cnames.each do |cn|
+    cnames.includes(:domain_control_validations).each do |cn|
       # if the certificate_name scoped dcv is not satisfied, check the team level domain name
       unless cn.domain_control_validations.any?(&"satisfied?".to_sym)
         ssl_account.other_dcvs_satisfy_domain(cn)
         # Team level validation check
         team_level_validated = false
-        team_cnames.each do |team_cn|
+        team_cnames.includes(:domain_control_validations).each do |team_cn|
           if team_cn.non_wildcard_name == cn.non_wildcard_name
             team_dcv = team_cn.domain_control_validations.last
-            if team_dcv && team_dcv.validated?(public_key_sha1)
+            if team_dcv && team_dcv.validated?(nil,public_key_sha1)
               team_level_validated = true
               break
-            else
-              if cn.domain_control_validations.any?(&"satisfied?".to_sym)
-                team_level_validated = true
-                break
-              end
             end
           end
         end
@@ -1435,7 +1430,7 @@ class CertificateOrder < ActiveRecord::Base
          country_name: r.country}
     api_domains = {}
     if !cc.domains.blank?
-      cc.certificate_names.find_by_domains(cc.domains.flatten+[common_name]).each {|cn|
+      cc.certificate_names.includes(:domain_control_validations).find_by_domains(cc.domains.flatten+[common_name]).each {|cn|
         if cn
           api_domains.merge!(cn.name.to_sym => {dcv:
             cn.domain_control_validations.last_method.try(:method_for_api) ||

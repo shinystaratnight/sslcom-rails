@@ -56,9 +56,9 @@ class ValidationsController < ApplicationController
         caa_check_domain_arry = []
         public_key_sha1=cc.cached_csr_public_key_sha1
         unless cc.ca.blank?
-          cnames = cc.certificate_names.includes(domain_control_validations: :csr).where{domain_control_validations.workflow_state=="satisfied"}.references(:domain_control_validations)
+          cnames = cc.certificate_names.includes(validated_domain_control_validations: :csr)
           team_cnames = @certificate_order.ssl_account.all_certificate_names(nil,"validated").
-              includes(domain_control_validations: :csr).where{domain_control_validations.workflow_state=="satisfied"}.references(:domain_control_validations)
+              includes(validated_domain_control_validations: :csr)
 
           # Team level validation check
           @ds = {}
@@ -87,7 +87,7 @@ class ValidationsController < ApplicationController
               end
             end
 
-            (validated_domain_arry << cn.name) if cn.domain_control_validations.validated
+            (validated_domain_arry << cn.name) if cn.validated_domain_control_validations.last
           end
 
           @all_validated=@certificate_order.domains_validated?
@@ -164,7 +164,7 @@ class ValidationsController < ApplicationController
       identifier = params['validate_code']
       cnames = cc.certificate_names
       all_validated = true
-      cnames.each do |cn|
+      cnames.includes(:domain_control_validations).each do |cn|
         dcv = cn.domain_control_validations.last
         if dcv.identifier == identifier
           dcv.update_attribute(:identifier_found, true)
@@ -293,7 +293,7 @@ class ValidationsController < ApplicationController
   def get_asynch_domains
     co = (current_user.is_system_admins? ? CertificateOrder :
               current_user.certificate_orders).find_by_ref(params[:certificate_order_id])
-    cn = co.certificate_content.certificate_names.find_by_name(params['domain_name']) if co
+    cn = co.certificate_content.certificate_names.includes(:domain_control_validations).find_by_name(params['domain_name']) if co
 
     returnObj = Rails.cache.fetch(cn.get_asynch_cache_label) do
       if cn

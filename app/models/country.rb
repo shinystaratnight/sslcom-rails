@@ -22,4 +22,10 @@ class Country < ActiveRecord::Base
       iso1_codes-BLACKLIST
     end
   end
+
+  def self.select_options(values="iso1_code")
+    Rails.cache.fetch("Country/select_options/#{values}") do
+      approved.collect {|c| [ c.name, c.send(values.to_sym) ] }.sort{|x,y|x[0]<=>y[0]}
+    end
+  end
 end

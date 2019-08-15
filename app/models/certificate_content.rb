@@ -123,7 +123,7 @@ class CertificateContent < ActiveRecord::Base
       last_sent = unless co.certificate.is_ucc?
         cc.csr.domain_control_validations.last_sent
       else
-        cc.certificate_names.map{|cn| cn.domain_control_validations.last_sent}
+        cc.certificate_names.map{|cn| cn.last_sent_domain_control_validations.last}
           .flatten.compact
       end
       unless last_sent.blank?
@@ -148,7 +148,7 @@ class CertificateContent < ActiveRecord::Base
         last_sent = unless certificate_order.certificate.is_ucc?
                       csr.domain_control_validations.last_sent
                     else
-                      certificate_names.map {|cn| cn.domain_control_validations.last_sent}.flatten.compact
+                      certificate_names.map {|cn| cn..last_sent_domain_control_validations.last}.flatten.compact
                     end
         unless last_sent.blank?
           certificate_order.valid_recipients_list.each do |c|
@@ -319,6 +319,13 @@ class CertificateContent < ActiveRecord::Base
 
   def certificate
     certificate_order.try :certificate
+  end
+
+  # validate all certificate_names based on a previous validation
+  def validate_via_cname
+    certificate_names.each{|cn|cn.validate_via_cname}
+    ca=csrs.map{|c|c.signed_certificates.map(&:created_at)}.first.first
+    domain_control_validations.update_all responded_at: ca, created_at: ca, updated_at: ca
   end
 
   def self.cli_domain=(cli_domain)
