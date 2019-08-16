@@ -11,7 +11,7 @@ module FundedAccountsHelper
   end
 
   def initial_reseller_deposit?
-    current_user.ssl_account.has_role?('new_reseller') && (
+    current_user.ssl_account.has_role?('new_reseller') && current_user.ssl_account.reseller && (
           current_user.ssl_account.reseller.enter_billing_information? ||
           current_user.ssl_account.reseller.select_tier?)
   end
