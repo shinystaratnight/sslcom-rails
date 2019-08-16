@@ -107,75 +107,8 @@ module CertificateOrdersHelper
         link_to('submit csr', edit_certificate_order_path(@ssl_slug, certificate_order)) if
             permitted_to?(:update, certificate_order)
       when "contacts_provided", "pending_validation", "validated"
-        if certificate_content.workflow_state == "validated" &&
-            (certificate.is_cs? || certificate.is_smime_or_client?)
-          if current_user.is_individual_certificate? or
-              (certificate_order.get_recipient and certificate_order.get_recipient.email==current_user.email)
-
-            if certificate_order.generate_certificate_order_token &&
-                !certificate_order.generate_certificate_order_token.is_expired &&
-                certificate_order.generate_certificate_order_token.due_date < DateTime.now
-              certificate_order.generate_certificate_order_token.update_attribute(:is_expired, true)
-              certificate_order.update_attribute(:request_status, '')
-            end
-
-            if certificate_order.generate_certificate_order_token.blank? or certificate_order.generate_certificate_order_token.is_expired
-              link_to certificate_order.request_status == 'done' ? 'activation request sent. Request again?' : 'request certificate',
-                      nil, class: 'link_to_send_notify',
-                      :data => {
-                          :ref => certificate_order.ref,
-                          :type => 'request',
-                          :done => certificate_order.request_status == 'done' ? 'true' : 'false'
-                      }
-            else
-              # link_to 'generate certificate', generate_cert_certificate_order_path(@ssl_slug, certificate_order.ref) if
-              #     permitted_to?(:update, certificate_order.validation) # assume multi domain
-              link_to 'generate certificate', confirm_path(certificate_order.generate_certificate_order_token.token) if
-                  permitted_to?(:update, certificate_order.validation) # assume multi domain
-            end
-          elsif current_user.is_billing_only? || current_user.is_validations_only? || current_user.is_validations_and_billing_only?
-            'n/a'
-          else
-            if certificate.is_smime_or_client? && certificate_order.get_recipient
-              if certificate_order.generate_certificate_order_token &&
-                  !certificate_order.generate_certificate_order_token.is_expired &&
-                  certificate_order.generate_certificate_order_token.due_date < DateTime.now
-                certificate_order.generate_certificate_order_token.update_attribute(:is_expired, true)
-                certificate_order.update_attribute(:request_status, '')
-              end
-
-              recipient = certificate_order.get_recipient
-              iv = Contact.find_by(user_id: (recipient.user_id || recipient.id))
-              link_to !certificate_order.generate_certificate_order_token.blank? && !certificate_order.generate_certificate_order_token.is_expired ?
-                          'activation link sent. Resend?' : 'send activation link to ' + iv.email,
-                      nil, class: 'link_to_send_notify',
-                      :data => { :ref => certificate_order.ref,
-                              :type => 'token',
-                              :ori_text => ((!certificate_order.generate_certificate_order_token.blank? && !certificate_order.generate_certificate_order_token.is_expired) ?
-                                                ('send activation link to ' + iv.email) : ''),
-                              :done => (!certificate_order.generate_certificate_order_token.blank? && !certificate_order.generate_certificate_order_token.is_expired).to_s
-                      }
-            elsif certificate_order.locked_registrant and certificate_order.certificate_content.ca
-              if certificate_order.generate_certificate_order_token &&
-                  !certificate_order.generate_certificate_order_token.is_expired &&
-                  certificate_order.generate_certificate_order_token.due_date < DateTime.now
-                certificate_order.generate_certificate_order_token.update_attribute(:is_expired, true)
-                certificate_order.update_attribute(:request_status, '')
-              end
-
-              link_to !certificate_order.generate_certificate_order_token.blank? && !certificate_order.generate_certificate_order_token.is_expired ?
-                          'activation link sent. Resend?' : 'send activation link to ' + certificate_order.locked_registrant.email,
-                      nil, class: 'link_to_send_notify',
-                      :data => { :ref => certificate_order.ref,
-                                 :type => 'token',
-                                 :ori_text => ((!certificate_order.generate_certificate_order_token.blank? && !certificate_order.generate_certificate_order_token.is_expired) ?
-                                                   ('send activation link to ' + certificate_order.locked_registrant.email) : ''),
-                                 :done => (!certificate_order.generate_certificate_order_token.blank? && !certificate_order.generate_certificate_order_token.is_expired).to_s
-                      }
-            else
-              'n/a'
-            end
-          end
+        if certificate_content.workflow_state == "validated" && (certificate.is_cs? || certificate.is_smime_or_client?)
+          specific_action(certificate, certificate_order, false)
           # link_to 'generate certificate', generate_cert_certificate_order_path(@ssl_slug, certificate_order.ref) if
           #     permitted_to?(:update, certificate_order.validation) # assume multi domain
         else
@@ -184,73 +117,7 @@ module CertificateOrdersHelper
         end
       when "issued","revoked"
         if(certificate.is_cs? || certificate.is_smime_or_client?)
-          if current_user.is_individual_certificate? or
-              (certificate_order.get_recipient and certificate_order.get_recipient.email==current_user.email)
-
-            if certificate_order.generate_certificate_order_token &&
-                !certificate_order.generate_certificate_order_token.is_expired &&
-                certificate_order.generate_certificate_order_token.due_date < DateTime.now
-              certificate_order.generate_certificate_order_token.update_attribute(:is_expired, true)
-              certificate_order.update_attribute(:request_status, '')
-            end
-
-            if certificate_order.generate_certificate_order_token.blank? or certificate_order.generate_certificate_order_token.is_expired
-              link_to certificate_order.request_status == 'done' ? 'activation request sent. Request again?' : 'request rekey',
-                      nil, class: 'link_to_send_notify',
-                      :data => {
-                          :ref => certificate_order.ref,
-                          :type => 'request',
-                          :done => certificate_order.request_status == 'done' ? 'true' : 'false'
-                      }
-            else
-              # link_to 'generate certificate', generate_cert_certificate_order_path(@ssl_slug, certificate_order.ref) if
-              #     permitted_to?(:update, certificate_order.validation) # assume multi domain
-              link_to 'generate certificate', confirm_path(certificate_order.generate_certificate_order_token.token) if
-                  permitted_to?(:update, certificate_order.validation) # assume multi domain
-            end
-          elsif current_user.is_billing_only? || current_user.is_validations_only? || current_user.is_validations_and_billing_only?
-            'n/a'
-          else
-            if certificate.is_smime_or_client? && certificate_order.get_recipient
-              if certificate_order.generate_certificate_order_token &&
-                  !certificate_order.generate_certificate_order_token.is_expired &&
-                  certificate_order.generate_certificate_order_token.due_date < DateTime.now
-                certificate_order.generate_certificate_order_token.update_attribute(:is_expired, true)
-                certificate_order.update_attribute(:request_status, '')
-              end
-
-              recipient = certificate_order.get_recipient
-              iv = Contact.find_by(user_id: (recipient.user_id || recipient.id))
-              link_to !certificate_order.generate_certificate_order_token.blank? && !certificate_order.generate_certificate_order_token.is_expired ?
-                          'activation link sent. Resend?' : 'send activation link to ' + iv.email,
-                      nil, class: 'link_to_send_notify',
-                      :data => { :ref => certificate_order.ref,
-                              :type => 'token',
-                              :ori_text => ((!certificate_order.generate_certificate_order_token.blank? && !certificate_order.generate_certificate_order_token.is_expired) ?
-                                                ('send activation link to ' + iv.email) : ''),
-                              :done => (!certificate_order.generate_certificate_order_token.blank? && !certificate_order.generate_certificate_order_token.is_expired).to_s
-                      }
-            elsif certificate_order.locked_registrant and certificate_order.certificate_content.ca
-              if certificate_order.generate_certificate_order_token &&
-                  !certificate_order.generate_certificate_order_token.is_expired &&
-                  certificate_order.generate_certificate_order_token.due_date < DateTime.now
-                certificate_order.generate_certificate_order_token.update_attribute(:is_expired, true)
-                certificate_order.update_attribute(:request_status, '')
-              end
-
-              link_to !certificate_order.generate_certificate_order_token.blank? && !certificate_order.generate_certificate_order_token.is_expired ?
-                          'activation link sent. Resend?' : 'send activation link to ' + certificate_order.locked_registrant.email,
-                      nil, class: 'link_to_send_notify',
-                      :data => { :ref => certificate_order.ref,
-                                 :type => 'token',
-                                 :ori_text => ((!certificate_order.generate_certificate_order_token.blank? && !certificate_order.generate_certificate_order_token.is_expired) ?
-                                                   ('send activation link to ' + certificate_order.locked_registrant.email) : ''),
-                                 :done => (!certificate_order.generate_certificate_order_token.blank? && !certificate_order.generate_certificate_order_token.is_expired).to_s
-                      }
-            else
-              'n/a'
-            end
-          end
+          specific_action(certificate, certificate_order, true)
           # link_to 'generate certificate', generate_cert_certificate_order_path(@ssl_slug, certificate_order.ref) if
           #     permitted_to?(:update, certificate_order.validation) # assume multi domain
         else
@@ -287,6 +154,67 @@ module CertificateOrdersHelper
         end
       when "canceled"
       end
+    end
+  end
+
+  def specific_action(certificate, certificate_order, is_rekey)
+    if current_user.is_individual_certificate? or
+        (certificate_order.get_recipient and certificate_order.get_recipient.email==current_user.email)
+      reset_expired_token_request_status(certificate_order)
+
+      if certificate_order.generate_certificate_order_token.blank? or certificate_order.generate_certificate_order_token.is_expired
+        link_to certificate_order.request_status == 'done' ? 'activation request sent. Request again?' : (is_rekey ? 'request rekey' : 'request certificate'),
+                nil, class: 'link_to_send_notify',
+                :data => {
+                    :ref => certificate_order.ref,
+                    :type => 'request',
+                    :done => certificate_order.request_status == 'done' ? 'true' : 'false'
+                }
+      else
+        link_to 'generate certificate', confirm_path(certificate_order.generate_certificate_order_token.token) if
+            permitted_to?(:update, certificate_order.validation) # assume multi domain
+      end
+    elsif current_user.is_billing_only? || current_user.is_validations_only? || current_user.is_validations_and_billing_only?
+      'n/a'
+    else
+      if certificate.is_smime_or_client? && certificate_order.get_recipient
+        reset_expired_token_request_status(certificate_order)
+
+        recipient = certificate_order.get_recipient
+        iv = Contact.find_by(user_id: (recipient.user_id || recipient.id))
+        link_to !certificate_order.generate_certificate_order_token.blank? && !certificate_order.generate_certificate_order_token.is_expired ?
+                    'activation link sent. Resend?' : 'send activation link to ' + iv.email,
+                nil, class: 'link_to_send_notify',
+                :data => { :ref => certificate_order.ref,
+                           :type => 'token',
+                           :ori_text => ((!certificate_order.generate_certificate_order_token.blank? && !certificate_order.generate_certificate_order_token.is_expired) ?
+                                             ('send activation link to ' + iv.email) : ''),
+                           :done => (!certificate_order.generate_certificate_order_token.blank? && !certificate_order.generate_certificate_order_token.is_expired).to_s
+                }
+      elsif certificate_order.locked_registrant and certificate_order.certificate_content.ca
+        reset_expired_token_request_status(certificate_order)
+
+        link_to !certificate_order.generate_certificate_order_token.blank? && !certificate_order.generate_certificate_order_token.is_expired ?
+                    'activation link sent. Resend?' : 'send activation link to ' + certificate_order.locked_registrant.email,
+                nil, class: 'link_to_send_notify',
+                :data => { :ref => certificate_order.ref,
+                           :type => 'token',
+                           :ori_text => ((!certificate_order.generate_certificate_order_token.blank? && !certificate_order.generate_certificate_order_token.is_expired) ?
+                                             ('send activation link to ' + certificate_order.locked_registrant.email) : ''),
+                           :done => (!certificate_order.generate_certificate_order_token.blank? && !certificate_order.generate_certificate_order_token.is_expired).to_s
+                }
+      else
+        'n/a'
+      end
+    end
+  end
+
+  def reset_expired_token_request_status(certificate_order)
+    if certificate_order.generate_certificate_order_token &&
+        !certificate_order.generate_certificate_order_token.is_expired &&
+        certificate_order.generate_certificate_order_token.due_date < DateTime.now
+      certificate_order.generate_certificate_order_token.update_attribute(:is_expired, true)
+      certificate_order.update_attribute(:request_status, '')
     end
   end
 
