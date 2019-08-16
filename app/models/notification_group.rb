@@ -77,7 +77,7 @@ class NotificationGroup < ActiveRecord::Base
                       ]).update_all(domain_name: domain.name)
           end
         else
-          cc.certificate_names.each do |cn|
+          cc.certificate_names.includes(:notification_groups_subjects).each do |cn|
             if cud == 'create'
               ngs.find_or_create_by(
                   subjectable_type: 'CertificateName', subjectable_id: cn.id

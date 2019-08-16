@@ -222,6 +222,7 @@ class CertificateContent < ActiveRecord::Base
 
     state :pending_issuance do
       event :pend_validation, :transitions_to => :pending_validation
+      event :pend_issuance, :transitions_to => :pending_issuance
       event :issue, :transitions_to => :issued
       event :cancel, :transitions_to => :canceled
       event :reset, :transitions_to => :new
@@ -287,7 +288,7 @@ class CertificateContent < ActiveRecord::Base
   end
 
   def sslcom_ca_request
-    SslcomCaRequest.where(username: self.ref).first
+    SslcomCaRequest.where(username: self.label).first
   end
 
   def pkcs7
