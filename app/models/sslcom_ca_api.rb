@@ -208,7 +208,7 @@ class SslcomCaApi
         return
       else
         cc.pend_issuance!
-      end
+      end unless options[:mapping].profile_name=~/EV/
       host = ca_host(options[:mapping])+
           "/v1/certificate#{'/ev' if options[:mapping].profile_name=~/EV/}/pkcs10"
       options.merge!(collect_certificate: true, username:
