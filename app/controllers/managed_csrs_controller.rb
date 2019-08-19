@@ -1,6 +1,5 @@
 class ManagedCsrsController < ApplicationController
   before_filter :require_user, :set_ssl_slug, except: [:new, :add_generated_csr]
-  # before_filter :set_row_page, only: [:index]
   before_filter :global_set_row_page, only: [:index]
   before_filter :set_sign_hash_algorithms, :find_ssl_account, only: [:new]
 
@@ -162,12 +161,6 @@ class ManagedCsrsController < ApplicationController
   end
 
   private
-  # def set_row_page
-  #   @per_page = params[:per_page] ? params[:per_page] : 10
-  #   Csr.per_page = @per_page if Csr.per_page != @per_page
-  #
-  #   @p = {page: (params[:page] || 1), per_page: @per_page}
-  # end
 
   def set_sign_hash_algorithms
     @sign_alg = [

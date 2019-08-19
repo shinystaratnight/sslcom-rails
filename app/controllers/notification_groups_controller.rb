@@ -1,7 +1,6 @@
 class NotificationGroupsController < ApplicationController
   before_action :require_user, only: [:index, :new, :create, :edit, :update, :destroy]
   before_action :find_ssl_account
-  # before_action :set_row_page, only: [:index, :search]
   before_filter :global_set_row_page, only: [:index, :search]
   before_action :set_schedule_value, only: [:index, :new, :edit, :search]
 
@@ -561,18 +560,6 @@ class NotificationGroupsController < ApplicationController
   end
 
   private
-    # def set_row_page
-    #   preferred_row_count = current_user.preferred_note_group_row_count
-    #   @per_page = params[:per_page] || preferred_row_count.or_else("10")
-    #   NotificationGroup.per_page = @per_page if NotificationGroup.per_page != @per_page
-    #
-    #   if @per_page != preferred_row_count
-    #     current_user.preferred_note_group_row_count = @per_page
-    #     current_user.save(validate: false)
-    #   end
-    #
-    #   @p = {page: (params[:page] || 1), per_page: @per_page}
-    # end
 
     def remove_duplicate(mArry)
       result = {}

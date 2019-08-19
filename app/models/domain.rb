@@ -6,9 +6,6 @@ class Domain < CertificateName
   cattr_accessor :per_page
   @@per_page = 10
 
-  # cattr_accessor :csr_per_page
-  # @@csr_per_page = 10
-
   scope :expired_validation, -> {
     joins(:domain_control_validations)
         .where('domain_control_validations.id = (SELECT MAX(domain_control_validations.id) FROM domain_control_validations WHERE domain_control_validations.certificate_name_id = certificate_names.id)')
