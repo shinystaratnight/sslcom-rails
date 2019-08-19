@@ -6,8 +6,8 @@ class Domain < CertificateName
   cattr_accessor :per_page
   @@per_page = 10
 
-  cattr_accessor :csr_per_page
-  @@csr_per_page = 10
+  # cattr_accessor :csr_per_page
+  # @@csr_per_page = 10
 
   scope :expired_validation, -> {
     joins(:domain_control_validations)

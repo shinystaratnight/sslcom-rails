@@ -1,9 +1,10 @@
 
 class DomainsController < ApplicationController
   before_filter :require_user, :except => [:dcv_validate, :dcv_all_validate]
+  before_filter :global_set_row_page, only: [:index, :search, :select_csr]
   before_filter :find_ssl_account
-  before_filter :set_row_page, only: [:index, :search]
-  before_filter :set_csr_row_page, only: [:select_csr]
+  # before_filter :set_row_page, only: [:index, :search]
+  # before_filter :set_csr_row_page, only: [:select_csr]
 
   def search
     index
@@ -500,29 +501,29 @@ class DomainsController < ApplicationController
     end
   end
 
-  def set_row_page
-    preferred_row_count = current_user.preferred_domain_row_count
-    @per_page = params[:per_page] || preferred_row_count.or_else("10")
-    Domain.per_page = @per_page if Domain.per_page != @per_page
+  # def set_row_page
+  #   preferred_row_count = current_user.preferred_domain_row_count
+  #   @per_page = params[:per_page] || preferred_row_count.or_else("10")
+  #   Domain.per_page = @per_page if Domain.per_page != @per_page
+  #
+  #   if @per_page != preferred_row_count
+  #     current_user.preferred_domain_row_count = @per_page
+  #     current_user.save(validate: false)
+  #   end
+  #
+  #   @p = {page: (params[:page] || 1), per_page: @per_page}
+  # end
 
-    if @per_page != preferred_row_count
-      current_user.preferred_domain_row_count = @per_page
-      current_user.save(validate: false)
-    end
-
-    @p = {page: (params[:page] || 1), per_page: @per_page}
-  end
-
-  def set_csr_row_page
-    preferred_row_count = current_user.preferred_domain_csr_row_count
-    @per_page = params[:per_page] || preferred_row_count.or_else("10")
-    Domain.csr_per_page = @per_page if Domain.csr_per_page != @per_page
-
-    if @per_page != preferred_row_count
-      current_user.preferred_domain_csr_row_count = @per_page
-      current_user.save(validate: false)
-    end
-
-    @p = {page: (params[:page] || 1), per_page: @per_page}
-  end
+  # def set_csr_row_page
+  #   preferred_row_count = current_user.preferred_domain_csr_row_count
+  #   @per_page = params[:per_page] || preferred_row_count.or_else("10")
+  #   Domain.csr_per_page = @per_page if Domain.csr_per_page != @per_page
+  #
+  #   if @per_page != preferred_row_count
+  #     current_user.preferred_domain_csr_row_count = @per_page
+  #     current_user.save(validate: false)
+  #   end
+  #
+  #   @p = {page: (params[:page] || 1), per_page: @per_page}
+  # end
 end

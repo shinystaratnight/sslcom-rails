@@ -1,8 +1,9 @@
 class RegisteredAgentsController < ApplicationController
   before_action :require_user
   before_action :find_ssl_account
-  before_action :set_row_registered_agent_page, only: [:index, :search]
-  before_action :set_row_managed_certificate_page, only: [:managed_certificates, :search_managed_certificates, :remove_managed_certificates]
+  # before_action :set_row_registered_agent_page, only: [:index, :search]
+  # before_action :set_row_managed_certificate_page, only: [:managed_certificates, :search_managed_certificates, :remove_managed_certificates]
+  before_filter :global_set_row_page, only: [:index, :search, :managed_certificates, :search_managed_certificates, :remove_managed_certificates]
 
   def index
     @registered_agents = @ssl_account.registered_agents.paginate(@p)
@@ -126,31 +127,31 @@ class RegisteredAgentsController < ApplicationController
     redirect_to account_path(ssl_slug: @ssl_slug)
   end
 
-  private
-
-    def set_row_registered_agent_page
-      preferred_row_count = current_user.preferred_registered_agent_row_count
-      @per_page = params[:ra_per_page] || preferred_row_count.or_else("10")
-      RegisteredAgent.per_page = @per_page if RegisteredAgent.per_page != @per_page
-
-      if @per_page != preferred_row_count
-        current_user.preferred_registered_agent_row_count = @per_page
-        current_user.save(validate: false)
-      end
-
-      @p = {page: (params[:page] || 1), per_page: @per_page}
-    end
-
-    def set_row_managed_certificate_page
-      preferred_row_count = current_user.preferred_managed_certificate_row_count
-      @per_page = params[:mc_per_page] || preferred_row_count.or_else("10")
-      ManagedCertificate.per_page = @per_page if ManagedCertificate.per_page != @per_page
-
-      if @per_page != preferred_row_count
-        current_user.preferred_managed_certificate_row_count = @per_page
-        current_user.save(validate: false)
-      end
-
-      @p = {page: (params[:page] || 1), per_page: @per_page}
-    end
+  # private
+  #
+  #   def set_row_registered_agent_page
+  #     preferred_row_count = current_user.preferred_registered_agent_row_count
+  #     @per_page = params[:ra_per_page] || preferred_row_count.or_else("10")
+  #     RegisteredAgent.per_page = @per_page if RegisteredAgent.per_page != @per_page
+  #
+  #     if @per_page != preferred_row_count
+  #       current_user.preferred_registered_agent_row_count = @per_page
+  #       current_user.save(validate: false)
+  #     end
+  #
+  #     @p = {page: (params[:page] || 1), per_page: @per_page}
+  #   end
+  #
+  #   def set_row_managed_certificate_page
+  #     preferred_row_count = current_user.preferred_managed_certificate_row_count
+  #     @per_page = params[:mc_per_page] || preferred_row_count.or_else("10")
+  #     ManagedCertificate.per_page = @per_page if ManagedCertificate.per_page != @per_page
+  #
+  #     if @per_page != preferred_row_count
+  #       current_user.preferred_managed_certificate_row_count = @per_page
+  #       current_user.save(validate: false)
+  #     end
+  #
+  #     @p = {page: (params[:page] || 1), per_page: @per_page}
+  #   end
 end

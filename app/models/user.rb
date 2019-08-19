@@ -39,11 +39,11 @@ class User < ActiveRecord::Base
   has_many  :notification_groups, through: :ssl_accounts
   has_many  :certificate_order_tokens
 
-  preference  :managed_certificate_row_count, :string, :default=>"10"
-  preference  :registered_agent_row_count, :string, :default=>"10"
-  preference  :cert_order_row_count, :string, :default=>"10"
-  preference  :order_row_count, :string, :default=>"10"
-  preference  :cdn_row_count, :string, :default=>"10"
+  preference  :managed_certificate_row_count, :string, :default => "10"
+  preference  :registered_agent_row_count, :string, :default => "10"
+  preference  :cert_order_row_count, :string, :default => "10"
+  preference  :order_row_count, :string, :default => "10"
+  preference  :cdn_row_count, :string, :default => "10"
   preference  :user_row_count, :string, :default => "10"
   preference  :note_group_row_count, :string, :default => "10"
   preference  :scan_log_row_count, :string, :default => "10"
@@ -51,6 +51,7 @@ class User < ActiveRecord::Base
   preference  :domain_csr_row_count, :string, :default => "10"
   preference  :team_row_count, :string, :default => "10"
   preference  :validate_row_count, :string, :default => "10"
+  preference  :managed_csr_row_count, :string, :default => "10"
 
   #will_paginate
   cattr_accessor :per_page

@@ -34,8 +34,10 @@ class CertificateOrdersController < ApplicationController
   before_filter :load_certificate_order,
                 only: [:show, :show_cert_order, :validate_issue, :update, :edit, :download, :destroy, :delete, :update_csr, :auto_renew, :start_over,
                        :change_ext_order_number, :admin_update, :developer, :sslcom_ca, :update_tags, :recipient, :validate_issue]
-  before_filter :set_row_page, only: [:index, :search, :credits, :pending, :filter_by_scope, :order_by_csr, :filter_by,
-                                      :incomplete, :reprocessing]
+  # before_filter :set_row_page, only: [:index, :search, :credits, :pending, :filter_by_scope, :order_by_csr, :filter_by,
+  #                                     :incomplete, :reprocessing]
+  before_filter :global_set_row_page, only: [:index, :search, :credits, :pending, :filter_by_scope, :order_by_csr, :filter_by,
+                                             :incomplete, :reprocessing]
   before_filter :get_team_tags, only: [:index, :search]
   before_filter :construct_special_fields, only: [:edit, :create, :update, :update_csr]
   in_place_edit_for :certificate_order, :notes
@@ -973,18 +975,18 @@ class CertificateOrdersController < ApplicationController
     end
   end
 
-  def set_row_page
-    preferred_row_count = current_user.preferred_cert_order_row_count
-    @per_page = params[:per_page] || preferred_row_count.or_else("10")
-    CertificateOrder.per_page = @per_page if CertificateOrder.per_page != @per_page
-
-    if @per_page != preferred_row_count
-      current_user.preferred_cert_order_row_count = @per_page
-      current_user.save(validate: false)
-    end
-
-    @p = {page: (params[:page] || 1), per_page: @per_page}
-  end
+  # def set_row_page
+  #   preferred_row_count = current_user.preferred_cert_order_row_count
+  #   @per_page = params[:per_page] || preferred_row_count.or_else("10")
+  #   CertificateOrder.per_page = @per_page if CertificateOrder.per_page != @per_page
+  #
+  #   if @per_page != preferred_row_count
+  #     current_user.preferred_cert_order_row_count = @per_page
+  #     current_user.save(validate: false)
+  #   end
+  #
+  #   @p = {page: (params[:page] || 1), per_page: @per_page}
+  # end
 
   def recert(action)
     instance_variable_set("@"+action,CertificateOrder.unscoped.find_by_ref(params[:id]))

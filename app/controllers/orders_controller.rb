@@ -19,7 +19,8 @@ class OrdersController < ApplicationController
   filter_access_to :visitor_trackings, :filter_by_state, require: [:index]
   filter_access_to :show, :update_invoice, attribute_check: true
   before_filter :find_user, :only => [:user_orders]
-  before_filter :set_row_page, only: [:index, :search, :filter_by_state, :visitor_trackings]
+  # before_filter :set_row_page, only: [:index, :search, :filter_by_state, :visitor_trackings]
+  before_filter :global_set_row_page, only: [:index, :search, :filter_by_state, :visitor_trackings]
   before_filter :get_team_tags, only: [:index, :search]
 
   def update_tags
@@ -1063,17 +1064,17 @@ class OrdersController < ApplicationController
     end
   end
   
-  def set_row_page
-    preferred_row_count = current_user.preferred_order_row_count
-    @per_page = params[:per_page] || preferred_row_count.or_else("10")
-
-    if @per_page != preferred_row_count
-      current_user.preferred_order_row_count = @per_page
-      current_user.save(validate: false)
-    end
-
-    @p = {page: (params[:page] || 1), per_page: @per_page}
-  end
+  # def set_row_page
+  #   preferred_row_count = current_user.preferred_order_row_count
+  #   @per_page = params[:per_page] || preferred_row_count.or_else("10")
+  #
+  #   if @per_page != preferred_row_count
+  #     current_user.preferred_order_row_count = @per_page
+  #     current_user.save(validate: false)
+  #   end
+  #
+  #   @p = {page: (params[:page] || 1), per_page: @per_page}
+  # end
 
   # admin user refunds line item
   def refund_partial_amount(params)
