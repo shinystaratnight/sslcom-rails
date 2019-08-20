@@ -45,7 +45,7 @@
           %tr
             %td
               -workflow_available = ''
-              -if roles.include?(Role::OWNER) || roles.include?(Role::ACCOUNT_ADMIN)
+              -if roles & [Role::OWNER, Role::ACCOUNT_ADMIN, Role::RESELLER]
                 -if ra.workflow_status == 'active'
                   -workflow_available = 'already'
                 -else

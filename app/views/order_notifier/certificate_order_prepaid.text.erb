@@ -9,7 +9,7 @@ Reference Number: <%=@order.reference_number%>
 
   <%=cert.description+" ("+cert.quantity.to_s+" qty)"%>
   <%order_line_items(cert, true).each do |item|-%>
-        - <%=item.h%>
+        - <%=h item%>
   <%end-%>
 <%end-%>
       
