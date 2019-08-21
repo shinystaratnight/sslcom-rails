@@ -30,7 +30,7 @@ class Certificate < ActiveRecord::Base
   
   NUM_DOMAINS_TIERS = 3
   UCC_INITIAL_DOMAINS_BLOCK = 3
-  UCC_MAX_DOMAINS = 200
+  UCC_MAX_DOMAINS = 500
 
   FREE_CERTS_CART_LIMIT=5
 
