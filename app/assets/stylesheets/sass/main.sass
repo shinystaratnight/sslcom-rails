@@ -3740,8 +3740,23 @@ label.error
 #certificate_orders > table
   width: 84%
 
-#validations > table
-  width: 100%
+#domains_list #validations
+  padding-top: 0px
+  margin-top: 0px
+
+#validations
+  padding-top: 10px
+
+  &> table
+    width: 100%
+
+    .delete_csr
+      padding-left: 10px
+      padding-right: 10px
+
+  .delete_checkbox_csrs
+    margin-right: 10px
+
 
 #dashboard > table
   float: none
@@ -6422,6 +6437,12 @@ span.notifications-teams
               max-width: 310px
 
 
+#wrap_domain_filter
+  margin: 0.8em auto !important
+  float: none !important
+  width: 415px !important
+
+#wrap_domain_filter,
 #wrap_cert_order_filter,
 #wrap_order_filter
   margin: 0.8em 0 0.5em
@@ -6968,6 +6989,17 @@ i.fa-external-link.fa-ssl-custom
   tbody tr
     &.removed_domain
       background-color: lightgrey
+
+    &.certificate_name .dcv_list
+      width: 150px
+      height: 15px
+
+    &.certificate_name .own_email
+      display: none
+      position: absolute
+      width: 130px
+      height: 9px
+
     &.certificate_name td
       padding: 3px
       border-top: 1px solid grey
@@ -8717,11 +8749,13 @@ i.fa-external-link.fa-ssl-custom
         color: red
         font-size: 12px
 
-      #locked_reg_domains
+      #locked_reg_domains,
+      #domain_names
         width: 474px
         box-shadow: 0px 0px 10px 0 rgba(0, 0, 0, 0.18)
 
-      &.error-invalid #locked_reg_domains
+      &.error-invalid #locked_reg_domains,
+      &.error-invalid #domain_names
         border-color: red
 
       &.error-invalid #required-valid
@@ -8941,6 +8975,9 @@ a.back_to_generate_cert_page
 .cert_wrap
   .col-md-3
     line-height: 160px
+
+.managed_csr.algorithm_wrap select
+  width: 100%
 
 .managed_csr.algorithm_wrap select
   width: 100%

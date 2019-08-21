@@ -77,6 +77,7 @@ class CertificateContent < ActiveRecord::Base
                492759=> %w(.*?\.ssl\.com\z \Assl\.com\z .*?\.certlock\.com\z \Acertlock\.com\z),
                497080=> %w(.*?\.ssl\.com\z \Assl\.com\z .*?\.certlock\.com\z \Acertlock\.com\z),
                474299=> %w(.*?\.ssl\.com\z \Assl\.com\z .*?\.certlock\.com\z \Acertlock\.com\z),
+               477317=> %w(.*?\.ssl\.com\z \Assl\.com\z .*?\.certlock\.com\z \Acertlock\.com\z),
                464808=> %w(.*?\.ssl\.com\z \Assl\.com\z .*?\.certlock\.com\z \Acertlock\.com\z)}
 
   DOMAIN_COUNT_OFFLOAD=50
@@ -122,7 +123,7 @@ class CertificateContent < ActiveRecord::Base
       last_sent = unless co.certificate.is_ucc?
         cc.csr.domain_control_validations.last_sent
       else
-        cc.certificate_names.map{|cn| cn.domain_control_validations.last_sent}
+        cc.certificate_names.map{|cn| cn.last_sent_domain_control_validations.last}
           .flatten.compact
       end
       unless last_sent.blank?
@@ -147,7 +148,7 @@ class CertificateContent < ActiveRecord::Base
         last_sent = unless certificate_order.certificate.is_ucc?
                       csr.domain_control_validations.last_sent
                     else
-                      certificate_names.map {|cn| cn.domain_control_validations.last_sent}.flatten.compact
+                      certificate_names.map {|cn| cn..last_sent_domain_control_validations.last}.flatten.compact
                     end
         unless last_sent.blank?
           certificate_order.valid_recipients_list.each do |c|
@@ -221,6 +222,7 @@ class CertificateContent < ActiveRecord::Base
 
     state :pending_issuance do
       event :pend_validation, :transitions_to => :pending_validation
+      event :pend_issuance, :transitions_to => :pending_issuance
       event :issue, :transitions_to => :issued
       event :cancel, :transitions_to => :canceled
       event :reset, :transitions_to => :new
@@ -228,6 +230,7 @@ class CertificateContent < ActiveRecord::Base
 
     state :issued do
       event :reprocess, :transitions_to => :csr_submitted
+      event :pend_issuance, :transitions_to => :pending_issuance
       event :validate, :transitions_to => :validated
       event :cancel, :transitions_to => :canceled
       event :revoke, :transitions_to => :revoked
@@ -285,7 +288,7 @@ class CertificateContent < ActiveRecord::Base
   end
 
   def sslcom_ca_request
-    SslcomCaRequest.where(username: self.ref).first
+    SslcomCaRequest.where(username: self.label).first
   end
 
   def pkcs7
@@ -317,6 +320,13 @@ class CertificateContent < ActiveRecord::Base
 
   def certificate
     certificate_order.try :certificate
+  end
+
+  # validate all certificate_names based on a previous validation
+  def validate_via_cname
+    certificate_names.each{|cn|cn.validate_via_cname}
+    ca=csrs.map{|c|c.signed_certificates.map(&:created_at)}.first.first
+    domain_control_validations.update_all responded_at: ca, created_at: ca, updated_at: ca
   end
 
   def self.cli_domain=(cli_domain)
@@ -792,7 +802,7 @@ class CertificateContent < ActiveRecord::Base
   def subject_dn(options={})
     cert = options[:certificate] || self.certificate
     dn=certificate.is_server? ? ["CN=#{options[:common_name] || common_name}"] : []
-    dn << "emailAddress=#{certificate_order.assignee.email}" if certificate.is_smime? && certificate_order.assignee
+    dn << "emailAddress=#{certificate_order.get_recipient.email}" if certificate.is_smime? && certificate_order.get_recipient.email
     if certificate.is_smime_or_client? and !certificate.is_client_basic?
       person=certificate_order.locked_recipient
       dn << "CN=#{[person.first_name,person.last_name].join(" ").strip}"

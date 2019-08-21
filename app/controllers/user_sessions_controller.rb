@@ -2,7 +2,7 @@ class UserSessionsController < ApplicationController
   before_filter :require_no_user, only: [:new]
   before_filter :find_dup_login, only: [:create]
   before_filter :require_user, only: [:destroy, :duo]
-  skip_filter :finish_reseller_signup, only: [:destroy]
+  skip_before_filter :finish_reseller_signup, only: [:destroy]
   skip_before_action :verify_authenticity_token
   skip_before_action :verify_duo_authentication, only: [:new, :create, :destroy]
   skip_before_action :require_no_authentication, only: [:duo_verify]
@@ -27,7 +27,7 @@ class UserSessionsController < ApplicationController
 
     if params[:user_session][:failed_count].to_i >= Settings.captcha_threshold.to_i
       if verify_recaptcha(response: params[:user_session]['g-recaptcha-response'])
-        @user_session = UserSession.new(params[:user_session])
+        @user_session = UserSession.new(params[:user_session].to_h)
 
         if @user_session.save && !@user_session.user.is_disabled?
           user = @user_session.user
@@ -82,7 +82,7 @@ class UserSessionsController < ApplicationController
         end
       end
     else
-      @user_session = UserSession.new(params[:user_session])
+      @user_session = UserSession.new(params[:user_session].to_h)
 
       if @user_session.save && !@user_session.user.is_disabled?
         user = @user_session.user
@@ -167,10 +167,10 @@ class UserSessionsController < ApplicationController
     end
 
     if current_user.blank?
-      @user_session = UserSession.new(params[:user_session])
+      @user_session = UserSession.new(params[:user_session].to_h)
     else
       if current_user.is_admin? && params[:login]
-        @user_session = UserSession.new(User.find_by_login params[:login])
+        @user_session = UserSession.new((User.find_by_login params[:login]))
         @user_session.id = :shadow
         clear_cart
       end
@@ -287,7 +287,7 @@ class UserSessionsController < ApplicationController
           Authorization.current_user=nil
           flash[:error] = "Unable to sign with U2F." unless params[:user]
 
-          @user_session = UserSession.new(params[:user_session])
+          @user_session = UserSession.new(params[:user_session].to_h)
 
           format.html {render :action => :new}
           format.js   {render :json=>@user_session}
@@ -352,7 +352,7 @@ class UserSessionsController < ApplicationController
                   Authorization.current_user=nil
                   flash[:error] = "Unable to authenticate with U2F: " + e.class.name unless params[:user]
     
-                  @user_session = UserSession.new(params[:user_session])
+                  @user_session = UserSession.new(params[:user_session].to_h)
                   format.html {render :action => :new}
                   format.js   {render :json=>@user_session.errors}
                 ensure

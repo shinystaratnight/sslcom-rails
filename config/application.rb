@@ -80,16 +80,9 @@ module SslCom
       g.jbuilder            false
     end
 
-    config.middleware.use OAuth::Rack::OAuthFilter
+    # config.middleware.use OAuth::Rack::OAuthFilter
     config.middleware.insert_before ActionDispatch::ParamsParser, "CatchJsonParseErrors"
 
-    # config.force_ssl = true
-    unless Rails.env.test?
-      config.middleware.use Rack::SslEnforcer,
-        only: [%r(^/certificates/.*?/buy), %r(^/login), %r{^/account(/new)?}, %r(^/user_session/new), %r{^/users?/new(/affiliates)?},
-          %r(^/password_resets/new), %r(^/orders/new), %r(^/secure/allocate_funds), %r(^/certificate_orders/.*)]
-    end
-    
     # Delayed Job
     config.active_job.queue_adapter = :delayed_job
     
@@ -122,7 +115,6 @@ require "#{Rails.root}/lib/in_words.rb"
 require "#{Rails.root}/lib/kernel.rb"
 require "#{Rails.root}/lib/money.rb"
 # require "#{Rails.root}/lib/subdomain-fu.rb"
-require "#{Rails.root}/lib/force_ssl.rb"
 require "#{Rails.root}/lib/domain_constraint.rb"
 require "#{Rails.root}/lib/preferences.rb"
 require "#{Rails.root}/lib/active_record.rb"

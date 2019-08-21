@@ -8,6 +8,10 @@ class CertificateName < ActiveRecord::Base
   has_many    :ca_certificate_requests, as: :api_requestable, dependent: :destroy
   has_many    :ca_dcv_requests, as: :api_requestable, dependent: :destroy
   has_many    :ca_dcv_resend_requests, as: :api_requestable, dependent: :destroy
+  has_many    :validated_domain_control_validations, -> { where(workflow_state: "satisfied")},
+              class_name: "DomainControlValidation"
+  has_many    :last_sent_domain_control_validations, -> { where{email_address !~ 'null'}},
+              class_name: "DomainControlValidation"
   has_many    :domain_control_validations, dependent: :destroy do
     def last_sent
       where{email_address !~ 'null'}.last
@@ -20,6 +24,10 @@ class CertificateName < ActiveRecord::Base
     def last_method
       where{dcv_method >> ['http','https','email','cname']}.last
     end
+
+    def validated
+      where{workflow_state=="satisfied"}.last
+    end
   end
   has_many    :notification_groups_subjects, as: :subjectable
   has_many    :notification_groups, through: :notification_groups_subjects
@@ -28,8 +36,53 @@ class CertificateName < ActiveRecord::Base
 
   scope :find_by_domains, ->(domains){includes(:domain_control_validations).where{name>>domains}}
   scope :validated, ->{joins(:domain_control_validations).where{domain_control_validations.workflow_state=="satisfied"}}
+  scope :last_domain_control_validation, ->{joins(:domain_control_validations).limit(1)}
+  scope :expired_validation, ->{
+    joins(:domain_control_validations)
+        .where('domain_control_validations.id = (SELECT MAX(domain_control_validations.id) FROM domain_control_validations WHERE domain_control_validations.certificate_name_id = certificate_names.id)')
+        .where{(domain_control_validations.responded_at < DomainControlValidation::MAX_DURATION_DAYS[:email].days.ago.to_date)}
+  }
+  scope :unvalidated, ->{
+    satisfied = <<~SQL
+    SELECT COUNT(domain_control_validations.id) FROM domain_control_validations
+    WHERE certificate_name_id = certificate_names.id AND workflow_state='satisfied'
+    SQL
+    total = <<~SQL
+    SELECT COUNT(domain_control_validations.id) FROM domain_control_validations
+    WHERE certificate_name_id = certificate_names.id
+    SQL
+    where "(#{total}) > 0 AND (#{satisfied}) = 0"
+  }
   scope :sslcom, ->{joins{certificate_content}.where.not certificate_contents: {ca_id: nil}}
   scope :global, -> {where{(certificate_content_id==nil) & (ssl_account_id==nil) & (acme_account_id==nil)}}
+  scope :search_domains, lambda {|term|
+    term ||= ""
+    term = term.strip.split(/\s(?=(?:[^']|'[^']*')*$)/)
+    filters = { email: nil, name: nil, expired_validation: nil }
+
+    filters.each {|fn, fv|
+      term.delete_if {|str| str =~ Regexp.new(fn.to_s + "\\:\\'?([^']*)\\'?"); filters[fn] ||= $1; $1}
+    }
+
+    term = term.empty? ? nil : term.join(" ")
+
+    return nil if [term, *(filters.values)].compact.empty?
+
+    result = self.all
+    unless term.blank?
+      result = result.where{
+        (email =~ "%#{term}%") |
+        (name =~ "%#{term}%")
+      }
+    end
+
+    %w(expired_validation).each do |field|
+      query = filters[field.to_sym]
+      result = result.expired_validation if query
+    end
+
+    result.uniq.order(created_at: :desc)
+  }
 
   #will_paginate
   cattr_accessor :per_page
@@ -191,7 +244,7 @@ class CertificateName < ActiveRecord::Base
         end
         return true if !!(r =~ Regexp.new("^#{options[:csr].sha2_hash}") &&
             (options[:ca_tag]=="ssl.com" ? true : r =~ Regexp.new("^#{options[:ca_tag]}")) &&
-            (options[:csr].unique_value.blank? ? true : r =~ Regexp.new("^#{options[:csr].unique_value}")))
+            ((options[:csr].unique_value.blank? or options[:ignore_unique_value]) ? true : r =~ Regexp.new("^#{options[:csr].unique_value}")))
       end
     rescue Exception=>e
       return false
@@ -212,6 +265,10 @@ class CertificateName < ActiveRecord::Base
 
   def ca_validation
     certificate_content.certificate_order.ca_mdc_statuses.last.domain_status[name]
+  end
+
+  def validate_via_cname
+    domain_control_validations.create(dcv_method: "cname").satisfy!
   end
 
   def caa_lookup
@@ -243,9 +300,10 @@ class CertificateName < ActiveRecord::Base
       end
       Rails.cache.write("CertificateName.candidate_email_addresses/#{dname}",standard_addresses,
                         expires_in: DomainControlValidation::EMAIL_CHOICE_CACHE_EXPIRES_DAYS.days)
-      cert_names=CertificateName.where("name LIKE ?", "%#{dname}")
-      cert_names.each{|cn| cn.touch; Rails.cache.delete(cn.get_asynch_cache_label)}
-      cert_names.map(&:certificate_content).uniq.compact.each{|cc|cc.touch}
+      cert_names=CertificateName.where("name = ?", "#{dname}")
+      cert_names.update_all(updated_at: Time.now)
+      cert_names.each{|cn| Rails.cache.delete(cn.get_asynch_cache_label)}
+      CertificateContent.where{id >> cert_names.map(&:certificate_content_id)}.update_all(updated_at: Time.now)
       if certificate_name
         dcv=certificate_name.domain_control_validations.last
         dcv.update_column(:candidate_addresses, standard_addresses) if dcv
@@ -253,11 +311,11 @@ class CertificateName < ActiveRecord::Base
     end
 
     def max_attempts
-      1
+      3
     end
 
     def max_run_time
-      5 # seconds
+      300 # seconds
     end
   end
 
@@ -279,9 +337,10 @@ class CertificateName < ActiveRecord::Base
 
   def self.add_email_address_candidate(dname,email_address)
     Rails.cache.delete("CertificateName.candidate_email_addresses/#{dname}")
-    cert_names=CertificateName.where("name LIKE ?", "%#{dname}")
-    cert_names.each{|cn| cn.touch; Rails.cache.delete(cn.get_asynch_cache_label)}
-    cert_names.map(&:certificate_content).uniq.compact.each{|cc|cc.touch}
+    cert_names=CertificateName.where("name = ?", "#{dname}")
+    cert_names.update_all(updated_at: Time.now)
+    cert_names.each{|cn| Rails.cache.delete(cn.get_asynch_cache_label)}
+    CertificateContent.where{id >> cert_names.map(&:certificate_content_id)}.update_all(updated_at: Time.now)
     standard_addresses=CertificateName.candidate_email_addresses(dname)
     standard_addresses << email_address
     DomainControlValidation.global.find_or_create_by(subject: dname).update_column(

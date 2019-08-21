@@ -393,7 +393,7 @@ class CertificateOrdersController < ApplicationController
       end
 
       if @iv_exists.nil? && @assignee_id.nil?
-        redirect_to :back, error: 'Something went wront, please try again'
+        redirect_to :back, error: 'Something went wrong, please try again'
       else
         client_smime_validate
       end
@@ -1160,7 +1160,7 @@ class CertificateOrdersController < ApplicationController
   def schedule(params)
     # Create or Update notification group
     if params[:schedule_type] == 'none' && params[:notification_group] != 'none'
-      notification_group = current_user.ssl_account.notification_groups.where(ref: params[:notification_group]).first
+      notification_group = current_user.ssl_account.notification_groups.includes{:notification_groups_subjects}.where(ref: params[:notification_group]).first
 
       unless notification_group
         flash[:error] = "Some error occurs while getting notification group data. Please try again."
@@ -1170,7 +1170,7 @@ class CertificateOrdersController < ApplicationController
       end
     else
       # Saving notification group info
-      notification_group = current_user.ssl_account.notification_groups.find_by_friendly_name('ng-' + @certificate_order.ref)
+      notification_group = current_user.ssl_account.notification_groups.includes{:notification_groups_subjects}.find_by_friendly_name('ng-' + @certificate_order.ref)
 
       if notification_group.nil?
         notification_group = NotificationGroup.new(

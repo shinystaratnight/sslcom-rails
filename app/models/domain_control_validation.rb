@@ -23,6 +23,7 @@ class DomainControlValidation < ActiveRecord::Base
   default_scope{ order("domain_control_validations.created_at asc")}
   scope :global, -> {where{(certificate_name_id==nil) & (csr_id==nil)}}
   scope :whois_threshold, -> {where(updated_at: 1.hour.ago..DateTime.now)}
+  scope :satisfied, -> {where(workflow_state: "satisfied")}
 
   include Workflow
   workflow do
@@ -136,9 +137,9 @@ class DomainControlValidation < ActiveRecord::Base
     name=('%'+name[1..-1]) if name[0]=="*" # wildcard
     DomainControlValidation.joins(:certificate_name).where{(identifier_found==1) &
         (certificate_name.name=~"#{name}") &
-        (certificate_name_id >> [ssl_account.all_certificate_names.map(&:id)])}.each do |dcv|
-      return dcv if dcv.validated?(name,public_key_sha1)
-    end
+        (certificate_name_id >> [ssl_account.all_certificate_names(name,"validated").map(&:id)])}.each do |dcv|
+          return dcv if dcv.validated?(name,public_key_sha1)
+        end
   end
 
   def self.validated?(ssl_account,domain,public_key_sha1=nil)
@@ -177,8 +178,6 @@ class DomainControlValidation < ActiveRecord::Base
     subject=subject[2..-1] if subject=~/\A\*\./
     compare_with=compare_with[2..-1] if compare_with=~/\A\*\./
     if ::PublicSuffix.valid?(subject, default_rule: nil) and ::PublicSuffix.valid?(compare_with, default_rule: nil)
-      sd=::PublicSuffix.parse(subject)
-      subject_subdomains = sd.trd ? sd.trd.split(".").reverse : []
       d=::PublicSuffix.parse(compare_with)
       compare_with_subdomains = d.trd ? d.trd.split(".").reverse : []
       0.upto(compare_with_subdomains.count) do |i|

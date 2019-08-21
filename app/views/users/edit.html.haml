@@ -34,7 +34,7 @@
           %div a minimum of 1 lower case letter [a-z] and
           %div a minimum of 1 upper case letter [A-Z] and
           %div a minimum of 1 numeric character [0-9] and
-          %div a minimum of 1 special character: ~`!@#$%^&*()-+={}[]|\;:"<>,./?
+          %div a minimum of 1 special character: #{User::PASSWORD_SPECIAL_CHARS}
       #button_container
         =f.submit 'Activate User', class: 'button_blue'
 

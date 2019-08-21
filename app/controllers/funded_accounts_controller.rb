@@ -8,7 +8,7 @@ class FundedAccountsController < ApplicationController
   before_filter :require_user, :only => [:allocate_funds_for_order,
     :deposit_funds, :allocate_funds, :apply_funds, :confirm_funds]
   before_filter :find_ssl_account
-  skip_filter :finish_reseller_signup
+  skip_before_filter :finish_reseller_signup
   filter_access_to :all
 
   def allocate_funds

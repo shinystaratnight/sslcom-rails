@@ -80,7 +80,7 @@
                   %div SSL CERTIFICATES
                 %ul
                   -%w(dv premiumssl ev wildcard ucc evucc ov).each do |type|
-                    -next if type=='premiumssl' && !(DEPLOYMENT_CLIENT=~/ssl.com/)
+                    -next if type=='premiumssl' && !(DEPLOYMENT_CLIENT=~/ssl\.com/)
                     %li
                       %a{:href => "#{certificate_url(Settings.subca_mapping.send(type).send "product")}"}
                         =Settings.subca_mapping.send(type).send("label").html_safe
@@ -91,7 +91,7 @@
                           30 Day Trial
                         -else
                           Free Trial SSL
-                  -if DEPLOYMENT_CLIENT=~/ssl.com/
+                  -if DEPLOYMENT_CLIENT=~/ssl\.com/
                     %li.divider
                     %li
                       %a{:href => "#{details_site_seals_url({:subdomain=>false})}"}

@@ -157,6 +157,11 @@ jQuery(function($) {
     }
   };
   $(document).ready(function() {
+    $('#number_rows').change(function () {
+      $('#per_page').val($(this).val());
+      $('#search_form').submit();
+    });
+
     var status_bar=null;
     $.method_type();
     $("select#domain_control_validation_email option[value='none']").remove();
@@ -536,6 +541,23 @@ jQuery(function($) {
           domain=$(this).attr("alt").replace("*.", "").toLowerCase();
         <%end%>
 
+        if (!$(dcv_select).find(':selected').hasClass('cbEdit') &&
+          $('input[id="dcv_email_' + domain + '"]').css('display') == 'block') {
+          dcv_own_email = $('input[id="dcv_email_' + domain + '"]');
+          new_email_opt = $(dcv_select).find('option[class="cbEdit"]')[0];
+
+          if (/@/.test($(dcv_own_email).val())) {
+            $(new_email_opt).text('Your Email: ' + $(dcv_own_email).val());
+            $(new_email_opt).attr('value', $(dcv_own_email).val());
+          } else {
+            $(new_email_opt).text($(dcv_own_email).attr('placeholder'));
+            $(new_email_opt).attr('value', '');
+          }
+
+          $(dcv_own_email).val('');
+          $(dcv_own_email).css('display', 'none');
+        }
+
         //get cert order index
         instruction=$('span[alt="'+$(this).attr('name')+'"]')[0];
         /*file=$(this).attr("alt").replace("*.", "").toLowerCase()+"/.well-known/pki-validation/"+$('.md5_hash').text()+".txt";*/
@@ -558,6 +580,9 @@ jQuery(function($) {
           } else {
             email_addr = methods[0].substr(methods[0].indexOf(':') + 2);
             $(instruction).html("Validation instructions will be emailed to "+email_addr+". Please follow those instructions.");
+
+            $('input[id="dcv_email_' + domain + '"]').val(email_addr);
+            $('input[id="dcv_email_' + domain + '"]').css('display', 'block');
           }
           $('td.pretest[class~="'+$(dcv_select).attr("alt")+'"]').html("n/a");
         }
@@ -800,6 +825,11 @@ jQuery(function($) {
                 $('td.pretest[class~="'+$(dcv_select).attr("alt")+'"]').html((data ? "<div class='passed'>passed</div>" : "<div class='failed'>failed</div>"));
               });
         }
+        else {
+          $('input[id="dcv_email_' + domain + '"]').css('display', 'block');
+          $('input[id="dcv_email_' + domain + '"]').attr('placeholder', methods[0]);
+        }
+
         $(instruction).css({ background: "yellow" });
       });
     <%end%>
@@ -1113,9 +1143,15 @@ jQuery(function($) {
                           trElement.append(tdElement);
 
                           tdElement = $('<td></td>');
+                          var inputElement = $('<input></input>');
+                          inputElement.attr('class', 'own_email');
+                          inputElement.attr('id', 'dcv_email_' + value);
+                          tdElement.append(inputElement);
+
                           var sltElement = $('<select></select>');
                           sltElement.attr('name', 'domains[' + value + '][dcv]');
                           sltElement.attr('id', 'domains_' + value + '_dcv');
+                          sltElement.attr('class', 'dcv_list');
                           sltElement.attr('alt', value);
                           <%if Settings.enable_caa%>
                           if (result[key]['caa_check'] == 'failed' || result[key]['caa_check'] == '') {
@@ -1130,13 +1166,21 @@ jQuery(function($) {
                           optElement.append('Please select a validation method');
                           sltElement.append(optElement);
 
+                          <%if current_user.is_super_user?%>
+                            optElement = $('<option></option>');
+                            optElement.attr('value', '');
+                            optElement.attr('class', 'cbEdit');
+                            optElement.append('Enter New Email Address');
+                            sltElement.append(optElement);
+                          <%end%>
+
                           Object.keys(result[key]['options']).map(function(optGroupKey) {
                             var optGroupElement = $('<optgroup></optgroup>');
                             optGroupElement.attr('label', optGroupKey);
 
                             Object.keys(result[key]['options'][optGroupKey]).map(function(optKey) {
                               var optElement = $('<option></option>');
-                              optElement.attr('value', optKey);
+                              optElement.attr('value', optKey.toLowerCase());
                               optElement.append(result[key]['options'][optGroupKey][optKey]);
                               optGroupElement.append(optElement);
                             });
@@ -1146,23 +1190,7 @@ jQuery(function($) {
 
                           tdElement.append(sltElement);
                           trElement.append(tdElement);
-                          $('[name="domains[' + value + '][dcv]"]').val(result[key]['slt_option']);
-
-                          <%if current_user.is_super_user?%>
-                            $('[name="domains[' + value + '][dcv]"]').customComboBox({
-                              tipText: "Enter New Email Address",
-                              tipClass: "enter new aemail address",
-                              allowed: /[A-Za-z0-9\_\-\.\@\s]/,
-                              notallowed: /[\<\>]/,
-                              index: 'first',
-                              prefix: 'Your Email: ',
-                              onKeyDown: function(el, character, fulltext) {
-                                if (character.charCodeAt(0) == 32) {
-                                  $(el).trigger('change');
-                                }
-                              }
-                            });
-                          <%end%>
+                          $('[name="domains[' + value + '][dcv]"]').val(result[key]['slt_option'] == null ? null : result[key]['slt_option'].toLowerCase());
 
                           <%if Settings.enable_caa%>
                             tdElement = $('<td></td>');
@@ -1361,12 +1389,54 @@ jQuery(function($) {
         $(document).on('click', '#validate_domains', function(e) {
           e.preventDefault();
           domains_emails = [];
+          empty_email_domain = '';
 
           $.each($('.domain_list').find('select[id^=domains]'), function(key, value) {
-            if ($(value).val().indexOf('@') > -1 && $(value).find("option:selected").text().indexOf(':') >  -1) {
-              domains_emails.push($(value).attr('alt') + "|" + $(value).val().trim());
+            if ($(value).find('option:selected').hasClass('cbEdit')) {
+              if ($(value).prev().val() == '') {
+                empty_email_domain = $(value).attr('alt');
+                return false;
+              } else {
+                $(value).find('option:selected').text('Your Email: ' + $(value).prev().val());
+                $(value).find('option:selected').attr('value', $(value).prev().val());
+
+                domains_emails.push($(value).attr('alt') + "|" + $(value).prev().val().trim());
+              }
+            } else {
+              if ($(value).val().indexOf('@') > -1 && $(value).find("option:selected").text().indexOf(':') >  -1) {
+                domains_emails.push($(value).attr('alt') + "|" + $(value).val().trim());
+              }
             }
           });
+
+          if (empty_email_domain !== '') {
+            var message_wrap_element = $('<div></div>');
+            message_wrap_element.attr('class', 'flash_message error');
+
+            var message_element = $('<span></span>');
+            message_element.append('You have not input your email address for this domain : ' + empty_email_domain);
+            message_wrap_element.append(message_element);
+
+            var btn_element = $('<small></small>');
+            var close_btn_element = $('<div></div>');
+            close_btn_element.attr('class', 'close_flash_message');
+
+            var close_sign_element = $('<span></span>');
+            close_sign_element.append('X');
+
+            close_btn_element.append(close_sign_element);
+            close_btn_element.append('close');
+
+            btn_element.append(close_btn_element);
+            message_wrap_element.append(btn_element);
+
+            if ($('#content').find('.inner').children().first().hasClass('flash_message')) {
+              $('#content').find('.inner').children().first().remove();
+            }
+            message_wrap_element.insertBefore($('#content').find('.inner').children().first());
+
+            return false;
+          }
 
           <%if controller_name=="validations" %>
           if (domains_emails.length > 0) {

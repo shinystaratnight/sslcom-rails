@@ -44,10 +44,11 @@
         %strong=link_to "List DCV Methods w/o CSR", "http://docs.sslcomapi.apiary.io/#get-%2Fcertificate%2F%7Bref%7D%2Fvalidations%2Fmethods%7B%3Faccount_key%2Csecret_key%7D", target: "_blank"
       %li
         %textarea.selectAll{style: "width:95%;"}=co.to_api_string(action: "dcv_methods_wo_csr", current_user: current_user, domain_override: api_domain(co))
-      %li
-        %strong=link_to "List DCV Methods w/ CSR", "http://docs.sslcomapi.apiary.io/#post-%2Fcertificates%2Fvalidations%2Fcsr_hash", target: "_blank"
-      %li
-        %textarea.selectAll{style: "width:95%;"}=co.to_api_string(action: "dcv_methods_w_csr", current_user: current_user, domain_override: api_domain(co))
+      -if co.csr
+        %li
+          %strong=link_to "List DCV Methods w/ CSR", "http://docs.sslcomapi.apiary.io/#post-%2Fcertificates%2Fvalidations%2Fcsr_hash", target: "_blank"
+        %li
+          %textarea.selectAll{style: "width:95%;"}=co.to_api_string(action: "dcv_methods_w_csr", current_user: current_user, domain_override: api_domain(co))
       %li
         %strong=link_to "Update DCV", "http://docs.sslcomapi.apiary.io/#put-%2Fcertificate%2F%7Bref%7D", target: "_blank"
       %li
@@ -58,11 +59,11 @@
           %strong=link_to "New Order w/ CSR", "http://docs.sslcomapi.apiary.io/#post-%2Fcertificates", target: "_blank"
         %li
           %textarea.selectAll{style: "width:95%;"}=co.to_api_string(action: "create_w_csr", current_user: current_user, domain_override: api_domain(co))
-      -if co.external_order_number
         %li
           %strong=link_to "Process CSR or Reissue", "http://docs.sslcomapi.apiary.io/#put-%2Fcertificate%2F%7Bref%7D", target: "_blank"
         %li
           %textarea.selectAll{style: "width:95%;"}=co.to_api_string(action: "update", current_user: current_user, domain_override: api_domain(co))
+      -if co.signed_certificate
         %li
           %strong=link_to "Revoke", "http://docs.sslcomapi.apiary.io/#reference/ssl-certificates/certificate-order/revoke-certificate", target: "_blank"
         %li
@@ -72,8 +73,7 @@
         %li
           %dl
             %dt
-              -serials=%w(evucc256sslcom ucc256sslcom ov256sslcom ev256sslcom dv256sslcom wc256sslcom basic256sslcom)
-              -serials << %w(premium256sslcom) if DEPLOYMENT_CLIENT =~ Regexp.new(Settings.portal_domain)
+              -serials=%w(evucc256sslcom ucc256sslcom ov256sslcom ev256sslcom dv256sslcom wc256sslcom basic256sslcom premium256sslcom)
               -serials.each do |type|
                 -c=Certificate.find_by_serial(type)
                 %dd "#{c.api_product_code}" - #{c.title}
@@ -137,7 +137,7 @@
             %dd "337" - #{Certificate.find_by_serial("ev256sslcom").title}
             %dd
             %dd "279" - #{Certificate.find_by_serial("ucc256sslcom").title}
-            -if DEPLOYMENT_CLIENT=~ Regexp.new(Settings.portal_domain)
+            -if DEPLOYMENT_CLIENT=~/ssl\.com/
               %dd "279" - #{Certificate.find_by_serial("premium256sslcom").title}
             %dd "410" - #{Certificate.find_by_serial("evucc256sslcom").title}
             %dd "361" - OV UCC
@@ -152,7 +152,7 @@
             %dd #{Settings.ca_certificate_id_ev} - ev
             %dd #{Settings.ca_certificate_id_ov} - ov
             %dd #{Settings.ca_certificate_id_dv} - dv
-        -if DEPLOYMENT_CLIENT=~/ssl.com/
+        -if DEPLOYMENT_CLIENT=~/ssl\.com/
           %li
             SHA1
             %dl

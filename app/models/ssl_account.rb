@@ -146,6 +146,13 @@ class SslAccount < ActiveRecord::Base
   # default_scope ->{order("ssl_accounts.created_at desc")}
   default_scope{where{workflow_state << ['archived']}.order("ssl_accounts.created_at desc")}
 
+  scope :search_team, -> (term){joins{users}.where{
+        (acct_number =~ "%#{term}%") |
+        (ssl_slug =~ "%#{term}%") |
+        (company_name =~ "%#{term}%") |
+        (users.first_name =~ "%#{term}%") |
+        (users.last_name =~ "%#{term}%")}}
+
   include Workflow
   workflow do
     state :active do
@@ -246,11 +253,12 @@ class SslAccount < ActiveRecord::Base
 
   # does this domain satisfy pending validations of other domains on this team? Return list of satisfied names
   # domain - the domain that has satisfied DV
-  # dcv - the domain control validation method that was satisfied
   def satisfy_related_dcvs(domain)
+    # the satisfied domain control validation method
     dcv = domain.domain_control_validations.last
     [].tap do |satisfied_names|
-      all_certificate_names.includes(:domain_control_validations).each do |certificate_name|
+      # TODO find only unvalidated domains or validated domains with older/different timestamp
+      all_certificate_names(domain.name,"unvalidated").includes(:domain_control_validations).each do |certificate_name|
         if certificate_name.name!=domain.name and
             DomainControlValidation.domain_in_subdomains?(domain.name,certificate_name.name) and
             # team validated domain
@@ -259,6 +267,7 @@ class SslAccount < ActiveRecord::Base
             (domain.csr and certificate_name.csr and
                 domain.cached_csr_public_key_sha1==certificate_name.cached_csr_public_key_sha1))
           certificate_name.domain_control_validations.create(dcv.attributes.except("id"))
+          # TODO only call apply_for_certificate once
           certificate_name.certificate_content.certificate_order.apply_for_certificate if certificate_name.certificate_content
           satisfied_names << certificate_name.name
         end
@@ -266,12 +275,13 @@ class SslAccount < ActiveRecord::Base
     end
   end
 
-  # is this domain's validation satisfied by an already validated domain. If so, create a dcv with satisfied status
+  # does already validated domain validate `certificate_name`? If so, create a dcv with satisfied status
   # certificate_name - the domain we are looking up
   def other_dcvs_satisfy_domain(certificate_name)
-    all_certificate_names.includes(:domain_control_validations).each do |cn|
+    # TODO find only validated domains
+    all_certificate_names(certificate_name.name,"validated").includes(:validated_domain_control_validations).each do |cn|
       if cn.id!=certificate_name.id and DomainControlValidation.domain_in_subdomains?(cn.name,certificate_name.name)
-        dcv = cn.domain_control_validations.last
+        dcv = cn.validated_domain_control_validations.last # TODO find dcv.satisfied?
         if dcv && dcv.identifier_found
           # email validation
           if dcv.dcv_method =~ /email/ or
@@ -328,6 +338,12 @@ class SslAccount < ActiveRecord::Base
   def is_registered_reseller?
     Rails.cache.fetch("#{cache_key}/is_registered_reseller") do
       has_role?('reseller') && reseller.try("complete?")
+    end
+  end
+
+  def is_new_reseller?
+    Rails.cache.fetch("#{cache_key}/is_new_reseller") do
+      has_role?('new_reseller')
     end
   end
 
@@ -576,11 +592,29 @@ class SslAccount < ActiveRecord::Base
   end
 
   # concatenate team (Domain) and order scoped certificate_names
-  def all_certificate_names(scope="sslcom")
-    CertificateName.where(id: (Rails.cache.fetch("#{cache_key}/all_certificate_names/#{scope}") {
-      ((scope=="sslcom" ? self.certificate_names.sslcom : self.certificate_names)+self.domains).map(&:id).uniq
-    })).order(updated_at: :desc)
+  def all_certificate_names(root=nil,cn_validated="",scope="sslcom")
+    cn,dn= case cn_validated
+        when "validated"
+          [self.certificate_names.validated,self.domains.validated]
+        when "unvalidated"
+          [self.certificate_names.unvalidated,self.domains.unvalidated]
+        else
+          [self.certificate_names,self.domains]
+        end
+    cn=cn.sslcom if scope=="sslcom"
+    if root
+      d=::PublicSuffix.parse(root)
+      CertificateName.where(id: (Rails.cache.fetch("#{cache_key}/all_certificate_names/#{cn_validated+scope}/#{d.domain}") {
+        name_sql=->(scoped_names){scoped_names.where('name like ? OR name = ?', '%.'+d.domain ,d.domain)}
+        (name_sql.call(cn)+name_sql.call(dn)).map(&:id).uniq
+      })).order(updated_at: :desc)
+    else
+      CertificateName.where(id: (Rails.cache.fetch("#{cache_key}/all_certificate_names/#{cn_validated+scope}") {
+        (cn+dn).map(&:id).uniq
+      })).order(updated_at: :desc)
+    end
   end
+  memoize :all_certificate_names
 
   def all_csrs
     Csr.where(id: (Rails.cache.fetch("#{cache_key}/all_csrs") {
@@ -597,7 +631,7 @@ class SslAccount < ActiveRecord::Base
   def validated_domains
     validated_domains = []
     cnames = self.certificate_names
-    cnames.each do |cn|
+    cnames.includes(:domain_control_validations).each do |cn|
       dcv = cn.domain_control_validations.last
       if dcv && dcv.identifier_found
         validated_domains << cn.name unless validated_domains.include?(cn.name)
@@ -616,7 +650,7 @@ class SslAccount < ActiveRecord::Base
 
   def get_account_admins
     uid=Rails.cache.fetch("#{cache_key}/get_account_admins") do
-      users.with_role(Role::ACCOUNT_ADMIN).pluck(:user_id).uniq
+      users.with_role(Role::ACCOUNT_ADMIN).pluck(:id).uniq
     end
     uid ? User.find(uid) : nil
   end

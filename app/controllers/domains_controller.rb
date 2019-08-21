@@ -2,12 +2,31 @@
 class DomainsController < ApplicationController
   before_filter :require_user, :except => [:dcv_validate, :dcv_all_validate]
   before_filter :find_ssl_account
-  before_filter :set_row_page, only: [:index]
+  before_filter :set_row_page, only: [:index, :search]
   before_filter :set_csr_row_page, only: [:select_csr]
 
+  def search
+    index
+  end
+
   def index
-    cnames = @ssl_account.all_certificate_names.includes(:domain_control_validations,:signed_certificates).order(created_at: :desc)
-    @domains = (@ssl_account.domains.order(created_at: :desc) + cnames).uniq(&:id).paginate(@p)
+    @search = params[:search] || ""
+
+    if @search.blank?
+      cnames = @ssl_account.all_certificate_names.includes(:domain_control_validations,:signed_certificates).order(created_at: :desc)
+      total_domains = (@ssl_account.domains.order(created_at: :desc) + cnames).uniq(&:id)
+    else
+      cnames = @ssl_account.all_certificate_names.includes(:domain_control_validations,:signed_certificates).search_domains(params[:search])
+      domains = @ssl_account.domains.search_domains(params[:search])
+      total_domains = (domains + cnames).uniq(&:id)
+    end
+
+    @domains = total_domains.uniq{|cn| [cn.name, cn.certificate_content_id, cn.ssl_account_id]}.paginate(@p)
+
+    respond_to do |format|
+      format.html { render :action => :index }
+      format.xml { render :xml => @domains }
+    end
   end
 
   def create
@@ -88,14 +107,15 @@ class DomainsController < ApplicationController
     end
     @all_domains = []
     @address_choices = []
-    @cnames = @ssl_account.all_certificate_names.includes(:domain_control_validations).order(created_at: :desc)
+    @cnames = @ssl_account.all_certificate_names(nil,"unvalidated").
+        includes(:domain_control_validations).order(created_at: :desc)
     @cnames.each do |cn|
       dcv = cn.domain_control_validations.last
       next if dcv && dcv.identifier_found
       @all_domains << cn
       @address_choices << CertificateName.candidate_email_addresses(cn.non_wildcard_name)
     end
-    @domains = @ssl_account.domains.order(created_at: :desc)
+    @domains = @ssl_account.domains(nil,"unvalidated").includes(:domain_control_validations).order(created_at: :desc)
     @domains.each do |dn|
       dcv = dn.domain_control_validations.last
       next if dcv && dcv.identifier_found
@@ -388,10 +408,13 @@ class DomainsController < ApplicationController
     end
   end
 
+  # TODO rewrite this so we extract only certificate_names with no satisfied domain_control_validations
   def dcv_all_validate
     validated=[]
-    dnames = @ssl_account.domains.includes(:domain_control_validations) # directly scoped to the team
-    cnames = @ssl_account.all_certificate_names.includes(:domain_control_validations) # scoped to certificate_orders
+    # directly scoped to the team
+    dnames = @ssl_account.domains.includes(:domain_control_validations)
+    # scoped to certificate_orders
+    cnames = @ssl_account.all_certificate_names.includes(:domain_control_validations)
     if(params['authenticity_token'])
       identifier = params['validate_code']
       (dnames+cnames).each do |cn|
@@ -443,7 +466,7 @@ class DomainsController < ApplicationController
     identifier_list = []
     domain_ary = []
     domain_list = []
-    cnames.each do |cn|
+    cnames.includes(:domain_control_validations).each do |cn|
       dcv = cn.domain_control_validations.last
       if DomainControlValidation.approved_email_address? CertificateName.candidate_email_addresses(
           cn.non_wildcard_name), dcv.email_address
