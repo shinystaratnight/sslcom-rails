@@ -56,8 +56,12 @@
                     %strong notes:
                     = sa.notes
                     %br/
-                    %strong user:
-                    = sa.owner.email
+                    - if sa.owner.is_a? User
+                      %strong user:
+                      = sa.owner.email
+                    - elsif sa.owner.is_a? ApiCredential
+                      %strong user:
+                      = sa.owner.account_key
 
               - revoked = al.find {|sa| sa.action == 'revocation'}
               - unless revoked.nil?

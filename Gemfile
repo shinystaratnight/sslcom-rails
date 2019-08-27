@@ -1,5 +1,6 @@
 source 'http://rubygems.org'
 
+gem 'bundler', '1.17.3'
 gem 'rails', '~> 4.2.11.1'
 gem 'bootsnap', require: false
 gem 'sprockets'
@@ -8,7 +9,7 @@ gem 'responders', '~> 2.0'
 gem 'dynamic_form'
 gem 'mysql2'
 gem 'workflow', '~> 1.2'
-gem "rabl"
+gem "rabl", '0.14.1'
 gem 'pry-rails'
 gem 'awesome_print'
 gem 'activemerchant'
