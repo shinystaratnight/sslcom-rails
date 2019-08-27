@@ -583,6 +583,7 @@ DEPENDENCIES
   bootstrap
   bootstrap-datepicker-rails
   builder
+  bundler (= 1.17.3)
   byebug
   cancan
   capybara
@@ -641,7 +642,7 @@ DEPENDENCIES
   pry-rails
   pry-remote
   public_suffix
-  rabl
+  rabl (= 0.14.1)
   rack-cors (>= 0.4.1)
   rack-ssl-enforcer
   rack_session_access

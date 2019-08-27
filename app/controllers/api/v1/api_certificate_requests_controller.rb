@@ -112,9 +112,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
               notes:  "api revocation from ip address #{request.remote_ip}",
               action: "revoked"
             )
-            if signed_certificate.ca == "comodo"
-              signed_certificate.revoke! @result.reason
-            end
+            signed_certificate.revoke! @result.reason
           end
         end
         @result.status = "revoked"

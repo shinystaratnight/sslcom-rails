@@ -198,7 +198,7 @@ class SslcomCaApi
           ca: options[:ca]) if approval_res.try(:body)=~/WAITING FOR APPROVAL/
     end
     if options[:mapping].profile_name=~/EV/ and (approval_res.try(:body).blank? or approval_res.try(:body)=="[]" or
-        (cc.signed_certificate.read_attribute(:ejbca_username)==cc.csr.sslcom_ca_requests.compact.first.username and
+        (!cc.signed_certificate.blank? and cc.signed_certificate.read_attribute(:ejbca_username)==cc.csr.sslcom_ca_requests.compact.first.username and
             !cc.csr.sslcom_ca_requests.compact.first.username.blank?))
       # create the user for EV order
       host = ca_host(options[:mapping])+"/v1/user"
@@ -208,7 +208,7 @@ class SslcomCaApi
         return
       else
         cc.pend_issuance!
-      end
+      end unless options[:mapping].profile_name=~/EV/
       host = ca_host(options[:mapping])+
           "/v1/certificate#{'/ev' if options[:mapping].profile_name=~/EV/}/pkcs10"
       options.merge!(collect_certificate: true, username:
