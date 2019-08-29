@@ -122,7 +122,7 @@
             Country
         .filter_label
           .filter_cont.hidden{'data-type'=>'select'}
-            =select_tag :filter_country, options_for_select(Country::PRIORITY+[""], disabled: [""])+options_for_select(Country.approved.collect {|c| [ c.name, c.name ] }.sort{|x,y|x[0]<=>y[0]}), :class=>'filter_cont_slt', 'data-field'=>'country'
+            =select_tag :filter_country, options_for_select(Country::PRIORITY+[""], disabled: [""])+options_for_select(Country.select_options("name")), :class=>'filter_cont_slt', 'data-field'=>'country'
       %div.filter_item
         .filter_evt.clearfix
           %label

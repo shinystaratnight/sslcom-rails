@@ -1,5 +1,6 @@
 source 'http://rubygems.org'
 
+gem 'bundler', '1.17.3'
 gem 'rails', '~> 4.2.11.1'
 gem 'bootsnap', require: false
 gem 'sprockets'
@@ -7,8 +8,8 @@ gem 'protected_attributes'
 gem 'responders', '~> 2.0'
 gem 'dynamic_form'
 gem 'mysql2'
-gem 'workflow'
-gem "rabl"
+gem 'workflow', '~> 1.2'
+gem "rabl", '0.14.1'
 gem 'pry-rails'
 gem 'awesome_print'
 gem 'activemerchant'
@@ -16,7 +17,7 @@ gem 'money', '2.1.0'
 gem 'rack-ssl-enforcer'
 gem 'will_paginate'
 gem 'haml', '>= 3.1.alpha.50'
-gem 'declarative_authorization'
+gem 'declarative_authorization', git: 'git@github.com:Xymist/declarative_authorization.git', :branch => 'allow_rails_5'
 gem "authlogic"
 gem "savon", '~> 2.0'
 gem 'zip-zip'
@@ -24,7 +25,7 @@ gem 'rb-inotify', :require => false
 gem 'aws-sdk', '~> 2.0'
 gem "paperclip", '~> 5.3.0'
 gem 'xml-simple'
-gem 'json', '~> 1.8.1'
+gem 'json' #, '~> 1.8.6'
 gem 'easy_roles'
 gem 'squeel'
 gem 'yui-compressor'
@@ -37,11 +38,13 @@ gem 'whenever', require: false
 gem 'openssl-extensions', :require => 'openssl-extensions/all'
 gem 'simpleidn'
 gem "oauth-plugin", ">= 0.4.0.pre1"
-gem "therubyracer", '~> 0.12.0', platform: :ruby
-gem "libv8", '~> 3.16.14.0'
-# gem 'request_exception_handler'
+# gem "therubyracer", '~> 0.12.3', platform: :ruby
+gem 'mini_racer', platforms: :ruby
+gem "libv8"
+gem 'request_exception_handler'
 gem 'rvm-capistrano'
 gem 'dalli'
+gem 'dalli-elasticache'
 gem 'attr_encrypted', '>= 3.0.3'
 gem 'delayed_job_active_record'
 gem "daemons"
@@ -63,6 +66,7 @@ gem 'rails-observers'
 gem 'actionpack-action_caching', '~> 1.1', '>= 1.1.1'
 gem 'sass-rails'
 gem 'bootstrap'
+gem 'popper_js', '~> 1.11.1'
 gem 'compass-rails'
 gem 'select2-rails'
 gem 'stripe'
@@ -71,7 +75,7 @@ gem 'rails-api'
 gem 'jsonapi-serializers'
 gem 'api-pagination'
 gem 'rubyzip', '~> 1.2.2'
-gem 'wkhtmltopdf-binary'
+# gem 'wkhtmltopdf-binary' see config/initializers/wicked_pdf.rb for installation instructions
 gem 'wicked_pdf'
 gem 'u2f'
 gem 'duo_web', '~> 1.0'

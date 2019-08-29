@@ -112,9 +112,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
               notes:  "api revocation from ip address #{request.remote_ip}",
               action: "revoked"
             )
-            if signed_certificate.ca == "comodo"
-              signed_certificate.revoke! @result.reason
-            end
+            signed_certificate.revoke! @result.reason
           end
         end
         @result.status = "revoked"
@@ -622,8 +620,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
           @result.cert_details[:api_commands][:is_test] = @acr.is_test
 
           @result.cert_details[:api_commands][:products] = []
-          serial_list = ['evucc256sslcom', 'ucc256sslcom', 'ov256sslcom', 'ev256sslcom', 'dv256sslcom', 'wc256sslcom', 'basic256sslcom']
-          serial_list.push('premium256sslcom') if DEPLOYMENT_CLIENT=~/www.ssl.com/
+          serial_list = ['evucc256sslcom', 'ucc256sslcom', 'ov256sslcom', 'ev256sslcom', 'dv256sslcom', 'wc256sslcom', 'basic256sslcom','premium256sslcom']
           serial_list.each do |serial|
             c = Certificate.find_by_serial(serial)
             @result.cert_details[:api_commands][:products].push('"' + c.api_product_code + '"' + ' - ' + c.title)
@@ -1119,11 +1116,12 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
                 result.effective_date = sc.effective_date
                 result.expiration_date = sc.expiration_date
                 result.algorithm = sc.is_SHA2? ? 'SHA256' : 'SHA1'
-                result.site_seal_code = ERB::Util.json_escape(render_to_string(
-                                                                  partial: 'site_seals/site_seal_code.html.haml',
-                                                                  locals: {co: acr},
-                                                                  layout: false)
-                )
+                # below is forcing nginx to return content_type: html which is breaking SSL Manager
+                # result.site_seal_code = ERB::Util.json_escape(render_to_string(
+                #                                                   partial: 'site_seals/site_seal_code.html.haml',
+                #                                                   locals: {co: acr},
+                #                                                   layout: false)
+                # )
               end
             end
 

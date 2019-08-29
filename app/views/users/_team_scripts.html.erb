@@ -1,0 +1,11 @@
+<script type="text/javascript">
+  jQuery.noConflict();
+  jQuery(function($) {
+    $(document).ready(function() {
+      $('#number_rows').change(function () {
+        $('#per_page').val($(this).val());
+        $('#search_form').submit();
+      });
+    });
+  });
+</script>

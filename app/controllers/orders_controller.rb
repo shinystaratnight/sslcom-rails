@@ -1005,7 +1005,7 @@ class OrdersController < ApplicationController
       else
         current_user.ssl_account.cached_certificate_orders.find_by(ref: params[:co_ref])
       end
-      @ssl_account = @certificate_order.ssl_account
+      @ssl_account = @certificate_order.try(:ssl_account)
       @certificate_content = @certificate_order.certificate_contents.find_by(ref: params[:cc_ref])
 
       @amount = if params[:renew_ucc] || params[:ucc_csr_submit]

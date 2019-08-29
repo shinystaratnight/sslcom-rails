@@ -57,7 +57,7 @@ module CertificateOrdersHelper
         end
       end
     end
-    if DEPLOYMENT_CLIENT=="ssl.com" && !(certificate_order.certificate.is_client? || certificate_order.certificate.is_code_signing?)
+    if !(certificate_order.certificate.is_client? || certificate_order.certificate.is_code_signing?)
       items << "SSL.com Secured Seal"
       items << link_to("SSL.com daily site monitoring", notification_groups_path({ssl_slug: @ssl_slug}))
     end

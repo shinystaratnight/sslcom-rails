@@ -5,6 +5,7 @@ class User < ActiveRecord::Base
 #  using_access_control
 
   OWNED_MAX_TEAMS = 3
+  PASSWORD_SPECIAL_CHARS = '~`!@#\$%^&*()-+={}[]|;:"<>,./?'
 
   has_many  :u2fs
   has_many  :assignments, dependent: :destroy
@@ -48,6 +49,8 @@ class User < ActiveRecord::Base
   preference  :scan_log_row_count, :string, :default => "10"
   preference  :domain_row_count, :string, :default => "10"
   preference  :domain_csr_row_count, :string, :default => "10"
+  preference  :team_row_count, :string, :default => "10"
+  preference  :validate_row_count, :string, :default => "10"
 
   #will_paginate
   cattr_accessor :per_page
@@ -62,7 +65,7 @@ class User < ActiveRecord::Base
     format: {with: /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i, on: :create}
   validates :password, format: {
     with: /\A(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[\W]).{8,}\z/, if: :validate_password?,
-    message: "must be at least 8 characters long and include at least 1 of each of the following: uppercase, lowercase, number and special character such as ~`!@#$%^&*()-+={}[]|\;:\"<>,./?."
+    message: "must be at least 8 characters long and include at least 1 of each of the following: uppercase, lowercase, number and special character such as #{User::PASSWORD_SPECIAL_CHARS}"
   }
   accepts_nested_attributes_for :assignments
 
@@ -80,6 +83,8 @@ class User < ActiveRecord::Base
       {:on => :update, :minimum => 8,
       :if => '(has_no_credentials? && !admin_update) || changing_password'}
   end
+
+  before_save :should_reset_perishable_token
 
   before_create do |u|
     u.status='enabled'
@@ -748,7 +753,8 @@ class User < ActiveRecord::Base
   end
 
   def is_owner?(target_account=nil)
-    role_symbols(target_account).include? Role::OWNER.to_sym
+    # TODO need to separate out reseller from owner
+    role_symbols(target_account) & [Role::OWNER.to_sym,Role::RESELLER.to_sym]
   end
 
   def is_account_admin?
@@ -759,8 +765,8 @@ class User < ActiveRecord::Base
     (role_symbols & [Role::OWNER.to_sym, Role::ACCOUNT_ADMIN.to_sym]).any?
   end
 
-  def is_reseller?
-    role_symbols.include? Role::RESELLER.to_sym
+  def is_reseller?(target_account=nil)
+    role_symbols(target_account).include? Role::RESELLER.to_sym
   end
 
   def is_billing?
@@ -1061,6 +1067,19 @@ class User < ActiveRecord::Base
   end
 
   private
+
+  # https://github.com/binarylogic/authlogic/issues/81
+  def should_record_timestamps?
+    changed_keys = self.changes.keys - ["last_request_at", "perishable_token", "updated_at", "created_at"]
+    changed_keys.present? && super
+  end
+
+  # https://github.com/binarylogic/authlogic/issues/485
+  def should_reset_perishable_token
+    if changed? && changed_attributes.keys != ['last_request_at']
+      reset_perishable_token
+    end
+  end
 
   def self_or_other(user_id)
     user = user_id ? User.find(user_id) : self

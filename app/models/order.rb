@@ -241,7 +241,7 @@ class Order < ActiveRecord::Base
   end
 
   def self.range_amount(start, finish)
-    amount = BigDecimal.new(range(start, finish).amount.to_s)
+    amount = BigDecimal(range(start, finish).amount.to_s)
     rounded = (amount * 100).round / 100
     '%.02f' % rounded
   end
