@@ -1,6 +1,5 @@
 source 'http://rubygems.org'
 
-gem 'bundler', '1.17.3'
 gem 'rails', '~> 4.2.11.1'
 gem 'bootsnap', require: false
 gem 'sprockets'
@@ -50,7 +49,7 @@ gem 'delayed_job_active_record'
 gem "daemons"
 gem 'delayed_job_groups_plugin'
 gem 'delayed-web'
-gem 'public_suffix'
+gem 'public_suffix', ">= 4.0.0"
 gem 'rack-cors', ">= 0.4.1", :require => 'rack/cors'
 gem 'cancan'
 gem 'unscoped_associations'
