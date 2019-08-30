@@ -111,6 +111,7 @@ module Stripeable
   end
   
   def stripe_test?(stripe_object)
+    return false if stripe_object.blank?
     stripe_object = Stripe::Token.retrieve(stripe_object) if stripe_object.is_a?(String)
     !stripe_object[:livemode]
   end
