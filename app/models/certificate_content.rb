@@ -148,7 +148,7 @@ class CertificateContent < ActiveRecord::Base
         last_sent = unless certificate_order.certificate.is_ucc?
                       csr.domain_control_validations.last_sent
                     else
-                      certificate_names.map {|cn| cn..last_sent_domain_control_validations.last}.flatten.compact
+                      certificate_names.map {|cn| cn.last_sent_domain_control_validations.last}.flatten.compact
                     end
         unless last_sent.blank?
           certificate_order.valid_recipients_list.each do |c|

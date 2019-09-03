@@ -65,7 +65,7 @@ class SignedCertificate < ActiveRecord::Base
 
   before_create do |s|
     s.decoded=s.decode
-    s.serial=s.decoded_serial if s.decoded
+    s.serial=s.decoded ? s.decoded_serial : ""
     s.status ||= "issued"
   end
 
