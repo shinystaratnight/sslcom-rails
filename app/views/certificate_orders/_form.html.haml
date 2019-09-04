@@ -113,7 +113,7 @@
       .clearfix
         %label{:for=>"country"}
           *Country:
-        =rf.select :country, options_for_select(Country::PRIORITY+[""], disabled: [""])+options_for_select(Country.approved.collect {|c| [ c.name, c.iso1_code ] }.sort{|x,y|x[0]<=>y[0]},rf.object.country)
+        =rf.select :country, options_for_select(Country::PRIORITY+[""], disabled: [""])+options_for_select(Country.select_options,rf.object.country)
       -if certificate.is_evcs? or certificate.is_ev?
         .clearfix
           %label{:for=>"business_category"}
@@ -133,7 +133,7 @@
           %label{:for=>"incorporation_country"}
             *Registered Country:
             %span.label_desc jurisdiction of incorporation country
-          =rf.select :incorporation_country, options_for_select(Country::PRIORITY+[""], disabled: [""])+options_for_select(Country.approved.collect {|c| [ c.name, c.iso1_code ] }.sort{|x,y|x[0]<=>y[0]},rf.object.incorporation_country)
+          =rf.select :incorporation_country, options_for_select(Country::PRIORITY+[""], disabled: [""])+options_for_select(Country.select_options,rf.object.incorporation_country)
         .clearfix
           %label{:for=>"company_number"}
             *Registration Number:

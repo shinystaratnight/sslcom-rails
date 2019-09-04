@@ -8,7 +8,7 @@ gem 'responders', '~> 2.0'
 gem 'dynamic_form'
 gem 'mysql2'
 gem 'workflow', '~> 1.2'
-gem "rabl"
+gem "rabl", '0.14.1'
 gem 'pry-rails'
 gem 'awesome_print'
 gem 'activemerchant'
@@ -49,7 +49,7 @@ gem 'delayed_job_active_record'
 gem "daemons"
 gem 'delayed_job_groups_plugin'
 gem 'delayed-web'
-gem 'public_suffix'
+gem 'public_suffix', ">= 4.0.0"
 gem 'rack-cors', ">= 0.4.1", :require => 'rack/cors'
 gem 'cancan'
 gem 'unscoped_associations'

@@ -753,7 +753,8 @@ class User < ActiveRecord::Base
   end
 
   def is_owner?(target_account=nil)
-    role_symbols(target_account).include? Role::OWNER.to_sym
+    # TODO need to separate out reseller from owner
+    role_symbols(target_account) & [Role::OWNER.to_sym,Role::RESELLER.to_sym]
   end
 
   def is_account_admin?
@@ -764,8 +765,8 @@ class User < ActiveRecord::Base
     (role_symbols & [Role::OWNER.to_sym, Role::ACCOUNT_ADMIN.to_sym]).any?
   end
 
-  def is_reseller?
-    role_symbols.include? Role::RESELLER.to_sym
+  def is_reseller?(target_account=nil)
+    role_symbols(target_account).include? Role::RESELLER.to_sym
   end
 
   def is_billing?
