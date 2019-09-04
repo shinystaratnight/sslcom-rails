@@ -163,16 +163,43 @@ module CertificateOrdersHelper
       reset_expired_token_request_status(certificate_order)
 
       if certificate_order.generate_certificate_order_token.blank? or certificate_order.generate_certificate_order_token.is_expired
-        link_to certificate_order.request_status == 'done' ? 'activation request sent. Request again?' : (is_rekey ? 'request rekey' : 'request certificate'),
-                nil, class: 'link_to_send_notify',
-                :data => {
-                    :ref => certificate_order.ref,
-                    :type => 'request',
-                    :done => certificate_order.request_status == 'done' ? 'true' : 'false'
-                }
+        if certificate.is_client_basic?
+          recipient = certificate_order.get_recipient
+          iv = Contact.find_by(user_id: (recipient.user_id || recipient.id))
+          certificate_order.update_attribute(:request_status, 'done')
+
+          link_to 'send activation link to ' + iv.email,
+                  nil, class: 'link_to_send_notify',
+                  :data => { :ref => certificate_order.ref,
+                             :type => 'token',
+                             :ori_text => '',
+                             :done => 'false'
+                  }
+        else
+          link_to certificate_order.request_status == 'done' ? 'activation request sent. Request again?' : (is_rekey ? 'request rekey' : 'request certificate'),
+                  nil, class: 'link_to_send_notify',
+                  :data => {
+                      :ref => certificate_order.ref,
+                      :type => 'request',
+                      :done => certificate_order.request_status == 'done' ? 'true' : 'false'
+                  }
+        end
       else
-        link_to 'generate certificate', confirm_path(certificate_order.generate_certificate_order_token.token) if
-            permitted_to?(:update, certificate_order.validation) # assume multi domain
+        if !certificate.is_client_basic? || (certificate.is_client_basic? && current_user.is_standard? && current_user.ssl_account.epki_registrant)
+          link_to 'generate certificate', confirm_path(certificate_order.generate_certificate_order_token.token) if
+              permitted_to?(:update, certificate_order.validation) # assume multi domain
+        else
+          recipient = certificate_order.get_recipient
+          iv = Contact.find_by(user_id: (recipient.user_id || recipient.id))
+
+          link_to 'activation link sent. Resend?',
+                  nil, class: 'link_to_send_notify',
+                  :data => { :ref => certificate_order.ref,
+                             :type => 'token',
+                             :ori_text => 'send activation link to ' + iv.email,
+                             :done => 'true'
+                  }
+        end
       end
     elsif current_user.is_billing_only? || current_user.is_validations_only? || current_user.is_validations_and_billing_only?
       'n/a'
