@@ -404,14 +404,14 @@ class Order < ActiveRecord::Base
     state :fully_refunded do
       event :unrefund, transitions_to: :paid do |complete=true|
         line_items.each {|li|
-          CertificateOrder.unscoped.find(li.sellable_id).unrefund! if li.sellable_type=="CertificateOrder"} if complete
+          CertificateOrder.unscoped.find_by_id(li.sellable_id).unrefund! if li.sellable_type=="CertificateOrder"} if complete
       end
       event :charge_back, transitions_to: :charged_back do |complete=true|
         line_items.each {|li|li.sellable_unscoped.charge_back!} if complete
       end
       event :reject, :transitions_to => :rejected do |complete=true|
         line_items.each {|li|
-          CertificateOrder.unscoped.find(li.sellable_id).reject! if li.sellable_type=="CertificateOrder"} if complete
+          CertificateOrder.unscoped.find_by_id(li.sellable_id).reject! if li.sellable_type=="CertificateOrder"} if complete
       end
     end
 
@@ -430,14 +430,14 @@ class Order < ActiveRecord::Base
       end
       event :unrefund, transitions_to: :paid do |complete=true|
         line_items.each {|li|
-          CertificateOrder.unscoped.find(li.sellable_id).unrefund! if li.sellable_type=="CertificateOrder"} if complete
+          CertificateOrder.unscoped.find_by_id(li.sellable_id).unrefund! if li.sellable_type=="CertificateOrder"} if complete
       end
       event :charge_back, transitions_to: :charged_back do |complete=true|
         line_items.each {|li|li.sellable_unscoped.charge_back!} if complete
       end
       event :reject, :transitions_to => :rejected do |complete=true|
         line_items.each {|li|
-          CertificateOrder.unscoped.find(li.sellable_id).reject! if li.sellable_type=="CertificateOrder"} if complete
+          CertificateOrder.unscoped.find_by_id(li.sellable_id).reject! if li.sellable_type=="CertificateOrder"} if complete
       end
     end
 
@@ -458,7 +458,7 @@ class Order < ActiveRecord::Base
       end
       event :unreject, transitions_to: :paid do |complete=true|
         line_items.each {|li|
-          CertificateOrder.unscoped.find(li.sellable_id).unreject! if li.sellable_type=="CertificateOrder"} if complete
+          CertificateOrder.unscoped.find_by_id(li.sellable_id).unreject! if li.sellable_type=="CertificateOrder"} if complete
       end
       event :cancel, transitions_to: :canceled do |complete=true|
         cancel_order
@@ -1004,7 +1004,7 @@ class Order < ActiveRecord::Base
     end
     
     SystemAudit.create(
-        owner:  User.find(user_id),
+        owner:  User.find_by_id(user_id),
         target: o,
         action: "Refund #{new_refund.id} created for order #{o.reference_number}. It is now #{o.current_state}",
         notes:  "Originating order is #{self.reference_number}."
@@ -1025,7 +1025,7 @@ class Order < ActiveRecord::Base
   end
   
   def get_order_charged
-    deducted_from_id ? Order.find(deducted_from_id) : self
+    deducted_from_id ? Order.find_by_id(deducted_from_id) : self
   end
   
   def get_total_merchant_amount

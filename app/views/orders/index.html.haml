@@ -61,8 +61,8 @@
             =select_tag :filter_product,
             options_for_select([['Domains Adjustment', 'domain_adjustments'],
               ['Deposit', 'deposit'],
-              [Order::FAW, 'faw'], 
-              ['Certificate Order', 'certificate'], 
+              [Order::FAW, 'faw'],
+              ['Certificate Order', 'certificate'],
               ['Reseller Tier', 'reseller'],
               ['Basic SSL (basicssl)', 'basicssl'],
               ['Wildcard SSL (wildcard)', 'wildcard'],
@@ -140,7 +140,7 @@
               =select_tag :filter_order_tags,                                                |
               options_for_select(@team_tags.pluck(:name).sort_by(&:downcase)),               |
               class: 'filter_cont_slt slt-large', 'data-field': 'order_tags', multiple: true
-  
+
   =button_tag 'Search', :type=>'button', :id=>'btn_order_filter_search'
   =button_tag 'Cancel', :type=>'button', :id=>'btn_close_order_filter'
 
@@ -160,7 +160,7 @@
       =title
       =will_paginate @orders
     -if current_user.is_admin?
-      =render partial: 'orders/index_stats' 
+      =render partial: 'orders/index_stats'
     %tr.heading_row
       %th.name(scope="col") Description
       %th(scope="col" colspan="3") Date

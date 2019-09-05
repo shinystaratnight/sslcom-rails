@@ -112,7 +112,7 @@ class CertificateContent < ActiveRecord::Base
   
   CertificateNamesJob = Struct.new(:cc_id, :domains) do
     def perform
-      CertificateContent.find(cc_id).certificate_names_from_domains
+      CertificateContent.find_by_id(cc_id).certificate_names_from_domains
     end
   end
 
@@ -490,7 +490,7 @@ class CertificateContent < ActiveRecord::Base
   end
 
   def cached_certificate_order
-    CertificateOrder.unscoped.find(Rails.cache.fetch("#{cache_key}/cached_certificate_order")do
+    CertificateOrder.unscoped.find_by_id(Rails.cache.fetch("#{cache_key}/cached_certificate_order")do
       certificate_order.id
     end)
   end
