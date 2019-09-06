@@ -791,17 +791,24 @@ class CertificateOrdersController < ApplicationController
                 else
                   true
                 end
-    
-    if validated
-      cc.validate! unless cc.validated?
-      co.copy_iv_ov_validation_history(validations)
-      redirect_to certificate_order_path(@ssl_slug, co.ref)
-    else
+
+    if co.certificate.is_client_pro? && params[:saved_contacts].blank?
       cc.pend_validation! if !(cc.pending_validation? or cc.issued?)
       redirect_to document_upload_certificate_order_validation_path(
-        @ssl_slug, certificate_order_id: co.ref
-      )
-    end 
+                      @ssl_slug, certificate_order_id: co.ref
+                  )
+    else
+      if validated
+        cc.validate! unless cc.validated?
+        co.copy_iv_ov_validation_history(validations)
+        redirect_to certificate_order_path(@ssl_slug, co.ref)
+      else
+        cc.pend_validation! if !(cc.pending_validation? or cc.issued?)
+        redirect_to document_upload_certificate_order_validation_path(
+                        @ssl_slug, certificate_order_id: co.ref
+                    )
+      end
+    end
   end
 
   def admin_validate
@@ -956,7 +963,7 @@ class CertificateOrdersController < ApplicationController
     unless attrs.empty?
       @iv_exists = @certificate_order.ssl_account
         .individual_validations.find_by(attrs)
-    end  
+    end
     @assignee_id = @iv_exists.user_id if @iv_exists
   end
 
