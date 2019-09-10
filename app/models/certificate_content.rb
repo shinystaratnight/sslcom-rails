@@ -223,6 +223,7 @@ class CertificateContent < ActiveRecord::Base
     state :pending_issuance do
       event :pend_validation, :transitions_to => :pending_validation
       event :pend_issuance, :transitions_to => :pending_issuance
+      event :validate, :transitions_to => :validated
       event :issue, :transitions_to => :issued
       event :cancel, :transitions_to => :canceled
       event :reset, :transitions_to => :new

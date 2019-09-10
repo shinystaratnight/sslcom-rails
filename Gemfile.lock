@@ -179,6 +179,7 @@ GEM
     dalli-elasticache (0.2.0)
       dalli (>= 1.0.0)
     database_cleaner (1.7.0)
+    date (2.0.0)
     debug_inspector (0.0.3)
     deep_merge (1.2.1)
     delayed-web (0.4.5)
@@ -235,6 +236,7 @@ GEM
     encryptor (3.0.0)
     erubi (1.8.0)
     erubis (2.7.0)
+    etc (1.0.1)
     eventmachine (1.2.7)
     execjs (2.7.0)
     factory_girl (4.9.0)
@@ -250,11 +252,13 @@ GEM
     ffi-compiler (1.0.1)
       ffi (>= 1.0.0)
       rake
+    fileutils (1.2.0)
     font-awesome-rails (4.7.0.5)
       railties (>= 3.2, < 6.1)
     foreman (0.85.0)
       thor (~> 0.19.1)
     formatador (0.2.5)
+    forwardable (1.2.0)
     globalid (0.4.2)
       activesupport (>= 4.2.0)
     guard (2.15.0)
@@ -511,9 +515,11 @@ GEM
       activerecord (>= 3.0)
       activesupport (>= 3.0)
       polyamorous (~> 1.1.0)
+    stringio (0.0.2)
     stripe (4.22.0)
       faraday (~> 0.13)
       net-http-persistent (~> 3.0)
+    strscan (1.0.0)
     temple (0.8.1)
     terminal-notifier-guard (1.7.0)
     terrapin (0.6.0)
@@ -561,6 +567,7 @@ GEM
     yui-compressor (0.12.0)
     zip-zip (0.3)
       rubyzip (>= 1.0.0)
+    zlib (1.0.0)
 
 PLATFORMS
   ruby
@@ -597,6 +604,7 @@ DEPENDENCIES
   dalli
   dalli-elasticache
   database_cleaner
+  date
   declarative_authorization!
   delayed-web
   delayed_job_active_record
@@ -605,10 +613,13 @@ DEPENDENCIES
   duo_web (~> 1.0)
   dynamic_form
   easy_roles
+  etc
   factory_girl_rails
   faker
+  fileutils
   font-awesome-rails
   foreman
+  forwardable
   guard
   guard-livereload
   guard-minitest
@@ -667,7 +678,9 @@ DEPENDENCIES
   spring-commands-testunit
   sprockets
   squeel
+  stringio
   stripe
+  strscan
   terminal-notifier-guard
   timezone (~> 1.0)
   turbolinks
@@ -686,6 +699,7 @@ DEPENDENCIES
   xml-simple
   yui-compressor
   zip-zip
+  zlib
 
 BUNDLED WITH
    1.17.3

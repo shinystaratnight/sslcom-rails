@@ -92,6 +92,14 @@ gem 'memoist'
 # gem 'countries'
 gem 'bootstrap-datepicker-rails'
 gem 'timezone', '~> 1.0'
+# required by sws-a1
+gem 'etc'
+gem 'fileutils'
+gem 'zlib'
+gem 'stringio'
+gem 'date'
+gem 'strscan'
+gem 'forwardable'
 
 group :development do
   gem 'foreman'
