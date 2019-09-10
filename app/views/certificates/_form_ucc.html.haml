@@ -112,7 +112,9 @@
         %span.label_desc can skip and edit later
         -unless @certificate.is_premium_ssl?
           %span.label_break
-          %span.label_desc 2000 domains maximum
+          -#%span.label_desc 2000 domains maximum
+          %span.label_desc
+            = Certificate::UCC_MAX_DOMAINS.to_s + ' domains maximum'
           %span.label_break
           %span.label_desc
             $

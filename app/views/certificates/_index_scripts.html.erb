@@ -56,6 +56,9 @@ jQuery(function($) {
       <%if @certificate.is_premium_ssl?-%>
         domains = domains.slice(0,3);
         names = domains.join(' ');
+      <%elsif @certificate.is_ucc?-%>
+        domains = domains.slice(0, <%= Certificate::UCC_MAX_DOMAINS%>);
+        names = domains.join(' ');
       <%end-%>
 
       return domains.filter(Boolean);
@@ -83,6 +86,9 @@ jQuery(function($) {
 
       <%if @certificate.is_premium_ssl?-%>
         valid_domains = valid_domains.slice(0, 3);
+        textArea.value = valid_domains.join(' ');
+      <%elsif @certificate.is_ucc?-%>
+        valid_domains = valid_domains.slice(0, <%= Certificate::UCC_MAX_DOMAINS%>);
         textArea.value = valid_domains.join(' ');
       <%end-%>
 
