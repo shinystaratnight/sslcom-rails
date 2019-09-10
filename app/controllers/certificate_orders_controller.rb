@@ -135,6 +135,7 @@ class CertificateOrdersController < ApplicationController
       @taggable = @certificate_order
       get_team_tags
       redirect_to edit_certificate_order_path(@ssl_slug, @certificate_order) and return if @certificate_order.certificate_content.new?
+
       respond_to do |format|
         format.html # show.html.erb
         format.xml  { render :xml => @certificate_order }
@@ -226,6 +227,10 @@ class CertificateOrdersController < ApplicationController
         end
         @saved_registrants = @certificate_order.ssl_account.saved_registrants
       end
+
+      unless params[:approve_phone].blank?
+        flash[:notice] = "It needs to verify phone number."
+      end
     else
       not_found
     end
@@ -310,6 +315,7 @@ class CertificateOrdersController < ApplicationController
       is_smime_or_client = @certificate_order.certificate.is_smime_or_client?
       if @certificate_order.update_attributes(params[:certificate_order])
         cc = @certificate_order.certificate_content
+        original_state_phone_approve = cc.locked_registrant.blank? ? false : cc.locked_registrant.phone_number_approved
 
         # TODO: Store LockedRegistrant Data in case of CS
         setup_locked_registrant(
@@ -350,6 +356,15 @@ class CertificateOrdersController < ApplicationController
             end
           end
         end
+
+        if current_user.is_super_user? && !original_state_phone_approve &&
+            !params[:certificate_order][:certificate_contents_attributes]['0'][:registrant_attributes][:phone].empty? &&
+            params[:certificate_order][:certificate_contents_attributes]['0'][:registrant_attributes][:phone_number_approved] &&
+            params[:certificate_order][:certificate_contents_attributes]['0'][:registrant_attributes][:phone_number_approved] == '1'
+          OrderNotifier.notify_phone_number_approve(@certificate_order, current_user.email).deliver
+          flash[:notice] = "It has been approved phone number and sent notification to this certificate order's owner."
+        end
+
         if is_smime_or_client
           format.html { redirect_to recipient_certificate_order_path(@ssl_slug, @certificate_order.ref) }
         elsif @certificate_order.is_express_signup? || @certificate_order.skip_contacts_step?
@@ -1060,6 +1075,7 @@ class CertificateOrdersController < ApplicationController
       @registrant.last_name = locked_registrant.last_name
       @registrant.email = locked_registrant.email
       @registrant.phone = locked_registrant.phone
+      @registrant.phone_number_approved = locked_registrant.phone_number_approved
       @registrant.country_code = locked_registrant.country_code
       @registrant.status = locked_registrant.status
       @registrant.parent_id = locked_registrant.parent_id
@@ -1080,7 +1096,7 @@ class CertificateOrdersController < ApplicationController
       if cc.locked_registrant.blank?
         cc.create_locked_registrant(cc_params[:registrant_attributes])
         cc.locked_registrant.save!
-      elsif current_user.is_admin?
+      elsif current_user.is_system_admins?
         cc.locked_registrant.update(cc_params[:registrant_attributes])
       end
       setup_reusable_registrant(cc.locked_registrant)

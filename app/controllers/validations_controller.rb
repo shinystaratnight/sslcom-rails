@@ -8,7 +8,7 @@ include Open3
 class ValidationsController < ApplicationController
   before_filter :require_user, only: [:index, :new, :edit, :show, :upload, :document_upload, :get_asynch_domains]
   before_filter :find_validation, only: [:update, :new]
-  before_filter :find_certificate_order, only: [:new, :edit, :show, :upload, :document_upload]
+  before_filter :find_certificate_order, only: [:new, :edit, :show, :upload, :document_upload, :request_approve_phone_number]
   before_filter :set_row_page, only: [:index, :search]
 
   filter_access_to :all
@@ -19,7 +19,8 @@ class ValidationsController < ApplicationController
   filter_access_to :edit, :show, :attribute_check=>true
   filter_access_to :admin_manage, :attribute_check=>true
   filter_access_to :send_to_ca, require: :sysadmin_manage
-  filter_access_to :get_asynch_domains, :remove_domains, :get_email_addresses, :send_callback, :add_super_user_email, :require=>:ajax
+  filter_access_to :get_asynch_domains, :remove_domains, :get_email_addresses, :send_callback,
+                   :add_super_user_email, :request_approve_phone_number, :require=>:ajax
   in_place_edit_for :validation_history, :notes
 
   def search
@@ -829,6 +830,23 @@ class ValidationsController < ApplicationController
 
     else
       returnObj['status'] = 'incorrect-token'
+    end
+
+    render :json => returnObj
+  end
+
+  def request_approve_phone_number
+    returnObj = {}
+
+    if current_user
+      super_users = User.search_super_user.uniq
+      super_users.each do |super_user|
+        OrderNotifier.request_phone_number_approve(@certificate_order, super_user.email).deliver
+      end
+
+      returnObj['status'] = 'success'
+    else
+      returnObj['status'] = 'session_expired'
     end
 
     render :json => returnObj

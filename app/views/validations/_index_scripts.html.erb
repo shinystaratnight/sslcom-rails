@@ -2174,12 +2174,57 @@ jQuery(function($) {
     $(document).on('click', '#link_to_send_callback', function(e) {
       e.preventDefault();
 
-      $('#email_modal_body').removeClass('error-invalid');
-      $('#email_modal_body').removeClass('error-required');
-      $('.btn-ok-send-emails').prop('disabled', true);
-      $('#callback_emails').val('');
+      if ($(this).attr('data-phone-number-approved') == 'false') {
+        if ($(this).attr('data-super-user') == 'true') {
+          window.location = "<%= edit_certificate_order_url(id: @certificate_order.ref, registrant: false, approve_phone: true)%>";
+        } else {
+          $.ajax({
+            url: '<%=request_approve_phone_number_certificate_order_validation_path(@ssl_slug, @certificate_order.ref)%>',
+            data: {},
+            type: 'POST',
+            success: function (data) {
+              if (data['status' == 'session_expired']) {
+                location.reload(true);
+              } else {
+                // Removing flash message if exist.
+                if ($('#content').find('.inner').children().first().hasClass('flash_message')) {
+                  $('#content').find('.inner').children().first().remove();
+                }
 
-      $('#email_modal').show();
+                // Displaying flash message.
+                var message_wrap_element = $('<div></div>');
+                message_wrap_element.attr('class', 'flash_message notice');
+
+                var message_element = $('<span></span>');
+                message_element.append('Phone number has not been verified, It has sent email to super user(s) for phone verification. Please wait.');
+                message_wrap_element.append(message_element);
+
+                var btn_element = $('<small></small>');
+                var close_btn_element = $('<div></div>');
+                close_btn_element.attr('class', 'close_flash_message');
+
+                var close_sign_element = $('<span></span>');
+                close_sign_element.append('X');
+
+                close_btn_element.append(close_sign_element);
+                close_btn_element.append('close');
+
+                btn_element.append(close_btn_element);
+                message_wrap_element.append(btn_element);
+
+                message_wrap_element.insertBefore($('#content').find('.inner').children().first());
+              }
+            }
+          });
+        }
+      } else {
+        $('#email_modal_body').removeClass('error-invalid');
+        $('#email_modal_body').removeClass('error-required');
+        $('.btn-ok-send-emails').prop('disabled', true);
+        $('#callback_emails').val('');
+
+        $('#email_modal').show();
+      }
     });
 
     $(document).on('click', '#email_modal_close', function() {

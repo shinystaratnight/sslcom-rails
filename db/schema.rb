@@ -314,9 +314,12 @@ ActiveRecord::Schema.define(version: 20190813161628) do
     t.string   "ext_customer_ref",     limit: 255
     t.string   "approval",             limit: 255
     t.integer  "ca_id",                limit: 4
+    t.datetime "expires_at"
+    t.string   "url_callback",         limit: 255
   end
 
   add_index "certificate_contents", ["certificate_order_id"], name: "index_certificate_contents_on_certificate_order_id", using: :btree
+  add_index "certificate_contents", ["id", "certificate_order_id"], name: "index_certificate_contents_on_id_and_certificate_order_id", unique: true, using: :btree
   add_index "certificate_contents", ["ref"], name: "index_certificate_contents_on_ref", using: :btree
   add_index "certificate_contents", ["workflow_state"], name: "index_certificate_contents_on_workflow_state", using: :btree
 
@@ -413,6 +416,7 @@ ActiveRecord::Schema.define(version: 20190813161628) do
     t.datetime "callback_datetime"
     t.boolean  "is_callback_done"
     t.string   "callback_method",          limit: 255
+    t.string   "locale",                   limit: 255
   end
 
   create_table "certificate_orders", force: :cascade do |t|
@@ -444,12 +448,13 @@ ActiveRecord::Schema.define(version: 20190813161628) do
     t.integer  "assignee_id",           limit: 4
     t.datetime "expires_at"
     t.string   "request_status",        limit: 255
+    t.text     "requester_emails",      limit: 65535
   end
 
   add_index "certificate_orders", ["created_at"], name: "index_certificate_orders_on_created_at", using: :btree
   add_index "certificate_orders", ["id", "is_test"], name: "index_certificate_orders_on_test", using: :btree
   add_index "certificate_orders", ["id", "ref", "ssl_account_id"], name: "index_certificate_orders_on_id_and_ref_and_ssl_account_id", using: :btree
-  add_index "certificate_orders", ["id", "workflow_state", "is_expired", "is_test"], name: "05122018_index_certificate_orders_on_4_cols", unique: true, using: :btree
+  add_index "certificate_orders", ["id", "ssl_account_id", "workflow_state", "is_test", "updated_at"], name: "index_certificate_orders_on_5_cols", unique: true, using: :btree
   add_index "certificate_orders", ["id", "workflow_state", "is_expired", "is_test"], name: "index_certificate_orders_on_workflow_state", unique: true, using: :btree
   add_index "certificate_orders", ["is_expired"], name: "index_certificate_orders_on_is_expired", using: :btree
   add_index "certificate_orders", ["is_test"], name: "index_certificate_orders_on_is_test", using: :btree
@@ -561,6 +566,7 @@ ActiveRecord::Schema.define(version: 20190813161628) do
     t.text     "domains",               limit: 65535
     t.string   "country_code",          limit: 255
     t.string   "workflow_state",        limit: 255
+    t.boolean  "phone_number_approved",               default: false
   end
 
   add_index "contacts", ["contactable_id", "contactable_type"], name: "index_contacts_on_contactable_id_and_contactable_type", using: :btree
@@ -633,9 +639,10 @@ ActiveRecord::Schema.define(version: 20190813161628) do
   add_index "csrs", ["certificate_content_id", "common_name"], name: "index_csrs_on_common_name_and_certificate_content_id", using: :btree
   add_index "csrs", ["certificate_content_id"], name: "index_csrs_on_certificate_content_id", using: :btree
   add_index "csrs", ["common_name", "email", "sig_alg"], name: "index_csrs_on_3_cols", using: :btree
-  add_index "csrs", ["common_name", "email", "sig_alg"], name: "index_csrs_on_common_name_and_email_and_sig_alg", using: :btree
   add_index "csrs", ["common_name"], name: "index_csrs_on_common_name", using: :btree
+  add_index "csrs", ["id", "common_name", "email", "sig_alg"], name: "index_csrs_on_id_and_common_name_and_email_and_sig_alg", unique: true, using: :btree
   add_index "csrs", ["organization"], name: "index_csrs_on_organization", using: :btree
+  add_index "csrs", ["sig_alg", "common_name", "email"], name: "index_csrs_on_sig_alg_and_common_name_and_email", using: :btree
   add_index "csrs", ["ssl_account_id"], name: "index_csrs_on_ssl_account_id", using: :btree
 
   create_table "dbs", force: :cascade do |t|
@@ -907,7 +914,7 @@ ActiveRecord::Schema.define(version: 20190813161628) do
   end
 
   add_index "mailboxer_conversation_opt_outs", ["conversation_id"], name: "index_mailboxer_conversation_opt_outs_on_conversation_id", using: :btree
-  add_index "mailboxer_conversation_opt_outs", ["unsubscriber_id", "unsubscriber_type"], name: "index_mailboxer_conversation_opt_outs_on_unsubscriber_id_type", using: :btree
+  add_index "mailboxer_conversation_opt_outs", ["unsubscriber_id", "unsubscriber_type"], name: "index_mailboxer_conversation_opt_outs_on_unsubscriber_id_type", length: {"unsubscriber_id"=>nil, "unsubscriber_type"=>191}, using: :btree
 
   create_table "mailboxer_conversations", force: :cascade do |t|
     t.string   "subject",    limit: 255, default: ""
@@ -1568,6 +1575,7 @@ ActiveRecord::Schema.define(version: 20190813161628) do
   add_index "signed_certificates", ["csr_id"], name: "index_signed_certificates_on_csr_id", using: :btree
   add_index "signed_certificates", ["ejbca_username"], name: "index_signed_certificates_on_ejbca_username", using: :btree
   add_index "signed_certificates", ["fingerprint"], name: "index_signed_certificates_on_fingerprint", using: :btree
+  add_index "signed_certificates", ["strength"], name: "index_signed_certificates_on_strength", using: :btree
 
   create_table "site_checks", force: :cascade do |t|
     t.text     "url",                   limit: 65535
@@ -1600,6 +1608,7 @@ ActiveRecord::Schema.define(version: 20190813161628) do
     t.datetime "declined_at"
   end
 
+  add_index "ssl_account_users", ["id", "ssl_account_id", "user_id"], name: "index_ssl_account_users_on_id_and_ssl_account_id_and_user_id", unique: true, using: :btree
   add_index "ssl_account_users", ["ssl_account_id", "user_id"], name: "index_ssl_account_users_on_ssl_account_id_and_user_id", using: :btree
   add_index "ssl_account_users", ["ssl_account_id"], name: "index_ssl_account_users_on_ssl_account_id", using: :btree
   add_index "ssl_account_users", ["user_id", "ssl_account_id", "approved", "user_enabled"], name: "index_ssl_account_users_on_four_fields", using: :btree
@@ -1626,6 +1635,7 @@ ActiveRecord::Schema.define(version: 20190813161628) do
 
   add_index "ssl_accounts", ["acct_number", "company_name", "ssl_slug"], name: "index_ssl_accounts_on_acct_number_and_company_name_and_ssl_slug", using: :btree
   add_index "ssl_accounts", ["acct_number"], name: "index_ssl_account_on_acct_number", using: :btree
+  add_index "ssl_accounts", ["id", "acct_number", "company_name", "ssl_slug"], name: "my_index", unique: true, using: :btree
   add_index "ssl_accounts", ["id", "created_at"], name: "index_ssl_accounts_on_id_and_created_at", using: :btree
   add_index "ssl_accounts", ["ssl_slug", "acct_number"], name: "index_ssl_accounts_on_ssl_slug_and_acct_number", using: :btree
 
@@ -1730,7 +1740,7 @@ ActiveRecord::Schema.define(version: 20190813161628) do
     t.datetime "updated_at",                             null: false
   end
 
-  add_index "tags", ["ssl_account_id", "name"], name: "index_tags_on_ssl_account_id_and_name", using: :btree
+  add_index "tags", ["ssl_account_id", "name"], name: "index_tags_on_ssl_account_id_and_name", length: {"ssl_account_id"=>nil, "name"=>191}, using: :btree
   add_index "tags", ["ssl_account_id"], name: "index_tags_on_ssl_account_id", using: :btree
   add_index "tags", ["taggings_count"], name: "index_tags_on_taggings_count", using: :btree
 
@@ -1847,6 +1857,7 @@ ActiveRecord::Schema.define(version: 20190813161628) do
   add_index "users", ["default_ssl_account"], name: "index_users_on_default_ssl_account", using: :btree
   add_index "users", ["email"], name: "index_users_on_email", using: :btree
   add_index "users", ["id", "ssl_account_id", "status"], name: "index_users_on_status_and_ssl_account_id", using: :btree
+  add_index "users", ["id", "status", "login", "email"], name: "index_users_on_id_and_status_and_login_and_email", unique: true, using: :btree
   add_index "users", ["id", "status"], name: "index_users_on_status", using: :btree
   add_index "users", ["login", "email"], name: "index_users_on_login_and_email", using: :btree
   add_index "users", ["login"], name: "index_users_on_login", using: :btree
