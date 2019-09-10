@@ -1076,6 +1076,10 @@ class CertificateOrder < ActiveRecord::Base
     certificate_order_tokens.last
   end
 
+  def generate_certificate_order_token
+    certificate_order_tokens.where(:status => nil).last
+  end
+
   def phone_verified?
     return false if locked_registrant.blank?
     certificate_order_tokens.where(

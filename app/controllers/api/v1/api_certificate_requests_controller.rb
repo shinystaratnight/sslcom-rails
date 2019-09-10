@@ -134,8 +134,9 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
 
       options={csr: params[:csr]}
       if res = SslcomCaApi.apply_for_certificate(co, options).x509_certificates
-        co_token = co.certificate_order_tokens.where(token: params[:token], is_expired: false).first
+        co_token = co.certificate_order_tokens.where(token: params[:token], status: nil, is_expired: false).last
         co_token.update_attribute(:is_expired, true) if co_token
+        co.update_attribute(:request_status, '')
 
         cert_chain = ""
         res.each do |cert|
