@@ -94,7 +94,7 @@ gem 'bootstrap-datepicker-rails'
 gem 'timezone', '~> 1.0'
 # required by sws-a1
 gem 'etc'
-gem 'fileutils'
+gem 'fileutils', '~> 1.1.0'
 gem 'zlib'
 gem 'stringio'
 gem 'date'
