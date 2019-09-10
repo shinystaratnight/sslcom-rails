@@ -9,6 +9,7 @@ class ValidationsController < ApplicationController
   before_filter :require_user, only: [:index, :new, :edit, :show, :upload, :document_upload, :get_asynch_domains]
   before_filter :find_validation, only: [:update, :new]
   before_filter :find_certificate_order, only: [:new, :edit, :show, :upload, :document_upload, :request_approve_phone_number]
+  before_filter :set_supported_languages, only: [:verification]
   before_filter :set_row_page, only: [:index, :search]
 
   filter_access_to :all
@@ -667,14 +668,19 @@ class ValidationsController < ApplicationController
             @callback_type = 'schedule'
             @callback_method = @certificate_order_token.callback_method.upcase
             @callback_datetime = @certificate_order_token.callback_datetime.in_time_zone(@certificate_order_token.callback_timezone.split(':')[1]).strftime('%Y-%m-%d %I:%M %p %:z')
+            @callback_locale = @certificate_order_token.locale.blank? ? 'en' : @certificate_order_token.locale
+
             flash[:notice] = 'It has been already scheduled automated callback.'
           elsif @certificate_order_token.callback_type == CertificateOrderToken::CALLBACK_MANUAL
             @callback_type = 'manual'
             @callback_method = @certificate_order_token.callback_method.upcase
             @callback_datetime = @certificate_order_token.callback_datetime.in_time_zone(@certificate_order_token.callback_timezone.split(':')[1]).strftime('%Y-%m-%d %I:%M %p %:z')
+            @callback_locale = @certificate_order_token.locale.blank? ? 'en' : @certificate_order_token.locale
+
             flash[:notice] = 'It has been already scheduled manual callback.'
           else
             @callback_type = 'none'
+            @callback_locale = 'en'
           end
         end
       end
@@ -717,7 +723,8 @@ class ValidationsController < ApplicationController
         @response = Authy::PhoneVerification.start(
             via: params[:method],
             country_code: country_code,
-            phone_number: phone_number
+            phone_number: phone_number,
+            locale: params[:locale]
         )
 
         if @response.ok?
@@ -815,7 +822,8 @@ class ValidationsController < ApplicationController
           callback_type: params[:callback_type],
           callback_timezone: params[:callback_timezone],
           callback_datetime: dtz,
-          is_callback_done: (params[:callback_type] == CertificateOrderToken::CALLBACK_MANUAL ? nil : false)
+          is_callback_done: (params[:callback_type] == CertificateOrderToken::CALLBACK_MANUAL ? nil : false),
+          locale: params[:locale]
       )
 
       if params[:callback_type] == CertificateOrderToken::CALLBACK_MANUAL
@@ -1076,5 +1084,42 @@ class ValidationsController < ApplicationController
 
   def help
     Helpers.instance
+  end
+
+  def set_supported_languages
+    @supported_languages = [
+        ['Afrikaans', 'af'],
+        ['Arabic', 'ar'],
+        ['Catalan', 'ca'],
+        ['Chinese', 'zh'],
+        ['Chinese (Mandarin)', 'zh-CN'],
+        ['Chinese (Cantonese)', 'zh-HK'],
+        ['Croatian', 'hr'],
+        ['Czech', 'cs'],
+        ['Danish', 'da'],
+        ['Dutch', 'nl'],
+        ['English', 'en'],
+        ['Finnish', 'fi'],
+        ['French', 'fr'],
+        ['German', 'de'],
+        ['Greek', 'el'],
+        ['Hebrew', 'he'],
+        ['Hindi', 'hi'],
+        ['Hungarian', 'hu'],
+        ['Indonesian', 'id'],
+        ['Italian', 'it'],
+        ['Japanese', 'ja'],
+        ['Korean', 'ko'],
+        ['Malay', 'ms'],
+        ['Norwegian', 'nb'],
+        ['Polish', 'pl'],
+        ['Portuguese - Brazil', 'pt-BR'],
+        ['Portuguese', 'pt'],
+        ['Romanian', 'ro'],
+        ['Russian', 'ru'],
+        ['Spanish', 'es'],
+        ['Swedish', 'sv'],
+        ['Tagalog', 'tl']
+    ]
   end
 end
