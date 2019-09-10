@@ -1441,7 +1441,7 @@ class CertificateOrder < ActiveRecord::Base
                 ApiCertificateCreate_v1_4::DEFAULT_DCV_METHOD })
         end
       }
-    elsif cc.csr
+    elsif cc.csr and certificate.is_server?
       api_domains.merge!(cc.csr.common_name.to_sym => {dcv: "#{last_dcv_sent ? last_dcv_sent.method_for_api : 'http_csr_hash'}"})
     end
     api_contacts = {}
