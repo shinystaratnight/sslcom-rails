@@ -672,7 +672,7 @@ jQuery(function($) {
             });
           } else {
             // Extracting Common Info from Subject
-            const info = {}
+            const info = {};
             var subject_dn_str = $('.cs_subject_dn').val().split(",");
 
             $.each(subject_dn_str, function(idx) {
@@ -688,6 +688,8 @@ jQuery(function($) {
                 info['state'] = subject_dn_str[idx].split('=')[1];
               } else if (subject_dn_str[idx].split('=')[0] == 'C') {
                 info['country'] = subject_dn_str[idx].split('=')[1];
+              } else if (subject_dn_str[idx].split('=')[0] == 'emailAddress') {
+                info['email'] = subject_dn_str[idx].split('=')[1];
               }
             });
 
