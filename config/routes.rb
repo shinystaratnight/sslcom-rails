@@ -77,7 +77,7 @@ SslCom::Application.routes.draw do
         # Signed Certificates
         match '/signed_certificates' => 'api_certificate_requests#retrieve_signed_certificates',
               as: :api_signed_certificates_retrieve, via: [:post]
-        
+
         # Certificate Enrollment
         match '/certificate_enrollment' => 'api_certificate_requests#certificate_enrollment_order',
           as: :api_certificate_enrollment, via: :post
@@ -183,7 +183,7 @@ SslCom::Application.routes.draw do
         put :add_certificate_orders
       end
     end
-    
+
     resources :certificate_enrollment_requests, except: [:edit, :new, :update, :show] do
       member do
         match :reject, via: [:put, :post]
@@ -286,6 +286,7 @@ SslCom::Application.routes.draw do
         post :send_callback
         post :add_super_user_email
         post :request_approve_phone_number
+        post :cancel_validation_process
 
         member do
           match :dcv_validate, via: [:get, :post, :options]

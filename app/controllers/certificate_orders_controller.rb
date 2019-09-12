@@ -18,7 +18,7 @@ class CertificateOrdersController < ApplicationController
   layout 'application'
   include OrdersHelper
   include CertificateOrdersHelper
-  
+
   skip_before_action :verify_authenticity_token, only: [:parse_csr]
   filter_access_to :all, except: [:generate_cert]
   filter_access_to :read, :update, :delete, :show, :edit, :developer, :recipient
@@ -136,8 +136,7 @@ class CertificateOrdersController < ApplicationController
     else
       @taggable = @certificate_order
       get_team_tags
-      redirect_to edit_certificate_order_path(@ssl_slug, @certificate_order) and return if @certificate_order.certificate_content.new?
-
+      redirect_to edit_certificate_order_path(@ssl_slug, @certificate_order) and return if @certificate_order.certificate_content && @certificate_order.certificate_content.new?
       respond_to do |format|
         format.html # show.html.erb
         format.xml  { render :xml => @certificate_order }
@@ -364,7 +363,7 @@ class CertificateOrdersController < ApplicationController
             params[:certificate_order][:certificate_contents_attributes]['0'][:registrant_attributes][:phone_number_approved] &&
             params[:certificate_order][:certificate_contents_attributes]['0'][:registrant_attributes][:phone_number_approved] == '1'
           OrderNotifier.notify_phone_number_approve(@certificate_order, current_user.email).deliver
-          flash[:notice] = "It has been approved phone number and sent notification to this certificate order's owner."
+          flash[:notice] = "Phone number approved and notification sent to this certificate order's owner."
         end
 
         if is_smime_or_client
@@ -789,6 +788,15 @@ class CertificateOrdersController < ApplicationController
     @certificate_order = Order.setup_certificate_order(
       certificate: @certificate, certificate_order: co
     )
+  end
+
+  def smime_client_duration
+    @certificate = Certificate.find params[:certificate_id]
+    partial = render_to_string(
+      partial: 'certificate_orders/smime_client_enrollment/duration_form',
+      layout: false
+    )
+    render json: {content: partial}, status: :ok
   end
 
   def client_smime_validate

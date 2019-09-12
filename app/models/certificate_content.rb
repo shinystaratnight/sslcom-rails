@@ -12,14 +12,14 @@ class CertificateContent < ActiveRecord::Base
   has_one     :registrant, as: :contactable, dependent: :destroy
   has_one     :locked_registrant, :as => :contactable
   has_many    :certificate_contacts, :as => :contactable
-  has_many    :certificate_names do # used for dcv of each domain in a UCC or multi domain ssl
+  has_many    :certificate_names, :dependent => :destroy do # used for dcv of each domain in a UCC or multi domain ssl
     def validated
       joins{domain_control_validations}.where{domain_control_validations.workflow_state=="satisfied"}.uniq
     end
   end
   has_many    :domain_control_validations, through: :certificate_names
-  has_many    :url_callbacks, as: :callbackable
-  has_many    :taggings, as: :taggable
+  has_many    :url_callbacks, :dependent => :destroy, as: :callbackable
+  has_many    :taggings, :dependent => :destroy, as: :taggable
   has_many    :tags, through: :taggings
   belongs_to  :ca
 

@@ -6,7 +6,8 @@ require 'tempfile'
 include Open3
 
 class ValidationsController < ApplicationController
-  before_filter :require_user, only: [:index, :new, :edit, :show, :upload, :document_upload, :get_asynch_domains]
+  before_filter :require_user, only: [:index, :new, :edit, :show, :upload, :document_upload, :get_asynch_domains,
+                                      :cancel_validation_process]
   before_filter :find_validation, only: [:update, :new]
   before_filter :find_certificate_order, only: [:new, :edit, :show, :upload, :document_upload, :request_approve_phone_number]
   before_filter :set_supported_languages, only: [:verification]
@@ -21,7 +22,7 @@ class ValidationsController < ApplicationController
   filter_access_to :admin_manage, :attribute_check=>true
   filter_access_to :send_to_ca, require: :sysadmin_manage
   filter_access_to :get_asynch_domains, :remove_domains, :get_email_addresses, :send_callback,
-                   :add_super_user_email, :request_approve_phone_number, :require=>:ajax
+                   :add_super_user_email, :request_approve_phone_number, :cancel_validation_process, :require=>:ajax
   in_place_edit_for :validation_history, :notes
 
   def search
@@ -855,6 +856,30 @@ class ValidationsController < ApplicationController
       returnObj['status'] = 'success'
     else
       returnObj['status'] = 'session_expired'
+    end
+
+    render :json => returnObj
+  end
+
+  def cancel_validation_process
+    returnObj = {}
+    co = (current_user.is_system_admins? ? CertificateOrder :
+              current_user.certificate_orders).find_by_ref(params[:certificate_order_id])
+
+    if co
+      if co.certificate_contents.size == 0
+        returnObj['status'] = 'no-exist-cert-content'
+      else
+        co.certificate_content.destroy
+        if co.certificate_contents.size == 0
+          cc=CertificateContent.new
+          cc.certificate_order=co
+          cc.save
+        end
+        returnObj['status'] = 'success'
+      end
+    else
+      returnObj['status'] = 'no-exist-cert-order'
     end
 
     render :json => returnObj
