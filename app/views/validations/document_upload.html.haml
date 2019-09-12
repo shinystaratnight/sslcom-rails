@@ -36,7 +36,7 @@
           -if co.certificate.is_ev? or co.certificate.is_evcs?
             %p
               Please refer to
-              =link_to "https://www.ssl.com/faqs/ssl-ev-validation-requirements/"
+              =link_to "https://#{Settings.portal_domain}/faqs/ssl-ev-validation-requirements/", "https://#{Settings.portal_domain}/faqs/ssl-ev-validation-requirements/"
               for details on the EV validation process.
             %p
               #{Settings.community_name} will verify the existence of your business, the ownership of the domain(s)

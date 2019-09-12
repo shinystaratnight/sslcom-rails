@@ -100,7 +100,7 @@ class ValidationsController < ApplicationController
                       current_user: current_user)
             if api_log_entry and api_log_entry.instance_of?(SslcomCaRequest) and api_log_entry.response=~/Check CAA/
               flash[:error] =
-                  "CAA validation failed. See https://www.ssl.com/how-to/configure-caa-records-to-authorize-ssl-com/"
+                  "CAA validation failed. See https://#{Settings.portal_domain}/how-to/configure-caa-records-to-authorize-ssl-com/"
             end
           end
 

@@ -13,7 +13,7 @@ SslCom::Application.configure do
   config.cache_store = :dalli_store
   config.action_controller.asset_host = Proc.new { |source|
     if source=~/\A\/validation_histories\/.*?\/documents/
-      "https://www.ssl.com"
+      "https://#{Settings.portal_domain}"
     else
       "https://cdn.ssl.com"
     end

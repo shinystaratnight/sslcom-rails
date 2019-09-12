@@ -70,7 +70,7 @@ describe 'reprocess' do
       # Signed Certificate 
       assert_equal 2, SignedCertificate.count
       assert_match "issued", sc.status
-      assert_match "www.ssl.com", sc.common_name
+      assert_match Settings.portal_domain, sc.common_name
       refute_nil sc.organization
       refute_nil sc.organization_unit
       refute_nil sc.address1
