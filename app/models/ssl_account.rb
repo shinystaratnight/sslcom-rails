@@ -288,8 +288,7 @@ class SslAccount < ActiveRecord::Base
           # http/s or cname must have the same public key
               (cn.csr and certificate_name.csr and
                   cn.cached_csr_public_key_sha1==certificate_name.cached_csr_public_key_sha1)
-            certificate_name.domain_control_validations.create(dcv.attributes.except("id"))
-            break
+            return certificate_name.domain_control_validations.create(dcv.attributes.except("id"))
           end
         end
       end
