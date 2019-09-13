@@ -127,7 +127,10 @@
         .col-md-2
         .col-md-8
           #back_to_csr_page(style='width: 100%; text-align: center; display: none;')
-            = link_to 'Back To CSR Submit Page', edit_certificate_order_path(@ssl_slug || @certificate_order.ssl_account.to_slug, @cert_ref), class: 'back_to_csr_page'
+            - if @for_reprocess == 'true'
+              = link_to 'Back To CSR Submit Page', reprocess_certificate_order_path(@ssl_slug || @certificate_order.ssl_account.to_slug, @cert_ref), class: 'back_to_csr_page'
+            - else
+              = link_to 'Back To CSR Submit Page', edit_certificate_order_path(@ssl_slug || @certificate_order.ssl_account.to_slug, @cert_ref), class: 'back_to_csr_page'
         .col-md-2
     - if @cert_token
       .row.pt-3

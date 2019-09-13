@@ -10,6 +10,7 @@ class ManagedCsrsController < ApplicationController
   def new
     if params[:cert_ref]
       @cert_ref = params[:cert_ref]
+      @for_reprocess = params[:is_reprocess]
       @certificate_order=@ssl_account.certificate_orders.find_by_ref(@cert_ref)
     elsif params[:cert_token]
       @is_server = params[:is_server]
