@@ -567,7 +567,7 @@ class CertificateOrder < ActiveRecord::Base
 
   def locked_recipient_subject_dn
     dn = []
-    if locked_recipient
+    if get_recipient
       dn << "CN=#{[locked_recipient.first_name,locked_recipient.last_name].join(" ").strip}"
       dn << "emailAddress=#{locked_recipient.email}"
 
