@@ -276,7 +276,7 @@ class CertificateContent < ActiveRecord::Base
           new_certificate_name=certificate_names.find_or_create_by(name: cn_domain.downcase)
           new_certificate_name.update_column(:is_common_name, csr.try(:common_name)==domain)
           new_certificate_name.candidate_email_addresses # start the queued job running
-          Delayed::Job.enqueue OtherDcvsSatisyJob.new(ssl_account,new_certificate_name) if ssl_account
+          Delayed::Job.enqueue OtherDcvsSatisyJob.new(ssl_account,new_certificate_name) if ssl_account && certificate.is_server?
         end
       end
     end
