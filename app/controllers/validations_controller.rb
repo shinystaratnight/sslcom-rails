@@ -70,7 +70,7 @@ class ValidationsController < ApplicationController
 
             team_cnames.each do |team_cn|
               if team_cn.name == cn.name
-                team_dcv = team_cn.domain_control_validations.last
+                team_dcv = team_cn.validated_domain_control_validations.last
 
                 if team_dcv && team_dcv.validated?(nil,public_key_sha1)
                   team_level_validated = true

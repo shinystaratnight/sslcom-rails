@@ -141,18 +141,6 @@ ActiveRecord::Schema.define(version: 20190813161628) do
 
   add_index "billing_profiles", ["ssl_account_id"], name: "index_billing_profile_on_ssl_account_id", using: :btree
 
-  create_table "blocklist", force: :cascade do |t|
-    t.string   "type",        limit: 255
-    t.string   "domain",      limit: 255
-    t.integer  "validation",  limit: 4
-    t.string   "status",      limit: 255
-    t.string   "reason",      limit: 255
-    t.string   "description", limit: 255
-    t.text     "notes",       limit: 65535
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
   create_table "blocklists", force: :cascade do |t|
     t.string   "type",        limit: 255
     t.string   "domain",      limit: 255
