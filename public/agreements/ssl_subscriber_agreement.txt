@@ -193,7 +193,7 @@ Online Certificate Status Protocol (OCSP) An online certificate status protocol 
 
 Personal Data means information that can be used to identify you as an individual, such as your name, business name, email address, telephone number, and photograph.
 Public Key Infrastructure (PKI) is a set of roles, policies, and procedures needed to create, manage, distribute, use, store, and revoke digital certificates and manage public-key encryption.
-Privacy Policy means the current SSL.com Privacy Policy, available at https://ra.ssl.com/privacy_policy/.
+Privacy Policy means the current SSL.com Privacy Policy, available at https://ra.ssl.com/privacy-policy/.
 Private Key means the private key corresponding to the public key included in a Certificate.
 Public Key means the corresponding cryptographic key to the Private Key included in a Certificate.
 Relying Party is an entity that relies upon the information contained within the Certificate.
