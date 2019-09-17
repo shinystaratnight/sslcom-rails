@@ -25,7 +25,7 @@
           %td(colspan='6')=will_paginate @users
     %caption
       =title
-      [learn about #{link_to "inviting users", "https://www.ssl.com/how-to/inviting-users-to-your-team/", target: "_blank"}]
+      [learn about #{link_to "inviting users", "https://#{Settings.portal_domain}/how-to/inviting-users-to-your-team/", target: "_blank"}]
       =will_paginate @users
     -unless current_user.is_system_admins?
       %tr

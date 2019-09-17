@@ -24,7 +24,7 @@ class ApiUserRequestsControllerTest < ActionDispatch::IntegrationTest
       assert_match @team.acct_number, items['account_number']
       assert_match @team.api_credential.account_key, items['account_key']
       assert_match @team.api_credential.secret_key, items['secret_key']
-      assert_match "https://www.ssl.com/users/#{@user.id}", items['user_url']
+      assert_match "https://#{Settings.portal_domain}/users/#{@user.id}", items['user_url']
       assert_match Money.new(@team.funded_account.cents).format, items['available_funds']
     end
 

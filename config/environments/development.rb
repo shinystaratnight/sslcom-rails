@@ -1,5 +1,5 @@
 SslCom::Application.configure do
-  APP_URL = "http://www.ssl.local:3000"
+  APP_URL = "http://#{Settings.dev_portal_domain}:3000"
   MIGRATING_FROM_LEGACY = false
   MIGRATING_SURLS_TO_SSL_GS = false
   # Settings specified here will take precedence over those in config/environment.rb

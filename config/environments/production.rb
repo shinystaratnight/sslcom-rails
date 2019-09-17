@@ -1,6 +1,6 @@
 SslCom::Application.configure do
   # Settings specified here will take precedence over those in config/environment.rb
-  APP_URL = "https://ra.ssl.com"
+  APP_URL = "https://#{Settings.portal_domain}"
   MIGRATING_FROM_LEGACY = false
 
   # The production environment is meant for finished, "live" apps.
@@ -13,7 +13,7 @@ SslCom::Application.configure do
   config.cache_store = :dalli_store
   config.action_controller.asset_host = Proc.new { |source|
     if source=~/\A\/validation_histories\/.*?\/documents/
-      "https://www.ssl.com"
+      "https://#{Settings.portal_domain}"
     else
       "https://cdn.ssl.com"
     end
