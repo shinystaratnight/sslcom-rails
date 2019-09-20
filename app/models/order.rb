@@ -711,7 +711,7 @@ class Order < ActiveRecord::Base
   
   def get_reprocess_orders
     result = {}
-    cached_certificate_orders.each do |co|
+    cached_certificate_orders.includes(:orders).each do |co|
       current = []
       co.orders.order(created_at: :asc).each do |o|
         if o.reprocess_ucc_order?

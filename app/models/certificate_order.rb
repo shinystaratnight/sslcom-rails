@@ -1132,7 +1132,7 @@ class CertificateOrder < ActiveRecord::Base
 
   def subject
     Rails.cache.fetch("#{cache_key}/subject") do
-      csr=csrs.includes(:signed_certificates).last
+      csr=csrs.last
       return "" if csr.blank?
       if certificate_content.issued?
         csr.signed_certificates.last.try(:common_name)
@@ -1145,7 +1145,7 @@ class CertificateOrder < ActiveRecord::Base
   memoize :subject
 
   def display_subject
-    csr = csrs.includes(:signed_certificates).last
+    csr = csrs.last
     return if csr.blank?
     last_signed_certificate=csr.signed_certificates.last
     names=last_signed_certificate.subject_alternative_names unless last_signed_certificate.blank?

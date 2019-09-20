@@ -57,7 +57,7 @@ class ValidationsController < ApplicationController
         @caa_check_domains = ''
         validated_domain_arry = []
         caa_check_domain_arry = []
-        public_key_sha1=cc.cached_csr_public_key_sha1
+        public_key_sha1 = Settings.compare_public_key ? cc.cached_csr_public_key_sha1 : nil
         unless cc.ca.blank?
           cnames = cc.certificate_names.includes(validated_domain_control_validations: :csr)
           team_cnames = @certificate_order.ssl_account.all_certificate_names(nil,"validated").

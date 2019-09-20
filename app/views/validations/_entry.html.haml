@@ -5,7 +5,6 @@
   -cn = co.certificate.is_code_signing? or co.certificate.is_smime_or_client? ? co.registrant.company_name : cc.csr.common_name
   -#-to_reminder = cc.locked_registrant.email if co.certificate.is_code_signing?
 -v = co.validation
--status=certificate_order_status(cc)
 %tr.expanded(class="#{'hidden' if current_page?(:validations) or current_page?(:search_validations)}")
   %td(colspan="6")
     .certificate_details

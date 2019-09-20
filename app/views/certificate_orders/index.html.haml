@@ -59,7 +59,7 @@
       %th(scope="col") Expires
       %th(scope="col") Action
     -unless @certificate_orders.empty?
-      -@certificate_orders.includes(:folder, :orders, :ssl_account, sub_order_items: :product_variant_item, certificate_contents: :csrs, validation: :users).each do |co| # add :renewal once index is created
+      -@certificate_orders.includes(:folder, :orders, :ssl_account, :certificate_contents, sub_order_items: :product_variant_item, validation: :users).each do |co| # add :renewal once index is created
         -cache([current_user.id,'certificate_orders_list', co.certificate_content.cache_key], expires_in: 24.hours) do
           -cc = co.certificate_content
           -#-cn = (co.is_unused_credit? || cc.csr.blank?) ? nil : cc.csr.common_name
@@ -80,10 +80,10 @@
                 -else
                   %i.fa.fa-plus.icon-co-add-folder{id: co.ref}
             %td.status_message(class="#{status_class(cc)}")
-              #{certificate_order_status(cc)}
+              #{certificate_order_status(cc, co)}
             %td
               =co.created_at.strftime("%b %d, %Y")
-            %td(class="#{expires_on_class(cc)}")
+            %td(class="#{expires_on_class(cc,co)}")
               #{expires_on(cc)}
             %td.ssl_action
               #{action(co)}

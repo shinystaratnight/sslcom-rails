@@ -1,4 +1,5 @@
 class ProductVariantItem < ActiveRecord::Base
+  extend Memoist
   acts_as_sellable :cents => :amount, :currency => false
   belongs_to  :product_variant_group
   has_one :sub_order_item
@@ -14,6 +15,7 @@ class ProductVariantItem < ActiveRecord::Base
               product_variant_group.variantable &&
               product_variant_group.variantable.is_a?(Certificate)
   end
+  memoize :certificate
 
   def cached_certificate_id
     Rails.cache.fetch("#{cache_key}/cached_certificate_id") do
