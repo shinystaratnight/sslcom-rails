@@ -112,7 +112,7 @@
           %label
             Managed CSR:
           =select_tag :managed_csr, options_for_select(@managed_csrs), :class => 'managed_csr'
-          =link_to 'Create CSR', new_managed_csr_path(@ssl_slug || @certificate_order.ssl_account.to_slug, cert_ref: @certificate_order.ref, is_repcoess: @is_reprocess)
+          =link_to 'Create CSR', new_managed_csr_path(@ssl_slug || @certificate_order.ssl_account.to_slug, cert_ref: @certificate_order.ref, is_reprocess: @is_reprocess)
       .clearfix.manage_cn_block
         %label
           Common Name (CN):

@@ -37,7 +37,7 @@ class CertificateOrder < ActiveRecord::Base
   has_many    :sslcom_ca_requests, :through=>:csrs
   has_many    :sub_order_items, :as => :sub_itemable, :dependent => :destroy
   has_many    :product_variant_items, through: :sub_order_items, :dependent => :destroy
-  has_many    :orders, ->{includes :stored_preferences}, :through => :line_items, unscoped: true
+  has_many    :orders, :through => :line_items, unscoped: true
   has_many    :other_party_validation_requests, class_name: "OtherPartyValidationRequest",
               as: :other_party_requestable, dependent: :destroy
   has_many    :ca_retrieve_certificates, as: :api_requestable, dependent: :destroy
@@ -584,9 +584,10 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def get_audit_logs
-    al = SystemAudit.where(target_id: id, target_type: 'CertificateOrder')
-    al << SystemAudit.where(target_id: line_items.ids, target_type: 'LineItem')
-    al.flatten.sort_by(&:created_at).reverse
+    SystemAudit.where(
+        "(target_id = ? AND target_type = ?) OR (target_id IN (?) AND target_type = ?)",
+          id, 'CertificateOrder', line_items.ids, 'LineItem'
+    ).order('created_at desc')
   end
 
 

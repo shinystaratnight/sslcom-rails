@@ -883,15 +883,15 @@ class Order < ActiveRecord::Base
               else
                 ""
             end
-    (is_test? ? "(TEST) " : "") + display
+    # (is_test? ? "(TEST) " : "") + display
   end
 
   def is_deposit?
-    Deposit == line_items.first.sellable_unscoped.class if line_items.first
+    Deposit == line_items.first.sellable.class if line_items.first
   end
 
   def is_reseller_tier?
-    ResellerTier == line_items.first.sellable_unscoped.class if line_items.first
+    ResellerTier == line_items.first.sellable.class if line_items.first
   end
 
   def migrated_from
@@ -1233,7 +1233,7 @@ class Order < ActiveRecord::Base
   end
 
   def is_test?
-    certificate_orders.any?{|co|co.is_test?}
+    certificate_orders.is_test.count > 0
   end
 
   # This is the required step to save certificate_orders to this order
