@@ -143,7 +143,7 @@ class DomainControlValidation < ActiveRecord::Base
   end
 
   def self.validated?(ssl_account,domain,public_key_sha1=nil)
-    satisfied_validation(ssl_account,domain,public_key_sha1=nil).blank? ? false : true
+    satisfied_validation(ssl_account,domain,public_key_sha1).blank? ? false : true
   end
 
   def cached_csr_public_key_sha1

@@ -46,9 +46,9 @@
               %dd
                 %ul
                   %li
-                    Please submit a signed copy of the #{link_to "EV Subscriber agreement #{image_tag('pdf_icon.gif')}".html_safe, co.certificate.is_evcs? ? Certificate::SSLCOM_EV_SUBSCRIBER_AGREEMENT : Certificate::USERTRUST_EV_SUBSCRIBER_AGREEMENT }
+                    Please submit a signed copy of the #{link_to "EV Subscriber agreement #{image_tag('pdf_icon.gif')}".html_safe, Certificate::SSLCOM_EV_SUBSCRIBER_AGREEMENT}
                   %li
-                    Please submit a signed copy of the #{link_to "EV Authorization Form #{image_tag('pdf_icon.gif')}".html_safe,  co.certificate.is_evcs? ? Certificate::SSLCOM_EV_AUTHORIZATION : Certificate::USERTRUST_EV_AUTHORIZATION}
+                    Please submit a signed copy of the #{link_to "EV Authorization Form #{image_tag('pdf_icon.gif')}".html_safe, Certificate::SSLCOM_EV_AUTHORIZATION}
             %p
               Lastly, please choose one of the following items to submit:
             %dl.listing
