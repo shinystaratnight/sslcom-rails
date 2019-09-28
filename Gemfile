@@ -16,7 +16,7 @@ gem 'money', '2.1.0'
 gem 'rack-ssl-enforcer'
 gem 'will_paginate'
 gem 'haml', '>= 3.1.alpha.50'
-gem 'declarative_authorization', git: 'git@github.com:Xymist/declarative_authorization.git', :branch => 'allow_rails_5'
+gem 'declarative_authorization', git: 'https://github.com/Xymist/declarative_authorization.git', :branch => 'allow_rails_5'
 gem "authlogic"
 gem "savon", '~> 2.0'
 gem 'zip-zip'
@@ -100,6 +100,7 @@ gem 'stringio'
 gem 'date'
 gem 'strscan'
 gem 'forwardable'
+gem 'scout_apm'
 
 group :development do
   gem 'foreman'
@@ -112,6 +113,9 @@ group :development do
   gem 'binding_of_caller'
   gem 'annotate'
   gem 'byebug'
+  gem 'memory_profiler'
+  gem 'meta_request'
+  gem 'bullet'
 end
 
 group :development, :test do

@@ -254,9 +254,9 @@ module CertificateOrdersHelper
     (certificate_order.ssl_account!=current_user.ssl_account)
   end
 
-  def certificate_order_status(certificate_content=nil)
+  def certificate_order_status(certificate_content=nil,co=nil)
     return if certificate_content.blank?
-    co=certificate_content.cached_certificate_order
+    co ||= certificate_content.cached_certificate_order
     if co && certificate_content.new?
       co.is_expired? ? 'expired' : (co.certificate.admin_submit_csr? ? 'info required' : 'waiting for csr')
     elsif certificate_content.expired?
@@ -297,13 +297,14 @@ module CertificateOrdersHelper
     end
   end
 
-  def expires_on_class(certificate_content)
+  def expires_on_class(certificate_content,co=nil)
     return if certificate_content.new? ||
         certificate_content.csr.blank? ||
       certificate_content.csr.signed_certificate.blank? ||
       certificate_content.csr.signed_certificate.expiration_date.blank?
-    if certificate_content.cached_certificate_order
-      sa = certificate_content.certificate_order.ssl_account
+    co ||= certificate_content.cached_certificate_order
+    if co
+      sa = co.ssl_account
       ep = certificate_content.csr.signed_certificate.expiration_date
       if ep <= sa.preferred_reminder_notice_triggers(ReminderTrigger.find(1)).
           to_i.days.from_now && ep > Time.now

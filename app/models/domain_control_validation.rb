@@ -137,7 +137,7 @@ class DomainControlValidation < ActiveRecord::Base
     name=('%'+name[1..-1]) if name[0]=="*" # wildcard
     DomainControlValidation.joins(:certificate_name).where{(identifier_found==1) &
         (certificate_name.name=~"#{name}") &
-        (certificate_name_id >> [ssl_account.all_certificate_names(name,"validated").map(&:id)])}.each do |dcv|
+        (certificate_name_id >> [ssl_account.all_certificate_names(name,"validated").pluck(:id)])}.each do |dcv|
           return dcv if dcv.validated?(name,public_key_sha1)
         end
   end

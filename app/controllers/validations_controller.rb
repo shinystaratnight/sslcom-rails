@@ -57,7 +57,7 @@ class ValidationsController < ApplicationController
         @caa_check_domains = ''
         validated_domain_arry = []
         caa_check_domain_arry = []
-        public_key_sha1=cc.cached_csr_public_key_sha1
+        public_key_sha1 = Settings.compare_public_key ? cc.cached_csr_public_key_sha1 : nil
         unless cc.ca.blank?
           cnames = cc.certificate_names.includes(validated_domain_control_validations: :csr)
           team_cnames = @certificate_order.ssl_account.all_certificate_names(nil,"validated").
@@ -296,20 +296,20 @@ class ValidationsController < ApplicationController
   def get_asynch_domains
     co = (current_user.is_system_admins? ? CertificateOrder :
               current_user.certificate_orders).find_by_ref(params[:certificate_order_id])
-    cn = co.certificate_content.certificate_names.includes(:domain_control_validations).find_by_name(params['domain_name']) if co
+    cn = co.certificate_content.certificate_names.find_by_name(params['domain_name']) if co
 
     returnObj = Rails.cache.fetch(cn.get_asynch_cache_label) do
       if cn
         ds = params['domain_status']
-        dcv = cn.domain_control_validations.last
 
         if co.certificate_content.ca
+          dcv = cn.validated_domain_control_validations.last
           domain_status =
-              if dcv and dcv.identifier_found?
+              if dcv
                 "validated"
               else
                 co.ssl_account.other_dcvs_satisfy_domain(cn)
-                dcv = cn.domain_control_validations.last
+                dcv = cn.validated_domain_control_validations.last
                 dcv and dcv.identifier_found? ? "validated" : "pending"
               end
           if dcv

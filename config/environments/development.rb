@@ -68,6 +68,11 @@ SslCom::Application.configure do
     s3_region:    Rails.application.secrets.s3_region,
     s3_host_name: "s3-#{Rails.application.secrets.s3_region}.amazonaws.com"
   }
+
+  config.after_initialize do
+    Bullet.enable = true
+    Bullet.bullet_logger = true
+  end
 end
 
 require "#{Rails.root}/lib/force_ssl.rb"
@@ -77,4 +82,5 @@ require "#{Rails.root}/lib/force_ssl.rb"
 #   config.mirrors = %w(www)
 #   config.preferred_mirror = "www"
 # end
+#
 

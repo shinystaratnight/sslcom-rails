@@ -56,10 +56,10 @@
           -else
             %i.fa.fa-plus.icon-co-add-folder{id: co.ref}
       %td(class="#{status_class(@cc)}")
-        #{certificate_order_status(@cc)}
+        #{certificate_order_status(@cc,co)}
       %td
         =@certificate_order.orders.first.created_at.strftime("%b %d, %Y")
-      %td(class="#{expires_on_class(@cc)}")
+      %td(class="#{expires_on_class(@cc,co)}")
         %span.expires_on=expires_on(@cc)
       %td.ssl_action=action(@certificate_order)
     %tr.expanded
