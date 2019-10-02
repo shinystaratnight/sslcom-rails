@@ -190,7 +190,7 @@
         },
         success: function(data, status){
           if($.inArray("#{Role::OWNER.to_sym}", data.user.role_symbols)>-1)
-            window.location.href = "#{account_path}";
+            window.location.href = "#{current_user ? teams_user_path(current_user) : account_path}";
         }
       });
     });

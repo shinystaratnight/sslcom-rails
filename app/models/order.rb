@@ -404,14 +404,14 @@ class Order < ActiveRecord::Base
     state :fully_refunded do
       event :unrefund, transitions_to: :paid do |complete=true|
         line_items.each {|li|
-          CertificateOrder.unscoped.find(li.sellable_id).unrefund! if li.sellable_type=="CertificateOrder"} if complete
+          CertificateOrder.unscoped.find_by_id(li.sellable_id).unrefund! if li.sellable_type=="CertificateOrder"} if complete
       end
       event :charge_back, transitions_to: :charged_back do |complete=true|
         line_items.each {|li|li.sellable_unscoped.charge_back!} if complete
       end
       event :reject, :transitions_to => :rejected do |complete=true|
         line_items.each {|li|
-          CertificateOrder.unscoped.find(li.sellable_id).reject! if li.sellable_type=="CertificateOrder"} if complete
+          CertificateOrder.unscoped.find_by_id(li.sellable_id).reject! if li.sellable_type=="CertificateOrder"} if complete
       end
     end
 
@@ -430,14 +430,14 @@ class Order < ActiveRecord::Base
       end
       event :unrefund, transitions_to: :paid do |complete=true|
         line_items.each {|li|
-          CertificateOrder.unscoped.find(li.sellable_id).unrefund! if li.sellable_type=="CertificateOrder"} if complete
+          CertificateOrder.unscoped.find_by_id(li.sellable_id).unrefund! if li.sellable_type=="CertificateOrder"} if complete
       end
       event :charge_back, transitions_to: :charged_back do |complete=true|
         line_items.each {|li|li.sellable_unscoped.charge_back!} if complete
       end
       event :reject, :transitions_to => :rejected do |complete=true|
         line_items.each {|li|
-          CertificateOrder.unscoped.find(li.sellable_id).reject! if li.sellable_type=="CertificateOrder"} if complete
+          CertificateOrder.unscoped.find_by_id(li.sellable_id).reject! if li.sellable_type=="CertificateOrder"} if complete
       end
     end
 
@@ -458,7 +458,7 @@ class Order < ActiveRecord::Base
       end
       event :unreject, transitions_to: :paid do |complete=true|
         line_items.each {|li|
-          CertificateOrder.unscoped.find(li.sellable_id).unreject! if li.sellable_type=="CertificateOrder"} if complete
+          CertificateOrder.unscoped.find_by_id(li.sellable_id).unreject! if li.sellable_type=="CertificateOrder"} if complete
       end
       event :cancel, transitions_to: :canceled do |complete=true|
         cancel_order
@@ -711,7 +711,7 @@ class Order < ActiveRecord::Base
   
   def get_reprocess_orders
     result = {}
-    cached_certificate_orders.each do |co|
+    cached_certificate_orders.includes(:orders).each do |co|
       current = []
       co.orders.order(created_at: :asc).each do |o|
         if o.reprocess_ucc_order?
@@ -883,15 +883,15 @@ class Order < ActiveRecord::Base
               else
                 ""
             end
-    (is_test? ? "(TEST) " : "") + display
+    # (is_test? ? "(TEST) " : "") + display
   end
 
   def is_deposit?
-    Deposit == line_items.first.sellable_unscoped.class if line_items.first
+    Deposit == line_items.first.sellable.class if line_items.first
   end
 
   def is_reseller_tier?
-    ResellerTier == line_items.first.sellable_unscoped.class if line_items.first
+    ResellerTier == line_items.first.sellable.class if line_items.first
   end
 
   def migrated_from
@@ -1004,7 +1004,7 @@ class Order < ActiveRecord::Base
     end
     
     SystemAudit.create(
-        owner:  User.find(user_id),
+        owner:  User.find_by_id(user_id),
         target: o,
         action: "Refund #{new_refund.id} created for order #{o.reference_number}. It is now #{o.current_state}",
         notes:  "Originating order is #{self.reference_number}."
@@ -1025,7 +1025,7 @@ class Order < ActiveRecord::Base
   end
   
   def get_order_charged
-    deducted_from_id ? Order.find(deducted_from_id) : self
+    deducted_from_id ? Order.find_by_id(deducted_from_id) : self
   end
   
   def get_total_merchant_amount
@@ -1233,7 +1233,7 @@ class Order < ActiveRecord::Base
   end
 
   def is_test?
-    certificate_orders.any?{|co|co.is_test?}
+    certificate_orders.is_test.count > 0
   end
 
   # This is the required step to save certificate_orders to this order

@@ -466,7 +466,7 @@ class DomainsController < ApplicationController
     identifier_list = []
     domain_ary = []
     domain_list = []
-    cnames.includes(:domain_control_validations).each do |cn|
+    cnames.each do |cn|
       dcv = cn.domain_control_validations.last
       if DomainControlValidation.approved_email_address? CertificateName.candidate_email_addresses(
           cn.non_wildcard_name), dcv.email_address

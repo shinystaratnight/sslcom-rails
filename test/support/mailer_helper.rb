@@ -29,7 +29,7 @@ module MailerHelper
     urls.delete_if{|d| ignore.include?(d)}
     if urls.any?
       urls = urls.first
-        .gsub('http://www.ssl.com', '')
+        .gsub("http://#{Settings.portal_domain}", '')
         .gsub(/https:\/\/127.0.0.1:\d+/, '')
     end
   end

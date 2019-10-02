@@ -279,6 +279,7 @@ class SslAccount < ActiveRecord::Base
   # certificate_name - the domain we are looking up
   def other_dcvs_satisfy_domain(certificate_name)
     # TODO find only validated domains
+    satisfied = nil
     all_certificate_names(certificate_name.name,"validated").includes(:validated_domain_control_validations).each do |cn|
       if cn.id!=certificate_name.id and DomainControlValidation.domain_in_subdomains?(cn.name,certificate_name.name)
         dcv = cn.validated_domain_control_validations.last # TODO find dcv.satisfied?
@@ -286,14 +287,15 @@ class SslAccount < ActiveRecord::Base
           # email validation
           if dcv.dcv_method =~ /email/ or
           # http/s or cname must have the same public key
-              (cn.csr and certificate_name.csr and
-                  cn.cached_csr_public_key_sha1==certificate_name.cached_csr_public_key_sha1)
-            certificate_name.domain_control_validations.create(dcv.attributes.except("id"))
+            (Settings.compare_public_key ? (cn.csr and certificate_name.csr and
+                  cn.cached_csr_public_key_sha1==certificate_name.cached_csr_public_key_sha1) : true)
+            satisfied = certificate_name.domain_control_validations.create(dcv.attributes.except("id"))
             break
           end
         end
       end
     end
+    satisfied
   end
 
   def unique_signed_certificates

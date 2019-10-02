@@ -1,15 +1,15 @@
 site: 'remote'
 root_subdomain: "www"
-actionmailer_host: "www.ssl.com"
+actionmailer_host: "ra.ssl.com"
 community_name: "SSL.com"
-community_domain: "www.ssl.com"
+community_domain: "ra.ssl.com"
 api_domain: "sws.sslpki.com"
 test_api_domain: "sws-test.sslpki.com"
 dev_api_domain: "sws.sslpki.local"
 dev_test_api_domain: "sws-test.sslpki.local"
-portal_domain: "www.ssl.com"
+portal_domain: "ra.ssl.com"
 sandbox_domain: "sandbox.ssl.com"
-dev_portal_domain: "www.ssl.local"
+dev_portal_domain: "ra.ssl.local"
 dev_sandbox_domain: "sandbox.ssl.local"
 support_domain: "support.ssl.com"
 community_tagline: "copyright 2016"
@@ -34,7 +34,7 @@ enable_exception_notifier: true
 offer_trial: false
 minimum_deposit_amount: 10.00
 ucc_initial_domains_block: 3
-ucc_max_domains: 200
+ucc_max_domains: 500
 cert_expiration_threshold_days: 365
 expiring_threshold: 90
 enable_caa: true
@@ -79,7 +79,7 @@ ca_certificate_id_code_signing: "509"
 
 olark_id: '3356-178-10-2724'
 
-dv_explanation_link: "https://www.ssl.com/faqs/ssl-dv-validation-requirements/"
+dv_explanation_link: "https://ra.ssl.com/faqs/ssl-dv-validation-requirements/"
 
 # 'local' for openssl, 'remote' to use java SOAP
 csr_parser: local

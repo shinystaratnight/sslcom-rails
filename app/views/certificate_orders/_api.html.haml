@@ -73,7 +73,8 @@
         %li
           %dl
             %dt
-              -serials=%w(evucc256sslcom ucc256sslcom ov256sslcom ev256sslcom dv256sslcom wc256sslcom basic256sslcom premium256sslcom)
+              -serials=%w(evucc256sslcom ucc256sslcom ov256sslcom ev256sslcom dv256sslcom wc256sslcom basic256sslcom)
+              -serials << %w(premium256sslcom) if DEPLOYMENT_CLIENT =~ Regexp.new(Settings.portal_domain)
               -serials.each do |type|
                 -c=Certificate.find_by_serial(type)
                 %dd "#{c.api_product_code}" - #{c.title}
@@ -137,7 +138,7 @@
             %dd "337" - #{Certificate.find_by_serial("ev256sslcom").title}
             %dd
             %dd "279" - #{Certificate.find_by_serial("ucc256sslcom").title}
-            -if DEPLOYMENT_CLIENT=~/ssl\.com/
+            -if DEPLOYMENT_CLIENT=~ Regexp.new(Settings.portal_domain)
               %dd "279" - #{Certificate.find_by_serial("premium256sslcom").title}
             %dd "410" - #{Certificate.find_by_serial("evucc256sslcom").title}
             %dd "361" - OV UCC

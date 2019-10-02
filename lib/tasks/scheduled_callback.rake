@@ -22,7 +22,8 @@ namespace 'scheduled_callback' do
           @response = Authy::PhoneVerification.start(
               via: 'sms',
               country_code: country_code,
-              phone_number: phone_number
+              phone_number: phone_number,
+              locale: co_token.locale.blank? ? 'en' : co_token.locale
           )
 
           # Update is_callback_done
@@ -32,7 +33,8 @@ namespace 'scheduled_callback' do
           @response = Authy::PhoneVerification.start(
               via: 'call',
               country_code: country_code,
-              phone_number: phone_number
+              phone_number: phone_number,
+              locale: co_token.locale.blank? ? 'en' : co_token.locale
           )
 
           # Update is_callback_done

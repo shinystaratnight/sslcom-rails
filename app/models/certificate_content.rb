@@ -12,14 +12,14 @@ class CertificateContent < ActiveRecord::Base
   has_one     :registrant, as: :contactable, dependent: :destroy
   has_one     :locked_registrant, :as => :contactable
   has_many    :certificate_contacts, :as => :contactable
-  has_many    :certificate_names do # used for dcv of each domain in a UCC or multi domain ssl
+  has_many    :certificate_names, :dependent => :destroy do # used for dcv of each domain in a UCC or multi domain ssl
     def validated
       joins{domain_control_validations}.where{domain_control_validations.workflow_state=="satisfied"}.uniq
     end
   end
   has_many    :domain_control_validations, through: :certificate_names
-  has_many    :url_callbacks, as: :callbackable
-  has_many    :taggings, as: :taggable
+  has_many    :url_callbacks, :dependent => :destroy, as: :callbackable
+  has_many    :taggings, :dependent => :destroy, as: :taggable
   has_many    :tags, through: :taggings
   belongs_to  :ca
 
@@ -112,7 +112,7 @@ class CertificateContent < ActiveRecord::Base
   
   CertificateNamesJob = Struct.new(:cc_id, :domains) do
     def perform
-      CertificateContent.find(cc_id).certificate_names_from_domains
+      CertificateContent.find_by_id(cc_id).certificate_names_from_domains
     end
   end
 
@@ -148,7 +148,7 @@ class CertificateContent < ActiveRecord::Base
         last_sent = unless certificate_order.certificate.is_ucc?
                       csr.domain_control_validations.last_sent
                     else
-                      certificate_names.map {|cn| cn..last_sent_domain_control_validations.last}.flatten.compact
+                      certificate_names.map {|cn| cn.last_sent_domain_control_validations.last}.flatten.compact
                     end
         unless last_sent.blank?
           certificate_order.valid_recipients_list.each do |c|
@@ -195,6 +195,7 @@ class CertificateContent < ActiveRecord::Base
       event :provide_contacts, transitions_to: :contacts_provided
       event :submit_csr, :transitions_to => :csr_submitted
       event :issue, :transitions_to => :issued
+      event :pend_issuance, :transitions_to => :pending_issuance
       event :pend_validation, :transitions_to => :pending_validation do |options={}|
         pre_validation(options)
       end
@@ -223,6 +224,7 @@ class CertificateContent < ActiveRecord::Base
     state :pending_issuance do
       event :pend_validation, :transitions_to => :pending_validation
       event :pend_issuance, :transitions_to => :pending_issuance
+      event :validate, :transitions_to => :validated
       event :issue, :transitions_to => :issued
       event :cancel, :transitions_to => :canceled
       event :reset, :transitions_to => :new
@@ -275,7 +277,7 @@ class CertificateContent < ActiveRecord::Base
           new_certificate_name=certificate_names.find_or_create_by(name: cn_domain.downcase)
           new_certificate_name.update_column(:is_common_name, csr.try(:common_name)==domain)
           new_certificate_name.candidate_email_addresses # start the queued job running
-          Delayed::Job.enqueue OtherDcvsSatisyJob.new(ssl_account,new_certificate_name) if ssl_account
+          Delayed::Job.enqueue OtherDcvsSatisyJob.new(ssl_account,new_certificate_name) if ssl_account && certificate.is_server?
         end
       end
     end
@@ -490,7 +492,7 @@ class CertificateContent < ActiveRecord::Base
   end
 
   def cached_certificate_order
-    CertificateOrder.unscoped.find(Rails.cache.fetch("#{cache_key}/cached_certificate_order")do
+    CertificateOrder.unscoped.find_by_id(Rails.cache.fetch("#{cache_key}/cached_certificate_order")do
       certificate_order.id
     end)
   end

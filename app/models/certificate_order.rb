@@ -37,7 +37,7 @@ class CertificateOrder < ActiveRecord::Base
   has_many    :sslcom_ca_requests, :through=>:csrs
   has_many    :sub_order_items, :as => :sub_itemable, :dependent => :destroy
   has_many    :product_variant_items, through: :sub_order_items, :dependent => :destroy
-  has_many    :orders, ->{includes :stored_preferences}, :through => :line_items, unscoped: true
+  has_many    :orders, :through => :line_items, unscoped: true
   has_many    :other_party_validation_requests, class_name: "OtherPartyValidationRequest",
               as: :other_party_requestable, dependent: :destroy
   has_many    :ca_retrieve_certificates, as: :api_requestable, dependent: :destroy
@@ -565,6 +565,16 @@ class CertificateOrder < ActiveRecord::Base
     end
   end
 
+  def locked_recipient_subject_dn
+    dn = []
+    if get_recipient
+      dn << "CN=#{[locked_recipient.first_name,locked_recipient.last_name].join(" ").strip}"
+      dn << "emailAddress=#{locked_recipient.email}"
+
+      dn.map{|d|d.gsub(/\\/,'\\\\').gsub(',','\,')}.join(",")
+    end
+  end
+
   def get_recipient
     recipient = locked_recipient
     if locked_recipient.nil? && assignee 
@@ -574,9 +584,10 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def get_audit_logs
-    al = SystemAudit.where(target_id: id, target_type: 'CertificateOrder')
-    al << SystemAudit.where(target_id: line_items.ids, target_type: 'LineItem')
-    al.flatten.sort_by(&:created_at).reverse
+    SystemAudit.where(
+        "(target_id = ? AND target_type = ?) OR (target_id IN (?) AND target_type = ?)",
+          id, 'CertificateOrder', line_items.ids, 'LineItem'
+    ).order('created_at desc')
   end
 
 
@@ -1076,6 +1087,10 @@ class CertificateOrder < ActiveRecord::Base
     certificate_order_tokens.last
   end
 
+  def generate_certificate_order_token
+    certificate_order_tokens.where(:status => nil).last
+  end
+
   def phone_verified?
     return false if locked_registrant.blank?
     certificate_order_tokens.where(
@@ -1117,7 +1132,7 @@ class CertificateOrder < ActiveRecord::Base
 
   def subject
     Rails.cache.fetch("#{cache_key}/subject") do
-      csr=csrs.includes(:signed_certificates).last
+      csr=csrs.last
       return "" if csr.blank?
       if certificate_content.issued?
         csr.signed_certificates.last.try(:common_name)
@@ -1130,7 +1145,7 @@ class CertificateOrder < ActiveRecord::Base
   memoize :subject
 
   def display_subject
-    csr = csrs.includes(:signed_certificates).last
+    csr = csrs.last
     return if csr.blank?
     last_signed_certificate=csr.signed_certificates.last
     names=last_signed_certificate.subject_alternative_names unless last_signed_certificate.blank?
@@ -1203,23 +1218,12 @@ class CertificateOrder < ActiveRecord::Base
   def domains_validated?
     all_validated = true
     public_key_sha1=certificate_content.cached_csr_public_key_sha1
-    cnames = certificate_content.certificate_names.includes(:domain_control_validations)
-    team_cnames = ssl_account.all_certificate_names.includes(:domain_control_validations)
-    cnames.includes(:domain_control_validations).each do |cn|
+    cnames = certificate_content.certificate_names.includes(:validated_domain_control_validations)
+    cnames.each do |cn|
       # if the certificate_name scoped dcv is not satisfied, check the team level domain name
-      unless cn.domain_control_validations.any?(&"satisfied?".to_sym)
-        ssl_account.other_dcvs_satisfy_domain(cn)
+      unless cn.validated_domain_control_validations.last
         # Team level validation check
-        team_level_validated = false
-        team_cnames.includes(:domain_control_validations).each do |team_cn|
-          if team_cn.non_wildcard_name == cn.non_wildcard_name
-            team_dcv = team_cn.domain_control_validations.last
-            if team_dcv && team_dcv.validated?(nil,public_key_sha1)
-              team_level_validated = true
-              break
-            end
-          end
-        end
+        team_level_validated = ssl_account.other_dcvs_satisfy_domain(cn).blank? ? false : true
       else
         # this certificate_name is validated so continue to the next certificate_name
         next
@@ -1437,7 +1441,7 @@ class CertificateOrder < ActiveRecord::Base
                 ApiCertificateCreate_v1_4::DEFAULT_DCV_METHOD })
         end
       }
-    elsif cc.csr
+    elsif cc.csr and certificate.is_server?
       api_domains.merge!(cc.csr.common_name.to_sym => {dcv: "#{last_dcv_sent ? last_dcv_sent.method_for_api : 'http_csr_hash'}"})
     end
     api_contacts = {}

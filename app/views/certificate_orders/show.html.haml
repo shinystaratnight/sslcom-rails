@@ -36,7 +36,7 @@
       -if permitted_to?(:update, @certificate_order)
         -team_iv = @certificate_order.get_team_iv
         -link_text = team_iv.nil? ? " [how do I use this page?]" : " #{team_iv.first_name} #{team_iv.last_name}"
-        =link_to "[how do I use this page?]", "https://www.ssl.com/article/certificate-order-page-information/"
+        =link_to "[how do I use this page?]", "https://#{Settings.portal_domain}/article/certificate-order-page-information/"
     %tr.heading_row
       %th(scope="col") Subject
       -if show_folders
@@ -56,10 +56,10 @@
           -else
             %i.fa.fa-plus.icon-co-add-folder{id: co.ref}
       %td(class="#{status_class(@cc)}")
-        #{certificate_order_status(@cc)}
+        #{certificate_order_status(@cc,co)}
       %td
         =@certificate_order.orders.first.created_at.strftime("%b %d, %Y")
-      %td(class="#{expires_on_class(@cc)}")
+      %td(class="#{expires_on_class(@cc,co)}")
         %span.expires_on=expires_on(@cc)
       %td.ssl_action=action(@certificate_order)
     %tr.expanded
@@ -405,7 +405,7 @@
                                         (serial: #{sc.replacement.serial})
                                       immediately to avoid downtime.
                                       %br
-                                      Please refer to this #{link_to "serial number entropy FAQ", "https://www.ssl.com/faqs/faq-what-is-the-serial-number-entropy-issue-im-hearing-about/"} for more details.
+                                      Please refer to this #{link_to "serial number entropy FAQ", "https://#{Settings.portal_domain}/faqs/faq-what-is-the-serial-number-entropy-issue-im-hearing-about/"} for more details.
                                   -if sc.try(:body).blank?
                                     (server software: #{c.server_software.try :title})
                                   -else
@@ -589,7 +589,7 @@
 #epki_admin_modal.epki_admin_modal
   #epki_admin_modal_content.modal-content
     #epki_admin_modal_header.modal-header
-      %span#epki_modal_close.close
+      %span#epki_admin_modal_close.close
         &times;
       %p
         Please choose options
@@ -603,8 +603,23 @@
         .block_chk
           = check_box_tag 'chk_copy_link', true, false, :class => 'chk_method'
         .block_label
-          %span View and copy activation link
+          %span View activation link
       #required-field
         * It needs to choose one method at least!
     #epki_admin_modal_footer.modal-footer
       = button_tag 'OK', :type => 'button', :class => 'btn btn-grey btn-ok'
+
+#epki_activation_link_modal.epki_activation_link_modal
+  #epki_activation_link_modal_content.modal-content
+    #epki_activation_link_modal_header.modal-header
+      %span#epki_activation_link_modal_close.close
+        &times;
+      %p
+        Activation Link
+    #epki_activation_link_modal_body.modal-body
+      .method_block.clearfix
+        = text_field_tag :activation_link, '', :readonly => true
+        %span.copy_activation_link{:title => 'Clipboard'}
+          %i.fa.fa-clipboard
+    #epki_activation_link_modal_footer.modal-footer
+      = button_tag 'OK', :type => 'button', :class => 'btn btn-grey btn-activation-link-ok'

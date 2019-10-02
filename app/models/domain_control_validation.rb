@@ -137,13 +137,13 @@ class DomainControlValidation < ActiveRecord::Base
     name=('%'+name[1..-1]) if name[0]=="*" # wildcard
     DomainControlValidation.joins(:certificate_name).where{(identifier_found==1) &
         (certificate_name.name=~"#{name}") &
-        (certificate_name_id >> [ssl_account.all_certificate_names(name,"validated").map(&:id)])}.each do |dcv|
+        (certificate_name_id >> [ssl_account.all_certificate_names(name,"validated").pluck(:id)])}.each do |dcv|
           return dcv if dcv.validated?(name,public_key_sha1)
         end
   end
 
   def self.validated?(ssl_account,domain,public_key_sha1=nil)
-    satisfied_validation(ssl_account,domain,public_key_sha1=nil).blank? ? false : true
+    satisfied_validation(ssl_account,domain,public_key_sha1).blank? ? false : true
   end
 
   def cached_csr_public_key_sha1
@@ -163,10 +163,11 @@ class DomainControlValidation < ActiveRecord::Base
   # public_key_sha1 - against a csr
   def validated?(domain=nil,public_key_sha1=nil)
     satisfied = ->(public_key_sha1){
+        cert_req=(csr || certificate_name.csr).try(:public_key_sha1) if public_key_sha1
         identifier_found && !responded_at.blank? &&
             responded_at > DomainControlValidation::MAX_DURATION_DAYS[:email].days.ago &&
-          (!email_address.blank? or (public_key_sha1 ? (csr || certificate_name.csr).
-              public_key_sha1.downcase==public_key_sha1.downcase : true))
+          (!email_address.blank? or (public_key_sha1 ?
+                                         cert_req.try(:downcase)==public_key_sha1.downcase : true))
     }
     (domain ? DomainControlValidation.domain_in_subdomains?(domain,certificate_name.name) : true) and
         satisfied.call(public_key_sha1)

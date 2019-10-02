@@ -27,7 +27,7 @@
           %td(colspan='7')=will_paginate @teams
     %caption
       =title
-      [learn about #{link_to "teams", "https://www.ssl.com/article/introducing-teams-ssl-com-multiuser-accounts/", target: "_blank"}]
+      [learn about #{link_to "teams", "https://#{Settings.portal_domain}/article/introducing-teams-ssl-com-multiuser-accounts/", target: "_blank"}]
       =will_paginate @teams
     -if permitted_to?(:create_team, current_user) and !system_admins
       %br

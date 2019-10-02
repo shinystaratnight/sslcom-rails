@@ -102,7 +102,7 @@ module SslCom
     config.sass.preferred_syntax = :sass
     config.sass.line_comments = false
     config.sass.cache = false
-    config.action_mailer.default_url_options = { host: "www.ssl.com", protocol: "https" }
+    config.action_mailer.default_url_options = { host: "ra.ssl.com", protocol: "https" }
     self.paths['config/database'] = 'config/client/certassure/database.yml' if DEPLOYMENT_CLIENT=~/certassure/i && Rails.root.to_s=~/Development/
   end
 end
@@ -125,7 +125,6 @@ require "will_paginate"
 #try to figure this out for heroku and rails 3
 #class Fixnum; include InWords; end
 #class Bignum; include InWords; end
-
 DB_STRING_MAX_LENGTH = 255
 DB_TEXT_MAX_LENGTH = 40000
 HTML_TEXT_FIELD_SIZE = 20

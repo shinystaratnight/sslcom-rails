@@ -18,16 +18,16 @@ class CertificateOrdersController < ApplicationController
   layout 'application'
   include OrdersHelper
   include CertificateOrdersHelper
-  
+
   skip_before_action :verify_authenticity_token, only: [:parse_csr]
   filter_access_to :all, except: [:generate_cert]
   filter_access_to :read, :update, :delete, :show, :edit, :developer, :recipient
   filter_access_to :incomplete, :pending, :search, :reprocessing, :order_by_csr, :require=>:read
   filter_access_to :credits, :filter_by, :filter_by_scope, :require=>:index
-  filter_access_to :update_csr, require: [:update]
+  filter_access_to :update_csr, :generate_cert, require: [:update]
   filter_access_to :download, :start_over, :reprocess, :admin_update, :change_ext_order_number, :switch_from_comodo,
                    :developers, :require=>[:update, :delete]
-  filter_access_to :renew, :parse_csr, :generate_cert, require: [:create]
+  filter_access_to :renew, :parse_csr, require: [:create]
   filter_access_to :auto_renew, require: [:admin_manage]
   filter_access_to :show_cert_order, :validate_issue, :register_domains, :require=>:ajax
   before_filter :find_certificate, only: [:enrollment]
@@ -82,9 +82,11 @@ class CertificateOrdersController < ApplicationController
       elsif co_token.is_expired
         is_expired = true
         flash[:error] = "The page has expired or is no longer valid."
-      elsif co_token.due_date < DateTime.now
-        is_expired = true
-        flash[:error] = "The page has expired or is no longer valid."
+      # elsif co_token.due_date < DateTime.now
+      #   is_expired = true
+      #   # co_token.update_attribute(:is_expired, true)
+      #
+      #   flash[:error] = "The page has expired or is no longer valid."
       else
         @certificate_order = co_token.certificate_order
         @token = params[:token]
@@ -134,7 +136,7 @@ class CertificateOrdersController < ApplicationController
     else
       @taggable = @certificate_order
       get_team_tags
-      redirect_to edit_certificate_order_path(@ssl_slug, @certificate_order) and return if @certificate_order.certificate_content.new?
+      redirect_to edit_certificate_order_path(@ssl_slug, @certificate_order) and return if @certificate_order.certificate_content && @certificate_order.certificate_content.new?
       respond_to do |format|
         format.html # show.html.erb
         format.xml  { render :xml => @certificate_order }
@@ -213,6 +215,8 @@ class CertificateOrdersController < ApplicationController
               @generated_csr = params[:csr_ref]
             end
 
+            @is_reprocess = false
+
             return render '/certificates/buy', :layout=>'application'
           end
           unless @certificate_order.certificate_content.csr_submitted? or params[:registrant]
@@ -225,6 +229,10 @@ class CertificateOrdersController < ApplicationController
           registrants_on_edit
         end
         @saved_registrants = @certificate_order.ssl_account.saved_registrants
+      end
+
+      unless params[:approve_phone].blank?
+        flash[:notice] = "It needs to verify phone number."
       end
     else
       not_found
@@ -270,6 +278,12 @@ class CertificateOrdersController < ApplicationController
                             .delete_if{|arr| arr.second == nil}
         @managed_csrs.insert(0, ['none', 'none'])
 
+        if params[:csr_ref]
+          @generated_csr = params[:csr_ref]
+        end
+
+        @is_reprocess = true
+
         return render '/certificates/buy', :layout=>'application'
       end
     else
@@ -310,6 +324,7 @@ class CertificateOrdersController < ApplicationController
       is_smime_or_client = @certificate_order.certificate.is_smime_or_client?
       if @certificate_order.update_attributes(params[:certificate_order])
         cc = @certificate_order.certificate_content
+        original_state_phone_approve = cc.locked_registrant.blank? ? false : cc.locked_registrant.phone_number_approved
 
         # TODO: Store LockedRegistrant Data in case of CS
         setup_locked_registrant(
@@ -350,6 +365,15 @@ class CertificateOrdersController < ApplicationController
             end
           end
         end
+
+        if current_user.is_super_user? && !original_state_phone_approve &&
+            !params[:certificate_order][:certificate_contents_attributes]['0'][:registrant_attributes][:phone].empty? &&
+            params[:certificate_order][:certificate_contents_attributes]['0'][:registrant_attributes][:phone_number_approved] &&
+            params[:certificate_order][:certificate_contents_attributes]['0'][:registrant_attributes][:phone_number_approved] == '1'
+          OrderNotifier.notify_phone_number_approve(@certificate_order, current_user.email).deliver
+          flash[:notice] = "Phone number approved and notification sent to this certificate order's owner."
+        end
+
         if is_smime_or_client
           format.html { redirect_to recipient_certificate_order_path(@ssl_slug, @certificate_order.ref) }
         elsif @certificate_order.is_express_signup? || @certificate_order.skip_contacts_step?
@@ -451,14 +475,14 @@ class CertificateOrdersController < ApplicationController
               cert_single_name.domain_control_validations.delete_all # remove any previous validations
               cert_single_name.candidate_email_addresses # start the queued job running
               Delayed::Job.enqueue CertificateContent::OtherDcvsSatisyJob.new(@certificate_order.ssl_account,
-                                                          cert_single_name) if @certificate_order.ssl_account
+                                                          cert_single_name) if @certificate_order.ssl_account && @certificate_order.certificate.is_server?
               # Basic and High Assurance includes domain minus www
               if CertificateContent.non_wildcard_name(params[:common_name].downcase,true) != cert_single_name.name
                 no_www=cc.certificate_names.create(is_common_name: false, name:
                                    CertificateContent.non_wildcard_name(params[:common_name].downcase,true))
                 no_www.candidate_email_addresses # start the queued job running
                 Delayed::Job.enqueue CertificateContent::OtherDcvsSatisyJob.new(@certificate_order.ssl_account,
-                                                                              no_www) if @certificate_order.ssl_account
+                                                                              no_www) if @certificate_order.ssl_account && @certificate_order.certificate.is_server?
               end
             end
           else
@@ -774,6 +798,15 @@ class CertificateOrdersController < ApplicationController
     )
   end
 
+  def smime_client_duration
+    @certificate = Certificate.find params[:certificate_id]
+    partial = render_to_string(
+      partial: 'certificate_orders/smime_client_enrollment/duration_form',
+      layout: false
+    )
+    render json: {content: partial}, status: :ok
+  end
+
   def client_smime_validate
     co = @certificate_order
     cc = co.certificate_content
@@ -1060,6 +1093,7 @@ class CertificateOrdersController < ApplicationController
       @registrant.last_name = locked_registrant.last_name
       @registrant.email = locked_registrant.email
       @registrant.phone = locked_registrant.phone
+      @registrant.phone_number_approved = locked_registrant.phone_number_approved
       @registrant.country_code = locked_registrant.country_code
       @registrant.status = locked_registrant.status
       @registrant.parent_id = locked_registrant.parent_id
@@ -1080,7 +1114,7 @@ class CertificateOrdersController < ApplicationController
       if cc.locked_registrant.blank?
         cc.create_locked_registrant(cc_params[:registrant_attributes])
         cc.locked_registrant.save!
-      elsif current_user.is_admin?
+      elsif current_user.is_system_admins?
         cc.locked_registrant.update(cc_params[:registrant_attributes])
       end
       setup_reusable_registrant(cc.locked_registrant)

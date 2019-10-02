@@ -19,7 +19,7 @@ class LineItem < ActiveRecord::Base
 
   def sellable_unscoped
     if sellable_type == 'CertificateOrder'
-      CertificateOrder.unscoped.find(sellable_id)
+      CertificateOrder.unscoped.find_by_id(sellable_id)
     else
       sellable
     end

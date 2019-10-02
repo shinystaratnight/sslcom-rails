@@ -6,9 +6,11 @@ require 'tempfile'
 include Open3
 
 class ValidationsController < ApplicationController
-  before_filter :require_user, only: [:index, :new, :edit, :show, :upload, :document_upload, :get_asynch_domains]
+  before_filter :require_user, only: [:index, :new, :edit, :show, :upload, :document_upload, :get_asynch_domains,
+                                      :cancel_validation_process]
   before_filter :find_validation, only: [:update, :new]
-  before_filter :find_certificate_order, only: [:new, :edit, :show, :upload, :document_upload]
+  before_filter :find_certificate_order, only: [:new, :edit, :show, :upload, :document_upload, :request_approve_phone_number]
+  before_filter :set_supported_languages, only: [:verification]
   before_filter :set_row_page, only: [:index, :search]
 
   filter_access_to :all
@@ -19,7 +21,8 @@ class ValidationsController < ApplicationController
   filter_access_to :edit, :show, :attribute_check=>true
   filter_access_to :admin_manage, :attribute_check=>true
   filter_access_to :send_to_ca, require: :sysadmin_manage
-  filter_access_to :get_asynch_domains, :remove_domains, :get_email_addresses, :send_callback, :add_super_user_email, :require=>:ajax
+  filter_access_to :get_asynch_domains, :remove_domains, :get_email_addresses, :send_callback,
+                   :add_super_user_email, :request_approve_phone_number, :cancel_validation_process, :require=>:ajax
   in_place_edit_for :validation_history, :notes
 
   def search
@@ -54,7 +57,7 @@ class ValidationsController < ApplicationController
         @caa_check_domains = ''
         validated_domain_arry = []
         caa_check_domain_arry = []
-        public_key_sha1=cc.cached_csr_public_key_sha1
+        public_key_sha1 = Settings.compare_public_key ? cc.cached_csr_public_key_sha1 : nil
         unless cc.ca.blank?
           cnames = cc.certificate_names.includes(validated_domain_control_validations: :csr)
           team_cnames = @certificate_order.ssl_account.all_certificate_names(nil,"validated").
@@ -67,7 +70,7 @@ class ValidationsController < ApplicationController
 
             team_cnames.each do |team_cn|
               if team_cn.name == cn.name
-                team_dcv = team_cn.domain_control_validations.last
+                team_dcv = team_cn.validated_domain_control_validations.last
 
                 if team_dcv && team_dcv.validated?(nil,public_key_sha1)
                   team_level_validated = true
@@ -98,7 +101,7 @@ class ValidationsController < ApplicationController
                       current_user: current_user)
             if api_log_entry and api_log_entry.instance_of?(SslcomCaRequest) and api_log_entry.response=~/Check CAA/
               flash[:error] =
-                  "CAA validation failed. See https://www.ssl.com/how-to/configure-caa-records-to-authorize-ssl-com/"
+                  "CAA validation failed. See https://#{Settings.portal_domain}/how-to/configure-caa-records-to-authorize-ssl-com/"
             end
           end
 
@@ -293,20 +296,20 @@ class ValidationsController < ApplicationController
   def get_asynch_domains
     co = (current_user.is_system_admins? ? CertificateOrder :
               current_user.certificate_orders).find_by_ref(params[:certificate_order_id])
-    cn = co.certificate_content.certificate_names.includes(:domain_control_validations).find_by_name(params['domain_name']) if co
+    cn = co.certificate_content.certificate_names.find_by_name(params['domain_name']) if co
 
     returnObj = Rails.cache.fetch(cn.get_asynch_cache_label) do
       if cn
         ds = params['domain_status']
-        dcv = cn.domain_control_validations.last
 
         if co.certificate_content.ca
+          dcv = cn.validated_domain_control_validations.last
           domain_status =
-              if dcv and dcv.identifier_found?
+              if dcv
                 "validated"
               else
                 co.ssl_account.other_dcvs_satisfy_domain(cn)
-                dcv = cn.domain_control_validations.last
+                dcv = cn.validated_domain_control_validations.last
                 dcv and dcv.identifier_found? ? "validated" : "pending"
               end
           if dcv
@@ -666,14 +669,19 @@ class ValidationsController < ApplicationController
             @callback_type = 'schedule'
             @callback_method = @certificate_order_token.callback_method.upcase
             @callback_datetime = @certificate_order_token.callback_datetime.in_time_zone(@certificate_order_token.callback_timezone.split(':')[1]).strftime('%Y-%m-%d %I:%M %p %:z')
+            @callback_locale = @certificate_order_token.locale.blank? ? 'en' : @certificate_order_token.locale
+
             flash[:notice] = 'It has been already scheduled automated callback.'
           elsif @certificate_order_token.callback_type == CertificateOrderToken::CALLBACK_MANUAL
             @callback_type = 'manual'
             @callback_method = @certificate_order_token.callback_method.upcase
             @callback_datetime = @certificate_order_token.callback_datetime.in_time_zone(@certificate_order_token.callback_timezone.split(':')[1]).strftime('%Y-%m-%d %I:%M %p %:z')
+            @callback_locale = @certificate_order_token.locale.blank? ? 'en' : @certificate_order_token.locale
+
             flash[:notice] = 'It has been already scheduled manual callback.'
           else
             @callback_type = 'none'
+            @callback_locale = 'en'
           end
         end
       end
@@ -716,7 +724,8 @@ class ValidationsController < ApplicationController
         @response = Authy::PhoneVerification.start(
             via: params[:method],
             country_code: country_code,
-            phone_number: phone_number
+            phone_number: phone_number,
+            locale: params[:locale]
         )
 
         if @response.ok?
@@ -814,7 +823,8 @@ class ValidationsController < ApplicationController
           callback_type: params[:callback_type],
           callback_timezone: params[:callback_timezone],
           callback_datetime: dtz,
-          is_callback_done: (params[:callback_type] == CertificateOrderToken::CALLBACK_MANUAL ? nil : false)
+          is_callback_done: (params[:callback_type] == CertificateOrderToken::CALLBACK_MANUAL ? nil : false),
+          locale: params[:locale]
       )
 
       if params[:callback_type] == CertificateOrderToken::CALLBACK_MANUAL
@@ -829,6 +839,47 @@ class ValidationsController < ApplicationController
 
     else
       returnObj['status'] = 'incorrect-token'
+    end
+
+    render :json => returnObj
+  end
+
+  def request_approve_phone_number
+    returnObj = {}
+
+    if current_user
+      super_users = User.search_super_user.uniq
+      super_users.each do |super_user|
+        OrderNotifier.request_phone_number_approve(@certificate_order, super_user.email).deliver
+      end
+
+      returnObj['status'] = 'success'
+    else
+      returnObj['status'] = 'session_expired'
+    end
+
+    render :json => returnObj
+  end
+
+  def cancel_validation_process
+    returnObj = {}
+    co = (current_user.is_system_admins? ? CertificateOrder :
+              current_user.certificate_orders).find_by_ref(params[:certificate_order_id])
+
+    if co
+      if co.certificate_contents.size == 0
+        returnObj['status'] = 'no-exist-cert-content'
+      else
+        co.certificate_content.destroy
+        if co.certificate_contents.size == 0
+          cc=CertificateContent.new
+          cc.certificate_order=co
+          cc.save
+        end
+        returnObj['status'] = 'success'
+      end
+    else
+      returnObj['status'] = 'no-exist-cert-order'
     end
 
     render :json => returnObj
@@ -1058,5 +1109,42 @@ class ValidationsController < ApplicationController
 
   def help
     Helpers.instance
+  end
+
+  def set_supported_languages
+    @supported_languages = [
+        ['Afrikaans', 'af'],
+        ['Arabic', 'ar'],
+        ['Catalan', 'ca'],
+        ['Chinese', 'zh'],
+        ['Chinese (Mandarin)', 'zh-CN'],
+        ['Chinese (Cantonese)', 'zh-HK'],
+        ['Croatian', 'hr'],
+        ['Czech', 'cs'],
+        ['Danish', 'da'],
+        ['Dutch', 'nl'],
+        ['English', 'en'],
+        ['Finnish', 'fi'],
+        ['French', 'fr'],
+        ['German', 'de'],
+        ['Greek', 'el'],
+        ['Hebrew', 'he'],
+        ['Hindi', 'hi'],
+        ['Hungarian', 'hu'],
+        ['Indonesian', 'id'],
+        ['Italian', 'it'],
+        ['Japanese', 'ja'],
+        ['Korean', 'ko'],
+        ['Malay', 'ms'],
+        ['Norwegian', 'nb'],
+        ['Polish', 'pl'],
+        ['Portuguese - Brazil', 'pt-BR'],
+        ['Portuguese', 'pt'],
+        ['Romanian', 'ro'],
+        ['Russian', 'ru'],
+        ['Spanish', 'es'],
+        ['Swedish', 'sv'],
+        ['Tagalog', 'tl']
+    ]
   end
 end

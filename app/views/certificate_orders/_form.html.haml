@@ -164,6 +164,11 @@
           *Phone:
         = select_tag 'authy-countries', nil, name: 'country_code', 'data-show-as': 'number', 'data-value': @registrant.country_code
         =rf.text_field :phone
+      -if current_user.is_super_user?
+        .clearfix
+          %label{for: "phone_number_approved"}
+            Approve Phone Number:
+          = rf.check_box :phone_number_approved
     -#-if current_user.ssl_account.has_role? 'reseller'
     -#  .clearfix
     -#    %label{:for=>"verified"}

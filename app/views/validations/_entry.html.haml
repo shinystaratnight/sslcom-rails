@@ -5,7 +5,6 @@
   -cn = co.certificate.is_code_signing? or co.certificate.is_smime_or_client? ? co.registrant.company_name : cc.csr.common_name
   -#-to_reminder = cc.locked_registrant.email if co.certificate.is_code_signing?
 -v = co.validation
--status=certificate_order_status(cc)
 %tr.expanded(class="#{'hidden' if current_page?(:validations) or current_page?(:search_validations)}")
   %td(colspan="6")
     .certificate_details
@@ -125,17 +124,18 @@
                                           %li.applied_doc.tree-connect(alt="#{name}_#{i}_#{vh.id}")
                                             applied: #{name}
                           =render partial: 'validations/dcv', locals: {co: co}
-                  %li.send_callback_section
-                    -#-TODO: After add info_verified state to workflow on certificate content,
-                    -#-TODO: below if statement should be commented out and "perform callback" link should be inside if statement.
-                    -#- if @cert_order.certificate_content.info_verified?
-                    - if @cert_order.phone_verified?
-                      - if @cert_order.locked_registrant.country_code.blank?
-                        callback verification completed for #{'+1-' + @cert_order.locked_registrant.phone}
+                  -if @cert_order.locked_registrant
+                    %li.send_callback_section
+                      -#-TODO: After add info_verified state to workflow on certificate content,
+                      -#-TODO: below if statement should be commented out and "perform callback" link should be inside if statement.
+                      -#- if @cert_order.certificate_content.info_verified?
+                      - if @cert_order.phone_verified?
+                        - if @cert_order.locked_registrant.country_code.blank?
+                          callback verification completed for #{'+1-' + @cert_order.locked_registrant.phone}
+                        - else
+                          callback verification completed for #{'+' + @cert_order.locked_registrant.country_code + '-' + @cert_order.locked_registrant.phone}
                       - else
-                        callback verification completed for #{'+' + @cert_order.locked_registrant.country_code + '-' + @cert_order.locked_registrant.phone}
-                    - else
-                      =link_to 'Perform Callback', nil, id: 'link_to_send_callback'
+                        =link_to 'Perform Callback', nil, id: 'link_to_send_callback', 'data-phone-number-approved' => @cert_order.locked_registrant.phone_number_approved, 'data-super-user' => current_user.is_super_user?
               .certificate_details_box
                 %ul
                   %li

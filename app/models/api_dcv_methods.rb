@@ -4,5 +4,5 @@ class ApiDcvMethods < ApiCertificateRequest
 
   attr_accessor :dcv_methods, :instructions, :md5_hash, :sha1_hash, :sha2_hash, :dns_sha2_hash, :dns_md5_hash, :ca_tag
 
-  INSTRUCTIONS="https://www.ssl.com/faqs/ssl-dv-validation-requirements/"
+  INSTRUCTIONS="https://#{Settings.portal_domain}/faqs/ssl-dv-validation-requirements/"
 end

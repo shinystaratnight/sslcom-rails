@@ -105,6 +105,8 @@ class User < ActiveRecord::Base
 
   scope :search_sys_admin, ->{ joins{ roles }.where{ roles.name == Role::SYS_ADMIN } }
 
+  scope :search_super_user, -> {joins{roles}.where{roles.name == Role::SUPER_USER}}
+
   def ssl_account(default_team=nil)
     SslAccount.find_by_id(Rails.cache.fetch("#{cache_key}/ssl_account/#{default_team.is_a?(Symbol) ? default_team.to_s : default_team.try(:cache_key)}") do
       default_ssl = default_ssl_account && is_approved_account?(default_ssl_account)
@@ -906,7 +908,7 @@ class User < ActiveRecord::Base
       params = {ssl_account_id: ssl.ssl_account_id, skip_match: true}
       if approval_token_valid?(params)
         acct_invite << {
-          acct_number:    SslAccount.find(ssl.ssl_account_id).acct_number,
+          acct_number:    SslAccount.find_by_id(ssl.ssl_account_id).acct_number,
           ssl_account_id: ssl.ssl_account_id,
           approval_token: ssl.approval_token
         }
@@ -1082,7 +1084,7 @@ class User < ActiveRecord::Base
   end
 
   def self_or_other(user_id)
-    user = user_id ? User.find(user_id) : self
+    user = user_id ? User.find_by_id(user_id) : self
   end
 
   def approve_account(params)
@@ -1107,7 +1109,7 @@ class User < ActiveRecord::Base
       ssl = ssl_account_users.where(approved: true, user_enabled: true)
       ssl.any? ? ssl.first.ssl_account_id : nil
     end
-    ssl_accounts.find(sa_id) if sa_id
+    ssl_accounts.find_by_id(sa_id) if sa_id
   end
 
   def self.change_login(old, new)

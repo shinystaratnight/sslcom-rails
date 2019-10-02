@@ -134,8 +134,9 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
 
       options={csr: params[:csr]}
       if res = SslcomCaApi.apply_for_certificate(co, options).x509_certificates
-        co_token = co.certificate_order_tokens.where(token: params[:token], is_expired: false).first
+        co_token = co.certificate_order_tokens.where(token: params[:token], status: nil, is_expired: false).last
         co_token.update_attribute(:is_expired, true) if co_token
+        co.update_attribute(:request_status, '')
 
         cert_chain = ""
         res.each do |cert|
@@ -620,7 +621,8 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
           @result.cert_details[:api_commands][:is_test] = @acr.is_test
 
           @result.cert_details[:api_commands][:products] = []
-          serial_list = ['evucc256sslcom', 'ucc256sslcom', 'ov256sslcom', 'ev256sslcom', 'dv256sslcom', 'wc256sslcom', 'basic256sslcom','premium256sslcom']
+          serial_list = ['evucc256sslcom', 'ucc256sslcom', 'ov256sslcom', 'ev256sslcom', 'dv256sslcom', 'wc256sslcom', 'basic256sslcom']
+          serial_list.push('premium256sslcom') if DEPLOYMENT_CLIENT =~ Regexp.new(Settings.portal_domain)
           serial_list.each do |serial|
             c = Certificate.find_by_serial(serial)
             @result.cert_details[:api_commands][:products].push('"' + c.api_product_code + '"' + ' - ' + c.title)

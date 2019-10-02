@@ -310,6 +310,26 @@ class OrderNotifier < ActionMailer::Base
          to: Settings.support_email
   end
 
+  def request_phone_number_approve(co, to_email)
+    @co_edit_page_path = edit_certificate_order_url(id: co.ref, registrant: false, approve_phone: true)
+    @cert_order_ref = co.ref
+
+    mail subject: "Request for approving Phone Number",
+         from: co.get_download_cert_email,
+         to: to_email
+  end
+
+  def notify_phone_number_approve(co, from_email)
+    phone_number = co.locked_registrant.phone
+    country_code = co.locked_registrant.country_code
+    @phone_number = "(+" + country_code + ") " + phone_number
+    @cert_order_ref = co.ref
+
+    mail subject: "Approved Phone Number",
+         from: from_email,
+         to: co.get_download_cert_email
+  end
+
   protected
   def setup_email(user)
     @recipients  = "#{user.email}"
