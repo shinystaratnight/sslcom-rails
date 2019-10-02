@@ -53,7 +53,7 @@ gem 'public_suffix', ">= 4.0.0"
 gem 'rack-cors', ">= 0.4.1", :require => 'rack/cors'
 gem 'cancan'
 gem 'unscoped_associations'
-gem 'nokogiri'
+gem 'nokogiri', ">= 1.10.4"
 gem 'coffee-rails'
 gem 'jquery-rails'
 gem 'jquery-ui-rails'
