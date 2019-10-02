@@ -10,7 +10,7 @@ jQuery(function($) {
     $('#order_wildcard_amount').val(wildcard_cost);
     $('#order_nonwildcard_amount').val($('#ucc-nonwildcard-amount').data('cost'));
   }
-  
+
   $.uniqueStrings = function(list) {
     var result = [];
     $.each(list, function(i, e) {
@@ -40,7 +40,7 @@ jQuery(function($) {
       return true;
     }
   };
-  
+
   <%if Settings.csr_domains_ui%>
     $.domains = function(all_domains){
       names = all_domains.replace(/(\W)(\s+)/g, "$2")
@@ -53,6 +53,8 @@ jQuery(function($) {
       <%end-%>
 
       domains = $.uniqueStrings(names.toLowerCase().split(/\s/));
+      $.removeFromArray("", domains);
+
       <%if @certificate.is_premium_ssl?-%>
         domains = domains.slice(0,3);
         names = domains.join(' ');
@@ -82,20 +84,26 @@ jQuery(function($) {
         }
       });
 
+      $.removeFromArray("", valid_domains);
       textArea.value = valid_domains.join(' ');
 
       <%if @certificate.is_premium_ssl?-%>
-        valid_domains = valid_domains.slice(0, 3);
-        textArea.value = valid_domains.join(' ');
+        /*valid_domains = valid_domains.slice(0, 3);
+        textArea.value = valid_domains.join(' ');*/
+        domains = valid_domains.slice(0, 3);
+        textArea.value = domains.join(' ');
       <%elsif @certificate.is_ucc?-%>
-        valid_domains = valid_domains.slice(0, <%= Certificate::UCC_MAX_DOMAINS%>);
-        textArea.value = valid_domains.join(' ');
+        /*valid_domains = valid_domains.slice(0, < %= Certificate::UCC_MAX_DOMAINS%>);
+        textArea.value = valid_domains.join(' ');*/
+        domains = valid_domains.slice(0, <%= Certificate::UCC_MAX_DOMAINS%>);
+        textArea.value = domains.join(' ');
       <%end-%>
 
-      return valid_domains.filter(Boolean);
+      /*return valid_domains.filter(Boolean);*/
+      return domains.filter(Boolean);
     };
   <%end%>
-  
+
   $('#previous_csr').change(function(){
     if($(this).is(':checked')) {
       $('#certificate_order_certificate_contents_attributes_0_signing_request').val($('#previous_csr_body').val());
@@ -112,13 +120,13 @@ jQuery(function($) {
   $('span.use_previous_csr').click(function(){
     $('#previous_csr').click();
   });
-  
+
   $.removeFromArray = function(value, arr) {
       return jQuery.grep(arr, function(elem, index) {
           return elem !== value;
       });
   };
-  
+
   $.extractWildcards = function(domains) {
     var wildcards;
     if ( $('#ucc-wildcard-amount').length ) {
@@ -130,7 +138,7 @@ jQuery(function($) {
     }
     return wildcards.length;
   };
-  
+
   $.getAllDomainCounts = function(domains) {
     var init_nonwildcard = $('#ucc-nonwildcard-amount').data('initial-count'),
         wildcard         = $('#ucc-wildcard-amount');
@@ -152,9 +160,11 @@ jQuery(function($) {
 
   <%if Settings.csr_domains_ui%>
     $.adjustDomainPricing = function(all_domains) {
-      var domains = $.domains(all_domains),
-        ucc_initial = <%= Certificate::UCC_INITIAL_DOMAINS_BLOCK %>;
-      $.removeFromArray("", domains);
+      var domains = $.domains(all_domains);
+      var ucc_initial = <%= Certificate::UCC_INITIAL_DOMAINS_BLOCK %>;
+
+      /*$.removeFromArray("", domains);*/
+
       $('.order_amount_desc span').text(
         (domains.length > ucc_initial) ? domains.length : ucc_initial
       );
@@ -174,9 +184,11 @@ jQuery(function($) {
     };
   <%else%>
     $.adjustDomainPricing = function(textArea) {
-      var domains = $.domains(textArea),
-        ucc_initial = <%= Certificate::UCC_INITIAL_DOMAINS_BLOCK %>;
-      $.removeFromArray("", domains);
+      var domains = $.domains(textArea);
+      var ucc_initial = <%= Certificate::UCC_INITIAL_DOMAINS_BLOCK %>;
+
+      /*$.removeFromArray("", domains);*/
+
       $('.order_amount_desc span').text(
         (domains.length > ucc_initial) ? domains.length : ucc_initial
       );
@@ -199,15 +211,15 @@ jQuery(function($) {
   $.updateOrderDescription  = function(args) {
     var wildcard_data = $('#ucc-wildcard-amount').data('cost'),
       wildcard_cost = (typeof wildcard_data =='undefined') ? '0.00' : wildcard_data;
-    
-    $('#order_order_description').val('Prorated charge for ' 
+
+    $('#order_order_description').val('Prorated charge for '
       + (args.addt_nonwildcard + args.addt_wildcard)
       + ' additional domains: (wildcard: ' + args.addt_wildcard + ' x $' + wildcard_cost
       + ', non wildcard: ' + args.addt_nonwildcard + ' x $'
       + $('#ucc-nonwildcard-amount').data('cost') + '). '
-      + 'Used ' + args.cur_wildcard + ' of ' + args.init_wildcard 
+      + 'Used ' + args.cur_wildcard + ' of ' + args.init_wildcard
       + ' available wildcard domains and '
-      + args.cur_nonwildcard + ' of ' + args.init_nonwildcard 
+      + args.cur_nonwildcard + ' of ' + args.init_nonwildcard
       + ' available non wildcard domains.'
     );
   };
@@ -235,7 +247,7 @@ jQuery(function($) {
 
     return results;
   };
-  
+
   $("textarea[name*=signing_request]").click(function(){
     $(this).select();
   });
@@ -391,7 +403,7 @@ jQuery(function($) {
       });
     }
   });
-  
+
   <% unless @certificate.is_code_signing? || Rails.env.test? %>
     $("textarea[name*=signing_request]").bind("change paste", function() {
       if ($(this).val() == "") {
@@ -579,7 +591,7 @@ jQuery(function($) {
   };
 
   $.update_order_pricing = function(){
-    domains_cost = 0.0
+    domains_cost = 0.0;
     server_license_cost = 0.0;
     duration_index = <%= @certificate_order.certificate ? @certificate_order.certificate_duration(:years) : "$(':radio[name*=duration]:checked').val();".html_safe %>
     duration_cost = durations[duration_index-1];
@@ -949,7 +961,7 @@ jQuery(function($) {
           return false;
         }
       });
-      
+
       <% if !@request %>
         if($(':radio[name*=has_csr]:checked').val()=="false"){
           show_csr=false;
@@ -957,7 +969,7 @@ jQuery(function($) {
           $('#form_progress_indicator').hide();
         }
       <% end %>
-      
+
       $('.add_to_cart_button').click(function(){
         $.change_cart_items("add");
       });
