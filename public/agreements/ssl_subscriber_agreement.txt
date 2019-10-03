@@ -187,13 +187,13 @@ Confidential Information means:  (i) for SSL.com, SSL.com’s business continuit
 
 Confidential Information does not include Certificate Signing Requests, Certificates, Certificate status information and other information that SSL.com publishes as part of providing the Certificate Services or information.
 
-CPS means the SSL.com Certification Practices Statement published at https://ra.ssl.com/repository/SSLcom-CPS.pdf as it may be modified from time to time in accordance with its terms.
+CPS means the SSL.com Certification Practices Statement published at https://secure.ssl.com/repository/SSLcom-CPS.pdf as it may be modified from time to time in accordance with its terms.
 
 Online Certificate Status Protocol (OCSP) An online certificate status protocol (OCSP) is one of the two protocols aside from certificate revocation lists (CRL) for maintaining the security of servers and other network resources. It is used for getting an X.509 digital certificate’s revocation status.
 
 Personal Data means information that can be used to identify you as an individual, such as your name, business name, email address, telephone number, and photograph.
 Public Key Infrastructure (PKI) is a set of roles, policies, and procedures needed to create, manage, distribute, use, store, and revoke digital certificates and manage public-key encryption.
-Privacy Policy means the current SSL.com Privacy Policy, available at https://ra.ssl.com/privacy-policy/.
+Privacy Policy means the current SSL.com Privacy Policy, available at https://secure.ssl.com/privacy-policy/.
 Private Key means the private key corresponding to the public key included in a Certificate.
 Public Key means the corresponding cryptographic key to the Private Key included in a Certificate.
 Relying Party is an entity that relies upon the information contained within the Certificate.

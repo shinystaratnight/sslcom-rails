@@ -1,15 +1,14 @@
 site: 'remote'
-root_subdomain: "www"
-actionmailer_host: "ra.ssl.com"
+actionmailer_host: "secure.ssl.com"
 community_name: "SSL.com"
-community_domain: "ra.ssl.com"
+community_domain: "secure.ssl.com"
 api_domain: "sws.sslpki.com"
 test_api_domain: "sws-test.sslpki.com"
 dev_api_domain: "sws.sslpki.local"
 dev_test_api_domain: "sws-test.sslpki.local"
-portal_domain: "ra.ssl.com"
+portal_domain: "secure.ssl.com"
 sandbox_domain: "sandbox.ssl.com"
-dev_portal_domain: "ra.ssl.local"
+dev_portal_domain: "secure.ssl.local"
 dev_sandbox_domain: "sandbox.ssl.local"
 support_domain: "support.ssl.com"
 community_tagline: "copyright 2016"
@@ -79,7 +78,7 @@ ca_certificate_id_code_signing: "509"
 
 olark_id: '3356-178-10-2724'
 
-dv_explanation_link: "https://ra.ssl.com/faqs/ssl-dv-validation-requirements/"
+dv_explanation_link: "https://secure.ssl.com/faqs/ssl-dv-validation-requirements/"
 
 # 'local' for openssl, 'remote' to use java SOAP
 csr_parser: local

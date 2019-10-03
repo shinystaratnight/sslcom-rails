@@ -16,7 +16,7 @@ class Tracking < ActiveRecord::Base
     parents.first if parents
   end
 
-  SSL_LINKS = ["/", "http://ssl.com%", "https://ssl.com%", "http://ra.ssl.com%", "https://ra.ssl.com%",
+  SSL_LINKS = ["/", "http://ssl.com%", "https://ssl.com%", "http://secure.ssl.com%", "https://secure.ssl.com%",
                "https://ssl/", "http://reseller.ssl.com%", "https://reseller.ssl.com%","http://staging1.ssl.com%",
                "http://sws.ssl.com%", "https://sws.ssl.com%","http://staging.ssl.com%", "https://staging1.ssl.com%",
                "http://staging2.ssl.com%", "https://staging2.ssl.com%",

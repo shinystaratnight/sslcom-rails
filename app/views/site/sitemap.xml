@@ -2,247 +2,247 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
 	<url>
-		<loc>http://ra.ssl.com/</loc>
+		<loc>http://secure.ssl.com/</loc>
 		<lastmod>2011-10-01</lastmod>
 		<changefreq>weekly</changefreq>
 		<priority>0.5</priority>
 	</url>
 	<url>
-		<loc>https://ra.ssl.com/orders/show_cart</loc>
+		<loc>https://secure.ssl.com/orders/show_cart</loc>
 		<lastmod>2011-10-01</lastmod>
 		<changefreq>weekly</changefreq>
 		<priority>0.5</priority>
 	</url>
 	<url>
-		<loc>https://ra.ssl.com/about</loc>
+		<loc>https://secure.ssl.com/about</loc>
 		<lastmod>2011-10-01</lastmod>
 		<changefreq>weekly</changefreq>
 		<priority>0.5</priority>
 	</url>
 	<url>
-		<loc>https://ra.ssl.com/login</loc>
+		<loc>https://secure.ssl.com/login</loc>
 		<lastmod>2011-10-01</lastmod>
 		<changefreq>weekly</changefreq>
 		<priority>0.5</priority>
 	</url>
 	<url>
-		<loc>https://ra.ssl.com/users/new</loc>
+		<loc>https://secure.ssl.com/users/new</loc>
 		<lastmod>2011-10-01</lastmod>
 		<changefreq>weekly</changefreq>
 		<priority>0.5</priority>
 	</url>
 	<url>
-		<loc>https://ra.ssl.com/</loc>
+		<loc>https://secure.ssl.com/</loc>
 		<lastmod>2011-10-01</lastmod>
 		<changefreq>weekly</changefreq>
 		<priority>0.5</priority>
 	</url>
 	<url>
-		<loc>https://ra.ssl.com/certificates</loc>
+		<loc>https://secure.ssl.com/certificates</loc>
 		<lastmod>2011-10-01</lastmod>
 		<changefreq>weekly</changefreq>
 		<priority>0.5</priority>
 	</url>
 	<url>
-		<loc>https://ra.ssl.com/site_seals/details</loc>
+		<loc>https://secure.ssl.com/site_seals/details</loc>
 		<lastmod>2011-10-01</lastmod>
 		<changefreq>weekly</changefreq>
 		<priority>0.5</priority>
 	</url>
 	<url>
-		<loc>https://ra.ssl.com/site_seals/11665f53-4c3e2026/site_report</loc>
+		<loc>https://secure.ssl.com/site_seals/11665f53-4c3e2026/site_report</loc>
 		<lastmod>2011-10-01</lastmod>
 		<changefreq>weekly</changefreq>
 		<priority>0.5</priority>
 	</url>
 	<url>
-		<loc>https://ra.ssl.com/site_seals/11665f53-4c3e2026/artifacts</loc>
+		<loc>https://secure.ssl.com/site_seals/11665f53-4c3e2026/artifacts</loc>
 		<lastmod>2011-10-01</lastmod>
 		<changefreq>weekly</changefreq>
 		<priority>0.5</priority>
 	</url>
 	<url>
-		<loc>https://ra.ssl.com/certificates/free</loc>
+		<loc>https://secure.ssl.com/certificates/free</loc>
 		<lastmod>2011-10-01</lastmod>
 		<changefreq>weekly</changefreq>
 		<priority>0.5</priority>
 	</url>
 	<url>
-		<loc>https://ra.ssl.com/certificates/single_domain</loc>
+		<loc>https://secure.ssl.com/certificates/single_domain</loc>
 		<lastmod>2011-10-01</lastmod>
 		<changefreq>weekly</changefreq>
 		<priority>0.5</priority>
 	</url>
 	<url>
-		<loc>https://ra.ssl.com/certificates/wildcard_or_ucc</loc>
+		<loc>https://secure.ssl.com/certificates/wildcard_or_ucc</loc>
 		<lastmod>2011-10-01</lastmod>
 		<changefreq>weekly</changefreq>
 		<priority>0.5</priority>
 	</url>
 	<url>
-		<loc>https://ra.ssl.com/certificates/wildcard</loc>
+		<loc>https://secure.ssl.com/certificates/wildcard</loc>
 		<lastmod>2011-10-01</lastmod>
 		<changefreq>weekly</changefreq>
 		<priority>0.5</priority>
 	</url>
 	<url>
-		<loc>https://ra.ssl.com/certificates/wildcard/buy</loc>
+		<loc>https://secure.ssl.com/certificates/wildcard/buy</loc>
 		<lastmod>2011-10-01</lastmod>
 		<changefreq>weekly</changefreq>
 		<priority>0.5</priority>
 	</url>
 	<url>
-		<loc>https://ra.ssl.com/certificates/ev</loc>
+		<loc>https://secure.ssl.com/certificates/ev</loc>
 		<lastmod>2011-10-01</lastmod>
 		<changefreq>weekly</changefreq>
 		<priority>0.5</priority>
 	</url>
 	<url>
-		<loc>https://ra.ssl.com/certificates/ev/buy</loc>
+		<loc>https://secure.ssl.com/certificates/ev/buy</loc>
 		<lastmod>2011-10-01</lastmod>
 		<changefreq>weekly</changefreq>
 		<priority>0.5</priority>
 	</url>
 	<url>
-		<loc>https://ra.ssl.com/certificates/evucc</loc>
+		<loc>https://secure.ssl.com/certificates/evucc</loc>
 		<lastmod>2011-10-01</lastmod>
 		<changefreq>weekly</changefreq>
 		<priority>0.5</priority>
 	</url>
 	<url>
-		<loc>https://ra.ssl.com/certificates/evucc/buy</loc>
+		<loc>https://secure.ssl.com/certificates/evucc/buy</loc>
 		<lastmod>2011-10-01</lastmod>
 		<changefreq>weekly</changefreq>
 		<priority>0.5</priority>
 	</url>
 	<url>
-		<loc>https://ra.ssl.com/certificates/high_assurance</loc>
+		<loc>https://secure.ssl.com/certificates/high_assurance</loc>
 		<lastmod>2011-10-01</lastmod>
 		<changefreq>weekly</changefreq>
 		<priority>0.5</priority>
 	</url>
 	<url>
-		<loc>https://ra.ssl.com/certificates/high_assurance/buy</loc>
+		<loc>https://secure.ssl.com/certificates/high_assurance/buy</loc>
 		<lastmod>2011-10-01</lastmod>
 		<changefreq>weekly</changefreq>
 		<priority>0.5</priority>
 	</url>
 	<url>
-		<loc>https://ra.ssl.com/certificates/ucc</loc>
+		<loc>https://secure.ssl.com/certificates/ucc</loc>
 		<lastmod>2011-10-01</lastmod>
 		<changefreq>weekly</changefreq>
 		<priority>0.5</priority>
 	</url>
 	<url>
-		<loc>https://ra.ssl.com/certificates/ucc/buy</loc>
+		<loc>https://secure.ssl.com/certificates/ucc/buy</loc>
 		<lastmod>2011-10-01</lastmod>
 		<changefreq>weekly</changefreq>
 		<priority>0.5</priority>
 	</url>
 	<url>
-		<loc>https://ra.ssl.com/restful_api</loc>
+		<loc>https://secure.ssl.com/restful_api</loc>
 		<lastmod>2011-10-01</lastmod>
 		<changefreq>weekly</changefreq>
 		<priority>0.5</priority>
 	</url>
 	<url>
-		<loc>https://ra.ssl.com/certificates/apidocs/apply</loc>
+		<loc>https://secure.ssl.com/certificates/apidocs/apply</loc>
 		<lastmod>2011-10-01</lastmod>
 		<changefreq>weekly</changefreq>
 		<priority>0.5</priority>
 	</url>
 	<url>
-		<loc>https://ra.ssl.com/host_providers</loc>
+		<loc>https://secure.ssl.com/host_providers</loc>
 		<lastmod>2011-10-01</lastmod>
 		<changefreq>weekly</changefreq>
 		<priority>0.5</priority>
 	</url>
 	<url>
-		<loc>https://ra.ssl.com/reseller_tiers</loc>
+		<loc>https://secure.ssl.com/reseller_tiers</loc>
 		<lastmod>2011-10-01</lastmod>
 		<changefreq>weekly</changefreq>
 		<priority>0.5</priority>
 	</url>
 	<url>
-		<loc>https://ra.ssl.com/account/new</loc>
+		<loc>https://secure.ssl.com/account/new</loc>
 		<lastmod>2011-10-01</lastmod>
 		<changefreq>weekly</changefreq>
 		<priority>0.5</priority>
 	</url>
 	<url>
-		<loc>https://ra.ssl.com/user_session/new</loc>
+		<loc>https://secure.ssl.com/user_session/new</loc>
 		<lastmod>2011-10-01</lastmod>
 		<changefreq>weekly</changefreq>
 		<priority>0.5</priority>
 	</url>
 	<url>
-		<loc>https://ra.ssl.com/password_resets/new</loc>
+		<loc>https://secure.ssl.com/password_resets/new</loc>
 		<lastmod>2011-10-01</lastmod>
 		<changefreq>weekly</changefreq>
 		<priority>0.5</priority>
 	</url>
 	<url>
-		<loc>https://ra.ssl.com/registrars</loc>
+		<loc>https://secure.ssl.com/registrars</loc>
 		<lastmod>2011-10-01</lastmod>
 		<changefreq>weekly</changefreq>
 		<priority>0.5</priority>
 	</url>
 	<url>
-		<loc>https://ra.ssl.com/merchants</loc>
+		<loc>https://secure.ssl.com/merchants</loc>
 		<lastmod>2011-10-01</lastmod>
 		<changefreq>weekly</changefreq>
 		<priority>0.5</priority>
 	</url>
 	<url>
-		<loc>https://ra.ssl.com/browser_compatibility</loc>
+		<loc>https://secure.ssl.com/browser_compatibility</loc>
 		<lastmod>2011-10-01</lastmod>
 		<changefreq>weekly</changefreq>
 		<priority>0.5</priority>
 	</url>
 	<url>
-		<loc>https://ra.ssl.com/validations/requirements</loc>
+		<loc>https://secure.ssl.com/validations/requirements</loc>
 		<lastmod>2011-10-01</lastmod>
 		<changefreq>weekly</changefreq>
 		<priority>0.5</priority>
 	</url>
 	<url>
-		<loc>https://ra.ssl.com/contact_us</loc>
+		<loc>https://secure.ssl.com/contact_us</loc>
 		<lastmod>2011-10-01</lastmod>
 		<changefreq>weekly</changefreq>
 		<priority>0.5</priority>
 	</url>
 	<url>
-		<loc>https://ra.ssl.com/privacy_policy</loc>
+		<loc>https://secure.ssl.com/privacy_policy</loc>
 		<lastmod>2011-10-01</lastmod>
 		<changefreq>weekly</changefreq>
 		<priority>0.5</priority>
 	</url>
 	<url>
-		<loc>https://ra.ssl.com/terms_of_use</loc>
+		<loc>https://secure.ssl.com/terms_of_use</loc>
 		<lastmod>2011-10-01</lastmod>
 		<changefreq>weekly</changefreq>
 		<priority>0.5</priority>
 	</url>
 	<url>
-		<loc>https://ra.ssl.com/copyright</loc>
+		<loc>https://secure.ssl.com/copyright</loc>
 		<lastmod>2011-10-01</lastmod>
 		<changefreq>weekly</changefreq>
 		<priority>0.5</priority>
 	</url>
 	<url>
-		<loc>https://ra.ssl.com/users/activation_notice</loc>
+		<loc>https://secure.ssl.com/users/activation_notice</loc>
 		<lastmod>2011-10-01</lastmod>
 		<changefreq>weekly</changefreq>
 		<priority>0.5</priority>
 	</url>
 	<url>
-		<loc>https://ra.ssl.com/certificates/free/buy</loc>
+		<loc>https://secure.ssl.com/certificates/free/buy</loc>
 		<lastmod>2011-10-01</lastmod>
 		<changefreq>weekly</changefreq>
 		<priority>0.5</priority>
 	</url>
 	<url>
-		<loc>https://ra.ssl.com/logout</loc>
+		<loc>https://secure.ssl.com/logout</loc>
 		<lastmod>2011-10-01</lastmod>
 		<changefreq>weekly</changefreq>
 		<priority>0.5</priority>

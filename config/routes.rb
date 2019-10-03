@@ -16,7 +16,6 @@ SslCom::Application.routes.draw do
 
   match '/oauth',               :to => 'oauth#index',         :as => :oauth, via: [:get, :post]
 
-  match ''=>'surls#index', :constraints => {:subdomain=>Surl::SUBDOMAIN}, as: 'surls_root', via: [:get, :post]
   match '/'=>'resellers#index', :constraints => {:subdomain=>Reseller::SUBDOMAIN}, as: 'resellers_root', via: [:get, :post]
   match '/' => 'site#index', :as => :root, via: [:get, :post]
   match 'login' => 'user_sessions#new', :as => :login, via: [:get, :post]

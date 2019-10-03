@@ -329,7 +329,7 @@ class CertificateName < ActiveRecord::Base
     name=CertificateContent.non_wildcard_name(name,false)
     Rails.cache.fetch("CertificateName.candidate_email_addresses/#{name}",
                       expires_in: DomainControlValidation::EMAIL_CHOICE_CACHE_EXPIRES_DAYS.days) do
-      Delayed::Job.enqueue WhoisJob.new(name,certificate_name)
+      Delayed::Job.enqueue WhoisJob.new(name,certificate_name) unless APP_URL=~Regexp.new(Settings.portal_domain)
       DomainControlValidation.global.find_by_subject(name).try(:candidate_addresses) ||
           DomainControlValidation.email_address_choices(name)
     end
