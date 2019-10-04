@@ -23,6 +23,13 @@ jQuery(function($) {
     var registerRequests = <%= @registration_requests.to_json.html_safe %>;
     var signRequests = <%= @sign_requests.as_json.to_json.html_safe %>;
 
+    $('.register_u2f').click(function() {
+      $('.u2f_block.register').hide();
+      $('.u2f_device_name').val('');
+      $('.add_u2f_device').prop('disabled', true);
+      $('.u2f_block.add_nick_name').show();
+    });
+
     $('.u2f_device_name').keyup(function() {
       if ($(this).val().trim() == '') {
         $('.add_u2f_device').prop('disabled', true);
