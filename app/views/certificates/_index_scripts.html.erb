@@ -3,6 +3,7 @@ jQuery.noConflict();
 jQuery(function($) {
   var ucc_reprocess = $('#calculated_reprocess_price');
   var names = '';
+  var removed_domains = [];
   
   if (ucc_reprocess.length) {
     var wildcard_cost = $('#ucc-wildcard-amount').data('cost');
@@ -43,6 +44,7 @@ jQuery(function($) {
   
   <%if Settings.csr_domains_ui%>
     $.domains = function(all_domains){
+      removed_domains = [];
       names = all_domains.replace(/(\W)(\s+)/g, "$2")
         .replace('_','')
         .replace(/(\s+|^)([^<%='\*' if @certificate.allow_wildcard_ucc?%>\w])/g, "$1")
@@ -54,9 +56,11 @@ jQuery(function($) {
 
       domains = $.uniqueStrings(names.toLowerCase().split(/\s/));
       <%if @certificate.is_premium_ssl?-%>
+        removed_domains = domains.slice(3);
         domains = domains.slice(0,3);
         names = domains.join(' ');
       <%elsif @certificate.is_ucc?-%>
+        removed_domains = domains.slice(<%= Certificate::UCC_MAX_DOMAINS%>);
         domains = domains.slice(0, <%= Certificate::UCC_MAX_DOMAINS%>);
         names = domains.join(' ');
       <%end-%>
@@ -65,6 +69,7 @@ jQuery(function($) {
     };
   <%else%>
     $.domains = function(textArea){
+      removed_domains = [];
       textArea.value = textArea.value.replace(/(\W)(\s+)/g, "$2")
         .replace('_','')
         .replace(/(\s+|^)([^<%='\*' if @certificate.allow_wildcard_ucc?%>\w])/g, "$1")
@@ -85,9 +90,11 @@ jQuery(function($) {
       textArea.value = valid_domains.join(' ');
 
       <%if @certificate.is_premium_ssl?-%>
+        removed_domains = valid_domains.slice(3);
         valid_domains = valid_domains.slice(0, 3);
         textArea.value = valid_domains.join(' ');
       <%elsif @certificate.is_ucc?-%>
+        removed_domains = valid_domains.slice(<%= Certificate::UCC_MAX_DOMAINS%>);
         valid_domains = valid_domains.slice(0, <%= Certificate::UCC_MAX_DOMAINS%>);
         textArea.value = valid_domains.join(' ');
       <%end-%>
@@ -171,6 +178,38 @@ jQuery(function($) {
       } else {
         $.update_order_pricing();
       }
+
+      if (removed_domains.length > 0) {
+        var message_wrap_element = $('<div></div>');
+        message_wrap_element.attr('class', 'flash_message notice');
+
+        var message_element = $('<span></span>');
+        var notice_message = 'The following domains has been removed because of exceeding the limitation for domains count. <br />';
+        notice_message += removed_domains.join('   ');
+        message_element.html(notice_message);
+
+        message_wrap_element.append(message_element);
+
+        var btn_element = $('<small></small>');
+        var close_btn_element = $('<div></div>');
+        close_btn_element.attr('class', 'close_flash_message');
+
+        var close_sign_element = $('<span></span>');
+        close_sign_element.append('X');
+
+        close_btn_element.append(close_sign_element);
+        close_btn_element.append('close');
+
+        btn_element.append(close_btn_element);
+        message_wrap_element.append(btn_element);
+
+        if ($('#content').find('.inner').children().first().hasClass('flash_message')) {
+          $('#content').find('.inner').children().first().remove();
+        }
+        message_wrap_element.insertBefore($('#content').find('.inner').children().first());
+
+        window.scrollTo(0, 0);
+      }
     };
   <%else%>
     $.adjustDomainPricing = function(textArea) {
@@ -192,6 +231,38 @@ jQuery(function($) {
         $.updateOrderDescription(domain_counts);
       } else {
         $.update_order_pricing();
+      }
+
+      if (removed_domains.length > 0) {
+        var message_wrap_element = $('<div></div>');
+        message_wrap_element.attr('class', 'flash_message notice');
+
+        var message_element = $('<span></span>');
+        var notice_message = 'The following domains has been removed because of exceed the limitation for additional domains. <br />';
+        notice_message += removed_domains.join('   ');
+        message_element.html(notice_message);
+
+        message_wrap_element.append(message_element);
+
+        var btn_element = $('<small></small>');
+        var close_btn_element = $('<div></div>');
+        close_btn_element.attr('class', 'close_flash_message');
+
+        var close_sign_element = $('<span></span>');
+        close_sign_element.append('X');
+
+        close_btn_element.append(close_sign_element);
+        close_btn_element.append('close');
+
+        btn_element.append(close_btn_element);
+        message_wrap_element.append(btn_element);
+
+        if ($('#content').find('.inner').children().first().hasClass('flash_message')) {
+          $('#content').find('.inner').children().first().remove();
+        }
+        message_wrap_element.insertBefore($('#content').find('.inner').children().first());
+
+        window.scrollTo(0, 0);
       }
     };
   <%end%>
@@ -297,8 +368,8 @@ jQuery(function($) {
                 $.adjustDomainPricing(all_domains.join(' '));
               <%else%>
                 all_domains = $.unique($.merge(data['subject_alternative_names'], [data['common_name']]));
-                /*additional_domains = $("textarea[name*=additional_domains]").text() + " " + data['subject_alternative_names'];*/
-                additional_domains = $("textarea[name*=additional_domains]").text() + " " + all_domains;
+                /*additional_domains = $("textarea[name*=additional_domains]").val() + " " + data['subject_alternative_names'];*/
+                additional_domains = all_domains + " " + $("textarea[name*=additional_domains]").val();
                 $("textarea[name*=additional_domains]").val($.uniqueStrings(additional_domains.split(/[\s,\n]+/)).join(" "));
 
                 $.adjustDomainPricing($("textarea[name*=additional_domains]")[0]);
@@ -461,7 +532,7 @@ jQuery(function($) {
                     $.adjustDomainPricing(all_domains.join(' '));
                   <%else%>
                     all_domains = $.unique($.merge(data.certificate_content.csr.subject_alternative_names, [data.certificate_content.csr.common_name]));
-                    additional_domains = $("textarea[name*=additional_domains]").text() + " " + all_domains;
+                    additional_domains = all_domains + " " + $("textarea[name*=additional_domains]").val();
                     $("textarea[name*=additional_domains]").val($.uniqueStrings(additional_domains.split(/[\s,\n]+/)).join(" "));
 
                     $.adjustDomainPricing($("textarea[name*=additional_domains]")[0]);
@@ -750,7 +821,7 @@ jQuery(function($) {
                   domain_names_ary.splice(index, 1);
                 }
 
-                domain_names = domain_names_ary.join(' ') + ' ' + current_common_name;
+                domain_names = current_common_name + ' ' + domain_names_ary.join(' ');
                 $('textarea[id$=domains]').val(domain_names);
 
                 $.adjustDomainPricing($('textarea[id$=domains]')[0]);
