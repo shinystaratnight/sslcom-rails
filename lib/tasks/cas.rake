@@ -399,7 +399,7 @@ namespace :cas do
           end_entity: Ca::END_ENTITY[:evcs]
       )
       Ca.find_or_initialize_by(ref: "0015").update_attributes(
-          friendly_name: "SSL.com SSL RSA 4096 R2 (EV)",
+          friendly_name: "SSL.com SSL RSA 4096 R3 (EV)",
           profile_name: "EV_RSA_SERVER_CERT",
           algorithm: "rsa",
           size: 4096,

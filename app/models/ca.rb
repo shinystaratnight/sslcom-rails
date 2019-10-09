@@ -49,7 +49,21 @@ class Ca < ActiveRecord::Base
                           "SSLcom-SubCA-CodeSigning-RSA-4096-R1" => "MilleniumSign-Intermediate-codeSigning-RSA-4096-R3",
                           "SSLcom-SubCA-clientCert-RSA-4096-R2" => "MilleniumSign-Intermediate-clientCert-RSA-4096-R3",
                           "SSLcom-SubCA-clientCert-ECC-384-R2" => "MilleniumSign-Intermediate-clientCert-ECC-384-R3",
-                          "SSLcom-SubCA-EV-SSL-RSA-4096-R3" => "MilleniumSign-Intermediate-EV-SSL-RSA-4096-R3"}}
+                          "SSLcom-SubCA-EV-SSL-RSA-4096-R3" => "MilleniumSign-Intermediate-EV-SSL-RSA-4096-R3"},
+                        "aef-1epq21m" => # SafeToOpen
+                          {"SSLcom-SubCA-SSL-RSA-4096-R1" => "SafeToOpen-Intermediate-SSL-RSA-4096-R1",
+                          "SSLcom-SubCA-SSL-ECC-384-R2" => "SafeToOpen-Intermediate-SSL-ECC-384-R1",
+                          "SSLcom-SubCA-CodeSigning-RSA-4096-R1" => "SafeToOpen-Intermediate-codeSigning-RSA-4096-R1",
+                          "SSLcom-SubCA-clientCert-RSA-4096-R2" => "SafeToOpen-Intermediate-clientCert-RSA-4096-R1",
+                          "SSLcom-SubCA-clientCert-ECC-384-R2" => "SafeToOpen-Intermediate-clientCert-ECC-384-R1",
+                          "SSLcom-SubCA-EV-SSL-RSA-4096-R3" => "SafeToOpen-Intermediate-EV-SSL-RSA-4096-R1"},
+                        "af7-1epf2p9" => # DodoSign
+                          {"SSLcom-SubCA-SSL-RSA-4096-R1" => "DodoSign-Intermediate-SSL-RSA-4096-R1",
+                          "SSLcom-SubCA-SSL-ECC-384-R2" => "DodoSign-Intermediate-SSL-ECC-384-R1",
+                          "SSLcom-SubCA-CodeSigning-RSA-4096-R1" => "DodoSign-Intermediate-codeSigning-RSA-4096-R1",
+                          "SSLcom-SubCA-clientCert-RSA-4096-R2" => "DodoSign-Intermediate-clientCert-RSA-4096-R1",
+                          "SSLcom-SubCA-clientCert-ECC-384-R2" => "DodoSign-Intermediate-clientCert-ECC-384-R1",
+                          "SSLcom-SubCA-EV-SSL-RSA-4096-R3" => "DodoSign-Intermediate-EV-SSL-RSA-4096-R1"}}
 
   validates :ref, presence: true, uniqueness: true
 
