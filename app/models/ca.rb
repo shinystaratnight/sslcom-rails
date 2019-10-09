@@ -82,6 +82,10 @@ class Ca < ActiveRecord::Base
     Ca.find_by(profile_name: down_profile, host: host, end_entity: down_entity)
   end
 
+  def is_ev?
+    profile_name=~/EV/
+  end
+
   private
 
 end

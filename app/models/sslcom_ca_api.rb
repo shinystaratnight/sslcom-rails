@@ -177,7 +177,7 @@ class SslcomCaApi
 
     # does this need to be a DV if OV is required but not satisfied?
     if certificate_order.certificate.is_server? and
-        (options[:mapping].profile_name=~/OV/ or options[:mapping].profile_name=~/EV/)
+        (options[:mapping].profile_name=~/OV/ or options[:mapping].is_ev?)
       downstep = !certificate_order.ov_validated?
       options[:mapping]=options[:mapping].downstep if downstep
     end
@@ -191,13 +191,13 @@ class SslcomCaApi
     else
       cc.csr.save if cc.csr.new_record?
     end
-    if options[:mapping].profile_name=~/EV/
+    if options[:mapping].is_ev?
       approval_req, approval_res = SslcomCaApi.get_status(csr: cc.csr, mapping: options[:mapping])
       return cc.csr.sslcom_ca_requests.create(
           parameters: approval_req.body, method: "get", response: approval_res.body,
           ca: options[:ca]) if approval_res.try(:body)=~/WAITING FOR APPROVAL/
     end
-    if options[:mapping].profile_name=~/EV/ and (approval_res.try(:body).blank? or approval_res.try(:body)=="[]" or
+    if options[:mapping].is_ev? and (approval_res.try(:body).blank? or approval_res.try(:body)=="[]" or
         (!cc.signed_certificate.blank? and cc.signed_certificate.read_attribute(:ejbca_username)==cc.csr.sslcom_ca_requests.compact.first.username and
             !cc.csr.sslcom_ca_requests.compact.first.username.blank?))
       # create the user for EV order
@@ -208,21 +208,21 @@ class SslcomCaApi
         return
       else
         cc.pend_issuance!
-      end unless options[:mapping].profile_name=~/EV/
+      end unless options[:mapping].is_ev?
       host = ca_host(options[:mapping])+
-          "/v1/certificate#{'/ev' if options[:mapping].profile_name=~/EV/}/pkcs10"
+          "/v1/certificate#{'/ev' if options[:mapping].is_ev?}/pkcs10"
       options.merge!(collect_certificate: true, username:
-          cc.csr.sslcom_usernames.compact.first) if options[:mapping].profile_name=~/EV/
+          cc.csr.sslcom_usernames.compact.first) if options[:mapping].is_ev?
     end
     req, res = call_ca(host, options, issue_cert_json(options))
     api_log_entry=cc.csr.sslcom_ca_requests.create(request_url: host,
       parameters: req.body, method: "post", response: res.try(:body), ca: options[:ca_name] || ca_name(options))
-    if (!options[:mapping].profile_name=~/EV/ and api_log_entry.username.blank?) or
-        (options[:mapping].profile_name=~/EV/ and api_log_entry.username.blank? and
+    if (!options[:mapping].is_ev? and api_log_entry.username.blank?) or
+        (options[:mapping].is_ev? and api_log_entry.username.blank? and
             api_log_entry.request_username.blank?)
       OrderNotifier.problem_ca_sending("support@ssl.com", cc.certificate_order,"sslcom").deliver
     elsif api_log_entry.certificate_chain # signed certificate is issued
-      cc.update_column(:label, options[:mapping].profile_name=~/EV/ ? api_log_entry.request_username :
+      cc.update_column(:label, options[:mapping].is_ev? ? api_log_entry.request_username :
                                  api_log_entry.username) unless api_log_entry.blank?
       attrs = {body: api_log_entry.end_entity_certificate.to_s, ca_id: options[:mapping].id,
                ejbca_username: cc.csr.sslcom_ca_requests.compact.first.username}
