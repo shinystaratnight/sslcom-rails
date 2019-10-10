@@ -131,7 +131,7 @@ class Csr < ActiveRecord::Base
   end
   memoize :csr_unique_value
 
-  def common_name
+  def common_name_to_unicode
     SimpleIDN.to_unicode(read_attribute(:common_name)).gsub(/\x00/, '') unless read_attribute(:common_name).blank?
   end
 

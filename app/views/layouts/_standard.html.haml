@@ -13,8 +13,6 @@
                 -permitted_to? :index, :certificate_orders do
                   %th.validations=link_to "INCOMPLETE", incomplete_certificate_orders_path
                   %th.certificate_status=link_to "PROCESSING", filter_by_scope_certificate_orders_path(@ssl_slug, "pending")
-              -unless funded_account.blank? || !permitted_to?(:allocate_funds, funded_account)
-                %th.certificate_status=link_to "AVAILABLE FUNDS", allocate_funds_url
               -if current_user.ssl_account.has_credits?
                 %th.certificate_status=link_to "CREDITS", credits_certificate_orders_path
               -if permitted_to? :create, :orders
@@ -30,8 +28,6 @@
                 -permitted_to? :index, :certificate_orders do
                   %td.validations=link_to current_user.ssl_account.cached_certificate_orders_incomplete_count, incomplete_certificate_orders_path
                   %td.certificate_status=link_to current_user.ssl_account.cached_certificate_orders_pending_count, filter_by_scope_certificate_orders_path(@ssl_slug, "pending")
-              -unless funded_account.blank? || !permitted_to?(:allocate_funds, funded_account)
-                %td.certificate_status=link_to funded_account.amount(true).format(:with_currency=>false), allocate_funds_url(ssl_slug: @ssl_slug)
               -if current_user.ssl_account.has_credits?
                 %td.certificate_status=link_to current_user.ssl_account.cached_certificate_orders_credits_count, credits_certificate_orders_path
               -if permitted_to? :create, :orders
