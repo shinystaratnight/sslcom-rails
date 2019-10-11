@@ -103,8 +103,8 @@
         %th status
       %tbody.domain_list{'data-ref' => co.certificate_content.ref}
     #upload_validations(style='width: 100%; text-align: center; display: none;')
-      =submit_tag "Validate", :id=>"validate_domains", :disable_with=>"Submitting..."
       =button_tag "Start Over", :id=>"start_over_process", :type=>"button", :disable_with=>"Submitting..."
+      =submit_tag "Validate", :id=>"validate_domains", :disable_with=>"Submitting..."
       .clearfix
         =image_tag('waiting_bar_medium.gif', :id=>'waiting_bar', :style=>'display: none; vertical-align: middle;')
 -else

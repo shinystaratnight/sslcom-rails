@@ -668,7 +668,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   end
 
   def ref
-    @ref || parameters_to_hash["ref"]
+    super
   end
 
   def test_update_dcv

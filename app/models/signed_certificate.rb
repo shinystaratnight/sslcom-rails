@@ -204,7 +204,7 @@ class SignedCertificate < ActiveRecord::Base
     OpenSSL::Digest::SHA1.new(public_key.to_der).to_s
   end
 
-  def common_name
+  def common_name_to_unicode
     SimpleIDN.to_unicode read_attribute(:common_name)
   end
 
