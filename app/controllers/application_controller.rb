@@ -257,7 +257,7 @@ class ApplicationController < ActionController::Base
       )
     end.order(params[:order]=="by_csr" ? "csrs.created_at desc" : "certificate_orders.created_at desc")
     result=result.joins{certificate_contents.csr} if params[:order]=="by_csr"
-    unless options[:source] && options[:source] == 'folders'
+    if options[:source] && options[:source] == 'folders'
       archived_folder = current_user.is_admin? || (params[:search] && params[:search].include?('folder_ids')) ?
                             [true, false, nil] : [false, nil]
       result=result.includes(:folder).where(folders: {archived: archived_folder})

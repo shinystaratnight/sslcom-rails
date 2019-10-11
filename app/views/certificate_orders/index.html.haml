@@ -59,7 +59,7 @@
       %th(scope="col") Expires
       %th(scope="col") Action
     -unless @certificate_orders.empty?
-      -@certificate_orders.includes(:folder,:validation, :ssl_account, sub_order_items: :product_variant_item, certificate_contents: {csrs: :signed_certificates}).each do |co| # add :renewal once index is created
+      -@certificate_orders.includes(:renewal, :folder, :validation, :ssl_account, sub_order_items: :product_variant_item, certificate_contents: {csrs: :signed_certificates}).each do |co| # add :renewal once index is created
         -if co.certificate_content
           -cache([current_user.id,'certificate_orders_list', co.certificate_content.cache_key], expires_in: 24.hours) do
             -cc = co.certificate_content
