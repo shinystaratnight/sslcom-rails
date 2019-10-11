@@ -367,8 +367,8 @@ class CertificateOrdersController < ApplicationController
         end
 
         if current_user.is_super_user? && !original_state_phone_approve &&
-            !params[:certificate_order][:certificate_contents_attributes]['0'][:registrant_attributes][:phone].empty? &&
-            params[:certificate_order][:certificate_contents_attributes]['0'][:registrant_attributes][:phone_number_approved] &&
+            !params[:certificate_order][:certificate_contents_attributes]['0'][:registrant_attributes][:phone].blank? &&
+            !params[:certificate_order][:certificate_contents_attributes]['0'][:registrant_attributes][:phone_number_approved].blank? &&
             params[:certificate_order][:certificate_contents_attributes]['0'][:registrant_attributes][:phone_number_approved] == '1'
           OrderNotifier.notify_phone_number_approve(@certificate_order, current_user.email).deliver
           flash[:notice] = "Phone number approved and notification sent to this certificate order's owner."
