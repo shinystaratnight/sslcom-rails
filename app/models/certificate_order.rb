@@ -1176,6 +1176,8 @@ class CertificateOrder < ActiveRecord::Base
     end
     signed_certificates.each do |sc|
       sc.revoke!(reason) # this will result in redundant calls, but will catch all signed certificates under this order
+      cc=sc.certificate_content
+      cc.revoke! if cc and !cc.revoked?
     end
   end
 

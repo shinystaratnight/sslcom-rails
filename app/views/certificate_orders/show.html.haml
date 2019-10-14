@@ -75,15 +75,15 @@
                     .certificate_details_box
                       %ul
                         -unless co.certificate.admin_submit_csr?
-                          -fields = (@cc.csr.signed_certificate.blank?)? @cc.csr : @cc.csr.signed_certificate
-                          %li
-                            %strong
-                              =fields.is_a?(Csr) ? "csr" : "certificate"
-                              contents
                           -if @cc.csr.blank?
                             %li
                               %em waiting for input
                           -else
+                            -fields = (@cc.csr.signed_certificate.blank?)? @cc.csr : @cc.csr.signed_certificate
+                            %li
+                              %strong
+                                =fields.is_a?(Csr) ? "csr" : "certificate"
+                                contents
                             -unless @cc.csr.signed_certificate
                               -unless fields.organization.blank?
                                 %li

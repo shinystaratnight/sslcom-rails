@@ -114,6 +114,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
             )
             signed_certificate.revoke! @result.reason
           end
+
         end
         @result.status = "revoked"
       end
