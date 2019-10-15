@@ -163,6 +163,6 @@ class ResellerTier < ActiveRecord::Base
   #           11201=>["NAESB Basic", "Duration", "2 Years", 2505]}
   # rt.update_prices(options)
   # sa = SslAccount.find_by_acct_number "a0a-1dpi0uq"
-  # sa.adjust_reseller_tier "dtntcomodoca"
+  # sa.adjust_reseller_tier label
   # bundle exec rake cas:seed_ejbca_profiles LIVE=all EJBCA_ENV=production RAILS_ENV=production # (optional) create mappings
 end

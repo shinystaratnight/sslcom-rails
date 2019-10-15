@@ -310,7 +310,12 @@ class ValidationsController < ApplicationController
               else
                 co.ssl_account.other_dcvs_satisfy_domain(cn)
                 dcv = cn.validated_domain_control_validations.last
-                dcv and dcv.identifier_found? ? "validated" : "pending"
+                if dcv
+                  "validated"
+                else
+                  dcv = cn.domain_control_validations.last
+                  "pending"
+                end
               end
           if dcv
             domain_method = dcv.email_address ? dcv.email_address : dcv.dcv_method
