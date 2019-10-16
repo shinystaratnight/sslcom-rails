@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190813161628) do
+ActiveRecord::Schema.define(version: 20191015191034) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        limit: 255
@@ -140,6 +140,18 @@ ActiveRecord::Schema.define(version: 20190813161628) do
   end
 
   add_index "billing_profiles", ["ssl_account_id"], name: "index_billing_profile_on_ssl_account_id", using: :btree
+
+  create_table "blocklist", force: :cascade do |t|
+    t.string   "type",        limit: 255
+    t.string   "domain",      limit: 255
+    t.integer  "validation",  limit: 4
+    t.string   "status",      limit: 255
+    t.string   "reason",      limit: 255
+    t.string   "description", limit: 255
+    t.text     "notes",       limit: 65535
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "blocklists", force: :cascade do |t|
     t.string   "type",        limit: 255
@@ -306,26 +318,11 @@ ActiveRecord::Schema.define(version: 20190813161628) do
     t.string   "url_callback",         limit: 255
   end
 
+  add_index "certificate_contents", ["ca_id"], name: "index_certificate_contents_on_ca_id", using: :btree
   add_index "certificate_contents", ["certificate_order_id"], name: "index_certificate_contents_on_certificate_order_id", using: :btree
   add_index "certificate_contents", ["id", "certificate_order_id"], name: "index_certificate_contents_on_id_and_certificate_order_id", unique: true, using: :btree
   add_index "certificate_contents", ["ref"], name: "index_certificate_contents_on_ref", using: :btree
   add_index "certificate_contents", ["workflow_state"], name: "index_certificate_contents_on_workflow_state", using: :btree
-
-  create_table "certificate_enrollment_invites", force: :cascade do |t|
-    t.integer  "certificate_id", limit: 4,                  null: false
-    t.integer  "ssl_account_id", limit: 4,                  null: false
-    t.integer  "user_id",        limit: 4,                  null: false
-    t.integer  "duration",       limit: 4
-    t.boolean  "active",                     default: true
-    t.string   "token",          limit: 255
-    t.integer  "max_domains",    limit: 4,   default: 1
-    t.datetime "created_at",                                null: false
-    t.datetime "updated_at",                                null: false
-  end
-
-  add_index "certificate_enrollment_invites", ["certificate_id"], name: "index_certificate_enrollment_invites_on_certificate_id", using: :btree
-  add_index "certificate_enrollment_invites", ["ssl_account_id"], name: "index_certificate_enrollment_invites_on_ssl_account_id", using: :btree
-  add_index "certificate_enrollment_invites", ["user_id"], name: "index_certificate_enrollment_invites_on_user_id", using: :btree
 
   create_table "certificate_enrollment_requests", force: :cascade do |t|
     t.integer  "certificate_id",     limit: 4,     null: false
@@ -437,13 +434,13 @@ ActiveRecord::Schema.define(version: 20190813161628) do
     t.datetime "expires_at"
     t.text     "requester_emails",      limit: 65535
     t.string   "request_status",        limit: 255
-    t.text     "requester_emails",      limit: 65535
   end
 
   add_index "certificate_orders", ["created_at"], name: "index_certificate_orders_on_created_at", using: :btree
   add_index "certificate_orders", ["id", "is_test"], name: "index_certificate_orders_on_test", using: :btree
   add_index "certificate_orders", ["id", "ref", "ssl_account_id"], name: "index_certificate_orders_on_id_and_ref_and_ssl_account_id", using: :btree
   add_index "certificate_orders", ["id", "ssl_account_id", "workflow_state", "is_test", "updated_at"], name: "index_certificate_orders_on_5_cols", unique: true, using: :btree
+  add_index "certificate_orders", ["id", "workflow_state", "is_expired", "is_test"], name: "index_certificate_orders_on_id_ws_ie_it", using: :btree
   add_index "certificate_orders", ["id", "workflow_state", "is_expired", "is_test"], name: "index_certificate_orders_on_workflow_state", unique: true, using: :btree
   add_index "certificate_orders", ["is_expired"], name: "index_certificate_orders_on_is_expired", using: :btree
   add_index "certificate_orders", ["is_test"], name: "index_certificate_orders_on_is_test", using: :btree
@@ -535,7 +532,6 @@ ActiveRecord::Schema.define(version: 20190813161628) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "registrant_type",       limit: 4
-    t.integer  "parent_id",             limit: 4
     t.string   "callback_method",       limit: 255
     t.date     "incorporation_date"
     t.string   "incorporation_country", limit: 255
@@ -747,6 +743,7 @@ ActiveRecord::Schema.define(version: 20190813161628) do
   add_index "domain_control_validations", ["csr_id", "email_address", "dcv_method"], name: "index_domain_control_validations_on_3_cols(2)", using: :btree
   add_index "domain_control_validations", ["id", "csr_id"], name: "index_domain_control_validations_on_id_csr_id", using: :btree
   add_index "domain_control_validations", ["subject"], name: "index_domain_control_validations_on_subject", using: :btree
+  add_index "domain_control_validations", ["workflow_state"], name: "index_domain_control_validations_on_workflow_state", using: :btree
 
   create_table "duo_accounts", force: :cascade do |t|
     t.integer  "ssl_account_id",              limit: 4
@@ -1057,6 +1054,7 @@ ActiveRecord::Schema.define(version: 20190813161628) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "cents",        limit: 4
+    t.integer  "invoice_id",   limit: 4
   end
 
   create_table "orders", force: :cascade do |t|
@@ -1185,6 +1183,7 @@ ActiveRecord::Schema.define(version: 20190813161628) do
     t.string   "workflow_state",        limit: 255
     t.string   "admin_pin",             limit: 255
     t.string   "license",               limit: 255
+    t.string   "management_key",        limit: 255
   end
 
   create_table "preferences", force: :cascade do |t|
@@ -1553,6 +1552,7 @@ ActiveRecord::Schema.define(version: 20190813161628) do
     t.string   "type",                      limit: 255
     t.integer  "registered_agent_id",       limit: 4
     t.string   "ejbca_username",            limit: 255
+    t.integer  "certificate_content_id",    limit: 4
   end
 
   add_index "signed_certificates", ["ca_id"], name: "index_signed_certificates_on_ca_id", using: :btree
