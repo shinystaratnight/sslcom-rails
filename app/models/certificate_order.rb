@@ -1007,7 +1007,8 @@ class CertificateOrder < ActiveRecord::Base
     if registrant_types == 'iv_ov'
       iv_ov_validated? ? CLIENT_SMIME_NO_DOCS : CLIENT_SMIME_FULL
     elsif registrant_types == 'iv'
-      iv_validated? ? CLIENT_SMIME_IV_VALIDATED : CLIENT_SMIME_IV_VALIDATE
+      iv_validated? ? (self.certificate.is_client_pro? ? CLIENT_SMIME_IV_VALIDATE : CLIENT_SMIME_IV_VALIDATED) : CLIENT_SMIME_IV_VALIDATE
+      # iv_validated? ? CLIENT_SMIME_IV_VALIDATED : CLIENT_SMIME_IV_VALIDATE
     else
       CLIENT_SMIME_NO_IV_OV
     end
