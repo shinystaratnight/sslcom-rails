@@ -2390,10 +2390,10 @@ jQuery(function($) {
 
       if ($(this).attr('data-phone-number-approved') == 'false') {
         if ($(this).attr('data-super-user') == 'true') {
-          window.location = "<%= edit_certificate_order_url(id: @certificate_order.ref, registrant: false, approve_phone: true)%>";
+          window.location = $(this).attr('data-url');
         } else {
           $.ajax({
-            url: '<%=request_approve_phone_number_certificate_order_validation_path(@ssl_slug, @certificate_order.ref)%>',
+            url: $(this).attr('data-url'),
             data: {},
             type: 'POST',
             success: function (data) {
