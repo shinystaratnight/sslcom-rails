@@ -36,13 +36,13 @@ class SignedCertificate < ActiveRecord::Base
   BEGIN_PKCS7_TAG="-----BEGIN PKCS7-----"
   END_PKCS7_TAG="-----END PKCS7-----"
 
-  IIS_INSTALL_LINK = "https://#{Settings.portal_domain}/how-to/modern-iis-ssl-installation-the-easy-way/"
-  CPANEL_INSTALL_LINK = "https://#{Settings.portal_domain}/how-to/install-certificate-whm-cpanel/"
+  IIS_INSTALL_LINK = "https://www.ssl.com/how-to/modern-iis-ssl-installation-the-easy-way/"
+  CPANEL_INSTALL_LINK = "https://www.ssl.com/how-to/install-certificate-whm-cpanel/"
   NGINX_INSTALL_LINK = "http://nginx.org/en/docs/http/configuring_https_servers.html"
   V8_NODEJS_INSTALL_LINK = "http://nodejs.org/api/https.html"
-  JAVA_INSTALL_LINK = "https://#{Settings.portal_domain}/how-to/how-to-install-a-certificate-on-java-based-web-servers/"
-  OTHER_INSTALL_LINK = "https://#{Settings.portal_domain}/article/intermediate-certificate-download/"
-  APACHE_INSTALL_LINK = "https://info.ssl.com/how-to-install-a-certificate-on-apache-mod_ssl/"
+  JAVA_INSTALL_LINK = "https://www.ssl.com/how-to/how-to-install-a-certificate-on-java-based-web-servers/"
+  OTHER_INSTALL_LINK = "https://www.ssl.com/article/intermediate-certificate-download/"
+  APACHE_INSTALL_LINK = "https://www.ssl.com/how-to/install-ssl-apache-mod-ssl/"
   AMAZON_INSTALL_LINK = "http://aws.amazon.com/documentation/"
 
   APACHE_BUNDLE = "ca-bundle-client.crt"
@@ -111,6 +111,10 @@ class SignedCertificate < ActiveRecord::Base
 
   scope :by_public_key, lambda { |pubKey|
     where{replace(replace(decoded, ' ', ''), '\r\n', '\n') =~ '%' + pubKey + '%'}
+  }
+
+  scope :search, lambda { |term|
+    where("MATCH (common_name, url, body, decoded, ext_customer_ref, ejbca_username) AGAINST ('#{term}')")
   }
 
   scope :search_with_terms, lambda { |term|

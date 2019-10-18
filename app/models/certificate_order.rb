@@ -84,7 +84,7 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   default_scope{ where{(workflow_state << ['canceled','refunded','charged_back']) & (is_expired != true)}.
-      joins(:certificate_contents).order(created_at: :desc)}
+      order(created_at: :desc)}
 
   scope :with_counts, -> {
     select <<~SQL
@@ -149,38 +149,22 @@ class CertificateOrder < ActiveRecord::Base
     keys=filters.map{|f|f[0] if !f[1].blank?}.compact
     unless term.blank?
       # if 'is_test' and 'order_by_csr' are the only search terms, keep it simple
-      result = case term
-               when /co-\w/i
-                 result.where{
-                   (ref =~ "%#{term}%") |
-                       (notes =~ "%#{term}%")}
-               when /\d{7,8}/
-                 result.where{
-                   (external_order_number =~ "%#{term}%") |
-                       (notes =~ "%#{term}%")}
-               else
-                 cc_query=cc_query.joins{csrs}.joins{csr.signed_certificates.outer}.where{(domains =~ "%#{term}%") |
-                     (csrs.common_name =~ "%#{term}%") |
-                     (csrs.email =~ "%#{term}%") |
-                     (csrs.sig_alg =~ "%#{term}%") |
-                     (csrs.subject_alternative_names =~ "%#{term}%") |
-                     (csr.signed_certificates.common_name =~ "%#{term}%") |
-                     (csr.signed_certificates.subject_alternative_names =~ "%#{term}%")}
-                 result.joins{ssl_account.outer}.joins{ssl_account.users.outer}.where{
-                   (notes =~ "%#{term}%") |
-                       (ssl_account.acct_number =~ "%#{term}%") |
-                       (ssl_account.company_name =~ "%#{term}%") |
-                       (ssl_account.ssl_slug =~ "%#{term}%") |
-                       (users.login =~ "%#{term}%") |
-                       (users.email =~ "%#{term}%") }
-               end
+      sql=%(MATCH (csrs.common_name, csrs.body, csrs.decoded) AGAINST ('#{term}') OR
+          MATCH (signed_certificates.common_name, signed_certificates.url, signed_certificates.body,
+          signed_certificates.decoded, signed_certificates.ext_customer_ref, signed_certificates.ejbca_username)
+          AGAINST ('#{term}') OR
+          MATCH (ssl_accounts.acct_number, ssl_accounts.company_name, ssl_accounts.ssl_slug) AGAINST ('#{term}') OR
+          MATCH (certificate_orders.ref, certificate_orders.external_order_number, certificate_orders.notes) AGAINST ('#{term}') OR
+          MATCH (users.login, users.email) AGAINST ('#{term}')).squish
+      result = result.joins{csrs}.joins{csrs.signed_certificates.outer}.joins{ssl_account.outer}.
+          joins{ssl_account.users.outer}.where(sql)
     end
     result=result.joins{ssl_account.outer} unless (keys & [:account_number]).empty?
     result=result.joins{ssl_account.users.outer} unless (keys & [:login, :email]).empty?
-    cc_query=(cc_query ? cc_query : CertificateContent).joins{csrs} unless
+    cc_query=(cc_query || CertificateContent).joins{csrs} unless
         (keys & [:country, :strength, :common_name, :organization, :organization_unit, :state,
                 :subject_alternative_names, :locality, :decoded]).empty?
-    cc_query=(cc_query ? cc_query : CertificateContent).joins{csr.signed_certificates.outer} unless
+    cc_query=(cc_query || CertificateContent).joins{csr.signed_certificates.outer} unless
         (keys & [:country, :strength, :postal_code, :signature, :fingerprint, :expires_at, :created_at, :issued_at,
                  :common_name, :organization, :organization_unit, :state, :subject_alternative_names, :locality,
                  :decoded, :address]).empty?
@@ -333,23 +317,23 @@ class CertificateOrder < ActiveRecord::Base
     joins{certificate_contents}.where{certificate_contents.duration >> term.split(',')}
   }
 
-  scope :unvalidated, ->{where{(is_expired==false) &
+  scope :unvalidated, ->{joins(:certificate_contents).where{(is_expired==false) &
     (certificate_contents.workflow_state >> ['pending_validation', 'contacts_provided'])}.
       order("certificate_contents.updated_at asc")}
 
   scope :not_csr_blank, ->{joins{certificate_contents.csr}.where{certificate_contents.csr.id!=nil}}
 
-  scope :incomplete, ->{not_test.where{(is_expired==false) &
+  scope :incomplete, ->{not_test.joins(:certificate_contents).where{(is_expired==false) &
     (certificate_contents.workflow_state >> ['csr_submitted', 'info_provided', 'contacts_provided'])}.
       order("certificate_contents.updated_at asc")}
 
-  scope :pending, ->{not_test.where{certificate_contents.workflow_state >> ['pending_validation', 'validated']}.
-      order("certificate_contents.updated_at asc")}
+  scope :pending, ->{not_test.joins(:certificate_contents).where{certificate_contents.workflow_state >>
+      ['pending_validation', 'validated']}.order("certificate_contents.updated_at asc")}
 
-  scope :has_csr, ->{not_test.where{(workflow_state=='paid') &
+  scope :has_csr, ->{not_test.joins(:certificate_contents).where{(workflow_state=='paid') &
     (certificate_contents.signing_request != "")}.order("certificate_contents.updated_at asc")}
 
-  scope :credits, ->{not_test.where({:workflow_state=>'paid'} & {is_expired: false} &
+  scope :credits, ->{not_test.joins(:certificate_contents).where({:workflow_state=>'paid'} & {is_expired: false} &
     {:certificate_contents=>{workflow_state: "new"}})} # and not new
 
   #new certificate orders are the ones still in the shopping cart
@@ -1007,7 +991,7 @@ class CertificateOrder < ActiveRecord::Base
     if registrant_types == 'iv_ov'
       iv_ov_validated? ? CLIENT_SMIME_NO_DOCS : CLIENT_SMIME_FULL
     elsif registrant_types == 'iv'
-      iv_validated? ? CLIENT_SMIME_IV_VALIDATED : CLIENT_SMIME_IV_VALIDATE
+      (!iv_validated? or self.certificate.is_client_pro?) ? CLIENT_SMIME_IV_VALIDATE : CLIENT_SMIME_IV_VALIDATED
     else
       CLIENT_SMIME_NO_IV_OV
     end
@@ -1176,6 +1160,8 @@ class CertificateOrder < ActiveRecord::Base
     end
     signed_certificates.each do |sc|
       sc.revoke!(reason) # this will result in redundant calls, but will catch all signed certificates under this order
+      cc=sc.certificate_content
+      cc.revoke! if cc and !cc.revoked?
     end
   end
 

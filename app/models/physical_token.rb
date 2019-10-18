@@ -1,5 +1,5 @@
 class PhysicalToken < ActiveRecord::Base
-  MAKE_AND_MODELS={Gemalto: %w(5100\ eToken)}
+  MAKE_AND_MODELS={Gemalto: %w(5100\ eToken), Yubico: %w(Yubikey\ FIPS\ 140-2)}
   CARRIERS=%w(FedEx UPS USPS DHL in-person)
 
   belongs_to :certificate_order

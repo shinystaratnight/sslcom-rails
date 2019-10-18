@@ -601,7 +601,7 @@ namespace :cas do
           caa_issuers: ["ssl.com"],
           host: "https://#{url}:8443/restapi",
           admin_host: "https://#{url}:8443",
-          ca_name: "SSLcom-SubCA-CodeSigning-ECC-384-R1",
+          ca_name: "SSLcom-SubCA-CodeSigning-ECC-384-R2",
           ekus: [Ca::EKUS[:code_signing]],
           end_entity: Ca::END_ENTITY[:cs]
       )
@@ -649,7 +649,7 @@ namespace :cas do
       )
       Ca.find_or_initialize_by(ref: "0034").update_attributes(
           friendly_name: "SSL.com Basic Email ECC",
-          profile_name: "MYSSL_ECC_RSA_SMIME_CERT",
+          profile_name: "MYSSL_EAV_ECC_SMIME_CERT",
           algorithm: "ecc",
           size: 384,
           description: Ca::SSLCOM_CA,
