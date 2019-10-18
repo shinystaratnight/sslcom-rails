@@ -649,7 +649,7 @@ namespace :cas do
       )
       Ca.find_or_initialize_by(ref: "0034").update_attributes(
           friendly_name: "SSL.com Basic Email ECC",
-          profile_name: "MYSSL_ECC_RSA_SMIME_CERT",
+          profile_name: "MYSSL_EAV_ECC_SMIME_CERT",
           algorithm: "ecc",
           size: 384,
           description: Ca::SSLCOM_CA,

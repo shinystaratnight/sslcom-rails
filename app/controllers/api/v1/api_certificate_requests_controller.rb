@@ -317,7 +317,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
 
               cnames.each do |cn|
                 dcv = cn.domain_control_validations.last
-                if !dcv.nil? && !dcv.identifier_found
+                if dcv && !dcv.identifier_found # TODO DRY and apply with app/controllers/validations_controller.rb:305
                   if dcv.dcv_method == 'email'
                     if DomainControlValidation.approved_email_address? CertificateName.candidate_email_addresses(
                         cn.non_wildcard_name), dcv.email_address
