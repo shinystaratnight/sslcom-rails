@@ -73,7 +73,7 @@ gem 'json-schema'
 gem 'rails-api'
 gem 'jsonapi-serializers'
 gem 'api-pagination'
-gem 'rubyzip', '~> 1.2.2'
+gem "rubyzip", ">= 1.3.0"
 # gem 'wkhtmltopdf-binary' see config/initializers/wicked_pdf.rb for installation instructions
 gem 'wicked_pdf'
 gem 'u2f'
