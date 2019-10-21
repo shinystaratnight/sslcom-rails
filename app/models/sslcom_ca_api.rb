@@ -186,59 +186,63 @@ class SslcomCaApi
   def self.apply_for_certificate(certificate_order, options={})
     set_mapping(certificate_order, options)
     options.merge! cc: cc = options[:certificate_content] || certificate_order.certificate_content
-    if cc.csr.blank?
-      cc.create_csr(body: options[:csr])
-    else
-      cc.csr.save if cc.csr.new_record?
-    end
-    if options[:mapping].is_ev?
-      approval_req, approval_res = SslcomCaApi.get_status(csr: cc.csr, mapping: options[:mapping])
-      return cc.csr.sslcom_ca_requests.create(
-          parameters: approval_req.body, method: "get", response: approval_res.body,
-          ca: options[:ca]) if approval_res.try(:body)=~/WAITING FOR APPROVAL/
-    end
-    if options[:mapping].is_ev? and (approval_res.try(:body).blank? or approval_res.try(:body)=="[]" or
-        (!cc.signed_certificate.blank? and cc.signed_certificate.read_attribute(:ejbca_username)==cc.csr.sslcom_ca_requests.compact.first.username and
-            !cc.csr.sslcom_ca_requests.compact.first.username.blank?))
-      # create the user for EV order
-      host = ca_host(options[:mapping])+"/v1/user"
-      options.merge! no_public_key: true
-    else # collect cert
-      if cc.pending_issuance?
-        return
+    begin
+      if cc.csr.blank?
+        cc.create_csr(body: options[:csr])
       else
-        cc.pend_issuance!
-      end unless options[:mapping].is_ev?
-      host = ca_host(options[:mapping])+
-          "/v1/certificate#{'/ev' if options[:mapping].is_ev?}/pkcs10"
-      options.merge!(collect_certificate: true, username:
-          cc.csr.sslcom_usernames.compact.first) if options[:mapping].is_ev?
-    end
-    req, res = call_ca(host, options, issue_cert_json(options))
-    api_log_entry=cc.csr.sslcom_ca_requests.create(request_url: host,
-      parameters: req.body, method: "post", response: res.try(:body), ca: options[:ca_name] || ca_name(options))
-    if (!options[:mapping].is_ev? and api_log_entry.username.blank?) or
-        (options[:mapping].is_ev? and api_log_entry.username.blank? and
-            api_log_entry.request_username.blank?)
-      OrderNotifier.problem_ca_sending("support@ssl.com", cc.certificate_order,"sslcom").deliver
-      cc.validate! if cc.pending_issuance? # did not issue cert, release hold
-    elsif api_log_entry.certificate_chain # signed certificate is issued
-      cc.update_column(:label, options[:mapping].is_ev? ? api_log_entry.request_username :
-                                 api_log_entry.username) unless api_log_entry.blank?
-      attrs = {body: api_log_entry.end_entity_certificate.to_s, ca_id: options[:mapping].id,
-               ejbca_username: cc.csr.sslcom_ca_requests.compact.first.username}
-      cc.csr.signed_certificates.create(attrs)
-      SystemAudit.create(
-          owner:  options[:current_user],
-          target: api_log_entry,
-          notes:  "issued signed certificate for certificate order #{certificate_order.ref}",
-          action: "SslcomCaApi#apply_for_certificate"
-      )
-      cc.issue! if cc.pending_issuance?
-    else # did not issue cert, release hold
+        cc.csr.save if cc.csr.new_record?
+      end
+      if options[:mapping].is_ev?
+        approval_req, approval_res = SslcomCaApi.get_status(csr: cc.csr, mapping: options[:mapping])
+        return cc.csr.sslcom_ca_requests.create(
+            parameters: approval_req.body, method: "get", response: approval_res.body,
+            ca: options[:ca]) if approval_res.try(:body)=~/WAITING FOR APPROVAL/
+      end
+      if options[:mapping].is_ev? and (approval_res.try(:body).blank? or approval_res.try(:body)=="[]" or
+          (!cc.signed_certificate.blank? and cc.signed_certificate.read_attribute(:ejbca_username)==cc.csr.sslcom_ca_requests.compact.first.username and
+              !cc.csr.sslcom_ca_requests.compact.first.username.blank?))
+        # create the user for EV order
+        host = ca_host(options[:mapping])+"/v1/user"
+        options.merge! no_public_key: true
+      else # collect cert
+        if cc.pending_issuance?
+          return
+        else
+          cc.pend_issuance!
+        end unless options[:mapping].is_ev?
+        host = ca_host(options[:mapping])+
+            "/v1/certificate#{'/ev' if options[:mapping].is_ev?}/pkcs10"
+        options.merge!(collect_certificate: true, username:
+            cc.csr.sslcom_usernames.compact.first) if options[:mapping].is_ev?
+      end
+      req, res = call_ca(host, options, issue_cert_json(options))
+      api_log_entry=cc.csr.sslcom_ca_requests.create(request_url: host,
+        parameters: req.body, method: "post", response: res.try(:body), ca: options[:ca_name] || ca_name(options))
+      if (!options[:mapping].is_ev? and api_log_entry.username.blank?) or
+          (options[:mapping].is_ev? and api_log_entry.username.blank? and
+              api_log_entry.request_username.blank?)
+        OrderNotifier.problem_ca_sending("support@ssl.com", cc.certificate_order,"sslcom").deliver
+        cc.validate! if cc.pending_issuance? # did not issue cert, release hold
+      elsif api_log_entry.certificate_chain # signed certificate is issued
+        cc.update_column(:label, options[:mapping].is_ev? ? api_log_entry.request_username :
+                                   api_log_entry.username) unless api_log_entry.blank?
+        attrs = {body: api_log_entry.end_entity_certificate.to_s, ca_id: options[:mapping].id,
+                 ejbca_username: cc.csr.sslcom_ca_requests.compact.first.username}
+        cc.csr.signed_certificates.create(attrs)
+        SystemAudit.create(
+            owner:  options[:current_user],
+            target: api_log_entry,
+            notes:  "issued signed certificate for certificate order #{certificate_order.ref}",
+            action: "SslcomCaApi#apply_for_certificate"
+        )
+        cc.issue! if cc.pending_issuance?
+      else # did not issue cert, release hold
+        cc.validate! if cc.pending_issuance?
+      end
+      api_log_entry
+    ensure
       cc.validate! if cc.pending_issuance?
     end
-    api_log_entry
   end
 
   def self.ca_host(mapping=nil)

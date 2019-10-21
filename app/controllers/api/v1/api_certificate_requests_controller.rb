@@ -354,6 +354,8 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
                 email_list.each_with_index do |value, key|
                   OrderNotifier.dcv_email_send(@acr, value, identifier_list[key], domain_ary[key], nil, ssl_slug).deliver
                 end
+              else
+                @acr.apply_for_certificate
               end
             end
 
