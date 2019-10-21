@@ -139,11 +139,11 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
     @certificate_order = self.find_certificate_order
     self.domains = {self.csr_obj.common_name=>{"dcv"=>"http_csr_hash"}} if self.domains.blank?
     # caa_check_domains = parameters_to_hash["caa_check_domains"].split(',')
-    caa_check_domains = self.caa_check_domains.split(',')
+    caa_check_domains = self.caa_check_domains.split(',') unless self.caa_check_domains.blank?
 
     if @certificate_order.is_a?(CertificateOrder)
       # CAA Checking for domains what has been validated and no passed for CAA.
-      if caa_check_domains && caa_check_domains[0] != ''
+      unless caa_check_domains.blank?
         @certificate_order.certificate_content.certificate_names.find_by_domains(caa_check_domains).each do |cn|
           CaaCheck.pass?(@certificate_order.ref, cn, cn.certificate_content)
         end
@@ -216,7 +216,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
 
     if @certificate_order.is_a?(CertificateOrder)
       # CAA Checking for domains what has been validated and no passed for CAA.
-      if caa_check_domains && caa_check_domains[0] != ''
+      unless caa_check_domains.blank?
         @certificate_order.certificate_content.certificate_names.find_by_domains(caa_check_domains).each do |cn|
           CaaCheck.pass?(@certificate_order.ref, cn, cn.certificate_content)
         end
@@ -664,7 +664,11 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   end
 
   def caa_check_domains
-    @caa_check_domains || parameters_to_hash["caa_check_domains"]
+    if Settings.enable_caa
+      @caa_check_domains || parameters_to_hash["caa_check_domains"]
+    else
+      ''
+    end
   end
 
   def ref

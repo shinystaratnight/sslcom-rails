@@ -221,6 +221,7 @@ class SslcomCaApi
         (options[:mapping].is_ev? and api_log_entry.username.blank? and
             api_log_entry.request_username.blank?)
       OrderNotifier.problem_ca_sending("support@ssl.com", cc.certificate_order,"sslcom").deliver
+      cc.validate! if cc.pending_issuance? # did not issue cert, release hold
     elsif api_log_entry.certificate_chain # signed certificate is issued
       cc.update_column(:label, options[:mapping].is_ev? ? api_log_entry.request_username :
                                  api_log_entry.username) unless api_log_entry.blank?
@@ -234,6 +235,8 @@ class SslcomCaApi
           action: "SslcomCaApi#apply_for_certificate"
       )
       cc.issue! if cc.pending_issuance?
+    else # did not issue cert, release hold
+      cc.validate! if cc.pending_issuance?
     end
     api_log_entry
   end

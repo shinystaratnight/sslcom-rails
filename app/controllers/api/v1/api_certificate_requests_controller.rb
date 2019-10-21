@@ -198,7 +198,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
 
             #Send validation email unless ca_id is nil
             unless @acr.certificate_content.ca_id.nil?
-              cnames = @acr.certificate_content.certificate_names
+              cnames = @acr.certificate_content.certificate_names.includes(:domain_control_validations)
               email_for_identifier = ''
               identifier = ''
               email_list = []
@@ -304,7 +304,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
 
             #Send validation email unless ca_id is nil
             unless @acr.certificate_content.ca_id.nil?
-              cnames = @acr.certificate_content.certificate_names
+              cnames = @acr.certificate_content.certificate_names.includes(:domain_control_validations)
               email_for_identifier = ''
               identifier = ''
               email_list = []
