@@ -134,19 +134,38 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
       # if co.ov_validated?
 
       options={csr: params[:csr]}
-      if res = SslcomCaApi.apply_for_certificate(co, options).x509_certificates
-        co_token = co.certificate_order_tokens.where(token: params[:token], status: nil, is_expired: false).last
-        co_token.update_attribute(:is_expired, true) if co_token
-        co.update_attribute(:request_status, '')
+      unless co.certificate_content.csr.blank?
+        cc_params = co.certificate_content.attributes.except(*%w{id created_at updated_at label ref})
+        new_cc = CertificateContent.new(cc_params)
+        new_cc.save if new_cc.valid?
+        new_cc.validate! if new_cc.pending_issuance?
 
-        cert_chain = ""
-        res.each do |cert|
-          cert_chain += cert.to_s
+        new_cc.create_registrant(
+            co.certificate_content.registrant.attributes.except(*CertificateOrder::ID_AND_TIMESTAMP)
+        ) if co.certificate_content.registrant
+        new_cc.create_locked_registrant(
+            co.certificate_content.locked_registrant.attributes.except(*CertificateOrder::ID_AND_TIMESTAMP)
+        ) if co.certificate_content.locked_registrant
+
+        options[:certificate_content] = new_cc
+      end
+
+      generated_certificate = SslcomCaApi.apply_for_certificate(co, options)
+      unless generated_certificate.nil?
+        if res = generated_certificate.x509_certificates
+          co_token = co.certificate_order_tokens.where(token: params[:token], status: nil, is_expired: false).last
+          co_token.update_attribute(:is_expired, true) if co_token
+          co.update_attribute(:request_status, '')
+
+          cert_chain = ""
+          res.each do |cert|
+            cert_chain += cert.to_s
+          end
+
+          @result.cert_results = cert_chain
+          @result.cert_common_name = (res.first.subject.common_name || res.first.serial.to_s).
+              gsub(/[\s\.\*\(\)]/,"_").downcase + '.crt'
         end
-
-        @result.cert_results = cert_chain
-        @result.cert_common_name = (res.first.subject.common_name || res.first.serial.to_s).
-            gsub(/[\s\.\*\(\)]/,"_").downcase + '.crt'
       end
     else
       InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
@@ -198,7 +217,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
 
             #Send validation email unless ca_id is nil
             unless @acr.certificate_content.ca_id.nil?
-              cnames = @acr.certificate_content.certificate_names
+              cnames = @acr.certificate_content.certificate_names.includes(:domain_control_validations)
               email_for_identifier = ''
               identifier = ''
               email_list = []
@@ -304,7 +323,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
 
             #Send validation email unless ca_id is nil
             unless @acr.certificate_content.ca_id.nil?
-              cnames = @acr.certificate_content.certificate_names
+              cnames = @acr.certificate_content.certificate_names.includes(:domain_control_validations)
               email_for_identifier = ''
               identifier = ''
               email_list = []
@@ -354,6 +373,8 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
                 email_list.each_with_index do |value, key|
                   OrderNotifier.dcv_email_send(@acr, value, identifier_list[key], domain_ary[key], nil, ssl_slug).deliver
                 end
+              else
+                @acr.apply_for_certificate
               end
             end
 
