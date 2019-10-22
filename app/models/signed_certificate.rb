@@ -70,12 +70,7 @@ class SignedCertificate < ActiveRecord::Base
   end
 
   after_create do |s|
-    # begin
-      s.csr.certificate_content.issue! unless %w(ShadowSignedCertificate ManagedCertificate).include?(self.type)
-    # rescue
-    #   p s.id
-    #   p s.csr.id
-    # end
+    s.csr.certificate_content.issue! unless %w(ShadowSignedCertificate ManagedCertificate).include?(self.type)
   end
 
   after_save do |s|
@@ -229,15 +224,15 @@ class SignedCertificate < ActiveRecord::Base
         errors.add :base, 'error: could not parse certificate'
       else
         self[:parent_cert] = false
-        self[:common_name] = parsed.subject.common_name
-        self[:organization] = parsed.subject.organization
+        self[:common_name] = parsed.subject.common_name.force_encoding('ISO-8859-1').encode('UTF-8')
+        self[:organization] = parsed.subject.organization.force_encoding('ISO-8859-1').encode('UTF-8')
         self[:organization_unit] = ou_array(parsed.subject.to_s)
-        self[:state] = parsed.subject.region
-        self[:locality] = parsed.subject.locality
-        pc=field_array("postalCode", parsed.subject.to_s)
+        self[:state] = parsed.subject.region.force_encoding('ISO-8859-1').encode('UTF-8')
+        self[:locality] = parsed.subject.locality.force_encoding('ISO-8859-1').encode('UTF-8')
+        pc=field_array("postalCode", parsed.subject.to_s.force_encoding('ISO-8859-1').encode('UTF-8'))
         self[:postal_code] = pc.first unless pc.blank?
-        self[:country] = parsed.subject.country
-        street=field_array("street", parsed.subject.to_s)
+        self[:country] = parsed.subject.country.force_encoding('ISO-8859-1').encode('UTF-8')
+        street=field_array("street", parsed.subject.to_s.force_encoding('ISO-8859-1').encode('UTF-8'))
         unless street.blank?
           street.each_with_index do |s, i|
             break if i>=2

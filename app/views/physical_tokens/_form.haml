@@ -10,11 +10,15 @@
   .clearfix
     %label{:for=>"model_number"}
       Model Number:
-    =f.select :model_number, PhysicalToken::MAKE_AND_MODELS.values
+    =f.select :model_number, []
   .clearfix
     %label{:for=>"serial_number"}
       Serial Number:
     =f.text_field :serial_number
+  .clearfix.management_key
+    %label{:for=>"activation_pin"}
+      Management Key:
+    =f.text_field :management_key
   .clearfix
     %label{:for=>"activation_pin"}
       Activation PIN:

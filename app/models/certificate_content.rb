@@ -285,6 +285,10 @@ class CertificateContent < ActiveRecord::Base
     NotificationGroup.auto_manage_cert_name(self, 'create')
   end
 
+  def all_domains_validated?
+    (certificate_names.pluck(:id) - certificate_names.validated.pluck(:id)).empty?
+  end
+
   def signed_certificate
     signed_certificates.last
   end

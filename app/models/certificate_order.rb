@@ -745,7 +745,8 @@ class CertificateOrder < ActiveRecord::Base
 
   def used_days(options={round: false})
     if signed_certificates && !signed_certificates.empty?
-      sum = (Time.now - signed_certificates.sort{|a,b|a.created_at.to_i<=>b.created_at.to_i}.first.effective_date)
+      sum = (Time.now - (signed_certificates.sort{|a,b|a.created_at.to_i<=>b.created_at.to_i}.first.effective_date ||
+          self.created_at))
       (options[:round] ? sum.round : sum)/1.day
     else
       0
@@ -1202,8 +1203,8 @@ class CertificateOrder < ActiveRecord::Base
   # SSL.com chained Root call
   # DRY this up with ValidationsController#new
   def domains_validated?
+    return true if certificate_content.certificate_names.all_domains_validated?
     all_validated = true
-    public_key_sha1=certificate_content.cached_csr_public_key_sha1
     cnames = certificate_content.certificate_names.includes(:validated_domain_control_validations)
     cnames.each do |cn|
       # if the certificate_name scoped dcv is not satisfied, check the team level domain name
@@ -1224,7 +1225,7 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def caa_validated?
-    true
+    Settings.enable_caa || true
   end
 
   def apply_for_certificate(options={})
@@ -2055,9 +2056,12 @@ class CertificateOrder < ActiveRecord::Base
     return validated
   end
 
-  # Comodo chained certs
   def all_domains_validated?
-    return true if domains_validated.count==validating_domains.count
+    if certificate_content.ca_id
+      certificate_content.all_domains_validated?
+    else
+      domains_validated.count==validating_domains.count
+    end
   end
 
   def to_api_retrieve(result, options)

@@ -1,0 +1,52 @@
+<script type="text/javascript">
+jQuery.noConflict();
+jQuery(function($) {
+  $(document).ready(function() {
+    if ($('#physical_token_manufacturer').val() == 'Gemalto') {
+      $('.management_key').hide();
+      $('select[id="physical_token_model_number"]').empty();
+
+      <% PhysicalToken::MAKE_AND_MODELS['Gemalto'.to_sym].each do |model_value|%>
+        var optionElement = $('<option></option>');
+        optionElement.attr('value', '<%= model_value%>');
+        optionElement.append('<%= model_value%>');
+        $('select[id="physical_token_model_number"]').append(optionElement);
+      <% end %>
+    } else {
+      $('.management_key').show();
+      $('select[id="physical_token_model_number"]').empty();
+
+      <% PhysicalToken::MAKE_AND_MODELS['Yubico'.to_sym].each do |model_value|%>
+        var optionElement = $('<option></option>');
+        optionElement.attr('value', '<%= model_value%>');
+        optionElement.append('<%= model_value%>');
+        $('select[id="physical_token_model_number"]').append(optionElement);
+      <% end %>
+    }
+
+    $(document).on('change', '#physical_token_manufacturer', function() {
+      if ($(this).val() == 'Gemalto') {
+        $('.management_key').hide();
+        $('select[id="physical_token_model_number"]').empty();
+
+        <% PhysicalToken::MAKE_AND_MODELS['Gemalto'.to_sym].each do |model_value|%>
+          var optionElement = $('<option></option>');
+          optionElement.attr('value', '<%= model_value%>');
+          optionElement.append('<%= model_value%>');
+          $('select[id="physical_token_model_number"]').append(optionElement);
+        <% end %>
+      } else {
+        $('.management_key').show();
+        $('select[id="physical_token_model_number"]').empty();
+
+        <% PhysicalToken::MAKE_AND_MODELS['Yubico'.to_sym].each do |model_value|%>
+          var optionElement = $('<option></option>');
+          optionElement.attr('value', '<%= model_value%>');
+          optionElement.append('<%= model_value%>');
+          $('select[id="physical_token_model_number"]').append(optionElement);
+        <% end %>
+      }
+    });
+  });
+});
+</script>
