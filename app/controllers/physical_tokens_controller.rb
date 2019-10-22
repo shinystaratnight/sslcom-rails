@@ -64,7 +64,11 @@ class PhysicalTokensController < ApplicationController
     end
 
     def physical_token_params
+      params[:physical_token][:management_key] = '' if params[:physical_token][:manufacturer] == 'Gemalto' &&
+          !params[:physical_token][:management_key].blank?
+
       params.require(:physical_token).permit(:certificate_order_id, :signed_certificate_id, :tracking_number,
-               :shipping_method, :activation_pin, :admin_pin, :manufacturer, :model_number, :serial_number, :name)
+               :shipping_method, :activation_pin, :admin_pin, :manufacturer, :model_number, :serial_number, :name,
+               :management_key, :notes, :license)
     end
 end

@@ -303,7 +303,7 @@
                                     |
                                     =link_to "delete", certificate_order_physical_token_path(@certificate_order.ref,token), method: :delete,
                                       data: {confirm: 'Are you sure you want to delete this token?'}
-                              -if token.in_transit? and !token.tracking_number.blank?
+                              -if (token.in_transit? || token.not_yet_shipped?) and !token.tracking_number.blank?
                                 %ul
                                   %li=link_to "#{token.shipping_method}: #{token.tracking_number}"
                             -else
