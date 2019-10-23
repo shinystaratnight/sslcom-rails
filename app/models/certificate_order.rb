@@ -1203,7 +1203,8 @@ class CertificateOrder < ActiveRecord::Base
   # SSL.com chained Root call
   # DRY this up with ValidationsController#new
   def domains_validated?
-    return true if certificate_content.certificate_names.all_domains_validated?
+    # return true if certificate_content.certificate_names.all_domains_validated?
+    return true if self.all_domains_validated?
     all_validated = true
     cnames = certificate_content.certificate_names.includes(:validated_domain_control_validations)
     cnames.each do |cn|

@@ -603,7 +603,7 @@ class SslAccount < ActiveRecord::Base
           [self.certificate_names,self.domains]
         end
     cn=cn.sslcom if scope=="sslcom"
-    if root
+    if root && PublicSuffix.valid?(root)
       d=::PublicSuffix.parse(root)
       CertificateName.where(id: (Rails.cache.fetch("#{cache_key}/all_certificate_names/#{cn_validated+scope}/#{d.domain}") {
         name_sql=->(scoped_names){scoped_names.where('name like ? OR name = ?', '%.'+d.domain ,d.domain)}
