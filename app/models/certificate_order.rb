@@ -1203,25 +1203,9 @@ class CertificateOrder < ActiveRecord::Base
   # SSL.com chained Root call
   # DRY this up with ValidationsController#new
   def domains_validated?
-    return true if certificate_content.certificate_names.all_domains_validated?
-    all_validated = true
-    cnames = certificate_content.certificate_names.includes(:validated_domain_control_validations)
-    cnames.each do |cn|
-      # if the certificate_name scoped dcv is not satisfied, check the team level domain name
-      unless cn.validated_domain_control_validations.last
-        # Team level validation check
-        team_level_validated = ssl_account.other_dcvs_satisfy_domain(cn).blank? ? false : true
-      else
-        # this certificate_name is validated so continue to the next certificate_name
-        next
-      end
-      unless team_level_validated
-        # this domain is not satisfied, no point in continuing
-        all_validated = false
-        break
-      end
-    end
-    all_validated
+    return true if certificate_content.all_domains_validated?
+    ssl_account.other_dcvs_satisfy_domain(certificate_content.certificate_names.unvalidated)
+    certificate_content.all_domains_validated?
   end
 
   def caa_validated?
