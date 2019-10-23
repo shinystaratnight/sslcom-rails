@@ -59,9 +59,9 @@ class ValidationsController < ApplicationController
         caa_check_domain_arry = []
         public_key_sha1 = Settings.compare_public_key ? cc.cached_csr_public_key_sha1 : nil
         unless cc.ca.blank?
-          cnames = cc.certificate_names.includes(validated_domain_control_validations: :csr)
+          cnames = cc.certificate_names.includes(:validated_domain_control_validations)
           team_cnames = @certificate_order.ssl_account.all_certificate_names(nil,"validated").
-              includes(validated_domain_control_validations: :csr)
+              includes(:validated_domain_control_validations)
 
           # Team level validation check
           @ds = {}
@@ -72,7 +72,7 @@ class ValidationsController < ApplicationController
               if team_cn.name == cn.name
                 team_dcv = team_cn.validated_domain_control_validations.last
 
-                if team_dcv && team_dcv.validated?(nil,public_key_sha1)
+                if team_dcv && (Settings.compare_public_key ? team_dcv.validated?(nil,public_key_sha1) : true)
                   team_level_validated = true
 
                   @ds[team_cn.name] = {}
