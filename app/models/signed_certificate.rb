@@ -224,27 +224,27 @@ class SignedCertificate < ActiveRecord::Base
         errors.add :base, 'error: could not parse certificate'
       else
         self[:parent_cert] = false
-        self[:common_name] = parsed.subject.common_name.force_encoding('ISO-8859-1').encode('UTF-8')
-        self[:organization] = parsed.subject.organization.force_encoding('ISO-8859-1').encode('UTF-8')
+        self[:common_name] = parsed.subject.common_name.force_encoding('UTF-8') if parsed.subject.common_name
+        self[:organization] = parsed.subject.organization.force_encoding('UTF-8') if parsed.subject.organization
         self[:organization_unit] = ou_array(parsed.subject.to_s)
-        self[:state] = parsed.subject.region.force_encoding('ISO-8859-1').encode('UTF-8')
-        self[:locality] = parsed.subject.locality.force_encoding('ISO-8859-1').encode('UTF-8')
-        pc=field_array("postalCode", parsed.subject.to_s.force_encoding('ISO-8859-1').encode('UTF-8'))
+        self[:state] = parsed.subject.region.force_encoding('UTF-8') if parsed.subject.region
+        self[:locality] = parsed.subject.locality.force_encoding('UTF-8') if parsed.subject.locality
+        pc=field_array("postalCode", parsed.subject.to_s)
         self[:postal_code] = pc.first unless pc.blank?
-        self[:country] = parsed.subject.country.force_encoding('ISO-8859-1').encode('UTF-8')
-        street=field_array("street", parsed.subject.to_s.force_encoding('ISO-8859-1').encode('UTF-8'))
+        self[:country] = parsed.subject.country.force_encoding('UTF-8') if parsed.subject.country
+        street=field_array("street", parsed.subject.to_s)
         unless street.blank?
           street.each_with_index do |s, i|
             break if i>=2
             self["address#{i+1}".to_sym] = field_array("street", parsed.subject.to_s)[0]
           end
         end
-        self[:signature] = parsed.subject_key_identifier
+        self[:signature] = parsed.subject_key_identifier.force_encoding('UTF-8') if parsed.subject_key_identifier
         self[:fingerprint] = OpenSSL::Digest::SHA1.new(parsed.to_der).to_s
         self[:fingerprintSHA] = "SHA1"
         self[:effective_date] = parsed.not_before
         self[:expiration_date] = parsed.not_after
-        self[:subject_alternative_names] = parsed.subject_alternative_names
+        self[:subject_alternative_names] = parsed.subject_alternative_names.map{|san| san.force_encoding('UTF-8')}
         #TODO ecdsa throws exception. Find better method
         self[:strength] = parsed.public_key.instance_of?(OpenSSL::PKey::EC) ?
                               (matched[1] if matched=parsed.to_text.match(/Private-Key\: \((\d+)/)) : parsed.strength

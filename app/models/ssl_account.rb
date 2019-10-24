@@ -267,29 +267,33 @@ class SslAccount < ActiveRecord::Base
                 domain.cached_csr_public_key_sha1==certificate_name.cached_csr_public_key_sha1))
           certificate_name.domain_control_validations.create(dcv.attributes.except("id"))
           # TODO only call apply_for_certificate once
-          certificate_name.certificate_content.certificate_order.apply_for_certificate if certificate_name.certificate_content
           satisfied_names << certificate_name.name
         end
       end
+      certificate_name.certificate_content.certificate_order.apply_for_certificate if certificate_name.certificate_content
     end
   end
 
   # does already validated domain validate `certificate_name`? If so, create a dcv with satisfied status
   # certificate_name - the domain we are looking up
-  def other_dcvs_satisfy_domain(certificate_name)
+  def other_dcvs_satisfy_domain(certificate_names)
+    certificate_names = [certificate_names] if certificate_names.is_a?(CertificateName)
     # TODO find only validated domains
-    satisfied = nil
-    all_certificate_names(certificate_name.name,"validated").includes(:validated_domain_control_validations).each do |cn|
-      if cn.id!=certificate_name.id and DomainControlValidation.domain_in_subdomains?(cn.name,certificate_name.name)
-        dcv = cn.validated_domain_control_validations.last # TODO find dcv.satisfied?
-        if dcv && dcv.identifier_found
-          # email validation
-          if dcv.dcv_method =~ /email/ or
-          # http/s or cname must have the same public key
-            (Settings.compare_public_key ? (cn.csr and certificate_name.csr and
-                  cn.cached_csr_public_key_sha1==certificate_name.cached_csr_public_key_sha1) : true)
-            satisfied = certificate_name.domain_control_validations.create(dcv.attributes.except("id"))
-            break
+    satisfied = []
+    all_certificate_names(certificate_names.map(&:name),"validated").
+        includes(:validated_domain_control_validations).each do |cn|
+      certificate_names.each do |certificate_name|
+        if cn.id!=certificate_name.id and DomainControlValidation.domain_in_subdomains?(cn.name,certificate_name.name)
+          dcv = cn.validated_domain_control_validations.last # TODO find dcv.satisfied?
+          if dcv && dcv.identifier_found
+            # email validation
+            if dcv.dcv_method =~ /email/ or
+                # http/s or cname must have the same public key
+                (Settings.compare_public_key ? (cn.csr and certificate_name.csr and
+                    cn.cached_csr_public_key_sha1==certificate_name.cached_csr_public_key_sha1) : true)
+              satisfied << certificate_name.domain_control_validations.create(dcv.attributes.except("id"))
+              break
+            end
           end
         end
       end
@@ -593,7 +597,8 @@ class SslAccount < ActiveRecord::Base
   end
 
   # concatenate team (Domain) and order scoped certificate_names
-  def all_certificate_names(root=nil,cn_validated="",scope="sslcom")
+  def all_certificate_names(roots=nil,cn_validated="",scope="sslcom")
+    roots=[roots] if roots.is_a?(String)
     cn,dn= case cn_validated
         when "validated"
           [self.certificate_names.validated,self.domains.validated]
@@ -603,13 +608,19 @@ class SslAccount < ActiveRecord::Base
           [self.certificate_names,self.domains]
         end
     cn=cn.sslcom if scope=="sslcom"
-    if root
-      d=::PublicSuffix.parse(root)
-      CertificateName.where(id: (Rails.cache.fetch("#{cache_key}/all_certificate_names/#{cn_validated+scope}/#{d.domain}") {
-        name_sql=->(scoped_names){scoped_names.where('name like ? OR name = ?', '%.'+d.domain ,d.domain)}
+    # query an array of domains
+    if roots
+      CertificateName.where(id: (Rails.cache.fetch(
+          "#{cache_key}/all_certificate_names/#{cn_validated+scope}/#{Digest::SHA1.hexdigest(roots.to_s)}") {
+        sql = []
+        roots.each do |root|
+          d=::PublicSuffix.parse(root)
+          sql << "name like '#{'%.'+d.domain}' OR name = '#{d.domain}'"
+        end
+        name_sql=->(scoped_names){scoped_names.where(sql.join(" OR "))}
         (name_sql.call(cn)+name_sql.call(dn)).map(&:id).uniq
-      })).order(updated_at: :desc)
-    else
+        })).order(updated_at: :desc)
+    else # get all domains that belong to this account
       CertificateName.where(id: (Rails.cache.fetch("#{cache_key}/all_certificate_names/#{cn_validated+scope}") {
         (cn+dn).map(&:id).uniq
       })).order(updated_at: :desc)

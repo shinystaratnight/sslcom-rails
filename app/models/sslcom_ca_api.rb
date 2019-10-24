@@ -89,7 +89,8 @@ class SslcomCaApi
               else
                 'ManagementCA'
               end
-      Ca::SSL_ACCOUNT_MAPPING[options[:cc].ssl_account.acct_number] ?
+      Ca::SSL_ACCOUNT_MAPPING[options[:cc].ssl_account.acct_number] &&
+          Ca::SSL_ACCOUNT_MAPPING[options[:cc].ssl_account.acct_number][ca_name] ?
         Ca::SSL_ACCOUNT_MAPPING[options[:cc].ssl_account.acct_number][ca_name] : ca_name
     end
   end
@@ -218,11 +219,11 @@ class SslcomCaApi
       req, res = call_ca(host, options, issue_cert_json(options))
       api_log_entry=cc.csr.sslcom_ca_requests.create(request_url: host,
         parameters: req.body, method: "post", response: res.try(:body), ca: options[:ca_name] || ca_name(options))
+      cc.validate! if cc.pending_issuance? # release hold
       if (!options[:mapping].is_ev? and api_log_entry.username.blank?) or
           (options[:mapping].is_ev? and api_log_entry.username.blank? and
               api_log_entry.request_username.blank?)
         OrderNotifier.problem_ca_sending("support@ssl.com", cc.certificate_order,"sslcom").deliver
-        cc.validate! if cc.pending_issuance? # did not issue cert, release hold
       elsif api_log_entry.certificate_chain # signed certificate is issued
         cc.update_column(:label, options[:mapping].is_ev? ? api_log_entry.request_username :
                                    api_log_entry.username) unless api_log_entry.blank?
@@ -235,9 +236,6 @@ class SslcomCaApi
             notes:  "issued signed certificate for certificate order #{certificate_order.ref}",
             action: "SslcomCaApi#apply_for_certificate"
         )
-        cc.issue! if cc.pending_issuance?
-      else # did not issue cert, release hold
-        cc.validate! if cc.pending_issuance?
       end
       api_log_entry
     ensure
