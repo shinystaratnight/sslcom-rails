@@ -4,7 +4,6 @@
     %table#at_a_glance_header
       %tbody
         %tr
-          -funded_account = current_user.ssl_account.funded_account
           -if show_teams
             %th{colspan: 2} CURRENT TEAM
           -unless is_sandbox?

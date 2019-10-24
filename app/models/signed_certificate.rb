@@ -224,14 +224,14 @@ class SignedCertificate < ActiveRecord::Base
         errors.add :base, 'error: could not parse certificate'
       else
         self[:parent_cert] = false
-        self[:common_name] = parsed.subject.common_name.force_encoding('UTF-8')
-        self[:organization] = parsed.subject.organization.force_encoding('UTF-8')
+        self[:common_name] = parsed.subject.common_name.force_encoding('UTF-8') if parsed.subject.common_name
+        self[:organization] = parsed.subject.organization.force_encoding('UTF-8') if parsed.subject.organization
         self[:organization_unit] = ou_array(parsed.subject.to_s)
-        self[:state] = parsed.subject.region.force_encoding('UTF-8')
-        self[:locality] = parsed.subject.locality.force_encoding('UTF-8')
+        self[:state] = parsed.subject.region.force_encoding('UTF-8') if parsed.subject.region
+        self[:locality] = parsed.subject.locality.force_encoding('UTF-8') if parsed.subject.locality
         pc=field_array("postalCode", parsed.subject.to_s)
         self[:postal_code] = pc.first unless pc.blank?
-        self[:country] = parsed.subject.country.force_encoding('UTF-8')
+        self[:country] = parsed.subject.country.force_encoding('UTF-8') if parsed.subject.country
         street=field_array("street", parsed.subject.to_s)
         unless street.blank?
           street.each_with_index do |s, i|
@@ -239,7 +239,7 @@ class SignedCertificate < ActiveRecord::Base
             self["address#{i+1}".to_sym] = field_array("street", parsed.subject.to_s)[0]
           end
         end
-        self[:signature] = parsed.subject_key_identifier.force_encoding('UTF-8')
+        self[:signature] = parsed.subject_key_identifier.force_encoding('UTF-8') if parsed.subject_key_identifier
         self[:fingerprint] = OpenSSL::Digest::SHA1.new(parsed.to_der).to_s
         self[:fingerprintSHA] = "SHA1"
         self[:effective_date] = parsed.not_before
