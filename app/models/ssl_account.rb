@@ -270,7 +270,6 @@ class SslAccount < ActiveRecord::Base
           satisfied_names << certificate_name.name
         end
       end
-      certificate_name.certificate_content.certificate_order.apply_for_certificate if certificate_name.certificate_content
     end
   end
 

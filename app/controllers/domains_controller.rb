@@ -412,12 +412,12 @@ class DomainsController < ApplicationController
   def dcv_all_validate
     validated=[]
     # directly scoped to the team
-    dnames = @ssl_account.domains
+    dnames = @ssl_account.domains.includes(:domain_control_validations)
     # scoped to certificate_orders
-    cnames = @ssl_account.all_certificate_names
+    cnames = @ssl_account.all_certificate_names.includes(:domain_control_validations)
     if(params['authenticity_token'])
       identifier = params['validate_code']
-      (dnames+cnames).includes(:domain_control_validations).each do |cn|
+      (dnames+cnames).each do |cn|
         dcv = cn.domain_control_validations.last
         if dcv && dcv.identifier == identifier && dcv.responded_at.blank?
           # dcv.update_columns(identifier_found: true, responded_at: DateTime.now)
