@@ -37,44 +37,22 @@ class UserSessionsController < ApplicationController
 
           if user.shopping_cart
             if cookies[:cart].blank?
-              cookies[:cart] = {
-                  :value => user.shopping_cart.content,
-                  :path => "/",
-                  :expires => Settings.cart_cookie_days.to_i.days.from_now
-              }
+              set_cookie(:cart,user.shopping_cart.content)
             else
               if !cookies[:cart_guid].blank? && cookies[:cart_guid] == user.shopping_cart.guid
-                cookies[:cart] = {
-                    :value => cookies[:cart],
-                    :path => "/",
-                    :expires => Settings.cart_cookie_days.to_i.days.from_now
-                }
+                set_cookie(:cart,cookies[:cart]) # very peculiar
               else
                 content = user.shopping_cart.content.blank? ? [] : JSON.parse(user.shopping_cart.content)
                 content = shopping_cart_content(content, JSON.parse(cookies[:cart]))
                 user.shopping_cart.update_attribute :content, content
 
-                cookies[:cart] = {
-                    :value => content,
-                    :path => "/",
-                    :expires => Settings.cart_cookie_days.to_i.days.from_now
-                }
+                set_cookie(:cart,content)
               end
             end
           end
 
-          # cookies[:cart] = {
-          #     :value=>user.shopping_cart.content,
-          #     :path => "/",
-          #     :expires => Settings.cart_cookie_days.to_i.days.from_now
-          # } if user.shopping_cart
-
           if user.ssl_account.is_registered_reseller?
-            cookies[:r_tier] = {
-                :value=>user.ssl_account.reseller.reseller_tier.label,
-                :path => "/",
-                :expires => Settings.cart_cookie_days.to_i.days.from_now
-            }
+            set_cookie(:r_tier,user.ssl_account.reseller.reseller_tier.label)
           end
 
           # Fetch existing U2Fs from your db
@@ -92,44 +70,22 @@ class UserSessionsController < ApplicationController
 
         if user.shopping_cart
           if cookies[:cart].blank?
-            cookies[:cart] = {
-                :value => user.shopping_cart.content,
-                :path => "/",
-                :expires => Settings.cart_cookie_days.to_i.days.from_now
-            }
+            set_cookie(:cart,user.shopping_cart.content)
           else
             if !cookies[:cart_guid].blank? && cookies[:cart_guid] == user.shopping_cart.guid
-              cookies[:cart] = {
-                  :value => cookies[:cart],
-                  :path => "/",
-                  :expires => Settings.cart_cookie_days.to_i.days.from_now
-              }
+              set_cookie(:cart,cookies[:cart])
             else
               content = user.shopping_cart.content.blank? ? [] : JSON.parse(user.shopping_cart.content)
               content = shopping_cart_content(content, JSON.parse(cookies[:cart]))
               user.shopping_cart.update_attribute :content, content
 
-              cookies[:cart] = {
-                  :value => content,
-                  :path => "/",
-                  :expires => Settings.cart_cookie_days.to_i.days.from_now
-              }
+              set_cookie(:cart,content)
             end
           end
         end
 
-        # cookies[:cart] = {
-        #     :value=>user.shopping_cart.content,
-        #     :path => "/",
-        #     :expires => Settings.cart_cookie_days.to_i.days.from_now
-        # } if user.shopping_cart
-
         if user.ssl_account.is_registered_reseller?
-          cookies[:r_tier] = {
-              :value=>user.ssl_account.reseller.reseller_tier.label,
-              :path => "/",
-              :expires => Settings.cart_cookie_days.to_i.days.from_now
-          }
+          set_cookie(:r_tier,user.ssl_account.reseller.reseller_tier.label)
         end
         # Fetch existing U2Fs from your db
         key_handles = @user_session.user.u2fs.pluck(:key_handle)
@@ -176,11 +132,7 @@ class UserSessionsController < ApplicationController
       end
 
       unless current_user.ssl_account.nil?
-        cookies[:acct] = {
-          value: current_user.ssl_account.acct_number,
-          path: "/",
-          expires: Settings.cart_cookie_days.to_i.days.from_now
-        }
+        set_cookie(:acct,current_user.ssl_account.acct_number)
       end
     end
 
@@ -190,56 +142,27 @@ class UserSessionsController < ApplicationController
       if @user_session
         if @user_session.save && !@user_session.user.is_disabled?
           user = @user_session.user
-
-          cookies[:acct] = {
-              :value=>user.ssl_account.acct_number,
-              :path => "/",
-              :expires => Settings.cart_cookie_days.to_i.days.from_now
-          }
-
+          set_cookie(:acct,user.ssl_account.acct_number)
           #we'll know what tier the user is even if s/he is not logged in
           cookies.delete(:r_tier)
 
           if user.shopping_cart
             if cookies[:cart].blank?
-              cookies[:cart] = {
-                  :value => user.shopping_cart.content,
-                  :path => "/",
-                  :expires => Settings.cart_cookie_days.to_i.days.from_now
-              }
+              set_cookie(:cart,user.shopping_cart.content)
             else
               if !cookies[:cart_guid].blank? && cookies[:cart_guid] == user.shopping_cart.guid
-                cookies[:cart] = {
-                    :value => cookies[:cart],
-                    :path => "/",
-                    :expires => Settings.cart_cookie_days.to_i.days.from_now
-                }
+                set_cookie(:cart,cookies[:cart])
               else
                 content = user.shopping_cart.content.blank? ? [] : JSON.parse(user.shopping_cart.content)
                 content = shopping_cart_content(content, JSON.parse(cookies[:cart]))
                 user.shopping_cart.update_attribute :content, content
-                
-                cookies[:cart] = {
-                    :value => content,
-                    :path => "/",
-                    :expires => Settings.cart_cookie_days.to_i.days.from_now
-                }
+                set_cookie(:cart,content)
               end
             end
           end
 
-          # cookies[:cart] = {
-          #     :value=>user.shopping_cart.content,
-          #     :path => "/",
-          #     :expires => Settings.cart_cookie_days.to_i.days.from_now
-          # } if user.shopping_cart
-
           if user.ssl_account.is_registered_reseller?
-            cookies[:r_tier] = {
-                :value=>user.ssl_account.reseller.reseller_tier.label,
-                :path => "/",
-                :expires => Settings.cart_cookie_days.to_i.days.from_now
-            }
+            set_cookie(:r_tier,user.ssl_account.reseller.reseller_tier.label)
           end
 
           flash[:notice] = "Successfully logged in." unless request.xhr?

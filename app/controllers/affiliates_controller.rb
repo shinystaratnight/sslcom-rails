@@ -37,10 +37,8 @@ class AffiliatesController < ApplicationController
   def refer
     id = params[:id]
     if Affiliate.exists?(id)
-      cookies[:aid] = {:value=>id, :path => "/", :expires => Settings.
-          cart_cookie_days.to_i.days.from_now}
-      cookies[:ref] = {:value=>request.url, :path => "/", :expires => Settings.
-          cart_cookie_days.to_i.days.from_now}
+      set_cookie(:aid,id)
+      set_cookie(:ref,request.url)
     end
     if id=="21"
       redirect_to "https://#{Settings.portal_domain}/affiliate/program.php?id=101&url=#{request.url.gsub(/\/code\/\w+\/?\z/,"")}"

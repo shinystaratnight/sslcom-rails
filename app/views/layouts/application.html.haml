@@ -30,7 +30,6 @@
     =render :partial => "shared/scripts_and_styles"
     =yield :js
   %body
-    =render partial: "layouts/facebook" if Rails.env=~/production/i
     #wrapper
       -if (current_user.blank?) || (!current_user.is_passed_2fa(session[:duo_auth])) || yield(:header)=='public' || yield(:header)=='public_wo_container'
         -unless request.subdomain==Reseller::SUBDOMAIN

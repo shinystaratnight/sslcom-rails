@@ -18,9 +18,6 @@
             po.src = 'https://apis.google.com/js/plusone.js';
             var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
           })();
-      #facebook
-        %script{:src => "https://connect.facebook.net/en_US/all.js#xfbml=1"}
-        %fb:like{:layout => "button_count", :show_faces => "false"}
   This shortened secure link (ssl) points to
   #{link_to @surl.original, @surl.original, style: "text-decoration:underline;color:#00c"} which
   was scanned for safe viewing on #{DateTime.now.strftime("%B %d, %Y")} by ssl.com security services.

@@ -152,15 +152,8 @@ class UsersController < ApplicationController
                                         })
         if @user_session.save
           user = @user_session.user
-
-          cookies[:acct] = {
-              :value=>user.ssl_account.acct_number,
-              :path => "/",
-              :expires => Settings.cart_cookie_days.to_i.days.from_now
-          }
-
+          set_cookie(:acct,user.ssl_account.acct_number)
           flash[:notice] = "Successfully logged in."
-
           redirect_to (account_path(user.ssl_account(:default_team) ?
                                                                  user.ssl_account(:default_team).to_slug :
                                                                  {})) and return
