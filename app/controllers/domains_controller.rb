@@ -433,9 +433,9 @@ class DomainsController < ApplicationController
                   !team_domain.domain_control_validations.last.satisfied?
           # find all other non validated certificate_names and validate them
           validated<<@ssl_account.satisfy_related_dcvs(cn)
+          cn.certificate_content.certificate_order.apply_for_certificate if cn.certificate_content
         end
       end
-      cn.certificate_content.certificate_order.apply_for_certificate
       unless validated.empty?
         flash[:notice] = "The following domains are now validated: #{validated.flatten.uniq.join(" ,")}"
         redirect_to(domains_path) if current_user
