@@ -150,8 +150,7 @@ class ApplicationController < ActionController::Base
   end
 
   def save_cart_items(items)
-    cookies[:cart] = {:value=>JSON.generate(items), :path => "/",
-      :expires => Settings.cart_cookie_days.to_i.days.from_now}
+    set_cookie(:cart,JSON.generate(items))
   end
 
   def free_qty_limit
@@ -277,6 +276,11 @@ class ApplicationController < ActionController::Base
         CertificateOrder.not_new(:include=>:site_seal) :
         current_user.certificate_orders.not_new(:include=>:site_seal))
     end
+  end
+
+  def set_cookie(name,value)
+    cookies[name] = {value: value, path: "/", domain: ".ssl.com",
+                     expires: Settings.cart_cookie_days.to_i.days.from_now}
   end
 
   def set_ssl_slug(target_user=nil)
@@ -547,8 +551,7 @@ class ApplicationController < ActionController::Base
   def require_no_user
     if current_user
       store_location
-      cookies[:acct] = {:value=>current_user.ssl_account.acct_number, :path => "/", :expires => Settings.
-          cart_cookie_days.to_i.days.from_now} if current_user.is_admin?
+      set_cookie(:acct,current_user.ssl_account.acct_number)
       flash[:notice] = "You must be logged out to access page '#{request.fullpath}'"
       redirect_to account_url
       return false
@@ -616,10 +619,8 @@ class ApplicationController < ActionController::Base
             aid_li.push(aid_li.last)
           end
         end
-      cookies[:aid_li] = {:value=>aid_li.join(":"), :path => "/",
-        :expires => Settings.cart_cookie_days.to_i.days.from_now}
-      cookies[:cart] = {:value=>cart.join(":"), :path => "/",
-        :expires => Settings.cart_cookie_days.to_i.days.from_now}
+      set_cookie(:aid_li,aid_li.join(":"))
+      set_cookie(:cart,cart.join(":"))
       end
     end
   end

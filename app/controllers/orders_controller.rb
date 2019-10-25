@@ -79,22 +79,8 @@ class OrdersController < ApplicationController
       # cookies[:cart] = {:value=>(@cart.content.blank? ? @cart.content : CGI.unescape(@cart.content)), :path => "/",
       #                   :expires => Settings.cart_cookie_days.to_i.days.from_now}
 
-      cookies[:cart_guid] = {:value=>@cart.guid, :path => "/",
-                             :expires => Settings.cart_cookie_days.to_i.days.from_now} # reset guid
-      cookies[:cart] = @cart.content
-
-      # if @cart.content.blank?
-      #   cookies[:cart] = @cart.content
-      # else
-      #   # remove domains str from cookies content for cookie size.
-      #   content = JSON.parse(@cart.content)
-      #   content.each do |cookie|
-      #     # cookie.delete 'do'
-      #     cookie['do'] = cookie['do'].length
-      #   end
-      #
-      #   cookies[:cart] = content.to_json
-      # end
+      set_cookie(:cart_guid,@cart.guid)
+      set_cookie(:cart,@cart.content)
     else
       cart = cookies[:cart]
       guid = cookies[:cart_guid]
@@ -102,28 +88,26 @@ class OrdersController < ApplicationController
       if current_user
         if current_user.shopping_cart
           guid=current_user.shopping_cart.guid
-          cookies[:cart_guid] = {:value=>guid, :path => "/",
-                                 :expires => Settings.cart_cookie_days.to_i.days.from_now} # reset guid
           current_user.shopping_cart.update_attribute :content, cart
         # elsif guid && db_cart
         #     db_cart.update_attributes content: cart, user_id: current_user.id
         else # each user should 'own' a db_cart
           guid=UUIDTools::UUID.random_create.to_s
-          cookies[:cart_guid] = {:value=>guid, :path => "/", :expires => Settings.cart_cookie_days.to_i.days.from_now}
           current_user.create_shopping_cart(guid: guid, content: cart)
         end
+        set_cookie(:cart_guid,guid)
       elsif guid && db_cart #assume user is not logged in
         db_cart.update_attribute :content, cart
       else
         guid=UUIDTools::UUID.random_create.to_s
-        cookies[:cart_guid] = {:value=>guid, :path => "/", :expires => Settings.cart_cookie_days.to_i.days.from_now}
+        set_cookie(:cart_guid,guid)
         ShoppingCart.create(guid: guid, content: cart)
       end
       redirect_to show_cart_orders_path(id: guid)
     end
     setup_orders
   end
-
+  
   def add_cart
     cart = params[:cart]
     guid = cookies[:cart_guid]
@@ -132,8 +116,7 @@ class OrdersController < ApplicationController
     if current_user
       if current_user.shopping_cart
         guid = current_user.shopping_cart.guid
-        cookies[:cart_guid] = {:value=>guid, :path => "/",
-                               :expires => Settings.cart_cookie_days.to_i.days.from_now} # reset guid
+        set_cookie(:cart_guid,guid)
 
         # Get stored cart info
         content = current_user.shopping_cart.content.blank? ? [] : JSON.parse(current_user.shopping_cart.content)
@@ -141,7 +124,7 @@ class OrdersController < ApplicationController
         current_user.shopping_cart.update_attribute :content, content.to_json
       else # each user should 'own' a db_cart
         guid = UUIDTools::UUID.random_create.to_s
-        cookies[:cart_guid] = {:value=>guid, :path => "/", :expires => Settings.cart_cookie_days.to_i.days.from_now}
+        set_cookie(:cart_guid,guid)
         current_user.create_shopping_cart(guid: guid, content: [cart].to_json)
       end
     elsif guid && db_cart #assume user is not logged in
@@ -151,7 +134,7 @@ class OrdersController < ApplicationController
       db_cart.update_attribute :content, content.to_json
     else
       guid = UUIDTools::UUID.random_create.to_s
-      cookies[:cart_guid] = {:value=>guid, :path => "/", :expires => Settings.cart_cookie_days.to_i.days.from_now}
+      set_cookie(:cart_guid,guid)
       ShoppingCart.create(guid: guid, content: [cart].to_json)
     end
 
@@ -567,8 +550,7 @@ class OrdersController < ApplicationController
           co
         end}.compact
     end
-    cookies[:acct] = {:value=>current_user.ssl_account.acct_number, :path => "/", :expires => Settings.
-        cart_cookie_days.to_i.days.from_now}
+    set_cookie(:acct,current_user.ssl_account.acct_number)
     respond_to do |format|
       if @order.line_items.count==1
         format.html { render "/funded_accounts/success", :layout=>'application'}

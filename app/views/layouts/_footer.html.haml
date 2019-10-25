@@ -1,7 +1,6 @@
 #global_footer.clearfix
   %section#logo_share
     #logo_box
-    =render partial: 'layouts/social_share'
     .site_seal_footer=render 'site/site_seal'
   %ul.section_box
     %h4 Products and Services
@@ -151,7 +150,7 @@
       $('#cart_total').text('$'+total+" USD");
     };
     $.empty_out_cart = function(){
-      $.cookie("cart", "", {path: '/'});
+      $.cookie("cart", "", {path: '/',domain: 'ssl.com'});
       $('.add_to_cart_button').removeAttr("disabled");
       $('#cart','#cart_total').effect("highlight", {}, 3000);
     };
@@ -174,7 +173,7 @@
         $.cookie("cart", null); //deletes cookie jquery method
       else
         $.cookie("cart", $.toJSON(cart), { expires:
-          #{Settings.cart_cookie_days}, path: '/'});
+          #{Settings.cart_cookie_days}, path: '/',domain: 'ssl.com'});
     };
     $.get_cart_items = function(){
       if($.cookie("cart")==null || $.cookie("cart")=="")
