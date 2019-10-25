@@ -412,12 +412,12 @@ class DomainsController < ApplicationController
   def dcv_all_validate
     validated=[]
     # directly scoped to the team
-    dnames = @ssl_account.domains
+    dnames = @ssl_account.domains.includes(:domain_control_validations)
     # scoped to certificate_orders
-    cnames = @ssl_account.all_certificate_names
+    cnames = @ssl_account.all_certificate_names.includes(:domain_control_validations)
     if(params['authenticity_token'])
       identifier = params['validate_code']
-      (dnames+cnames).includes(:domain_control_validations).each do |cn|
+      (dnames+cnames).each do |cn|
         dcv = cn.domain_control_validations.last
         if dcv && dcv.identifier == identifier && dcv.responded_at.blank?
           # dcv.update_columns(identifier_found: true, responded_at: DateTime.now)
@@ -433,9 +433,9 @@ class DomainsController < ApplicationController
                   !team_domain.domain_control_validations.last.satisfied?
           # find all other non validated certificate_names and validate them
           validated<<@ssl_account.satisfy_related_dcvs(cn)
+          cn.certificate_content.certificate_order.apply_for_certificate if cn.certificate_content
         end
       end
-      cn.certificate_content.certificate_order.apply_for_certificate
       unless validated.empty?
         flash[:notice] = "The following domains are now validated: #{validated.flatten.uniq.join(" ,")}"
         redirect_to(domains_path) if current_user
