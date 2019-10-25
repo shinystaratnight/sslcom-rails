@@ -279,7 +279,7 @@ class ApplicationController < ActionController::Base
   end
 
   def set_cookie(name,value)
-    cookies[name] = {value: value, path: "/", domain: "www.ssl.com",
+    cookies[name] = {value: value, path: "/", domain: ".ssl.com",
                      expires: Settings.cart_cookie_days.to_i.days.from_now}
   end
 
