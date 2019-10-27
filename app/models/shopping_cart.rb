@@ -16,4 +16,7 @@ class ShoppingCart < ActiveRecord::Base
   RENEWAL_ORDER = "rn"
   AFFILIATE = "af"
   DEFAULT_AFFILIATE_ID = 1
+
+  CART_KEY = :cart
+  CART_GUID_KEY = :cart_guid
 end

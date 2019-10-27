@@ -276,12 +276,13 @@ class Certificate < ActiveRecord::Base
     @cpvi ||= ProductVariantItem.unscoped.where(id:
       (Rails.cache.fetch("#{cache_key}/cached_product_variant_items/#{options.to_s}") do
         if options[:by_serial]
-          product_variant_items.where{serial=~"%#{options[:by_serial]}%"}.pluck(:id)
+          product_variant_items.where{serial=~"%#{options[:by_serial]}%"}
         else
-          product_variant_items.pluck(:id)
-        end
+          product_variant_items
+        end.pluck(:id)
     end))
   end
+  memoize :cached_product_variant_items
 
   def role_can_manage
     Role.get_role_id Role::RA_ADMIN
@@ -298,9 +299,12 @@ class Certificate < ActiveRecord::Base
   end
 
   def items_by_duration
-    @items_by_duration ||= product_variant_groups.includes(:product_variant_items).duration.map(&:product_variant_items).
-        flatten.sort{|a,b|a.value.to_i <=> b.value.to_i}
+    ProductVariantItem.where(id: (Rails.cache.fetch("#{cache_key}/items_by_duration") do
+      product_variant_groups.includes(:product_variant_items).duration.map(&:product_variant_items).
+          flatten.sort{|a,b|a.value.to_i <=> b.value.to_i}.map(&:id)
+    end))
   end
+  memoize :items_by_duration
 
   def pricing(certificate_order,certificate_content)
     ratio = certificate_order.signed_certificates.try(:last) ? certificate_order.duration_remaining : 1

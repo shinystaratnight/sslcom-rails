@@ -6,8 +6,8 @@ class Website < ActiveRecord::Base
     cs_id=Rails.cache.fetch("current_site/#{domain}",
                       expires_in: 24.hours) {
         cs=self.where{(host == domain) | (api_host == domain)}.last
-        cs ? cs.id : nil}
-    Website.find cs_id if cs_id
+        cs ? cs.id : ''}
+    Website.find cs_id unless cs_id.blank?
   end
 
   def use_database
