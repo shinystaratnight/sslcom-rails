@@ -234,7 +234,11 @@ class Certificate < ActiveRecord::Base
   scope :base_products, ->{where{reseller_tier_id == nil}}
   scope :available, ->{where{(product != 'mssl') & (serial =~ "%sslcom%") & (title << Settings.excluded_titles)}}
   scope :sitemap, ->{where{(product != 'mssl') & (product !~ '%tr')}}
-  scope :for_sale, ->{where{(product != 'mssl') & (serial =~ "%sslcom%")}}
+  scope :for_sale, ->{
+    Certificate.unscoped.where(id: (Rails.cache.fetch("Certificate.for_sale") do
+      where{(product != 'mssl') & (serial =~ "%sslcom%")}.pluck(:id)
+    end))
+  }
   
   def self.get_smime_client_products(tier=nil)
     cur_tier = tier ? "#{tier}tr" : ""

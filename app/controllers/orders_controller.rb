@@ -80,7 +80,7 @@ class OrdersController < ApplicationController
       #                   :expires => Settings.cart_cookie_days.to_i.days.from_now}
 
       set_cookie(ShoppingCart::CART_GUID_KEY,@cart.guid)
-      set_cookie(ShoppingCart::CART_KEY,@cart.content)
+      set_cookie(ShoppingCart::CART_KEY,@cart.content) unless @cart.content.blank?
     else
       cart = cookies[ShoppingCart::CART_KEY]
       guid = cookies[ShoppingCart::CART_GUID_KEY]
@@ -96,8 +96,8 @@ class OrdersController < ApplicationController
           current_user.create_shopping_cart(guid: guid, content: cart)
         end
         set_cookie(ShoppingCart::CART_GUID_KEY,guid)
-      elsif guid && db_cart #assume user is not logged in
-        db_cart.update_attribute :content, cart
+      elsif guid && db_cart && !cart.blank? #assume user is not logged in
+        db_cart.update_attribute(:content, cart)
       else
         guid=UUIDTools::UUID.random_create.to_s
         set_cookie(ShoppingCart::CART_GUID_KEY,guid)
@@ -129,7 +129,7 @@ class OrdersController < ApplicationController
       end
     elsif guid && db_cart #assume user is not logged in
       # Get stored cart info
-      content = db_cart.content ? JSON.parse(db_cart.content) : []
+      content = db_cart.content.blank? ? [] : JSON.parse(db_cart.content)
       content = shopping_cart_content(content, cart)
       db_cart.update_attribute :content, content.to_json
     else
