@@ -615,7 +615,7 @@ class ApplicationController < ActionController::Base
             aid_li.push(aid_li.last)
           end
         end
-      set_cookie(:aid_li,aid_li.join(":"))
+      set_cookie(ShoppingCart::AID_LI,aid_li.join(":"))
       set_cookie(ShoppingCart::CART_KEY,cart.join(":"))
       end
     end
@@ -623,7 +623,7 @@ class ApplicationController < ActionController::Base
 
   def clear_cart
     cookies.delete(ShoppingCart::CART_KEY)
-    cookies.delete(:aid_li)
+    cookies.delete(ShoppingCart::AID_LI)
     current_user.shopping_cart.update_attribute(:content, nil) if current_user && current_user.shopping_cart
   end
 
