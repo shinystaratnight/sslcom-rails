@@ -14,7 +14,7 @@ class ApplicationController < ActionController::Base
   helper_method :current_user_session, :current_user, :is_reseller, :cookies, :current_website,
     :cart_contents, :cart_products, :certificates_from_cookie, "is_iphone?", "hide_dcv?", :free_qty_limit,
     "hide_documents?", "hide_both?", "hide_validation?"
-  before_filter :set_database, if: "request.host=~/^sandbox/ || request.host=~/^sws-test/ || request.host=~/ssl.local$/"
+  before_filter :set_database, if: "request.host=~/^sandbox/ || request.host=~/^sws-test/"
   before_filter :set_mailer_host
   before_filter :detect_recert, except: [:renew, :reprocess]
   before_filter :set_current_user
@@ -25,11 +25,6 @@ class ApplicationController < ActionController::Base
   before_filter :team_base, if: "params[:ssl_slug] && current_user"
   before_filter :set_ssl_slug, :load_notifications
   after_filter :set_access_control_headers#need to move parse_csr to api, if: "request.subdomain=='sws' || request.subdomain=='sws-test'"
-
-  # Bonus - add view_path
-  def set_paths
-    self.prepend_view_path current_website.view_path unless current_website.view_path.blank?
-  end
 
   def set_access_control_headers
     headers['Access-Control-Allow-Origin'] = '*'
@@ -130,7 +125,7 @@ class ApplicationController < ActionController::Base
   # returns the cart cookie with reseller tier as an array
   def cart_contents
     find_tier
-    cart = cookies[:cart]
+    cart = cookies[ShoppingCart::CART_KEY]
     cart.blank? ? {} : JSON.parse(cart).each{|i|i['pr']=i['pr']+@tier if(i && @tier && i['pr'] && !i['pr'].ends_with?(@tier))}
   end
 
@@ -146,11 +141,11 @@ class ApplicationController < ActionController::Base
   end
 
   def delete_cart_items
-    cookies.delete :cart
+    cookies.delete ShoppingCart::CART_KEY, domain: cookie_domain
   end
 
   def save_cart_items(items)
-    set_cookie(:cart,JSON.generate(items))
+    set_cookie(ShoppingCart::CART_KEY,JSON.generate(items))
   end
 
   def free_qty_limit
@@ -172,9 +167,9 @@ class ApplicationController < ActionController::Base
 
   def old_certificates_from_cookie
     @certificate_orders=[]
-    return @certificate_orders unless cookies[:cart]
+    return @certificate_orders unless cookies[ShoppingCart::CART_KEY]
     Order.cart_items session, cookies
-    certs=cookies[:cart].split(":")
+    certs=cookies[ShoppingCart::CART_KEY].split(":")
     certs.each do |c|
       parts = c.split(",")
       certificate_order = CertificateOrder.new :server_licenses=>parts[2],
@@ -279,7 +274,8 @@ class ApplicationController < ActionController::Base
   end
 
   def set_cookie(name,value)
-    cookies[name] = {value: value, path: "/", domain: ".ssl.com",
+    # cookies.delete(name, domain: "secure.ssl.local") if name==:cart
+    cookies[name] = {value: value, path: "/", domain: :all,
                      expires: Settings.cart_cookie_days.to_i.days.from_now}
   end
 
@@ -606,8 +602,8 @@ class ApplicationController < ActionController::Base
   #this function can be turned back on by the Settings.sync_aid_li_and_cart
   #variable
   def sync_aid_li_and_cart
-    if cookies[:aid_li] && cookies[:cart]
-      aid_li=cookies[:aid_li].split(":")
+    if cookies[ShoppingCart::AID_LI] && cookies[ShoppingCart::CART_KEY]
+      aid_li=cookies[ShoppingCart::AID_LI].split(":")
       cart=cart_contents
       if aid_li.count!=cart.count
         if aid_li.count>cart.count
@@ -619,15 +615,15 @@ class ApplicationController < ActionController::Base
             aid_li.push(aid_li.last)
           end
         end
-      set_cookie(:aid_li,aid_li.join(":"))
-      set_cookie(:cart,cart.join(":"))
+      set_cookie(ShoppingCart::AID_LI,aid_li.join(":"))
+      set_cookie(ShoppingCart::CART_KEY,cart.join(":"))
       end
     end
   end
 
   def clear_cart
-    cookies.delete(:cart)
-    cookies.delete(:aid_li)
+    cookies.delete(ShoppingCart::CART_KEY)
+    cookies.delete(ShoppingCart::AID_LI)
     current_user.shopping_cart.update_attribute(:content, nil) if current_user && current_user.shopping_cart
   end
 
@@ -640,10 +636,10 @@ class ApplicationController < ActionController::Base
   end
 
   def identify_visitor
-    cookies[:guid] = {:value=>UUIDTools::UUID.random_create.to_s, :path => "/",
-      :expires => 2.years.from_now} unless cookies[:guid]
+    cookies[VisitorToken::GUID] = {:value=>UUIDTools::UUID.random_create.to_s, :path => "/",
+      :expires => 2.years.from_now} unless cookies[VisitorToken::GUID]
     @visitor_token = VisitorToken.find_or_create_by_guid_and_affiliate_id(
-      cookies[:guid],cookies[:aid])
+      cookies[VisitorToken::GUID],cookies[ShoppingCart::AID])
     @visitor_token.user ||= current_user if current_user
     @visitor_token.save if @visitor_token.changed? #TODO only if change
   end
@@ -664,10 +660,10 @@ class ApplicationController < ActionController::Base
 #      output = cache(md5) { request.request_uri }
 #
 #      @tracking = UUID.random_create
-#      cookies[:guid] = {:value=>guid, :path => "/", :expires => 2.years.from_now} unless cookies[:guid]
-#      @visitor_token = VisitorToken.find_or_build_by_guid(cookies[:guid])
+#      cookies[VisitorToken::GUID] = {:value=>guid, :path => "/", :expires => 2.years.from_now} unless cookies[VisitorToken::GUID]
+#      @visitor_token = VisitorToken.find_or_build_by_guid(cookies[VisitorToken::GUID])
 #      @visitor_token.user ||= current_user if current_user
-#      @visitor_token.affiliate_id = cookies[:aid] if cookies[:aid] && token.affiliate_id != cookies[:aid]
+#      @visitor_token.affiliate_id = cookies[ShoppingCart::AID] if cookies[ShoppingCart::AID] && token.affiliate_id != cookies[ShoppingCart::AID]
 #      @visitor_token.save
 #    end
   end

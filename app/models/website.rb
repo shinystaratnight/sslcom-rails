@@ -2,12 +2,16 @@
 class Website < ActiveRecord::Base
   belongs_to :db
 
+  def self.domain_contraints
+    Rails.cache.fetch("domain_contraints",expires_in: 24.hours){Website.pluck(:api_host)+Sandbox.pluck(:host)}
+  end
+
   def self.current_site(domain)
     cs_id=Rails.cache.fetch("current_site/#{domain}",
                       expires_in: 24.hours) {
         cs=self.where{(host == domain) | (api_host == domain)}.last
-        cs ? cs.id : nil}
-    Website.find cs_id if cs_id
+        cs ? cs.id : ''}
+    Website.find cs_id unless cs_id.blank?
   end
 
   def use_database

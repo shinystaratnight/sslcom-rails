@@ -281,7 +281,8 @@ class CertificateName < ActiveRecord::Base
 
   WhoisJob = Struct.new(:dname, :certificate_name) do
     def perform
-      if dcv=DomainControlValidation.global.find_by_subject(dname)
+      dcv=DomainControlValidation.global.find_by_subject(dname)
+      if dcv
         standard_addresses = dcv.candidate_addresses
       else
         standard_addresses = DomainControlValidation.email_address_choices(dname)

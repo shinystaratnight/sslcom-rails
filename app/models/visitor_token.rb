@@ -7,5 +7,5 @@ class VisitorToken < ActiveRecord::Base
   has_many    :tracked_urls, :through=>:trackings
   has_many    :orders
 
-
+  GUID = :guid
 end

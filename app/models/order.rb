@@ -292,7 +292,7 @@ class Order < ActiveRecord::Base
 
   def credit_affiliate(cookies)
     if !(self.is_test? || self.cents==0)
-      if cookies[:aid] && Affiliate.exists?(cookies[:aid])
+      if cookies[ShoppingCart::AID] && Affiliate.exists?(cookies[ShoppingCart::AID])
         self.ext_affiliate_name="idevaffiliate"
         self.ext_affiliate_id="72198"
       else

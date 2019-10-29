@@ -24,72 +24,22 @@ class UserSessionsController < ApplicationController
   def user_login
     result_obj = {}
     key_handles = []
-
-    if params[:user_session][:failed_count].to_i >= Settings.captcha_threshold.to_i
-      if verify_recaptcha(response: params[:user_session]['g-recaptcha-response'])
-        @user_session = UserSession.new(params[:user_session].to_h)
-
-        if @user_session.save && !@user_session.user.is_disabled?
-          user = @user_session.user
-
-          #we'll know what tier the user is even if s/he is not logged in
-          cookies.delete(:r_tier)
-
-          if user.shopping_cart
-            if cookies[:cart].blank?
-              set_cookie(:cart,user.shopping_cart.content)
-            else
-              if !cookies[:cart_guid].blank? && cookies[:cart_guid] == user.shopping_cart.guid
-                set_cookie(:cart,cookies[:cart]) # very peculiar
-              else
-                content = user.shopping_cart.content.blank? ? [] : JSON.parse(user.shopping_cart.content)
-                content = shopping_cart_content(content, JSON.parse(cookies[:cart]))
-                user.shopping_cart.update_attribute :content, content
-
-                set_cookie(:cart,content)
-              end
-            end
-          end
-
-          if user.ssl_account.is_registered_reseller?
-            set_cookie(:r_tier,user.ssl_account.reseller.reseller_tier.label)
-          end
-
-          # Fetch existing U2Fs from your db
-          key_handles = @user_session.user.u2fs.pluck(:key_handle)
-        end
-      end
-    else
+    cart_and_u2fs=->{
       @user_session = UserSession.new(params[:user_session].to_h)
 
       if @user_session.save && !@user_session.user.is_disabled?
-        user = @user_session.user
-
-        #we'll know what tier the user is even if s/he is not logged in
-        cookies.delete(:r_tier)
-
-        if user.shopping_cart
-          if cookies[:cart].blank?
-            set_cookie(:cart,user.shopping_cart.content)
-          else
-            if !cookies[:cart_guid].blank? && cookies[:cart_guid] == user.shopping_cart.guid
-              set_cookie(:cart,cookies[:cart])
-            else
-              content = user.shopping_cart.content.blank? ? [] : JSON.parse(user.shopping_cart.content)
-              content = shopping_cart_content(content, JSON.parse(cookies[:cart]))
-              user.shopping_cart.update_attribute :content, content
-
-              set_cookie(:cart,content)
-            end
-          end
-        end
-
-        if user.ssl_account.is_registered_reseller?
-          set_cookie(:r_tier,user.ssl_account.reseller.reseller_tier.label)
-        end
+        shopping_cart_to_cookie
         # Fetch existing U2Fs from your db
         key_handles = @user_session.user.u2fs.pluck(:key_handle)
       end
+    }
+
+    if params[:user_session][:failed_count].to_i >= Settings.captcha_threshold.to_i
+      if verify_recaptcha(response: params[:user_session]['g-recaptcha-response'])
+        cart_and_u2fs.call
+      end
+    else
+      cart_and_u2fs.call
     end
 
     unless key_handles.empty?
@@ -141,29 +91,7 @@ class UserSessionsController < ApplicationController
 
       if @user_session
         if @user_session.save && !@user_session.user.is_disabled?
-          user = @user_session.user
-          set_cookie(:acct,user.ssl_account.acct_number)
-          #we'll know what tier the user is even if s/he is not logged in
-          cookies.delete(:r_tier)
-
-          if user.shopping_cart
-            if cookies[:cart].blank?
-              set_cookie(:cart,user.shopping_cart.content)
-            else
-              if !cookies[:cart_guid].blank? && cookies[:cart_guid] == user.shopping_cart.guid
-                set_cookie(:cart,cookies[:cart])
-              else
-                content = user.shopping_cart.content.blank? ? [] : JSON.parse(user.shopping_cart.content)
-                content = shopping_cart_content(content, JSON.parse(cookies[:cart]))
-                user.shopping_cart.update_attribute :content, content
-                set_cookie(:cart,content)
-              end
-            end
-          end
-
-          if user.ssl_account.is_registered_reseller?
-            set_cookie(:r_tier,user.ssl_account.reseller.reseller_tier.label)
-          end
+          user = shopping_cart_to_cookie
 
           flash[:notice] = "Successfully logged in." unless request.xhr?
           format.js   {render :json=>url_for_js(user)}
@@ -202,7 +130,7 @@ class UserSessionsController < ApplicationController
         if params[:logout] == 'true'
           if current_user.is_admin?
             cookies.delete(:r_tier)
-            cookies.delete(:cart_guid)
+            cookies.delete(ShoppingCart::CART_GUID_KEY)
             clear_cart
           end
           cookies.delete(:acct)
@@ -267,7 +195,7 @@ class UserSessionsController < ApplicationController
                   # Log out to protect hack.
                   if current_user.is_admin?
                     cookies.delete(:r_tier)
-                    cookies.delete(:cart_guid)
+                    cookies.delete(ShoppingCart::CART_GUID_KEY)
                     clear_cart
                   end
                   cookies.delete(:acct)
@@ -366,7 +294,7 @@ class UserSessionsController < ApplicationController
   def destroy
     if current_user.is_admin?
       cookies.delete(:r_tier)
-      cookies.delete(:cart_guid)
+      cookies.delete(ShoppingCart::CART_GUID_KEY)
       clear_cart
     end
     cookies.delete(:acct)
@@ -379,6 +307,32 @@ class UserSessionsController < ApplicationController
   end
 
   private
+
+  def shopping_cart_to_cookie
+    user = @user_session.user
+    set_cookie(:acct, user.ssl_account.acct_number)
+    #we'll know what tier the user is even if s/he is not logged in
+    cookies.delete(:r_tier)
+
+    if user.shopping_cart
+      if cookies[ShoppingCart::CART_KEY].blank?
+        set_cookie(ShoppingCart::CART_KEY, user.shopping_cart.content)
+      else
+        if !cookies[ShoppingCart::CART_GUID_KEY].blank? && cookies[ShoppingCart::CART_GUID_KEY] == user.shopping_cart.guid
+          set_cookie(ShoppingCart::CART_KEY, cookies[ShoppingCart::CART_KEY])
+        else
+          content = user.shopping_cart.content.blank? ? [] : JSON.parse(user.shopping_cart.content)
+          content = shopping_cart_content(content, JSON.parse(cookies[ShoppingCart::CART_KEY]))
+          user.shopping_cart.update_attribute :content, content
+          set_cookie(ShoppingCart::CART_KEY, content)
+        end
+      end
+    end
+    if user.ssl_account.is_registered_reseller?
+      set_cookie(:r_tier, user.ssl_account.reseller.reseller_tier.label)
+    end
+    user
+  end
 
   def url_for_js(user)
     redirect = create_ssl_certificate_route(user)

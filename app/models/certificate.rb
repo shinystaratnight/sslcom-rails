@@ -234,7 +234,11 @@ class Certificate < ActiveRecord::Base
   scope :base_products, ->{where{reseller_tier_id == nil}}
   scope :available, ->{where{(product != 'mssl') & (serial =~ "%sslcom%") & (title << Settings.excluded_titles)}}
   scope :sitemap, ->{where{(product != 'mssl') & (product !~ '%tr')}}
-  scope :for_sale, ->{where{(product != 'mssl') & (serial =~ "%sslcom%")}}
+  scope :for_sale, ->{
+    Certificate.unscoped.where(id: (Rails.cache.fetch("Certificate.for_sale") do
+      where{(product != 'mssl') & (serial =~ "%sslcom%")}.pluck(:id)
+    end))
+  }
   
   def self.get_smime_client_products(tier=nil)
     cur_tier = tier ? "#{tier}tr" : ""
@@ -276,12 +280,13 @@ class Certificate < ActiveRecord::Base
     @cpvi ||= ProductVariantItem.unscoped.where(id:
       (Rails.cache.fetch("#{cache_key}/cached_product_variant_items/#{options.to_s}") do
         if options[:by_serial]
-          product_variant_items.where{serial=~"%#{options[:by_serial]}%"}.pluck(:id)
+          product_variant_items.where{serial=~"%#{options[:by_serial]}%"}
         else
-          product_variant_items.pluck(:id)
-        end
+          product_variant_items
+        end.pluck(:id)
     end))
   end
+  memoize :cached_product_variant_items
 
   def role_can_manage
     Role.get_role_id Role::RA_ADMIN
@@ -298,9 +303,12 @@ class Certificate < ActiveRecord::Base
   end
 
   def items_by_duration
-    @items_by_duration ||= product_variant_groups.includes(:product_variant_items).duration.map(&:product_variant_items).
-        flatten.sort{|a,b|a.value.to_i <=> b.value.to_i}
+    ProductVariantItem.where(id: (Rails.cache.fetch("#{cache_key}/items_by_duration") do
+      product_variant_groups.includes(:product_variant_items).duration.map(&:product_variant_items).
+          flatten.sort{|a,b|a.value.to_i <=> b.value.to_i}.map(&:id)
+    end))
   end
+  memoize :items_by_duration
 
   def pricing(certificate_order,certificate_content)
     ratio = certificate_order.signed_certificates.try(:last) ? certificate_order.duration_remaining : 1
@@ -337,12 +345,12 @@ class Certificate < ActiveRecord::Base
         product_variant_groups.domains.includes(:product_variant_items).map(&:product_variant_items).flatten
       else
         unless is_ev?
-          product_variant_items.where{serial=~"%yrdm%"}.flatten.zip(
-              product_variant_items.where{serial=~"%yradm%"}.flatten,
-              product_variant_items.where{serial=~"%yrwcdm%"}.flatten)
+          cached_product_variant_items(by_serial: "yrdm").flatten.zip(
+              cached_product_variant_items(by_serial: "yradm").flatten,
+              cached_product_variant_items(by_serial: "yrwcdm").flatten)
         else
-          product_variant_items.where{serial=~"%yrdm%"}.flatten.zip(
-              product_variant_items.where{serial=~"%yradm%"}.flatten)
+          cached_product_variant_items(by_serial: "yrdm").flatten.zip(
+              cached_product_variant_items(by_serial: "yradm").flatten)
         end
       end
     end

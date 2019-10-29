@@ -73,17 +73,22 @@ class OrdersController < ApplicationController
     redirect_to orders_path
   end
 
+  # if the guid is in the URL, populate the browser cart cookie with the db shopping_cart record
+  # otherwise if the user is not logged in, populate the db shopping_cart with the contents stored in the browser cart cookie
   def show_cart
     @cart = ShoppingCart.find_by_guid(params[:id]) if params[:id]
-    if @cart # manually overwrite owned shopping_cart in favor or url specified
-      # cookies[:cart] = {:value=>(@cart.content.blank? ? @cart.content : CGI.unescape(@cart.content)), :path => "/",
+    if @cart # manually overwrite owned shopping_cart in favor of url specified
+      # cookies[ShoppingCart::CART_KEY] = {:value=>(@cart.content.blank? ? @cart.content : CGI.unescape(@cart.content)), :path => "/",
       #                   :expires => Settings.cart_cookie_days.to_i.days.from_now}
-
-      set_cookie(:cart_guid,@cart.guid)
-      set_cookie(:cart,@cart.content)
+      if cookies[ShoppingCart::CART_KEY]=="delete"
+        cookies.delete(ShoppingCart::CART_KEY, domain: :all)
+        @cart.update_attribute(:content, nil)
+      end
+      set_cookie(ShoppingCart::CART_GUID_KEY,@cart.guid)
+      set_cookie(ShoppingCart::CART_KEY,@cart.content)
     else
-      cart = cookies[:cart]
-      guid = cookies[:cart_guid]
+      cart = cookies[ShoppingCart::CART_KEY]
+      guid = cookies[ShoppingCart::CART_GUID_KEY]
       db_cart = ShoppingCart.find_by_guid(guid)
       if current_user
         if current_user.shopping_cart
@@ -95,12 +100,12 @@ class OrdersController < ApplicationController
           guid=UUIDTools::UUID.random_create.to_s
           current_user.create_shopping_cart(guid: guid, content: cart)
         end
-        set_cookie(:cart_guid,guid)
+        set_cookie(ShoppingCart::CART_GUID_KEY,guid)
       elsif guid && db_cart #assume user is not logged in
-        db_cart.update_attribute :content, cart
+        db_cart.update_attribute(:content, cart)
       else
         guid=UUIDTools::UUID.random_create.to_s
-        set_cookie(:cart_guid,guid)
+        set_cookie(ShoppingCart::CART_GUID_KEY,guid)
         ShoppingCart.create(guid: guid, content: cart)
       end
       redirect_to show_cart_orders_path(id: guid)
@@ -110,13 +115,13 @@ class OrdersController < ApplicationController
   
   def add_cart
     cart = params[:cart]
-    guid = cookies[:cart_guid]
+    guid = cookies[ShoppingCart::CART_GUID_KEY]
     db_cart = ShoppingCart.find_by_guid(guid)
 
     if current_user
       if current_user.shopping_cart
         guid = current_user.shopping_cart.guid
-        set_cookie(:cart_guid,guid)
+        set_cookie(ShoppingCart::CART_GUID_KEY,guid)
 
         # Get stored cart info
         content = current_user.shopping_cart.content.blank? ? [] : JSON.parse(current_user.shopping_cart.content)
@@ -124,17 +129,17 @@ class OrdersController < ApplicationController
         current_user.shopping_cart.update_attribute :content, content.to_json
       else # each user should 'own' a db_cart
         guid = UUIDTools::UUID.random_create.to_s
-        set_cookie(:cart_guid,guid)
+        set_cookie(ShoppingCart::CART_GUID_KEY,guid)
         current_user.create_shopping_cart(guid: guid, content: [cart].to_json)
       end
     elsif guid && db_cart #assume user is not logged in
       # Get stored cart info
-      content = db_cart.content ? JSON.parse(db_cart.content) : []
+      content = db_cart.content.blank? ? [] : JSON.parse(db_cart.content)
       content = shopping_cart_content(content, cart)
       db_cart.update_attribute :content, content.to_json
     else
       guid = UUIDTools::UUID.random_create.to_s
-      set_cookie(:cart_guid,guid)
+      set_cookie(ShoppingCart::CART_GUID_KEY,guid)
       ShoppingCart.create(guid: guid, content: [cart].to_json)
     end
 
@@ -145,14 +150,14 @@ class OrdersController < ApplicationController
     returnObj = {}
 
     # Getting Shopping Cart Info
-    if cookies[:cart_guid].blank?
+    if cookies[ShoppingCart::CART_GUID_KEY].blank?
       returnObj['status'] = 'expired'
     else
-      shopping_cart = ShoppingCart.find_by_guid(cookies[:cart_guid])
+      shopping_cart = ShoppingCart.find_by_guid(cookies[ShoppingCart::CART_GUID_KEY])
 
       if shopping_cart
         content = shopping_cart.content.blank? ? [] : JSON.parse(shopping_cart.content)
-        cart = cookies[:cart].blank? ? [] : JSON.parse(cookies[:cart])
+        cart = cookies[ShoppingCart::CART_KEY].blank? ? [] : JSON.parse(cookies[ShoppingCart::CART_KEY])
 
         # Changing the quantity if change the quantity
         content = checkout_shopping_cart_content(content, cart)
@@ -204,11 +209,11 @@ class OrdersController < ApplicationController
           :layout=>"application") and return unless certificate_order_steps
       else
         # Getting Shopping Cart Info
-        shopping_cart = ShoppingCart.find_by_guid(cookies[:cart_guid])
+        shopping_cart = ShoppingCart.find_by_guid(cookies[ShoppingCart::CART_GUID_KEY])
 
         if shopping_cart
           content = shopping_cart.content.blank? ? [] : JSON.parse(shopping_cart.content)
-          cart = cookies[:cart].blank? ? [] : JSON.parse(cookies[:cart])
+          cart = cookies[ShoppingCart::CART_KEY].blank? ? [] : JSON.parse(cookies[ShoppingCart::CART_KEY])
 
           # Changing the quantity if change the quantity
           content = checkout_shopping_cart_content(content, cart)

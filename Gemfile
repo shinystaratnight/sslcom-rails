@@ -16,7 +16,7 @@ gem 'money', '2.1.0'
 gem 'rack-ssl-enforcer'
 gem 'will_paginate'
 gem 'haml', '>= 3.1.alpha.50'
-gem 'declarative_authorization', git: 'https://github.com/Xymist/declarative_authorization.git', :branch => 'allow_rails_5'
+gem 'declarative_authorization', git: 'https://github.com/xymist/declarative_authorization.git', :branch => 'allow_rails_5'
 gem "authlogic"
 gem "savon", '~> 2.0'
 gem 'zip-zip'
