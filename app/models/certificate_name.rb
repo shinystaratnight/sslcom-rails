@@ -164,7 +164,8 @@ class CertificateName < ActiveRecord::Base
 
   def non_wildcard_name(check_type=false)
     check_type && self.certificate_content.certificate_order.certificate.is_single? ?
-        CertificateContent.non_wildcard_name(name,true) : CertificateContent.non_wildcard_name(name,false)
+        CertificateContent.non_wildcard_name(name,true) :
+        CertificateContent.non_wildcard_name(name,false)
   end
 
   # requires csr not be blank

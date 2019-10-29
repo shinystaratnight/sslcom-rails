@@ -17,8 +17,8 @@ class ShoppingCart < ActiveRecord::Base
   AFFILIATE = "af"
   DEFAULT_AFFILIATE_ID = 1
 
-  CART_KEY = :cart1
-  CART_GUID_KEY = :cart_guid1
-  AID = :aid
-  AID_LI = :aid_li
+  CART_KEY = :cart_102019
+  CART_GUID_KEY = :cart_guid_102019
+  AID = :aid_102019
+  AID_LI = :aid_li_102019
 end
