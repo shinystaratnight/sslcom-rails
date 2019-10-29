@@ -73,14 +73,19 @@ class OrdersController < ApplicationController
     redirect_to orders_path
   end
 
+  # if the guid is in the URL, populate the browser cart cookie with the db shopping_cart record
+  # otherwise if the user is not logged in, populate the db shopping_cart with the contents stored in the browser cart cookie
   def show_cart
     @cart = ShoppingCart.find_by_guid(params[:id]) if params[:id]
-    if @cart # manually overwrite owned shopping_cart in favor or url specified
+    if @cart # manually overwrite owned shopping_cart in favor of url specified
       # cookies[ShoppingCart::CART_KEY] = {:value=>(@cart.content.blank? ? @cart.content : CGI.unescape(@cart.content)), :path => "/",
       #                   :expires => Settings.cart_cookie_days.to_i.days.from_now}
-
+      if cookies[ShoppingCart::CART_KEY]=="delete"
+        cookies.delete(ShoppingCart::CART_KEY, domain: :all)
+        @cart.update_attribute(:content, nil)
+      end
       set_cookie(ShoppingCart::CART_GUID_KEY,@cart.guid)
-      set_cookie(ShoppingCart::CART_KEY,@cart.content) unless @cart.content.blank?
+      set_cookie(ShoppingCart::CART_KEY,@cart.content)
     else
       cart = cookies[ShoppingCart::CART_KEY]
       guid = cookies[ShoppingCart::CART_GUID_KEY]
@@ -96,7 +101,7 @@ class OrdersController < ApplicationController
           current_user.create_shopping_cart(guid: guid, content: cart)
         end
         set_cookie(ShoppingCart::CART_GUID_KEY,guid)
-      elsif guid && db_cart && !cart.blank? #assume user is not logged in
+      elsif guid && db_cart #assume user is not logged in
         db_cart.update_attribute(:content, cart)
       else
         guid=UUIDTools::UUID.random_create.to_s

@@ -141,7 +141,7 @@ class ApplicationController < ActionController::Base
   end
 
   def delete_cart_items
-    cookies.delete ShoppingCart::CART_KEY
+    cookies.delete ShoppingCart::CART_KEY, domain: cookie_domain
   end
 
   def save_cart_items(items)
@@ -274,7 +274,8 @@ class ApplicationController < ActionController::Base
   end
 
   def set_cookie(name,value)
-    cookies[name] = {value: value, path: "/", domain: Rails.env.development? ? ".ssl.local" : ".ssl.com",
+    # cookies.delete(name, domain: "secure.ssl.local") if name==:cart
+    cookies[name] = {value: value, path: "/", domain: :all,
                      expires: Settings.cart_cookie_days.to_i.days.from_now}
   end
 
@@ -601,8 +602,8 @@ class ApplicationController < ActionController::Base
   #this function can be turned back on by the Settings.sync_aid_li_and_cart
   #variable
   def sync_aid_li_and_cart
-    if cookies[:aid_li] && cookies[ShoppingCart::CART_KEY]
-      aid_li=cookies[:aid_li].split(":")
+    if cookies[ShoppingCart::AID_LI] && cookies[ShoppingCart::CART_KEY]
+      aid_li=cookies[ShoppingCart::AID_LI].split(":")
       cart=cart_contents
       if aid_li.count!=cart.count
         if aid_li.count>cart.count
@@ -635,10 +636,10 @@ class ApplicationController < ActionController::Base
   end
 
   def identify_visitor
-    cookies[:guid] = {:value=>UUIDTools::UUID.random_create.to_s, :path => "/",
-      :expires => 2.years.from_now} unless cookies[:guid]
+    cookies[VisitorToken::GUID] = {:value=>UUIDTools::UUID.random_create.to_s, :path => "/",
+      :expires => 2.years.from_now} unless cookies[VisitorToken::GUID]
     @visitor_token = VisitorToken.find_or_create_by_guid_and_affiliate_id(
-      cookies[:guid],cookies[:aid])
+      cookies[VisitorToken::GUID],cookies[ShoppingCart::AID])
     @visitor_token.user ||= current_user if current_user
     @visitor_token.save if @visitor_token.changed? #TODO only if change
   end
@@ -659,10 +660,10 @@ class ApplicationController < ActionController::Base
 #      output = cache(md5) { request.request_uri }
 #
 #      @tracking = UUID.random_create
-#      cookies[:guid] = {:value=>guid, :path => "/", :expires => 2.years.from_now} unless cookies[:guid]
-#      @visitor_token = VisitorToken.find_or_build_by_guid(cookies[:guid])
+#      cookies[VisitorToken::GUID] = {:value=>guid, :path => "/", :expires => 2.years.from_now} unless cookies[VisitorToken::GUID]
+#      @visitor_token = VisitorToken.find_or_build_by_guid(cookies[VisitorToken::GUID])
 #      @visitor_token.user ||= current_user if current_user
-#      @visitor_token.affiliate_id = cookies[:aid] if cookies[:aid] && token.affiliate_id != cookies[:aid]
+#      @visitor_token.affiliate_id = cookies[ShoppingCart::AID] if cookies[ShoppingCart::AID] && token.affiliate_id != cookies[ShoppingCart::AID]
 #      @visitor_token.save
 #    end
   end

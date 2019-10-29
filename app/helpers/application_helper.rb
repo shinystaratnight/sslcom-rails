@@ -409,6 +409,14 @@ module ApplicationHelper
     end
   end
 
+  def cookie_domain
+    Rails.env.development? ? "ssl.local" : "ssl.com"
+  end
+
+  def set_cookie_js(name,value)
+    "$.cookie(\"#{name}\", #{value}, {path: '/',domain: \".#{cookie_domain}\"})"
+  end
+
   def srp_link
     link_to "SSL Reseller Program", details_resellers_url(subdomain: Reseller::SUBDOMAIN)
   end

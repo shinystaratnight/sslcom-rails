@@ -224,7 +224,8 @@
       $('#cart_total').text('$'+total+" USD");
     };
     $.empty_out_cart = function(){
-      $.cookie("cart", "", {path: '/',domain: 'ssl.com'});
+      #{set_cookie_js(ShoppingCart::CART_KEY,'"delete"').html_safe};
+      #{set_cookie_js(ShoppingCart::CART_GUID_KEY,'"delete"').html_safe};
       $('.add_to_cart_button').removeAttr("disabled");
       $(".icn_cart-filled").addClass("icn_cart").removeClass("icn_cart-filled");
       $('#cart','#cart_total', '.icn_cart').effect("highlight", {}, 3000);
@@ -245,20 +246,19 @@
     });
     $.save_cart = function(cart){
       if(cart=="" || cart.length==0)
-        $.cookie("cart", null); //deletes cookie jquery method
+        #{set_cookie_js(ShoppingCart::CART_KEY,'null').html_safe}; //deletes cookie jquery method
       else
-        $.cookie("cart", $.toJSON(cart), { expires:
-          #{Settings.cart_cookie_days}, path: '/',domain: 'ssl.com'});
+        #{set_cookie_js(ShoppingCart::CART_KEY,'$.toJSON(cart)').html_safe};
     };
     $.get_cart_items = function(){
-      if($.cookie("cart")==null || $.cookie("cart")=="")
+      if($.cookie("#{ShoppingCart::CART_KEY}")==null || $.cookie("#{ShoppingCart::CART_KEY}")=="" || $.cookie("#{ShoppingCart::CART_KEY}")=="delete")
         return [];
       else
-        return $.evalJSON($.cookie("cart"));
+        return $.evalJSON($.cookie("#{ShoppingCart::CART_KEY}"));
     };
     $.get_affiliate = function(){
-      return ($.cookie("aid")==null || $.cookie("aid")=="")
-        ? #{ShoppingCart::DEFAULT_AFFILIATE_ID} : $.cookie("aid");
+      return ($.cookie("#{ShoppingCart::AID}")==null || $.cookie("#{ShoppingCart::AID}")=="")
+        ? #{ShoppingCart::DEFAULT_AFFILIATE_ID} : $.cookie("#{ShoppingCart::AID}");
     };
     $.remove_from_cart=function(indx){
       cart = $.get_cart_items();
