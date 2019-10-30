@@ -1,6 +1,6 @@
 class CsrsController < ApplicationController
   before_filter :find_csr, only:[:http_dcv_file, :verification_check, :create_new_unique_value]
-  filter_access_to :all, :attribute_check=>true
+  filter_access_to :all, :attribute_check=>true, except: [:verification_check]
   filter_access_to :country_codes, :http_dcv_file, :all_domains, :check_validation, :create_new_unique_value, :require=>[:create] #anyone can create read creates csrs, thus read this
 
   # PUT /csrs/1

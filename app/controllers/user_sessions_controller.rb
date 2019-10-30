@@ -129,7 +129,7 @@ class UserSessionsController < ApplicationController
       else
         if params[:logout] == 'true'
           if current_user.is_admin?
-            cookies.delete(:r_tier)
+            cookies.delete(ResellerTier::TIER_KEY)
             cookies.delete(ShoppingCart::CART_GUID_KEY)
             clear_cart
           end
@@ -194,7 +194,7 @@ class UserSessionsController < ApplicationController
                 rescue U2F::Error => e
                   # Log out to protect hack.
                   if current_user.is_admin?
-                    cookies.delete(:r_tier)
+                    cookies.delete(ResellerTier::TIER_KEY)
                     cookies.delete(ShoppingCart::CART_GUID_KEY)
                     clear_cart
                   end
@@ -293,7 +293,7 @@ class UserSessionsController < ApplicationController
 
   def destroy
     if current_user.is_admin?
-      cookies.delete(:r_tier)
+      cookies.delete(ResellerTier::TIER_KEY)
       cookies.delete(ShoppingCart::CART_GUID_KEY)
       clear_cart
     end
@@ -312,7 +312,7 @@ class UserSessionsController < ApplicationController
     user = @user_session.user
     set_cookie(:acct, user.ssl_account.acct_number)
     #we'll know what tier the user is even if s/he is not logged in
-    cookies.delete(:r_tier)
+    cookies.delete(ResellerTier::TIER_KEY)
 
     if user.shopping_cart
       if cookies[ShoppingCart::CART_KEY].blank?
@@ -329,7 +329,7 @@ class UserSessionsController < ApplicationController
       end
     end
     if user.ssl_account.is_registered_reseller?
-      set_cookie(:r_tier, user.ssl_account.reseller.reseller_tier.label)
+      set_cookie(ResellerTier::TIER_KEY, user.ssl_account.reseller.reseller_tier.label)
     end
     user
   end

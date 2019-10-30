@@ -9,6 +9,7 @@ class ResellerTier < ActiveRecord::Base
 
   DEFAULT_TIER = 2
   PUBLIC_TIERS = [7,8,*(1..5)]
+  TIER_KEY = :r_tier_102019
 
   # these tiers are for sale to the general public, otherwise the tier is customized and private to select resellers
   scope :general, ->{where{id>>PUBLIC_TIERS}}
