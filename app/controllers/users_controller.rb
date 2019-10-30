@@ -453,6 +453,7 @@ class UsersController < ApplicationController
       @teams = @teams.search_team(team)
     end
     @teams = @teams.paginate(@p)
+    @reseller_tiers = ResellerTier.general.map{|rt| [rt.label + ' (' + rt.description['ideal_for'] + ')', rt.id]}
   end
 
   def archive_team
