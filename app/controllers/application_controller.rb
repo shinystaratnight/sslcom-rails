@@ -95,8 +95,8 @@ class ApplicationController < ActionController::Base
       @tier = @certificate_order.ssl_account.tier_suffix
     elsif current_user and current_user.ssl_account.tier_suffix
       @tier = current_user.ssl_account.tier_suffix
-    elsif cookies[:r_tier]
-      @tier = ResellerTier.tier_suffix(cookies[:r_tier])
+    elsif cookies[ResellerTier::TIER_KEY]
+      @tier = ResellerTier.tier_suffix(cookies[ResellerTier::TIER_KEY])
     end
     @tier = nil if @tier.blank?
     @tier

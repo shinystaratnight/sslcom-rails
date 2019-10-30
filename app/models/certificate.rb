@@ -345,12 +345,12 @@ class Certificate < ActiveRecord::Base
         product_variant_groups.domains.includes(:product_variant_items).map(&:product_variant_items).flatten
       else
         unless is_ev?
-          cached_product_variant_items(by_serial: "yrdm").flatten.zip(
-              cached_product_variant_items(by_serial: "yradm").flatten,
-              cached_product_variant_items(by_serial: "yrwcdm").flatten)
+          product_variant_items.where{serial=~"%yrdm%"}.flatten.zip(
+              product_variant_items.where{serial=~"%yradm%"}.flatten,
+              product_variant_items.where{serial=~"%yrwcdm%"}.flatten)
         else
-          cached_product_variant_items(by_serial: "yrdm").flatten.zip(
-              cached_product_variant_items(by_serial: "yradm").flatten)
+          product_variant_items.where{serial=~"%yrdm%"}.flatten.zip(
+              product_variant_items.where{serial=~"%yradm%"}.flatten)
         end
       end
     end
