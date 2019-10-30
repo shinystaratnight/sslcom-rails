@@ -164,7 +164,8 @@ class CertificateName < ActiveRecord::Base
 
   def non_wildcard_name(check_type=false)
     check_type && self.certificate_content.certificate_order.certificate.is_single? ?
-        CertificateContent.non_wildcard_name(name,true) : CertificateContent.non_wildcard_name(name,false)
+        CertificateContent.non_wildcard_name(name,true) :
+        CertificateContent.non_wildcard_name(name,false)
   end
 
   # requires csr not be blank
@@ -281,7 +282,8 @@ class CertificateName < ActiveRecord::Base
 
   WhoisJob = Struct.new(:dname, :certificate_name) do
     def perform
-      if dcv=DomainControlValidation.global.find_by_subject(dname)
+      dcv=DomainControlValidation.global.find_by_subject(dname)
+      if dcv
         standard_addresses = dcv.candidate_addresses
       else
         standard_addresses = DomainControlValidation.email_address_choices(dname)

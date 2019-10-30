@@ -1,6 +1,6 @@
 GIT
-  remote: https://github.com/Xymist/declarative_authorization.git
-  revision: 3ec49fa3eed2faabe291d582b9d55ab1c8421e78
+  remote: https://github.com/xymist/declarative_authorization.git
+  revision: 3cd79342d073b71cdda427745848abb461d454d6
   branch: allow_rails_5
   specs:
     declarative_authorization (1.1.0.pre)
