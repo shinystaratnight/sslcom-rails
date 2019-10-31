@@ -65,7 +65,7 @@ class NotificationGroup < ActiveRecord::Base
 
         if domain
           if cud == 'delete'
-            ngs.where(subjectable_type: 'CertificateName', subjectable_id: domain.id, domain_name: nil).destroy_all
+            ngs.where(subjectable_type: 'CertificateName', subjectable_id: domain.id, domain_name: nil).delete_all
             ngs.where(subjectable_type: 'CertificateName', subjectable_id: domain.id)
                 .update_all(subjectable_type: nil, subjectable_id: nil)
           elsif cud == 'update'
@@ -82,7 +82,7 @@ class NotificationGroup < ActiveRecord::Base
               cn.notification_groups_subjects.create(notification_group_id: group.id) if cn.notification_groups_subjects.
                   empty?{|s|s.notification_group_id==group.id}
             elsif cud == 'delete'
-              ngs.where(subjectable_type: 'CertificateName', subjectable_id: cn.id, domain_name: nil).destroy_all
+              ngs.where(subjectable_type: 'CertificateName', subjectable_id: cn.id, domain_name: nil).delete_all
               ngs.where(subjectable_type: 'CertificateName', subjectable_id: domain.id)
                   .update_all(subjectable_type: nil, subjectable_id: nil)
             end
