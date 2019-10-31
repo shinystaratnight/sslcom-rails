@@ -303,7 +303,7 @@ module CertificateOrdersHelper
       certificate_content.csr.signed_certificate.blank? ||
       certificate_content.csr.signed_certificate.expiration_date.blank?
     co ||= certificate_content.cached_certificate_order
-    if co
+    if co.try(:ssl_account)
       sa = co.ssl_account
       ep = certificate_content.csr.signed_certificate.expiration_date
       if ep <= sa.preferred_reminder_notice_triggers(ReminderTrigger.find(1)).
