@@ -101,6 +101,7 @@ gem 'date'
 gem 'strscan'
 gem 'forwardable'
 gem 'scout_apm'
+gem 'activerecord-import'
 
 group :development do
   gem 'foreman'
