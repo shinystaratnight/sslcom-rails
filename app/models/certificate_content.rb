@@ -409,7 +409,10 @@ class CertificateContent < ActiveRecord::Base
 
   def dcv_domains(options)
     i = 0
+    dcvs = [] # bulk insert of dcv
+    cn_ids = [] # need to touch certificate_names to bust cache since bulk insert skips callbacks
     certificate_names.find_by_domains(options[:domains].keys).each do |name|
+      cn_ids << name.id
       k, v = name.name, options[:domains][name.name]
       cur_email = options[:emails] ? options[:emails][k] : nil
 
@@ -417,11 +420,12 @@ class CertificateContent < ActiveRecord::Base
       when /https?/i, /cname/i
         dcv = name.domain_control_validations.last
         if !dcv || (dcv && !dcv.satisfied?)
-          dcv = name.domain_control_validations.create(
+          dcv = name.domain_control_validations.new(
               dcv_method: v["dcv"],
               candidate_addresses: cur_email,
               failure_action: v["dcv_failure_action"]
           )
+          dcvs << dcv
         end
 
         if (v["dcv_failure_action"]=="remove" || options[:dcv_failure_action]=="remove")
@@ -431,7 +435,7 @@ class CertificateContent < ActiveRecord::Base
       else
         if DomainControlValidation.approved_email_address? CertificateName.candidate_email_addresses(
             name.non_wildcard_name), v["dcv"]
-          name.domain_control_validations.create(dcv_method: "email", email_address: v["dcv"],
+          dcvs << name.domain_control_validations.new(dcv_method: "email", email_address: v["dcv"],
                                                  failure_action: v["dcv_failure_action"],
                                                  candidate_addresses: CertificateName.candidate_email_addresses(
                                                      name.non_wildcard_name))
@@ -439,6 +443,8 @@ class CertificateContent < ActiveRecord::Base
       end
       i+=1
     end
+    DomainControlValidation.import dcvs
+    CertificateName.where(id: cn_ids).update_all updated_at: DateTime.now
   end
 
   def signing_request=(signing_request)
