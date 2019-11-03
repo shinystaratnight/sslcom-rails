@@ -411,15 +411,16 @@ class CertificateContent < ActiveRecord::Base
     i = 0
     dcvs = [] # bulk insert of dcv
     cn_ids = [] # need to touch certificate_names to bust cache since bulk insert skips callbacks
-    certificate_names.find_by_domains(options[:domains].keys).each do |name|
+    certificate_names.find_by_domains(options[:domains].keys).
+        includes(:validated_domain_control_validations).each do |name|
       cn_ids << name.id
       k, v = name.name, options[:domains][name.name]
       cur_email = options[:emails] ? options[:emails][k] : nil
 
       case v["dcv"]
       when /https?/i, /cname/i
-        dcv = name.domain_control_validations.last
-        if !dcv || (dcv && !dcv.satisfied?)
+        dcv = name.validated_domain_control_validations.last
+        if dcv.blank?
           dcv = name.domain_control_validations.new(
               dcv_method: v["dcv"],
               candidate_addresses: cur_email,
