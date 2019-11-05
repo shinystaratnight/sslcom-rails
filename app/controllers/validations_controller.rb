@@ -61,7 +61,8 @@ class ValidationsController < ApplicationController
         unless cc.ca.blank?
           cnames = cc.certificate_names.includes(:validated_domain_control_validations)
           # need to get fresh copy of certificate names since async validation can corrupt the cache
-          Rails.cache.delete(SslAccount.get_all_certificate_names_cache_label(cnames.map(&:name),"validated"))
+          Rails.cache.delete(@certificate_order.ssl_account.get_all_certificate_names_cache_label(cnames.map(&:name),
+                                                                                                  "validated"))
           team_cnames = @certificate_order.ssl_account.all_certificate_names(cnames.map(&:name),"validated").
               includes(:validated_domain_control_validations)
 

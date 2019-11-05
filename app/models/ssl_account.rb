@@ -610,7 +610,7 @@ class SslAccount < ActiveRecord::Base
     # query an array of domains
     if roots
       CertificateName.where(id: (Rails.cache.fetch(
-        SslAccount.get_all_certificate_names_cache_label(roots,cn_validated,scope)) {
+        get_all_certificate_names_cache_label(roots,cn_validated,scope)) {
           sql = []
           roots.each do |root|
             d=::PublicSuffix.parse(root)
@@ -621,13 +621,13 @@ class SslAccount < ActiveRecord::Base
       }))
     else # get all domains that belong to this account
       CertificateName.where(id: (Rails.cache.fetch(
-        SslAccount.get_all_certificate_names_cache_label(roots,cn_validated,scope)) {(cn+dn).map(&:id).uniq
+        get_all_certificate_names_cache_label(roots,cn_validated,scope)) {(cn+dn).map(&:id).uniq
       }))
     end.order(updated_at: :desc)
   end
   memoize :all_certificate_names
 
-  def self.get_all_certificate_names_cache_label(roots=nil,cn_validated="",scope="sslcom")
+  def get_all_certificate_names_cache_label(roots=nil,cn_validated="",scope="sslcom")
     if roots
       "#{cache_key}/all_certificate_names/#{cn_validated+scope}/#{Digest::SHA1.hexdigest(roots.to_s)}"
     else
