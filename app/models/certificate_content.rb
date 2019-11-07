@@ -274,7 +274,7 @@ class CertificateContent < ActiveRecord::Base
 
   def certificate_names_from_domains(domains=nil)
     is_single=certificate.is_single?
-    csr_common_name=csr.try(:common_name)==domain
+    csr_common_name=csr.try(:common_name)
     unless (is_single or certificate.is_wildcard?) and certificate_names.count > 0
       domains ||= all_domains
       new_certificate_names=[]
