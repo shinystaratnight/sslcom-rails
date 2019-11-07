@@ -393,8 +393,8 @@ class DomainsController < ApplicationController
   end
 
   def dcv_validate
-    @domain = current_user.ssl_account.domains.includes(:domain_control_validations).find_by(id: params[:id]) ||
-        current_user.ssl_account.all_certificate_names.includes(:domain_control_validations).find_by(id: params[:id]) if @domain.nil?
+    @domain = current_user.ssl_account.domains.unvalidated.includes(:domain_control_validations).find_by(id: params[:id]) ||
+        current_user.ssl_account.all_certificate_names(nil,"unvalidated").includes(:domain_control_validations).find_by(id: params[:id]) if @domain.nil?
     if(params['authenticity_token'])
       identifier = params['validate_code']
       dcv = @domain.domain_control_validations.last
@@ -408,19 +408,17 @@ class DomainsController < ApplicationController
     end
   end
 
-  # TODO rewrite this so we extract only certificate_names with no satisfied domain_control_validations
   def dcv_all_validate
     validated=[]
     # directly scoped to the team
-    dnames = @ssl_account.domains.includes(:domain_control_validations)
+    dnames = @ssl_account.domains.unvalidated.includes(:domain_control_validations)
     # scoped to certificate_orders
-    cnames = @ssl_account.all_certificate_names.includes(:domain_control_validations)
+    cnames = @ssl_account.all_certificate_names(nil,"unvalidated").includes(:domain_control_validations)
     if(params['authenticity_token'])
       identifier = params['validate_code']
       (dnames+cnames).each do |cn|
         dcv = cn.domain_control_validations.last
         if dcv && dcv.identifier == identifier && dcv.responded_at.blank?
-          # dcv.update_columns(identifier_found: true, responded_at: DateTime.now)
           validated << cn.name
           unless dcv.satisfied?
             dcv.satisfy!

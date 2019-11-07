@@ -185,6 +185,7 @@ class CertificateContent < ActiveRecord::Base
       event :provide_contacts, :transitions_to => :contacts_provided
       event :cancel, :transitions_to => :canceled
       event :reset, :transitions_to => :new
+      event :pend_issuance, :transitions_to => :pending_issuance
       event :pend_validation, :transitions_to => :pending_validation do |options={}|
         pre_validation(options)
       end
@@ -262,22 +263,29 @@ class CertificateContent < ActiveRecord::Base
     end
   end
 
-  OtherDcvsSatisyJob = Struct.new(:ssl_account,:new_certificate_name) do
+  # issuance_type - nil, "dv_only"
+  OtherDcvsSatisyJob = Struct.new(:ssl_account,:new_certificate_name,:certificate_content,:issuance_type) do
     def perform
       ssl_account.other_dcvs_satisfy_domain(new_certificate_name)
+      certificate_content.certificate_order.apply_for_certificate if certificate_content.certificate.is_dv? and
+          issuance_type=="dv_only" and !certificate_content.issued?
     end
   end
 
   def certificate_names_from_domains(domains=nil)
-    unless (certificate.is_single? or certificate.is_wildcard?) and certificate_names.count > 0
+    is_single=certificate.is_single?
+    csr_common_name=csr.try(:common_name)
+    unless (is_single or certificate.is_wildcard?) and certificate_names.count > 0
       domains ||= all_domains
+      new_certificate_names=[]
       (domains-certificate_names.find_by_domains(domains).pluck(:name)).each do |domain|
         unless domain=~/,/
-          cn_domain = certificate.is_single? ? CertificateContent.non_wildcard_name(domain,true) : domain
-          new_certificate_name=certificate_names.find_or_create_by(name: cn_domain.downcase)
-          new_certificate_name.update_column(:is_common_name, csr.try(:common_name)==domain)
+          cn_domain = is_single ? CertificateContent.non_wildcard_name(domain,true) : domain
+          new_certificate_name=certificate_names.find_or_create_by(name: cn_domain.downcase,
+                                                                   is_common_name: csr_common_name==domain)
           new_certificate_name.candidate_email_addresses # start the queued job running
-          Delayed::Job.enqueue OtherDcvsSatisyJob.new(ssl_account,new_certificate_name) if ssl_account && certificate.is_server?
+          Delayed::Job.enqueue OtherDcvsSatisyJob.new(ssl_account,new_certificate_name,self,"dv_only") if ssl_account &&
+              certificate.is_server?
         end
       end
     end
