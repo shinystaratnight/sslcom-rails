@@ -60,7 +60,10 @@ class ValidationsController < ApplicationController
         public_key_sha1 = Settings.compare_public_key ? cc.cached_csr_public_key_sha1 : nil
         unless cc.ca.blank?
           cnames = cc.certificate_names.includes(:validated_domain_control_validations)
-          team_cnames = @certificate_order.ssl_account.all_certificate_names(cnames.pluck(:name),"validated").
+          # need to get fresh copy of certificate names since async validation can corrupt the cache
+          Rails.cache.delete(@certificate_order.ssl_account.get_all_certificate_names_cache_label(cnames.map(&:name),
+                                                                                                  "validated"))
+          team_cnames = @certificate_order.ssl_account.all_certificate_names(cnames.map(&:name),"validated").
               includes(:validated_domain_control_validations)
 
           # Team level validation check
