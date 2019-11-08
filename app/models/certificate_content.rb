@@ -277,16 +277,19 @@ class CertificateContent < ActiveRecord::Base
     csr_common_name=csr.try(:common_name)
     unless (is_single or certificate.is_wildcard?) and certificate_names.count > 0
       domains ||= all_domains
+      domains = domains.each{|domain| is_single ? CertificateContent.non_wildcard_name(domain,true) :
+                                          domain.downcase}.uniq
       new_certificate_names=[]
       (domains-certificate_names.find_by_domains(domains).pluck(:name)).each do |domain|
         unless domain=~/,/
-          cn_domain = is_single ? CertificateContent.non_wildcard_name(domain,true) : domain
-          new_certificate_name=certificate_names.find_or_create_by(name: cn_domain.downcase,
-                                                                   is_common_name: csr_common_name==domain)
-          new_certificate_name.candidate_email_addresses # start the queued job running
-          Delayed::Job.enqueue OtherDcvsSatisyJob.new(ssl_account,new_certificate_name,self,"dv_only") if ssl_account &&
-              certificate.is_server?
+          new_certificate_names<<certificate_names.new(name: domain, is_common_name: csr_common_name==domain)
         end
+      end
+      CertificateName.import new_certificate_names
+      certificate_names.where(name: new_certificate_names.map(&:name)).each do |cn|
+        cn.candidate_email_addresses # start the queued job running
+        Delayed::Job.enqueue OtherDcvsSatisyJob.new(ssl_account,cn,self,"dv_only") if ssl_account &&
+            certificate.is_server?
       end
     end
     # Auto adding domains in case of certificate order has been included into some groups.
