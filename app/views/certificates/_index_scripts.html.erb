@@ -770,7 +770,17 @@ jQuery(function($) {
         <%end%>
       }
 
+      var is_avail_adds_domains = $('textarea[id$=domains]').length ? true : false;
+
       if (is_valid_domain && is_allowed_wildcard_domain) {
+        if (!is_avail_adds_domains) {
+          if (current_common_name != old_common_name) {
+            current_common_name == '' ? $('#old_common_name').val('') : $('#old_common_name').val(current_common_name);
+          }
+
+          return;
+        }
+
         if ($('#content').find('.inner').children().first().hasClass('flash_message')) {
           $('#content').find('.inner').children().first().remove();
         }
@@ -784,7 +794,6 @@ jQuery(function($) {
             $('#old_common_name').val('');
 
             if (index != -1) {
-              /*domain_names_ary[index] = '';*/
               domain_names_ary.splice(index, 1);
               $('textarea[id$=domains]').val(domain_names_ary.join(' '));
 
@@ -830,15 +839,17 @@ jQuery(function($) {
           }
         }
       } else {
-        var domain_names = $('textarea[id$=domains]').val().toLowerCase();
-        var domain_names_ary = domain_names.split(/\s/);
-        var index = $.inArray(old_common_name, domain_names_ary);
+        if (is_avail_adds_domains) {
+          var domain_names = $('textarea[id$=domains]').val().toLowerCase();
+          var domain_names_ary = domain_names.split(/\s/);
+          var index = $.inArray(old_common_name, domain_names_ary);
 
-        if (index != -1) {
-          domain_names_ary.splice(index, 1);
-          $('textarea[id$=domains]').val(domain_names_ary.join(' '));
+          if (index != -1) {
+            domain_names_ary.splice(index, 1);
+            $('textarea[id$=domains]').val(domain_names_ary.join(' '));
 
-          $.adjustDomainPricing($('textarea[id$=domains]')[0]);
+            $.adjustDomainPricing($('textarea[id$=domains]')[0]);
+          }
         }
 
         $('#old_common_name').val('');
@@ -886,6 +897,12 @@ jQuery(function($) {
 
     $('#common_name').blur(function() {
       $.manage_common_name();
+    });
+
+    $('#common_name').on('paste', function() {
+      setTimeout(function() {
+        $.manage_common_name();
+      }, 0);
     });
 
     $('textarea[id$=domains]').keypress(function (e) {

@@ -267,6 +267,7 @@ class SslAccount < ActiveRecord::Base
                 domain.cached_csr_public_key_sha1==certificate_name.cached_csr_public_key_sha1))
           certificate_name.domain_control_validations.create(dcv.attributes.except("id"))
           # TODO only call apply_for_certificate once
+          certificate_name.certificate_content.certificate_order.apply_for_certificate if certificate_name.certificate_content
           satisfied_names << certificate_name.name
         end
       end
