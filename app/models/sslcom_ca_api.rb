@@ -188,6 +188,11 @@ class SslcomCaApi
     set_mapping(certificate_order, options)
     options.merge! cc: cc = options[:certificate_content] || certificate_order.certificate_content
     begin
+      if cc.pending_issuance?
+        return
+      else
+        cc.pend_issuance!
+      end unless options[:mapping].is_ev?
       if cc.csr.blank?
         cc.create_csr(body: options[:csr])
       else
@@ -206,11 +211,6 @@ class SslcomCaApi
         host = ca_host(options[:mapping])+"/v1/user"
         options.merge! no_public_key: true
       else # collect cert
-        if cc.pending_issuance?
-          return
-        else
-          cc.pend_issuance!
-        end unless options[:mapping].is_ev?
         host = ca_host(options[:mapping])+
             "/v1/certificate#{'/ev' if options[:mapping].is_ev?}/pkcs10"
         options.merge!(collect_certificate: true, username:
