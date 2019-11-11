@@ -3,7 +3,11 @@
 ## Getting set up
 
 1. Download VirtualBox and import the image into VirtualBox.
-2. Set `secure.ssl.local` to `127.0.0.1` in /etc/hosts (OS X) or hosts file on Win32. Make sure you flush your DNS.
+2. Set the following in /etc/hosts (OS X) or hosts file on Win32. Make sure you flush your DNS.
+  a. `secure.ssl.local` to `127.0.0.1`
+  b. `sws-test.sslpki.local` to `127.0.0.1`
+  c. `sws.sslpki.local` to `127.0.0.1`
+  d. `sandbox.ssl.local` to `127.0.0.1`
 3. Download Vagrant and `vagrant init` in the terminal.
 4. Clone the SSL.com Rails Repo
 5. Create `.vagrant/machines/default/virtualbox/creator_uid` put your machine user's UID. For Macs it's usually 501, Windows 0.
@@ -21,8 +25,8 @@
 ### Run Delayed Job
 
 1. In another tab, SSH into the box `vagrant ssh`
-2. Navigate to `/vagrant` and run `script/delayed_job start`
-3. To terminate delayed job server, run `script/delayed_job stop` or press `Ctr+C`
+2. Navigate to `/vagrant` and run `rake jobs:work`
+3. To terminate delayed job server, press `Ctr+C`
 
 ### `synced_folders` Template
 
