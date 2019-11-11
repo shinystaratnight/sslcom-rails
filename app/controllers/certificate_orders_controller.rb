@@ -149,7 +149,7 @@ class CertificateOrdersController < ApplicationController
     @certificate_order.apply_for_certificate(
         mapping: cc.ca,
         current_user: current_user
-    )
+    ) unless cc.pending_issuance?
     render :json => cc.issued?
   end
 

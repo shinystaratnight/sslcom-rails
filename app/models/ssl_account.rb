@@ -279,7 +279,7 @@ class SslAccount < ActiveRecord::Base
     certificate_names = [certificate_names] if certificate_names.is_a?(CertificateName)
     # TODO find only validated domains
     satisfied = []
-    all_certificate_names(certificate_names.map(&:name),"validated").
+    all_certificate_names(certificate_names.blank? ? nil : certificate_names.map(&:name),"validated").
         includes(:validated_domain_control_validations).each do |cn|
       certificate_names.each do |certificate_name|
         if cn.id!=certificate_name.id and DomainControlValidation.domain_in_subdomains?(cn.name,certificate_name.name)
