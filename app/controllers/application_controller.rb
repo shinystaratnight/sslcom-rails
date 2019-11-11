@@ -441,15 +441,14 @@ class ApplicationController < ActionController::Base
     ssl_acct_slug = params[:ssl_slug] || params[:acct_number] ||
         (params[:certificate_enrollment_request][:ssl_slug] if params[:certificate_enrollment_request])
     if params[:action]=="dcv_all_validate" and ssl_acct_slug
-      @ssl_account = SslAccount.find_by_acct_number(ssl_acct_slug) ||
-        SslAccount.find_by_ssl_slug(ssl_acct_slug)
+      @ssl_account = SslAccount.where('ssl_slug = ? OR acct_number = ?', ssl_acct_slug, ssl_acct_slug).last
       not_found if @ssl_account.blank?
     elsif current_user.blank?
       not_found
     else  
       @ssl_account = if ssl_acct_slug and request[:action]!="validate_ssl_slug"
         ssls = current_user.is_system_admins? ? SslAccount : current_user.ssl_accounts
-        ssls.find_by_acct_number(ssl_acct_slug) || ssls.find_by_ssl_slug(ssl_acct_slug)
+        ssls.where('ssl_slug = ? OR acct_number = ?', ssl_acct_slug, ssl_acct_slug).last
       else
         current_user.ssl_account
       end
