@@ -1204,7 +1204,7 @@ class CertificateOrder < ActiveRecord::Base
   # DRY this up with ValidationsController#new
   def domains_validated?
     return true if certificate_content.all_domains_validated?
-    ssl_account.other_dcvs_satisfy_domain(certificate_content.certificate_names.unvalidated)
+    ssl_account.other_dcvs_satisfy_domain(certificate_content.certificate_names.unvalidated.all)
     certificate_content.all_domains_validated?
   end
 

@@ -60,7 +60,7 @@ gem 'jquery-ui-rails'
 gem 'turbolinks'
 gem 'jbuilder'
 gem 'sdoc',          group: :doc
-gem 'airbrake', '~> 8.3.2'
+gem 'airbrake', '~> 9.5' # https://airbrake.io/docs/ruby/upgrading-your-notifier/
 gem 'rails-observers'
 gem 'actionpack-action_caching', '~> 1.1', '>= 1.1.1'
 gem 'sass-rails'

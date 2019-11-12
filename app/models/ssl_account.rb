@@ -255,50 +255,65 @@ class SslAccount < ActiveRecord::Base
   def satisfy_related_dcvs(domain)
     # the satisfied domain control validation method
     dcv = domain.domain_control_validations.last
-    [].tap do |satisfied_names|
+    attempt_to_issue=[]
+    dcvs=[]
+    cn_ids = [] # need to touch certificate_names to bust cache since bulk insert skips callbacks
+    satisfied=[].tap do |satisfied_names|
       # TODO find only unvalidated domains or validated domains with older/different timestamp
-      all_certificate_names(domain.name,"unvalidated").includes(:domain_control_validations).each do |certificate_name|
+      all_certificate_names(domain.name,"unvalidated").includes(:domain_control_validations,
+                                                certificate_contents: :certificate_orders).each do |certificate_name|
         if certificate_name.name!=domain.name and
             DomainControlValidation.domain_in_subdomains?(domain.name,certificate_name.name) and
             # team validated domain
             (domain.certificate_content_id==nil or
             # do they have the same public key
-            (domain.csr and certificate_name.csr and
-                domain.cached_csr_public_key_sha1==certificate_name.cached_csr_public_key_sha1))
-          certificate_name.domain_control_validations.create(dcv.attributes.except("id"))
-          # TODO only call apply_for_certificate once
-          certificate_name.certificate_content.certificate_order.apply_for_certificate if certificate_name.certificate_content
+            (Settings.compare_public_key ? (domain.csr and certificate_name.csr and
+                domain.cached_csr_public_key_sha1==certificate_name.cached_csr_public_key_sha1) : true))
+          cn_ids << certificate_name.id
+          dcvs<<certificate_name.domain_control_validations.new(dcv.attributes.except("id"))
+          attempt_to_issue << certificate_name.certificate_content.certificate_order
           satisfied_names << certificate_name.name
         end
       end
     end
+    DomainControlValidation.import dcvs
+    CertificateName.where(id: cn_ids).update_all updated_at: DateTime.now
+    attempt_to_issue.uniq.each{|co|co.apply_for_certificate if co.all_domains_validated?}
+    return satisfied
   end
 
   # does already validated domain validate `certificate_name`? If so, create a dcv with satisfied status
   # certificate_name - the domain we are looking up
   def other_dcvs_satisfy_domain(certificate_names)
     certificate_names = [certificate_names] if certificate_names.is_a?(CertificateName)
-    # TODO find only validated domains
-    satisfied = []
-    all_certificate_names(certificate_names.blank? ? nil : certificate_names.map(&:name),"validated").
-        includes(:validated_domain_control_validations).each do |cn|
-      certificate_names.each do |certificate_name|
-        if cn.id!=certificate_name.id and DomainControlValidation.domain_in_subdomains?(cn.name,certificate_name.name)
-          dcv = cn.validated_domain_control_validations.last # TODO find dcv.satisfied?
-          if dcv && dcv.identifier_found
-            # email validation
-            if dcv.dcv_method =~ /email/ or
-                # http/s or cname must have the same public key
-                (Settings.compare_public_key ? (cn.csr and certificate_name.csr and
-                    cn.cached_csr_public_key_sha1==certificate_name.cached_csr_public_key_sha1) : true)
-              satisfied << certificate_name.domain_control_validations.create(dcv.attributes.except("id"))
-              break
+    attempt_to_issue=[]
+    dcvs=[]
+    cn_ids = [] # need to touch certificate_names to bust cache since bulk insert skips callbacks
+    unless certificate_names.blank?
+      all_certificate_names(certificate_names.map(&:name),"validated").
+          includes(:validated_domain_control_validations).each do |cn|
+        certificate_names.each do |certificate_name|
+          if cn.id!=certificate_name.id and DomainControlValidation.domain_in_subdomains?(cn.name,certificate_name.name)
+            dcv = cn.validated_domain_control_validations.last # TODO find dcv.satisfied?
+            if dcv && dcv.identifier_found
+              # email validation
+              if dcv.dcv_method =~ /email/ or
+                  # http/s or cname must have the same public key
+                  (Settings.compare_public_key ? (cn.csr and certificate_name.csr and
+                      cn.cached_csr_public_key_sha1==certificate_name.cached_csr_public_key_sha1) : true)
+                cn_ids << certificate_name.id
+                dcvs << certificate_name.domain_control_validations.new(dcv.attributes.except("id"))
+                attempt_to_issue << certificate_name.certificate_content.certificate_order
+                break
+              end
             end
           end
         end
       end
+      DomainControlValidation.import dcvs
+      CertificateName.where(id: cn_ids).update_all updated_at: DateTime.now
+      attempt_to_issue.uniq.each{|co|co.apply_for_certificate if co.all_domains_validated?}
     end
-    satisfied
   end
 
   def unique_signed_certificates
@@ -614,8 +629,10 @@ class SslAccount < ActiveRecord::Base
         get_all_certificate_names_cache_label(roots,cn_validated,scope)) {
           sql = []
           roots.each do |root|
-            d=::PublicSuffix.parse(root)
-            sql << "name like '#{'%.'+d.domain}' OR name = '#{d.domain}'"
+            if PublicSuffix.valid?(root)
+              d=::PublicSuffix.parse(root)
+              sql << "name like '#{'%.'+d.domain}' OR name = '#{d.domain}'"
+            end
           end
           name_sql=->(scoped_names){scoped_names.where(sql.join(" OR "))}
           (name_sql.call(cn)+name_sql.call(dn)).map(&:id).uniq
