@@ -106,7 +106,6 @@ gem 'activerecord-import'
 group :development do
   gem 'foreman'
   gem 'dotenv-rails'
-  gem 'guard-livereload'
   gem 'web-console', '~> 2.0'
   gem 'spring'
   gem 'spring-commands-testunit'
@@ -121,31 +120,19 @@ end
 
 group :development, :test do
   gem 'builder'
-  gem 'factory_girl_rails'
-  gem 'launchy'
+  gem 'factory_bot_rails'
   gem 'pry-remote'
   gem 'ruby_parser'
   gem 'ruby-odbc'
 end
 
 group :test do
-  gem 'capybara'
-  gem 'capybara-webkit'
-  gem 'capybara_minitest_spec'
-  gem 'capybara-screenshot'
-  gem 'chromedriver-helper'
   gem 'database_cleaner'
   gem 'faker'
-  gem 'guard'
-  gem 'guard-minitest'
-  gem 'headless'
-  gem 'minitest-focus'
-  gem 'minitest-rails'
+  gem "minitest-rails", "~> 2.0"
   gem 'minitest-reporters'
   gem 'mocha'
-  gem 'rack_session_access'
-  gem 'selenium-webdriver'
-  gem 'terminal-notifier-guard'
+  gem 'simplecov', require: false
 end
 
 group :assets do

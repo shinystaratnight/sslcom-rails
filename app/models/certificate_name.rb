@@ -51,7 +51,7 @@ class CertificateName < ActiveRecord::Base
     SELECT COUNT(domain_control_validations.id) FROM domain_control_validations
     WHERE certificate_name_id = certificate_names.id
     SQL
-    where "(#{total}) > 0 AND (#{satisfied}) = 0"
+    where "(#{total}) >= 0 AND (#{satisfied}) = 0"
   }
   scope :sslcom, ->{joins{certificate_content}.where.not certificate_contents: {ca_id: nil}}
   scope :global, -> {where{(certificate_content_id==nil) & (ssl_account_id==nil) & (acme_account_id==nil)}}

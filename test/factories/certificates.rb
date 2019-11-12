@@ -1,21 +1,21 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :certificate do
-    status       'live'
-    published_as 'live'
-    roles        'Registered'
-    
-  
+    status       {'live'}
+    published_as {'live'}
+    roles        {'Registered'}
+
+
     # 100 Enterprise EV UCC/SAN SSL (evucc256sslcom)
     # ==========================================================================
     trait :evuccssl do
       reseller_tier_id      nil
-      title                 'Enterprise EV Multi-domain UCC SSL'
+      title                 {'Enterprise EV Multi-domain UCC SSL'}
       summary               nil
       text_only_summary     nil
       text_only_description nil
-      allow_wildcard_ucc    false
-      serial                'evucc256sslcom'
-      product               'evucc'
+      allow_wildcard_ucc    {false}
+      serial                {'evucc256sslcom'}
+      product               {'evucc'}
       icons                 {{main: 'ev_bar_lg.jpg'}}
       display_order         {{all: 2, index: 5}}
       description           {{certificate_type: "Enterprise EV UCC",
@@ -24,9 +24,9 @@ FactoryGirl.define do
                               summary:          "for Exchange and Communications Server\n",
                               abbr:             "EV UCC SSL"
                             }.with_indifferent_access}
-                            
+
       after(:create) do |certificate|
-        
+
         # Domains
         value = 365
         amount = 13300
@@ -55,7 +55,7 @@ FactoryGirl.define do
           )
           value += 365
         end
-        
+
         value = 365
         amount = 12900
         (1..2).to_a.each do |n|
@@ -74,7 +74,7 @@ FactoryGirl.define do
           )
           value += 365
         end
-        
+
         # Server Licenses
         group_server = certificate.product_variant_groups.create(
           title:                 'Server Licenses',
@@ -85,7 +85,7 @@ FactoryGirl.define do
           serial:                 nil,
           published_as:           'live',
         )
-        
+
         value = 365
         amount = 1000
         (1..2).to_a.each do |n|
@@ -106,18 +106,18 @@ FactoryGirl.define do
         end
       end
     end
-    
+
     # 106 Basic SSL (basic256sslcom)
     # ==========================================================================
     trait :basicssl do
       reseller_tier_id      nil
-      title                 'Basic SSL'
+      title                 {'Basic SSL'}
       summary               nil
       text_only_summary     nil
       text_only_description nil
       allow_wildcard_ucc    nil
-      serial                'basic256sslcom'
-      product               'basicssl'
+      serial                {'basic256sslcom'}
+      product               {'basicssl'}
       icons                 {{main: 'silver_lock_lg.gif'}}
       display_order         {{all: 3, index: 2}}
       description           {{certificate_type: "Basic SSL",
@@ -138,7 +138,7 @@ FactoryGirl.define do
           serial:                 nil,
           published_as:           'live',
         )
-        
+
         (1..3).to_a.each do |n|
           ProductVariantItem.create(
             product_variant_group_id: group_duration.id,
@@ -162,13 +162,13 @@ FactoryGirl.define do
     # ==========================================================================
     trait :evssl do
       reseller_tier_id      nil
-      title                 'Enterprise EV SSL'
+      title                 {'Enterprise EV SSL'}
       summary               nil
       text_only_summary     nil
       text_only_description nil
       allow_wildcard_ucc    nil
-      serial                'ev256sslcom'
-      product               'ev'
+      serial                {'ev256sslcom'}
+      product               {'ev'}
       icons                 {{main: 'ev_bar_lg.jpg'}}
       display_order         {{all: 1, index: 1}}
       description           {{certificate_type: "Enterprise EV",
@@ -177,7 +177,7 @@ FactoryGirl.define do
                               summary:          "highest trust assurance",
                               abbr:             "EV SSL"
                             }.with_indifferent_access}
-                              
+
       after(:create) do |certificate|
         value = 365
         group_duration = certificate.product_variant_groups.create(
@@ -205,21 +205,21 @@ FactoryGirl.define do
           )
           value += 365
         end
-        
-      end  
+
+      end
     end
-    
+
     # 101 UCC SSL (ucc256sslcom)
     # ==========================================================================
     trait :uccssl do
       reseller_tier_id      nil
-      title                 'Multi-domain UCC SSL'
+      title                 {'Multi-domain UCC SSL'}
       summary               nil
       text_only_summary     nil
       text_only_description nil
       allow_wildcard_ucc    nil
-      serial                'ucc256sslcom'
-      product               'ucc'
+      serial                {'ucc256sslcom'}
+      product               {'ucc'}
       icons                 {{main: 'silver_locks_lg.gif'}}
       display_order         {{all: 6, index: 6}}
       description           {{certificate_type: "High Assurance UCC",
@@ -322,18 +322,18 @@ FactoryGirl.define do
         end
       end
     end
-    
+
     # Wildcard SSL (wc256sslcom)
     # ==========================================================================
     trait :wcssl do
       reseller_tier_id      nil
-      title                 'Multi-subdomain Wildcard SSL'
+      title                 {'Multi-subdomain Wildcard SSL'}
       summary               nil
       text_only_summary     nil
       text_only_description nil
       allow_wildcard_ucc    nil
-      serial                'wc256sslcom'
-      product               'wildcard'
+      serial                {'wc256sslcom'}
+      product               {'wildcard'}
       icons                 {{main: 'gold_locks_lg.gif'}}
       display_order         {{all: 1, index: 1}}
       description           {{certificate_type: "Wildcard",
@@ -398,18 +398,18 @@ FactoryGirl.define do
         end
       end
     end
-    
+
     # 103 High Assurance SSL (ov256sslcom)
     # ==========================================================================
     trait :ovssl do
       reseller_tier_id      nil
-      title                 'High Assurance SSL'
+      title                 {'High Assurance SSL'}
       summary               nil
       text_only_summary     nil
       text_only_description nil
       allow_wildcard_ucc    nil
-      serial                'ov256sslcom'
-      product               'high_assurance'
+      serial                {'ov256sslcom'}
+      product               {'high_assurance'}
       icons                 {{main: 'gold_lock_lg.gif'}}
       display_order         {{all: 3, index: 2}}
       description           {{certificate_type: "High Assurance",
@@ -430,7 +430,7 @@ FactoryGirl.define do
           serial:                 nil,
           published_as:           'live',
         )
-        
+
         (1..3).to_a.each do |n|
           ProductVariantItem.create(
             product_variant_group_id: group.id,
@@ -449,18 +449,18 @@ FactoryGirl.define do
         end
       end
     end
-    
+
     # 104 Free SSL (ov256sslcom)
     # ==========================================================================
     trait :freessl do
       reseller_tier_id      nil
-      title                 'Free SSL'
-      summary               "90-day Basic SSL trial\n"
+      title                 {'Free SSL'}
+      summary               {"90-day Basic SSL trial\n"}
       text_only_summary     nil
       text_only_description nil
       allow_wildcard_ucc    nil
-      serial                'dv256sslcom'
-      product               'free'
+      serial                {'dv256sslcom'}
+      product               {'free'}
       icons                 {{main: 'silver_lock_lg.gif'}}
       display_order         {{all: 5, index: 3}}
       description           {{certificate_type: "Free",
@@ -480,7 +480,7 @@ FactoryGirl.define do
           serial:                 nil,
           published_as:           'live',
         )
-      
+
         ProductVariantItem.create(
           product_variant_group_id: group.id,
           title:                    "90 Days",
@@ -496,18 +496,18 @@ FactoryGirl.define do
         )
       end
     end
-    
+
     # Premium SSL (premium256sslcom)
     # ==========================================================================
     trait :premiumssl do
       reseller_tier_id      nil
-      title                 'Premium Multi-subdomain SSL'
+      title                 {'Premium Multi-subdomain SSL'}
       summary               nil
       text_only_summary     nil
       text_only_description nil
       allow_wildcard_ucc    nil
-      serial                'premium256sslcom'
-      product               'premiumssl'
+      serial                {'premium256sslcom'}
+      product               {'premiumssl'}
       icons                 {{main: 'silver_locks_lg.gif'}}
       display_order         {{all: 6, index: 6}}
       description           {{certificate_type: "Premium SSL",
@@ -516,7 +516,7 @@ FactoryGirl.define do
                               summary:          "ssl for up to 3 subdomains\n",
                               abbr:             "Premium SSL"
                             }.with_indifferent_access}
-      
+
       after(:create) do |certificate|
         # Domain
         group_domain = certificate.product_variant_groups.create(
@@ -571,13 +571,13 @@ FactoryGirl.define do
     # ==========================================================================
     trait :codesigningssl do
       reseller_tier_id      nil
-      title                 'Code Signing'
+      title                 {'Code Signing'}
       summary               nil
       text_only_summary     nil
       text_only_description nil
       allow_wildcard_ucc    nil
-      serial                'codesigning256sslcom'
-      product               'code-signing'
+      serial                {'codesigning256sslcom'}
+      product               {'code-signing'}
       icons                 {{main: 'gold_lock_lg.gif'}}
       display_order         {{all: 3, index: 2}}
       description           {{certificate_type: "Code Signing",
@@ -622,13 +622,13 @@ FactoryGirl.define do
     # ==========================================================================
     trait :evcodesigningssl do
       reseller_tier_id      nil
-      title                 'EV Code Signing'
+      title                 {'EV Code Signing'}
       summary               nil
       text_only_summary     nil
       text_only_description nil
       allow_wildcard_ucc    nil
-      serial                'evcodesigning256sslcom'
-      product               'ev-code-signing'
+      serial                {'evcodesigning256sslcom'}
+      product               {'ev-code-signing'}
       icons                 {{main: 'gold_lock_lg.gif'}}
       display_order         {{all: 3, index: 2}}
       description           {{certificate_type: "EV Code Signing",
