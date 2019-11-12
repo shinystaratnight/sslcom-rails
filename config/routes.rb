@@ -57,6 +57,10 @@ SslCom::Application.routes.draw do
         match '/ssl_manager/collections' => 'api_ssl_manager_requests#collections',
               as: :api_ssl_managers_collections, via: [:options, :get]
 
+        # ACME
+        match '/acme/hmac' => 'api_acme_requests#retrieve_hmac',
+              as: :api_acme_retrieve, via: [:post]
+
         # Code Signing.
         match '/generate_certificate' => 'api_certificate_requests#generate_certificate_v1_4',
               as: :api_certificate_generate_v1_4, via: [:options, :post]
