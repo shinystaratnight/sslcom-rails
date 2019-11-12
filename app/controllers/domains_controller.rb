@@ -287,25 +287,27 @@ class DomainsController < ApplicationController
       @domain_details = {}
       @csr = Csr.find_by_id(params[:selected_csr])
       cnames = []
+      dcvs=[]
+      cn_ids = [] # need to touch certificate_names to bust cache since bulk insert skips callbacks
       d_name_ids.each_with_index do |id, index|
         cn = CertificateName.find_by_id(id)
         @selected_domains << cn
         @address_choices << CertificateName.candidate_email_addresses(cn.non_wildcard_name)
         if addresses[index]=~EmailValidator::EMAIL_FORMAT
-          cn.domain_control_validations.create(dcv_method: "email", email_address: addresses[index],
+          dcvs << cn.domain_control_validations.new(dcv_method: "email", email_address: addresses[index],
                                                candidate_addresses: @address_choices, csr_unique_value_id:
                                                @csr.csr_unique_value.id) if @address_choices.include?(addresses[index])
-        elsif addresses[index] == 'http_csr_hash'
-          cn.domain_control_validations.create(dcv_method: "http_csr_hash", failure_action: "ignore", csr_unique_value_id: @csr.csr_unique_value.id)
-        elsif addresses[index] == 'https_csr_hash'
-          cn.domain_control_validations.create(dcv_method: "https_csr_hash", failure_action: "ignore", csr_unique_value_id: @csr.csr_unique_value.id)
-        elsif addresses[index] == 'cname_csr_hash'
-          cn.domain_control_validations.create(dcv_method: "cname_csr_hash", failure_action: "ignore", csr_unique_value_id: @csr.csr_unique_value.id)
+        elsif ['http_csr_hash','https_csr_hash','cname_csr_hash'].include? addresses[index]
+          dcvs << cn.domain_control_validations.new(dcv_method: addresses[index], failure_action: "ignore",
+                                                    csr_unique_value_id: @csr.csr_unique_value.id)
+          cn_ids << id
         else
           next
         end
         cnames << cn
       end unless d_name_ids.blank?
+      DomainControlValidation.import dcvs
+      CertificateName.where(id: cn_ids).update_all updated_at: DateTime.now
       email_for_identifier = ''
       identifier = ''
       email_list = []
@@ -416,6 +418,9 @@ class DomainsController < ApplicationController
     cnames = @ssl_account.all_certificate_names(nil,"unvalidated").includes(:domain_control_validations)
     if(params['authenticity_token'])
       identifier = params['validate_code']
+      attempt_to_issue=[]
+      dcvs=[]
+      cn_ids = [] # need to touch certificate_names to bust cache since bulk insert skips callbacks
       (dnames+cnames).each do |cn|
         dcv = cn.domain_control_validations.last
         if dcv && dcv.identifier == identifier && dcv.responded_at.blank?
@@ -426,14 +431,18 @@ class DomainsController < ApplicationController
           # find similar order scope domain (or create a new team scoped domain) and validate it
           team_domain=@ssl_account.domains.where.not(certificate_content_id: nil).find_by_name(cn.name) ||
               @ssl_account.domains.create(cn.attributes.except("id","certificate_content_id"))
-          team_domain.domain_control_validations.create(dcv.attributes.except("id")) if
+          dcvs << team_domain.domain_control_validations.new(dcv.attributes.except("id")) if
                   team_domain.domain_control_validations.empty? or
                   !team_domain.domain_control_validations.last.satisfied?
+          cn_ids << team_domain.id
           # find all other non validated certificate_names and validate them
           validated<<@ssl_account.satisfy_related_dcvs(cn)
           cn.certificate_content.certificate_order.apply_for_certificate if cn.certificate_content
         end
       end
+      DomainControlValidation.import dcvs
+      CertificateName.where(id: cn_ids).update_all updated_at: DateTime.now
+      attempt_to_issue.uniq.each{|co|co.apply_for_certificate if co.all_domains_validated?}
       unless validated.empty?
         flash[:notice] = "The following domains are now validated: #{validated.flatten.uniq.join(" ,")}"
         redirect_to(domains_path) if current_user

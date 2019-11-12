@@ -77,9 +77,10 @@ class NotificationGroup < ActiveRecord::Base
                       ]).update_all(domain_name: domain.name)
           end
         else
+          ngs_batch=[]
           cc.certificate_names.includes(:notification_groups_subjects).each do |cn|
             if cud == 'create'
-              cn.notification_groups_subjects.create(notification_group_id: group.id) if cn.notification_groups_subjects.
+              ngs_batch << cn.notification_groups_subjects.new(notification_group_id: group.id) if cn.notification_groups_subjects.
                   empty?{|s|s.notification_group_id==group.id}
             elsif cud == 'delete'
               ngs.where(subjectable_type: 'CertificateName', subjectable_id: cn.id, domain_name: nil).delete_all
@@ -87,6 +88,7 @@ class NotificationGroup < ActiveRecord::Base
                   .update_all(subjectable_type: nil, subjectable_id: nil)
             end
           end
+          NotificationGroupsSubject.import ngs_batch
         end
       end
     end

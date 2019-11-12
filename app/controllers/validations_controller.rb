@@ -58,7 +58,7 @@ class ValidationsController < ApplicationController
         validated_domain_arry = []
         caa_check_domain_arry = []
         public_key_sha1 = Settings.compare_public_key ? cc.cached_csr_public_key_sha1 : nil
-        unless cc.ca.blank?
+        unless cc.ca_id.blank?
           cnames = cc.certificate_names.includes(:validated_domain_control_validations)
           # need to get fresh copy of certificate names since async validation can corrupt the cache
           Rails.cache.delete(@certificate_order.ssl_account.get_all_certificate_names_cache_label(cnames.map(&:name),
