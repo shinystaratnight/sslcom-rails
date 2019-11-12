@@ -1,6 +1,6 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :certificate_order do
-    external_order_number '111111'
+    external_order_number {'111111'}
     ssl_account factory: [:ssl_account, :billing_profile]
     after(:build) do |co, evaluator|
       co.sub_order_items.build(product_variant_item:

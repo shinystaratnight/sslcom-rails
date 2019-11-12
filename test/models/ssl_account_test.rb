@@ -22,19 +22,19 @@ class SslAccountTest < Minitest::Spec
     it '#ssl_slug should NOT be valid under 2 characters' do
       @ssl_acct.ssl_slug = 'a'
       @ssl_acct.save
-      
+
       assert_equal ['is too short (minimum is 2 characters)'], @ssl_acct.errors.messages[:ssl_slug]
     end
     it '#ssl_slug should NOT be valid when over 20 characters' do
       @ssl_acct.ssl_slug = 'overtwentycharacterslong'
       @ssl_acct.save
-      
+
       assert_equal ['is too long (maximum is 20 characters)'], @ssl_acct.errors.messages[:ssl_slug]
     end
     it '#ssl_slug should NOT be valid when empty string' do
       @ssl_acct.ssl_slug = ''
       @ssl_acct.save
-      
+
       assert_equal ['is too short (minimum is 2 characters)'], @ssl_acct.errors.messages[:ssl_slug]
     end
     it '#ssl_slug should NOT be valid when not unique' do
@@ -60,19 +60,19 @@ class SslAccountTest < Minitest::Spec
     it '#company_name should NOT be valid under 2 characters' do
       @ssl_acct.company_name = 'a'
       @ssl_acct.save
-      
+
       assert_equal ['is too short (minimum is 2 characters)'], @ssl_acct.errors.messages[:company_name]
     end
     it '#company_name should NOT be valid when over 20 characters' do
       @ssl_acct.company_name = 'overtwentycharacterslong'
       @ssl_acct.save
-      
+
       assert_equal ['is too long (maximum is 20 characters)'], @ssl_acct.errors.messages[:company_name]
     end
     it '#company_name should NOT be valid when empty string' do
       @ssl_acct.company_name = ''
       @ssl_acct.save
-      
+
       assert_equal ['is too short (minimum is 2 characters)'], @ssl_acct.errors.messages[:company_name]
     end
     it '#company_name should be valid when nil' do
@@ -118,7 +118,7 @@ class SslAccountTest < Minitest::Spec
       target_user = create(:user, :owner)
       target_ssl  = target_user.ssl_account
       other_user  = create_and_approve_user(target_ssl, 'other_user')
-      
+
       assert_equal target_user, target_ssl.get_account_owner
       refute_equal other_user, target_ssl.get_account_owner
     end

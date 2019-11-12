@@ -18,7 +18,7 @@ module SessionHelper
     fill_in 'user_session_password', with: user.password
     find('input[alt="submit"]').click
   end
-  
+
   def logged_as(user)
     # Using rack directly
     page.set_rack_session('user_credentials' => user.persistence_token)
@@ -26,16 +26,6 @@ module SessionHelper
 
   def disable_authorization
     Authorization.ignore_access_control(true)
-  end
-
-  def set_user_credentials_cookie(cookie_hash)
-    Capybara.current_session.driver.browser.manage.add_cookie(
-      {name: 'user_credentials'}.merge(cookie_hash.first[1])
-    )
-  end
-
-  def delete_all_cookies
-    Capybara.current_session.driver.browser.manage.delete_all_cookies
   end
 
   def fill_in_cert_registrant
@@ -87,11 +77,11 @@ module SessionHelper
       csr_id: csr_id
     )
   end
-  
+
   def get_last_certificate_content
     CertificateContent.order(id: :desc).first
   end
-  
+
   # reprocess/rekey a certificate through 'Orders' index
   def rekey_certificate(domains_str=nil)
     visit certificate_orders_path
@@ -104,7 +94,7 @@ module SessionHelper
     find('input[alt="edit ssl certificate order"]').click
     find('input[alt="Bl submit button"]').click
   end
-  
+
   def update_cookie(cookie, user)
     value = "#{user.persistence_token}::#{user.send(user.class.primary_key)}"
     cookie.to_h['user_credentials'].merge!(value: value)

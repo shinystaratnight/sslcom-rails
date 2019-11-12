@@ -67,15 +67,14 @@ module SslCom
     # config.generators do |g|
     #   g.fixture_replacement :machinist
     # end
-    
+
     # Rails Api
     config.api_only = false
-    
+
     #turn off strong parameters
     config.action_controller.permit_all_parameters = true
 
     config.generators do |g|
-      g.fixture_replacement :factory_girl
       g.test_framework :minitest, spec: true, fixture: false
       g.jbuilder            false
     end
@@ -85,7 +84,7 @@ module SslCom
 
     # Delayed Job
     config.active_job.queue_adapter = :delayed_job
-    
+
     config.middleware.insert_before 0, Rack::Cors do
       allow do
         origins '*'

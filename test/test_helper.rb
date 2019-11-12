@@ -1,3 +1,15 @@
+require 'simplecov'
+SimpleCov.start 'rails' do
+add_filter '/bin/'
+ add_filter '/db/'
+ add_filter '/test/'
+ add_filter '/config/'
+ add_group "Models", "app/models"
+ add_group "Controllers", "app/controllers"
+ add_group "Helpers", "app/helpers"
+ add_group "Lib", "lib/"
+end
+
 ENV["RAILS_ENV"] = 'test'
 require File.expand_path('../../config/environment', __FILE__)
 
@@ -7,24 +19,15 @@ require 'minitest/pride'
 require 'minitest/reporters'
 require 'mocha/setup'
 require 'database_cleaner'
-require 'factory_girl'
+require 'factory_bot'
 require 'rack/utils'
-require 'capybara'
-require 'capybara/rails'
-require 'capybara/dsl'
-require 'capybara-screenshot/minitest'
-require 'headless'
 require 'authlogic/test_case'
-require 'rack_session_access/capybara'
 require 'declarative_authorization/maintenance'
-require 'selenium-webdriver'
 require 'json-schema'
-
-Capybara.app = Rack::ShowExceptions.new(SslCom::Application)
 
 ActiveRecord::Migration.maintain_test_schema!
 
-Minitest::Reporters.use!
+Minitest::Reporters.use! [Minitest::Reporters::SpecReporter.new]
 
 # Requires supporting ruby files with custom matchers and macros, etc,
 # in spec/support/ and its subdirectories.
@@ -42,39 +45,20 @@ DatabaseCleaner.strategy = :truncation
 
 class Minitest::Spec
   include Authlogic::TestCase
-  include Capybara::DSL
-  include Capybara::Screenshot::MiniTestPlugin
   include Rails.application.routes.url_helpers
 
   before :each do
     disable_authorization
     activate_authlogic
     DatabaseCleaner.start
-    @headless = Headless.new
-    @headless.start
     Delayed::Worker.delay_jobs = false
   end
 
   after :each do
     DatabaseCleaner.clean
-    Capybara.reset_sessions!
-    Capybara.use_default_driver
-    Capybara.app_host = nil
-    delete_all_cookies
     clear_email_deliveries
   end
 end
-
-Capybara.register_driver :selenium do |app|
-  Capybara::Selenium::Driver.new(app, browser: :chrome)
-end
-
-Capybara.default_driver    = :selenium
-Capybara.javascript_driver = :selenium
-
-Capybara.default_max_wait_time = 60
-
-Capybara::Screenshot.autosave_on_failure = false
 
 # Forces all threads to share the same connection. This works on
 # Capybara because it starts the web server in a thread.
