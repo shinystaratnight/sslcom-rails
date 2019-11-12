@@ -181,7 +181,7 @@ $('#expand_register_card').on('click', function(){
     $.profileRequiredToggle('disable');
     $(this).add('img[id=toggle_billing_profile_form]').attr('src', "<%= asset_path('add_new_billing_profile.png') %>");
     if (profile_id && profile_id.length > 0) {
-      $(":radio[id*='+profile_id+']").prop("checked", true);
+      $(":radio[id*="+profile_id+"]").prop("checked", true);
     }
     profile_form_hidden = true;
   }
