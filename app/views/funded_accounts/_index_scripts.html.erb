@@ -28,6 +28,26 @@ jQuery(function($) {
       $.applyDiscount();
       setTimeout(function(){$.updateRequiredDeposit();}, 2000);
     });
+
+    $('[name*=load_funds]').on('click', function(e) {
+      // Check Discounted.
+      if ($('#discount_amount').length > 0 &&
+        $('#discount_amount').val().trim() != '') {
+
+        var original_order_amount = parseFloat($('#tier_load_amount').data('original-amount'));
+        var discounted_amount = parseFloat($('#discount_amount').val());
+        var funded_account_amount = parseFloat($('#current_balance').data('funded-account'));
+
+        // Check funded account is enough for discounted amount.
+        if (!profile_form_hidden &&
+          (funded_account_amount > (original_order_amount - discounted_amount)) &&
+          (funded_account_amount < original_order_amount)) {
+
+          // Make it to remove required field for CC information.
+          $.profileRequiredToggle('disable');
+        }
+      }
+    });
   });
 });
 </script>
