@@ -288,7 +288,7 @@ class OrderNotifier < ActionMailer::Base
     @requestor = requestor
 
     mail subject: "Certificate Activation Link",
-         from:  "no-reply@ssl.com",
+         from:  Settings.from_email.no_reply,
          to:    user.email
   end
 
@@ -315,7 +315,7 @@ class OrderNotifier < ActionMailer::Base
     @cert_order_ref = co.ref
 
     mail subject: "Request for approving Phone Number",
-         from: co.get_download_cert_email,
+         from: Settings.from_email.no_reply,
          to: to_email
   end
 
@@ -326,7 +326,7 @@ class OrderNotifier < ActionMailer::Base
     @cert_order_ref = co.ref
 
     mail subject: "Approved Phone Number",
-         from: from_email,
+         from: Settings.from_email.no_reply,
          to: co.get_download_cert_email
   end
 
