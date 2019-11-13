@@ -6,6 +6,7 @@ add_filter '/bin/'
  add_filter '/config/'
  add_group "Models", "app/models"
  add_group "Controllers", "app/controllers"
+ add_group "Services", "app/services"
  add_group "Helpers", "app/helpers"
  add_group "Lib", "lib/"
 end
@@ -17,6 +18,7 @@ require 'rails/test_help'
 require 'minitest/rails'
 require 'minitest/pride'
 require 'minitest/reporters'
+require 'webmock/minitest'
 require 'mocha/setup'
 require 'database_cleaner'
 require 'factory_bot'
@@ -57,6 +59,19 @@ class Minitest::Spec
   after :each do
     DatabaseCleaner.clean
     clear_email_deliveries
+  end
+end
+
+if RUBY_VERSION>='2.6.0'
+  if Rails.version < '5'
+    class ActionController::TestResponse < ActionDispatch::TestResponse
+      def recycle!
+        # hack to avoid MonitorMixin double-initialize error:
+        @mon_mutex_owner_object_id = nil
+        @mon_mutex = nil
+        initialize
+      end
+    end
   end
 end
 

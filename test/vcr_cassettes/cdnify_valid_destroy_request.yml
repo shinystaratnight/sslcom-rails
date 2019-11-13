@@ -1,0 +1,44 @@
+---
+http_interactions:
+- request:
+    method: delete
+    uri: https://reseller.cdnify.com/api/v1/resources/b4ed84a
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+      Authorization:
+      - Basic NmJlYjZlMDcwYmI3OWI0ZTYwY2Q0MGZjNzU1OGI5ZGYyMzcyNGEyZTg1ZGFiMjNiNjU6eA==
+  response:
+    status:
+      code: 204
+      message: No Content
+    headers:
+      Server:
+      - nginx/1.4.7
+      Content-Type:
+      - text/html
+      Connection:
+      - keep-alive
+      Cache-Control:
+      - no-cache
+      Date:
+      - Thu, 14 Nov 2019 21:11:47 GMT
+      X-Ratelimit-Limit:
+      - '1000'
+      X-Ratelimit-Remaining:
+      - '998'
+      X-Ratelimit-Reset:
+      - '1573769431'
+    body:
+      encoding: UTF-8
+      string: ''
+    http_version: 
+  recorded_at: Thu, 14 Nov 2019 21:11:45 GMT
+recorded_with: VCR 5.0.0

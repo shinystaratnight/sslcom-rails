@@ -75,31 +75,22 @@ class CdnsController < ApplicationController
     render :json => returnObj
   end
 
-  def update_resources
+  def delete_resources
     resources = params['deleted_resources']
-    is_deleted = true
 
-    if resources
-      resources.each do |resource_key|
-        @response = HTTParty.delete('https://reseller.cdnify.com/api/v1/resources/' + resource_key.split('|')[0],
-                                    basic_auth: {username: resource_key.split('|')[2], password: 'x'})
+    resources.each do |resource|
+      resource = resource.split('|')
+      resource_id, resource_name, api_key = resource[0], resource[1], resource[2]
+      @response = Cdnify.destroy_cdn_resources(resource_id, api_key)
 
-        if @response
-          unless @response.code == 204
-            is_deleted = false
-            @response.parsed_response['errors'].each do |error|
-              flash[:error] = '' unless flash[:error]
-              flash[:error].concat("<br />") unless flash[:error] == ''
-              flash[:error].concat(resource_key.split('|')[1] + ': ' + error['code'].to_s + ': ' + error['message'])
-            end
-          end
-        else
-          flash[:error] = 'Faile to delete selected resources'
+      if @response.code == 204
+        flash[:notice] = 'Resources Successfully Deleted.'
+      else
+        @response.parsed_response['errors'].each do |error|
+          flash[:error] = "#{resource_name}: #{error['code']}: #{error['message']}"
         end
       end
     end
-
-    flash[:notice] = 'Successfully Updated.' if is_deleted
 
     redirect_to cdns_path(ssl_slug: @ssl_slug)
   end
@@ -180,32 +171,22 @@ class CdnsController < ApplicationController
   end
 
   def update_resource
-    resource_id = params[:id]
-    api_key = params[:api_key]
-    resource_origin = params[:resource_origin]
-    resource_name = params[:resource_name]
+    api_key = cdn_update_params[:api_key]
+    resource_id = cdn_update_params[:id]
+    @response = Cdnify.update_cdn_resource(cdn_update_params)
 
-    @response = HTTParty.patch('https://reseller.cdnify.com/api/v1/resources/' + resource_id,
-                               {basic_auth: {username: api_key, password: 'x'}, body: {alias: resource_name, origin: resource_origin}})
-
-    if @response && @response.parsed_response
-      if @response.parsed_response['resources']
-        flash[:notice] = 'Successfully Updated General Settings.'
-      else
-        @response.parsed_response['errors'].each do |error|
-          flash[:error] = '' unless flash[:error]
-          flash[:error].concat("<br />") unless flash[:error] == ''
-          flash[:error].concat(error['code'].to_s + ': ' + error['message'])
-        end
-      end
+    if @response.code == 200
+      flash[:notice] = 'Successfully Updated General Settings.'
     else
-      flash[:error] = 'Failed to Update General Settings.'
+      @response.parsed_response['errors'].each do |error|
+        flash[:error] = "#{error['code']}" + ': ' + "#{error['message']}"
+      end
     end
 
     session[:selected_tab] = @tab_setting
     session[:user_api_key] = api_key
 
-    redirect_to resource_cdn_cdn_path(@ssl_slug, resource_id) and return
+    redirect_to resource_cdn_cdn_path(@ssl_slug, resource_id)
   end
 
   def add_custom_domain
@@ -480,25 +461,14 @@ class CdnsController < ApplicationController
   # POST /cdns
   # POST /cdns.json
   def create
-    api_key = params[:api_key]
-    resource_name = params[:resource_name]
-    resource_origin = params[:resource_origin]
+    @response = Cdnify.create_cdn_resource(cdn_params)
 
-    @response = HTTParty.post('https://reseller.cdnify.com/api/v1/resources',
-                             {basic_auth: {username: api_key, password: 'x'}, body: {alias: resource_name, origin: resource_origin}})
-
-    if @response && @response.parsed_response
-      if @response.parsed_response['resources']
-        flash[:notice] = 'Successfully Created Resource.'
-      else
-        @response.parsed_response['errors'].each do |error|
-          flash[:error] = '' unless flash[:error]
-          flash[:error].concat("<br />") unless flash[:error] == ''
-          flash[:error].concat(error['code'].to_s + ': ' + error['message'])
-        end
-      end
+    if @response.parsed_response["resources"]
+      flash[:notice] = 'Successfully Created Resource.'
     else
-      flash[:error] = 'Failed to Create Resource.'
+      @response.parsed_response['errors'].each do |error|
+        flash[:error] = "#{error['code']}" + ': ' + "#{error['message']}"
+      end
     end
 
     redirect_to cdns_path(ssl_slug: @ssl_slug)
@@ -548,7 +518,11 @@ class CdnsController < ApplicationController
     end
 
     def cdn_params
-      params.require(:cdn).permit()
+      params.permit(:api_key, :resource_origin, :resource_name)
+    end
+
+    def cdn_update_params
+      params[:params].permit(:api_key, :resource_origin, :resource_name, :id)
     end
 
     def current_user_api_key(key = nil)
@@ -571,4 +545,4 @@ class CdnsController < ApplicationController
         end
       end
     end
-end
+  end

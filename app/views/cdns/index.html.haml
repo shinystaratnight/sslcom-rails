@@ -11,7 +11,7 @@
   %div
     .sub-title Resources
     .sub-cont
-      =form_tag :update_resources_cdns, :method=>:post do
+      =form_tag :delete_resources_cdns, :method=>:delete do
         =hidden_field_tag :api_key, @current_user_api_key
         #resources
           %table(cellspacing="0")
