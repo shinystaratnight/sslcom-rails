@@ -1,0 +1,2 @@
+class InvalidApiAcmeRequest < CaApiRequest
+end

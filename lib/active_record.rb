@@ -1,3 +1,5 @@
+require 'workflow'
+
 Workflow::Adapter::ActiveRecord::InstanceMethods.module_eval do
   # On transition the new workflow state is immediately saved in the
   # database.

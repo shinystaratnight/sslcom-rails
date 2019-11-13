@@ -366,15 +366,21 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
     cc.registrant.destroy unless cc.registrant.blank?
     cc.add_ca(options[:certificate_order].ssl_account) if options[:certificate_order].external_order_number.blank?
     cc.create_registrant(
-        company_name: self.organization_name,
-        department: self.organization_unit_name,
-        po_box: self.post_office_box,
-        address1: self.street_address_1,
-        address2: self.street_address_2,
-        address3: self.street_address_3,
-        city: self.locality_name,
-        state: self.state_or_province_name,
-        postal_code: self.postal_code,
+        company_name: (self.organization_name.force_encoding("ISO-8859-1").encode("UTF-8") unless
+            self.organization_name.nil?),
+        department: (self.organization_unit_name.force_encoding("ISO-8859-1").encode("UTF-8") unless
+            self.organization_unit_name.nil?),
+        po_box: (self.post_office_box.force_encoding("ISO-8859-1").encode("UTF-8") unless self.post_office_box.nil?),
+        address1: (self.street_address_1.force_encoding("ISO-8859-1").encode("UTF-8") unless
+            self.street_address_1.nil?),
+        address2: (self.street_address_2.force_encoding("ISO-8859-1").encode("UTF-8") unless
+            self.street_address_2.nil?),
+        address3: (self.street_address_3.force_encoding("ISO-8859-1").encode("UTF-8") unless
+            self.street_address_3.nil?),
+        city: (self.locality_name.force_encoding("ISO-8859-1").encode("UTF-8") unless self.locality_name.nil?),
+        state: (self.state_or_province_name.force_encoding("ISO-8859-1").encode("UTF-8") unless
+            self.state_or_province_name.nil?),
+        postal_code: (self.postal_code.force_encoding("ISO-8859-1").encode("UTF-8") unless self.postal_code.nil?),
         country: self.country_name || csr_obj.country)
     if cc.csr_submitted?
       cc.provide_info!

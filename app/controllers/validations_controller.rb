@@ -58,7 +58,7 @@ class ValidationsController < ApplicationController
         validated_domain_arry = []
         caa_check_domain_arry = []
         public_key_sha1 = Settings.compare_public_key ? cc.cached_csr_public_key_sha1 : nil
-        unless cc.ca.blank?
+        unless cc.ca_id.blank?
           cnames = cc.certificate_names.includes(:validated_domain_control_validations)
           # need to get fresh copy of certificate names since async validation can corrupt the cache
           Rails.cache.delete(@certificate_order.ssl_account.get_all_certificate_names_cache_label(cnames.map(&:name),
@@ -100,8 +100,7 @@ class ValidationsController < ApplicationController
           if @all_validated and cc.signed_certificate.blank? and !cc.issued?
             cc.validate! if cc.pending_validation?
             api_log_entry=@certificate_order.apply_for_certificate(
-                mapping: @certificate_order.certificate_content.ca,
-                      current_user: current_user)
+                mapping: @certificate_order.certificate_content.ca, current_user: current_user)
             if api_log_entry and api_log_entry.instance_of?(SslcomCaRequest) and api_log_entry.response=~/Check CAA/
               flash[:error] =
                   "CAA validation failed. See https://#{Settings.portal_domain}/how-to/configure-caa-records-to-authorize-ssl-com/"
@@ -593,7 +592,7 @@ class ValidationsController < ApplicationController
 
   def send_to_ca(options={})
     co=CertificateOrder.find_by_ref(params[:certificate_order_id])
-    result = co.apply_for_certificate(params.merge(current_user: current_user))
+    result = co.apply_for_certificate(params.merge(current_user: current_user, multiple_signed_certificates: true))
     unless options[:send_to_ca].blank? or [Ca::CERTLOCK_CA,Ca::SSLCOM_CA,Ca::MANAGEMENT_CA].include?(params[:ca])
       co.certificate_content.pend_validation!(send_to_ca: false, host: request.host_with_port) if result.order_number && !co.certificate_content.pending_validation?
     end

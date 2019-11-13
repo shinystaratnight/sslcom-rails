@@ -113,19 +113,19 @@ class UserTest < Minitest::Spec
 
     it 'default to main_ssl_account IF default_ssl_account=nil' do
       @invited_user.update_attributes(default_ssl_account: nil, main_ssl_account: @main_ssl.id)
-      
+
       assert_equal @main_ssl.id, @invited_user.ssl_account.id
       assert_equal @main_ssl.id, @invited_user.default_ssl_account
     end
 
     it 'defaults to 1st approved account IF default_ssl_account=nil AND main_ssl_account=nil' do
       @invited_user.update_attributes(default_ssl_account: nil, main_ssl_account: nil)
-      
+
       first_approved_ssl = @invited_user.send(:get_first_approved_acct).id
       assert_equal first_approved_ssl, @invited_user.ssl_account.id
-      assert_equal first_approved_ssl, @invited_user.default_ssl_account 
+      assert_equal first_approved_ssl, @invited_user.default_ssl_account
     end
-    
+
     it 'defaults to main_ssl_account IF default_ssl_account NOT approved' do
       @invited_user.update_attributes(default_ssl_account: @default_ssl.id, main_ssl_account: @main_ssl.id)
       @invited_user.ssl_account_users.where(ssl_account_id: @default_ssl.id).first.update(approved: false)
@@ -153,7 +153,7 @@ class UserTest < Minitest::Spec
       refute_nil @invited_user.ssl_account
       refute_nil @invited_user.default_ssl_account
     end
-  end  
+  end
 
   describe 'account helper methods' do
     before(:all) do
@@ -165,7 +165,7 @@ class UserTest < Minitest::Spec
       previous_ssl_account = @owner.default_ssl_account
       assert_equal 1, @owner.ssl_accounts.count
       assert_equal SslAccountUser.where(user_id: @owner.id).first.ssl_account_id, previous_ssl_account
-      
+
       new_ssl_account = @owner.create_ssl_account
 
       assert_equal 2, @owner.ssl_accounts.count
@@ -177,7 +177,7 @@ class UserTest < Minitest::Spec
     end
 
     it '#create_ssl_account should set roles if provided' do
-      params = { ssl_account_id: 
+      params = { ssl_account_id:
         @owner.create_ssl_account([@owner_role, @billing_role])
       }
       assert_equal 2, @owner.assignments.where(params).count
@@ -189,7 +189,7 @@ class UserTest < Minitest::Spec
       ssl_params = {ssl_account_id: @default_ssl.id}
       @owner.set_approval_token(ssl_params)
       ssl = @owner.ssl_account_users.where(ssl_params).first
-      
+
       refute_nil ssl.approval_token
       refute_nil ssl.token_expires
       refute     ssl.approved
@@ -213,44 +213,44 @@ class UserTest < Minitest::Spec
   end
 
   describe 'role helper methods' do
-    before(:all) { 
+    before(:all) {
       @owner = create(:user, :owner)
-      @default_ssl   = @owner.ssl_account 
+      @default_ssl   = @owner.ssl_account
     }
 
     it '#set_roles_for_account should set roles' do
       prev_roles = @owner.roles.count
       new_roles  = [@reseller_role, @billing_role]
       @owner.set_roles_for_account(@default_ssl, new_roles)
-      
+
       assert_equal prev_roles+new_roles.count, @owner.roles.count
     end
-    
+
     it '#set_roles_for_account should ignore unassociated ssl_account' do
       other_ssl_account = create(:user, :owner).ssl_account
       prev_roles        = @owner.roles.count
       @owner.set_roles_for_account(other_ssl_account, [@owner_role])
-      
+
       assert_equal prev_roles, @owner.roles.count
     end
-    
+
     it '#set_roles_for_account should ignore duplicate roles' do
       prev_roles = @owner.roles.count
       @owner.set_roles_for_account(@default_ssl, [@owner_role])
-      
+
       assert_equal prev_roles, @owner.roles.count
     end
 
     it '#roles_for_account should return array of role ids' do
       @owner.set_roles_for_account(@default_ssl, [@reseller_role, @billing_role])
-      
-      assert_equal [@owner_role, @reseller_role, @billing_role].sort, 
+
+      assert_equal [@owner_role, @reseller_role, @billing_role].sort,
         @owner.roles_for_account(@default_ssl).sort
     end
 
     it '#roles_for_account should ignore unassociated ssl_account' do
       other_ssl_account = create(:user, :owner).ssl_account
-      
+
       assert_equal [], @owner.roles_for_account(other_ssl_account)
     end
 
@@ -258,7 +258,7 @@ class UserTest < Minitest::Spec
       assert_equal 1, @owner.get_roles_by_name(Role::OWNER).count
       assert_equal 0, @owner.get_roles_by_name(Role::BILLING).count
     end
-    
+
     it '#update_account_role should update assignment' do
       assert_equal 1, @owner.roles.count
       assert_equal @owner_role, @owner.roles.first.id
@@ -278,10 +278,10 @@ class UserTest < Minitest::Spec
       )
 
       assert_equal 3, @owner.roles.count
-      assert_equal [@owner_role, @reseller_role, @billing_role].sort, 
-        @owner.roles_for_account(@default_ssl).sort      
+      assert_equal [@owner_role, @reseller_role, @billing_role].sort,
+        @owner.roles_for_account(@default_ssl).sort
     end
-    
+
     it '#assign_roles should ignore duplicate roles' do
       assert_equal 1, @owner.roles.count
       @owner.assign_roles( user: {
@@ -313,7 +313,7 @@ class UserTest < Minitest::Spec
     end
 
     it '#roles_list_for_user should return scoped list for non admin' do
-      # 'owner' user can only see roles: account_admin, billing, installer, validations 
+      # 'owner' user can only see roles: account_admin, billing, installer, validations
       assert_equal Role.get_select_ids_for_owner.sort, User.roles_list_for_user(@owner).ids.sort
     end
 
@@ -329,7 +329,7 @@ class UserTest < Minitest::Spec
       # e.g.: { ssl_1_id: [role_ids], ssl_2_id: [role_ids] }
       roles = [@reseller_role, @billing_role]
       assert_equal [[@default_ssl.id, [@owner_role]]].to_h, User.get_user_accounts_roles(@owner)
-      
+
       @owner.set_roles_for_account(@default_ssl, roles)
       roles << @owner_role
       assert_equal [[@default_ssl.id, roles.sort]].to_h, User.get_user_accounts_roles(@owner)
@@ -338,14 +338,14 @@ class UserTest < Minitest::Spec
     it '#get_user_accounts_roles_names should return a mapped hash' do
       # e.g.: {'team_1': ['owner'], 'team_2': ['account_admin', 'installer']}
       assert_equal [[@default_ssl.get_team_name, ['owner']]].to_h, User.get_user_accounts_roles_names(@owner)
-      
+
       @owner.set_roles_for_account(@default_ssl, [@reseller_role, @billing_role])
       assert_equal [[@default_ssl.get_team_name, ['owner', 'reseller', 'billing']]].to_h, User.get_user_accounts_roles_names(@owner)
-    end    
+    end
 
     it '#role_symbols should return [scoped role_symbols] for non-admin' do
       assert_equal [:owner], @owner.role_symbols(@default_ssl)
-      
+
       # scope to default ssl account when no account provided
       assert_equal [:owner], @owner.role_symbols
     end
@@ -366,7 +366,7 @@ class UserTest < Minitest::Spec
   end
 
   describe 'approval token helpers' do
-    before(:all) { 
+    before(:all) {
       @owner  = create(:user, :owner)
       @default_ssl    = @owner.ssl_account
       @user_w_token   = create(:user, :owner)
@@ -376,13 +376,13 @@ class UserTest < Minitest::Spec
 
     it '#approval_token_valid? false if account approved' do
       ssl_params = {ssl_account_id: @default_ssl.id}
-      
+
       refute @owner.approval_token_valid?(ssl_params)
     end
 
-    it '#approval_token_valid? false if token expired' do      
+    it '#approval_token_valid? false if token expired' do
       assert @user_w_token.approval_token_valid?(@ssl_prms_token)
-      @user_w_token.ssl_account_users.first.update( 
+      @user_w_token.ssl_account_users.first.update(
         token_expires: (DateTime.now - 2.hours) # expire token
       )
 
@@ -392,7 +392,7 @@ class UserTest < Minitest::Spec
     it '#approval_token_valid? false if token does not match' do
       valid_token = @user_w_token.ssl_account_users.first.approval_token
       @ssl_prms_token.merge!(skip_match: false)
-      
+
       assert @user_w_token.approval_token_valid?(@ssl_prms_token.merge(token: valid_token))
       refute @user_w_token.approval_token_valid?(@ssl_prms_token.merge(token: 'does not match'))
     end
@@ -475,7 +475,7 @@ class UserTest < Minitest::Spec
         assert_equal 1, new_user.get_all_approved_accounts.count
         assert_equal [Role.get_owner_id], new_user.roles.ids
         refute_nil   new_user.default_ssl_account
-        
+
         # account is approved, no invitation token
         assert_nil   ssl.approval_token
         assert_nil   ssl.token_expires
@@ -588,7 +588,7 @@ class UserTest < Minitest::Spec
         assert_equal ssl_own.id, user.main_ssl_account
 
         user.set_default_team(ssl_other) # user does not own ssl_other
-        assert_equal ssl_own.id, user.main_ssl_account        
+        assert_equal ssl_own.id, user.main_ssl_account
       end
       it '#team_status returns correct status' do
         invited_user     = create(:user, :owner)
@@ -600,26 +600,26 @@ class UserTest < Minitest::Spec
 
         # user is invited
         invited_user.set_approval_token(params)
-        assert_equal 1, invited_user.get_all_approved_accounts.count 
+        assert_equal 1, invited_user.get_all_approved_accounts.count
         assert_equal :pending, invited_user.team_status(invited_ssl_acct)
-        
+
         # user DECLINES team invitation
         invited_user.decline_invite(params)
-        assert_equal 1, invited_user.get_all_approved_accounts.count 
+        assert_equal 1, invited_user.get_all_approved_accounts.count
         assert_equal :declined, invited_user.team_status(invited_ssl_acct)
-        
+
         # user ACCEPTS team invitation
         invited_user.set_approval_token(params)
         invited_user.send(:approve_account, {ssl_account_id: invited_ssl_acct.id})
-        assert_equal 2, invited_user.get_all_approved_accounts.count 
+        assert_equal 2, invited_user.get_all_approved_accounts.count
         assert_equal :accepted, invited_user.team_status(invited_ssl_acct)
-        
+
         # invitation EXPIRED
         invited_user.set_approval_token(params)
         invited_user.ssl_account_users.where(params).first.update_attribute(:token_expires, 1.day.ago)
         assert_equal 1, invited_user.get_all_approved_accounts.count
         assert_equal :expired, invited_user.team_status(invited_ssl_acct)
-        
+
         # NEW user is invited
         invited_user.update_attribute(:active, false)
         invited_user.set_approval_token(params)

@@ -1,7 +1,7 @@
 class ContactsController < ApplicationController
   layout 'application'
 
-  before_filter :find_ssl_account, only: :saved_contacts
+  before_filter :require_user
   before_filter :find_contact, only: [:admin_update, :edit, :update, :destroy]
 
   filter_access_to :all
@@ -198,18 +198,21 @@ class ContactsController < ApplicationController
   end
 
   def get_saved_contacts
-    if current_user.is_system_admins?
-      Contact.where(contactable_type: 'SslAccount', type: 'CertificateContact')
+    if current_user.is_system_admins? and @ssl_account.blank?
+      CertificateContact.where(contactable_type: 'SslAccount')
     else
-      @ssl_account.saved_contacts
+      (@ssl_account and current_user.ssl_accounts.include?(@ssl_account)) ? @ssl_account.try(:saved_contacts) :
+          current_user.ssl_account.saved_contacts
     end
   end
 
   def get_saved_registrants
-    if current_user.is_system_admins?
-      Contact.where(contactable_type: 'SslAccount', type: ['Registrant', 'IndividualValidation'])
+    if current_user.is_system_admins? and @ssl_account.blank?
+      Contact.where(type: ['Registrant','IndividualValidation']).where(contactable_type: 'SslAccount')
     else
-      @ssl_account.saved_registrants
+      Contact.where(type: ['Registrant','IndividualValidation']).where(contactable_type: 'SslAccount').
+          where(contactable_id: (@ssl_account and current_user.ssl_accounts.include?(@ssl_account)) ?
+                                    @ssl_account.id : current_user.ssl_account.id)
     end
   end
 

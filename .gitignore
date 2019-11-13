@@ -29,3 +29,5 @@ app/assets/images/ui-bg_diagonals-thick_18_b81900_40x40.png
 *.png
 /.vagrant/
 /.vagrant_bak/
+coverage/
+coverage/*

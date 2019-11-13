@@ -176,6 +176,7 @@ class CertificateContent < ActiveRecord::Base
       event :reprocess, :transitions_to => :reprocess_requested
       event :cancel, :transitions_to => :canceled
       event :reset, :transitions_to => :new
+      event :pend_issuance, :transitions_to => :pending_issuance
     end
 
     state :info_provided do
@@ -264,9 +265,10 @@ class CertificateContent < ActiveRecord::Base
   end
 
   # issuance_type - nil, "dv_only"
-  OtherDcvsSatisyJob = Struct.new(:ssl_account,:new_certificate_name,:certificate_content,:issuance_type) do
+  OtherDcvsSatisyJob = Struct.new(:ssl_account,:new_certificate_names,:certificate_content,:issuance_type) do
     def perform
-      ssl_account.other_dcvs_satisfy_domain(new_certificate_name)
+      new_certificate_names = [new_certificate_names] if new_certificate_names.is_a?(CertificateName)
+      ssl_account.other_dcvs_satisfy_domain(new_certificate_names)
       certificate_content.certificate_order.apply_for_certificate if certificate_content.certificate.is_dv? and
           issuance_type=="dv_only" and !certificate_content.issued?
     end
@@ -286,9 +288,12 @@ class CertificateContent < ActiveRecord::Base
         end
       end
       CertificateName.import new_certificate_names
-      certificate_names.where(name: new_certificate_names.map(&:name)).each do |cn|
-        cn.candidate_email_addresses # start the queued job running
-        Delayed::Job.enqueue OtherDcvsSatisyJob.new(ssl_account,cn,self,"dv_only") if ssl_account &&
+      cns=certificate_names.where(name: new_certificate_names.map(&:name))
+      unless cns.blank?
+        cns.each do |cn|
+          cn.candidate_email_addresses # start the queued job running
+        end
+        Delayed::Job.enqueue OtherDcvsSatisyJob.new(ssl_account,cns,self,"dv_only") if ssl_account &&
             certificate.is_server?
       end
     end

@@ -149,7 +149,7 @@ class CertificateOrdersController < ApplicationController
     @certificate_order.apply_for_certificate(
         mapping: cc.ca,
         current_user: current_user
-    )
+    ) unless cc.pending_issuance?
     render :json => cc.issued?
   end
 
@@ -465,7 +465,7 @@ class CertificateOrdersController < ApplicationController
       if @certificate_content.valid?
         cc = @certificate_order.transfer_certificate_content(@certificate_content)
 
-        if params[:common_name] && !params[:common_name].empty?
+        if params[:common_name] && !params[:common_name].empty? && PublicSuffix.valid?(params[:common_name])
           if @certificate_order.certificate.is_single? or @certificate_order.certificate.is_wildcard?
             cert_single_name = cc.certificate_names.where(is_common_name: true).first
 

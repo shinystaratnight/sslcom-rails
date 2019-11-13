@@ -1,13 +1,13 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :user  do
-    first_name            'first name'
-    last_name             'last name'
+    first_name            {'first name'}
+    last_name             {'last name'}
     sequence(:login)      {|n| "user_login#{n}"}
     sequence(:email)      {|n| "tester_#{n}@domain.com"}
-    status                'enabled'
-    password              'Testing_ssl+1'
-    password_confirmation 'Testing_ssl+1'
-    active                true
+    status                {'enabled'}
+    password              {'Testing_ssl+1'}
+    password_confirmation {'Testing_ssl+1'}
+    active                {true}
 
     trait :sysadmin do
       after(:create) {|u| u.create_ssl_account([Role.get_role_id(Role::SYS_ADMIN)])}

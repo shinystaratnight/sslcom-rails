@@ -51,7 +51,7 @@ class CertificateName < ActiveRecord::Base
     SELECT COUNT(domain_control_validations.id) FROM domain_control_validations
     WHERE certificate_name_id = certificate_names.id
     SQL
-    where "(#{total}) > 0 AND (#{satisfied}) = 0"
+    where "(#{total}) >= 0 AND (#{satisfied}) = 0"
   }
   scope :sslcom, ->{joins{certificate_content}.where.not certificate_contents: {ca_id: nil}}
   scope :global, -> {where{(certificate_content_id==nil) & (ssl_account_id==nil) & (acme_account_id==nil)}}
@@ -331,7 +331,7 @@ class CertificateName < ActiveRecord::Base
     name=CertificateContent.non_wildcard_name(name,false)
     Rails.cache.fetch("CertificateName.candidate_email_addresses/#{name}",
                       expires_in: DomainControlValidation::EMAIL_CHOICE_CACHE_EXPIRES_DAYS.days) do
-      Delayed::Job.enqueue WhoisJob.new(name,certificate_name) unless APP_URL=~Regexp.new(Settings.portal_domain)
+      Delayed::Job.enqueue WhoisJob.new(name,certificate_name)
       DomainControlValidation.global.find_by_subject(name).try(:candidate_addresses) ||
           DomainControlValidation.email_address_choices(name)
     end
