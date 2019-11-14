@@ -442,7 +442,7 @@ class DomainsController < ApplicationController
       end
       DomainControlValidation.import dcvs
       CertificateName.where(id: cn_ids).update_all updated_at: DateTime.now
-      attempt_to_issue.uniq.each{|co|co.apply_for_certificate if co.all_domains_validated?}
+      attempt_to_issue.uniq.compact.each{|co|co.apply_for_certificate if co.all_domains_validated?}
       unless validated.empty?
         flash[:notice] = "The following domains are now validated: #{validated.flatten.uniq.join(" ,")}"
         redirect_to(domains_path) if current_user
