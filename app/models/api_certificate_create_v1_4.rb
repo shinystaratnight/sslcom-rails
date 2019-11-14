@@ -366,15 +366,21 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
     cc.registrant.destroy unless cc.registrant.blank?
     cc.add_ca(options[:certificate_order].ssl_account) if options[:certificate_order].external_order_number.blank?
     cc.create_registrant(
-        company_name: self.organization_name.blank? ? self.organization_name : self.organization_name.force_encoding('UTF-8'),
-        department: self.organization_unit_name.blank? ? self.organization_unit_name : self.organization_unit_name.force_encoding('UTF-8'),
-        po_box: self.post_office_box.blank? ? self.post_office_box : self.post_office_box.force_encoding('UTF-8'),
-        address1: self.street_address_1.blank? ? self.street_address_1 : self.street_address_1.force_encoding('UTF-8'),
-        address2: self.street_address_2.blank? ? self.street_address_2 : self.street_address_2.force_encoding('UTF-8'),
-        address3: self.street_address_3.blank? ? self.street_address_3 : self.street_address_3.force_encoding('UTF-8'),
-        city: self.locality_name.blank? ? self.locality_name : self.locality_name.force_encoding('UTF-8'),
-        state: self.state_or_province_name.blank? ? self.state_or_province_name : self.state_or_province_name.force_encoding('UTF-8'),
-        postal_code: self.postal_code.blank? ? self.postal_code : self.postal_code.force_encoding('UTF-8'),
+        company_name: (self.organization_name.force_encoding("ISO-8859-1").encode("UTF-8") unless
+            self.organization_name.nil?),
+        department: (self.organization_unit_name.force_encoding("ISO-8859-1").encode("UTF-8") unless
+            self.organization_unit_name.nil?),
+        po_box: (self.post_office_box.force_encoding("ISO-8859-1").encode("UTF-8") unless self.post_office_box.nil?),
+        address1: (self.street_address_1.force_encoding("ISO-8859-1").encode("UTF-8") unless
+            self.street_address_1.nil?),
+        address2: (self.street_address_2.force_encoding("ISO-8859-1").encode("UTF-8") unless
+            self.street_address_2.nil?),
+        address3: (self.street_address_3.force_encoding("ISO-8859-1").encode("UTF-8") unless
+            self.street_address_3.nil?),
+        city: (self.locality_name.force_encoding("ISO-8859-1").encode("UTF-8") unless self.locality_name.nil?),
+        state: (self.state_or_province_name.force_encoding("ISO-8859-1").encode("UTF-8") unless
+            self.state_or_province_name.nil?),
+        postal_code: (self.postal_code.force_encoding("ISO-8859-1").encode("UTF-8") unless self.postal_code.nil?),
         country: self.country_name || csr_obj.country)
     if cc.csr_submitted?
       cc.provide_info!
