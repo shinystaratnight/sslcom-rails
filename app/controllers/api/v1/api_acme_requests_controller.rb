@@ -5,14 +5,30 @@ class Api::V1::ApiAcmeRequestsController < Api::V1::APIController
   before_filter :set_test, :record_parameters
 
   wrap_parameters ApiAcmeRequest, include:[*(
-    ApiAcmeRequest::ACCESSORS
+    ApiAcmeRequest::ACCOUNT_ACCESSORS+
+    ApiAcmeRequest::CREDENTIAL_ACCESSORS
   ).uniq]
 
   def retrieve_hmac
     set_template "retrieve_hmac"
 
     if @result.valid? && @result.save
-      @result.hmac = @result.api_credential.hmac
+      @result.hmac_key = @result.api_credential.hmac_key
+    else
+      InvalidApiAcmeRequest.create parameters: params, response: @result.to_json
+    end
+
+    render_200_status
+  rescue => e
+    render_500_error e
+  end
+
+  def retrieve_credentials
+    set_template "retrieve_credentials"
+
+    if @result.valid? && @result.save
+      @result.account_key = @result.api_credential.account_key
+      @result.secret_key = @result.api_credential.secret_key
     else
       InvalidApiAcmeRequest.create parameters: params, response: @result.to_json
     end
@@ -27,8 +43,11 @@ class Api::V1::ApiAcmeRequestsController < Api::V1::APIController
   def record_parameters
     klass = case params[:action]
               when "retrieve_hmac"
-                ApiAcmeRetrieve
+                ApiAcmeRetrieveCredential
+              when "retrieve_credentials"
+                ApiAcmeRetrieveHmac
             end
+
     @result = klass.new(_wrap_parameters(params)['api_acme_request'] || params[:api_acme_request])
     @result.debug ||= params[:debug] if params[:debug]
     @result.action ||= params[:action]

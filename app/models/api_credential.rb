@@ -8,7 +8,10 @@ class ApiCredential < ActiveRecord::Base
     if new_record?
       self.account_key ||= SecureRandom.hex(6)
       self.secret_key  ||= SecureRandom.base64(10)
-      self.hmac ||= SecureRandom.base64(32)
+      self.hmac_key ||= SecureRandom.base64(32)
+    elsif self.hmac_key.blank?
+      self.hmac_key = SecureRandom.base64(32)
+      self.save
     end
   end
 
