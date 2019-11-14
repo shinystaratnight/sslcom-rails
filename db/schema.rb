@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20191111213016) do
+ActiveRecord::Schema.define(version: 20191114144308) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        limit: 255
@@ -63,7 +63,7 @@ ActiveRecord::Schema.define(version: 20191111213016) do
     t.datetime "created_at",                 null: false
     t.datetime "updated_at",                 null: false
     t.string   "roles",          limit: 255
-    t.string   "hmac",           limit: 255
+    t.string   "hmac_key",       limit: 255
   end
 
   add_index "api_credentials", ["account_key", "secret_key"], name: "index_api_credentials_on_account_key_and_secret_key", unique: true, using: :btree
