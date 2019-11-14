@@ -156,15 +156,15 @@ class CertificateOrder < ActiveRecord::Base
           MATCH (ssl_accounts.acct_number, ssl_accounts.company_name, ssl_accounts.ssl_slug) AGAINST ('#{term}') OR
           MATCH (certificate_orders.ref, certificate_orders.external_order_number, certificate_orders.notes) AGAINST ('#{term}') OR
           MATCH (users.login, users.email) AGAINST ('#{term}')).squish
-      result = result.joins{csrs}.joins{csrs.signed_certificates.outer}.joins{ssl_account.outer}.
+      result = result.joins{csrs.outer}.joins{csrs.outer.signed_certificates.outer}.joins{ssl_account.outer}.
           joins{ssl_account.users.outer}.where(sql)
     end
     result=result.joins{ssl_account.outer} unless (keys & [:account_number]).empty?
     result=result.joins{ssl_account.users.outer} unless (keys & [:login, :email]).empty?
-    cc_query=(cc_query || CertificateContent).joins{csrs} unless
+    cc_query=(cc_query || CertificateContent).joins{csrs.outer} unless
         (keys & [:country, :strength, :common_name, :organization, :organization_unit, :state,
                 :subject_alternative_names, :locality, :decoded]).empty?
-    cc_query=(cc_query || CertificateContent).joins{csr.signed_certificates.outer} unless
+    cc_query=(cc_query || CertificateContent).joins{csr.outer.signed_certificates.outer} unless
         (keys & [:country, :strength, :postal_code, :signature, :fingerprint, :expires_at, :created_at, :issued_at,
                  :common_name, :organization, :organization_unit, :state, :subject_alternative_names, :locality,
                  :decoded, :address]).empty?
