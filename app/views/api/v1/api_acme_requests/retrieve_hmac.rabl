@@ -5,6 +5,6 @@ unless @result.errors.blank?
   end
 else
   glue @result do
-    attributes :hmac
+    attributes :hmac_key
   end
 end

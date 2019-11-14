@@ -13,7 +13,7 @@ class Api::V1::ApiAcmeRequestsController < Api::V1::APIController
     set_template "retrieve_hmac"
 
     if @result.valid? && @result.save
-      @result.hmac = @result.api_credential.hmac
+      @result.hmac_key = @result.api_credential.hmac_key
     else
       InvalidApiAcmeRequest.create parameters: params, response: @result.to_json
     end
