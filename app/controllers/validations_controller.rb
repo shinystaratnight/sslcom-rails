@@ -100,7 +100,7 @@ class ValidationsController < ApplicationController
           if @all_validated and cc.signed_certificate.blank? and !cc.issued?
             cc.validate! if cc.pending_validation?
             api_log_entry=@certificate_order.apply_for_certificate(
-                mapping: @certificate_order.certificate_content.ca, current_user: current_user)
+                mapping: cc.ca, current_user: current_user)
             if api_log_entry and api_log_entry.instance_of?(SslcomCaRequest) and api_log_entry.response=~/Check CAA/
               flash[:error] =
                   "CAA validation failed. See https://#{Settings.portal_domain}/how-to/configure-caa-records-to-authorize-ssl-com/"
@@ -179,7 +179,7 @@ class ValidationsController < ApplicationController
       if all_validated
         cc.validate! unless cc.validated?
         @certificate_order.apply_for_certificate(mapping:
-           @certificate_order.certificate.cas.ssl_account_or_general_default(current_user.ssl_account).last) unless @certificate_order.certificate_content.ca.blank?
+           @certificate_order.certificate.cas.ssl_account_or_general_default(current_user.ssl_account).last) unless cc.ca_id.blank?
       end
     end
   end
