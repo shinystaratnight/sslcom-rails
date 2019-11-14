@@ -221,6 +221,7 @@ class CertificateContent < ActiveRecord::Base
       event :issue, :transitions_to => :issued
       event :cancel, :transitions_to => :canceled
       event :reset, :transitions_to => :new
+      event :revoke, :transitions_to => :revoked
     end
 
     state :pending_issuance do
@@ -302,7 +303,8 @@ class CertificateContent < ActiveRecord::Base
   end
 
   def all_domains_validated?
-    (certificate_names.pluck(:id) - certificate_names.validated.pluck(:id)).empty?
+    !certificate_names.empty? and
+        (certificate_names.pluck(:id) - certificate_names.validated.pluck(:id)).empty?
   end
 
   def signed_certificate

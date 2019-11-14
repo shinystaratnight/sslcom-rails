@@ -261,7 +261,7 @@ class SslAccount < ActiveRecord::Base
     satisfied=[].tap do |satisfied_names|
       # TODO find only unvalidated domains or validated domains with older/different timestamp
       all_certificate_names(domain.name,"unvalidated").includes(:domain_control_validations,
-                                                certificate_contents: :certificate_orders).each do |certificate_name|
+                                                certificate_content: :certificate_orders).each do |certificate_name|
         if certificate_name.name!=domain.name and
             DomainControlValidation.domain_in_subdomains?(domain.name,certificate_name.name) and
             # team validated domain
@@ -303,7 +303,7 @@ class SslAccount < ActiveRecord::Base
                       cn.cached_csr_public_key_sha1==certificate_name.cached_csr_public_key_sha1) : true)
                 cn_ids << certificate_name.id
                 dcvs << certificate_name.domain_control_validations.new(dcv.attributes.except("id"))
-                attempt_to_issue << certificate_name.certificate_content.certificate_order
+                attempt_to_issue << certificate_name.certificate_content.try(:certificate_order)
                 break
               end
             end
