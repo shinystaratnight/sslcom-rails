@@ -34,7 +34,7 @@
         %th
           = sort_link('status', get_col_direction('status', params), 'Status')
     %tbody
-      -@invoices.each do |i|
+      -@invoices.includes(:orders).each do |i|
         %tr
           %td #{i.start_date.strftime('%F')}
           %td #{i.end_date.strftime('%F')}
