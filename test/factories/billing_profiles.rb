@@ -25,7 +25,7 @@ FactoryBot.define do
 
   trait :declined do
     if BillingProfile.gateway_stripe?
-      card_number '4000000000000002'
+      card_number {'4000000000000002'}
     else
       postal_code {'46282'} # Authorize.net general decline
     end
