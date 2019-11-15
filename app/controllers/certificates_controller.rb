@@ -100,7 +100,7 @@ class CertificatesController < ApplicationController
 
   def pricing
     prep_purchase
-    @values=@certificate.pricing(@certificate_order, @certificate_content)
+    @values=@certificate_order.pricing
     respond_to do |format|
       unless @certificate.blank?
         format.html { render :action => "pricing"}

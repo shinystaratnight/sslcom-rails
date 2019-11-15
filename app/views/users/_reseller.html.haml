@@ -98,12 +98,15 @@
                     -if ac = ssl_account.api_credential
                       .certificate_details_box
                         %ul
+                          %li
+                            %strong
+                              developers and integration
+                          %li=link_to "generate api commands", "https://www.ssl.com/how-to/pregenerated-api-calls-to-automate-certificate-management/"
                           -if user.is_account_admin? || user.is_owner? || user.is_installer?
-                            %li
-                              %strong
-                                =link_to "api credentials", api_credentials_path(ssl_slug: @ssl_slug)
+                            %li=link_to "api credentials", api_credentials_path(ssl_slug: @ssl_slug)
                             %li=link_to "developer tools", is_sandbox? ? developers_certificate_orders_url : "https://sandbox.ssl.com"
                             %li=link_to 'view documentation', "http://docs.sslcomapi.apiary.io/", target: "_new"
+
                     .certificate_details_box
                       %ul
                         %li
