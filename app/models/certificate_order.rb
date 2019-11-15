@@ -580,10 +580,6 @@ class CertificateOrder < ActiveRecord::Base
     orders.count > 0 && orders.first.persisted?
   end
 
-  def pricing
-    certificate.pricing(self)
-  end
-
   # Prorated pricing for single domain for ucc certificate,
   # used in calculating reprocessing amount for additional domains.
   def ucc_prorated_domain(type, reseller_tier=nil)
