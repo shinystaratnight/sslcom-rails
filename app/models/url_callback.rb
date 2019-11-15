@@ -52,7 +52,7 @@ class UrlCallback < ActiveRecord::Base
         (url_callback.headers and url_callback.headers["content-type"]) ?
             url_callback.headers["content-type"] : 'application/json') : Net::HTTP::Get.new(uri)
       req.basic_auth url_callback.auth["basic"]["username"],
-                     url_callback.auth["basic"]["username"] if (url_callback.auth and url_callback.auth["basic"])
+                     url_callback.auth["basic"]["password"] if (url_callback.auth and url_callback.auth["basic"])
       http = Net::HTTP.new(uri.host, uri.port)
       if url_callback.url=~/^https/i
         http.use_ssl = true
