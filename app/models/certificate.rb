@@ -311,7 +311,7 @@ class Certificate < ActiveRecord::Base
   memoize :items_by_duration
 
   def pricing(certificate_order,certificate_content)
-    Rails.cache.fetch("#{cache_key}/#{certificate_order.try(:cache_key)}/#{certificate_content.domains}",
+    Rails.cache.fetch("#{cache_key}/#{certificate_order.try(:cache_key)}/#{certificate_content.try(:domains)}",
                       expires_in: 1.hour) do
       ratio = certificate_order.signed_certificate ? certificate_order.duration_remaining : 1
       durations=[]
@@ -335,7 +335,7 @@ class Certificate < ActiveRecord::Base
         num_durations.times do |i|
           licenses << (items_by_server_licenses[i].price*ratio).format
         end
-        result.merge!(licenses: licenses, domains: certificate_content.domains)
+        result.merge!(licenses: licenses, domains: certificate_content.try(:domains))
       end
       result.merge!(product: product)
     end
