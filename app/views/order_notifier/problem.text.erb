@@ -1,6 +1,6 @@
 The following problem has been detected and a SystemAudit record recorded:
 
-Owner: <%= @system_audit.owner%>
-Target: <%= @system_audit.target%>
+Owner: <%= @system_audit.owner.model_and_id%>
+Target: <%= @system_audit.target.model_and_id%>
 Notes: <%= @system_audit.notes%>
 Action: <%= @system_audit.action%>
