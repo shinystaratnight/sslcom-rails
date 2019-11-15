@@ -310,8 +310,8 @@ class CertificateContent < ActiveRecord::Base
   memoize "all_domains_validated?".to_sym
 
   def signed_certificate
-    SignedCertificate.unscoped.find_by_id(Rails.cache.fetch("#{cache_key}/signed_certificate")do
-      signed_certificates.last
+    SignedCertificate.unscoped.find_by_id(Rails.cache.fetch("#{cache_key}/signed_certificate") do
+      signed_certificates.last.try(:id)
     end)
   end
   memoize :signed_certificate
@@ -402,9 +402,9 @@ class CertificateContent < ActiveRecord::Base
   end
 
   def all_domains
-    parse_unique_domains(
-      (domains.blank? ? [] : domains) + [csr.try(:all_names)] + certificate_names.map(&:name)
-    )
+    Rails.cache.fetch("#{cache_key}/all_domains") do
+      parse_unique_domains((domains.blank? ? [] : domains) + [csr.try(:all_names)] + certificate_names.map(&:name))
+    end
   end
 
   def certificate_names_by_domains

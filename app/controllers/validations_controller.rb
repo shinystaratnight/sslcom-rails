@@ -36,7 +36,7 @@ class ValidationsController < ApplicationController
     if !@certificate_order.certificate.is_server?
       url = document_upload_certificate_order_validation_url(certificate_order_id: @certificate_order.ref)
     elsif cc.csr.blank?
-      url = edit_certificate_order_path(@ssl_slug, certificate_order)
+      url = edit_certificate_order_path(@ssl_slug, @certificate_order)
     else
       if cc.issued?
         checkout = {checkout: "true"}
