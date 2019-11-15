@@ -866,13 +866,15 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def description
-    if certificate.is_ucc?
-      year = sub_order_items.map(&:product_variant_item).detect(&:is_domain?)
-    else
-      year = sub_order_items.map(&:product_variant_item).detect(&:is_duration?)
+    Rails.cache.fetch("#{cache_key}/description") do
+      if certificate.is_ucc?
+        year = sub_order_items.map(&:product_variant_item).detect(&:is_domain?)
+      else
+        year = sub_order_items.map(&:product_variant_item).detect(&:is_duration?)
+      end
+      year.blank? ? "" : (year.value.to_i < 365 ? "#{year.value.to_i} Days" :
+                              "#{year.value.to_i/365} Year") + " #{certificate.title}"
     end
-    year.blank? ? "" : (year.value.to_i < 365 ? "#{year.value.to_i} Days" :
-        "#{year.value.to_i/365} Year") + " #{certificate.title}"
   end
 
   #find the desired Certificate, choose among it’s product_variant_groups, and finally choose among it’s product_variant_items
@@ -1177,17 +1179,20 @@ class CertificateOrder < ActiveRecord::Base
   # count of domains bought
   # type can be 'wildcard', 'all'
   def purchased_domains(type="nonwildcard")
-    soid = sub_order_items.find_all{|item|item.
-      product_variant_item.is_domain?}
-    case type
+    Rails.cache.fetch("#{cache_key}/purchased_domains/#{type.to_s if type}") do
+      soid = sub_order_items.find_all{|item|item.
+          product_variant_item.is_domain?}
+      case type
       when 'all'
         soid.sum(&:quantity)
       when 'wildcard'
         soid.find_all{|item|item.product_variant_item.serial=~ /wcdm/}.sum(&:quantity)
       when 'nonwildcard'
         soid.sum(:quantity)-soid.find_all{|item|item.product_variant_item.serial=~ /wcdm/}.sum(&:quantity)
+      end
     end
   end
+  memoize :purchased_domains
 
   def order
     orders.last
@@ -1714,13 +1719,15 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def description_with_tier(target_order=nil)
-    return description if certificate.reseller_tier.blank?
-    tier_label = if target_order && target_order.reseller_tier
-      target_order.reseller_tier.label
-    else
-      certificate.reseller_tier.label
+    Rails.cache.fetch("#{cache_key}/description_with_tier/#{target_order.to_s if target_order}") do
+      return description if certificate.reseller_tier.blank?
+      tier_label = if target_order && target_order.reseller_tier
+                     target_order.reseller_tier.label
+                   else
+                     certificate.reseller_tier.label
+                   end
+      description + " (Tier #{tier_label} Reseller)"
     end
-    description + " (Tier #{tier_label} Reseller)"
   end
 
   def validation_stage_checkout_in_progress?
@@ -2052,54 +2059,6 @@ class CertificateOrder < ActiveRecord::Base
     end
   end
 
-  def to_api_retrieve(result, options)
-    result.order_date = self.created_at
-    result.order_status = self.status
-    result.registrant = self.certificate_content.registrant.to_api_query if (self.certificate_content && self.certificate_content.registrant)
-    result.contacts = self.certificate_content.certificate_contacts if (self.certificate_content && self.certificate_content.certificate_contacts)
-    result.validations = result.validations_from_comodo(self) if external_order_number #'validations' kept executing twice so it was renamed to 'validations_from_comodo'
-    result.description = self.description
-    result.product = self.certificate.api_product_code
-    result.product_name = self.certificate.product
-    result.subscriber_agreement = self.certificate.subscriber_agreement_content if result.show_subscriber_agreement =~ /[Yy]/
-    result.external_order_number = self.ext_customer_ref
-    result.server_software = self.server_software.id if self.server_software
-
-    if self.certificate.is_ucc?
-      result.domains_qty_purchased = self.purchased_domains('all').to_s
-      result.wildcard_qty_purchased = self.purchased_domains('wildcard').to_s
-    else
-      result.domains_qty_purchased = "1"
-      result.wildcard_qty_purchased = self.certificate.is_wildcard? ? "1" : "0"
-    end
-
-    if (self.signed_certificate && result.query_type != "order_status_only")
-      result.certificates =
-          case options[:format]
-          when "end_entity"
-            self.signed_certificate.x509_certificates.first.to_s
-          when "nginx"
-            self.signed_certificate.to_nginx(false,order: options[:order])
-          else
-            self.signed_certificate.to_format(response_type: result.response_type, #assume comodo issued cert
-                                              response_encoding: result.response_encoding) || self.signed_certificate.to_nginx
-          end
-      result.common_name = self.signed_certificate.common_name
-      result.subject_alternative_names = self.signed_certificate.subject_alternative_names
-      result.effective_date = self.signed_certificate.effective_date
-      result.expiration_date = self.signed_certificate.expiration_date
-      result.algorithm = self.signed_certificate.is_SHA2? ? "SHA256" : "SHA1"
-      # result.site_seal_code = ERB::Util.json_escape(ApplicationController.new.render_to_string(
-      #                                                   partial: 'site_seals/site_seal_code.html.haml',
-      #                                                   locals: {co: self},
-      #                                                   layout: false
-      #                                               ))
-    elsif (self.csr)
-      result.certificates = ""
-      result.common_name = self.csr.common_name
-    end
-  end
-  
   def renew_billing?
     co = self.parent
     return false if co.nil?

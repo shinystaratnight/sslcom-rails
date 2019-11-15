@@ -310,6 +310,13 @@ class OrderNotifier < ActionMailer::Base
          to: Settings.support_email
   end
 
+  def problem(system_audit)
+    @system_audit = system_audit
+    mail subject: "A problem has been detected",
+         from: Settings.from_email.no_reply,
+         to: Settings.support_email
+  end
+
   def request_phone_number_approve(co, to_email)
     @co_edit_page_path = edit_certificate_order_url(id: co.ref, registrant: false, approve_phone: true)
     @cert_order_ref = co.ref

@@ -1,4 +1,5 @@
 class CertificateContent < ActiveRecord::Base
+  extend Memoist
   include V2MigrationProgressAddon
   include Workflow
   
@@ -306,10 +307,14 @@ class CertificateContent < ActiveRecord::Base
     !certificate_names.empty? and
         (certificate_names.pluck(:id) - certificate_names.validated.pluck(:id)).empty?
   end
+  memoize "all_domains_validated?".to_sym
 
   def signed_certificate
-    signed_certificates.last
+    SignedCertificate.unscoped.find_by_id(Rails.cache.fetch("#{cache_key}/signed_certificate")do
+      signed_certificates.last
+    end)
   end
+  memoize :signed_certificate
 
   def sslcom_ca_request
     SslcomCaRequest.where(username: self.label).first
@@ -406,7 +411,64 @@ class CertificateContent < ActiveRecord::Base
     certificate_names.find_by_domains(all_domains).compact
   end
 
-  def callback(packaged_cert,options={})
+  def to_api_retrieve(result, options)
+    result.order_date = self.certificate_order.created_at
+    result.order_status = self.certificate_order.status
+    result.registrant = registrant.to_api_query if registrant
+    result.contacts = certificate_contacts if certificate_contacts
+    #'validations' kept executing twice so it was renamed to 'validations_from_comodo'
+    result.validations = result.validations_from_comodo(self) if self.certificate_order.external_order_number
+    result.description = self.certificate_order.description
+    result.product = self.certificate_order.certificate.api_product_code
+    result.product_name = self.certificate_order.certificate.product
+    result.subscriber_agreement =
+        self.certificate_order.certificate.subscriber_agreement_content if result.show_subscriber_agreement =~ /[Yy]/
+    result.external_order_number = self.certificate_order.ext_customer_ref
+    result.server_software = self.certificate_order.server_software.id if self.certificate_order.server_software
+
+    if self.certificate_order.certificate.is_ucc?
+      result.domains_qty_purchased = self.certificate_order.purchased_domains('all').to_s
+      result.wildcard_qty_purchased = self.certificate_order.purchased_domains('wildcard').to_s
+    else
+      result.domains_qty_purchased = "1"
+      result.wildcard_qty_purchased = self.certificate_order.certificate.is_wildcard? ? "1" : "0"
+    end
+
+    if (signed_certificate && result.query_type != "order_status_only")
+      result.certificates =
+          case options[:format]
+          when "end_entity"
+            signed_certificate.x509_certificates.first.to_s
+          when "nginx"
+            signed_certificate.to_nginx(false,order: options[:order])
+          else
+            signed_certificate.to_format(response_type: result.response_type, #assume comodo issued cert
+                                              response_encoding: result.response_encoding) || signed_certificate.to_nginx
+          end
+      result.common_name = signed_certificate.common_name
+      result.subject_alternative_names = signed_certificate.subject_alternative_names
+      result.effective_date = signed_certificate.effective_date
+      result.expiration_date = signed_certificate.expiration_date
+      result.algorithm = signed_certificate.is_SHA2? ? "SHA256" : "SHA1"
+      # result.site_seal_code = ERB::Util.json_escape(ApplicationController.new.render_to_string(
+      #                                                   partial: 'site_seals/site_seal_code.html.haml',
+      #                                                   locals: {co: self},
+      #                                                   layout: false
+      #                                               ))
+    elsif (self.csr)
+      result.certificates = ""
+      result.common_name = self.csr.common_name
+    end
+  end
+
+  def callback(packaged_cert=nil,options={})
+    if packaged_cert.blank?
+      cert = ApiCertificateRetrieve.new(query_type: "all_certificates")
+      to_api_retrieve cert, format: "nginx"
+      packaged_cert =
+          Rabl::Renderer.json(cert,File.join("api","v1","api_certificate_requests", "show_v1_4"),
+                              view_path: 'app/views', locals: {result:cert})
+    end
     uc = unless options.blank?
       UrlCallback.new(options)
     else

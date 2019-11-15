@@ -52,7 +52,7 @@ class UrlCallback < ActiveRecord::Base
         (url_callback.headers and url_callback.headers["content-type"]) ?
             url_callback.headers["content-type"] : 'application/json') : Net::HTTP::Get.new(uri)
       req.basic_auth url_callback.auth["basic"]["username"],
-                     url_callback.auth["basic"]["username"] if (url_callback.auth and url_callback.auth["basic"])
+                     url_callback.auth["basic"]["password"] if (url_callback.auth and url_callback.auth["basic"])
       http = Net::HTTP.new(uri.host, uri.port)
       if url_callback.url=~/^https/i
         http.use_ssl = true
@@ -71,6 +71,10 @@ class UrlCallback < ActiveRecord::Base
       end
       return req, res
     rescue Exception=>e
+      audit=SystemAudit.create(owner: url_callback, target: url_callback.callbackable,
+                         notes: "failed callback: #{e.message}",
+                         action: "UrlCallback#perform_callback")
+      OrderNotifier.problem(audit).deliver
       return false
     end
   end
