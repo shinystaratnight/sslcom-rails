@@ -461,12 +461,14 @@ class CertificateContent < ActiveRecord::Base
     end
   end
 
-  def callback(options={})
-    cert = ApiCertificateRetrieve.new(query_type: "all_certificates")
-    to_api_retrieve cert, format: "nginx"
-    packaged_cert =
-        Rabl::Renderer.json(cert,File.join("api","v1","api_certificate_requests", "show_v1_4"),
-          view_path: 'app/views', locals: {result:cert})
+  def callback(packaged_cert=nil,options={})
+    if packaged_cert.blank?
+      cert = ApiCertificateRetrieve.new(query_type: "all_certificates")
+      to_api_retrieve cert, format: "nginx"
+      packaged_cert =
+          Rabl::Renderer.json(cert,File.join("api","v1","api_certificate_requests", "show_v1_4"),
+                              view_path: 'app/views', locals: {result:cert})
+    end
     uc = unless options.blank?
       UrlCallback.new(options)
     else

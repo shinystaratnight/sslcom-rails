@@ -71,6 +71,10 @@ class UrlCallback < ActiveRecord::Base
       end
       return req, res
     rescue Exception=>e
+      audit=SystemAudit.create(owner: self, target: certificate_content,
+                         notes: "failed callback: #{e.message}",
+                         action: "UrlCallback#perform_callback")
+      OrderNotifier.problem(audit).deliver
       return false
     end
   end

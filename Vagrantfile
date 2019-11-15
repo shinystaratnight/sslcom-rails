@@ -13,11 +13,11 @@ Vagrant.configure("2") do |config|
   config.vm.network "forwarded_port", guest: 9515,  host: 9515,  auto_correct: true
   config.vm.network "forwarded_port", guest: 10000, host: 10000, auto_correct: true
 
-  # Always upgrade to latest packages
-  config.vm.provision "shell", run: "always", inline: <<-SHELL
-    apt-get update
-    apt-get -y upgrade
-  SHELL
+  # # Always upgrade to latest packages
+  # config.vm.provision "shell", run: "always", inline: <<-SHELL
+  #   apt-get update
+  #   apt-get -y upgrade
+  # SHELL
 
   # # Install Ruby2.6 from Brightbox APT repository
   # config.vm.provision "shell", inline: <<-SHELL

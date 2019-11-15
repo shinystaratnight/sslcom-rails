@@ -90,7 +90,7 @@ class SignedCertificate < ActiveRecord::Base
       last_sent=s.csr.domain_control_validations.last_sent
       last_sent.satisfy! if(last_sent && !last_sent.satisfied?)
       unless cc.url_callbacks.blank?
-        cc.callback(co_json)
+        cc.callback
       end
     end
   end

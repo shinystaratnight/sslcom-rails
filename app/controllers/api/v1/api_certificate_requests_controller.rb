@@ -422,7 +422,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
     if @result.save
       @acr = @result.find_certificate_order
       if @acr.is_a?(CertificateOrder) && @acr.errors.empty?
-        req,res = @acr.certificate_content.callback(co_json,@result.callback)
+        req,res = @acr.certificate_content.callback(@result.callback)
         @result.callback_hook=res.body
         @result.response=res
       else
