@@ -474,7 +474,7 @@ SslCom::Application.routes.draw do
 
       member do
         get :resource_cdn
-        post :update_resource
+        patch :update_resource
         post :add_custom_domain
         post :update_custom_domain
         post :update_advanced_setting

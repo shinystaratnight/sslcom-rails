@@ -115,7 +115,7 @@
         #resource-general
           .sub-title General Settings
           .sub-cont
-            =form_tag :update_resource_cdn, :method=>:post do
+            =form_tag :update_resource_cdn, :method=>:patch do
               =hidden_field_tag :api_key, @current_user_api_key
               %div.reg-resource.clearfix
                 .field-label Resource Origin:

@@ -31,7 +31,7 @@ describe CdnsController do
 
     it "successfully updates a cdn resource" do
       VCR.use_cassette("cdnify_valid_update_request") do
-        post :update_resource, params: params
+        patch :update_resource, params
 
         assert_equal 'Successfully Updated General Settings.', flash[:notice]
       end
@@ -39,7 +39,7 @@ describe CdnsController do
 
     it "does not successfully updates a cdn resource" do
       VCR.use_cassette("cdnify_invalid_update_request") do
-        post :update_resource, params: invalid_params
+        patch :update_resource, invalid_params
 
         assert flash[:error]
       end

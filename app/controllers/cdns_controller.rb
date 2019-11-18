@@ -522,7 +522,7 @@ class CdnsController < ApplicationController
     end
 
     def cdn_update_params
-      params[:params].permit(:api_key, :resource_origin, :resource_name, :id)
+      params.permit(:api_key, :resource_origin, :resource_name, :id)
     end
 
     def current_user_api_key(key = nil)
