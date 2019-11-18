@@ -84,7 +84,9 @@ namespace 'scan' do
       end
     end
 
-    NotificationGroup.where(id: groups).find_in_batches(batch_size: 250) do |batch_list|
+    NotificationGroup.where(id: groups)
+        .includes(:notification_groups_subjects, :notification_groups_contacts, :schedules)
+        .find_in_batches(batch_size: 250) do |batch_list|
       batch_list.each do |group|
         group.scan_notification_group
       end

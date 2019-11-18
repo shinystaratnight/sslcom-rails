@@ -4,7 +4,6 @@ class NotificationGroup < ActiveRecord::Base
   has_many  :notification_groups_contacts, dependent: :destroy
   has_many  :contacts, through: :notification_groups_contacts,
             source: :contactable, source_type: 'Contact'
-
   has_many  :notification_groups_subjects, dependent: :destroy
   has_many  :certificate_orders, through: :notification_groups_subjects,
             source: :subjectable, source_type: 'CertificateOrder'
@@ -36,7 +35,7 @@ class NotificationGroup < ActiveRecord::Base
   end
 
   def self.auto_manage_email_address(cc, cud, contacts=[])
-    notification_groups = cc.certificate_order.notification_groups
+    notification_groups = cc.certificate_order.notification_groups.includes(:notification_groups_contacts)
 
     if notification_groups
       notification_groups.each do |group|
@@ -57,10 +56,11 @@ class NotificationGroup < ActiveRecord::Base
   end
 
   def self.auto_manage_cert_name(cc, cud, domain=nil)
-    notification_groups = cc.certificate_order.notification_groups
+    notification_groups = cc.certificate_order.notification_groups.includes(:notification_groups_subjects)
 
     if notification_groups
-      notification_groups.includes(:notification_groups_subjects).each do |group|
+      # notification_groups.includes(:notification_groups_subjects).each do |group|
+      notification_groups.each do |group|
         ngs = group.notification_groups_subjects
 
         if domain
@@ -394,7 +394,7 @@ class NotificationGroup < ActiveRecord::Base
     hour = current.strftime("%H").to_i.to_s
     minute = current.strftime("%M").to_i.to_s
 
-    NotificationGroup.includes(:schedules).find_each do |group|
+    NotificationGroup.includes(:notification_groups_subjects, :notification_groups_contacts, :schedules).find_each do |group|
       schedules = {}
       group.schedules.each do |arr|
         if schedules[arr.schedule_type].blank?

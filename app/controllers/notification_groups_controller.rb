@@ -8,7 +8,7 @@ class NotificationGroupsController < ApplicationController
     @filter_slt_type = params[:filter_type]
 
     if params[:filter_type] == 'true'
-      @notification_groups = @ssl_account.notification_groups.paginate(@p)
+      @notification_groups = @ssl_account.cached_notification_groups.paginate(@p)
     else
       @filter_slt_schedule_type = params[:filter_schedule_type]
 
@@ -17,7 +17,7 @@ class NotificationGroupsController < ApplicationController
         notification_group_ids = Schedule.where(schedule_type: 'Simple',
                                                 schedule_value: params[:filter_schedule_simple])
                                      .pluck(:notification_group_id).uniq
-        @notification_groups = @ssl_account.notification_groups.where(id: notification_group_ids).paginate(@p)
+        @notification_groups = @ssl_account.cached_notification_groups.where(id: notification_group_ids).paginate(@p)
       else
         notification_group_ids = []
 
@@ -86,7 +86,7 @@ class NotificationGroupsController < ApplicationController
               pluck(:notification_group_id).uniq
         end
 
-        @notification_groups = @ssl_account.notification_groups.where(id: notification_group_ids.uniq).paginate(@p)
+        @notification_groups = @ssl_account.cached_notification_groups.where(id: notification_group_ids.uniq).paginate(@p)
       end
     end
 
@@ -97,14 +97,14 @@ class NotificationGroupsController < ApplicationController
   end
 
   def index
-    @notification_groups = @ssl_account.notification_groups.paginate(@p)
+    @notification_groups = @ssl_account.cached_notification_groups.paginate(@p)
   end
 
   def remove_groups
     group_ids = params[:note_group_check]
 
     unless group_ids.blank?
-      @ssl_account.notification_groups.where(id: group_ids).destroy_all
+      @ssl_account.cached_notification_groups.where(id: group_ids).destroy_all
       Preference.where(owner_type: 'NotificationGroup', owner_id: group_ids).destroy_all
       Schedule.where(notification_group_id: group_ids).destroy_all
     end
@@ -118,19 +118,20 @@ class NotificationGroupsController < ApplicationController
     group_ids = params[:note_group_check]
 
     # if group_ids.blank?
-    #   groups = @ssl_account.notification_groups
+    #   groups = @ssl_account.cached_notification_groups
     # else
-    #   groups = @ssl_account.notification_groups.where(id: group_ids, status: true)
+    #   groups = @ssl_account.cached_notification_groups.where(id: group_ids, status: true)
     # end
 
-    groups = @ssl_account.notification_groups.where(id: group_ids, status: false)
+    groups = @ssl_account.cached_notification_groups.where(id: group_ids, status: false)
 
     # groups.includes(
     #     [:stored_preferences, {:certificate_orders =>
     #                                [:orders, :certificate_contents =>
     #                                    {:csr => :signed_certificates}]}]).find_in_batches(batch_size: 250) do |batch_list|
     if groups.size > 0
-      groups.find_in_batches(batch_size: 250) do |batch_list|
+      groups.includes(:notification_groups_subjects, :notification_groups_contacts)
+          .find_in_batches(batch_size: 250) do |batch_list|
         batch_list.each do |group|
           # NotificationGroup.scan_notification_group(group)
           group.scan_notification_group
@@ -149,14 +150,17 @@ class NotificationGroupsController < ApplicationController
     group_ids = params[:note_group_check]
     note_group_status = params[:note_groups_status]
 
-    @ssl_account.notification_groups.where(id: group_ids).update_all(status: note_group_status == 'true')
+    @ssl_account.cached_notification_groups.where(id: group_ids).update_all(status: note_group_status == 'true')
 
     flash[:notice] = "It has been updated status to " + note_group_status == 'true' ? 'Enable' : 'Disable' + " successfully."
     redirect_to notification_groups_path(ssl_slug: @ssl_slug)
   end
 
   def scan_individual_group
-    notification_group = @ssl_account.notification_groups.includes(:notification_groups_subjects).find(params[:notification_group_id])
+    # notification_group = @ssl_account.cached_notification_groups.includes(:notification_groups_subjects).find(params[:notification_group_id])
+    notification_group = @ssl_account.cached_notification_groups
+                             .includes(:notification_groups_subjects, :notification_groups_contacts)
+                             .find(params[:notification_group_id])
     notification_group.scan_notification_group
 
     flash[:notice] = "Scan has been done successfully."
@@ -164,10 +168,10 @@ class NotificationGroupsController < ApplicationController
   end
 
   def new
-    certificate_names = @ssl_account.certificate_names.pluck(:name, :id)
+    certificate_names = @ssl_account.cached_certificate_names.pluck(:name, :id)
     @subjects_list = remove_duplicate(certificate_names)
                          .map{ |arr| [arr[0], arr[0] + '---' + arr[1].to_s] }
-    @contacts_list = remove_duplicate(@ssl_account.cached_certificate_orders.flatten.compact
+    @contacts_list = remove_duplicate(@ssl_account.cached_certificate_orders.includes({certificate_contents: :certificate_contacts}).flatten.compact
                                           .map(&:certificate_contents).flatten.compact
                                           .map(&:certificate_contacts).flatten.compact.map{ |cct| [cct.email, cct.id] })
                          .map{ |arr| [arr[0], arr[0] + '---' + arr[1].to_s] }
@@ -178,21 +182,24 @@ class NotificationGroupsController < ApplicationController
   end
 
   def edit
-    @notification_group = @ssl_account.notification_groups.where(id: params[:id]).first
+    @notification_group = @ssl_account.cached_notification_groups
+                              .includes(:notification_groups_subjects, :notification_groups_contacts, :schedules)
+                              .where(id: params[:id]).first
+
     slt_cert_orders = @notification_group.certificate_orders.flatten.compact
     @cos_list = @ssl_account.cached_certificate_orders.pluck(:ref, :id).uniq
     @slt_cos_list = slt_cert_orders.map(&:id)
 
     @slt_subjects_list = generate_slt_subjects
     domain_names = @notification_group.notification_groups_subjects.where(subjectable_id: nil)
-    @subjects_list = remove_duplicate(@ssl_account.certificate_names.pluck(:name, :id))
+    @subjects_list = remove_duplicate(@ssl_account.cached_certificate_names.pluck(:name, :id))
                          .map{ |arr| [arr[0], @slt_subjects_list.include?(arr[1].to_s) ? arr[1] : (arr[0] + '---' + arr[1].to_s)] }
                          .concat(domain_names.pluck(:domain_name, :domain_name))
 
     @slt_contacts_list = generate_slt_contacts
     email_addresses = @notification_group.notification_groups_contacts.where(contactable_id: nil)
     @contacts_list = remove_duplicate(
-        @ssl_account.cached_certificate_orders.flatten.compact
+        @ssl_account.cached_certificate_orders.includes({certificate_contents: :certificate_contacts}).flatten.compact
             .map(&:certificate_contents).flatten.compact
             .map(&:certificate_contacts).flatten.compact
             .map{ |cct| [cct.email, cct.id] }
@@ -222,7 +229,7 @@ class NotificationGroupsController < ApplicationController
     if params[:friendly_name].blank?
       returnObj['is_duplicated'] = 'false'
     else
-      notification_group = @ssl_account.notification_groups.find_by_friendly_name(params[:friendly_name])
+      notification_group = @ssl_account.cached_notification_groups.find_by_friendly_name(params[:friendly_name])
       returnObj['is_duplicated'] = notification_group ?
                                        (params[:ng_id] == '' ?
                                             'true' :
@@ -237,7 +244,10 @@ class NotificationGroupsController < ApplicationController
   def register_notification_group
     if params[:format]
       # Saving notification group info
-      notification_group = @ssl_account.notification_groups.includes(:notification_groups_subjects).where(ref: params[:format]).first
+      # notification_group = @ssl_account.cached_notification_groups.includes(:notification_groups_subjects).where(ref: params[:format]).first
+      notification_group = @ssl_account.cached_notification_groups
+                               .includes(:notification_groups_subjects, :notification_groups_contacts, :schedules)
+                               .where(ref: params[:format]).first
       notification_group.friendly_name = params[:friendly_name] unless params[:friendly_name].blank?
       notification_group.scan_port = params[:scan_port]
       notification_group.notify_all = params[:notify_all] ? params[:notify_all] : false
@@ -262,13 +272,14 @@ class NotificationGroupsController < ApplicationController
 
     unless notification_group.save
       flash[:error] = "Some error occurs while saving notification group data. Please try again."
+
       redirect_to new_notification_group_path(ssl_slug: @ssl_slug) and return unless params[:format]
       redirect_to edit_notification_group_path(@ssl_slug, notification_group.id) and return
     end
 
     # Saving certificate order tags
     if params[:cos_list]
-      current_tags = notification_group.certificate_orders.pluck(:id)
+      current_tags = notification_group.certificate_orders.pluck(:id).map(&:to_s)
       remove_tags = current_tags - params[:cos_list]
       add_tags = params[:cos_list] - current_tags
 
@@ -536,7 +547,9 @@ class NotificationGroupsController < ApplicationController
     contact_ids = []
 
     if params['cos'] && params['cos'].size > 0
-      certificate_contents = @ssl_account.cached_certificate_orders.where(id: params['cos']).flatten.compact
+      certificate_contents = @ssl_account.cached_certificate_orders
+                                 .includes({certificate_contents: [:certificate_names, :certificate_contacts]})
+                                 .where(id: params['cos']).flatten.compact
                                  .map(&:certificate_contents).flatten.compact
 
       removed_dup_cns = remove_duplicate(certificate_contents.map(&:certificate_names)
@@ -612,7 +625,7 @@ class NotificationGroupsController < ApplicationController
       result.concat(selected_subjects)
 
       from_cert_orders = remove_duplicate(
-          @ssl_account.certificate_names
+          @ssl_account.cached_certificate_names
               .where(id: subjects.where(domain_name: nil, subjectable_type: 'CertificateName')
                              .pluck(:subjectable_id))
               .pluck(:name, :id)
@@ -639,8 +652,16 @@ class NotificationGroupsController < ApplicationController
 
       slt_contact_ids = contacts.where(email_address: nil, contactable_type: 'CertificateContact')
                             .pluck(:contactable_id)
+      # from_cert_orders = remove_duplicate(
+      #     @ssl_account.cached_certificate_orders.flatten.compact
+      #         .map(&:certificate_contents).flatten.compact
+      #         .map(&:certificate_contacts).flatten.compact
+      #         .select{ |contact| slt_contact_ids.include?(contact.id) }
+      #         .map{ |contact| [contact.email, contact.id.to_s] }
+      # ).map{ |arr| arr[1] }
+
       from_cert_orders = remove_duplicate(
-          @ssl_account.cached_certificate_orders.flatten.compact
+          @ssl_account.cached_certificate_orders.includes({certificate_contents: :certificate_contacts}).flatten.compact
               .map(&:certificate_contents).flatten.compact
               .map(&:certificate_contacts).flatten.compact
               .select{ |contact| slt_contact_ids.include?(contact.id) }

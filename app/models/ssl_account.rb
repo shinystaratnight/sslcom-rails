@@ -713,6 +713,14 @@ class SslAccount < ActiveRecord::Base
   # end
   # memoize :get_account_admins
   #
+
+  def cached_notification_groups
+    NotificationGroup.where(id: (Rails.cache.fetch("#{cache_key}/cached_notification_groups") do
+      notification_groups.pluck(:id).uniq
+    end)).order(created_at: :desc)
+  end
+  memoize :cached_notification_groups
+
   def cached_users
     User.where(id: (Rails.cache.fetch("#{cache_key}/cached_users") do
       users.pluck(:id).uniq
