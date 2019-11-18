@@ -70,12 +70,7 @@ class SignedCertificate < ActiveRecord::Base
   end
 
   after_create do |s|
-    # begin
       s.csr.certificate_content.issue! if !s.csr.blank? && !%w(ShadowSignedCertificate ManagedCertificate).include?(self.type)
-    # rescue
-    #   p s.id
-    #   p s.csr.id
-    # end
   end
 
   after_save do |s|
