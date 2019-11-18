@@ -161,10 +161,10 @@ class CertificateOrder < ActiveRecord::Base
     end
     result=result.joins{ssl_account.outer} unless (keys & [:account_number]).empty?
     result=result.joins{ssl_account.users.outer} unless (keys & [:login, :email]).empty?
-    cc_query=(cc_query || CertificateContent).joins{csrs.outer} unless
+    cc_query=(cc_query || CertificateContent).joins{csrs} unless
         (keys & [:country, :strength, :common_name, :organization, :organization_unit, :state,
                 :subject_alternative_names, :locality, :decoded]).empty?
-    cc_query=(cc_query || CertificateContent).joins{csr.outer.signed_certificates.outer} unless
+    cc_query=(cc_query || CertificateContent).joins{csr.signed_certificates.outer} unless
         (keys & [:country, :strength, :postal_code, :signature, :fingerprint, :expires_at, :created_at, :issued_at,
                  :common_name, :organization, :organization_unit, :state, :subject_alternative_names, :locality,
                  :decoded, :address]).empty?

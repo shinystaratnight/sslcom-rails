@@ -715,7 +715,8 @@ class SslAccount < ActiveRecord::Base
   #
 
   def cached_notification_groups
-    NotificationGroup.where(id: (Rails.cache.fetch("#{cache_key}/cached_notification_groups") do
+    NotificationGroup.where(id: (Rails.cache.fetch("#{cache_key}/cached_notification_groups",
+                                                   expires_in: 1.hour) do
       notification_groups.pluck(:id).uniq
     end)).order(created_at: :desc)
   end
