@@ -155,6 +155,8 @@ GEM
       deep_merge (~> 1.2, >= 1.2.1)
       dry-schema (~> 1.0)
     connection_pool (2.2.2)
+    crack (0.4.3)
+      safe_yaml (~> 1.0.0)
     crass (1.0.4)
     daemons (1.3.1)
     dalli (2.7.10)
@@ -244,6 +246,7 @@ GEM
     haml (5.1.2)
       temple (>= 0.8.0)
       tilt
+    hashdiff (1.0.0)
     highline (2.0.2)
     httparty (0.17.0)
       mime-types (~> 3.0)
@@ -418,6 +421,7 @@ GEM
     rubyzip (1.3.0)
     rvm-capistrano (1.5.6)
       capistrano (~> 2.15.4)
+    safe_yaml (1.0.5)
     sass (3.4.25)
     sass-rails (5.0.7)
       railties (>= 4.0.0, < 6)
@@ -492,6 +496,7 @@ GEM
     unscoped_associations (0.7.1)
       activerecord (>= 3.2.0, < 5.1.0)
     uuidtools (2.1.5)
+    vcr (5.0.0)
     wasabi (3.5.0)
       httpi (~> 2.0)
       nokogiri (>= 1.4.2)
@@ -500,6 +505,10 @@ GEM
       binding_of_caller (>= 0.7.2)
       railties (>= 4.0)
       sprockets-rails (>= 2.0, < 4.0)
+    webmock (3.7.6)
+      addressable (>= 2.3.6)
+      crack (>= 0.3.2)
+      hashdiff (>= 0.4.0, < 2.0.0)
     whenever (1.0.0)
       chronic (>= 0.6.3)
     where-or (0.1.6)
@@ -628,7 +637,9 @@ DEPENDENCIES
   uglifier (= 4.1.8)
   unscoped_associations
   uuidtools
+  vcr
   web-console (~> 2.0)
+  webmock
   whenever
   where-or
   whois (~> 4.0)
