@@ -23,6 +23,8 @@ class CertificateContent < ActiveRecord::Base
   has_many    :taggings, :dependent => :destroy, as: :taggable
   has_many    :tags, through: :taggings
   belongs_to  :ca
+  has_many    :sslcom_ca_requests, as: :api_requestable
+  has_many    :yubi_key_certificates
 
   accepts_nested_attributes_for :certificate_contacts, :allow_destroy => true
   accepts_nested_attributes_for :registrant, :allow_destroy => false
@@ -315,6 +317,10 @@ class CertificateContent < ActiveRecord::Base
     end)
   end
   memoize :signed_certificate
+
+  def yubi_key_certificate
+    yubi_key_certificates.last
+  end
 
   def sslcom_ca_request
     SslcomCaRequest.where(username: self.label).first
@@ -956,6 +962,10 @@ class CertificateContent < ActiveRecord::Base
     unless cc.nil?
       certificate_contacts.update_all(contactable_id: cc.id)
     end
+  end
+
+  def sslcom_approval_ids
+    sslcom_ca_requests.unexpired.map(&:approval_id)
   end
 
   private

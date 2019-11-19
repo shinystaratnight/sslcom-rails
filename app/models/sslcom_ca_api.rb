@@ -184,6 +184,63 @@ class SslcomCaApi
     end
   end
 
+  def self.apply_for_attestation(certificate_order, parsed, user_name = nil)
+    options = {}
+
+    set_mapping(certificate_order, options)
+    options.merge! cc: cc = options[:certificate_content] || certificate_order.certificate_content
+
+    approval_req, approval_res = get_attestation_status(options)
+    return cc.sslcom_ca_requests.create(
+        parameters: approval_req.body,
+        method: "get",
+        response: approval_res.body,
+        ca: options[:ca]
+    ) if approval_res.try(:body)=~/WAITING FOR APPROVAL/
+
+    if user_name.blank?
+      host = ca_host(options[:mapping]) + "/v1/user"
+      options.merge! no_public_key: true,
+                     public_key: parsed.public_key
+    else
+      host = ca_host(options[:mapping]) + "/v1/certificate/ev/pkcs10"
+      options.merge! collect_certificate: true,
+                     public_key: parsed.public_key,
+                     username: user_name
+    end
+
+    req, res = call_ca(host, options, issue_cert_json(options))
+    api_log_entry = cc.sslcom_ca_requests.create(
+        request_url: host,
+        parameters: req.body,
+        method: "post",
+        response: res.try(:body),
+        ca: ca_name(options)
+    )
+
+    if api_log_entry.username.blank? and api_log_entry.request_username.blank?
+      OrderNotifier.problem_ca_sending("support@ssl.com", cc.certificate_order, "sslcom").deliver
+    elsif api_log_entry.certificate_chain # signed certificate is issued
+      cc.update_column(:label, api_log_entry.request_username) unless api_log_entry.blank?
+
+      attrs = {
+          body: api_log_entry.end_entity_certificate.to_s,
+          ca_id: options[:mapping].id
+      }
+
+      cc.yubi_key_certificates.create(attrs)
+
+      SystemAudit.create(
+          owner:  options[:current_user],
+          target: api_log_entry,
+          notes:  "issued signed certificate for certificate order #{certificate_order.ref}",
+          action: "SslcomCaApi#apply_for_certificate"
+      )
+    end
+
+    api_log_entry
+  end
+
   def self.apply_for_certificate(certificate_order, options={})
     set_mapping(certificate_order, options)
     options.merge! cc: cc = options[:certificate_content] || certificate_order.certificate_content
@@ -276,6 +333,19 @@ class SslcomCaApi
       end
       api_log_entry
     end
+  end
+
+  def self.get_attestation_status(options)
+    unless options[:cc].blank?
+      return if options[:cc].sslcom_approval_ids.compact.first.blank?
+      query = "status/#{options[:cc].sslcom_approval_ids.compact.first}"
+    else
+      query = "approvals"
+    end
+
+    host = ca_host(options[:cc] ? options[:cc].ca : options[:mapping]) + "/v1/#{query}"
+    options = {method: "get"}
+    call_ca(host, options, "")
   end
 
   def self.get_status(options={csr: nil,host_only: false})

@@ -70,11 +70,11 @@ class SignedCertificate < ActiveRecord::Base
   end
 
   after_create do |s|
-    s.csr.certificate_content.issue! unless %w(ShadowSignedCertificate ManagedCertificate).include?(self.type)
+    s.csr.certificate_content.issue! if !s.csr.blank? && !%w(ShadowSignedCertificate ManagedCertificate).include?(self.type)
   end
 
   after_save do |s|
-    unless %w(ShadowSignedCertificate ManagedCertificate).include?(self.type)
+    if !s.csr.blank? && !%w(ShadowSignedCertificate ManagedCertificate).include?(self.type)
       s.send_processed_certificate
       cc=s.csr.certificate_content
       if cc.preferred_reprocessing?
