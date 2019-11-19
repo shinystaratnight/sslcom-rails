@@ -16,7 +16,7 @@
       =link_to "How Do I Create a CDN?", "https://www.ssl.com/article/what-is-a-cdn-and-how-can-i-get-one-from-ssl-com/"
       )
     .sub-cont
-      =form_tag :update_resources_cdns, :method=>:post do
+      =form_tag :delete_resources_cdns, :method=>:delete do
         =hidden_field_tag :api_key, @current_user_api_key
         #resources
           %table(cellspacing="0")

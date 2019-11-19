@@ -1,0 +1,40 @@
+---
+http_interactions:
+- request:
+    method: patch
+    uri: https://reseller.cdnify.com/api/v1/resources/non_existent
+    body:
+      encoding: UTF-8
+      string: alias=mywebsite&origin=http%3A%2F%2Fwww.mywebsite.com
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+      Authorization:
+      - Basic NDg2NTM1YWU2MDZhNGE0N2I4OTExMDYxMzExZDUzMzE3MzFlMjA1YTA4NmEzYzY0ZTg6eA==
+  response:
+    status:
+      code: 404
+      message: Not Found
+    headers:
+      Server:
+      - nginx/1.4.7
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Cache-Control:
+      - no-cache
+      Date:
+      - Fri, 15 Nov 2019 16:25:29 GMT
+    body:
+      encoding: UTF-8
+      string: '{"errors":[{"code":404,"message":"HTTP: Failed to find resource"}]}'
+    http_version: 
+  recorded_at: Fri, 15 Nov 2019 16:25:26 GMT
+recorded_with: VCR 5.0.0

@@ -112,7 +112,6 @@ group :development do
   gem 'better_errors'
   gem 'binding_of_caller'
   gem 'annotate'
-  gem 'byebug'
   gem 'memory_profiler'
   gem 'meta_request'
   gem 'bullet'
@@ -124,6 +123,7 @@ group :development, :test do
   gem 'pry-remote'
   gem 'ruby_parser'
   gem 'ruby-odbc'
+  gem 'byebug'
 end
 
 group :test do
@@ -133,6 +133,8 @@ group :test do
   gem 'minitest-reporters'
   gem 'mocha'
   gem 'simplecov', require: false
+  gem 'vcr'
+  gem 'webmock'
 end
 
 group :assets do

@@ -1,0 +1,47 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://reseller.cdnify.com/api/v1/resources
+    body:
+      encoding: UTF-8
+      string: alias=somewebsite&origin=http%3A%2F%2Fwww.somewebsite.com
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+      Authorization:
+      - Basic NDg2NTM1YWU2MDZhNGE0N2I4OTExMDYxMzExZDUzMzE3MzFlMjA1YTA4NmEzYzY0ZTg6eA==
+  response:
+    status:
+      code: 400
+      message: Bad Request
+    headers:
+      Server:
+      - nginx/1.4.7
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Cache-Control:
+      - no-cache
+      Date:
+      - Wed, 13 Nov 2019 20:45:56 GMT
+      X-Ratelimit-Limit:
+      - '1000'
+      X-Ratelimit-Remaining:
+      - '997'
+      X-Ratelimit-Reset:
+      - '1573680380'
+    body:
+      encoding: UTF-8
+      string: '{"errors":[{"code":1004,"message":"Sorry, this resource has already
+        been taken. Please choose a different name."}]}'
+    http_version: 
+  recorded_at: Wed, 13 Nov 2019 20:45:54 GMT
+recorded_with: VCR 5.0.0

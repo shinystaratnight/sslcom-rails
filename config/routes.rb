@@ -20,7 +20,7 @@ SslCom::Application.routes.draw do
   match '/' => 'site#index', :as => :root, via: [:get, :post]
   match 'login' => 'user_sessions#new', :as => :login, via: [:get, :post]
   match 'logout' => 'user_sessions#destroy', :as => :logout, via: [:get, :post]
-  match '(/team/:ssl_slug)/signed_certificates/:id/revoke' => 'signed_certificates#revoke', 
+  match '(/team/:ssl_slug)/signed_certificates/:id/revoke' => 'signed_certificates#revoke',
     as: 'revoke_signed_certificate', via: [:put, :post]
 
   resources :unsubscribes, only: [:edit, :update]
@@ -66,7 +66,7 @@ SslCom::Application.routes.draw do
         # Code Signing.
         match '/generate_certificate' => 'api_certificate_requests#generate_certificate_v1_4',
               as: :api_certificate_generate_v1_4, via: [:options, :post]
-        
+
         # Teams
         match '/teams/add_contact' => 'teams#add_contact',
           as: :api_team_add_contact, via: :post
@@ -317,7 +317,7 @@ SslCom::Application.routes.draw do
       resources :contacts, only: :index
       match :update_tags, via: [:put, :post], on: :member
     end
-    
+
     resources :contacts, except: :index do
       collection do
         get :saved_contacts
@@ -486,12 +486,12 @@ SslCom::Application.routes.draw do
     resources :cdns do
       post :register_account, on: :collection
       # post :register_api_key, on: :collection
-      post :update_resources, on: :collection
+      delete :delete_resources, on: :collection
       get :check_cname, on: :collection
 
       member do
         get :resource_cdn
-        post :update_resource
+        patch :update_resource
         post :add_custom_domain
         post :update_custom_domain
         post :update_advanced_setting

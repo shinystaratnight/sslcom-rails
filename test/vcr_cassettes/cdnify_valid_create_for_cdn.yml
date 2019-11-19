@@ -1,0 +1,46 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://reseller.cdnify.com/api/v1/resources
+    body:
+      encoding: UTF-8
+      string: alias=mywebsite&origin=http%3A%2F%2Fwww.mywebsite.com
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+      Authorization:
+      - Basic NDg2NTM1YWU2MDZhNGE0N2I4OTExMDYxMzExZDUzMzE3MzFlMjA1YTA4NmEzYzY0ZTg6eA==
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Server:
+      - nginx/1.4.7
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Cache-Control:
+      - no-cache
+      Date:
+      - Wed, 13 Nov 2019 19:02:18 GMT
+      X-Ratelimit-Limit:
+      - '1000'
+      X-Ratelimit-Remaining:
+      - '998'
+      X-Ratelimit-Reset:
+      - '1573672690'
+    body:
+      encoding: UTF-8
+      string: '{"resources":[{"id":"98b3515","type":"mirror","alias":"mywebsite","hostname":"mywebsite.a.cdnify.io","origin":"www.mywebsite.com","created_at":"2019-11-13T19:02:18+00:00","custom_domains":[],"advanced_settings":{"allow_robots":false,"cache_query_string":false,"enable_cors":false,"disable_gzip":false,"force_ssl":false,"cache_expire_time":0,"pull_https":false,"link":false}}]}'
+    http_version: 
+  recorded_at: Wed, 13 Nov 2019 19:02:18 GMT
+recorded_with: VCR 5.0.0
