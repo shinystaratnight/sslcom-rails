@@ -31,7 +31,7 @@ class CertificateOrder < ActiveRecord::Base
       where{expiration_date < Date.today}
     end
   end
-  has_many    :public_key_certificates, :through=>:certificate_contents do
+  has_many    :yubi_key_certificates, :through=>:certificate_contents do
     def expired
       where{expiration_date < Date.today}
     end
@@ -744,8 +744,8 @@ class CertificateOrder < ActiveRecord::Base
     signed_certificates.order(:created_at).last
   end
 
-  def public_key_certificate
-    public_key_certificates.order(:created_at).last
+  def yubi_key_certificate
+    yubi_key_certificates.order(:created_at).last
   end
 
   def comodo_ca_id

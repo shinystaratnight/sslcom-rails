@@ -1,4 +1,4 @@
-class PublicKeyCertificate < SignedCertificate
+class YubiKeyCertificate < SignedCertificate
   belongs_to :certificate_content
 
   after_initialize do
@@ -55,7 +55,7 @@ class PublicKeyCertificate < SignedCertificate
     path
   end
 
-  def create_public_key_cert_zip_bundle(options={})
+  def create_yubi_key_cert_zip_bundle(options={})
     options[:is_windows] = false unless Settings.allow_windows_cr #having issues with \r\n so stick with linux format
     co = certificate_content.certificate_order
     path = "/tmp/" + friendly_common_name + ".zip#{Time.now.to_i.to_s(32)}"

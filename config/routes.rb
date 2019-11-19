@@ -296,7 +296,7 @@ SslCom::Application.routes.draw do
     end
 
     resources :certificate_contents do
-      resources :public_key_certificates do
+      resources :yubi_key_certificates do
         member do
           get :server_bundle
           get :pkcs7

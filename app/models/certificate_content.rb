@@ -23,7 +23,7 @@ class CertificateContent < ActiveRecord::Base
   has_many    :tags, through: :taggings
   belongs_to  :ca
   has_many    :sslcom_ca_requests, as: :api_requestable
-  has_many    :public_key_certificates
+  has_many    :yubi_key_certificates
 
   accepts_nested_attributes_for :certificate_contacts, :allow_destroy => true
   accepts_nested_attributes_for :registrant, :allow_destroy => false
@@ -289,8 +289,8 @@ class CertificateContent < ActiveRecord::Base
     signed_certificates.last
   end
 
-  def public_key_certificate
-    public_key_certificates.last
+  def yubi_key_certificate
+    yubi_key_certificates.last
   end
 
   def sslcom_ca_request
