@@ -80,10 +80,7 @@ class OrdersController < ApplicationController
     if @cart # manually overwrite owned shopping_cart in favor of url specified
       # cookies[ShoppingCart::CART_KEY] = {:value=>(@cart.content.blank? ? @cart.content : CGI.unescape(@cart.content)), :path => "/",
       #                   :expires => Settings.cart_cookie_days.to_i.days.from_now}
-      if cookies[ShoppingCart::CART_KEY]=="delete"
-        cookies.delete(ShoppingCart::CART_KEY, domain: :all)
-        @cart.update_attribute(:content, nil)
-      end
+      @cart.update_attribute(:content, nil) if delete_cart_cookie?
       set_cookie(ShoppingCart::CART_GUID_KEY,@cart.guid)
       set_cookie(ShoppingCart::CART_KEY,@cart.content)
     else

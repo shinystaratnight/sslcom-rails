@@ -122,11 +122,22 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  # check to see if the cart cookie should be blanked
+  def delete_cart_cookie?
+    if cookies[ShoppingCart::CART_KEY]=="delete"
+      cookies.delete(ShoppingCart::CART_KEY, domain: :all)
+      return true
+    end
+    false
+  end
+
   # returns the cart cookie with reseller tier as an array
   def cart_contents
     find_tier
+    delete_cart_cookie?
     cart = cookies[ShoppingCart::CART_KEY]
-    cart.blank? ? {} : JSON.parse(cart).each{|i|i['pr']=i['pr']+@tier if(i && @tier && i['pr'] && !i['pr'].ends_with?(@tier))}
+    cart.blank? ? {} :
+        JSON.parse(cart).each{|i|i['pr']=i['pr']+@tier if(i && @tier && i['pr'] && !i['pr'].ends_with?(@tier))}
   end
 
   def cart_products

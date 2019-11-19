@@ -407,8 +407,14 @@ class CertificateContent < ActiveRecord::Base
   end
 
   def all_domains
-    Rails.cache.fetch("#{cache_key}/all_domains") do
-      parse_unique_domains((domains.blank? ? [] : domains) + [csr.try(:all_names)] + certificate_names.map(&:name))
+    extract=->{parse_unique_domains((domains.blank? ? [] : domains) +
+                                        [csr.try(:all_names)] + certificate_names.map(&:name))}
+    if new_record?
+      extract.call
+    else
+      Rails.cache.fetch("#{cache_key}/all_domains") do
+        extract.call
+      end
     end
   end
 
