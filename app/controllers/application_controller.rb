@@ -122,11 +122,22 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  # check to see if the cart cookie should be blanked
+  def delete_cart_cookie?
+    if cookies[ShoppingCart::CART_KEY]=="delete"
+      cookies.delete(ShoppingCart::CART_KEY, domain: :all)
+      return true
+    end
+    false
+  end
+
   # returns the cart cookie with reseller tier as an array
   def cart_contents
     find_tier
+    delete_cart_cookie?
     cart = cookies[ShoppingCart::CART_KEY]
-    cart.blank? ? {} : JSON.parse(cart).each{|i|i['pr']=i['pr']+@tier if(i && @tier && i['pr'] && !i['pr'].ends_with?(@tier))}
+    cart.blank? ? {} :
+        JSON.parse(cart).each{|i|i['pr']=i['pr']+@tier if(i && @tier && i['pr'] && !i['pr'].ends_with?(@tier))}
   end
 
   def cart_products
@@ -537,6 +548,42 @@ class ApplicationController < ActionController::Base
       redirect_to new_user_session_path
       return false
     end
+  end
+
+  def global_set_row_page
+    klass, row_count, page_size = case params[:controller]
+                         when 'domains'
+                           params[:action] == 'select_csr' ? [Domain, 'preferred_domain_csr_row_count', 'per_page']
+                               : [Domain, 'preferred_domain_row_count', 'per_page']
+                         when 'scan_logs'
+                           [ScanLog, 'preferred_scan_log_row_count', 'per_page']
+                         when 'managed_csrs'
+                           [Csr, 'preferred_managed_csr_row_count', 'per_page']
+                         when 'orders'
+                           [Order, 'preferred_order_row_count', 'per_page']
+                         when 'cdns'
+                           [Cdn, 'preferred_cdn_row_count', 'per_page']
+                         when 'certificate_orders'
+                           [CertificateOrder, 'preferred_cert_order_row_count', 'per_page']
+                         when 'notification_groups'
+                           [NotificationGroup, 'preferred_note_group_row_count', 'per_page']
+                         when 'users'
+                           params[:action] == 'teams' ? [SslAccount, 'preferred_team_row_count', 'per_page']
+                               : [User, 'preferred_user_row_count', 'per_page']
+                         when 'registered_agents'
+                           ['index', 'search'].include?(params[:action]) ? [RegisteredAgent, 'preferred_registered_agent_row_count', 'ra_per_page']
+                               : [ManagedCertificate, 'preferred_managed_certificate_row_count', 'mc_per_page']
+     end
+
+    preferred_row_count = current_user.try(row_count)
+    @per_page = params[page_size.to_sym] || preferred_row_count.or_else('10')
+    klass.per_page = @per_page if klass.per_page != @per_page
+
+    if @per_page != preferred_row_count
+      current_user.update_attribute(row_count, @per_page)
+    end
+
+    @p = {page: (params[:page] || 1), per_page: @per_page}
   end
 
   def require_admin

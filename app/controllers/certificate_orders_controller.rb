@@ -34,8 +34,8 @@ class CertificateOrdersController < ApplicationController
   before_filter :load_certificate_order,
                 only: [:show, :show_cert_order, :validate_issue, :update, :edit, :download, :destroy, :delete, :update_csr, :auto_renew, :start_over,
                        :change_ext_order_number, :admin_update, :developer, :sslcom_ca, :update_tags, :recipient, :validate_issue]
-  before_filter :set_row_page, only: [:index, :search, :credits, :pending, :filter_by_scope, :order_by_csr, :filter_by,
-                                      :incomplete, :reprocessing]
+  before_filter :global_set_row_page, only: [:index, :search, :credits, :pending, :filter_by_scope, :order_by_csr, :filter_by,
+                                             :incomplete, :reprocessing]
   before_filter :get_team_tags, only: [:index, :search]
   before_filter :construct_special_fields, only: [:edit, :create, :update, :update_csr]
   in_place_edit_for :certificate_order, :notes
@@ -201,7 +201,8 @@ class CertificateOrdersController < ApplicationController
             @certificate_content = @certificate_order.certificate_content
             @certificate_content.agreement=true
 
-            @notification_groups = @certificate_order.ssl_account.notification_groups.pluck(:friendly_name, :ref)
+            # @notification_groups = @certificate_order.ssl_account.notification_groups.pluck(:friendly_name, :ref)
+            @notification_groups = @certificate_order.ssl_account.cached_notification_groups.pluck(:friendly_name, :ref)
             @notification_groups.insert(0, ['none', 'none']) if @notification_groups.empty?
 
             @managed_csrs = (@certificate_order.ssl_account.all_csrs)
@@ -266,7 +267,8 @@ class CertificateOrdersController < ApplicationController
           end
         end
 
-        @notification_groups = current_user.ssl_account.notification_groups.pluck(:friendly_name, :ref)
+        # @notification_groups = current_user.ssl_account.notification_groups.pluck(:friendly_name, :ref)
+        @notification_groups = current_user.ssl_account.cached_notification_groups.pluck(:friendly_name, :ref)
         @notification_groups.insert(0, ['none', 'none']) #if @notification_groups.empty?
 
         notification_group_subject = @certificate_order.notification_groups_subjects.where(created_page: 'csr').first
@@ -1017,19 +1019,6 @@ class CertificateOrdersController < ApplicationController
     end
   end
 
-  def set_row_page
-    preferred_row_count = current_user.preferred_cert_order_row_count
-    @per_page = params[:per_page] || preferred_row_count.or_else("10")
-    CertificateOrder.per_page = @per_page if CertificateOrder.per_page != @per_page
-
-    if @per_page != preferred_row_count
-      current_user.preferred_cert_order_row_count = @per_page
-      current_user.save(validate: false)
-    end
-
-    @p = {page: (params[:page] || 1), per_page: @per_page}
-  end
-
   def recert(action)
     instance_variable_set("@"+action,CertificateOrder.unscoped.find_by_ref(params[:id]))
     instance_variable_get("@"+action)
@@ -1205,7 +1194,10 @@ class CertificateOrdersController < ApplicationController
   def schedule(params)
     # Create or Update notification group
     if params[:schedule_type] == 'none' && params[:notification_group] != 'none'
-      notification_group = current_user.ssl_account.notification_groups.includes{:notification_groups_subjects}.where(ref: params[:notification_group]).first
+      # notification_group = current_user.ssl_account.notification_groups.includes{:notification_groups_subjects}.where(ref: params[:notification_group]).first
+      notification_group = current_user.ssl_account.cached_notification_groups
+                               .includes(:notification_groups_subjects, :notification_groups_contacts, :schedules)
+                               .where(ref: params[:notification_group]).first
 
       unless notification_group
         flash[:error] = "Some error occurs while getting notification group data. Please try again."
@@ -1215,7 +1207,10 @@ class CertificateOrdersController < ApplicationController
       end
     else
       # Saving notification group info
-      notification_group = current_user.ssl_account.notification_groups.includes{:notification_groups_subjects}.find_by_friendly_name('ng-' + @certificate_order.ref)
+      # notification_group = current_user.ssl_account.notification_groups.includes{:notification_groups_subjects}.find_by_friendly_name('ng-' + @certificate_order.ref)
+      notification_group = current_user.ssl_account.cached_notification_groups
+                               .includes(:notification_groups_subjects, :notification_groups_contacts, :schedules)
+                               .find_by_friendly_name('ng-' + @certificate_order.ref)
 
       if notification_group.nil?
         notification_group = NotificationGroup.new(

@@ -19,7 +19,7 @@ class OrdersController < ApplicationController
   filter_access_to :visitor_trackings, :filter_by_state, require: [:index]
   filter_access_to :show, :update_invoice, attribute_check: true
   before_filter :find_user, :only => [:user_orders]
-  before_filter :set_row_page, only: [:index, :search, :filter_by_state, :visitor_trackings]
+  before_filter :global_set_row_page, only: [:index, :search, :filter_by_state, :visitor_trackings]
   before_filter :get_team_tags, only: [:index, :search]
 
   def update_tags
@@ -80,10 +80,7 @@ class OrdersController < ApplicationController
     if @cart # manually overwrite owned shopping_cart in favor of url specified
       # cookies[ShoppingCart::CART_KEY] = {:value=>(@cart.content.blank? ? @cart.content : CGI.unescape(@cart.content)), :path => "/",
       #                   :expires => Settings.cart_cookie_days.to_i.days.from_now}
-      if cookies[ShoppingCart::CART_KEY]=="delete"
-        cookies.delete(ShoppingCart::CART_KEY, domain: :all)
-        @cart.update_attribute(:content, nil)
-      end
+      @cart.update_attribute(:content, nil) if delete_cart_cookie?
       set_cookie(ShoppingCart::CART_GUID_KEY,@cart.guid)
       set_cookie(ShoppingCart::CART_KEY,@cart.content)
     else
@@ -1050,18 +1047,6 @@ class OrdersController < ApplicationController
     end
   end
   
-  def set_row_page
-    preferred_row_count = current_user.preferred_order_row_count
-    @per_page = params[:per_page] || preferred_row_count.or_else("10")
-
-    if @per_page != preferred_row_count
-      current_user.preferred_order_row_count = @per_page
-      current_user.save(validate: false)
-    end
-
-    @p = {page: (params[:page] || 1), per_page: @per_page}
-  end
-
   # admin user refunds line item
   def refund_partial_amount(params)
     refund_amount = @order.make_available_line(@target)

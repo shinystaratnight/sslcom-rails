@@ -320,6 +320,11 @@ class CertificateContent < ActiveRecord::Base
     SslcomCaRequest.where(username: self.label).first
   end
 
+  # this hash is used for filenames based on many domains
+  def domains_hash
+    Digest::SHA1.hexdigest(domains.join(","))
+  end
+
   def pkcs7
     sslcom_ca_request.pkcs7
   end
@@ -402,8 +407,14 @@ class CertificateContent < ActiveRecord::Base
   end
 
   def all_domains
-    Rails.cache.fetch("#{cache_key}/all_domains") do
-      parse_unique_domains((domains.blank? ? [] : domains) + [csr.try(:all_names)] + certificate_names.map(&:name))
+    extract=->{parse_unique_domains((domains.blank? ? [] : domains) +
+                                        [csr.try(:all_names)] + certificate_names.map(&:name))}
+    if new_record?
+      extract.call
+    else
+      Rails.cache.fetch("#{cache_key}/all_domains") do
+        extract.call
+      end
     end
   end
 

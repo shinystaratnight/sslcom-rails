@@ -187,6 +187,7 @@ class SslcomCaApi
   def self.apply_for_certificate(certificate_order, options={})
     set_mapping(certificate_order, options)
     options.merge! cc: cc = options[:certificate_content] || certificate_order.certificate_content
+    signed_certificate=nil
     begin
       if cc.pending_issuance?
         return
@@ -229,7 +230,7 @@ class SslcomCaApi
                                    api_log_entry.username) unless api_log_entry.blank?
         attrs = {body: api_log_entry.end_entity_certificate.to_s, ca_id: options[:mapping].id,
                  ejbca_username: cc.csr.sslcom_ca_requests.compact.first.username}
-        cc.csr.signed_certificates.create(attrs)
+        signed_certificate=cc.csr.signed_certificates.create(attrs)
         SystemAudit.create(
             owner:  options[:current_user],
             target: api_log_entry,
@@ -239,7 +240,7 @@ class SslcomCaApi
       end
       api_log_entry
     ensure
-      cc.validate! if cc.pending_issuance?
+      cc.validate! if cc.pending_issuance? and signed_certificate.blank?
     end
   end
 

@@ -161,10 +161,10 @@ class CertificateOrder < ActiveRecord::Base
     end
     result=result.joins{ssl_account.outer} unless (keys & [:account_number]).empty?
     result=result.joins{ssl_account.users.outer} unless (keys & [:login, :email]).empty?
-    cc_query=(cc_query || CertificateContent).joins{csrs.outer} unless
+    cc_query=(cc_query || CertificateContent).joins{csrs} unless
         (keys & [:country, :strength, :common_name, :organization, :organization_unit, :state,
                 :subject_alternative_names, :locality, :decoded]).empty?
-    cc_query=(cc_query || CertificateContent).joins{csr.outer.signed_certificates.outer} unless
+    cc_query=(cc_query || CertificateContent).joins{csr.signed_certificates.outer} unless
         (keys & [:country, :strength, :postal_code, :signature, :fingerprint, :expires_at, :created_at, :issued_at,
                  :common_name, :organization, :organization_unit, :state, :subject_alternative_names, :locality,
                  :decoded, :address]).empty?
@@ -866,14 +866,20 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def description
-    Rails.cache.fetch("#{cache_key}/description") do
+    extract=->{
       if certificate.is_ucc?
         year = sub_order_items.map(&:product_variant_item).detect(&:is_domain?)
       else
         year = sub_order_items.map(&:product_variant_item).detect(&:is_duration?)
       end
       year.blank? ? "" : (year.value.to_i < 365 ? "#{year.value.to_i} Days" :
-                              "#{year.value.to_i/365} Year") + " #{certificate.title}"
+                              "#{year.value.to_i/365} Year") + " #{certificate.title}"}
+    if new_record?
+      extract.call
+    else
+      Rails.cache.fetch("#{cache_key}/description") do
+        extract.call
+      end
     end
   end
 
@@ -1719,7 +1725,7 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def description_with_tier(target_order=nil)
-    Rails.cache.fetch("#{cache_key}/description_with_tier/#{target_order.to_s if target_order}") do
+    extract=->{
       return description if certificate.reseller_tier.blank?
       tier_label = if target_order && target_order.reseller_tier
                      target_order.reseller_tier.label
@@ -1727,6 +1733,13 @@ class CertificateOrder < ActiveRecord::Base
                      certificate.reseller_tier.label
                    end
       description + " (Tier #{tier_label} Reseller)"
+    }
+    if new_record?
+      extract.call
+    else
+      Rails.cache.fetch("#{cache_key}/description_with_tier/#{target_order.try(:cache_key)}") do
+        extract.call
+      end
     end
   end
 

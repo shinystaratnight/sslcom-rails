@@ -25,6 +25,10 @@ class Order < ActiveRecord::Base
   has_many    :tags, through: :taggings
   has_and_belongs_to_many    :discounts
 
+  #will_paginate
+  cattr_accessor :per_page
+  @@per_page = 10
+
   money :amount, cents: :cents
   money :wildcard_amount, cents: :wildcard_cents
   money :non_wildcard_amount, cents: :non_wildcard_cents
