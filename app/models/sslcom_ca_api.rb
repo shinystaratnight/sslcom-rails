@@ -50,9 +50,9 @@ class SslcomCaApi
     if options[:mapping]
       options[:mapping].profile_name
     elsif options[:cc].certificate.is_evcs?
-      "EV_RSA_CS_CERT"
+      "EV_RSA_CS_ULMT_CERT"
     elsif options[:cc].certificate.is_cs?
-      "RSA_CS_CERT"
+      "RSA_CS_ULMT_CERT"
     else
       "#{options[:cc].certificate.validation_type.upcase}_#{sig_alg_parameter(options[:cc].csr)}_SERVER_CERT"
     end
@@ -244,12 +244,12 @@ class SslcomCaApi
   def self.apply_for_certificate(certificate_order, options={})
     set_mapping(certificate_order, options)
     options.merge! cc: cc = options[:certificate_content] || certificate_order.certificate_content
-    signed_certificate=nil
     begin
-      if cc.pending_issuance?
+      if cc.preferred_pending_issuance?
         return
       else
-        cc.pend_issuance!
+        cc.preferred_pending_issuance = true
+        cc.save
       end unless options[:mapping].is_ev?
       if cc.csr.blank?
         cc.create_csr(body: options[:csr])
@@ -277,7 +277,7 @@ class SslcomCaApi
       req, res = call_ca(host, options, issue_cert_json(options))
       api_log_entry=cc.csr.sslcom_ca_requests.create(request_url: host,
         parameters: req.body, method: "post", response: res.try(:body), ca: options[:ca_name] || ca_name(options))
-      cc.validate! if cc.pending_issuance? # release hold
+      cc.validate! if cc.preferred_pending_issuance? # release hold
       if (!options[:mapping].is_ev? and api_log_entry.username.blank?) or
           (options[:mapping].is_ev? and api_log_entry.username.blank? and
               api_log_entry.request_username.blank?)
@@ -287,7 +287,7 @@ class SslcomCaApi
                                    api_log_entry.username) unless api_log_entry.blank?
         attrs = {body: api_log_entry.end_entity_certificate.to_s, ca_id: options[:mapping].id,
                  ejbca_username: cc.csr.sslcom_ca_requests.compact.first.username}
-        signed_certificate=cc.csr.signed_certificates.create(attrs)
+        cc.csr.signed_certificates.create(attrs)
         SystemAudit.create(
             owner:  options[:current_user],
             target: api_log_entry,
@@ -297,7 +297,10 @@ class SslcomCaApi
       end
       api_log_entry
     ensure
-      cc.validate! if cc.pending_issuance? and signed_certificate.blank?
+      if cc.preferred_pending_issuance?
+        cc.preferred_pending_issuance=false
+        cc.save
+      end
     end
   end
 

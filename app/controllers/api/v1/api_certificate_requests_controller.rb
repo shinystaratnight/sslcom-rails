@@ -137,9 +137,10 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
       unless co.certificate_content.csr.blank?
         cc_params = co.certificate_content.attributes.except(*%w{id created_at updated_at label ref})
         new_cc = CertificateContent.new(cc_params)
-        new_cc.save if new_cc.valid?
-        new_cc.validate! if new_cc.pending_issuance?
-
+        if new_cc.valid? or new_cc.preferred_pending_issuance?
+          new_cc.preferred_pending_issuance=false if new_cc.preferred_pending_issuance?
+          new_cc.save
+        end
         new_cc.create_registrant(
             co.certificate_content.registrant.attributes.except(*CertificateOrder::ID_AND_TIMESTAMP)
         ) if co.certificate_content.registrant

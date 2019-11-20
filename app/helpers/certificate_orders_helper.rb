@@ -318,12 +318,21 @@ module CertificateOrdersHelper
   end
 
   def certificate_type(certificate_order)
-    if certificate_order.is_a?(CertificateOrder)
-      unless Order.unscoped{certificate_order.order}.preferred_migrated_from_v2
-        certificate_order.certificate.description["certificate_type"]
-      else
-        certificate_order.preferred_v2_product_description.
-            gsub /[Cc]ertificate\z/, ''
+    extract=->{
+      if certificate_order.is_a?(CertificateOrder)
+        unless Order.unscoped{certificate_order.order}.preferred_migrated_from_v2
+          certificate_order.certificate.description["certificate_type"]
+        else
+          certificate_order.preferred_v2_product_description.
+              gsub /[Cc]ertificate\z/, ''
+        end
+      end
+    }
+    if certificate_order.new_record?
+      extract.call
+    else
+      Rails.cache.fetch("#{certificate_order.cache_key}/certificate_type") do
+        extract.call
       end
     end
   end

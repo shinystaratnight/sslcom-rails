@@ -112,7 +112,8 @@ class CertificateContent < ActiveRecord::Base
   @@cli_domain = "https://sws.sslpki.com"
 
   preference  :reprocessing, default: false
-  
+  preference  :pending_issuance, default: false
+
   CertificateNamesJob = Struct.new(:cc_id, :domains) do
     def perform
       CertificateContent.find_by_id(cc_id).certificate_names_from_domains
@@ -831,7 +832,7 @@ class CertificateContent < ActiveRecord::Base
   #
   # dNSName - It could be multiple but atleast one is required
   #
-  # 4- End Entity Profile : EV_CS_CERT_EE and Certificate Profile: EV_RSA_CS_CERT
+  # 4- End Entity Profile : EV_CS_CERT_EE and Certificate Profile: EV_RSA_CS_ULMT_CERT
   #
   # Subject DN
   #
@@ -854,7 +855,7 @@ class CertificateContent < ActiveRecord::Base
   #
   # This extension is not required for this profile
   #
-  #  5- End Entity Profile : CS_CERT_EE and Certificate Profile: RSA_CS_CERT
+  #  5- End Entity Profile : CS_CERT_EE and Certificate Profile: RSA_CS_ULMT_CERT
   #
   #  Subject DN
   #
