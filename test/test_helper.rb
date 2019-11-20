@@ -45,7 +45,6 @@ DatabaseCleaner.strategy = :truncation
 
 class Minitest::Spec
   include Authlogic::TestCase
-  include Rails.application.routes.url_helpers
 
   before :each do
     disable_authorization

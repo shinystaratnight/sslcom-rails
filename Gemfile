@@ -112,7 +112,6 @@ group :development do
   gem 'better_errors'
   gem 'binding_of_caller'
   gem 'annotate'
-  gem 'byebug'
   gem 'memory_profiler'
   gem 'meta_request'
   gem 'bullet'
@@ -120,6 +119,7 @@ end
 
 group :development, :test do
   gem 'builder'
+  gem 'byebug'
   gem 'factory_bot_rails'
   gem 'pry-remote'
   gem 'ruby_parser'
