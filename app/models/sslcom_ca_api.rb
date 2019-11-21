@@ -249,8 +249,8 @@ class SslcomCaApi
         return
       else
         cc.preferred_pending_issuance = true
-        cc.save
-      end unless options[:mapping].is_ev?
+        cc.preferred_pending_issuance_will_change!
+      end
       if cc.csr.blank?
         cc.create_csr(body: options[:csr])
       else
@@ -277,7 +277,6 @@ class SslcomCaApi
       req, res = call_ca(host, options, issue_cert_json(options))
       api_log_entry=cc.csr.sslcom_ca_requests.create(request_url: host,
         parameters: req.body, method: "post", response: res.try(:body), ca: options[:ca_name] || ca_name(options))
-      cc.validate! if cc.preferred_pending_issuance? # release hold
       if (!options[:mapping].is_ev? and api_log_entry.username.blank?) or
           (options[:mapping].is_ev? and api_log_entry.username.blank? and
               api_log_entry.request_username.blank?)
@@ -299,7 +298,7 @@ class SslcomCaApi
     ensure
       if cc.preferred_pending_issuance?
         cc.preferred_pending_issuance=false
-        cc.save
+        cc.preferred_pending_issuance_will_change!
       end
     end
   end

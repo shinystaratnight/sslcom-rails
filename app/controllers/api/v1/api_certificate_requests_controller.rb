@@ -34,6 +34,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
 
   # set which parameters will be displayed via the api response
   def set_result_parameters(result, acr)
+    cc                     = acr.certificate_contents(true).last # need to reload to get certs
     ssl_slug               = acr.ssl_account.to_slug
     result.ref             = acr.ref
     result.order_status    ||= acr.status # using ||= because status might have been set from CAA problems
@@ -44,9 +45,9 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
     result.receipt_url     = domain+order_path(ssl_slug, acr.order)
     result.smart_seal_url  = domain+certificate_order_site_seal_path(ssl_slug, acr.ref)
     result.validation_url  = domain+certificate_order_validation_path(ssl_slug, acr)
-    result.registrant      = acr.certificate_content.registrant.to_api_query if
-        (acr.certificate_content && acr.certificate_content.registrant)
-    result.certificates    = acr.certificate_content.x509_certificates.map(&:to_s).join("\n") if acr.certificate_content.x509_certificates
+    result.registrant      = cc.registrant.to_api_query if
+        (cc && cc.registrant)
+    result.certificates    = cc.x509_certificates.map(&:to_s).join("\n") if cc.x509_certificates
   end
 
   def create_v1_4
@@ -137,9 +138,10 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
       unless co.certificate_content.csr.blank?
         cc_params = co.certificate_content.attributes.except(*%w{id created_at updated_at label ref})
         new_cc = CertificateContent.new(cc_params)
-        if new_cc.valid? or new_cc.preferred_pending_issuance?
-          new_cc.preferred_pending_issuance=false if new_cc.preferred_pending_issuance?
-          new_cc.save
+        new_cc.save if new_cc.valid?
+        if new_cc.preferred_pending_issuance?
+          new_cc.write_preference("pending_issuance", false)
+          cc.preferred_pending_issuance_will_change!
         end
         new_cc.create_registrant(
             co.certificate_content.registrant.attributes.except(*CertificateOrder::ID_AND_TIMESTAMP)

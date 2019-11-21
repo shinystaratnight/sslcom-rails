@@ -310,7 +310,6 @@ class CertificateContent < ActiveRecord::Base
     !certificate_names.empty? and
         (certificate_names.pluck(:id) - certificate_names.validated.pluck(:id)).empty?
   end
-  memoize "all_domains_validated?".to_sym
 
   def signed_certificate
     SignedCertificate.unscoped.find_by_id(Rails.cache.fetch("#{cache_key}/signed_certificate") do
@@ -574,7 +573,7 @@ class CertificateContent < ActiveRecord::Base
 
   CONTACT_ROLES.each do |role|
     define_method("#{role}_contacts") do
-      certificate_contacts(true).select{|c|c.has_role? role}
+      certificate_contacts.select{|c|c.has_role? role}
     end
 
     define_method("#{role}_contact") do
