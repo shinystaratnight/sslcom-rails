@@ -638,9 +638,7 @@ class CertificateContent < ActiveRecord::Base
         certificate_contacts.any?
       end
     else
-      CertificateContent::CONTACT_ROLES.all? do |role|
-        send "#{role}_contact"
-      end
+      (certificate_contacts.map(&:roles).uniq-CertificateContent::CONTACT_ROLES).empty
     end
   end
 
