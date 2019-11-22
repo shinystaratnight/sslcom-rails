@@ -228,7 +228,7 @@ class SslcomCaApi
           ca_id: options[:mapping].id
       }
 
-      cc.yubi_key_certificates.create(attrs)
+      cc.attestation_certificates.create(attrs)
 
       SystemAudit.create(
           owner:  options[:current_user],

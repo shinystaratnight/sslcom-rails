@@ -1,41 +1,5 @@
-class YubiKeyCertificate < SignedCertificate
+class AttestationCertificate < SignedCertificate
   belongs_to :certificate_content
-
-  after_initialize do
-    if new_record?
-      self.email_customer ||= ejbca_username.blank? ? false : true
-    end
-  end
-
-  after_create do |s|
-    s.certificate_content.issue! unless %w(ShadowSignedCertificate ManagedCertificate).include?(self.type)
-  end
-
-  after_save do |s|
-    unless %w(ShadowSignedCertificate ManagedCertificate).include?(self.type)
-      cc = s.certificate_content
-      if cc.preferred_reprocessing?
-        cc.preferred_reprocessing = false
-        cc.save
-      end
-
-      co = cc.certificate_order
-      unless co.site_seal.fully_activated?
-        co.site_seal.assign_attributes({workflow_state: "fully_activated"}, without_protection: true)
-        co.site_seal.save
-      end
-
-      co.validation.approve! unless(co.validation.approved? || co.validation.approved_through_override?)
-
-      unless cc.url_callbacks.blank?
-        cert = ApiCertificateRetrieve.new(query_type: "all_certificates")
-        co.to_api_retrieve cert, format: "nginx"
-        co_json = Rabl::Renderer.json(cert,File.join("api","v1","api_certificate_requests", "show_v1_4"),
-                                      view_path: 'app/views', locals: {result:cert})
-        cc.callback(co_json)
-      end
-    end
-  end
 
   def nonidn_friendly_common_name
     SimpleIDN.to_ascii(read_attribute(:common_name) || certificate_content.ref).gsub('*', 'STAR').gsub('.', '_')
@@ -55,7 +19,7 @@ class YubiKeyCertificate < SignedCertificate
     path
   end
 
-  def create_yubi_key_cert_zip_bundle(options={})
+  def create_attestation_cert_zip_bundle(options={})
     options[:is_windows] = false unless Settings.allow_windows_cr #having issues with \r\n so stick with linux format
     co = certificate_content.certificate_order
     path = "/tmp/" + friendly_common_name + ".zip#{Time.now.to_i.to_s(32)}"

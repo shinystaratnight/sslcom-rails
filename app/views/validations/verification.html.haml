@@ -10,7 +10,7 @@
 - if @status
   %h2
     Callback Verification for Certificate Order
-    =link_to @token, @certificate_order_token
+    =link_to @certificate_order_token.certificate_order.ref, @certificate_order_token.certificate_order
   %div.pt-3.automated-call-verification
     .row
       .col-md-2
