@@ -679,7 +679,9 @@ privileges do
     :set_2fa_type,
     :update_ssl_slug,
     :saved_contacts,
-    :smime_client_enrollment
+    :smime_client_enrollment,
+    :manage_reseller,
+    :remove_reseller
   ]
   privilege :sysadmin_manage, includes: [
     :admin_manage,

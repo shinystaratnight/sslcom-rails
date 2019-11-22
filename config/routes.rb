@@ -448,6 +448,8 @@ SslCom::Application.routes.draw do
         put  :duo_enable
         put  :duo_own_used
         put  :set_2fa_type
+        post :remove_reseller
+        post :manage_reseller
       end
       member do
         get :adjust_funds

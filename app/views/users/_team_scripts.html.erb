@@ -7,5 +7,193 @@
         $('#search_form').submit();
       });
     });
+
+    $('.team-sel-reseller-tier').on('click', function(e) {
+      e.preventDefault();
+
+      // Setting selected ssl_account_id.
+      $('#ssl_account_ref').val($(this).attr('data-team-ref'));
+
+      if ($(this).attr('data-reseller-fields').trim() != '') {
+        var fields_list = $(this).attr('data-reseller-fields').split(',');
+
+        // Setting flag as exist reseller for the ssl_account
+        $('#exist_reseller').val('true');
+
+        $.each(fields_list, function(idx, item) {
+          // Removing required mark from label.
+          $('.lbl_' + item.split('=')[0]).removeClass('required-mark');
+
+          // Setting original value.
+          $('#' + item.split('=')[0]).val(item.split('=')[1]);
+
+          // Removing error-required class
+          if ($('#' + item.split('=')[0]).hasClass('error-required')) {
+            $('#' + item.split('=')[0]).removeClass('error-required');
+          }
+          if ($('#' + item.split('=')[0]).next().hasClass('error-required')) {
+            $('#' + item.split('=')[0]).next().removeClass('error-required');
+          }
+        });
+      } else {
+        var field_names = "reseller_tier,first_name,last_name,email,phone,type_organization," +
+                          "organization,website,address1,postal_code,city,state,tax_number,country";
+
+        // Setting flag as exist reseller for the ssl_account
+        $('#exist_reseller').val('false');
+
+        $.each(field_names.split(','), function(idx, item) {
+          // Adding required mark to label.
+          $('.lbl_' + item).addClass('required-mark');
+
+          // Initializing all reseller field's value
+          if (item == 'reseller_tier') {
+            $('#' + item).val('1');
+          } else if (item == 'country') {
+            $('#' + item).val('United States');
+          } else if (item == 'type_organization') {
+            $('#' + item).val('<%= Reseller::INDIVIDUAL %>');
+          } else {
+            if ($('#' + item).hasClass('error-required')) {
+              $('#' + item).removeClass('error-required');
+            }
+            if ($('#' + item).next().hasClass('error-required')) {
+              $('#' + item).next().removeClass('error-required');
+            }
+
+            $('#' + item).val('');
+          }
+        });
+      }
+
+      $('#reseller-tier-modal').show();
+    });
+
+    $('.team-del-reseller-tier').on('click', function(e) {
+      e.preventDefault();
+
+      var ssl_account_ref = $(this).attr('data-team-ref');
+
+      if (confirm('Are you sure to remove reseller from team (#' + ssl_account_ref + ') ?')) {
+        $.ajax({
+          url: '<%= remove_reseller_ssl_account_path %>',
+          data: {
+            ssl_account_ref: ssl_account_ref
+          },
+          type: 'POST'
+        }).success(function(data) {
+          location.reload(true);
+        }).error(function(data) {
+          var message_wrap_element = $('<div></div>');
+          message_wrap_element.attr('class', 'flash_message error');
+
+          var message_element = $('<span></span>');
+          message_element.append('It occurs some errors while removing reseller for the team(#' + ssl_account_ref + '). Please try again.');
+          message_wrap_element.append(message_element);
+
+          var btn_element = $('<small></small>');
+          var close_btn_element = $('<div></div>');
+          close_btn_element.attr('class', 'close_flash_message');
+
+          var close_sign_element = $('<span></span>');
+          close_sign_element.append('X');
+
+          close_btn_element.append(close_sign_element);
+          close_btn_element.append('close');
+
+          btn_element.append(close_btn_element);
+          message_wrap_element.append(btn_element);
+
+          if ($('#content').find('.inner').children().first().hasClass('flash_message')) {
+            $('#content').find('.inner').children().first().remove();
+          }
+          message_wrap_element.insertBefore($('#content').find('.inner').children().first());
+        });
+      }
+    });
+
+    $(document).on('click', '.btn-save-reseller', function(e) {
+      var validated = true;
+
+      if ($('#exist_reseller').val() == 'false') {
+        var field_names = "first_name,last_name,email,phone,organization,website,address1,"+
+                          "postal_code,city,state,tax_number";
+
+        $.each(field_names.split(','), function(idx, item) {
+          if ($('#' + item).val().trim() == '') {
+            if (validated) {
+              validated = false;
+            }
+
+            if (!$('#' + item).hasClass('error-required')) {
+              $('#' + item).addClass('error-required');
+            }
+
+            if (!$('#' + item).next().hasClass('error-required')) {
+              $('#' + item).next().addClass('error-required');
+            }
+          } else {
+            if ($('#' + item).hasClass('error-required')) {
+              $('#' + item).removeClass('error-required');
+            }
+
+            if ($('#' + item).next().hasClass('error-required')) {
+              $('#' + item).next().removeClass('error-required');
+            }
+          }
+        });
+      }
+
+      if (validated) {
+        $('#change_reseller_tier_modal_form').ajaxSubmit({
+          dataType: "json",
+          success: function(data) {
+            location.reload(true);
+          },
+          error: function(data) {
+            var message_wrap_element = $('<div></div>');
+            message_wrap_element.attr('class', 'flash_message error');
+
+            var message_element = $('<span></span>');
+            message_element.append('It occurs some errors while managing reseller for the team(#' + $('#ssl_account_ref').val() + '). Please try again.');
+            message_wrap_element.append(message_element);
+
+            var btn_element = $('<small></small>');
+            var close_btn_element = $('<div></div>');
+            close_btn_element.attr('class', 'close_flash_message');
+
+            var close_sign_element = $('<span></span>');
+            close_sign_element.append('X');
+
+            close_btn_element.append(close_sign_element);
+            close_btn_element.append('close');
+
+            btn_element.append(close_btn_element);
+            message_wrap_element.append(btn_element);
+
+            if ($('#content').find('.inner').children().first().hasClass('flash_message')) {
+              $('#content').find('.inner').children().first().remove();
+            }
+            message_wrap_element.insertBefore($('#content').find('.inner').children().first());
+
+            $('#reseller-tier-modal').hide();
+          }
+        });
+      }
+    });
+
+    $(document).on('click', '#reseller-tier-modal-close', function() {
+      $('#reseller-tier-modal').hide();
+    });
+
+    $(document).on('click', '.btn-cancel-reseller', function() {
+      $('#reseller-tier-modal').hide();
+    });
+
+    window.onclick = function(event) {
+      if (event.target == $('#reseller-tier-modal')[0]) {
+        $('#reseller-tier-modal').hide();
+      }
+    };
   });
 </script>

@@ -1,5 +1,5 @@
 class SslAccountsController < ApplicationController
-  before_filter :require_user, only: [:show, :edit, :edit_settings]
+  before_filter :require_user, only: [:show, :edit, :edit_settings, :manage_reseller, :remove_reseller]
   before_filter :find_ssl_account
   filter_access_to :all, attribute_check: true
 
@@ -203,6 +203,36 @@ class SslAccountsController < ApplicationController
     else
       redirect_to admin_show_user_path(@ssl_account.get_account_owner)
     end
+  end
+
+  def remove_reseller
+    team = SslAccount.find_by_acct_number(params[:ssl_account_ref]) ||
+        SslAccount.find_by_ssl_slug(params[:ssl_account_ref])
+
+    team.users.each do |u|
+      u.assignments.where(
+                       role_id: [Role.find_by_name(Role::RESELLER).id],
+                       ssl_account_id: team.id
+      ).destroy_all
+    end
+
+    team.remove_role! 'reseller' if team.reseller.destroy!
+
+    render :json => true
+  end
+
+  def manage_reseller
+    team = SslAccount.find_by_acct_number(params[:ssl_account_ref]) ||
+        SslAccount.find_by_ssl_slug(params[:ssl_account_ref])
+    reseller_fields = {}
+
+    Reseller::TEMP_FIELDS.keys.each do |key|
+      reseller_fields[key] = params[key.to_sym]
+    end
+
+    team.adjust_reseller_tier(params[:reseller_tier], reseller_fields)
+
+    render :json => true
   end
 
   private

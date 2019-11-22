@@ -442,15 +442,17 @@ class SslAccount < ActiveRecord::Base
   def adjust_reseller_tier(tier, reseller_fields=Reseller::TEMP_FIELDS)
     #if account is not reseller, do it now else just change the tier number
     if reseller.blank?
-      create_reseller(reseller_fields.reverse_merge(reseller_tier_id: ResellerTier.find_by_label(tier).id))
+      # create_reseller(reseller_fields.reverse_merge(reseller_tier_id: ResellerTier.find_by_label(tier).id))
+      create_reseller(reseller_fields.reverse_merge(reseller_tier_id: tier.to_i))
       roles << "reseller"
       set_reseller_default_prefs
       users.each do |u|
         u.set_roles_for_account(self, [Role.find_by_name(Role::RESELLER).id])
       end
     else
-      reseller.reseller_tier=ResellerTier.find_by_label(tier)
-      reseller.save
+      # reseller.reseller_tier=ResellerTier.find_by_label(tier)
+      reseller_fields = reseller_fields.reverse_merge(reseller_tier_id: tier.to_i)
+      reseller.update_attributes(reseller_fields)
     end
     roles << "reseller" unless is_reseller?
     roles.delete "new_reseller" if is_new_reseller?
