@@ -37,7 +37,7 @@
                 message_wrap_element.attr('class', 'flash_message notice');
 
                 var message_element = $('<span></span>');
-                message_element.append('It has been verified successfully for attestation.');
+                message_element.append('Successful attestation for '+result.cn);
                 message_wrap_element.append(message_element);
 
                 var btn_element = $('<small></small>');
@@ -59,7 +59,7 @@
                 message_wrap_element.attr('class', 'flash_message error');
 
                 var message_element = $('<span></span>');
-                message_element.append('It has been failed to verification for attestation. Please try with correct ones.');
+                message_element.append('Failed attestation');
                 message_wrap_element.append(message_element);
 
                 var btn_element = $('<small></small>');

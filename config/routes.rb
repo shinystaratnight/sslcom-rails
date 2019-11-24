@@ -616,8 +616,8 @@ SslCom::Application.routes.draw do
   match '/validation/register_callback' => 'validations#register_callback', :as => :register_callback, via: [:post]
 
   # Test Attestation
-  match '/verify_attestation' => 'attestation_certificates#verify_attestation', :as => :verify_attestation, via: [:get]
-  match '/check_attestation_verification' => 'attestation_certificates#check_attestation_verification', :as => :check_attestation_verification, via: [:post]
+  match '/verify-attestation' => 'attestation_certificates#verify_attestation', :as => :verify_attestation, via: [:get]
+  match '/check-attestation-verification' => 'attestation_certificates#check_attestation_verification', :as => :check_attestation_verification, via: [:post]
 
   #match 'paid_cert_orders'=> 'site#paid_cert_orders'
   (Reseller::TARGETED+SiteController::STANDARD_PAGES).each do |i|

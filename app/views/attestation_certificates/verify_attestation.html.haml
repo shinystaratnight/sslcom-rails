@@ -3,21 +3,21 @@
 = stylesheet_link_tag 'bootstrap_style', :medial => 'all'
 .attestation.pt-3
   %h2
-    Attestation Verification
+    Attestation Verification for Yubikey PIV
   .row
     .col-md-3.block-label{:style => "text-align: right"}
       Attestation Certificate :
     .col-md-9.attest-cert-block
       =text_area_tag 'attestation_cert', @attestation_certificate.blank? ? nil : @attestation_certificate.body, :class => 'attest-cert'
       .error-block
-        * It requires an attestation certificate
+        * attestation certificate required
   .row.pt-4
     .col-md-3.block-label{:style => "text-align: right"}
-      Attestation Issuer Certificate :
+      Intermediate Certificate :
     .col-md-9.attest-issuer-cert-block
       =text_area_tag 'attestation_issuer_cert', @attestation_issuer_certificate.blank? ? nil : @attestation_issuer_certificate.body, :class => 'attest-issuer-cert'
       .error-block
-        * It requires an attestation issuer certificate
+        * intermediate certificate required
   .btn-block.pt-5
     .col-md-12
       %input.btn-save-attestation{:type => 'button', :value => 'Submit', :class => 'btn btn-primary'}
