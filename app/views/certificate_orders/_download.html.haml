@@ -1,5 +1,5 @@
 -if certificate_order.csr.blank?
-  -formats = cs_certificate_formats(certificate_order.certificate_content, certificate_order.yubi_key_certificate)
+  -formats = cs_certificate_formats(certificate_order.certificate_content, certificate_order.attestation_certificate)
 -else
   -formats = certificate_formats(certificate_order.csr, certificate_order.signed_certificate)
 

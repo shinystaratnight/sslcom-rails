@@ -31,11 +31,12 @@ class CertificateOrder < ActiveRecord::Base
       where{expiration_date < Date.today}
     end
   end
-  has_many    :yubi_key_certificates, :through=>:certificate_contents do
+  has_many    :attestation_certificates, :through => :certificate_contents do
     def expired
       where{expiration_date < Date.today}
     end
   end
+  has_many    :attestation_issuer_certificates, :through => :certificate_contents
   has_many    :shadow_certificates, :through=>:csrs, class_name: "ShadowSignedCertificate"
   has_many    :ca_certificate_requests, :through=>:csrs
   has_many    :ca_api_requests, :through=>:csrs
@@ -739,8 +740,12 @@ class CertificateOrder < ActiveRecord::Base
     signed_certificates.order(:created_at).last
   end
 
-  def yubi_key_certificate
-    yubi_key_certificates.order(:created_at).last
+  def attestation_certificate
+    attestation_certificates.order(:created_at).last
+  end
+
+  def attestation_issuer_certificate
+    attestation_issuer_certificates.order(:created_at).last
   end
 
   def comodo_ca_id

@@ -303,7 +303,7 @@ SslCom::Application.routes.draw do
     end
 
     resources :certificate_contents do
-      resources :yubi_key_certificates do
+      resources :attestation_certificates do
         member do
           get :server_bundle
           get :pkcs7
@@ -616,6 +616,10 @@ SslCom::Application.routes.draw do
   match '/validation/automated_call' => 'validations#automated_call', :as => :automated_call, via: [:post]
   match '/validation/phone_verification_check' => 'validations#phone_verification_check', :as => :phone_verification_check, via: [:post]
   match '/validation/register_callback' => 'validations#register_callback', :as => :register_callback, via: [:post]
+
+  # Test Attestation
+  match '/verify-attestation' => 'attestation_certificates#verify_attestation', :as => :verify_attestation, via: [:get]
+  match '/check-attestation-verification' => 'attestation_certificates#check_attestation_verification', :as => :check_attestation_verification, via: [:post]
 
   #match 'paid_cert_orders'=> 'site#paid_cert_orders'
   (Reseller::TARGETED+SiteController::STANDARD_PAGES).each do |i|

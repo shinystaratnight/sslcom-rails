@@ -1086,7 +1086,6 @@ class ValidationsController < ApplicationController
   end
 
   # def domain_validation
-  #   byebug
   #   @exist_ext_order_number = @certificate_order.external_order_number
   #   if @exist_ext_order_number
   #     mdc_validation = ComodoApi.mdc_status(@certificate_order)

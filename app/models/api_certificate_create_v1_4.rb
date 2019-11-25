@@ -82,6 +82,12 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
       elsif self.api_requestable.is_a?(CertificateName) # a multi domain validation
         #TODO add dcv validation
       end
+
+      if is_attestation_processing?
+        unless AttestationCertificate.is_cert_valid?(attestation_certificate, attestation_issuer_certificate)
+          self.errors[:attestation] << "wrong attestation certificate"
+        end
+      end
     end
     # verify_domain_limits
   end
@@ -119,13 +125,36 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
         )
         return self unless errors.blank?
         order.save
-        if csr && certificate_content.save
+
+        if certificate_content.save
           setup_certificate_content(
               certificate_order: @certificate_order,
               certificate_content: certificate_content,
               ssl_account: api_requestable,
-              contacts: self.contacts)
+              contacts: self.contacts) if csr
+
+          if is_attestation_processing?
+            create_attestation_certificate(
+                attestation_certificate.strip,
+                certificate_content,
+                AttestationCertificate
+            )
+            create_attestation_certificate(
+                attestation_issuer_certificate.strip,
+                certificate_content,
+                AttestationIssuerCertificate
+            )
+          end
         end
+
+        # if csr && certificate_content.save
+        #   setup_certificate_content(
+        #       certificate_order: @certificate_order,
+        #       certificate_content: certificate_content,
+        #       ssl_account: api_requestable,
+        #       contacts: self.contacts)
+        # end
+
         certificate_content.url_callbacks.create(callback) if callback
         return @certificate_order
       else
@@ -255,16 +284,16 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
         if @certificate_order.certificate_content.ca_id.nil?
           comodo_auto_update_dcv(certificate_order: @certificate_order)
         end
-      elsif is_attestation_processing?
-        unless self.is_cert_valid? && @certificate_order.certificate_content.validated!
-          cert_body = SignedCertificate.enclose_with_tags(attestation_certificate.strip)
-          parsed = OpenSSL::X509::Certificate.new(cert_body)
-
-          api_log_entry = SslcomCaApi.apply_for_attestation(@certificate_order, parsed, nil)
-          if api_log_entry.message.blank? && !api_log_entry.username.blank?
-            SslcomCaApi.apply_for_attestation(@certificate_order, parsed, api_log_entry.username)
-          end
-        end
+      # elsif is_attestation_processing?
+      #   unless self.is_cert_valid? && @certificate_order.certificate_content.validated!
+      #     cert_body = SignedCertificate.enclose_with_tags(attestation_certificate.strip)
+      #     parsed = OpenSSL::X509::Certificate.new(cert_body)
+      #
+      #     api_log_entry = SslcomCaApi.apply_for_attestation(@certificate_order, parsed, nil)
+      #     if api_log_entry.message.blank? && !api_log_entry.username.blank?
+      #       SslcomCaApi.apply_for_attestation(@certificate_order, parsed, api_log_entry.username)
+      #     end
+      #   end
       else
         if self.csr_obj
           certificate_content = @certificate_order.certificate_contents.build
@@ -728,21 +757,40 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   end
 
   def is_cert_valid?
-    cert_body = SignedCertificate.enclose_with_tags(attestation_certificate.strip)
-    cert = OpenSSL::X509::Certificate.new(cert_body)
+    verified = verify_signature(
+        attestation_issuer_certificate.strip,
+        attestation_certificate.strip
+    )
 
-    # is_valid = store.verify(cert)
-    return store.verify(cert)
+    if verified
+      AttestationCertificate::ATTESTATION_ROOT_CERTIFICATES.each do |root_cert|
+        verified = AttestationCertificate.verify_signature(
+            root_cert.strip,
+            attestation_issuer_certificate.strip
+        )
 
-    # return is_valid
+        break if verified
+      end
+    end
+
+    return verified
   end
 
-  def store
-    @store ||= OpenSSL::X509::Store.new.tap do |store|
-      store.set_default_paths
-      store.add_cert(OpenSSL::X509::Certificate.new(
-          SignedCertificate.enclose_with_tags(attestation_issuer_certificate.strip))
-      )
-    end
+  # def store(cert)
+  #   @store ||= OpenSSL::X509::Store.new.tap do |store|
+  #     store.set_default_paths
+  #     store.add_cert(OpenSSL::X509::Certificate.new(
+  #         SignedCertificate.enclose_with_tags(cert))
+  #     )
+  #   end
+  # end
+
+  def create_attestation_certificate(cert, certificate_content, klass)
+    attestation_certificate = klass.new
+    attestation_certificate.body = cert
+    attestation_certificate.type = klass.to_s
+    attestation_certificate.certificate_content = certificate_content
+    attestation_certificate.status = "stored"
+    attestation_certificate.save!
   end
 end
