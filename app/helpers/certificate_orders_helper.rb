@@ -318,12 +318,21 @@ module CertificateOrdersHelper
   end
 
   def certificate_type(certificate_order)
-    if certificate_order.is_a?(CertificateOrder)
-      unless Order.unscoped{certificate_order.order}.preferred_migrated_from_v2
-        certificate_order.certificate.description["certificate_type"]
-      else
-        certificate_order.preferred_v2_product_description.
-            gsub /[Cc]ertificate\z/, ''
+    extract=->{
+      if certificate_order.is_a?(CertificateOrder)
+        unless Order.unscoped{certificate_order.order}.preferred_migrated_from_v2
+          certificate_order.certificate.description["certificate_type"]
+        else
+          certificate_order.preferred_v2_product_description.
+              gsub /[Cc]ertificate\z/, ''
+        end
+      end
+    }
+    if certificate_order.new_record?
+      extract.call
+    else
+      Rails.cache.fetch("#{certificate_order.cache_key}/certificate_type") do
+        extract.call
       end
     end
   end
@@ -338,6 +347,18 @@ module CertificateOrdersHelper
      java: ["Java/Tomcat", download_csr_signed_certificate_url(@ssl_slug, csr, sc), SignedCertificate::JAVA_INSTALL_LINK],
      other: ["Other platforms", download_csr_signed_certificate_url(@ssl_slug, csr, sc), SignedCertificate::OTHER_INSTALL_LINK],
      bundle: ["CA bundle (intermediate certs)", server_bundle_csr_signed_certificate_url(@ssl_slug, csr, sc), SignedCertificate::OTHER_INSTALL_LINK]}
+  end
+
+  def cs_certificate_formats(cc, pkc)
+    {iis7: ["Microsoft IIS (*.p7b)", pkcs7_certificate_content_attestation_certificate_url(@ssl_slug, cc, pkc), SignedCertificate::IIS_INSTALL_LINK],
+     cpanel: ["WHM/cpanel", whm_zip_certificate_content_attestation_certificate_url(@ssl_slug, cc, pkc), SignedCertificate::CPANEL_INSTALL_LINK],
+     apache: ["Apache", apache_zip_certificate_content_attestation_certificate_url(@ssl_slug, cc, pkc), SignedCertificate::APACHE_INSTALL_LINK],
+     amazon: ["Amazon", amazon_zip_certificate_content_attestation_certificate_url(@ssl_slug, cc, pkc), SignedCertificate::AMAZON_INSTALL_LINK],
+     nginx: ["Nginx", nginx_certificate_content_attestation_certificate_url(@ssl_slug, cc, pkc), SignedCertificate::NGINX_INSTALL_LINK],
+     v8_nodejs: ["V8+Node.js", nginx_certificate_content_attestation_certificate_url(@ssl_slug, cc, pkc), SignedCertificate::V8_NODEJS_INSTALL_LINK],
+     java: ["Java/Tomcat", download_certificate_content_attestation_certificate_url(@ssl_slug, cc, pkc), SignedCertificate::JAVA_INSTALL_LINK],
+     other: ["Other platforms", download_certificate_content_attestation_certificate_url(@ssl_slug, cc, pkc), SignedCertificate::OTHER_INSTALL_LINK],
+     bundle: ["CA bundle (intermediate certs)", server_bundle_certificate_content_attestation_certificate_url(@ssl_slug, cc, pkc), SignedCertificate::OTHER_INSTALL_LINK]}
   end
 
   # When validation instructions are generated for a certificate name,

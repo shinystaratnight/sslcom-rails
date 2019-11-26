@@ -86,7 +86,8 @@
                       .certificate_details_box
                         %ul
                           -if co.certificate_content.issued? && !co.certificate_content.expired?
-                            =render partial: 'download', locals: {csr: co.csr, signed_certificate: co.signed_certificate}
+                            -#=render partial: 'download', locals: {csr: co.csr, signed_certificate: co.signed_certificate}
+                            =render partial: 'download', locals: {certificate_order: co}
                           -unless cc.csr.blank? || hide_validation?(co)
                             -if cc.pending_validation?
                               %li

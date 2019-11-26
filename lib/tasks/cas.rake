@@ -220,7 +220,7 @@ namespace :cas do
       )
       Ca.find_or_initialize_by(ref: "0001").update_attributes(
           friendly_name: "SSL.com EV CS RSA 4096",
-          profile_name: "EV_RSA_CS_CERT",
+          profile_name: "EV_RSA_CS_ULMT_CERT",
           algorithm: "rsa",
           size: 4096,
           description: Ca::SSLCOM_CA,
@@ -372,7 +372,7 @@ namespace :cas do
       )
       Ca.find_or_initialize_by(ref: "0013").update_attributes(
           friendly_name: "SSL.com CS RSA 4096",
-          profile_name: "RSA_CS_CERT",
+          profile_name: "RSA_CS_ULMT_CERT",
           algorithm: "rsa",
           size: 4096,
           description: Ca::SSLCOM_CA,
@@ -386,7 +386,7 @@ namespace :cas do
       )
       Ca.find_or_initialize_by(ref: "0014").update_attributes(
           friendly_name: "SSL.com EV CS RSA 4096 R2",
-          profile_name: "EV_RSA_CS_CERT",
+          profile_name: "EV_RSA_CS_ULMT_CERT",
           algorithm: "rsa",
           size: 4096,
           description: Ca::SSLCOM_CA,
@@ -706,7 +706,7 @@ namespace :cas do
       # # Dev ejbca mappings
       # Ca.find_or_initialize_by(ref: "0013d").update_attributes(
       #     friendly_name: "SSL.com CS RSA 4096 (dev)",
-      #     profile_name: "RSA_CS_CERT",
+      #     profile_name: "RSA_CS_ULMT_CERT",
       #     algorithm: "rsa",
       #     size: 4096,
       #     description: Ca::SSLCOM_CA,
@@ -720,7 +720,7 @@ namespace :cas do
       # )
       # Ca.find_or_initialize_by(ref: "0014d").update_attributes(
       #     friendly_name: "SSL.com EV CS RSA 4096 R2 (dev)",
-      #     profile_name: "EV_RSA_CS_CERT",
+      #     profile_name: "EV_RSA_CS_ULMT_CERT",
       #     algorithm: "rsa",
       #     size: 4096,
       #     description: Ca::SSLCOM_CA,

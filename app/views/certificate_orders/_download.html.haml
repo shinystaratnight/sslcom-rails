@@ -1,4 +1,9 @@
--formats = certificate_formats(csr,signed_certificate)
+-if certificate_order.csr.blank?
+  -formats = cs_certificate_formats(certificate_order.certificate_content, certificate_order.attestation_certificate)
+-else
+  -formats = certificate_formats(certificate_order.csr, certificate_order.signed_certificate)
+
+-#-formats = certificate_formats(csr,signed_certificate)
 %li
   %strong{style: "color: blue"} certificate download by platform
 %li.category_border.download_certificate

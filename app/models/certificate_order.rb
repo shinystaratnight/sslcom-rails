@@ -31,6 +31,12 @@ class CertificateOrder < ActiveRecord::Base
       where{expiration_date < Date.today}
     end
   end
+  has_many    :attestation_certificates, :through => :certificate_contents do
+    def expired
+      where{expiration_date < Date.today}
+    end
+  end
+  has_many    :attestation_issuer_certificates, :through => :certificate_contents
   has_many    :shadow_certificates, :through=>:csrs, class_name: "ShadowSignedCertificate"
   has_many    :ca_certificate_requests, :through=>:csrs
   has_many    :ca_api_requests, :through=>:csrs
@@ -734,6 +740,14 @@ class CertificateOrder < ActiveRecord::Base
     signed_certificates.order(:created_at).last
   end
 
+  def attestation_certificate
+    attestation_certificates.order(:created_at).last
+  end
+
+  def attestation_issuer_certificate
+    attestation_issuer_certificates.order(:created_at).last
+  end
+
   def comodo_ca_id
     (signed_certificate || certificate).comodo_ca_id
   end
@@ -1215,7 +1229,7 @@ class CertificateOrder < ActiveRecord::Base
   # DRY this up with ValidationsController#new
   def domains_validated?
     return true if certificate_content.all_domains_validated?
-    ssl_account.other_dcvs_satisfy_domain(certificate_content.certificate_names.unvalidated.all)
+    ssl_account.other_dcvs_satisfy_domain(certificate_content.certificate_names.unvalidated.all,false)
     certificate_content.all_domains_validated?
   end
 
@@ -1226,7 +1240,7 @@ class CertificateOrder < ActiveRecord::Base
   def apply_for_certificate(options={})
     # set multiple_signed_certificates to true when manually requesting a new signed certificate which can result
     # in several signed_certificates belonging to the same csr thus certificate_content
-    (return false if !certificate_content.signed_certificate.blank? or certificate_content.pending_issuance?) unless
+    (return false if !certificate_content.signed_certificate.blank? or certificate_content.preferred_pending_issuance?) unless
       options[:multiple_signed_certificates]
     if [Ca::CERTLOCK_CA,Ca::SSLCOM_CA,Ca::MANAGEMENT_CA].include?(options[:ca]) or certificate_content.ca or
         !options[:mapping].blank?
@@ -1235,7 +1249,7 @@ class CertificateOrder < ActiveRecord::Base
       elsif !certificate.is_server? or (domains_validated? and caa_validated?)
         # # queue this job due to CAA lookups
         # if certificate_names.count > 10 and not options[:mapping].try(:profile_name)=~/EV/
-        #   unless certificate_content.pending_issuance?
+        #   unless certificate_content.preferred_pending_issuance?
         #     SslcomCaApi.delay.apply_for_certificate(self, options)
         #     certificate_content.pend_issuance!
         #   end

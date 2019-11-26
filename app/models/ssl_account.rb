@@ -284,7 +284,7 @@ class SslAccount < ActiveRecord::Base
 
   # does already validated domain validate `certificate_name`? If so, create a dcv with satisfied status
   # certificate_name - the domain we are looking up
-  def other_dcvs_satisfy_domain(certificate_names)
+  def other_dcvs_satisfy_domain(certificate_names,apply_for_certificate=true)
     certificate_names = [certificate_names] if certificate_names.is_a?(CertificateName)
     attempt_to_issue=[]
     dcvs=[]
@@ -312,7 +312,9 @@ class SslAccount < ActiveRecord::Base
       end
       DomainControlValidation.import dcvs
       CertificateName.where(id: cn_ids).update_all updated_at: DateTime.now
-      attempt_to_issue.uniq.compact.each{|co|co.apply_for_certificate if co.all_domains_validated?}
+      if apply_for_certificate
+        attempt_to_issue.uniq.compact.each{|co|co.apply_for_certificate if co.all_domains_validated?}
+      end
     end
   end
 
@@ -442,15 +444,17 @@ class SslAccount < ActiveRecord::Base
   def adjust_reseller_tier(tier, reseller_fields=Reseller::TEMP_FIELDS)
     #if account is not reseller, do it now else just change the tier number
     if reseller.blank?
-      create_reseller(reseller_fields.reverse_merge(reseller_tier_id: ResellerTier.find_by_label(tier).id))
+      # create_reseller(reseller_fields.reverse_merge(reseller_tier_id: ResellerTier.find_by_label(tier).id))
+      create_reseller(reseller_fields.reverse_merge(reseller_tier_id: tier.to_i))
       roles << "reseller"
       set_reseller_default_prefs
       users.each do |u|
         u.set_roles_for_account(self, [Role.find_by_name(Role::RESELLER).id])
       end
     else
-      reseller.reseller_tier=ResellerTier.find_by_label(tier)
-      reseller.save
+      # reseller.reseller_tier=ResellerTier.find_by_label(tier)
+      reseller_fields = reseller_fields.reverse_merge(reseller_tier_id: tier.to_i)
+      reseller.update_attributes(reseller_fields)
     end
     roles << "reseller" unless is_reseller?
     roles.delete "new_reseller" if is_new_reseller?

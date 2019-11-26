@@ -1,0 +1,86 @@
+<script type="text/javascript">
+  jQuery.noConflict();
+  jQuery(function($) {
+    $(document).ready(function() {
+      $(document).on('click', '.btn-save-attestation', function() {
+        var attest_cert = $('.attest-cert').val();
+        var attest_issuer_cert = $('.attest-issuer-cert').val();
+
+        if (attest_cert.trim() == '' || attest_issuer_cert.trim() == '') {
+          if (attest_cert.trim() == '') {
+            $('.attest-cert-block').addClass('required-error');
+          }
+
+          if (attest_issuer_cert.trim() == '') {
+            $('.attest-issuer-cert-block').addClass('required-error');
+          }
+        } else {
+          $('.attest-cert-block').removeClass('required-error');
+          $('.attest-issuer-cert-block').removeClass('required-error');
+
+          if ($('#content').find('.inner').children().first().hasClass('flash_message')) {
+            $('#content').find('.inner').children().first().remove();
+          }
+
+          var ajax_url = '<%= check_attestation_verification_path %>';
+
+          $.ajax({
+            url: ajax_url,
+            data: {
+              attestation_cert: attest_cert,
+              attestation_issuer_cert: attest_issuer_cert,
+            },
+            type: "POST",
+            success: function (result) {
+              if (result) {
+                var message_wrap_element = $('<div></div>');
+                message_wrap_element.attr('class', 'flash_message notice');
+
+                var message_element = $('<span></span>');
+                message_element.append('Successful attestation for '+result.cn);
+                message_wrap_element.append(message_element);
+
+                var btn_element = $('<small></small>');
+                var close_btn_element = $('<div></div>');
+                close_btn_element.attr('class', 'close_flash_message');
+
+                var close_sign_element = $('<span></span>');
+                close_sign_element.append('X');
+
+                close_btn_element.append(close_sign_element);
+                close_btn_element.append('close');
+
+                btn_element.append(close_btn_element);
+                message_wrap_element.append(btn_element);
+
+                message_wrap_element.insertBefore($('#content').find('.inner').children().first());
+              } else {
+                var message_wrap_element = $('<div></div>');
+                message_wrap_element.attr('class', 'flash_message error');
+
+                var message_element = $('<span></span>');
+                message_element.append('Failed attestation');
+                message_wrap_element.append(message_element);
+
+                var btn_element = $('<small></small>');
+                var close_btn_element = $('<div></div>');
+                close_btn_element.attr('class', 'close_flash_message');
+
+                var close_sign_element = $('<span></span>');
+                close_sign_element.append('X');
+
+                close_btn_element.append(close_sign_element);
+                close_btn_element.append('close');
+
+                btn_element.append(close_btn_element);
+                message_wrap_element.append(btn_element);
+
+                message_wrap_element.insertBefore($('#content').find('.inner').children().first());
+              }
+            }
+          });
+        }
+      });
+    });
+  });
+</script>

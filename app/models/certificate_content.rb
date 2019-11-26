@@ -23,6 +23,9 @@ class CertificateContent < ActiveRecord::Base
   has_many    :taggings, :dependent => :destroy, as: :taggable
   has_many    :tags, through: :taggings
   belongs_to  :ca
+  has_many    :sslcom_ca_requests, as: :api_requestable
+  has_many    :attestation_certificates
+  has_many    :attestation_issuer_certificates
 
   accepts_nested_attributes_for :certificate_contacts, :allow_destroy => true
   accepts_nested_attributes_for :registrant, :allow_destroy => false
@@ -110,7 +113,8 @@ class CertificateContent < ActiveRecord::Base
   @@cli_domain = "https://sws.sslpki.com"
 
   preference  :reprocessing, default: false
-  
+  preference  :pending_issuance, default: false
+
   CertificateNamesJob = Struct.new(:cc_id, :domains) do
     def perform
       CertificateContent.find_by_id(cc_id).certificate_names_from_domains
@@ -270,7 +274,7 @@ class CertificateContent < ActiveRecord::Base
   OtherDcvsSatisyJob = Struct.new(:ssl_account,:new_certificate_names,:certificate_content,:issuance_type) do
     def perform
       new_certificate_names = [new_certificate_names] if new_certificate_names.is_a?(CertificateName)
-      ssl_account.other_dcvs_satisfy_domain(new_certificate_names)
+      ssl_account.other_dcvs_satisfy_domain(new_certificate_names,false)
       certificate_content.certificate_order.apply_for_certificate if certificate_content.certificate.is_dv? and
           issuance_type=="dv_only" and !certificate_content.issued?
     end
@@ -307,7 +311,6 @@ class CertificateContent < ActiveRecord::Base
     !certificate_names.empty? and
         (certificate_names.pluck(:id) - certificate_names.validated.pluck(:id)).empty?
   end
-  memoize "all_domains_validated?".to_sym
 
   def signed_certificate
     SignedCertificate.unscoped.find_by_id(Rails.cache.fetch("#{cache_key}/signed_certificate") do
@@ -315,6 +318,14 @@ class CertificateContent < ActiveRecord::Base
     end)
   end
   memoize :signed_certificate
+
+  def attestation_certificate
+    attestation_certificates.last
+  end
+
+  def attestation_issuer_certificate
+    attestation_issuer_certificates.last
+  end
 
   def sslcom_ca_request
     SslcomCaRequest.where(username: self.label).first
@@ -567,7 +578,7 @@ class CertificateContent < ActiveRecord::Base
 
   CONTACT_ROLES.each do |role|
     define_method("#{role}_contacts") do
-      certificate_contacts(true).select{|c|c.has_role? role}
+      certificate_contacts.select{|c|c.has_role? role}
     end
 
     define_method("#{role}_contact") do
@@ -631,9 +642,7 @@ class CertificateContent < ActiveRecord::Base
         certificate_contacts.any?
       end
     else
-      CertificateContent::CONTACT_ROLES.all? do |role|
-        send "#{role}_contact"
-      end
+      (certificate_contacts.map(&:roles).uniq-CertificateContent::CONTACT_ROLES).empty
     end
   end
 
@@ -825,7 +834,7 @@ class CertificateContent < ActiveRecord::Base
   #
   # dNSName - It could be multiple but atleast one is required
   #
-  # 4- End Entity Profile : EV_CS_CERT_EE and Certificate Profile: EV_RSA_CS_CERT
+  # 4- End Entity Profile : EV_CS_CERT_EE and Certificate Profile: EV_RSA_CS_ULMT_CERT
   #
   # Subject DN
   #
@@ -848,7 +857,7 @@ class CertificateContent < ActiveRecord::Base
   #
   # This extension is not required for this profile
   #
-  #  5- End Entity Profile : CS_CERT_EE and Certificate Profile: RSA_CS_CERT
+  #  5- End Entity Profile : CS_CERT_EE and Certificate Profile: RSA_CS_ULMT_CERT
   #
   #  Subject DN
   #
@@ -956,6 +965,10 @@ class CertificateContent < ActiveRecord::Base
     unless cc.nil?
       certificate_contacts.update_all(contactable_id: cc.id)
     end
+  end
+
+  def sslcom_approval_ids
+    sslcom_ca_requests.unexpired.map(&:approval_id)
   end
 
   private

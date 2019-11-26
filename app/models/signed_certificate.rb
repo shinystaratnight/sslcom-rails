@@ -70,16 +70,16 @@ class SignedCertificate < ActiveRecord::Base
   end
 
   after_create do |s|
-    s.csr.certificate_content.issue! unless %w(ShadowSignedCertificate ManagedCertificate).include?(self.type)
+    s.csr.certificate_content.issue! if !s.csr.blank? && !%w(ShadowSignedCertificate ManagedCertificate).include?(self.type)
   end
 
   after_save do |s|
-    unless %w(ShadowSignedCertificate ManagedCertificate).include?(self.type)
+    if !s.csr.blank? && !%w(ShadowSignedCertificate ManagedCertificate).include?(self.type)
       s.send_processed_certificate
       cc=s.csr.certificate_content
       if cc.preferred_reprocessing?
         cc.preferred_reprocessing=false
-        cc.save
+        cc.preferred_pending_issuance_will_change!
       end
       co=cc.certificate_order
       unless co.site_seal.fully_activated?
@@ -240,7 +240,7 @@ class SignedCertificate < ActiveRecord::Base
         self[:fingerprintSHA] = "SHA1"
         self[:effective_date] = parsed.not_before
         self[:expiration_date] = parsed.not_after
-        self[:subject_alternative_names] = parsed.subject_alternative_names.map{|san| san.force_encoding('UTF-8')}
+        self[:subject_alternative_names] = parsed.subject_alternative_names
         #TODO ecdsa throws exception. Find better method
         self[:strength] = parsed.public_key.instance_of?(OpenSSL::PKey::EC) ?
                               (matched[1] if matched=parsed.to_text.match(/Private-Key\: \((\d+)/)) : parsed.strength

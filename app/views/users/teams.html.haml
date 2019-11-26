@@ -126,6 +126,13 @@
                       -if params[:page]
                         =hidden_field_tag :page, params[:page]
 
+                  #team-reseller-tier-switch
+                    #frm-team-reseller-tier-switch.clearfix
+                      =label_tag 'Reseller Level:'
+                      =link_to 'Manage', '', class: 'team-sel-reseller-tier', "data-team-ref": t.acct_number || t.ssl_slug, "data-reseller-fields": reseller_fields(t)
+                      -unless t.reseller.blank?
+                        %span /
+                        =link_to 'Delete', '', class: 'team-del-reseller-tier', "data-team-ref": t.acct_number || t.ssl_slug
               %td=t.created_at.strftime("%b %d, %Y")
               -#-unless system_admins
                 %td#team-action-items.teams-index-text-left
@@ -179,3 +186,82 @@
       %tr
         %td(colspan="7")
           There are no teams.
+
+#reseller-tier-modal.reseller-tier-modal
+  #reseller-tier-modal-content.modal-content
+    #reseller-tier-modal-header.modal-header
+      %span#reseller-tier-modal-close.close
+        &times;
+      %p
+        Change Reseller Tier.
+    #reseller-tier-modal-body.modal-body
+      =form_tag :manage_reseller_ssl_account, :id => 'change_reseller_tier_modal_form', :method => :post do
+        =hidden_field_tag :ssl_account_ref
+        =hidden_field_tag :exist_reseller
+        .reseller-fields.clearfix
+          =label_tag 'Level :', nil, class: 'lbl_reseller_tier'
+          =select_tag :reseller_tier, options_for_select(@reseller_tiers), class: 'reseller-tier'
+        .reseller-fields.clearfix
+          =label_tag 'First Name :', nil, class: 'lbl_first_name'
+          =text_field_tag :first_name, '', class: 'reseller-field-first-name'
+          .required-field
+            * First Name is required!
+        .reseller-fields.clearfix
+          =label_tag 'Last Name :', nil, class: 'lbl_last_name'
+          =text_field_tag :last_name, '', class: 'reseller-field-last-name'
+          .required-field
+            * Last Name is required!
+        .reseller-fields.clearfix
+          =label_tag 'Email :', nil, class: 'lbl_email'
+          =text_field_tag :email, '', class: 'reseller-field-email'
+          .required-field
+            * Email Address is required!
+        .reseller-fields.clearfix
+          =label_tag 'Phone :', nil, class: 'lbl_phone'
+          =text_field_tag :phone, '', class: 'reseller-field-phone'
+          .required-field
+            * Phone Number is required!
+        .reseller-fields.clearfix
+          =label_tag 'Type Organization :', nil, class: 'lbl_type_organization'
+          =select_tag :type_organization, options_for_select([[Reseller::INDIVIDUAL.capitalize, Reseller::INDIVIDUAL], [Reseller::BUSINESS.capitalize, Reseller::BUSINESS]]), class: 'reseller-field-type-organization'
+        .reseller-fields.clearfix
+          =label_tag 'Organization :', nil, class: 'lbl_organization'
+          =text_field_tag :organization, '', class: 'reseller-field-organization'
+          .required-field
+            * Organization is required!
+        .reseller-fields.clearfix
+          =label_tag 'Website :', nil, class: 'lbl_website'
+          =text_field_tag :website, '', class: 'reseller-field-website'
+          .required-field
+            * Website Address is required!
+        .reseller-fields.clearfix
+          =label_tag 'Address1 :', nil, class: 'lbl_address1'
+          =text_field_tag :address1, '', class: 'reseller-field-address1'
+          .required-field
+            * Address is required!
+        .reseller-fields.clearfix
+          =label_tag 'Postal Code :', nil, class: 'lbl_postal_code'
+          =text_field_tag :postal_code, '', class: 'reseller-field-postal-code'
+          .required-field
+            * Postal Code is required!
+        .reseller-fields.clearfix
+          =label_tag 'City :', nil, class: 'lbl_city'
+          =text_field_tag :city, '', class: 'reseller-field-city'
+          .required-field
+            * City is required!
+        .reseller-fields.clearfix
+          =label_tag 'State :', nil, class: 'lbl_state'
+          =text_field_tag :state, '', class: 'reseller-field-state'
+          .required-field
+            * State is required!
+        .reseller-fields.clearfix
+          =label_tag 'Tax Number :', nil, class: 'lbl_tax_number'
+          =text_field_tag :tax_number, '', class: 'reseller-field-tax-number'
+          .required-field
+            * Tax Number is required!
+        .reseller-fields.clearfix
+          =label_tag 'Country :', nil, class: 'lbl_country'
+          =select_tag :country, options_for_select(BillingProfile::TOP_COUNTRIES + [""], disabled: [""]) + options_for_select(Country.select_options("name"))
+    #reseller-tier-modal-footer.modal-footer
+      = button_tag 'Save', :type => 'button', :class => 'btn btn-grey btn-save-reseller float-right'
+      = button_tag 'Cancel', :type => 'button', :class => 'btn btn-grey btn-cancel-reseller float-right mr-1'
