@@ -217,12 +217,12 @@ class User < ActiveRecord::Base
     role_ids = added_user.assignments.where(
       ssl_account_id: get_auto_add_users_teams.map(&:id)
     ).pluck(:role_id).uniq
-    
+
     # If invited user has owner role or reseller role, then replace
     # it with account admin role for the team they're invited to.
-    if role_ids.include?(Role.get_owner_id) || 
+    if role_ids.include?(Role.get_owner_id) ||
       role_ids.include?(Role.get_reseller_id)
-      
+
       # User cannot be account_admin and have other roles.
       role_ids = [Role.get_account_admin_id]
     end
@@ -277,7 +277,7 @@ class User < ActiveRecord::Base
       end
     end
   end
-  
+
   def create_ssl_account(role_ids=nil, attr={})
     self.save if self.new_record?
     new_ssl_account = SslAccount.create(attr)
@@ -289,7 +289,7 @@ class User < ActiveRecord::Base
   end
 
   def set_default_ssl_account(account)
-    account = account.is_a?(SslAccount) ? account.id : account 
+    account = account.is_a?(SslAccount) ? account.id : account
     update_attribute(:default_ssl_account, account)
   end
 
@@ -311,6 +311,7 @@ class User < ActiveRecord::Base
 
   def roles_for_account(target_ssl=nil)
     ssl = target_ssl.nil? ? ssl_account : target_ssl
+
     if ssl_accounts.include?(ssl)
       assignments.where(ssl_account_id: ssl).pluck(:role_id).uniq
     else
@@ -349,7 +350,7 @@ class User < ActiveRecord::Base
     if params[:deliver_invite]
       User.get_user_by_email(params[:user][:email])
         .deliver_signup_invitation!(params[:from_user], params[:root_url], params[:invited_teams])
-    else  
+    else
       user = User.new(params[:user].merge(login: params[:user][:email]))
       user.signup!(params)
       ssl = user.create_ssl_account([Role.get_owner_id])
@@ -373,7 +374,7 @@ class User < ActiveRecord::Base
     ssl_acct_id = (params[:user] && params[:user][:ssl_account_id]) || params[:ssl_account_id]
     user        = email ? User.get_user_by_email(email) : self
     new_params  = params.merge(ssl_account_id: ssl_acct_id, skip_match: true, from_user: params[:from_user])
-    
+
     if user.ssl_accounts.map(&:id).include? ssl_acct_id.to_i
       user.set_approval_token(new_params)
       if user.approval_token_valid?(new_params)
@@ -394,7 +395,7 @@ class User < ActiveRecord::Base
     ssl = ssl_account_users.where(ssl_account_id: account).delete_all
     if ssl > 0
       deliver_removed_from_account!(account, current_user)
-      unless current_user.is_system_admins? 
+      unless current_user.is_system_admins?
         deliver_removed_from_account_notify_admin!(account, current_user)
       end
       update_default_ssl_account(account)
@@ -402,7 +403,7 @@ class User < ActiveRecord::Base
   end
 
   def leave_team(remove_ssl)
-    unless remove_ssl.get_account_owner == self 
+    unless remove_ssl.get_account_owner == self
       ssl = ssl_account_users.where(ssl_account_id: remove_ssl).delete_all
       assignments.where(ssl_account_id: remove_ssl).delete_all
     end
@@ -507,11 +508,11 @@ class User < ActiveRecord::Base
   def deliver_email_changed!(address=self.email)
     UserNotifier.email_changed(self, address).deliver
   end
-  
+
   def deliver_invite_to_account!(params)
     UserNotifier.invite_to_account(self, params[:from_user], params[:ssl_account_id]).deliver
   end
-  
+
   def deliver_invite_to_account_notify_admin!(params)
     UserNotifier.invite_to_account_notify_admin(self, params[:from_user], params[:ssl_account_id]).deliver
   end
@@ -622,7 +623,7 @@ class User < ActiveRecord::Base
     new_role_ids       = params[:user][:role_ids].compact.reject{|id| id.blank?}.map(&:to_i)
     current_role_ids   = roles_for_account(SslAccount.find(params[:user][:ssl_account_id]))
     removable_role_ids = inverse ? new_role_ids : current_role_ids - new_role_ids
-    
+
     assignments.where(
       role_id:        removable_role_ids,
       ssl_account_id: params[:user][:ssl_account_id]
@@ -698,6 +699,7 @@ class User < ActiveRecord::Base
   def role_symbols(target_account=nil)
     sa = target_account || ssl_account
     return [] if sa.blank?
+
     Rails.cache.fetch("#{cache_key}/role_symbols/#{sa.cache_key}") do
       Role.where(id: roles_for_account(sa)).map{|role| role.name.underscore.to_sym}
     end
@@ -763,7 +765,7 @@ class User < ActiveRecord::Base
 
   def is_account_admin?
     role_symbols.include? Role::ACCOUNT_ADMIN.to_sym
-  end  
+  end
 
   def is_standard?
     (role_symbols & [Role::OWNER.to_sym, Role::ACCOUNT_ADMIN.to_sym]).any?
@@ -892,7 +894,7 @@ class User < ActiveRecord::Base
       end
     end
   end
-  
+
   #
   # User invite and approval token management
   #
@@ -997,7 +999,7 @@ class User < ActiveRecord::Base
     has_stored_token  = ssl && ssl.approval_token
     token_expired     = has_stored_token && DateTime.parse(ssl.token_expires.to_s) <= DateTime.now
     tokens_dont_match = params[:skip_match] ? false : (has_stored_token && ssl.approval_token != params[:token])
-    
+
     return false if no_ssl_account || no_token_stored || tokens_dont_match || token_expired
     true
   end
@@ -1014,7 +1016,7 @@ class User < ActiveRecord::Base
     ssl = get_ssl_acct_user_for_approval(params)
     ssl && ssl.approved && ssl.token_expires.nil? && ssl.approval_token.nil?
   end
-  
+
   def user_declined_invite?(params)
     ssl = get_ssl_acct_user_for_approval(params)
     ssl && !ssl.approved && ssl.token_expires.nil? && ssl.approval_token.nil?
@@ -1094,7 +1096,7 @@ class User < ActiveRecord::Base
     ssl.update(approved: true, token_expires: nil, approval_token: nil) if ssl
     ssl
   end
-  
+
   def generate_approval_token
     OAuth::Helper.generate_key(40)[0,40]
   end
@@ -1118,7 +1120,7 @@ class User < ActiveRecord::Base
     #requires SQL statement to change login
     User.where('login LIKE ?', old).update_all(login: new)
   end
-  
+
   def validate_password?
     (!new_record? || (new_record? && crypted_password)) && require_password?
   end
