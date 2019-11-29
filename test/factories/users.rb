@@ -10,39 +10,84 @@ FactoryBot.define do
     active                {true}
 
     trait :sysadmin do
-      after(:create) {|u| u.create_ssl_account([Role.get_role_id(Role::SYS_ADMIN)])}
+      after(:create) do |user|
+        user.assignments << create(:assignment, :sysadmin)
+        user.ssl_accounts << user.assignments.first.ssl_account
+        user.approved_teams << user.assignments.first.ssl_account
+        user.default_ssl_account = user.assignments.first.ssl_account.id
+      end
     end
 
     trait :super_user do
-      after(:create) {|u| u.create_ssl_account([Role.get_role_id(Role::SUPER_USER)])}
+      after(:create) do |user|
+        user.assignments << create(:assignment, :super_user)
+        user.ssl_accounts << user.assignments.first.ssl_account
+        user.approved_teams << user.assignments.first.ssl_account
+        user.default_ssl_account = user.assignments.first.ssl_account.id
+      end
     end
 
     trait :owner do
-      after(:create) {|u| u.create_ssl_account([Role.get_role_id(Role::OWNER)])}
+      after(:create) do |user|
+        user.assignments << create(:assignment, :owner)
+        user.ssl_accounts << user.assignments.first.ssl_account
+        user.approved_teams << user.assignments.first.ssl_account
+        user.default_ssl_account = user.assignments.first.ssl_account.id
+      end
     end
 
     trait :reseller do
-      after(:create) {|u| u.create_ssl_account([Role.get_role_id(Role::RESELLER)])}
+      after(:create) do |user|
+        user.assignments << create(:assignment, :reseller)
+        user.ssl_accounts << user.assignments.first.ssl_account
+        user.approved_teams << user.assignments.first.ssl_account
+        user.default_ssl_account = user.assignments.first.ssl_account.id
+      end
     end
 
     trait :account_admin do
-      after(:create) {|u| u.create_ssl_account([Role.get_role_id(Role::ACCOUNT_ADMIN)])}
+      after(:create) do |user|
+        user.assignments << create(:assignment, :account_admin)
+        user.ssl_accounts << user.assignments.first.ssl_account
+        user.approved_teams << user.assignments.first.ssl_account
+        user.default_ssl_account = user.assignments.first.ssl_account.id
+      end
     end
 
     trait :billing do
-      after(:create) {|u| u.create_ssl_account([Role.get_role_id(Role::BILLING)])}
+      after(:create) do |user|
+        user.assignments << create(:assignment, :billing)
+        user.ssl_accounts << user.assignments.first.ssl_account
+        user.approved_teams << user.assignments.first.ssl_account
+        user.default_ssl_account = user.assignments.first.ssl_account.id
+      end
     end
 
     trait :installer do
-      after(:create) {|u| u.create_ssl_account([Role.get_role_id(Role::INSTALLER)])}
+      after(:create) do |user|
+        user.assignments << create(:assignment, :installer)
+        user.ssl_accounts << user.assignments.first.ssl_account
+        user.approved_teams << user.assignments.first.ssl_account
+        user.default_ssl_account = user.assignments.first.ssl_account.id
+      end
     end
 
     trait :validations do
-      after(:create) {|u| u.create_ssl_account([Role.get_role_id(Role::VALIDATIONS)])}
+      after(:create) do |user|
+        user.assignments << create(:assignment, :validations)
+        user.ssl_accounts << user.assignments.first.ssl_account
+        user.approved_teams << user.assignments.first.ssl_account
+        user.default_ssl_account = user.assignments.first.ssl_account.id
+      end
     end
 
     trait :users_manager do
-      after(:create) {|u| u.create_ssl_account([Role.get_role_id(Role::USERS_MANAGER)])}
+      after(:create) do |user|
+        user.assignments << create(:assignment, :users_manager)
+        user.ssl_accounts << user.assignments.first.ssl_account
+        user.approved_teams << user.assignments.first.ssl_account
+        user.default_ssl_account = user.assignments.first.ssl_account.id
+      end
     end
   end
 end
