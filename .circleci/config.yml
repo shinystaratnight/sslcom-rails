@@ -67,3 +67,6 @@ jobs:
       - run:
           name: Run Rails Application Tests
           command: bundle exec rake test
+
+      - store_artifacts:
+          path: coverage
