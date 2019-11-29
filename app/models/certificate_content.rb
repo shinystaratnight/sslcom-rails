@@ -315,7 +315,7 @@ class CertificateContent < ActiveRecord::Base
 
   def dcv_verify_certificate_names
     certificate_names.includes(:domain_control_validation).unvalidated.each do |cn|
-      cn.dcv_verify unless cn.domain_control_validation.dcv_method =~ /email/
+      cn.dcv_verify unless cn.domain_control_validation.try(:dcv_method) =~ /email/
     end
   end
 
