@@ -482,6 +482,19 @@ class Csr < ActiveRecord::Base
     end
   end
 
+  # this should be run as a cron job
+  def self.process_server_certificates(submitted_on=1.day.ago)
+    Csr.joins(:certificate_content).includes(:signed_certificates, certificate_content: :certificate_order).
+        where{(certificate_content.workflow_state>>["pending_validation"]) &
+          (created_at > submitted_on)}.uniq.map{|csr|
+            csr.certificate_order.apply_for_certificate if(
+            csr.certificate_content.ca_id and
+            !csr.signed_certificate and
+                !csr.is_ip_address? and
+                csr.certificate_order.paid? and
+                csr.certificate_content.certificate.is_server?)}.compact
+  end
+
   private
 
   def public_key_hash(save_to_db=false)
