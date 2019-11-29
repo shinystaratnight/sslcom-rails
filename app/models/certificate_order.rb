@@ -1243,8 +1243,10 @@ class CertificateOrder < ActiveRecord::Base
   def apply_for_certificate(options={})
     # set allow_multiple_certs_per_content to true when manually requesting a new signed certificate which can result
     # in several signed_certificates belonging to the same csr thus certificate_content
-    (return false if !certificate_content.signed_certificate.blank? or certificate_content.preferred_pending_issuance?) unless
-      options[:allow_multiple_certs_per_content]
+    (return false if !certificate_content.signed_certificate.blank? or
+        certificate_content.preferred_pending_issuance? or
+        certificate_content.
+            preferred_process_pending_server_certificates?) unless options[:allow_multiple_certs_per_content]
     if [Ca::CERTLOCK_CA,Ca::SSLCOM_CA,Ca::MANAGEMENT_CA].include?(options[:ca]) or certificate_content.ca or
         !options[:mapping].blank?
       if !certificate_content.infringement.empty? # possible trademark problems
