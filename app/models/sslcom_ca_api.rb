@@ -291,6 +291,8 @@ class SslcomCaApi
       if (!options[:mapping].is_ev? and api_log_entry.username.blank?) or
           (options[:mapping].is_ev? and api_log_entry.username.blank? and
               api_log_entry.request_username.blank?)
+        cc.preferred_process_pending_server_certificates = false
+        cc.preferred_process_pending_server_certificates_will_change!
         OrderNotifier.problem_ca_sending("support@ssl.com", cc.certificate_order,"sslcom").deliver
       elsif api_log_entry.certificate_chain # signed certificate is issued
         cc.update_column(:label, options[:mapping].is_ev? ? api_log_entry.request_username :

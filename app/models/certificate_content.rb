@@ -114,6 +114,7 @@ class CertificateContent < ActiveRecord::Base
 
   preference  :reprocessing, default: false
   preference  :pending_issuance, default: false
+  preference  :process_pending_server_certificates, default: true
 
   CertificateNamesJob = Struct.new(:cc_id, :domains) do
     def perform

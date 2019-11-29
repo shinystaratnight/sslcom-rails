@@ -485,16 +485,19 @@ class Csr < ActiveRecord::Base
   def self.process_pending_server_certificates(submitted_on=1.day.ago)
     Csr.joins(:certificate_content).includes(:signed_certificates, certificate_content: :certificate_order).
         where{(certificate_content.workflow_state>>["pending_validation"]) &
-          (created_at > submitted_on)}.uniq.map{|csr|
+          (created_at > submitted_on)}.uniq.map do |csr|
             cc=csr.certificate_content
             co=csr.certificate_order
-            cc.dcv_verify_certificate_names unless co.domains_validated?
-            co.apply_for_certificate if(
-            cc.ca_id and
-            !csr.signed_certificate and
-                !csr.is_ip_address? and
-                co.paid? and
-                cc.certificate.is_server?)}.compact
+            unless cc.preferred_process_pending_server_certificates
+              cc.dcv_verify_certificate_names unless co.domains_validated?
+              co.apply_for_certificate if(
+              cc.ca_id and
+                  !csr.signed_certificate and
+                  !csr.is_ip_address? and
+                  co.paid? and
+                  cc.certificate.is_server?)
+            end
+          end
   end
 
   private
