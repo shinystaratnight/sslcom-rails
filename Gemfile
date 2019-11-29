@@ -119,6 +119,7 @@ end
 
 group :development, :test do
   gem 'builder'
+  gem 'byebug'
   gem 'factory_bot_rails'
   gem 'pry-remote'
   gem 'ruby_parser'

@@ -15,7 +15,7 @@ class Role < ActiveRecord::Base
   VALIDATIONS   = 'validations'
   RA_ADMIN      = 'ra_admin'
   INDIVIDUAL_CERTIFICATE  = 'individual_certificate'
-  
+
   def self.get_role_id(role_name)
     Rails.cache.fetch(["get_role_id",role_name]) { Role.find_by(name: role_name).id }
   end
@@ -33,11 +33,11 @@ class Role < ActiveRecord::Base
   def self.get_account_admin_id
     Role.get_role_id(Role::ACCOUNT_ADMIN)
   end
-    
+
   def self.get_owner_id
     Role.get_role_id(Role::OWNER)
   end
-  
+
   def self.get_reseller_id
     Role.get_role_id(Role::RESELLER)
   end
@@ -45,7 +45,7 @@ class Role < ActiveRecord::Base
   def self.get_individual_certificate_id
     Role.get_role_id(Role::INDIVIDUAL_CERTIFICATE)
   end
-  
+
   def self.get_select_ids_for_owner
     Role.get_role_ids([
       ACCOUNT_ADMIN,
@@ -86,7 +86,7 @@ class Role < ActiveRecord::Base
       SYS_ADMIN
     ])
   end
-  
+
   def self.can_manage_payable_invoice
     Role.get_role_ids([
       ACCOUNT_ADMIN,
@@ -95,9 +95,9 @@ class Role < ActiveRecord::Base
       RESELLER
     ])
   end
-  # 
+  #
   # Roles that cannot be managed by users_manager role
-  # 
+  #
   def self.cannot_be_managed
     Role.get_role_ids([
       ACCOUNT_ADMIN,
