@@ -278,7 +278,7 @@ class SslAccount < ActiveRecord::Base
     end
     DomainControlValidation.import dcvs
     CertificateName.where(id: cn_ids).update_all updated_at: DateTime.now
-    attempt_to_issue.uniq.compact.each{|co|co.apply_for_certificate if co.all_domains_validated?}
+    attempt_to_issue.uniq.compact.each{|co|co.apply_for_certificate if co.domains_validated?}
     return satisfied
   end
 
@@ -313,7 +313,9 @@ class SslAccount < ActiveRecord::Base
       DomainControlValidation.import dcvs
       CertificateName.where(id: cn_ids).update_all updated_at: DateTime.now
       if apply_for_certificate
-        attempt_to_issue.uniq.compact.each{|co|co.apply_for_certificate if co.all_domains_validated?}
+        attempt_to_issue.uniq.compact.each do |co|co.apply_for_certificate if
+            co.domains_validated?(other_dcvs_satisfy_domain: false)
+        end
       end
     end
   end

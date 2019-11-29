@@ -26,7 +26,8 @@ class CertificateOrder < ActiveRecord::Base
   has_many    :domain_control_validations, through: :certificate_names
   has_many    :csrs, :through=>:certificate_contents, :source=>"csr"
   has_many    :csr_unique_values, through: :csrs
-  has_many    :signed_certificates, :through=>:csrs do
+  has_many    :attestation_certificates, through: :certificate_contents
+  has_many    :signed_certificates, through: :csrs do
     def expired
       where{expiration_date < Date.today}
     end
@@ -1227,10 +1228,12 @@ class CertificateOrder < ActiveRecord::Base
 
   # SSL.com chained Root call
   # DRY this up with ValidationsController#new
-  def domains_validated?
+  def domains_validated?(options={other_dcvs_satisfy_domain: true})
     return true if certificate_content.all_domains_validated?
-    ssl_account.other_dcvs_satisfy_domain(certificate_content.certificate_names.unvalidated.all,false)
-    certificate_content.all_domains_validated?
+    if options[:other_dcvs_satisfy_domain]
+      ssl_account.other_dcvs_satisfy_domain(certificate_content.certificate_names.unvalidated.all,false)
+      certificate_content.all_domains_validated?
+    end
   end
 
   def caa_validated?
@@ -1238,10 +1241,10 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def apply_for_certificate(options={})
-    # set multiple_signed_certificates to true when manually requesting a new signed certificate which can result
+    # set allow_multiple_certs_per_content to true when manually requesting a new signed certificate which can result
     # in several signed_certificates belonging to the same csr thus certificate_content
     (return false if !certificate_content.signed_certificate.blank? or certificate_content.preferred_pending_issuance?) unless
-      options[:multiple_signed_certificates]
+      options[:allow_multiple_certs_per_content]
     if [Ca::CERTLOCK_CA,Ca::SSLCOM_CA,Ca::MANAGEMENT_CA].include?(options[:ca]) or certificate_content.ca or
         !options[:mapping].blank?
       if !certificate_content.infringement.empty? # possible trademark problems
@@ -2076,14 +2079,6 @@ class CertificateOrder < ActiveRecord::Base
       end
     end
     return validated
-  end
-
-  def all_domains_validated?
-    if certificate_content.ca_id
-      certificate_content.all_domains_validated?
-    else
-      domains_validated.count==validating_domains.count
-    end
   end
 
   def renew_billing?

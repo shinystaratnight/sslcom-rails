@@ -148,7 +148,7 @@
           -opts=[["Scan", "scan"], ["Enable", "enable"], ["Disable", "disable"], ["Delete", "delete"]]
           %td.note_group_event(scope="col" width="50px")
             =check_box_tag "select_all", nil, false, {id: 'select_all'}
-            =select_tag("note_group_event_type", options_for_select(opts), prompt: 'Please select an option')
+            =select_tag("note_group_event_type", options_for_select(opts), prompt: 'Select')
           %td(scope="col") Friendly Name
           %td(scope="col") Scan History Counts
           %td(scope="col") Disabled?

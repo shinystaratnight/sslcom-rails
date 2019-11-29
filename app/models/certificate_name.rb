@@ -212,7 +212,9 @@ class CertificateName < ActiveRecord::Base
     csr.ca_tag
   end
 
-  def dcv_verify(protocol)
+  def dcv_verify(protocol=nil)
+    protocol ||= domain_control_validations.last.dcv_method
+    return nil if protocol=~/email/
     prepend=""
     CertificateName.dcv_verify(protocol: protocol,
                                https_dcv_url: dcv_url(true,prepend, true),

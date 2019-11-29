@@ -85,7 +85,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
 
       if is_attestation_processing?
         unless AttestationCertificate.is_cert_valid?(attestation_certificate, attestation_issuer_certificate)
-          self.errors[:attestation] << "wrong attestation certificate"
+          self.errors[:attestation] << "attestation failed"
         end
       end
     end
@@ -745,11 +745,11 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   end
 
   def attestation_certificate
-    @attestation_certificate || parameters_to_hash["attestation_certificate"]
+    @attestation_certificate || parameters_to_hash["attestation_cert"]
   end
 
   def attestation_issuer_certificate
-    @attestation_issuer_certificate || parameters_to_hash["attestation_issuer_certificate"]
+    @attestation_issuer_certificate || parameters_to_hash["attestation_issuer_cert"]
   end
 
   def is_attestation_processing?

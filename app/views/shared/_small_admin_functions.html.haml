@@ -29,3 +29,5 @@
   -if co.certificate.is_evcs?
     %li
       =link_to "add physical token", new_certificate_order_physical_token_path(co)
+  -unless co.attestation_certificate.blank?
+    %li found attestation: #{co.attestation_certificate.common_name}

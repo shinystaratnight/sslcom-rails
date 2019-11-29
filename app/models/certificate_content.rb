@@ -312,6 +312,12 @@ class CertificateContent < ActiveRecord::Base
         (certificate_names.pluck(:id) - certificate_names.validated.pluck(:id)).empty?
   end
 
+  def dcv_verify_certificate_names
+    certificate_names.include(:last_domain_control_validation).unvalidated.each do |cn|
+      cn.dcv_verify unless cn.last_domain_control_validation.dcv_method =~ /email/
+    end
+  end
+
   def signed_certificate
     SignedCertificate.unscoped.find_by_id(Rails.cache.fetch("#{cache_key}/signed_certificate") do
       signed_certificates.last.try(:id)

@@ -436,12 +436,12 @@ class DomainsController < ApplicationController
           cn_ids << team_domain.id
           # find all other non validated certificate_names and validate them
           validated<<@ssl_account.satisfy_related_dcvs(cn)
-          cn.certificate_content.certificate_order.apply_for_certificate if cn.certificate_content
+          attempt_to_issue << cn.certificate_content.certificate_order if cn.certificate_content
         end
       end
       DomainControlValidation.import dcvs
       CertificateName.where(id: cn_ids).update_all updated_at: DateTime.now
-      attempt_to_issue.uniq.compact.each{|co|co.apply_for_certificate if co.all_domains_validated?}
+      attempt_to_issue.uniq.compact.each{|co|co.apply_for_certificate}
       unless validated.empty?
         flash[:notice] = "The following domains are now validated: #{validated.flatten.uniq.join(" ,")}"
         redirect_to(domains_path) if current_user

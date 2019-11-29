@@ -321,7 +321,6 @@ class Csr < ActiveRecord::Base
       OpenSSL::X509::Request.new(body)
     rescue Exception=>e
       logger.error e.backtrace.inspect
-      nil
     end
   end
 

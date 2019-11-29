@@ -97,7 +97,7 @@ class Api::V1::ApiSslManagerRequestsController < Api::V1::APIController
   def collection
     set_template "collection"
 
-    if @result.save
+    if @result.valid?
       if @obj = @result.create_managed_certificates
         if @obj.is_a?(RegisteredAgent) && @obj.errors.empty?
           set_result_parameter(@result, @obj, nil)
