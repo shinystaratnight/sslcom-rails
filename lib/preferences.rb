@@ -196,7 +196,7 @@ module Preferences
 
       # Writer
       define_method("preferred_#{name}=") do |*args|
-        Rails.cache.delete("#{cache_key}/preferred_#{name}}")
+        Rails.cache.delete("#{cache_key}/preferred_#{name}")
         write_preference(*args.flatten.unshift(name))
       end
       alias_method "prefers_#{name}=", "preferred_#{name}="
