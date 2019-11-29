@@ -215,7 +215,7 @@ class CertificateName < ActiveRecord::Base
   end
 
   def dcv_verify(protocol=nil)
-    protocol ||= domain_control_validation.dcv_method
+    protocol ||= domain_control_validation.try(:dcv_method)
     return nil if protocol=~/email/
     prepend=""
     CertificateName.dcv_verify(protocol: protocol,
