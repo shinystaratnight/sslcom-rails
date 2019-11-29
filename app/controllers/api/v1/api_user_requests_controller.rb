@@ -63,7 +63,7 @@ class Api::V1::ApiUserRequestsController < Api::V1::APIController
       if @obj = UserSession.create(params.to_h).user
         @results = []
         if @obj.is_a?(User) && @obj.errors.empty?
-          @obj.ssl_accounts.each do |team|
+          @obj.ssl_accounts.uniq.each do |team|
             result = ApiUserListTeam_v1_4.new
             result.acct_number = team.acct_number
             result.roles = team.roles
