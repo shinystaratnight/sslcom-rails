@@ -152,6 +152,12 @@ class OrderNotifier < ActionMailer::Base
   end
 
   def potential_trademark(contact, certificate_order, domains)
+    cc = certificate_order.certificate_content
+    if cc.preferred_process_pending_server_certificates
+      cc.preferred_process_pending_server_certificates = false
+      cc.preferred_process_pending_server_certificates_will_change!
+    end
+
     @domains = domains
     @certificate_order=certificate_order
     mail  subject:       "Potential Trademark Issue for #{certificate_order.ref}",
