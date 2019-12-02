@@ -11,6 +11,7 @@ class Csr < ActiveRecord::Base
   
   has_many    :whois_lookups, :dependent => :destroy
   has_many    :signed_certificates, -> { where(type: nil) }, :dependent => :destroy
+  has_one :signed_certificate, -> { where(type: nil).order 'created_at' }, class_name: "SignedCertificate"
   has_many    :shadow_certificates
   has_many    :ca_certificate_requests, as: :api_requestable, dependent: :destroy
   has_many    :sslcom_ca_requests, as: :api_requestable
@@ -366,11 +367,6 @@ class Csr < ActiveRecord::Base
   def signed_certificate=(signed_certificate)
     signed_certificates << signed_certificate
   end
-
-  def signed_certificate
-    signed_certificates.order(:created_at).last
-  end
-  memoize :signed_certificate
 
   def replace_csr(csr)
     update_attribute :body, csr

@@ -27,6 +27,7 @@ class CertificateOrder < ActiveRecord::Base
   has_many    :csrs, :through=>:certificate_contents, :source=>"csr"
   has_many    :csr_unique_values, through: :csrs
   has_many    :attestation_certificates, through: :certificate_contents
+  has_one     :signed_certificate, -> { order 'created_at' }, class_name: "SignedCertificate"
   has_many    :signed_certificates, through: :csrs do
     def expired
       where{expiration_date < Date.today}
@@ -737,10 +738,6 @@ class CertificateOrder < ActiveRecord::Base
   end
   memoize :certificate
 
-  def signed_certificate
-    signed_certificates.order(:created_at).last
-  end
-
   def attestation_certificate
     attestation_certificates.order(:created_at).last
   end
@@ -793,7 +790,7 @@ class CertificateOrder < ActiveRecord::Base
   # :actual is based on the duration of the signed cert, :order is the duration based on the certificate order
   def total_days(options={round: false, duration: :order})
     if options[:duration]== :actual
-      if signed_certificates && !signed_certificates.empty?
+      unless signed_certificates.empty?
         sum = (signed_certificates.sort{|a,b|a.created_at.to_i<=>b.created_at.to_i}.last.expiration_date -
             signed_certificates.sort{|a,b|a.created_at.to_i<=>b.created_at.to_i}.first.effective_date)
         (options[:round] ? sum.round : sum)/1.day
