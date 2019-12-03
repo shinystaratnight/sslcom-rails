@@ -272,6 +272,14 @@ GEM
     jsonapi-serializers (1.0.1)
       activesupport
     jwt (2.2.1)
+    launchy (2.4.3)
+      addressable (~> 2.3)
+    letter_opener (1.7.0)
+      launchy (~> 2.2)
+    letter_opener_web (1.3.4)
+      actionmailer (>= 3.2)
+      letter_opener (~> 1.0)
+      railties (>= 3.2)
     libv8 (7.3.492.27.1)
     loofah (2.2.3)
       crass (~> 1.0.2)
@@ -582,6 +590,7 @@ DEPENDENCIES
   json
   json-schema
   jsonapi-serializers
+  letter_opener_web (~> 1.0)
   libv8
   mailboxer
   memoist
