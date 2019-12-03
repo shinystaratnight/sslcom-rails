@@ -115,6 +115,7 @@ group :development do
   gem 'memory_profiler'
   gem 'meta_request'
   gem 'bullet'
+  gem 'letter_opener_web', '~> 1.0'
 end
 
 group :development, :test do

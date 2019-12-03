@@ -27,7 +27,6 @@ class CertificateOrder < ActiveRecord::Base
   has_many    :csrs, :through=>:certificate_contents, :source=>"csr"
   has_many    :csr_unique_values, through: :csrs
   has_many    :attestation_certificates, through: :certificate_contents
-  has_one     :signed_certificate, -> { order 'created_at' }, class_name: "SignedCertificate"
   has_many    :signed_certificates, through: :csrs do
     def expired
       where{expiration_date < Date.today}
@@ -737,6 +736,10 @@ class CertificateOrder < ActiveRecord::Base
     end
   end
   memoize :certificate
+
+  def signed_certificate
+    signed_certificates.order(:created_at).last
+  end
 
   def attestation_certificate
     attestation_certificates.order(:created_at).last
