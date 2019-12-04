@@ -13,6 +13,7 @@ jobs:
           MYSQL_ROOT_HOST: "%"
     steps:
       - checkout
+      - ruby-linter/stylelint
       - restore_cache:
           keys:
             - sslcom-rails-{{ checksum "Gemfile.lock" }}
@@ -31,6 +32,10 @@ jobs:
       - run:
           name: Bundle Install Gem Dependencies
           command: bundle check --path vendor/bundle || bundle install --deployment
+
+      - run:
+          name: Rubocop Linting
+          command:  bundle exec rubocop
 
       - run:
           name: Build the Local Environment File on the Fly

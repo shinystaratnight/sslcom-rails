@@ -117,6 +117,13 @@ group :development do
   gem 'spring'
   gem 'spring-commands-testunit'
   gem 'web-console', '~> 2.0'
+
+  # Linting
+  gem 'rubocop', require: false
+  gem 'rubocop-minitest'
+  gem 'rubocop-performance'
+  gem 'rubocop-rails'
+  gem 'rubocop-rspec'
 end
 
 group :development, :test do
