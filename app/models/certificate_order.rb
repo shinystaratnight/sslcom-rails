@@ -759,7 +759,7 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def used_days(options={round: false})
-    if signed_certificates && !signed_certificates.empty?
+    if !signed_certificates.try("empty?".to_sym)
       sum = (Time.now - (signed_certificates.sort{|a,b|a.created_at.to_i<=>b.created_at.to_i}.first.effective_date ||
           self.created_at))
       (options[:round] ? sum.round : sum)/1.day
@@ -922,9 +922,7 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def migrated_from_v2?
-    Rails.cache.fetch("#{cache_key}/migrated_from_v2") do
-      order.try(:preferred_migrated_from_v2)
-    end
+    order.try(:preferred_migrated_from_v2)
   end
   memoize "migrated_from_v2?".to_sym
 

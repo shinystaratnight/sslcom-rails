@@ -326,7 +326,7 @@ class Csr < ActiveRecord::Base
   end
 
   def public_key
-    openssl_request.public_key if openssl_request
+    openssl_request.public_key if openssl_request.is_a?(OpenSSL::X509::Request)
   end
 
   def verify_signature
