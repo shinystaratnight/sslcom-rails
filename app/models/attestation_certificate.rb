@@ -52,7 +52,7 @@ class AttestationCertificate < SignedCertificate
     read_attribute(:ejbca_username) or (certificate_content.blank? ? nil : certificate_content.sslcom_ca_requests.first.try(:username))
   end
 
-  def self.is_cert_valid?(attest_cert, attest_issuer_cert)
+  def self.attestation_pass?(attest_cert, attest_issuer_cert)
     verified = verify_signature(attest_issuer_cert.strip, attest_cert.strip)
 
     if verified
