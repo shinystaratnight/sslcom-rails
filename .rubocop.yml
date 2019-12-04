@@ -6,6 +6,7 @@ require:
   - rubocop-performance
   - rubocop-rspec
   - rubocop-rails
+  - rubocop-minitest
 
 AllCops:
   Exclude:
