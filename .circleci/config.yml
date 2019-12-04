@@ -13,7 +13,6 @@ jobs:
           MYSQL_ROOT_HOST: "%"
     steps:
       - checkout
-      - ruby-linter/stylelint
       - restore_cache:
           keys:
             - sslcom-rails-{{ checksum "Gemfile.lock" }}

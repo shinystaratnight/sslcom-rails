@@ -1,11 +1,13 @@
 {
     "cSpell.words": [
         "Gemfile",
+        "Rakefile",
         "cdns",
         "circleci",
         "linting",
         "mkdir",
         "outdent",
+        "prepend",
         "rspec",
         "sslcom",
         "unixodbc"

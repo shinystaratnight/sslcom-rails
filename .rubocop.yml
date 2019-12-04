@@ -5,6 +5,7 @@ require:
   - rubocop/cop/internal_affairs
   - rubocop-performance
   - rubocop-rspec
+  - rubocop-rails
 
 AllCops:
   Exclude:
@@ -13,6 +14,7 @@ AllCops:
     - 'tmp/**/*'
     - 'lib/**/*'
     - 'test/**/*'
+    - 'bin/*'
   TargetRubyVersion: 2.3
 
 Naming/PredicateName:
@@ -24,13 +26,10 @@ Naming/PredicateName:
     - def_node_search
 
 Rails:
-  Enabled: false
+  Enabled: true
 
 Style/FormatStringToken:
-  # Because we parse a lot of source codes from strings. Percent arrays
-  # look like unannotated format string tokens to this cop.
-  Exclude:
-    - spec/**/*
+  Enabled: false
 
 Layout/HashAlignment:
   EnforcedHashRocketStyle:
@@ -62,6 +61,9 @@ Layout/ClassStructure:
 # Trailing white space is meaningful in code examples
 Layout/TrailingWhitespace:
   AllowInHeredoc: true
+
+Layout/SpaceBeforeBlockBraces:
+  Enabled: false
 
 Lint/AmbiguousBlockAssociation:
   Exclude:
