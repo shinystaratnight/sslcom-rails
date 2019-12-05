@@ -3,6 +3,7 @@ require 'resolv'
 
 class CertificateName < ActiveRecord::Base
   belongs_to  :certificate_content
+  has_one :certificate_order, through: :certificate_content
   has_many    :signed_certificates, through: :certificate_content
   has_many    :caa_checks, as: :checkable
   has_many    :ca_certificate_requests, as: :api_requestable, dependent: :destroy
@@ -12,6 +13,7 @@ class CertificateName < ActiveRecord::Base
               class_name: "DomainControlValidation"
   has_many    :last_sent_domain_control_validations, -> { where{email_address !~ 'null'}},
               class_name: "DomainControlValidation"
+  has_one :domain_control_validation, -> { order 'created_at' }, class_name: "DomainControlValidation"
   has_many    :domain_control_validations, dependent: :destroy do
     def last_sent
       where{email_address !~ 'null'}.last
@@ -163,7 +165,7 @@ class CertificateName < ActiveRecord::Base
   end
 
   def non_wildcard_name(check_type=false)
-    check_type && self.certificate_content.certificate_order.certificate.is_single? ?
+    check_type && self.certificate_order.certificate.is_single? ?
         CertificateContent.non_wildcard_name(name,true) :
         CertificateContent.non_wildcard_name(name,false)
   end
@@ -212,7 +214,9 @@ class CertificateName < ActiveRecord::Base
     csr.ca_tag
   end
 
-  def dcv_verify(protocol)
+  def dcv_verify(protocol=nil)
+    protocol ||= domain_control_validation.try(:dcv_method)
+    return nil if protocol=~/email/
     prepend=""
     CertificateName.dcv_verify(protocol: protocol,
                                https_dcv_url: dcv_url(true,prepend, true),
@@ -265,7 +269,7 @@ class CertificateName < ActiveRecord::Base
   end
 
   def ca_validation
-    certificate_content.certificate_order.ca_mdc_statuses.last.domain_status[name]
+    certificate_order.ca_mdc_statuses.last.domain_status[name]
   end
 
   def validate_via_cname

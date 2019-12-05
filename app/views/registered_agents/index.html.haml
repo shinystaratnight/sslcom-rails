@@ -28,7 +28,7 @@
             -opts = [['Delete', 'delete'], ['Approve', 'approve']]
             -if @registered_agents.size > 0
               =check_box_tag 'select_all', nil, false, {id: 'select_all'}
-              =select_tag('registered_agent_event_type', options_for_select(opts), prompt: 'Please select an option')
+              =select_tag('registered_agent_event_type', options_for_select(opts), prompt: 'Select')
           %td(scope="col") IP Address
           %td(scope="col") Mac Address
           %td(scope="col") Agent

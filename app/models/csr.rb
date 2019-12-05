@@ -11,6 +11,7 @@ class Csr < ActiveRecord::Base
   
   has_many    :whois_lookups, :dependent => :destroy
   has_many    :signed_certificates, -> { where(type: nil) }, :dependent => :destroy
+  has_one :signed_certificate, -> { where(type: nil).order 'created_at' }, class_name: "SignedCertificate"
   has_many    :shadow_certificates
   has_many    :ca_certificate_requests, as: :api_requestable, dependent: :destroy
   has_many    :sslcom_ca_requests, as: :api_requestable
@@ -321,12 +322,11 @@ class Csr < ActiveRecord::Base
       OpenSSL::X509::Request.new(body)
     rescue Exception=>e
       logger.error e.backtrace.inspect
-      nil
     end
   end
 
   def public_key
-    openssl_request.public_key if openssl_request
+    openssl_request.public_key if openssl_request.is_a?(OpenSSL::X509::Request)
   end
 
   def verify_signature
@@ -367,11 +367,6 @@ class Csr < ActiveRecord::Base
   def signed_certificate=(signed_certificate)
     signed_certificates << signed_certificate
   end
-
-  def signed_certificate
-    signed_certificates.order(:created_at).last
-  end
-  memoize :signed_certificate
 
   def replace_csr(csr)
     update_attribute :body, csr
@@ -480,6 +475,25 @@ class Csr < ActiveRecord::Base
       sc.sslcom_ca_requests << api_log_entry
       sc
     end
+  end
+
+  # this should be run as a cron job
+  def self.process_pending_server_certificates(submitted_on=1.day.ago)
+    Csr.joins(:certificate_content).includes(:signed_certificates, certificate_content: :certificate_order).
+        where{(certificate_content.workflow_state>>["pending_validation"]) &
+          (created_at > submitted_on)}.uniq.map do |csr|
+            cc=csr.certificate_content
+            co=csr.certificate_order
+            if cc.preferred_process_pending_server_certificates
+              cc.dcv_verify_certificate_names unless co.domains_validated?
+              co.apply_for_certificate if(
+              cc.ca_id and
+                  !csr.signed_certificate and
+                  !csr.is_ip_address? and
+                  co.paid? and
+                  cc.certificate.is_server?)
+            end
+          end
   end
 
   private

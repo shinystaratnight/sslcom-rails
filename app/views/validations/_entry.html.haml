@@ -57,7 +57,7 @@
                             %ul
                               -if co.certificate.requires_locked_registrant?
                                 %li.validation_complete
-                                  #{check_box_tag "validation_complete", true, false, :alt=>"#{i}"}validation complete
+                                  #{check_box_tag "validation_complete", cc.validated? ? false : true, false, :alt=>"#{i}"}#{cc.validated? ? "unvalidate" : "validation complete" }
                                 %li.email_customer
                                   #{check_box_tag "email_customer", true, false, :alt=>"#{i}"}notify customer?
                               %li.approve_submit=submit_tag 'submit'

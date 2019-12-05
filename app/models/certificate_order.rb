@@ -26,7 +26,8 @@ class CertificateOrder < ActiveRecord::Base
   has_many    :domain_control_validations, through: :certificate_names
   has_many    :csrs, :through=>:certificate_contents, :source=>"csr"
   has_many    :csr_unique_values, through: :csrs
-  has_many    :signed_certificates, :through=>:csrs do
+  has_many    :attestation_certificates, through: :certificate_contents
+  has_many    :signed_certificates, through: :csrs do
     def expired
       where{expiration_date < Date.today}
     end
@@ -758,7 +759,7 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def used_days(options={round: false})
-    if signed_certificates && !signed_certificates.empty?
+    if !signed_certificates.try("empty?".to_sym)
       sum = (Time.now - (signed_certificates.sort{|a,b|a.created_at.to_i<=>b.created_at.to_i}.first.effective_date ||
           self.created_at))
       (options[:round] ? sum.round : sum)/1.day
@@ -792,7 +793,7 @@ class CertificateOrder < ActiveRecord::Base
   # :actual is based on the duration of the signed cert, :order is the duration based on the certificate order
   def total_days(options={round: false, duration: :order})
     if options[:duration]== :actual
-      if signed_certificates && !signed_certificates.empty?
+      unless signed_certificates.empty?
         sum = (signed_certificates.sort{|a,b|a.created_at.to_i<=>b.created_at.to_i}.last.expiration_date -
             signed_certificates.sort{|a,b|a.created_at.to_i<=>b.created_at.to_i}.first.effective_date)
         (options[:round] ? sum.round : sum)/1.day
@@ -921,9 +922,7 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def migrated_from_v2?
-    Rails.cache.fetch("#{cache_key}/migrated_from_v2") do
-      order.try(:preferred_migrated_from_v2)
-    end
+    order.try(:preferred_migrated_from_v2)
   end
   memoize "migrated_from_v2?".to_sym
 
@@ -1227,10 +1226,12 @@ class CertificateOrder < ActiveRecord::Base
 
   # SSL.com chained Root call
   # DRY this up with ValidationsController#new
-  def domains_validated?
+  def domains_validated?(options={other_dcvs_satisfy_domain: true})
     return true if certificate_content.all_domains_validated?
-    ssl_account.other_dcvs_satisfy_domain(certificate_content.certificate_names.unvalidated.all,false)
-    certificate_content.all_domains_validated?
+    if options[:other_dcvs_satisfy_domain]
+      ssl_account.other_dcvs_satisfy_domain(certificate_content.certificate_names.unvalidated.all,false)
+      certificate_content.all_domains_validated?
+    end
   end
 
   def caa_validated?
@@ -1238,10 +1239,12 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def apply_for_certificate(options={})
-    # set multiple_signed_certificates to true when manually requesting a new signed certificate which can result
+    # set allow_multiple_certs_per_content to true when manually requesting a new signed certificate which can result
     # in several signed_certificates belonging to the same csr thus certificate_content
-    (return false if !certificate_content.signed_certificate.blank? or certificate_content.preferred_pending_issuance?) unless
-      options[:multiple_signed_certificates]
+    (return false if !certificate_content.signed_certificate.blank? or
+        certificate_content.preferred_pending_issuance? or
+        !certificate_content.
+            preferred_process_pending_server_certificates?) unless options[:allow_multiple_certs_per_content]
     if [Ca::CERTLOCK_CA,Ca::SSLCOM_CA,Ca::MANAGEMENT_CA].include?(options[:ca]) or certificate_content.ca or
         !options[:mapping].blank?
       if !certificate_content.infringement.empty? # possible trademark problems
@@ -2076,14 +2079,6 @@ class CertificateOrder < ActiveRecord::Base
       end
     end
     return validated
-  end
-
-  def all_domains_validated?
-    if certificate_content.ca_id
-      certificate_content.all_domains_validated?
-    else
-      domains_validated.count==validating_domains.count
-    end
   end
 
   def renew_billing?

@@ -1,0 +1,72 @@
+version: 2
+jobs:
+  build:
+    working_directory: ~/sslcom-rails
+    docker:
+      - image: circleci/ruby:2.6.2
+        environment:
+          RAILS_ENV: test
+          DB_HOST: 127.0.0.1
+      - image: circleci/mysql:5.7.28
+        environment:
+          MYSQL_ALLOW_EMPTY_PASSWORD: "true"
+          MYSQL_ROOT_HOST: "%"
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - sslcom-rails-{{ checksum "Gemfile.lock" }}
+            - sslcom-rails-
+
+      - run:
+          name: Install Libraries for mySQL and Correct Bundler Version (1.17.3)
+          command: |
+            sudo apt-get install unixodbc-dev
+            sudo apt-get -y install mysql-server
+            sudo gem uninstall bundler
+            sudo rm /usr/local/bin/bundle
+            sudo rm /usr/local/bin/bundler
+            sudo gem install bundler -v 1.17.3
+
+      - run:
+          name: Bundle Install Gem Dependencies
+          command: bundle check --path vendor/bundle || bundle install --deployment
+
+      - run:
+          name: Build the Local Environment File on the Fly
+          command: |-
+            mkdir -p config && echo '
+              AWS_ACCESS_KEY_ID: ""
+              AWS_SECRET_ACCESS_KEY: ""
+              S3_BUCKET_NAME: ""
+              AWS_DEFAULT_REGION: ""
+            ' > config/local_env.yml
+
+      - run:
+          name: Build the Test Database YML file on the Fly
+          command: |-
+            mkdir -p config && echo 'test:
+              adapter: mysql2
+              database: ssl_com_test
+              username: root
+              host: 127.0.0.1
+            ' > config/database.yml
+
+      - save_cache:
+          key: sslcom-rails-{{ checksum "Gemfile.lock" }}
+          paths:
+            - vendor/bundle
+
+      - run:
+          name: Create the Test Database, Load the Structure, and Migrate the Latest Migrations
+          command: |-
+            export RAILS_ENV="test"
+            export RACK_ENV="test"
+            bundle exec rake db:create db:structure:load db:migrate --trace
+
+      - run:
+          name: Run Rails Application Tests
+          command: bundle exec rake test
+
+      - store_artifacts:
+          path: coverage

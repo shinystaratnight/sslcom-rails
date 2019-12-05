@@ -42,7 +42,7 @@ class ValidationsController < ApplicationController
         checkout = {checkout: "true"}
         if cc.signed_certificate
           flash.now[:notice] = "SSL certificate has been issued"
-        elsif @certificate_order.all_domains_validated?
+        elsif @certificate_order.domains_validated?
           flash.now[:notice] = "All domains have been validated, please wait for certificate issuance"
         end
 
@@ -564,9 +564,11 @@ class ValidationsController < ApplicationController
         end
 
         is_validated = false
-        if params[:validation_complete]
+        if params[:validation_complete]=="true"
           cc.validate! unless cc.validated?
           is_validated = true
+        elsif params[:validation_complete]=="false"
+          cc.pend_validation! unless cc.validated?
         else
           if vrs.all?(&:approved?)
             unless cc.validated?
@@ -594,9 +596,10 @@ class ValidationsController < ApplicationController
 
   def send_to_ca(options={})
     co=CertificateOrder.find_by_ref(params[:certificate_order_id])
-    result = co.apply_for_certificate(params.merge(current_user: current_user, multiple_signed_certificates: true))
+    result = co.apply_for_certificate(params.merge(current_user: current_user, allow_multiple_certs_per_content: true))
     unless options[:send_to_ca].blank? or [Ca::CERTLOCK_CA,Ca::SSLCOM_CA,Ca::MANAGEMENT_CA].include?(params[:ca])
-      co.certificate_content.pend_validation!(send_to_ca: false, host: request.host_with_port) if result.order_number && !co.certificate_content.pending_validation?
+      co.certificate_content.pend_validation!(send_to_ca: false, host: request.host_with_port) if
+          result.order_number && !co.certificate_content.pending_validation?
     end
     respond_to do |format|
       format.js {render :json=>{:result=>render_to_string(:partial=>

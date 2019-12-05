@@ -10,6 +10,7 @@ class ApiSslManagerCreate < ApiSslManagerRequest
     already_registered = RegisteredAgent.where(
         ip_address: self.ip_address,
         mac_address: self.mac_address,
+        ssl_account_id: api_requestable.id,
         agent: self.agent
     ).first
 

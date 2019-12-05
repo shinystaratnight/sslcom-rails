@@ -84,8 +84,8 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
       end
 
       if is_attestation_processing?
-        unless AttestationCertificate.is_cert_valid?(attestation_certificate, attestation_issuer_certificate)
-          self.errors[:attestation] << "wrong attestation certificate"
+        unless AttestationCertificate.attestation_pass?(attestation_certificate, attestation_issuer_certificate)
+          self.errors[:attestation] << "attestation failed"
         end
       end
     end
@@ -285,7 +285,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
           comodo_auto_update_dcv(certificate_order: @certificate_order)
         end
       # elsif is_attestation_processing?
-      #   unless self.is_cert_valid? && @certificate_order.certificate_content.validated!
+      #   unless self.attestation_pass? && @certificate_order.certificate_content.validated!
       #     cert_body = SignedCertificate.enclose_with_tags(attestation_certificate.strip)
       #     parsed = OpenSSL::X509::Certificate.new(cert_body)
       #
@@ -745,18 +745,18 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   end
 
   def attestation_certificate
-    @attestation_certificate || parameters_to_hash["attestation_certificate"]
+    @attestation_certificate || parameters_to_hash["attestation_cert"]
   end
 
   def attestation_issuer_certificate
-    @attestation_issuer_certificate || parameters_to_hash["attestation_issuer_certificate"]
+    @attestation_issuer_certificate || parameters_to_hash["attestation_issuer_cert"]
   end
 
   def is_attestation_processing?
     attestation_certificate.blank? && attestation_issuer_certificate.blank? ? false : true
   end
 
-  def is_cert_valid?
+  def attestation_pass?
     verified = verify_signature(
         attestation_issuer_certificate.strip,
         attestation_certificate.strip

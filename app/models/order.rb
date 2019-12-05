@@ -228,8 +228,6 @@ class Order < ActiveRecord::Base
     end
   end
 
-  preference :migrated_from_v2, :default=>false
-
   SmimeClientEnrollValidate = Struct.new(:user_id, :order_id) do
     def perform
       user = User.find user_id
@@ -1175,6 +1173,13 @@ class Order < ActiveRecord::Base
     end
     options[:certificate_orders]
   end
+
+  def preferred_migrated_from_v2?
+    Rails.cache.fetch("#{cache_key}/migrated_from_v2") do
+      created_at < Time.at(1317279546) # last order in production that was migrated
+    end
+  end
+  alias_method "preferred_migrated_from_v2".to_sym, "preferred_migrated_from_v2?".to_sym
 
   # builds out certificate_order at a deep level by building SubOrderItems for each certificate_order
   def self.setup_certificate_order(options)

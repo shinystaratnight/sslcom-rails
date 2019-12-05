@@ -141,14 +141,17 @@ class SslcomCaApi
     cert = options[:cc].certificate
     co=options[:cc].certificate_order
     carry_over=0
-    public_key=unless options[:public_key]
-      csr=options[:csr] ? Csr.new(body: options[:csr]) : options[:cc].csr
-      carry_over=(!cert.is_server? or cert.is_free?) ? 0 : csr.days_left
-      options[:mapping]=options[:mapping].ecc_profile if csr.sig_alg_parameter=~/ecc/i
-      csr.public_key
-    else
-      options[:public_key]
-    end
+    public_key=
+        if options[:cc].attestation_certificate
+          options[:cc].attestation_certificate.public_key
+        elsif options[:public_key]
+          options[:public_key]
+        else
+          csr=options[:csr] ? Csr.new(body: options[:csr]) : options[:cc].csr
+          carry_over=(!cert.is_server? or cert.is_free?) ? 0 : csr.days_left
+          options[:mapping]=options[:mapping].ecc_profile if csr.sig_alg_parameter=~/ecc/i
+          csr.public_key
+        end
     if public_key
       dn={}
       if options[:collect_certificate]
@@ -252,19 +255,27 @@ class SslcomCaApi
         cc.preferred_pending_issuance_will_change!
       end
       if cc.csr.blank?
-        cc.create_csr(body: options[:csr])
+        if !options[:csr].blank?
+          cc.create_csr(body: options[:csr])
+        elsif cc.attestation_certificate
+          csr=OpenSSL::X509::Request.new
+          csr.public_key=cc.attestation_certificate.public_key
+          cc.create_csr(body: csr.to_s)
+        end
       else
         cc.csr.save if cc.csr.new_record?
       end
-      if options[:mapping].is_ev?
+      if options[:mapping].is_ev? # has the CSR already been submitted and is waiting for approval?
         approval_req, approval_res = SslcomCaApi.get_status(csr: cc.csr, mapping: options[:mapping])
+        # exit if the csr has been submitted but not approved yet
         return cc.csr.sslcom_ca_requests.create(
             parameters: approval_req.body, method: "get", response: approval_res.body,
             ca: options[:ca]) if approval_res.try(:body)=~/WAITING FOR APPROVAL/
       end
       if options[:mapping].is_ev? and (approval_res.try(:body).blank? or approval_res.try(:body)=="[]" or
-          (!cc.signed_certificate.blank? and cc.signed_certificate.read_attribute(:ejbca_username)==cc.csr.sslcom_ca_requests.compact.first.username and
-              !cc.csr.sslcom_ca_requests.compact.first.username.blank?))
+          (!cc.signed_certificate.blank? and
+            cc.signed_certificate.read_attribute(:ejbca_username)==cc.csr.sslcom_ca_requests.compact.first.username and
+            !cc.csr.sslcom_ca_requests.compact.first.username.blank?))
         # create the user for EV order
         host = ca_host(options[:mapping])+"/v1/user"
         options.merge! no_public_key: true
@@ -280,6 +291,8 @@ class SslcomCaApi
       if (!options[:mapping].is_ev? and api_log_entry.username.blank?) or
           (options[:mapping].is_ev? and api_log_entry.username.blank? and
               api_log_entry.request_username.blank?)
+        cc.preferred_process_pending_server_certificates = false
+        cc.preferred_process_pending_server_certificates_will_change!
         OrderNotifier.problem_ca_sending("support@ssl.com", cc.certificate_order,"sslcom").deliver
       elsif api_log_entry.certificate_chain # signed certificate is issued
         cc.update_column(:label, options[:mapping].is_ev? ? api_log_entry.request_username :

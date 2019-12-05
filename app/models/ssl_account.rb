@@ -278,7 +278,7 @@ class SslAccount < ActiveRecord::Base
     end
     DomainControlValidation.import dcvs
     CertificateName.where(id: cn_ids).update_all updated_at: DateTime.now
-    attempt_to_issue.uniq.compact.each{|co|co.apply_for_certificate if co.all_domains_validated?}
+    attempt_to_issue.uniq.compact.each{|co|co.apply_for_certificate if co.domains_validated?}
     return satisfied
   end
 
@@ -291,7 +291,7 @@ class SslAccount < ActiveRecord::Base
     cn_ids = [] # need to touch certificate_names to bust cache since bulk insert skips callbacks
     unless certificate_names.blank?
       all_certificate_names(certificate_names.map(&:name),"validated").
-          includes(:validated_domain_control_validations).each do |cn|
+          includes(:validated_domain_control_validations, :certificate_order).each do |cn|
         certificate_names.each do |certificate_name|
           if cn.id!=certificate_name.id and DomainControlValidation.domain_in_subdomains?(cn.name,certificate_name.name)
             dcv = cn.validated_domain_control_validations.last # TODO find dcv.satisfied?
@@ -303,7 +303,7 @@ class SslAccount < ActiveRecord::Base
                       cn.cached_csr_public_key_sha1==certificate_name.cached_csr_public_key_sha1) : true)
                 cn_ids << certificate_name.id
                 dcvs << certificate_name.domain_control_validations.new(dcv.attributes.except("id"))
-                attempt_to_issue << certificate_name.certificate_content.try(:certificate_order)
+                attempt_to_issue << certificate_name.try(:certificate_order)
                 break
               end
             end
@@ -313,7 +313,9 @@ class SslAccount < ActiveRecord::Base
       DomainControlValidation.import dcvs
       CertificateName.where(id: cn_ids).update_all updated_at: DateTime.now
       if apply_for_certificate
-        attempt_to_issue.uniq.compact.each{|co|co.apply_for_certificate if co.all_domains_validated?}
+        attempt_to_issue.uniq.compact.each do |co|co.apply_for_certificate if
+            co.domains_validated?(other_dcvs_satisfy_domain: false)
+        end
       end
     end
   end

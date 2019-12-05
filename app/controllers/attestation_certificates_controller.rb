@@ -47,6 +47,6 @@ class AttestationCertificatesController < ApplicationController
   end
 
   def check_attestation_verification
-    render json: AttestationCertificate.is_cert_valid?(params[:attestation_cert], params[:attestation_issuer_cert])
+    render json: AttestationCertificate.attestation_pass?(params[:attestation_cert], params[:attestation_issuer_cert])
   end
 end

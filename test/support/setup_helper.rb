@@ -16,12 +16,6 @@ module SetupHelper
     end
   end
 
-  def create_reminder_triggers
-    unless ReminderTrigger.count == 5
-      (1..5).to_a.each { |i| ReminderTrigger.create(id: i, name: i) }
-    end
-  end
-
   def set_common_roles
     @all_roles           = [Role.get_owner_id, Role.get_account_admin_id]
     @billing_role        = [Role.get_role_id(Role::BILLING)]
@@ -33,7 +27,6 @@ module SetupHelper
   end
 
   def initialize_roles
-    create_reminder_triggers
     create_roles
     set_common_roles
     @password = 'Testing@1'
@@ -71,13 +64,13 @@ module SetupHelper
     invited_user.send(:approve_account, ssl_account_id: invited_ssl_acct.id)
     invited_user
   end
-  
+
   def initialize_countries
     Country.create(iso1_code: 'US', name_caps: 'UNITED STATES', name: 'United States', iso3_code: 'USA', num_code: 840)
     Country.create(iso1_code: 'ZA', name_caps: 'SOUTH AFRICA', name: 'South Africa', iso3_code: 'ZAF', num_code: 710)
     Country.create(iso1_code: 'CA', name_caps: 'CANADA', name: 'Canada', iso3_code: 'CAN', num_code: 124)
   end
-  
+
   def initialize_certificate_csr_keys
 @nonwildcard_csr = <<EOS
 -----BEGIN CERTIFICATE REQUEST-----

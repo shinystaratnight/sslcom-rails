@@ -114,6 +114,7 @@ class CertificateContent < ActiveRecord::Base
 
   preference  :reprocessing, default: false
   preference  :pending_issuance, default: false
+  preference  :process_pending_server_certificates, default: true
 
   CertificateNamesJob = Struct.new(:cc_id, :domains) do
     def perform
@@ -310,6 +311,12 @@ class CertificateContent < ActiveRecord::Base
   def all_domains_validated?
     !certificate_names.empty? and
         (certificate_names.pluck(:id) - certificate_names.validated.pluck(:id)).empty?
+  end
+
+  def dcv_verify_certificate_names
+    certificate_names.includes(:domain_control_validation).unvalidated.each do |cn|
+      cn.dcv_verify unless cn.domain_control_validation.try(:dcv_method) =~ /email/
+    end
   end
 
   def signed_certificate

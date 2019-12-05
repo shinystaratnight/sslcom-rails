@@ -31,3 +31,4 @@ app/assets/images/ui-bg_diagonals-thick_18_b81900_40x40.png
 /.vagrant_bak/
 coverage/
 coverage/*
+!/config/deploy.rb
