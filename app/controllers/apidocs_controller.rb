@@ -19,27 +19,40 @@ class ApidocsController < ActionController::Base
       end
     end
 
-    parameter :login do
-      key :name, :login
+    parameter :create_user_parameter do
+      key :name, :body
       key :type, :string
       key :in, :body
-      key :description, 'login used when signing in'
+      key :description, 'User account information'
       key :required, true
+
+      schema do
+        property :login do
+          key :name, :login
+          key :type, :string
+          key :in, :body
+          key :description, 'login used when signing in'
+          key :required, true
+        end
+        property :email do
+          key :name, :email
+          key :type, :string
+          key :in, :body
+          key :description, 'email address associated with the new user'
+          key :required, true
+          key :example, 'user@gmail.com'
+        end
+        property :password do
+          key :name, :password
+          key :type, :string
+          key :in, :body
+          key :description, 'password the user signs in with'
+          key :required, true
+          key :example, '@Sup3AwE$0We'
+        end
+      end
     end
-    parameter :email do
-      key :name, :email
-      key :type, :string
-      key :in, :body
-      key :description, 'email address associated with the new user'
-      key :required, true
-    end
-    parameter :password do
-      key :name, :password
-      key :type, :string
-      key :in, :body
-      key :description, 'password the user signs in with'
-      key :required, true
-    end
+
     tag do
       key :name, 'user'
       key :description, 'User operations'
@@ -58,7 +71,8 @@ class ApidocsController < ActionController::Base
   SWAGGERED_CLASSES = [
     Api::V1::ApiUserRequestsController,
     User,
-    ErrorModel,
+    Swagger::Blocks::ErrorResponse,
+    Swagger::Blocks::UserInfoResponse,
     self
   ].freeze
 

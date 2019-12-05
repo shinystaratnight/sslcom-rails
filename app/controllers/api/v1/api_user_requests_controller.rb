@@ -16,28 +16,28 @@ module Api
         result.update_attribute :response, render_to_string(template: template)
       end
 
-      # include Swagger::Blocks
       swagger_path '/users' do
         operation :post do
           key :summary, 'Create a User'
           key :description, 'Creates a User and returns API credentials'
           key :operation, 'createUser'
+          key :produces, %w[application/json]
+          key :consumes, %w[application/json]
           key :tags, [
             'user'
           ]
-          parameter :login
-          parameter :email
-          parameter :password
+          parameter :create_user_parameter
+
           response 200 do
             key :description, 'create user response'
             schema do
-              key :'$ref', :CreateUser
+              key :'$ref', :UserInfoResponse
             end
           end
           response :default do
             key :description, 'unexpected error'
             schema do
-              key :'$ref', :ErrorModel
+              key :'$ref', :ErrorResponse
             end
           end
         end
@@ -61,6 +61,48 @@ module Api
         render_200_status
       rescue StandardError => e
         render_500_error e
+      end
+
+      swagger_path '/user/{login}/{password}' do
+        operation :post do
+          key :summary, 'Retreive User API Credentials'
+          key :description, 'A single User object with all its details. Also call this method to get the latest api credentials that are required for other resources within the SSL.com api.'
+          key :operation, 'getUser'
+          key :produces, %w[application/json]
+          key :consumes, %w[application/json]
+          key :tags, [
+            'user'
+          ]
+          parameter :login do
+            key :name, :login
+            key :type, :string
+            key :in, :path
+            key :description, 'login used when signing in'
+            key :required, true
+            key :example, 'swaggeruser'
+          end
+          parameter :password do
+            key :name, :password
+            key :type, :string
+            key :in, :path
+            key :description, 'password the user signs in with'
+            key :required, true
+            key :example, `@Sup3AwE$0We`
+          end
+
+          response 200 do
+            key :description, 'Get User Response'
+            schema do
+              key :'$ref', :UserInfoResponse
+            end
+          end
+          response :default do
+            key :description, 'unexpected error'
+            schema do
+              key :'$ref', :ErrorResponse
+            end
+          end
+        end
       end
 
       def show_v1_4
