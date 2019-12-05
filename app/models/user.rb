@@ -1,8 +1,14 @@
-class User < ActiveRecord::Base
+class User < ApplicationRecord
   extend Memoist
   include V2MigrationProgressAddon
   include UserMessageable
-#  using_access_control
+
+  swagger_schema :User do
+    property :account_key
+    property :secret_key
+    property :status
+    property :user_url
+  end
 
   OWNED_MAX_TEAMS = 3
   PASSWORD_SPECIAL_CHARS = '~`!@#\$%^&*()-+={}[]|;:"<>,./?'

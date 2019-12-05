@@ -123,7 +123,6 @@ end
 group :development, :test do
   gem 'builder'
   gem 'byebug'
-  gem 'byebug'
   gem 'factory_bot_rails'
   gem 'pry-remote'
   gem 'ruby-odbc'
@@ -141,6 +140,7 @@ group :test do
   gem 'webmock'
 end
 
-gem 'uglifier', '4.1.8'
-
 gem 'httparty'
+gem 'swagger-blocks'
+gem 'swagger-docs'
+gem 'uglifier', '4.1.8'

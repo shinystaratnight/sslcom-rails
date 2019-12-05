@@ -482,6 +482,10 @@ GEM
       faraday (~> 0.13)
       net-http-persistent (~> 3.0)
     strscan (1.0.0)
+    swagger-blocks (3.0.0)
+    swagger-docs (0.2.9)
+      activesupport (>= 3)
+      rails (>= 3)
     temple (0.8.1)
     terrapin (0.6.0)
       climate_control (>= 0.0.3, < 1.0)
@@ -640,6 +644,8 @@ DEPENDENCIES
   stringio
   stripe
   strscan
+  swagger-blocks
+  swagger-docs
   timezone (~> 1.0)
   turbolinks
   u2f
