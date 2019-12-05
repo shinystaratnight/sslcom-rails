@@ -16,6 +16,7 @@ module Api
         result.update_attribute :response, render_to_string(template: template)
       end
 
+      # include Swagger::Blocks
       swagger_path '/users' do
         operation :post do
           key :summary, 'Create a User'
@@ -24,39 +25,23 @@ module Api
           key :tags, [
             'user'
           ]
-          parameter do
-            key :name, :login
-            key :type, :string
-            key :in, :body
-            key :description, 'login used when signing in'
-            key :required, true
-          end
-          parameter do
-            key :name, :email
-            key :type, :string
-            key :in, :body
-            key :description, 'email address associated with the new user'
-            key :required, true
-          end
-          parameter do
-            key :name, :password
-            key :type, :string
-            key :in, :body
-            key :description, 'password the user signs in with'
-            key :required, true
-          end
+          parameter :login
+          parameter :email
+          parameter :password
           response 200 do
             key :description, 'create user response'
             schema do
-              key :'$ref', :User
+              key :'$ref', :CreateUser
+            end
+          end
+          response :default do
+            key :description, 'unexpected error'
+            schema do
+              key :'$ref', :ErrorModel
             end
           end
         end
       end
-      # swagger_api :create_v1_4 do
-      #   summary 'Create a new user'
-      #   notes 'Creates a new user and returns API credentials'
-      # end
 
       def create_v1_4
         set_template 'create_v1_4'

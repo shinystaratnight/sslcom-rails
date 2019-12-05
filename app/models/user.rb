@@ -3,11 +3,20 @@ class User < ApplicationRecord
   include V2MigrationProgressAddon
   include UserMessageable
 
-  swagger_schema :User do
-    property :account_key
-    property :secret_key
-    property :status
-    property :user_url
+  swagger_schema :CreateUser do
+    key :required, [:login, :email, :password]
+    property :account_key do
+      key :type, :string
+    end
+    property :secret_key do
+      key :type, :string
+    end
+    property :status do
+      key :type, :string
+    end
+    property :user_url do
+      key :type, :string
+    end
   end
 
   OWNED_MAX_TEAMS = 3

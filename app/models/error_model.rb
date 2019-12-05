@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# app/models/error_model.rb
 class ErrorModel
   include Swagger::Blocks
 
