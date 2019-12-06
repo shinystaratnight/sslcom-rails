@@ -143,8 +143,8 @@ class SslAccount < ActiveRecord::Base
   validates :ssl_slug, uniqueness: {case_sensitive: false}, length: {in: 2..20}, allow_nil: true
   validates :company_name, length: {in: 2..20}, allow_nil: true
 
-  # default_scope ->{order("ssl_accounts.created_at desc")}
-  default_scope{where{workflow_state << ['archived']}.order("ssl_accounts.created_at desc")}
+  default_scope ->{order("ssl_accounts.created_at desc")}
+  # default_scope{where{workflow_state << ['archived']}.order("ssl_accounts.created_at desc")}
 
   scope :search_team, -> (term){
     sql=%(MATCH (ssl_accounts.acct_number, ssl_accounts.company_name, ssl_accounts.ssl_slug) AGAINST ('#{term}') OR
