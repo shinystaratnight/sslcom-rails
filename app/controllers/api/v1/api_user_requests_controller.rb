@@ -63,7 +63,7 @@ module Api
         render_500_error e
       end
 
-      swagger_path '/user/{login}/{password}' do
+      swagger_path '/user/{login}/' do
         operation :post do
           key :summary, 'Retreive User API Credentials'
           key :description, 'A single User object with all its details. Also call this method to get the latest api credentials that are required for other resources within the SSL.com api.'
@@ -73,7 +73,7 @@ module Api
           key :tags, [
             'user'
           ]
-          parameter :login do
+          parameter do
             key :name, :login
             key :type, :string
             key :in, :path
@@ -81,10 +81,10 @@ module Api
             key :required, true
             key :example, 'swaggeruser'
           end
-          parameter :password do
+          parameter do
             key :name, :password
             key :type, :string
-            key :in, :path
+            key :in, :query
             key :description, 'password the user signs in with'
             key :required, true
             key :example, `@Sup3AwE$0We`
@@ -124,8 +124,10 @@ module Api
         else
           InvalidApiUserRequest.create parameters: params, response: @result.errors.to_json
         end
-        render_200_status
+        # render_200_status
+        render json: JSONAPI::Serializer.serialize(@result), status: :ok
       rescue StandardError => e
+        binding.pry
         render_500_error e
       end
 

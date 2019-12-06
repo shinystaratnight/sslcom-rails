@@ -111,7 +111,6 @@ group :development do
   gem 'binding_of_caller'
   gem 'bullet'
   gem 'dotenv-rails'
-  gem 'foreman'
   gem 'letter_opener_web', '~> 1.0'
   gem 'memory_profiler'
   gem 'meta_request'
@@ -140,6 +139,7 @@ group :test do
   gem 'webmock'
 end
 
+gem 'foreman'
 gem 'httparty'
 gem 'swagger-blocks'
 gem 'swagger-docs'
