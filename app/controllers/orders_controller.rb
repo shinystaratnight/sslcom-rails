@@ -354,7 +354,7 @@ class OrdersController < ApplicationController
         owner: current_user,
         target: @order,
         notes: params[:revoke_reason],
-        action: 'Revoke all #{list.count} items(s) for order.'
+        action: "Revoke all #{list.count} items(s) for order."
       )
       flash[:notice] = "All #{list.count} order item(s) have been revoked."
     else  

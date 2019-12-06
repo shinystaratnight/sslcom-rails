@@ -33,6 +33,10 @@ jobs:
           command: bundle check --path vendor/bundle || bundle install --deployment
 
       - run:
+          name: Rubocop Linting
+          command:  bundle exec rubocop
+
+      - run:
           name: Build the Local Environment File on the Fly
           command: |-
             mkdir -p config && echo '
