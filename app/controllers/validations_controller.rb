@@ -209,7 +209,21 @@ class ValidationsController < ApplicationController
         certificate_content.update_column :domains, remain_domains
       end
 
-      certificate_names.where{ name >> domain_name_arry }.each do |cn_obj|
+      certificate_names.includes(:domain_control_validations).where{ name >> domain_name_arry }.each do |cn_obj|
+        cleanup = -> {
+          # Remove Domain from Notification Group
+          NotificationGroup.auto_manage_cert_name(certificate_content, 'delete', cn_obj)
+
+          # Remove Domain Object
+          dcvs = cn_obj.domain_control_validations
+          if dcvs.size > 0
+            dcvs.delete_all
+          end
+          cn_obj.destroy
+
+          # TODO: Remove cache for removed domain
+          Rails.cache.delete(params[:certificate_order_id] + ':' + cn_obj.name)
+        }
         if certificate_content.ca_id.nil?
           res = ComodoApi.auto_remove_domain(domain_name: cn_obj, order_number: certificate_order.external_order_number)
 
@@ -226,35 +240,12 @@ class ValidationsController < ApplicationController
           end
 
           if error_code.zero?
-            # Remove Domain from Notification Group
-            NotificationGroup.auto_manage_cert_name(certificate_content, 'delete', cn_obj)
-
-            # Remove Domain Object
-            dcvs = cn_obj.domain_control_validations
-            if dcvs.size > 0
-              dcvs.delete_all
-            end
-            cn_obj.destroy
-
-            # TODO: Remove cache for removed domain
-            # Rails.cache.delete(params[:certificate_order_id] + ':' + domain_name)
-            Rails.cache.delete(params[:certificate_order_id] + ':' + cn_obj.name)
+            cleanup.call
           else
             result_obj[cn_obj.name] = error_message.gsub("+", " ").gsub("%27", "'").gsub("%21", "!")
           end
         else
-          dcvs = cn_obj.domain_control_validations
-          if dcvs.size > 0
-            dcvs.delete_all
-          end
-          # Remove Domain from Notification Group
-          NotificationGroup.auto_manage_cert_name(certificate_content, 'delete', cn_obj)
-
-          # Remove Domain Object
-          cn_obj.destroy
-
-          # TODO: Remove cache for removed domain
-          Rails.cache.delete(params[:certificate_order_id] + ':' + cn_obj.name)
+          cleanup.call
         end
       end
     else
