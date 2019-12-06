@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 SslCom::Application.configure do
   APP_URL = "http://#{Settings.dev_portal_domain}:3000"
   MIGRATING_FROM_LEGACY = false
@@ -26,13 +28,13 @@ SslCom::Application.configure do
   # Only use best-standards-support built into browsers
   config.action_dispatch.best_standards_support = :builtin
 
-  config.action_mailer.delivery_method = :letter_opener
+  config.action_mailer.delivery_method = :letter_opener_web
   config.action_mailer.perform_deliveries = true
 
   config.eager_load = false
 
   config.to_prepare do
-    BillingProfile.password = "kama1jama1"
+    BillingProfile.password = 'kama1jama1'
   end
 
   config.assets.debug = false
@@ -41,31 +43,31 @@ SslCom::Application.configure do
 
   unless Rails.env.test?
     config.middleware.use Rack::SslEnforcer,
-      only: [%r(^/certificates/.*?/buy), %r(^/login), %r{^/account(/new)?}, %r(^/user_session/new),
-             %r{^/users?/new(/affiliates)?}, %r(^/password_resets/new), %r(^/orders/new), %r(^/secure/allocate_funds),
-             %r(^/certificate_orders/.*)]
+                          only: [%r{^/certificates/.*?/buy}, %r{^/login}, %r{^/account(/new)?}, %r{^/user_session/new},
+                                 %r{^/users?/new(/affiliates)?}, %r{^/password_resets/new}, %r{^/orders/new}, %r{^/secure/allocate_funds},
+                                 %r{^/certificate_orders/.*}]
   end
 
   ActiveMerchant::Billing::Base.mode = :test
-  #config.log_level = :info
+  # config.log_level = :info
   # GATEWAY_TEST_CODE = 1.0
   # END ActiveMerchant configuration
 
   require 'sass/plugin/rack'
   Sass::Plugin.options[:line_numbers] = true
 
-  config.middleware.insert_before 0, "Rack::Cors" do
+  config.middleware.insert_before 0, 'Rack::Cors' do
     allow do
       origins '*'
-      resource '*', :headers => :any, :methods => :any
+      resource '*', headers: :any, methods: :any
     end
   end
-  
+
   # AWS S3
   config.paperclip_defaults = {
-    storage:      :s3,
-    bucket:       Rails.application.secrets.s3_bucket,
-    s3_region:    Rails.application.secrets.s3_region,
+    storage: :s3,
+    bucket: Rails.application.secrets.s3_bucket,
+    s3_region: Rails.application.secrets.s3_region,
     s3_host_name: "s3-#{Rails.application.secrets.s3_region}.amazonaws.com"
   }
 
@@ -83,4 +85,3 @@ require "#{Rails.root}/lib/force_ssl.rb"
 #   config.preferred_mirror = "www"
 # end
 #
-

@@ -1,8 +1,12 @@
+# frozen_string_literal: true
+
+# app/controllers/concerns/serializer_helper.rb
+
 require 'active_support/concern'
 
 module SerializerHelper
   extend ActiveSupport::Concern
-  
+
   def serialize_model(model, options = {})
     options[:namespace] = Api::V1
     options[:is_collection] = false
