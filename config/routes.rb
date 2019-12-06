@@ -1,5 +1,7 @@
 require 'domain_constraint'
 
+# rubocop:disable Metrics/LineLength, Metrics/BlockLength
+
 SslCom::Application.routes.draw do
   mount Delayed::Web::Engine, at: '/certificate_orders/jobs'
   mount LetterOpenerWeb::Engine, at: '/letter_opener' if Rails.env.development?
@@ -35,9 +37,7 @@ SslCom::Application.routes.draw do
   match 'enterprise_pki_service_agreement' => 'contacts#enterprise_pki_service_agreement', via: :get
 
   # api: If version is not specified then use the default version in APIConstraint
-  constraints DomainConstraint.new(
-    (%w(sws.sslpki.com sws.sslpki.local)+Website.domain_contraints).uniq
-  ) do
+  constraints DomainConstraint.new((%w(sws.sslpki.com sws.sslpki.local)+Website.domain_contraints).uniq) do
     scope module: :api do
       scope module: :v1, constraints: APIConstraint.new(version: 1), defaults: {format: 'json'} do
         # Users
@@ -655,3 +655,4 @@ end
 Delayed::Web::Engine.middleware.use Rack::Auth::Basic do |username, password|
   username == '!as09bv#f9' && password == 'a$gdP12@_'
 end
+# rubocop:enable Metrics/LineLength, Metrics/BlockLength
