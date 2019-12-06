@@ -184,19 +184,12 @@ module Preferences
 
       # Reader
       define_method("preferred_#{name}") do |*group|
-        if new_record?
-          preferred(name, group.first)
-        else
-          Rails.cache.fetch("#{cache_key}/preferred_#{name}") do
-            preferred(name, group.first)
-          end
-        end
+        preferred(name, group.first)
       end
       alias_method "prefers_#{name}", "preferred_#{name}"
 
       # Writer
       define_method("preferred_#{name}=") do |*args|
-        Rails.cache.delete("#{cache_key}/preferred_#{name}")
         write_preference(*args.flatten.unshift(name))
       end
       alias_method "prefers_#{name}=", "preferred_#{name}="
