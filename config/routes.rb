@@ -2,8 +2,6 @@
 
 require 'domain_constraint'
 
-# rubocop:disable Metrics/LineLength, Metrics/BlockLength
-
 SslCom::Application.routes.draw do
   mount Delayed::Web::Engine, at: '/certificate_orders/jobs'
   mount LetterOpenerWeb::Engine, at: '/letter_opener' if Rails.env.development?
@@ -607,5 +605,3 @@ end
 Delayed::Web::Engine.middleware.use Rack::Auth::Basic do |username, password|
   username == '!as09bv#f9' && password == 'a$gdP12@_'
 end
-
-# rubocop:enable Metrics/LineLength, Metrics/BlockLength
