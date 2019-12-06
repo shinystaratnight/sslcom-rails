@@ -33,6 +33,7 @@ class ApidocsController < ActionController::Base
           key :in, :body
           key :description, 'login used when signing in'
           key :required, true
+          key :example, 'swaggeruser'
         end
         property :email do
           key :name, :email
@@ -40,10 +41,12 @@ class ApidocsController < ActionController::Base
           key :in, :body
           key :description, 'email address associated with the new user'
           key :required, true
+          key :format, :email
           key :example, 'user@gmail.com'
         end
         property :password do
           key :name, :password
+          key :format, :password
           key :type, :string
           key :in, :body
           key :description, 'password the user signs in with'
@@ -72,7 +75,7 @@ class ApidocsController < ActionController::Base
     Api::V1::ApiUserRequestsController,
     User,
     Swagger::Blocks::ErrorResponse,
-    Swagger::Blocks::UserInfoResponse,
+    Swagger::Blocks::CredentialsResponse,
     self
   ].freeze
 

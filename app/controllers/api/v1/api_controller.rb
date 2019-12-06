@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'will_paginate/array'
+
 module Api
   module V1
     class APIController < ActionController::API

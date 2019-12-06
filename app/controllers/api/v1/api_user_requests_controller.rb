@@ -29,13 +29,13 @@ module Api
           parameter :create_user_parameter
 
           response 200 do
-            key :description, 'create user response'
+            key :description, 'Credentials Response'
             schema do
-              key :'$ref', :UserInfoResponse
+              key :'$ref', :CredentialsResponse
             end
           end
           response :default do
-            key :description, 'unexpected error'
+            key :description, 'Error Response'
             schema do
               key :'$ref', :ErrorResponse
             end
@@ -64,7 +64,7 @@ module Api
       end
 
       swagger_path '/user/{login}/' do
-        operation :post do
+        operation :get do
           key :summary, 'Retreive User API Credentials'
           key :description, 'A single User object with all its details. Also call this method to get the latest api credentials that are required for other resources within the SSL.com api.'
           key :operation, 'getUser'
@@ -79,25 +79,24 @@ module Api
             key :in, :path
             key :description, 'login used when signing in'
             key :required, true
-            key :example, 'swaggeruser'
           end
           parameter do
             key :name, :password
             key :type, :string
+            key :format, :password
             key :in, :query
             key :description, 'password the user signs in with'
             key :required, true
-            key :example, `@Sup3AwE$0We`
           end
 
           response 200 do
-            key :description, 'Get User Response'
+            key :description, 'Credentials Response'
             schema do
-              key :'$ref', :UserInfoResponse
+              key :'$ref', :CredentialsResponse
             end
           end
-          response :default do
-            key :description, 'unexpected error'
+          response :error do
+            key :description, 'Error Response'
             schema do
               key :'$ref', :ErrorResponse
             end
@@ -124,10 +123,8 @@ module Api
         else
           InvalidApiUserRequest.create parameters: params, response: @result.errors.to_json
         end
-        # render_200_status
-        render json: JSONAPI::Serializer.serialize(@result), status: :ok
+        render_200_status
       rescue StandardError => e
-        binding.pry
         render_500_error e
       end
 
