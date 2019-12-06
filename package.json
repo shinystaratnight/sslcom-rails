@@ -1,0 +1,11 @@
+{
+  "name": "sslcom-rails",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/SSLcom/sslcom-rails.git",
+  "author": "SSL.com",
+  "license": "MIT",
+  "dependencies": {
+    "bootstrap": "^4.4.1"
+  }
+}
