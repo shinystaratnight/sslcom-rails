@@ -9,7 +9,7 @@ require 'preferences/lib/preferences/preference_definition'
 #
 # For example,
 #
-#   class User < ApplicationRecord
+#   class User < ActiveRecord::Base
 #     preference :notifications
 #   end
 #
@@ -26,7 +26,7 @@ require 'preferences/lib/preferences/preference_definition'
 # treated just like regular ActiveRecord attributes, they can also be
 # validated against in the same way.  For example,
 #
-#   class User < ApplicationRecord
+#   class User < ActiveRecord::Base
 #     preference :color, :string
 #
 #     validates_presence_of :preferred_color
@@ -60,7 +60,7 @@ module Preferences
     # The example below shows the various ways to define a preference for a
     # particular model.
     #
-    #   class User < ApplicationRecord
+    #   class User < ActiveRecord::Base
     #     preference :notifications, :default => false
     #     preference :color, :string, :default => 'red', :group_defaults => {:car => 'black'}
     #     preference :favorite_number, :integer
@@ -104,7 +104,7 @@ module Preferences
     # you can also use the shortcut accessor methods that are generated when a
     # preference is defined.  For example,
     #
-    #   class User < ApplicationRecord
+    #   class User < ActiveRecord::Base
     #     preference :notifications
     #   end
     #
@@ -328,7 +328,7 @@ module Preferences
     #
     # == Examples
     #
-    #   class User < ApplicationRecord
+    #   class User < ActiveRecord::Base
     #     preference :color, :string, :default => 'red'
     #   end
     #
@@ -355,7 +355,7 @@ module Preferences
     #
     # == Examples
     #
-    #   class User < ApplicationRecord
+    #   class User < ActiveRecord::Base
     #     preference :color, :string, :default => 'red'
     #   end
     #
@@ -610,6 +610,6 @@ module Preferences
   end
 end
 
-ApplicationRecord.class_eval do
+ActiveRecord::Base.class_eval do
   extend Preferences::MacroMethods
 end
