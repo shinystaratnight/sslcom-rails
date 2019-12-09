@@ -1,4 +1,5 @@
 require 'simplecov'
+SimpleCov.minimum_coverage 10
 SimpleCov.start 'rails' do
 add_filter '/bin/'
  add_filter '/db/'
@@ -35,29 +36,20 @@ Minitest::Reporters.use! [Minitest::Reporters::SpecReporter.new]
 # in spec/support/ and its subdirectories.
 Dir[File.join('./test/support/**/*.rb')].sort.each { |f| require f }
 
+include Authlogic::TestCase
 include SessionHelper
-include SetupHelper
-include MailerHelper
-include Authorization::TestHelper
-include AuthorizationHelper
-include ApiSetupHelper
 
 DatabaseCleaner.clean_with :truncation
 DatabaseCleaner.strategy = :truncation
 
 class Minitest::Spec
-  include Authlogic::TestCase
-
   before :each do
-    disable_authorization
-    activate_authlogic
     DatabaseCleaner.start
     Delayed::Worker.delay_jobs = false
   end
 
   after :each do
     DatabaseCleaner.clean
-    clear_email_deliveries
   end
 end
 
@@ -65,7 +57,7 @@ if RUBY_VERSION>='2.6.0'
   if Rails.version < '5'
     class ActionController::TestResponse < ActionDispatch::TestResponse
       def recycle!
-        # hack to avoid MonitorMixin double-initialize error:
+        # Hack to avoid MonitorMixin double-initialize error:
         @mon_mutex_owner_object_id = nil
         @mon_mutex = nil
         initialize

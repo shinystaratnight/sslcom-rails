@@ -567,6 +567,7 @@ SslCom::Application.routes.draw do
   match 'browser_compatibility' => 'site#compatibility', as: :browsers, via: %i[get post]
   match 'acceptable-top-level-domains-tlds-for-ssl-certificates' => 'site#top_level_domains_tlds', as: :tlds, via: %i[get post]
   match '/certificate_order_token/:token/generate_cert' => 'certificate_orders#generate_cert', :as => :confirm, via: [:get]
+  match '/download_certificates/:co_ids' => 'certificate_orders#download_certificates', as: :download_certificates, via: [:post], defaults: { format: :csv }
   match '/validation/email_verification_check' => 'validations#email_verification_check', :as => :email_verification_check, via: [:post]
 
   # Callback

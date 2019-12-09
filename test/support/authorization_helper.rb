@@ -73,7 +73,7 @@ module AuthorizationHelper
   end
 
   def should_see_cert_order_headers(user)
-    visit user_path user 
+    visit user_path user
     if user.is_system_admins?
       page.must_have_content 'IN PROGRESS'
       page.must_have_content 'REPROCESSING'
@@ -85,7 +85,7 @@ module AuthorizationHelper
   end
 
   def should_not_see_cert_order_headers(user)
-    visit user_path user 
+    visit user_path user
     if user.is_system_admins?
       refute page.has_content? 'IN PROGRESS'
       refute page.has_content? 'REPROCESSING'
@@ -143,7 +143,7 @@ module AuthorizationHelper
 
   # Certificate/CertificateContent setup helper methods
   # ===================================================
-  # 
+  #
   def co_state_issued
     CertificateContent.first.update(workflow_state: 'issued')
   end
@@ -158,10 +158,10 @@ module AuthorizationHelper
       .update(expiration_date: 5.days.ago)
   end
 
-  # 
-  # Generates a certificate order and all associated records for the passed in 
+  #
+  # Generates a certificate order and all associated records for the passed in
   # user's ssl_account.
-  # 
+  #
   def prepare_certificate_orders(user)
     initialize_server_software
     initialize_certificate_csr_keys
@@ -203,7 +203,7 @@ module AuthorizationHelper
     find('input[alt="Bl submit button"]').click
     # Create SignedCertificate for non wildcard
     # =========================================================
-    create(:signed_certificate, :nonwildcard_certificate_sslcom, 
+    create(:signed_certificate, :nonwildcard_certificate_sslcom,
       csr_id: Csr.where.not(certificate_content_id: nil).first.id
     )
   end

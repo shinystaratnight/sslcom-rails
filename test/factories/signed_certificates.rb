@@ -11,17 +11,17 @@ FactoryBot.define do
     subject_alternative_names {['qlikdev.ezops.com', 'www.qlikdev.ezops.com']}
   end
 
-  trait :nonwildcard_csr do
-    after :build do |sc|
-      initialize_certificate_csr_keys
-      sc.body = @nonwildcard_certificate.strip
-    end
-  end
-
-  trait :nonwildcard_certificate_sslcom do
-    after :build do |sc|
-      initialize_certificate_csr_keys
-      sc.body = @nonwildcard_certificate_sslcom.strip
-    end
-  end
+  # trait :nonwildcard_csr do
+  #   after :build do |sc|
+  #     initialize_certificate_csr_keys
+  #     sc.body = @nonwildcard_certificate.strip
+  #   end
+  # end
+  #
+  # trait :nonwildcard_certificate_sslcom do
+  #   after :build do |sc|
+  #     initialize_certificate_csr_keys
+  #     sc.body = @nonwildcard_certificate_sslcom.strip
+  #   end
+  # end
 end

@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+# rubocop:disable Metrics/ClassLength
+>>>>>>> Add Certificate Order/Certificate Download Functionality
 class CertificateOrder < ApplicationRecord
   extend Memoist
   include V2MigrationProgressAddon
@@ -27,7 +31,11 @@ class CertificateOrder < ApplicationRecord
   has_many    :csrs, :through=>:certificate_contents, :source=>"csr"
   has_many    :csr_unique_values, through: :csrs
   has_many    :attestation_certificates, through: :certificate_contents
+<<<<<<< HEAD
   has_many    :signed_certificates, through: :csrs, :source=>"signed_certificate" do
+=======
+  has_many    :signed_certificates, through: :csrs, source: :signed_certificate do
+>>>>>>> Add Certificate Order/Certificate Download Functionality
     def expired
       where{expiration_date < Date.today}
     end
@@ -441,7 +449,7 @@ class CertificateOrder < ApplicationRecord
     label: CLIENT_SMIME_VALIDATED_SHORT,
     pages: ['Recipient', 'Complete']
   }
-  
+
   CSR_SUBMITTED = :csr_submitted
   INFO_PROVIDED = :info_provided
   REPROCESS_REQUESTED = :reprocess_requested
@@ -568,7 +576,7 @@ class CertificateOrder < ApplicationRecord
 
   def get_recipient
     recipient = locked_recipient
-    if locked_recipient.nil? && assignee 
+    if locked_recipient.nil? && assignee
       recipient = LockedRecipient.create_for_co(self)
     end
     recipient
@@ -995,13 +1003,13 @@ class CertificateOrder < ApplicationRecord
       iv_exists && iv_exists.validated?
     else
       false
-    end  
+    end
   end
 
   def ov_validated?
     locked_registrant && locked_registrant.validated?
   end
-    
+
   def iv_ov_validated?
     iv_validated? && ov_validated?
   end
@@ -1009,7 +1017,7 @@ class CertificateOrder < ApplicationRecord
   def smime_client_process
     return CLIENT_SMIME_NO_DOCS if certificate.nil?
     registrant_types = certificate.client_smime_validations
-    
+
     if registrant_types == 'iv_ov'
       iv_ov_validated? ? CLIENT_SMIME_NO_DOCS : CLIENT_SMIME_FULL
     elsif registrant_types == 'iv'
@@ -1793,21 +1801,6 @@ class CertificateOrder < ApplicationRecord
     end
   end
 
-#  def receipt_recipients
-#    returning addys = [] do
-#      addys << ssl_account.reseller.email if
-#        ssl_account.is_registered_reseller? &&
-#        ssl_account.preferred_receipt_include_reseller?
-#      addys << ssl_account.preferred_receipt_recipients unless
-#        ssl_account.preferred_receipt_recipients.empty?
-#      addys << administrative_contact.email if
-#        ssl_account.preferred_receipt_include_cert_admin?
-#      addys << billing_contact.email if
-#        ssl_account.preferred_receipt_include_cert_bill?
-#      addys.uniq!
-#    end
-#  end
-
   def certificate_chain_names
     parse_certificate_chain.transpose[0]
   end
@@ -2057,7 +2050,7 @@ class CertificateOrder < ApplicationRecord
     sa.orders << self.order
     sa.certificate_orders << self
   end
-  
+
   def valid_recipients_list
     return receipt_recipients unless receipt_recipients.is_a? Array
     receipt_recipients.map(&:split).compact.flatten.uniq
@@ -2179,17 +2172,6 @@ class CertificateOrder < ApplicationRecord
     end.last
   end
 
-  #def purchase_using(profile)
-  #  credit_card = ActiveMerchant::Billing::CreditCard.new({
-  #    :first_name => profile.first_name,
-  #    :last_name  => profile.last_name,
-  #    :number     => profile.card_number,
-  #    :month      => profile.expiration_month,
-  #    :year       => profile.expiration_year
-  #  })
-  #  credit_card.type = 'bogus' if defined?(::GATEWAY_TEST_CODE)
-  #end
-
   def clone_for_renew(certificate_orders, order)
     cached_certificate_orders.each do |cert|
       cert.quantity.times do |i|
@@ -2284,4 +2266,30 @@ class CertificateOrder < ApplicationRecord
                        notes: "",
                        action: "CertificateOrder#expire_credits(#{options.to_s})")
   end
+
+  def self.to_csv
+    columns = ["Order Ref", "Name", "Status", "Order Date", "Expiration Date"]
+
+    CSV.generate(headers: true) do |csv|
+      csv << columns
+
+      all.find_each do |cert_order|
+        csv << columns.map do |attr|
+          case attr
+          when "Order Ref"
+            cert_order.ref
+          when "Name"
+            cert_order.common_name
+          when "Status"
+            cert_order.certificate_content.workflow_state
+          when "Order Date"
+            cert_order.certificate_content.created_at
+          when "Expiration Date"
+            cert_order.signed_certificates.present? ? cert_order.expiration_date : 'N/A'
+          end
+        end
+      end
+    end
+  end
 end
+# rubocop:enable Metrics/ClassLength

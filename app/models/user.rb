@@ -1,6 +1,6 @@
 class User < ApplicationRecord
   extend Memoist
-  include V2MigrationProgressAddon
+  # include V2MigrationProgressAddon
   include UserMessageable
 
   swagger_schema :CreateUser do
