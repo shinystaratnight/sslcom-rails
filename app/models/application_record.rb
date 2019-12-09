@@ -21,8 +21,4 @@ class ApplicationRecord < ActiveRecord::Base
   include Acts::As::Publishable
 
   self.abstract_class = true
-
-  def model_and_id
-    [self.class.to_s.underscore, self.id].join("_")
-  end
 end
