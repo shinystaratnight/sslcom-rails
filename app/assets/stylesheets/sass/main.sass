@@ -8954,15 +8954,17 @@ i.fa-external-link.fa-ssl-custom
       .reseller-fields
         padding-bottom: 10px
 
-        .required-field
+        .required-field,
+        .required-validation
           display: none
           color: red
           margin-left: 140px
           padding-top: 3px
           font-size: 10px
 
-          &.error-required
-            display: block
+        .required-field.error-required,
+        .required-validation.error-validation
+          display: block
 
         label
           text-align: right
@@ -8985,7 +8987,8 @@ i.fa-external-link.fa-ssl-custom
           height: 18px
           width: 250px
 
-          &.error-required
+          &.error-required,
+          &.error-validation
             border: 1px solid red
 
     .modal-footer

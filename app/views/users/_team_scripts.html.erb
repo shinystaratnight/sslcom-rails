@@ -1,6 +1,15 @@
 <script type="text/javascript">
   jQuery.noConflict();
   jQuery(function($) {
+    $.emailValidation = function(email) {
+      var regex = /^([a-zA-Z0-9_\.\-\+])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+      if(!regex.test(email)) {
+        return false;
+      }else{
+        return true;
+      }
+    };
+
     $(document).ready(function() {
       $('#number_rows').change(function () {
         $('#per_page').val($(this).val());
@@ -21,9 +30,6 @@
         $('#exist_reseller').val('true');
 
         $.each(fields_list, function(idx, item) {
-          // Removing required mark from label.
-          $('.lbl_' + item.split('=')[0]).removeClass('required-mark');
-
           // Setting original value.
           $('#' + item.split('=')[0]).val(item.split('=')[1]);
 
@@ -43,9 +49,6 @@
         $('#exist_reseller').val('false');
 
         $.each(field_names.split(','), function(idx, item) {
-          // Adding required mark to label.
-          $('.lbl_' + item).addClass('required-mark');
-
           // Initializing all reseller field's value
           if (item == 'reseller_tier') {
             $('#' + item).val('1');
@@ -115,22 +118,68 @@
     $(document).on('click', '.btn-save-reseller', function(e) {
       var validated = true;
 
-      if ($('#exist_reseller').val() == 'false') {
-        var field_names = "first_name,last_name,email,phone,organization,website,address1,"+
-                          "postal_code,city,state,tax_number";
+      var field_names = "first_name,last_name,email,phone,organization,website,address1,"+
+                        "postal_code,city,state,tax_number";
 
-        $.each(field_names.split(','), function(idx, item) {
-          if ($('#' + item).val().trim() == '') {
-            if (validated) {
+      $.each(field_names.split(','), function(idx, item) {
+        if ($('#' + item).val().trim() == '') {
+          if (validated) {
+            validated = false;
+          }
+
+          if (item == 'email') {
+            if ($('#' + item).hasClass('error-validation')) {
+              $('#' + item).removeClass('error-validation');
+            }
+
+            if ($('#' + item).next().next().hasClass('error-validation')) {
+              $('#' + item).next().next().removeClass('error-validation');
+            }
+          }
+
+          if (!$('#' + item).hasClass('error-required')) {
+            $('#' + item).addClass('error-required');
+          }
+
+          if (!$('#' + item).next().hasClass('error-required')) {
+            $('#' + item).next().addClass('error-required');
+          }
+        } else {
+          if (item == 'email') {
+            if ($.emailValidation($('#' + item).val().trim())) {
+              if ($('#' + item).hasClass('error-required')) {
+                $('#' + item).removeClass('error-required');
+              }
+
+              if ($('#' + item).next().hasClass('error-required')) {
+                $('#' + item).next().removeClass('error-required');
+              }
+
+              if ($('#' + item).hasClass('error-validation')) {
+                $('#' + item).removeClass('error-validation');
+              }
+
+              if ($('#' + item).next().next().hasClass('error-validation')) {
+                $('#' + item).next().next().removeClass('error-validation');
+              }
+            } else {
               validated = false;
-            }
 
-            if (!$('#' + item).hasClass('error-required')) {
-              $('#' + item).addClass('error-required');
-            }
+              if ($('#' + item).hasClass('error-required')) {
+                $('#' + item).removeClass('error-required');
+              }
 
-            if (!$('#' + item).next().hasClass('error-required')) {
-              $('#' + item).next().addClass('error-required');
+              if ($('#' + item).next().hasClass('error-required')) {
+                $('#' + item).next().removeClass('error-required');
+              }
+
+              if (!$('#' + item).hasClass('error-validation')) {
+                $('#' + item).addClass('error-validation');
+              }
+
+              if (!$('#' + item).next().next().hasClass('error-validation')) {
+                $('#' + item).next().next().addClass('error-validation');
+              }
             }
           } else {
             if ($('#' + item).hasClass('error-required')) {
@@ -141,8 +190,8 @@
               $('#' + item).next().removeClass('error-required');
             }
           }
-        });
-      }
+        }
+      });
 
       if (validated) {
         $('#change_reseller_tier_modal_form').ajaxSubmit({
