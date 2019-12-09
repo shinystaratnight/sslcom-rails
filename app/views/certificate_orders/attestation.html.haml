@@ -1,21 +1,23 @@
 - content_for :title, "Attestation"
-= render :partial => 'index_scripts'
+= render 'attestation_scripts'
 = stylesheet_link_tag 'bootstrap_style', :medial => 'all'
+- co = @certificate_order
 .attestation.pt-3
   %h2
-    Attestation Verification for Yubikey PIV
+    Attestation for
+    =link_to "#{co.certificate.title} #{co.ref}", co
   .row
     .col-md-3.block-label{:style => "text-align: right"}
       Attestation Certificate :
     .col-md-9.attest-cert-block
-      =text_area_tag 'attestation_cert', @attestation_certificate.blank? ? nil : @attestation_certificate.body, :class => 'attest-cert'
+      =text_area_tag 'attestation_cert', co.attestation_certificate.blank? ? nil : co.attestation_certificate.body, :class => 'attest-cert'
       .error-block
         * attestation certificate required
   .row.pt-4
     .col-md-3.block-label{:style => "text-align: right"}
       Intermediate Certificate :
     .col-md-9.attest-issuer-cert-block
-      =text_area_tag 'attestation_issuer_cert', @attestation_issuer_certificate.blank? ? AttestationCertificate::YUBIKEY_PIV_INTERMEDIATE_CA : @attestation_issuer_certificate.body, :class => 'attest-issuer-cert'
+      =text_area_tag 'attestation_issuer_cert', co.attestation_issuer_certificate.blank? ? AttestationCertificate::YUBIKEY_PIV_INTERMEDIATE_CA : co.attestation_issuer_certificate.body, :class => 'attest-issuer-cert'
       .error-block
         * intermediate certificate required
   .btn-block.pt-5

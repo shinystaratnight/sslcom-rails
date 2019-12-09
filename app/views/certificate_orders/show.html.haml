@@ -311,6 +311,15 @@
                                 %li Serial - #{token.serial_number}
                                 %li Activation PIN - #{token.activation_pin}
                                 %li Admin PIN - #{token.admin_pin}
+                        -if @certificate_order.certificate.is_evcs? or @certificate_order.certificate.is_client_business?
+                          %li.category_border
+                          %li
+                            %strong attestation
+                          %li
+                            =link_to 'manage', attestation_certificate_order_path(@ssl_slug, @certificate_order)
+                            -unless @certificate_order.attestation_certificate.blank?
+                              %span /
+                              =link_to 'Delete', '', class: 'lnk-remove-attestation', 'data-cert-order-ref': @certificate_order.ref, 'data-url': remove_attestation_certificate_order_path(@ssl_slug, @certificate_order)
                     .certificate_details_box
                       %ul
                         -if co.certificate_content.issued? && !co.certificate_content.expired?
