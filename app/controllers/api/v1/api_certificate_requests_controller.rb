@@ -861,7 +861,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
           # Caching Certificate order for "Retrieve an SSL Certificate" API.
           @result.private_cache_key = @acr.certificate_content.updated_at.strftime('%Y%m%d%H%M%S')
 
-          ActiveRecord::Base.include_root_in_json = false
+          ApplicationRecord.include_root_in_json = false
           cache_key = 'api-retrieve-ssl-cert-' + params[:ref]
 
           Rails.cache.write(cache_key, @result.to_json(:methods => [
@@ -1152,7 +1152,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
             # Caching Individual Certificate order for "SSL-Certificate-Collection" API.
             result.private_cache_key = cc.updated_at.strftime('%Y%m%d%H%M%S')
 
-            ActiveRecord::Base.include_root_in_json = false
+            ApplicationRecord.include_root_in_json = false
             cache_key = 'api-ssl-cert-collection-' + acr.ref + '-' + (client_app ? 'T' : 'F')
 
             Rails.cache.write(cache_key, result.to_json(:methods => [
@@ -1355,7 +1355,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
             end
 
             # Caching CSR Hashes for "Retrieve all validation methods based on hash of certificate signing request" API.
-            ActiveRecord::Base.include_root_in_json = false
+            ApplicationRecord.include_root_in_json = false
             cache_key = 'api-csr-hash-' + @result.md5_hash
             Rails.cache.write(cache_key, @result.to_json(:methods => [
                 :instructions, :md5_hash, :sha2_hash, :dns_md5_hash, :dns_sha2_hash, :dcv_methods, :ca_tag]))

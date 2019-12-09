@@ -146,7 +146,7 @@ class ApplicationController < ActionController::Base
       if pr.blank?
         nil
       else
-        ActiveRecord::Base.find_from_model_and_id(pr)
+        ApplicationRecord.find_from_model_and_id(pr)
       end
     }.compact
   end

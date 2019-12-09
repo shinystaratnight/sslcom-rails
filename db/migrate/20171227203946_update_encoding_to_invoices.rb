@@ -1,6 +1,6 @@
 class UpdateEncodingToInvoices < ActiveRecord::Migration
   def db
-    ActiveRecord::Base.connection
+    ApplicationRecord.connection
   end
   
   def up

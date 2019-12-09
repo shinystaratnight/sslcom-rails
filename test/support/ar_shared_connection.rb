@@ -1,4 +1,4 @@
-class ActiveRecord::Base
+class ApplicationRecord
   mattr_accessor :shared_connection
   @@shared_connection = nil
 
