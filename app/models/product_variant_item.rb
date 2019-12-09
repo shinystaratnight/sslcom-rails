@@ -1,4 +1,4 @@
-class ProductVariantItem < ActiveRecord::Base
+class ProductVariantItem < ApplicationRecord
   extend Memoist
   acts_as_sellable :cents => :amount, :currency => false
   belongs_to  :product_variant_group

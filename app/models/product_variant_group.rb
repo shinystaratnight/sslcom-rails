@@ -1,4 +1,4 @@
-class ProductVariantGroup < ActiveRecord::Base
+class ProductVariantGroup < ApplicationRecord
   has_many :product_variant_items, dependent: :destroy
   belongs_to  :variantable, :polymorphic => true, touch: true
   validates_uniqueness_of :display_order, :scope => [:variantable_id, :variantable_type]

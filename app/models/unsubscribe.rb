@@ -1,4 +1,4 @@
-class Unsubscribe < ActiveRecord::Base
+class Unsubscribe < ApplicationRecord
   validates :email, presence: true, email: true, :uniqueness=>
       {:scope=>[:domain]}, on: :create
   validates :specs, presence: true, on: :create

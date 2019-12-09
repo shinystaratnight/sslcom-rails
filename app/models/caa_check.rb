@@ -1,4 +1,4 @@
-class CaaCheck < ActiveRecord::Base
+class CaaCheck < ApplicationRecord
   belongs_to :checkable, :polymorphic => true
 
   CAA_COMMAND=->(name, authority){

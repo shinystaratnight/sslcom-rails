@@ -1,4 +1,4 @@
-class Address < ActiveRecord::Base
+class Address < ApplicationRecord
   ADDRESS_MAPPING  = { :address1 => :street1, :address2 => :street2,
     :city => :locality, :state => :region, :zip => :postal_code }
   

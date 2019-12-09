@@ -1,4 +1,4 @@
-class VisitorToken < ActiveRecord::Base
+class VisitorToken < ApplicationRecord
   validates_presence_of :guid
 
   belongs_to  :user

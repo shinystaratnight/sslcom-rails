@@ -1,4 +1,4 @@
-class Deposit < ActiveRecord::Base
+class Deposit < ApplicationRecord
   acts_as_sellable :cents => :amount, :currency => false
   has_many    :orders, ->{includes(:stored_preferences)}, :through => :line_items
 

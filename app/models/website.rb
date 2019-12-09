@@ -1,5 +1,5 @@
 # This allows a reseller to white-label the RA portal. It allows for optional seperate db
-class Website < ActiveRecord::Base
+class Website < ApplicationRecord
   belongs_to :db
 
   def self.domain_contraints
@@ -15,13 +15,13 @@ class Website < ActiveRecord::Base
   end
 
   def use_database
-    ActiveRecord::Base.establish_connection(website_connection)
+    ApplicationRecord.establish_connection(website_connection)
     CertificateContent.cli_domain=self.api_host unless self.api_host.blank?
   end
 
 # Revert back to the shared database
   def self.revert_database
-    ActiveRecord::Base.establish_connection(Website::default_connection)
+    ApplicationRecord.establish_connection(Website::default_connection)
   end
 
   # production api
@@ -48,7 +48,7 @@ class Website < ActiveRecord::Base
   
 # Regular database.yml configuration hash
   def self.default_connection
-    @default_config ||= ActiveRecord::Base.connection.instance_variable_get("@config").dup
+    @default_config ||= ApplicationRecord.connection.instance_variable_get("@config").dup
   end
 
 # Return regular connection hash but with database name changed

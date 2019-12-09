@@ -1,6 +1,6 @@
 require 'public_suffix'
 
-class DomainControlValidation < ActiveRecord::Base
+class DomainControlValidation < ApplicationRecord
   has_many    :ca_dcv_requests, as: :api_requestable, dependent: :destroy
   belongs_to  :csr, touch: true # only for single domain certs
   belongs_to  :csr_unique_value

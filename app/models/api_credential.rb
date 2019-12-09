@@ -1,4 +1,4 @@
-class ApiCredential < ActiveRecord::Base
+class ApiCredential < ApplicationRecord
   belongs_to :ssl_account
 
   validates :account_key, :secret_key, presence: true, length: {minimum: 6}

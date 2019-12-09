@@ -1,4 +1,4 @@
-class Assignment < ActiveRecord::Base
+class Assignment < ApplicationRecord
   belongs_to  :user, touch: true
   belongs_to  :role
   belongs_to  :ssl_account, touch: true

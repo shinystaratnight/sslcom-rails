@@ -1,4 +1,4 @@
-class CertificateOrderToken < ActiveRecord::Base
+class CertificateOrderToken < ApplicationRecord
   belongs_to :certificate_order
   belongs_to :ssl_account
   belongs_to :user

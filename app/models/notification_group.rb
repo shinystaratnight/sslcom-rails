@@ -1,4 +1,4 @@
-class NotificationGroup < ActiveRecord::Base
+class NotificationGroup < ApplicationRecord
   belongs_to :ssl_account
 
   has_many  :notification_groups_contacts, dependent: :destroy

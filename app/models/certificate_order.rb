@@ -1,4 +1,4 @@
-class CertificateOrder < ActiveRecord::Base
+class CertificateOrder < ApplicationRecord
   extend Memoist
   include V2MigrationProgressAddon
   #using_access_control

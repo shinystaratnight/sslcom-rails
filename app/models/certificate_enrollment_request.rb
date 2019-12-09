@@ -1,4 +1,4 @@
-class CertificateEnrollmentRequest < ActiveRecord::Base
+class CertificateEnrollmentRequest < ApplicationRecord
   include Filterable
   include Sortable
 

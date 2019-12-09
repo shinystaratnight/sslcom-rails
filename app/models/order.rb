@@ -1,7 +1,7 @@
 require 'monitor'
 require 'bigdecimal'
 
-class Order < ActiveRecord::Base
+class Order < ApplicationRecord
   extend Memoist
   include V2MigrationProgressAddon
   include SmimeClientEnrollable
@@ -823,7 +823,7 @@ class Order < ActiveRecord::Base
 #        pr=line_item[ShoppingCart::PRODUCT_CODE]
 #        if !pr.blank? &&
 #          ((line_item.count > 1 && Certificate.find_by_product(pr)) ||
-#          ActiveRecord::Base.find_from_model_and_id(pr))
+#          ApplicationRecord.find_from_model_and_id(pr))
 #          session[:cart_items] << line_item
 #        else
 #          cart_items.delete line_item

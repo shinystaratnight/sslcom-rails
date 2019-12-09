@@ -1,4 +1,4 @@
-class BillingProfile < ActiveRecord::Base  
+class BillingProfile < ApplicationRecord  
   include ActiveMerchant::Billing::CreditCardMethods
   
   belongs_to  :ssl_account

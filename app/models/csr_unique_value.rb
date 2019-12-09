@@ -1,5 +1,5 @@
 
-class CsrUniqueValue < ActiveRecord::Base
+class CsrUniqueValue < ApplicationRecord
   belongs_to  :csr
   has_many    :domain_control_validations
 

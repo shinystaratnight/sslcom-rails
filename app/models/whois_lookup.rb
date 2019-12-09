@@ -1,4 +1,4 @@
-class WhoisLookup < ActiveRecord::Base
+class WhoisLookup < ApplicationRecord
   belongs_to  :csr
   before_create :query_whois
 

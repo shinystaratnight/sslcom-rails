@@ -1,4 +1,4 @@
-class Ca < ActiveRecord::Base
+class Ca < ApplicationRecord
 
   has_many  :cas_certificates, dependent: :destroy
   has_many  :certificates, through: :cas_certificates

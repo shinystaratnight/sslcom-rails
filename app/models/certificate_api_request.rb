@@ -1,4 +1,4 @@
-class CertificateApiRequest < ActiveRecord::Base
+class CertificateApiRequest < ApplicationRecord
   serialize :other_domains
   validates :account_key, :secret_key, :product, :period, :server_count,
            :server_software, :csr, :csr_obj, :is_customer_validated,

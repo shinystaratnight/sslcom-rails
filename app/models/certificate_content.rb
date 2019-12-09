@@ -1,4 +1,4 @@
-class CertificateContent < ActiveRecord::Base
+class CertificateContent < ApplicationRecord
   extend Memoist
   include V2MigrationProgressAddon
   include Workflow

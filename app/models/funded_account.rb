@@ -1,4 +1,4 @@
-class FundedAccount < ActiveRecord::Base
+class FundedAccount < ApplicationRecord
   using_access_control
   belongs_to :ssl_account
 

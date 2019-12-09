@@ -1,4 +1,4 @@
-class Contact < ActiveRecord::Base
+class Contact < ApplicationRecord
   include V2MigrationProgressAddon
   include Filterable
   include Workflow

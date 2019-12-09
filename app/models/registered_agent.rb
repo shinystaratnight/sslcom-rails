@@ -1,4 +1,4 @@
-class RegisteredAgent < ActiveRecord::Base
+class RegisteredAgent < ApplicationRecord
   belongs_to  :ssl_account
   belongs_to  :requester, :class_name => 'User'
   belongs_to  :approver, :class_name => 'User'

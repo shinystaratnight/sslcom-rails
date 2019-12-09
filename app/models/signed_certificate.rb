@@ -3,7 +3,7 @@ require 'zip/zip'
 require 'openssl'
 #require 'zip/zipfilesystem'
 
-class SignedCertificate < ActiveRecord::Base
+class SignedCertificate < ApplicationRecord
   include CertificateType
   include CertificateProperties
 #  using_access_control
