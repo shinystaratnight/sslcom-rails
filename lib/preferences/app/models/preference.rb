@@ -7,7 +7,7 @@
 # User may have a preferred color for a particular Car.  In this case, the
 # +owner+ is the User record, the +name+ is "color", and the +group+ is the
 # Car record.  This allows preferences to have a sort of context around them.
-class Preference < ApplicationRecord
+class Preference < ActiveRecord::Base
   belongs_to :owner, :polymorphic => true
   belongs_to :group, :polymorphic => true
   
@@ -26,7 +26,7 @@ class Preference < ApplicationRecord
     #   Preference.split_group(1)             # => [nil, 1]
     #   Preference.split_group(User.find(1))  # => [1, "User"]
     def split_group(group = nil)
-      if group.is_a?(ApplicationRecord)
+      if group.is_a?(ActiveRecord::Base)
         group_id, group_type = group.id, group.class.base_class.name.to_s
       else
         group_id, group_type = nil, group.is_a?(Symbol) ? group.to_s : group
