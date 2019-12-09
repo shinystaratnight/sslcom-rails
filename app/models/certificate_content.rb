@@ -313,9 +313,13 @@ class CertificateContent < ActiveRecord::Base
         (certificate_names.pluck(:id) - certificate_names.validated.pluck(:id)).empty?
   end
 
+  # TODO all methods check http, https, and cname
   def dcv_verify_certificate_names
     certificate_names.includes(:domain_control_validation).unvalidated.each do |cn|
-      cn.dcv_verify unless cn.domain_control_validation.try(:dcv_method) =~ /email/
+      dcv = cn.domain_control_validation
+      if dcv and cn.dcv_verify(dcv.dcv_method)
+        dcv.satisfy!
+      end
     end
   end
 

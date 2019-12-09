@@ -13,7 +13,8 @@ class CertificateName < ActiveRecord::Base
               class_name: "DomainControlValidation"
   has_many    :last_sent_domain_control_validations, -> { where{email_address !~ 'null'}},
               class_name: "DomainControlValidation"
-  has_one :domain_control_validation, -> { order 'created_at' }, class_name: "DomainControlValidation"
+  has_one :domain_control_validation, -> { order 'created_at' }, class_name: "DomainControlValidation",
+              unscoped: true
   has_many    :domain_control_validations, dependent: :destroy do
     def last_sent
       where{email_address !~ 'null'}.last
@@ -214,6 +215,7 @@ class CertificateName < ActiveRecord::Base
     csr.ca_tag
   end
 
+  # TODO all methods check http, https, and cname of protocol is nil
   def dcv_verify(protocol=nil)
     protocol ||= domain_control_validation.try(:dcv_method)
     return nil if protocol=~/email/
