@@ -282,6 +282,9 @@ SslCom::Application.routes.draw do
         get :change_ext_order_number
         get :generate_cert
         post :register_domains
+        get :attestation
+        post :save_attestation
+        post :remove_attestation
       end
 
       resource :validation do

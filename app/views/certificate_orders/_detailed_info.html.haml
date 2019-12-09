@@ -83,6 +83,16 @@
                               -unless  cc.blank?
                                 %li
                                   =link_to 'create/edit contacts', certificate_content_contacts_url(@ssl_slug, cc)
+                          -if co.certificate.is_evcs? or co.certificate.is_client_business?
+                            %li.category_border
+                            %li
+                              %strong attestation
+                            %li
+                              =link_to 'manage', attestation_certificate_order_path(@ssl_slug, co)
+                              -unless co.attestation_certificate.blank?
+                                %span /
+                                =link_to 'Delete', '', class: 'lnk-remove-attestation', 'data-cert-order-ref': co.ref, 'data-url': remove_attestation_certificate_order_path(@ssl_slug, co)
+
                       .certificate_details_box
                         %ul
                           -if co.certificate_content.issued? && !co.certificate_content.expired?

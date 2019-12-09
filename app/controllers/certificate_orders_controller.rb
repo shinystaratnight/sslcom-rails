@@ -29,11 +29,12 @@ class CertificateOrdersController < ApplicationController
                    :developers, :require=>[:update, :delete]
   filter_access_to :renew, :parse_csr, require: [:create]
   filter_access_to :auto_renew, require: [:admin_manage]
-  filter_access_to :show_cert_order, :validate_issue, :register_domains, :require=>:ajax
+  filter_access_to :show_cert_order, :validate_issue, :register_domains, :save_attestation, :remove_attestation, :require=>:ajax
   before_filter :find_certificate, only: [:enrollment]
   before_filter :load_certificate_order,
                 only: [:show, :show_cert_order, :validate_issue, :update, :edit, :download, :destroy, :delete, :update_csr, :auto_renew, :start_over,
-                       :change_ext_order_number, :admin_update, :developer, :sslcom_ca, :update_tags, :recipient, :validate_issue]
+                       :change_ext_order_number, :admin_update, :developer, :sslcom_ca, :update_tags, :recipient, :validate_issue, :attestation,
+                        :save_attestation, :remove_attestation]
   before_filter :global_set_row_page, only: [:index, :search, :credits, :pending, :filter_by_scope, :order_by_csr, :filter_by,
                                              :incomplete, :reprocessing]
   before_filter :get_team_tags, only: [:index, :search]
@@ -768,7 +769,52 @@ class CertificateOrdersController < ApplicationController
     render :json => returnObj
   end
 
+  def save_attestation
+    returnObj = AttestationCertificate.attestation_pass?(
+        params[:attestation_cert],
+        params[:attestation_issuer_cert])
+
+    if returnObj
+      if @certificate_order.attestation_certificate
+        @certificate_order.attestation_certificate.body = params[:attestation_cert]
+        @certificate_order.attestation_certificate.save!
+
+        @certificate_order.attestation_issuer_certificate.body = params[:attestation_issuer_cert]
+        @certificate_order.attestation_issuer_certificate.save!
+      else
+        create_attestation_certificate(
+            params[:attestation_cert],
+            @certificate_order.certificate_content,
+            AttestationCertificate
+        )
+        create_attestation_certificate(
+            params[:attestation_issuer_cert],
+            @certificate_order.certificate_content,
+            AttestationIssuerCertificate
+        )
+      end
+    end
+
+    render :json => returnObj
+  end
+
+  def remove_attestation
+    @certificate_order.attestation_certificate.destroy!
+    @certificate_order.attestation_issuer_certificate.destroy!
+
+    render :json => true
+  end
+
   private
+
+  def create_attestation_certificate(cert, certificate_content, klass)
+    attestation_certificate = klass.new
+    attestation_certificate.body = cert
+    attestation_certificate.type = klass.to_s
+    attestation_certificate.certificate_content = certificate_content
+    attestation_certificate.status = "stored"
+    attestation_certificate.save!
+  end
 
   def smime_client_create
     @certificate = Certificate.find params[:certificate_id]
