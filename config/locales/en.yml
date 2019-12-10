@@ -36,14 +36,14 @@ en:
     payment_method_example:
       {"payment":{"credit_card":{"first_name":"Bob","last_name":"Smith","number":"370000000000002", "expires": "0119","cvv": "007", "postal_code":"77098","country":"US"}}}
     account_key_description:
-      "The SWS account key of the reseller account.\nexample: 4980a361"
+      "<b>The SWS account key of the reseller account.\nexample:</b> 4980a361"
     secret_key_description:
-      "The SWW secret key of the reseller account.\nexample: csr/ceZvPQ=="
+      "<b>The SWW secret key of the reseller account.\nexample:</b> csr/ceZvPQ=="
     product_param_description:
-      "The product code of the ssl certificate being purchased.\nSelect only one code from the following choices:\n 100 (for EV UCC SSL)\n101 (for UCC SSL)\n103 (for High Assurance SSL)\n102 (for EV SSL)\n104 (for Free SSL)\n105 (for Wildcard SSL)\n106 (for Basic SSL)\n107 (for Premium SSL)"
+      "<b>The product code of the ssl certificate being purchased.</b>\nSelect only one code from the following choices:\n 100 (for EV UCC SSL)\n101 (for UCC SSL)\n103 (for High Assurance SSL)\n102 (for EV SSL)\n104 (for Free SSL)\n105 (for Wildcard SSL)\n106 (for Basic SSL)\n107 (for Premium SSL)"
     period_param_description:
-      "The number of days the certificate is valid for.\nDepending on what is specified by the product key, different options are available:\n365 or 730 for EV SSL certs\n30 or 90 for Free Trial SSL certs\n365, 730, 1095, 1461, or 1826 for all others"
+      "<b>The number of days the certificate is valid for.</b>\nDepending on what is specified by the product key, different options are available:\n365 or 730 for EV SSL certs\n30 or 90 for Free Trial SSL certs\n365, 730, 1095, 1461, or 1826 for all others"
     unique_value_param_description:
-      An alphanumeric string that ensures the uniqueness of the request. If you do not supply a unique value, one will be generated for you (SSL.com uses a random 10-digit hexadecimal number for this purpose). Specifying a unique value in this way is useful if you want to generate DCV files or CNAME entries outside of SSL.com’s user portal. Must be unique to each CSR and domains combination. Ignored if no CSR is in the request.
+      <b>An alphanumeric string that ensures the uniqueness of the request. If you do not supply a unique value, one will be generated for you (SSL.com uses a random 10-digit hexadecimal number for this purpose). Specifying a unique value in this way is useful if you want to generate DCV files or CNAME entries outside of SSL.com’s user portal. Must be unique to each CSR and domains combination. Ignored if no CSR is in the request.</b>
     csr_param_description:
       "Certificate signing request (Base-64 encoded). If the csr is not provided, then an order voucher will be created instead which can be used at a later time. The voucher code will be returned as result.\nExample:\n-----BEGIN CERTIFICATE REQUEST-----\nMIICvTCCAaUCAQAweDELMAkGA1UEBhMCdXMxDjAMBgNVBAgTBVRleGFzMRA\nwDgYDnVQQHEwdIb3VzdG9uMRUwEwYDVQQKEwxZb3VyIENvbXBhbnkxFTATB\ngNVBAsTDFlvndXIgSVQgRGVwdDEZMBcGA1UEAxMQd3d3LnlvdXJzaXRlLmNvbT\nCCASIwDQYJKoZInhvcNAQEBBQADggEPADCCAQoCggEBAKWnrKf35qmU/tBnieUc\nQmf0xhntGO2YDgAOnW9J44IAhC1IB715312J28WvoLSSZDuBxqMaLgBbcNyrR\nFkwbZ+sRbLsjJ24v21DtnLE2gMSbr9YSuH0McOBh9sf23tHd2n5rteJn5fVux\nc6ak3t9mag2jjD43Blyh3ih7nADPj0XAk0Gfn+obfmKPMpZwYEhXnJNtWKHzf\nlzAjUjaxbMwMIrvgZcvk/BZZ184znYquasNmvJotvptP0RF3J0GhuiYg75Bgi\nmMq3YFxFjAnYjRRZ7p8z/DEfTkdZOPHGnypaz4ny+l8lggyvMOgZD7yanGuVx\nzlBhpB90INXVDX9+yQ23XHECAwEAAaAAMA0GnCSqGSIb3DQEBBQUAA4IBAQAw\nbFXORWmD9ovp4qsxozzUZAKxUTluiTIsO+bK2pXVnHAhxVkzcVi8nFqzkeAuK\nRTQ9UZPMjnnjHWOKIghIpiAabSiC0E/0SPR9s3QzJWhVnOfOpoKYoRnDUh+/S\nH/Otg4Wid7yKOfdPFK4J8GtnPB2i5Eih0ZOYTTIU2xSmkZ9Tn+LoB7PxOVii8\nDq5Nrbbzq8x/WpJfKTackp6nWl2ILcfXM3iGBmLqXPRn5/Uvj767nrq5mHXD2\nIakxBAeTci16WqQEVcow3qn1JwLyGOzXuuW/UA2/HJUE4zG+8CQIb3OLn0Yq2\n6QKt/i5CJv//uZcRZY8VRkPaH090QOr85UfP7Y3Dn\n-----END CERTIFICATE REQUEST-----"
