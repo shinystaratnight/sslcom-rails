@@ -323,8 +323,7 @@
                     .certificate_details_box
                       %ul
                         -if co.certificate_content.issued? && !co.certificate_content.expired?
-                          -#=render partial: 'download', locals: {csr: co.csr, signed_certificate: co.signed_certificate}
-                          =render partial: 'download', locals: {certificate_order: co}
+                          =render partial: 'download', locals: {csr: co.csr, signed_certificate: co.signed_certificate}
                         -unless @cc.csr.blank? || hide_validation?(co)
                           -if @cc.pending_validation?
                             %li
@@ -483,9 +482,8 @@
                                     %ul
                                       -if sc && !sc.expired?
                                         %div
-                                          submitted on #{sc.created_at.strftime("%b %d, %Y %R %Z")}
-                                        -#=render partial: 'download', locals: {csr: csr, signed_certificate: sc}
-                                        =render partial: 'download', locals: {certificate_order: co}
+                                          issued on #{sc.created_at.strftime("%b %d, %Y %R %Z")}
+                                        =render partial: 'download', locals: {csr: csr, signed_certificate: sc}
                                       -else
                                         %div
                                           no signed certificate found
