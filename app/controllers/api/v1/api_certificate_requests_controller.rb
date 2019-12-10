@@ -60,7 +60,156 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
       key :tags, [
         'certificate'
       ]
-      parameter :create_certificate_parameter
+      parameter do
+        key :name, :account_key
+        key :in, :query
+        key :type, :string
+        key :required, true
+        key :description, I18n.t(:account_key_description, scope: :documentation)
+      end
+      parameter do
+        key :name, :secret_key
+        key :in, :query
+        key :type, :string
+        key :required, true
+        key :description, I18n.t(:secret_key_description, scope: :documentation)
+      end
+      parameter do
+        key :name, :product
+        key :in, :query
+        key :type, :number
+        key :format, :integer
+        key :required, true
+        key :description, I18n.t(:product_param_description, scope: :documentation)
+      end
+      parameter do
+        key :name, :period
+        key :in, :query
+        key :type, :number
+        key :format, :integer
+        key :required, true
+        key :description, I18n.t(:period_param_description, scope: :documentation)
+      end
+      parameter do
+        key :name, :unique_value
+        key :in, :query
+        key :type, :string
+        key :format, :byte
+        key :description, I18n.t(:unique_value_param_description, scope: :documentation)
+      end
+      parameter do
+        key :name, :csr
+        key :in, :query
+        key :type, :string
+        key :description, I18n.t(:csr_param_description, scope: :documentation)      end
+      parameter do
+        key :name, :server_software
+        key :in, :query
+        key :type, :integer
+        key :description, I18n.t(:period_param_description, scope: :documentation)      end
+      parameter do
+        key :name, :domains
+        key :in, :query
+        key :type, :object
+        key :description, I18n.t(:period_param_description, scope: :documentation)      end
+      parameter do
+        key :name, :organization
+        key :in, :query
+        key :type, :string
+        key :description, I18n.t(:period_param_description, scope: :documentation)      end
+      parameter do
+        key :name, :organization_unit
+        key :in, :query
+        key :type, :string
+        key :description, I18n.t(:period_param_description, scope: :documentation)      end
+      parameter do
+        key :name, :post_office_box
+        key :in, :query
+        key :type, :string
+        key :description, I18n.t(:period_param_description, scope: :documentation)      end
+      parameter do
+        key :name, :street_address_1
+        key :in, :query
+        key :type, :string
+        key :description, I18n.t(:period_param_description, scope: :documentation)      end
+      parameter do
+        key :name, :organization_unit
+        key :in, :query
+        key :type, :string
+        key :description, I18n.t(:period_param_description, scope: :documentation)      end
+      parameter do
+        key :name, :street_address_3
+        key :in, :query
+        key :type, :string
+        key :description, I18n.t(:period_param_description, scope: :documentation)      end
+      parameter do
+        key :name, :locality
+        key :in, :query
+        key :type, :string
+        key :description, I18n.t(:period_param_description, scope: :documentation)      end
+      parameter do
+        key :name, :state_or_providence
+        key :in, :query
+        key :type, :string
+        key :description, I18n.t(:period_param_description, scope: :documentation)      end
+      parameter do
+        key :name, :postal_code
+        key :in, :query
+        key :type, :string
+        key :description, I18n.t(:period_param_description, scope: :documentation)      end
+      parameter do
+        key :name, :country
+        key :in, :query
+        key :type, :string
+        key :description, I18n.t(:period_param_description, scope: :documentation)      end
+      parameter do
+        key :name, :duns_number
+        key :in, :query
+        key :type, :string
+        key :description, I18n.t(:period_param_description, scope: :documentation)      end
+      parameter do
+        key :name, :company_number
+        key :in, :query
+        key :type, :string
+        key :description, I18n.t(:period_param_description, scope: :documentation)      end
+      parameter do
+        key :name, :joi
+        key :in, :query
+        key :type, :object
+        key :description, I18n.t(:period_param_description, scope: :documentation)      end
+      parameter do
+        key :name, :ca_certificate_id
+        key :in, :query
+        key :description, I18n.t(:period_param_description, scope: :documentation)      end
+      parameter do
+        key :name, :external_order_number
+        key :in, :query
+        key :description, I18n.t(:period_param_description, scope: :documentation)      end
+      parameter do
+        key :name, :hide_certificate_reference
+        key :in, :query
+        key :type, :string
+        key :description, I18n.t(:period_param_description, scope: :documentation)      end
+      parameter do
+        key :name, :callback
+        key :in, :query
+        key :type, :object
+        key :description, I18n.t(:period_param_description, scope: :documentation)      end
+      parameter do
+        key :name, :contacts
+        key :in, :query
+        key :type, :object
+        key :description, I18n.t(:period_param_description, scope: :documentation)      end
+      parameter do
+        key :name, :app_req
+        key :in, :query
+        key :type, :object
+        key :description, I18n.t(:period_param_description, scope: :documentation)      end
+      parameter do
+        key :name, :payment_method
+        key :in, :query
+        key :type, :object
+        key :description, I18n.t(:period_param_description, scope: :documentation)      end
 
       response 201 do
         key :description, 'Certificate Created Response'
