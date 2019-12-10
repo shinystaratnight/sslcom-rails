@@ -26,7 +26,28 @@ module Api
           key :tags, [
             'user'
           ]
-          parameter :create_user_parameter
+          parameter do
+            key :name, :login
+            key :type, :string
+            key :in, :query
+            key :description, 'login used when signing in'
+            key :required, true
+          end
+          parameter do
+            key :name, :email
+            key :type, :string
+            key :format, :email
+            key :in, :query
+            key :description, 'email address associated with the new user'
+            key :required, true
+          end
+          parameter do
+            key :name, :password
+            key :type, :string
+            key :in, :query
+            key :description, 'password the user signs in with'
+            key :required, true
+          end
 
           response 200 do
             key :description, 'Credentials Response'

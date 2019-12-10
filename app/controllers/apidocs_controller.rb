@@ -170,40 +170,6 @@ class ApidocsController < ApplicationController
       end
     end
 
-    parameter :create_user_parameter do
-      key :name, :body
-      key :type, :string
-      key :in, :body
-      key :description, 'User account information'
-      key :required, true
-
-      schema do
-        property :login do
-          key :name, :login
-          key :type, :string
-          key :description, 'login used when signing in'
-          key :required, true
-          key :example, 'swaggeruser'
-        end
-        property :email do
-          key :name, :email
-          key :type, :string
-          key :description, 'email address associated with the new user'
-          key :required, true
-          key :format, :email
-          key :example, 'user@gmail.com'
-        end
-        property :password do
-          key :name, :password
-          key :format, :password
-          key :type, :string
-          key :description, 'password the user signs in with'
-          key :required, true
-          key :example, '@Sup3AwE$0We'
-        end
-      end
-    end
-
     tag do
       key :name, 'user'
       key :description, 'User operations'
