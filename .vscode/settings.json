@@ -6,6 +6,7 @@
         "circleci",
         "linting",
         "mkdir",
+        "mysite",
         "outdent",
         "prepend",
         "rspec",

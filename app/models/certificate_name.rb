@@ -215,7 +215,7 @@ class CertificateName < ApplicationRecord
     csr.ca_tag
   end
 
-  # TODO all methods check http, https, and cname of protocol is nil
+  # TODO: all methods check http, https, and cname of protocol is nil
   def dcv_verify(protocol=nil)
     protocol ||= domain_control_validation.try(:dcv_method)
     return nil if protocol=~/email/

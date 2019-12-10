@@ -2,4 +2,54 @@
 # See http://github.com/svenfuchs/rails-i18n/tree/master/rails%2Flocale for starting points.
 
 en:
-  hello: "Hello world"
+  hello: 'Hello world'
+  documentation:
+    create_certificate_description: >
+      Create an ssl.com certificate order (or voucher code). Upon successful api call, the price (if any) of the ssl certificate will be deducted 
+      from reseller account associated with the account number specified in the account_key.Voucher codes are used to purchase a certificate without 
+      having to submit a csr right away. This is useful for host providers, enterprise environments, or any situation where buying the certificate and 
+      installing it do not necessarily happen at the same time. A voucher code can be created by simply only specifying the product type and duration.'
+    certificate_tag_description:
+      Certificate Operations
+    csr_example:
+      -----BEGIN CERTIFICATE REQUEST-----\nMIICvTCCAaUCAQAweDELMAkGA1UEBhMCdXMxDjAMBgNVBAgTBVRleGFzMRAwDgYDnVQQHEwdIb3VzdG9uMRUwEwYDVQQKEwxZb3VyIENvbXBhbnkxFTATBgNVBAsTDFlvndXIgSVQgRGVwdDEZMBcGA1UEAxMQd3d3LnlvdXJzaXRlLmNvbTCCASIwDQYJKoZInhvcNAQEBBQADggEPADCCAQoCggEBAKWnrKf35qmU/tBnieUc\nQmf0xhntGO2YDgAOnW9J44IAhC1IB715312J28WvoLSSZDuBxqMaLgBbcNyrR\nFkwbZ+sRbLsjJ24v21DtnLE2gMSbr9YSuH0McOBh9sf23tHd2n5rteJn5fVux\nc6ak3t9mag2jjD43Blyh3ih7nADPj0XAk0Gfn+obfmKPMpZwYEhXnJNtWKHzf\nlzAjUjaxbMwMIrvgZcvk/BZZ184znYquasNmvJotvptP0RF3J0GhuiYg75Bgi\nmMq3YFxFjAnYjRRZ7p8z/DEfTkdZOPHGnypaz4ny+l8lggyvMOgZD7yanGuVx\nzlBhpB90INXVDX9+yQ23XHECAwEAAaAAMA0GnCSqGSIb3DQEBBQUAA4IBAQAw\nbFXORWmD9ovp4qsxozzUZAKxUTluiTIsO+bK2pXVnHAhxVkzcVi8nFqzkeAuK\nRTQ9UZPMjnnjHWOKIghIpiAabSiC0E/0SPR9s3QzJWhVnOfOpoKYoRnDUh+/S\nH/Otg4Wid7yKOfdPFK4J8GtnPB2i5Eih0ZOYTTIU2xSmkZ9Tn+LoB7PxOVii8\nDq5Nrbbzq8x/WpJfKTackp6nWl2ILcfXM3iGBmLqXPRn5/Uvj767nrq5mHXD2\nIakxBAeTci16WqQEVcow3qn1JwLyGOzXuuW/UA2/HJUE4zG+8CQIb3OLn0Yq2\n6QKt/i5CJv//uZcRZY8VRkPaH090QOr85UfP7Y3Dn\n-----END CERTIFICATE REQUEST-----
+    domains_example:
+      {"www.mysite.com" : {"dcv" : "admin@mysite.com"}}
+    organization_example:
+      SSL Corp
+    organization_unit_example:
+      IT Security
+    street_address_1_example:
+      3100 Richmond Avenue
+    street_address_2_example:
+      Suite 301
+    street_address_3_example:
+      Engineering Department
+    joi_example:
+      {"joi" : {"locality" : "Houston", "state_or_province" : "Texas", "country" : "US", "incorporation_date" : "2002-06-01"}, "assumed_name" : "SSL.com", "business_category" : "b"}
+    callback_example:
+      {"url":"https://www.domain.com/receive_certificate.asp","method":"post","auth":{"basic":{"username":"your_username","password":"your_password"}},"parameters":{"certificate_hook":"cert","custom_attribute":"any_value","another_custom":"any_value","etc":"etc"}}
+    contacts_example:
+      {"all":{"first_name":"Joe","last_name":"Bob","email":"jbob@domain.com","phone":"+123456789","country":"US"}}
+    app_req_example:
+      {"first_name": "Joe", "last_name": "Bob", "email_address": "bob@mysite.com", "phone_number": "111-111-1111", "title": "owner", "country": "US", "callback_method": "t"}
+    payment_method_example:
+      {"payment":{"credit_card":{"first_name":"Bob","last_name":"Smith","number":"370000000000002", "expires": "0119","cvv": "007", "postal_code":"77098","country":"US"}}}
+    account_key_description:
+      "<b>The SWS account key of the reseller account.\nexample:</b> 4980a361"
+    secret_key_description:
+      "<b>The SWW secret key of the reseller account.\nexample:</b> csr/ceZvPQ=="
+    product_param_description:
+      "<b>The product code of the ssl certificate being purchased.</b>\nSelect only one code from the following choices:\n 100 (for EV UCC SSL)\n101 (for UCC SSL)\n103 (for High Assurance SSL)\n102 (for EV SSL)\n104 (for Free SSL)\n105 (for Wildcard SSL)\n106 (for Basic SSL)\n107 (for Premium SSL)"
+    period_param_description:
+      "<b>The number of days the certificate is valid for.</b>\nDepending on what is specified by the product key, different options are available:\n365 or 730 for EV SSL certs\n30 or 90 for Free Trial SSL certs\n365, 730, 1095, 1461, or 1826 for all others"
+    unique_value_param_description:
+      <b>An alphanumeric string that ensures the uniqueness of the request. If you do not supply a unique value, one will be generated for you (SSL.com uses a random 10-digit hexadecimal number for this purpose). Specifying a unique value in this way is useful if you want to generate DCV files or CNAME entries outside of SSL.com’s user portal. Must be unique to each CSR and domains combination. Ignored if no CSR is in the request.</b>
+    csr_param_description:
+      "Certificate signing request (Base-64 encoded). If the csr is not provided, then an order voucher will be created instead which can be used at a later time. The voucher code will be returned as result.\nExample:\n-----BEGIN CERTIFICATE REQUEST-----\nMIICvTCCAaUCAQAweDELMAkGA1UEBhMCdXMxDjAMBgNVBAgTBVRleGFzMRA\nwDgYDnVQQHEwdIb3VzdG9uMRUwEwYDVQQKEwxZb3VyIENvbXBhbnkxFTATB\ngNVBAsTDFlvndXIgSVQgRGVwdDEZMBcGA1UEAxMQd3d3LnlvdXJzaXRlLmNvbT\nCCASIwDQYJKoZInhvcNAQEBBQADggEPADCCAQoCggEBAKWnrKf35qmU/tBnieUc\nQmf0xhntGO2YDgAOnW9J44IAhC1IB715312J28WvoLSSZDuBxqMaLgBbcNyrR\nFkwbZ+sRbLsjJ24v21DtnLE2gMSbr9YSuH0McOBh9sf23tHd2n5rteJn5fVux\nc6ak3t9mag2jjD43Blyh3ih7nADPj0XAk0Gfn+obfmKPMpZwYEhXnJNtWKHzf\nlzAjUjaxbMwMIrvgZcvk/BZZ184znYquasNmvJotvptP0RF3J0GhuiYg75Bgi\nmMq3YFxFjAnYjRRZ7p8z/DEfTkdZOPHGnypaz4ny+l8lggyvMOgZD7yanGuVx\nzlBhpB90INXVDX9+yQ23XHECAwEAAaAAMA0GnCSqGSIb3DQEBBQUAA4IBAQAw\nbFXORWmD9ovp4qsxozzUZAKxUTluiTIsO+bK2pXVnHAhxVkzcVi8nFqzkeAuK\nRTQ9UZPMjnnjHWOKIghIpiAabSiC0E/0SPR9s3QzJWhVnOfOpoKYoRnDUh+/S\nH/Otg4Wid7yKOfdPFK4J8GtnPB2i5Eih0ZOYTTIU2xSmkZ9Tn+LoB7PxOVii8\nDq5Nrbbzq8x/WpJfKTackp6nWl2ILcfXM3iGBmLqXPRn5/Uvj767nrq5mHXD2\nIakxBAeTci16WqQEVcow3qn1JwLyGOzXuuW/UA2/HJUE4zG+8CQIb3OLn0Yq2\n6QKt/i5CJv//uZcRZY8VRkPaH090QOr85UfP7Y3Dn\n-----END CERTIFICATE REQUEST-----"
+    login_param_description:
+      <b>login used when signing in</b>
+    email_param_description:
+      <b>email address associated with the new user</b>
+    password_param_description:
+      <b>password the user signs in with</b>

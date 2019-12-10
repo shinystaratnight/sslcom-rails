@@ -7,7 +7,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
   after_filter :notify_saved_result, except: [:create_v1_4, :download_v1_4]
 
   # parameters listed here made available as attributes in @result
-  wrap_parameters ApiCertificateRequest, include: [*( 
+  wrap_parameters ApiCertificateRequest, include: [*(
     ApiCertificateRequest::ACCESSORS+
     ApiCertificateRequest::CREATE_ACCESSORS_1_4+
     ApiCertificateRequest::RETRIEVE_ACCESSORS+
@@ -22,7 +22,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
   SANDBOX_DOMAIN = "https://sandbox.ssl.com"
   SCAN_COMMAND=->(parameters, url){%x"echo QUIT | cipherscan/cipherscan #{parameters} #{url}"}
   ANALYZE_COMMAND=->(parameters, url){%x"echo QUIT | cipherscan/analyze.py #{parameters} #{url}"}
-  
+
   def notify_saved_result
     @rendered=render_to_string(template: @template)
     unless @rendered.is_a?(String) && @rendered.include?('errors')
@@ -50,6 +50,182 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
     result.certificates    = cc.x509_certificates.map(&:to_s).join("\n") if cc.x509_certificates
   end
 
+  swagger_path '/certificates' do
+    operation :post do
+      key :summary, 'Create an SSL Certificate'
+      key :description, I18n.t(:create_certificate_description, scope: :documentation)
+      key :operation, 'createCertificate'
+      key :produces, %w[application/json]
+      key :consumes, %w[application/json]
+      key :tags, [
+        'certificate'
+      ]
+      parameter do
+        key :name, :account_key
+        key :in, :query
+        key :type, :string
+        key :required, true
+        key :description, I18n.t(:account_key_description, scope: :documentation)
+      end
+      parameter do
+        key :name, :secret_key
+        key :in, :query
+        key :type, :string
+        key :required, true
+        key :description, I18n.t(:secret_key_description, scope: :documentation)
+      end
+      parameter do
+        key :name, :product
+        key :in, :query
+        key :type, :number
+        key :format, :integer
+        key :required, true
+        key :description, I18n.t(:product_param_description, scope: :documentation)
+      end
+      parameter do
+        key :name, :period
+        key :in, :query
+        key :type, :number
+        key :format, :integer
+        key :required, true
+        key :description, I18n.t(:period_param_description, scope: :documentation)
+      end
+      parameter do
+        key :name, :unique_value
+        key :in, :query
+        key :type, :string
+        key :format, :byte
+        key :description, I18n.t(:unique_value_param_description, scope: :documentation)
+      end
+      parameter do
+        key :name, :csr
+        key :in, :query
+        key :type, :string
+        key :description, I18n.t(:csr_param_description, scope: :documentation)      end
+      parameter do
+        key :name, :server_software
+        key :in, :query
+        key :type, :integer
+        key :description, I18n.t(:period_param_description, scope: :documentation)      end
+      parameter do
+        key :name, :domains
+        key :in, :query
+        key :type, :object
+        key :description, I18n.t(:period_param_description, scope: :documentation)      end
+      parameter do
+        key :name, :organization
+        key :in, :query
+        key :type, :string
+        key :description, I18n.t(:period_param_description, scope: :documentation)      end
+      parameter do
+        key :name, :organization_unit
+        key :in, :query
+        key :type, :string
+        key :description, I18n.t(:period_param_description, scope: :documentation)      end
+      parameter do
+        key :name, :post_office_box
+        key :in, :query
+        key :type, :string
+        key :description, I18n.t(:period_param_description, scope: :documentation)      end
+      parameter do
+        key :name, :street_address_1
+        key :in, :query
+        key :type, :string
+        key :description, I18n.t(:period_param_description, scope: :documentation)      end
+      parameter do
+        key :name, :organization_unit
+        key :in, :query
+        key :type, :string
+        key :description, I18n.t(:period_param_description, scope: :documentation)      end
+      parameter do
+        key :name, :street_address_3
+        key :in, :query
+        key :type, :string
+        key :description, I18n.t(:period_param_description, scope: :documentation)      end
+      parameter do
+        key :name, :locality
+        key :in, :query
+        key :type, :string
+        key :description, I18n.t(:period_param_description, scope: :documentation)      end
+      parameter do
+        key :name, :state_or_providence
+        key :in, :query
+        key :type, :string
+        key :description, I18n.t(:period_param_description, scope: :documentation)      end
+      parameter do
+        key :name, :postal_code
+        key :in, :query
+        key :type, :string
+        key :description, I18n.t(:period_param_description, scope: :documentation)      end
+      parameter do
+        key :name, :country
+        key :in, :query
+        key :type, :string
+        key :description, I18n.t(:period_param_description, scope: :documentation)      end
+      parameter do
+        key :name, :duns_number
+        key :in, :query
+        key :type, :string
+        key :description, I18n.t(:period_param_description, scope: :documentation)      end
+      parameter do
+        key :name, :company_number
+        key :in, :query
+        key :type, :string
+        key :description, I18n.t(:period_param_description, scope: :documentation)      end
+      parameter do
+        key :name, :joi
+        key :in, :query
+        key :type, :object
+        key :description, I18n.t(:period_param_description, scope: :documentation)      end
+      parameter do
+        key :name, :ca_certificate_id
+        key :in, :query
+        key :description, I18n.t(:period_param_description, scope: :documentation)      end
+      parameter do
+        key :name, :external_order_number
+        key :in, :query
+        key :description, I18n.t(:period_param_description, scope: :documentation)      end
+      parameter do
+        key :name, :hide_certificate_reference
+        key :in, :query
+        key :type, :string
+        key :description, I18n.t(:period_param_description, scope: :documentation)      end
+      parameter do
+        key :name, :callback
+        key :in, :query
+        key :type, :object
+        key :description, I18n.t(:period_param_description, scope: :documentation)      end
+      parameter do
+        key :name, :contacts
+        key :in, :query
+        key :type, :object
+        key :description, I18n.t(:period_param_description, scope: :documentation)      end
+      parameter do
+        key :name, :app_req
+        key :in, :query
+        key :type, :object
+        key :description, I18n.t(:period_param_description, scope: :documentation)      end
+      parameter do
+        key :name, :payment_method
+        key :in, :query
+        key :type, :object
+        key :description, I18n.t(:period_param_description, scope: :documentation)      end
+
+      response 201 do
+        key :description, 'Certificate Created Response'
+        schema do
+          key :'$ref', :CreateCertificateResponse
+        end
+      end
+      response :default do
+        key :description, 'Error Response'
+        schema do
+          key :'$ref', :ErrorResponse
+        end
+      end
+    end
+  end
+
   def create_v1_4
     set_template 'create_v1_4'
     if @result.csr_obj && !@result.csr_obj.valid?
@@ -58,7 +234,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
       if @result.valid? && @result.save
         if @acr = @result.create_certificate_order
           # successfully charged
-          if @acr.is_a?(CertificateOrder) && @acr.errors.empty?      
+          if @acr.is_a?(CertificateOrder) && @acr.errors.empty?
             if @acr.certificate_content.csr && @result.debug
               ccr = @acr.certificate_content.csr.ca_certificate_requests.last
               @result.api_request=ccr.parameters
@@ -204,7 +380,6 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
     if @result.csr_obj && !result.csr_obj.valid?
       @result = @result.csr_obj
     else
-      # ext_order_number = CertificateOrder.find_by_ref(params[:ref]).external_order_number || 'eon'
       if @result.save
         if @acr = @result.replace_certificate_order
           @csr = @acr.csr
@@ -214,10 +389,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
               ccr = @acr.certificate_content.csr.ca_certificate_requests.last
               @result.api_request=ccr.parameters
               @result.api_response=ccr.response
-            end# @result.error_code=ccr.response_error_code
-            # @result.error_message=ccr.response_error_message
-            # @result.eta=ccr.response_certificate_eta
-            # @result.order_status = ccr.response_certificate_status
+            end
 
             #Send validation email unless ca_id is nil
             unless @acr.certificate_content.ca_id.nil?
@@ -279,19 +451,6 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
           else
             @result = @acr #so that rabl can report errors
           end
-
-          # unless @result.cert_names.blank?
-          #   @result.cert_names.keys.each do |key|
-          #     # expire_fragment(params[:ref] + ':' + key)
-          #     Rails.cache.delete(params[:ref] + ':' + ext_order_number + ':' + key)
-          #
-          #     # cache = Rails.cache.read(params[:ref] + ':' + ext_order_number + ':' + key)
-          #     # unless cache && JSON.parse(cache)['tr_info']['status'] == 'validated'
-          #     #   Rails.cache.delete(params[:ref] + ':' + ext_order_number + ':' + key)
-          #     # end
-          #   end
-          # end
-
         end
       else
         InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
@@ -309,7 +468,6 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
       # we do this sloppy maneuver because the rabl template only reports errors
       @result = @result.csr_obj
     else
-      # ext_order_number = CertificateOrder.find_by_ref(params[:ref]).external_order_number || 'eon'
       if @result.save #save the api request
         if @acr = @result.update_certificate_order
           @csr = @acr.csr
@@ -320,10 +478,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
               ccr = @acr.certificate_content.csr.ca_certificate_requests.first
               @result.api_request=ccr.parameters
               @result.api_response=ccr.response
-            end# @result.error_code=ccr.response_error_code
-            # @result.error_message=ccr.response_error_message
-            # @result.eta=ccr.response_certificate_eta
-            # @result.order_status = ccr.response_certificate_status
+            end
 
             #Send validation email unless ca_id is nil
             unless @acr.certificate_content.ca_id.nil?
@@ -388,28 +543,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
           else
             @result = @acr #so that rabl can report errors
           end
-
-          # unless @result.cert_names.blank?
-          #   @result.cert_names.keys.each do |key|
-          #     # expire_fragment(params[:ref] + ':' + key)
-          #     Rails.cache.delete(params[:ref] + ':' + ext_order_number + ':' + key)
-          #
-          #     # cache = Rails.cache.read(params[:ref] + ':' + ext_order_number + ':' + key)
-          #     # unless cache && JSON.parse(cache)['tr_info']['status'] == 'validated'
-          #     #   Rails.cache.delete(params[:ref] + ':' + ext_order_number + ':' + key)
-          #     # end
-          #   end
-          # end
-
         end
-
-        # @result.cert_names.keys.each do |key|
-        #   # expire_fragment(params[:ref] + ':' + key)
-        #   cache = Rails.cache.read(params[:ref] + ':' + key)
-        #   unless cache && JSON.parse(cache)['tr_info']['status'] == 'validated'
-        #     Rails.cache.delete(params[:ref] + ':' + key)
-        #   end
-        # end unless @result.cert_names.blank?
       else
         InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
       end
@@ -479,11 +613,6 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
       if @acr.is_a?(CertificateOrder) && @acr.errors.empty?
         @result.menu = {}
 
-        # @result.menu[:certificate_details_tab] = permitted_to?(:show, @acr)
-        # @result.menu[:validation_status_tab] = permitted_to?(:show, @acr.validation)
-        # @result.menu[:smart_seal_tab] = permitted_to?(:show, @acr.site_seal)
-        # @result.menu[:transaction_receipt_tab] = permitted_to?(:show, @acr.order)
-
         @result.menu[:certificate_details_tab] = true
         @result.menu[:validation_status_tab] = true
         @result.menu[:smart_seal_tab] = true
@@ -541,17 +670,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
 
           if @acr.certificate_content.issued? && !@acr.certificate_content.expired?
             csr, sc = @acr.csr, @acr.signed_certificate
-            # @result.cert_details.download = {
-            #     iis7: ["Microsoft IIS (*.p7b)", certificate_file("pkcs", @acr), SignedCertificate::IIS_INSTALL_LINK],
-            #     cpanel: ["WHM/cpanel", certificate_file("whm_bundle", @acr), SignedCertificate::CPANEL_INSTALL_LINK],
-            #     apache: ["Apache", certificate_file("apache_bundle", @acr), SignedCertificate::APACHE_INSTALL_LINK],
-            #     amazon: ["Amazon", certificate_file("amazon_bundle", @acr), SignedCertificate::AMAZON_INSTALL_LINK],
-            #     nginx: ["Nginx", certificate_file("nginx", @acr), SignedCertificate::NGINX_INSTALL_LINK],
-            #     v8_nodejs: ["V8+Node.js", certificate_file("nginx", @acr), SignedCertificate::V8_NODEJS_INSTALL_LINK],
-            #     java: ["Java/Tomcat", certificate_file("other", @acr), SignedCertificate::JAVA_INSTALL_LINK],
-            #     other: ["Other platforms", certificate_file("other", @acr), SignedCertificate::OTHER_INSTALL_LINK],
-            #     bundle: ["CA bundle (intermediate certs)", certificate_file("ca_bundle", @acr), SignedCertificate::OTHER_INSTALL_LINK]
-            # }
+
             @result.cert_details[:download] = [
                 ["iis7", "Microsoft IIS (*.p7b)", certificate_file("pkcs", @acr), SignedCertificate::IIS_INSTALL_LINK],
                 ["cpanel", "WHM/cpanel", certificate_file("whm_bundle", @acr), SignedCertificate::CPANEL_INSTALL_LINK],
@@ -633,7 +752,6 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
               @result.cert_details[:certificate_contents][cc.label][:sc][:created_at] = sc.created_at.strftime("%b %d, %Y %R %Z")
               @result.cert_details[:certificate_contents][cc.label][:sc][:decoded] = sc.decoded
               @result.cert_details[:certificate_contents][cc.label][:sc][:subject_alternative_names] = sc.subject_alternative_names
-              # @result.cert_details.certificate_contents[cc.label]['permitted_to'] = permitted_to!(:create, SignedCertificate.new)
             end
           end
 
@@ -709,8 +827,6 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
           # TODO: In case of Admin.
         end
 
-        # if @result.cert_details.menu[:validation_status_tab]
-
         if @result.menu[:smart_seal_tab]
           ss = @acr.site_seal
 
@@ -749,8 +865,6 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
           @result.smart_seal[:cc_issued] = @acr.certificate_content.issued?
           @result.smart_seal[:sc_dv] = @acr.csr.signed_certificate.is_dv?
 
-          # @result.smart_seal[:hide_document] =
-          #     @acr.other_party_validation_request && @acr.other_party_validation_request.hide_documents?
           @result.smart_seal[:validation_histories] = []
           validation_histories = @acr.validation_histories
           validation_histories.each do |validation|
@@ -776,13 +890,10 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
 
             @result.smart_seal[:validation_histories] << tmp
           end
-          # @result.smart_seal[:validation_histories] = @acr.validation_histories
           # TODO: Other_party_request(CO)
           @result.smart_seal[:other_party_request] = false
           @result.smart_seal[:valid_his_preview] = false
         end
-
-        # if @result.menu[:transaction_receipt_tab]
 
         render(:template => @template) and return
       end
@@ -1003,12 +1114,6 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
             OrderNotifier.validation_documents_uploaded_comodo("evdocs@comodo.com", @acr, @files).
                 deliver if (@acr.certificate.is_ev? && @acr.ca_name=="comodo")
           end
-
-          # checkout={}
-          # if @acr.certificate_content.contacts_provided?
-          #   @message.certificate_content.pend_validation!(host: request.host_with_port) if @other_party_validation_request.blank?
-          #   checkout={checkout: "true"}
-          # end
         end
         @result.errors = error
 
@@ -1140,12 +1245,6 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
                 result.effective_date = sc.effective_date
                 result.expiration_date = sc.expiration_date
                 result.algorithm = sc.is_SHA2? ? 'SHA256' : 'SHA1'
-                # below is forcing nginx to return content_type: html which is breaking SSL Manager
-                # result.site_seal_code = ERB::Util.json_escape(render_to_string(
-                #                                                   partial: 'site_seals/site_seal_code.html.haml',
-                #                                                   locals: {co: acr},
-                #                                                   layout: false)
-                # )
               end
             end
 
@@ -1225,8 +1324,6 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
 
     if @result.save
       @result.email_addresses={}
-      # @certificate_order=find_certificate_order
-      # @certificate_order.is_a?(CertificateOrder)
 
       if @result.domain
         # Reading cache of email address for "Acceptable Email addresses for domain control validation" API.

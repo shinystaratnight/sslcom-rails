@@ -11,7 +11,7 @@ module Swagger
         property :errors do
           key :type, :array
           items do
-            key :type, :string
+            key :type, :object
           end
         end
       end

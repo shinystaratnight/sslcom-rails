@@ -19,43 +19,6 @@ class ApidocsController < ApplicationController
       end
     end
 
-    parameter :create_user_parameter do
-      key :name, :body
-      key :type, :string
-      key :in, :body
-      key :description, 'User account information'
-      key :required, true
-
-      schema do
-        property :login do
-          key :name, :login
-          key :type, :string
-          key :in, :body
-          key :description, 'login used when signing in'
-          key :required, true
-          key :example, 'swaggeruser'
-        end
-        property :email do
-          key :name, :email
-          key :type, :string
-          key :in, :body
-          key :description, 'email address associated with the new user'
-          key :required, true
-          key :format, :email
-          key :example, 'user@gmail.com'
-        end
-        property :password do
-          key :name, :password
-          key :format, :password
-          key :type, :string
-          key :in, :body
-          key :description, 'password the user signs in with'
-          key :required, true
-          key :example, '@Sup3AwE$0We'
-        end
-      end
-    end
-
     tag do
       key :name, 'user'
       key :description, 'User operations'
@@ -63,6 +26,10 @@ class ApidocsController < ApplicationController
         key :description, 'Find more info here'
         key :url, 'https://swagger.io'
       end
+    end
+    tag do
+      key :name, 'certificate'
+      key :description, I18n.t(:certificate_tag_description, scope: :documentation)
     end
     key :host, 'sws.sslpki.local:3000'
     key :basePath, '/'
@@ -76,6 +43,8 @@ class ApidocsController < ApplicationController
     User,
     Swagger::Blocks::ErrorResponse,
     Swagger::Blocks::CredentialsResponse,
+    Swagger::Blocks::CreateCertificateResponse,
+    Api::V1::ApiCertificateRequestsController,
     self
   ].freeze
 
