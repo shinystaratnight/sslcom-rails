@@ -2,4 +2,21 @@
 # See http://github.com/svenfuchs/rails-i18n/tree/master/rails%2Flocale for starting points.
 
 en:
-  hello: "Hello world"
+  hello: 'Hello world'
+  documentation:
+    create_certificate_description: >
+      Create an ssl.com certificate order (or voucher code). Upon successful api call, the price (if any) of the ssl certificate will be deducted 
+      from reseller account associated with the account number specified in the account_key.Voucher codes are used to purchase a certificate without 
+      having to submit a csr right away. This is useful for host providers, enterprise environments, or any situation where buying the certificate and 
+      installing it do not necessarily happen at the same time. A voucher code can be created by simply only specifying the product type and duration.'
+    certificate_tag_description:
+      Certificate Operations
+    csr_example:
+      -----BEGIN CERTIFICATE REQUEST-----nMIICvTCCAaUCAQAweDELMAkGA1UEBhMCdXMxDjAMBgNVBAgTBVRleGFzMRAwDgYDnVQQHEwdIb3VzdG9uMRUwEwYDVQQKEwxZb3VyIENvbXBhbnkxFTATBgNVBAsTDFlvndXIgSVQgRGVwdDEZMBcGA1UEAxMQd3d3LnlvdXJzaXRlLmNvbTCCASIwDQYJKoZInhvcNAQEBBQADggEPADCCAQoCggEBAKWnrKf35qmU/tBnieUcQmf0xhntGO2YDgAOnW9J44IAhC1IB715312J28WvoLSSZDuBxqMaLgBbcNyrRFkwbZ+sRbLsjJ24v21DtnLE2gMSbr9YSuH0McOBh9sf23tHd2n5rteJn5fVuxc6ak3t9mag2jjD43Blyh3ih7nADPj0XAk0Gfn+obfmKPMpZwYEhXnJNtWKHzflzAjUjaxbMwMIrvgZcvk/BZZ184znYquasNmvJotvptP0RF3J0GhuiYg75BgimMq3YFxFjAnYjRRZ7p8z/DEfTkdZOPHGnypaz4ny+l8lggyvMOgZD7yanGuVxzlBhpB90INXVDX9+yQ23XHECAwEAAaAAMA0GnCSqGSIb3DQEBBQUAA4IBAQAwbFXORWmD9ovp4qsxozzUZAKxUTluiTIsO+bK2pXVnHAhxVkzcVi8nFqzkeAuKRTQ9UZPMjnnjHWOKIghIpiAabSiC0E/0SPR9s3QzJWhVnOfOpoKYoRnDUh+/SH/Otg4Wid7yKOfdPFK4J8GtnPB2i5Eih0ZOYTTIU2xSmkZ9Tn+LoB7PxOVii8Dq5Nrbbzq8x/WpJfKTackp6nWl2ILcfXM3iGBmLqXPRn5/Uvj767nrq5mHXD2IakxBAeTci16WqQEVcow3qn1JwLyGOzXuuW/UA2/HJUE4zG+8CQIb3OLn0Yq26QKt/i5CJv//uZcRZY8VRkPaH090QOr85UfP7Y3Dn-----END CERTIFICATE REQUEST-----
+    domains_example:
+      {"www.mysite.com" : {"dcv" : "admin@mysite.com"}}
+    organization_example:
+      SSL Corp
+    organization_unit_example:
+      IT Security
+      

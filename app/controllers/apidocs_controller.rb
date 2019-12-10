@@ -19,6 +19,69 @@ class ApidocsController < ApplicationController
       end
     end
 
+    parameter :create_certificate_parameter do
+      key :name, :body
+      key :type, :string
+      key :in, :body
+      key :required, true
+
+      schema do
+        property :account_key do
+          key :name, :account_key
+          key :type, :string
+          key :example, 'xxxxxxxxx'
+        end
+        property :secret_key do
+          key :name, :secret_key
+          key :type, :string
+          key :example, 'xxxxxxxxx'
+        end
+        property :product do
+          key :name, :account_key
+          key :type, :number
+          key :format, :integer
+          key :example, 100
+        end
+        property :period do
+          key :name, :period
+          key :type, :number
+          key :format, :integer
+          key :example, 365
+        end
+        property :unique_value do
+          key :name, :unique_value
+          key :type, :string
+          key :example, '0cad05061b'
+          key :format, :byte
+        end
+        property :csr do
+          key :name, :csr
+          key :type, :string
+          key :example, I18n.t(:csr_example, scope: :documentation)
+        end
+        property :server_software do
+          key :name, :server_software
+          key :type, :integer
+          key :example, 13
+        end
+        property :domains do
+          key :name, :domains
+          key :type, :object
+          key :example, I18n.t(:domains_example, scope: :documentation)
+        end
+        property :organization do
+          key :name, :organization
+          key :type, :object
+          key :example, I18n.t(:organization_example, scope: :documentation)
+        end
+        property :organization_unit do
+          key :name, :organization_unit
+          key :type, :object
+          key :example, I18n.t(:organization_unit_example, scope: :documentation)
+        end
+      end
+    end
+
     parameter :create_user_parameter do
       key :name, :body
       key :type, :string
@@ -30,7 +93,6 @@ class ApidocsController < ApplicationController
         property :login do
           key :name, :login
           key :type, :string
-          key :in, :body
           key :description, 'login used when signing in'
           key :required, true
           key :example, 'swaggeruser'
@@ -38,7 +100,6 @@ class ApidocsController < ApplicationController
         property :email do
           key :name, :email
           key :type, :string
-          key :in, :body
           key :description, 'email address associated with the new user'
           key :required, true
           key :format, :email
@@ -48,7 +109,6 @@ class ApidocsController < ApplicationController
           key :name, :password
           key :format, :password
           key :type, :string
-          key :in, :body
           key :description, 'password the user signs in with'
           key :required, true
           key :example, '@Sup3AwE$0We'
@@ -64,6 +124,10 @@ class ApidocsController < ApplicationController
         key :url, 'https://swagger.io'
       end
     end
+    tag do
+      key :name, 'certificate'
+      key :description, I18n.t(:certificate_tag_description, scope: :documentation)
+    end
     key :host, 'sws.sslpki.local:3000'
     key :basePath, '/'
     key :consumes, ['application/json']
@@ -76,6 +140,7 @@ class ApidocsController < ApplicationController
     User,
     Swagger::Blocks::ErrorResponse,
     Swagger::Blocks::CredentialsResponse,
+    Api::V1::ApiCertificateRequestsController,
     self
   ].freeze
 

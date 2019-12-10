@@ -7,7 +7,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
   after_filter :notify_saved_result, except: [:create_v1_4, :download_v1_4]
 
   # parameters listed here made available as attributes in @result
-  wrap_parameters ApiCertificateRequest, include: [*( 
+  wrap_parameters ApiCertificateRequest, include: [*(
     ApiCertificateRequest::ACCESSORS+
     ApiCertificateRequest::CREATE_ACCESSORS_1_4+
     ApiCertificateRequest::RETRIEVE_ACCESSORS+
@@ -50,6 +50,33 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
     result.certificates    = cc.x509_certificates.map(&:to_s).join("\n") if cc.x509_certificates
   end
 
+  swagger_path '/certificates' do
+    operation :post do
+      key :summary, 'Create an SSL Certificate'
+      key :description, I18n.t(:create_certificate_description, scope: :documentation)
+      key :operation, 'createCertificate'
+      key :produces, %w[application/json]
+      key :consumes, %w[application/json]
+      key :tags, [
+        'certificate'
+      ]
+      parameter :create_certificate_parameter
+
+      response 200 do
+        key :description, 'Credentials Response'
+        schema do
+          key :'$ref', :CredentialsResponse
+        end
+      end
+      response :default do
+        key :description, 'Error Response'
+        schema do
+          key :'$ref', :ErrorResponse
+        end
+      end
+    end
+  end
+
   def create_v1_4
     set_template 'create_v1_4'
     if @result.csr_obj && !@result.csr_obj.valid?
@@ -58,7 +85,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
       if @result.valid? && @result.save
         if @acr = @result.create_certificate_order
           # successfully charged
-          if @acr.is_a?(CertificateOrder) && @acr.errors.empty?      
+          if @acr.is_a?(CertificateOrder) && @acr.errors.empty?
             if @acr.certificate_content.csr && @result.debug
               ccr = @acr.certificate_content.csr.ca_certificate_requests.last
               @result.api_request=ccr.parameters
