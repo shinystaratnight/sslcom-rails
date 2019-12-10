@@ -30,7 +30,7 @@ module Api
             key :name, :login
             key :type, :string
             key :in, :query
-            key :description, 'login used when signing in'
+            key :description, I18n.t(:login_param_description, scope: :documentation)
             key :required, true
           end
           parameter do
@@ -38,14 +38,14 @@ module Api
             key :type, :string
             key :format, :email
             key :in, :query
-            key :description, 'email address associated with the new user'
+            key :description, I18n.t(:email_param_description, scope: :documentation)
             key :required, true
           end
           parameter do
             key :name, :password
             key :type, :string
             key :in, :query
-            key :description, 'password the user signs in with'
+            key :description, I18n.t(:password_param_description, scope: :documentation)
             key :required, true
           end
 
