@@ -71,13 +71,101 @@ class ApidocsController < ApplicationController
         end
         property :organization do
           key :name, :organization
-          key :type, :object
+          key :type, :string
           key :example, I18n.t(:organization_example, scope: :documentation)
         end
         property :organization_unit do
           key :name, :organization_unit
-          key :type, :object
+          key :type, :string
           key :example, I18n.t(:organization_unit_example, scope: :documentation)
+        end
+        property :post_office_box do
+          key :name, :post_office_box
+          key :type, :object
+          key :example, '485'
+        end
+        property :street_address_1 do
+          key :name, :street_address_1
+          key :type, :string
+          key :example, I18n.t(:street_address_1_example, scope: :documentation)
+        end
+        property :street_address_2 do
+          key :name, :organization_unit
+          key :type, :string
+          key :example, I18n.t(:street_address_2_example, scope: :documentation)
+        end
+        property :street_address_3 do
+          key :name, :street_address_3
+          key :type, :string
+          key :example, I18n.t(:street_address_3_example, scope: :documentation)
+        end
+        property :locality do
+          key :name, :locality
+          key :type, :string
+          key :example, 'Houston'
+        end
+        property :state_or_providence do
+          key :name, :state_or_providence
+          key :type, :string
+          key :example, 'Texas'
+        end
+        property :postal_code do
+          key :name, :postal_code
+          key :type, :string
+          key :example, '77098'
+        end
+        property :country do
+          key :name, :country
+          key :type, :string
+          key :example, 'US'
+        end
+        property :duns_number do
+          key :name, :duns_number
+          key :type, :string
+          key :example, '15-048-3782'
+        end
+        property :company_number do
+          key :name, :company_number
+          key :type, :string
+          key :example, '15-048-3782'
+        end
+        property :joi do
+          key :name, :joi
+          key :type, :object
+          key :example, I18n.t(:joi_example, scope: :documentation)
+        end
+        property :ca_certificate_id do
+          key :name, :ca_certificate_id
+          key :type, :number
+        end
+        property :external_order_number do
+          key :name, :external_order_number
+          key :type, :string
+        end
+        property :hide_certificate_reference do
+          key :name, :hide_certificate_reference
+          key :type, :string
+          key :example, 'y'
+        end
+        property :callback do
+          key :name, :callback
+          key :type, :object
+          key :example, I18n.t(:callback_example, scope: :documentation)
+        end
+        property :contacts do
+          key :name, :contacts
+          key :type, :object
+          key :example, I18n.t(:contacts_example, scope: :documentation)
+        end
+        property :app_req do
+          key :name, :app_req
+          key :type, :object
+          key :example, I18n.t(:app_req_example, scope: :documentation)
+        end
+        property :payment_method do
+          key :name, :payment_method
+          key :type, :object
+          key :example, I18n.t(:payment_method_example, scope: :documentation)
         end
       end
     end
@@ -140,6 +228,7 @@ class ApidocsController < ApplicationController
     User,
     Swagger::Blocks::ErrorResponse,
     Swagger::Blocks::CredentialsResponse,
+    Swagger::Blocks::CreateCertificateResponse,
     Api::V1::ApiCertificateRequestsController,
     self
   ].freeze

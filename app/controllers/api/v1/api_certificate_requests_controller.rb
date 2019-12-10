@@ -62,10 +62,10 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
       ]
       parameter :create_certificate_parameter
 
-      response 200 do
-        key :description, 'Credentials Response'
+      response 201 do
+        key :description, 'Certificate Created Response'
         schema do
-          key :'$ref', :CredentialsResponse
+          key :'$ref', :CreateCertificateResponse
         end
       end
       response :default do

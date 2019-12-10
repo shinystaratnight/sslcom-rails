@@ -19,4 +19,19 @@ en:
       SSL Corp
     organization_unit_example:
       IT Security
-      
+    street_address_1_example:
+      3100 Richmond Avenue
+    street_address_2_example:
+      Suite 301
+    street_address_3_example:
+      Engineering Department
+    joi_example:
+      {"joi" : {"locality" : "Houston", "state_or_province" : "Texas", "country" : "US", "incorporation_date" : "2002-06-01"}, "assumed_name" : "SSL.com", "business_category" : "b"}
+    callback_example:
+      {"url":"https://www.domain.com/receive_certificate.asp","method":"post","auth":{"basic":{"username":"your_username","password":"your_password"}},"parameters":{"certificate_hook":"cert","custom_attribute":"any_value","another_custom":"any_value","etc":"etc"}}
+    contacts_example:
+      {"all":{"first_name":"Joe","last_name":"Bob","email":"jbob@domain.com","phone":"+123456789","country":"US"}}
+    app_req_example:
+      {"first_name": "Joe", "last_name": "Bob", "email_address": "bob@mysite.com", "phone_number": "111-111-1111", "title": "owner", "country": "US", "callback_method": "t"}
+    payment_method_example:
+      {"payment":{"credit_card":{"first_name":"Bob","last_name":"Smith","number":"370000000000002", "expires": "0119","cvv": "007", "postal_code":"77098","country":"US"}}}
