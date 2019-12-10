@@ -5,7 +5,7 @@ require 'digest'
 require 'net/https'
 require 'uri'
 
-class Csr < ActiveRecord::Base
+class Csr < ApplicationRecord
   extend Memoist
   include Encodable
   

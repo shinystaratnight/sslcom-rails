@@ -1,4 +1,4 @@
-class Role < ActiveRecord::Base
+class Role < ApplicationRecord
   has_many                  :assignments, dependent: :destroy
   has_many                  :users, :through => :assignments
   has_and_belongs_to_many   :permissions

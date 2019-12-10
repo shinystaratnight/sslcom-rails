@@ -1,4 +1,4 @@
-class OrderTransaction < ActiveRecord::Base
+class OrderTransaction < ApplicationRecord
   include Stripeable
   
   belongs_to  :order

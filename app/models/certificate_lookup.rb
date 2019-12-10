@@ -1,7 +1,7 @@
 # This class looks up Web ssl certs on domains and provides
 # a reference for expirations for both csrs and signed certificates
 
-class CertificateLookup < ActiveRecord::Base
+class CertificateLookup < ApplicationRecord
   has_many :site_checks
   has_many :csrs
   has_many :signed_certificates

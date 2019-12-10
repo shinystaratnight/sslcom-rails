@@ -1,3 +1,3 @@
-class U2f < ActiveRecord::Base
+class U2f < ApplicationRecord
   belongs_to :user
 end

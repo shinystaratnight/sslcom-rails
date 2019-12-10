@@ -75,7 +75,7 @@ module OldSite
   # this is the main function to do the migration
   def self.migrate_all
     Authorization.ignore_access_control(true)
-    ActiveRecord::Base.logger.level = 3 # at any time
+    ApplicationRecord.logger.level = 3 # at any time
     ap "Usage: type 'Q' and press Enter to exit this program"
     dynamic_initialize
     Customer.migrate_all
@@ -91,7 +91,7 @@ module OldSite
   end
 
   def self.certs_and_line_items_mismatch
-    ActiveRecord::Base.logger.level = 3 # at any time
+    ApplicationRecord.logger.level = 3 # at any time
     i=0
     OldSite::Order.find_each(:include=>{:order_number=>
         [{:certificates=>{:certificate_product=>:product}},
@@ -124,7 +124,7 @@ module OldSite
   #just a one-time-use convenience method. The logic fix was incorporated into
   #the migration script
   def self.adjust_order_payment_method
-    ActiveRecord::Base.logger.level = 3 # at any time
+    ApplicationRecord.logger.level = 3 # at any time
     ::Order.find_each do |o|
       old_o=V2MigrationProgress.find_by_migratable_and_source_table_name(o,
         "Orders", :first)
@@ -139,7 +139,7 @@ module OldSite
   #signed certificates
   def self.import_signed_certificates
     Authorization.ignore_access_control(true)
-    ActiveRecord::Base.logger.level = 3 # at any time
+    ApplicationRecord.logger.level = 3 # at any time
     i=0
     count = ::Csr.count
     ::Csr.find_each do |c|
@@ -379,7 +379,7 @@ module OldSite
     #end
   end
 
-  class Base < ActiveRecord::Base
+  class Base < ApplicationRecord
     establish_connection :ssl_store_mssql
     self.abstract_class=true
 

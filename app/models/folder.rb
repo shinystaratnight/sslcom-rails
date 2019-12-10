@@ -1,4 +1,4 @@
-class Folder < ActiveRecord::Base
+class Folder < ApplicationRecord
   extend Memoist
 
   belongs_to :ssl_account

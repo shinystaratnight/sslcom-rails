@@ -1,2 +1,2 @@
-class SurlBlacklist < ActiveRecord::Base
+class SurlBlacklist < ApplicationRecord
 end

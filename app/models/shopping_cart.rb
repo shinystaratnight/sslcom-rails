@@ -4,7 +4,7 @@
 #pr - product code
 #rn - renewal order
 #du - duration
-class ShoppingCart < ActiveRecord::Base
+class ShoppingCart < ApplicationRecord
   belongs_to :user
 
   LICENSES = "li"

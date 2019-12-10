@@ -1,4 +1,4 @@
-class CaApiRequest < ActiveRecord::Base
+class CaApiRequest < ApplicationRecord
   belongs_to :api_requestable, polymorphic: true
 
   default_scope{ order("created_at desc")}

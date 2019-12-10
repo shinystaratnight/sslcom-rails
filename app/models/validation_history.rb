@@ -1,6 +1,6 @@
 # The validation document
 
-class ValidationHistory < ActiveRecord::Base
+class ValidationHistory < ApplicationRecord
   has_many  :validation_ruling_validation_histories
   has_many  :validation_rulings, :through=>:validation_ruling_validation_histories, :as=>:validation_rulable
   has_many  :validation_rules, :through => :validation_rulings

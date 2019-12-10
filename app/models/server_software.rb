@@ -1,4 +1,4 @@
-class ServerSoftware < ActiveRecord::Base
+class ServerSoftware < ApplicationRecord
   has_many :certificate_contents
   has_many :certificate_orders, through: :certificate_contents
 

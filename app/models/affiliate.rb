@@ -1,4 +1,4 @@
-class Affiliate < ActiveRecord::Base
+class Affiliate < ApplicationRecord
   belongs_to  :ssl_account
   has_many    :line_items
   has_many    :certificate_orders, through: :line_items, :source => :sellable, :source_type => 'CertificateOrder'

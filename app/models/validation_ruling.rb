@@ -1,6 +1,6 @@
 # The decision or current status on a validation rule requirement on a given validation material (document)
 
-class ValidationRuling < ActiveRecord::Base
+class ValidationRuling < ApplicationRecord
   belongs_to  :validation_rulable, :polymorphic=>true
   belongs_to  :validation_rule
   acts_as_notable

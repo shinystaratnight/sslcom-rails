@@ -1,4 +1,4 @@
-class V2MigrationProgress < ActiveRecord::Base
+class V2MigrationProgress < ApplicationRecord
   belongs_to  :migratable, :polymorphic=>true
   validates_uniqueness_of :source_id, :scope=>:source_table_name
 

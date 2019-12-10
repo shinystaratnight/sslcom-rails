@@ -1,6 +1,6 @@
 # This represents a purchased instance of Product
 
-class ProductOrder < ActiveRecord::Base
+class ProductOrder < ApplicationRecord
   acts_as_sellable :cents => :amount, :currency => false
   belongs_to  :ssl_account
   belongs_to  :product

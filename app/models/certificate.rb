@@ -1,4 +1,4 @@
-class Certificate < ActiveRecord::Base
+class Certificate < ApplicationRecord
   extend Memoist
   include CertificateType
   include PriceView

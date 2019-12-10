@@ -1,4 +1,4 @@
-class DuplicateV2User < ActiveRecord::Base
+class DuplicateV2User < ApplicationRecord
   belongs_to  :user
   has_many    :legacy_v2_user_mappings, :as=>:user_mappable
 

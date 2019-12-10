@@ -1,7 +1,7 @@
 # Represents a domain name or ip address to be secured by a UCC or Multi domain SSL
 require 'resolv'
 
-class CertificateName < ActiveRecord::Base
+class CertificateName < ApplicationRecord
   belongs_to  :certificate_content
   has_one :certificate_order, through: :certificate_content
   has_many    :signed_certificates, through: :certificate_content

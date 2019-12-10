@@ -1,4 +1,4 @@
-class ValidationHistoryValidation < ActiveRecord::Base
+class ValidationHistoryValidation < ApplicationRecord
   belongs_to  :validation_history
   belongs_to  :validation
 

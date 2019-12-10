@@ -1,4 +1,4 @@
-class Db  < ActiveRecord::Base
+class Db  < ApplicationRecord
 
   # create initial local and global sandboxes
   # be sure db sandbox_ssl_com exists and is accessible

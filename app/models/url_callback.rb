@@ -1,7 +1,7 @@
 require 'net/http'
 require 'uri'
 
-class UrlCallback < ActiveRecord::Base
+class UrlCallback < ApplicationRecord
   belongs_to  :callbackable, polymorphic: true
 
   AUTH = {basic: 'basic'}

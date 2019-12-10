@@ -1,4 +1,4 @@
-class Payment < ActiveRecord::Base
+class Payment < ApplicationRecord
   class AuthorizationError < StandardError; end
   belongs_to :order
   belongs_to :address
