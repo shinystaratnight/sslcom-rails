@@ -338,15 +338,21 @@ module CertificateOrdersHelper
   end
 
   def certificate_formats(csr, sc)
-    {iis7: ["Microsoft IIS (*.p7b)", pkcs7_csr_signed_certificate_url(@ssl_slug, csr, sc), SignedCertificate::IIS_INSTALL_LINK],
-     cpanel: ["WHM/cpanel", whm_zip_csr_signed_certificate_url(@ssl_slug, csr, sc), SignedCertificate::CPANEL_INSTALL_LINK],
-     apache: ["Apache", apache_zip_csr_signed_certificate_url(@ssl_slug, csr, sc), SignedCertificate::APACHE_INSTALL_LINK],
-     amazon: ["Amazon", amazon_zip_csr_signed_certificate_url(@ssl_slug, csr, sc), SignedCertificate::AMAZON_INSTALL_LINK],
-     nginx: ["Nginx", nginx_csr_signed_certificate_url(@ssl_slug, csr, sc), SignedCertificate::NGINX_INSTALL_LINK],
-     v8_nodejs: ["V8+Node.js", nginx_csr_signed_certificate_url(@ssl_slug, csr, sc), SignedCertificate::V8_NODEJS_INSTALL_LINK],
-     java: ["Java/Tomcat", download_csr_signed_certificate_url(@ssl_slug, csr, sc), SignedCertificate::JAVA_INSTALL_LINK],
-     other: ["Other platforms", download_csr_signed_certificate_url(@ssl_slug, csr, sc), SignedCertificate::OTHER_INSTALL_LINK],
-     bundle: ["CA bundle (intermediate certs)", server_bundle_csr_signed_certificate_url(@ssl_slug, csr, sc), SignedCertificate::OTHER_INSTALL_LINK]}
+    if sc.is_smime_or_client? or sc.is_code_signing?
+      {other: ["Individual certificates", download_csr_signed_certificate_url(@ssl_slug, csr, sc), SignedCertificate::OTHER_INSTALL_LINK],
+       nginx: ["Single bundle", nginx_csr_signed_certificate_url(@ssl_slug, csr, sc), nil],
+       iis7:  ["p7b format", pkcs7_csr_signed_certificate_url(@ssl_slug, csr, sc), nil]}
+    else
+      {iis7: ["Microsoft IIS (*.p7b)", pkcs7_csr_signed_certificate_url(@ssl_slug, csr, sc), SignedCertificate::IIS_INSTALL_LINK],
+       cpanel: ["WHM/cpanel", whm_zip_csr_signed_certificate_url(@ssl_slug, csr, sc), SignedCertificate::CPANEL_INSTALL_LINK],
+       apache: ["Apache", apache_zip_csr_signed_certificate_url(@ssl_slug, csr, sc), SignedCertificate::APACHE_INSTALL_LINK],
+       amazon: ["Amazon", amazon_zip_csr_signed_certificate_url(@ssl_slug, csr, sc), SignedCertificate::AMAZON_INSTALL_LINK],
+       nginx: ["Nginx", nginx_csr_signed_certificate_url(@ssl_slug, csr, sc), SignedCertificate::NGINX_INSTALL_LINK],
+       v8_nodejs: ["V8+Node.js", nginx_csr_signed_certificate_url(@ssl_slug, csr, sc), SignedCertificate::V8_NODEJS_INSTALL_LINK],
+       java: ["Java/Tomcat", download_csr_signed_certificate_url(@ssl_slug, csr, sc), SignedCertificate::JAVA_INSTALL_LINK],
+       other: ["Other platforms", download_csr_signed_certificate_url(@ssl_slug, csr, sc), SignedCertificate::OTHER_INSTALL_LINK],
+       bundle: ["CA bundle (intermediate certs)", server_bundle_csr_signed_certificate_url(@ssl_slug, csr, sc), SignedCertificate::OTHER_INSTALL_LINK]}
+    end
   end
 
   def cs_certificate_formats(cc, pkc)

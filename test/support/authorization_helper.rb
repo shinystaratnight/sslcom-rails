@@ -123,7 +123,7 @@ module AuthorizationHelper
 
   def should_see_cert_download_table
     first('td.dropdown').click
-    page.must_have_content 'certificate download by platform'
+    page.must_have_content 'certificate download formats'
     page.must_have_content 'WHM/cpanel'
     page.must_have_content 'Apache'
     page.must_have_content 'Amazon'
@@ -133,7 +133,7 @@ module AuthorizationHelper
 
   def should_not_see_cert_download_table
     first('td.dropdown').click
-    refute page.has_content? 'certificate download by platform'
+    refute page.has_content? 'certificate download formats'
     refute page.has_content? 'WHM/cpanel'
     refute page.has_content? 'Apache'
     refute page.has_content? 'Amazon'
