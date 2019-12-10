@@ -47,5 +47,5 @@ every 1.day, at: "12:30pm" do
 end
 
 every 1.minute do
-  bundle_exec "Delayed::Job.enqueue NotificationGroupScanJob.new('sandbox.ssl.com')"
+  bundle_exec "Delayed::Job.enqueue NotificationGroupScanJob.new('sandbox.ssl.com'), queue: 'notification_group_scan'"
 end
