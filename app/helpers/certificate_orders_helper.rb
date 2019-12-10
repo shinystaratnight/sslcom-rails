@@ -339,7 +339,9 @@ module CertificateOrdersHelper
 
   def certificate_formats(csr, sc)
     if sc.is_smime_or_client? or sc.is_code_signing?
-      {other: ["All certificates", download_csr_signed_certificate_url(@ssl_slug, csr, sc), SignedCertificate::OTHER_INSTALL_LINK]}
+      {other: ["Individual certificates", download_csr_signed_certificate_url(@ssl_slug, csr, sc), SignedCertificate::OTHER_INSTALL_LINK],
+       nginx: ["Single bundle", nginx_csr_signed_certificate_url(@ssl_slug, csr, sc), nil],
+       iis7:  ["p7b format", pkcs7_csr_signed_certificate_url(@ssl_slug, csr, sc), nil]}
     else
       {iis7: ["Microsoft IIS (*.p7b)", pkcs7_csr_signed_certificate_url(@ssl_slug, csr, sc), SignedCertificate::IIS_INSTALL_LINK],
        cpanel: ["WHM/cpanel", whm_zip_csr_signed_certificate_url(@ssl_slug, csr, sc), SignedCertificate::CPANEL_INSTALL_LINK],
