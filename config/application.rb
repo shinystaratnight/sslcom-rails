@@ -37,7 +37,7 @@ module SslCom
     # Config::Integration::Rails::Railtie.preload
 
     # Add additional load paths for your own custom dirs
-    %w(observers mailers middleware serializers).each do |dir|
+    %w(observers mailers middleware serializers paths).each do |dir|
       config.autoload_paths << "#{config.root}/app/#{dir}"
     end
 

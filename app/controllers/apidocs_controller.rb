@@ -18,6 +18,25 @@ class ApidocsController < ApplicationController
         key :name, 'MIT'
       end
     end
+    security_definition :account_key, type: :apiKey do
+      key :name, :account_key
+      key :in, :query
+    end
+    security_definition :secret_key, type: :apiKey do
+      key :name, :secret_key
+      key :in, :query
+    end
+
+    parameter :per_page do
+      key :name, :per_page
+      key :in, :query
+      key :description, 'The number of records per page (default is 10 if unspecified).'
+    end
+    parameter :page do
+      key :name, :page
+      key :in, :query
+      key :description, 'The page number. Example: if per_page is set to 10, and page is 5, then records 51-60 will be returned.'
+    end
 
     tag do
       key :name, 'user'
@@ -45,6 +64,7 @@ class ApidocsController < ApplicationController
     Swagger::Blocks::CredentialsResponse,
     Swagger::Blocks::CreateCertificateResponse,
     Api::V1::ApiCertificateRequestsController,
+    Swagger::Blocks::SslCertificatesPath,
     self
   ].freeze
 

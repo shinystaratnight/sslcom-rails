@@ -53,3 +53,13 @@ en:
       <b>email address associated with the new user</b>
     password_param_description:
       <b>password the user signs in with</b>
+    start_param_description:
+      'Beginning of date range when the certificate orders were created. Example: 01-31-2012'
+    end_param_description:
+      'Ending of date range when the certificate orders were created. If not specified then defaults to now. Example: 04-30-2015'
+    filter_param_description:
+      'Filter the result set. Currently vouchers is supported and only returns unused available certificate order credits. If this parameter is not specified all certificate orders are returned. Example: vouchers'
+    search_param_description:
+      'Advanced search by criteria such as product, expiration, certificate fields, etc'
+    fields_param_description:
+      'Return only the requested fields'
