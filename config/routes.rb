@@ -3,7 +3,7 @@
 require 'domain_constraint'
 
 SslCom::Application.routes.draw do
-  mount Delayed::Web::Engine, at: '/certificate_orders/jobs'
+  mount Delayed::Web::Engine, at: '/jobs'
   mount LetterOpenerWeb::Engine, at: '/letter_opener' if Rails.env.development?
 
   resources :apidocs, only: [:index]
