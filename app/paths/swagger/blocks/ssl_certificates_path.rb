@@ -134,138 +134,137 @@ module Swagger
             key :name, :server_software
             key :in, :query
             key :type, :integer
-            key :description, I18n.t(:period_param_description, scope: :documentation)
+            key :description, I18n.t(:server_software_description, scope: :documentation)
           end
           parameter do
             key :name, :domains
             key :in, :query
             key :type, :object
-            key :description, I18n.t(:period_param_description, scope: :documentation)
+            key :description, I18n.t(:domains_param_description, scope: :documentation)
           end
           parameter do
             key :name, :organization
             key :in, :query
             key :type, :string
-            key :description, I18n.t(:period_param_description, scope: :documentation)
+            key :description, I18n.t(:organization_param_description, scope: :documentation)
             key :required, true
           end
           parameter do
             key :name, :organization_unit
             key :in, :query
             key :type, :string
-            key :description, I18n.t(:period_param_description, scope: :documentation)
+            key :description, I18n.t(:organization_unit_param_description, scope: :documentation)
           end
           parameter do
             key :name, :post_office_box
             key :in, :query
             key :type, :string
-            key :description, I18n.t(:period_param_description, scope: :documentation)
+            key :description, I18n.t(:post_office_box_param_description, scope: :documentation)
           end
           parameter do
             key :name, :street_address_1
             key :in, :query
             key :type, :string
-            key :description, I18n.t(:period_param_description, scope: :documentation)
+            key :description, I18n.t(:street_address_1_param_description, scope: :documentation)
             key :required, true
           end
           parameter do
             key :name, :organization_unit
             key :in, :query
             key :type, :string
-            key :description, I18n.t(:period_param_description, scope: :documentation)
+            key :description, I18n.t(:street_address_2_param_description, scope: :documentation)
           end
           parameter do
             key :name, :street_address_3
             key :in, :query
             key :type, :string
-            key :description, I18n.t(:period_param_description, scope: :documentation)
+            key :description, I18n.t(:street_address_3_param_description, scope: :documentation)
           end
           parameter do
             key :name, :locality
             key :in, :query
             key :type, :string
-            key :description, I18n.t(:period_param_description, scope: :documentation)
+            key :description, I18n.t(:locality_param_description, scope: :documentation)
           end
           parameter do
             key :name, :state_or_providence
             key :in, :query
             key :type, :string
-            key :description, I18n.t(:period_param_description, scope: :documentation)
+            key :description, I18n.t(:state_or_providence_param_description, scope: :documentation)
             key :required, true
           end
           parameter do
-            key :name, :postal_code
+            key :name, :state_or_providence
             key :in, :query
             key :type, :string
-            key :description, I18n.t(:period_param_description, scope: :documentation)
+            key :description, I18n.t(:state_or_providence_param_description, scope: :documentation)
             key :required, true
           end
           parameter do
             key :name, :country
             key :in, :query
             key :type, :string
-            key :description, I18n.t(:period_param_description, scope: :documentation)
+            key :description, I18n.t(:country_param_description, scope: :documentation)
             key :required, true
           end
           parameter do
             key :name, :duns_number
             key :in, :query
             key :type, :string
-            key :description, I18n.t(:period_param_description, scope: :documentation)
+            key :description, I18n.t(:duns_number_param_description, scope: :documentation)
           end
           parameter do
             key :name, :company_number
             key :in, :query
             key :type, :string
-            key :description, I18n.t(:period_param_description, scope: :documentation)
+            key :description, I18n.t(:company_number_params_description, scope: :documentation)
           end
           parameter do
             key :name, :joi
             key :in, :query
             key :type, :object
-            key :description, I18n.t(:period_param_description, scope: :documentation)
+            key :description, I18n.t(:joi_param_description, scope: :documentation)
           end
           parameter do
             key :name, :ca_certificate_id
             key :in, :query
-            key :description, I18n.t(:period_param_description, scope: :documentation)
+            key :description, I18n.t(:ca_certificate_id_param_description, scope: :documentation)
           end
           parameter do
             key :name, :external_order_number
             key :in, :query
-            key :description, I18n.t(:period_param_description, scope: :documentation)
+            key :description, I18n.t(:external_order_number_param_description, scope: :documentation)
           end
           parameter do
             key :name, :hide_certificate_reference
             key :in, :query
             key :type, :string
-            key :description, I18n.t(:period_param_description, scope: :documentation)
+            key :description, I18n.t(:hide_certificate_reference_description, scope: :documentation)
           end
           parameter do
             key :name, :callback
             key :in, :query
             key :type, :object
-            key :description, I18n.t(:period_param_description, scope: :documentation)
-            key :example, I18n.t(:callback_example, scope: :documentation)
+            key :description, I18n.t(:callback_param_description, scope: :documentation)
           end
           parameter do
             key :name, :contacts
             key :in, :query
             key :type, :object
-            key :description, I18n.t(:period_param_description, scope: :documentation)
+            key :description, I18n.t(:contacts_param_description, scope: :documentation)
             key :required, true
           end
           parameter do
             key :name, :app_req
             key :in, :query
             key :type, :object
-            key :description, I18n.t(:period_param_description, scope: :documentation)
+            key :description, I18n.t(:app_req_param_description, scope: :documentation)
           end
           parameter do
             key :name, :payment_method
             key :in, :query
             key :type, :object
-            key :description, I18n.t(:period_param_description, scope: :documentation)
+            key :description, I18n.t(:payment_method_param_description, scope: :documentation)
           end
           response 201 do
             key :description, 'Certificate Created Response'
