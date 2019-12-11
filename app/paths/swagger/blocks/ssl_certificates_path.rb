@@ -3,7 +3,7 @@ module Swagger
     class SslCertificatesPath < Path
       swagger_path '/certificates' do
         operation :get do
-          key :summary, 'SSL Certificates Collection'
+          key :summary, 'Get a list of purchased SSL certificates'
           key :description, 'List all SSL Certificates'
           key :operation, 'indexCertificates'
           key :produces, %w[application/json]
@@ -88,7 +88,7 @@ module Swagger
           end
         end
         operation :post do
-          key :summary, 'Create an SSL Certificate'
+          key :summary, 'Purchase an SSL Certificate'
           key :description, I18n.t(:create_certificate_description, scope: :documentation)
           key :operation, 'createCertificate'
           key :produces, %w[application/json]

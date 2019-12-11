@@ -3,8 +3,17 @@
 
 en:
   documentation:
+    title:
+      SSL.com Developer API
+    introduction: >
+      <p>
+        SSL.com <b>SSL Web Services (SWS) API</b> is a ssl pki management service that allows life-cycle management of ssl certificates. Please refer to <a href='https://www.ssl.com/guide/ssl-coms-sws-api-introduction/'>the guide</a> for more details.
+      </p>
+      <p>
+        To get pregenerated API cURL commands for an individual order, try appending /developer at the end of that certificate order page (ie <code>https://www.ssl.com/certificate_orders/co-1234xyz/developer</code>).
+      </p>
     create_certificate_description: >
-      Create an ssl.com certificate order (or voucher code). Upon successful api call, the price (if any) of the ssl certificate will be deducted from reseller account associated with the account number specified in the account_key.Voucher codes are used to purchase a certificate without having to submit a csr right away. This is useful for host providers, enterprise environments, or any situation where buying the certificate and installing it do not necessarily happen at the same time. A voucher code can be created by simply only specifying the product type and duration.
+      <p><b>Create an ssl.com certificate order (or voucher code). Upon successful api call, the price (if any) of the ssl certificate will be deducted from reseller account associated with the account number specified in the account_key. Voucher codes are used to purchase a certificate without having to submit a csr right away. This is useful for host providers, enterprise environments, or any situation where buying the certificate and installing it do not necessarily happen at the same time. A voucher code can be created by simply only specifying the product type and duration.</b></p>
     certificate_tag_description:
       Certificate Operations
     csr_example:

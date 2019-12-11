@@ -8,8 +8,8 @@ class ApidocsController < ApplicationController
     key :swagger, '2.0'
     info do
       key :version, '1.0.0'
-      key :title, 'SSL.com Developer API'
-      key :description, 'demonstrates features in the SSL.com API'
+      key :title, I18n.t(:title, scope: :documentation)
+      key :description, I18n.t(:introduction, scope: :documentation)
       #   key :termsOfService, 'http://helloreverb.com/terms/'
       contact do
         key :name, 'SSL.com API Team'
@@ -40,15 +40,19 @@ class ApidocsController < ApplicationController
 
     tag do
       key :name, 'user'
-      key :description, 'User operations'
+      key :description, 'User Operations'
       externalDocs do
         key :description, 'Find more info here'
-        key :url, 'https://swagger.io'
+        key :url, 'https://www.ssl.com/guide/ssl-coms-sws-api-introduction/'
       end
     end
     tag do
       key :name, 'certificate'
       key :description, I18n.t(:certificate_tag_description, scope: :documentation)
+      externalDocs do
+        key :description, 'Find more info here'
+        key :url, 'https://www.ssl.com/guide/ssl-coms-sws-api-introduction/'
+      end
     end
     key :host, 'sws.sslpki.local:3000'
     key :basePath, '/'
