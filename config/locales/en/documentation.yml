@@ -41,9 +41,9 @@ en:
     payment_method_example:
       {"payment":{"credit_card":{"first_name":"Bob","last_name":"Smith","number":"370000000000002", "expires": "0119","cvv": "007", "postal_code":"77098","country":"US"}}}
     account_key_description:
-      "<b>The SWS account key of the reseller account.<br>example:</b> 4980a361"
+      <b>The SWS account key of the reseller account.<br>Example&#58;</b> <code>4980a361</code>
     secret_key_description:
-      "<b>The SWW secret key of the reseller account.<br>example:</b> csr/ceZvPQ=="
+      <b>The SWW secret key of the reseller account.<br>Example&#58;</b> <code>csr/ceZvPQ==</code>
     product_param_description: >
       <b>The product code of the ssl certificate being purchased. Select only one code from the following choices: </b>
       <ul>
@@ -167,11 +167,11 @@ en:
     locality_param_description:
       <b>Set the Locality (eg city or town name). Ignored for DV certificates. <br>Overrides value extracted from the csr.</br>Example&#58;</b> Houston.
     state_or_providence_param_description:
-      <b>Sets the State or Province. Ignored for DV certificates. <br>Overrides value extracted from the csr.</br>Example&#58;</b> Texas.
+      <b>Sets the State or Province. Ignored for DV certificates. <br>Overrides value extracted from the csr.</br>Example&#58;</b> <code>Texas</code>
     postal_code_param_description:
-      <b>Sets the Postal Code. Ignored for DV certificates. <br>Overrides value extracted from the csr.<br>Example&#58;</b> 77098>
+      <b>Sets the Postal Code. Ignored for DV certificates. <br>Overrides value extracted from the csr.<br>Example&#58;</b> <code>77098</code>
     country_param_description:
-      <b>Sets the Country (C) field (ISO3166 2-character country code). <br>Overrides value extracted from the csr.<br>Example&#58; </b>US
+      <b>Sets the Country (C) field (ISO3166 2-character country code). <br>Overrides value extracted from the csr.<br>Example&#58; </b><code>US</code>
     duns_number_param_description:
       <b>Provide the Dun and Bradstreet number which helps validate OV and EV certificates. Ignored for DV certificates. <br>Overrides value extracted from the csr</b>
     company_number_params_description:
@@ -310,10 +310,34 @@ en:
             "postal_code"&#58; "77098",
             "country"&#58; "US"}}
       </code>
+    certificate_order_description: >
+      <p>Use this call to process a voucher, rekey an existing certificate order, or change the validation method(s).</p>
+      <p>To process a voucher, simply provide the voucher code <code>ref</code> along with the csr and other relevant information for the certificate order. This also applies to a certificate that has already been processed but needs to be rekeyed.</p>
+      <p>To change the validation methods, simply provide the voucher or certificate reference number <code>ref</code> and the <code>domains</code> parameter. The other "required" parameters are not required if doing the update validation call.</p>
     certificate_order_summary:
-      Certificate Order
-    certificate_order_description:
       Process, rekey, update validation of an SSL Certificate order
     ref_param_description: >
       <p><b>String ref is the certificate reference number (or voucher code) of the SSL.com certificate order. You specify this in the url so there is no need to include it as a parameter in the JSON request.</b></p>
       <p><b>Example: <code>co-abcd1234.</code></b></p>
+    certificate_download_summary:
+      Download Certificate
+    certificate_download_descriptions:
+      Retrieve an SSL Certificate
+    certificate_delete_summary:
+      Revoke Certificate
+    certificate_delete_description:
+      Use this call to revoke an issued certificate based on it's serial number, or all issued certificates under a specific order using it's certificate reference or voucher number.
+    reason_param_description: >
+      <p>
+        <b>
+          The reason for this revocation. If there is different reason for each certificate, then each certificate should be individually revoked through it's own api call.
+        </b>
+      </p>
+      <p><b>Example&#58;</b><code>mistake</code></p>
+    serials_param_description: >
+      <p>
+        <b>
+          The serial numbers of one or more issued certificates under this order. If no serials is specified, then all issued certificates will be revoked for the certificate order identified by the ref parameter.
+        </b>
+      </p>
+      <p><b>Example&#58;</b><code>["0c:00:99:b7:d7:89:c9:f6:66:26:31:7e:bc:ea:7c:1c"]</code></p>

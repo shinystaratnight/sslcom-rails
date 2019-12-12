@@ -123,7 +123,7 @@ module Swagger
           parameter :hide_certificate_reference
           parameter :callback
           parameter :contacts
-          parameter :app_req
+          parameter :app_rep
           parameter :payment_method
           response 201 do
             key :description, 'Certificate Created Response'
@@ -144,9 +144,24 @@ module Swagger
         operation :get do
           security account_key: []
           security secret_key: []
+          key :summary, I18n.t(:certificate_download_summary, scope: :documentation)
+          key :description, I18n.t(:certificate_download_description, scope: :documentation)
+          key :operation, 'getCertificate'
+          key :produces, %w[application/json]
+          key :consumes, %w[application/json]
+          key :tags, [
+            'certificate'
+          ]
+          parameter :ref
+          parameter :response_type
+          parameter :response_encoding
+        end
+        operation :put do
+          security account_key: []
+          security secret_key: []
           key :summary, I18n.t(:certificate_order_summary, scope: :documentation)
           key :description, I18n.t(:certificate_order_description, scope: :documentation)
-          key :operation, 'indexCertificates'
+          key :operation, 'updateCertificate'
           key :produces, %w[application/json]
           key :consumes, %w[application/json]
           key :tags, [
@@ -171,6 +186,36 @@ module Swagger
           parameter :domains
           parameter :organization
           parameter :organization_unit
+          parameter :post_office_box
+          parameter :state_or_providence
+          parameter :street_address_1
+          parameter :street_address_2
+          parameter :street_address_3
+          parameter :postal_code
+          parameter :country
+          parameter :duns_number
+          parameter :company_number
+          parameter :joi
+          parameter :ca_certificate_id
+          parameter :external_order_number
+          parameter :hide_certificate_reference
+          parameter :callback
+          parameter :contacts
+          parameter :app_rep
+          parameter :payment_method
+        end
+        operation :delete do
+          security account_key: []
+          security secret_key: []
+          key :summary, I18n.t(:certificate_delete_summary, scope: :documentation)
+          key :description, I18n.t(:certificate_delete_description, scope: :documentation)
+          key :operation, 'deleteCertificate'
+          key :produces, %w[application/json]
+          key :consumes, %w[application/json]
+          key :tags, [
+            'certificate'
+          ]
+          parameter :reason_required
         end
       end
     end

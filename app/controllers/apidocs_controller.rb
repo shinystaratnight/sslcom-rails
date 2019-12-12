@@ -130,6 +130,13 @@ class ApidocsController < ApplicationController
       key :description, I18n.t(:state_or_providence_param_description, scope: :documentation)
       key :required, true
     end
+    parameter :postal_code do
+      key :name, :postal_code
+      key :in, :query
+      key :type, :string
+      key :description, I18n.t(:postal_code_param_description, scope: :documentation)
+      key :required, true
+    end
     parameter :country do
       key :name, :country
       key :in, :query
@@ -184,8 +191,8 @@ class ApidocsController < ApplicationController
       key :description, I18n.t(:contacts_param_description, scope: :documentation)
       key :required, true
     end
-    parameter :app_req do
-      key :name, :app_req
+    parameter :app_rep do
+      key :name, :app_rep
       key :in, :query
       key :type, :object
       key :description, I18n.t(:app_req_param_description, scope: :documentation)
@@ -214,6 +221,19 @@ class ApidocsController < ApplicationController
       key :type, :string
       key :description, I18n.t(:ref_param_description, scope: :documentation)
       key :required, true
+    end
+    parameter :reason_required do
+      key :name, :reason_required
+      key :in, :query
+      key :type, :string
+      key :description, I18n.t(:reason_param_description, scope: :documentation)
+      key :required, true
+    end
+    parameter :serials do
+      key :name, :serials
+      key :in, :query
+      key :type, :string
+      key :description, I18n.t(:serials_param_description, scope: :documentation)
     end
 
     tag do
