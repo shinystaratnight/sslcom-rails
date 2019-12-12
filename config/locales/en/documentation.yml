@@ -314,3 +314,6 @@ en:
       Certificate Order
     certificate_order_description:
       Process, rekey, update validation of an SSL Certificate order
+    ref_param_description: >
+      <p><b>String ref is the certificate reference number (or voucher code) of the SSL.com certificate order. You specify this in the url so there is no need to include it as a parameter in the JSON request.</b></p>
+      <p><b>Example: <code>co-abcd1234.</code></b></p>

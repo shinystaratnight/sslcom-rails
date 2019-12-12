@@ -208,6 +208,13 @@ class ApidocsController < ApplicationController
       key :type, :string
       key :description, I18n.t(:payment_method_param_description, scope: :documentation)
     end
+    parameter :ref do
+      key :name, :ref
+      key :in, :query
+      key :type, :string
+      key :description, I18n.t(:ref_param_description, scope: :documentation)
+      key :required, true
+    end
 
     tag do
       key :name, 'user'

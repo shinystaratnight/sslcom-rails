@@ -154,16 +154,22 @@ module Swagger
           ]
           parameter :ref
           parameter :unique_value
-          parameter :csr do
+          parameter do
+            key :name, :csr
+            key :in, :query
+            key :type, :string
+            key :description, I18n.t(:csr_param_description, scope: :documentation)
             key :required, true
           end
-          parameter :server_software do
+          parameter do
+            key :name, :server_software
+            key :in, :query
+            key :type, :integer
+            key :description, I18n.t(:server_software_description, scope: :documentation)
             key :required, true
           end
           parameter :domains
-          parameter :organization do
-            key :required, true
-          end
+          parameter :organization
           parameter :organization_unit
         end
       end
