@@ -22,10 +22,10 @@ describe CertificateOrdersController do
     end
 
     @user = create(:user, :owner)
+    login_as(@user)
   end
 
   it 'allows a user to download certificate orders in csv format' do
-    login_as(@user)
     certificate = create(:certificate_with_certificate_order)
     co = build(:certificate_order)
     co.sub_order_items << certificate.product_variant_items.first.sub_order_item
@@ -35,6 +35,6 @@ describe CertificateOrdersController do
 
     post :download_certificates, co_ids: co.id, format: :csv
     response.code.must_equal "200"
-    response.body.must_match "Order Ref,Name,Status,Order Date,Expiration Date"
+    response.body.must_match "Order Ref,Order Label,Duration,Signed Certificate,Status,Effective Date,Expiration Date"
   end
 end

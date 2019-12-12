@@ -701,8 +701,8 @@ class CertificateOrdersController < ApplicationController
   end
 
   def download_certificates
-    cert_orders = CertificateOrder.where(id: params[:co_ids].split('/'))
-
+    cert_orders = CertificateOrder.where(id: params[:co_ids].split('/')).includes(:signed_certificates)
+  
     respond_to do |format|
       format.csv do
         send_data cert_orders.to_csv, filename: "certificates-#{DateTime.current.strftime("%Y-%m-%d_%H:%M:%S")}.csv"

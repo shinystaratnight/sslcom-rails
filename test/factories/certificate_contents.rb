@@ -6,5 +6,6 @@ FactoryBot.define do
     workflow_state { "issued" }
     label { "test.com1575479891145" }
     ref {"co-ee1eufn55-0"}
+    duration {90}
   end
 end
