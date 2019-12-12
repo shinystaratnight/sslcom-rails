@@ -65,29 +65,32 @@ en:
     unique_value_param_description:
       <b>An alphanumeric string that ensures the uniqueness of the request. If you do not supply a unique value, one will be generated for you (SSL.com uses a random 10-digit hexadecimal number for this purpose). Specifying a unique value in this way is useful if you want to generate DCV files or CNAME entries outside of SSL.com’s user portal. Must be unique to each CSR and domains combination. Ignored if no CSR is in the request.</b>
     csr_param_description: >
-      <b>Certificate signing request (Base-64 encoded). If the csr is not provided, then an order voucher will be created instead which can be used at a later time. The voucher code will be returned as result</b>
-      <br><br>
-      <b>Example&#58;</b>
-      <br><br>
-      <div style="max-width:600px">
-      -----BEGIN CERTIFICATE REQUEST-----
-      MIICvTCCAaUCAQAweDELMAkGA1UEBhMCdXMxDjAMBgNVBAgTBVRleGFzMRAw
-      DgYDnVQQHEwdIb3VzdG9uMRUwEwYDVQQKEwxZb3VyIENvbXBhbnkxFTATBgNV
-      BAsTDFlvndXIgSVQgRGVwdDEZMBcGA1UEAxMQd3d3LnlvdXJzaXRlLmNvbTCC
-      ASIwDQYJKoZInhvcNAQEBBQADggEPADCCAQoCggEBAKWnrKf35qmU/tBnieUc
-      Qmf0xhntGO2YDgAOnW9J44IAhC1IB715312J28WvoLSSZDuBxqMaLgBbcNyrR
-      FkwbZ+sRbLsjJ24v21DtnLE2gMSbr9YSuH0McOBh9sf23tHd2n5rteJn5fVuxc
-      6ak3t9mag2jjD43Blyh3ih7nADPj0XAk0Gfn+obfmKPMpZwYEhXnJNtWKHzflz
-      AjUjaxbMwMIrvgZcvk/BZZ184znYquasNmvJotvptP0RF3J0GhuiYg75BgimMq
-      3YFxFjAnYjRRZ7p8z/DEfTkdZOPHGnypaz4ny+l8lggyvMOgZD7yanGuVxzlBh
-      pB90INXVDX9+yQ23XHECAwEAAaAAMA0GnCSqGSIb3DQEBBQUAA4IBAQAwbFXOR
-      WmD9ovp4qsxozzUZAKxUTluiTIsO+bK2pXVnHAhxVkzcVi8nFqzkeAuKRTQ9UZ
-      PMjnnjHWOKIghIpiAabSiC0E/0SPR9s3QzJWhVnOfOpoKYoRnDUh+/SH/Otg4W
-      id7yKOfdPFK4J8GtnPB2i5Eih0ZOYTTIU2xSmkZ9Tn+LoB7PxOVii8Dq5Nrbbz
-      q8x/WpJfKTackp6nWl2ILcfXM3iGBmLqXPRn5/Uvj767nrq5mHXD2IakxBAeTc
-      i16WqQEVcow3qn1JwLyGOzXuuW/UA2/HJUE4zG+8CQIb3OLn0Yq26QKt/i5CJv
-      //uZcRZY8VRkPaH090QOr85UfP7Y3Dn</div>
-      -----END CERTIFICATE REQUEST-----<br>
+      <p>
+        <b>Certificate signing request (Base-64 encoded). If the csr is not provided, then an order voucher will be created instead which can be used at a later time. The voucher code will be returned as result</b>
+      </p>
+      <p>
+        <b>Example&#58;</b>
+      </p>
+      <code>
+        -----BEGIN CERTIFICATE REQUEST-----
+        MIICvTCCAaUCAQAweDELMAkGA1UEBhMCdXMxDjAMBgNVBAgTBVRleGFzMRAw
+        DgYDnVQQHEwdIb3VzdG9uMRUwEwYDVQQKEwxZb3VyIENvbXBhbnkxFTATBgNV
+        BAsTDFlvndXIgSVQgRGVwdDEZMBcGA1UEAxMQd3d3LnlvdXJzaXRlLmNvbTCC
+        ASIwDQYJKoZInhvcNAQEBBQADggEPADCCAQoCggEBAKWnrKf35qmU/tBnieUc
+        Qmf0xhntGO2YDgAOnW9J44IAhC1IB715312J28WvoLSSZDuBxqMaLgBbcNyrR
+        FkwbZ+sRbLsjJ24v21DtnLE2gMSbr9YSuH0McOBh9sf23tHd2n5rteJn5fVuxc
+        6ak3t9mag2jjD43Blyh3ih7nADPj0XAk0Gfn+obfmKPMpZwYEhXnJNtWKHzflz
+        AjUjaxbMwMIrvgZcvk/BZZ184znYquasNmvJotvptP0RF3J0GhuiYg75BgimMq
+        3YFxFjAnYjRRZ7p8z/DEfTkdZOPHGnypaz4ny+l8lggyvMOgZD7yanGuVxzlBh
+        pB90INXVDX9+yQ23XHECAwEAAaAAMA0GnCSqGSIb3DQEBBQUAA4IBAQAwbFXOR
+        WmD9ovp4qsxozzUZAKxUTluiTIsO+bK2pXVnHAhxVkzcVi8nFqzkeAuKRTQ9UZ
+        PMjnnjHWOKIghIpiAabSiC0E/0SPR9s3QzJWhVnOfOpoKYoRnDUh+/SH/Otg4W
+        id7yKOfdPFK4J8GtnPB2i5Eih0ZOYTTIU2xSmkZ9Tn+LoB7PxOVii8Dq5Nrbbz
+        q8x/WpJfKTackp6nWl2ILcfXM3iGBmLqXPRn5/Uvj767nrq5mHXD2IakxBAeTc
+        i16WqQEVcow3qn1JwLyGOzXuuW/UA2/HJUE4zG+8CQIb3OLn0Yq26QKt/i5CJv
+        //uZcRZY8VRkPaH090QOr85UfP7Y3Dn
+        -----END CERTIFICATE REQUEST-----
+      </code>
     login_param_description:
       <b>login used when signing in</b>
     email_param_description:
@@ -268,7 +271,7 @@ en:
           </ul>
         </li>
       </ul>
-      <p><b>Example:</b></p>
+      <p><b>Example&#58;</b></p>
       <code>
         {"first_name"&#58; "Joe",
           "last_name"&#58; "Bob",
@@ -300,7 +303,7 @@ en:
           </ul>
         </li>
       </ul>
-      <p><b>Example:</b></p>
+      <p><b>Example&#58;</b></p>
       <code>
           {"credit_card"&#58; {"first_name"&#58; "Bob",
             "last_name"&#58; "Smith",
@@ -341,3 +344,39 @@ en:
         </b>
       </p>
       <p><b>Example&#58;</b><code>["0c:00:99:b7:d7:89:c9:f6:66:26:31:7e:bc:ea:7c:1c"]</code></p>
+    validate_certificate_summary:
+      Retrieve acceptable domain validation methods for a Certificate
+    validate_certificate_description:
+      A single Validation object containing a list of acceptable methods to complete the verification of the order.
+    response_type_param_description: >
+      <p><b>Specifies the type/format of the certificates that are being returned, if applicable. Default: <code>individually</code> </b></p>
+      <ul>
+        <li>zip</li>
+        <li>netscape</li>
+        <li>pkcs7</li>
+        <li>individually</li>
+      </ul>
+    response_encoding_param_description: >
+      <p><b>Specifies the encoding of the certificates that are being returned, if applicable. Default: <code>base64</code> </b></p>
+      <ul>
+        <li>base64</li>
+        <li>binary</li>
+      </ul>
+    email_validation_options:
+      Retrieve acceptable email addresses for domain control validation
+    email_validation_options_description:
+      A single Validation object containing a list of acceptable email addresses for domain control control validation of an ssl certificate.
+    validation_domains_param_description: >
+      <p><b>Array of 1 or more domains to query. Each value must be separated out with a name domains[], ie domains[]=www.domain.com&domains[]=domain2.info&domains[]=mail.domain3.biz</b></p>
+      <p><b>Example&#58;</b><code>www.domain1.com</code></p>
+    csr_hash_validation_options:
+      Retrieve all validation methods based on hash of certificate signing request
+    csr_hash_validation_options_description:
+      A single Validation object containing values that will satisfy domain control validation using the hash of the certificate signing request.
+    api_parameters:
+      Retrieve pre-filled parameters needed to make a successful API call
+    api_parameters_description:
+      A list of pre-filled parameters needed to make a successful API call
+    action_param_description: >
+      <p><b>This is the valid action that api intends to call. The returned parameters can then be used in that api action call. Valid actions are: update_dcv, update, create_w_csr, create, show, index, dcv_emails, dcv_methods_wo_csr and dcv_methods_w_csr. Please note that some actions cannot be executed such as update_dcv if the csr has not already been submitted.</b></p>
+      <p><b>Example&#58;</b><code>create</code></p>

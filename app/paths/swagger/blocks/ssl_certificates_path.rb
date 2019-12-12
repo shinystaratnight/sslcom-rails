@@ -80,7 +80,7 @@ module Swagger
               end
             end
           end
-          response :default do
+          response :error do
             key :description, 'Error Response'
             schema do
               key :'$ref', :ErrorResponse
@@ -140,7 +140,7 @@ module Swagger
         end
       end
 
-      swagger_path '/certificate/ref' do
+      swagger_path '/certificate/{ref}' do
         operation :get do
           security account_key: []
           security secret_key: []
@@ -155,6 +155,15 @@ module Swagger
           parameter :ref
           parameter :response_type
           parameter :response_encoding
+          response 200 do
+            key :description, 'Certificate Response'
+          end
+          response :error do
+            key :description, 'Error Response'
+            schema do
+              key :'$ref', :ErrorResponse
+            end
+          end
         end
         operation :put do
           security account_key: []
@@ -203,7 +212,17 @@ module Swagger
           parameter :contacts
           parameter :app_rep
           parameter :payment_method
+          response 200 do
+            key :description, 'Certificate Response'
+          end
+          response :error do
+            key :description, 'Error Response'
+            schema do
+              key :'$ref', :ErrorResponse
+            end
+          end
         end
+
         operation :delete do
           security account_key: []
           security secret_key: []
@@ -216,6 +235,123 @@ module Swagger
             'certificate'
           ]
           parameter :reason_required
+          parameter :serials
+          response :error do
+            key :description, 'Error Response'
+            schema do
+              key :'$ref', :ErrorResponse
+            end
+          end
+          response 200 do
+            key :description, 'Certificate Revoked'
+          end
+        end
+      end
+
+      swagger_path '/certificate/{ref}/validations/methods' do
+        operation :get do
+          security account_key: []
+          security secret_key: []
+          key :summary, I18n.t(:validate_certificate_summary, scope: :documentation)
+          key :description, I18n.t(:validate_certificate_description, scope: :documentation)
+          key :operation, 'getValidationMethods'
+          key :produces, %w[application/json]
+          key :consumes, %w[application/json]
+          key :tags, [
+            'certificate'
+          ]
+          parameter :ref
+          response 200 do
+            key :description, 'Validation Methods Response'
+          end
+          response :error do
+            key :description, 'Error Response'
+            schema do
+              key :'$ref', :ErrorResponse
+            end
+          end
+          # extends SwaggerResponses::GenericError
+        end
+      end
+
+      swagger_path '/certificates/validations/email' do
+        operation :get do
+          security account_key: []
+          security secret_key: []
+          key :summary, I18n.t(:email_validation_options, scope: :documentation)
+          key :description, I18n.t(:email_validation_options_description, scope: :documentation)
+          key :operation, 'getEmailValidationOptions'
+          key :produces, %w[application/json]
+          key :consumes, %w[application/json]
+          key :tags, [
+            'certificate'
+          ]
+          parameter :domains_required
+          response 200 do
+            key :description, 'Email Validation Options Response'
+          end
+          response :error do
+            key :description, 'Error Response'
+            schema do
+              key :'$ref', :ErrorResponse
+            end
+          end
+        end
+      end
+      swagger_path '/certificates/validations/csr_hash' do
+        # this method should probably be a GET
+        operation :post do
+          security account_key: []
+          security secret_key: []
+          key :summary, I18n.t(:csr_hash_validation_options, scope: :documentation)
+          key :description, I18n.t(:csr_hash_validation_options_description, scope: :documentation)
+          key :operation, 'getCSRHashValidationOptions'
+          key :produces, %w[application/json]
+          key :consumes, %w[application/json]
+          key :tags, [
+            'certificate'
+          ]
+          parameter :domains
+          parameter :csr_required
+          response 200 do
+            key :description, 'CSR Hash Validation Options Response'
+          end
+          response :error do
+            key :description, 'Error Response'
+            schema do
+              key :'$ref', :ErrorResponse
+            end
+          end
+        end
+      end
+      swagger_path '/certificate/{ref}/api_parameters/{action}' do
+        operation :get do
+          security account_key: []
+          security secret_key: []
+          key :summary, I18n.t(:api_parameters, scope: :documentation)
+          key :description, I18n.t(:api_parameters_description, scope: :documentation)
+          key :operation, 'getApiParameters'
+          key :produces, %w[application/json]
+          key :consumes, %w[application/json]
+          key :tags, [
+            'certificate'
+          ]
+          parameter :ref
+          parameter :action_required
+          response 200 do
+            key :description, 'CSR Hash Validation Options Response'
+            schema do
+              property :parameters do
+                key :type, :object
+              end
+            end
+          end
+          response :error do
+            key :description, 'Error Response'
+            schema do
+              key :'$ref', :ErrorResponse
+            end
+          end
         end
       end
     end

@@ -67,6 +67,13 @@ class ApidocsController < ApplicationController
       key :type, :string
       key :description, I18n.t(:csr_param_description, scope: :documentation)
     end
+    parameter :csr_required do
+      key :name, :csr
+      key :in, :query
+      key :type, :string
+      key :required, true
+      key :description, I18n.t(:csr_param_description, scope: :documentation)
+    end
     parameter :server_software do
       key :name, :server_software
       key :in, :query
@@ -78,6 +85,13 @@ class ApidocsController < ApplicationController
       key :in, :query
       key :type, :object
       key :description, I18n.t(:domains_param_description, scope: :documentation)
+    end
+    parameter :domains_required do
+      key :name, 'domains[]='
+      key :in, :query
+      key :type, :string
+      key :required, true
+      key :description, I18n.t(:validation_domains_param_description, scope: :documentation)
     end
     parameter :organization do
       key :name, :organization
@@ -207,23 +221,23 @@ class ApidocsController < ApplicationController
       key :name, :response_type
       key :in, :query
       key :type, :string
-      key :description, I18n.t(:payment_method_param_description, scope: :documentation)
+      key :description, I18n.t(:response_type_param_description, scope: :documentation)
     end
     parameter :response_encoding do
       key :name, :response_encoding
       key :in, :query
       key :type, :string
-      key :description, I18n.t(:payment_method_param_description, scope: :documentation)
+      key :description, I18n.t(:response_encoding_param_description, scope: :documentation)
     end
     parameter :ref do
       key :name, :ref
-      key :in, :query
+      key :in, :path
       key :type, :string
       key :description, I18n.t(:ref_param_description, scope: :documentation)
       key :required, true
     end
     parameter :reason_required do
-      key :name, :reason_required
+      key :name, :reason
       key :in, :query
       key :type, :string
       key :description, I18n.t(:reason_param_description, scope: :documentation)
@@ -235,7 +249,13 @@ class ApidocsController < ApplicationController
       key :type, :string
       key :description, I18n.t(:serials_param_description, scope: :documentation)
     end
-
+    parameter :action_required do
+      key :name, :action
+      key :in, :path
+      key :type, :string
+      key :description, I18n.t(:action_param_description, scope: :documentation)
+      key :required, true
+    end
     tag do
       key :name, 'user'
       key :description, 'User Operations'
