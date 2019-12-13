@@ -22,3 +22,8 @@ PreCommit:
   ForbiddenBranches:
     enabled: true
     branch_patterns: ['master', 'staging'] # no pushing directly to master or staging
+  Fasterer: # Runs fasterer against any modified Ruby files.
+    enabled: true
+    exclude:
+      - 'vendor/**/*.rb'
+      - 'db/schema.rb'
