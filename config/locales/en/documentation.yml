@@ -55,11 +55,6 @@ en:
         <li><code>105</code>Wildcard SSL</li>
         <li><code>106</code>Basic SSL</li>
         <li><code>107</code>Premium SSL</li>
-        <li><code>200</code>Basic</li>
-        <li><code>201</code>Wildcard SSL</li>
-        <li><code>202</code>UCC SSL</li>
-        <li><code>203</code>EV SSL</li>
-        <li><code>204</code>EV UCC SSL</li>
         <li><code>300</code>Personal Basic</li>
         <li><code>301</code>Person Pro</li>
         <li><code>302</code>Personal Business</li>
