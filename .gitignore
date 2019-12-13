@@ -32,3 +32,4 @@ coverage/*
 .idea/ssl_com_rails3.iml
 .idea/.rakeTasks
 node_modules
+rails_best_practices_output.html
