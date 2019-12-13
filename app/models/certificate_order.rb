@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-=======
-# rubocop:disable Metrics/ClassLength
->>>>>>> Add Certificate Order/Certificate Download Functionality
 class CertificateOrder < ApplicationRecord
   extend Memoist
   include V2MigrationProgressAddon
@@ -31,11 +27,7 @@ class CertificateOrder < ApplicationRecord
   has_many    :csrs, :through=>:certificate_contents, :source=>"csr"
   has_many    :csr_unique_values, through: :csrs
   has_many    :attestation_certificates, through: :certificate_contents
-<<<<<<< HEAD
-  has_many    :signed_certificates, through: :csrs, :source=>"signed_certificate" do
-=======
   has_many    :signed_certificates, through: :csrs, source: :signed_certificate do
->>>>>>> Add Certificate Order/Certificate Download Functionality
     def expired
       where{expiration_date < Date.today}
     end
@@ -1137,7 +1129,7 @@ class CertificateOrder < ApplicationRecord
   end
 
   def expiration_date
-    certificate_content.try("csr").try("signed_certificate").try("expiration_date")
+    certificate_content.csr.signed_certificate.expiration_date
   end
 
   def is_expired_credit?
@@ -2268,27 +2260,24 @@ class CertificateOrder < ApplicationRecord
   end
 
   def self.to_csv
-    columns = ["Order Ref", "Order Label", "Duration", "Signed Certificate", "Status", "Effective Date", "Expiration Date"]
+    columns = ["Order Ref", "Name", "Status", "Order Date", "Expiration Date"]
+
     CSV.generate(headers: true) do |csv|
       csv << columns
+
       all.find_each do |cert_order|
-        signed_certs = cert_order.signed_certificates
-  
         csv << columns.map do |attr|
-          if attr == "Order Ref"
+          case attr
+          when "Order Ref"
             cert_order.ref
-          elsif attr == "Order Label"
-            cert_order.certificate.title
-          elsif attr == "Duration"
-            cert_order.certificate_content.duration
-          elsif (attr == "Signed Certificate") && signed_certs.present?
-            signed_certs.map(&:common_name)
-          elsif (attr == "Status") && signed_certs.present?
-            signed_certs.map(&:status)
-          elsif (attr == "Effective Date") && signed_certs.present?
-            signed_certs.map(&:effective_date)
-          elsif (attr == "Expiration Date") && signed_certs.present?
-            signed_certs.map(&:expiration_date)
+          when "Name"
+            cert_order.common_name
+          when "Status"
+            cert_order.certificate_content.workflow_state
+          when "Order Date"
+            cert_order.certificate_content.created_at
+          when "Expiration Date"
+            cert_order.signed_certificates.present? ? cert_order.expiration_date : 'N/A'
           end
         end
       end
