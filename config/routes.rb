@@ -3,11 +3,11 @@
 require 'domain_constraint'
 
 SslCom::Application.routes.draw do
+  mount Rswag::Ui::Engine => '/api'
   mount Delayed::Web::Engine, at: '/jobs'
   mount LetterOpenerWeb::Engine, at: '/letter_opener' if Rails.env.development?
 
   resources :apidocs, only: [:index]
-  get '/api' => redirect('/swagger/dist/index.html?url=/apidocs')
 
   resources :oauth_clients
 
