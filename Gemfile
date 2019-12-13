@@ -152,4 +152,5 @@ gem 'swagger-blocks'
 gem 'swagger-docs'
 gem 'uglifier', '4.1.8'
 
+gem 'fasterer'
 gem 'overcommit'
