@@ -119,7 +119,8 @@ class OrderNotifier < ActionMailer::Base
 
   end
 
-  def dcv_email_send(certificate_order, email_address, identifier, domain_list, domain_id = nil, ssl_slug = '', dcv_type = 'cert')
+  # TODO: refactor to scan all teams that belong to an emailed recipient and remove the ssl_slug - it's causing too many problems
+  def dcv_email_send(email_address, identifier, domain_list, domain_id = nil, ssl_slug = '', dcv_type = 'cert')
     @contact = email_address
     @domains = domain_list
     @identifier = identifier

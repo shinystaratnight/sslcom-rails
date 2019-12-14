@@ -27,7 +27,7 @@ class CertificateOrder < ApplicationRecord
   has_many    :csrs, :through=>:certificate_contents, :source=>"csr"
   has_many    :csr_unique_values, through: :csrs
   has_many    :attestation_certificates, through: :certificate_contents
-  has_many    :signed_certificates, through: :csrs do
+  has_many    :signed_certificates, through: :csrs, :source=>"signed_certificate" do
     def expired
       where{expiration_date < Date.today}
     end
@@ -1245,7 +1245,7 @@ class CertificateOrder < ApplicationRecord
         certificate_content.preferred_pending_issuance? or
         !certificate_content.
             preferred_process_pending_server_certificates?) unless options[:allow_multiple_certs_per_content]
-    if [Ca::CERTLOCK_CA,Ca::SSLCOM_CA,Ca::MANAGEMENT_CA].include?(options[:ca]) or certificate_content.ca or
+    if [Ca::CERTLOCK_CA,Ca::SSLCOM_CA,Ca::MANAGEMENT_CA].include?(options[:ca]) or certificate_content.ca_id or
         !options[:mapping].blank?
       if !certificate_content.infringement.empty? # possible trademark problems
         OrderNotifier.potential_trademark(Settings.notify_address, self, certificate_content.infringement).deliver_now
