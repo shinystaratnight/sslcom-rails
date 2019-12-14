@@ -260,23 +260,6 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
       #assume updating domain validation, already sent to comodo
       if @certificate_order.certificate_content && @certificate_order.certificate_content.pending_validation? &&
           (@certificate_order.external_order_number || !@certificate_order.certificate_content.ca.blank?)
-        #set domains
-
-        # if @certificate_order.certificate.is_basic? || @certificate_order.certificate.is_free? || @certificate_order.certificate.is_high_assurance?
-        #   cnames = @certificate_order.certificate_content.domains
-        #   domain_strs = []
-        #   self.domains.keys.each do |key|
-        #     domain_strs << key unless domain_strs.include? key
-        #
-        #     if !key.include?('www.') && cnames.include?('www.' + key)
-        #       domain_strs << ('www.' + key)
-        #     end
-        #   end
-        #   @certificate_order.certificate_content.update_attribute(:domains, domain_strs)
-        # else
-        #   @certificate_order.certificate_content.update_attribute(:domains, self.domains.keys)
-        # end
-
         @certificate_order.certificate_content.update_attribute(:domains, self.domains.keys)
         @certificate_order.certificate_content.dcv_domains({domains: self.domains, emails: self.dcv_candidate_addresses})
 
@@ -295,14 +278,14 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
       #     end
       #   end
       else
-        if self.csr_obj
+        if self.csr_obj # was a csr submitted?
           certificate_content = @certificate_order.certificate_contents.build
           csr = self.csr_obj
           csr.save
           certificate_content.csr = csr
           certificate_content.server_software_id = server_software
-          certificate_content.submit_csr!
           certificate_content.domains = domains.keys unless domains.blank?
+          certificate_content.submit_csr!
           if errors.blank?
             if certificate_content.save
               setup_certificate_content(

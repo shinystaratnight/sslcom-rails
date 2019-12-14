@@ -1,13 +1,13 @@
 Dear <%=@contact%>,
 
-We have received a request to issue an SSL certificate for:
+We have received a request to validate control of the following domains for issuance of SSL/TLS certificate(s) for:
 
 Domain:
   <%@domains.each do |domain| -%>
     <%=domain%>
   <%end -%>
 
-To permit the issuance of the certificate please visit <%=@validation_url%> and enter the following "validation code":
+To permit the issuance of SSL/TLS certificate(s) for these domains, please visit <%=@validation_url%> and enter the following "validation code":
 
             <%=@identifier%>
 

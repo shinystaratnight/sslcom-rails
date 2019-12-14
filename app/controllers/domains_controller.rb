@@ -87,10 +87,10 @@ class DomainsController < ApplicationController
       if params[:dcv_address]=~EmailValidator::EMAIL_FORMAT
         if DomainControlValidation.approved_email_address? CertificateName.candidate_email_addresses(
             @domain.non_wildcard_name), params[:dcv_address]
-          identifier = (SecureRandom.hex(8)+Time.now.to_i.to_s(32))[0..19]
+          identifier = DomainControlValidation.generate_identifier
           @domain.domain_control_validations.create(dcv_method: "email", email_address: params[:dcv_address],
                                                     identifier: identifier, failure_action: "ignore", candidate_addresses: @addresses)
-          OrderNotifier.dcv_email_send(nil, params[:dcv_address], identifier, [@domain.name], @domain.id, @ssl_slug, 'team').deliver
+          OrderNotifier.dcv_email_send(params[:dcv_address], identifier, [@domain.name], @domain.id, @ssl_slug, 'team').deliver
           @domain.domain_control_validations.last.send_dcv!
           flash[:notice] = "Validation email has been sent."
         else
@@ -294,8 +294,7 @@ class DomainsController < ApplicationController
         @address_choices << CertificateName.candidate_email_addresses(cn.non_wildcard_name)
         if addresses[index]=~EmailValidator::EMAIL_FORMAT
           dcvs << cn.domain_control_validations.new(dcv_method: "email", email_address: addresses[index],
-                                               candidate_addresses: @address_choices, csr_unique_value_id:
-                                               @csr.csr_unique_value.id) if @address_choices.include?(addresses[index])
+                                               candidate_addresses: @address_choices) if @address_choices.include?(addresses[index])
         elsif ['http_csr_hash','https_csr_hash','cname_csr_hash'].include? addresses[index]
           dcvs << cn.domain_control_validations.new(dcv_method: addresses[index], failure_action: "ignore",
                                                     csr_unique_value_id: @csr.csr_unique_value.id)
@@ -366,7 +365,7 @@ class DomainsController < ApplicationController
       identifier_list << identifier
       unless domain_list.blank?
         email_list.each_with_index do |value, key|
-          OrderNotifier.dcv_email_send(nil, value, identifier_list[key], domain_ary[key], nil, @ssl_slug, 'group').deliver
+          OrderNotifier.dcv_email_send(value, identifier_list[key], domain_ary[key], nil, @ssl_slug, 'group').deliver
         end
       end
       notice_string = ""
@@ -482,7 +481,7 @@ class DomainsController < ApplicationController
             identifier_list << identifier
             domain_list = []
           end
-          identifier = (SecureRandom.hex(8) + Time.now.to_i.to_s(32))[0..19]
+          identifier = DomainControlValidation.generate_identifier
           email_for_identifier = dcv.email_address
         end
         domain_list << cn.name
@@ -496,7 +495,7 @@ class DomainsController < ApplicationController
 
     if email_list[0] != ''
       email_list.each_with_index do |value, key|
-        OrderNotifier.dcv_email_send(nil, value, identifier_list[key], domain_ary[key], nil, @ssl_slug, 'group').deliver
+        OrderNotifier.dcv_email_send(value, identifier_list[key], domain_ary[key], nil, @ssl_slug, 'group').deliver
       end
 
       return true

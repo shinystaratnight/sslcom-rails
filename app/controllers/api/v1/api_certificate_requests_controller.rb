@@ -241,7 +241,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
                           domain_list = []
                         end
 
-                        identifier = (SecureRandom.hex(8)+Time.now.to_i.to_s(32))[0..19]
+                        identifier = DomainControlValidation.generate_identifier
                         email_for_identifier = dcv.email_address
                       end
 
@@ -265,7 +265,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
                 identifier_list << identifier
 
                 email_list.each_with_index do |value, key|
-                  OrderNotifier.dcv_email_send(@acr, value, identifier_list[key], domain_ary[key], nil, ssl_slug).deliver
+                  OrderNotifier.dcv_email_send(value, identifier_list[key], domain_ary[key], nil, ssl_slug).deliver
                 end
               end
             end
@@ -355,7 +355,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
                 identifier_list << identifier
 
                 email_list.each_with_index do |value, key|
-                  OrderNotifier.dcv_email_send(@acr, value, identifier_list[key], domain_ary[key], nil, ssl_slug).deliver
+                  OrderNotifier.dcv_email_send(value, identifier_list[key], domain_ary[key], nil, ssl_slug).deliver
                 end
               else
                 @acr.apply_for_certificate
