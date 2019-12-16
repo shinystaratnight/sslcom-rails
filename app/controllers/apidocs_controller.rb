@@ -26,7 +26,10 @@ class ApidocsController < ApplicationController
       key :name, :secret_key
       key :in, :query
     end
-
+    security_definition :swagger_version, type: :apiKey do
+      key :name, :swagger_version
+      key :in, :header
+    end
     parameter :per_page do
       key :name, :per_page
       key :in, :query

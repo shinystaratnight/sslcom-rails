@@ -9,7 +9,7 @@ class CertificateContent < ApplicationRecord
   belongs_to  :server_software
   has_one     :csr, :dependent => :destroy
   has_many    :csrs, :dependent => :destroy
-  has_many    :signed_certificates, through: :csr
+  has_many    :signed_certificates, through: :csr, :source=>"signed_certificate"
   has_one     :registrant, as: :contactable, dependent: :destroy
   has_one     :locked_registrant, :as => :contactable
   has_many    :certificate_contacts, :as => :contactable
@@ -529,10 +529,10 @@ class CertificateContent < ApplicationRecord
       cn_ids << name.id
       k, v = name.name, options[:domains][name.name]
       cur_email = options[:emails] ? options[:emails][k] : nil
-
+      dcv = name.validated_domain_control_validations.last
       case v["dcv"]
       when /https?/i, /cname/i
-        dcv = name.validated_domain_control_validations.last
+        # do not create another instance if previous cname of http(s) instance exists
         if dcv.blank?
           dcv = name.domain_control_validations.new(
               dcv_method: v["dcv"],
@@ -549,11 +549,13 @@ class CertificateContent < ApplicationRecord
       else
         if DomainControlValidation.approved_email_address? CertificateName.candidate_email_addresses(
             name.non_wildcard_name), v["dcv"]
-          dcvs << name.domain_control_validations.new(dcv_method: "email", email_address: v["dcv"],
+          dcv = name.domain_control_validations.new(dcv_method: "email", email_address: v["dcv"],
                                                  failure_action: v["dcv_failure_action"],
                                                  candidate_addresses: CertificateName.candidate_email_addresses(
                                                      name.non_wildcard_name))
+          OrderNotifier.dcv_email_send(v["dcv"], dcv.identifier, [name.name], name.id, @ssl_slug).deliver
         end
+        dcvs << dcv
       end
       i+=1
     end

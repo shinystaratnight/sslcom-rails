@@ -13,6 +13,7 @@ module Swagger
           ]
           security account_key: []
           security secret_key: []
+          security swagger_version: []
 
           parameter :per_page
           parameter :page
@@ -99,7 +100,7 @@ module Swagger
 
           security account_key: []
           security secret_key: []
-
+          security swagger_version: []
           parameter :product
           parameter :period
           parameter :unique_value
@@ -144,6 +145,7 @@ module Swagger
         operation :get do
           security account_key: []
           security secret_key: []
+          security swagger_version: []
           key :summary, I18n.t(:certificate_download_summary, scope: :documentation)
           key :description, I18n.t(:certificate_download_description, scope: :documentation)
           key :operation, 'getCertificate'
@@ -168,6 +170,7 @@ module Swagger
         operation :put do
           security account_key: []
           security secret_key: []
+          security swagger_version: []
           key :summary, I18n.t(:certificate_order_summary, scope: :documentation)
           key :description, I18n.t(:certificate_order_description, scope: :documentation)
           key :operation, 'updateCertificate'
@@ -226,6 +229,7 @@ module Swagger
         operation :delete do
           security account_key: []
           security secret_key: []
+          security swagger_version: []
           key :summary, I18n.t(:certificate_delete_summary, scope: :documentation)
           key :description, I18n.t(:certificate_delete_description, scope: :documentation)
           key :operation, 'deleteCertificate'
@@ -252,6 +256,7 @@ module Swagger
         operation :get do
           security account_key: []
           security secret_key: []
+          security swagger_version: []
           key :summary, I18n.t(:validate_certificate_summary, scope: :documentation)
           key :description, I18n.t(:validate_certificate_description, scope: :documentation)
           key :operation, 'getValidationMethods'
@@ -278,6 +283,7 @@ module Swagger
         operation :get do
           security account_key: []
           security secret_key: []
+          security swagger_version: []
           key :summary, I18n.t(:email_validation_options, scope: :documentation)
           key :description, I18n.t(:email_validation_options_description, scope: :documentation)
           key :operation, 'getEmailValidationOptions'
@@ -303,6 +309,7 @@ module Swagger
         operation :post do
           security account_key: []
           security secret_key: []
+          security swagger_version: []
           key :summary, I18n.t(:csr_hash_validation_options, scope: :documentation)
           key :description, I18n.t(:csr_hash_validation_options_description, scope: :documentation)
           key :operation, 'getCSRHashValidationOptions'
@@ -328,6 +335,7 @@ module Swagger
         operation :get do
           security account_key: []
           security secret_key: []
+          security swagger_version: []
           key :summary, I18n.t(:api_parameters, scope: :documentation)
           key :description, I18n.t(:api_parameters_description, scope: :documentation)
           key :operation, 'getApiParameters'
