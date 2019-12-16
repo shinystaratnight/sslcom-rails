@@ -17,6 +17,7 @@ module Api
       skip_before_action :verify_authenticity_token
       before_filter :activate_authlogic
       before_filter :set_default_request_format
+      before_filter :nilify_empty_has_params
       after_filter  :set_access_control_headers
 
       TEST_SUBDOMAIN = 'sws-test'
@@ -85,6 +86,17 @@ module Api
 
       def set_default_request_format
         request.format = :json
+      end
+
+      def nilify_empty_has_params
+        return if swagger_vesion_header.blank?
+        params.each do |key, value|
+          params[key] = nil if value == '{}'
+        end
+      end
+
+      def swagger_vesion_header
+        request.headers['HTTP_SWAGGER_VERSION']
       end
     end
   end
