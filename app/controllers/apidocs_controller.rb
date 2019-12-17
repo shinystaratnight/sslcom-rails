@@ -26,7 +26,10 @@ class ApidocsController < ApplicationController
       key :name, :secret_key
       key :in, :query
     end
-
+    security_definition :swagger_version, type: :apiKey do
+      key :name, :swagger_version
+      key :in, :header
+    end
     parameter :per_page do
       key :name, :per_page
       key :in, :query
@@ -86,6 +89,12 @@ class ApidocsController < ApplicationController
       key :type, :object
       key :description, I18n.t(:domains_param_description, scope: :documentation)
     end
+    parameter :recipient do
+      key :name, :recipient
+      key :in, :query
+      key :type, :object
+      key :description, I18n.t(:recipient_param_description, scope: :documentation)
+    end
     parameter :domains_required do
       key :name, 'domains[]='
       key :in, :query
@@ -98,7 +107,6 @@ class ApidocsController < ApplicationController
       key :in, :query
       key :type, :string
       key :description, I18n.t(:organization_param_description, scope: :documentation)
-      key :required, true
     end
     parameter :organization_unit do
       key :name, :organization_unit
@@ -117,7 +125,6 @@ class ApidocsController < ApplicationController
       key :in, :query
       key :type, :string
       key :description, I18n.t(:street_address_1_param_description, scope: :documentation)
-      key :required, true
     end
     parameter :street_address_2 do
       key :name, :street_address_2
@@ -142,7 +149,6 @@ class ApidocsController < ApplicationController
       key :in, :query
       key :type, :string
       key :description, I18n.t(:state_or_providence_param_description, scope: :documentation)
-      key :required, true
     end
     parameter :postal_code do
       key :name, :postal_code
@@ -156,7 +162,6 @@ class ApidocsController < ApplicationController
       key :in, :query
       key :type, :string
       key :description, I18n.t(:country_param_description, scope: :documentation)
-      key :required, true
     end
     parameter :duns_number do
       key :name, :duns_number
@@ -203,7 +208,6 @@ class ApidocsController < ApplicationController
       key :in, :query
       key :type, :object
       key :description, I18n.t(:contacts_param_description, scope: :documentation)
-      key :required, true
     end
     parameter :app_rep do
       key :name, :app_rep

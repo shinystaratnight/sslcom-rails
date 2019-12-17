@@ -14,21 +14,21 @@ class ApiCertificateRequest < CaApiRequest
   FREE_PERIODS = %w(30 90)
 
   CREATE_ACCESSORS_1_4 = [:account_key, :secret_key, :product, :period, :server_count, :server_software, :domains,
-      :domain, :common_names_flag, :csr, :organization_name, :organization_unit_name, :post_office_box,
+      :domain, :common_names_flag, :csr, :organization, :organization_unit, :post_office_box,
       :street_address_1, :street_address_2, :street_address_3, :locality_name, :state_or_province_name,
-      :postal_code, :country_name, :duns_number, :company_number, :registered_locality_name,
+      :postal_code, :country, :duns_number, :company_number, :registered_locality_name,
       :registered_state_or_province_name, :registered_country_name, :incorporation_date,
       :assumed_name, :business_category, :email_address, :contact_email_address, :dcv_email_address,
       :ca_certificate_id, :is_customer_validated, :hide_certificate_reference, :external_order_number,
       :dcv_candidate_addresses, :dcv_method, :ref, :contacts, :options, :renewal_id, :billing_profile, :certificates,
-      :attestation_cert, :attestation_issuer_cert]
+      :attestation_cert, :attestation_issuer_cert, :recipient]
 
   UPDATE_ACCESSORS_1_4 = [:cert_names, :caa_check_domains]
 
   ACCESSORS = [:account_key, :secret_key, :product, :period, :server_count, :server_software, :domains, :options,
-      :domain, :common_names_flag, :csr, :organization_name, :organization_unit_name, :post_office_box,
+      :domain, :common_names_flag, :csr, :organization, :organization_unit, :post_office_box,
       :street_address_1, :street_address_2, :street_address_3, :locality_name, :state_or_province_name,
-      :postal_code, :country_name, :duns_number, :company_number, :registered_locality_name,
+      :postal_code, :country, :duns_number, :company_number, :registered_locality_name,
       :registered_state_or_province_name, :registered_country_name, :incorporation_date,
       :assumed_name, :business_category, :email_address, :contact_email_address, :dcv_email_address,
       :ca_certificate_id, :is_customer_validated, :hide_certificate_reference, :external_order_number,
@@ -36,9 +36,9 @@ class ApiCertificateRequest < CaApiRequest
       :ca_order_number, :debug, :api_call, :billing_profile, :callback, :unique_value, :pub_key, :signed_certificates]
 
   REPROCESS_ACCESSORS = [:account_key, :secret_key, :server_count, :server_software, :domains,
-      :domain, :common_names_flag, :csr, :organization_name, :organization_unit_name, :post_office_box,
+      :domain, :common_names_flag, :csr, :organization, :organization_unit, :post_office_box,
       :street_address_1, :street_address_2, :street_address_3, :locality_name, :state_or_province_name,
-      :postal_code, :country_name, :duns_number, :company_number, :registered_locality_name,
+      :postal_code, :country, :duns_number, :company_number, :registered_locality_name,
       :registered_state_or_province_name, :registered_country_name, :incorporation_date,
       :assumed_name, :business_category, :email_address, :contact_email_address,
       :ca_certificate_id, :is_customer_validated, :hide_certificate_reference, :external_order_number,
