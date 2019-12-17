@@ -387,7 +387,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
       assignee = options[:certificate_order].assignee || User.find_or_initialize_by(email: recipient_attr["email"])
       assignee.login ||= recipient_attr["email"]
       assignee.save
-      recipient_attr.merge! user_id: assignee.id
+      recipient_attr[:user_id] = assignee.id
       options[:certificate_order].create_locked_recipient(recipient_attr)
     end
     if !options[:certificate].is_server? or cc.csr_submitted?
