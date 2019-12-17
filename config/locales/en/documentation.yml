@@ -55,6 +55,13 @@ en:
         <li><code>105</code> Wildcard SSL</li>
         <li><code>106</code> Basic SSL</li>
         <li><code>107</code> Premium SSL</li>
+        <li><code>300</code> Personal Basic</li>
+        <li><code>301</code> Person Pro</li>
+        <li><code>302</code> Personal Business</li>
+        <li><code>303</code> Personal Enterprise</li>
+        <li><code>310</code> NAESB Basic</li>
+        <li><code>350</code> Code Signing</li>
+        <li><code>360</code> EV Code Signing</li>
       </ul>
     period_param_description: >
       <b>The number of days the certificate is valid for.</b><br>
