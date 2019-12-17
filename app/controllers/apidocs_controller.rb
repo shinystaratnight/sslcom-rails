@@ -89,6 +89,12 @@ class ApidocsController < ApplicationController
       key :type, :object
       key :description, I18n.t(:domains_param_description, scope: :documentation)
     end
+    parameter :recipient do
+      key :name, :recipient
+      key :in, :query
+      key :type, :object
+      key :description, I18n.t(:recipient_param_description, scope: :documentation)
+    end
     parameter :domains_required do
       key :name, 'domains[]='
       key :in, :query

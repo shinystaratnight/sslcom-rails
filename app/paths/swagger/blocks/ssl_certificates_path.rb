@@ -107,6 +107,7 @@ module Swagger
           parameter :csr
           parameter :server_software
           parameter :domains
+          parameter :recipient
           parameter :organization
           parameter :organization_unit
           parameter :post_office_box
@@ -196,6 +197,7 @@ module Swagger
             key :required, true
           end
           parameter :domains
+          parameter :recipient
           parameter :organization
           parameter :organization_unit
           parameter :post_office_box
