@@ -12,7 +12,10 @@ en:
       <p>
         To get pregenerated API cURL commands for an individual order, try appending /developer at the end of that certificate order page (ie <code>https://www.ssl.com/certificate_orders/co-1234xyz/developer</code>).
       </p>
-    create_certificate_description: >
+      <p>
+        <b>Security:</b> Request require that <code>account_key</code> and <code>secret_key</code>. You can do this by clicking on the Authorize link below.
+      </p>
+    create_certificate_description:
       <p><b>Create an ssl.com certificate order (or voucher code). Upon successful api call, the price (if any) of the ssl certificate will be deducted from reseller account associated with the account number specified in the account_key. Voucher codes are used to purchase a certificate without having to submit a csr right away. This is useful for host providers, enterprise environments, or any situation where buying the certificate and installing it do not necessarily happen at the same time. A voucher code can be created by simply only specifying the product type and duration.</b></p>
     certificate_tag_description:
       Certificate Operations

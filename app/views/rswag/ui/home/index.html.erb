@@ -91,6 +91,10 @@
     configObject.dom_id = "#swagger-ui";
     configObject.presets = [SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset];
     configObject.layout = "StandaloneLayout";
+    configObject.requestInterceptor = function (request) {
+      request.headers.swagger_version = 2;
+      return request;
+    }
 
     // If oauth2RedirectUrl isn't specified, use the built-in default
     if (!configObject.hasOwnProperty("oauth2RedirectUrl"))
@@ -101,7 +105,6 @@
 
     // Apply OAuth config
     ui.initOAuth(oauthConfigObject);
-    console.log(ui);
   }
   $(document).bind("DOMNodeInserted", function(e){
     if (e.target.className == 'opblock-section'){
@@ -114,7 +117,12 @@
         }
       });
     }
-    // window.ui.preauthorizeApiKey('swagger_version', '2');
+    else{
+      $('textarea.curl').each(function (index, element) {
+        const curl = $(element).val().replace('-H  "swagger_version: 2"', '');
+        $(element).val(curl);
+      });
+    }
   });
 </script>
 </body>
