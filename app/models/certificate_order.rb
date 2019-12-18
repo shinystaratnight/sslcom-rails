@@ -1425,8 +1425,8 @@ class CertificateOrder < ApplicationRecord
     cc = certificate_content
     r = cc.registrant
     registrant_params = r.blank? ? {} :
-        {organization: r.company_name,
-         organization_unit: r.department,
+        {organization_name: r.company_name,
+         organization_unit_name: r.department,
          post_office_box: r.po_box,
          street_address_1: r.address1,
          street_address_2: r.address2,

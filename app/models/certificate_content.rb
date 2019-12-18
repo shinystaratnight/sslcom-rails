@@ -986,11 +986,10 @@ class CertificateContent < ApplicationRecord
 
   # if a certificate_content has a signed_certificate and is validated, it's state should be changed to issued
   def self.sync_issued_state
-    CertificateContent
-      .includes(csr: :signed_certificates)
-      .where{ (workflow_state=="validated") & (created_at > 120.days.ago) }
-      .map{ |cc| cc.issue! if(cc.signed_certificate and cc.certificate.is_server?)}
-      .compact
+    certificate_content = CertificateContent.includes(csr: :signed_certificates).where{(workflow_state=="validated") & (created_at > 120.days.ago)}
+    certificate_content.map do |cc|
+      cc.issue! if(cc.signed_certificate and cc.certificate.is_server?)
+    end.compact
   end
 
   private
