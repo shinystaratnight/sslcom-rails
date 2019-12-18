@@ -14,6 +14,7 @@ AllCops:
     - 'test/**/*'
     - 'bin/*'
     - 'config/**/*.yml'
+    - 'db/**/*'
   TargetRubyVersion: 2.3
 
 Naming/PredicateName:
@@ -84,9 +85,9 @@ Metrics/BlockLength:
 Metrics/LineLength:
   Enabled: false
 
+Metrics/ModuleLength:
+  Enabled: false
+
 Naming/FileName:
   Exclude:
     - lib/rubocop-rails.rb
-
-Metrics/ModuleLength:
-  Enabled: false
