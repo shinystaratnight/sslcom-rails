@@ -133,8 +133,8 @@ module ApiSetupHelper
   # Certificate content registrant
   def api_get_csr_registrant
     {
-      organization:      'SSL.com Org',    # company_name
-      organization_unit: 'IT Department',  # department
+      organization_name:      'SSL.com Org',    # company_name
+      organization_unit_name: 'IT Department',  # department
       street_address_1:       '123 H St.',      # address1
       street_address_2:       nil,              # address2
       street_address_3:       nil,              # address3

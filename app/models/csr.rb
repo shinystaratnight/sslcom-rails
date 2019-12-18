@@ -484,7 +484,7 @@ class Csr < ApplicationRecord
           (created_at > submitted_on)}.uniq.map do |csr|
             cc=csr.certificate_content
             co=csr.certificate_order
-            if cc.preferred_process_pending_server_certificates and co
+            if cc.preferred_process_pending_server_certificates
               cc.dcv_verify_certificate_names unless co.domains_validated?
               co.apply_for_certificate if(
               cc.ca_id and
