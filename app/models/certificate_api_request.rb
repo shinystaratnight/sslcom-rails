@@ -16,7 +16,7 @@ class CertificateApiRequest < ApplicationRecord
   validates :incorporation_date, :registered_country_name , presence: true, if: lambda{|c|c.product=~/[ev]/}
   validates :registered_locality_name, :registered_state_or_province_name, :registered_country_name,
            :incorporation_date, :assumed_name, presence: false, unless: lambda{|c|c.product=~/[ev]/}
-  validates :organization_name, presence: true, if: lambda{|c|c.csr_obj.organization.blank?}
+  validates :organization, presence: true, if: lambda{|c|c.csr_obj.organization.blank?}
   validates :locality_name, presence: true, if: lambda{|c|c.csr_obj.locality.blank?}
   validates :state_or_province_name, presence: true, if: lambda{|c|c.csr_obj.state.blank?}
   validates :dcv_email_address, :email_address, :contact_email_address, email: true
