@@ -151,3 +151,7 @@ gem 'httparty'
 gem 'swagger-blocks'
 gem 'swagger-docs'
 gem 'uglifier', '4.1.8'
+
+gem 'bcrypt_pbkdf', '~> 1'
+gem 'bundle-audit'
+gem 'ed25519', '~> 1.2'
