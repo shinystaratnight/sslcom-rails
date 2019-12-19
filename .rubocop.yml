@@ -1,17 +1,14 @@
 # This is the configuration used to check the rubocop source code.
 
-inherit_from: .rubocop_todo.yml
 require:
   - rubocop/cop/internal_affairs
   - rubocop-performance
-  - rubocop-rspec
   - rubocop-rails
   - rubocop-minitest
 
 AllCops:
   Exclude:
     - 'vendor/**/*'
-    - 'spec/fixtures/**/*'
     - 'tmp/**/*'
     - 'lib/**/*'
     - 'test/**/*'
@@ -68,12 +65,10 @@ Layout/SpaceBeforeBlockBraces:
   Enabled: false
 
 Lint/AmbiguousBlockAssociation:
-  Exclude:
-    - 'spec/**/*.rb'
+  Enabled: true
 
 Lint/InterpolationCheck:
-  Exclude:
-    - 'spec/**/*.rb'
+  Enabled: true
 
 Lint/UselessAccessModifier:
   MethodCreatingMethods:
@@ -84,21 +79,14 @@ Lint/BooleanSymbol:
   Enabled: false
 
 Metrics/BlockLength:
-  Exclude:
-    - 'Rakefile'
-    - '**/*.rake'
-    - 'spec/**/*.rb'
+  Enabled: false
+
+Metrics/LineLength:
+  Enabled: false
 
 Naming/FileName:
   Exclude:
     - lib/rubocop-rails.rb
 
 Metrics/ModuleLength:
-  Exclude:
-    - 'spec/**/*.rb'
-
-RSpec/PredicateMatcher:
-  EnforcedStyle: explicit
-
-RSpec/NestedGroups:
-  Max: 7
+  Enabled: false

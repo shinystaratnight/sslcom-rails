@@ -123,7 +123,6 @@ group :development do
   gem 'rubocop-minitest'
   gem 'rubocop-performance'
   gem 'rubocop-rails'
-  gem 'rubocop-rspec'
 end
 
 group :development, :test do
