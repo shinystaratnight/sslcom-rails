@@ -17,6 +17,7 @@ namespace :rubocop do
     diff_branch = ENV['DIFF_BRANCH'] || 'staging'
     cmd = %(git diff-tree -r --no-commit-id --diff-filter=M --name-only HEAD origin/#{diff_branch})
     diff = `#{cmd}`
+    diff.gsub!(/^(db\/|vendor\/|tmp\/|lib\/|test\/|bin\/|config\/|scripts\/|features\/)+\S+/, '')
     diff.split "\n"
   end
 
