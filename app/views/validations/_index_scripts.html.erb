@@ -1900,19 +1900,20 @@ jQuery(function($) {
             var reprocess_url = '<%=reprocess_certificate_order_path(@ssl_slug, @certificate_order)%>';
             window.location.href = reprocess_url;
             return false;
+          <%else%>
+            $(this).parent().css('background-color', 'white');
+            $(this).siblings().prop('disabled', true);
+
+            var domain_name = $(this).parent().next().text();
+            var inputElement = $('<input></input>');
+            inputElement.attr('value', domain_name);
+
+            $(this).parent().next().empty();
+            $(this).parent().next().append(inputElement);
+
+            $(this).attr('class', 'btn_save_domain');
+            $(this).attr('value', 'Save');
           <%end%>
-          $(this).parent().css('background-color', 'white');
-          $(this).siblings().prop('disabled', true);
-
-          var domain_name = $(this).parent().next().text();
-          var inputElement = $('<input></input>');
-          inputElement.attr('value', domain_name);
-
-          $(this).parent().next().empty();
-          $(this).parent().next().append(inputElement);
-
-          $(this).attr('class', 'btn_save_domain');
-          $(this).attr('value', 'Save');
         });
 
         // Click Save button per domain.
