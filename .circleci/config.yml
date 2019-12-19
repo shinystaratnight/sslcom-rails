@@ -85,10 +85,10 @@ jobs:
           name: Run Rails Application Tests
           command: bundle exec rake test
 
-      - run:
-          name: Eager load classes to check for issues
-          command: |
-              bundle exec rails runner 'Rails.application.eager_load!'
+      # - run:
+      #     name: Eager load classes to check for issues
+      #     command: |
+      #         bundle exec rails runner 'Rails.application.eager_load!'
 
       - store_artifacts:
           path: coverage
