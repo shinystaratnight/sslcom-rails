@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 namespace :rubocop do
   require 'rubocop/rake_task'
 
@@ -14,7 +15,7 @@ namespace :rubocop do
 
   def changed_files
     diff_branch = ENV['DIFF_BRANCH'] || 'staging'
-    cmd = %(git diff-tree -r --no-commit-id --name-only head origin/#{diff_branch})
+    cmd = %(git diff-tree -r --no-commit-id --name-only HEAD origin/#{diff_branch})
     diff = `#{cmd}`
     diff.split "\n"
   end
