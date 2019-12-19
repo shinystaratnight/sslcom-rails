@@ -28,9 +28,6 @@ Naming/PredicateName:
 Rails:
   Enabled: true
 
-Style/FormatStringToken:
-  Enabled: false
-
 Layout/HashAlignment:
   EnforcedHashRocketStyle:
     - key
@@ -91,3 +88,9 @@ Metrics/ModuleLength:
 Naming/FileName:
   Exclude:
     - lib/rubocop-rails.rb
+
+Style/FormatStringToken:
+  Enabled: false
+
+Style/Documentation:
+  Enabled: false
