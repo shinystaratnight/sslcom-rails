@@ -60,14 +60,14 @@ module Api
         render template: @template, status: :bad_request
       end
 
-      def render_500_error(e)
-        logger.error e.message
-        e.backtrace.each { |line| logger.error line }
+      def render_500_error(err)
+        logger.error err.message
+        err.backtrace.each { |line| logger.error line }
         error(500, 500, 'server error')
       end
 
       def set_access_control_headers
-        headers['Access-Control-Allow-Origin'] = '*' if Rails.env = 'development' # nginx handles this in production
+        headers['Access-Control-Allow-Origin'] = '*' if Rails.env.development? # nginx handles this in production
         headers['Access-Control-Allow-Methods'] = 'POST, PUT, DELETE, GET, OPTIONS'
         headers['Access-Control-Request-Method'] = '*'
         headers['Access-Control-Allow-Headers'] = 'Origin, X-Requested-With, Content-Type, Accept, Authorization'
