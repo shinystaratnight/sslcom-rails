@@ -92,6 +92,7 @@ GEM
       aws-sdk-core (= 2.11.326)
     aws-sigv4 (1.1.0)
       aws-eventstream (~> 1.0, >= 1.0.2)
+    bcrypt_pbkdf (1.0.1)
     better_errors (2.5.1)
       coderay (>= 1.0.0)
       erubi (>= 1.0.0)
@@ -220,6 +221,7 @@ GEM
     duo_web (1.0.0)
     dynamic_form (1.1.4)
     easy_roles (1.2.0)
+    ed25519 (1.2.4)
     encryptor (3.0.0)
     erubi (1.8.0)
     erubis (2.7.0)
@@ -579,6 +581,7 @@ DEPENDENCIES
   authy
   awesome_print
   aws-sdk (~> 2.0)
+  bcrypt_pbkdf (~> 1)
   better_errors
   binding_of_caller
   bootsnap
@@ -605,6 +608,7 @@ DEPENDENCIES
   duo_web (~> 1.0)
   dynamic_form
   easy_roles
+  ed25519 (~> 1.2)
   etc
   factory_bot_rails
   faker
