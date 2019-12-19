@@ -59,6 +59,9 @@ jobs:
               username: root
               host: 127.0.0.1
             ' > config/database.yml
+      - run:
+          name: Copy Settings File
+          command: cp config/client/certassure/settings.yml config/
 
       - run:
           name: Rubocop Linting
