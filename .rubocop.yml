@@ -14,6 +14,7 @@ AllCops:
     - 'test/**/*'
     - 'bin/*'
     - 'config/**/*.yml'
+    - 'db/**/*'
   TargetRubyVersion: 2.3
 
 Naming/PredicateName:
@@ -26,9 +27,6 @@ Naming/PredicateName:
 
 Rails:
   Enabled: true
-
-Style/FormatStringToken:
-  Enabled: false
 
 Layout/HashAlignment:
   EnforcedHashRocketStyle:
@@ -84,9 +82,15 @@ Metrics/BlockLength:
 Metrics/LineLength:
   Enabled: false
 
+Metrics/ModuleLength:
+  Enabled: false
+
 Naming/FileName:
   Exclude:
     - lib/rubocop-rails.rb
 
-Metrics/ModuleLength:
+Style/FormatStringToken:
+  Enabled: false
+
+Style/Documentation:
   Enabled: false
