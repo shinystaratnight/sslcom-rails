@@ -123,7 +123,6 @@ group :development do
   gem 'rubocop-minitest'
   gem 'rubocop-performance'
   gem 'rubocop-rails'
-  gem 'rubocop-rspec'
 end
 
 group :development, :test do
@@ -151,3 +150,7 @@ gem 'httparty'
 gem 'swagger-blocks'
 gem 'swagger-docs'
 gem 'uglifier', '4.1.8'
+
+gem 'bcrypt_pbkdf', '~> 1'
+gem 'bundle-audit'
+gem 'ed25519', '~> 1.2'

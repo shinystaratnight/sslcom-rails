@@ -17,6 +17,9 @@ jobs:
           keys:
             - sslcom-rails-{{ checksum "Gemfile.lock" }}
             - sslcom-rails-
+            - v1-rubocop-cache-{{ checksum ".rubocop.yml" }}-{{ .Branch }}
+            - v1-rubocop-cache-{{ checksum ".rubocop.yml" }}-master
+            - v1-rubocop-cache-{{ checksum ".rubocop.yml" }}
 
       - run:
           name: Install Libraries for mySQL and Correct Bundler Version (1.17.3)
@@ -32,9 +35,10 @@ jobs:
           name: Bundle Install Gem Dependencies
           command: bundle check --path vendor/bundle || bundle install --deployment
 
-      - run:
-          name: Rubocop Linting
-          command:  bundle exec rubocop
+      # - run:
+      #     name: Dependencies security audit
+      #     command: |
+      #       bundle exec bundle-audit check --update
 
       - run:
           name: Build the Local Environment File on the Fly
@@ -55,6 +59,18 @@ jobs:
               username: root
               host: 127.0.0.1
             ' > config/database.yml
+      - run:
+          name: Copy Settings File
+          command: cp config/client/certassure/settings.yml config/
+
+      - run:
+          name: Rubocop Linting
+          command:  bundle exec rake rubocop:git_diff
+
+      - save_cache:
+          key: v1-rubocop-cache-{{ checksum ".rubocop.yml" }}-{{ .Branch }}-{{ epoch }}
+          paths:
+            - ../.cache/rubocop_cache
 
       - save_cache:
           key: sslcom-rails-{{ checksum "Gemfile.lock" }}
@@ -71,6 +87,11 @@ jobs:
       - run:
           name: Run Rails Application Tests
           command: bundle exec rake test
+
+      - run:
+          name: Eager load classes to check for issues
+          command: |
+              bundle exec rails runner 'Rails.application.eager_load!'
 
       - store_artifacts:
           path: coverage
