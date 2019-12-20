@@ -38,11 +38,14 @@
     -unless @certificate_orders.empty?
       %tfoot
         %tr
-          %td.wrap_number_rows(colspan='2')
+          %td.wrap_number_rows(colspan='1')
             =select_tag :number_rows,
             options_for_select([[5, 5], [10, 10], [20, 20], [50, 50], [100, 100]], @per_page),
             :class=>'per_page'
+          %td.wrap_number_rows
+            = button_to 'Export to CSV', download_certificates_path(@certificate_orders.pluck(:id))
           %td(colspan='5')=pagination
+
     %caption
       SSL Certificates Management
       =pagination
@@ -140,4 +143,3 @@
           %i.fa.fa-clipboard
     #epki_activation_link_modal_footer.modal-footer
       = button_tag 'OK', :type => 'button', :class => 'btn btn-grey btn-activation-link-ok'
-
