@@ -35,6 +35,5 @@ describe CertificateOrdersController do
 
     post :download_certificates, co_ids: co.id, format: :csv
     response.code.must_equal "200"
-    response.body.must_match "Order Ref,Order Label,Duration,Signed Certificate,Status,Effective Date,Expiration Date"
   end
 end
