@@ -123,6 +123,7 @@ group :development do
   gem 'rubocop-minitest'
   gem 'rubocop-performance'
   gem 'rubocop-rails'
+  gem 'solargraph', require: false
 end
 
 group :development, :test do
