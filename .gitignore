@@ -29,6 +29,6 @@ app/assets/images/ui-bg_diagonals-thick_18_b81900_40x40.png
 coverage/
 coverage/*
 !/config/deploy.rb
-.idea/ssl_com_rails3.iml
-.idea/.rakeTasks
 node_modules
+sandbox_ssl_com.sql
+ubuntu-xenial-16.04-cloudimg-console.log
