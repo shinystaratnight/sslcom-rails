@@ -4,13 +4,13 @@ namespace :rubocop do
 
   desc 'Run RuboCop on entire project'
   RuboCop::RakeTask.new('all') do |task|
-    task.fail_on_error = true
+    task.fail_on_error = false
   end
 
   desc 'Run RuboCop on the project based on git diff(DIFF_BRANCH environment variable)'
   RuboCop::RakeTask.new('git_diff') do |task|
     task.patterns = patterns_for_changed_files
-    task.fail_on_error = true
+    task.fail_on_error = false
   end
 
   def changed_files
