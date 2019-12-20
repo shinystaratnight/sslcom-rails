@@ -2260,7 +2260,7 @@ class CertificateOrder < ApplicationRecord
   end
 
   def self.to_csv
-    columns = ["Order Ref", "Name", "Status", "Order Date", "Expiration Date"]
+    columns = ["Order Ref", "Order Label", "Duration", "Signed Certificate", "Status", "Effective Date", "Expiration Date"]
 
     CSV.generate(headers: true) do |csv|
       csv << columns
