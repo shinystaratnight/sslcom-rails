@@ -16,6 +16,7 @@ tmp/
 /.idea/workspace.xml
 .DS_Store
 /.idea/
+.idea/**/*
 /config/initializers/session_store.rb
 .env
 config/local_env.yml
@@ -25,6 +26,7 @@ config/deploy.rb
 *.png
 app/assets/images/ui-bg_diagonals-thick_18_b81900_40x40.png
 /.vagrant/
+.vagrant/**/*
 /.vagrant_bak/
 coverage/
 coverage/*
@@ -32,3 +34,18 @@ coverage/*
 .idea/ssl_com_rails3.iml
 .idea/.rakeTasks
 node_modules
+sandbox_ssl_com.sql
+ubuntu-xenial-16.04-cloudimg-console.log
+.idea/ssl_com_rails3.iml
+.idea/workspace.xml
+.vagrant/machines/default/virtualbox/action_provision
+.vagrant/machines/default/virtualbox/action_set_name
+.vagrant/machines/default/virtualbox/id
+.vagrant/machines/default/virtualbox/index_uuid
+.vagrant/machines/default/virtualbox/private_key
+.idea/ssl_com_rails3.iml
+.vagrant/machines/default/virtualbox/private_key
+.vagrant/machines/default/virtualbox/index_uuid
+.vagrant/machines/default/virtualbox/id
+.vagrant/machines/default/virtualbox/action_set_name
+.vagrant/machines/default/virtualbox/action_provision
