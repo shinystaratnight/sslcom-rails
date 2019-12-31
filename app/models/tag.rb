@@ -1,4 +1,4 @@
-class Tag < ActiveRecord::Base
+class Tag < ApplicationRecord
   belongs_to :ssl_account
   has_many :taggings, dependent: :destroy
   has_many :orders, through: :taggings, source: :taggable, source_type: 'Order'

@@ -37,7 +37,7 @@ module SslCom
     # Config::Integration::Rails::Railtie.preload
 
     # Add additional load paths for your own custom dirs
-    %w(observers mailers middleware serializers).each do |dir|
+    %w(observers mailers middleware serializers paths).each do |dir|
       config.autoload_paths << "#{config.root}/app/#{dir}"
     end
 
@@ -53,11 +53,11 @@ module SslCom
     config.time_zone = 'Central Time (US & Canada)'
 
     # The default locale is :en and all translations from config/locales/*.rb,yml are auto loaded.
-    # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}').to_s]
+    config.i18n.load_path += Dir[Rails.root.join('config', 'locales', '**', '*.{rb,yml}').to_s]
     # config.i18n.default_locale = :de
 
     # Configure the default encoding used in templates for Ruby 1.9.
-    config.encoding = "utf-8"
+    config.encoding = 'utf-8'
 
     # Configure sensitive parameters which will be filtered from the log file.
     config.filter_parameters += [:password, :password_confirmation]

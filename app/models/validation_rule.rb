@@ -1,6 +1,6 @@
 # The actual validation rule or requirement
 
-class ValidationRule < ActiveRecord::Base
+class ValidationRule < ApplicationRecord
   belongs_to  :parent, :foreign_key => :parent_id
   serialize   :applicable_validation_methods
   serialize   :required_validation_methods

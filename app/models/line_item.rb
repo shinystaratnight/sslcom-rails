@@ -1,4 +1,4 @@
-class LineItem < ActiveRecord::Base
+class LineItem < ApplicationRecord
   belongs_to  :order, touch: true
   belongs_to  :affiliate
   belongs_to  :sellable, :polymorphic => true

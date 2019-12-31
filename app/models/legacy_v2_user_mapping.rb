@@ -1,4 +1,4 @@
-class LegacyV2UserMapping < ActiveRecord::Base
+class LegacyV2UserMapping < ApplicationRecord
   belongs_to  :user_mappable, :polymorphic => true
 
   def customer

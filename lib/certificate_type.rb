@@ -97,7 +97,11 @@ module CertificateType
   end
 
   def is_naesb?
-    (self.is_a?(ApiCertificateRequest) ? target_certificate :  self).product.include?('naesb')
+    if self.is_a? SignedCertificate
+      !!(decoded.include?("NAESB"))
+    else
+      (self.is_a?(ApiCertificateRequest) ? target_certificate :  self).product.include?('naesb')
+    end
   end
 
   def is_client_basic?

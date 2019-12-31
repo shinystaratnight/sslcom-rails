@@ -1,2 +1,2 @@
-class Blocklist < ActiveRecord::Base
+class Blocklist < ApplicationRecord
 end

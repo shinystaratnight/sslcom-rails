@@ -1,0 +1,122 @@
+# This is the configuration used to check the rubocop source code.
+
+require:
+  - rubocop/cop/internal_affairs
+  - rubocop-performance
+  - rubocop-rails
+  - rubocop-minitest
+
+AllCops:
+  Exclude:
+    - 'vendor/**/*'
+    - 'tmp/**/*'
+    - 'lib/**/*'
+    - 'bin/*'
+    - 'config/**/*.yml'
+    - 'db/**/*'
+  TargetRubyVersion: 2.6
+
+Rails:
+  Enabled: true
+
+Style/FormatStringToken:
+  Enabled: false
+Style/Documentation:
+  Enabled: false
+Style/GuardClause:
+  Enabled: false
+Style/IfInsideElse:
+  Enabled: false
+Style/MultilineBlockChain:
+  Enabled: false
+Style/MultilineTernaryOperator:
+  Enabled: false
+Style/ClassVars:
+  Enabled: false
+Style/EvalWithLocation:
+  Enabled: false
+Style/StructInheritance:
+  Enabled: false
+
+Security/Eval:
+  Exclude:
+    - app/models/notification_group.rb
+
+Layout/HashAlignment:
+  EnforcedHashRocketStyle:
+    - key
+    - table
+  EnforcedColonStyle:
+    - key
+    - table
+
+Layout/EndOfLine:
+  EnforcedStyle: lf
+
+Layout/ClassStructure:
+  Enabled: true
+  Categories:
+    module_inclusion:
+      - include
+      - prepend
+      - extend
+  ExpectedOrder:
+      - module_inclusion
+      - constants
+      - public_class_methods
+      - initializer
+      - instance_methods
+      - protected_methods
+      - private_methods
+
+# Trailing white space is meaningful in code examples
+Layout/TrailingWhitespace:
+  AllowInHeredoc: true
+
+Layout/SpaceBeforeBlockBraces:
+  Enabled: false
+
+Lint/AmbiguousBlockAssociation:
+  Enabled: true
+Lint/InterpolationCheck:
+  Enabled: true
+Lint/UselessAccessModifier:
+  MethodCreatingMethods:
+    - 'def_matcher'
+    - 'def_node_matcher'
+Lint/BooleanSymbol:
+  Enabled: false
+Lint/IneffectiveAccessModifier:
+  Exclude:
+    - app/models/product_order.rb
+Lint/Void:
+  Exclude:
+    - config/deploy.rb
+    - app/models/product_order.rb
+Lint/EmptyWhen:
+  Exclude:
+    - app/models/product_order.rb
+
+Metrics:
+  Enabled: false
+
+Rails/Output:
+  Enabled: false
+Rails/HasAndBelongsToMany:
+  Enabled: false
+Rails/RelativeDateConstant:
+  Enabled: false
+Rails/SkipsModelValidations:
+  Enabled: false
+
+Metrics/ModuleLength:
+  Enabled: false
+
+Naming/FileName:
+  Exclude:
+    - lib/rubocop-rails.rb
+
+Naming/MethodParameterName:
+  Enabled: false
+Naming/PredicateName:
+  Enabled: false

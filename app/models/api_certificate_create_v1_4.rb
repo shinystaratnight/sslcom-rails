@@ -42,7 +42,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
       {in: ServerSoftware.pluck(:id).map(&:to_s),
       message: "needs to be one of the following: #{ServerSoftware.pluck(:id).map(&:to_s).join(', ')}"},
             if: lambda{|c|c.is_server? && c.csr && Settings.require_server_software_w_csr_submit}
-  validates :organization_name, presence: true, if: lambda{|c|c.csr && (!c.is_dv? && c.csr_obj.organization.blank?)}
+  validates :organization, presence: true, if: lambda{|c|c.csr && (!c.is_dv? && c.csr_obj.organization.blank?)}
   validates :post_office_box, presence: {message: "is required if street_address_1 is not specified"},
             if: lambda{|c|!c.is_dv? && c.street_address_1.blank? && c.csr} #|| c.parsed_field("POST_OFFICE_BOX").blank?}
   validates :street_address_1, presence: {message: "is required if post_office_box is not specified"},
@@ -50,10 +50,10 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   validates :locality_name, presence: true, if: lambda{|c|c.csr && (!c.is_dv? && c.csr_obj.locality.blank?)}
   validates :state_or_province_name, presence: true, if: lambda{|c|csr && (!c.is_dv? && c.csr_obj.state.blank?)}
   validates :postal_code, presence: true, if: lambda{|c|c.csr && !c.is_dv?} #|| c.parsed_field("POSTAL_CODE").blank?}
-  validates :country_name, presence: true, inclusion:
+  validates :country, presence: true, inclusion:
       {in: Country.accepted_countries, message: "needs to be one of the following: #{Country.accepted_countries.join(', ')}"},
       if: lambda{|c| c.csr && c.csr_obj && c.csr_obj.country.try("blank?")}
-  #validates :registered_country_name, :incorporation_date, if: lambda{|c|c.is_ev?}
+  #validates :registered_country, :incorporation_date, if: lambda{|c|c.is_ev?}
   validates :dcv_method, inclusion: {in: ApiCertificateCreate::DCV_METHODS,
       message: "needs to one of the following: #{DCV_METHODS.join(', ')}"}, if: lambda{|c|c.dcv_method}
   validates :contact_email_address, email: true, unless: lambda{|c|c.contact_email_address.blank?}
@@ -62,7 +62,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   validates :unique_value, format: {with: /[a-zA-Z0-9]{1,20}/}, unless: lambda{|c|c.unique_value.blank?}
   # use code instead of serial allows attribute changes without affecting the cert name
   validate :verify_dcv, on: :create, if: "!domains.blank?"
-  # validate :validate_contacts, if: "api_requestable && api_requestable.reseller.blank? && !csr.blank?"
+  validate :validate_contacts, unless: lambda{|c|c.contacts.blank?}
   validate :validate_callback, unless: lambda{|c|c.callback.blank?}
   validate :renewal_exists, if: lambda{|c|c.renewal_id}
 
@@ -131,7 +131,8 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
               certificate_order: @certificate_order,
               certificate_content: certificate_content,
               ssl_account: api_requestable,
-              contacts: self.contacts) if csr
+              contacts: self.contacts,
+              certificate: certificate) if csr
 
           if is_attestation_processing?
             create_attestation_certificate(
@@ -260,23 +261,6 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
       #assume updating domain validation, already sent to comodo
       if @certificate_order.certificate_content && @certificate_order.certificate_content.pending_validation? &&
           (@certificate_order.external_order_number || !@certificate_order.certificate_content.ca.blank?)
-        #set domains
-
-        # if @certificate_order.certificate.is_basic? || @certificate_order.certificate.is_free? || @certificate_order.certificate.is_high_assurance?
-        #   cnames = @certificate_order.certificate_content.domains
-        #   domain_strs = []
-        #   self.domains.keys.each do |key|
-        #     domain_strs << key unless domain_strs.include? key
-        #
-        #     if !key.include?('www.') && cnames.include?('www.' + key)
-        #       domain_strs << ('www.' + key)
-        #     end
-        #   end
-        #   @certificate_order.certificate_content.update_attribute(:domains, domain_strs)
-        # else
-        #   @certificate_order.certificate_content.update_attribute(:domains, self.domains.keys)
-        # end
-
         @certificate_order.certificate_content.update_attribute(:domains, self.domains.keys)
         @certificate_order.certificate_content.dcv_domains({domains: self.domains, emails: self.dcv_candidate_addresses})
 
@@ -295,14 +279,14 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
       #     end
       #   end
       else
-        if self.csr_obj
+        if self.csr_obj # was a csr submitted?
           certificate_content = @certificate_order.certificate_contents.build
           csr = self.csr_obj
           csr.save
           certificate_content.csr = csr
           certificate_content.server_software_id = server_software
-          certificate_content.submit_csr!
           certificate_content.domains = domains.keys unless domains.blank?
+          certificate_content.submit_csr!
           if errors.blank?
             if certificate_content.save
               setup_certificate_content(
@@ -382,10 +366,10 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
     cc.registrant.destroy unless cc.registrant.blank?
     cc.add_ca(options[:certificate_order].ssl_account) if options[:certificate_order].external_order_number.blank?
     cc.create_registrant(
-        company_name: (self.organization_name.force_encoding("ISO-8859-1").encode("UTF-8") unless
-            self.organization_name.nil?),
-        department: (self.organization_unit_name.force_encoding("ISO-8859-1").encode("UTF-8") unless
-            self.organization_unit_name.nil?),
+        company_name: (self.organization.force_encoding("ISO-8859-1").encode("UTF-8") unless
+            self.organization.nil?),
+        department: (self.organization_unit.force_encoding("ISO-8859-1").encode("UTF-8") unless
+            self.organization_unit.nil?),
         po_box: (self.post_office_box.force_encoding("ISO-8859-1").encode("UTF-8") unless self.post_office_box.nil?),
         address1: (self.street_address_1.force_encoding("ISO-8859-1").encode("UTF-8") unless
             self.street_address_1.nil?),
@@ -397,7 +381,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
         state: (self.state_or_province_name.force_encoding("ISO-8859-1").encode("UTF-8") unless
             self.state_or_province_name.nil?),
         postal_code: (self.postal_code.force_encoding("ISO-8859-1").encode("UTF-8") unless self.postal_code.nil?),
-        country: self.country_name || csr_obj.country)
+        country: self.country || csr_obj.country)
     if cc.csr_submitted?
       cc.provide_info!
       if Contact.optional_contacts? && contacts && contacts[:saved_contacts]
@@ -636,8 +620,8 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
     if id
       found = self.api_requestable.saved_registrants.find_by(id: id.to_i)
       if found
-        self.organization_name = found.company_name
-        self.organization_unit_name = found.department
+        self.organization = found.company_name
+        self.organization_unit = found.department
         self.post_office_box = found.po_box
         self.street_address_1 = found.address1
         self.street_address_2 = found.address2
@@ -645,7 +629,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
         self.locality_name = found.city
         self.state_or_province_name = found.state
         self.postal_code = found.postal_code
-        self.country_name = found.country
+        self.country = found.country
       else
         errors[:saved_registrant].push(id: "Registrant with id=#{id} does not exist.")
       end

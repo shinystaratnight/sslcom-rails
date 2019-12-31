@@ -1,4 +1,4 @@
-class SiteSeal < ActiveRecord::Base
+class SiteSeal < ApplicationRecord
   #using_access_control
   has_many  :certificate_orders, -> { unscope(where: [:workflow_state, :is_expired]) }
   has_many  :validations, through: :certificate_orders

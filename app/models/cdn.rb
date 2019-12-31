@@ -1,4 +1,4 @@
-class Cdn < ActiveRecord::Base
+class Cdn < ApplicationRecord
   belongs_to :ssl_account
   belongs_to :certificate_order
 

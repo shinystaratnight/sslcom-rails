@@ -1,6 +1,6 @@
 # This represents a purchased instance of Product
 
-class ProductOrder < ActiveRecord::Base
+class ProductOrder < ApplicationRecord
   acts_as_sellable :cents => :amount, :currency => false
   belongs_to  :ssl_account
   belongs_to  :product
@@ -529,8 +529,8 @@ class ProductOrder < ActiveRecord::Base
     cc = certificate_content
     r = cc.registrant
     registrant_params = r.blank? ? {} :
-        {organization_name: r.company_name,
-         organization_unit_name: r.department,
+        {organization: r.company_name,
+         organization_unit: r.department,
          post_office_box: r.po_box,
          street_address_1: r.address1,
          street_address_2: r.address2,

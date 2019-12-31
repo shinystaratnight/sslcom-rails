@@ -1,6 +1,6 @@
 require 'public_suffix'
 
-class DomainControlValidation < ActiveRecord::Base
+class DomainControlValidation < ApplicationRecord
   has_many    :ca_dcv_requests, as: :api_requestable, dependent: :destroy
   belongs_to  :csr, touch: true # only for single domain certs
   belongs_to  :csr_unique_value
@@ -24,6 +24,11 @@ class DomainControlValidation < ActiveRecord::Base
   scope :global, -> {where{(certificate_name_id==nil) & (csr_id==nil)}}
   scope :whois_threshold, -> {where(updated_at: 1.hour.ago..DateTime.now)}
   scope :satisfied, -> {where(workflow_state: "satisfied")}
+
+  after_initialize do
+    # TODO: search for DomainControlValidation.generate_identifier and DRY the blocks up
+    self.identifier ||= DomainControlValidation.generate_identifier
+  end
 
   include Workflow
   workflow do
@@ -64,11 +69,16 @@ class DomainControlValidation < ActiveRecord::Base
     end
   end
 
+  def self.generate_identifier
+    (SecureRandom.hex(8)+Time.now.to_i.to_s(32))[0..19]
+  end
+
   def email_address_check
     errors.add(:email_address, "'#{email_address}' "+IS_INVALID) unless
         DomainControlValidation.approved_email_address? candidate_addresses, email_address
   end
 
+  # use for notifying comodo order customers a dcv is on the way from Comodo
   def send_to(address)
     update_attributes email_address: address, sent_at: DateTime.now, dcv_method: "email"
     if csr.sent_success

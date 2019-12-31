@@ -1,4 +1,4 @@
-class DuoAccount < ActiveRecord::Base
+class DuoAccount < ApplicationRecord
   belongs_to :ssl_account
 
   validates :duo_akey, length: { minimum: 40 }

@@ -1,2 +1,2 @@
-class ReminderTrigger < ActiveRecord::Base
+class ReminderTrigger < ApplicationRecord
 end

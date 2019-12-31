@@ -27,7 +27,7 @@ class ApplicationController < ActionController::Base
   after_filter :set_access_control_headers#need to move parse_csr to api, if: "request.subdomain=='sws' || request.subdomain=='sws-test'"
 
   def set_access_control_headers
-    headers['Access-Control-Allow-Origin'] = '*'
+    headers['Access-Control-Allow-Origin'] = '*' if Rails.env="development" # nginx handles this in production
     headers['Access-Control-Allow-Methods'] = 'POST, PUT, DELETE, GET, OPTIONS'
     headers['Access-Control-Request-Method'] = '*'
     headers['Access-Control-Allow-Headers'] = 'Origin, X-Requested-With, Content-Type, Accept, Authorization'
@@ -146,7 +146,7 @@ class ApplicationController < ActionController::Base
       if pr.blank?
         nil
       else
-        ActiveRecord::Base.find_from_model_and_id(pr)
+        ApplicationRecord.find_from_model_and_id(pr)
       end
     }.compact
   end

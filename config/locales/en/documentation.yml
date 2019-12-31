@@ -1,0 +1,392 @@
+# Sample localization file for English. Add more files in this directory for other locales.
+# See http://github.com/svenfuchs/rails-i18n/tree/master/rails%2Flocale for starting points.
+
+en:
+  documentation:
+    title:
+      SSL.com Developer API
+    introduction: >
+      <p>
+        SSL.com <b>SSL Web Services (SWS) API</b> is a ssl pki management service that allows life-cycle management of ssl certificates. Please refer to <a href='https://www.ssl.com/guide/ssl-coms-sws-api-introduction/'>the guide</a> for more details.
+      </p>
+      <p>
+        To get pregenerated API cURL commands for an individual order, try appending /developer at the end of that certificate order page (ie <code>https://www.ssl.com/certificate_orders/co-1234xyz/developer</code>).
+      </p>
+      <p>
+        <b>Security:</b> Most request require that <code>account_key</code> and <code>secret_key</code> be sent. You can set these values using the  on the Authorize &#x1f512; link below.
+      </p>
+    create_certificate_description:
+      <p><b>Create an ssl.com certificate order (or voucher code). Upon successful api call, the price (if any) of the ssl certificate will be deducted from reseller account associated with the account number specified in the account_key. Voucher codes are used to purchase a certificate without having to submit a csr right away. This is useful for host providers, enterprise environments, or any situation where buying the certificate and installing it do not necessarily happen at the same time. A voucher code can be created by simply only specifying the product type and duration.</b></p>
+    certificate_tag_description:
+      Certificate Operations
+    csr_example:
+      -----BEGIN CERTIFICATE REQUEST-----<br>MIICvTCCAaUCAQAweDELMAkGA1UEBhMCdXMxDjAMBgNVBAgTBVRleGFzMRAwDgYDnVQQHEwdIb3VzdG9uMRUwEwYDVQQKEwxZb3VyIENvbXBhbnkxFTATBgNVBAsTDFlvndXIgSVQgRGVwdDEZMBcGA1UEAxMQd3d3LnlvdXJzaXRlLmNvbTCCASIwDQYJKoZInhvcNAQEBBQADggEPADCCAQoCggEBAKWnrKf35qmU/tBnieUc<br>Qmf0xhntGO2YDgAOnW9J44IAhC1IB715312J28WvoLSSZDuBxqMaLgBbcNyrR<br>FkwbZ+sRbLsjJ24v21DtnLE2gMSbr9YSuH0McOBh9sf23tHd2n5rteJn5fVux<br>c6ak3t9mag2jjD43Blyh3ih7nADPj0XAk0Gfn+obfmKPMpZwYEhXnJNtWKHzf<br>lzAjUjaxbMwMIrvgZcvk/BZZ184znYquasNmvJotvptP0RF3J0GhuiYg75Bgi<br>mMq3YFxFjAnYjRRZ7p8z/DEfTkdZOPHGnypaz4ny+l8lggyvMOgZD7yanGuVx<br>zlBhpB90INXVDX9+yQ23XHECAwEAAaAAMA0GnCSqGSIb3DQEBBQUAA4IBAQAw<br>bFXORWmD9ovp4qsxozzUZAKxUTluiTIsO+bK2pXVnHAhxVkzcVi8nFqzkeAuK<br>RTQ9UZPMjnnjHWOKIghIpiAabSiC0E/0SPR9s3QzJWhVnOfOpoKYoRnDUh+/S<br>H/Otg4Wid7yKOfdPFK4J8GtnPB2i5Eih0ZOYTTIU2xSmkZ9Tn+LoB7PxOVii8<br>Dq5Nrbbzq8x/WpJfKTackp6nWl2ILcfXM3iGBmLqXPRn5/Uvj767nrq5mHXD2<br>IakxBAeTci16WqQEVcow3qn1JwLyGOzXuuW/UA2/HJUE4zG+8CQIb3OLn0Yq2<br>6QKt/i5CJv//uZcRZY8VRkPaH090QOr85UfP7Y3Dn<br>-----END CERTIFICATE REQUEST-----
+    domains_example:
+      {"www.mysite.com" : {"dcv" : "admin@mysite.com"}}
+    organization_example:
+      SSL Corp
+    organization_unit_example:
+      IT Security
+    street_address_1_example:
+      3100 Richmond Avenue
+    street_address_2_example:
+      Suite 301
+    street_address_3_example:
+      Engineering Department
+    joi_example:
+      {"joi" : {"locality" : "Houston", "state_or_province" : "Texas", "country" : "US", "incorporation_date" : "2002-06-01"}, "assumed_name" : "SSL.com", "business_category" : "b"}
+    callback_example:
+      {"url":"https://www.domain.com/receive_certificate.asp","method":"post","auth":{"basic":{"username":"your_username","password":"your_password"}},"parameters":{"certificate_hook":"cert","custom_attribute":"any_value","another_custom":"any_value","etc":"etc"}}
+    contacts_example:
+      {"all":{"first_name":"Joe","last_name":"Bob","email":"jbob@domain.com","phone":"+123456789","country":"US"}}
+    app_req_example:
+      {"first_name": "Joe", "last_name": "Bob", "email_address": "bob@mysite.com", "phone_number": "111-111-1111", "title": "owner", "country": "US", "callback_method": "t"}
+    payment_method_example:
+      {"payment":{"credit_card":{"first_name":"Bob","last_name":"Smith","number":"370000000000002", "expires": "0119","cvv": "007", "postal_code":"77098","country":"US"}}}
+    account_key_description:
+      <b>The SWS account key of the reseller account.<br>Example&#58;</b> <code>4980a361</code>
+    secret_key_description:
+      <b>The SWW secret key of the reseller account.<br>Example&#58;</b> <code>csr/ceZvPQ==</code>
+    product_param_description: >
+      <b>The product code of the ssl certificate being purchased. Select only one code from the following choices: </b>
+      <ul>
+        <li><code>100</code> EV UCC SSL</li>
+        <li><code>101</code> UCC SSL</li>
+        <li><code>102</code> EV SSL</li>
+        <li><code>103</code> High Assurance SSL</li>
+        <li><code>104</code> Free SSL</li>
+        <li><code>105</code> Wildcard SSL</li>
+        <li><code>106</code> Basic SSL</li>
+        <li><code>107</code> Premium SSL</li>
+        <li><code>300</code> Personal Basic</li>
+        <li><code>301</code> Person Pro</li>
+        <li><code>302</code> Personal Business</li>
+        <li><code>303</code> Personal Enterprise</li>
+        <li><code>310</code> NAESB Basic</li>
+        <li><code>350</code> Code Signing</li>
+        <li><code>360</code> EV Code Signing</li>
+      </ul>
+    period_param_description: >
+      <b>The number of days the certificate is valid for.</b><br>
+      Depending on what is specified by the product key, different options are available:<br>
+      365 or 730 for EV SSL certs<br>
+      30 or 90 for Free Trial SSL certs<br>
+      365, 730, 1095, 1461, or 1826 for all others<br>
+    unique_value_param_description:
+      <b>An alphanumeric string that ensures the uniqueness of the request. If you do not supply a unique value, one will be generated for you (SSL.com uses a random 10-digit hexadecimal number for this purpose). Specifying a unique value in this way is useful if you want to generate DCV files or CNAME entries outside of SSL.com’s user portal. Must be unique to each CSR and domains combination. Ignored if no CSR is in the request.</b>
+    csr_param_description: >
+      <p>
+        <b>Certificate signing request (Base-64 encoded). If the csr is not provided, then an order voucher will be created instead which can be used at a later time. The voucher code will be returned as result</b>
+      </p>
+      <p>
+        <b>Example&#58;</b>
+      </p>
+      <code>
+        -----BEGIN CERTIFICATE REQUEST-----
+        MIICvTCCAaUCAQAweDELMAkGA1UEBhMCdXMxDjAMBgNVBAgTBVRleGFzMRAw
+        DgYDnVQQHEwdIb3VzdG9uMRUwEwYDVQQKEwxZb3VyIENvbXBhbnkxFTATBgNV
+        BAsTDFlvndXIgSVQgRGVwdDEZMBcGA1UEAxMQd3d3LnlvdXJzaXRlLmNvbTCC
+        ASIwDQYJKoZInhvcNAQEBBQADggEPADCCAQoCggEBAKWnrKf35qmU/tBnieUc
+        Qmf0xhntGO2YDgAOnW9J44IAhC1IB715312J28WvoLSSZDuBxqMaLgBbcNyrR
+        FkwbZ+sRbLsjJ24v21DtnLE2gMSbr9YSuH0McOBh9sf23tHd2n5rteJn5fVuxc
+        6ak3t9mag2jjD43Blyh3ih7nADPj0XAk0Gfn+obfmKPMpZwYEhXnJNtWKHzflz
+        AjUjaxbMwMIrvgZcvk/BZZ184znYquasNmvJotvptP0RF3J0GhuiYg75BgimMq
+        3YFxFjAnYjRRZ7p8z/DEfTkdZOPHGnypaz4ny+l8lggyvMOgZD7yanGuVxzlBh
+        pB90INXVDX9+yQ23XHECAwEAAaAAMA0GnCSqGSIb3DQEBBQUAA4IBAQAwbFXOR
+        WmD9ovp4qsxozzUZAKxUTluiTIsO+bK2pXVnHAhxVkzcVi8nFqzkeAuKRTQ9UZ
+        PMjnnjHWOKIghIpiAabSiC0E/0SPR9s3QzJWhVnOfOpoKYoRnDUh+/SH/Otg4W
+        id7yKOfdPFK4J8GtnPB2i5Eih0ZOYTTIU2xSmkZ9Tn+LoB7PxOVii8Dq5Nrbbz
+        q8x/WpJfKTackp6nWl2ILcfXM3iGBmLqXPRn5/Uvj767nrq5mHXD2IakxBAeTc
+        i16WqQEVcow3qn1JwLyGOzXuuW/UA2/HJUE4zG+8CQIb3OLn0Yq26QKt/i5CJv
+        //uZcRZY8VRkPaH090QOr85UfP7Y3Dn
+        -----END CERTIFICATE REQUEST-----
+      </code>
+    login_param_description:
+      <b>login used when signing in</b>
+    email_param_description:
+      <b>email address associated with the new user</b>
+    password_param_description:
+      <b>password the user signs in with</b>
+    start_param_description:
+      'Beginning of date range when the certificate orders were created. Example&#58; 01-31-2012'
+    end_param_description:
+      'Ending of date range when the certificate orders were created. If not specified then defaults to now. Example&#58; 04-30-2015'
+    filter_param_description:
+      'Filter the result set. Currently vouchers is supported and only returns unused available certificate order credits. If this parameter is not specified all certificate orders are returned. Example&#58; vouchers'
+    search_param_description:
+      Advanced search by criteria such as product, expiration, certificate fields, etc
+    fields_param_description:
+      Return only the requested fields
+    server_software_description: >
+      <b>The server software which the ssl certificate is to be installed on. This is ignored if the csr parameter is not included</b>
+       <code>1</code>OTHER
+       <code>2</code>AOL
+       <code>3</code>Apache-ModSSL
+       <code>4</code>Apache-SSL (Ben-SSL, not Stronghold)
+       <code>5</code>C2Net Stronghold
+       <code>6</code>Cisco 3000 Series VPN Concentrator
+       <code>7</code>Citrix
+       <code>8</code>Cobalt Raq
+       <code>9</code>Covalent Server Software
+       <code>10</code> Ensim
+       <code>11</code> HSphere
+       <code>12</code> IBM HTTP Server
+       <code>13</code> IBM Internet Connection Server
+       <code>14</code> iPlanet
+       <code>15</code> Java Web Server (Javasoft / Sun)
+       <code>16</code> Lotus Domino
+       <code>17</code> Lotus Domino Go!
+       <code>18</code> Microsoft IIS 1.x to 4.x
+       <code>19</code> Microsoft IIS 5.x to 6.x
+       <code>20</code> Microsoft IIS 7.x and later
+       <code>21</code> Netscape Enterprise Server
+       <code>22</code> Netscape FastTrack
+       <code>23</code> Novell Web Server
+       <code>24</code> Oracle
+       <code>25</code> Plesk
+       <code>26</code> Quid Pro Quo
+       <code>27</code> R3 SSL Server
+       <code>28</code> Raven SSL
+       <code>29</code> RedHat Linux
+       <code>30</code> SAP Web Application Server
+       <code>31</code> Tomcat
+       <code>32</code> Website Professional
+       <code>33</code> WebStar 4.x and later34 WebTen (from Tenon)
+       <code>35</code> WHM/CPanel
+       <code>36</code> Zeus Web Server
+       <code>37</code> Nginx
+       <code>38</code> Heroku
+       <code>39</code> Amazon Load Balancer
+    domains_param_description: >
+      <b>Domains to be included in the certificate. These values override those listed in the csr. If domains is not specified, the domains for the certificate order will be extracted from the certificate signing request (csr). If you want to use some or all of the domains encoded in the csr along with some additional domains, then you must list all domains in this parameter. The first domain listed in the hash is by default listed in the CN field and the other domains will be listed in the SAN field. Multiple domains can only be listed for the following products&#58; 100, 102, 107. Other product types will only use the first domain and ignore the other domains.</b><br><br>
+      <b>Example (when csr is specified)</b><br>
+      <code>{"domains"&#58; {"www.mysite.com"&#58; {"dcv"&#58; "admin@mysite.com"}}, "mail.domain.io"&#58; {"dcv&#58; "HTTP_CSR_HASH"}}}<br></code>
+      <b>Example (when csr is not specified)</b><br>
+      <code>{"domains"&#58; ["www.mysite.com","*.test.com","mail.yoursite.com"]}</code>
+    organization_param_description: >
+      <b>Sets the Organization (O) field of the ssl certificate to this value. Ignored for DV certificates.<br>Overrides the (O) value in the csr if csr is specified.<br>
+      Example&#58;</b> SLL Corp
+    organization_unit_param_description: >
+      <b>Sets the Organization Unit (OU) (eg department name). Ignored for DV certificates.<br>Overrides the (OU) value in the csr if csr is specified.
+      <br>Example&#58;</b> IT Security.
+    post_office_box_param_description:
+      <b>Sets the Post Office Box</b>
+    street_address_1_param_description:
+      <b>Sets the Street Address 1</b>
+    street_address_2_param_description:
+      <b>Sets the Street Address 2</b>
+    street_address_3_param_description:
+      <b>Sets the Street Address 3</b>
+    locality_param_description:
+      <b>Set the Locality (eg city or town name). Ignored for DV certificates. <br>Overrides value extracted from the csr.</br>Example&#58;</b> Houston.
+    state_or_providence_param_description:
+      <b>Sets the State or Province. Ignored for DV certificates. <br>Overrides value extracted from the csr.</br>Example&#58;</b> <code>Texas</code>
+    postal_code_param_description:
+      <b>Sets the Postal Code. Ignored for DV certificates. <br>Overrides value extracted from the csr.<br>Example&#58;</b> <code>77098</code>
+    country_param_description:
+      <b>Sets the Country (C) field (ISO3166 2-character country code). <br>Overrides value extracted from the csr.<br>Example&#58; </b><code>US</code>
+    duns_number_param_description:
+      <b>Provide the Dun and Bradstreet number which helps validate OV and EV certificates. Ignored for DV certificates. <br>Overrides value extracted from the csr</b>
+    company_number_params_description:
+      <b>Provide the the company registration number which helps validate OV and EV certificates. Ignored for DV certificates. <br>Overrides value extracted from the csr</b>
+    joi_param_description: >
+      <b>Jurisdiction of Incorporation. Only for EV certificates.</b><br>
+      <ul>
+        <li><code>locality</code> The City or Town (if any) in which the company is incorporated or registered.</li>
+        <li><code>state_or_province</code> The State or Province (if any) in which the company is incorporated or registered.</li>
+        <li><code>country</code> The Country in which the company is incorporated or registered.</li>
+        <li><code>incorporation_date</code> The date of incorporation (YYYY-MM-DD) of the company. This is useful information for Validation purposes</li>
+        <li><code>assumed_name</code> The d/b/a (does business as) name (if any) for the company.</li>
+        <li>
+          <code>business_category</code> Business Category (see Clause 5 of the EV Guidelines V1.0). Valid values are:
+          <ul>
+            <li><code>b</code> Private Organization</li>
+            <li><code>c</code> Government Entity</li>
+            <li><code>c</code> Government Entity</li>
+          </ul>
+        </li>
+      </ul>
+      <p>
+        <b>Example&#58; </b>
+      </p>
+      <code>{"joi"&#58; {"locality"&#58; "Houston", "state_or_province"&#58; "Texas", "country"&#58; "US", "incorporation_date"&#58; "2002-06-01"}, "assumed_name"&#58; "SSL.com", "business_category"&#58; "b"}</code><br>
+    ca_certificate_id_param_description:
+      <b>If specified, this overrides SSL.com’s default choice of CA certificate/key to be used to issue this certificate. This functionality is only available by special agreement with SSL.com.</b>
+    external_order_number_param_description:
+      <b>This identifier is provided for integration with partner systems. If the external system has a record or identifier that needs to associate with this particular ssl certificate order, then the developer provides an external order number or identifier so that the developer can make the association.</b>
+    hide_certificate_reference_description: >
+      <b>Hide the certificate reference number in the emailed ssl certificate. By default, the ssl certificate reference number is displayed in the email.</b>
+      <ul>
+        <li><code>y</code> hide the certificate reference number in the emailed ssl certificate</li>
+        <li><code>n</code> default; show the certificate reference number in the emailed ssl certificate</li>
+      </ul>
+    callback_param_description: >
+      <b>This is the callback SSL.com will make once the certificate is issued and ready for collection. The url is "called" via the method (post or get). </b><br>
+      <ul>
+        <li>url (required, string) The url (must use https) that SSL.com will call to notify that the certificate is issued and ready.</li>
+        <li>method (required, string) The HTTP method used in the url callback. Valid values are:
+          <ul>
+            <li><code>get</code> Can only be notified of the certificate issuance status via the status_hook parameter (see below)</li>
+            <li><code>post</code> Can receive the certificate chain via the certificate_hook parameter (see below)</li>
+          </ul>
+        </li>
+      </ul>
+    contacts_param_description: >
+      <b>Required only if csr is specified, otherwise contacts will be ignored. Contacts with administrative, billing, technical, validation or all roles. Specify one for each (total of 4): [administrative, billing, technical, validation]. You can also specify one with role all which will used as the default contact in place of one or more of the previous contact roles if they are not specified.</b>
+      <ul style="list-style: none;">
+        <li><code>first_name</code>Required</li>
+        <li><code>last_name</code>Required</li>
+        <li><code>email</code>Required</li>
+        <li><code>phone</code>Required</li>
+        <li><code>title</code></li>
+        <li><code>ext</code></li>
+        <li><code>fax</code></li>
+        <li><code>organization</code></li>
+        <li><code>organization_unit</code></li>
+        <li><code>street_address_1</code></li>
+        <li><code>street_address_2</code></li>
+        <li><code>street_address3</code></li>
+        <li><code>post_office_box</code></li>
+        <li><code>locality</code></li>
+        <li><code>state_or_province</code></li>
+        <li><code>postal_code</code></li>
+        <li><code>country</code>Applicant Representative's country code (ISO3166 2-character country code)</li>
+      </ul>
+      <p><b>Example&#58;</b></p>
+      <code>"contacts"&#58;{"all"&#58;{"first_name"&#58;"Joe","last_name"&#58;"Bob","email"&#58;"jbob@domain.com","phone"&#58;"+123456789","country"&#58;"US"}}</code>
+    app_req_param_description: >
+      <p><b>Applicant Representative used for callback. Only for OV certificates. All values are optional.</b></p>
+      <ul>
+        <li><code>first_name</code></li>
+        <li><code>last_name</code></li>
+        <li><code>email_address</code></li>
+        <li><code>phone_number</code></li>
+        <li><code>title</code></li>
+        <li><code>fax</code></li>
+        <li><code>organization</code></li>
+        <li><code>organization_unit</code></li>
+        <li><code>street_address_1</code></li>
+        <li><code>street_address_2</code></li>
+        <li><code>street_address_3</code></li>
+        <li><code>post_office_box</code></li>
+        <li><code>locality</code></li>
+        <li><code>state_or_province</code></li>
+        <li><code>postal_code</code></li>
+        <li><code>country</code>Applicant Representative's country code (ISO3166 2-character country code)</li>
+        <li>
+          <code>callback_method</code>Applicant Representative's country code (ISO3166 2-character country code)
+          <ul>
+            <li><code>t</code>The phone_number will be called to communicate a callback verification code which will be used to confirm the identity of the Applicant Representative</li>
+            <li><code>l</code>A letter, containing a callback verification code, will be sent via snail mail to the Applicant Representative</li>
+          </ul>
+        </li>
+      </ul>
+      <p><b>Example&#58;</b></p>
+      <code>
+        {"first_name"&#58; "Joe",
+          "last_name"&#58; "Bob",
+          "email_address"&#58; "bob@mysite.com",
+          "phone_number"&#58; "111-111-1111",
+          "title"&#58; "owner",
+          "country"&#58; "US",
+          "callback_method"&#58; "t"}
+      </code>
+    payment_method_param_description:
+      <p><b>Applications Chosen Method of Payment</b></p>
+      <ul>
+        <li>
+          <code>credit_card</code>
+          <ul>
+            <li><code>first_name</code>Required</li>
+            <li><code>last_name</code>Required</li>
+            <li><code>number</code>Required</li>
+            <li><code>expires</code>Required</li>
+            <li><code>cvv</code>Required</li>
+            <li><code>postal_code</code>Required</li>
+            <li><code>street_address_1</code></li>
+            <li><code>street_address_2</code></li>
+            <li><code>street_address_3</code></li>
+            <li><code>post_office_box</code></li>
+            <li><code>locality</code></li>
+            <li><code>state_or_province</code></li>
+            <li><code>country</code>Applicant Representative's country code (ISO3166 2-character country code)</li>
+          </ul>
+        </li>
+      </ul>
+      <p><b>Example&#58;</b></p>
+      <code>
+          {"credit_card"&#58; {"first_name"&#58; "Bob",
+            "last_name"&#58; "Smith",
+            "number"&#58; "370000000000002",
+            "expires"&#58; "0119",
+            "cvv"&#58; "007",
+            "postal_code"&#58; "77098",
+            "country"&#58; "US"}}
+      </code>
+    certificate_order_description: >
+      <p>Use this call to process a voucher, rekey an existing certificate order, or change the validation method(s).</p>
+      <p>To process a voucher, simply provide the voucher code <code>ref</code> along with the csr and other relevant information for the certificate order. This also applies to a certificate that has already been processed but needs to be rekeyed.</p>
+      <p>To change the validation methods, simply provide the voucher or certificate reference number <code>ref</code> and the <code>domains</code> parameter. The other "required" parameters are not required if doing the update validation call.</p>
+    certificate_order_summary:
+      Process, rekey, update validation of an SSL Certificate order
+    ref_param_description: >
+      <p><b>String ref is the certificate reference number (or voucher code) of the SSL.com certificate order. You specify this in the url so there is no need to include it as a parameter in the JSON request.</b></p>
+      <p><b>Example: <code>co-abcd1234.</code></b></p>
+    certificate_download_summary:
+      Download Certificate
+    certificate_download_descriptions:
+      Retrieve an SSL Certificate
+    certificate_delete_summary:
+      Revoke Certificate
+    certificate_delete_description:
+      Use this call to revoke an issued certificate based on it's serial number, or all issued certificates under a specific order using it's certificate reference or voucher number.
+    reason_param_description: >
+      <p>
+        <b>
+          The reason for this revocation. If there is different reason for each certificate, then each certificate should be individually revoked through it's own api call.
+        </b>
+      </p>
+      <p><b>Example&#58;</b><code>mistake</code></p>
+    serials_param_description: >
+      <p>
+        <b>
+          The serial numbers of one or more issued certificates under this order. If no serials is specified, then all issued certificates will be revoked for the certificate order identified by the ref parameter.
+        </b>
+      </p>
+      <p><b>Example&#58;</b><code>["0c:00:99:b7:d7:89:c9:f6:66:26:31:7e:bc:ea:7c:1c"]</code></p>
+    validate_certificate_summary:
+      Retrieve acceptable domain validation methods for a Certificate
+    validate_certificate_description:
+      A single Validation object containing a list of acceptable methods to complete the verification of the order.
+    response_type_param_description: >
+      <p><b>Specifies the type/format of the certificates that are being returned, if applicable. Default: <code>individually</code> </b></p>
+      <ul>
+        <li>zip</li>
+        <li>netscape</li>
+        <li>pkcs7</li>
+        <li>individually</li>
+      </ul>
+    response_encoding_param_description: >
+      <p><b>Specifies the encoding of the certificates that are being returned, if applicable. Default: <code>base64</code> </b></p>
+      <ul>
+        <li>base64</li>
+        <li>binary</li>
+      </ul>
+    email_validation_options:
+      Retrieve acceptable email addresses for domain control validation
+    email_validation_options_description:
+      A single Validation object containing a list of acceptable email addresses for domain control control validation of an ssl certificate.
+    validation_domains_param_description: >
+      <p><b>Array of 1 or more domains to query. Each value must be separated out with a name domains[], ie domains[]=www.domain.com&domains[]=domain2.info&domains[]=mail.domain3.biz</b></p>
+      <p><b>Example&#58;</b><code>www.domain1.com</code></p>
+    csr_hash_validation_options:
+      Retrieve all validation methods based on hash of certificate signing request
+    csr_hash_validation_options_description:
+      A single Validation object containing values that will satisfy domain control validation using the hash of the certificate signing request.
+    api_parameters:
+      Retrieve pre-filled parameters needed to make a successful API call
+    api_parameters_description:
+      A list of pre-filled parameters needed to make a successful API call
+    action_param_description: >
+      <p><b>This is the valid action that api intends to call. The returned parameters can then be used in that api action call. Valid actions are: update_dcv, update, create_w_csr, create, show, index, dcv_emails, dcv_methods_wo_csr and dcv_methods_w_csr. Please note that some actions cannot be executed such as update_dcv if the csr has not already been submitted.</b></p>
+      <p><b>Example&#58;</b><code>create</code></p>

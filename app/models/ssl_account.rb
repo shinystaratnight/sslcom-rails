@@ -1,4 +1,4 @@
-class SslAccount < ActiveRecord::Base
+class SslAccount < ApplicationRecord
   extend Memoist
   using_access_control
   acts_as_billable
@@ -143,8 +143,8 @@ class SslAccount < ActiveRecord::Base
   validates :ssl_slug, uniqueness: {case_sensitive: false}, length: {in: 2..20}, allow_nil: true
   validates :company_name, length: {in: 2..20}, allow_nil: true
 
-  # default_scope ->{order("ssl_accounts.created_at desc")}
-  default_scope{where{workflow_state << ['archived']}.order("ssl_accounts.created_at desc")}
+  default_scope ->{order("ssl_accounts.created_at desc")}
+  # default_scope{where{workflow_state << ['archived']}.order("ssl_accounts.created_at desc")}
 
   scope :search_team, -> (term){
     sql=%(MATCH (ssl_accounts.acct_number, ssl_accounts.company_name, ssl_accounts.ssl_slug) AGAINST ('#{term}') OR
@@ -900,7 +900,7 @@ class SslAccount < ActiveRecord::Base
 
   #Reminder.preparing_recipients to locate point of injection for do-not-send list
   def self.send_reminders
-    # ActiveRecord::Base.logger.level = Logger::INFO
+    # ApplicationRecord.logger.level = Logger::INFO
     logger.info "Sending SSL.com cert reminders. Type 'Q' and press Enter to exit this program"
     SslAccount.unscoped.order('created_at').includes(
         [:stored_preferences, {:certificate_orders =>
@@ -1120,7 +1120,7 @@ class SslAccount < ActiveRecord::Base
           table.constantize.unscoped.where.not(sql, *(ranges.flatten)).delete_all
       }
     end
-    ActiveRecord::Base.connection.tables.map do |model|
+    ApplicationRecord.connection.tables.map do |model|
       unless %w(auto_renewals delayed_job).include?(model)
         begin
           klass = model.capitalize.singularize.camelize.constantize

@@ -1,4 +1,4 @@
-class Revocation < ActiveRecord::Base
+class Revocation < ApplicationRecord
   belongs_to :revoked_signed_certificate, class_name: "SignedCertificate", foreign_key: "revoked_signed_certificate_id"
   belongs_to :replacement_signed_certificate, class_name: "SignedCertificate", foreign_key: "replacement_signed_certificate_id"
 

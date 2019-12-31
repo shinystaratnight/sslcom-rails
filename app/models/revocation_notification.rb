@@ -1,4 +1,4 @@
-class RevocationNotification < ActiveRecord::Base
+class RevocationNotification < ApplicationRecord
   serialize :fingerprints
 
   def self.load_revocations

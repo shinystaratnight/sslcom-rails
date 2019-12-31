@@ -5,7 +5,7 @@ require 'digest'
 require 'net/https'
 require 'uri'
 
-class Csr < ActiveRecord::Base
+class Csr < ApplicationRecord
   extend Memoist
   include Encodable
   
@@ -482,9 +482,9 @@ class Csr < ActiveRecord::Base
     Csr.joins(:certificate_content).includes(:signed_certificates, certificate_content: :certificate_order).
         where{(certificate_content.workflow_state>>["pending_validation"]) &
           (created_at > submitted_on)}.uniq.map do |csr|
-            cc=csr.certificate_content
-            co=csr.certificate_order
-            if cc.preferred_process_pending_server_certificates
+            cc = csr.certificate_content
+            co = csr.certificate_order
+            if cc.preferred_process_pending_server_certificates and co
               cc.dcv_verify_certificate_names unless co.domains_validated?
               co.apply_for_certificate if(
               cc.ca_id and

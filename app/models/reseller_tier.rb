@@ -1,4 +1,4 @@
-class ResellerTier < ActiveRecord::Base
+class ResellerTier < ApplicationRecord
   include PriceView
   acts_as_sellable :cents => :amount, :currency => false
   has_many  :certificates, dependent: :destroy

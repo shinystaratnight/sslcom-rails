@@ -1,4 +1,4 @@
-class SentReminder < ActiveRecord::Base
+class SentReminder < ApplicationRecord
   serialize :trigger_value
 
   validates :signed_certificate_id, :uniqueness=>

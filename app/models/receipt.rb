@@ -1,4 +1,4 @@
-class Receipt < ActiveRecord::Base
+class Receipt < ApplicationRecord
   belongs_to  :order
 
   serialize   :confirmation_recipients

@@ -1,4 +1,4 @@
-class Discount < ActiveRecord::Base
+class Discount < ApplicationRecord
   has_and_belongs_to_many :certificates
   has_and_belongs_to_many :orders
   belongs_to :benefactor, polymorphic: true

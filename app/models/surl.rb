@@ -2,7 +2,7 @@ require "net/https"
 require "uri"
 require "digest/sha1"
 
-class Surl < ActiveRecord::Base
+class Surl < ApplicationRecord
   belongs_to  :user
   has_many    :surl_visits
 

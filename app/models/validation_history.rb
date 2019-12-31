@@ -1,6 +1,6 @@
 # The validation document
 
-class ValidationHistory < ActiveRecord::Base
+class ValidationHistory < ApplicationRecord
   has_many  :validation_ruling_validation_histories
   has_many  :validation_rulings, :through=>:validation_ruling_validation_histories, :as=>:validation_rulable
   has_many  :validation_rules, :through => :validation_rulings
@@ -34,7 +34,7 @@ class ValidationHistory < ActiveRecord::Base
     ['application/zip', 'zip'], ['application/vnd.oasis.opendocument.text', 'odt'],
     ['application/msword', 'doc'], ['application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'docx'],
     ['audio/mpeg', 'mp3'], ['audio/x-mpeg', 'mp3'], ['audio/mp3', 'mp3'], ['audio/x-mp3', 'mp3'], ['audio/mpeg3', 'mp3'],
-    ['audio/x-mpeg3', 'mp3'], ['audio/mpg', 'mp3'], ['audio/x-mpg', 'mp3'], ['audio/x-mpegaudio', 'mp3'], ['text/plain', 'txt, text']]
+    ['audio/x-mpeg3', 'mp3'], ['audio/mpg', 'mp3'], ['audio/x-mpg', 'mp3'], ['audio/x-mpegaudio', 'mp3'], ['video/mp4', 'm4a'], ['text/plain', 'txt, text']]
 
   validates_attachment_content_type :document, :content_type =>  ValidationHistory::CONTENT_TYPES.transpose[0]
 

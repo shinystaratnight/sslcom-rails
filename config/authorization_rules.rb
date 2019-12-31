@@ -391,6 +391,7 @@ authorization do
     #
     has_permission_on :certificate_orders, to: :smime_client_enrollment
     has_permission_on :certificate_orders, to: [
+      :attestation,
       :edit,
       :delete,
       :read,
@@ -655,11 +656,10 @@ privileges do
   privilege :create, includes: [:new, :generate_cert]
   privilege :delete, includes: :destroy
   privilege :admin_manage, includes: [
-    :admin_activate,
+    :attestation,
     :admin_index,
     :admin_show,
     :admin_update,
-    :change_ext_order_number,
     :edit,
     :edit_settings,
     :edit_password,
@@ -684,6 +684,7 @@ privileges do
     :remove_reseller
   ]
   privilege :sysadmin_manage, includes: [
+    :admin_activate,
     :admin_manage,
     :adjust_funds,
     :change_ext_order_number,

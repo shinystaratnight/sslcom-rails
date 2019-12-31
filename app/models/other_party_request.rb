@@ -1,4 +1,4 @@
-class OtherPartyRequest < ActiveRecord::Base
+class OtherPartyRequest < ApplicationRecord
   belongs_to  :other_party_requestable, polymorphic: true
   belongs_to  :user
   serialize   :email_addresses

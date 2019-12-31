@@ -1,2 +1,2 @@
-class ValidationCompliance < ActiveRecord::Base
+class ValidationCompliance < ApplicationRecord
 end

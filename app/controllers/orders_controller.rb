@@ -170,7 +170,7 @@ class OrdersController < ApplicationController
   end
 
   def add
-    add_to_cart @line_item = ActiveRecord::Base.find_from_model_and_id(param)
+    add_to_cart @line_item = ApplicationRecord.find_from_model_and_id(param)
     session[:cart_items].uniq!
 
     respond_to do |format|
@@ -234,7 +234,7 @@ class OrdersController < ApplicationController
 
   def remove
     unless session[:cart_items].nil?
-      @line_item = ActiveRecord::Base.find_from_model_and_id(param)
+      @line_item = ApplicationRecord.find_from_model_and_id(param)
       session[:cart_items].delete @line_item.model_and_id
     end
     
@@ -354,7 +354,7 @@ class OrdersController < ApplicationController
         owner: current_user,
         target: @order,
         notes: params[:revoke_reason],
-        action: 'Revoke all #{list.count} items(s) for order.'
+        action: "Revoke all #{list.count} items(s) for order."
       )
       flash[:notice] = "All #{list.count} order item(s) have been revoked."
     else  

@@ -1,4 +1,4 @@
-class CasCertificate < ActiveRecord::Base
+class CasCertificate < ApplicationRecord
   STATUS = {default: "default",
             active: "active",
             inactive: "inactive",

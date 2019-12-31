@@ -15,7 +15,7 @@
     .col-md-3.block-label{:style => "text-align: right"}
       Intermediate Certificate :
     .col-md-9.attest-issuer-cert-block
-      =text_area_tag 'attestation_issuer_cert', @attestation_issuer_certificate.blank? ? nil : @attestation_issuer_certificate.body, :class => 'attest-issuer-cert'
+      =text_area_tag 'attestation_issuer_cert', @attestation_issuer_certificate.blank? ? AttestationCertificate::YUBIKEY_PIV_INTERMEDIATE_CA : @attestation_issuer_certificate.body, :class => 'attest-issuer-cert'
       .error-block
         * intermediate certificate required
   .btn-block.pt-5

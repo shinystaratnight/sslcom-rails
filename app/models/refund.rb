@@ -1,4 +1,4 @@
-class Refund < ActiveRecord::Base
+class Refund < ApplicationRecord
   include ActiveMerchant::Billing
 
   belongs_to :order

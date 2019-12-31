@@ -7,7 +7,7 @@ require 'timeout'
 # A site check is a query from the website to
 # query the ssl status of a domain
 
-class SiteCheck < ActiveRecord::Base
+class SiteCheck < ApplicationRecord
   belongs_to :certificate_lookup
 
   attr_accessor :verify_trust, :ssl_client, :openssl_connect_result

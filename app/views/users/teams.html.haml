@@ -43,16 +43,15 @@
       %th(scope="col") Funds
       %th(scope="col") Details
       %th(scope="col") Join Date
-      -#-unless system_admins
+      -unless system_admins
         %th(scope="col" class="teams-index-text-left") Action
-      %th(scope="col" class="teams-index-text-left") Action
+      -#%th(scope="col" class="teams-index-text-left") Action
     -unless @team_invites.nil?
       -@team_invites.each do |t|
         -invite_ssl = SslAccount.find(t[:ssl_account_id])
         %tr
           %td=invite_ssl.get_team_name
           %td=invite_ssl.acct_number
-          %td
           %td=current_user.role_symbols(invite_ssl)
           %td
           %td Invited to team. Pending approval...
@@ -128,8 +127,8 @@
 
                   #team-reseller-tier-switch
                     #frm-team-reseller-tier-switch.clearfix
-                      =label_tag 'Reseller Level:'
-                      =link_to 'Manage', '', class: 'team-sel-reseller-tier', "data-team-ref": t.acct_number || t.ssl_slug, "data-reseller-fields": reseller_fields(t)
+                      =label_tag "Reseller Level:"
+                      =link_to "Manage#{t.reseller ? ' Tier '+t.reseller.reseller_tier.label : ''}", '', class: 'team-sel-reseller-tier', "data-team-ref": t.acct_number || t.ssl_slug, "data-reseller-fields": reseller_fields(t)
                       -unless t.reseller.blank?
                         %span /
                         =link_to 'Delete', '', class: 'team-del-reseller-tier', "data-team-ref": t.acct_number || t.ssl_slug
@@ -147,23 +146,42 @@
                     %br/
                     = link_to "<i class='fa fa-certificate'></i> set default".html_safe, |
                       set_default_team_user_path(current_user, ssl_account_id: t.id), method: :put
-              %td#team-action-items.teams-index-text-left
-                -unless system_admins
+
+              -unless system_admins
+                %td#team-action-items.teams-index-text-left
                   =link_to "<i class='fa fa-eye'></i> view".html_safe,
                     switch_default_ssl_account_user_path(current_user.id, ssl_account_id: t.id)
-                  -unless account_owner || system_admins
+                  -unless account_owner
                     %br/
                     =link_to "<i class='fa fa-user-times'></i> leave".html_safe,
                       leave_team_user_path(current_user, ssl_account_id: t.id),
                       {data: {confirm: "Please confirm you want to leave team #{t.get_team_name}."}}
-                  -if permitted_to?(:set_default_team, current_user) && !system_admins && current_user.default_ssl_account != t.id
+                  -if permitted_to?(:set_default_team, current_user) && current_user.default_ssl_account != t.id
                     %br/
                     = link_to "<i class='fa fa-certificate'></i> set default".html_safe,
                       set_default_team_user_path(current_user, ssl_account_id: t.id), method: :put
-                - if account_owner and current_user.total_teams_owned.count > 1
-                  =link_to "<i class='fa fa-chevron-circle-down'></i> archive".html_safe,
-                    archive_team_user_path(current_user.id, ssl_account_id: t.id),
-                    {data: {confirm: "Please confirm you want to archive team \"#{t.get_team_name}\"."}}
+                  - if account_owner and current_user.total_teams_owned.count > 1
+                    =link_to "<i class='fa fa-chevron-circle-down'></i> archive".html_safe,
+                      archive_team_user_path(current_user.id, ssl_account_id: t.id),
+                      {data: {confirm: "Please confirm you want to archive team \"#{t.get_team_name}\"."}}
+
+              -#%td#team-action-items.teams-index-text-left
+              -#  -unless system_admins
+              -#    =link_to "<i class='fa fa-eye'></i> view".html_safe,
+              -#      switch_default_ssl_account_user_path(current_user.id, ssl_account_id: t.id)
+              -#    -unless account_owner || system_admins
+              -#      %br/
+              -#      =link_to "<i class='fa fa-user-times'></i> leave".html_safe,
+              -#        leave_team_user_path(current_user, ssl_account_id: t.id),
+              -#        {data: {confirm: "Please confirm you want to leave team #{t.get_team_name}."}}
+              -#    -if permitted_to?(:set_default_team, current_user) && !system_admins && current_user.default_ssl_account != t.id
+              -#      %br/
+              -#      = link_to "<i class='fa fa-certificate'></i> set default".html_safe,
+              -#        set_default_team_user_path(current_user, ssl_account_id: t.id), method: :put
+              -#  - if account_owner and current_user.total_teams_owned.count > 1
+              -#    =link_to "<i class='fa fa-chevron-circle-down'></i> archive".html_safe,
+              -#      archive_team_user_path(current_user.id, ssl_account_id: t.id),
+              -#      {data: {confirm: "Please confirm you want to archive team \"#{t.get_team_name}\"."}}
           -else
             -account_owner_admin = current_user.is_team_owner_admin? t
             %tr
@@ -178,10 +196,11 @@
                 $#{t.funded_account.try :amount}
               %td#team-detail-links
               %td=t.created_at.strftime("%b %d, %Y")
-              %td#team-action-items.teams-index-text-left
-                - if account_owner_admin || system_admins
-                  =link_to "<i class='fa fa-chevron-circle-up'></i> unarchive".html_safe,
-                      retrieve_team_user_path(current_user.id, ssl_account_id: t.id)
+              - unless system_admins
+                %td#team-action-items.teams-index-text-left
+                  - if account_owner_admin
+                    =link_to "<i class='fa fa-chevron-circle-up'></i> unarchive".html_safe,
+                        retrieve_team_user_path(current_user.id, ssl_account_id: t.id)
     -else
       %tr
         %td(colspan="7")
@@ -199,68 +218,70 @@
         =hidden_field_tag :ssl_account_ref
         =hidden_field_tag :exist_reseller
         .reseller-fields.clearfix
-          =label_tag 'Level :', nil, class: 'lbl_reseller_tier'
+          =label_tag 'Level :', nil, class: 'lbl_reseller_tier required-mark'
           =select_tag :reseller_tier, options_for_select(@reseller_tiers), class: 'reseller-tier'
         .reseller-fields.clearfix
-          =label_tag 'First Name :', nil, class: 'lbl_first_name'
+          =label_tag 'First Name :', nil, class: 'lbl_first_name required-mark'
           =text_field_tag :first_name, '', class: 'reseller-field-first-name'
           .required-field
             * First Name is required!
         .reseller-fields.clearfix
-          =label_tag 'Last Name :', nil, class: 'lbl_last_name'
+          =label_tag 'Last Name :', nil, class: 'lbl_last_name required-mark'
           =text_field_tag :last_name, '', class: 'reseller-field-last-name'
           .required-field
             * Last Name is required!
         .reseller-fields.clearfix
-          =label_tag 'Email :', nil, class: 'lbl_email'
+          =label_tag 'Email :', nil, class: 'lbl_email required-mark'
           =text_field_tag :email, '', class: 'reseller-field-email'
           .required-field
             * Email Address is required!
+          .required-validation
+            * This Email Address is invalid!
         .reseller-fields.clearfix
-          =label_tag 'Phone :', nil, class: 'lbl_phone'
+          =label_tag 'Phone :', nil, class: 'lbl_phone required-mark'
           =text_field_tag :phone, '', class: 'reseller-field-phone'
           .required-field
             * Phone Number is required!
         .reseller-fields.clearfix
-          =label_tag 'Type Organization :', nil, class: 'lbl_type_organization'
+          =label_tag 'Type Organization :', nil, class: 'lbl_type_organization required-mark'
           =select_tag :type_organization, options_for_select([[Reseller::INDIVIDUAL.capitalize, Reseller::INDIVIDUAL], [Reseller::BUSINESS.capitalize, Reseller::BUSINESS]]), class: 'reseller-field-type-organization'
         .reseller-fields.clearfix
-          =label_tag 'Organization :', nil, class: 'lbl_organization'
+          =label_tag 'Organization :', nil, class: 'lbl_organization required-mark'
           =text_field_tag :organization, '', class: 'reseller-field-organization'
           .required-field
             * Organization is required!
         .reseller-fields.clearfix
-          =label_tag 'Website :', nil, class: 'lbl_website'
+          =label_tag 'Website :', nil, class: 'lbl_website required-mark'
           =text_field_tag :website, '', class: 'reseller-field-website'
           .required-field
             * Website Address is required!
         .reseller-fields.clearfix
-          =label_tag 'Address1 :', nil, class: 'lbl_address1'
+          =label_tag 'Address1 :', nil, class: 'lbl_address1 required-mark'
           =text_field_tag :address1, '', class: 'reseller-field-address1'
           .required-field
             * Address is required!
         .reseller-fields.clearfix
-          =label_tag 'Postal Code :', nil, class: 'lbl_postal_code'
+          =label_tag 'Postal Code :', nil, class: 'lbl_postal_code required-mark'
           =text_field_tag :postal_code, '', class: 'reseller-field-postal-code'
           .required-field
             * Postal Code is required!
         .reseller-fields.clearfix
-          =label_tag 'City :', nil, class: 'lbl_city'
+          =label_tag 'City :', nil, class: 'lbl_city required-mark'
           =text_field_tag :city, '', class: 'reseller-field-city'
           .required-field
             * City is required!
         .reseller-fields.clearfix
-          =label_tag 'State :', nil, class: 'lbl_state'
+          =label_tag 'State :', nil, class: 'lbl_state required-mark'
           =text_field_tag :state, '', class: 'reseller-field-state'
           .required-field
             * State is required!
         .reseller-fields.clearfix
-          =label_tag 'Tax Number :', nil, class: 'lbl_tax_number'
+          =label_tag 'Tax Number :', nil, class: 'lbl_tax_number required-mark'
           =text_field_tag :tax_number, '', class: 'reseller-field-tax-number'
           .required-field
             * Tax Number is required!
         .reseller-fields.clearfix
-          =label_tag 'Country :', nil, class: 'lbl_country'
+          =label_tag 'Country :', nil, class: 'lbl_country required-mark'
           =select_tag :country, options_for_select(BillingProfile::TOP_COUNTRIES + [""], disabled: [""]) + options_for_select(Country.select_options("name"))
     #reseller-tier-modal-footer.modal-footer
       = button_tag 'Save', :type => 'button', :class => 'btn btn-grey btn-save-reseller float-right'

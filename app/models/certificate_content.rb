@@ -1,15 +1,15 @@
-class CertificateContent < ActiveRecord::Base
+class CertificateContent < ApplicationRecord
   extend Memoist
   include V2MigrationProgressAddon
   include Workflow
-  
+
   belongs_to  :certificate_order, -> { unscope(where: [:workflow_state, :is_expired]) }, touch: true
   has_one     :ssl_account, through: :certificate_order
   has_many    :users, through: :certificate_order
   belongs_to  :server_software
   has_one     :csr, :dependent => :destroy
   has_many    :csrs, :dependent => :destroy
-  has_many    :signed_certificates, through: :csr
+  has_many    :signed_certificates, through: :csr, :source=>"signed_certificate"
   has_one     :registrant, as: :contactable, dependent: :destroy
   has_one     :locked_registrant, :as => :contactable
   has_many    :certificate_contacts, :as => :contactable
@@ -97,7 +97,7 @@ class CertificateContent < ActiveRecord::Base
   INTRANET_IP_REGEX = /\A(127\.0\.0\.1)|(10.\d{,3}.\d{,3}.\d{,3})|(172\.1[6-9].\d{,3}.\d{,3})|(172\.2[0-9].\d{,3}.\d{,3})|(172\.3[0-1].\d{,3}.\d{,3})|(192\.168.\d{,3}.\d{,3})\z/
 
   serialize :domains
-  
+
   validates_presence_of :server_software_id, :signing_request, # :agreement, # need to test :agreement out on reprocess and api submits
     :if => "certificate_order_has_csr && !ajax_check_csr && Settings.require_server_software_w_csr_submit"
   validates_format_of :signing_request, :with=>SIGNING_REQUEST_REGEX,
@@ -313,9 +313,13 @@ class CertificateContent < ActiveRecord::Base
         (certificate_names.pluck(:id) - certificate_names.validated.pluck(:id)).empty?
   end
 
+  # TODO all methods check http, https, and cname
   def dcv_verify_certificate_names
     certificate_names.includes(:domain_control_validation).unvalidated.each do |cn|
-      cn.dcv_verify unless cn.domain_control_validation.try(:dcv_method) =~ /email/
+      dcv = cn.domain_control_validation
+      if dcv and cn.dcv_verify(dcv.dcv_method)
+        dcv.satisfy!
+      end
     end
   end
 
@@ -525,10 +529,10 @@ class CertificateContent < ActiveRecord::Base
       cn_ids << name.id
       k, v = name.name, options[:domains][name.name]
       cur_email = options[:emails] ? options[:emails][k] : nil
-
+      dcv = name.validated_domain_control_validations.last
       case v["dcv"]
       when /https?/i, /cname/i
-        dcv = name.validated_domain_control_validations.last
+        # do not create another instance if previous cname of http(s) instance exists
         if dcv.blank?
           dcv = name.domain_control_validations.new(
               dcv_method: v["dcv"],
@@ -545,11 +549,13 @@ class CertificateContent < ActiveRecord::Base
       else
         if DomainControlValidation.approved_email_address? CertificateName.candidate_email_addresses(
             name.non_wildcard_name), v["dcv"]
-          dcvs << name.domain_control_validations.new(dcv_method: "email", email_address: v["dcv"],
+          dcv = name.domain_control_validations.new(dcv_method: "email", email_address: v["dcv"],
                                                  failure_action: v["dcv_failure_action"],
                                                  candidate_addresses: CertificateName.candidate_email_addresses(
                                                      name.non_wildcard_name))
+          OrderNotifier.dcv_email_send(v["dcv"], dcv.identifier, [name.name], name.id, @ssl_slug).deliver
         end
+        dcvs << dcv
       end
       i+=1
     end
@@ -706,7 +712,7 @@ class CertificateContent < ActiveRecord::Base
     end
     "#{certificate_order.ref}-#{index}"
   end
-  
+
   def contacts_for_form_opt(type=nil)
       certificate_contact_compatibility
       case type
@@ -722,7 +728,7 @@ class CertificateContent < ActiveRecord::Base
           []
       end
   end
-  
+
   def contacts_for_form
     certificate_contact_compatibility
     unless self.certificate_contacts.blank?
@@ -966,7 +972,7 @@ class CertificateContent < ActiveRecord::Base
     rescue
     end
   end
-  
+
   def preserve_certificate_contacts
     cc = certificate_order.certificate_contents.where.not(id: id).last
     unless cc.nil?
@@ -978,8 +984,16 @@ class CertificateContent < ActiveRecord::Base
     sslcom_ca_requests.unexpired.map(&:approval_id)
   end
 
+  # if a certificate_content has a signed_certificate and is validated, it's state should be changed to issued
+  def self.sync_issued_state
+    certificate_content = CertificateContent.includes(csr: :signed_certificates).where{(workflow_state=="validated") & (created_at > 120.days.ago)}
+    certificate_content.map do |cc|
+      cc.issue! if(cc.signed_certificate and cc.certificate.is_server?)
+    end.compact
+  end
+
   private
-  
+
   def certificate_contact_compatibility
     if Contact.optional_contacts? # optional contacts ENABLED
       # contacts created from saved contacts
@@ -1026,11 +1040,11 @@ class CertificateContent < ActiveRecord::Base
       all.where.not(id: keep.map(&:id)).destroy_all
     end
   end
-  
+
   def validate_domains?
     (new? && (domains.blank? || errors[:domain].any?)) || !rekey_certificate.blank?
   end
-  
+
   def certificate_names_created?
     self.reload
     return false if domains.blank? && !certificate_name_from_csr?
@@ -1039,19 +1053,19 @@ class CertificateContent < ActiveRecord::Base
     common          = current_domains & new_domains
     common.length == new_domains.length && (current_domains.length == new_domains.length)
   end
-  
+
   def certificate_name_from_csr?
-    certificate_names.count == 1 && 
+    certificate_names.count == 1 &&
       csr.common_name &&
       certificate_names.first.name == csr.common_name &&
       certificate_names.first.is_common_name
   end
-  
+
   def parse_unique_domains(target_domains)
     return [] if target_domains.blank?
     target_domains.flatten.compact.map(&:downcase).map(&:strip).reject(&:blank?).uniq
   end
-  
+
   def domains_validation
     unless all_domains.blank?
       all_domains.each do |domain|
@@ -1120,14 +1134,14 @@ class CertificateContent < ActiveRecord::Base
     end
     true
   end
-  
+
   def transfer_existing_contacts
     certificate_order.certificate_contacts
       .where.not(contactable_id: id)
       .update_all(contactable_id: id)
-    
+
     Contact.clear_duplicate_co_contacts(certificate_order)
-    
+
     if certificate_contacts.any? && info_provided?
       provide_contacts!
     end
