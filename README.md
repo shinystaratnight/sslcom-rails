@@ -18,7 +18,7 @@
 10. Create the development database with `RAILS_ENV=development rake db:create`. If prompted for a password, type `vagrant`.
 11. Get the schema by typing `RAILS_ENV=development rake db:structure:load`
 12. Run any needed migrations `RAILS_ENV=development rake db:migrate`.
-13. Download sandbox_ssl_com.sql and populate the database with `mysql -u ssl_db -p sandbox_ssl_com < sandbox_ssl.sql`
+13. Download sandbox_ssl_com.sql and populate the database with `mysql -u ssl_db -p sandbox_ssl_com < sandbox_ssl_com.sql`
 14. Navigate to the repo and run `./start-dev`
 15. Navigate to `https://secure.ssl.local:3000/` in your browser and it should work!
 

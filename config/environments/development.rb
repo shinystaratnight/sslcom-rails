@@ -53,9 +53,6 @@ SslCom::Application.configure do
   # GATEWAY_TEST_CODE = 1.0
   # END ActiveMerchant configuration
 
-  require 'sass/plugin/rack'
-  Sass::Plugin.options[:line_numbers] = true
-
   config.middleware.insert_before 0, 'Rack::Cors' do
     allow do
       origins '*'

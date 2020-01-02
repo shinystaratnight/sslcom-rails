@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20191119235824) do
+ActiveRecord::Schema.define(version: 20191209161630) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        limit: 255
@@ -1530,6 +1530,7 @@ ActiveRecord::Schema.define(version: 20191119235824) do
   add_index "signed_certificates", ["ejbca_username"], name: "index_signed_certificates_on_ejbca_username", using: :btree
   add_index "signed_certificates", ["fingerprint"], name: "index_signed_certificates_on_fingerprint", using: :btree
   add_index "signed_certificates", ["strength"], name: "index_signed_certificates_on_strength", using: :btree
+  add_index "signed_certificates", ["type", "certificate_content_id"], name: "index_signed_certificates_t_cci", using: :btree
 
   create_table "site_checks", force: :cascade do |t|
     t.text     "url",                   limit: 65535

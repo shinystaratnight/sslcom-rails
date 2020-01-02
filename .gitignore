@@ -33,3 +33,4 @@ node_modules
 .byebug_history
 sandbox_ssl_com.sql
 ubuntu-xenial-16.04-cloudimg-console.log
+public/assets
