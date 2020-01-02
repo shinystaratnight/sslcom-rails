@@ -29,6 +29,8 @@ Vagrant.configure('2') do |config|
     debconf-set-selections <<< 'mysql-server mysql-server/root_password_again password vagrant'
     sudo apt-get -y install libmysqlclient-dev mysql-server libssl-dev
     sudo apt-get -y install unixodbc-dev
+    sudo apt-get -y install nodejs
+    sudo apt-get -y install npm
   SHELL
 
   # Install Ruby2.6 from Brightbox APT repository
