@@ -70,7 +70,7 @@ gem 'rails-observers'
 gem 'request_exception_handler'
 gem 'rubyzip', '>= 1.3.0'
 gem 'rvm-capistrano'
-gem 'sass-rails'
+gem 'sassc-rails', '>= 2.1.0'
 gem 'sdoc', group: :doc
 gem 'select2-rails'
 gem 'stripe'
