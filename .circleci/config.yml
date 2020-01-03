@@ -112,6 +112,10 @@ jobs:
           command: bundle exec rake test
 
       - run:
+          name: Precompile Assets
+          command: bundle exec rake assets:precompile --trace
+
+      - run:
           name: Eager load classes to check for issues
           command: |
               bundle exec rails runner 'Rails.application.eager_load!'

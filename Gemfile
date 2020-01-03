@@ -117,11 +117,6 @@ group :development do
   gem 'spring-commands-testunit'
   gem 'web-console', '~> 2.0'
 
-  # Linting
-  gem 'rubocop', require: false
-  gem 'rubocop-minitest'
-  gem 'rubocop-performance'
-  gem 'rubocop-rails'
   gem 'solargraph', require: false
 end
 
@@ -130,6 +125,10 @@ group :development, :test do
   gem 'byebug'
   gem 'factory_bot_rails'
   gem 'pry-remote'
+  gem 'rubocop', require: false
+  gem 'rubocop-minitest'
+  gem 'rubocop-performance'
+  gem 'rubocop-rails'
   gem 'ruby-odbc'
   gem 'ruby_parser'
 end
