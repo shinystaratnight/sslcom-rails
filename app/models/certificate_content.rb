@@ -773,7 +773,7 @@ class CertificateContent < ApplicationRecord
         if ((!is_ucc && !is_wildcard) || is_premium_ssl) && asterisk_found
           errors.add(:domain, "cannot begin with *. since the order does not allow wildcards")
         elsif certificate_order.certificate.is_dv? && CertificateContent.is_ip_address?(domain)
-          errors.add(:domain, "#{domain} was determined to be for an ip address. This is only allowed on OV or EV ssl orders.")
+          errors.add(:domain, "#{domain} was determined to be for an ip address. This is only allowed on OV ssl orders.")
         elsif !!(domain=~Regexp.new("\\.("+Country::BLACKLIST.join("|")+")$",true))
           errors.add(:domain, "#{domain} is a restricted tld")
         end
