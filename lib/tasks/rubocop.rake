@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-if Rails.env.development?
+unless Rails.env.production?
   namespace :rubocop do
     require 'rubocop/rake_task'
 
