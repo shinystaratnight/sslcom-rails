@@ -120,3 +120,5 @@ Naming/MethodParameterName:
   Enabled: false
 Naming/PredicateName:
   Enabled: false
+Naming/AccessorMethodName:
+  Enabled: false
