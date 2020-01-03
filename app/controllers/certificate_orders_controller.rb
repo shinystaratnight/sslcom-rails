@@ -443,6 +443,7 @@ class CertificateOrdersController < ApplicationController
     end
 
     if @certificate_order.certificate.is_single?
+      byebug
       params[:certificate_order][:certificate_contents_attributes]['0'.to_sym][:additional_domains]=[]
     elsif @certificate_order.certificate.is_premium_ssl?
       params[:certificate_order][:certificate_contents_attributes]['0'.to_sym][:additional_domains]=
