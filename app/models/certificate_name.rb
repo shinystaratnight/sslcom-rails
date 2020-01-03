@@ -351,7 +351,7 @@ class CertificateName < ApplicationRecord
     CertificateContent.where{id >> cert_names.map(&:certificate_content_id)}.update_all(updated_at: Time.now)
     standard_addresses=CertificateName.candidate_email_addresses(dname)
     standard_addresses << email_address
-    DomainControlValidation.global.find_or_create_by(subject: dname).update_column(
+    DomainControlValidation.global.find_or_create_by(subject: dname.gsub(/\A\*\./, "").downcase).update_column(
         :candidate_addresses, standard_addresses)
   end
 end
