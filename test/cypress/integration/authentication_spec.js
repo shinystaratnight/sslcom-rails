@@ -10,7 +10,7 @@ describe('My First Test', function () {
     // Visit the application under test
     cy.visit('/');
 
-    cy.contains("My ACCOUNT")
+    cy.contains("MY ACCOUNT")
 
     // Accessing result
     // cy.appFactories([

@@ -117,12 +117,11 @@ group :development do
   gem 'lol_dba'
   gem 'memory_profiler'
   gem 'meta_request'
-  # gem 'puma'
+  gem 'puma'
+  gem 'solargraph', require: false
   gem 'spring'
   gem 'spring-commands-testunit'
   gem 'web-console', '~> 2.0'
-
-  gem 'solargraph', require: false
 end
 
 group :development, :test do
