@@ -292,6 +292,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
       # we do this sloppy maneuver because the rabl template only reports errors
       @result = @result.csr_obj
     else
+      byebug
       if @result.save #save the api request
         if @acr = @result.update_certificate_order
           @csr = @acr.csr

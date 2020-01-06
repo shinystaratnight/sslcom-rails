@@ -128,7 +128,7 @@ class ApiCertificateRequest < CaApiRequest
       if defined?(:serials) && self.serials
         (self.serials.is_a?(Array) ? serials : [serials]).map do |serial|
           if sc=klass.find_by_serial(serial)
-            certs<<sc
+            certs << sc
           else
             errors[:signed_certificate] <<
                 "Signed certificate not found for serial #{serial}#{" within certificate order ref #{certificate_order.ref}" if certificate_order}."
@@ -136,7 +136,7 @@ class ApiCertificateRequest < CaApiRequest
           end
         end
       else
-        certs<<klass
+        certs << klass
       end
     end
   end
