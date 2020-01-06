@@ -50,9 +50,14 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   validates :locality_name, presence: true, if: lambda{|c|c.csr && (!c.is_dv? && c.csr_obj.locality.blank?)}
   validates :state_or_province_name, presence: true, if: lambda{|c|csr && (!c.is_dv? && c.csr_obj.state.blank?)}
   validates :postal_code, presence: true, if: lambda{|c|c.csr && !c.is_dv?} #|| c.parsed_field("POSTAL_CODE").blank?}
+
+  ############## NOTE: country is required regardless of csr #####################
   validates :country, presence: true, inclusion:
       {in: Country.accepted_countries, message: "needs to be one of the following: #{Country.accepted_countries.join(', ')}"},
       if: lambda{|c| c.csr && c.csr_obj && c.csr_obj.country.try("blank?")}
+  ############## NOTE: country is required regardless of csr #####################
+
+
   #validates :registered_country, :incorporation_date, if: lambda{|c|c.is_ev?}
   validates :dcv_method, inclusion: {in: ApiCertificateCreate::DCV_METHODS,
       message: "needs to one of the following: #{DCV_METHODS.join(', ')}"}, if: lambda{|c|c.dcv_method}
@@ -64,8 +69,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   validate :verify_dcv, on: :create, if: "!domains.blank?"
 
   ####################### NOTE: ASK LEO IF VALIDATE CONTACTS IS ALWAYS PRESENT ###########
-  # validates :validate_contacts, unless: lambda { |c| c.contacts.blank? }
-  validates :contacts, presence: true
+  validates :contacts, presence: true, on: [:create, :update]
   validate :validate_contacts
   ######################### NOTE: ASK LEO IF VALIDATE CONTACTS IS ALWAYS PRESENT ###########
 
@@ -580,7 +584,6 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
       end
     else
       CertificateContent::CONTACT_ROLES.each do |role|
-        # byebug
         if (contacts_info.fetch(role, false) || contacts_info['all'])
           c_role = contacts_info[role] ? role : 'all'
           attrs  = retrieve_saved_contact(contacts_info[c_role], [c_role])
