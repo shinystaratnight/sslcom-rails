@@ -117,7 +117,7 @@ group :development do
   gem 'lol_dba'
   gem 'memory_profiler'
   gem 'meta_request'
-  gem 'puma'
+  # gem 'puma'
   gem 'solargraph', require: false
   gem 'spring'
   gem 'spring-commands-testunit'

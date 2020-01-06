@@ -1,0 +1,24 @@
+development:
+  adapter: mysql2
+  encoding: utf8
+  reconnect: false
+  database: sandbox_ssl_com
+#  host: 174.129.35.108
+  pool: 5
+  # username: ssl_db
+  # password: ssl_db
+  # socket: /var/run/mysqld/mysqld.sock
+# Warning: The database defined as "test" will be erased and
+# re-generated from your development database when you run "rake".
+# Do not set this db to the same as development or production.
+test: &TEST
+  adapter: mysql2
+  encoding: utf8
+  reconnect: false
+  database: ssl_com_test
+  pool: 5
+  # username: ssl_dev_db
+  # password: ssl_dev_db
+  # socket: /var/run/mysqld/mysqld.sock
+cucumber:
+  <<: *TEST

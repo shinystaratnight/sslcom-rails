@@ -1,24 +1,31 @@
 // test/cypress/integrations/authentication_spec.js
-describe('My First Test', function () {
+describe('User authentication spec', function () {
   it('visit root', function () {
-    // This calls to the backend to prepare the application state
-    // cy.appFactories([
-    //   ['create_list', 'post', 10],
-    //   ['create', 'post', {title: 'Hello World'} ]
-    // ])
+    // Clean database
+    cy.exec('rake db:seed RAILS_ENV=test', { failOnNonZeroExit: false })
 
-    // Visit the application under test
-    cy.visit('/');
+    // Visit root page
+    cy.visit('https://localhost:5002');
 
+    // Visit account page
     cy.contains("MY ACCOUNT")
+      .click()
 
-    // Accessing result
-    // cy.appFactories([
-    //   ['create', 'invoice', {
-    //     paid: false
-    //   }]
-    // ]).then((records) => {
-    //   cy.visit(`/invoices/${records[0].id}`);
-    // });
+    // Load new account form
+    cy.contains('Create a new account')
+      .click()
+
+    // Create user account
+    cy.get('form').within(($form) => {
+      cy.get('input[name="user[login]"]').type('cypress')
+      cy.get('input[name="user[email]"]').type('cypress@test.ssl.com')
+      cy.get('input[name="user[password]"]').type('Password123!')
+      cy.get('input[name="user[password_confirmation]"]').type('Password123!')
+      cy.get('input[name="tos"]').click()
+      cy.root().submit()
+    })
+
+    // New user is redirected to Dashboard
+    cy.contains('SSL.com Customer Dashboard')
   })
 })
