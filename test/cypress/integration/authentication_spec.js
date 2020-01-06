@@ -2,10 +2,10 @@
 describe('User authentication spec', function () {
   it('visit root', function () {
     // Clean database
-    cy.exec('rake db:seed RAILS_ENV=test', { failOnNonZeroExit: false })
+    cy.exec('RAILS_ENV=test rake db:test:clear', { failOnNonZeroExit: false })
 
     // Visit root page
-    cy.visit('https://localhost:5002');
+    cy.visit('/');
 
     // Visit account page
     cy.contains("MY ACCOUNT")

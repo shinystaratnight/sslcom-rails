@@ -30,6 +30,21 @@
 
 ### `synced_folders` Template
 
-```
+```json
 {"virtualbox":{"/vagrant":{"guestpath":"/vagrant","hostpath":"INSERT_PATH_HERE","disabled":false,"__vagrantfile":true}}}
 ```
+
+### Setting up test db for Cypress
+
+```bash
+bundle exec rake db:create RAILS_ENV=test
+bundle exec rake db:structure:load RAILS_ENV=test
+bundle exec rake db:migrate RAILS_ENV=test
+mysql -u ssl_dev_db -p ssl_com_test < sandbox_ssl_com.sql
+bundle exec rake db:migrate RAILS_ENV=test
+```
+
+### Running Cypress Spec
+
+- [ ] Start rails server in test mode `rails s -b 0.0.0.0 -e test -p 5002`, on Vagrant machine
+- [ ] On your local machine `yarn cypress open --project ./test`
