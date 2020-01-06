@@ -2,7 +2,7 @@
 describe('User authentication spec', function () {
   it('visit root', function () {
     // Clean database
-    cy.exec('RAILS_ENV=test rake db:test:clear', { failOnNonZeroExit: false })
+    cy.app('clean')
 
     // Visit root page
     cy.visit('/');

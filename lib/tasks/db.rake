@@ -13,16 +13,3 @@ if Rails.env == 'production'
     end
   end
 end
-
-namespace :db do
-  namespace :test do
-    desc 'Clean before running database for test'
-    task clear: :environment do
-      if Rails.env == 'test'
-        # User.destroy_all
-        User.connection.truncate(User.table_name)
-        puts 'Database has been cleared for tests'
-      end
-    end
-  end
-end
