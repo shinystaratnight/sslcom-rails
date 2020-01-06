@@ -1,6 +1,6 @@
 // test/cypress/integrations/authentication_spec.js
 describe('User authentication spec', function () {
-  it('visit root', function () {
+  it('allows user to register and login', function () {
     // Clean database
     cy.app('clean')
 

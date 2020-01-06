@@ -112,6 +112,10 @@ jobs:
           command: bundle exec rake test
 
       - run:
+          name: Run Cypress
+          command: bin/rake cypress:run
+
+      - run:
           name: Precompile Assets
           command: bundle exec rake assets:precompile --trace
 
