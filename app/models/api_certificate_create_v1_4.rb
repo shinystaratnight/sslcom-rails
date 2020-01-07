@@ -52,9 +52,8 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   validates :postal_code, presence: true, if: lambda{|c|c.csr && !c.is_dv?} #|| c.parsed_field("POSTAL_CODE").blank?}
 
   ############## NOTE: country is required regardless of csr #####################
-  validates :country, presence: true, inclusion:
-      {in: Country.accepted_countries, message: "needs to be one of the following: #{Country.accepted_countries.join(', ')}"},
-      if: lambda{|c| c.csr && c.csr_obj && c.csr_obj.country.try("blank?")}
+  validates :country, presence: true, inclusion: { in: Country.accepted_countries, message: "needs to be one of the following: #{Country.accepted_countries.join(', ')}" },
+      if: lambda { |c| c.csr && c.csr_obj && c.csr_obj.country.try("blank?") }
   ############## NOTE: country is required regardless of csr #####################
 
 
