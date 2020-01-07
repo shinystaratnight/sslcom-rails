@@ -136,6 +136,7 @@ group :development, :test do
   gem 'rubocop-rails'
   gem 'ruby-odbc'
   gem 'ruby_parser'
+  gem 'seed_dump'
 end
 
 group :test do

@@ -1,7 +1,11 @@
+# frozen_string_literal: true
+
 class Sandbox < Website
-  def self.exists?(domain)
-    Rails.cache.fetch("Sandbox.exists/#{domain}", expires_in: 24.hours) {
-      !self.where{(host == domain) | (api_host == domain)}.blank?
-    }
+  def self.exists?(domain = '')
+    return false if domain.blank?
+
+    Rails.cache.fetch("Sandbox.exists/#{domain}", expires_in: 24.hours) do
+      where{ (host == domain) | (api_host == domain) }.present?
+    end
   end
 end

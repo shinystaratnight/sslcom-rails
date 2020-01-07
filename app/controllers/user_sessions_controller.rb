@@ -58,174 +58,179 @@ class UserSessionsController < ApplicationController
   end
 
   def create
-    if params["prev.x".intern]
-      #assume trying to login during checkout
-      if params[:certificate_order]
-        @certificate_order=CertificateOrder.new(params[:certificate_order])
-        @certificate_order.has_csr=true
-        if params["prev.x".intern]
-          render(:template => "/certificates/buy",
-                 :layout=>"application")
+    begin
+      if params["prev.x".intern]
+        #assume trying to login during checkout
+        if params[:certificate_order]
+          @certificate_order=CertificateOrder.new(params[:certificate_order])
+          @certificate_order.has_csr=true
+          if params["prev.x".intern]
+            render(:template => "/certificates/buy",
+                   :layout=>"application")
+          end
+        else
+          redirect_to show_cart_orders_url and return
         end
+      end
+
+      if current_user.blank?
+        @user_session = UserSession.new(params[:user_session].to_h)
       else
-        redirect_to show_cart_orders_url and return
-      end
-    end
+        if current_user.is_admin? && params[:login]
+          @user_session = UserSession.new((User.find_by_login params[:login]))
+          @user_session.id = :shadow
+          clear_cart
+        end
 
-    if current_user.blank?
-      @user_session = UserSession.new(params[:user_session].to_h)
-    else
-      if current_user.is_admin? && params[:login]
-        @user_session = UserSession.new((User.find_by_login params[:login]))
-        @user_session.id = :shadow
-        clear_cart
+        unless current_user.ssl_account.nil?
+          set_cookie(:acct,current_user.ssl_account.acct_number)
+        end
       end
 
-      unless current_user.ssl_account.nil?
-        set_cookie(:acct,current_user.ssl_account.acct_number)
-      end
-    end
+      respond_to do |format|
+        @failed_count = params[:failed_count].to_i
 
-    respond_to do |format|
-      @failed_count = params[:failed_count].to_i
+        if @user_session
+          if @user_session.save && !@user_session.user.is_disabled?
+            user = shopping_cart_to_cookie
 
-      if @user_session
-        if @user_session.save && !@user_session.user.is_disabled?
-          user = shopping_cart_to_cookie
+            flash[:notice] = "Successfully logged in." unless request.xhr?
+            format.js   {render :json=>url_for_js(user)}
+            format.html {redirect_back_or_default account_path(user.ssl_account(:default_team) ?
+                                                                   user.ssl_account(:default_team).to_slug :
+                                                                   {})}
+          elsif @user_session.attempted_record && !@user_session.attempted_record.active?
+            flash[:notice] = "Your account has not been activated. %s"
+            flash[:notice_item] = "Click here to have the activation email resent to #{@user_session.attempted_record.email}.",
+                resend_activation_users_path(:login => @user_session.attempted_record.login)
+            @user_session.errors[:base] << ("please visit #{resend_activation_users_url(
+                :login => @user_session.attempted_record.login)} to have your activation notice resent")
 
-          flash[:notice] = "Successfully logged in." unless request.xhr?
-          format.js   {render :json=>url_for_js(user)}
-          format.html {redirect_back_or_default account_path(user.ssl_account(:default_team) ?
-                                                                 user.ssl_account(:default_team).to_slug :
-                                                                 {})}
-        elsif @user_session.attempted_record && !@user_session.attempted_record.active?
-          flash[:notice] = "Your account has not been activated. %s"
-          flash[:notice_item] = "Click here to have the activation email resent to #{@user_session.attempted_record.email}.",
-              resend_activation_users_path(:login => @user_session.attempted_record.login)
-          @user_session.errors[:base] << ("please visit #{resend_activation_users_url(
-              :login => @user_session.attempted_record.login)} to have your activation notice resent")
+            log_failed_attempt(@user_session.user, params,flash[:notice])
+            format.html {render :action => :new}
+            format.js   {render :json=>@user_session.errors}
+          elsif @user_session.user.blank? || (!@user_session.user.blank? && @user_session.user.is_admin_disabled?)
+            unless @user_session.user.blank?
+              if (!@user_session.user.blank? && @user_session.user.is_admin_disabled?)
+                flash.now[:error] = "Ooops, it appears this account has been disabled." unless request.xhr?
 
-          log_failed_attempt(@user_session.user, params,flash[:notice])
-          format.html {render :action => :new}
-          format.js   {render :json=>@user_session.errors}
-        elsif @user_session.user.blank? || (!@user_session.user.blank? && @user_session.user.is_admin_disabled?)
-          unless @user_session.user.blank?
-            if (!@user_session.user.blank? && @user_session.user.is_admin_disabled?)
-              flash.now[:error] = "Ooops, it appears this account has been disabled." unless request.xhr?
-
-              log_failed_attempt(@user_session.user, params,flash.now[:error])
-              @user_session.destroy
-              @user_session=UserSession.new
+                log_failed_attempt(@user_session.user, params,flash.now[:error])
+                @user_session.destroy
+                @user_session=UserSession.new
+              end
             end
-          end
-          log_failed_attempt(@user_session.user, params,@user_session.errors.to_json)
-          format.html {render :action => :new}
-          format.js   {render :json=>@user_session}
-        else
-          log_failed_attempt(params[:user_session][:login], params,flash.now[:error])
-          format.html {render :action => :new}
-          format.js   {render :json=>@user_session.errors}
-        end
-      else
-        if params[:logout] == 'true'
-          if current_user.is_admin?
-            cookies.delete(ResellerTier::TIER_KEY)
-            cookies.delete(ShoppingCart::CART_GUID_KEY)
-            clear_cart
-          end
-          cookies.delete(:acct)
-          current_user_session.destroy
-          Authorization.current_user=nil
-          flash[:error] = "Unable to sign with U2F." unless params[:user]
-
-          @user_session = UserSession.new(params[:user_session].to_h)
-
-          format.html {render :action => :new}
-          format.js   {render :json=>@user_session}
-        else
-          @user_session = current_user_session
-
-          if current_user.is_duo_required?
-            flash[:notice] = "Duo 2-factor authentication setup." unless request.xhr?
-            format.js   {render :json=>url_for_js(current_user)}
-            format.html {redirect_to(duo_user_session_url)}
+            log_failed_attempt(@user_session.user, params,@user_session.errors.to_json)
+            format.html {render :action => :new}
+            format.js   {render :json=>@user_session}
           else
-            if current_user.ssl_account(:default_team).sec_type == 'duo'
-              if current_user.ssl_account(:default_team).duo_enabled && (Settings.duo_auto_enabled || Settings.duo_custom_enabled) && current_user.duo_enabled
-                flash[:notice] = "Duo 2-factor authentication setup." unless request.xhr?
-              else
-                flash[:notice] = "Successfully logged in." unless request.xhr?
-              end
+            log_failed_attempt(params[:user_session][:login], params,flash.now[:error])
+            format.html {render :action => :new}
+            format.js   {render :json=>@user_session.errors}
+          end
+        else
+          if params[:logout] == 'true'
+            if current_user.is_admin?
+              cookies.delete(ResellerTier::TIER_KEY)
+              cookies.delete(ShoppingCart::CART_GUID_KEY)
+              clear_cart
+            end
+            cookies.delete(:acct)
+            current_user_session.destroy
+            Authorization.current_user=nil
+            flash[:error] = "Unable to sign with U2F." unless params[:user]
+
+            @user_session = UserSession.new(params[:user_session].to_h)
+
+            format.html {render :action => :new}
+            format.js   {render :json=>@user_session}
+          else
+            @user_session = current_user_session
+
+            if current_user.is_duo_required?
+              flash[:notice] = "Duo 2-factor authentication setup." unless request.xhr?
               format.js   {render :json=>url_for_js(current_user)}
-              if current_user.ssl_account(:default_team).duo_enabled && (Settings.duo_auto_enabled || Settings.duo_custom_enabled) && current_user.duo_enabled
-                format.html {redirect_to(duo_user_session_url)}
-              else
-                session[:duo_auth] = true
-                format.html {redirect_back_or_default account_path(current_user.ssl_account(:default_team) ? current_user.ssl_account(:default_team).to_slug : {})}
-              end
-            elsif current_user.ssl_account(:default_team).sec_type == 'u2f'
-              session[:duo_auth] = true
-              if params['u2f_response'].blank?
-                flash[:notice] = "Successfully logged in." unless request.xhr?
-                format.js   {render :json=>url_for_js(current_user)}
-                format.html {redirect_back_or_default account_path(current_user.ssl_account(:default_team) ? current_user.ssl_account(:default_team).to_slug : {})}
-              else  
-                response = U2F::SignResponse.load_from_json(params[:u2f_response])
-                reg_u2f = current_user.u2fs.find_by_key_handle(response.key_handle) if response.key_handle
-    
-                unless reg_u2f
+              format.html {redirect_to(duo_user_session_url)}
+            else
+              if current_user.ssl_account(:default_team).sec_type == 'duo'
+                if current_user.ssl_account(:default_team).duo_enabled && (Settings.duo_auto_enabled || Settings.duo_custom_enabled) && current_user.duo_enabled
+                  flash[:notice] = "Duo 2-factor authentication setup." unless request.xhr?
+                else
                   flash[:notice] = "Successfully logged in." unless request.xhr?
-    
+                end
+                format.js   {render :json=>url_for_js(current_user)}
+                if current_user.ssl_account(:default_team).duo_enabled && (Settings.duo_auto_enabled || Settings.duo_custom_enabled) && current_user.duo_enabled
+                  format.html {redirect_to(duo_user_session_url)}
+                else
+                  session[:duo_auth] = true
+                  format.html {redirect_back_or_default account_path(current_user.ssl_account(:default_team) ? current_user.ssl_account(:default_team).to_slug : {})}
+                end
+              elsif current_user.ssl_account(:default_team).sec_type == 'u2f'
+                session[:duo_auth] = true
+                if params['u2f_response'].blank?
+                  flash[:notice] = "Successfully logged in." unless request.xhr?
+                  format.js   {render :json=>url_for_js(current_user)}
+                  format.html {redirect_back_or_default account_path(current_user.ssl_account(:default_team) ? current_user.ssl_account(:default_team).to_slug : {})}
+                else
+                  response = U2F::SignResponse.load_from_json(params[:u2f_response])
+                  reg_u2f = current_user.u2fs.find_by_key_handle(response.key_handle) if response.key_handle
+
+                  unless reg_u2f
+                    flash[:notice] = "Successfully logged in." unless request.xhr?
+
+                    format.js   {render :json=>url_for_js(current_user)}
+                    format.html {redirect_back_or_default account_path(current_user.ssl_account(:default_team) ?
+                                                                           current_user.ssl_account(:default_team).to_slug :
+                                                                           {})}
+                  end
+
+                  begin
+                    u2f.authenticate!(
+                        session[:challenge],
+                        response,
+                        Base64.decode64(reg_u2f.public_key),
+                        reg_u2f.counter
+                    )
+
+                    reg_u2f.update(counter: response.counter)
+                  rescue U2F::Error => e
+                    # Log out to protect hack.
+                    if current_user.is_admin?
+                      cookies.delete(ResellerTier::TIER_KEY)
+                      cookies.delete(ShoppingCart::CART_GUID_KEY)
+                      clear_cart
+                    end
+                    cookies.delete(:acct)
+                    current_user_session.destroy
+                    Authorization.current_user=nil
+                    flash[:error] = "Unable to authenticate with U2F: " + e.class.name unless params[:user]
+
+                    @user_session = UserSession.new(params[:user_session].to_h)
+                    format.html {render :action => :new}
+                    format.js   {render :json=>@user_session.errors}
+                  ensure
+                    session.delete(:challenge)
+                  end
+
+                  flash[:notice] = "Successfully logged in." unless request.xhr?
+
                   format.js   {render :json=>url_for_js(current_user)}
                   format.html {redirect_back_or_default account_path(current_user.ssl_account(:default_team) ?
                                                                          current_user.ssl_account(:default_team).to_slug :
                                                                          {})}
                 end
-    
-                begin
-                  u2f.authenticate!(
-                      session[:challenge],
-                      response,
-                      Base64.decode64(reg_u2f.public_key),
-                      reg_u2f.counter
-                  )
-    
-                  reg_u2f.update(counter: response.counter)
-                rescue U2F::Error => e
-                  # Log out to protect hack.
-                  if current_user.is_admin?
-                    cookies.delete(ResellerTier::TIER_KEY)
-                    cookies.delete(ShoppingCart::CART_GUID_KEY)
-                    clear_cart
-                  end
-                  cookies.delete(:acct)
-                  current_user_session.destroy
-                  Authorization.current_user=nil
-                  flash[:error] = "Unable to authenticate with U2F: " + e.class.name unless params[:user]
-    
-                  @user_session = UserSession.new(params[:user_session].to_h)
-                  format.html {render :action => :new}
-                  format.js   {render :json=>@user_session.errors}
-                ensure
-                  session.delete(:challenge)
-                end
-    
+              else
+                session[:duo_auth] = true;
                 flash[:notice] = "Successfully logged in." unless request.xhr?
-    
-                format.js   {render :json=>url_for_js(current_user)}
-                format.html {redirect_back_or_default account_path(current_user.ssl_account(:default_team) ?
-                                                                       current_user.ssl_account(:default_team).to_slug :
-                                                                       {})}
+                  format.js   {render :json=>url_for_js(current_user)}
+                  format.html {redirect_back_or_default account_path(current_user.ssl_account(:default_team) ? current_user.ssl_account(:default_team).to_slug : {})}
               end
-            else
-              session[:duo_auth] = true;
-              flash[:notice] = "Successfully logged in." unless request.xhr?
-                format.js   {render :json=>url_for_js(current_user)}
-                format.html {redirect_back_or_default account_path(current_user.ssl_account(:default_team) ? current_user.ssl_account(:default_team).to_slug : {})}
             end
-          end  
+          end
         end
       end
+    rescue => exception
+      binding.pry
+      puts exception
     end
   end
 
@@ -279,7 +284,7 @@ class UserSessionsController < ApplicationController
         @authenticated_user = Duo.verify_response(@duo_account ? @duo_account.duo_ikey : "", @duo_account ? @duo_account.duo_skey : "", @duo_account ? @duo_account.duo_akey : "", params['sig_response'])
       end
     end if current_user
-    
+
     if @authenticated_user
       session[:duo_auth] = true
       respond_to do |format|

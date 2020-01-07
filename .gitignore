@@ -35,3 +35,4 @@ sandbox_ssl_com.sql
 ubuntu-xenial-16.04-cloudimg-console.log
 public/assets
 test/.nyc_output
+test/cypress/videos
