@@ -50,13 +50,8 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   validates :locality_name, presence: true, if: lambda{|c|c.csr && (!c.is_dv? && c.csr_obj.locality.blank?)}
   validates :state_or_province_name, presence: true, if: lambda{|c|csr && (!c.is_dv? && c.csr_obj.state.blank?)}
   validates :postal_code, presence: true, if: lambda{|c|c.csr && !c.is_dv?} #|| c.parsed_field("POSTAL_CODE").blank?}
-
-  ############## NOTE: country is required regardless of csr #####################
   validates :country, presence: true, inclusion: { in: Country.accepted_countries, message: "needs to be one of the following: #{Country.accepted_countries.join(', ')}" },
       if: lambda { |c| c.csr && c.csr_obj && c.csr_obj.country.try("blank?") }
-  ############## NOTE: country is required regardless of csr #####################
-
-
   #validates :registered_country, :incorporation_date, if: lambda{|c|c.is_ev?}
   validates :dcv_method, inclusion: {in: ApiCertificateCreate::DCV_METHODS,
       message: "needs to one of the following: #{DCV_METHODS.join(', ')}"}, if: lambda{|c|c.dcv_method}
@@ -65,13 +60,9 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   validates :common_names_flag, format: {with: /[01]/}, unless: lambda{|c|c.common_names_flag.blank?}
   validates :unique_value, format: {with: /[a-zA-Z0-9]{1,20}/}, unless: lambda{|c|c.unique_value.blank?}
   # use code instead of serial allows attribute changes without affecting the cert name
-  validate :verify_dcv, on: :create, if: "!domains.blank?"
-
-  ####################### NOTE: ASK LEO IF VALIDATE CONTACTS IS ALWAYS PRESENT ###########
+  validate :verify_dcv, on: :create
   validates :contacts, presence: true, on: [:create, :update]
   validate :validate_contacts
-  ######################### NOTE: ASK LEO IF VALIDATE CONTACTS IS ALWAYS PRESENT ###########
-
   validate :validate_callback, unless: lambda { |c| c.callback.blank? }
   validate :renewal_exists, if: lambda{|c|c.renewal_id}
 
@@ -534,14 +525,17 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
 
   # must belong to a list of acceptable email addresses
   def verify_dcv
+    domains_list = JSON.parse(domains)
+    return if domains_list.empty?
     #if submitting domains, then a csr must have been submitted on this or a previous request
     if csr.present? || is_processing?
       self.dcv_candidate_addresses = {}
-      if self.domains.is_a?(Array)
-        values = Array.new(self.domains.count,"dcv"=>"HTTP_CSR_HASH")
-        self.domains = (self.domains.zip(values)).to_h
-      end
-      self.domains.each do |k,v|
+      # byebug
+      # if self.domains.is_a?(Array)
+      #   values = Array.new(self.domains.count,"dcv"=>"HTTP_CSR_HASH")
+      #   self.domains = (self.domains.zip(values)).to_h
+      # end
+      domains_list.each do |k,v|
         unless v["dcv"] =~ /https?/i || v["dcv"] =~ /cname/i
           unless v["dcv"]=~EmailValidator::EMAIL_FORMAT
             errors[:domains] << "domain control validation for #{k} failed. #{v["dcv"]} is an invalid email address."
