@@ -127,6 +127,13 @@ jobs:
           key: v1-yarn-{{ checksum "package.json" }}
 
       - run:
+          name: Setup Database for Cypress Test
+          command: |-
+            export RAILS_ENV="test"
+            export RACK_ENV="test"
+            bundle exec rake db:create db:structure:load db:migrate db:seed --trace
+
+      - run:
           name: Rails Server
           command: bundle exec rails server -e test -b 0.0.0.0 -p 5002
           background: true
