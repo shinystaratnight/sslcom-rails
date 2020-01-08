@@ -1,21 +1,21 @@
 // test/cypress/integrations/authentication_spec.js
 describe('User authentication spec', function () {
   it('allows user to register and login', function () {
-    // Clean database
+    // Clean Database
     cy.app('clean')
 
-    // Visit root page
+    // Visit Root Page
     cy.visit('/');
 
-    // Visit account page
+    // Visit Account Page
     cy.contains("MY ACCOUNT")
       .click()
 
-    // Load new account form
+    // Go To Login Page
     cy.contains('Create a new account')
       .click()
 
-    // Create user account
+    // Create User Account
     cy.get('form').within(($form) => {
       cy.get('input[name="user[login]"]').type('cypress')
       cy.get('input[name="user[email]"]').type('cypress@test.ssl.com')
@@ -25,7 +25,29 @@ describe('User authentication spec', function () {
       cy.root().submit()
     })
 
-    // New user is redirected to Dashboard
+    // New User Is Redirected To Dashboard
     cy.contains('SSL.com Customer Dashboard')
+  })
+
+  it('allows existing user to login and logout', function () {
+    // Go To Login Page
+    cy.visit('/user_session/new')
+
+    // Fill In And Submit Login Form
+    cy.get('form').within(($form) => {
+      cy.get('input[name="user_session[login]"]').type('cypress')
+      cy.get('input[name="user_session[password]"]').type('Password123!')
+      cy.root().submit()
+    })
+
+    // User Is Redirected To Dashboard
+    cy.contains('SSL.com Customer Dashboard')
+
+    // Logout User
+    cy.contains('Logout')
+      .click()
+
+    // Redirected to Login Page
+    cy.contains('Customer login')
   })
 })
