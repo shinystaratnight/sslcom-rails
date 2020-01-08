@@ -38,11 +38,7 @@
 ### Setting up test db for Cypress
 
 ```bash
-bundle exec rake db:create RAILS_ENV=test
-bundle exec rake db:structure:load RAILS_ENV=test
-bundle exec rake db:migrate RAILS_ENV=test
-mysql -u ssl_dev_db -p ssl_com_test < sandbox_ssl_com.sql
-bundle exec rake db:migrate RAILS_ENV=test
+RAILS_ENV=test rake db:drop db:create db:structure:load db:migrate db:seed --trace
 ```
 
 ### Running Cypress Spec

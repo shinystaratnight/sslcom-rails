@@ -132,6 +132,7 @@ class SslAccount < ApplicationRecord
   SETTINGS_SECTIONS = %w[processed_certificate receipt confirmation].freeze
   NUMBER_OF_TRIGGERS = 5
   TRIGGER_RANGE = (-364..364).freeze
+  @@reserved_routes ||= Rails.application.routes.named_routes.map{|r| r.to_s}
 
   SHOW_TEAMS_THRESHOLD = 0
   SETTINGS_SECTIONS.each do |item|
@@ -576,7 +577,7 @@ class SslAccount < ApplicationRecord
     cur_ssl_slug = slug_str.strip.downcase
     cur_ssl_slug.present? &&
       !SslAccount.where(ssl_slug: cur_ssl_slug).exists? &&
-      !reserved_routes.include?(cur_ssl_slug) &&
+      !@@reserved_routes .include?(cur_ssl_slug) &&
       cur_ssl_slug.gsub(/([a-zA-Z]|_|-|\s|\d)/, '').empty?
   end
 
@@ -1261,9 +1262,4 @@ class SslAccount < ApplicationRecord
     ReminderTrigger.order(created_at: :desc).limit(5)
   end
   memoize :initial_reminder_triggers
-
-  def reserved_routes
-    Rails.application.routes.named_routes.map(&:to_s)
-  end
-  memoize :reserved_routes
 end
