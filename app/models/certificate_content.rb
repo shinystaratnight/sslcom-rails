@@ -291,7 +291,7 @@ class CertificateContent < ApplicationRecord
       new_certificate_names=[]
       (domains-certificate_names.find_by_domains(domains).pluck(:name)).each do |domain|
         unless domain=~/,/
-          new_certificate_names<<certificate_names.new(name: domain, is_common_name: csr_common_name==domain)
+          new_certificate_names << certificate_names.new(name: domain, is_common_name: csr_common_name==domain)
         end
       end
       CertificateName.import new_certificate_names

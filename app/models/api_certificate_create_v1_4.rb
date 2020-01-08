@@ -285,7 +285,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
           csr.save
           certificate_content.csr = csr
           certificate_content.server_software_id = server_software
-          certificate_content.domains = domains.keys unless domains.blank?
+          certificate_content.domains = domains.keys unless JSON.parse(domains).empty?
           certificate_content.submit_csr!
           if errors.blank?
             if certificate_content.save
@@ -293,7 +293,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
                   certificate_order: @certificate_order,
                   certificate_content: certificate_content,
                   contacts: self.contacts)
-              certificate_content.url_callbacks.create(callback) if callback
+              certificate_content.url_callbacks.create(JSON.parse(callback)) if JSON.parse(callback)
             else
               return certificate_content
             end
@@ -384,7 +384,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
         country: self.country || csr_obj.country)
     if cc.csr_submitted?
       cc.provide_info!
-      if Contact.optional_contacts? && contacts && contacts[:saved_contacts]
+      if Contact.optional_contacts? && JSON.parse(contacts) && JSON.parse(contacts)[:saved_contacts]
         sc = contacts[:saved_contacts]
         if sc && sc.is_a?(Array) && sc.any?
           sc.each do |c_id|
@@ -402,9 +402,10 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
         end
       else
         CertificateContent::CONTACT_ROLES.each do |role|
-          c = if options[:contacts] && (options[:contacts][role] || options[:contacts][:all])
+          contacts_list = JSON.parse(options[:contacts])
+          c = if contacts_list && (contacts_list[role] || contacts_list['all'])
                 CertificateContact.new(retrieve_saved_contact(
-                    options[:contacts][(options[:contacts][role] ? role : :all)].to_utf8,
+                    contacts_list[(contacts_list[role] ? role : 'all')].to_utf8,
                     %w(company_name department)
                 ))
               elsif api_requestable.reseller
@@ -447,8 +448,9 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   end
 
   def send_dcv(cc)
-    if self.debug=="true" || (self.domains && self.domains.count <= Validation::COMODO_EMAIL_LOOKUP_THRESHHOLD)
-      cc.dcv_domains({domains: self.domains, emails: self.dcv_candidate_addresses,
+    domains_list = JSON.parse(domains)
+    if self.debug=="true" || (domains_list && domains_list.count <= Validation::COMODO_EMAIL_LOOKUP_THRESHHOLD)
+      cc.dcv_domains({domains: domains_list, emails: self.dcv_candidate_addresses,
                       dcv_failure_action: self.options.blank? ? nil : self.options['dcv_failure_action']})
       cc.pend_validation!(ca_certificate_id: ca_certificate_id, send_to_ca: send_to_ca || true) unless cc.pending_validation?
     else
@@ -529,7 +531,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
     return if domains_list.empty?
     #if submitting domains, then a csr must have been submitted on this or a previous request
     if csr.present? || is_processing?
-      self.dcv_candidate_addresses = {}
+      dcv_candidate_addresses = {}
       # byebug
       # if self.domains.is_a?(Array)
       #   values = Array.new(self.domains.count,"dcv"=>"HTTP_CSR_HASH")
@@ -540,7 +542,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
           unless v["dcv"]=~EmailValidator::EMAIL_FORMAT
             errors[:domains] << "domain control validation for #{k} failed. #{v["dcv"]} is an invalid email address."
           else
-            self.dcv_candidate_addresses[k]=[]
+            dcv_candidate_addresses[k]=[]
             # self.dcv_candidate_addresses[k]=ComodoApi.domain_control_email_choices(k).email_address_choices
             # errors[:domains] << "domain control validation for #{k} failed. Invalid email address #{v["dcv"]} was submitted but only #{self.dcv_candidate_addresses[k].join(", ")} are valid choices." unless
             #     self.dcv_candidate_addresses[k].include?(v["dcv"])
@@ -607,11 +609,13 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   end
 
   def validate_callback
-    if !callback.is_a?(Hash)
-        errors[:callback] << "expecting hash"
+    callback_info = JSON.parse(callback)
+    return if callback_info.empty?
+    unless callback_info.is_a?(Hash)
+      errors[:callback] << "expecting hash"
       return false
     else
-      cb = UrlCallback.new(callback)
+      cb = UrlCallback.new(callback_info)
       errors[:callback] = cb.errors unless cb.valid?
     end
   end
