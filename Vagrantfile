@@ -13,6 +13,7 @@ Vagrant.configure('2') do |config|
   config.vm.network 'forwarded_port', guest: 4443,  host: 4443,  auto_correct: true
   config.vm.network 'forwarded_port', guest: 9515,  host: 9515,  auto_correct: true
   config.vm.network 'forwarded_port', guest: 10_000, host: 10_000, auto_correct: true
+  config.vm.network 'forwarded_port', guest: 5002, host: 5002, auto_correct: true
 
   # configure virtualbox host
   config.vm.provider 'virtualbox' do |vb|
@@ -29,8 +30,12 @@ Vagrant.configure('2') do |config|
     debconf-set-selections <<< 'mysql-server mysql-server/root_password_again password vagrant'
     sudo apt-get -y install libmysqlclient-dev mysql-server libssl-dev
     sudo apt-get -y install unixodbc-dev
-    sudo apt-get -y install nodejs
+    curl -sL https://deb.nodesource.com/setup_13.x | sudo -E bash -
+    sudo apt-get install -y nodejs
     sudo apt-get -y install npm
+    curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
+    echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+    sudo apt update && sudo apt install yarn
   SHELL
 
   # Install Ruby2.6 from Brightbox APT repository
@@ -66,5 +71,6 @@ Vagrant.configure('2') do |config|
     apt-get update
     apt-get install -y webmin >/dev/null 2>&1
     apt-get -y install memcached
+    apt-get -y install xvfb libgtk-3-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2
   SHELL
 end
