@@ -3,9 +3,9 @@
 # app/models/swagger/blocks/create_certificate_response.rb
 module Swagger
   module Blocks
-    class CreateCertificateResponse
+    class UpdateCertificateResponse
       include Swagger::Blocks
-      swagger_schema :CreateCertificateResponse do
+      swagger_schema :UpdateCertificateResponse do
         property :ref do
           key :type, :string
         end
