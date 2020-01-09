@@ -992,6 +992,14 @@ class CertificateContent < ApplicationRecord
     end.compact
   end
 
+  def to_api_query
+    {}.tap do |result|
+      %w(ref).each do |k,v|
+        result.merge!({"#{k.to_sym}": self.send(k)})
+      end
+    end
+  end
+
   private
 
   def certificate_contact_compatibility

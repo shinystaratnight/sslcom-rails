@@ -156,7 +156,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
         #       contacts: self.contacts)
         # end
 
-        certificate_content.url_callbacks.create(callback) if callback
+        certificate_content.url_callbacks.create(JSON.parse(callback)) unless JSON.parse(callback)
         return @certificate_order
       else
         return certificate_content
