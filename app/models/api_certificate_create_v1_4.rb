@@ -561,7 +561,6 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   end
 
   def validate_contacts
-    ############### Note: Add a valid_json? method ########################
     contacts_info = JSON.parse(contacts)
     unless contacts_info.is_a?(Hash)
       errors[:contacts] << "parameter expects hash format"
