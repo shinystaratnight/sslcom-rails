@@ -156,7 +156,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
         #       contacts: self.contacts)
         # end
 
-        certificate_content.url_callbacks.create(JSON.parse(callback)) unless JSON.parse(callback)
+        certificate_content.url_callbacks.create(JSON.parse(callback)) unless JSON.parse(callback).empty?
         return @certificate_order
       else
         return certificate_content
@@ -293,7 +293,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
                   certificate_order: @certificate_order,
                   certificate_content: certificate_content,
                   contacts: self.contacts)
-              certificate_content.url_callbacks.create(JSON.parse(callback)) if JSON.parse(callback)
+              certificate_content.url_callbacks.create(JSON.parse(callback)) unless JSON.parse(callback).empty?
             else
               return certificate_content
             end
@@ -532,11 +532,10 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
     #if submitting domains, then a csr must have been submitted on this or a previous request
     if csr.present? || is_processing?
       dcv_candidate_addresses = {}
-      # byebug
-      # if self.domains.is_a?(Array)
-      #   values = Array.new(self.domains.count,"dcv"=>"HTTP_CSR_HASH")
-      #   self.domains = (self.domains.zip(values)).to_h
-      # end
+      if domaind_list.is_a?(Array)
+        values = Array.new(domains_list.count,"dcv"=>"HTTP_CSR_HASH")
+        domains_list = (domains_list.zip(values)).to_h
+      end
       domains_list.each do |k,v|
         unless v["dcv"] =~ /https?/i || v["dcv"] =~ /cname/i
           unless v["dcv"]=~EmailValidator::EMAIL_FORMAT
