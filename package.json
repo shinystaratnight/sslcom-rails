@@ -5,5 +5,11 @@
   "repository": "https://github.com/SSLcom/sslcom-rails.git",
   "author": "SSL.com",
   "license": "MIT",
-  "dependencies": {}
+  "dependencies": {},
+  "devDependencies": {
+    "@cypress/code-coverage": "^1.10.4",
+    "cypress": "^3.8.1",
+    "istanbul-lib-coverage": "^3.0.0",
+    "nyc": "^15.0.0"
+  }
 }

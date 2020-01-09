@@ -1,0 +1,8 @@
+{
+  "baseUrl": "https://localhost:5002",
+  "defaultCommandTimeout": 15000,
+  "env": {
+    "RAILS_ENV": "test",
+    "RACK_ENV": "test"
+  }
+}

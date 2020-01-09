@@ -40,6 +40,7 @@ SslCom::Application.configure do
   config.assets.debug = false
   config.assets.compile = true
   config.assets.digest = false
+  config.assets.quiet = true
 
   unless Rails.env.test?
     config.middleware.use Rack::SslEnforcer,
