@@ -1,8 +1,13 @@
 // test/cypress/integrations/authentication_spec.js
 describe('User authentication spec', function () {
-  it('allows user to register and login', function () {
-    // Clean Database
+  beforeEach(() => {
     cy.app('clean')
+    cy.request('DELETE', '/user_session')
+    cy.log('before each executed')
+  })
+
+  it('allows user to register and login', function () {
+    // cy.request('DELETE', '/user_session')
 
     // Visit Root Page
     cy.visit('/');
@@ -30,18 +35,30 @@ describe('User authentication spec', function () {
   })
 
   it('allows existing user to login and logout', function () {
+    cy.appFactories([
+      ['create', 'user', {
+        login: 'existing'
+      }]
+    ])
+
+    // Logout Current User
+    // cy.request('DELETE', '/user_session')
+
     // Go To Login Page
     cy.visit('/user_session/new')
 
     // Fill In And Submit Login Form
     cy.get('form').within(($form) => {
-      cy.get('input[name="user_session[login]"]').type('cypress')
-      cy.get('input[name="user_session[password]"]').type('Password123!')
+      cy.get('input[name="user_session[login]"]').type('existing')
+      cy.get('input[name="user_session[password]"]').type('Testing_ssl+1')
       cy.root().submit()
     })
 
+
     // User Is Redirected To Dashboard
-    cy.contains('SSL.com Customer Dashboard')
+    cy.get('#content')
+      .should('not.contain', 'Customer login')
+      .contains('SSL.com Customer Dashboard')
 
     // Logout User
     cy.contains('Logout')
@@ -49,5 +66,78 @@ describe('User authentication spec', function () {
 
     // Redirected to Login Page
     cy.contains('Customer login')
+  })
+
+  it('fails gracefully when attempting to reset password with nonexistent login', function () {
+    cy.visit('/password_resets/new')
+
+    cy.get('form').within(($form) => {
+      cy.get('input[name="login"]').type('nonexistent')
+    })
+    cy.get('.password_resets_btn').click()
+    cy.contains('No user was found with that login')
+  })
+
+  it('allows existing user to reset password using login', function () {
+    cy.appFactories([
+      ['create', 'user', {
+        login: 'existing'
+      }]
+    ])
+
+    cy.visit('/password_resets/new')
+
+    cy.get('form').within(($form) => {
+      cy.get('input[name="login"]').type('existing')
+    })
+    cy.get('.password_resets_btn').click()
+    cy.contains('Customer login')
+  })
+
+  it('allows existing user to reset password using email', function () {
+    // cy.request('DELETE', '/user_session')
+
+    cy.appFactories([
+      ['create', 'user', {
+        email: 'existing@ssl.com'
+      }]
+    ])
+
+    cy.visit('/password_resets/new')
+
+    cy.get('form').within(($form) => {
+      cy.get('input[name="email"]').type('existing@ssl.com')
+    })
+    cy.get('.password_resets_btn').click()
+    cy.contains('Customer login')
+  })
+
+  it('fails gracefully when attempting to reset a password with nonexistent email', function () {
+    // cy.request('DELETE', '/user_session')
+
+    cy.visit('/password_resets/new')
+
+    cy.get('form').within(($form) => {
+      cy.get('input[name="email"]').type('nonexistent@ssl.com')
+    })
+    cy.get('.password_resets_btn').click()
+    cy.contains('No user was found with that email')
+  })
+
+  it('requires Duo 2FA when logging in as super_user', function () {
+    cy.app('super_user')
+
+    cy.visit('/user_session/new')
+
+    // Fill In And Submit Login Form
+    cy.get('form').within(($form) => {
+      cy.get('input[name="user_session[login]"]').type('superuser1')
+      cy.get('input[name="user_session[password]"]').type('Testing_ssl+1')
+      cy.root().submit()
+    })
+
+    // Prompted for Duo 2FA
+    cy.get('.white-wrapper')
+      .contains('Two-factor authentication enhances the security of your account by using a secondary device to verify your identity.')
   })
 })

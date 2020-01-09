@@ -667,14 +667,16 @@ class User < ApplicationRecord
     end
     memoize :get_user_accounts_roles
 
+    def user_account_roles(user)
+      ids = get_user_accounts_roles(user).uniq
+      Role.where(id: ids)
+    end
+    memoize :user_account_roles
+
     def get_user_accounts_roles_names(user)
       # e.g.: {'team_1': ['owner'], 'team_2': ['account_admin', 'installer']}
       Rails.cache.fetch("#{user.cache_key}/get_user_accounts_roles_names") do
-        user.ssl_accounts.inject({}) do |all, s|
-          all[s.get_team_name] = user.assignments.where(ssl_account_id: s.id)
-                                     .map(&:role).uniq.map(&:name)
-          all
-        end
+        user_account_roles(user)&.map(&:name)
       end
     end
     memoize :get_user_accounts_roles_names
@@ -684,7 +686,6 @@ class User < ApplicationRecord
     end
     memoize :total_teams_owned
   end
-
 
   # the second will take care of setting any data that you want to happen
   # at activation. at the very least this will be setting active to true

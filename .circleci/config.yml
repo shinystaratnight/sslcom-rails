@@ -131,7 +131,7 @@ jobs:
           command: |-
             export RAILS_ENV="test"
             export RACK_ENV="test"
-            bundle exec rake db:create db:structure:load db:migrate db:seed --trace
+            bundle exec rake db:seed --trace
 
       - run:
           name: Rails Server

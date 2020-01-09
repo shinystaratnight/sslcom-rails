@@ -58,10 +58,9 @@ class UserSessionsController < ApplicationController
   end
 
   def create
-    begin
-      if params["prev.x".intern]
-        #assume trying to login during checkout
-        if params[:certificate_order]
+    if params["prev.x".intern]
+      #assume trying to login during checkout
+      if params[:certificate_order]
           @certificate_order=CertificateOrder.new(params[:certificate_order])
           @certificate_order.has_csr=true
           if params["prev.x".intern]
@@ -70,10 +69,10 @@ class UserSessionsController < ApplicationController
           end
         else
           redirect_to show_cart_orders_url and return
-        end
       end
+    end
 
-      if current_user.blank?
+    if current_user.blank?
         @user_session = UserSession.new(params[:user_session].to_h)
       else
         if current_user.is_admin? && params[:login]
@@ -85,9 +84,9 @@ class UserSessionsController < ApplicationController
         unless current_user.ssl_account.nil?
           set_cookie(:acct,current_user.ssl_account.acct_number)
         end
-      end
+    end
 
-      respond_to do |format|
+    respond_to do |format|
         @failed_count = params[:failed_count].to_i
 
         if @user_session
@@ -227,10 +226,6 @@ class UserSessionsController < ApplicationController
             end
           end
         end
-      end
-    rescue => exception
-      binding.pry
-      puts exception
     end
   end
 
