@@ -62,10 +62,6 @@ module Api
         render template: @template, status: :created
       end
 
-      def render_204_status
-        render template: @template, status: :no_content
-      end
-
       def render_400_status
         render template: @template, status: :bad_request
       end

@@ -372,7 +372,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
         InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
       end
     end
-    render_204_status
+    render_200_status
   rescue => e
     render_500_error e
   end
