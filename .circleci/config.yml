@@ -1,6 +1,8 @@
 version: 2
 jobs:
   build:
+    environment:
+      CC_TEST_REPORTER_ID: 28165637ec744cbee7b35b80ec881d25bc0e7437b2321f168572a270828aa586
     working_directory: ~/sslcom-rails
     docker:
       - image: circleci/ruby:2.6.2-node-browsers

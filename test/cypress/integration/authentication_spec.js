@@ -132,4 +132,35 @@ describe('User authentication spec', function () {
       expect(loc.pathname).to.eq('/user_session/duo')
     })
   })
+
+  it('allows super_user to login as another user', function () {
+    cy.appFactories([
+      ['create_list', 'user', 5]
+    ])
+
+    cy.app('super_user')
+
+    cy.visit('/user_session/new')
+
+    // Fill In And Submit Login Form
+    cy.get('form').within(($form) => {
+      cy.get('input[name="user_session[login]"]').type('superuser1')
+      cy.get('input[name="user_session[password]"]').type('Testing_ssl+1')
+      cy.root().submit()
+    })
+
+    let session
+    cy.getCookie('_my_app_session')
+      .then((c) => {
+        session = c
+      })
+
+    cy.log(session)
+
+    cy.visit('/account')
+    cy.get('#content')
+      .should('not.contain', 'Customer login')
+      .contains('Customer Dashboard')
+  })
+
 })
