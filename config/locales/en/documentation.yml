@@ -165,7 +165,7 @@ en:
       <code>{"domains"&#58; ["www.mysite.com","*.test.com","mail.yoursite.com"]}</code>
     organization_param_description: >
       <b>Sets the Organization (O) field of the ssl certificate to this value. Ignored for DV certificates.<br>Overrides the (O) value in the csr if csr is specified.<br>
-      Example&#58;</b> SLL Corp
+      Example&#58;</b> SSL Corp
     organization_unit_param_description: >
       <b>Sets the Organization Unit (OU) (eg department name). Ignored for DV certificates.<br>Overrides the (OU) value in the csr if csr is specified.
       <br>Example&#58;</b> IT Security.
@@ -253,7 +253,7 @@ en:
         <li><code>country</code>Applicant Representative's country code (ISO3166 2-character country code)</li>
       </ul>
       <p><b>Example&#58;</b></p>
-      <code>"contacts"&#58;{"all"&#58;{"first_name"&#58;"Joe","last_name"&#58;"Bob","email"&#58;"jbob@domain.com","phone"&#58;"+123456789","country"&#58;"US"}}</code>
+      <code>{"all"&#58;{"first_name"&#58;"Joe","last_name"&#58;"Bob","email"&#58;"jbob@domain.com","phone"&#58;"+123456789","country"&#58;"US"}}</code>
     app_req_param_description: >
       <p><b>Applicant Representative used for callback. Only for OV certificates. All values are optional.</b></p>
       <ul>

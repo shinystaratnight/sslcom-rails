@@ -2,9 +2,9 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
   prepend_view_path "app/views/api/v1/api_certificate_requests"
   include ActionController::Helpers
   helper SiteSealsHelper
-  before_filter :set_database, if: "request.host=~/^sandbox/ || request.host=~/^sws-test/ || request.host=~/ssl.local$/"
-  before_filter :set_test, :record_parameters, except: [:scan, :analyze, :download_v1_4]
-  after_filter :notify_saved_result, except: [:create_v1_4, :download_v1_4]
+  before_action :set_database, if: "request.host=~/^sandbox/ || request.host=~/^sws-test/ || request.host=~/ssl.local$/"
+  before_action :set_test, :record_parameters, except: [:scan, :analyze, :download_v1_4]
+  after_action :notify_saved_result, except: [:create_v1_4, :download_v1_4]
 
   # parameters listed here made available as attributes in @result
   wrap_parameters ApiCertificateRequest, include: [*(
@@ -34,20 +34,20 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
 
   # set which parameters will be displayed via the api response
   def set_result_parameters(result, acr)
-    cc                     = acr.certificate_contents(true).last # need to reload to get certs
-    ssl_slug               = acr.ssl_account.to_slug
-    result.ref             = acr.ref
-    result.order_status    ||= acr.status # using ||= because status might have been set from CAA problems
-    result.order_amount    = acr.order.amount.format
+    cc = acr.certificate_contents.last # need to reload to get certs
+    ssl_slug = acr.ssl_account.to_slug
+    result.ref = acr.ref
+    result.order_status ||= acr.status # using ||= because status might have been set from CAA problems
+    result.order_amount = acr.order.amount.format
     domain = api_result_domain(acr)
     result.external_order_number = acr.ext_customer_ref
-    result.certificate_url = domain+certificate_order_path(ssl_slug, acr)
-    result.receipt_url     = domain+order_path(ssl_slug, acr.order)
-    result.smart_seal_url  = domain+certificate_order_site_seal_path(ssl_slug, acr.ref)
-    result.validation_url  = domain+certificate_order_validation_path(ssl_slug, acr)
-    result.registrant      = cc.registrant.to_api_query if
-        (cc && cc.registrant)
-    result.certificates    = cc.x509_certificates.map(&:to_s).join("\n") if cc.x509_certificates
+    result.certificate_url = domain + certificate_order_path(ssl_slug, acr)
+    result.receipt_url = domain + order_path(ssl_slug, acr.order)
+    result.smart_seal_url = domain + certificate_order_site_seal_path(ssl_slug, acr.ref)
+    result.validation_url = domain + certificate_order_validation_path(ssl_slug, acr)
+    result.registrant = cc.registrant.to_api_query if (cc && cc.registrant)
+    result.certificate_contents = cc.to_api_query
+    result.certificates = cc.x509_certificates.map(&:to_s).join("\n") if cc.x509_certificates
   end
 
   def create_v1_4
@@ -73,7 +73,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
         InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
       end
     end
-    render_200_status_noschema
+    render_201_status
   rescue => e
     render_500_error e
   end
