@@ -63,19 +63,6 @@ jobs:
               send_dv_first: true
             ' > config/settings.yml
 
-      # - run:
-      #     name: Duo Settings
-      #     command: |-
-      #       echo 'DUO_INTEGRATION_KEY: ${DUO_INTEGRATION_KEY}' > config/local_env.yml
-      #       echo 'DUO_INTEGRATION_KEY: ${DUO_INTEGRATION_KEY}' > config/local_env.yml
-      #       echo 'DUO_SECRET_KEY: ${DUO_SECRET_KEY}' > config/local_env.yml
-      #       echo 'DUO_APPLICATION_KEY: ${DUO_APPLICATION_KEY}' > config/local_env.yml
-      #       echo 'DUO_API_HOSTNAME: ${DUO_API_HOSTNAME}' > config/local_env.yml
-      #       echo 'DUO_SYSADMIN_INTEGRATION_KEY: ${DUO_INTEGRATION_KEY}' > config/local_env.yml
-      #       echo 'DUO_SYSADMIN_SECRET_KEY: ${DUO_SECRET_KEY}' > config/local_env.yml
-      #       echo 'DUO_SYSADMIN_APPLICATION_KEY: ${DUO_APPLICATION_KEY}' > config/local_env.yml
-      #       echo 'DUO_SYSADMIN_API_HOSTNAME: ${DUO_API_HOSTNAME}' > config/local_env.yml
-
       - run:
             name: Build the Local Environment File on the Fly
             command: |-
