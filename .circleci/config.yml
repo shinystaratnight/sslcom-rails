@@ -71,14 +71,14 @@ jobs:
               AWS_SECRET_ACCESS_KEY: ""
               S3_BUCKET_NAME: ""
               AWS_DEFAULT_REGION: ""
-              DUO_INTEGRATION_KEY: <%= ENV["DUO_INTEGRATION_KEY"] %>
-              DUO_SECRET_KEY: <%= ENV["DUO_SECRET_KEY"] %>
-              DUO_APPLICATION_KEY: <%= ENV["DUO_APPLICATION_KEY"] %>
-              DUO_API_HOSTNAME: <%= ENV["DUO_API_HOSTNAME"] %>
-              DUO_SYSADMIN_INTEGRATION_KEY: <%= ENV["DUO_INTEGRATION_KEY"] %>
-              DUO_SYSADMIN_SECRET_KEY: <%= ENV["DUO_SECRET_KEY"] %>
-              DUO_SYSADMIN_APPLICATION_KEY: <%= ENV["DUO_APPLICATION_KEY"] %>
-              DUO_SYSADMIN_API_HOSTNAME: <%= ENV["DUO_API_HOSTNAME"] %>
+              DUO_INTEGRATION_KEY: "${DUO_INTEGRATION_KEY}"
+              DUO_SECRET_KEY: "${DUO_SECRET_KEY}"
+              DUO_APPLICATION_KEY: "${DUO_APPLICATION_KEY}"
+              DUO_API_HOSTNAME: "${DUO_API_HOSTNAME}"
+              DUO_SYSADMIN_INTEGRATION_KEY: "${DUO_INTEGRATION_KEY}"
+              DUO_SYSADMIN_SECRET_KEY: "${DUO_SECRET_KEY}"
+              DUO_SYSADMIN_APPLICATION_KEY: "${DUO_APPLICATION_KEY}"
+              DUO_SYSADMIN_API_HOSTNAME: "${DUO_API_HOSTNAME}"
             ' > config/local_env.yml
 
       - run:
