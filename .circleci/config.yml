@@ -126,12 +126,12 @@ jobs:
             - ~/.cache
           key: v1-yarn-{{ checksum "package.json" }}
 
-      - run:
-          name: Setup Database for Cypress Test
-          command: |-
-            export RAILS_ENV="test"
-            export RACK_ENV="test"
-            bundle exec rake db:seed --trace
+      # - run:
+      #     name: Setup Database for Cypress Test
+      #     command: |-
+      #       export RAILS_ENV="test"
+      #       export RACK_ENV="test"
+      #       bundle exec rake db:seed --trace
 
       - run:
           name: Rails Server

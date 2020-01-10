@@ -7,8 +7,6 @@ describe('User authentication spec', function () {
   })
 
   it('allows user to register and login', function () {
-    // cy.request('DELETE', '/user_session')
-
     // Visit Root Page
     cy.visit('/');
 
@@ -40,9 +38,6 @@ describe('User authentication spec', function () {
         login: 'existing'
       }]
     ])
-
-    // Logout Current User
-    // cy.request('DELETE', '/user_session')
 
     // Go To Login Page
     cy.visit('/user_session/new')
@@ -95,8 +90,6 @@ describe('User authentication spec', function () {
   })
 
   it('allows existing user to reset password using email', function () {
-    // cy.request('DELETE', '/user_session')
-
     cy.appFactories([
       ['create', 'user', {
         email: 'existing@ssl.com'
@@ -113,8 +106,6 @@ describe('User authentication spec', function () {
   })
 
   it('fails gracefully when attempting to reset a password with nonexistent email', function () {
-    // cy.request('DELETE', '/user_session')
-
     cy.visit('/password_resets/new')
 
     cy.get('form').within(($form) => {
@@ -137,7 +128,8 @@ describe('User authentication spec', function () {
     })
 
     // Prompted for Duo 2FA
-    cy.get('.white-wrapper')
-      .contains('Two-factor authentication enhances the security of your account by using a secondary device to verify your identity.')
+    cy.location().should((loc) => {
+      expect(loc.pathname).to.eq('/user_session/duo')
+    })
   })
 })
