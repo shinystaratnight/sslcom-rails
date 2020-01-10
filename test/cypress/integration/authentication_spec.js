@@ -51,7 +51,7 @@ describe('User authentication spec', function () {
     cy.visit('/password_resets/new')
 
     cy.get('form').within(($form) => {
-      cy.get('input[name="login"]').type('nonexistent')
+      cy.get('input[name="login"]').type('skeeter')
     })
     cy.get('.password_resets_btn').click()
     cy.contains('No user was found with that login')
@@ -81,7 +81,7 @@ describe('User authentication spec', function () {
     cy.visit('/password_resets/new')
 
     cy.get('form').within(($form) => {
-      cy.get('input[name="email"]').type('nonexistent@ssl.com')
+      cy.get('input[name="email"]').type('token@ssl.com')
     })
     cy.get('.password_resets_btn').click()
     cy.contains('No user was found with that email')
@@ -107,7 +107,7 @@ describe('User authentication spec', function () {
     cy.visit('/user_session/new')
 
     cy.get('form').within(($form) => {
-      cy.get('input[name="user_session[login]"]').type('superuser1')
+      cy.get('input[name="user_session[login]"]').type('timmy')
       cy.get('input[name="user_session[password]"]').type('Testing_ssl+1')
       cy.root().submit()
     })
