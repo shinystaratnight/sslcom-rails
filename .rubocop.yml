@@ -37,10 +37,13 @@ Style/EvalWithLocation:
   Enabled: false
 Style/StructInheritance:
   Enabled: false
+Style/DoubleNegation:
+  Enabled: false
 
 Security/Eval:
   Exclude:
     - app/models/notification_group.rb
+    - app/models/ssl_account.rb
 
 Layout/HashAlignment:
   EnforcedHashRocketStyle:
@@ -84,18 +87,24 @@ Lint/UselessAccessModifier:
   MethodCreatingMethods:
     - 'def_matcher'
     - 'def_node_matcher'
+Lint/UselessAssignment:
+  Exclude:
+    - app/models/ssl_account.rb
 Lint/BooleanSymbol:
   Enabled: false
 Lint/IneffectiveAccessModifier:
-  Exclude:
-    - app/models/product_order.rb
+  Enabled: false
 Lint/Void:
   Exclude:
     - config/deploy.rb
     - app/models/product_order.rb
+    - app/models/ssl_account.rb
 Lint/EmptyWhen:
   Exclude:
     - app/models/product_order.rb
+Lint/ShadowingOuterLocalVariable:
+  Exclude:
+    - app/models/ssl_account.rb
 
 Metrics:
   Enabled: false
@@ -108,7 +117,10 @@ Rails/RelativeDateConstant:
   Enabled: false
 Rails/SkipsModelValidations:
   Enabled: false
-
+Rails/HasManyOrHasOneDependent:
+  Enabled: false
+Rails/InverseOf:
+  Enabled: false
 Metrics/ModuleLength:
   Enabled: false
 
