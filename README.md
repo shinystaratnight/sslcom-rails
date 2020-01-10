@@ -1,5 +1,7 @@
 # SSL.com Rails
 
+[![CircleCI](https://circleci.com/gh/SSLcom/sslcom-rails/tree/master.svg?style=svg)](https://circleci.com/gh/SSLcom/sslcom-rails/tree/master)
+
 ## Getting set up
 
 1. Download VirtualBox and import the image into VirtualBox.
