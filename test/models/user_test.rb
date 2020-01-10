@@ -1,12 +1,57 @@
+# frozen_string_literal: true
+
+# == Schema Information
+#
+# Table name: users
+#
+#  id                  :integer          not null, primary key
+#  ssl_account_id      :integer
+#  login               :string(255)      not null
+#  email               :string(255)      not null
+#  crypted_password    :string(255)
+#  password_salt       :string(255)
+#  persistence_token   :string(255)      not null
+#  single_access_token :string(255)      not null
+#  perishable_token    :string(255)      not null
+#  status              :string(255)
+#  login_count         :integer          default(0), not null
+#  failed_login_count  :integer          default(0), not null
+#  last_request_at     :datetime
+#  current_login_at    :datetime
+#  last_login_at       :datetime
+#  current_login_ip    :string(255)
+#  last_login_ip       :string(255)
+#  active              :boolean          default(FALSE), not null
+#  openid_identifier   :string(255)
+#  created_at          :datetime
+#  updated_at          :datetime
+#  first_name          :string(255)
+#  last_name           :string(255)
+#  phone               :string(255)
+#  organization        :string(255)
+#  address1            :string(255)
+#  address2            :string(255)
+#  address3            :string(255)
+#  po_box              :string(255)
+#  postal_code         :string(255)
+#  city                :string(255)
+#  state               :string(255)
+#  country             :string(255)
+#  is_auth_token       :boolean
+#  default_ssl_account :integer
+#  max_teams           :integer
+#  main_ssl_account    :integer
+#  persist_notice      :boolean          default(FALSE)
+#  duo_enabled         :string(255)      default("enabled")
+#
+
+
 require 'test_helper'
 
 describe User do
-
   before do
     # Create necessary reminder triggers
-    unless ReminderTrigger.count == 5
-      (1..5).to_a.each { |i| ReminderTrigger.create(id: i, name: i) }
-    end
+    (1..5).to_a.each { |i| ReminderTrigger.create(id: i, name: i) } unless ReminderTrigger.count == 5
 
     unless Role.count == 11
       create(:role, :account_admin)
@@ -24,31 +69,19 @@ describe User do
   end
 
   describe 'attributes' do
-    before(:each)  { @user = create(:user) }
+    let(:user) { create(:user) }
 
-    it { assert_respond_to @user, :login }
-    it { assert_respond_to @user, :first_name }
-    it { assert_respond_to @user, :last_name }
-    it { assert_respond_to @user, :email }
-    it { assert_respond_to @user, :active }
-    it { assert_respond_to @user, :default_ssl_account }
-    it { assert_respond_to @user, :main_ssl_account }
-    it { assert_respond_to @user, :max_teams }
+    it { assert_respond_to user, :login }
+    it { assert_respond_to user, :first_name }
+    it { assert_respond_to user, :last_name }
+    it { assert_respond_to user, :email }
+    it { assert_respond_to user, :active }
+    it { assert_respond_to user, :default_ssl_account }
+    it { assert_respond_to user, :main_ssl_account }
+    it { assert_respond_to user, :max_teams }
 
-    it '#first_name returns a string' do
-      assert_match 'first name', @user.first_name
-    end
-    it '#last_name returns a string' do
-      assert_match 'last name', @user.last_name
-    end
-    it '#login returns a string' do
-      assert_includes @user.login, 'user_login'
-    end
-    it '#email returns a string' do
-      assert_includes @user.email, '@domain.com'
-    end
     it '#max_teams_reached returns an integer' do
-      assert_equal User::OWNED_MAX_TEAMS, @user.max_teams
+      assert_equal User::OWNED_MAX_TEAMS, user.max_teams
     end
   end
 
@@ -58,25 +91,25 @@ describe User do
     end
 
     it 'should require email' do
-      refute build(:user, email: nil).valid?
+      assert_not build(:user, email: nil).valid?
     end
 
     it 'should require unique email' do
       create(:user, email: 'dupe@domain.com')
-      refute build(:user, email: 'dupe@domain.com').valid?
+      assert_not build(:user, email: 'dupe@domain.com').valid?
     end
 
     it 'should require valid email' do
-      refute build(:user, email: 'invalid_email.com').valid?
-      refute build(:user, email: 'invalid_email@').valid?
-      refute build(:user, email: '<valid@domain.com>').valid?
-      refute build(:user, email: 'invalid_email').valid?
+      assert_not build(:user, email: 'invalid_email.com').valid?
+      assert_not build(:user, email: 'invalid_email@').valid?
+      assert_not build(:user, email: '<valid@domain.com>').valid?
+      assert_not build(:user, email: 'invalid_email').valid?
       assert build(:user, email: 'valid_email@domain.com').valid?
     end
 
     it 'should have default_ssl_account if assigned role' do
       user = create(:user, :owner)
-      refute_nil user.default_ssl_account
+      assert_not_nil user.default_ssl_account
     end
   end
 
@@ -214,7 +247,7 @@ describe User do
       new_ssl_account = @owner.create_ssl_account
 
       assert_equal 2, @owner.ssl_accounts.count
-      refute_nil @owner.default_ssl_account
+      assert_not_nil @owner.default_ssl_account
       # should not overwrite default_ssl_account id previously set
       assert_equal previous_ssl_account, @owner.default_ssl_account
       # ssl account should be automatically approved
@@ -226,8 +259,7 @@ describe User do
       billing = create(:role, :billing)
 
       params = { ssl_account_id:
-        @owner.create_ssl_account([owner.id, billing.id])
-      }
+        @owner.create_ssl_account([owner.id, billing.id]) }
 
       assert_equal 2, @owner.assignments.where(params).count
       assert_equal 1, @owner.assignments.where(params.merge(role_id: owner.id)).count
@@ -237,13 +269,13 @@ describe User do
     it '#approve_account should approve account and clear token info' do
       owner = create(:user, :owner)
       default_ssl = owner.ssl_account
-      ssl_params = {ssl_account_id: default_ssl.id}
+      ssl_params = { ssl_account_id: default_ssl.id }
       owner.set_approval_token(ssl_params)
       ssl = owner.ssl_account_users.where(ssl_params).first
 
-      refute_nil ssl.approval_token
-      refute_nil ssl.token_expires
-      refute     ssl.approved
+      assert_not_nil ssl.approval_token
+      assert_not_nil ssl.token_expires
+      assert_not     ssl.approved
 
       owner.send(:approve_account, ssl_params)
       ssl = owner.ssl_account_users.where(ssl_params).first
@@ -265,12 +297,12 @@ describe User do
   end
 
   describe 'role helper methods' do
-    before(:all) {
+    before(:all) do
       @owner = create(:user, :owner)
       @default_ssl = @owner.ssl_account
       @reseller_role = create(:role, :reseller).id
       @billing_role = create(:role, :billing).id
-    }
+    end
 
     # it '#set_roles_for_account should set roles' do
     #   prev_roles = @owner.roles.count
@@ -418,13 +450,13 @@ describe User do
   end
 
   describe 'approval token helpers' do
-    before(:all) {
-      @owner  = create(:user, :owner)
-      @default_ssl    = @owner.ssl_account
-      @user_w_token   = create(:user, :owner)
-      @ssl_prms_token = { ssl_account_id: @user_w_token.ssl_account.id, skip_match: true}
+    before(:all) do
+      @owner = create(:user, :owner)
+      @default_ssl = @owner.ssl_account
+      @user_w_token = create(:user, :owner)
+      @ssl_prms_token = { ssl_account_id: @user_w_token.ssl_account.id, skip_match: true }
       @user_w_token.set_approval_token(ssl_account_id: @user_w_token.ssl_account.id)
-    }
+    end
 
     # it '#approval_token_valid? false if account approved' do
     #   ssl_params = {ssl_account_id: @default_ssl.id}
@@ -438,15 +470,15 @@ describe User do
         token_expires: (DateTime.now - 2.hours) # expire token
       )
 
-      refute @user_w_token.approval_token_valid?(@ssl_prms_token)
+      assert_not @user_w_token.approval_token_valid?(@ssl_prms_token)
     end
 
     it '#approval_token_valid? false if token does not match' do
       valid_token = @user_w_token.ssl_account_users.first.approval_token
-      @ssl_prms_token.merge!(skip_match: false)
+      @ssl_prms_token[:skip_match] = false
 
       assert @user_w_token.approval_token_valid?(@ssl_prms_token.merge(token: valid_token))
-      refute @user_w_token.approval_token_valid?(@ssl_prms_token.merge(token: 'does not match'))
+      assert_not @user_w_token.approval_token_valid?(@ssl_prms_token.merge(token: 'does not match'))
     end
     #
     # it '#set_approval_token sets a valid token' do
@@ -483,12 +515,12 @@ describe User do
 
     it '#approval_token_not_expired false when expired' do
       @user_w_token.ssl_account_users.first.update(token_expires: (DateTime.now - 2.hours))
-      refute @user_w_token.approval_token_not_expired?(ssl_account_id: @user_w_token.ssl_accounts.first.id)
+      assert_not @user_w_token.approval_token_not_expired?(ssl_account_id: @user_w_token.ssl_accounts.first.id)
     end
 
     it '#pending_account_invites? should return correct boolean' do
       assert @user_w_token.pending_account_invites?
-      refute @owner.pending_account_invites?
+      assert_not @owner.pending_account_invites?
     end
 
     # it '#get_pending_accounts should return array of hashes' do
@@ -502,8 +534,8 @@ describe User do
     # end
 
     it '#decline_invite should decline invite' do
-      params = {ssl_account_id: @user_w_token.ssl_account_users.first.ssl_account_id}
-      refute @user_w_token.user_declined_invite?(params)
+      params = { ssl_account_id: @user_w_token.ssl_account_users.first.ssl_account_id }
+      assert_not @user_w_token.user_declined_invite?(params)
       @user_w_token.decline_invite(params)
       assert @user_w_token.user_declined_invite?(params)
     end
@@ -627,7 +659,7 @@ describe User do
       it '#set_default_team should update user' do
         user      = create(:user, :owner)
         ssl_own   = user.ssl_accounts.first
-        ssl_other = create(:ssl_account)
+        create(:ssl_account)
 
         assert_nil user.main_ssl_account
         user.set_default_team(ssl_own)
@@ -646,10 +678,10 @@ describe User do
         assert_equal ssl_own.id, user.main_ssl_account
       end
       it '#team_status returns correct status' do
-        invited_user     = create(:user, :owner)
-        invited_user_ssl = invited_user.ssl_account
+        invited_user = create(:user, :owner)
+        invited_user.ssl_account
         invited_ssl_acct = create(:ssl_account)
-        params           = {ssl_account_id: invited_ssl_acct.id}
+        params           = { ssl_account_id: invited_ssl_acct.id }
         invited_user.ssl_accounts << invited_ssl_acct
         # invited_user.set_roles_for_account(invited_ssl_acct, @acct_admin_role)
 
@@ -665,7 +697,7 @@ describe User do
 
         # user ACCEPTS team invitation
         invited_user.set_approval_token(params)
-        invited_user.send(:approve_account, {ssl_account_id: invited_ssl_acct.id})
+        invited_user.send(:approve_account, ssl_account_id: invited_ssl_acct.id)
         assert_equal 2, invited_user.get_all_approved_accounts.count
         assert_equal :accepted, invited_user.team_status(invited_ssl_acct)
 

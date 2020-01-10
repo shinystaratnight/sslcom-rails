@@ -69,7 +69,11 @@ class UsersController < ApplicationController
     if params[:search]
       search = params[:search].strip.split(' ')
       role = nil
-      search.delete_if { |s| s =~ /role\:(.+)/; role ||= Regexp.last_match(1); Regexp.last_match(1) }
+      search.delete_if do |s|
+        s =~ /role\:(.+)/
+        role ||= Regexp.last_match(1)
+        Regexp.last_match(1)
+      end
       search = search.join(' ')
       @users = @users.with_role(role).uniq if role
       @users = @users.search(search) if search.present?
@@ -339,7 +343,7 @@ class UsersController < ApplicationController
       @duo_hostname = @duo_account.duo_hostname
       @sig_request = Duo.sign_request(@duo_account ? @duo_account.duo_ikey : '', @duo_account ? @duo_account.duo_skey : '', @duo_account ? @duo_account.duo_akey : '', current_user.login)
     else
-      s = Rails.application.secrets
+      s = rails_application_secrets
       @duo_hostname = s.duo_api_hostname
       @sig_request = Duo.sign_request(s.duo_integration_key, s.duo_secret_key, s.duo_application_key, current_user.login)
     end
@@ -354,7 +358,7 @@ class UsersController < ApplicationController
       @duo_account = team.duo_account
       @authenticated_user = Duo.verify_response(@duo_account ? @duo_account.duo_ikey : '', @duo_account ? @duo_account.duo_skey : '', @duo_account ? @duo_account.duo_akey : '', params['sig_response'])
     else
-      s = Rails.application.secrets
+      s = rails_application_secrets
       @authenticated_user = Duo.verify_response(s.duo_integration_key, s.duo_secret_key, s.duo_application_key, params['sig_response'])
     end
     if @authenticated_user
