@@ -64,6 +64,19 @@ jobs:
             ' > config/settings.yml
 
       - run:
+          name: Duo Settings
+          command: |-
+            echo 'DUO_INTEGRATION_KEY: ${DUO_INTEGRATION_KEY}' > config/local_env.yml
+            echo 'DUO_INTEGRATION_KEY: ${DUO_INTEGRATION_KEY}' > config/local_env.yml
+            echo 'DUO_SECRET_KEY: ${DUO_SECRET_KEY} > config/local_env.yml
+            echo 'DUO_APPLICATION_KEY: ${DUO_APPLICATION_KEY} > config/local_env.yml
+            echo 'DUO_API_HOSTNAME: ${DUO_API_HOSTNAME} > config/local_env.yml
+            echo 'DUO_SYSADMIN_INTEGRATION_KEY: ${DUO_INTEGRATION_KEY} > config/local_env.yml
+            echo 'DUO_SYSADMIN_SECRET_KEY: ${DUO_SECRET_KEY} > config/local_env.yml
+            echo 'DUO_SYSADMIN_APPLICATION_KEY: ${DUO_APPLICATION_KEY} > config/local_env.yml
+            echo 'DUO_SYSADMIN_API_HOSTNAME: ${DUO_API_HOSTNAME} > config/local_env.yml
+
+      - run:
           name: Build the Local Environment File on the Fly
           command: |-
             mkdir -p config && echo '
@@ -71,14 +84,6 @@ jobs:
               AWS_SECRET_ACCESS_KEY: ""
               S3_BUCKET_NAME: ""
               AWS_DEFAULT_REGION: ""
-              DUO_INTEGRATION_KEY: "${DUO_INTEGRATION_KEY}"
-              DUO_SECRET_KEY: "${DUO_SECRET_KEY}"
-              DUO_APPLICATION_KEY: "${DUO_APPLICATION_KEY}"
-              DUO_API_HOSTNAME: "${DUO_API_HOSTNAME}"
-              DUO_SYSADMIN_INTEGRATION_KEY: "${DUO_INTEGRATION_KEY}"
-              DUO_SYSADMIN_SECRET_KEY: "${DUO_SECRET_KEY}"
-              DUO_SYSADMIN_APPLICATION_KEY: "${DUO_APPLICATION_KEY}"
-              DUO_SYSADMIN_API_HOSTNAME: "${DUO_API_HOSTNAME}"
             ' > config/local_env.yml
 
       - run:
@@ -134,21 +139,21 @@ jobs:
             - ~/.cache
           key: v1-yarn-{{ checksum "package.json" }}
 
-      # - run:
-      #     name: Setup Database for Cypress Test
-      #     command: |-
-      #       export RAILS_ENV="test"
-      #       export RACK_ENV="test"
-      #       bundle exec rake db:seed --trace
+      - run:
+          name: Setup Database for Cypress Test
+          command: |-
+            export RAILS_ENV="test"
+            export RACK_ENV="test"
+            bundle exec rake db:seed --trace
 
-      # - run:
-      #     name: Rails Server
-      #     command: bundle exec rails server -e test -b 0.0.0.0 -p 5002
-      #     background: true
+      - run:
+          name: Rails Server
+          command: bundle exec rails server -e test -b 0.0.0.0 -p 5002
+          background: true
 
-      # - run:
-      #     name: Run Cypress
-      #     command: yarn cypress run --project ./test
+      - run:
+          name: Run Cypress
+          command: yarn cypress run --project ./test
 
       - run:
           name: Precompile Assets
