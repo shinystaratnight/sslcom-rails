@@ -396,36 +396,32 @@ class UserSessionsController < ApplicationController
     content.to_json
   end
 
-  def rails_application_secrets
-    @rails_application_secrets ||= Rails.application.secrets
-  end
-
   def duo_api_host_name
-    ENV['DUO_API_HOSTNAME'].presence || rails_application_secrets.duo_api_hostname
+    rails_application_secrets.duo_api_hostname
   end
 
   def duo_integration_key
-    ENV['DUO_INTEGRATION_KEY'].presence || rails_application_secrets.duo_integration_key
+    rails_application_secrets.duo_integration_key
   end
 
   def duo_secret_key
-    ENV['DUO_SECRET_KEY'].presence || rails_application_secrets.duo_secret_key
+    rails_application_secrets.duo_secret_key
   end
 
   def duo_application_key
-    ENV['DUO_APPLICATION_KEY'].presence || rails_application_secrets.duo_application_key
+    rails_application_secrets.duo_application_key
   end
 
   def duo_system_admins_integration_key
-    ENV['DUO_SYSADMIN_APPLICATION_KEY'].presence || rails_application_secrets.duo_system_admins_integration_key
+    rails_application_secrets.duo_system_admins_integration_key
   end
 
   def duo_system_admins_secret_key
-    ENV['DUO_SYSADMIN_APPLICATION_KEY'].presence || rails_application_secrets.duo_system_admins_secret_key
+    rails_application_secrets.duo_system_admins_secret_key
   end
 
   def duo_system_admins_application_key
-    ENV['DUO_SYSADMIN_APPLICATION_KEY'].presence || rails_application_secrets.duo_system_admins_application_key
+    rails_application_secrets.duo_system_admins_application_key
   end
 
   def sig_response_param

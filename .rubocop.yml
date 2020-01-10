@@ -39,6 +39,9 @@ Style/StructInheritance:
   Enabled: false
 Style/DoubleNegation:
   Enabled: false
+Style/NestedTernaryOperator:
+  Exclude:
+    - 'app/controllers/application_controller.rb'
 
 Security/Eval:
   Exclude:
@@ -121,6 +124,10 @@ Rails/HasManyOrHasOneDependent:
   Enabled: false
 Rails/InverseOf:
   Enabled: false
+Rails/LexicallyScopedActionFilter:
+  Exclude:
+    - app/controllers/application_controller.rb
+
 Metrics/ModuleLength:
   Enabled: false
 

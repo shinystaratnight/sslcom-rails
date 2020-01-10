@@ -71,14 +71,14 @@ jobs:
               AWS_SECRET_ACCESS_KEY: ""
               S3_BUCKET_NAME: ""
               AWS_DEFAULT_REGION: ""
-              DUO_INTEGRATION_KEY: ${DUO_INTEGRATION_KEY}
-              DUO_SECRET_KEY: ${DUO_SECRET_KEY}
-              DUO_APPLICATION_KEY: ${DUO_APPLICATION_KEY}
-              DUO_API_HOSTNAME: ${DUO_API_HOSTNAME}
-              DUO_SYSADMIN_INTEGRATION_KEY: ${DUO_INTEGRATION_KEY}
-              DUO_SYSADMIN_SECRET_KEY: ${DUO_SECRET_KEY}
-              DUO_SYSADMIN_APPLICATION_KEY: ${DUO_APPLICATION_KEY}
-              DUO_SYSADMIN_API_HOSTNAME: ${DUO_API_HOSTNAME}
+              DUO_INTEGRATION_KEY: "DIHIOLJQJO49Z3L4DGKX"
+              DUO_SECRET_KEY: "RXZKr1yKNbaXnm5ikadBFBDmT7AQaj9N6b5JG6Je"
+              DUO_APPLICATION_KEY: "asdfghjkl12345678sdfasdcvbxaqbxvbaertwertwrtafadfsafa2"
+              DUO_API_HOSTNAME: "api-f176c327.duosecurity.com"
+              DUO_SYSADMIN_INTEGRATION_KEY: "DIHIOLJQJO49Z3L4DGKX"
+              DUO_SYSADMIN_SECRET_KEY: "RXZKr1yKNbaXnm5ikadBFBDmT7AQaj9N6b5JG6Je"
+              DUO_SYSADMIN_APPLICATION_KEY: "asdfghjkl12345678sdfasdcvbxaqbxvbaertwertwrtafadfsafa2"
+              DUO_SYSADMIN_API_HOSTNAME: "api-f176c327.duosecurity.com"
             ' > config/local_env.yml
 
       - run:
