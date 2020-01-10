@@ -92,7 +92,7 @@ jobs:
                     DUO_SYSADMIN_SECRET_KEY: '${DUO_SECRET_KEY}'
                     DUO_SYSADMIN_APPLICATION_KEY: '${DUO_APPLICATION_KEY}'
                     DUO_SYSADMIN_API_HOSTNAME: '${DUO_API_HOSTNAME}'
-                " > local_env.yml
+                " > config/local_env.yml
 
       - run:
           name: Build the Test Database YML file on the Fly
