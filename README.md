@@ -45,3 +45,13 @@ RAILS_ENV=test rake db:drop db:create db:structure:load db:migrate db:seed --tra
 
 - [ ] Start rails server in test mode `rails s -b 0.0.0.0 -e test -p 5002`, on Vagrant machine
 - [ ] On your local machine `yarn cypress open --project ./test`
+
+### Note on setting up Vagrant with Rubymine
+rbenv installation may be required in the vagrant instance so the Rubymine vagrant pluging get see the Ruby Interpreter 
+https://www.digitalocean.com/community/tutorials/how-to-install-ruby-on-rails-with-rbenv-on-ubuntu-16-04
+
+### Note on running un puma
+when running puma, enable ssl like so
+```bash
+puma -b 'ssl://0.0.0.0:3000?key=config/cert/key.pem&cert=config/cert/cert.pem'
+```
