@@ -291,7 +291,7 @@ class CertificateContent < ApplicationRecord
       new_certificate_names=[]
       (domains-certificate_names.find_by_domains(domains).pluck(:name)).each do |domain|
         unless domain=~/,/
-          new_certificate_names<<certificate_names.new(name: domain, is_common_name: csr_common_name==domain)
+          new_certificate_names << certificate_names.new(name: domain, is_common_name: csr_common_name==domain)
         end
       end
       CertificateName.import new_certificate_names
@@ -990,6 +990,14 @@ class CertificateContent < ApplicationRecord
     certificate_content.map do |cc|
       cc.issue! if(cc.signed_certificate and cc.certificate.is_server?)
     end.compact
+  end
+
+  def to_api_query
+    {}.tap do |result|
+      %w(ref).each do |k,v|
+        result.merge!({"#{k.to_sym}": self.send(k)})
+      end
+    end
   end
 
   private

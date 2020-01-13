@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 SslCom::Application.configure do
   MIGRATING_FROM_LEGACY = false
   # Settings specified here will take precedence over those in config/environment.rb
@@ -6,7 +8,7 @@ SslCom::Application.configure do
   # test suite.  You never need to work with it otherwise.  Remember that
   # your test database is "scratch space" for the test suite and is wiped
   # and recreated between test runs.  Don't rely on the data there!
-  config.cache_classes = ENV['CI'].present?
+  config.cache_classes = false # ENV['CI'].present?
 
   # Log error messages when you accidentally call methods on nil.
   config.whiny_nils = true
@@ -19,17 +21,17 @@ SslCom::Application.configure do
   config.action_dispatch.show_exceptions = false
 
   # Disable request forgery protection in test environment
-  config.action_controller.allow_forgery_protection    = false
+  config.action_controller.allow_forgery_protection = false
 
   # Tell Action Mailer not to deliver emails to the real world.
   # The :test delivery method accumulates sent emails in the
   # ActionMailer::Base.deliveries array.
   config.action_mailer.delivery_method = :test
   config.action_mailer.perform_deliveries = true
-  config.action_mailer.default_url_options = {host: 'localhost:3000'}
+  config.action_mailer.default_url_options = { host: 'localhost:3000' }
 
   config.after_initialize do
-    Rails.application.routes.default_url_options = {host: 'localhost:3000'}
+    Rails.application.routes.default_url_options = { host: 'localhost:3000' }
   end
 
   config.force_ssl = false
@@ -47,15 +49,14 @@ SslCom::Application.configure do
 
   ActiveMerchant::Billing::Base.mode = :test
 
-  config.eager_load=false
+  config.eager_load = false
 
   config.serve_static_assets = true
-  config.static_cache_control = "public, max-age=3600"
+  config.static_cache_control = 'public, max-age=3600'
 
-  #config.log_level = Logger::INFO
+  GATEWAY_TEST_CODE = 1.0
 
-  GATEWAY_TEST_CODE=1.0
-  # END ActiveMerchant configuration
+  config.log_level = :debug
 end
 
-#require "#{Rails.root}/lib/firewatir_url.rb"
+# require "#{Rails.root}/lib/firewatir_url.rb"

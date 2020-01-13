@@ -1,8 +1,8 @@
 class Api::V1::ApiAcmeRequestsController < Api::V1::APIController
   prepend_view_path "app/views/api/v1/api_acme_requests"
 
-  before_filter :set_database, if: "request.host=~/^sandbox/ || request.host=~/^sws-test/ || request.host=~/ssl.local$/"
-  before_filter :set_test, :record_parameters
+  before_action :set_database, if: "request.host=~/^sandbox/ || request.host=~/^sws-test/ || request.host=~/ssl.local$/"
+  before_action :set_test, :record_parameters
 
   wrap_parameters ApiAcmeRequest, include:[*(
     ApiAcmeRequest::ACCOUNT_ACCESSORS+
