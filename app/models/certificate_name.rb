@@ -3,7 +3,7 @@ require 'resolv'
 
 class CertificateName < ApplicationRecord
   belongs_to  :certificate_content
-  has_one :certificate_order, through: :certificate_content
+  has_one   :certificate_order, through: :certificate_content
   has_many    :signed_certificates, through: :certificate_content
   has_many    :caa_checks, as: :checkable
   has_many    :ca_certificate_requests, as: :api_requestable, dependent: :destroy
@@ -296,7 +296,7 @@ class CertificateName < ApplicationRecord
         begin
           d=::PublicSuffix.parse(dname)
           whois=Whois.whois(ActionDispatch::Http::URL.extract_domain(d.domain, 1)).to_s
-          whois_addresses = WhoisLookup.email_addresses(whois)
+          whois_addresses = WhoisLookup.email_addresses(whois.gsub(/^.*?abuse.*?$/i,"")) # remove any line with 'abuse'
           whois_addresses.each do |ad|
             standard_addresses << ad.downcase unless ad =~/abuse.*?@/i
           end unless whois_addresses.blank?
@@ -337,7 +337,7 @@ class CertificateName < ApplicationRecord
     name=CertificateContent.non_wildcard_name(name,false)
     Rails.cache.fetch("CertificateName.candidate_email_addresses/#{name}",
                       expires_in: DomainControlValidation::EMAIL_CHOICE_CACHE_EXPIRES_DAYS.days) do
-      # Delayed::Job.enqueue WhoisJob.new(name,certificate_name) # need to be able to filter out registrar's email
+      Delayed::Job.enqueue WhoisJob.new(name,certificate_name)
       DomainControlValidation.global.find_by_subject(name).try(:candidate_addresses) ||
           DomainControlValidation.email_address_choices(name)
     end

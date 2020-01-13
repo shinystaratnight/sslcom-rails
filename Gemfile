@@ -96,6 +96,7 @@ gem 'scout_apm'
 gem 'stringio'
 gem 'strscan'
 gem 'zlib'
+gem 'puma'
 
 # Frontend
 gem 'bootstrap'
