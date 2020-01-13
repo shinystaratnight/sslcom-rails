@@ -198,12 +198,12 @@ class User < ApplicationRecord
     is_super_user?
   end
 
-  def is_passed_2fa session_duo
+  def is_passed_2fa(session_duo)
     status = false
     if self.is_duo_required?
       status = session_duo
     else
-      if self.ssl_account.sec_type == 'duo'
+      if self.ssl_account&.sec_type == 'duo'
         if Settings.duo_auto_enabled || Settings.duo_custom_enabled
           status = session_duo
         else
@@ -881,19 +881,26 @@ class User < ApplicationRecord
   def apply_omniauth(omniauth)
     self.email = omniauth['user_info']['email']
 
-    # Update user info fetching from social network
-    case omniauth['provider']
-    when 'facebook'
-      # fetch extra user info from facebook
-    when 'twitter'
-      # fetch extra user info from twitter
-    end
+    # # Update user info fetching from social network
+    # case omniauth['provider']
+    # when 'facebook'
+    #   # fetch extra user info from facebook
+    # when 'twitter'
+    #   # fetch extra user info from twitter
+    # end
   end
 
   def make_admin
     unless roles.map(&:name).include?(Role::SYS_ADMIN)
       roles << Role.find_by(name: Role::SYS_ADMIN)
       assignments << Assignment.new(ssl_account_id: ssl_account.id, role_id: Role.find_by(name: Role::SYS_ADMIN).id)
+    end
+  end
+
+  def make_super_user
+    unless roles.map(&:name).include?(Role::SUPER_USER)
+      roles << Role.find_by(name: Role::SUPER_USER)
+      assignments << Assignment.new(ssl_account_id: ssl_account.id, role_id: Role.find_by(name: Role::SUPER_USER).id)
     end
   end
 

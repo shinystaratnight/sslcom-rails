@@ -1,67 +1,55 @@
 // test/cypress/integrations/authentication_spec.js
 describe('User authentication spec', function () {
   beforeEach(() => {
-    cy.appEval("User.connection.truncate(User.table_name)")
-    cy.log('users table reset')
-    cy.request('DELETE', '/user_session')
-    cy.log('user session destroyed')
+    cy.visit('/logout')
+  })
+
+  it('removes users from previous tests', function(){
+    cy.appEval("User.destroy_all")
   })
 
   it('allows user to register and login', function () {
-    // Visit Root Page
-    cy.visit('/');
+    cy.contains('Create a new account').click()
 
-    // Visit Account Page
-    cy.contains("MY ACCOUNT")
-      .click()
-
-    // Go To Login Page
-    cy.contains('Create a new account')
-      .click()
-
-    // Create User Account
     cy.get('form').within(($form) => {
       cy.get('input[name="user[login]"]').type('chef')
       cy.get('input[name="user[email]"]').type('chef@test.ssl.com')
-      cy.get('input[name="user[password]"]').type('Password123!')
-      cy.get('input[name="user[password_confirmation]"]').type('Password123!')
+      cy.get('input[name="user[password]"]').type('Testing_ssl+1')
+      cy.get('input[name="user[password_confirmation]"]').type('Testing_ssl+1')
       cy.get('input[name="tos"]').click()
-      cy.root().submit()
     })
+    cy.get('#next_submit').click()
 
-    // New User Is Redirected To Dashboard
     cy.contains('SSL.com Customer Dashboard')
   })
 
   it('allows existing user to login and logout', function () {
     cy.appFactories([
       ['create', 'user', {
-        login: 'stan'
+        login: 'randy'
       }]
     ])
 
-    // Go To Login Page
-    cy.visit('/user_session/new')
+    cy.visit('/');
+
+    cy.contains("MY ACCOUNT").click()
 
     // Fill In And Submit Login Form
     cy.get('form').within(($form) => {
-      cy.get('input[name="user_session[login]"]').type('stan')
-      cy.get('input[name="user_session[password]"]').type('Testing_ssl+1')
-      cy.root().submit()
+      cy.get('input#user_session_login').type('randy')
+      cy.get('input#user_session_password').type('Testing_ssl+1')
     })
 
+    cy.get('#next_submit').click()
 
     // User Is Redirected To Dashboard
-    cy.get('#content')
-      .should('not.contain', 'Customer login')
-      .contains('SSL.com Customer Dashboard')
+    cy.get('#content').contains('SSL.com Customer Dashboard')
 
-    // Logout User
-    cy.contains('Logout')
-      .click()
+    // // Logout User
+    // cy.contains('Logout').click()
 
-    // Redirected to Login Page
-    cy.contains('Customer login')
+    // // Redirected to Login Page
+    // cy.contains('Customer login')
   })
 
   it('fails gracefully when attempting to reset password with nonexistent login', function () {
@@ -122,7 +110,8 @@ describe('User authentication spec', function () {
         login: 'kenny'
       }]
     ])
-    cy.appEval("User.find_by(name: 'kenny').assign_roles([Role.find_or_create_by(name: 'super_user')])")
+    cy.appEval("User.find_by(login: 'kenny').make_super_user")
+
     cy.visit('/user_session/new')
 
     // Fill In And Submit Login Form
@@ -139,14 +128,14 @@ describe('User authentication spec', function () {
   })
 
   it('allows super_user to login as another user', function () {
+    cy.setCookie('skip_duo', 'true')
     cy.appFactories([
       ['create', 'user', {
         login: 'timmy'
       }],
       ['create_list', 'user', 5]
     ])
-    cy.appEval("User.find_by(login: 'timmy').make_admin")
-
+    cy.appEval("User.find_by(login: 'timmy').make_super_user")
     cy.visit('/user_session/new')
 
     // Fill In And Submit Login Form
@@ -156,17 +145,7 @@ describe('User authentication spec', function () {
       cy.root().submit()
     })
 
-    let session
-    cy.getCookie('_my_app_session')
-      .then((c) => {
-        session = c
-      })
-
-    cy.log(session)
-
-    cy.visit('/account')
-    cy.get('#content')
-      .should('not.contain', 'Customer login')
-      .contains('Customer Dashboard')
+    // cy.visit('/account')
+    cy.get('#content').contains('Admin Dashboard')
   })
 })

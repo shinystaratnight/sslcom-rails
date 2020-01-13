@@ -151,7 +151,7 @@ class UserSessionsController < ApplicationController
             format.js   { render json: url_for_js(current_user) }
             format.html { redirect_to(duo_user_session_url) }
           else
-            if current_user_default_team.sec_type == 'duo'
+            if current_user_default_team&.sec_type == 'duo'
               if current_user_default_team.duo_enabled && (Settings.duo_auto_enabled || Settings.duo_custom_enabled) && current_user.duo_enabled
                 flash[:notice] = 'Duo 2-factor authentication setup.' unless request.xhr?
               else
@@ -164,7 +164,7 @@ class UserSessionsController < ApplicationController
                 session[:duo_auth] = true
                 format.html { redirect_back_or_default account_path(current_user_default_team ? current_user_default_team.to_slug : {}) }
               end
-            elsif current_user_default_team.sec_type == 'u2f'
+            elsif current_user_default_team&.sec_type == 'u2f'
               session[:duo_auth] = true
               if params['u2f_response'].blank?
                 flash[:notice] = 'Successfully logged in.' unless request.xhr?
