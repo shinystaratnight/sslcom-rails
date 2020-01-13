@@ -25,8 +25,8 @@ describe('User authentication spec', function () {
       cy.get('input[name="user[password]"]').type('Testing_ssl+1')
       cy.get('input[name="user[password_confirmation]"]').type('Testing_ssl+1')
       cy.get('input[name="tos"]').click()
-      cy.root().submit()
     })
+    cy.get('#next_submit').click()
 
     cy.contains('SSL.com Customer Dashboard')
   })
