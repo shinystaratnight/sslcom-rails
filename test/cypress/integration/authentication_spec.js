@@ -17,17 +17,28 @@ describe('User authentication spec', function () {
   })
 
   it('allows user to register and login', function () {
-    cy.contains('Create a new account').click()
+    // Visit Root Page
+    cy.visit('/');
 
+    // Visit Account Page
+    cy.contains("MY ACCOUNT")
+      .click()
+
+    // Go To Login Page
+    cy.contains('Create a new account')
+      .click()
+
+    // Create User Account
     cy.get('form').within(($form) => {
       cy.get('input[name="user[login]"]').type('cypress')
       cy.get('input[name="user[email]"]').type('cypress@test.ssl.com')
       cy.get('input[name="user[password]"]').type('Testing_ssl+1')
       cy.get('input[name="user[password_confirmation]"]').type('Testing_ssl+1')
       cy.get('input[name="tos"]').click()
+      cy.root().submit()
     })
-    cy.get('#next_submit').click()
 
+    // New User Is Redirected To Dashboard
     cy.contains('SSL.com Customer Dashboard')
   })
 
@@ -51,7 +62,7 @@ describe('User authentication spec', function () {
     cy.visit('/password_resets/new')
 
     cy.get('form').within(($form) => {
-      cy.get('input[name="login"]').type('skeeter')
+      cy.get('input[name="login"]').type('nonexistent')
     })
     cy.get('.password_resets_btn').click()
     cy.contains('No user was found with that login')
@@ -81,7 +92,7 @@ describe('User authentication spec', function () {
     cy.visit('/password_resets/new')
 
     cy.get('form').within(($form) => {
-      cy.get('input[name="email"]').type('token@ssl.com')
+      cy.get('input[name="email"]').type('nonexistent@ssl.com')
     })
     cy.get('.password_resets_btn').click()
     cy.contains('No user was found with that email')
