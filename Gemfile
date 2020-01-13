@@ -98,12 +98,6 @@ gem 'strscan'
 gem 'zlib'
 gem 'puma'
 
-# Rubocop
-gem 'rubocop', require: false
-gem 'rubocop-minitest'
-gem 'rubocop-performance'
-gem 'rubocop-rails'
-
 # Frontend
 gem 'bootstrap'
 gem 'coffee-rails'
@@ -139,6 +133,10 @@ group :development, :test do
   gem 'cypress-on-rails', '~> 1.0'
   gem 'factory_bot_rails'
   gem 'pry-remote'
+  gem 'rubocop', require: false
+  gem 'rubocop-minitest'
+  gem 'rubocop-performance'
+  gem 'rubocop-rails'
   gem 'ruby-odbc'
   gem 'ruby_parser'
   gem 'seed_dump'
