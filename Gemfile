@@ -130,7 +130,7 @@ end
 group :development, :test do
   gem 'builder'
   gem 'byebug'
-  gem 'cypress-on-rails', '~> 1.0'
+  gem 'cypress-on-rails', '~> 1.5.1'
   gem 'factory_bot_rails'
   gem 'pry-remote'
   gem 'rubocop', require: false

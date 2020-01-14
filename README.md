@@ -2,6 +2,10 @@
 
 [![CircleCI](https://circleci.com/gh/SSLcom/sslcom-rails/tree/master.svg?style=svg)](https://circleci.com/gh/SSLcom/sslcom-rails/tree/master)
 
+[![Maintainability](https://api.codeclimate.com/v1/badges/a8f3ee62506a9befd80a/maintainability)](https://codeclimate.com/repos/5e18e6aa249421017701af15/maintainability)
+
+[![Test Coverage](https://api.codeclimate.com/v1/badges/a8f3ee62506a9befd80a/test_coverage)](https://codeclimate.com/repos/5e18e6aa249421017701af15/test_coverage)
+
 ## Getting set up
 
 1. Download VirtualBox and import the image into VirtualBox.

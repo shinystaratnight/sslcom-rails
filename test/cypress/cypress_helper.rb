@@ -19,13 +19,17 @@ rescue LoadError => e
   end
 end
 
+begin
+  require 'declarative_authorization/maintenance'
+rescue LoadError => e
+  puts e.message
+end
+
 require 'cypress_on_rails/smart_factory_wrapper'
 
 factory = CypressOnRails::SimpleRailsFactory
 factory = FactoryBot if defined?(FactoryBot)
 factory = FactoryGirl if defined?(FactoryGirl)
-
-system('RAILS_ENV=test rake db:drop db:create db:structure:load db:migrate db:seed --trace') if ENV['CI'].blank?
 
 CypressOnRails::SmartFactoryWrapper.configure(
   always_reload: !Rails.configuration.cache_classes,
