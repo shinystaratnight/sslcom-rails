@@ -17,18 +17,8 @@ describe('User authentication spec', function () {
   })
 
   it('allows user to register and login', function () {
-    // Visit Root Page
-    cy.visit('/');
+    cy.contains('Create a new account').click()
 
-    // Visit Account Page
-    cy.contains("MY ACCOUNT")
-      .click()
-
-    // Go To Login Page
-    cy.contains('Create a new account')
-      .click()
-
-    // Create User Account
     cy.get('form').within(($form) => {
       cy.get('input[name="user[login]"]').type('cypress')
       cy.get('input[name="user[email]"]').type('cypress@test.ssl.com')
@@ -38,7 +28,6 @@ describe('User authentication spec', function () {
       cy.root().submit()
     })
 
-    // New User Is Redirected To Dashboard
     cy.contains('SSL.com Customer Dashboard')
   })
 
