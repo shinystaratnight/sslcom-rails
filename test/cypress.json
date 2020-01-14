@@ -3,6 +3,7 @@
   "defaultCommandTimeout": 15000,
   "env": {
     "RAILS_ENV": "test",
-    "RACK_ENV": "test"
+    "RACK_ENV": "test",
+    "CYPRESS_ENV": "test"
   }
 }

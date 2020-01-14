@@ -15,7 +15,7 @@
 
 FactoryBot.define do
   factory :role do
-    name {}
+    name { 'owner' }
     description {}
     status {}
   end

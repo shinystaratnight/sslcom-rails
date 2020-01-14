@@ -19,6 +19,12 @@ rescue LoadError => e
   end
 end
 
+begin
+  require 'declarative_authorization/maintenance'
+rescue LoadError => e
+  puts e.message
+end
+
 require 'cypress_on_rails/smart_factory_wrapper'
 
 factory = CypressOnRails::SimpleRailsFactory
