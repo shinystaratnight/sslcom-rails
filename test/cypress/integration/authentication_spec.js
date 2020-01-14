@@ -102,23 +102,51 @@ describe('User authentication spec', function () {
     })
   })
 
-  it.skip('allows sysadmin to login as another user', function () {
-    cy.appFactories([
-      ['create', 'user', 'sysadmin', {login: 'tyson'}],
-      ['create_list', 'user', 5]
-    ])
+  it('allows sysadmin to login as another user', function () {
+    cy.appFactories([['create', 'user', 'sysadmin']]).then((results) => {
+      const user = results[0];
 
-    cy.setCookie('skip_duo', 'true')
-    cy.visit('/user_session/new')
+      cy.setCookie('skip_duo', 'true')
+      cy.visit('/user_session/new')
 
-    cy.get('form').within(($form) => {
-      cy.get('input[name="user_session[login]"]').type('tyson')
-      cy.get('input[name="user_session[password]"]').type('Testing_ssl+1')
-      cy.root().submit()
+      cy.get('form').within(($form) => {
+        cy.get('input[name="user_session[login]"]').type(`${user.login}`)
+        cy.get('input[name="user_session[password]"]').type('Testing_ssl+1')
+        cy.root().submit()
+      })
+
+      cy.location().should((loc) => {
+        expect(loc.pathname).to.contain('/team')
+        expect(loc.pathname).to.contain('/account')
+      })
+      cy.get('#manage_certificates').click()
+      cy.get('td.dropdown').eq(2).click()
+      cy.contains('login as').click()
+      cy.contains('pickles')
     })
+  })
 
-    cy.visit('/account')
-    cy.get('#content').contains('Customer Dashboard')
-    cy.visit('/logout')
+  it('allows super_user to login as another user', function () {
+    cy.appFactories([['create', 'user', 'super_user']]).then((results) => {
+      const user = results[0];
+
+      cy.setCookie('skip_duo', 'true')
+      cy.visit('/user_session/new')
+
+      cy.get('form').within(($form) => {
+        cy.get('input[name="user_session[login]"]').type(`${user.login}`)
+        cy.get('input[name="user_session[password]"]').type('Testing_ssl+1')
+        cy.root().submit()
+      })
+
+      cy.location().should((loc) => {
+        expect(loc.pathname).to.contain('/team')
+        expect(loc.pathname).to.contain('/account')
+      })
+      cy.get('#manage_certificates').click()
+      cy.get('td.dropdown').eq(4).click()
+      cy.contains('login as').click()
+      cy.contains('pickles')
+    })
   })
 })

@@ -593,6 +593,7 @@ class UsersController < ApplicationController
   end
 
   def set_admin_flag
+    @user ||= current_user
     @user.admin_update = true if admin_op?
   end
 
