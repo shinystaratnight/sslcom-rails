@@ -1,14 +1,11 @@
 // test/cypress/integrations/authentication_spec.js
 describe('User authentication spec', function () {
   before(() => {
-    // cy.app('clean')
-  })
-
-  beforeEach(() => {
-    cy.visit('/logout')
+    cy.app('clean')
   })
 
   it('allows user to register and login', function () {
+    cy.visit('/user_session/new')
     cy.contains('Create a new account').click()
 
     cy.get('form').within(($form) => {
@@ -21,11 +18,10 @@ describe('User authentication spec', function () {
     })
 
     cy.contains('SSL.com Customer Dashboard')
+    cy.visit('/logout')
   })
 
-  it.skip('allows existing user to login and logout', function () {
-    cy.visit('/user_session/new')
-
+  it('allows existing user to login and logout', function () {
     cy.get('form').within(($form) => {
       cy.get('input[name="user_session[login]"]').type('cypress')
       cy.get('input[name="user_session[password]"]').type('Testing_ssl+1')
@@ -37,6 +33,7 @@ describe('User authentication spec', function () {
     cy.contains('Logout').click()
 
     cy.contains('Customer login')
+    cy.visit('/logout')
   })
 
   it('fails gracefully when attempting to reset password with nonexistent login', function () {
@@ -85,19 +82,21 @@ describe('User authentication spec', function () {
     cy.contains('No user was found with that email')
   })
 
-  it.skip('requires Duo 2FA when logging in as super_user', function () {
+  it('requires Duo 2FA when logging in as super_user', function () {
     cy.appFactories([
       ['create', 'user', 'super_user', {login: 'pickles'}],
     ])
 
     cy.visit('/user_session/new')
 
+    // Fill In And Submit Login Form
     cy.get('form').within(($form) => {
       cy.get('input[name="user_session[login]"]').type('pickles')
       cy.get('input[name="user_session[password]"]').type('Testing_ssl+1')
       cy.root().submit()
     })
 
+    // Prompted for Duo 2FA
     cy.location().should((loc) => {
       expect(loc.pathname).to.eq('/user_session/duo')
     })
@@ -109,6 +108,7 @@ describe('User authentication spec', function () {
       ['create_list', 'user', 5]
     ])
 
+    cy.setCookie('skip_duo', 'true')
     cy.visit('/user_session/new')
 
     cy.get('form').within(($form) => {
@@ -119,5 +119,6 @@ describe('User authentication spec', function () {
 
     cy.visit('/account')
     cy.get('#content').contains('Customer Dashboard')
+    cy.visit('/logout')
   })
 })
