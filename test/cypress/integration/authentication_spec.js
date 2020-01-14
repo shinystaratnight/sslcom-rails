@@ -2,13 +2,6 @@
 describe('User authentication spec', function () {
   before(() => {
     cy.app('clean')
-    cy.appFactories([
-      ['create', 'user', 'owner', {login: 'token'}],
-      ['create', 'user', 'owner', {login: 'tinman'}],
-      ['create', 'user', 'owner', {email: 'cartman@gmail.com'}],
-      ['create', 'user', 'super_user', {login: 'pickles'}],
-      ['create_list', 'user', 5]
-    ])
   })
 
   beforeEach(() => {
@@ -57,6 +50,9 @@ describe('User authentication spec', function () {
   })
 
   it('allows existing user to reset password using login', function () {
+    cy.appFactories([
+      ['create', 'user', {login: 'token'}]
+    ])
     cy.visit('/password_resets/new')
 
     cy.get('form').within(($form) => {
@@ -67,6 +63,9 @@ describe('User authentication spec', function () {
   })
 
   it('allows existing user to reset password using email', function () {
+    cy.appFactories([
+      ['create', 'user', {email: 'cartman@gmail.com'}]
+    ])
     cy.visit('/password_resets/new')
 
     cy.get('form').within(($form) => {
@@ -87,6 +86,10 @@ describe('User authentication spec', function () {
   })
 
   it.skip('requires Duo 2FA when logging in as super_user', function () {
+    cy.appFactories([
+      ['create', 'user', 'super_user', {login: 'pickles'}],
+    ])
+
     cy.visit('/user_session/new')
 
     cy.get('form').within(($form) => {
@@ -100,13 +103,16 @@ describe('User authentication spec', function () {
     })
   })
 
-  it.skip('allows super_user to login as another user', function () {
-    cy.app('super_user')
+  it.skip('allows sysadmin to login as another user', function () {
+    cy.appFactories([
+      ['create', 'user', 'sysadmin', {login: 'tyson'}],
+      ['create_list', 'user', 5]
+    ])
 
     cy.visit('/user_session/new')
 
     cy.get('form').within(($form) => {
-      cy.get('input[name="user_session[login]"]').type('timmy')
+      cy.get('input[name="user_session[login]"]').type('tyson')
       cy.get('input[name="user_session[password]"]').type('Testing_ssl+1')
       cy.root().submit()
     })
