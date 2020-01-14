@@ -1,6 +1,8 @@
 version: 2
 jobs:
   build:
+    environment:
+      CC_TEST_REPORTER_ID: 28165637ec744cbee7b35b80ec881d25bc0e7437b2321f168572a270828aa586
     working_directory: ~/sslcom-rails
     docker:
       - image: circleci/ruby:2.6.2-node-browsers
@@ -134,21 +136,21 @@ jobs:
             - ~/.cache
           key: v1-yarn-{{ checksum "package.json" }}
 
-      # - run:
-      #     name: Setup Database for Cypress Test
-      #     command: |-
-      #       export RAILS_ENV="test"
-      #       export RACK_ENV="test"
-      #       bundle exec rake db:seed --trace
+      - run:
+          name: Setup Database for Cypress Test
+          command: |-
+            export RAILS_ENV="test"
+            export RACK_ENV="test"
+            bundle exec rake db:seed --trace
 
-      # - run:
-      #     name: Rails Server
-      #     command: bundle exec rails server -e test -b 0.0.0.0 -p 5002
-      #     background: true
+      - run:
+          name: Rails Server
+          command: bundle exec rails server webrick -e test -b 0.0.0.0 -p 5002
+          background: true
 
-      # - run:
-      #     name: Run Cypress
-      #     command: yarn cypress run --project ./test
+      - run:
+          name: Run Cypress
+          command: yarn cypress run --project ./test
 
       - run:
           name: Precompile Assets

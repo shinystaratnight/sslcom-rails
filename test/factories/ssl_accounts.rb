@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :ssl_account do
-    acct_number {}
+    # acct_number {}
     status {}
     ssl_slug {}
     company_name {}
@@ -12,7 +14,7 @@ FactoryBot.define do
     default_folder_id {}
     no_limit {}
     epki_agreement {}
-    workflow_state { "active" }
+    workflow_state { 'active' }
   end
 
   trait :billing_profile do

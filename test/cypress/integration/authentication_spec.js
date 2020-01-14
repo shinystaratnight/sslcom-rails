@@ -1,66 +1,39 @@
 // test/cypress/integrations/authentication_spec.js
 describe('User authentication spec', function () {
-  beforeEach(() => {
+  before(() => {
     cy.app('clean')
-    cy.request('DELETE', '/user_session')
-    cy.log('before each executed')
   })
 
   it('allows user to register and login', function () {
-    // Visit Root Page
-    cy.visit('/');
+    cy.visit('/user_session/new')
+    cy.contains('Create a new account').click()
 
-    // Visit Account Page
-    cy.contains("MY ACCOUNT")
-      .click()
-
-    // Go To Login Page
-    cy.contains('Create a new account')
-      .click()
-
-    // Create User Account
     cy.get('form').within(($form) => {
       cy.get('input[name="user[login]"]').type('cypress')
       cy.get('input[name="user[email]"]').type('cypress@test.ssl.com')
-      cy.get('input[name="user[password]"]').type('Password123!')
-      cy.get('input[name="user[password_confirmation]"]').type('Password123!')
+      cy.get('input[name="user[password]"]').type('Testing_ssl+1')
+      cy.get('input[name="user[password_confirmation]"]').type('Testing_ssl+1')
       cy.get('input[name="tos"]').click()
       cy.root().submit()
     })
 
-    // New User Is Redirected To Dashboard
     cy.contains('SSL.com Customer Dashboard')
+    cy.visit('/logout')
   })
 
   it('allows existing user to login and logout', function () {
-    cy.appFactories([
-      ['create', 'user', {
-        login: 'existing'
-      }]
-    ])
-
-    // Go To Login Page
-    cy.visit('/user_session/new')
-
-    // Fill In And Submit Login Form
     cy.get('form').within(($form) => {
-      cy.get('input[name="user_session[login]"]').type('existing')
+      cy.get('input[name="user_session[login]"]').type('cypress')
       cy.get('input[name="user_session[password]"]').type('Testing_ssl+1')
       cy.root().submit()
     })
 
+    cy.get('#content').contains('SSL.com Customer Dashboard')
 
-    // User Is Redirected To Dashboard
-    cy.get('#content')
-      .should('not.contain', 'Customer login')
-      .contains('SSL.com Customer Dashboard')
+    cy.contains('Logout').click()
 
-    // Logout User
-    cy.contains('Logout')
-      .click()
-
-    // Redirected to Login Page
     cy.contains('Customer login')
+    cy.visit('/logout')
   })
 
   it('fails gracefully when attempting to reset password with nonexistent login', function () {
@@ -75,15 +48,12 @@ describe('User authentication spec', function () {
 
   it('allows existing user to reset password using login', function () {
     cy.appFactories([
-      ['create', 'user', {
-        login: 'existing'
-      }]
+      ['create', 'user', {login: 'token'}]
     ])
-
     cy.visit('/password_resets/new')
 
     cy.get('form').within(($form) => {
-      cy.get('input[name="login"]').type('existing')
+      cy.get('input[name="login"]').type('token')
     })
     cy.get('.password_resets_btn').click()
     cy.contains('Customer login')
@@ -91,15 +61,12 @@ describe('User authentication spec', function () {
 
   it('allows existing user to reset password using email', function () {
     cy.appFactories([
-      ['create', 'user', {
-        email: 'existing@ssl.com'
-      }]
+      ['create', 'user', {email: 'cartman@gmail.com'}]
     ])
-
     cy.visit('/password_resets/new')
 
     cy.get('form').within(($form) => {
-      cy.get('input[name="email"]').type('existing@ssl.com')
+      cy.get('input[name="email"]').type('cartman@gmail.com')
     })
     cy.get('.password_resets_btn').click()
     cy.contains('Customer login')
@@ -116,13 +83,15 @@ describe('User authentication spec', function () {
   })
 
   it('requires Duo 2FA when logging in as super_user', function () {
-    cy.app('super_user')
+    cy.appFactories([
+      ['create', 'user', 'super_user', {login: 'pickles'}],
+    ])
 
     cy.visit('/user_session/new')
 
     // Fill In And Submit Login Form
     cy.get('form').within(($form) => {
-      cy.get('input[name="user_session[login]"]').type('superuser1')
+      cy.get('input[name="user_session[login]"]').type('pickles')
       cy.get('input[name="user_session[password]"]').type('Testing_ssl+1')
       cy.root().submit()
     })
@@ -131,5 +100,25 @@ describe('User authentication spec', function () {
     cy.location().should((loc) => {
       expect(loc.pathname).to.eq('/user_session/duo')
     })
+  })
+
+  it.skip('allows sysadmin to login as another user', function () {
+    cy.appFactories([
+      ['create', 'user', 'sysadmin', {login: 'tyson'}],
+      ['create_list', 'user', 5]
+    ])
+
+    cy.setCookie('skip_duo', 'true')
+    cy.visit('/user_session/new')
+
+    cy.get('form').within(($form) => {
+      cy.get('input[name="user_session[login]"]').type('tyson')
+      cy.get('input[name="user_session[password]"]').type('Testing_ssl+1')
+      cy.root().submit()
+    })
+
+    cy.visit('/account')
+    cy.get('#content').contains('Customer Dashboard')
+    cy.visit('/logout')
   })
 })
