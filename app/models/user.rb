@@ -897,13 +897,6 @@ class User < ApplicationRecord
     end
   end
 
-  def make_super_user
-    unless roles.map(&:name).include?(Role::SUPER_USER)
-      roles << Role.find_by(name: Role::SUPER_USER)
-      assignments << Assignment.new(ssl_account_id: ssl_account.id, role_id: Role.find_by(name: Role::SUPER_USER).id)
-    end
-  end
-
   def remove_admin
     sysadmin_roles = get_roles_by_name(Role::SYS_ADMIN)
 
