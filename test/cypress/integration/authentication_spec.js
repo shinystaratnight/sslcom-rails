@@ -2,7 +2,6 @@
 describe('User authentication spec', function () {
   before(() => {
     cy.app('clean')
-    cy.appEval("Rails.cache.clear")
     cy.appFactories([
       ['create', 'user', 'owner', {login: 'token'}],
       ['create', 'user', 'owner', {login: 'tinman'}],
