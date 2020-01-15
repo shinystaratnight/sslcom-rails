@@ -125,8 +125,11 @@ jobs:
       - store_test_results:
           path: test/reports
 
+      - store_artifacts:
+          path: coverage
 
-            # Yarn dependencies
+
+      # Yarn dependencies
       - restore_cache:
           keys:
             - v1-yarn-{{ checksum "package.json" }}
@@ -150,7 +153,11 @@ jobs:
 
       - run:
           name: Rails Server
-          command: bundle exec rails server webrick -e test -b 0.0.0.0 -p 5002
+          command: |-
+            gem install foreman --no-doc
+            touch log/bullet.log
+            touch log/test.log
+            foreman start -f Procfile.test
           background: true
 
       - run:
@@ -159,6 +166,12 @@ jobs:
 
       - store_artifacts:
           path: test/cypress/videos
+
+      - store_artifacts:
+          path: log
+
+      - store_artifacts:
+          path: coverage
 
       - store_artifacts:
           path: test/cypress/screenshots

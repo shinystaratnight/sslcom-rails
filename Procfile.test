@@ -1,0 +1,4 @@
+web: bundle exec rails server puma -e test -b 'ssl://0.0.0.0:5002?key=config/cert/key.pem&cert=config/cert/cert.pem'
+bullet: tail -f log/bullet.log
+debug: tail -f log/test.log
+worker1: bundle exec rake jobs:work

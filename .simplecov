@@ -1,5 +1,6 @@
 SimpleCov.minimum_coverage 10
 SimpleCov.refuse_coverage_drop
+SimpleCov.enable_coverage :branch
 
 SimpleCov.start 'rails' do
   filters.clear
@@ -23,5 +24,4 @@ SimpleCov.start 'rails' do
   add_group 'Services', 'app/services'
   add_group 'Helpers', 'app/helpers'
   add_group 'Serializers', 'app/serializers'
-  enable_coverage :branch
 end

@@ -6,7 +6,7 @@ class UsersController < ApplicationController
   skip_before_action :verify_authenticity_token
   skip_before_action :finish_reseller_signup, only: [:cancel_reseller_signup]
   before_action :require_no_user, only: %i[new create]
-  before_action :set_users, only: [:index]
+  before_action :set_users, only: %i[index search]
   before_action :require_user, only: %i[
     show edit update cancel_reseller_signup
     approve_account_invite resend_account_invite

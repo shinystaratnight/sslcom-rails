@@ -72,7 +72,7 @@ class UserSessionsController < ApplicationController
     if current_user.blank?
       @user_session = UserSession.new(params[:user_session].to_h)
     else
-      if can_shadow? && login_param
+      if current_user.is_admin? && login_param
         @user_session = UserSession.new((User.find_by login: login_param))
         @user_session.id = :shadow
         clear_cart
@@ -426,11 +426,6 @@ class UserSessionsController < ApplicationController
 
   def current_user_default_team
     current_user&.ssl_account(:default_team)
-  end
-
-  def can_shadow?
-    current_user&.is_admin? # || current_user&.is_super_user?
-    # current_user&.is_super_user?
   end
 
   def login_param
