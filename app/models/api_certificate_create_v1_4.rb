@@ -53,7 +53,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   validates :country, presence: true, inclusion:
       {in: Country.accepted_countries, message: "needs to be one of the following: #{Country.accepted_countries.join(', ')}"},
       if: lambda{|c| c.csr && c.csr_obj && c.csr_obj.country.try("blank?")}
-  #validates :registered_country, :incorporation_date, if: lambda{|c|c.is_ev?}
+  #validates :registered_country_name, :incorporation_date, if: lambda{|c|c.is_ev?}
   validates :dcv_method, inclusion: {in: ApiCertificateCreate::DCV_METHODS,
       message: "needs to one of the following: #{DCV_METHODS.join(', ')}"}, if: lambda{|c|c.dcv_method}
   validates :contact_email_address, email: true, unless: lambda{|c|c.contact_email_address.blank?}
@@ -62,7 +62,11 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   validates :unique_value, format: {with: /[a-zA-Z0-9]{1,20}/}, unless: lambda{|c|c.unique_value.blank?}
   # use code instead of serial allows attribute changes without affecting the cert name
   validate :verify_dcv, on: :create, if: "!domains.blank?"
-  validate :validate_contacts, unless: lambda{|c|c.contacts.blank?}
+
+  ########### Note to development team: Evaluate the utility of validate_contacts ##########################
+  # validate :validate_contacts, unless: lambda{|c|c.contacts.blank?}
+  ##########################################################################################################
+
   validate :validate_callback, unless: lambda{|c|c.callback.blank?}
   validate :renewal_exists, if: lambda{|c|c.renewal_id}
 
@@ -115,7 +119,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
     )
     order = api_requestable.purchase(@certificate_order)
     order.cents = @certificate_order.attributes_before_type_cast["amount"].to_f
-    
+
     if errors.blank?
       if certificate_content.valid?
         apply_funds(
@@ -132,7 +136,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
               certificate_content: certificate_content,
               ssl_account: api_requestable,
               contacts: self.contacts,
-              certificate: certificate) if csr
+              certificate: certificate)
 
           if is_attestation_processing?
             create_attestation_certificate(
@@ -381,8 +385,16 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
         state: (self.state_or_province_name.force_encoding("ISO-8859-1").encode("UTF-8") unless
             self.state_or_province_name.nil?),
         postal_code: (self.postal_code.force_encoding("ISO-8859-1").encode("UTF-8") unless self.postal_code.nil?),
-        country: self.country || csr_obj.country)
-    if cc.csr_submitted?
+        country: self.country || csr_obj.try(:country))
+    if self.recipient
+      recipient_attr = JSON.parse self.recipient
+      assignee = options[:certificate_order].assignee || User.find_or_initialize_by(email: recipient_attr["email"])
+      assignee.login ||= recipient_attr["email"]
+      assignee.save
+      recipient_attr[:user_id] = assignee.id
+      options[:certificate_order].create_locked_recipient(recipient_attr)
+    end
+    if !options[:certificate].is_server? or cc.csr_submitted?
       cc.provide_info!
       if Contact.optional_contacts? && contacts && contacts[:saved_contacts]
         sc = contacts[:saved_contacts]
@@ -555,55 +567,57 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
     end
   end
 
-  def validate_contacts
-    if contacts
-      if !contacts.is_a?(Hash)
-          errors[:contacts] << "expecting hash"
-        return false
-      end
-      errors[:contacts] = {}
-      if Contact.optional_contacts? && contacts[:saved_contacts]
-        sc = contacts[:saved_contacts]
-        if sc && sc.is_a?(Array) && sc.any? 
-          found = 0
-          sc.each {|c| found += 1 if api_requestable.all_saved_contacts.find_by(id: c.to_i)}
-          errors[:contacts].push(saved_contacts: "Contacts with ids #{sc.join(', ')} do not exist.") unless found > 0
-        else
-          errors[:contacts].push(saved_contacts: "Zero contacts provided, please pass a list of saved contact ids. E.g.: [1, 5, 6].")
-        end
-      else
-        CertificateContent::CONTACT_ROLES.each do |role|
-          if (contacts[role] || contacts['all'])
-            c_role = contacts[role] ? role : 'all'
-            attrs  = retrieve_saved_contact(contacts[c_role], [c_role])
-            extra  = (attrs.keys - permit_contact_fields).flatten
-            if attrs[:saved_contact] # failed to find saved contact by id
-              errors[:contacts].last[:role] = c_role
-            elsif !extra.empty?
-              msg = {c_role.to_sym => "The following parameters are invalid: #{extra.join(', ')}"}
-              errors[:contacts].last.merge!(msg)
-            elsif !CertificateContact.new(attrs.to_utf8.merge(roles: [role])).valid?
-              r = CertificateContact.new(attrs.to_utf8.merge(roles: [role]))
-              r.valid?
-              errors[:contacts].last.merge!(c_role.to_sym => r.errors)
-            elsif attrs['country'].blank? || Country.find_by_iso1_code(attrs['country'].upcase).blank?
-              msg = {c_role.to_sym => "The 'country' parameter has an invalid value of '#{attrs['country']}'"}
-              errors[:contacts].last.merge!(msg)
-            end
-          else
-            msg = {role.to_sym => "contact information missing"}
-            errors[:contacts].last.merge!(msg)
-          end
-        end
-      end
-    else
-      errors[:contacts] << "parameter required"
-    end
-    cur_err = errors[:contacts].reject(&:empty?)
-    errors.delete(:contacts)
-    errors.add(:contacts, cur_err) if cur_err.any?
-    errors.get(:contacts) ? false : true
-  end
+  ########### Note to development team: Evaluate the utility of validate_contacts ##########################
+  # def validate_contacts
+  #   if contacts
+  #     if !contacts.is_a?(Hash)
+  #         errors[:contacts] << "expecting hash"
+  #       return false
+  #     end
+  #     errors[:contacts] = {}
+  #     if Contact.optional_contacts? && contacts[:saved_contacts]
+  #       sc = contacts[:saved_contacts]
+  #       if sc && sc.is_a?(Array) && sc.any?
+  #         found = 0
+  #         sc.each {|c| found += 1 if api_requestable.all_saved_contacts.find_by(id: c.to_i)}
+  #         errors[:contacts].push(saved_contacts: "Contacts with ids #{sc.join(', ')} do not exist.") unless found > 0
+  #       else
+  #         errors[:contacts].push(saved_contacts: "Zero contacts provided, please pass a list of saved contact ids. E.g.: [1, 5, 6].")
+  #       end
+  #     else
+  #       CertificateContent::CONTACT_ROLES.each do |role|
+  #         if (contacts[role] || contacts['all'])
+  #           c_role = contacts[role] ? role : 'all'
+  #           attrs  = retrieve_saved_contact(contacts[c_role], [c_role])
+  #           extra  = (attrs.keys - permit_contact_fields).flatten
+  #           if attrs[:saved_contact] # failed to find saved contact by id
+  #             errors[:contacts].last[:role] = c_role
+  #           elsif !extra.empty?
+  #             msg = {c_role.to_sym => "The following parameters are invalid: #{extra.join(', ')}"}
+  #             errors[:contacts].last.merge!(msg)
+  #           elsif !CertificateContact.new(attrs.to_utf8.merge(roles: [role])).valid?
+  #             r = CertificateContact.new(attrs.to_utf8.merge(roles: [role]))
+  #             r.valid?
+  #             errors[:contacts].last.merge!(c_role.to_sym => r.errors)
+  #           elsif attrs['country'].blank? || Country.find_by_iso1_code(attrs['country'].upcase).blank?
+  #             msg = {c_role.to_sym => "The 'country' parameter has an invalid value of '#{attrs['country']}'"}
+  #             errors[:contacts].last.merge!(msg)
+  #           end
+  #         else
+  #           msg = {role.to_sym => "contact information missing"}
+  #           errors[:contacts].last.merge!(msg)
+  #         end
+  #       end
+  #     end
+  #   else
+  #     errors[:contacts] << "parameter required"
+  #   end
+  #   cur_err = errors[:contacts].reject(&:empty?)
+  #   errors.delete(:contacts)
+  #   errors.add(:contacts, cur_err) if cur_err.any?
+  #   errors.get(:contacts) ? false : true
+  # end
+  ########### Note to development team: Evaluate the utility of validate_contacts ##########################
 
   def validate_callback
     if !callback.is_a?(Hash)
@@ -635,7 +649,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
       end
     end
   end
-  
+
   def retrieve_saved_contact(attributes, extra_attributes=[])
     new_attrs = attributes # { saved_contact: contact_id }
     if attributes && attributes.is_a?(Hash)
@@ -723,7 +737,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
       end
     end
   end
-  
+
   def permit_contact_fields
     CertificateContent::RESELLER_FIELDS_TO_COPY + %w(organization organization_unit country saved_contact)
   end
@@ -732,7 +746,6 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
     @attestation_certificate || parameters_to_hash["attestation_cert"]
   end
 
-  def attestation_issuer_certificate
     @attestation_issuer_certificate || parameters_to_hash["attestation_issuer_cert"]
   end
 

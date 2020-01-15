@@ -17,6 +17,7 @@ module Api
       skip_before_action :verify_authenticity_token
       before_action :activate_authlogic
       before_action :set_default_request_format
+      before_action :nilify_empty_has_params
       after_action  :set_access_control_headers
 
       TEST_SUBDOMAIN = 'sws-test'
