@@ -16,7 +16,7 @@ class UserSessionsController < ApplicationController
   end
 
   def show
-    if params[:login]
+    if login_param
       create
     else
       redirect_to action: :new
@@ -63,10 +63,7 @@ class UserSessionsController < ApplicationController
       if params[:certificate_order]
         @certificate_order = CertificateOrder.new(params[:certificate_order])
         @certificate_order.has_csr = true
-        if params['prev.x'.intern]
-          render(template: '/certificates/buy',
-                 layout: 'application')
-        end
+        render(template: '/certificates/buy', layout: 'application') if params['prev.x'.intern]
       else
         redirect_to(show_cart_orders_url) && return
       end
@@ -75,13 +72,13 @@ class UserSessionsController < ApplicationController
     if current_user.blank?
       @user_session = UserSession.new(params[:user_session].to_h)
     else
-      if current_user.is_admin? && params[:login]
-        @user_session = UserSession.new((User.find_by login: params[:login]))
+      if current_user.is_admin? && login_param
+        @user_session = UserSession.new((User.find_by login: login_param))
         @user_session.id = :shadow
         clear_cart
       end
 
-      set_cookie(:acct, current_user.ssl_account.acct_number) unless current_user.ssl_account.nil?
+      set_cookie(:acct, current_user.ssl_account.acct_number) unless current_user&.ssl_account&.nil?
     end
 
     respond_to do |format|
@@ -356,8 +353,7 @@ class UserSessionsController < ApplicationController
       else
         { owner: nil,
           target: nil,
-          action: "Failed login attempt by #{params[:user_session] ? params[:user_session][:login] :
-                                               params[:login]} from ip address #{request.remote_ip}",
+          action: "Failed login attempt by #{params[:user_session] ? params[:user_session][:login] : login_param} from ip address #{request.remote_ip}",
           notes: reason }
       end
     )
@@ -430,5 +426,9 @@ class UserSessionsController < ApplicationController
 
   def current_user_default_team
     current_user&.ssl_account(:default_team)
+  end
+
+  def login_param
+    params[:login]
   end
 end

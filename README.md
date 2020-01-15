@@ -26,14 +26,8 @@
 12. Run any needed migrations `RAILS_ENV=development rake db:migrate`.
 13. Download sandbox_ssl_com.sql and populate the database with `mysql -u ssl_db -p sandbox_ssl_com < sandbox_ssl_com.sql`
 14. Run migrations again `bundle exec rake db:migrate RAILS_ENV=development`
-15. Navigate to the repo and run `./start-dev`
+15. Navigate to the repo and run `foreman start`
 16. Navigate to `https://secure.ssl.local:3000/` in your browser and it should work!
-
-### Run Delayed Job
-
-1. In another tab, SSH into the box `vagrant ssh`
-2. Navigate to `/vagrant` and run `rake jobs:work`
-3. To terminate delayed job server, press `Ctr+C`
 
 ### `synced_folders` Template
 
@@ -49,15 +43,18 @@ RAILS_ENV=test rake db:drop db:create db:structure:load db:migrate db:seed --tra
 
 ### Running Cypress Spec
 
-- [ ] Start rails server in test mode `rails s -b 0.0.0.0 -e test -p 5002`, on Vagrant machine
+- [ ] Start rails server in test mode `foreman start -f Procfile.test`, on Vagrant machine
 - [ ] On your local machine `yarn cypress open --project ./test`
 
 ### Note on setting up Vagrant with Rubymine
-rbenv installation may be required in the vagrant instance so the Rubymine vagrant pluging get see the Ruby Interpreter 
+
+rbenv installation may be required in the vagrant instance so the Rubymine vagrant plugin get see the Ruby Interpreter
 https://www.digitalocean.com/community/tutorials/how-to-install-ruby-on-rails-with-rbenv-on-ubuntu-16-04
 
-### Note on running un puma
+### Note on running on puma
+
 when running puma, enable ssl like so
+
 ```bash
 puma -b 'ssl://0.0.0.0:3000?key=config/cert/key.pem&cert=config/cert/cert.pem'
 ```

@@ -14,10 +14,10 @@ Array.wrap(command_options).map do |factory_options|
 end
 
 # spec/cypress/app_commands/factory_bot.rb
-require 'cypress_on_rails/smart_factory_wrapper'
+# require 'cypress_on_rails/smart_factory_wrapper'
 
-CypressOnRails::SmartFactoryWrapper.configure(
-  always_reload: !Rails.configuration.cache_classes,
-  factory: FactoryBot,
-  files: Dir['./test/factories/**/*.rb']
-)
+# CypressOnRails::SmartFactoryWrapper.configure(
+#   always_reload: !Rails.configuration.cache_classes,
+#   factory: FactoryBot,
+#   files: Dir['./test/factories/**/*.rb']
+# )

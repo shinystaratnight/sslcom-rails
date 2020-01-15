@@ -21,6 +21,7 @@ end
 
 begin
   require 'declarative_authorization/maintenance'
+  require 'simplecov'
 rescue LoadError => e
   puts e.message
 end
