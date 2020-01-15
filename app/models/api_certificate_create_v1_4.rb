@@ -746,6 +746,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
     @attestation_certificate || parameters_to_hash["attestation_cert"]
   end
 
+  def attestation_issuer_certificate
     @attestation_issuer_certificate || parameters_to_hash["attestation_issuer_cert"]
   end
 
