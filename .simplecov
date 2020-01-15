@@ -1,13 +1,12 @@
 SimpleCov.minimum_coverage 10
 SimpleCov.refuse_coverage_drop
-SimpleCov.enable_coverage :branch
 
 SimpleCov.start 'rails' do
   filters.clear
-  # add_filter do |src|
-  #   !(src.filename =~ /^#{SimpleCov.root}/) unless src.filename =~ /my_engine/
-  # end
   add_filter %r{^/test/}
+  add_filter %r{^/.*declarative_authorization.*/}
+  add_filter %r{^/.*lib/gems/.*/}
+  add_filter %r{^/usr/}
   add_filter %r{^/config/}
   add_filter %r{^/db/}
   add_filter %r{^/vendor/}
@@ -17,11 +16,11 @@ SimpleCov.start 'rails' do
   add_filter %r{^/lib/in_place_editing}
   add_filter %r{^/lib/dynamic_form}
   add_filter %r{^/lib/preferences}
-  add_filter %r{^/app/assets/}
   add_filter %r{^/app/paths/}
   add_group 'Models', 'app/models'
   add_group 'Controllers', 'app/controllers'
   add_group 'Services', 'app/services'
   add_group 'Helpers', 'app/helpers'
   add_group 'Serializers', 'app/serializers'
+  add_group 'Constraints', 'app/constraints'
 end
