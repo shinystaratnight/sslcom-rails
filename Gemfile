@@ -135,7 +135,6 @@ group :development, :test do
   gem 'pry-remote'
   gem 'rubocop', require: false
   gem 'rubocop-minitest'
-  gem 'rubocop-performance'
   gem 'rubocop-rails'
   gem 'ruby-odbc'
   gem 'ruby_parser'
