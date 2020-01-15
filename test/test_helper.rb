@@ -1,19 +1,9 @@
-require 'simplecov'
-SimpleCov.minimum_coverage 10
-SimpleCov.start 'rails' do
-add_filter '/bin/'
- add_filter '/db/'
- add_filter '/test/'
- add_filter '/config/'
- add_group "Models", "app/models"
- add_group "Controllers", "app/controllers"
- add_group "Services", "app/services"
- add_group "Helpers", "app/helpers"
- add_group "Lib", "lib/"
-end
+# frozen_string_literal: true
 
-ENV["RAILS_ENV"] = 'test'
-require File.expand_path('../../config/environment', __FILE__)
+require 'simplecov'
+
+ENV['RAILS_ENV'] = 'test'
+require File.expand_path('../config/environment', __dir__)
 
 require 'rails/test_help'
 require 'minitest/rails'
@@ -53,7 +43,7 @@ class Minitest::Spec
   end
 end
 
-if RUBY_VERSION>='2.6.0'
+if RUBY_VERSION >= '2.6.0'
   if Rails.version < '5'
     class ActionController::TestResponse < ActionDispatch::TestResponse
       def recycle!

@@ -120,6 +120,11 @@ jobs:
       - run:
           name: Run Rails Application Tests
           command: bundle exec rake test
+          when: always
+
+      - store_test_results:
+          path: test/reports
+
 
             # Yarn dependencies
       - restore_cache:
@@ -152,6 +157,12 @@ jobs:
           name: Run Cypress
           command: yarn cypress run --project ./test
 
+      - store_artifacts:
+          path: test/cypress/videos
+
+      - store_artifacts:
+          path: test/cypress/screenshots
+
       - run:
           name: Precompile Assets
           command: bundle exec rake assets:precompile --trace
@@ -161,5 +172,3 @@ jobs:
           command: |
               bundle exec rails runner 'Rails.application.eager_load!'
 
-      - store_artifacts:
-          path: coverage

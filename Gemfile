@@ -145,6 +145,7 @@ end
 group :test do
   gem 'database_cleaner'
   gem 'faker'
+  gem 'minitest-ci'
   gem 'minitest-rails', '~> 2.0'
   gem 'minitest-reporters'
   gem 'mocha'

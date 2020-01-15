@@ -142,7 +142,7 @@ GEM
     connection_pool (2.2.2)
     crack (0.4.3)
       safe_yaml (~> 1.0.0)
-    crass (1.0.5)
+    crass (1.0.6)
     cypress-on-rails (1.5.1)
       rack
     daemons (1.3.1)
@@ -300,7 +300,9 @@ GEM
     mini_portile2 (2.4.0)
     mini_racer (0.2.6)
       libv8 (>= 6.9.411)
-    minitest (5.13.0)
+    minitest (5.14.0)
+    minitest-ci (3.4.0)
+      minitest (>= 5.0.6)
     minitest-rails (2.2.1)
       minitest (~> 5.7)
       railties (~> 4.1)
@@ -717,6 +719,7 @@ DEPENDENCIES
   memory_profiler
   meta_request
   mini_racer
+  minitest-ci
   minitest-rails (~> 2.0)
   minitest-reporters
   mocha

@@ -1,0 +1,16 @@
+version: "2"
+
+exclude_patterns:
+  - "config/"
+  - "db/"
+  - "**/node_modules/"
+  - "test/"
+  - "**/vendor/"
+  - "*.md"
+  - "app/assets/"
+  - ".*"
+  - 'vendor/**/*'
+  - 'tmp/**/*'
+  - 'lib/**/*'
+  - 'bin/*'
+  - 'db/**/*'
