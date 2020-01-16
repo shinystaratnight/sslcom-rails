@@ -36,3 +36,5 @@ ubuntu-xenial-16.04-cloudimg-console.log
 public/assets
 test/.nyc_output
 test/cypress/videos
+test/reports
+test/cypress/screenshots/authentication_spec.js

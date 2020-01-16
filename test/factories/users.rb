@@ -49,8 +49,8 @@ FactoryBot.define do
   factory :user do
     first_name            { Faker::Name.first_name }
     last_name             { Faker::Name.last_name }
-    sequence(:login)      { Faker::Internet.username(specifier: 8..15) }
-    sequence(:email)      { Faker::Internet.email }
+    login                 { Faker::Internet.username(specifier: 8..15) }
+    email                 { Faker::Internet.email }
     status                { 'enabled' }
     password              { 'Testing_ssl+1' }
     password_confirmation { 'Testing_ssl+1' }

@@ -676,7 +676,10 @@ class User < ApplicationRecord
     def get_user_accounts_roles_names(user)
       # e.g.: {'team_1': ['owner'], 'team_2': ['account_admin', 'installer']}
       Rails.cache.fetch("#{user.cache_key}/get_user_accounts_roles_names") do
-        user_account_roles(user)&.map(&:name)
+        user.ssl_accounts.each_with_object({}) do |s, all|
+          all[s.get_team_name] = user.assignments.where(ssl_account_id: s.id).map(&:role).uniq.map(&:name)
+          all
+        end
       end
     end
     memoize :get_user_accounts_roles_names

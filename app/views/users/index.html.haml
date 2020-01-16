@@ -47,8 +47,7 @@
           -cache([current_user.id,'admin_users_list', u.cache_key], expires_in: 12.hours) do
             -user_view = true
             -user_view ||= u!=current_user && u.is_owner?(current_user.ssl_account).size == 0
-            -type = ""
-            -User.get_user_accounts_roles_names(u).each{|ssl| type << "<strong>#{ssl.first}</strong>: #{ssl.second.join(', ')}<br />"}
+            -type = user_role_names(u)
             -us, us_class=user_status(u)
             %tr{class: "#{user_view ? 'enable' : 'disable'}", alt: "#{u.id}"}
               %td.dropdown= user_view ? image_tag('expand.png') : ''
