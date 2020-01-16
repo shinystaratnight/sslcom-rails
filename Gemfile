@@ -91,12 +91,12 @@ gem 'date'
 gem 'etc'
 gem 'fileutils', '~> 1.1.0'
 gem 'forwardable'
+gem 'puma'
 gem 'schema_plus'
 gem 'scout_apm'
 gem 'stringio'
 gem 'strscan'
 gem 'zlib'
-gem 'puma'
 
 # Frontend
 gem 'bootstrap'
@@ -112,9 +112,6 @@ gem 'yui-compressor'
 
 group :development do
   gem 'annotate'
-  gem 'better_errors'
-  gem 'binding_of_caller'
-  gem 'bullet'
   gem 'dotenv-rails'
   gem 'letter_opener_web', '~> 1.0'
   gem 'lol_dba'
@@ -128,14 +125,16 @@ group :development do
 end
 
 group :development, :test do
+  gem 'better_errors'
+  gem 'binding_of_caller'
   gem 'builder'
+  gem 'bullet'
   gem 'byebug'
   gem 'cypress-on-rails', '~> 1.5.1'
   gem 'factory_bot_rails'
   gem 'pry-remote'
   gem 'rubocop', require: false
   gem 'rubocop-minitest'
-  gem 'rubocop-performance'
   gem 'rubocop-rails'
   gem 'ruby-odbc'
   gem 'ruby_parser'
@@ -145,6 +144,7 @@ end
 group :test do
   gem 'database_cleaner'
   gem 'faker'
+  gem 'minitest-ci'
   gem 'minitest-rails', '~> 2.0'
   gem 'minitest-reporters'
   gem 'mocha'
