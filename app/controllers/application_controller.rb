@@ -19,7 +19,7 @@ class ApplicationController < ActionController::Base
   before_action :set_mailer_host
   before_action :detect_recert, except: %i[renew reprocess]
   before_action :set_current_user
-  before_action :verify_duo_authentication, except: %i[duo duo_verify login logout]
+  before_action :verify_duo_authentication, except: %i[duo duo_verify login logout], if: -> { skip_duo_cookie.nil? }
   before_action :identify_visitor, :record_visit,
                 if: 'Settings.track_visitors'
   before_action :finish_reseller_signup, if: 'current_user'

@@ -2,7 +2,6 @@
 
 require:
   - rubocop/cop/internal_affairs
-  - rubocop-performance
   - rubocop-rails
   - rubocop-minitest
 

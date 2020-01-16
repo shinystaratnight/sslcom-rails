@@ -1,4 +1,4 @@
-web: rails s -b 0.0.0.0 --environment=development
+web: rails s webrick -b 0.0.0.0 --environment=development
 bullet: tail -f log/bullet.log
 debug: tail -f log/development.log
 worker1: bundle exec rake jobs:work
