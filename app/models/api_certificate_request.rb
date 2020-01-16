@@ -21,7 +21,7 @@ class ApiCertificateRequest < CaApiRequest
       :assumed_name, :business_category, :email_address, :contact_email_address, :dcv_email_address,
       :ca_certificate_id, :is_customer_validated, :hide_certificate_reference, :external_order_number,
       :dcv_candidate_addresses, :dcv_method, :ref, :contacts, :options, :renewal_id, :billing_profile, :certificates,
-      :attestation_cert, :attestation_issuer_cert]
+      :attestation_cert, :attestation_issuer_cert, :certificate_contents]
 
   UPDATE_ACCESSORS_1_4 = [:cert_names, :caa_check_domains]
 
@@ -33,7 +33,7 @@ class ApiCertificateRequest < CaApiRequest
       :assumed_name, :business_category, :email_address, :contact_email_address, :dcv_email_address,
       :ca_certificate_id, :is_customer_validated, :hide_certificate_reference, :external_order_number,
       :dcv_candidate_addresses, :dcv_method, :dcv_methods, :certificate_ref, :contacts, :admin_funded,
-      :ca_order_number, :debug, :api_call, :billing_profile, :callback, :unique_value, :pub_key, :signed_certificates]
+      :ca_order_number, :debug, :api_call, :billing_profile, :callback, :unique_value, :pub_key, :signed_certificates, :certificate_contents]
 
   REPROCESS_ACCESSORS = [:account_key, :secret_key, :server_count, :server_software, :domains,
       :domain, :common_names_flag, :csr, :organization, :organization_unit, :post_office_box,
@@ -42,7 +42,7 @@ class ApiCertificateRequest < CaApiRequest
       :registered_state_or_province_name, :registered_country_name, :incorporation_date,
       :assumed_name, :business_category, :email_address, :contact_email_address,
       :ca_certificate_id, :is_customer_validated, :hide_certificate_reference, :external_order_number,
-      :dcv_methods, :ref, :options]
+      :dcv_methods, :ref, :options, :certificate_contents]
 
   RETRIEVE_ACCESSORS = [:account_key, :secret_key, :ref, :query_type, :response_type, :response_encoding,
     :show_validity_period, :show_domains, :show_ext_status, :validations, :registrant, :start, :end, :filter,

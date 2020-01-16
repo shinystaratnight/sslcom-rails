@@ -386,7 +386,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
             self.state_or_province_name.nil?),
         postal_code: (self.postal_code.force_encoding("ISO-8859-1").encode("UTF-8") unless self.postal_code.nil?),
         country: self.country || csr_obj.try(:country))
-    if self.recipient
+    if self.try(:recipient)
       recipient_attr = JSON.parse self.recipient
       assignee = options[:certificate_order].assignee || User.find_or_initialize_by(email: recipient_attr["email"])
       assignee.login ||= recipient_attr["email"]
