@@ -26,22 +26,44 @@ Minitest::Reporters.use! [Minitest::Reporters::SpecReporter.new]
 # in spec/support/ and its subdirectories.
 Dir[File.join('./test/support/**/*.rb')].sort.each { |f| require f }
 
-include Authlogic::TestCase
-include SessionHelper
-
 DatabaseCleaner.clean_with :truncation
 DatabaseCleaner.strategy = :truncation
 
-class Minitest::Spec
-  include SetupHelper
+module Minitest
+  class Spec
+    class_eval do
+      include SessionHelper
+      include SetupHelper
+      include Authlogic::TestCase
 
-  before :each do
-    DatabaseCleaner.start
-    Delayed::Worker.delay_jobs = false
+      before :each do
+        DatabaseCleaner.start
+        Delayed::Worker.delay_jobs = false
+      end
+
+      after :each do
+        DatabaseCleaner.clean
+      end
+    end
   end
+end
 
-  after :each do
-    DatabaseCleaner.clean
+module ActiveSupport
+  class TestCase
+    class_eval do
+      include SessionHelper
+      include SetupHelper
+      include Authlogic::TestCase
+
+      before :each do
+        DatabaseCleaner.start
+        Delayed::Worker.delay_jobs = false
+      end
+
+      after :each do
+        DatabaseCleaner.clean
+      end
+    end
   end
 end
 

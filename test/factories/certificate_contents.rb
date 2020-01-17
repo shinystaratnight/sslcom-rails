@@ -1,3 +1,28 @@
+# == Schema Information
+#
+# Table name: certificate_contents
+#
+#  id                   :integer          not null, primary key
+#  certificate_order_id :integer          not null
+#  signing_request      :text(65535)
+#  signed_certificate   :text(65535)
+#  server_software_id   :integer
+#  domains              :text(65535)
+#  duration             :integer
+#  workflow_state       :string(255)
+#  billing_checkbox     :boolean
+#  validation_checkbox  :boolean
+#  technical_checkbox   :boolean
+#  created_at           :datetime
+#  updated_at           :datetime
+#  label                :string(255)
+#  ref                  :string(255)
+#  agreement            :boolean
+#  ext_customer_ref     :string(255)
+#  approval             :string(255)
+#  ca_id                :integer
+#
+
 FactoryBot.define do
   factory :certificate_content do
     signing_request {

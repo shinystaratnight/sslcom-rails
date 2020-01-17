@@ -140,3 +140,7 @@ Naming/PredicateName:
   Enabled: false
 Naming/AccessorMethodName:
   Enabled: false
+Naming/MemoizedInstanceVariableName:
+  Exclude:
+    - app/controllers/application_controller.rb
+
