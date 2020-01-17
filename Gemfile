@@ -61,6 +61,7 @@ gem 'public_suffix', '>= 4.0.0'
 gem 'rack-cors', '>= 0.4.1', require: 'rack/cors'
 gem 'rails-api'
 gem 'rails-observers'
+# gem 'ransack'
 gem 'request_exception_handler'
 gem 'rubyzip', '>= 1.3.0'
 gem 'rvm-capistrano'
@@ -107,7 +108,6 @@ gem 'sassc-rails', '>= 2.1.0'
 gem 'select2-rails'
 gem 'slim-rails'
 gem 'turbolinks'
-# gem 'webpacker', '~> 4.x'
 gem 'yui-compressor'
 
 group :development do
@@ -117,7 +117,6 @@ group :development do
   gem 'lol_dba'
   gem 'memory_profiler'
   gem 'meta_request'
-  # gem 'puma'
   gem 'solargraph', require: false
   gem 'spring'
   gem 'spring-commands-testunit'

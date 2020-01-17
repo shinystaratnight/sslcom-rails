@@ -33,6 +33,8 @@ DatabaseCleaner.clean_with :truncation
 DatabaseCleaner.strategy = :truncation
 
 class Minitest::Spec
+  include SetupHelper
+
   before :each do
     DatabaseCleaner.start
     Delayed::Worker.delay_jobs = false
