@@ -17,10 +17,11 @@ require 'rack/utils'
 require 'authlogic/test_case'
 require 'declarative_authorization/maintenance'
 require 'json-schema'
+require 'minitest/bang'
 
 ActiveRecord::Migration.maintain_test_schema!
 
-Minitest::Reporters.use! [Minitest::Reporters::SpecReporter.new]
+Minitest::Reporters.use! [Minitest::Reporters::SpecReporter.new, Minitest::Reporters::JUnitReporter.new]
 
 # Requires supporting ruby files with custom matchers and macros, etc,
 # in spec/support/ and its subdirectories.
@@ -54,15 +55,7 @@ module ActiveSupport
       include SessionHelper
       include SetupHelper
       include Authlogic::TestCase
-
-      before :each do
-        DatabaseCleaner.start
-        Delayed::Worker.delay_jobs = false
-      end
-
-      after :each do
-        DatabaseCleaner.clean
-      end
+      include DatabaseCleanerSupport
     end
   end
 end

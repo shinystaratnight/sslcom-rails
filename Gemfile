@@ -143,10 +143,14 @@ end
 group :test do
   gem 'database_cleaner'
   gem 'faker'
+  gem 'minitest-bang', require: false
   gem 'minitest-ci'
   gem 'minitest-rails', '~> 2.0'
   gem 'minitest-reporters'
   gem 'mocha'
+  gem 'rails-controller-testing'
+  gem 'shoulda', '~> 3.5'
+  gem 'shoulda-matchers', '~> 2.0'
   gem 'simplecov', require: false
   gem 'vcr'
   gem 'webmock'

@@ -41,27 +41,65 @@ describe CertificateOrder do
   before(:all) do
     initialize_roles
     initialize_triggers
+    initialize_server_software
   end
 
-  describe 'search_with_csr scope' do
+  subject { build(:certificate_order) }
+
+  # context 'associations' do
+  #   should belong_to(:assignee).class_name('User')
+  #   should belong_to(:folder)
+  #   should belong_to(:site_seal)
+  #   should belong_to(:parent).class_name('CertificateOrder')
+  #   should belong_to(:ssl_account)
+  #   should belong_to(:validation)
+
+  #   should have_many(:registrants).through(:certificate_contents)
+  #   should have_many(:locked_registrants).through(:certificate_contents)
+  #   should have_many(:certificate_contacts).through(:certificate_contents)
+  #   should have_many(:domain_control_validations).through(:certificate_names)
+  #   should have_many(:csrs).through(:certificate_contents).source(:csr)
+  #   should have_many(:csr_unique_values).through(:csrs)
+  #   should have_many(:attestation_certificates).through(:certificate_contents)
+
+  #   should have_many(:signed_certificates).through(:csrs).source(:signed_certificate)
+  #   should have_many(:attestation_issuer_certificates).through(:certificate_contents)
+  #   should have_many(:shadow_certificates).through(:csrs).class_name('ShadowSignedCertificate')
+  #   should have_many(:ca_certificate_requests).through(:csrs)
+  #   should have_many(:ca_api_requests).through(:csrs)
+  #   should have_many(:sslcom_ca_requests).through(:csrs)
+  #   should have_many(:sub_order_items)
+  #   should have_many(:product_variant_items).through(:sub_order_items)
+  #   should have_many(:orders).through(:line_items)
+  #   should have_many(:other_party_validation_requests).class_name('OtherPartyValidationRequest')
+  #   should have_many(:ca_retrieve_certificates)
+  #   should have_many(:ca_mdc_statuses)
+
+  #   should have_many(:jois).class_name('Joi')
+  #   should have_many(:app_reps).class_name('AppRep')
+  #   should have_many(:physical_tokens)
+  #   should have_many(:url_callbacks).through(:certificate_contents)
+  #   should have_many(:taggings)
+  #   should have_many(:tags).through(:taggings)
+  #   should have_many(:notification_groups_subjects)
+  #   should have_many(:notification_groups).through(:notification_groups_subjects)
+  #   should have_many(:certificate_order_tokens)
+  #   should have_many(:certificate_order_managed_csrs)
+  #   should have_many(:managed_csrs).through(:certificate_order_managed_csrs)
+  #   should have_many(:certificate_order_domains)
+  #   should have_many(:managed_domains).through(:certificate_order_domains).source(:domain)
+
+  #   should have_one(:locked_recipient)
+  #   should have_one(:renewal)
+  # end
+
+  context 'scopes' do
     # configurable_filters = [
-    #   common_name: "'#{Faker::Internet.domain_name}'",
-    #   organization: "'#{Faker::Company.name}'",
-    #   organization_unit: "'#{Faker::Commerce.department}'",
     #   address: "'#{Faker::Address.street_address}'",
-    #   state: "'#{Faker::Address.state}'",
-    #   postal_code: "'#{Faker::Address.postcode}'",
-    #   subject_alternative_names: nil,
-    #   locality: "'#{Faker::Address.city}'",
-    #   country: "'#{Faker::Address.country}'",
-    #   signature: nil,
-    #   fingerprint: nil,
-    #   strength: nil,
     #   expires_at: "'#{300.days.from_now}'",
     #   login: nil,
     #   email: "'#{Faker::Internet.email}'",
     #   product: nil,
-    #   decoded: true,
     #   is_test: true,
     #   order_by_csr: nil,
     #   physical_tokens: nil,
@@ -76,17 +114,32 @@ describe CertificateOrder do
     #   folder_ids: nil
     # ]
 
-    it 'filters by csr.common_name' do
-      common_name = Faker::Internet.domain_name
-      cert = create(:certificate_with_certificate_order)
-      co = CertificateOrder.unscoped.create(sub_order_items: [cert.product_variant_groups[0].product_variant_items[0].sub_order_item])
-      co.certificate_contents << create(:certificate_content, certificate_order_id: co.id, csrs: [create(:csr, common_name: common_name)])
-      query = "common_name:#{common_name}"
-      queried = CertificateOrder.search_with_csr(query)
+    describe 'search_with_csr' do
+      let!(:cert) { create(:certificate_with_certificate_order) }
+      %w[common_name organization organization_unit state subject_alternative_names locality decoded].each do |field|
+        it "filters by csr.#{field}" do
+          co = CertificateOrder.paid.create(sub_order_items: [cert.product_variant_groups[0].product_variant_items[0].sub_order_item])
+          co.certificate_contents << create(:certificate_content, include_csr: true, certificate_order_id: co.id)
+          csr = co.certificate_contents[0].csrs[1]
+          query = "#{field}:'#{csr[field.to_sym]}'"
+          queried = CertificateOrder.search_with_csr(query)
 
-      puts "queried: #{queried.presence || 'nil'}"
-      puts JSON.dump(co.certificate_contents.first.csr.common_name)
-      assert_equal(queried.include?(co), true)
+          assert_equal(queried.include?(co), true)
+        end
+      end
+
+      %w[postal_code signature fingerprint country strength].each do |field|
+        it "filters by signed_certificate.#{field}" do
+          co = CertificateOrder.paid.create(sub_order_items: [cert.product_variant_groups[0].product_variant_items[0].sub_order_item])
+          co.certificate_contents << create(:certificate_content, include_csr: true, certificate_order_id: co.id)
+          sc = co.certificate_contents[0].csrs[1].signed_certificates[0]
+
+          query = "#{field}:'#{sc[field.to_sym]}'"
+          queried = CertificateOrder.search_with_csr(query)
+
+          assert_equal(queried.include?(co), true)
+        end
+      end
     end
   end
 end

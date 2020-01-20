@@ -107,6 +107,8 @@ class CertificateOrder < ApplicationRecord
 
   scope :is_test, ->{where{is_test==true}}
 
+  scope :paid, -> { unscoped.where(workflow_state: :paid)}
+
   scope :search, lambda {|term, options={}|
     where{ref =~ '%'+term+'%'}.merge(options)
   }

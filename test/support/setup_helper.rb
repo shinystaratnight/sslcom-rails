@@ -47,7 +47,7 @@ module SetupHelper
   end
 
   def initialize_server_software
-    ['Apache-ModSSL', 'Oracle', 'Amazon Load Balancer'].each_with_index{ |t, i| ServerSoftware.create(id: i + 1, title: t) }
+    ['Apache-ModSSL', 'Oracle', 'Amazon Load Balancer'].each{ |title| ServerSoftware.find_or_create_by(title: title) }
   end
 
   def create_and_approve_user(invited_ssl_acct, login = nil, roles = nil)

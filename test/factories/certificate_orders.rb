@@ -42,13 +42,5 @@ FactoryBot.define do
     amount { '11000' }
     ca { 'SSLcomSHA2' }
     ssl_account
-    certificate_contents { CertificateContent.none }
-    certificate
-
-    trait :with_certificate_content do
-      after_create do |co|
-        co.certificate_contents << create(:certificate_content, workflow_state: 'new')
-      end
-    end
   end
 end
