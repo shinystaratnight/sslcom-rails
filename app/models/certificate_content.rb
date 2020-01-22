@@ -555,7 +555,7 @@ class CertificateContent < ApplicationRecord
                                                      name.non_wildcard_name))
           OrderNotifier.dcv_email_send(v["dcv"], dcv.identifier, [name.name], name.id, @ssl_slug).deliver
         end
-        dcvs << dcv
+        dcvs << dcv unless dcv.blank?
       end
       i+=1
     end
