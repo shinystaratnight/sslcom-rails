@@ -324,7 +324,7 @@ SslCom::Application.routes.draw do
 
       collection do
         get :certificate_orders_domains_contacts
-        post :search
+        get :search
         post :register_notification_group
         post :remove_groups
         post :scan_groups
