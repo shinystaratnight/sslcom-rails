@@ -50,9 +50,10 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   validates :locality_name, presence: true, if: lambda{|c|c.csr && (!c.is_dv? && c.csr_obj.locality.blank?)}
   validates :state_or_province_name, presence: true, if: lambda{|c|csr && (!c.is_dv? && c.csr_obj.state.blank?)}
   validates :postal_code, presence: true, if: lambda{|c|c.csr && !c.is_dv?} #|| c.parsed_field("POSTAL_CODE").blank?}
-  validates :country, presence: true, inclusion: { in: Country.accepted_countries, message: "needs to be one of the following: #{Country.accepted_countries.join(', ')}" },
-      if: lambda { |c| c.csr && c.csr_obj && c.csr_obj.country.try("blank?") }
-  #validates :registered_country, :incorporation_date, if: lambda{|c|c.is_ev?}
+  validates :country_name, presence: true, inclusion:
+      {in: Country.accepted_countries, message: "needs to be one of the following: #{Country.accepted_countries.join(', ')}"},
+      if: lambda{|c| c.csr && c.csr_obj && c.csr_obj.country.try("blank?")}
+  #validates :registered_country_name, :incorporation_date, if: lambda{|c|c.is_ev?}
   validates :dcv_method, inclusion: {in: ApiCertificateCreate::DCV_METHODS,
       message: "needs to one of the following: #{DCV_METHODS.join(', ')}"}, if: lambda{|c|c.dcv_method}
   validates :contact_email_address, email: true, unless: lambda{|c|c.contact_email_address.blank?}
@@ -60,10 +61,9 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   validates :common_names_flag, format: {with: /[01]/}, unless: lambda{|c|c.common_names_flag.blank?}
   validates :unique_value, format: {with: /[a-zA-Z0-9]{1,20}/}, unless: lambda{|c|c.unique_value.blank?}
   # use code instead of serial allows attribute changes without affecting the cert name
-  validate :verify_dcv, on: :create
-  validates :contacts, presence: true, on: [:create, :update]
-  validate :validate_contacts
-  validate :validate_callback, unless: lambda { |c| c.callback.blank? }
+  validate :verify_dcv, on: :create, if: "!domains.blank?"
+  # validate :validate_contacts, if: "api_requestable && api_requestable.reseller.blank? && !csr.blank?"
+  validate :validate_callback, unless: lambda{|c|c.callback.blank?}
   validate :renewal_exists, if: lambda{|c|c.renewal_id}
 
   before_validation do
@@ -115,7 +115,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
     )
     order = api_requestable.purchase(@certificate_order)
     order.cents = @certificate_order.attributes_before_type_cast["amount"].to_f
-
+    
     if errors.blank?
       if certificate_content.valid?
         apply_funds(
@@ -131,8 +131,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
               certificate_order: @certificate_order,
               certificate_content: certificate_content,
               ssl_account: api_requestable,
-              contacts: self.contacts,
-              certificate: certificate) if csr
+              contacts: self.contacts) if csr
 
           if is_attestation_processing?
             create_attestation_certificate(
@@ -156,7 +155,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
         #       contacts: self.contacts)
         # end
 
-        certificate_content.url_callbacks.create(JSON.parse(callback)) unless JSON.parse(callback).empty?
+        certificate_content.url_callbacks.create(callback) if callback
         return @certificate_order
       else
         return certificate_content
@@ -261,6 +260,23 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
       #assume updating domain validation, already sent to comodo
       if @certificate_order.certificate_content && @certificate_order.certificate_content.pending_validation? &&
           (@certificate_order.external_order_number || !@certificate_order.certificate_content.ca.blank?)
+        #set domains
+
+        # if @certificate_order.certificate.is_basic? || @certificate_order.certificate.is_free? || @certificate_order.certificate.is_high_assurance?
+        #   cnames = @certificate_order.certificate_content.domains
+        #   domain_strs = []
+        #   self.domains.keys.each do |key|
+        #     domain_strs << key unless domain_strs.include? key
+        #
+        #     if !key.include?('www.') && cnames.include?('www.' + key)
+        #       domain_strs << ('www.' + key)
+        #     end
+        #   end
+        #   @certificate_order.certificate_content.update_attribute(:domains, domain_strs)
+        # else
+        #   @certificate_order.certificate_content.update_attribute(:domains, self.domains.keys)
+        # end
+
         @certificate_order.certificate_content.update_attribute(:domains, self.domains.keys)
         @certificate_order.certificate_content.dcv_domains({domains: self.domains, emails: self.dcv_candidate_addresses})
 
@@ -279,21 +295,21 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
       #     end
       #   end
       else
-        if self.csr_obj # was a csr submitted?
+        if self.csr_obj
           certificate_content = @certificate_order.certificate_contents.build
           csr = self.csr_obj
           csr.save
           certificate_content.csr = csr
           certificate_content.server_software_id = server_software
-          certificate_content.domains = domains.keys unless JSON.parse(domains).empty?
           certificate_content.submit_csr!
+          certificate_content.domains = domains.keys unless domains.blank?
           if errors.blank?
             if certificate_content.save
               setup_certificate_content(
                   certificate_order: @certificate_order,
                   certificate_content: certificate_content,
                   contacts: self.contacts)
-              certificate_content.url_callbacks.create(JSON.parse(callback)) unless JSON.parse(callback).empty?
+              certificate_content.url_callbacks.create(callback) if callback
             else
               return certificate_content
             end
@@ -366,10 +382,10 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
     cc.registrant.destroy unless cc.registrant.blank?
     cc.add_ca(options[:certificate_order].ssl_account) if options[:certificate_order].external_order_number.blank?
     cc.create_registrant(
-        company_name: (self.organization.force_encoding("ISO-8859-1").encode("UTF-8") unless
+        company: (self.organization.force_encoding("ISO-8859-1").encode("UTF-8") unless
             self.organization.nil?),
-        department: (self.organization_unit.force_encoding("ISO-8859-1").encode("UTF-8") unless
-            self.organization_unit.nil?),
+        department: (self.organization_unit_name.force_encoding("ISO-8859-1").encode("UTF-8") unless
+            self.organization_unit_name.nil?),
         po_box: (self.post_office_box.force_encoding("ISO-8859-1").encode("UTF-8") unless self.post_office_box.nil?),
         address1: (self.street_address_1.force_encoding("ISO-8859-1").encode("UTF-8") unless
             self.street_address_1.nil?),
@@ -381,10 +397,10 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
         state: (self.state_or_province_name.force_encoding("ISO-8859-1").encode("UTF-8") unless
             self.state_or_province_name.nil?),
         postal_code: (self.postal_code.force_encoding("ISO-8859-1").encode("UTF-8") unless self.postal_code.nil?),
-        country: self.country || csr_obj.country)
+        country: self.country_name || csr_obj.country)
     if cc.csr_submitted?
       cc.provide_info!
-      if Contact.optional_contacts? && JSON.parse(contacts) && JSON.parse(contacts)[:saved_contacts]
+      if Contact.optional_contacts? && contacts && contacts[:saved_contacts]
         sc = contacts[:saved_contacts]
         if sc && sc.is_a?(Array) && sc.any?
           sc.each do |c_id|
@@ -402,11 +418,10 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
         end
       else
         CertificateContent::CONTACT_ROLES.each do |role|
-          contacts_list = JSON.parse(options[:contacts])
-          c = if contacts_list && (contacts_list[role] || contacts_list['all'])
+          c = if options[:contacts] && (options[:contacts][role] || options[:contacts][:all])
                 CertificateContact.new(retrieve_saved_contact(
-                    contacts_list[(contacts_list[role] ? role : 'all')].to_utf8,
-                    %w(company_name department)
+                    options[:contacts][(options[:contacts][role] ? role : :all)].to_utf8,
+                    %w(company department)
                 ))
               elsif api_requestable.reseller
                 attributes = api_requestable.reseller.attributes.select do |attr, value|
@@ -448,9 +463,8 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   end
 
   def send_dcv(cc)
-    domains_list = JSON.parse(domains)
-    if self.debug=="true" || (domains_list && domains_list.count <= Validation::COMODO_EMAIL_LOOKUP_THRESHHOLD)
-      cc.dcv_domains({domains: domains_list, emails: self.dcv_candidate_addresses,
+    if self.debug=="true" || (self.domains && self.domains.count <= Validation::COMODO_EMAIL_LOOKUP_THRESHHOLD)
+      cc.dcv_domains({domains: self.domains, emails: self.dcv_candidate_addresses,
                       dcv_failure_action: self.options.blank? ? nil : self.options['dcv_failure_action']})
       cc.pend_validation!(ca_certificate_id: ca_certificate_id, send_to_ca: send_to_ca || true) unless cc.pending_validation?
     else
@@ -527,21 +541,19 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
 
   # must belong to a list of acceptable email addresses
   def verify_dcv
-    domains_list = JSON.parse(domains)
-    return if domains_list.empty?
     #if submitting domains, then a csr must have been submitted on this or a previous request
-    if csr.present? || is_processing?
-      dcv_candidate_addresses = {}
-      if domaind_list.is_a?(Array)
-        values = Array.new(domains_list.count,"dcv"=>"HTTP_CSR_HASH")
-        domains_list = (domains_list.zip(values)).to_h
+    if !csr.blank? || is_processing?
+      self.dcv_candidate_addresses = {}
+      if self.domains.is_a?(Array)
+        values = Array.new(self.domains.count,"dcv"=>"HTTP_CSR_HASH")
+        self.domains = (self.domains.zip(values)).to_h
       end
-      domains_list.each do |k,v|
+      self.domains.each do |k,v|
         unless v["dcv"] =~ /https?/i || v["dcv"] =~ /cname/i
           unless v["dcv"]=~EmailValidator::EMAIL_FORMAT
             errors[:domains] << "domain control validation for #{k} failed. #{v["dcv"]} is an invalid email address."
           else
-            dcv_candidate_addresses[k]=[]
+            self.dcv_candidate_addresses[k]=[]
             # self.dcv_candidate_addresses[k]=ComodoApi.domain_control_email_choices(k).email_address_choices
             # errors[:domains] << "domain control validation for #{k} failed. Invalid email address #{v["dcv"]} was submitted but only #{self.dcv_candidate_addresses[k].join(", ")} are valid choices." unless
             #     self.dcv_candidate_addresses[k].include?(v["dcv"])
@@ -560,45 +572,48 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   end
 
   def validate_contacts
-    contacts_info = JSON.parse(contacts)
-    unless contacts_info.is_a?(Hash)
-      errors[:contacts] << "parameter expects hash format"
-      return
-    end
-    errors[:contacts] = {}
-    if Contact.optional_contacts? && contacts_info.fetch(:saved_contacts, false)
-      sc = contacts_info[:saved_contacts]
-      if sc && sc.is_a?(Array) && sc.any?
-        found = 0
-        sc.each {|c| found += 1 if api_requestable.all_saved_contacts.find_by(id: c.to_i)}
-        errors[:contacts].push(saved_contacts: "Contacts with ids #{sc.join(', ')} do not exist.") unless found > 0
-      else
-        errors[:contacts].push(saved_contacts: "Zero contacts provided, please pass a list of saved contact ids. E.g.: [1, 5, 6].")
+    if contacts
+      if !contacts.is_a?(Hash)
+          errors[:contacts] << "expecting hash"
+        return false
       end
-    else
-      CertificateContent::CONTACT_ROLES.each do |role|
-        if (contacts_info.fetch(role, false) || contacts_info['all'])
-          c_role = contacts_info[role] ? role : 'all'
-          attrs  = retrieve_saved_contact(contacts_info[c_role], [c_role])
-          extra  = (attrs.keys - permit_contact_fields).flatten
-          if attrs[:saved_contact] # failed to find saved contact by id
-            errors[:contacts].last[:role] = c_role
-          elsif !extra.empty?
-            msg = {c_role.to_sym => "The following parameters are invalid: #{extra.join(', ')}"}
-            errors[:contacts].last.merge!(msg)
-          elsif !CertificateContact.new(attrs.to_utf8.merge(roles: [role])).valid?
-            r = CertificateContact.new(attrs.to_utf8.merge(roles: [role]))
-            r.valid?
-            errors[:contacts].last.merge!(c_role.to_sym => r.errors)
-          elsif attrs['country'].blank? || Country.find_by_iso1_code(attrs['country'].upcase).blank?
-            msg = {c_role.to_sym => "The 'country' parameter has an invalid value of '#{attrs['country']}'"}
+      errors[:contacts] = {}
+      if Contact.optional_contacts? && contacts[:saved_contacts]
+        sc = contacts[:saved_contacts]
+        if sc && sc.is_a?(Array) && sc.any? 
+          found = 0
+          sc.each {|c| found += 1 if api_requestable.all_saved_contacts.find_by(id: c.to_i)}
+          errors[:contacts].push(saved_contacts: "Contacts with ids #{sc.join(', ')} do not exist.") unless found > 0
+        else
+          errors[:contacts].push(saved_contacts: "Zero contacts provided, please pass a list of saved contact ids. E.g.: [1, 5, 6].")
+        end
+      else
+        CertificateContent::CONTACT_ROLES.each do |role|
+          if (contacts[role] || contacts['all'])
+            c_role = contacts[role] ? role : 'all'
+            attrs  = retrieve_saved_contact(contacts[c_role], [c_role])
+            extra  = (attrs.keys - permit_contact_fields).flatten
+            if attrs[:saved_contact] # failed to find saved contact by id
+              errors[:contacts].last[:role] = c_role
+            elsif !extra.empty?
+              msg = {c_role.to_sym => "The following parameters are invalid: #{extra.join(', ')}"}
+              errors[:contacts].last.merge!(msg)
+            elsif !CertificateContact.new(attrs.to_utf8.merge(roles: [role])).valid?
+              r = CertificateContact.new(attrs.to_utf8.merge(roles: [role]))
+              r.valid?
+              errors[:contacts].last.merge!(c_role.to_sym => r.errors)
+            elsif attrs['country'].blank? || Country.find_by_iso1_code(attrs['country'].upcase).blank?
+              msg = {c_role.to_sym => "The 'country' parameter has an invalid value of '#{attrs['country']}'"}
+              errors[:contacts].last.merge!(msg)
+            end
+          else
+            msg = {role.to_sym => "contact information missing"}
             errors[:contacts].last.merge!(msg)
           end
-        else
-          msg = {role.to_sym => "contact information missing"}
-          errors[:contacts].last.merge!(msg)
         end
       end
+    else
+      errors[:contacts] << "parameter required"
     end
     cur_err = errors[:contacts].reject(&:empty?)
     errors.delete(:contacts)
@@ -607,13 +622,11 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   end
 
   def validate_callback
-    callback_info = JSON.parse(callback)
-    return if callback_info.empty?
-    unless callback_info.is_a?(Hash)
-      errors[:callback] << "expecting hash"
+    if !callback.is_a?(Hash)
+        errors[:callback] << "expecting hash"
       return false
     else
-      cb = UrlCallback.new(callback_info)
+      cb = UrlCallback.new(callback)
       errors[:callback] = cb.errors unless cb.valid?
     end
   end
@@ -623,8 +636,8 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
     if id
       found = self.api_requestable.saved_registrants.find_by(id: id.to_i)
       if found
-        self.organization = found.company_name
-        self.organization_unit = found.department
+        self.organization = found.company
+        self.organization_unit_name = found.department
         self.post_office_box = found.po_box
         self.street_address_1 = found.address1
         self.street_address_2 = found.address2
@@ -632,13 +645,13 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
         self.locality_name = found.city
         self.state_or_province_name = found.state
         self.postal_code = found.postal_code
-        self.country = found.country
+        self.country_name = found.country
       else
         errors[:saved_registrant].push(id: "Registrant with id=#{id} does not exist.")
       end
     end
   end
-
+  
   def retrieve_saved_contact(attributes, extra_attributes=[])
     new_attrs = attributes # { saved_contact: contact_id }
     if attributes && attributes.is_a?(Hash)
@@ -726,7 +739,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
       end
     end
   end
-
+  
   def permit_contact_fields
     CertificateContent::RESELLER_FIELDS_TO_COPY + %w(organization organization_unit country saved_contact)
   end
