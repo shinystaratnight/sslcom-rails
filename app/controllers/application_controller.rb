@@ -667,7 +667,7 @@ class ApplicationController < ActionController::Base
   end
 
   def clear_cart
-    cookies.delete(ShoppingCart::CART_KEY)
+    cookies.delete(ShoppingCart::CART_KEY, domain: cookie_domain)
     cookies.delete(ShoppingCart::AID_LI)
     current_user.shopping_cart.update_attribute(:content, nil) if current_user&.shopping_cart
   end
