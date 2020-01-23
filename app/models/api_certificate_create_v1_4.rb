@@ -394,7 +394,8 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
       recipient_attr[:user_id] = assignee.id
       options[:certificate_order].create_locked_recipient(recipient_attr)
     end
-    if !options[:certificate].is_server? or cc.csr_submitted?
+    ######ASK leo about this ########
+    if (options[:certificate].present? && !options[:certificate].is_server?) || cc.csr_submitted?
       cc.provide_info!
       if Contact.optional_contacts? && contacts && contacts[:saved_contacts]
         sc = contacts[:saved_contacts]
