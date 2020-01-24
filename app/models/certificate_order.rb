@@ -242,10 +242,9 @@ class CertificateOrder < ApplicationRecord
       result = result.where{
         (ssl_account.users.send(field.to_sym) =~ "%#{query}%")} if query
     end
-    %w(account_number).each do |field|
-      query=filters[field.to_sym]
-      result = result.where{
-        (ssl_account.send(field.to_sym) =~ "%#{query}%")} if query
+    %w[account_number].each do |_field|
+      query = filters[:acct_number]
+      result = result.where{ (ssl_account.send(:acct_number) =~ "%#{query}%") } if query
     end
     %w(expires_at created_at issued_at).each do |field|
       query=filters[field.to_sym]

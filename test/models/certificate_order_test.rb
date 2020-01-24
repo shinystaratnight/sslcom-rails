@@ -95,7 +95,6 @@ describe CertificateOrder do
 
   context 'scopes' do
     # configurable_filters = [
-    #   product: nil,
     #   is_test: true,
     #   order_by_csr: nil,
     #   physical_tokens: nil,
@@ -110,33 +109,47 @@ describe CertificateOrder do
     # ]
 
     describe 'search_with_csr' do
-      let!(:cert) { create(:certificate_with_certificate_order) }
+      let!(:cert) { create(:certificate_with_certificate_order, :basicssl) }
       let!(:co) { create(:certificate_order, sub_order_items: [cert.product_variant_groups[0].product_variant_items[0].sub_order_item]) }
-      %w[common_name organization organization_unit state subject_alternative_names locality decoded].each do |field|
+
+      %w[common_name organization organization_unit state subject_alternative_names locality].each do |field|
         it "filters by csr.#{field}" do
           co.certificate_contents << create(:certificate_content, include_csr: true, certificate_order_id: co.id)
-          csr = co.certificate_contents[0].csrs[1]
+          csr = co.certificate_contents[0].csrs[0]
           query = "#{field}:'#{csr[field.to_sym]}'"
+          puts query
           queried = CertificateOrder.search_with_csr(query)
 
           assert_equal(queried.include?(co), true)
         end
       end
 
-      %w[postal_code signature fingerprint country strength address login email].each do |field|
+      it 'filters by csr.decoded' do
+        co.certificate_contents << create(:certificate_content, include_csr: true, certificate_order_id: co.id)
+        query = "decoded:'3d:85:97:16:20:81:80:83:3a:6f:26:94:c6:5a:38'"
+        queried = CertificateOrder.search_with_csr(query)
+
+        assert_equal(queried.include?(co), true)
+      end
+
+      %w[postal_code signature fingerprint country strength address login email product account_number].each do |field|
         it "filters by signed_certificate.#{field}" do
           co.certificate_contents << create(:certificate_content, include_csr: true, certificate_order_id: co.id)
-          sc = co.certificate_contents[0].csrs[1].signed_certificates[0]
+          sc = co.certificate_contents[0].csrs[0].signed_certificates[0]
 
           query = case field
+                  when 'account_number'
+                    "account_number:'#{co.ssl_account[:acct_number]}'"
+                  when 'product'
+                    "product:'#{cert[:product]}'"
                   when 'login'
                     co.ssl_account.users << create(:user)
-                    "#{field}:'#{co.ssl_account.users[0][field.to_sym]}'"
+                    "login:'#{co.ssl_account.users[0][:login]}'"
                   when 'email'
                     co.ssl_account.users << create(:user)
-                    "#{field}:'#{co.ssl_account.users[0][field.to_sym]}'"
+                    "email:'#{co.ssl_account.users[0][:email]}'"
                   when 'address'
-                    "#{field}:'#{sc[:address1]}'"
+                    "address:'#{sc[:address1]}'"
                   else
                     "#{field}:'#{sc[field.to_sym]}'"
                   end
@@ -148,7 +161,6 @@ describe CertificateOrder do
       end
 
       it 'filters by signed_certificate.expiration_date' do
-        co = CertificateOrder.paid.create(sub_order_items: [cert.product_variant_groups[0].product_variant_items[0].sub_order_item])
         co.certificate_contents << create(:certificate_content, include_csr: true, certificate_order_id: co.id)
         start = DateTime.now.strftime('%m/%d/%Y')
         stop = (DateTime.now + 30.days).strftime('%m/%d/%Y')
@@ -160,7 +172,6 @@ describe CertificateOrder do
       end
 
       it 'filters by signed_certificate.created_at' do
-        co = CertificateOrder.paid.create(sub_order_items: [cert.product_variant_groups[0].product_variant_items[0].sub_order_item])
         co.certificate_contents << create(:certificate_content, include_csr: true, certificate_order_id: co.id)
         start = (DateTime.now - 2.days).strftime('%m/%d/%Y')
         stop = (DateTime.now + 30.days).strftime('%m/%d/%Y')
@@ -172,7 +183,6 @@ describe CertificateOrder do
       end
 
       it 'filters by created_at' do
-        co = CertificateOrder.paid.create(sub_order_items: [cert.product_variant_groups[0].product_variant_items[0].sub_order_item])
         co.certificate_contents << create(:certificate_content, include_csr: true, certificate_order_id: co.id)
         start = (DateTime.now - 2.days).strftime('%m/%d/%Y')
         stop = (DateTime.now + 30.days).strftime('%m/%d/%Y')
