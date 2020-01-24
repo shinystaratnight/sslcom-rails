@@ -8,9 +8,6 @@ FactoryBot.define do
 
     factory :certificate_with_certificate_order do
       title                 { 'Enterprise EV Multi-domain UCC SSL' }
-      summary               { nil }
-      text_only_summary     { nil }
-      text_only_description { nil }
       allow_wildcard_ucc    { false }
       serial                { 'evucc256sslcom' }
       product               { 'evucc' }
@@ -38,9 +35,6 @@ FactoryBot.define do
     # ==========================================================================
     trait :evuccssl do
       title                 { 'Enterprise EV Multi-domain UCC SSL' }
-      summary               { nil }
-      text_only_summary     { nil }
-      text_only_description { nil }
       allow_wildcard_ucc    { false }
       serial                { 'evucc256sslcom' }
       product               { 'evucc' }
@@ -185,12 +179,7 @@ FactoryBot.define do
     # 102 EV SSL (ev256sslcom)
     # ==========================================================================
     trait :evssl do
-      reseller_tier_id      nil
       title                 { 'Enterprise EV SSL' }
-      summary               nil
-      text_only_summary     nil
-      text_only_description nil
-      allow_wildcard_ucc    nil
       serial                { 'ev256sslcom' }
       product               { 'ev' }
       icons                 { { main: 'ev_bar_lg.jpg' } }
@@ -236,12 +225,7 @@ FactoryBot.define do
     # 101 UCC SSL (ucc256sslcom)
     # ==========================================================================
     trait :uccssl do
-      reseller_tier_id      nil
       title                 { 'Multi-domain UCC SSL' }
-      summary               nil
-      text_only_summary     nil
-      text_only_description nil
-      allow_wildcard_ucc    nil
       serial                { 'ucc256sslcom' }
       product               { 'ucc' }
       icons                 { { main: 'silver_locks_lg.gif' } }
@@ -351,7 +335,6 @@ FactoryBot.define do
     # Wildcard SSL (wc256sslcom)
     # ==========================================================================
     trait :wcssl do
-      reseller_tier_id      nil
       title                 { 'Multi-subdomain Wildcard SSL' }
       summary               nil
       text_only_summary     nil
@@ -428,7 +411,6 @@ FactoryBot.define do
     # 103 High Assurance SSL (ov256sslcom)
     # ==========================================================================
     trait :ovssl do
-      reseller_tier_id      nil
       title                 { 'High Assurance SSL' }
       summary               nil
       text_only_summary     nil
@@ -480,7 +462,6 @@ FactoryBot.define do
     # 104 Free SSL (ov256sslcom)
     # ==========================================================================
     trait :freessl do
-      reseller_tier_id      nil
       title                 { 'Free SSL' }
       summary               { "90-day Basic SSL trial\n" }
       text_only_summary     nil
@@ -528,12 +509,7 @@ FactoryBot.define do
     # Premium SSL (premium256sslcom)
     # ==========================================================================
     trait :premiumssl do
-      reseller_tier_id      nil
       title                 { 'Premium Multi-subdomain SSL' }
-      summary               nil
-      text_only_summary     nil
-      text_only_description nil
-      allow_wildcard_ucc    nil
       serial                { 'premium256sslcom' }
       product               { 'premiumssl' }
       icons                 { { main: 'silver_locks_lg.gif' } }
@@ -599,7 +575,6 @@ FactoryBot.define do
     # 350 Code Signing SSL (codesigning256sslcom)
     # ==========================================================================
     trait :codesigningssl do
-      reseller_tier_id      nil
       title                 { 'Code Signing' }
       summary               nil
       text_only_summary     nil
@@ -651,7 +626,6 @@ FactoryBot.define do
     # 360 EV Code Signing SSL (evcodesigning256sslcom)
     # ==========================================================================
     trait :evcodesigningssl do
-      reseller_tier_id      nil
       title                 { 'EV Code Signing' }
       summary               nil
       text_only_summary     nil

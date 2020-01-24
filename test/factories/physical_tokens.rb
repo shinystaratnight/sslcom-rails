@@ -21,12 +21,10 @@
 #  management_key        :string(255)
 #
 
-require "test_helper"
+require './test/support/setup_helper'
 
-describe PhysicalToken do
-  let(:physical_token) { PhysicalToken.new }
-
-  it "must be valid" do
-    value(physical_token).must_be :valid?
+FactoryBot.define do
+  factory :physical_token do
+    workflow_state { 'received' }
   end
 end

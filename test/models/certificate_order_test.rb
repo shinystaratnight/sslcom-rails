@@ -46,58 +46,55 @@ describe CertificateOrder do
 
   subject { build(:certificate_order) }
 
-  context 'associations' do
-    should belong_to(:assignee).class_name('User')
-    should belong_to(:folder)
-    should belong_to(:site_seal)
-    should belong_to(:parent).class_name('CertificateOrder')
-    should belong_to(:ssl_account)
-    should belong_to(:validation)
+  # context 'associations' do
+  #   should belong_to(:assignee).class_name('User')
+  #   should belong_to(:folder)
+  #   should belong_to(:site_seal)
+  #   should belong_to(:parent).class_name('CertificateOrder')
+  #   should belong_to(:ssl_account)
+  #   should belong_to(:validation)
 
-    should have_many(:registrants).through(:certificate_contents)
-    should have_many(:locked_registrants).through(:certificate_contents)
-    should have_many(:certificate_contacts).through(:certificate_contents)
-    should have_many(:domain_control_validations).through(:certificate_names)
-    should have_many(:csrs).through(:certificate_contents).source(:csr)
-    should have_many(:csr_unique_values).through(:csrs)
-    should have_many(:attestation_certificates).through(:certificate_contents)
+  #   should have_many(:registrants).through(:certificate_contents)
+  #   should have_many(:locked_registrants).through(:certificate_contents)
+  #   should have_many(:certificate_contacts).through(:certificate_contents)
+  #   should have_many(:domain_control_validations).through(:certificate_names)
+  #   should have_many(:csrs).through(:certificate_contents).source(:csr)
+  #   should have_many(:csr_unique_values).through(:csrs)
+  #   should have_many(:attestation_certificates).through(:certificate_contents)
 
-    should have_many(:signed_certificates).through(:csrs).source(:signed_certificate)
-    should have_many(:attestation_issuer_certificates).through(:certificate_contents)
-    should have_many(:shadow_certificates).through(:csrs).class_name('ShadowSignedCertificate')
-    should have_many(:ca_certificate_requests).through(:csrs)
-    should have_many(:ca_api_requests).through(:csrs)
-    should have_many(:sslcom_ca_requests).through(:csrs)
-    should have_many(:sub_order_items)
-    should have_many(:product_variant_items).through(:sub_order_items)
-    should have_many(:orders).through(:line_items)
-    should have_many(:other_party_validation_requests).class_name('OtherPartyValidationRequest')
-    should have_many(:ca_retrieve_certificates)
-    should have_many(:ca_mdc_statuses)
+  #   should have_many(:signed_certificates).through(:csrs).source(:signed_certificate)
+  #   should have_many(:attestation_issuer_certificates).through(:certificate_contents)
+  #   should have_many(:shadow_certificates).through(:csrs).class_name('ShadowSignedCertificate')
+  #   should have_many(:ca_certificate_requests).through(:csrs)
+  #   should have_many(:ca_api_requests).through(:csrs)
+  #   should have_many(:sslcom_ca_requests).through(:csrs)
+  #   should have_many(:sub_order_items)
+  #   should have_many(:product_variant_items).through(:sub_order_items)
+  #   should have_many(:orders).through(:line_items)
+  #   should have_many(:other_party_validation_requests).class_name('OtherPartyValidationRequest')
+  #   should have_many(:ca_retrieve_certificates)
+  #   should have_many(:ca_mdc_statuses)
 
-    should have_many(:jois).class_name('Joi')
-    should have_many(:app_reps).class_name('AppRep')
-    should have_many(:physical_tokens)
-    should have_many(:url_callbacks).through(:certificate_contents)
-    should have_many(:taggings)
-    should have_many(:tags).through(:taggings)
-    should have_many(:notification_groups_subjects)
-    should have_many(:notification_groups).through(:notification_groups_subjects)
-    should have_many(:certificate_order_tokens)
-    should have_many(:certificate_order_managed_csrs)
-    should have_many(:managed_csrs).through(:certificate_order_managed_csrs)
-    should have_many(:certificate_order_domains)
-    should have_many(:managed_domains).through(:certificate_order_domains).source(:domain)
+  #   should have_many(:jois).class_name('Joi')
+  #   should have_many(:app_reps).class_name('AppRep')
+  #   should have_many(:physical_tokens)
+  #   should have_many(:url_callbacks).through(:certificate_contents)
+  #   should have_many(:taggings)
+  #   should have_many(:tags).through(:taggings)
+  #   should have_many(:notification_groups_subjects)
+  #   should have_many(:notification_groups).through(:notification_groups_subjects)
+  #   should have_many(:certificate_order_tokens)
+  #   should have_many(:certificate_order_managed_csrs)
+  #   should have_many(:managed_csrs).through(:certificate_order_managed_csrs)
+  #   should have_many(:certificate_order_domains)
+  #   should have_many(:managed_domains).through(:certificate_order_domains).source(:domain)
 
-    should have_one(:locked_recipient)
-    should have_one(:renewal)
-  end
+  #   should have_one(:locked_recipient)
+  #   should have_one(:renewal)
+  # end
 
   context 'scopes' do
     # configurable_filters = [
-    #   is_test: true,
-    #   order_by_csr: nil,
-    #   physical_tokens: nil,
     #   notes: nil,
     #   ref: nil,
     #   external_order_number: nil,
@@ -109,18 +106,38 @@ describe CertificateOrder do
     # ]
 
     describe 'search_with_csr' do
-      let!(:cert) { create(:certificate_with_certificate_order, :basicssl) }
-      let!(:co) { create(:certificate_order, sub_order_items: [cert.product_variant_groups[0].product_variant_items[0].sub_order_item]) }
+      let(:cert) { create(:certificate_with_certificate_order, :premiumssl) }
+      let(:co) { create(:certificate_order, sub_order_items: [cert.product_variant_groups[0].product_variant_items[0].sub_order_item]) }
 
       %w[common_name organization organization_unit state subject_alternative_names locality].each do |field|
         it "filters by csr.#{field}" do
           co.certificate_contents << create(:certificate_content, include_csr: true, certificate_order_id: co.id)
           csr = co.certificate_contents[0].csrs[0]
           query = "#{field}:'#{csr[field.to_sym]}'"
-          puts query
           queried = CertificateOrder.search_with_csr(query)
 
           assert_equal(queried.include?(co), true)
+        end
+      end
+
+      CertificateOrder::STATUS.keys.each do |status|
+        it "filters on status #{status}" do
+          co.certificate_contents << create(:certificate_content, certificate_order_id: co.id, workflow_state: status)
+          query = "status:'#{status}'"
+          queried = CertificateOrder.search_with_csr(query)
+          expected = case status
+                     when :csr_submitted
+                       'waiting on registrant information from customer'
+                     when :info_provided
+                       'waiting on contacts information from customer'
+                     when :reprocess_requested
+                       'reissue requested. waiting on certificate signing request (csr)from customer'
+                     when :contacts_provided
+                       'waiting on validation from customer'
+                     end
+          queried.each do |q|
+            assert_equal(expected, q.status)
+          end
         end
       end
 
@@ -153,7 +170,6 @@ describe CertificateOrder do
                   else
                     "#{field}:'#{sc[field.to_sym]}'"
                   end
-          puts query
           queried = CertificateOrder.search_with_csr(query)
 
           assert_equal(queried.include?(co), true)
@@ -191,6 +207,33 @@ describe CertificateOrder do
         queried = CertificateOrder.search_with_csr(query)
 
         assert_equal(queried.include?(co), true)
+      end
+
+      it 'filters correctly for is_test:false?' do
+        query = "is_test:'false'"
+        queried = CertificateOrder.search_with_csr(query)
+        assert_equal(queried.include?(co), true)
+      end
+
+      it 'filters correctly for is_test:true?' do
+        co.update(is_test: true)
+        query = "is_test:'true'"
+        queried = CertificateOrder.search_with_csr(query)
+        assert_equal(queried.include?(co), true)
+      end
+
+      %i[in_transit received in_possession].each do |token_status|
+        it "filters by physical_tokens:#{token_status}"do
+          skip
+          co.certificate_contents << create(:certificate_content, include_csr: true, certificate_order_id: co.id)
+          sc = co.certificate_contents[0].csrs[0].signed_certificates[0]
+          create(:physical_token, certificate_order: co, signed_certificate: sc, workflow_state: token_status)
+          query = "physical_tokens:'#{token_status}'"
+          queried = CertificateOrder.search_with_csr(query)
+          queried.each do |q|
+            assert_equal(q.workflow_state, token_status)
+          end
+        end
       end
     end
   end

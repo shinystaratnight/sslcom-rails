@@ -83,6 +83,8 @@ Layout/SpaceBeforeBlockBraces:
 
 Lint/AmbiguousBlockAssociation:
   Enabled: true
+Lint/AssignmentInCondition:
+  Enabled: false
 Lint/InterpolationCheck:
   Enabled: true
 Lint/UselessAccessModifier:
