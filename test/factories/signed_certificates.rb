@@ -41,12 +41,15 @@
 #  certificate_content_id    :integer
 #
 
-
 require './test/support/setup_helper'
 
 FactoryBot.define do
   factory :signed_certificate do
+    address1 { Faker::Address.street_address }
+    address2 { Faker::Address.secondary_address }
     common_name { 'qlikdev.ezops.com' }
+    country { Faker::Address.country }
+    expiration_date { 90.days.from_now }
     status { 'issued' }
     organization_unit { ['Domain Control Validated'] }
     fingerprint       { "--- !ruby/object:OpenSSL::BN {}\n" }
