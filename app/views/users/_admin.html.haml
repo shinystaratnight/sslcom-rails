@@ -5,6 +5,18 @@
   %p
     This is THE Admin screen for #{Settings.community_name}. You have ALMOST limitless powers in the #{Settings.community_name} universe.
     Be careful; with great powers comes great responsibilities (* all functions are audit logged).
+#profile-content
+-if user.avatar.file.nil?
+  %form.md-form
+    .file-field
+      .mb-4
+        %img.rounded-circle.z-depth-1-half.avatar-pic{:alt => "example placeholder avatar", :src => "https://mdbootstrap.com/img/Photos/Others/placeholder-avatar.jpg"}/
+      .d-flex.justify-content-center
+        .btn.btn-mdb-color.btn-rounded.float-left
+          %span Add photo
+          %input{:type => "file"}/
+-else
+  = image_tag display_image_url(user), alt: user.login, height: '150', width: '150', class: 'avatar'
 #dashboard
   %table(cellspacing="0")
     -unless user.last_login_at.blank?

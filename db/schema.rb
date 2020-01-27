@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200106155500) do
+ActiveRecord::Schema.define(version: 20200127214857) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        :limit=>255
@@ -1646,6 +1646,7 @@ ActiveRecord::Schema.define(version: 20200106155500) do
     t.integer  "main_ssl_account",    :limit=>4
     t.boolean  "persist_notice",      :default=>false
     t.string   "duo_enabled",         :limit=>255, :default=>"enabled"
+    t.string   "avatar",              :limit=>255
   end
   add_index "users", ["id", "ssl_account_id", "status"], :name=>"index_users_on_status_and_ssl_account_id", :using=>:btree
   add_index "users", ["id", "status"], :name=>"index_users_on_status", :using=>:btree

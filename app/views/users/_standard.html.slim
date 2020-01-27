@@ -1,0 +1,144 @@
+-title="#{Settings.community_name} Customer Dashboard"
+-content_for :title, title
+#profile-content
+  = image_tag display_image_url(user), alt: user.login, height: '150', width: '150', class: 'avatar'
+.reseller_registration_select_tier
+  h2=title
+  p
+    | The SSL standard account is designed to streamline your ssl.com certificate
+    | purchases by providing an all encompassing interface related to your ssl
+    | certificates including, validations, tracking, reporting, and Smart SeaLs.
+  -if ssl_account.has_only_credits?
+    p
+      | You currently have unused ssl certificate credits. You will need to submit
+      | a certificate signing request (csr) for a particular pending ssl.com
+      | certificate credit in order to process the credit into an ssl certificate
+      | for your website.
+      =link_to "Click here to see a list of your ssl.com certificate credits.", credits_certificate_orders_path
+  -unless ssl_account.has_certificate_orders?
+    p
+      | To get started and enable encryption and trust services on your website
+      | through an ssl.com certificate, you will need to acquire an ssl.com
+      | certificate.
+      =link_to "Click here to see a list ssl.com certificate products.", certificates_path
+  -if Settings.enable_affiliate_program==true && !current_user.is_affiliate? && !is_sandbox?
+    .become_reseller_title(style="margin: 10px 0 0")
+      p
+        strong.red NEW! Earn commissions through the # Settings.community_name  Referral Link Program
+      p
+        a(href="https://# Settings.community_domain /affiliate/index.php")
+          | Click here
+        | to become an #{Settings.community_name} Referral Link Partner or
+        =link_to "click here for more details", details_affiliates_path
+  /
+    .become_reseller_title(style="margin: 10px 0 0")
+      p
+        a(href="# url_for resellers_root_url(:subdomain=Reseller::SUBDOMAIN) ")
+          strong Become a reseller
+          | (click here to learn more)
+    p
+      | Make more profit and save money by reselling ssl.com certificates at a discount.
+      =link_to "Click here to sign up for the ssl.com reseller program.", new_reseller_url
+#dashboard
+  table(cellspacing="0")
+    caption
+      | ssl account information for #{user.login} #{"(last logged in #{user.last_login_at.strftime("%b %d, %Y")})" unless user.last_login_at.blank?}
+    tr.heading_row
+      tr.expanded
+        td(colspan="5")
+          .certificate_details
+            table(cellspacing="0")
+              tbody
+                tr.alt
+                  th account type
+                  th signup date
+                  th last logged on
+                  -if current_user.is_system_admins?
+                    th last ip address
+                tr.alt
+                  td standard
+                  td=user.created_at.strftime("%b %d, %Y")
+                  td=user.updated_at.strftime("%b %d, %Y")
+                  -if current_user.is_system_admins?
+                    td # link_to(user.last_login_ip, "http://www.infosniper.net/index.php?ip_address=#{user.last_login_ip}&map_source=1&overview_map=1&lang=1&map_type=1&zoom_level=7", target: "_blank") if user.last_login_ip 
+            table(cellspacing="0")
+              tbody
+                tr
+                  td(colspan="5")
+                    .half_width_box
+                      ul
+                        li
+                          strong
+                            | login account
+                        li username: # user.login 
+                        li email: # user.email 
+                        li account number: # ssl_account.acct_number 
+                        li roles: # user.role_symbols(ssl_account).join('/') 
+                        =render partial: 'ssl_slug_company', locals: {user: user}
+                        -if permitted_to? :admin_manage, user
+                          javascript:
+                            | function adjust_funds_#{user.id}()
+                            | {
+                              | var amount = prompt("Amount to adjust (in USD)?", '');
+                              | if (amount == null || amount=="")
+                                | return;
+                              | else
+                                | window.location = '#{adjust_funds_user_url(user)}?amount='+encodeURIComponent(amount);
+                            | }
+                            | function change_login_#{user.id}()
+                            | {
+                              | var login = prompt("What is the new username? (3 chars min)", '');
+                              | if (login == null || login=="")
+                                | return;
+                              | else
+                                | window.location = '#{change_login_user_url(user)}?login='+encodeURIComponent(login);
+                            | }
+                          li=remote_login_link(user)
+                        li=link_to 'edit email address', edit_email_user_url(user)
+                        li=link_to 'change password', edit_password_user_url(user)
+                        -if permitted_to?(:edit, :billing_profiles) && !is_sandbox?
+                          -unless current_user.is_affiliate?
+                            li=link_to 'become a referral link partner', "https://# Settings.community_domain /affiliate/index.php"
+                          -unless ssl_account.is_registered_reseller?
+                            li=link_to 'upgrade to reseller', new_reseller_url
+                        -permitted_to? :edit_settings, current_user.ssl_account do
+                          li=link_to "settings", edit_settings_ssl_account_path(ssl_slug: @ssl_slug)
+                    .half_width_box
+                      ul
+                        -if ssl_account && permitted_to?(:read, :contacts)
+                          li
+                            strong contacts/identities
+                          li=link_to 'contacts', saved_contacts_contacts_path(ssl_slug: @ssl_slug)
+                          li=link_to 'identity manager', saved_contacts_contacts_path(ssl_slug: @ssl_slug, registrants: true)
+                    -unless is_sandbox?
+                      .half_width_box
+                        ul
+                          -if permitted_to?(:edit, :billing_profiles)
+                            li
+                              strong
+                                | billing and purchase
+                            -if permitted_to?(:create, :funded_accounts)
+                              li available funds: $# ssl_account.funded_account.amount 
+                            -if permitted_to? :read, :orders
+                              li=link_to "billing", is_sandbox? ? search_orders_path(search:'is_test:true') : orders_path(ssl_slug: @ssl_slug)
+                            li=link_to 'buy certificate', certificates_url
+                            li=link_to "s/mime or client enrollment", smime_client_enrollment_certificate_orders_path(ssl_slug: @ssl_slug)
+                            li=link_to 'deposit funds', allocate_funds_url(ssl_slug: @ssl_slug)
+                            -if ssl_account && permitted_to?(:index, :billing_profiles)
+                              li=link_to 'manage billing profiles', billing_profiles_path(ssl_slug: @ssl_slug)
+                            li=link_to 'view purchased certificates', certificate_orders_url(ssl_slug: @ssl_slug)
+                            -if ssl_account.has_credits?
+                              li=link_to 'use certificate credits', credits_certificate_orders_url(ssl_slug: @ssl_slug)
+                            -if ssl_account && permitted_to?(:index, :invoices) && ssl_account.invoices.any?
+                              li=link_to 'monthly and daily invoices', invoices_path(@ssl_slug)
+                    -if ssl_account.api_credentials
+                      .half_width_box
+                        ul
+                          li
+                            strong
+                              | developers and integration
+                          li=link_to "generate api commands", "https://www.ssl.com/how-to/pregenerated-api-calls-to-automate-certificate-management/"
+                          -if user.is_account_admin? || user.is_owner? || user.is_installer?
+                            li=link_to "api credentials", api_credentials_path(ssl_slug: @ssl_slug)
+                            li=link_to "developer tools", is_sandbox? ? developers_certificate_orders_url : "https://sandbox.ssl.com"
+                            li=link_to 'view documentation', "http://docs.sslcomapi.apiary.io/", target: "_new"

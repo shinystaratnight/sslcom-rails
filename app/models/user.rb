@@ -3,6 +3,8 @@ class User < ApplicationRecord
   # include V2MigrationProgressAddon
   include UserMessageable
 
+  mount_uploader :avatar, AvatarUploader
+
   swagger_schema :CreateUser do
     key :required, [:login, :email, :password]
     property :account_key do

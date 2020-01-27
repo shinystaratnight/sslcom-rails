@@ -4,3 +4,16 @@
 *= require sass/master
 *= require font-awesome
 */
+
+img.avatar, .avatar-form {
+  margin-left: -50px;
+}
+
+.inner {
+  overflow: visible;
+}
+
+.avatar-form {
+  height: 150px;
+  width: 150px;
+}

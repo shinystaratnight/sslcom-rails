@@ -110,6 +110,8 @@ gem 'slim-rails'
 gem 'turbolinks'
 gem 'yui-compressor'
 
+gem 'carrierwave', '< 2.0'
+
 group :development do
   gem 'annotate'
   gem 'dotenv-rails'

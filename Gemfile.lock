@@ -687,6 +687,7 @@ DEPENDENCIES
   bullet
   byebug
   cancan
+  carrierwave (< 2.0)
   coffee-rails
   config
   cypress-on-rails (~> 1.5.1)
