@@ -286,7 +286,6 @@ class ApidocsController < ApplicationController
     Swagger::Blocks::ErrorResponse,
     Swagger::Blocks::CredentialsResponse,
     Swagger::Blocks::CreateCertificateResponse,
-    Swagger::Blocks::UpdateCertificateResponse,
     # Api::V1::ApiCertificateRequestsController,
     self
   ].freeze

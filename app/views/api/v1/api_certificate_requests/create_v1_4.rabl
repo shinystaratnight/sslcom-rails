@@ -1,5 +1,5 @@
 object false
-if @result.errors.present?
+unless @result.errors.blank?
   glue @result do
     attributes :errors
   end
