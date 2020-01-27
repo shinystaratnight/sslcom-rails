@@ -50,6 +50,7 @@ FactoryBot.define do
     common_name { 'qlikdev.ezops.com' }
     country { Faker::Address.country }
     expiration_date { 90.days.from_now }
+    locality { Faker::Address.city }
     state { Faker::Address.state }
     status { 'issued' }
     organization { 'Test Organization' }

@@ -96,11 +96,9 @@ class CertificateOrder < ApplicationRecord
     SQL
   }
 
-  scope :not_test, ->{ where{ is_test.nil? | (is_test == false) } }
+  scope :not_test, ->{ where{ (is_test == nil) | (is_test == false) } }
 
   scope :is_test, ->{ where{ is_test == true } }
-
-  scope :paid, -> { unscoped.where(workflow_state: :paid) }
 
   scope :search, lambda { |term, options = {}|
     where{ ref =~ '%' + term + '%' }.merge(options)

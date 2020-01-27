@@ -1,3 +1,36 @@
+# == Schema Information
+#
+# Table name: csrs
+#
+#  id                        :integer          not null, primary key
+#  certificate_content_id    :integer
+#  body                      :text(65535)
+#  duration                  :integer
+#  common_name               :string(255)
+#  organization              :string(255)
+#  organization_unit         :string(255)
+#  state                     :string(255)
+#  locality                  :string(255)
+#  country                   :string(255)
+#  email                     :string(255)
+#  sig_alg                   :string(255)
+#  created_at                :datetime
+#  updated_at                :datetime
+#  subject_alternative_names :text(65535)
+#  strength                  :integer
+#  challenge_password        :boolean
+#  certificate_lookup_id     :integer
+#  decoded                   :text(65535)
+#  ext_customer_ref          :string(255)
+#  public_key_sha1           :string(255)
+#  public_key_sha256         :string(255)
+#  public_key_md5            :string(255)
+#  ssl_account_id            :integer
+#  ref                       :string(255)
+#  friendly_name             :string(255)
+#  modulus                   :text(65535)
+#
+
 require 'zip/zip'
 require 'zip/zipfilesystem'
 require 'openssl-extensions/all'

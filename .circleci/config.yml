@@ -7,6 +7,7 @@ jobs:
         environment:
           RAILS_ENV: test
           DB_HOST: 127.0.0.1
+          CIRCLE_CI: 'true'
       - image: circleci/mysql:5.7.28
         environment:
           MYSQL_ALLOW_EMPTY_PASSWORD: "true"
@@ -123,7 +124,7 @@ jobs:
 
       - run:
           name: Run Rails Application Tests
-          command: SEED=13274 bundle exec rake test
+          command: bundle exec rake test
           when: always
 
       - run:
@@ -143,51 +144,51 @@ jobs:
       - run: ./cc-test-reporter after-build -r $CC_TEST_REPORTER_ID -t simplecov --exit-code $? || true
 
       # Yarn dependencies
-      # - restore_cache:
-      #     keys:
-      #       - v1-yarn-{{ checksum "package.json" }}
-      #       # fallback to using the latest cache if no exact match is found
-      #       - v1-yarn-
+      - restore_cache:
+          keys:
+            - v1-yarn-{{ checksum "package.json" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-yarn-
 
-      # - run: yarn install
+      - run: yarn install
 
-      # - save_cache:
-      #     paths:
-      #       - node_modules
-      #       - ~/.cache
-      #     key: v1-yarn-{{ checksum "package.json" }}
+      - save_cache:
+          paths:
+            - node_modules
+            - ~/.cache
+          key: v1-yarn-{{ checksum "package.json" }}
 
-      # - run:
-      #     name: Setup Database for Cypress Test
-      #     command: |-
-      #       export RAILS_ENV="test"
-      #       export RACK_ENV="test"
-      #       bundle exec rake db:seed --trace
+      - run:
+          name: Setup Database for Cypress Test
+          command: |-
+            export RAILS_ENV="test"
+            export RACK_ENV="test"
+            bundle exec rake db:seed --trace
 
-      # - run:
-      #     name: Rails Server
-      #     command: |-
-      #       gem install foreman --no-doc
-      #       touch log/bullet.log
-      #       touch log/test.log
-      #       foreman start -f Procfile.test
-      #     background: true
+      - run:
+          name: Rails Server
+          command: |-
+            gem install foreman --no-doc
+            touch log/bullet.log
+            touch log/test.log
+            foreman start -f Procfile.test
+          background: true
 
-      # - run:
-      #     name: Run Cypress
-      #     command: yarn cypress run --project ./test
+      - run:
+          name: Run Cypress
+          command: yarn cypress run --project ./test
 
-      # - store_artifacts:
-      #     path: test/cypress/videos
+      - store_artifacts:
+          path: test/cypress/videos
 
-      # - store_artifacts:
-      #     path: log
+      - store_artifacts:
+          path: log
 
-      # # - store_artifacts:
-      # #     path: coverage
+      - store_artifacts:
+          path: coverage
 
-      # - store_artifacts:
-      #     path: test/cypress/screenshots
+      - store_artifacts:
+          path: test/cypress/screenshots
 
       - run:
           name: Precompile Assets
