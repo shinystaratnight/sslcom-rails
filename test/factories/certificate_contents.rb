@@ -37,10 +37,15 @@ FactoryBot.define do
 
     transient do
       include_csr { false }
+      include_tags { false }
     end
 
     after :create do |cc, options|
       cc.csrs << create(:csr, signed: true, certificate_content_id: cc.id) if options.include_csr
+      if options.include_tags
+        tagging = Tagging.create(tag: create(:tag), taggable_id: cc.id, taggable_type: 'CertificateContent')
+        cc.taggings << tagging
+      end
     end
   end
 end

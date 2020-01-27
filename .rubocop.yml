@@ -110,7 +110,7 @@ Lint/ShadowingOuterLocalVariable:
   Exclude:
     - app/models/ssl_account.rb
 
-Metrics:
+Metrics/LineLength:
   Enabled: false
 
 Rails/Output:

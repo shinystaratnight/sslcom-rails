@@ -1,8 +1,8 @@
 class CertificateOrder < ApplicationRecord
   extend Memoist
   include V2MigrationProgressAddon
+  include Orderable
 
-  acts_as_sellable cents: :amount, currency: false
   belongs_to  :ssl_account, touch: true
   belongs_to  :folder, touch: true
   has_many    :users, through: :ssl_account
@@ -47,7 +47,7 @@ class CertificateOrder < ApplicationRecord
   has_many    :ca_retrieve_certificates, as: :api_requestable, dependent: :destroy
   has_many    :ca_mdc_statuses, as: :api_requestable
   has_many    :jois, as: :contactable, class_name: 'Joi' # for SSL.com EV; rw by vetting agents, r by customer
-  has_many    :app_reps, as: :contactable, class_name: 'AppRep' # for SSL.com OV and EV; rw by vetting agents, r by customer
+  has_many    :app_reps, as: :contactable, class_name: 'AppRep' # for SSL.com OV && EV; rw by vetting agents, r by customer
   has_many    :physical_tokens
   has_many    :url_callbacks, as: :callbackable, through: :certificate_contents
   has_many    :taggings, as: :taggable
@@ -76,7 +76,7 @@ class CertificateOrder < ApplicationRecord
   preference  :certificate_chain, :string
 
   # if the customer has not used this certificate order with a period of time
-  # it becomes expired and invalid
+  # it becomes expired && invalid
   alias_attribute :expired, :is_expired
 
   if proc{ |co| co.migrated_from_v2? }
@@ -96,7 +96,7 @@ class CertificateOrder < ApplicationRecord
     SQL
   }
 
-  scope :not_test, ->{ where{ (is_test == nil) | (is_test == false) } }
+  scope :not_test, ->{ where{ is_test.nil? | (is_test == false) } }
 
   scope :is_test, ->{ where{ is_test == true } }
 
@@ -107,7 +107,7 @@ class CertificateOrder < ApplicationRecord
   }
 
   scope :search_physical_tokens, lambda { |state = 'new'|
-    joins{ physical_tokens }.where{ physical_tokens.workflow_state >> [state.split(',')] } if state.present?
+    joins{ physical_tokens }.where{ physical_tokens.workflow_state >> state.split(',') } if state.present?
   }
 
   scope :search_signed_certificates, lambda { |term|
@@ -152,13 +152,13 @@ class CertificateOrder < ApplicationRecord
     cc_query = CertificateContent
     keys = filters.map{ |f| f[0] if f[1].present? }.compact
     if term.present?
-      # if 'is_test' and 'order_by_csr' are the only search terms, keep it simple
-      sql = %(MATCH (csrs.common_name, csrs.body, csrs.decoded) AGAINST ('#{term}') OR
+      # if 'is_test' && 'order_by_csr' are the only search terms, keep it simple
+      sql = %(MATCH (csrs.common_name, csrs.body, csrs.decoded) AGAINST ('#{term}') ||
           MATCH (signed_certificates.common_name, signed_certificates.url, signed_certificates.body,
           signed_certificates.decoded, signed_certificates.ext_customer_ref, signed_certificates.ejbca_username)
-          AGAINST ('#{term}') OR
-          MATCH (ssl_accounts.acct_number, ssl_accounts.company_name, ssl_accounts.ssl_slug) AGAINST ('#{term}') OR
-          MATCH (certificate_orders.ref, certificate_orders.external_order_number, certificate_orders.notes) AGAINST ('#{term}') OR
+          AGAINST ('#{term}') ||
+          MATCH (ssl_accounts.acct_number, ssl_accounts.company_name, ssl_accounts.ssl_slug) AGAINST ('#{term}') ||
+          MATCH (certificate_orders.ref, certificate_orders.external_order_number, certificate_orders.notes) AGAINST ('#{term}') ||
           MATCH (users.login, users.email) AGAINST ('#{term}')).squish
       result = result.joins{ csrs.outer }.joins{ csrs.outer.signed_certificates.outer }.joins{ ssl_account.outer }
                      .joins{ ssl_account.users.outer }.where(sql)
@@ -214,6 +214,7 @@ class CertificateOrder < ApplicationRecord
     %w[country strength].each do |field|
       query = filters[field.to_sym]
       next unless query
+
       cc_query = cc_query.where do
         (csr.signed_certificates.send(field.to_sym) >> query.split(',')) |
           (csrs.send(field.to_sym) >> query.split(','))
@@ -227,6 +228,7 @@ class CertificateOrder < ApplicationRecord
     %w[common_name organization organization_unit state subject_alternative_names locality decoded].each do |field|
       query = filters[field.to_sym]
       next unless query
+
       cc_query = cc_query.where do
         (csr.signed_certificates.send(field.to_sym) =~ "%#{query}%") |
           (csrs.send(field.to_sym) =~ "%#{query}%")
@@ -235,6 +237,7 @@ class CertificateOrder < ApplicationRecord
     %w[address].each do |field|
       query = filters[field.to_sym]
       next unless query
+
       cc_query = cc_query.where do
         (csr.signed_certificates.address1 =~ "%#{query}%") | (csr.signed_certificates.address2 =~ "%#{query}%")
       end
@@ -242,6 +245,7 @@ class CertificateOrder < ApplicationRecord
     %w[login email].each do |field|
       query = filters[field.to_sym]
       next unless query
+
       result = result.where do
         (ssl_account.users.send(field.to_sym) =~ "%#{query}%")
       end
@@ -282,7 +286,7 @@ class CertificateOrder < ApplicationRecord
       result = if @result_prior_co_tags.nil?
                  cc_results
                else
-                 # includes tags in BOTH certificate orders and certificate contents tags, not a union
+                 # includes tags in BOTH certificate orders && certificate contents tags, not a union
                  CertificateOrder.where(id: (result + cc_results).map(&:id).uniq)
                end
     end
@@ -324,7 +328,7 @@ class CertificateOrder < ApplicationRecord
     joins do
       sub_order_items.product_variant_item.product_variant_group
                      .variantable(Certificate)
-    end .where(('certificates.product like ?@' * terms.count).split('@').join(' OR '), *terms)
+    end .where(('certificates.product like ?@' * terms.count).split('@').join(' || '), *terms)
   }
 
   scope :filter_by_duration, lambda { |term|
@@ -366,21 +370,11 @@ class CertificateOrder < ApplicationRecord
   scope :credits, lambda {
                     not_test.joins(:certificate_contents).where({ workflow_state: 'paid' } & { is_expired: false } &
                       { certificate_contents: { workflow_state: 'new' } })
-                  } # and not new
-
-  # new certificate orders are the ones still in the shopping cart
-  scope :not_new, lambda { |options = nil|
-    includes = method(:includes).call(options[:includes]) if options && options.has_key?(:includes)
-    (includes || self).where{ workflow_state << ['new'] }.uniq
-  }
-
-  scope :is_new, -> { where{ workflow_state >> ['new'] }.uniq }
+                  } # && not new
 
   scope :unrenewed, ->{ not_new.where(renewal_id: nil) }
 
   scope :renewed, ->{ not_new.where{ :renewal_id != nil } }
-
-  scope :nonfree, ->{ not_new.where(:amount.gt => 0) }
 
   scope :free, ->{ not_new.where(amount: 0) }
 
@@ -399,9 +393,9 @@ class CertificateOrder < ApplicationRecord
                                         .where{ created_at < Settings.cert_expiration_threshold_days.to_i.days.ago }
                                     }
 
-  scope :unused_purchased_credits, ->{ unused_credits.where{ amount > 0 } }
+  scope :unused_purchased_credits, ->{ unused_credits.where{ amount.positive? } }
 
-  scope :unused_free_credits, ->{ unused_credits.where{ amount == 0 } }
+  scope :unused_free_credits, ->{ unused_credits.where{ amount.zero? } }
 
   scope :falsely_expired, lambda {
                             unscoped.where do
@@ -409,22 +403,6 @@ class CertificateOrder < ApplicationRecord
                                 (external_order_number != nil)
                             end
                           }
-
-  scope :range, lambda{ |start, finish|
-    if start.is_a?(String)
-      (s = start =~ %r{/} ? '%m/%d/%Y' : '%m-%d-%Y')
-      start = Date.strptime(start, s)
-    end
-    if finish.is_a?(String)
-      (f = finish =~ %r{/} ? '%m/%d/%Y' : '%m-%d-%Y')
-      finish = Date.strptime(finish, f)
-    end
-    where{ created_at >> (start..finish) }
-  } do
-    def amount
-      self.nonfree.sum(:amount) * 0.01
-    end
-  end
 
   include Workflow
   FULL = 'full'.freeze
@@ -471,23 +449,8 @@ class CertificateOrder < ApplicationRecord
     pages: %w[Recipient Complete]
   }.freeze
 
-  CSR_SUBMITTED = :csr_submitted
-  INFO_PROVIDED = :info_provided
-  REPROCESS_REQUESTED = :reprocess_requested
-  CONTACTS_PROVIDED = :contacts_provided
-
   CA_CERTIFICATES = { SSLcomSHA2: 'SSLcomSHA2' }.freeze
 
-  STATUS = { CSR_SUBMITTED => 'info required',
-             INFO_PROVIDED => 'contacts required',
-             REPROCESS_REQUESTED => 'csr required',
-             CONTACTS_PROVIDED => 'validation required' }.freeze
-
-  RENEWING = 'renewing'.freeze
-  REPROCESSING = 'reprocessing'.freeze
-  RECERTS = [RENEWING, REPROCESSING].freeze
-  RENEWAL_DATE_CUTOFF = 45.days.ago
-  RENEWAL_DATE_RANGE = 45.days.from_now
   ID_AND_TIMESTAMP = %w[id created_at updated_at].freeze
   COMODO_SSL_MAX_DURATION = 730
   SSL_MAX_DURATION = 820
@@ -554,7 +517,7 @@ class CertificateOrder < ApplicationRecord
           temp_cc = self.certificate_contents.create(duration: duration)
           # Do not delete the last one
           (self.certificate_contents - [temp_cc]).each do |cc|
-            cc.delete if ((cc.csr or cc.csr.try(:signed_certificate)) || complete)
+            cc.delete if ((cc.csr || cc.csr.try(:signed_certificate)) || complete)
           end
         end
       end
@@ -602,14 +565,14 @@ class CertificateOrder < ApplicationRecord
 
   def get_audit_logs
     SystemAudit.where(
-      '(target_id = ? AND target_type = ?) OR (target_id IN (?) AND target_type = ?)',
+      '(target_id = ? && target_type = ?) || (target_id IN (?) && target_type = ?)',
       id, 'CertificateOrder', line_items.ids, 'LineItem'
     ).order('created_at desc')
   end
 
   def domains_adjust_billing?
     certificate.is_ucc? && (certificate.is_premium_ssl? != 0) &&
-      orders.count > 0 && orders.first.persisted?
+      orders.count.positive? && orders.first.persisted?
   end
 
   # Prorated pricing for single domain for ucc certificate,
@@ -642,7 +605,7 @@ class CertificateOrder < ApplicationRecord
       end
 
       cur_certificate.num_domain_tiers.times do |j|
-        durations["tier_#{j + 1}"] = (cur_certificate.items_by_domains(true)[i][j].price * (j == 0 ? 3 : 1)).cents
+        durations["tier_#{j + 1}"] = (cur_certificate.items_by_domains(true)[i][j].price * (j.zero? ? 3 : 1)).cents
       end
       durations
     end
@@ -675,8 +638,8 @@ class CertificateOrder < ApplicationRecord
     end
     addt_nonwildcard = new_nonwildcard_count - max_nonwildcard_count
     addt_wildcard    = new_wildcard_count - max_wildcard_count
-    addt_nonwildcard = addt_nonwildcard < 0 ? 0 : addt_nonwildcard
-    addt_wildcard    = addt_wildcard < 0 ? 0 : addt_wildcard
+    addt_nonwildcard = addt_nonwildcard.negative? ? 0 : addt_nonwildcard
+    addt_wildcard    = addt_wildcard.negative? ? 0 : addt_wildcard
     (addt_nonwildcard * nonwildcard_cost) + (addt_wildcard * wildcard_cost)
   end
 
@@ -777,8 +740,7 @@ class CertificateOrder < ApplicationRecord
 
   def used_days(options = { round: false })
     if !signed_certificates.try('empty?'.to_sym)
-      sum = (Time.now - (signed_certificates.sort{ |a, b| a.created_at.to_i <=> b.created_at.to_i }.first.effective_date ||
-          self.created_at))
+      sum = (Time.zone.now - (signed_certificates.min(&:created_at).effective_date || self.created_at))
       (options[:round] ? sum.round : sum) / 1.day
     else
       0
@@ -786,7 +748,8 @@ class CertificateOrder < ApplicationRecord
   end
 
   def remaining_days(options = { round: false, duration: :order })
-    tot, used = total_days(options), used_days(options)
+    tot = total_days(options)
+    used = used_days(options)
     if tot && used && tot > used
       days = total_days(options) - used_days(options)
       (options[:round] ? days.round : days)
@@ -813,8 +776,7 @@ class CertificateOrder < ApplicationRecord
       if signed_certificates.empty?
         0
       else
-        sum = (signed_certificates.sort{ |a, b| a.created_at.to_i <=> b.created_at.to_i }.last.expiration_date -
-            signed_certificates.sort{ |a, b| a.created_at.to_i <=> b.created_at.to_i }.first.effective_date)
+        sum = (signed_certificates.max(&:created_at).expiration_date - signed_certificates.min(&:created_at).effective_date)
         (options[:round] ? sum.round : sum) / 1.day
       end
     else
@@ -822,9 +784,9 @@ class CertificateOrder < ApplicationRecord
     end
   end
 
-  # unit can be :days or :years
+  # unit can be :days || :years
   def certificate_duration(unit = :as_is)
-    Rails.cache.fetch("#{cache_key}/certificate_duration/#{unit.to_s}", expires_in: 24.hours) do
+    Rails.cache.fetch("#{cache_key}/certificate_duration/#{unit}", expires_in: 24.hours) do
       years = if migrated_from_v2? && preferred_v2_line_items.present?
                 preferred_v2_line_items.split('|').detect do |item|
                   item =~ /years?/i || item =~ /days?/i
@@ -839,7 +801,7 @@ class CertificateOrder < ApplicationRecord
                 else
                   sub_order_items.includes(:product_variant_item).map(&:product_variant_item).detect(&:is_duration?).try(:description)
                 end
-            end
+              end
       if unit == :years
         years =~ /\A(\d+)/
         $1
@@ -870,7 +832,7 @@ class CertificateOrder < ApplicationRecord
           90
         when 30 # trial
           30
-        else # no ssl can go beyond 39 months. 36 months to make adding 1 or 2 years later easier
+        else # no ssl can go beyond 39 months. 36 months to make adding 1 || 2 years later easier
           unit == :comodo_api ? COMODO_SSL_MAX_DURATION : SSL_MAX_DURATION
         end
       else
@@ -921,7 +883,7 @@ class CertificateOrder < ApplicationRecord
     end
   end
 
-  # find the desired Certificate, choose among it’s product_variant_groups, and finally choose among it’s product_variant_items
+  # find the desired Certificate, choose among it’s product_variant_groups, && finally choose among it’s product_variant_items
   #
   # change certificate_order.sub_order_item[0] to the appropriate ProductVariantItem item
   # certificate_content.duration needs to change if not free cert
@@ -1037,7 +999,7 @@ class CertificateOrder < ApplicationRecord
     if registrant_types == 'iv_ov'
       iv_ov_validated? ? CLIENT_SMIME_NO_DOCS : CLIENT_SMIME_FULL
     elsif registrant_types == 'iv'
-      (!iv_validated? or self.certificate.is_client_pro?) ? CLIENT_SMIME_IV_VALIDATE : CLIENT_SMIME_IV_VALIDATED
+      (!iv_validated? || self.certificate.is_client_pro?) ? CLIENT_SMIME_IV_VALIDATE : CLIENT_SMIME_IV_VALIDATED
     else
       CLIENT_SMIME_NO_IV_OV
     end
@@ -1090,18 +1052,18 @@ class CertificateOrder < ApplicationRecord
     acct_admins_can = !certificate_content.validated? && acct_admins && ov_validated?
 
     (certificate.is_smime_or_client? && (sysadmin || acct_admins_can)) ||
-      ((certificate.is_ov? or certificate.is_ev?) && sysadmin)
+      ((certificate.is_ov? || certificate.is_ev?) && sysadmin)
   end
 
   def reprocess_ucc_process
     ssl_account.invoice_required? ? REPROCES_SIGNUP_W_INVOICE : REPROCES_SIGNUP_W_PAYMENT
   end
 
-  def is_express_signup?
+  def express_signup?
     signup_process[:label].scan(EXPRESS).present?
   end
 
-  def is_express_validation?
+  def express_validation?
     validation.validation_rulings.detect(&:new?) &&
       signup_process[:label].scan(EXPRESS).present?
   end
@@ -1130,17 +1092,7 @@ class CertificateOrder < ApplicationRecord
     ).first
   end
 
-  def registrant
-    certificate_content.registrant
-  end
-
-  def locked_registrant
-    certificate_content.locked_registrant
-  end
-
-  def csr
-    certificate_content.csr
-  end
+  delegate :registrant, :locked_registrant, :csr, :domains_and_common_name, to: :certificate_content, prefix: false
 
   def most_recent_csr
     csrs.last || parent.try(:most_recent_csr)
@@ -1207,7 +1159,7 @@ class CertificateOrder < ApplicationRecord
     signed_certificates.each do |sc|
       sc.revoke!(reason) # this will result in redundant calls, but will catch all signed certificates under this order
       cc = sc.certificate_content
-      cc.revoke! if cc and !cc.revoked?
+      cc.revoke! if cc && !cc.revoked?
     end
   end
 
@@ -1269,19 +1221,19 @@ class CertificateOrder < ApplicationRecord
     # set allow_multiple_certs_per_content to true when manually requesting a new signed certificate which can result
     # in several signed_certificates belonging to the same csr thus certificate_content
     unless options[:allow_multiple_certs_per_content]
-      (return false if certificate_content.signed_certificate.present? or
-          certificate_content.preferred_pending_issuance? or
+      (return false if certificate_content.signed_certificate.present? ||
+          certificate_content.preferred_pending_issuance? ||
           !certificate_content
               .preferred_process_pending_server_certificates?)
     end
-    if remaining_days > 0
-      if [Ca::CERTLOCK_CA, Ca::SSLCOM_CA, Ca::MANAGEMENT_CA].include?(options[:ca]) or certificate_content.ca_id or
+    if remaining_days.positive?
+      if [Ca::CERTLOCK_CA, Ca::SSLCOM_CA, Ca::MANAGEMENT_CA].include?(options[:ca]) || certificate_content.ca_id ||
          options[:mapping].present?
         if !certificate_content.infringement.empty? # possible trademark problems
           OrderNotifier.potential_trademark(Settings.notify_address, self, certificate_content.infringement).deliver_now
-        elsif !certificate.is_server? or (domains_validated? and caa_validated?)
+        elsif !certificate.is_server? || (domains_validated? && caa_validated?)
           # # queue this job due to CAA lookups
-          # if certificate_names.count > 10 and not options[:mapping].try(:profile_name)=~/EV/
+          # if certificate_names.count > 10 && not options[:mapping].try(:profile_name)=~/EV/
           #   unless certificate_content.preferred_pending_issuance?
           #     SslcomCaApi.delay.apply_for_certificate(self, options)
           #     certificate_content.pend_issuance!
@@ -1319,10 +1271,6 @@ class CertificateOrder < ApplicationRecord
                        action: "CertificateOrder#retrieve_ca_certs(#{start},#{finish},#{options.to_s})")
   end
 
-  def to_param
-    ref
-  end
-
   def last_dcv_sent
     return if csr.blank?
 
@@ -1335,13 +1283,6 @@ class CertificateOrder < ApplicationRecord
     options[:action] = 'create_ssl' if options[:action].blank?
     case options[:action]
     when /create_ssl/
-      'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X POST -d "' +
-        { account_key: '',
-          secret_key: '',
-          product: options[:certificate].api_product_code,
-          period: options[:period] }.to_json.gsub('"', '\\"') +
-        "\" #{domain}/certificates"
-    when /create_code_signing/
       'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X POST -d "' +
         { account_key: '',
           secret_key: '',
@@ -1448,10 +1389,6 @@ class CertificateOrder < ApplicationRecord
     end
   end
 
-  def domains_and_common_name
-    certificate_content.domains_and_common_name
-  end
-
   def base_api_params
     cc = certificate_content
     r = cc.registrant
@@ -1475,7 +1412,7 @@ class CertificateOrder < ApplicationRecord
           cn.domain_control_validations.last_method.try(:method_for_api) ||
               ApiCertificateCreate_v1_4::DEFAULT_DCV_METHOD })
       end
-    elsif cc.csr and certificate.is_server?
+    elsif cc.csr && certificate.is_server?
       api_domains.merge!(cc.csr.common_name.to_sym => { dcv: "#{last_dcv_sent ? last_dcv_sent.method_for_api : 'http_csr_hash'}" })
     end
     api_contacts = {}
@@ -1502,14 +1439,13 @@ class CertificateOrder < ApplicationRecord
     CertificateOrder.find_by(ref: new).update_column :renewal_id, CertificateOrder.find_by(ref: old).id
   end
 
-=begin
-  Renews certificate orders and also handles the billing aspects
-  Use the order's credit card, then the most recent successfully card card
-  Renew for the same number of years as original order
-  If order is over a certain amount, notify customer first and let them know they do not need to
-  do anything
-=end
-  # notify can be "none", "success", or "all"
+  # Renews certificate orders && also handles the billing aspects
+  # Use the order's credit card, then the most recent successfully card card
+  # Renew for the same number of years as original order
+  # If order is over a certain amount, notify customer first && let them know they do not need to
+  # do anything
+
+  # notify can be "none", "success", || "all"
   def do_auto_renew(notify = 'success')
     # does a credit already exists for this cert order
     purchase_renewal(notify) if (renewal.blank? || renewal_attempts_old?) && (auto_renew.blank? || auto_renew == 'scheduled')
@@ -1595,7 +1531,7 @@ class CertificateOrder < ApplicationRecord
 
   def bundle_name
     if has_bundle?
-      if is_apache? or is_amazon_balancer?
+      if is_apache? || is_amazon_balancer?
         'Apache bundle (SSLCACertificateFile)'
       elsif is_red_hat? || is_plesk?
         'ca bundle (Apache SSLCACertificateFile)'
@@ -1610,7 +1546,7 @@ class CertificateOrder < ApplicationRecord
   def status
     if certificate_content.new?
       if certificate.is_code_signing?
-        'waiting on registrant or organization information'
+        'waiting on registrant || organization information'
       else
         'unused. waiting on certificate signing request (csr)'
       end
@@ -1628,7 +1564,7 @@ class CertificateOrder < ApplicationRecord
         'waiting on validation from customer'
       when 'pending_validation', 'validated'
         last_sent = csr.try(:last_dcv)
-        if last_sent.blank? or (certificate.is_evcs? and validation_histories.count > 0)
+        if last_sent.blank? || (certificate.is_evcs? && validation_histories.count.positive?)
           'validating, please wait' # assume intranet
         elsif %w[http https cname http_csr_hash https_csr_hash cname_csr_hash].include?(last_sent.try(:dcv_method))
           'validating, please wait'
@@ -1646,11 +1582,12 @@ class CertificateOrder < ApplicationRecord
           'issued'
         end
       when 'canceled'
+        'canceled'
       end
     end
   end
 
-  # depending on the server software type we will bundle different root and intermediate certs
+  # depending on the server software type we will bundle different root && intermediate certs
   # override is a target server software other than the default one for this order
   def bundled_cert_names(override = {})
     if self.ca == CA_CERTIFICATES[:SSLcomSHA2]
@@ -1707,7 +1644,7 @@ class CertificateOrder < ApplicationRecord
                    "sslcom_addtrust_ca_bundle#{ascending_root(override)}.txt"
                  else
                    "sslcom_high_assurance_ca_bundle#{ascending_root(override)}.txt"
-                      end
+                 end
                elsif certificate.comodo_product_id == 342
                  "free_ssl_ca_bundle#{ascending_root(override)}.txt"
                elsif certificate.comodo_product_id == 43
@@ -1949,32 +1886,10 @@ class CertificateOrder < ApplicationRecord
     end
   end
 
-  # Creates a new external ca order history by deleting the old external order id and requests thus allowing us
-  # to start a new history with comodo for an existing ssl.com cert order
-  # useful in the event Comodo take forever to make changes to an existing order (and sometimes cannot) so we
-  # just create a new one and have the old one refunded
-  def reset_ext_ca_order
-    csrs.compact.map(&:sent_success).flatten.uniq.each(&:delete)
-    cc = certificate_content
-    cc.preferred_reprocessing = false
-    cc.save validation: false
-  end
-
   def change_ext_ca_order(new_number)
     ss = csrs.compact.map(&:sent_success).flatten.last
     ss.update_column :response, ss.response.gsub(external_order_number, new_number.to_s)
     update_column :external_order_number, new_number
-  end
-
-  # Resets this order as if it never processed
-  #   <tt>complete</tt> - removes the certificate_content (and it's csr and other properties)
-  #   <tt>ext_ca_orders</tt> - removes the external calls history to comodo for this order
-  def reset(complete = false, ext_ca_orders = false)
-    self.reset_ext_ca_order if ext_ca_orders
-    self.certificate_content.csr.delete if certificate_content.csr.present?
-
-    self.start_over!(complete) unless %w[canceled revoked]
-                                      .include?(self.certificate_content.workflow_state)
   end
 
   # Removes any certificate_contents that were not processed, except the last one
@@ -2084,7 +1999,7 @@ class CertificateOrder < ApplicationRecord
     ds = mdc_validation.domain_status
     validated = []
     validating_domains.each_with_index do |cn, _i|
-      if ds and ds[cn.name]
+      if ds && ds[cn.name]
         name = ds[cn.name]
         validated << cn if (name && name['status'] =~ /validated/i)
       end
@@ -2143,10 +2058,10 @@ class CertificateOrder < ApplicationRecord
 
   # will cycle through billing profile to purchase certificate order
   # use the billing profile associated with this order
-  # otherwise, find most recent successfully purchased order and use it's billing profile,
+  # otherwise, find most recent successfully purchased order && use it's billing profile,
   # cannot rely on order transactions, since the data was not migrated
 
-  # notify can be "none", "success", or "all"
+  # notify can be "none", "success", || "all"
   def purchase_renewal(notify)
     bp = order.billing_profile
     response = [bp, (ssl_account.cached_orders.map(&:billing_profile) - [bp]).shift].compact.each do |bp|

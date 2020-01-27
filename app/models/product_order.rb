@@ -1,7 +1,9 @@
 # This represents a purchased instance of Product
 
 class ProductOrder < ApplicationRecord
-  acts_as_sellable :cents => :amount, :currency => false
+  include Orderable
+
+  # acts_as_sellable :cents => :amount, :currency => false
   belongs_to  :ssl_account
   belongs_to  :product
   has_many    :users, through: :ssl_account
@@ -9,7 +11,7 @@ class ProductOrder < ApplicationRecord
       :sub_product_order_id, join_table: 'product_orders_sub_product_orders' # this order belongs to other(s)
   has_and_belongs_to_many :sub_product_orders, class_name: 'ProductOrder', foreign_key:
       :sub_product_order_id, join_table: 'product_orders_sub_product_orders' # this order has other order(s)
-  #will_paginate
+  # will_paginate
   cattr_reader :per_page
   @@per_page = 10
 
@@ -25,23 +27,6 @@ class ProductOrder < ApplicationRecord
     {:conditions => ["ref #{SQL_LIKE} ?", '%'+term+'%']}.merge(options)
   }
 
-  scope :range, lambda{|start, finish|
-    if start.is_a?(String)
-      (s= start =~ /\// ? "%m/%d/%Y" : "%m-%d-%Y")
-      start = Date.strptime(start, s)
-    end
-    if finish.is_a?(String)
-      (f= finish =~ /\// ? "%m/%d/%Y" : "%m-%d-%Y")
-      finish = Date.strptime(finish, f)
-    end
-    where{created_at >> (start..finish)}
-  } do
-
-    def amount
-      self.nonfree.sum(:amount)*0.01
-    end
-  end
-
   FULL = 'full'
   EXPRESS = 'express'
   PREPAID_FULL = 'prepaid_full'
@@ -56,23 +41,7 @@ class ProductOrder < ApplicationRecord
   PREPAID_EXPRESS_SIGNUP_PROCESS = {:label=>PREPAID_EXPRESS,
     :pages=>EXPRESS_SIGNUP_PROCESS[:pages] - %w(Payment)}
 
-  CSR_SUBMITTED = :csr_submitted
-  INFO_PROVIDED = :info_provided
-  REPROCESS_REQUESTED = :reprocess_requested
-  CONTACTS_PROVIDED = :contacts_provided
-
   CA_CERTIFICATES = {SSLcomSHA2: "SSLcomSHA2"}
-
-  STATUS = {CSR_SUBMITTED=>'info required',
-            INFO_PROVIDED=> 'contacts required',
-            REPROCESS_REQUESTED => 'csr required',
-            CONTACTS_PROVIDED => 'validation required'}
-
-  RENEWING = 'renewing'
-  REPROCESSING = 'reprocessing'
-  RECERTS = [RENEWING, REPROCESSING]
-  RENEWAL_DATE_CUTOFF = 45.days.ago
-  RENEWAL_DATE_RANGE = 45.days.from_now
 
   # changed for the migration
   # unless MIGRATING_FROM_LEGACY
@@ -407,10 +376,6 @@ class ProductOrder < ApplicationRecord
         self.orphaned_certificate_contents remove: true
       end
     end
-  end
-
-  def to_param
-    ref
   end
 
   def last_dcv_sent
@@ -1006,32 +971,10 @@ class ProductOrder < ApplicationRecord
     end
   end
 
-  # Creates a new external ca order history by deleting the old external order id and requests thus allowing us
-  # to start a new history with comodo for an existing ssl.com cert order
-  # useful in the event Comodo take forever to make changes to an existing order (and sometimes cannot) so we
-  # just create a new one and have the old one refunded
-  def reset_ext_ca_order
-    csrs.compact.map(&:sent_success).flatten.compact.uniq.each{|a|a.delete}
-    cc=certificate_content
-    cc.preferred_reprocessing = false
-    cc.save validation: false
-  end
-
   def change_ext_ca_order(new_number)
     ss=csrs.compact.map(&:sent_success).flatten.compact.last
     ss.update_column :response, ss.response.gsub(external_order_number, new_number.to_s)
     update_column :external_order_number, new_number
-  end
-
-  # Resets this order as if it never processed
-  #   <tt>complete</tt> - removes the certificate_content (and it's csr and other properties)
-  #   <tt>ext_ca_orders</tt> - removes the external calls history to comodo for this order
-  def reset(complete=false,ext_ca_orders=false)
-    self.reset_ext_ca_order if ext_ca_orders
-    self.certificate_content.csr.delete unless certificate_content.csr.blank?
-
-    self.start_over!(complete) unless ['canceled', 'revoked'].
-        include?(self.certificate_content.workflow_state)
   end
 
   # Removes any certificate_contents that were not processed, except the last one

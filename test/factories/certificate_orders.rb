@@ -42,5 +42,18 @@ FactoryBot.define do
     amount { '11000' }
     ca { 'SSLcomSHA2' }
     ssl_account
+    external_order_number { Faker::Alphanumeric.alphanumeric(number: 12) }
+    notes { Faker::Lorem.paragraph }
+
+    transient do
+      include_tags { false }
+    end
+
+    after :create do |co, options|
+      if options.include_tags
+        tagging = Tagging.create(tag: create(:tag), taggable_id: co.id, taggable_type: 'CertificateOrder')
+        co.taggings << tagging
+      end
+    end
   end
 end
