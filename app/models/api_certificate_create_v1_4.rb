@@ -24,7 +24,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
           !c.is_free? && c.ref.blank? && ['create_v1_4'].include?(c.action)}
   validates :period, presence: true, format: {with: /\d+/},
     inclusion: {in: ApiCertificateRequest::EV_SSL_PERIODS,
-    message: "needs tome be one of the following: #{EV_SSL_PERIODS.join(', ')}"}, if: lambda{|c|c.is_ev? && c.ref.blank? &&
+    message: "needs to be one of the following: #{EV_SSL_PERIODS.join(', ')}"}, if: lambda{|c|c.is_ev? && c.ref.blank? &&
     ['create_v1_4'].include?(c.action)}
   validates :period, presence: true, format: {with: /\d+/},
     inclusion: {in: ApiCertificateRequest::EV_CS_PERIODS,
