@@ -332,7 +332,7 @@ class ApplicationController < ActionController::Base
       co_valid = certificate_order_steps
       if params["prev.x".intern] || !co_valid
         @certificate_order.has_csr=true
-        render(:template => "submit_csr", :layout=>"application")
+        render(template: "submit_csr", layout: "application")
         return false
       end
     else
@@ -379,7 +379,7 @@ class ApplicationController < ActionController::Base
                                      .certificate_orders.detect(&:new?).dup
     @certificate_order.duration = @certificate.duration_index(@certificate_content.duration)
     @certificate_order.has_csr = true
-    render(:template => "submit_csr", :layout=>"application")
+    render(template: "submit_csr", layout: "application")
   end
 
   def create_ssl_certificate_route(user)
