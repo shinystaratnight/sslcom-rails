@@ -493,7 +493,7 @@ class ApplicationController < ActionController::Base
   private
 
   def get_team_tags
-    @get_team_tags ||= if @taggable
+    @team_tags ||= if @taggable
                          Tag.get_object_team_tags(@taggable)
                        elsif current_user.is_system_admins?
                          Tag.all.order(taggings_count: :desc)
@@ -667,7 +667,7 @@ class ApplicationController < ActionController::Base
   end
 
   def clear_cart
-    cookies.delete(ShoppingCart::CART_KEY)
+    cookies.delete(ShoppingCart::CART_KEY, domain: cookie_domain)
     cookies.delete(ShoppingCart::AID_LI)
     current_user.shopping_cart.update_attribute(:content, nil) if current_user&.shopping_cart
   end

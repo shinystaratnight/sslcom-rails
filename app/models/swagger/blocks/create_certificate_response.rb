@@ -38,13 +38,6 @@ module Swagger
           key :type, :string
           key :format, :uri
         end
-        property :certificates do
-          key :type, :string
-          key :format, :uri
-        end
-        property :certificate_contents do
-          key :type, :object
-        end
       end
     end
   end

@@ -538,7 +538,7 @@ class ProductOrder < ApplicationRecord
          locality_name: r.city,
          state_or_province_name: r.state,
          postal_code: r.postal_code,
-         country_name: r.country}
+         country: r.country}
     api_domains = {}
     if !cc.domains.blank?
       (cc.domains.flatten+[common_name]).each { |d|
