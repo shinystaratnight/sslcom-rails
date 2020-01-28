@@ -320,6 +320,7 @@ class CertificateOrdersController < ApplicationController
   # PUT /certificate_orders/1
   # PUT /certificate_orders/1.xml
   def update
+    byebug
     respond_to do |format|
       params[:certificate_order][:certificate_contents_attributes]['0'][:registrant_attributes][:country_code] =
           params[:country_code] if params[:country_code]
@@ -1074,7 +1075,7 @@ class CertificateOrdersController < ApplicationController
 
   def load_certificate_order
     if current_user
-      @certificate_order=current_user.certificate_order_by_ref(params[:id])
+      @certificate_order = current_user.certificate_order_by_ref(params[:id])
 
       if @certificate_order.nil?
         co = current_user.ssl_accounts.includes(:certificate_orders).map(&:certificate_orders)

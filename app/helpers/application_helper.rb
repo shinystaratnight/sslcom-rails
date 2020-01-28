@@ -187,7 +187,7 @@ module ApplicationHelper
     channels.sort_by(&:name).each_with_object(@tree) do |channel, tree|
       tree << ordered_list_for_tree(channel)
     end
-    @tree<<"</ul>"
+    @tree << "</ul>"
   end
 
 
@@ -292,7 +292,7 @@ module ApplicationHelper
     assignments = current_user.assignments.where.not(role_id: Role.cannot_be_invited) if current_user
     if assignments && assignments.any?
       teams = current_user.ssl_account_users
-        .where(ssl_account_id: assignments.map(&:ssl_account).uniq.compact.map(&:id))  
+        .where(ssl_account_id: assignments.map(&:ssl_account).uniq.compact.map(&:id))
         .where.not(approved: false).where(declined_at: nil).map(&:ssl_account).uniq.compact
       count   = teams.count
       tab     = '&nbsp;' * 5
@@ -329,7 +329,7 @@ module ApplicationHelper
       ["Greater or equal", "greater_or_equal"]
     ]
   end
-  
+
   def sort_link(column, direction, title)
     icon = sort_icon_for(column)
     direction = if direction.blank?
@@ -358,7 +358,7 @@ module ApplicationHelper
   def get_col_direction(column, params)
     column == params[:column] ? params[:direction] : ''
   end
-  
+
   def render_user_roles(roles_list)
     final = []
     roles_list.each do |role|
@@ -387,7 +387,7 @@ module ApplicationHelper
       else
         mail_trash_path(@ssl_slug)
     end
-  end  
+  end
 
   private
 
@@ -404,7 +404,7 @@ module ApplicationHelper
       when /no_div/
         "#{label}#{asterisk} #{form_field}#{append}".html_safe
       else
-        content_tag("div", "#{label}#{asterisk} #{form_field}#{append}", 
+        content_tag("div", "#{label}#{asterisk} #{form_field}#{append}",
           {:class => tag_class}, false)
     end
   end
@@ -445,10 +445,11 @@ module ApplicationHelper
     co=@certificate_order
     sv=co.certificate ? co.skip_verification? : CertificateOrder.skip_verification?(certificate)
     added_padding=1.54
-    process = if params[:order_description] || (params[:reprocess_ucc] || 
-      (co.certificate && co.certificate.is_ucc? && 
+    byebug
+    process = if params[:order_description] || (params[:reprocess_ucc] ||
+      (co.certificate && co.certificate.is_ucc? &&
       (co.order.reprocess_ucc_order? || params[:action] == "reprocess")))
-      
+
       co.reprocess_ucc_process
     elsif certificate && certificate.is_smime_or_client?
       co.smime_client_process
@@ -548,7 +549,7 @@ module ApplicationHelper
   end
 
   def remote_login_link(u)
-    link_to("login as #{u.login}", user_session_url(:login=>u.login, 
+    link_to("login as #{u.login}", user_session_url(:login=>u.login,
         authenticity_token: form_authenticity_token()), :method=>:post,
         :id=>u.model_and_id) if !u.is_disabled? or !u.is_super_user?
   end
@@ -572,12 +573,12 @@ module ApplicationHelper
   def is_new_order_page?
     current_page?(new_order_path) || current_page?(checkout_orders_path)
   end
-  
+
   def get_full_path(params)
     path = params[:controller] == 'certificates' ? "admin_index_" : ''
     send("#{path}#{params[:controller]}_path", params.except(:controller, :action))
   end
-  
+
   def co_folder_children(contents, options={})
     output = []
     contents.includes{certificate_orders.certificate_contents}.each do |f|
