@@ -494,6 +494,14 @@ class CertificateContent < ApplicationRecord
     end
   end
 
+  def to_api_query
+   {}.tap do |result|
+     %w(ref).each do |k,v|
+       result.merge!({"#{k.to_sym}": self.send(k)})
+     end	
+   end
+  end
+
   def callback(packaged_cert=nil,options={})
     if packaged_cert.blank?
       cert = ApiCertificateRetrieve.new(query_type: "all_certificates")
@@ -990,14 +998,6 @@ class CertificateContent < ApplicationRecord
     certificate_content.map do |cc|
       cc.issue! if(cc.signed_certificate and cc.certificate.is_server?)
     end.compact
-  end
-
-  def to_api_query
-    {}.tap do |result|
-      %w(ref).each do |k,v|
-        result.merge!({"#{k.to_sym}": self.send(k)})
-      end
-    end
   end
 
   private
