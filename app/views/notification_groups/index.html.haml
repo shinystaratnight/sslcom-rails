@@ -14,7 +14,7 @@
 -#    =hidden_field_tag :per_page, @per_page
 %h1 Certificate Monitoring and Notification
 %h2 Set Alerts for Expiring Certificates #{link_to "(details)", "https://#{Settings.portal_domain}/customizable-reminder-alerts-for-expiring-certificates/"}
-=form_tag :search_notification_groups, :id=>'search_form', :method=>:post do
+=form_tag :search_notification_groups, :id=>'search_form', :method=>:get do
   =hidden_field_tag :per_page, @per_page
   #wrap_note_group_filter
     .wrap_filter_block.clearfix

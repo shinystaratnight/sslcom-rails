@@ -141,7 +141,7 @@
                   %li
                     %strong(class="val_docs_list_#{i}" alt="#{v.validation_histories.count}") validation documents
                   -if co.validation.validation_histories.empty?
-                    -if co.is_express_validation?
+                    -if co.express_validation?
                       %li
                         %em none required
                     -else

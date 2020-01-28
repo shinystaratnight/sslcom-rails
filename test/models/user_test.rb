@@ -50,22 +50,8 @@ require 'test_helper'
 
 describe User do
   before do
-    # Create necessary reminder triggers
-    (1..5).to_a.each { |i| ReminderTrigger.create(id: i, name: i) } unless ReminderTrigger.count == 5
-
-    unless Role.count == 11
-      create(:role, :account_admin)
-      create(:role, :billing)
-      create(:role, :installer)
-      create(:role, :owner)
-      create(:role, :reseller)
-      create(:role, :super_user)
-      create(:role, :sysadmin)
-      create(:role, :users_manager)
-      create(:role, :validations)
-      create(:role, :ra_admin)
-      create(:role, :individual_certificate)
-    end
+    initialize_triggers
+    initialize_roles
   end
 
   describe 'attributes' do

@@ -214,9 +214,6 @@ module Swagger
           parameter :payment_method
           response 200 do
             key :description, 'Certificate Response'
-            schema do
-              key :'$ref', :UpdateCertificateResponse
-            end
           end
           response :error do
             key :description, 'Error Response'

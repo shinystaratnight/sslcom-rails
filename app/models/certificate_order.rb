@@ -1,3 +1,38 @@
+# == Schema Information
+#
+# Table name: certificate_orders
+#
+#  id                    :integer          not null, primary key
+#  ssl_account_id        :integer
+#  validation_id         :integer
+#  site_seal_id          :integer
+#  workflow_state        :string(255)
+#  ref                   :string(255)
+#  num_domains           :integer
+#  server_licenses       :integer
+#  line_item_qty         :integer
+#  amount                :integer
+#  notes                 :text(65535)
+#  created_at            :datetime
+#  updated_at            :datetime
+#  is_expired            :boolean
+#  renewal_id            :integer
+#  is_test               :boolean
+#  auto_renew            :string(255)
+#  auto_renew_status     :string(255)
+#  ca                    :string(255)
+#  external_order_number :string(255)
+#  ext_customer_ref      :string(255)
+#  validation_type       :string(255)
+#  acme_account_id       :string(255)
+#  wildcard_count        :integer
+#  nonwildcard_count     :integer
+#  folder_id             :integer
+#  assignee_id           :integer
+#  expires_at            :datetime
+#  request_status        :string(255)
+#
+
 class CertificateOrder < ApplicationRecord
   extend Memoist
   include V2MigrationProgressAddon
@@ -240,10 +275,9 @@ class CertificateOrder < ApplicationRecord
       result = result.where{
         (ssl_account.users.send(field.to_sym) =~ "%#{query}%")} if query
     end
-    %w(account_number).each do |field|
-      query=filters[field.to_sym]
-      result = result.where{
-        (ssl_account.send(field.to_sym) =~ "%#{query}%")} if query
+    %w[account_number].each do |_field|
+      query = filters[:acct_number]
+      result = result.where{ (ssl_account.send(:acct_number) =~ "%#{query}%") } if query
     end
     %w(expires_at created_at issued_at).each do |field|
       query=filters[field.to_sym]
@@ -1434,7 +1468,7 @@ class CertificateOrder < ApplicationRecord
          locality_name: r.city,
          state_or_province_name: r.state,
          postal_code: r.postal_code,
-         country_name: r.country}
+         country: r.country}
     api_domains = {}
     if !cc.domains.blank?
       cc.certificate_names.includes(:domain_control_validations).find_by_domains(cc.domains.flatten+[common_name]).each {|cn|

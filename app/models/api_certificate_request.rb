@@ -42,7 +42,7 @@ class ApiCertificateRequest < CaApiRequest
       :registered_state_or_province_name, :registered_country_name, :incorporation_date,
       :assumed_name, :business_category, :email_address, :contact_email_address,
       :ca_certificate_id, :is_customer_validated, :hide_certificate_reference, :external_order_number,
-      :dcv_methods, :ref, :options]
+      :dcv_methods, :ref, :options, :certificate_contents]
 
   RETRIEVE_ACCESSORS = [:account_key, :secret_key, :ref, :query_type, :response_type, :response_encoding,
     :show_validity_period, :show_domains, :show_ext_status, :validations, :registrant, :start, :end, :filter,
@@ -79,12 +79,11 @@ class ApiCertificateRequest < CaApiRequest
   ).uniq
 
   before_validation(on: :create) do
-    ac=api_credential
-    unless ac.blank?
+    ac = api_credential
+    if ac.present?
       self.api_requestable = ac.ssl_account
     else
       errors[:login] << "account_key not found or wrong secret_key"
-      false
     end
   end
 
@@ -95,8 +94,7 @@ class ApiCertificateRequest < CaApiRequest
   end
 
   def api_credential
-    (self.account_key && self.secret_key) ?
-        ApiCredential.find_by_account_key_and_secret_key(self.account_key, self.secret_key) : nil
+    ApiCredential.find_by_account_key_and_secret_key(account_key, secret_key)
   end
   memoize :api_credential
 
@@ -130,8 +128,7 @@ class ApiCertificateRequest < CaApiRequest
           if sc=klass.find_by_serial(serial)
             certs << sc
           else
-            errors[:signed_certificate] <<
-                "Signed certificate not found for serial #{serial}#{" within certificate order ref #{certificate_order.ref}" if certificate_order}."
+            errors[:signed_certificate] << "Signed certificate not found for serial #{serial}#{" within certificate order ref #{certificate_order.ref}" if certificate_order}."
             break
           end
         end
