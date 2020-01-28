@@ -112,6 +112,7 @@ gem 'turbolinks'
 gem 'yui-compressor'
 
 gem 'carrierwave', '< 2.0'
+gem 'rmagick'
 
 group :development do
   gem 'annotate'

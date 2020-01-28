@@ -281,6 +281,20 @@ class UsersController < ApplicationController
     end
   end
 
+  def upload_avatar
+    respond_to do |format|
+      begin
+        current_user.avatar = params[:file]
+        current_user.save!
+        format.js { render json: current_user.avatar.url, status: :ok }
+        format.json { render json: current_user.avatar.url, status: :ok }
+      rescue StandardError => e
+        format.js { render json: e.message, status: :unprocessable_entity }
+        format.json { render json: e.message, status: :unprocessable_entity }
+      end
+    end
+  end
+
   def admin_update
     respond_to do |format|
       if @user.update(params[:user])
