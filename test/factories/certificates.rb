@@ -464,9 +464,9 @@ FactoryBot.define do
     trait :freessl do
       title                 { 'Free SSL' }
       summary               { "90-day Basic SSL trial\n" }
-      text_only_summary     nil
-      text_only_description nil
-      allow_wildcard_ucc    nil
+      text_only_summary     { nil }
+      text_only_description { nil }
+      allow_wildcard_ucc    { nil }
       serial                { 'dv256sslcom' }
       product               { 'free' }
       icons                 { { main: 'silver_lock_lg.gif' } }

@@ -320,7 +320,6 @@ class CertificateOrdersController < ApplicationController
   # PUT /certificate_orders/1
   # PUT /certificate_orders/1.xml
   def update
-    byebug
     respond_to do |format|
       params[:certificate_order][:certificate_contents_attributes]['0'][:registrant_attributes][:country_code] =
           params[:country_code] if params[:country_code]
@@ -548,12 +547,13 @@ class CertificateOrdersController < ApplicationController
           else
             edit_certificate_order_path(@ssl_slug, @certificate_order)
           end
-          flash[:error] = "Please correct errors in this step. #{@certificate_content.errors.full_messages.join(', ')}."
-          format.html { redirect_to path }
+          #Confirm this change to see if its breaking or not.
+          @certificate = @certificate_order.certificate
+          format.html { render 'submit_csr', layout: 'application' }
         else
           @certificate = @certificate_order.certificate
-          format.html { render 'submit_csr', :layout=>'application' }
-          format.xml  { render :xml => @certificate_order.errors, :status => :unprocessable_entity }
+          format.html { render 'submit_csr', layout: 'application' }
+          format.xml  { render xml: @certificate_order.errors, status: :unprocessable_entity }
         end
       end
     end
