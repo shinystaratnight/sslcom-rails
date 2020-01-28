@@ -44,7 +44,7 @@ class Csr < ApplicationRecord
   
   has_many    :whois_lookups, :dependent => :destroy
   has_many    :signed_certificates, -> { where(type: nil) }, :dependent => :destroy
-  has_one :signed_certificate, -> { where(type: nil).order 'created_at' }, class_name: "SignedCertificate"
+  has_one :signed_certificate, -> { where(type: nil).order 'created_at desc' }, class_name: "SignedCertificate"
   has_many    :shadow_certificates
   has_many    :ca_certificate_requests, as: :api_requestable, dependent: :destroy
   has_many    :sslcom_ca_requests, as: :api_requestable
@@ -233,11 +233,11 @@ class Csr < ApplicationRecord
   end
 
   def sslcom_approval_ids
-    sslcom_ca_requests.unexpired.pluck(:approval_id)
+    sslcom_ca_requests.pluck(:approval_id)
   end
 
   def sslcom_usernames
-    sslcom_ca_requests.unexpired.pluck(:username)
+    sslcom_ca_requests.pluck(:username)
   end
 
   def sslcom_outstanding_approvals
