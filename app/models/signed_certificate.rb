@@ -406,7 +406,7 @@ class SignedCertificate < ApplicationRecord
             zipped_pkcs7
           elsif certificate_order.is_nginx?
             to_nginx_file
-          elsif certificate_order.cpanel?
+          elsif certificate_order.is_panel?
             zipped_whm_bundle
           elsif certificate_order.is_apache?
             zipped_apache_bundle
