@@ -4,6 +4,10 @@
     -#-cache("head_08042014"+params.to_s, expires_in: 1.year) do
     :javascript
       var _sf_startpt=(new Date()).getTime()
+    = javascript_include_tag '//code.jquery.com/jquery-3.4.1.slim.min.js', integrity: 'sha256-pasqAKBDmFT4eHoN2ndd6lN370kFiGUFyTiUHWhU7k8=', crossorigin: 'anonymous'
+    = javascript_include_tag '//stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js'
+    = stylesheet_link_tag '//stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css'
+    = javascript_include_tag '//kit.fontawesome.com/32ac29d6b6.js', crossorigin: 'anonymous'
     %favicon_link_tag
     %meta{"http-equiv"=>"Content-Type", :content=>"text/html;charset=utf-8"}
     %title= h(yield(:title).or_else(Settings.meta_title)) + " | #{Settings.community_name}"

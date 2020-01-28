@@ -1,0 +1,12 @@
+#profile-content
+  %form.md-form
+    .file-field
+      .m-2
+      -if user.avatar.file.nil?
+        = fa_icon('user-circle', size: '7x')
+      -else
+        = image_tag display_image_url(user), alt: user.login, height: '7em', width: '7em', class: 'avatar'
+      .d-flex.m-2
+        %button#add-avatar.btn.btn-info.btn-rounded
+          %span Add photo
+    
