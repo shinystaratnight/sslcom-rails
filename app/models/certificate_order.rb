@@ -1580,7 +1580,7 @@ class CertificateOrder < ApplicationRecord
     [37].include? software.id
   end
 
-  def is_panel?
+  def is_cpanel?
     [35].include? software.id
   end
 
