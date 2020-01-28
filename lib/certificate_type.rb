@@ -78,7 +78,7 @@ module CertificateType
 
   def is_client?
     if self.is_a? SignedCertificate
-      !!(decoded.include?("TLS Web Client Authentication"))
+      !!(decoded.include?("TLS Web Client Authentication")) and !(decoded.include?("TLS Web Server Authentication"))
     else
       (self.is_a?(ApiCertificateRequest) ? target_certificate :  self).product.include?('personal')
     end
