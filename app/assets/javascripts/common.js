@@ -34,16 +34,15 @@ $(document).ready(function(){
       data: fd,
       contentType: false,
       processData: false,
-      success: function(data, status){
-        if(data != 0){
-          // Show image preview
-          console.log(data);
-          console.log(status);
-          $('#preview').append("<img src='"+data+"' width='100' height='100' style='display: inline-block;'>");
-        }else{
-          alert('file not uploaded');
+      statusCode: {
+        200: function(response){
+          // $('#preview').append("<img src='" + response.responseText + "' width='300' height='300' style='display: inline-block;'>");
+          window.location.reload(true);
+        },
+        422: function(response){
+          alert(response.responseText);
         }
-      }
+      },
     });
   });
 });

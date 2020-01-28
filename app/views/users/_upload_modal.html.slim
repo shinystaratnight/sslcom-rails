@@ -5,7 +5,7 @@
     .modal-content
       .modal-header
         button.close data-dismiss="modal" type="button"  &times;
-        h4.modal-title Upload Profile Image
+        / h4.modal-title Upload Profile Image
       .modal-body
         /! Form
         form action="" enctype="multipart/form-data" method="post"
@@ -16,3 +16,6 @@
           input#btn_upload.btn.btn-info type="button" value="Upload" /
         /! Preview
         #preview
+      .modal-footer
+        button.btn.btn-primary type="button" data-dismiss="modal"
+          | Close
