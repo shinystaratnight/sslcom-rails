@@ -345,7 +345,10 @@ jQuery(function($) {
           <%else%>
           var days_left = "";
           <%end%>
+          $(".cert_reqs").after("<div class='flash_message notice'><span class='ajax_info'>common name field in csr is: "
+            + data['common_name'] + days_left + "</span></div>");
 
+          $('#common_name').val(data['common_name']);
           var csr_names = [];
           // adjust domain price.
           <% if @certificate.is_ucc?-%>
@@ -510,6 +513,7 @@ jQuery(function($) {
                 <%end%>
               }
 
+              $('#common_name').val(data.certificate_content.csr.common_name);
               <%if @certificate.is_ucc?-%>
                 if((typeof data.certificate_content.csr.subject_alternative_names != 'undefined')){
                   <%if Settings.csr_domains_ui%>
