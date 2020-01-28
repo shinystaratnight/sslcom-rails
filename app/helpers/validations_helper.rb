@@ -6,7 +6,7 @@ module ValidationsHelper
       dcv_wait=(!@cert_order.csr.blank? && last_sent.try("satisfied?")) ? "" :
           ", waiting for response to domain control validation email"
       if validation_rulings.detect(&:new?)
-        unless @cert_order.is_express_signup?
+        unless @cert_order.express_signup?
           [(@cert_order.certificate.is_ev? ? ValidationRuling::NEW_EV_STATUS : ValidationRuling::NEW_STATUS)+dcv_wait,
            ValidationRuling::ATTENTION_CLASS]
         else
