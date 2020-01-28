@@ -83,6 +83,8 @@ Layout/SpaceBeforeBlockBraces:
 
 Lint/AmbiguousBlockAssociation:
   Enabled: true
+Lint/AssignmentInCondition:
+  Enabled: false
 Lint/InterpolationCheck:
   Enabled: true
 Lint/UselessAccessModifier:
@@ -108,7 +110,7 @@ Lint/ShadowingOuterLocalVariable:
   Exclude:
     - app/models/ssl_account.rb
 
-Metrics:
+Metrics/LineLength:
   Enabled: false
 
 Rails/Output:
@@ -140,3 +142,7 @@ Naming/PredicateName:
   Enabled: false
 Naming/AccessorMethodName:
   Enabled: false
+Naming/MemoizedInstanceVariableName:
+  Exclude:
+    - app/controllers/application_controller.rb
+

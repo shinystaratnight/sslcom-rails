@@ -1,3 +1,28 @@
+# == Schema Information
+#
+# Table name: certificate_contents
+#
+#  id                   :integer          not null, primary key
+#  certificate_order_id :integer          not null
+#  signing_request      :text(65535)
+#  signed_certificate   :text(65535)
+#  server_software_id   :integer
+#  domains              :text(65535)
+#  duration             :integer
+#  workflow_state       :string(255)
+#  billing_checkbox     :boolean
+#  validation_checkbox  :boolean
+#  technical_checkbox   :boolean
+#  created_at           :datetime
+#  updated_at           :datetime
+#  label                :string(255)
+#  ref                  :string(255)
+#  agreement            :boolean
+#  ext_customer_ref     :string(255)
+#  approval             :string(255)
+#  ca_id                :integer
+#
+
 class CertificateContent < ApplicationRecord
   extend Memoist
   include V2MigrationProgressAddon
@@ -36,10 +61,9 @@ class CertificateContent < ApplicationRecord
   after_save   :transfer_existing_contacts
   before_destroy :preserve_certificate_contacts
 
-  before_create do |cc|
+  after_create do |cc|
     ref_number = cc.to_ref
-    cc.ref = ref_number
-    cc.label = ref_number
+    cc.update(ref: ref_number, label: ref_number)
   end
 
   SIGNING_REQUEST_REGEX = /\A[\w\-\/\s\n\+=]+\Z/
@@ -492,6 +516,14 @@ class CertificateContent < ApplicationRecord
       result.certificates = ""
       result.common_name = self.csr.common_name
     end
+  end
+
+  def to_api_query
+   {}.tap do |result|
+     %w(ref).each do |k,v|
+       result.merge!({"#{k.to_sym}": self.send(k)})
+     end	
+   end
   end
 
   def callback(packaged_cert=nil,options={})
@@ -990,14 +1022,6 @@ class CertificateContent < ApplicationRecord
     certificate_content.map do |cc|
       cc.issue! if(cc.signed_certificate and cc.certificate.is_server?)
     end.compact
-  end
-
-  def to_api_query
-    {}.tap do |result|
-      %w(ref).each do |k,v|
-        result.merge!({"#{k.to_sym}": self.send(k)})
-      end
-    end
   end
 
   private
