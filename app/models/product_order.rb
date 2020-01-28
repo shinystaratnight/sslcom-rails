@@ -312,8 +312,8 @@ class ProductOrder < ApplicationRecord
     end
   end
 
-  def is_express_signup?
-    !signup_process[:label].scan(EXPRESS).blank?
+  def express_signup?
+    signup_process[:label].scan(EXPRESS).present?
   end
 
   def is_express_validation?
