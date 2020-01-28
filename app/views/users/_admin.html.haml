@@ -2,9 +2,7 @@
 -user ||= current_user
 .container
   .row
-    .col-sm-2
-      = render partial: 'user_profile', locals: { user: user}
-    .col-sm-10
+    .col-md-12
       .reseller_registration_select_tier
         %h2 #{Settings.community_name} System Admin Dashboard
         %p

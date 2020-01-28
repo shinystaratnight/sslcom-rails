@@ -14,7 +14,6 @@
   %div{style: 'flex-basis:270px;'}
 #validations
   %table(cellspacing="0")
-    -#-if will_paginate @users
     -if @users.size > 0
       %tfoot
         %tr
@@ -22,11 +21,11 @@
             =select_tag :number_rows,
             options_for_select([[5, 5], [10, 10], [20, 20], [50, 50], [100, 100]], @per_page),
             :class=>'per_page'
-          %td(colspan='6')=will_paginate @users
-    %caption
-      =title
-      [learn about #{link_to "inviting users", "https://#{Settings.portal_domain}/how-to/inviting-users-to-your-team/", target: "_blank"}]
-      =will_paginate @users
+          %td(colspan='4')
+            =title
+            [learn about #{link_to "inviting users", "https://#{Settings.portal_domain}/how-to/inviting-users-to-your-team/", target: "_blank"}]
+          %td(colspan='2')
+            =will_paginate @users
     -unless current_user.is_system_admins?
       %tr
         =link_to 'Invite User', new_managed_user_path(slug_params), class: 'button_blue button_index'

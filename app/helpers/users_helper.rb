@@ -61,8 +61,4 @@ module UsersHelper
     end
     permit.flatten.uniq.compact
   end
-
-  def display_image_url(user)
-    user.avatar.file.nil? ? 'https://via.placeholder.com/150' : user.avatar.url
-  end
 end
