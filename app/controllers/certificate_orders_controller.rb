@@ -379,7 +379,7 @@ class CertificateOrdersController < ApplicationController
 
         if is_smime_or_client
           format.html { redirect_to recipient_certificate_order_path(@ssl_slug, @certificate_order.ref) }
-        elsif @certificate_order.is_express_signup? || @certificate_order.skip_contacts_step?
+        elsif @certificate_order.express_signup? || @certificate_order.skip_contacts_step?
           format.html { redirect_to validation_destination(slug: @ssl_slug, certificate_order: @certificate_order) }
         else #assume ev full signup process
           format.html { redirect_to certificate_content_contacts_path(@ssl_slug, cc) }
