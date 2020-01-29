@@ -20,7 +20,7 @@ describe('Avatar spec', function () {
       cy.contains('Add photo').click();
       cy.get("#uploadModal button[data-dismiss='modal']").should('be.visible')
       cy.fixture(fileName).then(fileContent => {
-        cy.get('input[type="file"]').upload({fileContent, fileName, mimeType: 'image/jpeg'});
+        cy.get('input[type="file"]').upload({fileContent, fileName, mimeType: 'image/jpeg'}, {force: true, events: ['dragenter', 'drop', 'dragleave', 'change']});
       });
       cy.get('input[type="file"]').trigger('change');
       // cy.get('#uploadModal').trigger('hidden.bs.modal')
