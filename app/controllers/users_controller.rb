@@ -598,10 +598,10 @@ class UsersController < ApplicationController
   end
 
   def set_users
-    @users = if current_user.is_system_admins?
+    @users = if current_user&.is_system_admins?
                @ssl_account.try(:users) || User.unscoped
              else
-               current_user.manageable_users
+               current_user&.manageable_users
              end
   end
 

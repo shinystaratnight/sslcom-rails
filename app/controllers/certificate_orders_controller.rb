@@ -381,10 +381,10 @@ class CertificateOrdersController < ApplicationController
           format.html { redirect_to recipient_certificate_order_path(@ssl_slug, @certificate_order.ref) }
         elsif @certificate_order.express_signup? || @certificate_order.skip_contacts_step?
           format.html { redirect_to validation_destination(slug: @ssl_slug, certificate_order: @certificate_order) }
-        else #assume ev full signup process
+        else # assume ev full signup process
           format.html { redirect_to certificate_content_contacts_path(@ssl_slug, cc) }
         end
-        format.xml  { head :ok }
+        format.xml { head :ok }
       else
         setup_registrant(
           params[:certificate_order][:certificate_contents_attributes]['0'][:registrant_attributes]
