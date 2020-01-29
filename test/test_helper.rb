@@ -47,8 +47,8 @@ module Minitest
       end
 
       after :all do
-        FileUtils.rm_rf(Dir["#{Rails.root}/public/uploads/#{Rails.env}/"])
-        FileUtils.rm_rf(Dir["#{Rails.root}/tmp/uploads/#{Rails.env}/"])
+        FileUtils.rm_rf(Dir[Rails.root.join('/public/uploads/test')])
+        FileUtils.rm_rf(Dir[Rails.root.join('/tmp/uploads/test')])
       end
     end
   end
