@@ -29,13 +29,13 @@
                         ul
                           li
                             strong reseller administrator
-                          li name: # [r.first_name, r.last_name].join(' ') 
-                          li email: # r.email 
-                          li phone: # r.phone 
+                          li name: #{[r.first_name, r.last_name].join(' ')} 
+                          li email: #{r.email} 
+                          li phone: #{r.phone}
                           -unless r.ext.blank?
-                            li ext: # r.ext 
+                            li ext: #{r.ext}
                           -unless r.fax.blank?
-                            li fax: # r.fax 
+                            li fax: #{r.fax} 
                           li=link_to 'edit', edit_ssl_account_path(ssl_slug || params[:ssl_slug])
                       .col-md-3
                         ul

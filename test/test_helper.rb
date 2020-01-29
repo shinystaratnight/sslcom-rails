@@ -45,6 +45,11 @@ module Minitest
       after :each do
         DatabaseCleaner.clean
       end
+
+      after :all do
+        FileUtils.rm_rf(Dir["#{Rails.root}/public/uploads/#{Rails.env}/"])
+        FileUtils.rm_rf(Dir["#{Rails.root}/tmp/uploads/#{Rails.env}/"])
+      end
     end
   end
 end

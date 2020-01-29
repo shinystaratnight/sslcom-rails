@@ -31,6 +31,7 @@
         =link_to 'Invite User', new_managed_user_path(slug_params), class: 'button_blue button_index'
     %tr.heading_row
       %th
+      %th
       %th.name(scope="col")Username
       %th(scope="col") Email Address
       %th(scope="col") Role(s)
@@ -41,7 +42,7 @@
       -else
         %th(scope="col") Approved
     -if current_user.is_system_admins?
-      -if @users.size > 0
+      -if @users.any?
         -@users.includes(:ssl_accounts).each do |u|
           -cache([current_user.id,'admin_users_list', u.cache_key], expires_in: 12.hours) do
             -user_view = true
@@ -50,6 +51,7 @@
             -us, us_class=user_status(u)
             %tr{class: "#{user_view ? 'enable' : 'disable'}", alt: "#{u.id}"}
               %td.dropdown= user_view ? image_tag('expand.png') : ''
+              %td.expandable= u.avatar.url(:thumb).blank? ? fa_icon('user-circle', size: '4x') : image_tag(u.avatar.url(:thumb), alt: u.login, class: 'xs-avatar')
               %td.name.expandable=u.login
               %td.expandable=u.email
               %td.expandable.constrained=type.html_safe
@@ -57,12 +59,12 @@
               %td.expandable=(u.last_login_at.blank?) ? "never" : u.last_login_at.strftime("%b %d, %Y")
               %td.expandable.validation_status_message(class="#{us_class}" colspan="1")=us
             -#%tr.hidden.expanded
-              %td(colspan="7")
+              %td(colspan="8")
                 .certificate_details
                   =render "details", u: u
       -else
         %tr
-          %td(colspan='7')
+          %td(colspan='8')
             There are no Users
     -else
       -if @users.size > 0
@@ -73,6 +75,7 @@
             -as, as_class=ssl_account_status(u, current_user.ssl_account)
             %tr{class: "#{user_view ? 'enable' : 'disable'}", alt: "#{u.id}"}
               %td.dropdown= user_view ? image_tag('expand.png') : ''
+              %td.expandable= u.avatar.url(:thumb).blank? ? fa_icon('user-circle', size: '4x') : image_tag(u.avatar.url(:thumb), alt: u.login, class: 'xs-avatar')
               %td.name.expandable=u.login
               %td.expandable=u.email
               %td.expandable="#{u.role_symbols(current_user.ssl_account).join('/')}"
