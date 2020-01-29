@@ -219,7 +219,7 @@ class CertificateOrdersController < ApplicationController
 
             @is_reprocess = false
 
-            return render 'submit_csr', :layout=>'application'
+            return render 'submit_csr', layout: 'application'
           end
           unless @certificate_order.certificate_content.csr_submitted? or params[:registrant]
             redirect_to certificate_order_path(@ssl_slug, @certificate_order)
@@ -287,7 +287,7 @@ class CertificateOrdersController < ApplicationController
 
         @is_reprocess = true
 
-        return render 'submit_csr', :layout=>'application'
+        return render 'submit_csr', layout: 'application'
       end
     else
       not_found
@@ -312,7 +312,7 @@ class CertificateOrdersController < ApplicationController
           format.html {redirect_to confirm_funds_path(:id=>'certificate_order')}
         end
       else
-        format.html { render(:template => "submit_csr")}
+        format.html { render template: 'submit_csr' }
       end
     end
   end
@@ -1252,7 +1252,7 @@ class CertificateOrdersController < ApplicationController
         flash[:error] = "Some error occurs while getting notification group data. Please try again."
         @certificate = @certificate_order.certificate
 
-        format.html { render 'submit_csr', :layout=>'application' }
+        format.html { render 'submit_csr', layout: 'application' }
       end
     else
       # Saving notification group info
@@ -1280,7 +1280,7 @@ class CertificateOrdersController < ApplicationController
         flash[:error] = "Some error occurs while saving notification group data. Please try again."
         @certificate = @certificate_order.certificate
 
-        format.html { render 'submit_csr', :layout=>'application' }
+        format.html { render 'submit_csr', layout: 'application' }
       end
     end
 
@@ -1655,7 +1655,7 @@ class CertificateOrdersController < ApplicationController
         flash[:error] = "Some error occurs while adding this csr to the csr manager."
         @certificate = @certificate_order.certificate
 
-        format.html { render 'submit_csr', :layout=>'application' }
+        format.html { render 'submit_csr', layout: 'application' }
       end
 
       @certificate_order.managed_csrs << managed_csr
