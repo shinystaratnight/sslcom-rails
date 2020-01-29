@@ -45,11 +45,6 @@ module Minitest
       after :each do
         DatabaseCleaner.clean
       end
-
-      after :all do
-        FileUtils.rm_rf(Dir[Rails.root.join('/public/uploads/test')])
-        FileUtils.rm_rf(Dir[Rails.root.join('/tmp/uploads/test')])
-      end
     end
   end
 end
