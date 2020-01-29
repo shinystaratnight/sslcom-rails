@@ -1113,7 +1113,7 @@ class CertificateOrder < ApplicationRecord
     !signup_process[:label].scan(EXPRESS).blank?
   end
 
-  def is_express_validation?
+  def express_validation?
     validation.validation_rulings.detect(&:new?) &&
       !signup_process[:label].scan(EXPRESS).blank?
   end
