@@ -298,7 +298,7 @@ class CertificateName < ApplicationRecord
           whois=Whois.whois(ActionDispatch::Http::URL.extract_domain(d.domain, 1)).to_s
           whois_addresses = WhoisLookup.email_addresses(whois.gsub(/^.*?abuse.*?$/i,"")) # remove any line with 'abuse'
           whois_addresses.each do |ad|
-            standard_addresses << ad.downcase unless ad =~/abuse.*?@/i
+            standard_addresses << ad.downcase
           end unless whois_addresses.blank?
         rescue Exception=>e
           Logger.new(STDOUT).error e.backtrace.inspect

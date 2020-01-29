@@ -1108,7 +1108,7 @@ class CertificateOrder < ApplicationRecord
     ssl_account.invoice_required? ? REPROCES_SIGNUP_W_INVOICE : REPROCES_SIGNUP_W_PAYMENT
   end
 
-  def is_express_signup?
+  def express_signup?
     !signup_process[:label].scan(EXPRESS).blank?
   end
 

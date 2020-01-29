@@ -259,7 +259,7 @@ class DomainControlValidation < ApplicationRecord
                        email: "sent validation to #{self.email_address}"})}"
   end
 
-  def icann_contacts
+  def self.icann_contacts
     # txt = <https://www.icann.org/registrar-reports/accreditation-qualified-list.html>
     # txt.scan(/Email: (.*?)\n/).flatten.uniq
     ["customerservice@networksolutions.com",
