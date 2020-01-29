@@ -1,4 +1,10 @@
 GIT
+  remote: https://github.com/hcfairbanks/carrierwave_asserts
+  revision: 017271e50e36a2b0ffaaead9a6ef1d2db7bd2ea9
+  specs:
+    carrierwave_asserts (0.1.0)
+
+GIT
   remote: https://github.com/xymist/declarative_authorization.git
   revision: 3cd79342d073b71cdda427745848abb461d454d6
   branch: allow_rails_5
@@ -446,6 +452,8 @@ GEM
       unicode-display_width (>= 1.4.0, < 1.7)
     rubocop-minitest (0.5.0)
       rubocop (>= 0.74)
+    rubocop-performance (1.5.1)
+      rubocop (>= 0.71.0)
     rubocop-rails (2.4.0)
       rack (>= 1.1)
       rubocop (>= 0.72.0)
@@ -689,6 +697,7 @@ DEPENDENCIES
   byebug
   cancan
   carrierwave (< 2.0)
+  carrierwave_asserts!
   coffee-rails
   config
   cypress-on-rails (~> 1.5.1)
@@ -762,6 +771,7 @@ DEPENDENCIES
   rswag-ui
   rubocop
   rubocop-minitest
+  rubocop-performance
   rubocop-rails
   ruby-odbc
   ruby_parser

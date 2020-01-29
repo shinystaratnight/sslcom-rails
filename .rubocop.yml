@@ -2,6 +2,9 @@
 
 require:
   - rubocop/cop/internal_affairs
+  - rubocop-performance
+  - rubocop-rails
+  - rubocop-minitest
 
 AllCops:
   Exclude:
@@ -11,7 +14,7 @@ AllCops:
     - 'bin/*'
     - 'config/**/*.yml'
     - 'db/**/*'
-  TargetRubyVersion: 2.5
+  TargetRubyVersion: 2.6
 
 Rails:
   Enabled: true
@@ -35,8 +38,6 @@ Style/EvalWithLocation:
 Style/StructInheritance:
   Enabled: false
 Style/DoubleNegation:
-  Enabled: false
-Style/RedundantBegin:
   Enabled: false
 Style/NestedTernaryOperator:
   Exclude:
