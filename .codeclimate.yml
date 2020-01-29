@@ -1,5 +1,35 @@
 version: "2"
 
+plugins:
+  brakeman:
+    enabled: true
+  bundler-audit:
+    enabled: true
+  csslint:
+    enabled: true
+  coffeelint:
+    enabled: true
+  duplication:
+    enabled: true
+  fixme:
+    enabled: true
+  flog:
+    enabled: true
+    config:
+      score_threshold: 20.0
+  git-legal:
+    enabled: true
+  haml-lint:
+    enabled: true
+  reek:
+    enabled: true
+  rubocop:
+    enabled: true
+    config:
+      file: .rubocop-cc.yml
+  sass-lint:
+    enabled: true
+
 exclude_patterns:
   - "config/"
   - "db/"
