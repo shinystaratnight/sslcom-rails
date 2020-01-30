@@ -22,7 +22,9 @@ class ApplicationRecord < ActiveRecord::Base
 
   self.abstract_class = true
 
-  def to_param
-    ref
+  if respond_to?(:ref)
+    def to_param
+      ref
+    end
   end
 end
