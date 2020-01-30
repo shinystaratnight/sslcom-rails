@@ -24,7 +24,7 @@ class ApplicationRecord < ActiveRecord::Base
 
   if respond_to?(:ref)
     def to_param
-      ref
+      ref unless respond_to?(:to_param)
     end
   end
 end
