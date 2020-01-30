@@ -772,7 +772,7 @@ class CertificateOrder < ApplicationRecord
   memoize :certificate
 
   def signed_certificate
-    signed_certificates.order(:created_at).last
+    signed_certificates.order(:created_at).first
   end
 
   def attestation_certificate
