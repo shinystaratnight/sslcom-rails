@@ -101,7 +101,7 @@ class ApplicationController < ActionController::Base
               elsif reseller_tier_cookie
                 ResellerTier.tier_suffix(reseller_tier_cookie)
               elsif id = params[:reseller_id]
-                Reseller.find(id)&.tier_suffix
+                Reseller.find(id)&.ssl_account&.tier_suffix
               end
   end
 
