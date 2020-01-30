@@ -21,4 +21,10 @@ class ApplicationRecord < ActiveRecord::Base
   include Acts::As::Publishable
 
   self.abstract_class = true
+
+  if respond_to?(:ref)
+    def to_param
+      ref unless respond_to?(:to_param)
+    end
+  end
 end

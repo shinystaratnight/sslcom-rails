@@ -510,10 +510,6 @@ class Certificate < ApplicationRecord
         c.product=~Regexp.new(tier)}
   end
 
-  def to_param
-    product_root
-  end
-
   def has_locked_registrant?
     is_code_signing? || is_ev? || is_ov?
   end
