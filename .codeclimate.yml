@@ -25,6 +25,13 @@ plugins:
     enabled: true
   rubocop:
     enabled: true
+    checks:
+      Rubocop/Layout/AlignHash:
+        enabled: false
+      Rubocop/Lint/UselessAssignment:
+        enabled: false
+      Rubocop/Metrics/BlockNesting:
+        enabled: false
   sass-lint:
     enabled: true
 
