@@ -94,17 +94,10 @@ class ApplicationController < ActionController::Base
   end
 
   def find_tier
-    @tier = ''
-    # tier_label = ->(label){ ('-' unless /\A\d\z/.match?(label)).to_s + label + 'tr' } # add '-' for non single digit tier due to flexible labeling
-    if @certificate_order && @certificate_order.ssl_account.try(:tier_suffix).present?
-      @tier = @certificate_order.ssl_account.tier_suffix
-    elsif current_user&.ssl_account&.tier_suffix
-      @tier = current_user.ssl_account.tier_suffix
-    elsif cookies[ResellerTier::TIER_KEY]
-      @tier = ResellerTier.tier_suffix(cookies[ResellerTier::TIER_KEY])
-    end
-    @tier = nil if @tier.blank?
-    @tier
+    @tier ||= @certificate_order&.tier_suffix
+    @tier ||= current_user&.tier_suffix
+    @tier ||= ResellerTier.tier_suffix(reseller_tier_cookie) if reseller_tier_cookie.present?
+    @tier ||= reseller&.tier_suffix
   end
 
   def add_to_cart(line_item)
@@ -491,6 +484,18 @@ class ApplicationController < ActionController::Base
   end
 
   private
+
+  def pricing_params
+    params.require(:reseller).permit(:id)
+  end
+
+  def reseller
+    @reseller ||= User.find(pricing_params[:id]) unless pricing_params[:id].blank?
+  end
+
+  def reseller_tier_cookie
+    cookies[ResellerTier::TIER_KEY]
+  end
 
   def get_team_tags
     @team_tags ||= if @taggable

@@ -121,6 +121,8 @@ class User < ApplicationRecord
 
   scope :search_super_user, -> {joins{roles}.where{roles.name == Role::SUPER_USER}}
 
+  delegate :tier_suffix, to: :ssl_account, prefix: false
+
   def ssl_account(default_team=nil)
     SslAccount.find_by_id(Rails.cache.fetch("#{cache_key}/ssl_account/#{default_team.is_a?(Symbol) ? default_team.to_s : default_team.try(:cache_key)}") do
       default_ssl = default_ssl_account && is_approved_account?(default_ssl_account)

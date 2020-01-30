@@ -99,6 +99,8 @@ Metrics/LineLength:
 Metrics/ModuleLength:
   Enabled: false
 
+Naming/MemoizedInstanceVariableName:
+  Enabled: false
 Naming/FileName:
   Exclude:
     - lib/rubocop-rails.rb

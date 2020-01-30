@@ -55,7 +55,7 @@ class ResellerTier < ApplicationRecord
   end
 
   def self.tier_suffix(label)
-    "#{'-' unless (label =~/\A(\d)\z/ and $1.to_i < 6)}"+label + 'tr' #add '-' for non single digit tier due to flexible labeling
+    "#{'-' unless (label =~ /\A(\d)\z/ and $1.to_i < 6)}#{label}tr" # add '-' for non single digit tier due to flexible labeling
   end
 
   def to_param
