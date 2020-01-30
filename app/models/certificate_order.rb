@@ -36,7 +36,7 @@
 class CertificateOrder < ApplicationRecord
   extend Memoist
   include V2MigrationProgressAddon
-  #using_access_control
+
   acts_as_sellable :cents => :amount, :currency => false
   belongs_to  :ssl_account, touch: true
   belongs_to  :folder, touch: true
@@ -46,15 +46,13 @@ class CertificateOrder < ApplicationRecord
   has_many    :validation_histories, through: :validation
   belongs_to  :site_seal
   belongs_to  :parent, class_name: 'CertificateOrder', :foreign_key=>:renewal_id
-  has_one     :renewal, class_name: 'CertificateOrder', :foreign_key=>:renewal_id,
-              :dependent=>:destroy #represents a child renewal
+  has_one     :renewal, class_name: 'CertificateOrder', :foreign_key=>:renewal_id, :dependent=>:destroy #represents a child renewal
   has_many    :renewal_attempts
   has_many    :renewal_notifications
   has_many    :cdns
   has_many    :certificate_contents, :dependent => :destroy, after_add: Proc.new { |p, d| p.certificate_content(true)}
   has_many    :certificate_names, through: :certificate_contents
-  has_one     :locked_recipient, class_name: 'LockedRecipient',
-              as: :contactable, dependent: :destroy
+  has_one     :locked_recipient, class_name: 'LockedRecipient', as: :contactable, dependent: :destroy
   has_many    :registrants, through: :certificate_contents
   has_many    :locked_registrants, through: :certificate_contents
   has_many    :certificate_contacts, through: :certificate_contents
@@ -80,12 +78,9 @@ class CertificateOrder < ApplicationRecord
   has_many    :sub_order_items, :as => :sub_itemable, :dependent => :destroy
   has_many    :product_variant_items, through: :sub_order_items, :dependent => :destroy
   has_many    :orders, :through => :line_items, unscoped: true
-  has_many    :other_party_validation_requests, class_name: "OtherPartyValidationRequest",
-              as: :other_party_requestable, dependent: :destroy
+  has_many    :other_party_validation_requests, class_name: "OtherPartyValidationRequest", as: :other_party_requestable, dependent: :destroy
   has_many    :ca_retrieve_certificates, as: :api_requestable, dependent: :destroy
   has_many    :ca_mdc_statuses, as: :api_requestable
-  #has_many    :client_order_certificate_requests, class_name: "ClientOrderCertificateRequest",
-  #            as: :api_requestable, dependent: :destroy
   has_many    :jois, as: :contactable, class_name: 'Joi' # for SSL.com EV; rw by vetting agents, r by customer
   has_many    :app_reps, as: :contactable, class_name: 'AppRep' # for SSL.com OV and EV; rw by vetting agents, r by customer
   has_many    :physical_tokens
@@ -104,20 +99,15 @@ class CertificateOrder < ApplicationRecord
   attr_accessor :duration, :has_csr
 
   # the following only apply to api calls
-  attr_accessor :certificate_url, :receipt_url, :smart_seal_url, :validation_url, :dcv_method,
-      :dcv_email_address, :dcv_candidate_addresses
+  attr_accessor :certificate_url, :receipt_url, :smart_seal_url, :validation_url, :dcv_method, :dcv_email_address, :dcv_candidate_addresses
 
-  #will_paginate
-  cattr_accessor :per_page
-  @@per_page = 10
-
-  #used to temporarily determine lineitem qty
+  # used to temporarily determine lineitem qty
   attr_accessor :quantity
   preference  :payment_order, :string, :default=>"normal"
   preference  :certificate_chain, :string
 
-  #if the customer has not used this certificate order with a period of time
-  #it becomes expired and invalid
+  # if the customer has not used this certificate order with a period of time
+  # it becomes expired and invalid
   alias_attribute  :expired, :is_expired
 
   if Proc.new{|co|co.migrated_from_v2?}
@@ -1320,10 +1310,6 @@ class CertificateOrder < ApplicationRecord
     SystemAudit.create(owner: nil, target: nil,
                        notes: "",
                        action: "CertificateOrder#retrieve_ca_certs(#{start},#{finish},#{options.to_s})")
-  end
-
-  def to_param
-    ref
   end
 
   def last_dcv_sent

@@ -21,4 +21,8 @@ class ApplicationRecord < ActiveRecord::Base
   include Acts::As::Publishable
 
   self.abstract_class = true
+
+  def to_param
+    ref
+  end
 end

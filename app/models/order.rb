@@ -15,8 +15,7 @@ class Order < ApplicationRecord
   belongs_to  :invoice, class_name: "Invoice", foreign_key: :invoice_id
   belongs_to  :reseller_tier, foreign_key: :reseller_tier_id
   has_many    :line_items, dependent: :destroy, after_add: Proc.new { |p, d| p.amount += d.amount}
-  has_many    :certificate_orders, through: :line_items, :source => :sellable,
-              :source_type => 'CertificateOrder', unscoped: true
+  has_many    :certificate_orders, through: :line_items, :source => :sellable, :source_type => 'CertificateOrder', unscoped: true
   has_many    :payments
   has_many    :transactions, class_name: 'OrderTransaction', dependent: :destroy
   has_many    :refunds, dependent: :destroy
@@ -25,10 +24,6 @@ class Order < ApplicationRecord
   has_many    :tags, through: :taggings
   has_and_belongs_to_many    :discounts
 
-  #will_paginate
-  cattr_accessor :per_page
-  @@per_page = 10
-
   money :amount, cents: :cents
   money :wildcard_amount, cents: :wildcard_cents
   money :non_wildcard_amount, cents: :non_wildcard_cents
@@ -36,8 +31,8 @@ class Order < ApplicationRecord
   before_create :total, :determine_description
   after_create :generate_reference_number, :commit_discounts, :domains_adjustment_notice
 
-  #is_free? is used to as a way to allow orders that are not charged (ie cent==0)
-  attr_accessor  :is_free, :receipt, :deposit_mode, :temp_discounts
+  # is_free? is used to as a way to allow orders that are not charged (ie cent==0)
+  attr_accessor :is_free, :receipt, :deposit_mode, :temp_discounts
 
   after_initialize do
     if new_record?
