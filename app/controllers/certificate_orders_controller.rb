@@ -547,9 +547,8 @@ class CertificateOrdersController < ApplicationController
           else
             edit_certificate_order_path(@ssl_slug, @certificate_order)
           end
-          #Confirm this change to see if its breaking or not.
-          @certificate = @certificate_order.certificate
-          format.html { render 'submit_csr', layout: 'application' }
+          flash[:error] = "Please correct errors in this step. #{@certificate_content.errors.full_messages.join(', ')}."
+          format.html { redirect_to path }
         else
           @certificate = @certificate_order.certificate
           format.html { render 'submit_csr', layout: 'application' }

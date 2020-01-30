@@ -593,7 +593,7 @@
           %span
             =Money.new(nonwildcard_cost).format
           %span{id: 'nonwildcard-current-count'}
-      
+
       -unless @certificate_order.certificate.is_ev?
         -wildcard_cost = @certificate_order.ucc_prorated_domain(:wildcard, @tier)
         %br

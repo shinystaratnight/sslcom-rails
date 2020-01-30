@@ -3,17 +3,8 @@ require 'test_helper'
 describe CertificateOrdersController do
   # Note to developers: Extract this logic into cleaner FactoryBot setup
   before do
-    unless ReminderTrigger.count == 5
-      (1..5).to_a.each { |i| ReminderTrigger.create(id: i, name: i) }
-    end
-
-    unless Role.count == 11
-      [:account_admin, :billing, :installer, :owner, :reseller,
-       :super_user, :sysadmin, :users_manager, :validations,
-       :ra_admin, :individual_certificate].each do |trait|
-         create(:role, trait)
-       end
-    end
+    initialize_roles
+    initialize_triggers
 
     @user = create(:user, :owner)
     login_as(@user)
@@ -156,8 +147,7 @@ describe CertificateOrdersController do
           }
 
           put :update_csr, params
-          assert_template :submit_csr
-          assert_select 'div.errorExplanation', flash[:error]
+          assert flash[:error]
         end
 
         it 'rejects numerical ip addresses for ev ucc certificates in the additional_domains parameter' do
@@ -178,8 +168,7 @@ describe CertificateOrdersController do
           }
 
           put :update_csr, params
-          assert_template :submit_csr
-          assert_select 'div.errorExplanation', flash[:error]
+          assert flash[:error]
         end
       end
     end
