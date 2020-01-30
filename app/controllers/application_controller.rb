@@ -98,8 +98,8 @@ class ApplicationController < ActionController::Base
                 @certificate_order&.tier_suffix
               elsif current_user&.tier_suffix
                 current_user.tier_suffix
-              elsif cookies[ResellerTier::TIER_KEY]
-                ResellerTier.tier_suffix(cookies[ResellerTier::TIER_KEY])
+              elsif reseller_tier_cookie
+                ResellerTier.tier_suffix(reseller_tier_cookie)
               elsif id = params[:reseller_id]
                 Reseller.find(id)&.tier_suffix
               end
