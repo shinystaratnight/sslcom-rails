@@ -25,8 +25,6 @@ plugins:
     enabled: true
   rubocop:
     enabled: true
-    config:
-      file: .rubocop-cc.yml
   sass-lint:
     enabled: true
 

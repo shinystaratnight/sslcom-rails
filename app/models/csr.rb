@@ -76,10 +76,6 @@ class Csr < ApplicationRecord
   # validates_presence_of :common_name, :if=> "!body.blank?", :message=> "field blank. Invalid csr."
   # validates_uniqueness_of :unique_value, scope: :public_key_sha1
 
-  #will_paginate
-  cattr_accessor :per_page
-  @@per_page = 10
-
   scope :sslcom, ->{joins{certificate_content}.where.not certificate_contents: {ca_id: nil}}
 
   scope :search, lambda { |term|
@@ -127,12 +123,7 @@ class Csr < ApplicationRecord
   after_save do |c|
     c.certificate_content.touch unless c.certificate_content.blank?
     c.certificate_order.touch unless c.certificate_content.blank?
-
   end
-
-  # def to_param
-  #   ref
-  # end
 
   def unique_value
     if certificate_content.blank? or certificate_content.ca.blank?

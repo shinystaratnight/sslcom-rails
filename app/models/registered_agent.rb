@@ -6,10 +6,6 @@ class RegisteredAgent < ApplicationRecord
 
   attr_accessor :api_status, :reason
 
-  # will_paginate
-  cattr_accessor :per_page
-  @@per_page = 10
-
   scope :search_with_terms, lambda { |term|
     term ||= ""
     term = term.strip.split(/\s(?=(?:[^']|'[^']*')*$)/)
@@ -88,9 +84,5 @@ class RegisteredAgent < ApplicationRecord
 
   before_create do |ra|
     ra.ref = 'sm-' + SecureRandom.hex(1) + Time.now.to_i.to_s(32)
-  end
-
-  def to_param
-    ref
   end
 end

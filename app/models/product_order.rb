@@ -11,7 +11,7 @@ class ProductOrder < ApplicationRecord
       :sub_product_order_id, join_table: 'product_orders_sub_product_orders' # this order has other order(s)
   #will_paginate
   cattr_reader :per_page
-  @@per_page = 10
+  
 
   #used to temporarily determine lineitem qty
   attr_accessor :quantity
@@ -407,10 +407,6 @@ class ProductOrder < ApplicationRecord
         self.orphaned_certificate_contents remove: true
       end
     end
-  end
-
-  def to_param
-    ref
   end
 
   def last_dcv_sent

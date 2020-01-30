@@ -2,36 +2,21 @@ class NotificationGroup < ApplicationRecord
   belongs_to :ssl_account
 
   has_many  :notification_groups_contacts, dependent: :destroy
-  has_many  :contacts, through: :notification_groups_contacts,
-            source: :contactable, source_type: 'Contact'
+  has_many  :contacts, through: :notification_groups_contacts, source: :contactable, source_type: 'Contact'
   has_many  :notification_groups_subjects, dependent: :destroy
-  has_many  :certificate_orders, through: :notification_groups_subjects,
-            source: :subjectable, source_type: 'CertificateOrder'
-  has_many  :certificate_contents, through: :notification_groups_subjects,
-            source: :subjectable, source_type: 'CertificateContent'
-  has_many  :certificate_names, through: :notification_groups_subjects,
-            source: :subjectable, source_type: 'CertificateName'
+  has_many  :certificate_orders, through: :notification_groups_subjects, source: :subjectable, source_type: 'CertificateOrder'
+  has_many  :certificate_contents, through: :notification_groups_subjects, source: :subjectable, source_type: 'CertificateContent'
+  has_many  :certificate_names, through: :notification_groups_subjects, source: :subjectable, source_type: 'CertificateName'
   has_many  :schedules
   has_many  :scan_logs
 
   attr_accessor :ssl_client
 
-  preference  :notification_group_triggers, :string
-
-  # validates :friendly_name, allow_nil: false, allow_blank: false,
-  #           length: { minimum: 1, maximum: 255 }
+  preference :notification_group_triggers, :string
 
   before_create do |ng|
     ng.ref = 'ng-' + SecureRandom.hex(1) + Time.now.to_i.to_s(32)
     ng.friendly_name = ng.ref if ng.friendly_name.blank?
-  end
-
-  # will_paginate
-  cattr_accessor :per_page
-  @@per_page = 10
-
-  def to_param
-    ref
   end
 
   def self.auto_manage_email_address(cc, cud, contacts=[])

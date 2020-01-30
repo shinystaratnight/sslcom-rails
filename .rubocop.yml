@@ -2,8 +2,6 @@
 
 require:
   - rubocop/cop/internal_affairs
-  - rubocop-rails
-  - rubocop-minitest
 
 AllCops:
   Exclude:
@@ -13,10 +11,7 @@ AllCops:
     - 'bin/*'
     - 'config/**/*.yml'
     - 'db/**/*'
-  TargetRubyVersion: 2.6
-
-Rails:
-  Enabled: true
+  TargetRubyVersion: 2.5
 
 Style/FormatStringToken:
   Enabled: false
@@ -47,14 +42,6 @@ Security/Eval:
     - app/models/notification_group.rb
     - app/models/ssl_account.rb
 
-Layout/HashAlignment:
-  EnforcedHashRocketStyle:
-    - key
-    - table
-  EnforcedColonStyle:
-    - key
-    - table
-
 Layout/EndOfLine:
   EnforcedStyle: lf
 
@@ -73,10 +60,6 @@ Layout/ClassStructure:
       - instance_methods
       - protected_methods
       - private_methods
-
-# Trailing white space is meaningful in code examples
-Layout/TrailingWhitespace:
-  AllowInHeredoc: true
 
 Layout/SpaceBeforeBlockBraces:
   Enabled: false
@@ -113,22 +96,6 @@ Lint/ShadowingOuterLocalVariable:
 Metrics/LineLength:
   Enabled: false
 
-Rails/Output:
-  Enabled: false
-Rails/HasAndBelongsToMany:
-  Enabled: false
-Rails/RelativeDateConstant:
-  Enabled: false
-Rails/SkipsModelValidations:
-  Enabled: false
-Rails/HasManyOrHasOneDependent:
-  Enabled: false
-Rails/InverseOf:
-  Enabled: false
-Rails/LexicallyScopedActionFilter:
-  Exclude:
-    - app/controllers/application_controller.rb
-
 Metrics/ModuleLength:
   Enabled: false
 
@@ -136,13 +103,7 @@ Naming/FileName:
   Exclude:
     - lib/rubocop-rails.rb
 
-Naming/MethodParameterName:
-  Enabled: false
 Naming/PredicateName:
   Enabled: false
 Naming/AccessorMethodName:
   Enabled: false
-Naming/MemoizedInstanceVariableName:
-  Exclude:
-    - app/controllers/application_controller.rb
-

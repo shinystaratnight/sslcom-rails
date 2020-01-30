@@ -74,7 +74,8 @@ gem 'u2f'
 gem 'wicked_pdf'
 # gem 'simple_captcha2', require: 'simple_captcha'
 gem 'acts_as_tree'
-gem 'font-awesome-rails'
+gem 'font_awesome5_rails'
+
 gem 'recaptcha', require: 'recaptcha/rails'
 gem 'where-or'
 gem 'whois', '~> 4.0'
@@ -110,6 +111,9 @@ gem 'slim-rails'
 gem 'turbolinks'
 gem 'yui-compressor'
 
+gem 'carrierwave', '< 2.0'
+gem 'rmagick'
+
 group :development do
   gem 'annotate'
   gem 'dotenv-rails'
@@ -134,6 +138,7 @@ group :development, :test do
   gem 'pry-remote'
   gem 'rubocop', require: false
   gem 'rubocop-minitest'
+  gem 'rubocop-performance'
   gem 'rubocop-rails'
   gem 'ruby-odbc'
   gem 'ruby_parser'
@@ -141,6 +146,7 @@ group :development, :test do
 end
 
 group :test do
+  gem 'carrierwave_asserts', git: 'https://github.com/hcfairbanks/carrierwave_asserts'
   gem 'database_cleaner'
   gem 'faker'
   gem 'minitest-bang', require: false

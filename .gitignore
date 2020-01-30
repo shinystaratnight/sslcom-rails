@@ -38,3 +38,4 @@ test/.nyc_output
 test/cypress/videos
 test/reports
 test/cypress/screenshots/authentication_spec.js
+public/uploads
