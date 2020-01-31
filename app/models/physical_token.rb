@@ -25,7 +25,7 @@
 
 class PhysicalToken < ApplicationRecord
   MAKE_AND_MODELS={Gemalto: %w(5100\ eToken), Yubico: %w(Yubikey\ FIPS\ 140-2)}
-  CARRIERS = ['Not Yet Shipped', 'FedEx', 'UPS', 'USPS', 'DHL', 'in-person']
+  CARRIERS = ['Not Yet Shipped', 'FedEx', 'UPS', 'USPS', 'DHL', 'in-person'].freeze
 
   belongs_to :certificate_order
   belongs_to :signed_certificate
