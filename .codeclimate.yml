@@ -23,6 +23,9 @@ plugins:
     enabled: true
   reek:
     enabled: true
+    checks:
+      NilCheck:
+        enabled: false
   rubocop:
     enabled: true
     checks:

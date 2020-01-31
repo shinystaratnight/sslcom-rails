@@ -76,6 +76,7 @@ jobs:
                     AWS_ACCESS_KEY_ID: ''
                     AWS_SECRET_ACCESS_KEY: ''
                     S3_BUCKET_NAME: ''
+                    S3_AVATAR_BUCKET_NAME: ''
                     AWS_DEFAULT_REGION: ''
                     DUO_INTEGRATION_KEY: '${DUO_INTEGRATION_KEY}'
                     DUO_SECRET_KEY: '${DUO_SECRET_KEY}'
