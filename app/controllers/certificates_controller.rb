@@ -8,7 +8,7 @@ class CertificatesController < ApplicationController
     only: [:show, :buy, :pricing, :buy_renewal]
   before_filter :find_certificate_by_id,
     only: [:edit, :update, :manage_product_variants]
-  filter_access_to :edit, :update, :manage_product_variants, 
+  filter_access_to :edit, :update, :manage_product_variants,
     attribute_check: true
   filter_access_to :buy_renewal, :new, :admin_index, :create
   layout false, only: [:pricing]
@@ -75,7 +75,7 @@ class CertificatesController < ApplicationController
     prep_purchase
     respond_to do |format|
       unless @certificate.blank?
-        format.html { render action: :buy}
+        format.html { render 'certificate_orders/submit_csr'}
         format.xml  { render :xml => @certificate}
       else
         format.html {not_found}
@@ -112,11 +112,11 @@ class CertificatesController < ApplicationController
       end
     end
   end
-  
+
   def new
     @certificate = Certificate.new
   end
-  
+
   def edit
   end
 
@@ -132,7 +132,7 @@ class CertificatesController < ApplicationController
         error: "Failed to update certificate due to errors: #{@certificate.errors.full_messages.join(', ')}."
     end
   end
-  
+
   def create
     parse_params
     @certificate = Certificate.new(@new_params)
@@ -142,7 +142,7 @@ class CertificatesController < ApplicationController
       log_system_audit(:create)
       mpv_redirect_to_cert
     else
-      render :new, 
+      render :new,
         error: "Failed to create certificate due to errors: #{@certificate.errors.full_messages.join(', ')}."
     end
   end
@@ -166,13 +166,13 @@ class CertificatesController < ApplicationController
       end
     end
   end
-  
+
   def admin_index
     @certificates = Certificate.all.sort_with(params)
     @certificates = @certificates.index_filter(params) if params[:commit]
     @certificates = @certificates.paginate(page: params[:page], per_page: 25)
   end
-  
+
   private
 
   def mpv_delete_group
@@ -285,7 +285,7 @@ class CertificatesController < ApplicationController
       @certificate.cas << (Ca.where(id: cas) - exist_cas)
     else
       @certificate.cas_certificates.destroy_all
-    end  
+    end
   end
 
   def log_system_audit(type)

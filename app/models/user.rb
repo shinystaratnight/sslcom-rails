@@ -3,6 +3,8 @@ class User < ApplicationRecord
   # include V2MigrationProgressAddon
   include UserMessageable
 
+  mount_uploader :avatar, AvatarUploader
+
   swagger_schema :CreateUser do
     key :required, [:login, :email, :password]
     property :account_key do
@@ -67,10 +69,6 @@ class User < ApplicationRecord
   preference  :team_row_count, :string, :default => "10"
   preference  :validate_row_count, :string, :default => "10"
   preference  :managed_csr_row_count, :string, :default => "10"
-
-  #will_paginate
-  cattr_accessor :per_page
-  @@per_page = 10
 
   attr_accessor :changing_password, :admin_update, :role_ids, :role_change_type
   attr_accessible :login, :email, :password, :password_confirmation,

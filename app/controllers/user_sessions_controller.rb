@@ -58,12 +58,12 @@ class UserSessionsController < ApplicationController
   end
 
   def create
-    if params['prev.x'.intern]
-      # assume trying to login during checkout
+    if params["prev.x".intern]
+      #assume trying to login during checkout
       if params[:certificate_order]
         @certificate_order = CertificateOrder.new(params[:certificate_order])
         @certificate_order.has_csr = true
-        render(template: '/certificates/buy', layout: 'application') if params['prev.x'.intern]
+        render(template: 'certificat_orders/submit_csr', layout: 'application') if params['prev.x'.intern]
       else
         redirect_to(show_cart_orders_url) && return
       end

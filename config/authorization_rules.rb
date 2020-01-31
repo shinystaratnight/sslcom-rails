@@ -22,13 +22,13 @@ authorization do
     ] do
       if_attribute role_can_manage: is_in {user.roles.ids}
     end
-    has_permission_on :authorization_rules, :to => :read
+    has_permission_on :authorization_rules, to:  :read
     has_permission_on :site_seals, :validation_rules, :certificate_orders,
-      :to => :sysadmin_manage, except: :delete
+      to:  :sysadmin_manage, except: :delete
     has_permission_on :affiliates, :certificate_orders, :domains, :cdns, :csrs, :orders, :signed_certificates, :surls, :physical_tokens,
-      :to => :manage
+      to:  :manage
     has_permission_on :managed_users, :ssl_accounts, :validations, :validation_histories,
-      :to => :sysadmin_manage
+      to:  :sysadmin_manage
     has_permission_on :resellers,    to: [:create, :read, :update]
     has_permission_on :orders,       to: [:refund_merchant, :update_invoice, :revoke]
     #
@@ -49,7 +49,7 @@ authorization do
     #
     # Users
     #
-    has_permission_on :users, :to => :sysadmin_manage
+    has_permission_on :users, to:  :sysadmin_manage
     #
     # Invoices
     #
@@ -92,24 +92,28 @@ authorization do
     #
     # SslAccounts
     #
-    has_permission_on :ssl_accounts, :to => [:create, :update]
-    has_permission_on :ssl_accounts, :to => :admin_manage do
+    has_permission_on :ssl_accounts, to: [:create, :update]
+    has_permission_on :ssl_accounts, to:  :admin_manage do
       if_attribute get_account_owner: is {user}
     end
     #
     # FundedAccounts
     #
-    has_permission_on :funded_accounts, :to => :create
+    has_permission_on :funded_accounts, to:  :create
     #
     # ManagedUsers
     #
-    has_permission_on :managed_users, :to => [
+    has_permission_on :managed_users, to: [
       :edit, :read, :remove_from_account, :update_roles
     ], join_by: :and do
       if_attribute id: is_not {user.id}
       if_attribute id: is_in  {user.ssl_account.cached_users.map(&:id).uniq}
       if_attribute :ssl_accounts => contains {user.ssl_account}
     end
+    #
+    # Users
+    #
+    has_permission_on :users, to: [:upload_avatar]
   end
 
   # ============================================================================
@@ -155,12 +159,12 @@ authorization do
     #
     # SslAccounts
     #
-    has_permission_on :ssl_accounts, :to => [:create, :validate_ssl_slug, :update]
-    has_permission_on :ssl_accounts, :to => :update_ssl_slug, join_by: :and do
+    has_permission_on :ssl_accounts, to: [:create, :validate_ssl_slug, :update]
+    has_permission_on :ssl_accounts, to:  :update_ssl_slug, join_by: :and do
       if_attribute :id => is {user.ssl_account.id},
                    ssl_slug: is {nil}
     end
-    has_permission_on :ssl_accounts, :to => [
+    has_permission_on :ssl_accounts, to: [
       :edit_settings,
       :read,
       :update,
@@ -172,11 +176,11 @@ authorization do
     #
     # FundedAccounts
     #
-    has_permission_on :funded_accounts, :to => :create
+    has_permission_on :funded_accounts, to:  :create
     #
     # ManagedUsers
     #
-    has_permission_on :managed_users, :to => [
+    has_permission_on :managed_users, to: [
       :edit, :read, :remove_from_account, :update_roles
     ], join_by: :and do
       if_attribute id: is_not {user.id}
@@ -186,7 +190,7 @@ authorization do
     #
     # Users
     #
-    has_permission_on :users, :to => [:enable_disable, :enable_disable_duo, :delete], join_by: :and do
+    has_permission_on :users, to: [:enable_disable, :enable_disable_duo, :delete], join_by: :and do
       if_attribute id: is_not {user.id}
       if_attribute id: is_in  {user.ssl_account.cached_users.map(&:id).uniq}
       if_attribute total_teams_owned: does_not_contain {user.ssl_account}
@@ -226,8 +230,8 @@ authorization do
     #
     # ManagedUsers
     #
-    has_permission_on :managed_users, :to => :create
-    has_permission_on :managed_users, :to => [
+    has_permission_on :managed_users, to:  :create
+    has_permission_on :managed_users, to: [
       :edit, :read, :remove_from_account, :update_roles
     ], join_by: :and do
       # cannot on users w/roles account_admin|owner|sysadmin|reseller OR self
@@ -238,8 +242,8 @@ authorization do
     #
     # Users
     #
-    has_permission_on :users, :to => [:create, :read]
-    has_permission_on :users, :to => [:enable_disable, :enable_disable_duo, :delete], join_by: :and do
+    has_permission_on :users, to: [:create, :read]
+    has_permission_on :users, to: [:enable_disable, :enable_disable_duo, :delete], join_by: :and do
       if_attribute id: is_not {user.id}
       if_attribute id: is_in  {user.ssl_account.cached_users.map(&:id).uniq}
       if_attribute total_teams_cannot_manage_users: contains {user.ssl_account}
@@ -247,11 +251,11 @@ authorization do
     #
     # FundedAccounts
     #
-    has_permission_on :funded_accounts, :to => :create
+    has_permission_on :funded_accounts, to:  :create
     #
     # SslAccounts
     #
-    has_permission_on :ssl_accounts, :to => [:create, :validate_ssl_slug]
+    has_permission_on :ssl_accounts, to: [:create, :validate_ssl_slug]
   end
 
   # ============================================================================
@@ -283,7 +287,7 @@ authorization do
     #  most routes do not use 'id' in params to denote funded_account id
     #  so attribute_check is not possible.
     #
-    has_permission_on :funded_accounts, :to => [
+    has_permission_on :funded_accounts, to: [
         :create,
         :create_free_ssl,
         :read,
@@ -298,17 +302,17 @@ authorization do
     # CertificateOrders
     #
     has_permission_on :certificate_orders, to: :smime_client_enrollment
-    has_permission_on :certificate_orders, :to => [:create, :read, :show] do
+    has_permission_on :certificate_orders, to: [:create, :read, :show] do
       if_attribute ssl_account: is {user.ssl_account}
     end
-    has_permission_on :certificates, :to => [:buy_renewal]
+    has_permission_on :certificates, to: [:buy_renewal]
     #
     # Orders
     #
     has_permission_on :orders, to: :transfer_order do
       if_attribute :billable => is_in {user.ssl_accounts}
     end
-    has_permission_on :orders, :to => [
+    has_permission_on :orders, to: [
         :create,
         :create_free_ssl,
         :create_multi_free_ssl,
@@ -342,18 +346,18 @@ authorization do
       if_attribute assignee_id: is {user.id}
     end
 
-    has_permission_on :signed_certificates, :to => [:show] do
+    has_permission_on :signed_certificates, to: [:show] do
       if_attribute :csr => {:certificate_content => {:certificate_order => {
           :assignee_id => is {user.id}}}
       }
     end
 
-    has_permission_on :physical_tokens, :to => [:read] do
+    has_permission_on :physical_tokens, to: [:read] do
       if_attribute certificate_order_id: is_in {user.ssl_account.cached_certificate_orders.map(&:id).uniq
       }
     end
 
-    has_permission_on :site_seals, :certificate_contents, :to => [:read, :update] do
+    has_permission_on :site_seals, :certificate_contents, to: [:read, :update] do
       if_permitted_to :update, :certificate_order
     end
   end
@@ -380,12 +384,12 @@ authorization do
     #
     # Csrs
     #
-    has_permission_on :csrs, :to => :create
-    has_permission_on :csrs, :to => [:update, :delete] do
+    has_permission_on :csrs, to:  :create
+    has_permission_on :csrs, to: [:update, :delete] do
       if_permitted_to :update, :certificate_content
     end
 
-    has_permission_on :certificates, :to => :read
+    has_permission_on :certificates, to:  :read
     #
     # CertificateOrders
     #
@@ -402,22 +406,22 @@ authorization do
       if_attribute ssl_account: is {user.ssl_account}
     end
 
-    has_permission_on :contacts, :to => [:read, :update, :delete] do
+    has_permission_on :contacts, to: [:read, :update, :delete] do
       if_attribute :contactable => is_in {user.ssl_account.certificate_contacts}
     end
 
-    has_permission_on :signed_certificates, :to => [:show] do
+    has_permission_on :signed_certificates, to: [:show] do
       if_attribute :csr => {:certificate_content => {:certificate_order => {
           :ssl_account => is {user.ssl_account}}}
       }
     end
 
-    has_permission_on :physical_tokens, :to => [:read] do
+    has_permission_on :physical_tokens, to: [:read] do
       if_attribute certificate_order_id: is_in {user.ssl_account.cached_certificate_orders.map(&:id).uniq
       }
     end
 
-    has_permission_on :site_seals, :certificate_contents, :to => [:read, :update] do
+    has_permission_on :site_seals, :certificate_contents, to: [:read, :update] do
       if_permitted_to :update, :certificate_order
     end
   end
@@ -430,20 +434,20 @@ authorization do
     #
     # Validations
     #
-    has_permission_on :validations, :to => [:read, :update, :create, :dcv_validate] do
+    has_permission_on :validations, to: [:read, :update, :create, :dcv_validate] do
       if_attribute :users => contains {user}
     end
     has_permission_on :validations, to: :upload_for_registrant
     #
     # ValidationHistories
     #
-    has_permission_on :validation_histories, :to => :manage, :except=>:delete do
+    has_permission_on :validation_histories, to:  :manage, :except=>:delete do
       if_attribute :ssl_accounts => contains {user.ssl_account}
     end
     #
     # SiteSeals 
     #
-    has_permission_on :site_seals, :to => [:create, :read, :update]
+    has_permission_on :site_seals, to: [:create, :read, :update]
     #
     # SignedCertificates 
     #
@@ -470,26 +474,26 @@ authorization do
     #
     # Users
     #
-    has_permission_on :users, :to => :enable_disable, join_by: :and do
+    has_permission_on :users, to:  :enable_disable, join_by: :and do
       if_attribute id: is_not {user.id}
       if_attribute id: is_in {user.ssl_account.cached_users.map(&:id).uniq}
     end
-    has_permission_on :users, :to => [:create, :show, :update] do
+    has_permission_on :users, to: [:create, :show, :update] do
       if_attribute :id => is {user.id}
     end
-    has_permission_on :users, :to => :create_team do
+    has_permission_on :users, to:  :create_team do
       if_attribute max_teams_reached?: is {false}
     end
     #
     # Other
     # 
-    has_permission_on :resellers, :to => [:create, :read, :update] do
+    has_permission_on :resellers, to: [:create, :read, :update] do
       if_attribute :ssl_account => is {user.ssl_account}
     end
-    has_permission_on :affiliates, :to => [:create, :read, :update] do
+    has_permission_on :affiliates, to: [:create, :read, :update] do
       if_attribute :ssl_account => is {user.ssl_account}
     end
-    has_permission_on :other_party_validation_requests, :to => [:create, :show]
+    has_permission_on :other_party_validation_requests, to: [:create, :show]
   end
 
   # ============================================================================
@@ -513,7 +517,7 @@ authorization do
     # 
     # Users
     # 
-    has_permission_on :users, :to => [
+    has_permission_on :users, to: [
       :dont_show_again,
       :edit,
       :edit_email,
@@ -525,28 +529,28 @@ authorization do
     ] do
       if_attribute :id => is {user.id}
     end
-    has_permission_on :users, :to => :index do
+    has_permission_on :users, to:  :index do
       if_attribute :can_manage_team_users? => is {true}
     end
-    has_permission_on :users, :to => :switch_default_ssl_account do
+    has_permission_on :users, to:  :switch_default_ssl_account do
       if_attribute default_ssl_account: is_in {user.ssl_accounts.map(&:id)}
     end
-    has_permission_on :users, :to => :duo do
+    has_permission_on :users, to:  :duo do
       if_attribute default_ssl_account: is_in {user.ssl_accounts.map(&:id)}
     end
-    has_permission_on :users, :to => :duo_verify do
+    has_permission_on :users, to:  :duo_verify do
       if_attribute default_ssl_account: is_in {user.ssl_accounts.map(&:id)}
     end
-    has_permission_on :users, :to => :resend_account_invite do
+    has_permission_on :users, to:  :resend_account_invite do
       if_attribute ssl_account_id: is_in {user.ssl_accounts.map(&:id)}
     end
-    has_permission_on :users, :to => :approve_account_invite do
+    has_permission_on :users, to:  :approve_account_invite do
       if_attribute get_approval_tokens: is {user.get_approval_tokens}
     end
-    has_permission_on :users, :to => :decline_account_invite do
+    has_permission_on :users, to:  :decline_account_invite do
       if_attribute get_approval_tokens: is {user.get_approval_tokens}
     end
-    has_permission_on :users, :to => :set_default_team do
+    has_permission_on :users, to:  :set_default_team do
       if_attribute ssl_account: is_in {user.ssl_accounts}
     end
     # 
@@ -595,18 +599,18 @@ authorization do
   # GUEST Role
   # ============================================================================ 
   role :guest do
-    has_permission_on :csrs, :certificate_orders, :orders,  :to => [:create, :smime_client_enrollment]
-    has_permission_on :certificates,  :to => :buy_renewal
-    has_permission_on :site_seals, :to => [:site_report]
-    has_permission_on :users, :ssl_accounts, :resellers,    :to => [:create, :update]
-    has_permission_on :certificates, :to => :read
-    has_permission_on :funded_accounts, :to => [
+    has_permission_on :csrs, :certificate_orders, :orders,  to: [:create, :smime_client_enrollment]
+    has_permission_on :certificates,  to:  :buy_renewal
+    has_permission_on :site_seals, to: [:site_report]
+    has_permission_on :users, :ssl_accounts, :resellers,    to: [:create, :update]
+    has_permission_on :certificates, to:  :read
+    has_permission_on :funded_accounts, to: [
       :allocate_funds_for_order,
       :create,
       :create_free_ssl,
       :create_multi_free_ssl
     ]
-    has_permission_on :orders, :to => [
+    has_permission_on :orders, to: [
       :allocate_funds_for_order,
       :create_free_ssl,
       :create_multi_free_ssl, 
@@ -623,16 +627,16 @@ authorization do
     #
     # Users
     # 
-    has_permission_on :users, :to => :approve_account_invite do
+    has_permission_on :users, to:  :approve_account_invite do
       if_attribute get_approval_tokens: is {user.get_approval_tokens}
     end
-    has_permission_on :users, :to => :decline_account_invite do
+    has_permission_on :users, to:  :decline_account_invite do
       if_attribute get_approval_tokens: is {user.get_approval_tokens}
     end
 
     # Ajax
-    has_permission_on :certificate_orders, :to => :ajax
-    has_permission_on :validations, :to => :ajax
+    has_permission_on :certificate_orders, to:  :ajax
+    has_permission_on :validations, to:  :ajax
     #
     # CertificateEnrollmentRequests
     #

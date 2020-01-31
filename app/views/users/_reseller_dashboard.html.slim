@@ -1,0 +1,116 @@
+#dashboard
+  table(cellspacing="0")
+    caption
+      | ssl account information for #{user.login} #{"(last logged in #{user.last_login_at.strftime("%b %d, %Y")})" unless user.last_login_at.blank?}
+    tr.heading_row
+      tr.expanded
+        td(colspan="5")
+          .certificate_details
+            table(cellspacing="0")
+              tbody
+                tr.alt
+                  th account type
+                  th partner level
+                  th signup date
+                  th validation level
+                tr.alt
+                  td reseller partner
+                  td=r.reseller_tier.label
+                  td=r.created_at.strftime("%b %d, %Y") unless r.created_at.blank?
+                  td class 2
+            table(cellspacing="0")
+              tbody
+                tr
+                  td(colspan="5")
+                    .row
+                      .col-md-2
+                        = render partial: 'user_profile', locals: { user: user}
+                      .col-md-3
+                        ul
+                          li
+                            strong reseller administrator
+                          li name: #{[r.first_name, r.last_name].join(' ')} 
+                          li email: #{r.email} 
+                          li phone: #{r.phone}
+                          -unless r.ext.blank?
+                            li ext: #{r.ext}
+                          -unless r.fax.blank?
+                            li fax: #{r.fax} 
+                          li=link_to 'edit', edit_ssl_account_path(ssl_slug || params[:ssl_slug])
+                      .col-md-3
+                        ul
+                          li
+                            strong reseller profile
+                          li
+                            | \#{r.organization}
+                          li
+                            | \#{r.address1}
+                          li
+                            | \#{r.address2}
+                          li
+                            | \#{r.address3}
+                          li
+                            | \#{r.po_box}
+                          li
+                            | \#{[r.city, r.state, r.postal_code].join(', ')}
+                          li
+                            | \#{r.country}
+                          li
+                            | \#{r.website}
+                          li=link_to 'edit', edit_ssl_account_path(ssl_slug || params[:ssl_slug])
+                      .col-md-3
+                        ul
+                          -if permitted_to?(:edit, :billing_profiles)
+                            li
+                              strong billing and purchase
+                            -if permitted_to?(:create, :funded_accounts)
+                              li available funds: # ssl_account.funded_account.amount(true).format with_currency=false 
+                            -if permitted_to? :read, :orders
+                              li=link_to "billing", is_sandbox? ? search_orders_path(search:'is_test:true') : orders_path(ssl_slug: ssl_slug)
+                            li=link_to 'deposit funds', allocate_funds_url(ssl_slug: ssl_slug)
+                            -if ssl_account && permitted_to?(:index, :billing_profiles)
+                              li=link_to 'manage billing profiles', billing_profiles_path(ssl_slug: ssl_slug)
+                            li=link_to 'buy certificate', certificates_url
+                            li=link_to "s/mime or client enrollment", smime_client_enrollment_certificate_orders_path(ssl_slug: ssl_slug)
+                            li=link_to 'certificate pricing', reseller_tier_url(ssl_account.reseller.reseller_tier.id)
+                            -if ssl_account && permitted_to?(:index, :invoices) && ssl_account.invoices.any?
+                              li=link_to 'monthly and daily invoices', invoices_path(ssl_slug)
+                tr
+                  td(colspan="5")
+                    .row
+                      .col-md-2
+                      -if ac = ssl_account.api_credential
+                        .col-md-3
+                          ul
+                            li
+                              strong
+                                | developers and integration
+                            li=link_to "generate api commands", "https://www.ssl.com/how-to/pregenerated-api-calls-to-automate-certificate-management/"
+                            -if user.is_account_admin? || user.is_owner? || user.is_installer?
+                              li=link_to "api credentials", api_credentials_path(ssl_slug: ssl_slug)
+                              li=link_to "developer tools", is_sandbox? ? developers_certificate_orders_url : "https://sandbox.ssl.com"
+                              li=link_to 'view documentation', "http://docs.sslcomapi.apiary.io/", target: "_new"
+
+                      .col-md-3
+                        ul
+                          li
+                            strong
+                              | login account
+                          li username: # user.login 
+                          li email: # user.email 
+                          li account number: # ssl_account.acct_number 
+                          li roles: # user.role_symbols.join('/') 
+                          =render partial: 'ssl_slug_company', locals: {user: user}
+                          -if permitted_to? :admin_manage, user
+                            li=remote_login_link(user)
+                          li=link_to 'edit email address', edit_email_user_url(user)
+                          li=link_to 'change password', edit_password_user_url(user)
+                          -permitted_to? :edit_settings, current_user.ssl_account do
+                            li=link_to "settings", edit_settings_ssl_account_path(ssl_slug: ssl_slug)
+                      .col-md-3
+                        ul
+                          -if ssl_account && permitted_to?(:read, :contacts)
+                            li
+                              strong contacts/identities
+                            li=link_to 'contacts', saved_contacts_contacts_path(ssl_slug: ssl_slug)
+                            li=link_to 'identity manager', saved_contacts_contacts_path(ssl_slug: ssl_slug, registrants: true)

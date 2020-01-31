@@ -1,0 +1,35 @@
+#dashboard
+  table(cellspacing="0")
+    -unless user.last_login_at.blank?
+      caption
+        | ssl account information for #{user.login} (last logged in #{user.last_login_at.strftime("%b %d, %Y")})
+    tr.heading_row
+      tr.expanded
+        td(colspan="5")
+          .certificate_details
+            table(cellspacing="0")
+              tbody
+                tr.alt
+                  th account type
+                  th signup date
+                  th last logged on
+                tr.alt
+                  td system administrator
+                  td=user.created_at.strftime("%b %d, %Y")
+                  td=user.updated_at.strftime("%b %d, %Y")
+            table(cellspacing="0")
+              tbody
+                tr
+                  td(colspan="5")
+                    .row
+                      .col-md-2
+                        = render partial: 'user_profile', locals: { user: user}
+                      .col-md-5
+                        = render partial: 'users/login_account', locals: { user: user, ssl_slug: ssl_slug}
+                      .col-md-5
+                        ul
+                          -if ssl_account && permitted_to?(:read, :contacts)
+                            li
+                              strong contacts/identities
+                            li=link_to 'contacts', saved_contacts_contacts_path(ssl_slug: ssl_slug)
+                            li=link_to 'identity manager', saved_contacts_contacts_path(ssl_slug: ssl_slug, registrants: true)
