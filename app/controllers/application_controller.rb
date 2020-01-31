@@ -239,7 +239,8 @@ class ApplicationController < ActionController::Base
 
   def find_certificate
     prod = params[:id] == 'mssl' ? 'high_assurance' : params[:id]
-    @certificate = Certificate.includes(:product_variant_items).for_sale.find_by(product: prod + (@tier || ''))
+    identifier = "#{prod}#{@tier}"
+    @certificate = Certificate.includes(:product_variant_items).for_sale.find_by(product: identifier)
   end
 
   def find_certificate_orders(options = {})

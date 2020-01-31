@@ -1,5 +1,30 @@
 # frozen_string_literal: true
 
+# == Schema Information
+#
+# Table name: certificates
+#
+#  id                    :integer          not null, primary key
+#  reseller_tier_id      :integer
+#  title                 :string(255)
+#  status                :string(255)
+#  summary               :text(65535)
+#  text_only_summary     :text(65535)
+#  description           :text(65535)
+#  text_only_description :text(65535)
+#  allow_wildcard_ucc    :boolean
+#  published_as          :string(16)       default("draft")
+#  serial                :string(255)
+#  product               :string(255)
+#  icons                 :string(255)
+#  display_order         :string(255)
+#  roles                 :string(255)      default("--- []")
+#  created_at            :datetime
+#  updated_at            :datetime
+#  special_fields        :string(255)      default([])
+#
+
+
 FactoryBot.define do
   factory :certificate do
     status       { 'live' }
@@ -336,10 +361,6 @@ FactoryBot.define do
     # ==========================================================================
     trait :wcssl do
       title                 { 'Multi-subdomain Wildcard SSL' }
-      summary               nil
-      text_only_summary     nil
-      text_only_description nil
-      allow_wildcard_ucc    nil
       serial                { 'wc256sslcom' }
       product               { 'wildcard' }
       icons                 { { main: 'gold_locks_lg.gif' } }
@@ -412,10 +433,6 @@ FactoryBot.define do
     # ==========================================================================
     trait :ovssl do
       title                 { 'High Assurance SSL' }
-      summary               nil
-      text_only_summary     nil
-      text_only_description nil
-      allow_wildcard_ucc    nil
       serial                { 'ov256sslcom' }
       product               { 'high_assurance' }
       icons                 { { main: 'gold_lock_lg.gif' } }
@@ -576,10 +593,6 @@ FactoryBot.define do
     # ==========================================================================
     trait :codesigningssl do
       title                 { 'Code Signing' }
-      summary               nil
-      text_only_summary     nil
-      text_only_description nil
-      allow_wildcard_ucc    nil
       serial                { 'codesigning256sslcom' }
       product               { 'code-signing' }
       icons                 { { main: 'gold_lock_lg.gif' } }
@@ -627,10 +640,6 @@ FactoryBot.define do
     # ==========================================================================
     trait :evcodesigningssl do
       title                 { 'EV Code Signing' }
-      summary               nil
-      text_only_summary     nil
-      text_only_description nil
-      allow_wildcard_ucc    nil
       serial                { 'evcodesigning256sslcom' }
       product               { 'ev-code-signing' }
       icons                 { { main: 'gold_lock_lg.gif' } }
