@@ -5,7 +5,7 @@ describe CertificateOrdersController do
   before do
     initialize_roles
     initialize_triggers
-    login(role: owner)
+    login(role: :owner)
   end
 
   describe 'update_csr' do
