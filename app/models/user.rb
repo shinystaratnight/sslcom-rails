@@ -5,24 +5,13 @@ class User < ApplicationRecord
   include Pagable
   include UserMessageable
 
-  has_attached_file :avatar, styles: { large: '400x400>', medium: '150x150>', thumb: '64x64>' }, bucket: ENV['S3_AVATAR_BUCKET_NAME']
-  validates_attachment_content_type :avatar, content_type: %r{\Aimage/.*\z}
+  has_attached_file :avatar, s3_protocol: 'http', url: "/:class/:id/:attachment/:style.:extension", path: ":id_partition/:style.:extension", s3_permissions: :private, bucket: ENV.fetch('S3_AVATAR_BUCKET_NAME'), styles: {
+    thumb: '100x100>',
+    standard: '200x200#',
+    large: '300x300>'
+  }
 
-  swagger_schema :CreateUser do
-    key :required, %i[login email password]
-    property :account_key do
-      key :type, :string
-    end
-    property :secret_key do
-      key :type, :string
-    end
-    property :status do
-      key :type, :string
-    end
-    property :user_url do
-      key :type, :string
-    end
-  end
+  validates_attachment_content_type :avatar, content_type: %r{\Aimage/.*\z}
 
   OWNED_MAX_TEAMS = 3
   PASSWORD_SPECIAL_CHARS = '~`!@#\$%^&*()-+={}[]|;:"<>,./?'
