@@ -27,13 +27,15 @@ describe ResellerTier do
   end
 
   describe '.generate_tier' do
+    let!(:resellers) { create_list(:reseller, 2) }
     let!(:tier) do
       ResellerTier.generate_tier(
         label: '7',
         description: { 'ideal_for' => 'enterprise organizations' },
         discount_rate: 0.35,
         amount: 5_000_000,
-        roles: 'tier_7_reseller'
+        roles: 'tier_7_reseller',
+        reseller_ids: resellers.map(&:id)
       )
     end
 
@@ -51,6 +53,10 @@ describe ResellerTier do
 
     it 'assigns roles correctly' do
       assert_equal 'tier_7_reseller', tier.roles
+    end
+
+    it 'assigns resellers correctly' do
+      assert_equal resellers.map(&:id), tier.resellers.map(&:id)
     end
 
     it 'assigns label correctly' do
