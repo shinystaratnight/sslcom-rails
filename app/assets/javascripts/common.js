@@ -21,6 +21,7 @@
 
 $(document).ready(function(){
   $('input#file').change(function(){
+    $('button#spinner').show();
     var fd = new FormData();
     var id = $('#user_id').val();
     var files = $('#file')[0].files[0];
@@ -36,9 +37,12 @@ $(document).ready(function(){
       processData: false,
       statusCode: {
         200: function(response){
-          $('#preview').append("<img src='" + response.responseText + "' width='300' height='300' style='display: inline-block;'>");
+          $('button#spinner').hide();
+          $('.preview').hide();
+          $('#preview').append("<img class='preview' src='" + response.responseText + "' width='300' height='300' style='display: inline-block;'>");
         },
         422: function(response){
+          $('button#spinner').hide();
           alert(response.responseText);
         }
       },

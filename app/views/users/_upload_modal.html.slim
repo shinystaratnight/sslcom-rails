@@ -12,6 +12,10 @@
           | Select or drag an image file :
           input#file.form-control name="file" type="file" /
           #dropzone
+          button#spinner.m-4.btn.btn-primary disabled="" type="button" style="display: none;"
+            span.spinner-border.spinner-border-sm aria-hidden="true" role="status" 
+            | Loading...
+
         /! Preview
         #preview
       .modal-footer
