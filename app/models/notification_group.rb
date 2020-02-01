@@ -341,11 +341,11 @@ class NotificationGroup < ApplicationRecord
 
     unless results.empty? or contacts.empty?
       results.each do |result|
-        unless SentReminder.exists?(trigger_value: [result.before, result.after].join(", "),
-                                    expires_at: result.expire,
-                                    subject: result.domain,
-                                    recipients: contacts.uniq.join(";"),
-                                    reminder_type: result.reminder_type)
+        # only email in the event a change of status occurred
+        if SentReminder.order("created_at DESC").find_by(trigger_value: [result.before, result.after].join(", "),
+                               expires_at: result.expire,
+                               subject: result.domain,
+                               recipients: contacts.uniq.join(";")).try(:reminder_type)!=result.reminder_type
           logger.info "Sending reminder"
           d = [",," + contacts.uniq.join(";")]
           body = Reminder.domain_digest_notice(d, result, self)

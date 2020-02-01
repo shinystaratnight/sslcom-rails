@@ -1,0 +1,257 @@
+<script type="text/javascript">
+  jQuery.noConflict();
+  jQuery(function($) {
+    $(document).ready(function () {
+      $(document).on('click', '.url_callback_title', function() {
+        if ($('.url_callback_cont').is(':visible')) {
+          $('.url_callback_cont').hide('fast');
+
+          $.each($('.tab_link'), function(idx, tab) {
+            $(tab).removeClass('active');
+          });
+
+          $.each($('.tab_cont'), function(idx, tab) {
+            $(tab).removeClass('active');
+          });
+        } else {
+          $('.url_callback_cont').show('fast');
+          $('.tab_link[data_tab_type = "auth"]').addClass('active');
+          $('.tab_cont_auth').addClass('active');
+        }
+      });
+
+      $(document).on('click', '.tab_link', function() {
+        $.each($('.tab_link'), function(idx, tab) {
+          $(tab).removeClass('active');
+        });
+        $(this).addClass('active');
+
+        var what_tab = $(this).attr('data_tab_type');
+
+        if (!$('.tab_cont_' + what_tab).hasClass('active')) {
+          $.each($('.tab_cont'), function(idx, tab) {
+            $(tab).removeClass('active');
+          });
+
+          $('.tab_cont_' + what_tab).addClass('active');
+        }
+      });
+
+      $(document).on('change', '#callback_auth_type', function() {
+        if ($(this).val() == 'none') {
+          $('.callback_auth_username').val('');
+          $('.callback_auth_password').val('');
+
+          $('.auth_username').hide();
+          $('.auth_password').hide();
+        } else if ($(this).val() == 'basic') {
+          $('.auth_username').show();
+          $('.auth_password').show();
+        }
+      });
+
+      $(document).on('click', '.btn_test_callback', function() {
+        if ($('#base_url').val().trim() == '') {
+          alert('It needs to input base url for callback.');
+        } else {
+          var ajax_url_check = '<%= check_url_callback_path %>';
+
+          var header_keys = $('.callback_headers_key').map(function() {
+            return this.value;
+          }).get().join(',');
+          var header_values = $('.callback_headers_value').map(function() {
+            return this.value;
+          }).get().join(',');
+
+          var param_keys = $('.callback_params_key').map(function() {
+            return this.value;
+          }).get().join(',');
+          var param_values = $('.callback_params_value').map(function() {
+            return this.value;
+          }).get().join(',');
+
+          $(this).attr('disabled', true);
+
+          $.ajax({
+            url: ajax_url_check,
+            data: {
+              method: $('#callback_method').val(),
+              base_url: $('#base_url').val(),
+              auth: $('#callback_auth_type').val(),
+              username: $('#callback_auth_username').val(),
+              password: $('#callback_auth_password').val(),
+              header_keys: header_keys,
+              header_values: header_values,
+              param_keys: param_keys,
+              param_values: param_values
+            },
+            type: "POST",
+            dataType: "html",
+            success: function(result) {
+              $('.response_body_content').val(JSON.parse(result)['body']);
+              $('.response_msg_content').text(JSON.parse(result)['message']);
+              $('.url_callback_modal').show();
+              $('.btn_test_callback').attr('disabled', false);
+            }
+          });
+        }
+      });
+
+      /********************* Headers *******************/
+      $(document).on('click', '.callback_headers_remove', function() {
+        $(this).parents('.tab_cont_elmt').remove();
+      });
+      $(document).on('click', '.callback_headers_add', function() {
+        if ($('.callback_headers_new_key').val().trim() == '') {
+          $('.callback_headers_new_key').focus();
+          return;
+        }
+
+        if ($('.callback_headers_new_value').val().trim() == '') {
+          $('.callback_headers_new_value').focus();
+          return;
+        }
+
+        /************************ Header Element Wrapper ************************/
+        var tab_cont_elmt = $('<div></div>');
+        tab_cont_elmt.attr('class', 'clearfix tab_cont_elmt');
+
+        /********************* Header Key Element Wrapper *********************/
+        var tab_cont_header = $('<div></div>');
+        tab_cont_header.attr('class', 'clearfix tab_cont_header');
+        tab_cont_elmt.append(tab_cont_header);
+
+        /*** Header Key Element Label ***/
+        var tab_cont_label = $('<label></label>');
+        tab_cont_label.append('Key:');
+        tab_cont_header.append(tab_cont_label);
+
+        /*** Header Key Element Value ***/
+        var tab_cont_input = $('<input></input>');
+        tab_cont_input.attr('type', 'text');
+        tab_cont_input.attr('name', 'callback_headers_key');
+        tab_cont_input.attr('class', 'callback_headers_key');
+        tab_cont_input.attr('readonly', true);
+        tab_cont_input.attr('value', $('.callback_headers_new_key').val().trim());
+        tab_cont_header.append(tab_cont_input);
+
+        /********************* Header Value Element Wrapper *********************/
+        tab_cont_header = $('<div></div>');
+        tab_cont_header.attr('class', 'clearfix tab_cont_header');
+        tab_cont_elmt.append(tab_cont_header);
+
+        /*** Header Value Element Label ***/
+        tab_cont_label = $('<label></label>');
+        tab_cont_label.append('Value:');
+        tab_cont_header.append(tab_cont_label);
+
+        /*** Header Value Element Value ***/
+        tab_cont_input = $('<input></input>');
+        tab_cont_input.attr('type', 'text');
+        tab_cont_input.attr('name', 'callback_headers_value');
+        tab_cont_input.attr('class', 'callback_headers_value');
+        tab_cont_input.attr('readonly', true);
+        tab_cont_input.attr('value', $('.callback_headers_new_value').val().trim());
+        tab_cont_header.append(tab_cont_input);
+
+        /*** Header Event ***/
+        var header_btn = $('<button></button>');
+        header_btn.attr('type', 'button');
+        header_btn.attr('class', 'callback_headers_remove fa fa-remove');
+        tab_cont_header.append(header_btn);
+
+        tab_cont_elmt.insertBefore($('.tab_cont_headers').children().first());
+
+        /***************** Clearing new key and new value field ****************/
+        $('.callback_headers_new_key').val('');
+        $('.callback_headers_new_value').val('');
+      });
+
+      /********************* Params *******************/
+      $(document).on('click', '.callback_params_remove', function() {
+        $(this).parents('.tab_cont_elmt').remove();
+      });
+      $(document).on('click', '.callback_params_add', function() {
+        if ($('.callback_params_new_key').val().trim() == '') {
+          $('.callback_params_new_key').focus();
+          return;
+        }
+
+        if ($('.callback_params_new_value').val().trim() == '') {
+          $('.callback_params_new_value').focus();
+          return;
+        }
+
+        /************************ Param Element Wrapper ************************/
+        var tab_cont_elmt = $('<div></div>');
+        tab_cont_elmt.attr('class', 'clearfix tab_cont_elmt');
+
+        /********************* Param Key Element Wrapper *********************/
+        var tab_cont_header = $('<div></div>');
+        tab_cont_header.attr('class', 'clearfix tab_cont_header');
+        tab_cont_elmt.append(tab_cont_header);
+
+        /*** Param Key Element Label ***/
+        var tab_cont_label = $('<label></label>');
+        tab_cont_label.append('Key:');
+        tab_cont_header.append(tab_cont_label);
+
+        /*** Param Key Element Value ***/
+        var tab_cont_input = $('<input></input>');
+        tab_cont_input.attr('type', 'text');
+        tab_cont_input.attr('name', 'callback_params_key');
+        tab_cont_input.attr('class', 'callback_params_key');
+        tab_cont_input.attr('readonly', true);
+        tab_cont_input.attr('value', $('.callback_params_new_key').val().trim());
+        tab_cont_header.append(tab_cont_input);
+
+        /********************* Param Value Element Wrapper *********************/
+        tab_cont_header = $('<div></div>');
+        tab_cont_header.attr('class', 'clearfix tab_cont_header');
+        tab_cont_elmt.append(tab_cont_header);
+
+        /*** Param Value Element Label ***/
+        tab_cont_label = $('<label></label>');
+        tab_cont_label.append('Value:');
+        tab_cont_header.append(tab_cont_label);
+
+        /*** Param Value Element Value ***/
+        tab_cont_input = $('<input></input>');
+        tab_cont_input.attr('type', 'text');
+        tab_cont_input.attr('name', 'callback_params_value');
+        tab_cont_input.attr('class', 'callback_params_value');
+        tab_cont_input.attr('readonly', true);
+        tab_cont_input.attr('value', $('.callback_params_new_value').val().trim());
+        tab_cont_header.append(tab_cont_input);
+
+        /*** Param Event ***/
+        var param_btn = $('<button></button>');
+        param_btn.attr('type', 'button');
+        param_btn.attr('class', 'callback_params_remove fa fa-remove');
+        tab_cont_header.append(param_btn);
+
+        tab_cont_elmt.insertBefore($('.tab_cont_params').children().first());
+
+        /***************** Clearing new key and new value field ****************/
+        $('.callback_params_new_key').val('');
+        $('.callback_params_new_value').val('');
+      });
+
+      $(document).on('click', '.btn-res_ok', function() {
+        $('#url_callback_modal').hide();
+      });
+
+      $(document).on('click', '#url_callback_modal_close', function() {
+        $('#url_callback_modal').hide();
+      });
+
+      window.onclick = function(event) {
+        if (event.target == $('#url_callback_modal')[0]) {
+          $('#url_callback_modal').hide();
+
+        }
+      }
+
+    });
+  });
+</script>
