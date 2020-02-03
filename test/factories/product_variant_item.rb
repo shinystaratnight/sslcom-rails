@@ -1,6 +1,5 @@
 FactoryBot.define do
   factory :product_variant_item do
-    product_variant_group
     title {"1 Year Domain For 3 Domains (ea domain)"}
     status {"live"}
     description {"1 year domain for 3 domains (ea domain)"}

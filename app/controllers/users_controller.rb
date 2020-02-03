@@ -1,40 +1,41 @@
+# frozen_string_literal: true
+
 class UsersController < ApplicationController
   # fix for https://sslcom.airbrake.io/projects/128852/groups/2108774376847787256?resolved=any&tab=overview
-  skip_before_action :require_no_authentication, :only => [:duo_verify]
+  skip_before_action :require_no_authentication, only: [:duo_verify]
   skip_before_action :verify_authenticity_token
-  skip_before_filter :finish_reseller_signup, only: [:cancel_reseller_signup]
-  before_filter :require_no_user, :only => [:new, :create]
-  before_filter :require_user, only: [
-    :show, :edit, :update, :cancel_reseller_signup, 
-    :approve_account_invite, :resend_account_invite,
-    :switch_default_ssl_account, :enable_disable, :teams,
-    :index, :admin_show, :search_teams, :archive_team, :retrieve_team
+  skip_before_action :finish_reseller_signup, only: [:cancel_reseller_signup]
+  before_action :require_no_user, only: %i[new create]
+  before_action :set_users, only: %i[index search]
+  before_action :require_user, only: %i[
+    show edit update cancel_reseller_signup
+    approve_account_invite resend_account_invite
+    switch_default_ssl_account enable_disable teams
+    index admin_show search_teams archive_team retrieve_team
   ]
-  # before_filter :finish_reseller_signup, :only => [:show]
-  before_filter :new_user, :only=>[:create, :new]
-  before_filter :find_ssl_account, only: [:show, :admin_show]
-  before_filter :find_user, :set_admin_flag, :only=>[:edit_email,
-    :edit_password, :update, :login_as, :admin_update, :admin_show,
-    :consolidate, :dup_info, :adjust_funds, :change_login, 
-    :switch_default_ssl_account, :index, :admin_activate, :show, :teams]
-  before_filter :global_set_row_page, only: [:index, :search, :teams]
+  before_action :new_user, only: %i[create new]
+  before_action :find_ssl_account, only: %i[show admin_show]
+  before_action :find_user, :set_admin_flag, only: %i[edit_email
+                                                      edit_password update login_as admin_update admin_show
+                                                      consolidate dup_info adjust_funds change_login
+                                                      switch_default_ssl_account index admin_activate show teams]
+  before_action :global_set_row_page, only: %i[index search teams]
 
- # before_filter :index, :only=>:search
+  # before_filter :index, :only=>:search
   filter_access_to  :all
   filter_access_to  :update, :admin_update, :enable_disable,
-    :switch_default_ssl_account, :decline_account_invite,
-    :approve_account_invite, :create_team, :set_default_team,
-    :index, :edit_email, :edit_password, :leave_team, :dont_show_again, :archive_team, :retrieve_team, attribute_check: true
-  filter_access_to  :consolidate, :dup_info, :archive_team, :retrieve_team, :require=>:update
-  filter_access_to  :resend_activation, :activation_notice, :require=>:create
-  filter_access_to  :edit_password, :edit_email, :cancel_reseller_signup, :teams, :require=>:edit
-  filter_access_to  :show_user, :reset_failed_login_count, :require => :ajax
+                    :switch_default_ssl_account, :decline_account_invite,
+                    :approve_account_invite, :create_team, :set_default_team,
+                    :index, :edit_email, :edit_password, :leave_team, :dont_show_again, :archive_team, :retrieve_team, attribute_check: true
+  filter_access_to  :consolidate, :dup_info, :archive_team, :retrieve_team, require: :update
+  filter_access_to  :resend_activation, :activation_notice, require: :create
+  filter_access_to  :edit_password, :edit_email, :cancel_reseller_signup, :teams, require: :edit
+  filter_access_to  :show_user, :reset_failed_login_count, require: :ajax
 
-  def new
-  end
+  def new; end
 
   def new_affiliate
-    render action: "new"
+    render action: 'new'
   end
 
   def search
@@ -43,146 +44,136 @@ class UsersController < ApplicationController
 
   def search_teams
     if current_user.is_system_admins?
-      unless params[:search_term].blank?
+      if params[:search_term].present?
         s = params[:search_term]
         str = s.downcase
         @found_teams = SslAccount.where(
-          "id = ? OR lower(acct_number) LIKE ? OR lower(company_name) LIKE ? OR lower(ssl_slug) LIKE ?",
+          'id = ? OR lower(acct_number) LIKE ? OR lower(company_name) LIKE ? OR lower(ssl_slug) LIKE ?',
           s, "%#{str}%", "%#{str}%", "%#{str}%"
         )
       end
-      json = if @found_teams && @found_teams.any?
-        @order = Order.find_by(reference_number: params[:order]) if params[:order]
-        @certificate_order = CertificateOrder.find_by(ref: params[:certificate_order]) if params[:certificate_order]
-        {content: render_to_string(partial: '/orders/order_transfer_form', layout: false)}
-      else
-        {error: 'Team does not exist.'}
-      end
+      json = if @found_teams&.any?
+               @order = Order.find_by(reference_number: params[:order]) if params[:order]
+               @certificate_order = CertificateOrder.find_by(ref: params[:certificate_order]) if params[:certificate_order]
+               { content: render_to_string(partial: '/orders/order_transfer_form', layout: false) }
+             else
+               { error: 'Team does not exist.' }
+             end
     else
-      json = {error: 'Not authorized to do this action!'}
+      json = { error: 'Not authorized to do this action!' }
     end
     render json: json
   end
 
   def index
-    # preferred_row_count = current_user.preferred_user_row_count
-    # @per_page = params[:per_page] || preferred_row_count.or_else("10")
-    # User.per_page = @per_page if User.per_page != @per_page
-    #
-    # if @per_page != preferred_row_count
-    #   current_user.preferred_user_row_count = @per_page
-    #   current_user.save(validate: false)
-    # end
-    #
-    # # p = {:page => params[:page],per_page: 10}
-    # @p = {page: (params[:page] || 1), per_page: @per_page}
-
-    set_users
-
     if params[:search]
-      search = params[:search].strip.split(" ")
+      search = params[:search].strip.split(' ')
       role = nil
-      search.delete_if {|s|s =~ /role\:(.+)/; role ||= $1; $1}
-      search = search.join(" ")
+      search.delete_if do |s|
+        s =~ /role\:(.+)/
+        role ||= Regexp.last_match(1)
+        Regexp.last_match(1)
+      end
+      search = search.join(' ')
       @users = @users.with_role(role).uniq if role
-      @users = @users.search(search) unless search.blank?
+      @users = @users.search(search) if search.present?
     end
-    @users = @users.order("created_at desc").paginate(@p)
+    @users = @users.order('created_at desc').paginate(@p)
 
     respond_to do |format|
-      format.html { render :action => :index }
-      format.xml  { render :xml => @users }
+      format.html { render action: :index }
+      format.xml  { render xml: @users }
     end
   end
 
   def show_user
     if current_user
       user = User.unscoped.find(params[:id])
-      render :partial => 'details', :locals => { :user => user }
+      render partial: 'details', locals: { user: user }
     else
-      render :json => 'no-user'
+      render json: 'no-user'
     end
   end
 
   def reset_failed_login_count
-    returnObj = {}
+    data = {}
 
     if current_user
       user = User.unscoped.find(params[:id])
       user.update_attribute('failed_login_count', 0)
 
-      returnObj['status'] = 'success'
+      data['status'] = 'success'
     else
-      returnObj['status'] = 'no-user'
+      data['status'] = 'no-user'
     end
 
-    render :json => returnObj
+    render json: data
   end
 
   def create
     reseller = request.subdomain == Reseller::SUBDOMAIN
-    if @user.signup!(params)
-      @user.create_ssl_account
-      if reseller
-        @user.ssl_account.add_role! "new_reseller"
-        @user.ssl_account.set_reseller_default_prefs
-      end
-      @user.set_roles_for_account(
-        @user.ssl_account,
-        [Role.find_by_name((reseller ? Role::RESELLER : Role::OWNER)).id]
-      )
+    User.transaction do
+      if @user.signup!(params)
+        @user.create_ssl_account
+        if reseller
+          @user.ssl_account.add_role! 'new_reseller'
+          @user.ssl_account.set_reseller_default_prefs
+        end
+        @user.set_roles_for_account(
+          @user.ssl_account,
+          [Role.find_by(name: (reseller ? Role::RESELLER : Role::OWNER)).id]
+        )
 
-      if Settings.require_signup_password
-        # Check Code Signing Certificate Order for assign as assignee.
-        CertificateOrder.unscoped.search_validated_not_assigned(params[:user][:email]).each do |cert_order|
-          cert_order.update_attribute(:assignee, @user)
-          LockedRecipient.create_for_co(cert_order)
+        if Settings.require_signup_password
+          # Check Code Signing Certificate Order for assign as assignee.
+          CertificateOrder.unscoped.search_validated_not_assigned(params[:user][:email]).each do |cert_order|
+            cert_order.update_attribute(:assignee, @user)
+            LockedRecipient.create_for_co(cert_order)
+          end
+
+          # TODO: New Logic for auto activation by signup with password.
+          @user.deliver_auto_activation_confirmation!
+          notice = 'Your account has been created.'
+          flash[:notice] = notice
+
+          # Auto Login after register
+          @user_session = UserSession.new(
+            login: params[:user][:login],
+            password: params[:user][:password],
+            failed_account: '0'
+          )
+          if @user_session.save
+            user = @user_session.user
+            set_cookie(:acct, user.ssl_account.acct_number)
+            flash[:notice] = 'Successfully logged in.'
+            redirect_to(account_path(user.ssl_account(:default_team) ?
+                                                                   user.ssl_account(:default_team).to_slug :
+                                                                   {})) && return
+          end
+        else
+          # TODO: Original Logic for activation by email.
+          @user.deliver_activation_instructions!
+          notice = "Your account has been created. Please check your
+            e-mail at #{@user.email} for your account activation instructions!"
+          flash[:notice] = notice
         end
 
-        # TODO: New Logic for auto activation by signup with password.
-        @user.deliver_auto_activation_confirmation!
-        notice = "Your account has been created."
-        flash[:notice] = notice
-
-        # Auto Login after register
-        @user_session = UserSession.new({
-                                            login: params[:user][:login],
-                                            password: params[:user][:password],
-                                            failed_account: '0'
-                                        })
-        if @user_session.save
-          user = @user_session.user
-          set_cookie(:acct,user.ssl_account.acct_number)
-          flash[:notice] = "Successfully logged in."
-          redirect_to (account_path(user.ssl_account(:default_team) ?
-                                                                 user.ssl_account(:default_team).to_slug :
-                                                                 {})) and return
-        end
+        # in production heroku, requests coming FROM a subdomain will not transmit
+        # flash messages to the target page. works fine in dev though
+        redirect_to(request.subdomain == Reseller::SUBDOMAIN ? login_url(notice: notice) : login_url)
       else
-        # TODO: Original Logic for activation by email.
-        @user.deliver_activation_instructions!
-        notice = "Your account has been created. Please check your
-          e-mail at #{@user.email} for your account activation instructions!"
-        flash[:notice] = notice
+        render action: :new
       end
-
-      #in production heroku, requests coming FROM a subdomain will not transmit
-      #flash messages to the target page. works fine in dev though
-      redirect_to(request.subdomain == Reseller::SUBDOMAIN ? login_url(:notice => notice) : login_url)
-    else
-      render :action => :new
     end
   end
 
   def show
-    if @user.ssl_account.has_credits? and @user.can_perform_accounting?
-      flash.now[:warning] = "You have unused ssl certificate credits. %s"
-      flash.now[:warning_item] = "Click here to view the list of credits.",
-        credits_certificate_orders_path
+    if @user.ssl_account.has_credits? && @user.can_perform_accounting?
+      flash.now[:warning] = 'You have unused ssl certificate credits. %s'
+      flash.now[:warning_item] = 'Click here to view the list of credits.',
+                                 credits_certificate_orders_path
     end
-    if @user.pending_account_invites?
-      render_invite_messages
-    end
+    render_invite_messages if @user.pending_account_invites?
   end
 
   def cancel_reseller_signup
@@ -190,45 +181,43 @@ class UsersController < ApplicationController
     owner_role = Role.get_owner_id
     if current_user.role_symbols.include? Role::RESELLER.to_sym
       ssl.remove_role! 'new_reseller'
-      ssl.reseller.destroy unless (ssl.is_reseller? or ssl.reseller.blank?)
+      ssl.reseller.destroy unless ssl.is_reseller? || ssl.reseller.blank?
       current_user.update_account_role(ssl, Role::RESELLER, Role::OWNER)
     end
     current_user.set_roles_for_account(ssl, [owner_role]) unless current_user.duplicate_role?(owner_role)
-    flash[:notice] = "reseller signup has been canceled"
-    @user = current_user #for rabl object reference
+    flash[:notice] = 'reseller signup has been canceled'
+    @user = current_user # for rabl object reference
   end
 
   def admin_show
-    @ssl_slug=@ssl_account.to_slug if @ssl_account
+    @ssl_slug = @ssl_account.to_slug if @ssl_account
   end
 
   def edit
     @user = User.find(params[:id]) if params[:update_own_team_limit] || params[:admin_activate]
   end
 
-  def login_as
-  end
+  def login_as; end
 
-  def dup_info
-  end
+  def dup_info; end
 
   def adjust_funds
-    amount=params["amount"].to_f*100
+    amount = params['amount'].to_f * 100
     @user.ssl_account.funded_account.add_cents(amount)
     SystemAudit.create(owner: current_user, target: @user.ssl_account.funded_account,
-                       notes: "amount (in USD): #{amount.to_s}",
-                       action: "FundedAccount#add_cents")
+                       notes: "amount (in USD): #{amount}",
+                       action: 'FundedAccount#add_cents')
     redirect_to admin_show_user_path(@user)
   end
 
   def change_login
     old = @user.login
-    @user.login = params["login"]
-    if(@user.valid?)
-      User.change_login old, params["login"]
+    @user.login = params['login']
+    if @user.valid?
+      User.change_login old, params['login']
       SystemAudit.create(owner: current_user, target: @user,
-                         notes: "changed login from #{old} to #{params["login"]}",
-                         action: "UserController#change_login")
+                         notes: "changed login from #{old} to #{params['login']}",
+                         action: 'UserController#change_login')
     else
       @user.login = old
     end
@@ -236,17 +225,18 @@ class UsersController < ApplicationController
   end
 
   def consolidate
-    login, email = params[:login], params[:email]
+    login = params[:login]
+    email = params[:email]
     keep_login = (@user.login == login)
     keep_email = (@user.email == email)
     if keep_login && keep_email
-      #delete all duplicate_v2_users
+      # delete all duplicate_v2_users
     elsif email && login && !(keep_login && keep_email)
-      #change both
+      # change both
     elsif email
-      #change email
+      # change email
     elsif login
-      #change login
+      # change login
     end
     change_password
   end
@@ -266,23 +256,24 @@ class UsersController < ApplicationController
     @user ||= @current_user # makes our views "cleaner" and more consistent
     edit_email = params[:edit_action] == 'edit_email'
     unless edit_email
-      @user.changing_password = true #nonelegant hack to trigger validations of password
-      @user.errors[:base]<<(
-        'Old password value does not match password to be changed') unless
-        @user.valid_password?(params[:old_password]) unless admin_op?
+      @user.changing_password = true # nonelegant hack to trigger validations of password
+      unless admin_op? || @user.valid_password?(params[:old_password])
+        @user.errors[:base] <<
+          'Old password value does not match password to be changed'
+      end
     end
-    old_address=@user.email #be sure to notify where changed from
-    if @user.errors.empty? && @user.update_attributes(params[:user])
-      flash[:notice] = "Account updated."
-      unless edit_email
-        @user.deliver_password_changed!
-      else
+    old_address = @user.email # be sure to notify where changed from
+    if @user.errors.empty? && @user.update(params[:user])
+      flash[:notice] = 'Account updated.'
+      if edit_email
         @user.deliver_email_changed!(old_address)
         @user.deliver_email_changed!
+      else
+        @user.deliver_password_changed!
       end
       redirect_to admin_op? ? users_url : edit_account_url
     elsif edit_email
-      flash[:error] = "Email is not a valid email."
+      flash[:error] = 'Email is not a valid email.'
       redirect_to edit_email_users_path
     else
       @chpwd = !admin_op?
@@ -290,19 +281,33 @@ class UsersController < ApplicationController
     end
   end
 
+  def upload_avatar
+    respond_to do |format|
+      begin
+        current_user.avatar = params[:file]
+        current_user.save!
+        format.js { render json: current_user.avatar.url, status: :ok }
+        format.json { render json: current_user.avatar.url, status: :ok }
+      rescue StandardError => e
+        format.js { render json: e.message, status: :unprocessable_entity }
+        format.json { render json: e.message, status: :unprocessable_entity }
+      end
+    end
+  end
+
   def admin_update
     respond_to do |format|
-      if @user.update_attributes(params[:user])
-        format.js { render :json=>@user.to_json}
+      if @user.update(params[:user])
+        format.js { render json: @user.to_json }
       else
-        format.js { render :json=>@user.errors.to_json}
+        format.js { render json: @user.errors.to_json }
       end
     end
   end
 
   def resend_activation
     if params[:login]
-      @user = User.find_by_login params[:login]
+      @user = User.find_by login: params[:login]
       if @user
         if !@user.active?
           @user.deliver_activation_instructions!
@@ -311,12 +316,12 @@ class UsersController < ApplicationController
           flash[:notice] = "Looks like user #{params[:login]} has already been activated"
         end
       else
-        if DuplicateV2User.find_by_login params[:login]
-          flash[:notice] = "Ooops, looks like user #{params[:login]} has been consolidated with another account.
+        flash[:notice] = if DuplicateV2User.find_by login: params[:login]
+                           "Ooops, looks like user #{params[:login]} has been consolidated with another account.
             Please contact support@ssl.com for more details"
-        else
-          flash[:notice] = "Ooops, looks like user #{params[:login]} doesn't exist in our system"
-        end
+                         else
+                           "Ooops, looks like user #{params[:login]} doesn't exist in our system"
+                         end
       end
       redirect_to login_path
     else
@@ -336,23 +341,23 @@ class UsersController < ApplicationController
       if @switch_ssl_account && @user.get_all_approved_accounts.map(&:id).include?(@switch_ssl_account.to_i)
         @ssl_slug = SslAccount.find(@switch_ssl_account).to_slug
         @user.set_default_ssl_account(@switch_ssl_account)
-        flash[:notice] = "You have switched to team %s."
+        flash[:notice] = 'You have switched to team %s.'
         flash[:notice_item] = "<strong>#{SslAccount.find(@user.default_ssl_account).get_team_name}</strong>"
       else
-        flash[:error] = "Something went wrong. Please try again!"
+        flash[:error] = 'Something went wrong. Please try again!'
       end
       redirect_to redirect_back_w_team_slug(old_ssl_slug)
     end
   end
 
-  def duo 
+  def duo
     team = SslAccount.find(session[:switch_ssl_account])
     if team.duo_own_used
       @duo_account = team.duo_account
       @duo_hostname = @duo_account.duo_hostname
-      @sig_request = Duo.sign_request(@duo_account ? @duo_account.duo_ikey : "", @duo_account ? @duo_account.duo_skey : "", @duo_account ? @duo_account.duo_akey : "", current_user.login)
+      @sig_request = Duo.sign_request(@duo_account ? @duo_account.duo_ikey : '', @duo_account ? @duo_account.duo_skey : '', @duo_account ? @duo_account.duo_akey : '', current_user.login)
     else
-      s = Rails.application.secrets;
+      s = rails_application_secrets
       @duo_hostname = s.duo_api_hostname
       @sig_request = Duo.sign_request(s.duo_integration_key, s.duo_secret_key, s.duo_application_key, current_user.login)
     end
@@ -365,19 +370,19 @@ class UsersController < ApplicationController
     team = SslAccount.find(session[:switch_ssl_account])
     if team.duo_own_used
       @duo_account = team.duo_account
-      @authenticated_user = Duo.verify_response(@duo_account ? @duo_account.duo_ikey : "", @duo_account ? @duo_account.duo_skey : "", @duo_account ? @duo_account.duo_akey : "", params['sig_response'])
+      @authenticated_user = Duo.verify_response(@duo_account ? @duo_account.duo_ikey : '', @duo_account ? @duo_account.duo_skey : '', @duo_account ? @duo_account.duo_akey : '', params['sig_response'])
     else
-      s = Rails.application.secrets;
+      s = rails_application_secrets
       @authenticated_user = Duo.verify_response(s.duo_integration_key, s.duo_secret_key, s.duo_application_key, params['sig_response'])
     end
     if @authenticated_user
       if @switch_ssl_account && @user.get_all_approved_accounts.map(&:id).include?(@switch_ssl_account.to_i)
         @user.set_default_ssl_account(@switch_ssl_account)
-        flash[:notice]      = "You have switched to team %s."
+        flash[:notice]      = 'You have switched to team %s.'
         flash[:notice_item] = "<strong>#{@user.ssl_account.get_team_name}</strong>"
         set_ssl_slug(@user)
       else
-        flash[:error] = "Something went wrong. Please try again!"
+        flash[:error] = 'Something went wrong. Please try again!'
       end
       redirect_to account_path(ssl_slug: @ssl_slug)
     else
@@ -393,12 +398,12 @@ class UsersController < ApplicationController
     else
       team = SslAccount.find(params[:ssl_account_id])
       flash[:notice] = "You have accepted the invitation to <strong>#{team.get_team_name}</strong>.<br />
-        Would you like to set <strong>#{team.get_team_name}</strong> as your Default Team? 
+        Would you like to set <strong>#{team.get_team_name}</strong> as your Default Team?
         <i>(This setting may be changed later.)</i><br />
         %s <span class='chip medium--grey'>NO</span><br /><br />
         The current default is <strong>#{user.ssl_account.get_team_name}</strong>."
       flash[:notice_item] = view_context.link_to("<span class='chip medium'>YES</span>".html_safe,
-        switch_default_ssl_account_user_path(ssl_account_id: params[:ssl_account_id]))
+                                                 switch_default_ssl_account_user_path(ssl_account_id: params[:ssl_account_id]))
     end
     params[:to_teams] ? redirect_to(teams_user_path(user)) : redirect_to(account_path(ssl_slug: @ssl_slug))
   end
@@ -431,15 +436,15 @@ class UsersController < ApplicationController
   def enable_disable
     update_user_status(params) if params[:user][:status]
     respond_to do |format|
-      format.js {render json: @user.to_json}
-    end  
+      format.js { render json: @user.to_json }
+    end
   end
 
   def enable_disable_duo
     update_user_duo_status(params) if params[:user][:duo_enabled]
     respond_to do |format|
-      format.js {render json: @user.to_json}
-    end  
+      format.js { render json: @user.to_json }
+    end
   end
 
   def teams
@@ -447,13 +452,13 @@ class UsersController < ApplicationController
     team = params[:team]
     # @teams = @user.get_all_approved_accounts
     @teams = @user.get_all_approved_teams
-    unless team.blank?
+    if team.present?
       team = team.strip.downcase
       # @teams = @teams.where("acct_number = ? OR ssl_slug = ? OR company_name = ?", team, team, team)
       @teams = @teams.search_team(team)
     end
     @teams = @teams.paginate(@p)
-    @reseller_tiers = ResellerTier.general.map{|rt| [rt.label + ' (' + rt.description['ideal_for'] + ')', rt.id]}
+    @reseller_tiers = ResellerTier.general.map{ |rt| [rt.label + ' (' + rt.description['ideal_for'] + ')', rt.id] }
   end
 
   def archive_team
@@ -488,7 +493,7 @@ class UsersController < ApplicationController
   end
 
   def autoadd_users_to_team
-    if params[:auto_add_user_ids] && params[:auto_add_user_ids].any?
+    if params[:auto_add_user_ids]&.any?
       users = User.where(id: params[:auto_add_user_ids].map(&:to_i))
       users.each do |user|
         user.ssl_accounts << @new_team
@@ -497,13 +502,13 @@ class UsersController < ApplicationController
         roles = current_user.get_auto_add_user_roles(user)
         roles = [Role.get_individual_certificate_id] if roles.empty?
         user.set_roles_for_account(@new_team, roles)
-        
+
         # send invitation email
         current_user.invite_existing_user(
-          user: {email: user.email, ssl_account_id: @new_team.id},
+          user: { email: user.email, ssl_account_id: @new_team.id },
           from_user: current_user
         )
-        
+
         SystemAudit.create(
           owner:  current_user,
           target: user,
@@ -545,7 +550,7 @@ class UsersController < ApplicationController
       @user.leave_team(team)
       flash[:notice] = "You have successfully left team #{team.get_team_name}."
     else
-      flash[:error] = own_team ? "You cannot leave team that you own!" : "Something went wrong, please try again."
+      flash[:error] = own_team ? 'You cannot leave team that you own!' : 'Something went wrong, please try again.'
     end
     redirect_to teams_user_path
   end
@@ -553,7 +558,7 @@ class UsersController < ApplicationController
   def dont_show_again
     @user = User.find params[:id]
     @user.update(persist_notice: false)
-    respond_to {|format| format.js {render json: 'ok'}}
+    respond_to { |format| format.js { render json: 'ok' } }
   end
 
   def admin_activate
@@ -580,35 +585,38 @@ class UsersController < ApplicationController
   end
 
   def find_user
-    @user=if current_user.is_system_admins?
-            if params[:id]
-              User.unscoped.find(params[:id])
-            elsif @ssl_account
-              @ssl_account.get_account_owner
+    @user = if current_user.is_system_admins?
+              if params[:id]
+                User.unscoped.find(params[:id])
+              elsif @ssl_account
+                @ssl_account.get_account_owner
+              else
+                current_user
+              end
             else
               current_user
             end
-          else
-            current_user
-          end
   end
 
   def admin_op?
-    (@user!=@current_user &&
-      (@current_user.is_admin? || @current_user.is_owner?)
-    ) unless @current_user.blank?
+    if @current_user.present?
+      (@user != @current_user &&
+        (@current_user.is_admin? || @current_user.is_owner?)
+      )
+    end
   end
 
   def set_admin_flag
-    @user.admin_update=true if admin_op?
+    @user ||= current_user
+    @user.admin_update = true if admin_op?
   end
 
   def set_users
-    if current_user.is_system_admins?
-      @users = @ssl_account.try(:users) || User.unscoped
-    else
-      @users = current_user.manageable_users
-    end
+    @users = if current_user&.is_system_admins?
+               @ssl_account.try(:users) || User.unscoped
+             else
+               current_user&.manageable_users
+             end
   end
 
   def admin_or_current_user?
@@ -619,11 +627,11 @@ class UsersController < ApplicationController
     invites = current_user.get_pending_accounts
     if invites.any?
       invites.each do |invite|
-        new_params = {ssl_account_id: invite[:ssl_account_id], token: invite[:approval_token]}
+        new_params = { ssl_account_id: invite[:ssl_account_id], token: invite[:approval_token] }
         accept_link = view_context.link_to('here',
-          approve_account_invite_user_path(current_user, new_params))
+                                           approve_account_invite_user_path(current_user, new_params))
         decline_link = view_context.link_to('decline',
-          decline_account_invite_user_path(current_user, new_params))
+                                            decline_account_invite_user_path(current_user, new_params))
         flash[:notice] = "You have been invited to join account ##{invite[:acct_number]}.
           Please click #{accept_link} to accept the invitation. Click %s to reject."
         flash[:notice_item] = decline_link
@@ -637,9 +645,7 @@ def update_user_status(params)
   target_status = params[:user][:status].to_sym
   if target_user && target_status
     target_user.set_status_all_accounts(target_status) if current_user.is_system_admins?
-    unless (current_user.roles_for_account & Role.can_manage_users).empty?
-      target_user.set_status_for_account(target_status, current_user.ssl_account)
-    end
+    target_user.set_status_for_account(target_status, current_user.ssl_account) unless (current_user.roles_for_account & Role.can_manage_users).empty?
   end
 end
 
@@ -653,7 +659,7 @@ def create_custom_ssl_acct(user, params)
   slug_valid = params[:ssl_slug] && SslAccount.ssl_slug_valid?(params[:ssl_slug])
   user.create_ssl_account(
     [Role.get_owner_id],
-    {company_name: params[:team_name], ssl_slug: (slug_valid ? params[:ssl_slug] : nil)}
+    company_name: params[:team_name], ssl_slug: (slug_valid ? params[:ssl_slug] : nil)
   )
 end
 

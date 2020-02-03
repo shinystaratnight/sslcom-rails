@@ -5,6 +5,7 @@ class Order < ApplicationRecord
   extend Memoist
   include V2MigrationProgressAddon
   include SmimeClientEnrollable
+  include Pagable
 
   belongs_to  :billable, :polymorphic => true, touch: true
   belongs_to  :address
@@ -15,8 +16,7 @@ class Order < ApplicationRecord
   belongs_to  :invoice, class_name: "Invoice", foreign_key: :invoice_id
   belongs_to  :reseller_tier, foreign_key: :reseller_tier_id
   has_many    :line_items, dependent: :destroy, after_add: Proc.new { |p, d| p.amount += d.amount}
-  has_many    :certificate_orders, through: :line_items, :source => :sellable,
-              :source_type => 'CertificateOrder', unscoped: true
+  has_many    :certificate_orders, through: :line_items, :source => :sellable, :source_type => 'CertificateOrder', unscoped: true
   has_many    :payments
   has_many    :transactions, class_name: 'OrderTransaction', dependent: :destroy
   has_many    :refunds, dependent: :destroy
@@ -25,10 +25,6 @@ class Order < ApplicationRecord
   has_many    :tags, through: :taggings
   has_and_belongs_to_many    :discounts
 
-  #will_paginate
-  cattr_accessor :per_page
-  @@per_page = 10
-
   money :amount, cents: :cents
   money :wildcard_amount, cents: :wildcard_cents
   money :non_wildcard_amount, cents: :non_wildcard_cents
@@ -36,8 +32,8 @@ class Order < ApplicationRecord
   before_create :total, :determine_description
   after_create :generate_reference_number, :commit_discounts, :domains_adjustment_notice
 
-  #is_free? is used to as a way to allow orders that are not charged (ie cent==0)
-  attr_accessor  :is_free, :receipt, :deposit_mode, :temp_discounts
+  # is_free? is used to as a way to allow orders that are not charged (ie cent==0)
+  attr_accessor :is_free, :receipt, :deposit_mode, :temp_discounts
 
   after_initialize do
     if new_record?
@@ -54,7 +50,7 @@ class Order < ApplicationRecord
     self.wildcard_cents = 0 if self.wildcard_cents.blank?
     self.non_wildcard_cents = 0 if self.non_wildcard_cents.blank?
   end
-  
+
   FAW                    = "Funded Account Withdrawal"
   DOMAINS_ADJUSTMENT     = "Domains Adjustment"
   SSL_CERTIFICATE        = "SSL.com Certificate Order"
@@ -62,7 +58,7 @@ class Order < ApplicationRecord
   DI_PAYMENT             = "Daily Invoice Payment"
   S_OR_C_ENROLLMENT      = "S/MIME or Client Enrollment"
   CERTIFICATE_ENROLLMENT = "Certificate Enrollment"
-  
+
   # If team's billing_method is set to 'monthly', grab all orders w/'approved' approval
   # when running charges at the end of the month for orders from ucc reprocessing.
   BILLING_STATUS = %w{approved pending declined}
@@ -93,7 +89,7 @@ class Order < ApplicationRecord
   scope :search, lambda {|term|
     term = term.strip.split(/\s(?=(?:[^']|'[^']*')*$)/)
     filters = { amount: nil, email: nil, login: nil, account_number: nil, product: nil, created_at: nil,
-                discount_amount: nil, company_name: nil, ssl_slug: nil, is_test: nil, reference_number: nil, 
+                discount_amount: nil, company_name: nil, ssl_slug: nil, is_test: nil, reference_number: nil,
                 monthly_invoice: nil, order_tags: nil
               }
     filters.each{|fn, fv|
@@ -311,15 +307,15 @@ class Order < ApplicationRecord
       self.save validate: false
     end
   end
-    
+
   def total
-    unless reprocess_ucc_order? || 
+    unless reprocess_ucc_order? ||
       invoice_payment? ||
-      on_payable_invoice? || 
+      on_payable_invoice? ||
       voided_on_payable_invoice? ||
       domains_adjustment? ||
       no_limit_order?
-      
+
       self.amount = line_items.inject(0.to_money) {|sum,l| sum + l.amount }
     end
   end
@@ -361,7 +357,7 @@ class Order < ApplicationRecord
         line_items.each {|li| li.sellable_unscoped.charge_back!} if complete
       end
     end
-      
+
     state :pending do
       event :payment_invoiced, transitions_to: :invoiced
       event :give_away, transitions_to: :payment_not_required
@@ -551,7 +547,7 @@ class Order < ApplicationRecord
   ## END acts_as_state_machine
 
   # BEGIN number
-  
+
   def get_full_refund_amount
     refunded = 0
     if fully_refunded?
@@ -579,7 +575,7 @@ class Order < ApplicationRecord
   def no_limit_order?
     state == 'invoiced'
   end
-  
+
   def voided_on_payable_invoice?
     !invoice_id.blank? && (
       fully_refunded? ||
@@ -593,49 +589,49 @@ class Order < ApplicationRecord
   def on_payable_invoice?
     !invoice_id.blank? && state == 'invoiced'
   end
-  
+
   def approved_for_invoice?
     on_payable_invoice? && approval == 'approved'
   end
-  
+
   def removed_from_invoice?
     on_payable_invoice? && approval == 'rejected'
   end
-  
+
   def invoice_address
     Invoice.find_by(order_id: id)
   end
-  
+
   def reprocess_ucc_order?
     self.type == 'ReprocessCertificateOrder'
   end
-  
+
   def domains_adjustment?
     description == DOMAINS_ADJUSTMENT
   end
-  
+
   def reprocess_ucc_free?
     reprocess_ucc_order? && cents==0
   end
-  
+
   def monthly_invoice_order?
     # Payment for total of monthly invoice
     description == MI_PAYMENT
   end
-  
+
   def daily_invoice_order?
     # Payment for total of daily invoice
     description == DI_PAYMENT
   end
-  
+
   def invoice_payment?
     monthly_invoice_order? || daily_invoice_order?
   end
-  
+
   def faw_order?
     description == FAW # Funded Account Withdrawal
   end
-  
+
   def get_order_type_label
     if reprocess_ucc_order?
       '(Reprocess)'
@@ -643,9 +639,9 @@ class Order < ApplicationRecord
       '(Domains Adjustment)'
     else
       ''
-    end  
+    end
   end
-  
+
   # Get all orders for certificate orders or line items of main order.
   def get_cached_orders
     certificate_orders.map(&:orders).inject([]) do |all, o|
@@ -653,7 +649,7 @@ class Order < ApplicationRecord
       all.flatten
     end
   end
-  
+
   # Fetches all domain counts that were added during UCC domains adjustment
   def get_reprocess_domains
     Rails.cache.fetch("#{cache_key}/get_reprocess_domains") do
@@ -690,27 +686,27 @@ class Order < ApplicationRecord
       }
     end
   end
-  
+
   def get_ccref_from_notes
     unless notes.blank?
       notes.split(').').first.split.last.delete(')')
     end
   end
-  
+
   def get_reprocess_cc(co)
     cc = nil
     if co
       str = get_ccref_from_notes
       cc  = if str.nil?
         []
-      else  
+      else
         co.certificate_contents.where("ref = ? OR id = ?", str, str)
       end
       cc  = cc.any? ? cc.first : nil
     end
     cc
   end
-  
+
   def get_reprocess_orders
     result = {}
     cached_certificate_orders.includes(:orders).each do |co|
@@ -729,11 +725,11 @@ class Order < ApplicationRecord
     end
     result
   end
-    
+
   def number
     SecureRandom.base64(32)
   end
-  
+
   def invoice_denied_order(ssl_account)
     cur_invoice_id = Invoice.get_or_create_for_team(ssl_account).try(:id)
     if cur_invoice_id
@@ -926,26 +922,26 @@ class Order < ApplicationRecord
       response.params['response_reason_code'] == UNSETTLED_CREDIT_RESPONSE_REASON_CODE
     end
   end
-  
+
   # ============================================================================
   # Make available to customer
   # ============================================================================
   def make_available_total
     get_total_merchant_amount + get_funded_account_amount
   end
-  
+
   def make_available_line(item, type=nil)
     order_total  = domains_adjustment? ? get_full_reprocess_amount : line_items.pluck(:cents).sum
     discount_amt = discount_amount(:items)
     total = if domains_adjustment?
       get_full_reprocess_amount
-    else  
+    else
       item.is_a?(LineItem) ? item.cents : item.amount
     end
     percent      = total.to_d/order_total.to_d
     discount     = (discount_amt.blank? || discount_amt.cents == 0) ? 0 : (discount_amt.cents * percent)
     funded       = get_funded_account_amount == 0 ? 0 : (get_funded_account_amount * percent)
-    
+
     if type == :merchant
       total - (discount + funded)
     else
@@ -959,8 +955,8 @@ class Order < ApplicationRecord
     percent      = total.to_d/order_total.to_d
     get_funded_account_amount == 0 ? 0 : (get_funded_account_amount * percent)
   end
-  
-  # If order has been transfered from another team, then the originating team 
+
+  # If order has been transfered from another team, then the originating team
   # should be credited. Lookup SystemAudit log for specific keywords
   # to determine originating order.
   def get_team_to_credit
@@ -974,7 +970,7 @@ class Order < ApplicationRecord
     from_team = SslAccount.find_by(acct_number: from_team.gsub('#', '')) unless from_team.nil?
     from_team.nil? ? billable : from_team
   end
-  
+
   # ============================================================================
   # REFUND (utilizes 3 merchants, Stripe, PaypalExpress and Authorize.net)
   # ============================================================================
@@ -993,7 +989,7 @@ class Order < ApplicationRecord
       }
       new_refund = Refund.refund_merchant(params)
     end
-    
+
     unless invoice_payment?
       if merchant_fully_refunded?
         full_refund! unless fully_refunded?
@@ -1004,7 +1000,7 @@ class Order < ApplicationRecord
         partial_refund! unless partially_refunded?
       end
     end
-    
+
     SystemAudit.create(
         owner:  User.find_by_id(user_id),
         target: o,
@@ -1013,7 +1009,7 @@ class Order < ApplicationRecord
     )
     new_refund
   end
-  
+
   def get_merchant
     o = get_order_charged
     return 'na'         if o.payment_not_refundable?
@@ -1025,11 +1021,11 @@ class Order < ApplicationRecord
     return 'funded'     if o.payment_funded_account_partial? || o.payment_funded_account?
     return 'other'
   end
-  
+
   def get_order_charged
     deducted_from_id ? Order.find_by_id(deducted_from_id) : self
   end
-  
+
   def get_total_merchant_amount
     merchant = get_merchant
     o = get_order_charged
@@ -1045,63 +1041,63 @@ class Order < ApplicationRecord
       0
     end
   end
-  
+
   def get_full_reprocess_amount
     cur_amount = cents != get_total_merchant_amount ? cents : get_total_merchant_amount
     cur_amount + get_funded_account_amount
   end
-  
+
   def get_full_reprocess_format
     Money.new(get_full_reprocess_amount).format
   end
-  
+
   def get_paid_reprocess_amount
     get_total_merchant_amount
   end
-  
+
   def get_funded_account_order
     # order for funded account withdrawal
     Order.where('description LIKE ?', "%Funded Account Withdrawal%")
       .where('notes LIKE ?', "%#{reference_number}%").last
-  end  
-  
+  end
+
   def get_funded_account_amount
     # order was partially paid by funded account?
     found = get_funded_account_order
     found ? found.cents : 0
   end
-  
+
   def get_surplus_amount
     # covered order amount and suplus credited to funded account?
     get_total_merchant_amount - (cents - get_funded_account_amount)
   end
-  
+
   def get_total_merchant_refunds
     refunds.where(status: 'success').map(&:amount).sum
   end
-  
+
   def payment_refundable?
     target = get_merchant
     !target.blank? && %w{stripe paypal authnet}.include?(target)
   end
-  
+
   def payment_not_required?
     state == 'payment_not_required'
   end
-  
+
   def payment_not_refundable?
     po_number || quote_number
   end
-  
+
   def payment_zero?
-    [billable_type, notes, po_number, quote_number].compact.empty? && 
+    [billable_type, notes, po_number, quote_number].compact.empty? &&
       cents == 0 && !payment_not_required?
   end
-  
+
   def payment_funded_account_partial?
     description.include?('Funded Account Withdrawal')
-  end  
-  
+  end
+
   def payment_funded_account?
     billing_profile_id.nil? &&
       po_number.nil? &&
@@ -1111,7 +1107,7 @@ class Order < ApplicationRecord
       deducted_from_id.nil? &&
       state == 'paid'
   end
-  
+
   def funded_account_w_notes?
     !notes.blank? && (
       notes.include?('Reprocess UCC') ||
@@ -1121,23 +1117,23 @@ class Order < ApplicationRecord
       notes.include?('daily invoice')
     )
   end
-    
+
   def payment_stripe?
     !payment_not_refundable? && transactions.any? &&
       !transactions.last.reference.blank? &&
       transactions.last.reference.include?('ch_')
-  end  
-  
+  end
+
   def payment_authnet?
     !payment_not_refundable? && transactions.any? &&
       !transactions.last.reference.blank? &&
       transactions.last.reference.include?('#purchase')
   end
-  
+
   def payment_paypal?
     !payment_not_refundable? && !notes.blank? && notes.include?('paidviapaypal')
   end
-  
+
   # this builds non-deep certificate_orders(s) from the cookie params
   def self.certificates_order(options)
     options[:certificates].compact.each do |c|
@@ -1291,13 +1287,13 @@ class Order < ApplicationRecord
       []
     end
   end
-  
+
   def original_order?
     self.class == Order
   end
 
   private
-  
+
   def domains_adjustment_notice
     if domains_adjustment? and Settings.invoice_notify
       Assignment.users_can_manage_invoice(billable).each do |u|

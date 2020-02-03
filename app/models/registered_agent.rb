@@ -1,14 +1,16 @@
 class RegisteredAgent < ApplicationRecord
+  include Pagable
+
   belongs_to  :ssl_account
-  belongs_to  :requester, :class_name => 'User'
-  belongs_to  :approver, :class_name => 'User'
+  belongs_to  :requester, class_name: 'User'
+  belongs_to  :approver, class_name: 'User'
   has_many :managed_certificates, dependent: :destroy
 
   attr_accessor :api_status, :reason
 
-  # will_paginate
-  cattr_accessor :per_page
-  @@per_page = 10
+  def to_param
+    ref
+  end
 
   scope :search_with_terms, lambda { |term|
     term ||= ""
@@ -88,9 +90,5 @@ class RegisteredAgent < ApplicationRecord
 
   before_create do |ra|
     ra.ref = 'sm-' + SecureRandom.hex(1) + Time.now.to_i.to_s(32)
-  end
-
-  def to_param
-    ref
   end
 end

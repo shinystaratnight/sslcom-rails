@@ -1,4 +1,3 @@
-@import 'compass'
 @import url(https://fonts.googleapis.com/css?family=Montserrat)
 @import url(https://fonts.googleapis.com/css?family=Raleway)
 
@@ -119,9 +118,85 @@ a:hover
   color: inherit
   font_size: inherit
 
+@mixin table-scaffolding
+  th
+    text-align: center
+    font-weight: bold
+  td,
+  th
+    padding: 2px
+    &.numeric
+      text-align: right
+
+@mixin inner-table-borders($width: 2px, $color: black)
+  th, td
+    border:
+      right: $width solid $color
+      bottom: $width solid $color
+      left-width: 0
+      top-width: 0
+    &:last-child
+      border-right-width: 0
+    // IE8 ignores rules that are included on the same line as :last-child
+    // see http://www.richardscarrott.co.uk/posts/view/ie8-last-child-bug for details
+    @if support-legacy-browser(ie, "8")
+      &.last
+        border-right-width: 0
+  tbody, tfoot
+    tr:last-child
+      th, td
+        border-bottom-width: 0
+    @if support-legacy-browser(ie, "8")
+      tr.last
+        th, td
+          border-bottom-width: 0
+
+@mixin outer-table-borders($width: 2px, $color: black)
+  border: $width solid $color
+  thead
+    th
+      border-bottom: $width solid $color
+  tfoot
+    th, td
+      border-top: $width solid $color
+  th
+    &:first-child #{if(support-legacy-browser(ie, "6"), ", &.first", null)}
+      border-right: $width solid $color
+
 @mixin small_page_heading
   font: bold 1.6em "Raleway",Arial !important
   margin: 15px 0 7px
+
+@mixin alternating-rows-and-columns($even-row-color, $odd-row-color, $dark-intersection, $header-color: white, $footer-color: white)
+  th
+    background-color: $header-color
+    &.even, &:nth-child(2n)
+      background-color: $header-color - $dark-intersection
+  tr
+    &.odd, &:nth-child(2n+1)
+      td
+        background-color: $odd-row-color
+        &.even, &:nth-child(2n)
+          background-color: $odd-row-color - $dark-intersection
+  tr.even
+    td
+      background-color: $even-row-color
+      &.even, &:nth-child(2n)
+        background-color: $even-row-color - $dark-intersection
+  tfoot
+    th, td
+      background-color: $footer-color
+      &.even, &:nth-child(2n)
+        background-color: $footer-color - $dark-intersection
+@mixin no-bullet
+  list-style-image: none
+  list-style-type: none
+  margin-left: 0
+
+@mixin no-bullets
+  list-style: none
+  li
+    +no-bullet
 
 =center
   text-align: center
@@ -172,25 +247,25 @@ a:hover
 
 .inner
   padding-bottom: 0px
-  width: 940px
+  width: 1024px
   margin: 0 auto
   overflow: hidden
   clear: both
 
 .innerd
   padding-bottom: 0px
-  width: 940px
+  width: 1024px
   margin: 0 auto
   overflow: hidden
 
 .innerb
-  width: 940px
+  width: 1024px
   margin: 0 auto
   overflow: hidden
 
 .innerc
   padding-bottom: 0px
-  width: 940px
+  width: 1024px
   margin: 0 auto
   overflow: hidden
 
@@ -254,19 +329,8 @@ a:hover
 #content
   width: 100%
 
-=background_image($padding)
-  padding: $padding
-  width: 100%
-  background: #fff image-url('bg-content.gif') repeat-x
-
-.container, .containerb, .containerl
-  +background_image(27px 0 25px)
-
 .container, .containerl
   display: inline-block
-
-.containerc, .containerd
-  +background_image(27px 0 0 0)
 
 .containerd
   height: 108px
@@ -468,7 +532,7 @@ a:hover
     margin: -2rem 0 0
     float: right
     padding: 5px 10px
-  
+
   &.button_show
     border-radius: 3px 3px 0 0
     font-size: 1.6rem
@@ -476,7 +540,7 @@ a:hover
     margin: -1.9rem -0.3rem -0.9rem 0.8rem
     float: right
     padding: 5px 10px
-    
+
 .small
   background: image-url('bg-small-button.gif') no-repeat
   display: block
@@ -3824,7 +3888,7 @@ label.error
   width: 16.7%
 
 .certificate_details_box, .contact_details_box, .notes_box, .full_width_box,
-.half_width_box
+.half_width_box, .col-md-3, .col-md-4, .col-md-5, .col-md-12
   float: left
   width: 33%
   padding: 20px 0px
@@ -3890,7 +3954,7 @@ label.error
     display: block
     float:   none !important
     margin:  1rem auto !important
-    
+
 
 /* ----------- Generic Form ----------- */
 #plain_form
@@ -3899,9 +3963,11 @@ label.error
 #stylized
   border: solid 1px #ccccff
   background: #fff image-url('bg.gif') repeat-x
-  @include box-shadow(0 0 1px 1px rgba(255, 255, 255, 0.4) inset)
-  @include background(linear-gradient(#DEDEDE, white 20%))
-  @include border-radius(5px)
+  box-shadow: 0 0 1px 1px rgba(255, 255, 255, 0.4) inset
+  -webkit-box-shadow: 0 0 1px 1px rgba(255, 255, 255, 0.4) inset
+  -moz-box-shadow: 0 0 1px 1px rgba(255, 255, 255, 0.4) inset
+  background: linear-gradient(#DEDEDE, white 20%)
+  border-radius: 5px
 
 #stylized, #surl_stylized
   p, .heading, form, button
@@ -3953,7 +4019,7 @@ label.error
     width: 300px
     text-align: left
     background-color: #EBEBFE
-    @include border-radius(5px)
+    border-radius: 5px
 
     p
       text-align: inherit
@@ -4018,20 +4084,26 @@ label.error
   //the following should be able to exist outside stylized
   input[type=text], input[type=number], input[type=url], input[type=email], input[type=password], select, textarea
     font-size: 1.5em
-    @include text-shadow(0px 1px 0px #fff)
+    text-shadow: 0px 1px 0px #fff
     outline: none
-    @include background(linear-gradient(top,  #ddd,  #fff))
-    @include border-radius(3px)
+    background: linear-gradient(top,  #ddd,  #fff)
+    border-radius: 3px
     border: 1px solid #717171
-    @include box-shadow(1px 1px 1px 1px #efefef)
+    box-shadow: 1px 1px 1px 1px #efefef
+    -moz-box-shadow: 1px 1px 1px 1px #efefef
+    -webkit-box-shadow: 1px 1px 1px 1px #efefef
 
     &:focus
-      @include box-shadow(0px 0px 5px #007eff)
+      box-shadow: 0px 0px 5px #007eff
+      -moz-box-shadow: 0px 0px 5px #007eff
+      -webkit-box-shadow: 0px 0px 5px #007eff
 
   .field_with_errors
     input, select, textarea
       border: 1px solid red
-      @include box-shadow(0px 0px 5px red)
+      box-shadow: 0px 0px 5px red
+      -moz-box-shadow: 0px 0px 5px red
+      -webkit-box-shadow: 0px 0px 5px red
 
   #multi_upload_wrap
     padding-left: 20em
@@ -4109,7 +4181,7 @@ label.error
       padding: 0
       margin: 0
 
-  #acc_form 
+  #acc_form
     position: relative
     #btn_reset_secretkey
       border-width: 2px
@@ -4208,7 +4280,7 @@ label.error
         margin: 0px 5px 0px 0px
         padding: 5px 2px
         font-size: 12px
-      
+
       .duo_key
         margin-bottom: 10px
 
@@ -4392,7 +4464,7 @@ table#at_a_glance_header
   font-weight: bold
   margin: 0 1em
 
-#deposit_details, 
+#deposit_details,
 #order_details,
 .order_details
   margin: 0 0 1em
@@ -4436,8 +4508,7 @@ table#line_items_receipt
   background-color: #efe
   font-size: 1.4em
   color: #333
-  //@include text-shadow(1px 1px 1px rgba(255,255,255,.8),  2px 2px 3px rgba(0,0,0,.4))
-  @include background(linear-gradient(#EEFFEE 10%, #FFFFFF, #EEFFEE 90%))
+  background: linear-gradient(#EEFFEE 10%, #FFFFFF, #EEFFEE 90%)
 
   ul
     margin: 0 auto
@@ -4643,7 +4714,7 @@ table#line_items_receipt
 #domains_label_text
   padding-bottom: 2px
 
-#current_balance, 
+#current_balance,
 #balance_after_load,
 #tier_load_amount,
 #buying_tier_level,
@@ -4931,7 +5002,7 @@ img.blue_icon
   text-align: center
   margin: 0 auto
   margin-top: 1em
-  width: 400px
+  width: 440px
   font-size: 1.4em
   border: 1px solid #ccf
   #search
@@ -5266,8 +5337,10 @@ ul.csr_fields
   padding: 1em 0 0 0
 
 ul#send_to_ca_box
-  @include box-shadow(0 1px 0 rgba(0, 0, 0, 0.1), 0 1px 7px 0 rgba(0, 0, 0, 0.8) inset)
-  @include border-radius(4px)
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1), 0 1px 7px 0 rgba(0, 0, 0, 0.8) inset
+  -moz-box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1), 0 1px 7px 0 rgba(0, 0, 0, 0.8) inset
+  -webkit-box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1), 0 1px 7px 0 rgba(0, 0, 0, 0.8) inset
+  border-radius: 4px
   margin: 1em 0
   padding-top: 1em
   padding-bottom: 1em
@@ -5276,7 +5349,7 @@ ul#send_to_ca_box
   font-size: .8em
 
   dd
-    @include text-shadow(0 1px 3px rgba(255, 0, 0, 0.6))
+    text-shadow: 0 1px 3px rgba(255, 0, 0, 0.6)
 
 #processing_ca
   text-align: center
@@ -5290,21 +5363,25 @@ ul#send_to_ca_box
   color: #050505
   padding: 10px 20px
   background-color: #ebebeb
-  @include background(linear-gradient(top,#ffffff 0%, #ebebeb 50%, #dbdbdb 50%, #b5b5b5))
-  @include border-radius(10px)
+  background: linear-gradient(top,#ffffff 0%, #ebebeb 50%, #dbdbdb 50%, #b5b5b5)
+  border-radius: 10px
   border: 1px solid #949494
-  @include box-shadow(0px 1px 3px rgba(000,000,000,0.5), inset 0px 0px 2px rgba(255,255,255,1))
-  @include text-shadow(0px -1px 0px rgba(000,000,000,0.2), 0px 1px 0px rgba(255,255,255,1))
+  box-shadow: 0px 1px 3px rgba(000,000,000,0.5), inset 0px 0px 2px rgba(255,255,255,1)
+  -moz-box-shadow: 0px 1px 3px rgba(000,000,000,0.5), inset 0px 0px 2px rgba(255,255,255,1)
+  -webkit-box-shadow: 0px 1px 3px rgba(000,000,000,0.5), inset 0px 0px 2px rgba(255,255,255,1)
+  text-shadow: 0px -1px 0px rgba(000,000,000,0.2), 0px 1px 0px rgba(255,255,255,1)
 
 .shiny_blue_button
   color: #ffffff
   padding: 10px 20px
   background-color: #79cff7
-  @include background(linear-gradient(top, #79cff7 0%, #11557a))
-  @include box-shadow(0px 1px 3px rgba(000,000,000,0.4), inset 0px 0px 2px rgba(255,255,255,0.7))
-  @include border-radius(5px)
+  background: linear-gradient(top, #79cff7 0%, #11557a)
+  box-shadow: 0px 1px 3px rgba(000,000,000,0.4), inset 0px 0px 2px rgba(255,255,255,0.7)
+  -moz-box-shadow: 0px 1px 3px rgba(000,000,000,0.4), inset 0px 0px 2px rgba(255,255,255,0.7)
+  -webkit-box-shadow: 0px 1px 3px rgba(000,000,000,0.4), inset 0px 0px 2px rgba(255,255,255,0.7)
+  border-radius: 5px
   border: 1px solid #00387d
-  @include text-shadow(0px -1px 0px rgba(000,000,000,0.4), 0px 1px 0px rgba(255,255,255,0.3))
+  text-shadow: 0px -1px 0px rgba(000,000,000,0.4), 0px 1px 0px rgba(255,255,255,0.3)
 
 #busy_sending
   display: none
@@ -5427,7 +5504,7 @@ span#no_emails_accessible
       background-color: rgb(220, 223, 254)
       background-color: rgba(220, 223, 254, 0.9)
       border: 1px solid orange
-      @include border-radius(10px)
+      border-radius: 10px
 
       #advanced_options
         font-size: 0.8em
@@ -5513,8 +5590,8 @@ span#no_emails_accessible
 
 #manage_current_links, #accepted_country_codes, #restricted_country_codes, #affiliate_sales
   background: #fcf0c4
-  @include background(linear-gradient(top, #FFFFF5 0%, #FDFFB8))
-  @include border-radius(15px)
+  background: linear-gradient(top, #FFFFF5 0%, #FDFFB8)
+  border-radius: 15px
   font-size: 1.5em
   border-collapse: collapse
   float: left
@@ -5777,7 +5854,7 @@ span#no_emails_accessible
     width: 270px !important
     min-width: 270px !important
     max-width: 270px !important
-  
+
   .ssl_action
     a
       font-size: 1.1rem
@@ -6094,7 +6171,7 @@ span.notifications-teams
   font-weight: 500
   color: white
   text-align: center
-  
+
 .refund-receipt
   color: #666666
   width: 37%
@@ -6235,7 +6312,7 @@ span.notifications-teams
   background: -moz-linear-gradient(#84b332, $base_green)
   background: linear-gradient(#84b332, $base_green)
   border: 2px solid #84b332
-        
+
 #invoice-container-errors,
 #invoice-admin-errors
   .errors-invoice-update
@@ -6246,7 +6323,7 @@ span.notifications-teams
 
 #invoice-container-ext,
 #invoice-container-admin,
-#invoice-container-credit 
+#invoice-container-credit
   form
     border-top: 1px dashed lightgrey
     margin-top: 2.5rem
@@ -6280,9 +6357,9 @@ span.notifications-teams
       font-weight: 600
       font-size: 1.3rem !important
       width: 30%
-      
+
     .label_desc
-      font-weight: 500  
+      font-weight: 500
       font-size: 1.1rem !important
 
 #cdns
@@ -6594,8 +6671,10 @@ span.notifications-teams
     margin-left: -4.5rem !important
     width: 120% !important
     border: solid 1px #69AFFD
-    @include box-shadow(0 0 1px 1px rgba(255, 255, 255, 0.4) inset)
-    @include border-radius(5px)
+    box-shadow: 0 0 1px 1px rgba(255, 255, 255, 0.4) inset
+    -moz-box-shadow: 0 0 1px 1px rgba(255, 255, 255, 0.4) inset
+    -webkit-box-shadow: 0 0 1px 1px rgba(255, 255, 255, 0.4) inset
+    border-radius: 5px
     .button_red
       font-weight: 600
       color: #FFFFFF !important
@@ -6669,10 +6748,10 @@ span.notifications-teams
  */
 .order_details
   .order-status
-    font-size: 1.4rem  
+    font-size: 1.4rem
     span
       font-weight: 600
-   
+
 #order_status_section
   margin: 1em auto 0
   border: none
@@ -6680,49 +6759,49 @@ span.notifications-teams
   width: 100%
   font-size: 1.4em
   text-align: left
-  
+
   tr#heading_row
     color: grey
     font-size: 1.1rem
-    
+
     th
       border-bottom: 1px solid #ccc
-      
+
       &:first-child
         padding-left: 1rem
-  
+
   tr
     border-bottom: 1px dashed grey
-    
+
     &:last-child
       border: none
-        
+
   td
     margin: 1.5rem
-    
+
     &:first-child
       padding-left: 1rem
-    
+
   .ref
     width: 23%
-  
+
   .status
     font-weight: 600
     font-size: 1.1rem
     width: 13%
-      
+
   .system-audit,
   .revoke-status,
   .cert-content-state
     font-weight: 400
     font-size: 1.2rem
     margin: 1.2rem 0
-    
+
     span
       margin-bottom: 0.2rem
       font-size: 1rem
       font-weight: 600
-   
+
 #order_details_section
   margin: 1em auto 0
   border: none
@@ -6733,7 +6812,7 @@ span.notifications-teams
   tr#heading_row
     color: grey
     font-size: 1.1rem
-    
+
     th
       border-bottom: 1px solid #ccc
     .index
@@ -6741,13 +6820,13 @@ span.notifications-teams
 
     .description
       width: 75%
-    
+
     .quantity
       width: 10%
-    
+
     .price
       width: 10%
-  
+
   td, th
     padding: 1em
     &.description
@@ -6755,32 +6834,32 @@ span.notifications-teams
       font-size: .9em
       font-weight: 600
       width: 75%
-  
+
       &.subitem
         padding: 0 0 0 2em
         font-size: .8em
         font-weight: 400
         color: #333
-  
+
     &.line-index
       color: grey
       opacity: 0.6
-      
+
     &.quantity
       text-align: right
       width: 10%
-  
+
     &.price
       text-align: right
       width: 10%
-  
+
     &.total_row
       padding-top: 1em
       font-weight: bold
-  
+
   .line_item td
     padding-bottom: 0
- 
+
   .line-index,
   .index,
   tr td:first-child,
@@ -6788,43 +6867,43 @@ span.notifications-teams
     padding: 1em 0 0 1em
     width: 15px
     max-width: 15px
-    
+
   .order-detail-container
     margin: 0.5rem 1rem 0.5rem 0.5rem
-  
+
   .order-detail-cn
     color: #3c3c3c
     font-size: 1.1rem
     font-weight: 600
     margin: -1rem 0 2rem 2.5rem
     text-transform: uppercase
-    
+
   .order-detail-actions
     font-size: 0.8rem
     display: flex
-    
-    #btn-order-edit,  
+
+    #btn-order-edit,
     #btn-order-cancel,
     #btn-order-credit,
     #btn-order-co-refunt,
     #btn-order-revoke,
     .btn-pay-invoices
       border-radius: 3px
-      border: none  
+      border: none
       font-weight: 500
       color: #FFFFFF !important
       cursor: pointer
       letter-spacing: 1px
       padding: 2px 3px
-    
+
     form
       margin-top: -0.3rem
-      
+
     #btn-order-edit
       border: 1px solid $base_green
       font-weight: 600
       background-color: $base_green
-      
+
     #btn-order-cancel
       border: 1px solid $base_green
       color: $base_green !important
@@ -6833,16 +6912,16 @@ span.notifications-teams
     #btn-order-credit
       border: 1px solid grey
       background-color: grey
-    
+
     #btn-order-co-refunt
       border: 1px solid #F51C29
       background-color: #F51C29
-    
+
     #btn-order-revoke
       border: 1px solid #334DFF
       color: #334DFF !important
       background-color: none
-    
+
     .btn-pay-invoices
       margin-right: 1.3rem
       font-size: 0.95rem
@@ -6852,16 +6931,16 @@ span.notifications-teams
       background-color: none !important
       margin-top: 0.7rem
       text-transform: uppercase
-    
+
     emp
       padding-right: 1rem
       text-transform: uppercase
       font-size: 1.1rem
       margin-top: 0.9rem
-      
+
   .description.total_row
     text-align: right
-  
+
   .order-discount td,
   .order-funded td,
   .order-total td,
@@ -6869,14 +6948,14 @@ span.notifications-teams
   #order-refunded td
     padding-top: 1rem !important
     vertical-align: top !important
-    
+
     &.price
       padding-right: 1rem
-    
+
   .order-discount,
   .order-funded
     color: grey
-  
+
   .line-item-refunded
     .description
       letter-spacing: 0.5px
@@ -6887,7 +6966,7 @@ span.notifications-teams
 
   #order-refunded
     color: #c13a3a
-  
+
   .order-divider
     td
       border-bottom: 1px solid #ccc
@@ -6967,7 +7046,7 @@ i.fa-external-link.fa-ssl-custom
   color: #6b9029
   font-size: 1.4rem
   font-weight: 600
-  
+
 #domains_validation
   width: 100%
   border: 1px solid black
@@ -7139,7 +7218,7 @@ i.fa-external-link.fa-ssl-custom
   font-weight: 600
   width: 13%
   min-width: 13%
-  
+
   i
     margin-left: 0.5rem
 
@@ -7158,7 +7237,7 @@ i.fa-external-link.fa-ssl-custom
   width: 45%
   div
     float: left
-  
+
 .btn-team-links,
 .btn-rmv-invoice-item,
 .btn-add-invoice-item,
@@ -7249,7 +7328,7 @@ i.fa-external-link.fa-ssl-custom
       font-size: 12px
       color: #3c3c3c
       padding: 0px
-  
+
 /*
  * Invoices details and index
  */
@@ -7260,18 +7339,18 @@ i.fa-external-link.fa-ssl-custom
 .invoices-index
   td, th
     text-align: left !important
-  
+
   td:first-child, th:first-child
     padding-left: 1rem !important
-    
+
   .type span
     font-size: 1rem
     text-transform: uppercase
     color: grey
-    
+
   .list
     text-align: center !important
-      
+
 .btn-edit-invoice-item,
 #btn-update-invoice-item
   border: 1px solid #334DFF
@@ -7282,7 +7361,7 @@ i.fa-external-link.fa-ssl-custom
   border: 1px solid #334DFF
   background-color: white
   color: #334DFF !important
-  
+
 #invoice-status,
 #invoice-status-archived
   color: grey
@@ -7291,17 +7370,17 @@ i.fa-external-link.fa-ssl-custom
 
 #invoice-status-archived
   color: red
-    
+
 .monthly-invoice
   #summary
     font-size: 1.5rem
     display: flex
     justify-content: center
-    
+
     div
       margin-right: 1.9rem
       margin-bottom: 1rem
-    
+
     span
       color: grey
       font-size: 1.2rem
@@ -7310,28 +7389,28 @@ i.fa-external-link.fa-ssl-custom
 #validations.monthly-invoice > table,
 #validations.monthly-invoice > table td
   border-color: #CCCCCC !important
-  
+
 #tbl-monthly-invoice
   tbody
     .description
       width: 60%
-  
+
   span
     color: grey
-  
+
   .items-description
     font-size: 1.2rem
     width: 50%
-  
+
   #mo-select
     width: 50% !important
 
   .description.total_row
     text-align: right
-  
+
   .select-item td
     margin-left: 1rem
-    
+
   .order-funded td,
   .order-total td,
   .order-subtotal td
@@ -7339,13 +7418,13 @@ i.fa-external-link.fa-ssl-custom
     font-weight: 600
     padding-top: 1rem !important
     vertical-align: top !important
-      
+
     &.price
       padding-right: 1rem
-  
+
   .order-subtotal td
     border-top: 2px solid grey
-            
+
   .order-funded
     color: grey
 
@@ -7354,20 +7433,20 @@ i.fa-external-link.fa-ssl-custom
 
 #items-invoice-select
   width: 22%
-  
+
   .select2.select2-container
     width: 100% !important
-  
+
 #summary.transfer-items
   div
     margin-right: 2.5rem
     margin-bottom: 1.5rem
-  
+
   #items-invoice-transfer .button-mo-invoice
     margin: 0 0 0 2rem
     padding: 1.5px 15px
     font-size: 1.4rem
-    
+
 #monthly-invoice-actions,
 #monthly-invoice-pmt
   margin: 2em auto 4em
@@ -7390,29 +7469,29 @@ i.fa-external-link.fa-ssl-custom
   width: 100%
   font-size: 1.4em
   text-align: center
-  
+
   tr td:first-child
     margin-left: 0.5rem
-  
+
   td
     padding-bottom: 0.5rem
-    
+
   tr.heading_row
     color: grey
     font-size: 1.1rem
-  
+
   .detail
     width: 55%
     text-align: left
     border-bottom: dashed 1px grey
-    
+
     strong
       color: grey
       font-size: 1rem
-  
+
   .user
     color: grey
-    
+
   .divider
     td
       border-bottom: 1px solid #ccc
@@ -7428,19 +7507,19 @@ i.fa-external-link.fa-ssl-custom
       font-size: 1.3rem
       font-weight: 600
       margin-right: 2.5rem
-    
+
 /*
  * Transaction Details
  */
 .dl-transfer-team
   border-radius: 0
-  
+
   #dialog-form
     background-color: #ffffff !important
-    
+
     #frm-team-search
       margin: 1rem
-    
+
     #team-search-results
       margin-top: 1rem
 
@@ -7448,24 +7527,24 @@ i.fa-external-link.fa-ssl-custom
     font-size: 1.4rem
     margin-bottom: -3rem !important
 
-  .ui-dialog-buttonset button:nth-child(2) 
+  .ui-dialog-buttonset button:nth-child(2)
     color: #ffffff
     background-color: $base_green
     border-color: $base_green
     border-radius: 4px
-      
+
   .ui-dialog, .ui-widget-content
     font-family: sans-serif, Arial
-    
+
   .ui-widget-header
     border: 1px solid grey
     color: white
     background: grey
     font-size: 1.5rem
-  
+
   .ui-dialog-content
     font-size: 1.4rem
-    
+
   .ui-dialog-titlebar-close
     color: white
 
@@ -7473,7 +7552,7 @@ i.fa-external-link.fa-ssl-custom
   text-transform: uppercase
   float: right
   font-size: 1.3rem
-  
+
   span
     font-size: 1.5rem
 
@@ -7481,7 +7560,7 @@ i.fa-external-link.fa-ssl-custom
   border: 0.5px solid #bebcbc
   padding: 2.5px 5px
   cursor: pointer
-  
+
   &:hover,
   &:active
     background-color: $base_green
@@ -7490,34 +7569,34 @@ i.fa-external-link.fa-ssl-custom
 
 /*
  * Transaction Show: Reprocess UCC Section
- */ 
+ */
 #order_details_reprocess_ucc
   border: none
   border-collapse: collapse
   width: 100%
   font-size: 1.4em
   text-align: center
-  
+
   tr td:first-child
     margin-left: 0.5rem
-  
+
   td
     padding-bottom: 0.5rem
-    
+
   tr.heading_row
     color: grey
     font-size: 1.1rem
-  
+
   .domains-list
-  
+
   .order-edit
     font-weight: 500
-    
+
   .order-divider
     td
       border-bottom: 1px solid #ccc
       padding: 0.4rem 0 !important
-  
+
   .reprocess-amount
     font-weight: 600
 
@@ -7529,7 +7608,7 @@ i.fa-external-link.fa-ssl-custom
     font-weight: 600
     letter-spacing: 1px
     text-transform: uppercase
-    
+
   #btn-bp-default,
   #btn-bp-delete
     border-radius: 3px
@@ -7541,7 +7620,7 @@ i.fa-external-link.fa-ssl-custom
     letter-spacing: 1px
     padding: 2px 3px
     text-transform: uppercase
-      
+
   #btn-bp-default
     border: 1px solid $base_green
     background-color: $base_green
@@ -7549,20 +7628,20 @@ i.fa-external-link.fa-ssl-custom
   #btn-bp-delete
     border: 1px solid #F51C29
     background-color: #F51C29
-    
-    
+
+
 .filter-form
   label
     font-weight: 600
     font-size: 1.25rem
     width: 6.7rem
-  
+
   .clearfix
     margin-bottom: 1rem
-  
+
   table
     border-bottom: 1px solid #ccf !important
-    
+
   tr, td
     border: none !important
 
@@ -7579,7 +7658,7 @@ i.fa-external-link.fa-ssl-custom
   letter-spacing: 1px
   padding: 5px 7px
   text-transform: uppercase
-  
+
 .btn-filter, .btn-filter-clear
   border: 1px solid #334DFF
   background-color: white
@@ -7610,13 +7689,13 @@ i.fa-external-link.fa-ssl-custom
   border: 1px solid #334DFF
   background-color: #334DFF
   margin-left: 1.5rem
-  
+
 .order-stats-cont
   display: flex
   font-size: 1.3rem
   justify-content: center
   color: grey
-  
+
   .emp
     font-weight: 600
     font-size: 1.2rem
@@ -7636,7 +7715,7 @@ i.fa-external-link.fa-ssl-custom
   width: 300px
   padding: 10px 0px 20px 0px
   margin: auto
-  
+
 /*
  * Tags Input Container
  */
@@ -7655,7 +7734,7 @@ i.fa-external-link.fa-ssl-custom
 
   span
     font-size: 1.2rem
-    font-weight: 600   
+    font-weight: 600
 
 .cc-tags
   margin-left: 2.1rem
@@ -7732,11 +7811,11 @@ i.fa-external-link.fa-ssl-custom
 .schedule_container,
 #contacts-container,
 #subjects-container,
-#cos-container, 
+#cos-container,
 #tags-container,
 #ca-certificates-select
   margin: 0 !important
-  
+
   .select2
     float: none !important
     width: 96% !important
@@ -7770,7 +7849,7 @@ i.fa-external-link.fa-ssl-custom
           padding: 0px 4px
           margin-right: 2px
           vertical-align: middle
-  
+
   #tags-co-input,
   #tags-cc-input
     margin-top: -2rem
@@ -7990,7 +8069,7 @@ i.fa-external-link.fa-ssl-custom
         font-size: 1.2rem
         padding: 0.6rem
         margin-left: 1rem
-    
+
   #btn_cert_order_filter,
   #btn_cert_order_filter_search,
   #btn_close_cert_order_filter,
@@ -8017,7 +8096,7 @@ i.fa-external-link.fa-ssl-custom
 #folders-index
   width: 85%
   margin: 1.5rem auto
-  
+
   .jstree-grid-wrapper
     border: 1px solid lightgrey
     width: 100%
@@ -8030,7 +8109,7 @@ i.fa-external-link.fa-ssl-custom
   .folder-index-expires,
   .folder-index-action
     font-size: 1.3rem
-  
+
   .folder-index-action
     font-weight: 600
     color: $base_green
@@ -8038,7 +8117,7 @@ i.fa-external-link.fa-ssl-custom
 
   .folder-index-status
     font-weight: 600
-  
+
   .folder-index-name
     border-right: 1px solid grey
 
@@ -8056,10 +8135,10 @@ i.fa-external-link.fa-ssl-custom
     padding: 0.5rem
 
   #folders-tree
-  
+
   i
     font-size: 1.5rem
-  
+
   #folders-header
     margin-bottom: 0.5rem
     height: 25px
@@ -8094,7 +8173,7 @@ i.fa-external-link.fa-ssl-custom
     display: flex
     flex-direction: row
     justify-content: center
-    
+
     #folders-action,
     #folders-action-other
       background-color: #eeeeee
@@ -8128,8 +8207,8 @@ i.fa-external-link.fa-ssl-custom
         margin-left: 0
         width: 100px
         padding: 0.55rem
-        
-    
+
+
     #folders-action-other
       border-left: 1px solid lightgrey
       padding: 1.2rem 0
@@ -8153,7 +8232,7 @@ i.fa-external-link.fa-ssl-custom
           font-size: 1.3rem
           margin-left: 2rem
           margin-top: 0.5rem !important
-          
+
           &:first-child
             margin-top: 0
 
@@ -8169,7 +8248,7 @@ i.fa-external-link.fa-ssl-custom
 
   .jstree-folder-archive
     color: #990000
-  
+
   .jstree-co
     color: grey !important
 
@@ -8196,7 +8275,7 @@ i.fa-external-link.fa-ssl-custom
 
 #co-folders-container
   margin: 0.8em 0 0.5em
-  
+
   .folder-co-count
     background-color: $base_green
     border-radius: 8px
@@ -8235,13 +8314,13 @@ i.fa-external-link.fa-ssl-custom
           white-space: nowrap
           width: 100%
           display: inline-block
-          
+
           &:hover
             background-color: #beebff
-          
+
           a
             color: grey
-        
+
 
   #folder-tree-actions
     padding: 1.3rem
@@ -8249,10 +8328,10 @@ i.fa-external-link.fa-ssl-custom
 
     &.sub-menu
       border-bottom: 1px solid #ccf
-    
+
     i
       font-size: 1.5rem
- 
+
     .btn-co-folders
       margin-right: 1rem
       font-size: 1rem
@@ -8306,12 +8385,12 @@ i.fa-external-link.fa-ssl-custom
   .ui-dialog-buttonpane
     font-size: 1.4rem
 
-  .ui-dialog-buttonset button:nth-child(2) 
+  .ui-dialog-buttonset button:nth-child(2)
     color: #ffffff
     background-color: $base_green
     border-color: $base_green
     border-radius: 3px
-        
+
   .ui-widget-header
     border: 1px solid grey
     color: white
@@ -8323,7 +8402,7 @@ i.fa-external-link.fa-ssl-custom
  */
 #iv-ov-file-upload
   margin-left: 1rem
-  
+
   p
     font-size: 1.6rem
     color: #5A79A5 !important
@@ -8332,7 +8411,7 @@ i.fa-external-link.fa-ssl-custom
     margin-top: 2rem
 
   #iv_multi_upload, #ov_multi_upload
-  
+
   .MultiFile-remove
     margin-left: 3rem !important
 
@@ -8358,7 +8437,7 @@ i.fa-external-link.fa-ssl-custom
     &:hover
       color: black
       border-bottom: solid 2px black
-      
+
     &:last-child
       margin-right: 0
 
@@ -8498,7 +8577,7 @@ i.fa-external-link.fa-ssl-custom
   flex-wrap: nowrap
   justify-content: flex-start
   margin-top: 2rem
-  
+
   .mailbox-container-empty
     text-align: center
     font-size: 1.4rem
@@ -8536,12 +8615,12 @@ i.fa-external-link.fa-ssl-custom
         color: grey
         font-size: 1.4rem !important
         letter-spacing: 0.5px !important
-    
+
     #menu-main-unread-count
       margin-left: 1rem
-    
+
     .menu-main-item__selected
-      background-color: #f0808052 
+      background-color: #f0808052
       a
         color: red !important
         font-weight: 600 !important
@@ -8576,14 +8655,14 @@ i.fa-external-link.fa-ssl-custom
     #mailbox-select-all
       text-align: center
       width: 3%
-    
+
     #mailbox-refresh,
     #mailbox-read-actions
       font-size: 1.9rem
       a
         color: grey
         margin-left: 1rem
-    
+
     #mailbox-read-actions
       height: 2.5rem
 
@@ -8597,17 +8676,17 @@ i.fa-external-link.fa-ssl-custom
 
 #mailbox-compose-container
   width: 100%
-  
+
   span.compose-label
     font-size: 1.1rem
     font-weight: 600
     text-transform: uppercase
     padding-bottom: 1rem
 
-  form, table, td, 
+  form, table, td,
   .select2-selection.select2-selection--multiple
     width: 100% !important
-  
+
   .select2
     width: 95% !important
 
@@ -8618,7 +8697,7 @@ i.fa-external-link.fa-ssl-custom
 
   td
     padding: 1rem
-  
+
   #mail-body,
   #mail-subject,
   .select2-selection
@@ -8668,7 +8747,7 @@ i.fa-external-link.fa-ssl-custom
     font-size: 1.45rem
     padding-top: 2rem
     padding-left: 1.5rem
-  
+
   .mailbox-read-buttons
     margin-top: 4rem
     i
@@ -8695,18 +8774,18 @@ i.fa-external-link.fa-ssl-custom
       border-bottom: 1px solid #f2f2f2
       padding-bottom: 1rem
       margin-bottom: 1rem
-    
+
     div:nth-child(2)
       margin-bottom: 1rem
 
     div:last-child
       margin-bottom: 1rem
-    
+
     .txt-mail-reply-body
       width: 100%
       border: none
       border-bottom: 1px solid #f2f2f2
-    
+
     .btn-reply-send,
     .btn-reply-cancel
       border: 1px solid $base_green
@@ -8717,7 +8796,7 @@ i.fa-external-link.fa-ssl-custom
       padding: 0.5rem 1rem
       margin-right: 1rem
       letter-spacing: 0.5px
-    
+
     .btn-reply-cancel
       background-color: white
       color: $base_green
@@ -8725,11 +8804,11 @@ i.fa-external-link.fa-ssl-custom
 #mailbox-mail-list
   border-collapse: collapse
   width: 100%
-  
+
   tr
     border-bottom: 1px solid #f2f2f2
     cursor: pointer
-    
+
     &:hover
       background-color: #f2f2f2
       border: 1px solid lightgrey
@@ -8739,7 +8818,7 @@ i.fa-external-link.fa-ssl-custom
     td
       height: 2.6rem
       font-size: 1.3rem
-  
+
   .mail-item-unread
     font-weight: 600
 
@@ -8752,7 +8831,7 @@ i.fa-external-link.fa-ssl-custom
 
   .mail-subject
     width: 60%
-  
+
   .mail-actions
     width: 4%
     a
@@ -9179,7 +9258,7 @@ a.back_to_generate_cert_page
   font-weight: 600
 
 /*
- * SMIME Client Enrollment Page 
+ * SMIME Client Enrollment Page
  */
 .frm-sc-enroll
   #emails
@@ -9335,7 +9414,7 @@ a.back_to_generate_cert_page
       line-height: 4rem
       text-align: center
       margin-bottom: 1rem
-    
+
     &__days, &__link
       font-size: 1.25rem
       margin: 0.5rem
@@ -9345,7 +9424,7 @@ a.back_to_generate_cert_page
       font-weight: 600
       letter-spacing: 0.5px
       margin-top: 1.2rem
-    
+
     &__link:last-child
       margin-bottom: 2rem
 

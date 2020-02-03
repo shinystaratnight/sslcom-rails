@@ -24,7 +24,7 @@ class ApiCertificateCreate < ApiCertificateRequest
       {in: ServerSoftware.pluck(:id).map(&:to_s),
       message: "needs to be one of the following: #{ServerSoftware.pluck(:id).map(&:to_s).join(', ')}"},
       if: "Settings.require_server_software_w_csr_submit"
-  validates :organization_name, presence: true, if: lambda{|c|!c.is_dv? || c.csr_obj.organization.blank?}
+  validates :organization, presence: true, if: lambda{|c|!c.is_dv? || c.csr_obj.organization.blank?}
   validates :post_office_box, presence: {message: "is required if street_address_1 is not specified"},
             if: lambda{|c|!c.is_dv? && c.street_address_1.blank?} #|| c.parsed_field("POST_OFFICE_BOX").blank?}
   validates :street_address_1, presence: {message: "is required if post_office_box is not specified"},
@@ -32,10 +32,10 @@ class ApiCertificateCreate < ApiCertificateRequest
   validates :locality_name, presence: true, if: lambda{|c|!c.is_dv? || c.csr_obj.locality.blank?}
   validates :state_or_province_name, presence: true, if: lambda{|c|!c.is_dv? || c.csr_obj.state.blank?}
   validates :postal_code, presence: true, if: lambda{|c|!c.is_dv?} #|| c.parsed_field("POSTAL_CODE").blank?}
-  validates :country_name, presence: true, inclusion:
+  validates :country, presence: true, inclusion:
       {in: Country.accepted_countries, message: "needs to be one of the following: #{Country.accepted_countries.join(', ')}"},
       if: lambda{|c|c.csr_obj && c.csr_obj.country.try("blank?")}
-  #validates :registered_country_name, :incorporation_date, if: lambda{|c|c.is_ev?}
+  #validates :registered_country, :incorporation_date, if: lambda{|c|c.is_ev?}
   validates :dcv_email_address, email: true, unless: lambda{|c|c.dcv_email_address.blank?}
   validates :dcv_method, inclusion: {in: ApiCertificateCreate::DCV_METHODS,
       message: "needs to one of the following: #{DCV_METHODS.join(', ')}"}, if: lambda{|c|c.dcv_method}
@@ -108,8 +108,8 @@ class ApiCertificateCreate < ApiCertificateRequest
     cc = options[:certificate_content]
     cc.add_ca(options[:certificate_order].ssl_account) if options[:certificate_order].external_order_number.blank?
     cc.create_registrant(
-        company_name: self.organization_name,
-        department: self.organization_unit_name,
+        company_name: self.organization,
+        department: self.organization_unit,
         po_box: self.post_office_box,
         address1: self.street_address_1,
         address2: self.street_address_2,
@@ -117,7 +117,7 @@ class ApiCertificateCreate < ApiCertificateRequest
         city: self.locality_name,
         state: self.state_or_province_name,
         postal_code: self.postal_code,
-        country: self.country_name)
+        country: self.country)
     if cc.csr_submitted?
       cc.provide_info!
       CertificateContent::CONTACT_ROLES.each do |role|

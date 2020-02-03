@@ -1,8 +1,6 @@
 FactoryBot.define do
   factory :sub_order_item do
-    product_variant_item
-    quantity {3}
-    amount {17700}
-    product_id nil
+    quantity { 1 }
+    amount { 100 }
   end
 end

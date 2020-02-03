@@ -1,0 +1,15 @@
+#profile-content
+  form.md-form
+    .file-field
+      .m-4
+        -if user.avatar.file.nil?
+          = fa_icon('user-circle', size: '7x')
+        -else
+          = image_tag user.avatar.url(:standard), alt: user.login, class: 'avatar'
+      .d-flex.m-2.justify-content-center
+        button#add-avatar.btn.btn-info.btn-rounded data-target='#uploadModal' type='button' data-toggle='modal' Add photo
+        = render partial: 'users/upload_modal', locals: { user: user }
+
+
+    
+

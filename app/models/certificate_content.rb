@@ -1,8 +1,33 @@
+# == Schema Information
+#
+# Table name: certificate_contents
+#
+#  id                   :integer          not null, primary key
+#  certificate_order_id :integer          not null
+#  signing_request      :text(65535)
+#  signed_certificate   :text(65535)
+#  server_software_id   :integer
+#  domains              :text(65535)
+#  duration             :integer
+#  workflow_state       :string(255)
+#  billing_checkbox     :boolean
+#  validation_checkbox  :boolean
+#  technical_checkbox   :boolean
+#  created_at           :datetime
+#  updated_at           :datetime
+#  label                :string(255)
+#  ref                  :string(255)
+#  agreement            :boolean
+#  ext_customer_ref     :string(255)
+#  approval             :string(255)
+#  ca_id                :integer
+#
+
 class CertificateContent < ApplicationRecord
   extend Memoist
   include V2MigrationProgressAddon
   include Workflow
-  
+
   belongs_to  :certificate_order, -> { unscope(where: [:workflow_state, :is_expired]) }, touch: true
   has_one     :ssl_account, through: :certificate_order
   has_many    :users, through: :certificate_order
@@ -36,10 +61,9 @@ class CertificateContent < ApplicationRecord
   after_save   :transfer_existing_contacts
   before_destroy :preserve_certificate_contacts
 
-  before_create do |cc|
+  after_create do |cc|
     ref_number = cc.to_ref
-    cc.ref = ref_number
-    cc.label = ref_number
+    cc.update(ref: ref_number, label: ref_number)
   end
 
   SIGNING_REQUEST_REGEX = /\A[\w\-\/\s\n\+=]+\Z/
@@ -97,7 +121,7 @@ class CertificateContent < ApplicationRecord
   INTRANET_IP_REGEX = /\A(127\.0\.0\.1)|(10.\d{,3}.\d{,3}.\d{,3})|(172\.1[6-9].\d{,3}.\d{,3})|(172\.2[0-9].\d{,3}.\d{,3})|(172\.3[0-1].\d{,3}.\d{,3})|(192\.168.\d{,3}.\d{,3})\z/
 
   serialize :domains
-  
+
   validates_presence_of :server_software_id, :signing_request, # :agreement, # need to test :agreement out on reprocess and api submits
     :if => "certificate_order_has_csr && !ajax_check_csr && Settings.require_server_software_w_csr_submit"
   validates_format_of :signing_request, :with=>SIGNING_REQUEST_REGEX,
@@ -291,7 +315,7 @@ class CertificateContent < ApplicationRecord
       new_certificate_names=[]
       (domains-certificate_names.find_by_domains(domains).pluck(:name)).each do |domain|
         unless domain=~/,/
-          new_certificate_names<<certificate_names.new(name: domain, is_common_name: csr_common_name==domain)
+          new_certificate_names << certificate_names.new(name: domain, is_common_name: csr_common_name==domain)
         end
       end
       CertificateName.import new_certificate_names
@@ -492,6 +516,14 @@ class CertificateContent < ApplicationRecord
       result.certificates = ""
       result.common_name = self.csr.common_name
     end
+  end
+
+  def to_api_query
+   {}.tap do |result|
+     %w(ref).each do |k,v|
+       result.merge!({"#{k.to_sym}": self.send(k)})
+     end	
+   end
   end
 
   def callback(packaged_cert=nil,options={})
@@ -710,7 +742,7 @@ class CertificateContent < ApplicationRecord
     end
     "#{certificate_order.ref}-#{index}"
   end
-  
+
   def contacts_for_form_opt(type=nil)
       certificate_contact_compatibility
       case type
@@ -726,7 +758,7 @@ class CertificateContent < ApplicationRecord
           []
       end
   end
-  
+
   def contacts_for_form
     certificate_contact_compatibility
     unless self.certificate_contacts.blank?
@@ -770,8 +802,8 @@ class CertificateContent < ApplicationRecord
         asterisk_found = (domain=~/\A\*\./)==0
         if ((!is_ucc && !is_wildcard) || is_premium_ssl) && asterisk_found
           errors.add(:domain, "cannot begin with *. since the order does not allow wildcards")
-        elsif certificate_order.certificate.is_dv? && CertificateContent.is_ip_address?(domain)
-          errors.add(:domain, "#{domain} was determined to be for an ip address. This is only allowed on OV or EV ssl orders.")
+        elsif (certificate_order.certificate.is_dv? || certificate_order.certificate.is_ev?) && CertificateContent.is_ip_address?(domain)
+          errors.add(:domain, "#{domain} was determined to be for an ip address. This is only allowed on OV ssl orders.")
         elsif !!(domain=~Regexp.new("\\.("+Country::BLACKLIST.join("|")+")$",true))
           errors.add(:domain, "#{domain} is a restricted tld")
         end
@@ -970,7 +1002,7 @@ class CertificateContent < ApplicationRecord
     rescue
     end
   end
-  
+
   def preserve_certificate_contacts
     cc = certificate_order.certificate_contents.where.not(id: id).last
     unless cc.nil?
@@ -984,14 +1016,14 @@ class CertificateContent < ApplicationRecord
 
   # if a certificate_content has a signed_certificate and is validated, it's state should be changed to issued
   def self.sync_issued_state
-    CertificateContent.includes(csr: :signed_certificates).
-        where{(workflow_state=="validated") &
-          (created_at > 120.days.ago)}.map{|cc|
-          cc.issue! if(cc.signed_certificate and cc.certificate.is_server?)}.compact
+    certificate_content = CertificateContent.includes(csr: :signed_certificates).where{(workflow_state=="validated") & (created_at > 120.days.ago)}
+    certificate_content.map do |cc|
+      cc.issue! if(cc.signed_certificate and cc.certificate.is_server?)
+    end.compact
   end
 
   private
-  
+
   def certificate_contact_compatibility
     if Contact.optional_contacts? # optional contacts ENABLED
       # contacts created from saved contacts
@@ -1038,11 +1070,11 @@ class CertificateContent < ApplicationRecord
       all.where.not(id: keep.map(&:id)).destroy_all
     end
   end
-  
+
   def validate_domains?
     (new? && (domains.blank? || errors[:domain].any?)) || !rekey_certificate.blank?
   end
-  
+
   def certificate_names_created?
     self.reload
     return false if domains.blank? && !certificate_name_from_csr?
@@ -1051,19 +1083,19 @@ class CertificateContent < ApplicationRecord
     common          = current_domains & new_domains
     common.length == new_domains.length && (current_domains.length == new_domains.length)
   end
-  
+
   def certificate_name_from_csr?
-    certificate_names.count == 1 && 
+    certificate_names.count == 1 &&
       csr.common_name &&
       certificate_names.first.name == csr.common_name &&
       certificate_names.first.is_common_name
   end
-  
+
   def parse_unique_domains(target_domains)
     return [] if target_domains.blank?
     target_domains.flatten.compact.map(&:downcase).map(&:strip).reject(&:blank?).uniq
   end
-  
+
   def domains_validation
     unless all_domains.blank?
       all_domains.each do |domain|
@@ -1132,14 +1164,14 @@ class CertificateContent < ApplicationRecord
     end
     true
   end
-  
+
   def transfer_existing_contacts
     certificate_order.certificate_contacts
       .where.not(contactable_id: id)
       .update_all(contactable_id: id)
-    
+
     Contact.clear_duplicate_co_contacts(certificate_order)
-    
+
     if certificate_contacts.any? && info_provided?
       provide_contacts!
     end

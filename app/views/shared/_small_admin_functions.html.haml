@@ -26,7 +26,7 @@
   -if co.external_order_number
     %li ext order number: #{co.external_order_number}
   %li=link_to "change ext order number", '#', onclick:  "change_ext_order_#{co.id}()"
-  -if co.certificate.is_evcs?
+  -if co.certificate.is_evcs? || co.certificate.is_client_business?
     %li
       =link_to "add physical token", new_certificate_order_physical_token_path(co)
   -unless co.attestation_certificate.blank?

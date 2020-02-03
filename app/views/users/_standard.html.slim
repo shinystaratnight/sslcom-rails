@@ -1,0 +1,40 @@
+-title="#{Settings.community_name} Customer Dashboard"
+-content_for :title, title
+.reseller_registration_select_tier
+  h2=title
+  p
+    | The SSL standard account is designed to streamline your ssl.com certificate
+    | purchases by providing an all encompassing interface related to your ssl
+    | certificates including, validations, tracking, reporting, and Smart SeaLs.
+  -if ssl_account.has_only_credits?
+    p
+      | You currently have unused ssl certificate credits. You will need to submit
+      | a certificate signing request (csr) for a particular pending ssl.com
+      | certificate credit in order to process the credit into an ssl certificate
+      | for your website.
+      =link_to "Click here to see a list of your ssl.com certificate credits.", credits_certificate_orders_path
+  -unless ssl_account.has_certificate_orders?
+    p
+      | To get started and enable encryption and trust services on your website
+      | through an ssl.com certificate, you will need to acquire an ssl.com
+      | certificate.
+      =link_to "Click here to see a list ssl.com certificate products.", certificates_path
+  -if Settings.enable_affiliate_program==true && !current_user.is_affiliate? && !is_sandbox?
+    .become_reseller_title(style="margin: 10px 0 0")
+      p
+        strong.red NEW! Earn commissions through the #{Settings.community_name} Referral Link Program
+      p
+        a(href="https://#{Settings.community_domain}/affiliate/index.php")
+          | Click here 
+        | to become an #{Settings.community_name} Referral Link Partner or 
+        = link_to "click here for more details", details_affiliates_path
+  /
+    .become_reseller_title(style="margin: 10px 0 0")
+      p
+        a(href="# url_for resellers_root_url(:subdomain=Reseller::SUBDOMAIN) ")
+          strong Become a reseller
+          | (click here to learn more)
+    p
+      | Make more profit and save money by reselling ssl.com certificates at a discount.
+      =link_to "Click here to sign up for the ssl.com reseller program.", new_reseller_url
+= render partial: 'users/standard_dashboard', locals: {user: user, ssl_account: ssl_account}

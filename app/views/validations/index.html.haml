@@ -16,14 +16,14 @@
             =select_tag :number_rows,
             options_for_select([[5, 5], [10, 10], [20, 20], [50, 50], [100, 100]], @per_page),
             :class=>'per_page'
-          %td(colspan='4')=will_paginate @certificate_orders
-    -#-if will_paginate @certificate_orders
-      %tfoot
-        %tr
-          %td(colspan='6')=will_paginate @certificate_orders
+          %td(colspan='2')
+          %td(colspan='4')
+            = render partial: 'shared/paginate', locals: { collection: @certificate_orders }
     %caption
-      Outstanding Validations for SSL Certificates
-      =will_paginate @certificate_orders
+      %span
+        Outstanding Validations for SSL Certificates
+      %span
+        = render partial: 'shared/paginate', locals: { collection: @certificate_orders }
     %tr.heading_row
       %td
       %th.name(scope="col")Subject

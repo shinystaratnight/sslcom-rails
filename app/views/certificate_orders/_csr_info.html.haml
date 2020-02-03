@@ -1,0 +1,660 @@
+-notification_groups = @notification_groups || []
+-slt_notification_group = @slt_notification_group || []
+-schedule_simple_type = @schedule_simple_type || []
+-schedule_weekdays = @schedule_weekdays || []
+-schedule_months = @schedule_months || []
+-schedule_days = @schedule_days || []
+-schedule_hours = @schedule_hours || []
+-schedule_minutes = @schedule_minutes || []
+-@managed_csrs ||=[]
+-reprocess_ucc = domains_adjust_billing?(@certificate_order)
+-if @certificate.is_ucc?
+  -if @certificate.is_ev?
+    -first, second = @certificate.items_by_domains(true).transpose[0]
+  -else
+    -first, second, third = @certificate.items_by_domains(true).transpose[0]
+-unless @certificate_order.is_unused_credit? || @request
+  .clearfix#has_csr_switch
+    %label{:for=>"has_csr"}
+      *Do you have your CSR?:
+      %span.label_desc certificate signing request
+    .radio_choices
+      .radio_w_desc.clearfix
+        =f.radio_button :has_csr, true
+        %span.has_csr_container I want to submit my CSR now
+      .radio_w_desc.clearfix
+        =f.radio_button :has_csr, false
+        %span.has_csr_container I will submit my CSR later or have someone else do it
+-else
+  =f.hidden_field :has_csr
+
+=f.fields_for :certificate_contents, @certificate_content do |cert_form|
+  -if Settings.show_csr_submit_on_buy_page || @certificate_order.is_unused_credit? || @request
+    #csr_section
+      -if @certificate.is_browser_generated_capable?
+        %p
+          In order to submit a Certificate Signing Request (CSR), you must first
+          generate it in your web browser or try using the #{link_to "#{Settings.community_name} Manager", "http://www.ssltools.com/manager"}
+          if you have a Windows desktop or server available.
+        %p
+          If you will be using OpenSSL, try the
+          =link_to "OpenSSL CSR Tool", "http://tools.ssl.com"
+      -else
+        %p
+          In order to submit a Certificate Signing Request (CSR), you must first
+          generate it on the web server that will be utilizing the SSL server
+          certificate.
+        %ul(style="font-size:1.4em; margin-bottom:20px")
+          %li
+            generate the CSR through your
+            =link_to "CSR Manager,", new_managed_csr_path(@ssl_slug || @certificate_order.ssl_account.to_slug, cert_ref: @certificate_order.ref, is_reprocess: @is_reprocess)
+            or
+          %li
+            for Microsoft Windows try the
+            =link_to "SSLTools Manager", "http://www.ssltools.com/manager", target: "_blank"
+            or visit this #{link_to "How-To Guide", "https://www.youtube.com/watch?v=4jC2FNvEouU", target: "_blank"}
+          %li
+            for Apache, Nginx, or other OpenSSL platform try the
+            =link_to "OpenSSL CSR Tool", "http://tools.ssl.com", target: "_blank"
+          %li
+            for cPanel, try viewing this video:
+            =link_to "How to Generate CSR in cPanel x3", "https://www.youtube.com/watch?v=dUb6Bnu8UmQ", target: "_blank"
+        %p
+          For other platforms or if you need further instructions on generating a CSR,
+          =link_to "click here to go to the support pages.", "http://info.ssl.com/?cNode=8N8H6U&pNodes=8P3K3M", target: "_blank"
+          Once the CSR is ready, you may copy and paste it
+          into the text box below. Your CSR should appear similar
+          (although not identical) to:
+        %dl.cert_example
+          .sample_csr
+            %dt
+            %dd -----BEGIN NEW CERTIFICATE REQUEST-----
+            %dd MIICizCCAkkCAQAwgYUxCzAJBgNVBAYTAlVTMQ4wDAYDVQQIEwVUZXhhcz
+            %dd EQMA4GA1UEBxMHSG91c3RvbjEpMCcGA1UEChMgU2VjdXJlIFNvY2tldHMg
+            %dd TGFib3JhdG9yaWVzLCBMTEMxEDAOBgNVBAsTB0V4YW1wbGUxFzAVBgNVBA
+            %dd (more encoding...)
+            %dd gsPa9X3F8h82UJDqg9bZ+fPQely1JeEg1sVJW2sTaRNnAqsddPFihWHfzS
+            %dd /+5Ks5E/MYsKBV4GjjytxR3PgxWT06XFqnEt40RDTJ2wd7kQ9yGYpFpQhw
+            %dd 92SQTgt3fbz4TmbTmDU7fYw1lq2kQLx6z6oAAwCwYHKoZIzjgEAwUAAy8A
+            %dd V7VB4cjEAhRFFKjEGjuJcPUSXUMB85RYyGpSrw==
+            %dd -----END NEW CERTIFICATE REQUEST-----
+        %p
+          %em Note: The Common Name (CN) field in your CSR must conform to the following rules:
+        %ul.cert_reqs
+          -unless @certificate.is_wildcard?
+            -unless @certificate.allow_wildcard_ucc?
+              %li It CANNOT represent a wildcard domain name (i.e. *.domain.com)
+            %li It MUST represent your fully-qualified domain name (i.e. submit.domain.com)
+          -else
+            %li It MUST represent a wildcard domain name by starting with an asterisk (i.e. *.domain.com)
+      .clearfix
+        %label{:for=>"certificate_order_certificate_content_server_software"}
+          *CSR:
+          %span.label_desc certificate signing request
+          -if @certificate_order.most_recent_csr
+            -current_order_csr=@certificate_order.csrs.last
+            %span{style: "float: right"}
+              =check_box_tag :previous_csr, false, nil
+              -if current_order_csr
+                %span.use_previous_csr use previous csr
+              -else #assume renewal
+                %span.use_previous_csr use from
+                =link_to @certificate_order.parent.ref, @certificate_order.parent, target: "_blank"
+            =text_area_tag :previous_csr_body, @certificate_order.most_recent_csr.body, style: "display: none"
+        =cert_form.text_area :signing_request, :cols=>40, :rows=>10, :wrap=>'off'
+        -#=hidden_field_tag :hidden_www_domain, class: 'hidden_www_domain'
+      - unless @request
+        .clearfix.add_to_manager_block
+          %label
+            Save to CSR Manager:
+          =check_box_tag :add_to_manager, true, true
+        .clearfix.managed_csrs_block
+          %label
+            Managed CSR:
+          =select_tag :managed_csr, options_for_select(@managed_csrs), :class => 'managed_csr'
+          =link_to 'Create CSR', new_managed_csr_path(@ssl_slug || @certificate_order.ssl_account.to_slug, cert_ref: @certificate_order.ref, is_reprocess: @is_reprocess)
+      .clearfix.manage_cn_block
+        %label
+          Common Name (CN):
+          %span.label_desc primary domain name
+        =text_field_tag :common_name
+        =hidden_field_tag :old_common_name
+      -if Settings.csr_domains_ui
+        .clearfix.managed_domains_block
+          %label
+            -if @certificate.is_ucc?
+              #domains_label_text
+                -if @certificate.is_premium_ssl?
+                  Subdomains (3 max)
+                -else
+                  Domains#{" (prorated)" if @certificate_order.signed_certificates.try(:last)}:
+                  =link_to image_tag('question_mark.png'), '#what_are_domains', :rel => 'prettyPhoto', :id => 'what_are_domains_link'
+              %span.label_desc separated by space or new line
+              -unless reprocess_ucc
+                %span.label_break
+                %span.label_desc can skip and edit later
+              -unless @certificate.is_premium_ssl?
+                %span.label_break
+                -#%span.label_desc 2000 domains maximum
+                %span.label_desc
+                  = Certificate::UCC_MAX_DOMAINS.to_s + ' domains maximum'
+                -unless reprocess_ucc
+                  %span.label_break
+                  %span.label_desc
+                    $
+                    %span#first_domain_tier_price>
+                      #{first.price.format}
+                    \ for first 3 non-wildcard domains
+                  %span.label_break
+                  %span.label_desc
+                    $
+                    %span#second_domain_tier_price>
+                      #{second.price.format}
+                    \ ea non-wildcard domain after 3rd
+                  -unless @certificate.is_ev?
+                    %span.label_desc
+                      $
+                      %span#third_domain_tier_price>
+                        #{third.price.format}
+                      \ ea wildcard domain
+            -else
+              Domains:
+          .block_body
+            .schedule_container.managed_domains_container.clearfix
+              -#=select_tag :managed_domains, options_for_select(@managed_domains, selected: @managed_domains.collect {|arr| arr[1]}),
+              -#                multiple: true, data: {placeholder: "click here to list available domains to scan."}, :class => 'managed_domains'
+              -if reprocess_ucc
+                =select_tag :managed_domains,
+                  options_for_select(@certificate_content.domains.collect {|domain| [domain, 'csr-' + domain]}, selected: @certificate_content.domains.collect {|domain| 'csr-' + domain}),
+                  multiple: true, data: {placeholder: "click here to list available domains to scan."}, :class => 'managed_domains'
+                -hide=''
+              -else
+                =select_tag :managed_domains, options_for_select([], selected: []),
+                  multiple: true, data: {placeholder: "click here to list available domains to scan."}, :class => 'managed_domains'
+                -hide='hidden'
+              %p.managed_domains_instruction
+                If entering domains individually, please click < SPACE > after each entry.
+                Otherwise, please paste a list of domains separated by comma or space
+              =link_to 'Clear All Domains', '', {class: "clear_domains #{hide}"}
+      -if @certificate.is_browser_generated_capable?
+        =cert_form.hidden_field :server_software_id, value: ServerSoftware.find(1).id
+      -else
+        -if Settings.require_server_software_w_csr_submit
+          .clearfix
+            %label{:for=>"certificate_order_certificate_contents_attributes_0_server_software_id"}
+              Server Software:
+              %span.label_desc for informational purposes only
+            -ss=ServerSoftware.all.to_a-[ServerSoftware.find(1)]
+            -other=[ServerSoftware.find(1)].map{|s|[s.title,s.id]}
+            =select_field_for(cert_form, :server_software_id.to_s, other+ss.sort{|a,b|a.title<=>b.title}.collect{|s|[s.title,s.id]},{:no_label=>true}, {})
+    -if Settings.activate_monitoring && !@certificate.is_browser_generated_capable? && !@request
+      .clearfix
+        %label
+          Schedule SSL Scans:
+          %span.label_desc expiration reminder notifications
+        .schedule_block_group
+          .schedule_type
+            .schedule_block
+              .block_body.clearfix
+                .block_item
+                  %span
+                    =radio_button_tag :schedule_type, 'simple', true
+                    Simple
+                .block_item
+                  %span
+                    =radio_button_tag :schedule_type, 'custom', false
+                    Custom
+                .block_item
+                  %span
+                    =radio_button_tag :schedule_type, 'none', false
+                    None
+          .simple_schedule
+            .schedule_block
+              .block_body.clearfix
+                =select_tag :schedule_simple_type, options_for_select(schedule_simple_type, selected: {})
+          .custom_schedule
+            .schedule_block
+              .block_label
+                WeekDays
+              .block_body.clearfix
+                .block_item
+                  %span
+                    =radio_button_tag :weekday_type, true, true
+                    All
+                .block_item
+                  %span
+                    =radio_button_tag :weekday_type, false, false
+                    Selected
+              .block_weekday_custom.custom_selected_block
+                .schedule_container.clearfix
+                  =select_tag :weekday_custom_list, options_for_select(schedule_weekdays, selected: {}),
+                          multiple: true, data: {placeholder: "click here to list available weekdays to scan."}
+            .schedule_block
+              .block_label
+                Months
+              .block_body.clearfix
+                .block_item
+                  %span
+                    =radio_button_tag :month_type, true, true
+                    All
+                .block_item
+                  %span
+                    =radio_button_tag :month_type, false, false
+                    Selected
+              .block_month_custom.custom_selected_block
+                .schedule_container.clearfix
+                  =select_tag :month_custom_list, options_for_select(schedule_months, selected: {}),
+                          multiple: true, data: {placeholder: "click here to list available months to scan."}
+            .schedule_block
+              .block_label
+                Days
+              .block_body.clearfix
+                .block_item
+                  %span
+                    =radio_button_tag :day_type, true, true
+                    All
+                .block_item
+                  %span
+                    =radio_button_tag :day_type, false, false
+                    Selected
+              .block_day_custom.custom_selected_block
+                .schedule_container.clearfix
+                  =select_tag :day_custom_list, options_for_select(schedule_days, selected: {}),
+                          multiple: true, data: {placeholder: "click here to list available days to scan."}
+            .schedule_block
+              .block_label
+                Hours
+              .block_body.clearfix
+                .block_item
+                  %span
+                    =radio_button_tag :hour_type, true, true
+                    All
+                .block_item
+                  %span
+                    =radio_button_tag :hour_type, false, false
+                    Selected
+              .block_hour_custom.custom_selected_block
+                .schedule_container.clearfix
+                  =select_tag :hour_custom_list, options_for_select(schedule_hours, selected: {}),
+                          multiple: true, data: {placeholder: "click here to list available hours to scan."}
+            .schedule_block
+              .block_label
+                Minutes
+              .block_body.clearfix
+                .block_item
+                  %span
+                    =radio_button_tag :minute_type, true, true
+                    All
+                .block_item
+                  %span
+                    =radio_button_tag :minute_type, false, false
+                    Selected
+              .block_minute_custom.custom_selected_block
+                .schedule_container.clearfix
+                  =select_tag :minute_custom_list, options_for_select(schedule_minutes, selected: {}),
+                          multiple: true, data: {placeholder: "click here to list available minutes to scan."}
+          .notification_group_schedule
+            .schedule_block
+              .block_label
+                Notification Groups
+              .block_body.clearfix
+                =select_tag :notification_group, options_for_select(notification_groups, selected: slt_notification_group)
+  -else
+    -if @certificate.is_code_signing?
+      %p #{@certificate.title} Certificate Summary
+      %ul.cert_reqs
+        %li Used to secure apps by making them tamper proof
+        %li Validates the identity of the owner or author of the application to be installed
+        %li Eliminates "Untrusted App" dialogs when installing or executing the application
+        %li Prevents unauthorized bundling of app with other applications (such as malware/bloatware/spyware)
+    -elsif @certificate.is_client?
+      %p #{@certificate.title} Certificate Summary
+      %ul.cert_reqs
+        #{@certificate.description["points"].html_safe}
+    -elsif @certificate.is_wildcard?
+      %p #{@certificate.title} Summary
+      %ul.cert_reqs
+        %li CAN secure any number of subdomains (no limit) for 1 single price
+        %li No additional charge for each subdomain
+        %li Secures root domain as well as subdomains (ie domain.com, www.domain.com, exch01.domain.com)
+        %li All entries will have the same root domain name
+        %li CAN use on unlimited ip addresses with multiple, concurrent private keys (great for hosting and virtual hosts)
+        %li CAN use certificate on unlimited multiple servers concurrently
+      %p Example entries include:
+      %ul.cert_reqs
+        %li domain.com
+        %li www.domain.com
+        %li mail.domain.com
+        %li lync.domain.com
+        %li exch01.domain.com
+        %li autodiscover.domain.com
+      %p and so on...
+    -elsif @certificate.is_premium_ssl?
+      %p #{@certificate.title} Summary
+      %ul.cert_reqs
+        %li CAN secure up to 3 different subdomains
+        %li An entry CAN be a Fully Qualified Domain Name (FQDN) or simply a subdomain+domain
+        %li All entries MUST have the same domain name, but can have different subdomains; for multi domain ssl please see #{link_to 'UCC SSL', buy_certificate_url("ucc") }
+        %li An entry CANNOT represent a wildcard domain name (i.e. *.domain.com); for multi domain wildcard ssl please see #{link_to 'UCC SSL', buy_certificate_url("ucc") }
+        %li CAN use on unlimited ip addresses with multiple, concurrent private keys (great for hosting and virtual hosts)
+        %li CAN use certificate on unlimited multiple servers concurrently
+      %p Example entries include:
+      %ul.cert_reqs
+        %li www.domain.com
+        %li lync.domain.com
+        %li any.domain.com
+    -elsif @certificate.is_ucc?
+      %p #{'Extended Validation' if @certificate.is_ev?} UC Certificate (aka SANs, Exchange SSL, multidomain SSL) Summary
+      %ul.cert_reqs
+        -if @certificate.is_ev?
+          %li Displays your company name with a green background in the address bar
+          %li Displays your company details in the SSL Certificate details
+        %li CAN secure up to 2000 entries (first 3 non-wildcard are free, additional charge per entry after the 3rd entry)
+        %li CAN use certificate on unlimited multiple servers concurrently
+        %li CAN change domains at anytime or specify them later without fees or costs
+        %li An entry CAN be a Fully Qualified Domain Name (FQDN)
+        -unless @certificate.is_ev?
+          %li An entry CAN be a single worded server name or an internal ip address (but the certificate #{link_to "will not be effective past Dec 2015", "https://cabforum.org/wp-content/uploads/Guidance-Deprecated-Internal-Names.pdf", target: "_blank"} per CAB Forum Reqs.)
+        -unless @certificate.allow_wildcard_ucc?
+          %li An entry CANNOT represent a wildcard domain name (i.e. *.domain.com); for multi domain wildcard ssl please see #{link_to 'UCC SSL', buy_certificate_url("ucc") }
+        -else
+          %li An entry CAN represent a wildcard domain name (i.e. *.domain.com, but NOT multiple levels like *.*.domain.com)
+        %li CAN use on unlimited ip addresses with multiple, concurrent private keys (great for hosting and virtual hosts)
+      %p Example entries include:
+      %ul.cert_reqs
+        %li domain.com
+        %li www.domain.net
+        -unless @certificate.is_ev?
+          %li *.example.com
+          %li *.apps.domain.co.uk
+      -if Settings.csr_domains_ui
+        .clearfix.managed_renewal_domain_block
+          %label
+            #domains_label_text
+              -if @certificate.is_premium_ssl?
+                Subdomains (3 max)
+              -else
+                Domains#{" (prorated)" if @certificate_order.signed_certificates.try(:last)}:
+                =link_to image_tag('question_mark.png'), '#what_are_domains', :rel => 'prettyPhoto', :id => 'what_are_domains_link'
+              %span.label_desc separated by space or new line
+              -unless reprocess_ucc
+                %span.label_break
+                %span.label_desc can skip and edit later
+              -unless @certificate.is_premium_ssl?
+                %span.label_break
+                -#%span.label_desc 2000 domains maximum
+                %span.label_desc
+                  = Certificate::UCC_MAX_DOMAINS.to_s + ' domains maximum'
+                -unless reprocess_ucc
+                  %span.label_break
+                  %span.label_desc
+                    $
+                    %span#first_domain_tier_price>
+                      #{first.price.format}
+                    \ for first 3 non-wildcard domains
+                  %span.label_break
+                  %span.label_desc
+                    $
+                    %span#second_domain_tier_price>
+                      #{second.price.format}
+                    \ ea non-wildcard domain after 3rd
+                  -unless @certificate.is_ev?
+                    %span.label_desc
+                      $
+                      %span#third_domain_tier_price>
+                        #{third.price.format}
+                      \ ea wildcard domain
+          .block_body
+            .schedule_container.managed_domains_container.clearfix
+              =select_tag :managed_domains,
+                options_for_select(@certificate_content.domains.collect {|domain| [domain, 'csr-' + domain]}, selected: @certificate_content.domains.collect {|domain| 'csr-' + domain}),
+                multiple: true, data: {placeholder: "click here to list available domains to scan."}, :class => 'managed_domains'
+              %p.managed_domains_instruction
+                If enter domains individually, please click < SPACE > after each entry. Otherwise, please paste a list of domains separated by comma or space
+              =link_to 'Clear All Domains', '', {class: 'clear_domains'}
+    -else
+      %p
+        %em Each domain the ssl certificate will secure conforms to the following:
+      %ul.cert_reqs
+        -unless @certificate.is_wildcard?
+          -unless @certificate.allow_wildcard_ucc?
+            %li It CANNOT represent a wildcard domain name (i.e. *.domain.com); for wildcard ssl please see #{link_to 'Wildcard SSL', buy_certificate_url("wildcard") }
+          -if @certificate.is_premium_ssl?
+            %li It will secure up to 3 subdomain names (i.e. www.domain.com, mail.domain.com, lync.domain.com)
+          -else
+            %li It will secure a domain name (i.e. domain.com); comes with 'www' subdomain automatically
+            %li It will secure a fully-qualified domain name (i.e. mail.domain.com or secure.domain.info, etc)
+            -unless @certificate.is_ev?
+              -if @certificate.is_ucc?
+                %li It will secure a local ip address (i.e. 10.0.0.0)
+              -unless @certificate.is_free?
+                %li It will secure a single word server name (i.e. localhost or bizserver)
+            -unless @certificate.is_ucc?
+              %li It will secure the 'www' subdomain free of cost
+        -else
+          %li It will secure all subdomains (i.e. www.domain.com, mail.domain.com, lync.domain.com, etc.)
+        %li CAN use certificate on unlimited multiple servers concurrently
+        -if @certificate.is_free?
+          %li Only documentation support provided, does NOT come with technical support
+  -if @certificate.is_ucc? && !Settings.csr_domains_ui
+    .clearfix
+      %label{:for=>"certificate_order_certificate_contents_attributes_0_additional_domains"}
+        #domains_label_text
+          -if @certificate.is_premium_ssl?
+            Subdomains (3 max)
+          -else
+            Domains#{" (prorated)" if @certificate_order.signed_certificates.try(:last)}:
+            =link_to image_tag('question_mark.png'), '#what_are_domains', :rel => 'prettyPhoto', :id => 'what_are_domains_link'
+        %span.label_desc separated by space or new line
+        -unless reprocess_ucc
+          %span.label_break
+          %span.label_desc can skip and edit later
+        -unless @certificate.is_premium_ssl?
+          %span.label_break
+          -#%span.label_desc 2000 domains maximum
+          %span.label_desc
+            = Certificate::UCC_MAX_DOMAINS.to_s + ' domains maximum'
+          -unless reprocess_ucc
+            %span.label_break
+            %span.label_desc
+              $
+              %span#first_domain_tier_price>
+                #{first.price.format}
+              \ for first 3 non-wildcard domains
+            %span.label_break
+            %span.label_desc
+              $
+              %span#second_domain_tier_price>
+                #{second.price.format}
+              \ ea non-wildcard domain after 3rd
+            -unless @certificate.is_ev?
+              %span.label_desc
+                $
+                %span#third_domain_tier_price>
+                  #{third.price.format}
+                \ ea wildcard domain
+      =cert_form.text_area :additional_domains, cols: 40, rows: 10, class: 'subject_alternative_names'
+
+  -unless @certificate_order.is_unused_credit? || @request
+    .clearfix
+      %label{:for=>"duration"}
+        *Duration:
+        %span.label_desc certificate expires in
+      .radio_choices
+        -unless @certificate.is_ucc?
+          -@certificate.items_by_duration.each_with_index do |item, i|
+            -first = @certificate.items_by_duration[0]
+            -if !@certificate.is_naesb? or (@certificate.is_naesb? and i==1)
+              .radio_w_desc.clearfix
+                =f.radio_button :duration, i+1, :id => item.model_and_id
+                =item.title
+                #{(item.price / (i+1)).format}#{'/yr' unless i==0}
+                -if i > 0
+                  -p = 1.0-(item.price.cents.to_f / (first.price.cents * (i+1)).to_f)
+                  -unless @certificate.is_naesb?
+                    %span.save
+                      (
+                      %em> save #{Integer((p*100).ceil)}%
+                      )
+        -else
+          -first_year_price = 0
+          -@certificate.first_domains_tiers.each_with_index do |item, i|
+            .radio_w_desc.clearfix
+              =f.radio_button :duration, i+1
+              =pluralize(i+1, "Year")
+              -mod_price = item.price*3
+              -first_year_price = mod_price if i==0
+              #{(mod_price / (i+1)).format}#{'/yr' unless i==0}
+              -if i > 0
+                -p = 1.0-(mod_price.cents.to_f / (first_year_price.cents * (i+1)).to_f)
+                %span.save
+                  (
+                  %em> save #{Integer((p*100).ceil)}%
+                  )
+    -if @certificate.is_ucc? or @certificate.is_wildcard?
+      -if Settings.single_server_license_only
+        =f.hidden_field(:server_licenses.to_s, value: "0")
+      -else
+        .clearfix(style="#{"display: none" if @certificate.is_premium_ssl?}")
+          %label{:for=>"licenses"}
+            *Number of licenses:
+            =link_to image_tag('question_mark.png'), '#what_is_number_licenses', :rel => 'prettyPhoto', :id => 'what_is_number_licenses_link'
+            %span.label_desc installing on how many servers
+          =select_field_for(f, :server_licenses.to_s, (1..100).collect{|i|[i,i-1]},{:no_label=>true}, {})
+          #server_license_cost_ea_desc
+            $
+            %span#server_license_cost_ea> 10
+    -#.clearfix
+    -#  %label{:for=>"support"}
+    -#    Installation Support:
+    -#    %span.label_desc see support packages for details
+    -#  .radio_choices
+    -#    .radio_w_desc.clearfix
+    -#      =radio_button_tag :support, "bronze"
+    -#      Bronze $0 (included)
+    -#    .radio_w_desc.clearfix
+    -#      =radio_button_tag :support, "silver"
+    -#      Silver $49
+    -#    .radio_w_desc.clearfix
+    -#      =radio_button_tag :support, "gold"
+    -#      Gold $99
+    -#    .radio_w_desc.clearfix
+    -#      =radio_button_tag :support, "combo"
+    -#      Gold+SSL Score Booster and Monitor $1029
+      .clearfix
+        %label{:for=>"support"}
+          SSL Score Booster:
+          %span.label_desc boost trust with a higher SSL Score
+        .radio_choices
+          .radio_w_desc.clearfix
+            =check_box_tag :ssl_booster, "standard", false
+            Score 'A' Assistance $299.00
+      .clearfix
+        %label{:for=>"support"}
+          SSL Score Monitor:
+          %span.label_desc get notified of SSL Score changes
+        .radio_choices
+          .radio_w_desc.clearfix
+            =radio_button_tag :ssl_monitor, "m500"
+            500 Pages Scanned Monthly $0/mo (included)
+          .radio_w_desc.clearfix
+            =radio_button_tag :ssl_monitor, "d500"
+            500 Pages Scanned Daily $9.00/mo
+          .radio_w_desc.clearfix
+            =radio_button_tag :ssl_monitor, "d10000"
+            10,000 Pages Scanned Daily $29.00/mo
+          .radio_w_desc.clearfix
+            =radio_button_tag :ssl_monitor, "h10000"
+            10,000 Pages Scanned Hourly $149.00/mo
+    .clearfix
+      %label{:for => "expense_amount"}
+        Order Amount:
+        %span.label_desc total cost of order
+      #order_amount
+        %span#calculated_price $0.0
+        -if @certificate.is_ucc?
+          .order_amount_desc
+            (includes
+            %span 3
+            #{"sub" if @certificate.is_premium_ssl?}domains)
+  -else
+    -if reprocess_ucc
+      -max_counts        = @certificate_order.ucc_get_max_counts
+      -wildcard_count    = max_counts[:wildcard_count]
+      -nonwildcard_count = max_counts[:nonwildcard_count]
+      -nonwildcard_cost  = @certificate_order.ucc_prorated_domain(:nonwildcard, @tier)
+
+      .clearfix
+        %label{for: "ucc_nonwildcard_amount"}
+          Domain Amount:
+          %span.label_desc prorated cost per additional domain
+          %span.label_desc Previous count: #{nonwildcard_count} domains
+        #ucc-nonwildcard-amount{data: {cost: Money.new(nonwildcard_cost).to_s, initial_count: nonwildcard_count}}
+          %span
+            =Money.new(nonwildcard_cost).format
+          %span{id: 'nonwildcard-current-count'}
+
+      -unless @certificate_order.certificate.is_ev?
+        -wildcard_cost = @certificate_order.ucc_prorated_domain(:wildcard, @tier)
+        %br
+        .clearfix
+          %label{for: "ucc_wildcard_amount"}
+            Wildcard Domain Amount:
+            %span.label_desc prorated cost per additional wildcard
+            %span.label_desc Previous count: #{wildcard_count} wildcard domains
+          #ucc-wildcard-amount{data: {cost: Money.new(wildcard_cost).to_s, initial_count: wildcard_count}}
+            %span
+              =Money.new(wildcard_cost).format
+            %span{id: 'wildcard-current-count'}
+      %br
+      .clearfix
+        %label{for: "expense_amount"}
+          Order Amount:
+          %span.label_desc total cost of order
+        #order_amount
+          %span#calculated_reprocess_price $0.0
+          .order_amount_desc
+            (includes
+            %span 3
+            #{"sub" if @certificate.is_premium_ssl?}domains)
+    .clearfix
+      %label *Subscriber Agreement
+      =cert_form.check_box :agreement
+      %p
+        &nbsp;By clicking this check box, you agree to the terms of the
+        =link_to "SSL.com Subscriber Agreement", Certificate::SSLCOM_SUBSCRIBER_AGREEMENT
+#what_is_number_licenses.hidden
+  #what_is_number_licenses_explain
+    %p
+      Each SSL certificate is licensed to be installed on a single server. Every
+      additional server that the certificate will be installed on requires
+      a valid license. Please specify how many additional
+      servers the SSL certificate will be installed on.
+
+    %p
+      For deployment onto more than 100 servers, please contact sales@ssl.com.
+-if @certificate.is_ucc?
+  #what_are_domains.hidden
+    #domain_pricing_popup
+      %table(cellspacing="0")
+        %tr.heading_row
+          %th(scope="col") Description
+          %th(scope="col") Pricing
+        -@certificate.items_by_domains.each_with_index do |item, i|
+          %tr(class="#{(i.odd?) ? 'alt' : ''}")
+            %td=item.description
+            %td
+              =item.price.format
+            /
+              -if i > 0 && i.even?
+                -p = 1.0-(item.price.cents.to_f / (first.price.cents * (i)).to_f)
+                %span.save
+                  (
+                  %em> save #{Integer((p*100).ceil)}%
+                  )
+              -elsif i > 1 && i.odd?
+                -p = 1.0-(item.price.cents.to_f / (second.price.cents * (i)).to_f)
+                %span.save
+                  (
+                  %em> save #{Integer((p*100).ceil)}%
+                  )

@@ -1,10 +1,14 @@
+# frozen_string_literal: true
+
 class User < ApplicationRecord
   extend Memoist
-  include V2MigrationProgressAddon
+  include Pagable
   include UserMessageable
 
+  mount_uploader :avatar, AvatarUploader
+
   swagger_schema :CreateUser do
-    key :required, [:login, :email, :password]
+    key :required, %i[login email password]
     property :account_key do
       key :type, :string
     end
@@ -54,23 +58,19 @@ class User < ApplicationRecord
   has_many  :notification_groups, through: :ssl_accounts
   has_many  :certificate_order_tokens
 
-  preference  :managed_certificate_row_count, :string, :default => "10"
-  preference  :registered_agent_row_count, :string, :default => "10"
-  preference  :cert_order_row_count, :string, :default => "10"
-  preference  :order_row_count, :string, :default => "10"
-  preference  :cdn_row_count, :string, :default => "10"
-  preference  :user_row_count, :string, :default => "10"
-  preference  :note_group_row_count, :string, :default => "10"
-  preference  :scan_log_row_count, :string, :default => "10"
-  preference  :domain_row_count, :string, :default => "10"
-  preference  :domain_csr_row_count, :string, :default => "10"
-  preference  :team_row_count, :string, :default => "10"
-  preference  :validate_row_count, :string, :default => "10"
-  preference  :managed_csr_row_count, :string, :default => "10"
-
-  #will_paginate
-  cattr_accessor :per_page
-  @@per_page = 10
+  preference  :managed_certificate_row_count, :string, default: '10'
+  preference  :registered_agent_row_count, :string, default: '10'
+  preference  :cert_order_row_count, :string, default: '10'
+  preference  :order_row_count, :string, default: '10'
+  preference  :cdn_row_count, :string, default: '10'
+  preference  :user_row_count, :string, default: '10'
+  preference  :note_group_row_count, :string, default: '10'
+  preference  :scan_log_row_count, :string, default: '10'
+  preference  :domain_row_count, :string, default: '10'
+  preference  :domain_csr_row_count, :string, default: '10'
+  preference  :team_row_count, :string, default: '10'
+  preference  :validate_row_count, :string, default: '10'
+  preference  :managed_csr_row_count, :string, default: '10'
 
   attr_accessor :changing_password, :admin_update, :role_ids, :role_change_type
   attr_accessible :login, :email, :password, :password_confirmation,
@@ -122,6 +122,8 @@ class User < ApplicationRecord
   scope :search_sys_admin, ->{ joins{ roles }.where{ roles.name == Role::SYS_ADMIN } }
 
   scope :search_super_user, -> {joins{roles}.where{roles.name == Role::SUPER_USER}}
+
+  delegate :tier_suffix, to: :ssl_account, prefix: false
 
   def ssl_account(default_team=nil)
     SslAccount.find_by_id(Rails.cache.fetch("#{cache_key}/ssl_account/#{default_team.is_a?(Symbol) ? default_team.to_s : default_team.try(:cache_key)}") do
@@ -198,12 +200,12 @@ class User < ApplicationRecord
     is_super_user?
   end
 
-  def is_passed_2fa session_duo
+  def is_passed_2fa(session_duo)
     status = false
     if self.is_duo_required?
       status = session_duo
     else
-      if self.ssl_account.sec_type == 'duo'
+      if self.ssl_account&.sec_type == 'duo'
         if Settings.duo_auto_enabled || Settings.duo_custom_enabled
           status = session_duo
         else
@@ -667,12 +669,17 @@ class User < ApplicationRecord
     end
     memoize :get_user_accounts_roles
 
+    def user_account_roles(user)
+      ids = get_user_accounts_roles(user).uniq
+      Role.where(id: ids)
+    end
+    memoize :user_account_roles
+
     def get_user_accounts_roles_names(user)
       # e.g.: {'team_1': ['owner'], 'team_2': ['account_admin', 'installer']}
       Rails.cache.fetch("#{user.cache_key}/get_user_accounts_roles_names") do
-        user.ssl_accounts.inject({}) do |all, s|
-          all[s.get_team_name] = user.assignments.where(ssl_account_id: s.id)
-                                     .map(&:role).uniq.map(&:name)
+        user.ssl_accounts.each_with_object({}) do |s, all|
+          all[s.get_team_name] = user.assignments.where(ssl_account_id: s.id).map(&:role).uniq.map(&:name)
           all
         end
       end
@@ -684,7 +691,6 @@ class User < ApplicationRecord
     end
     memoize :total_teams_owned
   end
-
 
   # the second will take care of setting any data that you want to happen
   # at activation. at the very least this will be setting active to true
@@ -880,13 +886,13 @@ class User < ApplicationRecord
   def apply_omniauth(omniauth)
     self.email = omniauth['user_info']['email']
 
-    # Update user info fetching from social network
-    case omniauth['provider']
-    when 'facebook'
-      # fetch extra user info from facebook
-    when 'twitter'
-      # fetch extra user info from twitter
-    end
+    # # Update user info fetching from social network
+    # case omniauth['provider']
+    # when 'facebook'
+    #   # fetch extra user info from facebook
+    # when 'twitter'
+    #   # fetch extra user info from twitter
+    # end
   end
 
   def make_admin

@@ -1,7 +1,7 @@
 -content_for :title, "Certificate Order Management"
+-pagination=will_paginate @certificate_orders, inner_window: 2, outer_window: 1
 -show_folders = current_user && Folder.show_folders?(current_user)
 =render :partial => 'index_scripts'
--pagination=will_paginate @certificate_orders
 #search_bar
   =form_tag :search_certificate_orders, :id=>'search_form', :method=>:get do
     =text_field_tag :search, @search
@@ -32,20 +32,23 @@
 
 #certificate_orders
   %table(cellspacing="0")
-    -#.loader_wrap
-    -#  .loader
-    -#-if will_paginate @certificate_orders
     -unless @certificate_orders.empty?
       %tfoot
         %tr
-          %td.wrap_number_rows(colspan='2')
+          %td.wrap_number_rows(colspan='1')
             =select_tag :number_rows,
             options_for_select([[5, 5], [10, 10], [20, 20], [50, 50], [100, 100]], @per_page),
             :class=>'per_page'
-          %td(colspan='5')=pagination
+          %td.wrap_number_rows
+            = button_to 'Export to CSV', download_certificates_path(@certificate_orders.pluck(:id))
+          %td
+          %td
+          %td(colspan='5')
+            = pagination
+
     %caption
       SSL Certificates Management
-      =pagination
+      = pagination
     %tr.heading_row
       -if show_folders && show_folders_container?
         %th
@@ -140,4 +143,3 @@
           %i.fa.fa-clipboard
     #epki_activation_link_modal_footer.modal-footer
       = button_tag 'OK', :type => 'button', :class => 'btn btn-grey btn-activation-link-ok'
-

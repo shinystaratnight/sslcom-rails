@@ -22,7 +22,7 @@ class Contact < ApplicationRecord
   belongs_to  :parent, class_name: "Contact"
 
   attr_accessor :update_parent, :administrative_role, :billing_role, :technical_role, :validation_role, :epki_agreement_request
-  
+
   serialize :special_fields
   serialize :domains
 
@@ -38,9 +38,9 @@ class Contact < ApplicationRecord
   ]
   SYNC_FIELDS = SYNC_FIELDS_REQUIRED.dup.push(:roles)
   ROLES = %w(administrative billing technical validation)
-  
+
   before_validation :set_roles
-  
+
   workflow do
     state :new do
       event :provide_info, :transitions_to => :info_provided
@@ -68,11 +68,11 @@ class Contact < ApplicationRecord
     state :callback_satisfied do
     end
   end
-  
+
   ALIAS_FIELDS.each do |k,v|
     alias_attribute k, v
   end
-  
+
   SyncChildContactsJob = Struct.new(:contact_id) do
     def perform
       parent = Contact.find contact_id
@@ -85,7 +85,7 @@ class Contact < ApplicationRecord
       end
     end
   end
-  
+
   def self.get_company_fields
     [
       'company_name',
@@ -102,7 +102,7 @@ class Contact < ApplicationRecord
       'special_fields'
     ]
   end
-  # Remove duplicate certificate contacts for current certificate content 
+  # Remove duplicate certificate contacts for current certificate content
   # of passed certificate order.
   # Param certificate_order: object, object.id, array of objects, array of ids
   def self.clear_duplicate_co_contacts(certificate_order)
@@ -114,7 +114,7 @@ class Contact < ApplicationRecord
       when 'CertificateOrder'
         [certificate_order]
     end
-    
+
     co.each do |cur_co|
       co_contacts = cur_co.certificate_content.certificate_contacts
       co_contacts.each do |c|
@@ -123,7 +123,7 @@ class Contact < ApplicationRecord
       end
     end
   end
-  
+
   def self.index_filter(params)
     filters                = {}
     p                      = params
@@ -134,13 +134,13 @@ class Contact < ApplicationRecord
     filters[:email]        = { 'LIKE' => p[:email] } unless p[:email].blank?
     filters[:company_name] = { 'LIKE' => p[:company_name] } unless p[:company_name].blank?
     filters[:phone]        = { 'LIKE' => p[:phone] } unless p[:phone].blank?
-    
+
     if filter_roles && filter_roles.any?
       filter_roles.each_with_index do |role, i|
         filters["roles_#{i}".to_sym] = { 'LIKE' => role }
       end
     end
-    t = p[:team] 
+    t = p[:team]
     if t.present?
       found = SslAccount.where(
         "ssl_slug = ? OR acct_number = ? OR id = ? OR LOWER(company_name) LIKE LOWER(?)", t, t, t, "%#{t}%"
@@ -171,7 +171,7 @@ class Contact < ApplicationRecord
     end
     # attributes.except(*EXCLUDED_FIELDS)
   end
-  
+
   def set_roles
     set_roles = []
     set_roles << 'administrative' if (administrative_role && administrative_role == '1')
@@ -185,7 +185,7 @@ class Contact < ApplicationRecord
       self.roles = ['administrative']
     end
   end
-  
+
   def self.optional_contacts?
     Settings.dynamic_contact_count == "on"
   end

@@ -1,18 +1,9 @@
-require 'simplecov'
-SimpleCov.start 'rails' do
-add_filter '/bin/'
- add_filter '/db/'
- add_filter '/test/'
- add_filter '/config/'
- add_group "Models", "app/models"
- add_group "Controllers", "app/controllers"
- add_group "Services", "app/services"
- add_group "Helpers", "app/helpers"
- add_group "Lib", "lib/"
-end
+# frozen_string_literal: true
 
-ENV["RAILS_ENV"] = 'test'
-require File.expand_path('../../config/environment', __FILE__)
+require 'simplecov'
+
+ENV['RAILS_ENV'] = 'test'
+require File.expand_path('../config/environment', __dir__)
 
 require 'rails/test_help'
 require 'minitest/rails'
@@ -26,46 +17,54 @@ require 'rack/utils'
 require 'authlogic/test_case'
 require 'declarative_authorization/maintenance'
 require 'json-schema'
+require 'minitest/bang'
 
 ActiveRecord::Migration.maintain_test_schema!
 
-Minitest::Reporters.use! [Minitest::Reporters::SpecReporter.new]
+Minitest::Reporters.use! [Minitest::Reporters::SpecReporter.new, Minitest::Reporters::JUnitReporter.new]
 
 # Requires supporting ruby files with custom matchers and macros, etc,
 # in spec/support/ and its subdirectories.
 Dir[File.join('./test/support/**/*.rb')].sort.each { |f| require f }
 
-include SessionHelper
-include SetupHelper
-include MailerHelper
-include Authorization::TestHelper
-include AuthorizationHelper
-include ApiSetupHelper
-
 DatabaseCleaner.clean_with :truncation
 DatabaseCleaner.strategy = :truncation
 
-class Minitest::Spec
-  include Authlogic::TestCase
+module Minitest
+  class Spec
+    class_eval do
+      include SessionHelper
+      include SetupHelper
+      include Authlogic::TestCase
 
-  before :each do
-    disable_authorization
-    activate_authlogic
-    DatabaseCleaner.start
-    Delayed::Worker.delay_jobs = false
-  end
+      before :each do
+        DatabaseCleaner.start
+        Delayed::Worker.delay_jobs = false
+      end
 
-  after :each do
-    DatabaseCleaner.clean
-    clear_email_deliveries
+      after :each do
+        DatabaseCleaner.clean
+      end
+    end
   end
 end
 
-if RUBY_VERSION>='2.6.0'
+module ActiveSupport
+  class TestCase
+    class_eval do
+      include SessionHelper
+      include SetupHelper
+      include Authlogic::TestCase
+      include DatabaseCleanerSupport
+    end
+  end
+end
+
+if RUBY_VERSION >= '2.6.0'
   if Rails.version < '5'
     class ActionController::TestResponse < ActionDispatch::TestResponse
       def recycle!
-        # hack to avoid MonitorMixin double-initialize error:
+        # Hack to avoid MonitorMixin double-initialize error:
         @mon_mutex_owner_object_id = nil
         @mon_mutex = nil
         initialize

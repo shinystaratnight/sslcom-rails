@@ -1,0 +1,45 @@
+-c={}
+-c[:description]="Purchase ssl certificates and digital certificates from ssl.com. Buy ev, wildcard, uc, code signing, or any digital certificate."
+-c[:keywords]="buy ssl certificate purchase code signing certificates low cost prices ev wildcard uc ucc exchange apache java iis"
+-co=@certificate_order
+-if @renewing
+  -c[:title] = "Renewing #{@certificate.title} Certificate For #{@renewing.subject}"
+-elsif @reprocessing
+  -c[:title] = "Reprocessing #{@certificate.title} Certificate For #{co.subject}"
+-else
+  -c[:title] = "#{co.is_unused_credit? ? "Process" : buy_or_get} #{@certificate.title} Certificate"
+-c.each do |k, v|
+  -content_for k, c[k]
+=order_progress_indicator(1, @certificate)
+-form_params=new_certificate_params
+#buy_other_certs
+  %ul
+    %li.heading Other Certificates
+    -Certificate.base_products.available.reject{|c|c.product=~/free/}.each do |cert|
+      -unless cert==@certificate
+        %li=link_to cert.title, buy_certificate_path(:id=>cert.product_root)
+.reseller_registration_profile
+  #buy_certificate_heading
+    %h1
+      =c[:title]
+      =link_to "(click here for product details)", certificate_url(@certificate)
+    %h2 Please fill out the required fields below to begin your certificate order.
+  =error_messages_for :certificate_order, :certificate_content
+  =form_for(*form_params) do |f|
+    =hidden_field :certificate, :product
+    =hidden_field :order, :order_description, value: nil
+    =hidden_field :order, :adjustment_amount, value: 0
+    =hidden_field :order, :wildcard_count, value: 0
+    =hidden_field :order, :nonwildcard_count, value: 0
+    =hidden_field :order, :wildcard_amount, value: 0
+    =hidden_field :order, :nonwildcard_amount, value: 0
+
+    =recert?
+    #stylized.default_form
+      = render :partial => "certificate_orders/csr_info", :locals => {:f=>f}
+    #button_container
+      #next_submit=image_submit_tag "next_bl.gif", alt: 'submit ssl certificate order', class: 'submit_csr_img_tag'
+      #product_details.center{style: "font-size: 1.5em"}
+        =link_to image_tag('more_info_sm_bl.gif', :title=>'click to see this certificate'), certificate_url(@certificate.product_root)
+= render :partial => '/certificates/index_scripts'
+= javascript_include_tag 'psl.min'

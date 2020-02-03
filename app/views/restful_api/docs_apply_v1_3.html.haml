@@ -261,12 +261,12 @@
                 or sha384WithRSAEncryption (PKCS#1)
                 or sha512WithRSAEncryption (PKCS#1)
         %dt
-          %span.api_key_or_value organization_name
+          %span.api_key_or_value organization
           %span.optional_api_key
             [optional if parsed from csr; ignored for domain validated certificates]
         %dd
           Represents the Organization Name.
-        %dt.optional_api_key organization_unit_name
+        %dt.optional_api_key organization_unit
         %dd
           Represents the Organization Unit Name (eg department name).
         %dt
@@ -430,7 +430,7 @@
             curl -H "Accept: application/json" -H "Content-type: application/json" -X POST -d
             "{\"account_key\" : \"xxxxxx\",\"secret_key\" : \"xxxxxxxxx\",\"product\" :
             \"100\", \"period\" : \"365\", \"server_count\" : \"1\", \"server_software\" : \"15\",
-            \"organization_name\" : \"yoursite\", \"street_address_1\" : \"somewhere st\",
+            \"organization\" : \"yoursite\", \"street_address_1\" : \"somewhere st\",
             \"locality_name\" : \"new york\", \"state_or_province_name\" : \"new york\", \"postal_code\" :
             \"77777\", \"country_name\" : \"US\", \"duns_number\" : \"1234567\", \"company_number\" :
             \"yoursite_number\", \"registered_country_name\" : \"US\", \"incorporation_date\" :
@@ -863,12 +863,12 @@
             %dd and
             %dd -----END xxxxx-----
         %dt
-          %span.api_key_or_value organization_name
+          %span.api_key_or_value organization
           %span.optional_api_key
             [optional if parsed from csr; ignored for domain validated certificates]
         %dd
           Represents the Organization Name.
-        %dt.optional_api_key organization_unit_name
+        %dt.optional_api_key organization_unit
         %dd
           Represents the Organization Unit Name (eg department name).
         %dt
@@ -1011,7 +1011,7 @@
           :plain
             curl -H "Accept: application/json" -H "Content-type: application/json" -X POST -d
             "{\"account_key\" : \"xxxxxx\",\"secret_key\" : \"xxxxxxxxx\",
-            \"organization_name\" : \"yoursite\", \"street_address_1\" : \"somewhere st\",
+            \"organization\" : \"yoursite\", \"street_address_1\" : \"somewhere st\",
             \"locality_name\" : \"new york\", \"state_or_province_name\" : \"new york\", \"postal_code\" :
             \"77777\", \"country_name\" : \"US\", \"duns_number\" : \"1234567\", \"company_number\" :
             \"yoursite_number\", \"registered_country_name\" : \"US\", \"incorporation_date\" :
@@ -1065,7 +1065,7 @@
             {"errors":{"account_key":["can't be blank"],
             "secret_key":["can't be blank"],
             "csr":["can't be blank"], "ref":["can't be blank"],
-            "organization_name":["can't be blank"],"post_office_box":
+            "organization":["can't be blank"],"post_office_box":
             ["is required if street_address_1 is not specified"],"street_address_1":
             ["is required if post_office_box is not specified"],"locality_name":
             ["can't be blank"],"state_or_province_name":["can't be blank"],

@@ -1,5 +1,11 @@
 # SSL.com Rails
 
+[![CircleCI](https://circleci.com/gh/SSLcom/sslcom-rails/tree/master.svg?style=svg&circle-token=6c2cc58a545d1d674d5e8f97809671be9fe38a2a)](https://circleci.com/gh/SSLcom/sslcom-rails/tree/master)
+
+[![Maintainability](https://api.codeclimate.com/v1/badges/a8f3ee62506a9befd80a/maintainability)](https://codeclimate.com/repos/5e18e6aa249421017701af15/maintainability)
+
+[![Test Coverage](https://api.codeclimate.com/v1/badges/a8f3ee62506a9befd80a/test_coverage)](https://codeclimate.com/repos/5e18e6aa249421017701af15/test_coverage)
+
 ## Getting set up
 
 1. Download VirtualBox and import the image into VirtualBox.
@@ -18,18 +24,37 @@
 10. Create the development database with `RAILS_ENV=development rake db:create`. If prompted for a password, type `vagrant`.
 11. Get the schema by typing `RAILS_ENV=development rake db:structure:load`
 12. Run any needed migrations `RAILS_ENV=development rake db:migrate`.
-13. Download sandbox_ssl_com.sql and populate the database with `mysql -u ssl_db -p sandbox_ssl_com < sandbox_ssl.sql`
-14. Navigate to the repo and run `./start-dev`
-15. Navigate to `https://secure.ssl.local:3000/` in your browser and it should work!
-
-### Run Delayed Job
-
-1. In another tab, SSH into the box `vagrant ssh`
-2. Navigate to `/vagrant` and run `rake jobs:work`
-3. To terminate delayed job server, press `Ctr+C`
+13. Download sandbox_ssl_com.sql and populate the database with `mysql -u ssl_db -p sandbox_ssl_com < sandbox_ssl_com.sql`
+14. Run migrations again `bundle exec rake db:migrate RAILS_ENV=development`
+15. Navigate to the repo and run `foreman start`
+16. Navigate to `https://secure.ssl.local:3000/` in your browser and it should work!
 
 ### `synced_folders` Template
 
-```
+```json
 {"virtualbox":{"/vagrant":{"guestpath":"/vagrant","hostpath":"INSERT_PATH_HERE","disabled":false,"__vagrantfile":true}}}
+```
+
+### Setting up test db for Cypress
+
+```bash
+RAILS_ENV=test rake db:drop db:create db:structure:load db:migrate db:seed --trace
+```
+
+### Running Cypress Spec
+
+- [ ] Start rails server in test mode `foreman start -f Procfile.test`, on Vagrant machine
+- [ ] On your local machine `yarn cypress open --project ./test`
+
+### Note on setting up Vagrant with Rubymine
+
+rbenv installation may be required in the vagrant instance so the Rubymine vagrant plugin get see the Ruby Interpreter
+https://www.digitalocean.com/community/tutorials/how-to-install-ruby-on-rails-with-rbenv-on-ubuntu-16-04
+
+### Note on running on puma
+
+when running puma, enable ssl like so
+
+```bash
+puma -b 'ssl://0.0.0.0:3000?key=config/cert/key.pem&cert=config/cert/cert.pem'
 ```

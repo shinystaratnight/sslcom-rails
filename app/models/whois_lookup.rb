@@ -4,6 +4,11 @@ class WhoisLookup < ApplicationRecord
 
   WHOIS=->(domain){%x"whois #{domain}"}
 
+  def self.registrant_whois(domain)
+    whois = WHOIS.call(domain)
+    refer = whois=~/refer:\s+?(\w)$/
+  end
+
   def query_whois
     if csr.top_level_domain && Whois.find(csr.top_level_domain).try(:valid?)
       self.raw = whois = Whois.find(csr.top_level_domain)
