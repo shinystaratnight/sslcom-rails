@@ -61,16 +61,16 @@ module ApplicationHelper
   def api_domain(certificate_order=nil)
     api_source=@website || Settings
     unless certificate_order.blank?
-      if Rails.env=="production"
+      if Rails.env.production?
         "https://" + (certificate_order.is_test ? api_source.test_api_domain : api_source.api_domain)
       else
         "https://" + (certificate_order.is_test ? api_source.dev_test_api_domain : api_source.dev_api_domain) +":3000"
       end
     else
       if is_sandbox?
-        Rails.env=="production" ? "https://#{api_source.test_api_domain}" : "https://#{api_source.dev_test_api_domain}:3000"
+        Rails.env.production? ? "https://#{api_source.test_api_domain}" : "https://#{api_source.dev_test_api_domain}:3000"
       else
-        Rails.env=="production" ? "https://#{api_source.api_domain}" : "https://#{api_source.dev_api_domain}:3000"
+        Rails.env.production? ? "https://#{api_source.api_domain}" : "https://#{api_source.dev_api_domain}:3000"
       end
     end
   end
