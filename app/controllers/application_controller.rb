@@ -94,14 +94,14 @@ class ApplicationController < ActionController::Base
   end
 
   def find_tier
-    @tier ||= if @certificate_order
-                @certificate_order&.tier_suffix
-              elsif current_user&.tier_suffix
-                current_user.tier_suffix
-              elsif cookie = params[:reseller_cookie]
+    @tier ||= if suffix = @certificate_order&.tier_suffix
+                suffix
+              elsif suffix = current_user&.tier_suffix
+                suffix
+              elsif key = params[:reseller_tier_key]
+                ResellerTier.tier_suffix(key)
+              elsif cookie = cookies[ResellerTier::TIER_KEY]
                 ResellerTier.tier_suffix(cookie)
-              elsif reseller_tier_cookie
-                ResellerTier.tier_suffix(reseller_tier_cookie)
               end
   end
 
@@ -490,10 +490,6 @@ class ApplicationController < ActionController::Base
   end
 
   private
-
-  def reseller_tier_cookie
-    cookies[ResellerTier::TIER_KEY]
-  end
 
   def get_team_tags
     @team_tags ||= if @taggable

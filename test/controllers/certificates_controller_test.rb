@@ -6,17 +6,17 @@ describe CertificatesController do
   before do
     initialize_roles
     initialize_triggers
+    create(:certificate_with_certificate_order)
   end
 
   describe 'find_tier before_filter' do
     it 'finds tier when passed reseller_cookie params' do
-      create(:certificate_with_certificate_order)
       tier_options = attributes_for(:reseller_tier, :west)
       ResellerTier.generate_tier(tier_options)
 
       params = {
         id: 'evucc',
-        reseller_cookie: 'west.com'
+        reseller_tier_key: 'west.com'
       }
 
       get :pricing, params
@@ -24,7 +24,6 @@ describe CertificatesController do
     end
 
     it 'tier is nil when no reseller_cookie is passed' do
-      create(:certificate_with_certificate_order)
       params = {
         id: 'evucc'
       }
