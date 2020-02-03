@@ -29,6 +29,12 @@ FactoryBot.define do
       description  { { ideal_for: 'professionals' } }
     end
 
+    trait :west do
+      label { 'west.com' }
+      description { { name: 'west.com tier', ideal_for: 'pay as you go' } }
+      published_as { 'live' }
+    end
+
     trait :medium_business do
       label        { '3' }
       amount { 100_000 }

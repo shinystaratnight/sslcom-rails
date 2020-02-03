@@ -9,19 +9,21 @@ describe CertificatesController do
   end
 
   describe 'find_tier before_filter' do
-    it 'finds tier when passed reseller_id params' do
-      reseller = create(:reseller)
+    it 'finds tier when passed reseller_cookie params' do
       create(:certificate_with_certificate_order)
+      tier_options = attributes_for(:reseller_tier, :west)
+      ResellerTier.generate_tier(tier_options)
+
       params = {
         id: 'evucc',
-        reseller_id: reseller[:id]
+        reseller_cookie: 'west.com'
       }
 
       get :pricing, params
-      assert_equal assigns[:tier], reseller.ssl_account.tier_suffix
+      assert_equal assigns[:tier], '-west.comtr'
     end
 
-    it 'tier is nil when no reseller_id is passed' do
+    it 'tier is nil when no reseller_cookie is passed' do
       create(:certificate_with_certificate_order)
       params = {
         id: 'evucc'
