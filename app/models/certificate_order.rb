@@ -36,6 +36,7 @@
 class CertificateOrder < ApplicationRecord
   extend Memoist
   include V2MigrationProgressAddon
+  include Pagable
 
   acts_as_sellable cents: :amount, currency: false
   belongs_to  :ssl_account, touch: true
@@ -755,7 +756,7 @@ class CertificateOrder < ApplicationRecord
     if new_record?
       sub_order_items[0].product_variant_item.certificate if sub_order_items[0] && sub_order_items[0].product_variant_item
     else
-      Certificate.unscoped.includes(:sub_order_items).find_by_id(Rails.cache.fetch("#{cache_key}/certificate") do
+      Certificate.unscoped.find_by_id(Rails.cache.fetch("#{cache_key}/certificate") do
         sub_order_items[0].product_variant_item.cached_certificate_id if sub_order_items[0] &&
             sub_order_items[0].product_variant_item
       end)

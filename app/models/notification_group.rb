@@ -1,4 +1,8 @@
+# frozen_string_literal: true
+
 class NotificationGroup < ApplicationRecord
+  include Pagable
+
   belongs_to :ssl_account
 
   has_many  :notification_groups_contacts, dependent: :destroy

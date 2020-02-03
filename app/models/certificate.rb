@@ -28,6 +28,7 @@ class Certificate < ApplicationRecord
   include PriceView
   include Filterable
   include Sortable
+  include Pagable
 
   has_many    :product_variant_groups, :as => :variantable, dependent: :destroy
   has_many    :product_variant_items, through: :product_variant_groups, dependent: :destroy

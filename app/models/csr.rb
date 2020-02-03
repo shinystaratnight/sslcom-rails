@@ -41,6 +41,7 @@ require 'uri'
 class Csr < ApplicationRecord
   extend Memoist
   include Encodable
+  include Pagable
   
   has_many    :whois_lookups, :dependent => :destroy
   has_many    :signed_certificates, -> { where(type: nil) }, :dependent => :destroy

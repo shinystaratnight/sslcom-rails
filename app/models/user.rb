@@ -1,12 +1,14 @@
+# frozen_string_literal: true
+
 class User < ApplicationRecord
   extend Memoist
-  # include V2MigrationProgressAddon
+  include Pagable
   include UserMessageable
 
   mount_uploader :avatar, AvatarUploader
 
   swagger_schema :CreateUser do
-    key :required, [:login, :email, :password]
+    key :required, %i[login email password]
     property :account_key do
       key :type, :string
     end
@@ -56,19 +58,19 @@ class User < ApplicationRecord
   has_many  :notification_groups, through: :ssl_accounts
   has_many  :certificate_order_tokens
 
-  preference  :managed_certificate_row_count, :string, :default => "10"
-  preference  :registered_agent_row_count, :string, :default => "10"
-  preference  :cert_order_row_count, :string, :default => "10"
-  preference  :order_row_count, :string, :default => "10"
-  preference  :cdn_row_count, :string, :default => "10"
-  preference  :user_row_count, :string, :default => "10"
-  preference  :note_group_row_count, :string, :default => "10"
-  preference  :scan_log_row_count, :string, :default => "10"
-  preference  :domain_row_count, :string, :default => "10"
-  preference  :domain_csr_row_count, :string, :default => "10"
-  preference  :team_row_count, :string, :default => "10"
-  preference  :validate_row_count, :string, :default => "10"
-  preference  :managed_csr_row_count, :string, :default => "10"
+  preference  :managed_certificate_row_count, :string, default: '10'
+  preference  :registered_agent_row_count, :string, default: '10'
+  preference  :cert_order_row_count, :string, default: '10'
+  preference  :order_row_count, :string, default: '10'
+  preference  :cdn_row_count, :string, default: '10'
+  preference  :user_row_count, :string, default: '10'
+  preference  :note_group_row_count, :string, default: '10'
+  preference  :scan_log_row_count, :string, default: '10'
+  preference  :domain_row_count, :string, default: '10'
+  preference  :domain_csr_row_count, :string, default: '10'
+  preference  :team_row_count, :string, default: '10'
+  preference  :validate_row_count, :string, default: '10'
+  preference  :managed_csr_row_count, :string, default: '10'
 
   attr_accessor :changing_password, :admin_update, :role_ids, :role_change_type
   attr_accessible :login, :email, :password, :password_confirmation,

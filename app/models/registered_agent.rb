@@ -1,7 +1,9 @@
 class RegisteredAgent < ApplicationRecord
+  include Pagable
+
   belongs_to  :ssl_account
-  belongs_to  :requester, :class_name => 'User'
-  belongs_to  :approver, :class_name => 'User'
+  belongs_to  :requester, class_name: 'User'
+  belongs_to  :approver, class_name: 'User'
   has_many :managed_certificates, dependent: :destroy
 
   attr_accessor :api_status, :reason

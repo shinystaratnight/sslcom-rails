@@ -1,25 +1,21 @@
 # This represents a purchased instance of Product
 
 class ProductOrder < ApplicationRecord
-  acts_as_sellable :cents => :amount, :currency => false
+  include Pagable
+  acts_as_sellable cents: :amount, currency: false
   belongs_to  :ssl_account
   belongs_to  :product
   has_many    :users, through: :ssl_account
-  has_and_belongs_to_many :parent_product_orders, class_name: 'ProductOrder', association_foreign_key:
-      :sub_product_order_id, join_table: 'product_orders_sub_product_orders' # this order belongs to other(s)
-  has_and_belongs_to_many :sub_product_orders, class_name: 'ProductOrder', foreign_key:
-      :sub_product_order_id, join_table: 'product_orders_sub_product_orders' # this order has other order(s)
-  #will_paginate
-  cattr_reader :per_page
-  
+  has_and_belongs_to_many :parent_product_orders, class_name: 'ProductOrder', association_foreign_key: :sub_product_order_id, join_table: 'product_orders_sub_product_orders' # this order belongs to other(s)
+  has_and_belongs_to_many :sub_product_orders, class_name: 'ProductOrder', foreign_key: :sub_product_order_id, join_table: 'product_orders_sub_product_orders' # this order has other order(s)
 
-  #used to temporarily determine lineitem qty
+  # used to temporarily determine lineitem qty
   attr_accessor :quantity
-  preference  :payment_order, :string, :default=>"normal"
+  preference :payment_order, :string, default: 'normal'
 
-  #if the customer has not used this certificate order with a period of time
-  #it becomes expired and invalid
-  alias_attribute  :expired, :is_expired
+  # if the customer has not used this certificate order with a period of time
+  # it becomes expired and invalid
+  alias_attribute :expired, :is_expired
 
   scope :search, lambda {|term, options|
     {:conditions => ["ref #{SQL_LIKE} ?", '%'+term+'%']}.merge(options)
