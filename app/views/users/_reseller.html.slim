@@ -13,10 +13,10 @@
   -if Settings.enable_affiliate_program==true && !current_user.is_affiliate?
     .become_reseller_title(style="margin: 10px 0 0")
       p
-        strong.red NEW! Earn commissions through the # Settings.community_name  Referral Link Program
+        strong.red NEW! Earn commissions through the #{Settings.community_name} Referral Link Program
       p
-        a(href="https://# Settings.community_domain /affiliate/index.php")
-          | Click here
-        | to become an #{Settings.community_name} Referral Link Partner or
+        a(href="https://#{Settings.community_domain}/affiliate/index.php")
+          | Click here 
+        | to become an #{Settings.community_name} Referral Link Partner or 
         =link_to "click here for more details", details_affiliates_path
 = render partial: 'users/reseller_dashboard', locals: { user: user, ssl_slug: @ssl_slug, r: r }

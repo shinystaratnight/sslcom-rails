@@ -42,29 +42,30 @@
                           li
                             strong reseller profile
                           li
-                            | \#{r.organization}
+                            | #{r.organization}
                           li
-                            | \#{r.address1}
+                            | #{r.address1}
                           li
-                            | \#{r.address2}
+                            | #{r.address2}
                           li
-                            | \#{r.address3}
+                            | #{r.address3}
                           li
-                            | \#{r.po_box}
+                            | #{r.po_box}
                           li
-                            | \#{[r.city, r.state, r.postal_code].join(', ')}
+                            | #{[r.city, r.state, r.postal_code].join(', ')}
                           li
-                            | \#{r.country}
+                            | #{r.country}
                           li
-                            | \#{r.website}
-                          li=link_to 'edit', edit_ssl_account_path(ssl_slug || params[:ssl_slug])
+                            | #{r.website}
+                          li
+                            =link_to 'edit', edit_ssl_account_path(ssl_slug || params[:ssl_slug])
                       .col-md-3
                         ul
                           -if permitted_to?(:edit, :billing_profiles)
                             li
                               strong billing and purchase
                             -if permitted_to?(:create, :funded_accounts)
-                              li available funds: # ssl_account.funded_account.amount(true).format with_currency=false 
+                              li available funds: #{ssl_account.funded_account.amount(true).format with_currency=false}
                             -if permitted_to? :read, :orders
                               li=link_to "billing", is_sandbox? ? search_orders_path(search:'is_test:true') : orders_path(ssl_slug: ssl_slug)
                             li=link_to 'deposit funds', allocate_funds_url(ssl_slug: ssl_slug)
@@ -72,7 +73,7 @@
                               li=link_to 'manage billing profiles', billing_profiles_path(ssl_slug: ssl_slug)
                             li=link_to 'buy certificate', certificates_url
                             li=link_to "s/mime or client enrollment", smime_client_enrollment_certificate_orders_path(ssl_slug: ssl_slug)
-                            li=link_to 'certificate pricing', reseller_tier_url(ssl_account.reseller.reseller_tier.id)
+                            li=link_to 'certificate pricing', reseller_tier_url(ssl_account.reseller.reseller_tier.id) if ssl_account.reseller
                             -if ssl_account && permitted_to?(:index, :invoices) && ssl_account.invoices.any?
                               li=link_to 'monthly and daily invoices', invoices_path(ssl_slug)
                 tr
@@ -96,10 +97,10 @@
                           li
                             strong
                               | login account
-                          li username: # user.login 
-                          li email: # user.email 
-                          li account number: # ssl_account.acct_number 
-                          li roles: # user.role_symbols.join('/') 
+                          li username: #{user.login}
+                          li email: #{user.email}
+                          li account number: #{ssl_account.acct_number}
+                          li roles: #{user.role_symbols.join('/')}
                           =render partial: 'ssl_slug_company', locals: {user: user}
                           -if permitted_to? :admin_manage, user
                             li=remote_login_link(user)
