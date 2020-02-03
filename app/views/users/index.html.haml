@@ -50,7 +50,7 @@
             -us, us_class=user_status(u)
             %tr{class: "#{user_view ? 'enable' : 'disable'}", alt: "#{u.id}"}
               %td.dropdown= user_view ? image_tag('expand.png') : ''
-              %td.expandable= u.avatar.file?  ? image_tag(u.avatar.url(:thumb), alt: u.login, class: 'xs-avatar') : fa_icon('user-circle', size: '4x')
+              %td.expandable= u.avatar.file?  ? image_tag(u.authenticated_avatar_url({style: :thumb}), alt: u.login, class: 'xs-avatar') : fa_icon('user-circle', size: '4x')
               %td.name.expandable=u.login
               %td.expandable=u.email
               %td.expandable.constrained=type.html_safe

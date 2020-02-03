@@ -36,14 +36,18 @@ $(document).ready(function(){
       contentType: false,
       processData: false,
       statusCode: {
-        200: function(response){
-          $('button#spinner').hide();
-          $('.preview').hide();
-          $('#preview').append("<img class='preview' src='" + response.responseText + "' width='300' height='300' style='display: inline-block;'>");
+        200: function(){
+          $.get('/users/avatar').done(function(response){
+            $('button#spinner').hide();
+            $('.preview').hide();
+            $('#preview').append("<img class='preview' src='" + response.data.links.large_avatar_url + "' width='300' height='300' style='display: inline-block;'>");
+          })
         },
         422: function(response){
           $('button#spinner').hide();
-          alert(response.responseText);
+          $('#toast').append('<span class="badge badge-danger">There was an error uploading your image. Please try again later.</span>');
+          $('#toast').toast();
+          // alert(response.responseText);
         }
       },
     });

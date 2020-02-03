@@ -223,6 +223,8 @@ GEM
       i18n (>= 0.7)
     faraday (0.15.4)
       multipart-post (>= 1.2, < 3)
+    fast_jsonapi (1.5)
+      activesupport (>= 4.2)
     ffi (1.11.3)
     ffi-compiler (1.0.1)
       ffi (>= 1.0.0)
@@ -719,6 +721,7 @@ DEPENDENCIES
   etc
   factory_bot_rails
   faker
+  fast_jsonapi
   fileutils (~> 1.1.0)
   font_awesome5_rails
   foreman

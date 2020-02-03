@@ -30,7 +30,7 @@ class UsersController < ApplicationController
   filter_access_to  :consolidate, :dup_info, :archive_team, :retrieve_team, require: :update
   filter_access_to  :resend_activation, :activation_notice, require: :create
   filter_access_to  :edit_password, :edit_email, :cancel_reseller_signup, :teams, require: :edit
-  filter_access_to  :show_user, :reset_failed_login_count, require: :ajax
+  filter_access_to  :show_user, :reset_failed_login_count, :avatar, require: :ajax
 
   def new; end
 
@@ -575,6 +575,18 @@ class UsersController < ApplicationController
     else
       flash[:error] = "Unable to activate user due to errors. #{@user.errors.full_messages.join(', ')}"
       redirect_to edit_user_path(@user, admin_activate: true)
+    end
+  end
+
+  def avatar
+    respond_to do |format|
+      data = UserSerializer.new(current_user).serializable_hash
+      format.js do
+        render json: data, status: :ok
+      end
+      format.json do
+        render json: data, status: :ok
+      end
     end
   end
 

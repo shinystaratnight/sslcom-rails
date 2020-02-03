@@ -5,7 +5,7 @@ class User < ApplicationRecord
   include Pagable
   include UserMessageable
 
-  has_attached_file :avatar, s3_protocol: 'http', url: "/:class/:id/:attachment/:style.:extension", path: ":id_partition/:style.:extension", s3_permissions: :private, bucket: ENV.fetch('S3_AVATAR_BUCKET_NAME'), styles: {
+  has_attached_file :avatar, s3_protocol: 'http', url: '/:class/:id/:attachment/:style.:extension', path: ':id_partition/:style.:extension', s3_permissions: :private, bucket: ENV.fetch('S3_AVATAR_BUCKET_NAME') + '_antarr', styles: {
     thumb: '100x100>',
     standard: '200x200#',
     large: '300x300>'
@@ -1065,6 +1065,12 @@ class User < ApplicationRecord
     # since it's disabled
     users_clear_ssl = target_ssl_account_users.map(&:user).uniq.flatten.compact.keep_if{ |u| target_ssl_account_users.map(&:ssl_account_id).include?(u.default_ssl_account) }.map(&:id)
     User.where(id: users_clear_ssl).update_all(default_ssl_account: nil) if users_clear_ssl.any?
+  end
+
+  def authenticated_avatar_url(options = { style: :standard })
+    expires_in = 10.minutes
+    options.reverse_merge! expires_in: expires_in, use_ssl: true
+    avatar.s3_object(options[:style]).presigned_url(:get, secure: true, expires_in: expires_in).to_s
   end
 
   private

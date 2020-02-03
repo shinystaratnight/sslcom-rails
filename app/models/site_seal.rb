@@ -6,7 +6,7 @@ class SiteSeal < ApplicationRecord
   has_many  :certificate_orders, -> { unscope(where: %i[workflow_state is_expired]) }
   has_many  :validations, through: :certificate_orders
   has_many  :validation_histories, through: :validations
-  attr_protected :workflow_state
+  attr_accessible :workflow_state
 
   EV_SEAL = 'ev'
   OV_SEAL = 'ov'
