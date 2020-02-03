@@ -5,6 +5,7 @@ class Order < ApplicationRecord
   extend Memoist
   include V2MigrationProgressAddon
   include SmimeClientEnrollable
+  include Pagable
 
   belongs_to  :billable, :polymorphic => true, touch: true
   belongs_to  :address

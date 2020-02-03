@@ -95,7 +95,8 @@ Lint/ShadowingOuterLocalVariable:
 
 Metrics/LineLength:
   Enabled: false
-
+Metrics/BlockLength:
+  Enabled: false
 Metrics/ModuleLength:
   Enabled: false
 

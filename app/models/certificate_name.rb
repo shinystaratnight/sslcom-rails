@@ -2,6 +2,8 @@
 require 'resolv'
 
 class CertificateName < ApplicationRecord
+  include Pagable
+
   belongs_to  :certificate_content
   has_one   :certificate_order, through: :certificate_content
   has_many    :signed_certificates, through: :certificate_content

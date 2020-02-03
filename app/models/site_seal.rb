@@ -1,6 +1,9 @@
+# frozen_string_literal: true
+
 class SiteSeal < ApplicationRecord
-  #using_access_control
-  has_many  :certificate_orders, -> { unscope(where: [:workflow_state, :is_expired]) }
+  include Pagable
+
+  has_many  :certificate_orders, -> { unscope(where: %i[workflow_state is_expired]) }
   has_many  :validations, through: :certificate_orders
   has_many  :validation_histories, through: :validations
   attr_protected :workflow_state
@@ -12,7 +15,7 @@ class SiteSeal < ApplicationRecord
   FREE_SEAL_IMAGE = 'free_ssl_trust_logo.gif'
   SEAL_IMAGE = 'ssl_trust_logo.gif'
 
-  REPORT_CACHE_KEY = "ssl_com_report_2015_"
+  REPORT_CACHE_KEY = 'ssl_com_report_2015_'
 
   REPORT_DIMENSIONS = 'height=500, width=400, top=100, left=100'
   REPORT_ARTIFACTS_DIMENSIONS = 'height=600, width=400, top=100, left=100'
@@ -22,18 +25,12 @@ class SiteSeal < ApplicationRecord
   DEACTIVATED = :deactivated
   CANCELED = :canceled
   
-  ACTIVATE = "activate"
-  
-  NEW_STATUS = 
-    "site seal has not been activated yet"
-  FULLY_ACTIVATED_STATUS =
-    "site seal has been fully activated with all features"
-  CONDITIONALLY_ACTIVATED_STATUS =
-    "site seal has been partially activated, pending final approval"
-  DEACTIVATED_STATUS =
-    "site seal has been temporarily deactivated"
-  CANCELED_STATUS =
-    "site seal has been disabled pending investigation"
+  ACTIVATE = 'activate'
+  NEW_STATUS = 'site seal has not been activated yet'
+  FULLY_ACTIVATED_STATUS = "site seal has been fully activated with all features"
+  CONDITIONALLY_ACTIVATED_STATUS = 'site seal has been partially activated, pending final approval'
+  DEACTIVATED_STATUS = 'site seal has been temporarily deactivated'
+  CANCELED_STATUS = 'site seal has been disabled pending investigation'
 
   CLICK_TO_EXPAND = 'click to for more details'
 
@@ -96,6 +93,10 @@ class SiteSeal < ApplicationRecord
           certificate.product)
     end
     Rails.cache.delete REPORT_CACHE_KEY+self.id.to_s
+  end
+
+  def to_param
+    ref
   end
 
   def self.activate_all
