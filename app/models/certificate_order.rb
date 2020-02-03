@@ -112,11 +112,10 @@ class CertificateOrder < ApplicationRecord
 
   if Proc.new{ |co|co.migrated_from_v2? }
     preference :v2_product_description, :string, default: 'ssl certificate'
-    preference  :v2_line_items, :string
+    preference :v2_line_items, :string
   end
 
-  default_scope{ where{ (workflow_state << ['canceled','refunded','charged_back']) & (is_expired != true) }.
-      order(created_at: :desc)}
+  default_scope{ where{ (workflow_state << ['canceled','refunded','charged_back']) & (is_expired != true) }.order(created_at: :desc)}
 
   scope :with_counts, -> {
     select <<~SQL
@@ -135,6 +134,8 @@ class CertificateOrder < ApplicationRecord
   scope :search, lambda { |term, options={}|
     where{ ref =~ '%' + term + '%' }.merge(options)
   }
+
+  scope :with_includes, -> { includes(%i[ssl_account orders validation site_seal]) }
 
   scope :search_physical_tokens, lambda { |state='new'|
     joins{ physical_tokens }.where{ physical_tokens.workflow_state >> [state.split(',')] } unless state.blank?
@@ -752,10 +753,9 @@ class CertificateOrder < ApplicationRecord
 
   def certificate
     if new_record?
-        sub_order_items[0].product_variant_item.certificate if sub_order_items[0] &&
-            sub_order_items[0].product_variant_item
+      sub_order_items[0].product_variant_item.certificate if sub_order_items[0] && sub_order_items[0].product_variant_item
     else
-      Certificate.unscoped.find_by_id(Rails.cache.fetch("#{cache_key}/certificate") do
+      Certificate.unscoped.includes(:sub_order_items).find_by_id(Rails.cache.fetch("#{cache_key}/certificate") do
         sub_order_items[0].product_variant_item.cached_certificate_id if sub_order_items[0] &&
             sub_order_items[0].product_variant_item
       end)
