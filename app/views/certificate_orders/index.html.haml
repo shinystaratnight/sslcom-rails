@@ -47,6 +47,7 @@
 
     %caption
       SSL Certificates Management
+      = render partial: 'shared/paginate', locals: { collection: @certificate_orders }
     %tr.heading_row
       -if show_folders && show_folders_container?
         %th

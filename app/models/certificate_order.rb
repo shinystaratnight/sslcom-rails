@@ -1264,6 +1264,10 @@ class CertificateOrder < ApplicationRecord
     Settings.enable_caa || true
   end
 
+  def to_param
+    ref
+  end
+
   def apply_for_certificate(options={})
     # set allow_multiple_certs_per_content to true when manually requesting a new signed certificate which can result
     # in several signed_certificates belonging to the same csr thus certificate_content

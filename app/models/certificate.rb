@@ -512,6 +512,10 @@ class Certificate < ApplicationRecord
     get_root(self.serial)
   end
 
+  def to_param
+    product_root
+  end
+
   def untiered
     if reseller_tier.blank?
       self

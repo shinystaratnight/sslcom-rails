@@ -159,6 +159,7 @@
             = render partial: 'shared/paginate', locals: { collection: @orders }
     %caption
       = title
+      = render partial: 'shared/paginate', locals: { collection: @orders }
     -if current_user.is_admin?
       =render partial: 'orders/index_stats'
     %tr.heading_row

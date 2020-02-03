@@ -6,6 +6,10 @@ class RegisteredAgent < ApplicationRecord
 
   attr_accessor :api_status, :reason
 
+  def to_param
+    ref
+  end
+
   scope :search_with_terms, lambda { |term|
     term ||= ""
     term = term.strip.split(/\s(?=(?:[^']|'[^']*')*$)/)

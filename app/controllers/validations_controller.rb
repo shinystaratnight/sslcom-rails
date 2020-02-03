@@ -405,14 +405,14 @@ class ValidationsController < ApplicationController
     # p = {:page => params[:page]}
     @certificate_orders =
       if !params[:search].blank? && (@search = params[:search])
-       current_user.is_admin? ?
+        current_user.is_admin? ?
            (@ssl_account.try(:certificate_orders) || CertificateOrder)
-               .not_test.search_with_csr(params[:search]).unvalidated.not_csr_blank :
-        current_user.ssl_account.certificate_orders.not_test.search(params[:search]).unvalidated.not_csr_blank
+             .not_test.search_with_csr(params[:search]).unvalidated.not_csr_blank :
+        current_user.includes([:orders, :ssl_account]).ssl_account.certificate_orders.not_test.search(params[:search]).unvalidated.not_csr_blank
       else
         current_user.is_admin? ?
             (@ssl_account.try(:certificate_orders) || CertificateOrder).unvalidated.not_csr_blank :
-            current_user.ssl_account.certificate_orders.unvalidated.not_csr_blank
+            current_user.includes([:orders, :ssl_account]).ssl_account.certificate_orders.unvalidated.not_csr_blank
       end
 
     @certificate_orders = @certificate_orders.paginate(@p)

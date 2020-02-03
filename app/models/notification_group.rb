@@ -19,6 +19,10 @@ class NotificationGroup < ApplicationRecord
     ng.friendly_name = ng.ref if ng.friendly_name.blank?
   end
 
+  def to_param
+    ref
+  end
+
   def self.auto_manage_email_address(cc, cud, contacts=[])
     notification_groups = cc.certificate_order.notification_groups.includes(:notification_groups_contacts)
 

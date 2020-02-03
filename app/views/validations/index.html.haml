@@ -20,8 +20,10 @@
           %td(colspan='4')
             = render partial: 'shared/paginate', locals: { collection: @certificate_orders }
     %caption
-      Outstanding Validations for SSL Certificates
-      -# = render partial: 'shared/paginate', locals: { collection: @certificate_orders }
+      %span
+        Outstanding Validations for SSL Certificates
+      %span
+        = render partial: 'shared/paginate', locals: { collection: @certificate_orders }
     %tr.heading_row
       %td
       %th.name(scope="col")Subject

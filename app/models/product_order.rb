@@ -415,6 +415,9 @@ class ProductOrder < ApplicationRecord
     (%w(http https).include?(dcvs.last.try(:dcv_method))) ? dcvs.last : dcvs.last_sent
   end
 
+  def to_param
+    ref
+  end
 
   def self.to_api_string(options={})
     domain = options[:domain_override] || "https://sws-test.sslpki.com"
