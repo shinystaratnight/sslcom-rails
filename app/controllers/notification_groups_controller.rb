@@ -97,7 +97,7 @@ class NotificationGroupsController < ApplicationController
   end
 
   def index
-    @notification_groups = @ssl_account.cached_notification_groups.paginate(@p)
+    @notification_groups = @ssl_account.notification_groups.paginate(@p)
   end
 
   def remove_groups

@@ -46,6 +46,30 @@ every 1.day, at: "12:30pm" do
   bundle_exec "CertificateOrder.retrieve_ca_certs(30.days.ago, 15.days.ago, db: 'sandbox.ssl.com')"
 end
 
-every 1.minute do
-  bundle_exec "Delayed::Job.enqueue NotificationGroupScanJob.new('sandbox.ssl.com'), queue: 'notification_group_scan'"
+# NotificationGroups
+# hourly
+every :hour do
+  bundle_exec "NotificationGroupsManager.scan({db: 'sandbox.ssl.com', schedule_type: 'Simple', schedule_value: '1'})"
 end
+
+# daily
+every :day, at: '12:00am' do
+  bundle_exec "NotificationGroupsManager.scan({db: 'sandbox.ssl.com', schedule_type: 'Simple', schedule_value: '2'})"
+end
+
+# weekly
+every :sunday, at: '12:00am' do
+  bundle_exec "NotificationGroupsManager.scan({db: 'sandbox.ssl.com', schedule_type: 'Simple', schedule_value: '3'})"
+end
+
+# monthly
+every '0 12 1 * *' do
+  bundle_exec "NotificationGroupsManager.scan({db: 'sandbox.ssl.com', schedule_type: 'Simple', schedule_value: '4'})"
+end
+
+# yearly
+every '0 0 1 1 *' do
+  bundle_exec "NotificationGroupsManager.scan({db: 'sandbox.ssl.com', schedule_type: 'Simple', schedule_value: '5'})"
+end
+
+#### ToDo: Write custom cron job for custom ng ##############
