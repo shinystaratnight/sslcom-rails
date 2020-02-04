@@ -27,7 +27,7 @@ $(document).ready(function(){
     var files = $('#file')[0].files[0];
     fd.append('file', files);
     fd.append('user_id', id);
-
+    $('.alert').remove();
     // AJAX request
     $.ajax({
       url: '/users/upload_avatar',
@@ -39,15 +39,22 @@ $(document).ready(function(){
         200: function(){
           $.get('/users/avatar').done(function(response){
             $('button#spinner').hide();
-            $('.preview').hide();
+            $('.preview').remove();
             $('#preview').append("<img class='preview' src='" + response.data.links.large_avatar_url + "' width='300' height='300' style='display: inline-block;'>");
           })
         },
         422: function(response){
           $('button#spinner').hide();
-          $('#toast').append('<span class="badge badge-danger">There was an error uploading your image. Please try again later.</span>');
-          $('#toast').toast();
-          // alert(response.responseText);
+          $('.preview').remove();
+          if(response.responseText.match(/bucket|denied/i)){
+            $('#alert').append('<div class="alert alert-danger" role="alert">There was an error uploading your image. Please try again later.<button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span> </button></div>');
+          }
+          else if(response.responseText.match(/content/i)){
+            $('#alert').append('<div class="alert alert-danger" role="alert">This file is not acceptable. Please choose a PNG, JPEG, or GIF file.<button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span> </button></div>');
+          }
+          else{
+            $('#alert').append('<div class="alert alert-danger" role="alert">' + response.responseText + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span> </button></div>');
+          }
         }
       },
     });

@@ -1,10 +1,4 @@
 GIT
-  remote: https://github.com/hcfairbanks/carrierwave_asserts
-  revision: 017271e50e36a2b0ffaaead9a6ef1d2db7bd2ea9
-  specs:
-    carrierwave_asserts (0.1.0)
-
-GIT
   remote: https://github.com/xymist/declarative_authorization.git
   revision: 3cd79342d073b71cdda427745848abb461d454d6
   branch: allow_rails_5
@@ -699,8 +693,6 @@ DEPENDENCIES
   bullet
   byebug
   cancan
-  carrierwave (< 2.0)
-  carrierwave_asserts!
   coffee-rails
   config
   cypress-on-rails (~> 1.5.1)

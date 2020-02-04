@@ -35,7 +35,7 @@ class UsersController < ApplicationController
   def new; end
 
   def new_affiliate
-    render action: 'new'
+    render :new
   end
 
   def search
@@ -81,7 +81,7 @@ class UsersController < ApplicationController
     @users = @users.order('created_at desc').paginate(@p)
 
     respond_to do |format|
-      format.html { render action: :index }
+      format.html { render :index }
       format.xml  { render xml: @users }
     end
   end
@@ -162,7 +162,7 @@ class UsersController < ApplicationController
         # flash messages to the target page. works fine in dev though
         redirect_to(request.subdomain == Reseller::SUBDOMAIN ? login_url(notice: notice) : login_url)
       else
-        render action: :new
+        render :new
       end
     end
   end
@@ -221,7 +221,7 @@ class UsersController < ApplicationController
     else
       @user.login = old
     end
-    render action: :admin_show
+    render :admin_show
   end
 
   def consolidate

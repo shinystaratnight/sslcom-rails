@@ -105,7 +105,6 @@ gem 'slim-rails'
 gem 'turbolinks'
 gem 'yui-compressor'
 
-gem 'carrierwave', '< 2.0'
 gem 'rmagick'
 
 group :development do
@@ -140,7 +139,6 @@ group :development, :test do
 end
 
 group :test do
-  gem 'carrierwave_asserts', git: 'https://github.com/hcfairbanks/carrierwave_asserts'
   gem 'database_cleaner'
   gem 'faker'
   gem 'minitest-bang', require: false

@@ -5,7 +5,7 @@ class User < ApplicationRecord
   include Pagable
   include UserMessageable
 
-  has_attached_file :avatar, s3_protocol: 'http', url: '/:class/:id/:attachment/:style.:extension', path: ':id_partition/:style.:extension', s3_permissions: :private, bucket: ENV.fetch('S3_AVATAR_BUCKET_NAME') + '_antarr', styles: {
+  has_attached_file :avatar, s3_protocol: 'http', url: '/:class/:id/:attachment/:style.:extension', path: ':id_partition/:style.:extension', s3_permissions: :private, bucket: ENV.fetch('S3_AVATAR_BUCKET_NAME'), styles: {
     thumb: '100x100>',
     standard: '200x200#',
     large: '300x300>'
