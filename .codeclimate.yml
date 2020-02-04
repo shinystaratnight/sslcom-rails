@@ -4,11 +4,11 @@ plugins:
   brakeman:
     enabled: true
   bundler-audit:
-    enabled: true
+    enabled: false # we are using dependabot
   csslint:
     enabled: true
   coffeelint:
-    enabled: true
+    enabled: false # not currently using coffeescript
   duplication:
     enabled: true
   fixme:
@@ -23,6 +23,9 @@ plugins:
     enabled: true
   reek:
     enabled: true
+    checks:
+      NilCheck:
+        enabled: false
   rubocop:
     enabled: true
     checks:
@@ -34,6 +37,11 @@ plugins:
         enabled: false
   sass-lint:
     enabled: true
+    checks:
+      no-ids:
+        enabled: false
+      single-line-per-selector:
+        enabled: false
 
 exclude_patterns:
   - "config/"
@@ -42,10 +50,11 @@ exclude_patterns:
   - "test/"
   - "**/vendor/"
   - "*.md"
-  - "app/assets/"
   - ".*"
   - 'vendor/**/*'
   - 'tmp/**/*'
   - 'lib/**/*'
   - 'bin/*'
   - 'db/**/*'
+  - 'script/'
+  - 'features/'

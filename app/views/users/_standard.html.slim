@@ -31,7 +31,7 @@
   /
     .become_reseller_title(style="margin: 10px 0 0")
       p
-        a(href="# url_for resellers_root_url(:subdomain=Reseller::SUBDOMAIN) ")
+        a(href="#{url_for resellers_root_url(:subdomain=Reseller::SUBDOMAIN)}")
           strong Become a reseller
           | (click here to learn more)
     p
