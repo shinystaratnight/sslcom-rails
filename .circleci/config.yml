@@ -8,6 +8,7 @@ jobs:
           RAILS_ENV: test
           DB_HOST: 127.0.0.1
           CIRCLE_CI: 'true'
+          CACHE_VERSION: 'v1'
       - image: circleci/mysql:5.7.28
         environment:
           MYSQL_ALLOW_EMPTY_PASSWORD: "true"
@@ -100,16 +101,6 @@ jobs:
       - run:
           name: Copy Settings File
           command: cp config/client/certassure/settings.yml config/
-
-      # No need for rubocop in CicleCi as long as we are using CodeClimate
-      # - run:
-      #     name: Rubocop Linting
-      #     command:  bundle exec rake rubocop:git_diff
-
-      # - save_cache:
-      #     key: v1-rubocop-cache-{{ checksum ".rubocop.yml" }}-{{ .Branch }}-{{ epoch }}
-      #     paths:
-      #       - ../.cache/rubocop_cache
 
       - save_cache:
           key: sslcom-rails-{{ checksum "Gemfile.lock" }}
