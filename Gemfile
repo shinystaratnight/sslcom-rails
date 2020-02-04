@@ -105,8 +105,6 @@ gem 'slim-rails'
 gem 'turbolinks'
 gem 'yui-compressor'
 
-gem 'rmagick'
-
 group :development do
   gem 'annotate'
   gem 'dotenv-rails'
