@@ -55,6 +55,7 @@ SslCom::Application.routes.draw do
         # ACME
         match '/acme/hmac' => 'api_acme_requests#retrieve_hmac', as: :api_acme_retrieve_hmac, via: [:post]
         match '/acme/credentials' => 'api_acme_requests#retrieve_credentials', as: :api_acme_retrieve_credentials, via: [:post]
+        match '/acme/validations/info' => 'api_acme_requests#validations_info', as: :api_acme_validations_info, via: [:post]
 
         # Code Signing.
         match '/generate_certificate' => 'api_certificate_requests#generate_certificate_v1_4', as: :api_certificate_generate_v1_4, via: %i[options post]
