@@ -31,7 +31,7 @@ class WhoIsJob < Struct.new(:dname, :certificate_name)
   end
 
   def touch_cnames(dname)
-    current_time = Time.zone.now
+    current_time = Time.now.utc
     cert_names = CertificateName.where('name = ?', dname.to_s)
     cert_names.update_all(updated_at: current_time)
     cert_names.each{ |cn| Rails.cache.delete(cn.get_asynch_cache_label) }

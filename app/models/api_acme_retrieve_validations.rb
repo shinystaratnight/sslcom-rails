@@ -3,8 +3,6 @@
 class ApiAcmeRetrieveValidations < ApiAcmeRequest
   extend Memoist
 
-  validates :account_key, :secret_key, presence: true
-
   before_validation(on: :create) do
     if certificate_order.nil?
       errors[:certificate_order_id] << "certificate order not found with id #{certificate_order_id}"
