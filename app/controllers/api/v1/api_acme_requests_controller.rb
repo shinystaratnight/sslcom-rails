@@ -36,27 +36,29 @@ module Api
       end
 
       def validations_info
-        if @result.save!
+        if @result.valid? && @result.save
           response = {}
           @result.certificate_order.certificate_content.certificate_names.each do |cname|
-            cc = cname.certificate_content
-            data = {
-              http_token: '',
-              dns_token: '',
-              validated: cc.all_domains_validated?
-            }
-            data[:validation_source] = cc.domain_control_validations.last.dcv_method if cc.all_domains_validated?
-            response[cname.name] = data
+            response[cname.name] = serialize_cname(cname)
           end
           render json: response, status: :ok
-          return
         else
           InvalidApiAcmeRequest.create parameters: acme_params, response: @result.to_json
         end
-        render_200_status
       end
 
       private
+
+      def serialize_cname(cname)
+        cc = cname.certificate_content
+        data = {
+          http_token: '',
+          dns_token: '',
+          validated: cc.all_domains_validated?
+        }
+        data[:validation_source] = cc.domain_control_validations.last.dcv_method if cc.all_domains_validated?
+        data
+      end
 
       def record_parameters
         @result = klass.new(api_acme_request) do |result|
