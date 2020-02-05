@@ -2,7 +2,7 @@
 
 class WhoIsJob < Struct.new(:dname, :certificate_name)
   def perform
-    dcv = DomainControlValidation.global.find_by_subject(dname)
+    dcv = global_validations.find_by_subject(dname)
     if dcv
       standard_addresses = dcv.candidate_addresses
     else
@@ -19,7 +19,7 @@ class WhoIsJob < Struct.new(:dname, :certificate_name)
       rescue StandardError => e
         Logger.new(STDOUT).error e.backtrace.inspect
       end
-      DomainControlValidation.global.find_or_create_by(subject: dname).update_column(:candidate_addresses, standard_addresses)
+      global_validations.find_or_create_by(subject: dname).update_column(:candidate_addresses, standard_addresses)
     end
     Rails.cache.write("CertificateName.candidate_email_addresses/#{dname}", standard_addresses, expires_in: DomainControlValidation::EMAIL_CHOICE_CACHE_EXPIRES_DAYS.days)
     touch_cnames(dname)
@@ -31,13 +31,18 @@ class WhoIsJob < Struct.new(:dname, :certificate_name)
   end
 
   def touch_cnames(dname)
+    current_time = Time.utc.now
     cert_names = CertificateName.where('name = ?', dname.to_s)
-    cert_names.update_all(updated_at: Time.now)
+    cert_names.update_all(updated_at: current_time)
     cert_names.each{ |cn| Rails.cache.delete(cn.get_asynch_cache_label) }
-    CertificateContent.where{ id >> cert_names.map(&:certificate_content_id) }.update_all(updated_at: Time.now)
+    CertificateContent.where{ id >> cert_names.map(&:certificate_content_id) }.update_all(updated_at: current_time)
   end
 
   def max_run_time
     300 # seconds
+  end
+
+  def global_validations
+    @global_validations ||= DomainControlValidation.global
   end
 end
