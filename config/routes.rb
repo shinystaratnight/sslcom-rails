@@ -512,6 +512,7 @@ SslCom::Application.routes.draw do
       get :show_user
       get :reset_failed_login_count
       match :upload_avatar, format: /(js|json)/, via: %i[put patch]
+      get :avatar, format: /(js|json)/
     end
 
     member do

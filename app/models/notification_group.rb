@@ -1,4 +1,8 @@
+# frozen_string_literal: true
+
 class NotificationGroup < ApplicationRecord
+  include Pagable
+
   belongs_to :ssl_account
 
   has_many  :notification_groups_contacts, dependent: :destroy
@@ -17,6 +21,10 @@ class NotificationGroup < ApplicationRecord
   before_create do |ng|
     ng.ref = 'ng-' + SecureRandom.hex(1) + Time.now.to_i.to_s(32)
     ng.friendly_name = ng.ref if ng.friendly_name.blank?
+  end
+
+  def to_param
+    ref
   end
 
   def self.auto_manage_email_address(cc, cud, contacts=[])

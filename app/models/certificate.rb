@@ -1,9 +1,34 @@
+# == Schema Information
+#
+# Table name: certificates
+#
+#  id                    :integer          not null, primary key
+#  reseller_tier_id      :integer
+#  title                 :string(255)
+#  status                :string(255)
+#  summary               :text(65535)
+#  text_only_summary     :text(65535)
+#  description           :text(65535)
+#  text_only_description :text(65535)
+#  allow_wildcard_ucc    :boolean
+#  published_as          :string(16)       default("draft")
+#  serial                :string(255)
+#  product               :string(255)
+#  icons                 :string(255)
+#  display_order         :string(255)
+#  roles                 :string(255)      default("--- []")
+#  created_at            :datetime
+#  updated_at            :datetime
+#  special_fields        :string(255)      default([])
+#
+
 class Certificate < ApplicationRecord
   extend Memoist
   include CertificateType
   include PriceView
   include Filterable
   include Sortable
+  include Pagable
 
   has_many    :product_variant_groups, :as => :variantable, dependent: :destroy
   has_many    :product_variant_items, through: :product_variant_groups, dependent: :destroy
@@ -84,13 +109,13 @@ class Certificate < ApplicationRecord
           location: "public/agreements/ssl_subscriber_agreement.txt"}}
 
   WILDCARD_SWITCH_DATE = Date.strptime "02/09/2012", "%m/%d/%Y"
-  #Comodo prods:
-  #Essential Free SSL = 342
-  #Essential SSL = 301
-  #Essential SSL Wildcard = 343
-  #Positive SSL MDC = 279
-  #InstantSSL Wildcard = 35
-  #43 was the old trial cert
+  # Comodo prods:
+  # Essential Free SSL = 342
+  # Essential SSL = 301
+  # Essential SSL Wildcard = 343
+  # Positive SSL MDC = 279
+  # InstantSSL Wildcard = 35
+  # 43 was the old trial cert
   COMODO_PRODUCT_MAPPINGS =
       {"free"=> 342, "high_assurance"=>24, "wildcard"=>35, "ev"=>337,
        "ucc"=>361, "evucc"=>410}
@@ -234,11 +259,9 @@ class Certificate < ApplicationRecord
   scope :base_products, ->{where{reseller_tier_id == nil}}
   scope :available, ->{where{(product != 'mssl') & (serial =~ "%sslcom%") & (title << Settings.excluded_titles)}}
   scope :sitemap, ->{where{(product != 'mssl') & (product !~ '%tr')}}
-  scope :for_sale, ->{
-    Certificate.unscoped.where(id: (Rails.cache.fetch("Certificate.for_sale") do
-      where{(product != 'mssl') & (serial =~ "%sslcom%")}.pluck(:id)
-    end))
-  }
+  scope :not_mssl, -> { where.not(product: 'mssl') }
+  scope :sslcom, -> { where("serial LIKE ?", "%sslcom%")}
+  scope :for_sale, -> { unscoped.not_mssl.sslcom }
   
   def self.get_smime_client_products(tier=nil)
     cur_tier = tier ? "#{tier}tr" : ""
@@ -311,8 +334,7 @@ class Certificate < ApplicationRecord
   memoize :items_by_duration
 
   def pricing(certificate_order,certificate_content)
-    Rails.cache.fetch("#{cache_key}/#{certificate_order.try(:cache_key)}/#{certificate_content.try(:domains_hash)}",
-                      expires_in: 1.hour) do
+    Rails.cache.fetch("#{cache_key}/#{certificate_order.try(:cache_key)}/#{certificate_content.try(:domains_hash)}", expires_in: 1.hour) do
       ratio = certificate_order.signed_certificate ? certificate_order.duration_remaining : 1
       durations=[]
       result={}
@@ -489,6 +511,10 @@ class Certificate < ApplicationRecord
 
   def serial_root
     get_root(self.serial)
+  end
+
+  def to_param
+    product_root
   end
 
   def untiered

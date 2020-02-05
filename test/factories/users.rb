@@ -56,7 +56,9 @@ FactoryBot.define do
     password_confirmation { 'Testing_ssl+1' }
     active                { true }
 
-    avatar { File.new("#{Rails.root}/test/factories/images/idris.jpg") }
+    trait :with_avatar do
+      avatar { File.new("#{Rails.root}/test/factories/images/idris.jpg") }
+    end
 
     trait :sysadmin do
       after(:create) do |user|

@@ -14,18 +14,17 @@
   %div{style: 'flex-basis:270px;'}
 #validations
   %table(cellspacing="0")
-    -if @users.size > 0
+    -if @users.any?
       %tfoot
         %tr
           %td.wrap_number_rows
-            =select_tag :number_rows,
-            options_for_select([[5, 5], [10, 10], [20, 20], [50, 50], [100, 100]], @per_page),
-            :class=>'per_page'
-          %td(colspan='5')
-            =title
-            [learn about #{link_to "inviting users", "https://#{Settings.portal_domain}/how-to/inviting-users-to-your-team/", target: "_blank"}]
-          %td(colspan='2')
+            = select_tag :number_rows, options_for_select([[5, 5], [10, 10], [20, 20], [50, 50], [100, 100]], @per_page), class: 'per_page'
+          %td(colspan='7')
             = render partial: 'shared/paginate', locals: { collection: @users }
+    %caption
+      = title
+      [learn about #{link_to "inviting users", "https://#{Settings.portal_domain}/how-to/inviting-users-to-your-team/", target: "_blank"}]
+      = render partial: 'shared/paginate', locals: { collection: @users }
     - unless current_user.is_system_admins?
       %tr
         =link_to 'Invite User', new_managed_user_path(slug_params), class: 'button_blue button_index'
@@ -51,7 +50,7 @@
             -us, us_class=user_status(u)
             %tr{class: "#{user_view ? 'enable' : 'disable'}", alt: "#{u.id}"}
               %td.dropdown= user_view ? image_tag('expand.png') : ''
-              %td.expandable= u.avatar.url(:thumb).blank? ? fa_icon('user-circle', size: '4x') : image_tag(u.avatar.url(:thumb), alt: u.login, class: 'xs-avatar')
+              %td.expandable= u.avatar.file?  ? image_tag(u.authenticated_avatar_url({style: :thumb}), alt: u.login, class: 'xs-avatar') : fa_icon('user-circle', size: '4x')
               %td.name.expandable=u.login
               %td.expandable=u.email
               %td.expandable.constrained=type.html_safe

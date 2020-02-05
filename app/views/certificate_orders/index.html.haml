@@ -1,4 +1,5 @@
 -content_for :title, "Certificate Order Management"
+-pagination=will_paginate @certificate_orders, inner_window: 2, outer_window: 1
 -show_folders = current_user && Folder.show_folders?(current_user)
 =render :partial => 'index_scripts'
 #search_bar
@@ -43,10 +44,11 @@
           %td
           %td
           %td(colspan='5')
-            = render partial: 'shared/paginate', locals: { collection: @certificate_orders }
+            = pagination
 
     %caption
       SSL Certificates Management
+      = pagination
     %tr.heading_row
       -if show_folders && show_folders_container?
         %th

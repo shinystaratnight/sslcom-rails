@@ -94,17 +94,15 @@ class ApplicationController < ActionController::Base
   end
 
   def find_tier
-    @tier = ''
-    # tier_label = ->(label){ ('-' unless /\A\d\z/.match?(label)).to_s + label + 'tr' } # add '-' for non single digit tier due to flexible labeling
-    if @certificate_order && @certificate_order.ssl_account.try(:tier_suffix).present?
-      @tier = @certificate_order.ssl_account.tier_suffix
-    elsif current_user&.ssl_account&.tier_suffix
-      @tier = current_user.ssl_account.tier_suffix
-    elsif cookies[ResellerTier::TIER_KEY]
-      @tier = ResellerTier.tier_suffix(cookies[ResellerTier::TIER_KEY])
-    end
-    @tier = nil if @tier.blank?
-    @tier
+    @tier ||= if suffix = @certificate_order&.tier_suffix
+                suffix
+              elsif suffix = current_user&.tier_suffix
+                suffix
+              elsif key = params[:reseller_tier_key]
+                ResellerTier.tier_suffix(key)
+              elsif cookie = cookies[ResellerTier::TIER_KEY]
+                ResellerTier.tier_suffix(cookie)
+              end
   end
 
   def add_to_cart(line_item)
@@ -241,7 +239,8 @@ class ApplicationController < ActionController::Base
 
   def find_certificate
     prod = params[:id] == 'mssl' ? 'high_assurance' : params[:id]
-    @certificate = Certificate.includes(:product_variant_items).for_sale.find_by(product: prod + (@tier || ''))
+    identifier = "#{prod}#{@tier}"
+    @certificate = Certificate.includes(:product_variant_items).for_sale.find_by(product: identifier)
   end
 
   def find_certificate_orders(options = {})

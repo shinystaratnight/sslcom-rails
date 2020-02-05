@@ -50,6 +50,11 @@ module SetupHelper
     ['Apache-ModSSL', 'Oracle', 'Amazon Load Balancer'].each{ |title| ServerSoftware.find_or_create_by(title: title) }
   end
 
+  def login(role: :owner)
+    @user = create(:user, role)
+    login_as(@user)
+  end
+
   def create_and_approve_user(invited_ssl_acct, login = nil, roles = nil)
     set_roles = roles || @acct_admin_role
     new_user  = login.nil? ? create(:user, :owner) : create(:user, :owner, login: login)
