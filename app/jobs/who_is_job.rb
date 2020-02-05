@@ -22,18 +22,19 @@ class WhoIsJob < Struct.new(:dname, :certificate_name)
       DomainControlValidation.global.find_or_create_by(subject: dname).update_column(:candidate_addresses, standard_addresses)
     end
     Rails.cache.write("CertificateName.candidate_email_addresses/#{dname}", standard_addresses, expires_in: DomainControlValidation::EMAIL_CHOICE_CACHE_EXPIRES_DAYS.days)
-    cert_names = CertificateName.where('name = ?', dname.to_s)
-    cert_names.update_all(updated_at: Time.now)
-    cert_names.each{ |cn| Rails.cache.delete(cn.get_asynch_cache_label) }
-    CertificateContent.where{ id >> cert_names.map(&:certificate_content_id) }.update_all(updated_at: Time.now)
-    if certificate_name
-      dcv = certificate_name.domain_control_validations.last
-      dcv&.update_column(:candidate_addresses, standard_addresses)
-    end
+    touch_cnames(dname)
+    certificate_name&.domain_control_validations&.last&.update_column(:candidate_addresses, standard_addresses)
   end
 
   def max_attempts
     3
+  end
+
+  def touch_cnames(dname)
+    cert_names = CertificateName.where('name = ?', dname.to_s)
+    cert_names.update_all(updated_at: Time.now)
+    cert_names.each{ |cn| Rails.cache.delete(cn.get_asynch_cache_label) }
+    CertificateContent.where{ id >> cert_names.map(&:certificate_content_id) }.update_all(updated_at: Time.now)
   end
 
   def max_run_time

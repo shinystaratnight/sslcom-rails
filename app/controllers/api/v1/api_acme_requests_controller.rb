@@ -60,7 +60,7 @@ module Api
 
       def record_parameters
         @result = klass.new(api_acme_request) do |result|
-          result.debug ||= acme_params[:debug] if acme_params[:debug]
+          result.debug ||= acme_params.fetch(:debug, false)
           result.action ||= acme_params[:action]
           result.test = @test
           result.request_url = request.url
