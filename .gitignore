@@ -39,3 +39,5 @@ test/cypress/videos
 test/reports
 test/cypress/screenshots/authentication_spec.js
 public/uploads
+000/000
+nbproject

@@ -41,24 +41,15 @@
                         ul
                           li
                             strong reseller profile
-                          li
-                            | #{r.organization}
-                          li
-                            | #{r.address1}
-                          li
-                            | #{r.address2}
-                          li
-                            | #{r.address3}
-                          li
-                            | #{r.po_box}
-                          li
-                            | #{[r.city, r.state, r.postal_code].join(', ')}
-                          li
-                            | #{r.country}
-                          li
-                            | #{r.website}
-                          li
-                            =link_to 'edit', edit_ssl_account_path(ssl_slug || params[:ssl_slug])
+                          li #{r.organization}
+                          li #{r.address1}
+                          li #{r.address2}
+                          li #{r.address3}
+                          li #{r.po_box}
+                          li #{[r.city, r.state, r.postal_code].join(', ')}
+                          li #{r.country}
+                          li #{r.website}
+                          li=link_to 'edit', edit_ssl_account_path(ssl_slug || params[:ssl_slug])
                       .col-md-3
                         ul
                           -if permitted_to?(:edit, :billing_profiles)
@@ -73,7 +64,7 @@
                               li=link_to 'manage billing profiles', billing_profiles_path(ssl_slug: ssl_slug)
                             li=link_to 'buy certificate', certificates_url
                             li=link_to "s/mime or client enrollment", smime_client_enrollment_certificate_orders_path(ssl_slug: ssl_slug)
-                            li=link_to 'certificate pricing', reseller_tier_url(ssl_account.reseller.reseller_tier.id) if ssl_account.reseller
+                            li=link_to 'certificate pricing', reseller_tier_url(ssl_account.reseller.reseller_tier.id) unless ssl_account.reseller.nil?
                             -if ssl_account && permitted_to?(:index, :invoices) && ssl_account.invoices.any?
                               li=link_to 'monthly and daily invoices', invoices_path(ssl_slug)
                 tr

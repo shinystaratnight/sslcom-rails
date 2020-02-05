@@ -57,6 +57,6 @@ SslCom::Application.configure do
   GATEWAY_TEST_CODE = 1.0
 
   config.log_level = :debug
-end
 
-# require "#{Rails.root}/lib/firewatir_url.rb"
+  Paperclip::Attachment.default_options[:path] = "#{Rails.root}/test/test_files/:class/:id_partition/:style.:extension"
+end
