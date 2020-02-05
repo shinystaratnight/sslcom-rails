@@ -16,7 +16,6 @@
 #  caa_passed             :boolean          default(FALSE)
 #
 
-
 class Domain < CertificateName
   include Pagable
 
