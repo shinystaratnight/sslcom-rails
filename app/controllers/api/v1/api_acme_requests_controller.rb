@@ -39,12 +39,13 @@ module Api
         if @result.save!
           response = {}
           @result.certificate_order.certificate_content.certificate_names.each do |cname|
+            cc = cname.certificate_content
             data = {
               http_token: '',
               dns_token: '',
-              validated: cname.certificate_content.all_domains_validated?
+              validated: cc.all_domains_validated?
             }
-            data[:validation_source] = nil # TODO: if validated
+            data[:validation_source] = cc.domain_control_validations.last.dcv_method if cc.all_domains_validated?
             response[cname.name] = data
           end
           render json: response, status: :ok
