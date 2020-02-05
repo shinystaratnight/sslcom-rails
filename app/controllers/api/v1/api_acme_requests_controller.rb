@@ -18,7 +18,7 @@ module Api
         if @result.valid? && @result.save
           @result.hmac_key = @result.api_credential.hmac_key
         else
-          InvalidApiAcmeRequest.create parameters: params, response: @result.to_json
+          InvalidApiAcmeRequest.create parameters: acme_params, response: @result.to_json
         end
         render_200_status
       end
@@ -30,7 +30,7 @@ module Api
           @result.account_key = @result.api_credential.account_key
           @result.secret_key = @result.api_credential.secret_key
         else
-          InvalidApiAcmeRequest.create parameters: params, response: @result.to_json
+          InvalidApiAcmeRequest.create parameters: acme_params, response: @result.to_json
         end
         render_200_status
       end
@@ -51,7 +51,7 @@ module Api
           render json: response, status: :ok
           return
         else
-          InvalidApiAcmeRequest.create parameters: params, response: @result.to_json
+          InvalidApiAcmeRequest.create parameters: acme_params, response: @result.to_json
         end
         render_200_status
       end
@@ -60,22 +60,22 @@ module Api
 
       def record_parameters
         @result = klass.new(api_acme_request) do |result|
-          result.debug ||= params[:debug] if params[:debug]
-          result.action ||= params[:action]
+          result.debug ||= acme_params[:debug] if acme_params[:debug]
+          result.action ||= acme_params[:action]
           result.test = @test
           result.request_url = request.url
-          result.parameters = params.to_utf8.to_json
+          result.parameters = acme_params.to_utf8.to_json
           result.raw_request = request.raw_post.force_encoding('ISO-8859-1').encode('UTF-8')
           result.request_method = request.request_method
         end
       end
 
       def api_acme_request
-        _wrap_parameters(params)['api_acme_request'] || params[:api_acme_request]
+        _wrap_parameters(acme_params)['api_acme_request'] || acme_params[:api_acme_request]
       end
 
       def klass
-        case params[:action]
+        case acme_params[:action]
         when 'retrieve_hmac'
           ApiAcmeRetrieveCredential
         when 'retrieve_credentials'
@@ -87,6 +87,10 @@ module Api
 
       def set_template(filename)
         @template = File.join('api', 'v1', 'api_acme_requests', filename)
+      end
+
+      def acme_params
+        params.permit %i[account_key secret_key debug hmac_key certificate_order_id action api_acme_request]
       end
     end
   end
