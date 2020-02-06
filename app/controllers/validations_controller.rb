@@ -291,7 +291,7 @@ class ValidationsController < ApplicationController
   end
 
   def get_asynch_domains
-    co = (current_user.is_system_admins? ? CertificateOrder.includes(:certificate_content) :
+    co = (current_user.is_system_admins? ? CertificateOrder.includes(:certificate_contents) :
               current_user.certificate_orders).find_by_ref(params[:certificate_order_id])
     cn = co.certificate_content.certificate_names.find_by_name(params['domain_name']) if co
 
@@ -448,7 +448,7 @@ class ValidationsController < ApplicationController
     @i = 0
     @error = []
     @files = params[:filedata] || []
-    
+
     if params[:filedata]
       upload_documents(params[:filedata], :saved_registrant_documents)
     end
@@ -1008,7 +1008,7 @@ class ValidationsController < ApplicationController
         @registrant.validation_histories << @val_history
         contacts = LockedRegistrant.where(parent_id: @registrant.id)
         if contacts.any?
-          # If client or s/mime certificate used this registrant, then add 
+          # If client or s/mime certificate used this registrant, then add
           # documents to locked registrant and certificate order as well.
           CertificateOrder.joins(certificate_contents: :locked_registrant)
             .where("contacts.id IN (?)", contacts.ids).each do |co|
@@ -1030,7 +1030,7 @@ class ValidationsController < ApplicationController
         lrc = @certificate_order.locked_recipient
         if lrc && (lrc.user_id == iv_exists.user_id)
           lrc.validation_histories << @val_history
-        end 
+        end
       end
     end
   end
