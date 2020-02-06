@@ -1,6 +1,6 @@
 # SSL.com Rails
 
-[![CircleCI](https://circleci.com/gh/SSLcom/sslcom-rails/tree/master.svg?style=svg)](https://circleci.com/gh/SSLcom/sslcom-rails/tree/master)
+[![CircleCI](https://circleci.com/gh/SSLcom/sslcom-rails/tree/master.svg?style=svg&circle-token=6c2cc58a545d1d674d5e8f97809671be9fe38a2a)](https://circleci.com/gh/SSLcom/sslcom-rails/tree/master)
 
 [![Maintainability](https://api.codeclimate.com/v1/badges/a8f3ee62506a9befd80a/maintainability)](https://codeclimate.com/repos/5e18e6aa249421017701af15/maintainability)
 

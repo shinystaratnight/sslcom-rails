@@ -1,5 +1,29 @@
 # frozen_string_literal: true
 
+# == Schema Information
+#
+# Table name: ssl_accounts
+#
+#  id                     :integer          not null, primary key
+#  acct_number            :string(255)
+#  roles                  :string(255)      default([])
+#  created_at             :datetime
+#  updated_at             :datetime
+#  status                 :string(255)
+#  ssl_slug               :string(255)
+#  company_name           :string(255)
+#  issue_dv_no_validation :string(255)
+#  billing_method         :string(255)      default("monthly")
+#  duo_enabled            :boolean
+#  duo_own_used           :boolean
+#  sec_type               :string(255)
+#  default_folder_id      :integer
+#  no_limit               :boolean          default(FALSE)
+#  epki_agreement         :datetime
+#  workflow_state         :string(255)      default("active")
+#
+
+
 class SslAccount < ApplicationRecord
   extend Memoist
   using_access_control
@@ -165,16 +189,15 @@ class SslAccount < ApplicationRecord
 
   # before create function
   def b_create
-    self.acct_number = 'a' + SecureRandom.hex(1) + '-' + Time.now.to_i.to_s(32)
+    self.acct_number = loop do
+      nbr = 'a' + SecureRandom.hex(1) + '-' + Time.now.to_i.to_s(32)
+      break nbr unless SslAccount.exists?(acct_number: nbr)
+    end
   end
 
   # before filter
   def initial_setup
-    self.preferred_reminder_notice_triggers = '60', initial_reminder_triggers[0]
-    self.preferred_reminder_notice_triggers = '30', initial_reminder_triggers[1]
-    self.preferred_reminder_notice_triggers = '7', initial_reminder_triggers[2]
-    self.preferred_reminder_notice_triggers = '1', initial_reminder_triggers[3]
-    self.preferred_reminder_notice_triggers = '-30', initial_reminder_triggers[5]
+    initialize_preferred_triggers
     generate_funded_account
     create_api_credential if api_credential.blank?
     create_folders
@@ -1034,6 +1057,14 @@ class SslAccount < ApplicationRecord
   end
 
   private
+
+  def initialize_preferred_triggers
+    self.preferred_reminder_notice_triggers = '60', initial_reminder_triggers[0]
+    self.preferred_reminder_notice_triggers = '30', initial_reminder_triggers[1]
+    self.preferred_reminder_notice_triggers = '7', initial_reminder_triggers[2]
+    self.preferred_reminder_notice_triggers = '1', initial_reminder_triggers[3]
+    self.preferred_reminder_notice_triggers = '-30', initial_reminder_triggers[5]
+  end
 
   # creates dev db from production. NOTE: This will modify the db data so use this on a COPY of the production db
   # SslAccount.convert_db_to_development

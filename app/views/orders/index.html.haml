@@ -147,7 +147,6 @@
 =render :partial=>'/certificate_orders/quick_links'
 #certificate_orders
   %table(cellspacing="0")
-    -#-if will_paginate @orders
     -if @orders.size > 0
       %tfoot
         %tr
@@ -155,10 +154,12 @@
             =select_tag :number_rows,
             options_for_select([[5, 5], [10, 10], [20, 20], [50, 50], [100, 100]], @per_page),
             :class=>'per_page'
-          %td(colspan='7')=will_paginate @orders
+          %td
+          %td(colspan='7')
+            = render partial: 'shared/paginate', locals: { collection: @orders }
     %caption
-      =title
-      =will_paginate @orders
+      = title
+      = render partial: 'shared/paginate', locals: { collection: @orders }
     -if current_user.is_admin?
       =render partial: 'orders/index_stats'
     %tr.heading_row

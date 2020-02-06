@@ -202,7 +202,7 @@ class OrdersController < ApplicationController
           params[:certificate_order][:certificate_contents_attributes]['0'.to_sym][:additional_domains] = additional_domains.strip
         end
 
-        render(:template => "/certificates/buy",
+        render(:template => "submit_csr",
           :layout=>"application") and return unless certificate_order_steps
       else
         # Getting Shopping Cart Info

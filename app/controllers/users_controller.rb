@@ -30,12 +30,12 @@ class UsersController < ApplicationController
   filter_access_to  :consolidate, :dup_info, :archive_team, :retrieve_team, require: :update
   filter_access_to  :resend_activation, :activation_notice, require: :create
   filter_access_to  :edit_password, :edit_email, :cancel_reseller_signup, :teams, require: :edit
-  filter_access_to  :show_user, :reset_failed_login_count, require: :ajax
+  filter_access_to  :show_user, :reset_failed_login_count, :avatar, require: :ajax
 
   def new; end
 
   def new_affiliate
-    render action: 'new'
+    render :new
   end
 
   def search
@@ -81,7 +81,7 @@ class UsersController < ApplicationController
     @users = @users.order('created_at desc').paginate(@p)
 
     respond_to do |format|
-      format.html { render action: :index }
+      format.html { render :index }
       format.xml  { render xml: @users }
     end
   end
@@ -162,7 +162,7 @@ class UsersController < ApplicationController
         # flash messages to the target page. works fine in dev though
         redirect_to(request.subdomain == Reseller::SUBDOMAIN ? login_url(notice: notice) : login_url)
       else
-        render action: :new
+        render :new
       end
     end
   end
@@ -221,7 +221,7 @@ class UsersController < ApplicationController
     else
       @user.login = old
     end
-    render action: :admin_show
+    render :admin_show
   end
 
   def consolidate
@@ -278,6 +278,20 @@ class UsersController < ApplicationController
     else
       @chpwd = !admin_op?
       render :edit_password
+    end
+  end
+
+  def upload_avatar
+    respond_to do |format|
+      begin
+        current_user.avatar = params[:file]
+        current_user.save!
+        format.js { render json: current_user.avatar.url, status: :ok }
+        format.json { render json: current_user.avatar.url, status: :ok }
+      rescue StandardError => e
+        format.js { render json: e.message, status: :unprocessable_entity }
+        format.json { render json: e.message, status: :unprocessable_entity }
+      end
     end
   end
 
@@ -564,6 +578,18 @@ class UsersController < ApplicationController
     end
   end
 
+  def avatar
+    respond_to do |format|
+      data = UserSerializer.new(current_user).serializable_hash
+      format.js do
+        render json: data, status: :ok
+      end
+      format.json do
+        render json: data, status: :ok
+      end
+    end
+  end
+
   private
 
   def new_user
@@ -598,10 +624,10 @@ class UsersController < ApplicationController
   end
 
   def set_users
-    @users = if current_user.is_system_admins?
+    @users = if current_user&.is_system_admins?
                @ssl_account.try(:users) || User.unscoped
              else
-               current_user.manageable_users
+               current_user&.manageable_users
              end
   end
 

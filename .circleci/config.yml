@@ -1,20 +1,30 @@
 version: 2
 jobs:
   build:
-    environment:
-      CC_TEST_REPORTER_ID: 28165637ec744cbee7b35b80ec881d25bc0e7437b2321f168572a270828aa586
     working_directory: ~/sslcom-rails
     docker:
       - image: circleci/ruby:2.6.2-node-browsers
         environment:
           RAILS_ENV: test
           DB_HOST: 127.0.0.1
+          CIRCLE_CI: 'true'
+          CACHE_VERSION: 'v1'
       - image: circleci/mysql:5.7.28
         environment:
           MYSQL_ALLOW_EMPTY_PASSWORD: "true"
           MYSQL_ROOT_HOST: "%"
     steps:
       - checkout
+
+      - run: mkdir -p tmp/test-reports/minitest/queue_mode/
+
+      - run:
+          name: Install Code Climate Test Reporter
+          command: |
+            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+            chmod +x ./cc-test-reporter
+
+      - run: ./cc-test-reporter before-build
       - restore_cache:
           keys:
             - sslcom-rails-{{ checksum "Gemfile.lock" }}
@@ -36,11 +46,6 @@ jobs:
       - run:
           name: Bundle Install Gem Dependencies
           command: bundle check --path vendor/bundle || bundle install --deployment
-
-      # - run:
-      #     name: Dependencies security audit
-      #     command: |
-      #       bundle exec bundle-audit check --update
 
       - run:
           name: Build the Settings YML files
@@ -72,6 +77,7 @@ jobs:
                     AWS_ACCESS_KEY_ID: ''
                     AWS_SECRET_ACCESS_KEY: ''
                     S3_BUCKET_NAME: ''
+                    S3_AVATAR_BUCKET_NAME: ''
                     AWS_DEFAULT_REGION: ''
                     DUO_INTEGRATION_KEY: '${DUO_INTEGRATION_KEY}'
                     DUO_SECRET_KEY: '${DUO_SECRET_KEY}'
@@ -96,15 +102,6 @@ jobs:
           name: Copy Settings File
           command: cp config/client/certassure/settings.yml config/
 
-      - run:
-          name: Rubocop Linting
-          command:  bundle exec rake rubocop:git_diff
-
-      - save_cache:
-          key: v1-rubocop-cache-{{ checksum ".rubocop.yml" }}-{{ .Branch }}-{{ epoch }}
-          paths:
-            - ../.cache/rubocop_cache
-
       - save_cache:
           key: sslcom-rails-{{ checksum "Gemfile.lock" }}
           paths:
@@ -122,12 +119,21 @@ jobs:
           command: bundle exec rake test
           when: always
 
+      - run:
+          name: Code Climate Test Coverage
+          command: |
+            ./cc-test-reporter format-coverage -t simplecov -o "coverage/codeclimate.$CIRCLE_NODE_INDEX.json"
+
       - store_test_results:
           path: test/reports
 
       - store_artifacts:
           path: coverage
 
+      - store_artifacts:
+          path: test/reports
+
+      - run: ./cc-test-reporter after-build -r $CC_TEST_REPORTER_ID -t simplecov --exit-code $? || true
 
       # Yarn dependencies
       - restore_cache:
@@ -185,3 +191,35 @@ jobs:
           command: |
               bundle exec rails runner 'Rails.application.eager_load!'
 
+  upload-coverage:
+    docker:
+      - image: circleci/ruby:2.6.2-node-browsers
+    environment:
+      # you can add your CodeClimate test report ID here or in CircleCI
+      # settings for environment variables
+      CC_TEST_REPORTER_ID: $CC_TEST_REPORTER_ID
+    working_directory: ~/repo
+
+    steps:
+      # This will restore files from persist_to_workspace step
+      # Thanks to it we will have access to CodeClimate test coverage files from
+      # each parallel job. We need them in order to merge it into one file in next step.
+      - attach_workspace:
+          at: ~/repo
+      - run:
+          name: Install Code Climate Test Reporter
+          command: |
+            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+            chmod +x ./cc-test-reporter
+      - run: ./cc-test-reporter after-build -t simplecov --exit-code $? || true
+
+
+workflows:
+  version: 2
+
+  build_and_coverage:
+    jobs:
+      - build
+      # - upload-coverage:
+      #     requires:
+      #       - build

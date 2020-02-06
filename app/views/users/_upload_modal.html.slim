@@ -1,0 +1,29 @@
+/! Modal
+#uploadModal.modal.fade role="dialog" 
+  .modal-dialog
+    /! Modal content
+    .modal-content
+      .modal-header
+        h4.modal-title Upload Profile Image
+      .modal-body
+        #alert
+        /! Form
+        form action="" class="dropzone" enctype="multipart/form-data" method="post"
+          input#user_id type="hidden" name="user_id" value="#{user.id}"
+          | Select or drag an image file :
+          input#file.form-control name="file" type="file" /
+          #dropzone
+          button#spinner.m-4.btn.btn-primary disabled="" type="button" style="display: none;"
+            span.spinner-border.spinner-border-sm aria-hidden="true" role="status" 
+            | Loading...
+
+        /! Preview
+        #preview
+      .modal-footer
+        button.btn.btn-primary type="button" data-dismiss="modal"
+          | Close
+
+javascript:
+  $(window).on('hidden.bs.modal', function (e) {
+    window.location = window.location.href;
+  })

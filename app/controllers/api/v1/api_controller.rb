@@ -43,8 +43,6 @@ module Api
         Authlogic::Session::Base.controller = Authlogic::ControllerAdapters::RailsAdapter.new(self)
       end
 
-      # Note: Assess the utility and functionality of this method.
-      # It does not seem to work as expected.
       def render_200_status_noschema
         json = if @result.errors.empty?
                  serialize_model(@result)['data']['attributes']
@@ -56,10 +54,6 @@ module Api
 
       def render_200_status
         render template: @template, status: :ok
-      end
-
-      def render_201_status
-        render template: @template, status: :created
       end
 
       def render_400_status

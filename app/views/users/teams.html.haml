@@ -1,5 +1,4 @@
 -title = "Teams"
--will_paginate @teams
 -content_for :title, title
 -system_admins = current_user.is_system_admins?
 =render :partial => 'team_scripts'
@@ -17,18 +16,16 @@
       %tfoot
         %tr
           %td.wrap_number_rows(colspan='2')
-            =select_tag :number_rows,
-            options_for_select([[5, 5], [10, 10], [20, 20], [50, 50], [100, 100]], @per_page),
-            :class=>'per_page'
-          %td(colspan='5')=will_paginate @teams
+            =select_tag :number_rows, options_for_select([[5, 5], [10, 10], [20, 20], [50, 50], [100, 100]], @per_page), class: 'per_page'
+          %td(colspan='5')= render partial: 'shared/paginate', locals: { collection: @teams }
     -#-if will_paginate @teams
       %tfoot
         %tr
-          %td(colspan='7')=will_paginate @teams
+          %td(colspan='7')= render partial: 'shared/paginate', locals: { collection: @teams }
     %caption
       =title
       [learn about #{link_to "teams", "https://#{Settings.portal_domain}/article/introducing-teams-ssl-com-multiuser-accounts/", target: "_blank"}]
-      =will_paginate @teams
+      = render partial: 'shared/paginate', locals: { collection: @teams }
     -if permitted_to?(:create_team, current_user) and !system_admins
       %br
       %tr
@@ -60,9 +57,9 @@
             =link_to "accept", t[:accept]
             %br
             =link_to "decline", t[:decline], {style: 'color:red;'}
-    -if @teams.size > 0
+    -if @teams.any?
       -@teams.each do |t|
-        -cache([current_user,'teams_list', t], expires_in: 12.hours) do
+        -cache do
           -if t.active?
             -account_owner = current_user.is_account_owner? t
             -account_admin = current_user.is_account_team_admin? t

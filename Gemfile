@@ -11,7 +11,7 @@ gem 'declarative_authorization', git: 'https://github.com/xymist/declarative_aut
 gem 'dynamic_form'
 gem 'easy_roles'
 gem 'haml', '>= 3.1.alpha.50'
-gem 'json' # , '~> 1.8.6'
+gem 'json'
 gem 'money', '2.1.0'
 gem 'mysql2'
 gem 'paperclip', '~> 5.3.0'
@@ -38,7 +38,6 @@ gem 'radix62'
 gem 'simpleidn'
 gem 'uuidtools'
 gem 'whenever', require: false
-# gem "therubyracer", '~> 0.12.3', platform: :ruby
 gem 'actionpack-action_caching', '~> 1.1', '>= 1.1.1'
 gem 'airbrake', '~> 9.5' # https://airbrake.io/docs/ruby/upgrading-your-notifier/
 gem 'api-pagination'
@@ -67,29 +66,26 @@ gem 'rvm-capistrano'
 gem 'sdoc', group: :doc
 gem 'stripe'
 gem 'unscoped_associations'
-# gem 'wkhtmltopdf-binary' see config/initializers/wicked_pdf.rb for installation instructions
 gem 'duo_web', '~> 1.0'
 gem 'u2f'
 gem 'wicked_pdf'
-# gem 'simple_captcha2', require: 'simple_captcha'
 gem 'acts_as_tree'
-gem 'font-awesome-rails'
+gem 'font_awesome5_rails'
+
 gem 'recaptcha', require: 'recaptcha/rails'
 gem 'where-or'
 gem 'whois', '~> 4.0'
 gem 'whois-parser'
-# gem "skylight"
 gem 'authy'
 gem 'mailboxer'
 gem 'memoist'
-# gem 'countries'
 gem 'bootstrap-datepicker-rails'
 gem 'timezone', '~> 1.0'
 # required by sws-a1
 gem 'activerecord-import'
 gem 'date'
 gem 'etc'
-gem 'fileutils', '~> 1.1.0'
+gem 'fileutils', '~> 1.4.1'
 gem 'forwardable'
 gem 'puma'
 gem 'schema_plus'
@@ -107,7 +103,6 @@ gem 'sassc-rails', '>= 2.1.0'
 gem 'select2-rails'
 gem 'slim-rails'
 gem 'turbolinks'
-# gem 'webpacker', '~> 4.x'
 gem 'yui-compressor'
 
 group :development do
@@ -117,7 +112,6 @@ group :development do
   gem 'lol_dba'
   gem 'memory_profiler'
   gem 'meta_request'
-  # gem 'puma'
   gem 'solargraph', require: false
   gem 'spring'
   gem 'spring-commands-testunit'
@@ -135,6 +129,7 @@ group :development, :test do
   gem 'pry-remote'
   gem 'rubocop', require: false
   gem 'rubocop-minitest'
+  gem 'rubocop-performance'
   gem 'rubocop-rails'
   gem 'ruby-odbc'
   gem 'ruby_parser'
@@ -144,10 +139,14 @@ end
 group :test do
   gem 'database_cleaner'
   gem 'faker'
+  gem 'minitest-bang', require: false
   gem 'minitest-ci'
   gem 'minitest-rails', '~> 2.0'
   gem 'minitest-reporters'
   gem 'mocha'
+  gem 'rails-controller-testing'
+  gem 'shoulda', '~> 3.5'
+  gem 'shoulda-matchers', '~> 2.0'
   gem 'simplecov', require: false
   gem 'vcr'
   gem 'webmock'
@@ -163,3 +162,6 @@ gem 'rswag-ui'
 
 gem 'bcrypt_pbkdf', '~> 1'
 gem 'ed25519', '~> 1.2'
+gem 'oj'
+gem 'fast_jsonapi'
+

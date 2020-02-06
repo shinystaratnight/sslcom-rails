@@ -2,6 +2,8 @@
 require 'resolv'
 
 class CertificateName < ApplicationRecord
+  include Pagable
+
   belongs_to  :certificate_content
   has_one   :certificate_order, through: :certificate_content
   has_many    :signed_certificates, through: :certificate_content
@@ -9,12 +11,9 @@ class CertificateName < ApplicationRecord
   has_many    :ca_certificate_requests, as: :api_requestable, dependent: :destroy
   has_many    :ca_dcv_requests, as: :api_requestable, dependent: :destroy
   has_many    :ca_dcv_resend_requests, as: :api_requestable, dependent: :destroy
-  has_many    :validated_domain_control_validations, -> { where(workflow_state: "satisfied")},
-              class_name: "DomainControlValidation"
-  has_many    :last_sent_domain_control_validations, -> { where{email_address !~ 'null'}},
-              class_name: "DomainControlValidation"
-  has_one :domain_control_validation, -> { order 'created_at' }, class_name: "DomainControlValidation",
-              unscoped: true
+  has_many    :validated_domain_control_validations, -> { where(workflow_state: "satisfied")}, class_name: "DomainControlValidation"
+  has_many    :last_sent_domain_control_validations, -> { where{email_address !~ 'null'}}, class_name: "DomainControlValidation"
+  has_one :domain_control_validation, -> { order 'created_at' }, class_name: "DomainControlValidation", unscoped: true
   has_many    :domain_control_validations, dependent: :destroy do
     def last_sent
       where{email_address !~ 'null'}.last
@@ -86,10 +85,6 @@ class CertificateName < ApplicationRecord
 
     result.uniq.order(created_at: :desc)
   }
-
-  #will_paginate
-  cattr_accessor :per_page
-  @@per_page = 10
 
   def is_ip_address?
     name.index(/\A(?:[0-9]{1,3}\.){3}[0-9]{1,3}\z/)==0 if name
@@ -298,7 +293,7 @@ class CertificateName < ApplicationRecord
           whois=Whois.whois(ActionDispatch::Http::URL.extract_domain(d.domain, 1)).to_s
           whois_addresses = WhoisLookup.email_addresses(whois.gsub(/^.*?abuse.*?$/i,"")) # remove any line with 'abuse'
           whois_addresses.each do |ad|
-            standard_addresses << ad.downcase unless ad =~/abuse.*?@/i
+            standard_addresses << ad.downcase
           end unless whois_addresses.blank?
         rescue Exception=>e
           Logger.new(STDOUT).error e.backtrace.inspect
