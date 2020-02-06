@@ -1,3 +1,21 @@
+# frozen_string_literal: true
+#
+# == Schema Information
+#
+# Table name: certificate_names
+#
+#  id                     :integer          not null, primary key
+#  certificate_content_id :integer
+#  email                  :string(255)
+#  name                   :string(255)
+#  is_common_name         :boolean
+#  created_at             :datetime         not null
+#  updated_at             :datetime         not null
+#  acme_account_id        :string(255)
+#  ssl_account_id         :integer
+#  caa_passed             :boolean          default(FALSE)
+#
+
 # Represents a domain name or ip address to be secured by a UCC or Multi domain SSL
 require 'resolv'
 
@@ -35,6 +53,8 @@ class CertificateName < ApplicationRecord
   has_many    :notification_groups, through: :notification_groups_subjects
 
   attr_accessor :csr
+  delegate :acme_token, to: :domain_control_validation, prefix: false
+  delegate :all_domains_validated?, to: :certificate_content, prefix: false
 
   scope :find_by_domains, ->(domains){ includes(:domain_control_validations).where{ name >> domains } }
   scope :validated, ->{ joins(:domain_control_validations).where{ domain_control_validations.workflow_state == 'satisfied' } }
@@ -110,14 +130,17 @@ class CertificateName < ApplicationRecord
 
   def top_level_domain
     if is_fqdn?
-      name =~ (/(?:.*?\.)(.+)/)
+      name =~ /(?:.*?\.)(.+)/
       $1
     end
   end
 
+  def validation_source
+    last_dcv&.dcv_method
+  end
+
   def last_dcv
-    (domain_control_validations.last.try(:dcv_method) =~ /https?/) ?
-        domain_control_validations.last : domain_control_validations.last_sent
+    domain_control_validations.last.try(:dcv_method) =~ /https?/ ? domain_control_validations.last : domain_control_validations.last_sent
   end
 
   def last_dcv_for_comodo_auto_update_dcv

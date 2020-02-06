@@ -264,5 +264,6 @@ class DomainControlValidation < ApplicationRecord
       random_token = SecureRandom.urlsafe_base64(96, false)
       break random_token unless DomainControlValidation.exists?(acme_token: random_token)
     end
+    save
   end
 end

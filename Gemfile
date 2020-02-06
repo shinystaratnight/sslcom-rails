@@ -163,5 +163,4 @@ gem 'rswag-ui'
 gem 'bcrypt_pbkdf', '~> 1'
 gem 'ed25519', '~> 1.2'
 gem 'oj'
-gem 'fast_jsonapi'
-
+gem 'active_model_serializers'
