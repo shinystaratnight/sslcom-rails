@@ -581,13 +581,11 @@ class CertificateContent < ApplicationRecord
       else
         if DomainControlValidation.approved_email_address? CertificateName.candidate_email_addresses(
             name.non_wildcard_name), v["dcv"]
-          dcv = name.domain_control_validations.new(dcv_method: "email", email_address: v["dcv"],
+          dcvs << name.domain_control_validations.new(dcv_method: "email", email_address: v["dcv"],
                                                  failure_action: v["dcv_failure_action"],
                                                  candidate_addresses: CertificateName.candidate_email_addresses(
                                                      name.non_wildcard_name))
-          OrderNotifier.dcv_email_send(v["dcv"], dcv.identifier, [name.name], name.id, @ssl_slug).deliver
         end
-        dcvs << dcv unless dcv.blank?
       end
       i+=1
     end
@@ -804,8 +802,8 @@ class CertificateContent < ApplicationRecord
         asterisk_found = (domain=~/\A\*\./)==0
         if ((!is_ucc && !is_wildcard) || is_premium_ssl) && asterisk_found
           errors.add(:domain, "cannot begin with *. since the order does not allow wildcards")
-        elsif certificate_order.certificate.is_dv? && CertificateContent.is_ip_address?(domain)
-          errors.add(:domain, "#{domain} was determined to be for an ip address. This is only allowed on OV or EV ssl orders.")
+        elsif (certificate_order.certificate.is_dv? || certificate_order.certificate.is_ev?) && CertificateContent.is_ip_address?(domain)
+          errors.add(:domain, "#{domain} was determined to be for an ip address. This is only allowed on OV ssl orders.")
         elsif !!(domain=~Regexp.new("\\.("+Country::BLACKLIST.join("|")+")$",true))
           errors.add(:domain, "#{domain} is a restricted tld")
         end

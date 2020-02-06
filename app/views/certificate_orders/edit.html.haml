@@ -9,8 +9,7 @@
   =error_messages_for :certificate_order, :registrant
   =form_for @certificate_order, url: certificate_order_path(ssl_slug: @ssl_slug, id: @certificate_order) do |f|
     #stylized.default_form
-      =render :partial => "/certificate_orders/form", :locals => {:f=>f}
-    #button_container
+      =render :partial => "registrant_form", :locals => {:f=>f}
       #auto_adjust
         =image_tag "cancel_bl.gif", id: "start_over_redirect"
         =image_submit_tag "next_bl.gif", alt: "edit ssl certificate order"

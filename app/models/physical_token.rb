@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: physical_tokens
@@ -23,7 +25,7 @@
 
 class PhysicalToken < ApplicationRecord
   MAKE_AND_MODELS={Gemalto: %w(5100\ eToken), Yubico: %w(Yubikey\ FIPS\ 140-2)}
-  CARRIERS=%w(FedEx UPS USPS DHL in-person Not\ Yet\ Shipped)
+  CARRIERS = ['Not Yet Shipped', 'FedEx', 'UPS', 'USPS', 'DHL', 'in-person'].freeze
 
   belongs_to :certificate_order
   belongs_to :signed_certificate

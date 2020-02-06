@@ -30,6 +30,12 @@ Dir[File.join('./test/support/**/*.rb')].sort.each { |f| require f }
 DatabaseCleaner.clean_with :truncation
 DatabaseCleaner.strategy = :truncation
 
+Paperclip::Attachment.default_options[:path] = if ENV['PARALLEL_TEST_GROUPS']
+                                                 ":rails_root/public/system/:rails_env/#{ENV['TEST_ENV_NUMBER'].to_i}/:class/:attachment/:id_partition/:filename"
+                                               else
+                                                 ':rails_root/public/system/:rails_env/:class/:attachment/:id_partition/:filename'
+                                               end
+
 module Minitest
   class Spec
     class_eval do

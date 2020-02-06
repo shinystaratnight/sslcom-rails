@@ -33,10 +33,10 @@
     =hidden_field :order, :nonwildcard_count, value: 0
     =hidden_field :order, :wildcard_amount, value: 0
     =hidden_field :order, :nonwildcard_amount, value: 0
-    
+
     =recert?
     #stylized.default_form
-      = render :partial => "/certificates/form", :locals => {:f=>f}
+      = render :partial => "certificate_orders/csr_info", :locals => {:f=>f}
     #button_container
       #next_submit=image_submit_tag "next_bl.gif", alt: 'submit ssl certificate order', class: 'submit_csr_img_tag'
       #product_details.center{style: "font-size: 1.5em"}

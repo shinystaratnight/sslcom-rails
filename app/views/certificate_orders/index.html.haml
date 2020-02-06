@@ -1,7 +1,7 @@
 -content_for :title, "Certificate Order Management"
+-pagination=will_paginate @certificate_orders, inner_window: 2, outer_window: 1
 -show_folders = current_user && Folder.show_folders?(current_user)
 =render :partial => 'index_scripts'
--pagination=will_paginate @certificate_orders
 #search_bar
   =form_tag :search_certificate_orders, :id=>'search_form', :method=>:get do
     =text_field_tag :search, @search
@@ -32,9 +32,6 @@
 
 #certificate_orders
   %table(cellspacing="0")
-    -#.loader_wrap
-    -#  .loader
-    -#-if will_paginate @certificate_orders
     -unless @certificate_orders.empty?
       %tfoot
         %tr
@@ -44,11 +41,14 @@
             :class=>'per_page'
           %td.wrap_number_rows
             = button_to 'Export to CSV', download_certificates_path(@certificate_orders.pluck(:id))
-          %td(colspan='5')=pagination
+          %td
+          %td
+          %td(colspan='5')
+            = pagination
 
     %caption
       SSL Certificates Management
-      =pagination
+      = pagination
     %tr.heading_row
       -if show_folders && show_folders_container?
         %th
