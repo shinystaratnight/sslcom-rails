@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200205063657) do
+ActiveRecord::Schema.define(version: 20200206192249) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        :limit=>255
@@ -57,13 +57,14 @@ ActiveRecord::Schema.define(version: 20200205063657) do
   end
 
   create_table "api_credentials", force: :cascade do |t|
-    t.integer  "ssl_account_id", :limit=>4, :index=>{:name=>"index_api_credentials_on_ssl_account_id", :using=>:btree}
-    t.string   "account_key",    :limit=>255, :index=>{:name=>"index_api_credentials_on_account_key_and_secret_key", :with=>["secret_key"], :unique=>true, :using=>:btree}
-    t.string   "secret_key",     :limit=>255
-    t.datetime "created_at",     :null=>false
-    t.datetime "updated_at",     :null=>false
-    t.string   "roles",          :limit=>255
-    t.string   "hmac_key",       :limit=>255
+    t.integer  "ssl_account_id",               :limit=>4, :index=>{:name=>"index_api_credentials_on_ssl_account_id", :using=>:btree}
+    t.string   "account_key",                  :limit=>255, :index=>{:name=>"index_api_credentials_on_account_key_and_secret_key", :with=>["secret_key"], :unique=>true, :using=>:btree}
+    t.string   "secret_key",                   :limit=>255
+    t.datetime "created_at",                   :null=>false
+    t.datetime "updated_at",                   :null=>false
+    t.string   "roles",                        :limit=>255
+    t.string   "hmac_key",                     :limit=>255
+    t.string   "acme_acct_pub_key_thumbprint", :limit=>255, :index=>{:name=>"index_api_credentials_on_acme_acct_pub_key_thumbprint", :using=>:btree}
   end
 
   create_table "apis", force: :cascade do |t|

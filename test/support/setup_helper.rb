@@ -2,19 +2,7 @@
 
 module SetupHelper
   def create_roles
-    [
-      Role::ACCOUNT_ADMIN,
-      Role::BILLING,
-      Role::INSTALLER,
-      Role::RESELLER,
-      Role::OWNER,
-      Role::SYS_ADMIN,
-      Role::SUPER_USER,
-      Role::USERS_MANAGER,
-      Role::VALIDATIONS,
-      Role::RA_ADMIN,
-      Role::INDIVIDUAL_CERTIFICATE
-    ].each { |role_name| Role.find_or_create_by(name: role_name) }
+    Role::ALL.each { |role_name| Role.find_or_create_by(name: role_name) }
   end
 
   def set_common_roles
@@ -34,16 +22,9 @@ module SetupHelper
   end
 
   def initialize_certificates
-    create(:certificate, :evuccssl)   # 100 EV UCC/SAN SSL (evucc256sslcom), multi-domain, non-wildcard
-    create(:certificate, :uccssl)     # 101 UCC SSL (ucc256sslcom), multi-domain, wildcard
-    create(:certificate, :evssl)      # 102 EV SSL (ev256sslcom), 1-domain, non-wildcard
-    create(:certificate, :ovssl)      # 103 High Assurance SSL (ov256sslcom), 1-domain, non-wildcard
-    create(:certificate, :freessl)    # 104 Free SSL (dv256), 1-domain,  non-wildcard
-    create(:certificate, :wcssl)      # 105 Wildcard SSL (wc256sslcom), 1-domain, unlimited-subdomains, wildcard
-    create(:certificate, :basicssl)   # 106 Basic SSL (basic256sslcom), 1-domain, non-wildcard
-    create(:certificate, :premiumssl) # 107 Premium SSL (premium256sslcom), 1-domain, 3-subdomains, non-wildcard
-    create(:certificate, :codesigningssl) # 350 Code Signing (codesigning256sslcom)
-    create(:certificate, :evcodesigningssl) # 360 EV Code Signing (evcodesigning256sslcom)
+    %i[evuccssl uccssl evssl ovssl freessl wcssl basicssl premiumssl codesigningssl evcodesigningssl].each do |trait|
+      create(:certificate, trait)
+    end
   end
 
   def initialize_server_software
@@ -53,6 +34,7 @@ module SetupHelper
   def login(role: :owner)
     @user = create(:user, role)
     login_as(@user)
+    @user
   end
 
   def create_and_approve_user(invited_ssl_acct, login = nil, roles = nil)

@@ -31,6 +31,8 @@ class Role < ApplicationRecord
   RA_ADMIN      = 'ra_admin'
   INDIVIDUAL_CERTIFICATE = 'individual_certificate'
 
+  ALL = [ACCOUNT_ADMIN, BILLING, INSTALLER, OWNER, RESELLER, SUPER_USER, SYS_ADMIN, USERS_MANAGER, VALIDATIONS, RA_ADMIN, INDIVIDUAL_CERTIFICATE].freeze
+
   def self.get_role_id(role_name)
     Rails.cache.fetch(['get_role_id', role_name]) { Role.find_by(name: role_name).id }
   end

@@ -18,6 +18,9 @@ require 'authlogic/test_case'
 require 'declarative_authorization/maintenance'
 require 'json-schema'
 require 'minitest/bang'
+require 'capybara/rails'
+require 'capybara-screenshot/minitest'
+require 'capybara/minitest'
 
 ActiveRecord::Migration.maintain_test_schema!
 
@@ -41,6 +44,7 @@ module Minitest
     class_eval do
       include SessionHelper
       include SetupHelper
+      include Asserts
       include Authlogic::TestCase
 
       before :each do
@@ -55,11 +59,20 @@ module Minitest
   end
 end
 
+module ActionDispatch
+  class IntegrationTest
+    include Capybara::Screenshot::MiniTestPlugin
+    include Capybara::DSL
+    include Capybara::Minitest::Assertions
+  end
+end
+
 module ActiveSupport
   class TestCase
     class_eval do
       include SessionHelper
       include SetupHelper
+      include Asserts
       include Authlogic::TestCase
       include DatabaseCleanerSupport
     end
