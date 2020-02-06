@@ -79,7 +79,7 @@ module Api
       end
 
       def acme_params
-        params.permit %i[account_key secret_key debug hmac_key certificate_order_id action api_acme_request format]
+        params.permit %i[account_key secret_key debug hmac_key certificate_order_id action api_acme_request format acme_acct_pub_key_thumbprint]
       end
     end
   end
