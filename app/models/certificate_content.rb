@@ -120,6 +120,10 @@ class CertificateContent < ApplicationRecord
 
   INTRANET_IP_REGEX = /\A(127\.0\.0\.1)|(10.\d{,3}.\d{,3}.\d{,3})|(172\.1[6-9].\d{,3}.\d{,3})|(172\.2[0-9].\d{,3}.\d{,3})|(172\.3[0-1].\d{,3}.\d{,3})|(192\.168.\d{,3}.\d{,3})\z/
 
+  # dtnt comodo chained is 492703
+  # 499740 using Azure. Remove once we are in Azure
+  COMODO_SSL_ACCOUNTS = %w[467564 16077 204730 492703 21291 499740 490782].freeze
+
   serialize :domains
 
   validates_presence_of :server_software_id, :signing_request, # :agreement, # need to test :agreement out on reprocess and api submits
@@ -288,9 +292,7 @@ class CertificateContent < ApplicationRecord
   end
 
   def add_ca(ssl_account)
-    # dtnt comodo chained is 492703
-    # 499740 using Azure. Remove once we are in Azure
-    unless [467564,16077,204730,492703,21291,499740,490782].include?(ssl_account.id)
+    unless COMODO_SSL_ACCOUNTS.include?(ssl_account.id)
       self.ca = (self.certificate.cas.ssl_account_or_general_default(ssl_account)).last if ca.blank? and certificate
     end
   end
@@ -522,7 +524,7 @@ class CertificateContent < ApplicationRecord
    {}.tap do |result|
      %w(ref).each do |k,v|
        result.merge!({"#{k.to_sym}": self.send(k)})
-     end	
+     end
    end
   end
 

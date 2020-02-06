@@ -1874,7 +1874,8 @@ class CertificateOrder < ApplicationRecord
             'responseFormat' => 1,
             'showCertificateID' => 'N',
             'foreignOrderNumber' => ref,
-            'uniqueValue' => csr.unique_value
+            'uniqueValue' => csr.unique_value,
+            'orderNumber' => external_order_number
           )
           last_sent = csr.last_dcv
           #43 is the old comodo 30 day trial
