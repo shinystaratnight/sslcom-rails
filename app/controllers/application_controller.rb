@@ -493,6 +493,7 @@ class ApplicationController < ActionController::Base
 
   def get_team_tags
     @team_tags ||= if @taggable
+
                      Tag.get_object_team_tags(@taggable)
                    elsif current_user.is_system_admins?
                      Tag.all.order(taggings_count: :desc)

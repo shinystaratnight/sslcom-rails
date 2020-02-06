@@ -27,7 +27,7 @@
             %li=link_to "Domains Manager", domains_path(@ssl_slug)
             %li=link_to "CSRs Manager", managed_csrs_path(@ssl_slug)
         -if permitted_to?(:index, :certificate_orders)
-          %li=link_to "SSL Managers", registered_agents_path(ssl_slug: @ssl_slug)
+          %li=link_to "SSL Manager Apps", registered_agents_path(ssl_slug: @ssl_slug)
           %li=link_to 'Contacts Manager', saved_contacts_contacts_path(ssl_slug: @ssl_slug)
           %li=link_to 'Identity Manager', saved_contacts_contacts_path(ssl_slug: @ssl_slug, registrants: true)
         -if permitted_to?(:index, :certificate_enrollment_requests) and Settings.enrollment_links

@@ -3967,7 +3967,7 @@ label.error
   background: linear-gradient(#DEDEDE, white 20%)
   border-radius: 5px
 
-#stylized, #surl_stylized
+#stylized, #surl_stylized, #url_callback
   p, .heading, form, button
     border: 0
     margin: 0
@@ -5675,6 +5675,9 @@ span#no_emails_accessible
     &.error .ajax_info
       color: red
 
+  .url_callback_block input[type="text"]
+    width: 300px
+
   .managed_domains_block .block_body
     float: left
     width: 400px
@@ -5698,6 +5701,7 @@ span#no_emails_accessible
       margin-top: 5px
       padding-bottom: 5px
       padding-left: 10px
+
 
   .managed_csrs_block .managed_csr
     width: 230px
@@ -6285,7 +6289,7 @@ span.notifications-teams
   box-shadow: none
 
 #btn-folder-rename,
-#btn-folder-default,
+#btn-folder-default
   background: -webkit-linear-gradient(#69B3FF, #334DFF)
   background: -o-linear-gradient(#69B3FF, #334DFF)
   background: -moz-linear-gradient(#69B3FF, #334DFF)
@@ -6597,7 +6601,7 @@ span.notifications-teams
 /* Optional/dynamic contacts is turned on: custom styles */
 
 #btn_cancel_saved_contact,
-#btn_cancel_role_contact,
+#btn_cancel_role_contact
   margin-left: 18rem !important
 
 #btn_edit_saved_contact,
@@ -9461,6 +9465,139 @@ a.back_to_generate_cert_page
       .subject_dn_value
         padding-left: 10px
 
+
+#url_callback.url_callback_container
+  padding-top: 10px
+  padding-bottom: 5px
+
+  .url_callback_block
+    width: 100%
+
+    input[type="text"],
+    input[type="password"]
+      width: 300px
+
+    .url_callback_title
+      border: 1px solid black
+
+    .url_callback_cont
+      border: 1px solid black
+      border-top: none
+
+.url_callback_block
+  width: 90%
+  margin: 0px auto 5px
+
+  .url_callback_title
+    p
+      padding: 10px 10px !important
+      background-color: #aaa
+      cursor: pointer
+
+  .url_callback_cont
+    border: 1px solid #aaa
+    padding: 10px
+    display: none
+
+    .base_url
+      line-height: 28px
+
+      label
+        width: 120px
+        font-size: 1.3em !important
+
+      input[type="text"]
+        margin-bottom: 0px !important
+        font-size: 1.2em !important
+        width: 180px
+
+      button
+        margin-left: 10px !important
+        padding: 5px 10px !important
+        cursor: pointer
+        font-size: 1.2em
+        vertical-align: middle
+
+      select
+        font-size: 1.0em !important
+        margin-bottom: 0px !important
+
+    .url_tabs
+      overflow: hidden
+      border: 1px solid #ccc
+      background-color: #f1f1f1
+      margin-top: 10px
+
+      .tab_link
+        font-size: 1.3em
+        background-color: #f1f1f1
+        float: left
+        border: none
+        outline: none
+        cursor: pointer
+        padding: 8px 20px
+        transition: 0.3s
+
+        &:hover
+          background-color: #ddd
+
+        &.active
+          background-color: #ccc !important
+
+    .tab_cont
+      display: none
+      padding: 10px 15px
+      border: 1px solid #ccc
+      border-top: none
+      font-size: 12px
+
+      &.active
+        display: block
+
+      .tab_cont_elmt
+        line-height: 30px
+
+        label
+          font-size: 1.0em !important
+
+        select
+          font-size: 1.0em !important
+          margin-bottom: 5px !important
+
+        input
+          font-size: 1.0em !important
+          margin-bottom: 5px !important
+          width: 150px
+
+        .tab_cont_param,
+        .tab_cont_header
+          float: left
+
+          &:first-child
+            width: 45%
+
+          label
+            width: 40px !important
+
+          input.callback_headers_key,
+          input.callback_headers_value,
+          input.callback_params_key,
+          input.callback_params_value
+            border: 0px !important
+            box-shadow: 0px 0px 0px 0px #fff !important
+            background: linear-gradient(to bottom, #ddd, #ddd) !important
+            cursor: default
+
+          button
+            width: 50px
+            padding: 5px !important
+            margin-left: 30px !important
+            cursor: pointer
+
+            &.callback_headers_remove,
+            &.callback_params_remove
+              width: 25px
+              margin-left: 40px !important
 .attestation
   font-size: 13px
 
@@ -9502,3 +9639,87 @@ a.back_to_generate_cert_page
     display: none
     color: red
     font-size: 12px
+
+.url_callback_modal
+  display: none
+  position: fixed
+  z-index: 1
+  padding-top: 100px
+  left: 0
+  top: 0
+  width: 100%
+  height: 100%
+  overflow: auto
+  background-color: rgb(0,0,0)
+  background-color: rgba(0,0,0,0.5)
+
+  .modal-content
+    position: relative
+    background-color: #fefefe
+    margin: auto
+    padding: 0
+    border: 1px solid #888
+    width: 450px
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19)
+    -webkit-animation-name: animatetop
+    -webkit-animation-duration: 0.5s
+    animation-name: animatetop
+    animation-duration: 0.5s
+
+    .modal-header
+      padding: 18px 12px 10px
+      background-color: white
+      color: black
+      font-size: 20px
+      text-align: center
+
+      p
+        font-size: 25px !important
+
+    .modal-body
+      padding: 0px 25px
+
+      .method_block
+        padding-top: 10px
+        padding-bottom: 5px
+
+        .block_body_label,
+        .block_message_content,
+        .block_message_label
+          float: left
+          width: 20%
+          span
+            font-size: 14px
+
+        .block_body_content
+          float: left
+
+          textarea
+            font-size: 10px !important
+            width: 300px
+            height: 150px
+            margin-left: 0px !important
+            margin-bottom: 0px !important
+
+    .modal-footer
+      padding: 15px 12px 12px 12px
+      background-color: white
+      color: black
+      text-align: right
+
+      button
+        width: 50px
+        height: 20px
+
+    .close
+      color: black
+      float: right
+      font-size: 20px
+      font-weight: bold
+      margin-top: -10px
+
+      &:hover,
+      &:focus
+        color: #888
+        text-decoration: none
+        cursor: pointer
