@@ -516,6 +516,7 @@ class Csr < ApplicationRecord
                   !csr.signed_certificate and
                   !csr.is_ip_address? and
                   co.paid? and
+                  !co.certificate.is_ev? and
                   cc.certificate.is_server?)
             end
           end
