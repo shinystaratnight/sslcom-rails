@@ -582,8 +582,6 @@ class CertificateOrder < ApplicationRecord
     end
   end
 
-  delegate :tier_suffix, to: :ssl_account, prefix: false
-
   def locked_recipient_subject_dn
     dn = []
     if get_recipient
