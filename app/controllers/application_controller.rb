@@ -94,7 +94,7 @@ class ApplicationController < ActionController::Base
   end
 
   def find_tier
-    @tier ||= if suffix = @certificate_order&.tier_suffix
+    @tier ||= if suffix = @certificate_order&.ssl_account&.tier_suffix
                 suffix
               elsif suffix = current_user&.tier_suffix
                 suffix
