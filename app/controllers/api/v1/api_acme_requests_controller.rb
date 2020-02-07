@@ -37,12 +37,14 @@ module Api
 
       def validations_info
         if @result.valid? && @result.save
-          render json: @result.certificate_order.certificate_content.certificate_names,
-                 each_serializer: CertificateNameSerializer,
-                 status: :ok
-        else
-          InvalidApiAcmeRequest.create parameters: acme_params, response: @result.to_json
+          render_validations
+          return
+        elsif @result.errors[:certificate_order_id].present?
+          render_not_found(CertificateOrder, acme_params[:certificate_order_id])
+        elsif @result.errors[:credential].present?
+          render_unathorized
         end
+        InvalidApiAcmeRequest.create parameters: acme_params, response: @result.to_json
       end
 
       private
@@ -72,6 +74,18 @@ module Api
         when 'validations_info'
           ApiAcmeRetrieveValidations
         end
+      end
+
+      def validated?
+        return false unless account_key && secret_key && acme_acct_pub_key_thumbprint
+
+        ApiCredential.exists?(account_key: account_key, secret_key: secret_key, acme_acct_pub_key_thumbprint: acme_acct_pub_key_thumbprint)
+      end
+
+      def render_validations
+        render json: @result.certificate_order.certificate_content.certificate_names.having_dvc,
+               each_serializer: CertificateNameSerializer,
+               status: :ok
       end
 
       def set_template(filename)

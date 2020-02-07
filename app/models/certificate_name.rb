@@ -58,6 +58,7 @@ class CertificateName < ApplicationRecord
 
   scope :find_by_domains, ->(domains){ includes(:domain_control_validations).where{ name >> domains } }
   scope :validated, ->{ joins(:domain_control_validations).where{ domain_control_validations.workflow_state == 'satisfied' } }
+  scope :having_dvc, -> { joins(:domain_control_validations).group('domain_control_validations.id').having('count(*) > ?', 0) }
   scope :last_domain_control_validation, ->{ joins(:domain_control_validations).limit(1) }
   scope :expired_validation, ->{
     joins(:domain_control_validations)

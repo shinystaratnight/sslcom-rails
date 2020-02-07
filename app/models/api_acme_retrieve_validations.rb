@@ -24,7 +24,7 @@ class ApiAcmeRetrieveValidations < ApiAcmeRequest
   def certificate_order
     return nil unless certificate_order_id
 
-    @certificate_order = CertificateOrder.find(certificate_order_id)
+    @certificate_order = CertificateOrder.includes(certificate_contents: [:domain_control_validations]).find(certificate_order_id)
   end
   memoize :api_credential
 end

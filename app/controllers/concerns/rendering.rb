@@ -27,6 +27,14 @@ module Rendering
     render template: @template, status: :ok
   end
 
+  def render_not_found(klass, identifier, key = 'id')
+    render json: { error: "#{klass} not found with #{key} identifier"}
+  end
+
+  def render_unathorized
+    render json: { error: 'Invalid credentials'}, status: :unauthorized
+  end
+
   def render_400_status
     render template: @template, status: :bad_request
   end
