@@ -98,9 +98,9 @@ class ApplicationController < ActionController::Base
                 suffix
               elsif suffix = current_user&.tier_suffix
                 suffix
-              elsif key = params[:reseller_tier_key]
-                ResellerTier.tier_suffix(key)
-              elsif cookie = cookies[ResellerTier::TIER_KEY]
+              elsif params[:reseller_tier_key].present?
+                ResellerTier.tier_suffix(params[:reseller_tier_key])
+              elsif cookie = cookies[ResellerTier::TIER_KEY].present?
                 ResellerTier.tier_suffix(cookie)
               end
   end
