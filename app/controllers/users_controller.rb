@@ -357,7 +357,7 @@ class UsersController < ApplicationController
       @duo_hostname = @duo_account.duo_hostname
       @sig_request = Duo.sign_request(@duo_account ? @duo_account.duo_ikey : '', @duo_account ? @duo_account.duo_skey : '', @duo_account ? @duo_account.duo_akey : '', current_user.login)
     else
-      s = rails_application_secrets
+      s = Rails.application.secrets
       @duo_hostname = s.duo_api_hostname
       @sig_request = Duo.sign_request(s.duo_integration_key, s.duo_secret_key, s.duo_application_key, current_user.login)
     end
@@ -372,7 +372,7 @@ class UsersController < ApplicationController
       @duo_account = team.duo_account
       @authenticated_user = Duo.verify_response(@duo_account ? @duo_account.duo_ikey : '', @duo_account ? @duo_account.duo_skey : '', @duo_account ? @duo_account.duo_akey : '', params['sig_response'])
     else
-      s = rails_application_secrets
+      s = Rails.application.secrets
       @authenticated_user = Duo.verify_response(s.duo_integration_key, s.duo_secret_key, s.duo_application_key, params['sig_response'])
     end
     if @authenticated_user
