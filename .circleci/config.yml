@@ -25,13 +25,10 @@ jobs:
             chmod +x ./cc-test-reporter
 
       - run: ./cc-test-reporter before-build
-#      - restore_cache:
-#          keys:
-#            - sslcom-rails-{{ checksum "Gemfile.lock" }}
-#            - sslcom-rails-
-#            - v1-rubocop-cache-{{ checksum ".rubocop.yml" }}-{{ .Branch }}
-#            - v1-rubocop-cache-{{ checksum ".rubocop.yml" }}-master
-#            - v1-rubocop-cache-{{ checksum ".rubocop.yml" }}
+      - restore_cache:
+         keys:
+           - sslcom-rails-{{ checksum "Gemfile.lock" }}
+           - sslcom-rails-
 
       - run:
           name: Install Libraries for mySQL and Correct Bundler Version (1.17.3)
@@ -102,10 +99,10 @@ jobs:
           name: Copy Settings File
           command: cp config/client/certassure/settings.yml config/
 
-#      - save_cache:
-#          key: sslcom-rails-{{ checksum "Gemfile.lock" }}
-#          paths:
-#            - vendor/bundle
+      - save_cache:
+         key: sslcom-rails-{{ checksum "Gemfile.lock" }}
+         paths:
+           - vendor/bundle
 
       - run:
           name: Create the Test Database, Load the Structure, and Migrate the Latest Migrations
