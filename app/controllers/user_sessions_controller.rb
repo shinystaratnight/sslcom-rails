@@ -232,61 +232,60 @@ class UserSessionsController < ApplicationController
 
   def duo
     return if current_user.blank?
-
     if current_user.is_duo_required?
-      @duo_hostname = duo_api_host_name
-      @sig_request = Duo.sign_request(duo_system_admins_integration_key, duo_system_admins_secret_key, duo_system_admins_application_key, current_user.login)
+      s = Rails.application.secrets
+      @duo_hostname = s.duo_system_admins_api_hostname
+      @sig_request = Duo.sign_request(s.duo_system_admins_integration_key, s.duo_system_admins_secret_key, s.duo_system_admins_application_key, current_user.login)
     else
       if Settings.duo_auto_enabled && Settings.duo_custom_enabled
-        if current_user_default_team.duo_own_used
-          @duo_account = current_user_default_team.duo_account
-          @duo_hostname = @duo_account&.duo_hostname
-          @sig_request = if @duo_account.present?
-                           Duo.sign_request(@duo_account.duo_ikey, @duo_account.duo_skey, @duo_account.duo_akey, current_user.login)
-                         else
-                           Duo.sign_request('', '', '', current_user.login)
-                         end
+        if current_user.ssl_account(:default_team).duo_own_used
+          @duo_account = current_user.ssl_account(:default_team).duo_account
+          @duo_hostname = @duo_account.duo_hostname
+          @sig_request = Duo.sign_request(@duo_account ? @duo_account.duo_ikey : "", @duo_account ? @duo_account.duo_skey : "", @duo_account ? @duo_account.duo_akey : "", current_user.login)
         else
-          @duo_hostname = duo_api_host_name
-          @sig_request = Duo.sign_request(duo_integration_key, duo_secret_key, duo_application_key, current_user.login)
+          s = Rails.application.secrets
+          @duo_hostname = s.duo_api_hostname
+          @sig_request = Duo.sign_request(s.duo_integration_key, s.duo_secret_key, s.duo_application_key, current_user.login)
         end
       elsif Settings.duo_auto_enabled && !Settings.duo_custom_enabled
-        @duo_hostname = duo_api_host_name
-        @sig_request = Duo.sign_request(duo_integration_key, duo_secret_key, duo_application_key, current_user.login)
+        s = Rails.application.secrets
+        @duo_hostname = s.duo_api_hostname
+        @sig_request = Duo.sign_request(s.duo_integration_key, s.duo_secret_key, s.duo_application_key, current_user.login)
       else
-        @duo_account = current_user_default_team.duo_account
-        @duo_hostname = @duo_account ? @duo_account.duo_hostname : ''
-        @sig_request = Duo.sign_request(@duo_account ? @duo_account.duo_ikey : '', @duo_account ? @duo_account.duo_skey : '', @duo_account ? @duo_account.duo_akey : '', current_user.login)
+        @duo_account = current_user.ssl_account(:default_team).duo_account
+        @duo_hostname = @duo_account ? @duo_account.duo_hostname : ""
+        @sig_request = Duo.sign_request(@duo_account ? @duo_account.duo_ikey : "", @duo_account ? @duo_account.duo_skey : "", @duo_account ? @duo_account.duo_akey : "", current_user.login)
       end
     end
   end
 
   def duo_verify
-    if current_user
-      if current_user.is_duo_required?
-        @authenticated_user = Duo.verify_response(duo_system_admins_integration_key, duo_system_admins_secret_key, duo_system_admins_application_key, sig_response_param)
-      else
-        if Settings.duo_auto_enabled && Settings.duo_custom_enabled
-          if current_user_default_team.duo_own_used
-            @duo_account = current_user_default_team.duo_account
-            @authenticated_user = Duo.verify_response(@duo_account ? @duo_account.duo_ikey : '', @duo_account ? @duo_account.duo_skey : '', @duo_account ? @duo_account.duo_akey : '', sig_response_param)
-          else
-            @authenticated_user = Duo.verify_response(duo_integration_key, duo_secret_key, duo_application_key, sig_response_param)
-          end
-        elsif Settings.duo_auto_enabled && !Settings.duo_custom_enabled
-          @authenticated_user = Duo.verify_response(duo_integration_key, duo_secret_key, duo_application_key, sig_response_param)
+    if current_user.is_duo_required?
+      s = Rails.application.secrets;
+      @authenticated_user = Duo.verify_response(s.duo_system_admins_integration_key, s.duo_system_admins_secret_key, s.duo_system_admins_application_key, params['sig_response'])
+    else
+      if Settings.duo_auto_enabled && Settings.duo_custom_enabled
+        if current_user.ssl_account(:default_team).duo_own_used
+          @duo_account = current_user.ssl_account(:default_team).duo_account
+          @authenticated_user = Duo.verify_response(@duo_account ? @duo_account.duo_ikey : "", @duo_account ? @duo_account.duo_skey : "", @duo_account ? @duo_account.duo_akey : "", params['sig_response'])
         else
-          @duo_account = current_user_default_team.duo_account
-          @authenticated_user = Duo.verify_response(@duo_account ? @duo_account.duo_ikey : '', @duo_account ? @duo_account.duo_skey : '', @duo_account ? @duo_account.duo_akey : '', sig_response_param)
+          s = Rails.application.secrets;
+          @authenticated_user = Duo.verify_response(s.duo_integration_key, s.duo_secret_key, s.duo_application_key, params['sig_response'])
         end
+      elsif Settings.duo_auto_enabled && !Settings.duo_custom_enabled
+        s = Rails.application.secrets;
+        @authenticated_user = Duo.verify_response(s.duo_integration_key, s.duo_secret_key, s.duo_application_key, params['sig_response'])
+      else
+        @duo_account = current_user.ssl_account(:default_team).duo_account
+        @authenticated_user = Duo.verify_response(@duo_account ? @duo_account.duo_ikey : "", @duo_account ? @duo_account.duo_skey : "", @duo_account ? @duo_account.duo_akey : "", params['sig_response'])
       end
-    end
-
+    end if current_user
+    
     if @authenticated_user
       session[:duo_auth] = true
       respond_to do |format|
-        format.js   { render json: url_for_js(current_user) }
-        format.html { redirect_back_or_default account_path(current_user_default_team ? current_user_default_team.to_slug : {}) }
+        format.js   {render :json=>url_for_js(current_user)}
+        format.html {redirect_back_or_default account_path(current_user.ssl_account(:default_team) ? current_user.ssl_account(:default_team).to_slug : {})}
       end
     else
       redirect_to action: :new
