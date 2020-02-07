@@ -485,10 +485,6 @@ class ApplicationController < ActionController::Base
     current_user&.ssl_account(:default_team)
   end
 
-  def rails_application_secrets
-    @rails_application_secrets ||= Rails.application.secrets
-  end
-
   private
 
   def get_team_tags

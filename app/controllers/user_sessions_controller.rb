@@ -392,31 +392,31 @@ class UserSessionsController < ApplicationController
   end
 
   def duo_api_host_name
-    rails_application_secrets.duo_api_hostname
+    Rails.application.secrets.duo_api_hostname
   end
 
   def duo_integration_key
-    rails_application_secrets.duo_integration_key
+    Rails.application.secrets.duo_integration_key
   end
 
   def duo_secret_key
-    rails_application_secrets.duo_secret_key
+    Rails.application.secrets.duo_secret_key
   end
 
   def duo_application_key
-    rails_application_secrets.duo_application_key
+    Rails.application.secrets.duo_application_key
   end
 
   def duo_system_admins_integration_key
-    rails_application_secrets.duo_system_admins_integration_key
+    Rails.application.secrets.duo_system_admins_integration_key
   end
 
   def duo_system_admins_secret_key
-    rails_application_secrets.duo_system_admins_secret_key
+    Rails.application.secrets.duo_system_admins_secret_key
   end
 
   def duo_system_admins_application_key
-    rails_application_secrets.duo_system_admins_application_key
+    Rails.application.secrets.duo_system_admins_application_key
   end
 
   def sig_response_param
