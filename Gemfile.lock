@@ -223,7 +223,7 @@ GEM
     ffi-compiler (1.0.1)
       ffi (>= 1.0.0)
       rake
-    fileutils (1.4.1)
+    fileutils (1.1.0)
     font_awesome5_rails (1.0.0)
       railties (>= 4.2)
     foreman (0.85.0)
@@ -713,7 +713,7 @@ DEPENDENCIES
   factory_bot_rails
   faker
   fast_jsonapi
-  fileutils (~> 1.4.1)
+  fileutils (~> 1.1.0)
   font_awesome5_rails
   foreman
   forwardable
