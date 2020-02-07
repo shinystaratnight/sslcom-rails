@@ -25,10 +25,10 @@ jobs:
             chmod +x ./cc-test-reporter
 
       - run: ./cc-test-reporter before-build
-      - restore_cache:
-         keys:
-           - sslcom-rails-{{ checksum "Gemfile.lock" }}
-           - sslcom-rails-
+      # - restore_cache:
+      #    keys:
+      #      - sslcom-rails-{{ checksum "Gemfile.lock" }}
+      #      - sslcom-rails-
 
       - run:
           name: Install Libraries for mySQL and Correct Bundler Version (1.17.3)
