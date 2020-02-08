@@ -4,6 +4,9 @@ class User < ApplicationRecord
   extend Memoist
   include Pagable
   include UserMessageable
+  include Concerns::User::Association
+  include Concerns::User::Preferences
+  include Concerns::User::Validation
 
   has_attached_file :avatar, s3_protocol: 'http', url: '/:class/:id/:attachment/:style.:extension', path: ':id_partition/:style.:extension', s3_permissions: :private, bucket: ENV.fetch('S3_AVATAR_BUCKET_NAME'), styles: {
     thumb: '100x100>',
@@ -14,75 +17,14 @@ class User < ApplicationRecord
   validates_attachment_content_type :avatar, content_type: %r{\Aimage/.*\z}
 
   OWNED_MAX_TEAMS = 3
-  PASSWORD_SPECIAL_CHARS = '~`!@#\$%^&*()-+={}[]|;:"<>,./?'
-
-  has_many :u2fs
-  has_many :assignments, dependent: :destroy
-  has_many :visitor_tokens
-  has_many :surls
-  has_many :roles, through: :assignments
-  has_many :permissions, through: :roles
-  has_many :legacy_v2_user_mappings, as: :user_mappable
-  has_many :duplicate_v2_users
-  has_many :other_party_requests
-  has_many :client_applications
-  has_many :owned_system_audits, as: :owner, class_name: 'SystemAudit'
-  has_many :target_system_audits, as: :target, class_name: 'SystemAudit'
-  has_many :tokens, ->{ order('authorized_at desc').includes(:client_application) }, class_name: 'OauthToken'
-  has_many :ssl_account_users, dependent: :destroy
-  has_many :ssl_accounts, through: :ssl_account_users
-  has_many :certificate_orders, through: :ssl_accounts
-  has_many :orders, through: :ssl_accounts
-  has_many :validation_histories, through: :certificate_orders
-  has_many :validations, through: :certificate_orders
-  has_many :approved_ssl_account_users, ->{ where{ (approved == true) & (user_enabled == true) } }, dependent: :destroy, class_name: 'SslAccountUser'
-  has_many :approved_ssl_accounts, foreign_key: :ssl_account_id, source: 'ssl_account', through: :approved_ssl_account_users
-  has_many :approved_teams, foreign_key: :ssl_account_id, source: 'ssl_account', through: :approved_ssl_account_users
-  has_many :refunds
-  has_many :discounts, as: :benefactor, dependent: :destroy
-  has_one :shopping_cart
-  has_and_belongs_to_many :user_groups
-  has_many  :notification_groups, through: :ssl_accounts
-  has_many  :certificate_order_tokens
-
-  preference  :managed_certificate_row_count, :string, default: '10'
-  preference  :registered_agent_row_count, :string, default: '10'
-  preference  :cert_order_row_count, :string, default: '10'
-  preference  :order_row_count, :string, default: '10'
-  preference  :cdn_row_count, :string, default: '10'
-  preference  :user_row_count, :string, default: '10'
-  preference  :note_group_row_count, :string, default: '10'
-  preference  :scan_log_row_count, :string, default: '10'
-  preference  :domain_row_count, :string, default: '10'
-  preference  :domain_csr_row_count, :string, default: '10'
-  preference  :team_row_count, :string, default: '10'
-  preference  :validate_row_count, :string, default: '10'
-  preference  :managed_csr_row_count, :string, default: '10'
 
   attr_accessor :changing_password, :admin_update, :role_ids, :role_change_type
   attr_accessible :login, :email, :password, :password_confirmation, :openid_identifier, :status, :assignments_attributes, :first_name, :last_name,
                   :default_ssl_account, :ssl_account_id, :role_ids, :role_change_type, :main_ssl_account, :max_teams, :persist_notice
-  validates :email, email: true, uniqueness: true, format: { with: /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i, on: :create }
-  validates :password, format: {
-    with: /\A(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[\W]).{8,}\z/, if: :validate_password?,
-    message: "must be at least 8 characters long and include at least 1 of each of the following: uppercase, lowercase, number and special character such as #{User::PASSWORD_SPECIAL_CHARS}"
-  }
+
   accepts_nested_attributes_for :assignments
 
   acts_as_messageable
-
-  acts_as_authentic do |c|
-    c.logged_in_timeout = 30.minutes
-    c.validate_email_field = false
-    c.session_ids = [nil, :shadow]
-    c.crypto_provider = Authlogic::CryptoProviders::Sha512
-    c.validates_length_of_password_field_options =
-      { on: :update, minimum: 8,
-        if: '(has_no_credentials? && !admin_update) || changing_password' }
-    c.validates_length_of_password_confirmation_field_options =
-      { on: :update, minimum: 8,
-        if: '(has_no_credentials? && !admin_update) || changing_password' }
-  end
 
   before_save :should_reset_perishable_token
 
@@ -109,7 +51,17 @@ class User < ApplicationRecord
 
   delegate :tier_suffix, to: :ssl_account, prefix: false
 
-  def ssl_account(default_team=nil)
+  acts_as_authentic do |c|
+    c.logged_in_timeout = 30.minutes
+    c.validate_email_field = false
+    c.validate_login_field = false
+    c.session_ids = [nil, :shadow]
+    c.crypto_provider = Authlogic::CryptoProviders::Sha512
+    c.validates_length_of_password_field_options = { on: :update, minimum: 8, if: '(has_no_credentials? && !admin_update) || changing_password' }
+    c.validates_length_of_password_confirmation_field_options = { on: :update, minimum: 8, if: '(has_no_credentials? && !admin_update) || changing_password' }
+  end
+
+  def ssl_account(default_team = nil)
     SslAccount.find_by_id(Rails.cache.fetch("#{cache_key}/ssl_account/#{default_team.is_a?(Symbol) ? default_team.to_s : default_team.try(:cache_key)}") do
       default_ssl = default_ssl_account && is_approved_account?(default_ssl_account)
       main_ssl    = main_ssl_account && is_approved_account?(main_ssl_account)
@@ -155,7 +107,7 @@ class User < ApplicationRecord
   end
 
   def is_team_owner_admin?(ssl_account)
-    assignments.where(role_id: [Role.get_owner_id, Role.get_account_admin_id], ssl_account_id: ssl_account.id).size > 0
+    assignments.where(role_id: [Role.get_owner_id, Role.get_account_admin_id], ssl_account_id: ssl_account.id).size.positive?
   end
 
   def role_symbols_archived_team(ssl_account)
@@ -205,15 +157,13 @@ class User < ApplicationRecord
   end
 
   def get_auto_add_users_teams
-    self.ssl_accounts.joins(:assignments).where(
+    ssl_accounts.joins(:assignments).where(
       assignments: { role_id: Role.can_auto_add_users }
     ).uniq.compact
   end
 
   def get_auto_add_users
-    users = User.joins(:ssl_accounts)
-      .where(ssl_accounts: { id: get_auto_add_users_teams.map(&:id) })
-      .where.not(users: { id: id }).uniq.compact
+    User.joins(:ssl_accounts).where(ssl_accounts: { id: get_auto_add_users_teams.map(&:id) }).where.not(users: { id: id }).uniq.compact
   end
 
   def get_auto_add_user_roles(added_user)
@@ -252,8 +202,7 @@ class User < ApplicationRecord
 
   def total_teams_cannot_manage_users(user_id = nil)
     user = self_or_other(user_id)
-    user.ssl_accounts - user.assignments.where(role_id: Role.cannot_be_managed)
-      .map(&:ssl_account).uniq.compact
+    user.ssl_accounts - user.assignments.where(role_id: Role.cannot_be_managed).map(&:ssl_account).uniq.compact
   end
   memoize :total_teams_cannot_manage_users
 
@@ -267,14 +216,14 @@ class User < ApplicationRecord
   end
 
   def can_manage_team_users?(target_ssl = nil)
-    assignments.where(
+    assignments.exists?(
       ssl_account_id: (target_ssl.nil? ? ssl_account : target_ssl).id,
       role_id: Role.can_manage_users
-    ).any?
+    )
   end
 
   def self.find_non_owners
-     [].tap do |orphans|
+    [].tap do |orphans|
       find_each do |u|
         orphans << u if u.owned_ssl_account.blank?
       end
@@ -282,10 +231,10 @@ class User < ApplicationRecord
   end
 
   def create_ssl_account(role_ids = nil, attr = {})
-    self.save if self.new_record?
+    save if new_record?
     new_ssl_account = SslAccount.create(attr)
     ssl_accounts << new_ssl_account
-    set_roles_for_account(new_ssl_account, role_ids) if (role_ids && role_ids.length > 0)
+    set_roles_for_account(new_ssl_account, role_ids) if role_ids&.length&.positive?
     set_default_ssl_account(new_ssl_account) unless default_ssl_account
     approve_account(ssl_account_id: new_ssl_account.id)
     new_ssl_account
@@ -301,11 +250,11 @@ class User < ApplicationRecord
   end
 
   def set_roles_for_account(account, role_ids)
-    if account && ssl_accounts.include?(account) && role_ids.count > 0
+    if account && ssl_accounts.include?(account) && role_ids.count.positive?
       role_ids.each do |role|
         Assignment.find_or_create_by(
-          user_id:        id,
-          role_id:        role,
+          user_id: id,
+          role_id: role,
           ssl_account_id: account.id
         )
       end
@@ -324,24 +273,22 @@ class User < ApplicationRecord
   memoize :roles_for_account
 
   def get_roles_by_name(role_name)
-      role_id = Role.get_role_id(role_name)
-      role_id ? assignments.where(role_id: role_id) : []
+    role_id = Role.get_role_id(role_name)
+    role_id ? assignments.where(role_id: role_id) : []
   end
 
   def update_account_role(account, old_role, new_role)
     old_role = assignments.where(
       ssl_account_id: account, role_id: Role.get_role_id(old_role)
     ).first
-    unless duplicate_role?(new_role, account)
-      old_role.update(role_id: Role.get_role_id(new_role)) if old_role
-    end
+    old_role&.update(role_id: Role.get_role_id(new_role)) unless duplicate_role?(new_role, account)
   end
 
   def duplicate_role?(role, target_ssl = nil)
-    assignments.where(
-        ssl_account_id: (target_ssl.nil? ? ssl_account : target_ssl).id,
-        role_id:        (role.is_a?(String) ? Role.get_role_id(role) : Role.find(role))
-    ).any?
+    assignments.exists?(
+      ssl_account_id: (target_ssl.nil? ? ssl_account : target_ssl).id,
+      role_id: (role.is_a?(String) ? Role.get_role_id(role) : Role.find(role))
+    )
   end
 
   def invite_user_to_account!(params)
@@ -351,8 +298,7 @@ class User < ApplicationRecord
 
   def invite_new_user(params)
     if params[:deliver_invite]
-      User.get_user_by_email(params[:user][:email])
-        .deliver_signup_invitation!(params[:from_user], params[:root_url], params[:invited_teams])
+      User.get_user_by_email(params[:user][:email]).deliver_signup_invitation!(params[:from_user], params[:root_url], params[:invited_teams])
     else
       user = User.new(params[:user].merge(login: params[:user][:email]))
       user.signup!(params)
@@ -396,11 +342,9 @@ class User < ApplicationRecord
   def remove_user_from_account(account, current_user)
     assignments.where(ssl_account_id: account).delete_all
     ssl = ssl_account_users.where(ssl_account_id: account).delete_all
-    if ssl > 0
+    if ssl.positive?
       deliver_removed_from_account!(account, current_user)
-      unless current_user.is_system_admins?
-        deliver_removed_from_account_notify_admin!(account, current_user)
-      end
+      deliver_removed_from_account_notify_admin!(account, current_user) unless current_user.is_system_admins?
       update_default_ssl_account(account)
     end
   end
@@ -459,8 +403,8 @@ class User < ApplicationRecord
     Rails.cache.fetch("#{cache_key}/is_disabled/#{target_ssl.try(:cache_key)}") do
       ssl = target_ssl || ssl_account
       return true if ssl.nil?
-      ssl_account_users.where(ssl_account_id: ssl.id)
-          .map(&:user_enabled).include?(false)
+
+      ssl_account_users.where(ssl_account_id: ssl.id).map(&:user_enabled).include?(false)
     end
   end
 
@@ -508,7 +452,7 @@ class User < ApplicationRecord
     UserNotifier.password_changed(self).deliver
   end
 
-  def deliver_email_changed!(address = self.email)
+  def deliver_email_changed!(address = email)
     UserNotifier.email_changed(self, address).deliver
   end
 
@@ -847,7 +791,7 @@ class User < ApplicationRecord
     user = duplicate_logins(obj).last.user
     dupes = duplicate_logins(obj).last.user.duplicate_v2_users
     matched = dupes.each do |dupe|
-      break dupe if (LegacySslMd5.matches? dupe.password, password)
+      break dupe if LegacySslMd5.matches?(dupe.password, password)
     end
     if matched
       user.login = obj
@@ -859,13 +803,17 @@ class User < ApplicationRecord
   if MIGRATING_FROM_LEGACY
     def update_record_without_timestamping
       class << self
-        def record_timestamps; false; end
+        def record_timestamps
+          false
+        end
       end
 
       save(false)
 
       class << self
-        def record_timestamps; super ; end
+        def record_timestamps
+          super
+        end
       end
     end
   end
@@ -951,9 +899,7 @@ class User < ApplicationRecord
       else
         errors << 'Invite token is invalid or expired, please contact account admin!'
       end
-      unless user_approved_invite?(params)
-        errors << 'Something went wrong! Please try again!'
-      end
+      errors << 'Something went wrong! Please try again!' unless user_approved_invite?(params)
     end
     errors
   end
@@ -963,27 +909,24 @@ class User < ApplicationRecord
     if ssl
       team = ssl.ssl_account
       SystemAudit.create(
-        owner:  self,
+        owner: self,
         target: team,
         action: 'Declined invitation to team (UsersController#decline_account_invite).',
-        notes:  "User #{login} has declined invitation to team #{team.get_team_name} (##{team.acct_number})."
+        notes: "User #{login} has declined invitation to team #{team.get_team_name} (##{team.acct_number})."
       )
       ssl.update(
-        approved:       false,
-        token_expires:  nil,
+        approved: false,
+        token_expires: nil,
         approval_token: nil,
-        declined_at:    DateTime.now
+        declined_at: DateTime.now
       )
     end
   end
 
   def approve_all_accounts(log_invite = nil)
-    ssl_account_users.update_all(
-      approved: true, token_expires: nil, approval_token: nil
-    )
+    ssl_account_users.update_all(approved: true, token_expires: nil, approval_token: nil)
     if log_invite
-      ssl_ids = assignments.where.not(role_id: Role.cannot_be_invited)
-        .map(&:ssl_account).uniq.compact.map(&:id)
+      ssl_ids = assignments.where.not(role_id: Role.cannot_be_invited).map(&:ssl_account).uniq.compact.map(&:id)
       ssl_account_users.where(ssl_account_id: ssl_ids).update_all(invited_at: DateTime.now)
     end
   end
@@ -1006,11 +949,11 @@ class User < ApplicationRecord
   end
 
   def get_all_approved_accounts
-    (self.is_system_admins? ? SslAccount.unscoped : self.approved_ssl_accounts).order('created_at desc')
+    (is_system_admins? ? SslAccount.unscoped : approved_ssl_accounts).order('created_at desc')
   end
 
   def get_all_approved_teams
-    (self.is_system_admins? ? SslAccount.unscoped : self.approved_teams).order('created_at desc')
+    (is_system_admins? ? SslAccount.unscoped : approved_teams).order('created_at desc')
   end
 
   def user_approved_invite?(params)
