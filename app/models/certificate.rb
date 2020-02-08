@@ -264,7 +264,7 @@ class Certificate < ApplicationRecord
   scope :for_sale, -> { unscoped.not_mssl.sslcom }
   
   def self.get_smime_client_products(tier=nil)
-    cur_tier = tier.blank? '' : "#{tier}tr"
+    cur_tier = tier.blank? ? '' : "#{tier}tr"
     Certificate.available.where(
       "product REGEXP ?",
       "^personal.*(basic|pro|business|enterprise|naesb-basic)#{cur_tier}$"
