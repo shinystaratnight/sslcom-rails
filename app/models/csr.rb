@@ -45,7 +45,7 @@ class Csr < ApplicationRecord
   
   has_many    :whois_lookups, :dependent => :destroy
   has_many    :signed_certificates, -> { where(type: nil) }, :dependent => :destroy
-  has_one :signed_certificate, -> { where(type: nil).order 'created_at desc' }, class_name: "SignedCertificate"
+  has_one :signed_certificate, -> { where(type: nil).order 'signed_certificates.created_at desc' }, class_name: "SignedCertificate"
   has_many    :shadow_certificates
   has_many    :ca_certificate_requests, as: :api_requestable, dependent: :destroy
   has_many    :sslcom_ca_requests, as: :api_requestable
