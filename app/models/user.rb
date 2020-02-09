@@ -10,6 +10,9 @@ class User < ApplicationRecord
   include Concerns::User::Avatar
   include Concerns::User::Scope
   include Concerns::User::Notification
+  include Concerns::User::Approval
+  include Concerns::User::Invitation
+  include Concerns::User::Team
 
   OWNED_MAX_TEAMS = 3
 
@@ -151,53 +154,12 @@ class User < ApplicationRecord
 
     # If invited user has owner role or reseller role, then replace
     # it with account admin role for the team they're invited to.
-    if role_ids.include?(Role.get_owner_id) ||
-        role_ids.include?(Role.get_reseller_id)
+    if role_ids.include?(Role.get_owner_id) || role_ids.include?(Role.get_reseller_id)
 
       # User cannot be account_admin and have other roles.
       role_ids = [Role.get_account_admin_id]
     end
     role_ids.uniq
-  end
-
-  def total_teams_owned(user_id = nil)
-    user = self_or_other(user_id)
-    user.assignments.includes(:ssl_account).where(role_id: Role.get_owner_id).map(&:ssl_account).uniq.compact
-  end
-  memoize :total_teams_owned
-
-  def total_teams_admin(user_id = nil)
-    user = self_or_other(user_id)
-    user.assignments.includes(:ssl_account).where(role_id: Role.get_account_admin_id).map(&:ssl_account).uniq.compact
-  end
-  memoize :total_teams_admin
-
-  def total_teams_can_manage_users(user_id = nil)
-    user = self_or_other(user_id)
-    user.assignments.includes(:ssl_account).where(role_id: Role.can_manage_users).map(&:ssl_account).uniq.compact
-  end
-  memoize :total_teams_can_manage_users
-
-  def total_teams_cannot_manage_users(user_id = nil)
-    user = self_or_other(user_id)
-    user.ssl_accounts - user.assignments.where(role_id: Role.cannot_be_managed).map(&:ssl_account).uniq.compact
-  end
-  memoize :total_teams_cannot_manage_users
-
-  def max_teams_reached?(user_id = nil)
-    user = self_or_other(user_id)
-    total_teams_owned(user.id).count >= user.max_teams
-  end
-
-  def set_default_team(ssl_account)
-    update(main_ssl_account: ssl_account.id) if ssl_accounts.include?(ssl_account)
-  end
-
-  def can_manage_team_users?(target_ssl = nil)
-    assignments.exists?(
-      ssl_account_id: (target_ssl.nil? ? ssl_account : target_ssl).id,
-      role_id: Role.can_manage_users
-    )
   end
 
   def self.find_non_owners
@@ -445,9 +407,7 @@ class User < ApplicationRecord
   def assign_roles(params)
     role_ids = params[:user][:role_ids]
     cur_account_id = params[:user][:ssl_account_id]
-    unless role_ids.nil? || cur_account_id.nil?
-      new_role_ids = role_ids.compact.reject { |id| id.blank? }.map(&:to_i)
-    end
+    new_role_ids = role_ids.compact.reject { |id| id.blank? }.map(&:to_i) unless role_ids.nil? || cur_account_id.nil?
     if new_role_ids.present?
       current_account = SslAccount.find cur_account_id
       current_role_ids = roles_for_account current_account
@@ -462,7 +422,7 @@ class User < ApplicationRecord
     removable_role_ids = inverse ? new_role_ids : current_role_ids - new_role_ids
 
     assignments.where(
-      role_id:        removable_role_ids,
+      role_id: removable_role_ids,
       ssl_account_id: params[:user][:ssl_account_id]
     ).destroy_all
   end
@@ -471,9 +431,7 @@ class User < ApplicationRecord
     extend Memoist
     def roles_list_for_user(user, exclude_roles = nil)
       exclude_roles ||= []
-      unless user.is_system_admins?
-        exclude_roles << Role.where.not(id: Role.get_select_ids_for_owner).map(&:id).uniq
-      end
+      exclude_roles << Role.where.not(id: Role.get_select_ids_for_owner).map(&:id).uniq unless user.is_system_admins?
       exclude_roles.any? ? Role.where.not(id: exclude_roles.flatten) : Role.all
     end
     memoize :roles_list_for_user
@@ -533,8 +491,7 @@ class User < ApplicationRecord
   end
 
   def roles_humanize(target_account = nil)
-    Role.where(id: roles_for_account(target_account || ssl_account))
-      .map { |role| role.name.humanize(capitalize: false) }
+    Role.where(id: roles_for_account(target_account || ssl_account)).map { |role| role.name.humanize(capitalize: false) }
   end
 
   def role_symbols(target_account = nil)
@@ -739,153 +696,15 @@ class User < ApplicationRecord
   # User invite and approval token management
   #
 
-  def pending_account_invites?
-    ssl_account_users.each do |ssl|
-      return true if approval_token_valid?(ssl_account_id: ssl.ssl_account_id, skip_match: true)
-    end
-    false
-  end
-
-  def get_pending_accounts
-    acct_invite = []
-    ssl_account_users.each do |ssl|
-      params = { ssl_account_id: ssl.ssl_account_id, skip_match: true }
-      if approval_token_valid?(params)
-        acct_invite << {
-          acct_number: SslAccount.find_by_id(ssl.ssl_account_id).acct_number,
-          ssl_account_id: ssl.ssl_account_id,
-          approval_token: ssl.approval_token
-        }
-      end
-    end
-    acct_invite
-  end
-
-  def generate_approval_query(params)
-    ssl = get_ssl_acct_user_for_approval(params)
-    "?token=#{ssl.approval_token}&ssl_account_id=#{ssl.ssl_account_id}"
-  end
-
-  def get_approval_tokens
-    ssl_account_users.map(&:approval_token).uniq.compact.flatten
-  end
-
-  def approve_invite(params)
-    ssl_acct_id = params[:ssl_account_id]
-    errors = []
-    if user_approved_invite?(params)
-      errors << 'Invite already approved for this account!'
-    else
-      if approval_token_valid?(params)
-        set_approval_token(params.merge(clear: true))
-        ssl = approve_account(params)
-        if ssl
-          deliver_invite_to_account_accepted!(ssl.ssl_account)
-          Assignment.where( # notify team owner and users_manager(s)
-            ssl_account_id: ssl_acct_id,
-            role_id: Role.get_role_ids([Role::OWNER, Role::USERS_MANAGER])
-          ).map(&:user).uniq.compact.each do |for_admin|
-            deliver_invite_to_account_accepted!(ssl.ssl_account, for_admin)
-          end
-        end
-      else
-        errors << 'Invite token is invalid or expired, please contact account admin!'
-      end
-      errors << 'Something went wrong! Please try again!' unless user_approved_invite?(params)
-    end
-    errors
-  end
-
-  def decline_invite(params)
-    ssl = get_ssl_acct_user_for_approval(params)
-    if ssl
-      team = ssl.ssl_account
-      SystemAudit.create(
-        owner: self,
-        target: team,
-        action: 'Declined invitation to team (UsersController#decline_account_invite).',
-        notes: "User #{login} has declined invitation to team #{team.get_team_name} (##{team.acct_number})."
-      )
-      ssl.update(
-        approved: false,
-        token_expires: nil,
-        approval_token: nil,
-        declined_at: DateTime.now
-      )
-    end
-  end
-
-  def approve_all_accounts(log_invite = nil)
-    ssl_account_users.update_all(approved: true, token_expires: nil, approval_token: nil)
-    if log_invite
-      ssl_ids = assignments.where.not(role_id: Role.cannot_be_invited).map(&:ssl_account).uniq.compact.map(&:id)
-      ssl_account_users.where(ssl_account_id: ssl_ids).update_all(invited_at: DateTime.now)
-    end
-  end
-
-  def approval_token_not_expired?(params)
-    user_approved_invite?(params) || approval_token_valid?(params.merge(skip_match: true))
-  end
-
-  def approval_token_valid?(params)
-    ssl = get_ssl_acct_user_for_approval(params)
-    no_ssl_account = ssl.nil?
-    no_token_stored = ssl&.approval_token.nil?
-    has_stored_token = ssl&.approval_token
-    token_expired = has_stored_token && DateTime.parse(ssl.token_expires.to_s) <= DateTime.now
-    tokens_dont_match = params[:skip_match] ? false : (has_stored_token && ssl.approval_token != params[:token])
-
-    return false if no_ssl_account || no_token_stored || tokens_dont_match || token_expired
-
-    true
-  end
-
-  def get_all_approved_accounts
-    (is_system_admins? ? SslAccount.unscoped : approved_ssl_accounts).order('created_at desc')
-  end
-
-  def get_all_approved_teams
-    (is_system_admins? ? SslAccount.unscoped : approved_teams).order('created_at desc')
-  end
-
-  def user_approved_invite?(params)
-    ssl = get_ssl_acct_user_for_approval(params)
-    ssl&.approved && ssl.token_expires.nil? && ssl.approval_token.nil?
-  end
-
-  def user_declined_invite?(params)
-    ssl = get_ssl_acct_user_for_approval(params)
-    ssl && !ssl.approved && ssl.token_expires.nil? && ssl.approval_token.nil?
-  end
-
-  def resend_invitation_with_token(params)
-    errors = []
-    invite_existing_user(params)
-    errors << 'Token was not renewed. Please try again' unless approval_token_valid?(params.merge(skip_match: true))
-    errors
-  end
-
-  def set_approval_token(params)
-    ssl = get_ssl_acct_user_for_approval(params)
-    ssl&.update(
-      approved: false,
-      token_expires: (params[:clear] ? nil : (DateTime.now + 72.hours)),
-      approval_token: (params[:clear] ? nil : generate_approval_token),
-      invited_at: DateTime.now,
-      declined_at: nil
-    )
-  end
-
   def set_status_for_account(status_type, target_ssl = nil)
     ssl = target_ssl.nil? ? ssl_account : target_ssl
     owner_id = Role.get_owner_id
 
     target_ssl = if roles_for_account(ssl).include?(owner_id)
-      # if owner, disable access to this ssl account for all associated users
-      SslAccountUser.where(ssl_account_id: ssl.id)
-    else
-      ssl_account_users.where(ssl_account_id: ssl.id)
-    end
+                   SslAccountUser.where(ssl_account_id: ssl.id) # if owner, disable access to this ssl account for all associated users
+                 else
+                   ssl_account_users.where(ssl_account_id: ssl.id)
+                 end
     target_ssl.update_all(user_enabled: (status_type == :enabled))
     clear_def_ssl_for_users(target_ssl)
   end
