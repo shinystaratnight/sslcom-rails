@@ -292,27 +292,28 @@ class ValidationsController < ApplicationController
 
   def get_asynch_domains
     co = (current_user.is_system_admins? ? CertificateOrder.includes(:certificate_contents) :
-                                           current_user.certificate_orders).find_by_ref(params[:certificate_order_id])
+              current_user.certificate_orders).find_by_ref(params[:certificate_order_id])
     cn = co.certificate_content.certificate_names.find_by_name(params['domain_name']) if co
 
-    cached_label = Rails.cache.fetch(cn&.get_asynch_cache_label) do
+    returnObj = Rails.cache.fetch(cn&.get_asynch_cache_label) do
       if cn
         ds = params['domain_status']
 
         if co.certificate_content.ca
           dcv = cn.validated_domain_control_validations.last
-          domain_status = if dcv
-                            'validated'
-                          else
-                            co.ssl_account.other_dcvs_satisfy_domain(cn)
-                            dcv = cn.validated_domain_control_validations.last
-                            if dcv
-                              'validated'
-                            else
-                              dcv = cn.domain_control_validations.last
-                              'pending'
-                            end
-                          end
+          domain_status =
+              if dcv
+                "validated"
+              else
+                co.ssl_account.other_dcvs_satisfy_domain(cn)
+                dcv = cn.validated_domain_control_validations.last
+                if dcv
+                  "validated"
+                else
+                  dcv = cn.domain_control_validations.last
+                  "pending"
+                end
+              end
           if dcv
             domain_method = dcv.email_address ? dcv.email_address : dcv.dcv_method
           else
@@ -325,32 +326,32 @@ class ValidationsController < ApplicationController
         end
 
         addresses =
-          if co.certificate_content.ca.blank? && co.external_order_number
+          if co.certificate_content.ca.blank? and co.external_order_number
             ComodoApi.domain_control_email_choices(cn.name).email_address_choices
           else
             CertificateName.candidate_email_addresses(cn.non_wildcard_name)
           end
-        addresses.delete('none')
+        addresses.delete("none")
 
-        options_object = {}
-        via_email = {}
-        via_csr = {}
+        optionsObj = {}
+        viaEmail = {}
+        viaCSR = {}
 
-        if dcv || !ds.blank?
+        if dcv or !ds.blank?
           addresses.each do |addr|
-            via_email[addr] = addr
+            viaEmail[addr] = addr
           end
 
-          via_csr['http_csr_hash'] = 'CSR hash text file using http://'
-          via_csr['https_csr_hash'] = 'CSR hash text file using https://'
-          via_csr['cname_csr_hash'] = 'Add cname entry'
+          viaCSR['http_csr_hash'] = 'CSR hash text file using http://'
+          viaCSR['https_csr_hash'] = 'CSR hash text file using https://'
+          viaCSR['cname_csr_hash'] = 'Add cname entry'
 
-          options_object['Validation via email'] = via_email
-          options_object['Validation via csr hash'] = via_csr
+          optionsObj['Validation via email'] = viaEmail
+          optionsObj['Validation via csr hash'] = viaCSR
 
           {
             'tr_info' => {
-              'options' => options_object,
+              'options' => optionsObj,
               'slt_option' => domain_method ?
                                   domain_method.downcase.gsub('pre-validated %28', '').gsub('%29', '').gsub(' ', '_') : nil,
               'pretest' => 'n/a',
@@ -362,28 +363,28 @@ class ValidationsController < ApplicationController
             'tr_instruction' => false
           }
         else
-          options_object = {}
+          optionsObj = {}
           addresses ||= CertificateName.candidate_email_addresses(cn.non_wildcard_name)
 
-          via_email = {}
-          via_csr = {}
+          viaEmail = {}
+          viaCSR = {}
 
           addresses.each do |addr|
-            via_email[addr] = addr
+            viaEmail[addr] = addr
           end
 
-          via_csr['http_csr_hash'] = 'CSR hash text file using http://'
-          via_csr['https_csr_hash'] = 'CSR hash text file using https://'
-          via_csr['cname_csr_hash'] = 'Add cname entry'
+          viaCSR['http_csr_hash'] = 'CSR hash text file using http://'
+          viaCSR['https_csr_hash'] = 'CSR hash text file using https://'
+          viaCSR['cname_csr_hash'] = 'Add cname entry'
 
-          options_object['Validation via email'] = via_email
-          options_object['Validation via csr hash'] = via_csr
+          optionsObj['Validation via email'] = viaEmail
+          optionsObj['Validation via csr hash'] = viaCSR
 
           le = cn.domain_control_validations.last_emailed
 
           {
             'tr_info' => {
-              'options' => options_object,
+              'options' => optionsObj,
               'slt_option' => le.blank? ? nil : le.email_address,
               'pretest' => 'n/a',
               'attempt' => 'validation not performed yet',
@@ -397,7 +398,7 @@ class ValidationsController < ApplicationController
       end
     end
 
-    render json: cached_label
+    render :json => returnObj
   end
 
   def index
