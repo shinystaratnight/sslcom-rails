@@ -115,6 +115,7 @@ group :development do
   gem 'solargraph', require: false
   gem 'spring'
   gem 'spring-commands-testunit'
+  gem 'standard'
   gem 'web-console', '~> 2.0'
 end
 

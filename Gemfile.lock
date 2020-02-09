@@ -602,6 +602,9 @@ GEM
       activerecord (>= 3.0)
       activesupport (>= 3.0)
       polyamorous (~> 1.1.0)
+    standard (0.1.7)
+      rubocop (~> 0.77.0)
+      rubocop-performance (~> 1.5.1)
     stringio (0.0.2)
     stripe (4.22.0)
       faraday (~> 0.13)
@@ -789,6 +792,7 @@ DEPENDENCIES
   spring-commands-testunit
   sprockets
   squeel
+  standard
   stringio
   stripe
   strscan

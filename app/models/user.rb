@@ -7,14 +7,9 @@ class User < ApplicationRecord
   include Concerns::User::Association
   include Concerns::User::Preferences
   include Concerns::User::Validation
-
-  has_attached_file :avatar, s3_protocol: 'http', url: '/:class/:id/:attachment/:style.:extension', path: ':id_partition/:style.:extension', s3_permissions: :private, bucket: ENV.fetch('S3_AVATAR_BUCKET_NAME'), styles: {
-    thumb: '100x100>',
-    standard: '200x200#',
-    large: '300x300>'
-  }
-
-  validates_attachment_content_type :avatar, content_type: %r{\Aimage/.*\z}
+  include Concerns::User::Avatar
+  include Concerns::User::Scope
+  include Concerns::User::Notification
 
   OWNED_MAX_TEAMS = 3
 
@@ -33,22 +28,6 @@ class User < ApplicationRecord
     u.max_teams = OWNED_MAX_TEAMS unless u.max_teams
   end
 
-  default_scope { where{ status << ['disabled'] }.order('users.created_at desc') }
-  scope :with_role, ->(role) { joins(:roles).where('lower(roles.name) LIKE (?)', "%#{role.downcase.strip}%")}
-  scope :search,    lambda { |term|
-                      joins{ ssl_accounts.api_credentials }.where{
-                        (login =~ "%#{term}%") |
-                          (email =~ "%#{term}%") |
-                          (last_login_ip =~ "%#{term}%") |
-                          (current_login_ip =~ "%#{term}%") |
-                          (ssl_accounts.api_credentials.account_key =~ "%#{term}%") |
-                          (ssl_accounts.api_credentials.secret_key =~ "%#{term}%") |
-                          (ssl_accounts.acct_number =~ "%#{term}%")}.uniq}
-
-  scope :search_sys_admin, ->{ joins{ roles }.where{ roles.name == Role::SYS_ADMIN } }
-
-  scope :search_super_user, -> { joins{ roles }.where{ roles.name == Role::SUPER_USER } }
-
   delegate :tier_suffix, to: :ssl_account, prefix: false
 
   acts_as_authentic do |c|
@@ -64,7 +43,7 @@ class User < ApplicationRecord
   def ssl_account(default_team = nil)
     SslAccount.find_by_id(Rails.cache.fetch("#{cache_key}/ssl_account/#{default_team.is_a?(Symbol) ? default_team.to_s : default_team.try(:cache_key)}") do
       default_ssl = default_ssl_account && is_approved_account?(default_ssl_account)
-      main_ssl    = main_ssl_account && is_approved_account?(main_ssl_account)
+      main_ssl = main_ssl_account && is_approved_account?(main_ssl_account)
 
       # Retrieve team that was manually set as default in Teams by user
       break main_ssl_account if default_team && main_ssl
@@ -111,7 +90,7 @@ class User < ApplicationRecord
   end
 
   def role_symbols_archived_team(ssl_account)
-    assignments.includes(:role).where(ssl_account_id: ssl_account.id).map{ |assign| assign.role.name.to_sym }.uniq.compact
+    assignments.includes(:role).where(ssl_account_id: ssl_account.id).map { |assign| assign.role.name.to_sym }.uniq.compact
   end
 
   def is_first_approved_acct?(ssl_account)
@@ -127,9 +106,9 @@ class User < ApplicationRecord
     if ssl
       status = :accepted if active && ssl.approved
       status = :declined if ssl.declined_at || (!ssl.approved && ssl.token_expires.nil? && ssl.approval_token.nil?)
-      status = :expired  if ssl.token_expires && (status != :declined) && (ssl.token_expires < DateTime.now)
-      status = :pending  if !active && (status != :declined)
-      status = :pending  if active && (!ssl.approved && ssl.token_expires && ssl.approval_token) && (ssl.token_expires > DateTime.now)
+      status = :expired if ssl.token_expires && (status != :declined) && (ssl.token_expires < DateTime.now)
+      status = :pending if !active && (status != :declined)
+      status = :pending if active && (!ssl.approved && ssl.token_expires && ssl.approval_token) && (ssl.token_expires > DateTime.now)
     end
     status
   end
@@ -139,20 +118,19 @@ class User < ApplicationRecord
   end
 
   def is_passed_2fa(session_duo)
-    status = false
-    if self.is_duo_required?
-      status = session_duo
-    else
-      if self.ssl_account&.sec_type == 'duo'
-        if Settings.duo_auto_enabled || Settings.duo_custom_enabled
-          status = session_duo
-        else
-          status = true
-        end
-      else
-        status = true
-      end
-    end
+    status = if is_duo_required?
+               session_duo
+             else
+               if ssl_account&.sec_type == 'duo'
+                 if Settings.duo_auto_enabled || Settings.duo_custom_enabled
+                   session_duo
+                 else
+                   true
+                 end
+               else
+                 true
+               end
+             end
     status
   end
 
@@ -174,7 +152,7 @@ class User < ApplicationRecord
     # If invited user has owner role or reseller role, then replace
     # it with account admin role for the team they're invited to.
     if role_ids.include?(Role.get_owner_id) ||
-       role_ids.include?(Role.get_reseller_id)
+        role_ids.include?(Role.get_reseller_id)
 
       # User cannot be account_admin and have other roles.
       role_ids = [Role.get_account_admin_id]
@@ -293,7 +271,7 @@ class User < ApplicationRecord
 
   def invite_user_to_account!(params)
     user_exists = User.get_user_by_email(params[:user][:email])
-    user_exists ? user_exists : invite_new_user(params)
+    user_exists || invite_new_user(params)
   end
 
   def invite_new_user(params)
@@ -319,10 +297,10 @@ class User < ApplicationRecord
   end
 
   def invite_existing_user(params)
-    email       = params[:user][:email] if params[:user]
+    email = params[:user][:email] if params[:user]
     ssl_acct_id = (params[:user] && params[:user][:ssl_account_id]) || params[:ssl_account_id]
-    user        = email ? User.get_user_by_email(email) : self
-    new_params  = params.merge(ssl_account_id: ssl_acct_id, skip_match: true, from_user: params[:from_user])
+    user = email ? User.get_user_by_email(email) : self
+    new_params = params.merge(ssl_account_id: ssl_acct_id, skip_match: true, from_user: params[:from_user])
 
     if user.ssl_accounts.map(&:id).include? ssl_acct_id.to_i
       user.set_approval_token(new_params)
@@ -392,7 +370,7 @@ class User < ApplicationRecord
   end
 
   def has_role?(role)
-    roles.map{ |r|r.name.downcase }.include?(role.to_s)
+    roles.map { |r| r.name.downcase }.include?(role.to_s)
   end
 
   def active?
@@ -414,123 +392,35 @@ class User < ApplicationRecord
     end
   end
 
-  def deliver_activation_confirmation_by_sysadmin!(password)
-    reset_perishable_token!
-    UserNotifier.activation_confirmation_by_sysadmin(self, password).deliver
-  end
-
-  def deliver_auto_activation_confirmation!
-    reset_perishable_token!
-    UserNotifier.auto_activation_confirmation(self).deliver
-  end
-
-  def deliver_activation_instructions!
-    reset_perishable_token!
-    UserNotifier.activation_instructions(self).deliver
-  end
-
-  def deliver_activation_confirmation!
-    reset_perishable_token!
-    UserNotifier.activation_confirmation(self).deliver
-  end
-
-  def deliver_signup_invitation!(current_user, root_url, invited_teams)
-    reset_perishable_token!
-    UserNotifier.signup_invitation(self, current_user, root_url, invited_teams).deliver
-  end
-
-  def deliver_password_reset_instructions!
-    reset_perishable_token!
-    UserNotifier.password_reset_instructions(self).deliver
-  end
-
-  def deliver_username_reminder!
-    UserNotifier.username_reminder(self).deliver
-  end
-
-  def deliver_password_changed!
-    UserNotifier.password_changed(self).deliver
-  end
-
-  def deliver_email_changed!(address = email)
-    UserNotifier.email_changed(self, address).deliver
-  end
-
-  def deliver_invite_to_account!(params)
-    UserNotifier.invite_to_account(self, params[:from_user], params[:ssl_account_id]).deliver
-  end
-
-  def deliver_invite_to_account_notify_admin!(params)
-    UserNotifier.invite_to_account_notify_admin(self, params[:from_user], params[:ssl_account_id]).deliver
-  end
-
-  def deliver_removed_from_account!(account, current_user)
-    UserNotifier.removed_from_account(self, account, current_user).deliver
-  end
-
-  def deliver_removed_from_account_notify_admin!(account, current_user)
-    UserNotifier.removed_from_account_notify_admin(self, account, current_user).deliver
-  end
-
-  def deliver_leave_team!(account)
-    UserNotifier.leave_team(self, account).deliver
-  end
-
-  def deliver_leave_team_notify_admins!(notify_user, account)
-    UserNotifier.leave_team_notify_admins(self, notify_user, account).deliver
-  end
-
-  def deliver_invite_to_account_accepted!(account, for_admin = nil)
-    UserNotifier.invite_to_account_accepted(self, account, for_admin).deliver
-  end
-
-  def deliver_invite_to_account_disabled!(account, current_user)
-    UserNotifier.invite_to_account_disabled(self, account, current_user).deliver
-  end
-
-  def deliver_ssl_cert_private_key!(resource_id, host_name, custom_domain_id)
-    UserNotifier.ssl_cert_private_key(self, resource_id, host_name, custom_domain_id).deliver
-  end
-
-  def deliver_generate_install_ssl!(resource_id, host_name, to_address)
-    UserNotifier.generate_install_ssl(self, resource_id, host_name, to_address).deliver
-  end
-
-  def deliver_register_ssl_manager_to_team!(registered_agent_ref, ssl_account, auto_approve)
-    auto_approve ?
-        UserNotifier.auto_register_ssl_manager_to_team(self, ssl_account).deliver :
-        UserNotifier.register_ssl_manager_to_team(self, registered_agent_ref, ssl_account).deliver
-  end
-
   def browsing_history(l_bound = nil, h_bound = nil, sort = 'asc')
     l_bound = '01/01/2000' if l_bound.blank?
     s = l_bound =~ /\// ? '%m/%d/%Y' : '%m-%d-%Y'
     start = Date.strptime l_bound, s
     finish =
-        if(h_bound.blank?)
-          DateTime.now
-        elsif h_bound.is_a?(String)
-          f = h_bound =~ /\// ? '%m/%d/%Y' : '%m-%d-%Y'
-          Date.strptime h_bound, f
-        else
-          h_bound.to_datetime
-        end
+      if h_bound.blank?
+        DateTime.now
+      elsif h_bound.is_a?(String)
+        f = h_bound =~ /\// ? '%m/%d/%Y' : '%m-%d-%Y'
+        Date.strptime h_bound, f
+      else
+        h_bound.to_datetime
+      end
     count = 0
     visitor_tokens.map do |vt|
       ["route #{count += 1}"] +
-        vt.trackings.order('created_at ' + sort).where{ created_at >> (start..finish) }.map{ |t| "from #{t.referer.url.blank? ? "unknown" : t.referer.url} to #{t.tracked_url.url} at #{t.created_at}" }.uniq
+        vt.trackings.order('created_at ' + sort).where { created_at >> (start..finish) }.map { |t| "from #{t.referer.url.blank? ? "unknown" : t.referer.url} to #{t.tracked_url.url} at #{t.created_at}" }.uniq
     end
   end
 
   # find user with no ssl_account
   def ssl_account_orphans
-    User.where{ ssl_account_id.not_in SslAccount.all }
+    User.where { ssl_account_id.not_in SslAccount.all }
   end
 
   # we need to make sure that either a password or openid gets set
   # when the user activates his account
   def has_no_credentials?
-    self.crypted_password.blank? # && self.openid_identifier.blank?
+    crypted_password.blank? # && self.openid_identifier.blank?
   end
 
   # ...
@@ -556,12 +446,12 @@ class User < ApplicationRecord
     role_ids = params[:user][:role_ids]
     cur_account_id = params[:user][:ssl_account_id]
     unless role_ids.nil? || cur_account_id.nil?
-      new_role_ids = role_ids.compact.reject{ |id| id.blank? }.map(&:to_i)
+      new_role_ids = role_ids.compact.reject { |id| id.blank? }.map(&:to_i)
     end
     if new_role_ids.present?
-      current_account  = SslAccount.find cur_account_id
+      current_account = SslAccount.find cur_account_id
       current_role_ids = roles_for_account current_account
-      new_role_ids     = new_role_ids - current_role_ids
+      new_role_ids -= current_role_ids
       set_roles_for_account(current_account, new_role_ids.uniq)
     end
   end
@@ -639,12 +529,12 @@ class User < ApplicationRecord
   end
 
   def referer_urls
-    visitor_tokens.map{ |v|v.trackings.non_ssl_com_referer }.flatten.map{ |t|t.referer.url }
+    visitor_tokens.map { |v| v.trackings.non_ssl_com_referer }.flatten.map { |t| t.referer.url }
   end
 
   def roles_humanize(target_account = nil)
     Role.where(id: roles_for_account(target_account || ssl_account))
-        .map{ |role| role.name.humanize(capitalize: false) }
+      .map { |role| role.name.humanize(capitalize: false) }
   end
 
   def role_symbols(target_account = nil)
@@ -652,42 +542,44 @@ class User < ApplicationRecord
     return [] if sa.blank?
 
     Rails.cache.fetch("#{cache_key}/role_symbols/#{sa.cache_key}") do
-      Role.where(id: roles_for_account(sa)).map{ |role| role.name.underscore.to_sym }
+      Role.where(id: roles_for_account(sa)).map { |role| role.name.underscore.to_sym }
     end
   end
   memoize :role_symbols
 
   def role_symbols_all_accounts
-    roles.map{ |role| role.name.underscore.to_sym }
+    roles.map { |role| role.name.underscore.to_sym }
   end
 
   def certificate_order_by_ref(ref)
     CertificateOrder.unscoped.includes(:certificate_contents).find(
-        Rails.cache.fetch("#{cache_key}/certificate_order_id/#{ref}") do
-          co = CertificateOrder.unscoped{
-               (is_system_admins? ?
-             CertificateOrder : certificate_orders).find_by_ref(ref)}
-          co.id unless co.blank?
-        end)
+      Rails.cache.fetch("#{cache_key}/certificate_order_id/#{ref}") do
+        co = CertificateOrder.unscoped {
+          (is_system_admins? ?
+        CertificateOrder : certificate_orders).find_by_ref(ref)
+        }
+        co.id unless co.blank?
+      end
+    )
   end
 
   # check for any SslAccount records do not have roles, users or an owner
   # check for any User record that do not have a role for a given SslAccount
   def self.integrity_check(fix = nil)
     # find SslAccount records with no users
-    no_users = SslAccount.joins{ ssl_account_users.outer }.where{ ssl_account_users.ssl_account_id == nil }
+    no_users = SslAccount.joins { ssl_account_users.outer }.where { ssl_account_users.ssl_account_id == nil }
     # verify users do not exist
     ap no_users.map(&:users).flatten.compact
     no_users.delete if fix
     # find User records with no ssl_accounts
-    no_ssl_accounts = User.unscoped.joins{ ssl_account_users.outer }.where{ ssl_account_users.user_id == nil }
+    no_ssl_accounts = User.unscoped.joins { ssl_account_users.outer }.where { ssl_account_users.user_id == nil }
     ap no_ssl_accounts.map(&:ssl_accounts).flatten.compact
     # find any SslAccount record without a role that belongs to a User
-    Assignment.joins{ user }.joins{ user.ssl_accounts }.where{ ssl_account_id == nil }.count
+    Assignment.joins { user }.joins { user.ssl_accounts }.where { ssl_account_id == nil }.count
     # How many SslAccounts that do not have any role
-    SslAccount.joins{ assignments.outer }.where{ assignments.ssl_account_id == nil }.count
+    SslAccount.joins { assignments.outer }.where { assignments.ssl_account_id == nil }.count
     # How many SslAccounts that have the owner role
-    SslAccount.joins{ assignments }.where{ assignments.role_id == 4 }.count
+    SslAccount.joins { assignments }.where { assignments.role_id == 4 }.count
   end
 
   def can_manage_certificates?
@@ -712,7 +604,7 @@ class User < ApplicationRecord
 
   def is_owner?(target_account = nil)
     # TODO need to separate out reseller from owner
-    role_symbols(target_account) & [Role::OWNER.to_sym,Role::RESELLER.to_sym]
+    role_symbols(target_account) & [Role::OWNER.to_sym, Role::RESELLER.to_sym]
   end
 
   def is_account_admin?
@@ -860,7 +752,7 @@ class User < ApplicationRecord
       params = { ssl_account_id: ssl.ssl_account_id, skip_match: true }
       if approval_token_valid?(params)
         acct_invite << {
-          acct_number:    SslAccount.find_by_id(ssl.ssl_account_id).acct_number,
+          acct_number: SslAccount.find_by_id(ssl.ssl_account_id).acct_number,
           ssl_account_id: ssl.ssl_account_id,
           approval_token: ssl.approval_token
         }
@@ -880,7 +772,7 @@ class User < ApplicationRecord
 
   def approve_invite(params)
     ssl_acct_id = params[:ssl_account_id]
-    errors      = []
+    errors = []
     if user_approved_invite?(params)
       errors << 'Invite already approved for this account!'
     else
@@ -936,11 +828,11 @@ class User < ApplicationRecord
   end
 
   def approval_token_valid?(params)
-    ssl               = get_ssl_acct_user_for_approval(params)
-    no_ssl_account    = ssl.nil?
-    no_token_stored   = ssl&.approval_token.nil?
-    has_stored_token  = ssl&.approval_token
-    token_expired     = has_stored_token && DateTime.parse(ssl.token_expires.to_s) <= DateTime.now
+    ssl = get_ssl_acct_user_for_approval(params)
+    no_ssl_account = ssl.nil?
+    no_token_stored = ssl&.approval_token.nil?
+    has_stored_token = ssl&.approval_token
+    token_expired = has_stored_token && DateTime.parse(ssl.token_expires.to_s) <= DateTime.now
     tokens_dont_match = params[:skip_match] ? false : (has_stored_token && ssl.approval_token != params[:token])
 
     return false if no_ssl_account || no_token_stored || tokens_dont_match || token_expired
@@ -985,28 +877,28 @@ class User < ApplicationRecord
   end
 
   def set_status_for_account(status_type, target_ssl = nil)
-    ssl      = target_ssl.nil? ? ssl_account : target_ssl
+    ssl = target_ssl.nil? ? ssl_account : target_ssl
     owner_id = Role.get_owner_id
 
     target_ssl = if roles_for_account(ssl).include?(owner_id)
-                   # if owner, disable access to this ssl account for all associated users
-                   SslAccountUser.where(ssl_account_id: ssl.id)
-                 else
-                   ssl_account_users.where(ssl_account_id: ssl.id)
-                 end
+      # if owner, disable access to this ssl account for all associated users
+      SslAccountUser.where(ssl_account_id: ssl.id)
+    else
+      ssl_account_users.where(ssl_account_id: ssl.id)
+    end
     target_ssl.update_all(user_enabled: (status_type == :enabled))
     clear_def_ssl_for_users(target_ssl)
   end
 
   def set_status_all_accounts(status_type)
-    ssl_accounts.each{ |target_ssl| set_status_for_account(status_type, target_ssl) } if status_type
+    ssl_accounts.each { |target_ssl| set_status_for_account(status_type, target_ssl) } if status_type
   end
 
   def clear_def_ssl_for_users(target_ssl_account_users)
     # if any user in target_ssl_account_users has their default_ssl_account set
     # to ssl_account in target_ssl_account_users, clear user's default_ssl_account
     # since it's disabled
-    users_clear_ssl = target_ssl_account_users.map(&:user).uniq.flatten.compact.keep_if{ |u| target_ssl_account_users.map(&:ssl_account_id).include?(u.default_ssl_account) }.map(&:id)
+    users_clear_ssl = target_ssl_account_users.map(&:user).uniq.flatten.compact.keep_if { |u| target_ssl_account_users.map(&:ssl_account_id).include?(u.default_ssl_account) }.map(&:id)
     User.where(id: users_clear_ssl).update_all(default_ssl_account: nil) if users_clear_ssl.any?
   end
 
@@ -1040,7 +932,7 @@ class User < ApplicationRecord
   end
 
   def generate_approval_token
-    OAuth::Helper.generate_key(40)[0,40]
+    OAuth::Helper.generate_key(40)[0, 40]
   end
 
   def get_ssl_acct_user_for_approval(params)
