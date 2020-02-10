@@ -61,9 +61,10 @@ class CertificateContent < ApplicationRecord
   after_save   :transfer_existing_contacts
   before_destroy :preserve_certificate_contacts
 
-  after_create do |cc|
+  before_create do |cc|
     ref_number = cc.to_ref
-    cc.update(ref: ref_number, label: ref_number)
+    cc.ref = ref_number
+    cc.label = ref_number
   end
 
   SIGNING_REQUEST_REGEX = /\A[\w\-\/\s\n\+=]+\Z/
