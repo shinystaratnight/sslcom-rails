@@ -32,7 +32,7 @@ module Concerns
 
       def max_teams_reached?(user_id = nil)
         user = self_or_other(user_id)
-        total_teams_owned(user.id).count >= user.max_teams
+        total_teams_owned(user.id).size >= user.max_teams
       end
 
       def set_default_team(ssl_account)
