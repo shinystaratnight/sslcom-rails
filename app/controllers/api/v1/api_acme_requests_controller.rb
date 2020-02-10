@@ -76,12 +76,6 @@ module Api
         end
       end
 
-      def validated?
-        return false unless account_key && secret_key && acme_acct_pub_key_thumbprint
-
-        ApiCredential.exists?(account_key: account_key, secret_key: secret_key, acme_acct_pub_key_thumbprint: acme_acct_pub_key_thumbprint)
-      end
-
       def render_validations
         render json: @result.certificate_order.certificate_content.certificate_names.having_dvc,
                each_serializer: CertificateNameSerializer,
