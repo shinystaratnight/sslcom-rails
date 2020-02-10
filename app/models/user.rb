@@ -407,7 +407,7 @@ class User < ApplicationRecord
   def assign_roles(params)
     role_ids = params[:user][:role_ids]
     cur_account_id = params[:user][:ssl_account_id]
-    new_role_ids = role_ids.compact.reject { |id| id.blank? }.map(&:to_i) unless role_ids.nil? || cur_account_id.nil?
+    new_role_ids = role_ids.compact.reject(&:blank?).map(&:to_i) unless role_ids.nil? || cur_account_id.nil?
     if new_role_ids.present?
       current_account = SslAccount.find cur_account_id
       current_role_ids = roles_for_account current_account
@@ -417,7 +417,7 @@ class User < ApplicationRecord
   end
 
   def remove_roles(params, inverse = false)
-    new_role_ids       = params[:user][:role_ids].compact.reject{ |id| id.blank? }.map(&:to_i)
+    new_role_ids       = params[:user][:role_ids].compact.reject(&:blank?).map(&:to_i)
     current_role_ids   = roles_for_account(SslAccount.find(params[:user][:ssl_account_id]))
     removable_role_ids = inverse ? new_role_ids : current_role_ids - new_role_ids
 
