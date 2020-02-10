@@ -22,7 +22,7 @@
             .filter_cont_item
               =select_tag :filter_amount, options_for_select([['Is equal to', 'equal'], ['Is greater than', 'bigger'], ['Is less than', 'smaller'], ['Is range of', 'range']]), class: 'filter_cont_slt slt-small'
             .filter_cont_item
-              =number_field_tag :filter_amount_from, nil, class: 'filter_cont_text small_input'
+              = number_field_tag :filter_amount_from, nil, class: 'filter_cont_text'
             .filter_cont_item.range.hidden -
             .filter_cont_item.range.hidden
               =number_field_tag :filter_amount_to, nil, class: 'filter_cont_text small_input'
