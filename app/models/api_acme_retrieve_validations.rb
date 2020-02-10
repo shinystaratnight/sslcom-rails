@@ -18,7 +18,7 @@ class ApiAcmeRetrieveValidations < ApiAcmeRequest
   def api_credential
     return nil unless account_key && secret_key
 
-    @api_credential = ApiCredential.find_by(account_key: account_key, secret_key: secret_key, acme_acct_pub_key_thumbprint: acme_acct_pub_key_thumbprint)
+    @api_credential = ApiCredential.find_by(account_key: account_key, secret_key: secret_key)
   end
 
   def certificate_order
