@@ -1,13 +1,13 @@
 -title = 'Transactions'
 -content_for :title, title
-=render :partial => 'index_scripts'
+=render partial: 'index_scripts'
 #search_bar
-  =form_tag :search_orders, :id=>'search_form', :method=>:get do
+  =form_tag :search_orders, id: 'search_form', method: :get do
     order #
     =text_field_tag :search, @search
     =hidden_field_tag :per_page, @per_page
-    =button_tag 'Search', :id=>'btn_order_search'
-    =button_tag 'Filters', :type=>'button', :id=>'btn_order_filter'
+    =button_tag 'Search', id: 'btn_order_search'
+    =button_tag 'Filters', type: 'button', id: 'btn_order_filter'
 
 %div.hidden#wrap_order_filter
   .wrap_filter_items.clearfix
@@ -15,46 +15,46 @@
       %div.filter_item
         .filter_evt.clearfix
           %label
-            =check_box_tag :filter_amount_chk, true, false, :class=>'filter_chk'
+            =check_box_tag :filter_amount_chk, true, false, class: 'filter_chk'
             Amount
         .filter_label
           .filter_cont.hidden.clearfix{'data-type'=>'mix', 'data-field'=>'amount'}
             .filter_cont_item
-              =select_tag :filter_amount, options_for_select([['Is equal to', 'equal'], ['Is greater than', 'bigger'], ['Is less than', 'smaller'], ['Is range of', 'range']]), :class=>'filter_cont_slt slt-small'
+              =select_tag :filter_amount, options_for_select([['Is equal to', 'equal'], ['Is greater than', 'bigger'], ['Is less than', 'smaller'], ['Is range of', 'range']]), class: 'filter_cont_slt slt-small'
             .filter_cont_item
-              =number_field_tag :filter_amount_from, nil, :class=>'filter_cont_text small_input'
+              = number_field_tag :filter_amount_from, nil, class: 'filter_cont_text'
             .filter_cont_item.range.hidden -
             .filter_cont_item.range.hidden
-              =number_field_tag :filter_amount_to, nil, :class=>'filter_cont_text small_input'
+              =number_field_tag :filter_amount_to, nil, class: 'filter_cont_text small_input'
       %div.filter_item
         .filter_evt.clearfix
           %label
-            =check_box_tag :filter_email_chk, true, false, :class=>'filter_chk'
+            =check_box_tag :filter_email_chk, true, false, class: 'filter_chk'
             Email
         .filter_label
           .filter_cont.hidden{'data-type'=>'text'}
-            =email_field_tag :filter_email, nil, :class=>'filter_cont_text', 'data-field'=>'email'
+            =email_field_tag :filter_email, nil, class: 'filter_cont_text', 'data-field'=>'email'
       %div.filter_item
         .filter_evt.clearfix
           %label
-            =check_box_tag :filter_login_chk, true, false, :class=>'filter_chk'
+            =check_box_tag :filter_login_chk, true, false, class: 'filter_chk'
             Login
         .filter_label
           .filter_cont.hidden{'data-type'=>'text'}
-            =text_field_tag :filter_login, nil, :class=>'filter_cont_text', 'data-field'=>'login'
+            =text_field_tag :filter_login, nil, class: 'filter_cont_text', 'data-field'=>'login'
       %div.filter_item
         .filter_evt.clearfix
           %label
-            =check_box_tag :filter_account_number_chk, true, false, :class=>'filter_chk'
+            =check_box_tag :filter_account_number_chk, true, false, class: 'filter_chk'
             Account Number
         .filter_label
           .filter_cont.hidden{'data-type'=>'text'}
-            =text_field_tag :filter_account_number, nil, :class=>'filter_cont_text', 'data-field'=>'account_number'
+            =text_field_tag :filter_account_number, nil, class: 'filter_cont_text', 'data-field'=>'account_number'
     .filter_items_col
       %div.filter_item
         .filter_evt.clearfix
           %label
-            =check_box_tag :filter_product_chk, true, false, :class=>'filter_chk'
+            =check_box_tag :filter_product_chk, true, false, class: 'filter_chk'
             Product
         .filter_label
           .filter_cont.hidden{'data-type'=>'select'}
@@ -71,80 +71,78 @@
               ['EV SAN SSL (evucc)', 'evucc'],
               ['Code Signing (code-signing)', 'code-signing'],
               ['EV Code Signing (ev-code-signing)', 'ev-code-signing']]),
-            :class=>'filter_cont_slt slt-large', 'data-field'=>'product', :multiple=> true
+            class: 'filter_cont_slt slt-large', 'data-field'=>'product', multiple: true
       %div.filter_item
         .filter_evt.clearfix
           %label
-            =check_box_tag :filter_created_at_chk, true, false, :class=>'filter_chk'
+            =check_box_tag :filter_created_at_chk, true, false, class: 'filter_chk'
             Created At
         .filter_label
           .filter_cont.hidden.clearfix{'data-type'=>'date'}
             .filter_cont_item
-              =date_field_tag :filter_created_from, nil, :class=>'filter_cont_date', 'data-field'=>'created'
+              =date_field_tag :filter_created_from, nil, class: 'filter_cont_date', 'data-field'=>'created'
             .filter_cont_item -
             .filter_cont_item
-              =date_field_tag :filter_created_to, nil, :class=>'filter_cont_date', 'data-field'=>'created'
+              =date_field_tag :filter_created_to, nil, class: 'filter_cont_date', 'data-field'=>'created'
       %div.filter_item
         .filter_evt.clearfix
           %label
-            =check_box_tag :filter_reference_number_chk, true, false, :class=>'filter_chk'
+            =check_box_tag :filter_reference_number_chk, true, false, class: 'filter_chk'
             Reference Number
         .filter_label
           .filter_cont.hidden{'data-type'=>'text'}
-            =text_field_tag :filter_reference_number, nil, :class=>'filter_cont_text', 'data-field'=>'reference_number'
+            =text_field_tag :filter_reference_number, nil, class: 'filter_cont_text', 'data-field'=>'reference_number'
       %div.filter_item
         .filter_evt.clearfix
           %label
-            =check_box_tag :filter_company_name_chk, true, false, :class=>'filter_chk'
+            =check_box_tag :filter_company_name_chk, true, false, class: 'filter_chk'
             Company Name
         .filter_label
           .filter_cont.hidden{'data-type'=>'text'}
-            =text_field_tag :filter_company_name, nil, :class=>'filter_cont_text', 'data-field'=>'company_name'
+            =text_field_tag :filter_company_name, nil, class: 'filter_cont_text', 'data-field'=>'company_name'
     .filter_items_col
       %div.filter_item
         .filter_evt.clearfix
           %label
-            =check_box_tag :filter_ssl_slug_chk, true, false, :class=>'filter_chk'
+            =check_box_tag :filter_ssl_slug_chk, true, false, class: 'filter_chk'
             SSL Slug
         .filter_label
           .filter_cont.hidden{'data-type'=>'text'}
-            =text_field_tag :filter_ssl_slug, nil, :class=>'filter_cont_text', 'data-field'=>'ssl_slug'
+            =text_field_tag :filter_ssl_slug, nil, class: 'filter_cont_text', 'data-field'=>'ssl_slug'
     .filter_items_col
       %div.filter_item
         .filter_evt.clearfix
           %label
-            =check_box_tag :filter_mi_chk, true, false, :class=>'filter_chk'
+            =check_box_tag :filter_mi_chk, true, false, class: 'filter_chk'
             Monthly Invoice
       -if current_user.is_system_admins?
         %div.filter_item
           .filter_evt.clearfix
             %label
-              =check_box_tag :filter_discount_amount_chk, true, false, :class=>'filter_chk'
+              =check_box_tag :filter_discount_amount_chk, true, false, class: 'filter_chk'
               Discount Amount
           .filter_label
             .filter_cont.hidden{'data-type'=>'text'}
-              =number_field_tag :filter_discount_amount, nil, :class=>'filter_cont_text', 'data-field'=>'discount_amount'
+              =number_field_tag :filter_discount_amount, nil, class: 'filter_cont_text', 'data-field'=>'discount_amount'
         %div.filter_item
           .filter_evt.clearfix
             %label
-              =check_box_tag :filter_is_test_chk, true, false, :class=>'filter_chk', 'data-field'=>'is_test'
+              =check_box_tag :filter_is_test_chk, true, false, class: 'filter_chk', 'data-field'=>'is_test'
               Test
       -if @team_tags.try("any?".to_sym)
         %div.filter_item
           .filter_evt.clearfix
             %label
-              =check_box_tag :filter_order_tags_chk, true, false, :class=>'filter_chk'
+              =check_box_tag :filter_order_tags_chk, true, false, class: 'filter_chk'
               Order Tags (Ctrl + Click Multi)
           .filter_label
             .filter_cont.hidden{'data-type'=>'select-multi'}
-              =select_tag :filter_order_tags,                                                |
-              options_for_select(@team_tags.pluck(:name).sort_by(&:downcase)),               |
-              class: 'filter_cont_slt slt-large', 'data-field': 'order_tags', multiple: true
+              = select_tag :filter_order_tags, options_for_select(@team_tags.pluck(:name).sort_by(&:downcase)), class: 'filter_cont_slt slt-large', 'data-field': 'order_tags', multiple: true
 
-  =button_tag 'Search', :type=>'button', :id=>'btn_order_filter_search'
-  =button_tag 'Cancel', :type=>'button', :id=>'btn_close_order_filter'
+  =button_tag 'Search', type: 'button', id: 'btn_order_filter_search'
+  =button_tag 'Cancel', type: 'button', id: 'btn_close_order_filter'
 
-=render :partial=>'/certificate_orders/quick_links'
+=render partial: '/certificate_orders/quick_links'
 #certificate_orders
   %table(cellspacing="0")
     -if @orders.size > 0
@@ -153,7 +151,7 @@
           %td.wrap_number_rows
             =select_tag :number_rows,
             options_for_select([[5, 5], [10, 10], [20, 20], [50, 50], [100, 100]], @per_page),
-            :class=>'per_page'
+            class: 'per_page'
           %td
           %td(colspan='7')
             = render partial: 'shared/paginate', locals: { collection: @orders }
@@ -175,10 +173,10 @@
             -if o.is_reseller_tier?
               %td Reseller Tier #{o.line_items.first.sellable.label} Discounting
             -elsif o.description.blank?
-              %td.name=link_to 'nil', order_path(@ssl_slug, o), :title=> "transaction"
+              %td.name=link_to 'nil', order_path(@ssl_slug, o), title: "transaction"
             -else
               -qualifier = o.display_state
-              %td.name=link_to [qualifier,o.description.shorten(45, false)].join(" "), order_path(@ssl_slug, o), :title=> o.description
+              %td.name=link_to [qualifier,o.description.shorten(45, false)].join(" "), order_path(@ssl_slug, o), title: o.description
             %td(colspan="3")=o.created_at.strftime("%b %d, %Y")
             %td=o.reference_number
             %td
