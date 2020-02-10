@@ -1179,7 +1179,7 @@ class Order < ApplicationRecord
 
   # builds out certificate_order at a deep level by building SubOrderItems for each certificate_order
   def self.setup_certificate_order(options)
-    certificate = options[:certificate] 
+    certificate = options[:certificate]
     certificate_order = options[:certificate_order]
     days = options[:duration] || certificate_order.duration
     duration = certificate&.duration_in_days(days)
