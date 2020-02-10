@@ -20,8 +20,7 @@ class ApplicationController < ActionController::Base
   before_action :detect_recert, except: %i[renew reprocess]
   before_action :set_current_user
   before_action :verify_duo_authentication, except: %i[duo duo_verify login logout], if: -> { skip_duo_cookie.nil? }
-  before_action :identify_visitor, :record_visit,
-                if: 'Settings.track_visitors'
+  before_action :identify_visitor, :record_visit, if: 'Settings.track_visitors'
   before_action :finish_reseller_signup, if: 'current_user'
   before_action :team_base, if: 'params[:ssl_slug] && current_user'
   before_action :set_ssl_slug, :load_notifications
@@ -576,7 +575,7 @@ class ApplicationController < ActionController::Base
     @per_page = params[page_size.to_sym] || preferred_row_count.or_else('10')
     klass.per_page = @per_page if klass.per_page != @per_page
 
-    current_user.update_attribute(row_count, @per_page) if @per_page != preferred_row_count
+    current_user&.update_attribute(row_count, @per_page) if @per_page != preferred_row_count
 
     @p = { page: (params[:page] || 1), per_page: @per_page }
   end

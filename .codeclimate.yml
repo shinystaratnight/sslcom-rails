@@ -20,12 +20,7 @@ plugins:
   haml-lint:
     enabled: true
   reek:
-    enabled: true
-    checks:
-      NilCheck:
-        enabled: false
-      UncommunicativeVariableName:
-          enabled: false
+    enabled: false # Duplicates Rubocop
   rubocop:
     enabled: true
     checks:
