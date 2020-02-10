@@ -7,7 +7,7 @@
   #dialog-form
     %p Please select team to transfer order:
     %br/
-    - ssl_slug = @ssl_slug.nil? ? @order.billable.to_slug : @ssl_slug
+    - ssl_slug = @ssl_slug.nil? ? @order&.billable&.to_slug : @ssl_slug
     - teams = sysadmins ? [] : user_teams.where.not(id: current_user.ssl_account)
     
     - if sysadmins
