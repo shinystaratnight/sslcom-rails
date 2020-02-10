@@ -1179,9 +1179,11 @@ class Order < ApplicationRecord
 
   # builds out certificate_order at a deep level by building SubOrderItems for each certificate_order
   def self.setup_certificate_order(options)
-    certificate, certificate_order = options[:certificate], options[:certificate_order]
-    duration = certificate.duration_in_days(options[:duration] || certificate_order.duration)
-    certificate_order.certificate_content.duration = duration
+    certificate = options[:certificate]
+    certificate_order = options[:certificate_order]
+    days = options[:duration] || certificate_order.duration
+    duration = certificate&.duration_in_days(days)
+    certificate_order&.certificate_content&.duration = duration
     if certificate.is_ucc? || certificate.is_wildcard?
       psl = certificate.items_by_server_licenses.find { |item|
         item.value==duration.to_s }
