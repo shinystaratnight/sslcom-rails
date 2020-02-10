@@ -51,7 +51,7 @@ class Tag < ApplicationRecord
 
   def self.get_object_team_tags(target_object)
     get_object_team(target_object)
-    get_team_tags.order(taggings_count: :desc)
+    get_team_tags&.order(taggings_count: :desc)
   end
 
   def self.filter_popular_tags(tags, type = :order)
@@ -109,7 +109,7 @@ class Tag < ApplicationRecord
   end
 
   def self.get_team_tags
-    @team.tags
+    @team&.tags
   end
 
   def strip_tag_name

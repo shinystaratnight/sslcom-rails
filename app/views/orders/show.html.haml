@@ -1,27 +1,26 @@
--title = "Order Details"
--reprocess_orders = @order.get_reprocess_orders
--content_for :title, title
-=render :partial => 'index_scripts'
+- title = "Order Details"
+- reprocess_orders = @order.get_reprocess_orders
+- content_for :title, title
+= render partial: 'index_scripts'
 
 .order_container
-  =render partial: "orders/cancel_order"
-  
-  -if current_user.is_admin?
+  = render partial: "orders/cancel_order", locals: { u: current_user }
+
+  - if current_user.is_admin?
     #completed_order_results
-      =render partial: 'orders/order_status'
-  
+      = render partial: 'orders/order_status'
+
   #completed_order_results
-    =render partial: 'orders/order_report'
+    = render partial: 'orders/order_report'
 
 .order_container
-  =render partial: 'orders/invoice_section'
+  = render partial: 'orders/invoice_section'
 
--if reprocess_orders.any?
-  -reprocess_orders.each do |ro|
+- if reprocess_orders.any?
+  - reprocess_orders.each do |ro|
     .order_container
       #completed_order_results
-        =render partial: 'orders/reprocess_ucc_report', |
-        locals: {reprocess_orders: ro.last, co_ref: reprocess_orders.keys.first}
+        = render partial: 'orders/reprocess_ucc_report', locals: {reprocess_orders: ro.last, co_ref: reprocess_orders.keys.first}
 
-=render partial: "orders/adwords_conversion" #must appear before confirm_affiliate_sale since ext_affiliate_credited is toggled there
-=confirm_affiliate_sale
+= render partial: "orders/adwords_conversion" # must appear before confirm_affiliate_sale since ext_affiliate_credited is toggled there
+= confirm_affiliate_sale

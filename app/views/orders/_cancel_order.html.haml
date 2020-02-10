@@ -28,8 +28,8 @@
       if(confirm("Are you sure you want to change order to "+state+"?"))
         window.location = '#{change_state_order_url(id: @order.reference_number)}?state='+state;
     }
-  -u=@order.billable.primary_user
-  -ref_merchant = @order.get_merchant
+  - u = @order&.billable&.primary_user
+  - ref_merchant = @order&.get_merchant
   %div(style="border: solid 1px red; margin: 5px 0 10px; padding: 5px")
     %table
       %tr
