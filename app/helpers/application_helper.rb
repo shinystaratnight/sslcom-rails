@@ -15,7 +15,7 @@ module ApplicationHelper
   end
 
   def sandbox_notice
-    flash[:sandbox] = "SSL.com Sandbox. This is a test environment for api orders. Transactions and orders are not live."
+    flash[:sandbox] = 'SSL.com Sandbox. This is a test environment for api orders. Transactions and orders are not live.'
   end
 
   # http://excid3.com/blog/change-actionmailer-email-url-host-dynamically
@@ -24,7 +24,7 @@ module ApplicationHelper
              Settings.actionmailer_host
            elsif is_sandbox_or_test?
              'sandbox.ssl.com'
-           elsif request.host_with_port=="sws.sslpki.com"
+           elsif request.host_with_port=='sws.sslpki.com'
              'secure.ssl.com'
            else
              request.host_with_port
@@ -36,7 +36,7 @@ module ApplicationHelper
   # https://stackoverflow.com/questions/1602901/rails-separate-database-per-subdomain
   # I use the entire domain, just change to sandbox_db and pass only the subdomain
   def current_website
-    @website ||= Website.current_site(request.host) #this is causing issues when using sandbox and www on the same machine
+    @website ||= Website.current_site(request.host) # this is causing issues when using sandbox and www on the same machine
     # @website = Website.current_site(request.host)
   end
   memoize :current_website
@@ -58,13 +58,13 @@ module ApplicationHelper
         ActionMailer::Base.default_url_options[:host]=~/^sws-test\./
   end
 
-  def api_domain(certificate_order=nil)
+  def api_domain(certificate_order = nil)
     api_source=@website || Settings
     unless certificate_order.blank?
       if Rails.env.production?
-        "https://" + (certificate_order.is_test ? api_source.test_api_domain : api_source.api_domain)
+        'https://' + (certificate_order.is_test ? api_source.test_api_domain : api_source.api_domain)
       else
-        "https://" + (certificate_order.is_test ? api_source.dev_test_api_domain : api_source.dev_api_domain) +":3000"
+        'https://' + (certificate_order.is_test ? api_source.dev_test_api_domain : api_source.dev_api_domain) +':3000'
       end
     else
       if is_sandbox?
@@ -86,16 +86,16 @@ module ApplicationHelper
 
   # from Dan Webb's MinusMOR plugin
   # enhanced with ability to detect partials with template format, i.e.: _post.html.erb
-  def partial(name, options={})
+  def partial(name, options = {})
     old_format = self.template_format
     self.template_format = :html
-    js render({ :partial => name }.merge(options))
+    js render({ partial: name }.merge(options))
   ensure
     self.template_format = old_format
   end
 
   def logged_in_or_front_page
-    current_user && !current_page?(:controller=>:site, :action=>:index)
+    current_user && !current_page?(controller: :site, action: :index)
   end
 
   def photo_path(photo)
@@ -108,7 +108,7 @@ module ApplicationHelper
     end
   end
 
-  def image_url(source, timestamp=true)
+  def image_url(source, timestamp = true)
     abs_path = image_path(source)
     unless abs_path =~ /\Ahttp/
       abs_path = "http#{'s' if request.protocol =~ /https/}://#{request.host_with_port}#{abs_path}"
@@ -135,37 +135,37 @@ module ApplicationHelper
   end
 
   def text_field_for(form, field,
-      size=HTML_TEXT_FIELD_SIZE,
-      maxlength=DB_STRING_MAX_LENGTH, options = {})
-    form_field = form.text_field field, :size => size, :maxlength => maxlength, value: options[:value]
-    label = form.label(field, "#{'*' if options.delete(:required)}#{field.humanize}:".gsub(/\b\w/) {|s| s.upcase }) unless options.delete(:no_label)
+      size = HTML_TEXT_FIELD_SIZE,
+      maxlength = DB_STRING_MAX_LENGTH, options = {})
+    form_field = form.text_field field, size: size, maxlength: maxlength, value: options[:value]
+    label = form.label(field, "#{'*' if options.delete(:required)}#{field.humanize}:".gsub(/\b\w/) { |s| s.upcase }) unless options.delete(:no_label)
     append = yield if block_given?
     create_tags label, form_field, options, append
   end
 
-  def check_box_for(form, field, yes="1", no="0", options={})
+  def check_box_for(form, field, yes = '1', no = '0', options = {})
     form_field = form.check_box field, options, yes, no
-    label = form.label(field, "#{field.humanize}:".gsub(/\b\w/) {|s| s.upcase }) unless options.delete(:no_label)
+    label = form.label(field, "#{field.humanize}:".gsub(/\b\w/) { |s| s.upcase }) unless options.delete(:no_label)
     append = yield if block_given?
     create_tags label, form_field, options, append
   end
 
   def country_select_field_for(form, field, priority_countries = nil, options = {}, html_options = {})
-    #TODO needs fixing
-    #form_field = localized_country_select form.object_name, field, priority_countries, options, html_options
-    country_options = options_for_select(Country.select_options("name"), (options[:selected] || 'United States'))
+    # TODO needs fixing
+    # form_field = localized_country_select form.object_name, field, priority_countries, options, html_options
+    country_options = options_for_select(Country.select_options('name'), (options[:selected] || 'United States'))
     if priority_countries
-      country_options = options_for_select(priority_countries+[""], disabled: [""])+country_options
+      country_options = options_for_select(priority_countries+[''], disabled: [''])+country_options
     end
     form_field = select(form.object_name, field, country_options, options, html_options)
-    label = content_tag("label", "#{'*' if options.delete(:required)}#{field.humanize}:".gsub(/\b\w/) {|s| s.upcase }, :for => field) unless options.delete(:no_label)
+    label = content_tag('label', "#{'*' if options.delete(:required)}#{field.humanize}:".gsub(/\b\w/) { |s| s.upcase }, for: field) unless options.delete(:no_label)
     append = yield if block_given?
     create_tags label, form_field, options, append
   end
 
   def credit_card_select_field_for(form, field, options = {}, html_options = {})
     form_field = form.select field, BillingProfile::CREDIT_CARDS, options, html_options
-    label = content_tag("label", "#{'*' if options.delete(:required)}#{field.humanize}:".gsub(/\b\w/) {|s| s.upcase }, :for => field) unless options.delete(:no_label)
+    label = content_tag('label', "#{'*' if options.delete(:required)}#{field.humanize}:".gsub(/\b\w/) { |s| s.upcase }, for: field) unless options.delete(:no_label)
     append = yield if block_given?
     create_tags label, form_field, options, append
   end
@@ -182,72 +182,70 @@ module ApplicationHelper
     base_finder = (filter_audience_type.blank?)? Release : Release.
       scoped_by_audience_type(filter_audience_type)
     @release_count = base_finder.all
-    @tree="<ul>"
-    channels = channel.camelcase.constantize.all :conditions => {:parent_id => nil}
+    @tree='<ul>'
+    channels = channel.camelcase.constantize.all conditions: {parent_id: nil}
     channels.sort_by(&:name).each_with_object(@tree) do |channel, tree|
       tree << ordered_list_for_tree(channel)
     end
-    @tree << "</ul>"
+    @tree << '</ul>'
   end
 
 
   def closed_csr_prompt?
-    current_page?(controller: "certificates", action: "buy") && !@certificate_order.try(:has_csr)
+    current_page?(controller: 'certificates', action: 'buy') && !@certificate_order.try(:has_csr)
   end
 
   def ordered_list_for_tree(channel)
-    "".tap do |tree|
+    ''.tap do |tree|
       unless channel.root?
-        tree << "<li>" << link_to(channel.name << ' (' << @release_count.select{|r|r.channel_id==channel.id}.size.to_s << ')', channel_path(channel)) << "</li>"
+        tree << '<li>' << link_to(channel.name << ' (' << @release_count.select{ |r|r.channel_id==channel.id }.size.to_s << ')', channel_path(channel)) << '</li>'
       else
-        tree << "<li>" << link_to(channel.name << ' (' << @release_count.select{|r|[r.channel_id, r.channel.parent_id].include? channel.id }.size.to_s << ')', channel_path(channel))
+        tree << '<li>' << link_to(channel.name << ' (' << @release_count.select{ |r|[r.channel_id, r.channel.parent_id].include? channel.id }.size.to_s << ')', channel_path(channel))
         unless channel.children.blank?
-          tree << "<ul>"
+          tree << '<ul>'
           channel.children.each_with_object(tree) do |child, tree|
             tree << ordered_list_for_tree(child)
           end
-          tree << "</ul>"
+          tree << '</ul>'
         end
-        tree << "</li>"
+        tree << '</li>'
       end
     end
   end
 
   def select_field_for(form, field, choices, options = {}, html_options = {})
     form_field = form.select(field, choices, options, html_options).html_safe
-    label = content_tag("label", "#{field.humanize}:".gsub(/\b\w/){|s|
-        s.upcase }, :for => field) unless options.delete(:no_label)
+    label = content_tag('label', "#{field.humanize}:".gsub(/\b\w/){ |s|
+        s.upcase }, for: field) unless options.delete(:no_label)
     append = yield if block_given?
     create_tags(label, form_field, options, append)
   end
 
   def add_to_cart_button(item)
     if SERVER_SIDE_CART
-      button_to_function "Add to cart", remote_function(:url => {:controller =>
-            :orders, :action => :add, :id => item.model_and_id}), ({:disabled =>
-            "disabled"} if cart_items.include? item )
+      button_to_function 'Add to cart', remote_function(url: {controller:             :orders, action: :add, id: item.model_and_id}), ({disabled:             'disabled'} if cart_items.include? item )
     else
-      button_to_function("Add to cart", "$.add_remove_cart_items('add', {#{ShoppingCart::PRODUCT_CODE} :
-          '#{item.serial}'});$.adjust_items_in_cart();", :id => item.model_and_id,
-        :class => "add_to_cart_button", :disabled => (!current_user.blank? &&
+      button_to_function('Add to cart', "$.add_remove_cart_items('add', {#{ShoppingCart::PRODUCT_CODE} :
+          '#{item.serial}'});$.adjust_items_in_cart();", id: item.model_and_id,
+        class: 'add_to_cart_button', disabled: (!current_user.blank? &&
             current_user.owns_release(item))? true : false)
     end
   end
 
   def remove_from_cart_link(item)
     if SERVER_SIDE_CART
-      link_to_remote 'Remove', :url => {:controller => :orders, :action => :remove, :id => item.model_and_id}
+      link_to_remote 'Remove', url: {controller: :orders, action: :remove, id: item.model_and_id}
     else
-      link_to "Remove", '#', onclick: { :id => item.model_and_id}, :class => "remove_from_cart_link"
+      link_to 'Remove', '#', onclick: { id: item.model_and_id}, class: 'remove_from_cart_link'
     end
   end
 
-  #Copied from /vendor/plugins/community_engine/engine_plugin/tiny_mce/lib/tiny_mce_helper.rb
-  #because it somehow skips loading tiny_mce_helper
+  # Copied from /vendor/plugins/community_engine/engine_plugin/tiny_mce/lib/tiny_mce_helper.rb
+  # because it somehow skips loading tiny_mce_helper
   def tiny_mce_init(options = @tiny_mce_options)
     options ||= {}
-    default_options = {:mode => 'textareas',
-                       :theme => 'simple'}
+    default_options = {mode: 'textareas',
+                       theme: 'simple'}
     options = default_options.merge(options)
     TinyMCE::OptionValidator.plugins = options[:plugins]
     tinymce_js = "tinyMCE.init({\n"
@@ -281,7 +279,7 @@ module ApplicationHelper
   end
 
   def javascript_include_tiny_mce
-    javascript_include_tag RAILS_ENV == 'development' ? "tiny_mce/tiny_mce_src" : "tiny_mce/tiny_mce", :plugin => "community_engine"
+    javascript_include_tag RAILS_ENV == 'development' ? 'tiny_mce/tiny_mce_src' : 'tiny_mce/tiny_mce', plugin: 'community_engine'
   end
 
   def javascript_include_tiny_mce_if_used
@@ -298,7 +296,7 @@ module ApplicationHelper
       tab     = '&nbsp;' * 5
       @notice = [
         "In addition to activating your own account, you're a member of #{count} other #{'team'.pluralize(count)}.",
-        "You can switch teams by clicking on a team name in <strong>CURRENT TEAM</strong> in the top menu.",
+        'You can switch teams by clicking on a team name in <strong>CURRENT TEAM</strong> in the top menu&.',
         "You can also visit <strong>#{link_to 'Teams', teams_user_path(current_user)}</strong> page to manage all teams.<br />",
         "Invited to Teams (#{count})<br />"
       ]
@@ -309,8 +307,8 @@ module ApplicationHelper
       end
       roles = assignments.map(&:role).uniq
       if roles.any?
-        @notice << "Role Descriptions<br />"
-        roles.each {|role| @notice << "<strong>#{role.name.humanize(capitalize: false)}:</strong> #{role.description}" if role.description}
+        @notice << 'Role Descriptions<br />'
+        roles.each { |role| @notice << "<strong>#{role.name.humanize(capitalize: false)}:</strong> #{role.description}" if role.description }
       end
       @notice
     end
@@ -322,11 +320,11 @@ module ApplicationHelper
   def filter_operators_list
     [
       [nil, nil],
-      ["Equal To", "equal"],
-      ["Less than", "less_than"],
-      ["Less or equal", "less_or_equal"],
-      ["Greater than", "greater_than"],
-      ["Greater or equal", "greater_or_equal"]
+      ['Equal To', 'equal'],
+      ['Less than', 'less_than'],
+      ['Less or equal', 'less_or_equal'],
+      ['Greater than', 'greater_than'],
+      ['Greater or equal', 'greater_or_equal']
     ]
   end
 
@@ -395,22 +393,22 @@ module ApplicationHelper
     tag_class = options.delete :class
     required = options.delete :required
     format = options.delete :format
-    asterisk = (required)?"*":""
-    append ||= ""
+    asterisk = (required)?'*':''
+    append ||= ''
     case format
       when /table/
-        content_tag("th", "#{label}#{asterisk}", nil, false) +
-          content_tag("td","#{form_field}#{append}", nil, false)
+        content_tag('th', "#{label}#{asterisk}", nil, false) +
+          content_tag('td',"#{form_field}#{append}", nil, false)
       when /no_div/
         "#{label}#{asterisk} #{form_field}#{append}".html_safe
       else
-        content_tag("div", "#{label}#{asterisk} #{form_field}#{append}",
-          {:class => tag_class}, false)
+        content_tag('div', "#{label}#{asterisk} #{form_field}#{append}",
+          {class: tag_class}, false)
     end
   end
 
   def cookie_domain
-    Rails.env.development? ? "ssl.local" : "ssl.com"
+    Rails.env.development? ? 'ssl.local' : 'ssl.com'
   end
 
   def set_cookie_js(name,value)
@@ -418,17 +416,17 @@ module ApplicationHelper
   end
 
   def srp_link
-    link_to "SSL Reseller Program", details_resellers_url(subdomain: Reseller::SUBDOMAIN)
+    link_to 'SSL Reseller Program', details_resellers_url(subdomain: Reseller::SUBDOMAIN)
   end
 
   def link_to_remove_fields(name, f)
-   f.hidden_field(:_destroy) + link_to(name, '#', onclick:  "remove_fields(this)")
+   f.hidden_field(:_destroy) + link_to(name, '#', onclick:  'remove_fields(this)')
   end
 
   def link_to_add_fields(name, f, association)
     new_object = f.object.class.reflect_on_association(association).klass.new
-    fields = f.fields_for(association, new_object, :child_index => "new_#{association}") do |builder|
-      render(association.to_s.singularize + "_fields", :f => builder)
+    fields = f.fields_for(association, new_object, child_index: "new_#{association}") do |builder|
+      render(association.to_s.singularize + '_fields', f: builder)
     end
     link_to(name, '#', onclick:  h("add_fields(this, \"#{association}\", \"#{escape_javascript(fields)}\")"))
   end
@@ -448,7 +446,7 @@ module ApplicationHelper
 
     process = if params[:order_description] || (params[:reprocess_ucc] ||
       (co.certificate && co.certificate.is_ucc? &&
-      (co.order.reprocess_ucc_order? || params[:action] == "reprocess")))
+      (co.order.reprocess_ucc_order? || params[:action] == 'reprocess')))
 
       co.reprocess_ucc_process
     elsif certificate && certificate.is_smime_or_client?
@@ -471,19 +469,19 @@ module ApplicationHelper
     pages = sv ? process[:pages] - [CertificateOrder::VERIFICATION_STEP] : process[:pages]
     process[:pages].delete('Contacts') if co.skip_contacts_step?
 
-    render(:partial => '/shared/form_progress_indicator',
-      :locals => {:pages=>[pages, page],
-        :options=>{:li_style=>padding}, certificate: certificate})
+    render(partial: '/shared/form_progress_indicator',
+      locals: {pages: [pages, page],
+        options: {li_style: padding}, certificate: certificate})
   end
 
-  #this has been bastardized, need to come up with a 'cleaner' solution
+  # this has been bastardized, need to come up with a 'cleaner' solution
   def is_public_index_page?
-    current_page?(:controller=>:site, :action=>:index) ||
-    current_page?(:controller=>:site, :action=>:reseller) ||
-    current_page?(:controller=>:surls, :action=>:index)  ||
-    current_page?(:controller=>:surls, :action=>:update) ||
-    current_page?(:controller=>:surls, :action=>:edit) ||
-    current_page?(:controller=>:surls, :action=>:show)
+    current_page?(controller: :site, action: :index) ||
+    current_page?(controller: :site, action: :reseller) ||
+    current_page?(controller: :surls, action: :index)  ||
+    current_page?(controller: :surls, action: :update) ||
+    current_page?(controller: :surls, action: :edit) ||
+    current_page?(controller: :surls, action: :show)
   end
 
   # If the current user meets the given privilege, permitted_to? returns true
@@ -549,13 +547,13 @@ module ApplicationHelper
   end
 
   def remote_login_link(u)
-    link_to("login as #{u.login}", user_session_url(:login=>u.login,
-        authenticity_token: form_authenticity_token()), :method=>:post,
-        :id=>u.model_and_id) if !u.is_disabled? or !u.is_super_user?
+    link_to("login as #{u&.login}", user_session_url(login: u&.login,
+        authenticity_token: form_authenticity_token()), method: :post,
+        id: u&.model_and_id) if !u&.is_disabled? || !u&.is_super_user?
   end
 
   def link_cluster(arry)
-    arry.compact.join(" | ").html_safe
+    arry.compact.join(' | ').html_safe
   end
 
   def recert?
@@ -575,13 +573,13 @@ module ApplicationHelper
   end
 
   def get_full_path(params)
-    path = params[:controller] == 'certificates' ? "admin_index_" : ''
+    path = params[:controller] == 'certificates' ? 'admin_index_' : ''
     send("#{path}#{params[:controller]}_path", params.except(:controller, :action))
   end
 
-  def co_folder_children(contents, options={})
+  def co_folder_children(contents, _options = {})
     output = []
-    contents.includes{certificate_orders.certificate_contents}.each do |f|
+    contents.includes{ certificate_orders.certificate_contents }.each do |f|
       output << FolderTree.new(
         ssl_account_id: @ssl_account,
         folder: f,
@@ -595,6 +593,6 @@ module ApplicationHelper
   end
 
   def show_folders_container?
-    params[:folders] || (params[:search] && params[:search].include?('folder_ids'))
+    params[:folders] || params[:search]&.include?('folder_ids')
   end
 end
