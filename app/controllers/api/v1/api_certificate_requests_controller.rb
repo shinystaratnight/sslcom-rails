@@ -286,6 +286,29 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
     render_500_error e
   end
 
+  def api_resend_domain_validation_v1_4
+    set_template "api_resend_domain_validation_v1_4"
+
+    if @result.save
+      if @acr = @result.resend_domain_validation
+        if @acr.is_a?(CertificateOrder) && @acr.errors.empty?
+          @result.success_message = "It has retried domain validation successfully for the certificate order. (ref: " + @acr.ref + ")"
+        elsif @acr.is_a?(String) && @acr == "incorrect_state"
+          @result.error_message = "This certificate order is not in pending validation state."
+        elsif @acr.is_a?(String) && @acr == "empty_dcv"
+          @result.error_message = "It has never been domain validation before for this certificate order."
+        else
+          @result = @acr
+        end
+      end
+    else
+      InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
+    end
+    render_200_status
+  rescue => e
+    render_500_error e
+  end
+
   def update_v1_4
     set_template "update_v1_4"
 
@@ -1333,6 +1356,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
   end
 
   private
+
   def package_certificate_order(result,acr)
     result.order_date = acr.created_at
     result.order_status = acr.status
@@ -1378,7 +1402,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
     klass = case params[:action]
               when "create_v1_3"
                 ApiCertificateCreate
-              when "create_v1_4", "update_v1_4", "contacts_v1_4", "replace_v1_4"
+              when "create_v1_4", "update_v1_4", "contacts_v1_4", "replace_v1_4", "api_resend_domain_validation_v1_4"
                 ApiCertificateCreate_v1_4
               when /revoke/
                 ApiCertificateRevoke

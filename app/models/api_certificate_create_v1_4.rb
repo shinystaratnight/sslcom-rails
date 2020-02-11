@@ -5,7 +5,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   attr_accessor :csr_obj, # temporary csr object
     :certificate_url, :receipt_url, :smart_seal_url, :validation_url, :order_number, :order_amount, :order_status,
     :api_request, :api_response, :error_code, :error_message, :eta, :send_to_ca, :ref, :renewal_id, :saved_registrant,
-    :certificates
+    :certificates, :success_message
 
   DCV_FAILURE_ACTIONS = %w(remove ignore)
 
@@ -94,6 +94,68 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
       end
     end
     # verify_domain_limits
+  end
+
+  def resend_domain_validation
+    @certificate_order = self.find_certificate_order
+
+    # Checking the certificatea order's current status
+    if @certificate_order.certificate_content.pending_validation?
+      cert_names = {}
+      domains = {}
+
+      # Preparing parameters for domain validation
+      if @certificate_order.certificate_content.ca_id.blank?
+        mdc_validation = ComodoApi.mdc_status(@certificate_order)
+        ds = mdc_validation.domain_status
+
+        if ds
+          names = @certificate_order.certificate_content.certificate_names.find_by_domains(ds.keys)
+          names.each do |cn|
+            if !ds[cn.name]['status'].blank? &&
+                ds[cn.name]['status'].casecmp('validated') != 0 &&
+                !ds[cn.name]['method'].blank?
+              cert_names[cn.name] = cn.name
+              domains[cn.name] = {}
+              domains[cn.name]['dcv'] = ds[cn.name]['method']
+              domains[cn.name]['dcv_failure_action'] = 'ignore'
+            end
+          end
+        end
+      else
+        @certificate_order.certificate_content.certificate_names.includes(:domain_control_validations).each do |cn|
+          dcv = cn.domain_control_validations.last
+
+          if dcv && !dcv.satisfied?
+            cert_names[cn.name] = cn.name
+            domains[cn.name] = {}
+            domains[cn.name]['dcv'] = dcv.email_address ? dcv.email_address : dcv.dcv_method
+            domains[cn.name]['dcv_failure_action'] = 'ignore'
+          end
+        end
+      end
+
+      # Checking the current certificate order's validate history
+      if cert_names.size > 0
+        @cert_names = cert_names
+        @domains = domains
+        @acr = self.update_certificate_order
+
+        # Domain Contorl Valdation verification for non-email method.
+        unless @certificate_order.certificate_content.ca_id.blank?
+          @certificate_order.certificate_content.certificate_names.includes(:domain_control_validations).each do |cn|
+            dcv = cn.domain_control_validations.last
+            dcv.satisfy!  if dcv && !dcv.satisfied? && dcv.dcv_method != 'email' && cn.dcv_verify(dcv.dcv_method)
+          end
+        end
+
+        return @acr
+      end
+
+      return "empty_dcv"
+    else
+      return "incorrect_state"
+    end
   end
 
   def create_certificate_order

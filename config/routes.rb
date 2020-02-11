@@ -92,6 +92,7 @@ SslCom::Application.routes.draw do
         match '/certificate/:ref/validations/methods' => 'api_certificate_requests#dcv_methods_v1_4', as: :api_dcv_methods_v1_4, via: %i[options get]
         match '/certificate/:ref/pretest' => 'api_certificate_requests#pretest_v1_4', as: :pretest_v1_4, via: %i[options get]
         match '/certificate/:ref/api_parameters/:api_call' => 'api_certificate_requests#api_parameters_v1_4', as: :api_parameters_v1_4, via: %i[options get]
+        match '/certificate/:ref/retry_domain_validation' => 'api_certificate_requests#api_resend_domain_validation_v1_4', as: :api_resend_domain_validation_v1_4, via: %i[options post]
         match '/scan/:url' => 'api_certificate_requests#scan', as: :api_scan, via: %i[options get], constraints: { url: %r{[^/]+} }
         match '/analyze/:url' => 'api_certificate_requests#analyze', as: :api_analyze, via: %i[options get], constraints: { url: %r{[^/]+} }
         match '/certificates/validations/csr_hash' => 'api_certificate_requests#dcv_methods_csr_hash_v1_4', as: :api_dcv_methods_csr_hash_v1_4, via: %i[options post]
