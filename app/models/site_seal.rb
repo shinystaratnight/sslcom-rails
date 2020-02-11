@@ -6,7 +6,7 @@ class SiteSeal < ApplicationRecord
   has_many  :certificate_orders, -> { unscope(where: %i[workflow_state is_expired]) }
   has_many  :validations, through: :certificate_orders
   has_many  :validation_histories, through: :validations
-  attr_accessible :workflow_state
+  attr_protected :workflow_state
 
   EV_SEAL = 'ev'
   OV_SEAL = 'ov'
@@ -24,7 +24,7 @@ class SiteSeal < ApplicationRecord
   CONDITIONALLY_ACTIVATED = :conditionally_activated
   DEACTIVATED = :deactivated
   CANCELED = :canceled
-  
+
   ACTIVATE = 'activate'
   NEW_STATUS = 'site seal has not been activated yet'
   FULLY_ACTIVATED_STATUS = "site seal has been fully activated with all features"
@@ -126,9 +126,9 @@ class SiteSeal < ApplicationRecord
       select(&:can_publish_to_site_seal?).empty? &&
       preferred_artifacts_status == ACTIVATE
   end
-  
+
   def status
-    
+
   end
 
   def is_disabled?
