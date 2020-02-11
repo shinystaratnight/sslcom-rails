@@ -22,6 +22,7 @@ jQuery(function($) {
         optionElement.append('<%= model_value%>');
         $('select[id="physical_token_model_number"]').append(optionElement);
       <% end %>
+      onChangeModelNumber();
     }
 
     $(document).on('change', '#physical_token_manufacturer', function() {
@@ -46,7 +47,20 @@ jQuery(function($) {
           $('select[id="physical_token_model_number"]').append(optionElement);
         <% end %>
       }
+      onChangeModelNumber();
     });
+
+    function onChangeModelNumber() {
+      if ($('#physical_token_model_number').val() == 'Yubikey FIPS 140-2') {
+        $('.license').hide();
+        $('#physical_token_activation_pin').parent().find('label').text('PIN:');
+        $('#physical_token_admin_pin').parent().find('label').text('PUK:');
+      } else {
+        $('.license').show();
+        $('#physical_token_activation_pin').parent().find('label').text('Activation PIN:');
+        $('#physical_token_admin_pin').parent().find('label').text('Admin PIN:');
+      }
+    };
   });
 });
 </script>

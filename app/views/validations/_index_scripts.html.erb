@@ -678,8 +678,8 @@ jQuery(function($) {
         <%end%>
 
         if (!$(dcv_select).find(':selected').hasClass('cbEdit') &&
-          $('input[id="dcv_email_' + domain + '"]').css('display') == 'block') {
-          dcv_own_email = $('input[id="dcv_email_' + domain + '"]');
+          $('input[id="dcv_email_' + $(this).attr("alt") + '"]').css('display') == 'block') {
+          dcv_own_email = $('input[id="dcv_email_' + $(this).attr("alt") + '"]');
           new_email_opt = $(dcv_select).find('option[class="cbEdit"]')[0];
 
           if (/@/.test($(dcv_own_email).val())) {
@@ -717,8 +717,8 @@ jQuery(function($) {
             email_addr = methods[0].substr(methods[0].indexOf(':') + 2);
             $(instruction).html("Validation instructions will be emailed to "+email_addr+". Please follow those instructions.");
 
-            $('input[id="dcv_email_' + domain + '"]').val(email_addr);
-            $('input[id="dcv_email_' + domain + '"]').css('display', 'block');
+            $('input[id="dcv_email_' + $(this).attr("alt") + '"]').val(email_addr);
+            $('input[id="dcv_email_' + $(this).attr("alt") + '"]').css('display', 'block');
           }
           $('td.pretest[class~="'+$(dcv_select).attr("alt")+'"]').html("n/a");
         }
@@ -962,8 +962,8 @@ jQuery(function($) {
               });
         }
         else {
-          $('input[id="dcv_email_' + domain + '"]').css('display', 'block');
-          $('input[id="dcv_email_' + domain + '"]').attr('placeholder', methods[0]);
+          $('input[id="dcv_email_' + $(this).attr("alt") + '"]').css('display', 'block');
+          $('input[id="dcv_email_' + $(this).attr("alt") + '"]').attr('placeholder', methods[0]);
         }
 
         $(instruction).css({ background: "yellow" });

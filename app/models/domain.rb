@@ -1,15 +1,15 @@
-class Domain < CertificateName
-  belongs_to  :ssl_account, touch: true
-  has_many  :certificate_order_domains, dependent: :destroy
+# frozen_string_literal: true
 
-  #will_paginate
-  cattr_accessor :per_page
-  @@per_page = 10
+class Domain < CertificateName
+  include Pagable
+
+  belongs_to :ssl_account, touch: true
+  has_many :certificate_order_domains, dependent: :destroy
 
   scope :expired_validation, -> {
     joins(:domain_control_validations)
-        .where('domain_control_validations.id = (SELECT MAX(domain_control_validations.id) FROM domain_control_validations WHERE domain_control_validations.certificate_name_id = certificate_names.id)')
-        .where{(domain_control_validations.responded_at < DomainControlValidation::MAX_DURATION_DAYS[:email].days.ago.to_date)}
+      .where('domain_control_validations.id = (SELECT MAX(domain_control_validations.id) FROM domain_control_validations WHERE domain_control_validations.certificate_name_id = certificate_names.id)')
+      .where{(domain_control_validations.responded_at < DomainControlValidation::MAX_DURATION_DAYS[:email].days.ago.to_date)}
   }
 
   scope :search_domains, lambda {|term|
@@ -21,7 +21,7 @@ class Domain < CertificateName
       term.delete_if {|str| str =~ Regexp.new(fn.to_s + "\\:\\'?([^']*)\\'?"); filters[fn] ||= $1; $1}
     }
 
-    term = term.empty? ? nil : term.join(" ")
+    term = term.empty? ? nil : term.join(' ')
 
     return nil if [term, *(filters.values)].compact.empty?
 

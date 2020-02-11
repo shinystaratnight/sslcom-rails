@@ -219,7 +219,7 @@ class CertificateOrdersController < ApplicationController
 
             @is_reprocess = false
 
-            return render '/certificates/buy', :layout=>'application'
+            return render 'submit_csr', layout: 'application'
           end
           unless @certificate_order.certificate_content.csr_submitted? or params[:registrant]
             redirect_to certificate_order_path(@ssl_slug, @certificate_order)
@@ -287,7 +287,7 @@ class CertificateOrdersController < ApplicationController
 
         @is_reprocess = true
 
-        return render '/certificates/buy', :layout=>'application'
+        return render 'submit_csr', layout: 'application'
       end
     else
       not_found
@@ -312,7 +312,7 @@ class CertificateOrdersController < ApplicationController
           format.html {redirect_to confirm_funds_path(:id=>'certificate_order')}
         end
       else
-        format.html { render(:template => "certificates/buy")}
+        format.html { render template: 'submit_csr' }
       end
     end
   end
@@ -379,12 +379,12 @@ class CertificateOrdersController < ApplicationController
 
         if is_smime_or_client
           format.html { redirect_to recipient_certificate_order_path(@ssl_slug, @certificate_order.ref) }
-        elsif @certificate_order.is_express_signup? || @certificate_order.skip_contacts_step?
+        elsif @certificate_order.express_signup? || @certificate_order.skip_contacts_step?
           format.html { redirect_to validation_destination(slug: @ssl_slug, certificate_order: @certificate_order) }
-        else #assume ev full signup process
+        else # assume ev full signup process
           format.html { redirect_to certificate_content_contacts_path(@ssl_slug, cc) }
         end
-        format.xml  { head :ok }
+        format.xml { head :ok }
       else
         setup_registrant(
           params[:certificate_order][:certificate_contents_attributes]['0'][:registrant_attributes]
@@ -551,8 +551,8 @@ class CertificateOrdersController < ApplicationController
           format.html { redirect_to path }
         else
           @certificate = @certificate_order.certificate
-          format.html { render '/certificates/buy', :layout=>'application' }
-          format.xml  { render :xml => @certificate_order.errors, :status => :unprocessable_entity }
+          format.html { render 'submit_csr', layout: 'application' }
+          format.xml  { render xml: @certificate_order.errors, status: :unprocessable_entity }
         end
       end
     end
@@ -702,7 +702,7 @@ class CertificateOrdersController < ApplicationController
 
   def download_certificates
     cert_orders = CertificateOrder.where(id: params[:co_ids].split('/')).includes(:signed_certificates)
-  
+
     respond_to do |format|
       format.csv do
         send_data cert_orders.to_csv, filename: "certificates-#{DateTime.current.strftime("%Y-%m-%d_%H:%M:%S")}.csv"
@@ -1074,7 +1074,7 @@ class CertificateOrdersController < ApplicationController
 
   def load_certificate_order
     if current_user
-      @certificate_order=current_user.certificate_order_by_ref(params[:id])
+      @certificate_order = current_user.certificate_order_by_ref(params[:id])
 
       if @certificate_order.nil?
         co = current_user.ssl_accounts.includes(:certificate_orders).map(&:certificate_orders)
@@ -1251,7 +1251,7 @@ class CertificateOrdersController < ApplicationController
         flash[:error] = "Some error occurs while getting notification group data. Please try again."
         @certificate = @certificate_order.certificate
 
-        format.html { render '/certificates/buy', :layout=>'application' }
+        format.html { render 'submit_csr', layout: 'application' }
       end
     else
       # Saving notification group info
@@ -1279,7 +1279,7 @@ class CertificateOrdersController < ApplicationController
         flash[:error] = "Some error occurs while saving notification group data. Please try again."
         @certificate = @certificate_order.certificate
 
-        format.html { render '/certificates/buy', :layout=>'application' }
+        format.html { render 'submit_csr', layout: 'application' }
       end
     end
 
@@ -1302,7 +1302,7 @@ class CertificateOrdersController < ApplicationController
     #     flash[:error] = "Some error occurs while saving notification group data. Please try again."
     #     @certificate = @certificate_order.certificate
     #
-    #     format.html { render '/certificates/buy', :layout=>'application' }
+    #     format.html { render 'submit_csr', :layout=>'application' }
     #   end
     # else
     #   notification_group = current_user.ssl_account.notification_groups.where(ref: params[:notification_group]).first
@@ -1311,7 +1311,7 @@ class CertificateOrdersController < ApplicationController
     #     flash[:error] = "Some error occurs while getting notification group data. Please try again."
     #     @certificate = @certificate_order.certificate
     #
-    #     format.html { render '/certificates/buy', :layout=>'application' }
+    #     format.html { render 'submit_csr', :layout=>'application' }
     #   end
     # end
 
@@ -1633,7 +1633,7 @@ class CertificateOrdersController < ApplicationController
     #     flash[:error] = "Some error occurs while adding this csr to the csr manager."
     #     @certificate = @certificate_order.certificate
     #
-    #     format.html { render '/certificates/buy', :layout=>'application' }
+    #     format.html { render 'submit_csr', :layout=>'application' }
     #   end
     #
     #   @certificate_order.managed_csrs << managed_csr
@@ -1654,7 +1654,7 @@ class CertificateOrdersController < ApplicationController
         flash[:error] = "Some error occurs while adding this csr to the csr manager."
         @certificate = @certificate_order.certificate
 
-        format.html { render '/certificates/buy', :layout=>'application' }
+        format.html { render 'submit_csr', layout: 'application' }
       end
 
       @certificate_order.managed_csrs << managed_csr

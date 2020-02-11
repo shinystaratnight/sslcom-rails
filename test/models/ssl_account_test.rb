@@ -1,3 +1,26 @@
+# == Schema Information
+#
+# Table name: ssl_accounts
+#
+#  id                     :integer          not null, primary key
+#  acct_number            :string(255)
+#  roles                  :string(255)      default([])
+#  created_at             :datetime
+#  updated_at             :datetime
+#  status                 :string(255)
+#  ssl_slug               :string(255)
+#  company_name           :string(255)
+#  issue_dv_no_validation :string(255)
+#  billing_method         :string(255)      default("monthly")
+#  duo_enabled            :boolean
+#  duo_own_used           :boolean
+#  sec_type               :string(255)
+#  default_folder_id      :integer
+#  no_limit               :boolean          default(FALSE)
+#  epki_agreement         :datetime
+#  workflow_state         :string(255)      default("active")
+#
+
 require 'test_helper'
 
 class SslAccountTest < Minitest::Spec

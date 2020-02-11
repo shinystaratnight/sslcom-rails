@@ -1,34 +1,27 @@
+# frozen_string_literal: true
+
 class NotificationGroup < ApplicationRecord
+  include Pagable
+
   belongs_to :ssl_account
 
   has_many  :notification_groups_contacts, dependent: :destroy
-  has_many  :contacts, through: :notification_groups_contacts,
-            source: :contactable, source_type: 'Contact'
+  has_many  :contacts, through: :notification_groups_contacts, source: :contactable, source_type: 'Contact'
   has_many  :notification_groups_subjects, dependent: :destroy
-  has_many  :certificate_orders, through: :notification_groups_subjects,
-            source: :subjectable, source_type: 'CertificateOrder'
-  has_many  :certificate_contents, through: :notification_groups_subjects,
-            source: :subjectable, source_type: 'CertificateContent'
-  has_many  :certificate_names, through: :notification_groups_subjects,
-            source: :subjectable, source_type: 'CertificateName'
+  has_many  :certificate_orders, through: :notification_groups_subjects, source: :subjectable, source_type: 'CertificateOrder'
+  has_many  :certificate_contents, through: :notification_groups_subjects, source: :subjectable, source_type: 'CertificateContent'
+  has_many  :certificate_names, through: :notification_groups_subjects, source: :subjectable, source_type: 'CertificateName'
   has_many  :schedules
   has_many  :scan_logs
 
   attr_accessor :ssl_client
 
-  preference  :notification_group_triggers, :string
-
-  # validates :friendly_name, allow_nil: false, allow_blank: false,
-  #           length: { minimum: 1, maximum: 255 }
+  preference :notification_group_triggers, :string
 
   before_create do |ng|
     ng.ref = 'ng-' + SecureRandom.hex(1) + Time.now.to_i.to_s(32)
     ng.friendly_name = ng.ref if ng.friendly_name.blank?
   end
-
-  # will_paginate
-  cattr_accessor :per_page
-  @@per_page = 10
 
   def to_param
     ref
@@ -341,11 +334,11 @@ class NotificationGroup < ApplicationRecord
 
     unless results.empty? or contacts.empty?
       results.each do |result|
-        unless SentReminder.exists?(trigger_value: [result.before, result.after].join(", "),
-                                    expires_at: result.expire,
-                                    subject: result.domain,
-                                    recipients: contacts.uniq.join(";"),
-                                    reminder_type: result.reminder_type)
+        # only email in the event a change of status occurred
+        if SentReminder.order("created_at DESC").find_by(trigger_value: [result.before, result.after].join(", "),
+                               expires_at: result.expire,
+                               subject: result.domain,
+                               recipients: contacts.uniq.join(";")).try(:reminder_type)!=result.reminder_type
           logger.info "Sending reminder"
           d = [",," + contacts.uniq.join(";")]
           body = Reminder.domain_digest_notice(d, result, self)

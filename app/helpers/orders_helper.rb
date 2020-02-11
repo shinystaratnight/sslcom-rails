@@ -102,7 +102,7 @@ module OrdersHelper
         element.attributes_before_type_cast["amount"].to_f}
     order
   end
-  
+
   def domains_adjustment_order
     if current_user
       amount       = Money.new(params[:order_amount].to_f * 100)
@@ -114,7 +114,7 @@ module OrdersHelper
       order
     end
   end
-  
+
   def current_order_reprocess_ucc
     if current_user
       @ssl_account = @certificate_order.ssl_account
@@ -197,7 +197,7 @@ module OrdersHelper
       unless current_user.ssl_account.can_buy?(certificate)
         flash.now[:error] = "Certificate belongs to a pricing tier which differs
           from your reseller tier level"
-        return render(:template => "/certificates/buy", :layout=>"application")
+        return render(:template => "submit_csr", :layout=>"application")
       else
         certificate_order.ssl_account = current_user.ssl_account
       end
@@ -212,7 +212,7 @@ module OrdersHelper
   def is_order_free?
     current_order.amount.to_s.to_i<=0
   end
-  
+
   def confirm_affiliate_sale
     # @order.reload
     if !@order.domains_adjustment? && !@order.invoice_payment? && !@order.on_payable_invoice?
@@ -236,7 +236,7 @@ module OrdersHelper
       order.class.name
     end
   end
-  
+
   def log_declined_transaction(transaction, last_four)
     unless current_user.nil?
       fa       = current_user.ssl_account.funded_account
@@ -274,23 +274,23 @@ module OrdersHelper
     return false if !declined || (declined && cards && cards.any? && cards.count < 2)
     declined && next_try && (next_try > DateTime.now)
   end
-  
+
   def order_invoice_notes
     "Payment for #{@invoice.get_type_format.downcase} invoice total of #{@invoice.get_amount_format} due on #{@invoice.end_date.strftime('%F')}."
   end
-  
+
   def ucc_csr_submit_notes
     "Initial CSR submit, UCC domains adjustment (certificate order: #{@certificate_order.ref}, certificate content: #{@certificate_content.ref})"
   end
-  
+
   def renew_ucc_notes
     "Renewal UCC domains adjustment (certificate order: #{@certificate_order.ref}, certificate content: #{@certificate_content.ref})"
   end
-  
+
   def reprocess_ucc_notes
     "Reprocess UCC (certificate order: #{@certificate_order.ref}, certificate content: #{@certificate_content.ref})"
   end
-  
+
   def smime_client_enrollment_notes(emails_count=nil)
     "S/MIME or Client enrollment for #{emails_count} emails."
   end
@@ -305,12 +305,12 @@ module OrdersHelper
         current_user.ssl_account
       end
     end
-    
-    unless params[:funding_source].nil? || 
+
+    unless params[:funding_source].nil? ||
       (params[:funding_source] && params[:funding_source] == 'paypal')
       existing_card = @ssl_account.billing_profiles.find(params[:funding_source])
     end
-    
+
     @funded_amount       = order[:funded_amount].to_f
     @order_amount        = order[:order_amount].to_f
     @charge_amount       = order[:charge_amount].to_f
@@ -320,13 +320,13 @@ module OrdersHelper
     @credit_card         = @profile.build_credit_card
     @funded_account_init = @ssl_account.funded_account.cents
     @target_amount       = (@charge_amount.blank? || @charge_amount == 0) ? @order_amount : @charge_amount
-    
+
     if @reprocess_ucc || @renew_ucc || @ucc_csr_submit
       @certificate_order   = @ssl_account.cached_certificate_orders.find_by(ref: order[:co_ref])
       @certificate_content = @certificate_order.certificate_contents.find_by(ref: order[:cc_ref])
     end
   end
-  
+
   def withdraw_funded_account(credit_amount, full_amount=0)
     @order.save unless @order.persisted?
     order_amount = @order_amount || full_amount
@@ -337,7 +337,7 @@ module OrdersHelper
     notes << "for renewal UCC domains adjustment." if @renew_ucc
     notes << "for initial CSR submit UCC domains adjustment." if @ucc_csr_submit
     notes << "for #{@invoice.get_type_format.downcase} invoice ##{@invoice.reference_number}." if @payable_invoice
-    
+
     fund = Deposit.create(
       amount:         credit_amount,
       full_name:      "Team #{@ssl_account.get_team_name} funded account",
@@ -345,7 +345,7 @@ module OrdersHelper
       last_digits:    'N/A',
       payment_method: 'Funded Account'
     )
-    
+
     @funded = @ssl_account.purchase fund
     @funded.description = 'Funded Account Withdrawal'
     @funded.notes = notes
@@ -354,7 +354,7 @@ module OrdersHelper
     @ssl_account.funded_account.decrement! :cents, credit_amount
     @ssl_account.funded_account.save
   end
-  
+
   def get_order_notes
     return reprocess_ucc_notes if @reprocess_ucc
     return order_invoice_notes if @payable_invoice
@@ -363,40 +363,40 @@ module OrdersHelper
     return smime_client_enrollment_notes('') if @order.is_a?SmimeClientEnrollmentOrder
     ''
   end
-  
+
   def get_order_descriptions
     return Order::DOMAINS_ADJUSTMENT if @reprocess_ucc || @renew_ucc || @ucc_csr_submit
     return (@ssl_account.get_invoice_pmt_description) if @payable_invoice
     return Order::S_OR_C_ENROLLMENT if @order.is_a?SmimeClientEnrollmentOrder
     Order::SSL_CERTIFICATE
   end
-  
+
   def ucc_update_domain_counts
     co = @certificate_order
     notes = []
     order = params[:order]
     reseller_tier = @tier || find_tier
-    
+
     # domains entered
     wildcard = order ? order[:wildcard_count].to_i : params[:wildcard_count].to_i
     nonwildcard = order ? order[:nonwildcard_count].to_i : params[:nonwildcard_count].to_i
-    
+
     # max domain counts stored
     co_nonwildcard = co.nonwildcard_count.blank? ? 0 : co.nonwildcard_count
     co_wildcard = co.wildcard_count.blank? ? 0 : co.wildcard_count
-    
+
     # max for previous signed certificates to determine credited domains
     prev_wildcard    = co.get_reprocess_max_wildcard(co.certificate_content).count
     prev_nonwildcard = co.get_reprocess_max_nonwildcard(co.certificate_content).count
 
     if (co_nonwildcard > prev_nonwildcard) &&
-      ((nonwildcard > co_nonwildcard) || (@reprocess_ucc && 
+      ((nonwildcard > co_nonwildcard) || (@reprocess_ucc &&
       (nonwildcard >= co_nonwildcard && (nonwildcard > 0))))
       notes << "#{co_nonwildcard - prev_nonwildcard} non wildcard domains"
     end
-    
+
     if (co_wildcard > prev_wildcard) &&
-      ((wildcard > co_wildcard) || (@reprocess_ucc && 
+      ((wildcard > co_wildcard) || (@reprocess_ucc &&
       (wildcard >= co_wildcard && (wildcard > 0))))
       notes << "#{co_wildcard - prev_wildcard} wildcard domains"
     end
@@ -407,7 +407,7 @@ module OrdersHelper
     co.update( nonwildcard_count: new_nonwildcard, wildcard_count: new_wildcard )
     @order.max_non_wildcard = new_nonwildcard
     @order.max_wildcard = new_wildcard
-    
+
     if reseller_tier
       @order.reseller_tier_id = ResellerTier.find_by(label: find_tier.delete('tr')).try(:id)
     end
@@ -419,20 +419,20 @@ module OrdersHelper
     @order.lock!
     @order.save
   end
-  
+
   def purchase_successful?
     return false unless (ActiveMerchant::Billing::Base.mode == :test ? true : @credit_card.valid?)
-    
+
     @order.description = get_order_descriptions
-    
+
     other_order = @reprocess_ucc || @renew_ucc || @payable_invoice
-    
+
     options = @profile.build_info(@order.description.gsub('Payment', 'Pmt')).merge(
       stripe_card_token: params[:billing_profile][:stripe_card_token],
       owner_email: current_user.nil? ? params[:user][:email] : current_user.ssl_account.get_account_owner.email
     )
     options.merge!(amount: (@target_amount.to_f * 100).to_i) if other_order
-    
+
     @gateway_response = @order.purchase(@credit_card, options)
     log_declined_transaction(@gateway_response, @credit_card.number.last(4)) unless @gateway_response.success?
     (@gateway_response.success?).tap do |success|

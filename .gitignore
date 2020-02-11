@@ -33,3 +33,11 @@ node_modules
 .byebug_history
 sandbox_ssl_com.sql
 ubuntu-xenial-16.04-cloudimg-console.log
+public/assets
+test/.nyc_output
+test/cypress/videos
+test/reports
+test/cypress/screenshots/authentication_spec.js
+public/uploads
+000/000
+nbproject

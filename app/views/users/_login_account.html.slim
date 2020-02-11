@@ -1,0 +1,12 @@
+ul
+  li
+    strong
+      | login account
+  li username: #{user.login} 
+  li email: #{user.email}
+  li account number: #{user.ssl_account.acct_number}
+  li roles: #{user.role_symbols.join('/')}
+  li=link_to 'edit email address', edit_email_users_url
+  li=link_to 'change password', edit_password_users_url
+  -permitted_to? :edit_settings, current_user.ssl_account do
+    li=link_to "settings", edit_settings_ssl_account_path(ssl_slug: ssl_slug)

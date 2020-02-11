@@ -2,19 +2,18 @@
 require 'resolv'
 
 class CertificateName < ApplicationRecord
+  include Pagable
+
   belongs_to  :certificate_content
-  has_one :certificate_order, through: :certificate_content
+  has_one   :certificate_order, through: :certificate_content
   has_many    :signed_certificates, through: :certificate_content
   has_many    :caa_checks, as: :checkable
   has_many    :ca_certificate_requests, as: :api_requestable, dependent: :destroy
   has_many    :ca_dcv_requests, as: :api_requestable, dependent: :destroy
   has_many    :ca_dcv_resend_requests, as: :api_requestable, dependent: :destroy
-  has_many    :validated_domain_control_validations, -> { where(workflow_state: "satisfied")},
-              class_name: "DomainControlValidation"
-  has_many    :last_sent_domain_control_validations, -> { where{email_address !~ 'null'}},
-              class_name: "DomainControlValidation"
-  has_one :domain_control_validation, -> { order 'created_at' }, class_name: "DomainControlValidation",
-              unscoped: true
+  has_many    :validated_domain_control_validations, -> { where(workflow_state: "satisfied")}, class_name: "DomainControlValidation"
+  has_many    :last_sent_domain_control_validations, -> { where{email_address !~ 'null'}}, class_name: "DomainControlValidation"
+  has_one :domain_control_validation, -> { order 'created_at' }, class_name: "DomainControlValidation", unscoped: true
   has_many    :domain_control_validations, dependent: :destroy do
     def last_sent
       where{email_address !~ 'null'}.last
@@ -86,10 +85,6 @@ class CertificateName < ApplicationRecord
 
     result.uniq.order(created_at: :desc)
   }
-
-  #will_paginate
-  cattr_accessor :per_page
-  @@per_page = 10
 
   def is_ip_address?
     name.index(/\A(?:[0-9]{1,3}\.){3}[0-9]{1,3}\z/)==0 if name
@@ -296,9 +291,9 @@ class CertificateName < ApplicationRecord
         begin
           d=::PublicSuffix.parse(dname)
           whois=Whois.whois(ActionDispatch::Http::URL.extract_domain(d.domain, 1)).to_s
-          whois_addresses = WhoisLookup.email_addresses(whois)
+          whois_addresses = WhoisLookup.email_addresses(whois.gsub(/^.*?abuse.*?$/i,"")) # remove any line with 'abuse'
           whois_addresses.each do |ad|
-            standard_addresses << ad.downcase unless ad =~/abuse.*?@/i
+            standard_addresses << ad.downcase
           end unless whois_addresses.blank?
         rescue Exception=>e
           Logger.new(STDOUT).error e.backtrace.inspect
@@ -337,7 +332,7 @@ class CertificateName < ApplicationRecord
     name=CertificateContent.non_wildcard_name(name,false)
     Rails.cache.fetch("CertificateName.candidate_email_addresses/#{name}",
                       expires_in: DomainControlValidation::EMAIL_CHOICE_CACHE_EXPIRES_DAYS.days) do
-      # Delayed::Job.enqueue WhoisJob.new(name,certificate_name) # need to be able to filter out registrar's email
+      Delayed::Job.enqueue WhoisJob.new(name,certificate_name)
       DomainControlValidation.global.find_by_subject(name).try(:candidate_addresses) ||
           DomainControlValidation.email_address_choices(name)
     end
@@ -351,7 +346,7 @@ class CertificateName < ApplicationRecord
     CertificateContent.where{id >> cert_names.map(&:certificate_content_id)}.update_all(updated_at: Time.now)
     standard_addresses=CertificateName.candidate_email_addresses(dname)
     standard_addresses << email_address
-    DomainControlValidation.global.find_or_create_by(subject: dname).update_column(
+    DomainControlValidation.global.find_or_create_by(subject: dname.gsub(/\A\*\./, "").downcase).update_column(
         :candidate_addresses, standard_addresses)
   end
 end

@@ -21,7 +21,7 @@ module CertificateType
           is_client_enterprise? || is_client_business?
     end
   end
-  
+
   def is_ev?
     if self.is_a? SignedCertificate
       !!(decoded.include?(SignedCertificate::OID_EV))
@@ -78,7 +78,7 @@ module CertificateType
 
   def is_client?
     if self.is_a? SignedCertificate
-      !!(decoded.include?("TLS Web Client Authentication"))
+      !!(decoded.include?("TLS Web Client Authentication")) and !(decoded.include?("TLS Web Server Authentication"))
     else
       (self.is_a?(ApiCertificateRequest) ? target_certificate :  self).product.include?('personal')
     end
@@ -280,7 +280,7 @@ J9RHjboNRhx3zxSkHLmkMcScKHQDNP8zGSal6Q10tz6XxnboJ5ajZt3hrvJBW8qY
 VoNzcOSGGtIxQbovvi0TWnZvTuhOgQ4/WwMioBK+ZlgRSssDxLQqKi2WF+A5VLxI
 03YnnZotBqbJ7DnSq9ufmgsnAjUpsUCV5/nonFWIGUbWtzT1fs45mtk48VH3Tyw=
   EOS
-  
+
   CERTUM_XSIGN_EV = <<-EOS
 MIIF3jCCBMagAwIBAgIQYvgSo19SvXS3GNYQrEtHgzANBgkqhkiG9w0BAQsFADB+
 MQswCQYDVQQGEwJQTDEiMCAGA1UEChMZVW5pemV0byBUZWNobm9sb2dpZXMgUy5B
@@ -423,5 +423,3 @@ bn1lIK8VMmDTyhOfAf2W08g3l2j49t6bZJJGTw==
 -----END CERTIFICATE REQUEST-----
   EOS
 end
-
-

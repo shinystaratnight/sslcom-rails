@@ -2,9 +2,6 @@
 
 require:
   - rubocop/cop/internal_affairs
-  - rubocop-performance
-  - rubocop-rails
-  - rubocop-minitest
 
 AllCops:
   Exclude:
@@ -14,11 +11,10 @@ AllCops:
     - 'bin/*'
     - 'config/**/*.yml'
     - 'db/**/*'
-  TargetRubyVersion: 2.6
+  TargetRubyVersion: 2.5
 
-Rails:
-  Enabled: true
-
+Bundler/OrderedGems:
+  Enabled: false
 Style/FormatStringToken:
   Enabled: false
 Style/Documentation:
@@ -37,18 +33,16 @@ Style/EvalWithLocation:
   Enabled: false
 Style/StructInheritance:
   Enabled: false
+Style/DoubleNegation:
+  Enabled: false
+Style/NestedTernaryOperator:
+  Exclude:
+    - 'app/controllers/application_controller.rb'
 
 Security/Eval:
   Exclude:
     - app/models/notification_group.rb
-
-Layout/HashAlignment:
-  EnforcedHashRocketStyle:
-    - key
-    - table
-  EnforcedColonStyle:
-    - key
-    - table
+    - app/models/ssl_account.rb
 
 Layout/EndOfLine:
   EnforcedStyle: lf
@@ -69,46 +63,42 @@ Layout/ClassStructure:
       - protected_methods
       - private_methods
 
-# Trailing white space is meaningful in code examples
-Layout/TrailingWhitespace:
-  AllowInHeredoc: true
-
 Layout/SpaceBeforeBlockBraces:
   Enabled: false
 
 Lint/AmbiguousBlockAssociation:
   Enabled: true
+Lint/AssignmentInCondition:
+  Enabled: false
 Lint/InterpolationCheck:
   Enabled: true
 Lint/UselessAccessModifier:
   MethodCreatingMethods:
     - 'def_matcher'
     - 'def_node_matcher'
+Lint/UselessAssignment:
+  Exclude:
+    - app/models/ssl_account.rb
 Lint/BooleanSymbol:
   Enabled: false
 Lint/IneffectiveAccessModifier:
-  Exclude:
-    - app/models/product_order.rb
+  Enabled: false
 Lint/Void:
   Exclude:
     - config/deploy.rb
     - app/models/product_order.rb
+    - app/models/ssl_account.rb
 Lint/EmptyWhen:
   Exclude:
     - app/models/product_order.rb
+Lint/ShadowingOuterLocalVariable:
+  Exclude:
+    - app/models/ssl_account.rb
 
-Metrics:
+Metrics/LineLength:
   Enabled: false
-
-Rails/Output:
+Metrics/BlockLength:
   Enabled: false
-Rails/HasAndBelongsToMany:
-  Enabled: false
-Rails/RelativeDateConstant:
-  Enabled: false
-Rails/SkipsModelValidations:
-  Enabled: false
-
 Metrics/ModuleLength:
   Enabled: false
 
@@ -116,7 +106,7 @@ Naming/FileName:
   Exclude:
     - lib/rubocop-rails.rb
 
-Naming/MethodParameterName:
-  Enabled: false
 Naming/PredicateName:
+  Enabled: false
+Naming/AccessorMethodName:
   Enabled: false

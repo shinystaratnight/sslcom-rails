@@ -1,6 +1,6 @@
 - unless @taggable.nil?
   - selected_tags = Tag.get_all_tag_names(@taggable)
-  
+
   - placeholder = case @taggable.class.to_s
   - when 'Order'
     - "order transaction #{@taggable.reference_number}"
@@ -10,5 +10,4 @@
     - "end-entity certificate #{@taggable.label}"
 
   = form_tag send("update_tags_#{@taggable.class.base_class.to_s.underscore}_path", @ssl_slug, @taggable), remote: true do
-    = select_tag :tags_list, options_for_select(@team_tags.pluck(:name), selected: selected_tags), |
-      multiple: true, data: {placeholder: "click here to add/remove/edit searchable tags for #{placeholder}"}
+    = select_tag :tags_list, options_for_select(@team_tags&.pluck(:name) || Tag.none, selected: selected_tags), multiple: true, data: {placeholder: "click here to add/remove/edit searchable tags for #{placeholder}"}

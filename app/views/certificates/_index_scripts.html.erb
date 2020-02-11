@@ -4,14 +4,14 @@ jQuery(function($) {
   var ucc_reprocess = $('#calculated_reprocess_price');
   var names = '';
   var removed_domains = [];
-  
+
   if (ucc_reprocess.length) {
     var wildcard_cost = $('#ucc-wildcard-amount').data('cost');
     wildcard_cost = (typeof wildcard_cost =='undefined') ? '0.00' : wildcard_cost;
     $('#order_wildcard_amount').val(wildcard_cost);
     $('#order_nonwildcard_amount').val($('#ucc-nonwildcard-amount').data('cost'));
   }
-  
+
   $.uniqueStrings = function(list) {
     var result = [];
     $.each(list, function(i, e) {
@@ -41,7 +41,7 @@ jQuery(function($) {
       return true;
     }
   };
-  
+
   <%if Settings.csr_domains_ui%>
     $.domains = function(all_domains){
       removed_domains = [];
@@ -102,7 +102,7 @@ jQuery(function($) {
       return valid_domains.filter(Boolean);
     };
   <%end%>
-  
+
   $('#previous_csr').change(function(){
     if($(this).is(':checked')) {
       $('#certificate_order_certificate_contents_attributes_0_signing_request').val($('#previous_csr_body').val());
@@ -119,13 +119,13 @@ jQuery(function($) {
   $('span.use_previous_csr').click(function(){
     $('#previous_csr').click();
   });
-  
+
   $.removeFromArray = function(value, arr) {
       return jQuery.grep(arr, function(elem, index) {
           return elem !== value;
       });
   };
-  
+
   $.extractWildcards = function(domains) {
     var wildcards;
     if ( $('#ucc-wildcard-amount').length ) {
@@ -137,7 +137,7 @@ jQuery(function($) {
     }
     return wildcards.length;
   };
-  
+
   $.getAllDomainCounts = function(domains) {
     var init_nonwildcard = $('#ucc-nonwildcard-amount').data('initial-count'),
         wildcard         = $('#ucc-wildcard-amount');
@@ -270,15 +270,15 @@ jQuery(function($) {
   $.updateOrderDescription  = function(args) {
     var wildcard_data = $('#ucc-wildcard-amount').data('cost'),
       wildcard_cost = (typeof wildcard_data =='undefined') ? '0.00' : wildcard_data;
-    
-    $('#order_order_description').val('Prorated charge for ' 
+
+    $('#order_order_description').val('Prorated charge for '
       + (args.addt_nonwildcard + args.addt_wildcard)
       + ' additional domains: (wildcard: ' + args.addt_wildcard + ' x $' + wildcard_cost
       + ', non wildcard: ' + args.addt_nonwildcard + ' x $'
       + $('#ucc-nonwildcard-amount').data('cost') + '). '
-      + 'Used ' + args.cur_wildcard + ' of ' + args.init_wildcard 
+      + 'Used ' + args.cur_wildcard + ' of ' + args.init_wildcard
       + ' available wildcard domains and '
-      + args.cur_nonwildcard + ' of ' + args.init_nonwildcard 
+      + args.cur_nonwildcard + ' of ' + args.init_nonwildcard
       + ' available non wildcard domains.'
     );
   };
@@ -306,7 +306,7 @@ jQuery(function($) {
 
     return results;
   };
-  
+
   $("textarea[name*=signing_request]").click(function(){
     $(this).select();
   });
@@ -349,7 +349,6 @@ jQuery(function($) {
             + data['common_name'] + days_left + "</span></div>");
 
           $('#common_name').val(data['common_name']);
-
           var csr_names = [];
           // adjust domain price.
           <% if @certificate.is_ucc?-%>
@@ -462,7 +461,7 @@ jQuery(function($) {
       });
     }
   });
-  
+
   <% unless @certificate.is_code_signing? || Rails.env.test? %>
     $("textarea[name*=signing_request]").bind("change paste", function() {
       if ($(this).val() == "") {
@@ -512,10 +511,9 @@ jQuery(function($) {
                 <%else%>
                   var days_left = "";
                 <%end%>
-                $(".cert_reqs").after("<div class='flash_message notice'><span class='ajax_info'>common name field in csr is: "+data.certificate_content.csr.common_name+days_left+"</span></div>");
-                $('#common_name').val(data.certificate_content.csr.common_name);
               }
 
+              $('#common_name').val(data.certificate_content.csr.common_name);
               <%if @certificate.is_ucc?-%>
                 if((typeof data.certificate_content.csr.subject_alternative_names != 'undefined')){
                   <%if Settings.csr_domains_ui%>
@@ -1037,7 +1035,7 @@ jQuery(function($) {
           return false;
         }
       });
-      
+
       <% if !@request %>
         if($(':radio[name*=has_csr]:checked').val()=="false"){
           show_csr=false;
@@ -1045,7 +1043,7 @@ jQuery(function($) {
           $('#form_progress_indicator').hide();
         }
       <% end %>
-      
+
       $('.add_to_cart_button').click(function(){
         $.change_cart_items("add");
       });

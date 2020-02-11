@@ -325,7 +325,7 @@ SslCom::Application.routes.draw do
 
       collection do
         get :certificate_orders_domains_contacts
-        post :search
+        get :search
         post :register_notification_group
         post :remove_groups
         post :scan_groups
@@ -512,6 +512,8 @@ SslCom::Application.routes.draw do
       match :enable_disable_duo, via: %i[put patch]
       get :show_user
       get :reset_failed_login_count
+      match :upload_avatar, format: /(js|json)/, via: %i[put patch]
+      get :avatar, format: /(js|json)/
     end
 
     member do
