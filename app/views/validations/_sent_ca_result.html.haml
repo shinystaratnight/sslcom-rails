@@ -10,7 +10,7 @@
       -unique_id=SslcomCaApi.unique_id(approval_id)
       -if unique_id
         %dd=link_to "click to approve",
-          "#{Rails.application.secrets.sslcom_ca_admin_host}/ejbca/adminweb/approval/approveaction.jsf?uniqueId=#{unique_id}", target: "_blank"
+          "#{Rails.application.secrets.sslcom_ca_admin_host}/ejbca/adminweb/approval/approvalaction.xhtml?uniqueId=#{unique_id}", target: "_blank"
   -elsif !ca_response.response.blank?
     -result=CGI::parse(ca_response.response)
     -if result['errorCode'][0]=~/^[0]/
