@@ -32,6 +32,8 @@ plugins:
         enabled: false
       Rubocop/Metrics/BlockNesting:
         enabled: false
+      Rubocop/Style/RedundantFreeze:
+        enabled: false
   sass-lint:
     enabled: true
     checks:
