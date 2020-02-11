@@ -35,8 +35,8 @@ class Reseller < ApplicationRecord
   belongs_to  :reseller_tier
   easy_roles  :roles
 
-  attr_accessible  :reseller_tier
-  
+  attr_protected  :reseller_tier
+
   PROFILE_COLUMNS = %w(display_name tagline description)
   COMPANY_COLUMNS = %w(organization website address1 address2 address3 postal_code city state country)
   ADMIN_COLUMNS = %w(first_name last_name email phone ext fax)
