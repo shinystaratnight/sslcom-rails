@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-#
 # == Schema Information
 #
 # Table name: certificate_names
@@ -30,101 +29,12 @@ require 'resolv'
 
 class CertificateName < ApplicationRecord
   include Pagable
-
-  belongs_to :certificate_content
-  belongs_to :ssl_account, class_name: 'SslAccount', foreign_key: 'ssl_account_id'
-
-  has_one :certificate_order, through: :certificate_content
-  has_many    :signed_certificates, through: :certificate_content
-  has_many    :caa_checks, as: :checkable
-  has_many    :ca_certificate_requests, as: :api_requestable, dependent: :destroy
-  has_many    :ca_dcv_requests, as: :api_requestable, dependent: :destroy
-  has_many    :ca_dcv_resend_requests, as: :api_requestable, dependent: :destroy
-  has_many    :validated_domain_control_validations, -> { where(workflow_state: 'satisfied') }, class_name: 'DomainControlValidation'
-  has_many    :last_sent_domain_control_validations, -> { where{ email_address !~ 'null' } }, class_name: 'DomainControlValidation'
-  has_one :domain_control_validation, -> { order 'created_at' }, class_name: 'DomainControlValidation', unscoped: true
-  has_many :domain_control_validations, dependent: :destroy do
-    def last_sent
-      where{ email_address !~ 'null' }.last
-    end
-
-    def last_emailed
-      where{ (email_address !~ 'null') & (dcv_method >> [nil, 'email']) }.last
-    end
-
-    def last_method
-      where{ dcv_method >> %w[http https email cname] }.last
-    end
-
-    def validated
-      where{ workflow_state == 'satisfied' }.last
-    end
-  end
-  has_many    :notification_groups_subjects, as: :subjectable
-  has_many    :notification_groups, through: :notification_groups_subjects
+  include Concerns::CertificateName::Association
+  include Concerns::CertificateName::Scope
+  include Concerns::CertificateName::Verification
 
   attr_accessor :csr
   delegate :all_domains_validated?, to: :certificate_content, prefix: false, allow_nil: true
-
-  scope :find_by_domains, ->(domains){ includes(:domain_control_validations).where{ name >> domains } }
-  scope :validated, ->{ joins(:domain_control_validations).where{ domain_control_validations.workflow_state == 'satisfied' } }
-  scope :having_dvc, -> { joins(:domain_control_validations).group('domain_control_validations.id').having('count(*) > ?', 0) }
-  scope :last_domain_control_validation, ->{ joins(:domain_control_validations).limit(1) }
-  scope :expired_validation, ->{
-    joins(:domain_control_validations)
-        .where('domain_control_validations.id = (SELECT MAX(domain_control_validations.id) FROM domain_control_validations WHERE domain_control_validations.certificate_name_id = certificate_names.id)')
-        .where{ (domain_control_validations.responded_at < DomainControlValidation::MAX_DURATION_DAYS[:email].days.ago.to_date) }
-  scope :last_domain_control_validation, ->{ joins(:domain_control_validations).limit(1) }
-  scope :expired_validation, ->{
-    joins(:domain_control_validations)
-      .where('domain_control_validations.id = (SELECT MAX(domain_control_validations.id) FROM domain_control_validations WHERE domain_control_validations.certificate_name_id = certificate_names.id)')
-      .where{ (domain_control_validations.responded_at < DomainControlValidation::MAX_DURATION_DAYS[:email].days.ago.to_date) }
-  }
-  scope :unvalidated, ->{
-    satisfied = <<~SQL
-    SELECT COUNT(domain_control_validations.id) FROM domain_control_validations
-    WHERE certificate_name_id = certificate_names.id AND workflow_state='satisfied'
-    SQL
-    total = <<~SQL
-    SELECT COUNT(domain_control_validations.id) FROM domain_control_validations
-    WHERE certificate_name_id = certificate_names.id
-    SQL
-    where "(#{total}) >= 0 AND (#{satisfied}) = 0"
-  }
-  scope :sslcom, ->{ joins{ certificate_content }.where.not certificate_contents: {ca_id: nil} }
-  scope :global, -> { where{ (certificate_content_id == nil) & (ssl_account_id == nil) & (acme_account_id == nil) } }
-  scope :search_domains, lambda { |term|
-    term ||= ''
-    term = term.strip.split(/\s(?=(?:[^']|'[^']*')*$)/)
-    filters = { email: nil, name: nil, expired_validation: nil }
-
-    filters.each { |fn, fv|
-      term.delete_if { |str| str =~ Regexp.new(fn.to_s + "\\:\\'?([^']*)\\'?"); filters[fn] ||= $1; $1 }
-    }
-
-    term = term.empty? ? nil : term.join(' ')
-
-    return nil if [term, *filters.values].compact.empty?
-
-    result = self.all
-    unless term.blank?
-      result = result.where{
-        (email =~ "%#{term}%") |
-        (name =~ "%#{term}%")
-      }
-    end
-
-    %w[expired_validation].each do |field|
-      query = filters[field.to_sym]
-      result = result.expired_validation if query
-    end
-
-    result.uniq.order(created_at: :desc)
-  }
-
-  after_initialize do
-    generate_acme_token if acme_token.blank?
-  end
 
   def is_ip_address?
     name&.index(/\A(?:[0-9]{1,3}\.){3}[0-9]{1,3}\z/)&.zero?
@@ -158,7 +68,7 @@ class CertificateName < ApplicationRecord
   end
 
   def last_dcv
-    (domain_control_validations.last.try(:dcv_method) =~ /https?/) ? domain_control_validations.last : domain_control_validations.last_sent
+    domain_control_validations.last.try(:dcv_method) =~ /https?/ ? domain_control_validations.last : domain_control_validations.last_sent
   end
 
   def last_dcv_for_comodo_auto_update_dcv
@@ -167,30 +77,32 @@ class CertificateName < ApplicationRecord
 
   def self.to_comodo_method(dcv_method)
     case dcv_method
-      when /https/i, ''
-        'HTTPS_CSR_HASH'
-      when /http/i, ''
-        'HTTP_CSR_HASH'
-      when /cname/i
-        'CNAME_CSR_HASH'
-      when /email/i
-        'EMAIL'
+    when /https/i, ''
+      'HTTPS_CSR_HASH'
+    when /http/i, ''
+      'HTTP_CSR_HASH'
+    when /cname/i
+      'CNAME_CSR_HASH'
+    when /email/i
+      'EMAIL'
     end
   end
 
   def last_dcv_for_comodo
     case domain_control_validations.last.try(:dcv_method)
-      when /https?/i, ''
-        'HTTPCSRHASH'
-      when /cname/i
-        'CNAMECSRHASH'
-      else
-        domain_control_validations.last_sent.try :email_address
+    when /https?/i, ''
+      'HTTPCSRHASH'
+    when /cname/i
+      'CNAMECSRHASH'
+    else
+      domain_control_validations.last_sent.try :email_address
     end
   end
 
-  def dcv_url(secure = false, prepend = '', check_type = false)
-    "http#{'s' if secure}://#{prepend + non_wildcard_name(check_type)}/.well-known/pki-validation/#{csr.md5_hash}.txt"
+  # def dcv_url(secure = false, prepend = '', check_type = false, validation_type = 'pki-validation', key = csr.md5_hash)
+  def dcv_url(options = {})
+    params = { secure: false, prepend: '', check_type: false, validation_type: 'pki-validation', key: csr.md5_hash }.merge(options)
+    "http#{'s' if secure}://#{params[:prepend] + non_wildcard_name(params[:check_type])}/.well-known/#{params[:validation_type]}/#{params[:key]}.txt"
   end
 
   def cname_origin(check_type = false)
@@ -202,9 +114,8 @@ class CertificateName < ApplicationRecord
   end
 
   def non_wildcard_name(check_type = false)
-    check_type && self.certificate_order.certificate.is_single? ?
-        CertificateContent.non_wildcard_name(name, true) :
-        CertificateContent.non_wildcard_name(name, false)
+    remove_www = check_type && certificate_order&.certificate&.is_single? ? true : false
+    CertificateContent.non_wildcard_name(name, remove_www)
   end
 
   # requires csr not be blank
@@ -244,66 +155,11 @@ class CertificateName < ApplicationRecord
   # if the domain has been validated, do not allow changing it's name
   def name=(name)
     dcv = self.domain_control_validations.last
-    super unless (dcv and dcv.satisfied?)
+    super unless dcv&.satisfied?
   end
 
   def ca_tag
     csr.ca_tag
-  end
-
-  # TODO: all methods check http, https, and cname of protocol is nil
-  def dcv_verify(protocol = nil)
-    protocol ||= domain_control_validation.try(:dcv_method)
-    return nil if protocol =~ /email/
-    prepend = ''
-    CertificateName.dcv_verify(protocol: protocol,
-                               https_dcv_url: dcv_url(true, prepend, true),
-                               http_dcv_url: dcv_url(false, prepend, true),
-                               cname_origin: cname_origin(true),
-                               cname_destination: cname_destination,
-                               csr: csr,
-                               ca_tag: ca_tag)
-  end
-
-  def self.dcv_verify(options)
-    begin
-      Timeout.timeout(Surl::TIMEOUT_DURATION) do
-        if options[:protocol] = ~/https/
-          r = CertificateName.https_verify(options[:https_dcv_url])
-        elsif options[:protocol] = ~/cname/
-          return CertificateName.cname_verify(options[:cname_origin], options[:cname_destination])
-        else
-          r = CertificateName.http_verify(options[:http_dcv_url])
-        end
-        return true if !!(r =~ Regexp.new("^#{options[:csr].sha2_hash}") &&
-            (options[:ca_tag] == I18n.t('labels.ssl_ca') ? true : r =~ Regexp.new("^#{options[:ca_tag]}")) &&
-            (options[:csr].unique_value.blank? || options[:ignore_unique_value]) ? true : r =~ Regexp.new("^#{options[:csr].unique_value}"))
-      end
-    rescue StandardError => _e
-      false
-    end
-  end
-
-  def self.https_verify(https_dcv_url)
-    uri = URI.parse(https_dcv_url)
-    http = Net::HTTP.new(uri.host, uri.port)
-    http.use_ssl = true
-    http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-    request = Net::HTTP::Get.new(uri.request_uri)
-    http.request(request).body
-  end
-
-  def self.cname_verify(cname_origin, cname_destination)
-    txt = Resolv::DNS.open do |dns|
-      records = dns.getresources(cname_origin, Resolv::DNS::Resource::IN::CNAME)
-    end
-    txt.size.positive? ? cname_destination.downcase == txt.last.name.to_s.downcase : false
-  end
-
-  def self.http_verify(http_dcv_url)
-    uri = URI.parse(http_dcv_url)
-    response = uri.open('User-Agent' => I18n.t('users_agent.chrome'), redirect: true)
-    response.read
   end
 
   def whois_lookup
@@ -350,7 +206,7 @@ class CertificateName < ApplicationRecord
 
   def self.add_email_address_candidate(dname, email_address)
     Rails.cache.delete("CertificateName.candidate_email_addresses/#{dname}")
-    cert_names = CertificateName.where('name = ?', "#{dname}")
+    cert_names = CertificateName.where('name = ?', dname.to_s)
     cert_names.update_all(updated_at: Time.now)
     cert_names.each{ |cn| Rails.cache.delete(cn.get_asynch_cache_label) }
     CertificateContent.where{ id >> cert_names.map(&:certificate_content_id) }.update_all(updated_at: Time.now)

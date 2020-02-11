@@ -72,7 +72,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
           end
         end
       else
-        InvalidApiCertificateRequest.create parameters: params, ca: I18n.t('labels.ssl_ca')
+        InvalidApiCertificateRequest.create parameters: params, ca: ssl_ca_label
       end
     end
     render_200_status
@@ -91,7 +91,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
         @result.signed_certificates << sc.as_json['signed_certificate']
       end
     else
-      InvalidApiCertificateRequest.create parameters: params, ca: I18n.t('labels.ssl_ca')
+      InvalidApiCertificateRequest.create parameters: params, ca: ssl_ca_label
     end
 
     render_200_status
@@ -122,7 +122,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
         @result.status = 'revoked'
       end
     else
-      InvalidApiCertificateRequest.create parameters: params, ca: I18n.t('labels.ssl_ca')
+      InvalidApiCertificateRequest.create parameters: params, ca: ssl_ca_label
     end
     render_200_status
   rescue => e
@@ -174,7 +174,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
         end
       end
     else
-      InvalidApiCertificateRequest.create parameters: params, ca: I18n.t('labels.ssl_ca')
+      InvalidApiCertificateRequest.create parameters: params, ca: ssl_ca_label
     end
 
     render_200_status
@@ -192,7 +192,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
         @result.is_ordered = false
       end
     else
-      InvalidApiCertificateRequest.create parameters: params, ca: I18n.t('labels.ssl_ca')
+      InvalidApiCertificateRequest.create parameters: params, ca: ssl_ca_label
     end
 
     render_200_status
@@ -279,7 +279,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
           end
         end
       else
-        InvalidApiCertificateRequest.create parameters: params, ca: I18n.t('labels.ssl_ca')
+        InvalidApiCertificateRequest.create parameters: params, ca: ssl_ca_label
       end
     end
     render_200_status
@@ -394,7 +394,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
           end
         end
       else
-        InvalidApiCertificateRequest.create parameters: params, ca: I18n.t('labels.ssl_ca')
+        InvalidApiCertificateRequest.create parameters: params, ca: ssl_ca_label
       end
     end
     render_200_status
@@ -416,7 +416,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
       end
 
     else
-      InvalidApiCertificateRequest.create parameters: params, ca: I18n.t('labels.ssl_ca')
+      InvalidApiCertificateRequest.create parameters: params, ca: ssl_ca_label
     end
     render_200_status
   rescue => e
@@ -431,7 +431,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
         @result.success_message = 'Contacts were successfully updated.'
       end
     else
-      InvalidApiCertificateRequest.create parameters: params, ca: I18n.t('labels.ssl_ca')
+      InvalidApiCertificateRequest.create parameters: params, ca: ssl_ca_label
     end
     render_200_status
   rescue => e
@@ -447,7 +447,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
         @result.update_attribute :response, render_to_string(:template => @template)
         render(:template => @template) and return
       else
-        InvalidApiCertificateRequest.create parameters: params, ca: I18n.t('labels.ssl_ca')
+        InvalidApiCertificateRequest.create parameters: params, ca: ssl_ca_label
       end
     end
     render action: :create_v1_3
@@ -747,7 +747,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
         render(:template => @template) and return
       end
     else
-      InvalidApiCertificateRequest.create parameters: params, ca: I18n.t('labels.ssl_ca')
+      InvalidApiCertificateRequest.create parameters: params, ca: ssl_ca_label
     end
   rescue => e
     render_500_error e
@@ -787,7 +787,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
       end
 
     else
-      InvalidApiCertificateRequest.create parameters: params, ca: I18n.t('labels.ssl_ca')
+      InvalidApiCertificateRequest.create parameters: params, ca: ssl_ca_label
     end
     render_200_status
   rescue => e
@@ -835,7 +835,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
         @result = ApiCertificateRetrieve.new(JSON.parse(cache))
       end
     else
-      InvalidApiCertificateRequest.create parameters: params, ca: I18n.t('labels.ssl_ca')
+      InvalidApiCertificateRequest.create parameters: params, ca: ssl_ca_label
     end
     render_200_status
   rescue => e
@@ -864,7 +864,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
         render(:template => @template) and return
       end
     else
-      InvalidApiCertificateRequest.create parameters: params, ca: I18n.t('labels.ssl_ca')
+      InvalidApiCertificateRequest.create parameters: params, ca: ssl_ca_label
     end
   rescue => e
     render_500_error e
@@ -969,7 +969,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
         render(:template => @template) and return
       end
     else
-      InvalidApiCertificateRequest.create parameters: params, ca: I18n.t('labels.ssl_ca')
+      InvalidApiCertificateRequest.create parameters: params, ca: ssl_ca_label
     end
   rescue => e
     render_500_error e
@@ -998,7 +998,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
         render(:template => @template) and return
       end
     else
-      InvalidApiCertificateRequest.create parameters: params, ca: I18n.t('labels.ssl_ca')
+      InvalidApiCertificateRequest.create parameters: params, ca: ssl_ca_label
     end
   rescue => e
     render_500_error e
@@ -1150,7 +1150,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
         render(template: @template) and return
       end
     else
-      InvalidApiCertificateRequest.create parameters: params, ca: I18n.t('labels.ssl_ca')
+      InvalidApiCertificateRequest.create parameters: params, ca: ssl_ca_label
     end
   rescue => e
     render_500_error e
@@ -1163,7 +1163,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
       @result.update_attribute :response, render_to_string(:template => @template)
       render(:template => @template) and return
     else
-      InvalidApiCertificateRequest.create parameters: params, ca: I18n.t('labels.ssl_ca')
+      InvalidApiCertificateRequest.create parameters: params, ca: ssl_ca_label
     end
     render action: :create_v1_3
   end
@@ -1208,7 +1208,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
         render(:template => @template) and return
       end
     else
-      InvalidApiCertificateRequest.create parameters: params, ca: I18n.t('labels.ssl_ca')
+      InvalidApiCertificateRequest.create parameters: params, ca: ssl_ca_label
     end
   end
 
@@ -1256,7 +1256,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
         render(:template => @template) and return
       end
     else
-      InvalidApiCertificateRequest.create parameters: params, ca: I18n.t('labels.ssl_ca')
+      InvalidApiCertificateRequest.create parameters: params, ca: ssl_ca_label
     end
   rescue => e
     render_500_error e
@@ -1264,7 +1264,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
 
   def dcv_methods_csr_hash_v1_4
     set_template "dcv_methods_v1_4"
-    if @result.save  #save the api request
+    if @result.save  # save the api request
       @acr = CertificateOrder.new
       @acr.certificate_contents.build.build_csr(body: @result.csr)
 
@@ -1323,7 +1323,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
         @result=@acr.csr  #so that rabl can report errors
       end
     else
-      InvalidApiCertificateRequest.create parameters: params, ca: I18n.t('labels.ssl_ca')
+      InvalidApiCertificateRequest.create parameters: params, ca: ssl_ca_label
     end
     render action: :dcv_methods_v1_4
   rescue => e
@@ -1338,7 +1338,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
         render(:template => @template) and return
       end
     else
-      InvalidApiCertificateRequest.create parameters: params, ca: I18n.t('labels.ssl_ca')
+      InvalidApiCertificateRequest.create parameters: params, ca: ssl_ca_label
     end
     render action: :create_v1_3
   end
@@ -1351,7 +1351,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
         render(:template => @template) and return
       end
     else
-      InvalidApiCertificateRequest.create parameters: params, ca: I18n.t('labels.ssl_ca')
+      InvalidApiCertificateRequest.create parameters: params, ca: ssl_ca_label
     end
     render action: :create_v1_3
   end
@@ -1381,18 +1381,13 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
 
     if (acr.signed_certificate && result.query_type != "order_status_only")
       result.certificates =
-          acr.signed_certificate.to_format(response_type: result.response_type, #assume comodo issued cert
+          acr.signed_certificate.to_format(response_type: result.response_type, # assume comodo issued cert
                                             response_encoding: result.response_encoding) || acr.signed_certificate.to_nginx
       result.common_name = acr.signed_certificate.common_name
       result.subject_alternative_names = acr.signed_certificate.subject_alternative_names
       result.effective_date = acr.signed_certificate.effective_date
       result.expiration_date = acr.signed_certificate.expiration_date
       result.algorithm = acr.signed_certificate.is_SHA2? ? "SHA256" : "SHA1"
-      # result.site_seal_code = ERB::Util.json_escape(render_to_string(
-      #                                                    partial: 'site_seals/site_seal_code.html.haml',
-      #                                                    locals: {co: acr},
-      #                                                    layout: false
-      #                                                ))
     elsif (acr.csr)
       result.certificates = nil
       result.common_name = acr.csr.common_name
@@ -1400,7 +1395,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
   end
 
   def record_parameters
-    @result=klass.new(_wrap_parameters(params)['api_certificate_request'] || params[:api_certificate_request])
+    @result = klass.new(_wrap_parameters(params)['api_certificate_request'] || params[:api_certificate_request])
     @result.debug ||= params[:debug] if params[:debug]
     @result.send_to_ca ||= params[:send_to_ca] if params[:send_to_ca]
     @result.action ||= params[:action]
@@ -1598,5 +1593,9 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
 
   def set_template(filename)
     @template = File.join("api","v1","api_certificate_requests", filename)
+  end
+
+  def ssl_ca_label
+    I18n.t('labels.ssl_ca')
   end
 end
