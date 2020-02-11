@@ -295,7 +295,7 @@ class ValidationsController < ApplicationController
               current_user.certificate_orders).find_by_ref(params[:certificate_order_id])
     cn = co.certificate_content.certificate_names.find_by_name(params['domain_name']) if co
 
-    returnObj = Rails.cache.fetch(cn.get_asynch_cache_label) do
+    returnObj = Rails.cache.fetch(cn&.get_asynch_cache_label) do
       if cn
         ds = params['domain_status']
 
