@@ -53,7 +53,7 @@ class CertificateName < ApplicationRecord
     end
 
     def last_method
-      where{ dcv_method >> %w(http https email cname) }.last
+      where{ dcv_method >> %w[http https email cname] }.last
     end
 
     def validated
@@ -74,6 +74,11 @@ class CertificateName < ApplicationRecord
     joins(:domain_control_validations)
         .where('domain_control_validations.id = (SELECT MAX(domain_control_validations.id) FROM domain_control_validations WHERE domain_control_validations.certificate_name_id = certificate_names.id)')
         .where{ (domain_control_validations.responded_at < DomainControlValidation::MAX_DURATION_DAYS[:email].days.ago.to_date) }
+  scope :last_domain_control_validation, ->{ joins(:domain_control_validations).limit(1) }
+  scope :expired_validation, ->{
+    joins(:domain_control_validations)
+      .where('domain_control_validations.id = (SELECT MAX(domain_control_validations.id) FROM domain_control_validations WHERE domain_control_validations.certificate_name_id = certificate_names.id)')
+      .where{ (domain_control_validations.responded_at < DomainControlValidation::MAX_DURATION_DAYS[:email].days.ago.to_date) }
   }
   scope :unvalidated, ->{
     satisfied = <<~SQL
@@ -99,7 +104,7 @@ class CertificateName < ApplicationRecord
 
     term = term.empty? ? nil : term.join(' ')
 
-    return nil if [term, *(filters.values)].compact.empty?
+    return nil if [term, *filters.values].compact.empty?
 
     result = self.all
     unless term.blank?
@@ -109,7 +114,7 @@ class CertificateName < ApplicationRecord
       }
     end
 
-    %w(expired_validation).each do |field|
+    %w[expired_validation].each do |field|
       query = filters[field.to_sym]
       result = result.expired_validation if query
     end
@@ -153,7 +158,7 @@ class CertificateName < ApplicationRecord
   end
 
   def last_dcv
-    domain_control_validations.last.try(:dcv_method) =~ /https?/ ? domain_control_validations.last : domain_control_validations.last_sent
+    (domain_control_validations.last.try(:dcv_method) =~ /https?/) ? domain_control_validations.last : domain_control_validations.last_sent
   end
 
   def last_dcv_for_comodo_auto_update_dcv
@@ -184,11 +189,11 @@ class CertificateName < ApplicationRecord
     end
   end
 
-  def dcv_url(secure=false, prepend='', check_type=false)
+  def dcv_url(secure = false, prepend = '', check_type = false)
     "http#{'s' if secure}://#{prepend + non_wildcard_name(check_type)}/.well-known/pki-validation/#{csr.md5_hash}.txt"
   end
 
-  def cname_origin(check_type=false)
+  def cname_origin(check_type = false)
     "#{csr.dns_md5_hash}.#{non_wildcard_name(check_type)}"
   end
 
@@ -196,7 +201,7 @@ class CertificateName < ApplicationRecord
     csr.cname_destination
   end
 
-  def non_wildcard_name(check_type=false)
+  def non_wildcard_name(check_type = false)
     check_type && self.certificate_order.certificate.is_single? ?
         CertificateContent.non_wildcard_name(name, true) :
         CertificateContent.non_wildcard_name(name, false)
@@ -247,7 +252,7 @@ class CertificateName < ApplicationRecord
   end
 
   # TODO: all methods check http, https, and cname of protocol is nil
-  def dcv_verify(protocol=nil)
+  def dcv_verify(protocol = nil)
     protocol ||= domain_control_validation.try(:dcv_method)
     return nil if protocol =~ /email/
     prepend = ''
@@ -263,30 +268,42 @@ class CertificateName < ApplicationRecord
   def self.dcv_verify(options)
     begin
       Timeout.timeout(Surl::TIMEOUT_DURATION) do
-        if options[:protocol] =~ /https/
-          uri = URI.parse(options[:https_dcv_url])
-          http = Net::HTTP.new(uri.host, uri.port)
-          http.use_ssl = true
-          http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-          request = Net::HTTP::Get.new(uri.request_uri)
-          r = http.request(request).body
-        elsif options[:protocol] =~ /cname/
-          txt = Resolv::DNS.open do |dns|
-            records = dns.getresources(options[:cname_origin], Resolv::DNS::Resource::IN::CNAME)
-          end
-          return (txt.size > 0) ? (options[:cname_destination].downcase == txt.last.name.to_s.downcase) : false
+        if options[:protocol] = ~/https/
+          r = CertificateName.https_verify(options[:https_dcv_url])
+        elsif options[:protocol] = ~/cname/
+          return CertificateName.cname_verify(options[:cname_origin], options[:cname_destination])
         else
-          r = open(options[:http_dcv_url], 'User-Agent' =>
-            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246',
-             redirect: true).read
+          r = CertificateName.http_verify(options[:http_dcv_url])
         end
         return true if !!(r =~ Regexp.new("^#{options[:csr].sha2_hash}") &&
-            (options[:ca_tag] == 'ssl.com' ? true : r =~ Regexp.new("^#{options[:ca_tag]}")) &&
-            ((options[:csr].unique_value.blank? or options[:ignore_unique_value]) ? true : r =~ Regexp.new("^#{options[:csr].unique_value}")))
+            (options[:ca_tag] == I18n.t('labels.ssl_ca') ? true : r =~ Regexp.new("^#{options[:ca_tag]}")) &&
+            (options[:csr].unique_value.blank? || options[:ignore_unique_value]) ? true : r =~ Regexp.new("^#{options[:csr].unique_value}"))
       end
     rescue StandardError => _e
       false
     end
+  end
+
+  def self.https_verify(https_dcv_url)
+    uri = URI.parse(https_dcv_url)
+    http = Net::HTTP.new(uri.host, uri.port)
+    http.use_ssl = true
+    http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+    request = Net::HTTP::Get.new(uri.request_uri)
+    http.request(request).body
+  end
+
+  def self.cname_verify(cname_origin, cname_destination)
+    txt = Resolv::DNS.open do |dns|
+      records = dns.getresources(cname_origin, Resolv::DNS::Resource::IN::CNAME)
+    end
+    txt.size.positive? ? cname_destination.downcase == txt.last.name.to_s.downcase : false
+  end
+
+  def self.http_verify(http_dcv_url)
+    uri = URI.parse(http_dcv_url)
+    response = uri.open('User-Agent' => I18n.t('users_agent.chrome'), redirect: true)
+    response.read
   end
 
   def whois_lookup

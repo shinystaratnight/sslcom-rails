@@ -120,7 +120,7 @@ class ApiCertificateRequest < CaApiRequest
 
   after_initialize do
     if new_record?
-      self.ca ||= "ssl.com"
+      self.ca ||= I18n.t('labels.ssl_ca')
     end
   end
 

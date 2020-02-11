@@ -1,34 +1,36 @@
+# frozen_string_literal: true
+
 class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
-  prepend_view_path "app/views/api/v1/api_certificate_requests"
+  prepend_view_path 'app/views/api/v1/api_certificate_requests'
   include ActionController::Helpers
   helper SiteSealsHelper
-  before_filter :set_database, if: "request.host=~/^sandbox/ || request.host=~/^sws-test/ || request.host=~/ssl.local$/"
-  before_filter :set_test, :record_parameters, except: [:scan, :analyze, :download_v1_4]
-  after_filter :notify_saved_result, except: [:create_v1_4, :download_v1_4]
+  before_filter :set_database, if: 'request.host=~/^sandbox/ || request.host=~/^sws-test/ || request.host=~/ssl.local$/'
+  before_filter :set_test, :record_parameters, except: %i[scan analyze download_v1_4]
+  after_filter :notify_saved_result, except: %i[create_v1_4 download_v1_4]
 
   # parameters listed here made available as attributes in @result
   wrap_parameters ApiCertificateRequest, include: [*(
-    ApiCertificateRequest::ACCESSORS+
-    ApiCertificateRequest::CREATE_ACCESSORS_1_4+
-    ApiCertificateRequest::RETRIEVE_ACCESSORS+
-    ApiCertificateRequest::DETAILED_ACCESSORS+
-    ApiCertificateRequest::REPROCESS_ACCESSORS+
-    ApiCertificateRequest::REVOKE_ACCESSORS+
-    ApiCertificateRequest::DCV_EMAILS_ACCESSORS+
+    ApiCertificateRequest::ACCESSORS +
+    ApiCertificateRequest::CREATE_ACCESSORS_1_4 +
+    ApiCertificateRequest::RETRIEVE_ACCESSORS +
+    ApiCertificateRequest::DETAILED_ACCESSORS +
+    ApiCertificateRequest::REPROCESS_ACCESSORS +
+    ApiCertificateRequest::REVOKE_ACCESSORS +
+    ApiCertificateRequest::DCV_EMAILS_ACCESSORS +
     ApiCertificateRequest::CERTIFICATE_ENROLLMENT_ACCESSORS
   ).uniq]
 
   ORDERS_DOMAIN = "https://#{Settings.community_domain}"
-  SANDBOX_DOMAIN = "https://sandbox.ssl.com"
-  SCAN_COMMAND=->(parameters, url){%x"echo QUIT | cipherscan/cipherscan #{parameters} #{url}"}
-  ANALYZE_COMMAND=->(parameters, url){%x"echo QUIT | cipherscan/analyze.py #{parameters} #{url}"}
+  SANDBOX_DOMAIN = 'https://sandbox.ssl.com'
+  SCAN_COMMAND = ->(parameters, url){ %x"echo QUIT | cipherscan/cipherscan #{parameters} #{url}" }
+  ANALYZE_COMMAND = ->(parameters, url){ %x"echo QUIT | cipherscan/analyze.py #{parameters} #{url}" }
 
   def notify_saved_result
-    @rendered=render_to_string(template: @template)
+    @rendered = render_to_string(template: @template)
     unless @rendered.is_a?(String) && @rendered.include?('errors')
       # commenting this out, it's causing encoding issues and can grow out of control
       # @result.update_attribute :response, @rendered
-      OrderNotifier.api_executed(@rendered, request.host_with_port).deliver if @rendered and !Settings.send_api_calls.blank?
+      OrderNotifier.api_executed(@rendered, request.host_with_port).deliver if @rendered && !Settings.send_api_calls.blank?
     end
   end
 
@@ -37,16 +39,15 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
     cc                     = acr.certificate_contents.last # need to reload to get certs
     ssl_slug               = acr.ssl_account.to_slug
     result.ref             = acr.ref
-    result.order_status    ||= acr.status # using ||= because status might have been set from CAA problems
-    result.order_amount    = acr.order.amount.format
+    result.order_status ||= acr.status # using ||= because status might have been set from CAA problems
+    result.order_amount = acr.order.amount.format
     domain = api_result_domain(acr)
     result.external_order_number = acr.ext_customer_ref
-    result.certificate_url = domain+certificate_order_path(ssl_slug, acr)
-    result.receipt_url     = domain+order_path(ssl_slug, acr.order)
-    result.smart_seal_url  = domain+certificate_order_site_seal_path(ssl_slug, acr.ref)
-    result.validation_url  = domain+certificate_order_validation_path(ssl_slug, acr)
-    result.registrant      = cc.registrant.to_api_query if
-        (cc && cc.registrant)
+    result.certificate_url = domain + certificate_order_path(ssl_slug, acr)
+    result.receipt_url     = domain + order_path(ssl_slug, acr.order)
+    result.smart_seal_url  = domain + certificate_order_site_seal_path(ssl_slug, acr.ref)
+    result.validation_url  = domain + certificate_order_validation_path(ssl_slug, acr)
+    result.registrant      = cc.registrant.to_api_query if cc&.registrant
     result.certificates    = cc.x509_certificates.map(&:to_s).join("\n") if cc.x509_certificates
     result.certificate_contents = cc.to_api_query
   end
@@ -71,16 +72,16 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
           end
         end
       else
-        InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
+        InvalidApiCertificateRequest.create parameters: params, ca: I18n.t('labels.ssl_ca')
       end
     end
     render_200_status
-  rescue => e
+  rescue StandardError => e
     render_500_error e
   end
 
   def retrieve_signed_certificates
-    set_template "retreive_signed_certificates"
+    set_template 'retreive_signed_certificates'
 
     if @result.valid? && @result.save
       @result.signed_certificates = []
@@ -90,7 +91,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
         @result.signed_certificates << sc.as_json['signed_certificate']
       end
     else
-      InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
+      InvalidApiCertificateRequest.create parameters: params, ca: I18n.t('labels.ssl_ca')
     end
 
     render_200_status
@@ -104,24 +105,24 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
       co = @result.find_certificate_order
       @acr = @result.find_signed_certificates(co)
       if @acr.is_a?(Array) && @result.errors.empty?
-        if @result.serials.blank? #revoke the entire order
+        if @result.serials.blank? # revoke the entire order
           co.revoke!(@result.reason,@result.api_credential)
-        else #revoke specific certs
+        else # revoke specific certs
           @acr.each do |signed_certificate|
             SystemAudit.create(
-              owner:  @result.api_credential,
+              owner: @result.api_credential,
               target: signed_certificate,
-              notes:  "api revocation from ip address #{request.remote_ip}",
-              action: "revoked"
+              notes: "api revocation from ip address #{request.remote_ip}",
+              action: 'revoked'
             )
             signed_certificate.revoke! @result.reason
           end
 
         end
-        @result.status = "revoked"
+        @result.status = 'revoked'
       end
     else
-      InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
+      InvalidApiCertificateRequest.create parameters: params, ca: I18n.t('labels.ssl_ca')
     end
     render_200_status
   rescue => e
@@ -173,7 +174,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
         end
       end
     else
-      InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
+      InvalidApiCertificateRequest.create parameters: params, ca: I18n.t('labels.ssl_ca')
     end
 
     render_200_status
@@ -191,7 +192,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
         @result.is_ordered = false
       end
     else
-      InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
+      InvalidApiCertificateRequest.create parameters: params, ca: I18n.t('labels.ssl_ca')
     end
 
     render_200_status
@@ -278,7 +279,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
           end
         end
       else
-        InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
+        InvalidApiCertificateRequest.create parameters: params, ca: I18n.t('labels.ssl_ca')
       end
     end
     render_200_status
@@ -393,7 +394,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
           end
         end
       else
-        InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
+        InvalidApiCertificateRequest.create parameters: params, ca: I18n.t('labels.ssl_ca')
       end
     end
     render_200_status
@@ -415,7 +416,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
       end
 
     else
-      InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
+      InvalidApiCertificateRequest.create parameters: params, ca: I18n.t('labels.ssl_ca')
     end
     render_200_status
   rescue => e
@@ -430,7 +431,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
         @result.success_message = 'Contacts were successfully updated.'
       end
     else
-      InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
+      InvalidApiCertificateRequest.create parameters: params, ca: I18n.t('labels.ssl_ca')
     end
     render_200_status
   rescue => e
@@ -446,7 +447,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
         @result.update_attribute :response, render_to_string(:template => @template)
         render(:template => @template) and return
       else
-        InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
+        InvalidApiCertificateRequest.create parameters: params, ca: I18n.t('labels.ssl_ca')
       end
     end
     render action: :create_v1_3
@@ -746,7 +747,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
         render(:template => @template) and return
       end
     else
-      InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
+      InvalidApiCertificateRequest.create parameters: params, ca: I18n.t('labels.ssl_ca')
     end
   rescue => e
     render_500_error e
@@ -786,7 +787,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
       end
 
     else
-      InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
+      InvalidApiCertificateRequest.create parameters: params, ca: I18n.t('labels.ssl_ca')
     end
     render_200_status
   rescue => e
@@ -834,7 +835,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
         @result = ApiCertificateRetrieve.new(JSON.parse(cache))
       end
     else
-      InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
+      InvalidApiCertificateRequest.create parameters: params, ca: I18n.t('labels.ssl_ca')
     end
     render_200_status
   rescue => e
@@ -863,7 +864,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
         render(:template => @template) and return
       end
     else
-      InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
+      InvalidApiCertificateRequest.create parameters: params, ca: I18n.t('labels.ssl_ca')
     end
   rescue => e
     render_500_error e
@@ -968,7 +969,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
         render(:template => @template) and return
       end
     else
-      InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
+      InvalidApiCertificateRequest.create parameters: params, ca: I18n.t('labels.ssl_ca')
     end
   rescue => e
     render_500_error e
@@ -997,7 +998,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
         render(:template => @template) and return
       end
     else
-      InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
+      InvalidApiCertificateRequest.create parameters: params, ca: I18n.t('labels.ssl_ca')
     end
   rescue => e
     render_500_error e
@@ -1149,7 +1150,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
         render(template: @template) and return
       end
     else
-      InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
+      InvalidApiCertificateRequest.create parameters: params, ca: I18n.t('labels.ssl_ca')
     end
   rescue => e
     render_500_error e
@@ -1162,7 +1163,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
       @result.update_attribute :response, render_to_string(:template => @template)
       render(:template => @template) and return
     else
-      InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
+      InvalidApiCertificateRequest.create parameters: params, ca: I18n.t('labels.ssl_ca')
     end
     render action: :create_v1_3
   end
@@ -1207,7 +1208,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
         render(:template => @template) and return
       end
     else
-      InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
+      InvalidApiCertificateRequest.create parameters: params, ca: I18n.t('labels.ssl_ca')
     end
   end
 
@@ -1255,7 +1256,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
         render(:template => @template) and return
       end
     else
-      InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
+      InvalidApiCertificateRequest.create parameters: params, ca: I18n.t('labels.ssl_ca')
     end
   rescue => e
     render_500_error e
@@ -1322,7 +1323,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
         @result=@acr.csr  #so that rabl can report errors
       end
     else
-      InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
+      InvalidApiCertificateRequest.create parameters: params, ca: I18n.t('labels.ssl_ca')
     end
     render action: :dcv_methods_v1_4
   rescue => e
@@ -1337,7 +1338,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
         render(:template => @template) and return
       end
     else
-      InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
+      InvalidApiCertificateRequest.create parameters: params, ca: I18n.t('labels.ssl_ca')
     end
     render action: :create_v1_3
   end
@@ -1350,7 +1351,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
         render(:template => @template) and return
       end
     else
-      InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
+      InvalidApiCertificateRequest.create parameters: params, ca: I18n.t('labels.ssl_ca')
     end
     render action: :create_v1_3
   end
@@ -1399,31 +1400,6 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
   end
 
   def record_parameters
-    klass = case params[:action]
-              when "create_v1_3"
-                ApiCertificateCreate
-              when "create_v1_4", "update_v1_4", "contacts_v1_4", "replace_v1_4", "api_resend_domain_validation_v1_4"
-                ApiCertificateCreate_v1_4
-              when /revoke/
-                ApiCertificateRevoke
-              when "retrieve_v1_3", "show_v1_4", "index_v1_4", "detail_v1_4", "view_upload_v1_4", "upload_v1_4",
-                  "update_site_seal_v1_4", "generate_certificate_v1_4","callback_v1_4"
-                ApiCertificateRetrieve
-              when "certificate_enrollment_order"
-                ApiCertificateEnrollment
-              when "retrieve_signed_certificates"
-                ApiSignedCertificateRequest
-              when "api_parameters_v1_4"
-                ApiParameters
-              when "quote"
-                ApiCertificateQuote
-              when "dcv_email_resend_v1_3"
-                ApiDcvEmailResend
-              when "dcv_emails_v1_3", "dcv_revoke_v1_3"
-                ApiDcvEmails
-              when "dcv_methods_v1_4", "dcv_revoke_v1_3", "dcv_methods_csr_hash_v1_4", "pretest_v1_4"
-                ApiDcvMethods
-            end
     @result=klass.new(_wrap_parameters(params)['api_certificate_request'] || params[:api_certificate_request])
     @result.debug ||= params[:debug] if params[:debug]
     @result.send_to_ca ||= params[:send_to_ca] if params[:send_to_ca]
@@ -1438,8 +1414,36 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
     @result.saved_registrant ||= params[:saved_registrant] if params[:saved_registrant]
   end
 
+  def klass
+    case params[:action]
+    when "create_v1_3"
+      ApiCertificateCreate
+    when "create_v1_4", "update_v1_4", "contacts_v1_4", "replace_v1_4"
+      ApiCertificateCreate_v1_4
+    when /revoke/
+      ApiCertificateRevoke
+    when "retrieve_v1_3", "show_v1_4", "index_v1_4", "detail_v1_4", "view_upload_v1_4", "upload_v1_4",
+        "update_site_seal_v1_4", "generate_certificate_v1_4","callback_v1_4"
+      ApiCertificateRetrieve
+    when "certificate_enrollment_order"
+      ApiCertificateEnrollment
+    when "retrieve_signed_certificates"
+      ApiSignedCertificateRequest
+    when "api_parameters_v1_4"
+      ApiParameters
+    when "quote"
+      ApiCertificateQuote
+    when "dcv_email_resend_v1_3"
+      ApiDcvEmailResend
+    when "dcv_emails_v1_3", "dcv_revoke_v1_3"
+      ApiDcvEmails
+    when "dcv_methods_v1_4", "dcv_revoke_v1_3", "dcv_methods_csr_hash_v1_4", "pretest_v1_4"
+      ApiDcvMethods
+    end
+  end
+
   def find_certificate_order
-    @certificate_order=@result.find_certificate_order
+    @certificate_order = @result.find_certificate_order
   end
 
   def csr

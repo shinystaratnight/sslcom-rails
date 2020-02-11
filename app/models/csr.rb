@@ -318,10 +318,10 @@ class Csr < ApplicationRecord
 
   def ca_tag
     if certificate_content.blank? # for prevalidating domain with csr
-      "ssl.com"
+      I18n.t('labels.ssl_ca')
     else
       caa_issuers = certificate_content.ca.try(:caa_issuers)
-      (caa_issuers[0] unless caa_issuers.blank?) || 'comodoca.com'
+      (caa_issuers[0] unless caa_issuers.blank?) || I18n.t('labels.comodo_ca')
     end
   end
 

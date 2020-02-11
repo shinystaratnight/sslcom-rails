@@ -1780,7 +1780,7 @@ class CertificateOrder < ApplicationRecord
   # @return [String]
   def ca_name
     if common_name =~ /impulshcs/
-      'ssl.com'
+      I18n.t('labels.ssl_ca')
     else
       'comodo'
     end

@@ -29,12 +29,12 @@ class CaaCheck < ApplicationRecord
       is_comodoca = certificate_content.nil? ? false : (certificate_content.ca.nil? ? false : true)
 
       if is_comodoca
-        result = caa_lookup(name, "comodoca.com")
+        result = caa_lookup(name, I18n.t('labels.comodo_ca'))
         if result == true # Timeout
           return_obj = true
         elsif result =~ /status/ # Returned CAA Check Result.
           arry = JSON.parse(result.gsub("}\n", "}").gsub("\n", "|||"))
-          log_caa_check(certificate_order_id, name, 'comodoca.com', arry)
+          log_caa_check(certificate_order_id, name, I18n.t('labels.comodo_ca'), arry)
 
           if arry['status'].to_s == 'true'
             return_obj = true
@@ -49,12 +49,12 @@ class CaaCheck < ApplicationRecord
           return_obj = false
         end
       else
-        result = caa_lookup(name, "ssl.com")
+        result = caa_lookup(name, I18n.t('labels.ssl_ca'))
         if result == true # Timeout
           return_obj = true
         elsif result =~ /status/ # Returned CAA Check Result.
           arry = JSON.parse(result.gsub("}\n", "}").gsub("\n", "|||"))
-          log_caa_check(certificate_order_id, name, 'ssl.com', arry)
+          log_caa_check(certificate_order_id, name, I18n.t('labels.ssl_ca'), arry)
 
           if arry['status'].to_s == 'true'
             return_obj = true

@@ -556,7 +556,7 @@ class CertificateContent < ApplicationRecord
   end
 
   def dcv_suffix
-    ca_id ? "ssl.com" : "comodoca.com"
+    ca_id ? I18n.t('labels.ssl_ca') : I18n.t('labels.comodo_ca')
   end
 
   def manually_validate_cname

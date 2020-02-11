@@ -62,7 +62,7 @@ class Surl < ApplicationRecord
   if Rails.env=='development'
     URL = 'ssl.com:3000'
   else
-    URL = 'ssl.com'
+    URL = I18n.t('labels.ssl_ca')
   end
 
 #  before_create
