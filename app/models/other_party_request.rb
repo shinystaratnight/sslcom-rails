@@ -1,3 +1,22 @@
+# == Schema Information
+#
+# Table name: other_party_requests
+#
+#  id                           :integer          not null, primary key
+#  email_addresses              :text(65535)
+#  identifier                   :string(255)
+#  other_party_requestable_type :string(255)
+#  sent_at                      :datetime
+#  created_at                   :datetime
+#  updated_at                   :datetime
+#  other_party_requestable_id   :integer
+#  user_id                      :integer
+#
+# Indexes
+#
+#  index_other_party_requests_on_user_id  (user_id)
+#
+
 class OtherPartyRequest < ApplicationRecord
   belongs_to  :other_party_requestable, polymorphic: true
   belongs_to  :user

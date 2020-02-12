@@ -1,3 +1,29 @@
+# == Schema Information
+#
+# Table name: registered_agents
+#
+#  id              :integer          not null, primary key
+#  agent           :string(255)      not null
+#  approved_at     :datetime
+#  friendly_name   :string(255)
+#  ip_address      :string(255)      not null
+#  mac_address     :string(255)      not null
+#  ref             :string(255)      not null
+#  requested_at    :datetime
+#  workflow_status :string(255)      not null
+#  created_at      :datetime
+#  updated_at      :datetime
+#  approver_id     :integer
+#  requester_id    :integer
+#  ssl_account_id  :integer          not null
+#
+# Indexes
+#
+#  index_registered_agents_on_approver_id     (approver_id)
+#  index_registered_agents_on_requester_id    (requester_id)
+#  index_registered_agents_on_ssl_account_id  (ssl_account_id)
+#
+
 class RegisteredAgent < ApplicationRecord
   include Pagable
 

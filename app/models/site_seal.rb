@@ -1,5 +1,23 @@
 # frozen_string_literal: true
 
+# == Schema Information
+#
+# Table name: site_seals
+#
+#  id             :integer          not null, primary key
+#  ref            :string(255)
+#  seal_type      :string(255)
+#  workflow_state :string(255)
+#  created_at     :datetime
+#  updated_at     :datetime
+#
+# Indexes
+#
+#  index_site_seals_ref             (ref)
+#  index_site_seals_workflow_state  (workflow_state)
+#
+
+
 class SiteSeal < ApplicationRecord
   include Pagable
 

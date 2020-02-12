@@ -3,24 +3,32 @@
 # Table name: certificate_contents
 #
 #  id                   :integer          not null, primary key
-#  certificate_order_id :integer          not null
-#  signing_request      :text(65535)
-#  signed_certificate   :text(65535)
-#  server_software_id   :integer
+#  agreement            :boolean
+#  approval             :string(255)
+#  billing_checkbox     :boolean
 #  domains              :text(65535)
 #  duration             :integer
-#  workflow_state       :string(255)
-#  billing_checkbox     :boolean
-#  validation_checkbox  :boolean
-#  technical_checkbox   :boolean
-#  created_at           :datetime
-#  updated_at           :datetime
+#  ext_customer_ref     :string(255)
 #  label                :string(255)
 #  ref                  :string(255)
-#  agreement            :boolean
-#  ext_customer_ref     :string(255)
-#  approval             :string(255)
+#  signed_certificate   :text(65535)
+#  signing_request      :text(65535)
+#  technical_checkbox   :boolean
+#  validation_checkbox  :boolean
+#  workflow_state       :string(255)
+#  created_at           :datetime
+#  updated_at           :datetime
 #  ca_id                :integer
+#  certificate_order_id :integer          not null
+#  server_software_id   :integer
+#
+# Indexes
+#
+#  index_certificate_contents_on_ca_id                 (ca_id)
+#  index_certificate_contents_on_certificate_order_id  (certificate_order_id)
+#  index_certificate_contents_on_ref                   (ref)
+#  index_certificate_contents_on_server_software_id    (server_software_id)
+#  index_certificate_contents_on_workflow_state        (workflow_state)
 #
 
 class CertificateContent < ApplicationRecord
