@@ -14,9 +14,7 @@ plugins:
   fixme:
     enabled: true
   flog:
-    enabled: true
-    config:
-      score_threshold: 20.0
+    enabled: false
   git-legal:
     enabled: true
   haml-lint:

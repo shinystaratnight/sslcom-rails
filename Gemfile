@@ -137,6 +137,8 @@ group :development, :test do
 end
 
 group :test do
+  gem 'capybara'
+  gem 'capybara-screenshot'
   gem 'database_cleaner'
   gem 'faker'
   gem 'minitest-bang', require: false
@@ -163,5 +165,5 @@ gem 'rswag-ui'
 gem 'bcrypt_pbkdf', '~> 1'
 gem 'ed25519', '~> 1.2'
 gem 'oj'
-gem 'fast_jsonapi'
-
+gem 'active_model_serializers'
+gem 'jose'

@@ -40,8 +40,8 @@ $(document).ready(function(){
           $.get('/users/avatar').done(function(response){
             $('button#spinner').hide();
             $('.preview').remove();
-            $('#preview').append("<img class='preview' src='" + response.data.links.large_avatar_url + "' width='300' height='300' style='display: inline-block;'>");
-          })
+            $('#preview').append("<img class='preview' src='" + response.large_avatar_url + "' width='300' height='300' style='display: inline-block;'>");
+          });
         },
         422: function(response){
           $('button#spinner').hide();

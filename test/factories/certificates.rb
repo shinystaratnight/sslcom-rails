@@ -24,7 +24,6 @@
 #  special_fields        :string(255)      default([])
 #
 
-
 FactoryBot.define do
   factory :certificate do
     status       { 'live' }

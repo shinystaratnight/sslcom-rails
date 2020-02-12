@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200131171449) do
+ActiveRecord::Schema.define(version: 20200206192249) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        :limit=>255
@@ -57,13 +57,14 @@ ActiveRecord::Schema.define(version: 20200131171449) do
   end
 
   create_table "api_credentials", force: :cascade do |t|
-    t.integer  "ssl_account_id", :limit=>4, :index=>{:name=>"index_api_credentials_on_ssl_account_id", :using=>:btree}
-    t.string   "account_key",    :limit=>255, :index=>{:name=>"index_api_credentials_on_account_key_and_secret_key", :with=>["secret_key"], :unique=>true, :using=>:btree}
-    t.string   "secret_key",     :limit=>255
-    t.datetime "created_at",     :null=>false
-    t.datetime "updated_at",     :null=>false
-    t.string   "roles",          :limit=>255
-    t.string   "hmac_key",       :limit=>255
+    t.integer  "ssl_account_id",               :limit=>4, :index=>{:name=>"index_api_credentials_on_ssl_account_id", :using=>:btree}
+    t.string   "account_key",                  :limit=>255, :index=>{:name=>"index_api_credentials_on_account_key_and_secret_key", :with=>["secret_key"], :unique=>true, :using=>:btree}
+    t.string   "secret_key",                   :limit=>255
+    t.datetime "created_at",                   :null=>false
+    t.datetime "updated_at",                   :null=>false
+    t.string   "roles",                        :limit=>255
+    t.string   "hmac_key",                     :limit=>255
+    t.string   "acme_acct_pub_key_thumbprint", :limit=>255, :index=>{:name=>"index_api_credentials_on_acme_acct_pub_key_thumbprint", :using=>:btree}
   end
 
   create_table "apis", force: :cascade do |t|
@@ -665,6 +666,7 @@ ActiveRecord::Schema.define(version: 20200131171449) do
     t.integer  "validation_compliance_id",   :limit=>4, :index=>{:name=>"index_domain_control_validations_on_validation_compliance_id", :using=>:btree}
     t.datetime "validation_compliance_date"
     t.integer  "csr_unique_value_id",        :limit=>4, :index=>{:name=>"index_domain_control_validations_on_csr_unique_value_id", :using=>:btree}
+    t.string   "acme_token",                 :limit=>255, :index=>{:name=>"index_domain_control_validations_on_acme_token", :using=>:btree}
   end
   add_index "domain_control_validations", ["certificate_name_id", "email_address", "dcv_method"], :name=>"index_domain_control_validations_on_3_cols", :using=>:btree
   add_index "domain_control_validations", ["csr_id", "email_address", "dcv_method"], :name=>"index_domain_control_validations_on_3_cols(2)", :using=>:btree

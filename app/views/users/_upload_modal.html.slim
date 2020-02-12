@@ -25,5 +25,7 @@
 
 javascript:
   $(window).on('hidden.bs.modal', function (e) {
-    window.location = window.location.href;
-  })
+    $.get('/users/avatar').done(function(response){
+      $('.avatar').attr('src', response.thumbnail_avatar_url);
+    });
+  });

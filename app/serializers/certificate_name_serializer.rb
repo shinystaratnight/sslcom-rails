@@ -16,9 +16,12 @@
 #  caa_passed             :boolean          default(FALSE)
 #
 
-class Domain < CertificateName
-  include Pagable
-
-  belongs_to :ssl_account, touch: true
-  has_many :certificate_order_domains, dependent: :destroy
+class CertificateNameSerializer < ActiveModel::Serializer
+  attribute :name, key: :domain
+  attribute :acme_token, key: :http_token
+  attribute :acme_token, key: :dns_token
+  attribute :validated do
+    object.all_domains_validated?
+  end
+  attribute :validation_source, if: -> { object.all_domains_validated? }
 end

@@ -7,6 +7,7 @@ module Api
     class APIController < ActionController::API
       include SerializerHelper
       include ApplicationHelper
+      include Rendering
       include ActionController::Cookies
       include ActionController::HttpAuthentication::Basic::ControllerMethods
       include ActionController::Rendering
@@ -30,40 +31,12 @@ module Api
 
       private
 
-      def error(status, code, message)
-        json = { response_type: 'ERROR', response_code: code, message: message }.to_json
-        render json: json, status: status
-      end
-
       def set_test
         @test = is_sandbox? || %w[test].include?(Rails.env)
       end
 
       def activate_authlogic
         Authlogic::Session::Base.controller = Authlogic::ControllerAdapters::RailsAdapter.new(self)
-      end
-
-      def render_200_status_noschema
-        json = if @result.errors.empty?
-                 serialize_model(@result)['data']['attributes']
-               else
-                 { errors: @result.errors }
-               end
-        render json: json, status: :ok
-      end
-
-      def render_200_status
-        render template: @template, status: :ok
-      end
-
-      def render_400_status
-        render template: @template, status: :bad_request
-      end
-
-      def render_500_error(err)
-        logger.error err.message
-        err.backtrace.each { |line| logger.error line }
-        error(500, 500, 'server error')
       end
 
       def set_access_control_headers
