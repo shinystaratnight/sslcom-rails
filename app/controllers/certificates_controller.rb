@@ -43,16 +43,16 @@ class CertificatesController < ApplicationController
   # GET /certificate/wildcard
   # GET /certificate/wildcard.xml
   def show
-    @certificates = Certificate.available
-    @certificates = if @tier.blank?
-                      @certificates.reject{ |c| c.product =~ /\dtr/ }
-                    else
-                      @certificates.find_all{ |c| c.product =~ Regexp.new(@tier) }
-                    end
     respond_to do |format|
       if @certificate.blank?
         format.html { not_found }
       else
+        @certificates = Certificate.available
+        @certificates = if @tier.blank?
+                          @certificates.reject{ |c| c.product =~ /\dtr/ }
+                        else
+                          @certificates.find_all{ |c| c.product =~ Regexp.new(@tier) }
+                        end
         format.html { render action: 'show_' + @certificate.product_root }
         format.xml { render xml: @certificate }
       end
@@ -62,11 +62,11 @@ class CertificatesController < ApplicationController
   # GET /certificate/buy/wildcard
   # GET /certificate/buy/wildcard.xml
   def buy
-    prep_purchase
     respond_to do |format|
       if @certificate.blank?
         format.html { not_found }
       else
+        prep_purchase
         format.html { render 'certificate_orders/submit_csr' }
         format.xml  { render xml: @certificate }
       end
@@ -87,12 +87,12 @@ class CertificatesController < ApplicationController
   end
 
   def pricing
-    prep_purchase
-    @values = @certificate.pricing(@certificate_order, @certificate_content)
     respond_to do |format|
       if @certificate.blank?
         format.html { not_found }
       else
+        prep_purchase
+        @values = @certificate.pricing(@certificate_order, @certificate_content)
         format.html { render action: 'pricing' }
         format.js { render action: 'pricing' }
         format.json { render action: 'pricing' }
