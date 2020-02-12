@@ -1365,6 +1365,13 @@ class CertificateOrder < ApplicationRecord
         options[:caller].blank? ?
             'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X PUT -d "' +
                 api_params.to_json.gsub('"','\\"') + "\" #{domain}/certificate/#{self.ref}" : api_params
+      when /validate/
+        # registrant_params.merge!(api_domains).merge!(api_contacts)
+        api_params = {account_key: account_key,
+                    secret_key: secret_key}
+        options[:caller].blank? ?
+            'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X POST -d "' +
+                api_params.to_json.gsub('"','\\"') + "\" #{domain}/certificate/#{self.ref}/retry_domain_validation" : api_params
       when /update/
         api_params = {account_key: account_key,
                     secret_key: secret_key,

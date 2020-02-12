@@ -35,10 +35,6 @@
       %strong=link_to "List Orders", "http://docs.sslcomapi.apiary.io/#get-%2Fcertificate%2F%7Bref%7D%2F%7B%3Fquery_type%2Cresponse_type%2Cresponse_encoding%7D", target: "_blank"
     %li
       %textarea.selectAll{style: "width:95%;"}=co.to_api_string(action: "index", current_user: current_user, domain_override: api_domain(co))
-    %li
-      %strong=link_to "New Order w/o CSR", "http://docs.sslcomapi.apiary.io/#post-%2Fcertificates", target: "_blank"
-    %li
-      %textarea.selectAll{style: "width:95%;"}=co.to_api_string(action: "create", current_user: current_user, domain_override: api_domain(co))
     -if co.certificate.is_server?
       %li
         %strong=link_to "List DCV Methods w/o CSR", "http://docs.sslcomapi.apiary.io/#get-%2Fcertificate%2F%7Bref%7D%2Fvalidations%2Fmethods%7B%3Faccount_key%2Csecret_key%7D", target: "_blank"
@@ -53,6 +49,10 @@
         %strong=link_to "Update DCV", "http://docs.sslcomapi.apiary.io/#put-%2Fcertificate%2F%7Bref%7D", target: "_blank"
       %li
         %textarea.selectAll{style: "width:95%;"}=co.to_api_string(action: "update_dcv", current_user: current_user, domain_override: api_domain(co))
+    %li
+      %strong=link_to "New Order w/o CSR", "http://docs.sslcomapi.apiary.io/#post-%2Fcertificates", target: "_blank"
+    %li
+      %textarea.selectAll{style: "width:95%;"}=co.to_api_string(action: "create", current_user: current_user, domain_override: api_domain(co))
     -if cc.registrant
       -if co.csr
         %li
@@ -63,6 +63,11 @@
           %strong=link_to "Process CSR or Reissue", "http://docs.sslcomapi.apiary.io/#put-%2Fcertificate%2F%7Bref%7D", target: "_blank"
         %li
           %textarea.selectAll{style: "width:95%;"}=co.to_api_string(action: "update", current_user: current_user, domain_override: api_domain(co))
+        -if !cc.all_domains_validated?
+          %li
+            %strong=link_to "Retry Domain Validation", "http://docs.sslcomapi.apiary.io/#put-%2Fcertificate%2F%7Bref%7D", target: "_blank"
+          %li
+            %textarea.selectAll{style: "width:95%;"}=co.to_api_string(action: "validate", current_user: current_user, domain_override: api_domain(co))
       -if co.signed_certificate
         %li
           %strong=link_to "Revoke", "http://docs.sslcomapi.apiary.io/#reference/ssl-certificates/certificate-order/revoke-certificate", target: "_blank"
