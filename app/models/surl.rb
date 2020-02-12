@@ -1,3 +1,26 @@
+# == Schema Information
+#
+# Table name: surls
+#
+#  id            :integer          not null, primary key
+#  guid          :string(255)
+#  identifier    :string(255)
+#  original      :text(65535)
+#  password_hash :string(255)
+#  password_salt :string(255)
+#  require_ssl   :boolean
+#  share         :boolean
+#  status        :string(255)
+#  username      :string(255)
+#  created_at    :datetime
+#  updated_at    :datetime
+#  user_id       :integer
+#
+# Indexes
+#
+#  index_surls_on_user_id  (user_id)
+#
+
 require "net/https"
 require "uri"
 require "digest/sha1"

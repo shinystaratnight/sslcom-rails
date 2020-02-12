@@ -1,3 +1,30 @@
+# == Schema Information
+#
+# Table name: product_orders
+#
+#  id                :integer          not null, primary key
+#  amount            :integer
+#  auto_renew        :string(255)
+#  auto_renew_status :string(255)
+#  is_expired        :boolean
+#  notes             :text(65535)
+#  ref               :string(191)
+#  value             :string(255)
+#  workflow_state    :string(255)
+#  created_at        :datetime
+#  updated_at        :datetime
+#  product_id        :integer
+#  ssl_account_id    :integer
+#
+# Indexes
+#
+#  index_product_orders_on_created_at      (created_at)
+#  index_product_orders_on_is_expired      (is_expired)
+#  index_product_orders_on_product_id      (product_id)
+#  index_product_orders_on_ref             (ref)
+#  index_product_orders_on_ssl_account_id  (ssl_account_id)
+#
+
 # This represents a purchased instance of Product
 
 class ProductOrder < ApplicationRecord
