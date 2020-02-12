@@ -93,14 +93,14 @@ class ApplicationController < ActionController::Base
   end
 
   def find_tier
-    @tier ||= if suffix = @certificate_order&.ssl_account&.tier_suffix
-                suffix
-              elsif suffix = current_user&.tier_suffix
-                suffix
+    @tier ||= if @certificate_order&.ssl_account&.tier_suffix
+                @certificate_order&.ssl_account&.tier_suffix
+              elsif current_user&.tier_suffix
+                current_user&.tier_suffix
               elsif params[:reseller_tier_key].present?
                 ResellerTier.tier_suffix(params[:reseller_tier_key])
-              elsif cookie = cookies[ResellerTier::TIER_KEY].present?
-                ResellerTier.tier_suffix(cookie)
+              elsif cookies[ResellerTier::TIER_KEY].present?
+                ResellerTier.tier_suffix(cookies[ResellerTier::TIER_KEY])
               end
   end
 
@@ -237,9 +237,16 @@ class ApplicationController < ActionController::Base
   end
 
   def find_certificate
-    prod = params[:id] == 'mssl' ? 'high_assurance' : params[:id]
-    identifier = "#{prod}#{@tier}"
-    @certificate = Certificate.includes(:product_variant_items).for_sale.find_by(product: identifier)
+    @certificate=Certificate.includes(:product_variant_items).find(Rails.cache.fetch("find_certificate/#{params[:id]}"+
+                                                                                         "#{@tier || ''}") do
+        prod = params[:id] == 'mssl' ? 'high_assurance' : params[:id]
+        unless @tier.blank?
+         (Certificate.for_sale.find_by(product: "#{prod}#{@tier}") ||
+             Certificate.for_sale.find_by(product: prod)).id
+        else
+         Certificate.for_sale.find_by(product: prod).id
+        end
+      end)
   end
 
   def find_certificate_orders(options = {})
