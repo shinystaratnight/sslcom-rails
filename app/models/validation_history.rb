@@ -1,3 +1,29 @@
+# == Schema Information
+#
+# Table name: validation_histories
+#
+#  id                            :integer          not null, primary key
+#  admin_notes                   :string(255)
+#  document_content_type         :string(255)
+#  document_file_name            :string(255)
+#  document_file_size            :string(255)
+#  document_updated_at           :datetime
+#  notes                         :string(255)
+#  publish_to_site_seal          :boolean
+#  publish_to_site_seal_approval :boolean          default(FALSE)
+#  random_secret                 :string(255)
+#  reviewer                      :string(255)
+#  satisfies_validation_methods  :string(255)
+#  created_at                    :datetime
+#  updated_at                    :datetime
+#  validation_id                 :integer
+#
+# Indexes
+#
+#  index_validation_histories_on_validation_id  (validation_id)
+#  index_validation_histories_validation_id     (validation_id)
+#
+
 # The validation document
 
 class ValidationHistory < ApplicationRecord

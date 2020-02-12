@@ -1,3 +1,23 @@
+# == Schema Information
+#
+# Table name: validation_rulings
+#
+#  id                      :integer          not null, primary key
+#  notes                   :string(255)
+#  status                  :string(255)
+#  validation_rulable_type :string(255)
+#  workflow_state          :string(255)
+#  created_at              :datetime
+#  updated_at              :datetime
+#  validation_rulable_id   :integer
+#  validation_rule_id      :integer
+#
+# Indexes
+#
+#  index_validation_rulings_on_rulable_id_and_rulable_type  (validation_rulable_id,validation_rulable_type)
+#  index_validation_rulings_on_validation_rule_id           (validation_rule_id)
+#
+
 # The decision or current status on a validation rule requirement on a given validation material (document)
 
 class ValidationRuling < ApplicationRecord

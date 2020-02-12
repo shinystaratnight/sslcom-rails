@@ -1,3 +1,30 @@
+# == Schema Information
+#
+# Table name: products
+#
+#  id                    :integer          not null, primary key
+#  amount                :integer
+#  auto_renew            :string(255)
+#  description           :text(65535)
+#  display_order         :string(255)
+#  duration              :integer
+#  ext_customer_ref      :string(255)
+#  icons                 :string(255)
+#  notes                 :text(65535)
+#  published_as          :string(16)       default("draft")
+#  ref                   :string(255)
+#  serial                :string(255)
+#  status                :string(255)
+#  summary               :text(65535)
+#  text_only_description :text(65535)
+#  text_only_summary     :text(65535)
+#  title                 :string(255)
+#  type                  :string(255)
+#  value                 :string(255)
+#  created_at            :datetime
+#  updated_at            :datetime
+#
+
 # This class represents a template of an item or service that can be sold. See ProductOrder for a purchased
 # instance of Product
 
