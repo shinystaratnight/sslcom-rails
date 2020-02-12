@@ -17,7 +17,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
 
   validates :account_key, :secret_key, presence: true
   validates :ref, presence: true, if: lambda{|c|['update_v1_4', 'show_v1_4'].include?(c.action)}
-  validates :csr, presence: true, unless: "ref.blank? || is_processing? || is_attestation_processing?"
+  validates :csr, presence: true, unless: lambda{|c| c.ref.blank? || c.is_processing? || c.is_attestation_processing?}
   validates :period, presence: true, format: /\d+/,
     inclusion: {in: ApiCertificateRequest::NON_EV_SSL_PERIODS,
     message: "needs to be one of the following: #{NON_EV_SSL_PERIODS.join(', ')}"}, if: lambda{|c| (c.is_dv? || c.is_ov?) &&
