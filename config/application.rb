@@ -21,7 +21,7 @@ module SslCom
     # set environment variables
     config.before_configuration do
       env_file = File.join(Rails.root, 'config', 'local_env.yml')
-      YAML.load(File.open(env_file)).each do |key, value|
+      YAML.safe_load(File.open(env_file)).each do |key, value|
         ENV[key.to_s] = value
       end
     end
@@ -37,7 +37,7 @@ module SslCom
     # Config::Integration::Rails::Railtie.preload
 
     # Add additional load paths for your own custom dirs
-    %w(observers mailers middleware serializers paths).each do |dir|
+    %w[observers mailers middleware serializers paths jobs].each do |dir|
       config.autoload_paths << "#{config.root}/app/#{dir}"
     end
 

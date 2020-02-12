@@ -23,7 +23,6 @@
 #  workflow_state         :string(255)      default("active")
 #
 
-
 class SslAccount < ApplicationRecord
   extend Memoist
   using_access_control

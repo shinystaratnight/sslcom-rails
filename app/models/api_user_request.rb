@@ -1,19 +1,21 @@
+# frozen_string_literal: true
+
 class ApiUserRequest < CaApiRequest
   attr_accessor :test, :action, :admin_submitted
 
-  CREATE_ACCESSORS_1_4 = [:login, :email, :password, :first_name, :last_name, :phone, :organization, :address1,
-                          :address2, :address3, :po_box, :postal_code, :city, :state, :country, :account_key,
-                          :secret_key, :options, :account_number]
+  CREATE_ACCESSORS_1_4 = %i[login email password first_name last_name phone organization 
+                            address1 address2 address3 po_box postal_code city state country
+                            account_key secret_key options account_number].freeze
 
   attr_accessor *(CREATE_ACCESSORS_1_4).uniq
 
   before_validation(on: :create) do
     if self.account_key && self.secret_key
       ac=ApiCredential.find_by_account_key_and_secret_key(self.account_key, self.secret_key)
-      unless ac.blank?
+      if ac.present?
         self.api_requestable = ac.ssl_account
       else
-        errors[:login] << "account_key not found or wrong secret_key"
+        errors[:login] << missing_account_key_or_secret_key
       end
     end
   end

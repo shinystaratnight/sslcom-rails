@@ -1,0 +1,4 @@
+en:
+  error:
+    invalid_api_credentials: 'invalid or missing account_key, secret_key or acme_acct_pub_key_thumbprint'
+    missing_account_key_or_secret_key: 'account_key not found or wrong secret_key'
