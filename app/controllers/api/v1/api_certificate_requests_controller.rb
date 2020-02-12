@@ -292,11 +292,11 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
     if @result.save
       if @acr = @result.resend_domain_validation
         if @acr.is_a?(CertificateOrder) && @acr.errors.empty?
-          @result.success_message = "It has retried domain validation successfully for the certificate order. (ref: " + @acr.ref + ")"
+          @result.success_message = "Successfully retried domain validation for certificate order ref #{@acr.ref}"
         elsif @acr.is_a?(String) && @acr == "incorrect_state"
-          @result.error_message = "This certificate order is not in pending validation state."
+          @result.error_message = "Error: certificate order #{@acr.ref} is not in pending validation state."
         elsif @acr.is_a?(String) && @acr == "empty_dcv"
-          @result.error_message = "It has never been domain validation before for this certificate order."
+          @result.error_message = "Error: certificate order #{@acr.ref} domain validation has never been performed yet."
         else
           @result = @acr
         end
