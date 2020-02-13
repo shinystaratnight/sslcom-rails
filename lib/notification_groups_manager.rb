@@ -1,7 +1,7 @@
 require 'concurrent'
 
 class SslClient
-  attr_reader :url, :port, :timeout
+  attr_reader :url, :port
 
   def initialize(url, port = '443')
     @url = url

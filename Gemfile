@@ -57,7 +57,6 @@ gem 'libv8'
 gem 'mini_racer', platforms: :ruby
 gem 'nokogiri', '>= 1.10.4'
 gem 'popper_js', '~> 1.14.5'
-gem 'parallel'
 gem 'public_suffix', '>= 4.0.0'
 gem 'rack-cors', '>= 0.4.1', require: 'rack/cors'
 gem 'rails-api'
