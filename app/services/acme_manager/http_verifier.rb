@@ -10,14 +10,20 @@ module AcmeManager
     end
 
     def call
-      @parts = AcmeManager.get_challenge(challenge_path)
+      @parts = challenge.split('.')
       verified
     end
 
     private
 
+    def challenge
+      uri = URI.parse(challenge_path)
+      response = uri.open('User-Agent' => I18n.t('users_agent.chrome'), redirect: true)
+      response&.read
+    end
+
     def challenge_path
-      "#{@challenge_url}/.well-known/acme-challenge/#{@api_credential.acme_acct_pub_key_thumbprint}"
+      [@challenge_url, '.well-known', 'acme-challenge', @api_credential.acme_acct_pub_key_thumbprint].join('/')
     end
 
     def verified

@@ -41,11 +41,11 @@ class CertificateName < ApplicationRecord
   end
 
   def is_server_name?
-    name.index(/\./).nil? if name
+    name&.index(/\./).nil?
   end
 
   def is_fqdn?
-    name&.index(/\A[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?\z/ix)&.zero? unless is_ip_address? && is_server_name?
+    name&.index(%r{\A[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(/.*)?\z}ix)&.zero? unless is_ip_address? && is_server_name?
   end
 
   def is_intranet?
@@ -152,7 +152,7 @@ class CertificateName < ApplicationRecord
 
   # if the domain has been validated, do not allow changing it's name
   def name=(name)
-    dcv = self.domain_control_validations.last
+    dcv = domain_control_validations.last
     super unless dcv&.satisfied?
   end
 
@@ -188,13 +188,13 @@ class CertificateName < ApplicationRecord
     "#{cache_key}/get_asynch_domains/#{non_wildcard_name}"
   end
 
-  def candidate_email_addresses(clear_cache=false)
+  def candidate_email_addresses(clear_cache = false)
     Rails.cache.delete("CertificateName.candidate_email_addresses/#{non_wildcard_name}") if clear_cache
     CertificateName.candidate_email_addresses(name, self)
   end
 
   # certificate_name in the event the domain_control_validations candidate addresses need to be updated
-  def self.candidate_email_addresses(name, certificate_name=nil)
+  def self.candidate_email_addresses(name, certificate_name = nil)
     name = CertificateContent.non_wildcard_name(name, false)
     Rails.cache.fetch("CertificateName.candidate_email_addresses/#{name}", expires_in: DomainControlValidation::EMAIL_CHOICE_CACHE_EXPIRES_DAYS.days) do
       Delayed::Job.enqueue WhoIsJob.new(name, certificate_name)
