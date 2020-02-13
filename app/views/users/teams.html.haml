@@ -59,7 +59,7 @@
             =link_to "decline", t[:decline], {style: 'color:red;'}
     -if @teams.any?
       -@teams.each do |t|
-        - cache([current_user,'teams_list', t], expires_in: 12.hours) do
+        - cache([current_user.id, 'teams_list', t.cache_key], expires_in: 12.hours) do
           -if t.active?
             -account_owner = current_user.is_account_owner? t
             -account_admin = current_user.is_account_team_admin? t
