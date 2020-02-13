@@ -1,10 +1,12 @@
 # frozen_string_literal: true
+
 #
 # == Schema Information
 #
 # Table name: certificate_names
 #
 #  id                     :integer          not null, primary key
+#  acme_token             :string(255)
 #  caa_passed             :boolean          default(FALSE)
 #  email                  :string(255)
 #  is_common_name         :boolean
@@ -17,6 +19,7 @@
 #
 # Indexes
 #
+#  index_certificate_names_on_acme_token              (acme_token)
 #  index_certificate_names_on_certificate_content_id  (certificate_content_id)
 #  index_certificate_names_on_name                    (name)
 #  index_certificate_names_on_ssl_account_id          (ssl_account_id)
@@ -59,8 +62,7 @@ class CertificateName < ApplicationRecord
   has_many    :notification_groups, through: :notification_groups_subjects
 
   attr_accessor :csr
-  delegate :acme_token, to: :domain_control_validation, prefix: false
-  delegate :all_domains_validated?, to: :certificate_content, prefix: false
+  delegate :all_domains_validated?, to: :certificate_content, prefix: false, allow_nil: true
 
   scope :find_by_domains, ->(domains){ includes(:domain_control_validations).where{ name >> domains } }
   scope :validated, ->{ joins(:domain_control_validations).where{ domain_control_validations.workflow_state == 'satisfied' } }
@@ -113,18 +115,20 @@ class CertificateName < ApplicationRecord
     result.uniq.order(created_at: :desc)
   }
 
+  after_initialize do
+    generate_acme_token if acme_token.blank?
+  end
+
   def is_ip_address?
-    name.index(/\A(?:[0-9]{1,3}\.){3}[0-9]{1,3}\z/) == 0 if name
+    name&.index(/\A(?:[0-9]{1,3}\.){3}[0-9]{1,3}\z/)&.zero?
   end
 
   def is_server_name?
-    name.index(/\./) == nil if name
+    name.index(/\./).nil? if name
   end
 
   def is_fqdn?
-    unless is_ip_address? && is_server_name?
-      name.index(/\A[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?\z/ix) == 0 if name
-    end
+    name&.index(/\A[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?\z/ix)&.zero? unless is_ip_address? && is_server_name?
   end
 
   def is_intranet?
@@ -334,5 +338,13 @@ class CertificateName < ApplicationRecord
     standard_addresses = CertificateName.candidate_email_addresses(dname)
     standard_addresses << email_address
     DomainControlValidation.global.find_or_create_by(subject: dname.gsub(/\A\*\./, '').downcase).update_column(:candidate_addresses, standard_addresses)
+  end
+
+  def generate_acme_token
+    self.acme_token = loop do
+      random_token = SecureRandom.urlsafe_base64(96, false)
+      break random_token unless CertificateName.exists?(acme_token: random_token)
+    end
+    save
   end
 end

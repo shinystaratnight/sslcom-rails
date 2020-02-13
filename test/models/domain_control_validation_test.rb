@@ -5,7 +5,6 @@
 # Table name: domain_control_validations
 #
 #  id                         :integer          not null, primary key
-#  acme_token                 :string(255)
 #  address_to_find_identifier :string(255)
 #  candidate_addresses        :text(65535)
 #  dcv_method                 :string(255)
@@ -29,7 +28,6 @@
 #
 #  index_domain_control_validations_on_3_cols                    (certificate_name_id,email_address,dcv_method)
 #  index_domain_control_validations_on_3_cols(2)                 (csr_id,email_address,dcv_method)
-#  index_domain_control_validations_on_acme_token                (acme_token)
 #  index_domain_control_validations_on_certificate_name_id       (certificate_name_id)
 #  index_domain_control_validations_on_csr_id                    (csr_id)
 #  index_domain_control_validations_on_csr_unique_value_id       (csr_unique_value_id)

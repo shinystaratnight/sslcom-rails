@@ -21,7 +21,6 @@
 #  index_api_credentials_on_ssl_account_id                (ssl_account_id)
 #
 
-
 class ApiCredential < ApplicationRecord
   belongs_to :ssl_account
 

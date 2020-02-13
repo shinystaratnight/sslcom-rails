@@ -51,11 +51,12 @@ class ApiAcmeRetrieveValidations < ApiAcmeRequest
 
     @api_credential = ApiCredential.find_by(account_key: account_key, secret_key: secret_key)
   end
+  memoize :api_credential
 
   def certificate_order
     return nil unless certificate_order_ref
 
-    @certificate_order = CertificateOrder.unscoped.includes(certificate_contents: [:domain_control_validations]).find_by(ref: certificate_order_ref)
+    @certificate_order = CertificateOrder.unscoped.includes(certificate_contents: [:certificate_names]).find_by(ref: certificate_order_ref)
   end
-  memoize :api_credential
+  memoize :certificate_order
 end

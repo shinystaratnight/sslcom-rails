@@ -76,8 +76,8 @@ class SignedCertificate < ApplicationRecord
   belongs_to :parent, :foreign_key=>:parent_id,
     :class_name=> 'SignedCertificate', :dependent=>:destroy
   belongs_to :csr, touch: true
-  delegate :certificate_content, to: :csr
-  delegate :certificate_order, to: :certificate_content
+  delegate :certificate_content, to: :csr, allow_nil: true
+  delegate :certificate_order, to: :certificate_content, allow_nil: true
   belongs_to :certificate_lookup
   validates_presence_of :body, :if=> Proc.new{|r| !r.parent_cert}
   validates :csr_id, :presence=>true, :on=>:save

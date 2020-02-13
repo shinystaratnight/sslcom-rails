@@ -7,6 +7,7 @@ module Api
       before_filter :set_database, if: 'request.host=~/^sandbox/ || request.host=~/^sws-test/ || request.host=~/ssl.local$/'
       before_filter :set_test, :record_parameters
       rescue_from Exception do |exception|
+        logger.error exception.message
         render_500_error exception
       end
 
@@ -77,7 +78,7 @@ module Api
       end
 
       def render_validations
-        render json: @result.certificate_order.certificate_content.certificate_names.having_dvc,
+        render json: @result.certificate_order.certificate_content.certificate_names,
                each_serializer: CertificateNameSerializer,
                status: :ok
       end
