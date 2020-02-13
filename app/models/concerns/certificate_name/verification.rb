@@ -6,22 +6,26 @@ module Concerns
       extend ActiveSupport::Concern
 
       def dcv_verify(protocol = nil)
-        protocol ||= domain_control_validation.try(:dcv_method)
-        return nil if protocol =~ /email/
-
-        validation_type = protocol.include? 'acme' ? 'acme-challenge' : 'pki-validation'
-        key = protocol.include? 'acme' ? domain_control_validation.acme_token : csr.md5_hash
-        options = { secure: true, prepend: '', check_type: true, validation_type: validation_type, key: key }
-        parameters = { https_dcv_url: dcv_url(options), http_dcv_url: dcv_url(options.merge(secure: false)),
-                       cname_origin: cname_origin(true), cname_destination: cname_destination, csr: csr, ca_tag: ca_tag }
-        self.class.dcv_verify(protocol, parameters)
+        case protocol ||= domain_control_validation.try(:dcv_method)
+        when /email/
+          nil
+        when /acme_http/
+          AcmeManager::HttpVerifier.new(api_credential, non_wildcard_name(true)).call
+        when /acme_dns_txt/
+          AcmeManager::DnsTxtVerifier.new(api_credential, non_wildcard_name(true)).call
+        else
+          prepend = ''
+          CertificateName.dcv_verify(protocol: protocol,
+                                     https_dcv_url: dcv_url(true, prepend, true),
+                                     http_dcv_url: dcv_url(false, prepend, true),
+                                     cname_origin: cname_origin(true),
+                                     cname_destination: cname_destination,
+                                     csr: csr,
+                                     ca_tag: ca_tag)
+        end
       end
 
-      def verify_challenge(response, options, is_acme)
-        is_acme ? acme_verified(response, options) : standard_verified(response, options)
-      end
-
-      def standard_verified(response, options)
+      def verified(response, options)
         csr = options[:csr]
         true if !!(
         if response =~ Regexp.new("^#{csr.sha2_hash}") &&
@@ -41,74 +45,31 @@ module Concerns
         unique_value.blank? || ignored
       end
 
-      def acme_verified(response)
-        self.class.acme_verify(response)
-      end
-
       def api_credential
         certificate_content&.ssl_account&.api_credential
       end
 
-      def hmac_key
-        api_credential&.hmac_key
-      end
-
-      def thumbprint
-        api_credential&.acme_acct_pub_key_thumbprint
-      end
-
-      def verified
-        well_formed && token_matches && thumbprint_matches
-      end
-
-      def well_formed
-        return true if @challenge_parts.length == 2
-
-        logger.debug "Key authorization #{@challenge_parts.join('.')} is not well formed"
-        false
-      end
-
-      def token_matches
-        return true if @challenge_parts[0] == hmac_key
-
-        logger.debug "Mismatching token in key authorization: #{parts[0]} instead of #{hmac_key}"
-        false
-      end
-
-      def thumbprint_matches
-        return true if @challenge_parts[1] == thumbprint
-
-        logger.debug "Mismatching thumbprint in key authorization: #{@challenge_parts[1]} instead of #{thumbprint}"
-        false
-      end
-
       class_methods do
-        def acme_verify(challenge)
-          return false if hmac_key.blank? || thumbprint.blank?
-
-          @challenge_parts = challenge.split('.')
-          verified
-        end
-
         def dcv_verify(protocol, options)
           begin
             Timeout.timeout(Surl::TIMEOUT_DURATION) do
-              return self.class.cname_verify(options[:cname_origin], options[:cname_destination]) if protocol =~ /cname/
+              response = self.class.selected_verification(protocol, options)
 
-              response = case protocol
-                         when /https/
-                           self.class.https_verify(options[:https_dcv_url])
-                         when /acme_http/
-                           self.class.http_verify(options[:http_dcv_url])
-                         when /acme_dns_txt/
-                           raise 'Not Implemented'
-                         else
-                           self.class.http_verify(options[:http_dcv_url])
-                         end
-              return verify_challenge(response, options, protocol.match?(/acme/))
+              return verified(response, options)
             end
           rescue StandardError => _e
             false
+          end
+        end
+
+        def verify(protocol, options)
+          case protocol
+          when /https/
+            self.class.https_verify(options[:https_dcv_url])
+          when /cname/
+            self.class.cname_verify(options[:cname_origin], options[:cname_destination])
+          else
+            self.class.http_verify(options[:http_dcv_url])
           end
         end
 

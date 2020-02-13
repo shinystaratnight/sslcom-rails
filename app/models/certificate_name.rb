@@ -99,10 +99,8 @@ class CertificateName < ApplicationRecord
     end
   end
 
-  # def dcv_url(secure = false, prepend = '', check_type = false, validation_type = 'pki-validation', key = csr.md5_hash)
-  def dcv_url(options = {})
-    params = { secure: false, prepend: '', check_type: false, validation_type: 'pki-validation', key: csr.md5_hash }.merge(options)
-    "http#{'s' if secure}://#{params[:prepend] + non_wildcard_name(params[:check_type])}/.well-known/#{params[:validation_type]}/#{params[:key]}.txt"
+  def dcv_url(secure = false, prepend = '', check_type = false)
+    "http#{'s' if secure}://#{prepend + non_wildcard_name(check_type)}/.well-known/pki-validation/#{csr.md5_hash}.txt"
   end
 
   def cname_origin(check_type = false)
