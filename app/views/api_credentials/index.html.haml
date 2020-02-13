@@ -1,7 +1,7 @@
 -title = "API Credential Management"
 -slug_params = {ssl_slug: @ssl_slug}
 -content_for :title, title
-=render :partial => 'index_scripts'
+=render partial: 'index_scripts'
 #validations
   %table(cellspacing="0")
     -unless current_user.is_system_admins?
@@ -11,13 +11,27 @@
       %th.name(scope="col")Account Key
       %th(scope="col") Secret Key
       %th(scope="col") Role(s)
+      %th(scope="col") HMAC Key
+      %th(scope="col") ACME Thumbnail
       - unless current_user.is_system_admins?
         %th(scope="col") Actions
     -@acs.each_with_index do |ac, index|
       %tr
-        %td.name.expandable=ac.account_key
-        %td.expandable.td_secret_key(data-secret-key="#{ac.secret_key}" tabindex="1")Click to view
-        %td.expandable=ac.role_names.join(', ')
+        %td.name.expandable
+          #{ac.account_key}
+          #{render partial: 'shared/copy_button', locals: { content: ac.account_key }}
+        %td.expandable.td_secret_key(data-secret-key="#{ac.secret_key}" tabindex="1")
+          Click to view
+          #{render partial: 'shared/copy_button', locals: { content: ac.secret_key }}
+        %td.expandable
+          #{ac.role_names.join(', ')}
+          #{render partial: 'shared/copy_button', locals: { content: ac.role_names.join(', ') }}
+        %td.expandable
+          #{truncate(ac.hmac_key, length: 20)}
+          #{render partial: 'shared/copy_button', locals: { content: ac.hmac_key }}
+        %td.expandable
+          #{truncate(ac.acme_acct_pub_key_thumbprint, length: 20)}
+          #{render partial: 'shared/copy_button', locals: { content: ac.acme_acct_pub_key_thumbprint }}
         -unless current_user.is_system_admins?
           -managed_api = ac.becomes(ApiCredential)
           %td.actions
@@ -25,4 +39,3 @@
             -if @acs.count > 1
               |
               =link_to 'remove', remove_api_credential_path(ac, slug_params), :class => 'remove_ac'
-       

@@ -28,10 +28,6 @@ linters:
   RuboCop:
     enabled: false
 
-  # Offense count: 5242
-  SpaceBeforeScript:
-    enabled: true
-
   # Offense count: 322
   TrailingWhitespace:
     enabled: true

@@ -31,7 +31,6 @@
 #  index_ca_api_requests_on_username_and_approval_id                 (username,approval_id) UNIQUE
 #
 
-
 class ApiAcmeRetrieveCredential < ApiAcmeRequest
   extend Memoist
 
