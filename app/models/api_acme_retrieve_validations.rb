@@ -31,13 +31,12 @@
 #  index_ca_api_requests_on_username_and_approval_id                 (username,approval_id) UNIQUE
 #
 
-
 class ApiAcmeRetrieveValidations < ApiAcmeRequest
   extend Memoist
 
   before_validation(on: :create) do
     if certificate_order.nil?
-      errors[:certificate_order_id] << "certificate order not found with id #{certificate_order_id}"
+      errors[:certificate_order_ref] << "certificate order #{certificate_order_ref} not found"
       false
     elsif ac = api_credential
       self.api_requestable = ac.ssl_account
@@ -54,9 +53,9 @@ class ApiAcmeRetrieveValidations < ApiAcmeRequest
   end
 
   def certificate_order
-    return nil unless certificate_order_id
+    return nil unless certificate_order_ref
 
-    @certificate_order = CertificateOrder.includes(certificate_contents: [:domain_control_validations]).find(certificate_order_id)
+    @certificate_order = CertificateOrder.unscoped.includes(certificate_contents: [:domain_control_validations]).find_by(ref: certificate_order_ref)
   end
   memoize :api_credential
 end

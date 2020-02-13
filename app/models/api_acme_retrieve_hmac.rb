@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: ca_api_requests
@@ -38,7 +40,7 @@ class ApiAcmeRetrieveHmac < ApiAcmeRequest
     ac = api_credential
 
     if ac.blank?
-      errors[:credential] << "hmac_key not found or wrong hmac_key"
+      errors[:credential] << 'hmac_key not found or wrong hmac_key'
       false
     end
   end

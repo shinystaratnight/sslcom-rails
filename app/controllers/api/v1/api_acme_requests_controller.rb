@@ -39,8 +39,8 @@ module Api
         if @result.valid? && @result.save
           render_validations
           return
-        elsif @result.errors[:certificate_order_id].present?
-          render_not_found(CertificateOrder, acme_params[:certificate_order_id])
+        elsif @result.errors[:certificate_order_ref].present?
+          render_not_found(CertificateOrder, acme_params[:certificate_order_ref])
         elsif @result.errors[:credential].present?
           render_unathorized
         end
@@ -87,7 +87,7 @@ module Api
       end
 
       def acme_params
-        params.permit %i[account_key secret_key debug hmac_key certificate_order_id action api_acme_request format acme_acct_pub_key_thumbprint]
+        params.permit %i[account_key secret_key debug hmac_key certificate_order_ref action api_acme_request format acme_acct_pub_key_thumbprint]
       end
     end
   end
