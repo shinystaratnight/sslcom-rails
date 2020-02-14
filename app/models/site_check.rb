@@ -1,3 +1,18 @@
+# == Schema Information
+#
+# Table name: site_checks
+#
+#  id                    :integer          not null, primary key
+#  url                   :text(65535)
+#  created_at            :datetime
+#  updated_at            :datetime
+#  certificate_lookup_id :integer
+#
+# Indexes
+#
+#  index_site_checks_on_certificate_lookup_id  (certificate_lookup_id)
+#
+
 require 'net/http'
 require 'net/https'
 require 'open-uri'

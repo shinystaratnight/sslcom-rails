@@ -21,7 +21,6 @@ class UsersController < ApplicationController
                                                       switch_default_ssl_account index admin_activate show teams]
   before_action :global_set_row_page, only: %i[index search teams]
 
-  # before_filter :index, :only=>:search
   filter_access_to  :all
   filter_access_to  :update, :admin_update, :enable_disable,
                     :switch_default_ssl_account, :decline_account_invite,

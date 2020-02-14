@@ -1,3 +1,27 @@
+# == Schema Information
+#
+# Table name: ssl_account_users
+#
+#  id             :integer          not null, primary key
+#  approval_token :string(255)
+#  approved       :boolean          default(FALSE)
+#  declined_at    :datetime
+#  invited_at     :datetime
+#  token_expires  :datetime
+#  user_enabled   :boolean          default(TRUE)
+#  created_at     :datetime
+#  updated_at     :datetime
+#  ssl_account_id :integer          not null
+#  user_id        :integer          not null
+#
+# Indexes
+#
+#  index_ssl_account_users_on_four_fields                 (user_id,ssl_account_id,approved,user_enabled)
+#  index_ssl_account_users_on_ssl_account_id              (ssl_account_id)
+#  index_ssl_account_users_on_ssl_account_id_and_user_id  (ssl_account_id,user_id)
+#  index_ssl_account_users_on_user_id                     (user_id)
+#
+
 class SslAccountUser < ApplicationRecord
   belongs_to  :user
   belongs_to  :unscoped_user, foreign_key: :ssl_account_id, class_name: "UnscopedUser"

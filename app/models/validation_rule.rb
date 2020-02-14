@@ -1,3 +1,23 @@
+# == Schema Information
+#
+# Table name: validation_rules
+#
+#  id                                   :integer          not null, primary key
+#  applicable_validation_methods        :text(65535)
+#  description                          :string(255)
+#  notes                                :text(65535)
+#  operator                             :string(255)
+#  required_validation_methods          :text(65535)
+#  required_validation_methods_operator :string(255)      default("AND")
+#  created_at                           :datetime
+#  updated_at                           :datetime
+#  parent_id                            :integer
+#
+# Indexes
+#
+#  index_validation_rules_on_parent_id  (parent_id)
+#
+
 # The actual validation rule or requirement
 
 class ValidationRule < ApplicationRecord

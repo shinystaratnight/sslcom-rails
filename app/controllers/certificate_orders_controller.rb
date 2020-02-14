@@ -845,6 +845,7 @@ class CertificateOrdersController < ApplicationController
   def smime_client_init
     find_tier
     @certificates = Certificate.get_smime_client_products(@tier)
+    @certificates = Certificate.get_smime_client_products if @certificates.blank?
     @certificate ||= @certificates.first
 
     co = CertificateOrder.new(

@@ -1,3 +1,17 @@
+# == Schema Information
+#
+# Table name: certificate_lookups
+#
+#  id          :integer          not null, primary key
+#  certificate :text(65535)
+#  common_name :string(255)
+#  expires_at  :datetime
+#  serial      :string(255)
+#  starts_at   :datetime
+#  created_at  :datetime
+#  updated_at  :datetime
+#
+
 # This class looks up Web ssl certs on domains and provides
 # a reference for expirations for both csrs and signed certificates
 

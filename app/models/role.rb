@@ -5,12 +5,16 @@
 # Table name: roles
 #
 #  id             :integer          not null, primary key
+#  description    :text(65535)
 #  name           :string(255)
+#  status         :string(255)
 #  created_at     :datetime
 #  updated_at     :datetime
 #  ssl_account_id :integer
-#  description    :text(65535)
-#  status         :string(255)
+#
+# Indexes
+#
+#  index_roles_on_ssl_account_id  (ssl_account_id)
 #
 
 class Role < ApplicationRecord
@@ -30,6 +34,8 @@ class Role < ApplicationRecord
   VALIDATIONS   = 'validations'
   RA_ADMIN      = 'ra_admin'
   INDIVIDUAL_CERTIFICATE = 'individual_certificate'
+
+  ALL = [ACCOUNT_ADMIN, BILLING, INSTALLER, OWNER, RESELLER, SUPER_USER, SYS_ADMIN, USERS_MANAGER, VALIDATIONS, RA_ADMIN, INDIVIDUAL_CERTIFICATE].freeze
 
   def self.get_role_id(role_name)
     Rails.cache.fetch(['get_role_id', role_name]) { Role.find_by(name: role_name).id }
