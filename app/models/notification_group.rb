@@ -39,6 +39,8 @@ class NotificationGroup < ApplicationRecord
 
   preference :notification_group_triggers, :string
 
+  alias_attribute :disabled, :status
+
   before_create do |ng|
     ng.ref = 'ng-' + SecureRandom.hex(1) + Time.now.to_i.to_s(32)
     ng.friendly_name = ng.ref if ng.friendly_name.blank?
