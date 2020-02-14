@@ -31,10 +31,8 @@ class ApiCredential < ApplicationRecord
       self.account_key ||= SecureRandom.hex(6)
       self.secret_key  ||= SecureRandom.base64(10)
       self.hmac_key ||= SecureRandom.base64(32)
-      self.acme_acct_pub_key_thumbprint ||= Base64.urlsafe_encode64(jwk_thumbprint)
-    elsif self.hmac_key.blank? || self.acme_acct_pub_key_thumbprint.blank?
+    elsif self.hmac_key.blank?
       self.hmac_key ||= SecureRandom.base64(32)
-      self.acme_acct_pub_key_thumbprint ||= Base64.urlsafe_encode64(jwk_thumbprint)
     end
     save
   end
@@ -56,10 +54,13 @@ class ApiCredential < ApplicationRecord
   end
 
   def role_names
-    role_names = []
-    role_ids&.each do |role_id|
-      role_names << Role.find(role_id).name
-    end
-    role_names
+    Role.find(role_ids).map(&:name)
+  end
+
+  def self.authenticate(account_key, secret_key)
+    ac = ApiCredential.find_by(account_key: account_key, secret_key: secret_key)
+    ac&.acme_acct_pub_key_thumbprint ||= Base64.urlsafe_encode64(jwk_thumbprint)
+    ac&.save if ac&.changed?
+    ac
   end
 end

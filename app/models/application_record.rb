@@ -14,6 +14,7 @@ require 'acts_as_notable/lib/note_methods'
 require 'acts_as_publishable/lib/acts_as_publishable'
 
 class ApplicationRecord < ActiveRecord::Base
+  include ActiveModel::Dirty
   include Swagger::Blocks
   include CollectiveIdea::Acts::Billable
   include CollectiveIdea::Acts::Sellable

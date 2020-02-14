@@ -49,7 +49,7 @@ class ApiAcmeRetrieveValidations < ApiAcmeRequest
   def api_credential
     return nil unless account_key && secret_key
 
-    @api_credential = ApiCredential.find_by(account_key: account_key, secret_key: secret_key)
+    @api_credential = ApiCredential.authenticate(account_key: account_key, secret_key: secret_key)
   end
   memoize :api_credential
 
