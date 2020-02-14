@@ -17,8 +17,6 @@
   = form.text_field :secret_key, value: 'Click to view', 'data-secret-key': @ac.secret_key
   = form.label :hmac_key, 'HMAC key'
   = form.text_field :hmac_key, read_only: true, disabled: true
-  = form.label :acme_acct_pub_key_thumbprint, 'ACME thumbprint'
-  = form.text_field :acme_acct_pub_key_thumbprint, read_only: true, disabled: true
   = button_tag 'Reset Secret Key', :type=>'button', :id=>'btn_reset_secretkey'
 .clearfix.form_input
   - role_ids = @ac.role_ids

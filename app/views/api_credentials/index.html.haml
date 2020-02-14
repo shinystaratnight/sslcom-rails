@@ -12,7 +12,6 @@
       %th(scope="col") Secret Key
       %th(scope="col") Role(s)
       %th(scope="col") HMAC Key
-      %th(scope="col") ACME Thumbnail
       - unless current_user.is_system_admins?
         %th(scope="col") Actions
     -@acs.each_with_index do |ac, index|
@@ -29,9 +28,6 @@
         %td.expandable
           #{truncate(ac.hmac_key, length: 20)}
           #{render partial: 'shared/copy_button', locals: { content: ac.hmac_key }}
-        %td.expandable
-          #{truncate(ac.acme_acct_pub_key_thumbprint, length: 20)}
-          #{render partial: 'shared/copy_button', locals: { content: ac.acme_acct_pub_key_thumbprint }}
         -unless current_user.is_system_admins?
           -managed_api = ac.becomes(ApiCredential)
           %td.actions
