@@ -345,6 +345,6 @@ class CertificateName < ApplicationRecord
       random_token = SecureRandom.urlsafe_base64(96, false)
       break random_token unless CertificateName.exists?(acme_token: random_token)
     end
-    save
+    save if persisted?
   end
 end
