@@ -90,8 +90,18 @@ class Ca < ApplicationRecord
                           "SSLcom-SubCA-CodeSigning-RSA-4096-R1" => "DodoSign-Intermediate-codeSigning-RSA-4096-R1",
                           "SSLcom-SubCA-clientCert-RSA-4096-R2" => "DodoSign-Intermediate-clientCert-RSA-4096-R1",
                           "SSLcom-SubCA-clientCert-ECC-384-R2" => "DodoSign-Intermediate-clientCert-ECC-384-R1",
-                          "SSLcom-SubCA-EV-SSL-RSA-4096-R3" => "DodoSign-Intermediate-EV-SSL-RSA-4096-R1"}}
-
+                          "SSLcom-SubCA-EV-SSL-RSA-4096-R3" => "DodoSign-Intermediate-EV-SSL-RSA-4096-R1",
+                          "SSLcom-SubCA-EV-SSL-ECC-384-R2" => "DodoSign-Intermediate-EV-SSL-ECC-384-R1"},
+                        "a3f-1f4ar60" => # PKI Ltd
+                          {"SSLcom-SubCA-SSL-RSA-4096-R1" => "PKILtd-TLS-I-RSA-R1",
+                          "SSLcom-SubCA-SSL-ECC-384-R2" => "PKILtd-TLS-I-ECC-R1",
+                          "SSLcom-SubCA-CodeSigning-RSA-4096-R1" => "PKILtd-codeSigning-I-RSA-R1",
+                          "SSLcom-SubCA-CodeSigning-ECC-384-R2" => "PKILtd-codeSigning-I-ECC-R1",
+                          "SSLcom-SubCA-clientCert-RSA-4096-R2" => "PKILtd-SMIME-I-RSA-R1",
+                          "SSLcom-SubCA-clientCert-ECC-384-R2" => "PKILtd-SMIME-I-ECC-R1",
+                          "SSLcom-SubCA-EV-SSL-RSA-4096-R3" => "PKILtd-EVTLS-I-RSA-R1",
+                          "SSLcom-SubCA-EV-SSL-ECC-384-R2" => "PKILtd-EVTLS-I-ECC-R1"}}
+  
   validates :ref, presence: true, uniqueness: true
 
   def ecc_profile
