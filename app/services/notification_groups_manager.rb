@@ -1,29 +1,3 @@
-require 'concurrent'
-
-class SslClient
-  attr_reader :url, :port
-
-  def initialize(url, port = '443')
-    @url = url
-    @port = port
-  end
-
-  def ping_for_certificate_info
-    context = OpenSSL::SSL::SSLContext.new
-    tcp_client = TCPSocket.new(url, port)
-    ssl_client = OpenSSL::SSL::SSLSocket.new tcp_client, context
-    ssl_client.hostname = url
-    ssl_client.sync_close = true
-    ssl_client.connect
-    certificate = ssl_client.peer_cert
-    verify_result = ssl_client.verify_result
-    tcp_client.close
-    {certificate: certificate, verify_result: verify_result }
-  rescue => error
-    {certificate: nil, verify_result: nil }
-  end
-end
-
 class NotificationGroupsManager
   Domain = Struct.new(:domain, :scan_port, :notification_group, :x509_cert, :verify_result)
 
@@ -52,21 +26,21 @@ class NotificationGroupsManager
 
     ScanLog.maximum('scan_group').nil? ? scan_group = 1 : scan_group = ScanLog.maximum('scan_group') + 1
     scan_logs = []
-    processed_domains = []
 
-    pool = Concurrent::CachedThreadPool.new
-    pool.post do
-      urls.uniq.each do |struct|
+    thread_pool = Concurrent::FixedThreadPool.new(20)
+
+    executors = urls.uniq.map do |struct|
+      Concurrent::Future.execute({ executor: thread_pool }) do
         ssl_client = SslClient.new(struct.domain.gsub("*.", "www."), struct.scan_port)
         cert_info = ssl_client.ping_for_certificate_info
         struct.x509_cert = cert_info[:certificate]
         struct.verify_result = cert_info[:verify_result]
-        processed_domains << struct
+        struct
       end
     end
 
-    pool.shutdown
-    pool.wait_for_termination
+    processed_domains = executors.map(&:value)
+
     processed_domains.uniq.each do |domain|
       if domain.x509_cert.present?
         certificate = domain.x509_cert
