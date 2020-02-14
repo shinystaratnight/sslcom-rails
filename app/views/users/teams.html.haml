@@ -1,14 +1,14 @@
--title = "Teams"
--content_for :title, title
--system_admins = current_user.is_system_admins?
-=render :partial => 'team_scripts'
+- title = "Teams"
+- content_for :title, title
+- system_admins = current_user.is_system_admins?
+= render partial: 'team_scripts'
 
 #search_bar
-  =form_tag teams_user_path, id: 'search_form', method: :get do
+  = form_tag teams_user_path, id: 'search_form', method: :get do
     name, account #, or slug
-    =text_field_tag :team, params[:team]
-    =hidden_field_tag :per_page, @per_page
-    =button_tag 'Search', id: 'btn_teams_search'
+    = text_field_tag :team, params[:team]
+    = hidden_field_tag :per_page, @per_page
+    = button_tag 'Search', id: 'btn_teams_search'
 
 #validations
   %table(cellspacing="0")
@@ -59,7 +59,7 @@
             =link_to "decline", t[:decline], {style: 'color:red;'}
     -if @teams.any?
       -@teams.each do |t|
-        -cache do
+        - cache([current_user.id, 'teams_list', t.cache_key], expires_in: 12.hours) do
           -if t.active?
             -account_owner = current_user.is_account_owner? t
             -account_admin = current_user.is_account_team_admin? t
@@ -211,75 +211,75 @@
       %p
         Change Reseller Tier.
     #reseller-tier-modal-body.modal-body
-      =form_tag :manage_reseller_ssl_account, :id => 'change_reseller_tier_modal_form', :method => :post do
-        =hidden_field_tag :ssl_account_ref
-        =hidden_field_tag :exist_reseller
+      = form_tag :manage_reseller_ssl_account, :id => 'change_reseller_tier_modal_form', :method => :post do
+        = hidden_field_tag :ssl_account_ref
+        = hidden_field_tag :exist_reseller
         .reseller-fields.clearfix
-          =label_tag 'Level :', nil, class: 'lbl_reseller_tier required-mark'
-          =select_tag :reseller_tier, options_for_select(@reseller_tiers), class: 'reseller-tier'
+          = label_tag 'Level :', nil, class: 'lbl_reseller_tier required-mark'
+          = select_tag :reseller_tier, options_for_select(@reseller_tiers), class: 'reseller-tier'
         .reseller-fields.clearfix
-          =label_tag 'First Name :', nil, class: 'lbl_first_name required-mark'
-          =text_field_tag :first_name, '', class: 'reseller-field-first-name'
+          = label_tag 'First Name :', nil, class: 'lbl_first_name required-mark'
+          = text_field_tag :first_name, '', class: 'reseller-field-first-name'
           .required-field
             * First Name is required!
         .reseller-fields.clearfix
-          =label_tag 'Last Name :', nil, class: 'lbl_last_name required-mark'
-          =text_field_tag :last_name, '', class: 'reseller-field-last-name'
+          = label_tag 'Last Name :', nil, class: 'lbl_last_name required-mark'
+          = text_field_tag :last_name, '', class: 'reseller-field-last-name'
           .required-field
             * Last Name is required!
         .reseller-fields.clearfix
-          =label_tag 'Email :', nil, class: 'lbl_email required-mark'
-          =text_field_tag :email, '', class: 'reseller-field-email'
+          = label_tag 'Email :', nil, class: 'lbl_email required-mark'
+          = text_field_tag :email, '', class: 'reseller-field-email'
           .required-field
             * Email Address is required!
           .required-validation
             * This Email Address is invalid!
         .reseller-fields.clearfix
-          =label_tag 'Phone :', nil, class: 'lbl_phone required-mark'
-          =text_field_tag :phone, '', class: 'reseller-field-phone'
+          = label_tag 'Phone :', nil, class: 'lbl_phone required-mark'
+          = text_field_tag :phone, '', class: 'reseller-field-phone'
           .required-field
             * Phone Number is required!
         .reseller-fields.clearfix
-          =label_tag 'Type Organization :', nil, class: 'lbl_type_organization required-mark'
-          =select_tag :type_organization, options_for_select([[Reseller::INDIVIDUAL.capitalize, Reseller::INDIVIDUAL], [Reseller::BUSINESS.capitalize, Reseller::BUSINESS]]), class: 'reseller-field-type-organization'
+          = label_tag 'Type Organization :', nil, class: 'lbl_type_organization required-mark'
+          = select_tag :type_organization, options_for_select([[Reseller::INDIVIDUAL.capitalize, Reseller::INDIVIDUAL], [Reseller::BUSINESS.capitalize, Reseller::BUSINESS]]), class: 'reseller-field-type-organization'
         .reseller-fields.clearfix
-          =label_tag 'Organization :', nil, class: 'lbl_organization required-mark'
-          =text_field_tag :organization, '', class: 'reseller-field-organization'
+          = label_tag 'Organization :', nil, class: 'lbl_organization required-mark'
+          = text_field_tag :organization, '', class: 'reseller-field-organization'
           .required-field
             * Organization is required!
         .reseller-fields.clearfix
-          =label_tag 'Website :', nil, class: 'lbl_website required-mark'
-          =text_field_tag :website, '', class: 'reseller-field-website'
+          = label_tag 'Website :', nil, class: 'lbl_website required-mark'
+          = text_field_tag :website, '', class: 'reseller-field-website'
           .required-field
             * Website Address is required!
         .reseller-fields.clearfix
-          =label_tag 'Address1 :', nil, class: 'lbl_address1 required-mark'
-          =text_field_tag :address1, '', class: 'reseller-field-address1'
+          = label_tag 'Address1 :', nil, class: 'lbl_address1 required-mark'
+          = text_field_tag :address1, '', class: 'reseller-field-address1'
           .required-field
             * Address is required!
         .reseller-fields.clearfix
-          =label_tag 'Postal Code :', nil, class: 'lbl_postal_code required-mark'
-          =text_field_tag :postal_code, '', class: 'reseller-field-postal-code'
+          = label_tag 'Postal Code :', nil, class: 'lbl_postal_code required-mark'
+          = text_field_tag :postal_code, '', class: 'reseller-field-postal-code'
           .required-field
             * Postal Code is required!
         .reseller-fields.clearfix
-          =label_tag 'City :', nil, class: 'lbl_city required-mark'
-          =text_field_tag :city, '', class: 'reseller-field-city'
+          = label_tag 'City :', nil, class: 'lbl_city required-mark'
+          = text_field_tag :city, '', class: 'reseller-field-city'
           .required-field
             * City is required!
         .reseller-fields.clearfix
-          =label_tag 'State :', nil, class: 'lbl_state required-mark'
-          =text_field_tag :state, '', class: 'reseller-field-state'
+          = label_tag 'State :', nil, class: 'lbl_state required-mark'
+          = text_field_tag :state, '', class: 'reseller-field-state'
           .required-field
             * State is required!
         .reseller-fields.clearfix
-          =label_tag 'Tax Number :', nil, class: 'lbl_tax_number required-mark'
-          =text_field_tag :tax_number, '', class: 'reseller-field-tax-number'
+          = label_tag 'Tax Number :', nil, class: 'lbl_tax_number required-mark'
+          = text_field_tag :tax_number, '', class: 'reseller-field-tax-number'
           .required-field
             * Tax Number is required!
         .reseller-fields.clearfix
-          =label_tag 'Country :', nil, class: 'lbl_country required-mark'
-          =select_tag :country, options_for_select(BillingProfile::TOP_COUNTRIES + [""], disabled: [""]) + options_for_select(Country.select_options("name"))
+          = label_tag 'Country :', nil, class: 'lbl_country required-mark'
+          = select_tag :country, options_for_select(BillingProfile::TOP_COUNTRIES + [""], disabled: [""]) + options_for_select(Country.select_options("name"))
     #reseller-tier-modal-footer.modal-footer
       = button_tag 'Save', :type => 'button', :class => 'btn btn-grey btn-save-reseller float-right'
       = button_tag 'Cancel', :type => 'button', :class => 'btn btn-grey btn-cancel-reseller float-right mr-1'
