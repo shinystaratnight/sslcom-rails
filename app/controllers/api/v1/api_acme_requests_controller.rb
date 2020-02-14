@@ -6,9 +6,18 @@ module Api
       prepend_view_path 'app/views/api/v1/api_acme_requests'
       before_filter :set_database, if: 'request.host=~/^sandbox/ || request.host=~/^sws-test/ || request.host=~/ssl.local$/'
       before_filter :set_test, :record_parameters
+
       rescue_from Exception do |exception|
-        logger.error exception.message
         render_500_error exception
+      end
+
+      rescue_from ActiveRecord::RecordInvalid do
+        InvalidApiAcmeRequest.create parameters: acme_params, response: @result.to_json
+        if @result.errors[:credential].present?
+          render_unathorized
+        else
+          render_errors(@result.errors, :not_found)
+        end
       end
 
       wrap_parameters ApiAcmeRequest, include: [*(ApiAcmeRequest::ACCOUNT_ACCESSORS + ApiAcmeRequest::CREDENTIAL_ACCESSORS).uniq]
@@ -16,36 +25,23 @@ module Api
       def retrieve_hmac
         set_template 'retrieve_hmac'
 
-        if @result.valid? && @result.save
-          @result.hmac_key = @result.api_credential.hmac_key
-        else
-          InvalidApiAcmeRequest.create parameters: acme_params, response: @result.to_json
-        end
+        persist
+        @result.hmac_key = @result.api_credential.hmac_key
         render_200_status
       end
 
       def retrieve_credentials
         set_template 'retrieve_credentials'
 
-        if @result.valid? && @result.save
-          @result.account_key = @result.api_credential.account_key
-          @result.secret_key = @result.api_credential.secret_key
-        else
-          InvalidApiAcmeRequest.create parameters: acme_params, response: @result.to_json
-        end
+        persist
+        @result.account_key = @result.api_credential.account_key
+        @result.secret_key = @result.api_credential.secret_key
         render_200_status
       end
 
       def validations_info
-        if @result.valid? && @result.save
-          render_validations
-          return
-        elsif @result.errors[:certificate_order_ref].present?
-          render_not_found(CertificateOrder, acme_params[:certificate_order_ref])
-        elsif @result.errors[:credential].present?
-          render_unathorized
-        end
-        InvalidApiAcmeRequest.create parameters: acme_params, response: @result.to_json
+        persist
+        render_validations
       end
 
       private
@@ -89,6 +85,11 @@ module Api
 
       def acme_params
         params.permit %i[account_key secret_key debug hmac_key certificate_order_ref action api_acme_request format acme_acct_pub_key_thumbprint]
+      end
+
+      def persist
+        @result.validate!
+        @result.save
       end
     end
   end
