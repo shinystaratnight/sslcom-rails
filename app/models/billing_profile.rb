@@ -71,7 +71,7 @@ class BillingProfile < ApplicationRecord
   TEST_AMOUNT = 80.50 # valid
   # TEST_AMOUNT = 70.02 # This transaction has been declined.
 
-  validates_presence_of *((REQUIRED_COLUMNS).map(&:intern))
+  validates_presence_of *REQUIRED_COLUMNS.map(&:intern)
 
   default_scope{ where{ (status << ['disable']) | (status == nil) } }
 

@@ -37,10 +37,6 @@ class ApiCredential < ApplicationRecord
     save
   end
 
-  def jwk_thumbprint
-    @jwk_thumbprint ||= JOSE::JWK.thumbprint(JOSE::JWK.from_oct(hmac_key))
-  end
-
   def reset_secret_key
     update_attribute :secret_key, SecureRandom.base64(10)
   end
@@ -55,12 +51,5 @@ class ApiCredential < ApplicationRecord
 
   def role_names
     Role.find(role_ids).map(&:name)
-  end
-
-  def self.authenticate(account_key, secret_key)
-    ac = ApiCredential.find_by(account_key: account_key, secret_key: secret_key)
-    ac&.acme_acct_pub_key_thumbprint ||= Base64.urlsafe_encode64(jwk_thumbprint)
-    ac&.save if ac&.changed?
-    ac
   end
 end

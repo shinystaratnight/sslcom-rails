@@ -15,6 +15,9 @@ AllCops:
 
 Bundler/OrderedGems:
   Enabled: false
+Style/StringLiterals:
+  Exclude:
+    - test/**/*test.rb
 Style/FormatStringToken:
   Enabled: false
 Style/Documentation:

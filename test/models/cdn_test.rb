@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: cdns
@@ -22,12 +24,12 @@
 #  fk_rails_...  (certificate_order_id => certificate_orders.id) ON DELETE => restrict ON UPDATE => restrict
 #
 
-require "test_helper"
+require 'test_helper'
 
 describe Cdn do
   let(:cdn) { Cdn.new }
 
-  it "must be valid" do
+  it 'must be valid' do
     value(cdn).must_be :valid?
   end
 end
