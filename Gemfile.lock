@@ -716,6 +716,7 @@ DEPENDENCIES
   capybara
   capybara-screenshot
   coffee-rails
+  concurrent-ruby
   config
   cypress-on-rails (~> 1.5.1)
   daemons

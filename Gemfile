@@ -7,6 +7,7 @@ gem 'authlogic'
 gem 'awesome_print'
 gem 'aws-sdk', '~> 2.0'
 gem 'bootsnap', require: false
+gem 'concurrent-ruby'
 gem 'declarative_authorization', git: 'https://github.com/xymist/declarative_authorization.git', branch: 'allow_rails_5'
 gem 'dynamic_form'
 gem 'easy_roles'
@@ -166,3 +167,4 @@ gem 'bcrypt_pbkdf', '~> 1'
 gem 'ed25519', '~> 1.2'
 gem 'oj'
 gem 'active_model_serializers'
+
