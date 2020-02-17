@@ -38,6 +38,7 @@ Paperclip::Attachment.default_options[:path] = if ENV['PARALLEL_TEST_GROUPS']
                                                else
                                                  ':rails_root/public/system/:rails_env/:class/:attachment/:id_partition/:filename'
                                                end
+WebMock.enable!
 
 module Minitest
   class Spec

@@ -3,7 +3,7 @@
 require 'test_helper'
 
 describe CertificateName do
-  subject { CertificateName.new }
+  subject { create(:certificate_name) }
 
   context "attributes" do
     should have_db_column :id
@@ -46,6 +46,49 @@ describe CertificateName do
       it 'is url safe' do
         subject.generate_acme_token
         assert_match(/^[a-zA-Z0-9_-]*$/, subject.acme_token)
+      end
+    end
+  end
+  context 'domain control validation' do
+    describe 'https domain validation' do
+      it 'passes if csr values are found' do
+        host = subject.name
+        subject.domain_control_validation = DomainControlValidation.create(dcv_method: 'https', candidate_addresses: host, csr_id: subject.csr.id)
+        subject.save
+        stub_request(:any, subject.dcv_url(true, '', true))
+          .with(headers: { 'Accept' => '*/*', 'User-Agent' => 'Ruby' })
+          .to_return(status: 200, body: [subject.csr.sha2_hash, subject.csr.ca_tag, subject.csr.unique_value].join("\n"))
+        assert_equal(true, subject.dcv_verify)
+      end
+  
+      it 'fails if ca_tag does not match' do
+        host = subject.name
+        subject.domain_control_validation = DomainControlValidation.create(dcv_method: 'https', candidate_addresses: host, csr_id: subject.csr.id)
+        subject.save
+        stub_request(:any, subject.dcv_url(true, '', true))
+          .with(headers: { 'Accept' => '*/*', 'User-Agent' => 'Ruby' })
+          .to_return(status: 200, body: [subject.csr.sha2_hash, "--#{subject.csr.ca_tag}--", subject.csr.unique_value].join("\n"))
+        assert_equal(nil, subject.dcv_verify)
+      end
+  
+      it 'fails if sha2_hash does not match' do
+        host = subject.name
+        subject.domain_control_validation = DomainControlValidation.create(dcv_method: 'https', candidate_addresses: host, csr_id: subject.csr.id)
+        subject.save
+        stub_request(:any, subject.dcv_url(true, '', true))
+          .with(headers: { 'Accept' => '*/*', 'User-Agent' => 'Ruby' })
+          .to_return(status: 200, body: ["--#{subject.csr.sha2_hash}--", subject.csr.ca_tag, subject.csr.unique_value].join("\n"))
+        assert_equal(nil, subject.dcv_verify)
+      end
+  
+      it 'fails if unique_value does not match' do
+        host = subject.name
+        subject.domain_control_validation = DomainControlValidation.create(dcv_method: 'https', candidate_addresses: host, csr_id: subject.csr.id)
+        subject.save
+        stub_request(:any, subject.dcv_url(true, '', true))
+          .with(headers: { 'Accept' => '*/*', 'User-Agent' => 'Ruby' })
+          .to_return(status: 200, body: [subject.csr.sha2_hash, subject.csr.ca_tag, "--#{subject.csr.unique_value}--"].join("\n"))
+        assert_equal(nil, subject.dcv_verify)
       end
     end
   end
