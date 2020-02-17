@@ -32,6 +32,8 @@ class CertificateName < ApplicationRecord
   include Pagable
 
   belongs_to :certificate_content
+  belongs_to :ssl_account, class_name: 'SslAccount', foreign_key: 'ssl_account_id'
+
   has_one :certificate_order, through: :certificate_content
   has_many    :signed_certificates, through: :certificate_content
   has_many    :caa_checks, as: :checkable

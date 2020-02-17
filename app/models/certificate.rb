@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: certificates
@@ -52,16 +54,16 @@ class Certificate < ApplicationRecord
   serialize   :title
   serialize   :special_fields
   preference  :certificate_chain, :string
-  
+
   accepts_nested_attributes_for :product_variant_groups, allow_destroy: false
-  
+
   ROLES = ResellerTier.pluck(:roles).compact.push('Registered').sort
-  
+
   NUM_DOMAINS_TIERS = 3
   UCC_INITIAL_DOMAINS_BLOCK = 3
   UCC_MAX_DOMAINS = 800
 
-  FREE_CERTS_CART_LIMIT=5
+  FREE_CERTS_CART_LIMIT = 5
 
   DOMAINS_TEXTAREA_SEPARATOR=/[\s\n\,\+]+/
 
