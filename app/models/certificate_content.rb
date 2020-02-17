@@ -318,21 +318,27 @@ class CertificateContent < ApplicationRecord
     end
   end
 
-  def certificate_names_from_domains(domains = nil)
-    is_single = certificate&.is_single?
-    csr_common_name = csr&.common_name
-    unless (is_single || certificate&.is_wildcard?) && certificate_names&.count&.positive?
+  def certificate_names_from_domains(domains=nil)
+    is_single=certificate.is_single?
+    csr_common_name=csr.try(:common_name)
+    unless (is_single or certificate.is_wildcard?) and certificate_names.count > 0
       domains ||= all_domains
-      domains = domains.each{ |domain| is_single ? CertificateContent.non_wildcard_name(domain, true) : domain.downcase }.uniq
-      new_certificate_names = []
-      (domains - certificate_names.find_by_domains(domains).pluck(:name)).each do |domain|
-        new_certificate_names << certificate_names.new(name: domain, is_common_name: csr_common_name == domain) unless domain =~ /,/
+      domains = domains.each{|domain| is_single ? CertificateContent.non_wildcard_name(domain,true) :
+                                          domain.downcase}.uniq
+      new_certificate_names=[]
+      (domains-certificate_names.find_by_domains(domains).pluck(:name)).each do |domain|
+        unless domain=~/,/
+          new_certificate_names << certificate_names.new(name: domain, is_common_name: csr_common_name==domain)
+        end
       end
       CertificateName.import new_certificate_names
-      cns = certificate_names.where(name: new_certificate_names.map(&:name))
+      cns=certificate_names.where(name: new_certificate_names.map(&:name))
       unless cns.blank?
-        cns.each(&:candidate_email_addresses)
-        Delayed::Job.enqueue OtherDcvsSatisyJob.new(ssl_account, cns, self, 'dv_only') if ssl_account && certificate&.is_server?
+        cns.each do |cn|
+          cn.candidate_email_addresses # start the queued job running
+        end
+        Delayed::Job.enqueue OtherDcvsSatisyJob.new(ssl_account,cns,self,"dv_only") if ssl_account &&
+            certificate.is_server?
       end
     end
     # Auto adding domains in case of certificate order has been included into some groups.
@@ -406,7 +412,7 @@ class CertificateContent < ApplicationRecord
   end
 
   def certificate
-    certificate_order&.certificate
+    certificate_order.try :certificate
   end
 
   # validate all certificate_names based on a previous validation
@@ -740,13 +746,13 @@ class CertificateContent < ApplicationRecord
   end
 
   def to_ref
-    cc = certificate_order&.certificate_contents&.where&.not(id: nil) || CertificateContent.none
+    cc = certificate_order.certificate_contents.where.not(id: nil)
     index = if cc.empty?
-              0
-            else
-              cc_ref = cc.order(:created_at).last.ref
-              cc_ref.blank? ? 0 : cc_ref.split('-').last.to_i + 1
-            end
+      0
+    else
+      cc_ref=cc.order(:created_at).last.ref
+      cc_ref.blank? ? 0 : cc_ref.split('-').last.to_i + 1
+    end
     "#{certificate_order.ref}-#{index}"
   end
 

@@ -284,7 +284,7 @@ class CertificateName < ApplicationRecord
             (options[:ca_tag] == 'ssl.com' ? true : r =~ Regexp.new("^#{options[:ca_tag]}")) &&
             ((options[:csr].unique_value.blank? or options[:ignore_unique_value]) ? true : r =~ Regexp.new("^#{options[:csr].unique_value}")))
       end
-    rescue Exception => e
+    rescue StandardError => _e
       false
     end
   end
