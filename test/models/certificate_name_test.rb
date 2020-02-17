@@ -92,6 +92,24 @@ describe CertificateName do
         assert_equal(nil, subject.dcv_verify)
       end
     end
+  describe 'cname domain control validation'
+    it 'fails if ca_tag does not match' do
+      stub_request(:any, subject.dcv_url(true, '', true))
+        .to_return(status: 200, body: [subject.csr.sha2_hash, "--#{subject.csr.ca_tag}--", subject.csr.unique_value].join("\n"))
+      assert_equal(nil, subject.dcv_verify)
+    end
+
+    it 'fails if sha2_hash does not match' do
+      stub_request(:any, subject.dcv_url(true, '', true))
+        .to_return(status: 200, body: ["--#{subject.csr.sha2_hash}--", subject.csr.ca_tag, subject.csr.unique_value].join("\n"))
+      assert_equal(nil, subject.dcv_verify)
+    end
+
+    it 'fails if unique_value does not match' do
+      stub_request(:any, subject.dcv_url(true, '', true))
+        .to_return(status: 200, body: [subject.csr.sha2_hash, subject.csr.ca_tag, "--#{subject.csr.unique_value}--"].join("\n"))
+      assert_equal(nil, subject.dcv_verify)
+    end
 
     describe 'https domain control validation' do
       before do
@@ -127,6 +145,25 @@ describe CertificateName do
           .to_return(status: 200, body: [subject.csr.sha2_hash, subject.csr.ca_tag, "--#{subject.csr.unique_value}--"].join("\n"))
         assert_equal(nil, subject.dcv_verify)
       end
+  end
+  describe 'cname domain control validation' do
+    before do
+      host = subject.name
+      subject.domain_control_validation = DomainControlValidation.create(dcv_method: 'cname', candidate_addresses: host, csr_id: subject.csr.id)
+      subject.save
+    end
+
+    it 'passes if a record matching cname_destination is found' do
+      mock_resolver = mock
+      mock_cname = mock
+      mock_resolver.expects(:getresources)
+                   .with(subject.cname_origin(true), Resolv::DNS::Resource::IN::CNAME).once
+                   .returns(mock_cname)
+      mock_resolver.expects(:size).returns(1)
+      mock_resolver.expects(:last).returns(name: subject.cname_destination)
+
+      Resolv::DNS.expects(:open).returns(mock_resolver)
+      assert_equal(true, subject.dcv_verify)
     end
   end
 end

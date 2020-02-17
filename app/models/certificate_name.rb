@@ -254,7 +254,7 @@ class CertificateName < ApplicationRecord
     CertificateName.dcv_verify(protocol: protocol,
                                https_dcv_url: dcv_url(true, prepend, true),
                                http_dcv_url: dcv_url(false, prepend, true),
-                               cname_origin: cname_origin(true), 
+                               cname_origin: cname_origin(true),
                                cname_destination: cname_destination,
                                csr: csr,
                                ca_tag: ca_tag)
