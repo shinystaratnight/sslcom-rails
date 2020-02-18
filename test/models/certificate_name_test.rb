@@ -3,6 +3,12 @@
 require 'test_helper'
 
 describe CertificateName do
+  before do
+    initialize_roles
+    initialize_triggers
+    initialize_server_software
+  end
+
   subject { create(:certificate_name) }
 
   context "attributes" do
