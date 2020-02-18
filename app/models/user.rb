@@ -63,7 +63,6 @@
 #  index_users_on_status_and_ssl_account_id           (id,ssl_account_id,status)
 #
 
-
 class User < ApplicationRecord
   extend Memoist
   include Pagable

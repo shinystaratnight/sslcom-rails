@@ -154,16 +154,13 @@ describe CertificateName do
     end
 
     it 'passes if a record matching cname_destination is found' do
-      mock_resolver = mock
-      mock_cname = mock
-      mock_resolver.expects(:getresources)
-                   .with(subject.cname_origin(true), Resolv::DNS::Resource::IN::CNAME).once
-                   .returns(mock_cname)
-      mock_resolver.expects(:size).returns(1)
-      mock_resolver.expects(:last).returns(name: subject.cname_destination)
-
-      Resolv::DNS.expects(:open).returns(mock_resolver)
+      Resolv::DNS.any_instance.stubs(:getresources).returns([Resolv::DNS::Resource::IN::CNAME.new(subject.cname_destination)])
       assert_equal(true, subject.dcv_verify)
+    end
+
+    it 'fails if no record matching cname_destination is found' do
+      Resolv::DNS.any_instance.stubs(:getresources).returns([])
+      assert_equal(false, subject.dcv_verify)
     end
   end
 end
