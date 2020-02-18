@@ -291,7 +291,7 @@
                           %li
                             %strong physical tokens
                           -@certificate_order.physical_tokens.active.each do |token|
-                            -display="#{token.model_number}"+(token.name.blank? ? '' : " (#{token.name})")
+                            - display = "#{token.model_number}"+(token.name.blank? ? '' : " (#{token.name})")
                             %li=display
                             -unless token.in_possession?
                               %ul
