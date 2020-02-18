@@ -11,7 +11,7 @@ require 'minitest/pride'
 require 'minitest/reporters'
 require 'webmock/minitest'
 require 'mocha/minitest'
-require 'database_cleaner'
+require 'database_cleaner/active_record'
 require 'factory_bot'
 require 'rack/utils'
 require 'authlogic/test_case'
@@ -49,12 +49,11 @@ module Minitest
       include Authlogic::TestCase
 
       before :each do
-        DatabaseCleaner.start
         Delayed::Worker.delay_jobs = false
       end
 
-      after :each do
-        DatabaseCleaner.clean
+      around do |tests|
+        DatabaseCleaner.cleaning(&tests)
       end
     end
   end

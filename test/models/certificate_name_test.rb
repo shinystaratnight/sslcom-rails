@@ -102,19 +102,19 @@ describe CertificateName do
     it 'fails if ca_tag does not match' do
       stub_request(:any, subject.dcv_url(true, '', true))
         .to_return(status: 200, body: [subject.csr.sha2_hash, "--#{subject.csr.ca_tag}--", subject.csr.unique_value].join("\n"))
-      assert_equal(nil, subject.dcv_verify)
+      assert_nil(subject.dcv_verify)
     end
 
     it 'fails if sha2_hash does not match' do
       stub_request(:any, subject.dcv_url(true, '', true))
         .to_return(status: 200, body: ["--#{subject.csr.sha2_hash}--", subject.csr.ca_tag, subject.csr.unique_value].join("\n"))
-      assert_equal(nil, subject.dcv_verify)
+      assert_nil(subject.dcv_verify)
     end
 
     it 'fails if unique_value does not match' do
       stub_request(:any, subject.dcv_url(true, '', true))
         .to_return(status: 200, body: [subject.csr.sha2_hash, subject.csr.ca_tag, "--#{subject.csr.unique_value}--"].join("\n"))
-      assert_equal(nil, subject.dcv_verify)
+      assert_nil(subject.dcv_verify)
     end
 
     describe 'https domain control validation' do
@@ -196,19 +196,19 @@ describe CertificateName do
     it 'fails if ca_tag does not match' do
       stub_request(:any, subject.dcv_url(false, '', true))
         .to_return(status: 200, body: [subject.csr.sha2_hash, "--#{subject.csr.ca_tag}--", subject.csr.unique_value].join("\n"))
-      assert_equal(nil, subject.dcv_verify)
+      assert_nil(subject.dcv_verify)
     end
 
     it 'fails if sha2_hash does not match' do
       stub_request(:any, subject.dcv_url(false, '', true))
         .to_return(status: 200, body: ["--#{subject.csr.sha2_hash}--", subject.csr.ca_tag, subject.csr.unique_value].join("\n"))
-      assert_equal(nil, subject.dcv_verify)
+      assert_nil(subject.dcv_verify)
     end
 
     it 'fails if unique_value does not match' do
       stub_request(:any, subject.dcv_url(false, '', true))
         .to_return(status: 200, body: [subject.csr.sha2_hash, subject.csr.ca_tag, "--#{subject.csr.unique_value}--"].join("\n"))
-      assert_equal(nil, subject.dcv_verify)
+      assert_nil(subject.dcv_verify)
     end
   end
 
@@ -220,7 +220,7 @@ describe CertificateName do
     end
 
     it 'fails if when protocol is email' do
-      assert_equal(nil, subject.dcv_verify)
+      assert_nil(subject.dcv_verify)
     end
   end
 end

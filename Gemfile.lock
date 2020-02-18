@@ -169,6 +169,9 @@ GEM
     dalli-elasticache (0.2.0)
       dalli (>= 1.0.0)
     database_cleaner (1.8.3)
+    database_cleaner-active_record (1.8.0)
+      activerecord
+      database_cleaner (~> 1.8.0)
     date (2.0.0)
     debug_inspector (0.0.3)
     deep_merge (1.2.1)
@@ -320,6 +323,8 @@ GEM
     mini_racer (0.2.6)
       libv8 (>= 6.9.411)
     minitest (5.14.0)
+    minitest-around (0.5.0)
+      minitest (~> 5.0)
     minitest-bang (1.0.4)
       minitest (>= 4.7.5)
     minitest-ci (3.4.0)
@@ -721,7 +726,7 @@ DEPENDENCIES
   daemons
   dalli
   dalli-elasticache
-  database_cleaner
+  database_cleaner-active_record
   date
   declarative_authorization!
   delayed-web
@@ -755,6 +760,7 @@ DEPENDENCIES
   memory_profiler
   meta_request
   mini_racer
+  minitest-around
   minitest-bang
   minitest-ci
   minitest-rails (~> 2.0)
