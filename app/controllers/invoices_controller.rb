@@ -302,18 +302,18 @@ class InvoicesController < ApplicationController
   def redirect_to_invoice
     redirect_to invoice_path(@ssl_slug, @invoice.reference_number)
   end
-  
+
   def find_ssl_account
     if current_user
-      ref = params[:order].nil? ? params[:id] : params[:order][:id]
+      ref = params.dig(:order, :id).presence || params[:id]
       @ssl_account = if current_user.is_system_admins?
-        Invoice.find_by(reference_number: ref).billable
-      else
-        current_user.ssl_account
-      end
+                       Invoice.find_by(reference_number: ref)&.billable
+                     else
+                       current_user.ssl_account
+                     end
     end
   end
-  
+
   def find_invoice
     if current_user
       ref = params[:order].nil? ? params[:id] : params[:order][:id]
