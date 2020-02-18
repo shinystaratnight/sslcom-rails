@@ -142,7 +142,6 @@ group :test do
   gem 'capybara-screenshot'
   gem 'database_cleaner-active_record'
   gem 'faker'
-  gem 'minitest-around'
   gem 'minitest-bang', require: false
   gem 'minitest-ci'
   gem 'minitest-rails', '~> 2.0'

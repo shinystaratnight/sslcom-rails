@@ -30,7 +30,7 @@ Minitest::Reporters.use! [Minitest::Reporters::SpecReporter.new, Minitest::Repor
 # in spec/support/ and its subdirectories.
 Dir[File.join('./test/support/**/*.rb')].sort.each { |f| require f }
 
-DatabaseCleaner.clean_with :truncation
+DatabaseCleaner.clean_with :deletion
 DatabaseCleaner.strategy = :truncation
 
 Paperclip::Attachment.default_options[:path] = if ENV['PARALLEL_TEST_GROUPS']
@@ -48,12 +48,15 @@ module Minitest
       include Asserts
       include Authlogic::TestCase
 
-      before :each do
+      before :all do
         Delayed::Worker.delay_jobs = false
+        DatabaseCleaner.strategy = :truncation
+        DatabaseCleaner.start
       end
 
-      around do |tests|
-        DatabaseCleaner.cleaning(&tests)
+      before :all do
+        DatabaseCleaner.strategy = :truncation
+        DatabaseCleaner.clean
       end
     end
   end

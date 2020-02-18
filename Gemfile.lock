@@ -323,8 +323,6 @@ GEM
     mini_racer (0.2.6)
       libv8 (>= 6.9.411)
     minitest (5.14.0)
-    minitest-around (0.5.0)
-      minitest (~> 5.0)
     minitest-bang (1.0.4)
       minitest (>= 4.7.5)
     minitest-ci (3.4.0)
@@ -760,7 +758,6 @@ DEPENDENCIES
   memory_profiler
   meta_request
   mini_racer
-  minitest-around
   minitest-bang
   minitest-ci
   minitest-rails (~> 2.0)
