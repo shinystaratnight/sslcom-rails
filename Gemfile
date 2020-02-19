@@ -167,5 +167,4 @@ gem 'bcrypt_pbkdf', '~> 1'
 gem 'ed25519', '~> 1.2'
 gem 'oj'
 gem 'active_model_serializers'
-gem 'jose'
 

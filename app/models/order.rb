@@ -1293,7 +1293,7 @@ class Order < ApplicationRecord
       certificate_order.sub_order_items << so
     end
     certificate_order.amount = certificate_order.sub_order_items.map(&:amount).sum
-    certificate_order.certificate_contents[0].certificate_order    = certificate_order
+    certificate_order&.certificate_contents[0]&.certificate_order = certificate_order
     certificate_order
   end
 

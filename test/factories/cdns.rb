@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: cdns
@@ -24,6 +26,5 @@
 
 FactoryBot.define do
   factory :cdn do
-
   end
 end

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200206192249) do
+ActiveRecord::Schema.define(version: 20200213220431) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        :limit=>255
@@ -362,6 +362,7 @@ ActiveRecord::Schema.define(version: 20200206192249) do
     t.string   "acme_account_id",        :limit=>255
     t.integer  "ssl_account_id",         :limit=>4, :index=>{:name=>"index_certificate_names_on_ssl_account_id", :using=>:btree}
     t.boolean  "caa_passed",             :default=>false
+    t.string   "acme_token",             :limit=>255, :index=>{:name=>"index_certificate_names_on_acme_token", :using=>:btree}
   end
 
   create_table "certificate_order_domains", force: :cascade do |t|
@@ -666,7 +667,6 @@ ActiveRecord::Schema.define(version: 20200206192249) do
     t.integer  "validation_compliance_id",   :limit=>4, :index=>{:name=>"index_domain_control_validations_on_validation_compliance_id", :using=>:btree}
     t.datetime "validation_compliance_date"
     t.integer  "csr_unique_value_id",        :limit=>4, :index=>{:name=>"index_domain_control_validations_on_csr_unique_value_id", :using=>:btree}
-    t.string   "acme_token",                 :limit=>255, :index=>{:name=>"index_domain_control_validations_on_acme_token", :using=>:btree}
   end
   add_index "domain_control_validations", ["certificate_name_id", "email_address", "dcv_method"], :name=>"index_domain_control_validations_on_3_cols", :using=>:btree
   add_index "domain_control_validations", ["csr_id", "email_address", "dcv_method"], :name=>"index_domain_control_validations_on_3_cols(2)", :using=>:btree

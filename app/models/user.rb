@@ -95,7 +95,7 @@ class User < ApplicationRecord
     u.max_teams = OWNED_MAX_TEAMS unless u.max_teams
   end
 
-  delegate :tier_suffix, to: :ssl_account, prefix: false
+  delegate :tier_suffix, to: :ssl_account, prefix: false, allow_nil: true
 
   acts_as_authentic do |c|
     c.logged_in_timeout = 30.minutes
