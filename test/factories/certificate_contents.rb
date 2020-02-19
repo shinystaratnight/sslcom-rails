@@ -48,6 +48,12 @@ FactoryBot.define do
       include_tags { false }
     end
 
+    trait :with_csr do
+      after :create do |cc|
+        cc.csrs << create(:csr, signed: true, certificate_content_id: cc.id)
+      end
+    end
+
     after :create do |cc, options|
       cc.csrs << create(:csr, signed: true, certificate_content_id: cc.id) if options.include_csr
       if options.include_tags

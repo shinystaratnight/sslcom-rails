@@ -535,8 +535,8 @@ class CertificateOrder < ApplicationRecord
     co.is_expired = false
     co.ref = 'co-' + SecureRandom.hex(1) + Time.now.to_i.to_s(32)
     v = co.create_validation
-    co.preferred_certificate_chain = co.certificate.preferred_certificate_chain
-    co.certificate.validation_rulings.each do |cvrl|
+    co.preferred_certificate_chain = co&.certificate&.preferred_certificate_chain
+    co&.certificate&.validation_rulings&.each do |cvrl|
       vrl = cvrl.dup
       vrl.status = ValidationRuling::WAITING_FOR_DOCS
       vrl.workflow_state = 'new'
@@ -766,23 +766,17 @@ class CertificateOrder < ApplicationRecord
   def add_reproces_order(target_order)
     target_order.save unless target_order.persisted?
     target_order.line_items.destroy_all
-    if target_order.valid?
-      line_items.create(
-          order_id: target_order.id, cents: target_order.cents, amount: target_order.amount, currency: 'USD'
-      )
-    end
-    # clear cache
-    target_order.touch
-    self.touch
+    line_items.create(order_id: target_order.id, cents: target_order.cents, amount: target_order.amount, currency: 'USD') if target_order.valid?
+    target_order.touch # clear cache
+    touch
   end
 
   def certificate
     if new_record?
-      sub_order_items[0].product_variant_item.certificate if sub_order_items[0] && sub_order_items[0].product_variant_item
+      sub_order_items[0].product_variant_item.certificate if sub_order_items[0]&.product_variant_item
     else
       Certificate.unscoped.find_by_id(Rails.cache.fetch("#{cache_key}/certificate") do
-        sub_order_items[0].product_variant_item.cached_certificate_id if sub_order_items[0] &&
-            sub_order_items[0].product_variant_item
+        sub_order_items[0].product_variant_item.cached_certificate_id if sub_order_items[0]&.product_variant_item
       end)
     end
   end

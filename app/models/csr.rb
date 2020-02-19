@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: csrs
@@ -135,8 +137,8 @@ class Csr < ApplicationRecord
   end
 
   after_save do |c|
-    c.certificate_content.touch unless c.certificate_content.blank?
-    c.certificate_order.touch unless c.certificate_content.blank?
+    c&.certificate_content&.touch
+    c&.certificate_order&.touch
   end
 
   def unique_value

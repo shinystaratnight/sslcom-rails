@@ -32,6 +32,8 @@ class CertificateName < ApplicationRecord
   include Pagable
 
   belongs_to :certificate_content
+  belongs_to :ssl_account, class_name: 'SslAccount', foreign_key: 'ssl_account_id'
+
   has_one :certificate_order, through: :certificate_content
   has_many    :signed_certificates, through: :certificate_content
   has_many    :caa_checks, as: :checkable
@@ -252,7 +254,7 @@ class CertificateName < ApplicationRecord
     CertificateName.dcv_verify(protocol: protocol,
                                https_dcv_url: dcv_url(true, prepend, true),
                                http_dcv_url: dcv_url(false, prepend, true),
-                               cname_origin: cname_origin(true), 
+                               cname_origin: cname_origin(true),
                                cname_destination: cname_destination,
                                csr: csr,
                                ca_tag: ca_tag)
@@ -282,8 +284,8 @@ class CertificateName < ApplicationRecord
             (options[:ca_tag] == 'ssl.com' ? true : r =~ Regexp.new("^#{options[:ca_tag]}")) &&
             ((options[:csr].unique_value.blank? or options[:ignore_unique_value]) ? true : r =~ Regexp.new("^#{options[:csr].unique_value}")))
       end
-    rescue Exception => e
-      return false
+    rescue StandardError => _e
+      false
     end
   end
 

@@ -116,7 +116,7 @@ FactoryBot.define do
     end
 
     after :create do |csr, options|
-      csr.signed_certificates << create(:signed_certificate, csr: csr) if options.signed
+      csr.signed_certificates << create(:signed_certificate, csr: csr, certificate_content_id: csr&.certificate_content&.id) if options.signed
     end
   end
 end
