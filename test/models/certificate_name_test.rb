@@ -57,66 +57,6 @@ describe CertificateName do
   end
 
   context 'domain control validation' do
-    describe 'https domain validation' do
-      it 'passes if csr values are found' do
-        host = subject.name
-        subject.domain_control_validation = DomainControlValidation.create(dcv_method: 'https', candidate_addresses: host, csr_id: subject.csr.id)
-        subject.save
-        stub_request(:any, subject.dcv_url(true, '', true))
-          .with(headers: { 'Accept' => '*/*', 'User-Agent' => 'Ruby' })
-          .to_return(status: 200, body: [subject.csr.sha2_hash, subject.csr.ca_tag, subject.csr.unique_value].join("\n"))
-        assert_equal(true, subject.dcv_verify)
-      end
-
-      it 'fails if ca_tag does not match' do
-        host = subject.name
-        subject.domain_control_validation = DomainControlValidation.create(dcv_method: 'https', candidate_addresses: host, csr_id: subject.csr.id)
-        subject.save
-        stub_request(:any, subject.dcv_url(true, '', true))
-          .with(headers: { 'Accept' => '*/*', 'User-Agent' => 'Ruby' })
-          .to_return(status: 200, body: [subject.csr.sha2_hash, "--#{subject.csr.ca_tag}--", subject.csr.unique_value].join("\n"))
-        assert_equal(nil, subject.dcv_verify)
-      end
-
-      it 'fails if sha2_hash does not match' do
-        host = subject.name
-        subject.domain_control_validation = DomainControlValidation.create(dcv_method: 'https', candidate_addresses: host, csr_id: subject.csr.id)
-        subject.save
-        stub_request(:any, subject.dcv_url(true, '', true))
-          .with(headers: { 'Accept' => '*/*', 'User-Agent' => 'Ruby' })
-          .to_return(status: 200, body: ["--#{subject.csr.sha2_hash}--", subject.csr.ca_tag, subject.csr.unique_value].join("\n"))
-        assert_equal(nil, subject.dcv_verify)
-      end
-
-      it 'fails if unique_value does not match' do
-        host = subject.name
-        subject.domain_control_validation = DomainControlValidation.create(dcv_method: 'https', candidate_addresses: host, csr_id: subject.csr.id)
-        subject.save
-        stub_request(:any, subject.dcv_url(true, '', true))
-          .with(headers: { 'Accept' => '*/*', 'User-Agent' => 'Ruby' })
-          .to_return(status: 200, body: [subject.csr.sha2_hash, subject.csr.ca_tag, "--#{subject.csr.unique_value}--"].join("\n"))
-        assert_equal(nil, subject.dcv_verify)
-      end
-    end
-  describe 'cname domain control validation'
-    it 'fails if ca_tag does not match' do
-      stub_request(:any, subject.dcv_url(true, '', true))
-        .to_return(status: 200, body: [subject.csr.sha2_hash, "--#{subject.csr.ca_tag}--", subject.csr.unique_value].join("\n"))
-      assert_nil(subject.dcv_verify)
-    end
-
-    it 'fails if sha2_hash does not match' do
-      stub_request(:any, subject.dcv_url(true, '', true))
-        .to_return(status: 200, body: ["--#{subject.csr.sha2_hash}--", subject.csr.ca_tag, subject.csr.unique_value].join("\n"))
-      assert_nil(subject.dcv_verify)
-    end
-
-    it 'fails if unique_value does not match' do
-      stub_request(:any, subject.dcv_url(true, '', true))
-        .to_return(status: 200, body: [subject.csr.sha2_hash, subject.csr.ca_tag, "--#{subject.csr.unique_value}--"].join("\n"))
-      assert_nil(subject.dcv_verify)
-    end
-
     describe 'https domain control validation' do
       before do
         host = subject.name
@@ -124,103 +64,95 @@ describe CertificateName do
         subject.save
       end
 
-      it 'passes if csr values are found' do
+      it 'fails if ca_tag does not match' do
         stub_request(:any, subject.dcv_url(true, '', true))
-          .with(headers: { 'Accept' => '*/*', 'User-Agent' => 'Ruby' })
+          .to_return(status: 200, body: [subject.csr.sha2_hash, "--#{subject.csr.ca_tag}--", subject.csr.unique_value].join("\n"))
+        assert_nil(subject.dcv_verify)
+      end
+
+      it 'fails if sha2_hash does not match' do
+        stub_request(:any, subject.dcv_url(true, '', true))
+          .to_return(status: 200, body: ["--#{subject.csr.sha2_hash}--", subject.csr.ca_tag, subject.csr.unique_value].join("\n"))
+        assert_nil(subject.dcv_verify)
+      end
+
+      it 'fails if unique_value does not match' do
+        stub_request(:any, subject.dcv_url(true, '', true))
+          .to_return(status: 200, body: [subject.csr.sha2_hash, subject.csr.ca_tag, "--#{subject.csr.unique_value}--"].join("\n"))
+        assert_nil(subject.dcv_verify)
+      end
+    end
+
+    describe 'cname domain control validation' do
+      before do
+        host = subject.name
+        subject.domain_control_validation = DomainControlValidation.create(dcv_method: 'cname', candidate_addresses: host, csr_id: subject.csr.id)
+        subject.save
+      end
+
+      it 'passes if a record matching cname_destination is found' do
+        dns = mock
+        dns.expects(:getresources)
+           .with(subject.cname_origin(true), Resolv::DNS::Resource::IN::CNAME)
+           .once
+        ::Resolv::DNS.stub :open, [Resolv::DNS::Resource::IN::CNAME.new(subject.cname_destination)], dns do
+          assert_equal(true, subject.dcv_verify)
+        end
+      end
+
+      it 'fails if no record matching cname_destination is found' do
+        dns = mock
+        dns.expects(:getresources)
+           .with(subject.cname_origin(true), Resolv::DNS::Resource::IN::CNAME)
+           .once
+        ::Resolv::DNS.stub :open, [], dns do
+          assert_equal(false, subject.dcv_verify)
+        end
+      end
+    end
+
+    describe 'http domain control validation' do
+      before do
+        host = subject.name
+        subject.domain_control_validation = DomainControlValidation.create(dcv_method: 'http', candidate_addresses: host, csr_id: subject.csr.id)
+        subject.save
+      end
+
+      it 'passes if csr values are found' do
+        stub_request(:any, subject.dcv_url(false, '', true))
           .to_return(status: 200, body: [subject.csr.sha2_hash, subject.csr.ca_tag, subject.csr.unique_value].join("\n"))
         assert_equal(true, subject.dcv_verify)
       end
 
       it 'fails if ca_tag does not match' do
-        stub_request(:any, subject.dcv_url(true, '', true))
-          .with(headers: { 'Accept' => '*/*', 'User-Agent' => 'Ruby' })
+        stub_request(:any, subject.dcv_url(false, '', true))
           .to_return(status: 200, body: [subject.csr.sha2_hash, "--#{subject.csr.ca_tag}--", subject.csr.unique_value].join("\n"))
-        assert_equal(nil, subject.dcv_verify)
+        assert_nil(subject.dcv_verify)
       end
 
       it 'fails if sha2_hash does not match' do
-        stub_request(:any, subject.dcv_url(true, '', true))
-          .with(headers: { 'Accept' => '*/*', 'User-Agent' => 'Ruby' })
+        stub_request(:any, subject.dcv_url(false, '', true))
           .to_return(status: 200, body: ["--#{subject.csr.sha2_hash}--", subject.csr.ca_tag, subject.csr.unique_value].join("\n"))
-        assert_equal(nil, subject.dcv_verify)
+        assert_nil(subject.dcv_verify)
       end
 
       it 'fails if unique_value does not match' do
-        stub_request(:any, subject.dcv_url(true, '', true))
-          .with(headers: { 'Accept' => '*/*', 'User-Agent' => 'Ruby' })
+        stub_request(:any, subject.dcv_url(false, '', true))
           .to_return(status: 200, body: [subject.csr.sha2_hash, subject.csr.ca_tag, "--#{subject.csr.unique_value}--"].join("\n"))
-        assert_equal(nil, subject.dcv_verify)
-      end
-  end
-  describe 'cname domain control validation' do
-    before do
-      host = subject.name
-      subject.domain_control_validation = DomainControlValidation.create(dcv_method: 'cname', candidate_addresses: host, csr_id: subject.csr.id)
-      subject.save
-    end
-
-    it 'passes if a record matching cname_destination is found' do
-      dns = mock
-      dns.expects(:getresources)
-         .with(subject.cname_origin(true), Resolv::DNS::Resource::IN::CNAME)
-         .once
-      ::Resolv::DNS.stub :open, [Resolv::DNS::Resource::IN::CNAME.new(subject.cname_destination)], dns do
-        assert_equal(true, subject.dcv_verify)
+        assert_nil(subject.dcv_verify)
       end
     end
 
-    it 'fails if no record matching cname_destination is found' do
-      dns = mock
-      dns.expects(:getresources)
-         .with(subject.cname_origin(true), Resolv::DNS::Resource::IN::CNAME)
-         .once
-      ::Resolv::DNS.stub :open, [], dns do
-        assert_equal(false, subject.dcv_verify)
+    describe 'email domain control validation' do
+      before do
+        host = subject.name
+        subject.domain_control_validation = DomainControlValidation.create(dcv_method: 'email', candidate_addresses: host, csr_id: subject.csr.id)
+        subject.save
       end
-    end
-  end
 
-  describe 'http domain control validation' do
-    before do
-      host = subject.name
-      subject.domain_control_validation = DomainControlValidation.create(dcv_method: 'http', candidate_addresses: host, csr_id: subject.csr.id)
-      subject.save
-    end
-
-    it 'passes if csr values are found' do
-      stub_request(:any, subject.dcv_url(false, '', true))
-        .to_return(status: 200, body: [subject.csr.sha2_hash, subject.csr.ca_tag, subject.csr.unique_value].join("\n"))
-      assert_equal(true, subject.dcv_verify)
-    end
-
-    it 'fails if ca_tag does not match' do
-      stub_request(:any, subject.dcv_url(false, '', true))
-        .to_return(status: 200, body: [subject.csr.sha2_hash, "--#{subject.csr.ca_tag}--", subject.csr.unique_value].join("\n"))
-      assert_nil(subject.dcv_verify)
-    end
-
-    it 'fails if sha2_hash does not match' do
-      stub_request(:any, subject.dcv_url(false, '', true))
-        .to_return(status: 200, body: ["--#{subject.csr.sha2_hash}--", subject.csr.ca_tag, subject.csr.unique_value].join("\n"))
-      assert_nil(subject.dcv_verify)
-    end
-
-    it 'fails if unique_value does not match' do
-      stub_request(:any, subject.dcv_url(false, '', true))
-        .to_return(status: 200, body: [subject.csr.sha2_hash, subject.csr.ca_tag, "--#{subject.csr.unique_value}--"].join("\n"))
-      assert_nil(subject.dcv_verify)
-    end
-  end
-
-  describe 'email domain control validation' do
-    before do
-      host = subject.name
-      subject.domain_control_validation = DomainControlValidation.create(dcv_method: 'email', candidate_addresses: host, csr_id: subject.csr.id)
-      subject.save
-    end
-
-    it 'fails if when protocol is email' do
-      assert_nil(subject.dcv_verify)
+      it 'fails if when protocol is email' do
+        assert_nil(subject.dcv_verify)
+      end
     end
   end
 end
