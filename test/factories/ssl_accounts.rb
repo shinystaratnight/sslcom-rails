@@ -31,10 +31,8 @@
 #  index_ssl_accounts_on_ssl_slug_and_acct_number                   (ssl_slug,acct_number)
 #
 
-
 FactoryBot.define do
   factory :ssl_account do
-    # acct_number {}
     status {}
     ssl_slug {}
     company_name {}

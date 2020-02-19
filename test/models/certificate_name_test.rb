@@ -149,6 +149,17 @@ describe CertificateName do
       end
     end
 
+    describe 'acme_http domain control validation' do
+      before do
+        subject
+        let(:ssl_account) { subject.ssl_account }
+        ssl_account.initial_setup
+      end
+      it 'passes if token and thumbprint are concatenated with .' do
+        assert_nil(ssl_account.api_credential)
+      end
+    end
+
     describe 'email domain control validation' do
       it 'fails if when protocol is email' do
         assert_nil(subject.dcv_verify('email'))

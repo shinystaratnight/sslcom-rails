@@ -31,7 +31,7 @@ module AcmeManager
     end
 
     def well_formed
-      return true if @token =~ /\w/
+      return true if @token.match?(/\w/)
 
       logger.debug "Key authorization #{@token} is not well formed"
       false
