@@ -33,7 +33,6 @@ class CertificateName < ApplicationRecord
   include Concerns::CertificateName::Scope
   include Concerns::CertificateName::Verification
 
-  attr_accessor :csr
   delegate :all_domains_validated?, to: :certificate_content, prefix: false, allow_nil: true
 
   def is_ip_address?
@@ -116,29 +115,16 @@ class CertificateName < ApplicationRecord
     CertificateContent.non_wildcard_name(name, remove_www)
   end
 
-  # requires csr not be blank
   def dcv_contents
-    csr.dcv_contents
-  end
-
-  def csr
-    @csr || certificate_content.try(:csr)
+    csr&.dcv_contents
   end
 
   def cached_csr_public_key_sha1
-    if @csr
-      @csr.public_key_sha1
-    else
-      certificate_content.cached_csr_public_key_sha1
-    end
+    csr&.public_key_sha1 || certificate_content&.cached_csr_public_key_sha1
   end
 
   def cached_csr_public_key_md5
-    if @csr
-      @csr.public_key_md5
-    else
-      certificate_content.cached_csr_public_key_md5
-    end
+    csr&.public_key_md5 || certificate_content&.cached_csr_public_key_md5
   end
 
   def new_name(new_name)
@@ -157,7 +143,7 @@ class CertificateName < ApplicationRecord
   end
 
   def ca_tag
-    csr.ca_tag
+    csr&.ca_tag
   end
 
   def whois_lookup

@@ -5,6 +5,7 @@
 # Table name: certificate_names
 #
 #  id                     :integer          not null, primary key
+#  acme_token             :string(255)
 #  caa_passed             :boolean          default(FALSE)
 #  email                  :string(255)
 #  is_common_name         :boolean
@@ -17,6 +18,7 @@
 #
 # Indexes
 #
+#  index_certificate_names_on_acme_token              (acme_token)
 #  index_certificate_names_on_certificate_content_id  (certificate_content_id)
 #  index_certificate_names_on_name                    (name)
 #  index_certificate_names_on_ssl_account_id          (ssl_account_id)
@@ -28,8 +30,6 @@ FactoryBot.define do
     caa_passed { false }
     email { Faker::Internet.email }
     is_common_name { true }
-
-    association :ssl_account, factory: :ssl_account
 
     after :create do |cn|
       cn.certificate_content = create(:certificate_content, :with_csr, certificate_order: create(:certificate_order))

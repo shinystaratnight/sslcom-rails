@@ -15,13 +15,13 @@ module Concerns
           AcmeManager::DnsTxtVerifier.new(api_credential, non_wildcard_name(true)).call
         else
           prepend = ''
-          CertificateName.dcv_verify(protocol: protocol,
-                                     https_dcv_url: dcv_url(true, prepend, true),
-                                     http_dcv_url: dcv_url(false, prepend, true),
-                                     cname_origin: cname_origin(true),
-                                     cname_destination: cname_destination,
-                                     csr: csr,
-                                     ca_tag: ca_tag)
+          self.class.dcv_verify(protocol,
+                                https_dcv_url: dcv_url(true, prepend, true),
+                                http_dcv_url: dcv_url(false, prepend, true),
+                                cname_origin: cname_origin(true),
+                                cname_destination: cname_destination,
+                                csr: csr,
+                                ca_tag: ca_tag)
         end
       end
 
@@ -49,8 +49,8 @@ module Concerns
         certificate_content&.ssl_account&.api_credential
       end
 
-      class_methods do
-        def dcv_verify(protocol, options)
+      included do
+        def self.dcv_verify(protocol, options)
           begin
             Timeout.timeout(Surl::TIMEOUT_DURATION) do
               response = self.class.selected_verification(protocol, options)
@@ -62,7 +62,7 @@ module Concerns
           end
         end
 
-        def verify(protocol, options)
+        def self.verify(protocol, options)
           case protocol
           when /https/
             self.class.https_verify(options[:https_dcv_url])
@@ -73,7 +73,7 @@ module Concerns
           end
         end
 
-        def https_verify(https_dcv_url)
+        def self.https_verify(https_dcv_url)
           uri = URI.parse(https_dcv_url)
           http = Net::HTTP.new(uri.host, uri.port)
           http.use_ssl = true
@@ -82,14 +82,14 @@ module Concerns
           http.request(request).body
         end
 
-        def cname_verify(cname_origin, cname_destination)
+        def self.cname_verify(cname_origin, cname_destination)
           txt = Resolv::DNS.open do |dns|
             dns.getresources(cname_origin, Resolv::DNS::Resource::IN::CNAME)
           end
           txt.size.positive? ? cname_destination.casecmp(txt.last.name.to_s).zero? : false
         end
 
-        def http_verify(http_dcv_url)
+        def self.http_verify(http_dcv_url)
           uri = URI.parse(http_dcv_url)
           response = uri.open('User-Agent' => I18n.t('users_agent.chrome'), redirect: true)
           response.read
