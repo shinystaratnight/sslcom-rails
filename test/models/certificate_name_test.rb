@@ -108,7 +108,7 @@ describe CertificateName do
            .with(subject.cname_origin(true), Resolv::DNS::Resource::IN::CNAME)
            .once
         ::Resolv::DNS.stub :open, [Resolv::DNS::Resource::IN::CNAME.new(subject.cname_destination)], dns do
-          assert_equal(true, subject.dcv_verify('cname'))
+          assert_true(subject.dcv_verify('cname'))
         end
       end
 
@@ -118,7 +118,7 @@ describe CertificateName do
            .with(subject.cname_origin(true), Resolv::DNS::Resource::IN::CNAME)
            .once
         ::Resolv::DNS.stub :open, [], dns do
-          assert_equal(false, subject.dcv_verify('cname'))
+          assert_false(subject.dcv_verify('cname'))
         end
       end
     end
@@ -127,7 +127,7 @@ describe CertificateName do
       it 'passes if csr values are found' do
         stub_request(:any, subject.dcv_url(false, '', true))
           .to_return(status: 200, body: [subject.csr.sha2_hash, subject.csr.ca_tag, subject.csr.unique_value].join("\n"))
-        assert_equal(true, subject.dcv_verify('http'))
+        assert_true(subject.dcv_verify('http'))
       end
 
       it 'fails if ca_tag does not match' do

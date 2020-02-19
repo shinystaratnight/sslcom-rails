@@ -10,6 +10,6 @@ module Asserts
   end
 
   def assert_true(actual)
-    assert_equal(false, actual)
+    assert_equal(true, actual)
   end
 end

@@ -3,6 +3,9 @@ version: "2"
 plugins:
   brakeman:
     enabled: true
+    checks:
+      no_attr_accessible:
+        enabled: false
   bundler-audit:
     enabled: false # we are using dependabot
   csslint:
