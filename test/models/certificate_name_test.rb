@@ -191,6 +191,32 @@ describe CertificateName do
       end
     end
 
+    describe 'acme_dns_txt domain control validation' do
+      let(:ac) { build_stubbed(:api_credential) }
+      before do
+        logger = mock
+        ApiCredential.stubs(:find).returns(ac)
+        CertificateName.any_instance.stubs(:api_credential).returns(ac)
+        AcmeManager::DnsTxtVerifier.any_instance.stubs(:thumbprint).returns(ac.acme_acct_pub_key_thumbprint)
+        AcmeManager::DnsTxtVerifier.any_instance.stubs(:logger).returns(logger)
+        logger.stubs(:debug).returns(true)
+      end
+
+      it 'passes if thumbprint is present' do
+        body = Resolv::DNS::Resource::IN::TXT.new(ac.acme_acct_pub_key_thumbprint)
+        AcmeManager::DnsTxtVerifier.any_instance.stubs(:challenge).returns(true)
+        AcmeManager::DnsTxtVerifier.any_instance.stubs(:token).returns(body.strings.last)
+        assert_true(cname.dcv_verify('acme_dns_txt'))
+      end
+
+      it 'fails if thumbprint is invalid' do
+        body = Resolv::DNS::Resource::IN::TXT.new("--#{ac.acme_acct_pub_key_thumbprint}--")
+        AcmeManager::DnsTxtVerifier.any_instance.stubs(:challenge).returns(true)
+        AcmeManager::DnsTxtVerifier.any_instance.stubs(:token).returns(body.strings.last)
+        assert_false(cname.dcv_verify('acme_dns_txt'))
+      end
+    end
+
     describe 'email domain control validation' do
       it 'fails if when protocol is email' do
         assert_nil(cname.dcv_verify('email'))

@@ -2,10 +2,10 @@
 
 module AcmeManager
   class DnsTxtVerifier < ApplicationService
-    attr_reader :challenge_url, :api_credential, :token
+    attr_reader :challenge_url, :thumbprint, :token
 
-    def initialize(api_credential, challenge_url)
-      @api_credential = api_credential
+    def initialize(thumbprint, challenge_url)
+      @thumbprint = thumbprint
       @challenge_url = challenge_url
     end
 
@@ -17,9 +17,10 @@ module AcmeManager
     private
 
     def challenge
-      @token = Resolv::DNS.open do |dns|
+      txt = Resolv::DNS.open do |dns|
         dns.getresources(challenge_path, Resolv::DNS::Resource::IN::TXT)
       end
+      @token = txt.strings.last
     end
 
     def challenge_path
@@ -27,25 +28,14 @@ module AcmeManager
     end
 
     def verified
-      well_formed && token_matches
-    end
-
-    def well_formed
-      return true if @token.match?(/\w/)
-
-      logger.debug "Key authorization #{@token} is not well formed"
-      false
+      token_matches
     end
 
     def token_matches
-      return true if @token == thumbprint
+      return true if token == thumbprint
 
-      logger.debug "Mismatching token in key authorization: #{@token} instead of #{thumbprint}"
+      logger.debug "Mismatching token in key authorization: #{token} instead of #{thumbprint}"
       false
-    end
-
-    def thumbprint
-      @api_credential.acme_acct_pub_key_thumbprint
     end
   end
 end
