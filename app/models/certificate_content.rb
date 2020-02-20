@@ -93,9 +93,9 @@ class CertificateContent < ApplicationRecord
   end
 
   def certificate_names_from_domains(domains=nil)
-    is_single=certificate.is_single?
+    is_single = certificate&.is_single?
     csr_common_name=csr.try(:common_name)
-    unless (is_single or certificate.is_wildcard?) and certificate_names.count > 0
+    unless (is_single || certificate&.is_wildcard?) && certificate_names.count.zero?
       domains ||= all_domains
       domains = domains.each{|domain| is_single ? CertificateContent.non_wildcard_name(domain,true) :
                                           domain.downcase}.uniq
@@ -111,8 +111,7 @@ class CertificateContent < ApplicationRecord
         cns.each do |cn|
           cn.candidate_email_addresses # start the queued job running
         end
-        Delayed::Job.enqueue OtherDcvsSatisyJob.new(ssl_account,cns,self,"dv_only") if ssl_account &&
-            certificate.is_server?
+        Delayed::Job.enqueue OtherDcvsSatisyJob.new(ssl_account, cns, self, 'dv_only') if ssl_account && certificate&.is_server?
       end
     end
     # Auto adding domains in case of certificate order has been included into some groups.

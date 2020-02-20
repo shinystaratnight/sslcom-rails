@@ -32,9 +32,6 @@ FactoryBot.define do
     email { Faker::Internet.email }
     is_common_name { true }
 
-    after :create do |cn|
-      cn.certificate_content = create(:certificate_content, certificate_order: create(:certificate_order))
-      cn.save
-    end
+    certificate_content
   end
 end

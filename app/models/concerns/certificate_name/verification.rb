@@ -121,10 +121,10 @@ module Concerns
         end
 
         def self.ca_tag_valid?
-          has_ssl_ca_tag? || has_matching_exteranal_ca_tag?
+          has_ssl_ca_tag? || has_matching_external_ca_tag?
         end
 
-        def self.has_matching_exteranal_ca_tag?
+        def self.has_matching_external_ca_tag?
           response.match? Regexp.new("^#{options[:ca_tag]}")
         end
 
