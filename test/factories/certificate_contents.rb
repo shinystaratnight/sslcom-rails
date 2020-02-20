@@ -52,7 +52,8 @@ FactoryBot.define do
 
     after :create do |cc, options|
       if options.include_tags
-        tagging = Tagging.create(tag: create(:tag), taggable_id: cc.id, taggable_type: 'CertificateContent')
+        tag = create(:tag)
+        tagging = Tagging.create(tag_id: tag[:id], taggable_id: cc.id, taggable_type: 'CertificateContent')
         cc.taggings << tagging
       end
     end
