@@ -82,7 +82,7 @@ describe CertificateName do
   # end
 
   context 'domain control validation' do
-    let!(:cname) { build(:certificate_name) }
+    let!(:cname) { build_stubbed(:certificate_name) }
 
     describe 'https domain control validation' do
       it 'fails if ca_tag does not match' do
@@ -155,13 +155,39 @@ describe CertificateName do
     end
 
     describe 'acme_http domain control validation' do
-      let!(:ac) { create(:api_credential) }
+      let(:ac) { build_stubbed(:api_credential) }
       before do
-        cname.certificate_content.csr.ssl_account.api_credentials << ac
+        logger = mock
+        ApiCredential.stubs(:find).returns(ac)
+        CertificateName.any_instance.stubs(:api_credential).returns(ac)
+        AcmeManager::HttpVerifier.any_instance.stubs(:thumbprint).returns(ac.acme_acct_pub_key_thumbprint)
+        AcmeManager::HttpVerifier.any_instance.stubs(:acme_token).returns(cname.acme_token)
+        AcmeManager::HttpVerifier.any_instance.stubs(:logger).returns(logger)
+        logger.stubs(:debug).returns(true)
       end
+
       it 'passes if token and thumbprint are concatenated with .' do
-        assert_not_nil cname.certificate_content.csr.ssl_account
-        puts cname.certificate_content.csr.ssl_account.api_credential.to_json
+        body = [cname.acme_token, ac.acme_acct_pub_key_thumbprint].join('.')
+        AcmeManager::HttpVerifier.any_instance.stubs(:challenge).returns(body)
+        assert_true(cname.dcv_verify('acme_http'))
+      end
+
+      it 'fails if thumbprint is invalid' do
+        body = [cname.acme_token, "--#{ac.acme_acct_pub_key_thumbprint}--"].join('.')
+        AcmeManager::HttpVerifier.any_instance.stubs(:challenge).returns(body)
+        assert_false(cname.dcv_verify('acme_http'))
+      end
+
+      it 'fails if token is invalid' do
+        body = ["--#{cname.acme_token}--", ac.acme_acct_pub_key_thumbprint].join('.')
+        AcmeManager::HttpVerifier.any_instance.stubs(:challenge).returns(body)
+        assert_false(cname.dcv_verify('acme_http'))
+      end
+
+      it 'fails if response is not well_formed' do
+        body = [cname.acme_token, ac.acme_acct_pub_key_thumbprint, cname.acme_token].join('.')
+        AcmeManager::HttpVerifier.any_instance.stubs(:challenge).returns(body)
+        assert_false(cname.dcv_verify('acme_http'))
       end
     end
 

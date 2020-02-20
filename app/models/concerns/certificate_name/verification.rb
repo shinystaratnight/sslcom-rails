@@ -10,7 +10,7 @@ module Concerns
         when /email/
           nil
         when /acme_http/
-          AcmeManager::HttpVerifier.new(api_credential, non_wildcard_name(true)).call
+          AcmeManager::HttpVerifier.new(api_credential.acme_acct_pub_key_thumbprint, acme_token, non_wildcard_name(true)).call
         when /acme_dns_txt/
           AcmeManager::DnsTxtVerifier.new(api_credential, non_wildcard_name(true)).call
         else

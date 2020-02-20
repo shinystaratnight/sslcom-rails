@@ -31,6 +31,7 @@ FactoryBot.define do
     caa_passed { false }
     email { Faker::Internet.email }
     is_common_name { true }
+    acme_token { SecureRandom.urlsafe_base64(96, false) }
 
     certificate_content
   end

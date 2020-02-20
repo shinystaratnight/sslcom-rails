@@ -2,10 +2,11 @@
 
 module AcmeManager
   class HttpVerifier < ApplicationService
-    attr_reader :challenge_url, :api_credential, :parts
+    attr_reader :challenge_url, :parts, :acme_token, :thumbprint
 
-    def initialize(api_credential, challenge_url)
-      @api_credential = api_credential
+    def initialize(thumbprint, acme_token, challenge_url)
+      @thumbprint = thumbprint
+      @acme_toke = acme_token
       @challenge_url = challenge_url
     end
 
@@ -19,11 +20,11 @@ module AcmeManager
     def challenge
       uri = URI.parse(challenge_path)
       response = uri.open('User-Agent' => I18n.t('users_agent.chrome'), redirect: true)
-      response&.read
+      response.read
     end
 
     def challenge_path
-      [@challenge_url, '.well-known', 'acme-challenge', @api_credential.acme_acct_pub_key_thumbprint].join('/')
+      [challenge_url, '.well-known', 'acme-challenge', thumbprint].join('/')
     end
 
     def verified
@@ -31,32 +32,24 @@ module AcmeManager
     end
 
     def well_formed
-      return true if @parts&.length == 2
+      return true if parts&.length == 2
 
-      logger.debug "Key authorization #{@parts.join('.')} is not well formed"
+      logger.debug "Key authorization #{parts.join('.')} is not well formed"
       false
     end
 
     def token_matches
-      return true if @parts[0] == hmac_key
+      return true if parts[0] == acme_token
 
-      logger.debug "Mismatching token in key authorization: #{@parts[0]} instead of #{hmac_key}"
+      logger.debug "Mismatching token in key authorization: #{parts[0]} instead of #{acme_token}"
       false
     end
 
     def thumbprint_matches
-      return true if @parts[1] == thumbprint
+      return true if parts[1] == thumbprint
 
-      logger.debug "Mismatching thumbprint in key authorization: #{@parts[1]} instead of #{thumbprint}"
+      logger.debug "Mismatching thumbprint in key authorization: #{parts[1]} instead of #{thumbprint}"
       false
-    end
-
-    def hmac_key
-      @api_credential.hmac_key
-    end
-
-    def thumbprint
-      @api_credential.acme_acct_pub_key_thumbprint
     end
   end
 end
