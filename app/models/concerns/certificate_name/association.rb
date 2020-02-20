@@ -7,6 +7,7 @@ module Concerns
 
       included do
         belongs_to :certificate_content
+        has_one :ssl_account, through: :certificate_content
         has_one :csr, through: :certificate_content
         has_one :certificate_order, through: :certificate_content
         has_many    :signed_certificates, through: :certificate_content
