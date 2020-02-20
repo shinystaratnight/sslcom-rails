@@ -11,7 +11,7 @@ module Concerns
         has_many    :users, through: :certificate_order
         belongs_to  :server_software, foreign_key: 'server_software_id'
         has_many    :csrs, dependent: :destroy
-        has_one     :csr, dependent: :destroy
+        has_one     :csr, -> { order(:created_at).limit(1) }, class_name: 'Csr', dependent: :destroy
         has_many    :signed_certificates, through: :csr, source: 'signed_certificate'
         has_one     :registrant, as: :contactable, dependent: :destroy
         has_one     :locked_registrant, as: :contactable
