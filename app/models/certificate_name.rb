@@ -119,6 +119,10 @@ class CertificateName < ApplicationRecord
     csr&.dcv_contents
   end
 
+  def csr
+    @csr ||= certificate_content&.csr
+  end
+
   def cached_csr_public_key_sha1
     csr&.public_key_sha1 || certificate_content&.cached_csr_public_key_sha1
   end

@@ -6,7 +6,7 @@ module Concerns
       extend ActiveSupport::Concern
 
       included do
-        belongs_to :certificate_content
+        belongs_to :certificate_content, foreign_key: 'certificate_content_id'
         has_one :ssl_account, through: :certificate_content
         has_one :csr, through: :certificate_content
         has_one :certificate_order, through: :certificate_content

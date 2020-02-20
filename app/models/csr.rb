@@ -57,7 +57,7 @@ class Csr < ApplicationRecord
   extend Memoist
   include Encodable
   include Pagable
-  
+
   has_many    :whois_lookups, :dependent => :destroy
   has_many    :signed_certificates, -> { where(type: nil) }, :dependent => :destroy
   has_one :signed_certificate, -> { where(type: nil).order 'signed_certificates.created_at desc' }, class_name: "SignedCertificate"
@@ -80,27 +80,23 @@ class Csr < ApplicationRecord
       where{dcv_method >> ['http','https','email']}.last
     end
   end
-  has_many    :csr_unique_values, :dependent => :destroy
-  has_one     :csr_override  #used for overriding csr fields - does not include a full csr
-  belongs_to  :certificate_content, touch: true
-  belongs_to  :certificate_lookup
-  belongs_to  :ssl_account, touch: true
-  has_one    :certificate_order, :through=>:certificate_content
-  has_many    :certificate_orders, :through=>:certificate_content # api_requestable.certificate_orders compatibility
+  has_many    :csr_unique_values, dependent: :destroy
+  has_one     :csr_override # used for overriding csr fields - does not include a full csr
+  belongs_to  :certificate_content, touch: true, foreign_key: 'certificate_content_id'
+  belongs_to  :certificate_lookup, foreign_key: 'certificate_lookup_id'
+  belongs_to  :ssl_account, touch: true, foreign_key: 'ssl_account_id'
+  has_one :certificate_order, through: :certificate_content
+  has_many    :certificate_orders, through: :certificate_content # api_requestable.certificate_orders compatibility
   serialize   :subject_alternative_names
   validates_presence_of :body
-  # validates_presence_of :common_name, :if=> "!body.blank?", :message=> "field blank. Invalid csr."
-  # validates_uniqueness_of :unique_value, scope: :public_key_sha1
 
-  scope :sslcom, ->{joins{certificate_content}.where.not certificate_contents: {ca_id: nil}}
+  scope :sslcom, ->{ joins{ certificate_content }.where.not certificate_contents: { ca_id: nil } }
 
   scope :search, lambda { |term|
     where("MATCH (common_name, body, decoded) AGAINST ('#{term}')")
   }
 
-  scope :pending, ->{joins(:certificate_content).
-      where{certificate_contents.workflow_state >> ['pending_validation', 'validated']}.
-      order("certificate_contents.updated_at asc")}
+  scope :pending, ->{ joins(:certificate_content).where{ certificate_contents.workflow_state >> %w[pending_validation validated] }.order('certificate_contents.updated_at asc') }
 
   scope :range, lambda{|start, finish|
     if start.is_a? String

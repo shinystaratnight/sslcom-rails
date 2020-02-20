@@ -6,12 +6,12 @@ module Concerns
       extend ActiveSupport::Concern
 
       included do
-        belongs_to  :certificate_order, -> { unscope(where: %i[workflow_state is_expired]) }, touch: true
+        belongs_to  :certificate_order, -> { unscope(where: %i[workflow_state is_expired]) }, touch: true, foreign_key: 'certificate_order_id'
         has_one     :ssl_account, through: :certificate_order
         has_many    :users, through: :certificate_order
-        belongs_to  :server_software
-        has_one     :csr, dependent: :destroy
+        belongs_to  :server_software, foreign_key: 'server_software_id'
         has_many    :csrs, dependent: :destroy
+        has_one     :csr, dependent: :destroy
         has_many    :signed_certificates, through: :csr, source: 'signed_certificate'
         has_one     :registrant, as: :contactable, dependent: :destroy
         has_one     :locked_registrant, as: :contactable
