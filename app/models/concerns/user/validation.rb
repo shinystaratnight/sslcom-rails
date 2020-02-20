@@ -4,7 +4,6 @@ module Concerns
   module User
     module Validation
       extend ActiveSupport::Concern
-      include Concerns::User
 
       PASSWORD_SPECIAL_CHARS = '~`!@#\$%^&*()-+={}[]|;:"<>,./?'
       LOGIN = /\A[a-zA-Z0-9_][a-zA-Z0-9\.+\-_@ ]+\z/.freeze
