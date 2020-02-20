@@ -18,6 +18,7 @@
 #
 # Indexes
 #
+#  index_certificate_names_on_acme_account_id         (acme_account_id)
 #  index_certificate_names_on_acme_token              (acme_token)
 #  index_certificate_names_on_certificate_content_id  (certificate_content_id)
 #  index_certificate_names_on_name                    (name)

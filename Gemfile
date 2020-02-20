@@ -107,6 +107,7 @@ gem 'turbolinks'
 gem 'yui-compressor'
 
 group :development do
+  gem 'active_record_doctor'
   gem 'annotate'
   gem 'dotenv-rails'
   gem 'letter_opener_web', '~> 1.0'
@@ -167,4 +168,3 @@ gem 'bcrypt_pbkdf', '~> 1'
 gem 'ed25519', '~> 1.2'
 gem 'oj'
 gem 'active_model_serializers'
-

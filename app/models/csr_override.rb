@@ -18,6 +18,10 @@
 #  updated_at        :datetime
 #  csr_id            :integer
 #
+# Indexes
+#
+#  index_csr_overrides_on_csr_id  (csr_id)
+#
 
 class CsrOverride < ApplicationRecord
   belongs_to  :csr
