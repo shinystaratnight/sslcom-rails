@@ -17,6 +17,7 @@
 # Indexes
 #
 #  fk_rails_486d5cc190           (certificate_order_id)
+#  index_cdns_on_resource_id     (resource_id)
 #  index_cdns_on_ssl_account_id  (ssl_account_id)
 #
 # Foreign Keys

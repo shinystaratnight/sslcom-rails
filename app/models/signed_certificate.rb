@@ -60,7 +60,8 @@
 #
 # Foreign Keys
 #
-#  fk_rails_...  (ca_id => cas.id) ON DELETE => restrict ON UPDATE => restrict
+#  fk_rails_...                                   (ca_id => cas.id) ON DELETE => restrict ON UPDATE => restrict
+#  fk_signed_certificates_certificate_content_id  (certificate_content_id => certificate_contents.id) ON DELETE => restrict ON UPDATE => restrict
 #
 
 require 'digest/md5'

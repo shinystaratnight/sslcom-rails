@@ -16,6 +16,7 @@
 # Indexes
 #
 #  index_contacts_on_recipients_subject_trigger_value_expires_at  (recipients,subject,trigger_value,expires_at)
+#  index_sent_reminders_on_signed_certificate_id                  (signed_certificate_id)
 #
 
 class SentReminder < ApplicationRecord
