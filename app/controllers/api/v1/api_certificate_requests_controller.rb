@@ -22,8 +22,8 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
 
   ORDERS_DOMAIN = "https://#{Settings.community_domain}"
   SANDBOX_DOMAIN = 'https://sandbox.ssl.com'
-  SCAN_COMMAND = ->(parameters, url){ %x"echo QUIT | cipherscan/cipherscan #{parameters} #{url}" }
-  ANALYZE_COMMAND = ->(parameters, url){ %x"echo QUIT | cipherscan/analyze.py #{parameters} #{url}" }
+  SCAN_COMMAND = ->(parameters, url){ `echo QUIT | cipherscan/cipherscan #{parameters} #{url}` }
+  ANALYZE_COMMAND = ->(parameters, url){ `echo QUIT | cipherscan/analyze.py #{parameters} #{url}` }
 
   def notify_saved_result
     @rendered = render_to_string(template: @template)

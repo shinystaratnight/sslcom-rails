@@ -67,6 +67,7 @@ class User < ApplicationRecord
   extend Memoist
   include Pagable
   include UserMessageable
+  include Concerns::User
   include Concerns::User::Association
   include Concerns::User::Preferences
   include Concerns::User::Validation
