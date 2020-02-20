@@ -111,6 +111,8 @@ FactoryBot.define do
     ref { 'csr-381eufn95' }
     strength { 2048 }
 
+    association :ssl_account, factory: :ssl_account
+
     transient do
       signed { false }
     end

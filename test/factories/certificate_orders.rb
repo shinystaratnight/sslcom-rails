@@ -39,6 +39,7 @@
 #  index_certificate_orders_on_3_cols                         (workflow_state,is_expired,is_test)
 #  index_certificate_orders_on_3_cols(2)                      (ssl_account_id,workflow_state,id)
 #  index_certificate_orders_on_4_cols                         (ssl_account_id,workflow_state,is_test,updated_at)
+#  index_certificate_orders_on_acme_account_id                (acme_account_id)
 #  index_certificate_orders_on_assignee_id                    (assignee_id)
 #  index_certificate_orders_on_created_at                     (created_at)
 #  index_certificate_orders_on_folder_id                      (folder_id)
@@ -76,6 +77,7 @@ FactoryBot.define do
     end
 
     after :create do |co, options|
+      create(:certificate_content, certificate_order_id: co.id)
       co.sub_order_items << create(:sub_order_item)
       co.taggings << Tagging.create(tag: create(:tag, ssl_account: co.ssl_account), taggable_id: co.id, taggable_type: 'CertificateOrder') if options.include_tags
     end
