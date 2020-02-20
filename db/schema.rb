@@ -1390,7 +1390,7 @@ ActiveRecord::Schema.define(version: 20200220181655) do
     t.string   "type",                      :limit=>255, :index=>{:name=>"index_signed_certificates_t_cci", :with=>["certificate_content_id"], :using=>:btree}
     t.integer  "registered_agent_id",       :limit=>4, :index=>{:name=>"index_signed_certificates_on_registered_agent_id", :using=>:btree}
     t.string   "ejbca_username",            :limit=>255, :index=>{:name=>"index_signed_certificates_on_ejbca_username", :using=>:btree}
-    t.integer  "certificate_content_id",    :limit=>4, :index=>{:name=>"index_signed_certificates_on_certificate_content_id", :using=>:btree}
+    t.integer  "certificate_content_id",    :limit=>4, :index=>{:name=>"index_signed_certificates_on_certificate_content_id", :using=>:btree}, :foreign_key=>{:references=>"certificate_contents", :name=>"fk_signed_certificates_certificate_content_id", :on_update=>:restrict, :on_delete=>:restrict}
   end
   add_index "signed_certificates", ["common_name", "strength"], :name=>"index_signed_certificates_on_3_cols", :using=>:btree
   add_index "signed_certificates", ["common_name", "url", "body", "decoded", "ext_customer_ref", "ejbca_username"], :name=>"index_signed_certificates_cn_u_b_d_ecf_eu", :type=>:fulltext
