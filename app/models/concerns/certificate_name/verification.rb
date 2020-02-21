@@ -35,13 +35,7 @@ module Concerns
         def self.dcv_verify(protocol, options)
           @options = options
           Timeout.timeout(Surl::TIMEOUT_DURATION) do
-            @response = verify(protocol)
-            case response
-            when TrueClass, FalseClass
-              response
-            else
-              verified
-            end
+            verify(protocol)
           rescue StandardError => _e
             return false
           end
@@ -56,14 +50,15 @@ module Concerns
         end
 
         def self.verify(protocol)
-          case protocol
-          when /https/
-            https_verify(options[:https_dcv_url])
-          when /cname/
-            cname_verify(options[:cname_origin], options[:cname_destination])
-          else
-            http_verify(options[:http_dcv_url])
-          end
+          @response = case protocol
+                      when /https/
+                        https_verify(options[:https_dcv_url])
+                      when /cname/
+                        cname_verify(options[:cname_origin], options[:cname_destination])
+                      else
+                        http_verify(options[:http_dcv_url])
+                      end
+          response == true || verified
         end
 
         def self.https_verify(https_dcv_url)
@@ -79,7 +74,7 @@ module Concerns
           txt = Resolv::DNS.open do |dns|
             dns.getresources(cname_origin, Resolv::DNS::Resource::IN::CNAME)
           end
-          txt&.size&.positive? ? cname_destination.casecmp(txt.last.name.to_s).zero? : false
+          txt&.size&.positive? && cname_destination.casecmp(txt.last.name.to_s).zero?
         end
 
         def self.http_verify(http_dcv_url)

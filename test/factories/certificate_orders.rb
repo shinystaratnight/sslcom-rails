@@ -89,7 +89,7 @@ FactoryBot.define do
     after :stub do |co|
       co.stubs(:sub_order_items).returns(build_stubbed(:sub_order_item))
       co.stubs(:certificate).returns(build_stubbed(:certificate))
-      co.stubs(:certificate_content).returns(build_stubbed(:certificate_content))
+      # co.stubs(:certificate_content).returns(build_stubbed(:certificate_content))
     end
   end
 end
