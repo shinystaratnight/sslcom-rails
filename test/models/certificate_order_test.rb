@@ -71,7 +71,7 @@ describe CertificateOrder do
     initialize_server_software
   end
 
-  subject { build(:certificate_order) }
+  subject { build(:certificate_order, true_build: true) }
 
   context 'associations' do
     should belong_to(:assignee).class_name('User')
@@ -121,14 +121,20 @@ describe CertificateOrder do
 
   context 'scopes' do
     describe 'search_with_csr' do
-      let(:cert) { create(:certificate_with_certificate_order, :premiumssl) }
-      let(:co) { create(:certificate_order, sub_order_items: [cert.product_variant_groups[0].product_variant_items[0].sub_order_item]) }
+      let!(:cert) { build(:certificate_with_certificate_order, :premiumssl) }
+      let!(:co) { build(:certificate_order) }
 
       %w[common_name organization subject_alternative_names locality country strength].each do |field|
         it "filters by csr.#{field}" do
-          skip if ENV['CIRCLE_CI'] == 'true' # until can figure out why tests seem fail randomly
           csr = co.certificate_contents[0].csrs[0]
-          query = "#{field}:'#{csr[field.to_sym]}'"
+          query = case field
+                  when 'subject_alternative_names'
+                    "#{field}:'#{csr[field.to_sym].join(', ')}'"
+                  when 'organization', 'locality'
+                    "#{field}:'#{csr[field.to_sym].gsub(' ', '')}'"
+                  else
+                    "#{field}:'#{csr[field.to_sym]}'"
+                  end
           queried = CertificateOrder.search_with_csr(query)
 
           assert_equal(queried.include?(co), true)
@@ -137,6 +143,8 @@ describe CertificateOrder do
 
       CertificateContent.workflow_spec.states.keys.each do |status|
         it "filters on status #{status}" do
+          co.certificate_content.stubs(:domains_validation).returns(true)
+          co.certificate_content.stubs(:csr_validation).returns(true)
           co.certificate_content.update(workflow_state: status)
           query = "status:'#{status}'"
           queried = CertificateOrder.search_with_csr(query)
@@ -153,17 +161,13 @@ describe CertificateOrder do
         assert_equal(queried.include?(co), true)
       end
 
-      %w[postal_code signature fingerprint address login email product account_number organization_unit state].each do |field|
+      %w[postal_code signature fingerprint address login email account_number organization_unit state].each do |field|
         it "filters by signed_certificate.#{field}" do
-          skip if ENV['CIRCLE_CI'] == 'true' # until can figure out why tests seem fail randomly
-
           sc = co.certificate_contents[0].csrs[0].signed_certificates[0]
 
           query = case field
                   when 'account_number'
                     "account_number:'#{co.ssl_account[:acct_number]}'"
-                  when 'product'
-                    "product:'#{cert[:product]}'"
                   when 'login'
                     co.ssl_account.users << create(:user)
                     "login:'#{co.ssl_account.users[0][:login]}'"
@@ -176,7 +180,6 @@ describe CertificateOrder do
                     "#{field}:'#{sc[field.to_sym]}'"
                   end
           queried = CertificateOrder.search_with_csr(query)
-
           assert_equal(queried.include?(co), true)
         end
       end
@@ -225,6 +228,14 @@ describe CertificateOrder do
         queried = CertificateOrder.search_with_csr(query)
         queried.each do |q|
           assert_equal co.certificate_contents[0].duration, q.certificate_contents[0].duration
+        end
+      end
+
+      it 'filters on certificate_content.product' do
+        query = "product:'#{cert[:product]}'"
+        queried = CertificateOrder.search_with_csr(query)
+        queried.each do |q|
+          assert_equal cert.product, q.certificate_contents[0].product
         end
       end
 

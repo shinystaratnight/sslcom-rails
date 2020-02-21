@@ -34,5 +34,9 @@ FactoryBot.define do
     acme_token { SecureRandom.urlsafe_base64(96, false) }
 
     certificate_content
+
+    after(:stub) do |cn|
+      cn.stubs(:certificate_content).returns(build_stubbed(:certificate_content))
+    end
   end
 end

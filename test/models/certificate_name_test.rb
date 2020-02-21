@@ -66,6 +66,9 @@ describe CertificateName do
 
   context 'ACME support' do
     describe '.generate_acme_token' do
+      before(:all) do
+        CertificateName.stubs(:exists?).returns(false)
+      end
       it 'is 128 characters long' do
         subject.generate_acme_token
         assert_equal(128, subject.acme_token.length)

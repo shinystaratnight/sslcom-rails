@@ -74,12 +74,15 @@ FactoryBot.define do
 
     transient do
       include_tags { false }
+      true_build { false }
     end
 
     after :build do |co, options|
-      # co.save
-      # create(:certificate_content, certificate_order_id: co.id)
-      # create(:sub_order_item, sub_itemable_id: co.id)
+      unless options.true_build
+        co.save unless options.true_build
+        create(:certificate_content, certificate_order_id: co.id)
+        create(:sub_order_item, sub_itemable_id: co.id)
+      end
       co.taggings << Tagging.create(tag: create(:tag, ssl_account: co.ssl_account), taggable_id: co.id, taggable_type: 'CertificateOrder') if options.include_tags
     end
 
