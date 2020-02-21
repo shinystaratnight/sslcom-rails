@@ -82,5 +82,10 @@ FactoryBot.define do
       create(:sub_order_item, sub_itemable_id: co.id)
       co.taggings << Tagging.create(tag: create(:tag, ssl_account: co.ssl_account), taggable_id: co.id, taggable_type: 'CertificateOrder') if options.include_tags
     end
+
+    after :stub do |co|
+      c.stubs(:certificate).returns(build_stubbed(:certificate))
+      c.stubs(:certificate_content).returns(build_stubbed(:certificate_content))
+    end
   end
 end

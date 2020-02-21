@@ -73,51 +73,51 @@ describe CertificateOrder do
 
   subject { build(:certificate_order) }
 
-  # context 'associations' do
-  #   should belong_to(:assignee).class_name('User')
-  #   should belong_to(:folder)
-  #   should belong_to(:site_seal)
-  #   should belong_to(:parent).class_name('CertificateOrder')
-  #   should belong_to(:ssl_account)
-  #   should belong_to(:validation)
+  context 'associations' do
+    should belong_to(:assignee).class_name('User')
+    should belong_to(:folder)
+    should belong_to(:site_seal)
+    should belong_to(:parent).class_name('CertificateOrder')
+    should belong_to(:ssl_account)
+    should belong_to(:validation)
 
-  #   should have_many(:registrants).through(:certificate_contents)
-  #   should have_many(:locked_registrants).through(:certificate_contents)
-  #   should have_many(:certificate_contacts).through(:certificate_contents)
-  #   should have_many(:domain_control_validations).through(:certificate_names)
-  #   should have_many(:csrs).through(:certificate_contents).source(:csr)
-  #   should have_many(:csr_unique_values).through(:csrs)
-  #   should have_many(:attestation_certificates).through(:certificate_contents)
+    should have_many(:registrants).through(:certificate_contents)
+    should have_many(:locked_registrants).through(:certificate_contents)
+    should have_many(:certificate_contacts).through(:certificate_contents)
+    should have_many(:domain_control_validations).through(:certificate_names)
+    should have_many(:csrs).through(:certificate_contents).source(:csr)
+    should have_many(:csr_unique_values).through(:csrs)
+    should have_many(:attestation_certificates).through(:certificate_contents)
 
-  #   should have_many(:signed_certificates).through(:csrs).source(:signed_certificate)
-  #   should have_many(:attestation_issuer_certificates).through(:certificate_contents)
-  #   should have_many(:shadow_certificates).through(:csrs).class_name('ShadowSignedCertificate')
-  #   should have_many(:ca_certificate_requests).through(:csrs)
-  #   should have_many(:ca_api_requests).through(:csrs)
-  #   should have_many(:sslcom_ca_requests).through(:csrs)
-  #   should have_many(:sub_order_items)
-  #   should have_many(:product_variant_items).through(:sub_order_items)
-  #   should have_many(:orders).through(:line_items)
-  #   should have_many(:other_party_validation_requests).class_name('OtherPartyValidationRequest')
-  #   should have_many(:ca_retrieve_certificates)
-  #   should have_many(:ca_mdc_statuses)
-  #   should have_many(:jois).class_name('Joi')
-  #   should have_many(:app_reps).class_name('AppRep')
-  #   should have_many(:physical_tokens)
-  #   should have_many(:url_callbacks).through(:certificate_contents)
-  #   should have_many(:taggings)
-  #   should have_many(:tags).through(:taggings)
-  #   should have_many(:notification_groups_subjects)
-  #   should have_many(:notification_groups).through(:notification_groups_subjects)
-  #   should have_many(:certificate_order_tokens)
-  #   should have_many(:certificate_order_managed_csrs)
-  #   should have_many(:managed_csrs).through(:certificate_order_managed_csrs)
-  #   should have_many(:certificate_order_domains)
-  #   should have_many(:managed_domains).through(:certificate_order_domains).source(:domain)
+    should have_many(:signed_certificates).through(:csrs).source(:signed_certificate)
+    should have_many(:attestation_issuer_certificates).through(:certificate_contents)
+    should have_many(:shadow_certificates).through(:csrs).class_name('ShadowSignedCertificate')
+    should have_many(:ca_certificate_requests).through(:csrs)
+    should have_many(:ca_api_requests).through(:csrs)
+    should have_many(:sslcom_ca_requests).through(:csrs)
+    should have_many(:sub_order_items)
+    should have_many(:product_variant_items).through(:sub_order_items)
+    should have_many(:orders).through(:line_items)
+    should have_many(:other_party_validation_requests).class_name('OtherPartyValidationRequest')
+    should have_many(:ca_retrieve_certificates)
+    should have_many(:ca_mdc_statuses)
+    should have_many(:jois).class_name('Joi')
+    should have_many(:app_reps).class_name('AppRep')
+    should have_many(:physical_tokens)
+    should have_many(:url_callbacks).through(:certificate_contents)
+    should have_many(:taggings)
+    should have_many(:tags).through(:taggings)
+    should have_many(:notification_groups_subjects)
+    should have_many(:notification_groups).through(:notification_groups_subjects)
+    should have_many(:certificate_order_tokens)
+    should have_many(:certificate_order_managed_csrs)
+    should have_many(:managed_csrs).through(:certificate_order_managed_csrs)
+    should have_many(:certificate_order_domains)
+    should have_many(:managed_domains).through(:certificate_order_domains).source(:domain)
 
-  #   should have_one(:locked_recipient)
-  #   should have_one(:renewal)
-  # end
+    should have_one(:locked_recipient)
+    should have_one(:renewal)
+  end
 
   context 'scopes' do
     describe 'search_with_csr' do
@@ -212,7 +212,7 @@ describe CertificateOrder do
       end
 
       it 'filters on certificate_content.tags' do
-        co.certificate_contents << create(:certificate_content, include_tags: true, certificate_order_id: co.id)
+        co.certificate_contents[0].stubs(:tags).returns(build_stubbed_list(:tag, 2))
         query = "cc_tags:'#{co.certificate_contents[0].tags[0].name}'"
         queried = CertificateOrder.search_with_csr(query)
         queried.each do |q|
