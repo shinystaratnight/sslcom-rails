@@ -413,8 +413,11 @@ jQuery(function($) {
         $(':password').clearFields();
       }
     };
-    $('input:image').livequery('click', function() {
-      if ($(':radio[name*=has_account]:checked').val() == "true" && $(this).attr('name')=='next') {
+    $('input:image').livequery('click', function(e) {
+      var url = window.location.pathname;
+      if ($(':radio[name*=has_account]:checked').val() == "true"
+        && $(this).attr('name')=='next'
+      ) {
         // Before Ajax
         $('div[id*=Explanation][class*=Explanation]').remove();
         $('#waiting_bar').show();
@@ -455,6 +458,14 @@ jQuery(function($) {
         });
 
         return false;
+      } else if ($(this).attr('name') == 'prev'
+        && (
+          url == '/orders/new'
+          || url == '/orders/checkout'
+        )
+      ) {
+        e.preventDefault();
+        window.location = "<%=show_cart_orders_url%>" + '?id=' + $.cookie("<%=ShoppingCart::CART_GUID_KEY %>");
       }
     });
 
