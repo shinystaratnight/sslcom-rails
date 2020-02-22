@@ -1,14 +1,42 @@
+# == Schema Information
+#
+# Table name: registered_agents
+#
+#  id              :integer          not null, primary key
+#  agent           :string(255)      not null
+#  approved_at     :datetime
+#  friendly_name   :string(255)
+#  ip_address      :string(255)      not null
+#  mac_address     :string(255)      not null
+#  ref             :string(255)      not null
+#  requested_at    :datetime
+#  workflow_status :string(255)      not null
+#  created_at      :datetime
+#  updated_at      :datetime
+#  approver_id     :integer
+#  requester_id    :integer
+#  ssl_account_id  :integer          not null
+#
+# Indexes
+#
+#  index_registered_agents_on_approver_id     (approver_id)
+#  index_registered_agents_on_requester_id    (requester_id)
+#  index_registered_agents_on_ssl_account_id  (ssl_account_id)
+#
+
 class RegisteredAgent < ApplicationRecord
+  include Pagable
+
   belongs_to  :ssl_account
-  belongs_to  :requester, :class_name => 'User'
-  belongs_to  :approver, :class_name => 'User'
+  belongs_to  :requester, class_name: 'User'
+  belongs_to  :approver, class_name: 'User'
   has_many :managed_certificates, dependent: :destroy
 
   attr_accessor :api_status, :reason
 
-  # will_paginate
-  cattr_accessor :per_page
-  @@per_page = 10
+  def to_param
+    ref
+  end
 
   scope :search_with_terms, lambda { |term|
     term ||= ""
@@ -88,9 +116,5 @@ class RegisteredAgent < ApplicationRecord
 
   before_create do |ra|
     ra.ref = 'sm-' + SecureRandom.hex(1) + Time.now.to_i.to_s(32)
-  end
-
-  def to_param
-    ref
   end
 end

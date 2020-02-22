@@ -12,7 +12,7 @@
 
     -unless @order.blank?
       -if current_user.is_admin?
-        -u=@order.billable.primary_user
+        - u= @order&.billable&.primary_user
         %p
           %em admin only:
           =remote_login_link(u)

@@ -1,3 +1,22 @@
+# == Schema Information
+#
+# Table name: v2_migration_progresses
+#
+#  id                :integer          not null, primary key
+#  migratable_type   :string(255)
+#  migrated_at       :datetime
+#  source_table_name :string(255)
+#  created_at        :datetime
+#  updated_at        :datetime
+#  migratable_id     :integer
+#  source_id         :integer
+#
+# Indexes
+#
+#  index_v2_migration_progresses_on_migratable_id  (migratable_id)
+#  index_v2_migration_progresses_on_source_id      (source_id)
+#
+
 class V2MigrationProgress < ApplicationRecord
   belongs_to  :migratable, :polymorphic=>true
   validates_uniqueness_of :source_id, :scope=>:source_table_name

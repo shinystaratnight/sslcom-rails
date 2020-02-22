@@ -1,3 +1,35 @@
+# == Schema Information
+#
+# Table name: ca_api_requests
+#
+#  id                   :integer          not null, primary key
+#  api_requestable_type :string(191)
+#  ca                   :string(255)
+#  certificate_chain    :text(65535)
+#  method               :string(255)
+#  parameters           :text(65535)
+#  raw_request          :text(65535)
+#  request_method       :text(65535)
+#  request_url          :text(65535)
+#  response             :text(16777215)
+#  type                 :string(191)
+#  username             :string(255)
+#  created_at           :datetime
+#  updated_at           :datetime
+#  api_requestable_id   :integer
+#  approval_id          :string(255)
+#
+# Indexes
+#
+#  index_ca_api_requests_on_api_requestable                          (api_requestable_id,api_requestable_type)
+#  index_ca_api_requests_on_approval_id                              (approval_id)
+#  index_ca_api_requests_on_id_and_type                              (id,type)
+#  index_ca_api_requests_on_type_and_api_requestable                 (id,api_requestable_id,api_requestable_type,type) UNIQUE
+#  index_ca_api_requests_on_type_and_api_requestable_and_created_at  (id,api_requestable_id,api_requestable_type,type,created_at)
+#  index_ca_api_requests_on_type_and_username                        (type,username)
+#  index_ca_api_requests_on_username_and_approval_id                 (username,approval_id) UNIQUE
+#
+
 class ApiCertificateRequest < CaApiRequest
   extend Memoist
   include CertificateType
@@ -16,33 +48,33 @@ class ApiCertificateRequest < CaApiRequest
   CREATE_ACCESSORS_1_4 = [:account_key, :secret_key, :product, :period, :server_count, :server_software, :domains,
       :domain, :common_names_flag, :csr, :organization, :organization_unit, :post_office_box,
       :street_address_1, :street_address_2, :street_address_3, :locality_name, :state_or_province_name,
-      :postal_code, :country_name, :duns_number, :company_number, :registered_locality_name,
+      :postal_code, :country, :duns_number, :company_number, :registered_locality_name,
       :registered_state_or_province_name, :registered_country_name, :incorporation_date,
       :assumed_name, :business_category, :email_address, :contact_email_address, :dcv_email_address,
       :ca_certificate_id, :is_customer_validated, :hide_certificate_reference, :external_order_number,
       :dcv_candidate_addresses, :dcv_method, :ref, :contacts, :options, :renewal_id, :billing_profile, :certificates,
-      :attestation_cert, :attestation_issuer_cert]
+      :attestation_cert, :attestation_issuer_cert, :certificate_contents]
 
   UPDATE_ACCESSORS_1_4 = [:cert_names, :caa_check_domains]
 
   ACCESSORS = [:account_key, :secret_key, :product, :period, :server_count, :server_software, :domains, :options,
       :domain, :common_names_flag, :csr, :organization, :organization_unit, :post_office_box,
       :street_address_1, :street_address_2, :street_address_3, :locality_name, :state_or_province_name,
-      :postal_code, :country_name, :duns_number, :company_number, :registered_locality_name,
+      :postal_code, :country, :duns_number, :company_number, :registered_locality_name,
       :registered_state_or_province_name, :registered_country_name, :incorporation_date,
       :assumed_name, :business_category, :email_address, :contact_email_address, :dcv_email_address,
       :ca_certificate_id, :is_customer_validated, :hide_certificate_reference, :external_order_number,
       :dcv_candidate_addresses, :dcv_method, :dcv_methods, :certificate_ref, :contacts, :admin_funded,
-      :ca_order_number, :debug, :api_call, :billing_profile, :callback, :unique_value, :pub_key, :signed_certificates]
+      :ca_order_number, :debug, :api_call, :billing_profile, :callback, :unique_value, :pub_key, :signed_certificates, :certificate_contents]
 
   REPROCESS_ACCESSORS = [:account_key, :secret_key, :server_count, :server_software, :domains,
       :domain, :common_names_flag, :csr, :organization, :organization_unit, :post_office_box,
       :street_address_1, :street_address_2, :street_address_3, :locality_name, :state_or_province_name,
-      :postal_code, :country_name, :duns_number, :company_number, :registered_locality_name,
+      :postal_code, :country, :duns_number, :company_number, :registered_locality_name,
       :registered_state_or_province_name, :registered_country_name, :incorporation_date,
       :assumed_name, :business_category, :email_address, :contact_email_address,
       :ca_certificate_id, :is_customer_validated, :hide_certificate_reference, :external_order_number,
-      :dcv_methods, :ref, :options]
+      :dcv_methods, :ref, :options, :certificate_contents]
 
   RETRIEVE_ACCESSORS = [:account_key, :secret_key, :ref, :query_type, :response_type, :response_encoding,
     :show_validity_period, :show_domains, :show_ext_status, :validations, :registrant, :start, :end, :filter,
@@ -79,12 +111,11 @@ class ApiCertificateRequest < CaApiRequest
   ).uniq
 
   before_validation(on: :create) do
-    ac=api_credential
-    unless ac.blank?
+    ac = api_credential
+    if ac.present?
       self.api_requestable = ac.ssl_account
     else
-      errors[:login] << "account_key not found or wrong secret_key"
-      false
+      errors[:login] << missing_account_key_or_secret_key
     end
   end
 
@@ -95,8 +126,7 @@ class ApiCertificateRequest < CaApiRequest
   end
 
   def api_credential
-    (self.account_key && self.secret_key) ?
-        ApiCredential.find_by_account_key_and_secret_key(self.account_key, self.secret_key) : nil
+    ApiCredential.find_by_account_key_and_secret_key(account_key, secret_key)
   end
   memoize :api_credential
 
@@ -128,15 +158,14 @@ class ApiCertificateRequest < CaApiRequest
       if defined?(:serials) && self.serials
         (self.serials.is_a?(Array) ? serials : [serials]).map do |serial|
           if sc=klass.find_by_serial(serial)
-            certs<<sc
+            certs << sc
           else
-            errors[:signed_certificate] <<
-                "Signed certificate not found for serial #{serial}#{" within certificate order ref #{certificate_order.ref}" if certificate_order}."
+            errors[:signed_certificate] << "Signed certificate not found for serial #{serial}#{" within certificate order ref #{certificate_order.ref}" if certificate_order}."
             break
           end
         end
       else
-        certs<<klass
+        certs << klass
       end
     end
   end
@@ -212,7 +241,7 @@ class ApiCertificateRequest < CaApiRequest
       if serial
         Certificate.find_by_serial(serial)
       elsif ref
-        CertificateOrder.unscoped.find_by_ref(ref).certificate
+        CertificateOrder.unscoped.find_by_ref(ref)&.certificate
       end
   end
 

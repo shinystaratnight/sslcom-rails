@@ -1,6 +1,22 @@
+# frozen_string_literal: true
+
+# == Schema Information
+#
+# Table name: reseller_tiers
+#
+#  id           :integer          not null, primary key
+#  label        :string(255)
+#  description  :string(255)
+#  amount       :integer
+#  roles        :string(255)
+#  published_as :string(255)
+#  created_at   :datetime
+#  updated_at   :datetime
+#
+
 class ResellerTier < ApplicationRecord
   include PriceView
-  acts_as_sellable :cents => :amount, :currency => false
+  acts_as_sellable cents: :amount, currency: false
   has_many  :certificates, dependent: :destroy
   has_many  :product_variant_groups, through: :certificates
   has_many  :product_variant_items, through: :certificates
@@ -8,11 +24,11 @@ class ResellerTier < ApplicationRecord
   serialize :description
 
   DEFAULT_TIER = 2
-  PUBLIC_TIERS = [7,8,*(1..5)]
+  PUBLIC_TIERS = [7, 8, *(1..5)].freeze
   TIER_KEY = :r_tier_102019
 
   # these tiers are for sale to the general public, otherwise the tier is customized and private to select resellers
-  scope :general, ->{where{id>>PUBLIC_TIERS}}
+  scope :general, ->{ where{ id >> PUBLIC_TIERS } }
 
   def self.sitemap
     ResellerTier.general
@@ -31,23 +47,20 @@ class ResellerTier < ApplicationRecord
   # ResellerTier.generate_tier(label: "ansonnet", description: {:name=>"ansonnet tier"}, discount_rate: 0.315)
   # ResellerTier.generate_tier(label: "dtntcomodoca", description: {:name=>"dtnt comodoca tier"}, discount_rate: 0.167)
   def self.generate_tier(options)
-    tier = find_or_create_by(label: options[:label])
-    tier.description = options[:description]
-    tier.published_as = "live"
-    tier.amount = options[:amount]
-    tier.roles = options[:roles]
-    tier.save!
-    options[:reseller_ids].each do |id|
-      tier.resellers << Reseller.find(id)
-    end if options[:reseller_ids]
-    Certificate.base_products.available.each do |cert|
-      tier.certificates << cert.duplicate(discount_rate: options[:discount_rate], reseller_tier_label: options[:label],
-                                          amount: options[:amount], roles: options[:roles])
+    where(label: options[:label]).first_or_create do |record|
+      record.description = options[:description]
+      record.published_as = 'live'
+      record.amount = options[:amount]
+      record.roles = options[:roles]
+      record.resellers << options[:reseller_ids].map { |id| Reseller.find(id) } if options[:reseller_ids]
+      record.certificates << Certificate.base_products.available.map do |cert|
+        cert.duplicate(discount_rate: options[:discount_rate], reseller_tier_label: options[:label], amount: options[:amount], roles: options[:roles])
+      end
     end
   end
 
   def price=(amount)
-    self.amount = amount.gsub(/\./,"").to_i
+    self.amount = amount.gsub(/\./, '').to_i
   end
 
   def is_free?
@@ -55,7 +68,7 @@ class ResellerTier < ApplicationRecord
   end
 
   def self.tier_suffix(label)
-    "#{'-' unless (label =~/\A(\d)\z/ and $1.to_i < 6)}"+label + 'tr' #add '-' for non single digit tier due to flexible labeling
+    "#{'-' unless label =~ /\A(\d)\z/ && (Regexp.last_match(1).to_i < 6)}#{label}tr" # add '-' for non single digit tier due to flexible labeling
   end
 
   def to_param

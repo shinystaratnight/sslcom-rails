@@ -16,7 +16,7 @@ SslCom::Application.configure do
 
   # Show full error reports and disable caching
   config.consider_all_requests_local       = true
-  config.action_controller.perform_caching = true
+  config.action_controller.perform_caching = false
   config.cache_store = :dalli_store
 
   # Don't care if the mailer can't send
@@ -40,6 +40,8 @@ SslCom::Application.configure do
   config.assets.debug = false
   config.assets.compile = true
   config.assets.digest = false
+  config.assets.quiet = true
+  # config.log_level = :info
 
   unless Rails.env.test?
     config.middleware.use Rack::SslEnforcer,
@@ -49,12 +51,8 @@ SslCom::Application.configure do
   end
 
   ActiveMerchant::Billing::Base.mode = :test
-  # config.log_level = :info
   # GATEWAY_TEST_CODE = 1.0
   # END ActiveMerchant configuration
-
-  require 'sass/plugin/rack'
-  Sass::Plugin.options[:line_numbers] = true
 
   config.middleware.insert_before 0, 'Rack::Cors' do
     allow do
@@ -78,10 +76,3 @@ SslCom::Application.configure do
 end
 
 require "#{Rails.root}/lib/force_ssl.rb"
-
-# SubdomainFu.configure do |config|
-#   config.tld_sizes = {development: 1, test: 1, production: 1} # set all at once (also the defaults)
-#   config.mirrors = %w(www)
-#   config.preferred_mirror = "www"
-# end
-#

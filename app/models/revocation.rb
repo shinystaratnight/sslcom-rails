@@ -1,3 +1,27 @@
+# == Schema Information
+#
+# Table name: revocations
+#
+#  id                                :integer          not null, primary key
+#  fingerprint                       :string(255)
+#  message_after_revoked             :text(65535)
+#  message_before_revoked            :text(65535)
+#  replacement_fingerprint           :string(255)
+#  revoked_on                        :datetime
+#  status                            :string(255)
+#  created_at                        :datetime         not null
+#  updated_at                        :datetime         not null
+#  replacement_signed_certificate_id :integer
+#  revoked_signed_certificate_id     :integer
+#
+# Indexes
+#
+#  index_revocations_on_fingerprint                        (fingerprint)
+#  index_revocations_on_replacement_fingerprint            (replacement_fingerprint)
+#  index_revocations_on_replacement_signed_certificate_id  (replacement_signed_certificate_id)
+#  index_revocations_on_revoked_signed_certificate_id      (revoked_signed_certificate_id)
+#
+
 class Revocation < ApplicationRecord
   belongs_to :revoked_signed_certificate, class_name: "SignedCertificate", foreign_key: "revoked_signed_certificate_id"
   belongs_to :replacement_signed_certificate, class_name: "SignedCertificate", foreign_key: "replacement_signed_certificate_id"

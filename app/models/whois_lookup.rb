@@ -1,8 +1,31 @@
+# == Schema Information
+#
+# Table name: whois_lookups
+#
+#  id                :integer          not null, primary key
+#  expiration        :datetime
+#  raw               :text(65535)
+#  record_created_on :datetime
+#  status            :string(255)
+#  created_at        :datetime
+#  updated_at        :datetime
+#  csr_id            :integer
+#
+# Indexes
+#
+#  index_whois_lookups_on_csr_id  (csr_id)
+#
+
 class WhoisLookup < ApplicationRecord
   belongs_to  :csr
   before_create :query_whois
 
   WHOIS=->(domain){%x"whois #{domain}"}
+
+  def self.registrant_whois(domain)
+    whois = WHOIS.call(domain)
+    refer = whois=~/refer:\s+?(\w)$/
+  end
 
   def query_whois
     if csr.top_level_domain && Whois.find(csr.top_level_domain).try(:valid?)

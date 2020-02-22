@@ -1,3 +1,51 @@
+# frozen_string_literal: true
+
+# == Schema Information
+#
+# Table name: csrs
+#
+#  id                        :integer          not null, primary key
+#  body                      :text(65535)
+#  challenge_password        :boolean
+#  common_name               :string(255)
+#  country                   :string(255)
+#  decoded                   :text(65535)
+#  duration                  :integer
+#  email                     :string(255)
+#  ext_customer_ref          :string(255)
+#  friendly_name             :string(255)
+#  locality                  :string(255)
+#  modulus                   :text(65535)
+#  organization              :string(255)
+#  organization_unit         :string(255)
+#  public_key_md5            :string(255)
+#  public_key_sha1           :string(255)
+#  public_key_sha256         :string(255)
+#  ref                       :string(255)
+#  sig_alg                   :string(255)
+#  state                     :string(255)
+#  strength                  :integer
+#  subject_alternative_names :text(65535)
+#  created_at                :datetime
+#  updated_at                :datetime
+#  certificate_content_id    :integer
+#  certificate_lookup_id     :integer
+#  ssl_account_id            :integer
+#
+# Indexes
+#
+#  index_csrs_cn_b_d                                     (common_name,body,decoded)
+#  index_csrs_on_3_cols                                  (common_name,email,sig_alg)
+#  index_csrs_on_certificate_content_id                  (certificate_content_id)
+#  index_csrs_on_certificate_lookup_id                   (certificate_lookup_id)
+#  index_csrs_on_common_name                             (common_name)
+#  index_csrs_on_common_name_and_certificate_content_id  (certificate_content_id,common_name)
+#  index_csrs_on_common_name_and_email_and_sig_alg       (common_name,email,sig_alg)
+#  index_csrs_on_organization                            (organization)
+#  index_csrs_on_sig_alg_and_common_name_and_email       (sig_alg,common_name,email)
+#  index_csrs_on_ssl_account_id                          (ssl_account_id)
+#
+
 require 'zip/zip'
 require 'zip/zipfilesystem'
 require 'openssl-extensions/all'
@@ -8,10 +56,11 @@ require 'uri'
 class Csr < ApplicationRecord
   extend Memoist
   include Encodable
+  include Pagable
   
   has_many    :whois_lookups, :dependent => :destroy
   has_many    :signed_certificates, -> { where(type: nil) }, :dependent => :destroy
-  has_one :signed_certificate, -> { where(type: nil).order 'created_at' }, class_name: "SignedCertificate"
+  has_one :signed_certificate, -> { where(type: nil).order 'signed_certificates.created_at desc' }, class_name: "SignedCertificate"
   has_many    :shadow_certificates
   has_many    :ca_certificate_requests, as: :api_requestable, dependent: :destroy
   has_many    :sslcom_ca_requests, as: :api_requestable
@@ -42,10 +91,6 @@ class Csr < ApplicationRecord
   validates_presence_of :body
   # validates_presence_of :common_name, :if=> "!body.blank?", :message=> "field blank. Invalid csr."
   # validates_uniqueness_of :unique_value, scope: :public_key_sha1
-
-  #will_paginate
-  cattr_accessor :per_page
-  @@per_page = 10
 
   scope :sslcom, ->{joins{certificate_content}.where.not certificate_contents: {ca_id: nil}}
 
@@ -92,14 +137,9 @@ class Csr < ApplicationRecord
   end
 
   after_save do |c|
-    c.certificate_content.touch unless c.certificate_content.blank?
-    c.certificate_order.touch unless c.certificate_content.blank?
-
+    c&.certificate_content&.touch
+    c&.certificate_order&.touch
   end
-
-  # def to_param
-  #   ref
-  # end
 
   def unique_value
     if certificate_content.blank? or certificate_content.ca.blank?
@@ -200,11 +240,11 @@ class Csr < ApplicationRecord
   end
 
   def sslcom_approval_ids
-    sslcom_ca_requests.unexpired.pluck(:approval_id)
+    sslcom_ca_requests.pluck(:approval_id)
   end
 
   def sslcom_usernames
-    sslcom_ca_requests.unexpired.pluck(:username)
+    sslcom_ca_requests.pluck(:username)
   end
 
   def sslcom_outstanding_approvals
@@ -491,6 +531,7 @@ class Csr < ApplicationRecord
                   !csr.signed_certificate and
                   !csr.is_ip_address? and
                   co.paid? and
+                  !co.certificate.is_ev? and
                   cc.certificate.is_server?)
             end
           end

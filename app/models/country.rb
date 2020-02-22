@@ -1,3 +1,15 @@
+# == Schema Information
+#
+# Table name: countries
+#
+#  id        :integer          not null, primary key
+#  iso1_code :string(255)
+#  iso3_code :string(255)
+#  name      :string(255)
+#  name_caps :string(255)
+#  num_code  :integer
+#
+
 class Country < ApplicationRecord
   BLACKLIST=%w(AF CU ER GN IR IQ LR KP RW SL SY SD SS ZW)
   PRIORITY = [["United States", "US"], ["United Kingdom", "GB"], ["Canada", "CA"]]

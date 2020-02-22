@@ -291,11 +291,11 @@ class ValidationsController < ApplicationController
   end
 
   def get_asynch_domains
-    co = (current_user.is_system_admins? ? CertificateOrder :
+    co = (current_user.is_system_admins? ? CertificateOrder.includes(:certificate_contents) :
               current_user.certificate_orders).find_by_ref(params[:certificate_order_id])
     cn = co.certificate_content.certificate_names.find_by_name(params['domain_name']) if co
 
-    returnObj = Rails.cache.fetch(cn.get_asynch_cache_label) do
+    returnObj = Rails.cache.fetch(cn&.get_asynch_cache_label) do
       if cn
         ds = params['domain_status']
 
@@ -405,13 +405,13 @@ class ValidationsController < ApplicationController
     # p = {:page => params[:page]}
     @certificate_orders =
       if !params[:search].blank? && (@search = params[:search])
-       current_user.is_admin? ?
-           (@ssl_account.try(:certificate_orders) || CertificateOrder)
-               .not_test.search_with_csr(params[:search]).unvalidated.not_csr_blank :
+        current_user.is_admin? ?
+           (@ssl_account.try(:certificate_orders) || CertificateOrder.with_includes)
+             .not_test.search_with_csr(params[:search]).unvalidated.not_csr_blank :
         current_user.ssl_account.certificate_orders.not_test.search(params[:search]).unvalidated.not_csr_blank
       else
         current_user.is_admin? ?
-            (@ssl_account.try(:certificate_orders) || CertificateOrder).unvalidated.not_csr_blank :
+            (@ssl_account.try(:certificate_orders) || CertificateOrder.with_includes).unvalidated.not_csr_blank :
             current_user.ssl_account.certificate_orders.unvalidated.not_csr_blank
       end
 
@@ -448,7 +448,7 @@ class ValidationsController < ApplicationController
     @i = 0
     @error = []
     @files = params[:filedata] || []
-    
+
     if params[:filedata]
       upload_documents(params[:filedata], :saved_registrant_documents)
     end
@@ -1008,7 +1008,7 @@ class ValidationsController < ApplicationController
         @registrant.validation_histories << @val_history
         contacts = LockedRegistrant.where(parent_id: @registrant.id)
         if contacts.any?
-          # If client or s/mime certificate used this registrant, then add 
+          # If client or s/mime certificate used this registrant, then add
           # documents to locked registrant and certificate order as well.
           CertificateOrder.joins(certificate_contents: :locked_registrant)
             .where("contacts.id IN (?)", contacts.ids).each do |co|
@@ -1030,7 +1030,7 @@ class ValidationsController < ApplicationController
         lrc = @certificate_order.locked_recipient
         if lrc && (lrc.user_id == iv_exists.user_id)
           lrc.validation_histories << @val_history
-        end 
+        end
       end
     end
   end
@@ -1075,7 +1075,7 @@ class ValidationsController < ApplicationController
   end
 
   def find_certificate_order
-    @certificate_order = (current_user.is_system_admins? ? CertificateOrder : current_user.certificate_orders).find_by_ref(params[:certificate_order_id])
+    @certificate_order = (current_user.is_system_admins? ? CertificateOrder.includes(:validation) : current_user.certificate_orders.includes(:validation)).find_by_ref(params[:certificate_order_id])
     @validation = @certificate_order.validation if @certificate_order
   end
 

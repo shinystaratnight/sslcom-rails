@@ -1,3 +1,29 @@
+# frozen_string_literal: true
+
+# == Schema Information
+#
+# Table name: product_variant_items
+#
+#  id                       :integer          not null, primary key
+#  amount                   :integer
+#  description              :text(65535)
+#  display_order            :integer
+#  item_type                :string(255)
+#  published_as             :string(255)
+#  serial                   :string(255)
+#  status                   :string(255)
+#  text_only_description    :text(65535)
+#  title                    :string(255)
+#  value                    :string(255)
+#  created_at               :datetime
+#  updated_at               :datetime
+#  product_variant_group_id :integer
+#
+# Indexes
+#
+#  index_product_variant_items_on_product_variant_group_id  (product_variant_group_id)
+#
+
 class ProductVariantItem < ApplicationRecord
   extend Memoist
   acts_as_sellable :cents => :amount, :currency => false
@@ -9,11 +35,7 @@ class ProductVariantItem < ApplicationRecord
   validates_presence_of :product_variant_group
 
   def certificate
-    @pvi_certificate ||=
-      product_variant_group.variantable if
-          product_variant_group &&
-              product_variant_group.variantable &&
-              product_variant_group.variantable.is_a?(Certificate)
+    @pvi_certificate ||= product_variant_group.variantable if product_variant_group&.variantable&.is_a?(Certificate)
   end
   memoize :certificate
 

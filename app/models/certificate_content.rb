@@ -1,3 +1,38 @@
+# frozen_string_literal: true
+
+# == Schema Information
+#
+# Table name: certificate_contents
+#
+#  id                   :integer          not null, primary key
+#  agreement            :boolean
+#  approval             :string(255)
+#  billing_checkbox     :boolean
+#  domains              :text(65535)
+#  duration             :integer
+#  ext_customer_ref     :string(255)
+#  label                :string(255)
+#  ref                  :string(255)
+#  signed_certificate   :text(65535)
+#  signing_request      :text(65535)
+#  technical_checkbox   :boolean
+#  validation_checkbox  :boolean
+#  workflow_state       :string(255)
+#  created_at           :datetime
+#  updated_at           :datetime
+#  ca_id                :integer
+#  certificate_order_id :integer          not null
+#  server_software_id   :integer
+#
+# Indexes
+#
+#  index_certificate_contents_on_ca_id                 (ca_id)
+#  index_certificate_contents_on_certificate_order_id  (certificate_order_id)
+#  index_certificate_contents_on_ref                   (ref)
+#  index_certificate_contents_on_server_software_id    (server_software_id)
+#  index_certificate_contents_on_workflow_state        (workflow_state)
+#
+
 class CertificateContent < ApplicationRecord
   extend Memoist
   include V2MigrationProgressAddon
@@ -95,6 +130,10 @@ class CertificateContent < ApplicationRecord
       29=>22, 30=>23, 31=>24, 32=>25, 33=>26, 34=>27, 35=>31, 36=>28, 37=>-1, 38=>-1, 39=>3}
 
   INTRANET_IP_REGEX = /\A(127\.0\.0\.1)|(10.\d{,3}.\d{,3}.\d{,3})|(172\.1[6-9].\d{,3}.\d{,3})|(172\.2[0-9].\d{,3}.\d{,3})|(172\.3[0-1].\d{,3}.\d{,3})|(192\.168.\d{,3}.\d{,3})\z/
+
+  # dtnt comodo chained is 492703
+  # 499740 using Azure. Remove once we are in Azure
+  COMODO_SSL_ACCOUNTS = %w[467564 16077 204730 492703 21291 499740 490782].freeze
 
   serialize :domains
 
@@ -264,9 +303,7 @@ class CertificateContent < ApplicationRecord
   end
 
   def add_ca(ssl_account)
-    # dtnt comodo chained is 492703
-    # 499740 using Azure. Remove once we are in Azure
-    unless [467564,16077,204730,492703,21291,499740,490782].include?(ssl_account.id)
+    unless COMODO_SSL_ACCOUNTS.include?(ssl_account.id)
       self.ca = (self.certificate.cas.ssl_account_or_general_default(ssl_account)).last if ca.blank? and certificate
     end
   end
@@ -291,7 +328,7 @@ class CertificateContent < ApplicationRecord
       new_certificate_names=[]
       (domains-certificate_names.find_by_domains(domains).pluck(:name)).each do |domain|
         unless domain=~/,/
-          new_certificate_names<<certificate_names.new(name: domain, is_common_name: csr_common_name==domain)
+          new_certificate_names << certificate_names.new(name: domain, is_common_name: csr_common_name==domain)
         end
       end
       CertificateName.import new_certificate_names
@@ -494,6 +531,14 @@ class CertificateContent < ApplicationRecord
     end
   end
 
+  def to_api_query
+   {}.tap do |result|
+     %w(ref).each do |k,v|
+       result.merge!({"#{k.to_sym}": self.send(k)})
+     end
+   end
+  end
+
   def callback(packaged_cert=nil,options={})
     if packaged_cert.blank?
       cert = ApiCertificateRetrieve.new(query_type: "all_certificates")
@@ -549,13 +594,11 @@ class CertificateContent < ApplicationRecord
       else
         if DomainControlValidation.approved_email_address? CertificateName.candidate_email_addresses(
             name.non_wildcard_name), v["dcv"]
-          dcv = name.domain_control_validations.new(dcv_method: "email", email_address: v["dcv"],
+          dcvs << name.domain_control_validations.new(dcv_method: "email", email_address: v["dcv"],
                                                  failure_action: v["dcv_failure_action"],
                                                  candidate_addresses: CertificateName.candidate_email_addresses(
                                                      name.non_wildcard_name))
-          OrderNotifier.dcv_email_send(v["dcv"], dcv.identifier, [name.name], name.id, @ssl_slug).deliver
         end
-        dcvs << dcv
       end
       i+=1
     end
@@ -772,8 +815,8 @@ class CertificateContent < ApplicationRecord
         asterisk_found = (domain=~/\A\*\./)==0
         if ((!is_ucc && !is_wildcard) || is_premium_ssl) && asterisk_found
           errors.add(:domain, "cannot begin with *. since the order does not allow wildcards")
-        elsif certificate_order.certificate.is_dv? && CertificateContent.is_ip_address?(domain)
-          errors.add(:domain, "#{domain} was determined to be for an ip address. This is only allowed on OV or EV ssl orders.")
+        elsif (certificate_order.certificate.is_dv? || certificate_order.certificate.is_ev?) && CertificateContent.is_ip_address?(domain)
+          errors.add(:domain, "#{domain} was determined to be for an ip address. This is only allowed on OV ssl orders.")
         elsif !!(domain=~Regexp.new("\\.("+Country::BLACKLIST.join("|")+")$",true))
           errors.add(:domain, "#{domain} is a restricted tld")
         end

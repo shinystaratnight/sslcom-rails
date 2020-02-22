@@ -2,41 +2,50 @@
 
 require:
   - rubocop/cop/internal_affairs
-  - rubocop-performance
-  - rubocop-rails
-  - rubocop-minitest
 
 AllCops:
   Exclude:
     - 'vendor/**/*'
     - 'tmp/**/*'
     - 'lib/**/*'
-    - 'test/**/*'
     - 'bin/*'
     - 'config/**/*.yml'
-  TargetRubyVersion: 2.3
+    - 'db/**/*'
+  TargetRubyVersion: 2.5
 
-Naming/PredicateName:
-  # Method define macros for dynamically generated method.
-  MethodDefinitionMacros:
-    - define_method
-    - define_singleton_method
-    - def_node_matcher
-    - def_node_search
-
-Rails:
-  Enabled: true
-
+Bundler/OrderedGems:
+  Enabled: false
+Style/StringLiterals:
+  Exclude:
+    - test/**/*test.rb
 Style/FormatStringToken:
   Enabled: false
+Style/Documentation:
+  Enabled: false
+Style/GuardClause:
+  Enabled: false
+Style/IfInsideElse:
+  Enabled: false
+Style/MultilineBlockChain:
+  Enabled: false
+Style/MultilineTernaryOperator:
+  Enabled: false
+Style/ClassVars:
+  Enabled: false
+Style/EvalWithLocation:
+  Enabled: false
+Style/StructInheritance:
+  Enabled: false
+Style/DoubleNegation:
+  Enabled: false
+Style/NestedTernaryOperator:
+  Exclude:
+    - 'app/controllers/application_controller.rb'
 
-Layout/HashAlignment:
-  EnforcedHashRocketStyle:
-    - key
-    - table
-  EnforcedColonStyle:
-    - key
-    - table
+Security/Eval:
+  Exclude:
+    - app/models/notification_group.rb
+    - app/models/ssl_account.rb
 
 Layout/EndOfLine:
   EnforcedStyle: lf
@@ -57,36 +66,50 @@ Layout/ClassStructure:
       - protected_methods
       - private_methods
 
-# Trailing white space is meaningful in code examples
-Layout/TrailingWhitespace:
-  AllowInHeredoc: true
-
 Layout/SpaceBeforeBlockBraces:
   Enabled: false
 
 Lint/AmbiguousBlockAssociation:
   Enabled: true
-
+Lint/AssignmentInCondition:
+  Enabled: false
 Lint/InterpolationCheck:
   Enabled: true
-
 Lint/UselessAccessModifier:
   MethodCreatingMethods:
     - 'def_matcher'
     - 'def_node_matcher'
-
+Lint/UselessAssignment:
+  Exclude:
+    - app/models/ssl_account.rb
 Lint/BooleanSymbol:
   Enabled: false
-
-Metrics/BlockLength:
+Lint/IneffectiveAccessModifier:
   Enabled: false
+Lint/Void:
+  Exclude:
+    - config/deploy.rb
+    - app/models/product_order.rb
+    - app/models/ssl_account.rb
+Lint/EmptyWhen:
+  Exclude:
+    - app/models/product_order.rb
+Lint/ShadowingOuterLocalVariable:
+  Exclude:
+    - app/models/ssl_account.rb
 
 Metrics/LineLength:
+  Enabled: false
+Metrics/BlockLength:
+  Enabled: false
+Metrics/ModuleLength:
   Enabled: false
 
 Naming/FileName:
   Exclude:
     - lib/rubocop-rails.rb
 
-Metrics/ModuleLength:
+Naming/PredicateName:
+  Enabled: false
+Naming/AccessorMethodName:
   Enabled: false

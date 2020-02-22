@@ -3,11 +3,11 @@
 require 'domain_constraint'
 
 SslCom::Application.routes.draw do
+  mount Rswag::Ui::Engine => '/api'
   mount Delayed::Web::Engine, at: '/jobs'
   mount LetterOpenerWeb::Engine, at: '/letter_opener' if Rails.env.development?
 
   resources :apidocs, only: [:index]
-  get '/api' => redirect('/swagger/dist/index.html?url=/apidocs')
 
   resources :oauth_clients
 
@@ -41,9 +41,9 @@ SslCom::Application.routes.draw do
       scope module: :v1, constraints: APIConstraint.new(version: 1), defaults: { format: 'json' } do
         # Users
         match '/users' => 'api_user_requests#create_v1_4', as: :api_user_create_v1_4, via: %i[options post]
-        match '/user/:login' => 'api_user_requests#show_v1_4', as: :api_user_show_v1_4, via: %i[options get], login: /.+\/?/
-        match '/users/get_teams' => 'api_user_requests#get_teams_v1_4', as: :api_user_get_teams_v1_4, via: %i[options get], get_teams: /.+\/?/
-        match '/users/set_default_team' => 'api_user_requests#set_default_team_v1_4', as: :api_user_set_default_team_v1_4, via: %i[options put], set_default_team: /.+\/?/
+        match '/user/:login' => 'api_user_requests#show_v1_4', as: :api_user_show_v1_4, via: %i[options get], login: %r{.+/?}
+        match '/users/get_teams' => 'api_user_requests#get_teams_v1_4', as: :api_user_get_teams_v1_4, via: %i[options get], get_teams: %r{.+/?}
+        match '/users/set_default_team' => 'api_user_requests#set_default_team_v1_4', as: :api_user_set_default_team_v1_4, via: %i[options put], set_default_team: %r{.+/?}
 
         # SSL Manager
         match '/ssl_manager' => 'api_ssl_manager_requests#register', as: :api_ssl_manager_register, via: %i[options post]
@@ -55,6 +55,7 @@ SslCom::Application.routes.draw do
         # ACME
         match '/acme/hmac' => 'api_acme_requests#retrieve_hmac', as: :api_acme_retrieve_hmac, via: [:post]
         match '/acme/credentials' => 'api_acme_requests#retrieve_credentials', as: :api_acme_retrieve_credentials, via: [:post]
+        match '/acme/validations/info' => 'api_acme_requests#validations_info', as: :api_acme_validations_info, via: [:post]
 
         # Code Signing.
         match '/generate_certificate' => 'api_certificate_requests#generate_certificate_v1_4', as: :api_certificate_generate_v1_4, via: %i[options post]
@@ -92,8 +93,9 @@ SslCom::Application.routes.draw do
         match '/certificate/:ref/validations/methods' => 'api_certificate_requests#dcv_methods_v1_4', as: :api_dcv_methods_v1_4, via: %i[options get]
         match '/certificate/:ref/pretest' => 'api_certificate_requests#pretest_v1_4', as: :pretest_v1_4, via: %i[options get]
         match '/certificate/:ref/api_parameters/:api_call' => 'api_certificate_requests#api_parameters_v1_4', as: :api_parameters_v1_4, via: %i[options get]
-        match '/scan/:url' => 'api_certificate_requests#scan', as: :api_scan, via: %i[options get], constraints: { url: /[^\/]+/ }
-        match '/analyze/:url' => 'api_certificate_requests#analyze', as: :api_analyze, via: %i[options get], constraints: { url: /[^\/]+/ }
+        match '/certificate/:ref/retry_domain_validation' => 'api_certificate_requests#api_resend_domain_validation_v1_4', as: :api_resend_domain_validation_v1_4, via: %i[options post]
+        match '/scan/:url' => 'api_certificate_requests#scan', as: :api_scan, via: %i[options get], constraints: { url: %r{[^/]+} }
+        match '/analyze/:url' => 'api_certificate_requests#analyze', as: :api_analyze, via: %i[options get], constraints: { url: %r{[^/]+} }
         match '/certificates/validations/csr_hash' => 'api_certificate_requests#dcv_methods_csr_hash_v1_4', as: :api_dcv_methods_csr_hash_v1_4, via: %i[options post]
         match '/certificates/1.3/retrieve' => 'api_certificate_requests#retrieve_v1_3', as: :api_certificate_retrieve_v1_3, via: %i[options get]
         match '/certificates/1.3/dcv_emails' => 'api_certificate_requests#dcv_emails_v1_3', as: :api_dcv_emails_v1_3, via: %i[options get post]
@@ -116,7 +118,6 @@ SslCom::Application.routes.draw do
     end
   end
 
-
   resources :affiliates do
     collection do
       get :details
@@ -135,7 +136,7 @@ SslCom::Application.routes.draw do
   end
 
   concern :teamable do
-    match '/enrollment/:product/:duration' => 'certificate_enrollment_requests#new', as: 'new_certificate_enrollment_request', via: %i[get post], duration: /\d+\/?/
+    match '/enrollment/:product/:duration' => 'certificate_enrollment_requests#new', as: 'new_certificate_enrollment_request', via: %i[get post], duration: %r{\d+/?}
     match '/enrollment_links' => 'certificate_enrollment_requests#enrollment_links', as: 'enrollment_links_certificate_enrollment_requests', via: :get
 
     resources :folders, only: %i[index create update destroy] do
@@ -325,7 +326,7 @@ SslCom::Application.routes.draw do
 
       collection do
         get :certificate_orders_domains_contacts
-        post :search
+        get :search
         post :register_notification_group
         post :remove_groups
         post :scan_groups
@@ -512,6 +513,8 @@ SslCom::Application.routes.draw do
       match :enable_disable_duo, via: %i[put patch]
       get :show_user
       get :reset_failed_login_count
+      match :upload_avatar, format: /(js|json)/, via: %i[put patch]
+      get :avatar, format: /(js|json)/
     end
 
     member do
@@ -568,6 +571,7 @@ SslCom::Application.routes.draw do
   match 'browser_compatibility' => 'site#compatibility', as: :browsers, via: %i[get post]
   match 'acceptable-top-level-domains-tlds-for-ssl-certificates' => 'site#top_level_domains_tlds', as: :tlds, via: %i[get post]
   match '/certificate_order_token/:token/generate_cert' => 'certificate_orders#generate_cert', :as => :confirm, via: [:get]
+  match '/download_certificates/:co_ids' => 'certificate_orders#download_certificates', as: :download_certificates, via: [:post], defaults: { format: :csv }
   match '/validation/email_verification_check' => 'validations#email_verification_check', :as => :email_verification_check, via: [:post]
 
   # Callback
@@ -590,8 +594,8 @@ SslCom::Application.routes.draw do
   # took the anchor version out /\w+\/?\z/ but need to test the results of this,
   # specifically the aff code should be the last thing and not followed by other characters
   # that could route this to anything other than an affiliate crediting
-  get '*disregard/code/:id' => 'affiliates#refer', id: /\w+\/?/
-  get '/code/:id' => 'affiliates#refer', id: /\w+\/?/
+  get '*disregard/code/:id' => 'affiliates#refer', id: %r{\w+/?}
+  get '/code/:id' => 'affiliates#refer', id: %r{\w+/?}
 
   resources :surls, constraints: { subdomain: Surl::SUBDOMAIN }, except: %i[index show]
   get '/surls/:id' => 'surls#destroy', :constraints => { subdomain: Surl::SUBDOMAIN }

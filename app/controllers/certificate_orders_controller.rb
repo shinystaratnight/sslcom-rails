@@ -25,7 +25,7 @@ class CertificateOrdersController < ApplicationController
   filter_access_to :incomplete, :pending, :search, :reprocessing, :order_by_csr, :require=>:read
   filter_access_to :credits, :filter_by, :filter_by_scope, :require=>:index
   filter_access_to :update_csr, :generate_cert, require: [:update]
-  filter_access_to :download, :start_over, :reprocess, :admin_update, :change_ext_order_number, :switch_from_comodo,
+  filter_access_to :download, :download_certificates, :start_over, :reprocess, :admin_update, :change_ext_order_number, :switch_from_comodo,
                    :developers, :require=>[:update, :delete]
   filter_access_to :renew, :parse_csr, require: [:create]
   filter_access_to :auto_renew, require: [:admin_manage]
@@ -219,7 +219,7 @@ class CertificateOrdersController < ApplicationController
 
             @is_reprocess = false
 
-            return render '/certificates/buy', :layout=>'application'
+            return render 'submit_csr', layout: 'application'
           end
           unless @certificate_order.certificate_content.csr_submitted? or params[:registrant]
             redirect_to certificate_order_path(@ssl_slug, @certificate_order)
@@ -250,7 +250,7 @@ class CertificateOrdersController < ApplicationController
       if @certificate_order.certificate_content.workflow_state == 'pending_validation' &&
         !current_user.is_system_admins?
         redirect_to new_certificate_order_validation_path(@ssl_slug, @certificate_order)
-      else  
+      else
         @certificate_order.has_csr=true
         @certificate = @certificate_order.mapped_certificate
         @certificate_content = @certificate_order.certificate_contents.build(
@@ -287,7 +287,7 @@ class CertificateOrdersController < ApplicationController
 
         @is_reprocess = true
 
-        return render '/certificates/buy', :layout=>'application'
+        return render 'submit_csr', layout: 'application'
       end
     else
       not_found
@@ -312,7 +312,7 @@ class CertificateOrdersController < ApplicationController
           format.html {redirect_to confirm_funds_path(:id=>'certificate_order')}
         end
       else
-        format.html { render(:template => "certificates/buy")}
+        format.html { render template: 'submit_csr' }
       end
     end
   end
@@ -333,7 +333,7 @@ class CertificateOrdersController < ApplicationController
         setup_locked_registrant(
           params[:certificate_order][:certificate_contents_attributes]['0'], cc
         ) if @certificate_order.certificate.requires_locked_registrant?
-        
+
         setup_reusable_registrant(@certificate_order.registrant) if params[:save_for_later]
 
         if cc.csr_submitted? or cc.new?
@@ -379,12 +379,12 @@ class CertificateOrdersController < ApplicationController
 
         if is_smime_or_client
           format.html { redirect_to recipient_certificate_order_path(@ssl_slug, @certificate_order.ref) }
-        elsif @certificate_order.is_express_signup? || @certificate_order.skip_contacts_step?
+        elsif @certificate_order.express_signup? || @certificate_order.skip_contacts_step?
           format.html { redirect_to validation_destination(slug: @ssl_slug, certificate_order: @certificate_order) }
-        else #assume ev full signup process
+        else # assume ev full signup process
           format.html { redirect_to certificate_content_contacts_path(@ssl_slug, cc) }
         end
-        format.xml  { head :ok }
+        format.xml { head :ok }
       else
         setup_registrant(
           params[:certificate_order][:certificate_contents_attributes]['0'][:registrant_attributes]
@@ -551,8 +551,8 @@ class CertificateOrdersController < ApplicationController
           format.html { redirect_to path }
         else
           @certificate = @certificate_order.certificate
-          format.html { render '/certificates/buy', :layout=>'application' }
-          format.xml  { render :xml => @certificate_order.errors, :status => :unprocessable_entity }
+          format.html { render 'submit_csr', layout: 'application' }
+          format.xml  { render xml: @certificate_order.errors, status: :unprocessable_entity }
         end
       end
     end
@@ -700,6 +700,16 @@ class CertificateOrdersController < ApplicationController
     t.close
   end
 
+  def download_certificates
+    cert_orders = CertificateOrder.where(id: params[:co_ids].split('/')).includes(:signed_certificates)
+
+    respond_to do |format|
+      format.csv do
+        send_data cert_orders.to_csv, filename: "certificates-#{DateTime.current.strftime("%Y-%m-%d_%H:%M:%S")}.csv"
+      end
+    end
+  end
+
   # this function allows the customer to resubmit a new csr even while the order is being processed
   def start_over
     @certificate_order.start_over! unless @certificate_order.blank?
@@ -819,7 +829,7 @@ class CertificateOrdersController < ApplicationController
   def smime_client_create
     @certificate = Certificate.find params[:certificate_id]
     smime_client_parse_emails
-    
+
     if @certificate && @emails.any?
       redirect_to new_order_path(@ssl_slug,
         emails: @emails,
@@ -835,6 +845,7 @@ class CertificateOrdersController < ApplicationController
   def smime_client_init
     find_tier
     @certificates = Certificate.get_smime_client_products(@tier)
+    @certificates = Certificate.get_smime_client_products if @certificates.blank?
     @certificate ||= @certificates.first
 
     co = CertificateOrder.new(
@@ -912,7 +923,7 @@ class CertificateOrdersController < ApplicationController
       if (ov_iv && @certificate_order.iv_ov_validated?) || (!ov_iv && @certificate_order.iv_validated?)
         cc.validate! if !(cc.validated? or cc.pending_validation? or cc.issued?)
       end
-    else  
+    else
       admin_validate_ov(ov)
       # if ov.validated? && @certificate_order.domains_validated?
       #   @certificate_order.apply_for_certificate(
@@ -921,7 +932,7 @@ class CertificateOrdersController < ApplicationController
       #   )
       # end
     end
-    redirect_to certificate_order_path(@ssl_slug, @certificate_order.ref), 
+    redirect_to certificate_order_path(@ssl_slug, @certificate_order.ref),
       notice: "Certificate order was successfully validated."
   end
 
@@ -941,7 +952,7 @@ class CertificateOrdersController < ApplicationController
     lr = @certificate_order.locked_recipient
     vt = params[:unvalidate_type]
 
-    if @certificate_order.certificate.is_smime_or_client?      
+    if @certificate_order.certificate.is_smime_or_client?
       iv = @certificate_order.get_team_iv
       if params[:unvalidate_iv] && vt && iv && lr && (iv.email == lr.email)
         iv.send("#{vt}!")
@@ -990,7 +1001,7 @@ class CertificateOrdersController < ApplicationController
     user_exists = User.find_by(email: params[:email])
     if user_exists
       user_exists_for_team = ssl.users.find_by(id: user_exists.id)
-      
+
       if user_exists_for_team
         @iv_exists = ssl.individual_validations.find_by(user_id: user_exists_for_team.id)
       end
@@ -1005,7 +1016,7 @@ class CertificateOrdersController < ApplicationController
           user_id: user_exists.id
         )
       end
-      
+
       # Add user to team w/role individual_certificate
       unless user_exists_for_team
         user_exists.ssl_accounts << ssl
@@ -1064,8 +1075,7 @@ class CertificateOrdersController < ApplicationController
 
   def load_certificate_order
     if current_user
-      @certificate_order=current_user.certificate_order_by_ref(params[:id])
-
+      @certificate_order = current_user.certificate_order_by_ref(params[:id])
       if @certificate_order.nil?
         co = current_user.ssl_accounts.includes(:certificate_orders).map(&:certificate_orders)
                  .flatten.find{|c| c.ref == params[:id]}
@@ -1142,7 +1152,7 @@ class CertificateOrdersController < ApplicationController
   def setup_locked_registrant(cc_params=nil, cc)
     if cc_params && cc_params[:registrant_attributes]
       cc_params[:registrant_attributes].delete('id')
-      
+
       unless params[:saved_contacts].blank?
         cc_params[:registrant_attributes].merge(
           {'parent_id' => params[:saved_contacts].to_i}
@@ -1165,7 +1175,7 @@ class CertificateOrdersController < ApplicationController
       from_registrant.persisted? &&
       from_registrant.parent_id.nil? &&
       @reusable_registrant.nil?
-      
+
       attr = from_registrant.attributes.delete_if do |k,v|
         %w{created_at updated_at id}.include?(k)
       end
@@ -1241,7 +1251,7 @@ class CertificateOrdersController < ApplicationController
         flash[:error] = "Some error occurs while getting notification group data. Please try again."
         @certificate = @certificate_order.certificate
 
-        format.html { render '/certificates/buy', :layout=>'application' }
+        format.html { render 'submit_csr', layout: 'application' }
       end
     else
       # Saving notification group info
@@ -1269,7 +1279,7 @@ class CertificateOrdersController < ApplicationController
         flash[:error] = "Some error occurs while saving notification group data. Please try again."
         @certificate = @certificate_order.certificate
 
-        format.html { render '/certificates/buy', :layout=>'application' }
+        format.html { render 'submit_csr', layout: 'application' }
       end
     end
 
@@ -1292,7 +1302,7 @@ class CertificateOrdersController < ApplicationController
     #     flash[:error] = "Some error occurs while saving notification group data. Please try again."
     #     @certificate = @certificate_order.certificate
     #
-    #     format.html { render '/certificates/buy', :layout=>'application' }
+    #     format.html { render 'submit_csr', :layout=>'application' }
     #   end
     # else
     #   notification_group = current_user.ssl_account.notification_groups.where(ref: params[:notification_group]).first
@@ -1301,7 +1311,7 @@ class CertificateOrdersController < ApplicationController
     #     flash[:error] = "Some error occurs while getting notification group data. Please try again."
     #     @certificate = @certificate_order.certificate
     #
-    #     format.html { render '/certificates/buy', :layout=>'application' }
+    #     format.html { render 'submit_csr', :layout=>'application' }
     #   end
     # end
 
@@ -1623,7 +1633,7 @@ class CertificateOrdersController < ApplicationController
     #     flash[:error] = "Some error occurs while adding this csr to the csr manager."
     #     @certificate = @certificate_order.certificate
     #
-    #     format.html { render '/certificates/buy', :layout=>'application' }
+    #     format.html { render 'submit_csr', :layout=>'application' }
     #   end
     #
     #   @certificate_order.managed_csrs << managed_csr
@@ -1644,7 +1654,7 @@ class CertificateOrdersController < ApplicationController
         flash[:error] = "Some error occurs while adding this csr to the csr manager."
         @certificate = @certificate_order.certificate
 
-        format.html { render '/certificates/buy', :layout=>'application' }
+        format.html { render 'submit_csr', layout: 'application' }
       end
 
       @certificate_order.managed_csrs << managed_csr

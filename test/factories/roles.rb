@@ -1,6 +1,25 @@
+# frozen_string_literal: true
+
+# == Schema Information
+#
+# Table name: roles
+#
+#  id             :integer          not null, primary key
+#  description    :text(65535)
+#  name           :string(255)
+#  status         :string(255)
+#  created_at     :datetime
+#  updated_at     :datetime
+#  ssl_account_id :integer
+#
+# Indexes
+#
+#  index_roles_on_ssl_account_id  (ssl_account_id)
+#
+
 FactoryBot.define do
   factory :role do
-    name {}
+    name { 'owner' }
     description {}
     status {}
   end
@@ -42,7 +61,7 @@ FactoryBot.define do
 
   trait :users_manager do
     name { 'users_manager' }
-    description { "Manage teams' users. Tasks include inviting users to team, removing, editing roles, disabling and enabling teams' users."}
+    description { "Manage teams' users. Tasks include inviting users to team, removing, editing roles, disabling and enabling teams' users." }
   end
 
   trait :validations do

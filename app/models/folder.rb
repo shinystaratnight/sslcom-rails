@@ -1,18 +1,55 @@
+# frozen_string_literal: true
+
+# == Schema Information
+#
+# Table name: folders
+#
+#  id             :integer          not null, primary key
+#  active         :boolean          default(FALSE)
+#  archived       :boolean          default(FALSE), not null
+#  default        :boolean          default(FALSE), not null
+#  description    :string(255)
+#  expired        :boolean          default(FALSE)
+#  items_count    :integer          default(0)
+#  name           :string(255)      not null
+#  revoked        :boolean          default(FALSE)
+#  created_at     :datetime         not null
+#  updated_at     :datetime         not null
+#  parent_id      :integer
+#  ssl_account_id :integer          not null
+#
+# Indexes
+#
+#  index_folder_statuses                                            (default,archived,name,ssl_account_id,expired,active,revoked)
+#  index_folders_on_active                                          (active)
+#  index_folders_on_archived                                        (archived)
+#  index_folders_on_archived_and_name_and_ssl_account_id            (archived,name,ssl_account_id)
+#  index_folders_on_default_and_name_and_ssl_account_id             (default,name,ssl_account_id)
+#  index_folders_on_expired                                         (expired)
+#  index_folders_on_name                                            (name)
+#  index_folders_on_name_and_ssl_account_id_and_active_and_revoked  (name,ssl_account_id,active,revoked)
+#  index_folders_on_name_and_ssl_account_id_and_expired             (name,ssl_account_id,expired)
+#  index_folders_on_name_and_ssl_account_id_and_revoked             (name,ssl_account_id,revoked)
+#  index_folders_on_parent_id                                       (parent_id)
+#  index_folders_on_revoked                                         (revoked)
+#  index_folders_on_ssl_account_id                                  (ssl_account_id)
+#
+
+
 class Folder < ApplicationRecord
   extend Memoist
 
   belongs_to :ssl_account
-  belongs_to :parent, foreign_key: "parent_id", class_name: "Folder"
+  belongs_to :parent, foreign_key: 'parent_id', class_name: 'Folder'
   has_many   :certificate_orders
-  
+
   acts_as_tree dependent: :destroy, order: :name
 
   validates :name,
-            presence: {allow_blank: false},
-            uniqueness: {scope: [:ssl_account_id, :parent_id],  case_sensitive: false},
+            presence: { allow_blank: false },
+            uniqueness: { scope: %i[ssl_account_id parent_id], case_sensitive: false },
             format: { with: /\A[\w ]+\z/,
-                      message: 'Letters, Numbers, Spaces and Underscores Only'
-                    }
+                      message: 'Letters, Numbers, Spaces and Underscores Only' }
 
   after_save     :there_can_only_be_one_default_folder
   before_destroy :can_destroy?
@@ -20,11 +57,11 @@ class Folder < ApplicationRecord
   after_destroy  :release_certificate_orders
 
   attr_reader :total_certificate_orders
-  
+
   def cached_certificate_orders
     CertificateOrder.where(id: (Rails.cache.fetch("#{cache_key}/cached_certificate_orders") do
       certificate_orders.pluck(:id)
-    end)).includes({certificate_contents: [:signed_certificates, :registrant]}).order(created_at: :desc)
+    end)).includes(certificate_contents: %i[signed_certificates registrant]).order(created_at: :desc)
   end
   memoize :cached_certificate_orders
 
@@ -36,22 +73,22 @@ class Folder < ApplicationRecord
     end
   end
 
-  def self.show_folders?(user=nil)
-    user.is_system_admins? ? false : Settings.folders == "show"
+  def self.show_folders?(user = nil)
+    user.is_system_admins? ? false : Settings.folders == 'show'
   end
 
   def folder_contents
     contents = []
     @total_certificate_orders = 0
-    if self.descendants.count > 0
-      self.self_and_descendants.includes(:certificate_orders).each do |child_folder|
+    if descendants&.count&.positive?
+      self_and_descendants.includes(:certificate_orders).find_each do |child_folder|
         certificate_orders = child_folder.certificate_orders.count
-        contents << child_folder.id if certificate_orders > 0
-        @total_certificate_orders +=certificate_orders
+        contents << child_folder.id if certificate_orders.positive?
+        @total_certificate_orders += certificate_orders
       end
     else
-      contents << self.id
-      @total_certificate_orders +=self.certificate_orders.count
+      contents << id
+      @total_certificate_orders += self.certificate_orders.count
     end
     contents.join(',')
   end
@@ -61,28 +98,23 @@ class Folder < ApplicationRecord
     !archived? && !expired? && !active? && !revoked?
   end
 
-  def self.reset_to_system_folders(team,options={})
+  def self.reset_to_system_folders(team, options = {})
     if team
-      co_list = team.certificate_orders.joins{signed_certificates.outer}
+      co_list = team.certificate_orders.joins{ signed_certificates.outer }
       folders = team.folders
       expired_folder = options[:expired_folder] || folders.find_by(expired: true)
       revoked_folder = options[:revoked_folder] || folders.find_by(revoked: true)
       active_folder = options[:active_folder] || folders.find_by(active: true)
       default_folder = options[:default_folder] || folders.find_by(default: true)
 
-      if expired_folder
-        co_list.expired.where{(folder_id != expired_folder.id) | (folder_id == nil)}.update_all(folder_id: expired_folder.id)
-      end
-      if revoked_folder
-        co_list.revoked.where{(folder_id != revoked_folder.id) | (folder_id == nil)}.update_all(folder_id: revoked_folder.id)
-      end
-      if default_folder
-        co_list.unused_credits.where{(folder_id != default_folder.id) | (folder_id == nil)}.update_all(folder_id: default_folder.id)
-      end
+      co_list.expired.where{ (folder_id != expired_folder.id) | folder_id.nil? }.update_all(folder_id: expired_folder.id) if expired_folder
+      co_list.revoked.where{ (folder_id != revoked_folder.id) | folder_id.nil? }.update_all(folder_id: revoked_folder.id) if revoked_folder
+      co_list.unused_credits.where{ (folder_id != default_folder.id) | folder_id.nil? }.update_all(folder_id: default_folder.id) if default_folder
       if active_folder
-        co_list.where{id <<
-          (co_list.expired.ids + co_list.revoked.ids + co_list.unused_credits.ids).flatten.compact.uniq
-        }.update_all(folder_id: active_folder.id)
+        co_list.where do
+          id <<
+            (co_list.expired.ids + co_list.revoked.ids + co_list.unused_credits.ids).flatten.compact.uniq
+        end.update_all(folder_id: active_folder.id)
       end
     end
   end
@@ -91,20 +123,17 @@ class Folder < ApplicationRecord
 
   # if this is going to be the default folder, all others should not
   def there_can_only_be_one_default_folder
-    if self.destroyed?
+    if destroyed?
       # create a new default folder if default is destroyed
       if default
         new_default = ssl_account.folders.create(default: true, name: 'default')
-        if new_default.persisted?
-          ssl_account.update_column(:default_folder_id, new_default.id)
-        end
+        ssl_account.update_column(:default_folder_id, new_default.id) if new_default.persisted?
       end
     else
       # If this is the default folder and saved normally, make sure there are no other defaults
       if default && can_destroy?
-        ssl_account.folders.where.not(id: id)
-          .where(default: true).update_all(default: false)
-        ssl_account.update_column(:default_folder_id, id)
+        ssl_account&.folders&.where&.not(id: id)&.where(default: true)&.update_all(default: false)
+        ssl_account&.update_column(:default_folder_id, id)
       end
     end
   end

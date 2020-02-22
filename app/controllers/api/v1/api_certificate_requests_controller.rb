@@ -34,7 +34,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
 
   # set which parameters will be displayed via the api response
   def set_result_parameters(result, acr)
-    cc                     = acr.certificate_contents(true).last # need to reload to get certs
+    cc                     = acr.certificate_contents.last # need to reload to get certs
     ssl_slug               = acr.ssl_account.to_slug
     result.ref             = acr.ref
     result.order_status    ||= acr.status # using ||= because status might have been set from CAA problems
@@ -48,6 +48,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
     result.registrant      = cc.registrant.to_api_query if
         (cc && cc.registrant)
     result.certificates    = cc.x509_certificates.map(&:to_s).join("\n") if cc.x509_certificates
+    result.certificate_contents = cc.to_api_query
   end
 
   def create_v1_4
@@ -73,7 +74,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
         InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
       end
     end
-    render_200_status_noschema
+    render_200_status
   rescue => e
     render_500_error e
   end
@@ -279,6 +280,29 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
       else
         InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
       end
+    end
+    render_200_status
+  rescue => e
+    render_500_error e
+  end
+
+  def api_resend_domain_validation_v1_4
+    set_template "api_resend_domain_validation_v1_4"
+
+    if @result.save
+      if @acr = @result.resend_domain_validation
+        if @acr.is_a?(CertificateOrder) && @acr.errors.empty?
+          @result.success_message = "Successfully retried domain validation for certificate order ref #{@acr.ref}"
+        elsif @acr.is_a?(String) && @acr == "incorrect_state"
+          @result.error_message = "Error: certificate order #{@acr.ref} is not in pending validation state."
+        elsif @acr.is_a?(String) && @acr == "empty_dcv"
+          @result.error_message = "Error: certificate order #{@acr.ref} domain validation has never been performed yet."
+        else
+          @result = @acr
+        end
+      end
+    else
+      InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
     end
     render_200_status
   rescue => e
@@ -1332,6 +1356,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
   end
 
   private
+
   def package_certificate_order(result,acr)
     result.order_date = acr.created_at
     result.order_status = acr.status
@@ -1377,7 +1402,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
     klass = case params[:action]
               when "create_v1_3"
                 ApiCertificateCreate
-              when "create_v1_4", "update_v1_4", "contacts_v1_4", "replace_v1_4"
+              when "create_v1_4", "update_v1_4", "contacts_v1_4", "replace_v1_4", "api_resend_domain_validation_v1_4"
                 ApiCertificateCreate_v1_4
               when /revoke/
                 ApiCertificateRevoke

@@ -1,6 +1,27 @@
+# frozen_string_literal: true
+
+# == Schema Information
+#
+# Table name: site_seals
+#
+#  id             :integer          not null, primary key
+#  ref            :string(255)
+#  seal_type      :string(255)
+#  workflow_state :string(255)
+#  created_at     :datetime
+#  updated_at     :datetime
+#
+# Indexes
+#
+#  index_site_seals_ref             (ref)
+#  index_site_seals_workflow_state  (workflow_state)
+#
+
+
 class SiteSeal < ApplicationRecord
-  #using_access_control
-  has_many  :certificate_orders, -> { unscope(where: [:workflow_state, :is_expired]) }
+  include Pagable
+
+  has_many  :certificate_orders, -> { unscope(where: %i[workflow_state is_expired]) }
   has_many  :validations, through: :certificate_orders
   has_many  :validation_histories, through: :validations
   attr_protected :workflow_state
@@ -12,7 +33,7 @@ class SiteSeal < ApplicationRecord
   FREE_SEAL_IMAGE = 'free_ssl_trust_logo.gif'
   SEAL_IMAGE = 'ssl_trust_logo.gif'
 
-  REPORT_CACHE_KEY = "ssl_com_report_2015_"
+  REPORT_CACHE_KEY = 'ssl_com_report_2015_'
 
   REPORT_DIMENSIONS = 'height=500, width=400, top=100, left=100'
   REPORT_ARTIFACTS_DIMENSIONS = 'height=600, width=400, top=100, left=100'
@@ -21,19 +42,13 @@ class SiteSeal < ApplicationRecord
   CONDITIONALLY_ACTIVATED = :conditionally_activated
   DEACTIVATED = :deactivated
   CANCELED = :canceled
-  
-  ACTIVATE = "activate"
-  
-  NEW_STATUS = 
-    "site seal has not been activated yet"
-  FULLY_ACTIVATED_STATUS =
-    "site seal has been fully activated with all features"
-  CONDITIONALLY_ACTIVATED_STATUS =
-    "site seal has been partially activated, pending final approval"
-  DEACTIVATED_STATUS =
-    "site seal has been temporarily deactivated"
-  CANCELED_STATUS =
-    "site seal has been disabled pending investigation"
+
+  ACTIVATE = 'activate'
+  NEW_STATUS = 'site seal has not been activated yet'
+  FULLY_ACTIVATED_STATUS = "site seal has been fully activated with all features"
+  CONDITIONALLY_ACTIVATED_STATUS = 'site seal has been partially activated, pending final approval'
+  DEACTIVATED_STATUS = 'site seal has been temporarily deactivated'
+  CANCELED_STATUS = 'site seal has been disabled pending investigation'
 
   CLICK_TO_EXPAND = 'click to for more details'
 
@@ -129,9 +144,9 @@ class SiteSeal < ApplicationRecord
       select(&:can_publish_to_site_seal?).empty? &&
       preferred_artifacts_status == ACTIVATE
   end
-  
+
   def status
-    
+
   end
 
   def is_disabled?

@@ -37,13 +37,13 @@ class AffiliatesController < ApplicationController
   def refer
     id = params[:id]
     if Affiliate.exists?(id)
-      set_cookie(:aid,id)
+      set_cookie(ShoppingCart::AID,id)
       set_cookie(:ref,request.url)
     end
     if id=="21"
-      redirect_to "https://#{Settings.portal_domain}/affiliate/program.php?id=101&url=#{request.url.gsub(/\/code\/\w+\/?\z/,"")}"
+      redirect_to "https://affiliates.ssl.com/program.php?id=101&url=#{request.url.gsub(/\/code\/\w+\/?\z/,"")}"
     elsif id=="35"
-      redirect_to "https://#{Settings.portal_domain}/affiliate/program.php?id=102&url=#{request.url.gsub(/\/code\/\w+\/?\z/,"")}"
+      redirect_to "https://affiliates.ssl.com/program.php?id=102&url=#{request.url.gsub(/\/code\/\w+\/?\z/,"")}"
     else
       redirect_to request.url.gsub(/\/code\/\w+\/?\z/,"")
     end

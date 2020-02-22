@@ -1,3 +1,33 @@
+# == Schema Information
+#
+# Table name: duo_accounts
+#
+#  id                          :integer          not null, primary key
+#  duo_akey                    :string(255)
+#  duo_hostname                :string(255)
+#  duo_ikey                    :string(255)
+#  duo_skey                    :string(255)
+#  encrypted_duo_akey          :string(255)
+#  encrypted_duo_akey_iv       :string(255)
+#  encrypted_duo_akey_salt     :string(255)
+#  encrypted_duo_hostname      :string(255)
+#  encrypted_duo_hostname_iv   :string(255)
+#  encrypted_duo_hostname_salt :string(255)
+#  encrypted_duo_ikey          :string(255)
+#  encrypted_duo_ikey_iv       :string(255)
+#  encrypted_duo_ikey_salt     :string(255)
+#  encrypted_duo_skey          :string(255)
+#  encrypted_duo_skey_iv       :string(255)
+#  encrypted_duo_skey_salt     :string(255)
+#  created_at                  :datetime         not null
+#  updated_at                  :datetime         not null
+#  ssl_account_id              :integer
+#
+# Indexes
+#
+#  index_duo_accounts_on_ssl_account_id  (ssl_account_id)
+#
+
 class DuoAccount < ApplicationRecord
   belongs_to :ssl_account
 

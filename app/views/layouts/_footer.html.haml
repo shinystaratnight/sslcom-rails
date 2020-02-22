@@ -1,95 +1,160 @@
-#global_footer.clearfix
-  %section#logo_share
-    #logo_box
-    .site_seal_footer=render 'site/site_seal'
-  %ul.section_box
-    %h4 Products and Services
-    -Certificate.root_products.each do |c|
-      %li=link_to c.title, certificate_url(:id=>c.product_root)
-    %li=link_to "Smart SeaL with Artifacts", details_site_seals_url
-    -#%li=link_to "Shortened Secure Links", surls_root_url(:subdomain=>Surl::SUBDOMAIN)
-    %li=link_to "Share Short Links", "http://ssl.gs"
-  %ul.section_box
-    %h4 Programs
-    %li=link_to "Resellers", resellers_root_url(:subdomain=>Reseller::SUBDOMAIN)
-    %li=link_to "RESTful API", restful_api_url
-    -Reseller::TARGETED.each do |t|
-      %li=send :link_to, t.titleize, eval("#{t}_url")
-    %li=link_to "Api Documents", "http://docs.sslcomapi.apiary.io/", target: "_new"
-  %ul.section_box
-    %h4 Support
-    %li=link_to "Resources", "https://support.ssl.com/"
-    %li=link_to "FAQ", "http://faq.ssl.com/"
-    %li=link_to "Knowledgebase", "https://support.ssl.com/Knowledgebase/List"
-    %li=link_to "Open Ticket", "https://support.ssl.com/Tickets/Submit"
-    %li=link_to "SSL Tools", "http://www.ssltools.com"
-    %li=link_to "SSL Compatibility & Acceptance", browsers_url
-    %li=link_to "Validation Requirements", requirements_validations_url
-    %li=link_to "Country Codes", country_codes_csrs_url
-    -#%li=link_to "Vpn Compatibility", "http://info.ssl.com/article.aspx?id=10241"
-    -#%li Chat
-  -#%ul.section_box
-  -#  %h4 More from #{Settings.community_name}
-  -#  %li=link_to "News", news_url
-  -#  -#%li Blog
-  -#  -#%li #{Settings.community_name} on Twitter
-  -#  -#%li #{Settings.community_name} on Facebook
-  %ul.section_box
-    %h4 Company
-    %li=link_to "About #{Settings.community_name}", about_url
-    %li=link_to "Contact Us", contact_us_url
-    %li=link_to "Community", "http://answers.ssl.com"
-    %li=link_to "CA Repository", repository_url
-    =# %li Webtrust Audit
-    -#%li Help
-    %li=link_to "What is SSL?", "http://info.ssl.com/article.aspx?id=10241"
-    =#%li Press Room
-    =#%li Careers
-    =#%li Sitemap
-#copyright_statement
-  &copy;#{Time.now.year} SSL.COM CORP ALL RIGHTS RESERVED.
-  %span.footer_link=link_to "Privacy Policy", privacy_policy_url
-  %span.footer_link=link_to "Terms of Service", terms_of_use_url
-  %span.footer_link=link_to "Copyright", copyright_url
-/ begin olark code
-%script{"data-cfasync" => "false", :type => "text/javascript"}
-  \/*{literal}
-  :cdata
-    */
-    window.olark||(function(c){var f=window,d=document,l=f.location.protocol=="https:"?"https:":"http:",z=c.name,r="load";var nt=function(){f[z]=function(){(a.s=a.s||[]).push(arguments)};var a=f[z]._={},q=c.methods.length;while(q--){(function(n){f[z][n]=function(){f[z]("call",n,arguments)}})(c.methods[q])}a.l=c.loader;a.i=nt;a.p={0:+new Date};a.P=function(u){a.p[u]=new Date-a.p[0]};function s(){a.P(r);f[z](r)}f.addEventListener?f.addEventListener(r,s,false):f.attachEvent("on"+r,s);var ld=function(){function p(hd){hd="head";return["<",hd,"></",hd,"><",i,' onl' + 'oad="var d=',g,";d.getElementsByTagName('head')[0].",j,"(d.",h,"('script')).",k,"='",l,"//",a.l,"'",'"',"></",i,">"].join("")}var i="body",m=d[i];if(!m){return setTimeout(ld,100)}a.P(1);var j="appendChild",h="createElement",k="src",n=d[h]("div"),v=n[j](d[h](z)),b=d[h]("iframe"),g="document",e="domain",o;n.style.display="none";m.insertBefore(n,m.firstChild).id=z;b.frameBorder="0";b.id=z+"-loader";if(/MSIE[ ]+6/.test(navigator.userAgent)){b.src="javascript:false"}b.allowTransparency="true";v[j](b);try{b.contentWindow[g].open()}catch(w){c[e]=d[e];o="javascript:var d="+g+".open();d.domain='"+d.domain+"';";b[k]=o+"void(0);"}try{var t=b.contentWindow[g];t.write(p());t.close()}catch(x){b[k]=o+'d.write("'+p().replace(/"/g,String.fromCharCode(92)+'"')+'");d.close();'}a.P(2)};ld()};nt()})({loader: "static.olark.com/jsclient/loader0.js",name:"olark",methods:["configure","extend","declare","identify"]});
-    \/* custom configuration goes here (www.olark.com/documentation) */
-    olark.identify('#{Settings.olark_id}');/*
-  {/literal}*/
-/ end olark code
-:javascript
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-30469369-1']);
-  _gaq.push(['_setDomainName', 'ssl.com']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
+.content
+  -unless is_new_order_page?
+    -if Rails.env =~ /production/
+      .box
+        =render 'site/site_seal'
+        %a{style: "margin-left: 12px", href: "http://www.bbb.org/houston/business-reviews/internet-services/ssl-com-in-houston-tx-51001755/#bbbonlineclick", title: "SSL.Com BBB Business Review", target: '_blank'}
+          %img{alt: "SSL.Com BBB Business Review", src: "//seal-houston.bbb.org/seals/black-seal-200-42-whitetxt-ssl-com-51001755.png", style: "border: 0;"}/
+    .box
+      %span.title CERTIFICATES
+      %ul
+        %li
+          %a{:href => "#{certificate_path('basicssl')}"}
+            %b> SSL
+            \.com
+            Basic
+        %li
+          %a{:href => "#{certificate_path('premiumssl')}"}
+            %b> SSL
+            \.com Premium
+        %li
+          %a{:href => "#{certificate_path('ev')}"}
+            %b> SSL
+            \.com Enterprise EV
+        %li=link_to "Wildcard Certificate", certificate_path('wildcard')
+        %li=link_to "Multi-Domain (UCC)", certificate_path('ucc')
+        %li=link_to "Multi-Domain EV (UCC)", certificate_path('evucc')
+    .box
+      %span.title SUPPORT
+      %ul
+        %li=link_to "What is <b>SSL</b>?".html_safe, "http://info.ssl.com/article.aspx?id=10241"
+        %li=link_to "Knowledgebase", "https://support.ssl.com/Knowledgebase/List"
+        %li=link_to "Contact Support", "https://support.ssl.com/Tickets/Submit"
+        %li
+          %a{:href => "http://www.ssltools.com"}
+            %b> SSL
+            \.com Tools
+        %li=link_to "Compatibility/Acceptance", browsers_path
+        %li=link_to "Country Codes", country_codes_csrs_path
+        %li=link_to "Top Level Domains (tlds)", tlds_path
+        %li=link_to "Validation Requirements", requirements_validations_path
+    .box
+      %span.title PROGRAMS
+      %ul
+        %li=link_to "Partners", affiliates_path
+        %li=link_to "RESTful API", "http://docs.sslcomapi.apiary.io/", target: "_new"
+        -Reseller::TARGETED.each do |t|
+          %li=send :link_to, t.titleize, eval("#{t}_path")
+    .box
+      %span.title COMPANY
+      %ul
+        %li=link_to "About #{Settings.community_name}", about_path
+        %li=link_to "Contact Us", contact_us_path
+        -# %li
+          %a{:href => "#"} Jobs
+        %li=link_to "CA Repository", repository_path
+        %li=link_to "Terms of Service", terms_of_use_path
+        %li=link_to "Privacy", privacy_policy_path
+        -# %li=link_to "Refund Policy", ""
+      / end of content
+      .clear
+.content
+  .copyright
+    \© #{Time.now.year}&nbsp;
+    %b>
+      %i> SSL
+    \.com Corp. All Rights Reserved
+-if Rails.env=~/production/
+  / Start of StatCounter Code for Default Guide
+  :javascript
+    var sc_project=10146096;
+    var sc_invisible=1;
+    var sc_security="a05875f5";
+    var scJsHost = (("https:" == document.location.protocol) ?
+    "https://secure." : "http://www.");
+    document.write("<sc"+"ript type='text/javascript' src='" +
+    scJsHost+
+    "statcounter.com/counter/counter.js'></"+"script>");
+  %noscript
+    .statcounter
+      %a{:href => "http://statcounter.com/", :target => "_blank", :title => "web analytics"}
+        %img.statcounter{:alt => "web analytics", :src => "https://c.statcounter.com/10146096/0/a05875f5/1/"}
+  / End of StatCounter Code for Default Guide
+  / Start of StatCounter Code for Default Guide
+  :javascript
+    var sc_project=10147535;
+    var sc_invisible=1;
+    var sc_security="399a9d97";
+    var sc_https=1;
+    var scJsHost = (("https:" == document.location.protocol) ?
+    "https://secure." : "http://www.");
+    document.write("<sc"+"ript type='text/javascript' src='" +
+    scJsHost+
+    "statcounter.com/counter/counter.js'></"+"script>");
+  %noscript
+    .statcounter
+      %a{:href => "http://statcounter.com/", :target => "_blank", :title => "web stats"}
+        %img.statcounter{:alt => "web stats", :src => "https://c.statcounter.com/10147535/0/399a9d97/1/"}
+  / End of StatCounter Code for Default Guide
+  :javascript
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-30469369-1', 'ssl.com');
+    ga('require', 'displayfeatures');
+    ga('send', 'pageview');
+  / Google Code for Remarketing Tag
+  /
+    \-
+    Remarketing tags may not be associated with personally identifiable information or placed on pages related to sensitive categories. See more information and instructions on how to setup the tag on: http://google.com/ads/remarketingsetup
+    \-
+  :javascript
+    /* <![CDATA[ */
+    var google_conversion_id = 975052302;
+    var google_custom_params = window.google_tag_params;
+    var google_remarketing_only = true;
+    /* ]]> */
+  %script{src: "//www.googleadservices.com/pagead/conversion.js", type: "text/javascript"}
+  %noscript
+    %div{style: "display:inline;"}
+      %img{alt: "", height: "1", src: "//googleads.g.doubleclick.net/pagead/viewthroughconversion/975052302/?value=#{@order ? @order.amount : "0"}&guid=ON&script=0", style: "border-style:none;", width: "1"}/
 -unless @certificate_order.blank? || @certificate_order.id.blank?
   :javascript
     jQuery(function($){
       $("#start_over").click(function(){
         $.ajax({
-          url: "#{start_over_certificate_order_url(@certificate_order.ref)}",
+          url: "#{start_over_certificate_order_path(@ssl_slug, @certificate_order.ref)}",
           type: "POST",
           beforeSend: function(){
             return confirm("Are you sure you want to start over with this certificate order?");
           },
           success: function(data, status){
-            if(data.certificate_order.certificate_content.workflow_state=="new")
-              window.location.href = "#{edit_certificate_order_url(@certificate_order.ref)}";
+            window.location.href = "#{edit_certificate_order_path(@ssl_slug, @certificate_order.ref)}";
           }
         });
       });
     });
 :javascript
+  setTimeout(function(){var a=document.createElement("script");
+  var b=document.getElementsByTagName("script")[0];
+  a.src=document.location.protocol+"//dnn506yrbagrg.cloudfront.net/pages/scripts/0017/5823.js?"+Math.floor(new Date().getTime()/3600000);
+  a.async=true;a.type="text/javascript";b.parentNode.insertBefore(a,b)}, 1);
+:javascript
   jQuery(function($){
+    $('#btn-reg-upload-cancel').on('click', function() {
+      $('.contact-show-container').show();
+      $('#contact-file-upload').hide();
+    });
+    $('#btn-reg-upload').on('click', function(e) {
+      e.preventDefault();
+      $('.contact-show-container').hide();
+      $('#contact-file-upload').show();
+    });
+    $('#live_chat').click(function(){
+      olark('api.box.expand');
+    });
     $.prettyLoader();
     $(".btn-buynow span, .hide_me").hide();
     $("a[rel^='prettyPopin']").prettyPopin();
@@ -109,22 +174,24 @@
       $(this).remove();
     });
     $("input[name='next']").click(function(){
-      $("#waiting_bar").show();
+      if (!$('#billing_section')) {
+        $('#waiting_bar').show();
+      }
     });
+    //#{"$('#colorpicker').farbtastic('.color');" if Rails.env.development?}
     $("#cancel_reseller_signup").click(function(){
       $.ajax({
-        url: "#{cancel_reseller_signup_users_url}",
+        url: "#{cancel_reseller_signup_users_path}",
         type: "GET",
         beforeSend: function(){
           return confirm("Are you sure you want to cancel your reseller signup?");
         },
         success: function(data, status){
           if($.inArray("#{Role::OWNER.to_sym}", data.user.role_symbols)>-1)
-            window.location.href = "#{account_url}";
+            window.location.href = "#{current_user ? teams_user_path(current_user) : account_path}";
         }
       });
     });
-    //#{"$('#colorpicker').farbtastic('.color');" if Rails.env.development?}
     //cart functions
     $.toMoneyFloat = function(money){
       money = money.replace(",","");
@@ -137,9 +204,14 @@
     $.adjust_items_in_cart = function(){
       var items = "items";
       var howMany = $.get_cart_items().length;
+      if(howMany>0)
+        $(".icn_cart").addClass("icn_cart-filled").removeClass("icn_cart");
+      else
+        $(".icn_cart-filled").addClass("icn_cart").removeClass("icn_cart-filled");
       if(howMany==1)
         items = "item";
       $("#cart_size").text(howMany.toString()+" "+items+" in cart");
+      $("#cart_count").text(howMany.toString());
     };
     $.adjust_order_total = function(){
       var total = 0;
@@ -153,20 +225,21 @@
       #{set_cookie_js(ShoppingCart::CART_KEY,'"delete"').html_safe};
       #{set_cookie_js(ShoppingCart::CART_GUID_KEY,'"delete"').html_safe};
       $('.add_to_cart_button').removeAttr("disabled");
-      $('#cart','#cart_total').effect("highlight", {}, 3000);
+      $(".icn_cart-filled").addClass("icn_cart").removeClass("icn_cart-filled");
+      $('#cart','#cart_total', '.icn_cart').effect("highlight", {}, 3000);
     };
     $('#empty_cart').click(function(){
       $.empty_out_cart();
     })
     $('.remove_from_cart_link').click(function(){
-      var id = $(this).attr("id")
+      var id = $(this).attr("id");
       $.remove_from_cart(id);
       $(this).parents('tr[id='+$(this).attr("id")+']').
         fadeOut('slow', function(){
           $(this).remove();
           $.adjust_items_in_cart();
           $.adjust_order_total();
-          $('#cart','#cart_total').effect("highlight", {}, 3000);}
+          $('#cart','#cart_total', '.icn_cart').effect("highlight", {}, 3000);}
         );
     });
     $.save_cart = function(cart){
@@ -176,7 +249,7 @@
         #{set_cookie_js(ShoppingCart::CART_KEY,'$.toJSON(cart)').html_safe};
     };
     $.get_cart_items = function(){
-      if($.cookie("#{ShoppingCart::CART_KEY}")==null || $.cookie("#{ShoppingCart::CART_KEY}")=="")
+      if($.cookie("#{ShoppingCart::CART_KEY}")==null || $.cookie("#{ShoppingCart::CART_KEY}")=="" || $.cookie("#{ShoppingCart::CART_KEY}")=="delete")
         return [];
       else
         return $.evalJSON($.cookie("#{ShoppingCart::CART_KEY}"));
@@ -248,29 +321,159 @@
     };
     Array.prototype.find = function(searchStr) {
       var returnArray = false;
-      for (i=0; i<this.length; i++) {
-        if (typeof(searchStr) == 'function') {
-          if (searchStr.test(this[i])) {
-            if (!returnArray) { returnArray = [] }
-            returnArray.push(i);
-          }
-        } else {
-          if (this[i]===searchStr) {
-            if (!returnArray) { returnArray = [] }
-            returnArray.push(i);
+      try{
+        for (i=0; i<this.length; i++) {
+          if (typeof(searchStr) == 'function') {
+            if (searchStr.test(this[i])) {
+              if (!returnArray) { returnArray = [] }
+              returnArray.push(i);
+            }
+          } else {
+            if (this[i]===searchStr) {
+              if (!returnArray) { returnArray = [] }
+              returnArray.push(i);
+            }
           }
         }
       }
+      catch{
+        // do nothing
+      }
       return returnArray;
     };
+    $.removeFromArray = function(value, arr) {
+        return jQuery.grep(arr, function(elem, index) {
+            return elem !== value;
+        });
+    };
     $.update_balance_after_load = function(){
-      var bracket = $.toMoneyFloat($('#funded_account_amount').val());
-      if(bracket == null || bracket == "" || bracket == ".")
-        bracket = 0;
-      var current_balance = $.toMoneyFloat($('#current_balance').text());
-      $('#balance_after_load').text('$'+((parseFloat(bracket)+parseFloat(current_balance)).toFixed(2))+" USD");
+      if($('#funded_account_amount').length) {
+        var bracket = $.toMoneyFloat($('#funded_account_amount').val());
+        if(bracket == null || bracket == "" || bracket == ".")
+          bracket = 0;
+        var current_balance = $.toMoneyFloat($('#current_balance').text());
+        $('[name*=paypal]').attr("href", $('[name*=paypal]').attr("href").replace(/amount=\d+/, "amount="+$('#funded_account_amount').val()*100));
+        $('#balance_after_load').text('$'+((parseFloat(bracket)+parseFloat(current_balance)).toFixed(2))+" USD");
+      }
+    };
+
+    $.filterPaypalExpressUrl = function(type) {
+      var paypal_final = $('[name*=paypal]').attr('href').split(/\&|\?/),
+          pattern      = (type == 'discount') ? 'discount' : 'funded_account\|funded_target';
+      for (var i=paypal_final.length-1; i>=0; i--) {
+        if ( paypal_final[i].match(new RegExp(pattern, 'i')) ) {paypal_final.splice(i, 1);}
+      }
+      paypal_final = (paypal_final.length > 1) ? paypal_final.join('&').replace('&', '?') : paypal_final.join('')+'?';
+      return paypal_final;
+    };
+
+    roundToTwo = function(num) {
+      return + (Math.round(parseFloat(num) + 'e+2') + 'e-2');
+    };
+
+    $.updateRequiredDeposit = function(){
+      if ($('#funded_account_target_amount').length) {
+        var discount_data  = $('span#discount_applied').data('discount'),
+            discount_amt   = ((typeof discount_data !== 'undefined') ? roundToTwo(discount_data) : 0),
+            deposit_amt    = roundToTwo($('#funded_account_target_amount').val()),
+            funded_amt     = roundToTwo($('#current_balance').data('funded-account')),
+            order_amt      = roundToTwo($('#funded_account_amount').val()-discount_amt),
+            diff           = roundToTwo(deposit_amt - order_amt),
+            min_amt        = roundToTwo(order_amt - funded_amt),
+            funded_fnl_amt = 0,
+            str_amt        = '',
+            paypal_final   = $.filterPaypalExpressUrl('funded');
+        funded_fnl_amt     = (diff >= 0) ? 0.00 : roundToTwo(funded_amt-(funded_amt-Math.abs(diff)));
+        
+        if (funded_fnl_amt > funded_amt) {
+          str_amt = 'Minimum not met, amount below limit of $'+min_amt.toFixed(2);
+          $('#click_to_load').hide();
+        } else {
+          str_amt       = '-$'+funded_amt.toFixed(2)+' USD';
+          paypal_final += '&funded_target='+deposit_amt;
+          $('#fnd_remaining_amt').text('$'+min_amt.toFixed(2));
+          $('#funded_account_target_amount').attr('min', min_amt);
+          $('#click_to_load').show();
+          paypal_final += '&funded_account='+funded_amt;
+        }
+        $('[name*=paypal]').attr('href', paypal_final);
+        $('#current_balance').text(str_amt);
+      }
+    };
+
+    $.applyDiscount = function() {
+      var discount_code   = $('#discount_code').val(),
+          load_amount     = $('#tier_load_amount'),
+          original_amount = load_amount.data('original-amount'),
+          old_total_text  = '$'+original_amount+' USD';
+      if (discount_code.length === 0 || !discount_code.trim()) {
+        $('span#discount_applied, span#invalid_discount_code').remove();
+        $('[name*=paypal]').attr('href', $.filterPaypalExpressUrl('discount'));
+        $('#discount_amount').val(0);
+        load_amount.text(old_total_text);
+        return;
+      }
+      $.ajax({
+        url:  "#{lookup_discount_orders_url}",
+        data: {discount_code: discount_code},
+        type: 'POST',
+        success: function(data) {
+          $('span#discount_applied, span#invalid_discount_code').remove();
+          load_amount.text(old_total_text);
+          if (typeof data.discount !== 'undefined') {
+            var apply         = parseFloat(data.discount.value),
+                old_total     = parseFloat(original_amount),
+                discount_show = $('span#discount_applied');
+            if (data.discount.apply_as == 'absolute') {
+              discount = apply * 0.01;
+            } else {
+              discount = (old_total * apply).toFixed(2);
+              load_amount.text('$'+(old_total - discount).toFixed(2)+' USD');
+              if (discount_show.length == 0) {
+                $('div#tier_load_amount').after(
+                  "<span id='discount_applied'>"+data.discount.label
+                    +' applied (-$'+discount+' from total of $'+old_total+')</span>'
+                );
+                $('span#discount_applied').data('discount', discount);
+                $('span#discount_applied').data('discount_code', discount_code);
+                $('#discount_amount').val(discount);
+              }
+              // Update PayPal express url w/discount params
+              if ($('[name*=paypal]').length) {
+                var url       = $.filterPaypalExpressUrl('discount'),
+                    delimeter = url.match(/\?/g) ? '&' : '?',
+                    href      = url+delimeter+'discount='+discount+'&discount_code='+discount_code;
+                $('[name*=paypal]').attr('href', href);
+              }
+            }
+          } else if (discount_code != '') {
+            $('label[for=discount_code]')
+              .append("<span class='label_desc' id='invalid_discount_code'>invalid discount code</span>");
+            if ($('[name*=paypal]').length) {
+              $('[name*=paypal]').attr('href', $.filterPaypalExpressUrl('discount'));
+            }
+            $('#discount_amount').val(0);
+          }
+        }
+      });
     };
     $.adjust_items_in_cart();
+    // Toggle Billing Profile CC form 'required' attributes
+    $.profileRequiredToggle = function(type) {
+      var form_fields = [
+        '#billing_profile_first_name',
+        '#billing_profile_last_name',
+        '#billing_profile_address_1',
+        '#billing_profile_postal_code',
+        '#billing_profile_city',
+        '#billing_profile_state',
+        '#billing_profile_phone',
+        '#billing_profile_credit_card',
+        '#billing_profile_card_number',
+        '#billing_profile_security_code'
+      ].join(', ');
+      $(form_fields).attr('required', (type=='enable'));
+    };
     /* Easiest Tooltips CONFIG */
     // these 2 variable determine popup's distance from the cursor
     // you might want to adjust to get the right result

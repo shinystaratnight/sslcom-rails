@@ -1,71 +1,92 @@
-require 'simplecov'
-SimpleCov.start 'rails' do
-add_filter '/bin/'
- add_filter '/db/'
- add_filter '/test/'
- add_filter '/config/'
- add_group "Models", "app/models"
- add_group "Controllers", "app/controllers"
- add_group "Services", "app/services"
- add_group "Helpers", "app/helpers"
- add_group "Lib", "lib/"
-end
+# frozen_string_literal: true
 
-ENV["RAILS_ENV"] = 'test'
-require File.expand_path('../../config/environment', __FILE__)
+require 'simplecov'
+
+ENV['RAILS_ENV'] = 'test'
+require File.expand_path('../config/environment', __dir__)
 
 require 'rails/test_help'
 require 'minitest/rails'
 require 'minitest/pride'
 require 'minitest/reporters'
 require 'webmock/minitest'
-require 'mocha/setup'
-require 'database_cleaner'
+require 'mocha/minitest'
+require 'database_cleaner/active_record'
 require 'factory_bot'
 require 'rack/utils'
 require 'authlogic/test_case'
 require 'declarative_authorization/maintenance'
 require 'json-schema'
+require 'minitest/bang'
+require 'capybara/rails'
+require 'capybara-screenshot/minitest'
+require 'capybara/minitest'
 
 ActiveRecord::Migration.maintain_test_schema!
 
-Minitest::Reporters.use! [Minitest::Reporters::SpecReporter.new]
+Minitest::Reporters.use! [Minitest::Reporters::SpecReporter.new, Minitest::Reporters::JUnitReporter.new]
 
 # Requires supporting ruby files with custom matchers and macros, etc,
 # in spec/support/ and its subdirectories.
 Dir[File.join('./test/support/**/*.rb')].sort.each { |f| require f }
 
-include SessionHelper
-include SetupHelper
-include MailerHelper
-include Authorization::TestHelper
-include AuthorizationHelper
-include ApiSetupHelper
-
-DatabaseCleaner.clean_with :truncation
+DatabaseCleaner.clean_with :deletion
 DatabaseCleaner.strategy = :truncation
 
-class Minitest::Spec
-  include Authlogic::TestCase
+Paperclip::Attachment.default_options[:path] = if ENV['PARALLEL_TEST_GROUPS']
+                                                 ":rails_root/public/system/:rails_env/#{ENV['TEST_ENV_NUMBER'].to_i}/:class/:attachment/:id_partition/:filename"
+                                               else
+                                                 ':rails_root/public/system/:rails_env/:class/:attachment/:id_partition/:filename'
+                                               end
+WebMock.enable!
 
-  before :each do
-    disable_authorization
-    activate_authlogic
-    DatabaseCleaner.start
-    Delayed::Worker.delay_jobs = false
-  end
+module Minitest
+  class Spec
+    class_eval do
+      include SessionHelper
+      include SetupHelper
+      include Asserts
+      include Authlogic::TestCase
 
-  after :each do
-    DatabaseCleaner.clean
-    clear_email_deliveries
+      before :all do
+        Delayed::Worker.delay_jobs = false
+        DatabaseCleaner.strategy = :truncation
+        DatabaseCleaner.start
+      end
+
+      before :all do
+        DatabaseCleaner.strategy = :truncation
+        DatabaseCleaner.clean
+      end
+    end
   end
 end
 
-if RUBY_VERSION>='2.6.0'
+module ActionDispatch
+  class IntegrationTest
+    include Capybara::Screenshot::MiniTestPlugin
+    include Capybara::DSL
+    include Capybara::Minitest::Assertions
+  end
+end
+
+module ActiveSupport
+  class TestCase
+    class_eval do
+      include SessionHelper
+      include SetupHelper
+      include Asserts
+      include Authlogic::TestCase
+      include DatabaseCleanerSupport
+    end
+  end
+end
+
+if RUBY_VERSION >= '2.6.0'
   if Rails.version < '5'
     class ActionController::TestResponse < ActionDispatch::TestResponse
       def recycle!
-        # hack to avoid MonitorMixin double-initialize error:
+        # Hack to avoid MonitorMixin double-initialize error:
         @mon_mutex_owner_object_id = nil
         @mon_mutex = nil
         initialize
