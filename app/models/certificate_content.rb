@@ -45,7 +45,7 @@ class CertificateContent < ApplicationRecord
 
   serialize :domains
 
-  attr_accessor  :additional_domains #used to html format results to page
+  attr_accessor  :additional_domains # used to html format results to page
   attr_accessor  :ajax_check_csr
   attr_accessor  :rekey_certificate
 
@@ -54,12 +54,6 @@ class CertificateContent < ApplicationRecord
   preference  :reprocessing, default: false
   preference  :pending_issuance, default: false
   preference  :process_pending_server_certificates, default: true
-
-  CertificateNamesJob = Struct.new(:cc_id, :domains) do
-    def perform
-      CertificateContent.find_by_id(cc_id).certificate_names_from_domains
-    end
-  end
 
   def pre_validation(options)
     if csr and !csr.sent_success #do not send if already sent successfully
@@ -92,7 +86,7 @@ class CertificateContent < ApplicationRecord
     end
   end
 
-  def certificate_names_from_domains(domains=nil)
+  def certificate_names_from_domains(domains = nil)
     is_single = certificate&.is_single?
     csr_common_name=csr.try(:common_name)
     unless (is_single || certificate&.is_wildcard?) && certificate_names.count.positive?
@@ -117,6 +111,7 @@ class CertificateContent < ApplicationRecord
     # Auto adding domains in case of certificate order has been included into some groups.
     NotificationGroup.auto_manage_cert_name(self, 'create')
   end
+  handle_asynchronously :certificate_names_from_domains
 
   def all_domains_validated?
     !certificate_names.empty? and
