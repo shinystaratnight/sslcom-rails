@@ -25,11 +25,12 @@
 #
 
 class CertificateNameSerializer < ActiveModel::Serializer
-  attribute :name, key: :domain
-  attribute :acme_token, key: :http_token
-  attribute :acme_token, key: :dns_token
+  attribute :domain
+  attribute :http_token
+  attribute :dns_token
   attribute :validated do
-    object.all_domains_validated?
+    object.validated?
   end
-  attribute :validation_source, if: -> { object.all_domains_validated? }
+  attribute :validation_method, key: :validation_source
+  attribute :status
 end
