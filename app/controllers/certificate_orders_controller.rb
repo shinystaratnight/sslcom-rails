@@ -1,18 +1,18 @@
-#ordering a certificate can be convoluted process because we wanted to maximize seo in the url and not
-#necessarily follow proper REST. the flow is as follows:
-#CertificatesController#buy
-#OrdersController#new
-#(or CertificateOrdersController#update_csr if unused credit)
-#FundedAccount#allocate_funds or #confirm_funds if from funded_account (ie reseller)
-#OrdersController#create_multi_free_ssl or OrdersController#create_free_ssl
-#CertificateOrdersController#edit (goes to application info prompt) or OrdersController#edit or OrdersController#new
-#CertificateOrdersController#update (goes to provide contacts prompt)
-#CertificateContentsController#update if not express
-#ValidationsController#new (asks for validation dcv and docs if not intranet/ucc, otherwise completes order)
-#ValidationsController#upload
-#
-#order is sent to api in the pend_validation workflow transition in certificate_content
-#OrderNotifier views contain all the email sent to customer during order
+# ordering a certificate can be convoluted process because we wanted to maximize seo in the url and not
+# necessarily follow proper REST. the flow is as follows:
+# CertificatesController#buy
+# OrdersController#new
+# (or CertificateOrdersController#update_csr if unused credit)
+# FundedAccount#allocate_funds or #confirm_funds if from funded_account (ie reseller)
+# OrdersController#create_multi_free_ssl or OrdersController#create_free_ssl
+# CertificateOrdersController#edit (goes to application info prompt) or OrdersController#edit or OrdersController#new
+# CertificateOrdersController#update (goes to provide contacts prompt)
+# CertificateContentsController#update if not express
+# ValidationsController#new (asks for validation dcv and docs if not intranet/ucc, otherwise completes order)
+# ValidationsController#upload
+
+# order is sent to api in the pend_validation workflow transition in certificate_content
+# OrderNotifier views contain all the email sent to customer during order
 
 class CertificateOrdersController < ApplicationController
   layout 'application'
@@ -442,8 +442,8 @@ class CertificateOrdersController < ApplicationController
       params[:certificate_order][:certificate_contents_attributes]['0'.to_sym][:additional_domains] = additional_domains.strip
     end
 
-    if @certificate_order.certificate.is_single?
-      params[:certificate_order][:certificate_contents_attributes]['0'.to_sym][:additional_domains]=[]
+    if @certificate_order&.certificate&.is_single?
+      params[:certificate_order][:certificate_contents_attributes]['0'.to_sym][:additional_domains] = []
     elsif @certificate_order.certificate.is_premium_ssl?
       params[:certificate_order][:certificate_contents_attributes]['0'.to_sym][:additional_domains]=
           params[:certificate_order][:certificate_contents_attributes]['0'.to_sym][:additional_domains].

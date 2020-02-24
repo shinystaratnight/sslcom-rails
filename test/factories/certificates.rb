@@ -34,6 +34,10 @@ FactoryBot.define do
     published_as { 'live' }
     roles        { 'Registered' }
 
+    transient do
+      true_build { false }
+    end
+
     factory :certificate_with_certificate_order do
       title                 { 'Enterprise EV Multi-domain UCC SSL' }
       allow_wildcard_ucc    { false }
@@ -49,13 +53,16 @@ FactoryBot.define do
           abbr: 'EV UCC SSL' }.with_indifferent_access
       end
       # Note: Mocking should be explored for complicated associations
-      after(:create) do |cert|
-        cert.product_variant_groups << create(:product_variant_group)
-        product_variant_group = cert.product_variant_groups.first
-        product_variant_group.product_variant_items << create(:product_variant_item, product_variant_group_id: product_variant_group.id)
-        product_variant_item = product_variant_group.product_variant_items.first
-        product_variant_item.sub_order_item = create(:sub_order_item, product_variant_item_id: product_variant_item.id)
-        sub_order_item = product_variant_item.sub_order_item
+      after(:build) do |cert, options|
+        unless options.true_build
+          cert.save
+          cert.product_variant_groups << create(:product_variant_group)
+          product_variant_group = cert.product_variant_groups.first
+          product_variant_group.product_variant_items << create(:product_variant_item, product_variant_group_id: product_variant_group.id)
+          product_variant_item = product_variant_group.product_variant_items.first
+          product_variant_item.sub_order_item = create(:sub_order_item, product_variant_item_id: product_variant_item.id)
+          cert.save
+        end
       end
     end
 

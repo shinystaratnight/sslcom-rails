@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'test_helper'
 
 describe CertificateOrdersController do
@@ -10,7 +12,7 @@ describe CertificateOrdersController do
 
   describe 'update_csr' do
     describe 'domain names' do
-      let(:fqdn) {
+      let(:fqdn) do
         "-----BEGIN CERTIFICATE REQUEST-----
         MIICrjCCAZYCAQAwaTELMAkGA1UEBhMCVVMxFDASBgNVBAMMC2V4YW1wbGUuY29t
         MRAwDgYDVQQHDAdIb3VzdG9uMRAwDgYDVQQKDAdTU0wuY29tMQ4wDAYDVQQIDAVU
@@ -28,9 +30,9 @@ describe CertificateOrdersController do
         yKDkQBcnU/oMONsuIsUyr5SKPbLVwSp8k9k61unEt30kYhiUgggbHILusT9hCfBv
         cpJ6EXAChQ0+6c8ND/mik0SG
         -----END CERTIFICATE REQUEST-----"
-      }
+      end
 
-      let(:numerical_domain_name) {
+      let(:numerical_domain_name) do
         "-----BEGIN CERTIFICATE REQUEST-----
         MIICsjCCAZoCAQAwbTELMAkGA1UEBhMCVVMxGDAWBgNVBAMMDzEwNi4yNTUuMjEy
         LjEyMzEQMA4GA1UEBwwHSG91c3RvbjEQMA4GA1UECgwHU1NMLmNvbTEOMAwGA1UE
@@ -48,7 +50,7 @@ describe CertificateOrdersController do
         l+9eeLRNmZj0soZDK8/aUVwiCNLZDpXRCOS35rO9+J7wObaTTfRmWDEriOSvKgXn
         5rg1kSFcn61bIYdGDLVTMlrHTN9tBw==
         -----END CERTIFICATE REQUEST-----"
-      }
+      end
 
       def create_certificate(type)
         cert = create(:certificate_with_certificate_order, type)
@@ -70,12 +72,12 @@ describe CertificateOrdersController do
             "certificate_contents_attributes": {
               "0": {
                 "signing_request": numerical_domain_name,
-                "server_software_id": "1",
+                "server_software_id": "1"
               }
             }
           },
           "common_name": "106.255.212.123",
-          "id": "#{free_cert.ref}"
+          "id": free_cert.ref.to_s
         }
 
         put :update_csr, params
@@ -91,12 +93,12 @@ describe CertificateOrdersController do
             "certificate_contents_attributes": {
               "0": {
                 "signing_request": numerical_domain_name,
-                "server_software_id": "1",
+                "server_software_id": "1"
               }
             }
           },
           "common_name": "106.255.212.123",
-          "id": "#{basicssl_cert.ref}"
+          "id": basicssl_cert.ref.to_s
         }
 
         put :update_csr, params
@@ -112,12 +114,12 @@ describe CertificateOrdersController do
             "certificate_contents_attributes": {
               "0": {
                 "signing_request": numerical_domain_name,
-                "server_software_id": "1",
+                "server_software_id": "1"
               }
             }
           },
           "common_name": "106.255.212.123",
-          "id": "#{ev_cert.ref}"
+          "id": ev_cert.ref.to_s
         }
 
         put :update_csr, params
@@ -128,7 +130,6 @@ describe CertificateOrdersController do
       describe 'ucc certs' do
         it 'rejects numerical ip addresses for ev ucc certificates' do
           evucc_cert = create_certificate(:evuccssl)
-
 
           params = {
             "certificate_order": {
@@ -141,7 +142,7 @@ describe CertificateOrdersController do
               }
             },
             "common_name": "",
-            "id": "#{evucc_cert.ref}"
+            "id": evucc_cert.ref.to_s
           }
 
           put :update_csr, params
@@ -162,7 +163,7 @@ describe CertificateOrdersController do
               }
             },
             "common_name": "",
-            "id": "#{evucc_cert.ref}"
+            "id": evucc_cert.ref.to_s
           }
 
           put :update_csr, params

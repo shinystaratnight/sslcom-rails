@@ -25,7 +25,6 @@
 #  index_certificate_names_on_ssl_account_id          (ssl_account_id)
 #
 
-
 require 'test_helper'
 
 describe CertificateName do
@@ -35,7 +34,7 @@ describe CertificateName do
     initialize_server_software
   end
 
-  subject { create(:certificate_name) }
+  subject { build(:certificate_name) }
 
   context "attributes" do
     should have_db_column :id
@@ -67,6 +66,9 @@ describe CertificateName do
 
   context 'ACME support' do
     describe '.generate_acme_token' do
+      before(:all) do
+        CertificateName.stubs(:exists?).returns(false)
+      end
       it 'is 128 characters long' do
         subject.generate_acme_token
         assert_equal(128, subject.acme_token.length)
@@ -83,101 +85,144 @@ describe CertificateName do
   end
 
   context 'domain control validation' do
-    describe 'https domain control validation' do
-      before do
-        host = subject.name
-        subject.domain_control_validation = DomainControlValidation.create(dcv_method: 'https', candidate_addresses: host, csr_id: subject.csr.id)
-        subject.save
-      end
+    let!(:cname) { build_stubbed(:certificate_name) }
 
+    describe 'https domain control validation' do
       it 'fails if ca_tag does not match' do
-        stub_request(:any, subject.dcv_url(true, '', true))
-          .to_return(status: 200, body: [subject.csr.sha2_hash, "--#{subject.csr.ca_tag}--", subject.csr.unique_value].join("\n"))
-        assert_nil(subject.dcv_verify)
+        cname.stubs(:ca_tag).returns('comodoca.com')
+        stub_request(:any, cname.dcv_url(true, '', true))
+          .to_return(status: 200, body: [cname.csr.sha2_hash, "--#{cname.csr.ca_tag}--", cname.csr.unique_value].join("\n"))
+        assert_false(cname.dcv_verify('https'))
       end
 
       it 'fails if sha2_hash does not match' do
-        stub_request(:any, subject.dcv_url(true, '', true))
-          .to_return(status: 200, body: ["--#{subject.csr.sha2_hash}--", subject.csr.ca_tag, subject.csr.unique_value].join("\n"))
-        assert_nil(subject.dcv_verify)
+        stub_request(:any, cname.dcv_url(true, '', true))
+          .to_return(status: 200, body: ["--#{cname.csr.sha2_hash}--", cname.csr.ca_tag, cname.csr.unique_value].join("\n"))
+        assert_false(cname.dcv_verify('https'))
       end
 
       it 'fails if unique_value does not match' do
-        stub_request(:any, subject.dcv_url(true, '', true))
-          .to_return(status: 200, body: [subject.csr.sha2_hash, subject.csr.ca_tag, "--#{subject.csr.unique_value}--"].join("\n"))
-        assert_nil(subject.dcv_verify)
+        stub_request(:any, cname.dcv_url(true, '', true))
+          .to_return(status: 200, body: [cname.csr.sha2_hash, cname.csr.ca_tag, "--#{cname.csr.unique_value}--"].join("\n"))
+        assert_false(cname.dcv_verify('https'))
       end
     end
 
     describe 'cname domain control validation' do
-      before do
-        host = subject.name
-        subject.domain_control_validation = DomainControlValidation.create(dcv_method: 'cname', candidate_addresses: host, csr_id: subject.csr.id)
-        subject.save
-      end
-
       it 'passes if a record matching cname_destination is found' do
         dns = mock
         dns.expects(:getresources)
-           .with(subject.cname_origin(true), Resolv::DNS::Resource::IN::CNAME)
+           .with(cname.cname_origin(true), Resolv::DNS::Resource::IN::CNAME)
            .once
-        ::Resolv::DNS.stub :open, [Resolv::DNS::Resource::IN::CNAME.new(subject.cname_destination)], dns do
-          assert_equal(true, subject.dcv_verify)
+        ::Resolv::DNS.stub :open, [Resolv::DNS::Resource::IN::CNAME.new(cname.cname_destination)], dns do
+          assert_true(cname.dcv_verify('cname'))
         end
       end
 
       it 'fails if no record matching cname_destination is found' do
         dns = mock
         dns.expects(:getresources)
-           .with(subject.cname_origin(true), Resolv::DNS::Resource::IN::CNAME)
+           .with(cname.cname_origin(true), Resolv::DNS::Resource::IN::CNAME)
            .once
         ::Resolv::DNS.stub :open, [], dns do
-          assert_equal(false, subject.dcv_verify)
+          assert_false(cname.dcv_verify('cname'))
         end
       end
     end
 
     describe 'http domain control validation' do
-      before do
-        host = subject.name
-        subject.domain_control_validation = DomainControlValidation.create(dcv_method: 'http', candidate_addresses: host, csr_id: subject.csr.id)
-        subject.save
-      end
-
       it 'passes if csr values are found' do
-        stub_request(:any, subject.dcv_url(false, '', true))
-          .to_return(status: 200, body: [subject.csr.sha2_hash, subject.csr.ca_tag, subject.csr.unique_value].join("\n"))
-        assert_equal(true, subject.dcv_verify)
+        stub_request(:any, cname.dcv_url(false, '', true))
+          .to_return(status: 200, body: [cname.csr.sha2_hash, cname.csr.ca_tag, cname.csr.unique_value].join("\n"))
+        assert_true(cname.dcv_verify('http'))
       end
 
       it 'fails if ca_tag does not match' do
-        stub_request(:any, subject.dcv_url(false, '', true))
-          .to_return(status: 200, body: [subject.csr.sha2_hash, "--#{subject.csr.ca_tag}--", subject.csr.unique_value].join("\n"))
-        assert_nil(subject.dcv_verify)
+        cname.stubs(:ca_tag).returns('comodoca.com')
+        stub_request(:any, cname.dcv_url(false, '', true))
+          .to_return(status: 200, body: [cname.csr.sha2_hash, "--#{cname.csr.ca_tag}--", cname.csr.unique_value].join("\n"))
+        assert_false(cname.dcv_verify('http'))
       end
 
       it 'fails if sha2_hash does not match' do
-        stub_request(:any, subject.dcv_url(false, '', true))
-          .to_return(status: 200, body: ["--#{subject.csr.sha2_hash}--", subject.csr.ca_tag, subject.csr.unique_value].join("\n"))
-        assert_nil(subject.dcv_verify)
+        stub_request(:any, cname.dcv_url(false, '', true))
+          .to_return(status: 200, body: ["--#{cname.csr.sha2_hash}--", cname.csr.ca_tag, cname.csr.unique_value].join("\n"))
+        assert_false(cname.dcv_verify('http'))
       end
 
       it 'fails if unique_value does not match' do
-        stub_request(:any, subject.dcv_url(false, '', true))
-          .to_return(status: 200, body: [subject.csr.sha2_hash, subject.csr.ca_tag, "--#{subject.csr.unique_value}--"].join("\n"))
-        assert_nil(subject.dcv_verify)
+        stub_request(:any, cname.dcv_url(false, '', true))
+          .to_return(status: 200, body: [cname.csr.sha2_hash, cname.csr.ca_tag, "--#{cname.csr.unique_value}--"].join("\n"))
+        assert_false(cname.dcv_verify('http'))
+      end
+    end
+
+    describe 'acme_http domain control validation' do
+      let(:ac) { build_stubbed(:api_credential) }
+      before do
+        logger = mock
+        ApiCredential.stubs(:find).returns(ac)
+        CertificateName.any_instance.stubs(:api_credential).returns(ac)
+        AcmeManager::HttpVerifier.any_instance.stubs(:thumbprint).returns(ac.acme_acct_pub_key_thumbprint)
+        AcmeManager::HttpVerifier.any_instance.stubs(:acme_token).returns(cname.acme_token)
+        AcmeManager::HttpVerifier.any_instance.stubs(:logger).returns(logger)
+        logger.stubs(:debug).returns(true)
+      end
+
+      it 'passes if token and thumbprint are concatenated with .' do
+        body = [cname.acme_token, ac.acme_acct_pub_key_thumbprint].join('.')
+        AcmeManager::HttpVerifier.any_instance.stubs(:challenge).returns(body)
+        assert_true(cname.dcv_verify('acme_http'))
+      end
+
+      it 'fails if thumbprint is invalid' do
+        body = [cname.acme_token, "--#{ac.acme_acct_pub_key_thumbprint}--"].join('.')
+        AcmeManager::HttpVerifier.any_instance.stubs(:challenge).returns(body)
+        assert_false(cname.dcv_verify('acme_http'))
+      end
+
+      it 'fails if token is invalid' do
+        body = ["--#{cname.acme_token}--", ac.acme_acct_pub_key_thumbprint].join('.')
+        AcmeManager::HttpVerifier.any_instance.stubs(:challenge).returns(body)
+        assert_false(cname.dcv_verify('acme_http'))
+      end
+
+      it 'fails if response is not well_formed' do
+        body = [cname.acme_token, ac.acme_acct_pub_key_thumbprint, cname.acme_token].join('.')
+        AcmeManager::HttpVerifier.any_instance.stubs(:challenge).returns(body)
+        assert_false(cname.dcv_verify('acme_http'))
+      end
+    end
+
+    describe 'acme_dns_txt domain control validation' do
+      let(:ac) { build_stubbed(:api_credential) }
+      before do
+        logger = mock
+        ApiCredential.stubs(:find).returns(ac)
+        CertificateName.any_instance.stubs(:api_credential).returns(ac)
+        AcmeManager::DnsTxtVerifier.any_instance.stubs(:thumbprint).returns(ac.acme_acct_pub_key_thumbprint)
+        AcmeManager::DnsTxtVerifier.any_instance.stubs(:logger).returns(logger)
+        logger.stubs(:debug).returns(true)
+      end
+
+      it 'passes if thumbprint is present' do
+        body = Resolv::DNS::Resource::IN::TXT.new(ac.acme_acct_pub_key_thumbprint)
+        AcmeManager::DnsTxtVerifier.any_instance.stubs(:challenge).returns(true)
+        AcmeManager::DnsTxtVerifier.any_instance.stubs(:token).returns(body.strings.last)
+        assert_true(cname.dcv_verify('acme_dns_txt'))
+      end
+
+      it 'fails if thumbprint is invalid' do
+        body = Resolv::DNS::Resource::IN::TXT.new("--#{ac.acme_acct_pub_key_thumbprint}--")
+        AcmeManager::DnsTxtVerifier.any_instance.stubs(:challenge).returns(true)
+        AcmeManager::DnsTxtVerifier.any_instance.stubs(:token).returns(body.strings.last)
+        assert_false(cname.dcv_verify('acme_dns_txt'))
       end
     end
 
     describe 'email domain control validation' do
-      before do
-        host = subject.name
-        subject.domain_control_validation = DomainControlValidation.create(dcv_method: 'email', candidate_addresses: host, csr_id: subject.csr.id)
-        subject.save
-      end
-
       it 'fails if when protocol is email' do
-        assert_nil(subject.dcv_verify)
+        assert_nil(cname.dcv_verify('email'))
       end
     end
   end

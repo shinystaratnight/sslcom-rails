@@ -408,7 +408,7 @@ module ApplicationHelper
   end
 
   def cookie_domain
-    Rails.env.development? ? 'ssl.local' : 'ssl.com'
+    Rails.env.development? ? 'ssl.local' : I18n.t('labels.ssl_ca')
   end
 
   def set_cookie_js(name,value)
