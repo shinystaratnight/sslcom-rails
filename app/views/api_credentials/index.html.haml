@@ -23,8 +23,9 @@
           Click to view
           #{render partial: 'shared/copy_button', locals: { content: ac.secret_key }}
         %td.expandable
-          #{ac.role_names.join(', ')}
-          #{render partial: 'shared/copy_button', locals: { content: ac.role_names.join(', ') }}
+          #{ac.role_names}
+        - unless ac.role_names.blank?
+          #{render partial: 'shared/copy_button', locals: { content: ac.role_names }}
         %td.expandable
           #{truncate(ac.hmac_key, length: 20)}
           #{render partial: 'shared/copy_button', locals: { content: ac.hmac_key }}

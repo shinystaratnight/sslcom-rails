@@ -48,8 +48,4 @@ class ApiCredential < ApplicationRecord
   def role_ids
     roles.nil? ? nil : (JSON.parse roles)
   end
-
-  def role_names
-    Role.find(role_ids).map(&:name)
-  end
 end

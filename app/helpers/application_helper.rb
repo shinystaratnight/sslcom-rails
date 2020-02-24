@@ -48,8 +48,8 @@ module ApplicationHelper
 
   def is_sandbox?
     @is_sandbox ||= Rails.cache.fetch("#{request.try(:host)}/is_sandbox") do
-                      Sandbox.exists?(request.try(:host))
-                    end
+      Sandbox.exists?(request.try(:host))
+    end
   end
   # memoize "is_sandbox?".to_sym
 
