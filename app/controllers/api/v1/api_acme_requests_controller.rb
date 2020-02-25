@@ -49,8 +49,12 @@ module Api
       private
 
       def certificate_names
-        @result.certificate_order.certificate_content.certificate_names_from_domains(certificate_content.domain) unless @result.certificate_order.certificate_content.certificate_names_created?
-        @result.certificate_order.certificate_content.certificate_names
+        certificate_content.certificate_names_from_domains(certificate_content.domain) unless certificate_content.certificate_names_created?
+        certificate_content.certificate_names
+      end
+
+      def certificate_content
+        @result.certificate_order.certificate_content
       end
 
       def record_parameters
