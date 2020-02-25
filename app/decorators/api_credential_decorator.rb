@@ -5,8 +5,22 @@ class ApiCredentialDecorator < Draper::Decorator
   delegate_all
 
   def role_names
-    return '' if object.role_ids.blank? || object.role_ids.empty?
+    roles.map(&:name)
+  end
 
-    Role.find(role_ids).map(&:name).join(', ')
+  def role_names_for_display
+    roles.map(&:name).join(', ')
+  end
+
+  def roles
+    if object.roles.nil?
+      Role.none
+    else
+      Role.find(object.roles.scan(/\d/).map(&:to_i))
+    end
+  end
+
+  def role_name_copy_link
+    render partial: 'shared/copy_button', locals: { content: role_names_for_display } unless role_names.empty?
   end
 end

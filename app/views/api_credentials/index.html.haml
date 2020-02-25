@@ -23,9 +23,8 @@
           Click to view
           #{render partial: 'shared/copy_button', locals: { content: ac.secret_key }}
         %td.expandable
-          #{ac.role_names}
-        - unless ac.role_names.blank?
-          #{render partial: 'shared/copy_button', locals: { content: ac.role_names }}
+          #{ac.role_names_for_display}
+          #{ac.role_name_copy_link}
         %td.expandable
           #{truncate(ac.hmac_key, length: 20)}
           #{render partial: 'shared/copy_button', locals: { content: ac.hmac_key }}
