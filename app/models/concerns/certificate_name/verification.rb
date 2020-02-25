@@ -7,6 +7,8 @@ module Concerns
 
       def dcv_verify(protocol = nil)
         case protocol ||= domain_control_validation&.dcv_method
+        when nil
+          false
         when /email/
           nil
         when /acme_http/

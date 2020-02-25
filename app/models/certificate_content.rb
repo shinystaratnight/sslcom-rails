@@ -55,12 +55,6 @@ class CertificateContent < ApplicationRecord
   preference  :pending_issuance, default: false
   preference  :process_pending_server_certificates, default: true
 
-  CertificateNamesJob = Struct.new(:cc_id, :domains) do
-    def perform
-      CertificateContent.find_by_id(cc_id).certificate_names_from_domains
-    end
-  end
-
   def pre_validation(options)
     if csr and !csr.sent_success #do not send if already sent successfully
       options[:certificate_content] = self
@@ -117,23 +111,21 @@ class CertificateContent < ApplicationRecord
     # Auto adding domains in case of certificate order has been included into some groups.
     NotificationGroup.auto_manage_cert_name(self, 'create')
   end
-
-  def certificate_names_from_domains_async(domains = nil)
-    certificate_names_from_domains(domains)
-  end
   handle_asynchronously :certificate_names_from_domains_async
+
+  # def certificate_names_from_domains_async(domains = nil)
+  #   certificate_names_from_domains(domains)
+  # end
+  # handle_asynchronously :certificate_names_from_domains_async
 
   def all_domains_validated?
     !certificate_names.empty? && (certificate_names.pluck(:id) - certificate_names.validated.pluck(:id)).empty?
   end
 
-  # TODO all methods check http, https, and cname
   def dcv_verify_certificate_names
     certificate_names.includes(:domain_control_validation).unvalidated.each do |cn|
       dcv = cn.domain_control_validation
-      if dcv and cn.dcv_verify(dcv.dcv_method)
-        dcv.satisfy!
-      end
+      dcv&.satisfy! if cn.dcv_verify(dcv&.dcv_method)
     end
   end
 
@@ -838,8 +830,7 @@ class CertificateContent < ApplicationRecord
       updated = 0
       all     = certificate_contacts(true).where(type: 'CertificateContact')
       CertificateContent::CONTACT_ROLES.each do |role|
-        found = certificate_contacts(true).where(type: 'CertificateContact')
-          .where("roles LIKE ?", "%#{role}%")
+        found = certificate_contacts(true).where(type: 'CertificateContact').where('roles LIKE ?', "%#{role}%")
         if found.any?
           update = found.first
           found = all - [update]
@@ -859,27 +850,6 @@ class CertificateContent < ApplicationRecord
 
   def validate_domains?
     (new? && (domains.blank? || errors[:domain].any?)) || !rekey_certificate.blank?
-  end
-
-  def certificate_names_created?
-    self.reload
-    return false if domains.blank? && !certificate_name_from_csr?
-    new_domains     = parse_unique_domains(domains)
-    current_domains = parse_unique_domains(certificate_names.pluck(:name))
-    common          = current_domains & new_domains
-    common.length == new_domains.length && (current_domains.length == new_domains.length)
-  end
-
-  def certificate_name_from_csr?
-    certificate_names.count == 1 &&
-      csr.common_name &&
-      certificate_names.first.name == csr.common_name &&
-      certificate_names.first.is_common_name
-  end
-
-  def parse_unique_domains(target_domains)
-    return [] if target_domains.blank?
-    target_domains.flatten.compact.map(&:downcase).map(&:strip).reject(&:blank?).uniq
   end
 
   def domains_validation

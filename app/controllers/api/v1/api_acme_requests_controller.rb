@@ -49,7 +49,7 @@ module Api
       private
 
       def certificate_names
-        @result.certificate_order.certificate_content.certificate_names_from_domains(certificate_content.domain) if @result.certificate_order.certificate_content.certificate_names.empty?
+        # @result.certificate_order.certificate_content.certificate_names_from_domains(certificate_content.domain) if @result.certificate_order.certificate_content.certificate_names.empty?
         @result.certificate_order.certificate_content.certificate_names
       end
 
