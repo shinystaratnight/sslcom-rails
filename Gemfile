@@ -128,6 +128,7 @@ group :development, :test do
   gem 'byebug'
   gem 'cypress-on-rails', '~> 1.5.1'
   gem 'factory_bot_rails'
+  gem 'faker'
   gem 'pry-remote'
   gem 'rubocop', require: false
   gem 'rubocop-minitest'

@@ -36,7 +36,7 @@ set :branch, "staging"
 # extension ".pub".
 ssh_options[:keys] = [File.join(ENV["HOME"], ".ssh", "id_rsa_2019")]
 
-server = "production_api"
+server = "sandbox"
 case server
   when "sandbox"
     require "rvm/capistrano"
@@ -83,7 +83,7 @@ end
 set :scm, :git
 set :repository, "git@github.com:SSLcom/sslcom-rails.git"
 set :deploy_via, :remote_cache
-# set :ssh_options, {:forward_agent => true}
+set :ssh_options, {:forward_agent => true}
 
 set :use_sudo, false
 

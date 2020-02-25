@@ -71,8 +71,13 @@ require 'openssl'
 
 class SignedCertificate < ApplicationRecord
   include CertificateType
+<<<<<<< HEAD
   include CertificateProperties
 
+=======
+  include Concerns::Certificate::X509Properties
+#  using_access_control
+>>>>>>> SP-458-email: Add expiration date email functionality for scanned
   serialize :organization_unit
   serialize :subject_alternative_names
   belongs_to :parent, :foreign_key=>:parent_id,

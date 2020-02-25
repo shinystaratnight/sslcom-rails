@@ -34,6 +34,11 @@
 
 FactoryBot.define do
   factory :ssl_account do
+    # acct_number {}
+    status {}
+    ssl_slug { "team-" + Faker::Alphanumeric.alpha(number: 10) }
+    company_name {}
+    issue_dv_no_validation {}
     billing_method { 'monthly' }
     workflow_state { 'active' }
 
