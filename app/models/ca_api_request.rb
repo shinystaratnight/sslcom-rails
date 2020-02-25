@@ -69,6 +69,6 @@ class CaApiRequest < ApplicationRecord
   end
 
   def missing_account_key_or_secret_key
-    I18n.t('errror.missing_account_key_or_secret_key')
+    I18n.t('error.missing_account_key_or_secret_key')
   end
 end
