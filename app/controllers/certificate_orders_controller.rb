@@ -444,7 +444,7 @@ class CertificateOrdersController < ApplicationController
 
     if @certificate_order&.certificate&.is_single?
       params[:certificate_order][:certificate_contents_attributes]['0'.to_sym][:additional_domains] = []
-    elsif @certificate_order.certificate.is_premium_ssl?
+    elsif @certificate_order&.certificate&.is_premium_ssl?
       params[:certificate_order][:certificate_contents_attributes]['0'.to_sym][:additional_domains]=
           params[:certificate_order][:certificate_contents_attributes]['0'.to_sym][:additional_domains].
               split(Certificate::DOMAINS_TEXTAREA_SEPARATOR)[0..2].join(" ")
