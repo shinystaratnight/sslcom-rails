@@ -34,7 +34,7 @@ class CertificateName < ApplicationRecord
   include Concerns::CertificateName::Scope
   include Concerns::CertificateName::Verification
 
-  after_create :generate_acme_token
+  after_initialize :generate_acme_token, if: -> { acme_token.nil? }
 
   delegate :all_domains_validated?, to: :certificate_content, prefix: false, allow_nil: true
 
