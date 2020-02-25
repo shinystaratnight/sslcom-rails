@@ -30,7 +30,7 @@ default_run_options[:pty] = true
 set :application, "ssl_com"
 set :domain, '172.16.1.12' #Rails 4 staging
 set :user, "ubuntu"
-set :branch, "staging"
+set :branch, "quick-fix-certificate-names-not-generated"
 # NOTE: for some reason Capistrano requires you to have both the public and
 # the private key in the same folder, the public key should have the
 # extension ".pub".

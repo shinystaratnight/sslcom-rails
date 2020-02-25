@@ -23,7 +23,7 @@ describe NotificationGroupsManager do
       assert_equal ScanLog.count, 1
       assert ScannedCertificate.count, 1
       assert ScanLog.last.scan_status == 'expiring'
-      assert ScanLog.last.domain_name == 'example.com'
+      assert ScanLog.last.domain_name == notification_group.notification_groups_subjects.first.domain_name
     end
   end
 
