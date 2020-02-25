@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class DcvSentNotifyJob < Struct.new(:cc_id, :host)
   def perform
     notify_dv_sent unless last_sent.blank?
