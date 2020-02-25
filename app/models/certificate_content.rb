@@ -86,10 +86,10 @@ class CertificateContent < ApplicationRecord
     end
   end
 
-  def certificate_names_from_domains(domains = nil)
+  def certificate_names_from_domains_async(domains = nil)
     is_single = certificate&.is_single?
     csr_common_name = csr.try(:common_name)
-    unless (is_single || certificate&.is_wildcard?) && certificate_names.count.zero?
+    unless (is_single || certificate&.is_wildcard?) && certificate_names.count.positive?
       domains ||= all_domains
       domains = domains&.each do |domain|
         is_single ? CertificateContent.non_wildcard_name(domain, true) : domain.downcase
@@ -111,10 +111,6 @@ class CertificateContent < ApplicationRecord
     end
     # Auto adding domains in case of certificate order has been included into some groups.
     NotificationGroup.auto_manage_cert_name(self, 'create')
-  end
-
-  def certificate_names_from_domains_async(domains = nil)
-    certificate_names_from_domains(domains)
   end
   handle_asynchronously :certificate_names_from_domains_async
 
