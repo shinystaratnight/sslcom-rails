@@ -2,7 +2,7 @@ require "test_helper"
 
 describe NotificationGroupsManager do
   describe 'NotificationGroupsManager.scan' do
-    it "scans domains associated with a notification groups succesfully" do
+    it "scans domains associated with a notification groups succesfully (failure case)" do
       notification_group = create(:notification_group)
       notification_group.schedules << create(:schedule, :daily)
       notification_group.notification_groups_subjects << create(:notification_groups_subject, :certificate_name_type)
@@ -10,8 +10,20 @@ describe NotificationGroupsManager do
       NotificationGroupsManager.scan({db: 'ssl_com_test', schedule_type: 'Simple', schedule_value: '2'})
 
       assert_equal ScanLog.count, 1
-      assert_equal ScannedCertificate.count, 1
-      assert ScanLog.last.scan_status == 'expired'
+      assert ScanLog.last.scan_status == 'not_found'
+    end
+
+    it "scans domains associated with a notification groups succesfully (success case)" do
+      notification_group = create(:notification_group)
+      notification_group.schedules << create(:schedule, :daily)
+      notification_group.notification_groups_subjects << create(:notification_groups_subject, domain_name: 'example.com')
+
+      NotificationGroupsManager.scan({db: 'ssl_com_test', schedule_type: 'Simple', schedule_value: '2'})
+
+      assert_equal ScanLog.count, 1
+      assert ScannedCertificate.count, 1
+      assert ScanLog.last.scan_status == 'expiring'
+      assert ScanLog.last.domain_name == 'example.com'
     end
   end
 
