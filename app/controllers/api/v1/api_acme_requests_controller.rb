@@ -57,7 +57,7 @@ module Api
       private
 
       def certificate_names
-        @result.certificate_order.certificate_content.certificate_names
+        @result.certificate_order.certificate_content.certificate_names 
       end
 
       def record_parameters
