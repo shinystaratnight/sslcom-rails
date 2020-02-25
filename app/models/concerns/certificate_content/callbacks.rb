@@ -6,8 +6,8 @@ module Concerns
       extend ActiveSupport::Concern
 
       included do
-        after_create :certificate_names_from_domains, unless: :certificate_names_created?
-        after_save   :certificate_names_from_domains, unless: :certificate_names_created?
+        after_create :certificate_names_from_domains_async, unless: :certificate_names_created?
+        after_save   :certificate_names_from_domains_async, unless: :certificate_names_created?
         after_save   :transfer_existing_contacts
         before_destroy :preserve_certificate_contacts
 

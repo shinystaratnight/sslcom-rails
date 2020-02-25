@@ -41,10 +41,17 @@ module Api
 
       def validations_info
         persist
-        render_validations
+        render json: certificate_names,
+               each_serializer: CertificateNameSerializer,
+               status: :ok
       end
 
       private
+
+      def certificate_names
+        @result.certificate_order.certificate_content.certificate_names_from_domains(certificate_content.domain) if @result.certificate_order.certificate_content.certificate_names.empty?
+        @result.certificate_order.certificate_content.certificate_names
+      end
 
       def record_parameters
         @result = klass.new(api_acme_request) do |result|
@@ -71,12 +78,6 @@ module Api
         when 'validations_info'
           ApiAcmeRetrieveValidations
         end
-      end
-
-      def render_validations
-        render json: @result.certificate_order.certificate_content.certificate_names,
-               each_serializer: CertificateNameSerializer,
-               status: :ok
       end
 
       def set_template(filename)

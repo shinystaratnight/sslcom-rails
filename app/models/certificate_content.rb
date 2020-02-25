@@ -118,9 +118,13 @@ class CertificateContent < ApplicationRecord
     NotificationGroup.auto_manage_cert_name(self, 'create')
   end
 
+  def certificate_names_from_domains_async(domains = nil)
+    certificate_names_from_domains(domains)
+  end
+  handle_asynchronously :certificate_names_from_domains_async
+
   def all_domains_validated?
-    !certificate_names.empty? and
-        (certificate_names.pluck(:id) - certificate_names.validated.pluck(:id)).empty?
+    !certificate_names.empty? && (certificate_names.pluck(:id) - certificate_names.validated.pluck(:id)).empty?
   end
 
   # TODO all methods check http, https, and cname
