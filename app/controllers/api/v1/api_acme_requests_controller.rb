@@ -4,7 +4,7 @@ module Api
   module V1
     class ApiAcmeRequestsController < APIController
       prepend_view_path 'app/views/api/v1/api_acme_requests'
-      before_filter :set_database, if: -> { request.host =~ /^sandbox/ || request.host =~ /^sws-test/ || request.host =~ /ssl.local$/ }
+      before_filter :set_database, if: 'request.host=~/^sandbox/ || request.host=~/^sws-test/ || request.host=~/ssl.local$/'
       before_filter :set_test, :record_parameters
 
       rescue_from Exception do |exception|
@@ -41,15 +41,15 @@ module Api
 
       def validations_info
         persist
-        render json: certificate_names,
-               each_serializer: CertificateNameSerializer,
-               status: :ok
+        render_validations
       end
 
       private
 
-      def certificate_names
-        @result.certificate_order.certificate_content.certificate_names
+      def render_validations
+        render json: @result.certificate_order.certificate_content.certificate_names,
+               each_serializer: CertificateNameSerializer,
+               status: :ok
       end
 
       def record_parameters
