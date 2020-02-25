@@ -45,7 +45,7 @@ describe CertificateContent do
 
   it 'it calls certificate_names_from_domains after being saved' do
     certificate_content = create(:certificate_content)
-    certificate_content.expects(:certificate_names_from_domains).returns(true)
+    certificate_content.expects(:certificate_names_from_domains_async).returns(true)
     certificate_content.save
   end
 

@@ -34,6 +34,8 @@ class CertificateName < ApplicationRecord
   include Concerns::CertificateName::Scope
   include Concerns::CertificateName::Verification
 
+  after_create :generate_acme_token
+
   delegate :all_domains_validated?, to: :certificate_content, prefix: false, allow_nil: true
 
   def is_ip_address?
