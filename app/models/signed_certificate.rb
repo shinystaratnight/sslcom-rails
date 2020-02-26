@@ -71,7 +71,7 @@ require 'openssl'
 
 class SignedCertificate < ApplicationRecord
   include CertificateType
-  include CertificateProperties
+  include Concerns::Certificate::X509Properties
 
   serialize :organization_unit
   serialize :subject_alternative_names

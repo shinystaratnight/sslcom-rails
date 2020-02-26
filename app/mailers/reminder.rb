@@ -83,7 +83,7 @@ class Reminder < ActionMailer::Base
     @unsubscribe='un-'+SecureRandom.hex(1)+Time.now.to_i.to_s(32)
     emails.split(/[, ;]/).each do |e|
       if e=~EmailValidator::EMAIL_FORMAT && !DO_NOT_SEND.any?{|dns|e=~Regexp.new(dns, "i")}
-        @to<<e
+        @to << e
       end
     end
   end

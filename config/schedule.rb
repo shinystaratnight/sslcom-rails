@@ -72,4 +72,6 @@ every '0 0 1 1 *' do
   bundle_exec "NotificationGroupsManager.scan({db: 'sandbox.ssl.com', schedule_type: 'Simple', schedule_value: '5'})"
 end
 
-#### ToDo: Write custom cron job for custom ng ##############
+every :day, at: '6:00am' do
+  bundle_exec "NotificationGroupsManager.send_expiration_reminders('sandbox.ssl.com')"
+end
