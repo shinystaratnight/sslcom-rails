@@ -95,7 +95,7 @@ class CertificateContent < ApplicationRecord
   def certificate_names_from_domains(domains=nil)
     is_single = certificate&.is_single?
     csr_common_name=csr.try(:common_name)
-    unless (is_single || certificate&.is_wildcard?) && certificate_names.count.zero?
+    unless (is_single || certificate&.is_wildcard?) && certificate_names.count.positive?
       domains ||= all_domains
       domains = domains.each{|domain| is_single ? CertificateContent.non_wildcard_name(domain,true) :
                                           domain.downcase}.uniq
