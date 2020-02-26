@@ -2,8 +2,6 @@
 
 module AcmeManager
   class HttpVerifier < ApplicationService
-    include ActiveSupport::Rescuable
-
     attr_reader :challenge_url, :parts, :acme_token, :thumbprint
 
     def initialize(thumbprint, acme_token, challenge_url)
