@@ -35,13 +35,14 @@ module MailerHelper
   end
 
   private
-    def delivery(position)
-      deliveries = ActionMailer::Base.deliveries
-      if position
-        position = (position == :first) ? 0 : position-1
-        deliveries[position]
-      else  
-        deliveries.last
-      end
+  
+  def delivery(position)
+    deliveries = ActionMailer::Base.deliveries
+    if position
+      position = (position == :first) ? 0 : position-1
+      deliveries[position]
+    else
+      deliveries.last
     end
+  end
 end
