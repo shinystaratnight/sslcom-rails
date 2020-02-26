@@ -55,6 +55,8 @@ Security/Eval:
 
 Layout/EndOfLine:
   EnforcedStyle: lf
+Layout/LineLength:
+  Enabled: false
 
 Layout/ClassStructure:
   Enabled: true
@@ -105,11 +107,7 @@ Lint/ShadowingOuterLocalVariable:
   Exclude:
     - app/models/ssl_account.rb
 
-Metrics/LineLength:
-  Enabled: false
-Metrics/BlockLength:
-  Enabled: false
-Metrics/ModuleLength:
+Metrics:
   Enabled: false
 
 Naming/FileName:

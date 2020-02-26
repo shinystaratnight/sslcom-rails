@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # issuance_type - nil, "dv_only"
 class OtherDcvsSatisyJob < Struct.new(:ssl_account, :new_certificate_names, :certificate_content, :issuance_type)
   def perform
