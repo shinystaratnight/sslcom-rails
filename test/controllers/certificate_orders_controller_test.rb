@@ -168,6 +168,8 @@ describe CertificateOrdersController do
             "id": evucc_cert.ref.to_s
           }
 
+          certificate = build_stubbed(:certificate, :evuccssl)
+          CertificateOrder.any_instance.stubs(:certificate).returns(certificate)
           put :update_csr, params
           assert flash[:error]
         end
