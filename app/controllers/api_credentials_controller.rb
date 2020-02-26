@@ -1,9 +1,6 @@
 class ApiCredentialsController < ApplicationController
   before_filter    :require_user
 
-  def new
-  end
-
   def index
     p = {:page => params[:page],per_page: 10}
     set_apis

@@ -2,6 +2,9 @@
 
 module AcmeManager
   class HttpVerifier < ApplicationService
+    rescue_from OpenURI::HTTPError do
+      return false
+    end
     attr_reader :challenge_url, :parts, :acme_token, :thumbprint
 
     def initialize(thumbprint, acme_token, challenge_url)
@@ -21,10 +24,12 @@ module AcmeManager
       uri = URI.parse(challenge_path)
       response = uri.open('User-Agent' => I18n.t('users_agent.chrome'), redirect: true)
       response.read
+    rescue StandardError=> e
+      e
     end
 
     def challenge_path
-      [challenge_url, '.well-known', 'acme-challenge', thumbprint].join('/')
+      ['http:/', challenge_url, '.well-known', 'acme-challenge', thumbprint].join('/')
     end
 
     def verified

@@ -9,12 +9,12 @@ module Concerns
         case protocol ||= domain_control_validation&.dcv_method
         when /email/
           nil
-        when /acme_http/
+        when /acme_http/i
           AcmeManager::HttpVerifier.new(api_credential.acme_acct_pub_key_thumbprint, acme_token, non_wildcard_name(true)).call
-        when /acme_dns_txt/
+        when /acme_dns_txt/i
           AcmeManager::DnsTxtVerifier.new(api_credential.acme_acct_pub_key_thumbprint, non_wildcard_name(true)).call
         else
-          self.class.dcv_verify(protocol, verification_options)
+          self.class.dcv_verify(protocol, verification_options) if csr.present?
         end
       end
 
