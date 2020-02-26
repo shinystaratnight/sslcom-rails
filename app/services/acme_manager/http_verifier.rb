@@ -4,10 +4,6 @@ module AcmeManager
   class HttpVerifier < ApplicationService
     include ActiveSupport::Rescuable
 
-    rescue_from OpenURI::HTTPError do
-      return false
-    end
-
     attr_reader :challenge_url, :parts, :acme_token, :thumbprint
 
     def initialize(thumbprint, acme_token, challenge_url)
@@ -19,6 +15,8 @@ module AcmeManager
     def call
       @parts = challenge.split('.')
       verified
+    rescue OpenURI::HTTPError => _e
+      false
     end
 
     private
