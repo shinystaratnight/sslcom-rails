@@ -40,14 +40,17 @@ module Api
       end
 
       def validations_info
-        persist
-        render json: certificate_names.decorate, each_serializer: CertificateNameSerializer, fields: %i[domain http_token dns_token validated], status: :ok
+        data = certificate_names.empty? ? certificate_names : certificate_names.decorate
+        render json: data, each_serializer: CertificateNameSerializer, fields: %i[domain http_token dns_token validated], status: :ok
       end
 
       def validation_status
         persist
-        if params[:domain].present?
-          render json: certificate_names.find_by(name: params[:domain]).decorate, serializer: CertificateNameSerializer, fields: %i[validation_source status], status: :ok
+        if certificate_name_for_domain
+          render json: certificate_name_for_domain.decorate, serializer: CertificateNameSerializer, fields: %i[validation_source status], status: :ok
+        elsif domain = params[:domain]
+          errors = { errors: [parameters: "no order matching #{domain} found"] }
+          render_errors(errors, :not_acceptable)
         else
           errors = { errors: [parameters: 'domain is required'] }
           render_errors(errors, :not_acceptable)
@@ -57,7 +60,11 @@ module Api
       private
 
       def certificate_names
-        @result.certificate_order.certificate_content.certificate_names 
+        @result.certificate_order.certificate_content.certificate_names || CertificateName.none
+      end
+
+      def certificate_name_for_domain
+        certificate_names.find_by('name LIKE ?', "%#{params[:domain]}%") if params[:domain]
       end
 
       def record_parameters

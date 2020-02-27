@@ -127,9 +127,6 @@ group :development, :test do
   gem 'builder'
   gem 'bullet'
   gem 'byebug'
-  gem 'cypress-on-rails', '~> 1.5.1'
-  gem 'factory_bot_rails'
-  gem 'faker'
   gem 'pry-remote'
   gem 'rubocop', require: false
   gem 'rubocop-minitest'
@@ -142,6 +139,9 @@ end
 group :test do
   gem 'capybara'
   gem 'capybara-screenshot'
+  gem 'cypress-on-rails', '~> 1.5.1'
+  gem 'factory_bot_rails'
+  gem 'faker'
   gem 'database_cleaner-active_record'
   gem 'minitest-bang', require: false
   gem 'minitest-ci'

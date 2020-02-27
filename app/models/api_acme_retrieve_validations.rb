@@ -56,7 +56,7 @@ class ApiAcmeRetrieveValidations < ApiAcmeRequest
   def certificate_order
     return nil unless certificate_order_ref
 
-    @certificate_order = CertificateOrder.unscoped.includes(certificate_contents: [:certificate_names]).find_by(ref: certificate_order_ref)
+    @certificate_order = CertificateOrder.includes(certificate_contents: [:certificate_names]).find_by(ref: certificate_order_ref)
   end
   memoize :certificate_order
 end

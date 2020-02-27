@@ -45,7 +45,7 @@ class CertificateContent < ApplicationRecord
 
   serialize :domains
 
-  attr_accessor  :additional_domains # used to html format results to page
+  attr_accessor  :additional_domains #used to html format results to page
   attr_accessor  :ajax_check_csr
   attr_accessor  :rekey_certificate
 
@@ -54,6 +54,12 @@ class CertificateContent < ApplicationRecord
   preference  :reprocessing, default: false
   preference  :pending_issuance, default: false
   preference  :process_pending_server_certificates, default: true
+
+  CertificateNamesJob = Struct.new(:cc_id, :domains) do
+    def perform
+      CertificateContent.find_by_id(cc_id).certificate_names_from_domains
+    end
+  end
 
   def pre_validation(options)
     if csr and !csr.sent_success #do not send if already sent successfully
@@ -86,7 +92,7 @@ class CertificateContent < ApplicationRecord
     end
   end
 
-  def certificate_names_from_domains(domains = nil)
+  def certificate_names_from_domains(domains=nil)
     is_single = certificate&.is_single?
     csr_common_name=csr.try(:common_name)
     unless (is_single || certificate&.is_wildcard?) && certificate_names.count.positive?
@@ -111,7 +117,6 @@ class CertificateContent < ApplicationRecord
     # Auto adding domains in case of certificate order has been included into some groups.
     NotificationGroup.auto_manage_cert_name(self, 'create')
   end
-  handle_asynchronously :certificate_names_from_domains
 
   def all_domains_validated?
     !certificate_names.empty? and
@@ -288,11 +293,6 @@ class CertificateContent < ApplicationRecord
       result.effective_date = signed_certificate.effective_date
       result.expiration_date = signed_certificate.expiration_date
       result.algorithm = signed_certificate.is_SHA2? ? "SHA256" : "SHA1"
-      # result.site_seal_code = ERB::Util.json_escape(ApplicationController.new.render_to_string(
-      #                                                   partial: 'site_seals/site_seal_code.html.haml',
-      #                                                   locals: {co: self},
-      #                                                   layout: false
-      #                                               ))
     elsif (self.csr)
       result.certificates = ""
       result.common_name = self.csr.common_name
@@ -848,9 +848,85 @@ class CertificateContent < ApplicationRecord
     end
   end
 
+  def validate_domains?
+    (new? && (domains.blank? || errors[:domain].any?)) || !rekey_certificate.blank?
+  end
+
+  def certificate_names_created?
+    self.reload
+    return false if domains.blank? && !certificate_name_from_csr?
+    new_domains     = parse_unique_domains(domains)
+    current_domains = parse_unique_domains(certificate_names.pluck(:name))
+    common          = current_domains & new_domains
+    common.length == new_domains.length && (current_domains.length == new_domains.length)
+  end
+
+  def certificate_name_from_csr?
+    certificate_names.count == 1 &&
+      csr.common_name &&
+      certificate_names.first.name == csr.common_name &&
+      certificate_names.first.is_common_name
+  end
+
   def parse_unique_domains(target_domains)
     return [] if target_domains.blank?
     target_domains.flatten.compact.map(&:downcase).map(&:strip).reject(&:blank?).uniq
+  end
+
+  def domains_validation
+    unless all_domains.blank?
+      all_domains.each do |domain|
+        domain_validation(domain)
+      end
+    end
+    self.rekey_certificate = false unless domains.blank?
+  end
+
+  def csr_validation
+    allow_wildcard_ucc=certificate_order.certificate.allow_wildcard_ucc?
+    is_wildcard = certificate_order.certificate.is_wildcard?
+    is_ucc = certificate_order.certificate.is_ucc?
+    is_server = certificate_order.certificate.is_server?
+    if csr.common_name.blank?
+      errors.add(:signing_request, 'is missing the common name (CN) field or is invalid and cannot be parsed')
+    elsif !csr.verify_signature
+      errors.add(:signing_request, 'has an invalid signature')
+    else
+      if is_server
+        asterisk_found = (csr.common_name=~/\A\*\./)==0
+        if is_wildcard && !asterisk_found
+          errors.add(:signing_request, "is wildcard certificate order, so it must begin with *.")
+        elsif ((!(is_ucc && allow_wildcard_ucc) && !is_wildcard)) && asterisk_found
+          errors.add(:signing_request, "cannot begin with *. since the order does not allow wildcards")
+        elsif !DomainNameValidator.valid?(csr.common_name)
+          errors.add(:signing_request, "common name field is invalid")
+        end
+      end
+      errors.add(:signing_request, "must be any of the following #{MIN_KEY_SIZE.join(', ')} key sizes.
+        Please submit a new certificate signing request with the proper key size.") if
+          csr.sig_alg=~/WithRSAEncryption/i && (csr.strength.blank? || !MIN_KEY_SIZE.include?(csr.strength))
+      #errors.add(:signing_request,
+      #  "country code '#{csr.country}' #{NOT_VALID_ISO_CODE}") unless
+      #    Country.accepted_countries.include?(csr.country)
+    end
+  end
+
+  # This validates each domain entry in the CN and SAN fields
+  def domain_validation_regex(is_wildcard, domain)
+    invalid_chars = "[^\\s\\n\\w\\.\\x00\\-#{'\\*' if is_wildcard}]"
+    domain.index(Regexp.new(invalid_chars))==nil and
+    domain.index(/\.\.+/)==nil and domain.index(/\A\./)==nil and
+    domain.index(/[^\w]\z/)==nil and domain.index(/\A[^\w\*]/)==nil and
+      is_wildcard ? (domain.index(/(\w)\*/)==nil and
+        domain.index(/(\*)[^\.]/)==nil) : true
+  end
+
+  def certificate_order_has_csr
+    ['true',true].any?{|t|t==certificate_order.try(:has_csr)}
+  end
+
+  def certificate_order_has_csr_and_signing_request
+    certificate_order_has_csr && !signing_request.blank?
   end
 
   def delete_duplicate_contacts
