@@ -71,8 +71,8 @@ require 'openssl'
 
 class SignedCertificate < ApplicationRecord
   include CertificateType
-  include CertificateProperties
-#  using_access_control
+  include Concerns::Certificate::X509Properties
+
   serialize :organization_unit
   serialize :subject_alternative_names
   belongs_to :parent, :foreign_key=>:parent_id,
@@ -87,12 +87,11 @@ class SignedCertificate < ApplicationRecord
     Proc.new{|r| !r.parent_cert && !r.body.blank?}
   has_many  :sslcom_ca_revocation_requests, as: :api_requestable
   has_many  :sslcom_ca_requests, as: :api_requestable
-  #validate :same_as_previously_signed_certificate?, :if=> '!csr.blank?'
+
   belongs_to  :registered_agent
   has_one   :revocation, :class_name => "Revocation", :foreign_key => "revoked_signed_certificate_id"
   has_one   :replacement, through: :revocation, class_name: "SignedCertificate",
             source: "replacement_signed_certificate", foreign_key: "replacement_signed_certificate_id"
-
 
   attr :parsed
   attr_accessor :email_customer
@@ -135,31 +134,8 @@ class SignedCertificate < ApplicationRecord
     s.status ||= "issued"
   end
 
-  after_create do |s|
-    s.csr.certificate_content.issue! if !s.csr.blank? && !%w(ShadowSignedCertificate ManagedCertificate).include?(self.type)
-  end
-
-  after_save do |s|
-    if !s.csr.blank? && !%w(ShadowSignedCertificate ManagedCertificate).include?(self.type)
-      s.send_processed_certificate
-      cc=s.csr.certificate_content
-      if cc.preferred_reprocessing?
-        cc.preferred_reprocessing=false
-        cc.preferred_pending_issuance_will_change!
-      end
-      co=cc.certificate_order
-      unless co.site_seal.fully_activated?
-        co.site_seal.assign_attributes({workflow_state: "fully_activated"}, without_protection: true)
-        co.site_seal.save
-      end
-      co.validation.approve! unless(co.validation.approved? || co.validation.approved_through_override?)
-      last_sent=s.csr.domain_control_validations.last_sent
-      last_sent.satisfy! if(last_sent && !last_sent.satisfied?)
-      unless cc.url_callbacks.blank?
-        cc.callback
-      end
-    end
-  end
+  after_create :after_create
+  after_save :after_save
 
   scope :live, -> {where{type == nil}}
 
@@ -833,5 +809,30 @@ class SignedCertificate < ApplicationRecord
       end
     }
   end
-end
 
+  def after_save
+    if !csr.blank? && !%w(ShadowSignedCertificate ManagedCertificate).include?(self.type)
+      send_processed_certificate
+      cc = csr.certificate_content
+      if cc.preferred_reprocessing?
+        cc.preferred_reprocessing = false
+        cc.preferred_pending_issuance_will_change!
+      end
+      co = cc.certificate_order
+      unless co.site_seal.fully_activated?
+        co.site_seal.assign_attributes({workflow_state: "fully_activated"}, without_protection: true)
+        co.site_seal.save
+      end
+      co.validation.approve! unless(co.validation.approved? || co.validation.approved_through_override?)
+      last_sent = csr.domain_control_validations.last_sent
+      last_sent.satisfy! if(last_sent && !last_sent.satisfied?)
+      unless cc.url_callbacks.blank?
+        cc.callback
+      end
+    end
+  end
+
+  def after_create
+    csr&.certificate_content&.issue! if csr.blank? && !%w(ShadowSignedCertificate ManagedCertificate).include?(self.type)
+  end
+end

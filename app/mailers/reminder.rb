@@ -1,6 +1,6 @@
 class Reminder < ActionMailer::Base
   default :from => "reminder@ssl.com", :bcc => ['info@ssl.com'], return_path: "reminder@ssl.com"
-  default_url_options[:host] = "ssl.com"
+  default_url_options[:host] = I18n.t('labels.ssl_ca')
 
   DO_NOT_SEND= %w(fiserv epsiia aturner@yisd.net cchavez@yisd.net gchavez@yisd.net ian@platinum.net d.riebeek@databaseonline.nl lsmith@patientplacement.com)
 
@@ -83,7 +83,7 @@ class Reminder < ActionMailer::Base
     @unsubscribe='un-'+SecureRandom.hex(1)+Time.now.to_i.to_s(32)
     emails.split(/[, ;]/).each do |e|
       if e=~EmailValidator::EMAIL_FORMAT && !DO_NOT_SEND.any?{|dns|e=~Regexp.new(dns, "i")}
-        @to<<e
+        @to << e
       end
     end
   end

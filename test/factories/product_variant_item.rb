@@ -12,6 +12,6 @@ FactoryBot.define do
     serial { 'sslcomucc256ssl1yrdm' }
     published_as { 'live' }
 
-    association :product_variant_group, factory: :product_variant_group
+    product_variant_group
   end
 end

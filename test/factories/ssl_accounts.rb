@@ -32,27 +32,17 @@
 #  index_ssl_accounts_on_ssl_slug_and_acct_number                   (ssl_slug,acct_number)
 #
 
-
 FactoryBot.define do
   factory :ssl_account do
-    # acct_number {}
-    status {}
-    ssl_slug {}
-    company_name {}
-    issue_dv_no_validation {}
+    ssl_slug { "team-" + Faker::Alphanumeric.alpha(number: 10) }
     billing_method { 'monthly' }
-    duo_enabled {}
-    duo_own_used {}
-    sec_type {}
-    default_folder_id {}
-    no_limit {}
-    epki_agreement {}
     workflow_state { 'active' }
-  end
+    after :create, &:create_api_credential
 
-  trait :billing_profile do
-    after(:create) do |ssl|
-      ssl.billing_profiles << create(:billing_profile)
+    trait :billing_profile do
+      after(:create) do |ssl|
+        ssl.billing_profiles << create(:billing_profile)
+      end
     end
   end
 end
