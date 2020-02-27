@@ -30,13 +30,13 @@ default_run_options[:pty] = true
 set :application, "ssl_com"
 set :domain, '172.16.1.12' #Rails 4 staging
 set :user, "ubuntu"
-set :branch, "staging"
+set :branch, "master"
 # NOTE: for some reason Capistrano requires you to have both the public and
 # the private key in the same folder, the public key should have the
 # extension ".pub".
 ssh_options[:keys] = [File.join(ENV["HOME"], ".ssh", "id_rsa_2019")]
 
-server = "production_api"
+server = "sandbox"
 case server
   when "sandbox"
     require "rvm/capistrano"
@@ -83,7 +83,7 @@ end
 set :scm, :git
 set :repository, "git@github.com:SSLcom/sslcom-rails.git"
 set :deploy_via, :remote_cache
-# set :ssh_options, {:forward_agent => true}
+set :ssh_options, {:forward_agent => true}
 
 set :use_sudo, false
 

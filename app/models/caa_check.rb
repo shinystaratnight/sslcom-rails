@@ -29,12 +29,12 @@ class CaaCheck < ApplicationRecord
       is_comodoca = certificate_content.nil? ? false : (certificate_content.ca.nil? ? false : true)
 
       if is_comodoca
-        result = caa_lookup(name, "comodoca.com")
+        result = caa_lookup(name, comodo_ca_label)
         if result == true # Timeout
           return_obj = true
         elsif result =~ /status/ # Returned CAA Check Result.
           arry = JSON.parse(result.gsub("}\n", "}").gsub("\n", "|||"))
-          log_caa_check(certificate_order_id, name, 'comodoca.com', arry)
+          log_caa_check(certificate_order_id, name, comodo_ca_label, arry)
 
           if arry['status'].to_s == 'true'
             return_obj = true
@@ -49,12 +49,12 @@ class CaaCheck < ApplicationRecord
           return_obj = false
         end
       else
-        result = caa_lookup(name, "ssl.com")
+        result = caa_lookup(name, ssl_ca_label)
         if result == true # Timeout
           return_obj = true
         elsif result =~ /status/ # Returned CAA Check Result.
           arry = JSON.parse(result.gsub("}\n", "}").gsub("\n", "|||"))
-          log_caa_check(certificate_order_id, name, 'ssl.com', arry)
+          log_caa_check(certificate_order_id, name, ssl_ca_label, arry)
 
           if arry['status'].to_s == 'true'
             return_obj = true
@@ -106,7 +106,15 @@ class CaaCheck < ApplicationRecord
     end
   end
 
-  def self.pass?(certificate_order_id, certificate_name, certificate_content)
+  def self.pass?(_certificate_order_id, _certificate_name, _certificate_content)
     true # Delayed::Job.enqueue CaaCheckJob.new(certificate_order_id, certificate_name, certificate_content)
+  end
+
+  def ssl_ca_label
+    I18n.t('labels.ssl_ca')
+  end
+
+  def comodo_ca_labl
+    I18n.t('labels.ssl_ca')
   end
 end

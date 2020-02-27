@@ -31,12 +31,12 @@ FactoryBot.define do
     caa_passed { false }
     email { Faker::Internet.email }
     is_common_name { true }
+    acme_token { SecureRandom.urlsafe_base64(96, false) }
 
-    association :ssl_account, factory: :ssl_account
+    certificate_content
 
-    after :create do |cn|
-      cn.certificate_content = create(:certificate_content, :with_csr, certificate_order: create(:certificate_order))
-      cn.save
+    after(:stub) do |cn|
+      cn.stubs(:certificate_content).returns(build_stubbed(:certificate_content))
     end
   end
 end

@@ -31,7 +31,6 @@ class ProductVariantItem < ApplicationRecord
   has_one :sub_order_item
   acts_as_publishable :live, :draft, :discontinue_sell
 
-  #validates_uniqueness_of :display_order, :scope => :product_variant_group_id
   validates_presence_of :product_variant_group
 
   def certificate
