@@ -1,0 +1,35 @@
+Hello,
+
+SSL.com Notification Group #{@notification_group.friendly_name || @notification_group.ref} expiration reminder:
+%br
+- @scanned_certificates.each do |scanned_cert|
+    %br
+    Reminder Type: Expiration
+    %br
+    Scanned Domain: #{scanned_cert.scan_logs.last.domain_name}
+    %br
+    SSL Certificate Expires: #{scanned_cert.not_after.to_date}
+    %br
+    SSL Certificate DN: #{scanned_cert.dn}
+    %br
+    SSL Certificate Serial: #{scanned_cert.serial}
+    %br
+    SSL Certificate Issuer DN: #{scanned_cert.issuer_dn}
+    %br
+%br
+
+To modify the SSL/TLS reminders or disable them, please visit:
+%br
+%br
+#{link_to 'Notification Group', 'edit_notification_group_url(@ssl_account, @notification_group.id)'}
+%br
+%br
+Thank you for choosing SSL.com!
+%br
+%br
+Kind Regards,
+%br
+%br
+SSL.com
+Toll Free: 877-SSL-Secure (877-775-7328)
+Intl: SSL-Certificates (+1-775-237-8434)

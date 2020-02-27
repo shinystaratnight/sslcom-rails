@@ -7,6 +7,7 @@ gem 'authlogic'
 gem 'awesome_print'
 gem 'aws-sdk', '~> 2.0'
 gem 'bootsnap', require: false
+gem 'concurrent-ruby'
 gem 'declarative_authorization', git: 'https://github.com/xymist/declarative_authorization.git', branch: 'allow_rails_5'
 gem 'dynamic_form'
 gem 'easy_roles'
@@ -106,6 +107,7 @@ gem 'turbolinks'
 gem 'yui-compressor'
 
 group :development do
+  gem 'active_record_doctor'
   gem 'annotate'
   gem 'dotenv-rails'
   gem 'letter_opener_web', '~> 1.0'
@@ -126,6 +128,7 @@ group :development, :test do
   gem 'byebug'
   gem 'cypress-on-rails', '~> 1.5.1'
   gem 'factory_bot_rails'
+  gem 'faker'
   gem 'pry-remote'
   gem 'rubocop', require: false
   gem 'rubocop-minitest'
@@ -139,8 +142,7 @@ end
 group :test do
   gem 'capybara'
   gem 'capybara-screenshot'
-  gem 'database_cleaner'
-  gem 'faker'
+  gem 'database_cleaner-active_record'
   gem 'minitest-bang', require: false
   gem 'minitest-ci'
   gem 'minitest-rails', '~> 2.0'
@@ -166,4 +168,3 @@ gem 'bcrypt_pbkdf', '~> 1'
 gem 'ed25519', '~> 1.2'
 gem 'oj'
 gem 'active_model_serializers'
-gem 'jose'

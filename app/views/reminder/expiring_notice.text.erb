@@ -1,25 +1,23 @@
-Dear <%=@name%>
+Hello,
 
-You are receiving this courtesy email because you have ordered or purchased your certificate from SSL.com.
+SSL.com Notification Group <%=@notification_group.friendly_name || @notification_group.ref%> scan results:
 
-This is a reminder that the SSL.com certificate for the domain named below expires on <%=@cert.expiration_date.strftime("%b %d, %Y")%> and has not yet been renewed.
+Reminder Type: <%=@result.reminder_type%>
+Scanned Domain: <%=@result.domain%>
+SSL Certificate Expires: <%=@result.expire%>
+<% unless @result.scanned_certificate_id.blank?
+  scanned_certificate=ScannedCertificate.find(@result.scanned_certificate_id)-%>
+SSL Certificate DN: <%=scanned_certificate.dn%>
+SSL Certificate Serial: <%=scanned_certificate.serial%>
+SSL Certificate Issuer DN: <%=scanned_certificate.issuer_dn%>
+<% end %>
 
-Domain: <%=@cert.common_name%> (https://<%=Settings.portal_domain%>/certificate_orders/<%=cert.certificate_order.ref%>)
+To modify the SSL/TLS reminders or disable them, please visit <%=edit_notification_group_url(@ssl_slug, @notification_group.id)%>
 
-The issuance email address for this certificate was <%=@contact.email%> and the certificate ref # is <%=@cert.certificate_order.ref%>
-
-When renewing, any remaining time from your expiring SSL/TLS certificate, up to 90 days, will be added to your renewal certificate so that you do not lose any SSL/TLS coverage.
-
-If you need to reset your username or password, please visit https://<%=Settings.portal_domain%>/password_resets/new
-
-Thank you for choosing SSL.com - we look forward to continuing to provide you with the most cost-effective certificates in the market.
+Thank you for choosing SSL.com!
 
 Kind Regards,
 
 SSL.com
 Toll Free: 877-SSL-Secure (877-775-7328)
 Intl: SSL-Certificates (+1-775-237-8434)
-
-
-
-<%=render partial: "email_prefs"%>

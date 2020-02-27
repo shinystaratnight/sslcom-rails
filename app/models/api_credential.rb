@@ -21,7 +21,6 @@
 #  index_api_credentials_on_ssl_account_id                (ssl_account_id)
 #
 
-
 class ApiCredential < ApplicationRecord
   belongs_to :ssl_account
 
@@ -32,16 +31,10 @@ class ApiCredential < ApplicationRecord
       self.account_key ||= SecureRandom.hex(6)
       self.secret_key  ||= SecureRandom.base64(10)
       self.hmac_key ||= SecureRandom.base64(32)
-      self.acme_acct_pub_key_thumbprint ||= Base64.urlsafe_encode64(jwk_thumbprint)
-    elsif self.hmac_key.blank? || self.acme_acct_pub_key_thumbprint.blank?
+    elsif self.hmac_key.blank?
       self.hmac_key ||= SecureRandom.base64(32)
-      self.acme_acct_pub_key_thumbprint ||= Base64.urlsafe_encode64(jwk_thumbprint)
     end
     save
-  end
-
-  def jwk_thumbprint
-    @jwk_thumbprint ||= JOSE::JWK.thumbprint(JOSE::JWK.from_oct(hmac_key))
   end
 
   def reset_secret_key
@@ -57,10 +50,6 @@ class ApiCredential < ApplicationRecord
   end
 
   def role_names
-    role_names = []
-    role_ids&.each do |role_id|
-      role_names << Role.find(role_id).name
-    end
-    role_names
+    Role.find(role_ids).map(&:name)
   end
 end

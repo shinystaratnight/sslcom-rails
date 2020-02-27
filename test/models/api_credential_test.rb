@@ -21,17 +21,21 @@
 #  index_api_credentials_on_ssl_account_id                (ssl_account_id)
 #
 
-
 require 'test_helper'
 
 describe ApiCredential do
   subject { ApiCredential.new }
 
-  context 'ACME support' do
-    describe '.acme_acct_pub_key_thumbprint' do
-      it 'is 60 characters long' do
-        assert_equal(60, subject.acme_acct_pub_key_thumbprint.length)
-      end
-    end
+  describe 'associations' do
+    should belong_to :ssl_account
+  end
+
+  describe 'attributes' do
+    should have_db_column :account_key
+    should have_db_column :acme_acct_pub_key_thumbprint
+    should have_db_column :hmac_key
+    should have_db_column :secret_key
+    should have_db_column :roles
+    should have_db_column :ssl_account_id
   end
 end

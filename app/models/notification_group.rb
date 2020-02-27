@@ -32,12 +32,15 @@ class NotificationGroup < ApplicationRecord
   has_many  :certificate_orders, through: :notification_groups_subjects, source: :subjectable, source_type: 'CertificateOrder'
   has_many  :certificate_contents, through: :notification_groups_subjects, source: :subjectable, source_type: 'CertificateContent'
   has_many  :certificate_names, through: :notification_groups_subjects, source: :subjectable, source_type: 'CertificateName'
-  has_many  :schedules
-  has_many  :scan_logs
+  has_many  :schedules, dependent: :destroy
+  has_many  :scan_logs, dependent: :destroy
+  has_many :scanned_certificates, through: :scan_logs
 
   attr_accessor :ssl_client
 
   preference :notification_group_triggers, :string
+
+  alias_attribute :disabled, :status
 
   before_create do |ng|
     ng.ref = 'ng-' + SecureRandom.hex(1) + Time.now.to_i.to_s(32)

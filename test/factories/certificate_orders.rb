@@ -39,6 +39,7 @@
 #  index_certificate_orders_on_3_cols                         (workflow_state,is_expired,is_test)
 #  index_certificate_orders_on_3_cols(2)                      (ssl_account_id,workflow_state,id)
 #  index_certificate_orders_on_4_cols                         (ssl_account_id,workflow_state,is_test,updated_at)
+#  index_certificate_orders_on_acme_account_id                (acme_account_id)
 #  index_certificate_orders_on_assignee_id                    (assignee_id)
 #  index_certificate_orders_on_created_at                     (created_at)
 #  index_certificate_orders_on_folder_id                      (folder_id)
@@ -73,13 +74,22 @@ FactoryBot.define do
 
     transient do
       include_tags { false }
+      true_build { false }
     end
 
-    after :create do |co, options|
-      if options.include_tags
-        tagging = Tagging.create(tag: create(:tag, ssl_account: co.ssl_account), taggable_id: co.id, taggable_type: 'CertificateOrder')
-        co.taggings << tagging
+    after :build do |co, options|
+      unless options.true_build
+        co.save unless options.true_build
+        create(:certificate_content, certificate_order_id: co.id)
+        create(:sub_order_item, sub_itemable_id: co.id)
       end
+      co.taggings << Tagging.create(tag: create(:tag, ssl_account: co.ssl_account), taggable_id: co.id, taggable_type: 'CertificateOrder') if options.include_tags
+    end
+
+    after :stub do |co|
+      co.stubs(:sub_order_items).returns(build_stubbed(:sub_order_item))
+      co.stubs(:certificate).returns(build_stubbed(:certificate))
+      # co.stubs(:certificate_content).returns(build_stubbed(:certificate_content))
     end
   end
 end

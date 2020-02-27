@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: certificate_orders
@@ -37,6 +39,7 @@
 #  index_certificate_orders_on_3_cols                         (workflow_state,is_expired,is_test)
 #  index_certificate_orders_on_3_cols(2)                      (ssl_account_id,workflow_state,id)
 #  index_certificate_orders_on_4_cols                         (ssl_account_id,workflow_state,is_test,updated_at)
+#  index_certificate_orders_on_acme_account_id                (acme_account_id)
 #  index_certificate_orders_on_assignee_id                    (assignee_id)
 #  index_certificate_orders_on_created_at                     (created_at)
 #  index_certificate_orders_on_folder_id                      (folder_id)
@@ -535,8 +538,8 @@ class CertificateOrder < ApplicationRecord
     co.is_expired = false
     co.ref = 'co-' + SecureRandom.hex(1) + Time.now.to_i.to_s(32)
     v = co.create_validation
-    co.preferred_certificate_chain = co.certificate.preferred_certificate_chain
-    co.certificate.validation_rulings.each do |cvrl|
+    co.preferred_certificate_chain = co&.certificate&.preferred_certificate_chain
+    co&.certificate&.validation_rulings&.each do |cvrl|
       vrl = cvrl.dup
       vrl.status = ValidationRuling::WAITING_FOR_DOCS
       vrl.workflow_state = 'new'
@@ -766,23 +769,17 @@ class CertificateOrder < ApplicationRecord
   def add_reproces_order(target_order)
     target_order.save unless target_order.persisted?
     target_order.line_items.destroy_all
-    if target_order.valid?
-      line_items.create(
-          order_id: target_order.id, cents: target_order.cents, amount: target_order.amount, currency: 'USD'
-      )
-    end
-    # clear cache
-    target_order.touch
-    self.touch
+    line_items.create(order_id: target_order.id, cents: target_order.cents, amount: target_order.amount, currency: 'USD') if target_order.valid?
+    target_order.touch # clear cache
+    touch
   end
 
   def certificate
     if new_record?
-      sub_order_items[0].product_variant_item.certificate if sub_order_items[0] && sub_order_items[0].product_variant_item
+      sub_order_items[0].product_variant_item.certificate if sub_order_items[0]&.product_variant_item
     else
       Certificate.unscoped.find_by_id(Rails.cache.fetch("#{cache_key}/certificate") do
-        sub_order_items[0].product_variant_item.cached_certificate_id if sub_order_items[0] &&
-            sub_order_items[0].product_variant_item
+        sub_order_items[0].product_variant_item.cached_certificate_id if sub_order_items[0]&.product_variant_item
       end)
     end
   end
@@ -1786,7 +1783,7 @@ class CertificateOrder < ApplicationRecord
   # @return [String]
   def ca_name
     if common_name =~ /impulshcs/
-      'ssl.com'
+      I18n.t('labels.ssl_ca')
     else
       'comodo'
     end

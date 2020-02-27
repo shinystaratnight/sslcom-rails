@@ -24,6 +24,7 @@
 # Indexes
 #
 #  index_ca_api_requests_on_api_requestable                          (api_requestable_id,api_requestable_type)
+#  index_ca_api_requests_on_approval_id                              (approval_id)
 #  index_ca_api_requests_on_id_and_type                              (id,type)
 #  index_ca_api_requests_on_type_and_api_requestable                 (id,api_requestable_id,api_requestable_type,type) UNIQUE
 #  index_ca_api_requests_on_type_and_api_requestable_and_created_at  (id,api_requestable_id,api_requestable_type,type,created_at)
@@ -31,12 +32,11 @@
 #  index_ca_api_requests_on_username_and_approval_id                 (username,approval_id) UNIQUE
 #
 
-
 class ApiAcmeRequest < CaApiRequest
   attr_accessor :test, :action
 
   ACCOUNT_ACCESSORS = %i[account_key secret_key debug acme_acct_pub_key_thumbprint].freeze
-  CREDENTIAL_ACCESSORS = %i[hmac_key certificate_order_id acme_acct_pub_key_thumbprint].freeze
+  CREDENTIAL_ACCESSORS = %i[hmac_key certificate_order_ref acme_acct_pub_key_thumbprint].freeze
 
   attr_accessor *(ACCOUNT_ACCESSORS + CREDENTIAL_ACCESSORS).uniq
 end

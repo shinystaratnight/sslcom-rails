@@ -17,6 +17,12 @@
 require 'test_helper'
 
 describe ResellerTier do
+  before(:all) do
+    initialize_roles
+    initialize_triggers
+    initialize_server_software
+  end
+
   subject { build(:reseller_tier, :professional) }
 
   context 'associations' do

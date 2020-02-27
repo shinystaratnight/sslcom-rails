@@ -10,8 +10,8 @@ require 'minitest/rails'
 require 'minitest/pride'
 require 'minitest/reporters'
 require 'webmock/minitest'
-require 'mocha/setup'
-require 'database_cleaner'
+require 'mocha/minitest'
+require 'database_cleaner/active_record'
 require 'factory_bot'
 require 'rack/utils'
 require 'authlogic/test_case'
@@ -30,7 +30,7 @@ Minitest::Reporters.use! [Minitest::Reporters::SpecReporter.new, Minitest::Repor
 # in spec/support/ and its subdirectories.
 Dir[File.join('./test/support/**/*.rb')].sort.each { |f| require f }
 
-DatabaseCleaner.clean_with :truncation
+DatabaseCleaner.clean_with :deletion
 DatabaseCleaner.strategy = :truncation
 
 Paperclip::Attachment.default_options[:path] = if ENV['PARALLEL_TEST_GROUPS']
@@ -38,6 +38,7 @@ Paperclip::Attachment.default_options[:path] = if ENV['PARALLEL_TEST_GROUPS']
                                                else
                                                  ':rails_root/public/system/:rails_env/:class/:attachment/:id_partition/:filename'
                                                end
+WebMock.enable!
 
 module Minitest
   class Spec
@@ -47,12 +48,14 @@ module Minitest
       include Asserts
       include Authlogic::TestCase
 
-      before :each do
-        DatabaseCleaner.start
+      before :all do
         Delayed::Worker.delay_jobs = false
+        DatabaseCleaner.strategy = :truncation
+        DatabaseCleaner.start
       end
 
-      after :each do
+      before :all do
+        DatabaseCleaner.strategy = :truncation
         DatabaseCleaner.clean
       end
     end

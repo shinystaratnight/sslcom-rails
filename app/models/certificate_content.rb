@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: certificate_contents
@@ -35,119 +37,19 @@ class CertificateContent < ApplicationRecord
   extend Memoist
   include V2MigrationProgressAddon
   include Workflow
-
-  belongs_to  :certificate_order, -> { unscope(where: [:workflow_state, :is_expired]) }, touch: true
-  has_one     :ssl_account, through: :certificate_order
-  has_many    :users, through: :certificate_order
-  belongs_to  :server_software
-  has_one     :csr, :dependent => :destroy
-  has_many    :csrs, :dependent => :destroy
-  has_many    :signed_certificates, through: :csr, :source=>"signed_certificate"
-  has_one     :registrant, as: :contactable, dependent: :destroy
-  has_one     :locked_registrant, :as => :contactable
-  has_many    :certificate_contacts, :as => :contactable
-  has_many    :certificate_names, :dependent => :destroy do # used for dcv of each domain in a UCC or multi domain ssl
-    def validated
-      joins{domain_control_validations}.where{domain_control_validations.workflow_state=="satisfied"}.uniq
-    end
-  end
-  has_many    :domain_control_validations, through: :certificate_names
-  has_many    :url_callbacks, :dependent => :destroy, as: :callbackable
-  has_many    :taggings, :dependent => :destroy, as: :taggable
-  has_many    :tags, through: :taggings
-  belongs_to  :ca
-  has_many    :sslcom_ca_requests, as: :api_requestable
-  has_many    :attestation_certificates
-  has_many    :attestation_issuer_certificates
-
-  accepts_nested_attributes_for :certificate_contacts, :allow_destroy => true
-  accepts_nested_attributes_for :registrant, :allow_destroy => false
-  accepts_nested_attributes_for :csr, :allow_destroy => false
-
-  after_create :certificate_names_from_domains, unless: :certificate_names_created?
-  after_save   :certificate_names_from_domains, unless: :certificate_names_created?
-  after_save   :transfer_existing_contacts
-  before_destroy :preserve_certificate_contacts
-
-  before_create do |cc|
-    ref_number = cc.to_ref
-    cc.ref = ref_number
-    cc.label = ref_number
-  end
-
-  SIGNING_REQUEST_REGEX = /\A[\w\-\/\s\n\+=]+\Z/
-  MIN_KEY_SIZE = [2048, 3072, 4096, 6144, 8192] #thought would be 2048, be see
-    #http://groups.google.com/group/mozilla.dev.security.policy/browse_thread/thread/7ceb6dd787e20da3# for details
-  NOT_VALID_ISO_CODE="is not a valid 2 lettered ISO-3166 country code."
-
-  ADMINISTRATIVE_ROLE = 'administrative'
-  CONTACT_ROLES = %w(administrative billing technical validation)
-
-  RESELLER_FIELDS_TO_COPY = %w(first_name last_name
-    po_box address1 address2 address3 city state postal_code email phone ext fax)
-
-  # terms in this list that are submitted as domains for an ssl will be kicked back
-  BARRED_SSL_TERMS = %w(\A\. \.onion\z \.local\z)
-
-  TRADEMARKS = %w(.*?\.ssl\.com\z \Assl\.com\z .*?\.google\.com\z \Agoogle\.com\z .*?\.whatsapp\.com\z \Awhatsapp\.com\z
-    .*?\.?facebook\.com \Afacebook\.com\z
-    .*?\.apple\.com\z \Aapple\.com\z .*?\.microsoft\.com\z \Amicrosoft\.com\z .*?\.paypal\.com\z \Apaypal\.com\z
-    .*?\.mozilla\.com\z \Amozilla\.com\z .*?\.gmail\.com\z \Agmail\.com\z .*?\.goog\.com\z \Agoog\.com\z
-    .*?\.?github\.com .*?\.?amazon\.com .*?\.?cloudapp\.com amzn ssltools certchat .*?\.certlock\.com\z \Acertlock\.com\z
-    .*?\.10million\.org .*?\.android\.com\z \Aandroid\.com\z .*?\.aol\.com .*?\.azadegi\.com .*?\.balatarin\.com .*?\.?comodo\.com
-    .*?\.?digicert\.com .*?\.?yahoo\.com .*?\.?entrust\.com .*?\.?godaddy\.com .*?\.oracle\.com\z \Aoracle\.com\z
-    .*?\.?globalsign\.com .*?\.JanamFadayeRahbar\.com .*?\.?logmein\.com .*?\.mossad\.gov\.il
-    .*?\.?mozilla\.org .*?\.RamzShekaneBozorg\.com .*?\.SahebeDonyayeDigital\.com .*?\.skype\.com .*?\.startssl\.com
-    .*?\.?thawte\.com .*?\.torproject\.org .*?\.walla\.co\.il .*?\.windowsupdate\.com .*?\.wordpress\.com addons\.mozilla\.org
-    azadegi\.com Comodo\sRoot\sCA CyberTrust\sRoot\sCA DigiCert\sRoot\sCA Equifax\sRoot\sCA friends\.walla\.co\.il
-    GlobalSign\sRoot\sCA login\.live\.com my\.screenname\.aol\.com secure\.logmein\.com
-    Thawte\sRoot\sCA twitter\.com VeriSign\sRoot\sCA wordpress\.com www\.10million\.org www\.balatarin\.com
-    cia\.gov \.cybertrust\.com equifax\.com hamdami\.com mossad\.gov\.il sis\.gov\.uk
-    yahoo\.com login\.skype\.com mozilla\.org \.live\.com global\strustee)
-
-  WHITELIST = {492127=> %w(.*?\.ssl\.com\z \Assl\.com\z .*?\.certlock\.com\z \Acertlock\.com\z),
-               491981=> %w(.*?\.ssl\.com\z \Assl\.com\z .*?\.certlock\.com\z \Acertlock\.com\z),
-               # temporary for sandbox
-               474187=> %w(.*?\.ssl\.com\z \Assl\.com\z .*?\.certlock\.com\z \Acertlock\.com\z),
-               493588=> %w(.*?\.ssl\.com\z \Assl\.com\z .*?\.certlock\.com\z \Acertlock\.com\z),
-               # Nick (next 3)
-               492759=> %w(.*?\.ssl\.com\z \Assl\.com\z .*?\.certlock\.com\z \Acertlock\.com\z),
-               497080=> %w(.*?\.ssl\.com\z \Assl\.com\z .*?\.certlock\.com\z \Acertlock\.com\z),
-               474299=> %w(.*?\.ssl\.com\z \Assl\.com\z .*?\.certlock\.com\z \Acertlock\.com\z),
-               477317=> %w(.*?\.ssl\.com\z \Assl\.com\z .*?\.certlock\.com\z \Acertlock\.com\z),
-               464808=> %w(.*?\.ssl\.com\z \Assl\.com\z .*?\.certlock\.com\z \Acertlock\.com\z)}
-
-  DOMAIN_COUNT_OFFLOAD=50
-
-  #SSL.com=>Comodo
-  COMODO_SERVER_SOFTWARE_MAPPINGS = {
-      1=>-1, 2=>1, 3=>2, 4=>3, 5=>4, 6=>33, 7=>34, 8=>5,
-      9=>6, 10=>29, 11=>32, 12=>7, 13=>8, 14=>9, 15=>10,
-      16=>11, 17=>12, 18=>13, 19=>14, 20=>35, 21=>15,
-      22=>16, 23=>17, 24=>18, 25=>30, 26=>19, 27=>20, 28=>21,
-      29=>22, 30=>23, 31=>24, 32=>25, 33=>26, 34=>27, 35=>31, 36=>28, 37=>-1, 38=>-1, 39=>3}
-
-  INTRANET_IP_REGEX = /\A(127\.0\.0\.1)|(10.\d{,3}.\d{,3}.\d{,3})|(172\.1[6-9].\d{,3}.\d{,3})|(172\.2[0-9].\d{,3}.\d{,3})|(172\.3[0-1].\d{,3}.\d{,3})|(192\.168.\d{,3}.\d{,3})\z/
-
-  # dtnt comodo chained is 492703
-  # 499740 using Azure. Remove once we are in Azure
-  COMODO_SSL_ACCOUNTS = %w[467564 16077 204730 492703 21291 499740 490782].freeze
+  include Concerns::CertificateContent
+  include Concerns::CertificateContent::Association
+  include Concerns::CertificateContent::Callbacks
+  include Concerns::CertificateContent::Validations
+  include Concerns::CertificateContent::Workflow
 
   serialize :domains
-
-  validates_presence_of :server_software_id, :signing_request, # :agreement, # need to test :agreement out on reprocess and api submits
-    :if => "certificate_order_has_csr && !ajax_check_csr && Settings.require_server_software_w_csr_submit"
-  validates_format_of :signing_request, :with=>SIGNING_REQUEST_REGEX,
-    :message=> 'contains invalid characters.',
-    :if => :certificate_order_has_csr_and_signing_request
-  validate :domains_validation, if: :validate_domains?
-  validate :csr_validation, if: "new? && csr"
 
   attr_accessor  :additional_domains #used to html format results to page
   attr_accessor  :ajax_check_csr
   attr_accessor  :rekey_certificate
 
-  @@cli_domain = "https://sws.sslpki.com"
+  @@cli_domain = 'https://sws.sslpki.com'
 
   preference  :reprocessing, default: false
   preference  :pending_issuance, default: false
@@ -156,24 +58,6 @@ class CertificateContent < ApplicationRecord
   CertificateNamesJob = Struct.new(:cc_id, :domains) do
     def perform
       CertificateContent.find_by_id(cc_id).certificate_names_from_domains
-    end
-  end
-
-  DcvSentNotifyJob = Struct.new(:cc_id, :host) do
-    def perform
-      cc = CertificateContent.find cc_id
-      co = cc.certificate_order
-      last_sent = unless co.certificate.is_ucc?
-        cc.csr.domain_control_validations.last_sent
-      else
-        cc.certificate_names.map{|cn| cn.last_sent_domain_control_validations.last}
-          .flatten.compact
-      end
-      unless last_sent.blank?
-        co.valid_recipients_list.each do |c|
-          OrderNotifier.dcv_sent(c, co, last_sent, host).deliver_now if host
-        end
-      end
     end
   end
 
@@ -202,124 +86,16 @@ class CertificateContent < ApplicationRecord
     end
   end
 
-  workflow do
-    state :new do
-      event :submit_csr, :transitions_to => :csr_submitted
-      event :provide_info, :transitions_to => :info_provided
-      event :cancel, :transitions_to => :canceled
-      event :issue, :transitions_to => :issued
-      event :reset, :transitions_to => :new
-      event :validate, :transitions_to => :validated
-      event :pend_validation, :transitions_to => :pending_validation
-    end
-
-    state :csr_submitted do
-      event :issue, :transitions_to => :issued
-      event :provide_info, :transitions_to => :info_provided
-      event :reprocess, :transitions_to => :reprocess_requested
-      event :cancel, :transitions_to => :canceled
-      event :reset, :transitions_to => :new
-      event :pend_issuance, :transitions_to => :pending_issuance
-    end
-
-    state :info_provided do
-      event :validate, :transitions_to => :validated
-      event :submit_csr, :transitions_to => :csr_submitted
-      event :issue, :transitions_to => :issued
-      event :provide_contacts, :transitions_to => :contacts_provided
-      event :cancel, :transitions_to => :canceled
-      event :reset, :transitions_to => :new
-      event :pend_issuance, :transitions_to => :pending_issuance
-      event :pend_validation, :transitions_to => :pending_validation do |options={}|
-        pre_validation(options)
-      end
-    end
-
-    state :contacts_provided do
-      event :validate, :transitions_to => :validated
-      event :provide_contacts, transitions_to: :contacts_provided
-      event :submit_csr, :transitions_to => :csr_submitted
-      event :issue, :transitions_to => :issued
-      event :pend_issuance, :transitions_to => :pending_issuance
-      event :pend_validation, :transitions_to => :pending_validation do |options={}|
-        pre_validation(options)
-      end
-      event :cancel, :transitions_to => :canceled
-      event :reset, :transitions_to => :new
-    end
-
-    state :pending_validation do
-      event :issue, :transitions_to => :issued
-      event :validate, :transitions_to => :validated do
-        self.preferred_reprocessing = false if self.preferred_reprocessing?
-      end
-      event :pend_issuance, :transitions_to => :pending_issuance
-      event :cancel, :transitions_to => :canceled
-      event :reset, :transitions_to => :new
-    end
-
-    state :validated do
-      event :pend_validation, :transitions_to => :pending_validation
-      event :pend_issuance, :transitions_to => :pending_issuance
-      event :issue, :transitions_to => :issued
-      event :cancel, :transitions_to => :canceled
-      event :reset, :transitions_to => :new
-      event :revoke, :transitions_to => :revoked
-    end
-
-    state :pending_issuance do
-      event :pend_validation, :transitions_to => :pending_validation
-      event :pend_issuance, :transitions_to => :pending_issuance
-      event :validate, :transitions_to => :validated
-      event :issue, :transitions_to => :issued
-      event :cancel, :transitions_to => :canceled
-      event :reset, :transitions_to => :new
-    end
-
-    state :issued do
-      event :reprocess, :transitions_to => :csr_submitted
-      event :pend_issuance, :transitions_to => :pending_issuance
-      event :validate, :transitions_to => :validated
-      event :cancel, :transitions_to => :canceled
-      event :revoke, :transitions_to => :revoked
-      event :issue, :transitions_to => :issued
-      event :reset, :transitions_to => :new
-    end
-
-    state :canceled
-
-    state :revoked do
-      event :revoke, :transitions_to => :revoked
-    end
-  end
-
-  after_initialize do
-    if new_record?
-      self.ajax_check_csr ||= false
-      self.signing_request ||= ""
-    end
-  end
-
   def add_ca(ssl_account)
     unless COMODO_SSL_ACCOUNTS.include?(ssl_account.id)
       self.ca = (self.certificate.cas.ssl_account_or_general_default(ssl_account)).last if ca.blank? and certificate
     end
   end
 
-  # issuance_type - nil, "dv_only"
-  OtherDcvsSatisyJob = Struct.new(:ssl_account,:new_certificate_names,:certificate_content,:issuance_type) do
-    def perform
-      new_certificate_names = [new_certificate_names] if new_certificate_names.is_a?(CertificateName)
-      ssl_account.other_dcvs_satisfy_domain(new_certificate_names,false)
-      certificate_content.certificate_order.apply_for_certificate if certificate_content.certificate.is_dv? and
-          issuance_type=="dv_only" and !certificate_content.issued?
-    end
-  end
-
   def certificate_names_from_domains(domains=nil)
-    is_single=certificate.is_single?
+    is_single = certificate&.is_single?
     csr_common_name=csr.try(:common_name)
-    unless (is_single or certificate.is_wildcard?) and certificate_names.count > 0
+    unless (is_single || certificate&.is_wildcard?) && certificate_names.count.positive?
       domains ||= all_domains
       domains = domains.each{|domain| is_single ? CertificateContent.non_wildcard_name(domain,true) :
                                           domain.downcase}.uniq
@@ -335,8 +111,7 @@ class CertificateContent < ApplicationRecord
         cns.each do |cn|
           cn.candidate_email_addresses # start the queued job running
         end
-        Delayed::Job.enqueue OtherDcvsSatisyJob.new(ssl_account,cns,self,"dv_only") if ssl_account &&
-            certificate.is_server?
+        Delayed::Job.enqueue OtherDcvsSatisyJob.new(ssl_account, cns, self, 'dv_only') if ssl_account && certificate&.is_server?
       end
     end
     # Auto adding domains in case of certificate order has been included into some groups.
@@ -554,7 +329,7 @@ class CertificateContent < ApplicationRecord
   end
 
   def dcv_suffix
-    ca_id ? "ssl.com" : "comodoca.com"
+    ca_id ? I18n.t('labels.ssl_ca') : I18n.t('labels.comodo_ca')
   end
 
   def manually_validate_cname
@@ -964,10 +739,9 @@ class CertificateContent < ApplicationRecord
       state=locked_registrant.state
       city=locked_registrant.city
       country=locked_registrant.country
-      postal_code=locked_registrant.postal_code
-      postal_address=locked_registrant.po_box
-      street_address=
-          [locked_registrant.address1,locked_registrant.address2,locked_registrant.address3].join(" ")
+      # postal_code=locked_registrant.postal_code
+      # postal_address=locked_registrant.po_box
+      # street_address= [locked_registrant.address1,locked_registrant.address2,locked_registrant.address3].join(" ")
       dn << "O=#{org}" if !org.blank? and (!city.blank? or !state.blank?)
       dn << "OU=#{ou}" unless ou.blank?
       dn << "OU=#{locked_registrant.special_fields["entity_code"]}" if certificate.is_naesb? and
@@ -978,18 +752,16 @@ class CertificateContent < ApplicationRecord
       # dn << "postalCode=#{postal_code}" unless postal_code.blank?
       # dn << "postalAddress=#{postal_address}" unless postal_address.blank?
       # dn << "streetAddress=#{street_address}" unless street_address.blank?
-      if cert.is_ev? or cert.is_evcs?
+      if cert.is_ev? || cert.is_evcs?
         dn << "serialNumber=#{locked_registrant.company_number}"
         dn << "2.5.4.15=#{locked_registrant.business_category}"
-        dn << "1.3.6.1.4.1.311.60.2.1.1=#{locked_registrant.incorporation_city}" unless
-            locked_registrant.incorporation_city.blank?
-        dn << "1.3.6.1.4.1.311.60.2.1.2=#{locked_registrant.incorporation_state}" unless
-            locked_registrant.incorporation_state.blank?
+        dn << "1.3.6.1.4.1.311.60.2.1.1=#{locked_registrant.incorporation_city}" unless locked_registrant.incorporation_city.blank?
+        dn << "1.3.6.1.4.1.311.60.2.1.2=#{locked_registrant.incorporation_state}" unless locked_registrant.incorporation_state.blank?
         dn << "1.3.6.1.4.1.311.60.2.1.3=#{locked_registrant.incorporation_country}"
       end
     end
     dn << options[:custom_fields] if options[:custom_fields]
-    dn.map{|d|d.gsub(/\\/,'\\\\').gsub(',','\,')}.join(",")
+    dn.map{ |d| d.gsub(/\\/, '\\\\').gsub(',', '\,') }.join(',')
   end
 
   def cached_csr_public_key_sha1
@@ -1006,19 +778,18 @@ class CertificateContent < ApplicationRecord
 
   def csr_certificate_name
     begin
-      if csr and certificate_names.find_by_name(csr.common_name).blank?
+      if csr && certificate_names.find_by_name(csr.common_name).blank?
         certificate_names.update_all(is_common_name: false)
         certificate_names.create(name: csr.common_name, is_common_name: true)
       end
-    rescue
+    rescue StandardError => e
+      logger.error e.message
     end
   end
 
   def preserve_certificate_contacts
     cc = certificate_order.certificate_contents.where.not(id: id).last
-    unless cc.nil?
-      certificate_contacts.update_all(contactable_id: cc.id)
-    end
+    certificate_contacts.update_all(contactable_id: cc.id) unless cc.nil?
   end
 
   def sslcom_approval_ids

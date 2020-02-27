@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: product_variant_items
@@ -29,15 +31,10 @@ class ProductVariantItem < ApplicationRecord
   has_one :sub_order_item
   acts_as_publishable :live, :draft, :discontinue_sell
 
-  #validates_uniqueness_of :display_order, :scope => :product_variant_group_id
   validates_presence_of :product_variant_group
 
   def certificate
-    @pvi_certificate ||=
-      product_variant_group.variantable if
-          product_variant_group &&
-              product_variant_group.variantable &&
-              product_variant_group.variantable.is_a?(Certificate)
+    @pvi_certificate ||= product_variant_group.variantable if product_variant_group&.variantable&.is_a?(Certificate)
   end
   memoize :certificate
 

@@ -48,6 +48,7 @@
 #  index_orders_on_billing_profile_id                       (billing_profile_id)
 #  index_orders_on_created_at                               (created_at)
 #  index_orders_on_deducted_from_id                         (deducted_from_id)
+#  index_orders_on_ext_affiliate_id                         (ext_affiliate_id)
 #  index_orders_on_id_and_state                             (id,state)
 #  index_orders_on_id_and_type                              (id,type)
 #  index_orders_on_invoice_id                               (invoice_id)
@@ -1293,7 +1294,7 @@ class Order < ApplicationRecord
       certificate_order.sub_order_items << so
     end
     certificate_order.amount = certificate_order.sub_order_items.map(&:amount).sum
-    certificate_order.certificate_contents[0].certificate_order    = certificate_order
+    certificate_order&.certificate_contents[0]&.certificate_order = certificate_order
     certificate_order
   end
 

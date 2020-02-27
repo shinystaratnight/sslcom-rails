@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: ca_api_requests
@@ -22,6 +24,7 @@
 # Indexes
 #
 #  index_ca_api_requests_on_api_requestable                          (api_requestable_id,api_requestable_type)
+#  index_ca_api_requests_on_approval_id                              (approval_id)
 #  index_ca_api_requests_on_id_and_type                              (id,type)
 #  index_ca_api_requests_on_type_and_api_requestable                 (id,api_requestable_id,api_requestable_type,type) UNIQUE
 #  index_ca_api_requests_on_type_and_api_requestable_and_created_at  (id,api_requestable_id,api_requestable_type,type,created_at)
@@ -38,7 +41,7 @@ class ApiAcmeRetrieveHmac < ApiAcmeRequest
     ac = api_credential
 
     if ac.blank?
-      errors[:credential] << "hmac_key not found or wrong hmac_key"
+      errors[:credential] << 'hmac_key not found or wrong hmac_key'
       false
     end
   end
