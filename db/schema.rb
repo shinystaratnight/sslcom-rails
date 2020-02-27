@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200220181655) do
+ActiveRecord::Schema.define(version: 20200228221909) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        :limit=>255
@@ -54,6 +54,19 @@ ActiveRecord::Schema.define(version: 20200220181655) do
     t.string   "type_organization",   :limit=>255
     t.datetime "created_at"
     t.datetime "updated_at"
+  end
+
+  create_table "ahoy_messages", force: :cascade do |t|
+    t.integer  "user_id",    :limit=>4
+    t.string   "user_type",  :limit=>255
+    t.text     "to",         :limit=>65535
+    t.string   "mailer",     :limit=>255
+    t.text     "subject",    :limit=>65535
+    t.datetime "sent_at"
+    t.string   "token",      :limit=>255, :index=>{:name=>"index_ahoy_messages_on_token", :using=>:btree}
+    t.datetime "opened_at"
+    t.datetime "clicked_at"
+    t.text     "content",    :limit=>65535
   end
 
   create_table "api_credentials", force: :cascade do |t|
@@ -1319,15 +1332,14 @@ ActiveRecord::Schema.define(version: 20200220181655) do
   end
 
   create_table "sent_reminders", force: :cascade do |t|
-    t.integer  "signed_certificate_id", :limit=>4, :index=>{:name=>"index_sent_reminders_on_signed_certificate_id", :using=>:btree}
-    t.text     "body",                  :limit=>65535
-    t.string   "recipients",            :limit=>255, :index=>{:name=>"index_contacts_on_recipients_subject_trigger_value_expires_at", :with=>["subject", "trigger_value", "expires_at"], :using=>:btree}
-    t.string   "subject",               :limit=>255
-    t.string   "trigger_value",         :limit=>255
+    t.text     "body",          :limit=>65535
+    t.string   "recipients",    :limit=>255, :index=>{:name=>"index_contacts_on_recipients_subject_trigger_value_expires_at", :with=>["subject", "trigger_value", "expires_at"], :using=>:btree}
+    t.string   "subject",       :limit=>255
+    t.string   "trigger_value", :limit=>255
     t.datetime "expires_at"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "reminder_type",         :limit=>255
+    t.string   "reminder_type", :limit=>255
   end
 
   create_table "server_softwares", force: :cascade do |t|

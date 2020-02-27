@@ -5,11 +5,11 @@
 # Table name: reseller_tiers
 #
 #  id           :integer          not null, primary key
-#  label        :string(255)
-#  description  :string(255)
 #  amount       :integer
-#  roles        :string(255)
+#  description  :string(255)
+#  label        :string(255)
 #  published_as :string(255)
+#  roles        :string(255)
 #  created_at   :datetime
 #  updated_at   :datetime
 #
