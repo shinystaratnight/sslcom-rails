@@ -101,6 +101,9 @@ describe CertificateOrdersController do
           "id": basicssl_cert.ref.to_s
         }
 
+        certificate = build_stubbed(:certificate, :basicssl)
+        CertificateOrder.any_instance.stubs(:certificate).returns(certificate)
+
         put :update_csr, params
         assert_template :submit_csr
         assert_select 'div.errorExplanation', flash[:error]

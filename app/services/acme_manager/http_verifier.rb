@@ -13,6 +13,8 @@ module AcmeManager
     def call
       @parts = challenge.split('.')
       verified
+    rescue OpenURI::HTTPError => _e
+      false
     end
 
     private
@@ -24,7 +26,7 @@ module AcmeManager
     end
 
     def challenge_path
-      [challenge_url, '.well-known', 'acme-challenge', thumbprint].join('/')
+      ['http:/', challenge_url, '.well-known', 'acme-challenge', thumbprint].join('/')
     end
 
     def verified
