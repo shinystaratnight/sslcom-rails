@@ -4,7 +4,7 @@ require 'domain_constraint'
 
 SslCom::Application.routes.draw do
   mount Rswag::Ui::Engine => '/api'
-  mount Delayed::Web::Engine, at: '/jobs'
+  mount Delayed::Web::Engine, at: '/jobs', constraints: AdminConstraint.new
   mount LetterOpenerWeb::Engine, at: '/letter_opener' if Rails.env.development?
 
   resources :apidocs, only: [:index]
@@ -608,8 +608,4 @@ SslCom::Application.routes.draw do
   # match "*path" => redirect("/?utm_source=any&utm_medium=any&utm_campaign=404_error")
 
   get '/certificate-download' => 'api/v1/api_certificate_requests#download_v1_4'
-end
-
-Delayed::Web::Engine.middleware.use Rack::Auth::Basic do |username, password|
-  username == '!as09bv#f9' && password == 'a$gdP12@_'
 end
