@@ -37,6 +37,8 @@ plugins:
         enabled: false
       Rubocop/Style/RedundantFreeze:
         enabled: false
+      Rubocop/Style/BracesAroundHashParameters:
+        enabled: false
   sass-lint:
     enabled: true
     checks:

@@ -8,22 +8,31 @@ module Concerns
       def dcv_verify(protocol = nil)
         attempts = 0
         status = while attempts < 3
-                   response = case protocol ||= domain_control_validation&.dcv_method
-                              when /email/
-                                break false
-                              when /acme_http/i
-                                AcmeManager::HttpVerifier.new(api_credential.acme_acct_pub_key_thumbprint, acme_token, non_wildcard_name(true)).call
-                              when /acme_dns_txt/i
-                                AcmeManager::DnsTxtVerifier.new(api_credential.acme_acct_pub_key_thumbprint, non_wildcard_name(true)).call
-                              else
-                                self.class.dcv_verify(protocol, verification_options) if csr.present?
-                              end
+                   response = attempt_dcv(protocol)
                    break response if response
 
                    attempts += 1
                    sleep WAIT_PERIOD
                  end
-        status || false
+        status || fail_dcv
+      end
+
+      def attempt_dcv(protocol)
+        case protocol ||= domain_control_validation&.dcv_method
+        when /email/
+          false
+        when /acme_http/i
+          AcmeManager::HttpVerifier.new(api_credential.acme_acct_pub_key_thumbprint, acme_token, non_wildcard_name(true)).call
+        when /acme_dns_txt/i
+          AcmeManager::DnsTxtVerifier.new(api_credential.acme_acct_pub_key_thumbprint, non_wildcard_name(true)).call
+        else
+          self.class.dcv_verify(protocol, verification_options) if csr.present?
+        end
+      end
+
+      def fail_dcv
+        domain_control_validations&.last_method&.update(workflow_state: 'failed')
+        false
       end
 
       def verification_options(prepend = '')

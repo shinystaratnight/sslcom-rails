@@ -24,7 +24,7 @@ class CertificateNameDecorator < Draper::Decorator
   end
 
   def status
-    case work_flow_state
+    case workflow_state
     when 'satisfied'
       'valid'
     when 'failed'
@@ -34,7 +34,7 @@ class CertificateNameDecorator < Draper::Decorator
     end
   end
 
-  def work_flow_state
-    object.validated_domain_control_validations.work_flow_state
+  def workflow_state
+    object.validated_domain_control_validations.last.workflow_state
   end
 end

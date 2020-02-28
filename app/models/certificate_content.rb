@@ -119,8 +119,7 @@ class CertificateContent < ApplicationRecord
   end
 
   def all_domains_validated?
-    !certificate_names.empty? and
-        (certificate_names.pluck(:id) - certificate_names.validated.pluck(:id)).empty?
+    !certificate_names.empty? && (certificate_names.pluck(:id) - certificate_names.validated.pluck(:id)).empty?
   end
 
   # TODO all methods check http, https, and cname

@@ -1,34 +1,28 @@
-# frozen_string_literal: true
-
 class ApiCredentialsController < ApplicationController
-  before_filter :require_user
+  before_filter    :require_user
 
   def index
-    p = { page: params[:page], per_page: 10 }
+    p = {:page => params[:page],per_page: 10}
     set_apis
 
     if params[:search]
-      search = params[:search].strip.split(' ')
+      search = params[:search].strip.split(" ")
       role = nil
-      search.delete_if do |s|
-        s =~ /role\:(.+)/
-        role ||= Regexp.last_match(1)
-        Regexp.last_match(1)
-      end
-      search = search.join(' ')
+      search.delete_if {|s|s =~ /role\:(.+)/; role ||= $1; $1}
+      search = search.join(" ")
       @acs = @acs.with_role(role) if role
       @acs = @acs.search(search) unless search.blank?
     end
-    @acs = @acs.order('created_at desc').paginate(p).decorate
+    @acs = @acs.order("created_at desc").paginate(p).decorate
 
     respond_to do |format|
-      format.html { render action: :index }
-      format.xml  { render xml: @acs }
+      format.html { render :action => :index }
+      format.xml  { render :xml => @acs }
     end
   end
 
   def new
-    @ac = ApiCredential.new
+    @ac=ApiCredential.new
   end
 
   def create
@@ -43,7 +37,9 @@ class ApiCredentialsController < ApplicationController
 
   def edit
     @ac = find_api_credential(params[:id])
-    @user_accounts_roles = User.get_user_accounts_roles(@user) if current_user.is_system_admins?
+    if current_user.is_system_admins?
+      @user_accounts_roles = User.get_user_accounts_roles(@user)
+    end
     @role_ids = @ac.role_ids
   end
 
@@ -63,8 +59,8 @@ class ApiCredentialsController < ApplicationController
     @ac.secret_key = new_ac.secret_key
     @ac.save
     respond_to do |format|
-      format.js { render json: new_ac.to_json }
-    end
+      format.js {render json: new_ac.to_json}
+    end  
   end
 
   def remove
@@ -74,13 +70,13 @@ class ApiCredentialsController < ApplicationController
   end
 
   private
-
+  
   def set_apis
-    @acs = if current_user.is_system_admins?
-             @ssl_account.try(:api_credentials) || ApiCredential.unscoped
-           else
-             current_user.manageable_acs
-           end
+    if current_user.is_system_admins?
+      @acs = @ssl_account.try(:api_credentials) || ApiCredential.unscoped
+    else
+      @acs = current_user.manageable_acs
+    end
   end
 
   def find_api_credential(id)

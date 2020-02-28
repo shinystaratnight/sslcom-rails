@@ -85,6 +85,9 @@ describe CertificateName do
 
   context 'domain control validation' do
     let!(:cname) { build_stubbed(:certificate_name) }
+    before :all do
+      cname.stubs(:fail_dcv).returns(false)
+    end
 
     describe 'https domain control validation' do
       it 'fails if ca_tag does not match' do
