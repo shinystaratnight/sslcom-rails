@@ -20,7 +20,7 @@ class CertificateNameDecorator < Draper::Decorator
   end
 
   def validation_method
-    object.validation_source.presence || ''
+    object.validation_source.presence || 'NONE'
   end
 
   def status

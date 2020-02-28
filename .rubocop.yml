@@ -49,7 +49,14 @@ Style/DoubleNegation:
 Style/NestedTernaryOperator:
   Exclude:
     - 'app/controllers/application_controller.rb'
-
+Style/HashTransformValues:
+  Enabled: true
+Style/HashTransformKeys:
+  Enabled: true
+Style/HashEachMethods:
+  Enabled: true
+Style/NilComparison:
+  Enabled: false
 Security/Eval:
   Exclude:
     - app/models/notification_group.rb

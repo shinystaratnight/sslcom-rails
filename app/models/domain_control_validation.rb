@@ -101,6 +101,8 @@ class DomainControlValidation < ApplicationRecord
         save
       end
     end
+
+    state :failed
   end
 
   def self.generate_identifier
@@ -251,11 +253,11 @@ class DomainControlValidation < ApplicationRecord
       subdomains.shift if subdomains[0] == '*' # remove wildcard
       [].tap do |s|
         0.upto(subdomains.count) do |i|
-          if i.zero?
-            s << d.domain
-          else
-            s << (subdomains.slice(-i, subdomains.count) << d.domain).join('.')
-          end
+          s << if i.zero?
+                 d.domain
+               else
+                 (subdomains.slice(-i, subdomains.count) << d.domain).join('.')
+               end
         end
       end.map do |e|
         AUTHORITY_EMAIL_ADDRESSES.map do |ae|

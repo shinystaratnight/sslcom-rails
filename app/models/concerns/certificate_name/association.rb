@@ -28,7 +28,7 @@ module Concerns
           end
 
           def last_method
-            where{ dcv_method >> %w[http https email cname] }.last
+            where{ dcv_method >> %w[http https email cname acme_http acme_dns_txt] }.last
           end
 
           def validated
