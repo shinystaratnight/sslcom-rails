@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-source 'http://rubygems.org'
+source 'https://rubygems.org'
 
 gem 'activemerchant'
 gem 'authlogic'
@@ -113,7 +113,6 @@ group :development do
   gem 'lol_dba'
   gem 'memory_profiler'
   gem 'meta_request'
-  gem 'solargraph', require: false
   gem 'spring'
   gem 'spring-commands-testunit'
   gem 'web-console', '~> 2.0'

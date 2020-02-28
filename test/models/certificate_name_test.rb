@@ -119,13 +119,7 @@ describe CertificateName do
       end
 
       it 'fails if no record matching cname_destination is found' do
-        dns = mock
-        dns.expects(:getresources)
-           .with(cname.cname_origin(true), Resolv::DNS::Resource::IN::CNAME)
-           .once
-        ::Resolv::DNS.stub :open, [], dns do
-          assert_false(cname.dcv_verify('cname'))
-        end
+        assert_false(cname.dcv_verify('cname'))
       end
     end
 
@@ -221,7 +215,7 @@ describe CertificateName do
 
     describe 'email domain control validation' do
       it 'fails if when protocol is email' do
-        assert_nil(cname.dcv_verify('email'))
+        assert_false(cname.dcv_verify('email'))
       end
     end
   end

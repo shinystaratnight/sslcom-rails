@@ -9,7 +9,7 @@ plugins:
       mass_assign_call:
         enabled: false
   bundler-audit:
-    enabled: false # we are using dependabot
+    enabled: true
   csslint:
     enabled: true
   coffeelint:

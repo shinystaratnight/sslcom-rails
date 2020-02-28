@@ -16,7 +16,7 @@ class CertificateNameDecorator < Draper::Decorator
   end
 
   def validated?
-    object.domain_control_validations.exists?(workflow_state: 'satisfied')
+    !object.validated_domain_control_validations.empty?
   end
 
   def validation_method
@@ -24,6 +24,17 @@ class CertificateNameDecorator < Draper::Decorator
   end
 
   def status
-    validated? ? 'valid' : 'processing'
+    case work_flow_state
+    when 'satisfied'
+      'valid'
+    when 'failed'
+      'invalid'
+    else
+      'processing'
+    end
+  end
+
+  def work_flow_state
+    object.validated_domain_control_validations.work_flow_state
   end
 end
