@@ -766,8 +766,8 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
 
   def is_processing?
     co=@certificate_order || find_certificate_order
-    co.is_a?(CertificateOrder) && (co.certificate_content.try("contacts_provided?") ||
-        co.certificate_content.try("pending_validation?")) ? true : false
+    co.is_a?(CertificateOrder) && %w(contacts_provided pending_validation new).
+        include?(co.certificate_content&.workflow_state) ? true : false
   end
 
   def domains

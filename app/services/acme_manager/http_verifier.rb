@@ -13,7 +13,7 @@ module AcmeManager
     def call
       @parts = challenge.split('.')
       verified
-    rescue OpenURI::HTTPError => _e
+    rescue Timeout::Error, OpenURI::HTTPError => _e
       false
     end
 
