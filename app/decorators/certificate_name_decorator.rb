@@ -35,6 +35,6 @@ class CertificateNameDecorator < Draper::Decorator
   end
 
   def workflow_state
-    object.validated_domain_control_validations.last.workflow_state
+    object.acme_domain_control_validations.last.workflow_state
   end
 end

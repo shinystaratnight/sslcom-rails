@@ -64,7 +64,7 @@ module Api
       end
 
       def certificate_name_for_domain
-        certificate_names.find_by('name LIKE ?', "%#{params[:domain]}%") if params[:domain]
+        certificate_names.order(:created_at).where('name LIKE ?', "%#{params[:domain]}%").last if params[:domain]
       end
 
       def record_parameters
