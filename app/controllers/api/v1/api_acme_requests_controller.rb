@@ -40,6 +40,7 @@ module Api
       end
 
       def validations_info
+        persist
         data = certificate_names.empty? ? certificate_names : certificate_names.decorate
         render json: data, each_serializer: CertificateNameSerializer, fields: %i[domain http_token dns_token validated], status: :ok
       end

@@ -34,7 +34,7 @@ module Rendering
   end
 
   def render_unathorized
-    render json: { error: 'Invalid credentials' }, status: :unauthorized
+    render json: { error: I18n.t('error.invalid_api_credentials') }, status: :unauthorized
   end
 
   def render_500_error(err)
