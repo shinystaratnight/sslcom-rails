@@ -311,28 +311,27 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
   end
 
   def update_v1_4
-    set_template "update_v1_4"
+    set_template 'update_v1_4'
 
     if @result.csr_obj && !@result.csr_obj.valid?
       # we do this sloppy maneuver because the rabl template only reports errors
       @result = @result.csr_obj
     else
-      if @result.save #save the api request
+      if @result.save # save the api request
         if @acr = @result.update_certificate_order
           @csr = @acr.csr
           # successfully charged
           if @acr.is_a?(CertificateOrder) && @acr.errors.empty?
             @acr.unchain_comodo if @acr.signed_certificate_duration_delta > 1
-            if @acr.certificate_content.csr && @result.debug=="true"
+            if @acr.certificate_content.csr && @result.debug == 'true'
               ccr = @acr.certificate_content.csr.ca_certificate_requests.first
-              @result.api_request=ccr.parameters
-              @result.api_response=ccr.response
+              @result.api_request = ccr.parameters
+              @result.api_response = ccr.response
             end
 
             #Send validation email unless ca_id is nil
             unless @acr.certificate_content.ca_id.nil?
-              cnames = @acr.certificate_content.certificate_names.includes(:domain_control_validations,
-                                                                           :certificate_content)
+              cnames = @acr.certificate_content.certificate_names.includes(:domain_control_validations, :certificate_content)
               email_for_identifier = ''
               identifier = ''
               email_list = []
@@ -347,16 +346,15 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
                 dcv = cn.domain_control_validations.last
                 if dcv && !dcv.identifier_found # TODO DRY and apply with app/controllers/validations_controller.rb:305
                   if dcv.dcv_method == 'email'
-                    if DomainControlValidation.approved_email_address? CertificateName.candidate_email_addresses(
-                        cn.non_wildcard_name), dcv.email_address
+                    if DomainControlValidation.approved_email_address? CertificateName.candidate_email_addresses(cn.non_wildcard_name), dcv.email_address
                       if dcv.email_address != email_for_identifier
-                        if domain_list.length>0
+                        if domain_list.length > 0
                           domain_ary << domain_list
                           email_list << email_for_identifier
                           identifier_list << identifier
                           domain_list = []
                         end
-                        identifier = (SecureRandom.hex(8)+Time.now.to_i.to_s(32))[0..19]
+                        identifier = (SecureRandom.hex(8) + Time.now.to_i.to_s(32))[0..19]
                         email_for_identifier = dcv.email_address
                       end
 
@@ -366,13 +364,19 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
                     end
                   else
                     if cn.dcv_verify(dcv.dcv_method)
+                      if dcv.blank?
+                        cn.reload!
+                        dcv = cn.domain_control_validations.last
+                      end
                       dcv.satisfy! unless dcv.satisfied?
                     end
                   end
                 end
               end
 
-              unless identifier == ''
+              if identifier.blank?
+                @acr.apply_for_certificate
+              else
                 ssl_slug = @result.api_credential.ssl_account.ssl_slug || @result.api_credential.ssl_account.acct_number
 
                 domain_ary << domain_list
@@ -382,15 +386,13 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
                 email_list.each_with_index do |value, key|
                   OrderNotifier.dcv_email_send(value, identifier_list[key], domain_ary[key], nil, ssl_slug).deliver
                 end
-              else
-                @acr.apply_for_certificate
               end
             end
 
             set_result_parameters(@result, @acr)
-            @result.debug=(@result.parameters_to_hash["debug"]=="true") # && @acr.admin_submitted = true
+            @result.debug = (@result.parameters_to_hash['debug'] == 'true') # && @acr.admin_submitted = true
           else
-            @result = @acr #so that rabl can report errors
+            @result = @acr # so that rabl can report errors
           end
         end
       else
@@ -398,7 +400,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
       end
     end
     render_200_status
-  rescue => e
+  rescue StandardError => e
     render_500_error e
   end
 

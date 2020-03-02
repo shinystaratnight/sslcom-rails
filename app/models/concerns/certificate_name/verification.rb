@@ -22,12 +22,22 @@ module Concerns
         when /email/
           false
         when /acme_http/i
+          domain_control_validations.find_or_create_by(dcv_method: 'acme_http', candidate_addresses: name) unless acme_http_dcv_present?
           AcmeManager::HttpVerifier.new(api_credential.acme_acct_pub_key_thumbprint, acme_token, non_wildcard_name(true)).call
         when /acme_dns_txt/i
+          domain_control_validations.find_or_create_by(dcv_method: 'acme_dns_txt', candidate_addresses: name) unless acme_dns_text_dcv_present?
           AcmeManager::DnsTxtVerifier.new(api_credential.acme_acct_pub_key_thumbprint, non_wildcard_name(true)).call
         else
           self.class.dcv_verify(protocol, verification_options) if csr.present?
         end
+      end
+
+      def acme_http_dcv_present?
+        domain_control_validations.where.not(workflow_state: 'failed').where(dcv_method: 'acme_http').exists?
+      end
+
+      def acme_dns_text_dcv_present?
+        domain_control_validations.where.not(workflow_state: 'failed').where(dcv_method: 'acme_dns_txt').exists?
       end
 
       def fail_dcv
