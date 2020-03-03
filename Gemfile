@@ -39,7 +39,7 @@ gem 'simpleidn'
 gem 'uuidtools'
 gem 'whenever', require: false
 gem 'actionpack-action_caching', '~> 1.1', '>= 1.1.1'
-gem 'airbrake', '~> 9.5' # https://airbrake.io/docs/ruby/upgrading-your-notifier/
+gem 'airbrake' # https://airbrake.io/docs/ruby/upgrading-your-notifier/
 gem 'api-pagination'
 gem 'attr_encrypted', '>= 3.0.3'
 gem 'cancan'
