@@ -120,7 +120,6 @@ describe NotificationGroupsManager do
     before(:each) do
       @notification_group = create(:notification_group)
       # Developer note: A stray -30 value is being generated. Must be destroyed before tests execute.
-      Preference.destroy_all
       ['-15', '0', '15', '30', '60'].each do |reminder_value|
         create(:preference, owner_id: @notification_group.id, value: reminder_value)
       end

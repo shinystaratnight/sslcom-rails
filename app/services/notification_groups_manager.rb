@@ -51,7 +51,7 @@ class NotificationGroupsManager
     initialize_database(db_name)
 
     NotificationGroup.includes(:ssl_account, :scanned_certificates, :notification_groups_contacts).find_each do |ng|
-      reminders = Preference.where(owner_id: ng.id).pluck(:value).sort.map(&:to_i)
+      reminders = Preference.where("owner_id = ? AND group_type = ?", ng.id, "ReminderTrigger").pluck(:value).sort.map(&:to_i)
       ssl_account = ng.ssl_account.acct_number || ng.ssl_account.ssl_slug
       contacts = ng.notification_groups_contacts
       scanned_certificates = ng.scanned_certificates
