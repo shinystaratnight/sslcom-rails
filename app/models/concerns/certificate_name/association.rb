@@ -17,11 +17,14 @@ module Concerns
         has_many    :ca_dcv_resend_requests, as: :api_requestable, dependent: :destroy
         has_many    :validated_domain_control_validations, -> { where(workflow_state: 'satisfied') }, class_name: 'DomainControlValidation'
         has_many    :last_sent_domain_control_validations, -> { where{ email_address !~ 'null' } }, class_name: 'DomainControlValidation'
-        has_many    :acme_domain_control_validations, -> { unscoped.order(:created_at).where{ dcv_method >> %w[acme_http acme_dns_txt] } }, class_name: 'DomainControlValidation'
         has_one :domain_control_validation, -> { order 'created_at' }, class_name: 'DomainControlValidation', unscoped: true
         has_many :domain_control_validations, dependent: :destroy do
           def last_sent
             where{ email_address !~ 'null' }.last
+          end
+
+          def acme
+            where('dcv_method LIKE ? ', "%acme%")
           end
 
           def last_emailed

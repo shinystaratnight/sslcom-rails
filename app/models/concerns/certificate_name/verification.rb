@@ -17,15 +17,18 @@ module Concerns
         status || fail_dcv
       end
 
+      def dcv_verify_async(protocol = nil)
+        dcv_verify(protocol)
+      end
+      handle_asynchronously :dcv_verify_async
+
       def attempt_dcv(protocol)
         case protocol ||= domain_control_validation&.dcv_method
         when /email/
           false
         when /acme_http/i
-          domain_control_validations.find_or_create_by(dcv_method: 'acme_http', candidate_addresses: name) unless acme_http_dcv_present?
           AcmeManager::HttpVerifier.new(api_credential.acme_acct_pub_key_thumbprint, acme_token, non_wildcard_name(true)).call
         when /acme_dns_txt/i
-          domain_control_validations.find_or_create_by(dcv_method: 'acme_dns_txt', candidate_addresses: name) unless acme_dns_text_dcv_present?
           AcmeManager::DnsTxtVerifier.new(api_credential.acme_acct_pub_key_thumbprint, non_wildcard_name(true)).call
         else
           self.class.dcv_verify(protocol, verification_options) if csr.present?
@@ -63,7 +66,7 @@ module Concerns
 
         def self.dcv_verify(protocol, options)
           @options = options
-          Timeout.timeout(Surl::TIMEOUT_DURATION) do
+          Timeout.timeout(Surl::TIMEOUT_DURATION + (WAIT_PERIOD * 3)) do
             verify(protocol)
           rescue StandardError => _e
             return false

@@ -70,15 +70,17 @@ class DomainControlValidation < ApplicationRecord
       event :send_dcv, transitions_to: :sent_dcv
       event :hashing, transitions_to: :hashed
       event :satisfy, transitions_to: :satisfied
+      event :fail, transitions_to: :failed
     end
 
     state :hashed do
       event :satisfy, transitions_to: :satisfied
+      event :fail, transitions_to: :failed
     end
 
     state :sent_dcv do
       event :satisfy, transitions_to: :satisfied
-
+      event :fail, transitions_to: :failed
       on_entry do
         update_attribute :sent_at, DateTime.now
       end
@@ -93,6 +95,8 @@ class DomainControlValidation < ApplicationRecord
             2
           when /http/
             6
+          when /acme_dns_txt/
+            7
           when /cname/
             7
           end
@@ -130,6 +134,16 @@ class DomainControlValidation < ApplicationRecord
     prepend = ''
     self.identifier, self.address_to_find_identifier = certificate_name.blank? ? [false, false] :
     case dcv_method
+    when /acme_http/
+      [
+        [certificate_name.acme_token, thumbprint].join('.'),
+        [certificate_name.non_wildcard_name(true), '.well-known', 'acme-challenge', thumbprint].join('/')
+      ]
+    when /acme_dns_txt/
+      [
+        [certificate_name.acme_token, thumbprint].join('.'),
+        ['_acme-challenge', certificate_name.non_wildcard_name(true)].join('/')
+      ]
     when /https/
       ["#{certificate_name.csr.sha2_hash}\n#{certificate_name.ca_tag}#{"\n#{certificate_name.csr.unique_value}" unless certificate_name.csr.unique_value.blank?}", certificate_name.dcv_url(true, prepend, true)]
     when /http/
@@ -137,6 +151,10 @@ class DomainControlValidation < ApplicationRecord
     when /cname/
       [certificate_name.cname_destination, certificate_name.cname_origin(true)]
     end
+  end
+
+  def thumbprint
+    @thumbprint ||= certificate_name.ssl_account.api_credential.acme_acct_pub_key_thumbprint
   end
 
   # the 24 hour limit no longer applies, but will keep this in case we need it again

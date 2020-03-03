@@ -312,8 +312,12 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
 
   def update_v1_4
     set_template 'update_v1_4'
-
-    if @result.csr_obj && !@result.csr_obj.valid?
+    if dcv_param.present?
+      unless %w[acme_http acme_dns_txt].include? dcv_param
+        errors = { errors: [parameters: "invalid dcv_method: #{dcv_param}"] }
+        render_errors(errors, :unprocessable_entity) && return
+      end
+    elsif @result.csr_obj && !@result.csr_obj.valid?
       # we do this sloppy maneuver because the rabl template only reports errors
       @result = @result.csr_obj
     else
@@ -329,7 +333,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
               @result.api_response = ccr.response
             end
 
-            #Send validation email unless ca_id is nil
+            # Send validation email unless ca_id is nil
             unless @acr.certificate_content.ca_id.nil?
               cnames = @acr.certificate_content.certificate_names.includes(:domain_control_validations, :certificate_content)
               email_for_identifier = ''
@@ -344,6 +348,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
 
               cnames.each do |cn|
                 dcv = cn.domain_control_validations.last
+                dcv ||= cn.domain_control_validations.create(dcv_method: dcv_param, candidate_addresses: cn.name) if dcv_param =~ /^acme/i
                 if dcv && !dcv.identifier_found # TODO DRY and apply with app/controllers/validations_controller.rb:305
                   if dcv.dcv_method == 'email'
                     if DomainControlValidation.approved_email_address? CertificateName.candidate_email_addresses(cn.non_wildcard_name), dcv.email_address
@@ -363,11 +368,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
                       dcv.update_attribute(:identifier, identifier)
                     end
                   else
-                    if cn.dcv_verify(dcv.dcv_method)
-                      if dcv.blank?
-                        cn.reload!
-                        dcv = cn.domain_control_validations.last
-                      end
+                    if cn.dcv_verify_async(dcv.dcv_method)
                       dcv.satisfy! unless dcv.satisfied?
                     end
                   end
@@ -375,7 +376,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
               end
 
               if identifier.blank?
-                @acr.apply_for_certificate
+                @acr.apply_for_certificate unless dcv_param =~ /^acme/
               else
                 ssl_slug = @result.api_credential.ssl_account.ssl_slug || @result.api_credential.ssl_account.acct_number
 
@@ -1584,13 +1585,13 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
     file_name = path[(path.rindex('/') + 1)..path.length]
     param_style = file_name[0..(file_name.rindex('.') - 1)]
 
-    if vh.document_file_name.force_encoding('UTF-8').include?(file_name)
-      style = vh.document.default_style
-    else
-      style = param_style.to_sym
-    end
+    style = if vh.document_file_name.force_encoding('UTF-8').include?(file_name)
+              vh.document.default_style
+            else
+              param_style.to_sym
+            end
 
-    return vh.authenticated_s3_get_url :style=> style
+    vh.authenticated_s3_get_url style: style
   end
 
   def set_template(filename)
@@ -1599,5 +1600,9 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
 
   def ssl_ca_label
     I18n.t('labels.ssl_ca')
+  end
+
+  def dcv_param
+    params[:domains].first[1]['dcv'].presence || ''
   end
 end
