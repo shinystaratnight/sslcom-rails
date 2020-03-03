@@ -124,7 +124,7 @@ class SslcomCaApi
 
   # revoke json parameter string for REST call to EJBCA
   def self.revoke_cert_json(signed_certificate, reason)
-    {issuer_dn: signed_certificate.openssl_x509.issuer.to_s.split("/").reject(&:empty?).join(","),
+    {issuer_dn: signed_certificate.openssl_x509.issuer.to_utf8.split("/").reject(&:empty?).join(","),
      certificate_serial_number: signed_certificate.openssl_x509.serial.to_s(16).downcase,
      revocation_reason: reason}.to_json
   end
