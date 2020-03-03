@@ -343,7 +343,7 @@ class DomainsController < ApplicationController
             failed_domains << cn.name
           end
         end
-
+        dcv.save if dcv.new_record?
         @domain_details[cn.name] = {}
         @domain_details[cn.name]['dcv_method'] = dcv ?
                                                      (dcv.email_address ?
