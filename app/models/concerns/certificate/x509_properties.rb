@@ -11,7 +11,7 @@ module Concerns
       end
 
       def issuer_dn
-        openssl_x509.issuer.to_s(OpenSSL::X509::Name::RFC2253)
+        openssl_x509.issuer.to_utf8
       end
 
       def dn
