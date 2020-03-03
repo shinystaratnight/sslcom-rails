@@ -34,9 +34,9 @@ class NotificationGroupsManager
           scanned_cert.save
           scan_logs << ScanLog.new(notification_group_id: domain.notification_group.id, scanned_certificate_id: scanned_cert.id, domain_name: domain.url, scan_status: scan_status, expiration_date: cert_expiration_date, scan_group: scan_group)
         else
-          if scan_status != scanned_cert.scan_logs.last.scan_status
+          # if scan_status != scanned_cert.scan_logs.last.scan_status
             NotificationGroupMailer.domain_digest_notice(scan_status, domain.notification_group, scanned_cert, domain.url, domain.notification_group.notification_groups_contacts, domain.notification_group.ssl_account).deliver_now
-          end
+          # end
           scan_logs << ScanLog.new(notification_group_id: domain.notification_group.id, scanned_certificate_id: scanned_cert.id, domain_name: domain.url, scan_status: scan_status, expiration_date: cert_expiration_date, scan_group: scan_group)
         end
       else
