@@ -1,5 +1,5 @@
 class NotificationGroupsManager
-  Domain = Struct.new(:url, :scan_port, :notification_group, :x509_cert, :verify_result)
+  DomainObject = Struct.new(:url, :scan_port, :notification_group, :x509_cert, :verify_result)
 
   def self.scan(options = {})
     initialize_database(options[:db])
@@ -108,11 +108,11 @@ class NotificationGroupsManager
 
       domains = []
       ngs.each do |notification_group_subject|
-        domains << Domain.new(notification_group_subject.domain_name, notification_group_subject.notification_group.scan_port, notification_group_subject.notification_group, nil, nil)
+        domains << DomainObject.new(notification_group_subject.domain_name, notification_group_subject.notification_group.scan_port, notification_group_subject.notification_group, nil, nil)
       end
 
       certificate_names.each do |cn|
-        domains << Domain.new(cn.name, cn.notification_groups.first.scan_port, cn.notification_groups.first)
+        domains << DomainObject.new(cn.name, cn.notification_groups.first.scan_port, cn.notification_groups.first)
       end
 
       executors = domains.uniq.map do |domain|
