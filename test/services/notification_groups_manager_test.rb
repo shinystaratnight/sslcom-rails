@@ -5,7 +5,9 @@ describe NotificationGroupsManager do
   describe 'NotificationGroupsManager.scan' do
     DomainObject = Struct.new(:url, :scan_port, :notification_group, :x509_cert, :verify_result)
 
-    before(:all) do
+
+    before(:each) do
+      ActionMailer::Base.deliveries.clear
       @notification_group = create(:notification_group)
       @notification_group.schedules << create(:schedule, :daily)
     end
@@ -118,15 +120,11 @@ describe NotificationGroupsManager do
 
   describe 'NotificationGroupsManager.send_expiration_reminders' do
     before(:each) do
+      ActionMailer::Base.deliveries.clear
       @notification_group = create(:notification_group)
-      # Developer note: A stray -30 value is being generated. Must be destroyed before tests execute.
       ['-15', '0', '15', '30', '60'].each do |reminder_value|
         create(:preference, owner_id: @notification_group.id, value: reminder_value)
       end
-    end
-
-    after(:each) do
-      ActionMailer::Base.deliveries.clear
     end
 
     it 'only sends one expiration reminder if mulitple certificates meet expiration criteria' do
@@ -151,7 +149,7 @@ describe NotificationGroupsManager do
 
       NotificationGroupsManager.send_expiration_reminders({db: 'ssl_com_test'})
       mail = ActionMailer::Base.deliveries.last
-      
+
       assert_equal Ahoy::Message.count, 1
       assert_equal ActionMailer::Base.deliveries.size, 1
       assert_equal mail.to.size, 1
