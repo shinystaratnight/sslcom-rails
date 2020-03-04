@@ -38,8 +38,9 @@ describe SslAccount do
   subject { build(:ssl_account) }
 
   before :all do
-    initialize_roles
-    initialize_triggers
+    stub_roles
+    stub_triggers
+    stub_server_software
   end
 
   context 'attributes' do

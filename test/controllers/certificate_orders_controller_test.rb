@@ -4,9 +4,10 @@ require 'test_helper'
 
 describe CertificateOrdersController do
   # Note to developers: Extract this logic into cleaner FactoryBot setup
-  before do
-    initialize_roles
-    initialize_triggers
+  before :all do
+    stub_roles
+    stub_triggers
+    stub_server_software
     login(role: :owner)
   end
 

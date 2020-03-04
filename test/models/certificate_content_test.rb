@@ -36,10 +36,10 @@
 require 'test_helper'
 
 describe CertificateContent do
-  before(:all) do
-    initialize_roles
-    initialize_triggers
-    initialize_server_software
+  before :all do
+    stub_roles
+    stub_triggers
+    stub_server_software
   end
   subject{ build_stubbed(:certificate_content) }
 

@@ -3,9 +3,10 @@
 require 'test_helper'
 
 describe CertificatesController do
-  before do
-    initialize_roles
-    initialize_triggers
+  before :all do
+    stub_roles
+    stub_triggers
+    stub_server_software
     create(:certificate_with_certificate_order)
   end
 

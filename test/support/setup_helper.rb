@@ -21,10 +21,30 @@ module SetupHelper
     @password = 'Testing@1'
   end
 
+  def stub_roles
+    roles = Role.all
+    role_set = []
+    Role::ALL.each_with_index do |r, i|
+      role_set << build_stubbed(:role, name: r.downcase, id: i)
+    end
+    roles.stubs(:[]).returns(role_set)
+    Role.stubs(:where).returns(roles)
+  end
+
   def initialize_certificates
     %i[evuccssl uccssl evssl ovssl freessl wcssl basicssl premiumssl codesigningssl evcodesigningssl].each do |trait|
       create(:certificate, trait)
     end
+  end
+
+  def stub_server_software
+    software = ServerSoftware.all
+    software_set = []
+    ['Apache-ModSSL', 'Oracle', 'Amazon Load Balancer'].each_with_index do |s, i|
+      software_set << build_stubbed(:server_software, title: s, id: i)
+    end
+    software.stubs(:[]).returns(software_set)
+    ServerSoftware.stubs(:where).returns(software)
   end
 
   def initialize_server_software
@@ -220,5 +240,13 @@ module SetupHelper
 
   def initialize_triggers
     (1..5).to_a.each { |i| ReminderTrigger.create(id: i, name: i) } unless ReminderTrigger.count == 5
+  end
+
+  def stub_triggers
+    triggers = ReminderTrigger.all
+    trigger_set = []
+    (1..5).to_a.each { |i| trigger_set << build_stubbed(:reminder_trigger, id: i, name: i) }
+    triggers.stubs(:[]).returns(trigger_set)
+    ReminderTrigger.stubs(:where).returns(triggers)
   end
 end

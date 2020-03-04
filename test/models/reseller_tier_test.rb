@@ -17,10 +17,10 @@
 require 'test_helper'
 
 describe ResellerTier do
-  before(:all) do
-    initialize_roles
-    initialize_triggers
-    initialize_server_software
+  before :all do
+    stub_roles
+    stub_triggers
+    stub_server_software
   end
 
   subject { build(:reseller_tier, :professional) }
