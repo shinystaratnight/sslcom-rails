@@ -4,11 +4,6 @@ require "test_helper"
 
 describe NotificationGroupsManager do
   include X509Helper
-  before :all do
-    initialize_roles
-    initialize_triggers
-    initialize_server_software
-  end
 
   describe 'NotificationGroupsManager.scan' do
     DomainObject = Struct.new(:url, :scan_port, :notification_group, :x509_cert, :verify_result)
@@ -201,7 +196,6 @@ describe NotificationGroupsManager do
     it 'sends one distinct notice (expiring in 60 days)' do
       @notification_group.notification_groups_contacts << create(:notification_groups_contact)
       @notification_group.scanned_certificates << create(:scanned_certificate, :expires_in_60_days)
-
       NotificationGroupsManager.send_expiration_reminders(db: 'ssl_com_test')
       mail = ActionMailer::Base.deliveries.last
 
