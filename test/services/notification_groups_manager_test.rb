@@ -1,7 +1,15 @@
+# frozen_string_literal: true
+
 require "test_helper"
 
 describe NotificationGroupsManager do
   include X509Helper
+  before :all do
+    stub_roles
+    stub_triggers
+    stub_server_software
+  end
+
   describe 'NotificationGroupsManager.scan' do
     DomainObject = Struct.new(:url, :scan_port, :notification_group, :x509_cert, :verify_result)
 
@@ -135,7 +143,7 @@ describe NotificationGroupsManager do
       @notification_group.scanned_certificates << create(:scanned_certificate, :expires_in_30_days)
       @notification_group.scanned_certificates << create(:scanned_certificate, :expires_in_60_days)
 
-      NotificationGroupsManager.send_expiration_reminders({db: 'ssl_com_test'})
+      NotificationGroupsManager.send_expiration_reminders(db: 'ssl_com_test')
       mail = ActionMailer::Base.deliveries.last
 
       assert_equal Ahoy::Message.count, 1
@@ -147,7 +155,7 @@ describe NotificationGroupsManager do
       @notification_group.notification_groups_contacts << create(:notification_groups_contact)
       @notification_group.scanned_certificates << create(:scanned_certificate, :expired_today)
 
-      NotificationGroupsManager.send_expiration_reminders({db: 'ssl_com_test'})
+      NotificationGroupsManager.send_expiration_reminders(db: 'ssl_com_test')
       mail = ActionMailer::Base.deliveries.last
 
       assert_equal Ahoy::Message.count, 1
@@ -159,7 +167,7 @@ describe NotificationGroupsManager do
       @notification_group.notification_groups_contacts << create(:notification_groups_contact)
       @notification_group.scanned_certificates << create(:scanned_certificate, :expired_15_days_ago)
 
-      NotificationGroupsManager.send_expiration_reminders({db: 'ssl_com_test'})
+      NotificationGroupsManager.send_expiration_reminders(db: 'ssl_com_test')
       mail = ActionMailer::Base.deliveries.last
 
       assert_equal Ahoy::Message.count, 1
@@ -171,7 +179,7 @@ describe NotificationGroupsManager do
       @notification_group.notification_groups_contacts << create(:notification_groups_contact)
       @notification_group.scanned_certificates << create(:scanned_certificate, :expires_in_15_days)
 
-      NotificationGroupsManager.send_expiration_reminders({db: 'ssl_com_test'})
+      NotificationGroupsManager.send_expiration_reminders(db: 'ssl_com_test')
       mail = ActionMailer::Base.deliveries.last
 
       assert_equal Ahoy::Message.count, 1
@@ -183,7 +191,7 @@ describe NotificationGroupsManager do
       @notification_group.notification_groups_contacts << create(:notification_groups_contact)
       @notification_group.scanned_certificates << create(:scanned_certificate, :expires_in_30_days)
 
-      NotificationGroupsManager.send_expiration_reminders({db: 'ssl_com_test'})
+      NotificationGroupsManager.send_expiration_reminders(db: 'ssl_com_test')
       mail = ActionMailer::Base.deliveries.last
 
       assert_equal Ahoy::Message.count, 1
@@ -195,7 +203,7 @@ describe NotificationGroupsManager do
       @notification_group.notification_groups_contacts << create(:notification_groups_contact)
       @notification_group.scanned_certificates << create(:scanned_certificate, :expires_in_60_days)
 
-      NotificationGroupsManager.send_expiration_reminders({db: 'ssl_com_test'})
+      NotificationGroupsManager.send_expiration_reminders(db: 'ssl_com_test')
       mail = ActionMailer::Base.deliveries.last
 
       assert_equal Ahoy::Message.count, 1
@@ -203,12 +211,11 @@ describe NotificationGroupsManager do
       assert_equal mail.to.size, 1
     end
 
-
     it 'sends expiration reminders to the correct contacts' do
       @notification_group.notification_groups_contacts << create_list(:notification_groups_contact, 3)
       @notification_group.scanned_certificates << create(:scanned_certificate, :expired_today)
 
-      NotificationGroupsManager.send_expiration_reminders({db: 'ssl_com_test'})
+      NotificationGroupsManager.send_expiration_reminders(db: 'ssl_com_test')
 
       mail = ActionMailer::Base.deliveries.last
 
@@ -222,7 +229,7 @@ describe NotificationGroupsManager do
       @notification_group.notification_groups_contacts << create(:notification_groups_contact)
       @notification_group.scanned_certificates << create(:scanned_certificate, :wont_expire_soon)
 
-      NotificationGroupsManager.send_expiration_reminders({db: 'ssl_com_test'})
+      NotificationGroupsManager.send_expiration_reminders(db: 'ssl_com_test')
 
       assert_equal Ahoy::Message.count, 0
       assert_equal ActionMailer::Base.deliveries.size, 0
@@ -239,7 +246,7 @@ describe NotificationGroupsManager do
         create(:preference, owner_id: second_notification_group.id, value: reminder_value)
       end
 
-      NotificationGroupsManager.send_expiration_reminders({db: 'ssl_com_test'})
+      NotificationGroupsManager.send_expiration_reminders(db: 'ssl_com_test')
       mail = ActionMailer::Base.deliveries
 
       assert_equal ActionMailer::Base.deliveries.size, 2
