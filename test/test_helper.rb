@@ -31,7 +31,7 @@ Minitest::Reporters.use! [Minitest::Reporters::SpecReporter.new, Minitest::Repor
 Dir[File.join('./test/support/**/*.rb')].sort.each { |f| require f }
 
 DatabaseCleaner.clean_with :deletion
-DatabaseCleaner.strategy = :truncation
+DatabaseCleaner.strategy = :truncation, { except: %w[roles reminder_triggers server_software]}
 
 Paperclip::Attachment.default_options[:path] = if ENV['PARALLEL_TEST_GROUPS']
                                                  ":rails_root/public/system/:rails_env/#{ENV['TEST_ENV_NUMBER'].to_i}/:class/:attachment/:id_partition/:filename"
@@ -50,15 +50,10 @@ module Minitest
 
       before :suite do
         Delayed::Worker.delay_jobs = false
-        DatabaseCleaner.strategy = :truncation
         DatabaseCleaner.start
-        stub_roles
-        stub_triggers
-        stub_server_software
       end
 
       after :suite do
-        DatabaseCleaner.strategy = :truncation
         DatabaseCleaner.clean
       end
     end
@@ -74,12 +69,10 @@ module ActionDispatch
     class_eval do
       before :suite do
         Delayed::Worker.delay_jobs = false
-        DatabaseCleaner.strategy = :truncation
         DatabaseCleaner.start
       end
 
       after :suite do
-        DatabaseCleaner.strategy = :truncation
         DatabaseCleaner.clean
       end
     end
@@ -96,15 +89,10 @@ module ActiveSupport
 
       before :suite do
         Delayed::Worker.delay_jobs = false
-        DatabaseCleaner.strategy = :truncation
         DatabaseCleaner.start
-        stub_roles
-        stub_triggers
-        stub_server_software
       end
 
       after :suite do
-        DatabaseCleaner.strategy = :truncation
         DatabaseCleaner.clean
       end
     end
