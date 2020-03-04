@@ -19,6 +19,16 @@ jobs:
     parallelism: 4
     steps:
       - checkout
+
+      - run:
+          name: Install Libraries for mySQL and Correct Bundler Version (1.17.3)
+          command: |
+            sudo apt-get install unixodbc-dev
+            sudo apt-get -y install mysql-server
+            sudo gem uninstall bundler
+            sudo rm /usr/local/bin/bundle
+            sudo rm /usr/local/bin/bundler
+            sudo gem install bundler -v 1.17.3
       - restore_cache:
           key: bundle-{{ checksum "Gemfile.lock" }}
       - run:
