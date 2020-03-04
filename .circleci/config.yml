@@ -16,7 +16,7 @@ jobs:
         environment:
           MYSQL_ALLOW_EMPTY_PASSWORD: "true"
           MYSQL_ROOT_HOST: "%"
-    parallelism: 4
+    parallelism: 2
     steps:
       - checkout
 
