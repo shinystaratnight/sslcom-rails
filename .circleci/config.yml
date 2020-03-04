@@ -379,6 +379,18 @@ jobs:
       # - store_artifacts:
       #     path: ~/split_app/coverage
       #     destination: coverage
+      - run:
+          name: Code Climate Test Coverage
+          command: |
+            ./cc-test-reporter format-coverage -t simplecov -o "coverage/codeclimate.$CIRCLE_NODE_INDEX.json"
+
+      # - store_test_results:
+      #     path: ~/sslcom-rails/test/reports
+
+      # - store_artifacts:
+      #     path: ~/sslcom-rails/test/reports
+
+      - run: ./cc-test-reporter after-build -r $CC_TEST_REPORTER_ID -t simplecov --exit-code $? || true
 workflows:
   version: 2
 
