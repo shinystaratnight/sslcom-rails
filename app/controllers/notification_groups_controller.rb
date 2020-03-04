@@ -103,12 +103,8 @@ class NotificationGroupsController < ApplicationController
 
   def remove_groups
     group_ids = params[:note_group_check]
-
-    unless group_ids.blank?
-      @ssl_account.notification_groups.where(id: group_ids).destroy_all
-      Preference.where(owner_type: 'NotificationGroup', owner_id: group_ids).destroy_all
-      Schedule.where(notification_group_id: group_ids).destroy_all
-    end
+    Preference.where(owner_type: 'NotificationGroup', owner_id: group_ids).destroy_all
+    NotificationGroup.where(id: group_ids).destroy_all
 
     flash[:notice] = "Selected notification groups has been removed successfully."
     redirect_to notification_groups_path(ssl_slug: @ssl_slug)
@@ -140,7 +136,7 @@ class NotificationGroupsController < ApplicationController
     @notification_group.scan
 
     flash[:notice] = "Scan has been done successfully."
-    redirect_to edit_notification_group_path(@ssl_slug, @notification_group.id)
+    redirect_to notification_group_scan_logs_url(@ssl_slug, @notification_group.id)
   end
 
   def new
