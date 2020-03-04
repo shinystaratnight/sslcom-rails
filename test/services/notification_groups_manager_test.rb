@@ -5,7 +5,6 @@ describe NotificationGroupsManager do
   describe 'NotificationGroupsManager.scan' do
     DomainObject = Struct.new(:url, :scan_port, :notification_group, :x509_cert, :verify_result)
 
-
     before(:each) do
       ActionMailer::Base.deliveries.clear
       @notification_group = create(:notification_group)
