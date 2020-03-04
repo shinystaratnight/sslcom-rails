@@ -53,6 +53,9 @@ aliases:
   - &copy-database-yml |
     cp config/database.yml.example config/database.yml
 
+  - &install-code-climate-reporter |
+    curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+    chmod +x ./cc-test-reporter
 defaults: &defaults
   parallelism: 2
   working_directory: ~/sslcom-rails
@@ -382,6 +385,8 @@ jobs:
       # - store_artifacts:
       #     path: ~/split_app/coverage
       #     destination: coverage
+      - run: *install-code-climate-reporter
+
       - run:
           name: Code Climate Test Coverage
           command: |
