@@ -48,13 +48,13 @@ module Minitest
       include Asserts
       include Authlogic::TestCase
 
-      before :all do
+      before :suite do
         Delayed::Worker.delay_jobs = false
         DatabaseCleaner.strategy = :truncation
         DatabaseCleaner.start
       end
 
-      before :all do
+      after :suite do
         DatabaseCleaner.strategy = :truncation
         DatabaseCleaner.clean
       end
@@ -67,6 +67,19 @@ module ActionDispatch
     include Capybara::Screenshot::MiniTestPlugin
     include Capybara::DSL
     include Capybara::Minitest::Assertions
+
+    class_eval do
+      before :suite do
+        Delayed::Worker.delay_jobs = false
+        DatabaseCleaner.strategy = :truncation
+        DatabaseCleaner.start
+      end
+
+      after :suite do
+        DatabaseCleaner.strategy = :truncation
+        DatabaseCleaner.clean
+      end
+    end
   end
 end
 
@@ -78,6 +91,17 @@ module ActiveSupport
       include Asserts
       include Authlogic::TestCase
       include DatabaseCleanerSupport
+
+      before :suite do
+        Delayed::Worker.delay_jobs = false
+        DatabaseCleaner.strategy = :truncation
+        DatabaseCleaner.start
+      end
+
+      after :suite do
+        DatabaseCleaner.strategy = :truncation
+        DatabaseCleaner.clean
+      end
     end
   end
 end

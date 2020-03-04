@@ -57,6 +57,11 @@ module SetupHelper
     @user
   end
 
+  def stub_login(role: :owner)
+    @user = build_stubbed(:user, id: rand(1000))
+    ApplicationController.any_instance.stubs(:current_user).returns(@user)
+  end
+
   def create_and_approve_user(invited_ssl_acct, login = nil, roles = nil)
     set_roles = roles || @acct_admin_role
     new_user  = login.nil? ? create(:user, :owner) : create(:user, :owner, login: login)
