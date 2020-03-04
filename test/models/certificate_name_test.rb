@@ -28,7 +28,7 @@
 require 'test_helper'
 
 describe CertificateName do
-  before :all do
+  before :each do
     stub_roles
     stub_triggers
     stub_server_software
