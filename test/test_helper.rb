@@ -90,7 +90,6 @@ module ActiveSupport
       include SetupHelper
       include Asserts
       include Authlogic::TestCase
-      include DatabaseCleanerSupport
 
       before :suite do
         Delayed::Worker.delay_jobs = false
