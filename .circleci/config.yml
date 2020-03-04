@@ -1,24 +1,27 @@
+defaults: &defaults
+  parallelism: 2
+  working_directory: ~/sslcom-rails
+  docker:
+    - image: circleci/ruby:2.6.2-node-browsers
+      environment:
+        RAILS_ENV: test
+        DB_HOST: 127.0.0.1
+        BUNDLE_JOBS: 1
+        BUNDLE_RETRY: 1
+        BUNDLE_PATH: vendor/bundle
+        CIRCLE_CI: 'true'
+        CACHE_VERSION: 'v1'
+        CIRCLE_NODE_INDEX: 0
+        CIRCLE_NODE_TOTAL: 2
+    - image: circleci/mysql:5.7.28
+      environment:
+        MYSQL_ALLOW_EMPTY_PASSWORD: "true"
+        MYSQL_ROOT_HOST: "%"
+
 version: 2
 jobs:
   test:
-    working_directory: ~/sslcom-rails
-    docker:
-      - image: circleci/ruby:2.6.2-node-browsers
-        environment:
-          RAILS_ENV: test
-          DB_HOST: 127.0.0.1
-          BUNDLE_JOBS: 1
-          BUNDLE_RETRY: 1
-          BUNDLE_PATH: vendor/bundle
-          CIRCLE_CI: 'true'
-          CACHE_VERSION: 'v1'
-          CIRCLE_NODE_INDEX: 0
-          CIRCLE_NODE_TOTAL: 2
-      - image: circleci/mysql:5.7.28
-        environment:
-          MYSQL_ALLOW_EMPTY_PASSWORD: "true"
-          MYSQL_ROOT_HOST: "%"
-    parallelism: 2
+    <<: *defaults
     steps:
       - checkout
 
@@ -104,7 +107,6 @@ jobs:
 
       - run:
           name: Run tests
-          # type: shell
           command: |-
             TESTFILES=$(circleci tests glob "test/**/*_test.rb" | circleci tests split --split-by=timings)
             bundle exec rake test \
@@ -122,37 +124,26 @@ jobs:
       #         --format progress \
       #         -- ${TESTFILES}
 
-      - run:
-          name: Code Climate Test Coverage
-          command: |
-            ./cc-test-reporter format-coverage -t simplecov -o "coverage/codeclimate.$CIRCLE_NODE_INDEX.json"
+      # - run:
+      #     name: Code Climate Test Coverage
+      #     command: |
+      #       ./cc-test-reporter format-coverage -t simplecov -o "coverage/codeclimate.$CIRCLE_NODE_INDEX.json"
 
-      - store_test_results:
-          path: test/reports
+      # - store_test_results:
+      #     path: test/reports
 
-      - store_artifacts:
-          path: coverage
+      # - store_artifacts:
+      #     path: coverage
 
-      - store_artifacts:
-          path: test/reports
+      # - store_artifacts:
+      #     path: test/reports
 
-      - run: ./cc-test-reporter after-build -r $CC_TEST_REPORTER_ID -t simplecov --exit-code $? || true
+      # - run: ./cc-test-reporter after-build -r $CC_TEST_REPORTER_ID -t simplecov --exit-code $? || true
   
-  # build:
-  #   working_directory: ~/sslcom-rails
-  #   docker:
-  #     - image: circleci/ruby:2.6.2-node-browsers
-  #       environment:
-  #         RAILS_ENV: test
-  #         DB_HOST: 127.0.0.1
-  #         CIRCLE_CI: 'true'
-  #         CACHE_VERSION: 'v1'
-  #     - image: circleci/mysql:5.7.28
-  #       environment:
-  #         MYSQL_ALLOW_EMPTY_PASSWORD: "true"
-  #         MYSQL_ROOT_HOST: "%"
-  #   steps:
-  #     - checkout
+  build:
+    <<: *defaults
+    steps:
+      - checkout
 
   #     - run: mkdir -p tmp/test-reports/minitest/queue_mode/
 
@@ -326,11 +317,76 @@ jobs:
   #         command: |
   #             bundle exec rails runner 'Rails.application.eager_load!'
 
+  coverage:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: .
+
+      - restore_cache:
+          key: v2-repo-{{ .Environment.CIRCLE_SHA1 }}
+
+      - restore_cache:
+          keys:
+            - gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+            - gem-cache-{{ arch }}-{{ .Branch }}
+            - gem-cache
+
+      - run: bundle install --path vendor/bundle
+
+      - run:
+          name: Merge and check coverage
+          command: |
+            RUN_COVERAGE=true bundle exec rake simplecov:report_coverage
+
+      - store_artifacts:
+          path: ~/sslcom-rails/coverage
+          destination: coverage
+
+      # - run:
+      #     name: Code Climate Test Coverage
+      #     command: |
+      #       ./cc-test-reporter format-coverage -t simplecov -o "coverage/codeclimate.$CIRCLE_NODE_INDEX.json"
+
+      # - store_test_results:
+      #     path: test/reports
+
+      # - store_artifacts:
+      #     path: coverage
+
+      # - store_artifacts:
+      #     path: test/reports
+
+      # - run: ./cc-test-reporter after-build -r $CC_TEST_REPORTER_ID -t simplecov --exit-code $? || true
+      # - attach_workspace:
+      #     at: .
+
+      # - restore_cache:
+      #     key: v2-repo-{{ .Environment.CIRCLE_SHA1 }}
+
+      # - restore_cache:
+      #     keys:
+      #       - gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+      #       - gem-cache-{{ arch }}-{{ .Branch }}
+      #       - gem-cache
+
+      # - run: bundle install --path vendor/bundle
+
+      # - run:
+      #     name: Merge and check coverage
+      #     command: |
+      #       RUN_COVERAGE=true bundle exec rake simplecov:report_coverage
+      # - store_artifacts:
+      #     path: ~/split_app/coverage
+      #     destination: coverage
 workflows:
   version: 2
 
   build_and_coverage:
     jobs:
-      # - build
+      - build
       - test
+      - coverage:
+          requires:
+            - test
 
