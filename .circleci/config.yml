@@ -83,7 +83,9 @@ jobs:
     steps:
       - checkout
 
-      - run: *install-mysql-dependencies
+      - run:
+          name: Install Mysql Libraries
+          command: *install-mysql-dependencies
             
       - restore_cache:
           key: bundle-{{ checksum "Gemfile.lock" }}
@@ -99,17 +101,25 @@ jobs:
           name: Wait for DB
           command: dockerize -wait tcp://localhost:3306 -timeout 1m
 
-      - run: *create-settings-yml
+      - run: 
+          name: Create settings.yml
+          command: *create-settings-yml
 
-      - run: *create-local-env-yml
+      - run: 
+          name: Copy local_env.yml
+          command: *create-local-env-yml
 
-      - run: *copy-database-yml
+      - run: 
+          name: Copy Database.yml
+          command: *copy-database-yml
 
       - run:
           name: Copy Settings File
           command: cp config/client/certassure/settings.yml config/
 
-      - run: *setup-database
+      - run:
+          name: Setup Database
+          command: *setup-database
 
       - run:
           name: Run tests
@@ -385,7 +395,9 @@ jobs:
       # - store_artifacts:
       #     path: ~/split_app/coverage
       #     destination: coverage
-      - run: *install-code-climate-reporter
+      - run: 
+          name: Install Code Climate Reporter
+          command: *install-code-climate-reporter
 
       - run:
           name: Code Climate Test Coverage
@@ -398,7 +410,9 @@ jobs:
       - store_artifacts:
           path: ~/sslcom-rails/test/reports
 
-      - run: ./cc-test-reporter after-build -r $CC_TEST_REPORTER_ID -t simplecov --exit-code $? || true
+      - run:
+          name: Notify Code Climate
+          command: ./cc-test-reporter after-build -r $CC_TEST_REPORTER_ID -t simplecov --exit-code $? || true
 workflows:
   version: 2
 
