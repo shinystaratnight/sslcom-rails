@@ -5,9 +5,9 @@ require "test_helper"
 describe NotificationGroupsManager do
   include X509Helper
   before :all do
-    stub_roles
-    stub_triggers
-    stub_server_software
+    initialize_roles
+    initialize_triggers
+    initialize_server_software
   end
 
   describe 'NotificationGroupsManager.scan' do
