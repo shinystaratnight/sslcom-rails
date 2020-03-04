@@ -71,7 +71,7 @@ describe CertificateOrder do
     stub_server_software
   end
 
-  subject { build(:certificate_order, true_build: true) }
+  subject { CertificateOrder.new }
 
   context 'associations' do
     should belong_to(:assignee).class_name('User')
