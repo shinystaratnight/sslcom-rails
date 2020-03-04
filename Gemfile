@@ -4,6 +4,7 @@ source 'http://rubygems.org'
 
 gem 'activemerchant'
 gem 'authlogic'
+gem 'ahoy_email'
 gem 'awesome_print'
 gem 'aws-sdk', '~> 2.0'
 gem 'bootsnap', require: false

@@ -85,7 +85,7 @@ class User < ApplicationRecord
 
   accepts_nested_attributes_for :assignments
 
-  acts_as_messageable
+
 
   before_save :should_reset_perishable_token
 

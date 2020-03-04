@@ -34,7 +34,7 @@ class NotificationGroup < ApplicationRecord
   has_many  :certificate_names, through: :notification_groups_subjects, source: :subjectable, source_type: 'CertificateName'
   has_many  :schedules, dependent: :destroy
   has_many  :scan_logs, dependent: :destroy
-  has_many :scanned_certificates, through: :scan_logs
+  has_many :scanned_certificates, -> { distinct }, through: :scan_logs
 
   attr_accessor :ssl_client
 
@@ -353,28 +353,6 @@ class NotificationGroup < ApplicationRecord
             expiration_date: expiration_date,
             scan_group: last_group_number ? (last_group_number + 1) : 1
         )
-      end
-    end
-
-    unless results.empty? or contacts.empty?
-      results.each do |result|
-        # only email in the event a change of status occurred
-        if SentReminder.order("created_at DESC").find_by(trigger_value: [result.before, result.after].join(", "),
-                               expires_at: result.expire,
-                               subject: result.domain,
-                               recipients: contacts.uniq.join(";")).try(:reminder_type)!=result.reminder_type
-          logger.info "Sending reminder"
-          d = [",," + contacts.uniq.join(";")]
-          body = Reminder.domain_digest_notice(d, result, self)
-          body.deliver unless body.to.empty?
-          logger.info "create SentReminder"
-          SentReminder.create(trigger_value: [result.before, result.after].join(", "),
-                              expires_at: result.expire,
-                              subject: result.domain,
-                              body: body,
-                              recipients: contacts.uniq.join(";"),
-                              reminder_type: result.reminder_type)
-        end
       end
     end
   end
