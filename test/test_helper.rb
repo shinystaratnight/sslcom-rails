@@ -52,6 +52,9 @@ module Minitest
         Delayed::Worker.delay_jobs = false
         DatabaseCleaner.strategy = :truncation
         DatabaseCleaner.start
+        stub_roles
+        stub_triggers
+        stub_server_software
       end
 
       after :suite do
@@ -95,6 +98,9 @@ module ActiveSupport
         Delayed::Worker.delay_jobs = false
         DatabaseCleaner.strategy = :truncation
         DatabaseCleaner.start
+        stub_roles
+        stub_triggers
+        stub_server_software
       end
 
       after :suite do
