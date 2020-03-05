@@ -12,7 +12,7 @@ describe NotificationGroup do
     @notification_group.stubs(:notification_groups_subjects).returns([build_stubbed(:notification_groups_subject, :certificate_name_type)])
     domain = @notification_group.notification_groups_subjects.first.domain_name
 
-    ping_results = {certificate: create_x509_cert(domain, Time.now + 365.days), verify_result: 19}
+    ping_results = {certificate: create_x509_cert(domain), verify_result: 0}
     SslClient.any_instance.stubs(:ping_for_certificate_info).returns(ping_results)
 
     @notification_group.scan
@@ -26,7 +26,7 @@ describe NotificationGroup do
     @notification_group.stubs(:certificate_names).returns([build_stubbed(:certificate_name)])
     domain = @notification_group.certificate_names.first.name
 
-    ping_results = {certificate: create_x509_cert(domain, Time.now + 365.days), verify_result: 19}
+    ping_results = {certificate: create_x509_cert(domain), verify_result: 0}
     SslClient.any_instance.stubs(:ping_for_certificate_info).returns(ping_results)
 
     @notification_group.scan
@@ -53,7 +53,7 @@ describe NotificationGroup do
     @notification_group.stubs(:notification_groups_subjects).returns([build_stubbed(:notification_groups_subject, :certificate_name_type)])
     domain = @notification_group.notification_groups_subjects.first.domain_name
 
-    ping_results = {certificate: create_x509_cert(domain, Time.now + 365.days), verify_result: 27}
+    ping_results = {certificate: create_x509_cert(domain), verify_result: 27}
     SslClient.any_instance.stubs(:ping_for_certificate_info).returns(ping_results)
 
     @notification_group.scan
@@ -68,7 +68,7 @@ describe NotificationGroup do
     @notification_group.stubs(:notification_groups_subjects).returns([build_stubbed(:notification_groups_subject, :certificate_name_type)])
     domain = @notification_group.notification_groups_subjects.first.domain_name
 
-    ping_results = {certificate: create_x509_cert(domain, Time.now), verify_result: 19}
+    ping_results = {certificate: create_x509_cert(domain), verify_result: 10}
     SslClient.any_instance.stubs(:ping_for_certificate_info).returns(ping_results)
 
     @notification_group.scan
@@ -83,7 +83,7 @@ describe NotificationGroup do
     @notification_group.stubs(:notification_groups_subjects).returns([build_stubbed(:notification_groups_subject, :certificate_name_type)])
     domain = @notification_group.notification_groups_subjects.first.domain_name
 
-    ping_results = {certificate: create_x509_cert(domain, Time.now + 365.days, true), verify_result: 19}
+    ping_results = {certificate: create_x509_cert(domain), verify_result: 29}
     SslClient.any_instance.stubs(:ping_for_certificate_info).returns(ping_results)
 
     @notification_group.scan
@@ -98,8 +98,8 @@ describe NotificationGroup do
     it 'sends a domain digest notice if a certificate changes status from one scan to the next' do
       @notification_group.stubs(:notification_groups_subjects).returns([build_stubbed(:notification_groups_subject, :certificate_name_type)])
       domain = @notification_group.notification_groups_subjects.first.domain_name
-      x509_cert = create_x509_cert(domain, Time.now + 365.days)
-      ping_results = {certificate: x509_cert, verify_result: 19}
+      x509_cert = create_x509_cert(domain)
+      ping_results = {certificate: x509_cert, verify_result: 0}
       SslClient.any_instance.stubs(:ping_for_certificate_info).returns(ping_results)
 
       @notification_group.scan
@@ -112,7 +112,7 @@ describe NotificationGroup do
       SslClient.any_instance.stubs(:ping_for_certificate_info).returns(ping_results_two)
 
       @notification_group.scan
-      
+
       assert_equal ScannedCertificate.count, 1
       assert_equal ScanLog.count, 2
       assert ScanLog.last.scan_status == 'untrusted'
