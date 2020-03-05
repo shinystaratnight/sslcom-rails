@@ -190,30 +190,22 @@ jobs:
             export RACK_ENV="test"
             bundle exec rake db:seed --trace
 
-  #     - run:
-  #         name: Rails Server
-  #         command: |-
-  #           gem install foreman --no-doc
-  #           touch log/bullet.log
-  #           touch log/test.log
-  #           foreman start -f Procfile.test
-  #         background: true
+      - run:
+          name: Rails Server
+          command: |-
+            gem install foreman --no-doc
+            foreman start -f Procfile.test
+          background: true
 
-  #     - run:
-  #         name: Run Cypress
-  #         command: yarn cypress run --project ./test
+      - run:
+          name: Run Cypress
+          command: yarn cypress run --project ./test
 
-  #     - store_artifacts:
-  #         path: test/cypress/videos
+      - store_artifacts:
+          path: test/cypress/videos
 
-  #     - store_artifacts:
-  #         path: log
-
-  #     - store_artifacts:
-  #         path: coverage
-
-  #     - store_artifacts:
-  #         path: test/cypress/screenshots
+      - store_artifacts:
+          path: log
 
       - run:
           name: Precompile Assets
