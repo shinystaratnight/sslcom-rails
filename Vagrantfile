@@ -15,15 +15,6 @@ Vagrant.configure('2') do |config|
   config.vm.network 'forwarded_port', guest: 10_000, host: 10_000, auto_correct: true
   config.vm.network 'forwarded_port', guest: 5002, host: 5002, auto_correct: true
 
-  config.vagrant.plugins = 'vagrant-persistent-storage'
-  config.persistent_storage.enabled = true
-  config.persistent_storage.location = "~/development/sourcehdd.vdi"
-  config.persistent_storage.size = 5000
-  config.persistent_storage.mountname = 'mysql'
-  config.persistent_storage.filesystem = 'ext4'
-  config.persistent_storage.mountpoint = '/var/lib/mysql'
-  config.persistent_storage.volgroupname = 'myvolgroup'
-
   # configure virtualbox host
   config.vm.provider 'virtualbox' do |vb|
     vb.memory = '4096'
