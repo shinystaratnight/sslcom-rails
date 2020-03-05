@@ -135,7 +135,6 @@ group :development, :test do
   gem 'rubocop-minitest'
   gem 'rubocop-performance'
   gem 'rubocop-rails'
-  gem 'ruby-odbc'
   gem 'ruby_parser'
   gem 'seed_dump'
 end

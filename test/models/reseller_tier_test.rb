@@ -17,13 +17,14 @@
 require 'test_helper'
 
 describe ResellerTier do
-  before(:all) do
-    initialize_roles
-    initialize_triggers
-    initialize_server_software
+  before :all do
+    stub_roles
+    stub_triggers
+    stub_server_software
+    SslAccount.any_instance.stubs(:initial_setup).returns(true)
   end
 
-  subject { build(:reseller_tier, :professional) }
+  subject { build_stubbed(:reseller_tier, :professional) }
 
   context 'associations' do
     should have_many(:certificates)

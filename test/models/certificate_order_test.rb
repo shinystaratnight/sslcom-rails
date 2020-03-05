@@ -65,13 +65,14 @@
 require 'test_helper'
 
 describe CertificateOrder do
-  before(:all) do
-    initialize_roles
-    initialize_triggers
-    initialize_server_software
+  before :all do
+    stub_roles
+    stub_triggers
+    stub_server_software
+    SslAccount.any_instance.stubs(:initial_setup).returns(true)
   end
 
-  subject { build(:certificate_order, true_build: true) }
+  subject { CertificateOrder.new }
 
   context 'associations' do
     should belong_to(:assignee).class_name('User')
