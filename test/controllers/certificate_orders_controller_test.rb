@@ -5,9 +5,9 @@ require 'test_helper'
 describe CertificateOrdersController do
   # Note to developers: Extract this logic into cleaner FactoryBot setup
   before :all do
-    initialize_roles
-    initialize_triggers
-    initialize_server_software
+    stub_roles
+    stub_triggers
+    stub_server_software
     login(role: :owner)
   end
 
@@ -80,6 +80,9 @@ describe CertificateOrdersController do
           "common_name": "106.255.212.123",
           "id": free_cert.ref.to_s
         }
+
+        certificate = build_stubbed(:certificate, :freessl)
+        CertificateOrder.any_instance.stubs(:certificate).returns(certificate)
 
         put :update_csr, params
         assert_template :submit_csr
