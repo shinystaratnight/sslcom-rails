@@ -130,6 +130,7 @@ jobs:
 
   build:
     <<: *defaults
+    parallelism: 1
     steps:
       - checkout
 
@@ -221,6 +222,7 @@ jobs:
 
   coverage:
     <<: *defaults
+    parallelism: 1
     steps:
       - attach_workspace:
           at: .
