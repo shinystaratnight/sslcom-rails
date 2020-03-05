@@ -13,7 +13,7 @@ describe NotificationGroupsManager do
 
     it "scans domains associated with a notification groups succesfully (success case)" do
       @notification_group.notification_groups_subjects << create(:notification_groups_subject, :certificate_name_type)
-      domain = DomainObject.new('valid.com', @notification_group.scan_port, @notification_group, create_x509_cert('valid.com', Time.now + 365.days), 19)
+      domain = DomainObject.new('valid.com', @notification_group.scan_port, @notification_group, create_x509_cert('valid.com'), 0)
 
       NotificationGroupsManager.stubs(:manufacture_domains_structs).with('Simple', '2').returns([domain])
       NotificationGroupsManager.scan({db: 'ssl_com_test', schedule_type: 'Simple', schedule_value: '2'})
@@ -37,7 +37,7 @@ describe NotificationGroupsManager do
     it "scans domains associated with a notification groups succesfully (untrusted case)" do
       @notification_group.notification_groups_subjects << create(:notification_groups_subject, domain_name: 'untrusted.com')
 
-      domain = DomainObject.new('untrusted.com', @notification_group.scan_port, @notification_group, create_x509_cert('untrusted.com', Time.now + 365.days), 27)
+      domain = DomainObject.new('untrusted.com', @notification_group.scan_port, @notification_group, create_x509_cert('untrusted.com'), 27)
 
       NotificationGroupsManager.stubs(:manufacture_domains_structs).with('Simple', '2').returns([domain])
       NotificationGroupsManager.scan({db: 'ssl_com_test', schedule_type: 'Simple', schedule_value: '2'})
@@ -51,7 +51,7 @@ describe NotificationGroupsManager do
     it "scans domains associated with a notification groups succesfully (expired case)" do
       @notification_group.notification_groups_subjects << create(:notification_groups_subject, domain_name: 'expired.com')
 
-      domain = DomainObject.new('expired.com', @notification_group.scan_port, @notification_group, create_x509_cert('expired.com', Time.now), 19)
+      domain = DomainObject.new('expired.com', @notification_group.scan_port, @notification_group, create_x509_cert('expired.com'), 10)
 
       NotificationGroupsManager.stubs(:manufacture_domains_structs).with('Simple', '2').returns([domain])
       NotificationGroupsManager.scan({db: 'ssl_com_test', schedule_type: 'Simple', schedule_value: '2'})
@@ -65,7 +65,7 @@ describe NotificationGroupsManager do
     it "scans domains associated with a notification groups succesfully (name_mismatch case)" do
       @notification_group.notification_groups_subjects << create(:notification_groups_subject, domain_name: 'name_mismatch.com')
 
-      domain =  DomainObject.new('name_mismatch.com', @notification_group.scan_port, @notification_group, create_x509_cert('name_mismatch.com', Time.now + 365.days, true), 19)
+      domain =  DomainObject.new('name_mismatch.com', @notification_group.scan_port, @notification_group, create_x509_cert('name_mismatch.com'), 29)
 
       NotificationGroupsManager.stubs(:manufacture_domains_structs).with('Simple', '2').returns([domain])
       NotificationGroupsManager.scan({db: 'ssl_com_test', schedule_type: 'Simple', schedule_value: '2'})
@@ -82,8 +82,8 @@ describe NotificationGroupsManager do
         notification_group.schedules << create(:schedule, :daily)
         notification_group.notification_groups_subjects << create(:notification_groups_subject, :certificate_name_type)
 
-        x509_certificate = create_x509_cert('valid.com', Time.now + 365.days)
-        domain = DomainObject.new('valid.com', notification_group.scan_port, notification_group, x509_certificate, 19)
+        x509_certificate = create_x509_cert('valid.com')
+        domain = DomainObject.new('valid.com', notification_group.scan_port, notification_group, x509_certificate, 0)
 
         NotificationGroupsManager.stubs(:manufacture_domains_structs).with('Simple', '2').returns([domain])
         NotificationGroupsManager.scan({db: 'ssl_com_test', schedule_type: 'Simple', schedule_value: '2'})
@@ -103,14 +103,14 @@ describe NotificationGroupsManager do
         assert_equal ActionMailer::Base.deliveries.size, 1
         assert_equal Ahoy::Message.count, 1
 
-        domain = DomainObject.new('valid.com', notification_group.scan_port, notification_group, x509_certificate, 19)
+        domain = DomainObject.new('valid.com', notification_group.scan_port, notification_group, x509_certificate, 29)
 
         NotificationGroupsManager.stubs(:manufacture_domains_structs).with('Simple', '2').returns([domain])
         NotificationGroupsManager.scan({db: 'ssl_com_test', schedule_type: 'Simple', schedule_value: '2'})
 
         assert_equal ScannedCertificate.count, 1
         assert_equal ScanLog.count, 3
-        assert ScanLog.last.scan_status == 'expiring'
+        assert ScanLog.last.scan_status == 'name_mismatch'
         assert_equal ActionMailer::Base.deliveries.size, 2
         assert_equal Ahoy::Message.count, 2
       end

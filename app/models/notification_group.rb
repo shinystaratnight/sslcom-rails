@@ -120,9 +120,8 @@ class NotificationGroup < ApplicationRecord
     domains << certificate_names.map(&:name).compact
     domains.flatten!.uniq!
 
-    logs = []
-
     if domains.any?
+      scan_logs = []
       domains.each do |domain|
         ssl_client = SslClient.new(domain.gsub("*.", "www."), self.scan_port)
         results = ssl_client.ping_for_certificate_info
@@ -130,13 +129,14 @@ class NotificationGroup < ApplicationRecord
         if results[:certificate].present?
           certificate = results[:certificate]
           verify_result = results[:verify_result]
-          cert_expiration_date = certificate.not_after.to_date
-          scan_status = 'expiring'
-          if verify_result == 27
+          scan_status = ''
+          if verify_result == 0
+            scan_status = 'expiring'
+          elsif verify_result == 27
             scan_status = 'untrusted'
-          elsif Date.today >= cert_expiration_date
+          elsif verify_result == 10
             scan_status = 'expired'
-          elsif !certificate.subject_alternative_names.include? domain
+          elsif verify_result == 29
             scan_status = 'name_mismatch'
           end
 
@@ -145,18 +145,18 @@ class NotificationGroup < ApplicationRecord
             scanned_cert.body = certificate.to_s
             scanned_cert.decoded = certificate.to_text
             scanned_cert.save
-            scan_logs << ScanLog.new(notification_group_id: self.id, scanned_certificate_id: scanned_cert.id, domain_name: domain, scan_status: scan_status, expiration_date: cert_expiration_date, scan_group: scan_group)
+            scan_logs << ScanLog.new(notification_group_id: self.id, scanned_certificate_id: scanned_cert.id, domain_name: domain, scan_status: scan_status, expiration_date: certificate.not_after.to_date, scan_group: scan_group)
           else
-            if scan_status != scanned_cert.scan_logs.last.scan_status
-              NotificationGroupMailer.domain_digest_notice(scan_status, self, scanned_cert, domain, self.notification_groups_contacts, self.ssl_account).deliver_now
-            end
-            scan_logs << ScanLog.new(notification_group_id: self.id, scanned_certificate_id: scanned_cert.id, domain_name: domain, scan_status: scan_status, expiration_date: cert_expiration_date, scan_group: scan_group)
+            # if scan_status != scanned_cert.scan_logs.last.scan_status
+            #   NotificationGroupMailer.domain_digest_notice(scan_status, self, scanned_cert, domain, self.notification_groups_contacts, self.ssl_account).deliver_now
+            # end
+            scan_logs << ScanLog.new(notification_group_id: self.id, scanned_certificate_id: scanned_cert.id, domain_name: domain, scan_status: scan_status, expiration_date: certificate.not_after.to_date, scan_group: scan_group)
           end
         else
           scan_logs << ScanLog.new(notification_group_id: self.id, scanned_certificate_id: nil, domain_name: domain, scan_status: "not_found", expiration_date: nil, scan_group: scan_group)
         end
       end
-      ScanLog.import logs
+      ScanLog.import scan_logs
     end
   end
 

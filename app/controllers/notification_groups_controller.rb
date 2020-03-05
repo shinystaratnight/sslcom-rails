@@ -114,7 +114,7 @@ class NotificationGroupsController < ApplicationController
     notificaton_group_ids = params[:note_group_check]
     notification_groups = NotificationGroup.where(id: notificaton_group_ids, status: false).includes(:certificate_names, :notification_groups_subjects, :notification_groups_contacts)
 
-    notification_groups.each do |ng|
+    notification_groups.map do |ng|
       ng.scan
     end
 
