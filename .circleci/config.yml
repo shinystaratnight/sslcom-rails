@@ -146,6 +146,9 @@ jobs:
             bundle exec rake test \
               -- ${TESTFILES}
 
+      - store_test_results:
+          path: test-results
+
       - run:
           name: Stash Coverage Results
           command: |
