@@ -24,7 +24,7 @@ module Concerns
           end
 
           def acme
-            where('dcv_method LIKE ? ', "%acme%")
+            where{ dcv_method >> %w[acme_http acme_dns_txt] }
           end
 
           def last_emailed

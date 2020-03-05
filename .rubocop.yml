@@ -66,6 +66,8 @@ Security/Eval:
 
 Layout/EndOfLine:
   EnforcedStyle: lf
+Layout/LineLength:
+  Enabled: false
 Layout/ClassStructure:
   Enabled: true
   Categories:
