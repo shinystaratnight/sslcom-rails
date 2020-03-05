@@ -28,13 +28,13 @@
 require 'test_helper'
 
 describe CertificateName do
-  before :each do
+  before :all do
     stub_roles
     stub_triggers
     stub_server_software
   end
 
-  subject { build(:certificate_name) }
+  subject { CertificateName.new }
 
   context "attributes" do
     should have_db_column :id
