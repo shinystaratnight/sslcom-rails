@@ -10,11 +10,13 @@ describe NotificationGroupsManager do
 
     before(:each) do
       ActionMailer::Base.deliveries.clear
+      SslAccount.any_instance.stubs(:initial_setup).returns(true)
       @notification_group = create(:notification_group)
       @notification_group.schedules << create(:schedule, :daily)
     end
 
     it "scans domains associated with a notification groups succesfully (success case)" do
+      SslAccount.any_instance.stubs(:initial_setup).returns(true)
       @notification_group.notification_groups_subjects << create(:notification_groups_subject, :certificate_name_type)
       domain = DomainObject.new('valid.com', @notification_group.scan_port, @notification_group, create_x509_cert('valid.com', Time.now + 365.days), 19)
 
@@ -123,6 +125,8 @@ describe NotificationGroupsManager do
   describe 'NotificationGroupsManager.send_expiration_reminders' do
     before(:each) do
       ActionMailer::Base.deliveries.clear
+      SslAccount.any_instance.stubs(:initial_setup).returns(true)
+
       @notification_group = create(:notification_group)
       ['-15', '0', '15', '30', '60'].each do |reminder_value|
         create(:preference, owner_id: @notification_group.id, value: reminder_value)

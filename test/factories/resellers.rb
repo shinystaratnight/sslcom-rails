@@ -38,7 +38,7 @@
 
 FactoryBot.define do
   factory :reseller do
-    ssl_account
+    # ssl_account
     website { Faker::Internet.domain_name }
     address1 { Faker::Address.street_address }
     postal_code { Faker::Address.zip_code }
