@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'active_support/inflector'
 require 'simplecov'
 
 ENV['RAILS_ENV'] = 'test'
@@ -31,7 +32,7 @@ Minitest::Reporters.use! [Minitest::Reporters::SpecReporter.new, Minitest::Repor
 Dir[File.join('./test/support/**/*.rb')].sort.each { |f| require f }
 
 DatabaseCleaner.clean_with :deletion
-DatabaseCleaner.strategy = :truncation
+DatabaseCleaner.strategy = :truncation, { except: %w[roles reminder_triggers server_software]}
 
 Paperclip::Attachment.default_options[:path] = if ENV['PARALLEL_TEST_GROUPS']
                                                  ":rails_root/public/system/:rails_env/#{ENV['TEST_ENV_NUMBER'].to_i}/:class/:attachment/:id_partition/:filename"
@@ -48,14 +49,12 @@ module Minitest
       include Asserts
       include Authlogic::TestCase
 
-      before :all do
+      before :suite do
         Delayed::Worker.delay_jobs = false
-        DatabaseCleaner.strategy = :truncation
         DatabaseCleaner.start
       end
 
-      before :all do
-        DatabaseCleaner.strategy = :truncation
+      after :suite do
         DatabaseCleaner.clean
       end
     end
@@ -67,6 +66,17 @@ module ActionDispatch
     include Capybara::Screenshot::MiniTestPlugin
     include Capybara::DSL
     include Capybara::Minitest::Assertions
+
+    class_eval do
+      before :suite do
+        Delayed::Worker.delay_jobs = false
+        DatabaseCleaner.start
+      end
+
+      after :suite do
+        DatabaseCleaner.clean
+      end
+    end
   end
 end
 
@@ -77,7 +87,15 @@ module ActiveSupport
       include SetupHelper
       include Asserts
       include Authlogic::TestCase
-      include DatabaseCleanerSupport
+
+      before :suite do
+        Delayed::Worker.delay_jobs = false
+        DatabaseCleaner.start
+      end
+
+      after :suite do
+        DatabaseCleaner.clean
+      end
     end
   end
 end

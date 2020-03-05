@@ -35,11 +35,13 @@
 require 'test_helper'
 
 describe SslAccount do
-  subject { build(:ssl_account) }
+  subject { SslAccount.new }
 
   before :all do
-    initialize_roles
-    initialize_triggers
+    stub_roles
+    stub_triggers
+    stub_server_software
+    SslAccount.any_instance.stubs(:create_api_credential).returns(true)
   end
 
   context 'attributes' do
