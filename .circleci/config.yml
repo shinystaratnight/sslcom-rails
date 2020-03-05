@@ -328,26 +328,14 @@ jobs:
             RUN_COVERAGE=true bundle exec rake simplecov:report_coverage
 
       - store_artifacts:
-          path: ~/sslcom-rails/coverage
-          destination: coverage
+          path: coverage
 
-      # - run:
-      #     name: Code Climate Test Coverage
-      #     command: |
-      #       ./cc-test-reporter format-coverage -t simplecov -o "coverage/codeclimate.$CIRCLE_NODE_INDEX.json"
+      - store_test_results:
+          path: test/reports
 
-      # - store_test_results:
-      #     path: test/reports
+      - store_artifacts:
+          path: test/reports
 
-      # - store_artifacts:
-      #     path: coverage
-
-      # - store_artifacts:
-      #     path: test/reports
-
-      # - run: ./cc-test-reporter after-build -r $CC_TEST_REPORTER_ID -t simplecov --exit-code $? || true
-      # - attach_workspace:
-      #     at: .
 
       # - restore_cache:
       #     key: v2-repo-{{ .Environment.CIRCLE_SHA1 }}
@@ -360,10 +348,10 @@ jobs:
 
       # - run: bundle install --path vendor/bundle
 
-      # - run:
-      #     name: Merge and check coverage
-      #     command: |
-      #       RUN_COVERAGE=true bundle exec rake simplecov:report_coverage
+      - run:
+          name: Merge and check coverage
+          command: |
+            RUN_COVERAGE=true bundle exec rake simplecov:report_coverage
       # - store_artifacts:
       #     path: ~/split_app/coverage
       #     destination: coverage
@@ -375,12 +363,6 @@ jobs:
           name: Code Climate Test Coverage
           command: |
             ./cc-test-reporter format-coverage -t simplecov -o "coverage/codeclimate.$CIRCLE_NODE_INDEX.json"
-
-      - store_test_results:
-          path: ~/sslcom-rails/test/reports
-
-      - store_artifacts:
-          path: ~/sslcom-rails/test/reports
 
       - run:
           name: Notify Code Climate
