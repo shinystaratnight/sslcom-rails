@@ -134,7 +134,7 @@ jobs:
     steps:
       - checkout
 
-  #     - run: mkdir -p tmp/test-reports/minitest/queue_mode/
+      - run: mkdir -p tmp/test-reports/minitest/queue_mode/
 
       - run:
           name: Install Libraries for mySQL and Correct Bundler Version (1.17.3)
@@ -227,10 +227,12 @@ jobs:
           key: v2-repo-{{ .Environment.CIRCLE_SHA1 }}
 
       - restore_cache:
-          keys:
-            - gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
-            - gem-cache-{{ arch }}-{{ .Branch }}
-            - gem-cache
+          key: bundle-{{ checksum "Gemfile.lock" }}
+      # - restore_cache:
+      #     keys:
+      #       - gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+      #       - gem-cache-{{ arch }}-{{ .Branch }}
+      #       - gem-cache
 
       - run: bundle install --path vendor/bundle
 
@@ -242,28 +244,6 @@ jobs:
       - store_artifacts:
           path: coverage
 
-      - store_test_results:
-          path: test/reports
-
-      - store_artifacts:
-          path: test/reports
-
-
-      # - restore_cache:
-      #     key: v2-repo-{{ .Environment.CIRCLE_SHA1 }}
-
-      # - restore_cache:
-      #     keys:
-      #       - gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
-      #       - gem-cache-{{ arch }}-{{ .Branch }}
-      #       - gem-cache
-
-      # - run: bundle install --path vendor/bundle
-
-      - run:
-          name: Merge and check coverage
-          command: |
-            RUN_COVERAGE=true bundle exec rake simplecov:report_coverage
       # - store_artifacts:
       #     path: ~/split_app/coverage
       #     destination: coverage
