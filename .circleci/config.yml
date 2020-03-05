@@ -93,17 +93,27 @@ jobs:
       - run:
           name: Install Mysql Libraries
           command: *install-mysql-dependencies
-            
+
+      - save_cache:
+          key: v2-repo-{{ .Environment.CIRCLE_SHA1 }}
+          paths:
+            - ~/sslcom-rails
+
       - restore_cache:
-          key: bundle-{{ checksum "Gemfile.lock" }}
-      - run:
+          keys:
+            - gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+            - gem-cache-{{ arch }}-{{ .Branch }}
+            - gem-cache
+
+     - run:
           name: Install bundle
           command: bin/bundle install --path vendor/bundle
 
       - save_cache:
-          key: bundle-{{ checksum "Gemfile.lock" }}
+          key: gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
           paths:
-            - vendor/bundle
+            - ~/sslcom-rails/vendor/bundle
+
       - run:
           name: Wait for DB
           command: dockerize -wait tcp://localhost:3306 -timeout 1m
@@ -134,6 +144,17 @@ jobs:
             TESTFILES=$(circleci tests glob "test/**/*_test.rb" | circleci tests split --split-by=timings)
             bundle exec rake test \
               -- ${TESTFILES}
+
+      - run:
+          name: Stash Coverage Results
+          command: |
+            mkdir coverage_results
+            cp -R coverage/.resultset.json coverage_results/.resultset-${CIRCLE_NODE_INDEX}.json
+
+      - persist_to_workspace:
+          root: .
+          paths:
+            - coverage_results
 
   build:
     <<: *defaults
@@ -238,12 +259,10 @@ jobs:
           key: v2-repo-{{ .Environment.CIRCLE_SHA1 }}
 
       - restore_cache:
-          key: bundle-{{ checksum "Gemfile.lock" }}
-      # - restore_cache:
-      #     keys:
-      #       - gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
-      #       - gem-cache-{{ arch }}-{{ .Branch }}
-      #       - gem-cache
+          keys:
+            - gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+            - gem-cache-{{ arch }}-{{ .Branch }}
+            - gem-cache
 
       - run: bundle install --path vendor/bundle
 
@@ -253,11 +272,9 @@ jobs:
             RUN_COVERAGE=true bundle exec rake simplecov:report_coverage
 
       - store_artifacts:
-          path: coverage
+          path: ~/sslcom-rails/coverage
+          destination: coverage
 
-      # - store_artifacts:
-      #     path: ~/split_app/coverage
-      #     destination: coverage
       - run: 
           name: Install Code Climate Reporter
           command: *install-code-climate-reporter
