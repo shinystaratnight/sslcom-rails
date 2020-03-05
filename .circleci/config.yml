@@ -267,6 +267,26 @@ jobs:
 
       - run: bundle install --path vendor/bundle
 
+      - run: 
+          name: Create settings.yml
+          command: *create-settings-yml
+
+      - run: 
+          name: Copy local_env.yml
+          command: *create-local-env-yml
+
+      - run: 
+          name: Copy Database.yml
+          command: *copy-database-yml
+
+      - run:
+          name: Copy Settings File
+          command: cp config/client/certassure/settings.yml config/
+
+      - run:
+          name: Setup Database
+          command: *setup-database
+
       - run:
           name: Merge and check coverage
           command: |
