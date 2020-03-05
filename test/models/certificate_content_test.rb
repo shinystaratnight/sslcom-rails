@@ -40,6 +40,7 @@ describe CertificateContent do
     stub_roles
     stub_triggers
     stub_server_software
+    SslAccount.any_instance.stubs(:initial_setup).returns(true)
   end
   subject{ build_stubbed(:certificate_content) }
 
