@@ -28,6 +28,7 @@ Vagrant.configure('2') do |config|
   config.vm.provider 'virtualbox' do |vb|
     vb.memory = '4096'
     vb.cpus = '4'
+    vb.customize ["modifyvm", :id, "--cpuexecutioncap", "40"]
   end
 
   # Always upgrade to latest packages

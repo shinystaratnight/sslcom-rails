@@ -127,35 +127,7 @@ jobs:
             TESTFILES=$(circleci tests glob "test/**/*_test.rb" | circleci tests split --split-by=timings)
             bundle exec rake test \
               -- ${TESTFILES}
-      # - run:
-      #     name: Run tests
-      #     # type: shell
-      #     command: |-
-      #       TESTFILES=$(circleci tests glob "test/**/*_test.rb" | circleci tests split --split-by=timings)
-      #       bundle exec rake test \
-      #         --no-fail-fast \
-      #         --profile 10 \
-      #         --format RspecJunitFormatter \
-      #         --out test_results/rspec.xml \
-      #         --format progress \
-      #         -- ${TESTFILES}
 
-      # - run:
-      #     name: Code Climate Test Coverage
-      #     command: |
-      #       ./cc-test-reporter format-coverage -t simplecov -o "coverage/codeclimate.$CIRCLE_NODE_INDEX.json"
-
-      # - store_test_results:
-      #     path: test/reports
-
-      # - store_artifacts:
-      #     path: coverage
-
-      # - store_artifacts:
-      #     path: test/reports
-
-      # - run: ./cc-test-reporter after-build -r $CC_TEST_REPORTER_ID -t simplecov --exit-code $? || true
-  
   build:
     <<: *defaults
     steps:
