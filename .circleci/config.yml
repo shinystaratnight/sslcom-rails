@@ -1,4 +1,6 @@
 aliases:
+  - &copy-certassure-settings |
+    config/client/certassure/settings.yml config/
   - &create-settings-yml |
     mkdir -p config && echo '
       api_product_codes:
@@ -51,7 +53,12 @@ aliases:
     bundle exec rake db:create db:structure:load db:migrate --trace
 
   - &copy-database-yml |
-    cp config/database.yml.example config/database.yml
+    mkdir -p config && echo 'test:
+      adapter: mysql2
+      database: ssl_com_test
+      username: root
+      host: 127.0.0.1
+    ' > config/database.yml
 
   - &install-code-climate-reporter |
     curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
@@ -147,6 +154,11 @@ jobs:
           name: Bundle Install Gem Dependencies
           command: bundle check --path vendor/bundle || bundle install --deployment
 
+      - save_cache:
+         key: sslcom-rails-{{ checksum "Gemfile.lock" }}
+         paths:
+           - vendor/bundle
+
       - run: 
           name: Create settings.yml
           command: *create-settings-yml
@@ -159,10 +171,9 @@ jobs:
           name: Copy Database.yml
           command: *copy-database-yml
 
-      - save_cache:
-         key: sslcom-rails-{{ checksum "Gemfile.lock" }}
-         paths:
-           - vendor/bundle
+      - run:
+          name: Copy CertAssureSetting
+          command: *copy-certassure-settings
 
       # Yarn dependencies
       - restore_cache:
