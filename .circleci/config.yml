@@ -63,6 +63,7 @@ aliases:
   - &install-code-climate-reporter |
     curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
     chmod +x ./cc-test-reporter
+
 defaults: &defaults
   parallelism: 2
   working_directory: ~/sslcom-rails
@@ -105,7 +106,7 @@ jobs:
             - gem-cache-{{ arch }}-{{ .Branch }}
             - gem-cache
 
-     - run:
+      - run:
           name: Install bundle
           command: bin/bundle install --path vendor/bundle
 
