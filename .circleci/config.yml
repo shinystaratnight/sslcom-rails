@@ -1,6 +1,6 @@
 aliases:
   - &copy-certassure-settings |
-    config/client/certassure/settings.yml config/
+    cp config/client/certassure/settings.yml config/
   - &create-settings-yml |
     mkdir -p config && echo '
       api_product_codes:
