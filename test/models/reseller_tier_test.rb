@@ -23,7 +23,7 @@ describe ResellerTier do
     stub_server_software
   end
 
-  subject { build(:reseller_tier, :professional) }
+  subject { build_stubbed(:reseller_tier, :professional) }
 
   context 'associations' do
     should have_many(:certificates)
