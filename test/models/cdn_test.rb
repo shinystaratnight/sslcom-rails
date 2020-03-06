@@ -7,7 +7,7 @@
 #  id                   :integer          not null, primary key
 #  api_key              :string(255)
 #  custom_domain_name   :string(255)
-#  is_ssl_req           :boolean          default(FALSE)
+#  is_ssl_req           :boolean          default("0")
 #  created_at           :datetime         not null
 #  updated_at           :datetime         not null
 #  certificate_order_id :integer

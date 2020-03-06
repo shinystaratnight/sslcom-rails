@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: resellers
@@ -35,89 +37,89 @@
 #
 
 class Reseller < ApplicationRecord
+  include Workflow
+
   belongs_to  :ssl_account
   has_many    :orders, through: :ssl_account
   belongs_to  :reseller_tier
-  easy_roles  :roles
 
   attr_protected  :reseller_tier
 
-  PROFILE_COLUMNS = %w(display_name tagline description)
-  COMPANY_COLUMNS = %w(organization website address1 address2 address3 postal_code city state country)
-  ADMIN_COLUMNS = %w(first_name last_name email phone ext fax)
-  PAYMENT_COLUMNS = %w(tax_number)
-  NONREQUIRED_COLUMNS = %w(ext fax)
-  REQUIRED_COLUMNS = %w(type_organization organization website address1 postal_code city state country) + ADMIN_COLUMNS - NONREQUIRED_COLUMNS
-  FORM_COLUMNS=%w(type_organization)+ADMIN_COLUMNS+COMPANY_COLUMNS
-  BUSINESS = "business"
-  INDIVIDUAL = "individual"
+  PROFILE_COLUMNS = %w[display_name tagline description].freeze
+  COMPANY_COLUMNS = %w[organization website address1 address2 address3 postal_code city state country].freeze
+  ADMIN_COLUMNS = %w[first_name last_name email phone ext fax].freeze
+  PAYMENT_COLUMNS = %w[tax_number].freeze
+  NONREQUIRED_COLUMNS = %w[ext fax].freeze
+  REQUIRED_COLUMNS = %w[type_organization organization website address1 postal_code city state country] + ADMIN_COLUMNS - NONREQUIRED_COLUMNS
+  FORM_COLUMNS = %w[type_organization] + ADMIN_COLUMNS + COMPANY_COLUMNS
+  BUSINESS = 'business'
+  INDIVIDUAL = 'individual'
 
-  WELCOME="Welcome to the SSL.com Reseller Program!"
+  WELCOME = 'Welcome to the SSL.com Reseller Program!'
 
   TEMP_FIELDS = {
-      first_name: "first name",
-      last_name: "last name",
-      email: "changeto@email.com",
-      phone: "123-456-7890",
-      type_organization: "business",
-      organization: "Some organization name",
-      website: "change.to.website",
-      address1: "Some Address",
-      postal_code: "Some postal code",
-      city: "Some city",
-      state: "Some state",
-      tax_number: "Some tax number",
-      country: "US"
-  }
+    first_name: 'first name',
+    last_name: 'last name',
+    email: 'changeto@email.com',
+    phone: '123-456-7890',
+    type_organization: 'business',
+    organization: 'Some organization name',
+    website: 'change.to.website',
+    address1: 'Some Address',
+    postal_code: 'Some postal code',
+    city: 'Some city',
+    state: 'Some state',
+    tax_number: 'Some tax number',
+    country: 'US'
+  }.freeze
 
   SUBDOMAIN = 'reseller'
 
-  TARGETED = %w(host_providers registrars merchants enterprises government education medical) - %w(enterprises government education medical)
+  TARGETED = %w[host_providers registrars merchants enterprises government education medical] - %w[enterprises government education medical]
 
-  SIGNUP_PAGES = %w(Reseller\ Profile Select\ Tier Billing\ Information Registration\ Complete)
-  SIGNUP_PAGES_FREE = %w(Reseller\ Profile Select\ Tier Registration\ Complete)
+  SIGNUP_PAGES = %w[Reseller\ Profile Select\ Tier Billing\ Information Registration\ Complete].freeze
+  SIGNUP_PAGES_FREE = %w[Reseller\ Profile Select\ Tier Registration\ Complete].freeze
 
-  validates_presence_of *((REQUIRED_COLUMNS-%w(email organization state)).map(&:intern))
-  validates_presence_of :organization, :if => Proc.new{|reseller| reseller.type_organization == BUSINESS }
-  validates_length_of   *((FORM_COLUMNS).map(&:intern)+[:maximum => 100])
-  validates_length_of   :email, :within => 3..100
-  validates_format_of   :email, :with => /\A([^@\s]+)@((?:[-a-z0-9A-Z]+\.)+[a-zA-Z]{2,})\z/
-  validates_presence_of "state", :if => Proc.new{|x| x.american? }
+  validates_presence_of *(REQUIRED_COLUMNS - %w[email organization state]).map(&:intern)
+  validates_presence_of :organization, if: proc{ |reseller| reseller.type_organization == BUSINESS }
+  validates_length_of   *(FORM_COLUMNS.map(&:intern) + [maximum: 100])
+  validates_length_of   :email, within: 3..100
+  validates_format_of   :email, with: /\A([^@\s]+)@((?:[-a-z0-9A-Z]+\.)+[a-zA-Z]{2,})\z/
+  validates_presence_of 'state', if: proc{ |x| x.american? }
 
-  include Workflow
   workflow do
     state :new do
-      event :profile_submitted, :transitions_to => :select_tier
-      event :back, :transitions_to => :new
-      event :completed, :transitions_to => :complete
+      event :profile_submitted, transitions_to: :select_tier
+      event :back, transitions_to: :new
+      event :completed, transitions_to: :complete
     end
 
     state :select_tier do
-      event :tier_selected, :transitions_to => :enter_billing_information
-      event :completed, :transitions_to => :complete
-      event :back, :transitions_to => :new
+      event :tier_selected, transitions_to: :enter_billing_information
+      event :completed, transitions_to: :complete
+      event :back, transitions_to: :new
     end
 
     state :enter_billing_information do
-      event :completed, :transitions_to => :complete
-      event :back, :transitions_to => :select_tier
+      event :completed, transitions_to: :complete
+      event :back, transitions_to: :select_tier
     end
 
     state :complete
   end
 
   def american?
-    country == "United States"
+    country == 'United States'
   end
 
   def type_organization
-    read_attribute("type_organization") || BUSINESS
+    read_attribute('type_organization') || BUSINESS
   end
 
   # the final stage of reseller signup
   def finish_signup(tier)
     self.reseller_tier = tier
-    self.completed!
+    completed!
     ssl_account.remove_role! 'new_reseller'
     ssl_account.add_role! 'reseller'
   end

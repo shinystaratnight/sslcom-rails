@@ -42,3 +42,6 @@ public/uploads
 000/000
 nbproject
 vendor/bundle/
+Vagrantfile.azure
+# Ignore master key for decrypting credentials and more.
+/config/master.key

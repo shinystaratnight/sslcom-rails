@@ -15,11 +15,15 @@
 
 class ApplicationRecord < ActiveRecord::Base
   include ActiveModel::Dirty
-  include Swagger::Blocks
+  # include Swagger::Blocks
   # include CollectiveIdea::Acts::Billable
   # include CollectiveIdea::Acts::Sellable
   # include CollectiveIdea::Acts::Money
   # include Acts::As::Publishable
 
   self.abstract_class = true
+
+  def model_and_id
+    [self.class.to_s.underscore, id].join('_')
+  end
 end

@@ -12,8 +12,8 @@
 #  duo_own_used           :boolean
 #  epki_agreement         :datetime
 #  issue_dv_no_validation :string(255)
-#  no_limit               :boolean          default(FALSE)
-#  roles                  :string(255)      default([])
+#  no_limit               :boolean          default("0")
+#  roles                  :string(255)      default("--- []")
 #  sec_type               :string(255)
 #  ssl_slug               :string(255)
 #  status                 :string(255)
@@ -35,7 +35,6 @@ class SslAccount < ApplicationRecord
   extend Memoist
   using_access_control
   acts_as_billable
-  easy_roles :roles
   has_many   :api_credentials
   has_one   :duo_account
   has_many  :billing_profiles

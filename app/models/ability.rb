@@ -1,12 +1,12 @@
-class Ability
-  include CanCan::Ability
+# frozen_string_literal: true
 
+class Ability
   def initialize(user)
     # Define abilities for the passed in user here. For example:
     #
     @user = user || User.new # guest user (not logged in)
     @user.roles.each { |role| send(role.name) if Ability.method_defined?(role.name) }
-      
+
     #   if user.admin?
     #     can :manage, :all
     #   else
@@ -29,7 +29,7 @@ class Ability
     can do |action, subject_class, subject|
       @user.permissions.find_all_by_action(aliases_for_action(action.to_s)).any? do |permission|
         permission.subject_class == subject_class.to_s &&
-            (subject.nil? || permission.subject_id.nil? || permission.subject_id == subject.id)
+          (subject.nil? || permission.subject_id.nil? || permission.subject_id == subject.id)
       end
     end
     can :manage, :all if @user.has_role? :admin
@@ -81,5 +81,4 @@ class Ability
     certificates_manager
     can :manage, Bill
   end
-
 end

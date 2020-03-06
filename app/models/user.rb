@@ -5,7 +5,7 @@
 # Table name: users
 #
 #  id                  :integer          not null, primary key
-#  active              :boolean          default(FALSE), not null
+#  active              :boolean          default("0"), not null
 #  address1            :string(255)
 #  address2            :string(255)
 #  address3            :string(255)
@@ -21,7 +21,7 @@
 #  default_ssl_account :integer
 #  duo_enabled         :string(255)      default("enabled")
 #  email               :string(255)      not null
-#  failed_login_count  :integer          default(0), not null
+#  failed_login_count  :integer          default("0"), not null
 #  first_name          :string(255)
 #  is_auth_token       :boolean
 #  last_login_at       :datetime
@@ -29,14 +29,14 @@
 #  last_name           :string(255)
 #  last_request_at     :datetime
 #  login               :string(255)      not null
-#  login_count         :integer          default(0), not null
+#  login_count         :integer          default("0"), not null
 #  main_ssl_account    :integer
 #  max_teams           :integer
 #  openid_identifier   :string(255)
 #  organization        :string(255)
 #  password_salt       :string(255)
 #  perishable_token    :string(255)      not null
-#  persist_notice      :boolean          default(FALSE)
+#  persist_notice      :boolean          default("0")
 #  persistence_token   :string(255)      not null
 #  phone               :string(255)
 #  po_box              :string(255)
@@ -84,8 +84,6 @@ class User < ApplicationRecord
                   :default_ssl_account, :ssl_account_id, :role_ids, :role_change_type, :main_ssl_account, :max_teams, :persist_notice
 
   accepts_nested_attributes_for :assignments
-
-
 
   before_save :should_reset_perishable_token
 
@@ -811,10 +809,6 @@ class User < ApplicationRecord
     ssl = get_ssl_acct_user_for_approval(params)
     ssl&.update(approved: true, token_expires: nil, approval_token: nil)
     ssl
-  end
-
-  def generate_approval_token
-    OAuth::Helper.generate_key(40)[0, 40]
   end
 
   def get_ssl_acct_user_for_approval(params)

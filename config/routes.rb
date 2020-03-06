@@ -2,9 +2,9 @@
 
 require 'domain_constraint'
 
-SslCom::Application.routes.draw do
+Rails.application.routes.draw
   mount Rswag::Ui::Engine => '/api'
-  mount Delayed::Web::Engine, at: '/jobs', constraints: AdminConstraint.new
+  # mount Delayed::Web::Engine, at: '/jobs', constraints: AdminConstraint.new
   mount LetterOpenerWeb::Engine, at: '/letter_opener' if Rails.env.development?
 
   resources :apidocs, only: [:index]

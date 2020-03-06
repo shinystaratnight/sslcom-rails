@@ -612,4 +612,4 @@ end
 
 ActiveRecord::Base.class_eval do
   extend Preferences::MacroMethods
-end
+end if defined?(ActiveRecord::Base)
