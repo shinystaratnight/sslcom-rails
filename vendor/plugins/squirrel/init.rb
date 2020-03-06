@@ -1,7 +1,7 @@
 require File.dirname(__FILE__) + '/lib/squirrel.rb'
 class << ActiveRecord::Base
   include Squirrel::Hook
-end
+end if defined?(ActiveRecord::Base)
 
 if defined?(ActiveRecord::NamedScope::Scope)
   class ActiveRecord::NamedScope::Scope

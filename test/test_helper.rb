@@ -19,9 +19,14 @@ require 'authlogic/test_case'
 require 'declarative_authorization/maintenance'
 require 'json-schema'
 require 'minitest/bang'
+
+# capybara
 require 'capybara/rails'
 require 'capybara-screenshot/minitest'
 require 'capybara/minitest'
+require 'minitest/rails/capybara'
+
+Capybara.server = :puma, { Silent: true }
 
 ActiveRecord::Migration.maintain_test_schema!
 
@@ -67,15 +72,10 @@ module ActionDispatch
     include Capybara::DSL
     include Capybara::Minitest::Assertions
 
-    class_eval do
-      before :suite do
-        Delayed::Worker.delay_jobs = false
-        DatabaseCleaner.start
-      end
-
-      after :suite do
-        DatabaseCleaner.clean
-      end
+    # Reset sessions and driver between tests
+    teardown do
+      Capybara.reset_sessions!
+      Capybara.use_default_driver
     end
   end
 end

@@ -1,19 +1,28 @@
 require File.expand_path('../boot', __FILE__)
 require 'rack/ssl-enforcer'
-require 'rails/all'
+require 'rails'
+# Pick the frameworks you want:
+require 'active_model/railtie'
+require 'active_job/railtie'
+require 'active_record/railtie'
+require 'action_controller/railtie'
+require 'action_mailer/railtie'
+require 'action_view/railtie'
+require 'sprockets/railtie'
+require 'rails/test_unit/railtie'
+
 require './lib/middleware/catch_json_parse_errors'
 
-Bundler.setup
-# If you have a Gemfile, require the gems listed there, including any gems
+# Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
-Bundler.require(:default, Rails.env) if defined?(Bundler)
+Bundler.setup
+Bundler.require(*Rails.groups)
+CLIENT_OPTIONS = ['ssl.com', 'certassure'].freeze
+DEPLOYMENT_CLIENT = CLIENT_OPTIONS[0]
 
-CLIENT_OPTIONS=["ssl.com","certassure"]
-DEPLOYMENT_CLIENT=CLIENT_OPTIONS[0]
-
-Struct.new("Expiring", :before, :after, :cert)
-Struct.new("Notification", :before, :after, :domain, :expire, :reminder_type, :scanned_certificate_id)
-Struct.new("Reminding", :year, :cert)
+Struct.new('Expiring', :before, :after, :cert)
+Struct.new('Notification', :before, :after, :domain, :expire, :reminder_type, :scanned_certificate_id)
+Struct.new('Reminding', :year, :cert)
 
 module SslCom
   class Application < Rails::Application
