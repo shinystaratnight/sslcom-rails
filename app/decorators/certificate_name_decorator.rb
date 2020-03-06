@@ -29,12 +29,14 @@ class CertificateNameDecorator < Draper::Decorator
       'valid'
     when 'failed'
       'invalid'
+    when ''
+      'pending'
     else
       'processing'
     end
   end
 
   def workflow_state
-    object.domain_control_validations.acme.last.workflow_state
+    object&.domain_control_validations&.acme&.last&.workflow_state || ''
   end
 end
