@@ -60,10 +60,9 @@ module SslCom
     config.encoding = 'utf-8'
 
     # Configure sensitive parameters which will be filtered from the log file.
-    config.filter_parameters += [:password, :password_confirmation]
-    #config.action_mailer.default_url_options = { :host => Settings.actionmailer_host }
+    # config.action_mailer.default_url_options = { :host => Settings.actionmailer_host }
 
-    #machinist generator
+    # machinist generator
     # config.generators do |g|
     #   g.fixture_replacement :machinist
     # end
@@ -71,7 +70,7 @@ module SslCom
     # Rails Api
     config.api_only = false
 
-    #turn off strong parameters
+    # turn off strong parameters
     config.action_controller.permit_all_parameters = true
 
     config.generators do |g|
