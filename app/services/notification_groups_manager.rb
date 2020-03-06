@@ -4,7 +4,7 @@ class NotificationGroupsManager
   def self.scan(options = {})
     initialize_database(options[:db])
     domains = manufacture_domains_structs(options[:schedule_type], options[:schedule_value])
-  
+
     scan_logs = []
     domains.uniq.each do |domain|
       scan_log = domain.notification_group.scan_logs.last
@@ -23,6 +23,7 @@ class NotificationGroupsManager
           scanned_cert.body = certificate.to_s
           scanned_cert.decoded = certificate.to_text
           scanned_cert.save
+          NotificationGroupMailer.domain_digest_notice(scan_status, domain.notification_group, scanned_cert, domain.url, domain.notification_group.notification_groups_contacts, domain.notification_group.ssl_account).deliver_now
           ScanLog.create(notification_group_id: domain.notification_group.id, scanned_certificate_id: scanned_cert.id, domain_name: domain.url, scan_status: scan_status, expiration_date: certificate.not_after.to_date, scan_group: scan_group)
         else
           if scan_status != scanned_cert.scan_logs.last.scan_status

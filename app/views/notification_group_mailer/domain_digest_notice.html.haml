@@ -3,7 +3,10 @@ Hello,
 SSL.com Notification Group #{@notification_group.friendly_name || @notification_group.ref} scan update for #{@domain}.
 %br
 %br
-Reminder Type: #{@scan_status}
+Scanned On: #{DateTime.current.strftime("%Y-%m-%d_%H:%M")}
+%br
+%br
+Scan Status: #{@scan_status}
 %br
 Scanned Domain: #{@domain}
 %br

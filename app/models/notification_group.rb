@@ -133,6 +133,7 @@ class NotificationGroup < ApplicationRecord
             scanned_cert.body = certificate.to_s
             scanned_cert.decoded = certificate.to_text
             scanned_cert.save
+            # NotificationGroupMailer.domain_digest_notice(scan_status, self, scanned_cert, domain, self.notification_groups_contacts, self.ssl_account).deliver_now
             ScanLog.create(notification_group_id: self.id, scanned_certificate_id: scanned_cert.id, domain_name: domain, scan_status: scan_status, expiration_date: certificate.not_after.to_date, scan_group: scan_group)
           else
             if scan_status != scanned_cert.scan_logs.last.scan_status
