@@ -17,13 +17,14 @@ class NotificationGroupsManager
       if domain.x509_cert.present?
         certificate = domain.x509_cert
         verify_result = domain.verify_result
-        cert_expiration_date = certificate.not_after.to_date
-        scan_status = 'expiring'
-        if verify_result == 27
+        scan_status = ''
+        if verify_result == 0
+          scan_status = 'expiring'
+        elsif verify_result == 27
           scan_status = 'untrusted'
-        elsif Date.today >= cert_expiration_date
+        elsif verify_result == 10
           scan_status = 'expired'
-        elsif !certificate.subject_alternative_names.include? domain.url
+        elsif verify_result == 29
           scan_status = 'name_mismatch'
         end
 
@@ -32,18 +33,17 @@ class NotificationGroupsManager
           scanned_cert.body = certificate.to_s
           scanned_cert.decoded = certificate.to_text
           scanned_cert.save
-          scan_logs << ScanLog.new(notification_group_id: domain.notification_group.id, scanned_certificate_id: scanned_cert.id, domain_name: domain.url, scan_status: scan_status, expiration_date: cert_expiration_date, scan_group: scan_group)
+          ScanLog.create(notification_group_id: domain.notification_group.id, scanned_certificate_id: scanned_cert.id, domain_name: domain.url, scan_status: scan_status, expiration_date: certificate.not_after.to_date, scan_group: scan_group)
         else
           if scan_status != scanned_cert.scan_logs.last.scan_status
             NotificationGroupMailer.domain_digest_notice(scan_status, domain.notification_group, scanned_cert, domain.url, domain.notification_group.notification_groups_contacts, domain.notification_group.ssl_account).deliver_now
           end
-          scan_logs << ScanLog.new(notification_group_id: domain.notification_group.id, scanned_certificate_id: scanned_cert.id, domain_name: domain.url, scan_status: scan_status, expiration_date: cert_expiration_date, scan_group: scan_group)
+          scan_logs << ScanLog.new(notification_group_id: domain.notification_group.id, scanned_certificate_id: scanned_cert.id, domain_name: domain.url, scan_status: scan_status, expiration_date: certificate.not_after.to_date, scan_group: scan_group)
         end
       else
         scan_logs << ScanLog.new(notification_group_id: domain.notification_group.id, scanned_certificate_id: nil, domain_name: domain.url, scan_status: "not_found", expiration_date: nil, scan_group: scan_group)
       end
     end
-
     ScanLog.import scan_logs
   end
 

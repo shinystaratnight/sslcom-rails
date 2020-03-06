@@ -1,5 +1,6 @@
 class NotificationGroupsController < ApplicationController
   before_action :require_user, only: [:index, :new, :create, :edit, :update, :destroy]
+  before_action :find_notification_group, only: :scan_individual_group
   before_action :find_ssl_account
   before_filter :global_set_row_page, only: [:index, :search]
   before_action :set_schedule_value, only: [:index, :new, :edit, :search]
@@ -102,47 +103,22 @@ class NotificationGroupsController < ApplicationController
 
   def remove_groups
     group_ids = params[:note_group_check]
-
-    unless group_ids.blank?
-      @ssl_account.notification_groups.where(id: group_ids).destroy_all
-      Preference.where(owner_type: 'NotificationGroup', owner_id: group_ids).destroy_all
-      Schedule.where(notification_group_id: group_ids).destroy_all
-    end
+    Preference.where(owner_type: 'NotificationGroup', owner_id: group_ids).destroy_all
+    NotificationGroup.where(id: group_ids).destroy_all
 
     flash[:notice] = "Selected notification groups has been removed successfully."
     redirect_to notification_groups_path(ssl_slug: @ssl_slug)
   end
 
   def scan_groups
-    # group_ids = params[:scan_groups]
-    group_ids = params[:note_group_check]
+    notificaton_group_ids = params[:note_group_check]
+    notification_groups = NotificationGroup.where(id: notificaton_group_ids, status: false).includes(:certificate_names, :notification_groups_subjects, :notification_groups_contacts)
 
-    # if group_ids.blank?
-    #   groups = @ssl_account.cached_notification_groups
-    # else
-    #   groups = @ssl_account.cached_notification_groups.where(id: group_ids, status: true)
-    # end
-
-    groups = @ssl_account.notification_groups.where(id: group_ids, status: false)
-
-    # groups.includes(
-    #     [:stored_preferences, {:certificate_orders =>
-    #                                [:orders, :certificate_contents =>
-    #                                    {:csr => :signed_certificates}]}]).find_in_batches(batch_size: 250) do |batch_list|
-    if groups.size > 0
-      groups.includes(:notification_groups_subjects, :notification_groups_contacts)
-          .find_in_batches(batch_size: 250) do |batch_list|
-        batch_list.each do |group|
-          # NotificationGroup.scan_notification_group(group)
-          group.scan_notification_group
-        end
-      end
-
-      flash[:notice] = "Scan has been done successfully for only enabled Notification Groups."
-    else
-      flash[:error] = "It can not scan for disabled Notification Group(s)."
+    notification_groups.map do |ng|
+      ng.scan
     end
 
+    flash[:notice] = "Scan has been done successfully for only enabled Notification Groups."
     redirect_to notification_groups_path(ssl_slug: @ssl_slug)
   end
 
@@ -157,14 +133,10 @@ class NotificationGroupsController < ApplicationController
   end
 
   def scan_individual_group
-    # notification_group = @ssl_account.cached_notification_groups.includes(:notification_groups_subjects).find(params[:notification_group_id])
-    notification_group = @ssl_account.notification_groups
-                             .includes(:notification_groups_subjects, :notification_groups_contacts)
-                             .find(params[:notification_group_id])
-    notification_group.scan_notification_group
+    @notification_group.scan
 
     flash[:notice] = "Scan has been done successfully."
-    redirect_to edit_notification_group_path(@ssl_slug, notification_group.id)
+    redirect_to notification_group_scan_logs_url(@ssl_slug, @notification_group.id)
   end
 
   def new
@@ -574,150 +546,146 @@ class NotificationGroupsController < ApplicationController
 
   private
 
-    def remove_duplicate(mArry)
-      result = {}
+  def find_notification_group
+    @notification_group = NotificationGroup.includes(:certificate_names, :notification_groups_subjects, :notification_groups_contacts).find_by_id(params[:notification_group_id])
+  end
 
-      mArry.each do |arr|
-        if result[arr[0]].blank?
-          result[arr[0]] = arr[1].to_s
-        else
-          result[arr[0]] = (result[arr[0]] + '|' + arr[1].to_s).split('|').sort.join('|')
-        end
+  def remove_duplicate(mArry)
+    result = {}
+
+    mArry.each do |arr|
+      if result[arr[0]].blank?
+        result[arr[0]] = arr[1].to_s
+      else
+        result[arr[0]] = (result[arr[0]] + '|' + arr[1].to_s).split('|').sort.join('|')
       end
-
-      result
     end
 
-    def parse_params(params)
-      result = []
+    result
+  end
 
-      params.each do |param|
-        if param !~ /\D/
-          result << param
+  def parse_params(params)
+    result = []
+
+    params.each do |param|
+      if param !~ /\D/
+        result << param
+      else
+        if param.split('---').size == 1
+          param.split('|').size == 1 ? result << param : result.concat(param.split('|'))
         else
-          if param.split('---').size == 1
-            param.split('|').size == 1 ? result << param : result.concat(param.split('|'))
+          if param.split('---')[1].split('|').size == 1
+            result << param
           else
-            if param.split('---')[1].split('|').size == 1
-              result << param
-            else
-              result.concat(param.split('---')[1].split('|').map{ |val| param.split('---')[0] + '---' + val })
-            end
+            result.concat(param.split('---')[1].split('|').map{ |val| param.split('---')[0] + '---' + val })
           end
         end
       end
-
-      result
     end
 
-    def generate_slt_subjects
-      result = []
+    result
+  end
 
-      subjects = @notification_group.notification_groups_subjects
-      typed_subjects = subjects.where(["domain_name IS NOT ? and subjectable_id IS ?",
-                                       nil,
-                                       nil]).pluck(:domain_name)
-      result.concat(typed_subjects)
+  def generate_slt_subjects
+    result = []
 
-      selected_subjects = remove_duplicate(
-          subjects.where.not(domain_name: nil, subjectable_id: nil).pluck(:domain_name, :subjectable_id)
-      ).map{ |arr| arr[0] + '---' + arr[1].to_s }
-      result.concat(selected_subjects)
+    subjects = @notification_group.notification_groups_subjects
+    typed_subjects = subjects.where(["domain_name IS NOT ? and subjectable_id IS ?",
+                                     nil,
+                                     nil]).pluck(:domain_name)
+    result.concat(typed_subjects)
 
-      from_cert_orders = remove_duplicate(
-          @ssl_account.cached_certificate_names
-              .where(id: subjects.where(domain_name: nil, subjectable_type: 'CertificateName')
-                             .pluck(:subjectable_id))
-              .pluck(:name, :id)
-      ).map{ |arr| arr[1].to_s }
+    selected_subjects = remove_duplicate(
+        subjects.where.not(domain_name: nil, subjectable_id: nil).pluck(:domain_name, :subjectable_id)
+    ).map{ |arr| arr[0] + '---' + arr[1].to_s }
+    result.concat(selected_subjects)
 
-      result.concat(from_cert_orders)
+    from_cert_orders = remove_duplicate(
+        @ssl_account.cached_certificate_names
+            .where(id: subjects.where(domain_name: nil, subjectable_type: 'CertificateName')
+                           .pluck(:subjectable_id))
+            .pluck(:name, :id)
+    ).map{ |arr| arr[1].to_s }
 
-      result
-    end
+    result.concat(from_cert_orders)
 
-    def generate_slt_contacts
-      result = []
+    result
+  end
 
-      contacts = @notification_group.notification_groups_contacts
-      typed_contacts = contacts.where(["email_address IS NOT ? and contactable_id IS ?",
-                                       nil,
-                                       nil]).pluck(:email_address)
-      result.concat(typed_contacts)
+  def generate_slt_contacts
+    result = []
 
-      selected_contacts = remove_duplicate(
-          contacts.where.not(email_address: nil, contactable_id: nil).pluck(:email_address, :contactable_id)
-      ).map{ |arr| arr[0] + '---' + arr[1].to_s }
-      result.concat(selected_contacts)
+    contacts = @notification_group.notification_groups_contacts
+    typed_contacts = contacts.where(["email_address IS NOT ? and contactable_id IS ?",
+                                     nil,
+                                     nil]).pluck(:email_address)
+    result.concat(typed_contacts)
 
-      slt_contact_ids = contacts.where(email_address: nil, contactable_type: 'CertificateContact')
-                            .pluck(:contactable_id)
-      # from_cert_orders = remove_duplicate(
-      #     @ssl_account.certificate_orders.flatten.compact
-      #         .map(&:certificate_contents).flatten.compact
-      #         .map(&:certificate_contacts).flatten.compact
-      #         .select{ |contact| slt_contact_ids.include?(contact.id) }
-      #         .map{ |contact| [contact.email, contact.id.to_s] }
-      # ).map{ |arr| arr[1] }
+    selected_contacts = remove_duplicate(
+        contacts.where.not(email_address: nil, contactable_id: nil).pluck(:email_address, :contactable_id)
+    ).map{ |arr| arr[0] + '---' + arr[1].to_s }
+    result.concat(selected_contacts)
 
-      from_cert_orders = remove_duplicate(
-          @ssl_account.certificate_orders.includes({certificate_contents: :certificate_contacts}).flatten.compact
-              .map(&:certificate_contents).flatten.compact
-              .map(&:certificate_contacts).flatten.compact
-              .select{ |contact| slt_contact_ids.include?(contact.id) }
-              .map{ |contact| [contact.email, contact.id.to_s] }
-      ).map{ |arr| arr[1] }
+    slt_contact_ids = contacts.where(email_address: nil, contactable_type: 'CertificateContact').pluck(:contactable_id)
 
-      result.concat(from_cert_orders)
+    from_cert_orders = remove_duplicate(
+        @ssl_account.certificate_orders.includes({certificate_contents: :certificate_contacts}).flatten.compact
+            .map(&:certificate_contents).flatten.compact
+            .map(&:certificate_contacts).flatten.compact
+            .select{ |contact| slt_contact_ids.include?(contact.id) }
+            .map{ |contact| [contact.email, contact.id.to_s] }
+    ).map{ |arr| arr[1] }
 
-      result
-    end
+    result.concat(from_cert_orders)
 
-    def set_schedule_value
-      @schedule_simple_type = [
-          ['Hourly', '1'],
-          ['Daily (at midnight)', '2'],
-          ['Weekly (on Sunday)', '3'],
-          ['Monthly (on the 1st)', '4'],
-          ['Yearly (on 1st Jan)', '5']
-      ]
+    result
+  end
 
-      @schedule_weekdays = [
-          ['Sunday', '0'], ['Monday', '1'], ['Tuesday', '2'], ['Wednesday', '3'],
-          ['Thursday', '4'], ['Friday', '5'], ['Saturday', '6']
-      ]
+  def set_schedule_value
+    @schedule_simple_type = [
+        ['Hourly', '1'],
+        ['Daily (at midnight)', '2'],
+        ['Weekly (on Sunday)', '3'],
+        ['Monthly (on the 1st)', '4'],
+        ['Yearly (on 1st Jan)', '5']
+    ]
 
-      @schedule_months = [
-          ['January', '1'], ['Febrary', '2'], ['March', '3'], ['April', '4'], ['May', '5'], ['June', '6'],
-          ['July', '7'], ['August', '8'], ['September', '9'], ['October', '10'], ['November', '11'], ['December', '12']
-      ]
+    @schedule_weekdays = [
+        ['Sunday', '0'], ['Monday', '1'], ['Tuesday', '2'], ['Wednesday', '3'],
+        ['Thursday', '4'], ['Friday', '5'], ['Saturday', '6']
+    ]
 
-      @schedule_days = [
-          ['1', '1'], ['2', '2'], ['3', '3'], ['4', '4'], ['5', '5'], ['6', '6'],
-          ['7', '7'], ['8', '8'], ['9', '9'], ['10', '10'], ['11', '11'], ['12', '12'],
-          ['13', '13'], ['14', '14'], ['15', '15'], ['16', '16'], ['17', '17'], ['18', '18'],
-          ['19', '19'], ['20', '20'], ['21', '21'], ['22', '22'], ['23', '23'], ['24', '24'],
-          ['25', '25'], ['26', '26'], ['27', '27'], ['28', '28'], ['29', '29'], ['30', '30'], ['31', '31']
-      ]
+    @schedule_months = [
+        ['January', '1'], ['Febrary', '2'], ['March', '3'], ['April', '4'], ['May', '5'], ['June', '6'],
+        ['July', '7'], ['August', '8'], ['September', '9'], ['October', '10'], ['November', '11'], ['December', '12']
+    ]
 
-      @schedule_hours = [
-          ['0', '0'], ['1', '1'], ['2', '2'], ['3', '3'], ['4', '4'], ['5', '5'], ['6', '6'],
-          ['7', '7'], ['8', '8'], ['9', '9'], ['10', '10'], ['11', '11'], ['12', '12'],
-          ['13', '13'], ['14', '14'], ['15', '15'], ['16', '16'], ['17', '17'], ['18', '18'],
-          ['19', '19'], ['20', '20'], ['21', '21'], ['22', '22'], ['23', '23']
-      ]
+    @schedule_days = [
+        ['1', '1'], ['2', '2'], ['3', '3'], ['4', '4'], ['5', '5'], ['6', '6'],
+        ['7', '7'], ['8', '8'], ['9', '9'], ['10', '10'], ['11', '11'], ['12', '12'],
+        ['13', '13'], ['14', '14'], ['15', '15'], ['16', '16'], ['17', '17'], ['18', '18'],
+        ['19', '19'], ['20', '20'], ['21', '21'], ['22', '22'], ['23', '23'], ['24', '24'],
+        ['25', '25'], ['26', '26'], ['27', '27'], ['28', '28'], ['29', '29'], ['30', '30'], ['31', '31']
+    ]
 
-      @schedule_minutes = [
-          ['0', '0'], ['1', '1'], ['2', '2'], ['3', '3'], ['4', '4'], ['5', '5'], ['6', '6'],
-          ['7', '7'], ['8', '8'], ['9', '9'], ['10', '10'], ['11', '11'], ['12', '12'],
-          ['13', '13'], ['14', '14'], ['15', '15'], ['16', '16'], ['17', '17'], ['18', '18'],
-          ['19', '19'], ['20', '20'], ['21', '21'], ['22', '22'], ['23', '23'], ['24', '24'],
-          ['25', '25'], ['26', '26'], ['27', '27'], ['28', '28'], ['29', '29'], ['30', '30'],
-          ['31', '31'], ['32', '32'], ['33', '33'], ['34', '34'], ['35', '35'], ['36', '36'],
-          ['37', '37'], ['38', '38'], ['39', '39'], ['40', '40'], ['41', '41'], ['42', '42'],
-          ['43', '43'], ['44', '44'], ['45', '45'], ['46', '46'], ['47', '47'], ['48', '48'],
-          ['49', '49'], ['50', '50'], ['51', '51'], ['52', '52'], ['53', '53'], ['54', '54'],
-          ['55', '55'], ['56', '56'], ['57', '57'], ['58', '58'], ['59', '59']
-      ]
-    end
+    @schedule_hours = [
+        ['0', '0'], ['1', '1'], ['2', '2'], ['3', '3'], ['4', '4'], ['5', '5'], ['6', '6'],
+        ['7', '7'], ['8', '8'], ['9', '9'], ['10', '10'], ['11', '11'], ['12', '12'],
+        ['13', '13'], ['14', '14'], ['15', '15'], ['16', '16'], ['17', '17'], ['18', '18'],
+        ['19', '19'], ['20', '20'], ['21', '21'], ['22', '22'], ['23', '23']
+    ]
+
+    @schedule_minutes = [
+        ['0', '0'], ['1', '1'], ['2', '2'], ['3', '3'], ['4', '4'], ['5', '5'], ['6', '6'],
+        ['7', '7'], ['8', '8'], ['9', '9'], ['10', '10'], ['11', '11'], ['12', '12'],
+        ['13', '13'], ['14', '14'], ['15', '15'], ['16', '16'], ['17', '17'], ['18', '18'],
+        ['19', '19'], ['20', '20'], ['21', '21'], ['22', '22'], ['23', '23'], ['24', '24'],
+        ['25', '25'], ['26', '26'], ['27', '27'], ['28', '28'], ['29', '29'], ['30', '30'],
+        ['31', '31'], ['32', '32'], ['33', '33'], ['34', '34'], ['35', '35'], ['36', '36'],
+        ['37', '37'], ['38', '38'], ['39', '39'], ['40', '40'], ['41', '41'], ['42', '42'],
+        ['43', '43'], ['44', '44'], ['45', '45'], ['46', '46'], ['47', '47'], ['48', '48'],
+        ['49', '49'], ['50', '50'], ['51', '51'], ['52', '52'], ['53', '53'], ['54', '54'],
+        ['55', '55'], ['56', '56'], ['57', '57'], ['58', '58'], ['59', '59']
+    ]
+  end
 end

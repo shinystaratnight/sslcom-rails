@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module X509Helper
-  def create_x509_cert(domain, time, name_mismatch = false)
+  def create_x509_cert(domain)
     key = OpenSSL::PKey::RSA.new(1024)
     public_key = key.public_key
 
@@ -10,8 +10,8 @@ module X509Helper
     cert = OpenSSL::X509::Certificate.new
     cert.subject = cert.issuer = OpenSSL::X509::Name.parse(subject)
 
-    cert.not_before = Time.now
-    cert.not_after = time
+    cert.not_before = Time.now + 365
+    cert.not_after = Time.now
     cert.public_key = public_key
     cert.serial = Faker::Number.number(digits:20)
     cert.version = 2
@@ -24,12 +24,6 @@ module X509Helper
       ef.create_extension("basicConstraints","CA:TRUE", true),
       ef.create_extension("subjectKeyIdentifier", "hash")
     ]
-
-    if name_mismatch
-      cert.add_extension ef.create_extension('subjectAltName', "DNS:namemismatch.com")
-    else
-      cert.add_extension ef.create_extension('subjectAltName', "DNS:#{domain}")
-    end
 
     cert.add_extension ef.create_extension("authorityKeyIdentifier",
                                            "keyid:always,issuer:always")

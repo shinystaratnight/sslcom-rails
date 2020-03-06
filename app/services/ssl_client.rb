@@ -7,7 +7,11 @@ class SslClient
   end
 
   def ping_for_certificate_info
+    cert_store = OpenSSL::X509::Store.new
+    cert_store.set_default_paths
     context = OpenSSL::SSL::SSLContext.new
+    context.verify_mode = OpenSSL::SSL::VERIFY_PEER
+    context.cert_store = cert_store
     tcp_client = TCPSocket.new(url, port)
     ssl_client = OpenSSL::SSL::SSLSocket.new tcp_client, context
     ssl_client.hostname = url
