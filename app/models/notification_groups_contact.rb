@@ -12,7 +12,6 @@
 #
 # Indexes
 #
-#  index_notification_groups_contacts_on_contactable_id         (contactable_id)
 #  index_notification_groups_contacts_on_notification_group_id  (notification_group_id)
 #
 

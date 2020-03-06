@@ -14,8 +14,7 @@
 #
 # Indexes
 #
-#  index_other_party_requests_on_other_party_requestable_id  (other_party_requestable_id)
-#  index_other_party_requests_on_user_id                     (user_id)
+#  index_other_party_requests_on_user_id  (user_id)
 #
 
 class OtherPartyRequest < ApplicationRecord

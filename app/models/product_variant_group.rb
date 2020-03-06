@@ -15,10 +15,6 @@
 #  updated_at            :datetime
 #  variantable_id        :integer
 #
-# Indexes
-#
-#  index_product_variant_groups_on_variantable_id  (variantable_id)
-#
 
 class ProductVariantGroup < ApplicationRecord
   has_many :product_variant_items, dependent: :destroy

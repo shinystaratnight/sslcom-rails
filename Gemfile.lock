@@ -352,7 +352,7 @@ GEM
     multi_json (1.13.1)
     multi_xml (0.6.0)
     multipart-post (2.1.1)
-    mysql2 (0.5.2)
+    mysql2 (0.5.3)
     net-http-persistent (3.1.0)
       connection_pool (~> 2.2)
     net-scp (2.0.0)
