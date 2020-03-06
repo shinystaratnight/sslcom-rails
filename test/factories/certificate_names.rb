@@ -36,6 +36,7 @@ FactoryBot.define do
 
     after(:stub) do |cn|
       cn.stubs(:certificate_content).returns(build_stubbed(:certificate_content))
+      cn.stubs(:sleep)
     end
   end
 end

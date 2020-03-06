@@ -63,28 +63,30 @@
 #  index_users_on_status_and_ssl_account_id           (id,ssl_account_id,status)
 #
 
-
 require 'test_helper'
 
 describe User do
-  before do
-    initialize_triggers
-    initialize_roles
+  before :all do
+    stub_roles
+    stub_triggers
+    stub_server_software
+    SslAccount.any_instance.stubs(:create_api_credential).returns
   end
 
-  describe 'attributes' do
-    let(:user) { create(:user) }
+  subject { User.new }
 
-    it { assert_respond_to user, :login }
-    it { assert_respond_to user, :first_name }
-    it { assert_respond_to user, :last_name }
-    it { assert_respond_to user, :email }
-    it { assert_respond_to user, :active }
-    it { assert_respond_to user, :default_ssl_account }
-    it { assert_respond_to user, :main_ssl_account }
-    it { assert_respond_to user, :max_teams }
+  describe 'attributes' do
+    should have_db_column :login
+    should have_db_column :first_name
+    should have_db_column :last_name
+    should have_db_column :email
+    should have_db_column :active
+    should have_db_column :default_ssl_account
+    should have_db_column :main_ssl_account
+    should have_db_column :max_teams
 
     it '#max_teams_reached returns an integer' do
+      user = create(:user)
       assert_equal User::OWNED_MAX_TEAMS, user.max_teams
     end
   end

@@ -9,7 +9,7 @@ plugins:
       mass_assign_call:
         enabled: false
   bundler-audit:
-    enabled: false # we are using dependabot
+    enabled: false
   csslint:
     enabled: true
   coffeelint:
@@ -36,6 +36,8 @@ plugins:
       Rubocop/Metrics/BlockNesting:
         enabled: false
       Rubocop/Style/RedundantFreeze:
+        enabled: false
+      Rubocop/Style/BracesAroundHashParameters:
         enabled: false
   sass-lint:
     enabled: true

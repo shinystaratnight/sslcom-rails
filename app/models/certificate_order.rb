@@ -1275,6 +1275,7 @@ class CertificateOrder < ApplicationRecord
   # DRY this up with ValidationsController#new
   def domains_validated?(options={other_dcvs_satisfy_domain: true})
     return true if certificate_content.all_domains_validated?
+
     if options[:other_dcvs_satisfy_domain]
       ssl_account.other_dcvs_satisfy_domain(certificate_content.certificate_names.unvalidated.all,false)
       certificate_content.all_domains_validated?

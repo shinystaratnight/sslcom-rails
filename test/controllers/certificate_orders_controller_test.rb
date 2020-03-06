@@ -193,6 +193,8 @@ describe CertificateOrdersController do
     co.save
 
     post :download_certificates, co_ids: co.id, format: :csv
+    stubbed_certificate = build_stubbed(:certificate_with_certificate_order)
+    CertificateOrder.any_instance.stubs(:certificate).returns(stubbed_certificate)
     response.code.must_equal "200"
     response.body.must_match "Order Ref,Order Label,Duration,Signed Certificate,Status,Effective Date,Expiration Date"
   end

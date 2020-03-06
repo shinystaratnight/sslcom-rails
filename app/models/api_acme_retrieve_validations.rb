@@ -35,14 +35,14 @@ class ApiAcmeRetrieveValidations < ApiAcmeRequest
   extend Memoist
 
   before_validation(on: :create) do
-    if certificate_order.nil?
+    if api_credential.nil?
+      errors[:credential] << I18n.t('error.invalid_api_credentials')
+      false
+    elsif certificate_order.nil?
       errors[:certificate_order_ref] << "certificate order #{certificate_order_ref} not found"
       false
-    elsif ac = api_credential
-      self.api_requestable = ac.ssl_account
     else
-      errors[:credential] << 'invalid credentials'
-      false
+      self.api_requestable = api_credential.ssl_account
     end
   end
 
@@ -54,9 +54,15 @@ class ApiAcmeRetrieveValidations < ApiAcmeRequest
   memoize :api_credential
 
   def certificate_order
-    return nil unless certificate_order_ref
+    return nil unless certificate_order_ref && api_credential
 
-    @certificate_order = CertificateOrder.unscoped.includes(certificate_contents: [:certificate_names]).find_by(ref: certificate_order_ref)
+    @certificate_order = certificate_orders.find_by(ref: certificate_order_ref)
   end
   memoize :certificate_order
+
+  private
+
+  def certificate_orders
+    api_credential.ssl_account.certificate_orders.includes(certificate_contents: [:certificate_names])
+  end
 end

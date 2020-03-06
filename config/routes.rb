@@ -4,7 +4,7 @@ require 'domain_constraint'
 
 SslCom::Application.routes.draw do
   mount Rswag::Ui::Engine => '/api'
-  mount Delayed::Web::Engine, at: '/jobs'
+  mount Delayed::Web::Engine, at: '/jobs', constraints: AdminConstraint.new
   mount LetterOpenerWeb::Engine, at: '/letter_opener' if Rails.env.development?
 
   resources :apidocs, only: [:index]
@@ -56,6 +56,7 @@ SslCom::Application.routes.draw do
         match '/acme/hmac' => 'api_acme_requests#retrieve_hmac', as: :api_acme_retrieve_hmac, via: [:post]
         match '/acme/credentials' => 'api_acme_requests#retrieve_credentials', as: :api_acme_retrieve_credentials, via: [:post]
         match '/acme/validations/info' => 'api_acme_requests#validations_info', as: :api_acme_validations_info, via: [:post]
+        match '/acme/:certificate_order_ref/domain/validation/status' => 'api_acme_requests#validation_status', as: :api_acme_domain_validation_status, via: [:post]
 
         # Code Signing.
         match '/generate_certificate' => 'api_certificate_requests#generate_certificate_v1_4', as: :api_certificate_generate_v1_4, via: %i[options post]
@@ -607,8 +608,4 @@ SslCom::Application.routes.draw do
   # match "*path" => redirect("/?utm_source=any&utm_medium=any&utm_campaign=404_error")
 
   get '/certificate-download' => 'api/v1/api_certificate_requests#download_v1_4'
-end
-
-Delayed::Web::Engine.middleware.use Rack::Auth::Basic do |username, password|
-  username == '!as09bv#f9' && password == 'a$gdP12@_'
 end
