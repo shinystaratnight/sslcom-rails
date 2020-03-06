@@ -65,6 +65,10 @@ class DomainControlValidation < ApplicationRecord
     self.identifier ||= DomainControlValidation.generate_identifier
   end
 
+  after_create do
+    update(workflow_state: 'new') if workflow_state.blank?
+  end
+
   workflow do
     state :new do
       event :send_dcv, transitions_to: :sent_dcv

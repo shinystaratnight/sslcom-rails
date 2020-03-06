@@ -40,15 +40,17 @@ module Concerns
       end
 
       def satify_dcv
-        dcv = domain_control_validations.last
         dcv.satisfy! unless dcv.satisfied?
         true
       end
 
       def fail_dcv
-        dcv = domain_control_validations.last
         dcv.fail!
         false
+      end
+
+      def dcv
+        domain_control_validations.last
       end
 
       def verification_options(prepend = '')

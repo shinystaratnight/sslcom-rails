@@ -87,6 +87,7 @@ describe CertificateName do
     let!(:cname) { build_stubbed(:certificate_name) }
     before :all do
       cname.stubs(:fail_dcv).returns(false)
+      cname.stubs(:satify_dcv).returns(true)
     end
 
     describe 'https domain control validation' do
