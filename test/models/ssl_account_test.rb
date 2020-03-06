@@ -27,7 +27,6 @@
 #  index_ssl_account_on_acct_number                                 (acct_number)
 #  index_ssl_accounts_an_cn_ss                                      (acct_number,company_name,ssl_slug)
 #  index_ssl_accounts_on_acct_number_and_company_name_and_ssl_slug  (acct_number,company_name,ssl_slug)
-#  index_ssl_accounts_on_default_folder_id                          (default_folder_id)
 #  index_ssl_accounts_on_id_and_created_at                          (id,created_at)
 #  index_ssl_accounts_on_ssl_slug_and_acct_number                   (ssl_slug,acct_number)
 #

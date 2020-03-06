@@ -25,7 +25,7 @@ Airbrake.configure do |c|
   # By default, Airbrake Ruby outputs to STDOUT. In Rails apps it makes sense to
   # use the Rails' logger.
   # https://github.com/airbrake/airbrake-ruby#logger
-  c.logger = Rails.logger
+  c.logger = Airbrake::Rails.logger
 
   # Configures the environment the application is running in. Helps the Airbrake
   # dashboard to distinguish between exceptions occurring in different
@@ -33,7 +33,7 @@ Airbrake.configure do |c|
   # NOTE: This option must be set in order to make the 'ignore_environments'
   # option work.
   # https://github.com/airbrake/airbrake-ruby#environment
-  c.environment = Rails.env
+  c.environment = Rails.env.production? ? Socket.gethostname : Rails.env
 
   # Setting this option allows Airbrake to filter exceptions occurring in
   # unwanted environments such as :test. By default, it is equal to an empty
@@ -41,13 +41,13 @@ Airbrake.configure do |c|
   # environments.
   # NOTE: This option *does not* work if you don't set the 'environment' option.
   # https://github.com/airbrake/airbrake-ruby#ignore_environments
-  c.ignore_environments = %w(test development)
+  c.ignore_environments = %w[test development]
 
   # A list of parameters that should be filtered out of what is sent to
   # Airbrake. By default, all "password" attributes will have their contents
   # replaced.
   # https://github.com/airbrake/airbrake-ruby#blacklist_keys
-  c.blacklist_keys = [/password/i]
+  c.blacklist_keys = Rails.application.config.filter_parameters
 end
 
 # If Airbrake doesn't send any expected exceptions, we suggest to uncomment the
