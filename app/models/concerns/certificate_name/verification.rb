@@ -50,7 +50,8 @@ module Concerns
       end
 
       def fail_dcv
-        domain_control_validations&.last_method&.update(workflow_state: 'failed')
+        dcv = domain_control_validations.last
+        dcv.fail!
         false
       end
 
