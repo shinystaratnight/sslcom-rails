@@ -4,7 +4,7 @@ class NotificationGroupsManager
   def self.scan(options = {})
     initialize_database(options[:db])
     domains = manufacture_domains_structs(options[:schedule_type], options[:schedule_value])
-
+  
     scan_logs = []
     domains.uniq.each do |domain|
       scan_log = domain.notification_group.scan_logs.last
@@ -16,17 +16,7 @@ class NotificationGroupsManager
 
       if domain.x509_cert.present?
         certificate = domain.x509_cert
-        verify_result = domain.verify_result
-        scan_status = ''
-        if verify_result == 0
-          scan_status = 'expiring'
-        elsif verify_result == 27
-          scan_status = 'untrusted'
-        elsif verify_result == 10
-          scan_status = 'expired'
-        elsif verify_result == 29
-          scan_status = 'name_mismatch'
-        end
+        scan_status = domain.verify_result
 
         scanned_cert = ScannedCertificate.find_or_initialize_by(serial: certificate.serial.to_s)
         if scanned_cert.new_record?
@@ -98,7 +88,7 @@ class NotificationGroupsManager
       ngs = NotificationGroupsSubject.includes(:notification_group, { notification_group: :schedules})
         .where(notification_groups: { status: false })
         .where(schedules: {schedule_type: schedule_type, schedule_value: schedule_value})
-        .where(["domain_name IS NOT ? and subjectable_id IS ?", nil, nil])
+        .where(["domain_name IS NOT ?", nil])
 
       subjectable_ids = NotificationGroupsSubject.where(subjectable_type: 'CertificateName').pluck(:subjectable_id).compact
       certificate_names = CertificateName.includes(:notification_groups, { notification_groups: :schedules})

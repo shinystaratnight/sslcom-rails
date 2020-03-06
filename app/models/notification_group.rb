@@ -107,8 +107,6 @@ class NotificationGroup < ApplicationRecord
   end
 
   def scan
-    scan_group = nil
-
     if scan_logs.last.nil?
       scan_group = 1
     else
@@ -128,17 +126,7 @@ class NotificationGroup < ApplicationRecord
 
         if results[:certificate].present?
           certificate = results[:certificate]
-          verify_result = results[:verify_result]
-          scan_status = ''
-          if verify_result == 0
-            scan_status = 'expiring'
-          elsif verify_result == 27
-            scan_status = 'untrusted'
-          elsif verify_result == 10
-            scan_status = 'expired'
-          elsif verify_result == 29
-            scan_status = 'name_mismatch'
-          end
+          scan_status =  results[:verify_result]
 
           scanned_cert = ScannedCertificate.find_or_initialize_by(serial: certificate.serial.to_s)
           if scanned_cert.new_record?
