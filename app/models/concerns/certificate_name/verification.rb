@@ -15,9 +15,7 @@ module Concerns
                    sleep WAIT_PERIOD
                  end
         if status == true
-          dcv = domain_control_validations.last
-          dcv.satisfy! unless dcv.satisfied?
-          status
+          satify_dcv
         else
           fail_dcv
         end
@@ -41,12 +39,10 @@ module Concerns
         end
       end
 
-      def acme_http_dcv_present?
-        domain_control_validations.where.not(workflow_state: 'failed').where(dcv_method: 'acme_http').exists?
-      end
-
-      def acme_dns_text_dcv_present?
-        domain_control_validations.where.not(workflow_state: 'failed').where(dcv_method: 'acme_dns_txt').exists?
+      def satify_dcv
+        dcv = domain_control_validations.last
+        dcv.satisfy! unless dcv.satisfied?
+        true
       end
 
       def fail_dcv
