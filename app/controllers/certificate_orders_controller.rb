@@ -1067,8 +1067,7 @@ class CertificateOrdersController < ApplicationController
     if current_user
       @certificate_order = current_user.certificate_order_by_ref(params[:id])
       if @certificate_order.nil?
-        co = current_user.ssl_accounts.includes(:certificate_orders).map(&:certificate_orders)
-                 .flatten.find{|c| c.ref == params[:id]}
+        co = current_user.ssl_accounts.includes(:certificate_orders).map(&:certificate_orders).flatten.find{ |c| c.ref == params[:id] }
         if co
           @certificate_order = co
           if co.ssl_account != current_user.ssl_account && current_user.ssl_accounts.include?(co.ssl_account)
@@ -1079,7 +1078,8 @@ class CertificateOrdersController < ApplicationController
         end
       end
     end
-    render 'site/404_not_found', status: 404 unless @certificate_order
+
+    render 'site/404_not_found', status: :not_found unless @certificate_order
   end
 
   def construct_special_fields

@@ -7,6 +7,8 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
   before_filter :set_database, if: 'request.host=~/^sandbox/ || request.host=~/^sws-test/ || request.host=~/ssl.local$/'
   before_filter :set_test, :record_parameters, except: %i[scan analyze download_v1_4]
   after_filter :notify_saved_result, except: %i[create_v1_4 download_v1_4]
+  before_action :set_certificate_order, only: [:update_v1_4]
+  before_action :verify_dcv_method, only: [:update_v1_4]
 
   # parameters listed here made available as attributes in @result
   wrap_parameters ApiCertificateRequest, include: [*(
@@ -20,8 +22,8 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
     ApiCertificateRequest::CERTIFICATE_ENROLLMENT_ACCESSORS
   ).uniq]
 
-  ORDERS_DOMAIN = "https://#{Settings.community_domain}"
-  SANDBOX_DOMAIN = 'https://sandbox.ssl.com'
+  ORDERS_DOMAIN = "https://#{Settings.community_domain}".freeze
+  SANDBOX_DOMAIN = 'https://sandbox.ssl.com'.freeze
   SCAN_COMMAND = ->(parameters, url){ `echo QUIT | cipherscan/cipherscan #{parameters} #{url}` }
   ANALYZE_COMMAND = ->(parameters, url){ `echo QUIT | cipherscan/analyze.py #{parameters} #{url}` }
 
@@ -312,12 +314,8 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
 
   def update_v1_4
     set_template 'update_v1_4'
-    if dcv_param.present?
-      unless %w[acme_http acme_dns_txt].include? dcv_param
-        errors = { errors: [parameters: "invalid dcv_method: #{dcv_param}"] }
-        render_errors(errors, :unprocessable_entity) && return
-      end
-    elsif @result.csr_obj && !@result.csr_obj.valid?
+
+    if @result.csr_obj && !@result.csr_obj.valid?
       # we do this sloppy maneuver because the rabl template only reports errors
       @result = @result.csr_obj
     else
@@ -1595,7 +1593,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
   end
 
   def set_template(filename)
-    @template = File.join("api","v1","api_certificate_requests", filename)
+    @template = File.join('api', 'v1', 'api_certificate_requests', filename)
   end
 
   def ssl_ca_label
@@ -1604,5 +1602,21 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
 
   def dcv_param
     params[:domains].first[1]['dcv'].presence || ''
+  end
+
+  def set_certificate_order
+    @certificate_order = CertificateOrder.find_by(ref: params[:ref])
+    json_render_not_found && return if @certificate_order.nil?
+
+    @certificate_order
+  end
+
+  def verify_dcv_method
+    if dcv_param.present?
+      unless %w[http https email cname acme_http acme_dns_txt].include? dcv_param
+        errors = { errors: [parameters: "invalid dcv_method: #{dcv_param}"] }
+        render_errors(errors, :unprocessable_entity) && return
+      end
+    end
   end
 end

@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 
-# app/controllers/concerns/rendering.rb
-
 require 'active_support/concern'
-
 module Rendering
   extend ActiveSupport::Concern
 
@@ -35,6 +32,10 @@ module Rendering
 
   def render_unathorized
     render json: { error: I18n.t('error.invalid_api_credentials') }, status: :unauthorized
+  end
+
+  def json_render_not_found
+    render json: { error: 'Resource not found' }, status: :not_found
   end
 
   def render_500_error(err)

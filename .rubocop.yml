@@ -38,6 +38,8 @@ Style/ClassVars:
   Enabled: false
 Style/EvalWithLocation:
   Enabled: false
+Style/ClassAndModuleChildren:
+  Enabled: false
 Layout/HeredocIndentation:
   Enabled: false
 Style/StructInheritance:
