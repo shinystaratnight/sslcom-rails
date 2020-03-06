@@ -14,7 +14,13 @@ module Concerns
                    attempts += 1
                    sleep WAIT_PERIOD
                  end
-        status || fail_dcv
+        if status == true
+          dcv = domain_control_validations.last
+          dcv.satisfy! unless dcv.satisfied?
+          status
+        else
+          fail_dcv
+        end
       end
 
       def dcv_verify_async(protocol = nil)
