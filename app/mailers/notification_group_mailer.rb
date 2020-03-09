@@ -11,12 +11,18 @@ class NotificationGroupMailer < ApplicationMailer
   end
 
   def domain_digest_notice(scan_status, notification_group, scanned_certificate, domain, contacts, ssl_account)
+    if scan_status == 'ok'
+      up_or_down = 'UP'
+    else
+      up_or_down = 'DOWN'
+    end
+    
     @scan_status = scan_status
     @scanned_certificate = scanned_certificate
     @notification_group = notification_group
     @ssl_account = ssl_account
     @domain = domain
-    subject = "SSL.com notification group #{@notification_group.friendly_name || @notification_group.friendly_name.ref} scan update for #{@domain}"
+    subject = "SSL.com #{@notification_group.friendly_name || @notification_group.friendly_name.ref} Alert: #{@domain} is #{up_or_down} [SSL/TLS: #{@scan_status}]"
     mail(to: contacts.pluck(:email_address).uniq, subject: subject)
   end
 
