@@ -96,6 +96,8 @@ describe NotificationGroupsManager do
         assert_equal ScannedCertificate.count, 1
         assert_equal ScanLog.count, 1
         assert ScanLog.last.scan_status == 'ok'
+        assert_equal ActionMailer::Base.deliveries.size, 1
+        assert_equal Ahoy::Message.count, 1
 
         domain = DomainObject.new('valid.com', notification_group.scan_port, notification_group, x509_certificate, 'certificate not trusted')
 
@@ -105,8 +107,8 @@ describe NotificationGroupsManager do
         assert_equal ScannedCertificate.count, 1
         assert_equal ScanLog.count, 2
         assert ScanLog.last.scan_status == 'certificate not trusted'
-        assert_equal ActionMailer::Base.deliveries.size, 1
-        assert_equal Ahoy::Message.count, 1
+        assert_equal ActionMailer::Base.deliveries.size, 2
+        assert_equal Ahoy::Message.count, 2
 
         domain = DomainObject.new('valid.com', notification_group.scan_port, notification_group, x509_certificate, 'subject issuer mismatch')
 
@@ -116,8 +118,8 @@ describe NotificationGroupsManager do
         assert_equal ScannedCertificate.count, 1
         assert_equal ScanLog.count, 3
         assert ScanLog.last.scan_status == 'subject issuer mismatch'
-        assert_equal ActionMailer::Base.deliveries.size, 2
-        assert_equal Ahoy::Message.count, 2
+        assert_equal ActionMailer::Base.deliveries.size, 3
+        assert_equal Ahoy::Message.count, 3
       end
     end
   end
