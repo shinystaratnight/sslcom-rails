@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 # == Schema Information
+# Schema version: 20200310160914
 #
 # Table name: signed_certificates
 #
@@ -60,7 +61,7 @@
 #
 # Foreign Keys
 #
-#  fk_rails_...  (ca_id => cas.id) ON DELETE => restrict ON UPDATE => restrict
+#  fk_rails_...  (ca_id => cas.id)
 #
 
 require './test/support/setup_helper'

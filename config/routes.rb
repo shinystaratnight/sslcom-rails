@@ -2,12 +2,26 @@
 
 require 'domain_constraint'
 
-Rails.application.routes.draw
+Rails.application.routes.draw do
   mount Rswag::Ui::Engine => '/api'
-  # mount Delayed::Web::Engine, at: '/jobs', constraints: AdminConstraint.new
+  mount Delayed::Web::Engine, at: '/jobs', constraints: AdminConstraint.new
   mount LetterOpenerWeb::Engine, at: '/letter_opener' if Rails.env.development?
 
   resources :apidocs, only: [:index]
+
+  resources :oauth_clients
+
+  match '/oauth/test_request',  to: 'oauth#test_request',  as: :test_request, via: %i[get post]
+
+  match '/oauth/token',         to: 'oauth#token',         as: :token, via: %i[get post]
+
+  match '/oauth/access_token',  to: 'oauth#access_token',  as: :access_token, via: %i[get post]
+
+  match '/oauth/request_token', to: 'oauth#request_token', as: :request_token, via: %i[get post]
+
+  match '/oauth/authorize',     to: 'oauth#authorize',     as: :authorize, via: %i[get post]
+
+  match '/oauth',               to: 'oauth#index',         as: :oauth, via: %i[get post]
 
   match '/' => 'resellers#index', :constraints => { subdomain: Reseller::SUBDOMAIN }, as: 'resellers_root', via: %i[get post]
   match '/' => 'site#index', :as => :root, via: %i[get post]
