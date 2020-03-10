@@ -122,31 +122,34 @@ class NotificationGroup < ApplicationRecord
       scan_logs = []
       domains.each do |domain|
         ssl_client = SslClient.new(domain.gsub("*.", "www."), self.scan_port)
-        results = ssl_client.ping_for_certificate_info
+        certificate = ssl_client.retrieve_x509_cert
 
-        if results[:certificate].present?
-          certificate = results[:certificate]
-          scan_status =  results[:verify_result]
-
+        if certificate.present?
+          scan_status = ssl_client.verify_result
           scanned_cert = ScannedCertificate.find_or_initialize_by(serial: certificate.serial.to_s)
           if scanned_cert.new_record?
             scanned_cert.body = certificate.to_s
             scanned_cert.decoded = certificate.to_text
             scanned_cert.save
-            # NotificationGroupMailer.domain_digest_notice(scan_status, self, scanned_cert, domain, self.notification_groups_contacts, self.ssl_account).deliver_now
-            ScanLog.create(notification_group_id: self.id, scanned_certificate_id: scanned_cert.id, domain_name: domain, scan_status: scan_status, expiration_date: certificate.not_after.to_date, scan_group: scan_group)
-          else
-            if scan_status != scanned_cert.scan_logs.last.scan_status
-              NotificationGroupMailer.domain_digest_notice(scan_status, self, scanned_cert, domain, self.notification_groups_contacts, self.ssl_account).deliver_now
-            end
-            scan_logs << ScanLog.new(notification_group_id: self.id, scanned_certificate_id: scanned_cert.id, domain_name: domain, scan_status: scan_status, expiration_date: certificate.not_after.to_date, scan_group: scan_group)
           end
+          scan_logs << build_scan_log(self, scanned_cert, domain, scan_status, certificate.not_after.to_date, scan_group)
+          send_domain_digest(scan_status, self, scanned_cert, domain, self.notification_groups_contacts, self.ssl_account)
         else
-          scan_logs << ScanLog.new(notification_group_id: self.id, scanned_certificate_id: nil, domain_name: domain, scan_status: "not_found", expiration_date: nil, scan_group: scan_group)
+          scan_logs << build_scan_log(self, nil, domain, 'not found', nil, scan_group)
         end
       end
       ScanLog.import scan_logs
     end
+  end
+
+  private
+
+  def send_domain_digest(scan_status, ng, scanned_cert, domain, contacts, ssl_account)
+    NotificationGroupMailer.domain_digest_notice(scan_status, ng, scanned_cert, domain, contacts, ssl_account).deliver_now
+  end
+
+  def build_scan_log(ng, scanned_cert, domain, scan_status, exp_date, scan_group)
+    ScanLog.new(notification_group_id: ng.id, scanned_certificate_id: scanned_cert, domain_name: domain, scan_status: scan_status, expiration_date: exp_date, scan_group: scan_group)
   end
 
   # Scan the domains belongs to notification groups and sending a reminder if expiration date is in reminder days what has been set"

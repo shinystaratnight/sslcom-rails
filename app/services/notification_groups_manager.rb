@@ -3,10 +3,10 @@ class NotificationGroupsManager
 
   def self.scan(options = {})
     initialize_database(options[:db])
-    domains = manufacture_domains_structs(options[:schedule_type], options[:schedule_value])
-
     scan_logs = []
-    domains.uniq.each do |domain|
+
+    domains = manufacture_domains_structs(options[:schedule_type], options[:schedule_value])
+    domains.each do |domain|
       scan_log = domain.notification_group.scan_logs.last
       if scan_log.nil?
         scan_group = 1
@@ -14,25 +14,29 @@ class NotificationGroupsManager
         scan_group = scan_log.scan_group + 1
       end
 
-      if domain.x509_cert.present?
-        certificate = domain.x509_cert
-        scan_status = domain.verify_result
+      certificate = domain.x509_cert
+      scan_status = domain.verify_result
 
+      if certificate.present?
         scanned_cert = ScannedCertificate.find_or_initialize_by(serial: certificate.serial.to_s)
         if scanned_cert.new_record?
           scanned_cert.body = certificate.to_s
           scanned_cert.decoded = certificate.to_text
           scanned_cert.save
-          NotificationGroupMailer.domain_digest_notice(scan_status, domain.notification_group, scanned_cert, domain.url, domain.notification_group.notification_groups_contacts, domain.notification_group.ssl_account).deliver_now
-          ScanLog.create(notification_group_id: domain.notification_group.id, scanned_certificate_id: scanned_cert.id, domain_name: domain.url, scan_status: scan_status, expiration_date: certificate.not_after.to_date, scan_group: scan_group)
-        else
-          if scan_status != scanned_cert.scan_logs.last.scan_status
-            NotificationGroupMailer.domain_digest_notice(scan_status, domain.notification_group, scanned_cert, domain.url, domain.notification_group.notification_groups_contacts, domain.notification_group.ssl_account).deliver_now
-          end
           scan_logs << ScanLog.new(notification_group_id: domain.notification_group.id, scanned_certificate_id: scanned_cert.id, domain_name: domain.url, scan_status: scan_status, expiration_date: certificate.not_after.to_date, scan_group: scan_group)
+        else
+          last_scan = ScanLog.where(scanned_certificate_id: scanned_cert.id).last
+          if last_scan.nil?
+            scan_logs << ScanLog.new(notification_group_id: domain.notification_group.id, scanned_certificate_id: scanned_cert.id, domain_name: domain.url, scan_status: scan_status, expiration_date: certificate.not_after.to_date, scan_group: scan_group)
+          elsif scan_status != last_scan.scan_status
+            NotificationGroupMailer.domain_digest_notice(scan_status, domain.notification_group, scanned_cert, domain.url, domain.notification_group.notification_groups_contacts, domain.notification_group.ssl_account).deliver_now
+            scan_logs << ScanLog.new(notification_group_id: domain.notification_group.id, scanned_certificate_id: scanned_cert.id, domain_name: domain.url, scan_status: scan_status, expiration_date: certificate.not_after.to_date, scan_group: scan_group)
+          else
+            scan_logs << ScanLog.new(notification_group_id: domain.notification_group.id, scanned_certificate_id: scanned_cert.id, domain_name: domain.url, scan_status: scan_status, expiration_date: certificate.not_after.to_date, scan_group: scan_group)
+          end
         end
       else
-        scan_logs << ScanLog.new(notification_group_id: domain.notification_group.id, scanned_certificate_id: nil, domain_name: domain.url, scan_status: "not_found", expiration_date: nil, scan_group: scan_group)
+        scan_logs << ScanLog.new(notification_group_id: domain.notification_group.id, domain_name: domain.url, scan_status: 'not found', expiration_date: nil, scan_group: scan_group)
       end
     end
     ScanLog.import scan_logs
@@ -103,19 +107,17 @@ class NotificationGroupsManager
       end
 
       certificate_names.each do |cn|
-        domains << DomainObject.new(cn.name, cn.notification_groups.first.scan_port, cn.notification_groups.first)
+        domains << DomainObject.new(cn.name, cn.notification_groups.first.scan_port, cn.notification_groups.first, nil, nil)
       end
 
-      executors = domains.uniq.map do |domain|
-        Concurrent::Future.execute({ executor: Concurrent::FixedThreadPool.new(20) }) do
-          ssl_client = SslClient.new(domain.url.gsub("*.", "www."), domain.scan_port)
-          cert_info = ssl_client.ping_for_certificate_info
-          domain.x509_cert = cert_info[:certificate]
-          domain.verify_result = cert_info[:verify_result]
-          domain
+      domains.uniq.map do |domain|
+        ssl_client = SslClient.new(domain.url.gsub("*.", "www."), domain.scan_port)
+        domain.x509_cert = ssl_client.retrieve_x509_cert
+        if domain.x509_cert.present?
+          domain.verify_result = ssl_client.verify_result
         end
+        domain
       end
-      executors.map(&:value)
     end
   end
 end
