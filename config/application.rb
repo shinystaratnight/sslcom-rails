@@ -100,7 +100,7 @@ module SslCom
     config.sass.cache = false
     config.action_mailer.default_url_options = { host: "secure.ssl.com", protocol: "https" }
     config.active_record.raise_in_transactional_callbacks = true
-    self.paths['config/database'] = 'config/client/certassure/database.yml' if DEPLOYMENT_CLIENT=~/certassure/i && Rails.root.to_s=~/Development/
+    self.paths['config/database'] = 'config/client/certassure/database.yml' if DEPLOYMENT_CLIENT =~ /certassure/i && Rails.root.to_s =~ /Development/
   end
 end
 
@@ -117,11 +117,10 @@ require "#{Rails.root}/lib/preferences.rb"
 require "#{Rails.root}/lib/active_record.rb"
 require "#{Rails.root}/lib/active_record_base.rb"
 require "#{Rails.root}/lib/hash.rb"
-require "will_paginate"
 
-#try to figure this out for heroku and rails 3
-#class Fixnum; include InWords; end
-#class Bignum; include InWords; end
+# try to figure this out for heroku and rails 3
+# class Fixnum; include InWords; end
+# class Bignum; include InWords; end
 DB_STRING_MAX_LENGTH = 255
 DB_TEXT_MAX_LENGTH = 40000
 HTML_TEXT_FIELD_SIZE = 20
@@ -134,8 +133,7 @@ db_env = Rails.configuration.database_configuration[Rails.env]
 db_adapter = db_env['adapter'].downcase if db_env.present?
 SQL_LIKE = db_adapter == 'postgresql' ? 'ilike' : 'like'
 
-#uncomment to track down bugs on heroku production
-#ActiveRecord::Base.logger.level = 0 # at any time
-ActiveMerchant::Billing::CreditCard.require_verification_value=false
-PublicSuffix::List.default =
-    PublicSuffix::List.parse(File.read(PublicSuffix::List::DEFAULT_LIST_PATH), private_domains: false)
+# uncomment to track down bugs on heroku production
+# ActiveRecord::Base.logger.level = 0 # at any time
+ActiveMerchant::Billing::CreditCard.require_verification_value = false
+PublicSuffix::List.default = PublicSuffix::List.parse(File.read(PublicSuffix::List::DEFAULT_LIST_PATH), private_domains: false)
