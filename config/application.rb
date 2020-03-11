@@ -1,5 +1,4 @@
 require File.expand_path('../boot', __FILE__)
-require 'oauth/rack/oauth_filter'
 require 'rack/ssl-enforcer'
 require 'rails/all'
 require './lib/middleware/catch_json_parse_errors'
@@ -78,8 +77,7 @@ module SslCom
       g.jbuilder            false
     end
 
-    # config.middleware.use OAuth::Rack::OAuthFilter
-    config.middleware.insert_before ActionDispatch::ParamsParser, "CatchJsonParseErrors"
+    config.middleware.insert_before ActionDispatch::ParamsParser, 'CatchJsonParseErrors'
 
     # Delayed Job
     config.active_job.queue_adapter = :delayed_job

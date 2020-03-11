@@ -136,7 +136,7 @@ describe SslAccount do
       end
     end
     it '#ssl_slug_valid? string using route names should NOT be valid' do
-      %w[oauth_clients managed_users user_session].each do |named_route|
+      %w[managed_users user_session].each do |named_route|
         refute SslAccount.ssl_slug_valid?(named_route)
       end
     end

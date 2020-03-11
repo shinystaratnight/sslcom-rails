@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200228221909) do
+ActiveRecord::Schema.define(version: 20200311131940) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        :limit=>255
@@ -77,7 +77,7 @@ ActiveRecord::Schema.define(version: 20200228221909) do
     t.datetime "updated_at",                   :null=>false
     t.string   "roles",                        :limit=>255
     t.string   "hmac_key",                     :limit=>255
-    t.string   "acme_acct_pub_key_thumbprint", :limit=>255, :index=>{:name=>"index_api_credentials_on_acme_acct_pub_key_thumbprint", :using=>:btree}
+    t.string   "acme_acct_pub_key_thumbprint", :limit=>255
   end
 
   create_table "apis", force: :cascade do |t|
@@ -375,7 +375,7 @@ ActiveRecord::Schema.define(version: 20200228221909) do
     t.string   "acme_account_id",        :limit=>255
     t.integer  "ssl_account_id",         :limit=>4, :index=>{:name=>"index_certificate_names_on_ssl_account_id", :using=>:btree}
     t.boolean  "caa_passed",             :default=>false
-    t.string   "acme_token",             :limit=>255, :index=>{:name=>"index_certificate_names_on_acme_token", :using=>:btree}
+    t.string   "acme_token",             :limit=>255
   end
 
   create_table "certificate_order_domains", force: :cascade do |t|
@@ -439,18 +439,6 @@ ActiveRecord::Schema.define(version: 20200228221909) do
     t.datetime "updated_at"
   end
   add_index "certificates_products", ["certificate_id", "product_id"], :name=>"index_certificates_products_on_certificate_id_and_product_id", :using=>:btree
-
-  create_table "client_applications", force: :cascade do |t|
-    t.string   "name",         :limit=>255
-    t.string   "url",          :limit=>255
-    t.string   "support_url",  :limit=>255
-    t.string   "callback_url", :limit=>255
-    t.string   "key",          :limit=>40, :index=>{:name=>"index_client_applications_on_key", :unique=>true, :using=>:btree}
-    t.string   "secret",       :limit=>40
-    t.integer  "user_id",      :limit=>4, :index=>{:name=>"index_client_applications_on_user_id", :using=>:btree}
-    t.datetime "created_at",   :null=>false
-    t.datetime "updated_at",   :null=>false
-  end
 
   create_table "contact_validation_histories", force: :cascade do |t|
     t.integer  "contact_id",            :limit=>4, :null=>false, :index=>{:name=>"index_contact_validation_histories_on_contact_id", :using=>:btree}
@@ -916,30 +904,6 @@ ActiveRecord::Schema.define(version: 20200228221909) do
     t.string   "created_page",          :limit=>255
   end
 
-  create_table "oauth_nonces", force: :cascade do |t|
-    t.string   "nonce",      :limit=>255, :index=>{:name=>"index_oauth_nonces_on_nonce_and_timestamp", :with=>["timestamp"], :unique=>true, :using=>:btree}
-    t.integer  "timestamp",  :limit=>4
-    t.datetime "created_at", :null=>false
-    t.datetime "updated_at", :null=>false
-  end
-
-  create_table "oauth_tokens", force: :cascade do |t|
-    t.integer  "user_id",               :limit=>4, :index=>{:name=>"index_oauth_tokens_on_user_id", :using=>:btree}
-    t.string   "type",                  :limit=>20
-    t.integer  "client_application_id", :limit=>4, :index=>{:name=>"index_oauth_tokens_on_client_application_id", :using=>:btree}
-    t.string   "token",                 :limit=>40, :index=>{:name=>"index_oauth_tokens_on_token", :unique=>true, :using=>:btree}
-    t.string   "secret",                :limit=>40
-    t.string   "callback_url",          :limit=>255
-    t.string   "verifier",              :limit=>20
-    t.string   "scope",                 :limit=>255
-    t.datetime "authorized_at"
-    t.datetime "invalidated_at"
-    t.datetime "valid_to"
-    t.datetime "created_at",            :null=>false
-    t.datetime "updated_at",            :null=>false
-  end
-  add_index "oauth_tokens", ["id", "type"], :name=>"index_oauth_tokens_on_id_and_type", :using=>:btree
-
   create_table "order_transactions", force: :cascade do |t|
     t.integer  "order_id",     :limit=>4, :index=>{:name=>"index_order_transactions_on_order_id", :using=>:btree}
     t.integer  "old_amount",   :limit=>4
@@ -1402,7 +1366,7 @@ ActiveRecord::Schema.define(version: 20200228221909) do
     t.string   "type",                      :limit=>255, :index=>{:name=>"index_signed_certificates_t_cci", :with=>["certificate_content_id"], :using=>:btree}
     t.integer  "registered_agent_id",       :limit=>4, :index=>{:name=>"index_signed_certificates_on_registered_agent_id", :using=>:btree}
     t.string   "ejbca_username",            :limit=>255, :index=>{:name=>"index_signed_certificates_on_ejbca_username", :using=>:btree}
-    t.integer  "certificate_content_id",    :limit=>4, :index=>{:name=>"index_signed_certificates_on_certificate_content_id", :using=>:btree}, :foreign_key=>{:references=>"certificate_contents", :name=>"fk_signed_certificates_certificate_content_id", :on_update=>:restrict, :on_delete=>:restrict}
+    t.integer  "certificate_content_id",    :limit=>4, :index=>{:name=>"index_signed_certificates_on_certificate_content_id", :using=>:btree}
   end
   add_index "signed_certificates", ["common_name", "strength"], :name=>"index_signed_certificates_on_3_cols", :using=>:btree
   add_index "signed_certificates", ["common_name", "url", "body", "decoded", "ext_customer_ref", "ejbca_username"], :name=>"index_signed_certificates_cn_u_b_d_ecf_eu", :type=>:fulltext

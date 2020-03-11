@@ -813,10 +813,6 @@ class User < ApplicationRecord
     ssl
   end
 
-  def generate_approval_token
-    OAuth::Helper.generate_key(40)[0, 40]
-  end
-
   def get_ssl_acct_user_for_approval(params)
     SslAccountUser.where(
       user_id: (params[:id].nil? ? id : params[:id]),
