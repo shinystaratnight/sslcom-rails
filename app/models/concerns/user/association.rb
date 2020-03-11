@@ -32,7 +32,7 @@ module Concerns
         has_and_belongs_to_many :user_groups
         has_many  :notification_groups, through: :ssl_accounts
         has_many  :certificate_order_tokens
-        has_many :messages, class_name: "Ahoy::Message", as: :user
+        has_many :messages, class_name: 'Ahoy::Message', as: :user
       end
     end
   end

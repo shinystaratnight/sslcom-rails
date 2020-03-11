@@ -29,8 +29,6 @@ module SetupHelper
     end
     roles.stubs(:[]).returns(role_set)
     Role.stubs(:where).returns(roles)
-    set_common_roles
-    @password = 'Testing@1'
   end
 
   def initialize_certificates
