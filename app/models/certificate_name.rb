@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 # == Schema Information
+# Schema version: 20200311011643
 #
 # Table name: certificate_names
 #
@@ -18,6 +19,7 @@
 #
 # Indexes
 #
+#  index_certificate_names_on_acme_token              (acme_token)
 #  index_certificate_names_on_certificate_content_id  (certificate_content_id)
 #  index_certificate_names_on_name                    (name)
 #  index_certificate_names_on_ssl_account_id          (ssl_account_id)
@@ -28,9 +30,9 @@ require 'resolv'
 
 class CertificateName < ApplicationRecord
   include Pagable
-  include Concerns::CertificateName::Association
-  include Concerns::CertificateName::Scope
-  include Concerns::CertificateName::Verification
+  # include Concerns::CertificateName::Association
+  # include Concerns::CertificateName::Scope
+  # include Concerns::CertificateName::Verification
 
   after_initialize :generate_acme_token, if: -> { acme_token.nil? }
 

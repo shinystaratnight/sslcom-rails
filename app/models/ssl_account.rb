@@ -31,10 +31,18 @@
 #  index_ssl_accounts_on_ssl_slug_and_acct_number                   (ssl_slug,acct_number)
 #
 
+require 'acts_as_billable/lib/active_merchant_default_gateway'
+require 'acts_as_billable/lib/acts_as_sellable'
+require 'acts_as_billable/lib/acts_as_seller'
+require 'acts_as_billable/lib/acts_as_billable'
+
 class SslAccount < ApplicationRecord
+  include CollectiveIdea::Acts::Billable
   extend Memoist
+
   using_access_control
   acts_as_billable
+
   has_many   :api_credentials
   has_one   :duo_account
   has_many  :billing_profiles
@@ -118,10 +126,8 @@ class SslAccount < ApplicationRecord
 
   accepts_nested_attributes_for :reseller, allow_destroy: false
 
-  unless MIGRATING_FROM_LEGACY
-    # has_many  :orders, :as=>:billable, :after_add=>:build_line_items
-    attr_readonly :acct_number
-  end
+  # has_many  :orders, :as=>:billable, :after_add=>:build_line_items
+  attr_readonly :acct_number
 
   preference  :reminder_status, default: true
   preference  :reminder_notice_triggers, :string

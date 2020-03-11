@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # == Schema Information
-# Schema version: 20200310160914
+# Schema version: 20200311011643
 #
 # Table name: signed_certificates
 #
@@ -61,7 +61,8 @@
 #
 # Foreign Keys
 #
-#  fk_rails_...  (ca_id => cas.id)
+#  fk_rails_...                                   (ca_id => cas.id) ON DELETE => restrict ON UPDATE => restrict
+#  fk_signed_certificates_certificate_content_id  (certificate_content_id => certificate_contents.id) ON DELETE => restrict ON UPDATE => restrict
 #
 
 require 'digest/md5'

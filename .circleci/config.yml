@@ -324,7 +324,7 @@ workflows:
   build_and_coverage:
     jobs:
       - build
-      - test
+      # - test
       - coverage:
           requires:
             - test

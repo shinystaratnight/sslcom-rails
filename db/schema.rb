@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200310160914) do
+ActiveRecord::Schema.define(version: 20200311011643) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        :limit=>255
@@ -77,7 +77,7 @@ ActiveRecord::Schema.define(version: 20200310160914) do
     t.datetime "updated_at",                   :null=>false
     t.string   "roles",                        :limit=>255
     t.string   "hmac_key",                     :limit=>255
-    t.string   "acme_acct_pub_key_thumbprint", :limit=>255
+    t.string   "acme_acct_pub_key_thumbprint", :limit=>255, :index=>{:name=>"index_api_credentials_on_acme_acct_pub_key_thumbprint", :using=>:btree}
   end
 
   create_table "apis", force: :cascade do |t|
@@ -375,7 +375,7 @@ ActiveRecord::Schema.define(version: 20200310160914) do
     t.string   "acme_account_id",        :limit=>255
     t.integer  "ssl_account_id",         :limit=>4, :index=>{:name=>"index_certificate_names_on_ssl_account_id", :using=>:btree}
     t.boolean  "caa_passed",             :default=>false
-    t.string   "acme_token",             :limit=>255
+    t.string   "acme_token",             :limit=>255, :index=>{:name=>"index_certificate_names_on_acme_token", :using=>:btree}
   end
 
   create_table "certificate_order_domains", force: :cascade do |t|
@@ -1313,7 +1313,7 @@ ActiveRecord::Schema.define(version: 20200310160914) do
     t.string   "type",                      :limit=>255, :index=>{:name=>"index_signed_certificates_t_cci", :with=>["certificate_content_id"], :using=>:btree}
     t.integer  "registered_agent_id",       :limit=>4, :index=>{:name=>"index_signed_certificates_on_registered_agent_id", :using=>:btree}
     t.string   "ejbca_username",            :limit=>255, :index=>{:name=>"index_signed_certificates_on_ejbca_username", :using=>:btree}
-    t.integer  "certificate_content_id",    :limit=>4, :index=>{:name=>"index_signed_certificates_on_certificate_content_id", :using=>:btree}
+    t.integer  "certificate_content_id",    :limit=>4, :index=>{:name=>"index_signed_certificates_on_certificate_content_id", :using=>:btree}, :foreign_key=>{:references=>"certificate_contents", :name=>"fk_signed_certificates_certificate_content_id", :on_update=>:restrict, :on_delete=>:restrict}
   end
   add_index "signed_certificates", ["common_name", "strength"], :name=>"index_signed_certificates_on_3_cols", :using=>:btree
   add_index "signed_certificates", ["common_name", "url", "body", "decoded", "ext_customer_ref", "ejbca_username"], :name=>"index_signed_certificates_cn_u_b_d_ecf_eu", :type=>:fulltext

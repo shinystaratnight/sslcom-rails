@@ -1219,7 +1219,7 @@ class Order < ApplicationRecord
           certificate_order.ssl_account=current_user.ssl_account
           next unless options[:current_user].ssl_account.can_buy?(certificate)
         end
-        #adjusting duration to reflect number of days validity
+        # adjusting duration to reflect number of days validity
         certificate_order = setup_certificate_order(certificate: certificate, certificate_order: certificate_order)
         options[:certificate_orders] << certificate_order if certificate_order.valid?
       end

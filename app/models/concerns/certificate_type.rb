@@ -1,86 +1,89 @@
+# frozen_string_literal: true
+
 module CertificateType
+  extend ActiveSupport::Concern
 
   def is_server?
     !(is_smime_or_client? || is_code_signing? || is_time_stamping?)
   end
 
   def is_dv?
-    if self.is_a? SignedCertificate
-      !!(decoded.include?(SignedCertificate::OID_DV))
+    if is_a? SignedCertificate
+      !!decoded.include?(SignedCertificate::OID_DV)
     else
-      (self.is_a?(ApiCertificateRequest) ? target_certificate :  self).product =~ /\A(basic|free)/
+      (is_a?(ApiCertificateRequest) ? target_certificate : self).product =~ /\A(basic|free)/
     end
   end
 
   def is_ov?
-    if self.is_a? SignedCertificate
-      !!(decoded.include?(SignedCertificate::OID_OV))
+    if is_a? SignedCertificate
+      !!decoded.include?(SignedCertificate::OID_OV)
     else
-      (self.is_a?(ApiCertificateRequest) ? target_certificate :
+      (is_a?(ApiCertificateRequest) ? target_certificate :
            self).product =~ /\A(wildcard|high_assurance|ucc|premiumssl)/ ||
-          is_client_enterprise? || is_client_business?
+        is_client_enterprise? || is_client_business?
     end
   end
 
   def is_ev?
-    if self.is_a? SignedCertificate
-      !!(decoded.include?(SignedCertificate::OID_EV))
+    if is_a? SignedCertificate
+      !!decoded.include?(SignedCertificate::OID_EV)
     else
-      (self.is_a?(ApiCertificateRequest) ? target_certificate :  self).product =~ /\Aev(?!\-code)/
+      (is_a?(ApiCertificateRequest) ? target_certificate : self).product =~ /\Aev(?!\-code)/
     end
   end
 
   def is_iv?
-    if self.is_a? SignedCertificate
-      !!(decoded.include?(SignedCertificate::OID_IV))
+    if is_a? SignedCertificate
+      !!decoded.include?(SignedCertificate::OID_IV)
     else
       # (self.is_a?(ApiCertificateRequest) ? target_certificate :  self).product =~ /\A(basic|free)/
     end
   end
 
   def is_evcs?
-    if self.is_a? SignedCertificate
-      !!(decoded.include?(SignedCertificate::OID_EVCS))
+    if is_a? SignedCertificate
+      !!decoded.include?(SignedCertificate::OID_EVCS)
     else
-      (self.is_a?(ApiCertificateRequest) ? target_certificate :  self).product =~ /\Aev-code-signing/
+      (is_a?(ApiCertificateRequest) ? target_certificate : self).product =~ /\Aev-code-signing/
     end
   end
 
   # implies non EV
   def is_cs?
-    if self.is_a? SignedCertificate
-      !!(decoded.include?(SignedCertificate::OID_CS))
+    if is_a? SignedCertificate
+      !!decoded.include?(SignedCertificate::OID_CS)
     else
-      (self.is_a?(ApiCertificateRequest) ? target_certificate :  self).product =~ /\A(code[_\-]signing)/
+      (is_a?(ApiCertificateRequest) ? target_certificate : self).product =~ /\A(code[_\-]signing)/
     end
   end
 
   # this covers both ev and non ev code signing
   def is_code_signing?
-    is_cs? or is_evcs?
+    is_cs? || is_evcs?
   end
 
   def is_test_certificate?
-    if self.is_a? SignedCertificate
-      !!(decoded.include?(SignedCertificate::OID_TEST))
+    if is_a? SignedCertificate
+      !!decoded.include?(SignedCertificate::OID_TEST)
     else
       # (self.is_a?(ApiCertificateRequest) ? target_certificate :  self).product =~ /\A(basic|free)/
     end
   end
 
   def is_smime?
-    if self.is_a? SignedCertificate
-      !!(decoded.include?("E-mail Protection"))
+    if is_a? SignedCertificate
+      !!decoded.include?('E-mail Protection')
     else
       is_client_basic? || is_client_pro? || is_client_business? || is_client_enterprise?
     end
   end
 
   def is_client?
-    if self.is_a? SignedCertificate
-      !!(decoded.include?("TLS Web Client Authentication")) and !(decoded.include?("TLS Web Server Authentication"))
+    if is_a? SignedCertificate
+      !!decoded.include?('TLS Web Client Authentication') && !decoded.include?('TLS Web Server Authentication')
     else
-      (self.is_a?(ApiCertificateRequest) ? target_certificate :  self).product.include?('personal')
+      (is_a?(ApiCertificateRequest) ? target_certificate : self).product.include?('personal')
     end
   end
 
@@ -97,37 +100,37 @@ module CertificateType
   end
 
   def is_naesb?
-    if self.is_a? SignedCertificate
-      !!(decoded.include?("NAESB"))
+    if is_a? SignedCertificate
+      !!decoded.include?('NAESB')
     else
-      (self.is_a?(ApiCertificateRequest) ? target_certificate :  self).product.include?('naesb')
+      (is_a?(ApiCertificateRequest) ? target_certificate : self).product.include?('naesb')
     end
   end
 
   def is_client_basic?
-    is_client? and !is_naesb? and
-        (self.is_a?(ApiCertificateRequest) ? target_certificate :  self).product_root=~/personal.*?basic\z/
+    is_client? && !is_naesb? &&
+      (is_a?(ApiCertificateRequest) ? target_certificate : self).product_root =~ /personal.*?basic\z/
   end
 
   def is_client_pro?
-    (self.is_a?(ApiCertificateRequest) ? target_certificate :  self).product_root=~/personal.*?pro\z/
+    (is_a?(ApiCertificateRequest) ? target_certificate :  self).product_root =~ /personal.*?pro\z/
   end
 
   def is_client_business?
-    (self.is_a?(ApiCertificateRequest) ? target_certificate :  self).product_root=~/personal.*?business\z/
+    (is_a?(ApiCertificateRequest) ? target_certificate :  self).product_root =~ /personal.*?business\z/
   end
 
   def is_client_enterprise?
-    (self.is_a?(ApiCertificateRequest) ? target_certificate :  self).product_root=~/personal.*?enterprise\z/
+    (is_a?(ApiCertificateRequest) ? target_certificate :  self).product_root =~ /personal.*?enterprise\z/
   end
 
   def is_ov_client?
-    is_client_enterprise? or is_client_business?
+    is_client_enterprise? || is_client_business?
   end
 
   def is_document_signing?
-    if self.is_a? SignedCertificate
-      !!(decoded.include?(SignedCertificate::OID_DOC_SIGNING))
+    if is_a? SignedCertificate
+      !!decoded.include?(SignedCertificate::OID_DOC_SIGNING)
     else
       is_client_pro? || is_client_business? || is_client_enterprise?
     end
@@ -135,20 +138,20 @@ module CertificateType
 
   def requires_company_info?
     is_client_business? ||
-    is_client_enterprise? ||
-    is_server? ||
-    is_code_signing? ||
-    is_ov? ||
-    is_naesb?
+      is_client_enterprise? ||
+      is_server? ||
+      is_code_signing? ||
+      is_ov? ||
+      is_naesb?
   end
 
   def requires_locked_registrant?
     is_code_signing? ||
-    is_ov? ||
-    is_ev? ||
-    is_client_business? ||
-    is_client_enterprise? ||
-    is_naesb?
+      is_ov? ||
+      is_ev? ||
+      is_client_business? ||
+      is_client_enterprise? ||
+      is_naesb?
   end
 
   def comodo_ca_id
@@ -173,21 +176,21 @@ module CertificateType
 
   def validation_type
     if is_dv?
-      "dv"
+      'dv'
     elsif is_cs?
-      "cs"
+      'cs'
     elsif is_evcs?
-      "evcs"
+      'evcs'
     elsif is_ev?
-      "ev"
+      'ev'
     elsif is_ov?
-      "ov"
+      'ov'
     elsif is_smime_or_client?
-      "iv"
+      'iv'
     end
   end
 
-  SSLCOM_RSA_ROOT=<<-EOS
+  SSLCOM_RSA_ROOT = <<-EOS
 MIIF3TCCA8WgAwIBAgIIeyyb0xaAMpkwDQYJKoZIhvcNAQELBQAwfDELMAkGA1UE
 BhMCVVMxDjAMBgNVBAgMBVRleGFzMRAwDgYDVQQHDAdIb3VzdG9uMRgwFgYDVQQK
 DA9TU0wgQ29ycG9yYXRpb24xMTAvBgNVBAMMKFNTTC5jb20gUm9vdCBDZXJ0aWZp
@@ -222,8 +225,7 @@ oYYitmUnDuy2n0Jg5GfCtdpBC8TTi2EbvPofkSvXRAdeuims2cXp71NIWuuA8ShY
 Ic2wBlX7Jz9TkHCpBB5XJ7k=
   EOS
 
-
-  SSLCOM_EV_RSA_ROOT_R2=<<-EOS
+  SSLCOM_EV_RSA_ROOT_R2 = <<-EOS
 MIIF6zCCA9OgAwIBAgIIVrYpzTS8ePYwDQYJKoZIhvcNAQELBQAwgYIxCzAJBgNV
 BAYTAlVTMQ4wDAYDVQQIDAVUZXhhczEQMA4GA1UEBwwHSG91c3RvbjEYMBYGA1UE
 CgwPU1NMIENvcnBvcmF0aW9uMTcwNQYDVQQDDC5TU0wuY29tIEVWIFJvb3QgQ2Vy
@@ -316,7 +318,7 @@ Lr+/dZTXKIDIYqdVjcGsvy0mQ12t+VRuJMRF+XTzy/LgDlr4SJjYZvWN7I4BxHyD
 k5ojwldA7NjrZWoFiQ/blgLF
   EOS
 
-  CERTUM_XSIGN=<<-EOS
+  CERTUM_XSIGN = <<-EOS
 MIIF2DCCBMCgAwIBAgIRAOQnBJX2jJHW0Ox7SU6k3xwwDQYJKoZIhvcNAQELBQAw
 fjELMAkGA1UEBhMCUEwxIjAgBgNVBAoTGVVuaXpldG8gVGVjaG5vbG9naWVzIFMu
 QS4xJzAlBgNVBAsTHkNlcnR1bSBDZXJ0aWZpY2F0aW9uIEF1dGhvcml0eTEiMCAG
@@ -351,7 +353,7 @@ LTAgUAcab/HxlB05g2PoH/1J0OgdRrJGgia9nJ3homhBSFFuevw1lvRU0rwrROVH
 13eCpUqrX5czqyQR
   EOS
 
-  RSA_TO_ECC_XSIGN=<<-EOS
+  RSA_TO_ECC_XSIGN = <<-EOS
 MIIFCTCCAvGgAwIBAgIIPyxgjFz5YyEwDQYJKoZIhvcNAQELBQAwfDELMAkGA1UE
 BhMCVVMxDjAMBgNVBAgMBVRleGFzMRAwDgYDVQQHDAdIb3VzdG9uMRgwFgYDVQQK
 DA9TU0wgQ29ycG9yYXRpb24xMTAvBgNVBAMMKFNTTC5jb20gUm9vdCBDZXJ0aWZp
@@ -381,7 +383,7 @@ Ghfxg5Adv4gju/886VksL+4YrGZvTHB+EtHCD/jvKOslGAitujP0yQ3bCSgZbkyQ
 S2eC1h8SyRIbOcb+8WsL0vXJkpz0eK3FVsEGdd3ECjAFazn5T00wP02aJxfa
   EOS
 
-  RSA_TO_ECC_EV_XSIGN=<<-EOS
+  RSA_TO_ECC_EV_XSIGN = <<-EOS
 MIIFFTCCAv2gAwIBAgIIf6MrKLHJq2wwDQYJKoZIhvcNAQELBQAwgYIxCzAJBgNV
 BAYTAlVTMQ4wDAYDVQQIDAVUZXhhczEQMA4GA1UEBwwHSG91c3RvbjEYMBYGA1UE
 CgwPU1NMIENvcnBvcmF0aW9uMTcwNQYDVQQDDC5TU0wuY29tIEVWIFJvb3QgQ2Vy
@@ -412,7 +414,7 @@ JbBok9Ol99KWY+eFSVm/IDkCJOIyOVOt0t/xrfYG74VO4RL2hfK0qbO6KhW+GaoC
 l2Lxp74DbA3f
   EOS
 
-  ECDSA_CSR=<<-EOS
+  ECDSA_CSR = <<-EOS
 -----BEGIN CERTIFICATE REQUEST-----
 MIIBCDCBrwIBADAdMRswGQYDVQQDDBJ0ZXN0ZWNkc2ExLnNzbC5jb20wWTATBgcq
 hkjOPQIBBggqhkjOPQMBBwNCAASvDWy6+/kTAU6/SSk4xDHYib4Wjo9tfLppnAGW

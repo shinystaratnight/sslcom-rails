@@ -709,29 +709,6 @@ class User < ApplicationRecord
     end
   end
 
-  # temporary function to assist in migration
-  if MIGRATING_FROM_LEGACY
-    def update_record_without_timestamping
-      class << self
-        def record_timestamps
-          false
-        end
-      end
-
-      save(false)
-
-      class << self
-        def record_timestamps
-          super
-        end
-      end
-    end
-  end
-
-  def apply_omniauth(omniauth)
-    self.email = omniauth['user_info']['email']
-  end
-
   def make_admin
     unless roles.map(&:name).include?(Role::SYS_ADMIN)
       roles << Role.find_by(name: Role::SYS_ADMIN)
