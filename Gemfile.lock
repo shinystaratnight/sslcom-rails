@@ -367,6 +367,7 @@ GEM
     nokogiri (1.10.8)
       mini_portile2 (~> 2.4.0)
     nori (2.6.0)
+    oauth (0.4.7)
     oj (3.10.2)
     openssl-extensions (1.2.1)
     paperclip (5.3.0)
@@ -755,6 +756,7 @@ DEPENDENCIES
   money (= 2.1.0)
   mysql2
   nokogiri (>= 1.10.4)
+  oauth
   oj
   openssl-extensions
   paperclip (~> 5.3.0)
