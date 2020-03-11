@@ -137,6 +137,13 @@ class Csr < ApplicationRecord
     c&.certificate_order&.touch
   end
 
+  def is_weak_key?
+    fingerprint = Digest::SHA1.hexdigest "Modulus=#{public_key.n.to_s(16)}\n"
+
+    # Check if the key is in the blacklist
+    WeakKey.where(sha1_hash: fingerprint[20..-1]).present?
+  end
+
   def unique_value
     if certificate_content.blank? or certificate_content.ca.blank?
       csr_unique_value.unique_value
