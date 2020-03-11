@@ -70,7 +70,7 @@ gem 'u2f'
 gem 'wicked_pdf'
 gem 'acts_as_tree'
 gem 'font_awesome5_rails'
-
+gem 'multi_json'
 gem 'recaptcha', require: 'recaptcha/rails'
 gem 'where-or'
 gem 'whois', '~> 4.0'

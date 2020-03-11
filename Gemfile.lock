@@ -351,6 +351,7 @@ GEM
       key_struct (~> 0.4)
     money (2.1.0)
     msgpack (1.3.1)
+    multi_json (1.14.1)
     multi_xml (0.6.0)
     multipart-post (2.1.1)
     mysql2 (0.5.3)
@@ -754,6 +755,7 @@ DEPENDENCIES
   minitest-reporters
   mocha
   money (= 2.1.0)
+  multi_json
   mysql2
   nokogiri (>= 1.10.4)
   oauth
