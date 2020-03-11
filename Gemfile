@@ -18,7 +18,6 @@ gem 'money', '2.1.0'
 gem 'mysql2' # gem install mysql2 -- --srcdir=/usr/local/mysql/include
 gem 'paperclip', '~> 5.3.0'
 gem 'protected_attributes'
-gem 'pry-rails'
 gem 'rabl', '0.14.1'
 gem 'rack-ssl-enforcer'
 gem 'rails', '~> 4.2.11.1'
@@ -124,6 +123,7 @@ group :development, :test do
   gem 'builder'
   gem 'bullet'
   gem 'byebug'
+  gem 'pry-rails'
   gem 'pry-remote'
   gem 'rubocop', require: false
   gem 'rubocop-minitest'

@@ -36,13 +36,6 @@ require 'test_helper'
 describe SslAccount do
   subject { SslAccount.new }
 
-  before :all do
-    stub_roles
-    stub_triggers
-    stub_server_software
-    SslAccount.any_instance.stubs(:create_api_credential).returns(true)
-  end
-
   context 'attributes' do
     # before(:each) { @ssl_acct = build(:ssl_account) }
     should have_db_column :acct_number
@@ -53,6 +46,13 @@ describe SslAccount do
   end
 
   describe 'validations' do
+    before :all do
+      stub_roles
+      stub_triggers
+      stub_server_software
+      SslAccount.any_instance.stubs(:create_api_credential).returns(true)
+    end
+
     it '#ssl_slug should NOT be valid under 2 characters' do
       subject.ssl_slug = 'a'
       subject.validate
