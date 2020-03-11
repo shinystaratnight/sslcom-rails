@@ -3,18 +3,18 @@
 require File.expand_path('boot', __dir__)
 
 # require 'rack/ssl-enforcer'
-require 'rails/all'
+# require 'rails/all'
 
 # Pick the frameworks you want:
-# require 'active_model/railtie'
-# require 'active_job/railtie'
-# require 'active_record/railtie'
-# require 'action_controller/railtie'
-# require 'action_mailer/railtie'
-# require 'action_view/railtie'
-# require 'sprockets/railtie'
-# require 'activesupport/all'
-# require "rails/test_unit/railtie"
+require 'active_model/railtie'
+require 'active_job/railtie'
+require 'active_record/railtie'
+require 'action_controller/railtie'
+require 'action_mailer/railtie'
+require 'action_view/railtie'
+# require "action_cable/engine"
+require 'sprockets/railtie'
+# require 'rails/test_unit/railtie'
 
 require './lib/middleware/catch_json_parse_errors'
 
@@ -44,6 +44,10 @@ module SslcomRails
 
     # Custom directories with classes and modules you want to be autoloadable.
     config.autoload_paths += %W[#{config.root}/lib]
+
+    %w[observers mailers middleware serializers paths jobs].each do |dir|
+      config.autoload_paths << "#{config.root}/app/#{dir}"
+    end
 
     config.force_ssl = !Rails.env.test?
     # Set Time.zone default to the specified zone and make Active Record auto-convert to this zone.
@@ -75,7 +79,7 @@ module SslcomRails
     config.middleware.insert_before ActionDispatch::ParamsParser, 'CatchJsonParseErrors'
 
     # Delayed Job
-    # config.active_job.queue_adapter = :delayed_job
+    config.active_job.queue_adapter = :delayed_job
 
     config.middleware.insert_before 0, Rack::Cors do
       allow do

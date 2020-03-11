@@ -3,7 +3,7 @@
 require 'domain_constraint'
 
 Rails.application.routes.draw do
-  mount Rswag::Ui::Engine => '/api'
+  mount Rswag::Ui::Engine => '/api' if defined?(Rswag)
   mount Delayed::Web::Engine, at: '/jobs', constraints: AdminConstraint.new
   mount LetterOpenerWeb::Engine, at: '/letter_opener' if Rails.env.development?
 

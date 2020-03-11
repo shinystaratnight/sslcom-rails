@@ -20,7 +20,7 @@ module Concerns
                             end .uniq
                           }
 
-        scope :search_sys_admin, -> { joins{ roles }.where{ roles.name == Role::SYS_ADMIN } }
+        scope :search_sys_admin, -> { joins{ roles }.where{ roles.name == Role::SYSADMIN } }
 
         scope :search_super_user, -> { joins{ roles }.where{ roles.name == Role::SUPER_USER } }
       end

@@ -29,13 +29,13 @@ class Role < ApplicationRecord
   OWNER         = 'owner'
   RESELLER      = 'reseller'
   SUPER_USER    = 'super_user'
-  SYS_ADMIN     = 'sysadmin'
+  SYSADMIN     = 'sysadmin'
   USERS_MANAGER = 'users_manager'
   VALIDATIONS   = 'validations'
   RA_ADMIN      = 'ra_admin'
   INDIVIDUAL_CERTIFICATE = 'individual_certificate'
 
-  ALL = [ACCOUNT_ADMIN, BILLING, INSTALLER, OWNER, RESELLER, SUPER_USER, SYS_ADMIN, USERS_MANAGER, VALIDATIONS, RA_ADMIN, INDIVIDUAL_CERTIFICATE].freeze
+  ALL = [ACCOUNT_ADMIN, BILLING, INSTALLER, OWNER, RESELLER, SUPER_USER, SYSADMIN, USERS_MANAGER, VALIDATIONS, RA_ADMIN, INDIVIDUAL_CERTIFICATE].freeze
 
   def self.get_role_id(role_name)
     Rails.cache.fetch(['get_role_id', role_name]) { Role.find_by(name: role_name).id }
@@ -48,7 +48,7 @@ class Role < ApplicationRecord
   end
 
   def self.admin_role_ids
-    Role.get_role_ids([SYS_ADMIN, SUPER_USER, OWNER, RA_ADMIN])
+    Role.get_role_ids([SYSADMIN, SUPER_USER, OWNER, RA_ADMIN])
   end
 
   def self.get_account_admin_id
@@ -92,7 +92,7 @@ class Role < ApplicationRecord
                         OWNER,
                         RESELLER,
                         SUPER_USER,
-                        SYS_ADMIN,
+                        SYSADMIN,
                         USERS_MANAGER
                       ])
   end
@@ -104,7 +104,7 @@ class Role < ApplicationRecord
                         OWNER,
                         RESELLER,
                         SUPER_USER,
-                        SYS_ADMIN
+                        SYSADMIN
                       ])
   end
 
@@ -126,7 +126,7 @@ class Role < ApplicationRecord
                         OWNER,
                         RESELLER,
                         SUPER_USER,
-                        SYS_ADMIN,
+                        SYSADMIN,
                         USERS_MANAGER,
                         RA_ADMIN
                       ])
@@ -137,7 +137,7 @@ class Role < ApplicationRecord
                         OWNER,
                         RESELLER,
                         SUPER_USER,
-                        SYS_ADMIN,
+                        SYSADMIN,
                         RA_ADMIN
                       ])
   end

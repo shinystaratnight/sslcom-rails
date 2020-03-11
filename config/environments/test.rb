@@ -7,7 +7,10 @@ Rails.application.configure do
   # test suite. You never need to work with it otherwise. Remember that
   # your test database is "scratch space" for the test suite and is wiped
   # and recreated between test runs. Don't rely on the data there!
-  config.cache_classes = true
+  config.cache_classes = false
+
+  # Log error messages when you accidentally call methods on nil.
+  config.whiny_nils = true
 
   # Do not eager load code on boot. This avoids loading your whole application
   # just for the purpose of running a single test. If you are using a tool that
@@ -32,6 +35,12 @@ Rails.application.configure do
   # The :test delivery method accumulates sent emails in the
   # ActionMailer::Base.deliveries array.
   config.action_mailer.delivery_method = :test
+  config.action_mailer.perform_deliveries = true
+  config.action_mailer.default_url_options = { host: 'localhost:3000' }
+
+  config.after_initialize do
+    Rails.application.routes.default_url_options = { host: 'localhost:3000' }
+  end
 
   # Randomize the order test cases are executed.
   config.active_support.test_order = :random
@@ -39,6 +48,19 @@ Rails.application.configure do
   # Print deprecation notices to the stderr.
   config.active_support.deprecation = :stderr
 
+  ActiveMerchant::Billing::Base.mode = :test
+
+  config.eager_load = false
+
+  config.serve_static_assets = true
+  config.static_cache_control = 'public, max-age=3600'
+
+  GATEWAY_TEST_CODE = 1.0
+
+  config.log_level = :debug
+
+  Paperclip::Attachment.default_options[:path] = "#{Rails.root}/test/test_files/:class/:id_partition/:style.:extension"
+
   # Raises error for missing translations
-  # config.action_view.raise_on_missing_translations = true
+  config.action_view.raise_on_missing_translations = true
 end

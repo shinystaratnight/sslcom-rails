@@ -31,11 +31,6 @@
 #  index_ssl_accounts_on_ssl_slug_and_acct_number                   (ssl_slug,acct_number)
 #
 
-require 'acts_as_billable/lib/active_merchant_default_gateway'
-require 'acts_as_billable/lib/acts_as_sellable'
-require 'acts_as_billable/lib/acts_as_seller'
-require 'acts_as_billable/lib/acts_as_billable'
-
 class SslAccount < ApplicationRecord
   include CollectiveIdea::Acts::Billable
   extend Memoist

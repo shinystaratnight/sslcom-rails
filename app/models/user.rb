@@ -233,12 +233,11 @@ class User < ApplicationRecord
 
   def create_ssl_account(role_ids = nil, attr = {})
     save if new_record?
-    new_ssl_account = SslAccount.create(attr)
-    ssl_accounts << new_ssl_account
-    set_roles_for_account(new_ssl_account, role_ids) if role_ids&.length&.positive?
-    set_default_ssl_account(new_ssl_account) unless default_ssl_account
-    approve_account(ssl_account_id: new_ssl_account.id)
-    new_ssl_account
+    account = ssl_accounts.create(attr)
+    set_roles_for_account(account, role_ids) if role_ids&.length&.positive?
+    set_default_ssl_account(account) unless default_ssl_account
+    approve_account(ssl_account_id: account.id)
+    account
   end
 
   def set_default_ssl_account(account)
@@ -490,10 +489,9 @@ class User < ApplicationRecord
 
   class << self
     extend Memoist
-    def roles_list_for_user(user, exclude_roles = nil)
-      exclude_roles ||= []
-      exclude_roles << Role.where.not(id: Role.get_select_ids_for_owner).map(&:id).uniq unless user.is_system_admins?
-      exclude_roles.any? ? Role.where.not(id: exclude_roles.flatten) : Role.all
+    def roles_list_for_user(user, exclude_roles = [])
+      exclude_roles << Role.where{ id << Role.get_select_ids_for_owner }.map(&:id).uniq unless user.is_system_admins?
+      exclude_roles.any? ? Role.where{ id << exclude_roles.flatten } : Role.all
     end
     memoize :roles_list_for_user
 
@@ -609,7 +607,7 @@ class User < ApplicationRecord
   end
 
   def is_admin?
-    role_symbols.include? Role::SYS_ADMIN.to_sym
+    role_symbols.include? Role::SYSADMIN.to_sym
   end
 
   def is_super_user?
@@ -710,21 +708,21 @@ class User < ApplicationRecord
   end
 
   def make_admin
-    unless roles.map(&:name).include?(Role::SYS_ADMIN)
-      roles << Role.find_by(name: Role::SYS_ADMIN)
-      assignments << Assignment.new(ssl_account_id: ssl_account.id, role_id: Role.find_by(name: Role::SYS_ADMIN).id)
+    unless roles.map(&:name).include?(Role::SYSADMIN)
+      roles << Role.find_by(name: Role::SYSADMIN)
+      assignments << Assignment.new(ssl_account_id: ssl_account.id, role_id: Role.find_by(name: Role::SYSADMIN).id)
     end
   end
 
   def remove_admin
-    sysadmin_roles = get_roles_by_name(Role::SYS_ADMIN)
+    sysadmin_roles = get_roles_by_name(Role::SYSADMIN)
 
     if sysadmin_roles.any?
       sysadmin_roles.each do |r|
         if r.ssl_account_id.nil?
           r.delete
         else
-          update_account_role(r.ssl_account_id, Role::SYS_ADMIN, Role::OWNER)
+          update_account_role(r.ssl_account_id, Role::SYSADMIN, Role::OWNER)
         end
       end
     end
@@ -786,6 +784,10 @@ class User < ApplicationRecord
     ssl = get_ssl_acct_user_for_approval(params)
     ssl&.update(approved: true, token_expires: nil, approval_token: nil)
     ssl
+  end
+
+  def generate_approval_token
+    OAuth::Helper.generate_key(40)[0, 40]
   end
 
   def get_ssl_acct_user_for_approval(params)

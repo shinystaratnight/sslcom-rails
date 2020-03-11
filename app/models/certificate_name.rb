@@ -30,9 +30,9 @@ require 'resolv'
 
 class CertificateName < ApplicationRecord
   include Pagable
-  # include Concerns::CertificateName::Association
-  # include Concerns::CertificateName::Scope
-  # include Concerns::CertificateName::Verification
+  include Concerns::CertificateName::Association
+  include Concerns::CertificateName::Scope
+  include Concerns::CertificateName::Verification
 
   after_initialize :generate_acme_token, if: -> { acme_token.nil? }
 

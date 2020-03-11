@@ -78,84 +78,13 @@ FactoryBot.define do
       avatar { File.new("#{Rails.root}/test/factories/images/idris.jpg") }
     end
 
-    trait :sysadmin do
-      after(:create) do |user|
-        user.assignments << create(:assignment, :sysadmin)
-        user.ssl_accounts << user.assignments.first.ssl_account
-        user.approved_teams << user.assignments.first.ssl_account
-        user.default_ssl_account = user.assignments.first.ssl_account.id
-      end
-    end
-
-    trait :super_user do
-      after(:create) do |user|
-        user.assignments << create(:assignment, :super_user)
-        user.ssl_accounts << user.assignments.first.ssl_account
-        user.approved_teams << user.assignments.first.ssl_account
-        user.default_ssl_account = user.assignments.first.ssl_account.id
-      end
-    end
-
-    trait :owner do
-      after(:create) do |user|
-        user.assignments << create(:assignment, :owner)
-        user.ssl_accounts << user.assignments.first.ssl_account
-        user.approved_teams << user.assignments.first.ssl_account
-        user.default_ssl_account = user.assignments.first.ssl_account.id
-      end
-    end
-
-    trait :reseller do
-      after(:create) do |user|
-        user.assignments << create(:assignment, :reseller)
-        user.ssl_accounts << user.assignments.first.ssl_account
-        user.approved_teams << user.assignments.first.ssl_account
-        user.default_ssl_account = user.assignments.first.ssl_account.id
-      end
-    end
-
-    trait :account_admin do
-      after(:create) do |user|
-        user.assignments << create(:assignment, :account_admin)
-        user.ssl_accounts << user.assignments.first.ssl_account
-        user.approved_teams << user.assignments.first.ssl_account
-        user.default_ssl_account = user.assignments.first.ssl_account.id
-      end
-    end
-
-    trait :billing do
-      after(:create) do |user|
-        user.assignments << create(:assignment, :billing)
-        user.ssl_accounts << user.assignments.first.ssl_account
-        user.approved_teams << user.assignments.first.ssl_account
-        user.default_ssl_account = user.assignments.first.ssl_account.id
-      end
-    end
-
-    trait :installer do
-      after(:create) do |user|
-        user.assignments << create(:assignment, :installer)
-        user.ssl_accounts << user.assignments.first.ssl_account
-        user.approved_teams << user.assignments.first.ssl_account
-        user.default_ssl_account = user.assignments.first.ssl_account.id
-      end
-    end
-
-    trait :validations do
-      after(:create) do |user|
-        user.assignments << create(:assignment, :validations)
-        user.ssl_accounts << user.assignments.first.ssl_account
-        user.approved_teams << user.assignments.first.ssl_account
-        user.default_ssl_account = user.assignments.first.ssl_account.id
-      end
-    end
-
-    trait :users_manager do
-      after(:create) do |user|
-        user.assignments << create(:assignment, :users_manager)
-        user.ssl_accounts << user.assignments.first.ssl_account
-        user.approved_teams << user.assignments.first.ssl_account
-        user.default_ssl_account = user.assignments.first.ssl_account.id
+    Role::ALL.each do |role_name|
+      trait role_name.to_sym do
+        after(:create) do |user|
+          user.create_ssl_account([Role.get_role_id(role_name)])
+          user.approved_teams << user.ssl_account
+          user.default_ssl_account = user.ssl_account.id
+        end
       end
     end
   end

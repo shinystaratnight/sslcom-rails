@@ -69,24 +69,28 @@ require 'rails_helper'
 # end
 
 describe User do
-  before(:each) do
-    stub_ssl_account_initial_setup
-    stub_roles
-    SslAccount.any_instance.stubs(:generate_funded_account).returns(true)
-  end
-
   %i[login first_name last_name email active default_ssl_account main_ssl_account max_teams].each do |column|
     it { should have_db_column column.to_sym }
   end
 
   describe 'attributes' do
+    before(:each) do
+      stub_ssl_account_initial_setup
+      stub_roles
+    end
+
     it '#max_teams_reached returns an integer' do
-      user = create(:user)
+      user = create(:user, :owner)
       assert_equal User::OWNED_MAX_TEAMS, user.max_teams
     end
   end
 
   describe 'validations' do
+    before(:each) do
+      stub_ssl_account_initial_setup
+      stub_roles
+    end
+
     let!(:user) { build(:user) }
 
     it 'should be valid' do
@@ -99,7 +103,7 @@ describe User do
     end
 
     it 'should require unique email' do
-      existing = create(:user)
+      existing = create(:user, :owner)
       user.email = existing.email
       expect(user).not_to be_valid
     end
@@ -126,7 +130,7 @@ describe User do
 
     it 'should have default_ssl_account if assigned role' do
       user = create(:user, :owner)
-      assert_not_nil user.default_ssl_account
+      expect(user.default_ssl_account).not_to be_nil
     end
   end
 
@@ -249,36 +253,35 @@ describe User do
   # end
 
   describe 'account helper methods' do
-    let!(:owner) { create(:user) }
+    let!(:owner) { create(:user, :owner) }
 
     it '#create_ssl_account should create/approve/add ssl_account' do
       owner.create_ssl_account
-      assert_equal 1, owner.ssl_accounts.count
+      owner.ssl_accounts.count.should eq 1
 
       previous_ssl_account = owner.default_ssl_account
 
-      assert_equal SslAccountUser.where(user_id: owner.id).first.ssl_account_id, previous_ssl_account
+      SslAccountUser.where(user_id: owner.id).first.ssl_account.should be previous_ssl_account
 
       new_ssl_account = owner.create_ssl_account
 
-      assert_equal 2, owner.ssl_accounts.count
-      assert_not_nil owner.default_ssl_account
+      owner.ssl_accounts.count.should eq 2
+      owner.default_ssl_account.should_not be_nil
       # should not overwrite default_ssl_account id previously set
-      assert_equal previous_ssl_account, owner.default_ssl_account
+      previous_ssl_account.should eq owner.default_ssl_account
       # ssl account should be automatically approved
-      assert owner.user_approved_invite?(ssl_account_id: new_ssl_account.id)
+      owner.user_approved_invite?(ssl_account_id: new_ssl_account.id).should be_truthy
     end
 
     it '#create_ssl_account should set roles if provided' do
       owner = create(:role, :owner)
       billing = create(:role, :billing)
 
-      params = { ssl_account_id:
-        owner.create_ssl_account([owner.id, billing.id]) }
+      params = { ssl_account_id: owner.create_ssl_account([owner.id, billing.id]).id }
 
-      assert_equal 2, owner.assignments.where(params).count
-      assert_equal 1, owner.assignments.where(params.merge(role_id: owner.id)).count
-      assert_equal 1, owner.assignments.where(params.merge(role_id: billing.id)).count
+      owner.assignments.where(params).count.should be 2
+      owner.assignments.where(params.merge(role_id: owner.id)).count.should be 1
+      owner.assignments.where(params.merge(role_id: billing.id)).count.should be 1
     end
 
     it '#approve_account should approve account and clear token info' do
@@ -288,16 +291,16 @@ describe User do
       owner.set_approval_token(ssl_params)
       ssl = owner.ssl_account_users.where(ssl_params).first
 
-      assert_not_nil ssl.approval_token
-      assert_not_nil ssl.token_expires
-      assert_not     ssl.approved
+      ssl.approval_token
+      ssl.token_expires.should_not be_nil
+      ssl.approved.should be_falsey
 
       owner.send(:approve_account, ssl_params)
       ssl = owner.ssl_account_users.where(ssl_params).first
 
-      assert_nil ssl.approval_token
-      assert_nil ssl.token_expires
-      assert     ssl.approved
+      ssl.approval_token.should be_nil
+      ssl.token_expires.should be_nil
+      ssl.approved.should be_truthy
     end
 
     # it '#get_all_approved_accounts return approved accounts' do
@@ -450,7 +453,7 @@ describe User do
     # end
 
     # it '#role_symbols should return [scoped role_symbols] for sysadmin' do
-    #   @owner.create_ssl_account([Role.get_role_id(Role::SYS_ADMIN)])
+    #   @owner.create_ssl_account([Role.get_role_id(Role::SYSADMIN)])
     #   # should pull 1 role from default ssl account,
     #   # ignore newly created (sysadmin) role for another ssl account
     #   assert_equal [:owner], @owner.role_symbols
@@ -465,6 +468,11 @@ describe User do
   end
 
   describe 'approval token helpers' do
+    before(:each) do
+      stub_ssl_account_initial_setup
+      stub_roles
+    end
+
     before(:all) do
       @owner = create(:user, :owner)
       @default_ssl = @owner.ssl_account
@@ -485,15 +493,15 @@ describe User do
         token_expires: (DateTime.now - 2.hours) # expire token
       )
 
-      assert_not @user_w_token.approval_token_valid?(@ssl_prms_token)
+      @user_w_token.approval_token_valid?(@ssl_prms_token).should be_falsey
     end
 
     it '#approval_token_valid? false if token does not match' do
       valid_token = @user_w_token.ssl_account_users.first.approval_token
       @ssl_prms_token[:skip_match] = false
 
-      assert @user_w_token.approval_token_valid?(@ssl_prms_token.merge(token: valid_token))
-      assert_not @user_w_token.approval_token_valid?(@ssl_prms_token.merge(token: 'does not match'))
+      @user_w_token.approval_token_valid?(@ssl_prms_token.merge(token: valid_token)).should be_truthy
+      @user_w_token.approval_token_valid?(@ssl_prms_token.merge(token: 'does not match')).should be_falsey
     end
     #
     # it '#set_approval_token sets a valid token' do
@@ -525,17 +533,17 @@ describe User do
     # end
 
     it '#approval_token_not_expired true when not expired' do
-      assert @user_w_token.approval_token_not_expired?(ssl_account_id: @user_w_token.ssl_accounts.first.id)
+      @user_w_token.approval_token_not_expired?(ssl_account_id: @user_w_token.ssl_accounts.first.id).should be_truthy
     end
 
     it '#approval_token_not_expired false when expired' do
       @user_w_token.ssl_account_users.first.update(token_expires: (DateTime.now - 2.hours))
-      assert_not @user_w_token.approval_token_not_expired?(ssl_account_id: @user_w_token.ssl_accounts.first.id)
+      @user_w_token.approval_token_not_expired?(ssl_account_id: @user_w_token.ssl_accounts.first.id).should be_falsey
     end
 
     it '#pending_account_invites? should return correct boolean' do
-      assert @user_w_token.pending_account_invites?
-      assert_not @owner.pending_account_invites?
+      @user_w_token.pending_account_invites?.should be_truthy
+      @owner.pending_account_invites?.should be_falsey
     end
 
     # it '#get_pending_accounts should return array of hashes' do
@@ -550,38 +558,38 @@ describe User do
 
     it '#decline_invite should decline invite' do
       params = { ssl_account_id: @user_w_token.ssl_account_users.first.ssl_account_id }
-      assert_not @user_w_token.user_declined_invite?(params)
+      @user_w_token.user_declined_invite?(params).should be_falsey
       @user_w_token.decline_invite(params)
-      assert @user_w_token.user_declined_invite?(params)
+      @user_w_token.user_declined_invite?(params).should be_truthy
     end
   end
 
   describe 'user invite helpers' do
-    describe '#invite_new_user' do
-      # it 'should create new user and ssl_account (pre-approved)' do
-      #   invite_user  = create(:user, :owner)
-      #   new_user = invite_user.invite_new_user(
-      #     user:      {email: 'new_user@domain.com'},
-      #     root_url:  'root_url',
-      #     from_user: invite_user
-      #   )
-      #   ssl = new_user.ssl_account_users.first
-      #
-      #   assert       new_user.persisted?
-      #   refute       new_user.active
-      #   assert       new_user.ssl_account
-      #   assert_equal 1, new_user.ssl_accounts.count
-      #   assert_equal 1, new_user.roles.count
-      #   assert_equal 1, new_user.get_all_approved_accounts.count
-      #   assert_equal [Role.get_owner_id], new_user.roles.ids
-      #   refute_nil   new_user.default_ssl_account
-      #
-      #   # account is approved, no invitation token
-      #   assert_nil   ssl.approval_token
-      #   assert_nil   ssl.token_expires
-      #   assert       ssl.approved
-      # end
-    end
+    # describe '#invite_new_user' do
+    #   it 'should create new user and ssl_account (pre-approved)' do
+    #     invite_user  = create(:user, :owner)
+    #     new_user = invite_user.invite_new_user(
+    #       user:      {email: 'new_user@domain.com'},
+    #       root_url:  'root_url',
+    #       from_user: invite_user
+    #     )
+    #     ssl = new_user.ssl_account_users.first
+
+    #     assert       new_user.persisted?
+    #     refute       new_user.active
+    #     assert       new_user.ssl_account
+    #     assert_equal 1, new_user.ssl_accounts.count
+    #     assert_equal 1, new_user.roles.count
+    #     assert_equal 1, new_user.get_all_approved_accounts.count
+    #     assert_equal [Role.get_owner_id], new_user.roles.ids
+    #     refute_nil   new_user.default_ssl_account
+
+    #     # account is approved, no invitation token
+    #     assert_nil   ssl.approval_token
+    #     assert_nil   ssl.token_expires
+    #     assert       ssl.approved
+    #   end
+    # end
 
     # describe '#invite_existing_user' do
     #   it 'should NOT create user or ssl_account, should generate invite token' do
