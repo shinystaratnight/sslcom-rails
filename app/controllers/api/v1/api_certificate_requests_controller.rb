@@ -136,7 +136,6 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
 
     if @result.valid? && @result.save
       co = @result.find_certificate_order
-      # if co.ov_validated?
 
       options={csr: params[:csr]}
       unless co.certificate_content.csr.blank?

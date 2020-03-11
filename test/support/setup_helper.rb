@@ -29,6 +29,8 @@ module SetupHelper
     end
     roles.stubs(:[]).returns(role_set)
     Role.stubs(:where).returns(roles)
+    set_common_roles
+    @password = 'Testing@1'
   end
 
   def initialize_certificates
@@ -49,16 +51,6 @@ module SetupHelper
 
   def initialize_server_software
     ['Apache-ModSSL', 'Oracle', 'Amazon Load Balancer'].each{ |title| ServerSoftware.find_or_create_by(title: title) }
-  end
-
-  def stub_server_software
-    software = ServerSoftware.all
-    software_set = []
-    ['Apache-ModSSL', 'Oracle', 'Amazon Load Balancer'].each_with_index do |s, i|
-      software_set << build_stubbed(:server_software, title: s, id: i)
-    end
-    software.stubs(:[]).returns(software_set)
-    ServerSoftware.stubs(:where).returns(software)
   end
 
   def login(role: :owner)
