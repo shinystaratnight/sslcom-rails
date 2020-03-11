@@ -118,6 +118,8 @@ describe SslAccount do
   end
 
   describe 'slug string validation' do
+    SslAccount.any_instance.stubs(:create_api_credential).returns(true)
+
     it '#ssl_slug_valid? string "company" should be valid' do
       assert SslAccount.ssl_slug_valid?('company')
     end
