@@ -37,7 +37,6 @@ describe SslAccount do
   subject { SslAccount.new }
 
   context 'attributes' do
-    # before(:each) { @ssl_acct = build(:ssl_account) }
     should have_db_column :acct_number
     should have_db_column :roles
     should have_db_column :status
@@ -118,7 +117,12 @@ describe SslAccount do
   end
 
   describe 'slug string validation' do
-    SslAccount.any_instance.stubs(:create_api_credential).returns(true)
+    before :all do
+      stub_roles
+      stub_triggers
+      stub_server_software
+      SslAccount.any_instance.stubs(:create_api_credential).returns(true)
+    end
 
     it '#ssl_slug_valid? string "company" should be valid' do
       assert SslAccount.ssl_slug_valid?('company')
