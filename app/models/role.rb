@@ -23,13 +23,16 @@ class Role < ApplicationRecord
   has_and_belongs_to_many   :permissions
   belongs_to                :ssl_account
 
+  scope :for_owners, -> { order(:id).where{ name >> [ACCOUNT_ADMIN, BILLING, INSTALLER, VALIDATIONS, USERS_MANAGER, INDIVIDUAL_CERTIFICATE] } }
+  scope :for_admins, -> { order(:id).where{ name >> [SYSADMIN, SUPER_USER, OWNER, RA_ADMIN] } }
+
   ACCOUNT_ADMIN = 'account_admin'
   BILLING       = 'billing'
   INSTALLER     = 'installer'
   OWNER         = 'owner'
   RESELLER      = 'reseller'
   SUPER_USER    = 'super_user'
-  SYSADMIN     = 'sysadmin'
+  SYSADMIN      = 'sysadmin'
   USERS_MANAGER = 'users_manager'
   VALIDATIONS   = 'validations'
   RA_ADMIN      = 'ra_admin'
@@ -48,7 +51,7 @@ class Role < ApplicationRecord
   end
 
   def self.admin_role_ids
-    Role.get_role_ids([SYSADMIN, SUPER_USER, OWNER, RA_ADMIN])
+    for_admins.pluck(:id)
   end
 
   def self.get_account_admin_id
@@ -65,17 +68,6 @@ class Role < ApplicationRecord
 
   def self.get_individual_certificate_id
     Role.get_role_id(Role::INDIVIDUAL_CERTIFICATE)
-  end
-
-  def self.get_select_ids_for_owner
-    Role.get_role_ids([
-                        ACCOUNT_ADMIN,
-                        BILLING,
-                        INSTALLER,
-                        VALIDATIONS,
-                        USERS_MANAGER,
-                        INDIVIDUAL_CERTIFICATE
-                      ])
   end
 
   def self.can_auto_add_users

@@ -65,13 +65,20 @@ RSpec.configure do |config|
   config.filter_rails_from_backtrace!
 
   config.before(:suite) do
-    DatabaseCleaner.strategy = :transaction
-    DatabaseCleaner.clean_with(:truncation)
+    DatabaseCleaner.strategy = :truncation, { except: %w[roles reminder_triggers server_software] }
+    DatabaseCleaner.clean_with(:deletion)
   end
 
   config.around(:each) do |example|
     DatabaseCleaner.cleaning do
       example.run
     end
+  end
+end
+
+Shoulda::Matchers.configure do |config|
+  config.integrate do |with|
+    with.test_framework :rspec
+    with.library :rails
   end
 end

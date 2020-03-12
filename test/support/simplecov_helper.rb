@@ -8,6 +8,7 @@ class SimpleCovHelper
     SimpleCov.start 'rails' do
       filters.clear
       add_filter %r{^/test/}
+      add_filter %r{^/spec/}
       add_filter %r{^/.*declarative_authorization.*/}
       add_filter %r{^/.*lib/gems/.*/}
       add_filter %r{^/usr/}

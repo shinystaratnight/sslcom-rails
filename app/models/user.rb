@@ -105,7 +105,7 @@ class User < ApplicationRecord
   end
 
   def ssl_account(default_team = nil)
-    SslAccount.find_by_id(Rails.cache.fetch("#{cache_key}/ssl_account/#{default_team.is_a?(Symbol) ? default_team.to_s : default_team.try(:cache_key)}") do
+    approved_ssl_accounts.find_by_id(Rails.cache.fetch("#{cache_key}/ssl_account/#{default_team.is_a?(Symbol) ? default_team.to_s : default_team.try(:cache_key)}") do
       default_ssl = default_ssl_account && is_approved_account?(default_ssl_account)
       main_ssl = main_ssl_account && is_approved_account?(main_ssl_account)
 
@@ -467,7 +467,7 @@ class User < ApplicationRecord
   def assign_roles(params)
     role_ids = params[:user][:role_ids]
     cur_account_id = params[:user][:ssl_account_id]
-    new_role_ids = role_ids.compact.reject(&:blank?).map(&:to_i) unless role_ids.nil? || cur_account_id.nil?
+    new_role_ids = role_ids.compact.reject(&:blank?) unless role_ids.nil? || cur_account_id.nil?
     if new_role_ids.present?
       current_account = SslAccount.find cur_account_id
       current_role_ids = roles_for_account current_account
@@ -490,8 +490,14 @@ class User < ApplicationRecord
   class << self
     extend Memoist
     def roles_list_for_user(user, exclude_roles = [])
-      exclude_roles << Role.where{ id << Role.get_select_ids_for_owner }.map(&:id).uniq unless user.is_system_admins?
-      exclude_roles.any? ? Role.where{ id << exclude_roles.flatten } : Role.all
+      if user.is_owner?
+        Role.for_owners
+      elsif user.is_system_admins?
+        Role.for_admins
+      else
+        exclude_roles << Role.where{ id << Role.get_select_ids_for_owner }.map(&:id).uniq
+        exclude_roles.any? ? Role.where{ id << exclude_roles.flatten } : Role.all
+      end
     end
     memoize :roles_list_for_user
 

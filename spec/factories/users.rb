@@ -82,7 +82,6 @@ FactoryBot.define do
       trait role_name.to_sym do
         after(:create) do |user|
           user.create_ssl_account([Role.get_role_id(role_name)])
-          user.approved_teams << user.ssl_account
           user.default_ssl_account = user.ssl_account.id
         end
       end

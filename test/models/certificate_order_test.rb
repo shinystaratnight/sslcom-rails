@@ -119,6 +119,7 @@ describe CertificateOrder do
         stub_triggers
         stub_server_software
         SslAccount.any_instance.stubs(:initial_setup).returns(true)
+        co.stubs(:certificate).returns(cert)
       end
       let!(:cert) { build(:certificate_with_certificate_order, :premiumssl) }
       let!(:co) { build(:certificate_order) }
