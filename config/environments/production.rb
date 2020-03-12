@@ -13,6 +13,14 @@ Rails.application.configure do
   # Full error reports are disabled and caching is turned on.
   config.consider_all_requests_local       = false
   config.action_controller.perform_caching = true
+  config.cache_store = :dalli_store
+  config.action_controller.asset_host = Proc.new { |source|
+    if source=~/\A\/validation_histories\/.*?\/documents/
+      "https://#{Settings.portal_domain}"
+    else
+      "https://cdn.ssl.com"
+    end
+  }
 
   # Enable Rack::Cache to put a simple HTTP cache in front of your application
   # Add `rack-cache` to your Gemfile before enabling this.
@@ -25,8 +33,8 @@ Rails.application.configure do
   config.serve_static_files = ENV['RAILS_SERVE_STATIC_FILES'].present?
 
   # Compress JavaScripts and CSS.
-  config.assets.js_compressor = :uglifier
-  # config.assets.css_compressor = :sass
+  config.assets.js_compressor = Uglifier.new(harmony: true)
+  config.assets.css_compressor = :sass
 
   # Do not fallback to assets pipeline if a precompiled asset is missed.
   config.assets.compile = false
@@ -69,6 +77,33 @@ Rails.application.configure do
 
   # Send deprecation notices to registered listeners.
   config.active_support.deprecation = :notify
+
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.smtp_settings = {
+      :address    => "email-smtp.us-east-1.amazonaws.com",
+      :port       => 25,
+      :domain     => "ssl.com",
+      :authentication => :login,
+      :user_name => "AKIAJ5WH7ADNDQDO7NGA",
+      :password => "Ag4HcpR7fDRmO8U/FLM100PYXNISHWQVhxS+tEJBoLhE"
+  }
+
+  config.to_prepare do
+    BillingProfile.password = "kama1jama1"
+  end
+
+  config.log_level = :info
+  # END ActiveMerchant configuration
+  config.eager_load = true
+
+  # AWS S3 
+  config.paperclip_defaults = {
+    storage:      :s3,
+    bucket:       Rails.application.secrets.s3_bucket,
+    s3_region:    Rails.application.secrets.s3_region,
+    preserve_files: true,
+    s3_host_name: "s3-#{Rails.application.secrets.s3_region}.amazonaws.com"
+  }
 
   # Use default logging formatter so that PID and timestamp are not suppressed.
   config.log_formatter = ::Logger::Formatter.new

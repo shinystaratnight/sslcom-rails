@@ -2,9 +2,6 @@
 
 require File.expand_path('boot', __dir__)
 
-# require 'rack/ssl-enforcer'
-# require 'rails/all'
-
 # Pick the frameworks you want:
 require 'active_model/railtie'
 require 'active_job/railtie'

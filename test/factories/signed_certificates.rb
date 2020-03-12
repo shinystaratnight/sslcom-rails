@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 # == Schema Information
-# Schema version: 20200311011643
 #
 # Table name: signed_certificates
 #

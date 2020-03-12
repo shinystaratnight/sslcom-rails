@@ -105,7 +105,7 @@ class User < ApplicationRecord
   end
 
   def ssl_account(default_team = nil)
-    approved_ssl_accounts.find_by_id(Rails.cache.fetch("#{cache_key}/ssl_account/#{default_team.is_a?(Symbol) ? default_team.to_s : default_team.try(:cache_key)}") do
+    SslAccount.find_by_id(Rails.cache.fetch("#{cache_key}/ssl_account/#{default_team.is_a?(Symbol) ? default_team.to_s : default_team.try(:cache_key)}") do
       default_ssl = default_ssl_account && is_approved_account?(default_ssl_account)
       main_ssl = main_ssl_account && is_approved_account?(main_ssl_account)
 
@@ -613,7 +613,7 @@ class User < ApplicationRecord
   end
 
   def is_admin?
-    role_symbols.include? Role::SYSADMIN.to_sym
+    role_symbols.include? Role::SYS_ADMIN.to_sym
   end
 
   def is_super_user?
@@ -714,21 +714,21 @@ class User < ApplicationRecord
   end
 
   def make_admin
-    unless roles.map(&:name).include?(Role::SYSADMIN)
-      roles << Role.find_by(name: Role::SYSADMIN)
-      assignments << Assignment.new(ssl_account_id: ssl_account.id, role_id: Role.find_by(name: Role::SYSADMIN).id)
+    unless roles.map(&:name).include?(Role::SYS_ADMIN)
+      roles << Role.find_by(name: Role::SYS_ADMIN)
+      assignments << Assignment.new(ssl_account_id: ssl_account.id, role_id: Role.find_by(name: Role::SYS_ADMIN).id)
     end
   end
 
   def remove_admin
-    sysadmin_roles = get_roles_by_name(Role::SYSADMIN)
+    sysadmin_roles = get_roles_by_name(Role::SYS_ADMIN)
 
     if sysadmin_roles.any?
       sysadmin_roles.each do |r|
         if r.ssl_account_id.nil?
           r.delete
         else
-          update_account_role(r.ssl_account_id, Role::SYSADMIN, Role::OWNER)
+          update_account_role(r.ssl_account_id, Role::SYS_ADMIN, Role::OWNER)
         end
       end
     end

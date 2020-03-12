@@ -413,7 +413,7 @@ describe User do
     end
 
     it '#role_symbols should return [scoped role_symbols] for sysadmin' do
-      owner.create_ssl_account([Role.get_role_id(Role::SYSADMIN)])
+      owner.create_ssl_account([Role.get_role_id(Role::SYS_ADMIN)])
       # should pull 1 role from default ssl account,
       # ignore newly created (sysadmin) role for another ssl account
       assert_equal [:owner], owner.role_symbols

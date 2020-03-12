@@ -4,7 +4,7 @@
 #
 #  id             :integer          not null, primary key
 #  friendly_name  :string(255)      not null
-#  notify_all     :boolean          default("1")
+#  notify_all     :boolean          default(TRUE)
 #  ref            :string(255)      not null
 #  scan_port      :string(255)      default("443")
 #  status         :boolean
