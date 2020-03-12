@@ -16,27 +16,30 @@ class NotificationGroupsManager
 
       certificate = domain.x509_cert
       scan_status = domain.verify_result
-      
+
       if certificate.present?
         scanned_cert = ScannedCertificate.find_or_initialize_by(serial: certificate.serial.to_s)
         if scanned_cert.new_record?
           scanned_cert.body = certificate.to_s
           scanned_cert.decoded = certificate.to_text
           scanned_cert.save
-          scan_logs << ScanLog.new(notification_group_id: domain.notification_group.id, scanned_certificate_id: scanned_cert.id, domain_name: domain.url, scan_status: scan_status, expiration_date: certificate.not_after.to_date, scan_group: scan_group)
+          scan_logs << build_scan_log(domain.notification_group, scanned_cert, domain, scan_status, certificate.not_after.to_date, scan_group)
         else
           last_scan = ScanLog.where(scanned_certificate_id: scanned_cert.id).last
           if last_scan.nil?
-            scan_logs << ScanLog.new(notification_group_id: domain.notification_group.id, scanned_certificate_id: scanned_cert.id, domain_name: domain.url, scan_status: scan_status, expiration_date: certificate.not_after.to_date, scan_group: scan_group)
+            scan_logs << build_scan_log(domain.notification_group, scanned_cert, domain, scan_status, certificate.not_after.to_date, scan_group)
           elsif scan_status != last_scan.scan_status
             NotificationGroupMailer.domain_digest_notice(scan_status, domain.notification_group, scanned_cert, domain.url, domain.notification_group.notification_groups_contacts, domain.notification_group.ssl_account).deliver_now
-            scan_logs << ScanLog.new(notification_group_id: domain.notification_group.id, scanned_certificate_id: scanned_cert.id, domain_name: domain.url, scan_status: scan_status, expiration_date: certificate.not_after.to_date, scan_group: scan_group)
+            scan_logs << build_scan_log(domain.notification_group, scanned_cert, domain, scan_status, certificate.not_after.to_date, scan_group)
           else
-            scan_logs << ScanLog.new(notification_group_id: domain.notification_group.id, scanned_certificate_id: scanned_cert.id, domain_name: domain.url, scan_status: scan_status, expiration_date: certificate.not_after.to_date, scan_group: scan_group)
+            scan_logs << build_scan_log(domain.notification_group, scanned_cert, domain, scan_status, certificate.not_after.to_date, scan_group)
           end
         end
       else
-        scan_logs << ScanLog.new(notification_group_id: domain.notification_group.id, domain_name: domain.url, scan_status: 'not found', expiration_date: nil, scan_group: scan_group)
+        if scan_status.nil?
+          scan_status = 'not found'
+        end
+        scan_logs << build_scan_log(domain.notification_group, certificate, domain, scan_status, nil, scan_group)
       end
     end
     ScanLog.import scan_logs
@@ -89,6 +92,10 @@ class NotificationGroupsManager
       end
     end
 
+    def build_scan_log(ng, scanned_cert, domain, scan_status, exp_date, scan_group)
+      ScanLog.new(notification_group_id: ng.id, scanned_certificate_id: scanned_cert, domain_name: domain.url, scan_status: scan_status, expiration_date: exp_date, scan_group: scan_group)
+    end
+
     def manufacture_domains_structs(schedule_type, schedule_value)
       domains = []
 
@@ -112,9 +119,7 @@ class NotificationGroupsManager
         domains.map do |domain|
           ssl_client = SslClient.new(domain.url.gsub("*.", "www."), domain.scan_port)
           domain.x509_cert = ssl_client.retrieve_x509_cert
-          if domain.x509_cert.present?
-            domain.verify_result = ssl_client.verify_result
-          end
+          domain.verify_result = ssl_client.verify_result
           domain
         end
       end

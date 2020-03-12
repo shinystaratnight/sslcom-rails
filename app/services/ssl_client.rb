@@ -25,11 +25,9 @@ class SslClient
   end
 
   def verify_result
-    result = %x"echo QUIT | openssl s_client -CApath /etc/ssl/certs/ -showcerts -servername #{url} -verify_hostname #{url} -connect #{url}:#{port}"
-    if result.empty?
-      return 'not found'
-    else
-      result.match(/Verify return code: (.*)/)[1]
-    end
+    result = %x"echo QUIT | openssl s_client -CApath /etc/ssl/certs/ -servername #{url} -verify_hostname #{url} -connect #{url}:#{port}"
+    result.match(/Verify return code: (.*)/)[1]
+  rescue
+    nil
   end
 end
