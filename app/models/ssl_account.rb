@@ -399,10 +399,6 @@ class SslAccount < ApplicationRecord
     certificate_orders.is_new.each(&:destroy)
   end
 
-  def clear_new_product_orders
-    product_orders.is_new.each(&:destroy)
-  end
-
   def has_only_credits?
     certificate_orders.credits.count.positive? && (certificate_orders.credits.count == certificate_orders.not_new.count)
   end
