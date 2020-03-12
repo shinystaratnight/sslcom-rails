@@ -102,16 +102,16 @@ jobs:
 
       - restore_cache:
           keys:
-            - gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
-            - gem-cache-{{ arch }}-{{ .Branch }}
-            - gem-cache
+            - gem-cache-v1-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+            - gem-cache-v1-{{ arch }}-{{ .Branch }}
+            - gem-cache-v1
 
       - run:
           name: Install bundle
           command: bin/bundle install --path vendor/bundle
 
       - save_cache:
-          key: gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+          key: gem-cache-v1-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
           paths:
             - ~/sslcom-rails/vendor/bundle
 
@@ -141,13 +141,18 @@ jobs:
 
       - run:
           name: Run tests
-          command: |-
-            TESTFILES=$(circleci tests glob "test/**/*_test.rb" | circleci tests split --split-by=timings)
-            bundle exec rake test \
-              -- ${TESTFILES}
+          command: |
+            mkdir -p /tmp/rspec
+            TEST_FILES="$(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)"
+            bundle exec rspec --profile 10 \
+                              --format RspecJunitFormatter \
+                              --out /tmp/rspec/rspec.xml \
+                              --format progress \
+                              -- \
+                              $TEST_FILES
 
       - store_test_results:
-          path: test-results
+          path: /tmp/rspec
 
       - run:
           name: Stash Coverage Results
@@ -173,14 +178,17 @@ jobs:
           command: *install-mysql-dependencies
       
       - restore_cache:
-          key: bundle-{{ checksum "Gemfile.lock" }}
+          keys:
+            - gem-cache-v1-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+            - gem-cache-v1-{{ arch }}-{{ .Branch }}
+            - gem-cache-v1
 
       - run:
           name: Bundle Install Gem Dependencies
           command: bundle check --path vendor/bundle || bundle install --deployment
 
       - save_cache:
-         key: sslcom-rails-{{ checksum "Gemfile.lock" }}
+         key: gem-cache-v1-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
          paths:
            - vendor/bundle
 
@@ -264,9 +272,9 @@ jobs:
 
       - restore_cache:
           keys:
-            - gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
-            - gem-cache-{{ arch }}-{{ .Branch }}
-            - gem-cache
+            - gem-cache-v1-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+            - gem-cache-v1-{{ arch }}-{{ .Branch }}
+            - gem-cache-v1
 
       - run:
           name: Install Mysql Libraries
