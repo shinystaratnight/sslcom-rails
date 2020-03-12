@@ -20,7 +20,9 @@ aliases:
         ucc: {product: "ucc", label: "Multi-Domain (SAN/UCC)"}
         evucc: {product: "evucc", label: "EV Multi-Domain (EV SAN/UCC)"}
       send_dv_first: true
-    ' > config/settings.yml  - &create-local-env-yml |
+    ' > config/settings.yml
+
+  - &create-local-env-yml |
     mkdir -p config && echo "
                 AWS_ACCESS_KEY_ID: ''
                 AWS_SECRET_ACCESS_KEY: ''
@@ -35,24 +37,34 @@ aliases:
                 DUO_SYSADMIN_SECRET_KEY: '${DUO_SECRET_KEY}'
                 DUO_SYSADMIN_APPLICATION_KEY: '${DUO_APPLICATION_KEY}'
                 DUO_SYSADMIN_API_HOSTNAME: '${DUO_API_HOSTNAME}'
-            " > config/local_env.yml  - &install-mysql-dependencies |
+            " > config/local_env.yml
+
+  - &install-mysql-dependencies |
     sudo apt-get install unixodbc-dev
     sudo apt-get -y install mysql-server
     sudo gem uninstall bundler
     sudo rm /usr/local/bin/bundle
     sudo rm /usr/local/bin/bundler
-    sudo gem install bundler -v 1.17.3  - &setup-database |
+    sudo gem install bundler -v 1.17.3
+
+  - &setup-database |
     export RAILS_ENV="test"
     export RACK_ENV="test"
-    bundle exec rake db:create db:structure:load db:migrate --trace  - &copy-database-yml |
+    bundle exec rake db:create db:structure:load db:migrate --trace
+
+  - &copy-database-yml |
     mkdir -p config && echo 'test:
       adapter: mysql2
       database: ssl_com_test
       username: root
       host: 127.0.0.1
-    ' > config/database.yml  - &install-code-climate-reporter |
+    ' > config/database.yml
+
+  - &install-code-climate-reporter |
     curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
-    chmod +x ./cc-test-reporterdefaults: &defaults
+    chmod +x ./cc-test-reporter
+
+defaults: &defaults
   parallelism: 2
   working_directory: ~/sslcom-rails
   docker:
@@ -64,154 +76,256 @@ aliases:
         BUNDLE_RETRY: 1
         BUNDLE_PATH: vendor/bundle
         CIRCLE_CI: 'true'
-        CACHE_VERSION: 'v1'
+        CACHE_VERSION: 'v2'
         CIRCLE_NODE_INDEX: 0
         CIRCLE_NODE_TOTAL: 2
     - image: circleci/mysql:5.7.28
       environment:
         MYSQL_ALLOW_EMPTY_PASSWORD: "true"
-        MYSQL_ROOT_HOST: "%"version: 2
+        MYSQL_ROOT_HOST: "%"
+
+version: 2
 jobs:
   test:
     <<: *defaults
     steps:
-      - checkout      - run:
+      - checkout
+
+      - run:
           name: Install Mysql Libraries
-          command: *install-mysql-dependencies      - save_cache:
+          command: *install-mysql-dependencies
+
+      - save_cache:
           key: v2-repo-{{ .Environment.CIRCLE_SHA1 }}
           paths:
-            - ~/sslcom-rails      - restore_cache:
+            - ~/sslcom-rails
+
+      - restore_cache:
           keys:
-            - gem-cache-v1-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
-            - gem-cache-v1-{{ arch }}-{{ .Branch }}
-            - gem-cache-v1      - run:
+            - gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+            - gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Branch }}
+            - gem-cache-{{ .Environment.CACHE_VERSION }}
+
+      - run:
           name: Install bundle
-          command: bin/bundle install --path vendor/bundle      - save_cache:
-          key: gem-cache-v1-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+          command: bin/bundle install --path vendor/bundle
+
+      - save_cache:
+          key: gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
           paths:
-            - ~/sslcom-rails/vendor/bundle      - run:
+            - ~/sslcom-rails/vendor/bundle
+
+      - run:
           name: Wait for DB
-          command: dockerize -wait tcp://localhost:3306 -timeout 1m      - run: 
+          command: dockerize -wait tcp://localhost:3306 -timeout 1m
+
+      - run: 
           name: Create settings.yml
-          command: *create-settings-yml      - run: 
+          command: *create-settings-yml
+
+      - run: 
           name: Copy local_env.yml
-          command: *create-local-env-yml      - run: 
+          command: *create-local-env-yml
+
+      - run: 
           name: Copy Database.yml
-          command: *copy-database-yml      - run:
+          command: *copy-database-yml
+
+      - run:
           name: Copy Settings File
-          command: cp config/client/certassure/settings.yml config/      - run:
+          command: cp config/client/certassure/settings.yml config/
+
+      - run:
           name: Setup Database
-          command: *setup-database      - run:
+          command: *setup-database
+
+      - run:
           name: Run tests
-          command: |
-            mkdir -p /tmp/rspec
-            TEST_FILES="$(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)"
-            bundle exec rspec --profile 10 \
-                              --format RspecJunitFormatter \
-                              --out /tmp/rspec/rspec.xml \
-                              --format progress \
-                              -- \
-                              $TEST_FILES      - store_test_results:
-          path: /tmp/rspec      - run:
+          command: |-
+            TESTFILES=$(circleci tests glob "test/**/*_test.rb" | circleci tests split --split-by=timings)
+            bundle exec rake test \
+              -- ${TESTFILES}
+
+      - store_test_results:
+          path: /tmp/rspec
+
+      - run:
           name: Stash Coverage Results
           command: |
             mkdir coverage_results
-            cp -R coverage/.resultset.json coverage_results/.resultset-${CIRCLE_NODE_INDEX}.json      - persist_to_workspace:
+            cp -R coverage/.resultset.json coverage_results/.resultset-${CIRCLE_NODE_INDEX}.json
+
+      - persist_to_workspace:
           root: .
           paths:
-            - coverage_results  build:
+            - coverage_results
+
+  build:
     <<: *defaults
     parallelism: 1
     steps:
-      - checkout      - run: mkdir -p tmp/test-reports/minitest/queue_mode/      - run:
+      - checkout
+
+      - run: mkdir -p tmp/test-reports/minitest/queue_mode/
+
+      - run:
           name: Install Libraries for mySQL and Correct Bundler Version (1.17.3)
-          command: *install-mysql-dependencies      - restore_cache:
+          command: *install-mysql-dependencies
+      
+      - restore_cache:
           keys:
-            - gem-cache-v1-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
-            - gem-cache-v1-{{ arch }}-{{ .Branch }}
-            - gem-cache-v1      - run:
+            - gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+            - gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Branch }}
+            - gem-cache-{{ .Environment.CACHE_VERSION }}
+
+      - run:
           name: Bundle Install Gem Dependencies
-          command: bundle check --path vendor/bundle || bundle install --deployment      - save_cache:
-         key: gem-cache-v1-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+          command: bundle check --path vendor/bundle || bundle install --deployment
+
+      - save_cache:
+         key: gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
          paths:
-           - vendor/bundle      - run: 
+           - vendor/bundle
+
+      - run: 
           name: Create settings.yml
-          command: *create-settings-yml      - run: 
+          command: *create-settings-yml
+
+      - run: 
           name: Copy local_env.yml
-          command: *create-local-env-yml      - run: 
+          command: *create-local-env-yml
+
+      - run: 
           name: Copy Database.yml
-          command: *copy-database-yml      - run:
+          command: *copy-database-yml
+
+      - run:
           name: Copy CertAssureSetting
-          command: *copy-certassure-settings      # Yarn dependencies
+          command: *copy-certassure-settings
+
+      # Yarn dependencies
       - restore_cache:
           keys:
             - v1-yarn-{{ checksum "package.json" }}
             # fallback to using the latest cache if no exact match is found
-            - v1-yarn-      - run: yarn install      - save_cache:
+            - v1-yarn-
+
+      - run: yarn install
+
+      - save_cache:
           paths:
             - node_modules
             - ~/.cache
-          key: v1-yarn-{{ checksum "package.json" }}      - run:
+          key: v1-yarn-{{ checksum "package.json" }}
+
+      - run:
           name: Setup Database
-          command: *setup-database      - run:
+          command: *setup-database
+
+      - run:
           name: Setup Database for Cypress Test
           command: |-
             export RAILS_ENV="test"
             export RACK_ENV="test"
-            bundle exec rake db:seed --trace      - run:
+            bundle exec rake db:seed --trace
+
+      - run:
           name: Rails Server
           command: |-
             gem install foreman --no-doc
             foreman start -f Procfile.test
-          background: true      - run:
+          background: true
+
+      - run:
           name: Run Cypress
-          command: yarn cypress run --project ./test      - store_artifacts:
-          path: test/cypress/videos      - store_artifacts:
-          path: log      - run:
+          command: yarn cypress run --project ./test
+
+      - store_artifacts:
+          path: test/cypress/videos
+
+      - store_artifacts:
+          path: log
+
+      - run:
           name: Precompile Assets
-          command: bundle exec rake assets:precompile --trace      - run:
+          command: bundle exec rake assets:precompile --trace
+
+      - run:
           name: Eager load classes to check for issues
           command: |
-              bundle exec rails runner 'Rails.application.eager_load!'  coverage:
+              bundle exec rails runner 'Rails.application.eager_load!'
+
+  coverage:
     <<: *defaults
     parallelism: 1
     steps:
       - attach_workspace:
-          at: .      - restore_cache:
-          key: v2-repo-{{ .Environment.CIRCLE_SHA1 }}      - restore_cache:
+          at: .
+
+      - restore_cache:
+          key: v2-repo-{{ .Environment.CIRCLE_SHA1 }}
+
+      - restore_cache:
           keys:
-            - gem-cache-v1-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
-            - gem-cache-v1-{{ arch }}-{{ .Branch }}
-            - gem-cache-v1      - run:
+            - gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+            - gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Branch }}
+            - gem-cache-{{ .Environment.CACHE_VERSION }}
+
+      - run:
           name: Install Mysql Libraries
-          command: *install-mysql-dependencies      - run: bundle install --path vendor/bundle      - run: 
+          command: *install-mysql-dependencies
+
+      - run: bundle install --path vendor/bundle
+
+      - run: 
           name: Create settings.yml
-          command: *create-settings-yml      - run: 
+          command: *create-settings-yml
+
+      - run: 
           name: Copy local_env.yml
-          command: *create-local-env-yml      - run: 
+          command: *create-local-env-yml
+
+      - run: 
           name: Copy Database.yml
-          command: *copy-database-yml      - run:
+          command: *copy-database-yml
+
+      - run:
           name: Copy Settings File
-          command: cp config/client/certassure/settings.yml config/      - run:
+          command: cp config/client/certassure/settings.yml config/
+
+      - run:
           name: Setup Database
-          command: *setup-database      - run:
+          command: *setup-database
+
+      - run:
           name: Merge and check coverage
           command: |
-            RUN_COVERAGE=true bundle exec rake simplecov:report_coverage      - store_artifacts:
+            RUN_COVERAGE=true bundle exec rake simplecov:report_coverage
+
+      - store_artifacts:
           path: ~/sslcom-rails/coverage
-          destination: coverage      - run: 
+          destination: coverage
+
+      - run: 
           name: Install Code Climate Reporter
-          command: *install-code-climate-reporter      - run:
+          command: *install-code-climate-reporter
+
+      - run:
           name: Code Climate Test Coverage
           command: |
-            ./cc-test-reporter format-coverage -t simplecov -o "coverage/codeclimate.$CIRCLE_NODE_INDEX.json"      - run:
+            ./cc-test-reporter format-coverage -t simplecov -o "coverage/codeclimate.$CIRCLE_NODE_INDEX.json"
+
+      - run:
           name: Notify Code Climate
           command: ./cc-test-reporter after-build -r $CC_TEST_REPORTER_ID -t simplecov --exit-code $? || true
 workflows:
-  version: 2  build_and_coverage:
+  version: 2
+
+  build_and_coverage:
     jobs:
       - build
       - test
       - coverage:
           requires:
             - test
+
