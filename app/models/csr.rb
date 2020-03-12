@@ -141,7 +141,7 @@ class Csr < ApplicationRecord
     fingerprint = Digest::SHA1.hexdigest "Modulus=#{public_key.n.to_s(16)}\n"
 
     # Check if the key is in the blacklist
-    WeakKey.where(sha1_hash: fingerprint[20..-1]).present?
+    WeakKey.where({sha1_hash: fingerprint[20..-1], size: public_key.n.num_bits}).present?
   end
 
   def unique_value
