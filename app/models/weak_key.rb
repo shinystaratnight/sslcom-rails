@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: weak_keys
@@ -13,5 +15,4 @@
 #
 
 class WeakKey < ApplicationRecord
-
 end
