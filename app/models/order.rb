@@ -1222,13 +1222,6 @@ class Order < ApplicationRecord
         #adjusting duration to reflect number of days validity
         certificate_order = setup_certificate_order(certificate: certificate, certificate_order: certificate_order)
         options[:certificate_orders] << certificate_order if certificate_order.valid?
-      elsif product = Product.find_by_serial(c[ShoppingCart::PRODUCT_CODE])
-        product_order = ProductOrder.new(product: product, amount: product.amount)
-        unless options[:current_user].blank?
-          options[:current_user].ssl_account.clear_new_product_orders
-          product_order.ssl_account=current_user.ssl_account
-        end
-        options[:certificate_orders] << product_order
       end
     end
     options[:certificate_orders]
