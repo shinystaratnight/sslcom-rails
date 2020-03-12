@@ -36,15 +36,7 @@ require 'test_helper'
 describe SslAccount do
   subject { SslAccount.new }
 
-  before :all do
-    stub_roles
-    stub_triggers
-    stub_server_software
-    SslAccount.any_instance.stubs(:create_api_credential).returns(true)
-  end
-
   context 'attributes' do
-    # before(:each) { @ssl_acct = build(:ssl_account) }
     should have_db_column :acct_number
     should have_db_column :roles
     should have_db_column :status
@@ -53,6 +45,13 @@ describe SslAccount do
   end
 
   describe 'validations' do
+    before :all do
+      stub_roles
+      stub_triggers
+      stub_server_software
+      SslAccount.any_instance.stubs(:create_api_credential).returns(true)
+    end
+
     it '#ssl_slug should NOT be valid under 2 characters' do
       subject.ssl_slug = 'a'
       subject.validate
@@ -118,6 +117,13 @@ describe SslAccount do
   end
 
   describe 'slug string validation' do
+    before :all do
+      stub_roles
+      stub_triggers
+      stub_server_software
+      SslAccount.any_instance.stubs(:create_api_credential).returns(true)
+    end
+
     it '#ssl_slug_valid? string "company" should be valid' do
       assert SslAccount.ssl_slug_valid?('company')
     end
@@ -136,7 +142,7 @@ describe SslAccount do
       end
     end
     it '#ssl_slug_valid? string using route names should NOT be valid' do
-      %w[oauth_clients managed_users user_session].each do |named_route|
+      %w[managed_users user_session].each do |named_route|
         refute SslAccount.ssl_slug_valid?(named_route)
       end
     end

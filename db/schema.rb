@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200228221909) do
+ActiveRecord::Schema.define(version: 20200311131940) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        :limit=>255
@@ -439,18 +439,6 @@ ActiveRecord::Schema.define(version: 20200228221909) do
     t.datetime "updated_at"
   end
   add_index "certificates_products", ["certificate_id", "product_id"], :name=>"index_certificates_products_on_certificate_id_and_product_id", :using=>:btree
-
-  create_table "client_applications", force: :cascade do |t|
-    t.string   "name",         :limit=>255
-    t.string   "url",          :limit=>255
-    t.string   "support_url",  :limit=>255
-    t.string   "callback_url", :limit=>255
-    t.string   "key",          :limit=>40, :index=>{:name=>"index_client_applications_on_key", :unique=>true, :using=>:btree}
-    t.string   "secret",       :limit=>40
-    t.integer  "user_id",      :limit=>4, :index=>{:name=>"index_client_applications_on_user_id", :using=>:btree}
-    t.datetime "created_at",   :null=>false
-    t.datetime "updated_at",   :null=>false
-  end
 
   create_table "contact_validation_histories", force: :cascade do |t|
     t.integer  "contact_id",            :limit=>4, :null=>false, :index=>{:name=>"index_contact_validation_histories_on_contact_id", :using=>:btree}
@@ -915,30 +903,6 @@ ActiveRecord::Schema.define(version: 20200228221909) do
     t.datetime "updated_at"
     t.string   "created_page",          :limit=>255
   end
-
-  create_table "oauth_nonces", force: :cascade do |t|
-    t.string   "nonce",      :limit=>255, :index=>{:name=>"index_oauth_nonces_on_nonce_and_timestamp", :with=>["timestamp"], :unique=>true, :using=>:btree}
-    t.integer  "timestamp",  :limit=>4
-    t.datetime "created_at", :null=>false
-    t.datetime "updated_at", :null=>false
-  end
-
-  create_table "oauth_tokens", force: :cascade do |t|
-    t.integer  "user_id",               :limit=>4, :index=>{:name=>"index_oauth_tokens_on_user_id", :using=>:btree}
-    t.string   "type",                  :limit=>20
-    t.integer  "client_application_id", :limit=>4, :index=>{:name=>"index_oauth_tokens_on_client_application_id", :using=>:btree}
-    t.string   "token",                 :limit=>40, :index=>{:name=>"index_oauth_tokens_on_token", :unique=>true, :using=>:btree}
-    t.string   "secret",                :limit=>40
-    t.string   "callback_url",          :limit=>255
-    t.string   "verifier",              :limit=>20
-    t.string   "scope",                 :limit=>255
-    t.datetime "authorized_at"
-    t.datetime "invalidated_at"
-    t.datetime "valid_to"
-    t.datetime "created_at",            :null=>false
-    t.datetime "updated_at",            :null=>false
-  end
-  add_index "oauth_tokens", ["id", "type"], :name=>"index_oauth_tokens_on_id_and_type", :using=>:btree
 
   create_table "order_transactions", force: :cascade do |t|
     t.integer  "order_id",     :limit=>4, :index=>{:name=>"index_order_transactions_on_order_id", :using=>:btree}

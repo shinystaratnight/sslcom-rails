@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # wkhtmltopdf binary downloads: https://wkhtmltopdf.org/downloads.html
 
 # Installing latest builds of wkhtmltopdf and wkhtmltoimage on linux (e.g.: 0.12.4)
@@ -9,19 +11,19 @@
 #   sudo mv bin/wkhtmltopdf/wkhtmltopdf bin/wkhtmltopdf/wkhtmltox-0.12.4_linux-generic-amd64
 
 wkhtmltopdf_executable = if Rails.env.production? || Rails.env.staging?
-  Rails.root.join('bin', 'wkhtmltopdf', 'wkhtmltox-0.12.4_linux-generic-amd64').to_s
-elsif RUBY_PLATFORM =~ (/linux/)
-   Rails.root.join('bin', 'wkhtmltopdf', 'wkhtmltox-0.12.4_linux-generic-amd64').to_s
-elsif RUBY_PLATFORM =~ (/mingw32/)
-  'C:\Program Files (x86)\wkhtmltopdf\wkhtmltopdf.exe'
-else
-  Rails.root.join('bin', 'wkhtmltopdf', 'wkhtmltox-0.12.4_osx-cocoa-x86-64.pkg').to_s
-end
+                           Rails.root.join('bin', 'wkhtmltopdf', 'wkhtmltox-0.12.4_linux-generic-amd64').to_s
+                         elsif RUBY_PLATFORM =~ /linux/
+                           Rails.root.join('bin', 'wkhtmltopdf', 'wkhtmltox-0.12.4_linux-generic-amd64').to_s
+                         elsif RUBY_PLATFORM =~ /mingw32/
+                           'C:\Program Files (x86)\wkhtmltopdf\wkhtmltopdf.exe'
+                         else
+                           Rails.root.join('bin', 'wkhtmltopdf', 'wkhtmltox-0.12.4_osx-cocoa-x86-64.pkg').to_s
+                         end
 
 WickedPdf.config = {
   disposition: 'attachment',
   exe_path: wkhtmltopdf_executable,
   page_size: 'A4',
   disable_smart_shrinking: true,
-  footer: {left: '[page] of [topage] | Thank you for using SSL.com. For assistance, please email Sales@SSL.com or visit SSL.com.'}
+  footer: { left: '[page] of [topage] | Thank you for using SSL.com. For assistance, please email Sales@SSL.com or visit SSL.com.' }
 }

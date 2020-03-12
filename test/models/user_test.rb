@@ -66,13 +66,6 @@
 require 'test_helper'
 
 describe User do
-  before :all do
-    stub_roles
-    stub_triggers
-    stub_server_software
-    SslAccount.any_instance.stubs(:create_api_credential).returns
-  end
-
   subject { User.new }
 
   describe 'attributes' do
@@ -92,6 +85,13 @@ describe User do
   end
 
   describe 'validations' do
+    before :all do
+      stub_roles
+      stub_triggers
+      stub_server_software
+      SslAccount.any_instance.stubs(:create_api_credential).returns
+    end
+
     it 'should be valid' do
       assert build(:user).valid?
     end
@@ -238,7 +238,11 @@ describe User do
   # end
 
   describe 'account helper methods' do
-    before(:all) do
+    before :all do
+      stub_roles
+      stub_triggers
+      stub_server_software
+      SslAccount.any_instance.stubs(:create_api_credential).returns
       @owner = create(:user)
     end
 
@@ -304,6 +308,10 @@ describe User do
 
   describe 'role helper methods' do
     before(:all) do
+      stub_roles
+      stub_triggers
+      stub_server_software
+      SslAccount.any_instance.stubs(:create_api_credential).returns
       @owner = create(:user, :owner)
       @default_ssl = @owner.ssl_account
       @reseller_role = create(:role, :reseller).id
@@ -457,6 +465,10 @@ describe User do
 
   describe 'approval token helpers' do
     before(:all) do
+      stub_roles
+      stub_triggers
+      stub_server_software
+      SslAccount.any_instance.stubs(:create_api_credential).returns
       @owner = create(:user, :owner)
       @default_ssl = @owner.ssl_account
       @user_w_token = create(:user, :owner)
@@ -611,6 +623,12 @@ describe User do
     # end
 
     describe 'team helpers' do
+      before :all do
+        stub_roles
+        stub_triggers
+        stub_server_software
+        SslAccount.any_instance.stubs(:create_api_credential).returns
+      end
       # it '#max_teams_reached? should return correct boolean' do
       #   user_2_teams = create(:user, :owner, max_teams: 2)
       #   assert_equal 2, user_2_teams.max_teams
