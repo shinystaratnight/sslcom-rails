@@ -62,33 +62,32 @@
 #  index_users_on_status_and_login_and_email          (status,login,email)
 #  index_users_on_status_and_ssl_account_id           (id,ssl_account_id,status)
 #
+
 require 'rails_helper'
 
-# RSpec.describe User, type: :model do
-#   pending "add some examples to (or delete) #{__FILE__}"
-# end
-
 describe User do
+  before(:all) do
+    initialize_roles
+  end
+
   %i[login first_name last_name email active default_ssl_account main_ssl_account max_teams].each do |column|
     it { should have_db_column column.to_sym }
   end
 
   describe 'attributes' do
     before(:each) do
-      stub_ssl_account_initial_setup
-      stub_roles
+      # stub_ssl_account_initial_setup
     end
 
     it '#max_teams_reached returns an integer' do
       user = create(:user, :owner)
-      assert_equal User::OWNED_MAX_TEAMS, user.max_teams
+      user.max_teams.should eq User::OWNED_MAX_TEAMS
     end
   end
 
   describe 'validations' do
     before(:each) do
-      stub_ssl_account_initial_setup
-      stub_roles
+      # stub_ssl_account_initial_setup
     end
 
     let!(:user) { build(:user) }
@@ -253,7 +252,7 @@ describe User do
   # end
 
   describe 'account helper methods' do
-    let!(:owner) { create(:user, :owner) }
+    let!(:owner) { create(:user) }
 
     it '#create_ssl_account should create/approve/add ssl_account' do
       owner.create_ssl_account
@@ -261,7 +260,7 @@ describe User do
 
       previous_ssl_account = owner.default_ssl_account
 
-      SslAccountUser.where(user_id: owner.id).first.ssl_account.should be previous_ssl_account
+      SslAccountUser.where(user_id: owner.id).first.ssl_account_id.should be previous_ssl_account
 
       new_ssl_account = owner.create_ssl_account
 
@@ -271,17 +270,6 @@ describe User do
       previous_ssl_account.should eq owner.default_ssl_account
       # ssl account should be automatically approved
       owner.user_approved_invite?(ssl_account_id: new_ssl_account.id).should be_truthy
-    end
-
-    it '#create_ssl_account should set roles if provided' do
-      owner = create(:role, :owner)
-      billing = create(:role, :billing)
-
-      params = { ssl_account_id: owner.create_ssl_account([owner.id, billing.id]).id }
-
-      owner.assignments.where(params).count.should be 2
-      owner.assignments.where(params.merge(role_id: owner.id)).count.should be 1
-      owner.assignments.where(params.merge(role_id: billing.id)).count.should be 1
     end
 
     it '#approve_account should approve account and clear token info' do
@@ -315,164 +303,157 @@ describe User do
   end
 
   describe 'role helper methods' do
-    before(:all) do
-      @owner = create(:user, :owner)
-      @default_ssl = @owner.ssl_account
-      @reseller_role = create(:role, :reseller).id
-      @billing_role = create(:role, :billing).id
-    end
+    let(:owner) { create(:user, :owner) }
+    let(:default_ssl) { owner.ssl_account }
+    let(:reseller_role) { create(:role, :reseller).id }
+    let(:billing_role) { create(:role, :billing).id }
 
     # it '#set_roles_for_account should set roles' do
-    #   prev_roles = @owner.roles.count
-    #   new_roles  = [@reseller_role, @billing_role]
-    #   @owner.set_roles_for_account(@default_ssl, new_roles)
+    #   prev_roles = owner.roles.count
+    #   new_roles  = [reseller_role, billing_role]
+    #   owner.set_roles_for_account(default_ssl, new_roles)
     #
-    #   assert_equal prev_roles+new_roles.count, @owner.roles.count
+    #   assert_equal prev_roles+new_roles.count, owner.roles.count
     # end
 
     it '#set_roles_for_account should ignore unassociated ssl_account' do
       other_ssl_account = create(:user, :owner).ssl_account
-      prev_roles        = @owner.roles.count
-      @owner.set_roles_for_account(other_ssl_account, [@owner_role])
+      prev_roles        = owner.roles.count
+      owner.set_roles_for_account(other_ssl_account, [owner_role])
 
-      assert_equal prev_roles, @owner.roles.count
+      owner.roles.count.should eq prev_roles
     end
 
     it '#set_roles_for_account should ignore duplicate roles' do
-      prev_roles = @owner.roles.count
-      @owner.set_roles_for_account(@default_ssl, [@owner_role])
+      prev_roles = owner.roles.count
+      owner.set_roles_for_account(default_ssl, [owner_role])
 
-      assert_equal prev_roles, @owner.roles.count
+      owner.roles.count.should eq prev_roles
     end
 
     # it '#roles_for_account should return array of role ids' do
-    #   @owner.set_roles_for_account(@default_ssl, [@reseller_role, @billing_role])
+    #   owner.set_roles_for_account(default_ssl, [reseller_role, billing_role])
     #
-    #   assert @owner.roles.map(&:id) == @owner.roles_for_account(@default_ssl)
+    #   assert owner.roles.map(&:id) == owner.roles_for_account(default_ssl)
     # end
 
     it '#roles_for_account should ignore unassociated ssl_account' do
       other_ssl_account = create(:user, :owner).ssl_account
 
-      assert_equal [], @owner.roles_for_account(other_ssl_account)
+      owner.roles_for_account(other_ssl_account).should be_empty
     end
 
     # it '#get_roles_by_name should return all assignments' do
-    #   assert_equal 1, @owner.get_roles_by_name(Role::OWNER).count
-    #   assert_equal 0, @owner.get_roles_by_name(Role::BILLING).count
+    #   assert_equal 1, owner.get_roles_by_name(Role::OWNER).count
+    #   assert_equal 0, owner.get_roles_by_name(Role::BILLING).count
     # end
 
     # it '#update_account_role should update assignment' do
-    #   assert_equal 1, @owner.roles.count
+    #   assert_equal 1, owner.roles.count
     #
-    #   @owner.update_account_role(@default_ssl, Role::OWNER, Role::BILLING)
+    #   owner.update_account_role(default_ssl, Role::OWNER, Role::BILLING)
     #
-    #   assert_equal 1, @owner.roles.count
-    #   assert_equal @billing_role, @owner.roles.first.id
-    #   assert_equal 0, @owner.assignments.where(role_id: @owner_role).count
+    #   assert_equal 1, owner.roles.count
+    #   assert_equal billing_role, owner.roles.first.id
+    #   assert_equal 0, owner.assignments.where(role_id: owner_role).count
     # end
 
     # it '#assign_roles should add new roles' do
-    #   assert_equal 1, @owner.roles.count
-    #   @owner.assign_roles( user: {
-    #     ssl_account_id: @default_ssl.id,
-    #     role_ids:       [@reseller_role, @billing_role] }
+    #   assert_equal 1, owner.roles.count
+    #   owner.assign_roles( user: {
+    #     ssl_account_id: default_ssl.id,
+    #     role_ids:       [reseller_role, billing_role] }
     #   )
     #
-    #   assert_equal 3, @owner.roles.count
-    #   assert_equal [@owner_role, @reseller_role, @billing_role].sort,
-    #     @owner.roles_for_account(@default_ssl).sort
+    #   assert_equal 3, owner.roles.count
+    #   assert_equal [owner_role, reseller_role, billing_role].sort,
+    #     owner.roles_for_account(default_ssl).sort
     # end
 
     # it '#assign_roles should ignore duplicate roles' do
-    #   assert_equal 1, @owner.roles.count
-    #   @owner.assign_roles( user: {
-    #     ssl_account_id: @default_ssl.id,
-    #     role_ids:       [@owner_role] }
+    #   assert_equal 1, owner.roles.count
+    #   owner.assign_roles( user: {
+    #     ssl_account_id: default_ssl.id,
+    #     role_ids:       [owner_role] }
     #   )
     #
-    #   assert_equal 1, @owner.roles.count
-    #   assert_equal 1, @owner.assignments.count
+    #   assert_equal 1, owner.roles.count
+    #   assert_equal 1, owner.assignments.count
     # end
 
     # it '#remove_roles should destroy all roles not passed in role_ids' do
-    #   roles = [@reseller_role, @billing_role]
-    #   @owner.assign_roles( user: {
-    #     ssl_account_id: @default_ssl.id,
+    #   roles = [reseller_role, billing_role]
+    #   owner.assign_roles( user: {
+    #     ssl_account_id: default_ssl.id,
     #     role_ids:       roles }
     #   )
-    #   assert_equal 3, @owner.roles.count
+    #   assert_equal 3, owner.roles.count
     #
-    #   @owner.remove_roles( user: {
-    #     ssl_account_id: @default_ssl.id,
+    #   owner.remove_roles( user: {
+    #     ssl_account_id: default_ssl.id,
     #     role_ids:       roles }
     #   )
     #
-    #   assert_equal 2, @owner.roles.count
-    #   assert_equal 2, @owner.assignments.count
-    #   assert_equal roles.sort, @owner.assignments.map(&:role_id).sort
-    #   assert_equal roles.sort, @owner.roles.ids.sort
+    #   assert_equal 2, owner.roles.count
+    #   assert_equal 2, owner.assignments.count
+    #   assert_equal roles.sort, owner.assignments.map(&:role_id).sort
+    #   assert_equal roles.sort, owner.roles.ids.sort
     # end
 
     # it '#roles_list_for_user should return scoped list for non admin' do
     #   # 'owner' user can only see roles: account_admin, billing, installer, validations
-    #   assert_equal Role.get_select_ids_for_owner.sort, User.roles_list_for_user(@owner).ids.sort
+    #   assert_equal Role.get_select_ids_for_owner.sort, User.roles_list_for_user(owner).ids.sort
     # end
 
     it '#roles_list_for_user should return all roles for admins' do
       sysadmin = create(:user, :sysadmin)
-      assert_equal Role.all.ids.sort, User.roles_list_for_user(sysadmin).ids.sort
+      User.roles_list_for_user(sysadmin).ids.sort.should eq Role.all.ids.sort
 
       super_user = create(:user, :super_user)
-      assert_equal Role.all.ids.sort, User.roles_list_for_user(super_user).ids.sort
+      User.roles_list_for_user(super_user).ids.sort.should eq Role.all.ids.sort
     end
 
     # it '#get_user_accounts_roles should return a mapped hash' do
     #   # e.g.: { ssl_1_id: [role_ids], ssl_2_id: [role_ids] }
-    #   roles = [@reseller_role, @billing_role]
-    #   assert_equal [[@default_ssl.id, [@owner_role]]].to_h, User.get_user_accounts_roles(@owner)
+    #   roles = [reseller_role, billing_role]
+    #   assert_equal [[default_ssl.id, [owner_role]]].to_h, User.get_user_accounts_roles(owner)
     #
-    #   @owner.set_roles_for_account(@default_ssl, roles)
-    #   roles << @owner_role
-    #   assert_equal [[@default_ssl.id, roles.sort]].to_h, User.get_user_accounts_roles(@owner)
+    #   owner.set_roles_for_account(default_ssl, roles)
+    #   roles << owner_role
+    #   assert_equal [[default_ssl.id, roles.sort]].to_h, User.get_user_accounts_roles(owner)
     # end
 
     # it '#get_user_accounts_roles_names should return a mapped hash' do
     #   # e.g.: {'team_1': ['owner'], 'team_2': ['account_admin', 'installer']}
-    #   assert_equal [[@default_ssl.get_team_name, ['owner']]].to_h, User.get_user_accounts_roles_names(@owner)
+    #   assert_equal [[default_ssl.get_team_name, ['owner']]].to_h, User.get_user_accounts_roles_names(owner)
     #
-    #   @owner.set_roles_for_account(@default_ssl, [@reseller_role, @billing_role])
-    #   assert_equal [[@default_ssl.get_team_name, ['owner', 'reseller', 'billing']]].to_h, User.get_user_accounts_roles_names(@owner)
+    #   owner.set_roles_for_account(default_ssl, [reseller_role, billing_role])
+    #   assert_equal [[default_ssl.get_team_name, ['owner', 'reseller', 'billing']]].to_h, User.get_user_accounts_roles_names(owner)
     # end
 
     # it '#role_symbols should return [scoped role_symbols] for non-admin' do
-    #   assert_equal [:owner], @owner.role_symbols(@default_ssl)
+    #   assert_equal [:owner], owner.role_symbols(default_ssl)
     #
     #   # scope to default ssl account when no account provided
-    #   assert_equal [:owner], @owner.role_symbols
+    #   assert_equal [:owner], owner.role_symbols
     # end
 
     # it '#role_symbols should return [scoped role_symbols] for sysadmin' do
-    #   @owner.create_ssl_account([Role.get_role_id(Role::SYSADMIN)])
+    #   owner.create_ssl_account([Role.get_role_id(Role::SYSADMIN)])
     #   # should pull 1 role from default ssl account,
     #   # ignore newly created (sysadmin) role for another ssl account
-    #   assert_equal [:owner], @owner.role_symbols
+    #   assert_equal [:owner], owner.role_symbols
     # end
     #
     # it '#role_symbols should return [scoped role_symbols] for super_user' do
-    #   @owner.create_ssl_account([Role.get_role_id(Role::SUPER_USER)])
+    #   owner.create_ssl_account([Role.get_role_id(Role::SUPER_USER)])
     #   # should pull 1 role from default ssl account,
     #   # ignore newly created (super_user) role for another ssl account
-    #   assert_equal [:owner], @owner.role_symbols
+    #   assert_equal [:owner], owner.role_symbols
     # end
   end
 
   describe 'approval token helpers' do
-    before(:each) do
-      stub_ssl_account_initial_setup
-      stub_roles
-    end
-
     before(:all) do
       @owner = create(:user, :owner)
       @default_ssl = @owner.ssl_account
@@ -488,11 +469,10 @@ describe User do
     # end
 
     it '#approval_token_valid? false if token expired' do
-      assert @user_w_token.approval_token_valid?(@ssl_prms_token)
+      @user_w_token.approval_token_valid?(@ssl_prms_token).should be_truthy
       @user_w_token.ssl_account_users.first.update(
         token_expires: (DateTime.now - 2.hours) # expire token
       )
-
       @user_w_token.approval_token_valid?(@ssl_prms_token).should be_falsey
     end
 
@@ -679,15 +659,17 @@ describe User do
       #   assert_equal 3, user_2_teams.assignments.count
       #   assert_equal 2, user_2_teams.total_teams_can_manage_users.count
       # end
+
       it '#set_default_team should update user' do
-        user      = create(:user, :owner)
-        ssl_own   = user.ssl_accounts.first
+        user = create(:user, :owner)
+        ssl_own = user.ssl_accounts.first
         create(:ssl_account)
 
         assert_nil user.main_ssl_account
         user.set_default_team(ssl_own)
         assert_equal ssl_own.id, user.main_ssl_account
       end
+
       it '#set_default_team should ignore if user does not own team' do
         user      = create(:user, :owner)
         ssl_own   = user.ssl_accounts.first
@@ -700,41 +682,40 @@ describe User do
         user.set_default_team(ssl_other) # user does not own ssl_other
         assert_equal ssl_own.id, user.main_ssl_account
       end
+
       it '#team_status returns correct status' do
         invited_user = create(:user, :owner)
-        invited_user.ssl_account
         invited_ssl_acct = create(:ssl_account)
         params           = { ssl_account_id: invited_ssl_acct.id }
         invited_user.ssl_accounts << invited_ssl_acct
-        # invited_user.set_roles_for_account(invited_ssl_acct, @acct_admin_role)
 
         # user is invited
         invited_user.set_approval_token(params)
-        assert_equal 1, invited_user.get_all_approved_accounts.count
-        assert_equal :pending, invited_user.team_status(invited_ssl_acct)
+        invited_user.get_all_approved_accounts.count.should eq 2
+        invited_user.team_status(invited_ssl_acct).should be :pending
 
         # user DECLINES team invitation
         invited_user.decline_invite(params)
-        assert_equal 1, invited_user.get_all_approved_accounts.count
-        assert_equal :declined, invited_user.team_status(invited_ssl_acct)
+        invited_user.get_all_approved_accounts.count.should eq 2
+        invited_user.team_status(invited_ssl_acct).should be :declined
 
         # user ACCEPTS team invitation
         invited_user.set_approval_token(params)
         invited_user.send(:approve_account, ssl_account_id: invited_ssl_acct.id)
-        assert_equal 2, invited_user.get_all_approved_accounts.count
-        assert_equal :accepted, invited_user.team_status(invited_ssl_acct)
+        invited_user.get_all_approved_accounts.count.should eq 3
+        invited_user.team_status(invited_ssl_acct).should be :accepted
 
         # invitation EXPIRED
         invited_user.set_approval_token(params)
         invited_user.ssl_account_users.where(params).first.update_attribute(:token_expires, 1.day.ago)
-        assert_equal 1, invited_user.get_all_approved_accounts.count
-        assert_equal :expired, invited_user.team_status(invited_ssl_acct)
+        invited_user.get_all_approved_accounts.count.should eq 2
+        invited_user.team_status(invited_ssl_acct).should be :expired
 
         # NEW user is invited
         invited_user.update_attribute(:active, false)
         invited_user.set_approval_token(params)
-        assert_equal 1, invited_user.get_all_approved_accounts.count
-        assert_equal :pending, invited_user.team_status(invited_ssl_acct)
+        invited_user.get_all_approved_accounts.count.should eq 2
+        invited_user.team_status(invited_ssl_acct).should be :pending
       end
     end
   end

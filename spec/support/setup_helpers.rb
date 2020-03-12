@@ -15,6 +15,10 @@ module SetupHelpers
     @users_manager_role  = [Role.get_role_id(Role::USERS_MANAGER)]
   end
 
+  def owner_role
+    [Role.get_owner_id]
+  end
+
   def initialize_roles
     create_roles
     set_common_roles
