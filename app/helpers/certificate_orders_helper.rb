@@ -417,4 +417,9 @@ module CertificateOrdersHelper
   def for_cs?
     @certificate_order.certificate.is_cs? or downstepped_to_cs?
   end
+
+  def show_management_key?(token)
+    token.model_number == 'Yubikey FIPS 140-2' &&
+      (for_evcs? || @certificate_order.certificate.is_client_business?)
+  end
 end

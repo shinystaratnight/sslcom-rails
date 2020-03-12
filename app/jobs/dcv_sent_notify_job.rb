@@ -1,3 +1,7 @@
+# frozen_string_literal: false
+
+require 'airbrake/delayed_job'
+
 class DcvSentNotifyJob < Struct.new(:cc_id, :host)
   def perform
     notify_dv_sent unless last_sent.blank?

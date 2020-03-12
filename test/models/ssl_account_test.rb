@@ -27,7 +27,6 @@
 #  index_ssl_account_on_acct_number                                 (acct_number)
 #  index_ssl_accounts_an_cn_ss                                      (acct_number,company_name,ssl_slug)
 #  index_ssl_accounts_on_acct_number_and_company_name_and_ssl_slug  (acct_number,company_name,ssl_slug)
-#  index_ssl_accounts_on_default_folder_id                          (default_folder_id)
 #  index_ssl_accounts_on_id_and_created_at                          (id,created_at)
 #  index_ssl_accounts_on_ssl_slug_and_acct_number                   (ssl_slug,acct_number)
 #
@@ -37,15 +36,7 @@ require 'test_helper'
 describe SslAccount do
   subject { SslAccount.new }
 
-  before :all do
-    stub_roles
-    stub_triggers
-    stub_server_software
-    SslAccount.any_instance.stubs(:create_api_credential).returns(true)
-  end
-
   context 'attributes' do
-    # before(:each) { @ssl_acct = build(:ssl_account) }
     should have_db_column :acct_number
     should have_db_column :roles
     should have_db_column :status
@@ -54,6 +45,13 @@ describe SslAccount do
   end
 
   describe 'validations' do
+    before :all do
+      stub_roles
+      stub_triggers
+      stub_server_software
+      SslAccount.any_instance.stubs(:create_api_credential).returns(true)
+    end
+
     it '#ssl_slug should NOT be valid under 2 characters' do
       subject.ssl_slug = 'a'
       subject.validate
@@ -119,6 +117,13 @@ describe SslAccount do
   end
 
   describe 'slug string validation' do
+    before :all do
+      stub_roles
+      stub_triggers
+      stub_server_software
+      SslAccount.any_instance.stubs(:create_api_credential).returns(true)
+    end
+
     it '#ssl_slug_valid? string "company" should be valid' do
       assert SslAccount.ssl_slug_valid?('company')
     end
@@ -137,7 +142,7 @@ describe SslAccount do
       end
     end
     it '#ssl_slug_valid? string using route names should NOT be valid' do
-      %w[oauth_clients managed_users user_session].each do |named_route|
+      %w[managed_users user_session].each do |named_route|
         refute SslAccount.ssl_slug_valid?(named_route)
       end
     end

@@ -13,7 +13,7 @@ class ApiCredentialsController < ApplicationController
       @acs = @acs.with_role(role) if role
       @acs = @acs.search(search) unless search.blank?
     end
-    @acs = @acs.order("created_at desc").paginate(p)
+    @acs = @acs.order("created_at desc").paginate(p).decorate
 
     respond_to do |format|
       format.html { render :action => :index }

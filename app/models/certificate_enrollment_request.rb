@@ -18,11 +18,10 @@
 #
 # Indexes
 #
-#  index_certificate_enrollment_requests_on_certificate_id      (certificate_id)
-#  index_certificate_enrollment_requests_on_order_id            (order_id)
-#  index_certificate_enrollment_requests_on_server_software_id  (server_software_id)
-#  index_certificate_enrollment_requests_on_ssl_account_id      (ssl_account_id)
-#  index_certificate_enrollment_requests_on_user_id             (user_id)
+#  index_certificate_enrollment_requests_on_certificate_id  (certificate_id)
+#  index_certificate_enrollment_requests_on_order_id        (order_id)
+#  index_certificate_enrollment_requests_on_ssl_account_id  (ssl_account_id)
+#  index_certificate_enrollment_requests_on_user_id         (user_id)
 #
 
 class CertificateEnrollmentRequest < ApplicationRecord

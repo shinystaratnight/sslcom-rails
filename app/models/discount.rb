@@ -20,7 +20,6 @@
 # Indexes
 #
 #  index_discounts_on_benefactor_id_and_benefactor_type  (benefactor_id,benefactor_type)
-#  index_discounts_on_discountable_id                    (discountable_id)
 #
 
 class Discount < ApplicationRecord

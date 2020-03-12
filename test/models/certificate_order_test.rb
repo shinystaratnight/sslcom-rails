@@ -39,7 +39,6 @@
 #  index_certificate_orders_on_3_cols                         (workflow_state,is_expired,is_test)
 #  index_certificate_orders_on_3_cols(2)                      (ssl_account_id,workflow_state,id)
 #  index_certificate_orders_on_4_cols                         (ssl_account_id,workflow_state,is_test,updated_at)
-#  index_certificate_orders_on_acme_account_id                (acme_account_id)
 #  index_certificate_orders_on_assignee_id                    (assignee_id)
 #  index_certificate_orders_on_created_at                     (created_at)
 #  index_certificate_orders_on_folder_id                      (folder_id)
@@ -65,13 +64,6 @@
 require 'test_helper'
 
 describe CertificateOrder do
-  before :all do
-    stub_roles
-    stub_triggers
-    stub_server_software
-    SslAccount.any_instance.stubs(:initial_setup).returns(true)
-  end
-
   subject { CertificateOrder.new }
 
   context 'associations' do
@@ -122,6 +114,12 @@ describe CertificateOrder do
 
   context 'scopes' do
     describe 'search_with_csr' do
+      before :all do
+        stub_roles
+        stub_triggers
+        stub_server_software
+        SslAccount.any_instance.stubs(:initial_setup).returns(true)
+      end
       let!(:cert) { build(:certificate_with_certificate_order, :premiumssl) }
       let!(:co) { build(:certificate_order) }
 

@@ -7,9 +7,11 @@ module Concerns
 
       included do
         belongs_to  :certificate_order, -> { unscope(where: %i[workflow_state is_expired]) }, touch: true, foreign_key: 'certificate_order_id'
+        belongs_to  :ca
+        belongs_to  :server_software, foreign_key: 'server_software_id'
+
         has_one     :ssl_account, through: :certificate_order
         has_many    :users, through: :certificate_order
-        belongs_to  :server_software, foreign_key: 'server_software_id'
         has_many    :csrs, dependent: :destroy
         has_one     :csr, -> { order(:created_at).limit(1) }, class_name: 'Csr', dependent: :destroy
         has_many    :signed_certificates, through: :csr, source: 'signed_certificate'
@@ -25,7 +27,6 @@ module Concerns
         has_many    :url_callbacks, dependent: :destroy, as: :callbackable
         has_many    :taggings, dependent: :destroy, as: :taggable
         has_many    :tags, through: :taggings
-        belongs_to  :ca
         has_many    :sslcom_ca_requests, as: :api_requestable
         has_many    :attestation_certificates
         has_many    :attestation_issuer_certificates

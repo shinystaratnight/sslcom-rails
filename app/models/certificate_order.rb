@@ -39,7 +39,6 @@
 #  index_certificate_orders_on_3_cols                         (workflow_state,is_expired,is_test)
 #  index_certificate_orders_on_3_cols(2)                      (ssl_account_id,workflow_state,id)
 #  index_certificate_orders_on_4_cols                         (ssl_account_id,workflow_state,is_test,updated_at)
-#  index_certificate_orders_on_acme_account_id                (acme_account_id)
 #  index_certificate_orders_on_assignee_id                    (assignee_id)
 #  index_certificate_orders_on_created_at                     (created_at)
 #  index_certificate_orders_on_folder_id                      (folder_id)
@@ -1276,6 +1275,7 @@ class CertificateOrder < ApplicationRecord
   # DRY this up with ValidationsController#new
   def domains_validated?(options={other_dcvs_satisfy_domain: true})
     return true if certificate_content.all_domains_validated?
+
     if options[:other_dcvs_satisfy_domain]
       ssl_account.other_dcvs_satisfy_domain(certificate_content.certificate_names.unvalidated.all,false)
       certificate_content.all_domains_validated?

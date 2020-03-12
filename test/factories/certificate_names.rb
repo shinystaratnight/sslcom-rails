@@ -18,7 +18,6 @@
 #
 # Indexes
 #
-#  index_certificate_names_on_acme_account_id         (acme_account_id)
 #  index_certificate_names_on_acme_token              (acme_token)
 #  index_certificate_names_on_certificate_content_id  (certificate_content_id)
 #  index_certificate_names_on_name                    (name)
@@ -37,6 +36,7 @@ FactoryBot.define do
 
     after(:stub) do |cn|
       cn.stubs(:certificate_content).returns(build_stubbed(:certificate_content))
+      cn.stubs(:sleep)
     end
   end
 end
