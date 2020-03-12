@@ -138,10 +138,12 @@ class Csr < ApplicationRecord
   end
 
   def is_weak_key?
+    return false unless public_key.instance_of? OpenSSL::PKey::RSA
+
     fingerprint = Digest::SHA1.hexdigest "Modulus=#{public_key.n.to_s(16)}\n"
 
     # Check if the key is in the blacklist
-    WeakKey.where(sha1_hash: fingerprint[20..-1]).present?
+    WeakKey.where({sha1_hash: fingerprint[20..-1], size: public_key.n.num_bits}).present?
   end
 
   def unique_value
