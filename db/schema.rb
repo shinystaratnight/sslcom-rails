@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200311131940) do
+ActiveRecord::Schema.define(version: 20200312160424) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        :limit=>255
@@ -1042,28 +1042,6 @@ ActiveRecord::Schema.define(version: 20200311131940) do
   add_index "preferences", ["id", "owner_id", "owner_type"], :name=>"index_preferences_on_id_and_owner_id_and_owner_type", :unique=>true, :using=>:btree
   add_index "preferences", ["id", "owner_id", "owner_type"], :name=>"index_preferences_on_owner_id_and_owner_type", :unique=>true, :using=>:btree
 
-  create_table "product_orders", force: :cascade do |t|
-    t.integer  "ssl_account_id",    :limit=>4, :index=>{:name=>"index_product_orders_on_ssl_account_id", :using=>:btree}
-    t.integer  "product_id",        :limit=>4, :index=>{:name=>"index_product_orders_on_product_id", :using=>:btree}
-    t.string   "workflow_state",    :limit=>255
-    t.string   "ref",               :limit=>191, :index=>{:name=>"index_product_orders_on_ref", :using=>:btree}
-    t.string   "auto_renew",        :limit=>255
-    t.string   "auto_renew_status", :limit=>255
-    t.boolean  "is_expired",        :index=>{:name=>"index_product_orders_on_is_expired", :using=>:btree}
-    t.string   "value",             :limit=>255
-    t.integer  "amount",            :limit=>4
-    t.text     "notes",             :limit=>65535
-    t.datetime "created_at",        :index=>{:name=>"index_product_orders_on_created_at", :using=>:btree}
-    t.datetime "updated_at"
-  end
-
-  create_table "product_orders_sub_product_orders", force: :cascade do |t|
-    t.integer  "product_order_id",     :limit=>4, :index=>{:name=>"index_product_orders_sub_product_orders_on_product_order_id", :using=>:btree}
-    t.integer  "sub_product_order_id", :limit=>4, :index=>{:name=>"index_product_orders_sub_product_orders_on_sub_product_order_id", :using=>:btree}
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
   create_table "product_variant_groups", force: :cascade do |t|
     t.integer  "variantable_id",        :limit=>4
     t.string   "variantable_type",      :limit=>255
@@ -1093,37 +1071,6 @@ ActiveRecord::Schema.define(version: 20200311131940) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
-
-  create_table "products", force: :cascade do |t|
-    t.string   "title",                 :limit=>255
-    t.string   "status",                :limit=>255
-    t.string   "type",                  :limit=>255
-    t.string   "value",                 :limit=>255
-    t.text     "summary",               :limit=>65535
-    t.text     "text_only_summary",     :limit=>65535
-    t.text     "description",           :limit=>65535
-    t.text     "text_only_description", :limit=>65535
-    t.string   "published_as",          :limit=>16, :default=>"draft"
-    t.string   "ref",                   :limit=>255
-    t.string   "serial",                :limit=>255
-    t.string   "icons",                 :limit=>255
-    t.integer  "amount",                :limit=>4
-    t.integer  "duration",              :limit=>4
-    t.text     "notes",                 :limit=>65535
-    t.string   "auto_renew",            :limit=>255
-    t.string   "display_order",         :limit=>255
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.string   "ext_customer_ref",      :limit=>255
-  end
-
-  create_table "products_sub_products", force: :cascade do |t|
-    t.integer  "product_id",     :limit=>4, :index=>{:name=>"index_products_sub_products_on_product_id", :using=>:btree}
-    t.integer  "sub_product_id", :limit=>4, :index=>{:name=>"index_products_sub_products_on_sub_product_id", :using=>:btree}
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-  add_index "products_sub_products", ["product_id", "sub_product_id"], :name=>"index_products_sub_products_on_product_id_and_sub_product_id", :using=>:btree
 
   create_table "receipts", force: :cascade do |t|
     t.integer  "order_id",                 :limit=>4, :index=>{:name=>"index_receipts_on_order_id", :using=>:btree}
