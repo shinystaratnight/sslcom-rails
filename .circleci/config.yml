@@ -76,7 +76,7 @@ defaults: &defaults
         BUNDLE_RETRY: 1
         BUNDLE_PATH: vendor/bundle
         CIRCLE_CI: 'true'
-        CACHE_VERSION: 'v2'
+        CACHE_VERSION: 'v2_2'
         CIRCLE_NODE_INDEX: 0
         CIRCLE_NODE_TOTAL: 2
     - image: circleci/mysql:5.7.28
@@ -100,11 +100,11 @@ jobs:
           paths:
             - ~/sslcom-rails
 
-      - restore_cache:
-          keys:
-            - "gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Branch }}-{{ checksum \"Gemfile.lock\" }}"
-            - "gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Branch }}"
-            - "gem-cache-{{ .Environment.CACHE_VERSION }}"
+      # - restore_cache:
+      #     keys:
+      #       - gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+      #       - gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Branch }}
+      #       - gem-cache-{{ .Environment.CACHE_VERSION }}
 
       - run:
           name: Install bundle
@@ -172,11 +172,12 @@ jobs:
           name: Install Libraries for mySQL and Correct Bundler Version (1.17.3)
           command: *install-mysql-dependencies
       
-      - restore_cache:
-          keys:
-            - "gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Branch }}-{{ checksum \"Gemfile.lock\" }}"
-            - "gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Branch }}"
-            - "gem-cache-{{ .Environment.CACHE_VERSION }}"
+      # - restore_cache:
+      #     keys:
+      #       - gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+      #       - gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Branch }}
+      #       - gem-cache-{{ .Environment.CACHE_VERSION }}
+
 
       - run:
           name: Bundle Install Gem Dependencies
@@ -265,11 +266,12 @@ jobs:
       - restore_cache:
           key: v2-repo-{{ .Environment.CIRCLE_SHA1 }}
 
-      - restore_cache:
-          keys:
-            - "gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Branch }}-{{ checksum \"Gemfile.lock\" }}"
-            - "gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Branch }}"
-            - "gem-cache-{{ .Environment.CACHE_VERSION }}"
+      # - restore_cache:
+      #     keys:
+      #       - gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+      #       - gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Branch }}
+      #       - gem-cache-{{ .Environment.CACHE_VERSION }}
+
 
       - run:
           name: Install Mysql Libraries
@@ -328,4 +330,3 @@ workflows:
       - coverage:
           requires:
             - test
-
