@@ -76,12 +76,13 @@ FactoryBot.define do
       true_build { false }
     end
 
+    trait :with_contents do
+      after :create do |co|
+        create(:certificate_content, certificate_order_id: co[:id])
+      end
+    end
+
     after :build do |co, options|
-      # unless options.true_build
-      #   co.save unless options.true_build
-      #   create(:certificate_content, certificate_order_id: co.id)
-      #   create(:sub_order_item, sub_itemable_id: co.id)
-      # end
       co.taggings << Tagging.create(tag: create(:tag, ssl_account: co.ssl_account), taggable_id: co.id, taggable_type: 'CertificateOrder') if options.include_tags
     end
 

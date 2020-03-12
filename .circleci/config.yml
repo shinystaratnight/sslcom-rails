@@ -76,7 +76,7 @@ defaults: &defaults
         BUNDLE_RETRY: 1
         BUNDLE_PATH: vendor/bundle
         CIRCLE_CI: 'true'
-        CACHE_VERSION: 'v2'
+        CACHE_VERSION: 'v4'
         CIRCLE_NODE_INDEX: 0
         CIRCLE_NODE_TOTAL: 2
     - image: circleci/mysql:5.7.28
@@ -86,7 +86,7 @@ defaults: &defaults
 
 version: 2
 jobs:
-  test:
+  minitest:
     <<: *defaults
     steps:
       - checkout
@@ -102,16 +102,89 @@ jobs:
 
       - restore_cache:
           keys:
-            - "gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Branch }}-{{ checksum \"Gemfile.lock\" }}"
-            - "gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Branch }}"
-            - "gem-cache-{{ .Environment.CACHE_VERSION }}"
+            - gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ checksum "Gemfile.lock" }}
+            - gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-
 
       - run:
           name: Install bundle
           command: bin/bundle install --path vendor/bundle
 
       - save_cache:
-          key: "gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Branch }}-{{ checksum \"Gemfile.lock\" }}"
+          key: gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ checksum "Gemfile.lock" }}
+          paths:
+            - ~/sslcom-rails/vendor/bundle
+
+      - run:
+          name: Wait for DB
+          command: dockerize -wait tcp://localhost:3306 -timeout 1m
+
+      - run: 
+          name: Create settings.yml
+          command: *create-settings-yml
+
+      - run: 
+          name: Copy local_env.yml
+          command: *create-local-env-yml
+
+      - run: 
+          name: Copy Database.yml
+          command: *copy-database-yml
+
+      - run:
+          name: Copy Settings File
+          command: cp config/client/certassure/settings.yml config/
+
+      - run:
+          name: Setup Database
+          command: *setup-database
+
+      - run:
+          name: Run tests
+          command: |-
+            mkdir -p /tmp/minitest
+            TESTFILES=$(circleci tests glob "test/**/*_test.rb" | circleci tests split --split-by=timings)
+            bundle exec rake test \
+              -- ${TESTFILES}
+
+      - store_test_results:
+          path: /tmp/minitest
+
+      - run:
+          name: Stash Coverage Results
+          command: |
+            mkdir coverage_results
+            cp -R coverage/.resultset.json coverage_results/.resultset-${CIRCLE_NODE_INDEX}.json
+
+      - persist_to_workspace:
+          root: .
+          paths:
+            - coverage_results
+
+  rspec:
+    <<: *defaults
+    steps:
+      - checkout
+
+      - run:
+          name: Install Mysql Libraries
+          command: *install-mysql-dependencies
+
+      - save_cache:
+          key: v2-repo-{{ .Environment.CIRCLE_SHA1 }}
+          paths:
+            - ~/sslcom-rails
+
+      - restore_cache:
+          keys:
+            - gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ checksum "Gemfile.lock" }}
+            - gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-
+
+      - run:
+          name: Install bundle
+          command: bin/bundle install --path vendor/bundle
+
+      - save_cache:
+          key: gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ checksum "Gemfile.lock" }}
           paths:
             - ~/sslcom-rails/vendor/bundle
 
@@ -179,16 +252,15 @@ jobs:
       
       - restore_cache:
           keys:
-            - "gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Branch }}-{{ checksum \"Gemfile.lock\" }}"
-            - "gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Branch }}"
-            - "gem-cache-{{ .Environment.CACHE_VERSION }}"
+            - gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ checksum "Gemfile.lock" }}
+            - gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-
 
       - run:
           name: Bundle Install Gem Dependencies
           command: bundle check --path vendor/bundle || bundle install --deployment
 
       - save_cache:
-         key: "gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Branch }}-{{ checksum \"Gemfile.lock\" }}"
+         key: gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ checksum "Gemfile.lock" }}
          paths:
            - vendor/bundle
 
@@ -211,9 +283,8 @@ jobs:
       # Yarn dependencies
       - restore_cache:
           keys:
-            - "{{ .Environment.CACHE_VERSION }}-yarn-{{ checksum \"package.json\" }}"
-            # fallback to using the latest cache if no exact match is found
-            - "{{ .Environment.CACHE_VERSION }}-yarn-"
+            - yarn-{{ .Environment.CACHE_VERSION }}-{{ checksum "package.json" }}
+            - yarn-{{ .Environment.CACHE_VERSION }}-
 
       - run: yarn install
 
@@ -221,7 +292,7 @@ jobs:
           paths:
             - node_modules
             - ~/.cache
-          key: "{{ .Environment.CACHE_VERSION }}-yarn-{{ checksum \"package.json\" }}"
+          key: yarn-{{ .Environment.CACHE_VERSION }}-{{ checksum "package.json" }}
 
       - run:
           name: Setup Database
@@ -272,9 +343,8 @@ jobs:
 
       - restore_cache:
           keys:
-            - "gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Branch }}-{{ checksum \"Gemfile.lock\" }}"
-            - "gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Branch }}"
-            - "gem-cache-{{ .Environment.CACHE_VERSION }}"
+            - gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ checksum "Gemfile.lock" }}
+            - gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-
 
       - run:
           name: Install Mysql Libraries
@@ -329,8 +399,9 @@ workflows:
   build_and_coverage:
     jobs:
       - build
-      - test
+      - minitest
+      # - rspec
       - coverage:
           requires:
-            - test
+            - minitest
 

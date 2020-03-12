@@ -50,6 +50,8 @@ FactoryBot.define do
       include_tags { false }
     end
 
+    to_create { |cc| cc.save(validate: false) }
+
     after :create do |cc, options|
       if options.include_tags
         tag = create(:tag)

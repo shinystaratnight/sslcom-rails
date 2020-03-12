@@ -4,7 +4,7 @@
 #
 #  id             :integer          not null, primary key
 #  card_declined  :text(65535)
-#  cents          :integer          default("0")
+#  cents          :integer          default(0)
 #  currency       :string(255)
 #  state          :string(255)
 #  created_at     :datetime

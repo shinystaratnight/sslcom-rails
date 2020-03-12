@@ -522,6 +522,14 @@ class CertificateOrder < ApplicationRecord
   SMIME_MAX_DURATION = 1095
   TS_MAX_DURATION = 4106
 
+  # changed for the migration
+  # unless MIGRATING_FROM_LEGACY
+  #   validates :certificate, presence: true
+  # else
+  #   validates :certificate, presence: true, :unless=>Proc.new {|co|
+  #     !co.orders.last.nil? && (co.orders.last.preferred_migrated_from_v2 == true)}
+  # end
+
   before_create do |co|
     default_folder = Folder.find_by(default: true, ssl_account_id: ssl_account_id)
     co.folder_id = default_folder.id if default_folder

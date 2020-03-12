@@ -5,14 +5,14 @@
 # Table name: folders
 #
 #  id             :integer          not null, primary key
-#  active         :boolean          default("0")
-#  archived       :boolean          default("0"), not null
-#  default        :boolean          default("0"), not null
+#  active         :boolean          default(FALSE)
+#  archived       :boolean          default(FALSE), not null
+#  default        :boolean          default(FALSE), not null
 #  description    :string(255)
-#  expired        :boolean          default("0")
-#  items_count    :integer          default("0")
+#  expired        :boolean          default(FALSE)
+#  items_count    :integer          default(0)
 #  name           :string(255)      not null
-#  revoked        :boolean          default("0")
+#  revoked        :boolean          default(FALSE)
 #  created_at     :datetime         not null
 #  updated_at     :datetime         not null
 #  parent_id      :integer

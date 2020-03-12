@@ -98,6 +98,7 @@ gem 'timezone', '~> 1.0'
 # required by sws-a1
 gem 'activerecord-import'
 gem 'date'
+gem 'etc', '1.0.1'
 gem 'fileutils', '~> 1.1.0'
 gem 'forwardable'
 # gem 'preferences', git: 'https://github.com/dlabare/preferences.git', branch: 'rails-5'

@@ -15,7 +15,7 @@
 #  ext_affiliate_name     :string(255)
 #  ext_customer_ref       :string(255)
 #  invoice_description    :text(65535)
-#  lock_version           :integer          default("0")
+#  lock_version           :integer          default(0)
 #  max_non_wildcard       :integer
 #  max_wildcard           :integer
 #  non_wildcard_cents     :integer
@@ -1219,7 +1219,7 @@ class Order < ApplicationRecord
           certificate_order.ssl_account=current_user.ssl_account
           next unless options[:current_user].ssl_account.can_buy?(certificate)
         end
-        # adjusting duration to reflect number of days validity
+        #adjusting duration to reflect number of days validity
         certificate_order = setup_certificate_order(certificate: certificate, certificate_order: certificate_order)
         options[:certificate_orders] << certificate_order if certificate_order.valid?
       end

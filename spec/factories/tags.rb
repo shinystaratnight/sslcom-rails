@@ -22,5 +22,7 @@ FactoryBot.define do
   factory :tag do
     name  { Faker::Internet.slug }
     ssl_account
+
+    to_create { |cc| cc.save!(validate: false) }
   end
 end

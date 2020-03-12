@@ -13,7 +13,7 @@
 #  published_as          :string(16)       default("draft")
 #  roles                 :string(255)      default("--- []")
 #  serial                :string(255)
-#  special_fields        :string(255)      default("--- []")
+#  special_fields        :string(255)      default([])
 #  status                :string(255)
 #  summary               :text(65535)
 #  text_only_description :text(65535)

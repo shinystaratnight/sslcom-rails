@@ -15,7 +15,7 @@
 #  ext_affiliate_name     :string(255)
 #  ext_customer_ref       :string(255)
 #  invoice_description    :text(65535)
-#  lock_version           :integer          default("0")
+#  lock_version           :integer          default(0)
 #  max_non_wildcard       :integer
 #  max_wildcard           :integer
 #  non_wildcard_cents     :integer

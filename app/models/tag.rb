@@ -6,7 +6,7 @@
 #
 #  id             :integer          not null, primary key
 #  name           :string(255)      not null
-#  taggings_count :integer          default("0"), not null
+#  taggings_count :integer          default(0), not null
 #  created_at     :datetime         not null
 #  updated_at     :datetime         not null
 #  ssl_account_id :integer          not null
