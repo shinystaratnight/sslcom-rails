@@ -90,25 +90,22 @@ class NotificationGroupsManager
     end
 
     def manufacture_domains_structs(schedule_type, schedule_value)
-      ngs = NotificationGroupsSubject.includes(:notification_group, { notification_group: :schedules})
+      domains = []
+
+      NotificationGroupsSubject.includes(:notification_group, { notification_group: :schedules})
         .where(notification_groups: { status: false })
         .where(schedules: {schedule_type: schedule_type, schedule_value: schedule_value})
-        .where(["domain_name IS NOT ?", nil])
+        .where(["domain_name IS NOT ?", nil]).find_each do |ngs|
+          domains << DomainObject.new(ngs.domain_name, ngs.notification_group.scan_port, ngs.notification_group, nil, nil)
+        end
 
       subjectable_ids = NotificationGroupsSubject.where(subjectable_type: 'CertificateName').pluck(:subjectable_id).compact
-      certificate_names = CertificateName.includes(:notification_groups, { notification_groups: :schedules})
+      CertificateName.includes(:notification_groups, { notification_groups: :schedules})
         .where(notification_groups: { status: false })
         .where(schedules: {schedule_type: schedule_type, schedule_value: schedule_value})
-        .where(id: subjectable_ids)
-
-      domains = []
-      ngs.each do |notification_group_subject|
-        domains << DomainObject.new(notification_group_subject.domain_name, notification_group_subject.notification_group.scan_port, notification_group_subject.notification_group, nil, nil)
-      end
-
-      certificate_names.each do |cn|
-        domains << DomainObject.new(cn.name, cn.notification_groups.first.scan_port, cn.notification_groups.first, nil, nil)
-      end
+        .where(id: subjectable_ids).find_each do |cn|
+          domains << DomainObject.new(cn.name, cn.notification_groups.first.scan_port, cn.notification_groups.first, nil, nil)
+        end
 
       domains.uniq.map do |domain|
         ssl_client = SslClient.new(domain.url.gsub("*.", "www."), domain.scan_port)
