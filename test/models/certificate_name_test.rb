@@ -18,7 +18,6 @@
 #
 # Indexes
 #
-#  index_certificate_names_on_acme_account_id         (acme_account_id)
 #  index_certificate_names_on_acme_token              (acme_token)
 #  index_certificate_names_on_certificate_content_id  (certificate_content_id)
 #  index_certificate_names_on_name                    (name)
@@ -86,6 +85,10 @@ describe CertificateName do
 
   context 'domain control validation' do
     let!(:cname) { build_stubbed(:certificate_name) }
+    before :all do
+      cname.stubs(:fail_dcv).returns(false)
+      cname.stubs(:satify_dcv).returns(true)
+    end
 
     describe 'https domain control validation' do
       it 'fails if ca_tag does not match' do
@@ -120,13 +123,7 @@ describe CertificateName do
       end
 
       it 'fails if no record matching cname_destination is found' do
-        dns = mock
-        dns.expects(:getresources)
-           .with(cname.cname_origin(true), Resolv::DNS::Resource::IN::CNAME)
-           .once
-        ::Resolv::DNS.stub :open, [], dns do
-          assert_false(cname.dcv_verify('cname'))
-        end
+        assert_false(cname.dcv_verify('cname'))
       end
     end
 
@@ -222,7 +219,7 @@ describe CertificateName do
 
     describe 'email domain control validation' do
       it 'fails if when protocol is email' do
-        assert_nil(cname.dcv_verify('email'))
+        assert_false(cname.dcv_verify('email'))
       end
     end
   end

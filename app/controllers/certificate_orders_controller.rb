@@ -921,12 +921,6 @@ class CertificateOrdersController < ApplicationController
       end
     else
       admin_validate_ov(ov)
-      # if ov.validated? && @certificate_order.domains_validated?
-      #   @certificate_order.apply_for_certificate(
-      #     mapping: @certificate_order.certificate_content.ca,
-      #     current_user: current_user
-      #   )
-      # end
     end
     redirect_to certificate_order_path(@ssl_slug, @certificate_order.ref),
       notice: "Certificate order was successfully validated."
@@ -1073,8 +1067,7 @@ class CertificateOrdersController < ApplicationController
     if current_user
       @certificate_order = current_user.certificate_order_by_ref(params[:id])
       if @certificate_order.nil?
-        co = current_user.ssl_accounts.includes(:certificate_orders).map(&:certificate_orders)
-                 .flatten.find{|c| c.ref == params[:id]}
+        co = current_user.ssl_accounts.includes(:certificate_orders).map(&:certificate_orders).flatten.find{ |c| c.ref == params[:id] }
         if co
           @certificate_order = co
           if co.ssl_account != current_user.ssl_account && current_user.ssl_accounts.include?(co.ssl_account)
@@ -1085,7 +1078,8 @@ class CertificateOrdersController < ApplicationController
         end
       end
     end
-    render 'site/404_not_found', status: 404 unless @certificate_order
+
+    render 'site/404_not_found', status: :not_found unless @certificate_order
   end
 
   def construct_special_fields

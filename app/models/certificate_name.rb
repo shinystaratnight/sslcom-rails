@@ -18,7 +18,6 @@
 #
 # Indexes
 #
-#  index_certificate_names_on_acme_account_id         (acme_account_id)
 #  index_certificate_names_on_acme_token              (acme_token)
 #  index_certificate_names_on_certificate_content_id  (certificate_content_id)
 #  index_certificate_names_on_name                    (name)
@@ -35,8 +34,6 @@ class CertificateName < ApplicationRecord
   include Concerns::CertificateName::Verification
 
   after_initialize :generate_acme_token, if: -> { acme_token.nil? }
-
-  delegate :all_domains_validated?, to: :certificate_content, prefix: false, allow_nil: true
 
   def is_ip_address?
     name&.index(/\A(?:[0-9]{1,3}\.){3}[0-9]{1,3}\z/)&.zero?

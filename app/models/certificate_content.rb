@@ -119,8 +119,7 @@ class CertificateContent < ApplicationRecord
   end
 
   def all_domains_validated?
-    !certificate_names.empty? and
-        (certificate_names.pluck(:id) - certificate_names.validated.pluck(:id)).empty?
+    !certificate_names.empty? && (certificate_names.pluck(:id) - certificate_names.validated.pluck(:id)).empty?
   end
 
   # TODO all methods check http, https, and cname
@@ -293,11 +292,6 @@ class CertificateContent < ApplicationRecord
       result.effective_date = signed_certificate.effective_date
       result.expiration_date = signed_certificate.expiration_date
       result.algorithm = signed_certificate.is_SHA2? ? "SHA256" : "SHA1"
-      # result.site_seal_code = ERB::Util.json_escape(ApplicationController.new.render_to_string(
-      #                                                   partial: 'site_seals/site_seal_code.html.haml',
-      #                                                   locals: {co: self},
-      #                                                   layout: false
-      #                                               ))
     elsif (self.csr)
       result.certificates = ""
       result.common_name = self.csr.common_name

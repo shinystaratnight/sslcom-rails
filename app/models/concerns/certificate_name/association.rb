@@ -23,12 +23,16 @@ module Concerns
             where{ email_address !~ 'null' }.last
           end
 
+          def acme
+            where{ dcv_method >> %w[acme_http acme_dns_txt] }
+          end
+
           def last_emailed
             where{ (email_address !~ 'null') & (dcv_method >> [nil, 'email']) }.last
           end
 
           def last_method
-            where{ dcv_method >> %w[http https email cname] }.last
+            where{ dcv_method >> %w[http https email cname acme_http acme_dns_txt] }.last
           end
 
           def validated

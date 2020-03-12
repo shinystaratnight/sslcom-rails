@@ -24,7 +24,7 @@ module AcmeManager
     end
 
     def challenge_path
-      ['_acme-challenge', @challenge_url].join('.')
+      ['_acme-challenge', challenge_url].join('.')
     end
 
     def verified

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-source 'http://rubygems.org'
+source 'https://rubygems.org'
 
 gem 'activemerchant'
 gem 'authlogic'
@@ -15,10 +15,9 @@ gem 'easy_roles'
 gem 'haml', '>= 3.1.alpha.50'
 gem 'json'
 gem 'money', '2.1.0'
-gem 'mysql2'
+gem 'mysql2' # gem install mysql2 -- --srcdir=/usr/local/mysql/include
 gem 'paperclip', '~> 5.3.0'
 gem 'protected_attributes'
-gem 'pry-rails'
 gem 'rabl', '0.14.1'
 gem 'rack-ssl-enforcer'
 gem 'rails', '~> 4.2.11.1'
@@ -31,17 +30,15 @@ gem 'will_paginate'
 gem 'workflow', '~> 1.2'
 gem 'xml-simple'
 gem 'zip-zip'
-# Commented out while converting to pipeline
-# gem 'jammit'
 gem 'config'
-gem 'oauth-plugin', '>= 0.4.0.pre1'
+gem 'oauth'
 gem 'openssl-extensions', require: 'openssl-extensions/all'
 gem 'radix62'
 gem 'simpleidn'
 gem 'uuidtools'
 gem 'whenever', require: false
 gem 'actionpack-action_caching', '~> 1.1', '>= 1.1.1'
-gem 'airbrake', '~> 9.5' # https://airbrake.io/docs/ruby/upgrading-your-notifier/
+gem 'airbrake' # https://airbrake.io/docs/ruby/upgrading-your-notifier/
 gem 'api-pagination'
 gem 'attr_encrypted', '>= 3.0.3'
 gem 'cancan'
@@ -73,7 +70,7 @@ gem 'u2f'
 gem 'wicked_pdf'
 gem 'acts_as_tree'
 gem 'font_awesome5_rails'
-
+gem 'multi_json'
 gem 'recaptcha', require: 'recaptcha/rails'
 gem 'where-or'
 gem 'whois', '~> 4.0'
@@ -115,7 +112,6 @@ group :development do
   gem 'lol_dba'
   gem 'memory_profiler'
   gem 'meta_request'
-  gem 'solargraph', require: false
   gem 'spring'
   gem 'spring-commands-testunit'
   gem 'web-console', '~> 2.0'
@@ -127,9 +123,7 @@ group :development, :test do
   gem 'builder'
   gem 'bullet'
   gem 'byebug'
-  gem 'cypress-on-rails', '~> 1.5.1'
-  gem 'factory_bot_rails'
-  gem 'faker'
+  gem 'pry-rails'
   gem 'pry-remote'
   gem 'rubocop', require: false
   gem 'rubocop-minitest'
@@ -142,6 +136,9 @@ end
 group :test do
   gem 'capybara'
   gem 'capybara-screenshot'
+  gem 'cypress-on-rails', '~> 1.5.1'
+  gem 'factory_bot_rails'
+  gem 'faker'
   gem 'database_cleaner-active_record'
   gem 'minitest-bang', require: false
   gem 'minitest-ci'
@@ -168,3 +165,4 @@ gem 'bcrypt_pbkdf', '~> 1'
 gem 'ed25519', '~> 1.2'
 gem 'oj'
 gem 'active_model_serializers'
+gem 'draper'

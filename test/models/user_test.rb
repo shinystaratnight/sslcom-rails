@@ -63,33 +63,35 @@
 #  index_users_on_status_and_ssl_account_id           (id,ssl_account_id,status)
 #
 
-
 require 'test_helper'
 
 describe User do
-  before do
-    initialize_triggers
-    initialize_roles
-  end
+  subject { User.new }
 
   describe 'attributes' do
-    let(:user) { create(:user) }
-
-    it { assert_respond_to user, :login }
-    it { assert_respond_to user, :first_name }
-    it { assert_respond_to user, :last_name }
-    it { assert_respond_to user, :email }
-    it { assert_respond_to user, :active }
-    it { assert_respond_to user, :default_ssl_account }
-    it { assert_respond_to user, :main_ssl_account }
-    it { assert_respond_to user, :max_teams }
+    should have_db_column :login
+    should have_db_column :first_name
+    should have_db_column :last_name
+    should have_db_column :email
+    should have_db_column :active
+    should have_db_column :default_ssl_account
+    should have_db_column :main_ssl_account
+    should have_db_column :max_teams
 
     it '#max_teams_reached returns an integer' do
+      user = create(:user)
       assert_equal User::OWNED_MAX_TEAMS, user.max_teams
     end
   end
 
   describe 'validations' do
+    before :all do
+      stub_roles
+      stub_triggers
+      stub_server_software
+      SslAccount.any_instance.stubs(:create_api_credential).returns
+    end
+
     it 'should be valid' do
       assert build(:user).valid?
     end
@@ -236,7 +238,11 @@ describe User do
   # end
 
   describe 'account helper methods' do
-    before(:all) do
+    before :all do
+      stub_roles
+      stub_triggers
+      stub_server_software
+      SslAccount.any_instance.stubs(:create_api_credential).returns
       @owner = create(:user)
     end
 
@@ -302,6 +308,10 @@ describe User do
 
   describe 'role helper methods' do
     before(:all) do
+      stub_roles
+      stub_triggers
+      stub_server_software
+      SslAccount.any_instance.stubs(:create_api_credential).returns
       @owner = create(:user, :owner)
       @default_ssl = @owner.ssl_account
       @reseller_role = create(:role, :reseller).id
@@ -455,6 +465,10 @@ describe User do
 
   describe 'approval token helpers' do
     before(:all) do
+      stub_roles
+      stub_triggers
+      stub_server_software
+      SslAccount.any_instance.stubs(:create_api_credential).returns
       @owner = create(:user, :owner)
       @default_ssl = @owner.ssl_account
       @user_w_token = create(:user, :owner)
@@ -609,6 +623,12 @@ describe User do
     # end
 
     describe 'team helpers' do
+      before :all do
+        stub_roles
+        stub_triggers
+        stub_server_software
+        SslAccount.any_instance.stubs(:create_api_credential).returns
+      end
       # it '#max_teams_reached? should return correct boolean' do
       #   user_2_teams = create(:user, :owner, max_teams: 2)
       #   assert_equal 2, user_2_teams.max_teams

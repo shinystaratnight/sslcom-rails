@@ -6,9 +6,30 @@ module Concerns
       extend ActiveSupport::Concern
 
       def dcv_verify(protocol = nil)
+        attempts = 0
+        status = while attempts < 3
+                   response = attempt_dcv(protocol)
+                   break response if response
+
+                   attempts += 1
+                   sleep WAIT_PERIOD
+                 end
+        if status == true
+          satify_dcv
+        else
+          fail_dcv
+        end
+      end
+
+      def dcv_verify_async(protocol = nil)
+        dcv_verify(protocol)
+      end
+      handle_asynchronously :dcv_verify_async
+
+      def attempt_dcv(protocol)
         case protocol ||= domain_control_validation&.dcv_method
         when /email/
-          nil
+          false
         when /acme_http/i
           AcmeManager::HttpVerifier.new(api_credential.acme_acct_pub_key_thumbprint, acme_token, non_wildcard_name(true)).call
         when /acme_dns_txt/i
@@ -16,6 +37,20 @@ module Concerns
         else
           self.class.dcv_verify(protocol, verification_options) if csr.present?
         end
+      end
+
+      def satify_dcv
+        dcv.satisfy! unless dcv.satisfied?
+        true
+      end
+
+      def fail_dcv
+        dcv.fail!
+        false
+      end
+
+      def dcv
+        domain_control_validations.last
       end
 
       def verification_options(prepend = '')
@@ -32,9 +67,11 @@ module Concerns
       end
 
       included do
+        WAIT_PERIOD = 5
+
         def self.dcv_verify(protocol, options)
           @options = options
-          Timeout.timeout(Surl::TIMEOUT_DURATION) do
+          Timeout.timeout(Surl::TIMEOUT_DURATION + (WAIT_PERIOD * 3)) do
             verify(protocol)
           rescue StandardError => _e
             return false
