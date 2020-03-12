@@ -16,7 +16,7 @@ class NotificationGroupsManager
 
       certificate = domain.x509_cert
       scan_status = domain.verify_result
-
+      
       if certificate.present?
         scanned_cert = ScannedCertificate.find_or_initialize_by(serial: certificate.serial.to_s)
         if scanned_cert.new_record?
@@ -107,14 +107,18 @@ class NotificationGroupsManager
           domains << DomainObject.new(cn.name, cn.notification_groups.first.scan_port, cn.notification_groups.first, nil, nil)
         end
 
-      domains.uniq.map do |domain|
-        ssl_client = SslClient.new(domain.url.gsub("*.", "www."), domain.scan_port)
-        domain.x509_cert = ssl_client.retrieve_x509_cert
-        if domain.x509_cert.present?
-          domain.verify_result = ssl_client.verify_result
+      domains = domains.uniq
+      domains.each_slice(1000).map do |domains|
+        domains.map do |domain|
+          ssl_client = SslClient.new(domain.url.gsub("*.", "www."), domain.scan_port)
+          domain.x509_cert = ssl_client.retrieve_x509_cert
+          if domain.x509_cert.present?
+            domain.verify_result = ssl_client.verify_result
+          end
+          domain
         end
-        domain
       end
+      domains.flatten
     end
   end
 end
