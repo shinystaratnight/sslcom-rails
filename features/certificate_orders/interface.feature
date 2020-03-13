@@ -73,7 +73,7 @@ Feature: Ordering SSL.com Certificates intuitively
      When I buy a "<certificate_type>" "1" year certificate using csr "<csr>"
      Then I should see <num_of_steps> steps to complete my ssl.com certificate order
   Examples:
-    |certificate_type|num_of_steps|
+    |certificate_type|num_of_steps|                                   |
     |free            |6           |ssl_danskkabeltv_dk_2048_csr       |
     |ev              |6           |ssl_danskkabeltv_dk_2048_csr       |
     |high_assurance  |6           |ssl_danskkabeltv_dk_2048_csr       |

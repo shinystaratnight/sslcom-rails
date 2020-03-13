@@ -140,6 +140,7 @@ group :development, :test do
 end
 
 group :test do
+  gem 'cucumber-rails', require: false
   gem 'cypress-on-rails'
   gem 'database_cleaner-active_record'
   gem 'mocha'
@@ -150,10 +151,10 @@ group :test do
   gem 'shoulda-matchers', require: false
 end
 
-gem 'foreman'
 gem 'httparty'
 gem 'rswag-ui'
 gem 'bcrypt_pbkdf', '~> 1'
 gem 'ed25519', '~> 1.2'
 gem 'active_model_serializers'
 gem 'draper'
+gem 'capybara'

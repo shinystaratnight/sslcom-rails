@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'capybara/rspec'
+
 Dir[File.join('./spec/support/**/*.rb')].sort.each { |f| require f }
 
 RSpec.configure do |config|

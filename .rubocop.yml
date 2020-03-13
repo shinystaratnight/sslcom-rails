@@ -39,6 +39,8 @@ Style/ClassAndModuleChildren:
   Enabled: false
 Layout/HeredocIndentation:
   Enabled: false
+Layout/SpaceInLambdaLiteral:
+  Enabled: false
 Style/StructInheritance:
   Enabled: false
 Style/PerlBackrefs:
@@ -86,6 +88,8 @@ Layout/ClassStructure:
 Layout/SpaceBeforeBlockBraces:
   Enabled: false
 Lint/LiteralAsCondition:
+  Enabled: false
+Lint/AmbiguousRegexpLiteral:
   Enabled: false
 Lint/AmbiguousBlockAssociation:
   Enabled: true
