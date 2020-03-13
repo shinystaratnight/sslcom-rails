@@ -38,10 +38,8 @@
             %td
               =scan.domain_name
             %td
-              -if scan.scan_status == 'expiring'
-                =scan.expiration_date ? "Valid until " + scan.expiration_date.strftime("%Y-%m-%d") : 'n/a'
-              -elsif scan.scan_status == 'expired'
-                =scan.expiration_date ? "Expired on " + scan.expiration_date.strftime("%Y-%m-%d") : 'n/a'
+              -if scan.scan_status == 'ok'
+                = "Valid until " + scan.expiration_date.strftime("%Y-%m-%d")
               -else
                 =scan.scan_status
             %td

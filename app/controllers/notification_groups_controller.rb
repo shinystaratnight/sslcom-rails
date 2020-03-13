@@ -118,7 +118,7 @@ class NotificationGroupsController < ApplicationController
       ng.scan
     end
 
-    flash[:notice] = "Scan has been done successfully for only enabled Notification Groups."
+    flash[:notice] = "Scan has been done successfully for only enabled Notification Groups. Delivering email scan receipts."
     redirect_to notification_groups_path(ssl_slug: @ssl_slug)
   end
 
@@ -135,7 +135,7 @@ class NotificationGroupsController < ApplicationController
   def scan_individual_group
     @notification_group.scan
 
-    flash[:notice] = "Scan has been done successfully."
+    flash[:notice] = "Scan has been done successfully. Delivering email scan receipt."
     redirect_to notification_group_scan_logs_url(@ssl_slug, @notification_group.id)
   end
 
