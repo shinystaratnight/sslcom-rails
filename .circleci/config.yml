@@ -45,7 +45,8 @@ aliases:
     sudo gem uninstall bundler
     sudo rm /usr/local/bin/bundle
     sudo rm /usr/local/bin/bundler
-    sudo gem install bundler -v 1.17.3
+    # sudo gem install bundler -v 1.17.3
+    sudo gem install bundler:2.1.4
 
   - &setup-database |
     export RAILS_ENV="test"
@@ -76,7 +77,7 @@ defaults: &defaults
         BUNDLE_RETRY: 1
         BUNDLE_PATH: vendor/bundle
         CIRCLE_CI: 'true'
-        CACHE_VERSION: 'v3'
+        CACHE_VERSION: 'v2_2'
         CIRCLE_NODE_INDEX: 0
         CIRCLE_NODE_TOTAL: 2
     - image: circleci/mysql:5.7.28
@@ -104,7 +105,7 @@ jobs:
           keys:
             - gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
             - gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Branch }}
-            - "gem-cache-{{ .Environment.CACHE_VERSION }}"
+            - gem-cache-{{ .Environment.CACHE_VERSION }}
 
       - run:
           name: Install bundle
@@ -176,7 +177,7 @@ jobs:
           keys:
             - gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
             - gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Branch }}
-            - "gem-cache-{{ .Environment.CACHE_VERSION }}"
+            - gem-cache-{{ .Environment.CACHE_VERSION }}
 
       - run:
           name: Bundle Install Gem Dependencies
@@ -267,7 +268,7 @@ jobs:
           keys:
             - gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
             - gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Branch }}
-            - "gem-cache-{{ .Environment.CACHE_VERSION }}"
+            - gem-cache-{{ .Environment.CACHE_VERSION }}
 
       - run:
           name: Install Mysql Libraries
