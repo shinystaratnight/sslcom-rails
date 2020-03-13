@@ -45,8 +45,7 @@ aliases:
     sudo gem uninstall bundler
     sudo rm /usr/local/bin/bundle
     sudo rm /usr/local/bin/bundler
-    # sudo gem install bundler -v 1.17.3
-    sudo gem install bundler:2.1.4
+    sudo gem install bundler:1.17.3
 
   - &setup-database |
     export RAILS_ENV="test"
