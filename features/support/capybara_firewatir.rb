@@ -1,3 +1,5 @@
+APP_URL = "http://#{Settings.dev_portal_domain}:3000"
+
 def get_element(element, attribute, attribute_val)
   if is_capybara?
     case element

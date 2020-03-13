@@ -1,3 +1,5 @@
+APP_URL = "http://#{Settings.dev_portal_domain}:3000"
+
 Given /\A(?:he|she|I) signs? up as a reseller using login ['"]([^'"]*)['"] and email ['"]([^'"]*)['"]\z/ do |login, email|
   @browser.goto APP_URL + new_account_path
   @browser.text_field(:id, "user_login").value= login

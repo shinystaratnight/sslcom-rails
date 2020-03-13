@@ -1,4 +1,8 @@
+# frozen_string_literal: true
+
 Rails.application.configure do
+  APP_URL = "https://#{Settings.portal_domain}"
+
   # Settings specified here will take precedence over those in config/application.rb.
 
   # Code is not reloaded between requests.
@@ -14,13 +18,13 @@ Rails.application.configure do
   config.consider_all_requests_local       = false
   config.action_controller.perform_caching = true
   config.cache_store = :dalli_store
-  config.action_controller.asset_host = Proc.new { |source|
-    if source=~/\A\/validation_histories\/.*?\/documents/
+  config.action_controller.asset_host = proc do |source|
+    if source =~ %r{\A/validation_histories/.*?/documents}
       "https://#{Settings.portal_domain}"
     else
-      "https://cdn.ssl.com"
+      'https://cdn.ssl.com'
     end
-  }
+  end
 
   # Enable Rack::Cache to put a simple HTTP cache in front of your application
   # Add `rack-cache` to your Gemfile before enabling this.
@@ -80,27 +84,27 @@ Rails.application.configure do
 
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = {
-      :address    => "email-smtp.us-east-1.amazonaws.com",
-      :port       => 25,
-      :domain     => "ssl.com",
-      :authentication => :login,
-      :user_name => "AKIAJ5WH7ADNDQDO7NGA",
-      :password => "Ag4HcpR7fDRmO8U/FLM100PYXNISHWQVhxS+tEJBoLhE"
+    address: 'email-smtp.us-east-1.amazonaws.com',
+    port: 25,
+    domain: 'ssl.com',
+    authentication: :login,
+    user_name: 'AKIAJ5WH7ADNDQDO7NGA',
+    password: 'Ag4HcpR7fDRmO8U/FLM100PYXNISHWQVhxS+tEJBoLhE'
   }
 
   config.to_prepare do
-    BillingProfile.password = "kama1jama1"
+    BillingProfile.password = 'kama1jama1'
   end
 
   config.log_level = :info
   # END ActiveMerchant configuration
   config.eager_load = true
 
-  # AWS S3 
+  # AWS S3
   config.paperclip_defaults = {
-    storage:      :s3,
-    bucket:       Rails.application.secrets.s3_bucket,
-    s3_region:    Rails.application.secrets.s3_region,
+    storage: :s3,
+    bucket: Rails.application.secrets.s3_bucket,
+    s3_region: Rails.application.secrets.s3_region,
     preserve_files: true,
     s3_host_name: "s3-#{Rails.application.secrets.s3_region}.amazonaws.com"
   }
