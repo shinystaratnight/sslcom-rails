@@ -1,19 +1,23 @@
-Hello,
+Scan update for Notification Group: #{@notification_group.friendly_name || @notification_group.ref}
 
-SSL.com Notification Group #{@notification_group.friendly_name || @notification_group.ref} scan update for #{@domain}.
 %br
 %br
-Reminder Type: #{@scan_status}
+Scanned On: #{DateTime.current.strftime("%Y-%m-%d_%H:%M")}
+%br
+%br
+Scan Status: #{@scan_status}
 %br
 Scanned Domain: #{@domain}
 %br
-SSL Certificate Expires: #{@scanned_certificate.not_after.to_date}
-%br
-SSL Certificate DN: #{@scanned_certificate.dn}
-%br
-SSL Certificate Serial: #{@scanned_certificate.serial}
-%br
-SSL Certificate Issuer DN: #{@scanned_certificate.issuer_dn}
+
+- unless @scanned_certificate.nil?
+  SSL Certificate Expires: #{@scanned_certificate.not_after.to_date}
+  %br
+  SSL Certificate DN: #{@scanned_certificate.dn}
+  %br
+  SSL Certificate Serial: #{@scanned_certificate.serial}
+  %br
+  SSL Certificate Issuer DN: #{@scanned_certificate.issuer_dn}
 %br
 %br
 To modify the SSL/TLS reminders or disable them, please visit #{edit_notification_group_url(@ssl_account, @notification_group.id)}
