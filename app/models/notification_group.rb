@@ -148,75 +148,10 @@ class NotificationGroup < ApplicationRecord
   private
 
   def send_domain_digest(scan_status, ng, scanned_cert, domain, contacts, ssl_account)
-    NotificationGroupMailer.domain_digest_notice(scan_status, ng, scanned_cert, domain, contacts, ssl_account).deliver_now
+    NotificationGroupMailer.domain_digest_notice(scan_status, ng, scanned_cert, domain, contacts.pluck(:email_address).uniq, ssl_account).deliver_later
   end
 
   def build_scan_log(ng, scanned_cert, domain, scan_status, exp_date, scan_group)
     ScanLog.new(notification_group_id: ng.id, scanned_certificate_id: scanned_cert, domain_name: domain, scan_status: scan_status, expiration_date: exp_date, scan_group: scan_group)
   end
-
-  # Scan the domains belongs to notification groups and sending a reminder if expiration date is in reminder days what has been set"
-  # def self.scan(options={})
-  #   Sandbox.find_by_host(options[:db]).use_database unless options[:db].blank?
-  #   current = DateTime.now
-  #   month = current.strftime("%m").to_i.to_s
-  #   day = current.strftime("%d").to_i.to_s
-  #   week_day = current.strftime("%w")
-  #   hour = current.strftime("%H").to_i.to_s
-  #   minute = current.strftime("%M").to_i.to_s
-  #
-  #   NotificationGroup.includes(:notification_groups_subjects, :notification_groups_contacts, :schedules).find_each do |group|
-  #     schedules = {}
-  #     group.schedules.each do |arr|
-  #       if schedules[arr.schedule_type].blank?
-  #         schedules[arr.schedule_type] = arr.schedule_value
-  #       else
-  #         schedules[arr.schedule_type] = (schedules[arr.schedule_type] + '|' + arr.schedule_value.to_s).split('|').sort.join('|')
-  #       end
-  #     end
-  #
-  #     run_scan = true
-  #     if schedules['Simple']
-  #       if (schedules['Simple'] == '1' && minute != '0') ||
-  #           (schedules['Simple'] == '2' && hour != '0' && minute != '0') ||
-  #           (schedules['Simple'] == '3' && week_day != '0' && hour != '0' && minute != '0') ||
-  #           (schedules['Simple'] == '4' && day != '1' && week_day != '0' && hour != '0' && minute != '0') ||
-  #           (schedules['Simple'] == '5' && month != '1' && day != '1' && week_day != '0' && hour != '0' && minute != '0')
-  #         run_scan = false
-  #       end
-  #     else
-  #       if schedules['Hour']
-  #         run_scan = (schedules['Hour'] == 'All' || schedules['Hour'].split('|').include?(hour))
-  #       else
-  #         run_scan = (hour == '0') unless schedules['Minute']
-  #       end
-  #
-  #       if run_scan && schedules['Minute']
-  #         run_scan = (schedules['Minute'] == 'All' || schedules['Minute'].split('|').include?(minute))
-  #       elsif run_scan && !schedules['Minute']
-  #         run_scan = (minute == '0')
-  #       end
-  #
-  #       if run_scan
-  #         run_scan_week_day = false
-  #         if schedules['Weekday']
-  #           run_scan_week_day = (schedules['Weekday'] == 'All' || schedules['Weekday'].split('|').include?(week_day))
-  #         end
-  #
-  #         unless run_scan_week_day
-  #           if schedules['Month']
-  #             run_scan = (schedules['Month'] == 'All' || schedules['Month'].split('|').include?(month))
-  #           end
-  #
-  #           if run_scan && schedules['Day']
-  #             run_scan = (schedules['Day'] == 'All' || schedules['Day'].split('|').include?(day))
-  #           elsif run_scan && !schedules['Day']
-  #             run_scan = (day == '1') unless schedules['Hour'] && schedules['Minute']
-  #           end
-  #         end
-  #       end
-  #     end
-  #     group.scan_notification_group if run_scan && !group.status
-  #   end
-  # end
 end

@@ -29,7 +29,7 @@ class NotificationGroupsManager
           if last_scan.nil?
             scan_logs << build_scan_log(domain.notification_group, scanned_cert, domain, scan_status, certificate.not_after.to_date, scan_group)
           elsif scan_status != last_scan.scan_status
-            NotificationGroupMailer.domain_digest_notice(scan_status, domain.notification_group, scanned_cert, domain.url, domain.notification_group.notification_groups_contacts, domain.notification_group.ssl_account).deliver_now
+            NotificationGroupMailer.domain_digest_notice(scan_status, domain.notification_group, scanned_cert, domain.url, domain.notification_group.notification_groups_contacts.pluck(:email_address).uniq, domain.notification_group.ssl_account).deliver_later
             scan_logs << build_scan_log(domain.notification_group, scanned_cert, domain, scan_status, certificate.not_after.to_date, scan_group)
           else
             scan_logs << build_scan_log(domain.notification_group, scanned_cert, domain, scan_status, certificate.not_after.to_date, scan_group)
@@ -76,7 +76,7 @@ class NotificationGroupsManager
       end
 
       if expired_certificates.any?
-        NotificationGroupMailer.expiration_notice(ng, expired_certificates, contacts, ssl_account).deliver_now
+        NotificationGroupMailer.expiration_notice(ng, expired_certificates, contacts.pluck(:email_address).uniq, ssl_account).deliver_later
       end
     end
   end
