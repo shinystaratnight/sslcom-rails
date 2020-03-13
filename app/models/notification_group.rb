@@ -123,9 +123,9 @@ class NotificationGroup < ApplicationRecord
       domains.each do |domain|
         ssl_client = SslClient.new(domain.gsub("*.", "www."), self.scan_port)
         certificate = ssl_client.retrieve_x509_cert
+        scan_status = ssl_client.verify_result
 
         if certificate.present?
-          scan_status = ssl_client.verify_result
           scanned_cert = ScannedCertificate.find_or_initialize_by(serial: certificate.serial.to_s)
           if scanned_cert.new_record?
             scanned_cert.body = certificate.to_s
@@ -135,7 +135,10 @@ class NotificationGroup < ApplicationRecord
           scan_logs << build_scan_log(self, scanned_cert, domain, scan_status, certificate.not_after.to_date, scan_group)
           send_domain_digest(scan_status, self, scanned_cert, domain, self.notification_groups_contacts, self.ssl_account)
         else
-          scan_logs << build_scan_log(self, nil, domain, 'not found', nil, scan_group)
+          if scan_status.nil?
+            scan_status = 'not found'
+          end
+          scan_logs << build_scan_log(self, nil, domain, scan_status, nil, scan_group)
         end
       end
       ScanLog.import scan_logs

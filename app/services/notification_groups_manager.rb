@@ -39,7 +39,7 @@ class NotificationGroupsManager
         if scan_status.nil?
           scan_status = 'not found'
         end
-        scan_logs << build_scan_log(domain.notification_group, certificate, domain, scan_status, nil, scan_group)
+        scan_logs << build_scan_log(domain.notification_group, nil, domain, scan_status, nil, scan_group)
       end
     end
     ScanLog.import scan_logs
@@ -114,16 +114,17 @@ class NotificationGroupsManager
           domains << DomainObject.new(cn.name, cn.notification_groups.first.scan_port, cn.notification_groups.first, nil, nil)
         end
 
+      results = []
       domains = domains.uniq
-      domains.each_slice(1000).map do |domains|
-        domains.map do |domain|
+      domains.each_slice(1000) do |domains|
+        domains.each do |domain|
           ssl_client = SslClient.new(domain.url.gsub("*.", "www."), domain.scan_port)
           domain.x509_cert = ssl_client.retrieve_x509_cert
           domain.verify_result = ssl_client.verify_result
-          domain
+          results << domain
         end
       end
-      domains.flatten
+      results.flatten
     end
   end
 end

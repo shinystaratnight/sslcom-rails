@@ -26,7 +26,7 @@ class SslClient
 
   def verify_result
     result = %x"echo QUIT | openssl s_client -CApath /etc/ssl/certs/ -servername #{url} -verify_hostname #{url} -connect #{url}:#{port}"
-    result.match(/Verify return code: (.*)/)[1]
+    result.match(/Verify return code: (.*)/)[1].scan(/\(([^\)]+)\)/).flatten[0].downcase
   rescue
     nil
   end

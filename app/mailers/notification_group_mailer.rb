@@ -11,7 +11,7 @@ class NotificationGroupMailer < ApplicationMailer
   end
 
   def domain_digest_notice(scan_status, notification_group, scanned_certificate, domain, contacts, ssl_account)
-    if scan_status == '0 (ok)'
+    if scan_status == 'ok'
       up_or_down = 'UP'
     else
       up_or_down = 'DOWN'
