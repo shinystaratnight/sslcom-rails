@@ -213,7 +213,6 @@ describe NotificationGroupsManager do
       @notification_group.scanned_certificates << create(:scanned_certificate, :expired_today)
 
       NotificationGroupsManager.send_expiration_reminders(db: 'ssl_com_test')
-
       mail = ActionMailer::Base.deliveries.last
 
       assert_equal Ahoy::Message.count, 1

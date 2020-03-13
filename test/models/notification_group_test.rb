@@ -39,6 +39,8 @@ describe NotificationGroup do
     assert_equal ScannedCertificate.count, 1
     assert_equal ScanLog.count, 1
     assert ScanLog.last.scan_status == 'ok'
+    assert_equal ActionMailer::Base.deliveries.size, 1
+    assert_equal Ahoy::Message.count, 1
   end
 
   it "scans domains associated with a notification groups succesfully (success case: certificate_name)" do
@@ -52,6 +54,8 @@ describe NotificationGroup do
     assert_equal ScannedCertificate.count, 1
     assert_equal ScanLog.count, 1
     assert ScanLog.last.scan_status == 'ok'
+    assert_equal ActionMailer::Base.deliveries.size, 1
+    assert_equal Ahoy::Message.count, 1
   end
 
   it "scans domains associated with a notification groups succesfully (failure case)" do
@@ -66,6 +70,8 @@ describe NotificationGroup do
     assert_equal ScannedCertificate.count, 0
     assert_equal ScanLog.count, 1
     assert ScanLog.last.scan_status == 'not found'
+    assert_equal ActionMailer::Base.deliveries.size, 1
+    assert_equal Ahoy::Message.count, 1
   end
 
   it "scans domains associated with a notification groups succesfully (untrusted case)" do
@@ -81,6 +87,8 @@ describe NotificationGroup do
     assert_equal ScannedCertificate.count, 1
     assert ScanLog.last.scan_status == 'certificate not trusted'
     assert ScanLog.last.domain_name == @notification_group.notification_groups_subjects.first.domain_name
+    assert_equal ActionMailer::Base.deliveries.size, 1
+    assert_equal Ahoy::Message.count, 1
   end
 
   it "scans domains associated with a notification groups succesfully (expired case)" do
@@ -96,6 +104,8 @@ describe NotificationGroup do
     assert_equal ScannedCertificate.count, 1
     assert ScanLog.last.scan_status == 'certificate has expired'
     assert ScanLog.last.domain_name == @notification_group.notification_groups_subjects.first.domain_name
+    assert_equal ActionMailer::Base.deliveries.size, 1
+    assert_equal Ahoy::Message.count, 1
   end
 
   it "scans domains associated with a notification groups succesfully (name_mismatch case)" do
@@ -111,5 +121,7 @@ describe NotificationGroup do
     assert_equal ScannedCertificate.count, 1
     assert ScanLog.last.scan_status == 'subject issuer mismatch'
     assert ScanLog.last.domain_name == @notification_group.notification_groups_subjects.first.domain_name
+    assert_equal ActionMailer::Base.deliveries.size, 1
+    assert_equal Ahoy::Message.count, 1
   end
 end

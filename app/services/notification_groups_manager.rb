@@ -15,8 +15,8 @@ class NotificationGroupsManager
       end
 
       certificate = domain.x509_cert
-      scan_status = domain.verify_result
-
+      domain.verify_result.nil? ? scan_status = 'not found' : scan_status = domain.verify_result
+    
       if certificate.present?
         scanned_cert = ScannedCertificate.find_or_initialize_by(serial: certificate.serial.to_s)
         if scanned_cert.new_record?
@@ -36,9 +36,6 @@ class NotificationGroupsManager
           end
         end
       else
-        if scan_status.nil?
-          scan_status = 'not found'
-        end
         scan_logs << build_scan_log(domain.notification_group, nil, domain, scan_status, nil, scan_group)
       end
     end
@@ -93,6 +90,11 @@ class NotificationGroupsManager
     end
 
     def build_scan_log(ng, scanned_cert, domain, scan_status, exp_date, scan_group)
+      if scanned_cert.present?
+        scanned_cert = scanned_cert.id
+      else
+        scanned_cert = nil
+      end
       ScanLog.new(notification_group_id: ng.id, scanned_certificate_id: scanned_cert, domain_name: domain.url, scan_status: scan_status, expiration_date: exp_date, scan_group: scan_group)
     end
 
