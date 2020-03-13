@@ -133,13 +133,11 @@ class NotificationGroup < ApplicationRecord
             scanned_cert.save
           end
           scan_logs << build_scan_log(self, scanned_cert, domain, scan_status, certificate.not_after.to_date, scan_group)
-          send_domain_digest(scan_status, self, scanned_cert, domain, self.notification_groups_contacts, self.ssl_account)
         else
-          if scan_status.nil?
-            scan_status = 'not found'
-          end
+          scan_status = 'not found' if scan_status.nil?
           scan_logs << build_scan_log(self, nil, domain, scan_status, nil, scan_group)
         end
+        send_domain_digest(scan_status, self, scanned_cert, domain, self.notification_groups_contacts, self.ssl_account)
       end
       ScanLog.import scan_logs
     end
