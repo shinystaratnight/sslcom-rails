@@ -227,7 +227,6 @@ GEM
     errbase (0.2.0)
     erubi (1.9.0)
     erubis (2.7.0)
-    etc (1.0.1)
     execjs (2.7.0)
     factory_bot (5.1.1)
       activesupport (>= 4.2.0)
@@ -696,7 +695,6 @@ DEPENDENCIES
   dynamic_form
   easy_roles
   ed25519 (~> 1.2)
-  etc (= 1.0.1)
   factory_bot_rails
   faker
   fileutils (~> 1.1.0)
@@ -795,4 +793,4 @@ DEPENDENCIES
   zlib
 
 BUNDLED WITH
-   2.1.4
+   1.17.2

@@ -85,9 +85,9 @@ defaults: &defaults
         MYSQL_ALLOW_EMPTY_PASSWORD: "true"
         MYSQL_ROOT_HOST: "%"
 
-version: 2
+version: 2.1
 jobs:
-  minitest:
+  rspec:
     <<: *defaults
     steps:
       - checkout
@@ -142,10 +142,15 @@ jobs:
 
       - run:
           name: Run tests
-          command: |-
-            TESTFILES=$(circleci tests glob "test/**/*_test.rb" | circleci tests split --split-by=timings)
-            bundle exec rake test \
-              -- ${TESTFILES}
+          command: |
+            mkdir -p /tmp/rspec
+            TEST_FILES="$(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)"
+            bundle exec rspec --profile 10 \
+                              --format RspecJunitFormatter \
+                              --out /tmp/rspec/rspec.xml \
+                              --format progress \
+                              -- \
+                              $TEST_FILES
 
       - store_test_results:
           path: /tmp/rspec
@@ -317,14 +322,12 @@ jobs:
       - run:
           name: Notify Code Climate
           command: ./cc-test-reporter after-build -r $CC_TEST_REPORTER_ID -t simplecov --exit-code $? || true
-workflows:
-  version: 2
 
+workflows:
   build_and_coverage:
     jobs:
       - build
-      - minitest
-      # - rspec
+      - rspec
       - coverage:
           requires:
-            - test
+            - rspec
