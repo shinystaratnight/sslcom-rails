@@ -102,8 +102,8 @@ jobs:
 
       - restore_cache:
           keys:
-            - "gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Branch }}-{{ checksum \"Gemfile.lock\" }}"
-            - "gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Branch }}"
+            - gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+            - gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Branch }}
             - "gem-cache-{{ .Environment.CACHE_VERSION }}"
 
       - run:
@@ -111,7 +111,7 @@ jobs:
           command: bin/bundle install --path vendor/bundle
 
       - save_cache:
-          key: "gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Branch }}-{{ checksum \"Gemfile.lock\" }}"
+          key: gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
           paths:
             - ~/sslcom-rails/vendor/bundle
 
@@ -174,8 +174,8 @@ jobs:
       
       - restore_cache:
           keys:
-            - "gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Branch }}-{{ checksum \"Gemfile.lock\" }}"
-            - "gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Branch }}"
+            - gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+            - gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Branch }}
             - "gem-cache-{{ .Environment.CACHE_VERSION }}"
 
       - run:
@@ -183,7 +183,7 @@ jobs:
           command: bundle check --path vendor/bundle || bundle install --deployment
 
       - save_cache:
-         key: "gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Branch }}-{{ checksum \"Gemfile.lock\" }}"
+         key: gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
          paths:
            - vendor/bundle
 
@@ -203,12 +203,10 @@ jobs:
           name: Copy CertAssureSetting
           command: *copy-certassure-settings
 
-      # Yarn dependencies
       - restore_cache:
           keys:
-            - "{{ .Environment.CACHE_VERSION }}-yarn-{{ checksum \"package.json\" }}"
-            # fallback to using the latest cache if no exact match is found
-            - "{{ .Environment.CACHE_VERSION }}-yarn-"
+            - yarn-{{ .Environment.CACHE_VERSION }}-{{ checksum "package.json" }}
+            - yarn-{{ .Environment.CACHE_VERSION }}-"
 
       - run: yarn install
 
@@ -216,7 +214,7 @@ jobs:
           paths:
             - node_modules
             - ~/.cache
-          key: "{{ .Environment.CACHE_VERSION }}-yarn-{{ checksum \"package.json\" }}"
+          key: yarn-{{ .Environment.CACHE_VERSION }}-{{ checksum "package.json" }}
 
       - run:
           name: Setup Database
@@ -267,8 +265,8 @@ jobs:
 
       - restore_cache:
           keys:
-            - "gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Branch }}-{{ checksum \"Gemfile.lock\" }}"
-            - "gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Branch }}"
+            - gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+            - gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Branch }}
             - "gem-cache-{{ .Environment.CACHE_VERSION }}"
 
       - run:
