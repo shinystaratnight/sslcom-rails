@@ -34,9 +34,9 @@ set :branch, "master"
 # NOTE: for some reason Capistrano requires you to have both the public and
 # the private key in the same folder, the public key should have the
 # extension ".pub".
-ssh_options[:keys] = [File.join(ENV["HOME"], ".ssh", "id_rsa_2019")]
+ssh_options[:keys] = [File.join(ENV["HOME"], ".ssh", "id_rsa")]
 
-server = "sandbox"
+server = "production"
 case server
   when "sandbox"
     require "rvm/capistrano"
@@ -61,14 +61,14 @@ case server
   when "production"
     require "rvm/capistrano"
     set :branch, "master"
-    set :domain, 'ra.sslpki.local'
-    set :deploy_to, "/home/ubuntu/sites/#{application}"
+    set :domain, 'ra.int.ssl.com'
+    set :deploy_to, "/home/ubuntu/sites/secure_ssl_com"
     ssh_options[:keys] = [File.join(ENV["HOME"], ".ssh", "sws-a1.sslpki.local.key")]
   when "production_api"
     set :application, "sws"
     set :user, "app-sws"
     set :branch, "master"
-    set :domain, 'sws-a1.sslpki.local'
+    set :domain, 'sws-a1.int.ssl.com'
     set :deploy_to, "/srv/www/#{application}"
     ssh_options[:keys] = [File.join(ENV["HOME"], ".ssh", "sws-a1.sslpki.local.key")]
 end
