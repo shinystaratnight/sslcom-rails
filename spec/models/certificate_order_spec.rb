@@ -79,8 +79,10 @@ describe(CertificateOrder) do
       end
 
       CertificateContent.workflow_spec.states.each_key do |status|
-        it("filters on status #{status}") do
-          co.certificate_content.update_attribute(workflow_state: status)
+        it "filters on status #{status}" do
+          co.certificate_content.stubs(:domain_validations).returns(true)
+          co.certificate_content.workflow_state = status
+          co.certificate_content.save(validate: false)
           query = "status:'#{status}'"
           queried = CertificateOrder.search_with_csr(query)
           queried.each do |q|
