@@ -58,7 +58,6 @@ describe(CertificateOrder) do
 
       before(:each) do
         co.stubs(:certificate).returns(cert)
-        # CertificateContent.any_instance.stubs(:domain_validation).returns(true)
         SslAccount.any_instance.stubs(:initial_setup).returns(true)
       end
 
@@ -171,7 +170,7 @@ describe(CertificateOrder) do
         end
       end
 
-      it('filters on tags') do
+      xit('filters on tags') do
         tagged_order = create(:certificate_order, include_tags: true, sub_order_items: [cert.product_variant_groups[0].product_variant_items[0].sub_order_item])
         query = "co_tags:'#{tagged_order.tags[0].name}'"
         queried = CertificateOrder.search_with_csr(query)
