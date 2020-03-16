@@ -1,1 +1,0 @@
-include FactoryBot::Syntax::Methods
