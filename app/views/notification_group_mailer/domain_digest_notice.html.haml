@@ -7,7 +7,7 @@ Scanned On: #{DateTime.current.strftime("%Y-%m-%d_%H:%M")}
 %br
 Scan Status: #{@scan_status}
 %br
-Scanned Domain: #{@domain}
+Scanned Url: #{@domain}
 %br
 
 - unless @scanned_certificate.nil?
@@ -20,7 +20,7 @@ Scanned Domain: #{@domain}
   SSL Certificate Issuer DN: #{@scanned_certificate.issuer_dn}
 %br
 %br
-To modify the SSL/TLS reminders or disable them, please visit #{edit_notification_group_url(@ssl_account, @notification_group.id)}
+To modify the SSL/TLS reminders or disable them, please visit https://<%=Settings.portal_domain%>/#{edit_notification_group_path(@ssl_account, @notification_group.id)}
 %br
 %br
 Thank you for choosing SSL.com!

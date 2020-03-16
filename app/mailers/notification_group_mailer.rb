@@ -21,7 +21,7 @@ class NotificationGroupMailer < ApplicationMailer
     @scanned_certificate = scanned_certificate
     @notification_group = notification_group
     @ssl_account = ssl_account
-    @domain = domain
+    @domain = domain.gsub(/\A\*\./, 'www.').downcase
     subject = "SSL.com #{@notification_group.friendly_name || @notification_group.friendly_name.ref} Alert: #{@domain} is #{up_or_down} [SSL/TLS: #{@scan_status}]"
     mail(to: contacts, subject: subject)
   end
