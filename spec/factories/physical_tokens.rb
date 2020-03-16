@@ -26,8 +26,6 @@
 #  index_physical_tokens_on_signed_certificate_id  (signed_certificate_id)
 #
 
-require './test/support/setup_helper'
-
 FactoryBot.define do
   factory :physical_token do
     workflow_state { 'received' }
