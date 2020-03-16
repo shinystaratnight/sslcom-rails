@@ -1,4 +1,4 @@
-// test/cypress/integrations/authentication_spec.js
+// spec/cypress/integrations/authentication_spec.js
 describe('User authentication spec', function () {
   before(() => {
     cy.app('clean')

@@ -64,8 +64,6 @@
 #  fk_signed_certificates_certificate_content_id  (certificate_content_id => certificate_contents.id) ON DELETE => restrict ON UPDATE => restrict
 #
 
-require './test/support/setup_helper'
-
 FactoryBot.define do
   factory :signed_certificate do
     address1 { Faker::Address.street_address }
