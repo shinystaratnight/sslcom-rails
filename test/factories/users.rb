@@ -86,5 +86,13 @@ FactoryBot.define do
         end
       end
     end
+
+    trait :sys_admin do
+      after(:create) do |user|
+        user.create_ssl_account([Role.get_role_id(SYS_ADMIN)])
+          user.default_ssl_account = user.ssl_account.id
+      end
+    end
+
   end
 end

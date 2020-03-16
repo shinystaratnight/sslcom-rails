@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-APP_URL = "http://#{Settings.dev_portal_domain}:3000"
-
 Given /\A(?:he|she|I) buys? a ['"]([^'"]*)['"] (?:duration\s)?['"]([^'"]*)['"] (?:year\s)?certificate using csr ['"]([^'"]*)['"]\z/ do |type, duration, csr|
   csr = eval("@#{csr}").gsub(/\r\n/, "\n")
   When "he goes to the '#{type}' certificate buy page"

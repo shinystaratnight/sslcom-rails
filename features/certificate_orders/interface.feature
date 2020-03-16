@@ -3,7 +3,6 @@
 #also all comments must appear before tags with no comments in-between tags
 #email tests do not work with remote selenium
 #@rack_test
-@firebug
 @selenium
 @remote
 @setup_certificates

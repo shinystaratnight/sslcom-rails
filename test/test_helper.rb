@@ -17,11 +17,6 @@ require 'authlogic/test_case'
 require 'declarative_authorization/maintenance'
 require 'json-schema'
 
-# capybara
-require 'capybara/rails'
-require 'capybara-screenshot/minitest'
-require 'capybara/minitest'
-
 require 'active_support/inflector'
 require 'simplecov'
 
@@ -64,10 +59,6 @@ end
 
 module ActionDispatch
   class IntegrationTest
-    include Capybara::Screenshot::MiniTestPlugin
-    include Capybara::DSL
-    include Capybara::Minitest::Assertions
-
     # Reset sessions and driver between tests
     teardown do
       Capybara.reset_sessions!
