@@ -14,23 +14,21 @@
 #  updated_at   :datetime
 #
 
-require 'test_helper'
+require 'rails_helper'
 
 describe ResellerTier do
   subject { build_stubbed(:reseller_tier, :professional) }
 
   context 'associations' do
-    should have_many(:certificates)
-    should have_many(:product_variant_groups).through(:certificates)
-    should have_many(:product_variant_items).through(:certificates)
-    should have_many(:resellers)
+    it{ should have_many(:certificates) }
+    it{ should have_many(:product_variant_groups).through(:certificates) }
+    it{ should have_many(:product_variant_items).through(:certificates) }
+    it{ should have_many(:resellers) }
   end
 
   describe '.generate_tier' do
-    before :all do
+    before :each do
       stub_roles
-      stub_triggers
-      stub_server_software
       SslAccount.any_instance.stubs(:initial_setup).returns(true)
     end
 
@@ -45,12 +43,12 @@ describe ResellerTier do
         roles: 'tier_7_reseller',
         reseller_ids: resellers.map(&:id)
       )
-      assert_equal 'enterprise organizations', tier.description['ideal_for']
-      assert_equal 'live', tier.published_as
-      assert_equal 5_000_000, tier.amount
-      assert_equal 'tier_7_reseller', tier.roles
-      assert_equal resellers.map(&:id), tier.resellers.map(&:id)
-      assert_equal '7', tier.label
+      'enterprise organizations'.should eq tier.description['ideal_for']
+      'live'.should eq tier.published_as
+      5_000_000.should eq tier.amount
+      'tier_7_reseller'.should eq tier.roles
+      resellers.map(&:id).should eq tier.resellers.map(&:id)
+      '7'.should eq tier.label
     end
   end
 end

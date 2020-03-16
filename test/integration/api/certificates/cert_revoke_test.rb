@@ -1,4 +1,4 @@
-# require 'test_helper'
+# require 'rails_helper'
 #
 # class CertRevokeTest < ActionDispatch::IntegrationTest
 #   describe 'revoke_v1_4' do

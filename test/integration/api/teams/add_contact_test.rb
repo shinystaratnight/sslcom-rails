@@ -1,4 +1,4 @@
-# require 'test_helper'
+# require 'rails_helper'
 #
 # class AddContactTest < ActionDispatch::IntegrationTest
 #   describe 'add_contact' do

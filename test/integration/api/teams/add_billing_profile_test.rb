@@ -1,4 +1,4 @@
-# require 'test_helper'
+# require 'rails_helper'
 #
 # class AddBillingProfileTest < ActionDispatch::IntegrationTest
 #   describe 'add_billing_profile' do

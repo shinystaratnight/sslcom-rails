@@ -1,4 +1,4 @@
-# require 'test_helper'
+# require 'rails_helper'
 #
 # class SavedContactsTest < ActionDispatch::IntegrationTest
 #   describe 'saved_contacts' do

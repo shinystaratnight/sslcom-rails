@@ -1,4 +1,4 @@
-# require 'test_helper'
+# require 'rails_helper'
 #
 # class ApiUserRequestsControllerTest < ActionDispatch::IntegrationTest
 #   describe 'api_user_show_v1_4' do

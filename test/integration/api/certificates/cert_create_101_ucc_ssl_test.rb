@@ -1,4 +1,4 @@
-# require 'test_helper'
+# require 'rails_helper'
 #
 # class CertCreate101UccSslTest < ActionDispatch::IntegrationTest
 #   # POST /certificates

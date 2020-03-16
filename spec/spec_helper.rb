@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'capybara/rspec'
+require 'webmock/rspec'
 
 Dir[File.join('./spec/support/**/*.rb')].sort.each { |f| require f }
 

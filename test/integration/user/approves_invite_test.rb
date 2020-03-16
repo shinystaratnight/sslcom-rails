@@ -1,4 +1,4 @@
-# require 'test_helper'
+# require 'rails_helper'
 # #
 # # Only existing SSL.com user can receive account invite with approval token.
 # #

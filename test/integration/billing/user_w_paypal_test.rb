@@ -1,4 +1,4 @@
-# require 'test_helper'
+# require 'rails_helper'
 # #
 # # A valid logged-in user makes a certificate order purchase using
 # # Paypal.

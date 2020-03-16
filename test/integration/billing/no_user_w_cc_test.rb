@@ -1,4 +1,4 @@
-# require 'test_helper'
+# require 'rails_helper'
 # #
 # # An anonymous or guest user makes a certificate order purchase using
 # # a valid credit card. End result should be a newly created user with valid

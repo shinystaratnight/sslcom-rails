@@ -37,15 +37,13 @@
 #  index_domain_control_validations_on_workflow_state            (workflow_state)
 #
 
-require 'test_helper'
+require 'rails_helper'
 
 describe DomainControlValidation do
-  subject { DomainControlValidation.new }
-
   context 'class methods' do
     describe 'DomainControlValidation.icann_contacts' do
       it 'loads contacts from yaml file' do
-        assert_includes(DomainControlValidation.icann_contacts, 'contact@0101domain.com')
+        described_class.icann_contacts.should include('contact@0101domain.com')
       end
     end
   end

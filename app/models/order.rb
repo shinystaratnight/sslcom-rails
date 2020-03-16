@@ -389,7 +389,7 @@ class Order < ApplicationRecord
     Money.new(amount.cents)-discount_amount
   end
 
-  include Workflow
+  include WorkflowActiverecord
   workflow_column :state
 
   workflow do

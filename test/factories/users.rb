@@ -74,13 +74,9 @@ FactoryBot.define do
     password_confirmation { 'Testing_ssl+1' }
     active                { true }
 
-    trait :with_avatar do
-      avatar { File.new("#{Rails.root}/test/factories/images/idris.jpg") }
-    end
-
-    trait :sysadmin do
+    trait :sys_admin do
       after(:create) do |user|
-        user.create_ssl_account([Role.get_role_id(SYS_ADMIN)])
+        user.create_ssl_account([Role.get_role_id('sysadmin')])
         user.default_ssl_account = user.ssl_account.id
       end
     end

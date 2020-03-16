@@ -24,17 +24,16 @@
 #  index_certificate_names_on_ssl_account_id          (ssl_account_id)
 #
 
-
-require 'test_helper'
+require 'rails_helper'
 
 describe Domain do
   context 'inherited from CertificateName' do
     describe 'scopes' do
       it 'inherits search_domains' do
-        proc { Domain.search_domains('ssl') }.must_be_silent
+        expect(proc { described_class.search_domains('ssl') }).not_to raise_error
       end
       it 'inherits expired_validation' do
-        proc { Domain.expired_validation }.must_be_silent
+        expect(proc { described_class.expired_validation }).not_to raise_error
       end
     end
   end

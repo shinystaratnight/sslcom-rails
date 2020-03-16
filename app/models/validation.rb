@@ -40,7 +40,7 @@ class Validation < ApplicationRecord
     end
   end
 
-  include Workflow
+  include WorkflowActiverecord
   workflow do
     state :new do
       event :validation_submitted, :transitions_to => :pending

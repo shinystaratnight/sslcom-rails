@@ -51,7 +51,7 @@ class PhysicalToken < ApplicationRecord
     end
   end
 
-  include Workflow
+  include WorkflowActiverecord
   workflow do
     state :new do
       event :in_stay, :transitions_to => :not_yet_shipped

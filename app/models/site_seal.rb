@@ -59,7 +59,7 @@ class SiteSeal < ApplicationRecord
   preference  :seal_image, :string
   preference  :artifacts_status, :string, :default=>ACTIVATE
 
-  include Workflow
+  include WorkflowActiverecord
   workflow do
     state :new do
       event :fully_activate, :transitions_to => FULLY_ACTIVATED

@@ -21,21 +21,16 @@
 #  index_api_credentials_on_ssl_account_id                (ssl_account_id)
 #
 
-require 'test_helper'
+require 'rails_helper'
 
 describe ApiCredential do
   subject { ApiCredential.new }
 
-  describe 'associations' do
-    should belong_to :ssl_account
-  end
-
-  describe 'attributes' do
-    should have_db_column :account_key
-    should have_db_column :acme_acct_pub_key_thumbprint
-    should have_db_column :hmac_key
-    should have_db_column :secret_key
-    should have_db_column :roles
-    should have_db_column :ssl_account_id
-  end
+  it { should belong_to :ssl_account }
+  it { should have_db_column :account_key }
+  it { should have_db_column :acme_acct_pub_key_thumbprint }
+  it { should have_db_column :hmac_key }
+  it { should have_db_column :secret_key }
+  it { should have_db_column :roles }
+  it { should have_db_column :ssl_account_id }
 end

@@ -56,7 +56,7 @@ class ValidationRuling < ApplicationRecord
 
   EXPAND=". click for details"
 
-  include Workflow
+  include WorkflowActiverecord
   workflow do
     state :new do
       event :unapprove, :transitions_to => :unapproved

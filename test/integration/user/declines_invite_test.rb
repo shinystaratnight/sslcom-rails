@@ -1,4 +1,4 @@
-# require 'test_helper'
+# require 'rails_helper'
 # #
 # # Existing user declines invite to an ssl account.
 # #

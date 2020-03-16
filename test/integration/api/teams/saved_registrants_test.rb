@@ -1,4 +1,4 @@
-# require 'test_helper'
+# require 'rails_helper'
 #
 # class SavedRegistrantsTest < ActionDispatch::IntegrationTest
 #   describe 'saved_registrants' do

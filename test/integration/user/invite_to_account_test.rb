@@ -1,4 +1,4 @@
-# require 'test_helper'
+# require 'rails_helper'
 # #
 # # owner invites (new to SSL.com) user to their ssl account
 # #

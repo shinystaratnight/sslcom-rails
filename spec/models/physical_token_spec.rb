@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: physical_tokens
@@ -26,12 +28,23 @@
 #  index_physical_tokens_on_signed_certificate_id  (signed_certificate_id)
 #
 
-require "test_helper"
+require 'rails_helper'
 
 describe PhysicalToken do
-  let(:physical_token) { PhysicalToken.new }
-
-  it "must be valid" do
-    value(physical_token).must_be :valid?
-  end
+  it { should have_db_column :activation_pin }
+  it { should have_db_column :admin_pin }
+  it { should have_db_column :license }
+  it { should have_db_column :management_key }
+  it { should have_db_column :manufacturer }
+  it { should have_db_column :model_number }
+  it { should have_db_column :name }
+  it { should have_db_column :notes }
+  it { should have_db_column :serial_number }
+  it { should have_db_column :shipping_method }
+  it { should have_db_column :tracking_number }
+  it { should have_db_column :workflow_state }
+  it { should have_db_column :created_at }
+  it { should have_db_column :updated_at }
+  it { should have_db_column :certificate_order_id }
+  it { should have_db_column :signed_certificate_id }
 end

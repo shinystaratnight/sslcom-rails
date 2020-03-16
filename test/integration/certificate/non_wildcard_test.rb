@@ -1,4 +1,4 @@
-# require 'test_helper'
+# require 'rails_helper'
 # #
 # # Workflow: user submits non-wildcard csr.
 # #

@@ -1,4 +1,4 @@
-# require 'test_helper'
+# require 'rails_helper'
 # #
 # # Workflow: Reprocess certificate after it has been issued.
 # #

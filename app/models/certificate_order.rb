@@ -554,7 +554,7 @@ class CertificateOrder < ApplicationRecord
     end
   end
 
-  include Workflow
+  include WorkflowActiverecord
   workflow do
     state :new do
       event :pay, transitions_to: :paid do |payment|

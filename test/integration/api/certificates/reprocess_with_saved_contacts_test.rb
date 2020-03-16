@@ -1,4 +1,4 @@
-# require 'test_helper'
+# require 'rails_helper'
 #
 # class ReprocessWithSavedContactsTest < ActionDispatch::IntegrationTest
 #   describe 'update_v1_4' do

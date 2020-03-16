@@ -1,4 +1,4 @@
-# require 'test_helper'
+# require 'rails_helper'
 #
 # class CreateWithSavedRegistrantTest < ActionDispatch::IntegrationTest
 #   describe 'create_v1_4' do

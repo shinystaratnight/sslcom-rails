@@ -1,4 +1,4 @@
-# require 'test_helper'
+# require 'rails_helper'
 #
 # class AddRegistrantTest < ActionDispatch::IntegrationTest
 #   describe 'add_registrant' do

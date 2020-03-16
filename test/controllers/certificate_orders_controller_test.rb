@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'test_helper'
+require 'rails_helper'
 
 describe CertificateOrdersController do
   # Note to developers: Extract this logic into cleaner FactoryBot setup

@@ -1,4 +1,4 @@
-# require 'test_helper'
+# require 'rails_helper'
 #
 # class CertCreateNoCsrTest < ActionDispatch::IntegrationTest
 #   # POST /certificates (WITHOUT voucher/ref#)

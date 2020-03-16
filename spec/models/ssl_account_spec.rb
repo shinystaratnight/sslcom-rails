@@ -31,24 +31,24 @@
 #  index_ssl_accounts_on_ssl_slug_and_acct_number                   (ssl_slug,acct_number)
 #
 
-require 'test_helper'
+require 'rails_helper'
 
 describe SslAccount do
   subject { SslAccount.new }
 
   context 'attributes' do
-    should have_db_column :acct_number
-    should have_db_column :roles
-    should have_db_column :status
-    should have_db_column :ssl_slug
-    should have_db_column :company_name
+    it { should have_db_column :acct_number }
+    it { should have_db_column :roles }
+    it { should have_db_column :status }
+    it { should have_db_column :ssl_slug }
+    it { should have_db_column :company_name }
   end
 
   describe 'validations' do
-    before :all do
+    before :each do
       stub_roles
-      stub_triggers
-      stub_server_software
+      # stub_triggers
+      # stub_server_software
       SslAccount.any_instance.stubs(:create_api_credential).returns(true)
     end
 
@@ -86,96 +86,79 @@ describe SslAccount do
     end
     it '#ssl_slug should be valid when nil' do
       subject.ssl_slug = nil
-      subject.validate
 
-      assert subject.valid?
+      subject.should be_valid
     end
     it '#company_name should NOT be valid under 2 characters' do
       subject.company_name = 'a'
       subject.validate
 
-      assert_equal ['is too short (minimum is 2 characters)'], subject.errors.messages[:company_name]
+      ['is too short (minimum is 2 characters)'].should eq subject.errors.messages[:company_name]
     end
     it '#company_name should NOT be valid when over 20 characters' do
       subject.company_name = 'overtwentycharacterslong'
       subject.validate
 
-      assert_equal ['is too long (maximum is 20 characters)'], subject.errors.messages[:company_name]
+      ['is too long (maximum is 20 characters)'].should eq subject.errors.messages[:company_name]
     end
     it '#company_name should NOT be valid when empty string' do
       subject.company_name = ''
       subject.validate
 
-      assert_equal ['is too short (minimum is 2 characters)'], subject.errors.messages[:company_name]
+      ['is too short (minimum is 2 characters)'].should eq subject.errors.messages[:company_name]
     end
     it '#company_name should be valid when nil' do
       subject.company_name = nil
-      subject.validate
 
-      assert subject.valid?
+      subject.should be_valid
     end
   end
 
   describe 'slug string validation' do
-    before :all do
+    before :each do
       stub_roles
-      stub_triggers
-      stub_server_software
+      # stub_triggers
+      # stub_server_software
       SslAccount.any_instance.stubs(:create_api_credential).returns(true)
     end
 
     it '#ssl_slug_valid? string "company" should be valid' do
-      assert SslAccount.ssl_slug_valid?('company')
+      SslAccount.ssl_slug_valid?('company').should be_truthy
     end
     it '#ssl_slug_valid? string w/underscore should be valid' do
-      assert SslAccount.ssl_slug_valid?('company_1')
+      SslAccount.ssl_slug_valid?('company_1').should be_truthy
     end
     it '#ssl_slug_valid? string w/dash should be valid' do
-      assert SslAccount.ssl_slug_valid?('company-1')
+      SslAccount.ssl_slug_valid?('company-1').should be_truthy
     end
     it '#ssl_slug_valid? string w/digits should be valid' do
-      assert SslAccount.ssl_slug_valid?('20160102')
+      SslAccount.ssl_slug_valid?('20160102').should be_truthy
     end
     it '#ssl_slug_valid? string using symbols should NOT be valid' do
       (%w[~ ! @ # $ % ^ & * ( ) = ` < > ? . , | [ ] / ; : ' "] + ['{', '}']).each do |symbol|
-        refute SslAccount.ssl_slug_valid?("team_#{symbol}")
+        SslAccount.ssl_slug_valid?("team_#{symbol}").should be_falsey
       end
     end
     it '#ssl_slug_valid? string using route names should NOT be valid' do
       %w[managed_users user_session].each do |named_route|
-        refute SslAccount.ssl_slug_valid?(named_route)
+        SslAccount.ssl_slug_valid?(named_route).should be_falsey
       end
     end
     it '#ssl_slug_valid? string not unique should NOT be valid' do
       create(:ssl_account, ssl_slug: 'dupe')
-      refute SslAccount.ssl_slug_valid?('dupe')
+      SslAccount.ssl_slug_valid?('dupe').should be_falsey
     end
   end
 
-  # describe 'helper methods' do
-  #   it '#get_account_owner returns correct user/owner' do
-  #     target_user = create(:user, :owner)
-  #     target_ssl  = target_user.assignments.first.ssl_account
-  #     new_user = create(:user)
-  #     # byebug
-  #     # other_user  = create_and_approve_user(target_ssl, 'other_user')
-  #     new_user.ssl_accounts << target_ssl
-  #     new_user.set_roles_for_account(target_ssl, [create(:role, :account_admin).id])
-  #     new_user.send(:approve_account, ssl_account_id: target_ssl.id)
-  #     # byebug
-  #     assert_equal target_user, target_ssl.get_account_owner
-  #     # refute_equal other_user, target_ssl.get_account_owner
-  #   end
-  # end
-
-  # describe 'helper methods' do
-  #   it '#get_account_owner returns correct user/owner' do
-  #     target_user = create(:user, :owner)
-  #     target_ssl  = target_user.ssl_account
-  #     other_user  = create_and_approve_user(target_ssl, 'other_user')
-
-  #     assert_equal target_user, target_ssl.get_account_owner
-  #     refute_equal other_user, target_ssl.get_account_owner
-  #   end
-  # end
+  describe 'helper methods' do
+    it '#get_account_owner returns correct user/owner' do
+      target_user = create(:user, :owner)
+      target_ssl  = target_user.assignments.first.ssl_account
+      new_user = create(:user)
+      new_user.ssl_accounts << target_ssl
+      new_user.set_roles_for_account(target_ssl, [create(:role, :account_admin).id])
+      new_user.send(:approve_account, ssl_account_id: target_ssl.id)
+      target_ssl.get_account_owner.should eq target_user
+    end
+  end
 end

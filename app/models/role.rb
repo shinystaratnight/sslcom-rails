@@ -32,7 +32,7 @@ class Role < ApplicationRecord
   OWNER         = 'owner'
   RESELLER      = 'reseller'
   SUPER_USER    = 'super_user'
-  SYS_ADMIN      = 'sysadmin'
+  SYS_ADMIN     = 'sysadmin'
   USERS_MANAGER = 'users_manager'
   VALIDATIONS   = 'validations'
   RA_ADMIN      = 'ra_admin'
@@ -64,6 +64,10 @@ class Role < ApplicationRecord
 
   def self.get_reseller_id
     Role.get_role_id(Role::RESELLER)
+  end
+
+  def self.get_billing_id
+    Role.get_role_id(Role::BILLING)
   end
 
   def self.get_individual_certificate_id

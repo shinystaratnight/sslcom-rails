@@ -1,4 +1,4 @@
-# require 'test_helper'
+# require 'rails_helper'
 # #
 # # Existing SSL.com user leaves a team.
 # # Team that they do not own and have accepted invitation for at one point.
