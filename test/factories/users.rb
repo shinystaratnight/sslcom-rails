@@ -78,6 +78,13 @@ FactoryBot.define do
       avatar { File.new("#{Rails.root}/test/factories/images/idris.jpg") }
     end
 
+    trait :sysadmin do
+      after(:create) do |user|
+        user.create_ssl_account([Role.get_role_id(SYS_ADMIN)])
+        user.default_ssl_account = user.ssl_account.id
+      end
+    end
+
     Role::ALL.each do |role_name|
       trait role_name.to_sym do
         after(:create) do |user|
@@ -86,13 +93,5 @@ FactoryBot.define do
         end
       end
     end
-
-    trait :sys_admin do
-      after(:create) do |user|
-        user.create_ssl_account([Role.get_role_id(SYS_ADMIN)])
-          user.default_ssl_account = user.ssl_account.id
-      end
-    end
-
   end
 end
