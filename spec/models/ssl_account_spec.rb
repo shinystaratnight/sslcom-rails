@@ -34,9 +34,8 @@
 require 'rails_helper'
 
 describe SslAccount do
-  before :each do
-    stub_roles
-    SslAccount.any_instance.stubs(:create_api_credential).returns(true)
+  before :all do
+    initialize_roles
   end
 
   subject { SslAccount.new }
@@ -113,13 +112,6 @@ describe SslAccount do
   end
 
   describe 'slug string validation' do
-    before :each do
-      stub_roles
-      # stub_triggers
-      # stub_server_software
-      SslAccount.any_instance.stubs(:create_api_credential).returns(true)
-    end
-
     it '#ssl_slug_valid? string "company" should be valid' do
       SslAccount.ssl_slug_valid?('company').should be_truthy
     end
