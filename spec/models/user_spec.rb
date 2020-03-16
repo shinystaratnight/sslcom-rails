@@ -66,11 +66,10 @@
 require 'rails_helper'
 
 describe User do
-  before :each do
-    stub_roles
-    stub_triggers
-    stub_server_software
-    SslAccount.any_instance.stubs(:create_api_credential).returns
+  before :all do
+    initialize_roles
+    initialize_triggers
+    initialize_server_software
   end
 
   describe 'attributes' do
@@ -85,20 +84,15 @@ describe User do
 
     it '#max_teams_reached returns an integer' do
       user = create(:user)
-      assert_equal User::OWNED_MAX_TEAMS, user.max_teams
+      expect(User::OWNED_MAX_TEAMS).to eq user.max_teams
     end
   end
 
   describe 'validations' do
-    # before :each do
-    #   stub_roles
-    #   stub_triggers
-    #   stub_server_software
-    #   SslAccount.any_instance.stubs(:create_api_credential).returns
-    # end
     let!(:user) { build(:user) }
+
     it 'it should be valid' do
-      user.should be_valid
+      expect(user).to be_valid
     end
 
     it 'it should require email' do
@@ -374,11 +368,11 @@ describe User do
     # end
 
     it '#roles_list_for_user it should return all roles for admins' do
-      sysadmin = create(:user, :sysadmin)
-      Role.all.ids.sort.should eq User.roles_list_for_user(sysadmin).ids.sort
+      sysadmin = create(:user, :sys_admin)
+      expect(User.roles_list_for_user(sysadmin).ids.sort).to eq Role.all.ids.sort
 
       super_user = create(:user, :super_user)
-      Role.all.ids.sort.should eq User.roles_list_for_user(super_user).ids.sort
+      expect(User.roles_list_for_user(super_user).ids.sort).to eq Role.all.ids.sort
     end
 
     # it '#get_user_accounts_roles it should return a mapped hash' do

@@ -23,9 +23,6 @@ class Role < ApplicationRecord
   has_and_belongs_to_many   :permissions
   belongs_to                :ssl_account
 
-  scope :for_owners, -> { order(:id).where{ name >> [ACCOUNT_ADMIN, BILLING, INSTALLER, VALIDATIONS, USERS_MANAGER, INDIVIDUAL_CERTIFICATE] } }
-  scope :for_admins, -> { order(:id).where{ name >> [SYS_ADMIN, SUPER_USER, OWNER, RA_ADMIN] } }
-
   ACCOUNT_ADMIN = 'account_admin'
   BILLING       = 'billing'
   INSTALLER     = 'installer'
@@ -40,6 +37,9 @@ class Role < ApplicationRecord
 
   ALL = [ACCOUNT_ADMIN, BILLING, INSTALLER, OWNER, RESELLER, SUPER_USER, SYS_ADMIN, USERS_MANAGER, VALIDATIONS, RA_ADMIN, INDIVIDUAL_CERTIFICATE].freeze
 
+  scope :for_owners, -> { order(:id).where{ name >> [ACCOUNT_ADMIN, BILLING, INSTALLER, VALIDATIONS, USERS_MANAGER, INDIVIDUAL_CERTIFICATE] } }
+  scope :for_admins, -> { order(:id).where{ name >> [SYS_ADMIN, SUPER_USER, OWNER, RA_ADMIN] } }
+
   def self.get_role_id(role_name)
     Rails.cache.fetch(['get_role_id', role_name]) { Role.find_by(name: role_name).id }
   end
@@ -51,11 +51,15 @@ class Role < ApplicationRecord
   end
 
   def self.admin_role_ids
-    for_admins.pluck(:id)
+    Role.get_role_ids([SYS_ADMIN, SUPER_USER, OWNER, RA_ADMIN])
   end
 
   def self.get_account_admin_id
     Role.get_role_id(Role::ACCOUNT_ADMIN)
+  end
+
+  def self.get_billing_id
+    Role.get_role_id(Role::BILLING)
   end
 
   def self.get_owner_id
@@ -66,12 +70,19 @@ class Role < ApplicationRecord
     Role.get_role_id(Role::RESELLER)
   end
 
-  def self.get_billing_id
-    Role.get_role_id(Role::BILLING)
-  end
-
   def self.get_individual_certificate_id
     Role.get_role_id(Role::INDIVIDUAL_CERTIFICATE)
+  end
+
+  def self.get_select_ids_for_owner
+    Role.get_role_ids([
+                        ACCOUNT_ADMIN,
+                        BILLING,
+                        INSTALLER,
+                        VALIDATIONS,
+                        USERS_MANAGER,
+                        INDIVIDUAL_CERTIFICATE
+                      ])
   end
 
   def self.can_auto_add_users

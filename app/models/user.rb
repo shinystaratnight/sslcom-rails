@@ -490,14 +490,9 @@ class User < ApplicationRecord
   class << self
     extend Memoist
     def roles_list_for_user(user, exclude_roles = [])
-      if user.is_owner?
-        Role.for_owners
-      elsif user.is_system_admins?
-        Role.for_admins
-      else
-        exclude_roles << Role.where{ id << Role.get_select_ids_for_owner }.map(&:id).uniq
-        exclude_roles.any? ? Role.where{ id << exclude_roles.flatten } : Role.all
-      end
+      exclude_roles ||= []
+      exclude_roles << Role.where.not(id: Role.get_select_ids_for_owner).map(&:id).uniq unless user.is_system_admins?
+      exclude_roles.any? ? Role.where.not(id: exclude_roles.flatten) : Role.all
     end
     memoize :roles_list_for_user
 
