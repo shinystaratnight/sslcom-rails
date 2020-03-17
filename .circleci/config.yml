@@ -174,8 +174,6 @@ jobs:
       - setup_remote_docker: 
          docker_layer_caching: true
 
-      - run: mkdir -p tmp/test-reports/minitest/queue_mode/
-
       - run:
           name: Install Libraries for mySQL and Correct Bundler Version (1.17.3)
           command: *install-mysql-dependencies
@@ -211,10 +209,10 @@ jobs:
           name: Copy CertAssureSetting
           command: *copy-certassure-settings
 
-      - restore_cache:
-          keys:
-            - yarn-{{ .Environment.CACHE_VERSION }}-{{ checksum "package.json" }}
-            - yarn-{{ .Environment.CACHE_VERSION }}-"
+      # - restore_cache:
+      #     keys:
+      #       - yarn-{{ .Environment.CACHE_VERSION }}-{{ checksum "package.json" }}
+      #       - yarn-{{ .Environment.CACHE_VERSION }}-"
 
       - run: yarn install
 
