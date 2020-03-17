@@ -47,3 +47,4 @@ Vagrantfile.azure
 /config/master.key
 spec/examples.txt
 rspec.xml
+yarn-error.log

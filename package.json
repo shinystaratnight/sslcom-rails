@@ -6,7 +6,9 @@
   "author": "SSL.com",
   "license": "MIT",
   "dependencies": {
-    "cypress-file-upload": "^3.5.3"
+    "bootstrap-datepicker": "^1.9.0",
+    "cypress-file-upload": "^3.5.3",
+    "select2": "^4.0.13"
   },
   "devDependencies": {
     "@cypress/code-coverage": "^1.10.4",
