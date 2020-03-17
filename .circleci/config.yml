@@ -246,7 +246,7 @@ jobs:
 
       - run:
           name: Run Cypress
-          command: yarn cypress run --project ./test
+          command: yarn cypress run
 
       - store_artifacts:
           path: test/cypress/videos
