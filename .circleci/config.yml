@@ -83,6 +83,7 @@ defaults: &defaults
       environment:
         MYSQL_ALLOW_EMPTY_PASSWORD: "true"
         MYSQL_ROOT_HOST: "%"
+        CACHE_VERSION: 'v3'
 
 version: 2.1
 jobs:
