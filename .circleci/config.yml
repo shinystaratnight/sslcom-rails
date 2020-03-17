@@ -144,24 +144,22 @@ jobs:
       - run:
           name: Run tests
           command: |
-            mkdir -p /tmp/rspec
-            TEST_FILES="$(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)"
-            bundle exec rspec --profile 10 \
-                              --format RspecJunitFormatter \
-                              --out /tmp/rspec/rspec.xml \
-                              --format progress \
-                              -- \
-                              $TEST_FILES
+            bundle exec rspec -p 5 -f progress -f RspecJunitFormatter -o rspec/rspec.xml $(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)
 
       - store_test_results:
-          path: /tmp/rspec
+          path: rspec
+
+      - store_artifacts:
+          path: log
+
+      - store_artifacts:
+          path: coverage
 
       - run:
           name: Stash Coverage Results
           command: |
             mkdir coverage_results
-            cp -R coverage/.resultset.json coverage_results/.resultset-${CIRCLE_NODE_INDEX}.json
-
+            cp -R coverage/.resultset.json coverage_results/.resultset-rspec-${CIRCLE_NODE_INDEX}.json
       - persist_to_workspace:
           root: .
           paths:
@@ -226,9 +224,9 @@ jobs:
             - ~/.cache
           key: yarn-{{ .Environment.CACHE_VERSION }}-{{ checksum "package.json" }}
 
-      # - run:
-      #     name: Setup Database
-      #     command: *setup-database
+      - run:
+          name: Setup Database
+          command: *setup-database
 
       # - run:
       #     name: Setup Database for Cypress Test

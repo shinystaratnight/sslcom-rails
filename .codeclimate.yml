@@ -54,6 +54,7 @@ exclude_patterns:
   - "db/"
   - "**/node_modules/"
   - "spec/"
+  - "test/"
   - "**/vendor/"
   - "*.md"
   - ".*"
