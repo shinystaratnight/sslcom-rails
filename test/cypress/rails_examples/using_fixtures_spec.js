@@ -22,7 +22,7 @@ describe('Rails using rails fixtures examples', function() {
   })
 
   it('loading another folder of fixtures', function() {
-    cy.appFixtures({fixtures_dir: 'spec/cypress_fixtures' })
+    cy.appFixtures({fixtures_dir: 'test/cypress_fixtures' })
     cy.visit('/')
     cy.get('table').find('tbody').should(($tbody) => {
       expect($tbody).to.contain('MyCypressFixtures')
