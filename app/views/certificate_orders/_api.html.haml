@@ -176,7 +176,7 @@
           REQUIRE_SHA2
         %li
           INFER_FROM_CSR
--if (current_user && current_user.is_system_admins?) and co.certificate_content.ca and !co.certificate_content.new?
+-if (current_user && current_user.is_super_user?) and co.certificate_content.ca and !co.certificate_content.new?
   .full_width_box
     %ul
       -if co.csr or !co.certificate.is_server?
