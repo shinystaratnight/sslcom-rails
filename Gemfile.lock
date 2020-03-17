@@ -623,7 +623,7 @@ GEM
       activerecord (>= 3.0)
       activesupport (>= 3.0)
       polyamorous (~> 1.1.0)
-    stringio (0.1.0)
+    stringio (0.0.2)
     stripe (5.17.0)
     strscan (1.0.3)
     swagger-blocks (3.0.0)
@@ -813,7 +813,7 @@ DEPENDENCIES
   spring
   sprockets (= 3.7.2)
   squeel
-  stringio
+  stringio (= 0.0.2)
   stripe
   strscan
   swagger-blocks
