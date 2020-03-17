@@ -41,7 +41,7 @@ gem 'rack-ssl-enforcer'
 gem 'rb-inotify', require: false
 gem 'responders', '~> 2.0'
 gem 'savon', '~> 2.0'
-gem 'sprockets'
+gem 'sprockets', '3.7.2'
 gem 'squeel'
 gem 'will_paginate'
 gem 'xml-simple'
