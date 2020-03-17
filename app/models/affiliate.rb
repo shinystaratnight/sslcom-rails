@@ -58,7 +58,7 @@ class Affiliate < ApplicationRecord
     postal_code city state country) + ADMIN_COLUMNS
   FORM_COLUMNS=%w(type_organization)+ADMIN_COLUMNS+COMPANY_COLUMNS+
     PAYMENT_COLUMNS
-  #guarantee 10% profit on each sale
+  # guarantee 10% profit on each sale
   ar=[]
   0.step((1-0.1-Settings.studio_fee_rate.to_f)*100,
     5){|i|ar<<i}
@@ -85,28 +85,27 @@ class Affiliate < ApplicationRecord
   validates_length_of   :email, :within => 3..100
   validates_format_of   :email, :with => /\A([^@\s]+)@((?:[-a-z0-9A-Z]+\.)+[a-zA-Z]{2,})\z/
 
-  #include WorkflowActiverecord
-  #workflow do
+  # include WorkflowActiverecord
+  # workflow do
   #  state :new do
   #    event :submit_profile, :transitions_to => :profile_submitted
   #  end
-  #
+  
   #  state :profile_submitted do
   #    event :approve, :transitions_to => :approved
   #    event :disapprove, :transitions_to => :disapproved
   #    event :cancel, :transitions_to => :new
   #  end
-  #
+  
   #  state :disapproved do
   #    event :approve, :transitions_to => :approved
   #    event :cancel,  :transitions_to => :new
   #  end
-  #
+  
   #  state :approved do
   #    event :cancel,  :transitions_to => :new
   #  end
-  #end
-
+  # end
 
   def american?
     country == "United States"
