@@ -92,8 +92,8 @@ gem 'whois-parser'
 gem 'in_place_editing'
 gem 'mailboxer'
 gem 'memoist'
-gem 'bootstrap-sass'
-# gem 'bootstrap-datepicker-rails'
+gem 'bootstrap'
+gem 'bootstrap-datepicker-rails'
 gem 'timezone', '~> 1.0'
 # required by sws-a1
 gem 'activerecord-import'
@@ -123,9 +123,6 @@ end
 
 group :development, :test do
   gem 'byebug'
-  gem 'capybara'
-  gem 'selenium-webdriver'
-  gem 'webdrivers'
   gem 'factory_bot_rails'
   gem 'faker'
   gem 'pry-rails'
@@ -143,8 +140,6 @@ group :development, :test do
 end
 
 group :test do
-  gem 'cucumber-rails', require: false
-  gem 'cypress-on-rails'
   gem 'database_cleaner-active_record'
   gem 'mocha'
   gem 'rspec_junit_formatter'
