@@ -34,11 +34,7 @@ module CertificateType
   end
 
   def is_iv?
-    if is_a? SignedCertificate
-      !!decoded.include?(SignedCertificate::OID_IV)
-    else
-      # (self.is_a?(ApiCertificateRequest) ? target_certificate :  self).product =~ /\A(basic|free)/
-    end
+    !!decoded.include?(SignedCertificate::OID_IV) if is_a? SignedCertificate
   end
 
   def is_evcs?
@@ -64,11 +60,7 @@ module CertificateType
   end
 
   def is_test_certificate?
-    if is_a? SignedCertificate
-      !!decoded.include?(SignedCertificate::OID_TEST)
-    else
-      # (self.is_a?(ApiCertificateRequest) ? target_certificate :  self).product =~ /\A(basic|free)/
-    end
+    !!decoded.include?(SignedCertificate::OID_TEST) if is_a? SignedCertificate
   end
 
   def is_smime?

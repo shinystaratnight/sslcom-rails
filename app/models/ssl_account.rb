@@ -38,7 +38,7 @@ class SslAccount < ApplicationRecord
   using_access_control
   acts_as_billable
 
-  has_many   :api_credentials
+  has_many  :api_credentials
   has_one   :duo_account
   has_many  :billing_profiles
   has_many  :certificate_orders, -> { unscope(where: %i[workflow_state is_expired]).includes([:orders]) },
