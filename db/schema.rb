@@ -1024,35 +1024,6 @@ ActiveRecord::Schema.define(version: 20200312160424) do
     t.string   "management_key",        :limit=>255
   end
 
-  create_table "plan_options", force: :cascade do |t|
-    t.string  "option_key",        :limit=>255
-    t.integer "plan_option_value", :limit=>4
-    t.integer "cents",             :limit=>4, :null=>false
-    t.string  "status",            :limit=>255
-    t.text    "description",       :limit=>65535
-  end
-
-  create_table "services", force: :cascade do |t|
-    t.string   "name",           :limit=>255
-    t.string   "billing_cycle",  :limit=>255
-    t.integer  "cents",          :limit=>4
-    t.text     "description",    :limit=>65535
-    t.text     "notes",          :limit=>65535
-    t.string   "type",           :limit=>255
-    t.string   "workflow_state", :limit=>255
-    t.boolean  "is_public",      :default=>false
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.integer  "display_order",  :limit=>4
-  end
-
-  create_table "plan_option_subscriptions", force: :cascade do |t|
-    t.integer "plan_option_id",   :limit=>4, :index=>{:name=>"fk_plan_option_subscriptions_plan_option_id", :using=>:btree}, :foreign_key=>{:references=>"plan_options", :name=>"fk_plan_option_subscriptions_plan_option_id", :on_update=>:restrict, :on_delete=>:restrict}
-    t.integer "service_id",       :limit=>4, :index=>{:name=>"fk_plan_option_subscriptions_service_id", :using=>:btree}, :foreign_key=>{:references=>"services", :name=>"fk_plan_option_subscriptions_service_id", :on_update=>:restrict, :on_delete=>:restrict}
-    t.boolean "is_default",       :default=>false
-    t.string  "plan_option_type", :limit=>255
-  end
-
   create_table "preferences", force: :cascade do |t|
     t.string   "name",       :limit=>255, :null=>false
     t.integer  "owner_id",   :limit=>4, :null=>false, :index=>{:name=>"index_preferences_on_owner_id_and_owner_type", :with=>["owner_type"], :using=>:btree}
@@ -1381,18 +1352,6 @@ ActiveRecord::Schema.define(version: 20200312160424) do
   add_index "ssl_accounts", ["acct_number", "company_name", "ssl_slug"], :name=>"index_ssl_accounts_on_acct_number_and_company_name_and_ssl_slug", :using=>:btree
   add_index "ssl_accounts", ["id", "created_at"], :name=>"index_ssl_accounts_on_id_and_created_at", :using=>:btree
 
-  create_table "ssl_account_subscriptions", force: :cascade do |t|
-    t.integer  "ssl_account_id", :limit=>4, :index=>{:name=>"fk_ssl_account_subscriptions_ssl_account_id", :using=>:btree}, :foreign_key=>{:references=>"ssl_accounts", :name=>"fk_ssl_account_subscriptions_ssl_account_id", :on_update=>:restrict, :on_delete=>:restrict}
-    t.integer  "service_id",     :limit=>4, :index=>{:name=>"fk_ssl_account_subscriptions_service_id", :using=>:btree}, :foreign_key=>{:references=>"services", :name=>"fk_ssl_account_subscriptions_service_id", :on_update=>:restrict, :on_delete=>:restrict}
-    t.string   "billing_cycle",  :limit=>255
-    t.integer  "cents",          :limit=>4
-    t.text     "notes",          :limit=>65535
-    t.string   "workflow_state", :limit=>255
-    t.text     "option_add_ons", :limit=>65535
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
   create_table "ssl_account_users", force: :cascade do |t|
     t.integer  "user_id",        :limit=>4, :null=>false, :index=>{:name=>"index_ssl_account_users_on_user_id", :using=>:btree}
     t.integer  "ssl_account_id", :limit=>4, :null=>false, :index=>{:name=>"index_ssl_account_users_on_ssl_account_id", :using=>:btree}
@@ -1436,11 +1395,6 @@ ActiveRecord::Schema.define(version: 20200312160424) do
     t.integer  "product_id",              :limit=>4, :index=>{:name=>"index_sub_order_items_on_product_id", :using=>:btree}
   end
   add_index "sub_order_items", ["id", "sub_itemable_id", "sub_itemable_type"], :name=>"index_sub_order_items_on_sub_itemable", :using=>:btree
-
-  create_table "subscription_services", force: :cascade do |t|
-    t.integer "service_id",      :limit=>4, :index=>{:name=>"index_subscription_services_on_service_id", :using=>:btree}, :foreign_key=>{:references=>"services", :name=>"fk_subscription_services_service_id", :on_update=>:restrict, :on_delete=>:restrict}
-    t.integer "subscription_id", :limit=>4, :index=>{:name=>"fk_subscription_services_subscription_id", :using=>:btree}, :foreign_key=>{:references=>"services", :name=>"fk_subscription_services_subscription_id", :on_update=>:restrict, :on_delete=>:restrict}
-  end
 
   create_table "surl_blacklists", force: :cascade do |t|
     t.string   "fingerprint", :limit=>255
