@@ -5,6 +5,7 @@
 #@rack_test
 @selenium
 @remote
+@firebug
 @setup_certificates
 
 Feature: Permissions to pages

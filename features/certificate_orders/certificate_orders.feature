@@ -4,6 +4,7 @@
 #email tests nor spork work with remote selenium
 #@webkit @remote
 @selenium @remote
+@firebug
 @javascript
 
 Feature: Manage SSL Certificates

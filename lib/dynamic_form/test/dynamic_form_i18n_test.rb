@@ -1,4 +1,4 @@
-require 'rails_helper'
+require 'test_helper'
 
 class DynamicFormI18nTest < Test::Unit::TestCase
   include ActionView::Context

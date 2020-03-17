@@ -1,5 +1,3 @@
-APP_URL = "http://#{Settings.dev_portal_domain}:3000"
-
 Given /\Athe (?:admin )?user with username ['"]([^'"]*)['"] and password ['"]([^'"]*)['"] is logged in\z/ do |username, password|
   goto login_path
   Then "he logs in with username '#{username}' and password '#{password}'"
