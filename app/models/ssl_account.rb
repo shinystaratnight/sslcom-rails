@@ -12,8 +12,8 @@
 #  duo_own_used           :boolean
 #  epki_agreement         :datetime
 #  issue_dv_no_validation :string(255)
-#  no_limit               :boolean          default(FALSE)
-#  roles                  :string(255)      default([])
+#  no_limit               :boolean          default("0")
+#  roles                  :string(255)      default("--- []")
 #  sec_type               :string(255)
 #  ssl_slug               :string(255)
 #  status                 :string(255)
@@ -32,11 +32,13 @@
 #
 
 class SslAccount < ApplicationRecord
+  include CollectiveIdea::Acts::Billable
   extend Memoist
+
   using_access_control
   acts_as_billable
-  easy_roles :roles
-  has_many   :api_credentials
+
+  has_many  :api_credentials
   has_one   :duo_account
   has_many  :billing_profiles
   has_many  :certificate_orders, -> { unscope(where: %i[workflow_state is_expired]).includes([:orders]) },
@@ -119,10 +121,8 @@ class SslAccount < ApplicationRecord
 
   accepts_nested_attributes_for :reseller, allow_destroy: false
 
-  unless MIGRATING_FROM_LEGACY
-    # has_many  :orders, :as=>:billable, :after_add=>:build_line_items
-    attr_readonly :acct_number
-  end
+  # has_many  :orders, :as=>:billable, :after_add=>:build_line_items
+  attr_readonly :acct_number
 
   preference  :reminder_status, default: true
   preference  :reminder_notice_triggers, :string
@@ -149,7 +149,7 @@ class SslAccount < ApplicationRecord
   after_create :initial_setup
   after_save { users.find_each(&:touch) }
 
-  include Workflow
+  include WorkflowActiverecord
   BILLING_METHODS = %w[monthly due_at_checkout daily].freeze
   PULL_RESELLER = 'pull_from_reseller'
   PULL_ADMIN_TECH = 'pull_from_admin_and_tech'
@@ -385,7 +385,7 @@ class SslAccount < ApplicationRecord
 
   def is_registered_reseller?
     Rails.cache.fetch("#{cache_key}/is_registered_reseller") do
-      has_role?('reseller') && reseller.try('complete?')
+      decorate.has_role?('reseller') && reseller.try('complete?')
     end
   end
 

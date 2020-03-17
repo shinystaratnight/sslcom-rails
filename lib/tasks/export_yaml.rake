@@ -1,23 +1,8 @@
 require 'find'
 
-#rake db:models_to_fixtures MODELS=<your model names separated by coma>
-#
-#for example:
-#
-#rake db:models_to_fixtures MODELS=User,Post
-#
-#All your model data will be stored on /tmp/ directory.
-
 namespace :db do
   desc "export the database models to YML fixtures (for specific models use MODELS=User,Post, etc)"
   task(:models_to_fixtures => :environment) do
-  #  ActiveRecord::Base.establish_connection(
-  #    :adapter => 'postgresql', # mysql, sqlite3
-  #    :encoding => 'utf8',
-  #    :database => 'cnxs_development',
-  #    :username => 'username',
-  #    :password => 'secret'
-  #  )
     ActiveRecord::Base.establish_connection("development")
     ActiveRecord::Base.connection
 
@@ -49,7 +34,7 @@ namespace :db do
         collection.each do |object|
           output.store(object.to_param, object.attributes)
         end
-        file_path = "#{Rails.root}/tmp/#{model.table_name}.yml"# /tmp/
+        file_path = "#{Rails.root}/tmp/#{model.table_name}.yml" # /tmp/
         File.open(file_path, "w+") { |file| file.write(output.to_yaml) }
       end
     end

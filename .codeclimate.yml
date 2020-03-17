@@ -41,6 +41,12 @@ plugins:
         enabled: false
       Rubocop/Layout/SpaceInsideHashLiteralBraces:
         enabled: false
+      Rubocop/Naming/HeredocDelimiterNaming:
+        enabled: false
+      Rubocop/Layout/ExtraSpacing:
+        enabled: false
+      Rubocop/Layout/IndentHeredoc:
+        enabled: false
   sass-lint:
     enabled: true
     checks:
@@ -53,6 +59,7 @@ exclude_patterns:
   - "config/"
   - "db/"
   - "**/node_modules/"
+  - "spec/"
   - "test/"
   - "**/vendor/"
   - "*.md"

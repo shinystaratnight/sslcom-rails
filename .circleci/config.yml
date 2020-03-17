@@ -76,21 +76,24 @@ defaults: &defaults
         BUNDLE_RETRY: 1
         BUNDLE_PATH: vendor/bundle
         CIRCLE_CI: 'true'
-        CACHE_VERSION: 'v2_2'
+        CACHE_VERSION: 'v3'
         CIRCLE_NODE_INDEX: 0
         CIRCLE_NODE_TOTAL: 2
     - image: circleci/mysql:5.7.28
       environment:
         MYSQL_ALLOW_EMPTY_PASSWORD: "true"
         MYSQL_ROOT_HOST: "%"
+        CACHE_VERSION: 'v3'
 
-version: 2
+version: 2.1
 jobs:
-  test:
+  rspec:
     <<: *defaults
     steps:
       - checkout
 
+      - setup_remote_docker:  
+         docker_layer_caching: true 
       - run:
           name: Install Mysql Libraries
           command: *install-mysql-dependencies
@@ -100,18 +103,18 @@ jobs:
           paths:
             - ~/sslcom-rails
 
-      # - restore_cache:
-      #     keys:
-      #       - gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
-      #       - gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Branch }}
-      #       - gem-cache-{{ .Environment.CACHE_VERSION }}
+      - restore_cache:
+          keys:
+            - gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+            - gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Branch }}
+            - gem-cache-{{ .Environment.CACHE_VERSION }}
 
       - run:
           name: Install bundle
           command: bin/bundle install --path vendor/bundle
 
       - save_cache:
-          key: "gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Branch }}-{{ checksum \"Gemfile.lock\" }}"
+          key: gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
           paths:
             - ~/sslcom-rails/vendor/bundle
 
@@ -141,20 +144,23 @@ jobs:
 
       - run:
           name: Run tests
-          command: |-
-            TESTFILES=$(circleci tests glob "test/**/*_test.rb" | circleci tests split --split-by=timings)
-            bundle exec rake test \
-              -- ${TESTFILES}
+          command: |
+            bundle exec rspec -p 5 -f progress -f RspecJunitFormatter -o rspec/rspec.xml $(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)
 
       - store_test_results:
-          path: /tmp/rspec
+          path: rspec
+
+      - store_artifacts:
+          path: log
+
+      - store_artifacts:
+          path: coverage
 
       - run:
           name: Stash Coverage Results
           command: |
             mkdir coverage_results
-            cp -R coverage/.resultset.json coverage_results/.resultset-${CIRCLE_NODE_INDEX}.json
-
+            cp -R coverage/.resultset.json coverage_results/.resultset-rspec-${CIRCLE_NODE_INDEX}.json
       - persist_to_workspace:
           root: .
           paths:
@@ -166,25 +172,25 @@ jobs:
     steps:
       - checkout
 
-      - run: mkdir -p tmp/test-reports/minitest/queue_mode/
+      - setup_remote_docker: 
+         docker_layer_caching: true
 
       - run:
           name: Install Libraries for mySQL and Correct Bundler Version (1.17.3)
           command: *install-mysql-dependencies
       
-      # - restore_cache:
-      #     keys:
-      #       - gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
-      #       - gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Branch }}
-      #       - gem-cache-{{ .Environment.CACHE_VERSION }}
-
+      - restore_cache:
+          keys:
+            - gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+            - gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Branch }}
+            - gem-cache-{{ .Environment.CACHE_VERSION }}
 
       - run:
           name: Bundle Install Gem Dependencies
           command: bundle check --path vendor/bundle || bundle install --deployment
 
       - save_cache:
-         key: "gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Branch }}-{{ checksum \"Gemfile.lock\" }}"
+         key: gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
          paths:
            - vendor/bundle
 
@@ -204,12 +210,10 @@ jobs:
           name: Copy CertAssureSetting
           command: *copy-certassure-settings
 
-      # Yarn dependencies
       - restore_cache:
           keys:
-            - "{{ .Environment.CACHE_VERSION }}-yarn-{{ checksum \"package.json\" }}"
-            # fallback to using the latest cache if no exact match is found
-            - "{{ .Environment.CACHE_VERSION }}-yarn-"
+            - yarn-{{ .Environment.CACHE_VERSION }}-{{ checksum "package.json" }}
+            - yarn-{{ .Environment.CACHE_VERSION }}-"
 
       - run: yarn install
 
@@ -217,35 +221,35 @@ jobs:
           paths:
             - node_modules
             - ~/.cache
-          key: "{{ .Environment.CACHE_VERSION }}-yarn-{{ checksum \"package.json\" }}"
+          key: yarn-{{ .Environment.CACHE_VERSION }}-{{ checksum "package.json" }}
 
       - run:
           name: Setup Database
           command: *setup-database
 
-      - run:
-          name: Setup Database for Cypress Test
-          command: |-
-            export RAILS_ENV="test"
-            export RACK_ENV="test"
-            bundle exec rake db:seed --trace
+      # - run:
+      #     name: Setup Database for Cypress Test
+      #     command: |-
+      #       export RAILS_ENV="test"
+      #       export RACK_ENV="test"
+      #       bundle exec rake db:seed --trace
 
-      - run:
-          name: Rails Server
-          command: |-
-            gem install foreman --no-doc
-            foreman start -f Procfile.test
-          background: true
+      # - run:
+      #     name: Rails Server
+      #     command: |-
+      #       gem install foreman --no-doc
+      #       foreman start -f Procfile.test
+      #     background: true
 
-      - run:
-          name: Run Cypress
-          command: yarn cypress run --project ./test
+      # - run:
+      #     name: Run Cypress
+      #     command: yarn cypress run
 
-      - store_artifacts:
-          path: test/cypress/videos
+      # - store_artifacts:
+      #     path: test/cypress/videos
 
-      - store_artifacts:
-          path: log
+      # - store_artifacts:
+      #     path: log
 
       - run:
           name: Precompile Assets
@@ -260,18 +264,20 @@ jobs:
     <<: *defaults
     parallelism: 1
     steps:
+      - setup_remote_docker: 
+         docker_layer_caching: true
+
       - attach_workspace:
           at: .
 
       - restore_cache:
           key: v2-repo-{{ .Environment.CIRCLE_SHA1 }}
 
-      # - restore_cache:
-      #     keys:
-      #       - gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
-      #       - gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Branch }}
-      #       - gem-cache-{{ .Environment.CACHE_VERSION }}
-
+      - restore_cache:
+          keys:
+            - gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+            - gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Branch }}
+            - gem-cache-{{ .Environment.CACHE_VERSION }}
 
       - run:
           name: Install Mysql Libraries
@@ -320,13 +326,12 @@ jobs:
       - run:
           name: Notify Code Climate
           command: ./cc-test-reporter after-build -r $CC_TEST_REPORTER_ID -t simplecov --exit-code $? || true
-workflows:
-  version: 2
 
+workflows:
   build_and_coverage:
     jobs:
       - build
-      - test
+      - rspec
       - coverage:
           requires:
-            - test
+            - rspec

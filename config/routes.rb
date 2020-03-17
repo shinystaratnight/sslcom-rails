@@ -2,8 +2,8 @@
 
 require 'domain_constraint'
 
-SslCom::Application.routes.draw do
-  mount Rswag::Ui::Engine => '/api'
+Rails.application.routes.draw do
+  mount Rswag::Ui::Engine => '/api' if defined?(Rswag)
   mount Delayed::Web::Engine, at: '/jobs', constraints: AdminConstraint.new
   mount LetterOpenerWeb::Engine, at: '/letter_opener' if Rails.env.development?
 
@@ -94,7 +94,6 @@ SslCom::Application.routes.draw do
 
   resources :password_resets, except: [:show]
 
-  resources :products
 
   constraints DomainConstraint.new(%w[reseller.ssl.com reseller.ssl.local]) do
     resources :resellers, only: %i[index new] do

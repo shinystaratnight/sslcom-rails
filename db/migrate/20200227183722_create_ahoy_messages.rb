@@ -6,6 +6,6 @@ class CreateAhoyMessages < ActiveRecord::Migration
       t.string :mailer
       t.text :subject
       t.timestamp :sent_at
-    end
+    end unless table_exists?(:ahoy_messages)
   end
 end

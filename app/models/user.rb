@@ -5,7 +5,7 @@
 # Table name: users
 #
 #  id                  :integer          not null, primary key
-#  active              :boolean          default(FALSE), not null
+#  active              :boolean          default("0"), not null
 #  address1            :string(255)
 #  address2            :string(255)
 #  address3            :string(255)
@@ -21,7 +21,7 @@
 #  default_ssl_account :integer
 #  duo_enabled         :string(255)      default("enabled")
 #  email               :string(255)      not null
-#  failed_login_count  :integer          default(0), not null
+#  failed_login_count  :integer          default("0"), not null
 #  first_name          :string(255)
 #  is_auth_token       :boolean
 #  last_login_at       :datetime
@@ -29,14 +29,14 @@
 #  last_name           :string(255)
 #  last_request_at     :datetime
 #  login               :string(255)      not null
-#  login_count         :integer          default(0), not null
+#  login_count         :integer          default("0"), not null
 #  main_ssl_account    :integer
 #  max_teams           :integer
 #  openid_identifier   :string(255)
 #  organization        :string(255)
 #  password_salt       :string(255)
 #  perishable_token    :string(255)      not null
-#  persist_notice      :boolean          default(FALSE)
+#  persist_notice      :boolean          default("0")
 #  persistence_token   :string(255)      not null
 #  phone               :string(255)
 #  po_box              :string(255)
@@ -84,8 +84,6 @@ class User < ApplicationRecord
                   :default_ssl_account, :ssl_account_id, :role_ids, :role_change_type, :main_ssl_account, :max_teams, :persist_notice
 
   accepts_nested_attributes_for :assignments
-
-
 
   before_save :should_reset_perishable_token
 
@@ -235,12 +233,11 @@ class User < ApplicationRecord
 
   def create_ssl_account(role_ids = nil, attr = {})
     save if new_record?
-    new_ssl_account = SslAccount.create(attr)
-    ssl_accounts << new_ssl_account
-    set_roles_for_account(new_ssl_account, role_ids) if role_ids&.length&.positive?
-    set_default_ssl_account(new_ssl_account) unless default_ssl_account
-    approve_account(ssl_account_id: new_ssl_account.id)
-    new_ssl_account
+    account = ssl_accounts.create(attr)
+    set_roles_for_account(account, role_ids) if role_ids&.length&.positive?
+    set_default_ssl_account(account) unless default_ssl_account
+    approve_account(ssl_account_id: account.id)
+    account
   end
 
   def set_default_ssl_account(account)
@@ -470,7 +467,7 @@ class User < ApplicationRecord
   def assign_roles(params)
     role_ids = params[:user][:role_ids]
     cur_account_id = params[:user][:ssl_account_id]
-    new_role_ids = role_ids.compact.reject(&:blank?).map(&:to_i) unless role_ids.nil? || cur_account_id.nil?
+    new_role_ids = role_ids.compact.reject(&:blank?) unless role_ids.nil? || cur_account_id.nil?
     if new_role_ids.present?
       current_account = SslAccount.find cur_account_id
       current_role_ids = roles_for_account current_account
@@ -492,7 +489,7 @@ class User < ApplicationRecord
 
   class << self
     extend Memoist
-    def roles_list_for_user(user, exclude_roles = nil)
+    def roles_list_for_user(user, exclude_roles = [])
       exclude_roles ||= []
       exclude_roles << Role.where.not(id: Role.get_select_ids_for_owner).map(&:id).uniq unless user.is_system_admins?
       exclude_roles.any? ? Role.where.not(id: exclude_roles.flatten) : Role.all
@@ -709,29 +706,6 @@ class User < ApplicationRecord
       user.login = obj
       user.crypted_password = matched.password
     end
-  end
-
-  # temporary function to assist in migration
-  if MIGRATING_FROM_LEGACY
-    def update_record_without_timestamping
-      class << self
-        def record_timestamps
-          false
-        end
-      end
-
-      save(false)
-
-      class << self
-        def record_timestamps
-          super
-        end
-      end
-    end
-  end
-
-  def apply_omniauth(omniauth)
-    self.email = omniauth['user_info']['email']
   end
 
   def make_admin

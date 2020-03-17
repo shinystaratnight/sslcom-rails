@@ -23,7 +23,7 @@ module Concerns
             joins{ domain_control_validations }.where{ domain_control_validations.workflow_state == 'satisfied' }.uniq
           end
         end
-        has_many    :domain_control_validations, through: :certificate_names
+        has_many    :domain_control_validations, through: :certificate_names, source: 'domain_control_validation'
         has_many    :url_callbacks, dependent: :destroy, as: :callbackable
         has_many    :taggings, dependent: :destroy, as: :taggable
         has_many    :tags, through: :taggings

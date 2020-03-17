@@ -70,6 +70,7 @@ class Order < ApplicationRecord
   include V2MigrationProgressAddon
   include SmimeClientEnrollable
   include Pagable
+  include WorkflowActiverecord
 
   belongs_to  :billable, :polymorphic => true, touch: true
   belongs_to  :address
@@ -389,7 +390,6 @@ class Order < ApplicationRecord
     Money.new(amount.cents)-discount_amount
   end
 
-  include Workflow
   workflow_column :state
 
   workflow do

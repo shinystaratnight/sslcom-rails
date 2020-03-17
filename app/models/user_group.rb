@@ -6,7 +6,7 @@
 #  description    :text(65535)
 #  name           :string(255)
 #  notes          :text(65535)
-#  roles          :string(255)      default([])
+#  roles          :string(255)      default("--- []")
 #  ssl_account_id :integer
 #
 # Indexes
@@ -17,5 +17,4 @@
 class UserGroup < ApplicationRecord
   belongs_to :ssl_account
   has_and_belongs_to_many :users
-  easy_roles :roles
 end
