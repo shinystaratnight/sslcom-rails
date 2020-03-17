@@ -385,7 +385,7 @@ class SslAccount < ApplicationRecord
 
   def is_registered_reseller?
     Rails.cache.fetch("#{cache_key}/is_registered_reseller") do
-      has_role?('reseller') && reseller.try('complete?')
+      decorate.has_role?('reseller') && reseller.try('complete?')
     end
   end
 
