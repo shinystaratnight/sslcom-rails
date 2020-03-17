@@ -53,7 +53,7 @@ exclude_patterns:
   - "config/"
   - "db/"
   - "**/node_modules/"
-  - "test/"
+  - "spec/"
   - "**/vendor/"
   - "*.md"
   - ".*"
