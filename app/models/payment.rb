@@ -7,7 +7,7 @@
 #  cleared_at   :datetime
 #  confirmation :string(255)
 #  currency     :string(255)
-#  lock_version :integer          default(0)
+#  lock_version :integer          default("0")
 #  voided_at    :datetime
 #  created_at   :datetime
 #  updated_at   :datetime
