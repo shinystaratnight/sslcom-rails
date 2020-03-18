@@ -5,6 +5,8 @@
 # Version of your assets, change this if you want to expire all your assets.
 Rails.application.config.assets.version = '1.0'
 
+Rails.application.config.assets.paths << Rails.root.join('node_modules')
+
 # Add additional assets to the asset load path
 # Rails.application.config.assets.paths << Emoji.images_path
 
@@ -15,5 +17,3 @@ Rails.application.config.assets.precompile += %w[ ssl_com.css certassure.css com
                                                   promise.min.js webcrypto-liner.shim.js asmcrypto.min.js elliptic.min.js bundle.umd.min.js bundle.pkcs.umd.min.js
                                                   psl.min.js form.authy.js u2f-api.js Duo-Web-v2.js jquery.timepicker.min.js invoice.css bootstrap_style.sass
                                                   jquery.timepicker.min.css delayed/web/application.css font_awesome5.js]
-
-Rails.application.config.assets.paths << Rails.root.join('node_modules')

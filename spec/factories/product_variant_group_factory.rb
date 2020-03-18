@@ -23,7 +23,6 @@ FactoryBot.define do
     status { 'live' }
     description { 'Domain Names' }
     text_only_description { 'Domain Names' }
-    serial { nil }
     published_as { 'live' }
 
     association :variantable, factory: %i[certificate evuccssl]
