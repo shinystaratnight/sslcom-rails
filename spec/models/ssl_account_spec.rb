@@ -40,6 +40,8 @@ describe SslAccount do
 
   subject { SslAccount.new }
 
+  it_behaves_like 'it has roles'
+
   context 'attributes' do
     it { should have_db_column :acct_number }
     it { should have_db_column :roles }

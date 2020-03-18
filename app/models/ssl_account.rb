@@ -35,6 +35,7 @@ class SslAccount < ApplicationRecord
   include CollectiveIdea::Acts::Billable
   extend Memoist
 
+  easy_roles :roles
   using_access_control
   acts_as_billable
 
