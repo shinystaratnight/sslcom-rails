@@ -7,7 +7,7 @@
 #  merchant             :string(255)
 #  merchant_response    :text(65535)
 #  message              :string(255)
-#  partial_refund       :boolean          default(FALSE)
+#  partial_refund       :boolean          default("0")
 #  reason               :string(255)
 #  reference            :string(255)
 #  status               :string(255)

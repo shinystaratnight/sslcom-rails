@@ -4,7 +4,7 @@
 #
 #  id          :integer          not null, primary key
 #  certificate :text(65535)
-#  counter     :integer          default(0), not null
+#  counter     :integer          default("0"), not null
 #  key_handle  :string(255)
 #  nick_name   :string(255)
 #  public_key  :string(255)

@@ -10,7 +10,7 @@
 #  document_updated_at           :datetime
 #  notes                         :string(255)
 #  publish_to_site_seal          :boolean
-#  publish_to_site_seal_approval :boolean          default(FALSE)
+#  publish_to_site_seal_approval :boolean          default("0")
 #  random_secret                 :string(255)
 #  reviewer                      :string(255)
 #  satisfies_validation_methods  :string(255)
