@@ -42,6 +42,8 @@ describe SslAccount do
 
   it_behaves_like 'it has roles'
 
+  it_behaves_like 'it has roles'
+
   context 'attributes' do
     it { is_expected.to have_db_column :acct_number }
     it { is_expected.to have_db_column :roles }
