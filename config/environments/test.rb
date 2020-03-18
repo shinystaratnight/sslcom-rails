@@ -56,7 +56,7 @@ Rails.application.configure do
 
   ActiveMerchant::Billing::Base.mode = :test
 
-  config.serve_static_assets = true
+  config.serve_static_files = true
   config.static_cache_control = 'public, max-age=3600'
 
   GATEWAY_TEST_CODE = 1.0
