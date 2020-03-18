@@ -140,6 +140,8 @@ group :development, :test do
 end
 
 group :test do
+  gem 'capybara'
+  gem 'capybara-screenshot'
   gem 'database_cleaner-active_record'
   gem 'mocha'
   gem 'rspec_junit_formatter'
