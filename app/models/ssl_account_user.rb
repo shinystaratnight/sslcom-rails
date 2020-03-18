@@ -6,11 +6,11 @@
 #
 #  id             :integer          not null, primary key
 #  approval_token :string(255)
-#  approved       :boolean          default(FALSE)
+#  approved       :boolean          default("0")
 #  declined_at    :datetime
 #  invited_at     :datetime
 #  token_expires  :datetime
-#  user_enabled   :boolean          default(TRUE)
+#  user_enabled   :boolean          default("1")
 #  created_at     :datetime
 #  updated_at     :datetime
 #  ssl_account_id :integer          not null

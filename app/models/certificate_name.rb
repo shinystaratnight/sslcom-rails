@@ -6,7 +6,7 @@
 #
 #  id                     :integer          not null, primary key
 #  acme_token             :string(255)
-#  caa_passed             :boolean          default(FALSE)
+#  caa_passed             :boolean          default("0")
 #  email                  :string(255)
 #  is_common_name         :boolean
 #  name                   :string(255)
