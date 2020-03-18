@@ -16,7 +16,7 @@ class NotificationGroupsManager
 
       certificate = domain.x509_cert
       domain.verify_result.nil? ? scan_status = 'not found' : scan_status = domain.verify_result
-    
+
       if certificate.present?
         scanned_cert = ScannedCertificate.find_or_initialize_by(serial: certificate.serial.to_s)
         if scanned_cert.new_record?
@@ -25,10 +25,10 @@ class NotificationGroupsManager
           scanned_cert.save
           scan_logs << build_scan_log(domain.notification_group, scanned_cert, domain, scan_status, certificate.not_after.to_date, scan_group)
         else
-          last_scan = ScanLog.where(scanned_certificate_id: scanned_cert.id).last
+          last_scan = ScanLog.where(notification_group_id: domain.notification_group.id, scanned_certificate_id: scanned_cert.id).last
           if last_scan.nil?
             scan_logs << build_scan_log(domain.notification_group, scanned_cert, domain, scan_status, certificate.not_after.to_date, scan_group)
-          elsif scan_status != last_scan.scan_status
+          elsif (scan_status != last_scan.scan_status) && Settings.send_domain_digest_notice
             NotificationGroupMailer.domain_digest_notice(scan_status, domain.notification_group, scanned_cert, domain.url, domain.notification_group.notification_groups_contacts.pluck(:email_address).uniq, domain.notification_group.ssl_account).deliver_later
             scan_logs << build_scan_log(domain.notification_group, scanned_cert, domain, scan_status, certificate.not_after.to_date, scan_group)
           else

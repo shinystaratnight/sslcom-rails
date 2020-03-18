@@ -6,5 +6,5 @@ class CreateWeakKeys < ActiveRecord::Migration
       t.integer   :size
     end
     add_index   :weak_keys, :sha1_hash
-  end
+  end unless table_exists?(:weak_keys)
 end

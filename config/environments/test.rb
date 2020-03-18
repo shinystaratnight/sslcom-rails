@@ -36,6 +36,7 @@ Rails.application.configure do
   # ActionMailer::Base.deliveries array.
   config.action_mailer.delivery_method = :test
   config.action_mailer.perform_deliveries = true
+  config.active_job.queue_adapter = :test
   config.action_mailer.default_url_options = { host: 'localhost:3000' }
 
   config.after_initialize do
@@ -56,7 +57,7 @@ Rails.application.configure do
 
   ActiveMerchant::Billing::Base.mode = :test
 
-  config.serve_static_assets = true
+  config.serve_static_files = true
   config.static_cache_control = 'public, max-age=3600'
 
   GATEWAY_TEST_CODE = 1.0
