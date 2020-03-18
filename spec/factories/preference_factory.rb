@@ -12,9 +12,7 @@
 FactoryBot.define do
   factory :preference do
     name { 'reminder_notice_triggers' }
-    owner_id { }
     owner_type { 'SslAccount' }
     group_type { 'ReminderTrigger' }
-    value { }
   end
 end

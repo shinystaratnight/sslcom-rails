@@ -37,6 +37,10 @@ Style/EvalWithLocation:
   Enabled: false
 Style/ClassAndModuleChildren:
   Enabled: false
+Style/MutableConstant:
+  Enabled: false
+Style/FrozenStringLiteralComment:
+  Enabled: false
 Layout/HeredocIndentation:
   Enabled: false
 Layout/SpaceInLambdaLiteral:

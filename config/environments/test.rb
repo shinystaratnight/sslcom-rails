@@ -1,4 +1,4 @@
-# frozen_string_literal: true
+# frozen_string_literal: false
 
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
@@ -55,8 +55,6 @@ Rails.application.configure do
   config.active_support.deprecation = :stderr
 
   ActiveMerchant::Billing::Base.mode = :test
-
-  config.eager_load = false
 
   config.serve_static_assets = true
   config.static_cache_control = 'public, max-age=3600'

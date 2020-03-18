@@ -21,8 +21,8 @@
 FactoryBot.define do
   factory :assignment do
     ssl_account
-    role
-    user
+    # role
+    # user
 
     trait :sysadmin do
       after(:create) do |assignment|

@@ -4,7 +4,6 @@ ENV['RAILS_ENV'] = 'test'
 require File.expand_path('../config/environment', __dir__)
 require 'rails/test_help'
 require 'minitest/rails'
-require 'minitest/rails/capybara'
 require 'minitest/reporters'
 require 'minitest/bang'
 
@@ -59,11 +58,6 @@ end
 
 module ActionDispatch
   class IntegrationTest
-    # Reset sessions and driver between tests
-    teardown do
-      Capybara.reset_sessions!
-      Capybara.use_default_driver
-    end
   end
 end
 
