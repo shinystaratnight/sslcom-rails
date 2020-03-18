@@ -72,6 +72,8 @@ describe User do
     initialize_server_software
   end
 
+  it_behaves_like 'it has roles'
+
   describe 'attributes' do
     it { should have_db_column :login }
     it { should have_db_column :first_name }
