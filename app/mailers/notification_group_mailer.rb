@@ -1,6 +1,6 @@
 class NotificationGroupMailer < ApplicationMailer
   # Developer note: the default 'to' recipients are temporary
-  default to: ['danielr@ssl.com','leo@ssl.com'], from: 'reminder@ssl.com', bcc: 'info@ssl.com', return_path: "reminder@ssl.com"
+  default to: ['danielr@ssl.com', 'leo@ssl.com'], from: "reminder@ssl.com", bcc: 'info@ssl.com', return_path: "reminder@ssl.com"
   track user: -> { User.find_by(email: message.to) }
 
   def expiration_notice(notification_group, scanned_certificates, contacts, ssl_account)
