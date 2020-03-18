@@ -69,7 +69,7 @@ class CertificateContact < Contact
     
   validates :first_name, :last_name, :email, :phone, presence: true
   validates :email, email: true
-  
+  easy_roles :roles
   attr_accessor :update_parent  
 
   def <=>(contact)
