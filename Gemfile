@@ -92,7 +92,7 @@ gem 'whois-parser'
 gem 'in_place_editing'
 gem 'mailboxer'
 gem 'memoist'
-gem 'bootstrap'
+gem 'bootstrap-sass'
 gem 'bootstrap-datepicker-rails'
 gem 'timezone', '~> 1.0'
 # required by sws-a1
