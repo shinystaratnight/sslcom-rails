@@ -4,6 +4,8 @@ class SslAccountDecorator < Draper::Decorator
   delegate_all
 
   def has_role?(role)
+    return false if object.roles.blank?
+
     role_id = Role.get_role_id(role)
     object.roles.split(',').map(&:to_i).include? role_id
   end
