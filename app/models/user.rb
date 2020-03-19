@@ -93,12 +93,14 @@ class User < ApplicationRecord
   end
 
   after_create do |u|
-    if u.as_reseller
-      u.create_ssl_account([Role.get_reseller_id])
-      user.ssl_account.add_role! 'new_reseller'
-      user.ssl_account.set_reseller_default_prefs
-    else
-      u.create_ssl_account([Role.get_owner_id])
+    if u.ssl_accounts.empty?
+      if u.as_reseller
+        u.create_ssl_account([Role.get_reseller_id])
+        u.ssl_account.add_role! 'new_reseller'
+        u.ssl_account.set_reseller_default_prefs
+      else
+        u.create_ssl_account([Role.get_owner_id])
+      end
     end
   end
 
@@ -426,13 +428,13 @@ class User < ApplicationRecord
 
   def browsing_history(l_bound = nil, h_bound = nil, sort = 'asc')
     l_bound = '01/01/2000' if l_bound.blank?
-    s = l_bound =~ /\// ? '%m/%d/%Y' : '%m-%d-%Y'
+    s = l_bound =~ %r{/} ? '%m/%d/%Y' : '%m-%d-%Y'
     start = Date.strptime l_bound, s
     finish =
       if h_bound.blank?
         DateTime.now
       elsif h_bound.is_a?(String)
-        f = h_bound =~ /\// ? '%m/%d/%Y' : '%m-%d-%Y'
+        f = h_bound =~ %r{/} ? '%m/%d/%Y' : '%m-%d-%Y'
         Date.strptime h_bound, f
       else
         h_bound.to_datetime
@@ -440,7 +442,7 @@ class User < ApplicationRecord
     count = 0
     visitor_tokens.map do |vt|
       ["route #{count += 1}"] +
-        vt.trackings.order('created_at ' + sort).where { created_at >> (start..finish) }.map { |t| "from #{t.referer.url.blank? ? "unknown" : t.referer.url} to #{t.tracked_url.url} at #{t.created_at}" }.uniq
+        vt.trackings.order('created_at ' + sort).where { created_at >> (start..finish) }.map { |t| "from #{t.referer.url.blank? ? 'unknown' : t.referer.url} to #{t.tracked_url.url} at #{t.created_at}" }.uniq
     end
   end
 
@@ -509,9 +511,8 @@ class User < ApplicationRecord
     def get_user_accounts_roles(user)
       # e.g.: {17198:[4], 29:[17, 18], 15:[17, 18, 19, 20]}
       Rails.cache.fetch("#{user.cache_key}/get_user_accounts_roles") do
-        user.ssl_accounts.inject({}) do |all, s|
+        user.ssl_accounts.each_with_object({}) do |s, all|
           all[s.id] = user.assignments.where(ssl_account_id: s.id).pluck(:role_id).uniq
-          all
         end
       end
     end
@@ -581,10 +582,10 @@ class User < ApplicationRecord
   def certificate_order_by_ref(ref)
     CertificateOrder.unscoped.includes(:certificate_contents).find(
       Rails.cache.fetch("#{cache_key}/certificate_order_id/#{ref}") do
-        co = CertificateOrder.unscoped {
+        co = CertificateOrder.unscoped do
           (is_system_admins? ?
         CertificateOrder : certificate_orders).find_by_ref(ref)
-        }
+        end
         co.id unless co.blank?
       end
     )
@@ -630,7 +631,7 @@ class User < ApplicationRecord
   end
 
   def is_owner?(target_account = nil)
-    # TODO need to separate out reseller from owner
+    # TODO: need to separate out reseller from owner
     role_symbols(target_account) & [Role::OWNER.to_sym, Role::RESELLER.to_sym]
   end
 
@@ -704,7 +705,7 @@ class User < ApplicationRecord
     end
   end
 
-  # TODO this is unfinished, going to instead email all
+  # TODO: this is unfinished, going to instead email all
   # duplicate_v2_users emails the corresponding consolidated username
   def self.consolidate_login(obj, password)
     user = duplicate_logins(obj).last.user

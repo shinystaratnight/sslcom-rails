@@ -36,6 +36,7 @@ Dir[File.join('./spec/support/**/*.rb')].sort.each { |f| require f }
 RSpec.configure do |config|
   config.include FactoryBot::Syntax::Methods
   config.include SetupHelpers
+  config.include ActiveSupport::Testing::TimeHelpers
 
   config.use_transactional_fixtures = false
 

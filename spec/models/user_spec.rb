@@ -204,7 +204,6 @@ describe User do
     let!(:owner) { create(:user) }
 
     it '#create_ssl_account it should create/approve/add ssl_account' do
-      owner.create_ssl_account
       assert_equal 1, owner.ssl_accounts.count
 
       previous_ssl_account = owner.default_ssl_account
@@ -229,18 +228,18 @@ describe User do
     end
 
     it '#approve_account it should approve account and clear token info' do
-      owner = create(:user, :owner)
-      default_ssl = owner.ssl_account
+      this = create(:user, :owner)
+      default_ssl = this.ssl_account
       ssl_params = { ssl_account_id: default_ssl.id }
-      owner.set_approval_token(ssl_params)
-      ssl = owner.ssl_account_users.where(ssl_params).first
+      this.set_approval_token(ssl_params)
+      ssl = this.ssl_account_users.where(ssl_params).first
 
       expect(ssl.approval_token).not_to be_nil
       expect(ssl.token_expires).not_to be_nil
       ssl.approved.should be_falsey
 
-      owner.send(:approve_account, ssl_params)
-      ssl = owner.ssl_account_users.where(ssl_params).first
+      this.send(:approve_account, ssl_params)
+      ssl = this.ssl_account_users.where(ssl_params).first
 
       expect(ssl.approval_token).to be_nil
       expect(ssl.token_expires).to be_nil
@@ -248,7 +247,7 @@ describe User do
     end
 
     it '#get_all_approved_accounts return approved accounts' do
-      owner = create(:user, :owner)
+      # owner = create(:user, :owner)
       default_ssl = owner.ssl_account
       ssl_params = { ssl_account_id: default_ssl.id }
       assert_equal 1, owner.get_all_approved_accounts.count
@@ -259,7 +258,7 @@ describe User do
   end
 
   describe 'role helper methods' do
-    let!(:owner) { create(:user, :owner) }
+    let(:owner) { create(:user, :owner) }
 
     xit '#set_roles_for_account it should set roles' do
       prev_roles = owner.roles.count
@@ -297,8 +296,8 @@ describe User do
     end
 
     it '#get_roles_by_name it should return all assignments' do
-      assert_equal 1, owner.get_roles_by_name(Role::OWNER).count
-      assert_equal 0, owner.get_roles_by_name(Role::BILLING).count
+      this = create(:user)
+      expect(this.get_roles_by_name(Role::OWNER).count).to eq 1
     end
 
     xit '#update_account_role it should update assignment' do
@@ -464,12 +463,13 @@ describe User do
     end
 
     it '#approval_token_not_expired true when not expired' do
-      assert user_w_token.approval_token_not_expired?(ssl_account_id: user_w_token.ssl_accounts.first.id)
+      expect(user_w_token.approval_token_not_expired?(ssl_account_id: user_w_token.ssl_accounts.first.id)).to be_truthy
     end
 
     it '#approval_token_not_expired false when expired' do
-      user_w_token.ssl_account_users.first.update(token_expires: (DateTime.now - 2.hours))
-      user_w_token.approval_token_not_expired?(ssl_account_id: user_w_token.ssl_accounts.first.id).should be_falsey
+      travel_to(Time.current + 400.days) do
+        expect(user_w_token.approval_token_not_expired?(ssl_account_id: user_w_token.ssl_accounts.first.id)).to be_falsey
+      end
     end
 
     it '#pending_account_invites? it should return correct boolean' do

@@ -48,6 +48,8 @@ Layout/SpaceInLambdaLiteral:
   Enabled: false
 Style/StructInheritance:
   Enabled: false
+Layout/SpaceInsideBlockBraces:
+  Enabled: false
 Style/PerlBackrefs:
   Enabled: false
 Style/RedundantBegin:
