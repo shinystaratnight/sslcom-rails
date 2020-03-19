@@ -40,6 +40,7 @@ Vagrant.configure('2') do |config|
     echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
     sudo apt install -y yarn
     sudo apt-get install -y chromium-chromedriver
+    sudo apt-get install -y imagemagick
   SHELL
 
   # Install Ruby2.6 from Brightbox APT repository

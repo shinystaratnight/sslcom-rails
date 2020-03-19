@@ -12,6 +12,7 @@ RSpec.feature 'Authentications', type: :feature do
 
   before(:each) do
     SystemAudit.stubs(:create).returns(true)
+    User.any_instance.stubs(:authenticated_avatar_url).returns('https://github.blog/wp-content/uploads/2012/03/codercat.jpg?fit=896%2C896')
   end
 
   it 'logins in user who registers automatically', js: true do
@@ -26,13 +27,12 @@ RSpec.feature 'Authentications', type: :feature do
     expect(page).to have_content('SSL.com Customer Dashboard')
   end
 
-  it 'allows an existing user to login', js: true do
-    user = create(:user, :owner)
+  it 'allows existing user to login and logout', js: true do
     user.deliver_auto_activation_confirmation!
     visit login_path
     fill_in 'user_session_login', with: user.login
     fill_in 'user_session_password', with: 'Testing_ssl+1'
-    find('input[alt="submit"]').click
+    find('#btn_login').click
     expect(page).to have_content("username: #{user.login}")
   end
 
@@ -115,54 +115,53 @@ end
 #   cy.contains('Customer login')
 # })
 
-# it('fails gracefully when attempting to reset a password with nonexistent email', function () {
-#   cy.visit('/password_resets/new')
+  it 'fails gracefully when attempting to reset password with nonexistent login', js: true do
+    visit new_password_reset_path
+    fill_in 'login', with: 'nonexistent'
+    find('.password_resets_btn').click
+    expect(page).to have_content 'No user was found with that login'
+  end
 
-#   cy.get('form').within(($form) => {
-#     cy.get('input[name="email"]').type('nonexistent@ssl.com')
-#   })
-#   cy.get('.password_resets_btn').click()
-#   cy.contains('No user was found with that email')
-# })
+  it 'allows existing user to reset password using login', js: true do
+    visit new_password_reset_path
+    fill_in 'login', with: user.login
+    find('.password_resets_btn').click
+    expect(page).to have_content 'Customer login'
+  end
 
-# it('requires Duo 2FA when logging in as super_user', function () {
-#   cy.appFactories([
-#     ['create', 'user', 'super_user', {login: 'pickles'}],
-#   ])
+  it 'allows existing user to reset password using email', js: true do
+    visit new_password_reset_path
+    fill_in 'email', with: user.email
+    find('.password_resets_btn').click
+    expect(page).to have_content 'Customer login'
+  end
 
-#   cy.visit('/user_session/new')
+  it 'fails gracefully when attempting to reset a password with nonexistent email', js: true do
+    visit new_password_reset_path
+    fill_in 'email', with: 'nonexistent@ssl.com'
+    find('.password_resets_btn').click
+    expect(page).to have_content 'No user was found with that email'
+  end
 
-#   // Fill In And Submit Login Form
-#   cy.get('form').within(($form) => {
-#     cy.get('input[name="user_session[login]"]').type('pickles')
-#     cy.get('input[name="user_session[password]"]').type('Testing_ssl+1')
-#     cy.root().submit()
-#   })
+  xit 'requires Duo 2FA when logging in as sysadmin', js: true do
+    sys_admin = create(:user, :sys_admin)
+    visit login_path
+    fill_in 'user_session_login', with: sys_admin.login
+    fill_in 'user_session_password', with: 'Testing_ssl+1'
+    find('#btn_login').click
+    expect(page).to have_content 'Duo'
+  end
 
-#   // Prompted for Duo 2FA
-#   cy.location().should((loc) => {
-#     expect(loc.pathname).to.eq('/user_session/duo')
-#   })
-# })
+  it 'allows sysadmin to login as another user', js: true do
+    sys_admin = create(:user, :sys_admin)
+    visit login_path
+    fill_in 'user_session_login', with: sys_admin.login
+    fill_in 'user_session_password', with: 'Testing_ssl+1'
+    find('#btn_login').click
 
-# it('allows sysadmin to login as another user', function () {
-#   cy.appFactories([['create', 'user', 'sysadmin', {login: 'tyson' }]]).then((_results) => {
-#     cy.setCookie('skip_duo', 'true')
-#     cy.visit('/user_session/new')
-
-#     cy.get('form').within(($form) => {
-#       cy.get('input[name="user_session[login]"]').type('tyson')
-#       cy.get('input[name="user_session[password]"]').type('Testing_ssl+1')
-#       cy.root().submit()
-#     })
-
-#     cy.location().should((loc) => {
-#       expect(loc.pathname).to.contain('/team')
-#       expect(loc.pathname).to.contain('/account')
-#     })
-#     cy.get('#manage_certificates').click()
-#     cy.get('td.dropdown').eq(2).click()
-#     cy.contains('login as').click()
-#     cy.contains('pickles')
-#   })
-# })
+    click_on 'Users'
+    find("tr[alt='#{user[:id]}']").click
+    find('a', text: 'login as').click
+    expect(page).to have_content user.name
+  end
+end
