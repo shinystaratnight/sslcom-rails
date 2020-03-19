@@ -149,6 +149,11 @@ jobs:
           name: Setup Database
           command: *setup-database
 
+      # - run:
+      #     name: Run tests
+      #     command: |
+      #       bundle exec rspec -p 5 -f progress -f RspecJunitFormatter -o rspec/rspec.xml $(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=filesize)
+
       - run:
           name: Precompile Assets
           command: *precompile-assets
@@ -274,6 +279,16 @@ jobs:
           command: |
             ./cc-test-reporter sum-coverage --output - codeclimate.*.json | ./cc-test-reporter upload-coverage --debug --input -
 
+      - attach_workspace:
+          at: ~/sslcom-rails
+      - run:
+          name: Install Code Climate Test Reporter
+          command: |
+            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+            chmod +x ./cc-test-reporter
+      - run:
+          command: |
+            ./cc-test-reporter sum-coverage --output - codeclimate.*.json | ./cc-test-reporter upload-coverage --debug --input -
 workflows:
   build_and_coverage:
     jobs:
