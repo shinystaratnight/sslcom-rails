@@ -149,10 +149,9 @@ jobs:
           name: Setup Database
           command: *setup-database
 
-      # - run:
-      #     name: Run tests
-      #     command: |
-      #       bundle exec rspec -p 5 -f progress -f RspecJunitFormatter -o rspec/rspec.xml $(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=filesize)
+      - run:
+          name: Precompile Assets
+          command: *precompile-assets
 
       - run:
           name: Precompile Assets
