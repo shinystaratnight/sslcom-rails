@@ -5,6 +5,13 @@ RSpec.feature 'Authentications', type: :feature do
     initialize_roles
     initialize_triggers
     initialize_server_software
+    initialize_certificates
+  end
+
+  let!(:user) { create(:user, :owner) }
+
+  before(:each) do
+    SystemAudit.stubs(:create).returns(true)
   end
 
   it 'logins in user who registers automatically', js: true do
@@ -16,6 +23,16 @@ RSpec.feature 'Authentications', type: :feature do
     fill_in 'user_password_confirmation', with: 'Testing_ssl+1'
     find('input[name="tos"]').click
     find('input[alt="Register"]').click
+    expect(page).to have_text('SSL.com Customer Dashboard')
+  end
+
+  it 'allows an existing user to login', js: true do
+    user = create(:user, :owner)
+    user.deliver_auto_activation_confirmation!
+    visit login_path
+    fill_in 'user_session_login', with: user.login
+    fill_in 'user_session_password', with: 'Testing_ssl+1'
+    find('input[alt="submit"]').click
     expect(page).to have_text('SSL.com Customer Dashboard')
   end
 end

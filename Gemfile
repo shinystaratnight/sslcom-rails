@@ -126,12 +126,15 @@ group :development, :test do
   gem 'factory_bot_rails'
   gem 'faker'
   gem 'pry-rails'
+  gem 'pry-remote'
+  gem 'pry-nav'
+  gem 'pry-rescue'
+  gem 'pry-stack_explorer'
   gem 'rspec-rails'
   gem 'better_errors'
   gem 'binding_of_caller'
   gem 'builder'
   gem 'bullet'
-  gem 'pry-remote'
   gem 'rubocop', require: false
   gem 'rubocop-rails', require: false
   gem 'rubocop-rspec', require: false

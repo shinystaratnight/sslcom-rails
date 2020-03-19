@@ -28,7 +28,6 @@ class UserSessionsController < ApplicationController
     key_handles = []
     cart_and_u2fs = lambda {
       @user_session = UserSession.new(params[:user_session].to_h)
-
       if @user_session.save && !@user_session.user.is_disabled?
         shopping_cart_to_cookie
         # Fetch existing U2Fs from your db

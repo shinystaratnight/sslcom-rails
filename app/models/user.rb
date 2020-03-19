@@ -79,7 +79,7 @@ class User < ApplicationRecord
 
   OWNED_MAX_TEAMS = 3
 
-  attr_accessor :changing_password, :admin_update, :role_ids, :role_change_type
+  attr_accessor :changing_password, :admin_update, :role_ids, :role_change_type, :as_reseller
   attr_accessible :login, :email, :password, :password_confirmation, :openid_identifier, :status, :assignments_attributes, :first_name, :last_name,
                   :default_ssl_account, :ssl_account_id, :role_ids, :role_change_type, :main_ssl_account, :max_teams, :persist_notice
 
@@ -90,6 +90,16 @@ class User < ApplicationRecord
   before_create do |u|
     u.status = 'enabled'
     u.max_teams = OWNED_MAX_TEAMS unless u.max_teams
+  end
+
+  after_create do |u|
+    if u.as_reseller
+      u.create_ssl_account([Role.get_reseller_id])
+      user.ssl_account.add_role! 'new_reseller'
+      user.ssl_account.set_reseller_default_prefs
+    else
+      u.create_ssl_account([Role.get_owner_id])
+    end
   end
 
   delegate :tier_suffix, to: :ssl_account, prefix: false, allow_nil: true
