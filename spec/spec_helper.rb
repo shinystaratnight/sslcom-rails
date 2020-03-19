@@ -69,3 +69,4 @@ end
 Capybara.default_driver = :selenium
 Capybara.javascript_driver = :selenium_chrome_headless
 Capybara.server = :puma, { Silent: true }
+Capybara.default_max_wait_time = 5
