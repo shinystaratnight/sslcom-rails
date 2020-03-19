@@ -288,6 +288,7 @@ jobs:
       - run:
           command: |
             ./cc-test-reporter sum-coverage --output - codeclimate.*.json | ./cc-test-reporter upload-coverage --debug --input -
+
 workflows:
   build_and_coverage:
     jobs:
