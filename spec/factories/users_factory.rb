@@ -79,10 +79,7 @@ FactoryBot.define do
     end
 
     trait :sys_admin do
-      after(:create) do |user|
-        user.create_ssl_account([Role.get_role_id('reseller')])
-        user.default_ssl_account = user.ssl_account.id
-      end
+      after(:create, &:make_admin)
     end
 
     Role::ALL.each do |role_name|

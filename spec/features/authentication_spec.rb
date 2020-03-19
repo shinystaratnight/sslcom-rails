@@ -12,6 +12,7 @@ RSpec.feature 'Authentications', type: :feature do
 
   before(:each) do
     SystemAudit.stubs(:create).returns(true)
+    stub_paperclip(User)
     User.any_instance.stubs(:authenticated_avatar_url).returns('https://github.blog/wp-content/uploads/2012/03/codercat.jpg?fit=896%2C896')
   end
 
@@ -143,8 +144,8 @@ end
     expect(page).to have_content 'No user was found with that email'
   end
 
-  xit 'requires Duo 2FA when logging in as sysadmin', js: true do
-    sys_admin = create(:user, :sys_admin)
+  xit 'requires Duo 2FA when logging in as super_user', js: true do
+    sys_admin = create(:user, :super_user)
     visit login_path
     fill_in 'user_session_login', with: sys_admin.login
     fill_in 'user_session_password', with: 'Testing_ssl+1'
@@ -152,16 +153,17 @@ end
     expect(page).to have_content 'Duo'
   end
 
-  it 'allows sysadmin to login as another user', js: true do
-    sys_admin = create(:user, :sys_admin)
+  xit 'allows sysadmin to login as another user', js: true do
+    other = create(:user)
+    admin = create(:user, :sys_admin)
+    admin.make_admin
     visit login_path
-    fill_in 'user_session_login', with: sys_admin.login
+    fill_in 'user_session_login', with: admin.login
     fill_in 'user_session_password', with: 'Testing_ssl+1'
     find('#btn_login').click
-
     click_on 'Users'
-    find("tr[alt='#{user[:id]}']").click
+    first('td.dropdown').click
     find('a', text: 'login as').click
-    expect(page).to have_content user.name
+    expect(page).to have_content("username: #{other.login}")
   end
 end
