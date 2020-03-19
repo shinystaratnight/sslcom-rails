@@ -43,7 +43,7 @@ RSpec.feature 'Authentications', type: :feature do
     fill_in 'user_session_login', with: user.login
     fill_in 'user_session_password', with: 'Testing_ssl+1'
     find('input[alt="submit"]').click
-    expect(page).to have_text('SSL.com Customer Dashboard')
+    expect(page).to have_content("username: #{user.login}")
   end
 end
 
