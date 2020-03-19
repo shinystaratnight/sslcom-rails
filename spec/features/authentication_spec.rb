@@ -35,6 +35,16 @@ RSpec.feature 'Authentications', type: :feature do
     find('input[alt="submit"]').click
     expect(page).to have_content("username: #{user.login}")
   end
+
+  it 'allows an existing user to login', js: true do
+    user = create(:user, :owner)
+    user.deliver_auto_activation_confirmation!
+    visit login_path
+    fill_in 'user_session_login', with: user.login
+    fill_in 'user_session_password', with: 'Testing_ssl+1'
+    find('input[alt="submit"]').click
+    expect(page).to have_text('SSL.com Customer Dashboard')
+  end
 end
 
 # it('allows user to register and login', function () {
