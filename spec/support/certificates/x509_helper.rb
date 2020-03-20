@@ -25,8 +25,7 @@ module X509Helper
       ef.create_extension('subjectKeyIdentifier', 'hash')
     ]
 
-    cert.add_extension ef.create_extension('authorityKeyIdentifier',
-                                           'keyid:always,issuer:always')
+    cert.add_extension ef.create_extension('authorityKeyIdentifier', 'keyid:always,issuer:always')
 
     cert.sign key, OpenSSL::Digest::SHA1.new
     cert
