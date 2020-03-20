@@ -88,9 +88,9 @@ FactoryBot.define do
         value = 365
         amount = 13_300
         group_duration = certificate.product_variant_groups.create(
-          title:                 'Domains',
-          status:                'live',
-          description:           'Domain Names',
+          title: 'Domains',
+          status: 'live',
+          description: 'Domain Names',
           text_only_description: 'Domain Names',
           display_order: 2,
           serial: nil,
@@ -99,16 +99,16 @@ FactoryBot.define do
         (1..2).to_a.each do |n|
           ProductVariantItem.create(
             product_variant_group_id: group_duration.id,
-            title:                    "#{n} Year Domain For 3 Domains (ea domain)",
-            status:                   'live',
-            description:              "#{n} year domain for 3 domains (ea domain)",
-            text_only_description:    "#{n} year domain for 3 domains (ea domain)",
-            amount:                   (n == 1 ? amount : amount * 1.6),
-            display_order:            n,
-            item_type:                'ucc_domain',
-            value:                    value,
-            serial:                   "sslcomevucc256ssl#{n}yrdm",
-            published_as:             'live'
+            title: "#{n} Year Domain For 3 Domains (ea domain)",
+            status: 'live',
+            description: "#{n} year domain for 3 domains (ea domain)",
+            text_only_description: "#{n} year domain for 3 domains (ea domain)",
+            amount: (n == 1 ? amount : amount * 1.6),
+            display_order: n,
+            item_type: 'ucc_domain',
+            value: value,
+            serial: "sslcomevucc256ssl#{n}yrdm",
+            published_as: 'live'
           )
           value += 365
         end
@@ -118,25 +118,25 @@ FactoryBot.define do
         (1..2).to_a.each do |n|
           ProductVariantItem.create(
             product_variant_group_id: group_duration.id,
-            title:                    "#{n} Year Domain For Domains 4-200 (ea domain)",
-            status:                   'live',
-            description:              "#{n} year domain for domains 4-200 (ea domain)",
-            text_only_description:    "#{n} year domain for domains 4-200 (ea domain)",
-            amount:                   (n == 1 ? amount : amount * 1.6),
-            display_order:            n,
-            item_type:                'ucc_domain',
-            value:                    value,
-            serial:                   "sslcomevucc256ssl#{n}yradm",
-            published_as:             'live'
+            title: "#{n} Year Domain For Domains 4-200 (ea domain)",
+            status: 'live',
+            description: "#{n} year domain for domains 4-200 (ea domain)",
+            text_only_description: "#{n} year domain for domains 4-200 (ea domain)",
+            amount: (n == 1 ? amount : amount * 1.6),
+            display_order: n,
+            item_type: 'ucc_domain',
+            value: value,
+            serial: "sslcomevucc256ssl#{n}yradm",
+            published_as: 'live'
           )
           value += 365
         end
 
         # Server Licenses
         group_server = certificate.product_variant_groups.create(
-          title:                 'Server Licenses',
-          status:                'live',
-          description:           'Server Licenses',
+          title: 'Server Licenses',
+          status: 'live',
+          description: 'Server Licenses',
           text_only_description: 'Server Licenses',
           display_order: 3,
           serial: nil,
@@ -183,28 +183,28 @@ FactoryBot.define do
       after(:create) do |certificate|
         value = 730
         group_duration = certificate.product_variant_groups.create(
-          title:                 'Duration',
-          status:                'live',
-          description:           'Duration',
+          title: 'Duration',
+          status: 'live',
+          description: 'Duration',
           text_only_description: 'Duration',
-          display_order:         1,
-          serial:                nil,
-          published_as:          'live'
+          display_order: 1,
+          serial: nil,
+          published_as: 'live'
         )
 
         (1..3).to_a.each do |n|
           ProductVariantItem.create(
             product_variant_group_id: group_duration.id,
-            title:                    "#{n} Years",
-            status:                   'live',
-            description:              "#{n} years",
-            text_only_description:    "#{n} years",
-            amount:                   value * 10.7,
-            display_order:            n,
-            item_type:                'duration',
-            value:                    value,
-            serial:                   "sslcombasic256ssl#{n}yr",
-            published_as:             'live'
+            title: "#{n} Years",
+            status: 'live',
+            description: "#{n} years",
+            text_only_description: "#{n} years",
+            amount: value * 10.7,
+            display_order: n,
+            item_type: 'duration',
+            value: value,
+            serial: "sslcombasic256ssl#{n}yr",
+            published_as: 'live'
           )
           value += 365
         end
@@ -230,9 +230,9 @@ FactoryBot.define do
       after(:create) do |certificate|
         value = 365
         group_duration = certificate.product_variant_groups.create(
-          title:                 'Duration',
-          status:                'live',
-          description:           'Duration',
+          title: 'Duration',
+          status: 'live',
+          description: 'Duration',
           text_only_description: 'Duration',
           display_order: 1,
           serial: nil,
@@ -241,16 +241,16 @@ FactoryBot.define do
         (1..2).to_a.each do |n|
           ProductVariantItem.create(
             product_variant_group_id: group_duration.id,
-            title:                    "#{n} Years",
-            status:                   'live',
-            description:              "#{n} years",
-            text_only_description:    "#{n} years",
-            amount:                   value * 10.7,
-            display_order:            n,
-            item_type:                'duration',
-            value:                    value,
-            serial:                   "sslcomev256ssl#{n}yr",
-            published_as:             'live'
+            title: "#{n} Years",
+            status: 'live',
+            description: "#{n} years",
+            text_only_description: "#{n} years",
+            amount: value * 10.7,
+            display_order: n,
+            item_type: 'duration',
+            value: value,
+            serial: "sslcomev256ssl#{n}yr",
+            published_as: 'live'
           )
           value += 365
         end
@@ -276,9 +276,9 @@ FactoryBot.define do
         # Server License
         value = 365
         group_server = certificate.product_variant_groups.create(
-          title:                 'Server Licenses',
-          status:                'live',
-          description:           'Server Licenses',
+          title: 'Server Licenses',
+          status: 'live',
+          description: 'Server Licenses',
           text_only_description: 'Server Licenses',
           display_order: 3,
           serial: nil,
@@ -302,9 +302,9 @@ FactoryBot.define do
         end
         # Domain
         group_domain = certificate.product_variant_groups.create(
-          title:                 'Domains',
-          status:                'live',
-          description:           'Domain Names',
+          title: 'Domains',
+          status: 'live',
+          description: 'Domain Names',
           text_only_description: 'Domain Names',
           display_order: 2,
           serial: nil,
@@ -315,16 +315,16 @@ FactoryBot.define do
         (1..3).to_a.each do |n|
           ProductVariantItem.create(
             product_variant_group_id: group_domain.id,
-            title:                    "#{n} Year Domain For 3 Domains (ea domain)",
-            status:                   'live',
-            description:              "#{n} year domain for 3 domains (ea domain)",
-            text_only_description:    "#{n} year domain for 3 domains (ea domain)",
-            amount:                   value * 10.7,
-            display_order:            n,
-            item_type:                'ucc_domain',
-            value:                    value,
-            serial:                   "sslcomucc256ssl#{n}yrdm",
-            published_as:             'live'
+            title: "#{n} Year Domain For 3 Domains (ea domain)",
+            status: 'live',
+            description: "#{n} year domain for 3 domains (ea domain)",
+            text_only_description: "#{n} year domain for 3 domains (ea domain)",
+            amount: value * 10.7,
+            display_order: n,
+            item_type: 'ucc_domain',
+            value: value,
+            serial: "sslcomucc256ssl#{n}yrdm",
+            published_as: 'live'
           )
           value += 365
         end
@@ -333,16 +333,16 @@ FactoryBot.define do
         (1..3).to_a.each do |n|
           ProductVariantItem.create(
             product_variant_group_id: group_domain.id,
-            title:                    "#{n} Year Domain For Domains 4-2000 (ea domain)",
-            status:                   'live',
-            description:              "#{n} Year Domain For Domains 4-2000 (ea domain)",
-            text_only_description:    "#{n} Year Domain For Domains 4-2000 (ea domain)",
-            amount:                   value * 6,
-            display_order:            n,
-            item_type:                'ucc_domain',
-            value:                    value,
-            serial:                   "sslcomucc256ssl#{n}yradm",
-            published_as:             'live'
+            title: "#{n} Year Domain For Domains 4-2000 (ea domain)",
+            status: 'live',
+            description: "#{n} Year Domain For Domains 4-2000 (ea domain)",
+            text_only_description: "#{n} Year Domain For Domains 4-2000 (ea domain)",
+            amount: value * 6,
+            display_order: n,
+            item_type: 'ucc_domain',
+            value: value,
+            serial: "sslcomucc256ssl#{n}yradm",
+            published_as: 'live'
           )
           value += 365
         end
@@ -351,16 +351,16 @@ FactoryBot.define do
         (1..3).to_a.each do |n|
           ProductVariantItem.create(
             product_variant_group_id: group_domain.id,
-            title:                    "#{n} Year Wildcard Domain",
-            status:                   'live',
-            description:              "#{n} Year Wildcard Domain",
-            text_only_description:    "#{n} Year Wildcard Domain",
-            amount:                   value * 14,
-            display_order:            n,
-            item_type:                'ucc_domain',
-            value:                    value,
-            serial:                   "sslcomucc256ssl#{n}yrwcdm",
-            published_as:             'live'
+            title: "#{n} Year Wildcard Domain",
+            status: 'live',
+            description: "#{n} Year Wildcard Domain",
+            text_only_description: "#{n} Year Wildcard Domain",
+            amount: value * 14,
+            display_order: n,
+            item_type: 'ucc_domain',
+            value: value,
+            serial: "sslcomucc256ssl#{n}yrwcdm",
+            published_as: 'live'
           )
           value += 365
         end
@@ -386,9 +386,9 @@ FactoryBot.define do
       after(:create) do |certificate|
         value = 365
         group_server = certificate.product_variant_groups.create(
-          title:                 'Server Licenses',
-          status:                'live',
-          description:           'Server Licenses',
+          title: 'Server Licenses',
+          status: 'live',
+          description: 'Server Licenses',
           text_only_description: 'Server Licenses',
           display_order: 2,
           serial: nil,
@@ -412,9 +412,9 @@ FactoryBot.define do
         end
         value = 365
         group_duration = certificate.product_variant_groups.create(
-          title:                 'Duration',
-          status:                'live',
-          description:           'Duration',
+          title: 'Duration',
+          status: 'live',
+          description: 'Duration',
           text_only_description: 'Duration',
           display_order: 1,
           serial: nil,
@@ -423,16 +423,16 @@ FactoryBot.define do
         (1..3).to_a.each do |n|
           ProductVariantItem.create(
             product_variant_group_id: group_duration.id,
-            title:                    "#{n} Years",
-            status:                   'live',
-            description:              "#{n} years",
-            text_only_description:    "#{n} years",
-            amount:                   value * 10.7,
-            display_order:            n,
-            item_type:                'duration',
-            value:                    value,
-            serial:                   "sslcomwc256ssl#{n}yr",
-            published_as:             'live'
+            title: "#{n} Years",
+            status: 'live',
+            description: "#{n} years",
+            text_only_description: "#{n} years",
+            amount: value * 10.7,
+            display_order: n,
+            item_type: 'duration',
+            value: value,
+            serial: "sslcomwc256ssl#{n}yr",
+            published_as: 'live'
           )
           value += 365
         end
@@ -458,9 +458,9 @@ FactoryBot.define do
       after(:create) do |certificate|
         value = 365
         group = certificate.product_variant_groups.create(
-          title:                 'Duration',
-          status:                'live',
-          description:           'Duration',
+          title: 'Duration',
+          status: 'live',
+          description: 'Duration',
           text_only_description: 'Duration',
           display_order: 1,
           serial: nil,
@@ -470,16 +470,16 @@ FactoryBot.define do
         (1..3).to_a.each do |n|
           ProductVariantItem.create(
             product_variant_group_id: group.id,
-            title:                    "#{n} Years",
-            status:                   'live',
-            description:              "#{n} years",
-            text_only_description:    "#{n} years",
-            amount:                   value * 10.7,
-            display_order:            n,
-            item_type:                'duration',
-            value:                    value,
-            serial:                   "sslcomov256ssl#{n}yr",
-            published_as:             'live'
+            title: "#{n} Years",
+            status: 'live',
+            description: "#{n} years",
+            text_only_description: "#{n} years",
+            amount: value * 10.7,
+            display_order: n,
+            item_type: 'duration',
+            value: value,
+            serial: "sslcomov256ssl#{n}yr",
+            published_as: 'live'
           )
           value += 365
         end
@@ -508,9 +508,9 @@ FactoryBot.define do
 
       after(:create) do |certificate|
         group = certificate.product_variant_groups.create(
-          title:                 'Duration',
-          status:                'live',
-          description:           'Duration',
+          title: 'Duration',
+          status: 'live',
+          description: 'Duration',
           text_only_description: 'Duration',
           display_order: 1,
           serial: nil,
@@ -519,16 +519,16 @@ FactoryBot.define do
 
         ProductVariantItem.create(
           product_variant_group_id: group.id,
-          title:                    '90 Days',
-          status:                   'live',
-          description:              '90 days',
-          text_only_description:    '90 days',
-          amount:                   0,
-          display_order:            1,
-          item_type:                'duration',
-          value:                    90,
-          serial:                   'dv256ssl1yr',
-          published_as:             'live'
+          title: '90 Days',
+          status: 'live',
+          description: '90 days',
+          text_only_description: '90 days',
+          amount: 0,
+          display_order: 1,
+          item_type: 'duration',
+          value: 90,
+          serial: 'dv256ssl1yr',
+          published_as: 'live'
         )
       end
     end
@@ -552,29 +552,29 @@ FactoryBot.define do
       after(:create) do |certificate|
         # Domain
         group_domain = certificate.product_variant_groups.create(
-          title:                 'Domains',
-          status:                'live',
-          description:           'Domain Names',
+          title: 'Domains',
+          status: 'live',
+          description: 'Domain Names',
           text_only_description: 'Domain Names',
-          display_order:         2,
-          serial:                nil,
-          published_as:          'live'
+          display_order: 2,
+          serial: nil,
+          published_as: 'live'
         )
         # For 3 Domains
         value = 365
         (1..3).to_a.each do |n|
           ProductVariantItem.create(
             product_variant_group_id: group_domain.id,
-            title:                    "#{n} Year Domain For 3 Domains (ea domain)",
-            status:                   'live',
-            description:              "#{n} year domain for 3 domains (ea domain)",
-            text_only_description:    "#{n} year domain for 3 domains (ea domain)",
-            amount:                   value * 10.7,
-            display_order:            n,
-            item_type:                'ucc_domain',
-            value:                    value,
-            serial:                   "sslcompremium256ssl#{n}yrdm",
-            published_as:             'live'
+            title: "#{n} Year Domain For 3 Domains (ea domain)",
+            status: 'live',
+            description: "#{n} year domain for 3 domains (ea domain)",
+            text_only_description: "#{n} year domain for 3 domains (ea domain)",
+            amount: value * 10.7,
+            display_order: n,
+            item_type: 'ucc_domain',
+            value: value,
+            serial: "sslcompremium256ssl#{n}yrdm",
+            published_as: 'live'
           )
           value += 365
         end
@@ -583,16 +583,16 @@ FactoryBot.define do
         (1..3).to_a.each do |n|
           ProductVariantItem.create(
             product_variant_group_id: group_domain.id,
-            title:                    "#{n} Year Domain For Domains 4-200 (ea domain)",
-            status:                   'live',
-            description:              "#{n} Year Domain For Domains 4-200 (ea domain)",
-            text_only_description:    "#{n} Year Domain For Domains 4-200 (ea domain)",
-            amount:                   value * 10.7,
-            display_order:            n,
-            item_type:                'ucc_domain',
-            value:                    value,
-            serial:                   "sslcompremium256ssl#{n}yradm",
-            published_as:             'live'
+            title: "#{n} Year Domain For Domains 4-200 (ea domain)",
+            status: 'live',
+            description: "#{n} Year Domain For Domains 4-200 (ea domain)",
+            text_only_description: "#{n} Year Domain For Domains 4-200 (ea domain)",
+            amount: value * 10.7,
+            display_order: n,
+            item_type: 'ucc_domain',
+            value: value,
+            serial: "sslcompremium256ssl#{n}yradm",
+            published_as: 'live'
           )
           value += 365
         end
@@ -618,9 +618,9 @@ FactoryBot.define do
       after(:create) do |certificate|
         value = 2190
         group_duration = certificate.product_variant_groups.create(
-          title:                 'Duration',
-          status:                'live',
-          description:           'Duration',
+          title: 'Duration',
+          status: 'live',
+          description: 'Duration',
           text_only_description: 'Duration',
           display_order: 1,
           serial: nil,
@@ -630,16 +630,16 @@ FactoryBot.define do
         (6..10).to_a.each do |n|
           ProductVariantItem.create(
             product_variant_group_id: group_duration.id,
-            title:                    "#{n} Years",
-            status:                   'live',
-            description:              "#{n} years",
-            text_only_description:    "#{n} years",
-            amount:                   value * 10.7,
-            display_order:            n,
-            item_type:                'duration',
-            value:                    value,
-            serial:                   "sslcomcodesigning256ssl#{n}yr",
-            published_as:             'live'
+            title: "#{n} Years",
+            status: 'live',
+            description: "#{n} years",
+            text_only_description: "#{n} years",
+            amount: value * 10.7,
+            display_order: n,
+            item_type: 'duration',
+            value: value,
+            serial: "sslcomcodesigning256ssl#{n}yr",
+            published_as: 'live'
           )
           value += 365
         end
@@ -665,9 +665,9 @@ FactoryBot.define do
       after(:create) do |certificate|
         value = 365
         group_duration = certificate.product_variant_groups.create(
-          title:                 'Duration',
-          status:                'live',
-          description:           'Duration',
+          title: 'Duration',
+          status: 'live',
+          description: 'Duration',
           text_only_description: 'Duration',
           display_order: 1,
           serial: nil,
@@ -677,16 +677,16 @@ FactoryBot.define do
         (1..3).to_a.each do |n|
           ProductVariantItem.create(
             product_variant_group_id: group_duration.id,
-            title:                    "#{n} Years",
-            status:                   'live',
-            description:              "#{n} years",
-            text_only_description:    "#{n} years",
-            amount:                   value * 10.7,
-            display_order:            n,
-            item_type:                'duration',
-            value:                    value,
-            serial:                   "sslcomevcodesigning256ssl#{n}yr",
-            published_as:             'live'
+            title: "#{n} Years",
+            status: 'live',
+            description: "#{n} years",
+            text_only_description: "#{n} years",
+            amount: value * 10.7,
+            display_order: n,
+            item_type: 'duration',
+            value: value,
+            serial: "sslcomevcodesigning256ssl#{n}yr",
+            published_as: 'live'
           )
           value += 365
         end

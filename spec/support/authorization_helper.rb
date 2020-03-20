@@ -150,12 +150,12 @@ module AuthorizationHelper
 
   def co_state_renewal
     CertificateContent.first.csr.signed_certificate
-      .update(expiration_date: 80.days.from_now)
+                      .update(expiration_date: 80.days.from_now)
   end
 
   def co_state_expire
     CertificateContent.first.csr.signed_certificate
-      .update(expiration_date: 5.days.ago)
+                      .update(expiration_date: 5.days.ago)
   end
 
   #
@@ -168,7 +168,7 @@ module AuthorizationHelper
 
     @logged_in_ssl_acct = user.ssl_account
     @logged_in_ssl_acct.billing_profiles << create(:billing_profile)
-    @year_3_id          = ProductVariantItem.find_by(serial:  "sslcombasic256ssl3yr").id
+    @year_3_id = ProductVariantItem.find_by(serial: 'sslcombasic256ssl3yr').id
     # Purchase basic non-wildcard certificate
     # =========================================================
     visit buy_certificate_path 'basicssl'
@@ -179,7 +179,7 @@ module AuthorizationHelper
     find('input[name="next"]').click
     # Submit and validate CSR Key for non-wilrdcard certificate
     # =========================================================
-    visit certificate_orders_path   # Certificate Orders
+    visit certificate_orders_path # Certificate Orders
     # Step 1: Submit CSR
     click_on 'submit csr'
     main_id = 'certificate_order_certificate_contents_attributes_0'
@@ -204,7 +204,6 @@ module AuthorizationHelper
     # Create SignedCertificate for non wildcard
     # =========================================================
     create(:signed_certificate, :nonwildcard_certificate_sslcom,
-      csr_id: Csr.where.not(certificate_content_id: nil).first.id
-    )
+           csr_id: Csr.where.not(certificate_content_id: nil).first.id)
   end
 end

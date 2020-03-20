@@ -32,6 +32,7 @@ describe Domain do
       it 'inherits search_domains' do
         expect(proc { described_class.search_domains('ssl') }).not_to raise_error
       end
+
       it 'inherits expired_validation' do
         expect(proc { described_class.expired_validation }).not_to raise_error
       end
