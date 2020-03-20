@@ -45,7 +45,7 @@ module Concerns
       end
 
       def fail_dcv
-        dcv.fail!
+        dcv.update_attribute(workflow_state: 'failed')
         false
       end
 
