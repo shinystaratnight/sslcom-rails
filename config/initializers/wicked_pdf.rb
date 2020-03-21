@@ -12,9 +12,9 @@
 
 wkhtmltopdf_executable = if Rails.env.production? || Rails.env.staging?
                            Rails.root.join('bin', 'wkhtmltopdf', 'wkhtmltox-0.12.4_linux-generic-amd64').to_s
-                         elsif RUBY_PLATFORM =~ /linux/
+                         elsif RUBY_PLATFORM.match?(/linux/)
                            Rails.root.join('bin', 'wkhtmltopdf', 'wkhtmltox-0.12.4_linux-generic-amd64').to_s
-                         elsif RUBY_PLATFORM =~ /mingw32/
+                         elsif RUBY_PLATFORM.match?(/mingw32/)
                            'C:\Program Files (x86)\wkhtmltopdf\wkhtmltopdf.exe'
                          else
                            Rails.root.join('bin', 'wkhtmltopdf', 'wkhtmltox-0.12.4_osx-cocoa-x86-64.pkg').to_s

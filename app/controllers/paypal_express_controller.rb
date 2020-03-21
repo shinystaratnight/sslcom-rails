@@ -98,7 +98,7 @@ class PaypalExpressController < ApplicationController
             notice = "Your purchase is now complete!"
             clear_cart
           else
-            notice = "Uh oh, not enough funds to complete the purchase. Please deposit #{((@ssl_account.funded_account.cents - @order.cents)*0.01).to_money}"
+            notice = "Uh oh, not enough funds to complete the purchase. Please deposit #{Money.new(((@ssl_account.funded_account.cents - @order.cents)*0.01))}"
           end
         end
       else

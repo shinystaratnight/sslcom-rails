@@ -11,6 +11,8 @@ require File.expand_path('../config/environment', __dir__)
 abort('The Rails environment is running in production mode!') if Rails.env.production?
 require 'rspec/rails'
 require 'shoulda/matchers'
+require 'authlogic'
+require 'authlogic/test_case'
 
 # Add additional requires below this line. Rails is not loaded until this point!
 
@@ -38,8 +40,10 @@ RSpec.configure do |config|
   config.include SetupHelpers
   config.include ActiveSupport::Testing::TimeHelpers
   config.include PaperclipMacros
+  config.include Authlogic::TestCase
 
   config.use_transactional_fixtures = false
+  config.render_views
 
   config.before(:suite) do
     if config.use_transactional_fixtures?
@@ -64,11 +68,11 @@ RSpec.configure do |config|
     end
   end
 
-  config.before(:each) do
+  config.before do
     DatabaseCleaner.start
   end
 
-  config.append_after(:each) do
+  config.append_after do
     DatabaseCleaner.clean
   end
 

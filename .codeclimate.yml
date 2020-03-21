@@ -28,6 +28,7 @@ plugins:
     enabled: false # Duplicates Rubocop
   rubocop:
     enabled: true
+    channel: rubocop-0-79
     checks:
       Rubocop/Layout/AlignHash:
         enabled: false

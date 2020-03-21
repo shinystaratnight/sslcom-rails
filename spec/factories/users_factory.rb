@@ -87,8 +87,10 @@ FactoryBot.define do
         after(:create) do |user|
           next if role_name == 'owner'
 
-          user.create_ssl_account([Role.get_role_id(role_name)])
-          user.default_ssl_account = user.ssl_account.id
+          user.create_ssl_account
+          user.set_roles_for_account(
+            user.ssl_account, [Role.find_by(name: role_name).id]
+          )
         end
       end
     end
