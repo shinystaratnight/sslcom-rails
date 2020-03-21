@@ -26,7 +26,7 @@
   %p
     To create a new test certificate order, simply choose the product and duration of the certificate below and click
     the 'Create Test Order' button.
-    =form_tag "#{(is_sandbox? and Rails.env=~/development/i) ? '' : api_domain}/certificates", enforce_utf8: false, class: "create_test_order" do |f|
+    =form_tag "#{(is_sandbox? and Rails.env=~/development/i) ? '' : api_domain}/certificates", enforce_utf8: false, class: "create-test-order" do |f|
       =hidden_field_tag :account_key, ac.account_key
       =hidden_field_tag :secret_key, ac.secret_key
       %table#at_a_glance_header{style: "float: none"}
