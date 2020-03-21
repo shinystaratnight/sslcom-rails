@@ -110,7 +110,7 @@
 
       -roles = current_user.role_symbols(current_user.ssl_account).join(',').split(',')
       -unless roles.include?(Role::INDIVIDUAL_CERTIFICATE) && roles.size == 1
-        =submit_tag "Create Test Order"
+        =submit_tag "Create Test Order", class: 'btn-submit'
   %h3 2) API Call Method
   %p
     Copy-and-paste the cURL command listed below into a console or terminal prompt (cURL must be installed in order for this
