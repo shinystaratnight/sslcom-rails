@@ -1378,7 +1378,7 @@ jQuery(function($) {
       }
     });
 
-    $('form.create_test_order').ajaxForm({
+    $('form.create-test-order').ajaxForm({
       dataType: "json",
       beforeSubmit: function(){
         confirmed = confirm('Create Test SSL Order?');
@@ -1423,10 +1423,10 @@ jQuery(function($) {
         }
       });
     <%end%>
-    
+
     function populateContact(label, data) {
       if (label=='country') {
-        $("label[for='" + label + "']").siblings('select').val(data);  
+        $("label[for='" + label + "']").siblings('select').val(data);
       } else {
         $("label[for='" + label + "']").siblings('input').val(data);
       }
@@ -1442,7 +1442,7 @@ jQuery(function($) {
         lra.show();
       }
     }
-    
+
     $('#saved_contacts').change(function() {
       var list = [
         ['title', 'title'],
@@ -1482,7 +1482,7 @@ jQuery(function($) {
       });
       toggleValidateRecipient();
     });
-    
+
     $('.dropdown, .status_message, .expand, .subject_column > a').click(function(){
       var currentElmt = $(this);
 
@@ -1530,7 +1530,7 @@ jQuery(function($) {
     $('form[id^=edit_certificate_order] textarea').keyup(function(){
       $(this).parents().filter('form').ajaxSubmit();
     });
-    
+
     $('#registrant_contact').change(function() {
       if(this.checked) {
         $('#first_name').val($(this).data('first-name'));
