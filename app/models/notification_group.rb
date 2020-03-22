@@ -120,28 +120,30 @@ class NotificationGroup < ApplicationRecord
     domains.flatten!.uniq!
 
     if domains.any?
-      scan_logs = []
       domains.each do |domain|
-        ssl_client = SslClient.new(domain.gsub("*.", "www."), self.scan_port)
-        certificate = ssl_client.retrieve_x509_cert
-        scan_status = ssl_client.verify_result
-
-        if certificate.present?
-          scanned_cert = ScannedCertificate.find_or_initialize_by(serial: certificate.serial.to_s)
-          if scanned_cert.new_record?
-            scanned_cert.body = certificate.to_s
-            scanned_cert.decoded = certificate.to_text
-            scanned_cert.save
-          end
-          scan_logs << build_scan_log(self, scanned_cert, domain, scan_status, certificate.not_after.to_date, scan_group)
-        else
-          scan_status = 'not found' if scan_status.nil?
-          scan_logs << build_scan_log(self, nil, domain, scan_status, nil, scan_group)
-        end
-        send_domain_digest(scan_status, self, scanned_cert, domain, self.notification_groups_contacts, self.ssl_account)
+        delay.scan_domain(domain, scan_group)
       end
-      ScanLog.import scan_logs
     end
+  end
+
+  def scan_domain(domain, scan_group)
+    ssl_client = SslClient.new(domain.gsub("*.", "www."), self.scan_port)
+    certificate = ssl_client.retrieve_x509_cert
+    scan_status = ssl_client.verify_result
+
+    if certificate.present?
+      scanned_cert = ScannedCertificate.find_or_initialize_by(serial: certificate.serial.to_s)
+      if scanned_cert.new_record?
+        scanned_cert.body = certificate.to_s
+        scanned_cert.decoded = certificate.to_text
+        scanned_cert.save
+      end
+      create_scan_log(self, scanned_cert, domain, scan_status, certificate.not_after.to_date, scan_group)
+    else
+      scan_status = 'not found' if scan_status.nil?
+      create_scan_log(self, nil, domain, scan_status, nil, scan_group)
+    end
+    send_domain_digest(scan_status, self, scanned_cert, domain, self.notification_groups_contacts, self.ssl_account)
   end
 
   private
@@ -150,7 +152,7 @@ class NotificationGroup < ApplicationRecord
     NotificationGroupMailer.domain_digest_notice(scan_status, ng, scanned_cert, domain, contacts.pluck(:email_address).uniq, ssl_account).deliver_later
   end
 
-  def build_scan_log(ng, scanned_cert, domain, scan_status, exp_date, scan_group)
-    ScanLog.new(notification_group_id: ng.id, scanned_certificate_id: scanned_cert, domain_name: domain, scan_status: scan_status, expiration_date: exp_date, scan_group: scan_group)
+  def create_scan_log(ng, scanned_cert, domain, scan_status, exp_date, scan_group)
+    ScanLog.create(notification_group_id: ng.id, scanned_certificate_id: scanned_cert, domain_name: domain, scan_status: scan_status, expiration_date: exp_date, scan_group: scan_group)
   end
 end
