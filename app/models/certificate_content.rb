@@ -36,7 +36,7 @@
 class CertificateContent < ApplicationRecord
   extend Memoist
   include V2MigrationProgressAddon
-  include WorkflowActiverecord
+  include Workflow
   include Concerns::CertificateContent
   include Concerns::CertificateContent::Association
   include Concerns::CertificateContent::Callbacks

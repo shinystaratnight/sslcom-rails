@@ -40,7 +40,7 @@
 require 'public_suffix'
 
 class DomainControlValidation < ApplicationRecord
-  include WorkflowActiverecord
+  include Workflow
 
   has_many    :ca_dcv_requests, as: :api_requestable, dependent: :destroy
   belongs_to  :csr, touch: true # only for single domain certs

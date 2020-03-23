@@ -87,7 +87,7 @@ class Affiliate < ApplicationRecord
   validates_length_of   :email, :within => 3..100
   validates_format_of   :email, :with => /\A([^@\s]+)@((?:[-a-z0-9A-Z]+\.)+[a-zA-Z]{2,})\z/
 
-  # include WorkflowActiverecord
+  # include Workflow
   # workflow do
   #  state :new do
   #    event :submit_profile, :transitions_to => :profile_submitted
