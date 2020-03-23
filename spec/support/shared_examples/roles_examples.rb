@@ -1,7 +1,7 @@
 shared_examples_for 'it has roles' do
   subject { described_class.new }
 
-  context 'is_role?' do
+  context 'with role' do
     it { is_expected.to respond_to :has_role? }
     it { is_expected.to respond_to :is_admin? }
     it { is_expected.to respond_to :is_super_user? }
