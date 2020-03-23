@@ -18,7 +18,11 @@ RSpec.describe 'Contacts', type: :feature do
   end
 
   it 'can add an administrative contact', js: true do
-    user.ssl_account.funded_account.update_attributes(cents: 0)
+    login
+    Authorization::Maintenance.without_access_control do
+      user.ssl_account.funded_account.update_attributes(cents: 100_000)
+    end
+
     click_on 'BUY'
     certificate_order = create(:certificate_order, :with_contents, ssl_account_id: user.ssl_account.id)
     visit account_path(user.ssl_account(:default_team).to_slug)
