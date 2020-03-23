@@ -346,7 +346,7 @@
 #       assert_nil   items['registrant']
 #       assert_nil   items['validations']
 #       assert_nil   items['external_order_number']
-# 
+#
 #       # db records
 #       assert_equal 1, CaApiRequest.count
 #       assert_equal 1, Order.count

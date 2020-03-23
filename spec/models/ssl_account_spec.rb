@@ -34,20 +34,20 @@
 require 'rails_helper'
 
 describe SslAccount do
+  subject { described_class.new }
+
   before :all do
     initialize_roles
   end
 
-  subject { SslAccount.new }
-
   it_behaves_like 'it has roles'
 
   context 'attributes' do
-    it { should have_db_column :acct_number }
-    it { should have_db_column :roles }
-    it { should have_db_column :status }
-    it { should have_db_column :ssl_slug }
-    it { should have_db_column :company_name }
+    it { is_expected.to have_db_column :acct_number }
+    it { is_expected.to have_db_column :roles }
+    it { is_expected.to have_db_column :status }
+    it { is_expected.to have_db_column :ssl_slug }
+    it { is_expected.to have_db_column :company_name }
   end
 
   describe 'validations' do
@@ -57,18 +57,21 @@ describe SslAccount do
 
       assert_equal ['is too short (minimum is 2 characters)'], subject.errors.messages[:ssl_slug]
     end
+
     it '#ssl_slug should NOT be valid when over 20 characters' do
       subject.ssl_slug = 'overtwentycharacterslong'
       subject.validate
 
       assert_equal ['is too long (maximum is 20 characters)'], subject.errors.messages[:ssl_slug]
     end
+
     it '#ssl_slug should NOT be valid when empty string' do
       subject.ssl_slug = ''
       subject.validate
 
       assert_equal ['is too short (minimum is 2 characters)'], subject.errors.messages[:ssl_slug]
     end
+
     it '#ssl_slug should NOT be valid when not unique' do
       @dupe = create(:ssl_account, ssl_slug: 'dupe')
       subject.ssl_slug = 'dupe'
@@ -76,6 +79,7 @@ describe SslAccount do
 
       assert_equal ['has already been taken'], subject.errors.messages[:ssl_slug]
     end
+
     it '#ssl_slug should ignore case' do
       @dupe = create(:ssl_account, ssl_slug: 'dupe')
       subject.ssl_slug = 'DUPE'
@@ -83,29 +87,34 @@ describe SslAccount do
 
       assert_equal ['has already been taken'], subject.errors.messages[:ssl_slug]
     end
+
     it '#ssl_slug should be valid when nil' do
       subject.ssl_slug = nil
 
       subject.should be_valid
     end
+
     it '#company_name should NOT be valid under 2 characters' do
       subject.company_name = 'a'
       subject.validate
 
       ['is too short (minimum is 2 characters)'].should eq subject.errors.messages[:company_name]
     end
+
     it '#company_name should NOT be valid when over 20 characters' do
       subject.company_name = 'overtwentycharacterslong'
       subject.validate
 
       ['is too long (maximum is 20 characters)'].should eq subject.errors.messages[:company_name]
     end
+
     it '#company_name should NOT be valid when empty string' do
       subject.company_name = ''
       subject.validate
 
       ['is too short (minimum is 2 characters)'].should eq subject.errors.messages[:company_name]
     end
+
     it '#company_name should be valid when nil' do
       subject.company_name = nil
 
@@ -115,30 +124,36 @@ describe SslAccount do
 
   describe 'slug string validation' do
     it '#ssl_slug_valid? string "company" should be valid' do
-      SslAccount.ssl_slug_valid?('company').should be_truthy
+      described_class.ssl_slug_valid?('company').should be_truthy
     end
+
     it '#ssl_slug_valid? string w/underscore should be valid' do
-      SslAccount.ssl_slug_valid?('company_1').should be_truthy
+      described_class.ssl_slug_valid?('company_1').should be_truthy
     end
+
     it '#ssl_slug_valid? string w/dash should be valid' do
-      SslAccount.ssl_slug_valid?('company-1').should be_truthy
+      described_class.ssl_slug_valid?('company-1').should be_truthy
     end
+
     it '#ssl_slug_valid? string w/digits should be valid' do
-      SslAccount.ssl_slug_valid?('20160102').should be_truthy
+      described_class.ssl_slug_valid?('20160102').should be_truthy
     end
+
     it '#ssl_slug_valid? string using symbols should NOT be valid' do
       (%w[~ ! @ # $ % ^ & * ( ) = ` < > ? . , | [ ] / ; : ' "] + ['{', '}']).each do |symbol|
-        SslAccount.ssl_slug_valid?("team_#{symbol}").should be_falsey
+        described_class.ssl_slug_valid?("team_#{symbol}").should be_falsey
       end
     end
+
     it '#ssl_slug_valid? string using route names should NOT be valid' do
       %w[managed_users user_session].each do |named_route|
-        SslAccount.ssl_slug_valid?(named_route).should be_falsey
+        described_class.ssl_slug_valid?(named_route).should be_falsey
       end
     end
+
     it '#ssl_slug_valid? string not unique should NOT be valid' do
       create(:ssl_account, ssl_slug: 'dupe')
-      SslAccount.ssl_slug_valid?('dupe').should be_falsey
+      described_class.ssl_slug_valid?('dupe').should be_falsey
     end
   end
 

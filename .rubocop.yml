@@ -2,6 +2,7 @@
 
 require:
   - rubocop/cop/internal_affairs
+  - rubocop-rspec
 
 AllCops:
   Exclude:
@@ -134,4 +135,8 @@ Naming/FileName:
 Naming/PredicateName:
   Enabled: false
 Naming/AccessorMethodName:
+  Enabled: false
+RSpec/AnyInstance:
+  Enabled: false
+RSpec/BeforeAfterAll:
   Enabled: false

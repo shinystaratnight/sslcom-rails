@@ -7,7 +7,7 @@ Rails.application.configure do
   # test suite. You never need to work with it otherwise. Remember that
   # your test database is "scratch space" for the test suite and is wiped
   # and recreated between test runs. Don't rely on the data there!
-  config.cache_classes = Rails.env.cucumber? # ENV['CI'].present?
+  config.cache_classes = false # ENV['CI'].present?
 
   # Log error messages when you accidentally call methods on nil.
   config.whiny_nils = true
@@ -56,9 +56,6 @@ Rails.application.configure do
   config.active_support.deprecation = :stderr
 
   ActiveMerchant::Billing::Base.mode = :test
-
-  config.serve_static_files = true
-  config.static_cache_control = 'public, max-age=3600'
 
   GATEWAY_TEST_CODE = 1.0
 

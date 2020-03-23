@@ -73,11 +73,11 @@ describe CertificateOrdersController do
             "certificate_contents_attributes": {
               "0": {
                 "signing_request": numerical_domain_name,
-                "server_software_id": "1"
+                "server_software_id": '1'
               }
             }
           },
-          "common_name": "106.255.212.123",
+          "common_name": '106.255.212.123',
           "id": free_cert.ref.to_s
         }
 
@@ -97,11 +97,11 @@ describe CertificateOrdersController do
             "certificate_contents_attributes": {
               "0": {
                 "signing_request": numerical_domain_name,
-                "server_software_id": "1"
+                "server_software_id": '1'
               }
             }
           },
-          "common_name": "106.255.212.123",
+          "common_name": '106.255.212.123',
           "id": basicssl_cert.ref.to_s
         }
 
@@ -121,11 +121,11 @@ describe CertificateOrdersController do
             "certificate_contents_attributes": {
               "0": {
                 "signing_request": numerical_domain_name,
-                "server_software_id": "1"
+                "server_software_id": '1'
               }
             }
           },
-          "common_name": "106.255.212.123",
+          "common_name": '106.255.212.123',
           "id": ev_cert.ref.to_s
         }
 
@@ -143,12 +143,12 @@ describe CertificateOrdersController do
               "certificate_contents_attributes": {
                 "0": {
                   "signing_request": numerical_domain_name,
-                  "server_software_id": "1",
-                  "additional_domains": "106.255.212.123"
+                  "server_software_id": '1',
+                  "additional_domains": '106.255.212.123'
                 }
               }
             },
-            "common_name": "",
+            "common_name": '',
             "id": evucc_cert.ref.to_s
           }
 
@@ -166,12 +166,12 @@ describe CertificateOrdersController do
               "certificate_contents_attributes": {
                 "0": {
                   "signing_request": fqdn,
-                  "server_software_id": "1",
-                  "additional_domains": "example.com 106.255.212.123"
+                  "server_software_id": '1',
+                  "additional_domains": 'example.com 106.255.212.123'
                 }
               }
             },
-            "common_name": "",
+            "common_name": '',
             "id": evucc_cert.ref.to_s
           }
 
@@ -195,7 +195,7 @@ describe CertificateOrdersController do
     post :download_certificates, co_ids: co.id, format: :csv
     stubbed_certificate = build_stubbed(:certificate_with_certificate_order)
     CertificateOrder.any_instance.stubs(:certificate).returns(stubbed_certificate)
-    response.code.must_equal "200"
-    response.body.must_match "Order Ref,Order Label,Duration,Signed Certificate,Status,Effective Date,Expiration Date"
+    response.code.must_equal '200'
+    response.body.must_match 'Order Ref,Order Label,Duration,Signed Certificate,Status,Effective Date,Expiration Date'
   end
 end

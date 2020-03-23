@@ -55,16 +55,6 @@ module SetupHelpers
     ['Apache-ModSSL', 'Oracle', 'Amazon Load Balancer'].each{ |title| ServerSoftware.find_or_create_by(title: title) }
   end
 
-  def stub_server_software
-    software = ServerSoftware.all
-    software_set = []
-    ['Apache-ModSSL', 'Oracle', 'Amazon Load Balancer'].each_with_index do |s, i|
-      software_set << build_stubbed(:server_software, title: s, id: i)
-    end
-    software.stubs(:[]).returns(software_set)
-    ServerSoftware.stubs(:where).returns(software)
-  end
-
   def login(role: :owner)
     @user = create(:user, role)
     login_as(@user)
@@ -72,7 +62,7 @@ module SetupHelpers
   end
 
   def stub_login(role: :owner)
-    @user = build_stubbed(:user, id: rand(1000))
+    @user = build_stubbed(:user, role, id: rand(1000))
     ApplicationController.any_instance.stubs(:current_user).returns(@user)
   end
 
@@ -267,9 +257,5 @@ module SetupHelpers
     (1..5).to_a.each { |i| trigger_set << build_stubbed(:reminder_trigger, id: i, name: i) }
     triggers.stubs(:[]).returns(trigger_set)
     ReminderTrigger.stubs(:where).returns(triggers)
-  end
-
-  def stub_ssl_account_initial_setup
-    SslAccount.any_instance.stubs(:initial_setup).returns(true)
   end
 end
