@@ -18,7 +18,6 @@ RSpec.describe 'Contacts', type: :feature do
   end
 
   it 'can add an administrative contact', js: true do
-    login
     Authorization::Maintenance.without_access_control do
       user.ssl_account.funded_account.update_attributes(cents: 100_000)
     end
