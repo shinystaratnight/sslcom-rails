@@ -161,4 +161,5 @@ gem 'ed25519', '~> 1.2'
 gem 'active_model_serializers'
 gem 'draper'
 gem 'mini_magick'
-gem "aws-sdk-rails", "~> 2.1"
+gem 'aws-sdk-rails', '~> 2.1'
+gem 'aws-sdk', '~> 3.0'
