@@ -70,7 +70,7 @@ class Order < ApplicationRecord
   include V2MigrationProgressAddon
   include SmimeClientEnrollable
   include Pagable
-  include WorkflowActiverecord
+  include Workflow
 
   belongs_to  :billable, :polymorphic => true, touch: true
   belongs_to  :address

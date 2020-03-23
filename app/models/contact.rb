@@ -62,7 +62,7 @@
 class Contact < ApplicationRecord
   include V2MigrationProgressAddon
   include Filterable
-  include WorkflowActiverecord
+  include Workflow
   # include RefParam
 
   enum status: {

@@ -65,7 +65,7 @@ class CertificateOrder < ApplicationRecord
   extend Memoist
   include V2MigrationProgressAddon
   include Pagable
-  include WorkflowActiverecord
+  include Workflow
 
   acts_as_sellable cents: :amount, currency: false
   belongs_to  :ssl_account, touch: true
