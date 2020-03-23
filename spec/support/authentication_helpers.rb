@@ -1,18 +1,20 @@
-module AuthenticationHelper
+module AuthenticationHelpers
   def create_user(login = Faker::Internet.username(specifier: 8))
     @current_user = User.create!(
       login: login,
-      password: 'generic',
-      password_confirmation: 'generic',
+      password: 'Password123!',
+      password_confirmation: 'Password123!',
       email: Faker::Internet.safe_email
     )
+    @current_user.activate!(user: { password: 'Password123!', password_confirmation: 'Password123!' })
   end
 
   def login_user
-    visit '/login'
-    fill_in('login', with: @current_user.login)
-    fill_in('password', with: 'generic')
-    click_button('Login')
+    visit login_path
+    fill_in('user_session_login', with: @current_user.login)
+    fill_in('user_session_password', with: 'Password123!')
+    find('input#btn_login').click
+    expect(page).to have_content('SSL.com Customer Dashboard')
   end
 
   def logout_user
