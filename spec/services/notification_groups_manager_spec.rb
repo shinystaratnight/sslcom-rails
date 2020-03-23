@@ -3,10 +3,10 @@
 require 'rails_helper'
 
 describe NotificationGroupsManager do
-  before do
-    stub_roles
-    stub_triggers
-    stub_server_software
+  before(:all) do
+    initialize_roles
+    initialize_triggers
+    initialize_server_software
   end
 
   include ActiveJob::TestHelper

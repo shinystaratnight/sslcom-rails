@@ -138,3 +138,5 @@ Naming/AccessorMethodName:
   Enabled: false
 RSpec/AnyInstance:
   Enabled: false
+RSpec/BeforeAfterAll:
+  Enabled: false
