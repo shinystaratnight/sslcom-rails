@@ -43,7 +43,7 @@
               -else
                 =scan.scan_status
             %td
-              =scan.created_at.strftime("%b %d %Y, %H:%M")
+              =scan.created_at.strftime('%B %-d, %Y %l:%M%P') + " #{scan.created_at.time_zone.name}"
       -else
         %tr
           %td(colspan='4')
