@@ -1,12 +1,12 @@
 Scan update for Notification Group: #{@notification_group.friendly_name || @notification_group.ref}
 %br
 %br
-Scanned On: #{DateTime.current.strftime("%Y-%m-%d_%H:%M")}
+Scanned On: #{DateTime.current.strftime('%B %-d, %Y %l:%M%P') + Time.current.time_zone.name}
 %br
 %br
 Scan Status: #{@scan_status}
 %br
-Scanned Url: https://#{@domain}
+Scanned URL: https://#{@domain}
 %br
 - unless @scanned_certificate.nil?
   SSL Certificate Expires: #{@scanned_certificate.not_after.to_date}
@@ -18,7 +18,7 @@ Scanned Url: https://#{@domain}
   SSL Certificate Issuer DN: #{@scanned_certificate.issuer_dn}
 %br
 %br
-To modify the SSL/TLS reminders or disable them, please visit #{edit_notification_group_url(@ssl_account, @notification_group.id)}
+To modify the SSL/TLS reminders or disable them, please visit #{edit_notification_group_url(@ssl_account.to_slug, @notification_group.id, host: Settings.actionmailer_host)}
 %br
 %br
 Thank you for choosing SSL.com!
