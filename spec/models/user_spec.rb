@@ -75,14 +75,14 @@ describe User do
   it_behaves_like 'it has roles'
 
   describe 'attributes' do
-    it { should have_db_column :login }
-    it { should have_db_column :first_name }
-    it { should have_db_column :last_name }
-    it { should have_db_column :email }
-    it { should have_db_column :active }
-    it { should have_db_column :default_ssl_account }
-    it { should have_db_column :main_ssl_account }
-    it { should have_db_column :max_teams }
+    it { is_expected.to have_db_column :login }
+    it { is_expected.to have_db_column :first_name }
+    it { is_expected.to have_db_column :last_name }
+    it { is_expected.to have_db_column :email }
+    it { is_expected.to have_db_column :active }
+    it { is_expected.to have_db_column :default_ssl_account }
+    it { is_expected.to have_db_column :main_ssl_account }
+    it { is_expected.to have_db_column :max_teams }
 
     it '#max_teams_reached returns an integer' do
       user = create(:user)
@@ -93,22 +93,22 @@ describe User do
   describe 'validations' do
     let!(:user) { build(:user) }
 
-    it 'it should be valid' do
+    it 'is valid' do
       expect(user).to be_valid
     end
 
-    it 'it should require email' do
+    it 'requires email' do
       user.email = nil
       expect(user).not_to be_valid
     end
 
-    it 'it should require unique email' do
+    it 'requires unique email' do
       create(:user, email: 'dupe@domain.com')
       user.email = 'dupe@domain.com'
       expect(user).not_to be_valid
     end
 
-    it 'it should require valid email' do
+    it 'requires valid email' do
       user.email = 'invalid_email.com'
       expect(user).not_to be_valid
 
@@ -128,7 +128,7 @@ describe User do
       expect(user).to be_valid
     end
 
-    it 'it should have default_ssl_account if assigned role' do
+    it 'has default_ssl_account if assigned role' do
       user = create(:user, :owner)
       expect(user.default_ssl_account).not_to be_nil
     end
@@ -147,7 +147,7 @@ describe User do
     let!(:owner) { create(:user, :owner) }
     let!(:invited) { create(:user, :owner) }
 
-    before(:each) do
+    before do
       approve_user_for_account(owner.ssl_account, invited)
       approve_user_for_account(owner.ssl_account, invited)
     end
@@ -354,32 +354,32 @@ describe User do
     end
 
     xit '#roles_list_for_user it should return scoped list for non admin' do
-      assert_equal Role.get_select_ids_for_owner.sort, User.roles_list_for_user(owner).ids.sort
+      assert_equal Role.get_select_ids_for_owner.sort, described_class.roles_list_for_user(owner).ids.sort
     end
 
     xit '#roles_list_for_user it should return all roles for admins' do
       sysadmin = create(:user, :sys_admin)
-      expect(User.roles_list_for_user(sysadmin).ids.sort).to eq Role.all.ids.sort
+      expect(described_class.roles_list_for_user(sysadmin).ids.sort).to eq Role.all.ids.sort
 
       super_user = create(:user, :super_user)
-      expect(User.roles_list_for_user(super_user).ids.sort).to eq Role.all.ids.sort
+      expect(described_class.roles_list_for_user(super_user).ids.sort).to eq Role.all.ids.sort
     end
 
     xit '#get_user_accounts_roles it should return a mapped hash' do
       roles = [Role.get_reseller_id, Role.get_billing_id]
-      expect(User.get_user_accounts_roles(owner)).to eq [owner.ssl_account.id, [Role.get_owner_id]].to_h
+      expect(described_class.get_user_accounts_roles(owner)).to eq [owner.ssl_account.id, [Role.get_owner_id]].to_h
 
       owner.set_roles_for_account(owner.ssl_account, roles)
       roles << Role.get_owner_id
-      expect(User.get_user_accounts_roles(owner)).to eq [[owner.ssl_account.id, roles.sort]].to_h
+      expect(described_class.get_user_accounts_roles(owner)).to eq [[owner.ssl_account.id, roles.sort]].to_h
     end
 
     xit '#get_user_accounts_roles_names it should return a mapped hash' do
       # e.g.: {'team_1': ['owner'], 'team_2': ['account_admin', 'installer']}
-      assert_equal [[owner.ssl_account.get_team_name, ['owner']]].to_h, User.get_user_accounts_roles_names(owner)
+      assert_equal [[owner.ssl_account.get_team_name, ['owner']]].to_h, described_class.get_user_accounts_roles_names(owner)
 
       owner.set_roles_for_account(owner.ssl_account, [Role.get_reseller_id, Role.get_billing_id])
-      assert_equal [[owner.ssl_account.get_team_name, %w[owner reseller billing]]].to_h, User.get_user_accounts_roles_names(owner)
+      assert_equal [[owner.ssl_account.get_team_name, %w[owner reseller billing]]].to_h, described_class.get_user_accounts_roles_names(owner)
     end
 
     xit '#role_symbols it should return [scoped role_symbols] for non-admin' do
@@ -409,13 +409,13 @@ describe User do
     let!(:user_w_token) { create(:user, :owner) }
     let!(:ssl_prms_token) { { ssl_account_id: user_w_token.ssl_account.id, skip_match: true } }
 
-    before(:each) do
+    before do
       user_w_token.set_approval_token(ssl_account_id: user_w_token.ssl_account.id)
     end
 
     it '#approval_token_valid? false if account approved' do
       ssl_params = { ssl_account_id: owner.ssl_account.id }
-      expect(owner.approval_token_valid?(ssl_params)).to be_falsey
+      expect(owner).not_to be_approval_token_valid(ssl_params)
     end
 
     it '#approval_token_valid? false if token expired' do

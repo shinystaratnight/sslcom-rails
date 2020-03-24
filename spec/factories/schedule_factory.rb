@@ -25,7 +25,7 @@ FactoryBot.define do
     trait :daily do
       schedule_value { '2' }
     end
-    
+
     trait :weekly do
       schedule_value { '3' }
     end

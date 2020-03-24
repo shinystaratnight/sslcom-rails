@@ -20,7 +20,7 @@
 
 class SiteSeal < ApplicationRecord
   include Pagable
-  include WorkflowActiverecord
+  include Workflow
 
   has_many  :certificate_orders, -> { unscope(where: %i[workflow_state is_expired]) }
   has_many  :validations, through: :certificate_orders

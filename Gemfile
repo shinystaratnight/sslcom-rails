@@ -106,7 +106,7 @@ gem 'strscan'
 gem 'zlib'
 gem 'swagger-blocks'
 gem 'swagger-docs'
-gem 'workflow-activerecord'
+gem 'workflow', '1.2.0'
 gem 'public_suffix'
 gem 'universal_ruby_whois'
 

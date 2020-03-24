@@ -33,7 +33,7 @@
 
 FactoryBot.define do
   factory :ssl_account do
-    ssl_slug { "team-" + Faker::Alphanumeric.alpha(number: 10) }
+    ssl_slug { 'team-' + Faker::Alphanumeric.alpha(number: 10) }
     billing_method { 'monthly' }
     workflow_state { 'active' }
 
