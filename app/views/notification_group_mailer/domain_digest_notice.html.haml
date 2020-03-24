@@ -1,7 +1,7 @@
 Scan update for Notification Group: #{@notification_group.friendly_name || @notification_group.ref}
 %br
 %br
-Scanned On: #{DateTime.current.strftime('%B %-d, %Y %l:%M%P') + Time.current.time_zone.name}
+Scanned On: #{DateTime.current.in_time_zone}
 %br
 %br
 Scan Status: #{@scan_status}
