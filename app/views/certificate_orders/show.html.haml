@@ -313,7 +313,7 @@
                                 %li #{display_label[0]} - #{token.activation_pin}
                                 %li #{display_label[1]} - #{token.admin_pin}
                                 - if show_management_key?(token)
-                                  %li Key - #{token.management_key}
+                                  %li Management Key - #{token.management_key}
                         -if @certificate_order.certificate.is_evcs? or @certificate_order.certificate.is_client_business?
                           %li.category_border
                           %li
