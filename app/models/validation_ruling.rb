@@ -21,7 +21,7 @@
 # The decision or current status on a validation rule requirement on a given validation material (document)
 
 class ValidationRuling < ApplicationRecord
-  include WorkflowActiverecord
+  include Workflow
 
   belongs_to  :validation_rulable, polymorphic: true
   belongs_to  :validation_rule

@@ -37,7 +37,7 @@
 #
 
 class Reseller < ApplicationRecord
-  include WorkflowActiverecord
+  include Workflow
 
   belongs_to  :ssl_account
   has_many    :orders, through: :ssl_account

@@ -150,7 +150,7 @@ class SslAccount < ApplicationRecord
   after_create :initial_setup
   after_save { users.find_each(&:touch) }
 
-  include WorkflowActiverecord
+  include Workflow
   BILLING_METHODS = %w[monthly due_at_checkout daily].freeze
   PULL_RESELLER = 'pull_from_reseller'
   PULL_ADMIN_TECH = 'pull_from_admin_and_tech'
