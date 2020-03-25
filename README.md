@@ -35,17 +35,6 @@
 {"virtualbox":{"/vagrant":{"guestpath":"/vagrant","hostpath":"INSERT_PATH_HERE","disabled":false,"__vagrantfile":true}}}
 ```
 
-### Setting up test db for Cypress
-
-```bash
-RAILS_ENV=test rake db:drop db:create db:structure:load db:migrate db:seed --trace
-```
-
-### Running Cypress Spec
-
-- [ ] Start rails server in test mode `foreman start -f Procfile.test`, on Vagrant machine
-- [ ] On your local machine `yarn cypress open --project ./test`
-
 ### Note on setting up Vagrant with Rubymine
 
 rbenv installation may be required in the vagrant instance so the Rubymine vagrant plugin get see the Ruby Interpreter

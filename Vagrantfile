@@ -14,11 +14,14 @@ Vagrant.configure('2') do |config|
   config.vm.network 'forwarded_port', guest: 9515,  host: 9515,  auto_correct: true
   config.vm.network 'forwarded_port', guest: 10_000, host: 10_000, auto_correct: true
   config.vm.network 'forwarded_port', guest: 5002, host: 5002, auto_correct: true
-
+  # ssh access from host machine
+  config.vm.provision 'file', source: '~/.ssh/id_rsa.pub', destination: '~/.ssh/id_rsa.pub'
+  config.vm.provision 'file', source: '~/.ssh/id_rsa', destination: '~/.ssh/id_rsa'
   # configure virtualbox host
   config.vm.provider 'virtualbox' do |vb|
     vb.memory = '4096'
     vb.cpus = '4'
+    vb.customize ['modifyvm', :id, '--cpuexecutioncap', '50']
   end
 
   # Always upgrade to latest packages

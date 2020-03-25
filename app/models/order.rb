@@ -15,7 +15,7 @@
 #  ext_affiliate_name     :string(255)
 #  ext_customer_ref       :string(255)
 #  invoice_description    :text(65535)
-#  lock_version           :integer          default(0)
+#  lock_version           :integer          default("0")
 #  max_non_wildcard       :integer
 #  max_wildcard           :integer
 #  non_wildcard_cents     :integer
@@ -48,7 +48,6 @@
 #  index_orders_on_billing_profile_id                       (billing_profile_id)
 #  index_orders_on_created_at                               (created_at)
 #  index_orders_on_deducted_from_id                         (deducted_from_id)
-#  index_orders_on_ext_affiliate_id                         (ext_affiliate_id)
 #  index_orders_on_id_and_state                             (id,state)
 #  index_orders_on_id_and_type                              (id,type)
 #  index_orders_on_invoice_id                               (invoice_id)
@@ -71,6 +70,7 @@ class Order < ApplicationRecord
   include V2MigrationProgressAddon
   include SmimeClientEnrollable
   include Pagable
+  include Workflow
 
   belongs_to  :billable, :polymorphic => true, touch: true
   belongs_to  :address
@@ -390,7 +390,6 @@ class Order < ApplicationRecord
     Money.new(amount.cents)-discount_amount
   end
 
-  include Workflow
   workflow_column :state
 
   workflow do
@@ -1223,13 +1222,6 @@ class Order < ApplicationRecord
         #adjusting duration to reflect number of days validity
         certificate_order = setup_certificate_order(certificate: certificate, certificate_order: certificate_order)
         options[:certificate_orders] << certificate_order if certificate_order.valid?
-      elsif product = Product.find_by_serial(c[ShoppingCart::PRODUCT_CODE])
-        product_order = ProductOrder.new(product: product, amount: product.amount)
-        unless options[:current_user].blank?
-          options[:current_user].ssl_account.clear_new_product_orders
-          product_order.ssl_account=current_user.ssl_account
-        end
-        options[:certificate_orders] << product_order
       end
     end
     options[:certificate_orders]

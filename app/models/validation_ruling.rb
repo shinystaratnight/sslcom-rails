@@ -21,12 +21,13 @@
 # The decision or current status on a validation rule requirement on a given validation material (document)
 
 class ValidationRuling < ApplicationRecord
-  belongs_to  :validation_rulable, :polymorphic=>true
+  include Workflow
+
+  belongs_to  :validation_rulable, polymorphic: true
   belongs_to  :validation_rule
   acts_as_notable
 
-  validates_uniqueness_of :validation_rule_id, :scope=>[:validation_rulable_id,
-    :validation_rulable_type]
+  validates_uniqueness_of :validation_rule_id, scope: %i[validation_rulable_id validation_rulable_type]
 
   REVIEWING = "reviewing documents"
   WAITING_FOR_DOCS = "waiting for documents"
@@ -56,7 +57,6 @@ class ValidationRuling < ApplicationRecord
 
   EXPAND=". click for details"
 
-  include Workflow
   workflow do
     state :new do
       event :unapprove, :transitions_to => :unapproved

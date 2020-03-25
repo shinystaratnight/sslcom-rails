@@ -137,6 +137,34 @@ class Csr < ApplicationRecord
     c&.certificate_order&.touch
   end
 
+  def is_weak_key?
+    return false unless public_key.instance_of? OpenSSL::PKey::RSA
+
+    fingerprint = Digest::SHA1.hexdigest "Modulus=#{public_key.n.to_s(16)}\n"
+
+    # Check if the key is in the blacklist
+    WeakKey.where({sha1_hash: fingerprint[20..-1], size: public_key.n.num_bits}).present?
+  end
+
+  def self.find_weak_keys
+    Csr.find_each do |csr|
+      begin
+        weak_keys=[]
+        openssl_request=OpenSSL::X509::Request.new(csr.body)
+        if openssl_request.is_a?(OpenSSL::X509::Request)
+          public_key=openssl_request.public_key
+          if public_key.instance_of? OpenSSL::PKey::RSA
+            fingerprint = Digest::SHA1.hexdigest "Modulus=#{public_key.n.to_s(16)}\n"
+            # Check if the key is in the blacklist
+            weak_keys << csr.id if WeakKey.where({sha1_hash: fingerprint[20..-1], size: public_key.n.num_bits}).present?
+          end
+        end
+        Csr.find(weak_keys) unless weak_keys.empty?
+      rescue Exception=>e
+      end
+    end
+  end
+
   def unique_value
     if certificate_content.blank? or certificate_content.ca.blank?
       csr_unique_value.unique_value

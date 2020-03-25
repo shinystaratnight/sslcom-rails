@@ -228,10 +228,7 @@ module OrdersHelper
 
   def row_description(order)
     if order.is_a?(CertificateOrder)
-      order.respond_to?(:description_with_tier) ? order.description_with_tier(@order) :
-          certificate_type(order)
-    elsif order.is_a?(ProductOrder)
-      order.product.title
+      order.respond_to?(:description_with_tier) ? order.description_with_tier(@order) : certificate_type(order)
     else
       order.class.name
     end

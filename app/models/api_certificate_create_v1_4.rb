@@ -22,7 +22,6 @@
 # Indexes
 #
 #  index_ca_api_requests_on_api_requestable                          (api_requestable_id,api_requestable_type)
-#  index_ca_api_requests_on_approval_id                              (approval_id)
 #  index_ca_api_requests_on_id_and_type                              (id,type)
 #  index_ca_api_requests_on_type_and_api_requestable                 (id,api_requestable_id,api_requestable_type,type) UNIQUE
 #  index_ca_api_requests_on_type_and_api_requestable_and_created_at  (id,api_requestable_id,api_requestable_type,type,created_at)
@@ -450,15 +449,6 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
     end
   end
 
-  DomainJob = Struct.new(:cc, :acc, :dcv_failure_action, :domains, :dcv_candidate_addresses) do
-    def perform
-      cc.dcv_domains({domains: (domains || [cc.csr.common_name]), emails: dcv_candidate_addresses,
-                            dcv_failure_action: dcv_failure_action})
-      cc.pend_validation!(ca_certificate_id: acc[:ca_certificate_id],
-                          send_to_ca: acc[:send_to_ca] || true) unless cc.pending_validation?
-    end
-  end
-
   def setup_certificate_content(options)
     cc = options[:certificate_content]
     cc.registrant.destroy unless cc.registrant.blank?
@@ -554,15 +544,14 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   end
 
   def send_dcv(cc)
-    if self.debug=="true" || (self.domains && self.domains.count <= Validation::COMODO_EMAIL_LOOKUP_THRESHHOLD)
-      cc.dcv_domains({domains: self.domains, emails: self.dcv_candidate_addresses,
-                      dcv_failure_action: self.options.blank? ? nil : self.options['dcv_failure_action']})
+    if debug == 'true' || (domains && domains.count <= Validation::COMODO_EMAIL_LOOKUP_THRESHHOLD)
+      cc.dcv_domains({ domains: domains, emails: dcv_candidate_addresses, dcv_failure_action: options.blank? ? nil : options['dcv_failure_action'] })
       cc.pend_validation!(ca_certificate_id: ca_certificate_id, send_to_ca: send_to_ca || true) unless cc.pending_validation?
     else
       job_group = Delayed::JobGroups::JobGroup.create!
-      job_group.enqueue(DomainJob.new(cc, {ca_certificate_id: self.ca_certificate_id, send_to_ca: self.send_to_ca || true},
-                                      self.options.blank? ? nil : self.options['dcv_failure_action'], self.domains,
-                                      self.dcv_candidate_addresses))
+      job_group.enqueue(DomainJob.new(cc, { ca_certificate_id: ca_certificate_id, send_to_ca: send_to_ca || true },
+                                      options.blank? ? nil : options['dcv_failure_action'], domains,
+                                      dcv_candidate_addresses))
       job_group.mark_queueing_complete
     end
   end
@@ -571,10 +560,10 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
     order = options[:order]
     if order.line_items.size > 0
       paid = if parameters_to_hash['billing_profile'].nil?
-        apply_to_funded_account(options)
-      else
-        apply_to_billing_profile(options)
-      end
+               apply_to_funded_account(options)
+             else
+               apply_to_billing_profile(options)
+             end
       if paid
         order.mark_paid!
         options[:certificate_order].pay!(true)
@@ -766,8 +755,8 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
 
   def is_processing?
     co=@certificate_order || find_certificate_order
-    co.is_a?(CertificateOrder) && (co.certificate_content.try("contacts_provided?") ||
-        co.certificate_content.try("pending_validation?")) ? true : false
+    co.is_a?(CertificateOrder) && %w(contacts_provided pending_validation new).
+        include?(co.certificate_content&.workflow_state) ? true : false
   end
 
   def domains

@@ -1,0 +1,68 @@
+---
+- hosts: all
+  sudo: true
+  roles:
+    - role: znzj.rbenv
+      rbenv_ruby_version: 2.6.2
+  vars:
+    - gem_path: "{{rbenv_root}}/shims/gem"
+  tasks:
+    - apt_repository: repo=ppa:chris-lea/node.js
+    - apt: update_cache=yes
+    - apt: name=nodejs
+    - apt: name=vim
+
+    - name: Install ruby dependencies
+      apt: name={{item}}
+      with_items:
+        - git-core
+        - curl
+        - zlib1g-dev
+        - build-essential
+        - libssl-dev
+        - libreadline-dev
+        - libyaml-dev
+        - libsqlite3-dev
+        - sqlite3
+        - libxml2-dev
+        - libxslt1-dev
+        - libcurl4-openssl-dev
+        - python-software-properties
+        - libffi-dev
+        - g++
+        - qt5-default
+        - libqt5webkit5-dev
+        - gstreamer1.0-plugins-base
+        - gstreamer1.0-tools
+        - gstreamer1.0-x
+
+    - name: Install mysql
+      sudo: yes
+      apt:  name={{item}} state=present update_cache=true
+      with_items:
+        - mysql-server
+        - python-mysqldb
+        - libmysqlclient-dev
+
+    - name: Make mysql bind to the appropriate port
+      sudo: yes
+      lineinfile: dest=/etc/mysql/my.cnf regexp="bind-address\s*\=\s127\.0\.0\.1" line="bind-address    = 0.0.0.0"
+
+    - name: Create a mysql developer account
+      mysql_user: "name=vagrant password=vagrant priv=*.*:ALL,GRANT state=absent host=localhost"
+
+    - name: Create a mysql developer account
+      mysql_user: "name=vagrant password=vagrant priv=*.*:ALL,GRANT state=present host=%"
+
+    - name: Restart mysql
+      sudo: yes
+      service: name=mysql state=restarted
+
+    - name: Install rails
+      gem:
+        name: rails
+        version: 4.2.11.1
+        state: present
+        user_install: no
+        executable: "{{gem_path}}"
+    

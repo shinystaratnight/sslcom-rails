@@ -415,10 +415,6 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  #   def responder
-  #     EnhancedResponder
-  #   end
-
   def handle_unverified_request
     # or destroy session, redirect
     current_user_session&.destroy

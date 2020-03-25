@@ -7,6 +7,8 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
   before_filter :set_database, if: 'request.host=~/^sandbox/ || request.host=~/^sws-test/ || request.host=~/ssl.local$/'
   before_filter :set_test, :record_parameters, except: %i[scan analyze download_v1_4]
   after_filter :notify_saved_result, except: %i[create_v1_4 download_v1_4]
+  before_action :set_certificate_order, only: [:update_v1_4]
+  before_action :verify_dcv_method, only: [:update_v1_4]
 
   # parameters listed here made available as attributes in @result
   wrap_parameters ApiCertificateRequest, include: [*(
@@ -20,8 +22,8 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
     ApiCertificateRequest::CERTIFICATE_ENROLLMENT_ACCESSORS
   ).uniq]
 
-  ORDERS_DOMAIN = "https://#{Settings.community_domain}"
-  SANDBOX_DOMAIN = 'https://sandbox.ssl.com'
+  ORDERS_DOMAIN = "https://#{Settings.community_domain}".freeze
+  SANDBOX_DOMAIN = 'https://sandbox.ssl.com'.freeze
   SCAN_COMMAND = ->(parameters, url){ `echo QUIT | cipherscan/cipherscan #{parameters} #{url}` }
   ANALYZE_COMMAND = ->(parameters, url){ `echo QUIT | cipherscan/analyze.py #{parameters} #{url}` }
 
@@ -134,7 +136,6 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
 
     if @result.valid? && @result.save
       co = @result.find_certificate_order
-      # if co.ov_validated?
 
       options={csr: params[:csr]}
       unless co.certificate_content.csr.blank?
@@ -311,28 +312,27 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
   end
 
   def update_v1_4
-    set_template "update_v1_4"
+    set_template 'update_v1_4'
 
     if @result.csr_obj && !@result.csr_obj.valid?
       # we do this sloppy maneuver because the rabl template only reports errors
       @result = @result.csr_obj
     else
-      if @result.save #save the api request
+      if @result.save # save the api request
         if @acr = @result.update_certificate_order
           @csr = @acr.csr
           # successfully charged
           if @acr.is_a?(CertificateOrder) && @acr.errors.empty?
             @acr.unchain_comodo if @acr.signed_certificate_duration_delta > 1
-            if @acr.certificate_content.csr && @result.debug=="true"
+            if @acr.certificate_content.csr && @result.debug == 'true'
               ccr = @acr.certificate_content.csr.ca_certificate_requests.first
-              @result.api_request=ccr.parameters
-              @result.api_response=ccr.response
+              @result.api_request = ccr.parameters
+              @result.api_response = ccr.response
             end
 
-            #Send validation email unless ca_id is nil
+            # Send validation email unless ca_id is nil
             unless @acr.certificate_content.ca_id.nil?
-              cnames = @acr.certificate_content.certificate_names.includes(:domain_control_validations,
-                                                                           :certificate_content)
+              cnames = @acr.certificate_content.certificate_names.includes(:domain_control_validations, :certificate_content)
               email_for_identifier = ''
               identifier = ''
               email_list = []
@@ -345,18 +345,18 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
 
               cnames.each do |cn|
                 dcv = cn.domain_control_validations.last
+                dcv ||= cn.domain_control_validations.create(dcv_method: dcv_param, candidate_addresses: cn.name) if dcv_param.match? /^acme/i
                 if dcv && !dcv.identifier_found # TODO DRY and apply with app/controllers/validations_controller.rb:305
                   if dcv.dcv_method == 'email'
-                    if DomainControlValidation.approved_email_address? CertificateName.candidate_email_addresses(
-                        cn.non_wildcard_name), dcv.email_address
+                    if DomainControlValidation.approved_email_address? CertificateName.candidate_email_addresses(cn.non_wildcard_name), dcv.email_address
                       if dcv.email_address != email_for_identifier
-                        if domain_list.length>0
+                        if domain_list.length > 0
                           domain_ary << domain_list
                           email_list << email_for_identifier
                           identifier_list << identifier
                           domain_list = []
                         end
-                        identifier = (SecureRandom.hex(8)+Time.now.to_i.to_s(32))[0..19]
+                        identifier = (SecureRandom.hex(8) + Time.now.to_i.to_s(32))[0..19]
                         email_for_identifier = dcv.email_address
                       end
 
@@ -365,14 +365,14 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
                       dcv.update_attribute(:identifier, identifier)
                     end
                   else
-                    if cn.dcv_verify(dcv.dcv_method)
-                      dcv.satisfy! unless dcv.satisfied?
-                    end
+                    cn.dcv_verify_async(dcv.dcv_method)
                   end
                 end
               end
 
-              unless identifier == ''
+              if identifier.blank?
+                @acr.apply_for_certificate unless dcv_param.match? /^acme/
+              else
                 ssl_slug = @result.api_credential.ssl_account.ssl_slug || @result.api_credential.ssl_account.acct_number
 
                 domain_ary << domain_list
@@ -382,15 +382,13 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
                 email_list.each_with_index do |value, key|
                   OrderNotifier.dcv_email_send(value, identifier_list[key], domain_ary[key], nil, ssl_slug).deliver
                 end
-              else
-                @acr.apply_for_certificate
               end
             end
 
             set_result_parameters(@result, @acr)
-            @result.debug=(@result.parameters_to_hash["debug"]=="true") # && @acr.admin_submitted = true
+            @result.debug = (@result.parameters_to_hash['debug'] == 'true') # && @acr.admin_submitted = true
           else
-            @result = @acr #so that rabl can report errors
+            @result = @acr # so that rabl can report errors
           end
         end
       else
@@ -398,12 +396,12 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
       end
     end
     render_200_status
-  rescue => e
+  rescue StandardError => e
     render_500_error e
   end
 
   def callback_v1_4
-    set_template "callback_v1_4"
+    set_template 'callback_v1_4'
 
     if @result.save
       @acr = @result.find_certificate_order
@@ -1582,20 +1580,40 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
     file_name = path[(path.rindex('/') + 1)..path.length]
     param_style = file_name[0..(file_name.rindex('.') - 1)]
 
-    if vh.document_file_name.force_encoding('UTF-8').include?(file_name)
-      style = vh.document.default_style
-    else
-      style = param_style.to_sym
-    end
+    style = if vh.document_file_name.force_encoding('UTF-8').include?(file_name)
+              vh.document.default_style
+            else
+              param_style.to_sym
+            end
 
-    return vh.authenticated_s3_get_url :style=> style
+    vh.authenticated_s3_get_url style: style
   end
 
   def set_template(filename)
-    @template = File.join("api","v1","api_certificate_requests", filename)
+    @template = File.join('api', 'v1', 'api_certificate_requests', filename)
   end
 
   def ssl_ca_label
     I18n.t('labels.ssl_ca')
+  end
+
+  def dcv_param
+    params[:domains].first[1]['dcv'].presence || ''
+  end
+
+  def set_certificate_order
+    @certificate_order = CertificateOrder.find_by(ref: params[:ref])
+    json_render_not_found && return if @certificate_order.nil?
+
+    @certificate_order
+  end
+
+  def verify_dcv_method
+    if dcv_param.present?
+      unless %w[http https email cname acme_http acme_dns_txt].include? dcv_param
+        errors = { errors: [parameters: "invalid dcv_method: #{dcv_param}"] }
+        render_errors(errors, :unprocessable_entity) && return
+      end
+    end
   end
 end

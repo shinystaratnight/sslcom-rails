@@ -1,4 +1,4 @@
-# frozen_string_literal: true
+# frozen_string_literal: false
 
 # == Schema Information
 #
@@ -352,7 +352,7 @@ class SignedCertificate < ApplicationRecord
   end
 
   def issuer
-    openssl_x509.issuer.to_s
+    openssl_x509.issuer.to_utf8
   end
 
   def is_sslcom_ca?

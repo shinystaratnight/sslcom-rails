@@ -4,14 +4,11 @@ module Concerns
       extend ActiveSupport::Concern
 
       def openssl_x509
-        begin
-          OpenSSL::X509::Certificate.new(body.strip)
-        rescue Exception
-        end
+        OpenSSL::X509::Certificate.new(body.strip)
       end
 
       def issuer_dn
-        openssl_x509.issuer.to_s(OpenSSL::X509::Name::RFC2253)
+        openssl_x509.issuer.to_utf8
       end
 
       def dn

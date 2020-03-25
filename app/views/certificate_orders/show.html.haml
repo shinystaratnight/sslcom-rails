@@ -310,10 +310,10 @@
                               - display_label = token.model_number == 'Yubikey FIPS 140-2' ? ['PIN', 'PUK'] : ['Activation PIN', 'Admin PIN']
                               %ul
                                 %li Serial - #{token.serial_number}
-                                - if token.model_number == 'Yubikey FIPS 140-2'
-                                  %li Management Key - #{token.management_key}
                                 %li #{display_label[0]} - #{token.activation_pin}
                                 %li #{display_label[1]} - #{token.admin_pin}
+                                - if show_management_key?(token)
+                                  %li Management Key - #{token.management_key}
                         -if @certificate_order.certificate.is_evcs? or @certificate_order.certificate.is_client_business?
                           %li.category_border
                           %li

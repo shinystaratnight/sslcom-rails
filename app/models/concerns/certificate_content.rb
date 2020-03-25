@@ -62,8 +62,9 @@ module Concerns
       INTRANET_IP_REGEX = /\A(127\.0\.0\.1)|(10.\d{,3}.\d{,3}.\d{,3})|(172\.1[6-9].\d{,3}.\d{,3})|(172\.2[0-9].\d{,3}.\d{,3})|(172\.3[0-1].\d{,3}.\d{,3})|(192\.168.\d{,3}.\d{,3})\z/.freeze
 
       # dtnt comodo chained is 492703
+      # Hikma is 204730
       # 499740 using Azure. Remove once we are in Azure
-      COMODO_SSL_ACCOUNTS = %w[467564 16077 204730 492703 21291 499740 490782].freeze
+      COMODO_SSL_ACCOUNTS = [467564, 16077, 204730, 492703, 21291, 499740, 490782]
     end
   end
 end

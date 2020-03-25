@@ -12,8 +12,8 @@
 #  duo_own_used           :boolean
 #  epki_agreement         :datetime
 #  issue_dv_no_validation :string(255)
-#  no_limit               :boolean          default(FALSE)
-#  roles                  :string(255)      default([])
+#  no_limit               :boolean          default("0")
+#  roles                  :string(255)      default("--- []")
 #  sec_type               :string(255)
 #  ssl_slug               :string(255)
 #  status                 :string(255)
@@ -27,17 +27,19 @@
 #  index_ssl_account_on_acct_number                                 (acct_number)
 #  index_ssl_accounts_an_cn_ss                                      (acct_number,company_name,ssl_slug)
 #  index_ssl_accounts_on_acct_number_and_company_name_and_ssl_slug  (acct_number,company_name,ssl_slug)
-#  index_ssl_accounts_on_default_folder_id                          (default_folder_id)
 #  index_ssl_accounts_on_id_and_created_at                          (id,created_at)
 #  index_ssl_accounts_on_ssl_slug_and_acct_number                   (ssl_slug,acct_number)
 #
 
 class SslAccount < ApplicationRecord
+  include CollectiveIdea::Acts::Billable
   extend Memoist
+
+  easy_roles :roles
   using_access_control
   acts_as_billable
-  easy_roles :roles
-  has_many   :api_credentials
+
+  has_many  :api_credentials
   has_one   :duo_account
   has_many  :billing_profiles
   has_many  :certificate_orders, -> { unscope(where: %i[workflow_state is_expired]).includes([:orders]) },
@@ -120,10 +122,8 @@ class SslAccount < ApplicationRecord
 
   accepts_nested_attributes_for :reseller, allow_destroy: false
 
-  unless MIGRATING_FROM_LEGACY
-    # has_many  :orders, :as=>:billable, :after_add=>:build_line_items
-    attr_readonly :acct_number
-  end
+  # has_many  :orders, :as=>:billable, :after_add=>:build_line_items
+  attr_readonly :acct_number
 
   preference  :reminder_status, default: true
   preference  :reminder_notice_triggers, :string
@@ -386,7 +386,7 @@ class SslAccount < ApplicationRecord
 
   def is_registered_reseller?
     Rails.cache.fetch("#{cache_key}/is_registered_reseller") do
-      has_role?('reseller') && reseller.try('complete?')
+      decorate.has_role?('reseller') && reseller.try('complete?')
     end
   end
 
@@ -398,10 +398,6 @@ class SslAccount < ApplicationRecord
 
   def clear_new_certificate_orders
     certificate_orders.is_new.each(&:destroy)
-  end
-
-  def clear_new_product_orders
-    product_orders.is_new.each(&:destroy)
   end
 
   def has_only_credits?

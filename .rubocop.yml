@@ -2,6 +2,7 @@
 
 require:
   - rubocop/cop/internal_affairs
+  - rubocop-rspec
 
 AllCops:
   Exclude:
@@ -15,9 +16,10 @@ AllCops:
 
 Bundler/OrderedGems:
   Enabled: false
-Style/StringLiterals:
-  Exclude:
-    - test/**/*test.rb
+Bundler/DuplicatedGem:
+  Enabled: true
+Style/NumericPredicate:
+  Enabled: false
 Style/FormatStringToken:
   Enabled: false
 Style/Documentation:
@@ -34,7 +36,15 @@ Style/ClassVars:
   Enabled: false
 Style/EvalWithLocation:
   Enabled: false
+Style/ClassAndModuleChildren:
+  Enabled: false
+Style/MutableConstant:
+  Enabled: false
+Style/FrozenStringLiteralComment:
+  Enabled: false
 Layout/HeredocIndentation:
+  Enabled: false
+Layout/SpaceInLambdaLiteral:
   Enabled: false
 Style/StructInheritance:
   Enabled: false
@@ -47,7 +57,14 @@ Style/DoubleNegation:
 Style/NestedTernaryOperator:
   Exclude:
     - 'app/controllers/application_controller.rb'
-
+Style/HashTransformValues:
+  Enabled: true
+Style/HashTransformKeys:
+  Enabled: true
+Style/HashEachMethods:
+  Enabled: true
+Style/NilComparison:
+  Enabled: false
 Security/Eval:
   Exclude:
     - app/models/notification_group.rb
@@ -57,7 +74,6 @@ Layout/EndOfLine:
   EnforcedStyle: lf
 Layout/LineLength:
   Enabled: false
-
 Layout/ClassStructure:
   Enabled: true
   Categories:
@@ -77,6 +93,8 @@ Layout/ClassStructure:
 Layout/SpaceBeforeBlockBraces:
   Enabled: false
 Lint/LiteralAsCondition:
+  Enabled: false
+Lint/AmbiguousRegexpLiteral:
   Enabled: false
 Lint/AmbiguousBlockAssociation:
   Enabled: true
@@ -117,4 +135,8 @@ Naming/FileName:
 Naming/PredicateName:
   Enabled: false
 Naming/AccessorMethodName:
+  Enabled: false
+RSpec/AnyInstance:
+  Enabled: false
+RSpec/BeforeAfterAll:
   Enabled: false
