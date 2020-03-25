@@ -201,20 +201,16 @@ describe User do
   end
 
   describe 'account helper methods' do
-    let!(:owner) { create(:user) }
+    let!(:owner) { create(:user, :owner) }
 
     it '#create_ssl_account it should create/approve/add ssl_account' do
-      assert_equal 1, owner.ssl_accounts.count
-
       previous_ssl_account = owner.default_ssl_account
 
       assert_equal SslAccountUser.where(user_id: owner.id).first.ssl_account_id, previous_ssl_account
+      new_ssl_account = nil
+      expect { new_ssl_account = owner.create_ssl_account }.to change { owner.ssl_accounts.count }.by(1)
 
-      new_ssl_account = owner.create_ssl_account
-
-      owner.ssl_accounts.count.should eq 2
-      expect(owner.default_ssl_account).not_to be_nil
-      previous_ssl_account.should eq owner.default_ssl_account
+      expect(owner.default_ssl_account).to eq previous_ssl_account
       owner.user_approved_invite?(ssl_account_id: new_ssl_account.id).should be_truthy
     end
 
@@ -247,13 +243,10 @@ describe User do
     end
 
     it '#get_all_approved_accounts return approved accounts' do
-      # owner = create(:user, :owner)
       default_ssl = owner.ssl_account
       ssl_params = { ssl_account_id: default_ssl.id }
-      assert_equal 1, owner.get_all_approved_accounts.count
 
-      owner.set_approval_token(ssl_params) # unapprove account
-      assert_equal 0, owner.get_all_approved_accounts.count
+      expect { owner.set_approval_token(ssl_params) }.to change { owner.get_all_approved_accounts.count }.by(-1) # unapprove account
     end
   end
 
@@ -484,7 +477,7 @@ describe User do
         ssl_account_id: ssl.ssl_account_id,
         approval_token: ssl.approval_token
       }
-      assert_equal [expected_hash], user_w_token.get_pending_accounts
+      expect(user_w_token.get_pending_accounts).to eq [expected_hash]
     end
 
     it '#decline_invite it should decline invite' do
