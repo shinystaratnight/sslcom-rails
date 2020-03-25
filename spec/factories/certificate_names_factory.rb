@@ -38,5 +38,15 @@ FactoryBot.define do
       cn.stubs(:certificate_content).returns(build_stubbed(:certificate_content))
       cn.stubs(:sleep)
     end
+
+    after(:create) do |cn|
+      cn.stubs(:sleep)
+    end
+
+    trait :with_dcv do
+      after(:create) do |cn|
+        cn.domain_control_validations << create(:domain_control_validation)
+      end
+    end
   end
 end

@@ -34,35 +34,31 @@ describe CertificateName do
     stub_server_software
   end
 
-  context 'attributes' do
-    it { is_expected.to have_db_column :id }
-    it { is_expected.to have_db_column :acme_token }
-    it { is_expected.to have_db_column :caa_passed }
-    it { is_expected.to have_db_column :email }
-    it { is_expected.to have_db_column :is_common_name }
-    it { is_expected.to have_db_column :name }
-    it { is_expected.to have_db_column :created_at }
-    it { is_expected.to have_db_column :updated_at }
-    it { is_expected.to have_db_column :acme_account_id }
-    it { is_expected.to have_db_column :certificate_content_id }
-    it { is_expected.to have_db_column :ssl_account_id }
-  end
+  it { is_expected.to have_db_column :id }
+  it { is_expected.to have_db_column :acme_token }
+  it { is_expected.to have_db_column :caa_passed }
+  it { is_expected.to have_db_column :email }
+  it { is_expected.to have_db_column :is_common_name }
+  it { is_expected.to have_db_column :name }
+  it { is_expected.to have_db_column :created_at }
+  it { is_expected.to have_db_column :updated_at }
+  it { is_expected.to have_db_column :acme_account_id }
+  it { is_expected.to have_db_column :certificate_content_id }
+  it { is_expected.to have_db_column :ssl_account_id }
 
-  context 'associations' do
-    it { is_expected.to belong_to :certificate_content }
-    it { is_expected.to have_one :certificate_order }
-    it { is_expected.to have_many    :signed_certificates }
-    it { is_expected.to have_many    :caa_checks }
-    it { is_expected.to have_many    :ca_certificate_requests }
-    it { is_expected.to have_many    :ca_dcv_requests }
-    it { is_expected.to have_many    :ca_dcv_resend_requests }
-    it { is_expected.to have_many    :validated_domain_control_validations }
-    it { is_expected.to have_many    :last_sent_domain_control_validations }
-    it { is_expected.to have_one :domain_control_validation }
-    it { is_expected.to have_many :domain_control_validations }
-  end
+  it { is_expected.to belong_to :certificate_content }
+  it { is_expected.to have_one :certificate_order }
+  it { is_expected.to have_many    :signed_certificates }
+  it { is_expected.to have_many    :caa_checks }
+  it { is_expected.to have_many    :ca_certificate_requests }
+  it { is_expected.to have_many    :ca_dcv_requests }
+  it { is_expected.to have_many    :ca_dcv_resend_requests }
+  it { is_expected.to have_many    :validated_domain_control_validations }
+  it { is_expected.to have_many    :last_sent_domain_control_validations }
+  it { is_expected.to have_one :domain_control_validation }
+  it { is_expected.to have_many :domain_control_validations }
 
-  context 'ACME support' do
+  describe 'ACME support' do
     describe '.generate_acme_token' do
       let!(:certificate_name){ build(:certificate_name) }
 
@@ -72,7 +68,7 @@ describe CertificateName do
 
       it 'is 128 characters long' do
         certificate_name.generate_acme_token
-        assert_equal(128, certificate_name.acme_token.length)
+        expect(certificate_name.acme_token.length). to eq 128
       end
 
       it 'does not have = padding' do
@@ -85,14 +81,60 @@ describe CertificateName do
         expect(certificate_name.acme_token).to match(/^[a-zA-Z0-9_-]*$/)
       end
     end
+
+    describe 'fail dcv' do
+      before do
+        logger = mock
+        ApplicationService.any_instance.stubs(:logger).returns(logger)
+        logger.stubs(:debug).returns(true)
+      end
+
+      let!(:certificate_name){ create(:certificate_name, :with_dcv) }
+
+      it 'does not update workflow_state for http' do
+        certificate_name.domain_control_validation.update(dcv_method: 'http')
+        stub_request(:any, certificate_name.dcv_url(true, '', true))
+          .to_return(status: 200, body: ['------------', '------------', '------------'])
+        expect{ certificate_name.dcv_verify }.not_to change { certificate_name.domain_control_validation.workflow_state }
+      end
+
+      it 'does not update workflow_state for https' do
+        stub_request(:any, certificate_name.dcv_url(true, '', true))
+          .to_return(status: 200, body: ['------------', '------------', '------------'])
+        expect{ certificate_name.dcv_verify }.not_to change { certificate_name.domain_control_validation.workflow_state }
+      end
+
+      it 'does not update workflow_state for cname' do
+        certificate_name.domain_control_validation.update(dcv_method: 'cname')
+        stub_request(:any, certificate_name.dcv_url(true, '', true))
+          .to_return(status: 200, body: ['------------', '------------', '------------'])
+        expect{ certificate_name.dcv_verify }.not_to change { certificate_name.domain_control_validation.workflow_state }
+      end
+
+      it 'updates workflow_state to failed for acme_http' do
+        certificate_name.domain_control_validation.update(dcv_method: 'acme_http')
+        body = [certificate_name.acme_token, '------------'].join('.')
+        AcmeManager::HttpVerifier.any_instance.stubs(:challenge).returns(body)
+        expect{ certificate_name.dcv_verify }.to change { certificate_name.domain_control_validation.workflow_state }.to('failed')
+      end
+
+      it 'updates workflow_state to failed for acme_dns_txt' do
+        certificate_name.domain_control_validation.update(dcv_method: 'acme_dns_txt')
+        body = Resolv::DNS::Resource::IN::TXT.new('------------')
+        AcmeManager::DnsTxtVerifier.any_instance.stubs(:challenge).returns(true)
+        AcmeManager::DnsTxtVerifier.any_instance.stubs(:token).returns(body.strings.last)
+        expect{ certificate_name.dcv_verify }.to change { certificate_name.domain_control_validation.workflow_state }.to('failed')
+      end
+    end
   end
 
-  context 'domain control validation' do
+  describe 'domain control validation' do
     let!(:cname) { build_stubbed(:certificate_name) }
 
     before do
       cname.stubs(:fail_dcv).returns(false)
       cname.stubs(:satify_dcv).returns(true)
+      cname.stubs(:sleep)
     end
 
     describe 'https domain control validation' do

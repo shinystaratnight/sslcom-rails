@@ -97,7 +97,7 @@ Lint/LiteralAsCondition:
 Lint/AmbiguousRegexpLiteral:
   Enabled: false
 Lint/AmbiguousBlockAssociation:
-  Enabled: true
+  Enabled: false
 Lint/AssignmentInCondition:
   Enabled: false
 Lint/InterpolationCheck:
