@@ -111,7 +111,7 @@ class NotificationGroupsManager
           scanned_cert.save
         else
           last_scan = ScanLog.where(scanned_certificate_id: scanned_cert.id, notification_group_id: domain.notification_group.id).last
-          if Setttings.send_domain_digest_notice && (scan_status != last_scan.scan_status)
+          if Settings.send_domain_digest_notice && (scan_status != last_scan.scan_status)
             NotificationGroupMailer.domain_digest_notice(scan_status, domain.notification_group, scanned_cert, domain.url, domain.notification_group.notification_groups_contacts.pluck(:email_address).uniq, domain.notification_group.ssl_account).deliver_later
           end
         end
