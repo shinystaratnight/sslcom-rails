@@ -154,10 +154,6 @@ jobs:
           command: *precompile-assets
 
       - run:
-          name: Precompile Assets
-          command: *precompile-assets
-
-      - run:
           name: Run tests
           command: |
             mkdir -p test-results/rspec test-artifacts
