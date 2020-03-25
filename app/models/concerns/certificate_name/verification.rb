@@ -40,17 +40,13 @@ module Concerns
       end
 
       def satify_dcv
-        dcv.satisfy! unless dcv.satisfied?
+        domain_control_validation.satisfy! unless domain_control_validation.satisfied?
         true
       end
 
       def fail_dcv
-        dcv.update_attribute(workflow_state: 'failed') if dcv.dcv_method =~ /^acme/i
+        domain_control_validation.update_attributes(workflow_state: 'failed') if domain_control_validation.dcv_method =~ /^acme/i
         false
-      end
-
-      def dcv
-        domain_control_validations.last
       end
 
       def verification_options(prepend = '')
