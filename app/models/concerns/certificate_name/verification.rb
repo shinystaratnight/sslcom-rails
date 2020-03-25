@@ -45,7 +45,7 @@ module Concerns
       end
 
       def fail_dcv
-        dcv.update_attribute(workflow_state: 'failed')
+        dcv.update_attribute(workflow_state: 'failed') if dcv.dcv_method =~ /^acme/i
         false
       end
 
