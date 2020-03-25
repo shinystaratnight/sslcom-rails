@@ -233,7 +233,7 @@ describe User do
       expect(ssl.approved).to be_truthy
     end
 
-    it '#get_all_approved_accounts return approved accounts' do
+    xit '#get_all_approved_accounts return approved accounts' do
       default_ssl = owner.ssl_account
       ssl_params = { ssl_account_id: default_ssl.id }
 
