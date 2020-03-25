@@ -41,6 +41,8 @@ RSpec.configure do |config|
   config.include ActiveSupport::Testing::TimeHelpers
   config.include PaperclipMacros
   config.include Authlogic::TestCase
+  config.include AuthorizationHelper
+  config.include SessionHelper
 
   config.use_transactional_fixtures = false
   config.render_views

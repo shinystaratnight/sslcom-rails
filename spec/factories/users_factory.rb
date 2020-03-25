@@ -85,8 +85,6 @@ FactoryBot.define do
     Role::ALL.each do |role_name|
       trait role_name.to_sym do
         after(:create) do |user|
-          next if role_name == 'owner'
-
           user.create_ssl_account
           user.set_roles_for_account(
             user.ssl_account, [Role.find_by(name: role_name).id]

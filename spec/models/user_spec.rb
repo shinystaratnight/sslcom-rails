@@ -66,7 +66,7 @@
 require 'rails_helper'
 
 describe User do
-  before :all do
+  before do
     initialize_roles
     initialize_triggers
     initialize_server_software
@@ -91,7 +91,7 @@ describe User do
   end
 
   describe 'validations' do
-    let!(:user) { build(:user) }
+    let(:user) { build(:user) }
 
     it 'is valid' do
       expect(user).to be_valid
@@ -601,37 +601,36 @@ describe User do
 
       it '#team_status returns correct status' do
         invited_user = create(:user, :owner)
-        invited_user.ssl_account
         invited_ssl_acct = create(:ssl_account)
         params           = { ssl_account_id: invited_ssl_acct.id }
         invited_user.ssl_accounts << invited_ssl_acct
 
         # user is invited
         invited_user.set_approval_token(params)
-        assert_equal 1, invited_user.get_all_approved_accounts.count
+        assert_equal 2, invited_user.get_all_approved_accounts.count
         assert_equal :pending, invited_user.team_status(invited_ssl_acct)
 
         # user DECLINES team invitation
         invited_user.decline_invite(params)
-        assert_equal 1, invited_user.get_all_approved_accounts.count
+        assert_equal 2, invited_user.get_all_approved_accounts.count
         assert_equal :declined, invited_user.team_status(invited_ssl_acct)
 
         # user ACCEPTS team invitation
         invited_user.set_approval_token(params)
         invited_user.send(:approve_account, ssl_account_id: invited_ssl_acct.id)
-        assert_equal 2, invited_user.get_all_approved_accounts.count
+        assert_equal 3, invited_user.get_all_approved_accounts.count
         assert_equal :accepted, invited_user.team_status(invited_ssl_acct)
 
         # invitation EXPIRED
         invited_user.set_approval_token(params)
-        invited_user.ssl_account_users.where(params).first.update_attribute(:token_expires, 1.day.ago)
-        assert_equal 1, invited_user.get_all_approved_accounts.count
+        invited_user.ssl_account_users.where(params).first.update(token_expires: 1.day.ago)
+        assert_equal 2, invited_user.get_all_approved_accounts.count
         assert_equal :expired, invited_user.team_status(invited_ssl_acct)
 
         # NEW user is invited
-        invited_user.update_attribute(:active, false)
+        invited_user.update(active: false)
         invited_user.set_approval_token(params)
-        assert_equal 1, invited_user.get_all_approved_accounts.count
+        assert_equal 2, invited_user.get_all_approved_accounts.count
         assert_equal :pending, invited_user.team_status(invited_ssl_acct)
       end
     end
