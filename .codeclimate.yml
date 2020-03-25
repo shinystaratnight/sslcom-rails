@@ -57,11 +57,8 @@ plugins:
         enabled: false
 
 exclude_patterns:
-  - "config/"
   - "db/"
   - "**/node_modules/"
-  - "spec/"
-  - "test/"
   - "**/vendor/"
   - "*.md"
   - ".*"
