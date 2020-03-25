@@ -134,15 +134,6 @@ describe User do
     end
   end
 
-  describe 'roles' do
-    Role::ALL.each do |role|
-      xit "has helper method is_#{role}?" do
-        user = create(:user, role.to_sym)
-        user.send("is_#{role}?").should be_truthy
-      end
-    end
-  end
-
   describe 'ssl_account' do
     let!(:owner) { create(:user, :owner) }
     let!(:invited) { create(:user, :owner) }
