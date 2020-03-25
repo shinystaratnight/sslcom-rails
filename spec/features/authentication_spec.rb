@@ -14,7 +14,7 @@ RSpec.describe 'Authentications', type: :feature do
     User.any_instance.stubs(:authenticated_avatar_url).returns('https://github.blog/wp-content/uploads/2012/03/codercat.jpg?fit=896%2C896')
   end
 
-  xit 'logins in user who registers automatically', js: true do
+  it 'logins in user who registers automatically', js: true do
     visit login_path
     click_on 'Create a new account'
     fill_in 'user_login', with: 'cypress'
@@ -26,7 +26,7 @@ RSpec.describe 'Authentications', type: :feature do
     expect(page).to have_content('SSL.com Customer Dashboard')
   end
 
-  xit 'allows existing user to login and logout', js: true do
+  it 'allows existing user to login and logout', js: true do
     user.deliver_auto_activation_confirmation!
     visit login_path
     fill_in 'user_session_login', with: user.login
@@ -35,35 +35,35 @@ RSpec.describe 'Authentications', type: :feature do
     expect(page).to have_content("username: #{user.login}")
   end
 
-  xit 'fails gracefully when attempting to reset password with nonexistent login', js: true do
+  it 'fails gracefully when attempting to reset password with nonexistent login', js: true do
     visit new_password_reset_path
     fill_in 'login', with: 'nonexistent'
     find('.password_resets_btn').click
     expect(page).to have_content 'No user was found with that login'
   end
 
-  xit 'allows existing user to reset password using login', js: true do
+  it 'allows existing user to reset password using login', js: true do
     visit new_password_reset_path
     fill_in 'login', with: user.login
     find('.password_resets_btn').click
     expect(page).to have_content 'Customer login'
   end
 
-  xit 'allows existing user to reset password using email', js: true do
+  it 'allows existing user to reset password using email', js: true do
     visit new_password_reset_path
     fill_in 'email', with: user.email
     find('.password_resets_btn').click
     expect(page).to have_content 'Customer login'
   end
 
-  xit 'fails gracefully when attempting to reset a password with nonexistent email', js: true do
+  it 'fails gracefully when attempting to reset a password with nonexistent email', js: true do
     visit new_password_reset_path
     fill_in 'email', with: 'nonexistent@ssl.com'
     find('.password_resets_btn').click
     expect(page).to have_content 'No user was found with that email'
   end
 
-  xit 'requires Duo 2FA when logging in as super_user', js: true do
+  it 'requires Duo 2FA when logging in as super_user', js: true do
     sys_admin = create(:user, :super_user)
     visit login_path
     fill_in 'user_session_login', with: sys_admin.login

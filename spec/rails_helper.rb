@@ -13,6 +13,7 @@ require 'rspec/rails'
 require 'shoulda/matchers'
 require 'authlogic'
 require 'authlogic/test_case'
+require 'declarative_authorization/maintenance'
 
 # Add additional requires below this line. Rails is not loaded until this point!
 
@@ -39,10 +40,10 @@ RSpec.configure do |config|
   config.include FactoryBot::Syntax::Methods
   config.include SetupHelpers
   config.include ActiveSupport::Testing::TimeHelpers
-  config.include PaperclipMacros
   config.include Authlogic::TestCase
   config.include AuthorizationHelper
   config.include SessionHelper
+  # config.include AuthenticationHelpers
 
   config.use_transactional_fixtures = false
   config.render_views
@@ -53,7 +54,6 @@ RSpec.configure do |config|
         Delete line `config.use_transactional_fixtures = true` from rails_helper.rb
         (or set it to false) to prevent uncommitted transactions being used in
         JavaScript-dependent specs.
-
         During testing, the app-under-test that the browser driver connects to
         uses a different database connection to the database connection used by
         the spec. The app's database connection would not be able to access
@@ -62,6 +62,24 @@ RSpec.configure do |config|
     end
 
     DatabaseCleaner.clean_with(:truncation)
+  end
+
+  config.before do
+    SystemAudit.stubs(:create).returns(true)
+    DatabaseCleaner.strategy = :transaction
+  end
+
+  config.before(:each, type: :feature) do
+    # :rack_test driver's Rack app under test shares database connection
+    # with the specs, so continue to use transaction strategy for speed.
+    driver_shares_db_connection_with_specs = Capybara.current_driver == :rack_test
+
+    unless driver_shares_db_connection_with_specs
+      # Driver is probably for an external browser with an app
+      # under test that does *not* share a database connection with the
+      # specs, so use truncation strategy.
+      DatabaseCleaner.strategy = :truncation, { except: %w[roles reminder_triggers server_software] }
+    end
   end
 
   config.around do |example|
