@@ -128,7 +128,7 @@ describe(CertificateOrder) do
                   when 'subject_alternative_names'
                     "#{field}:'#{csr[field.to_sym].join(', ')}'"
                   when 'organization', 'locality'
-                    "#{field}:'#{csr[field.to_sym].gsub(' ', '')}'"
+                    "#{field}:'#{csr[field.to_sym].delete(' ')}'"
                   else
                     "#{field}:'#{csr[field.to_sym]}'"
                   end

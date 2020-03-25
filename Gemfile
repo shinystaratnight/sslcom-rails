@@ -34,7 +34,7 @@ gem 'dynamic_form'
 gem 'easy_roles'
 gem 'haml'
 gem 'json'
-gem 'money', '2.1.0'
+gem 'money'
 gem 'multi_json'
 gem 'paperclip', '~> 5.3.0'
 gem 'rabl', '0.14.1'
@@ -126,12 +126,15 @@ group :development, :test do
   gem 'factory_bot_rails'
   gem 'faker'
   gem 'pry-rails'
+  gem 'pry-remote'
+  gem 'pry-nav'
+  gem 'pry-rescue'
+  gem 'pry-stack_explorer'
   gem 'rspec-rails'
   gem 'better_errors'
   gem 'binding_of_caller'
   gem 'builder'
   gem 'bullet'
-  gem 'pry-remote'
   gem 'rubocop', require: false
   gem 'rubocop-rails', require: false
   gem 'rubocop-rspec', require: false
@@ -140,6 +143,8 @@ group :development, :test do
 end
 
 group :test do
+  gem 'capybara'
+  gem 'capybara-screenshot'
   gem 'database_cleaner-active_record'
   gem 'mocha'
   gem 'rspec_junit_formatter'
@@ -147,6 +152,7 @@ group :test do
   gem 'vcr'
   gem 'webmock'
   gem 'shoulda-matchers', require: false
+  gem 'selenium-webdriver'
 end
 
 gem 'httparty'
@@ -155,3 +161,4 @@ gem 'bcrypt_pbkdf', '~> 1'
 gem 'ed25519', '~> 1.2'
 gem 'active_model_serializers'
 gem 'draper'
+gem 'mini_magick'

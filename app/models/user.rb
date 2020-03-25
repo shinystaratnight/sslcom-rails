@@ -79,7 +79,7 @@ class User < ApplicationRecord
 
   OWNED_MAX_TEAMS = 3
 
-  attr_accessor :changing_password, :admin_update, :role_ids, :role_change_type
+  attr_accessor :changing_password, :admin_update, :role_ids, :role_change_type, :as_reseller
   attr_accessible :login, :email, :password, :password_confirmation, :openid_identifier, :status, :assignments_attributes, :first_name, :last_name,
                   :default_ssl_account, :ssl_account_id, :role_ids, :role_change_type, :main_ssl_account, :max_teams, :persist_notice
 
@@ -90,6 +90,18 @@ class User < ApplicationRecord
   before_create do |u|
     u.status = 'enabled'
     u.max_teams = OWNED_MAX_TEAMS unless u.max_teams
+  end
+
+  after_create do |u|
+    if u.ssl_accounts.empty?
+      if u.as_reseller
+        u.create_ssl_account([Role.get_reseller_id])
+        u.ssl_account.add_role! 'new_reseller'
+        u.ssl_account.set_reseller_default_prefs
+      else
+        u.create_ssl_account([Role.get_owner_id])
+      end
+    end
   end
 
   delegate :tier_suffix, to: :ssl_account, prefix: false, allow_nil: true
@@ -105,7 +117,7 @@ class User < ApplicationRecord
   end
 
   def ssl_account(default_team = nil)
-    SslAccount.find_by_id(Rails.cache.fetch("#{cache_key}/ssl_account/#{default_team.is_a?(Symbol) ? default_team.to_s : default_team.try(:cache_key)}") do
+    SslAccount.find_by(id: Rails.cache.fetch("#{cache_key}/ssl_account/#{default_team.is_a?(Symbol) ? default_team.to_s : default_team.try(:cache_key)}") do
       default_ssl = default_ssl_account && is_approved_account?(default_ssl_account)
       main_ssl = main_ssl_account && is_approved_account?(main_ssl_account)
 
@@ -261,13 +273,11 @@ class User < ApplicationRecord
     end
   end
 
-  def roles_for_account(target_ssl = nil)
-    ssl = target_ssl.nil? ? ssl_account : target_ssl
-
-    if ssl_accounts.include?(ssl)
-      assignments.where(ssl_account_id: ssl).pluck(:role_id).uniq
+  def roles_for_account(target_ssl = ssl_account)
+    if ssl_accounts.include?(target_ssl)
+      assignments.where(ssl_account_id: target_ssl.id).pluck(:role_id).uniq
     else
-      []
+      Assignment.none
     end
   end
   memoize :roles_for_account
@@ -372,7 +382,7 @@ class User < ApplicationRecord
         update(default_ssl_account: main_ssl_account)
       else
         ssl = get_first_approved_acct
-        update_attributes(default_ssl_account: ssl.id, main_ssl_account: ssl.id)
+        update(default_ssl_account: ssl.id, main_ssl_account: ssl.id)
       end
     end
     update(main_ssl_account: default_ssl_account) if main_ssl_account == remove_ssl.id
@@ -416,13 +426,13 @@ class User < ApplicationRecord
 
   def browsing_history(l_bound = nil, h_bound = nil, sort = 'asc')
     l_bound = '01/01/2000' if l_bound.blank?
-    s = l_bound =~ /\// ? '%m/%d/%Y' : '%m-%d-%Y'
+    s = %r{/}.match?(l_bound) ? '%m/%d/%Y' : '%m-%d-%Y'
     start = Date.strptime l_bound, s
     finish =
       if h_bound.blank?
         DateTime.now
       elsif h_bound.is_a?(String)
-        f = h_bound =~ /\// ? '%m/%d/%Y' : '%m-%d-%Y'
+        f = %r{/}.match?(h_bound) ? '%m/%d/%Y' : '%m-%d-%Y'
         Date.strptime h_bound, f
       else
         h_bound.to_datetime
@@ -430,7 +440,7 @@ class User < ApplicationRecord
     count = 0
     visitor_tokens.map do |vt|
       ["route #{count += 1}"] +
-        vt.trackings.order('created_at ' + sort).where { created_at >> (start..finish) }.map { |t| "from #{t.referer.url.blank? ? "unknown" : t.referer.url} to #{t.tracked_url.url} at #{t.created_at}" }.uniq
+        vt.trackings.order('created_at ' + sort).where { created_at >> (start..finish) }.map { |t| "from #{t.referer.url.presence || 'unknown'} to #{t.tracked_url.url} at #{t.created_at}" }.uniq
     end
   end
 
@@ -456,9 +466,9 @@ class User < ApplicationRecord
 
     # TODO: New logic for auto activation account by passing password on Signup page.
     if Settings.require_signup_password
-      self.password = params[:user][:password] unless params[:user][:password].blank?
-      self.password_confirmation = params[:user][:password_confirmation] unless params[:user][:password_confirmation].blank?
-      self.active = true unless params[:user][:password].blank?
+      self.password = params[:user][:password] if params[:user][:password].present?
+      self.password_confirmation = params[:user][:password_confirmation] if params[:user][:password_confirmation].present?
+      self.active = true if params[:user][:password].present?
     end
 
     save_without_session_maintenance
@@ -499,9 +509,8 @@ class User < ApplicationRecord
     def get_user_accounts_roles(user)
       # e.g.: {17198:[4], 29:[17, 18], 15:[17, 18, 19, 20]}
       Rails.cache.fetch("#{user.cache_key}/get_user_accounts_roles") do
-        user.ssl_accounts.inject({}) do |all, s|
+        user.ssl_accounts.each_with_object({}) do |s, all|
           all[s.id] = user.assignments.where(ssl_account_id: s.id).pluck(:role_id).uniq
-          all
         end
       end
     end
@@ -571,11 +580,11 @@ class User < ApplicationRecord
   def certificate_order_by_ref(ref)
     CertificateOrder.unscoped.includes(:certificate_contents).find(
       Rails.cache.fetch("#{cache_key}/certificate_order_id/#{ref}") do
-        co = CertificateOrder.unscoped {
+        co = CertificateOrder.unscoped do
           (is_system_admins? ?
-        CertificateOrder : certificate_orders).find_by_ref(ref)
-        }
-        co.id unless co.blank?
+        CertificateOrder : certificate_orders).find_by(ref: ref)
+        end
+        co.id if co.present?
       end
     )
   end
@@ -620,7 +629,7 @@ class User < ApplicationRecord
   end
 
   def is_owner?(target_account = nil)
-    # TODO need to separate out reseller from owner
+    # TODO: need to separate out reseller from owner
     role_symbols(target_account) & [Role::OWNER.to_sym, Role::RESELLER.to_sym]
   end
 
@@ -694,7 +703,7 @@ class User < ApplicationRecord
     end
   end
 
-  # TODO this is unfinished, going to instead email all
+  # TODO: this is unfinished, going to instead email all
   # duplicate_v2_users emails the corresponding consolidated username
   def self.consolidate_login(obj, password)
     user = duplicate_logins(obj).last.user
@@ -778,7 +787,7 @@ class User < ApplicationRecord
   end
 
   def self_or_other(user_id)
-    user_id ? User.find_by_id(user_id) : self
+    user_id ? User.find_by(id: user_id) : self
   end
 
   def approve_account(params)
@@ -803,7 +812,7 @@ class User < ApplicationRecord
       ssl = ssl_account_users.where(approved: true, user_enabled: true)
       ssl.any? ? ssl.first.ssl_account_id : nil
     end
-    ssl_accounts.find_by_id(sa_id) if sa_id
+    ssl_accounts.find_by(id: sa_id) if sa_id
   end
 
   def self.change_login(old, new)

@@ -41,7 +41,7 @@ aliases:
 
   - &install-mysql-dependencies |
     sudo apt-get update
-    sudo apt-get install -y unixodbc-dev mysql-server chromedriver --fix-missing
+    sudo apt-get install -y unixodbc-dev mysql-server chromedriver
     sudo gem uninstall bundler
     sudo rm /usr/local/bin/bundle
     sudo rm /usr/local/bin/bundler
@@ -262,6 +262,17 @@ jobs:
     steps:
       - setup_remote_docker: 
          docker_layer_caching: true
+
+      - attach_workspace:
+          at: ~/sslcom-rails
+      - run:
+          name: Install Code Climate Test Reporter
+          command: |
+            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+            chmod +x ./cc-test-reporter
+      - run:
+          command: |
+            ./cc-test-reporter sum-coverage --output - codeclimate.*.json | ./cc-test-reporter upload-coverage --debug --input -
 
       - attach_workspace:
           at: ~/sslcom-rails

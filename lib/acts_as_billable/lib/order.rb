@@ -33,7 +33,7 @@ class Order < ActiveRecord::Base
   end
     
   def total
-    self.amount = line_items.inject(0.to_money) {|sum,l| sum + l.amount }
+    self.amount = line_items.inject(Money.new(0)) {|sum,l| sum + l.amount }
   end
   
   # TODO: Should this do more?

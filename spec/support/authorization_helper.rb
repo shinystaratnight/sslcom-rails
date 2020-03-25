@@ -1,14 +1,15 @@
 module AuthorizationHelper
   def prepare_auth_tables
+    activate_authlogic
     initialize_roles
     initialize_certificates
     initialize_all_auth_users
   end
 
   def initialize_all_auth_users
-    @owner          = create(:user, :owner)
-    @owner_ssl      = @owner.ssl_account
-    @account_admin  = create_and_approve_user(@owner_ssl, 'account_admin_login')
+    @owner = create(:user, :owner)
+    @owner_ssl = @owner.ssl_accounts.first
+    @account_admin = create_and_approve_user(@owner_ssl, 'account_admin_login')
     @account_admin2 = create_and_approve_user(@owner_ssl, 'account_admin_login2')
     @billing        = create_and_approve_user(@owner_ssl, 'billing_login', @billing_role)
     @users_manager  = create_and_approve_user(@owner_ssl, 'users_manager_login', @users_manager_role)

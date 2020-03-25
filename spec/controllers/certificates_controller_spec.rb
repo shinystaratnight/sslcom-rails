@@ -3,10 +3,12 @@
 require 'rails_helper'
 
 describe CertificatesController do
-  before :all do
+  include SessionHelper
+  before do
     stub_roles
     stub_triggers
     stub_server_software
+    activate_authlogic
     create(:certificate_with_certificate_order)
   end
 
