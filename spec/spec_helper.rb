@@ -3,7 +3,6 @@
 require 'capybara/rspec'
 require 'capybara-screenshot/rspec'
 require 'webmock/rspec'
-require 'rspec/retry'
 
 RSpec.configure do |config|
   config.expect_with :rspec do |expectations|
