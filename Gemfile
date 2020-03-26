@@ -147,7 +147,6 @@ group :test do
   gem 'database_cleaner-active_record'
   gem 'mocha'
   gem 'rspec_junit_formatter'
-  gem 'rspec-retry'
   gem 'simplecov', '0.17.1'
   gem 'vcr'
   gem 'webmock'

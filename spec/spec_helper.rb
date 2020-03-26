@@ -50,16 +50,6 @@ RSpec.configure do |config|
 
   config.profile_examples = 10
   config.order = :random
-
-  # retry settings for CI
-  config.verbose_retry = true
-  config.display_try_failure_messages = false
-  config.around :each, :js do |ex|
-    ex.run_with_retry retry: 3
-  end
-  config.retry_callback = proc do |ex|
-    Capybara.reset! if ex.metadata[:js]
-  end
 end
 
 Capybara.register_driver :selenium do |app|

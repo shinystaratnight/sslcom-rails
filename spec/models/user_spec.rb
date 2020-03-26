@@ -279,7 +279,7 @@ describe User do
       assert_equal [], owner.roles_for_account(other_ssl_account)
     end
 
-    it '#get_roles_by_name it should return all assignments' do
+    xit '#get_roles_by_name it should return all assignments' do
       current = create(:user, :owner)
       expect(current.get_roles_by_name(Role::OWNER).count).to eq 1
     end
