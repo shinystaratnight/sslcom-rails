@@ -12,15 +12,12 @@ RSpec.describe 'Contacts', type: :feature do
 
   let!(:user) { create(:user, :owner) }
 
-  before do
-    login
-  end
-
   it 'can add an administrative contact', js: true do
     Authorization::Maintenance.without_access_control do
       user.ssl_account.funded_account.update(cents: 100_000)
     end
 
+    login_user(user)
     visit account_path(user.ssl_account(:default_team).to_slug)
     click_on 'BUY'
     page.all('img[alt="Buy sm bl"]')[0].click
@@ -44,13 +41,6 @@ RSpec.describe 'Contacts', type: :feature do
     find('#btn_create_role_contact').click
     find('input[alt="Next bl"]').click
     expect(page).to have_content('Domain Validation')
-  end
-
-  def login
-    visit login_path
-    fill_in 'user_session_login', with: user.login
-    fill_in 'user_session_password', with: 'Testing_ssl+1'
-    find('#btn_login').click
   end
 
   def test_csr
