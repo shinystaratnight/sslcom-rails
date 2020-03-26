@@ -70,4 +70,5 @@ Capybara.default_driver = :selenium
 Capybara.javascript_driver = :selenium_chrome_headless
 Capybara.server = :puma, { Silent: true }
 Capybara.default_max_wait_time = 5
-Capybara::Screenshot.prune_strategy = { keep: 12 }
+Capybara::Screenshot.prune_strategy = :keep_last_run
+Capybara::Screenshot.webkit_options = { width: 1024, height: 768 }

@@ -4,8 +4,6 @@ RSpec.describe 'Authentications', type: :feature do
   before(:all) do
     initialize_roles
     initialize_triggers
-    initialize_server_software
-    initialize_certificates
   end
 
   let!(:user) { create(:user, :owner) }
