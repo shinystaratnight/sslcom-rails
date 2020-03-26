@@ -47,8 +47,6 @@ module ApplicationHelper
   end
 
   def is_sandbox?
-    return true if Rails.env.test?
-
     @is_sandbox ||= Rails.cache.fetch("#{request.try(:host)}/is_sandbox") do
       Sandbox.exists?(request.try(:host))
     end

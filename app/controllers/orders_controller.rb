@@ -225,8 +225,7 @@ class OrdersController < ApplicationController
         elsif ssl_account && ssl_account.no_limit
           create_no_limit_order
         elsif current_user.ssl_account.funded_account.cents > 0
-          redirect_to(is_current_order_affordable? ? confirm_funds_url(:order) :
-                          allocate_funds_for_order_path(id: :order)) and return
+          redirect_to(is_current_order_affordable? ? confirm_funds_url(id: :order) : allocate_funds_for_order_path(id: :order)) && return
         end
       end
     end

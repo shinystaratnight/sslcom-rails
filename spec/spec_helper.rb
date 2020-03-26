@@ -61,7 +61,8 @@ end
 
 Capybara.register_driver :selenium do |app|
   capabilities = Selenium::WebDriver::Remote::Capabilities.chrome(
-    chromeOptions: { args: %w[no-sandbox headless disable-gpu disable-dev-shm-usage window-size=1920,1080] }
+    loggingPrefs: { browser: 'ALL' },
+    chromeOptions: { args: %w[headless disable-gpu no-sandbox disable-dev-shm-usage disable-infobars disable-extensions window-size=1600,3200] }
   )
   Capybara::Selenium::Driver.new(app, browser: :chrome, desired_capabilities: capabilities)
 end
@@ -71,4 +72,4 @@ Capybara.javascript_driver = :selenium_chrome_headless
 Capybara.server = :puma, { Silent: true }
 Capybara.default_max_wait_time = 5
 Capybara::Screenshot.prune_strategy = :keep_last_run
-Capybara::Screenshot.webkit_options = { width: 1024, height: 768 }
+Capybara::Screenshot.webkit_options = { width: 1600, height: 3200 }
