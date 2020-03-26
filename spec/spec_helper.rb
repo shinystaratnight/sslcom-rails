@@ -3,6 +3,7 @@
 require 'capybara/rspec'
 require 'capybara-screenshot/rspec'
 require 'webmock/rspec'
+require 'rspec/retry'
 
 RSpec.configure do |config|
   config.expect_with :rspec do |expectations|
@@ -47,16 +48,18 @@ RSpec.configure do |config|
   #   #   - http://rspec.info/blog/2014/05/notable-changes-in-rspec-3/#zero-monkey-patching-mode
   #   config.disable_monkey_patching!
 
-  # Print the 10 slowest examples and example groups at the
-  # end of the spec run, to help surface which specs are running
-  # particularly slow.
   config.profile_examples = 10
-
-  # Run specs in random order to surface order dependencies. If you find an
-  # order dependency and want to debug it, you can fix the order by providing
-  # the seed, which is printed after each run.
-  #     --seed 1234
   config.order = :random
+
+  # retry settings for CI
+  config.verbose_retry = true
+  config.display_try_failure_messages = false
+  config.around :each, :js do |ex|
+    ex.run_with_retry retry: 3
+  end
+  config.retry_callback = proc do |ex|
+    Capybara.reset! if ex.metadata[:js]
+  end
 end
 
 Capybara.register_driver :selenium do |app|
