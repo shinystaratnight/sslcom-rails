@@ -107,16 +107,16 @@ jobs:
 
       - restore_cache:
           keys:
-            - gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
-            - gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Branch }}
-            - gem-cache-{{ .Environment.CACHE_VERSION }}
+            - gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+            - gem-cache-{{ arch }}-{{ .Branch }}
+            - gem-cache
 
       - run:
           name: Install bundle
           command: bin/bundle install --path vendor/bundle
 
       - save_cache:
-          key: gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+          key: gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
           paths:
             - ~/sslcom-rails/vendor/bundle
 
@@ -199,16 +199,16 @@ jobs:
       
       - restore_cache:
           keys:
-            - gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
-            - gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Branch }}
-            - gem-cache-{{ .Environment.CACHE_VERSION }}
+            - gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+            - gem-cache-{{ arch }}-{{ .Branch }}
+            - gem-cache
 
       - run:
           name: Bundle Install Gem Dependencies
           command: bundle check --path vendor/bundle || bundle install --deployment
 
       - save_cache:
-         key: gem-cache-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+         key: gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
          paths:
            - vendor/bundle
 
@@ -230,8 +230,8 @@ jobs:
 
       - restore_cache:
           keys:
-            - yarn-{{ .Environment.CACHE_VERSION }}-{{ checksum "package.json" }}
-            - yarn-{{ .Environment.CACHE_VERSION }}-"
+            - yarn-{{ checksum "package.json" }}
+            - yarn-"
 
       - run: yarn install
 
@@ -239,7 +239,7 @@ jobs:
           paths:
             - node_modules
             - ~/.cache
-          key: yarn-{{ .Environment.CACHE_VERSION }}-{{ checksum "package.json" }}
+          key: yarn-{{ checksum "package.json" }}
 
       - run:
           name: Setup Database
