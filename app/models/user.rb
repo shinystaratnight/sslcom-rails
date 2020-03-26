@@ -96,9 +96,9 @@ class User < ApplicationRecord
     if u.ssl_accounts.empty?
       u.create_ssl_account
       if u.as_reseller
-        user.ssl_account.add_role! 'new_reseller'
-        user.ssl_account.set_reseller_default_prefs
-        user.add_role(:reller, u.ssl_account)
+        u.ssl_account.add_role! 'new_reseller'
+        u.ssl_account.set_reseller_default_prefs
+        u.add_role(:reller, u.ssl_account)
       else
         u.set_roles_for_account(u.ssl_account, [Role.get_owner_id])
       end
