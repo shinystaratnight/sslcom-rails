@@ -280,8 +280,8 @@ describe User do
     end
 
     it '#get_roles_by_name it should return all assignments' do
-      this = create(:user)
-      expect(this.get_roles_by_name(Role::OWNER).count).to eq 1
+      current = create(:user, :owner)
+      expect(current.get_roles_by_name(Role::OWNER).count).to eq 1
     end
 
     xit '#update_account_role it should update assignment' do
