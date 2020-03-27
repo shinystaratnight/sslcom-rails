@@ -1,6 +1,6 @@
 class ResellerTiersController < ApplicationController
-  before_filter :require_user, :only => [:edit,:new]
-  before_filter :require_admin, :only => [:edit,:new]
+  before_action :require_user, :only => [:edit,:new]
+  before_action :require_admin, :only => [:edit,:new]
 
   def show
     @reseller_tier = ResellerTier.general.find_by_id(params[:id])

@@ -2,7 +2,7 @@ class NotificationGroupsController < ApplicationController
   before_action :require_user, only: [:index, :new, :create, :edit, :update, :destroy]
   before_action :find_notification_group, only: :scan_individual_group
   before_action :find_ssl_account
-  before_filter :global_set_row_page, only: [:index, :search]
+  before_action :global_set_row_page, only: [:index, :search]
   before_action :set_schedule_value, only: [:index, :new, :edit, :search]
 
   def search

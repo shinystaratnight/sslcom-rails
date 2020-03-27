@@ -4,8 +4,8 @@ module Api
   module V1
     class ApiAcmeRequestsController < APIController
       prepend_view_path 'app/views/api/v1/api_acme_requests'
-      before_filter :set_database, if: 'request.host=~/^sandbox/ || request.host=~/^sws-test/ || request.host=~/ssl.local$/'
-      before_filter :set_test, :record_parameters
+      before_action :set_database, if: 'request.host=~/^sandbox/ || request.host=~/^sws-test/ || request.host=~/ssl.local$/'
+      before_action :set_test, :record_parameters
 
       rescue_from Exception do |exception|
         render_500_error exception

@@ -1,6 +1,6 @@
 class ScanLogsController < ApplicationController
   before_action :find_ssl_account
-  before_filter :global_set_row_page, only: [:index]
+  before_action :global_set_row_page, only: [:index]
 
   def index
     @notification_group = @ssl_account.notification_groups.find(params[:notification_group_id])

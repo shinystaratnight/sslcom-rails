@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
 class CertificatesController < ApplicationController
-  before_filter :find_tier
-  before_filter :require_user, only: %i[buy buy_renewal], if: 'request.subdomain==Reseller::SUBDOMAIN'
-  before_filter :require_user, only: %i[admin_index new edit create update manage_product_variants]
-  before_filter :find_certificate, only: %i[show buy pricing buy_renewal]
-  before_filter :find_certificate_by_id, only: %i[edit update manage_product_variants]
+  before_action :find_tier
+  before_action :require_user, only: %i[buy buy_renewal], if: 'request.subdomain==Reseller::SUBDOMAIN'
+  before_action :require_user, only: %i[admin_index new edit create update manage_product_variants]
+  before_action :find_certificate, only: %i[show buy pricing buy_renewal]
+  before_action :find_certificate_by_id, only: %i[edit update manage_product_variants]
   filter_access_to :edit, :update, :manage_product_variants, attribute_check: true
   filter_access_to :buy_renewal, :new, :admin_index, :create
   layout false, only: [:pricing]
