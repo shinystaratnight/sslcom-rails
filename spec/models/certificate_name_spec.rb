@@ -34,6 +34,8 @@ describe CertificateName do
     stub_server_software
   end
 
+  it_behaves_like 'it filters on domain'
+
   it { is_expected.to have_db_column :id }
   it { is_expected.to have_db_column :acme_token }
   it { is_expected.to have_db_column :caa_passed }

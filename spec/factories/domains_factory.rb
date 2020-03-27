@@ -24,8 +24,10 @@
 #  index_certificate_names_on_ssl_account_id          (ssl_account_id)
 #
 
-require 'rails_helper'
-
-describe Domain do
-  it_behaves_like 'it filters on domain'
+FactoryBot.define do
+  factory :domain do
+    name { Faker::Internet.domain_name }
+    is_common_name { true }
+    email { Faker::Internet.email }
+  end
 end
