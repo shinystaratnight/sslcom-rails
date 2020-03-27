@@ -158,7 +158,7 @@ jobs:
           command: |
             mkdir -p test-results/rspec test-artifacts
             ./cc-test-reporter before-build
-            TESTFILES=$(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=filesize)
+            TESTFILES=$(circleci tests glob "spec/{controllers,decorators,models,services,integration}/**/*_spec.rb"| circleci tests split --split-by=filesize)
             bundle exec rspec --profile 10 \
                               --color \
                               --order random \
