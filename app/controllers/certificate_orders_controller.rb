@@ -30,15 +30,15 @@ class CertificateOrdersController < ApplicationController
   filter_access_to :renew, :parse_csr, require: [:create]
   filter_access_to :auto_renew, require: [:admin_manage]
   filter_access_to :show_cert_order, :validate_issue, :register_domains, :save_attestation, :remove_attestation, :require=>:ajax
-  before_filter :find_certificate, only: [:enrollment]
-  before_filter :load_certificate_order,
+  before_action :find_certificate, only: [:enrollment]
+  before_action :load_certificate_order,
                 only: [:show, :show_cert_order, :validate_issue, :update, :edit, :download, :destroy, :delete, :update_csr, :auto_renew, :start_over,
                        :change_ext_order_number, :admin_update, :developer, :sslcom_ca, :update_tags, :recipient, :validate_issue, :attestation,
                         :save_attestation, :remove_attestation]
-  before_filter :global_set_row_page, only: [:index, :search, :credits, :pending, :filter_by_scope, :order_by_csr, :filter_by,
+  before_action :global_set_row_page, only: [:index, :search, :credits, :pending, :filter_by_scope, :order_by_csr, :filter_by,
                                              :incomplete, :reprocessing]
-  before_filter :get_team_tags, only: [:index, :search]
-  before_filter :construct_special_fields, only: [:edit, :create, :update, :update_csr]
+  before_action :get_team_tags, only: [:index, :search]
+  before_action :construct_special_fields, only: [:edit, :create, :update, :update_csr]
   in_place_edit_for :certificate_order, :notes
   in_place_edit_for :csr, :signed_certificate_by_text
 

@@ -113,8 +113,8 @@ class User < ApplicationRecord
     c.validate_login_field = false
     c.session_ids = [nil, :shadow]
     c.crypto_provider = Authlogic::CryptoProviders::Sha512
-    c.validates_length_of_password_field_options = { on: :update, minimum: 8, if: '(has_no_credentials? && !admin_update) || changing_password' }
-    c.validates_length_of_password_confirmation_field_options = { on: :update, minimum: 8, if: '(has_no_credentials? && !admin_update) || changing_password' }
+    c.validates_length_of_password_field_options = { on: :update, minimum: 8, if: -> { (has_no_credentials? && !admin_update) || changing_password } }
+    c.validates_length_of_password_confirmation_field_options = { on: :update, minimum: 8, if: -> { (has_no_credentials? && !admin_update) || changing_password } }
   end
 
   def ssl_account(default_team = nil)

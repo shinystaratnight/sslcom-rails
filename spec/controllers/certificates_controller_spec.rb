@@ -12,7 +12,7 @@ describe CertificatesController do
     create(:certificate_with_certificate_order)
   end
 
-  describe 'find_tier before_filter' do
+  describe 'find_tier before_action' do
     it 'finds tier when passed reseller_cookie params' do
       tier_options = attributes_for(:reseller_tier, :west)
       ResellerTier.generate_tier(tier_options)

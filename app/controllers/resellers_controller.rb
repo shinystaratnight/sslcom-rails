@@ -1,6 +1,6 @@
 class ResellersController < ApplicationController
-  before_filter :require_user, :except=>[:index, :details]
-  skip_before_filter :finish_reseller_signup
+  before_action :require_user, :except=>[:index, :details]
+  skip_before_action :finish_reseller_signup
 
   def index
     flash.now[:notice] ||= params[:notice]

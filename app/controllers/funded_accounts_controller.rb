@@ -1,14 +1,14 @@
 class FundedAccountsController < ApplicationController
   include OrdersHelper, CertificateOrdersHelper, FundedAccountsHelper
-  before_filter :go_prev, :parse_certificate_orders, only: [:apply_funds, :create_free_ssl]
+  before_action :go_prev, :parse_certificate_orders, only: [:apply_funds, :create_free_ssl]
 #  resource_controller :singleton
 #  ssl_required :allocate_funds, :allocate_funds_for_order, :apply_funds,
 #    :deposit_funds
 #  belongs_to :user
-  before_filter :require_user, :only => [:allocate_funds_for_order,
+  before_action :require_user, :only => [:allocate_funds_for_order,
     :deposit_funds, :allocate_funds, :apply_funds, :confirm_funds]
-  before_filter :find_ssl_account
-  skip_before_filter :finish_reseller_signup
+  before_action :find_ssl_account
+  skip_before_action :finish_reseller_signup
   filter_access_to :all
 
   def allocate_funds

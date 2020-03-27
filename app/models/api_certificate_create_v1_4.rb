@@ -92,7 +92,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   validates :common_names_flag, format: {with: /[01]/}, unless: lambda{|c|c.common_names_flag.blank?}
   validates :unique_value, format: {with: /[a-zA-Z0-9]{1,20}/}, unless: lambda{|c|c.unique_value.blank?}
   # use code instead of serial allows attribute changes without affecting the cert name
-  validate :verify_dcv, on: :create, if: "!domains.blank?"
+  validate :verify_dcv, on: :create, if: -> { domains.present? }
 
   ########### Note to development team: Evaluate the utility of validate_contacts ##########################
   # validate :validate_contacts, unless: lambda{|c|c.contacts.blank?}

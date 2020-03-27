@@ -168,9 +168,9 @@ class SslAccount < ApplicationRecord
 
   SHOW_TEAMS_THRESHOLD = 0
   SETTINGS_SECTIONS.each do |item|
-    validate "#{item}_recipients_format".to_sym, unless: "preferred_#{item}_recipients=='0'"
+    validate "#{item}_recipients_format".to_sym, unless: -> { send("preferred_#{item}_recipients") == '0' }
   end
-  validate :reminder_notice_destinations_format, unless: "preferred_reminder_notice_destinations=='0'"
+  validate :reminder_notice_destinations_format, unless: -> { preferred_reminder_notice_destinations == '0' }
   validate :preferred_reminder_notice_triggers_format
   validates :acct_number, presence: true, uniqueness: true, on: :create
   validates :ssl_slug, uniqueness: { case_sensitive: false }, length: { in: 2..20 }, allow_nil: true
