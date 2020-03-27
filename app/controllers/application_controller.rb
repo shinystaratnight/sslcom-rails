@@ -15,14 +15,14 @@ class ApplicationController < ActionController::Base
   helper_method :current_user_session, :current_user, :is_reseller, :cookies, :current_website,
                 :cart_contents, :cart_products, :certificates_from_cookie, 'is_iphone?', 'hide_dcv?', :free_qty_limit,
                 'hide_documents?', 'hide_both?', 'hide_validation?'
-  before_action :set_database, if: 'request.host=~/^sandbox/ || request.host=~/^sws-test/'
+  before_action :set_database, if: -> { request.host.match?(/^sandbox/) || request.host.match?(/^sws-test/) }
   before_action :set_mailer_host
   before_action :detect_recert, except: %i[renew reprocess]
   before_action :set_current_user
   before_action :verify_duo_authentication, except: %i[duo duo_verify login logout]
-  before_action :identify_visitor, :record_visit, if: 'Settings.track_visitors'
-  before_action :finish_reseller_signup, if: 'current_user'
-  before_action :team_base, if: 'params[:ssl_slug] && current_user'
+  before_action :identify_visitor, :record_visit, if: -> { Settings.track_visitors }
+  before_action :finish_reseller_signup, if: -> { current_user.present? }
+  before_action :team_base, if: -> { params[:ssl_slug] && current_user }
   before_action :set_ssl_slug, :load_notifications
   after_action :set_access_control_headers # need to move parse_csr to api, if: "request.subdomain=='sws' || request.subdomain=='sws-test'"
 

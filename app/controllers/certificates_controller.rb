@@ -2,7 +2,7 @@
 
 class CertificatesController < ApplicationController
   before_action :find_tier
-  before_action :require_user, only: %i[buy buy_renewal], if: 'request.subdomain==Reseller::SUBDOMAIN'
+  before_action :require_user, only: %i[buy buy_renewal], if: -> { request.subdomain == Reseller::SUBDOMAIN }
   before_action :require_user, only: %i[admin_index new edit create update manage_product_variants]
   before_action :find_certificate, only: %i[show buy pricing buy_renewal]
   before_action :find_certificate_by_id, only: %i[edit update manage_product_variants]

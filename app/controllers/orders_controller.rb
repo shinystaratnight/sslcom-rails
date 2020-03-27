@@ -2,19 +2,16 @@ class OrdersController < ApplicationController
   require 'cgi'
   layout false, only: :invoice
   include OrdersHelper
-  #resource_controller
+
   helper_method :cart_items_from_model_and_id
-  before_action :finish_reseller_signup, :only => [:new], if: "current_user"
-  before_action :find_order, :only => [:show, :invoice, :update_invoice, :refund, :refund_merchant, :change_state,
-                                       :edit, :update, :transfer_order, :update_tags]
-  before_action :find_scoped_order, :only => [:revoke]
+  before_action :finish_reseller_signup, only: [:new], if: -> { current_user.present? }
+  before_action :find_order, only: [:show, :invoice, :update_invoice, :refund, :refund_merchant, :change_state, :edit, :update, :transfer_order, :update_tags]
+  before_action :find_scoped_order, only: [:revoke]
   before_action :set_ssl_slug, only: :show
   before_action :set_prev_flag, only: [:create, :create_free_ssl, :create_multi_free_ssl]
   before_action :prep_certificate_orders_instances, only: [:create, :create_free_ssl]
   before_action :go_prev, :parse_certificate_orders, only: [:create_multi_free_ssl]
 
-#  before_action :sync_aid_li_and_cart, :only=>[:create],
-#    :if=>Settings.sync_aid_li_and_cart
   filter_access_to :all
   filter_access_to :visitor_trackings, :filter_by_state, require: [:index]
   filter_access_to :show, :update_invoice, attribute_check: true
