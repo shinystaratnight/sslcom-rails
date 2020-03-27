@@ -6,7 +6,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
   helper SiteSealsHelper
   before_action :set_database, if: -> { request.host.match?(/^sandbox/) || request.host.match?(/^sws-test/) || request.host.match?(/ssl.local$/) }
   before_action :set_test, :record_parameters, except: %i[scan analyze download_v1_4]
-  after_filter :notify_saved_result, except: %i[create_v1_4 download_v1_4]
+  after_action :notify_saved_result, except: %i[create_v1_4 download_v1_4]
   before_action :set_certificate_order, only: [:update_v1_4]
   before_action :verify_dcv_method, only: [:update_v1_4]
 
