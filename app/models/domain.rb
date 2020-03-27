@@ -26,6 +26,11 @@
 
 class Domain < CertificateName
   include Pagable
+  include SearchCop
+
+  search_scope :search_domains do
+    attributes :email, :name
+  end
 
   belongs_to :ssl_account, touch: true
   has_many :certificate_order_domains, dependent: :destroy
