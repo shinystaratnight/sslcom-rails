@@ -70,7 +70,7 @@ defaults: &defaults
   parallelism: 2
   working_directory: ~/sslcom-rails
   docker:
-    - image: circleci/ruby:2.6.2-node-browsers
+    - image: ubuntu/xenial64
       environment:
         RAILS_ENV: test
         DB_HOST: 127.0.0.1
