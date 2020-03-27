@@ -136,8 +136,7 @@ class UsersController < ApplicationController
             flash[:notice] = 'Successfully logged in.'
             redirect_to(account_path(user.ssl_account(:default_team) ? user.ssl_account(:default_team).to_slug : {})) && return
           end
-        else
-          # TODO: Original Logic for activation by email.
+        else # Original Logic for activation by email.
           @user.deliver_activation_instructions!
           notice = "Your account has been created. Please check your
             e-mail at #{@user.email} for your account activation instructions!"

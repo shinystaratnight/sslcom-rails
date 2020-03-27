@@ -10,6 +10,7 @@ require File.expand_path('../config/environment', __dir__)
 # Prevent database truncation if the environment is production
 abort('The Rails environment is running in production mode!') if Rails.env.production?
 require 'rspec/rails'
+require 'capybara/rails'
 require 'shoulda/matchers'
 require 'authlogic'
 require 'authlogic/test_case'
@@ -64,9 +65,10 @@ RSpec.configure do |config|
     DatabaseCleaner.clean_with(:truncation)
   end
 
-  config.before do
+  config.before do |example|
     SystemAudit.stubs(:create).returns(true)
-    DatabaseCleaner.strategy = :transaction
+    DatabaseCleaner.strategy = example.metadata[:js] ? :deletion : :transaction
+    DatabaseCleaner.start
   end
 
   config.before(:each, type: :feature) do
@@ -82,17 +84,7 @@ RSpec.configure do |config|
     end
   end
 
-  config.around do |example|
-    DatabaseCleaner.cleaning do
-      example.run
-    end
-  end
-
-  config.before do
-    DatabaseCleaner.start
-  end
-
-  config.append_after do
+  config.after do
     DatabaseCleaner.clean
   end
 

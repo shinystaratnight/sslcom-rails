@@ -200,7 +200,7 @@ class FundedAccountsController < ApplicationController
 
   def apply_funds
     @account_total = @funded_account = @ssl_account.funded_account
-    apply_discounts(@order) #this needs to happen before the transaction but after the final incarnation of the order
+    apply_discounts(@order) # this needs to happen before the transaction but after the final incarnation of the order
     @funded_account.cents -= @order.final_amount.cents unless @funded_account.blank?
     respond_to do |format|
       if @funded_account.cents >= 0 and @order.line_items.size > 0
@@ -210,17 +210,16 @@ class FundedAccountsController < ApplicationController
           @order.mark_paid!
         end
         @funded_account.save
-        flash.now[:notice] = "The transaction was successful."
+        flash.now[:notice] = 'The transaction was successful.'
         if @certificate_order
           @certificate_order.pay! true
           return redirect_to edit_certificate_order_path(@certificate_order)
         elsif @certificate_orders
           @ssl_account.orders << @order
           clear_cart
-          flash[:notice] = "Order successfully placed. %s"
-          flash[:notice_item] = "Click here to finish processing your
-            ssl.com certificates.", credits_certificate_orders_path
-          format.html { redirect_to @order }
+          flash[:notice] = 'Order successfully placed. %s'
+          flash[:notice_item] = 'Click here to finish processing your ssl.com certificates.', credits_certificate_orders_path
+          format.html { redirect_to order_path(ssl_slug: @ssl_account.ssl_slug, id: @order.id) }
         end
         format.html { render :action => "success" }
       else
