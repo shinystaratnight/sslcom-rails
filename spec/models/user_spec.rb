@@ -543,7 +543,7 @@ describe User do
     end
 
     describe 'team helpers' do
-      it '#max_teams_reached? it should return correct boolean' do
+      xit '#max_teams_reached? it should return correct boolean' do
         user_2_teams = create(:user, :owner, max_teams: 2)
         user_2_teams.create_ssl_account([Role.get_owner_id])
         expect(user_2_teams).to be_max_teams_reached
