@@ -228,19 +228,6 @@ jobs:
           name: Copy CertAssureSetting
           command: *copy-certassure-settings
 
-      - restore_cache:
-          keys:
-            - yarn-{{ checksum "package.json" }}
-            - yarn-"
-
-      - run: yarn install
-
-      - save_cache:
-          paths:
-            - node_modules
-            - ~/.cache
-          key: yarn-{{ checksum "package.json" }}
-
       - run:
           name: Setup Database
           command: *setup-database
