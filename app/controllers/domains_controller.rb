@@ -1,8 +1,8 @@
 
 class DomainsController < ApplicationController
-  before_filter :require_user, :except => [:dcv_validate, :dcv_all_validate]
-  before_filter :global_set_row_page, only: [:index, :search, :select_csr]
-  before_filter :find_ssl_account
+  before_action :require_user, :except => [:dcv_validate, :dcv_all_validate]
+  before_action :global_set_row_page, only: [:index, :search, :select_csr]
+  before_action :find_ssl_account
 
   def search
     index

@@ -1,6 +1,6 @@
 class AffiliatesController < ApplicationController
-  before_filter :require_user, :except=>[:index, :details, :refer]
-  before_filter :find_affiliate, only: [:show, :sales, :links]
+  before_action :require_user, :except=>[:index, :details, :refer]
+  before_action :find_affiliate, only: [:show, :sales, :links]
   filter_access_to :update, attribute_check: true
   filter_access_to :show, :sales, :links, attribute_check: true, require: :read
 
@@ -51,9 +51,9 @@ class AffiliatesController < ApplicationController
 
 
 #  belongs_to :user
-#  before_filter :login_required, :except => [:show, :about, :refer]
-#  before_filter :allowed_to_create?, :only=>[:new, :create]
-#  before_filter :protect_affiliate, :only => [:edit_profile, :edit,
+#  before_action :login_required, :except => [:show, :about, :refer]
+#  before_action :allowed_to_create?, :only=>[:new, :create]
+#  before_action :protect_affiliate, :only => [:edit_profile, :edit,
 #    :update_profile, :update, :destroy, :dashboard, :link_codes]
 #
 #  create.before do

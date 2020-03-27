@@ -1,7 +1,7 @@
 class OtherPartyValidationRequestsController < ApplicationController
   respond_to :json, only: :create
   respond_to :html, only: :show
-  before_filter :require_user, only: :show
+  before_action :require_user, only: :show
   #filter_access_to :all
 
   def create

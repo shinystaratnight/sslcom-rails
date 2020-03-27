@@ -1,5 +1,5 @@
 class Api::V1::ApiSslManagerRequestsController < Api::V1::APIController
-  before_filter :set_test, :record_parameters
+  before_action :set_test, :record_parameters
 
   wrap_parameters ApiSslManagerRequest, include:
       [*(
