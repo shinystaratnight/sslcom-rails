@@ -38,7 +38,9 @@ class CertificateName < ApplicationRecord
   def self.search_domains(domain)
     name_matches = ransack(domain_cont: domain)
     email_matches = ransack(email_matches: "%#{domain}")
-    [name_matches.result + email_matches.result].flatten.uniq
+    expired_name_matches = expired_validation.ransack(domain_cont: domain)
+    expired_email_matches = expired_validation.ransack(email_matches: "%#{domain}")
+    [name_matches.result + email_matches.result + expired_name_matches.result + expired_email_matches.result].flatten.uniq
   end
 
   def is_ip_address?
