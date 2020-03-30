@@ -35,13 +35,36 @@ class CertificateName < ApplicationRecord
 
   after_initialize :generate_acme_token, if: -> { acme_token.nil? }
 
-  def self.search_domains(domain)
-    name_matches = ransack(domain_cont: domain)
-    email_matches = ransack(email_matches: "%#{domain}")
-    expired_name_matches = expired_validation.ransack(domain_cont: domain)
-    expired_email_matches = expired_validation.ransack(email_matches: "%#{domain}")
-    [name_matches.result + email_matches.result + expired_name_matches.result + expired_email_matches.result].flatten.uniq
+  def self.search_domains(term)
+    matches = ransack(name_cont: term, email_matches: "%#{term}", m: 'or')
+    matches.result
   end
+
+  # scope :search_domains, lambda { |term|
+  #   term ||= ''
+  #   term = term.strip.split(/\s(?=(?:[^']|'[^']*')*$)/)
+  #   filters = { email: nil, name: nil, expired_validation: nil }
+  #   filters.each do |fn, _fv|
+  #     term.delete_if do |str|
+  #       str =~ Regexp.new(fn.to_s + "\\:\\'?([^']*)\\'?")
+  #       filters[fn] ||= $1
+  #       $1
+  #     end
+  #   end
+  #   term = term.empty? ? nil : term.join(' ')
+  #   return nil if [term, *filters.values].compact.empty?
+  #   result = all
+  #   unless term.blank?
+  #     result = result.where do
+  #       (email =~ "%#{term}%") | (name =~ "%#{term}%")
+  #     end
+  #   end
+  #   %w[expired_validation].each do |field|
+  #     query = filters[field.to_sym]
+  #     result = result.expired_validation if query
+  #   end
+  #   result.uniq.order(created_at: :desc)
+  # }
 
   def is_ip_address?
     name&.index(/\A(?:[0-9]{1,3}\.){3}[0-9]{1,3}\z/)&.zero?
