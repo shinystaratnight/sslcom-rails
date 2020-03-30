@@ -1,4 +1,4 @@
-require 'test_helper'
+require 'rails_helper'
 require 'action_view/template/handlers/erb'
 
 class DynamicFormTest < ActionView::TestCase

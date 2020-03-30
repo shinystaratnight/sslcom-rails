@@ -1,7 +1,7 @@
 class RegisteredAgentsController < ApplicationController
   before_action :require_user
   before_action :find_ssl_account
-  before_filter :global_set_row_page, only: [:index, :search, :managed_certificates, :search_managed_certificates, :remove_managed_certificates]
+  before_action :global_set_row_page, only: [:index, :search, :managed_certificates, :search_managed_certificates, :remove_managed_certificates]
 
   def index
     @registered_agents = @ssl_account.registered_agents.paginate(@p)

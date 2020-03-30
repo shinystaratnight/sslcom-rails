@@ -10,4 +10,4 @@ tracer = TracePoint.new(:raise) do |tp|
   p [tp.lineno, tp.event, tp.raised_exception]
 end
 
-tracer.enable { Time.now.to_json }
+tracer.enable { Time.zone.now.to_json }

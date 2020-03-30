@@ -1,7 +1,7 @@
 class ManagedCsrsController < ApplicationController
-  before_filter :require_user, :set_ssl_slug, except: [:new, :add_generated_csr]
-  before_filter :global_set_row_page, only: [:index]
-  before_filter :set_sign_hash_algorithms, :find_ssl_account, only: [:new]
+  before_action :require_user, :set_ssl_slug, except: [:new, :add_generated_csr]
+  before_action :global_set_row_page, only: [:index]
+  before_action :set_sign_hash_algorithms, :find_ssl_account, only: [:new]
 
   def index
     @csrs = (current_user.ssl_account.all_csrs).paginate(@p)

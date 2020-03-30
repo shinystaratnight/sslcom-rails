@@ -27,15 +27,5 @@
 require 'rails_helper'
 
 describe Domain do
-  context 'inherited from CertificateName' do
-    describe 'scopes' do
-      it 'inherits search_domains' do
-        expect(proc { described_class.search_domains('ssl') }).not_to raise_error
-      end
-
-      it 'inherits expired_validation' do
-        expect(proc { described_class.expired_validation }).not_to raise_error
-      end
-    end
-  end
+  it_behaves_like 'it filters on domain'
 end

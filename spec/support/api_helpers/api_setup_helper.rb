@@ -42,13 +42,13 @@ module ApiSetupHelper
 
   # ProductVariantItem ids
   def api_initialize_pvi_ids
-    @ev_ucc_to3_domains   = ProductVariantItem.find_by_serial('sslcomevucc256ssl1yrdm').id
-    @ev_ucc_over3_domains = ProductVariantItem.find_by_serial('sslcomevucc256ssl1yradm').id
-    @ucc_min_domains      = ProductVariantItem.find_by_serial('sslcomucc256ssl1yrdm').id
-    @ucc_max_domains      = ProductVariantItem.find_by_serial('sslcomucc256ssl1yradm').id
-    @ucc_server_license   = ProductVariantItem.find_by_serial('sslcomucc256ssl1yrsl').id
-    @ucc_wildcard         = ProductVariantItem.find_by_serial('sslcomucc256ssl1yrwcdm').id
-    @basic_domains        = ProductVariantItem.find_by_serial('sslcombasic256ssl1yr').id
+    @ev_ucc_to3_domains   = ProductVariantItem.find_by(serial: 'sslcomevucc256ssl1yrdm').id
+    @ev_ucc_over3_domains = ProductVariantItem.find_by(serial: 'sslcomevucc256ssl1yradm').id
+    @ucc_min_domains      = ProductVariantItem.find_by(serial: 'sslcomucc256ssl1yrdm').id
+    @ucc_max_domains      = ProductVariantItem.find_by(serial: 'sslcomucc256ssl1yradm').id
+    @ucc_server_license   = ProductVariantItem.find_by(serial: 'sslcomucc256ssl1yrsl').id
+    @ucc_wildcard         = ProductVariantItem.find_by(serial: 'sslcomucc256ssl1yrwcdm').id
+    @basic_domains        = ProductVariantItem.find_by(serial: 'sslcombasic256ssl1yr').id
   end
 
   # SubOrderItem quantaties for specific product_variant_item_id
@@ -330,8 +330,8 @@ module ApiSetupHelper
   # Two total: 1. SSL API create endpoint
   #            2. Comodo API AutoApplySSL endpoint
   def api_ca_api_requests_when_csr
-    ca_request_1 = CaApiRequest.find_by_api_requestable_type 'SslAccount'
-    ca_request_2 = CaApiRequest.find_by_api_requestable_type 'Csr'
+    ca_request_1 = CaApiRequest.find_by api_requestable_type: 'SslAccount'
+    ca_request_2 = CaApiRequest.find_by api_requestable_type: 'Csr'
 
     # request to SSL.com API certificate create action
     assert_match 'ssl.com', ca_request_1.ca

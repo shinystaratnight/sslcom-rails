@@ -1,3 +1,4 @@
+
 Preference.create!([
   {name: "reminder_notice_triggers", owner_id: 474118, owner_type: "SslAccount", group_id: 1, group_type: "ReminderTrigger", value: "60"},
   {name: "reminder_notice_triggers", owner_id: 474118, owner_type: "SslAccount", group_id: 2, group_type: "ReminderTrigger", value: "30"},
@@ -99,14 +100,14 @@ Preference.create!([
   {name: "reminder_notice_triggers", owner_id: 474119, owner_type: "SslAccount", group_id: 8, group_type: "ReminderTrigger", value: "7"},
   {name: "reminder_notice_triggers", owner_id: 474119, owner_type: "SslAccount", group_id: 9, group_type: "ReminderTrigger", value: "1"},
   {name: "reminder_notice_triggers", owner_id: 474119, owner_type: "SslAccount", group_id: nil, group_type: nil, value: "-30"}
-])
+]) if Preference.all.count.zero?
 
 Website.create!([
   {host: "sandbox.ssl.com", api_host: "sws-test.sslpki.com", name: "Production Sandbox Site", description: nil, type: "Sandbox", db_id: 1},
   {host: "sandbox2.ssl.com", api_host: "sws-test2.sslpki.com", name: "Development Sandbox Site", description: nil, type: "Sandbox", db_id: 1},
   {host: "sandbox.ssl.local", api_host: "sws-test.sslpki.local", name: "Production Sandbox Site", description: nil, type: "Sandbox", db_id: 1},
   {host: "sandbox2.ssl.local", api_host: "sws-test2.sslpki.local", name: "Development Sandbox Site", description: nil, type: "Sandbox", db_id: 1}
-])
+]) if Website.all.count.zero?
 
 ServerSoftware.create!([
   {title: "OTHER", support_url: nil},
@@ -148,7 +149,8 @@ ServerSoftware.create!([
   {title: "Nginx", support_url: nil},
   {title: "Heroku", support_url: nil},
   {title: "Amazon Load Balancer", support_url: nil}
-])
+]) if ServerSoftware.all.count.zero?
+
 Country.create!([
   {iso1_code: "AG", name_caps: "ANTIGUA AND BARBUDA", name: "Antigua and Barbuda", iso3_code: "ATG", num_code: 28},
   {iso1_code: "ZA", name_caps: "SOUTH AFRICA", name: "South Africa", iso3_code: "ZAF", num_code: 710},
@@ -398,18 +400,18 @@ Country.create!([
   {iso1_code: "SS", name_caps: "SOUTH SUDAN", name: "South Sudan", iso3_code: "SSD", num_code: 728},
   {iso1_code: "BQ", name_caps: "BONAIRE, SINT EUSTATIUS AND SABA", name: "Bonaire, Sint Eustatius and Saba", iso3_code: "BES", num_code: 535},
   {iso1_code: "CW", name_caps: "CURACAO", name: "Curacao", iso3_code: "CUW", num_code: 531}
-])
+]) if Country.all.count.zero?
 
 
 Ca.create!([
   {ref: "0", friendly_name: "SSL.com Shadow", profile_name: "Management CA", algorithm: "rsa", size: nil, description: "SSL.com Shadow", caa_issuers: nil, host: nil, admin_host: nil, ekus: nil, end_entity: nil, ca_name: nil, type: nil, client_cert: nil, client_key: nil, client_password: nil}
-])
+]) if Ca.all.count.zero?
 
 Cdn.create!([
   {ssl_account_id: 466430, api_key: "8f213487af4f47fc609590892cc292a91b48af0b", resource_id: nil, custom_domain_name: nil, certificate_order_id: nil, is_ssl_req: false},
   {ssl_account_id: 474111, api_key: "d5e91eea0d36357424ebc6ca90519bdf8c98280c57fef5546c", resource_id: nil, custom_domain_name: nil, certificate_order_id: nil, is_ssl_req: false},
   {ssl_account_id: 474113, api_key: "97c1a433aa1fe69c5e8d79e5621c42360c4a9d0bc910782499", resource_id: nil, custom_domain_name: nil, certificate_order_id: nil, is_ssl_req: false}
-])
+]) if Cdn.all.count.zero?
 
 ResellerTier.create!([
   {label: "1", description: {"ideal_for"=>"pay as you go"}, amount: 0, roles: "tier_1_reseller", published_as: "live"},
@@ -421,9 +423,10 @@ ResellerTier.create!([
   {label: "6", description: {"ideal_for"=>"enterprise organizations"}, amount: 3500000, roles: "tier_6_reseller", published_as: "live"},
   {label: "7", description: {"ideal_for"=>"enterprise organizations"}, amount: 5000000, roles: "tier_7_reseller", published_as: "live"}
 ])
+
 Db.create!([
   {name: "sandbox_ssl_com", host: nil, username: nil, password: nil}
-])
+]) if Db.all.count.zero?
 
 ReminderTrigger.create!([
   {name: 1},
@@ -431,7 +434,7 @@ ReminderTrigger.create!([
   {name: 3},
   {name: 4},
   {name: 5}
-])
+]) if ReminderTrigger.all.count.zero?
 
 Role.create!([
   {name: "reseller", ssl_account_id: nil, description: "Reseller.", status: nil},
@@ -446,14 +449,25 @@ Role.create!([
   {name: "users_manager", ssl_account_id: nil, description: "Manage teams' users. Tasks include inviting users to team, removing, editing roles, disabling and enabling teams' users.", status: nil},
   {name: "ra_admin", ssl_account_id: nil, description: "Can manage RA system settings like product configurations and mappings.", status: nil},
   {name: "individual_certificate", ssl_account_id: nil, description: "Access to only certificate orders assigned to this user in a given team.", status: nil}
-])
+]) if Role.all.count.zero?
+
 Schedule.create!([
   {notification_group_id: 1, schedule_type: "Simple", schedule_value: "2"}
-])
+]) if Schedule.all.count.zero?
 
 ValidationRule.create!([
   {description: "domain validation", operator: "AND", parent_id: nil, applicable_validation_methods: ["automatic domain lookup", "manual domain lookup"], required_validation_methods: nil, required_validation_methods_operator: "AND", notes: nil},
   {description: "notorized corporation", operator: "AND", parent_id: nil, applicable_validation_methods: ["articles of incorporation", "certificate of formation", "charter documents", "business license", "doing business as", "registration of trade name", "partnership papers", "fictitious name statement", "vendor/reseller/merchant license", "merchant certificate"], required_validation_methods: ["articles of incorporation", "certificate of formation"], required_validation_methods_operator: "OR", notes: nil},
   {description: "notorized entity", operator: "AND", parent_id: nil, applicable_validation_methods: ["articles of incorporation", "certificate of formation", "charter documents", "business license", "doing business as", "registration of trade name", "partnership papers", "fictitious name statement", "vendor/reseller/merchant license", "merchant certificate"], required_validation_methods: nil, required_validation_methods_operator: "AND", notes: nil},
   {description: "organization validation", operator: "AND", parent_id: nil, applicable_validation_methods: ["articles of incorporation", "certificate of formation", "charter documents", "business license", "doing business as", "registration of trade name", "partnership papers", "fictitious name statement", "vendor/reseller/merchant license", "merchant certificate"], required_validation_methods: nil, required_validation_methods_operator: "AND", notes: nil}
-])
+]) if ValidationRule.all.count.zero?
+
+
+%w[antarr leo daniel soi].each do |login|
+  next if  User.exists?(login: login)
+
+  user = User.create!(login: login, email: "#{login}@ssl.com", password: "Password123!", password_confirmation: "Password123!", status: "enabled")
+  user.make_admin
+  user.activate!(user: {password: "Password123!", password_confirmation: "Password123!"})
+  user.deliver_auto_activation_confirmation!
+end

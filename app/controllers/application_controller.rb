@@ -15,14 +15,14 @@ class ApplicationController < ActionController::Base
   helper_method :current_user_session, :current_user, :is_reseller, :cookies, :current_website,
                 :cart_contents, :cart_products, :certificates_from_cookie, 'is_iphone?', 'hide_dcv?', :free_qty_limit,
                 'hide_documents?', 'hide_both?', 'hide_validation?'
-  before_action :set_database, if: 'request.host=~/^sandbox/ || request.host=~/^sws-test/'
+  before_action :set_database, if: -> { request.host.match?(/^sandbox/) || request.host.match?(/^sws-test/) }
   before_action :set_mailer_host
   before_action :detect_recert, except: %i[renew reprocess]
   before_action :set_current_user
-  before_action :verify_duo_authentication, except: %i[duo duo_verify login logout], if: -> { skip_duo_cookie.nil? }
-  before_action :identify_visitor, :record_visit, if: 'Settings.track_visitors'
-  before_action :finish_reseller_signup, if: 'current_user'
-  before_action :team_base, if: 'params[:ssl_slug] && current_user'
+  before_action :verify_duo_authentication, except: %i[duo duo_verify login logout]
+  before_action :identify_visitor, :record_visit, if: -> { Settings.track_visitors }
+  before_action :finish_reseller_signup, if: -> { current_user.present? }
+  before_action :team_base, if: -> { params[:ssl_slug] && current_user }
   before_action :set_ssl_slug, :load_notifications
   after_action :set_access_control_headers # need to move parse_csr to api, if: "request.subdomain=='sws' || request.subdomain=='sws-test'"
 
@@ -71,25 +71,17 @@ class ApplicationController < ActionController::Base
   end
 
   def verify_duo_authentication
-    if skip_duo_cookie.nil?
-      if current_user
-        if current_user.is_duo_required?
-          redirect_to duo_user_session_path unless session[:duo_auth]
-        else
-          if current_user&.ssl_account&.sec_type == 'duo' && current_user.duo_enabled
-            if Settings.duo_auto_enabled || Settings.duo_custom_enabled
-              redirect_to duo_user_session_path unless session[:duo_auth]
-            end
+    if current_user
+      if current_user.is_duo_required?
+        redirect_to duo_user_session_path unless session[:duo_auth]
+      else
+        if current_user&.ssl_account&.sec_type == 'duo' && current_user.duo_enabled
+          if Settings.duo_auto_enabled || Settings.duo_custom_enabled
+            redirect_to duo_user_session_path unless session[:duo_auth]
           end
         end
       end
     end
-  end
-
-  def skip_duo_cookie
-    return nil unless Rails.env.test?
-
-    cookies['skip_duo']
   end
 
   def find_tier

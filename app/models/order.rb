@@ -381,13 +381,13 @@ class Order < ApplicationRecord
       domains_adjustment? ||
       no_limit_order?
 
-      self.amount = line_items.inject(0.to_money) {|sum,l| sum + l.amount }
+      self.amount = line_items.inject(Money.new(0)) { |sum, l| sum + l.amount }
     end
   end
   memoize :total
 
   def final_amount
-    Money.new(amount.cents)-discount_amount
+    Money.new(amount.cents) - discount_amount
   end
 
   workflow_column :state

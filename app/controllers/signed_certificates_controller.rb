@@ -1,5 +1,5 @@
 class SignedCertificatesController < ApplicationController
-  before_filter :new_signed_certificate_from_params, :on=>:create
+  before_action :new_signed_certificate_from_params, :on=>:create
   filter_access_to :all, :attribute_check=>true
   filter_access_to :server_bundle, :pkcs7, :whm_zip, :nginx, :apache_zip, :amazon_zip, :download, :require=>:show
 

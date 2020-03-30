@@ -74,18 +74,21 @@ FactoryBot.define do
     password_confirmation { 'Testing_ssl+1' }
     active                { true }
 
+    trait :with_avatar do
+      avatar { File.new("#{Rails.root}/spec/support/fixtures/idris.jpg") }
+    end
+
     trait :sys_admin do
-      after(:create) do |user|
-        user.create_ssl_account([Role.get_role_id('reseller')])
-        user.default_ssl_account = user.ssl_account.id
-      end
+      after(:create, &:make_admin)
     end
 
     Role::ALL.each do |role_name|
       trait role_name.to_sym do
         after(:create) do |user|
-          user.create_ssl_account([Role.get_role_id(role_name)])
-          user.default_ssl_account = user.ssl_account.id
+          user.create_ssl_account
+          user.set_roles_for_account(
+            user.ssl_account, [Role.find_by(name: role_name).id]
+          )
         end
       end
     end

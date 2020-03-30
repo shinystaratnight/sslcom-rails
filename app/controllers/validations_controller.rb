@@ -6,12 +6,12 @@ require 'tempfile'
 include Open3
 
 class ValidationsController < ApplicationController
-  before_filter :require_user, only: [:index, :new, :edit, :show, :upload, :document_upload, :get_asynch_domains,
+  before_action :require_user, only: [:index, :new, :edit, :show, :upload, :document_upload, :get_asynch_domains,
                                       :cancel_validation_process]
-  before_filter :find_validation, only: [:update, :new]
-  before_filter :find_certificate_order, only: [:new, :edit, :show, :upload, :document_upload, :request_approve_phone_number]
-  before_filter :set_supported_languages, only: [:verification]
-  before_filter :set_row_page, only: [:index, :search]
+  before_action :find_validation, only: [:update, :new]
+  before_action :find_certificate_order, only: [:new, :edit, :show, :upload, :document_upload, :request_approve_phone_number]
+  before_action :set_supported_languages, only: [:verification]
+  before_action :set_row_page, only: [:index, :search]
 
   filter_access_to :all
   filter_access_to [:upload, :document_upload, :verification, :email_verification_check, :automated_call,

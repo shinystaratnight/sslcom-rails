@@ -2,7 +2,7 @@
 
 module SetupHelpers
   def create_roles
-    Role::ALL.each { |role_name| Role.find_or_create_by(name: role_name) }
+    Role::ALL.each { |role_name| Role.find_or_create_by(name: role_name) } if Role.all.count.zero?
   end
 
   def set_common_roles
