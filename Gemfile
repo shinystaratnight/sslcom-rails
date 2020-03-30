@@ -162,5 +162,4 @@ gem 'ed25519', '~> 1.2'
 gem 'active_model_serializers'
 gem 'draper'
 gem 'mini_magick'
-
-gem "search_cop", "~> 1.1"
+gem 'ransack', '~> 1.8'

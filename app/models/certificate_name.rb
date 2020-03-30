@@ -32,13 +32,14 @@ class CertificateName < ApplicationRecord
   include Concerns::CertificateName::Association
   include Concerns::CertificateName::Scope
   include Concerns::CertificateName::Verification
-  include SearchCop
-
-  search_scope :search_domains do
-    attributes :email, :name
-  end
 
   after_initialize :generate_acme_token, if: -> { acme_token.nil? }
+
+  def self.search_domains(domain)
+    name_matches = ransack(domain_cont: domain)
+    email_matches = ransack(email_matches: "%#{domain}")
+    [name_matches.result + email_matches.result].flatten.uniq
+  end
 
   def is_ip_address?
     name&.index(/\A(?:[0-9]{1,3}\.){3}[0-9]{1,3}\z/)&.zero?
