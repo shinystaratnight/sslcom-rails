@@ -10,10 +10,6 @@ RSpec.describe 'DomainValidations', type: :feature do
     let(:user) { create(:user, :owner) }
     let!(:domain) { Faker::Internet.domain_name }
 
-    # before do
-    #   cname.domain_control_validation.update(dcv_method: 'email')
-    # end
-
     it 'can start email validation', js: true do
       page.driver.browser.manage.window.resize_to(2500, 768)
       login
@@ -24,7 +20,6 @@ RSpec.describe 'DomainValidations', type: :feature do
       click_on 'Pending Validation'
       first('#dcv_methods option').select_option
       find('input[value="Validate"]').click
-      binding.pry
       fill_in 'validate_code', with: validation_code
       find('input[alt="Bl submit button"]').click
       expect(page).to have_content 'The following domains'
