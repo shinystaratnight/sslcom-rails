@@ -36,7 +36,7 @@ class CertificateName < ApplicationRecord
   after_initialize :generate_acme_token, if: -> { acme_token.nil? }
 
   def self.search_domains(term)
-    matches = ransack(name_cont: term, email_matches: term, m: 'or')
+    matches = ransack(name_cont: term, email_cont: term, m: 'or')
     matches.result
   end
 
