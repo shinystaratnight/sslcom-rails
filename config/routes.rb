@@ -94,7 +94,6 @@ Rails.application.routes.draw do
 
   resources :password_resets, except: [:show]
 
-
   constraints DomainConstraint.new(%w[reseller.ssl.com reseller.ssl.local]) do
     resources :resellers, only: %i[index new] do
       collection do

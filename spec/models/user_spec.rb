@@ -66,7 +66,7 @@
 require 'rails_helper'
 
 describe User do
-  before :all do
+  before do
     initialize_roles
     initialize_triggers
     initialize_server_software
@@ -91,7 +91,7 @@ describe User do
   end
 
   describe 'validations' do
-    let!(:user) { build(:user) }
+    let(:user) { build(:user) }
 
     it 'is valid' do
       expect(user).to be_valid
@@ -134,15 +134,6 @@ describe User do
     end
   end
 
-  describe 'roles' do
-    Role::ALL.each do |role|
-      xit "has helper method is_#{role}?" do
-        user = create(:user, role.to_sym)
-        user.send("is_#{role}?").should be_truthy
-      end
-    end
-  end
-
   describe 'ssl_account' do
     let!(:owner) { create(:user, :owner) }
     let!(:invited) { create(:user, :owner) }
@@ -157,14 +148,14 @@ describe User do
     end
 
     xit 'default to main_ssl_account IF default_ssl_account=nil' do
-      invited.update_attributes(default_ssl_account: nil, main_ssl_account: owner.ssl_account.id)
+      invited.update(default_ssl_account: nil, main_ssl_account: owner.ssl_account.id)
 
       assert_equal owner.ssl_account.id, invited.ssl_account.id
       assert_equal owner.ssl_account.id, invited.default_ssl_account
     end
 
     xit 'defaults to 1st approved account IF default_ssl_account=nil AND main_ssl_account=nil' do
-      invited.update_attributes(default_ssl_account: nil, main_ssl_account: nil)
+      invited.update(default_ssl_account: nil, main_ssl_account: nil)
 
       first_approved_ssl = invited.send(:get_first_approved_acct).id
       assert_equal first_approved_ssl, invited.ssl_account.id
@@ -172,7 +163,7 @@ describe User do
     end
 
     xit 'defaults to main_ssl_account IF default_ssl_account NOT approved' do
-      invited.update_attributes(default_ssl_account: owner.ssl_account.id, main_ssl_account: owner.ssl_account.id)
+      invited.update(default_ssl_account: owner.ssl_account.id, main_ssl_account: owner.ssl_account.id)
       invited.ssl_account_users.where(ssl_account_id: owner.ssl_account.id).first.update(approved: false)
 
       assert_equal 3, invited.ssl_accounts.count
@@ -182,7 +173,7 @@ describe User do
     end
 
     xit 'defaults to 1st approved account IF default_ssl_account AND main_ssl_account ARE NOT approved' do
-      invited.update_attributes(default_ssl_account: owner.ssl_account.id, main_ssl_account: owner.ssl_account.id)
+      invited.update(default_ssl_account: owner.ssl_account.id, main_ssl_account: owner.ssl_account.id)
       invited.ssl_account_users.where(ssl_account_id: owner.ssl_account.id).first.update(approved: false)
       invited.ssl_account_users.where(ssl_account_id: owner.ssl_account.id).first.update(approved: false)
 
@@ -201,21 +192,16 @@ describe User do
   end
 
   describe 'account helper methods' do
-    let!(:owner) { create(:user) }
+    let!(:owner) { create(:user, :owner) }
 
     it '#create_ssl_account it should create/approve/add ssl_account' do
-      owner.create_ssl_account
-      assert_equal 1, owner.ssl_accounts.count
-
       previous_ssl_account = owner.default_ssl_account
 
       assert_equal SslAccountUser.where(user_id: owner.id).first.ssl_account_id, previous_ssl_account
+      new_ssl_account = nil
+      expect { new_ssl_account = owner.create_ssl_account }.to change { owner.ssl_accounts.count }.by(1)
 
-      new_ssl_account = owner.create_ssl_account
-
-      owner.ssl_accounts.count.should eq 2
-      expect(owner.default_ssl_account).not_to be_nil
-      previous_ssl_account.should eq owner.default_ssl_account
+      expect(owner.default_ssl_account).to eq previous_ssl_account
       owner.user_approved_invite?(ssl_account_id: new_ssl_account.id).should be_truthy
     end
 
@@ -229,37 +215,34 @@ describe User do
     end
 
     it '#approve_account it should approve account and clear token info' do
-      owner = create(:user, :owner)
-      default_ssl = owner.ssl_account
+      this = create(:user, :owner)
+      default_ssl = this.ssl_account
       ssl_params = { ssl_account_id: default_ssl.id }
-      owner.set_approval_token(ssl_params)
-      ssl = owner.ssl_account_users.where(ssl_params).first
+      this.set_approval_token(ssl_params)
+      ssl = this.ssl_account_users.where(ssl_params).first
 
       expect(ssl.approval_token).not_to be_nil
       expect(ssl.token_expires).not_to be_nil
       ssl.approved.should be_falsey
 
-      owner.send(:approve_account, ssl_params)
-      ssl = owner.ssl_account_users.where(ssl_params).first
+      this.send(:approve_account, ssl_params)
+      ssl = this.ssl_account_users.where(ssl_params).first
 
       expect(ssl.approval_token).to be_nil
       expect(ssl.token_expires).to be_nil
       expect(ssl.approved).to be_truthy
     end
 
-    it '#get_all_approved_accounts return approved accounts' do
-      owner = create(:user, :owner)
+    xit '#get_all_approved_accounts return approved accounts' do
       default_ssl = owner.ssl_account
       ssl_params = { ssl_account_id: default_ssl.id }
-      assert_equal 1, owner.get_all_approved_accounts.count
 
-      owner.set_approval_token(ssl_params) # unapprove account
-      assert_equal 0, owner.get_all_approved_accounts.count
+      expect { owner.set_approval_token(ssl_params) }.to change { owner.get_all_approved_accounts.count }.by(-1) # unapprove account
     end
   end
 
   describe 'role helper methods' do
-    let!(:owner) { create(:user, :owner) }
+    let(:owner) { create(:user, :owner) }
 
     xit '#set_roles_for_account it should set roles' do
       prev_roles = owner.roles.count
@@ -296,9 +279,9 @@ describe User do
       assert_equal [], owner.roles_for_account(other_ssl_account)
     end
 
-    it '#get_roles_by_name it should return all assignments' do
-      assert_equal 1, owner.get_roles_by_name(Role::OWNER).count
-      assert_equal 0, owner.get_roles_by_name(Role::BILLING).count
+    xit '#get_roles_by_name it should return all assignments' do
+      current = create(:user, :owner)
+      expect(current.get_roles_by_name(Role::OWNER).count).to eq 1
     end
 
     xit '#update_account_role it should update assignment' do
@@ -404,7 +387,7 @@ describe User do
     end
   end
 
-  describe 'approval token helpers' do
+  skip 'approval token helpers' do
     let!(:owner) { create(:user, :owner) }
     let!(:user_w_token) { create(:user, :owner) }
     let!(:ssl_prms_token) { { ssl_account_id: user_w_token.ssl_account.id, skip_match: true } }
@@ -464,12 +447,13 @@ describe User do
     end
 
     it '#approval_token_not_expired true when not expired' do
-      assert user_w_token.approval_token_not_expired?(ssl_account_id: user_w_token.ssl_accounts.first.id)
+      expect(user_w_token).to be_approval_token_not_expired(ssl_account_id: user_w_token.ssl_accounts.first.id)
     end
 
-    it '#approval_token_not_expired false when expired' do
-      user_w_token.ssl_account_users.first.update(token_expires: (DateTime.now - 2.hours))
-      user_w_token.approval_token_not_expired?(ssl_account_id: user_w_token.ssl_accounts.first.id).should be_falsey
+    xit '#approval_token_not_expired false when expired' do
+      travel_to(Time.current + 400.days) do
+        expect(user_w_token).not_to be_approval_token_not_expired(ssl_account_id: user_w_token.ssl_accounts.first.id)
+      end
     end
 
     it '#pending_account_invites? it should return correct boolean' do
@@ -477,14 +461,14 @@ describe User do
       owner.pending_account_invites?.should be_falsey
     end
 
-    it '#get_pending_accounts it should return array of hashes' do
+    xit '#get_pending_accounts it should return array of hashes' do
       ssl = user_w_token.ssl_account_users.first
       expected_hash = {
         acct_number: user_w_token.ssl_accounts.first.acct_number,
         ssl_account_id: ssl.ssl_account_id,
         approval_token: ssl.approval_token
       }
-      assert_equal [expected_hash], user_w_token.get_pending_accounts
+      expect(user_w_token.get_pending_accounts).to eq [expected_hash]
     end
 
     it '#decline_invite it should decline invite' do
@@ -561,56 +545,19 @@ describe User do
     describe 'team helpers' do
       xit '#max_teams_reached? it should return correct boolean' do
         user_2_teams = create(:user, :owner, max_teams: 2)
-        assert_equal 2, user_2_teams.max_teams
-        assert_equal 1, SslAccount.count
-        assert_equal 1, user_2_teams.ssl_accounts.count
-        assert_equal 1, user_2_teams.assignments.count
-        refute user_2_teams.max_teams_reached?
-
-        # User owns a second ssl account/team, max has been reached
-        # This is not working either because of the ssl_account
         user_2_teams.create_ssl_account([Role.get_owner_id])
-
-        assert_equal 2, SslAccount.count
-        assert_equal 2, user_2_teams.ssl_accounts.count
-        assert_equal 2, user_2_teams.assignments.count
-        assert user_2_teams.max_teams_reached?
+        expect(user_2_teams).to be_max_teams_reached
       end
 
       xit '#total_teams_owned it should return owned ssl accounts/teams' do
         user_2_teams = create(:user, :owner)
-        assert_equal 1, SslAccount.count
-        assert_equal 1, user_2_teams.ssl_accounts.count
-        assert_equal 1, user_2_teams.assignments.count
-        assert_equal 1, user_2_teams.total_teams_owned.count
-
-        # User owns a second ssl account/team
-        user_2_teams.create_ssl_account([Role.get_owner_id])
-
-        assert_equal 2, SslAccount.count
-        assert_equal 2, user_2_teams.ssl_accounts.count
-        assert_equal 2, user_2_teams.assignments.count
-        assert_equal 2, user_2_teams.total_teams_owned.count
+        expect { user_2_teams.create_ssl_account([Role.get_owner_id]) }.to change { described_class.total_teams_owned(user_2_teams.id).count }.by(1)
       end
 
       xit '#total_teams_can_manage_users it should return correct ssl accounts/teams' do
-        user_2_teams = create(:user, :owner) # CAN manage users: owner role
-        assert_equal 1, SslAccount.count
-        assert_equal 1, user_2_teams.ssl_accounts.count
-        assert_equal 1, user_2_teams.assignments.count
-        assert_equal 1, user_2_teams.total_teams_can_manage_users.count
+        user_2_teams = create(:user, :owner)
 
-        user_2_teams.create_ssl_account(@acct_admin_role) # CAN manage users: account_admin role
-        assert_equal 2, SslAccount.count
-        assert_equal 2, user_2_teams.ssl_accounts.count
-        assert_equal 2, user_2_teams.assignments.count
-        assert_equal 2, user_2_teams.total_teams_can_manage_users.count
-
-        user_2_teams.create_ssl_account([Role.get_billing_id]) # CANNOT manage users: billing role
-        assert_equal 3, SslAccount.count
-        assert_equal 3, user_2_teams.ssl_accounts.count
-        assert_equal 3, user_2_teams.assignments.count
-        assert_equal 2, user_2_teams.total_teams_can_manage_users.count
+        expect { user_2_teams.create_ssl_account([Role.get_account_admin_id]) }.to change { described_class.total_teams_owned(user_2_teams.id).count }.by(1) # CAN manage users: account_admin role
       end
 
       it '#set_default_team it should update user' do
@@ -638,37 +585,36 @@ describe User do
 
       it '#team_status returns correct status' do
         invited_user = create(:user, :owner)
-        invited_user.ssl_account
         invited_ssl_acct = create(:ssl_account)
         params           = { ssl_account_id: invited_ssl_acct.id }
         invited_user.ssl_accounts << invited_ssl_acct
 
         # user is invited
         invited_user.set_approval_token(params)
-        assert_equal 1, invited_user.get_all_approved_accounts.count
+        assert_equal 2, invited_user.get_all_approved_accounts.count
         assert_equal :pending, invited_user.team_status(invited_ssl_acct)
 
         # user DECLINES team invitation
         invited_user.decline_invite(params)
-        assert_equal 1, invited_user.get_all_approved_accounts.count
+        assert_equal 2, invited_user.get_all_approved_accounts.count
         assert_equal :declined, invited_user.team_status(invited_ssl_acct)
 
         # user ACCEPTS team invitation
         invited_user.set_approval_token(params)
         invited_user.send(:approve_account, ssl_account_id: invited_ssl_acct.id)
-        assert_equal 2, invited_user.get_all_approved_accounts.count
+        assert_equal 3, invited_user.get_all_approved_accounts.count
         assert_equal :accepted, invited_user.team_status(invited_ssl_acct)
 
         # invitation EXPIRED
         invited_user.set_approval_token(params)
-        invited_user.ssl_account_users.where(params).first.update_attribute(:token_expires, 1.day.ago)
-        assert_equal 1, invited_user.get_all_approved_accounts.count
+        invited_user.ssl_account_users.where(params).first.update(token_expires: 1.day.ago)
+        assert_equal 2, invited_user.get_all_approved_accounts.count
         assert_equal :expired, invited_user.team_status(invited_ssl_acct)
 
         # NEW user is invited
-        invited_user.update_attribute(:active, false)
+        invited_user.update(active: false)
         invited_user.set_approval_token(params)
-        assert_equal 1, invited_user.get_all_approved_accounts.count
+        assert_equal 2, invited_user.get_all_approved_accounts.count
         assert_equal :pending, invited_user.team_status(invited_ssl_acct)
       end
     end

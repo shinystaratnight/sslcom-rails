@@ -1,14 +1,14 @@
 class FundedAccountsController < ApplicationController
   include OrdersHelper, CertificateOrdersHelper, FundedAccountsHelper
-  before_filter :go_prev, :parse_certificate_orders, only: [:apply_funds, :create_free_ssl]
+  before_action :go_prev, :parse_certificate_orders, only: [:apply_funds, :create_free_ssl]
 #  resource_controller :singleton
 #  ssl_required :allocate_funds, :allocate_funds_for_order, :apply_funds,
 #    :deposit_funds
 #  belongs_to :user
-  before_filter :require_user, :only => [:allocate_funds_for_order,
+  before_action :require_user, :only => [:allocate_funds_for_order,
     :deposit_funds, :allocate_funds, :apply_funds, :confirm_funds]
-  before_filter :find_ssl_account
-  skip_before_filter :finish_reseller_signup
+  before_action :find_ssl_account
+  skip_before_action :finish_reseller_signup
   filter_access_to :all
 
   def allocate_funds
@@ -200,7 +200,7 @@ class FundedAccountsController < ApplicationController
 
   def apply_funds
     @account_total = @funded_account = @ssl_account.funded_account
-    apply_discounts(@order) #this needs to happen before the transaction but after the final incarnation of the order
+    apply_discounts(@order) # this needs to happen before the transaction but after the final incarnation of the order
     @funded_account.cents -= @order.final_amount.cents unless @funded_account.blank?
     respond_to do |format|
       if @funded_account.cents >= 0 and @order.line_items.size > 0
@@ -210,17 +210,16 @@ class FundedAccountsController < ApplicationController
           @order.mark_paid!
         end
         @funded_account.save
-        flash.now[:notice] = "The transaction was successful."
+        flash.now[:notice] = 'The transaction was successful.'
         if @certificate_order
           @certificate_order.pay! true
           return redirect_to edit_certificate_order_path(@certificate_order)
         elsif @certificate_orders
           @ssl_account.orders << @order
           clear_cart
-          flash[:notice] = "Order successfully placed. %s"
-          flash[:notice_item] = "Click here to finish processing your
-            ssl.com certificates.", credits_certificate_orders_path
-          format.html { redirect_to @order }
+          flash[:notice] = 'Order successfully placed. %s'
+          flash[:notice_item] = 'Click here to finish processing your ssl.com certificates.', credits_certificate_orders_path
+          format.html { redirect_to order_path(ssl_slug: @ssl_account.ssl_slug, id: @order.id) }
         end
         format.html { render :action => "success" }
       else

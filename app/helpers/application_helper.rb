@@ -48,14 +48,13 @@ module ApplicationHelper
 
   def is_sandbox?
     @is_sandbox ||= Rails.cache.fetch("#{request.try(:host)}/is_sandbox") do
-                      Sandbox.exists?(request.try(:host))
-                    end
+      Sandbox.exists?(request.try(:host))
+    end
   end
-  # memoize "is_sandbox?".to_sym
+  memoize :is_sandbox?
 
   def is_sandbox_or_test?
-    is_sandbox? or ActionMailer::Base.default_url_options[:host]=~/^sandbox\./ or
-        ActionMailer::Base.default_url_options[:host]=~/^sws-test\./
+    is_sandbox? || ActionMailer::Base.default_url_options[:host] =~ /^sandbox\./ || ActionMailer::Base.default_url_options[:host] =~ /^sws-test\./
   end
 
   def api_domain(certificate_order = nil)

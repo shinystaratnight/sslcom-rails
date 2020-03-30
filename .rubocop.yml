@@ -3,6 +3,8 @@
 require:
   - rubocop/cop/internal_affairs
   - rubocop-rspec
+  - rubocop-performance
+  - rubocop-rails
 
 AllCops:
   Exclude:
@@ -12,8 +14,10 @@ AllCops:
     - 'bin/*'
     - 'config/**/*.yml'
     - 'db/**/*'
-  TargetRubyVersion: 2.5
+  TargetRubyVersion: 2.6
 
+InternalAffairs/UselessMessageAssertion:
+  Enabled: false
 Bundler/OrderedGems:
   Enabled: false
 Bundler/DuplicatedGem:
@@ -47,6 +51,8 @@ Layout/HeredocIndentation:
 Layout/SpaceInLambdaLiteral:
   Enabled: false
 Style/StructInheritance:
+  Enabled: false
+Layout/SpaceInsideBlockBraces:
   Enabled: false
 Style/PerlBackrefs:
   Enabled: false
@@ -97,7 +103,7 @@ Lint/LiteralAsCondition:
 Lint/AmbiguousRegexpLiteral:
   Enabled: false
 Lint/AmbiguousBlockAssociation:
-  Enabled: true
+  Enabled: false
 Lint/AssignmentInCondition:
   Enabled: false
 Lint/InterpolationCheck:
@@ -140,3 +146,8 @@ RSpec/AnyInstance:
   Enabled: false
 RSpec/BeforeAfterAll:
   Enabled: false
+RSpec/ExampleLength:
+  Enabled: false
+RSpec/NamedSubject:
+  Exclude:
+    - spec/decorators/funded_account_decorator_spec.rb

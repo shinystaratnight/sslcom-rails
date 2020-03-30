@@ -35,6 +35,11 @@ class CertificateName < ApplicationRecord
 
   after_initialize :generate_acme_token, if: -> { acme_token.nil? }
 
+  def self.search_domains(term)
+    matches = ransack(name_cont: term, email_cont: term, m: 'or')
+    matches.result
+  end
+
   def is_ip_address?
     name&.index(/\A(?:[0-9]{1,3}\.){3}[0-9]{1,3}\z/)&.zero?
   end

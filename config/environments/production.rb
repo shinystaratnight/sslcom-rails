@@ -19,7 +19,7 @@ Rails.application.configure do
   config.action_controller.perform_caching = true
   config.cache_store = :dalli_store
   config.action_controller.asset_host = proc do |source|
-    if source =~ %r{\A/validation_histories/.*?/documents}
+    if %r{\A/validation_histories/.*?/documents}.match?(source)
       "https://#{Settings.portal_domain}"
     else
       'https://cdn.ssl.com'

@@ -1,8 +1,8 @@
 class ContactsController < ApplicationController
   layout 'application'
 
-  before_filter :require_user
-  before_filter :find_contact, only: [:admin_update, :edit, :update, :destroy]
+  before_action :require_user
+  before_action :find_contact, only: [:admin_update, :edit, :update, :destroy]
 
   filter_access_to :all
   filter_access_to :edit, :update, :show, :destroy, attribute_check: true

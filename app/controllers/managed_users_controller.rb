@@ -1,5 +1,5 @@
 class ManagedUsersController < ApplicationController
-  before_filter    :require_user
+  before_action    :require_user
   filter_access_to :new, :create
   filter_access_to :edit, :update_roles, :remove_from_account, attribute_check: true
 

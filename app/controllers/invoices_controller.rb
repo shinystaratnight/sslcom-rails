@@ -1,9 +1,9 @@
 class InvoicesController < ApplicationController
   include OrdersHelper
   
-  before_filter :find_ssl_account, except: :index
-  before_filter :set_ssl_slug, except: :index
-  before_filter :find_invoice, except: :index
+  before_action :find_ssl_account, except: :index
+  before_action :set_ssl_slug, except: :index
+  before_action :find_invoice, except: :index
   
   filter_access_to :all
   filter_access_to :show, :update_invoice

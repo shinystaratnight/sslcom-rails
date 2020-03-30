@@ -7,7 +7,6 @@
     =text_field_tag :search, @search
     =hidden_field_tag :per_page, @per_page
     =button_tag 'Search', :id=>'btn_domain_search'
-    =button_tag 'Filters', :type=>'button', :id=>'btn_domain_filter'
 
 =render :partial=>'search_filters'
 
@@ -44,7 +43,7 @@
         %th(scope="col") Revalidation
       -if @domains && @domains.length > 0
         -@domains.each do |d|
-          -satisfied = d.domain_control_validations.where{workflow_state=="satisfied"}.last
+          -satisfied = d.domain_control_validations.with_satisfied_state.last
           -dcv = d.domain_control_validations.last
           -validation_status = satisfied ? 'validated' : 'pending validation'
           -remaining = dcv.try(:responded_at) ? DomainControlValidation::MAX_DURATION_DAYS[:email]-(Date.today-dcv.responded_at.to_date).to_i : nil
