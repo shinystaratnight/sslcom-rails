@@ -15,7 +15,6 @@ hooks:
       runas: ubuntu
   AfterInstall:
     - location: script/install_dependencies.sh
-    - location: script/prepare_application.sh
       timeout: 300
       runas: ubuntu
   ApplicationStart:
