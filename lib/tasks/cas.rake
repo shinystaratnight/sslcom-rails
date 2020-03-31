@@ -631,7 +631,7 @@ namespace :cas do
           admin_host: "https://#{url}:8443",
           ca_name: "SSLcom-SubCA-clientCert-RSA-4096-R2",
           ekus: [Ca::EKUS[:client]],
-          end_entity: "MYSSL_IV_EAV_CERT_EE"
+          end_entity: "MYSSL_EAV_CERT_EE"
       )
       Ca.find_or_initialize_by(ref: "0033").update_attributes(
           friendly_name: "SSL.com MySSL Pro RSA",
@@ -645,7 +645,7 @@ namespace :cas do
           admin_host: "https://#{url}:8443",
           ca_name: "SSLcom-SubCA-clientCert-RSA-4096-R2",
           ekus: [Ca::EKUS[:client]],
-          end_entity: "MYSSL_IV_EAV_CERT_EE"
+          end_entity: "MYSSL_IV_CERT_EE"
       )
       Ca.find_or_initialize_by(ref: "0034").update_attributes(
           friendly_name: "SSL.com Basic Email ECC",
@@ -659,7 +659,7 @@ namespace :cas do
           admin_host: "https://#{url}:8443",
           ca_name: "SSLcom-SubCA-clientCert-ECC-384-R2",
           ekus: [Ca::EKUS[:client]],
-          end_entity: "MYSSL_IV_EAV_CERT_EE"
+          end_entity: "MYSSL_EAV_CERT_EE"
       )
       Ca.find_or_initialize_by(ref: "0035").update_attributes(
           friendly_name: "SSL.com MySSL Pro ECC",
@@ -673,7 +673,7 @@ namespace :cas do
           admin_host: "https://#{url}:8443",
           ca_name: "SSLcom-SubCA-clientCert-ECC-384-R2",
           ekus: [Ca::EKUS[:client]],
-          end_entity: "MYSSL_IV_EAV_CERT_EE"
+          end_entity: "MYSSL_IV_CERT_EE"
       )
       Ca.find_or_initialize_by(ref: "0036").update_attributes(
           friendly_name: "SSL.com Business Identity RSA",
