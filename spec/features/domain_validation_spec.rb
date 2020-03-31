@@ -19,7 +19,6 @@ RSpec.describe 'DomainValidations', type: :feature do
       click_on 'Pending Validation'
       first('#dcv_methods option').select_option
       find('input[value="Validate"]').click
-      sleep 10
       within '#dcv_validate' do
         fill_in 'validate_code', with: validation_code.to_s
       end
