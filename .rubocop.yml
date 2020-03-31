@@ -76,8 +76,6 @@ Security/Eval:
     - app/models/notification_group.rb
     - app/models/ssl_account.rb
 
-Layout/EndOfLine:
-  EnforcedStyle: lf
 Layout/LineLength:
   Enabled: false
 Layout/ClassStructure:
@@ -95,7 +93,8 @@ Layout/ClassStructure:
       - instance_methods
       - protected_methods
       - private_methods
-
+Layout/EndOfLine:
+  Enabled: false
 Layout/SpaceBeforeBlockBraces:
   Enabled: false
 Lint/LiteralAsCondition:
