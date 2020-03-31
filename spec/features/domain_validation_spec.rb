@@ -23,7 +23,23 @@ RSpec.describe 'DomainValidations', type: :feature do
         fill_in 'validate_code', with: validation_code.to_s
       end
       find('input[alt="Bl submit button"]').click
-      expect(page).to have_content "The following domains are now validated: #{domain}"
+      expect(page).to have_content("The following domains are now validated: #{domain}")
+    end
+
+    it 'shows error when using incorrect validation code', js: true do
+      login
+      visit '/domains'
+      click_on 'add'
+      fill_in 'domain_names', with: domain
+      click_on 'Save'
+      click_on 'Pending Validation'
+      first('#dcv_methods option').select_option
+      find('input[value="Validate"]').click
+      within '#dcv_validate' do
+        fill_in 'validate_code', with: validation_code.split(//).shuffle.join
+      end
+      find('input[alt="Bl submit button"]').click
+      expect(page).to have_content('No domains have been validated.')
     end
   end
 
