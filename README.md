@@ -26,7 +26,7 @@
 12. Run any needed migrations `RAILS_ENV=development rake db:migrate`.
 13. Download sandbox_ssl_com.sql and populate the database with `mysql -u ssl_db -p sandbox_ssl_com < sandbox_ssl_com.sql`
 14. Run migrations again `bundle exec rake db:migrate RAILS_ENV=development`
-15. Navigate to the repo and run `foreman start`
+15. Navigate to the repo and run `foreman start web`
 16. Navigate to `https://secure.ssl.local:3000/` in your browser and it should work!
 
 ### `synced_folders` Template

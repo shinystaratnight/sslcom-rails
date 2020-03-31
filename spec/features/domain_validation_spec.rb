@@ -11,7 +11,6 @@ RSpec.describe 'DomainValidations', type: :feature do
     let!(:domain) { Faker::Internet.domain_name }
 
     it 'can start email validation', js: true do
-      page.driver.browser.manage.window.resize_to(2500, 768)
       login
       visit '/domains'
       click_on 'add'
@@ -20,7 +19,10 @@ RSpec.describe 'DomainValidations', type: :feature do
       click_on 'Pending Validation'
       first('#dcv_methods option').select_option
       find('input[value="Validate"]').click
-      fill_in 'validate_code', with: validation_code
+      sleep 2
+      within '#dcv_validate' do
+        fill_in 'validate_code', with: validation_code
+      end
       find('input[alt="Bl submit button"]').click
       expect(page).to have_content 'The following domains'
     end
