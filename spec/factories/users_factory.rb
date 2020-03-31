@@ -93,4 +93,21 @@ FactoryBot.define do
       end
     end
   end
+
+  Role::ALL.each do |role_name|
+    next if role_name == 'reseller'
+
+    factory role_name.to_sym do
+      after(:create) do |user|
+        user.create_ssl_account
+        user.set_roles_for_account(
+          user.ssl_account, [Role.find_by(name: role_name).id]
+        )
+      end
+    end
+  end
+
+  factory :sys_admin do
+    after(:create, &:make_admin)
+  end
 end

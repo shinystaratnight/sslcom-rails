@@ -38,19 +38,14 @@ Vagrant.configure('2') do |config|
     sudo apt-get install -y nodejs
     curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
     echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
-    sudo apt install -y yarn
     sudo apt-get install -y chromium-chromedriver
     sudo apt-get install -y imagemagick
   SHELL
 
+  config.vm.provision :shell, privileged: false, path: 'rbenv.sh'
+
   # Install Ruby2.6 from Brightbox APT repository
-  config.vm.provision 'shell', inline: <<-SHELL
-    apt-get -y install software-properties-common
-    apt-add-repository -y ppa:brightbox/ruby-ng
-    apt-get update
-    apt-get -y install ruby-switch ruby-bundler ruby2.6 ruby2.6-dev
-    sudo gem install bundler -v 1.17.3
-  SHELL
+  config.vm.provision 'shell', inline: 'gem install bundler -v 1.17.3'
 
   # Install Passenger + Nginx through Phusion's APT repository
   config.vm.provision 'shell', inline: <<-SHELL
