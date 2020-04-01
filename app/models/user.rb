@@ -629,9 +629,8 @@ class User < ApplicationRecord
     role_symbols.include? Role::RA_ADMIN.to_sym
   end
 
-  def is_owner?(target_account = nil)
-    # TODO: need to separate out reseller from owner
-    role_symbols(target_account) & [Role::OWNER.to_sym, Role::RESELLER.to_sym]
+  def is_owner?(target_account=nil)
+    role_symbols(target_account).include? Role::OWNER.to_sym
   end
 
   def is_account_admin?
