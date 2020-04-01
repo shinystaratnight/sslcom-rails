@@ -154,7 +154,7 @@ describe SslAccount do
   describe 'helper methods' do
     it '#get_account_owner returns correct user/owner' do
       target_user = create(:user, :owner)
-      target_ssl  = target_user.assignments.first.ssl_account
+      target_ssl  = target_user.ssl_account
       new_user = create(:user)
       new_user.ssl_accounts << target_ssl
       new_user.set_roles_for_account(target_ssl, [Role.get_account_admin_id])
