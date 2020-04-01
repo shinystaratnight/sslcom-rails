@@ -121,7 +121,7 @@ describe NotificationGroupsManager do
     context 'when a domain expires today' do
       it 'sends an expiration notice' do
         notification_group.scanned_certificates << create(:scanned_certificate, :expired_today)
-        expect { described_class.send_expiration_reminders(db: 'ssl_com_test') }.to { email_total_deliveries }
+        expect { described_class.send_expiration_reminders(db: 'ssl_com_test') }.to change { email_total_deliveries }
       end
 
       xit 'sends ahoy message' do
@@ -181,7 +181,7 @@ describe NotificationGroupsManager do
         notification_group.scanned_certificates << create(:scanned_certificate, :expires_in_15_days)
         notification_group.scanned_certificates << create(:scanned_certificate, :expires_in_30_days)
         notification_group.scanned_certificates << create(:scanned_certificate, :expires_in_60_days)
-        described_class.send_expiration_reminders(db: 'ssl_com_test')
+        expect { described_class.send_expiration_reminders(db: 'ssl_com_test') }.to change { email_total_deliveries }
       end
 
       xit 'sends ahoy message for all certs' do
