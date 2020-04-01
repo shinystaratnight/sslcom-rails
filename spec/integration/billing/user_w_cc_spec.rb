@@ -5,7 +5,6 @@
 # #
 # describe 'Valid user' do
 #   before do
-#     initialize_roles
 #     create(:certificate, :basicssl)
 #     @logged_in_user     = create(:user, :owner)
 #     @logged_in_ssl_acct = @logged_in_user.ssl_account

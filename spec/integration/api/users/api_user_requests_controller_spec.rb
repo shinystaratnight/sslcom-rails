@@ -4,7 +4,6 @@
 #   describe 'api_user_show_v1_4' do
 #     before do
 #       set_api_host
-#       initialize_roles
 #       @user = create(:user, :owner)
 #       @team = @user.ssl_account
 #       assert @user.valid?
@@ -44,7 +43,6 @@
 #   describe 'create_v1_4' do
 #     before do
 #       set_api_host
-#       initialize_roles
 #       assert_equal 0, User.count
 #     end
 #

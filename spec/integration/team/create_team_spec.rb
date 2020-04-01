@@ -2,7 +2,6 @@
 #
 # describe 'user creates a new team' do
 #   before do
-#     initialize_roles
 #     @current_owner = create(:user, :owner)
 #     @ssl_acct      = @current_owner.ssl_account
 #     @company_name  = 'team_2_name'

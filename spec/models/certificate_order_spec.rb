@@ -60,15 +60,9 @@
 #  index_certificate_orders_r_eon_n                           (ref,external_order_number,notes)
 #  index_certificate_orders_site_seal_id                      (site_seal_id)
 #
-require('rails_helper')
-describe(CertificateOrder) do
+require 'rails_helper'
+describe CertificateOrder do
   subject { described_class.new }
-
-  before(:all) do
-    initialize_roles
-    initialize_triggers
-    initialize_server_software
-  end
 
   it { is_expected.to belong_to(:assignee).class_name('User') }
   it { is_expected.to belong_to(:folder) }
@@ -111,9 +105,9 @@ describe(CertificateOrder) do
   it { is_expected.to have_one(:locked_recipient) }
   it { is_expected.to have_one(:renewal) }
 
-  context('scopes') do
-    describe('search_with_csr') do
-      let!(:cert) { create(:certificate_with_certificate_order, :premiumssl) }
+  describe 'scopes' do
+    describe 'search_with_csr' do
+      let!(:cert) { Certificate.find_by(product: 'premiumssl')}
       let!(:co) { create(:certificate_order, :with_contents) }
 
       before do

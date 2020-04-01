@@ -119,6 +119,7 @@ group :development do
   gem 'lol_dba'
   gem 'memory_profiler'
   gem 'meta_request'
+  gem 'seed_dump'
 end
 
 group :development, :test do

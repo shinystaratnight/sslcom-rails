@@ -28,11 +28,6 @@
 require 'rails_helper'
 
 describe CertificateName do
-  before do
-    stub_roles
-    stub_triggers
-    stub_server_software
-  end
 
   it_behaves_like 'it filters on domain'
 

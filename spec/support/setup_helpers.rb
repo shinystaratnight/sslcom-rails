@@ -5,55 +5,15 @@ module SetupHelpers
     Role::ALL.each { |role_name| Role.find_or_create_by(name: role_name) } if Role.all.count.zero?
   end
 
-  def set_common_roles
-    @all_roles           = [Role.get_owner_id, Role.get_account_admin_id]
-    @billing_role        = [Role.get_role_id(Role::BILLING)]
-    @acct_admin_role     = [Role.get_account_admin_id]
-    @owner_role          = [Role.get_owner_id]
-    @validations_role    = [Role.get_role_id(Role::VALIDATIONS)]
-    @installer_role      = [Role.get_role_id(Role::INSTALLER)]
-    @users_manager_role  = [Role.get_role_id(Role::USERS_MANAGER)]
-  end
-
-  def owner_role
-    [Role.get_owner_id]
-  end
-
-  def initialize_roles
-    create_roles
-    set_common_roles
-    @password = 'Testing@1'
-  end
-
-  def stub_roles
-    roles = Role.all
-    role_set = []
-    Role::ALL.each_with_index do |r, i|
-      role_set << build_stubbed(:role, name: r.downcase, id: i)
-    end
-    roles.stubs(:[]).returns(role_set)
-    Role.stubs(:where).returns(roles)
-  end
-
-  def initialize_certificates
-    %i[evuccssl uccssl evssl ovssl freessl wcssl basicssl premiumssl codesigningssl evcodesigningssl].each do |trait|
-      create(:certificate, trait)
-    end
-  end
-
-  def stub_server_software
-    software = ServerSoftware.all
-    software_set = []
-    ['Apache-ModSSL', 'Oracle', 'Amazon Load Balancer'].each_with_index do |s, i|
-      software_set << build_stubbed(:server_software, title: s, id: i)
-    end
-    software.stubs(:[]).returns(software_set)
-    ServerSoftware.stubs(:where).returns(software)
-  end
-
-  def initialize_server_software
-    ['Apache-ModSSL', 'Oracle', 'Amazon Load Balancer'].each{ |title| ServerSoftware.find_or_create_by(title: title) }
-  end
+  # def set_common_roles
+  #   @all_roles           = [Role.get_owner_id, Role.get_account_admin_id]
+  #   @billing_role        = [Role.get_role_id(Role::BILLING)]
+  #   @acct_admin_role     = [Role.get_account_admin_id]
+  #   @owner_role          = [Role.get_owner_id]
+  #   @validations_role    = [Role.get_role_id(Role::VALIDATIONS)]
+  #   @installer_role      = [Role.get_role_id(Role::INSTALLER)]
+  #   @users_manager_role  = [Role.get_role_id(Role::USERS_MANAGER)]
+  # end
 
   def login(role: :owner)
     @user = create(:user, role)
@@ -80,12 +40,6 @@ module SetupHelpers
     invited_user.set_roles_for_account(invited_ssl_acct, @acct_admin_role)
     invited_user.send(:approve_account, ssl_account_id: invited_ssl_acct.id)
     invited_user
-  end
-
-  def initialize_countries
-    Country.create(iso1_code: 'US', name_caps: 'UNITED STATES', name: 'United States', iso3_code: 'USA', num_code: 840)
-    Country.create(iso1_code: 'ZA', name_caps: 'SOUTH AFRICA', name: 'South Africa', iso3_code: 'ZAF', num_code: 710)
-    Country.create(iso1_code: 'CA', name_caps: 'CANADA', name: 'Canada', iso3_code: 'CAN', num_code: 124)
   end
 
   def initialize_certificate_csr_keys
@@ -245,17 +199,5 @@ module SetupHelpers
       7P7OYpW6l9uLM/2VovklYA==
       -----END CERTIFICATE-----
     EOS
-  end
-
-  def initialize_triggers
-    (1..5).to_a.each { |i| ReminderTrigger.create(id: i, name: i) } unless ReminderTrigger.count == 5
-  end
-
-  def stub_triggers
-    triggers = ReminderTrigger.all
-    trigger_set = []
-    (1..5).to_a.each { |i| trigger_set << build_stubbed(:reminder_trigger, id: i, name: i) }
-    triggers.stubs(:[]).returns(trigger_set)
-    ReminderTrigger.stubs(:where).returns(triggers)
   end
 end

@@ -6,9 +6,6 @@ describe CertificateOrdersController do
   include SessionHelper
 
   before do
-    initialize_roles
-    initialize_triggers
-    initialize_server_software
     activate_authlogic
     login_as(user)
   end

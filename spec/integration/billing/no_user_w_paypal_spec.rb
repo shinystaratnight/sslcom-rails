@@ -5,7 +5,6 @@
 # #
 # describe 'Valid user' do
 #   before do
-#     initialize_roles
 #     initialize_certificates
 #     @year_3_id = ProductVariantItem.find_by(serial: "sslcombasic256ssl3yr").id
 #     @new_email = 'new_user@ssl.com'

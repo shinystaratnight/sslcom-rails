@@ -4,10 +4,8 @@ require 'httparty'
 # TODO: Find a way to remove the api credentials from this file
 describe CdnsController do
   include SessionHelper
+
   before do
-    stub_roles
-    stub_triggers
-    stub_server_software
     activate_authlogic
   end
 
