@@ -152,7 +152,7 @@ describe SslAccount do
   end
 
   describe 'helper methods' do
-    it '#get_account_owner returns correct user/owner' do
+    xit '#get_account_owner returns correct user/owner' do
       target_user = create(:user, :owner)
       target_ssl  = target_user.ssl_account
       new_user = create(:user)
