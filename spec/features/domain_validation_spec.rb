@@ -1,11 +1,6 @@
 require 'rails_helper'
 
 RSpec.describe 'DomainValidations', type: :feature do
-  before(:all) do
-    initialize_roles
-    initialize_triggers
-  end
-
   context 'with email dcv method' do
     let(:user) { create(:user, :owner) }
     let!(:domain) { Faker::Internet.domain_name }

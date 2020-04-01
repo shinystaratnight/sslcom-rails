@@ -629,7 +629,7 @@ class User < ApplicationRecord
     role_symbols.include? Role::RA_ADMIN.to_sym
   end
 
-  def is_owner?(target_account=nil)
+  def is_owner?(target_account = nil)
     role_symbols(target_account).include? Role::OWNER.to_sym
   end
 

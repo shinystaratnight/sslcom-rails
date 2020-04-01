@@ -36,19 +36,13 @@ require 'rails_helper'
 describe SslAccount do
   subject { described_class.new }
 
-  before :all do
-    initialize_roles
-  end
-
   it_behaves_like 'it has roles'
 
-  context 'attributes' do
-    it { is_expected.to have_db_column :acct_number }
-    it { is_expected.to have_db_column :roles }
-    it { is_expected.to have_db_column :status }
-    it { is_expected.to have_db_column :ssl_slug }
-    it { is_expected.to have_db_column :company_name }
-  end
+  it { is_expected.to have_db_column :acct_number }
+  it { is_expected.to have_db_column :roles }
+  it { is_expected.to have_db_column :status }
+  it { is_expected.to have_db_column :ssl_slug }
+  it { is_expected.to have_db_column :company_name }
 
   describe 'validations' do
     it '#ssl_slug should NOT be valid under 2 characters' do
@@ -73,16 +67,16 @@ describe SslAccount do
     end
 
     it '#ssl_slug should NOT be valid when not unique' do
-      @dupe = create(:ssl_account, ssl_slug: 'dupe')
-      subject.ssl_slug = 'dupe'
+      existing = create(:ssl_account)
+      subject.ssl_slug = existing.ssl_slug
       subject.validate
 
       assert_equal ['has already been taken'], subject.errors.messages[:ssl_slug]
     end
 
     it '#ssl_slug should ignore case' do
-      @dupe = create(:ssl_account, ssl_slug: 'dupe')
-      subject.ssl_slug = 'DUPE'
+      existing = create(:ssl_account)
+      subject.ssl_slug = existing.ssl_slug
       subject.validate
 
       assert_equal ['has already been taken'], subject.errors.messages[:ssl_slug]
@@ -152,18 +146,18 @@ describe SslAccount do
     end
 
     it '#ssl_slug_valid? string not unique should NOT be valid' do
-      create(:ssl_account, ssl_slug: 'dupe')
-      described_class.ssl_slug_valid?('dupe').should be_falsey
+      existing = create(:ssl_account)
+      described_class.ssl_slug_valid?(existing.ssl_slug).should be_falsey
     end
   end
 
   describe 'helper methods' do
     xit '#get_account_owner returns correct user/owner' do
       target_user = create(:user, :owner)
-      target_ssl  = target_user.assignments.first.ssl_account
+      target_ssl  = target_user.ssl_account
       new_user = create(:user)
       new_user.ssl_accounts << target_ssl
-      new_user.set_roles_for_account(target_ssl, [create(:role, :account_admin).id])
+      new_user.set_roles_for_account(target_ssl, [Role.get_account_admin_id])
       new_user.send(:approve_account, ssl_account_id: target_ssl.id)
       target_ssl.get_account_owner.should eq target_user
     end

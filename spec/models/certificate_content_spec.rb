@@ -36,13 +36,6 @@
 require 'rails_helper'
 
 describe CertificateContent do
-  before do
-    stub_roles
-    stub_triggers
-    stub_server_software
-    SslAccount.any_instance.stubs(:initial_setup).returns(true)
-  end
-
   it 'calls certificate_names_from_domains after being saved' do
     certificate_content = create(:certificate_content)
     certificate_content.expects(:certificate_names_from_domains).returns(true)

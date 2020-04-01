@@ -66,12 +66,6 @@
 require 'rails_helper'
 
 describe User do
-  before do
-    initialize_roles
-    initialize_triggers
-    initialize_server_software
-  end
-
   it_behaves_like 'it has roles'
 
   describe 'attributes' do

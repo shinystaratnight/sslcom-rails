@@ -1,11 +1,7 @@
 module ApiSetupHelper
   def api_main_setup
     Authorization.ignore_access_control(true)
-    initialize_roles
-    initialize_server_software
-    initialize_certificates
     initialize_certificate_csr_keys
-    initialize_countries
     api_initialize_pvi_ids
     @card_number  = api_set_card_number
     @user         = create(:user, :owner)
@@ -19,7 +15,6 @@ module ApiSetupHelper
 
   def api_min_setup
     Authorization.ignore_access_control(true)
-    initialize_roles
     @card_number  = api_set_card_number
     @user         = create(:user, :owner)
     @team         = @user.ssl_account

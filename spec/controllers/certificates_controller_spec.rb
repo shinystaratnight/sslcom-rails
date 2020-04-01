@@ -3,15 +3,6 @@
 require 'rails_helper'
 
 describe CertificatesController do
-  include SessionHelper
-  before do
-    stub_roles
-    stub_triggers
-    stub_server_software
-    activate_authlogic
-    create(:certificate_with_certificate_order)
-  end
-
   describe 'find_tier before_action' do
     it 'finds tier when passed reseller_cookie params' do
       tier_options = attributes_for(:reseller_tier, :west)

@@ -588,6 +588,9 @@ GEM
       ffi-compiler (>= 1.0, < 2.0)
     sdoc (1.1.0)
       rdoc (>= 5.0)
+    seed_dump (3.3.1)
+      activerecord (>= 4)
+      activesupport (>= 4)
     select2-rails (4.0.3)
       thor (~> 0.14)
     selenium-webdriver (3.142.7)
@@ -804,6 +807,7 @@ DEPENDENCIES
   schema_plus
   scout_apm
   sdoc
+  seed_dump
   select2-rails
   selenium-webdriver
   shoulda-matchers

@@ -3,13 +3,6 @@ require 'rails_helper'
 RSpec.describe 'Contacts', type: :feature do
   include AuthenticationHelpers
 
-  before(:all) do
-    initialize_roles
-    initialize_triggers
-    initialize_server_software
-    initialize_certificates
-  end
-
   let!(:user) { create(:user, :owner) }
 
   it 'can add an administrative contact', js: true do

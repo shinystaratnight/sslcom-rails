@@ -1,11 +1,6 @@
 require 'rails_helper'
 
 RSpec.describe 'Authentications', type: :feature do
-  before(:all) do
-    initialize_roles
-    initialize_triggers
-  end
-
   let!(:user) { create(:user, :owner) }
 
   before do

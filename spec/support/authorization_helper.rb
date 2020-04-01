@@ -1,8 +1,6 @@
 module AuthorizationHelper
   def prepare_auth_tables
     activate_authlogic
-    initialize_roles
-    initialize_certificates
     initialize_all_auth_users
   end
 
@@ -164,7 +162,6 @@ module AuthorizationHelper
   # user's ssl_account.
   #
   def prepare_certificate_orders(user)
-    initialize_server_software
     initialize_certificate_csr_keys
 
     @logged_in_ssl_acct = user.ssl_account

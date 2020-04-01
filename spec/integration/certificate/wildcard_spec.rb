@@ -4,10 +4,6 @@
 # #
 # describe 'wildcard (single-domain) csr' do
 #   before do
-#     initialize_roles
-#     initialize_certificates
-#     initialize_server_software
-#     initialize_certificate_csr_keys
 #     @logged_in_user     = create(:user, :owner)
 #     @logged_in_ssl_acct = @logged_in_user.ssl_account
 #     @logged_in_ssl_acct.billing_profiles << create(:billing_profile)

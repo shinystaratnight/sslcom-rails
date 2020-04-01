@@ -44,7 +44,6 @@ RSpec.configure do |config|
   config.include Authlogic::TestCase
   config.include AuthorizationHelper
   config.include SessionHelper
-  # config.include AuthenticationHelpers
 
   config.use_transactional_fixtures = false
   config.render_views
@@ -62,31 +61,21 @@ RSpec.configure do |config|
       MSG
     end
 
-    DatabaseCleaner.clean_with(:truncation)
-  end
-
-  config.before do |example|
-    SystemAudit.stubs(:create).returns(true)
-    DatabaseCleaner.strategy = example.metadata[:js] ? :deletion : :transaction
+    Rails.application.load_seed
+    DatabaseCleaner.strategy = :truncation, { except: %w[product_variant items roles reminder_triggers server_softwares certificates countries preferences websites cas cdns reseller_tiers dbs schedules validation_rules] }
     DatabaseCleaner.start
   end
 
-  config.before(:each, type: :feature) do
-    # :rack_test driver's Rack app under test shares database connection
-    # with the specs, so continue to use transaction strategy for speed.
-    driver_shares_db_connection_with_specs = Capybara.current_driver == :rack_test
-    page.driver.browser.manage.window.resize_to(1920, 1080)
-
-    unless driver_shares_db_connection_with_specs
-      # Driver is probably for an external browser with an app
-      # under test that does *not* share a database connection with the
-      # specs, so use truncation strategy.
-      DatabaseCleaner.strategy = :truncation, { except: %w[roles reminder_triggers server_software] }
-    end
+  config.after(:suite) do
+    DatabaseCleaner.clean
   end
 
-  config.after do
-    DatabaseCleaner.clean
+  config.before do |_example|
+    SystemAudit.stubs(:create).returns(true)
+  end
+
+  config.before(:each, type: :feature) do
+    page.driver.browser.manage.window.resize_to(1920, 1080)
   end
 
   config.infer_spec_type_from_file_location!
