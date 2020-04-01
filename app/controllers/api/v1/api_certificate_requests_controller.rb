@@ -8,7 +8,6 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
   before_action :set_test, :record_parameters, except: %i[scan analyze download_v1_4]
   after_action :notify_saved_result, except: %i[create_v1_4 download_v1_4]
   before_action :set_certificate_order, only: [:update_v1_4]
-  before_action :verify_dcv_method, only: [:update_v1_4]
 
   # parameters listed here made available as attributes in @result
   wrap_parameters ApiCertificateRequest, include: [*(
@@ -1606,14 +1605,5 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
     json_render_not_found && return if @certificate_order.nil?
 
     @certificate_order
-  end
-
-  def verify_dcv_method
-    if dcv_param.present?
-      unless DomainControlValidation::DCV_METHODS.include? dcv_param
-        errors = { errors: [parameters: "invalid dcv_method: #{dcv_param}"] }
-        render_errors(errors, :unprocessable_entity) && return
-      end
-    end
   end
 end
