@@ -128,7 +128,7 @@ describe NotificationGroupsManager do
         expect_email_to_be_sent
       end
 
-      xit 'sends ahoy message' do
+      it 'sends ahoy message' do
         notification_group.scanned_certificates << create(:scanned_certificate, :expired_today)
         expect { described_class.send_expiration_reminders(db: 'ssl_com_test') }.to change { Ahoy::Message.count }
       end
@@ -140,7 +140,7 @@ describe NotificationGroupsManager do
         expect_email_to_be_sent
       end
 
-      xit 'sends ahoy message' do
+      it 'sends ahoy message' do
         notification_group.scanned_certificates << create(:scanned_certificate, :expired_15_days_ago)
         expect { described_class.send_expiration_reminders(db: 'ssl_com_test') }.to change { Ahoy::Message.count }
       end
@@ -152,7 +152,7 @@ describe NotificationGroupsManager do
         expect_email_to_be_sent
       end
 
-      xit 'sends ahoy message' do
+      it 'sends ahoy message' do
         notification_group.scanned_certificates << create(:scanned_certificate, :expires_in_15_days)
         expect { described_class.send_expiration_reminders(db: 'ssl_com_test') }.to change { Ahoy::Message.count }
       end
@@ -164,7 +164,7 @@ describe NotificationGroupsManager do
         expect_email_to_be_sent
       end
 
-      xit 'sends ahoy message' do
+      it 'sends ahoy message' do
         notification_group.scanned_certificates << create(:scanned_certificate, :expires_in_30_days)
         expect { described_class.send_expiration_reminders(db: 'ssl_com_test') }.to change { Ahoy::Message.count }
       end
@@ -174,7 +174,6 @@ describe NotificationGroupsManager do
       xit 'sends an expiration notice' do
         notification_group.scanned_certificates << create(:scanned_certificate, :expires_in_60_days)
         expect_email_to_be_sent
-        expect(Ahoy::Message.count).to be 1
       end
     end
 
@@ -188,7 +187,7 @@ describe NotificationGroupsManager do
         expect_email_to_be_sent
       end
 
-      xit 'sends ahoy message for all certs' do
+      it 'sends ahoy message for all certs' do
         notification_group.scanned_certificates << create(:scanned_certificate, :expired_today)
         notification_group.scanned_certificates << create(:scanned_certificate, :expired_15_days_ago)
         notification_group.scanned_certificates << create(:scanned_certificate, :expires_in_15_days)
