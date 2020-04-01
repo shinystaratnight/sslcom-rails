@@ -251,7 +251,7 @@ describe CertificateOrder do
       end
 
       %w[external_order_number ref notes].each do |field|
-        it("filters on #{field}") do
+        it "filters on #{field}" do
           query = "#{field}:'#{co[field.to_sym]}'"
           queried = described_class.search_with_csr(query)
           queried.each { |q| expect(q[field.to_sym]).to(eq(co[field.to_sym])) }
