@@ -8,12 +8,15 @@ describe NotificationGroupsManager do
   include MailerHelper
 
   before do
-    clear_email_deliveries
+    ActionMailer::Base.deliveries = []
     DatabaseCleaner.start
   end
 
   after do
     DatabaseCleaner.clean
+    clear_email_deliveries
+    clear_enqueued_jobs
+    clear_performed_jobs
   end
 
   describe '.scan' do
@@ -118,7 +121,7 @@ describe NotificationGroupsManager do
     context 'when a domain expires today' do
       it 'sends an expiration notice' do
         notification_group.scanned_certificates << create(:scanned_certificate, :expired_today)
-        expect { described_class.send_expiration_reminders(db: 'ssl_com_test') }.to change { email_total_deliveries }
+        expect { described_class.send_expiration_reminders(db: 'ssl_com_test') }.to have_enqueued_job(NotificationGroupMailer)
       end
 
       it 'sends ahoy message' do
