@@ -1610,7 +1610,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
 
   def verify_dcv_method
     if dcv_param.present?
-      unless %w[http https email cname acme_http acme_dns_txt].include? dcv_param
+      unless DomainControlValidation::DCV_METHODS.include? dcv_param
         errors = { errors: [parameters: "invalid dcv_method: #{dcv_param}"] }
         render_errors(errors, :unprocessable_entity) && return
       end

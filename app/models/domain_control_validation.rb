@@ -55,6 +55,7 @@ class DomainControlValidation < ApplicationRecord
   AUTHORITY_EMAIL_ADDRESSES = %w[admin@ administrator@ webmaster@ hostmaster@ postmaster@].freeze
   MAX_DURATION_DAYS = { email: 820 }.freeze
   EMAIL_CHOICE_CACHE_EXPIRES_DAYS = 1
+  DCV_METHODS = %w[email http_csr_hash cname_csr_hash https_csr_hash acme_http acme_dns_txt]
 
   default_scope{ order('domain_control_validations.created_at asc') }
   scope :global, -> { where{ (certificate_name_id == nil) & (csr_id == nil) } }
