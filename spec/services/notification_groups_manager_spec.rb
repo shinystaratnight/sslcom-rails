@@ -118,6 +118,10 @@ describe NotificationGroupsManager do
       end
     end
 
+    after do
+      Preference.where(owner_id: notification_group.id, group_type: 'ReminderTrigger').destroy_all
+    end
+
     context 'when a domain expires today' do
       it 'sends an expiration notice' do
         notification_group.scanned_certificates << create(:scanned_certificate, :expired_today)
