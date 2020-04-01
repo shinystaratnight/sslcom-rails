@@ -45,7 +45,9 @@ module Concerns
       end
 
       def fail_dcv
-        domain_control_validation.update_attributes(workflow_state: 'failed') if domain_control_validation.dcv_method.match? /^acme/i
+        return false if domain_control_validation.blank?
+
+        domain_control_validation.update(workflow_state: 'failed') if domain_control_validation.dcv_method.match? /^acme/i
         false
       end
 
