@@ -68,10 +68,12 @@ module Concerns
         WAIT_PERIOD = 5
 
         def self.dcv_verify(protocol, options)
-          @options = options
-          Timeout.timeout(Surl::TIMEOUT_DURATION + (WAIT_PERIOD * 3)) do
-            verify(protocol)
-          rescue StandardError => _e
+          begin
+            @options = options
+            Timeout.timeout(Surl::TIMEOUT_DURATION + (WAIT_PERIOD * 3)) do
+              verify(protocol)
+            end
+          rescue Exception => _e
             return false
           end
         end
