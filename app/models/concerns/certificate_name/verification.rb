@@ -6,7 +6,7 @@ module Concerns
       extend ActiveSupport::Concern
 
       def dcv_verify(protocol = nil)
-        attempts = 0
+        attempts = protocol&.match?(/acme/i) ? 0 : 2
         status = while attempts < 3
                    response = attempt_dcv(protocol)
                    break response if response
@@ -70,7 +70,9 @@ module Concerns
         def self.dcv_verify(protocol, options)
           begin
             @options = options
-            Timeout.timeout(Surl::TIMEOUT_DURATION + (WAIT_PERIOD * 3)) do
+            wait_for = url::TIMEOUT_DURATION
+            wait_for += WAIT_PERIOD * 3 if protocol.match?(/acme/)
+            Timeout.timeout(wait_for) do
               verify(protocol)
             end
           rescue Exception => _e
