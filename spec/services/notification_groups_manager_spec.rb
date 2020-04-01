@@ -6,6 +6,15 @@ describe NotificationGroupsManager do
   include ActiveJob::TestHelper
   include X509Helper
 
+  before do
+    ActionMailer::Base.deliveries.clear
+    DatabaseCleaner.start
+  end
+
+  after do
+    DatabaseCleaner.clean
+  end
+
   describe '.scan' do
     DomainObject = Struct.new(:url, :scan_port, :notification_group, :x509_cert, :verify_result)
 
@@ -97,50 +106,65 @@ describe NotificationGroupsManager do
   end
 
   describe '.send_expiration_reminders' do
-    before do
-      @notification_group = create(:notification_group)
-      @notification_group.notification_groups_contacts << create(:notification_groups_contact)
+    let(:notification_group) { create(:notification_group, notification_groups_contacts: [create(:notification_groups_contact)]) }
 
+    before do
       ['-15', '0', '15', '30', '60'].each do |reminder_value|
-        create(:preference, owner_id: @notification_group.id, value: reminder_value)
+        create(:preference, owner_id: notification_group.id, value: reminder_value)
       end
     end
 
     context 'when a domain expires today' do
       it 'sends an expiration notice' do
-        @notification_group.scanned_certificates << create(:scanned_certificate, :expired_today)
+        notification_group.scanned_certificates << create(:scanned_certificate, :expired_today)
         expect { described_class.send_expiration_reminders(db: 'ssl_com_test') }.to change { ActionMailer::Base.deliveries.count }.by(1)
-        expect(Ahoy::Message.count).to be 1
+      end
+
+      it 'sends ahoy message' do
+        notification_group.scanned_certificates << create(:scanned_certificate, :expired_today)
+        expect { described_class.send_expiration_reminders(db: 'ssl_com_test') }.to change { Ahoy::Message.count }.by(1)
       end
     end
 
     context 'when expired 15 days ago' do
       it 'sends an expiration notice' do
-        @notification_group.scanned_certificates << create(:scanned_certificate, :expired_15_days_ago)
+        notification_group.scanned_certificates << create(:scanned_certificate, :expired_15_days_ago)
         expect { described_class.send_expiration_reminders(db: 'ssl_com_test') }.to change { ActionMailer::Base.deliveries.count }.by(1)
-        expect(Ahoy::Message.count).to be 1
+      end
+
+      it 'sends ahoy message' do
+        notification_group.scanned_certificates << create(:scanned_certificate, :expired_15_days_ago)
+        expect { described_class.send_expiration_reminders(db: 'ssl_com_test') }.to change { Ahoy::Message.count }.by(1)
       end
     end
 
     context 'when expires in 15 days' do
       it 'sends an expiration notice' do
-        @notification_group.scanned_certificates << create(:scanned_certificate, :expires_in_15_days)
+        notification_group.scanned_certificates << create(:scanned_certificate, :expires_in_15_days)
         expect { described_class.send_expiration_reminders(db: 'ssl_com_test') }.to change { ActionMailer::Base.deliveries.count }.by(1)
-        expect(Ahoy::Message.count).to be 1
+      end
+
+      it 'sends ahoy message' do
+        notification_group.scanned_certificates << create(:scanned_certificate, :expires_in_15_days)
+        expect { described_class.send_expiration_reminders(db: 'ssl_com_test') }.to change { Ahoy::Message.count }.by(1)
       end
     end
 
     context 'when expires in 30 days' do
       it 'sends an expiration notice' do
-        @notification_group.scanned_certificates << create(:scanned_certificate, :expires_in_30_days)
+        notification_group.scanned_certificates << create(:scanned_certificate, :expires_in_30_days)
         expect { described_class.send_expiration_reminders(db: 'ssl_com_test') }.to change { ActionMailer::Base.deliveries.count }.by(1)
-        expect(Ahoy::Message.count).to be 1
+      end
+
+      it 'sends ahoy message' do
+        notification_group.scanned_certificates << create(:scanned_certificate, :expires_in_30_days)
+        expect { described_class.send_expiration_reminders(db: 'ssl_com_test') }.to change { Ahoy::Message.count }.by(1)
       end
     end
 
     context 'when expires in 60 days' do
       xit 'sends an expiration notice' do
-        @notification_group.scanned_certificates << create(:scanned_certificate, :expires_in_60_days)
+        notification_group.scanned_certificates << create(:scanned_certificate, :expires_in_60_days)
         expect { described_class.send_expiration_reminders(db: 'ssl_com_test') }.to change { ActionMailer::Base.deliveries.count }.by(1)
         expect(Ahoy::Message.count).to be 1
       end
@@ -148,27 +172,35 @@ describe NotificationGroupsManager do
 
     context 'when multiple expired certificates' do
       it 'sends an expiration notice for all certs' do
-        @notification_group.scanned_certificates << create(:scanned_certificate, :expired_today)
-        @notification_group.scanned_certificates << create(:scanned_certificate, :expired_15_days_ago)
-        @notification_group.scanned_certificates << create(:scanned_certificate, :expires_in_15_days)
-        @notification_group.scanned_certificates << create(:scanned_certificate, :expires_in_30_days)
-        @notification_group.scanned_certificates << create(:scanned_certificate, :expires_in_60_days)
+        notification_group.scanned_certificates << create(:scanned_certificate, :expired_today)
+        notification_group.scanned_certificates << create(:scanned_certificate, :expired_15_days_ago)
+        notification_group.scanned_certificates << create(:scanned_certificate, :expires_in_15_days)
+        notification_group.scanned_certificates << create(:scanned_certificate, :expires_in_30_days)
+        notification_group.scanned_certificates << create(:scanned_certificate, :expires_in_60_days)
         expect { described_class.send_expiration_reminders(db: 'ssl_com_test') }.to change { ActionMailer::Base.deliveries.count }.by(1)
-        expect(Ahoy::Message.count).to be 1
+      end
+
+      it 'sends ahoy message for all certs' do
+        notification_group.scanned_certificates << create(:scanned_certificate, :expired_today)
+        notification_group.scanned_certificates << create(:scanned_certificate, :expired_15_days_ago)
+        notification_group.scanned_certificates << create(:scanned_certificate, :expires_in_15_days)
+        notification_group.scanned_certificates << create(:scanned_certificate, :expires_in_30_days)
+        notification_group.scanned_certificates << create(:scanned_certificate, :expires_in_60_days)
+        expect { described_class.send_expiration_reminders(db: 'ssl_com_test') }.to change { Ahoy::Message.count }.by(1)
       end
     end
 
     context 'when no expirations' do
       it 'does not send any expiration reminders if criteria has not been met' do
-        @notification_group.scanned_certificates << create(:scanned_certificate, :wont_expire_soon)
+        notification_group.scanned_certificates << create(:scanned_certificate, :wont_expire_soon)
         expect { described_class.send_expiration_reminders(db: 'ssl_com_test') }.to change { ActionMailer::Base.deliveries.count }.by(0)
       end
     end
 
     # Developer note: restore test and refactor once scan is stable
     xit 'sends expiration reminders to the correct contacts' do
-      @notification_group.notification_groups_contacts << create_list(:notification_groups_contact, 3)
-      @notification_group.scanned_certificates << create(:scanned_certificate, :expired_today)
+      notification_group.notification_groups_contacts << create_list(:notification_groups_contact, 3)
+      notification_group.scanned_certificates << create(:scanned_certificate, :expired_today)
 
       described_class.send_expiration_reminders(db: 'ssl_com_test')
       mail = ActionMailer::Base.deliveries.last
@@ -176,14 +208,14 @@ describe NotificationGroupsManager do
       assert_equal Ahoy::Message.count, 1
       assert_equal ActionMailer::Base.deliveries.size, 1
       assert_equal mail['to'].to_s.split.size, 3
-      assert mail.to == @notification_group.notification_groups_contacts.pluck(:email_address)
+      assert mail.to == notification_group.notification_groups_contacts.pluck(:email_address)
     end
 
     # Developer note: restore test and refactor once scan is stable
     xit 'sends multiple emails to contacts that have subscribed to one or more notification groups' do
-      @notification_group.notification_groups_contacts << create_list(:notification_groups_contact, 3)
-      @notification_group.scanned_certificates << create(:scanned_certificate, :expired_today)
-      last_contact = @notification_group.notification_groups_contacts.last.email_address
+      notification_group.notification_groups_contacts << create_list(:notification_groups_contact, 3)
+      notification_group.scanned_certificates << create(:scanned_certificate, :expired_today)
+      last_contact = notification_group.notification_groups_contacts.last.email_address
       second_notification_group = create(:notification_group)
       second_notification_group.notification_groups_contacts << create(:notification_groups_contact, email_address: last_contact)
       second_notification_group.scanned_certificates << create(:scanned_certificate, :expired_today)
