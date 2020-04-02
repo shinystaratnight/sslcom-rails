@@ -45,7 +45,8 @@ RSpec.describe 'DomainValidations', type: :feature do
         user.ssl_accounts.first.generate_funded_account
         user.ssl_accounts.first.funded_account.update(cents: 100_000)
       end
-      CertificateHelper.stubs(:last_duration_pricing).returns('100.00')
+      initialize_certificates
+      CertificateDecorator.any_instance.stubs(:last_duration_price).returns(Money.new(1000))
     end
 
     it 'processes cname validation', js: true do
@@ -68,13 +69,12 @@ RSpec.describe 'DomainValidations', type: :feature do
     fill_in 'user_session_login', with: user.login
     fill_in 'user_session_password', with: 'Testing_ssl+1'
     find('#btn_login').click
-    expect(page).to have_content("username: #{user.login}")
   end
 
   def purchase_certificate
     visit account_path(user.ssl_account(:default_team).to_slug)
     click_on 'BUY'
-    first('img[alt="Buy sm bl"]')[0].click
+    find('#buy-ov256sslcom').click
     find('input[alt="submit ssl certificate order"]').click
     find('img[alt="Checkout"]').click
     find('input.order_next').click
@@ -94,7 +94,7 @@ RSpec.describe 'DomainValidations', type: :feature do
     fill_in 'contact_first_name', with: user.first_name
     fill_in 'contact_last_name', with: user.last_name
     fill_in 'contact_email', with: user.email
-    fill_in 'contact_phone', with: '832-201-7706'
+    fill_in 'contact_phone', with: Faker::PhoneNumber.cell_phone
     find('#btn_create_role_contact').click
     find('input[alt="Next bl"]').click
   end

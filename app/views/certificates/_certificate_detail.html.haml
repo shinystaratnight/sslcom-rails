@@ -14,6 +14,6 @@
   .more_info
     =link_to image_tag('more_info_sm_bl.gif', :title=>'click to see this certificate'), c.summary
     -unless c.product_root=='free'
-      =link_to image_tag('buy_sm_bl.gif', :title=>'click to buy this certificate'), buy_certificate_url(c.product_root)
+      =c.decorate.buy_link(true)
     -else
-      =link_to image_tag('get_sm_bl.gif', :title=>'click to get this certificate'), buy_certificate_url(c.product_root)
+      =c.decorate.get_link(true)

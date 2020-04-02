@@ -12,7 +12,7 @@
   %h2.product_description
     Ideal for Microsoft Exchange, OWA, Amazon EC2 and virtual hosting
   .product_description_buy_certificate
-    =link_to image_tag('buy_bl.gif', :title=>'click to buy this certificate'), buy_certificate_url(@certificate.product_root)
+    =@certificate.decorate.buy_link(true)
   =render :partial=>'big_pricing'
 .bottom_product_desc
   %p
@@ -40,6 +40,6 @@
     =link_to "Subject Alternative Name / SAN Certificates / UC Certificate.", san_path
 =render :partial=>'points_and_other_certs'
 .product_description_buy_certificate
-  =link_to image_tag('buy_bl.gif', :title=>'click to buy this certificate'), buy_certificate_url(@certificate.product_root)
+  =@certificate.decorate.buy_link(true)
 =render :partial=>'big_pricing'
 =render partial: 'bottom_info'

@@ -42,6 +42,12 @@ module SetupHelpers
     invited_user
   end
 
+  def initialize_certificates
+    %i[evuccssl uccssl evssl ovssl freessl wcssl basicssl premiumssl codesigningssl evcodesigningssl].each do |trait|
+      create(:certificate, trait)
+    end
+  end
+
   def initialize_certificate_csr_keys
     @nonwildcard_csr = <<~EOS
       -----BEGIN CERTIFICATE REQUEST-----

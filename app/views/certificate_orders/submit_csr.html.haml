@@ -7,7 +7,7 @@
 -elsif @reprocessing
   -c[:title] = "Reprocessing #{@certificate.title} Certificate For #{co.subject}"
 -else
-  -c[:title] = "#{co.is_unused_credit? ? "Process" : buy_or_get} #{@certificate.title} Certificate"
+  -c[:title] = "#{co.is_unused_credit? ? "Process" : @certificate.decorate.buy_or_get} #{@certificate.title} Certificate"
 -c.each do |k, v|
   -content_for k, c[k]
 =order_progress_indicator(1, @certificate)
