@@ -60,6 +60,7 @@
 #
 
 class LockedRecipient < Contact
+  belongs_to :certificate_order, class_name: 'CertificateOrder', foreign_key: :contactable_id, inverse_of: :locked_registrant
   validates :user_id, presence: true
 
   def self.create_for_co(co, target_assignee=nil)
