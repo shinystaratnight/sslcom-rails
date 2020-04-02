@@ -6,11 +6,7 @@ module Concerns
       extend ActiveSupport::Concern
 
       def dcv_verify(protocol = nil)
-        attempts = if protocol
-                     protocol.match?(/^acme/i) ? 0 : 2
-                   else
-                     2
-                   end
+        attempts = protocol&.match?(/^acme/i) ? 0 : 2
         status = while attempts < 3
                    response = attempt_dcv(protocol)
                    break response if response
@@ -71,11 +67,7 @@ module Concerns
       included do
         def self.dcv_verify(protocol, options)
           begin
-            wait_period = if protocol
-                            protocol.match?(/^acme/i) ? 5 : 0
-                          else
-                            0
-                          end
+            wait_period = protocol&.match?(/^acme/i) ? 5 : 0
             @options = options
             Timeout.timeout(Surl::TIMEOUT_DURATION + (wait_period * 3)) do
               verify(protocol)
