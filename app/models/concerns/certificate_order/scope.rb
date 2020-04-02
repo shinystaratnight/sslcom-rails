@@ -7,7 +7,10 @@ module Concerns
       include Concerns::CertificateOrder::Constants
 
       included do
-        default_scope{ order(created_at: :desc).where{ (workflow_state << %w(canceled refunded charged_back)) & (is_expired != true) }}
+        default_scope{ order(created_at: :desc).unexpired.where(workflow_state: %w(canceled refunded charged_back)) }
+
+        scope :unexpired, -> { where.not(is_expired: true) }
+        scope :expired, -> { where(is_expired: true) }
 
         scope :with_counts, lambda {
           select <<~SQL
@@ -30,7 +33,7 @@ module Concerns
         scope :with_includes, -> { includes(%i[ssl_account orders validation site_seal]) }
 
         scope :search_physical_tokens, lambda { |state = 'new'|
-          joins{ physical_tokens }.where{ physical_tokens.workflow_state >> [state.split(',')] } if state.present?
+          joins(:physical_tokens).where{ physical_tokens.workflow_state >> [state.split(',')] } if state.present?
         }
 
         scope :search_signed_certificates, lambda { |term|
@@ -39,15 +42,15 @@ module Concerns
         }
 
         scope :search_csr, lambda { |term|
-          joins{ certificate_contents.csr }.where{ certificate_contents.csr.common_name =~ "%#{term}%" }
+          joins(certificate_contents: [:csr]).where{ certificate_contents.csr.common_name =~ "%#{term}%" }
         }
 
         scope :search_assigned, lambda { |term|
-          joins{ assignee }.where{ assignee.id == term }
+          joins(:assignee).where{ assignee.id == term }
         }
 
         scope :search_validated_not_assigned, lambda { |term|
-          joins{ certificate_contents }
+          joins(:certificate_contents)
             .joins{ certificate_contents.locked_registrant }
             .where do
             (assignee_id == nil) &
@@ -72,7 +75,7 @@ module Concerns
           return nil if [term, *filters.values].compact.empty?
 
           result = not_new
-          cc_query = CertificateContent
+          cc_query = ::CertificateContent
           keys = filters.map{ |f| f[0] if f[1].present? }.compact
           if term.present?
             # if 'is_test' and 'order_by_csr' are the only search terms, keep it simple
@@ -88,10 +91,10 @@ module Concerns
           end
           result = result.joins{ ssl_account.outer } unless (keys & [:account_number]).empty?
           result = result.joins{ ssl_account.users.outer } unless (keys & %i[login email]).empty?
-          cc_query = (cc_query || CertificateContent).joins{ csrs } unless
+          cc_query = (cc_query || ::CertificateContent).joins(:csrs)unless
               (keys & %i[country strength common_name organization organization_unit state
                          subject_alternative_names locality decoded]).empty?
-          cc_query = (cc_query || CertificateContent).joins{ csr.signed_certificates.outer } unless
+          cc_query = (cc_query || ::CertificateContent).joins{ csr.signed_certificates.outer } unless
               (keys & %i[country strength postal_code signature fingerprint expires_at created_at issued_at
                          common_name organization organization_unit state subject_alternative_names locality
                          decoded address]).empty?
@@ -211,18 +214,18 @@ module Concerns
                      else
                        # includes tags in BOTH certificate orders and certificate contents tags, not a union
                        CertificateOrder.where(id: (result + cc_results).map(&:id).uniq)
-            end
+                     end
           end
           %w(folder_ids).each do |field|
             query = filters[field.to_sym]
             result = result.where(folder_id: query.split(',')) if query
           end
-          if cc_query != CertificateContent
+          if cc_query != ::CertificateContent
             ids = cc_query.pluck(:id).uniq
             if ids.empty?
               result.uniq
             else
-              result.joins{ certificate_contents }.where{ certificate_contents.id >> ids }
+              result.joins(:certificate_contents).where{ certificate_contents.id >> ids }
             end
           else
             result.uniq
@@ -242,12 +245,12 @@ module Concerns
         }
 
         scope :filter_by_duration, lambda { |term|
-          joins{ certificate_contents }.where{ certificate_contents.duration >> term.split(',') }
+          joins(:certificate_contents).where{ certificate_contents.duration >> term.split(',') }
         }
 
         scope :unvalidated, ->{ joins(:certificate_contents).unexpired.where{ (certificate_contents.workflow_state >> %w(pending_validation contacts_provided))}.order('certificate_contents.updated_at asc')}
 
-        scope :not_csr_blank, ->{ joins{ certificate_contents.csr }.where{ certificate_contents.csr.id != nil } }
+        scope :not_csr_blank, ->{ joins(certificate_contents: [:csr]).where{ certificate_contents.csr.id != nil } }
 
         scope :incomplete, lambda {
                              not_test.joins(:certificate_contents).unexpired.where do
@@ -296,8 +299,6 @@ module Concerns
           unexpired.with_paid_state.where{ (id << unused.joins{ certificate_contents.csr.signed_certificates.outer }.pluck(id).uniq) }
         }
 
-        scope :unexpired, -> { where(is_expired: [nil, false]) }
-        scope :expired, -> { where(is_expired: true) }
         scope :used_credits, lambda {
           unused = with_paid_state.unexpired
           where{ id >> unused.joins{ certificate_contents.csr.signed_certificates.outer }.pluck(id) }
