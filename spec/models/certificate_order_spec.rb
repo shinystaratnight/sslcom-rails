@@ -151,7 +151,7 @@ describe CertificateOrder do
       end
 
       %w[postal_code signature fingerprint address login email account_number organization_unit state].each do |field|
-        it("filters by signed_certificate.#{field}") do
+        it "filters by signed_certificate.#{field}" do
           sc = co.certificate_contents[0].csrs[0].signed_certificates[0]
           query = case field
                   when 'account_number'
@@ -168,11 +168,11 @@ describe CertificateOrder do
                     "#{field}:'#{sc[field.to_sym]}'"
                   end
           queried = described_class.search_with_csr(query)
-          queried.include?(co).should eq true
+          expect(queried).to include(co)
         end
       end
 
-      it('filters by signed_certificate.expiration_date') do
+      it 'filters by signed_certificate.expiration_date' do
         start = DateTime.now.strftime('%m/%d/%Y')
         stop = (DateTime.now + 30.days).strftime('%m/%d/%Y')
         range = [start, stop].join('-')
@@ -181,7 +181,7 @@ describe CertificateOrder do
         queried.include?(co).should eq true
       end
 
-      it('filters by signed_certificate.created_at') do
+      it 'filters by signed_certificate.created_at' do
         start = (DateTime.now - 2.days).strftime('%m/%d/%Y')
         stop = (DateTime.now + 30.days).strftime('%m/%d/%Y')
         range = [start, stop].join('-')

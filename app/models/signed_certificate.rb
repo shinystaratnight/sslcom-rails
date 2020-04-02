@@ -75,52 +75,50 @@ class SignedCertificate < ApplicationRecord
 
   serialize :organization_unit
   serialize :subject_alternative_names
-  belongs_to :parent, :foreign_key=>:parent_id,
-    :class_name=> 'SignedCertificate', :dependent=>:destroy
+  belongs_to :parent, foreign_key: :parent_id, class_name: 'SignedCertificate', dependent: :destroy
   belongs_to :csr, touch: true
   delegate :certificate_content, to: :csr, allow_nil: true
   delegate :certificate_order, to: :certificate_content, allow_nil: true
   belongs_to :certificate_lookup
-  validates_presence_of :body, :if=> Proc.new{|r| !r.parent_cert}
-  validates :csr_id, :presence=>true, :on=>:save
-  validate :proper_certificate?, :if=>
-    Proc.new{|r| !r.parent_cert && !r.body.blank?}
+  validates_presence_of :body, if: Proc.new { |r| !r.parent_cert }
+  validates :csr_id, presence: true, on: :save
+  validate :proper_certificate?, if: Proc.new { |r| !r.parent_cert && !r.body.blank? }
   has_many  :sslcom_ca_revocation_requests, as: :api_requestable
   has_many  :sslcom_ca_requests, as: :api_requestable
 
-  belongs_to  :registered_agent
-  has_one   :revocation, :class_name => "Revocation", :foreign_key => "revoked_signed_certificate_id"
-  has_one   :replacement, through: :revocation, class_name: "SignedCertificate",
-            source: "replacement_signed_certificate", foreign_key: "replacement_signed_certificate_id"
+  belongs_to :registered_agent
+  has_one :revocation, class_name: 'Revocation', foreign_key: 'revoked_signed_certificate_id'
+  has_one   :replacement, through: :revocation, class_name: 'SignedCertificate',
+            source: 'replacement_signed_certificate', foreign_key: 'replacement_signed_certificate_id'
 
   attr :parsed
   attr_accessor :email_customer
 
-  BEGIN_TAG="-----BEGIN CERTIFICATE-----"
-  END_TAG="-----END CERTIFICATE-----"
-  BEGIN_PKCS7_TAG="-----BEGIN PKCS7-----"
-  END_PKCS7_TAG="-----END PKCS7-----"
+  BEGIN_TAG = '-----BEGIN CERTIFICATE-----'
+  END_TAG = '-----END CERTIFICATE-----'
+  BEGIN_PKCS7_TAG = '-----BEGIN PKCS7-----'
+  END_PKCS7_TAG = '-----END PKCS7-----'
 
-  IIS_INSTALL_LINK = "https://www.ssl.com/how-to/modern-iis-ssl-installation-the-easy-way/"
-  CPANEL_INSTALL_LINK = "https://www.ssl.com/how-to/install-certificate-whm-cpanel/"
-  NGINX_INSTALL_LINK = "http://nginx.org/en/docs/http/configuring_https_servers.html"
-  V8_NODEJS_INSTALL_LINK = "http://nodejs.org/api/https.html"
-  JAVA_INSTALL_LINK = "https://www.ssl.com/how-to/how-to-install-a-certificate-on-java-based-web-servers/"
-  OTHER_INSTALL_LINK = "https://www.ssl.com/article/intermediate-certificate-download/"
-  APACHE_INSTALL_LINK = "https://www.ssl.com/how-to/install-ssl-apache-mod-ssl/"
-  AMAZON_INSTALL_LINK = "http://aws.amazon.com/documentation/"
+  IIS_INSTALL_LINK = 'https://www.ssl.com/how-to/modern-iis-ssl-installation-the-easy-way/'
+  CPANEL_INSTALL_LINK = 'https://www.ssl.com/how-to/install-certificate-whm-cpanel/'
+  NGINX_INSTALL_LINK = 'http://nginx.org/en/docs/http/configuring_https_servers.html'
+  V8_NODEJS_INSTALL_LINK = 'http://nodejs.org/api/https.html'
+  JAVA_INSTALL_LINK = 'https://www.ssl.com/how-to/how-to-install-a-certificate-on-java-based-web-servers/'
+  OTHER_INSTALL_LINK = 'https://www.ssl.com/article/intermediate-certificate-download/'
+  APACHE_INSTALL_LINK = 'https://www.ssl.com/how-to/install-ssl-apache-mod-ssl/'
+  AMAZON_INSTALL_LINK = 'http://aws.amazon.com/documentation/'
 
-  APACHE_BUNDLE = "ca-bundle-client.crt"
-  AMAZON_BUNDLE = "ca-chain-amazon.crt"
+  APACHE_BUNDLE = 'ca-bundle-client.crt'
+  AMAZON_BUNDLE = 'ca-chain-amazon.crt'
 
-  OID_DV = "2.23.140.1.2.1"
-  OID_OV = "2.23.140.1.2.2"
-  OID_IV = "2.23.140.1.2.3"
-  OID_EV = "2.23.140.1.1"
-  OID_EVCS = "2.23.140.1.3"
-  OID_CS = "2.23.140.1.4.1"
-  OID_DOC_SIGNING = "1.3.6.1.4.1.311.10.3.12"
-  OID_TEST = "2.23.140.2.1"
+  OID_DV = '2.23.140.1.2.1'
+  OID_OV = '2.23.140.1.2.2'
+  OID_IV = '2.23.140.1.2.3'
+  OID_EV = '2.23.140.1.1'
+  OID_EVCS = '2.23.140.1.3'
+  OID_CS = '2.23.140.1.4.1'
+  OID_DOC_SIGNING = '1.3.6.1.4.1.311.10.3.12'
+  OID_TEST = '2.23.140.2.1'
 
   after_initialize do
     if new_record?
@@ -129,9 +127,9 @@ class SignedCertificate < ApplicationRecord
   end
 
   before_create do |s|
-    s.decoded=s.decode
-    s.serial=s.decoded ? s.decoded_serial : ""
-    s.status ||= "issued"
+    s.decoded = s.decode
+    s.serial = s.decoded ? s.decoded_serial : ''
+    s.status ||= 'issued'
   end
 
   after_create :after_create
@@ -151,14 +149,14 @@ class SignedCertificate < ApplicationRecord
   }
 
   scope :search_with_terms, lambda { |term|
-    term ||= ""
+    term ||= ''
     term = term.strip.split(/\s(?=(?:[^']|'[^']*')*$)/)
     filters = { common_name: nil, sans: nil, effective_date: nil, expiration_date: nil, status: nil }
 
     filters.each {|fn, fv|
-      term.delete_if { |s| s =~ Regexp.new(fn.to_s+"\\:\\'?([^']*)\\'?"); filters[fn] ||= $1; $1 }
+      term.delete_if { |s| s =~ Regexp.new(fn.to_s + "\\:\\'?([^']*)\\'?"); filters[fn] ||= $1; $1 }
     }
-    term = term.empty? ? nil : term.join(" ")
+    term = term.empty? ? nil : term.join(' ')
 
     return nil if [term, *(filters.values)].compact.empty?
 
@@ -183,13 +181,13 @@ class SignedCertificate < ApplicationRecord
     %w(effective_date expiration_date).each do |field|
       query = filters[field.to_sym]
       if query
-        query = query.split("-")
-        start = Date.strptime query[0], "%m/%d/%Y"
-        finish = query[1] ? Date.strptime(query[1], "%m/%d/%Y") : start + 1.day
+        query = query.split('-')
+        start = Date.strptime query[0], '%m/%d/%Y'
+        finish = query[1] ? Date.strptime(query[1], '%m/%d/%Y') : start + 1.day
 
-        if field == "effective_date"
+        if field == 'effective_date'
           result = result.where{ (effective_date >> (start..finish)) }
-        elsif field == "expiration_date"
+        elsif field == 'expiration_date'
           result = result.where{ (expiration_date >> (start..finish)) }
         end
       end
@@ -207,7 +205,7 @@ class SignedCertificate < ApplicationRecord
     cl = CertificateLookup.includes{signed_certificates}.
         most_recent_expiring(start,finish).map(&:signed_certificates).flatten.compact
     # just update expiration date for rebilling, but do not save it to SignedCertificate
-    mre=self.most_recent_expiring(start,finish).each do |sc|
+    mre = self.most_recent_expiring(start,finish).each do |sc|
         # replace signed_certificate with one from lookups
         remove = cl.select{|c|c.common_name == sc.common_name}.
             sort{|a,b|a.created_at.to_i <=> b.created_at.to_i}
@@ -216,7 +214,7 @@ class SignedCertificate < ApplicationRecord
           remove.each {|r| cl.delete(r)}
         end
     end
-    tmp_certs={}
+    tmp_certs = {}
     result = []
     cl.each do |sc|
       if tmp_certs[sc.common_name]
@@ -248,11 +246,11 @@ class SignedCertificate < ApplicationRecord
   def body=(certificate)
     return if certificate.blank?
     self[:body] = SignedCertificate.enclose_with_tags(certificate.strip)
-    unless Settings.csr_parser=="remote"
+    unless Settings.csr_parser == 'remote'
       begin
-        parsed =  if certificate=~ /PKCS7/
-                    pkcs7=OpenSSL::PKCS7.new(self[:body])
-                    self[:body]=pkcs7.to_s
+        parsed = if certificate =~ /PKCS7/
+                    pkcs7 = OpenSSL::PKCS7.new(self[:body])
+                    self[:body] = pkcs7.to_s
                     pkcs7.certificates.first
                   else
                     OpenSSL::X509::Certificate.new(self[:body].strip)
@@ -267,31 +265,31 @@ class SignedCertificate < ApplicationRecord
         self[:organization_unit] = ou_array(parsed.subject.to_s)
         self[:state] = parsed.subject.region.force_encoding('UTF-8') if parsed.subject.region
         self[:locality] = parsed.subject.locality.force_encoding('UTF-8') if parsed.subject.locality
-        pc=field_array("postalCode", parsed.subject.to_s)
+        pc = field_array('postalCode', parsed.subject.to_s)
         self[:postal_code] = pc.first unless pc.blank?
         self[:country] = parsed.subject.country.force_encoding('UTF-8') if parsed.subject.country
-        street=field_array("street", parsed.subject.to_s)
+        street = field_array('street', parsed.subject.to_s)
         unless street.blank?
           street.each_with_index do |s, i|
-            break if i>=2
-            self["address#{i+1}".to_sym] = field_array("street", parsed.subject.to_s)[0]
+            break if i >= 2
+            self["address#{i + 1}".to_sym] = field_array('street', parsed.subject.to_s)[0]
           end
         end
         self[:signature] = parsed.subject_key_identifier.force_encoding('UTF-8') if parsed.subject_key_identifier
         self[:fingerprint] = OpenSSL::Digest::SHA1.new(parsed.to_der).to_s
-        self[:fingerprintSHA] = "SHA1"
+        self[:fingerprintSHA] = 'SHA1'
         self[:effective_date] = parsed.not_before
         self[:expiration_date] = parsed.not_after
         self[:subject_alternative_names] = parsed.subject_alternative_names
         #TODO ecdsa throws exception. Find better method
         self[:strength] = parsed.public_key.instance_of?(OpenSSL::PKey::EC) ?
-                              (matched[1] if matched=parsed.to_text.match(/Private-Key\: \((\d+)/)) : parsed.strength
+                              (matched[1] if matched = parsed.to_text.match(/Private-Key\: \((\d+)/)) : parsed.strength
       end
     else
       ssl_util = Savon::Client.new Settings.certificate_parser_wsdl
       begin
         response = ssl_util.parse_certificate do |soap|
-          soap.body = {:csr => certificate}
+          soap.body = {csr: certificate}
         end
       rescue Exception => ex
         logger.error ex
@@ -303,7 +301,7 @@ class SignedCertificate < ApplicationRecord
         end
         certs = []
         1.times do |i|
-          certs[i] = (i == 0) ? self : certs[i-1].create_parent(:parent_cert=>true)
+          certs[i] = (i == 0) ? self : certs[i - 1].create_parent(parent_cert: true)
           certs[i][:common_name] = @parsed[i][:cn][:cn]
           certs[i][:organization] = @parsed[i][:o][:o]
           certs[i][:organization_unit] = @parsed[i][:ou][:ou]
@@ -316,7 +314,7 @@ class SignedCertificate < ApplicationRecord
           certs[i][:fingerprintSHA] = @parsed[i][:fingerprint_sha]
           certs[i][:effective_date] = @parsed[i][:eff_date]
           certs[i][:expiration_date] = @parsed[i][:exp_date]
-          certs[i].save unless i==0
+          certs[i].save unless i == 0
         end
       end
     end
@@ -328,22 +326,22 @@ class SignedCertificate < ApplicationRecord
 
   # find the ratio remaining on the cert ie (today-effective_date/expiration_date-effective_date)
   def duration_remaining
-    remaining_days/total_days
+    remaining_days / total_days
   end
 
   def used_days(round=false)
     sum = (Time.now - effective_date)
-    (round ? sum.round : sum)/1.day
+    (round ? sum.round : sum) / 1.day
   end
 
   def remaining_days(round=false)
-    days = total_days-used_days
+    days = total_days - used_days
     (round ? days.round : days)
   end
 
   def total_days(round=false)
     sum = (expiration_date - effective_date)
-    (round ? sum.round : sum)/1.day
+    (round ? sum.round : sum) / 1.day
   end
 
   def expired?
@@ -356,7 +354,7 @@ class SignedCertificate < ApplicationRecord
   end
 
   def is_sslcom_ca?
-    ca_id != nil || ejbca_username != nil || issuer.include?("O=EJBCA Sample")
+    ca_id != nil || ejbca_username != nil || issuer.include?('O=EJBCA Sample')
   end
 
   def x509_certificates
@@ -365,77 +363,77 @@ class SignedCertificate < ApplicationRecord
   end
 
   def create_signed_cert_zip_bundle(options={})
-    options[:is_windows]=false unless Settings.allow_windows_cr #having issues with \r\n so stick with linux format
-    co=csr.certificate_content.certificate_order
-    path="/tmp/"+friendly_common_name+".zip#{Time.now.to_i.to_s(32)}"
+    options[:is_windows] = false unless Settings.allow_windows_cr #having issues with \r\n so stick with linux format
+    co = csr.certificate_content.certificate_order
+    path = '/tmp/' + friendly_common_name + ".zip#{Time.now.to_i.to_s(32)}"
     ::Zip::ZipFile.open(path, Zip::ZipFile::CREATE) do |zos|
       if certificate_content.ca
         x509_certificates.drop(1).each do |x509_cert|
             zos.get_output_stream((x509_cert.subject.common_name || x509_cert.serial.to_s).
-              gsub(/[\s\.\*\(\)]/,"_").upcase+'.crt') {|f|
+              gsub(/[\s\.\*\(\)]/,'_').upcase + '.crt') {|f|
             f.puts (options[:is_windows] ? x509_cert.to_s.gsub(/\n/, "\r\n") : x509_cert.to_s)
           }
         end
       else
         co.bundled_cert_names(components: true).each do |file_name|
-          file=File.new(co.bundled_cert_dir+file_name.strip, "r")
+          file = File.new(co.bundled_cert_dir + file_name.strip, 'r')
           zos.get_output_stream(file_name.strip) {|f|
-            f.puts (options[:is_windows] ? file.readlines.join("").gsub(/\n/, "\r\n") : file.readlines)}
+            f.puts (options[:is_windows] ? file.readlines.join('').gsub(/\n/, "\r\n") : file.readlines)}
         end
       end
       cert = options[:is_windows] ? body.gsub(/\n/, "\r\n") : body
-      zos.get_output_stream(nonidn_friendly_common_name+file_extension){|f| f.puts cert}
+      zos.get_output_stream(nonidn_friendly_common_name + file_extension){|f| f.puts cert}
     end
     path
   end
 
   def zipped_whm_bundle(is_windows=false)
-    is_windows=false unless Settings.allow_windows_cr #having issues with \r\n so stick with linux format
-    path="/tmp/"+friendly_common_name+".zip#{Time.now.to_i.to_s(32)}"
+    is_windows = false unless Settings.allow_windows_cr #having issues with \r\n so stick with linux format
+    path = '/tmp/' + friendly_common_name + ".zip#{Time.now.to_i.to_s(32)}"
     ::Zip::ZipFile.open(path, Zip::ZipFile::CREATE) do |zos|
-      file=File.new(ca_bundle(is_windows: is_windows), "r")
-      zos.get_output_stream(nonidn_friendly_common_name+".ca-bundle") {|f|f.puts (is_windows ?
-          file.readlines.join("").gsub(/\n/, "\r\n") : file.readlines)}
+      file = File.new(ca_bundle(is_windows: is_windows), 'r')
+      zos.get_output_stream(nonidn_friendly_common_name + '.ca-bundle') {|f|f.puts (is_windows ?
+          file.readlines.join('').gsub(/\n/, "\r\n") : file.readlines)}
       cert = is_windows ? body.gsub(/\n/, "\r\n") : body
-      zos.get_output_stream(nonidn_friendly_common_name+file_extension){|f| f.puts cert}
+      zos.get_output_stream(nonidn_friendly_common_name + file_extension){|f| f.puts cert}
     end
     path
   end
 
   def zipped_apache_bundle(is_windows=false)
-    is_windows=false unless Settings.allow_windows_cr #having issues with \r\n so stick with linux format
-    path="/tmp/"+friendly_common_name+".zip#{Time.now.to_i.to_s(32)}"
+    is_windows = false unless Settings.allow_windows_cr #having issues with \r\n so stick with linux format
+    path = '/tmp/' + friendly_common_name + ".zip#{Time.now.to_i.to_s(32)}"
     ::Zip::ZipFile.open(path, Zip::ZipFile::CREATE) do |zos|
-      file=File.new(ca_bundle(is_windows: is_windows, is_open_ssl: true), "r")
+      file = File.new(ca_bundle(is_windows: is_windows, is_open_ssl: true), 'r')
       zos.get_output_stream(APACHE_BUNDLE) {|f|f.puts (is_windows ?
-          file.readlines.join("").gsub(/\n/, "\r\n") : file.readlines)}
+          file.readlines.join('').gsub(/\n/, "\r\n") : file.readlines)}
       cert = is_windows ? body.gsub(/\n/, "\r\n") : body
-      zos.get_output_stream(nonidn_friendly_common_name+file_extension){|f| f.puts cert}
+      zos.get_output_stream(nonidn_friendly_common_name + file_extension){|f| f.puts cert}
     end
     path
   end
 
   def zipped_amazon_bundle(is_windows=false)
-    is_windows=false unless Settings.allow_windows_cr #having issues with \r\n so stick with linux format
-    co=csr.certificate_content.certificate_order
-    path="/tmp/"+friendly_common_name+".zip#{Time.now.to_i.to_s(32)}"
+    is_windows = false unless Settings.allow_windows_cr #having issues with \r\n so stick with linux format
+    co = csr.certificate_content.certificate_order
+    path = '/tmp/' + friendly_common_name + ".zip#{Time.now.to_i.to_s(32)}"
     ::Zip::ZipFile.open(path, Zip::ZipFile::CREATE) do |zos|
-      file=File.new(ca_bundle(is_windows: is_windows, server: "amazon"), "r")
+      file = File.new(ca_bundle(is_windows: is_windows, server: 'amazon'), 'r')
       zos.get_output_stream(AMAZON_BUNDLE) {|f|f.puts (is_windows ?
-          file.readlines.join("").gsub(/\n/, "\r\n") : file.readlines)}
+          file.readlines.join('').gsub(/\n/, "\r\n") : file.readlines)}
       cert = is_windows ? body.gsub(/\n/, "\r\n") : body
-      zos.get_output_stream(nonidn_friendly_common_name+file_extension){|f| f.puts cert}
+      zos.get_output_stream(nonidn_friendly_common_name + file_extension){|f| f.puts cert}
     end
     path
   end
 
   def zipped_pkcs7(is_windows=false)
-    is_windows=false unless Settings.allow_windows_cr #having issues with \r\n so stick with linux format
-    co=csr.certificate_content.certificate_order
-    path="/tmp/"+friendly_common_name+".zip#{Time.now.to_i.to_s(32)}"
+    is_windows = false unless Settings.allow_windows_cr #having issues with \r\n so stick with linux format
+    co = csr.certificate_content.certificate_order
+    path = '/tmp/' + friendly_common_name + ".zip#{Time.now.to_i.to_s(32)}"
     ::Zip::ZipFile.open(path, Zip::ZipFile::CREATE) do |zos|
       cert = is_windows ? body.gsub(/\n/, "\r\n") : body
-      zos.get_output_stream(nonidn_friendly_common_name+".p7b"){|f| f.puts to_pkcs7}
+      zos.get_output_stream(nonidn_friendly_common_name + '.p7b'){|f| f.puts to_pkcs7}
     end
     path
   end
@@ -457,14 +455,14 @@ class SignedCertificate < ApplicationRecord
           end
       certificate_order.site_seal.fully_activate! unless certificate_order.site_seal.fully_activated?
       if email_customer
-        certificate_order.processed_recipients.map{|r|r.split(" ")}.flatten.uniq.each do |c|
+        certificate_order.processed_recipients.map{|r|r.split(' ')}.flatten.uniq.each do |c|
           begin
             OrderNotifier.processed_certificate_order(contact: c,
                           certificate_order: certificate_order, file_path: zip_path).deliver
             # OrderNotifier.processed_certificate_order(contact: Settings.shadow_certificate_recipient,
             #               certificate_order: certificate_order, file_path: zip_path).deliver if certificate_order.certificate_content.ca
             OrderNotifier.site_seal_approve(c, certificate_order).deliver if certificate_order.certificate.is_server?
-          rescue Exception=>e
+          rescue Exception => e
             logger.error e.backtrace.inspect
           end
         end
@@ -492,7 +490,7 @@ class SignedCertificate < ApplicationRecord
   end
 
   def nonidn_friendly_common_name
-    SimpleIDN.to_ascii(read_attribute(:common_name) || csr.common_name||
+    SimpleIDN.to_ascii(read_attribute(:common_name) || csr.common_name ||
                            certificate_content.ref).gsub('*', 'STAR').gsub('.', '_')
   end
 
@@ -505,47 +503,47 @@ class SignedCertificate < ApplicationRecord
   end
 
   def ou_array(subject)
-    s=subject_to_array(subject)
+    s = subject_to_array(subject)
     s.select do |o|
-      h=Hash[*o]
-      true unless (h["OU"]).blank?
+      h = Hash[*o]
+      true unless (h['OU']).blank?
     end.map{|ou|ou[1]}
   end
 
   def field_array(field,subject)
-    s=subject_to_array(subject)
+    s = subject_to_array(subject)
     s.select do |o|
-      h=Hash[*o]
+      h = Hash[*o]
       true unless (h[field]).blank?
     end.map{|f|f[1]}
   end
 
   def public_cert(cn=nil,port=443)
-    cn=([self.common_name]+(self.subject_alternative_names||[])).find{|n|
+    cn = ([self.common_name] + (self.subject_alternative_names || [])).find{|n|
       CertificateContent.is_tld?(n)} unless cn
     CertificateContent.find_or_create_installed(cn)
   end
 
   def is_intranet?
-    ([self.common_name]+(self.subject_alternative_names||[])).uniq.all? {|n|CertificateContent.is_intranet?(n)}
+    ([self.common_name] + (self.subject_alternative_names || [])).uniq.all? {|n|CertificateContent.is_intranet?(n)}
   end
 
   def is_tld?
-    ([self.common_name]+(self.subject_alternative_names||[])).uniq.any? {|n|CertificateContent.is_tld?(n)}
+    ([self.common_name] + (self.subject_alternative_names || [])).uniq.any? {|n|CertificateContent.is_tld?(n)}
   end
 
   def ca_bundle(options={})
-    tmp_file="#{Rails.root}/tmp/sc_int_#{id}.txt"
+    tmp_file = "#{Rails.root}/tmp/sc_int_#{id}.txt"
     File.open(tmp_file, 'wb') do |f|
-      tmp=""
+      tmp = ''
       if certificate_content.ca
         x509_certificates.drop(1).each do |x509_cert|
-          tmp<<x509_cert.to_s
+          tmp << x509_cert.to_s
         end
       else
         certificate_order.bundled_cert_names(options).each do |file_name|
-          file=File.new(certificate_order.bundled_cert_dir+file_name.strip, "r")
-          tmp << file.readlines.join("")
+          file = File.new(certificate_order.bundled_cert_dir + file_name.strip, 'r')
+          tmp << file.readlines.join('')
         end
       end
       tmp.gsub!(/\n/, "\r\n") #if options[:is_windows]
@@ -555,13 +553,13 @@ class SignedCertificate < ApplicationRecord
   end
 
   def revoked_by
-    SignedCertificate.where{serial =~ "%"}.last.system_audits.where{action=="revoked"}.last.owner.login
+    SignedCertificate.where{serial =~ '%'}.last.system_audits.where{action == 'revoked'}.last.owner.login
   end
 
   def self.print_revoked_by(serials)
     serials.each do |serial_prefix|
-      sc=SignedCertificate.where{(serial =~ "#{serial_prefix}%") & (status=="revoked")}.last
-      audit=sc.system_audits.where{action=="revoked"}.last
+      sc = SignedCertificate.where{(serial =~ "#{serial_prefix}%") & (status == 'revoked')}.last
+      audit = sc.system_audits.where{action == 'revoked'}.last
       p [sc.common_name,
          serial_prefix,
          audit.owner.login,
@@ -570,23 +568,23 @@ class SignedCertificate < ApplicationRecord
   end
 
   def to_nginx(is_windows=nil, options={})
-    "".tap do |tmp|
+    ''.tap do |tmp|
       if certificate_content.ca_id
-        x509_certs=if options[:order]=="reverse"
+        x509_certs = if options[:order] == 'reverse'
                      x509_certificates.reverse
-                   elsif options[:order]=="rotate"
+                   elsif options[:order] == 'rotate'
                      x509_certificates.rotate
                    else
                      x509_certificates
                    end
         x509_certs.each do |x509_cert|
-          tmp<<x509_cert.to_s
+          tmp << x509_cert.to_s
         end
       else
-        tmp << body+"\n"
+        tmp << body + "\n"
         certificate_order.bundled_cert_names(is_open_ssl: true, ascending_root: true).each do |file_name|
-          file=File.new(certificate_order.bundled_cert_dir+file_name.strip, "r")
-          tmp << file.readlines.join("")
+          file = File.new(certificate_order.bundled_cert_dir + file_name.strip, 'r')
+          tmp << file.readlines.join('')
         end
       end
       tmp.gsub!(/\n/, "\r\n") if is_windows
@@ -594,7 +592,7 @@ class SignedCertificate < ApplicationRecord
   end
 
   def to_nginx_file(is_windows=nil)
-    tmp_file="#{Rails.root}/tmp/sc_int_#{id}.txt"
+    tmp_file = "#{Rails.root}/tmp/sc_int_#{id}.txt"
     File.open(tmp_file, 'wb') do |f|
       f.write to_nginx(is_windows)
     end
@@ -602,31 +600,31 @@ class SignedCertificate < ApplicationRecord
   end
 
   def pkcs7_file
-    sc_int="#{Rails.root}/tmp/sc_int_#{id}.cer"
+    sc_int = "#{Rails.root}/tmp/sc_int_#{id}.cer"
     File.open(sc_int, 'wb') do |f|
-      tmp=""
-      certificate_order.bundled_cert_names(server: "iis").each do |file_name|
-        file=File.new(certificate_order.bundled_cert_dir+file_name.strip, "r")
-        tmp << file.readlines.join("")
+      tmp = ''
+      certificate_order.bundled_cert_names(server: 'iis').each do |file_name|
+        file = File.new(certificate_order.bundled_cert_dir + file_name.strip, 'r')
+        tmp << file.readlines.join('')
       end
       f.write tmp
     end
-    sc_pem="#{Rails.root}/tmp/sc_pem_#{id}.cer"
+    sc_pem = "#{Rails.root}/tmp/sc_pem_#{id}.cer"
     File.open(sc_pem, 'wb') do |f|
-      f.write body+"\n"
+      f.write body + "\n"
     end
-    sc_pkcs7="#{Rails.root}/tmp/sc_pkcs7_#{id}.cer"
+    sc_pkcs7 = "#{Rails.root}/tmp/sc_pkcs7_#{id}.cer"
     ::CertUtil.pem_to_pkcs7(sc_pem, sc_int, sc_pkcs7)
     sc_pkcs7
   end
 
   def to_pem
-    return body unless file_type=="PKCS#7"
-    sc_pkcs7="#{Rails.root}/tmp/sc_pkcs7_#{id}.cer"
+    return body unless file_type == 'PKCS#7'
+    sc_pkcs7 = "#{Rails.root}/tmp/sc_pkcs7_#{id}.cer"
     File.open(sc_pkcs7, 'wb') do |f|
-      f.write body+"\n"
+      f.write body + "\n"
     end
-    sc_pem="#{Rails.root}/tmp/sc_pem_#{id}.cer"
+    sc_pem = "#{Rails.root}/tmp/sc_pem_#{id}.cer"
     ::CertUtil.pkcs7_to_pem(sc_pem, sc_pkcs7)
     sc_pem
   end
@@ -635,9 +633,9 @@ class SignedCertificate < ApplicationRecord
     if certificate_content.ca
       (SslcomCaRequest.where(username: ejbca_username).first.try(:pkcs7) || certificate_content.pkcs7).to_s
     else
-      comodo_cert = ComodoApi.collect_ssl(certificate_order, {response_type: "pkcs7"}).certificate
+      comodo_cert = ComodoApi.collect_ssl(certificate_order, {response_type: 'pkcs7'}).certificate
       if comodo_cert
-        (BEGIN_PKCS7_TAG+"\n"+comodo_cert+END_PKCS7_TAG).gsub(/\n/, "\r\n") #temporary fix
+        (BEGIN_PKCS7_TAG + "\n" + comodo_cert + END_PKCS7_TAG).gsub(/\n/, "\r\n") #temporary fix
       else
         return body if body.starts_with?(BEGIN_PKCS7_TAG)
         File.read(pkcs7_file) # TODO need to fix some bug. ending characters not matching comodo's certs
@@ -647,9 +645,9 @@ class SignedCertificate < ApplicationRecord
 
   def to_format(options={})
     if certificate_content.ca
-      if options[:response_type]=="individually"
+      if options[:response_type] == 'individually'
         to_nginx
-      elsif options[:response_type]=="pkcs7"
+      elsif options[:response_type] == 'pkcs7'
         to_pkcs7
       else
         SignedCertificate.remove_begin_end_tags(to_pkcs7)
@@ -660,7 +658,7 @@ class SignedCertificate < ApplicationRecord
   end
 
   def file_extension
-    if file_type=="PKCS#7"
+    if file_type == 'PKCS#7'
       '.p7b'
     elsif certificate_order.is_iis?
       '.cer'
@@ -675,12 +673,12 @@ class SignedCertificate < ApplicationRecord
 
   def decode
     begin
-      if self.file_type=='PKCS#7'
-        sc_pem="#{Rails.root}/tmp/sc_pem_#{id}.cer"
+      if self.file_type == 'PKCS#7'
+        sc_pem = "#{Rails.root}/tmp/sc_pem_#{id}.cer"
         File.open(sc_pem, 'wb') do |f|
-          f.write body+"\n"
+          f.write body + "\n"
         end
-        CertUtil.decode_certificate sc_pem, "pkcs7"
+        CertUtil.decode_certificate sc_pem, 'pkcs7'
       else
         openssl_x509.to_text
       end
@@ -689,7 +687,7 @@ class SignedCertificate < ApplicationRecord
   end
 
   def ca
-    read_attribute(:ca_id).blank? ? ("comodo" if comodo_ca_id) : Ca.find(read_attribute(:ca_id))
+    read_attribute(:ca_id).blank? ? ('comodo' if comodo_ca_id) : Ca.find(read_attribute(:ca_id))
   end
 
   def is_SHA2?
@@ -701,7 +699,7 @@ class SignedCertificate < ApplicationRecord
   end
 
   def signature_algorithm
-    matched=decoded.match(/Signature Algorithm: (.*?)\n/)
+    matched = decoded.match(/Signature Algorithm: (.*?)\n/)
     matched[1] if matched
   end
 
@@ -712,10 +710,10 @@ class SignedCertificate < ApplicationRecord
   # get the serial through regular expression of the decoded cert
   def decoded_serial
     # m=decoded.match(/Serial Number:\n(.*?)\n/m)
-    m=decoded.match(/Serial Number:(.*?)Signature/m)
+    m = decoded.match(/Serial Number:(.*?)Signature/m)
     unless m.blank?
-      if ca=="comodo"
-        m[1].strip.remove(":")
+      if ca == 'comodo'
+        m[1].strip.remove(':')
         # "00"+m[1].strip.remove(":") # need to clear this up with Comodo
       else
         m[1].strip
@@ -724,15 +722,15 @@ class SignedCertificate < ApplicationRecord
   end
 
   def revoked?
-    status == "revoked"
+    status == 'revoked'
   end
 
   def revoke!(reason)
     unless certificate_content.ca.blank?
-      response=SslcomCaApi.revoke_ssl(self,reason)
-      update_column(:status, "revoked") if response.is_a?(SslcomCaRevocationRequest) and response.response=="OK"
+      response = SslcomCaApi.revoke_ssl(self,reason)
+      update_column(:status, 'revoked') if response.is_a?(SslcomCaRevocationRequest) and response.response == 'OK'
     else
-      update_column(:status, "revoked") if ComodoApi.revoke_ssl(serial: self.serial, api_requestable: self, refund_reason: reason)
+      update_column(:status, 'revoked') if ComodoApi.revoke_ssl(serial: self.serial, api_requestable: self, refund_reason: reason)
     end
   end
 
@@ -741,8 +739,8 @@ class SignedCertificate < ApplicationRecord
   end
 
   def ejbca_certificate
-    host = "https://192.168.100.5:8443/v1/certificate/pkcs10"
-    options={username: "testdv1.ssl.com1551117126063"}
+    host = 'https://192.168.100.5:8443/v1/certificate/pkcs10'
+    options = {username: 'testdv1.ssl.com1551117126063'}
     req, res = SslcomCaApi.call_ca(host, options, options.to_json)
   end
 
@@ -756,14 +754,14 @@ class SignedCertificate < ApplicationRecord
   private
 
   def proper_certificate?
-    if Settings.csr_parser=="remote"
-      errors[:base]<<'invalid certificate' unless @parsed.is_a?(Array)
+    if Settings.csr_parser == 'remote'
+      errors[:base] << 'invalid certificate' unless @parsed.is_a?(Array)
     end
   end
 
   def same_as_previously_signed_certificate?
     if csr.signed_certificate && csr.signed_certificate.body == body
-      errors.add :base, "signed certificate is the same as previously saved one"
+      errors.add :base, 'signed certificate is the same as previously saved one'
     end
   end
 
@@ -772,8 +770,8 @@ class SignedCertificate < ApplicationRecord
   end
 
   def self.remove_begin_end_tags(certificate)
-    certificate.gsub!(/-+BEGIN.+?(CERTIFICATE|PKCS7)-+/,"") if certificate =~ /-+BEGIN.+?(CERTIFICATE|PKCS7)-+/
-    certificate.gsub!(/-+END.+?(CERTIFICATE|PKCS7)-+/,"") if certificate =~ /-+END.+?(CERTIFICATE|PKCS7)-+/
+    certificate.gsub!(/-+BEGIN.+?(CERTIFICATE|PKCS7)-+/,'') if certificate =~ /-+BEGIN.+?(CERTIFICATE|PKCS7)-+/
+    certificate.gsub!(/-+END.+?(CERTIFICATE|PKCS7)-+/,'') if certificate =~ /-+END.+?(CERTIFICATE|PKCS7)-+/
     certificate
   end
 
@@ -781,19 +779,19 @@ class SignedCertificate < ApplicationRecord
   def self.enclose_with_tags(cert)
     if cert =~ /PKCS7/
       # it's PKCS7
-      cert.gsub!(/-+BEGIN PKCS7-+/,"")
+      cert.gsub!(/-+BEGIN PKCS7-+/,'')
       cert = BEGIN_TAG + "\n" + cert.strip
-      cert.gsub!(/-+END PKCS7-+/,"")
-      cert = cert + "\n" unless cert=~/\n\Z\z/
+      cert.gsub!(/-+END PKCS7-+/,'')
+      cert = cert + "\n" unless cert =~ /\n\Z\z/
       cert = cert + END_TAG + "\n"
     else
       unless cert =~ Regexp.new(BEGIN_TAG)
-        cert.gsub!(/-+BEGIN.+?CERTIFICATE-+/,"")
+        cert.gsub!(/-+BEGIN.+?CERTIFICATE-+/,'')
         cert = BEGIN_TAG + "\n" + cert.strip
       end
       unless cert =~ Regexp.new(END_TAG)
-        cert.gsub!(/-+END.+?CERTIFICATE-+/,"")
-        cert = cert + "\n" unless cert=~/\n\Z\z/
+        cert.gsub!(/-+END.+?CERTIFICATE-+/,'')
+        cert = cert + "\n" unless cert =~ /\n\Z\z/
         cert = cert + END_TAG + "\n"
       end
     end
@@ -805,7 +803,7 @@ class SignedCertificate < ApplicationRecord
     self.find_each {|s|
       unless s.body.blank?
         s.update_columns(serial: s.decoded_serial,
-           fingerprint: OpenSSL::Digest::SHA1.new(s.openssl_x509.to_der).to_s, fingerprintSHA: "SHA1") if s.openssl_x509
+           fingerprint: OpenSSL::Digest::SHA1.new(s.openssl_x509.to_der).to_s, fingerprintSHA: 'SHA1') if s.openssl_x509
       end
     }
   end
@@ -820,7 +818,7 @@ class SignedCertificate < ApplicationRecord
       end
       co = cc.certificate_order
       unless co.site_seal.fully_activated?
-        co.site_seal.assign_attributes({workflow_state: "fully_activated"}, without_protection: true)
+        co.site_seal.assign_attributes({workflow_state: 'fully_activated'}, without_protection: true)
         co.site_seal.save
       end
       co.validation.approve! unless(co.validation.approved? || co.validation.approved_through_override?)

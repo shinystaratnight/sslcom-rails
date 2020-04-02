@@ -149,7 +149,7 @@ class BillingProfile < ApplicationRecord
   end
 
   def expired?
-    Date.new(expiration_year, expiration_month).end_of_month < Date.today
+    Date.new(expiration_year, expiration_month).end_of_month < Time.zone.today
   end
 
   # if credit card is expired, provide two theoretical dates - incremented by 2 and 3 respectively

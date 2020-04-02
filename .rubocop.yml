@@ -107,6 +107,10 @@ Lint/AssignmentInCondition:
   Enabled: false
 Lint/InterpolationCheck:
   Enabled: true
+Lint/StructNewOverride:
+  Enabled: true
+Lint/RaiseException:
+  Enabled: true
 Lint/UselessAccessModifier:
   MethodCreatingMethods:
     - 'def_matcher'
@@ -150,3 +154,10 @@ RSpec/ExampleLength:
 RSpec/NamedSubject:
   Exclude:
     - spec/decorators/funded_account_decorator_spec.rb
+Rails/HasManyOrHasOneDependent:
+  Enabled: false
+Style/NonNilCheck:
+  Exclude:
+    - app/models/**/*.rb
+Style/PercentLiteralDelimiters:
+  Enabled: false

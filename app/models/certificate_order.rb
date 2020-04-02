@@ -67,64 +67,12 @@ class CertificateOrder < ApplicationRecord
   include Pagable
   include Workflow
 
-  acts_as_sellable cents: :amount, currency: false
-  belongs_to  :ssl_account, touch: true
-  belongs_to  :folder, touch: true
-  has_many    :users, through: :ssl_account
-  belongs_to  :assignee, class_name: 'User'
-  belongs_to  :validation
-  has_many    :validation_histories, through: :validation
-  belongs_to  :site_seal
-  belongs_to :parent, class_name: 'CertificateOrder', foreign_key: :renewal_id
-  has_one :renewal, class_name: 'CertificateOrder', foreign_key: :renewal_id, dependent: :destroy # represents a child renewal
-  has_many    :renewal_attempts
-  has_many    :renewal_notifications
-  has_many    :cdns
-  has_many :certificate_contents, dependent: :destroy, after_add: Proc.new { |p, _| p.certificate_content(true) }
-  has_many    :certificate_names, through: :certificate_contents
-  has_one     :locked_recipient, class_name: 'LockedRecipient', as: :contactable, dependent: :destroy
-  has_many    :registrants, through: :certificate_contents
-  has_many    :locked_registrants, through: :certificate_contents
-  has_many    :certificate_contacts, through: :certificate_contents
-  has_many    :domain_control_validations, through: :certificate_names
-  has_many :csrs, through: :certificate_contents, source: 'csr'
-  has_many    :csr_unique_values, through: :csrs
-  has_many    :attestation_certificates, through: :certificate_contents
-  has_many    :signed_certificates, through: :csrs, source: :signed_certificate do
-    def expired
-      where{ expiration_date < Date.today }
-    end
-  end
-  has_many :attestation_certificates, through: :certificate_contents do
-    def expired
-      where{ expiration_date < Date.today }
-    end
-  end
-  has_many    :attestation_issuer_certificates, :through => :certificate_contents
-  has_many    :shadow_certificates, :through=>:csrs, class_name: "ShadowSignedCertificate"
-  has_many    :ca_certificate_requests, :through=>:csrs
-  has_many    :ca_api_requests, :through=>:csrs
-  has_many    :sslcom_ca_requests, :through=>:csrs
-  has_many    :sub_order_items, :as => :sub_itemable, :dependent => :destroy
-  has_many    :product_variant_items, through: :sub_order_items, :dependent => :destroy
-  has_many    :orders, :through => :line_items, unscoped: true
-  has_many    :other_party_validation_requests, class_name: "OtherPartyValidationRequest", as: :other_party_requestable, dependent: :destroy
-  has_many    :ca_retrieve_certificates, as: :api_requestable, dependent: :destroy
-  has_many    :ca_mdc_statuses, as: :api_requestable
-  has_many    :jois, as: :contactable, class_name: 'Joi' # for SSL.com EV; rw by vetting agents, r by customer
-  has_many    :app_reps, as: :contactable, class_name: 'AppRep' # for SSL.com OV and EV; rw by vetting agents, r by customer
-  has_many    :physical_tokens
-  has_many :url_callbacks, as: :callbackable, through: :certificate_contents
-  has_many    :taggings, as: :taggable
-  has_many    :tags, through: :taggings
-  has_many    :notification_groups_subjects, as: :subjectable
-  has_many    :notification_groups, through: :notification_groups_subjects
-  has_many    :certificate_order_tokens
-  has_many    :certificate_order_managed_csrs, dependent: :destroy
-  has_many    :managed_csrs, through: :certificate_order_managed_csrs
-  has_many    :certificate_order_domains, dependent: :destroy
-  has_many :managed_domains, through: :certificate_order_domains, source: :domain
+  include Concerns::CertificateOrder::Association
+  # include Concerns::CertificateOrder::Scope
+  include Concerns::CertificateOrder::Constants
+  include Concerns::CertificateOrder::Workflow
 
+  acts_as_sellable cents: :amount, currency: false
   accepts_nested_attributes_for :certificate_contents, allow_destroy: false
   attr_accessor :duration, :has_csr
 
@@ -134,7 +82,7 @@ class CertificateOrder < ApplicationRecord
   # used to temporarily determine lineitem qty
   attr_accessor :quantity
   preference :payment_order, :string, default: 'normal'
-  preference  :certificate_chain, :string
+  preference :certificate_chain, :string
 
   # if the customer has not used this certificate order with a period of time
   # it becomes expired and invalid
@@ -449,79 +397,9 @@ class CertificateOrder < ApplicationRecord
   } do
 
     def amount
-      self.nonfree.sum(:amount) * 0.01
+      nonfree.sum(:amount) * 0.01
     end
   end
-
-  FULL = 'full'
-  EXPRESS = 'express'
-  PREPAID_FULL = 'prepaid_full'
-  PREPAID_EXPRESS = 'prepaid_express'
-  VERIFICATION_STEP = 'Perform Validation'
-  CLIENT_SMIME_VALIDATE = 'client_smime_validate'
-  CLIENT_SMIME_VALIDATED = 'client_smime_validated'
-  CLIENT_SMIME_VALIDATED_SHORT = 'client_smime_validated_short'
-
-  FULL_SIGNUP_PROCESS = {label: FULL, pages: %W(Submit\ CSR Payment
-    Registrant Contacts #{VERIFICATION_STEP} Complete)}
-  EXPRESS_SIGNUP_PROCESS = {label: EXPRESS,
-                            pages: FULL_SIGNUP_PROCESS[:pages] - %w(Contacts)}
-  PREPAID_FULL_SIGNUP_PROCESS = {label: PREPAID_FULL,
-                                 pages: FULL_SIGNUP_PROCESS[:pages] - %w(Payment)}
-  NO_CSR_SIGNUP_PROCESS = {label: PREPAID_FULL,
-                           pages: PREPAID_FULL_SIGNUP_PROCESS[:pages] - %w(Submit\ CSR)}
-  PREPAID_EXPRESS_SIGNUP_PROCESS = {label: PREPAID_EXPRESS,
-                                    pages: EXPRESS_SIGNUP_PROCESS[:pages] - %w(Payment)}
-  REPROCES_SIGNUP_W_PAYMENT = {label: FULL,
-    pages: FULL_SIGNUP_PROCESS[:pages]}
-  REPROCES_SIGNUP_W_INVOICE = {label: PREPAID_EXPRESS,
-    pages: FULL_SIGNUP_PROCESS[:pages] - %w(Payment)}
-  CLIENT_SMIME_FULL = {
-    label: CLIENT_SMIME_VALIDATE,
-    pages: ['Registrant', 'Recipient', 'Upload Documents', 'Complete']
-  }
-  CLIENT_SMIME_IV_VALIDATE = {
-    label: CLIENT_SMIME_VALIDATE,
-    pages: ['Recipient', 'Upload Documents', 'Complete']
-  }
-  CLIENT_SMIME_IV_VALIDATED = {
-    label: CLIENT_SMIME_VALIDATE,
-    pages: ['Recipient', 'Complete']
-  }
-  CLIENT_SMIME_NO_DOCS = {
-    label: CLIENT_SMIME_VALIDATED,
-    pages: ['Registrant', 'Recipient', 'Complete']
-  }
-  CLIENT_SMIME_NO_IV_OV = {
-    label: CLIENT_SMIME_VALIDATED_SHORT,
-    pages: ['Recipient', 'Complete']
-  }
-
-  CSR_SUBMITTED = :csr_submitted
-  INFO_PROVIDED = :info_provided
-  REPROCESS_REQUESTED = :reprocess_requested
-  CONTACTS_PROVIDED = :contacts_provided
-
-  CA_CERTIFICATES = {SSLcomSHA2: 'SSLcomSHA2'}
-
-  STATUS = {CSR_SUBMITTED => 'info required',
-            INFO_PROVIDED => 'contacts required',
-            REPROCESS_REQUESTED => 'csr required',
-            CONTACTS_PROVIDED => 'validation required'}
-
-  RENEWING = 'renewing'
-  REPROCESSING = 'reprocessing'
-  RECERTS = [RENEWING, REPROCESSING]
-  RENEWAL_DATE_CUTOFF = 45.days.ago
-  RENEWAL_DATE_RANGE = 45.days.from_now
-  ID_AND_TIMESTAMP = ['id', 'created_at', 'updated_at']
-  COMODO_SSL_MAX_DURATION = 730
-  SSL_MAX_DURATION = 820
-  EV_SSL_MAX_DURATION = 730
-  CS_MAX_DURATION = 1095
-  CLIENT_MAX_DURATION = 1095
-  SMIME_MAX_DURATION = 1095
-  TS_MAX_DURATION = 4106
 
   before_create do |co|
     default_folder = Folder.find_by(default: true, ssl_account_id: ssl_account_id)
@@ -547,61 +425,6 @@ class CertificateOrder < ApplicationRecord
     end
   end
 
-  workflow do
-    state :new do
-      event :pay, transitions_to: :paid do |payment|
-        halt unless payment
-        post_process_csr unless is_prepaid?
-      end
-      event :reject, transitions_to: :rejected
-      event :cancel, transitions_to: :canceled
-    end
-
-    state :paid do
-      event :cancel, transitions_to: :canceled
-      event :reject, transitions_to: :rejected
-      event :refund, transitions_to: :refunded
-      event :charge_back, transitions_to: :charged_back
-      event :start_over, transitions_to: :paid do |complete=false|
-        if self.certificate_contents.count > 1
-          cc = self.certificate_contents.last
-          cc.preserve_certificate_contacts
-          cc.delete
-        else
-          duration = self.certificate_content.duration
-          temp_cc = self.certificate_contents.create(duration: duration)
-          # Do not delete the last one
-          (self.certificate_contents - [temp_cc]).each do |cc|
-            cc.delete if ((cc.csr or cc.csr.try(:signed_certificate)) || complete)
-          end
-        end
-      end
-    end
-
-    state :canceled do
-      event :uncancel, transitions_to: :paid
-      event :unrefund, transitions_to: :canceled
-      event :refund, transitions_to: :refunded
-      event :reject, transitions_to: :rejected
-      event :charge_back, transitions_to: :charged_back
-      event :cancel, transitions_to: :canceled
-    end
-
-    state :refunded do #only refund a canceled order
-      event :unrefund, transitions_to: :paid
-      event :reject, transitions_to: :rejected
-      event :charge_back, transitions_to: :charged_back
-    end
-
-    state :charged_back
-
-    state :rejected do #only refund a canceled order
-      event :cancel, transitions_to: :canceled
-      event :unreject, transitions_to: :paid
-      event :refund, transitions_to: :refunded
-    end
-  end
-
   def locked_recipient_subject_dn
     dn = []
     if get_recipient
@@ -614,23 +437,18 @@ class CertificateOrder < ApplicationRecord
 
   def get_recipient
     recipient = locked_recipient
-    if locked_recipient.nil? && assignee
-      recipient = LockedRecipient.create_for_co(self)
-    end
+    recipient = LockedRecipient.create_for_co(self) if locked_recipient.nil? && assignee
     recipient
   end
 
   def get_audit_logs
     SystemAudit.where(
-        '(target_id = ? AND target_type = ?) OR (target_id IN (?) AND target_type = ?)',
-          id, 'CertificateOrder', line_items.ids, 'LineItem'
+      '(target_id = ? AND target_type = ?) OR (target_id IN (?) AND target_type = ?)', id, 'CertificateOrder', line_items.ids, 'LineItem'
     ).order('created_at desc')
   end
 
-
   def domains_adjust_billing?
-    certificate.is_ucc? && (certificate.is_premium_ssl? != 0) &&
-    orders.count > 0 && orders.first.persisted?
+    certificate.is_ucc? && (certificate.is_premium_ssl? != 0) && orders.count > 0 && orders.first.persisted?
   end
 
   # Prorated pricing for single domain for ucc certificate,
