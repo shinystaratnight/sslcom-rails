@@ -181,7 +181,6 @@ GEM
     database_cleaner-active_record (1.8.0)
       activerecord
       database_cleaner (~> 1.8.0)
-    date (3.0.0)
     debug_inspector (0.0.3)
     deep_merge (1.2.1)
     delayed-web (0.4.7)
@@ -260,7 +259,6 @@ GEM
     ffi-compiler (1.0.1)
       ffi (>= 1.0.0)
       rake
-    fileutils (1.1.0)
     font_awesome5_rails (1.0.0)
       railties (>= 4.2)
     globalid (0.4.2)
@@ -629,7 +627,6 @@ GEM
       polyamorous (~> 1.1.0)
     stringio (0.0.2)
     stripe (5.17.0)
-    strscan (1.0.3)
     swagger-blocks (3.0.0)
     swagger-docs (0.2.9)
       activesupport (>= 3)
@@ -690,7 +687,6 @@ GEM
     yui-compressor (0.12.0)
     zip-zip (0.3)
       rubyzip (>= 1.0.0)
-    zlib (1.1.0)
 
 PLATFORMS
   ruby
@@ -731,7 +727,6 @@ DEPENDENCIES
   dalli
   dalli-elasticache
   database_cleaner-active_record
-  date
   declarative_authorization!
   delayed-web
   delayed_job_active_record
@@ -743,7 +738,6 @@ DEPENDENCIES
   ed25519 (~> 1.2)
   factory_bot_rails
   faker
-  fileutils (~> 1.1.0)
   font_awesome5_rails
   haml
   httparty
@@ -819,7 +813,6 @@ DEPENDENCIES
   squeel
   stringio (= 0.0.2)
   stripe
-  strscan
   swagger-blocks
   swagger-docs
   timezone (~> 1.0)
@@ -842,7 +835,6 @@ DEPENDENCIES
   xml-simple
   yui-compressor
   zip-zip
-  zlib
 
 BUNDLED WITH
    1.17.3
