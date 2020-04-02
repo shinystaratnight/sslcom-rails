@@ -66,64 +66,12 @@ class CertificateOrder < ApplicationRecord
   include V2MigrationProgressAddon
   include Pagable
   include Workflow
+  include Concerns::CertificateOrder::Association
+  include Concerns::CertificateOrder::Scope
+  include Concerns::CertificateOrder::Constants
+  include Concerns::CertificateOrder::Workflow
 
   acts_as_sellable cents: :amount, currency: false
-  belongs_to  :ssl_account, touch: true
-  belongs_to  :folder, touch: true
-  has_many    :users, through: :ssl_account
-  belongs_to  :assignee, class_name: 'User'
-  belongs_to  :validation
-  has_many    :validation_histories, through: :validation
-  belongs_to  :site_seal
-  belongs_to :parent, class_name: 'CertificateOrder', foreign_key: :renewal_id
-  has_one :renewal, class_name: 'CertificateOrder', foreign_key: :renewal_id, dependent: :destroy # represents a child renewal
-  has_many    :renewal_attempts
-  has_many    :renewal_notifications
-  has_many    :cdns
-  has_many :certificate_contents, dependent: :destroy, after_add: Proc.new { |p, _| p.certificate_content(true) }
-  has_many    :certificate_names, through: :certificate_contents
-  has_one     :locked_recipient, class_name: 'LockedRecipient', as: :contactable, dependent: :destroy
-  has_many    :registrants, through: :certificate_contents
-  has_many    :locked_registrants, through: :certificate_contents
-  has_many    :certificate_contacts, through: :certificate_contents
-  has_many    :domain_control_validations, through: :certificate_names
-  has_many :csrs, through: :certificate_contents, source: 'csr'
-  has_many    :csr_unique_values, through: :csrs
-  has_many    :attestation_certificates, through: :certificate_contents
-  has_many    :signed_certificates, through: :csrs, source: :signed_certificate do
-    def expired
-      where{ expiration_date < Date.today }
-    end
-  end
-  has_many :attestation_certificates, through: :certificate_contents do
-    def expired
-      where{ expiration_date < Date.today }
-    end
-  end
-  has_many    :attestation_issuer_certificates, :through => :certificate_contents
-  has_many    :shadow_certificates, :through=>:csrs, class_name: "ShadowSignedCertificate"
-  has_many    :ca_certificate_requests, :through=>:csrs
-  has_many    :ca_api_requests, :through=>:csrs
-  has_many    :sslcom_ca_requests, :through=>:csrs
-  has_many    :sub_order_items, :as => :sub_itemable, :dependent => :destroy
-  has_many    :product_variant_items, through: :sub_order_items, :dependent => :destroy
-  has_many    :orders, :through => :line_items, unscoped: true
-  has_many    :other_party_validation_requests, class_name: "OtherPartyValidationRequest", as: :other_party_requestable, dependent: :destroy
-  has_many    :ca_retrieve_certificates, as: :api_requestable, dependent: :destroy
-  has_many    :ca_mdc_statuses, as: :api_requestable
-  has_many    :jois, as: :contactable, class_name: 'Joi' # for SSL.com EV; rw by vetting agents, r by customer
-  has_many    :app_reps, as: :contactable, class_name: 'AppRep' # for SSL.com OV and EV; rw by vetting agents, r by customer
-  has_many    :physical_tokens
-  has_many :url_callbacks, as: :callbackable, through: :certificate_contents
-  has_many    :taggings, as: :taggable
-  has_many    :tags, through: :taggings
-  has_many    :notification_groups_subjects, as: :subjectable
-  has_many    :notification_groups, through: :notification_groups_subjects
-  has_many    :certificate_order_tokens
-  has_many    :certificate_order_managed_csrs, dependent: :destroy
-  has_many    :managed_csrs, through: :certificate_order_managed_csrs
-  has_many    :certificate_order_domains, dependent: :destroy
-  has_many :managed_domains, through: :certificate_order_domains, source: :domain
 
   accepts_nested_attributes_for :certificate_contents, allow_destroy: false
   attr_accessor :duration, :has_csr
@@ -144,384 +92,6 @@ class CertificateOrder < ApplicationRecord
     preference :v2_product_description, :string, default: 'ssl certificate'
     preference :v2_line_items, :string
   end
-
-  default_scope{ where{ (workflow_state << ['canceled','refunded','charged_back']) & (is_expired != true) }.order(created_at: :desc)}
-
-  scope :with_counts, -> {
-    select <<~SQL
-      certificate_orders.*,
-      (
-        SELECT COUNT(certificate_contents.id) FROM certificate_contents
-        WHERE certificate_order_id = certificate_orders.id
-      ) AS certificate_contents_count
-    SQL
-  }
-
-  scope :not_test, ->{ where{ (is_test == nil) | (is_test == false) } }
-
-  scope :is_test, ->{ where{ is_test == true } }
-
-  scope :search, lambda { |term, options={}|
-    where{ ref =~ '%' + term + '%' }.merge(options)
-  }
-
-  scope :with_includes, -> { includes(%i[ssl_account orders validation site_seal]) }
-
-  scope :search_physical_tokens, lambda { |state='new'|
-    joins{ physical_tokens }.where{ physical_tokens.workflow_state >> [state.split(',')] } unless state.blank?
-  }
-
-  scope :search_signed_certificates, lambda { |term|
-    joins{ certificate_contents.csr.signed_certificates }.
-      where{ certificate_contents.csr.signed_certificates.common_name =~ "%#{term}%" }
-  }
-
-  scope :search_csr, lambda { |term|
-    joins{ certificate_contents.csr }.where{ certificate_contents.csr.common_name =~ "%#{term}%" }
-  }
-
-  scope :search_assigned, lambda { |term|
-    joins{ assignee }.where{ assignee.id == term }
-  }
-
-  scope :search_validated_not_assigned, lambda { |term|
-    joins{ certificate_contents }.
-        joins{ certificate_contents.locked_registrant }.
-        where{ (assignee_id == nil ) &
-        (certificate_contents.workflow_state == 'validated') &
-        (certificate_contents.locked_registrant.email == term)
-    }
-  }
-
-  scope :search_with_csr, lambda { |term, options={}|
-    term ||= ''
-    term = term.strip.split(/\s(?=(?:[^']|'[^']*')*$)/)
-    filters = {common_name: nil, organization: nil, organization_unit: nil, address: nil, state: nil, postal_code: nil,
-               subject_alternative_names: nil, locality: nil, country:nil, signature: nil, fingerprint: nil, strength: nil,
-               expires_at: nil, created_at: nil, login: nil, email: nil, account_number: nil, product: nil,
-               decoded: nil, is_test: nil, order_by_csr: nil, physical_tokens: nil, issued_at: nil, notes: nil,
-               ref: nil, external_order_number: nil, status: nil, duration: nil, co_tags: nil, cc_tags: nil,
-               folder_ids: nil}
-    filters.each{ |fn, fv|
-      term.delete_if { |s|s =~ Regexp.new(fn.to_s + "\\:\\'?([^']*)\\'?"); filters[fn] ||= $1; $1 }
-    }
-    term = term.empty? ? nil : term.join(' ')
-    return nil if [term,*(filters.values)].compact.empty?
-    result = not_new
-    cc_query = CertificateContent
-    keys = filters.map{ |f|f[0] if !f[1].blank? }.compact
-    unless term.blank?
-      # if 'is_test' and 'order_by_csr' are the only search terms, keep it simple
-      sql = %(MATCH (csrs.common_name, csrs.body, csrs.decoded) AGAINST ('#{term}') OR
-          MATCH (signed_certificates.common_name, signed_certificates.url, signed_certificates.body,
-          signed_certificates.decoded, signed_certificates.ext_customer_ref, signed_certificates.ejbca_username)
-          AGAINST ('#{term}') OR
-          MATCH (ssl_accounts.acct_number, ssl_accounts.company_name, ssl_accounts.ssl_slug) AGAINST ('#{term}') OR
-          MATCH (certificate_orders.ref, certificate_orders.external_order_number, certificate_orders.notes) AGAINST ('#{term}') OR
-          MATCH (users.login, users.email) AGAINST ('#{term}')).squish
-      result = result.joins{ csrs.outer }.joins{ csrs.outer.signed_certificates.outer }.joins{ ssl_account.outer }.
-          joins{ ssl_account.users.outer }.where(sql)
-    end
-    result = result.joins{ ssl_account.outer } unless (keys & [:account_number]).empty?
-    result = result.joins{ ssl_account.users.outer } unless (keys & [:login, :email]).empty?
-    cc_query = (cc_query || CertificateContent).joins{ csrs } unless
-        (keys & [:country, :strength, :common_name, :organization, :organization_unit, :state,
-                :subject_alternative_names, :locality, :decoded]).empty?
-    cc_query = (cc_query || CertificateContent).joins{ csr.signed_certificates.outer } unless
-        (keys & [:country, :strength, :postal_code, :signature, :fingerprint, :expires_at, :created_at, :issued_at,
-                 :common_name, :organization, :organization_unit, :state, :subject_alternative_names, :locality,
-                 :decoded, :address]).empty?
-    %w(is_test).each do |field|
-      query = filters[field.to_sym]
-      if query.try('true?')
-        result = result.send(field)
-      elsif query.try('false?')
-        result = result.not_test
-      end
-    end
-    %w(order_by_csr).each do |field|
-      query = filters[field.to_sym]
-      result = result.send(field) if query.try('true?')
-    end
-    %w(physical_tokens).each do |field|
-      query = filters[field.to_sym]
-      result = result.search_physical_tokens(query) if query
-    end
-    %w(postal_code signature fingerprint).each do |field|
-      query = filters[field.to_sym]
-      cc_query = cc_query.where{
-        (csr.signed_certificates.send(field.to_sym) =~ "%#{query}%")} if query
-    end
-    %w(product).each do |field|
-      query = filters[field.to_sym]
-      result = result.filter_by(query) if query
-    end
-    %w(duration).each do |field|
-      query = filters[field.to_sym]
-      result = result.filter_by_duration(query) if query
-    end
-    %w(ref).each do |field|
-      query = filters[field.to_sym]
-      if query
-        result = result.where{ ref >> query.split(',') }
-        cc_query = cc_query.where{ ref >> query.split(',') }
-      end
-    end
-    %w(country strength).each do |field|
-      query = filters[field.to_sym]
-      cc_query = cc_query.where{
-        (csr.signed_certificates.send(field.to_sym) >> query.split(',')) |
-            (csrs.send(field.to_sym) >> query.split(','))} if query
-    end
-    %w(status).each do |field|
-      query = filters[field.to_sym]
-      if query
-        cc_query = cc_query.where{ workflow_state >> query.split(',') }
-      end
-    end
-    %w(common_name organization organization_unit state subject_alternative_names locality decoded).each do |field|
-      query = filters[field.to_sym]
-      cc_query = cc_query.where{
-        (csr.signed_certificates.send(field.to_sym) =~ "%#{query}%") |
-            (csrs.send(field.to_sym) =~ "%#{query}%") } if query
-    end
-    %w(address).each do |field|
-      query = filters[field.to_sym]
-      cc_query = cc_query.where{
-        (csr.signed_certificates.address1 =~ "%#{query}%") |
-        (csr.signed_certificates.address2 =~ "%#{query}%")} if query
-    end
-    %w(login email).each do |field|
-      query = filters[field.to_sym]
-      result = result.where{
-        (ssl_account.users.send(field.to_sym) =~ "%#{query}%")} if query
-    end
-    %w[account_number].each do |_field|
-      query = filters[:acct_number]
-      result = result.where{ (ssl_account.send(:acct_number) =~ "%#{query}%") } if query
-    end
-    %w(expires_at created_at issued_at).each do |field|
-      query = filters[field.to_sym]
-      if query
-        query = query.split('-')
-        start = Date.strptime query[0], '%m/%d/%Y'
-        finish = query[1] ? Date.strptime(query[1], '%m/%d/%Y') : start + 1.day
-        if(field == 'expires_at')
-          cc_query = cc_query.where{ (csr.signed_certificates.expiration_date >> (start..finish)) }
-        elsif(field == 'issued_at')
-          cc_query = cc_query.where{ (csr.signed_certificates.created_at >> (start..finish)) }
-        else
-          result = result.where{ created_at >> (start..finish) }
-        end
-      end
-    end
-    %w(co_tags).each do |field|
-      query = filters[field.to_sym]
-      if query
-        @result_prior_co_tags = result
-        result = result.joins(:tags).where(tags: {name: query.split(',')})
-      end
-    end
-    %w(cc_tags).each do |field|
-      query = filters[field.to_sym]
-      if query
-        cc_results = (@result_prior_co_tags || result)
-          .joins(certificate_contents: [:tags]).where(tags: {name: query.split(',')})
-
-        result = if @result_prior_co_tags.nil?
-          cc_results
-        else
-          # includes tags in BOTH certificate orders and certificate contents tags, not a union
-          CertificateOrder.where(id: (result + cc_results).map(&:id).uniq)
-        end
-      end
-    end
-    %w(folder_ids).each do |field|
-      query = filters[field.to_sym]
-      result = result.where(folder_id: query.split(',')) if query
-    end
-    if cc_query != CertificateContent
-      ids = cc_query.pluck(:id).uniq
-      unless ids.empty?
-        result.joins{ certificate_contents }.where{ certificate_contents.id >> ids }
-      else
-        result.uniq
-      end
-    else
-      result.uniq
-    end
-  }
-
-  # scope :reprocessing, lambda {
-  #   cids=Preference.select("owner_id").joins{owner(CertificateContent)}.
-  #       where{(name=="reprocessing") & (value==1)}.map(&:owner_id)
-  #   joins{certificate_contents.csr}.where{certificate_contents.id >> cids}.order("csrs.updated_at asc")
-  # }
-
-  # more elegant but needs to be refined. Too slow
-  # scope :reprocessing1, lambda {
-  #   cids=Preference.joins{owner(CertificateContent)}.
-  #       where{(name=="reprocessing") & (value==1)}.select{owner_id}
-  #   joins{certificate_contents.csr}.where{certificate_contents.id.in(cids)}.order("csrs.updated_at asc")
-  # }
-  #
-  scope :order_by_csr, lambda {
-    joins{ certificate_contents.csr.outer }.order('csrs.created_at desc') #.uniq #- breaks order by csr
-  }
-
-  scope :filter_by, lambda { |term|
-    terms = term.split(',').map{ |t|t + '%' }
-    joins{ sub_order_items.product_variant_item.product_variant_group.
-      variantable(Certificate)}.where(('certificates.product like ?@' * terms.count).split('@').join(' OR '), *terms)
-  }
-
-  scope :filter_by_duration, lambda { |term|
-    joins{ certificate_contents }.where{ certificate_contents.duration >> term.split(',') }
-  }
-
-  scope :unvalidated, ->{ joins(:certificate_contents).where{ (is_expired == false) &
-    (certificate_contents.workflow_state >> ['pending_validation', 'contacts_provided'])}.
-      order('certificate_contents.updated_at asc')}
-
-  scope :not_csr_blank, ->{ joins{ certificate_contents.csr }.where{ certificate_contents.csr.id != nil } }
-
-  scope :incomplete, ->{ not_test.joins(:certificate_contents).where{ (is_expired == false) &
-    (certificate_contents.workflow_state >> ['csr_submitted', 'info_provided', 'contacts_provided'])}.
-      order('certificate_contents.updated_at asc')}
-
-  scope :pending, ->{ not_test.joins(:certificate_contents).where{ certificate_contents.workflow_state >>
-      ['pending_validation', 'validated']}.order('certificate_contents.updated_at asc')}
-
-  scope :has_csr, ->{ not_test.joins(:certificate_contents).where{ (workflow_state == 'paid') &
-    (certificate_contents.signing_request != '')}.order('certificate_contents.updated_at asc')}
-
-  scope :credits, ->{ not_test.joins(:certificate_contents).where({workflow_state: 'paid'} & {is_expired: false} &
-    {certificate_contents: {workflow_state: 'new'}})} # and not new
-
-  #new certificate orders are the ones still in the shopping cart
-  scope :not_new, lambda { |options=nil|
-    if options && options.has_key?(:includes)
-      includes = method(:includes).call(options[:includes])
-    end
-    (includes || self).where{ workflow_state << ['new'] }.uniq
-  }
-
-  scope :is_new, lambda { where{ workflow_state >> ['new'] }.uniq }
-
-  scope :unrenewed, ->{ not_new.where(renewal_id: nil) }
-
-  scope :renewed, ->{ not_new.where{ :renewal_id != nil } }
-
-  scope :nonfree, ->{ not_new.where(:amount.gt => 0) }
-
-  scope :free, ->{ not_new.where(amount: 0) }
-
-  scope :unused_credits, ->{
-    unused = joins{}
-    where{ (workflow_state == 'paid') & (is_expired == false) & (id << unused.joins{ certificate_contents.csr.signed_certificates.outer }.pluck(id).uniq) }
-  }
-
-  scope :used_credits, ->{
-    unused = where{ (workflow_state == 'paid') & (is_expired == false) }
-    where{ id >> unused.joins{ certificate_contents.csr.signed_certificates.outer }.pluck(id) }
-  }
-
-  scope :unflagged_expired_credits, ->{ unused_credits.
-      where{ created_at < Settings.cert_expiration_threshold_days.to_i.days.ago }}
-
-  scope :unused_purchased_credits, ->{ unused_credits.where{ amount > 0 } }
-
-  scope :unused_free_credits, ->{ unused_credits.where{ amount == 0 } }
-
-  scope :falsely_expired, -> { unscoped.where{ (workflow_state == 'paid') & (is_expired == true) &
-      (external_order_number != nil)}}
-
-  scope :range, lambda{ |start, finish|
-    if start.is_a?(String)
-      (s = start =~ /\// ? '%m/%d/%Y' : '%m-%d-%Y')
-      start = Date.strptime(start, s)
-    end
-    if finish.is_a?(String)
-      (f = finish =~ /\// ? '%m/%d/%Y' : '%m-%d-%Y')
-      finish = Date.strptime(finish, f)
-    end
-    where{ created_at >> (start..finish) }
-  } do
-
-    def amount
-      self.nonfree.sum(:amount) * 0.01
-    end
-  end
-
-  FULL = 'full'
-  EXPRESS = 'express'
-  PREPAID_FULL = 'prepaid_full'
-  PREPAID_EXPRESS = 'prepaid_express'
-  VERIFICATION_STEP = 'Perform Validation'
-  CLIENT_SMIME_VALIDATE = 'client_smime_validate'
-  CLIENT_SMIME_VALIDATED = 'client_smime_validated'
-  CLIENT_SMIME_VALIDATED_SHORT = 'client_smime_validated_short'
-
-  FULL_SIGNUP_PROCESS = {label: FULL, pages: %W(Submit\ CSR Payment
-    Registrant Contacts #{VERIFICATION_STEP} Complete)}
-  EXPRESS_SIGNUP_PROCESS = {label: EXPRESS,
-                            pages: FULL_SIGNUP_PROCESS[:pages] - %w(Contacts)}
-  PREPAID_FULL_SIGNUP_PROCESS = {label: PREPAID_FULL,
-                                 pages: FULL_SIGNUP_PROCESS[:pages] - %w(Payment)}
-  NO_CSR_SIGNUP_PROCESS = {label: PREPAID_FULL,
-                           pages: PREPAID_FULL_SIGNUP_PROCESS[:pages] - %w(Submit\ CSR)}
-  PREPAID_EXPRESS_SIGNUP_PROCESS = {label: PREPAID_EXPRESS,
-                                    pages: EXPRESS_SIGNUP_PROCESS[:pages] - %w(Payment)}
-  REPROCES_SIGNUP_W_PAYMENT = {label: FULL,
-    pages: FULL_SIGNUP_PROCESS[:pages]}
-  REPROCES_SIGNUP_W_INVOICE = {label: PREPAID_EXPRESS,
-    pages: FULL_SIGNUP_PROCESS[:pages] - %w(Payment)}
-  CLIENT_SMIME_FULL = {
-    label: CLIENT_SMIME_VALIDATE,
-    pages: ['Registrant', 'Recipient', 'Upload Documents', 'Complete']
-  }
-  CLIENT_SMIME_IV_VALIDATE = {
-    label: CLIENT_SMIME_VALIDATE,
-    pages: ['Recipient', 'Upload Documents', 'Complete']
-  }
-  CLIENT_SMIME_IV_VALIDATED = {
-    label: CLIENT_SMIME_VALIDATE,
-    pages: ['Recipient', 'Complete']
-  }
-  CLIENT_SMIME_NO_DOCS = {
-    label: CLIENT_SMIME_VALIDATED,
-    pages: ['Registrant', 'Recipient', 'Complete']
-  }
-  CLIENT_SMIME_NO_IV_OV = {
-    label: CLIENT_SMIME_VALIDATED_SHORT,
-    pages: ['Recipient', 'Complete']
-  }
-
-  CSR_SUBMITTED = :csr_submitted
-  INFO_PROVIDED = :info_provided
-  REPROCESS_REQUESTED = :reprocess_requested
-  CONTACTS_PROVIDED = :contacts_provided
-
-  CA_CERTIFICATES = {SSLcomSHA2: 'SSLcomSHA2'}
-
-  STATUS = {CSR_SUBMITTED => 'info required',
-            INFO_PROVIDED => 'contacts required',
-            REPROCESS_REQUESTED => 'csr required',
-            CONTACTS_PROVIDED => 'validation required'}
-
-  RENEWING = 'renewing'
-  REPROCESSING = 'reprocessing'
-  RECERTS = [RENEWING, REPROCESSING]
-  RENEWAL_DATE_CUTOFF = 45.days.ago
-  RENEWAL_DATE_RANGE = 45.days.from_now
-  ID_AND_TIMESTAMP = ['id', 'created_at', 'updated_at']
-  COMODO_SSL_MAX_DURATION = 730
-  SSL_MAX_DURATION = 820
-  EV_SSL_MAX_DURATION = 730
-  CS_MAX_DURATION = 1095
-  CLIENT_MAX_DURATION = 1095
-  SMIME_MAX_DURATION = 1095
-  TS_MAX_DURATION = 4106
 
   before_create do |co|
     default_folder = Folder.find_by(default: true, ssl_account_id: ssl_account_id)
@@ -544,61 +114,6 @@ class CertificateOrder < ApplicationRecord
     if new_record?
       self.quantity ||= 1
       self.has_csr ||= false
-    end
-  end
-
-  workflow do
-    state :new do
-      event :pay, transitions_to: :paid do |payment|
-        halt unless payment
-        post_process_csr unless is_prepaid?
-      end
-      event :reject, transitions_to: :rejected
-      event :cancel, transitions_to: :canceled
-    end
-
-    state :paid do
-      event :cancel, transitions_to: :canceled
-      event :reject, transitions_to: :rejected
-      event :refund, transitions_to: :refunded
-      event :charge_back, transitions_to: :charged_back
-      event :start_over, transitions_to: :paid do |complete=false|
-        if self.certificate_contents.count > 1
-          cc = self.certificate_contents.last
-          cc.preserve_certificate_contacts
-          cc.delete
-        else
-          duration = self.certificate_content.duration
-          temp_cc = self.certificate_contents.create(duration: duration)
-          # Do not delete the last one
-          (self.certificate_contents - [temp_cc]).each do |cc|
-            cc.delete if ((cc.csr or cc.csr.try(:signed_certificate)) || complete)
-          end
-        end
-      end
-    end
-
-    state :canceled do
-      event :uncancel, transitions_to: :paid
-      event :unrefund, transitions_to: :canceled
-      event :refund, transitions_to: :refunded
-      event :reject, transitions_to: :rejected
-      event :charge_back, transitions_to: :charged_back
-      event :cancel, transitions_to: :canceled
-    end
-
-    state :refunded do #only refund a canceled order
-      event :unrefund, transitions_to: :paid
-      event :reject, transitions_to: :rejected
-      event :charge_back, transitions_to: :charged_back
-    end
-
-    state :charged_back
-
-    state :rejected do #only refund a canceled order
-      event :cancel, transitions_to: :canceled
-      event :unreject, transitions_to: :paid
-      event :refund, transitions_to: :refunded
     end
   end
 
@@ -711,7 +226,7 @@ class CertificateOrder < ApplicationRecord
   def get_reprocess_cc_domains(cc_id=nil)
     cur_domains = []
     if certificate_contents.any?
-      cur_domains = certificate_contents.includes(:signed_certificates).where(workflow_state: 'issued')
+      cur_domains = certificate_contents.includes(:signed_certificates).with_issued_state
       end_target  = certificate_contents.find_by(id: cc_id) unless cc_id.nil?
       if end_target
         cur_domains = cur_domains.where(
@@ -1343,14 +858,14 @@ class CertificateOrder < ApplicationRecord
     domain = options[:domain_override] || 'https://sws-test.sslpki.com'
     options[:action] = 'create_ssl' if options[:action].blank?
     case options[:action]
-      when /create_ssl/
+    when /create_ssl/
         'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X POST -d "' +
             {account_key: '',
              secret_key: '',
              product: options[:certificate].api_product_code,
              period: options[:period]}.to_json.gsub('"','\\"') +
             "\" #{domain}/certificates"
-      when /create_code_signing/
+    when /create_code_signing/
         'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X POST -d "' +
             {account_key: '',
              secret_key: '',
@@ -1372,7 +887,7 @@ class CertificateOrder < ApplicationRecord
       secret_key = (options[:show_credentials] || options[:current_user].try('is_system_admins?'.to_sym)) ? ssl_account.api_credential.secret_key : '[REDACTED]'
     end
     case options[:action]
-      when /update_dcv/
+    when /update_dcv/
         # registrant_params.merge!(api_domains).merge!(api_contacts)
         api_params = {account_key: account_key,
                     secret_key: secret_key,
@@ -1380,14 +895,14 @@ class CertificateOrder < ApplicationRecord
         options[:caller].blank? ?
             'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X PUT -d "' +
                 api_params.to_json.gsub('"','\\"') + "\" #{domain}/certificate/#{self.ref}" : api_params
-      when /validate/
+    when /validate/
         # registrant_params.merge!(api_domains).merge!(api_contacts)
         api_params = {account_key: account_key,
                     secret_key: secret_key}
         options[:caller].blank? ?
             'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X POST -d "' +
                 api_params.to_json.gsub('"','\\"') + "\" #{domain}/certificate/#{self.ref}/retry_domain_validation" : api_params
-      when /update/
+    when /update/
         api_params = {account_key: account_key,
                     secret_key: secret_key,
                     server_software: cc.server_software_id.to_s,
@@ -1397,7 +912,7 @@ class CertificateOrder < ApplicationRecord
         # registrant_params.merge!(api_domains).merge!(api_contacts)
         options[:caller].blank? ? 'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X PUT -d "' +
             api_params.to_json.gsub('"','\\"') + "\" #{domain}/certificate/#{self.ref}" : api_params
-      when /revoke/
+    when /revoke/
         api_params = {account_key: account_key,
                     secret_key: secret_key,
                     reason: 'development test',
@@ -1405,7 +920,7 @@ class CertificateOrder < ApplicationRecord
                     ref: self.ref}
         options[:caller].blank? ? 'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X DELETE -d "' +
             api_params.to_json.gsub('"','\\"') + "\" #{domain}/certificate/#{self.ref}" : api_params
-      when /create_w_csr/
+    when /create_w_csr/
         api_params = {account_key: account_key,
                     secret_key: secret_key,
                     product: certificate.api_product_code,
@@ -1416,7 +931,7 @@ class CertificateOrder < ApplicationRecord
                     csr: certificate_content.csr.body}.merge!(registrant_params)
         options[:caller].blank? ? 'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X POST -d "' +
             api_params.to_json.gsub('"','\\"') + "\" #{domain}/certificates" : api_params
-      when /create/
+    when /create/
         api_params = {account_key: account_key,
                     secret_key: secret_key,
                     product: certificate.api_product_code,
@@ -1424,31 +939,31 @@ class CertificateOrder < ApplicationRecord
                     domains: api_domains}
         options[:caller].blank? ? 'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X POST -d "' +
             api_params.to_json.gsub('"','\\"') + "\" #{domain}/certificates" : api_params
-      when /show/
+    when /show/
         api_params = {account_key: account_key,
                     secret_key: secret_key,
                     query_type: ('all_certificates' unless signed_certificate.blank?), show_subscriber_agreement: 'Y',
                     response_type: ('individually' unless signed_certificate.blank?)}
         options[:caller].blank? ? 'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X GET -d "' +
             api_params.to_json.gsub('"','\\"') + "\" #{domain}/certificate/#{self.ref}" : api_params
-      when /index/
+    when /index/
         api_params = {account_key: account_key,
                     secret_key: secret_key,
                     per_page: '10', page: '1'}
         options[:caller].blank? ? 'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X GET -d "' +
             api_params.to_json.gsub('"','\\"') + "\" #{domain}/certificates" : api_params
-      when /dcv_emails/
+    when /dcv_emails/
         api_params = {account_key: account_key,
                     secret_key: secret_key}.
             merge!(certificate.is_ucc? ? {domains: certificate_content.domains} : {domain: csr.common_name})
         options[:caller].blank? ? 'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X GET -d "' +
             api_params.to_json.gsub('"','\\"') + "\" #{domain}/certificates/validations/email" : api_params
-      when /dcv_methods_wo_csr/
+    when /dcv_methods_wo_csr/
         api_params = {account_key: account_key,
                     secret_key: secret_key}
         options[:caller].blank? ? 'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X GET -d "' +
             api_params.to_json.gsub('"','\\"') + "\" #{domain}/certificate/#{ref}/validations/methods" : api_params
-      when /dcv_methods_w_csr/
+    when /dcv_methods_w_csr/
         api_params = {account_key: account_key,
                     secret_key: secret_key,
                     csr: certificate_content.csr.body}
@@ -1542,11 +1057,11 @@ class CertificateOrder < ApplicationRecord
   end
 
   def is_unused_credit?
-    certificate_content.try('new?') && workflow_state == 'paid'
+    certificate_content&.new? && paid?
   end
 
   def is_unused?
-    certificate_content.try('new?') && (workflow_state == 'paid' || workflow_state == 'refunded')
+    certificate_content&.new? && (paid? || refunded?)
   end
 
   def is_prepaid?
@@ -1631,34 +1146,35 @@ class CertificateOrder < ApplicationRecord
       'n/a'
     else
       case certificate_content.workflow_state
-        when 'csr_submitted'
-          'waiting on registrant information from customer'
-        when 'info_provided'
-          'waiting on contacts information from customer'
-        when 'reprocess_requested'
-          'reissue requested. waiting on certificate signing request (csr)from customer'
-        when 'contacts_provided'
-          'waiting on validation from customer'
-        when 'pending_validation', 'validated'
-          last_sent = csr.try(:last_dcv)
-          if last_sent.blank? or (certificate.is_evcs? and validation_histories.count > 0)
-            'validating, please wait' #assume intranet
-          elsif %w(http https cname http_csr_hash https_csr_hash cname_csr_hash).include?(last_sent.try(:dcv_method))
-            'validating, please wait'
+      when 'csr_submitted'
+        'waiting on registrant information from customer'
+      when 'info_provided'
+        'waiting on contacts information from customer'
+      when 'reprocess_requested'
+        'reissue requested. waiting on certificate signing request (csr)from customer'
+      when 'contacts_provided'
+        'waiting on validation from customer'
+      when 'pending_validation', 'validated'
+        last_sent = csr.try(:last_dcv)
+        if last_sent.blank? || (certificate.is_evcs? && validation_histories.count > 0)
+          'validating, please wait' # assume intranet
+        elsif %w(http https cname http_csr_hash https_csr_hash cname_csr_hash).include?(last_sent.try(:dcv_method))
+          'validating, please wait'
+        else
+          'waiting validation email response from customer'
+        end
+      when 'issued'
+        if certificate_content.expiring?
+          if renewal&paid?
+            "renewed. see #{renewal.ref} for renewal"
           else
-            'waiting validation email response from customer'
+            'expiring. renew soon'
           end
-        when 'issued'
-          if certificate_content.expiring?
-            if renewal && renewal.paid?
-              "renewed. see #{renewal.ref} for renewal"
-            else
-              'expiring. renew soon'
-            end
-          else
-            'issued'
-          end
-        when 'canceled'
+        else
+          'issued'
+        end
+      when 'canceled'
+        ''
       end
     end
   end

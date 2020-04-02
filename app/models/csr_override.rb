@@ -20,5 +20,5 @@
 #
 
 class CsrOverride < ApplicationRecord
-  belongs_to  :csr
+  belongs_to :csr
 end
