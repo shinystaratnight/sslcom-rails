@@ -168,7 +168,7 @@ class Certificate < ApplicationRecord
   # :dir - the directory under the bundles
   # :labels - the file names of the component ca chain certs
   # :contents - the bundle name and component files from :labels
-  # after configuring a ca file set, run CertificateDecorator.generate_ca_certificates on the set to create the bundles
+  # after configuring a ca file set, run Certificate.generate_ca_certificates on the set to create the bundles
 
   BUNDLES = {comodo: {SHA1_2012: {
                         "AddTrustExternalCARoot.crt"=>"Root CA Certificate",
@@ -271,7 +271,7 @@ class Certificate < ApplicationRecord
   
   def self.get_smime_client_products(tier=nil)
     cur_tier = tier.blank? ? '' : "#{tier}tr"
-    CertificateDecorator.available.where(
+    Certificate.available.where(
       "product REGEXP ?",
       "^personal.*(basic|pro|business|enterprise|naesb-basic)#{cur_tier}$"
     )
@@ -280,7 +280,7 @@ class Certificate < ApplicationRecord
   def self.map_to_legacy(description, mapping=nil)
     [MAP_TO_TRIAL,MAP_TO_OV,MAP_TO_EV,MAP_TO_WILDCARD,MAP_TO_UCC].each do |m|
       type = mapping=='renew' ? 1 : 2
-      return CertificateDecorator.find_by_product(m[type]) if m[0].include?(description)
+      return Certificate.find_by_product(m[type]) if m[0].include?(description)
     end
   end
 
@@ -490,7 +490,7 @@ class Certificate < ApplicationRecord
   end
 
   def find_tier(tier)
-    CertificateDecorator.available.find_by_product(product_root+tier+'tr')
+    Certificate.available.find_by_product(product_root+tier+'tr')
   end
 
   def is_single?
@@ -527,17 +527,17 @@ class Certificate < ApplicationRecord
     if reseller_tier.blank?
       self
     else
-      CertificateDecorator.available.find_by_product product_root
+      Certificate.available.find_by_product product_root
     end
   end
 
   def self.root_products
-    CertificateDecorator.base_products.available.sort{|a,b|
+    Certificate.base_products.available.sort{|a,b|
     a.display_order['all'] <=> b.display_order['all']}
   end
 
   def self.tiered_products(tier)
-    CertificateDecorator.available.sort{|a,b|
+    Certificate.available.sort{|a,b|
     a.display_order['all'] <=> b.display_order['all']}.find_all{|c|
         c.product=~Regexp.new(tier)}
   end
@@ -599,13 +599,13 @@ class Certificate < ApplicationRecord
   def self.xcert_certum(x509_certificate,tagged_xcert=false)
     case x509_certificate.serial.to_s
     when "8875640296558310041"
-      tagged_xcert ? SignedCertificateDecorator.enclose_with_tags(CERTUM_XSIGN) : CERTUM_XSIGN
+      tagged_xcert ? SignedCertificate.enclose_with_tags(CERTUM_XSIGN) : CERTUM_XSIGN
     when "6248227494352943350","5688664355526928916"
-      tagged_xcert ? SignedCertificateDecorator.enclose_with_tags(CERTUM_XSIGN_EV) : CERTUM_XSIGN_EV
+      tagged_xcert ? SignedCertificate.enclose_with_tags(CERTUM_XSIGN_EV) : CERTUM_XSIGN_EV
     when "8495723813297216424"
-      tagged_xcert ? SignedCertificateDecorator.enclose_with_tags(RSA_TO_ECC_XSIGN) : RSA_TO_ECC_XSIGN
+      tagged_xcert ? SignedCertificate.enclose_with_tags(RSA_TO_ECC_XSIGN) : RSA_TO_ECC_XSIGN
     when "3182246526754555285"
-      tagged_xcert ? SignedCertificateDecorator.enclose_with_tags(RSA_TO_ECC_EV_XSIGN) : RSA_TO_ECC_EV_XSIGN
+      tagged_xcert ? SignedCertificate.enclose_with_tags(RSA_TO_ECC_EV_XSIGN) : RSA_TO_ECC_EV_XSIGN
     else
       x509_certificate.to_s
     end
@@ -647,8 +647,8 @@ class Certificate < ApplicationRecord
       new_cert.serial=options[:new_serial]+(m.blank? ? "" : m[1])
     elsif options[:reseller_tier_label]
       new_cert.product<<"-#{options[:reseller_tier_label]}tr"
-      if CertificateDecorator.find_by_serial("#{self.serial}-#{options[:reseller_tier_label]}tr") # adding reseller tier
-        new_cert = CertificateDecorator.find_by_serial("#{self.serial}-#{options[:reseller_tier_label]}tr") # update
+      if Certificate.find_by_serial("#{self.serial}-#{options[:reseller_tier_label]}tr") # adding reseller tier
+        new_cert = Certificate.find_by_serial("#{self.serial}-#{options[:reseller_tier_label]}tr") # update
       else
         new_cert.serial="#{self.serial}-#{options[:reseller_tier_label]}tr" # create reseller tier
       end
@@ -697,14 +697,14 @@ class Certificate < ApplicationRecord
   # this method duplicates the base certificate product along with all reseller_tiers
   def duplicate_w_tiers(options)
     sr = "#{self.serial_root}%"
-    CertificateDecorator.where{serial =~ sr}.map {|c| c.duplicate(options)}
+    Certificate.where{serial =~ sr}.map {|c| c.duplicate(options)}
   end
 
   # this method duplicates the base certificate product along with all standard 5 reseller_tiers
   def duplicate_standard_tiers(options)
     standard = "#{self.serial_root}%"
     custom = "#{self.serial_root}-%"
-    CertificateDecorator.where{serial =~ standard}.where{serial !~ custom}.map {|c|
+    Certificate.where{serial =~ standard}.where{serial !~ custom}.map {|c|
       c.duplicate(options)}
   end
 
@@ -750,7 +750,7 @@ class Certificate < ApplicationRecord
 
   # renames 'product' field for certificate including the reseller tiers
   def self.rename(oldname, newname)
-    certificates = CertificateDecorator.unscoped.where{product =~ "%#{oldname}%"}
+    certificates = Certificate.unscoped.where{product =~ "%#{oldname}%"}
     certificates.each {|certificate| certificate.update_column :product, certificate.product.gsub(oldname, newname)}
   end
 
@@ -758,13 +758,13 @@ class Certificate < ApplicationRecord
   def self.create_sslcom_products
     %w(evucc ucc ev ov dv wc).each do |serial|
       s = self.serial+"%"
-      CertificateDecorator.where{serial =~ s}.first.duplicate_standard_tiers serial+"256sslcom"
+      Certificate.where{serial =~ s}.first.duplicate_standard_tiers serial+"256sslcom"
     end
   end
 
   # one-time call to create ssl.com premium products
   def self.create_premium_ssl
-    c=CertificateDecorator.available.find_by_product "ucc"
+    c=Certificate.available.find_by_product "ucc"
     certs = c.duplicate_standard_tiers new_serial: "premium256sslcom", old_pvi_serial: "ucc256ssl",
                               new_pvi_serial: "premium256ssl"
     title = "Premium Multi-subdomain SSL"
@@ -841,7 +841,7 @@ class Certificate < ApplicationRecord
   end
 
   def self.create_basic_ssl
-    c=CertificateDecorator.available.find_by_product "high_assurance"
+    c=Certificate.available.find_by_product "high_assurance"
     certs = c.duplicate_standard_tiers new_serial: "basic256sslcom", old_pvi_serial: "ov256ssl", new_pvi_serial: "basic256ssl"
     title = "Basic SSL"
     description={
@@ -881,7 +881,7 @@ class Certificate < ApplicationRecord
   end
   
   def self.create_code_signing
-    c=CertificateDecorator.available.find_by_product "high_assurance"
+    c=Certificate.available.find_by_product "high_assurance"
     certs = c.duplicate_standard_tiers new_serial: "codesigning256sslcom", old_pvi_serial: "ov256ssl",
                               new_pvi_serial: "codesigning256ssl"
     title = "Code Signing"
@@ -938,7 +938,7 @@ class Certificate < ApplicationRecord
   end
 
   def self.create_ev_code_signing
-    c=CertificateDecorator.available.find_by_product "high_assurance"
+    c=Certificate.available.find_by_product "high_assurance"
     certs = c.duplicate_standard_tiers new_serial: "evcodesigning256sslcom", old_pvi_serial: "ov256ssl",
                               new_pvi_serial: "evcodesigning256ssl"
     title = "EV Code Signing"
@@ -997,7 +997,7 @@ class Certificate < ApplicationRecord
   end
 
   def self.create_email_certs
-    CertificateDecorator.purge %w(personalbasic personalbusiness personalpro personalenterprise naesbbasic)
+    Certificate.purge %w(personalbasic personalbusiness personalpro personalenterprise naesbbasic)
     products=[{serial_root: "personalbasic",title: "Personal Basic",validation_type: "class 1",
                summary: "for authenticating and encrypting email and well as client services",
                product: "personal-basic",
@@ -1079,7 +1079,7 @@ class Certificate < ApplicationRecord
                               sslcomnaesbbasicclient1yr7tr: [2625,5250]
                }}]
     products.each do |p|
-      c=CertificateDecorator.available.find_by_product "high_assurance"
+      c=Certificate.available.find_by_product "high_assurance"
       certs = c.duplicate_w_tiers(product: p, new_serial: "#{p[:serial_root]}256sslcom",
                                 old_pvi_serial: "ov256ssl", new_pvi_serial: "#{p[:serial_root]}256ssl")
       title = p[:title]
@@ -1127,7 +1127,7 @@ class Certificate < ApplicationRecord
 
   def self.purge(serial_snippets=[])
     serial_snippets.each do |serial_snippet|
-      CertificateDecorator.where{serial=~"%#{serial_snippet}%"}.each do |c|
+      Certificate.where{serial=~"%#{serial_snippet}%"}.each do |c|
         c.product_variant_groups.each do |pvg|
           pvg.product_variant_items.each do |pvi|
             pvi.destroy
@@ -1142,12 +1142,12 @@ class Certificate < ApplicationRecord
   def self.transform_products_05282012
     create_premium_ssl
     create_basic_ssl
-    CertificateDecorator.where{product =~ "ev%"}.each do |c|
+    Certificate.where{product =~ "ev%"}.each do |c|
       c.description.merge!(certificate_type: "Enterprise EV")
       c.title = "Enterprise EV SSL"
       c.save
     end
-    CertificateDecorator.where{product =~ "evucc%"}.each do |c|
+    Certificate.where{product =~ "evucc%"}.each do |c|
       c.description.merge!(certificate_type: "Enterprise EV UCC")
       c.title = "Enterprise EV Multi-domain UCC SSL"
       c.save
@@ -1164,8 +1164,8 @@ class Certificate < ApplicationRecord
   # prices - an ordered array of prices in cents USD. For ucc, use a 2 dimensional array with the structure
   #          [[1-3 domain price, 4+ domain price, wildcard price]] in increasing order of years
   #
-  # ie CertificateDecorator.change_prices "assureguard-ucc", [[18500,18500,49500],[31400,31500,82500],[43466,43500,116500]]
-  #    CertificateDecorator.change_prices("assureguard-evucc", [[37500,37500],[58500,58500]])
+  # ie Certificate.change_prices "assureguard-ucc", [[18500,18500,49500],[31400,31500,82500],[43466,43500,116500]]
+  #    Certificate.change_prices("assureguard-evucc", [[37500,37500],[58500,58500]])
 
   def self.change_prices(title="assureguard-dv", prices=[6800,11500,15200])
     self.where{product == title}.each do |c|
