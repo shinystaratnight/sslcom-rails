@@ -65,7 +65,7 @@ module ApplicationHelper
   def api_domain(certificate_order = nil)
     api_source=@website || Settings
     unless certificate_order.blank?
-      if production_mode?
+      if Rails.env.production?
         'https://' + (certificate_order.is_test ? api_source.test_api_domain : api_source.api_domain)
       else
         'https://' + (certificate_order.is_test ? api_source.dev_test_api_domain : api_source.dev_api_domain) +':3000'
