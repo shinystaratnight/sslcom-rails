@@ -1281,7 +1281,8 @@ class Order < ApplicationRecord
     end
     unless certificate.is_ucc?
       pvi = certificate.items_by_duration.find { |item| item.value==duration.to_s }
-      so  = SubOrderItem.new(product_variant_item: pvi, quantity: 1, amount: pvi.amount)
+      so  = SubOrderItem.new(:product_variant_item=>pvi, :quantity=>1,
+                             :amount              =>pvi.amount)
       certificate_order.sub_order_items << so
     end
     certificate_order.amount = certificate_order.sub_order_items.map(&:amount).sum

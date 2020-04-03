@@ -1,4 +1,4 @@
 -if (current_user && current_user.ssl_account.is_registered_reseller?) || cookies[ResellerTier::TIER_KEY]
-  .reseller_price_starting_at as low as #{@certificate.pricing}
+  .reseller_price_starting_at as low as #{pricing(@certificate)}
 -else
-  .price_starting_at as low as #{@certificate.pricing}/yr
+  .price_starting_at as low as #{pricing(@certificate)}/yr

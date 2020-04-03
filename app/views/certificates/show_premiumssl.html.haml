@@ -15,7 +15,7 @@
   %h2.product_description
     Great for wider subdomain coverage at low cost
   .product_description_buy_certificate
-    =@certificate.buy_link(true)
+    =link_to image_tag('buy_bl.gif', :title=>'click to buy this certificate'), buy_certificate_url(@certificate.product_root)
   =render :partial=>'big_pricing'
 .bottom_product_desc
   %p
@@ -48,6 +48,6 @@
     Start building trust and secure your site today with a Premium SSL Certificate.
 =render :partial=>'points_and_other_certs'
 .product_description_buy_certificate
-  =@certificate.buy_link(true)
+  =link_to image_tag('buy_bl.gif', :title=>'click to buy this certificate'), buy_certificate_url(@certificate.product_root)
 =render :partial=>'big_pricing'
 =render partial: 'bottom_info'

@@ -15,7 +15,7 @@
   %h2.product_description
     Class 1 validation and industry strength encryption at no cost
   .product_description_buy_certificate
-    =@certificate.buy_link(true)
+    =link_to image_tag('get_bl.gif', :title=>'click to buy this certificate'), buy_certificate_url(@certificate.product_root)
   -duration = @certificate.cached_product_variant_items.first
   .get_free_ssl
     #{duration.price.format}
@@ -46,6 +46,6 @@
     started with a Free SSL Certificate and get secured today!
 =render :partial=>'points_and_other_certs'
 .product_description_buy_certificate
-  =@certificate.buy_link(true)
+  =link_to image_tag('get_bl.gif', :title=>'click to buy this certificate'), buy_certificate_url(@certificate.product_root)
 .get_free_ssl
   #{duration.price.format}

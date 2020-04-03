@@ -24,16 +24,16 @@
             =image_tag(cert.icons["main"])
       .p_buy_certificate
         -unless cert.product_root == 'free'
-          =cert.buy_link(true)
+          =link_to image_tag('buy_bl.gif', :title=>'click to buy this certificate'), buy_certificate_url(cert.product_root)
         -else
-          =cert.get_link(true)
+          =link_to image_tag('get_bl.gif', :title=>'click to get this certificate'), buy_certificate_url(cert.product_root)
       .p_description
         %div(class="#{(current_user && current_user.ssl_account.is_registered_reseller?) ? 'reseller_p_starting_at' : 'p_starting_at'}")
           -unless cert.product_root == 'free'
             as low as
           -else
             get for
-          #{cert.pricing}/yr
+          #{pricing(cert)}/yr
         %div=link_to 'click to learn more...', certificate_url(cert.product_root)
       .p_points_container
         .p_points
