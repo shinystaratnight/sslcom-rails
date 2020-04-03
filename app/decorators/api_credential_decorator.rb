@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
-class ApiCredentialDecorator < Draper::Decorator
-  include Draper::LazyHelpers
+class ApiCredentialDecorator < ApplicationDecorator
   delegate_all
 
   def role_names
