@@ -1206,7 +1206,8 @@ class Order < ApplicationRecord
         if certificate.is_free?
           qty=c[ShoppingCart::QUANTITY].to_i > options[:max_free] ? options[:max_free] : c[ShoppingCart::QUANTITY].to_i
         else
-          qty=c[ShoppingCart::QUANTITY].to_i
+          # can crash server if too many items to set to 1000
+          qty=c[ShoppingCart::QUANTITY].to_i > 1000 ? 1000 : c[ShoppingCart::QUANTITY].to_i
         end
         certificate_order = CertificateOrder.new(
             :server_licenses => c[ShoppingCart::LICENSES],
