@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class CertificateNameDecorator < Draper::Decorator
+class CertificateNameDecorator < ApplicationDecorator
   delegate_all
 
   def domain
