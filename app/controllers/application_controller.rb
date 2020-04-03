@@ -130,8 +130,13 @@ class ApplicationController < ActionController::Base
     find_tier
     delete_cart_cookie?
     cart = cookies[ShoppingCart::CART_KEY]
-    cart.blank? ? {} :
-        JSON.parse(cart).each{ |i| i['pr'] = i['pr'] + @tier if i && @tier && i['pr'] && !i['pr'].ends_with?(@tier) }
+    begin
+      cart.blank? ? {} :
+          JSON.parse(cart).each{ |i| i['pr'] = i['pr'] + @tier if i && @tier && i['pr'] && !i['pr'].ends_with?(@tier) }
+    rescue
+      cookies.delete(ShoppingCart::CART_KEY, domain: :all)
+      {}
+    end
   end
 
   def cart_products
