@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
-class SslAccountDecorator < Draper::Decorator
+class SslAccountDecorator < ApplicationDecorator
   delegate_all
 end

@@ -1,4 +1,4 @@
-class FundedAccountDecorator < Draper::Decorator
+class FundedAccountDecorator < ApplicationDecorator
   delegate_all
 
   def available
