@@ -133,7 +133,7 @@ class ApplicationController < ActionController::Base
     begin
       cart.blank? ? {} :
           JSON.parse(cart).each{ |i| i['pr'] = i['pr'] + @tier if i && @tier && i['pr'] && !i['pr'].ends_with?(@tier) }
-    rescue
+    rescue StandardError => e
       cookies.delete(ShoppingCart::CART_KEY, domain: :all)
       {}
     end
