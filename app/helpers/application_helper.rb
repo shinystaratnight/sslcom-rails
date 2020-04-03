@@ -46,6 +46,11 @@ module ApplicationHelper
     sandbox_notice if @website.instance_of?(Sandbox) and self.is_a?(ApplicationController)
   end
 
+  # Todo: This method will be used to get the qa environment to more closely match production.
+  def production_mode?
+    Rails.env.production? || Rails.env.qa?
+  end
+
   def is_sandbox?
     @is_sandbox ||= Rails.cache.fetch("#{request.try(:host)}/is_sandbox") do
       Sandbox.exists?(request.try(:host))
@@ -60,7 +65,7 @@ module ApplicationHelper
   def api_domain(certificate_order = nil)
     api_source=@website || Settings
     unless certificate_order.blank?
-      if Rails.env.production?
+      if production_mode?
         'https://' + (certificate_order.is_test ? api_source.test_api_domain : api_source.api_domain)
       else
         'https://' + (certificate_order.is_test ? api_source.dev_test_api_domain : api_source.dev_api_domain) +':3000'
