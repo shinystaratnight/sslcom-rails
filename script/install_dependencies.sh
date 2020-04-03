@@ -1,6 +1,7 @@
 #!/bin/bash -ex
 cd /home/ubuntu/sslcom-rails
 sudo chown ubuntu:ubuntu -R .
+cp ../config/*.yml /home/ubuntu/sslcom-rails/config/.
 
 if [ -n "${BASH_VERSION:-}" -o -n "${ZSH_VERSION:-}" ] ; then
 
