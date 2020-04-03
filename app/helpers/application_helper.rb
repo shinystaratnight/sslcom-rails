@@ -46,6 +46,11 @@ module ApplicationHelper
     sandbox_notice if @website.instance_of?(Sandbox) and self.is_a?(ApplicationController)
   end
 
+  # Todo: This method will be used to get the qa environment to more closely match production.
+  def production_mode?
+    Rails.env.production? || Rails.env.qa?
+  end
+
   def is_sandbox?
     @is_sandbox ||= Rails.cache.fetch("#{request.try(:host)}/is_sandbox") do
       Sandbox.exists?(request.try(:host))
