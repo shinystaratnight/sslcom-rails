@@ -11,7 +11,6 @@
 -c.each do |k, v|
   -content_for k, c[k]
 =order_progress_indicator(1, @certificate)
--form_params=new_certificate_params
 #buy_other_certs
   %ul
     %li.heading Other Certificates
@@ -114,7 +113,7 @@
           %li CAN use certificate on unlimited multiple servers concurrently
           -if @certificate.is_free?
             %li Only documentation support provided, does NOT come with technical support
-    =form_for(*form_params) do |f|
+    =form_for(*co.new_params) do |f|
       =hidden_field :certificate, :product
       =recert?
       =render :partial => "/certificates/form_ucc", :locals => {:f=>f}
