@@ -15,7 +15,7 @@
   %h2.product_description
     Get the highest level encryption possible at a low price
   .product_description_buy_certificate
-    =@certificate.decorate.buy_link(true)
+    =@certificate.buy_link(true)
   =render :partial=>'big_pricing'
 .bottom_product_desc
   %p
@@ -48,6 +48,6 @@
     certificate.
 =render :partial=>'points_and_other_certs'
 .product_description_buy_certificate
-  =@certificate.decorate.buy_link(true)
+  =@certificate.buy_link(true)
 =render :partial=>'big_pricing'
 =render partial: 'bottom_info'

@@ -1,5 +1,6 @@
 class CertificateDecorator < Draper::Decorator
   delegate_all
+  decorates_finders
 
   def last_duration_price
     if object.is_ucc?
@@ -27,5 +28,9 @@ class CertificateDecorator < Draper::Decorator
     else
       h.link_to h.image_tag('get_bl.gif', title: 'click to get this certificate', id: "get-#{object.serial}"), h.buy_certificate_url(object)
     end
+  end
+
+  def self.collection_decorator_class
+    PaginatingDecorator
   end
 end

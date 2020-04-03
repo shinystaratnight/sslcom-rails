@@ -16,7 +16,7 @@
   %h2.product_description
     Unlock the green address bar on your site and retain more sales
   .product_description_buy_certificate
-    =@certificate.decorate.buy_link
+    =@certificate.buy_link
   =render :partial=>'big_pricing'
 .bottom_product_desc
   %h3 Enhanced Capabilities
@@ -55,6 +55,6 @@
     that you really mean business.
 =render :partial=>'points_and_other_certs'
 .product_description_buy_certificate
-  =@certificate.decorate.buy_link(true)
+  =@certificate.buy_link(true)
 =render partial: 'big_pricing'
 =render partial: 'bottom_info'

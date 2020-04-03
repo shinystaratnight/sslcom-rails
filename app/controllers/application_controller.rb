@@ -182,7 +182,7 @@ class ApplicationController < ActionController::Base
       certificate_order = CertificateOrder.new server_licenses: parts[2],
                                                duration: parts[1], quantity: parts[4].to_i
       certificate_order.certificate_contents.build domains: parts[3]
-      certificate = Certificate.for_sale.find_by(product: parts[0])
+      certificate = Certificate.for_sale.find_by(product: parts[0]).decorate
       if current_user.present?
         current_user.ssl_account.clear_new_certificate_orders
         next unless current_user.ssl_account.can_buy?(certificate)
@@ -239,7 +239,7 @@ class ApplicationController < ActionController::Base
         product&.id || nil
       end
     end
-    @certificate = Certificate.includes(:product_variant_items).find(id) unless id.blank?
+    @certificate = Certificate.includes(:product_variant_items).find(id).decorate if id.present?
   end
 
   def find_certificate_orders(options = {})
@@ -326,12 +326,12 @@ class ApplicationController < ActionController::Base
 
   def prep_certificate_orders_instances
     if params[:certificate_order]
-      @certificate = Certificate.for_sale.find_by(product: params[:certificate][:product])
+      @certificate = Certificate.for_sale.find_by(product: params[:certificate][:product]).decorate
       co_valid = certificate_order_steps
       if params["prev.x".intern] || !co_valid
         @certificate_order.has_csr=true
-        render(template: "submit_csr", layout: "application")
-        return false
+        render(template: 'submit_csr', layout: 'application')
+        false
       end
     else
       unless params['prev.x'.intern].nil?
@@ -371,7 +371,7 @@ class ApplicationController < ActionController::Base
     # need to create new objects and delete the existing ones
     @certificate_order = current_user.ssl_account
                                      .certificate_orders.detect(&:new?)
-    @certificate = @certificate_order.certificate
+    @certificate = @certificate_order.certificate.decorate
     @certificate_content = @certificate_order.certificate_content.dup
     @certificate_order = current_user.ssl_account
                                      .certificate_orders.detect(&:new?).dup

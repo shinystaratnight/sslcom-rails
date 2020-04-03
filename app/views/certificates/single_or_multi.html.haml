@@ -24,9 +24,9 @@
             =image_tag(cert.icons["main"])
       .p_buy_certificate
         -unless cert.product_root == 'free'
-          =cert.decorate.buy_link(true)
+          =cert.buy_link(true)
         -else
-          =cert.decorate.get_link(true)
+          =cert.get_link(true)
       .p_description
         %div(class="#{(current_user && current_user.ssl_account.is_registered_reseller?) ? 'reseller_p_starting_at' : 'p_starting_at'}")
           -unless cert.product_root == 'free'

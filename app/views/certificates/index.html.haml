@@ -16,8 +16,8 @@
       %td(colspan=2)
         %h3
           =link_to 'wildcard and exchange (ucc) ssl certificates', wildcard_or_ucc_certificates_url
-    -singles = @certificates.map{|c|c if(c.is_single? || c.is_premium_ssl?)}.compact
-    -multis = @certificates.map{|c|c if(c.is_multi? && !c.is_premium_ssl?)}.compact
+    -singles = @certificates.map{|c| c.decorate if(c.is_single? || c.is_premium_ssl?)}.compact
+    -multis = @certificates.map{|c| c.decorate if(c.is_multi? && !c.is_premium_ssl?)}.compact
     -all = singles.zip(multis)
     -all.each_with_index do |c,i|
       -if (i % 2)==0
