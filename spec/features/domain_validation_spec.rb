@@ -44,8 +44,8 @@ RSpec.describe 'DomainValidations', type: :feature do
         user.create_ssl_account if user.ssl_account.nil?
         user.ssl_accounts.first.generate_funded_account
         user.ssl_accounts.first.funded_account.update(cents: 100_000)
+        Certificate.delete_all
       end
-      initialize_certificates
       CertificateDecorator.any_instance.stubs(:last_duration_price).returns(Money.new(1000))
       Certificate.any_instance.stubs(:duration_in_days).returns(365)
     end

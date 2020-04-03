@@ -46,14 +46,4 @@ class CertificateDecorator < ApplicationDecorator
     orig = (object.tiered? ? (orig_price / years).format : nil) unless object.is_dv?
     h.render partial: 'pricing', locals: { actual: actual, orig: orig }
   end
-
-  def new_params
-    if object.is_unused_credit?
-      [object, { url: :update_csr_certificate_order }]
-    elsif object&.ssl_account&.is_registered_reseller?
-      object
-    else
-      [object, { url: :new_order }]
-    end
-  end
 end
