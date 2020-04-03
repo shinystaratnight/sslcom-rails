@@ -47,6 +47,7 @@ RSpec.describe 'DomainValidations', type: :feature do
       end
       initialize_certificates
       CertificateDecorator.any_instance.stubs(:last_duration_price).returns(Money.new(1000))
+      Certificate.any_instance.stubs(:duration_in_days).returns(365)
     end
 
     it 'processes cname validation', js: true do

@@ -1,4 +1,4 @@
-class CertificateDecorator < Draper::Decorator
+class CertificateDecorator < ApplicationDecorator
   delegate_all
   decorates_finders
 
@@ -30,7 +30,20 @@ class CertificateDecorator < Draper::Decorator
     end
   end
 
-  def self.collection_decorator_class
-    PaginatingDecorator
+  def pricing
+    last_duration_pricing
+  end
+
+  def last_duration_pricing
+    years = object.last_duration.value.to_i/365
+    years = 1 unless years > 0
+    p = lambda do |c|
+      c.decorate.last_duration_price
+    end
+    price = p.call(object)
+    orig_price = p.call(object.untiered)
+    actual = (price / years).format
+    orig = (object.tiered? ? (orig_price / years).format : nil) unless object.is_dv?
+    h.render partial: 'pricing', locals: { actual: actual, orig: orig }
   end
 end

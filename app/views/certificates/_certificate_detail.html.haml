@@ -10,7 +10,7 @@
         as low as
       -else
         get for
-      #{pricing(c)}/yr
+      #{c.pricing}/yr
   .more_info
     =link_to image_tag('more_info_sm_bl.gif', title: 'click to see this certificate'), certificate_url(c)
     -unless c.product_root=='free'
