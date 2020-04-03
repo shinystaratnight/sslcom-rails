@@ -53,6 +53,6 @@ if [ -n "${BASH_VERSION:-}" -o -n "${ZSH_VERSION:-}" ] ; then
 fi
 
 bundle install --deployment
-RAILS_ENV=production bundle exec rake db:migrate
-RAILS_ENV=production bundle exec rake assets:precompile
-RAILS_ENV=production bundle exec rake assets:clean
+RAILS_ENV=qa bundle exec rake db:migrate
+RAILS_ENV=qa bundle exec rake assets:precompile
+RAILS_ENV=qa bundle exec rake assets:clean

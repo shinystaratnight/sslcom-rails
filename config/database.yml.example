@@ -1,25 +1,50 @@
+# Example configuration template for all developers
+
+Four environments:
+  1. development
+  2. qa
+  3. production
+  4. test
+
 development:
   adapter: mysql2
   encoding: utf8
   reconnect: false
-  database: sandbox_ssl_com
-#  host: 174.129.35.108
+  database: dev_sslcom
   pool: 5
-  # username: ssl_db
-  # password: ssl_db
-  # socket: /var/run/mysqld/mysqld.sock
-# Warning: The database defined as "test" will be erased and
-# re-generated from your development database when you run "rake".
-# Do not set this db to the same as development or production.
-test: &test
-  host: 127.0.0.1
+  username: ssl_dev
+  password: ssl_dev
+  socket: /var/run/mysqld/mysqld.sock
+
+qa:
   adapter: mysql2
   encoding: utf8
   reconnect: false
-  database: ssl_com_test
+  database: qa_sslcom
   pool: 5
-  username: root
-  # password: ssl_dev_db
-  # socket: /var/run/mysqld/mysqld.sock
+  username: ssl_qa
+  password: ssl_qa
+  socket: /var/run/mysqld/mysqld.sock
+
+test: &Test
+  adapter: mysql2
+  encoding: utf8
+  reconnect: false
+  database: test_sslcom
+  pool: 5
+  username: ssl_test
+  password: ssl_test
+  socket: /var/run/mysqld/mysqld.sock
+
+production:
+  adapter: mysql2
+  encoding: utf8
+  reconnect: false
+  database: <PRODUCTION>
+  pool: 5
+  username: <PRODUCTION USER>
+  password: <PRODUCTION PASSWORD>
+  socket: /var/run/mysqld/mysqld.sock
+
 cucumber:
   <<: *test
