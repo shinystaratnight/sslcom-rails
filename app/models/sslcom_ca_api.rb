@@ -15,7 +15,7 @@ class SslcomCaApi
 
   PRODUCTION_IP = "192.168.5.17"
   STAGING_IP = "192.168.5.19"
-  DEVELOPMENT_IP = "192.168.100.5"
+  DEVELOPMENT_IP = "calypso-dev-01.int.ssl.com"
 
   # using the csr, determine the algorithm used
   def self.sig_alg_parameter(csr)
