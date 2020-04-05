@@ -10,15 +10,15 @@ This is a reminder that the SSL.com certificate(s) for the domains named below h
     days_today=Date.today.strftime('%j').to_i
     days = days_today-days_expired
     if Time.now < cert.expiration_date -%>
-    <%=(i+=1).to_s+") "+cert.common_name%> expires in <%=time_ago_in_words(cert.expiration_date)%> on <%=cert.expiration_date.strftime("%b %d, %Y")%> (renew here: https://<%=Settings.portal_domain%>/certificate_orders/<%=cert.certificate_order.ref%>/renew - ref # <%=cert.certificate_order.ref%>)
+    <%=(i+=1).to_s+") "+cert.common_name%> expires in <%=time_ago_in_words(cert.expiration_date)%> on <%=cert.expiration_date.strftime("%b %d, %Y")%> (renew here: https://<%=portal_domain%>/certificate_orders/<%=cert.certificate_order.ref%>/renew - ref # <%=cert.certificate_order.ref%>)
   <%else-%>
-    <%=(i+=1).to_s+") "+cert.common_name%> expired <%=time_ago_in_words(cert.expiration_date) %> ago on <%=cert.expiration_date.strftime("%b %d, %Y")%> (renew here: https://<%=Settings.portal_domain%>/certificate_orders/<%=cert.certificate_order.ref%>/renew - ref # <%=cert.certificate_order.ref%>)
+    <%=(i+=1).to_s+") "+cert.common_name%> expired <%=time_ago_in_words(cert.expiration_date) %> ago on <%=cert.expiration_date.strftime("%b %d, %Y")%> (renew here: https://<%=portal_domain%>/certificate_orders/<%=cert.certificate_order.ref%>/renew - ref # <%=cert.certificate_order.ref%>)
   <%end -%>
 <%end -%>
 
 When renewing, any remaining time from your expiring SSL/TLS certificate, up to 90 days, will be added to your renewal certificate so that you do not lose any SSL/TLS coverage.
 
-If you need to reset your username or password, please visit https://<%=Settings.portal_domain%>/password_resets/new
+If you need to reset your username or password, please visit https://<%=portal_domain%>/password_resets/new
 
 Thank you for choosing SSL.com - we look forward to continuing to provide you with the most cost-effective certificates in the market.
 

@@ -61,7 +61,7 @@
             -#=link_to image_tag("https://www.paypal.com/en_US/i/btn/btn_xpressCheckout.gif"), :controller => 'paypal_express', :action => 'checkout'
     #button_container
       =render partial: 'shared/prev_next_buttons'
-    -if DEPLOYMENT_CLIENT =~ Regexp.new(Settings.portal_domain)
+    -if DEPLOYMENT_CLIENT =~ Regexp.new(portal_domain)
       .trust_seal(style="text-align: center;")
         =render 'site/site_seal'
         %a{style: "margin-left: 12px", href: "http://www.bbb.org/houston/business-reviews/internet-services/ssl-com-in-houston-tx-51001755/#bbbonlineclick", title: "SSL.Com BBB Business Review", target: '_blank'}

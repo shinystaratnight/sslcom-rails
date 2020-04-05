@@ -5,7 +5,7 @@
   #site_title.hd_dimensions
     %div{:style=>"height:25px;"}
       %h1
-        ="#{Settings.community_name}"
+        ="#{community_name}"
       %div{:style=>'padding-top:5px;'}
         #cart
           ="#{image_tag 'cart.jpg', {:style=>'vertical-align: bottom;'}}"+"#{link_to pluralize(cart_items.size, "item")<<' in cart', {:controller => :orders, :action => :show_cart, :id => :current}, :id => 'cart_size'}"

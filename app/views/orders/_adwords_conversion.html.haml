@@ -1,4 +1,4 @@
--if Rails.env == "production" && !@order.ext_affiliate_credited?
+-if in_production_mode? && !@order.ext_affiliate_credited?
   / Google Code for Sale Conversion Page
   %script{type: "text/javascript"}
     /* <![CDATA[ */

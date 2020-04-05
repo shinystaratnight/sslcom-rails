@@ -22,7 +22,7 @@
           %td(colspan='4')=will_paginate @domains
       %caption
         =title
-        [learn about #{link_to "prevalidating domains", "https://#{Settings.portal_domain}/how-to/domain-name-pre-validation/", target: "_blank"}]
+        [learn about #{link_to "prevalidating domains", "https://#{portal_domain}/how-to/domain-name-pre-validation/", target: "_blank"}]
         |
         =link_to 'CSRs Manager', managed_csrs_path(@ssl_slug)
         %ul(style="float: right; display: flex; list-style: none;")

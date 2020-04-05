@@ -1,26 +1,26 @@
 -c={}
--c[:description]="Validations for #{Settings.community_name} certificates are designed to expedite issuance while maintaining strict compliance."
+-c[:description]="Validations for #{community_name} certificates are designed to expedite issuance while maintaining strict compliance."
 -c[:keywords]="ssl certificates validation requirement documents ev statements bills id license corporate charter business government compliance"
 -c[:title]='SSL Certificate Validation Requirements'
 -c[:header]='public'
 -c.each do |k, v|
   -content_for k, c[k]
 %h1=c[:title]
-%h2 Expedite issuance while maintaining #{Settings.community_name} certificate compliance
+%h2 Expedite issuance while maintaining #{community_name} certificate compliance
 .default_container
   %h3 Overview
   %p
     SSL certificates represent the underpinnings of trust in most Web and Internet transactions. As such,
-    there is great responsibility for globally trusted certificate authorities like #{Settings.community_name} to perform
+    there is great responsibility for globally trusted certificate authorities like #{community_name} to perform
     accurate but timely validation checks so that legitimate entities can continue to operate in
     a secure and trusted manner.
 .default_container
   %h3 Validation Types
   %p
-    Depending on which #{Settings.community_name} certificate is issued, different validation requirements need to be met in
-    order for all parties to maintain strict adherence to #{Settings.community_name}'s Certification Practices Statement. At
+    Depending on which #{community_name} certificate is issued, different validation requirements need to be met in
+    order for all parties to maintain strict adherence to #{community_name}'s Certification Practices Statement. At
     minimum, the customer (or subscriber) will be required to validate domain control by responding to
-    an email sent to a predetermined email address. The customer purchasing the #{Settings.community_name} certificate may be
+    an email sent to a predetermined email address. The customer purchasing the #{community_name} certificate may be
     required to submit validation artifacts and documents attesting to the ownership of or
     authorization to represent the original entity who registered the domain name listed as the subject in the ssl
     certificate.
@@ -43,7 +43,7 @@
         %dl.last_list
           %dt description
           %dd
-            An email from #{Settings.community_name} Validation Services is sent to a predetermined email address associated
+            An email from #{community_name} Validation Services is sent to a predetermined email address associated
             with the domain name represented by the ssl certificate.
             A user with access to the email address then clicks on a link embedded within the email. This
             will confirm that the customer or authorized party has control of the domain name.
@@ -68,8 +68,8 @@
             To supplement domain control validation, high assurance validation utilizes supporting
             documentation to provide additional assurance that the customer owns or is authorized to represent
             the organization listed as the owner of the domain. The documents can be submitted through each
-            #{Settings.community_name} certificate's order page or through
-            the #{link_to "the #{Settings.community_name} RESTful API", "http://docs.sslcomapi.apiary.io/", target: "_new"}.
+            #{community_name} certificate's order page or through
+            the #{link_to "the #{community_name} RESTful API", "http://docs.sslcomapi.apiary.io/", target: "_new"}.
             The accepted documents are as follows:
             %ul
               %li Articles of Association
@@ -100,7 +100,7 @@
           %dt description
           %dd
             Extended validation ssl certificate represent the highest in security standards for
-            #{Settings.community_name}. EV SSL certificates that have gone through the extended validation progress
+            #{community_name}. EV SSL certificates that have gone through the extended validation progress
             display the browser address bar with a green background. In addition to using domain control and
             organization validation, extended validation requires that an authorized signer submit a completed
             EV SSL request form which can be found below:

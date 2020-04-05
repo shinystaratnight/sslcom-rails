@@ -1,7 +1,7 @@
 -if @site_seal.blank?
-  No #{Settings.community_name} Site Report Found.
+  No #{community_name} Site Report Found.
 -else
-  -title = "#{Settings.community_name} Secured Site Report"
+  -title = "#{community_name} Secured Site Report"
   -content_for :title, title
   -ss = @site_seal
   -co = ss.certificate_order

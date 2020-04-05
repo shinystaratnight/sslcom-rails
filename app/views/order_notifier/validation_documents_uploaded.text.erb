@@ -1,6 +1,6 @@
 Hello,
 
-The following validation documents for <%=@certificate_order.subject%> (<%=Settings.community_name%> certificate ref# <%=@certificate_order.ref%>) have been recently uploaded:
+The following validation documents for <%=@certificate_order.subject%> (<%=community_name%> certificate ref# <%=@certificate_order.ref%>) have been recently uploaded:
 
 <%vh=@certificate_order.validation.validation_histories.last(@files.count)%>
 <%vh.each do |file|%>

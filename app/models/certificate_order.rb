@@ -1110,7 +1110,7 @@ class CertificateOrder < ApplicationRecord
     if [Ca::CERTLOCK_CA,Ca::SSLCOM_CA,Ca::MANAGEMENT_CA].include?(options[:ca]) or certificate_content.ca_id or
         !options[:mapping].blank?
       if !certificate_content.infringement.empty? # possible trademark problems
-        OrderNotifier.potential_trademark(Settings.notify_address, self, certificate_content.infringement).deliver_now
+        OrderNotifier.potential_trademark(notify_address, self, certificate_content.infringement).deliver_now
       elsif !certificate.is_server? or (domains_validated? and caa_validated?)
         # # queue this job due to CAA lookups
         # if certificate_names.count > 10 and not options[:mapping].try(:profile_name)=~/EV/
@@ -1702,7 +1702,7 @@ class CertificateOrder < ApplicationRecord
           build_comodo_dcv(last_sent, params, options)
         else
           params.merge!(
-            'test' => (is_test || !(Rails.env =~ /production/i)) ? 'Y' : 'N',
+            'test' => (is_test || !(in_production_mode?)) ? 'Y' : 'N',
             'product' => options[:product] || mapped_certificate.comodo_product_id.to_s,
             'serverSoftware' => cc.comodo_server_software_id.blank? ? ServerSoftware::OTHER :
               cc.comodo_server_software_id.to_s,

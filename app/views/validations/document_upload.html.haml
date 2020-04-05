@@ -36,10 +36,10 @@
           -if co.certificate.is_ev? or co.certificate.is_evcs?
             %p
               Please refer to
-              =link_to "https://#{Settings.portal_domain}/faqs/ssl-ev-validation-requirements/", "https://#{Settings.portal_domain}/faqs/ssl-ev-validation-requirements/"
+              =link_to "https://#{portal_domain}/faqs/ssl-ev-validation-requirements/", "https://#{portal_domain}/faqs/ssl-ev-validation-requirements/"
               for details on the EV validation process.
             %p
-              #{Settings.community_name} will verify the existence of your business, the ownership of the domain(s)
+              #{community_name} will verify the existence of your business, the ownership of the domain(s)
               #{co.all_domains.join(", ")}, and your employment status or authority to
               request the SSL Certificate for #{co.all_domains.join(", ")}. The following documents are required:
             %dl.listing
@@ -73,7 +73,7 @@
           -elsif !co.certificate.is_smime_or_client? and !co.certificate.is_code_signing?
             -name = co.certificate.is_code_signing? ? co.registrant.company_name : co.all_domains.join(", ")
             %p
-              If documents are required for this order, then #{Settings.community_name} will verify the existence of
+              If documents are required for this order, then #{community_name} will verify the existence of
               your business, the ownership of the domain(s)
               #{name}, and your employment status or authority to
               request the SSL Certificate for #{name}. Documents required from the registrant listed

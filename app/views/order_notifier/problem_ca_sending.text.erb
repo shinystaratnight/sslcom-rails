@@ -1,6 +1,6 @@
 Hello,
 
-There was a problem sending <%=Settings.community_name%> order <%=@certificate_order.ref%> to <%=@ca%>
+There was a problem sending <%=community_name%> order <%=@certificate_order.ref%> to <%=@ca%>
 
 Reason:
 <%ccr=@certificate_order.ca_api_requests.first%>
@@ -13,4 +13,4 @@ CA: <%=ccr.ca%>
 <%="Error: #{@error.message}"unless @error.blank?%>
 Regards,
 
-<%=Settings.community_name%> Support Team
+<%=community_name%> Support Team

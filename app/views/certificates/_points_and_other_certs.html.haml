@@ -7,7 +7,7 @@
   #container
     =image_tag(image_url("ssl_seal_1#{'_ev' if @certificate.is_ev?}.png", false), width: "130px")
     #description
-      Each #{@certificate.title} certificate comes with the following #{Settings.community_name}
+      Each #{@certificate.title} certificate comes with the following #{community_name}
       Secured Smart SeaL logo to be displayed on secured websites.
       =link_to "Click here for details.", details_site_seals_path
 .see_other_certificates

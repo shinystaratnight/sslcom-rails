@@ -2,17 +2,17 @@
 Dear <%=[@contact.first_name, @contact.last_name].join(" ")%>,
 
 <%end -%>
-Your <%=Settings.community_name%> Smart SeaL for <%=@certificate_order.subject%> (order #<%=@certificate_order.order.reference_number%>) is now active and ready for display on your website.
+Your <%=community_name%> Smart SeaL for <%=@certificate_order.subject%> (order #<%=@certificate_order.order.reference_number%>) is now active and ready for display on your website.
 
-With the <%=Settings.community_name%> Smart SeaL, you get:
+With the <%=community_name%> Smart SeaL, you get:
 
   -The Site Report which displays a summary report of the site owner and current status of the installed ssl certificate
   -The option to increase transparency with your customers and publish your validation documents with the Smart SeaL Artifacts
   -Daily site scanning and monitoring
-  -'Recommend This Page to Your Friends' functionality to increase traffic to your site. Plus each time you send a page to a known email contact, <%=Settings.community_name%> assures the page has been scanned of malware thus building upon the trust that an <%=Settings.community_name%> certificate already instills.
+  -'Recommend This Page to Your Friends' functionality to increase traffic to your site. Plus each time you send a page to a known email contact, <%=community_name%> assures the page has been scanned of malware thus building upon the trust that an <%=community_name%> certificate already instills.
   -Improved search engine optimization to your site to help you search engine rankings.
 
-For more information on how you can access and configure your <%=Settings.community_name%> Smart SeaL, please visit the following link: <%=certificate_order_site_seal_url(certificate_order_id: @certificate_order.ref)%>
+For more information on how you can access and configure your <%=community_name%> Smart SeaL, please visit the following link: <%=certificate_order_site_seal_url(certificate_order_id: @certificate_order.ref)%>
 
 Thank you for using ssl.com
 

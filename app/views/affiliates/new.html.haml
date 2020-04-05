@@ -1,8 +1,8 @@
--content_for :title, "#{Settings.community_name} Referral Link Registration"
+-content_for :title, "#{community_name} Referral Link Registration"
 =render :partial => 'index_scripts'
 .reseller_registration_profile
-  %h3 #{Settings.community_name} Referral Link Registration
-  %p Please fill out the required fields below to complete your registration for the #{Settings.community_name} Referral Link Program
+  %h3 #{community_name} Referral Link Registration
+  %p Please fill out the required fields below to complete your registration for the #{community_name} Referral Link Program
   =error_messages_for :affiliate
   =form_for @affiliate do |f|
     #stylized.default_form

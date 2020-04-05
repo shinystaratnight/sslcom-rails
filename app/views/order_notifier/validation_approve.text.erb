@@ -1,6 +1,6 @@
 Dear <%=[@contact.first_name, @contact.last_name].join(" ")%>,
 
-Your <%=Settings.community_name%> certificate for <%=@certificate_order.subject%> (order #<%=@certificate_order.order.reference_number%>) has been approved and will be issued shortly. Thank you for using ssl.com
+Your <%=community_name%> certificate for <%=@certificate_order.subject%> (order #<%=@certificate_order.order.reference_number%>) has been approved and will be issued shortly. Thank you for using ssl.com
 
 <%=render(:partial=>"support_contact")%>
 

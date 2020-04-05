@@ -1,9 +1,10 @@
 # Methods added to this helper will be available to all templates in the application.
 module ApplicationHelper
-  require 'memoist'
   require 'string'
   require 'object'
   extend Memoist
+
+  PRODUCTION_LIKE_ENV = /production|qa|sandbox|staging/
 
   # from Dan Webb's MinusMOR plugin
   def js(data)
@@ -46,9 +47,8 @@ module ApplicationHelper
     sandbox_notice if @website.instance_of?(Sandbox) and self.is_a?(ApplicationController)
   end
 
-  # Todo: This method will be used to get the qa environment to more closely match production.
-  def production_mode?
-    Rails.env.production? || Rails.env.qa?
+  def in_production_mode?
+    Rails.env.match?(PRODUCTION_LIKE_ENV)
   end
 
   def is_sandbox?
@@ -65,16 +65,16 @@ module ApplicationHelper
   def api_domain(certificate_order = nil)
     api_source=@website || Settings
     unless certificate_order.blank?
-      if Rails.env.production?
+      if in_production_mode?
         'https://' + (certificate_order.is_test ? api_source.test_api_domain : api_source.api_domain)
       else
         'https://' + (certificate_order.is_test ? api_source.dev_test_api_domain : api_source.dev_api_domain) +':3000'
       end
     else
       if is_sandbox?
-        Rails.env.production? ? "https://#{api_source.test_api_domain}" : "https://#{api_source.dev_test_api_domain}:3000"
+        in_production_mode? ? "https://#{api_source.test_api_domain}" : "https://#{api_source.dev_test_api_domain}:3000"
       else
-        Rails.env.production? ? "https://#{api_source.api_domain}" : "https://#{api_source.dev_api_domain}:3000"
+        in_production_mode? ? "https://#{api_source.api_domain}" : "https://#{api_source.dev_api_domain}:3000"
       end
     end
   end

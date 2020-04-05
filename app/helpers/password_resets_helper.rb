@@ -2,6 +2,6 @@
 
 module PasswordResetsHelper
   def submit_button_class
-    Rails.env.production? ? 'password_resets_btn hidden' : 'password_resets_btn'
+    in_production_mode? ? 'password_resets_btn hidden' : 'password_resets_btn'
   end
 end

@@ -36,7 +36,7 @@
       -if permitted_to?(:update, @certificate_order)
         -team_iv = @certificate_order.get_team_iv
         -link_text = team_iv.nil? ? " [how do I use this page?]" : " #{team_iv.first_name} #{team_iv.last_name}"
-        =link_to "[how do I use this page?]", "https://#{Settings.portal_domain}/article/certificate-order-page-information/"
+        =link_to "[how do I use this page?]", "https://#{portal_domain}/article/certificate-order-page-information/"
     %tr.heading_row
       %th(scope="col") Subject
       -if show_folders
@@ -417,7 +417,7 @@
                                         (serial: #{sc.replacement.serial})
                                       immediately to avoid downtime.
                                       %br
-                                      Please refer to this #{link_to "serial number entropy FAQ", "https://#{Settings.portal_domain}/faqs/faq-what-is-the-serial-number-entropy-issue-im-hearing-about/"} for more details.
+                                      Please refer to this #{link_to "serial number entropy FAQ", "https://#{portal_domain}/faqs/faq-what-is-the-serial-number-entropy-issue-im-hearing-about/"} for more details.
                                   -if sc.try(:body).blank?
                                     (server software: #{c.server_software.try :title})
                                   -else

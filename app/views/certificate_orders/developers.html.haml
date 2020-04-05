@@ -1,7 +1,7 @@
 -c={}
--c[:description]="The #{Settings.community_name} Developer Tools provides resources for developers to integrate #{Settings.community_name} into their processes."
+-c[:description]="The #{community_name} Developer Tools provides resources for developers to integrate #{community_name} into their processes."
 -c[:keywords]="ssl.com ssl certificate developer api"
--c[:title] = "#{Settings.community_name} Developer Tools"
+-c[:title] = "#{community_name} Developer Tools"
 -c.each do |k, v|
   -content_for k, c[k]
 -user ||= current_user
@@ -11,7 +11,7 @@
   %h2=c[:title]
   %h3 Getting Started
   %p
-    The #{Settings.community_name} Web Services REST api is designed to allow integration of #{Settings.community_name} products into your
+    The #{community_name} Web Services REST api is designed to allow integration of #{community_name} products into your
     processes. Using current and agile technology, the api is capable of taking advantage of modern
     software to provide complete control in a simple and intuitive interface.
   %p
@@ -26,7 +26,7 @@
   %p
     To create a new test certificate order, simply choose the product and duration of the certificate below and click
     the 'Create Test Order' button.
-    =form_tag "#{(is_sandbox? and Rails.env=~/development/i) ? '' : api_domain}/certificates", enforce_utf8: false, class: "create-test-order" do |f|
+    =form_tag "#{(is_sandbox? && Rails.env.development?) ? '' : api_domain}/certificates", enforce_utf8: false, class: "create-test-order" do |f|
       =hidden_field_tag :account_key, ac.account_key
       =hidden_field_tag :secret_key, ac.secret_key
       %table#at_a_glance_header{style: "float: none"}

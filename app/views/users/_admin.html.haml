@@ -1,11 +1,11 @@
--content_for :title, "#{Settings.community_name} System Admin Dashboard"
+-content_for :title, "#{community_name} System Admin Dashboard"
 -user ||= current_user
 .container
   .row
     .col-md-12
       .reseller_registration_select_tier
-        %h2 #{Settings.community_name} System Admin Dashboard
+        %h2 #{community_name} System Admin Dashboard
         %p
-          This is THE Admin screen for #{Settings.community_name}. You have ALMOST limitless powers in the #{Settings.community_name} universe.
+          This is THE Admin screen for #{community_name}. You have ALMOST limitless powers in the #{community_name} universe.
           Be careful; with great powers comes great responsibilities (* all functions are audit logged).
       = render partial: 'admin_dashboard', locals: { user: user, ssl_slug: @ssl_slug, ssl_account: ssl_account }

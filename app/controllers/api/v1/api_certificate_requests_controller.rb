@@ -602,7 +602,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
 
           @result.cert_details[:api_commands] = {}
           @result.cert_details[:api_commands][:is_server] = @acr.certificate.is_server?
-          @result.cert_details[:api_commands][:comm_name] = Settings.community_name
+          @result.cert_details[:api_commands][:comm_name] = community_name
           @result.cert_details[:api_commands][:is_test] = @acr.is_test
 
           @result.cert_details[:api_commands][:products] = []
@@ -705,7 +705,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
             @result.smart_seal[:registrant_city_state_country] = [r.city, r.state, r.country].join(', ')
           end
 
-          @result.smart_seal[:community_name] = Settings.community_name
+          @result.smart_seal[:community_name] = community_name
           @result.smart_seal[:cc_validated] = @acr.certificate_content.validated?
           @result.smart_seal[:cc_issued] = @acr.certificate_content.issued?
           @result.smart_seal[:sc_dv] = @acr.csr.signed_certificate.is_dv?
@@ -849,7 +849,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
         @result.subject = @acr.subject
         @result.checkout_in_progress = @acr.validation_stage_checkout_in_progress?
         @result.other_party_request = false
-        @result.community_name = Settings.community_name
+        @result.community_name = community_name
         @result.is_dv = @acr.certificate.is_dv?
         @result.is_dv_or_basic = @acr.certificate.is_dv_or_basic?
         @result.is_ev = @acr.certificate.is_ev?
@@ -940,7 +940,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
               error << "#{attr} #{msg}: " }
             count += 1 if vh
             error << "Error: Document for #{file.original_filename} was not
-          created. Please notify system admin at #{Settings.support_email}" unless vh
+          created. Please notify system admin at #{support_email}" unless vh
           end
         end
 
@@ -955,7 +955,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
               OrderNotifier.validation_documents_uploaded(c, @acr, @files).deliver
             end
 
-            OrderNotifier.validation_documents_uploaded(Settings.notify_address, @acr, @files).deliver
+            OrderNotifier.validation_documents_uploaded(notify_address, @acr, @files).deliver
             OrderNotifier.validation_documents_uploaded_comodo("evdocs@comodo.com", @acr, @files).
                 deliver if (@acr.certificate.is_ev? && @acr.ca_name=="comodo")
           end
@@ -1443,16 +1443,16 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
 
   def api_result_domain(certificate_order=nil)
     unless certificate_order.blank?
-      if Rails.env=~/production/i
+      if in_production_mode?
         "https://" + (certificate_order.is_test ? Settings.sandbox_domain : Settings.portal_domain)
       else
         "https://" + (certificate_order.is_test ? Settings.dev_sandbox_domain : Settings.dev_portal_domain) +":3000"
       end
     else
       if is_sandbox?
-        Rails.env=~/production/i ? "https://#{Settings.sandbox_domain}" : "https://#{Settings.dev_sandbox_domain}:3000"
+        in_production_mode?? "https://#{Settings.sandbox_domain}" : "https://#{Settings.dev_sandbox_domain}:3000"
       else
-        Rails.env=~/production/i ? "https://#{Settings.portal_domain}" : "https://#{Settings.dev_portal_domain}:3000"
+        in_production_mode?? "https://#{Settings.portal_domain}" : "https://#{Settings.dev_portal_domain}:3000"
       end
     end
   end
