@@ -59,7 +59,7 @@ Rails.application.configure do
 
   GATEWAY_TEST_CODE = 1.0
 
-  config.log_level = :debug
+  config.log_level = :info
 
   Paperclip::Attachment.default_options[:path] = "#{Rails.root}/spec/test_files/:class/:id_partition/:style.:extension"
 

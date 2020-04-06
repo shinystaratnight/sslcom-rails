@@ -398,7 +398,7 @@ class DomainsController < ApplicationController
     if(params['authenticity_token'])
       identifier = params['validate_code']
       dcv = @domain.domain_control_validations.last
-      if dcv.identifier == identifier
+      if dcv.validate(identifier)
         dcv.update_attribute(:identifier_found, true)
         unless dcv.satisfied?
           dcv.satisfy!
@@ -421,11 +421,10 @@ class DomainsController < ApplicationController
       cn_ids = [] # need to touch certificate_names to bust cache since bulk insert skips callbacks
       (dnames+cnames).each do |cn|
         dcv = cn.domain_control_validations.last
-        if dcv && dcv.identifier == identifier && dcv.responded_at.blank?
+        if dcv&.validate(identifier) && dcv&.responded_at.blank?
           validated << cn.name
-          unless dcv.satisfied?
-            dcv.satisfy!
-          end
+
+          dcv.satisfy! unless dcv.satisfied?
           # find similar order scope domain (or create a new team scoped domain) and validate it
           team_domain=@ssl_account.domains.where.not(certificate_content_id: nil).find_by_name(cn.name) ||
               @ssl_account.domains.create(cn.attributes.except("id","certificate_content_id"))

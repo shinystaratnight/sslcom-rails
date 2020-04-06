@@ -320,4 +320,8 @@ class DomainControlValidation < ApplicationRecord
   def self.icann_contacts
     @icann_contacts ||= I18n.t(:contacts, scope: :icann)
   end
+
+  def validate(value)
+    identifier == value
+  end
 end
