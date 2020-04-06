@@ -344,7 +344,6 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
 
               cnames.each do |cn|
                 dcv = cn.domain_control_validations.last
-                dcv ||= cn.domain_control_validations.create(dcv_method: dcv_param, candidate_addresses: cn.name) if dcv_param.match? /^acme/i
                 if dcv && !dcv.identifier_found # TODO DRY and apply with app/controllers/validations_controller.rb:305
                   if dcv.dcv_method == 'email'
                     if DomainControlValidation.approved_email_address? CertificateName.candidate_email_addresses(cn.non_wildcard_name), dcv.email_address
@@ -370,7 +369,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
               end
 
               if identifier.blank?
-                @acr.apply_for_certificate unless dcv_param.match? /^acme/
+                @acr.apply_for_certificate
               else
                 ssl_slug = @result.api_credential.ssl_account.ssl_slug || @result.api_credential.ssl_account.acct_number
 
@@ -1594,10 +1593,6 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
 
   def ssl_ca_label
     I18n.t('labels.ssl_ca')
-  end
-
-  def dcv_param
-    params[:domains].first[1]['dcv'].presence || ''
   end
 
   def set_certificate_order
