@@ -14,6 +14,7 @@
   b. `sws-test.sslpki.local` to `127.0.0.1`
   c. `sws.sslpki.local` to `127.0.0.1`
   d. `sandbox.ssl.local` to `127.0.0.1`
+  e. `reseller.ssl.local` to `127.0.0.1`
 3. Download Vagrant and `vagrant init` in the terminal.
 4. Clone the SSL.com Rails Repo
 5. Create `.vagrant/machines/default/virtualbox/creator_uid` put your machine user's UID. For Macs it's usually 501, Windows 0.
@@ -24,10 +25,12 @@
 10. Create the development database with `RAILS_ENV=development rake db:create`. If prompted for a password, type `vagrant`.
 11. Get the schema by typing `RAILS_ENV=development rake db:structure:load`
 12. Run any needed migrations `RAILS_ENV=development rake db:migrate`.
-13. Download sandbox_ssl_com.sql and populate the database with `mysql -u ssl_db -p sandbox_ssl_com < sandbox_ssl_com.sql`
+13. Download sandbox_ssl_com.sql and populate the database with `mysql -u ssl_db -p sandbox_ssl_com < database_ssl_com.sql`
 14. Run migrations again `bundle exec rake db:migrate RAILS_ENV=development`
-15. Navigate to the repo and run `foreman start web`
-16. Navigate to `https://secure.ssl.local:3000/` in your browser and it should work!
+15. Execute the following command: LIVE=all EJBCA_ENV=development RAILS_ENV=development bundle exec rake cas:seed_ejbca_profiles
+16. Navigate to the repo and run `foreman start web`
+17. Navigate to `https://secure.ssl.local:3000/` in your browser and it should work!
+18. Get access to SSL.com's VPN (Ask Leo or developers).
 
 ### `synced_folders` Template
 
