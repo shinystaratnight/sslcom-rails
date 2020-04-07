@@ -1,4 +1,4 @@
-# frozen_string_literal: true
+# frozen_string_literal: false
 
 # Load the Rails application.
 require File.expand_path('application', __dir__)

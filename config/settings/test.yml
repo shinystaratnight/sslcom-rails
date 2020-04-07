@@ -1,2 +1,3 @@
 enable_affiliate_program: false
 duo_auto_enabled: true
+require_signup_password: true

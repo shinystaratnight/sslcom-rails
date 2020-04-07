@@ -148,7 +148,7 @@ group :test do
   gem 'vcr'
   gem 'webmock'
   gem 'shoulda-matchers', require: false
-  gem 'selenium-webdriver'
+  gem 'webdrivers'
 end
 
 gem 'httparty'

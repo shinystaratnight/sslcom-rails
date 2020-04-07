@@ -17,6 +17,11 @@ RSpec.configure do |config|
     driven_by :selenium_chrome_headless
   end
 
+  config.after(:each, type: :feature) do
+    screenshot_and_save_page
+    Capybara.reset_sessions!
+  end
+
   config.mock_with :mocha
 
   # This option will default to `:apply_to_host_groups` in RSpec 4 (and will
@@ -39,29 +44,14 @@ RSpec.configure do |config|
   # the `--only-failures` and `--next-failure` CLI options. We recommend
   # you configure your source control system to ignore this file.
   config.example_status_persistence_file_path = 'spec/examples.txt'
-  #
-  #   # Limits the available syntax to the non-monkey patched syntax that is
-  #   # recommended. For more details, see:
-  #   #   - http://rspec.info/blog/2012/06/rspecs-new-expectation-syntax/
-  #   #   - http://www.teaisaweso.me/blog/2013/05/27/rspecs-new-message-expectation-syntax/
-  #   #   - http://rspec.info/blog/2014/05/notable-changes-in-rspec-3/#zero-monkey-patching-mode
-  #   config.disable_monkey_patching!
-
   config.profile_examples = 10
   config.order = :random
 end
 
-Capybara.register_driver :selenium do |app|
-  capabilities = Selenium::WebDriver::Remote::Capabilities.chrome(
-    loggingPrefs: { browser: 'ALL' },
-    chromeOptions: { args: %w[headless disable-gpu no-sandbox disable-dev-shm-usage disable-infobars disable-extensions window-size=1920,1080] }
-  )
-  Capybara::Selenium::Driver.new(app, browser: :chrome, desired_capabilities: capabilities)
-end
-
 Capybara.default_driver = :selenium
-Capybara.javascript_driver = :selenium_chrome_headless
+Capybara.javascript_driver = :selenium_chrome
 Capybara.server = :puma, { Silent: true }
 Capybara.default_max_wait_time = ENV['CONTINUOS_INTEGRATION'] == true ? 10 : 5
 Capybara::Screenshot.prune_strategy = :keep_last_run
 Capybara::Screenshot.webkit_options = { width: 1920, height: 1080 }
+Capybara::Screenshot.autosave_on_failure = true

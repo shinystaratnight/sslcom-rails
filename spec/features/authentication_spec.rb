@@ -8,12 +8,13 @@ RSpec.describe 'Authentications', type: :feature do
   end
 
   it 'logins in user who registers automatically', js: true do
+    registering = attributes_for(:user, :owner)
     visit login_path
     click_on 'Create a new account'
-    fill_in 'user_login', with: 'cypress'
-    fill_in 'user_email', with: 'cypress@ssl.com'
-    fill_in 'user_password', with: 'Testing_ssl+1'
-    fill_in 'user_password_confirmation', with: 'Testing_ssl+1'
+    fill_in 'user_login', with: registering[:login]
+    fill_in 'user_email', with: registering[:email]
+    fill_in 'user_password', with: registering[:password]
+    fill_in 'user_password_confirmation', with: registering[:password_confirmation]
     find('input[name="tos"]').click
     find('input[alt="Register"]').click
     expect(page).to have_content('SSL.com Customer Dashboard')
@@ -56,25 +57,18 @@ RSpec.describe 'Authentications', type: :feature do
   end
 
   it 'requires Duo 2FA when logging in as super_user', js: true do
-    sys_admin = create(:user, :super_user)
-    visit login_path
-    fill_in 'user_session_login', with: sys_admin.login
-    fill_in 'user_session_password', with: 'Testing_ssl+1'
-    find('#btn_login').click
-    expect(page).to have_content 'Duo 2-factor authentication setup'
+    as_user(create(:user, :super_user)) do
+      expect(page).to have_content 'Duo 2-factor authentication setup'
+    end
   end
 
   xit 'allows sysadmin to login as another user', js: true do
     other = create(:user)
-    admin = create(:user, :sys_admin)
-    admin.make_admin
-    visit login_path
-    fill_in 'user_session_login', with: admin.login
-    fill_in 'user_session_password', with: 'Testing_ssl+1'
-    find('#btn_login').click
-    click_on 'Users'
-    first('td.dropdown').click
-    find('a', text: 'login as').click
-    expect(page).to have_content("username: #{other.login}")
+    as_user(create(:user, :sys_admin)) do
+      click_on 'Users'
+      first('td.dropdown').click
+      find('a', text: 'login as').click
+      expect(page).to have_content("username: #{other.login}")
+    end
   end
 end
