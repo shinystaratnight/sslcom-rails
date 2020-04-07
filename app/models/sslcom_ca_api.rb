@@ -13,19 +13,19 @@ class SslcomCaApi
   RESPONSE_TYPE={"zip"=>0,"netscape"=>1, "pkcs7"=>2, "individually"=>3}
   RESPONSE_ENCODING={"base64"=>0,"binary"=>1}
 
-  PRODUCTION_IP = "192.168.5.17"
-  STAGING_IP = "192.168.5.19"
-  DEVELOPMENT_IP = "192.168.100.5"
+  PRODUCTION_IP = '192.168.5.17'
+  STAGING_IP = '192.168.5.19'
+  DEVELOPMENT_IP = 'calypso-dev-01.int.ssl.com'
 
   # using the csr, determine the algorithm used
   def self.sig_alg_parameter(csr)
     case csr.sig_alg
       when /rsa/i
-        "RSA"
+        'RSA'
       when /ecdsa/i
-        "ECC"
+        'ECC'
       when /dsa/i
-        "DSA"
+        'DSA'
     end
   end
 
@@ -50,9 +50,9 @@ class SslcomCaApi
     if options[:mapping]
       options[:mapping].profile_name
     elsif options[:cc].certificate.is_evcs?
-      "EV_RSA_CS_ULMT_CERT"
+      'EV_RSA_CS_ULMT_CERT'
     elsif options[:cc].certificate.is_cs?
-      "RSA_CS_ULMT_CERT"
+      'RSA_CS_ULMT_CERT'
     else
       "#{options[:cc].certificate.validation_type.upcase}_#{sig_alg_parameter(options[:cc].csr)}_SERVER_CERT"
     end
