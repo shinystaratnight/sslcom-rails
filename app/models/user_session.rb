@@ -9,7 +9,7 @@ class UserSession < Authlogic::Session::Base
   end
 
   before_validation do |this_session|
-    if User.find_by_login(this_session.login).try('is_system_admins?'.to_sym)
+    if User&.find_by(login: this_session.login)&.is_system_admins?
       UserSession.consecutive_failed_logins_limit 5
     else
       UserSession.consecutive_failed_logins_limit 15
@@ -23,7 +23,7 @@ class UserSession < Authlogic::Session::Base
         owner: user,
         target: nil,
         action: "User #{user.login} has logged out from ip address #{user.current_login_ip}",
-        notes: User.get_user_accounts_roles_names(user).to_s
+        notes: audit_notes
       )
     end
   end
@@ -35,7 +35,11 @@ class UserSession < Authlogic::Session::Base
       owner: user,
       target: nil,
       action: "User #{user.login} has logged in from ip address #{user.current_login_ip}",
-      notes: User.get_user_accounts_roles_names(user).to_s
+      notes: audit_notes
     )
+  end
+
+  def audit_notes
+    Rails.env.test? ? 'this is a test' : User.get_user_accounts_roles_names(user).to_s
   end
 end

@@ -41,7 +41,7 @@ aliases:
 
   - &install-mysql-dependencies |
     sudo apt-get update
-    sudo apt-get install -y unixodbc-dev mysql-server chromedriver
+    sudo apt-get install -y unixodbc-dev default-mysql-server
     sudo gem uninstall bundler
     sudo rm /usr/local/bin/bundle
     sudo rm /usr/local/bin/bundler
@@ -70,22 +70,22 @@ defaults: &defaults
   parallelism: 2
   working_directory: ~/sslcom-rails
   docker:
-    - image: circleci/ruby:2.6.5-stretch
+    - image: circleci/ruby:2.6.6-stretch-node-browsers
       environment:
         RAILS_ENV: test
         DB_HOST: 127.0.0.1
         BUNDLE_JOBS: 1
         BUNDLE_RETRY: 1
         BUNDLE_PATH: vendor/bundle
-        CIRCLE_CI: 'true'
-        CACHE_VERSION: 'v3'
+        CIRCLE_CI: "true"
+        CACHE_VERSION: "v3"
         CIRCLE_NODE_INDEX: 0
         CIRCLE_NODE_TOTAL: 2
     - image: circleci/mysql:5.7.28
       environment:
         MYSQL_ALLOW_EMPTY_PASSWORD: "true"
         MYSQL_ROOT_HOST: "%"
-        CACHE_VERSION: 'v3'
+        CACHE_VERSION: "v3"
 
 version: 2.1
 jobs:
@@ -94,8 +94,6 @@ jobs:
     steps:
       - checkout
 
-      # - setup_remote_docker:  
-      #    docker_layer_caching: true 
       - run:
           name: Install Mysql Libraries
           command: *install-mysql-dependencies
@@ -129,15 +127,15 @@ jobs:
           name: Wait for DB
           command: dockerize -wait tcp://localhost:3306 -timeout 1m
 
-      - run: 
+      - run:
           name: Create settings.yml
           command: *create-settings-yml
 
-      - run: 
+      - run:
           name: Copy local_env.yml
           command: *create-local-env-yml
 
-      - run: 
+      - run:
           name: Copy Database.yml
           command: *copy-database-yml
 
@@ -158,7 +156,7 @@ jobs:
           command: |
             mkdir -p test-results/rspec test-artifacts
             ./cc-test-reporter before-build
-            TESTFILES=$(circleci tests glob "spec/{controllers,decorators,models,services,integration, features}/**/*_spec.rb"| circleci tests split --split-by=filesize)
+            TESTFILES=$(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=filesize)
             bundle exec rspec --profile 10 \
                               --color \
                               --order random \
@@ -175,7 +173,7 @@ jobs:
           root: coverage
           paths:
             - codeclimate.*.json
-        
+
       - store_test_results:
           path: test-results
       - store_artifacts:
@@ -190,13 +188,10 @@ jobs:
     steps:
       - checkout
 
-      # - setup_remote_docker: 
-      #    docker_layer_caching: true
-
       - run:
           name: Install Libraries for mySQL and Correct Bundler Version (1.17.3)
           command: *install-mysql-dependencies
-      
+
       - restore_cache:
           keys:
             - gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
@@ -208,19 +203,19 @@ jobs:
           command: bundle check --path vendor/bundle || bundle install --deployment
 
       - save_cache:
-         key: gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
-         paths:
-           - vendor/bundle
+          key: gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+          paths:
+            - vendor/bundle
 
-      - run: 
+      - run:
           name: Create settings.yml
           command: *create-settings-yml
 
-      - run: 
+      - run:
           name: Copy local_env.yml
           command: *create-local-env-yml
 
-      - run: 
+      - run:
           name: Copy Database.yml
           command: *copy-database-yml
 
@@ -239,7 +234,7 @@ jobs:
       - run:
           name: Eager load classes to check for issues
           command: |
-              bundle exec rails runner 'Rails.application.eager_load!'
+            bundle exec rails runner 'Rails.application.eager_load!'
 
   upload-coverage:
     docker:
@@ -247,9 +242,6 @@ jobs:
     working_directory: ~/sslcom-rails
 
     steps:
-      # - setup_remote_docker: 
-      #    docker_layer_caching: true
-
       - attach_workspace:
           at: ~/sslcom-rails
       - run:

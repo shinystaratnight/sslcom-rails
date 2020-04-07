@@ -43,6 +43,7 @@ RSpec.configure do |config|
   config.include ActiveSupport::Testing::TimeHelpers
   config.include Authlogic::TestCase
   config.include AuthorizationHelper
+  config.include AuthenticationHelpers
   config.include SessionHelper
 
   config.use_transactional_fixtures = false
@@ -68,14 +69,6 @@ RSpec.configure do |config|
 
   config.after(:suite) do
     DatabaseCleaner.clean
-  end
-
-  config.before do |_example|
-    SystemAudit.stubs(:create).returns(true)
-  end
-
-  config.before(:each, type: :feature) do
-    page.driver.browser.manage.window.resize_to(1920, 1080)
   end
 
   config.infer_spec_type_from_file_location!

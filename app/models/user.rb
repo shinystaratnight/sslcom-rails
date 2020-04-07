@@ -465,7 +465,7 @@ class User < ApplicationRecord
     self.login = params[:user][:login] if login.blank?
     self.email = params[:user][:email]
 
-    # TODO: New logic for auto activation account by passing password on Signup page.
+    # new logic for auto activation account by passing password on Signup page.
     if Settings.require_signup_password
       self.password = params[:user][:password] if params[:user][:password].present?
       self.password_confirmation = params[:user][:password_confirmation] if params[:user][:password_confirmation].present?
