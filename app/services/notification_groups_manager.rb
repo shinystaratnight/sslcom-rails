@@ -1,6 +1,4 @@
 class NotificationGroupsManager
-  include ApplicationHelper
-
   DomainObject = Struct.new(:url, :scan_port, :notification_group, :x509_cert, :verify_result)
 
   def self.scan(options = {})
@@ -52,13 +50,17 @@ class NotificationGroupsManager
     def initialize_database(db_name)
       if Rails.env.development?
         Sandbox.find_by(host: 'sandbox.ssl.local').use_database
-      elsif in_production_mode?
+      elsif Rails.env.production? || Rails.env.qa?
         Sandbox.find_by(host: db_name).use_database
       end
     end
 
     def create_scan_log(ng, scanned_cert, domain, scan_status, exp_date, scan_group)
-      scanned_cert = scanned_cert&.id || nil
+      if scanned_cert.present?
+        scanned_cert = scanned_cert.id
+      else
+        scanned_cert = nil
+      end
       ScanLog.create(notification_group_id: ng.id, scanned_certificate_id: scanned_cert, domain_name: domain.url, scan_status: scan_status, expiration_date: exp_date, scan_group: scan_group)
     end
 
