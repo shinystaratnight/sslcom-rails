@@ -9,7 +9,7 @@ jQuery(function($) {
       $.get(validate_url).always(function(data) {
         if (data.message || (!slug.length && $('#ssl_account_create_team').length)){
           render.text('VALID: ' + slug).css('color','#6b9029')
-            .append(' &rarr; https://<%=Settings.portal_domain%>/team/' + slug);
+            .append(' &rarr; https://<%=portal_domain%>/team/' + slug);
           $('#slug_submit, #ssl_account_create_team').prop('disabled', false);
         } else {
           render.text('INVALID: ' + slug).css('color','#f00');

@@ -1,7 +1,7 @@
 -c={}
--c[:description]="#{Settings.community_name} issues ssl certificates to parties that have passed domain control validation"
+-c[:description]="#{community_name} issues ssl certificates to parties that have passed domain control validation"
 -c[:keywords]="ssl certificate api domain control validation dcv"
--c[:title] = "#{Settings.community_name} Domain Control Validation"
+-c[:title] = "#{community_name} Domain Control Validation"
 -c[:header] = "public"
 -c.each do |k, v|
   -content_for k, c[k]
@@ -42,7 +42,7 @@
     %a(name="file") File lookup over HTTP
   %p
     This method requires a file created from the certificate signing request's (csr) hashes be viewable
-    through http on port 80. #{Settings.community_name} will check for the existence of this file to satisfy domain control validation.
+    through http on port 80. #{community_name} will check for the existence of this file to satisfy domain control validation.
     This file contains two hashes from the csr. The file name is the MD5 hash of the csr with a .txt extension.
     Within this file is the SHA-2 hash of the csr followed by a newline and the word comodoca.com.
   %p
@@ -59,7 +59,7 @@
     %dt
       %dd http://www.yoursite.com/8593532A8FA01E6CEBB0B7E85E510D0F.txt
   %p
-    Upon successful order placement, #{Settings.community_name}'s automated server will look for this file at the above listed url,
+    Upon successful order placement, #{community_name}'s automated server will look for this file at the above listed url,
     and if found, domain control validation will be satisfied.
 .default_container
   %h3
@@ -77,5 +77,5 @@
     %dt
       %dd 8593532A8FA01E6CEBB0B7E85E510D0F.yoursite.com CNAME F18B0E3C464CCFE58209272A97ADC0E8C4233BF9.comodoca.com
   %p
-    Upon successful order placement, #{Settings.community_name}'s automated server will look for this dns entry,
+    Upon successful order placement, #{community_name}'s automated server will look for this dns entry,
     and if found, domain control validation will be satisfied.

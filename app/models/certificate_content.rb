@@ -65,7 +65,7 @@ class CertificateContent < ApplicationRecord
     if csr and !csr.sent_success #do not send if already sent successfully
       options[:certificate_content] = self
       if !self.infringement.empty? # possible trademark problems
-        OrderNotifier.potential_trademark(Settings.notify_address, certificate_order, self.infringement).deliver_now
+        OrderNotifier.potential_trademark(notify_address, certificate_order, self.infringement).deliver_now
       elsif ca.blank?
         certificate_order.apply_for_certificate(options)
       end

@@ -1,7 +1,7 @@
 -c={}
--c[:description]="About #{Settings.community_name} - a globally trusted certificate authority specializing in security products and services."
+-c[:description]="About #{community_name} - a globally trusted certificate authority specializing in security products and services."
 -c[:keywords]="about ssl ssl.com certificates what is"
--c[:title] = "About #{Settings.community_name} Certificate Authority"
+-c[:title] = "About #{community_name} Certificate Authority"
 -c[:header] = "public"
 -c.each do |k, v|
   -content_for k, c[k]
@@ -10,7 +10,7 @@
 .default_container
   %h3 Who We Are
   %p
-    #{Settings.community_name} is a globally trusted certificate authority that provides simple yet secure ssl certificate solutions.
+    #{community_name} is a globally trusted certificate authority that provides simple yet secure ssl certificate solutions.
     Founded in 2002, our philosophy continues to be the development of digital certificates that are easy to deploy
     and offer a high degree of security and assurance. From unlimited subdomain Wildcard SSL to Enterprise trust
     level EV SSL, we work closely with the development community to ensure that our ssl security and trust products
@@ -18,8 +18,8 @@
 .default_container
   %h3 What We Do
   %p
-    As a provider of ssl certificates, #{Settings.community_name} offers a range of trust building solutions to enhance your customers'
+    As a provider of ssl certificates, #{community_name} offers a range of trust building solutions to enhance your customers'
     experience. Our digital certificates provide security through encryption technologies and assurance through
     various background checks designed to ensure our certificates are issued to the correct parties,
-    resulting in a more trustworthy Internet. #{Settings.community_name} issued ssl certificates are trusted by all major server
+    resulting in a more trustworthy Internet. #{community_name} issued ssl certificates are trusted by all major server
     platforms and browsers, including mobile devices and tablets.

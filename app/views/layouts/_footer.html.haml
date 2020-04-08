@@ -1,6 +1,6 @@
 .content
   -unless is_new_order_page?
-    -if Rails.env =~ /production/
+    -if in_production_mode?
       .box
         =render 'site/site_seal'
         %a{style: "margin-left: 12px", href: "http://www.bbb.org/houston/business-reviews/internet-services/ssl-com-in-houston-tx-51001755/#bbbonlineclick", title: "SSL.Com BBB Business Review", target: '_blank'}
@@ -48,7 +48,7 @@
     .box
       %span.title COMPANY
       %ul
-        %li=link_to "About #{Settings.community_name}", about_path
+        %li=link_to "About #{community_name}", about_path
         %li=link_to "Contact Us", contact_us_path
         -# %li
           %a{:href => "#"} Jobs
@@ -64,7 +64,7 @@
     %b>
       %i> SSL
     \.com Corp. All Rights Reserved
--if Rails.env=~/production/
+-if in_production_mode?
   / Start of StatCounter Code for Default Guide
   :javascript
     var sc_project=10146096;
@@ -178,7 +178,6 @@
         $('#waiting_bar').show();
       }
     });
-    //#{"$('#colorpicker').farbtastic('.color');" if Rails.env.development?}
     $("#cancel_reseller_signup").click(function(){
       $.ajax({
         url: "#{cancel_reseller_signup_users_path}",

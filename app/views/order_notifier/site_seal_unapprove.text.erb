@@ -2,15 +2,15 @@
 Dear <%=[@contact.first_name, @contact.last_name].join(" ")%>,
 
 <%end -%>
-Your <%=Settings.community_name%> Smart SeaL for <%=@certificate_order.subject%> (order #<%=@certificate_order.order.reference_number%>) has been deactivated.
+Your <%=community_name%> Smart SeaL for <%=@certificate_order.subject%> (order #<%=@certificate_order.order.reference_number%>) has been deactivated.
 
 <%if @certificate_order.site_seal.canceled? -%>
-  Reason: violation of terms of use for display of the <%=Settings.community_name%> Smart SeaL
+  Reason: violation of terms of use for display of the <%=community_name%> Smart SeaL
 
 <%end-%>
-Please contact <%=Settings.community_name%> Support at support@ssl.com to determine the appropriate action needed to reactive this Smart SeaL.
+Please contact <%=community_name%> Support at support@ssl.com to determine the appropriate action needed to reactive this Smart SeaL.
 
-For more information on your <%=Settings.community_name%> Smart SeaL, please visit the following link: <%=certificate_order_site_seal_url(certificate_order_id: @certificate_order.ref)%>
+For more information on your <%=community_name%> Smart SeaL, please visit the following link: <%=certificate_order_site_seal_url(certificate_order_id: @certificate_order.ref)%>
 
 Thank you for using ssl.com
 

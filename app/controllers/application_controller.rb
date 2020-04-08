@@ -7,6 +7,8 @@ class ApplicationController < ActionController::Base
   rescue_from ActionController::InvalidAuthenticityToken, with: :invalid_auth_token
   layout 'application'
   include ApplicationHelper
+  include SettingsHelper
+
   rescue_from ActiveRecord::RecordNotFound, with: :not_found
   rescue_from ActionController::RoutingError, with: :not_found
   rescue_from AbstractController::ActionNotFound, with: :not_found

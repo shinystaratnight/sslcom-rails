@@ -501,7 +501,7 @@ class ValidationsController < ApplicationController
           @certificate_order.confirmation_recipients.map{|r|r.split(" ")}.flatten.uniq.each do |c|
             OrderNotifier.validation_documents_uploaded(c, @certificate_order, @files).deliver
           end
-          OrderNotifier.validation_documents_uploaded(Settings.notify_address, @certificate_order, @files).deliver
+          OrderNotifier.validation_documents_uploaded(notify_address, @certificate_order, @files).deliver
           OrderNotifier.validation_documents_uploaded_comodo("evdocs@comodo.com", @certificate_order, @files).
               deliver if (@certificate_order.certificate.is_ev? && @certificate_order.ca_name=="comodo")
         end
@@ -975,7 +975,7 @@ class ValidationsController < ApplicationController
           @error << "#{attr} #{msg}: " }
         i+=1 if vh
         @error << "Error: Document for #{file.original_filename} was not
-          created. Please notify system admin at #{Settings.support_email}" unless vh
+          created. Please notify system admin at #{support_email}" unless vh
       end
     end
     @i += i

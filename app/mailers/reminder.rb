@@ -1,4 +1,4 @@
-class Reminder < ActionMailer::Base
+class Reminder < ApplicationMailer
   default :from => "reminder@ssl.com", :bcc => ['info@ssl.com'], return_path: "reminder@ssl.com"
   default_url_options[:host] = I18n.t('labels.ssl_ca')
 

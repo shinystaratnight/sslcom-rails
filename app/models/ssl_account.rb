@@ -1290,7 +1290,7 @@ class SslAccount < ApplicationRecord
 
   # disable for deploying to cron
   def self.detect_abort
-    # abort('Exit: user terminated') if Rails.env=~/production/i && quit?
+    # abort('Exit: user terminated') if in_production_mode? && quit?
   end
 
   def initial_reminder_triggers

@@ -1,12 +1,12 @@
 -c={}
--c[:description]="Contact #{Settings.community_name}'s global locations using the listed information"
+-c[:description]="Contact #{community_name}'s global locations using the listed information"
 -c[:keywords]="contact ssl ssl.com support sales investors 1-SSL-Certificates 775-237-8434 877-SSL-Secure"
 -c[:title] = "Contact Us"
 -c[:header] = "public"
 -c.each do |k, v|
   -content_for k, c[k]
 %h1=c[:title]
-%h2 #{Settings.community_name} contact listings for support, sales and validation
+%h2 #{community_name} contact listings for support, sales and validation
 .default_container
   %h3 Contact Information
   .contact_us_support

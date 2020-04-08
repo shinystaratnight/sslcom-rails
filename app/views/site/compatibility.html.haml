@@ -1,21 +1,21 @@
 -c={}
--c[:description]="#{Settings.community_name} certificates are globally trusted by #{Settings.browser_acceptance} of browsers"
+-c[:description]="#{community_name} certificates are globally trusted by #{Settings.browser_acceptance} of browsers"
 -c[:keywords]="ssl ssl.com certificates browsers acceptance #{Settings.browser_acceptance} compatible blackberry rim mozilla aol firefox internet explorer safari chrome opera netscape"
--c[:title] = "#{Settings.community_name} Certificate Compatibility"
+-c[:title] = "#{community_name} Certificate Compatibility"
 -c[:header] = "public"
 -c.each do |k, v|
   -content_for k, c[k]
 %h1=c[:title]
 %h2 Overwhelmingly accepted and trusted by over 99.9% of users globally
 .default_container
-  %h3 #{Settings.community_name} SSL Compatibility and Acceptance
+  %h3 #{community_name} SSL Compatibility and Acceptance
   %p
-    #{Settings.community_name} certificates are accepted by over 99.9% of browsers, tablets, and mobile devices. This
+    #{community_name} certificates are accepted by over 99.9% of browsers, tablets, and mobile devices. This
     meets or exceeds trust levels of other leading certificate authorities such as Geotrust, Verisign,
     and Godaddy.
   %p 
-    To ensure long-term reliable and security for websites secured with #{Settings.community_name} issued ssl certificates,
-    all #{Settings.community_name} root and intermediate certificates are signed using 2048 bit keys.
+    To ensure long-term reliable and security for websites secured with #{community_name} issued ssl certificates,
+    all #{community_name} root and intermediate certificates are signed using 2048 bit keys.
   .content
     %table
       %tbody

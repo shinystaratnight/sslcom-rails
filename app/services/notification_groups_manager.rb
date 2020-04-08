@@ -49,9 +49,9 @@ class NotificationGroupsManager
 
     def initialize_database(db_name)
       if Rails.env.development?
-        Sandbox.find_by_host('sandbox.ssl.local').use_database
-      elsif Rails.env.production?
-        Sandbox.find_by_host(db_name).use_database
+        Sandbox.find_by(host: 'sandbox.ssl.local').use_database
+      elsif Rails.env.production? || Rails.env.qa?
+        Sandbox.find_by(host: db_name).use_database
       end
     end
 

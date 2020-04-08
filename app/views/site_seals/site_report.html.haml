@@ -2,7 +2,7 @@
   -ss = @site_seal
   -co = ss.latest_certificate_order
   -r = co.certificate_content.registrant
-  -title = "#{Settings.community_name} Secured Site Report for #{co.display_subject}"
+  -title = "#{community_name} Secured Site Report for #{co.display_subject}"
   -content_for :title, title
   #wrapper
     =render 'report_header'
@@ -32,7 +32,7 @@
       %dl
         %dt.section_header site owner
         %dd
-          This Web site can secure your private information using an #{Settings.community_name} issued SSL
+          This Web site can secure your private information using an #{community_name} issued SSL
           Certificate. Information exchanged with any address beginning with https is
           encrypted using SSL before transmission.
     -if r && (co.certificate_content.validated? || co.certificate_content.issued?) && !co.csr.signed_certificate.try("is_dv?".to_sym)

@@ -12,7 +12,7 @@
     =stylesheet_link_tag 'https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.5.1/min/dropzone.min.css'
     %favicon_link_tag
     %meta{ "http-equiv"=>"Content-Type", :content=>"text/html;charset=utf-8" }
-    %title= h(yield(:title).or_else(Settings.meta_title)) + " | #{Settings.community_name}"
+    %title= h(yield(:title).or_else(Settings.meta_title)) + " | #{community_name}"
     -if @meta
       -@meta.each do |key|
         %meta{:name=>key[0], :content=>key[1]}
@@ -23,10 +23,10 @@
       %meta{ content: "u5-F_Ea1wBSyXQRDH-SCD9NbgIQFyGxaCJUTvo6J4v0", name: "google-site-verification" }
     %meta(content="width=1115" name="viewport")
     -# the following metas are for google+ custom message
-    %meta(itemprop="name" content="Educating the public about SSL Certificates | #{Settings.community_name}")
+    %meta(itemprop="name" content="Educating the public about SSL Certificates | #{community_name}")
     -# the following metas are for facebook custom message
-    %meta(property="og:title" content="Educating the public about SSL Certificates | #{Settings.community_name}")
-    %meta(property="og:description" content="At #{Settings.community_name}, our vision is to create public awareness on the importance of SSL Certificates.  Have questions?  Post them on our Facebook wall using the link above and we will do our best to respond to your comments as soon as possible.")
+    %meta(property="og:title" content="Educating the public about SSL Certificates | #{community_name}")
+    %meta(property="og:description" content="At #{community_name}, our vision is to create public awareness on the importance of SSL Certificates.  Have questions?  Post them on our Facebook wall using the link above and we will do our best to respond to your comments as soon as possible.")
     %meta(property="og:type" content="product")
     %meta(property="og:image" content="#{asset_path('SSL.com-social_profile_pic.png')}")
     %meta(property="og:fb:app_id" content="175898732515690")
@@ -63,7 +63,7 @@
         #swifttagcontainerwoyxz3g3q4
           #proactivechatcontainerwoyxz3g3q4
           #swifttagdatacontainerwoyxz3g3q4(style="display: inline;")
-        -if Rails.env=="production" and !is_sandbox? and !current_user.try(:is_system_admins?)
+        -if in_production_mode? && !is_sandbox? and !current_user&is_system_admins?
           / begin olark code
           %script(data-cfasync="false" type='text/javascript')
             /*{literal}<![CDATA[*/

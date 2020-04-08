@@ -1,7 +1,7 @@
 -c={}
--c[:description]="#{Settings.community_name} RESTful api makes ssl buying easy and seamless."
+-c[:description]="#{community_name} RESTful api makes ssl buying easy and seamless."
 -c[:keywords]="ssl certificates restful api rest hosting registrars backend interface integrate system integration resellers"
--c[:title]="#{Settings.community_name} RESTful API"
+-c[:title]="#{community_name} RESTful API"
 -c[:header]='public'
 -c.each do |k, v|
   -content_for k, c[k]
@@ -10,10 +10,10 @@
 .default_container
   %h3 Program Overview
   %p
-    The #{Settings.community_name} RESTful API Program is an open standards based, RESTful api that allows resellers and systems
-    integrators to automatically manage their ssl certificates through #{Settings.community_name}'s backfacing interface.
+    The #{community_name} RESTful API Program is an open standards based, RESTful api that allows resellers and systems
+    integrators to automatically manage their ssl certificates through #{community_name}'s backfacing interface.
     The api is freely available to users with reseller accounts
-    (#{link_to "click here for more details on #{Settings.community_name} Reseller Program", details_resellers_url(subdomain: Reseller::SUBDOMAIN)}).
+    (#{link_to "click here for more details on #{community_name} Reseller Program", details_resellers_url(subdomain: Reseller::SUBDOMAIN)}).
     If you are a hosting provider, registrar, or other reseller with specific volume
     requirements and would like to participate in beta-testing the api, please contact us at support@ssl.com.
 .default_container

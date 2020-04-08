@@ -1,13 +1,13 @@
 -is_standard = current_page?(single_domain_certificates_url)
 -c={}
--c[:description]= (is_standard) ? "#{Settings.community_name} certificates secure single fully qualified domain names and provide the highest standards in security." : "#{Settings.community_name} wildcard certificates secure multiple subdomains and provide the highest standards in security."
+-c[:description]= (is_standard) ? "#{community_name} certificates secure single fully qualified domain names and provide the highest standards in security." : "#{community_name} wildcard certificates secure multiple subdomains and provide the highest standards in security."
 -c[:keywords]="certificate ssl certificates ssl.com EV Wildcard Digital IDs x509 pki trust certs secure sockets layer https security tls client"
 -c[:title] = (is_standard) ? "Standard SSL Certificate Products" : "Wildcard and UCC SSL Certificate Products"
 -c[:header] = "public"
 -c.each do |k, v|
   -content_for k, c[k]
 %h1=c[:title]
-%h2 #{Settings.community_name} certificate authority provides trusted ssl certificates for security
+%h2 #{community_name} certificate authority provides trusted ssl certificates for security
 %h3#p_standard_or_wildcard
   -if is_standard
     =link_to "click here for wildcard or ucc (multidomain) ssl certificates", wildcard_or_ucc_certificates_path
@@ -43,7 +43,7 @@
       #container
         =image_tag cert.site_seal.preferred_seal_image
         #description
-          Each #{cert.title} certificate comes with the following #{Settings.community_name}
+          Each #{cert.title} certificate comes with the following #{community_name}
           Secured Smart SeaL logo to be displayed on secured websites.
           =link_to "Click here for details.", details_site_seals_path
 .p_footer

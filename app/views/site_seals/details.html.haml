@@ -1,5 +1,5 @@
 -c={}
--c[:description]="Displaying #{Settings.community_name} secure website seals and smart seals build customer trust."
+-c[:description]="Displaying #{community_name} secure website seals and smart seals build customer trust."
 -c[:keywords]="SSL secure site seal smartseal smart trusted website"
 -c[:title]="SSL Secured Site Seals For Trusted Websites"
 -c.each do |k, v|
@@ -8,7 +8,7 @@
 %h1
   Display Your Website's SSL With The Smart SeaL
 %h2
-  Boost confidence with the #{Settings.community_name} Class Rating and Report
+  Boost confidence with the #{community_name} Class Rating and Report
 .default_container.clearfix
   %h3=c[:title]
   %table.smart_seal_types
@@ -30,55 +30,55 @@
             -c = Certificate.available.find_by_product "ev"
             =link_to c.title, certificate_url(:id=>c.product_root)
   %p
-    The #{Settings.community_name} Smart SeaL is a complementary service that
-    establishes trust by declaring your site's use of #{Settings.community_name} certificates and
-    it comes free with every #{Settings.community_name} certificate installed.
-    Displaying the #{Settings.community_name} Smart SeaL let's your customers know that
+    The #{community_name} Smart SeaL is a complementary service that
+    establishes trust by declaring your site's use of #{community_name} certificates and
+    it comes free with every #{community_name} certificate installed.
+    Displaying the #{community_name} Smart SeaL let's your customers know that
     your organization values online security and privacy.
   %p
     When a visitor
-    clicks on the #{Settings.community_name} Smart SeaL, a real-time generated #{Settings.community_name} Site Report
+    clicks on the #{community_name} Smart SeaL, a real-time generated #{community_name} Site Report
     appears that displays summary information about your organization and status
-    information about the #{Settings.community_name} certificate installed on your website.
+    information about the #{community_name} certificate installed on your website.
   #sample_site_report
     .caption Sample Site Report (7/10 size scale)
     =image_tag 'sample_site_report_sm.jpg'
   %p
     There
     simply is no better way to build trust with your visitors and avoid cart
-    abandonment than by displaying your use of #{Settings.community_name} certificates.
+    abandonment than by displaying your use of #{community_name} certificates.
   %p
-    The #{Settings.community_name} Site Report displays information such as the website address,
-    the status of and assurances about the #{Settings.community_name} certificate,
+    The #{community_name} Site Report displays information such as the website address,
+    the status of and assurances about the #{community_name} certificate,
     basic information about the website's owner/operator, and verification
     assurances about the website owner's identity.
   %p
     This report helps to reassure
     the visitor that a third-party, globally-trusted certificate authority such
-    as #{Settings.community_name} has undertaken the required steps to validate the website as
+    as #{community_name} has undertaken the required steps to validate the website as
     outlined in our Certificate Practices Statement.
   %p
-    With a trusted name like #{Settings.community_name}, your website's Site Report not only has the
+    With a trusted name like #{community_name}, your website's Site Report not only has the
     backing of a reputable, globally-trusted certificate authority, but also
     a company which abides by the Webtrust audit program, the
     governing program that all globally-trusted certificate authorities must
     follow.
   %p
-    This program is designed to ensure that #{Settings.community_name}'s processes remain
+    This program is designed to ensure that #{community_name}'s processes remain
     transparent and that we strictly follow these processes. In short, your
-    website's #{Settings.community_name} certificate and Site Report has assurances and features
+    website's #{community_name} certificate and Site Report has assurances and features
     that no other company can offer.
 %h2
-  Increase transparency with the #{Settings.community_name} Smart SeaL Artifacts
+  Increase transparency with the #{community_name} Smart SeaL Artifacts
 .default_container
   %h3 Smart SeaL Artifacts
   %p
-    To help build upon this trust, #{Settings.community_name} now offers the validated documents
+    To help build upon this trust, #{community_name} now offers the validated documents
     as Smart SeaL Artifacts within the Site Report.
     This patent pending service increases
     transparency by optionally allowing your visitors to review the documents
     we used to validate your organization as part of the process to issue your
-    website's #{Settings.community_name} certificate.
+    website's #{community_name} certificate.
   #sample_artifacts
     .caption Sample Validation Documents Report (7/10 size scale)
     =image_tag 'sample_artifacts_sm.jpg'
@@ -86,12 +86,12 @@
     You have the option to publish all pages,
     select pages or no pages of these documents. You can even turn this feature
     off in the event you'd like to only use the Site Report. Depending on which
-    #{Settings.community_name} certificate you purchase, the validation documents report comes free
-    as part of your #{Settings.community_name} certificate service
+    #{community_name} certificate you purchase, the validation documents report comes free
+    as part of your #{community_name} certificate service
     or you can purchase the service as an add-on to the
-    #{Settings.community_name} Smart SeaL that comes with your website's #{Settings.community_name} certificate.
+    #{community_name} Smart SeaL that comes with your website's #{community_name} certificate.
   %p
-    The following #{Settings.community_name} certificate products are Site Seal Artifacts enabled:
+    The following #{community_name} certificate products are Site Seal Artifacts enabled:
   %ul(style='font-size: 1.2em')
     -Certificate.root_products.each do |c|
       %li

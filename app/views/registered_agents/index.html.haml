@@ -20,7 +20,7 @@
                       :class=>'per_page'
             %td(colspan='8')=will_paginate @registered_agents
       %caption
-        SSL Managers (#{link_to "learn more about central management of all remote certificates and auto installation", "https://#{Settings.portal_domain}/guide/ssl-com-manager-installation/"})
+        SSL Managers (#{link_to "learn more about central management of all remote certificates and auto installation", "https://#{portal_domain}/guide/ssl-com-manager-installation/"})
         =will_paginate @registered_agents
       %tr.heading_row
         -if @registered_agents.size > 0

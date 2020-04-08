@@ -1,7 +1,7 @@
 -c={}
--c[:description]="#{Settings.community_name} offers a restful api to allow resellers to automate integrate ssl certificate purchasing"
+-c[:description]="#{community_name} offers a restful api to allow resellers to automate integrate ssl certificate purchasing"
 -c[:keywords]="ssl certificate api rest restful digital certificates integrate resellers automate manage"
--c[:title] = "#{Settings.community_name} API For Certificates"
+-c[:title] = "#{community_name} API For Certificates"
 -c[:header] = "public"
 -c.each do |k, v|
   -content_for k, c[k]
@@ -10,8 +10,8 @@
 .default_container
   %h3 SSL Certificate RESTful API Overview
   %p
-    Software developers can now integrate #{Settings.community_name} certificate purchasing into their process flows.
-    The #{Settings.community_name} Certificate API provides an open standards interface in the
+    Software developers can now integrate #{community_name} certificate purchasing into their process flows.
+    The #{community_name} Certificate API provides an open standards interface in the
     form of REST using the well established http protocol and JSON standards.
     By adopting well-established standards, the api minimizes the learning
     curve for the development team and results in faster deployment.
@@ -24,7 +24,7 @@
     be tied into a proprietary api language.
   %h3 Getting Started
   %p
-    Developers must create an #{Settings.community_name} Reseller account in order to get the required account_key and secret_key
+    Developers must create an #{community_name} Reseller account in order to get the required account_key and secret_key
     credentials necessary to interface with the api. Once this has been done, please visit the "Dashboard" and
     at the bottom of the screen under "api login credentials", the account_key and secret_key can be found.
 %h2
@@ -359,7 +359,7 @@
           via an api call.
         %dt.optional_api_key contact_email_address
         %dd
-          Represents an email address will be the only email address that #{Settings.community_name}
+          Represents an email address will be the only email address that #{community_name}
           Validation Staff will correspond with during the processing of this order. Otherwise reseller admin email
           address will be used.
         %dt.api_key_or_value dcv_email_address
@@ -391,19 +391,19 @@
               This option is used for validation via for #{link_to "verifying a CNAME dns entry", controller: "restful_api", action: "dcv", anchor:"dns"}.
         %dt.optional_api_key ca_certificate_id
         %dd
-          Overrides #{Settings.community_name}’s default choice of CA certificate/key to
+          Overrides #{community_name}’s default choice of CA certificate/key to
           be used to issue this certificate.
-          This functionality is only available by special agreement with #{Settings.community_name}.
+          This functionality is only available by special agreement with #{community_name}.
         %dt.api_key_or_value is_customer_validated [ignored for dv certs]
         %dd
-          Has the customer been validated according to #{Settings.community_name}'s RA validation guidelines?
+          Has the customer been validated according to #{community_name}'s RA validation guidelines?
           %dl
             %dd
               %span.api_key_or_value y
               (the host or reseller has validated the customer)
             %dd
               %span.api_key_or_value n
-              (#{Settings.community_name} will perform the validation)
+              (#{community_name} will perform the validation)
         %dt.optional_api_key hide_certificate_reference
         %dd
           Hide the certificate reference number in the emailed ssl certificate. By default, the ssl certificate
@@ -467,10 +467,10 @@
           :plain
             {"order_number" : "abcd1234", "order_status" : "pending validation",
             "order_amount" : "$49.00",
-            "certificate_url" : "https://#{Settings.community_domain}/certificate_orders/abcd1234",
-            "order_receipt_url" : "https://#{Settings.community_domain}/orders/abcd1234",
-            "smart_seal_url" : "https://#{Settings.community_domain}/smart_seals/abcd1234",
-            "validation_documents_url" : "https://#{Settings.community_domain}/validations/abcd1234"}
+            "certificate_url" : "https://#{community_domain}/certificate_orders/abcd1234",
+            "order_receipt_url" : "https://#{community_domain}/orders/abcd1234",
+            "smart_seal_url" : "https://#{community_domain}/smart_seals/abcd1234",
+            "validation_documents_url" : "https://#{community_domain}/validations/abcd1234"}
     %dt
       %div.api_sub_section errors
     %dd
@@ -961,7 +961,7 @@
           via an api call.
         %dt.optional_api_key contact_email_address
         %dd
-          Represents an email address will be the only email address that #{Settings.community_name}
+          Represents an email address will be the only email address that #{community_name}
           Validation Staff will correspond with during the processing of this order. Otherwise reseller admin email
           address will be used.
         %dt.api_key_or_value dcv_methods
@@ -983,9 +983,9 @@
               This option is used for validation via #{link_to "verifying a CNAME dns entry", controller: "restful_api", action: "dcv", anchor:"dns"}.
         %dt.optional_api_key ca_certificate_id
         %dd
-          Overrides #{Settings.community_name}’s default choice of CA certificate/key to
+          Overrides #{community_name}’s default choice of CA certificate/key to
           be used to issue this certificate.
-          This functionality is only available by special agreement with #{Settings.community_name}.
+          This functionality is only available by special agreement with #{community_name}.
         %dt.optional_api_key hide_certificate_reference
         %dd
           Hide the certificate reference number in the emailed ssl certificate. By default, the ssl certificate
@@ -1048,10 +1048,10 @@
           :plain
             {"order_number" : "abcd1234", "order_status" : "pending validation",
             "order_amount" : "$49.00",
-            "certificate_url" : "https://#{Settings.community_domain}/certificate_orders/abcd1234",
-            "order_receipt_url" : "https://#{Settings.community_domain}/orders/abcd1234",
-            "smart_seal_url" : "https://#{Settings.community_domain}/smart_seals/abcd1234",
-            "validation_documents_url" : "https://#{Settings.community_domain}/validations/abcd1234"}
+            "certificate_url" : "https://#{community_domain}/certificate_orders/abcd1234",
+            "order_receipt_url" : "https://#{community_domain}/orders/abcd1234",
+            "smart_seal_url" : "https://#{community_domain}/smart_seals/abcd1234",
+            "validation_documents_url" : "https://#{community_domain}/validations/abcd1234"}
     %dt
       %div.api_sub_section errors
     %dd

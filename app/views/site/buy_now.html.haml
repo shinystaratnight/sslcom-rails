@@ -130,7 +130,7 @@
             %b{:style => "text-shadow: none;"} →
       #trust-badges{style: "text-align: center"}
         =render 'site_seal'
-        -if Rails.env =~ /production/
+        -if in_production_mode?
           %a{style: "margin-left: 12px", href: "http://www.bbb.org/houston/business-reviews/internet-services/ssl-com-in-houston-tx-51001755/#bbbonlineclick", title: "SSL.Com BBB Business Review", target: '_blank'}
             %img{alt: "SSL.Com BBB Business Review", src: "//seal-houston.bbb.org/seals/black-seal-200-42-blacktxt-ssl-com-51001755.png", style: "border: 0;"}/
       #partners
@@ -213,7 +213,7 @@
             Anything (including people, software, computers, and devices) who exchange sensitive information on any network, including the Internet and Web, needs to use SSL. Sensitive information includes things like username and passwords, credit card numbers, or any other data that needs to be kept private.
           %span.title What is a Wildcard SSL certificate?
           %p
-            Wildcard ssl allows the use of an unlimited number of subdomains in the ssl certificate. Any full domain that matches *.yourdomain.com (where * can be any word and yourdomain.com is your domain) will be secured by a wildcard ssl digital certificate. For instance, ssl.com, #{Settings.community_domain}, mail.ssl.com, and any other combination of ssl.com would be secured by a wildcard certificate issued to *.ssl.com.
+            Wildcard ssl allows the use of an unlimited number of subdomains in the ssl certificate. Any full domain that matches *.yourdomain.com (where * can be any word and yourdomain.com is your domain) will be secured by a wildcard ssl digital certificate. For instance, ssl.com, #{community_domain}, mail.ssl.com, and any other combination of ssl.com would be secured by a wildcard certificate issued to *.ssl.com.
           %span.title How does the warranty work?
           %p
             The warranty protects the end user if an

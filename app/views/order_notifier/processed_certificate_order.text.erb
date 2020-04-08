@@ -5,7 +5,7 @@ Dear <%=[@contact.first_name, @contact.last_name].join(" ")%>,
 <%end -%>
 Thank you for choosing SSL.com!
 
-Your <%=Settings.community_name%> <%=@certificate_order.certificate.description["certificate_type"]%> certificate (ref# <%=@certificate_order.ref%>) for <%=@certificate_order.subject%> is ready and attached to this email. It is offered in the format that you selected when submitting your CSR. You can also find the x.509 certificate in text format at the bottom of this email.
+Your <%=community_name%> <%=@certificate_order.certificate.description["certificate_type"]%> certificate (ref# <%=@certificate_order.ref%>) for <%=@certificate_order.subject%> is ready and attached to this email. It is offered in the format that you selected when submitting your CSR. You can also find the x.509 certificate in text format at the bottom of this email.
 
 If you need the certificate in other formats, please visit your order download page:
 
@@ -16,12 +16,12 @@ The above DV certificate serves as a placeholder so that you can begin securing 
 
 Please submit the document items outlined in the link below through your SSL.com portal:
 
-  https://<%=Settings.portal_domain%>/faqs/ssl-ev-validation-requirements/
+  https://<%=portal_domain%>/faqs/ssl-ev-validation-requirements/
 <%end-%>
 
 Learn more about your certificate order page using the link below:
 
-  https://<%=Settings.portal_domain%>/article/certificate-order-page-information/
+  https://<%=portal_domain%>/article/certificate-order-page-information/
 <%if (@certificate_order.exceeds_br_duration?) && (@certificate_order.created_at > Date.parse('Apr 1 2015'))-%>
 
   <%=render(:partial=>"duration_limit")%>

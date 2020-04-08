@@ -1,9 +1,9 @@
 Hello,
 #{"\n"}
-#{@remove_user.login} has left one of your #{Settings.community_name} teams.
+#{@remove_user.login} has left one of your #{community_name} teams.
 #{"\n\n"}
 #{"\t"}Team:#{"\t"}#{@team.get_team_name}
 #{"\t"}User:#{"\t"}login: #{@remove_user.login} | email: #{@remove_user.email}
 #{"\t"}Date:#{"\t"}#{DateTime.now.strftime("%b %d, %Y at %l:%M %p")}
-#{"\n"}If you do not own this team or manage team's users, please notify #{Settings.community_name} security at #{Settings.support_email}.
+#{"\n"}If you do not own this team or manage team's users, please notify #{community_name} security at #{support_email}.
 =render 'support_signature'
