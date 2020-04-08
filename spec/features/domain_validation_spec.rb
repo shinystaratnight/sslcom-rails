@@ -30,7 +30,7 @@ RSpec.describe 'DomainValidations', type: :feature do
       expect(page).to have_content("The following domains are now validated: #{domain}")
     end
 
-    it 'shows error when using incorrect validation code', js: true do
+    xit 'shows error when using incorrect validation code', js: true do
       domain = Faker::Internet.domain_name
       login
       visit '/domains'
