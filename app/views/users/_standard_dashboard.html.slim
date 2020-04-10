@@ -60,7 +60,7 @@
                           li=link_to 'change password', edit_password_user_url(user)
                           -if permitted_to?(:edit, :billing_profiles) && !is_sandbox?
                             -unless current_user.is_affiliate?
-                              li=link_to 'become a referral link partner', "https://#{Settings.community_domain}/affiliate/index.php"
+                              li=link_to 'become a referral link partner', "https://#{community_domain}/affiliate/index.php"
                             -unless ssl_account.is_registered_reseller?
                               li=link_to 'upgrade to reseller', new_reseller_url
                           -permitted_to? :edit_settings, current_user.ssl_account do
@@ -82,7 +82,7 @@
                               strong
                                 | billing and purchase
                             -if permitted_to?(:create, :funded_accounts)
-                              li available funds: $ #{ssl_account.funded_account.amount}
+                              li available funds: $ #{ssl_account.funded_account.decorate.available}
                             -if permitted_to? :read, :orders
                               li=link_to "billing", is_sandbox? ? search_orders_path(search:'is_test:true') : orders_path(ssl_slug: @ssl_slug)
                             li=link_to 'buy certificate', certificates_url

@@ -55,6 +55,7 @@ class DomainControlValidation < ApplicationRecord
   AUTHORITY_EMAIL_ADDRESSES = %w[admin@ administrator@ webmaster@ hostmaster@ postmaster@].freeze
   MAX_DURATION_DAYS = { email: 820 }.freeze
   EMAIL_CHOICE_CACHE_EXPIRES_DAYS = 1
+  DCV_METHODS = %w[email http_csr_hash cname_csr_hash https_csr_hash acme_http acme_dns_txt]
 
   default_scope{ order('domain_control_validations.created_at asc') }
   scope :global, -> { where{ (certificate_name_id == nil) & (csr_id == nil) } }
@@ -65,20 +66,26 @@ class DomainControlValidation < ApplicationRecord
     self.identifier ||= DomainControlValidation.generate_identifier
   end
 
+  after_create do
+    update(workflow_state: 'new') if workflow_state.blank?
+  end
+
   workflow do
     state :new do
       event :send_dcv, transitions_to: :sent_dcv
       event :hashing, transitions_to: :hashed
       event :satisfy, transitions_to: :satisfied
+      event :fail, transitions_to: :failed
     end
 
     state :hashed do
       event :satisfy, transitions_to: :satisfied
+      event :fail, transitions_to: :failed
     end
 
     state :sent_dcv do
       event :satisfy, transitions_to: :satisfied
-
+      event :fail, transitions_to: :failed
       on_entry do
         update_attribute :sent_at, DateTime.now
       end
@@ -93,6 +100,8 @@ class DomainControlValidation < ApplicationRecord
             2
           when /http/
             6
+          when /acme_dns_txt/
+            7
           when /cname/
             7
           end
@@ -101,6 +110,8 @@ class DomainControlValidation < ApplicationRecord
         save
       end
     end
+
+    state :failed
   end
 
   def self.generate_identifier
@@ -128,6 +139,16 @@ class DomainControlValidation < ApplicationRecord
     prepend = ''
     self.identifier, self.address_to_find_identifier = certificate_name.blank? ? [false, false] :
     case dcv_method
+    when /acme_http/
+      [
+        [certificate_name.acme_token, thumbprint].join('.'),
+        [certificate_name.non_wildcard_name(true), '.well-known', 'acme-challenge', thumbprint].join('/')
+      ]
+    when /acme_dns_txt/
+      [
+        [certificate_name.acme_token, thumbprint].join('.'),
+        ['_acme-challenge', certificate_name.non_wildcard_name(true)].join('/')
+      ]
     when /https/
       ["#{certificate_name.csr.sha2_hash}\n#{certificate_name.ca_tag}#{"\n#{certificate_name.csr.unique_value}" unless certificate_name.csr.unique_value.blank?}", certificate_name.dcv_url(true, prepend, true)]
     when /http/
@@ -135,6 +156,10 @@ class DomainControlValidation < ApplicationRecord
     when /cname/
       [certificate_name.cname_destination, certificate_name.cname_origin(true)]
     end
+  end
+
+  def thumbprint
+    @thumbprint ||= certificate_name.ssl_account.api_credential.acme_acct_pub_key_thumbprint
   end
 
   # the 24 hour limit no longer applies, but will keep this in case we need it again
@@ -251,11 +276,11 @@ class DomainControlValidation < ApplicationRecord
       subdomains.shift if subdomains[0] == '*' # remove wildcard
       [].tap do |s|
         0.upto(subdomains.count) do |i|
-          if i.zero?
-            s << d.domain
-          else
-            s << (subdomains.slice(-i, subdomains.count) << d.domain).join('.')
-          end
+          s << if i.zero?
+                 d.domain
+               else
+                 (subdomains.slice(-i, subdomains.count) << d.domain).join('.')
+               end
         end
       end.map do |e|
         AUTHORITY_EMAIL_ADDRESSES.map do |ae|
@@ -294,5 +319,9 @@ class DomainControlValidation < ApplicationRecord
 
   def self.icann_contacts
     @icann_contacts ||= I18n.t(:contacts, scope: :icann)
+  end
+
+  def validate(value)
+    identifier == value
   end
 end

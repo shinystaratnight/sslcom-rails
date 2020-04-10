@@ -55,9 +55,7 @@ class RegisteredAgent < ApplicationRecord
     unless term.blank?
       result = case term
                  when /sm-\w/i
-                   result.where {
-                     ref =~ "%#{term}%"
-                   }
+                   result.where('ref LIKE ?', "%#{term}%")
                  else
                    result.where {
                      (ip_address =~ "%#{term}%") |

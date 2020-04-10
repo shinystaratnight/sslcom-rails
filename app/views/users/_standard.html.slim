@@ -1,4 +1,4 @@
--title="#{Settings.community_name} Customer Dashboard"
+-title="#{community_name} Customer Dashboard"
 -content_for :title, title
 .reseller_registration_select_tier
   h2=title
@@ -22,19 +22,10 @@
   -if Settings.enable_affiliate_program==true && !current_user.is_affiliate? && !is_sandbox?
     .become_reseller_title(style="margin: 10px 0 0")
       p
-        strong.red NEW! Earn commissions through the #{Settings.community_name} Referral Link Program
+        strong.red NEW! Earn commissions through the #{community_name} Referral Link Program
       p
-        a(href="https://#{Settings.community_domain}/affiliate/index.php")
+        a(href="https://#{community_domain}/affiliate/index.php")
           | Click here 
-        | to become an #{Settings.community_name} Referral Link Partner or 
+        | to become an #{community_name} Referral Link Partner or 
         = link_to "click here for more details", details_affiliates_path
-  /
-    .become_reseller_title(style="margin: 10px 0 0")
-      p
-        a(href="#{url_for resellers_root_url(:subdomain=Reseller::SUBDOMAIN)}")
-          strong Become a reseller
-          | (click here to learn more)
-    p
-      | Make more profit and save money by reselling ssl.com certificates at a discount.
-      =link_to "Click here to sign up for the ssl.com reseller program.", new_reseller_url
 = render partial: 'users/standard_dashboard', locals: {user: user, ssl_account: ssl_account}

@@ -19,7 +19,7 @@
 
       #email_dcv
         %p<
-          In order for #{Settings.community_name} to issue an SSL certificate for #{co.subject}, proof that you control the domain
+          In order for #{community_name} to issue an SSL certificate for #{co.subject}, proof that you control the domain
           #{co.subject} is a basic requirement that must be established.
           -if last_sent && last_sent.is_eligible_to_resend?
             A verification email has already been sent to the email address

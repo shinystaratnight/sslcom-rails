@@ -1,10 +1,10 @@
 Hello,
 #{"\n"}
-You have left #{Settings.community_name} team.
+You have left #{community_name} team.
 #{"\n\n"}
 #{"\t"}Team:#{"\t"}#{@team.get_team_name}
 #{"\t"}Date:#{"\t"}#{DateTime.now.strftime("%b %d, %Y at %l:%M %p")}
 #{"\n"}If you have done this in error, please feel free to contact #{@owner_user.email} for further instructions.
-#{"\n"}If you did not authorize this, please notify #{Settings.community_name} security at #{Settings.support_email}.
+#{"\n"}If you did not authorize this, please notify #{community_name} security at #{support_email}.
 #{"\n"}
 =render 'support_signature'

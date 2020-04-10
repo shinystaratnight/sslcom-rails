@@ -22,7 +22,6 @@
 # Indexes
 #
 #  index_ca_api_requests_on_api_requestable                          (api_requestable_id,api_requestable_type)
-#  index_ca_api_requests_on_approval_id                              (approval_id)
 #  index_ca_api_requests_on_id_and_type                              (id,type)
 #  index_ca_api_requests_on_type_and_api_requestable                 (id,api_requestable_id,api_requestable_type,type) UNIQUE
 #  index_ca_api_requests_on_type_and_api_requestable_and_created_at  (id,api_requestable_id,api_requestable_type,type,created_at)
@@ -55,7 +54,7 @@ class ApiCertificateCreate < ApiCertificateRequest
   validates :server_software, presence: true, format: {with: /\d+/}, inclusion:
       {in: ServerSoftware.pluck(:id).map(&:to_s),
       message: "needs to be one of the following: #{ServerSoftware.pluck(:id).map(&:to_s).join(', ')}"},
-      if: "Settings.require_server_software_w_csr_submit"
+      if: -> { Settings.require_server_software_w_csr_submit }
   validates :organization, presence: true, if: lambda{|c|!c.is_dv? || c.csr_obj.organization.blank?}
   validates :post_office_box, presence: {message: "is required if street_address_1 is not specified"},
             if: lambda{|c|!c.is_dv? && c.street_address_1.blank?} #|| c.parsed_field("POST_OFFICE_BOX").blank?}

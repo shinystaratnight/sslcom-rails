@@ -4,13 +4,13 @@ You are receiving this courtesy email because you have ordered or purchased your
 
 This is a reminder that the SSL.com certificate for the domain named below expired on <%=@cert.expiration_date.strftime("%b %d, %Y")%> and has not yet been renewed.
 
-Domain: <%=@cert.common_name%> (https://<%=Settings.portal_domain%>/certificate_orders/<%=cert.certificate_order.ref%>)
+Domain: <%=@cert.common_name%> (https://<%=portal_domain%>/certificate_orders/<%=cert.certificate_order.ref%>)
 
 The issuance email address for this certificate was <%=@contact.email%> and the certificate ref # is <%=@cert.certificate_order.ref%>
 
 When renewing, any remaining time from your expiring SSL/TLS certificate, up to 90 days, will be added to your renewal certificate so that you do not lose any SSL/TLS coverage.
 
-If you need to reset your username or password, please visit https://<%=Settings.portal_domain%>/password_resets/new
+If you need to reset your username or password, please visit https://<%=portal_domain%>/password_resets/new
 
 Thank you for choosing SSL.com - we look forward to continuing to provide you with the most cost-effective certificates in the market.
 

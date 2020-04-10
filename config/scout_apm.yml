@@ -23,6 +23,9 @@ common: &defaults
 production:
   <<: *defaults
 
+qa:
+  <<: *defaults
+
 development:
   <<: *defaults
   monitor: false
@@ -33,4 +36,3 @@ test:
 
 staging:
   <<: *defaults
-

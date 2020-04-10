@@ -1,5 +1,5 @@
 class CsrsController < ApplicationController
-  before_filter :find_csr, only:[:http_dcv_file, :verification_check, :create_new_unique_value]
+  before_action :find_csr, only:[:http_dcv_file, :verification_check, :create_new_unique_value]
   filter_access_to :all, :attribute_check=>true, except: [:verification_check]
   filter_access_to :country_codes, :http_dcv_file, :all_domains, :check_validation, :create_new_unique_value, :require=>[:create] #anyone can create read creates csrs, thus read this
 
@@ -89,7 +89,6 @@ class CsrsController < ApplicationController
       end
     end
 
-    # http_or_s=ActiveRecord::Base.find_from_model_and_id(params[:dcv]).dcv_verify(params[:protocol])
     respond_to do |format|
       format.html { render inline: http_or_s.to_s }
     end

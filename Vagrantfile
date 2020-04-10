@@ -15,16 +15,20 @@ Vagrant.configure('2') do |config|
   config.vm.network 'forwarded_port', guest: 10_000, host: 10_000, auto_correct: true
   config.vm.network 'forwarded_port', guest: 5002, host: 5002, auto_correct: true
 
+  # ssh access from host machine
+  config.vm.provision 'file', source: '~/.ssh/id_rsa.pub', destination: '~/.ssh/id_rsa.pub'
+  config.vm.provision 'file', source: '~/.ssh/id_rsa', destination: '~/.ssh/id_rsa'
+
   # configure virtualbox host
   config.vm.provider 'virtualbox' do |vb|
     vb.memory = '4096'
     vb.cpus = '4'
+    vb.customize ['modifyvm', :id, '--cpuexecutioncap', '50']
   end
 
   # Always upgrade to latest packages
   config.vm.provision 'shell', run: 'always', inline: <<-SHELL
     apt-get update
-    apt-get -y upgrade
     sudo apt-get -y install g++ qt5-default libqt5webkit5-dev gstreamer1.0-plugins-base gstreamer1.0-tools gstreamer1.0-x
     debconf-set-selections <<< 'mysql-server mysql-server/root_password password vagrant'
     debconf-set-selections <<< 'mysql-server mysql-server/root_password_again password vagrant'
@@ -32,20 +36,16 @@ Vagrant.configure('2') do |config|
     sudo apt-get -y install unixodbc-dev
     curl -sL https://deb.nodesource.com/setup_13.x | sudo -E bash -
     sudo apt-get install -y nodejs
-    sudo apt-get -y install npm
     curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
     echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
-    sudo apt update && sudo apt install yarn
+    sudo apt-get install -y chromium-chromedriver
+    sudo apt-get install -y imagemagick
   SHELL
 
+  config.vm.provision :shell, privileged: false, path: 'rbenv.sh'
+
   # Install Ruby2.6 from Brightbox APT repository
-  config.vm.provision 'shell', inline: <<-SHELL
-    apt-get -y install software-properties-common
-    apt-add-repository -y ppa:brightbox/ruby-ng
-    apt-get update
-    apt-get -y install ruby-switch ruby-bundler ruby2.6 ruby2.6-dev
-    sudo gem install bundler -v 1.17.3
-  SHELL
+  config.vm.provision 'shell', inline: 'gem install bundler -v 1.17.3'
 
   # Install Passenger + Nginx through Phusion's APT repository
   config.vm.provision 'shell', inline: <<-SHELL

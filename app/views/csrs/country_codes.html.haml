@@ -1,7 +1,7 @@
 -c={}
--c[:description]="#{Settings.community_name} issues signed certificates to the following country codes"
+-c[:description]="#{community_name} issues signed certificates to the following country codes"
 -c[:keywords]="ssl ssl.com country code certificate signing request csr export control list"
--c[:title] = "#{Settings.community_name} Accepted Country Codes for CSRs"
+-c[:title] = "#{community_name} Accepted Country Codes for CSRs"
 -c[:header] = "public"
 -c.each do |k, v|
   -content_for k, c[k]
@@ -10,7 +10,7 @@
 .default_container
   %h3 Accepted Country Code Listing
   %p
-    #{Settings.community_name} complies with US law and therefore accepts the following 2 lettered ISO-3166 country codes. Please
+    #{community_name} complies with US law and therefore accepts the following 2 lettered ISO-3166 country codes. Please
     be sure to use any of the following international country codes in your certificate signing requests (csr)
     that corresponds to the country of origin for the ssl.com certificate registrant.
     =link_to "Click here", "#restricted_list"
@@ -28,7 +28,7 @@
     %a{:name => "restricted_list", :href => "#restricted_list"}
       Restricted Countries Listing
   %p
-    The following countries are restricted by US Export restriction laws, therefore #{Settings.community_name} cannot issue ssl
+    The following countries are restricted by US Export restriction laws, therefore #{community_name} cannot issue ssl
     certificates for registrants in the following countries.
   %table#restricted_country_codes(cellpadding="6")
     %thead

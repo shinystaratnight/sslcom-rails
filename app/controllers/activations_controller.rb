@@ -1,5 +1,5 @@
 class ActivationsController < ApplicationController
-  before_filter :require_no_user, :only => [:new, :create]
+  before_action :require_no_user, :only => [:new, :create]
   rescue_from Exception, :with => :not_found
 
   def new

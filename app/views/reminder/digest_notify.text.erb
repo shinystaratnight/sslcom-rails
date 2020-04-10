@@ -8,9 +8,9 @@ This new certificate will not affect your currently installed server certificate
 
 However, you will need to replace the original certificate prior to it's expiration by installing the newly issued certificate. Please login to your account and complete the certificate re-issuance by using one of the certificate links below.
 
-Certificate Order: https://<%=Settings.portal_domain%>/certificate_orders/<%=@e_certs[0].cert.certificate_order.ref%>/validation/new
-Certificate Reprocess: https://<%=Settings.portal_domain%>/certificate_orders/<%=@e_certs[0].cert.certificate_order.ref%>/reprocess
-Validation Guide: https://<%=Settings.portal_domain%>/faqs/ssl-dv-validation-requirements/
+Certificate Order: https://<%=portal_domain%>/certificate_orders/<%=@e_certs[0].cert.certificate_order.ref%>/validation/new
+Certificate Reprocess: https://<%=portal_domain%>/certificate_orders/<%=@e_certs[0].cert.certificate_order.ref%>/reprocess
+Validation Guide: https://<%=portal_domain%>/faqs/ssl-dv-validation-requirements/
 
 After the validation above has been completed you will need install the newly issued server Certificate. This server certificate will replace the existing certificate that is already on your website and will be used for the last years of your order.
 

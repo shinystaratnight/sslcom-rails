@@ -13,19 +13,19 @@ class SslcomCaApi
   RESPONSE_TYPE={"zip"=>0,"netscape"=>1, "pkcs7"=>2, "individually"=>3}
   RESPONSE_ENCODING={"base64"=>0,"binary"=>1}
 
-  PRODUCTION_IP = "192.168.5.17"
-  STAGING_IP = "192.168.5.19"
-  DEVELOPMENT_IP = "192.168.100.5"
+  PRODUCTION_IP = '192.168.5.17'
+  STAGING_IP = '192.168.5.19'
+  DEVELOPMENT_IP = 'calypso-dev-01.int.ssl.com'
 
   # using the csr, determine the algorithm used
   def self.sig_alg_parameter(csr)
     case csr.sig_alg
       when /rsa/i
-        "RSA"
+        'RSA'
       when /ecdsa/i
-        "ECC"
+        'ECC'
       when /dsa/i
-        "DSA"
+        'DSA'
     end
   end
 
@@ -50,9 +50,9 @@ class SslcomCaApi
     if options[:mapping]
       options[:mapping].profile_name
     elsif options[:cc].certificate.is_evcs?
-      "EV_RSA_CS_ULMT_CERT"
+      'EV_RSA_CS_ULMT_CERT'
     elsif options[:cc].certificate.is_cs?
-      "RSA_CS_ULMT_CERT"
+      'RSA_CS_ULMT_CERT'
     else
       "#{options[:cc].certificate.validation_type.upcase}_#{sig_alg_parameter(options[:cc].csr)}_SERVER_CERT"
     end
@@ -124,7 +124,7 @@ class SslcomCaApi
 
   # revoke json parameter string for REST call to EJBCA
   def self.revoke_cert_json(signed_certificate, reason)
-    {issuer_dn: signed_certificate.openssl_x509.issuer.to_s.split("/").reject(&:empty?).join(","),
+    {issuer_dn: signed_certificate.openssl_x509.issuer.to_utf8,
      certificate_serial_number: signed_certificate.openssl_x509.serial.to_s(16).downcase,
      revocation_reason: reason}.to_json
   end
@@ -149,8 +149,8 @@ class SslcomCaApi
         else
           csr=options[:csr] ? Csr.new(body: options[:csr]) : options[:cc].csr
           carry_over=(!cert.is_server? or cert.is_free?) ? 0 : csr.days_left
-          options[:mapping]=options[:mapping].ecc_profile if csr.sig_alg_parameter=~/ecc/i
-          csr.public_key
+          options[:mapping]=options[:mapping].ecc_profile if csr&.sig_alg_parameter=~/ecc/i
+          csr&.public_key
         end
     if public_key
       dn={}
@@ -285,29 +285,32 @@ class SslcomCaApi
         options.merge!(collect_certificate: true, username:
             cc.csr.sslcom_usernames.compact.first) if options[:mapping].is_ev?
       end
-      req, res = call_ca(host, options, issue_cert_json(options))
-      api_log_entry=cc.csr.sslcom_ca_requests.create(request_url: host,
-        parameters: req.body, method: "post", response: res.try(:body), ca: options[:ca_name] || ca_name(options))
-      if (!options[:mapping].is_ev? and api_log_entry.username.blank?) or
-          (options[:mapping].is_ev? and api_log_entry.username.blank? and
-              api_log_entry.request_username.blank?)
-        cc.preferred_process_pending_server_certificates = false
-        cc.preferred_process_pending_server_certificates_will_change!
-        OrderNotifier.problem_ca_sending("support@ssl.com", cc.certificate_order,"sslcom").deliver
-      elsif api_log_entry.certificate_chain # signed certificate is issued
-        cc.update_column(:label, options[:mapping].is_ev? ? api_log_entry.request_username :
-                                   api_log_entry.username) unless api_log_entry.blank?
-        attrs = {body: api_log_entry.end_entity_certificate.to_s, ca_id: options[:mapping].id,
-                 ejbca_username: cc.csr.sslcom_ca_requests.compact.first.username}
-        cc.csr.signed_certificates.create(attrs)
-        SystemAudit.create(
-            owner:  options[:current_user],
-            target: api_log_entry,
-            notes:  "issued signed certificate for certificate order #{certificate_order.ref}",
-            action: "SslcomCaApi#apply_for_certificate"
-        )
+      ca_json = issue_cert_json(options)
+      if ca_json
+        req, res = call_ca(host, options, ca_json)
+        api_log_entry=cc.csr.sslcom_ca_requests.create(request_url: host,
+                                                       parameters: req.body, method: "post", response: res.try(:body), ca: options[:ca_name] || ca_name(options))
+        if (!options[:mapping].is_ev? and api_log_entry.username.blank?) or
+            (options[:mapping].is_ev? and api_log_entry.username.blank? and
+                api_log_entry.request_username.blank?)
+          cc.preferred_process_pending_server_certificates = false
+          cc.preferred_process_pending_server_certificates_will_change!
+          OrderNotifier.problem_ca_sending("support@ssl.com", cc.certificate_order,"sslcom").deliver
+        elsif api_log_entry.certificate_chain # signed certificate is issued
+          cc.update_column(:label, options[:mapping].is_ev? ? api_log_entry.request_username :
+                                       api_log_entry.username) unless api_log_entry.blank?
+          attrs = {body: api_log_entry.end_entity_certificate.to_s, ca_id: options[:mapping].id,
+                   ejbca_username: cc.csr.sslcom_ca_requests.compact.first.username}
+          cc.csr.signed_certificates.create(attrs)
+          SystemAudit.create(
+              owner:  options[:current_user],
+              target: api_log_entry,
+              notes:  "issued signed certificate for certificate order #{certificate_order.ref}",
+              action: "SslcomCaApi#apply_for_certificate"
+          )
+        end
+        api_log_entry
       end
-      api_log_entry
     ensure
       if cc.preferred_pending_issuance?
         cc.preferred_pending_issuance=false

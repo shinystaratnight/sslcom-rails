@@ -6,16 +6,49 @@ module Concerns
       extend ActiveSupport::Concern
 
       def dcv_verify(protocol = nil)
+        attempts = protocol&.match?(/^acme/i) ? 0 : 2
+        status = while attempts < 3
+                   response = attempt_dcv(protocol)
+                   break response if response
+
+                   attempts += 1
+                   sleep 5 if attempts < 3
+                 end
+        if status == true
+          satify_dcv
+        else
+          fail_dcv
+        end
+      end
+
+      def dcv_verify_async(protocol = nil)
+        dcv_verify(protocol)
+      end
+      handle_asynchronously :dcv_verify_async
+
+      def attempt_dcv(protocol)
         case protocol ||= domain_control_validation&.dcv_method
         when /email/
-          nil
-        when /acme_http/
+          false
+        when /acme_http/i
           AcmeManager::HttpVerifier.new(api_credential.acme_acct_pub_key_thumbprint, acme_token, non_wildcard_name(true)).call
-        when /acme_dns_txt/
+        when /acme_dns_txt/i
           AcmeManager::DnsTxtVerifier.new(api_credential.acme_acct_pub_key_thumbprint, non_wildcard_name(true)).call
         else
-          self.class.dcv_verify(protocol, verification_options)
+          self.class.dcv_verify(protocol, verification_options) if csr.present?
         end
+      end
+
+      def satify_dcv
+        domain_control_validation.satisfy! unless domain_control_validation.satisfied?
+        true
+      end
+
+      def fail_dcv
+        return false if domain_control_validation.blank?
+
+        domain_control_validation.update(workflow_state: 'failed') if domain_control_validation.dcv_method.match? /^acme/i
+        false
       end
 
       def verification_options(prepend = '')
@@ -33,11 +66,14 @@ module Concerns
 
       included do
         def self.dcv_verify(protocol, options)
-          @options = options
-          Timeout.timeout(Surl::TIMEOUT_DURATION) do
-            verify(protocol)
-          rescue StandardError => _e
-            return false
+          begin
+            wait_period = protocol&.match?(/^acme/i) ? 5 : 0
+            @options = options
+            Timeout.timeout(Surl::TIMEOUT_DURATION + (wait_period * 3)) do
+              verify(protocol)
+            end
+          rescue Exception => _e
+            false
           end
         end
 

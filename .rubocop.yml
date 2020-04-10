@@ -2,6 +2,9 @@
 
 require:
   - rubocop/cop/internal_affairs
+  - rubocop-rspec
+  - rubocop-performance
+  - rubocop-rails
 
 AllCops:
   Exclude:
@@ -11,13 +14,16 @@ AllCops:
     - 'bin/*'
     - 'config/**/*.yml'
     - 'db/**/*'
-  TargetRubyVersion: 2.5
+  TargetRubyVersion: 2.6
 
+InternalAffairs/UselessMessageAssertion:
+  Enabled: false
 Bundler/OrderedGems:
   Enabled: false
-Style/StringLiterals:
-  Exclude:
-    - test/**/*test.rb
+Bundler/DuplicatedGem:
+  Enabled: true
+Style/NumericPredicate:
+  Enabled: false
 Style/FormatStringToken:
   Enabled: false
 Style/Documentation:
@@ -34,9 +40,19 @@ Style/ClassVars:
   Enabled: false
 Style/EvalWithLocation:
   Enabled: false
+Style/ClassAndModuleChildren:
+  Enabled: false
+Style/MutableConstant:
+  Enabled: false
+Style/FrozenStringLiteralComment:
+  Enabled: false
 Layout/HeredocIndentation:
   Enabled: false
+Layout/SpaceInLambdaLiteral:
+  Enabled: false
 Style/StructInheritance:
+  Enabled: false
+Layout/SpaceInsideBlockBraces:
   Enabled: false
 Style/PerlBackrefs:
   Enabled: false
@@ -47,17 +63,21 @@ Style/DoubleNegation:
 Style/NestedTernaryOperator:
   Exclude:
     - 'app/controllers/application_controller.rb'
-
+Style/HashTransformValues:
+  Enabled: true
+Style/HashTransformKeys:
+  Enabled: true
+Style/HashEachMethods:
+  Enabled: true
+Style/NilComparison:
+  Enabled: false
 Security/Eval:
   Exclude:
     - app/models/notification_group.rb
     - app/models/ssl_account.rb
 
-Layout/EndOfLine:
-  EnforcedStyle: lf
 Layout/LineLength:
   Enabled: false
-
 Layout/ClassStructure:
   Enabled: true
   Categories:
@@ -73,16 +93,23 @@ Layout/ClassStructure:
       - instance_methods
       - protected_methods
       - private_methods
-
+Layout/EndOfLine:
+  Enabled: false
 Layout/SpaceBeforeBlockBraces:
   Enabled: false
 Lint/LiteralAsCondition:
   Enabled: false
+Lint/AmbiguousRegexpLiteral:
+  Enabled: false
 Lint/AmbiguousBlockAssociation:
-  Enabled: true
+  Enabled: false
 Lint/AssignmentInCondition:
   Enabled: false
 Lint/InterpolationCheck:
+  Enabled: true
+Lint/StructNewOverride:
+  Enabled: true
+Lint/RaiseException:
   Enabled: true
 Lint/UselessAccessModifier:
   MethodCreatingMethods:
@@ -117,4 +144,20 @@ Naming/FileName:
 Naming/PredicateName:
   Enabled: false
 Naming/AccessorMethodName:
+  Enabled: false
+RSpec/AnyInstance:
+  Enabled: false
+RSpec/BeforeAfterAll:
+  Enabled: false
+RSpec/ExampleLength:
+  Enabled: false
+RSpec/NamedSubject:
+  Exclude:
+    - spec/decorators/funded_account_decorator_spec.rb
+Rails/HasManyOrHasOneDependent:
+  Enabled: false
+Style/NonNilCheck:
+  Exclude:
+    - app/models/**/*.rb
+Style/PercentLiteralDelimiters:
   Enabled: false

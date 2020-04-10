@@ -23,7 +23,7 @@
             = render partial: 'shared/paginate', locals: { collection: @users }
     %caption
       = title
-      [learn about #{link_to "inviting users", "https://#{Settings.portal_domain}/how-to/inviting-users-to-your-team/", target: "_blank"}]
+      [learn about #{link_to "inviting users", "https://#{portal_domain}/how-to/inviting-users-to-your-team/", target: "_blank"}]
       = render partial: 'shared/paginate', locals: { collection: @users }
     - unless current_user.is_system_admins?
       %tr
@@ -50,7 +50,7 @@
             -us, us_class=user_status(u)
             %tr{class: "#{user_view ? 'enable' : 'disable'}", alt: "#{u.id}"}
               %td.dropdown= user_view ? image_tag('expand.png') : ''
-              %td.expandable= u.avatar.file?  ? image_tag(u.authenticated_avatar_url({style: :thumb}), alt: u.login, class: 'xs-avatar') : fa_icon('user-circle', size: '4x')
+              %td.expandable= u.decorate.thumbnail
               %td.name.expandable=u.login
               %td.expandable=u.email
               %td.expandable.constrained=type.html_safe
@@ -74,7 +74,7 @@
             -as, as_class=ssl_account_status(u, current_user.ssl_account)
             %tr{class: "#{user_view ? 'enable' : 'disable'}", alt: "#{u.id}"}
               %td.dropdown= user_view ? image_tag('expand.png') : ''
-              %td.expandable= u.avatar.url(:thumb).blank? ? fa_icon('user-circle', size: '4x') : image_tag(u.avatar.url(:thumb), alt: u.login, class: 'xs-avatar')
+              %td.expandable= u.decorate.thumbnail
               %td.name.expandable=u.login
               %td.expandable=u.email
               %td.expandable="#{u.role_symbols(current_user.ssl_account).join('/')}"

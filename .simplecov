@@ -1,9 +1,6 @@
-SimpleCov.minimum_coverage 10
-SimpleCov.refuse_coverage_drop
-
 SimpleCov.start 'rails' do
   filters.clear
-  add_filter %r{^/test/}
+  add_filter %r{^/spec/}
   add_filter %r{^/.*declarative_authorization.*/}
   add_filter %r{^/.*lib/gems/.*/}
   add_filter %r{^/usr/}
@@ -17,10 +14,7 @@ SimpleCov.start 'rails' do
   add_filter %r{^/lib/dynamic_form}
   add_filter %r{^/lib/preferences}
   add_filter %r{^/app/paths/}
-  add_group 'Models', 'app/models'
-  add_group 'Controllers', 'app/controllers'
-  add_group 'Services', 'app/services'
-  add_group 'Helpers', 'app/helpers'
-  add_group 'Serializers', 'app/serializers'
-  add_group 'Constraints', 'app/constraints'
+  Dir['app/*'].each do |dir|
+    add_group File.basename(dir).humanize, dir
+  end
 end

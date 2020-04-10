@@ -4,9 +4,10 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
   prepend_view_path 'app/views/api/v1/api_certificate_requests'
   include ActionController::Helpers
   helper SiteSealsHelper
-  before_filter :set_database, if: 'request.host=~/^sandbox/ || request.host=~/^sws-test/ || request.host=~/ssl.local$/'
-  before_filter :set_test, :record_parameters, except: %i[scan analyze download_v1_4]
-  after_filter :notify_saved_result, except: %i[create_v1_4 download_v1_4]
+  before_action :set_database, if: -> { request.host.match?(/^sandbox/) || request.host.match?(/^sws-test/) || request.host.match?(/ssl.local$/) }
+  before_action :set_test, :record_parameters, except: %i[scan analyze download_v1_4]
+  after_action :notify_saved_result, except: %i[create_v1_4 download_v1_4]
+  before_action :set_certificate_order, only: [:update_v1_4]
 
   # parameters listed here made available as attributes in @result
   wrap_parameters ApiCertificateRequest, include: [*(
@@ -20,8 +21,8 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
     ApiCertificateRequest::CERTIFICATE_ENROLLMENT_ACCESSORS
   ).uniq]
 
-  ORDERS_DOMAIN = "https://#{Settings.community_domain}"
-  SANDBOX_DOMAIN = 'https://sandbox.ssl.com'
+  ORDERS_DOMAIN = "https://#{Settings.community_domain}".freeze
+  SANDBOX_DOMAIN = 'https://sandbox.ssl.com'.freeze
   SCAN_COMMAND = ->(parameters, url){ `echo QUIT | cipherscan/cipherscan #{parameters} #{url}` }
   ANALYZE_COMMAND = ->(parameters, url){ `echo QUIT | cipherscan/analyze.py #{parameters} #{url}` }
 
@@ -134,7 +135,6 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
 
     if @result.valid? && @result.save
       co = @result.find_certificate_order
-      # if co.ov_validated?
 
       options={csr: params[:csr]}
       unless co.certificate_content.csr.blank?
@@ -311,28 +311,27 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
   end
 
   def update_v1_4
-    set_template "update_v1_4"
+    set_template 'update_v1_4'
 
     if @result.csr_obj && !@result.csr_obj.valid?
       # we do this sloppy maneuver because the rabl template only reports errors
       @result = @result.csr_obj
     else
-      if @result.save #save the api request
+      if @result.save # save the api request
         if @acr = @result.update_certificate_order
           @csr = @acr.csr
           # successfully charged
           if @acr.is_a?(CertificateOrder) && @acr.errors.empty?
             @acr.unchain_comodo if @acr.signed_certificate_duration_delta > 1
-            if @acr.certificate_content.csr && @result.debug=="true"
+            if @acr.certificate_content.csr && @result.debug == 'true'
               ccr = @acr.certificate_content.csr.ca_certificate_requests.first
-              @result.api_request=ccr.parameters
-              @result.api_response=ccr.response
+              @result.api_request = ccr.parameters
+              @result.api_response = ccr.response
             end
 
-            #Send validation email unless ca_id is nil
+            # Send validation email unless ca_id is nil
             unless @acr.certificate_content.ca_id.nil?
-              cnames = @acr.certificate_content.certificate_names.includes(:domain_control_validations,
-                                                                           :certificate_content)
+              cnames = @acr.certificate_content.certificate_names.includes(:domain_control_validations, :certificate_content)
               email_for_identifier = ''
               identifier = ''
               email_list = []
@@ -347,16 +346,15 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
                 dcv = cn.domain_control_validations.last
                 if dcv && !dcv.identifier_found # TODO DRY and apply with app/controllers/validations_controller.rb:305
                   if dcv.dcv_method == 'email'
-                    if DomainControlValidation.approved_email_address? CertificateName.candidate_email_addresses(
-                        cn.non_wildcard_name), dcv.email_address
+                    if DomainControlValidation.approved_email_address? CertificateName.candidate_email_addresses(cn.non_wildcard_name), dcv.email_address
                       if dcv.email_address != email_for_identifier
-                        if domain_list.length>0
+                        if domain_list.length > 0
                           domain_ary << domain_list
                           email_list << email_for_identifier
                           identifier_list << identifier
                           domain_list = []
                         end
-                        identifier = (SecureRandom.hex(8)+Time.now.to_i.to_s(32))[0..19]
+                        identifier = (SecureRandom.hex(8) + Time.now.to_i.to_s(32))[0..19]
                         email_for_identifier = dcv.email_address
                       end
 
@@ -365,14 +363,14 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
                       dcv.update_attribute(:identifier, identifier)
                     end
                   else
-                    if cn.dcv_verify(dcv.dcv_method)
-                      dcv.satisfy! unless dcv.satisfied?
-                    end
+                    cn.dcv_verify_async(dcv.dcv_method)
                   end
                 end
               end
 
-              unless identifier == ''
+              if identifier.blank?
+                @acr.apply_for_certificate
+              else
                 ssl_slug = @result.api_credential.ssl_account.ssl_slug || @result.api_credential.ssl_account.acct_number
 
                 domain_ary << domain_list
@@ -382,15 +380,13 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
                 email_list.each_with_index do |value, key|
                   OrderNotifier.dcv_email_send(value, identifier_list[key], domain_ary[key], nil, ssl_slug).deliver
                 end
-              else
-                @acr.apply_for_certificate
               end
             end
 
             set_result_parameters(@result, @acr)
-            @result.debug=(@result.parameters_to_hash["debug"]=="true") # && @acr.admin_submitted = true
+            @result.debug = (@result.parameters_to_hash['debug'] == 'true') # && @acr.admin_submitted = true
           else
-            @result = @acr #so that rabl can report errors
+            @result = @acr # so that rabl can report errors
           end
         end
       else
@@ -398,12 +394,12 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
       end
     end
     render_200_status
-  rescue => e
+  rescue StandardError => e
     render_500_error e
   end
 
   def callback_v1_4
-    set_template "callback_v1_4"
+    set_template 'callback_v1_4'
 
     if @result.save
       @acr = @result.find_certificate_order
@@ -606,7 +602,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
 
           @result.cert_details[:api_commands] = {}
           @result.cert_details[:api_commands][:is_server] = @acr.certificate.is_server?
-          @result.cert_details[:api_commands][:comm_name] = Settings.community_name
+          @result.cert_details[:api_commands][:comm_name] = community_name
           @result.cert_details[:api_commands][:is_test] = @acr.is_test
 
           @result.cert_details[:api_commands][:products] = []
@@ -709,7 +705,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
             @result.smart_seal[:registrant_city_state_country] = [r.city, r.state, r.country].join(', ')
           end
 
-          @result.smart_seal[:community_name] = Settings.community_name
+          @result.smart_seal[:community_name] = community_name
           @result.smart_seal[:cc_validated] = @acr.certificate_content.validated?
           @result.smart_seal[:cc_issued] = @acr.certificate_content.issued?
           @result.smart_seal[:sc_dv] = @acr.csr.signed_certificate.is_dv?
@@ -853,7 +849,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
         @result.subject = @acr.subject
         @result.checkout_in_progress = @acr.validation_stage_checkout_in_progress?
         @result.other_party_request = false
-        @result.community_name = Settings.community_name
+        @result.community_name = community_name
         @result.is_dv = @acr.certificate.is_dv?
         @result.is_dv_or_basic = @acr.certificate.is_dv_or_basic?
         @result.is_ev = @acr.certificate.is_ev?
@@ -944,7 +940,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
               error << "#{attr} #{msg}: " }
             count += 1 if vh
             error << "Error: Document for #{file.original_filename} was not
-          created. Please notify system admin at #{Settings.support_email}" unless vh
+          created. Please notify system admin at #{support_email}" unless vh
           end
         end
 
@@ -959,7 +955,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
               OrderNotifier.validation_documents_uploaded(c, @acr, @files).deliver
             end
 
-            OrderNotifier.validation_documents_uploaded(Settings.notify_address, @acr, @files).deliver
+            OrderNotifier.validation_documents_uploaded(notify_address, @acr, @files).deliver
             OrderNotifier.validation_documents_uploaded_comodo("evdocs@comodo.com", @acr, @files).
                 deliver if (@acr.certificate.is_ev? && @acr.ca_name=="comodo")
           end
@@ -1447,16 +1443,16 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
 
   def api_result_domain(certificate_order=nil)
     unless certificate_order.blank?
-      if Rails.env=~/production/i
+      if in_production_mode?
         "https://" + (certificate_order.is_test ? Settings.sandbox_domain : Settings.portal_domain)
       else
         "https://" + (certificate_order.is_test ? Settings.dev_sandbox_domain : Settings.dev_portal_domain) +":3000"
       end
     else
       if is_sandbox?
-        Rails.env=~/production/i ? "https://#{Settings.sandbox_domain}" : "https://#{Settings.dev_sandbox_domain}:3000"
+        in_production_mode?? "https://#{Settings.sandbox_domain}" : "https://#{Settings.dev_sandbox_domain}:3000"
       else
-        Rails.env=~/production/i ? "https://#{Settings.portal_domain}" : "https://#{Settings.dev_portal_domain}:3000"
+        in_production_mode?? "https://#{Settings.portal_domain}" : "https://#{Settings.dev_portal_domain}:3000"
       end
     end
   end
@@ -1582,20 +1578,27 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
     file_name = path[(path.rindex('/') + 1)..path.length]
     param_style = file_name[0..(file_name.rindex('.') - 1)]
 
-    if vh.document_file_name.force_encoding('UTF-8').include?(file_name)
-      style = vh.document.default_style
-    else
-      style = param_style.to_sym
-    end
+    style = if vh.document_file_name.force_encoding('UTF-8').include?(file_name)
+              vh.document.default_style
+            else
+              param_style.to_sym
+            end
 
-    return vh.authenticated_s3_get_url :style=> style
+    vh.authenticated_s3_get_url style: style
   end
 
   def set_template(filename)
-    @template = File.join("api","v1","api_certificate_requests", filename)
+    @template = File.join('api', 'v1', 'api_certificate_requests', filename)
   end
 
   def ssl_ca_label
     I18n.t('labels.ssl_ca')
+  end
+
+  def set_certificate_order
+    @certificate_order = CertificateOrder.find_by(ref: params[:ref])
+    json_render_not_found && return if @certificate_order.nil?
+
+    @certificate_order
   end
 end

@@ -1,4 +1,4 @@
-class Reminder < ActionMailer::Base
+class Reminder < ApplicationMailer
   default :from => "reminder@ssl.com", :bcc => ['info@ssl.com'], return_path: "reminder@ssl.com"
   default_url_options[:host] = I18n.t('labels.ssl_ca')
 
@@ -20,17 +20,6 @@ class Reminder < ActionMailer::Base
     preparing_recipients(d)
     @e_certs = d[1].uniq
     subject = "SSL.com reminder - ssl certificate expiration digest"
-    mail(:to => @to, :subject => subject)
-  end
-
-  def domain_digest_notice(d, result, notification_group)
-    preparing_recipients(d)
-    subject = "SSL.com notification group #{notification_group.friendly_name ||
-        notification_group.friendly_name.ref} scan for #{result.domain}"
-    @reminder_type = result.reminder_type
-    @result=result
-    @notification_group=notification_group
-    @ssl_slug=notification_group.ssl_account.to_slug if notification_group.ssl_account
     mail(:to => @to, :subject => subject)
   end
 

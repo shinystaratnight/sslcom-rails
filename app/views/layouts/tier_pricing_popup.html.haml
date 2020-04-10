@@ -3,12 +3,12 @@
   %head
     %favicon_link_tag
     %meta{"http-equiv"=>"Content-Type", :content=>"text/html;charset=utf-8"}
-    %title= h(yield(:title) || "SSL Certificates, EV Certificates, Wildcard Certificates, and Internet Security") + " | #{Settings.community_name}"
+    %title= h(yield(:title) || "SSL Certificates, EV Certificates, Wildcard Certificates, and Internet Security") + " | #{community_name}"
     -if @meta
       -@meta.each do |key|
         %meta{:name=>key[0], :content=>key[1]}
     %meta{ :name => "keywords", :content => "SSL Certificates, EV Certificates, Wildcard Certificates" }
-    %meta{ :name => "description", :content => "#{Settings.community_name} simplifies SSL certificate procurement and implementation for companies of any size. Integrate security into your website and applications with SSL certificates from #{Settings.community_name}." }
+    %meta{ :name => "description", :content => "#{community_name} simplifies SSL certificate procurement and implementation for companies of any size. Integrate security into your website and applications with SSL certificates from #{community_name}." }
     %meta{ :content => "text/html; charset=UTF-8", "http-equiv" => "Content-Type" }
     %meta{ :content => "IE=EmulateIE7", "http-equiv" => "X-UA-Compatible" }
     =render :partial => "shared/scripts_and_styles"

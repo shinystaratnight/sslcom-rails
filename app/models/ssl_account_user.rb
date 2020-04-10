@@ -1,14 +1,16 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: ssl_account_users
 #
 #  id             :integer          not null, primary key
 #  approval_token :string(255)
-#  approved       :boolean          default(FALSE)
+#  approved       :boolean          default("0")
 #  declined_at    :datetime
 #  invited_at     :datetime
 #  token_expires  :datetime
-#  user_enabled   :boolean          default(TRUE)
+#  user_enabled   :boolean          default("1")
 #  created_at     :datetime
 #  updated_at     :datetime
 #  ssl_account_id :integer          not null
@@ -24,10 +26,9 @@
 
 class SslAccountUser < ApplicationRecord
   belongs_to  :user
-  belongs_to  :unscoped_user, foreign_key: :ssl_account_id, class_name: "UnscopedUser"
+  belongs_to  :unscoped_user, foreign_key: :ssl_account_id, class_name: 'UnscopedUser', inverse_of: :ssl_account_users
   belongs_to  :ssl_account
 
-  scope :approved, ->{where{(approved == true) & (user_enabled == true)}}
-  scope :is_approved_ssl_account, ->(id){where{(approved == true) &
-      (user_enabled == true) & (ssl_account_id == id)}}
+  scope :approved, ->{ where(approved: true, user_enabled: true) }
+  scope :is_approved_ssl_account, ->(id){ approved.where(ssl_account_id: id) }
 end

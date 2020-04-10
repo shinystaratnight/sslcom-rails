@@ -7,7 +7,6 @@
     =text_field_tag :search, @search
     =hidden_field_tag :per_page, @per_page
     =button_tag 'Search', :id=>'btn_domain_search'
-    =button_tag 'Filters', :type=>'button', :id=>'btn_domain_filter'
 
 =render :partial=>'search_filters'
 
@@ -23,7 +22,7 @@
           %td(colspan='4')=will_paginate @domains
       %caption
         =title
-        [learn about #{link_to "prevalidating domains", "https://#{Settings.portal_domain}/how-to/domain-name-pre-validation/", target: "_blank"}]
+        [learn about #{link_to "prevalidating domains", "https://#{portal_domain}/how-to/domain-name-pre-validation/", target: "_blank"}]
         |
         =link_to 'CSRs Manager', managed_csrs_path(@ssl_slug)
         %ul(style="float: right; display: flex; list-style: none;")
@@ -44,7 +43,7 @@
         %th(scope="col") Revalidation
       -if @domains && @domains.length > 0
         -@domains.each do |d|
-          -satisfied = d.domain_control_validations.where{workflow_state=="satisfied"}.last
+          -satisfied = d.domain_control_validations.with_satisfied_state.last
           -dcv = d.domain_control_validations.last
           -validation_status = satisfied ? 'validated' : 'pending validation'
           -remaining = dcv.try(:responded_at) ? DomainControlValidation::MAX_DURATION_DAYS[:email]-(Date.today-dcv.responded_at.to_date).to_i : nil

@@ -29,13 +29,13 @@
 #  last_name             :string(255)
 #  notes                 :string(255)
 #  phone                 :string(255)
-#  phone_number_approved :boolean          default(FALSE)
+#  phone_number_approved :boolean          default("0")
 #  po_box                :string(255)
 #  postal_code           :string(255)
 #  registrant_type       :integer
 #  registration_service  :string(255)
-#  roles                 :string(255)      default([])
-#  saved_default         :boolean          default(FALSE)
+#  roles                 :string(255)      default("--- []")
+#  saved_default         :boolean          default("0")
 #  special_fields        :text(65535)
 #  state                 :string(255)
 #  status                :integer
@@ -61,46 +61,39 @@
 
 class CertificateContact < Contact
   include Comparable
-  
+
   before_validation :set_roles
   before_destroy :replace_with_default
-  after_save :set_one_default, if: 'contactable.is_a?SslAccount'
-  after_update :update_child_contacts, if: 'contactable.is_a?SslAccount'
-    
+  after_save :set_one_default, if: -> { contactable.is_a? SslAccount }
+  after_update :update_child_contacts, if: -> { contactable.is_a? SslAccount }
+
   validates :first_name, :last_name, :email, :phone, presence: true
   validates :email, email: true
-  
-  attr_accessor :update_parent
-  
   easy_roles :roles
-  
-  
-  def <=>(contact)
-    [first_name, last_name, email] <=> [contact.first_name, contact.last_name,
-      contact.email]
+  attr_accessor :update_parent
+
+  def <=>(other)
+    [first_name, last_name, email] <=> [other.first_name, other.last_name, other.email]
   end
 
   def to_digest_key
-    [first_name.capitalize, last_name.capitalize, email.downcase].join(",")
+    [first_name.capitalize, last_name.capitalize, email.downcase].join(',')
   end
-  
+
   private
-  
+
   def update_child_contacts
     Delayed::Job.enqueue SyncChildContactsJob.new(self.id)
   end
-  
+
   def set_one_default
     if saved_default
-      contactable.saved_contacts.where(saved_default: true).where.not(id: id)
-        .update_all(saved_default: false)
+      contactable.saved_contacts.where(saved_default: true).where.not(id: id).update_all(saved_default: false)
     else
-      unless contactable.saved_contacts.where(saved_default: true).any?
-        self.update(saved_default: true)
-      end
+      update(saved_default: true) unless contactable.saved_contacts.where(saved_default: true).any?
     end
   end
-  
+
   # If saved/available contact is deleted, then update all child contacts to default contact
   def replace_with_default
     unless contactable.is_a?(CertificateContent)

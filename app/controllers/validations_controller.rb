@@ -6,12 +6,12 @@ require 'tempfile'
 include Open3
 
 class ValidationsController < ApplicationController
-  before_filter :require_user, only: [:index, :new, :edit, :show, :upload, :document_upload, :get_asynch_domains,
+  before_action :require_user, only: [:index, :new, :edit, :show, :upload, :document_upload, :get_asynch_domains,
                                       :cancel_validation_process]
-  before_filter :find_validation, only: [:update, :new]
-  before_filter :find_certificate_order, only: [:new, :edit, :show, :upload, :document_upload, :request_approve_phone_number]
-  before_filter :set_supported_languages, only: [:verification]
-  before_filter :set_row_page, only: [:index, :search]
+  before_action :find_validation, only: [:update, :new]
+  before_action :find_certificate_order, only: [:new, :edit, :show, :upload, :document_upload, :request_approve_phone_number]
+  before_action :set_supported_languages, only: [:verification]
+  before_action :set_row_page, only: [:index, :search]
 
   filter_access_to :all
   filter_access_to [:upload, :document_upload, :verification, :email_verification_check, :automated_call,
@@ -501,7 +501,7 @@ class ValidationsController < ApplicationController
           @certificate_order.confirmation_recipients.map{|r|r.split(" ")}.flatten.uniq.each do |c|
             OrderNotifier.validation_documents_uploaded(c, @certificate_order, @files).deliver
           end
-          OrderNotifier.validation_documents_uploaded(Settings.notify_address, @certificate_order, @files).deliver
+          OrderNotifier.validation_documents_uploaded(notify_address, @certificate_order, @files).deliver
           OrderNotifier.validation_documents_uploaded_comodo("evdocs@comodo.com", @certificate_order, @files).
               deliver if (@certificate_order.certificate.is_ev? && @certificate_order.ca_name=="comodo")
         end
@@ -975,7 +975,7 @@ class ValidationsController < ApplicationController
           @error << "#{attr} #{msg}: " }
         i+=1 if vh
         @error << "Error: Document for #{file.original_filename} was not
-          created. Please notify system admin at #{Settings.support_email}" unless vh
+          created. Please notify system admin at #{support_email}" unless vh
       end
     end
     @i += i

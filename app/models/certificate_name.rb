@@ -6,7 +6,7 @@
 #
 #  id                     :integer          not null, primary key
 #  acme_token             :string(255)
-#  caa_passed             :boolean          default(FALSE)
+#  caa_passed             :boolean          default("0")
 #  email                  :string(255)
 #  is_common_name         :boolean
 #  name                   :string(255)
@@ -18,7 +18,6 @@
 #
 # Indexes
 #
-#  index_certificate_names_on_acme_account_id         (acme_account_id)
 #  index_certificate_names_on_acme_token              (acme_token)
 #  index_certificate_names_on_certificate_content_id  (certificate_content_id)
 #  index_certificate_names_on_name                    (name)
@@ -36,7 +35,10 @@ class CertificateName < ApplicationRecord
 
   after_initialize :generate_acme_token, if: -> { acme_token.nil? }
 
-  delegate :all_domains_validated?, to: :certificate_content, prefix: false, allow_nil: true
+  def self.search_domains(term)
+    matches = ransack(name_cont: term, email_cont: term, m: 'or')
+    matches.result
+  end
 
   def is_ip_address?
     name&.index(/\A(?:[0-9]{1,3}\.){3}[0-9]{1,3}\z/)&.zero?

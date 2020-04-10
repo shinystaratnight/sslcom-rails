@@ -9,7 +9,7 @@ plugins:
       mass_assign_call:
         enabled: false
   bundler-audit:
-    enabled: false # we are using dependabot
+    enabled: false
   csslint:
     enabled: true
   coffeelint:
@@ -28,6 +28,7 @@ plugins:
     enabled: false # Duplicates Rubocop
   rubocop:
     enabled: true
+    channel: rubocop-0-79
     checks:
       Rubocop/Layout/AlignHash:
         enabled: false
@@ -36,6 +37,16 @@ plugins:
       Rubocop/Metrics/BlockNesting:
         enabled: false
       Rubocop/Style/RedundantFreeze:
+        enabled: false
+      Rubocop/Style/BracesAroundHashParameters:
+        enabled: false
+      Rubocop/Layout/SpaceInsideHashLiteralBraces:
+        enabled: false
+      Rubocop/Naming/HeredocDelimiterNaming:
+        enabled: false
+      Rubocop/Layout/ExtraSpacing:
+        enabled: false
+      Rubocop/Layout/IndentHeredoc:
         enabled: false
   sass-lint:
     enabled: true
@@ -46,10 +57,8 @@ plugins:
         enabled: false
 
 exclude_patterns:
-  - "config/"
   - "db/"
   - "**/node_modules/"
-  - "test/"
   - "**/vendor/"
   - "*.md"
   - ".*"
@@ -60,3 +69,4 @@ exclude_patterns:
   - 'db/**/*'
   - 'script/'
   - 'features/'
+  - 'Vagrantfile'

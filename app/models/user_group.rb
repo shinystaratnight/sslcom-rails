@@ -6,7 +6,7 @@
 #  description    :text(65535)
 #  name           :string(255)
 #  notes          :text(65535)
-#  roles          :string(255)      default([])
+#  roles          :string(255)      default("--- []")
 #  ssl_account_id :integer
 #
 # Indexes

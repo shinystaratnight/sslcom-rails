@@ -110,27 +110,16 @@ class UsersController < ApplicationController
   end
 
   def create
-    reseller = request.subdomain == Reseller::SUBDOMAIN
+    @user.as_reseller = request.subdomain == Reseller::SUBDOMAIN
     User.transaction do
       if @user.signup!(params)
-        @user.create_ssl_account
-        if reseller
-          @user.ssl_account.add_role! 'new_reseller'
-          @user.ssl_account.set_reseller_default_prefs
-        end
-        @user.set_roles_for_account(
-          @user.ssl_account,
-          [Role.find_by(name: (reseller ? Role::RESELLER : Role::OWNER)).id]
-        )
-
         if Settings.require_signup_password
           # Check Code Signing Certificate Order for assign as assignee.
-          CertificateOrder.unscoped.search_validated_not_assigned(params[:user][:email]).each do |cert_order|
+          CertificateOrder.unscoped.search_validated_not_assigned(params[:user][:email])&.each do |cert_order|
             cert_order.update_attribute(:assignee, @user)
             LockedRecipient.create_for_co(cert_order)
           end
 
-          # TODO: New Logic for auto activation by signup with password.
           @user.deliver_auto_activation_confirmation!
           notice = 'Your account has been created.'
           flash[:notice] = notice
@@ -145,12 +134,9 @@ class UsersController < ApplicationController
             user = @user_session.user
             set_cookie(:acct, user.ssl_account.acct_number)
             flash[:notice] = 'Successfully logged in.'
-            redirect_to(account_path(user.ssl_account(:default_team) ?
-                                                                   user.ssl_account(:default_team).to_slug :
-                                                                   {})) && return
+            redirect_to(account_path(user.ssl_account(:default_team) ? user.ssl_account(:default_team).to_slug : {})) && return
           end
-        else
-          # TODO: Original Logic for activation by email.
+        else # Original Logic for activation by email.
           @user.deliver_activation_instructions!
           notice = "Your account has been created. Please check your
             e-mail at #{@user.email} for your account activation instructions!"
@@ -169,8 +155,7 @@ class UsersController < ApplicationController
   def show
     if @user.ssl_account.has_credits? && @user.can_perform_accounting?
       flash.now[:warning] = 'You have unused ssl certificate credits. %s'
-      flash.now[:warning_item] = 'Click here to view the list of credits.',
-                                 credits_certificate_orders_path
+      flash.now[:warning_item] = 'Click here to view the list of credits.', credits_certificate_orders_path
     end
     render_invite_messages if @user.pending_account_invites?
   end
@@ -447,13 +432,10 @@ class UsersController < ApplicationController
   end
 
   def teams
-    # p = {page: params[:page]}
     team = params[:team]
-    # @teams = @user.get_all_approved_accounts
     @teams = @user.get_all_approved_teams
     if team.present?
       team = team.strip.downcase
-      # @teams = @teams.where("acct_number = ? OR ssl_slug = ? OR company_name = ?", team, team, team)
       @teams = @teams.search_team(team)
     end
     @teams = @teams.paginate(@p)

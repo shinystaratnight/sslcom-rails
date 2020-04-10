@@ -1,19 +1,27 @@
-# frozen_string_literal: true
+# frozen_string_literal: false
 
-SslCom::Application.configure do
-  MIGRATING_FROM_LEGACY = false
-  # Settings specified here will take precedence over those in config/environment.rb
+Rails.application.configure do
+  # Settings specified here will take precedence over those in config/application.rb.
 
   # The test environment is used exclusively to run your application's
-  # test suite.  You never need to work with it otherwise.  Remember that
+  # test suite. You never need to work with it otherwise. Remember that
   # your test database is "scratch space" for the test suite and is wiped
-  # and recreated between test runs.  Don't rely on the data there!
+  # and recreated between test runs. Don't rely on the data there!
   config.cache_classes = false # ENV['CI'].present?
 
   # Log error messages when you accidentally call methods on nil.
   config.whiny_nils = true
 
-  # Show full error reports and disable caching
+  # Do not eager load code on boot. This avoids loading your whole application
+  # just for the purpose of running a single test. If you are using a tool that
+  # preloads Rails for running tests, you may have to set it to true.
+  config.eager_load = false
+
+  # Configure static file server for tests with Cache-Control for performance.
+  config.serve_static_files   = true
+  config.static_cache_control = 'public, max-age=3600'
+
+  # Show full error reports and disable caching.
   config.consider_all_requests_local       = true
   config.action_controller.perform_caching = false
 
@@ -28,6 +36,7 @@ SslCom::Application.configure do
   # ActionMailer::Base.deliveries array.
   config.action_mailer.delivery_method = :test
   config.action_mailer.perform_deliveries = true
+  config.active_job.queue_adapter = :test
   config.action_mailer.default_url_options = { host: 'localhost:3000' }
 
   config.after_initialize do
@@ -35,28 +44,25 @@ SslCom::Application.configure do
   end
 
   config.force_ssl = false
-
   # Use SQL instead of Active Record's schema dumper when creating the test database.
   # This is necessary if your schema can't be completely dumped by the schema dumper,
   # like if you have constraints or database-specific column types
   # config.active_record.schema_format = :sql
 
-  # Sort the order test cases are executed.
-  config.active_support.test_order = :sorted
+  # Randomize the order test cases are executed.
+  config.active_support.test_order = :random
 
   # Print deprecation notices to the stderr
   config.active_support.deprecation = :stderr
 
   ActiveMerchant::Billing::Base.mode = :test
 
-  config.eager_load = false
-
-  config.serve_static_assets = true
-  config.static_cache_control = 'public, max-age=3600'
-
   GATEWAY_TEST_CODE = 1.0
 
-  config.log_level = :debug
+  config.log_level = :info
 
-  Paperclip::Attachment.default_options[:path] = "#{Rails.root}/test/test_files/:class/:id_partition/:style.:extension"
+  Paperclip::Attachment.default_options[:path] = "#{Rails.root}/spec/test_files/:class/:id_partition/:style.:extension"
+
+  # Raises error for missing translations
+  config.action_view.raise_on_missing_translations = true
 end

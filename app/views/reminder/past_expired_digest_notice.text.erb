@@ -25,15 +25,15 @@ This is a reminder that the SSL.com certificate(s) for the domains named below h
           ((Time.now - cert.expiration_date)/seconds_in_year).to_i + add_on
         end
     if Time.now < (cert.expiration_date+num.years) -%>
-    <%=(i+=1).to_s+") "+cert.common_name%> expires in <%=time_ago_in_words(cert.expiration_date+num.years)%> on <%=(cert.expiration_date+num.years).strftime("%b %d, %Y")%> (renew here: https://<%=Settings.portal_domain%>/certificate_orders/<%=cert.certificate_order.ref%>/renew - ref # <%=cert.certificate_order.ref%>)
+    <%=(i+=1).to_s+") "+cert.common_name%> expires in <%=time_ago_in_words(cert.expiration_date+num.years)%> on <%=(cert.expiration_date+num.years).strftime("%b %d, %Y")%> (renew here: https://<%=portal_domain%>/certificate_orders/<%=cert.certificate_order.ref%>/renew - ref # <%=cert.certificate_order.ref%>)
   <%else-%>
-    <%=(i+=1).to_s+") "+cert.common_name%> expired <%=time_ago_in_words(cert.expiration_date+num.years) %> ago on <%=(cert.expiration_date+num.years).strftime("%b %d, %Y")%> (renew here: https://<%=Settings.portal_domain%>/certificate_orders/<%=cert.certificate_order.ref%>/renew - ref # <%=cert.certificate_order.ref%>)
+    <%=(i+=1).to_s+") "+cert.common_name%> expired <%=time_ago_in_words(cert.expiration_date+num.years) %> ago on <%=(cert.expiration_date+num.years).strftime("%b %d, %Y")%> (renew here: https://<%=portal_domain%>/certificate_orders/<%=cert.certificate_order.ref%>/renew - ref # <%=cert.certificate_order.ref%>)
   <%end -%>
 <%end -%>
 
 When renewing, any remaining time from your expiring SSL/TLS certificate, up to 90 days, will be added to your renewal certificate so that you do not lose any SSL/TLS coverage.
 
-If you need to reset your username or password, please visit https://<%=Settings.portal_domain%>/password_resets/new
+If you need to reset your username or password, please visit https://<%=portal_domain%>/password_resets/new
 
 Thank you for choosing SSL.com - we look forward to continuing to provide you with the most cost-effective certificates in the market.
 

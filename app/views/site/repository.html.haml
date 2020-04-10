@@ -1,16 +1,16 @@
 -c={}
--c[:description]="Document listings for #{Settings.community_name} certification practices statement and subscriber agreements"
+-c[:description]="Document listings for #{community_name} certification practices statement and subscriber agreements"
 -c[:keywords]="ssl ssl.com cps certification practices statement subscriber agreement"
 -c[:title] = "Practices Statement and Document Repository"
 -c[:header] = "public"
 -c.each do |k, v|
   -content_for k, c[k]
 %h1=c[:title]
-%h2 Published documents outlining #{Settings.community_name} policies and procedures
+%h2 Published documents outlining #{community_name} policies and procedures
 .default_container
   %h3 Certification Practices Statement
   %p
     =link_to image_tag("pdf_icon.gif", {align: "top"})+"click to download statement", Certificate::SSLCOM_CP_CPS
-  %h3 #{Settings.community_name} Subscriber Agreement
+  %h3 #{community_name} Subscriber Agreement
   %p
     =link_to image_tag("pdf_icon.gif", {align: "top"})+"click to download agreement", Certificate::SSLCOM_SUBSCRIBER_AGREEMENT

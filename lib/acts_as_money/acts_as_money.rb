@@ -1,9 +1,9 @@
 require 'money'
 
-module CollectiveIdea #:nodoc:
+module CollectiveIdea
   module Acts
-    module Money #:nodoc:
-      def self.included(base) #:nodoc:
+    module Money
+      def self.included(base)
         base.extend ClassMethods
       end
 
@@ -14,44 +14,10 @@ module CollectiveIdea #:nodoc:
           mapping << [options[:currency].to_s, 'currency'] if options[:currency]
 
           composed_of name, :class_name => 'Money', :allow_nil => true, :mapping => mapping do |m|
-            m.to_money
+            ::Money.new(m)
           end
         end
       end
     end
   end
-end
-
-class Money
-  cattr_accessor :zero
-
-  def -@
-    Money.new(-@cents, @currency)
-  end
-
-  def blank?
-    zero?
-  end
-
-  def format_with_zero(*rules)
-    rules = rules.flatten
-    options = {}
-    options.update rules.pop if rules.last.is_a? Hash
-
-    if cents == 0
-      if options[:zero]
-        options[:zero]
-      elsif self.class.zero
-        self.class.zero
-      else
-        format = "$0"
-        format << ".00" unless rules.include?(:no_cents)
-        format
-      end
-    else
-      format_with_free(options)
-    end
-  end
-  alias_method :format_with_free, :format
-  alias_method :format, :format_with_zero
 end

@@ -24,7 +24,7 @@
           %td(colspan='7')= render partial: 'shared/paginate', locals: { collection: @teams }
     %caption
       =title
-      [learn about #{link_to "teams", "https://#{Settings.portal_domain}/article/introducing-teams-ssl-com-multiuser-accounts/", target: "_blank"}]
+      [learn about #{link_to "teams", "https://#{portal_domain}/article/introducing-teams-ssl-com-multiuser-accounts/", target: "_blank"}]
       = render partial: 'shared/paginate', locals: { collection: @teams }
     -if permitted_to?(:create_team, current_user) and !system_admins
       %br

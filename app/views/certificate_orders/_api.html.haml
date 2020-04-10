@@ -2,10 +2,10 @@
 .full_width_box
   %ul
     %li
-      %strong Calls To #{Settings.community_name} API
+      %strong Calls To #{community_name} API
     -unless co.is_test
       %li{style: 'color:red'}
-        WARNING! This is a live order. If you are unfamiliar with the #{Settings.community_name} API, it is advised that you first create
+        WARNING! This is a live order. If you are unfamiliar with the #{community_name} API, it is advised that you first create
         and work with test orders prior to using the api on this order. Find out more about
         =link_to "creating test orders here.", is_sandbox? ? developers_certificate_orders_url : "https://sandbox.ssl.com"
       %li &nbsp;
@@ -13,14 +13,14 @@
       The api calls listed below are preformatted for cURL, but they can easily be translated into any other
       format. Each call is tailored to this particular order. Most, if not all, of the calls will at least require the
       account_key and secret_key parameters for authentication. Please review each call for specific parameters
-      required. For the api parameters documentation please see the #{link_to "'#{Settings.community_name} API Documentation'", "http://docs.sslcomapi.apiary.io", target: "_blank"}.
+      required. For the api parameters documentation please see the #{link_to "'#{community_name} API Documentation'", "http://docs.sslcomapi.apiary.io", target: "_blank"}.
     %li &nbsp;
     %li
       Certain calls are available depending on the current status of this certificate order. For instance, if the
       certificate has been issued, then the 'Reprocess/Reissue' api command will be displayed. Another example is if
       the csr (certificate signing request) has not been submitted, then the 'Update DCV' or 'New Order w/ CSR' api
       commands will not be displayed. If you want to create a test order,
-      be sure to visit #{link_to "the #{Settings.community_name} Developer Tools", is_sandbox? ? developers_certificate_orders_url : "https://sandbox.ssl.com"}.
+      be sure to visit #{link_to "the #{community_name} Developer Tools", is_sandbox? ? developers_certificate_orders_url : "https://sandbox.ssl.com"}.
     %li &nbsp;
     -if current_user.try("is_admin?")
       %li
@@ -79,7 +79,7 @@
           %dl
             %dt
               -serials=%w(evucc256sslcom ucc256sslcom ov256sslcom ev256sslcom dv256sslcom wc256sslcom basic256sslcom)
-              -serials << %w(premium256sslcom) if DEPLOYMENT_CLIENT =~ Regexp.new(Settings.portal_domain)
+              -serials << %w(premium256sslcom) if DEPLOYMENT_CLIENT =~ Regexp.new(portal_domain)
               -serials.each do |type|
                 -c=Certificate.find_by_serial(type)
                 %dd "#{c.api_product_code}" - #{c.title}
@@ -143,7 +143,7 @@
             %dd "337" - #{Certificate.find_by_serial("ev256sslcom").title}
             %dd
             %dd "279" - #{Certificate.find_by_serial("ucc256sslcom").title}
-            -if DEPLOYMENT_CLIENT=~ Regexp.new(Settings.portal_domain)
+            -if DEPLOYMENT_CLIENT=~ Regexp.new(portal_domain)
               %dd "279" - #{Certificate.find_by_serial("premium256sslcom").title}
             %dd "410" - #{Certificate.find_by_serial("evucc256sslcom").title}
             %dd "361" - OV UCC
@@ -176,7 +176,7 @@
           REQUIRE_SHA2
         %li
           INFER_FROM_CSR
--if (current_user && current_user.is_system_admins?) and co.certificate_content.ca and !co.certificate_content.new?
+-if (current_user && current_user.is_super_user?) and co.certificate_content.ca and !co.certificate_content.new?
   .full_width_box
     %ul
       -if co.csr or !co.certificate.is_server?

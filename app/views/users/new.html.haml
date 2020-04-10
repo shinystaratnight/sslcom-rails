@@ -10,19 +10,19 @@
     -unless request.subdomain==Reseller::SUBDOMAIN
       %p.interested_in_reselling
         %strong NEW!
-        Earn commission revenue by becoming #{Settings.community_name} Referral Link Partner. It's easy and free. After creating your #{Settings.community_name} account
-        be sure to go to click 'Dashboard' and then 'Become an #{Settings.community_name} Referral Link Partner'.
+        Earn commission revenue by becoming #{community_name} Referral Link Partner. It's easy and free. After creating your #{community_name} account
+        be sure to go to click 'Dashboard' and then 'Become an #{community_name} Referral Link Partner'.
         %strong=link_to "Click here to find out more.", details_affiliates_url
       %p.interested_in_reselling
         -#
-          Interested in becoming an #{Settings.community_name} Reseller Partner and receiving volume
+          Interested in becoming an #{community_name} Reseller Partner and receiving volume
           discounts on ssl certificate purchases?
           =link_to "Click here to find out more.", details_resellers_url(:subdomain=>Reseller::SUBDOMAIN)
           =#to find out more and to sign up
           =#%em (initial deposit required).
     -else
       %p
-        Not Interested in becoming an #{Settings.community_name} reseller and receiving volume
+        Not Interested in becoming an #{community_name} reseller and receiving volume
         discounts on ssl certificate purchases?
         =link_to "Click here", new_account_url(:subdomain=>false)
         to create a standard account for single certificate purchases.
@@ -32,7 +32,7 @@
       .subheading Credentials
       =render :partial => "form", :object => f
       %p#already_have_account
-        Already have a #{Settings.community_name} account? Click
+        Already have a #{community_name} account? Click
         =link_to 'here', new_user_session_path
         to login.
     #button_container

@@ -58,16 +58,16 @@ class Csr < ApplicationRecord
   include Encodable
   include Pagable
 
-  has_many    :whois_lookups, :dependent => :destroy
-  has_many    :signed_certificates, -> { where(type: nil) }, :dependent => :destroy
-  has_one :signed_certificate, -> { where(type: nil).order 'signed_certificates.created_at desc' }, class_name: "SignedCertificate"
+  has_many    :whois_lookups, dependent: :destroy
+  has_many    :signed_certificates, -> { where(type: nil) }, dependent: :destroy, inverse_of: :csr
+  has_one :signed_certificate, -> { where(type: nil).order 'signed_certificates.created_at desc' }, class_name: 'SignedCertificate'
   has_many    :shadow_certificates
   has_many    :ca_certificate_requests, as: :api_requestable, dependent: :destroy
   has_many    :sslcom_ca_requests, as: :api_requestable
   has_many    :ca_api_requests, as: :api_requestable
   has_many    :ca_dcv_requests, as: :api_requestable, dependent: :destroy
   has_many    :ca_dcv_resend_requests, as: :api_requestable, dependent: :destroy
-  has_many    :domain_control_validations, :dependent => :destroy do
+  has_many    :domain_control_validations, dependent: :destroy do
     def last_sent
       where{email_address !~ 'null'}.last
     end
@@ -81,14 +81,14 @@ class Csr < ApplicationRecord
     end
   end
   has_many    :csr_unique_values, dependent: :destroy
-  has_one     :csr_override # used for overriding csr fields - does not include a full csr
-  belongs_to  :certificate_content, touch: true, foreign_key: 'certificate_content_id'
-  belongs_to  :certificate_lookup, foreign_key: 'certificate_lookup_id'
-  belongs_to  :ssl_account, touch: true, foreign_key: 'ssl_account_id'
+  has_one     :csr_override, inverse_of: :csr, dependent: :nullify # used for overriding csr fields - does not include a full csr
+  belongs_to  :certificate_content, touch: true, foreign_key: :certificate_content_id, inverse_of: :csr
+  belongs_to  :certificate_lookup, foreign_key: :certificate_lookup_id, inverse_of: :csrs
+  belongs_to  :ssl_account, touch: true, foreign_key: :ssl_account_id, inverse_of: :csrs
   has_one :certificate_order, through: :certificate_content
   has_many    :certificate_orders, through: :certificate_content # api_requestable.certificate_orders compatibility
   serialize   :subject_alternative_names
-  validates_presence_of :body
+  validates :body, presence: true
 
   scope :sslcom, ->{ joins{ certificate_content }.where.not certificate_contents: { ca_id: nil } }
 
@@ -100,21 +100,21 @@ class Csr < ApplicationRecord
 
   scope :range, lambda{|start, finish|
     if start.is_a? String
-      s= start =~ /\// ? "%m/%d/%Y" : "%m-%d-%Y"
-      f= finish =~ /\// ? "%m/%d/%Y" : "%m-%d-%Y"
+      s = start.match?(/\//) ? '%m/%d/%Y' : '%m-%d-%Y'
+      f = finish.match?(/\//) ? '%m/%d/%Y' : '%m-%d-%Y'
       start = Date.strptime start, s
       finish = Date.strptime finish, f
     end
-    where{updated_at >> (start..finish)}} do
+    where(updated_at: (start..finish)) } do
   end
 
-  BEGIN_TAG="-----BEGIN CERTIFICATE REQUEST-----"
-  END_TAG="-----END CERTIFICATE REQUEST-----"
-  BEGIN_NEW_TAG="-----BEGIN NEW CERTIFICATE REQUEST-----"
-  END_NEW_TAG="-----END NEW CERTIFICATE REQUEST-----"
+  BEGIN_TAG = '-----BEGIN CERTIFICATE REQUEST-----'
+  END_TAG = '-----END CERTIFICATE REQUEST-----'
+  BEGIN_NEW_TAG = '-----BEGIN NEW CERTIFICATE REQUEST-----'
+  END_NEW_TAG = '-----END NEW CERTIFICATE REQUEST-----'
 
-  COMMAND=->(key_file){%x"openssl rsa -pubin -in #{key_file} -text -noout"}
-  TIMEOUT_DURATION=10
+  COMMAND = ->(key_file){%x"openssl rsa -pubin -in #{key_file} -text -noout"}
+  TIMEOUT_DURATION = 10
 
   before_create do |csr|
     csr.ref = generate_ref
@@ -135,6 +135,34 @@ class Csr < ApplicationRecord
   after_save do |c|
     c&.certificate_content&.touch
     c&.certificate_order&.touch
+  end
+
+  def is_weak_key?
+    return false unless public_key.instance_of? OpenSSL::PKey::RSA
+
+    fingerprint = Digest::SHA1.hexdigest "Modulus=#{public_key.n.to_s(16)}\n"
+
+    # Check if the key is in the blacklist
+    WeakKey.where({sha1_hash: fingerprint[20..-1], size: public_key.n.num_bits}).present?
+  end
+
+  def self.find_weak_keys
+    Csr.find_each do |csr|
+      begin
+        weak_keys=[]
+        openssl_request=OpenSSL::X509::Request.new(csr.body)
+        if openssl_request.is_a?(OpenSSL::X509::Request)
+          public_key=openssl_request.public_key
+          if public_key.instance_of? OpenSSL::PKey::RSA
+            fingerprint = Digest::SHA1.hexdigest "Modulus=#{public_key.n.to_s(16)}\n"
+            # Check if the key is in the blacklist
+            weak_keys << csr.id if WeakKey.where({sha1_hash: fingerprint[20..-1], size: public_key.n.num_bits}).present?
+          end
+        end
+        Csr.find(weak_keys) unless weak_keys.empty?
+      rescue Exception=>e
+      end
+    end
   end
 
   def unique_value

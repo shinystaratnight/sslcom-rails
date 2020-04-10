@@ -11,11 +11,6 @@
 #  migratable_id     :integer
 #  source_id         :integer
 #
-# Indexes
-#
-#  index_v2_migration_progresses_on_migratable_id  (migratable_id)
-#  index_v2_migration_progresses_on_source_id      (source_id)
-#
 
 class V2MigrationProgress < ApplicationRecord
   belongs_to  :migratable, :polymorphic=>true

@@ -1,10 +1,12 @@
-# Load the rails application
-require File.expand_path('../application', __FILE__)
+# frozen_string_literal: false
 
-# Initialize the rails application
-SslCom::Application.initialize!
+# Load the Rails application.
+require File.expand_path('application', __dir__)
 
-#for IDN (unicode names)
+# Initialize the Rails application.
+Rails.application.initialize!
+
+# for IDN (unicode names)
 Encoding.default_external = Encoding::UTF_8
 Encoding.default_internal = Encoding::UTF_8
 

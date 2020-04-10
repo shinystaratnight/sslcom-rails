@@ -30,15 +30,15 @@ class CertificateOrdersController < ApplicationController
   filter_access_to :renew, :parse_csr, require: [:create]
   filter_access_to :auto_renew, require: [:admin_manage]
   filter_access_to :show_cert_order, :validate_issue, :register_domains, :save_attestation, :remove_attestation, :require=>:ajax
-  before_filter :find_certificate, only: [:enrollment]
-  before_filter :load_certificate_order,
+  before_action :find_certificate, only: [:enrollment]
+  before_action :load_certificate_order,
                 only: [:show, :show_cert_order, :validate_issue, :update, :edit, :download, :destroy, :delete, :update_csr, :auto_renew, :start_over,
                        :change_ext_order_number, :admin_update, :developer, :sslcom_ca, :update_tags, :recipient, :validate_issue, :attestation,
                         :save_attestation, :remove_attestation]
-  before_filter :global_set_row_page, only: [:index, :search, :credits, :pending, :filter_by_scope, :order_by_csr, :filter_by,
+  before_action :global_set_row_page, only: [:index, :search, :credits, :pending, :filter_by_scope, :order_by_csr, :filter_by,
                                              :incomplete, :reprocessing]
-  before_filter :get_team_tags, only: [:index, :search]
-  before_filter :construct_special_fields, only: [:edit, :create, :update, :update_csr]
+  before_action :get_team_tags, only: [:index, :search]
+  before_action :construct_special_fields, only: [:edit, :create, :update, :update_csr]
   in_place_edit_for :certificate_order, :notes
   in_place_edit_for :csr, :signed_certificate_by_text
 
@@ -435,9 +435,9 @@ class CertificateOrdersController < ApplicationController
     if Settings.csr_domains_ui
       managed_domains = params[:managed_domains]
       additional_domains = ''
-      managed_domains.each do |domain|
+      managed_domains&.each do |domain|
         additional_domains.concat(domain.gsub('csr-', '') + ' ')
-      end unless managed_domains.blank?
+      end
 
       params[:certificate_order][:certificate_contents_attributes]['0'.to_sym][:additional_domains] = additional_domains.strip
     end
@@ -445,18 +445,16 @@ class CertificateOrdersController < ApplicationController
     if @certificate_order&.certificate&.is_single?
       params[:certificate_order][:certificate_contents_attributes]['0'.to_sym][:additional_domains] = []
     elsif @certificate_order&.certificate&.is_premium_ssl?
-      params[:certificate_order][:certificate_contents_attributes]['0'.to_sym][:additional_domains]=
-          params[:certificate_order][:certificate_contents_attributes]['0'.to_sym][:additional_domains].
-              split(Certificate::DOMAINS_TEXTAREA_SEPARATOR)[0..2].join(" ")
+      params[:certificate_order][:certificate_contents_attributes]['0'.to_sym][:additional_domains] = params[:certificate_order][:certificate_contents_attributes]['0'.to_sym][:additional_domains]
+                                                                                                      .split(Certificate::DOMAINS_TEXTAREA_SEPARATOR)[0..2].join(' ')
     end
 
-    @certificate_content=CertificateContent.new(
-      params[:certificate_order][:certificate_contents_attributes]['0'.to_sym]
-        .merge(rekey_certificate: true)
+    @certificate_content = CertificateContent.new(
+      params[:certificate_order][:certificate_contents_attributes]['0'.to_sym].merge(rekey_certificate: true)
     )
-    @certificate_order.has_csr=true #we are submitting a csr afterall
-    @certificate_content.certificate_order=@certificate_order
-    @certificate_content.preferred_reprocessing=true if eval("@#{CertificateOrder::REPROCESSING}")
+    @certificate_order.has_csr = true # we are submitting a csr after all
+    @certificate_content.certificate_order = @certificate_order
+    @certificate_content.preferred_reprocessing = true if eval("@#{CertificateOrder::REPROCESSING}")
 
     da_billing     = @certificate_order.domains_adjust_billing?
     ucc_renew      = true if da_billing && @certificate_order.renew_billing?
@@ -527,9 +525,7 @@ class CertificateOrdersController < ApplicationController
 
           format.html { redirect_to new_order_path(@ssl_slug, order_params) }
         else
-          if cc.pending_validation?
-            format.html { redirect_to certificate_order_path(@ssl_slug, @certificate_order) }
-          end
+          format.html { redirect_to certificate_order_path(@ssl_slug, @certificate_order) } if cc.pending_validation?
 
           # setting managed_csr and domains.
           setup_managed_csr_domains(params)
@@ -543,10 +539,10 @@ class CertificateOrdersController < ApplicationController
       else
         if domains_adjustment
           path = if ucc_reprocess
-            reprocess_certificate_order_path(@ssl_slug, @certificate_order)
-          else
-            edit_certificate_order_path(@ssl_slug, @certificate_order)
-          end
+                   reprocess_certificate_order_path(@ssl_slug, @certificate_order)
+                 else
+                   edit_certificate_order_path(@ssl_slug, @certificate_order)
+                 end
           flash[:error] = "Please correct errors in this step. #{@certificate_content.errors.full_messages.join(', ')}."
           format.html { redirect_to path }
         else
@@ -717,12 +713,8 @@ class CertificateOrdersController < ApplicationController
   end
 
   def parse_csr
-    c = Certificate.for_sale.find_by_product(params[:certificate])
-    co = CertificateOrder.new(duration: 1)
-    @cc = co.certificate_contents.build(certificate_order: co, ajax_check_csr: true)
-    co = Order.setup_certificate_order(certificate: c, certificate_order: co)
+    @cc = CertificateContent.new
     @cc.csr = Csr.new(body: params[:csr])
-    @cc.valid?
   rescue
   end
 
@@ -925,12 +917,6 @@ class CertificateOrdersController < ApplicationController
       end
     else
       admin_validate_ov(ov)
-      # if ov.validated? && @certificate_order.domains_validated?
-      #   @certificate_order.apply_for_certificate(
-      #     mapping: @certificate_order.certificate_content.ca,
-      #     current_user: current_user
-      #   )
-      # end
     end
     redirect_to certificate_order_path(@ssl_slug, @certificate_order.ref),
       notice: "Certificate order was successfully validated."
@@ -1077,8 +1063,7 @@ class CertificateOrdersController < ApplicationController
     if current_user
       @certificate_order = current_user.certificate_order_by_ref(params[:id])
       if @certificate_order.nil?
-        co = current_user.ssl_accounts.includes(:certificate_orders).map(&:certificate_orders)
-                 .flatten.find{|c| c.ref == params[:id]}
+        co = current_user.ssl_accounts.includes(:certificate_orders).map(&:certificate_orders).flatten.find{ |c| c.ref == params[:id] }
         if co
           @certificate_order = co
           if co.ssl_account != current_user.ssl_account && current_user.ssl_accounts.include?(co.ssl_account)
@@ -1089,7 +1074,8 @@ class CertificateOrdersController < ApplicationController
         end
       end
     end
-    render 'site/404_not_found', status: 404 unless @certificate_order
+
+    render 'site/404_not_found', status: :not_found unless @certificate_order
   end
 
   def construct_special_fields

@@ -26,12 +26,12 @@
 
 class ProductVariantItem < ApplicationRecord
   extend Memoist
-  acts_as_sellable :cents => :amount, :currency => false
-  belongs_to  :product_variant_group
-  has_one :sub_order_item
+  acts_as_sellable cents: :amount, currency: false
+  belongs_to :product_variant_group, foreign_key: 'product_variant_group_id', inverse_of: :product_variant_items
+  has_one :sub_order_item, dependent: :nullify
   acts_as_publishable :live, :draft, :discontinue_sell
 
-  validates_presence_of :product_variant_group
+  validates :product_variant_group_id, presence: true
 
   def certificate
     @pvi_certificate ||= product_variant_group.variantable if product_variant_group&.variantable&.is_a?(Certificate)
@@ -40,26 +40,24 @@ class ProductVariantItem < ApplicationRecord
 
   def cached_certificate_id
     Rails.cache.fetch("#{cache_key}/cached_certificate_id") do
-      certificate.id if certificate
+      certificate&.id
     end
   end
 
   def is_domain?
-    item_type=='ucc_domain'
+    item_type == 'ucc_domain'
   end
 
   def is_duration?
-    item_type=='duration'
+    item_type == 'duration'
   end
 
   def is_server_license?
-    item_type=='server_license'
+    item_type == 'server_license'
   end
 
   def reseller_tier_of?(compare)
-    if serial =~(/tr\z/)
-      compare.serial==base_serial
-    end
+    compare.serial == base_serial if serial.match?(/tr\z/)
   end
 
   def reseller_tier_label
@@ -100,6 +98,4 @@ class ProductVariantItem < ApplicationRecord
   def base_serial
     serial.slice(/.+(?=\-.+?tr)/) || serial.slice(/.+(?=\dtr)/)
   end
-
-
 end

@@ -1,9 +1,10 @@
 # Methods added to this helper will be available to all templates in the application.
 module ApplicationHelper
-  require 'memoist'
   require 'string'
   require 'object'
   extend Memoist
+
+  PRODUCTION_LIKE_ENV = /production|qa|sandbox|staging/
 
   # from Dan Webb's MinusMOR plugin
   def js(data)
@@ -46,31 +47,34 @@ module ApplicationHelper
     sandbox_notice if @website.instance_of?(Sandbox) and self.is_a?(ApplicationController)
   end
 
+  def in_production_mode?
+    Rails.env.match?(PRODUCTION_LIKE_ENV)
+  end
+
   def is_sandbox?
     @is_sandbox ||= Rails.cache.fetch("#{request.try(:host)}/is_sandbox") do
-                      Sandbox.exists?(request.try(:host))
-                    end
+      Sandbox.exists?(request.try(:host))
+    end
   end
-  # memoize "is_sandbox?".to_sym
+  memoize :is_sandbox?
 
   def is_sandbox_or_test?
-    is_sandbox? or ActionMailer::Base.default_url_options[:host]=~/^sandbox\./ or
-        ActionMailer::Base.default_url_options[:host]=~/^sws-test\./
+    is_sandbox? || ActionMailer::Base.default_url_options[:host] =~ /^sandbox\./ || ActionMailer::Base.default_url_options[:host] =~ /^sws-test\./
   end
 
   def api_domain(certificate_order = nil)
     api_source=@website || Settings
     unless certificate_order.blank?
-      if Rails.env.production?
+      if in_production_mode?
         'https://' + (certificate_order.is_test ? api_source.test_api_domain : api_source.api_domain)
       else
         'https://' + (certificate_order.is_test ? api_source.dev_test_api_domain : api_source.dev_api_domain) +':3000'
       end
     else
       if is_sandbox?
-        Rails.env.production? ? "https://#{api_source.test_api_domain}" : "https://#{api_source.dev_test_api_domain}:3000"
+        in_production_mode? ? "https://#{api_source.test_api_domain}" : "https://#{api_source.dev_test_api_domain}:3000"
       else
-        Rails.env.production? ? "https://#{api_source.api_domain}" : "https://#{api_source.dev_api_domain}:3000"
+        in_production_mode? ? "https://#{api_source.api_domain}" : "https://#{api_source.dev_api_domain}:3000"
       end
     end
   end

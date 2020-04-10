@@ -1,5 +1,4 @@
-require 'in_place_editing/lib/in_place_editing'
-require 'in_place_editing/lib/in_place_macros_helper'
+# frozen_string_literal: true
 
-ActionController::Base.send :include, InPlaceEditing
+ActionController::Base.include InPlaceEditing
 ActionController::Base.helper InPlaceMacrosHelper

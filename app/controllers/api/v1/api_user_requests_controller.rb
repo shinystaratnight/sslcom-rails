@@ -3,7 +3,7 @@
 module Api
   module V1
     class ApiUserRequestsController < APIController
-      before_filter :set_test, :record_parameters
+      before_action :set_test, :record_parameters
 
       wrap_parameters ApiUserRequest, include: [*ApiUserRequest::CREATE_ACCESSORS_1_4.uniq]
 

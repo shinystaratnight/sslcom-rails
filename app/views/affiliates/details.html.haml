@@ -10,19 +10,19 @@
         Referral Link Partner Program FAQ
       %h3(style="margin-bottom: 30px")
         %ul(style="width: 60%; margin: 0 auto")
-          %li=link_to "What's the process to becoming an Authorized #{Settings.community_name} Partner?", anchor: "sign_up"
+          %li=link_to "What's the process to becoming an Authorized #{community_name} Partner?", anchor: "sign_up"
           %li=link_to "How does it work?", anchor: "how"
           %li=link_to "Is there any cost to sign up as a partner?", anchor: "cost"
           %li=link_to "Do I have to buy certificates before I can resell them?", anchor: "prepay"
-          %li=link_to "Can I sell at prices below other #{Settings.community_name} partners?", anchor: "lower_price"
+          %li=link_to "Can I sell at prices below other #{community_name} partners?", anchor: "lower_price"
           %li=link_to "Am I required to be a host provider to resell SSL certificates?", anchor: "requirement"
           %li=link_to "When do my commission payments arrive?", anchor: "when"
           %li=link_to "Do royalty payments to me truly recur forever?", anchor: "forever"
           %li=link_to "Can I be paid through direct deposit?", anchor: "direct_deposit"
           %li=link_to "What's the wait time to get up and running on this program?", anchor: "wait_time"
-          %li=link_to "Am I able to offer #{Settings.community_name} Certificates through my website?", anchor: "my_site"
-          %li=link_to "How are #{Settings.community_name} Certificates sent to my customers?", anchor: "send_method"
-          %li=link_to "Is unsolicited bulk emailing permitted in selling #{Settings.community_name}?", anchor: "bulk_email"
+          %li=link_to "Am I able to offer #{community_name} Certificates through my website?", anchor: "my_site"
+          %li=link_to "How are #{community_name} Certificates sent to my customers?", anchor: "send_method"
+          %li=link_to "Is unsolicited bulk emailing permitted in selling #{community_name}?", anchor: "bulk_email"
       .clear
   .holder
     .inner
@@ -74,17 +74,17 @@
         %h2 FAQs
         .faq-boxes.affiliates
           %span.title
-            %a(name="sign_up") What's the process to becoming an Authorized #{Settings.community_name} Partner?
+            %a(name="sign_up") What's the process to becoming an Authorized #{community_name} Partner?
           %p
-            Becoming an #{Settings.community_name} Referral Link Partner is quick, easy and free. Just
-            =link_to "signup here.", "https://#{Settings.community_domain}/affiliate/index.php"
+            Becoming an #{community_name} Referral Link Partner is quick, easy and free. Just
+            =link_to "signup here.", "https://#{community_domain}/affiliate/index.php"
             Applications
             are normally authorized in one business day.
           %span.title
             %a(name="how") How does it work?
           %p
-            It's very simple. Any visitor that visits #{Settings.community_domain} with your code appended to the address
-            (ie #{Settings.community_domain}/code/you) belongs to you. Once they purchase an
+            It's very simple. Any visitor that visits #{community_domain} with your code appended to the address
+            (ie #{community_domain}/code/you) belongs to you. Once they purchase an
             = succeed ".com" do
               %i{:style => "font-weight:bold;"} SSL
             certificate, they become your customer.
@@ -103,7 +103,7 @@
             No. Customers and visitors you refer to ssl.com purchase the certificates, so you're not buying anything.
             There is no risk or investment on your part.
           %span.title
-            %a(name="lower_price") Can I sell at prices below other #{Settings.community_name} partners?
+            %a(name="lower_price") Can I sell at prices below other #{community_name} partners?
           %p
             = succeed ".com" do
               %i{:style => "font-weight:bold;"} SSL
@@ -156,7 +156,7 @@
             JUST A FEW HOURS! Once we verify and approve your business license, and your individual or company's taxpayer ID
             you can start earning commissions immediately!
           %span.title
-            %a(name="my_site") Am I able to offer #{Settings.community_name} Certificates through my website?
+            %a(name="my_site") Am I able to offer #{community_name} Certificates through my website?
           %p
             YES, ABSOLUTELY. Your customer trusts your site, and we provide the order form containing your unique ID
             that you can copy and paste onto your site. When the customer orders the certificate through your site, the order
@@ -168,7 +168,7 @@
             You control the look and feel and all aspects of the HTML and design. Our form just collects the
             info, completes the sale, and credits you for the sale. Our designers will even work with you to customize the look and feel at no additional charge.
           %span.title
-            %a(name="send_method") How are #{Settings.community_name} Certificates sent to my customers?
+            %a(name="send_method") How are #{community_name} Certificates sent to my customers?
           %p
             Your customers will manage their own certificates. This frees you up to focus on generating sales
             and more revenue. Customers download and install
@@ -180,7 +180,7 @@
             We provide installation resources such as online instructions,
             FAQ's, support forums and free support 24 hours a day.
           %span.title
-            %a(name="bulk_email") Is unsolicited bulk emailing permitted in selling #{Settings.community_name}?
+            %a(name="bulk_email") Is unsolicited bulk emailing permitted in selling #{community_name}?
           %p
             NO. Using unsolicited bulk email or spam to promote
             = succeed ".com" do
@@ -193,6 +193,6 @@
             Partner is determined to be in breach of this agreement after investigation, their account
             will be promptly terminated.
         .notes
-          %a{:href => "https://#{Settings.community_domain}/affiliate/index.php"}
+          %a{:href => "https://#{community_domain}/affiliate/index.php"}
             %div Limited number of licenses remain for each territory. Sign up today!
       .clear

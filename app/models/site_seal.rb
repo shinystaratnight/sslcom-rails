@@ -20,6 +20,7 @@
 
 class SiteSeal < ApplicationRecord
   include Pagable
+  include Workflow
 
   has_many  :certificate_orders, -> { unscope(where: %i[workflow_state is_expired]) }
   has_many  :validations, through: :certificate_orders
@@ -59,7 +60,6 @@ class SiteSeal < ApplicationRecord
   preference  :seal_image, :string
   preference  :artifacts_status, :string, :default=>ACTIVATE
 
-  include Workflow
   workflow do
     state :new do
       event :fully_activate, :transitions_to => FULLY_ACTIVATED

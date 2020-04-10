@@ -5,7 +5,7 @@
       Stripe.setPublishableKey("#{Rails.application.secrets.stripe_publishable_key}");
     }, 1000);
 -else
-  -accept = Rails.env.production? ? 'js' : 'jstest'
+  -accept = in_production_mode? ? 'js' : 'jstest'
   =javascript_include_tag "https://#{accept}.authorize.net/v1/Accept.js"
     
 -today_year = Date.today.year

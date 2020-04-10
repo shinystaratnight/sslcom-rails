@@ -1,222 +1,256 @@
-version: 2
+aliases:
+  - &copy-certassure-settings |
+    cp config/client/certassure/settings.yml config/
+  - &create-settings-yml |
+    cp config/settings/test.yml config/settings.yml
+
+  - &create-local-env-yml |
+    mkdir -p config && echo "
+                AWS_ACCESS_KEY_ID: ''
+                AWS_SECRET_ACCESS_KEY: ''
+                S3_BUCKET_NAME: ''
+                S3_AVATAR_BUCKET_NAME: ''
+                AWS_DEFAULT_REGION: ''
+                DUO_INTEGRATION_KEY: '${DUO_INTEGRATION_KEY}'
+                DUO_SECRET_KEY: '${DUO_SECRET_KEY}'
+                DUO_APPLICATION_KEY: '${DUO_APPLICATION_KEY}'
+                DUO_API_HOSTNAME: '${DUO_API_HOSTNAME}'
+                DUO_SYSADMIN_INTEGRATION_KEY: '${DUO_INTEGRATION_KEY}'
+                DUO_SYSADMIN_SECRET_KEY: '${DUO_SECRET_KEY}'
+                DUO_SYSADMIN_APPLICATION_KEY: '${DUO_APPLICATION_KEY}'
+                DUO_SYSADMIN_API_HOSTNAME: '${DUO_API_HOSTNAME}'
+            " > config/local_env.yml
+
+  - &install-mysql-dependencies |
+    sudo apt-get update
+    sudo apt-get install -y unixodbc-dev default-mysql-server
+    sudo gem uninstall bundler
+    sudo rm /usr/local/bin/bundle
+    sudo rm /usr/local/bin/bundler
+    sudo gem install bundler:1.17.3
+
+  - &precompile-assets |
+    RACK_ENV="test" bundle exec rake assets:precompile
+  - &setup-database |
+    export RAILS_ENV="test"
+    export RACK_ENV="test"
+    bundle exec rake db:create db:structure:load db:migrate --trace
+
+  - &copy-database-yml |
+    mkdir -p config && echo 'test:
+      adapter: mysql2
+      database: ssl_com_test
+      username: root
+      host: 127.0.0.1
+    ' > config/database.yml
+
+  - &install-code-climate-reporter |
+    curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+    chmod +x ./cc-test-reporter
+
+defaults: &defaults
+  parallelism: 2
+  working_directory: ~/sslcom-rails
+  docker:
+    - image: circleci/ruby:2.6.6-stretch-node-browsers
+      environment:
+        RAILS_ENV: test
+        DB_HOST: 127.0.0.1
+        BUNDLE_JOBS: 1
+        BUNDLE_RETRY: 1
+        BUNDLE_PATH: vendor/bundle
+        CIRCLE_CI: "true"
+        CACHE_VERSION: "v3"
+        CIRCLE_NODE_INDEX: 0
+        CIRCLE_NODE_TOTAL: 2
+    - image: circleci/mysql:5.7.28
+      environment:
+        MYSQL_ALLOW_EMPTY_PASSWORD: "true"
+        MYSQL_ROOT_HOST: "%"
+        CACHE_VERSION: "v3"
+
+version: 2.1
 jobs:
-  build:
-    working_directory: ~/sslcom-rails
-    docker:
-      - image: circleci/ruby:2.6.2-node-browsers
-        environment:
-          RAILS_ENV: test
-          DB_HOST: 127.0.0.1
-          CIRCLE_CI: 'true'
-          CACHE_VERSION: 'v1'
-      - image: circleci/mysql:5.7.28
-        environment:
-          MYSQL_ALLOW_EMPTY_PASSWORD: "true"
-          MYSQL_ROOT_HOST: "%"
+  rspec:
+    <<: *defaults
     steps:
       - checkout
 
-      - run: mkdir -p tmp/test-reports/minitest/queue_mode/
+      - run:
+          name: Install Mysql Libraries
+          command: *install-mysql-dependencies
+
+      - save_cache:
+          key: v2-repo-{{ .Environment.CIRCLE_SHA1 }}
+          paths:
+            - ~/sslcom-rails
+
+      - restore_cache:
+          keys:
+            - gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+            - gem-cache-{{ arch }}-{{ .Branch }}
+            - gem-cache
+
+      - run:
+          name: Install bundle
+          command: bin/bundle install --path vendor/bundle
+
+      - save_cache:
+          key: gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+          paths:
+            - ~/sslcom-rails/vendor/bundle
 
       - run:
           name: Install Code Climate Test Reporter
           command: |
             curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
             chmod +x ./cc-test-reporter
-
-      - run: ./cc-test-reporter before-build
-      # - restore_cache:
-      #    keys:
-      #      - sslcom-rails-{{ checksum "Gemfile.lock" }}
-      #      - sslcom-rails-
+      - run:
+          name: Wait for DB
+          command: dockerize -wait tcp://localhost:3306 -timeout 1m
 
       - run:
-          name: Install Libraries for mySQL and Correct Bundler Version (1.17.3)
-          command: |
-            sudo apt-get install unixodbc-dev
-            sudo apt-get -y install mysql-server
-            sudo gem uninstall bundler
-            sudo rm /usr/local/bin/bundle
-            sudo rm /usr/local/bin/bundler
-            sudo gem install bundler -v 1.17.3
+          name: Create settings.yml
+          command: *create-settings-yml
 
       - run:
-          name: Bundle Install Gem Dependencies
-          command: bundle check --path vendor/bundle || bundle install --deployment
+          name: Copy local_env.yml
+          command: *create-local-env-yml
 
       - run:
-          name: Build the Settings YML files
-          command: |-
-            mkdir -p config && echo '
-              api_product_codes:
-                {100: "evucc256sslcom", 101: "ucc256sslcom", 102: "ev256sslcom",
-                 103: "ov256sslcom", 104: "dv256sslcom", 105: "wc256sslcom", 106: "basic256sslcom",
-                 107: "premium256sslcom",
-                 204: "evucc256sslcom", 202: "ucc256sslcom", 203: "ev256sslcom",
-                 200: "basic256sslcom", 201: "wc256sslcom", 300: "personalbasic256sslcom",
-                 301: "personalpro256sslcom", 302: "personalbusiness256sslcom", 303: "personalenterprise256sslcom",
-                 310: "naesbbasic256sslcom", 350: "codesigning256sslcom", 360: "evcodesigning256sslcom"}
-              subca_mapping:
-                dv: {product: "basicssl", label: "<i>SSL</i>.com Basic"}
-                premiumssl: {product: "premiumssl", label: "<i>SSL</i>.com Premium"}
-                ev: {product: "ev", label: "<i>SSL</i>.com Enterprise EV"}
-                ov: {product: "high_assurance", label: "<i>SSL</i>.com High Assurance"}
-                wildcard: {product: "wildcard", label: "Wildcard (Unlimited Subdomains)"}
-                ucc: {product: "ucc", label: "Multi-Domain (SAN/UCC)"}
-                evucc: {product: "evucc", label: "EV Multi-Domain (EV SAN/UCC)"}
-              send_dv_first: true
-            ' > config/settings.yml
+          name: Copy Database.yml
+          command: *copy-database-yml
 
-      - run:
-            name: Build the Local Environment File on the Fly
-            command: |-
-                mkdir -p config && echo "
-                    AWS_ACCESS_KEY_ID: ''
-                    AWS_SECRET_ACCESS_KEY: ''
-                    S3_BUCKET_NAME: ''
-                    S3_AVATAR_BUCKET_NAME: ''
-                    AWS_DEFAULT_REGION: ''
-                    DUO_INTEGRATION_KEY: '${DUO_INTEGRATION_KEY}'
-                    DUO_SECRET_KEY: '${DUO_SECRET_KEY}'
-                    DUO_APPLICATION_KEY: '${DUO_APPLICATION_KEY}'
-                    DUO_API_HOSTNAME: '${DUO_API_HOSTNAME}'
-                    DUO_SYSADMIN_INTEGRATION_KEY: '${DUO_INTEGRATION_KEY}'
-                    DUO_SYSADMIN_SECRET_KEY: '${DUO_SECRET_KEY}'
-                    DUO_SYSADMIN_APPLICATION_KEY: '${DUO_APPLICATION_KEY}'
-                    DUO_SYSADMIN_API_HOSTNAME: '${DUO_API_HOSTNAME}'
-                " > config/local_env.yml
-
-      - run:
-          name: Build the Test Database YML file on the Fly
-          command: |-
-            mkdir -p config && echo 'test:
-              adapter: mysql2
-              database: ssl_com_test
-              username: root
-              host: 127.0.0.1
-            ' > config/database.yml
       - run:
           name: Copy Settings File
           command: cp config/client/certassure/settings.yml config/
 
-      - save_cache:
-         key: sslcom-rails-{{ checksum "Gemfile.lock" }}
-         paths:
-           - vendor/bundle
+      - run:
+          name: Setup Database
+          command: *setup-database
 
       - run:
-          name: Create the Test Database, Load the Structure, and Migrate the Latest Migrations
-          command: |-
-            export RAILS_ENV="test"
-            export RACK_ENV="test"
-            bundle exec rake db:create db:structure:load db:migrate --trace
+          name: Precompile Assets
+          command: *precompile-assets
 
       - run:
-          name: Run Rails Application Tests
-          command: bundle exec rake test
-          when: always
-
+          name: Run tests
+          command: |
+            mkdir -p test-results/rspec test-artifacts
+            ./cc-test-reporter before-build
+            TESTFILES=$(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=filesize)
+            bundle exec rspec --profile 10 \
+                              --color \
+                              --order random \
+                              --format RspecJunitFormatter \
+                              --out test-results/rspec/rspec.xml \
+                              --format progress \
+                              -- ${TESTFILES}
       - run:
           name: Code Climate Test Coverage
           command: |
             ./cc-test-reporter format-coverage -t simplecov -o "coverage/codeclimate.$CIRCLE_NODE_INDEX.json"
 
+      - persist_to_workspace:
+          root: coverage
+          paths:
+            - codeclimate.*.json
+
       - store_test_results:
-          path: test/reports
+          path: test-results
+      - store_artifacts:
+          path: test-artifacts
 
       - store_artifacts:
-          path: coverage
+          path: tmp/capybara
 
-      - store_artifacts:
-          path: test/reports
+  build:
+    <<: *defaults
+    parallelism: 1
+    steps:
+      - checkout
 
-      - run: ./cc-test-reporter after-build -r $CC_TEST_REPORTER_ID -t simplecov --exit-code $? || true
+      - run:
+          name: Install Libraries for mySQL and Correct Bundler Version (1.17.3)
+          command: *install-mysql-dependencies
 
-      # Yarn dependencies
       - restore_cache:
           keys:
-            - v1-yarn-{{ checksum "package.json" }}
-            # fallback to using the latest cache if no exact match is found
-            - v1-yarn-
+            - gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+            - gem-cache-{{ arch }}-{{ .Branch }}
+            - gem-cache
 
-      - run: yarn install
+      - run:
+          name: Bundle Install Gem Dependencies
+          command: bundle check --path vendor/bundle || bundle install --deployment
 
       - save_cache:
+          key: gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
           paths:
-            - node_modules
-            - ~/.cache
-          key: v1-yarn-{{ checksum "package.json" }}
+            - vendor/bundle
 
       - run:
-          name: Setup Database for Cypress Test
-          command: |-
-            export RAILS_ENV="test"
-            export RACK_ENV="test"
-            bundle exec rake db:seed --trace
+          name: Create settings.yml
+          command: *create-settings-yml
 
       - run:
-          name: Rails Server
-          command: |-
-            gem install foreman --no-doc
-            touch log/bullet.log
-            touch log/test.log
-            foreman start -f Procfile.test
-          background: true
+          name: Copy local_env.yml
+          command: *create-local-env-yml
 
       - run:
-          name: Run Cypress
-          command: yarn cypress run --project ./test
+          name: Copy Database.yml
+          command: *copy-database-yml
 
-      - store_artifacts:
-          path: test/cypress/videos
+      - run:
+          name: Copy CertAssureSetting
+          command: *copy-certassure-settings
 
-      - store_artifacts:
-          path: log
-
-      - store_artifacts:
-          path: coverage
-
-      - store_artifacts:
-          path: test/cypress/screenshots
+      - run:
+          name: Setup Database
+          command: *setup-database
 
       - run:
           name: Precompile Assets
-          command: bundle exec rake assets:precompile --trace
+          command: *precompile-assets
 
       - run:
           name: Eager load classes to check for issues
           command: |
-              bundle exec rails runner 'Rails.application.eager_load!'
+            bundle exec rails runner 'Rails.application.eager_load!'
 
   upload-coverage:
     docker:
-      - image: circleci/ruby:2.6.2-node-browsers
-    environment:
-      # you can add your CodeClimate test report ID here or in CircleCI
-      # settings for environment variables
-      CC_TEST_REPORTER_ID: $CC_TEST_REPORTER_ID
-    working_directory: ~/repo
+      - image: circleci/ruby:2.5.1-stretch-node
+    working_directory: ~/sslcom-rails
 
     steps:
-      # This will restore files from persist_to_workspace step
-      # Thanks to it we will have access to CodeClimate test coverage files from
-      # each parallel job. We need them in order to merge it into one file in next step.
       - attach_workspace:
-          at: ~/repo
+          at: ~/sslcom-rails
       - run:
           name: Install Code Climate Test Reporter
           command: |
             curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
             chmod +x ./cc-test-reporter
-      - run: ./cc-test-reporter after-build -t simplecov --exit-code $? || true
+      - run:
+          command: |
+            ./cc-test-reporter sum-coverage --output - codeclimate.*.json | ./cc-test-reporter upload-coverage --debug --input -
 
+      - attach_workspace:
+          at: ~/sslcom-rails
+      - run:
+          name: Install Code Climate Test Reporter
+          command: |
+            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+            chmod +x ./cc-test-reporter
+      - run:
+          command: |
+            ./cc-test-reporter sum-coverage --output - codeclimate.*.json | ./cc-test-reporter upload-coverage --debug --input -
 
 workflows:
-  version: 2
-
   build_and_coverage:
     jobs:
       - build
-      # - upload-coverage:
-      #     requires:
-      #       - build
+      - rspec
+      - upload-coverage:
+          requires:
+            - rspec

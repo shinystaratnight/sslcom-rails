@@ -29,7 +29,7 @@
     another user to complete the validation step.
     =link_to "How do I use this page?", Settings.dv_explanation_link, target: "_blank"
     **If you are getting "failed" under the pre-test column, please refer to the
-    =link_to "'Failed Pre-test?!' article.", "https://#{Settings.portal_domain}/guide/failed-pre-test/", target: "_blank"
+    =link_to "'Failed Pre-test?!' article.", "https://#{portal_domain}/guide/failed-pre-test/", target: "_blank"
     **
   %table{style: "width: 100%; border: 1px solid black; padding: 1em"}
     %tr
@@ -92,11 +92,11 @@
         -if Settings.enable_caa
           %th
             caa
-            %a{:href => "https://#{Settings.portal_domain}/how-to/configure-caa-records-to-authorize-ssl-com/", :target => "_blank"}
+            %a{:href => "https://#{portal_domain}/how-to/configure-caa-records-to-authorize-ssl-com/", :target => "_blank"}
               %span.badge ?
         %th
           pre-test
-          %a{:href => "https://#{Settings.portal_domain}/guide/failed-pre-test/", :target => "_blank"}
+          %a{:href => "https://#{portal_domain}/guide/failed-pre-test/", :target => "_blank"}
             %span.badge ?
         %th previous attempt
         %th attempted on
@@ -133,7 +133,7 @@
             %h2 Documents
             -if co.certificate.is_ev?
               %p
-                #{Settings.community_name} will verify the existence of your business, the ownership of the domain(s)
+                #{community_name} will verify the existence of your business, the ownership of the domain(s)
                 #{co.all_domains.join(", ")}, and your employment status or authority to
                 request the SSL Certificate for #{co.all_domains.join(", ")}. The following documents are required:
                 %dl.listing
@@ -147,7 +147,7 @@
                         %dd This form should be used if one person is to act in all three roles, Certificate Requester, Certificate Approver and Contract (Subscriber Agreement) Signer.
             -else
               %p
-                If documents are required for this order, then #{Settings.community_name} will verify the existence of your business, the ownership of the domain(s)
+                If documents are required for this order, then #{community_name} will verify the existence of your business, the ownership of the domain(s)
                 #{co.all_domains.join(", ")}, and your employment status or authority to
                 request the SSL Certificate for #{co.all_domains.join(", ")}. Documents required from the registrant listed
                 on this whois record for #{co.subject} may include:

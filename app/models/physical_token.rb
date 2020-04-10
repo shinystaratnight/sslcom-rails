@@ -29,6 +29,8 @@
 #
 
 class PhysicalToken < ApplicationRecord
+  include Workflow
+
   MAKE_AND_MODELS={Gemalto: %w(5100\ eToken), Yubico: %w(Yubikey\ FIPS\ 140-2)}
   CARRIERS = ['Not Yet Shipped', 'FedEx', 'UPS', 'USPS', 'DHL', 'in-person'].freeze
 
@@ -51,7 +53,6 @@ class PhysicalToken < ApplicationRecord
     end
   end
 
-  include Workflow
   workflow do
     state :new do
       event :in_stay, :transitions_to => :not_yet_shipped

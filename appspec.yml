@@ -1,0 +1,27 @@
+version: 0.0
+os: linux
+files:
+  - source: /
+    destination: /home/ubuntu/sslcom-rails
+    owner: ubuntu
+permissions:
+  - object: /home/ubuntu/sslcom-rails
+    owner: ubuntu
+    mode: 755
+hooks:
+  BeforeInstall:
+    - location: script/clear_files.sh
+      timeout: 300
+      runas: ubuntu
+  AfterInstall:
+    - location: script/install_dependencies.sh
+      timeout: 300
+      runas: ubuntu
+  ApplicationStart:
+    - location: script/start_server.sh
+      timeout: 300
+      runas: ubuntu
+  ApplicationStop:
+    - location: script/stop_server.sh
+      timeout: 300
+      runas: ubuntu

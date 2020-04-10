@@ -1,0 +1,153 @@
+site: 'remote'
+require_signup_password: true
+actionmailer_host: "secure.ssl.com"
+community_name: "SSL.com"
+community_domain: "secure.ssl.com"
+require_login_smime_claim: false
+api_domain: "sws.sslpki.com"
+csr_domains_ui: true
+test_api_domain: "sws-test.sslpki.com"
+dev_api_domain: "sws.sslpki.local"
+dev_test_api_domain: "sws-test.sslpki.local"
+portal_domain: "secure.ssl.com"
+sandbox_domain: "sandbox.ssl.com"
+dev_portal_domain: "secure.ssl.local"
+dev_sandbox_domain: "sandbox.ssl.local"
+support_domain: "support.ssl.com"
+folders: "show" # hide or show
+community_tagline: "copyright 2016"
+merchant_name: "SSL.com"
+community_description:  "SSL.com simplifies SSL certificate procurement and implementation. Integrate security into your websites and applications with SSL.com certificates."
+support_email:  "support@ssl.com"
+meta_description: "Wildcard SSL Certificates &amp; 2048-Bit Extended Validation SSL Certificate Authentication. Strong Secure Sockets Layer Https Encryption for Network Security."
+meta_keywords: "What is SSL, Best SSL, How SSL works, Learn SSL, SSL Security, Secured SSL"
+meta_title: "SSL Digital Certificate Authority - Authentication & Encryption"
+compare_public_key: false
+duo_enable: true
+u2f_enabled: false
+duo_auto_enabled: false
+duo_custom_enabled: false
+allow_windows_cr: false
+show_advertising: false
+enrollment_links: true
+closed_beta_mode: false
+track_visitors: false
+invoice_notify: false
+single_server_license_only: true
+show_csr_submit_on_buy_page: false
+dynamic_contact_count: "on"
+send_api_calls: ""
+shadow_certificate_recipient: "shadow-cert@ssl.com" # for test SSL.com certificates parallel issuance
+enable_google_translate: false
+enable_affiliate_program: true
+enable_exception_notifier: true
+enable_caa: false
+offer_trial: false
+minimum_deposit_amount: 10.00
+ucc_initial_domains_block: 3
+ucc_max_domains: 200
+cert_expiration_threshold_days: 365
+expiring_threshold: 60
+intermediate_certs_path: "<%=Rails.root%>/public/cert_bundles/"
+header_phone_numbers: "+1-SSL-Certificate (+1-775-237-8434) or toll free 877-SSL-Secure"
+corp_name: "SSL Corp"
+corp_address1: "3100 Richmond Ave"
+corp_address2: "Suite 503"
+corp_city: "Houston"
+corp_state: "TX"
+corp_zip: "77098"
+corp_phone_tag: "+1-SSL-Certificate (+1-775-237-8434)"
+corp_tollfree_tag: "877-SSL-Secure (877-775-7328)"
+corp_fax: "832-201-7706"
+mail_address1: "3100 Richmond Ave"
+mail_address2: "Suite 503"
+mail_city: "Houston"
+mail_state: "TX"
+mail_zip: "77098"
+public_header_phone_number: "1-877-SSL-SECURE"
+# Comment this out if you want to infer the locale
+# off of the http headers
+community_locale: "en"
+#absolute location of member's files
+member_files_location: "private"
+production_public_location: "public/"
+production_private_location: "private/"
+csr_parser_wsdl: 'http://ws.ssltools.com/sslutils/wsdl/SSLUtils.wsdl'
+certificate_parser_wsdl: 'http://ws.ssltools.com/sslutils/wsdl/SSLUtils.wsdl'
+
+installation_support_pages: "http://info.ssl.com"
+
+ca_certificate_id_ev: "508"
+ca_certificate_id_ov: "507"
+ca_certificate_id_dv: "506"
+ca_certificate_id_client: "510"
+ca_certificate_id_code_signing: "509"
+
+dv_explanation_link: "https://secure.ssl.com/faqs/ssl-dv-validation-requirements/"
+
+# 'local' for openssl, 'remote' to use java SOAP
+csr_parser: local
+
+api_product_codes: # look at Certificate.pluck(:serial)
+  {100: "evucc256sslcom", 101: "ucc256sslcom", 102: "ev256sslcom",
+   103: "ov256sslcom", 104: "dv256sslcom", 105: "wc256sslcom", 106: "basic256sslcom",
+   107: "premium256sslcom",
+   204: "evucc256sslcom", 202: "ucc256sslcom", 203: "ev256sslcom",
+   200: "basic256sslcom", 201: "wc256sslcom", 300: "personalbasic256sslcom",
+   301: "personalpro256sslcom", 302: "personalbusiness256sslcom", 303: "personalenterprise256sslcom",
+   310: "naesbbasic256sslcom", 350: "codesigning256sslcom", 360: "evcodesigning256sslcom"}
+
+subca_mapping:
+  dv: {product: "basicssl", label: "<i>SSL</i>.com Basic"}
+  premiumssl: {product: "premiumssl", label: "<i>SSL</i>.com Premium"}
+  ev: {product: "ev", label: "<i>SSL</i>.com Enterprise EV"}
+  ov: {product: "high_assurance", label: "<i>SSL</i>.com High Assurance"}
+  wildcard: {product: "wildcard", label: "Wildcard (Unlimited Subdomains)"}
+  ucc: {product: "ucc", label: "Multi-Domain (SAN/UCC)"}
+  evucc: {product: "evucc", label: "EV Multi-Domain (EV SAN/UCC)"}
+
+send_dv_first: true
+
+# The label you use for 'staff' writers (featured writer, staff, pro, etc.)
+featured_writer_label: 'Featured Writer'
+allow_anonymous_commenting: false
+require_server_software_w_csr_submit: true # Comodo API still relies on this
+# uncomment these keys if you turn captcha on for commenting or signup
+studio_fee_rate: .3
+affiliate_cookie_days: 30
+affiliate_program: "idevaffiliate"
+cart_cookie_days: 30
+exclude_amex: true
+number_of_captured_frames: 20
+max_content_size: 10
+max_num_releases: 100
+affiliate_param_key: 'code/r-'
+thumbnail_tagline_size: 32
+allow_reseller_validation: true
+sync_aid_li_and_cart: false
+browser_acceptance: "99.9%"
+notify_address: "support@ssl.com"
+disable_links_banner: false
+
+from_email:
+  orders: 'orders@ssl.com'
+  activations: 'noreply@ssl.com'
+  no_reply: 'noreply@ssl.com'
+
+photo:
+  missing_micro: '/plugin_assets/community_engine/images/icon_missing_micro.gif'
+  missing_thumb: '/plugin_assets/community_engine/images/icon_missing_thumb.gif'
+  missing_medium: "/plugin_assets/community_engine/images/icon_missing_medium.gif"
+  attachment_fu_options:
+    resize_to: "465>"
+    min_size: 1
+    #size in megabytes
+    max_size: 3
+    thumbnails: {thumb: "100x100!", medium: "290x320!", large: "664>", micro: "50x50!"}
+    #options - 's3', 'file_system', 'db_system' - see attachment_fu for details
+    storage: 'file_system'
+    content_type: ['image/jpg', 'image/jpeg', 'image/pjpeg', 'image/gif', 'image/png', 'image/x-png']
+
+theme: picclet
+
+captcha_threshold: 100

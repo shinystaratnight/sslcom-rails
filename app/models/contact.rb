@@ -29,13 +29,13 @@
 #  last_name             :string(255)
 #  notes                 :string(255)
 #  phone                 :string(255)
-#  phone_number_approved :boolean          default(FALSE)
+#  phone_number_approved :boolean          default("0")
 #  po_box                :string(255)
 #  postal_code           :string(255)
 #  registrant_type       :integer
 #  registration_service  :string(255)
 #  roles                 :string(255)      default("--- []")
-#  saved_default         :boolean          default(FALSE)
+#  saved_default         :boolean          default("0")
 #  special_fields        :text(65535)
 #  state                 :string(255)
 #  status                :integer
