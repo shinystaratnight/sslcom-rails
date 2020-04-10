@@ -16,6 +16,8 @@ class ApplicationRecord < ActiveRecord::Base
   include CollectiveIdea::Acts::Sellable
   include CollectiveIdea::Acts::Money
   include Acts::As::Publishable
+  include ApplicationHelper
+  include SettingsHelper
 
   self.abstract_class = true
 
