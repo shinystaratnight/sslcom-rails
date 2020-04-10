@@ -13,7 +13,7 @@
     =javascript_include_tag 'https://cdn.lr-ingest.io/LogRocket.min.js', crossorigin: 'anonymous'
     - if in_production_mode?
       :javascript
-        window.LogRocket && window.LogRocket.init("m9241k/ssl-com-#{Rails.env}", {
+        window.LogRocket && window.LogRocket.init("m9241k/ssl-com-#{Rails.env.production? ? Socket.gethostname : Rails.env}", {
           dom: {
             textSanitizer: true,
             inputSanitizer: true,
