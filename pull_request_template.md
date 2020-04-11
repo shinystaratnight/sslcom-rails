@@ -24,12 +24,13 @@
 
 - [ ] Is the code of an acceptable quality?
 - [ ] Do the changes function as described and is it robust?
+- [ ] Have commits been squashed to a satisfactory level?
 
 ---
 
 ## Nominate for Group Code Review (Anyone can nominate it)
 
-Indicate if you think the code should be reviewed in a Thursday code review session.
+Indicate if you think the code should be reviewed in a team code review session.
 
 - [ ] Recommend for group code review
 
