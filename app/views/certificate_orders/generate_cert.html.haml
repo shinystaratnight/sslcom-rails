@@ -46,10 +46,11 @@
       - else
         .col-md-5
           %input.generate_cert.right{:type=>'button', :value=>'Generate Certificate', :class=>'btn btn-primary'}
-        .col-md-2.create_csr_block
-          %input.create_csr.center{:type=>'button', :value=>'Create CSR', :class=>'btn btn-primary'}
-        .col-md-5{:style=>'font-size: 1.5em'}
-          %input.own_csr{:type=>'checkbox', :style=>'height: 33px; width: 20px; vertical-align: middle; margin-right: 10px'} I have my own CSR
+        -if is_cs
+          .col-md-2.create_csr_block
+            %input.create_csr.center{:type=>'button', :value=>'Create CSR', :class=>'btn btn-primary'}
+          .col-md-5{:style=>'font-size: 1.5em'}
+            %input.own_csr{:type=>'checkbox', :style=>'height: 33px; width: 20px; vertical-align: middle; margin-right: 10px'} I have my own CSR
   .integrated_algorithm_wrap
     .row.pt-4
       .col-md-3{:style=>"text-align: right"}
