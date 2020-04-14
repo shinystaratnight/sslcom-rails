@@ -11,15 +11,6 @@
     =javascript_include_tag '//cdnjs.cloudflare.com/ajax/libs/dropzone/5.5.1/min/dropzone.min.js'
     =stylesheet_link_tag 'https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.5.1/min/dropzone.min.css'
     =javascript_include_tag 'https://cdn.lr-ingest.io/LogRocket.min.js', crossorigin: 'anonymous'
-    - if in_production_mode?
-      :javascript
-        window.LogRocket && window.LogRocket.init("m9241k/ssl-com-#{Rails.env.production? ? Socket.gethostname : Rails.env}")
-    - if current_user.present? && in_production_mode?
-      :javascript
-        LogRocket.identify("#{current_user.id}", {
-          email: "#{current_user.login}",
-          login: "#{current_user.email}"
-        });
     %favicon_link_tag
     %meta{ "http-equiv"=>"Content-Type", :content=>"text/html;charset=utf-8" }
     %title= h(yield(:title).or_else(Settings.meta_title)) + " | #{community_name}"
@@ -81,3 +72,12 @@
             /* custom configuration goes here (www.olark.com/documentation) */
             olark.identify('#{Settings.olark_id}');/*]]>{/literal}*/
           / end olark code
+- if in_production_mode?
+  :javascript
+    window.LogRocket && window.LogRocket.init("m9241k/ssl-com-#{Rails.env.production? ? Socket.gethostname : Rails.env}")
+- if current_user.present? && in_production_mode?
+  :javascript
+    LogRocket.identify("#{current_user.id}", {
+      email: "#{current_user.login}",
+      login: "#{current_user.email}"
+    });
