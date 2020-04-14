@@ -23,7 +23,7 @@ RSpec.describe 'Authentications', type: :feature do
   it 'allows existing user to login and logout', js: true do
     visit login_path
     fill_in 'user_session_login', with: user.login
-    fill_in 'user_session_password', with: 'Testing_ssl+1'
+    fill_in 'user_session_password', with: user.password
     find('#btn_login').click
     expect(page).to have_content("username: #{user.login}")
   end

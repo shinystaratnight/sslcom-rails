@@ -224,6 +224,7 @@ jobs:
     working_directory: ~/sslcom-rails
 
     steps:
+
       - attach_workspace:
           at: ~/sslcom-rails
       - run:

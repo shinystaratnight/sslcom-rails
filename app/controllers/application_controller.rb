@@ -236,17 +236,13 @@ class ApplicationController < ActionController::Base
   end
 
   def find_certificate
-    id = Rails.cache.fetch("find_certificate/#{params[:id]}" + (@tier.to_s || '')) do
-      prod = params[:id] == 'mssl' ? 'high_assurance' : params[:id]
-      products = Certificate.for_sale
-      if @tier.present?
-        (products.find_by(product: "#{prod}#{@tier}") || products.find_by(product: prod))&.id || nil
-      else
-        product = products.find_by(product: prod)
-        product&.id || nil
-      end
-    end
-    @certificate = Certificate.includes(:product_variant_items).find(id) unless id.blank?
+    prod = params[:id] == 'mssl' ? 'high_assurance' : params[:id]
+    products = Certificate.includes(:product_variant_items).for_sale
+    @certificate = if @tier.present?
+                     products.find_by(product: "#{prod}#{@tier}") || products.find_by(product: prod)
+                   else
+                     products&.find_by(product: prod)
+                   end
   end
 
   def find_certificate_orders(options = {})

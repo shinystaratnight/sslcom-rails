@@ -149,6 +149,7 @@ group :test do
   gem 'webmock'
   gem 'shoulda-matchers', require: false
   gem 'webdrivers'
+  gem 'formulaic'
 end
 
 gem 'httparty'

@@ -19,33 +19,33 @@ class CertificateOrdersController < ApplicationController
   include OrdersHelper
   include CertificateOrdersHelper
 
+  caches_action :enrollment
   skip_before_action :verify_authenticity_token, only: [:parse_csr]
   filter_access_to :all, except: [:generate_cert]
   filter_access_to :read, :update, :delete, :show, :edit, :developer, :recipient
-  filter_access_to :incomplete, :pending, :search, :reprocessing, :order_by_csr, :require=>:read
-  filter_access_to :credits, :filter_by, :filter_by_scope, :require=>:index
+  filter_access_to :incomplete, :pending, :search, :reprocessing, :order_by_csr, require: :read
+  filter_access_to :credits, :filter_by, :filter_by_scope, require: :index
   filter_access_to :update_csr, :generate_cert, require: [:update]
-  filter_access_to :download, :download_certificates, :start_over, :reprocess, :admin_update, :change_ext_order_number, :switch_from_comodo,
-                   :developers, :require=>[:update, :delete]
+  filter_access_to :download, :download_certificates, :start_over, :reprocess, :admin_update, :change_ext_order_number, :switch_from_comodo, :developers, require: %i[update delete]
   filter_access_to :renew, :parse_csr, require: [:create]
   filter_access_to :auto_renew, require: [:admin_manage]
-  filter_access_to :show_cert_order, :validate_issue, :register_domains, :save_attestation, :remove_attestation, :require=>:ajax
-  before_action :find_certificate, only: [:enrollment]
+  filter_access_to :show_cert_order, :validate_issue, :register_domains, :save_attestation, :remove_attestation, require: :ajax
+  before_action :find_certificate, only: %i[enrollment]
   before_action :load_certificate_order,
-                only: [:show, :show_cert_order, :validate_issue, :update, :edit, :download, :destroy, :delete, :update_csr, :auto_renew, :start_over,
-                       :change_ext_order_number, :admin_update, :developer, :sslcom_ca, :update_tags, :recipient, :validate_issue, :attestation,
-                        :save_attestation, :remove_attestation]
-  before_action :global_set_row_page, only: [:index, :search, :credits, :pending, :filter_by_scope, :order_by_csr, :filter_by,
-                                             :incomplete, :reprocessing]
-  before_action :get_team_tags, only: [:index, :search]
-  before_action :construct_special_fields, only: [:edit, :create, :update, :update_csr]
+                only: %i[show show_cert_order validate_issue update edit download destroy delete update_csr auto_renew start_over
+                         change_ext_order_number admin_update developer sslcom_ca update_tags recipient validate_issue attestation
+                         save_attestation remove_attestation]
+  before_action :global_set_row_page, only: %i[index search credits pending filter_by_scope order_by_csr filter_by
+                                               incomplete reprocessing]
+  before_action :get_team_tags, only: %i[index search]
+  before_action :construct_special_fields, only: %i[edit create update update_csr]
   in_place_edit_for :certificate_order, :notes
   in_place_edit_for :csr, :signed_certificate_by_text
 
-  before_action :set_schedule_value, only: [:edit, :reprocess]
+  before_action :set_schedule_value, only: %i[edit reprocess]
   before_action :set_algorithm_and_size, only: [:generate_cert]
 
-  NUM_ROWS_LIMIT=2
+  NUM_ROWS_LIMIT = 2
 
   def smime_client_enrollment
     if params[:get_duration]

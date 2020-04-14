@@ -14,7 +14,7 @@ linters:
 
   # Offense count: 333
   InstanceVariables:
-    enabled: false
+    enabled: true
 
   # Offense count: 184
   LeadingCommentSpace:
@@ -38,11 +38,11 @@ linters:
 
   # Offense count: 555
   IdNames:
-    enabled: false
+    enabled: true
 
   # Offense count: 58
   UnnecessaryStringOutput:
-    enabled: false
+    enabled: true
 
   # Offense count: 543
   HtmlAttributes:
@@ -54,7 +54,7 @@ linters:
 
   # Offense count: 52
   ViewLength:
-    enabled: false
+    enabled: true
 
   # Offense count: 93
   UnnecessaryInterpolation:
@@ -66,7 +66,7 @@ linters:
 
   # Offense count: 112
   FinalNewline:
-    enabled: false
+    enabled: true
 
   # Offense count: 134
   MultilinePipe:

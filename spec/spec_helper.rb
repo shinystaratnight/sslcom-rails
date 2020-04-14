@@ -17,8 +17,8 @@ RSpec.configure do |config|
     driven_by :selenium_chrome_headless
   end
 
-  config.after(:each, type: :feature) do
-    screenshot_and_save_page
+  config.after(:each, type: :feature) do |example|
+    screenshot_and_save_page unless example.exception.blank?
     Capybara.reset_sessions!
   end
 

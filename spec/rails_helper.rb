@@ -45,6 +45,7 @@ RSpec.configure do |config|
   config.include AuthorizationHelper
   config.include AuthenticationHelpers
   config.include SessionHelper
+  config.include Formulaic::Dsl, type: :feature
 
   config.use_transactional_fixtures = false
   config.render_views

@@ -1,14 +1,6 @@
 # frozen_string_literal: false
 
 Rails.application.configure do
-  # Settings specified here will take precedence over those in config/application.rb.
-
-  # The test environment is used exclusively to run your application's
-  # test suite. You never need to work with it otherwise. Remember that
-  # your test database is "scratch space" for the test suite and is wiped
-  # and recreated between test runs. Don't rely on the data there!
-  config.cache_classes = false # ENV['CI'].present?
-
   # Log error messages when you accidentally call methods on nil.
   config.whiny_nils = true
 
@@ -24,6 +16,8 @@ Rails.application.configure do
   # Show full error reports and disable caching.
   config.consider_all_requests_local       = true
   config.action_controller.perform_caching = false
+  config.cache_store = :null_store
+  config.cache_classes = false
 
   # Raise exceptions instead of rendering exception templates
   config.action_dispatch.show_exceptions = false

@@ -848,8 +848,7 @@ class Order < ApplicationRecord
   # END authorization_reference
 
   def generate_reference_number
-      update_attribute :reference_number, SecureRandom.hex(2)+
-        '-'+Time.now.to_i.to_s(32)
+    update_attribute :reference_number, SecureRandom.hex(2) + '-' + Time.now.to_i.to_s(32)
   end
 
   def commit_discounts
@@ -867,32 +866,13 @@ class Order < ApplicationRecord
   memoize :cached_certificate_orders
 
   def is_free?
-    @is_free.try(:==, true) || (cents==0)
+    @is_free.try(:==, true) || (cents == 0)
   end
 
   def mark_paid!
     payment_authorized! unless authorized?
     payment_captured!
   end
-
-#  def self.cart_items(session, cookies)
-#    session[:cart_items] = []
-#    unless SERVER_SIDE_CART
-#      cart_items = cart_contents
-#      cart_items.each_with_index{|line_item, i|
-#        pr=line_item[ShoppingCart::PRODUCT_CODE]
-#        if !pr.blank? &&
-#          ((line_item.count > 1 && Certificate.find_by_product(pr)) ||
-#          ApplicationRecord.find_from_model_and_id(pr))
-#          session[:cart_items] << line_item
-#        else
-#          cart_items.delete line_item
-#          delete_cart_items
-#          save_cart_items(cart_items)
-#        end
-#      }
-#    end
-#  end
 
   # creates a new order based on this order, but still needs to be assigned to a purchased object
   # the following are valid options:

@@ -34,15 +34,11 @@ node_modules
 sandbox_ssl_com.sql
 ubuntu-xenial-16.04-cloudimg-console.log
 public/assets
-test/.nyc_output
-test/cypress/videos
-test/reports
-test/cypress/screenshots/
 public/uploads
 000/000
 nbproject
 vendor/bundle/
-Vagrantfile.azure
+.ruby-version
 # Ignore master key for decrypting credentials and more.
 /config/master.key
 spec/examples.txt

@@ -52,7 +52,7 @@ FactoryBot.define do
     credit_card       { 'Visa' }
     card_number       { BillingProfile.gateway_stripe? ? '4242424242424242' : '4007000000027' }
     expiration_month  { 1 }
-    expiration_year   { (Date.today + 3.years).year }
+    expiration_year   { (Time.zone.today + 3.years).year }
     security_code     { '900' }
     default_profile   { 1 }
     status            { '' }

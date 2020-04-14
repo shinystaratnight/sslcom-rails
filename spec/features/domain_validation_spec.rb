@@ -1,6 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe 'DomainValidations', type: :feature do
+  include CsrHelpers
+
   before do
     ActionController::Base.allow_forgery_protection = true
   end
@@ -23,14 +25,12 @@ RSpec.describe 'DomainValidations', type: :feature do
       all('#dcv_methods option')[1].select_option
       find('input[value="Validate"]').click
       DomainControlValidation.any_instance.stubs(:validate).returns(true)
-      within '#dcv_validate' do
-        fill_in 'validate_code', with: '-----------------'
-      end
+      fill_validation_code
       find('input[alt="Bl submit button"]').click
       expect(page).to have_content("The following domains are now validated: #{domain}")
     end
 
-    xit 'shows error when using incorrect validation code', js: true do
+    it 'shows error when using incorrect validation code', js: true do
       domain = Faker::Internet.domain_name
       login
       visit '/domains'
@@ -40,11 +40,105 @@ RSpec.describe 'DomainValidations', type: :feature do
       click_on 'Pending Validation'
       all('#dcv_methods option')[1].select_option
       find('input[value="Validate"]').click
-      within '#dcv_validate' do
-        fill_in 'validate_code', with: '-----------------'
-      end
+      fill_validation_code
       find('input[alt="Bl submit button"]').click
       expect(page).to have_content('No domains have been validated.')
+    end
+  end
+
+  context 'with cname dcv method' do
+    let(:user) { create(:user, :owner) }
+
+    before do
+      Authorization::Maintenance.without_access_control do
+        user.create_ssl_account if user.ssl_account.nil?
+        user.ssl_accounts.first.generate_funded_account
+        user.ssl_accounts.first.funded_account.update(cents: 100_000)
+      end
+      Certificate.any_instance.stubs(:last_duration).returns(duration = mock)
+      Certificate.any_instance.stubs(:duration_in_days).returns(365)
+      Certificate.any_instance.stubs(:is_ucc?).returns(false)
+      duration.stubs(:value).returns(365)
+      duration.stubs(:price).returns(Money.new(5000))
+    end
+
+    it 'processes cname validation', js: true do
+      stub_request(:any, 'https://secure.trust-provider.com/products/!GetMDCDomainDetails').to_return(status: 200, body: '')
+      stub_request(:any, 'https://secure.trust-provider.com/products/!AutoReplaceSSL').to_return(status: 200, body: '')
+      as_user(user) do
+        purchase_certificate
+        process_certificate
+        add_contact
+        within 'select[name="domains[example.com][dcv]"]' do
+          within 'optgroup[label="Validation via csr hash"]' do
+            find('option[value="cname_csr_hash"]').select_option
+          end
+        end
+        accept_confirm do
+          find('input[value="Validate"]').click
+        end
+
+        expected = find('span[alt="domains[example.com][dcv]"]').text.split(' -> ')
+        content = expected.last
+        Resolv::DNS.stubs(:open).returns([Resolv::DNS::Resource::IN::CNAME.new(content)])
+        CertificateName.any_instance.stubs(:dcv_verify).returns(true)
+        within 'select[name="domains[example.com][dcv]"]' do
+          within 'optgroup[label="Validation via csr hash"]' do
+            find('option[value="https_csr_hash"]').select_option
+          end
+        end
+        within 'select[name="domains[example.com][dcv]"]' do
+          within 'optgroup[label="Validation via csr hash"]' do
+            find('option[value="cname_csr_hash"]').select_option
+          end
+        end
+        accept_confirm do
+          click_on 'Validate'
+        end
+        click_on 'Premium EV Certificate Order'
+        expect(page).to have_content('Certificate For example.com')
+      end
+    end
+  end
+
+  def purchase_certificate
+    visit account_path(user.ssl_account(:default_team).to_slug)
+    visit '/certificates/ev'
+    all('img[title="click to buy this certificate"]')[1].click
+    find('.submit_csr_img_tag').click
+    find('img[alt="Checkout"]').click
+    find('.order_next').click
+  end
+
+  def process_certificate
+    click_on 'Click here'
+    fill_in 'certificate_order_certificate_contents_attributes_0_signing_request', with: single_csr
+    find('input.submit_csr_img_tag').click
+    fill_in 'certificate_order_certificate_contents_attributes_0_registrant_attributes_address1', with: '3100 Richmond'
+    fill_in 'certificate_order_certificate_contents_attributes_0_registrant_attributes_postal_code', with: '77098'
+    fill_in 'certificate_order_certificate_contents_attributes_0_registrant_attributes_company_number', with: '306384306384'
+    find('input[alt="edit ssl certificate order"]').click
+  end
+
+  def add_contact
+    click_on '+ Create New Contact'
+    find('#chk-technical-role').set(true)
+    fill_in 'contact_first_name', with: user.first_name
+    fill_in 'contact_last_name', with: user.last_name
+    fill_in 'contact_email', with: user.email
+    fill_in 'contact_phone', with: Faker::PhoneNumber.cell_phone
+    find('#btn_create_role_contact').click
+    find('input[alt="Next bl"]').click
+  end
+
+  def submit_payment_information
+    fill_form :billing_profile, attributes_for(:billing_profile)
+    find('.order_next').click
+  end
+
+  def fill_validation_code
+    within '#dcv_validate' do
+      fill_in 'validate_code', with: '-----------------'
     end
   end
 
