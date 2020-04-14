@@ -21,7 +21,7 @@
           smartlook('init', '2e539caf93a87f156af38b6fa13d825174ad4e6e');
     - if current_user.present? && in_production_mode?
       :javascript
-        smartlook('identify', current_user.email, {
+        smartlook('identify', "#{current_user.email}", {
           "id": "#{current_user.id}",
           "login": "#{current_user.login}"
         });
