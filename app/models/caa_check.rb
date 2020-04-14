@@ -115,6 +115,6 @@ class CaaCheck < ApplicationRecord
   end
 
   def comodo_ca_labl
-    I18n.t('labels.ssl_ca')
+    I18n.t('labels.comodo_ca')
   end
 end

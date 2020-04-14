@@ -397,17 +397,16 @@ module ApplicationHelper
     tag_class = options.delete :class
     required = options.delete :required
     format = options.delete :format
-    asterisk = (required)?'*':''
+    asterisk = required ? '*' : ''
     append ||= ''
     case format
-      when /table/
-        content_tag('th', "#{label}#{asterisk}", nil, false) +
-          content_tag('td',"#{form_field}#{append}", nil, false)
-      when /no_div/
-        "#{label}#{asterisk} #{form_field}#{append}".html_safe
-      else
-        content_tag('div', "#{label}#{asterisk} #{form_field}#{append}",
-          {class: tag_class}, false)
+    when /table/
+      content_tag('th', "#{label}#{asterisk}", nil, false) +
+        content_tag('td',"#{form_field}#{append}", nil, false)
+    when /no_div/
+      "#{label}#{asterisk} #{form_field}#{append}".html_safe
+    else
+      content_tag('div', "#{label}#{asterisk} #{form_field}#{append}", { class: tag_class }, false)
     end
   end
 
