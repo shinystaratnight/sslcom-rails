@@ -814,7 +814,7 @@ class SignedCertificate < ApplicationRecord
       cc = csr.certificate_content
       if cc.preferred_reprocessing?
         cc.preferred_reprocessing = false
-        cc.preferred_pending_issuance_will_change!
+        cc.save
       end
       co = cc.certificate_order
       unless co.site_seal.fully_activated?

@@ -86,6 +86,15 @@ class CertificateContent < ApplicationRecord
     end
   end
 
+  def toggle_pending_issuance(status=nil)
+    if status == false or (status.blank? and preferred_pending_issuance?)
+      write_preference('pending_issuance', false)
+    else
+      write_preference('pending_issuance', true)
+    end
+    preferred_pending_issuance_will_change!
+  end
+
   def add_ca(ssl_account)
     unless COMODO_SSL_ACCOUNTS.include?(ssl_account.id)
       self.ca = (self.certificate.cas.ssl_account_or_general_default(ssl_account)).last if ca.blank? and certificate
@@ -211,9 +220,10 @@ class CertificateContent < ApplicationRecord
 
   # are any of the sub/domains trademarks?
   def infringement
-    return ca_id.blank? ? [] : all_domains.map{|domain|domain if (TRADEMARKS-
-        (ssl_account and WHITELIST[ssl_account.id] ? WHITELIST[ssl_account.id] : [])).any?{|trademark|
-      domain.downcase =~ Regexp.new(trademark, Regexp::IGNORECASE)}}.compact
+    return (ApplicationController.helpers.is_sandbox_or_test? or ca_id.blank?) ? [] :
+       all_domains.map{|domain|domain if (TRADEMARKS- (ssl_account and WHITELIST[ssl_account.id] ?
+       WHITELIST[ssl_account.id] : [])).any?{|trademark|
+         domain.downcase =~ Regexp.new(trademark, Regexp::IGNORECASE)}}.compact
   end
 
   def self.infringers

@@ -251,8 +251,7 @@ class SslcomCaApi
       if cc.preferred_pending_issuance?
         return
       else
-        cc.preferred_pending_issuance = true
-        cc.preferred_pending_issuance_will_change!
+        cc.toggle_pending_issuance
       end
       if cc.csr.blank?
         if !options[:csr].blank?
@@ -313,8 +312,7 @@ class SslcomCaApi
       end
     ensure
       if cc.preferred_pending_issuance?
-        cc.preferred_pending_issuance=false
-        cc.preferred_pending_issuance_will_change!
+        cc.toggle_pending_issuance
       end
     end
   end

@@ -142,8 +142,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
         new_cc = CertificateContent.new(cc_params)
         new_cc.save if new_cc.valid?
         if new_cc.preferred_pending_issuance?
-          new_cc.write_preference("pending_issuance", false)
-          cc.preferred_pending_issuance_will_change!
+          new_cc.toggle_pending_issuance
         end
         new_cc.create_registrant(
             co.certificate_content.registrant.attributes.except(*CertificateOrder::ID_AND_TIMESTAMP)
@@ -1407,28 +1406,28 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
 
   def klass
     case params[:action]
-    when "create_v1_3"
+    when 'create_v1_3'
       ApiCertificateCreate
-    when "create_v1_4", "update_v1_4", "contacts_v1_4", "replace_v1_4"
+    when 'create_v1_4', 'update_v1_4', 'contacts_v1_4', 'replace_v1_4', 'api_resend_domain_validation_v1_4'
       ApiCertificateCreate_v1_4
     when /revoke/
       ApiCertificateRevoke
-    when "retrieve_v1_3", "show_v1_4", "index_v1_4", "detail_v1_4", "view_upload_v1_4", "upload_v1_4",
-        "update_site_seal_v1_4", "generate_certificate_v1_4","callback_v1_4"
+    when 'retrieve_v1_3', 'show_v1_4', 'index_v1_4', 'detail_v1_4', 'view_upload_v1_4', 'upload_v1_4',
+        'update_site_seal_v1_4', 'generate_certificate_v1_4','callback_v1_4'
       ApiCertificateRetrieve
-    when "certificate_enrollment_order"
+    when 'certificate_enrollment_order'
       ApiCertificateEnrollment
-    when "retrieve_signed_certificates"
+    when 'retrieve_signed_certificates'
       ApiSignedCertificateRequest
-    when "api_parameters_v1_4"
+    when 'api_parameters_v1_4'
       ApiParameters
-    when "quote"
+    when 'quote'
       ApiCertificateQuote
-    when "dcv_email_resend_v1_3"
+    when 'dcv_email_resend_v1_3'
       ApiDcvEmailResend
-    when "dcv_emails_v1_3", "dcv_revoke_v1_3"
+    when 'dcv_emails_v1_3'
       ApiDcvEmails
-    when "dcv_methods_v1_4", "dcv_revoke_v1_3", "dcv_methods_csr_hash_v1_4", "pretest_v1_4"
+    when 'dcv_methods_v1_4', 'dcv_methods_csr_hash_v1_4', 'pretest_v1_4'
       ApiDcvMethods
     end
   end
