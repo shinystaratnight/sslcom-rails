@@ -101,6 +101,86 @@ RSpec.describe 'DomainValidations', type: :feature do
     end
   end
 
+  context 'with http dcv method' do
+    let(:user) { create(:user, :owner) }
+
+    it 'passes when expected file is found', js: true do
+      stub_request(:any, 'https://secure.trust-provider.com/products/!GetMDCDomainDetails').to_return(status: 200, body: '')
+      stub_request(:any, 'https://secure.trust-provider.com/products/!AutoReplaceSSL').to_return(status: 200, body: '')
+      as_user(user) do
+        purchase_certificate
+        submit_payment_information
+        process_certificate
+        add_contact
+        within 'select[name="domains[example.com][dcv]"]' do
+          within 'optgroup[label="Validation via csr hash"]' do
+            find('option[value="http_csr_hash"]').select_option
+          end
+        end
+        accept_confirm do
+          find('input[value="Validate"]').click
+        end
+
+        CertificateName.any_instance.stubs(:dcv_verify).returns(true)
+        within 'select[name="domains[example.com][dcv]"]' do
+          within 'optgroup[label="Validation via csr hash"]' do
+            find('option[value="cname_csr_hash"]').select_option
+          end
+        end
+        within 'select[name="domains[example.com][dcv]"]' do
+          within 'optgroup[label="Validation via csr hash"]' do
+            find('option[value="http_csr_hash"]').select_option
+          end
+        end
+        accept_confirm do
+          click_on 'Validate'
+        end
+        click_on 'Premium EV Certificate Order'
+        expect(page).to have_content('Certificate For example.com')
+      end
+    end
+  end
+
+  context 'with https dcv method' do
+    let(:user) { create(:user, :owner) }
+
+    it 'passes when expected file is found', js: true do
+      stub_request(:any, 'https://secure.trust-provider.com/products/!GetMDCDomainDetails').to_return(status: 200, body: '')
+      stub_request(:any, 'https://secure.trust-provider.com/products/!AutoReplaceSSL').to_return(status: 200, body: '')
+      as_user(user) do
+        purchase_certificate
+        submit_payment_information
+        process_certificate
+        add_contact
+        within 'select[name="domains[example.com][dcv]"]' do
+          within 'optgroup[label="Validation via csr hash"]' do
+            find('option[value="https_csr_hash"]').select_option
+          end
+        end
+        accept_confirm do
+          find('input[value="Validate"]').click
+        end
+
+        CertificateName.any_instance.stubs(:dcv_verify).returns(true)
+        within 'select[name="domains[example.com][dcv]"]' do
+          within 'optgroup[label="Validation via csr hash"]' do
+            find('option[value="cname_csr_hash"]').select_option
+          end
+        end
+        within 'select[name="domains[example.com][dcv]"]' do
+          within 'optgroup[label="Validation via csr hash"]' do
+            find('option[value="https_csr_hash"]').select_option
+          end
+        end
+        accept_confirm do
+          click_on 'Validate'
+        end
+        click_on 'Premium EV Certificate Order'
+        expect(page).to have_content('Certificate For example.com')
+      end
+    end
+  end
+
   def purchase_certificate
     visit account_path(user.ssl_account(:default_team).to_slug)
     visit '/certificates/ev'
@@ -132,7 +212,19 @@ RSpec.describe 'DomainValidations', type: :feature do
   end
 
   def submit_payment_information
-    fill_form :billing_profile, attributes_for(:billing_profile)
+    bp = attributes_for(:billing_profile)
+    fill_in :billing_profile_first_name, with: bp[:first_name]
+    fill_in :billing_profile_last_name, with: bp[:last_name]
+    fill_in :billing_profile_address_1, with: bp[:address_1]
+    fill_in :billing_profile_city, with: bp[:city]
+    fill_in :billing_profile_state, with: bp[:state]
+    fill_in :billing_profile_postal_code, with: bp[:postal_code]
+    fill_in :billing_profile_phone, with: bp[:phone]
+    fill_in :billing_profile_card_number, with: bp[:card_number]
+    fill_in :billing_profile_security_code, with: bp[:security_code]
+    within '#billing_profile_expiration_year' do
+      all('option')[2].select_option
+    end
     find('.order_next').click
   end
 
