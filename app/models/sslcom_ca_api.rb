@@ -311,9 +311,7 @@ class SslcomCaApi
         api_log_entry
       end
     ensure
-      if cc.preferred_pending_issuance?
-        cc.toggle_pending_issuance
-      end
+      cc.toggle_pending_issuance if cc.preferred_pending_issuance?
     end
   end
 
