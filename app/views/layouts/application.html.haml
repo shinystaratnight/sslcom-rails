@@ -78,7 +78,7 @@
         #swifttagcontainerwoyxz3g3q4
           #proactivechatcontainerwoyxz3g3q4
           #swifttagdatacontainerwoyxz3g3q4(style="display: inline;")
-        -if in_production_mode? && !is_sandbox? and !current_user&is_system_admins?
+        -if in_production_mode? && !is_sandbox? and !current_user&.is_system_admins?
           / begin olark code
           %script(data-cfasync="false" type='text/javascript')
             /*{literal}<![CDATA[*/
