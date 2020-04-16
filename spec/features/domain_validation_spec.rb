@@ -101,82 +101,44 @@ RSpec.describe 'DomainValidations', type: :feature do
     end
   end
 
-  context 'with http dcv method' do
-    let(:user) { create(:user, :owner) }
+  %w[https_csr_hash http_csr_hash].each do |protocol|
+    context "with #{protocol} dcv method" do
+      let(:user) { create(:user, :owner) }
 
-    it 'passes when expected file is found', js: true do
-      stub_request(:any, 'https://secure.trust-provider.com/products/!GetMDCDomainDetails').to_return(status: 200, body: '')
-      stub_request(:any, 'https://secure.trust-provider.com/products/!AutoReplaceSSL').to_return(status: 200, body: '')
-      as_user(user) do
-        purchase_certificate
-        submit_payment_information
-        process_certificate
-        add_contact
-        within 'select[name="domains[example.com][dcv]"]' do
-          within 'optgroup[label="Validation via csr hash"]' do
-            find('option[value="http_csr_hash"]').select_option
+      it 'passes when expected file is found', js: true do
+        stub_request(:any, 'https://secure.trust-provider.com/products/!GetMDCDomainDetails').to_return(status: 200, body: '')
+        stub_request(:any, 'https://secure.trust-provider.com/products/!AutoReplaceSSL').to_return(status: 200, body: '')
+        as_user(user) do
+          purchase_certificate
+          submit_payment_information
+          process_certificate
+          add_contact
+          within 'select[name="domains[example.com][dcv]"]' do
+            within 'optgroup[label="Validation via csr hash"]' do
+              find("option[value='#{protocol}']").select_option
+            end
           end
-        end
-        accept_confirm do
-          find('input[value="Validate"]').click
-        end
+          accept_confirm do
+            find('input[value="Validate"]').click
+          end
 
-        CertificateName.any_instance.stubs(:dcv_verify).returns(true)
-        within 'select[name="domains[example.com][dcv]"]' do
-          within 'optgroup[label="Validation via csr hash"]' do
-            find('option[value="cname_csr_hash"]').select_option
+          CertificateName.any_instance.stubs(:dcv_verify).returns(true)
+          within 'select[name="domains[example.com][dcv]"]' do
+            within 'optgroup[label="Validation via csr hash"]' do
+              find('option[value="cname_csr_hash"]').select_option
+            end
           end
-        end
-        within 'select[name="domains[example.com][dcv]"]' do
-          within 'optgroup[label="Validation via csr hash"]' do
-            find('option[value="http_csr_hash"]').select_option
+          within 'select[name="domains[example.com][dcv]"]' do
+            within 'optgroup[label="Validation via csr hash"]' do
+              find("option[value='#{protocol}']").select_option
+            end
           end
-        end
-        accept_confirm do
-          click_on 'Validate'
-        end
-        click_on 'Premium EV Certificate Order'
-        expect(page).to have_content('Certificate For example.com')
-      end
-    end
-  end
-
-  context 'with https dcv method' do
-    let(:user) { create(:user, :owner) }
-
-    it 'passes when expected file is found', js: true do
-      stub_request(:any, 'https://secure.trust-provider.com/products/!GetMDCDomainDetails').to_return(status: 200, body: '')
-      stub_request(:any, 'https://secure.trust-provider.com/products/!AutoReplaceSSL').to_return(status: 200, body: '')
-      as_user(user) do
-        purchase_certificate
-        submit_payment_information
-        process_certificate
-        add_contact
-        within 'select[name="domains[example.com][dcv]"]' do
-          within 'optgroup[label="Validation via csr hash"]' do
-            find('option[value="https_csr_hash"]').select_option
+          accept_confirm do
+            click_on 'Validate'
           end
+          click_on 'Premium EV Certificate Order'
+          expect(page).to have_content('Certificate For example.com')
         end
-        accept_confirm do
-          find('input[value="Validate"]').click
-        end
-
-        CertificateName.any_instance.stubs(:dcv_verify).returns(true)
-        within 'select[name="domains[example.com][dcv]"]' do
-          within 'optgroup[label="Validation via csr hash"]' do
-            find('option[value="cname_csr_hash"]').select_option
-          end
-        end
-        within 'select[name="domains[example.com][dcv]"]' do
-          within 'optgroup[label="Validation via csr hash"]' do
-            find('option[value="https_csr_hash"]').select_option
-          end
-        end
-        accept_confirm do
-          click_on 'Validate'
-        end
-        click_on 'Premium EV Certificate Order'
-        expect(page).to have_content('Certificate For example.com')
       end
     end
   end
