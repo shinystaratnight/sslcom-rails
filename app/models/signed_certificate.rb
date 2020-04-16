@@ -67,7 +67,6 @@
 require 'digest/md5'
 require 'zip/zip'
 require 'openssl'
-#require 'zip/zipfilesystem'
 
 class SignedCertificate < ApplicationRecord
   include CertificateType
@@ -80,16 +79,14 @@ class SignedCertificate < ApplicationRecord
   delegate :certificate_content, to: :csr, allow_nil: true
   delegate :certificate_order, to: :certificate_content, allow_nil: true
   belongs_to :certificate_lookup
-  validates_presence_of :body, if: Proc.new { |r| !r.parent_cert }
+  validates :body, presence: { if: proc { |r| !r.parent_cert } }
   validates :csr_id, presence: true, on: :save
-  validate :proper_certificate?, if: Proc.new { |r| !r.parent_cert && !r.body.blank? }
+  validate :proper_certificate?, if: proc { |r| !r.parent_cert && r.body.present? }
   has_many  :sslcom_ca_revocation_requests, as: :api_requestable
   has_many  :sslcom_ca_requests, as: :api_requestable
-
   belongs_to :registered_agent
-  has_one :revocation, class_name: 'Revocation', foreign_key: 'revoked_signed_certificate_id'
-  has_one   :replacement, through: :revocation, class_name: 'SignedCertificate',
-            source: 'replacement_signed_certificate', foreign_key: 'replacement_signed_certificate_id'
+  has_one :revocation, class_name: 'Revocation', foreign_key: 'revoked_signed_certificate_id', inverse_of: :revoked_signed_certificate
+  has_one :replacement, through: :revocation, class_name: 'SignedCertificate', source: 'replacement_signed_certificate', foreign_key: 'replacement_signed_certificate_id'
 
   attr :parsed
   attr_accessor :email_customer
@@ -831,6 +828,13 @@ class SignedCertificate < ApplicationRecord
   end
 
   def after_create
-    csr&.certificate_content&.issue! if csr.blank? && !%w(ShadowSignedCertificate ManagedCertificate).include?(self.type)
+    case type
+    when 'ShadowSignedCertificate', 'ManagedCertificate'
+      true
+    when 'AttestationCertificate'
+      certificate_content.issue!
+    else
+      csr.certificate_content.issue!
+    end
   end
 end
