@@ -49,24 +49,12 @@ RSpec.describe 'DomainValidations', type: :feature do
   context 'with cname dcv method' do
     let(:user) { create(:user, :owner) }
 
-    before do
-      Authorization::Maintenance.without_access_control do
-        user.create_ssl_account if user.ssl_account.nil?
-        user.ssl_accounts.first.generate_funded_account
-        user.ssl_accounts.first.funded_account.update(cents: 100_000)
-      end
-      Certificate.any_instance.stubs(:last_duration).returns(duration = mock)
-      Certificate.any_instance.stubs(:duration_in_days).returns(365)
-      Certificate.any_instance.stubs(:is_ucc?).returns(false)
-      duration.stubs(:value).returns(365)
-      duration.stubs(:price).returns(Money.new(5000))
-    end
-
     it 'processes cname validation', js: true do
       stub_request(:any, 'https://secure.trust-provider.com/products/!GetMDCDomainDetails').to_return(status: 200, body: '')
       stub_request(:any, 'https://secure.trust-provider.com/products/!AutoReplaceSSL').to_return(status: 200, body: '')
       as_user(user) do
         purchase_certificate
+        submit_payment_information
         process_certificate
         add_contact
         within 'select[name="domains[example.com][dcv]"]' do

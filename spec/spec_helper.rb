@@ -18,8 +18,7 @@ RSpec.configure do |config|
   end
 
   config.after(:each, type: :feature) do |example|
-    screenshot_and_save_page unless example.exception.blank?
-    Capybara.reset_sessions!
+    screenshot_and_save_page if example.exception.present?
   end
 
   config.mock_with :mocha

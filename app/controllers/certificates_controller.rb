@@ -12,13 +12,7 @@ class CertificatesController < ApplicationController
   layout false, only: [:pricing]
 
   def index
-    @certificates = if Rails.env.development?
-                      @tier.blank? ? Certificate.root_products : Certificate.tiered_products(@tier)
-                    else
-                      Rails.cache.fetch(@tier.blank? ? 'tier_nil' : "tier_#{@tier}", expires_in: 30.days) do
-                        @tier.blank? ? Certificate.root_products : Certificate.tiered_products(@tier)
-                      end
-                    end
+    @certificates = @tier.blank? ? Certificate.root_products : Certificate.tiered_products(@tier)
   end
 
   def single_domain
