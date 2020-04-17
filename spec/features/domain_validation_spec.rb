@@ -93,6 +93,10 @@ RSpec.describe 'DomainValidations', type: :feature do
     context "with #{protocol} dcv method" do
       let(:user) { create(:user, :owner) }
 
+      before do
+        SslAccount.any_instance.stubs(:get_account_owner).returns(user)
+      end
+
       it 'passes when expected file is found', js: true do
         stub_request(:any, 'https://secure.trust-provider.com/products/!GetMDCDomainDetails').to_return(status: 200, body: '')
         stub_request(:any, 'https://secure.trust-provider.com/products/!AutoReplaceSSL').to_return(status: 200, body: '')

@@ -72,29 +72,29 @@
                               strong contacts/identities
                             li=link_to 'contacts', saved_contacts_contacts_path(ssl_slug: @ssl_slug)
                             li=link_to 'identity manager', saved_contacts_contacts_path(ssl_slug: @ssl_slug, registrants: true)
-                    -unless is_sandbox?
                     .row
                       .col-md-2
-                      .col-md-5
-                        ul
-                          -if permitted_to?(:edit, :billing_profiles)
-                            li
-                              strong
-                                | billing and purchase
-                            -if permitted_to?(:create, :funded_accounts)
-                              li available funds: $ #{ssl_account.funded_account.decorate.available}
-                            -if permitted_to? :read, :orders
-                              li=link_to "billing", is_sandbox? ? search_orders_path(search:'is_test:true') : orders_path(ssl_slug: @ssl_slug)
-                            li=link_to 'buy certificate', certificates_url
-                            li=link_to "s/mime or client enrollment", smime_client_enrollment_certificate_orders_path(ssl_slug: @ssl_slug)
-                            li=link_to 'deposit funds', allocate_funds_url(ssl_slug: @ssl_slug)
-                            -if ssl_account && permitted_to?(:index, :billing_profiles)
-                              li=link_to 'manage billing profiles', billing_profiles_path(ssl_slug: @ssl_slug)
-                            li=link_to 'view purchased certificates', certificate_orders_url(ssl_slug: @ssl_slug)
-                            -if ssl_account.has_credits?
-                              li=link_to 'use certificate credits', credits_certificate_orders_url(ssl_slug: @ssl_slug)
-                            -if ssl_account && permitted_to?(:index, :invoices) && ssl_account.invoices.any?
-                              li=link_to 'monthly and daily invoices', invoices_path(@ssl_slug)
+                      -unless is_sandbox?
+                        .col-md-5
+                          ul
+                            -if permitted_to?(:edit, :billing_profiles)
+                              li
+                                strong
+                                  | billing and purchase
+                              -if permitted_to?(:create, :funded_accounts)
+                                li available funds: $ #{ssl_account.funded_account.decorate.available}
+                              -if permitted_to? :read, :orders
+                                li=link_to "billing", is_sandbox? ? search_orders_path(search:'is_test:true') : orders_path(ssl_slug: @ssl_slug)
+                              li=link_to 'buy certificate', certificates_url
+                              li=link_to "s/mime or client enrollment", smime_client_enrollment_certificate_orders_path(ssl_slug: @ssl_slug)
+                              li=link_to 'deposit funds', allocate_funds_url(ssl_slug: @ssl_slug)
+                              -if ssl_account && permitted_to?(:index, :billing_profiles)
+                                li=link_to 'manage billing profiles', billing_profiles_path(ssl_slug: @ssl_slug)
+                              li=link_to 'view purchased certificates', certificate_orders_url(ssl_slug: @ssl_slug)
+                              -if ssl_account.has_credits?
+                                li=link_to 'use certificate credits', credits_certificate_orders_url(ssl_slug: @ssl_slug)
+                              -if ssl_account && permitted_to?(:index, :invoices) && ssl_account.invoices.any?
+                                li=link_to 'monthly and daily invoices', invoices_path(@ssl_slug)
                       -if ssl_account.api_credentials
                         .col-md-5
                           ul
