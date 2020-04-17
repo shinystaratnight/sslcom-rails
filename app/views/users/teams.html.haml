@@ -125,7 +125,7 @@
                   #team-reseller-tier-switch
                     #frm-team-reseller-tier-switch.clearfix
                       =label_tag "Reseller Level:"
-                      =link_to "Manage#{t.reseller ? ' Tier '+t.reseller.reseller_tier.label : ''}", '', class: 'team-sel-reseller-tier', "data-team-ref": t.acct_number || t.ssl_slug, "data-reseller-fields": reseller_fields(t)
+                      =link_to "Manage#{t&.reseller&.reseller_tier ? ' Tier '+t.reseller.reseller_tier.label : ''}", '', class: 'team-sel-reseller-tier', "data-team-ref": t.acct_number || t.ssl_slug, "data-reseller-fields": reseller_fields(t)
                       -unless t.reseller.blank?
                         %span /
                         =link_to 'Delete', '', class: 'team-del-reseller-tier', "data-team-ref": t.acct_number || t.ssl_slug
