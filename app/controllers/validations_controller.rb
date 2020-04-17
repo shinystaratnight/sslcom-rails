@@ -1062,9 +1062,7 @@ class ValidationsController < ApplicationController
 
   def notify_customer(validation_rulings)
     recips = [@co.certificate_content.administrative_contact]
-    recips << @co.certificate_content.validation_contact if
-        @co.certificate_content.validation_contact and @co.certificate_content.validation_contact.email.downcase!=
-      @co.certificate_content.administrative_contact.email.downcase
+    recips << @co.certificate_content.validation_contact if @co&.certificate_content&.validation_contact&.email&.downcase != @co&.certificate_content&.administrative_contact&.email&.downcase
     recips.each do |c|
       if validation_rulings.all?(&:approved?)
         OrderNotifier.validation_approve(c, @co).deliver

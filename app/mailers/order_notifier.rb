@@ -13,7 +13,7 @@ class OrderNotifier < ApplicationMailer
     )
 
     mail subject: 'New Certificate Enrollment Request',
-         from: orders_from_emai,
+         from: orders_from_email,
          to: team_admin.email
   end
 
@@ -22,7 +22,7 @@ class OrderNotifier < ApplicationMailer
     @decline_code = params[:decline_code]
     @user_email = params[:user_email]
     mail  subject: 'Order was invoiced due to decline error from Stripe merchant.',
-          from: orders_from_emai,
+          from: orders_from_email,
           to: support_email
   end
 
@@ -36,7 +36,7 @@ class OrderNotifier < ApplicationMailer
     @to_owner   = @to_team.get_account_owner.email
 
     mail  subject: "Order(s) have been transferred from team #{@from_team.get_team_name} to team #{@to_team.get_team_name}.",
-          from: orders_from_emai,
+          from: orders_from_email,
           to: [@from_owner, @to_owner].uniq
   end
 
@@ -46,7 +46,7 @@ class OrderNotifier < ApplicationMailer
     @team  = @order.billable
 
     mail  subject: "A new domains adjustment order has been placed for team #{@team.get_team_name}.",
-          from: orders_from_emai,
+          from: orders_from_email,
           to: @user.email
   end
 
@@ -57,7 +57,7 @@ class OrderNotifier < ApplicationMailer
     @invoice_type = @invoice.get_type_format.downcase
 
     mail  subject: "You have a new invoice for team #{@team.get_team_name}.",
-          from: orders_from_emai,
+          from: orders_from_email,
           to: @user.email
   end
 
@@ -69,7 +69,7 @@ class OrderNotifier < ApplicationMailer
     @invoice_type = @invoice.get_type_format.downcase
 
     mail  subject: "Payment has been submitted for invoice ##{@invoice.reference_number} for team #{@team.get_team_name}.",
-          from: orders_from_emai,
+          from: orders_from_email,
           to: @user.email
   end
 
@@ -77,7 +77,7 @@ class OrderNotifier < ApplicationMailer
     @ssl_account        = ssl_account
     @certificate_order  = certificate_order.reload
     mail  subject: "#{'(TEST) ' if certificate_order.is_test?}SSL.com #{certificate_order.certificate.description['certificate_type']} Certificate Confirmation For #{certificate_order.subject} (Order ##{certificate_order.ref})",
-          from: orders_from_emai,
+          from: orders_from_email,
           to: certificate_order.valid_recipients_list
   end
 
@@ -85,7 +85,7 @@ class OrderNotifier < ApplicationMailer
     @ssl_account  = ssl_account
     @order        = order
     mail  subject: "SSL.com Confirmation for Order ##{order.reference_number}",
-          from: orders_from_emai,
+          from: orders_from_email,
           to: to_valid_list(ssl_account.receipt_recipients)
   end
 
@@ -93,7 +93,7 @@ class OrderNotifier < ApplicationMailer
     @renewal = renewal
     setup(contact, certificate_order)
     mail  subject: "#{'(TEST) ' if certificate_order.is_test?}SSL.com #{certificate_order.certificate.description['certificate_type']} Certificate #{@renewal ? 'Renewal Processed' : 'Confirmation'} For #{certificate_order.subject} (Order ##{certificate_order.ref})",
-          from: orders_from_emai,
+          from: orders_from_email,
           to: contact
   end
 
@@ -110,7 +110,7 @@ class OrderNotifier < ApplicationMailer
                         new_certificate_order_validation_url(param)
                       end
     mail  subject: "#{'(TEST) ' if certificate_order.is_test?}SSL.com Validation Request Will Be Sent for #{certificate_order.subject} (Order ##{certificate_order.ref})",
-          from: orders_from_emai,
+          from: orders_from_email,
           to: contact
   end
 
@@ -141,7 +141,7 @@ class OrderNotifier < ApplicationMailer
         @certificate_content.signed_certificate : options[:certificate_order].signed_certificate
     mail(
       to: options[:contact],
-      from: orders_from_emai,
+      from: orders_from_email,
       subject: "#{'(TEST) ' if options[:certificate_order].is_test?}SSL.com #{options[:certificate_order].certificate.description['certificate_type']} Certificate (#{@signed_certificate.validation_type.upcase}) Attached For #{@signed_certificate.common_name}"
     )
   end
@@ -196,7 +196,7 @@ class OrderNotifier < ApplicationMailer
   def validation_approve(contact, certificate_order)
     setup(contact, certificate_order)
     mail  subject: "#{'(TEST) ' if certificate_order.is_test?}SSL.com Certificate For #{certificate_order.subject} Has Been Approved",
-          from: orders_from_emai,
+          from: orders_from_email,
           to: contact.email
   end
 
@@ -204,14 +204,14 @@ class OrderNotifier < ApplicationMailer
     setup(contact, certificate_order)
     @validation = validation
     mail  subject: "#{'(TEST) ' if certificate_order.is_test?}SSL.com Certificate For #{certificate_order.subject} Has Not Been Approved",
-          from: orders_from_emai,
+          from: orders_from_email,
           to: contact.email
   end
 
   def site_seal_approve(contact, certificate_order)
     setup(contact, certificate_order)
     mail  subject: "#{'(TEST) ' if certificate_order.is_test?}SSL.com Smart SeaL For #{certificate_order.subject} Is Now Ready",
-          from: orders_from_emai,
+          from: orders_from_email,
           to: (contact.is_a?(Contact) ? contact.email : contact)
   end
 
@@ -220,14 +220,14 @@ class OrderNotifier < ApplicationMailer
             (certificate_order.site_seal.canceled? ? 'Abuse Reported: ' : '')
     setup(contact, certificate_order)
     mail  subject: abuse + "SSL.com Smart SeaL For #{certificate_order.subject} Has Been Disabled",
-          from: orders_from_emai,
+          from: orders_from_email,
           to: (contact.is_a?(Contact) ? contact.email : contact)
   end
 
   def deposit_completed(ssl_account, deposit)
     @ssl_account = ssl_account
     @deposit = deposit
-    mail from: orders_from_emai,
+    mail from: orders_from_email,
          to: to_valid_list(ssl_account.receipt_recipients),
          subject: "SSL.com Deposit Confirmation ##{deposit.reference_number}"
   end
