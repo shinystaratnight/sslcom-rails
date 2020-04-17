@@ -273,7 +273,7 @@ class SslcomCaApi
       end
       if options[:mapping].is_ev? and (approval_res.try(:body).blank? or approval_res.try(:body)=="[]" or
           (!cc.signed_certificate.blank? and
-            cc.signed_certificate.read_attribute(:ejbca_username)==cc.csr.sslcom_ca_requests.compact.first.username and
+            cc.signed_certificates.first.read_attribute(:ejbca_username)==cc.csr.sslcom_ca_requests.compact.first.username and
             !cc.csr.sslcom_ca_requests.compact.first.username.blank?))
         # create the user for EV order
         host = ca_host(options[:mapping])+"/v1/user"
