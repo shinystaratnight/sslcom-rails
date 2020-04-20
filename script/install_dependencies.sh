@@ -3,6 +3,10 @@ cd /home/ubuntu/sslcom-rails
 sudo chown ubuntu:ubuntu -R .
 cp ../config/*.yml /home/ubuntu/sslcom-rails/config/.
 
+curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
+echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+sudo apt update && sudo apt install -y yarn
+
 if [ -n "${BASH_VERSION:-}" -o -n "${ZSH_VERSION:-}" ] ; then
 
   # Load user rvmrc configurations, if exist
@@ -53,6 +57,7 @@ if [ -n "${BASH_VERSION:-}" -o -n "${ZSH_VERSION:-}" ] ; then
 fi
 
 bundle install --deployment
+yarn install
 RAILS_ENV=qa bundle exec rake db:migrate
 RAILS_ENV=qa bundle exec rake assets:precompile
 RAILS_ENV=qa bundle exec rake assets:clean

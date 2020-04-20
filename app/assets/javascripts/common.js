@@ -8,7 +8,7 @@
 //= require jquery.cookie
 //= require jquery.json-2.2.min
 //= require jCal
-//= require datejs
+//= require date.js/dist/date.min
 //= require merchant_validate_cc
 //= require popper
 //= require bootstrap-sprockets
