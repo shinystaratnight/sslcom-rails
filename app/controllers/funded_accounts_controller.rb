@@ -35,10 +35,9 @@ class FundedAccountsController < ApplicationController
   def deposit_funds
     too_many_declines = delay_transaction?
     @reseller_initial_deposit = true if initial_reseller_deposit?
-    @funded_account, @billing_profile = 
-      FundedAccount.new(params[:funded_account]),
-      BillingProfile.new(params[:billing_profile])
-    # After discount, check if sufficient funds in funded account for final amount 
+    @funded_account = FundedAccount.new(funded_account_params)
+    @billing_profile = BillingProfile.new(billing_account_params)
+    # After discount, check if sufficient funds in funded account for final amount
     if @funded_account.deduct_order? && params[:discount_amount] && sufficient_funds?(params)
       new_params = params.select{|k,v| %w{funded_account discount_code discount_amount}.include?(k)}
       redirect_to apply_funds_path(new_params.deep_symbolize_keys) and return
@@ -65,21 +64,17 @@ class FundedAccountsController < ApplicationController
       @account_total = account.funded_account(true)
       @funded_original = @account_total.cents
       #if not deducting order, then it's a straight deposit since we don't deduct anything
-      @order ||= (@funded_account.deduct_order?)? current_order :
-        Order.new(:cents => 0, :deposit_mode => true)
+      @order ||= @funded_account.deduct_order? ? current_order : Order.new(cents: 0, deposit_mode: true)
       if @funded_account.deduct_order?
         deduct_order_amounts(params)
       else
-        @account_total.cents += @funded_account.amount.cents - @order.cents
+        @account_total.cents += (@funded_account.amount.cents * 100) - @order.cents
       end
       unless @funded_account.deduct_order?
         # do this before we attempt to deduct funds
-        @funded_account.errors.add(:amount, "being loaded is not sufficient") if
-            @account_total.cents <= 0 #should redirect to load funds page prepopulated with the amount difference
-        if @funded_account.amount && (@funded_account.amount.to_s.to_f < Settings.minimum_deposit_amount)
-          @funded_account.errors.add(:amount,
-            "minimum deposit load amount is #{Money.new(Settings.minimum_deposit_amount.to_i*100).format}"
-          )
+        @funded_account.errors.add(:amount, "being loaded is not sufficient") if @account_total.cents <= 0 #should redirect to load funds page prepopulated with the amount difference
+        if @funded_account.amount && (@funded_account.amount.cents < Settings.minimum_deposit_amount)
+          @funded_account.errors.add(:amount, "minimum deposit load amount is #{Money.new(Settings.minimum_deposit_amount.to_i * 100).format}")
         end
       end
     end
@@ -112,11 +107,11 @@ class FundedAccountsController < ApplicationController
     end
     @credit_card = @profile.build_credit_card
     if ActiveMerchant::Billing::Base.mode == :test ? true : @credit_card.valid?
-      @deposit.amount = @funded_account.amount
+      @deposit.amount = @funded_account.amount.cents
       @deposit.description = "Deposit"
       @funded.description = 'Funded Account Withdrawal' if @funded
       if initial_reseller_deposit?
-        #get this before transaction so user cannot change the cookie, thus 
+        #get this before transaction so user cannot change the cookie, thus
         #resulting in mismatched item purchased
         immutable_cart_item = ResellerTier.find_by_label(current_order.
             line_items.first.sellable.label)
@@ -128,8 +123,7 @@ class FundedAccountsController < ApplicationController
       if @gateway_response && @gateway_response.success?
         @deposit.mark_paid!
         flash.now[:notice] = @gateway_response.message
-        save_billing_profile if
-          (@funded_account.funding_source == "new credit card")
+        save_billing_profile if @funded_account.funding_source == "new credit card"
         @deposit.billing_profile = @profile
         if apply_order
           @order.deducted_from = @deposit
@@ -276,6 +270,31 @@ class FundedAccountsController < ApplicationController
 
   private
 
+  def funded_account_params
+    params.require(:funded_account).permit(:deduct_order, :order_type, :funding_source, :amount)
+  end
+
+  def billing_account_params
+    params.require(:billing_profile).permit(
+      :first_name,
+      :last_name,
+      :company,
+      :address_1,
+      :address_2,
+      :postal_code,
+      :city,
+      :state,
+      :country,
+      :phone,
+      :vat,
+      :credit_card,
+      :card_number,
+      :expiration_month,
+      :expiration_year,
+      :security_code
+    )
+  end
+
   def object
     @object = @ssl_account.funded_account ||= FundedAccount.new(:amount => 0)
   end
@@ -298,7 +317,7 @@ class FundedAccountsController < ApplicationController
     # target amount user has chosen to deposit to go towards order amount
     # and/or additional deposit to funded account if in surplus
     @funded_target    = Money.new(@funded_account.target_amount.to_f * 100)
-    
+
     # determine whether to tap into existing funds in the funded account
     @funded_diff      = @funded_target.cents - (price_w_discount - @funded_withdrawal)
     if (@funded_diff >= 0)  # deposit will cover cost of purchase and/or surplus for funded account
@@ -307,7 +326,7 @@ class FundedAccountsController < ApplicationController
     @funded_account.amount   = @funded_target
     @account_total.cents    -= @funded_withdrawal
   end
-  
+
   def log_deposit
     unless @funded_account.deduct_order?
       gateway = BillingProfile.gateway_stripe? ? 'Stripe' : 'Authorize.net'
@@ -324,7 +343,7 @@ class FundedAccountsController < ApplicationController
       )
     end
   end
-  
+
   def sufficient_funds?(params)
     funded_amt   = @ssl_account.funded_account.amount.cents
     order_amt    = to_cents(params[:funded_account][:amount])
@@ -332,7 +351,7 @@ class FundedAccountsController < ApplicationController
     discount_amt = (discount && discount.to_f > 0) ? to_cents(discount) : 0
     (funded_amt - (order_amt - discount_amt)) >= 0
   end
-  
+
   def to_cents(amount)
     Money.new(amount.to_f * 100).cents
   end
