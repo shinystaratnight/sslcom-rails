@@ -271,18 +271,18 @@ class SslcomCaApi
             parameters: approval_req.body, method: "get", response: approval_res.body,
             ca: options[:ca]) if approval_res.try(:body)=~/WAITING FOR APPROVAL/
       end
-      if options[:mapping].is_ev? and (approval_res.try(:body).blank? or approval_res.try(:body)=="[]" or
-          (!cc.signed_certificate.blank? and
-            cc.signed_certificates.first.read_attribute(:ejbca_username)==cc.csr.sslcom_ca_requests.compact.first.username and
-            !cc.csr.sslcom_ca_requests.compact.first.username.blank?))
+      if options[:mapping].is_ev? && (approval_res.try(:body).blank? || (approval_res.try(:body) == '[]') ||
+        (cc.signed_certificate.present? && cc.csr.sslcom_ca_requests.compact.first&.username.present? &&
+          (cc.signed_certificates.first.read_attribute(:ejbca_username) == cc.csr.sslcom_ca_requests.compact.first.username)))
         # create the user for EV order
-        host = ca_host(options[:mapping])+"/v1/user"
-        options.merge! no_public_key: true
+        host = ca_host(options[:mapping]) + '/v1/user'
+        options[:no_public_key] = true
       else # collect cert
-        host = ca_host(options[:mapping])+
-            "/v1/certificate#{'/ev' if options[:mapping].is_ev?}/pkcs10"
-        options.merge!(collect_certificate: true, username:
-            cc.csr.sslcom_usernames.compact.first) if options[:mapping].is_ev?
+        host = ca_host(options[:mapping]) + "/v1/certificate#{'/ev' if options[:mapping].is_ev?}/pkcs10"
+        if options[:mapping].is_ev?
+          options[:collect_certificate] = true
+          options[:username] = cc.csr.sslcom_usernames.compact.first
+        end
       end
       ca_json = issue_cert_json(options)
       if ca_json
@@ -437,4 +437,3 @@ class SslcomCaApi
 #    client.wsdl.soap_actions
 #  end
 end
-
