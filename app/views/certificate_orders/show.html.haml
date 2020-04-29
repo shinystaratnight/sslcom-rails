@@ -1,7 +1,7 @@
 -show_folders = current_user && Folder.show_folders?(current_user)
 -title = "#{@certificate_order.certificate.product_root.humanize} Certificate For #{@certificate_order.subject}"
 -co = @certificate_order
--cn = co.subject
+-cn = co.subject.blank? ? co.registrant.try(:company_name) : co.subject
 -@cc = co.certificate_content
 -@meta = [["ROBOTS", "NOINDEX, NOFOLLOW"]]
 =render 'index_scripts'
@@ -222,7 +222,7 @@
                             -if current_user.is_system_admins?
                               %li
                                 =link_to 'edit locked recipient', recipient_certificate_order_path(@ssl_slug, @certificate_order.ref, locked_recipient: true)
-                          %li 
+                          %li
                             %br/
                         %li
                           %strong registrant
@@ -345,7 +345,7 @@
                               %strong notes for admins only
                             %li
                               =f.text_area :notes, cols: 40, rows: 10
-                    %td(colspan="5")  
+                    %td(colspan="5")
                       .certificate_details_box
                         %strong audit log
                         -audits=(@certificate_order.system_audits.empty? ? "n/a" : "###")+"\n"
@@ -552,7 +552,7 @@
     function revokeSignedCertificate() {
       curDialog.find('form').submit();
     }
-    
+
     function setupDialog(dialog_id) {
       curDialog = $('#' + dialog_id);
       curDialog.dialog({
@@ -571,12 +571,12 @@
         }
       });
     }
-    
+
     $('.btn-cert-content-revoke').on('click', function(e) {
       e.preventDefault();
       setupDialog($(this).data('dialog-id'));
       $($(this).data('select-id')).select2();
-      
+
       curDialog.dialog('open');
     });
   });
