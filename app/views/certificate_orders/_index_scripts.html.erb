@@ -611,15 +611,14 @@ jQuery(function($) {
 
         $(document).on('click', '.toggle_show_btn', function(e) {
           e.preventDefault();
-
           $('.integrated_algorithm_wrap').hide();
-          $('.algorithm_wrap').show();
+          $('.algorithm_wrap').toggleClass("hidden");
+          console.log($('.algorithm_wrap'))
         });
 
         $(document).on('click', '.toggle_hidden_btn', function(e) {
           e.preventDefault();
-
-          $('.algorithm_wrap').hide();
+          $('.algorithm_wrap').toggleClass("hidden");
           $('.integrated_algorithm_wrap').show();
         });
 
@@ -661,12 +660,11 @@ jQuery(function($) {
                 $('.csr').attr('readonly', true);
                 $('.cert').val(data.cert_results);
                 $('.cert').attr('readonly', true);
-                $('.cert_wrap').show();
-
+                $('.cert_wrap').removeClass('hidden')
                 $('.generate_wrap').hide();
                 $('.integrated_algorithm_wrap').hide();
                 $('.algorithm_wrap').hide();
-                $('.cert_download_wrap').show();
+                $('.cert_download_wrap').removeClass('hidden');
                 $('#cert_common_name').val(data.cert_common_name);
               }
             });
@@ -760,12 +758,11 @@ jQuery(function($) {
 
                   $('.cert').val(data.cert_results);
                   $('.cert').attr('readonly', true);
-                  $('.cert_wrap').show();
-
+                  $('.cert_wrap').removeClass('hidden')
                   $('.generate_wrap').hide();
                   $('.integrated_algorithm_wrap').hide();
                   $('.algorithm_wrap').hide();
-                  $('.pkcs_download_wrap').show();
+                  $('.pkcs_download_wrap').removeClass('hidden');
                   $('#cert_common_name').val(data.cert_common_name);
                 }
               });

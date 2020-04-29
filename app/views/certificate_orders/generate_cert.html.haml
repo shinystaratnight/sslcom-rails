@@ -5,7 +5,7 @@
 %div{:style=>"width: 100%"}
   %h2
     Generate Request and Certificate For
-    =link_to @certificate_order.ref,@certificate_order
+    =link_to @certificate_order.ref, id: @certificate_order[:id]
   %h3.center
     Note: Your private key will be generated on your own computer by your web browser.
     SSL.com will never see or handle your private keys.
@@ -27,13 +27,6 @@
                   =s.split('=')[0] + '  : '
                 .subject_dn_value
                   =s.split('=')[1]
-
-  -#-if @certificate_order.certificate_content.subject_dn
-    %dl.center
-      %dt
-        %strong subject dn
-      -@certificate_order.certificate_content.subject_dn.split(',').each do |s|
-        %dt=s
   %input.cs_subject_dn{:type=>'hidden', :value=>"#{is_cs || is_client ? (is_personal_basic || is_personal_pro ? @certificate_order.locked_recipient_subject_dn : @certificate_order.certificate_content.locked_subject_dn) : @certificate_order.certificate_content.subject_dn}"}
   %input.sign_alg_type{:type => 'hidden', :value => 'rsa'}
   .generate_wrap
@@ -62,11 +55,6 @@
       .col-md-8
         %input.toggle_show_btn{:type=>'button', :value=>'Show Advanced Options', :class=>'btn btn-primary'}
   .algorithm_wrap.hidden
-    -#.row.pt-4
-    -#  .col-md-3{:style=>"text-align: right"}
-    -#    Hash Algorithm :
-    -#  .col-md-8
-    -#    = select_tag 'hash_algorithm', options_for_select(@hash_algorithm), include_blank: false, class: 'form-control'
     .row.pt-4
       .col-md-3{:style=>"text-align: right"}
         Sign Algorithm :
@@ -92,7 +80,6 @@
         CSR :
       .col-md-9
         = text_area_tag 'csr_body', @managed_csr.blank? ? nil : @managed_csr.body, class: 'csr', cols: '80', rows: '10'
-        -#%textarea.csr{:cols=>80, :rows=>10}
   .pri_key_wrap.hidden
     .row.pt-4
       .col-md-3{:style=>"text-align: right"}
