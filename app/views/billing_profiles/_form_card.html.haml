@@ -20,7 +20,7 @@
     =form.label :credit_card, image_tag('logo_cards_150x26.gif', style: 'vertical-align: middle;float: left;margin-left:1rem')
   .clearfix
     =form.label :card_number, '*Card Number:'
-    =form.text_field :card_number
+    =form.text_field :card_number, {"data-private" => "redact"}
   .clearfix
     -if params[:billing_profile]
       -exp_month = params[:billing_profile][:expiration_month]
@@ -30,7 +30,7 @@
     =form.select :expiration_year, options_for_select((today_year..(today_year + 10)).to_a, (exp_year || today_year))
   .clearfix
     =form.label :security_code, '*Security Code:'
-    =form.text_field :security_code, value: nil, size: 4
+    =form.text_field :security_code, value: nil, size: 4, "data-private": "redact"
     =link_to image_tag('question_mark.png'), '#what_is_security_code', rel: 'prettyPhoto', id: 'what_is_security_code_link'
   -if only_billing_profile
     .clearfix
