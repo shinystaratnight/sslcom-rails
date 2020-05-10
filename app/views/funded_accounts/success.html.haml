@@ -90,7 +90,7 @@
               %span=@order.state.humanize.downcase
         #credit_card_amount
           load amount:
-          %span=h (@deposit.amount * 100).format :with_currency
+          %span=h (@deposit.amount).format :with_currency
     -if @order && !@order.new_record? && (@order.cents > 0 or @order.is_free?) && !@order.is_deposit?
       =render partial: '/orders/order_report'
     -if @taggable

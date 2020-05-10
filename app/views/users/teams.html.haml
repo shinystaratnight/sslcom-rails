@@ -77,9 +77,9 @@
                 %td=link_to(t.get_account_owner.try(:login).shorten(15,false),admin_show_user_path(t.get_account_owner), title: t.get_account_owner.try(:login)) if t.get_account_owner.try(:login)
               %td
                 -if system_admins
-                  %a{style:"cursor: pointer;", onclick: "adjust_funds_ssl_account('#{t.to_slug}','#{t.get_team_name}')"} $#{t.funded_account.try :amount}
+                  %a{ style:"cursor: pointer;", onclick: "adjust_funds_ssl_account('#{ t.to_slug }','#{ t.get_team_name }')"} #{ t.funded_account&.amount&.format }
                 -elsif !current_user.role_symbols(t).include?((Role::INDIVIDUAL_CERTIFICATE).to_sym)
-                  $#{t.funded_account.try :amount}
+                  #{ t.funded_account&.amount&.format }
               %td#team-detail-links
                 -permissions = team_index_permissions(current_user, t)
                 %div
@@ -190,7 +190,7 @@
               -else
                 %td=link_to(t.get_account_owner.try(:login).shorten(15,false),admin_show_user_path(t.get_account_owner), title: t.get_account_owner.try(:login)) if t.get_account_owner.try(:login)
               %td
-                $#{t.funded_account.try :amount}
+                #{t.funded_account&.amount.format}
               %td#team-detail-links
               %td=t.created_at.strftime("%b %d, %Y")
               - unless system_admins

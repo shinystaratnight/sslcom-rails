@@ -12,6 +12,11 @@ module AuthenticationHelpers
   end
 
   def submit_payment_information
+    input_payment_information
+    find('.order_next').click
+  end
+
+  def input_payment_information
     bp = attributes_for(:billing_profile)
     fill_in :billing_profile_first_name, with: bp[:first_name]
     fill_in :billing_profile_last_name, with: bp[:last_name]
@@ -25,6 +30,5 @@ module AuthenticationHelpers
     within '#billing_profile_expiration_year' do
       all('option')[2].select_option
     end
-    find('.order_next').click
   end
 end

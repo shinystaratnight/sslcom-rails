@@ -6,6 +6,6 @@ describe FundedAccountDecorator, type: :decorator do
   it_behaves_like 'an ApplicationDecorator'
 
   it 'has an available amount of zero when initialized' do
-    expect(subject.available).to eq 0
+    expect(subject.available).to eq '$0.00'
   end
 end

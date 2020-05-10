@@ -82,7 +82,7 @@
                                 strong
                                   | billing and purchase
                               -if permitted_to?(:create, :funded_accounts)
-                                li available funds: $ #{ssl_account.funded_account.decorate.available}
+                                li available funds: #{ssl_account.funded_account.decorate.available}
                               -if permitted_to? :read, :orders
                                 li=link_to "billing", is_sandbox? ? search_orders_path(search:'is_test:true') : orders_path(ssl_slug: @ssl_slug)
                               li=link_to 'buy certificate', certificates_url

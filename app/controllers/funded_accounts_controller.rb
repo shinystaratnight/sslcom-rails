@@ -57,6 +57,7 @@ class FundedAccountsController < ApplicationController
         redirect_to show_cart_orders_url and return
       end
     end
+
     account = @ssl_account
     @funded_account.ssl_account = @billing_profile.ssl_account = account
     @funded_account.funding_source = FundedAccount::NEW_CREDIT_CARD if @funded_account.funding_source.blank?
@@ -68,7 +69,7 @@ class FundedAccountsController < ApplicationController
       if @funded_account.deduct_order?
         deduct_order_amounts(params)
       else
-        @account_total.cents += (@funded_account.amount.cents * 100) - @order.cents
+        @account_total.cents += @funded_account.amount.cents - @order.cents
       end
       unless @funded_account.deduct_order?
         # do this before we attempt to deduct funds
@@ -107,7 +108,7 @@ class FundedAccountsController < ApplicationController
     end
     @credit_card = @profile.build_credit_card
     if ActiveMerchant::Billing::Base.mode == :test ? true : @credit_card.valid?
-      @deposit.amount = @funded_account.amount.cents
+      @deposit.amount = @funded_account.amount
       @deposit.description = "Deposit"
       @funded.description = 'Funded Account Withdrawal' if @funded
       if initial_reseller_deposit?

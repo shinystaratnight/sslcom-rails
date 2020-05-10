@@ -14,7 +14,7 @@ module CollectiveIdea
           mapping << [options[:currency].to_s, 'currency'] if options[:currency]
 
           composed_of name, :class_name => 'Money', :allow_nil => true, :mapping => mapping do |m|
-            ::Money.new(m)
+            ::Money.new(m.to_f*100)
           end
         end
       end

@@ -92,5 +92,11 @@ FactoryBot.define do
         end
       end
     end
+
+    trait :billing_profile do
+      after(:create) do |user|
+        user.ssl_account.billing_profiles << create(:billing_profile)
+      end
+    end
   end
 end
