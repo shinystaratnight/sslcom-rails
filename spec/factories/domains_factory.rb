@@ -24,6 +24,8 @@
 #  index_certificate_names_on_ssl_account_id          (ssl_account_id)
 #
 
+# Developer Note: A domain and certificate name
+# are one  in the same
 FactoryBot.define do
   factory :domain do
     name { Faker::Internet.domain_name }

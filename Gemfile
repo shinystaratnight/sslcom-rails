@@ -105,6 +105,7 @@ gem 'workflow', '1.2.0'
 gem 'public_suffix'
 gem 'universal_ruby_whois'
 gem 'letter_opener_web'
+gem 'timecop'
 
 group :development do
   gem 'annotate'

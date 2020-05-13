@@ -57,7 +57,7 @@
             -else
               -status_link = link_to validation_status, validate_selected_domains_path(@ssl_slug, d_name_check: [d.id])
           %tr
-            %td=(order_ref=='Team' || (dcv && dcv.csr_unique_value)) ? (check_box_tag "d_name_check[]",d.id, false, :id => "d_name_check_#{d.id}", :class => "d_name_check") : ''
+            %td=(order_ref=='Team' || (dcv && dcv.csr_unique_value)) ? (check_box_tag "d_name_check[]", d.id, false, id: "d_name_check_#{d.id}", class: "d_name_check") : ''
             %td=d.name
             %td=d.certificate_content ? (link_to order_ref, d.certificate_content.issued? ? certificate_order_path(d.certificate_content.certificate_order) : new_certificate_order_validation_path(@ssl_slug, d.certificate_content.certificate_order)) : ((dcv && dcv.csr_unique_value) ? (link_to order_ref, validate_against_csr_domains_path(@ssl_slug, unique_value: dcv.csr_unique_value.unique_value)) : 'Team')
             %td.d_name_status=status_link

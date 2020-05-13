@@ -134,10 +134,7 @@ class DomainControlValidation < ApplicationRecord
     end
   end
 
-  # assume this belongs to a certificate_name which belongs to an ssl_account
   def hash_satisfied
-    prepend = ''
-    self.identifier, self.address_to_find_identifier = certificate_name.blank? ? [false, false] :
     case dcv_method
     when /acme_http/
       [
@@ -150,11 +147,11 @@ class DomainControlValidation < ApplicationRecord
         ['_acme-challenge', certificate_name.non_wildcard_name(true)].join('/')
       ]
     when /https/
-      ["#{certificate_name.csr.sha2_hash}\n#{certificate_name.ca_tag}#{"\n#{certificate_name.csr.unique_value}" unless certificate_name.csr.unique_value.blank?}", certificate_name.dcv_url(true, prepend, true)]
+      certificate_name.blank? || certificate_name.certificate_content.blank? ? populate_with_csr(true) : populate_with_certificate_name(true)
     when /http/
-      ["#{certificate_name.csr.sha2_hash}\n#{certificate_name.ca_tag}#{"\n#{certificate_name.csr.unique_value}" unless certificate_name.csr.unique_value.blank?}", certificate_name.dcv_url(false, prepend, true)]
+      certificate_name.blank? || certificate_name.certificate_content.blank? ? populate_with_csr(false) : populate_with_certificate_name(false)
     when /cname/
-      [certificate_name.cname_destination, certificate_name.cname_origin(true)]
+      certificate_name.blank? || certificate_name.certificate_content.blank? ? populate_cname_info_with_csr : populate_cname_info_with_certificate_name
     end
   end
 
@@ -323,5 +320,29 @@ class DomainControlValidation < ApplicationRecord
 
   def validate(value)
     identifier == value
+  end
+
+  private
+
+  def populate_with_csr(secure)
+    self.identifier = "#{csr.sha2_hash}\n#{csr.ca_tag}#{"\n#{csr.unique_value}" if csr.unique_value.present?}"
+    self.address_to_find_identifier = csr.dcv_url(secure, certificate_name.name)
+  end
+
+  # Developer Note: CertificateNames and Domains are the same concept.
+  # Domains however do not not have certificate contents when prevalidated.
+  def populate_with_certificate_name(secure, prepend = '')
+    self.identifier = "#{certificate_name.csr.sha2_hash}\n#{certificate_name.ca_tag}#{"\n#{certificate_name.csr.unique_value}" if certificate_name.csr.unique_value.present?}"
+    self.address_to_find_identifier = certificate_name.dcv_url(secure, prepend, true)
+  end
+
+  def populate_cname_info_with_csr()
+    self.identifier = csr.cname_destination
+    self.address_to_find_identifier = "#{csr.dns_md5_hash}.#{certificate_name.name}"
+  end
+
+  def populate_cname_info_with_certificate_name()
+    self.identifier = certificate_name.cname_destination
+    self.address_to_find_identifier = certificate_name.cname_origin(true)
   end
 end

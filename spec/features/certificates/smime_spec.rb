@@ -5,7 +5,7 @@ RSpec.describe 'SMIME', type: :feature do
     describe 'downloading certficate', js: true do
       let(:user) { create(:user, :owner) }
 
-      it 'shows advanced options correctly' do
+      xit 'shows advanced options correctly' do
         as_user(user) do
           purchase_certificate
           submit_payment_information

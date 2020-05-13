@@ -36,7 +36,14 @@
   -unless @csr.unique_value.blank?
     %tr
       %td unique value*
-      %td.unique_value=@csr.unique_value
+      %td.unique_value.clearfix
+        .current_unique_value_block
+          =@csr.unique_value
+        .new_unique_value_block
+          =button_tag 'Change', id: 'btn_new_unique_value', class: 'btn_new_unique_value'
+          =text_field_tag 'new_unique_value', @csr.unique_value, class: 'new_unique_value hidden'
+          =button_tag 'Save', id: 'btn_save_new_unique_value', class: 'btn_save_new_unique_value hidden'
+          =button_tag 'Cancel', id: 'btn_cancel_new_unique_value', class: 'btn_cancel_new_unique_value hidden'
 =form_tag('', method: :post, class: :api_certificate_request) do
   =hidden_field_tag :selected_csr, @csr.id
   .domains_loader_wrap.hidden
@@ -98,7 +105,7 @@
     =submit_tag "Validate", :id=>"validate_domains", :disable_with=>"Submitting..."
     .clearfix
       =image_tag('waiting_bar_medium.gif', :id=>'waiting_bar', :style=>'display: none; vertical-align: middle;')
-=render :partial => 'validations/index_scripts'
+=render partial: 'domains/index_scripts'
 %script{:type=>"text/javascript"}
   :plain
     //# PLUGIN INTEGRATION

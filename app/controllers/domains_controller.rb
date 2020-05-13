@@ -29,41 +29,42 @@ class DomainsController < ApplicationController
   end
 
   def create
-    res_Obj = {}
-    exist_domain_names = []
+    response_objects = {}
+    preexisting_domain_names = []
     created_domains = []
     created_domain_validated_status = {}
     validated_domains_remains = {}
 
-    unless params[:domain_names].nil?
+    if params[:domain_names].present?
       domain_names = params[:domain_names].split(/[\s,']/)
-      domain_names.each do |d_name|
-        next if d_name.empty?
 
-        if @ssl_account.domains.map(&:name).include?(d_name)
-          exist_domain_names << d_name
+      domain_names.each do |domain_name|
+        next if domain_name.empty?
+
+        if @ssl_account.domains.pluck(:name).include?(domain_name)
+          preexisting_domain_names << domain_name
         else
-          @domain = Domain.new
-          @domain.name = d_name
-          @domain.ssl_account_id = @ssl_account.id
-          @domain.save()
-          current_user.ssl_account.other_dcvs_satisfy_domain(@domain)
-          created_domains << @domain
+          domain = Domain.create(name: domain_name, ssl_account_id: @ssl_account.id)
 
-          dcv = @domain.domain_control_validations.last
-          created_domain_validated_status[d_name] = dcv && dcv.satisfied? ? 'true' : 'false'
+          @ssl_account.other_dcvs_satisfy_domain(domain)
 
-          validated_domains_remains[d_name] = dcv && dcv.responded_at ?
+          created_domains << domain
+
+          dcv = domain.domain_control_validations.last
+          created_domain_validated_status[domain_name] = dcv && dcv.satisfied? ? 'true' : 'false'
+
+          validated_domains_remains[domain_name] = dcv && dcv.responded_at ?
                                                   DomainControlValidation::MAX_DURATION_DAYS[:email] - (Date.today - dcv.responded_at.to_date).to_i :
                                                   0
         end
       end
     end
-    res_Obj['domains'] = created_domains
-    res_Obj['domains_status'] = created_domain_validated_status
-    res_Obj['remain_days'] = validated_domains_remains
-    res_Obj['exist_domains'] = exist_domain_names
-    render :json => res_Obj
+
+    response_objects['domains'] = created_domains
+    response_objects['domains_status'] = created_domain_validated_status
+    response_objects['remain_days'] = validated_domains_remains
+    response_objects['exist_domains'] = preexisting_domain_names
+    render json: response_objects
   end
 
   def destroy
@@ -76,6 +77,7 @@ class DomainsController < ApplicationController
     end
   end
 
+  # Developer Note: This doesn't seem to be used anymore.
   def validation_request
     @domain = current_user.ssl_account.domains.find_by(id: params[:id])
     if @domain.domain_control_validations.last.try(:identifier_found)
@@ -100,6 +102,7 @@ class DomainsController < ApplicationController
     end
   end
 
+  # Developer Note: This doesn't seem to be used anymore.
   def validate_all
     if params[:authenticity_token]
       send_validation_email(params)
@@ -179,7 +182,9 @@ class DomainsController < ApplicationController
       end
       @csrs = current_user.ssl_account.all_csrs.paginate(@p)
     else
-      redirect_to domains_path(@ssl_slug)
+      @selected_domains = current_user.ssl_account.domains
+      @csrs = current_user.ssl_account.all_csrs.paginate(@p)
+      render 'select_csr'
     end
   end
 
@@ -214,9 +219,7 @@ class DomainsController < ApplicationController
         @domain_details[dn.name]['status'] = dcv_last ? (dcv_last.satisfied? ? 'satisfied' : 'pending') : 'waiting'
       end
       @csr = Csr.find_by_id(params[:selected_csr])
-      if @csr.blank?
-        redirect_to domains_path(@ssl_slug)
-      end
+      return redirect_to_select_csr if @csr.blank?
       dcvs = @csr.csr_unique_value.domain_control_validations
       dcvs.each do |dcv|
         next if dcv.workflow_state == 'satisfied'
@@ -285,6 +288,7 @@ class DomainsController < ApplicationController
       @address_choices = []
       @domain_details = {}
       @csr = Csr.find_by_id(params[:selected_csr])
+      return redirect_to_select_csr if @csr.blank?
       cnames = []
       dcvs=[]
       cn_ids = [] # need to touch certificate_names to bust cache since bulk insert skips callbacks
@@ -383,7 +387,7 @@ class DomainsController < ApplicationController
   end
 
   def dcv_verify(protocol, domain_name, csr)
-    CertificateName.dcv_verify(protocol: protocol,
+    CertificateName.dcv_verify(protocol,
                                https_dcv_url: "https://#{domain_name}/.well-known/pki-validation/#{csr.md5_hash}.txt",
                                http_dcv_url: "http://#{domain_name}/.well-known/pki-validation/#{csr.md5_hash}.txt",
                                cname_origin: "#{csr.dns_md5_hash}.#{domain_name}",
@@ -450,6 +454,11 @@ class DomainsController < ApplicationController
   end
 
   private
+
+  def redirect_to_select_csr
+    flash[:error] = 'Please select an option to validate against CSR'
+    redirect_to select_csr_domains_path(@ssl_slug)
+  end
 
   def send_validation_email(params)
     d_name_ids = params[:d_name_id]

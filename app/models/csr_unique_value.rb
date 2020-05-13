@@ -13,7 +13,6 @@
 #  index_csr_unique_values_on_csr_id  (csr_id)
 #
 
-
 class CsrUniqueValue < ApplicationRecord
   belongs_to  :csr
   has_many    :domain_control_validations

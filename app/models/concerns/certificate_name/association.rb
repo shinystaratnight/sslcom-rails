@@ -10,13 +10,13 @@ module Concerns
         has_one :ssl_account, through: :certificate_content
         has_one :csr, through: :certificate_content
         has_one :certificate_order, through: :certificate_content
-        has_many    :signed_certificates, through: :certificate_content
-        has_many    :caa_checks, as: :checkable
-        has_many    :ca_certificate_requests, as: :api_requestable, dependent: :destroy
-        has_many    :ca_dcv_requests, as: :api_requestable, dependent: :destroy
-        has_many    :ca_dcv_resend_requests, as: :api_requestable, dependent: :destroy
-        has_many    :validated_domain_control_validations, -> { where(workflow_state: 'satisfied') }, class_name: 'DomainControlValidation'
-        has_many    :last_sent_domain_control_validations, -> { where{ email_address !~ 'null' } }, class_name: 'DomainControlValidation'
+        has_many :signed_certificates, through: :certificate_content
+        has_many :caa_checks, as: :checkable
+        has_many :ca_certificate_requests, as: :api_requestable, dependent: :destroy
+        has_many :ca_dcv_requests, as: :api_requestable, dependent: :destroy
+        has_many :ca_dcv_resend_requests, as: :api_requestable, dependent: :destroy
+        has_many :validated_domain_control_validations, -> { where(workflow_state: 'satisfied') }, class_name: 'DomainControlValidation'
+        has_many :last_sent_domain_control_validations, -> { where{ email_address !~ 'null' } }, class_name: 'DomainControlValidation'
         has_one :domain_control_validation, -> { order 'created_at' }, class_name: 'DomainControlValidation', unscoped: true
         has_many :domain_control_validations, dependent: :destroy do
           def last_sent

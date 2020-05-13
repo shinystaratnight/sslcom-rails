@@ -385,7 +385,7 @@ authorization do
     #
     # Csrs
     #
-    has_permission_on :csrs, to: :create
+    has_permission_on :csrs, to: %i[create verification_check]
     has_permission_on :csrs, to: %i[update delete] do
       if_permitted_to :update, :certificate_content
     end

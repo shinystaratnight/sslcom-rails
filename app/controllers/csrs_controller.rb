@@ -1,6 +1,6 @@
 class CsrsController < ApplicationController
   before_action :find_csr, only:[:http_dcv_file, :verification_check, :create_new_unique_value]
-  filter_access_to :all, :attribute_check=>true, except: [:verification_check]
+  filter_access_to :all, attribute_check: true
   filter_access_to :country_codes, :http_dcv_file, :all_domains, :check_validation, :create_new_unique_value, :require=>[:create] #anyone can create read creates csrs, thus read this
 
   # PUT /csrs/1
@@ -42,15 +42,15 @@ class CsrsController < ApplicationController
 
         if cn
           cn.new_name params['new_name']
-          http_or_s = cn.dcv_verify(params[:protocol])
+          http_or_s = cn.dcv_verify(params[:dcv_protocol])
 
-          if http_or_s.to_s == 'true'
+          if http_or_s
             dcv = cn.domain_control_validations.last
-            if dcv && (dcv.dcv_method == params[:protocol])
+            if dcv && (dcv.dcv_method == params[:dcv_protocol])
               dcv.satisfy! unless dcv.satisfied?
             else
-              dcv=cn.domain_control_validations.create(
-                  dcv_method: params[:protocol],
+              dcv = csr.domain_control_validations.create(
+                  dcv_method: params[:dcv_protocol],
                   candidate_addresses: nil,
                   failure_action: 'ignore')
               dcv.satisfy!
@@ -64,7 +64,7 @@ class CsrsController < ApplicationController
       cn = CertificateName.includes(:domain_control_validations).find_by_id(params[:choose_cn])
       csr = Csr.find_by_id(params[:selected_csr])
 
-      http_or_s = CertificateName.dcv_verify(protocol: params[:protocol],
+      http_or_s = CertificateName.dcv_verify(params[:dcv_protocol],
                                  https_dcv_url: "https://#{cn.name}/.well-known/pki-validation/#{csr.md5_hash}.txt",
                                  http_dcv_url: "http://#{cn.name}/.well-known/pki-validation/#{csr.md5_hash}.txt",
                                  cname_origin: "#{csr.dns_md5_hash}.#{cn.name}",
@@ -72,16 +72,17 @@ class CsrsController < ApplicationController
                                  csr: csr,
                                  ca_tag: csr.ca_tag)
 
-      if http_or_s.to_s == 'true'
+      if http_or_s
         dcv = cn.domain_control_validations.last
-
-        if dcv && (dcv.dcv_method == params[:protocol])
+        
+        if dcv && (dcv.dcv_method == params[:dcv_protocol])
           dcv.satisfy! unless dcv.satisfied?
         else
-          dcv=csr.domain_control_validations.create(
-              dcv_method: params[:protocol],
+          dcv = csr.domain_control_validations.build(
+              dcv_method: params[:dcv_protocol],
               candidate_addresses: nil,
-              failure_action: 'ignore')
+              failure_action: 'ignore',
+              certificate_name_id: cn.id)
           dcv.satisfy!
         end
       elsif http_or_s.nil?
@@ -91,6 +92,7 @@ class CsrsController < ApplicationController
 
     respond_to do |format|
       format.html { render inline: http_or_s.to_s }
+      format.json { render inline: http_or_s.to_s }
     end
   end
 
@@ -154,6 +156,6 @@ class CsrsController < ApplicationController
   private
 
   def find_csr
-    @csr=Csr.find(params[:id])
+    @csr = Csr.find(params[:id])
   end
 end

@@ -641,6 +641,7 @@ GEM
     thor (0.20.3)
     thread_safe (0.3.6)
     tilt (2.0.10)
+    timecop (0.9.1)
     timezone (1.3.6)
     turbolinks (5.2.1)
       turbolinks-source (~> 5.2)
@@ -823,6 +824,7 @@ DEPENDENCIES
   stripe
   swagger-blocks
   swagger-docs
+  timecop
   timezone (~> 1.0)
   turbolinks
   u2f

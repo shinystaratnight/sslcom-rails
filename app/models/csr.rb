@@ -332,7 +332,7 @@ class Csr < ApplicationRecord
   end
 
   # secure is for https, domain is to override the csr subject
-  def dcv_url(secure=false, domain=nil)
+  def dcv_url(secure = false, domain = nil)
     "http#{'s' if secure}://#{domain || non_wildcard_name}/.well-known/pki-validation/#{md5_hash}.txt"
   end
 

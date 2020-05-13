@@ -1,23 +1,5 @@
 -title = 'Add Csr'
 -content_for :title, title
--#.reseller_registration_profile
--#  %h3=title
--#  %p
--#    Please enter the csr string.
--#  =form_for @csr, url: managed_csrs_path do |f|
--#    =f.error_messages
--#    #stylized.default_form
--#      .subheading Csr
--#      =render :partial => "form", :object => f
--#    #button_container
--#      =f.submit 'Add', class: 'button_blue'
--#
--#-content_for :js do
--#  :javascript
--#    $("#user_ssl_account_ids").select2();
--#    $(document).ready(function() {
--#      $("#user_ssl_account_ids").select2();
--#    });
 
 = render :partial => 'index_scripts'
 = javascript_include_tag "promise.min", "webcrypto-liner.shim", "asmcrypto.min", "elliptic.min", "bundle.umd.min", "bundle.pkcs.umd.min"
@@ -105,7 +87,7 @@
         .form-group
           %label  Friendly Name:
           = text_field_tag 'friendly_name', nil, class: 'form-control'
-        .csr_wrap.hidden
+        .csr_wrap
           .form-group
             %label  CSR:
             = text_area_tag 'csr', nil, class: 'form-control', rows: '5'
@@ -117,10 +99,6 @@
           .form-group
             = button_tag 'Copy CSR', type: 'button', id: 'clipboard_csr_btn', class: 'btn btn-primary'
             = button_tag 'Copy Private Key', type: 'button', id: 'clipboard_pkey_btn', class: 'btn btn-primary'
-        -#.cert_orders_wrap
-          .form-group
-            %label  Certificate Orders:
-            = select_tag 'cert_order', options_for_select(@cert_orders), class: 'form-control'
       .col-md-2
     - if @cert_ref
       .row.pt-3

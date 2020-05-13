@@ -40,6 +40,94 @@
 require 'rails_helper'
 
 describe DomainControlValidation do
+  describe 'workflow' do
+
+    context 'domain prevalidation' do
+      before do
+        Timecop.freeze(DateTime.now)
+      end
+
+      after do
+        Timecop.return
+      end
+
+      describe 'satisfied state' do
+        let(:csr) { FactoryBot.create(:csr, common_name: 'ssl.com') }
+        let(:domain) { FactoryBot.create(:domain, name: 'support.ssl.com') }
+        let(:dcv) do
+          FactoryBot.build(:domain_control_validation,
+            dcv_method: '',
+            candidate_addresses: nil,
+            failure_action: 'ignore',
+            certificate_name_id: domain.id,
+            csr_id: csr.id,
+            workflow_state: 'new'
+          )
+        end
+
+        context 'email code' do
+          it 'prevalidates a domain based on email submission' do
+            dcv.dcv_method = 'email'
+            dcv.satisfy!
+            expect(dcv.dcv_method).to match 'email'
+            expect(dcv.validation_compliance_id).to eq 2
+            expect(dcv.identifier_found).to eq true
+            expect(dcv.responded_at).to eq DateTime.now
+            expect(DomainControlValidation.last.workflow_state).to match /satisfied/
+          end
+        end
+
+        context 'csr validation' do
+          before(:each) do
+            DomainControlValidation.destroy_all
+          end
+
+          it 'populates the necessary fields for http' do
+            csr.signed_certificates.destroy_all
+
+            dcv.dcv_method = 'http'
+            dcv.satisfy!
+            expect(dcv.dcv_method).to match 'http'
+            expect(dcv.identifier).to eq "#{csr.sha2_hash}\n#{csr.ca_tag}\n#{csr.unique_value}"
+            expect(dcv.address_to_find_identifier).to eq "http://#{domain.name}/.well-known/pki-validation/#{csr.md5_hash}.txt"
+            expect(dcv.validation_compliance_id).to eq 6
+            expect(dcv.identifier_found).to eq true
+            expect(dcv.responded_at).to eq DateTime.now
+            expect(DomainControlValidation.last.workflow_state).to match /satisfied/
+          end
+
+          it 'populates the necessary fields for https' do
+            csr.signed_certificates.destroy_all
+
+            dcv.dcv_method = 'https'
+            dcv.satisfy!
+            expect(dcv.dcv_method).to match 'https'
+            expect(dcv.identifier).to eq "#{csr.sha2_hash}\n#{csr.ca_tag}\n#{csr.unique_value}"
+            expect(dcv.address_to_find_identifier).to eq "https://#{domain.name}/.well-known/pki-validation/#{csr.md5_hash}.txt"
+            expect(dcv.validation_compliance_id).to eq 6
+            expect(dcv.identifier_found).to eq true
+            expect(dcv.responded_at).to eq DateTime.now
+            expect(DomainControlValidation.last.workflow_state).to match /satisfied/
+          end
+
+          it 'populates the necessary fields for cname' do
+            csr.signed_certificates.destroy_all
+
+            dcv.dcv_method = 'cname'
+            dcv.satisfy!
+            expect(dcv.dcv_method).to match 'cname'
+            expect(dcv.identifier).to eq "#{csr.dns_sha2_hash}.#{csr.ca_tag}"
+            expect(dcv.address_to_find_identifier).to eq "#{csr.dns_md5_hash}.#{domain.name}"
+            expect(dcv.validation_compliance_id).to eq 7
+            expect(dcv.identifier_found).to eq true
+            expect(dcv.responded_at).to eq DateTime.now
+            expect(DomainControlValidation.last.workflow_state).to match /satisfied/
+          end
+        end
+      end
+    end
+  end
+
   context 'class methods' do
     describe 'DomainControlValidation.icann_contacts' do
       it 'loads contacts from yaml file' do

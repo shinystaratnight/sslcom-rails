@@ -310,7 +310,7 @@ jQuery(function($) {
         }
       }
     };
-    
+
     $('#link_to_send_token').click(function(e) {
       e.preventDefault();
       $('form#send_certificate_order_token').ajaxSubmit(token_send_options);
@@ -725,7 +725,7 @@ jQuery(function($) {
         else if(/https/.test(methods[0])){
           instructions = uploadInstructionsLink(https);
           $(instruction).html(instructions);
-          $.ajax({url: '<%=verification_check_csr_path(@ssl_slug, @certificate_order.csr.id)%>?protocol=https&dcv='+
+          $.ajax({url: '<%=verification_check_csr_path(@ssl_slug, @certificate_order.csr.id)%>?dcv_protocol=https&dcv='+
             $(dcv_select).parents('tr').attr('id')+'&new_name='+$(dcv_select).attr('alt')+'&ref='+$(dcv_select).parents('tbody').attr('data-ref')}).done(
               function(data){
                 <%unless @certificate_order.certificate_content.ca_id.nil?%>
@@ -805,7 +805,7 @@ jQuery(function($) {
         else if(/http/.test(methods[0])){
           instructions = uploadInstructionsLink(http);
           $(instruction).html(instructions);
-          $.ajax({url: '<%=verification_check_csr_path(@ssl_slug, @certificate_order.csr.id)%>?protocol=http&dcv='+
+          $.ajax({url: '<%=verification_check_csr_path(@ssl_slug, @certificate_order.csr.id)%>?dcv_protocol=http&dcv='+
             $(dcv_select).parents('tr').attr('id')+'&new_name='+$(dcv_select).attr('alt')+'&ref='+$(dcv_select).parents('tbody').attr('data-ref')}).done(
               function(data){
                 <%unless @certificate_order.certificate_content.ca_id.nil?%>
@@ -884,7 +884,7 @@ jQuery(function($) {
         }
         else if(/cname/.test(methods[0])){
           $(instruction).html("Create CNAME: "+cname);
-          $.ajax({url: '<%=verification_check_csr_path(@ssl_slug, @certificate_order.csr.id)%>?protocol=cname&dcv='+
+          $.ajax({url: '<%=verification_check_csr_path(@ssl_slug, @certificate_order.csr.id)%>?dcv_protocol=cname&dcv='+
             $(dcv_select).parents('tr').attr('id')+'&new_name='+$(dcv_select).attr('alt')+'&ref='+$(dcv_select).parents('tbody').attr('data-ref')}).done(
               function(data){
                 <%unless @certificate_order.certificate_content.ca_id.nil?%>
