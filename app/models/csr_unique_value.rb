@@ -17,10 +17,10 @@ class CsrUniqueValue < ApplicationRecord
   belongs_to  :csr
   has_many    :domain_control_validations
 
-  validates_presence_of :csr
+  validates :csr, presence: true
   validates_each :unique_value do |record, attr, value|
     record.errors.add(attr, "is not unique to public key SHA1 #{record.csr.public_key_sha1}") if
-        Csr.joins(:csr_unique_values).where{(csr_unique_values.unique_value==value) &
-            (public_key_sha1==record.csr.public_key_sha1)}.count>1
+      Csr.joins(:csr_unique_values)
+        .where('csr_unique_values.unique_value = ? AND public_key_sha1 = ?', value, record.csr&.public_key_sha1).count >= 1
   end
 end

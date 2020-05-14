@@ -74,7 +74,7 @@ class CsrsController < ApplicationController
 
       if http_or_s
         dcv = cn.domain_control_validations.last
-        
+
         if dcv && (dcv.dcv_method == params[:dcv_protocol])
           dcv.satisfy! unless dcv.satisfied?
         else
@@ -143,7 +143,7 @@ class CsrsController < ApplicationController
     if same_exist
       returnObj['same'] = true
     else
-      @csr.csr_unique_values.create(unique_value: params[:new_unique_value])
+      @csr.csr_unique_values.create!(unique_value: params[:new_unique_value])
 
       returnObj['cname_destination'] = @csr.cname_destination
       returnObj['dns_sha2_hash'] = @csr.dns_sha2_hash
