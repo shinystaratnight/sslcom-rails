@@ -45,6 +45,7 @@
 #  status              :string(255)
 #  created_at          :datetime
 #  updated_at          :datetime
+#  authy_user_id       :string(255)
 #  ssl_account_id      :integer
 #
 # Indexes

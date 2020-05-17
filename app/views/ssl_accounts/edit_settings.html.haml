@@ -8,14 +8,12 @@
   =error_messages_for :ssl_account
   =form_for @ssl_account, :url=>update_settings_ssl_account_path(ssl_slug: params[:ssl_slug]) do |f|
     #stylized.default_form
-      -unless current_user.is_system_admins?
-        .subheading Team Name and URL
-        =render partial: '/users/ssl_slug_company', locals: {user: current_user}
-        =render partial: "settings_form", :locals => {:f=>f, :u2fs=>@u2fs}
-        -if current_user.is_owner? || current_user.is_account_admin?
-          =render partial: 'sec_settings', :locals => {:f=>f, :duo=>@duo_account, :u2fs=>@u2fs}
-      -else
-        =render partial: 'u2f_settings', :locals => {:f=>f, :u2fs=>@u2fs}
-        =hidden_field_tag 'u2f_response', '', :class => 'u2f_response'
+      .subheading Team Name and URL
+      = render partial: '/users/ssl_slug_company', locals: { user: current_user }
+      = render partial: "settings_form", locals: { f: f }
+      - if current_user.is_owner? || current_user.is_account_admin?
+        = render partial: 'sec_settings', locals: { duo: @duo_account, u2fs: @u2fs }
+
+
     #button_container
       #next_submit=image_submit_tag "bl_submit_button.gif", class: 'edit_setting_btn'

@@ -131,6 +131,7 @@ class UsersController < ApplicationController
           if @user_session.save
             user = @user_session.user
             set_cookie(:acct, user.ssl_account.acct_number)
+            session[:authenticated] = true
             flash[:notice] = 'Successfully logged in.'
             redirect_to(account_path(user.ssl_account(:default_team) ? user.ssl_account(:default_team).to_slug : {})) && return
           end

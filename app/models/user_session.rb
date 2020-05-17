@@ -18,7 +18,7 @@ class UserSession < Authlogic::Session::Base
 
   before_destroy do |this_session|
     user = this_session.record
-    if user.active? && !user.is_disabled?
+    if user&.active? && !user.is_disabled?
       SystemAudit.create(
         owner: user,
         target: nil,

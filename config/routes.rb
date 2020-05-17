@@ -392,8 +392,6 @@ Rails.application.routes.draw do
       match :update_ssl_slug, via: %i[put patch]
       match :update_company_name, via: %i[put patch]
       collection do
-        post :register_u2f
-        post :remove_u2f
         post :register_duo
         put  :duo_enable
         put  :duo_own_used
@@ -485,6 +483,21 @@ Rails.application.routes.draw do
 
   scope '(/team/:ssl_slug)', module: false do
     concerns :teamable
+  end
+
+  resources :otps do
+    collection do
+      get :login
+      post :verify_login
+      get :add_phone
+      post :verify_add_phone
+    end
+  end
+
+  resources :u2fs do
+    collection do
+      post :verify
+    end
   end
 
   resources :users, except: :index do

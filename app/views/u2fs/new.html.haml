@@ -1,0 +1,22 @@
+-title = request.subdomain==Reseller::SUBDOMAIN ? "Reseller login" : "Customer login"
+-content_for :title, title
+= render partial: 'index_scripts'
+= javascript_include_tag 'u2f-api'
+-failed_count = @failed_count || 0
+-limited_count = Settings.captcha_threshold
+.reseller_registration_profile
+  = form_for 'u2f', url: verify_u2fs_path, method: :post, html: { id: 'verify-u2f' } do |f|
+    %h3=title
+    %p
+      Login to your #{community_name} account to manage your SSL products and services including certificates,
+      links, and monitoring and scanning apps. If you currently do not have an account,
+      #{link_to "register for a free #{community_name} account", new_user_url}.
+    #stylized.default_form
+      .subheading Credentials
+      .clearfix.form_input#2fa-info{ style: 'display: none;' }
+        = render partial: 'twofa_authentication'
+      = hidden_field_tag 'u2f_response', '', :class => 'u2f_response'
+      = hidden_field_tag 'failed_count', failed_count, class: 'failed_count'
+      = hidden_field_tag 'error_message'
+
+      = render partial: 'shared/tfa_options'

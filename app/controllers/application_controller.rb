@@ -23,6 +23,7 @@ class ApplicationController < ActionController::Base
   before_action :detect_recert, except: %i[renew reprocess]
   before_action :set_current_user
   before_action :verify_duo_authentication, except: %i[duo duo_verify login logout]
+  before_action :use_2FA_authentication
   before_action :identify_visitor, :record_visit, if: -> { Settings.track_visitors }
   before_action :finish_reseller_signup, if: -> { current_user.present? }
   before_action :team_base, if: -> { params[:ssl_slug] && current_user }
@@ -71,6 +72,22 @@ class ApplicationController < ActionController::Base
     @user_session = UserSession.create(@user)
     @current_user_session = @user_session
     Authorization.current_user = @current_user = @user_session.record
+  end
+
+  # Methods related to 2FA
+  # ===================================================
+
+  ##
+  # Require user to setup 2FA
+  # if users tries to access information for a team that requires users to have eanbled 2FA
+  # ***And if user's default team requires it, then make user account add 2FA?
+  def use_2FA_authentication
+    # if user tries to access team that has u2f enabled
+    team = SslAccount.find_by(ssl_slug: params[:ssl_slug])
+    if team && team.sec_type && current_user && current_user.u2fs.empty?
+      flash[:error] = 'Please use 2FA'
+      redirect_to u2fs_path(current_user)
+    end
   end
 
   def verify_duo_authentication
@@ -547,7 +564,14 @@ class ApplicationController < ActionController::Base
       flash[:notice] = 'You must be logged in to access this page'
       redirect_to new_user_session_path
       false
+    elsif !session[:authenticated]
+      redirect_to new_u2f_path
+      false
     end
+  end
+
+  def user_account_path
+    account_path(current_user_default_team ? current_user_default_team.to_slug : {})
   end
 
   def global_set_row_page

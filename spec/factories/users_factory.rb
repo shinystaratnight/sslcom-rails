@@ -76,6 +76,12 @@ FactoryBot.define do
       Faker::Internet.username(specifier: 8..15) + "#{n}"
     end
 
+    trait :u2f do
+      after(:create) do |user|
+        u2f = create(:u2f, user: user)
+      end
+    end
+
     trait :with_avatar do
       avatar { File.new("#{Rails.root}/spec/support/fixtures/idris.jpg") }
     end

@@ -45,6 +45,7 @@
 #  status              :string(255)
 #  created_at          :datetime
 #  updated_at          :datetime
+#  authy_user_id       :string(255)
 #  ssl_account_id      :integer
 #
 # Indexes
@@ -769,6 +770,26 @@ class User < ApplicationRecord
     expires_in = 10.minutes
     options.reverse_merge! expires_in: expires_in, use_ssl: true
     avatar.s3_object(options[:style]).presigned_url(:get, secure: true, expires_in: expires_in).to_s
+  end
+
+  # 2FA
+  ##
+  # Check if user's phone is the same as the authy cellphone registered for authy user
+  # Authy returns the phone in format XXX-XXX-3765
+  def phone_verified?
+    authy_user = Authy::API.user_status(id: authy_user_id)
+    return false unless authy_user
+    user_country_code = Country.find_by(name: country)&.num_code
+    authy_user['status']&['phone_number']&.last(4) == phone&.last(4) && authy_user['status']['country_code'] == user_country_code
+  end
+
+  ##
+  # Checks if the user needs to verify phone via OTP
+  # Verification is needed when there is a change for user's phone and/or country
+  # For pre-existing phone details (no changes to phone/country) that are not verified
+  # register user with authy and verify phone, so that 2FA with OTP is possible
+  def requires_phone_verification?
+    phone_changed? || country_changed? || !phone_verified?
   end
 
   private

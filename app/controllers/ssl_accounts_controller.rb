@@ -29,7 +29,6 @@ class SslAccountsController < ApplicationController
     # Fetch existing Registrations from your db and generate SignRequests
     key_handles = current_user.u2fs.pluck(:key_handle)
     @sign_requests = u2f.authentication_requests(key_handles)
-    @u2fs = current_user.u2fs
     @duo_account = current_user_default_team.duo_account
 
     @app_id = u2f.app_id
@@ -83,56 +82,6 @@ class SslAccountsController < ApplicationController
     end
   end
 
-  def remove_u2f
-    response = {}
-    if current_user
-      u2f = current_user.u2fs.find(params['u2f_device_id'])
-      if u2f
-        u2f.destroy
-        response['u2f_device_id'] = u2f.id
-      else
-        response['error'] = 'There is no data for selected U2f Token'
-      end
-    else
-      response['error'] = ''
-    end
-
-    render json: response
-  end
-
-  def register_u2f
-    response = {}
-    if current_user
-      response = U2F::RegisterResponse.load_from_json(params[:u2f_response])
-      exist = current_user.u2fs.find_by(key_handle: response.key_handle)
-
-      if exist
-        response['error'] = 'This U2F device has already been registered.'
-      else
-        begin
-          reg = u2f.register!(session[:challenges], response)
-
-          # save a reference to your database
-          current_user.u2fs.create!(nick_name:   params['nick_name'],
-                                    certificate: reg.certificate,
-                                    key_handle:  reg.key_handle,
-                                    public_key:  reg.public_key,
-                                    counter:     reg.counter)
-        rescue U2F::Error => e
-          response['error'] = 'Unable to register: ' + e.class.name
-        ensure
-          session.delete(:challenges)
-          response['created_at'] = current_user.u2fs.last.created_at.strftime('%b %d, %Y')
-          response['u2f_device_id'] = current_user.u2fs.last.id
-        end
-      end
-    else
-      response['error'] = ''
-    end
-
-    render json: response
-  end
-
   def register_duo
     response = {}
     if current_user_default_team.duo_account
@@ -184,6 +133,7 @@ class SslAccountsController < ApplicationController
   end
 
   # PUT /ssl_account/set_2fa_type
+  # Toggle ssl_account.sec_type (u2f or duo)
   def set_2fa_type
     type = @ssl_account.sec_type == params['sec_type'] ? '' : params['sec_type']
     @ssl_account.update_attribute(:sec_type, type)

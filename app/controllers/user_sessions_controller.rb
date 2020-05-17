@@ -6,6 +6,7 @@ class UserSessionsController < ApplicationController
   skip_before_action :verify_authenticity_token
   skip_before_action :verify_duo_authentication, only: %i[new create destroy]
   skip_before_action :require_no_authentication, only: [:duo_verify]
+  skip_before_action :use_2FA_authentication
 
   def new
     @failed_count = 0
@@ -22,14 +23,15 @@ class UserSessionsController < ApplicationController
   end
 
   def user_login
-    result_obj = {}
+    @result_obj = {}
     key_handles = []
     cart_and_u2fs = lambda {
       @user_session = UserSession.new(params[:user_session].to_h)
-      if @user_session.save && !@user_session.user.is_disabled?
-        shopping_cart_to_cookie
+      @user = User.find_by(login: @user_session.login)
+
+      if @user && @user_session.valid? && !@user.is_disabled?
         # Fetch existing U2Fs from your db
-        key_handles = @user_session.user.u2fs.pluck(:key_handle)
+        key_handles = @user.u2fs.pluck(:key_handle)
       end
     }
 
@@ -41,17 +43,16 @@ class UserSessionsController < ApplicationController
 
     unless key_handles.empty?
       # Generate SignRequests
-      result_obj['app_id'] = u2f.app_id
-      result_obj['sign_requests'] = u2f.authentication_requests(key_handles)
-      result_obj['challenge'] = u2f.challenge
+      @result_obj['app_id'] = u2f.app_id
+      @result_obj['sign_requests'] = u2f.authentication_requests(key_handles)
+      @result_obj['challenge'] = u2f.challenge
 
       # Store challenge. We need it for the verification step
-      session[:challenge] = result_obj['challenge']
+      session[:challenge] = @result_obj['challenge']
     end
 
-    result_obj['failed_count'] = params[:user_session][:failed_count]
-
-    render json: result_obj
+    @result_obj['failed_count'] = params[:user_session][:failed_count]
+    render json: @result_obj
   end
 
   def create
@@ -85,7 +86,16 @@ class UserSessionsController < ApplicationController
         if @user_session.save && !@user_session.user.is_disabled?
           user = shopping_cart_to_cookie
 
+          session[:authenticated] = false
+          session[:pre_authenticated_user_id] = @user_session.user.id
+
           flash[:notice] = 'Successfully logged in.' unless request.xhr?
+          # @u2f_response = params[:u2f_response]
+          if @user_session.user.u2fs.any?
+            redirect_to new_u2f_path and return
+          end
+          session[:authenticated] = true
+
           format.js   { render json: url_for_js(user) }
           format.html do
             redirect_back_or_default account_path(user.ssl_account(:default_team) ?
@@ -158,63 +168,17 @@ class UserSessionsController < ApplicationController
                 session[:duo_auth] = true
                 format.html { redirect_back_or_default account_path(current_user_default_team ? current_user_default_team.to_slug : {}) }
               end
+            # Access to teams that have u2f enabled is handled in use_2FA_authentication
+            # What we should care about here is whether or not users have added 2fa for their account (regardless of any team requirement)
             elsif current_user_default_team&.sec_type == 'u2f'
+              # Why is this needed?
               session[:duo_auth] = true
-              if params['u2f_response'].blank?
-                flash[:notice] = 'Successfully logged in.' unless request.xhr?
-                format.js   { render json: url_for_js(current_user) }
-                # rubocop:disable Style/IdenticalConditionalBranches
-                format.html { redirect_back_or_default account_path(current_user_default_team ? current_user_default_team.to_slug : {}) }
-                # rubocop:enable Style/IdenticalConditionalBranches
-              else
-                response = U2F::SignResponse.load_from_json(params[:u2f_response])
-                reg_u2f = current_user.u2fs.find_by(key_handle: response.key_handle) if response.key_handle
-
-                unless reg_u2f
-                  flash[:notice] = 'Successfully logged in.' unless request.xhr?
-
-                  format.js   { render json: url_for_js(current_user) }
-                  format.html do
-                    redirect_back_or_default account_path(current_user_default_team ?
-                                                                          current_user_default_team.to_slug :
-                                                                          {})
-                  end
-                end
-
-                begin
-                  u2f.authenticate!(
-                    session[:challenge],
-                    response,
-                    Base64.decode64(reg_u2f.public_key),
-                    reg_u2f.counter
-                  )
-
-                  reg_u2f.update(counter: response.counter)
-                rescue U2F::Error => e
-                  # Log out to protect hack.
-                  if current_user.is_admin?
-                    cookies.delete(ResellerTier::TIER_KEY)
-                    cookies.delete(ShoppingCart::CART_GUID_KEY)
-                    clear_cart
-                  end
-                  cookies.delete(:acct)
-                  current_user_session.destroy
-                  Authorization.current_user = nil
-                  flash[:error] = 'Unable to authenticate with U2F: ' + e.class.name unless params[:user]
-
-                  @user_session = UserSession.new(params[:user_session].to_h)
-                  format.html { render action: :new }
-                  format.js   { render json: @user_session.errors }
-                ensure
-                  session.delete(:challenge)
-                end
-
-                flash[:notice] = 'Successfully logged in.' unless request.xhr?
-                format.js   { render json: url_for_js(current_user) }
-                # rubocop:disable Style/IdenticalConditionalBranches
-                format.html { redirect_back_or_default account_path(current_user_default_team ? current_user_default_team.to_slug : {}) }
-                # rubocop:enable Style/IdenticalConditionalBranches
-              end
+              #if params['u2f_response'].blank? # If it is blank, it means there was no 2FA!
+                # flash[:notice] = 'Successfully logged in.' unless request.xhr?
+                # format.js   { render json: url_for_js(current_user) }
+                # # rubocop:disable Style/IdenticalConditionalBranches
+                # format.html { redirect_back_or_default account_path(current_user_default_team ? current_user_default_team.to_slug : {}) }
+                # # rubocop:enable Style/IdenticalConditionalBranches
             else
               session[:duo_auth] = true
               flash[:notice] = 'Successfully logged in.' unless request.xhr?

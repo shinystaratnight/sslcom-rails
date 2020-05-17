@@ -11,6 +11,7 @@ jQuery(function($) {
     }
 
     $('.btn_login').click(function() {
+
       var user_session = {};
       user_session['login'] = $('#user_session_login').val();
       user_session['password'] = $('#user_session_password').val();
@@ -25,30 +26,8 @@ jQuery(function($) {
         },
         type: "POST",
         success: function (result) {
-          if (result['app_id']) {
-            var appId = result['app_id'];
-            var signRequests = result['sign_requests'];
-            var challenge = result['challenge'];
-
-            u2f.sign(appId, challenge, signRequests, function(signResponse) {
-              if (signResponse.errorCode) {
-                var failed_count = parseInt($('.failed_count').val()) + 1;
-                $('.failed_count').val(failed_count);
-                $('.u2f_logout').val('true');
-              } else {
-                $('.u2f_response').val(JSON.stringify(signResponse));
-              }
-              $('.new_user_session').submit();
-            });
-          } else {
-            var failed_count = parseInt($('.failed_count').val()) + 1;
-            $('.failed_count').val(failed_count);
-            $('.new_user_session').submit();
-          }
         }
       });
-
-      return false;
     });
   });
 });

@@ -1,0 +1,11 @@
+.clearfix
+.u2f_block#waiting_bar
+  = image_tag('waiting_bar_medium.gif', style: 'vertical-align: middle;')
+  #waiting_bar_text
+    Insert your key and touch it
+#otp-request{ style: 'display: none' }
+  .u2f_device_info
+    .input-group
+      = text_field_tag 'u2f[nick_name]', 'ad', class: 'form-control'
+      .input-group-append
+        .btn.btn-success.fa.fa-check
