@@ -1,7 +1,7 @@
 -certificate ||= @certificate_order.certificate if @certificate_order
 -title=new_order_title(certificate)
 -content_for :title, title
-= javascript_include_tag 'u2f-api'
+
 =order_progress_indicator(2, certificate) if certificate
 .reseller_registration_select_tier
   %h3
@@ -30,7 +30,6 @@
           =render partial: "billing_profiles", locals: {ssl_account: ssl_account}
         -else
           =render partial: "order_login"
-          =hidden_field_tag 'u2f_response', '', :class => 'u2f_response'
           =hidden_field_tag 'logout', 'false', :class => 'u2f_logout'
           =hidden_field_tag 'failed_count', 0, :class => 'failed_count'
           #recaptcha_container.hidden

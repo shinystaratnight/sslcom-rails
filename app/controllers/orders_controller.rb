@@ -178,6 +178,11 @@ class OrdersController < ApplicationController
   end
 
   def new
+    # If we need to login, make sure we return to cart checkout
+    session[:request_referrer] = 'checkout'
+    redirect_to new_user_session_path and return unless current_user
+    redirect_to new_u2f_path and return unless session[:authenticated]
+
     if params[:reprocess_ucc] || params[:renew_ucc] || params[:ucc_csr_submit]
       ucc_domains_adjust
     elsif params[:smime_client_enrollment]
@@ -226,6 +231,8 @@ class OrdersController < ApplicationController
         elsif current_user.ssl_account.funded_account.cents > 0
           redirect_to(is_current_order_affordable? ? confirm_funds_url(id: :order) : allocate_funds_for_order_path(id: :order)) && return
         end
+      else
+        @user_session = UserSession.new
       end
     end
   end

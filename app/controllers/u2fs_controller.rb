@@ -64,7 +64,7 @@ class U2fsController < ApplicationController
 
       session[:authenticated] = true
       respond_to do |format|
-        format.html { redirect_to user_account_path }
+        format.html { set_redirect(user: @user) }
       end
 
     rescue U2F::Error => e

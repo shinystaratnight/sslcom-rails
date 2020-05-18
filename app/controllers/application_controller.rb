@@ -75,6 +75,16 @@ class ApplicationController < ActionController::Base
     Authorization.current_user = @current_user = @user_session.record
   end
 
+  def set_redirect(user: nil)
+    if session[:request_referrer] == 'checkout'
+      redirect_to new_order_path and return
+    else
+      ssl_account = {}
+      ssl_account = user.ssl_account(:default_team)&.to_slug
+      redirect_back_or_default account_path(ssl_account) and return
+    end
+  end
+
   # Methods related to 2FA
   # ===================================================
 

@@ -14,6 +14,7 @@ class UserSessionsController < ApplicationController
     # Keep the count when page refreshes
     session[:failed_count] ||= 0
     session[:duo_auth] = false
+    session[:authenticated] = false
   end
 
   def show
@@ -54,6 +55,7 @@ class UserSessionsController < ApplicationController
   end
 
   def create
+    # Not sure if/when we enter the following block
     if params["prev.x".intern]
       # assume trying to login during checkout
       if params[:certificate_order]
@@ -93,9 +95,7 @@ class UserSessionsController < ApplicationController
 
           format.js   { render json: url_for_js(user) }
           format.html do
-            redirect_back_or_default account_path(user.ssl_account(:default_team) ?
-                                                                  user.ssl_account(:default_team).to_slug :
-                                                                  {})
+            set_redirect(user: user)
           end
         elsif @user_session.attempted_record && !@user_session.attempted_record.active?
           flash[:notice] = 'Your account has not been activated. %s'
@@ -261,8 +261,12 @@ class UserSessionsController < ApplicationController
     cookies.delete(:acct)
     current_user_session.destroy
     Authorization.current_user = nil
+    session[:pre_authenticated_user_id] = nil
+    session[:authenticated] = false
+    session[:request_referrer] = nil
     flash[:notice] = 'Successfully logged out.'
     session[:failed_count] = 0
+    session[:u2f_failed_count] = 0
     respond_to do |format|
       format.html { redirect_to new_user_session_url }
     end

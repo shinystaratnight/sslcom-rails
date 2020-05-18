@@ -17,8 +17,8 @@ class OtpsController < ApplicationController
     response = Authy::API.verify(id: current_user.authy_user_id,
                                  token: otp_params['verification_code'])
     if response.ok?
-      redirect_to user_account_path
       session[:authenticated] = true
+      set_redirect(user: current_user)
     else
       flash[:error] = 'Could not verify the code. Please try again or contact us.'
       render :login

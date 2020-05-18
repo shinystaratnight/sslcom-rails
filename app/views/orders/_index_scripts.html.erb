@@ -159,7 +159,7 @@ jQuery(function($) {
               itemQuery = filterCont.children().data('field') + ':' + val;
             }
           } else if ( (filterCont.data('type') == 'select') || (filterCont.data('type') == 'select-multi') ) {
-            
+
             if (filterCont.children().val()) {
               val = filterCont.children().val().toString();
 
@@ -337,7 +337,6 @@ jQuery(function($) {
       dataType: 'json',
       url: '<%=user_session_path%>',
       success: function(data, status, $form) {
-        $('#waiting_bar').hide();
         if (typeof(data.record) == "undefined") {
           errorArray = [];
           msg = "Login error(s):\n";
@@ -351,12 +350,6 @@ jQuery(function($) {
             errorArray.push(
               "Ooops, '" + data.duplicate_v2_user.login + "' has been consolidated with a primary account. Please contact support@ssl.com for assistance or more information."
             );
-          } else {
-            if ($('.u2f_logout').val() == 'true') {
-              errorArray.push('U2F: Unable to sign with U2F.');
-            } else {
-              errorArray.push('U2F: Unable to authenticate with U2F.');
-            }
           }
 
           errorString = errorArray.join(",\n");
@@ -420,7 +413,6 @@ jQuery(function($) {
       ) {
         // Before Ajax
         $('div[id*=Explanation][class*=Explanation]').remove();
-        $('#waiting_bar').show();
 
         var user_session = {};
         user_session['login'] = $('#user_session_login').val();
@@ -435,25 +427,8 @@ jQuery(function($) {
             user_session: user_session
           },
           type: "POST",
-          success: function (result) {
-            if (result['app_id']) {
-              var appId = result['app_id'];
-              var signRequests = result['sign_requests'];
-              var challenge = result['challenge'];
-
-              u2f.sign(appId, challenge, signRequests, function(signResponse) {
-                if (signResponse.errorCode) {
-                  $('.u2f_logout').val('true');
-                } else {
-                  $('.u2f_response').val(JSON.stringify(signResponse));
-                }
-                $('form#new_order').ajaxSubmit(options);
-              });
-            } else {
-              var failed_count = parseInt($('.failed_count').val()) + 1;
-              $('.failed_count').val(failed_count);
-              $('form#new_order').ajaxSubmit(options);
-            }
+          success: function(result) {
+            <%# window.location = '/orders/new'; %>
           }
         });
 
