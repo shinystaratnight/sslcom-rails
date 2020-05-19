@@ -1,12 +1,9 @@
 !!!
 %html(xmlns:fb="facebook.com/2008/fbml" itemscope="" itemtype="http://schema.org/Organization")
   %head
-    -# -cache("head_08042014"+params.to_s, expires_in: 1.year) do
     :javascript
       var _sf_startpt=(new Date()).getTime()
-    =javascript_include_tag '//code.jquery.com/jquery-3.4.1.slim.min.js', integrity: 'sha256-pasqAKBDmFT4eHoN2ndd6lN370kFiGUFyTiUHWhU7k8=', crossorigin: 'anonymous'
-    =javascript_include_tag '//stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js'
-    =stylesheet_link_tag '//stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css'
+    =javascript_include_tag 'common'
     =javascript_include_tag '//kit.fontawesome.com/32ac29d6b6.js', crossorigin: 'anonymous'
     =javascript_include_tag '//cdnjs.cloudflare.com/ajax/libs/dropzone/5.5.1/min/dropzone.min.js'
     =stylesheet_link_tag 'https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.5.1/min/dropzone.min.css'
@@ -41,11 +38,6 @@
       -if (current_user.blank?) || (!current_user.is_passed_2fa(session[:duo_auth])) || yield(:header)=='public' || yield(:header)=='public_wo_container'
         -unless request.subdomain==Reseller::SUBDOMAIN
           =render :partial => '/layouts/public_new'
-          -#
-            -if current_page?(action: "buy_now")
-              =render :partial => '/layouts/public_new'
-            -else
-              =render :partial => '/layouts/public'
         -else
           =render :partial => '/layouts/public_resellers'
       -elsif current_user.is_system_admins?

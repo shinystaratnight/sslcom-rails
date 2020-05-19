@@ -24,6 +24,9 @@ plugins:
     enabled: true
   haml-lint:
     enabled: true
+    checks:
+      HamlLint/LeadingCommentSpace:
+        enabled: false
   reek:
     enabled: false # Duplicates Rubocop
   rubocop:
@@ -47,6 +50,8 @@ plugins:
       Rubocop/Layout/ExtraSpacing:
         enabled: false
       Rubocop/Layout/IndentHeredoc:
+        enabled: false
+      Rubocop/Rails/FilePath:
         enabled: false
   sass-lint:
     enabled: true

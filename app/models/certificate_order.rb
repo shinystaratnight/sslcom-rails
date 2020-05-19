@@ -1110,7 +1110,7 @@ class CertificateOrder < ApplicationRecord
     if [Ca::CERTLOCK_CA,Ca::SSLCOM_CA,Ca::MANAGEMENT_CA].include?(options[:ca]) or certificate_content.ca_id or
         !options[:mapping].blank?
       if !certificate_content.infringement.empty? # possible trademark problems
-        OrderNotifier.potential_trademark(notify_address, self, certificate_content.infringement).deliver_now
+        OrderNotifier.potential_trademark(Settings.notify_address, self, certificate_content.infringement).deliver_now
       elsif !certificate.is_server? or (domains_validated? and caa_validated?)
         # # queue this job due to CAA lookups
         # if certificate_names.count > 10 and not options[:mapping].try(:profile_name)=~/EV/

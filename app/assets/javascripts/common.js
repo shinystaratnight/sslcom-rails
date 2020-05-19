@@ -1,6 +1,10 @@
+//= require jquery
 //= require jquery_ujs
-//= require jquery-ui
+//= require select2
 //= require application
+//= require jquery-ui
+//= require jquery-ui/widgets/tooltip
+//= require jquery.form
 //= require jquery.livequery
 //= require multifile/jquery.MetaData
 //= require multifile/jquery.MultiFile.pack
@@ -10,14 +14,13 @@
 //= require jCal
 //= require date.js/dist/date.min
 //= require merchant_validate_cc
-//= require popper
-//= require bootstrap-sprockets
 //= require invoice_section
 //= require vakata-jstree/jstree
 //= require deitch-jstree-grid/jstreegrid
 //= require folders
 //= require mailbox
 //= require certificate_enrollment
+//= jquery.prettyLoader
 
 function copyToClipboard(text, el) {
   var copyTest = document.queryCommandSupported('copy');
@@ -83,8 +86,6 @@ $(document).ready(function(){
       },
     });
   });
-
-  $('.js-tooltip').tooltip();
 
   $('.js-copy').click(function() {
     var text = $(this).attr('data-copy');

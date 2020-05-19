@@ -5,7 +5,7 @@
 %div{:style=>"width: 100%"}
   %h2
     Generate Request and Certificate For
-    =link_to @certificate_order.ref, id: @certificate_order[:id]
+    =link_to @certificate_order.ref, certificate_order_path(@certificate_order)
   %h3.center
     Note: Your private key will be generated on your own computer by your web browser.
     SSL.com will never see or handle your private keys.
@@ -27,7 +27,7 @@
                   =s.split('=')[0] + '  : '
                 .subject_dn_value
                   =s.split('=')[1]
-  %input.cs_subject_dn{:type=>'hidden', :value=>"#{is_cs || is_client ? (is_personal_basic || is_personal_pro ? @certificate_order.locked_recipient_subject_dn : @certificate_order.certificate_content.locked_subject_dn) : @certificate_order.certificate_content.subject_dn}"}
+  %input.cs_subject_dn{:type=>'hidden', :value=>"#{is_cs || is_client ? (is_personal_basic || is_personal_pro ? @certificate_order.locked_recipient_subject_dn : @certificate_order.certificate_content.locked_subject_dn) : @certificate_order.certificate_content.locked_subject_dn}"}
   %input.sign_alg_type{:type => 'hidden', :value => 'rsa'}
   .generate_wrap
     .row.pt-3
@@ -40,8 +40,8 @@
         .col-md-5
           %input.generate_cert.right{:type=>'button', :value=>'Generate Certificate', :class=>'btn btn-primary'}
         -if is_cs
-          .col-md-2.create_csr_block
-            %input.create_csr.center{:type=>'button', :value=>'Create CSR', :class=>'btn btn-primary'}
+          -#.col-md-2.create_csr_block
+          -#  %input.create_csr.center{:type=>'button', :value=>'Create CSR', :class=>'btn btn-primary'}
           .col-md-5{:style=>'font-size: 1.5em'}
             %input.own_csr{:type=>'checkbox', :style=>'height: 33px; width: 20px; vertical-align: middle; margin-right: 10px'} I have my own CSR
   .integrated_algorithm_wrap

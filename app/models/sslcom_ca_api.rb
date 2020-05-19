@@ -184,6 +184,12 @@ class SslcomCaApi
         (options[:mapping].profile_name=~/OV/ or options[:mapping].is_ev?)
       downstep = !certificate_order.ov_validated?
       options[:mapping]=options[:mapping].downstep if downstep
+    elsif certificate_order.certificate.is_document_signing? && options[:origin] == 'api'
+      options[:mapping] = if certificate_order.certificate.is_client_pro?
+                            'MYSSL_IV_RSA_SMIME_CERT'
+                          else
+                            'MYSSL_OV_RSA_SMIME_CERT'
+                          end
     end
   end
 

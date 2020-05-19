@@ -152,6 +152,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
         ) if co.certificate_content.locked_registrant
 
         options[:certificate_content] = new_cc
+        options[:origin] = 'api'
       end
 
       generated_certificate = SslcomCaApi.apply_for_certificate(co, options)
@@ -954,7 +955,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
               OrderNotifier.validation_documents_uploaded(c, @acr, @files).deliver
             end
 
-            OrderNotifier.validation_documents_uploaded(notify_address, @acr, @files).deliver
+            OrderNotifier.validation_documents_uploaded(Settings.notify_address, @acr, @files).deliver
             OrderNotifier.validation_documents_uploaded_comodo("evdocs@comodo.com", @acr, @files).
                 deliver if (@acr.certificate.is_ev? && @acr.ca_name=="comodo")
           end
@@ -982,7 +983,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
 
         if cache.blank?
           api_domain = "https://" + (@acr.is_test ? Settings.test_api_domain : Settings.api_domain)
-          @result.parameters = @acr.to_api_string(action: @result.api_call, domain_override: api_domain, caller: "api")
+          @result.parameters = @acr.to_api_string(action: @result.api_call, domain_override: api_domain, caller: 'api')
 
           # Caching Api Parameters for "Retrieve acceptable domain validation methods for Certificate" API.
           Rails.cache.write('api-retrieve-domain-valid-methods-' + @acr.ref + '-' + @result.api_call, @result.parameters.to_json)

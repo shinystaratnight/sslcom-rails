@@ -806,9 +806,9 @@ class SignedCertificate < ApplicationRecord
   end
 
   def after_save
-    if !csr.blank? && !%w(ShadowSignedCertificate ManagedCertificate).include?(self.type)
+    if self.type==nil
       send_processed_certificate
-      cc = csr.certificate_content
+      cc = (csr || self).certificate_content
       if cc.preferred_reprocessing?
         cc.preferred_reprocessing = false
         cc.save
@@ -829,12 +829,8 @@ class SignedCertificate < ApplicationRecord
 
   def after_create
     case type
-    when 'ShadowSignedCertificate', 'ManagedCertificate'
-      true
-    when 'AttestationCertificate'
-      certificate_content.issue!
-    else
-      csr.certificate_content.issue!
+    when nil # is SignedCertificate
+      (csr || self).certificate_content.issue!
     end
   end
 end

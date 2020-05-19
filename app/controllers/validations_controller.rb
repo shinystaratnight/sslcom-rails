@@ -20,7 +20,7 @@ class ValidationsController < ApplicationController
   filter_access_to :update, :new, :attribute_check=>true
   filter_access_to :edit, :show, :attribute_check=>true
   filter_access_to :admin_manage, :attribute_check=>true
-  filter_access_to :send_to_ca, require: :sysadmin_manage
+  filter_access_to :send_to_ca, require: :super_user_manage
   filter_access_to :get_asynch_domains, :remove_domains, :get_email_addresses, :send_callback,
                    :add_super_user_email, :request_approve_phone_number, :cancel_validation_process, :require=>:ajax
   in_place_edit_for :validation_history, :notes
@@ -501,7 +501,7 @@ class ValidationsController < ApplicationController
           @certificate_order.confirmation_recipients.map{|r|r.split(" ")}.flatten.uniq.each do |c|
             OrderNotifier.validation_documents_uploaded(c, @certificate_order, @files).deliver
           end
-          OrderNotifier.validation_documents_uploaded(notify_address, @certificate_order, @files).deliver
+          OrderNotifier.validation_documents_uploaded(Settings.notify_address, @certificate_order, @files).deliver
           OrderNotifier.validation_documents_uploaded_comodo("evdocs@comodo.com", @certificate_order, @files).
               deliver if (@certificate_order.certificate.is_ev? && @certificate_order.ca_name=="comodo")
         end
@@ -1061,7 +1061,7 @@ class ValidationsController < ApplicationController
   end
 
   def notify_customer(validation_rulings)
-    recips = [@co.certificate_content.administrative_contact]
+    recips = [@co.certificate_content.administrative_contact].compact
     recips << @co.certificate_content.validation_contact if @co&.certificate_content&.validation_contact&.email&.downcase != @co&.certificate_content&.administrative_contact&.email&.downcase
     recips.each do |c|
       if validation_rulings.all?(&:approved?)

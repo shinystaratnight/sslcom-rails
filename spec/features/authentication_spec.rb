@@ -71,4 +71,12 @@ RSpec.describe 'Authentications', type: :feature do
       expect(page).to have_content("username: #{other.login}")
     end
   end
+
+  xit 'disallows sysadmin to view "Send to SSL.com CA" page', js: true do
+    other = create(:user)
+    as_user(create(:user, :sys_admin)) do
+      visit certificate_order_path(ref: "co-10000")
+      expect(page).to have_content("username: #{other.login}")
+    end
+  end
 end

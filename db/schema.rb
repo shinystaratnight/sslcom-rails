@@ -151,21 +151,17 @@ ActiveRecord::Schema.define(version: 20200312160424) do
   end
 
   create_table "blocklists", force: :cascade do |t|
-    t.string  "pattern",            :limit=>255
-    t.boolean "regular_expression"
-    t.boolean "common_name"
-    t.boolean "organization"
-    t.boolean "organization_unit"
-    t.boolean "location"
-    t.boolean "state"
-    t.boolean "country"
-    t.boolean "san"
-    t.string  "type",               :limit=>255
-    t.string  "label",              :limit=>255
-    t.text    "description",        :limit=>65535
-    t.text    "notes",              :limit=>65535
-    t.text    "exempt",             :limit=>65535
+    t.string   "type",        :limit=>255
+    t.string   "domain",      :limit=>255
+    t.integer  "validation",  :limit=>4
+    t.string   "status",      :limit=>255
+    t.string   "reason",      :limit=>255
+    t.string   "description", :limit=>255
+    t.text     "notes",       :limit=>65535
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
+  add_index "blocklists", ["id", "type"], :name=>"index_blocklists_on_id_and_type", :using=>:btree
 
   create_table "ca_api_requests", force: :cascade do |t|
     t.integer  "api_requestable_id",   :limit=>4, :index=>{:name=>"index_ca_api_requests_on_api_requestable", :with=>["api_requestable_type"], :using=>:btree}

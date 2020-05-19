@@ -1,6 +1,11 @@
+<%= javascript_include_tag '//stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js' %>
+<%= stylesheet_link_tag '//stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css' %>
+
 <script type="text/javascript">
 jQuery(function($) {
   $(document).ready(function() {
+    $('.js-tooltip').tooltip();
+
     $('.remove_ac').on('click', function(){
       if(!confirm('Please confirm deletion of API credential. This cannot be undone')) return false;
     });

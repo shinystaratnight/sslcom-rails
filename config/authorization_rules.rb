@@ -4,6 +4,7 @@ authorization do
   # ============================================================================
   role :super_user do
     includes :sysadmin
+    has_permission_on :validations, :certificate_orders, to: :super_user_manage
   end
 
   # ============================================================================
@@ -601,7 +602,7 @@ authorization do
   # GUEST Role
   # ============================================================================
   role :guest do
-    has_permission_on :csrs, :certificate_orders, :orders,  to: %i[create smime_client_enrollment]
+    has_permission_on :csrs, :certificate_orders, :orders,  to: %i[create smime_client_enrollment lint]
     has_permission_on :certificates, to: :buy_renewal
     has_permission_on :site_seals, to: [:site_report]
     has_permission_on :users, :ssl_accounts, :resellers, to: %i[create update]
@@ -699,9 +700,12 @@ privileges do
     refund_merchant
     search
     set_default_team_max
-    sslcom_ca
     update_roles
     search_teams
     upload_for_registrant
+  ]
+  privilege :super_user_manage, includes: %i[
+    sslcom_ca
+    send_to_ca
   ]
 end
