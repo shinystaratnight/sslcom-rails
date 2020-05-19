@@ -9,26 +9,6 @@ jQuery(function($) {
     disableSubmitBtn = function () {
       $('.btn_login').hide();
     }
-
-    $('.btn_login').click(function() {
-
-      var user_session = {};
-      user_session['login'] = $('#user_session_login').val();
-      user_session['password'] = $('#user_session_password').val();
-      user_session['failed_count'] = $('.failed_count').val();
-      user_session['g-recaptcha-response'] = $('#g-recaptcha-response').val();
-
-      var ajaxLoginUrl = '<%=user_login_user_session_path%>';
-      $.ajax({
-        url: ajaxLoginUrl,
-        data: {
-          user_session: user_session
-        },
-        type: "POST",
-        success: function (result) {
-        }
-      });
-    });
   });
 });
 </script>

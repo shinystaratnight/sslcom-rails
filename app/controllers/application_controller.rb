@@ -613,7 +613,7 @@ class ApplicationController < ActionController::Base
   end
 
   def require_no_user
-    if current_user
+    if current_user && session[:authenticated]
       store_location
       set_cookie(:acct, current_user.ssl_account.acct_number)
       flash[:notice] = "You must be logged out to access page '#{request.fullpath}'"

@@ -7,10 +7,12 @@ class UserSessionsController < ApplicationController
   skip_before_action :verify_duo_authentication, only: %i[new create destroy]
   skip_before_action :require_no_authentication, only: [:duo_verify]
   skip_before_action :use_2FA_authentication
+  before_action :check_recaptcha, only: [:user_login, :create]
 
   def new
-    @failed_count = 0
     @user_session = UserSession.new
+    # Keep the count when page refreshes
+    session[:failed_count] ||= 0
     session[:duo_auth] = false
   end
 
@@ -35,11 +37,7 @@ class UserSessionsController < ApplicationController
       end
     }
 
-    if params[:user_session][:failed_count].to_i >= Settings.captcha_threshold.to_i
-      cart_and_u2fs.call if verify_recaptcha(response: params[:user_session]['g-recaptcha-response'])
-    else
-      cart_and_u2fs.call
-    end
+    cart_and_u2fs.call
 
     unless key_handles.empty?
       # Generate SignRequests
@@ -51,7 +49,7 @@ class UserSessionsController < ApplicationController
       session[:challenge] = @result_obj['challenge']
     end
 
-    @result_obj['failed_count'] = params[:user_session][:failed_count]
+    @result_obj['failed_count'] = session[:failed_count].to_i
     render json: @result_obj
   end
 
@@ -80,7 +78,7 @@ class UserSessionsController < ApplicationController
     end
 
     respond_to do |format|
-      @failed_count = params[:failed_count].to_i
+      @failed_count = session[:failed_count].to_i
 
       if @user_session
         if @user_session.save && !@user_session.user.is_disabled?
@@ -114,6 +112,8 @@ class UserSessionsController < ApplicationController
           format.html { render action: :new }
           format.js   { render json: @user_session.errors }
         elsif @user_session.user.blank? || (@user_session.user.present? && @user_session.user.is_admin_disabled?)
+          # This is also the case for wrong password
+          session[:failed_count] += 1
           if @user_session.user.present?
             if @user_session.user.present? && @user_session.user.is_admin_disabled?
               flash.now[:error] = 'Ooops, it appears this account has been disabled.' unless request.xhr?
@@ -127,6 +127,7 @@ class UserSessionsController < ApplicationController
           format.html { render action: :new }
           format.js   { render json: @user_session }
         else
+          session[:failed_count] += 1
           log_failed_attempt(params[:user_session][:login], params, flash.now[:error])
           format.html { render action: :new }
           format.js   { render json: @user_session.errors }
@@ -263,6 +264,7 @@ class UserSessionsController < ApplicationController
     current_user_session.destroy
     Authorization.current_user = nil
     flash[:notice] = 'Successfully logged out.'
+    session[:failed_count] = 0
     respond_to do |format|
       format.html { redirect_to new_user_session_url }
     end
@@ -350,6 +352,18 @@ class UserSessionsController < ApplicationController
     end
 
     content.to_json
+  end
+
+  ##
+  # Verifies captcha before proceeding to login process
+  def check_recaptcha
+    return unless session[:failed_count].to_i >= Settings.captcha_threshold.to_i
+    unless verify_recaptcha(response: params[:user_session]['g-recaptcha-response'])
+      @user_session = UserSession.new(params[:user_session].to_h)
+      session[:failed_count] += 1
+      flash.now[:error] = 'Recaptcha failed!'
+      render :new and return
+    end
   end
 
   def duo_api_host_name
