@@ -2,26 +2,26 @@ version: 0.0
 os: linux
 files:
   - source: /
-    destination: /home/ubuntu/sslcom-rails
-    owner: ubuntu
+    destination: /srv/www/ra/sslcom-rails
+    owner: app-ra
 permissions:
-  - object: /home/ubuntu/sslcom-rails
-    owner: ubuntu
+  - object: /srv/www/ra/sslcom-rails
+    owner: app-ra
+    group: app-ra
     mode: 755
 hooks:
-  BeforeInstall:
-    - location: script/clear_files.sh
-      timeout: 300
-      runas: ubuntu
   AfterInstall:
     - location: script/install_dependencies.sh
       timeout: 300
-      runas: ubuntu
+      runas: app-ra
+    - location: script/change_ownership.sh
+      timout: 300
+      runas: app-ra
   ApplicationStart:
     - location: script/start_server.sh
       timeout: 300
-      runas: ubuntu
+      runas: app-ra
   ApplicationStop:
     - location: script/stop_server.sh
       timeout: 300
-      runas: ubuntu
+      runas: app-ra
