@@ -85,12 +85,10 @@ class SslAccountsController < ApplicationController
 
   def register_duo
     response = {}
-    if current_user_default_team.duo_account
-      current_user_default_team.duo_account.update(params.except(:action, :controller))
-    else
-      current_user_default_team.create_duo_account
-      current_user_default_team.duo_account.update(params.except(:action, :controller))
-    end
+
+    current_user_default_team.create_duo_account unless current_user_default_team.duo_account
+
+    current_user_default_team.duo_account.update(params.except(:action, :controller))
     render json: response
   end
 
