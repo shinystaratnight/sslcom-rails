@@ -89,7 +89,7 @@ class SslAccountsController < ApplicationController
       current_user_default_team.duo_account.update(params.except(:action, :controller))
     else
       current_user_default_team.create_duo_account
-      ccurrent_user_default_team.duo_account.update(params.except(:action, :controller))
+      current_user_default_team.duo_account.update(params.except(:action, :controller))
     end
     render json: response
   end
