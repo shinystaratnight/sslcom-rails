@@ -23,6 +23,7 @@ class ApplicationController < ActionController::Base
   before_action :detect_recert, except: %i[renew reprocess]
   before_action :set_current_user
   before_action :verify_duo_authentication, except: %i[duo duo_verify login logout]
+  before_action :verify_u2f_authentication, except: %i[duo duo_verify login logout]
   before_action :use_2FA_authentication
   before_action :identify_visitor, :record_visit, if: -> { Settings.track_visitors }
   before_action :finish_reseller_signup, if: -> { current_user.present? }
@@ -88,6 +89,13 @@ class ApplicationController < ActionController::Base
       flash[:error] = 'Please use 2FA'
       redirect_to u2fs_path(current_user)
     end
+  end
+
+  def verify_u2f_authentication
+    return unless current_user
+    return if session[:authenticated] || session[:duo_auth]
+
+    redirect_to new_u2f_path if current_user.u2fs.any?
   end
 
   def verify_duo_authentication
@@ -563,9 +571,6 @@ class ApplicationController < ActionController::Base
       store_location
       flash[:notice] = 'You must be logged in to access this page'
       redirect_to new_user_session_path
-      false
-    elsif !session[:authenticated]
-      redirect_to new_u2f_path
       false
     end
   end

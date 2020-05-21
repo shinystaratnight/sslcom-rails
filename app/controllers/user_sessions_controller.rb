@@ -88,11 +88,8 @@ class UserSessionsController < ApplicationController
           session[:pre_authenticated_user_id] = @user_session.user.id
 
           flash[:notice] = 'Successfully logged in.' unless request.xhr?
-          # @u2f_response = params[:u2f_response]
-          if @user_session.user.u2fs.any?
-            redirect_to new_u2f_path and return
-          end
-          session[:authenticated] = true
+
+          set_authentication
 
           format.js   { render json: url_for_js(user) }
           format.html do
@@ -245,6 +242,7 @@ class UserSessionsController < ApplicationController
 
     if @authenticated_user
       session[:duo_auth] = true
+      session[:authenticated] = true
       respond_to do |format|
         format.js   {render :json=>url_for_js(current_user)}
         format.html {redirect_back_or_default account_path(current_user.ssl_account(:default_team) ? current_user.ssl_account(:default_team).to_slug : {})}
@@ -364,6 +362,13 @@ class UserSessionsController < ApplicationController
       flash.now[:error] = 'Recaptcha failed!'
       render :new and return
     end
+  end
+
+  def set_authentication
+    session[:authenticated] = true
+    session[:authenticated] = false if @user_session.user.is_duo_required?
+    session[:authenticated] = false if @user_session.user.u2fs.any?
+    session[:authenticated] = false if @user_session.user.ssl_account(:default).sec_type.present?
   end
 
   def duo_api_host_name
