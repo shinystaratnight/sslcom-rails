@@ -48,7 +48,7 @@
               %li
                 %a(href="#{account_url}")
                   %div MY ACCOUNT
-                -if current_user && current_user.is_passed_2fa?
+                -if current_user && session[:authenticated]
                   %ul
                     %li
                       =link_to "Logout", logout_url

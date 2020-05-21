@@ -36,7 +36,7 @@
     =yield :js
   %body
     #wrapper
-      -if (current_user.blank?) || (!current_user.is_passed_2fa(session[:duo_auth])) || yield(:header)=='public' || yield(:header)=='public_wo_container'
+      -if (current_user.blank?) || (!current_user.is_passed_2fa(session[:duo_auth]) || !session[:authenticated]) || yield(:header)=='public' || yield(:header)=='public_wo_container'
         -unless request.subdomain==Reseller::SUBDOMAIN
           =render :partial => '/layouts/public_new'
         -else
