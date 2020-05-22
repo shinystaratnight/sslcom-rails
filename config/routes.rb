@@ -22,7 +22,7 @@ Rails.application.routes.draw do
   match 'enterprise_pki_service_agreement' => 'contacts#enterprise_pki_service_agreement', via: :get
 
   # api: If version is not specified then use the default version in APIConstraint
-  constraints DomainConstraint.new((%w[sws.sslpki.com sws.sslpki.local] + Website.domain_contraints).uniq) do
+  constraints DomainConstraint.new((%w[sws-qa.int.ssl.com sws.sslpki.com sws.sslpki.local] + Website.domain_contraints).uniq) do
     scope module: :api do
       scope module: :v1, constraints: APIConstraint.new(version: 1), defaults: { format: 'json' } do
         # Users

@@ -23,8 +23,7 @@ Rails.application.configure do
   # Disable serving static files from the `/public` folder by default since
   # Apache or NGINX already handles this.
 
-  ######### Developer note: This value should be set to false but is true until qa env stabilizes ###########
-  config.serve_static_files = true
+  config.serve_static_files = false
 
 
   # Compress JavaScripts and CSS.
