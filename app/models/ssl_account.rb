@@ -311,6 +311,7 @@ class SslAccount < ApplicationRecord
     attempt_to_issue = []
     dcvs = []
     cn_ids = [] # need to touch certificate_names to bust cache since bulk insert skips callbacks
+
     if certificate_names.present?
       all_certificate_names(certificate_names.map(&:name), 'validated')
         .includes(:validated_domain_control_validations, :certificate_order).find_each do |cn|

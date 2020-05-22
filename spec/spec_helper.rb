@@ -47,7 +47,7 @@ RSpec.configure do |config|
   config.order = :random
 end
 
-Capybara.default_driver = :selenium
+Capybara.default_driver = :selenium_chrome
 Capybara.javascript_driver = :selenium_chrome
 Capybara.server = :puma, { Silent: true }
 Capybara.default_max_wait_time = ENV['CONTINUOS_INTEGRATION'] == true ? 10 : 5

@@ -48,5 +48,11 @@ FactoryBot.define do
         cn.domain_control_validations << create(:domain_control_validation)
       end
     end
+
+    trait :with_email_dcv do
+      after(:create) do |cn|
+        cn.domain_control_validations << create(:email_domain_control_validation, email_address: "admin@#{cn.name}", candidate_addresses: ["admin@#{cn.name}", "administrator@#{cn.name}", "webmaster@#{cn.name}", "hostmaster@#{cn.name}", "postmaster@#{cn.name}" ])
+      end
+    end
   end
 end

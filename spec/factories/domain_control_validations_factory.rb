@@ -13,5 +13,15 @@ FactoryBot.define do
     failure_action {}
     validation_compliance_id {}
     validation_compliance_date {}
+
+    factory :email_domain_control_validation do
+      dcv_method { 'email' }
+      identifier { Faker::Alphanumeric.alphanumeric(number: 10) }
+      identifier_found { true }
+      responded_at { DateTime.now }
+      sent_at { DateTime.now }
+      workflow_state { 'satisfied' }
+      validation_compliance_id { 2 }
+    end
   end
 end
