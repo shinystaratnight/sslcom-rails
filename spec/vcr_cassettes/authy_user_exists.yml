@@ -1,0 +1,123 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.authy.com//protected/json/users/261071388/status
+    body:
+      encoding: UTF-8
+      string: ''
+    headers:
+      User-Agent:
+      - AuthyRuby/2.7.5 (x86_64-linux, Ruby 2.6.3)
+      Accept:
+      - "*/*"
+      Date:
+      - Sun, 31 May 2020 18:50:33 GMT
+      X-Authy-Api-Key:
+      - b8ADi0bdBbKm8z6MGcakWmEYvoCYp7VC
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx/1.14.0 (Ubuntu)
+      Date:
+      - Sun, 31 May 2020 18:50:33 GMT
+      Content-Type:
+      - application/json;charset=utf-8
+      Content-Length:
+      - '738'
+      Connection:
+      - keep-alive
+      X-Content-Type-Options:
+      - nosniff
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubdomains
+    body:
+      encoding: UTF-8
+      string: '{"status":{"authy_id":261071388,"confirmed":true,"registered":false,"country_code":840,"phone_number":"XXX-XXX-7891","email":"user_authy@example.com","devices":[],"has_hard_token":false,"account_disabled":false,"detailed_devices":[{"device_type":"authy","os_type":"unknown","registration_device_id":null,"registration_method":null,"device_id":123456789,"last_sync_date":0,"creation_date":1589805151,"name":"Default","country":null,"region":null,"city":null,"public_ip":null,"user_agent":null,"enabled_unlock_methods":"","last_unlock_method_used":"unknown","last_unlock_date":null}],"deleted_devices":[],"last_devices_sync":0,"onetouch_ready":false,"multidevice_updated_at":null,"multidevice_enabled":true},"message":"User
+        status.","success":true}'
+    http_version: null
+  recorded_at: Sun, 31 May 2020 18:50:33 GMT
+- request:
+    method: post
+    uri: https://api.authy.com//protected/json/users/new
+    body:
+      encoding: UTF-8
+      string: user%5Bemail%5D=elton%40block.com&user%5Bcellphone%5D=1234567891&user%5Bcountry_code%5D=840&send_install_link_via_sms=true
+    headers:
+      User-Agent:
+      - AuthyRuby/2.7.5 (x86_64-linux, Ruby 2.6.3)
+      Accept:
+      - "*/*"
+      Date:
+      - Sun, 31 May 2020 18:50:33 GMT
+      X-Authy-Api-Key:
+      - b8ADi0bdBbKm8z6MGcakWmEYvoCYp7VC
+      Content-Type:
+      - application/x-www-form-urlencoded
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx/1.14.0 (Ubuntu)
+      Date:
+      - Sun, 31 May 2020 18:50:33 GMT
+      Content-Type:
+      - application/json;charset=utf-8
+      Content-Length:
+      - '79'
+      Connection:
+      - keep-alive
+      X-Content-Type-Options:
+      - nosniff
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubdomains
+    body:
+      encoding: UTF-8
+      string: '{"message":"User created successfully.","user":{"id":261071388},"success":true}'
+    http_version: null
+  recorded_at: Sun, 31 May 2020 18:50:33 GMT
+- request:
+    method: get
+    uri: https://api.authy.com//protected/json/sms/261071388
+    body:
+      encoding: UTF-8
+      string: ''
+    headers:
+      User-Agent:
+      - AuthyRuby/2.7.5 (x86_64-linux, Ruby 2.6.3)
+      Accept:
+      - "*/*"
+      Date:
+      - Sun, 31 May 2020 18:50:33 GMT
+      X-Authy-Api-Key:
+      - b8ADi0bdBbKm8z6MGcakWmEYvoCYp7VC
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx/1.14.0 (Ubuntu)
+      Date:
+      - Sun, 31 May 2020 18:50:33 GMT
+      Content-Type:
+      - application/json;charset=utf-8
+      Content-Length:
+      - '125'
+      Connection:
+      - keep-alive
+      Retry-After:
+      - Mon, 01 Jun 2020 00:00:00 GMT
+      X-Content-Type-Options:
+      - nosniff
+    body:
+      encoding: UTF-8
+      string: '{"message":"SMS sent successfully.", "success":true}'
+    http_version: null
+  recorded_at: Sun, 31 May 2020 18:50:33 GMT
+recorded_with: VCR 5.1.0

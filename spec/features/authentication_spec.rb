@@ -101,7 +101,7 @@ RSpec.describe 'Authentications', type: :feature do
       fill_in 'user_session_password', with: user.password
       find('#btn_login').click
 
-      expect(current_path).to eq new_order_path
+      expect(page).to have_current_path new_order_path
     end
   end
 end

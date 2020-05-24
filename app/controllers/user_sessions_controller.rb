@@ -49,6 +49,7 @@ class UserSessionsController < ApplicationController
       # Store challenge. We need it for the verification step
       session[:challenge] = @result_obj['challenge']
     end
+    session[:authenticated] = false
 
     @result_obj['failed_count'] = session[:failed_count].to_i
     render json: @result_obj
