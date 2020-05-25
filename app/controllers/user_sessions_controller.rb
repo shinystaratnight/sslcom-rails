@@ -406,10 +406,6 @@ class UserSessionsController < ApplicationController
     params['sig_response']
   end
 
-  def current_user_default_team
-    current_user&.ssl_account(:default_team)
-  end
-
   def login_param
     params[:login]
   end
