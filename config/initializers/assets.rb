@@ -15,5 +15,5 @@ Rails.application.config.assets.paths << Rails.root.join('node_modules')
 Rails.application.config.assets.precompile += %w[ ssl_com.css certassure.css common.sass print.css
                                                   ie.css ie8.css site_report.css buy_now.css ssl_seal.css form.authy.css flags.authy.css common.js shared.js jstz.min.js
                                                   promise.min.js webcrypto-liner.shim.js asmcrypto.min.js elliptic.min.js bundle.umd.min.js bundle.pkcs.umd.min.js
-                                                  psl.min.js form.authy.js u2f-api.js Duo-Web-v2.js jquery.timepicker.min.js invoice.css bootstrap_style.sass
+                                                  psl.min.js form.authy.js u2f-api.js Duo-Web-v2.js jquery.timepicker.min.js invoice.css bootstrap_style.sass bootstrap_fix.sass
                                                   jquery.timepicker.min.css delayed/web/application.css font_awesome5.js jquery.prettyLoader.js jquery.prettyPopin.js jquery.prettyPhoto.js]
