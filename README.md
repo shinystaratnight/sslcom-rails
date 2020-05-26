@@ -6,7 +6,81 @@
 
 [![Test Coverage](https://api.codeclimate.com/v1/badges/a8f3ee62506a9befd80a/test_coverage)](https://codeclimate.com/repos/5e18e6aa249421017701af15/test_coverage)
 
-## Getting set up
+
+## Getting Started
+
+This project contains a submodule for our Pillar framework. After cloning you must checkout the submodule by running the following commands:
+
+1. `git submodule update --init --recursive` - This will pull the submodule down into the components directory in rails. This submodule follows the master branch by default. if you need to make changes to the submodule, you can do so locally and perform the normal git actions inside the components directory. For more information on the Pillar Framework: https://sslcom.atlassian.net/l/c/BTHgT1ks
+
+2. Get access to SSL.com's VPN (Ask Leo or developers).
+
+3. Download and install Docker Desktop for your platform
+    
+    ( https://www.docker.com/products/docker-desktop )
+
+## Application Setup - Docker
+
+1. Set the following in /etc/hosts (OS X) or hosts file on Win32. Make sure you flush your DNS.
+    - `secure.ssl.local` to `127.0.0.1`
+    - `sws-test.sslpki.local` to `127.0.0.1`
+    - `sws.sslpki.local` to `127.0.0.1`
+    - `sandbox.ssl.local` to `127.0.0.1`
+    - `reseller.ssl.local` to `127.0.0.1`
+
+2. Clone the SSL.com Rails Repo
+
+3. Download and place `database.yml`, `secrets.yml`, `local_env.yml` and `settings.yml` into the config directory.
+
+    Contact a developer to get these files.
+
+4. Run the command: `docker network create devstack-services`
+
+5. Run the command: `docker-compose build`
+
+6. Run the command: `docker-compose up  -d mysql`
+
+7. Run the command: `docker-compose up  -d application`
+
+8. Run the command: `docker-compose run --rm application bundle install`
+
+9. Run the command: `docker-compose run --rm application yarn install`
+
+10. Run the command: `docker-compose run --rm application rake pillar_theme:webpacker:yarn_install`
+
+11. Run the command: `docker-compose run --rm application rake db:create`
+
+12. Run the command: `docker-compose run --rm application rake db:structure:load`
+
+13. Run the command: `docker-compose run --rm application rake db:migrate`
+
+14. Run the command: `docker-compose run --rm application rake db:seed`
+
+15. Run the command: `docker-compose run --rm application rake cas:seed_ejbca_profiles LIVE=all EJBCA_ENV=development RAILS_ENV=development`
+
+16. Run the command: `docker-compose restart application`
+
+17. Navigate to `https://secure.ssl.local:3000/` in your browser and it should work!
+
+#### NOTES:
+
+To start Rails Console:
+
+`docker-compose run --rm application rails c`
+
+To get into the Application Command Line:
+
+`docker-compose run --rm application zsh`
+
+##### For additional help on Docker please visit or contact a developer:
+
+https://sslcom.atlassian.net/l/c/69S14q2r
+
+
+
+#
+
+## Application Setup - Vagrant (DEPRECIATED)
 
 1. Download VirtualBox and import the image into VirtualBox.
 2. Set the following in /etc/hosts (OS X) or hosts file on Win32. Make sure you flush your DNS.
@@ -20,17 +94,18 @@
 5. Create `.vagrant/machines/default/virtualbox/creator_uid` put your machine user's UID. For Macs it's usually 501, Windows 0.
 6. Create `.vagrant/machines/default/virtualbox/synced_folders` and edit the hostpath to match the directory of the cloned Rails repo. Template is available below.
 7. Use the Vagrantfile in the SSL.com repository to `vagrant up` and build the environment.
-8. SSH into the vagrant environment `vagrant ssh`, navigate to the SSL.com repo and `bundle install`.
+8. SSH into the vagrant environment `vagrant ssh`, navigate to the SSL.com repo and run `yarn` then `bundle install`.
 9. Download and place database.yml, secrets.yml, local_env.yml, and settings.yml into the config directory.
-10. Create the development database with `RAILS_ENV=development rake db:create`. If prompted for a password, type `vagrant`.
-11. Get the schema by typing `RAILS_ENV=development rake db:structure:load`
-12. Run any needed migrations `RAILS_ENV=development rake db:migrate`.
-13. Download sandbox_ssl_com.sql and populate the database with `mysql -u ssl_db -p sandbox_ssl_com < database_ssl_com.sql`
-14. Run migrations again `bundle exec rake db:migrate RAILS_ENV=development`
-15. Execute the following command: LIVE=all EJBCA_ENV=development RAILS_ENV=development bundle exec rake cas:seed_ejbca_profiles
-16. Navigate to the repo and run `foreman start web`
-17. Navigate to `https://secure.ssl.local:3000/` in your browser and it should work!
-18. Get access to SSL.com's VPN (Ask Leo or developers).
+10. Setup Pillar by running the following commands `pillar_theme:webpacker:yarn_install`
+11. Create the development database with `RAILS_ENV=development rake db:create`. If prompted for a password, type `vagrant`.
+12. Get the schema by typing `RAILS_ENV=development rake db:structure:load`
+13. Run any needed migrations `RAILS_ENV=development rake db:migrate`.
+14. Download sandbox_ssl_com.sql and populate the database with `mysql -u ssl_db -p sandbox_ssl_com < database_ssl_com.sql`
+15. Run migrations again `bundle exec rake db:migrate RAILS_ENV=development`
+16. Execute the following command: LIVE=all EJBCA_ENV=development RAILS_ENV=development bundle exec rake cas:seed_ejbca_profiles
+17. Navigate to the repo and run `foreman start web`
+18. Navigate to `https://secure.ssl.local:3000/` in your browser and it should work!
+19. Get access to SSL.com's VPN (Ask Leo or developers).
 
 ### `synced_folders` Template
 

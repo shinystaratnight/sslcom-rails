@@ -153,7 +153,7 @@ class OrderNotifier < ApplicationMailer
       cc.preferred_process_pending_server_certificates_will_change!
     end
 
-    @domains = domains
+    @blocklist_entries = domains
     @certificate_order = certificate_order
     mail  subject: "Potential Trademark Issue for #{certificate_order.ref}",
           from: no_reply_email,

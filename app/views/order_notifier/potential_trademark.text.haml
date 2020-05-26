@@ -1,0 +1,21 @@
+Hello,
+
+The following domain(s) in #{community_name} certificate order ref# #{@certificate_order.ref} have triggered our Blocklist:
+
+- @blocklist_entries.each do |blocklist_entry|
+
+  = "\r\n. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .\r\n"
+
+  Blocklist Entry ID: #{blocklist_entry[:blocklist_entry_id]}
+
+  Blocklist Entry Type: #{blocklist_entry[:type].split("::").last}
+
+  Blocklist Entry Pattern: #{blocklist_entry[:blocklist_entry_pattern]}
+
+  Blocklist Entry Matches:
+  - blocklist_entry[:matches].each_with_index do |match, index|
+    = "\r\n    #{index + 1}. The field #{match[:field]} with value #{match[:value]} matches #{blocklist_entry[:blocklist_entry_pattern]}\r\n"
+
+  = "\r\n. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .\r\n"
+
+These certificates will not be issued until resolved. Please resolve the following issues.

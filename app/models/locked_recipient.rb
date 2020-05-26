@@ -67,6 +67,7 @@ class LockedRecipient < Contact
     assignee = target_assignee.nil? ? co.assignee : User.find(target_assignee)
     locked_recipient = co.locked_recipient
     co.reload
+    
     if assignee 
       iv = co.ssl_account.individual_validations.find_by(user_id: assignee.id)
       params = {

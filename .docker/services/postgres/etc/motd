@@ -1,0 +1,17 @@
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
++  Welcome To DevStack!
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
++
++  *** WARNING ***
++  This is a Docker container. With the exception of data volumes,
++  all changes will be lost when this container is stopped.
++
++  Container Service:
++
++  PostgreSQL
++
++  Common Paths:
++
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+

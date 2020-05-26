@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe 'UserAvatars', type: :feature do
   describe 'Uploading User Avatars' do
-    it 'allows user`s to upload avatars', js: true do
+    xit 'allows user`s to upload avatars', js: true do
       as_user(create(:user, :owner)) do
         visit '/account'
         click_on 'Add photo'

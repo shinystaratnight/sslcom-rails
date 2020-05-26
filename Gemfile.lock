@@ -7,6 +7,66 @@ GIT
       rails (>= 4.1.0, < 6)
       ruby_parser (>= 3.6.6)
 
+PATH
+  remote: components/pillar/components/pillar-authentication
+  specs:
+    pillar-authentication (0.0.0)
+      mysql2
+      pillar-core
+      pillar-theme
+      rails (~> 4.2)
+
+PATH
+  remote: components/pillar/components/pillar-authority
+  specs:
+    pillar-authority (0.0.0)
+      mysql2
+      pillar-authentication
+      pillar-core
+      pillar-theme
+      rails (~> 4.2)
+      rails_or
+
+PATH
+  remote: components/pillar/components/pillar-core
+  specs:
+    pillar-core (0.0.0)
+      groupdate
+      haml-rails
+      mysql2
+      pagy
+      pillar
+      pry
+      rails (~> 4.2)
+      ransack
+      responders
+
+PATH
+  remote: components/pillar/components/pillar-pages
+  specs:
+    pillar-pages (0.0.0)
+      mysql2
+      pillar-core
+      pillar-theme
+      rails (~> 4.2)
+
+PATH
+  remote: components/pillar/components/pillar-theme
+  specs:
+    pillar-theme (0.0.0)
+      chartkick
+      mysql2
+      pillar-core
+      rails (~> 4.2)
+      webpacker
+
+PATH
+  remote: components/pillar
+  specs:
+    pillar (0.0.0)
+      mysql2
+      rails (~> 4.2)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -155,6 +215,7 @@ GEM
       mime-types (>= 1.16)
     case_transform (0.2)
       activesupport
+    chartkick (3.3.1)
     childprocess (3.0.0)
     chronic (0.10.2)
     climate_control (0.2.0)
@@ -267,13 +328,26 @@ GEM
       i18n
     globalid (0.4.2)
       activesupport (>= 4.2.0)
+    groupdate (4.1.2)
+      activesupport (>= 4.2)
     gyoku (1.3.1)
       builder (>= 2.1.2)
     haml (5.1.2)
       temple (>= 0.8.0)
       tilt
+    haml-rails (1.0.0)
+      actionpack (>= 4.0.1)
+      activesupport (>= 4.0.1)
+      haml (>= 4.0.6, < 6.0)
+      html2haml (>= 1.0.1)
+      railties (>= 4.0.1)
     hashdiff (1.0.1)
     highline (2.0.3)
+    html2haml (2.2.0)
+      erubis (~> 2.7.0)
+      haml (>= 4.0, < 6)
+      nokogiri (>= 1.6.0)
+      ruby_parser (~> 3.5)
     httparty (0.18.0)
       mime-types (~> 3.0)
       multi_xml (>= 0.5.2)
@@ -335,8 +409,6 @@ GEM
     mini_magick (4.10.1)
     mini_mime (1.0.2)
     mini_portile2 (2.4.0)
-    mini_racer (0.2.9)
-      libv8 (>= 6.9.411)
     minitest (5.14.0)
     mocha (1.11.2)
     modware (0.1.3)
@@ -361,6 +433,7 @@ GEM
     oauth (0.5.4)
     oj (3.10.5)
     openssl-extensions (1.2.1)
+    pagy (3.8.1)
     paperclip (5.3.0)
       activemodel (>= 4.2.0)
       activesupport (>= 4.2.0)
@@ -401,6 +474,8 @@ GEM
       rack (~> 1.4)
     rack-cors (1.0.6)
       rack (>= 1.6.0)
+    rack-proxy (0.6.5)
+      rack
     rack-ssl-enforcer (0.2.9)
     rack-test (0.6.3)
       rack (>= 1.0)
@@ -429,6 +504,8 @@ GEM
       loofah (~> 2.3)
     rails-observers (0.1.5)
       activemodel (>= 4.0)
+    rails_or (1.1.8)
+      activerecord (>= 3)
     railties (4.2.11.1)
       actionpack (= 4.2.11.1)
       activesupport (= 4.2.11.1)
@@ -679,6 +756,10 @@ GEM
       addressable (>= 2.3.6)
       crack (>= 0.3.2)
       hashdiff (>= 0.4.0, < 2.0.0)
+    webpacker (4.2.2)
+      activesupport (>= 4.2)
+      rack-proxy (>= 0.6.1)
+      railties (>= 4.2)
     whenever (1.0.0)
       chronic (>= 0.6.3)
     where-or (0.1.6)
@@ -765,7 +846,6 @@ DEPENDENCIES
   memory_profiler
   meta_request
   mini_magick
-  mini_racer
   mocha
   money
   multi_json
@@ -775,6 +855,12 @@ DEPENDENCIES
   oj
   openssl-extensions
   paperclip (~> 5.3.0)
+  pillar!
+  pillar-authentication!
+  pillar-authority!
+  pillar-core!
+  pillar-pages!
+  pillar-theme!
   popper_js (~> 1.14.5)
   protected_attributes
   pry-nav

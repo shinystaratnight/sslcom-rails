@@ -35,11 +35,15 @@ aliases:
     sudo gem install bundler:1.17.3
 
   - &precompile-assets |
-    RACK_ENV="test" bundle exec rake assets:precompile
+    RACK_ENV="test" WEBPACKER_PRECOMPILE=false bundle exec rake assets:precompile
+    RACK_ENV="test" bundle exec rake pillar_theme:webpacker:compile
+    
   - &setup-database |
     export RAILS_ENV="test"
     export RACK_ENV="test"
-    bundle exec rake db:create db:structure:load db:migrate --trace
+    bundle exec rake db:create --trace
+    bundle exec rake db:structure:load --trace
+    bundle exec rake db:migrate --trace
 
   - &copy-database-yml |
     mkdir -p config && echo 'test:
@@ -80,6 +84,12 @@ jobs:
     <<: *defaults
     steps:
       - checkout
+
+      - run:
+          name: Pull Sub-Modules
+          command: |
+            git submodule init
+            git submodule update --remote
 
       - run:
           name: Install Mysql Libraries
@@ -189,6 +199,12 @@ jobs:
     parallelism: 1
     steps:
       - checkout
+
+      - run:
+          name: Pull Sub-Modules
+          command: |
+            git submodule init
+            git submodule update --remote
 
       - run:
           name: Install Libraries for mySQL and Correct Bundler Version (1.17.3)

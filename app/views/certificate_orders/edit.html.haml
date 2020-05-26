@@ -6,7 +6,7 @@
 .order_container
   %h3 Applicant Information for #{@certificate_order.description}
   %p Please fill out the required fields below to complete your certificate order.
-  =error_messages_for :certificate_order, :registrant
+  =error_messages_for :certificate_order, :registrant, :certificate_content
   =form_for @certificate_order, url: certificate_order_path(ssl_slug: @ssl_slug, id: @certificate_order) do |f|
     #stylized.default_form
       =render :partial => "registrant_form", :locals => {:f=>f}

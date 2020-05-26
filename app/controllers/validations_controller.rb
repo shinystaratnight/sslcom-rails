@@ -103,6 +103,13 @@ class ValidationsController < ApplicationController
             cc.validate! if cc.pending_validation?
             api_log_entry=@certificate_order.apply_for_certificate(
                 mapping: cc.ca, current_user: current_user)
+
+            if api_log_entry == :blocklist_error
+              matches = cc.infringement.map { |entry| entry[:matches] }.flatten.map{ |match| "The field <b>#{match[:field]}</b> with value of <b>#{match[:value]}</b> matches an item in our blocklist." }.uniq.join("<br>")
+              error = "Certificate was not issued. Our support team has been notified.<br><br> #{matches}"
+              flash[:error] = error
+            end
+
             if api_log_entry and api_log_entry.instance_of?(SslcomCaRequest) and api_log_entry.response=~/Check CAA/
               flash[:error] =
                   "CAA validation failed. See https://#{Settings.portal_domain}/how-to/configure-caa-records-to-authorize-ssl-com/"

@@ -10,3 +10,5 @@ ul
   li=link_to 'change password', edit_password_users_url
   -permitted_to? :edit_settings, current_user.ssl_account do
     li=link_to "settings", edit_settings_ssl_account_path(ssl_slug: ssl_slug)
+  - if current_user.is_system_admins?
+    li=link_to "manage blocklist", authority.admin_blocklist_entries_path

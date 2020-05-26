@@ -48,6 +48,7 @@ class CertificateContent < ApplicationRecord
   attr_accessor  :additional_domains #used to html format results to page
   attr_accessor  :ajax_check_csr
   attr_accessor  :rekey_certificate
+  attr_accessor  :skip_validation
 
   @@cli_domain = 'https://sws.sslpki.com'
 
@@ -59,6 +60,26 @@ class CertificateContent < ApplicationRecord
     def perform
       CertificateContent.find_by_id(cc_id).certificate_names_from_domains
     end
+  end
+
+  validate :validate_blocklist, unless: Proc.new { |record| record.certificate_order.new_record? || record.skip_validation }
+
+  def validate_blocklist
+    offenses = Pillar::Authority::BlocklistEntry.matches?(self, ssl_account&.id)
+    valid = true
+    
+    unless offenses.empty?
+      offenses.each do |offense|
+        if offense[:type] == "Pillar::Authority::BlocklistEntryTypes::Blacklist"
+          offense[:matches].each do |match|
+            errors.add(:base, "The field #{match[:field]} with value #{match[:value]} matches an entry in our blacklist database")
+            valid = false
+          end
+        end
+      end
+    end
+
+    return valid
   end
 
   def pre_validation(options)
@@ -104,18 +125,26 @@ class CertificateContent < ApplicationRecord
   def certificate_names_from_domains(domains=nil)
     is_single = certificate&.is_single?
     csr_common_name=csr.try(:common_name)
+    
     unless (is_single || certificate&.is_wildcard?) && certificate_names.count.positive?
-      domains ||= all_domains
-      domains = domains.each{|domain| is_single ? CertificateContent.non_wildcard_name(domain,true) :
-                                          domain.downcase}.uniq
+      domains ||= self.domains
       new_certificate_names=[]
-      (domains-certificate_names.find_by_domains(domains).pluck(:name)).each do |domain|
-        unless domain=~/,/
-          new_certificate_names << certificate_names.new(name: domain, is_common_name: csr_common_name==domain)
-        end
+
+      if is_single && common_name && !domains.include?(common_name)
+        domains << CertificateContent.non_wildcard_name(common_name, true)
       end
-      CertificateName.import new_certificate_names
+
+      domains.uniq.each do |domain|
+        new_certificate_names << certificate_names.new(name: domain, is_common_name: csr_common_name == domain)
+      end
+
+      ActiveRecord::Base.transaction do
+        CertificateName.destroy_all(certificate_content_id: self.id)
+        new_certificate_names.each(&:save)
+      end
+      
       cns=certificate_names.where(name: new_certificate_names.map(&:name))
+      
       unless cns.blank?
         cns.each do |cn|
           cn.candidate_email_addresses # start the queued job running
@@ -123,6 +152,7 @@ class CertificateContent < ApplicationRecord
         Delayed::Job.enqueue OtherDcvsSatisyJob.new(ssl_account, cns, self, 'dv_only') if ssl_account && certificate&.is_server?
       end
     end
+    
     # Auto adding domains in case of certificate order has been included into some groups.
     NotificationGroup.auto_manage_cert_name(self, 'create')
   end
@@ -220,10 +250,7 @@ class CertificateContent < ApplicationRecord
 
   # are any of the sub/domains trademarks?
   def infringement
-    return (ApplicationController.helpers.is_sandbox_or_test? or ca_id.blank?) ? [] :
-       all_domains.map{|domain|domain if (TRADEMARKS- (ssl_account and WHITELIST[ssl_account.id] ?
-       WHITELIST[ssl_account.id] : [])).any?{|trademark|
-         domain.downcase =~ Regexp.new(trademark, Regexp::IGNORECASE)}}.compact
+    Pillar::Authority::BlocklistEntry.matches?(self, ssl_account.id)
   end
 
   def self.infringers
@@ -464,7 +491,7 @@ class CertificateContent < ApplicationRecord
 
   def common_name
     (certificate_names.find_by_is_common_name(true).try(:name) ||
-        certificate_names.last.try(:name) || csr.try(:common_name)).downcase
+        certificate_names.last.try(:name) || csr.try(:common_name)).try(:downcase)
   end
 
   def has_all_contacts?
@@ -730,10 +757,10 @@ class CertificateContent < ApplicationRecord
   def subject_dn(options={})
     cert = options[:certificate] || self.certificate
     dn=certificate.is_server? ? ["CN=#{options[:common_name] || common_name}"] : []
-    dn << "emailAddress=#{certificate_order.get_recipient.email}" if certificate.is_smime? && certificate_order.get_recipient.email
+    dn << "emailAddress=#{certificate_order&.get_recipient&.email}" if certificate.is_smime? && certificate_order&.get_recipient&.email
     if certificate.is_smime_or_client? and !certificate.is_client_basic?
       person=certificate_order.locked_recipient
-      dn << "CN=#{[person.first_name,person.last_name].join(" ").strip}"
+      dn << "CN=#{[person&.first_name,person&.last_name].join(" ").strip}"
     end
     if locked_registrant and !(options[:mapping] ? options[:mapping].try(:profile_name) =~ /DV/ : cert.is_dv?)
       # if ev or ov order, must have locked registrant

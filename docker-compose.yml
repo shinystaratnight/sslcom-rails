@@ -1,0 +1,104 @@
+version: '3.7'
+services:
+
+  # # # # #
+  # #
+  # #  SHARED CONFIGURATIONS
+  # #
+  # # # # #
+  
+  rails-container: &rails-container
+    build:
+      context: .
+      target: base-container
+    stdin_open: true
+    tty: true
+    tmpfs:
+      - /tmp
+    volumes:
+      - ./:/usr/src/app:cached
+      - bundle:/bundle
+    environment:
+      - RAILS_ENV=${RAILS_ENV:-development}
+      - BOOTSNAP_CACHE_DIR=/bundle/bootsnap
+      - WEB_CONCURRENCY=1
+      - HISTFILE=/usr/src/app/log/.bash_history
+      - EDITOR=vi
+
+  # # # # #
+  # #
+  # #  SHARED SERVICES
+  # #
+  # # # # #
+
+  runner:
+    <<: *rails-container
+    container_name: runner
+    command: /bin/zsh
+
+  application:
+    <<: *rails-container
+    container_name: application
+    ports:
+      - 3000:3000
+    command: ["foreman", "start"]
+
+  mysql:
+    container_name: mysql
+    build:
+      context: .
+      target: mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_USER=ssl_dev_db
+      - MYSQL_PASSWORD=ssl_dev_db
+      - MYSQL_DATABASE=ssl_rails_development
+      - MYSQL_USER_MONITORING=monitoring
+    volumes:
+      - mysql:/var/lib/mysql
+    ports:
+      - target: 3306
+        published: 3306
+        protocol: tcp
+
+  redis:
+    container_name: redis
+    build:
+      context: .
+      target: redis
+    volumes:
+      - redis:/data
+    ports:
+      - 6379:6379
+
+  mailcatcher:
+    container_name: mailcatcher
+    build:
+      context: .
+      target: mailcatcher
+    ports:
+      - 1080:1080
+      - 1025:1025
+
+# # # # #
+# #
+# #  PERSISTENT VOLUMES
+# #
+# # # # #
+
+volumes:
+  bundle:
+  mysql:
+  postgres:
+  redis:
+
+# # # # #
+# #
+# #  EXPOSED NETWORKS
+# #
+# # # # #
+
+networks:
+  default:
+    external:
+      name: devstack-services

@@ -424,6 +424,8 @@ class SslcomCaApi
     http.cert = OpenSSL::X509::Certificate.new(File.read(client_auth_cert))
     http.key = OpenSSL::PKey::RSA.new(File.read(client_auth_key))
     req.body = body
+    puts "====> SSL CA Request <===="
+    puts "\tRequest => #{body}"
     res = http.request(req)
     return req, res
   end

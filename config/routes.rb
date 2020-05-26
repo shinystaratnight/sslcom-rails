@@ -6,6 +6,7 @@ Rails.application.routes.draw do
   mount Rswag::Ui::Engine => '/api' if defined?(Rswag)
   mount Delayed::Web::Engine, at: '/jobs', constraints: AdminConstraint.new
   mount LetterOpenerWeb::Engine, at: '/letter_opener' unless Rails.env.production?
+  mount Pillar::Engine, at: '/pillar'
 
   resources :apidocs, only: [:index]
 

@@ -1111,6 +1111,7 @@ class CertificateOrder < ApplicationRecord
         !options[:mapping].blank?
       if !certificate_content.infringement.empty? # possible trademark problems
         OrderNotifier.potential_trademark(Settings.notify_address, self, certificate_content.infringement).deliver_now
+        return :blocklist_error
       elsif !certificate.is_server? or (domains_validated? and caa_validated?)
         # # queue this job due to CAA lookups
         # if certificate_names.count > 10 and not options[:mapping].try(:profile_name)=~/EV/
@@ -1872,6 +1873,7 @@ class CertificateOrder < ApplicationRecord
     self.site_seal.conditionally_activate! unless self.site_seal.conditionally_activated?
     cc = self.certificate_content
     cc.domains = certificate_content.domains
+
     if certificate_content.preferred_reprocessing?
       self.certificate_contents << certificate_content
       certificate_content.create_registrant(cc.registrant.attributes.except(*ID_AND_TIMESTAMP)) if cc.registrant
@@ -1884,11 +1886,15 @@ class CertificateOrder < ApplicationRecord
       cc.server_software = certificate_content.server_software
       cc.agreement = certificate_content.agreement #backwards compatibility with older certificate_content objects
     end
+
+    cc.save(validate: false)
+
     if cc.new?
-      cc.submit_csr!
+      cc.submit_csr! if cc.validate_blocklist
     elsif cc.validated? || cc.pending_validation?
       cc.pend_validation! if cc.validated?
     end
+    
     cc
   end
 

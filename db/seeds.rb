@@ -536,7 +536,7 @@ ValidationRule.create!([
   {description: "organization validation", operator: "AND", parent_id: nil, applicable_validation_methods: ["articles of incorporation", "certificate of formation", "charter documents", "business license", "doing business as", "registration of trade name", "partnership papers", "fictitious name statement", "vendor/reseller/merchant license", "merchant certificate"], required_validation_methods: nil, required_validation_methods_operator: "AND", notes: nil}
 ])
 
-%w[antarr leo daniel soi].each do |login|
+%w[antarr leo daniel soi dustin].each do |login|
   next if  User.exists?(login: login)
 
   user = User.create!(login: login, email: "#{login}@ssl.com", password: "Password123!", password_confirmation: "Password123!", status: "enabled")
@@ -548,3 +548,5 @@ end unless Rails.env.test?
 Dir[File.join(Rails.root, 'db', 'seeds/', '*.rb')].sort.each do |seed|
   load seed
 end
+
+Pillar::Engine.load_seed

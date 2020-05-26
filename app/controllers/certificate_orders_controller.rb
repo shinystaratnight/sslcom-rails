@@ -325,7 +325,7 @@ class CertificateOrdersController < ApplicationController
           params[:country_code] if params[:country_code]
 
       is_smime_or_client = @certificate_order.certificate.is_smime_or_client?
-      if @certificate_order.update_attributes(params[:certificate_order])
+      if @certificate_order.update_attributes(params[:certificate_order]) && @certificate_order.certificate_content.valid?
         cc = @certificate_order.certificate_content
         original_state_phone_approve = cc.locked_registrant.blank? ? false : cc.locked_registrant.phone_number_approved
 
@@ -337,7 +337,7 @@ class CertificateOrdersController < ApplicationController
         setup_reusable_registrant(@certificate_order.registrant) if params[:save_for_later]
 
         if cc.csr_submitted? or cc.new?
-          cc.provide_info!
+          cc.provide_info! if cc.valid?
           if current_user.ssl_account.is_registered_reseller?
             @order = @certificate_order.order
             unless @order.deducted_from.blank?
@@ -364,7 +364,7 @@ class CertificateOrdersController < ApplicationController
 
             end
             unless @certificate_order.certificate.is_ev?
-              cc.provide_contacts!
+              cc.provide_contacts! if cc.valid?
             end
           end
         end
@@ -386,6 +386,7 @@ class CertificateOrdersController < ApplicationController
         end
         format.xml { head :ok }
       else
+        @certificate_order.errors.messages.delete(:"certificate_contents.base")
         setup_registrant(
           params[:certificate_order][:certificate_contents_attributes]['0'][:registrant_attributes]
         )
@@ -455,6 +456,7 @@ class CertificateOrdersController < ApplicationController
     @certificate_order.has_csr = true # we are submitting a csr after all
     @certificate_content.certificate_order = @certificate_order
     @certificate_content.preferred_reprocessing = true if eval("@#{CertificateOrder::REPROCESSING}")
+    @certificate_content.skip_validation = true
 
     da_billing     = @certificate_order.domains_adjust_billing?
     ucc_renew      = true if da_billing && @certificate_order.renew_billing?
@@ -499,6 +501,11 @@ class CertificateOrdersController < ApplicationController
             common_name_domain.update_attribute(:is_common_name, false) if common_name_domain
             cc.certificate_names.find_by_name(params[:common_name]).update_attribute(:is_common_name, true)
           end
+        end
+
+        unless cc.valid?
+          flash[:error] = "<b>Please correct the following errors.</b><br />#{cc.errors.full_messages.uniq.join('<br />')}."
+          format.html { redirect_to edit_certificate_order_path(@ssl_slug, @certificate_order) }
         end
 
         if domains_adjustment
@@ -547,7 +554,8 @@ class CertificateOrdersController < ApplicationController
           format.html { redirect_to path }
         else
           @certificate = @certificate_order.certificate
-          format.html { render 'submit_csr', layout: 'application' }
+          flash[:error] = "<b>Please correct the following errors.</b><br />#{@certificate_content.errors.full_messages.uniq.join('<br />')}."
+          format.html { redirect_to edit_certificate_order_path(@ssl_slug, @certificate_order) }
           format.xml  { render xml: @certificate_order.errors, status: :unprocessable_entity }
         end
       end

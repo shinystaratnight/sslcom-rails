@@ -39,6 +39,7 @@ describe CertificateContent do
   it 'calls certificate_names_from_domains after being saved' do
     certificate_content = create(:certificate_content)
     certificate_content.expects(:certificate_names_from_domains).returns(true)
+    certificate_content.skip_validation = true
     certificate_content.save
   end
 

@@ -95,6 +95,7 @@ FactoryBot.define do
 
     trait :billing_profile do
       after(:create) do |user|
+        user.create_ssl_account if user.ssl_account.nil?
         user.ssl_account.billing_profiles << create(:billing_profile)
       end
     end

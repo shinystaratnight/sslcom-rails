@@ -110,7 +110,6 @@ describe CsrsController do
           ssl_slug = @user.ssl_accounts.first.ssl_slug
           CertificateName.expects(:dcv_verify).with('https', dcv_options).returns(true)
           get :verification_check, team: ssl_slug, id: csr.id, dcv_protocol: 'https', choose_cn: "#{domain.id}", selected_csr: "#{csr.id}", format: :json
-
           dcv = DomainControlValidation.last
           expect(DomainControlValidation.count).to eq 1
           expect(dcv.identifier).to eq "#{csr.sha2_hash}\n#{csr.ca_tag}\n#{csr.unique_value}"

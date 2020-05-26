@@ -67,7 +67,7 @@ gem 'delayed_job_groups_plugin'
 gem 'json-schema'
 gem 'jsonapi-serializers'
 gem 'libv8'
-gem 'mini_racer', platforms: :ruby
+# gem 'mini_racer', platforms: :ruby
 gem 'oauth'
 gem 'nokogiri', '>= 1.10.4'
 gem 'popper_js', '~> 1.14.5'
@@ -162,3 +162,11 @@ gem 'draper'
 gem 'mini_magick'
 gem 'ransack', '~> 1.8'
 gem 'activerecord-session_store'
+
+gem 'pillar', path: 'components/pillar'
+# gem 'pillar-testing', path: 'components/pillar/components/pillar-testing', group: :test
+gem 'pillar-authentication', path: 'components/pillar/components/pillar-authentication'
+gem 'pillar-authority', path: 'components/pillar/components/pillar-authority'
+gem 'pillar-core', path: 'components/pillar/components/pillar-core'
+gem 'pillar-pages', path: 'components/pillar/components/pillar-pages'
+gem 'pillar-theme', path: 'components/pillar/components/pillar-theme'
