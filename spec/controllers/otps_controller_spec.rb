@@ -16,6 +16,7 @@ describe OtpsController do
                              authy_user_id: '261071388'
                             )
   end
+  let(:country) { Country.find_by(name: 'United States') }
 
   describe '#login' do
     context 'when user is registered with authy' do
@@ -51,7 +52,7 @@ describe OtpsController do
   describe '#verify_login', vcr: { cassette_name: 'authy_code_verify' } do
     context 'with invalid code'  do
       before do
-        params = { otp: { verification_code: '123456', authy_user_id: 261071388, phone: '1234567891', country: 'United States' } }
+        params = { otp: { verification_code: '123456', authy_user_id: '261071388', phone: '1234567891', country: country&.id } }
         get :verify_login, params
       end
 
@@ -70,7 +71,7 @@ describe OtpsController do
 
     context 'with valid code' do
       before do
-        params = { otp: { verification_code: '1234567', authy_user_id: 261071388, phone: '1234567891', country: 'United States' } }
+        params = { otp: { verification_code: '1234567', authy_user_id: '261071388', phone: '1234567891', country: country&.id } }
         get :verify_login, params
       end
 
@@ -174,14 +175,14 @@ describe OtpsController do
 
     it 'does not verify already verified phone' do
       VCR.use_cassette('authy_user_exists', allow_playback_repeats: true) do
-        get :add_phone, { otp: { phone: '1234567891', country: 'United States' } }, xhr: true
+        get :add_phone, { otp: { phone: '1234567891', country: country&.id } }, xhr: true
         expect(JSON.parse(response.body)['error']).to include 'Phone already verified!'
       end
     end
 
     context 'when new user', vcr: { cassette_name: 'authy_user_does_not_exist' } do
       before do
-        get :add_phone, { otp: { phone: '1234567891', country: 'United States' } }, xhr: true
+        get :add_phone, { otp: { phone: '1234567891', country: country&.id } }, xhr: true
       end
 
       it 'verifies new user' do
@@ -197,7 +198,7 @@ describe OtpsController do
   describe '#verify_add_phone', vcr: { cassette_name: 'authy_code_verify' } do
     context 'with invalid code'  do
       before do
-        params = { otp: { verification_code: '123456', authy_user_id: 261071388, phone: '1234567891', country: 'United States' } }
+        params = { otp: { verification_code: '123456', authy_user_id: '261071388', phone: '1234567891', country: country&.id } }
         get :verify_add_phone, params
       end
 
@@ -212,8 +213,13 @@ describe OtpsController do
 
     context 'with valid code' do
       before do
-        params = { otp: { verification_code: '1234567', authy_user_id: 261071388, phone: '1234567891' } }
+        user_authy.phone = nil
+        user_authy.country = nil
+        user_authy.save!
+
+        params = { otp: { verification_code: '1234567', authy_user: '261071388', phone: '1234567891', country: '197' } }
         get :verify_add_phone, params
+        user_authy.reload
       end
 
       it 'authenticates user' do
@@ -225,12 +231,19 @@ describe OtpsController do
         expected_result = { error: nil, success: 'true' }.stringify_keys
         expect(JSON.parse(response.body)).to eq expected_result
       end
+
+      it 'saves user phone' do
+        expect(user_authy.phone).to eq '1234567891'
+      end
+
+      it 'saves user country' do
+        expect(user_authy.country).to eq 'United States'
+      end
     end
 
     context 'with valid code and new values' do
       before do
-        country_id = Country.find_by(name: 'United States')&.id
-        params = { otp: { verification_code: '1234567', authy_user_id: 261071389, phone: '1234567892', country_id: country_id } }
+        params = { otp: { verification_code: '1234567', authy_user_id: '261071389', phone: '1234567892', country: country&.id } }
         get :verify_add_phone, params
       end
 

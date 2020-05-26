@@ -1,0 +1,19 @@
+.reseller_registration_profile
+  %h3.title
+    Phone Verification
+
+  #stylized.default_form
+    .settings_bloc
+      .u2f_bloc.u2f_inf
+        = form_for 'otp', url: verify_add_phone_otps_path, method: "POST" do |f|
+          .row
+            .col-md-12
+          .row
+            .col-md-6.offset-md-3
+              %p.text-center Please enter the verification code
+              = f.text_field :verification_code, class: "form-control", autofocus: true, label: 'adf'
+              = f.hidden_field 'authy_user_id', value: @authy_user_id
+
+              = submit_tag "Submit"
+
+    = link_to 'Send email', email_login_otps_path

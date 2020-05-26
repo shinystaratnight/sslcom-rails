@@ -487,6 +487,8 @@ Rails.application.routes.draw do
 
   resources :otps do
     collection do
+      get :email
+      get :email_login
       get :login
       post :verify_login
       get :add_phone

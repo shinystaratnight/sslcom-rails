@@ -773,14 +773,19 @@ class User < ApplicationRecord
   end
 
   # 2FA
+
   ##
-  # Check if user's phone is the same as the authy cellphone registered for authy user
-  # Authy returns the phone in format XXX-XXX-3765
+  # Check if user is registered with authy and
+  # if the authy cellphone is the same as user's phone
   def phone_verified?
+    return false unless authy_user_id
+
     authy_user = Authy::API.user_status(id: authy_user_id)
-    return false unless authy_user
+    return false unless authy_user['success'] == true
+
     user_country_code = Country.find_by(name: country)&.num_code
-    authy_user['status']&['phone_number']&.last(4) == phone&.last(4) && authy_user['status']['country_code'] == user_country_code
+
+    authy_user['status']['phone_number']&.last(4) == phone&.last(4) && authy_user['status']['country_code'] == user_country_code
   end
 
   ##

@@ -16,4 +16,16 @@
 
               = submit_tag "Submit"
 
-    = render partial: 'shared/tfa_options'
+    #forgot_container
+      %p#forgot_username_or_password
+        Send code to phone?
+        = link_to 'Send SMS', login_otps_path
+      %p#forgot_username_or_password
+        Send code to email?
+        = link_to 'Send email', email_login_otps_path
+      %p#forgot_username_or_password
+        Use DUO?
+        = link_to 'DUO authentication', duo_user_session_path
+      %p#forgot_username_or_password
+        Use security key?
+        = link_to 'Security Key', u2fs_path

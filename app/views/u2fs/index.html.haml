@@ -3,6 +3,7 @@
 = render partial: 'index_scripts'
 = javascript_include_tag 'u2f-api'
 
+= render partial: 'phone'
 -# Existing class that makes the form width the same as in other pages (edit_email, edit_password)
 .reseller_registration_profile
   %h3
@@ -27,4 +28,3 @@
                     = button_tag 'Remove', type: 'button', class: 'remove_u2f_device', 'data-id': u2f.id
         = render partial: 'add_key'
 
-  = render partial: 'phone'

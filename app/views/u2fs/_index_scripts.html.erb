@@ -178,15 +178,15 @@ jQuery(function($) {
     // OTP
     // Send SMS when user submits phone
     var add_phone_otp_url = '<%= add_phone_otps_path %>';
-    $('#submit_phone_verification').click(function(event) {
+    $('#submit_phone_verification, a#resend-otp-phone').click(function(event) {
       $('#phone-error').hide(); // Hide in case there were errors before
-      alert('in');
+      $('#code-error').hide();
       $.ajax({
         url: add_phone_otp_url,
         data: {
           otp: {
             phone: $('#user_phone').val(),
-            country: $('#user_country').find(":selected").text()
+            country: $('#user_country_id').find(":selected").val()
           }
         },
         type: 'GET',
@@ -197,7 +197,37 @@ jQuery(function($) {
             $('#phone-error').css('color', 'red');
           } else if (result['id']) {
             $('#code-verification-fields').show();
+            $('#send-otp').hide();
+            $('#phone-error').hide(); // Hide in case there were errors before
+            // Value for authy_user_id in form hidden field, to be used in verification
+            $('#otp_authy_user_id').val(result['id']);
+          }
+        }
+      });
+    });
+
+    var email_otp_url = '<%= email_otps_path %>';
+    $('a#otp-email, a#resend-otp-email').click(function(event) {
+      $('#phone-error').hide(); // Hide in case there were errors before
+      $('#code-error').hide();
+      $.ajax({
+        url: email_otp_url,
+        data: {
+          otp: {
+            phone: $('#user_phone').val(),
+            country: $('#user_country_id').find(":selected").val()
+          }
+        },
+        type: 'GET',
+        success: function(result) {
+          if(result['error']){
+            $('#phone-error').show();
+            $('#phone-error').text(result['error']);
+            $('#phone-error').css('color', 'red');
+          } else {
+            $('#code-verification-fields').show();
             $('#submit_phone_verification').hide();
+            $('#otp-email').hide();
             $('#phone-error').hide(); // Hide in case there were errors before
             // Value for authy_user_id in form hidden field, to be used in verification
             $('#otp_authy_user_id').val(result['id']);
@@ -209,6 +239,7 @@ jQuery(function($) {
     // Verify OTP
     var verify_otp_url = '<%= verify_add_phone_otps_path %>';
     $('#code_submit').click(function(event){
+      $('#code-error').hide();
       $.ajax({
         url: verify_otp_url,
         data: {
@@ -216,12 +247,13 @@ jQuery(function($) {
             verification_code: $('#otp_verification_code').val(),
             authy_user_id: $('#otp_authy_user_id').val(),
             phone: $('#user_phone').val(),
-            country: $('#user_country').find(":selected").text()
+            country: $('#user_country_id').find(":selected").val()
           }
         },
         type: 'POST',
         success: function(result) {
           if(result['error']){
+            $('#code-error').show();
             $('#code-error').text(result['error']);
             $('#code-error').css('color', 'red');
           } else if (result['success'] == 'true' ) {
@@ -229,6 +261,7 @@ jQuery(function($) {
             $('#phone-error').text('Verified!');
             $('#phone-error').css('color', 'green');
             $('#code-verification-fields').hide();
+            $('#u2f-new').prop('disabled', false);
           }
         }
       });
