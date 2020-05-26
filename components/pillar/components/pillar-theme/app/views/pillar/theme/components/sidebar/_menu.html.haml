@@ -1,0 +1,58 @@
+.v-navbar
+  .top
+    %ul.menu
+      - Pillar::Core.menu[:main_menu]&.sort_by(&:order)&.each do |menu_item|
+        %li
+          = active_link_to menu_item.link, class: "menu-item w-full", active: :exclusive do
+            %i.fa-fw{ class: menu_item.icon }
+            = menu_item.title
+      -# %li
+      -#   = active_link_to pages.dashboard_path, class: "menu-item w-full", active: :exclusive do
+      -#     %i.fal.fa-fw.fa-th-large
+      -#     Dashboard
+      -# %li
+      -#   = active_link_to "#", class: "menu-item w-full", active: :exclusive do
+      -#     %i.fal.fa-fw.fa-certificate
+      -#     Certificates
+      -# %li
+      -#   = active_link_to "#", class: "menu-item w-full", active: :exclusive do
+      -#     %i.fal.fa-fw.fa-router
+      -#     Monitoring
+      -# %li
+      -#   = active_link_to "#", class: "menu-item w-full", active: :exclusive do
+      -#     %i.fal.fa-fw.fa-server
+      -#     Domains
+      -# %li
+      -#   = active_link_to "#", class: "menu-item w-full", active: :exclusive do
+      -#     %i.fal.fa-fw.fa-user
+      -#     Members
+      -# %li
+      -#   = active_link_to "#", class: "menu-item w-full", active: :exclusive do
+      -#     %i.fal.fa-fw.fa-address-card
+      -#     Contacts
+      -# %li
+      -#   = active_link_to "#", class: "menu-item w-full", active: :exclusive do
+      -#     %i.fal.fa-fw.fa-cog
+      -#     Settings
+      %li.border-t.border-secondary-800
+      %li
+        %a.menu-item(href="#")
+          %i.fal.fa-fw.fa-user-shield
+          Administration
+        %ul.sub-menu
+          - Pillar::Core.menu[:administration]&.sort_by(&:order)&.each do |menu_item|
+            %li
+              = active_link_to menu_item.link, class: "menu-item w-full", active: :exclusive do
+                .ml-12
+                  = menu_item.title
+
+  .bottom
+    -# .navcard
+    -#   .flex.text-6xl
+    -#     %i.fad.fa-fw.fa-file-certificate.mr-4
+    -#     %h3.text-white.font-lite
+    -#       Learn more about secure certificates
+    -#   %h5.text-center.mt-4.mb-4
+    -#     Our knowledge base has the necessary knowledge to acquaint you with even the most technical knowledge.
+    -#   .btn.primary.lg.block.mt-6
+    -#     Learn More

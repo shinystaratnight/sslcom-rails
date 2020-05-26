@@ -1,0 +1,46 @@
+.flex.items-start.justify-center
+  .flex-1
+    = render partial: "search"
+  .flex-1  
+  .flex.flex-col.justify-end
+    = link_to new_admin_blocklist_entry_path, class: "btn primary lg" do
+      %i.fas.fa-plus-circle.text-lg.mr-2
+      Create
+
+.table-container.mt-8
+  .flex.items-center.justify-center.font-bold.text-sm.uppercase
+    .p-6.flex.items-center.justify-start.flex-1
+      = sort_link(@q, :pattern, hide_indicator: true) do
+        Pattern
+    .p-6.w-24
+    .p-none
+
+  - @resources.each do |r|
+    .flex.items-center.justify-center.bg-white.rounded.mb-2
+      .flex.flex-col.items-start.justify-center.flex-1.p-6
+        .text-lg
+          = r.pattern
+        .mt-4.text-gray-400
+          %i.fas.fa-tag.text-sm.mr-1
+          = r.type
+      .p-6.text-center
+        .font-bold.text-xl
+          = r.blocklist_entry_exemptions.length
+        .font-light.text-sm
+          Exemptions
+      .p-6.border-l.border-gray-100
+        .btn-group
+          = link_to edit_admin_blocklist_entry_path(r.id), class: "btn md rounded-r-none rounded-l" do
+            MODIFY
+          .dropdown(data-controller="dropdown" data-target="dropdown.parent")
+            %a.btn.md.dropdown-toggle.border-l.border-gray-300.rounded-l-none.rounded-r(data-action="click->dropdown#toggle click@window->dropdown#hide")
+              %i.fal.fa-angle-down.text-xl
+            .dropdown-menu.hidden(data-target="dropdown.menu")
+              .dropdown-content.px-4.py-2
+                = link_to admin_blocklist_entry_path(r), class: "dropdown-item text-red-500 py-2", method: :delete, data: { "confirm" => { title: "Are you sure?", subtitle: "this will permanently remove this item" }} do
+                  Permanently Remove Item
+
+.flex.items-start.justify-center.mt-8
+  .flex-1 
+  .flex.flex-col.justify-end
+    = render partial: "pillar/theme/components/common/pagination", locals: { pagy: @pagy }

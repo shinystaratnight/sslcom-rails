@@ -9,13 +9,9 @@
 
 ## Getting Started
 
-This project contains a submodule for our Pillar framework. After cloning you must checkout the submodule by running the following commands:
+1. Get access to SSL.com's VPN (Ask Leo or developers).
 
-1. `git submodule update --init --recursive` - This will pull the submodule down into the components directory in rails. This submodule follows the master branch by default. if you need to make changes to the submodule, you can do so locally and perform the normal git actions inside the components directory. For more information on the Pillar Framework: https://sslcom.atlassian.net/l/c/BTHgT1ks
-
-2. Get access to SSL.com's VPN (Ask Leo or developers).
-
-3. Download and install Docker Desktop for your platform
+2. Download and install Docker Desktop for your platform
     
     ( https://www.docker.com/products/docker-desktop )
 

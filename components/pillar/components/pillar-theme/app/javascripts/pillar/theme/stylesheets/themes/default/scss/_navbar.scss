@@ -1,0 +1,43 @@
+.v-navbar {
+  @apply flex flex-col items-center justify-center text-xl text-gray-200 w-full h-full;
+
+  & .top {
+    @apply flex-col flex-1 w-full;
+
+    & .menu {
+      @apply w-full;
+
+      & li { @apply w-full; }
+    }
+
+    & .sub-menu {
+      & .menu-item {
+        @apply flex items-center justify-start text-gray-500 px-6 py-2 w-full h-10 border-l-2 text-base font-light tracking-wider border-secondary-500;
+      }
+    }
+
+    & .menu-item {
+      @apply flex items-center justify-start text-gray-500 px-6 py-2 w-full h-14 border-l-2 text-base font-normal tracking-wider border-secondary-500;
+
+      &.active, &:hover { 
+        @apply text-white bg-secondary-450 border-l-2 border-primary-500;
+
+        & svg {
+          @apply text-primary-500;
+        }
+      }
+
+      & svg {
+        @apply text-xl mr-6;
+      }
+    }
+  }
+
+  & .bottom {
+    @apply flex-col w-full;
+
+    & .navcard {
+      @apply flex-col bg-secondary-700 p-4 m-4 rounded;
+    }
+  }
+ }

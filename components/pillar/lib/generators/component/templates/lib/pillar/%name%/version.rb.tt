@@ -1,0 +1,5 @@
+module Pillar
+  module <%= class_name %>
+    VERSION = "0.0.0"
+  end
+end

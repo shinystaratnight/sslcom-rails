@@ -1,0 +1,87 @@
+.flex.justify-center.items-center.bg-white.p-8.rounded
+  = form_for [:admin, @resource.becomes(Pillar::Authority::BlocklistEntry)] do |f|
+    .grid.grid-cols-3.gap-6
+      .md:col-span-1.col-span-3
+        .form-label
+          Basic Details
+        .form-description
+          Enter the blocklist details in the form.
+      .md:col-span-2.col-span-3
+        .grid.grid-cols-6.gap-6
+          .md:col-span-3.col-span-6
+            .field
+              = f.label "Pattern (RegEx ONLY)"
+              = f.text_field :pattern
+          .md:col-span-3.col-span-6
+            .field
+              = f.label :type
+              .select-wrapper
+                = f.select :type, @resource.class.types
+          .col-span-6
+            .field.mt-6
+              = f.label :description
+              = f.text_area :description
+    .my-16.border-t.border-gray-100
+    .grid.grid-cols-3.gap-6
+      .md:col-span-1.col-span-3
+        .form-label
+          Fields To Check
+        .form-description
+          The following fields in the subject will be checked.
+      .md:col-span-2.col-span-3
+        .grid.grid-cols-6.gap-6
+          .md:col-span-2.col-span-6
+            .field.flex.items-center.justify-start
+              = f.check_box :common_name, class: "form-checkbox mt-0 h-6 w-6 text-primary-500 block-inline"
+              = f.label :common_name, class: "ml-4"
+          .md:col-span-2.col-span-6
+            .field.flex.items-center.justify-start
+              = f.check_box :organization, class: "form-checkbox mt-0 h-6 w-6 text-primary-500 block-inline"
+              = f.label :organization, class: "ml-4"
+          .md:col-span-2.col-span-6
+            .field.flex.items-center.justify-start
+              = f.check_box :organization_unit, class: "form-checkbox mt-0 h-6 w-6 text-primary-500 block-inline"
+              = f.label :organization_unit, class: "ml-4"
+          .md:col-span-2.col-span-6
+            .field.flex.items-center.justify-start
+              = f.check_box :location, class: "form-checkbox mt-0 h-6 w-6 text-primary-500 block-inline"
+              = f.label :location, class: "ml-4"
+          .md:col-span-2.col-span-6
+            .field.flex.items-center.justify-start
+              = f.check_box :state, class: "form-checkbox mt-0 h-6 w-6 text-primary-500 block-inline"
+              = f.label :state, class: "ml-4"
+          .md:col-span-2.col-span-6
+            .field.flex.items-center.justify-start
+              = f.check_box :country, class: "form-checkbox mt-0 h-6 w-6 text-primary-500 block-inline"
+              = f.label :country, class: "ml-4"
+          .md:col-span-2.col-span-6
+            .field.flex.items-center.justify-start
+              = f.check_box :san, class: "form-checkbox mt-0 h-6 w-6 text-primary-500 block-inline"
+              = f.label :san, class: "ml-4"
+    .my-16.border-t.border-gray-100
+    .grid.grid-cols-3.gap-6
+      .md:col-span-1.col-span-3
+        .form-label
+          Account Exemptions
+        .form-description
+          The following accounts will be exempt from blocklist checks, for this item.
+      .md:col-span-2.col-span-3
+        .grid.grid-cols-6.gap-6
+          .col-span-6
+            .font-bold.text-xs
+              Account ID
+            .field(data-controller="nested-form")
+              %template(data-target="nested-form.template")
+                = f.fields_for :blocklist_entry_exemptions, f.object.blocklist_entry_exemptions.build, child_index: 'TEMPLATE_RECORD' do |blocklist_entry_exemption|
+                  = render "blocklist_entry_exemption_fields", form: blocklist_entry_exemption
+
+              = f.fields_for :blocklist_entry_exemptions do |blocklist_entry_exemption|
+                = render "blocklist_entry_exemption_fields", form: blocklist_entry_exemption
+
+              .text-left.mt-4(data-target="nested-form.add_item")
+                = link_to "#", class: "btn primary lg", data: { action: "nested-form#add_association" } do
+                  Add Exemption
+
+    .mt-16.mb-8.border-t.border-gray-100
+    .flex.justify-end
+      = f.submit "Save Blocklist Entry", class: 'btn primary xl w-auto'

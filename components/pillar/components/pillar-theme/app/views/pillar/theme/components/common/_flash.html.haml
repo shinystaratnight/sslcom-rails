@@ -1,0 +1,63 @@
+.fixed.right-0.m-5.z-50
+  - flash.each do |type, msg|
+    - case type
+    - when 'success'
+      .flash-message.relative
+        .bg-secondary-700.rounded.shadow-lg.max-w-sm
+          .rounded.overflow-hidden.shadow-xs
+            .flex.items-center.justify-center
+              .px-4.py-4
+                %i.far.fa-check-circle.text-3xl.text-primary-500
+              .py-4.pr-4.flex-1.text-white
+                .font-bold
+                  Success:
+                .font-light.text-base
+                  = msg
+              .px-4.py-4.border-l.border-gray-600
+                %a.trigger.h-full(href="javascript:void(0)")
+                  %i.far.fa-times-circle.text-xl.text-white
+    - when 'error'
+      .flash-message.relative
+        .bg-secondary-700.rounded.shadow-lg.max-w-sm
+          .rounded.overflow-hidden.shadow-xs
+            .flex.items-center.justify-center
+              .px-4.py-4
+                %i.far.fa-times-circle.text-3xl.text-red-600
+              .py-4.pr-4.flex-1.text-white
+                .font-bold
+                  Error:
+                .font-light.text-base
+                  = msg
+              .px-4.py-4.border-l.border-gray-600
+                %a.trigger.h-full(href="javascript:void(0)")
+                  %i.far.fa-times-circle.text-xl.text-white
+    - when 'warning'
+      .flash-message.relative
+        .bg-secondary-700.rounded.shadow-lg.max-w-sm
+          .rounded.overflow-hidden.shadow-xs
+            .flex.items-center.justify-center
+              .px-4.py-4
+                %i.far.fa-exclamation-circle.text-3xl.text-yellow-300
+              .py-4.pr-4.flex-1.text-white
+                .font-bold
+                  Alert:
+                .font-light.text-base
+                  = msg
+              .px-4.py-4.border-l.border-gray-600
+                %a.trigger.h-full(href="javascript:void(0)")
+                  %i.far.fa-times-circle.text-xl.text-white
+    - else
+      .flash-message.relative
+        .bg-secondary-700.rounded.shadow-lg.max-w-sm
+          .rounded.overflow-hidden.shadow-xs
+            .flex.items-center.justify-center
+              .px-4.py-4
+                %i.far.fa-info-circle.text-3xl.text-blue-500
+              .py-4.pr-4.flex-1.text-white
+                .font-bold
+                  Information:
+                .font-light.text-base
+                  = msg
+              .px-4.py-4.border-l.border-gray-600
+                %a.trigger.h-full(href="javascript:void(0)")
+                  %i.far.fa-times-circle.text-xl.text-white

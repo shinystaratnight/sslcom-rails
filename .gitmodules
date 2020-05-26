@@ -1,4 +1,0 @@
-[submodule "components/pillar"]
-	path = components/pillar
-	url = git@github.com:SSLcom/pillar.git
-	branch = master

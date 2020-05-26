@@ -7,5 +7,7 @@ cd sslcom-rails
 PATH="$(ruby -e 'puts Gem.user_dir')/bin:$PATH"
 bundle install --deployment
 RAILS_ENV=qa rake db:migrate
-RAILS_ENV=qa rake assets:precompile
-RAILS_ENV=qa rake assets:clean
+yarn install
+RAILS_ENV=qa WEBPACKER_PRECOMPILE=false rake assets:precompile
+RAILS_ENV=qa rake pillar_theme:webpacker:compile
+# RAILS_ENV=qa WEBPACKER_PRECOMPILE=false rake assets:clean

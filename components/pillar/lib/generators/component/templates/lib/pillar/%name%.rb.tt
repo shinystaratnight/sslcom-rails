@@ -1,0 +1,17 @@
+require "pillar/core"
+require "pillar/theme"
+require "pillar/<%= name %>/engine"
+
+module Pillar
+  module <%= class_name %>
+    class << self
+      def version
+        Pillar::<%= class_name %>::VERSION
+      end
+
+      def root
+        @root ||= Pathname.new(File.expand_path("../..", __dir__))
+      end
+    end
+  end
+end

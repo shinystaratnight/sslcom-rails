@@ -1,0 +1,20 @@
+-if Pillar::Core.component_loaded?(:authentication)
+  .flex.items-center.justify-start.w-full
+    -# - if current_user.avatar.attached?
+    -#   %span.inline-flex.items-center.justify-center.h-16.w-16.mr-4.rounded-full.bg-white
+    -#     = image_tag(main_app.url_for(current_user.avatar), class: "h-16 w-16 rounded-full")
+    -# - else
+    %span.inline-flex.items-center.justify-center.h-16.w-16.mr-4.rounded-full.bg-white
+      %span.text-xl.font-medium.leading-none.text-primary-500 DW
+    .flex-1
+      .text-white.text-lg.mr-2
+        = "#{current_user.first_name} #{current_user.last_name}"
+      .text-gray-500.text-xs.truncate
+        = link_to "#" do
+          = current_user.email
+        = link_to('Logout', "#", method: :delete)
+
+      -# - if user_masquerade?
+      -#   = link_to "Reverse masquerade", authentication.back_masquerade_path(current_user)
+
+  .flex.w-full

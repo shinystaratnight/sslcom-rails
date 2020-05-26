@@ -1,0 +1,12 @@
+.flex.items-start
+  .flex.flex-col.flex-1
+    .text-3xl.truncate
+      = "Manage #{resource_name.pluralize.capitalize}"
+    %h5.text-sm.text-gray-400
+
+.my-8
+  - if @resources.present?
+    = render partial: "list"
+
+  - else
+    = render partial: "pillar/theme/components/common/empty"

@@ -1,0 +1,19 @@
+.backdrop-container {
+  @apply absolute top-0 bottom-0 right-0 left-0 flex items-center justify-center;
+
+  .backdrop {
+    @apply absolute top-0 bottom-0 right-0 left-0 opacity-75 bg-secondary-800 z-40;
+  }
+
+  .modal {
+    @apply rounded bg-secondary-700 text-white text-right z-50;
+    
+    .close {
+      @apply relative flex w-auto flex-col items-end justify-center text-white p-4 cursor-pointer;
+    }
+
+    .content {
+      @apply relative flex flex-col items-center justify-center text-6xl p-10;
+    }
+  }
+}

@@ -1,0 +1,6 @@
+.bundle/
+log/*.log
+pkg/
+node_modules/
+tmp/
+public/pillar-packs

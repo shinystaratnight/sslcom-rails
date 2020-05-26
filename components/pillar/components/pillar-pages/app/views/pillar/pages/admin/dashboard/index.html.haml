@@ -1,0 +1,49 @@
+.flex.items-center
+  .flex.flex-col.flex-1
+    .text-3xl
+      System Overview
+    %h5.text-sm.text-gray-400
+      = "#{(DateTime.now - 30.days).strftime('%B %d, %Y')} - #{DateTime.now.strftime('%B %d, %Y')}"
+  .flex.items-center.justify-center
+
+.my-8
+  .flex.items-center.justify-center
+    .flex-1.border.border-gray-100.mr-2.bg-white.rounded
+      .flex.flex-col
+        .flex.p-5
+          .flex.items-center.justify-center.bg-primary-500.w-16.h-16.rounded.text-white
+            %i.fa-fw.fal.fa-file-certificate.text-2xl
+          .flex.flex-1.flex-col.ml-4
+            .text-gray-500.text-lg.font-light
+              Certificates Issued
+            %h2
+              = ::SignedCertificate.where('created_at >= ?', 1.month.ago).count
+
+    .flex-1.border.border-gray-100.mr-2.ml-2.bg-white.rounded
+      .flex.flex-col
+        .flex.p-5
+          .flex.items-center.justify-center.bg-primary-500.w-16.h-16.rounded.text-white
+            %i.fa-fw.fal.fa-receipt.text-2xl
+          .flex.flex-1.flex-col.ml-4
+            .text-gray-500.text-lg.font-light
+              Total Sales
+            %h2
+              = number_to_currency(::Order.where('created_at >= ?', 1.month.ago).sum(:cents) * 0.01)
+
+    .flex-1.border.border-gray-100.ml-2.bg-white.rounded
+      .flex.flex-col
+        .flex.p-5
+          .flex.items-center.justify-center.bg-primary-500.w-16.h-16.rounded.text-white
+            %i.fa-fw.fal.fa-user.text-2xl
+          .flex.flex-1.flex-col.ml-4
+            .text-gray-500.text-lg.font-light
+              New Users
+            %h2
+              = ::User.where('created_at >= ?', 1.month.ago).count
+
+  .flex.items-center.justify-center.mt-6
+    .flex-1.border.border-gray-100.mr-2.bg-white.rounded.px-5.py-8
+      .mb-10
+        %h2 Total Sales
+        %h6 Last 30 Days
+      = line_chart ::Order.group_by_day(:created_at, range: 30.days.ago).sum('(orders.cents * 0.01)'), round: 2, zeros: true, thousands: ",", prefix: "$"

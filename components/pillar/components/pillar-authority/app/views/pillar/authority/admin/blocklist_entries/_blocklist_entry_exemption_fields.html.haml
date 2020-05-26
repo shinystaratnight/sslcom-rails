@@ -1,0 +1,8 @@
+.nested-fields
+  .flex.items-center.justify-center.py-4
+    .flex-1
+      = form.hidden_field :_destroy
+      = form.text_field :account_id, placeholder: 'Account ID'
+    .actions.pl-4
+      = link_to "#", class: "btn lg red", data: { action: "click->nested-form#remove_association" } do |link|
+        %i.fas.fa-fw.fa-times

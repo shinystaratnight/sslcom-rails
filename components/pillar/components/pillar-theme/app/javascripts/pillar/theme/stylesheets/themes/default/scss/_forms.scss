@@ -1,0 +1,84 @@
+form {
+  @apply w-full;
+}
+
+label { 
+  @apply box-border appearance-none block w-full text-gray-700 text-sm my-1; 
+}
+
+input {
+  @apply box-border appearance-none block w-full p-3 text-base border border-gray-200 outline-none rounded;
+
+  &:focus { @apply shadow-outline-blue border-blue-300; }
+  &.xs { @apply h-6 px-2 text-sm; min-width: 2.5rem; }
+  &.sm { @apply h-8 px-4 text-base; min-width: 3rem; }
+  &.md { @apply h-10 px-6 text-lg; min-width: 4rem; }
+  &.lg { @apply h-12 px-8 text-xl; min-width: 5rem; }
+  &.xl { @apply h-16 px-10 text-2xl; min-width: 6rem; }
+}
+
+textarea {
+  @apply appearance-none block w-full p-3 text-base border border-gray-200 resize-none outline-none rounded;
+
+  height: 130px;
+
+  &:focus { @apply shadow-outline-blue border-blue-300; }
+}
+
+select {
+  @apply w-full h-full p-3 pr-8 appearance-none bg-white text-base outline-none relative;
+
+  &.xs { @apply h-6 text-sm; min-width: 2.5rem; }
+  &.sm { @apply h-8 text-base; min-width: 3rem; }
+  &.md { @apply h-10 text-lg; min-width: 4rem; }
+  &.lg { @apply h-12 text-xl; min-width: 5rem; }
+  &.xl { @apply h-16 text-2xl; min-width: 6rem; }
+}
+
+select::-ms-expand {
+  @apply hidden;
+}
+
+.field {}
+
+.form-label { 
+  @apply appearance-none block w-full text-gray-700 font-bold text-lg my-1; 
+}
+
+.form-description { 
+  @apply appearance-none block w-full text-gray-400 text-sm my-1; 
+}
+
+.search {
+  @apply border-none outline-none;
+
+  &:focus { @apply border-none outline-none shadow-none; }
+}
+
+.select-wrapper {
+  @apply relative border bg-white border-gray-200 rounded inline-flex w-full items-center justify-center;
+
+  &:focus { @apply shadow-outline-blue border-blue-300; }
+}
+
+.field_with_errors {
+  label {
+    @apply text-red-600 font-bold;
+  }
+
+  input {
+    @apply bg-red-200 text-red-600 border-red-400;
+  }
+}
+
+#error_explanation {
+  @apply mb-4;
+
+  h2 {
+    @apply text-base text-red-600 font-medium uppercase;
+  }
+
+  ul {
+    @apply ml-4 mt-2 text-sm text-red-500 font-bold;
+  }
+}

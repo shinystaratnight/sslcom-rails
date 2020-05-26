@@ -1,0 +1,10 @@
+module Pillar
+  module <%= class_name %>
+    class ApplicationController < ActionController::Base
+      layout "pillar/theme/application"
+      
+      def show
+      end
+    end
+  end
+end

@@ -1,0 +1,7 @@
+module Pillar
+  module <%= class_name %>
+    module ApplicationHelper
+      include Pillar::Theme::ApplicationHelper
+    end
+  end
+end

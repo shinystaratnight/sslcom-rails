@@ -1,0 +1,39 @@
+html {
+  font-family: 'Open Sans', sans-serif;
+}
+
+.divider {
+  @apply h-0 w-full overflow-hidden border-t border-gray-200;
+}
+
+.pagy_nav {
+  @apply flex justify-end items-start h-12 w-full;
+
+  & .page {
+    @apply w-10 h-10 flex justify-center items-center bg-gray-200 text-gray-800 rounded;
+
+    & a {
+      @apply p-2 w-full h-full flex justify-center items-center;
+    }
+
+    &:last-child {
+      @apply mr-0;
+    }
+
+    &.prev {
+      @apply w-20;
+
+      &.disabled { @apply text-gray-400; }
+    }
+
+    &.next {
+      @apply w-20;
+
+      &.disabled { @apply text-gray-400; }
+    }
+
+    &.current {
+      @apply bg-primary-500 text-white;
+    }
+  }
+}

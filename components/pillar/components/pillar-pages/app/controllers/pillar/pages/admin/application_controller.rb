@@ -1,0 +1,19 @@
+module Pillar
+  module Pages
+    module Admin
+      class ApplicationController < Pillar::Pages::ApplicationController
+        include Pillar::Core::CommonController
+        include Pillar::Authentication::CommonLegacyController
+        layout "pillar/theme/admin"
+        
+        private
+
+        def authorized?
+          unless current_user&.is_system_admins?
+            redirect_to main_app.root_path, flash: { error: "You don't have permission to view this page" }
+          end
+        end
+      end
+    end
+  end
+end

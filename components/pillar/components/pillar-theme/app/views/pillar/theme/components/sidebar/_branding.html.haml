@@ -1,0 +1,31 @@
+.flex.items-center.justify-center.h-full.w-full
+  .flex
+    = image_pack_tag "media/pillar/theme/images/ssl-gray-logo.svg", class: "h-4"
+  
+  -# - if Pillar::Core.component_loaded?(:authentication)
+  -#   .flex.flex-1.justify-end
+  -#     .dropdown.w-full.mr-2.ml-2(data-controller="dropdown" data-target="dropdown.parent")
+  -#       %a.btn.md.w-full.dropdown-toggle(data-action="click->dropdown#toggle click@window->dropdown#hide")
+  -#         .flex-1.mr-2.truncate
+  -#           = Pillar::Core::Current.account&.name
+  -#         %i.fal.fa-angle-down.text-xl
+  -#       .dropdown-menu.hidden(data-target="dropdown.menu")
+  -#         .dropdown-content.text-sm
+  -#           - current_user&.accounts.each do |account|
+  -#             = link_to authentication.switch_account_path(account), class: "py-1 dropdown-item" do
+  -#               .flex.items-center.justify-center
+  -#                 - if account.avatar.attached?
+  -#                   .flex.items-center.justify-center.pl-4
+  -#                     %span.inline-flex.items-center.justify-center.h-10.w-10.rounded-full.bg-white
+  -#                       = image_tag(main_app.url_for(account.avatar), class: "h-10 w-10 rounded-full")
+  -#                 .flex-1
+  -#                   .py-2.px-4
+  -#                     .font-bold
+  -#                       = account.name
+  -#                     .text-xs.text-gray-600
+  -#                       = account.unique_id
+  -#             .divider.h-0.w-full.overflow-hidden.border-t.border-gray-300
+
+  -#   .flex
+  -#     = link_to authentication.new_account_path, class: "btn primary md" do
+  -#       %i.fal.fa-fw.fa-plus

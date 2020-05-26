@@ -1,0 +1,20 @@
+- link = pagy_link_proc(pagy)
+
+%nav.pagy_nav.pagination{ role: "navigation" }
+  .btn-group
+    - if pagy.prev
+      %a.btn.lg.border-r.rounded-r-none{ href: pagy_url_for(@pagy.prev, @pagy) }
+        PREV
+    - else
+      .btn.lg.text-gray-400.border-r.rounded-r-none.cursor-default
+        PREV
+    
+    .btn.lg.rounded-none
+      = "Showing <span class='mx-2 font-bold'>#{@pagy.from} - #{@pagy.to}</span> OF <span class='mx-2 font-bold'>#{@pagy.count}</span>".html_safe
+    
+    - if pagy.next
+      %a.btn.lg.border-l.rounded-l-none{ href: pagy_url_for(@pagy.next, @pagy) }
+        NEXT
+    - else
+      .btn.lg.text-gray-400.border-l.rounded-l-none.cursor-default
+        NEXT

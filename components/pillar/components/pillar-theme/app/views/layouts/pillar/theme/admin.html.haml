@@ -1,0 +1,25 @@
+!!!
+%html
+  %head
+    %meta{ content: "text/html; charset=UTF-8", "http-equiv" => "Content-Type" }
+    %script{ crossorigin: "anonymous", src: "https://kit.fontawesome.com/8bb4d334a0.js","data-search-pseudo-elements" => "", "data-mutate-approach" => "sync" }
+
+    %title Pillar - Admin
+    = stylesheet_pack_tag "theme", media: "all", "data-turbolinks-track": "reload"
+    = javascript_pack_tag "theme", "data-turbolinks-track": "reload"
+    = csrf_meta_tags
+  %body
+    = render partial: "pillar/theme/components/common/flash"
+    .flex.h-screen
+      .flex.flex-col.bg-black(style="width:412px;")
+        .h-24.bg-secondary-500.border-b.border-secondary-800.px-6.py-4
+          = render partial: "pillar/theme/components/sidebar/branding"
+        .bg-secondary-500.px-6.py-4.border-b.border-secondary-800
+          = render partial: "pillar/theme/components/sidebar/user_information"
+        .flex-1.bg-secondary-500
+          = render partial: "pillar/theme/components/sidebar/menu"
+      .flex.flex-col.w-full
+        .h-24.bg-white.border-b.border-gray-200
+          = render partial: "pillar/theme/components/common/header"
+        .flex-1.bg-gray-50.px-14.pt-12.overflow-y-scroll
+          = yield

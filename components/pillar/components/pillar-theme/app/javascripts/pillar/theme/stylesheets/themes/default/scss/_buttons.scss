@@ -1,0 +1,287 @@
+//
+// BUTTONS
+//
+
+.btn {
+
+  @apply box-border inline-flex items-center justify-center rounded cursor-pointer;
+  @apply px-4 py-2 h-10 text-sm leading-5;
+  @apply bg-gray-200 border-gray-300 text-gray-800;
+
+  //
+  // BUTTON UTILITIES
+  //
+
+  //
+  // BUTTON SIZES
+  //
+
+  &.xs {
+    @apply px-2.5 py-1.5 h-6 text-xs leading-4;
+
+    &.circle {
+      @apply w-6 h-6 rounded-full;
+    }
+  }
+
+  &.sm {
+    @apply px-3 py-2 h-8 text-sm leading-4;
+
+    &.circle {
+      @apply w-8 h-8 rounded-full;
+    }
+  }
+
+  &.md {
+    @apply px-4 py-2 h-10 text-sm leading-5;
+
+    &.circle {
+      @apply w-10 h-10 rounded-full;
+    }
+  }
+
+  &.lg {
+    @apply px-4 py-2 h-12 text-base leading-6;
+
+    &.circle {
+      @apply w-12 h-12 rounded-full;
+    }
+  }
+
+  &.xl {
+    @apply px-6 py-3 h-16 text-base leading-6;
+
+    &.circle {
+      @apply w-16 h-16 rounded-full;
+    }
+  }
+
+  //
+  // BUTTON COLORS
+  //
+
+  &.primary {
+    @apply text-white bg-primary-500 border-primary-600;
+  }
+
+  &.secodnary {
+    @apply text-white bg-secondary-500 border-secondary-600;
+  }
+
+  &.red {
+    @apply text-white bg-red-500 border-red-600;
+  }
+
+  &.blue {
+    @apply text-white bg-blue-500 border-blue-600;
+  }
+
+  &.green {
+    @apply text-white bg-green-500 border-green-600;
+  }
+
+  &.orange {
+    @apply text-white bg-orange-500 border-orange-600;
+  }
+
+  &.purple {
+    @apply text-white bg-purple-500 border-purple-600;
+  }
+}
+
+//
+// BUTTON DROPDOWN
+//
+
+.dropdown {
+  @apply relative box-border inline-flex items-center justify-center;
+
+  .dropdown-toggle {}
+
+  .dropdown-menu {
+    @apply text-sm bg-gray-200 z-20 mt-1 mb-1 box-content w-auto rounded;
+
+    & .dropdown-content {
+      @apply w-auto flex flex-col flex-no-wrap box-content;
+
+      & a {
+        @apply whitespace-no-wrap;
+      }
+
+      .divider:last-of-type {
+        @apply hidden;
+      }
+    }
+  }
+}
+
+//
+// BUTTON GROUP
+//
+
+.btn-group {
+  @apply box-border inline-flex;
+}
+
+
+
+// .btn-group {
+//   @apply inline-flex box-content;
+
+//   & .btn {
+//     @apply relative box-content px-4 py-2 h-10 text-sm leading-5 text-gray-800 bg-gray-200 border-gray-200 rounded;
+//   }
+
+//   & .btn-group:not(:last-child)>.btn, 
+//   & .btn:not(:last-child):not(.trigger):not(.dropdown) {
+//     @apply rounded-r-none;
+//   }
+
+//   & .btn-group:not(:first-child)>.btn, 
+//   & .btn:not(:first-child) {
+//     @apply rounded-l-none;
+//   }
+
+//   .dropdown-menu {
+//     @apply border-gray-300 bg-gray-200 p-4 text-sm rounded-b box-content;
+//   }
+
+//   &.open {
+//     .btn { @apply rounded-b-none; }
+//   }
+
+//   //
+//   // SIZES
+//   //
+
+//   &.xs {
+//     & .btn {
+//       @apply px-2.5 py-1.5 h-6 text-xs leading-4;
+//     }
+
+//     & .dropdown-menu {
+//       // @apply mt-6;
+//     }
+//   }
+
+//   &.sm { 
+//     & .btn {
+//       @apply px-3 py-2 h-8 text-sm leading-4;
+//     }
+
+//     & .dropdown-menu {
+//       // @apply mt-8;
+//     }
+//   }
+
+//   &.md { 
+//     & .btn {
+//       @apply px-4 py-2 h-10 text-sm leading-5;
+//     }
+
+//     & .dropdown-menu {
+//       // @apply mt-10;
+//     }
+//   }
+
+//   &.lg {
+//     & .btn { 
+//       @apply px-4 py-2 h-12 text-base leading-6;
+//     }
+
+//     & .dropdown-menu {
+//       // @apply mt-12;
+//     }
+//   }
+
+//   &.xl { 
+//     & .btn {
+//       @apply px-6 py-3 h-16 text-base leading-6;
+//     }
+
+//     & .dropdown-menu {
+//       // @apply mt-16;
+//     }
+//   }
+
+// }
+
+// .btn {
+//   @apply inline-flex box-border items-center justify-center cursor-pointer rounded;
+
+//   //
+//   // SIZES
+//   //
+
+//   @apply px-4 py-2 h-10 text-sm leading-5;
+
+//   &.circle {
+//     @apply w-10 h-10 rounded-full;
+//   }
+
+//   &.xs {
+//     @apply px-2.5 py-1.5 h-6 text-xs leading-4;
+    
+//     &.circle {
+//       @apply w-6 h-6 rounded-full;
+//     }
+//   }
+
+//   &.sm { 
+//     @apply px-3 py-2 h-8 text-sm leading-4;
+
+//     &.circle {
+//       @apply w-8 h-8 rounded-full;
+//     }
+//   }
+
+//   &.md { 
+//     @apply px-4 py-2 h-10 text-sm leading-5;
+
+//     &.circle {
+//       @apply w-10 h-10 rounded-full;
+//     }
+//   }
+
+//   &.lg { 
+//     @apply px-4 py-2 h-12 text-base leading-6;
+
+//     &.circle {
+//       @apply w-12 h-12 rounded-full;
+//     }
+//   }
+
+//   &.xl { 
+//     @apply px-6 py-3 h-16 text-base leading-6;
+
+//     &.circle {
+//       @apply w-16 h-16 rounded-full;
+//     }
+//   }
+
+//   //
+//   // COLOR
+//   //
+
+//   @apply text-gray-800 bg-gray-200 border-gray-200;
+
+//   &.primary {
+//     @apply text-white bg-primary-500 border-primary-600;
+//   }
+
+//   &.secondary {
+//     @apply text-white bg-secondary-500 border-secondary-600;
+//   }
+  
+//   &.red {
+//     @apply text-white bg-red-500 border-red-600;
+//   }
+  
+//   &.blue {
+//     @apply text-white bg-blue-500 border-blue-600;
+//   }
+  
+//   &.green {
+//     @apply text-white bg-green-500 border-green-600;
+//   }
+// }

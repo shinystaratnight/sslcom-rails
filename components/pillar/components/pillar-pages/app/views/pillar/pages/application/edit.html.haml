@@ -1,0 +1,14 @@
+.flex.items-start
+  .flex.flex-col.flex-1
+    .text-3xl.truncate
+      = "Modify #{resource_name.capitalize}"
+    %h5.text-sm.text-gray-400
+
+  .flex.flex-col.items-end.justify-center
+    .flex.items-center.justify-center
+      = link_to collection_path, class: "btn lg" do
+        = "Back to #{resource_name.capitalize.pluralize}"
+
+.my-8
+  .flex.justify-center.items-center.py-4
+    = render partial: "form"

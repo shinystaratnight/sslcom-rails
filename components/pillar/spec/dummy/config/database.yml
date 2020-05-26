@@ -1,0 +1,19 @@
+default: &default
+  adapter: mysql2
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  timeout: 5000
+  host: 127.0.0.1
+  username: ssl_dev_db
+  password: ssl_dev_db
+
+development:
+  <<: *default
+  database: pillar_development
+
+test:
+  <<: *default
+  database: pillar_test
+
+production:
+  <<: *default
+  database: pillar_production

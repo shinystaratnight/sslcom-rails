@@ -1,0 +1,13 @@
+!!!
+%html
+  %head
+    %meta{ content: "text/html; charset=UTF-8", "http-equiv" => "Content-Type" }
+    %script{ crossorigin: "anonymous", src: "https://kit.fontawesome.com/8bb4d334a0.js","data-search-pseudo-elements" => "", "data-mutate-approach" => "sync" }
+
+    %title Pillar - Public
+    = stylesheet_pack_tag "theme", media: "all", "data-turbolinks-track": "reload"
+    = javascript_pack_tag "theme", "data-turbolinks-track": "reload"
+    = csrf_meta_tags
+  %body
+    .flex.h-screen.bg-gray-50
+      = yield

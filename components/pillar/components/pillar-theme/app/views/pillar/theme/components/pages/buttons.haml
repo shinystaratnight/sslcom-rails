@@ -1,0 +1,177 @@
+.flex.bg-green-100
+  TOP
+
+.table-container
+
+%div
+  .font-bold
+    Buttons
+  .block
+    %a.btn.xs
+      Regular Button XS
+    %a.btn.sm
+      Regular Button SM
+    %a.btn.md
+      Regular Button MD
+    %a.btn.lg
+      Regular Button LG
+    %a.btn.xl
+      Regular Button XL
+
+%div
+  .font-bold
+    Button Colors
+  .block
+    %a.btn.primary.xs
+      Regular Button XS
+    %a.btn.secondary.sm
+      Regular Button SM
+    %a.btn.red.md
+      Regular Button MD
+    %a.btn.blue.lg
+      Regular Button LG
+    %a.btn.green.xl
+      Regular Button XL
+    %a.btn.orange.lg
+      Regular Button LG
+    %a.btn.purple.md
+      Regular Button MD
+
+%div
+  .font-bold
+    Dropdown Buttons
+  .block
+    .dropdown(data-controller="dropdown" data-target="dropdown.parent")
+      %a.btn.xs.dropdown-toggle(data-action="click->dropdown#toggle click@window->dropdown#hide")
+        .mr-2 Dropdown link
+        %i.fal.fa-angle-down.text-xl
+      .dropdown-menu.hidden(data-target="dropdown.menu")
+        .dropdown-content
+          %a.dropdown-item Action
+          %a.dropdown-item Another action
+          %a.dropdown-item Something else here
+
+    .dropdown(data-controller="dropdown" data-target="dropdown.parent")
+      %a.btn.sm.dropdown-toggle(data-action="click->dropdown#toggle click@window->dropdown#hide")
+        .mr-2 Dropdown link
+        %i.fal.fa-angle-down.text-xl
+      .dropdown-menu.hidden(data-target="dropdown.menu")
+        .dropdown-content
+          %a.dropdown-item Action
+          %a.dropdown-item Another action
+          %a.dropdown-item Something else here
+
+    .dropdown(data-controller="dropdown" data-target="dropdown.parent")
+      %a.btn.md.dropdown-toggle(data-action="click->dropdown#toggle click@window->dropdown#hide")
+        .mr-2 Dropdown link
+        %i.fal.fa-angle-down.text-xl
+      .dropdown-menu.hidden(data-target="dropdown.menu")
+        .dropdown-content
+          %a.dropdown-item Action
+          %a.dropdown-item Another action
+          %a.dropdown-item Something else here
+
+    .dropdown(data-controller="dropdown" data-target="dropdown.parent")
+      %a.btn.lg.dropdown-toggle(data-action="click->dropdown#toggle click@window->dropdown#hide")
+        .mr-2 Dropdown link
+        %i.fal.fa-angle-down.text-xl
+      .dropdown-menu.hidden(data-target="dropdown.menu")
+        .dropdown-content
+          %a.dropdown-item Action
+          %a.dropdown-item Another action
+          %a.dropdown-item Something else here
+
+    .dropdown(data-controller="dropdown" data-target="dropdown.parent")
+      %a.btn.xl.dropdown-toggle(data-action="click->dropdown#toggle click@window->dropdown#hide")
+        .mr-2 Dropdown link
+        %i.fal.fa-angle-down.text-xl
+      .dropdown-menu.hidden(data-target="dropdown.menu")
+        .dropdown-content
+          %a.dropdown-item Action
+          %a.dropdown-item Another action
+          %a.dropdown-item Something else here
+
+%div
+  .font-bold
+    Button Groups
+  .block
+    .btn-group
+      %a.btn.xs.rounded-r-none.rounded-l
+        Button A - XS
+      %a.btn.xs.rounded-none
+        Button B - XS
+      %a.btn.xs.rounded-none
+        Button C - XS
+      .dropdown(data-controller="dropdown" data-target="dropdown.parent")
+        %a.btn.xs.dropdown-toggle.rounded-l-none.rounded-r(data-action="click->dropdown#toggle click@window->dropdown#hide")
+          .mr-2 Dropdown link
+          %i.fal.fa-angle-down.text-xl
+        .dropdown-menu.hidden(data-target="dropdown.menu")
+          .dropdown-content
+            %a.dropdown-item Action
+            %a.dropdown-item Another action
+            %a.dropdown-item Something else here
+
+    .btn-group
+      %a.btn.sm.rounded-r-none.rounded-l
+        %i.fal.fa-cog.text-xl.mr-2
+        Modify
+      .dropdown(data-controller="dropdown" data-target="dropdown.parent")
+        %a.btn.sm.dropdown-toggle.border-l.rounded-l-none.rounded-r(data-action="click->dropdown#toggle click@window->dropdown#hide")
+          %i.fal.fa-angle-down
+        .dropdown-menu.hidden(data-target="dropdown.menu")
+          .dropdown-content
+            %a.dropdown-item Action
+            %a.dropdown-item Another action
+            %a.dropdown-item Something else here
+
+    .btn-group
+      %a.btn.md.rounded-r-none.rounded-l
+        Button A - MD
+      %a.btn.md.rounded-none
+        Button B - MD
+      %a.btn.md.rounded-none
+        Button C - MD
+      .dropdown(data-controller="dropdown" data-target="dropdown.parent")
+        %a.btn.md.dropdown-toggle.rounded-l-none.rounded-r(data-action="click->dropdown#toggle click@window->dropdown#hide")
+          .mr-2 Dropdown link
+          %i.fal.fa-angle-down.text-xl
+        .dropdown-menu.hidden(data-target="dropdown.menu")
+          .dropdown-content
+            %a.dropdown-item Action
+            %a.dropdown-item Another action
+            %a.dropdown-item Something else here
+
+    .btn-group.mt-4
+      %a.btn.lg.rounded-r-none.rounded-l
+        Button A - LG
+      %a.btn.lg.rounded-none
+        Button B - LG
+      %a.btn.lg.rounded-none
+        Button C - LG
+      .dropdown(data-controller="dropdown" data-target="dropdown.parent")
+        %a.btn.lg.dropdown-toggle.rounded-l-none.rounded-r(data-action="click->dropdown#toggle click@window->dropdown#hide")
+          .mr-2 Dropdown link
+          %i.fal.fa-angle-down.text-xl
+        .dropdown-menu.hidden(data-target="dropdown.menu")
+          .dropdown-content
+            %a.dropdown-item Action
+            %a.dropdown-item Another action
+            %a.dropdown-item Something else here
+
+    .btn-group.mt-4
+      %a.btn.xl.rounded-r-none.rounded-l
+        Button A - XL
+      %a.btn.xl.rounded-none
+        Button B - XL
+      %a.btn.xl.rounded-none
+        Button C - XL
+      .dropdown(data-controller="dropdown" data-target="dropdown.parent")
+        %a.btn.xl.dropdown-toggle.rounded-l-none.rounded-r(data-action="click->dropdown#toggle click@window->dropdown#hide")
+          .mr-2 Dropdown link
+          %i.fal.fa-angle-down.text-xl
+        .dropdown-menu.hidden(data-target="dropdown.menu")
+          .dropdown-content
+            %a.dropdown-item Action
+            %a.dropdown-item Another action
+            %a.dropdown-item Something else here
