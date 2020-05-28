@@ -1,5 +1,7 @@
 -title = request.subdomain==Reseller::SUBDOMAIN ? "Reseller login" : "Customer login"
 -content_for :title, title
+=javascript_include_tag '//stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js'
+=stylesheet_link_tag "bootstrap_fix", :media => 'all'
 =render :partial => 'index_scripts'
 = javascript_include_tag 'u2f-api'
 -failed_count = @failed_count || 0

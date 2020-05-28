@@ -1,7 +1,8 @@
 -title = "CDN Management"
 -content_for :title, title
 =render :partial => 'index_scripts'
-=stylesheet_link_tag "bootstrap_style", :media => 'all'
+=javascript_include_tag '//stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js'
+=stylesheet_link_tag "bootstrap_fix", :media => 'all'
 -resources = @results[:resources]
 #search_bar.hidden
   =form_tag :cdns, :id=>'hidden_form', :method=>:get do

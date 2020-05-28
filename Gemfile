@@ -4,7 +4,7 @@ source 'https://rubygems.org'
 
 gem 'rails', '4.2.11.1'
 
-gem 'puma'
+gem 'puma', '>= 4.3.5'
 gem 'mysql2', '~> 0.5.3' # gem install mysql2 -- --srcdir=/usr/local/mysql/include
 gem 'bootsnap', require: false
 
