@@ -15,7 +15,7 @@ describe 'User Sessions', type: :request do
   # 4. user with u2f key added to user account, and team that requires u2f
 
   describe '#create' do
-    context 'super user' do
+    context 'when super user' do
       # User must log in with DUO
       before do
         post user_session_path, { user_session: { login: user_superuser.login,
@@ -32,12 +32,10 @@ describe 'User Sessions', type: :request do
 
       it 'requires DUO authentication' do
         expect(response).to redirect_to duo_user_session_url
-        expect(response.headers['Location'] ).to eq duo_user_session_url
-
       end
     end
 
-    context 'user without 2FA' do
+    context 'when user does not have 2FA' do
       before do
         post user_session_path, { user_session: { login: user_owner.login,
                                                   password: user_owner.password,
@@ -53,21 +51,6 @@ describe 'User Sessions', type: :request do
       it 'gets redirected to account' do
         expect(response).to redirect_to account_url(ssl_slug: user_owner.ssl_account(:default).acct_number)
       end
-
-      describe 'when team has sec_type u2f' do
-        before do
-          user_owner.ssl_account.update_attribute(:sec_type, 'u2f')
-        end
-
-        it 'is not authenticated' do
-          # expect(session[:authenticated]).to eq false
-        end
-
-        it 'is redirected to u2f' do
-          # follow_redirect!
-          # expect(response).to redirect_to new_u2f_url
-        end
-      end
     end
 
     context 'user with security key' do
@@ -77,7 +60,6 @@ describe 'User Sessions', type: :request do
                                                   u2f_response: '',
                                                   logout: false,
                                                   failed_count: 0 } }
-        follow_redirect!
       end
 
       it 'is not authenticated' do
@@ -87,6 +69,7 @@ describe 'User Sessions', type: :request do
       it 'is redirected to u2f' do
         expect(response).to redirect_to new_u2f_url
       end
+    end
 
     context 'when team has sec_type u2f, and user has security key' do
       before do
@@ -98,13 +81,12 @@ describe 'User Sessions', type: :request do
                                                   failed_count: 0 } }
       end
 
-        it 'is not authenticated' do
-          expect(session[:authenticated]).to eq false
-        end
+      it 'is not authenticated' do
+        expect(session[:authenticated]).to eq false
+      end
 
-        it 'is redirected to u2f' do
-          expect(response).to redirect_to new_u2f_url
-        end
+      it 'is redirected to u2f' do
+        expect(response.headers['Location'] ).to eq new_u2f_url
       end
     end
   end

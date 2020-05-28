@@ -31,6 +31,7 @@ class U2fsController < ApplicationController
 
       session[:challenge] = u2f.challenge
     end
+    session[:u2f_failed_count] ||= 0
   end
 
   def verify
@@ -41,10 +42,14 @@ class U2fsController < ApplicationController
     return true unless @user.u2fs.any?
 
     # If user has keys, we need to have a u2f_response, so that we can validate it!
-    return false unless params['u2f_response'].present?
+    return false if params['u2f_response'].blank?
 
-    if params[:error_message].present? || JSON.load(params[:u2f_response])['errorCode'].present?
+    if params[:error_message].present? || JSON.parse(params[:u2f_response])['errorCode'].present?
       flash[:error] = params[:error_message]
+      session[:u2f_failed_count] += 1
+      u2f_timeout = true if JSON.parse(params[:u2f_response])['errorCode'] == 5
+
+      redirect_to logout_path and return if u2f_timeout || session[:u2f_failed_count] >= 3
       redirect_to new_u2f_path and return
     end
 
@@ -66,18 +71,19 @@ class U2fsController < ApplicationController
       respond_to do |format|
         format.html { set_redirect(user: @user) }
       end
-
     rescue U2F::Error => e
       flash[:error] = 'Unable to authenticate with U2F: ' + e.class.name # unless params[:user]
+      session[:u2f_failed_count] += 1
 
       redirect_to new_u2f_path
     ensure
       session.delete(:challenge)
     end
+    session[:u2f_failed_count] = 0
   end
 
   def create
-    unless params[:u2f_response].present?
+    if params[:u2f_response].blank?
       flash[:error] = 'Could not add key'
       redirect_to u2fs_path and return
     end
@@ -98,7 +104,6 @@ class U2fsController < ApplicationController
                                 key_handle:  u2f_registration.key_handle,
                                 public_key:  u2f_registration.public_key,
                                 counter:     u2f_registration.counter)
-
     rescue U2F::Error => e
       response['error'] = 'Unable to register: ' + e.class.name
     ensure
@@ -110,7 +115,7 @@ class U2fsController < ApplicationController
   end
 
   def update
-    @u2f = current_user.u2fs.find_by(params[:id])
+    @u2f = current_user.u2fs.find_by(id: params[:id])
     if @u2f.update(u2f_params)
       flash.now[:notice] = 'Successfully updated'
     else

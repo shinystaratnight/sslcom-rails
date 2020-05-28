@@ -49,10 +49,9 @@ jQuery(function($) {
           $('#2fa-info').hide();
           setError(signResponse.errorCode);
         }
-
         $('.u2f_response').val(JSON.stringify(signResponse));
         $('#verify-u2f').submit();
-      });
+      }, 60);
     }
 
     // Add key

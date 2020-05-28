@@ -5,9 +5,10 @@ class UserSessionsController < ApplicationController
   skip_before_action :finish_reseller_signup, only: [:destroy]
   skip_before_action :verify_authenticity_token
   skip_before_action :verify_duo_authentication, only: %i[new create destroy]
+  skip_before_action :verify_u2f_authentication, only: %i[new create destroy duo duo_verify]
   skip_before_action :require_no_authentication, only: [:duo_verify]
-  skip_before_action :use_2FA_authentication
-  before_action :check_recaptcha, only: [:user_login, :create]
+  skip_before_action :use_2fa_authentication
+  before_action :check_recaptcha, only: %i[user_login create]
 
   def new
     @user_session = UserSession.new
@@ -98,6 +99,7 @@ class UserSessionsController < ApplicationController
           format.html do
             set_redirect(user: user)
           end
+
         elsif @user_session.attempted_record && !@user_session.attempted_record.active?
           flash[:notice] = 'Your account has not been activated. %s'
           flash[:notice_item] = "Click here to have the activation email resent to #{@user_session.attempted_record.email}.",
@@ -130,7 +132,10 @@ class UserSessionsController < ApplicationController
           format.html { render action: :new }
           format.js   { render json: @user_session.errors }
         end
-      else
+      end
+
+      current_user ||= @user_session.user
+      if !session[:authenticated] && current_user.present?
         if params[:logout] == 'true'
           if current_user.is_admin?
             cookies.delete(ResellerTier::TIER_KEY)
@@ -140,7 +145,7 @@ class UserSessionsController < ApplicationController
           cookies.delete(:acct)
           current_user_session.destroy
           Authorization.current_user = nil
-          flash[:error] = 'Unable to sign with U2F.' unless params[:user]
+          # flash[:error] = 'Unable to sign with U2F.' unless params[:user]
 
           @user_session = UserSession.new(params[:user_session].to_h)
 
@@ -167,17 +172,10 @@ class UserSessionsController < ApplicationController
                 session[:duo_auth] = true
                 format.html { redirect_back_or_default account_path(current_user_default_team ? current_user_default_team.to_slug : {}) }
               end
-            # Access to teams that have u2f enabled is handled in use_2FA_authentication
+            # Access to teams that have u2f enabled is handled in use_2fa_authentication
             # What we should care about here is whether or not users have added 2fa for their account (regardless of any team requirement)
-            elsif current_user_default_team&.sec_type == 'u2f'
-              # Why is this needed?
-              session[:duo_auth] = true
-              #if params['u2f_response'].blank? # If it is blank, it means there was no 2FA!
-                # flash[:notice] = 'Successfully logged in.' unless request.xhr?
-                # format.js   { render json: url_for_js(current_user) }
-                # # rubocop:disable Style/IdenticalConditionalBranches
-                # format.html { redirect_back_or_default account_path(current_user_default_team ? current_user_default_team.to_slug : {}) }
-                # # rubocop:enable Style/IdenticalConditionalBranches
+            elsif current_user_default_team&.sec_type == 'u2f' || current_user.u2fs.any?
+              redirect_to new_u2f_path and return
             else
               session[:duo_auth] = true
               flash[:notice] = 'Successfully logged in.' unless request.xhr?
@@ -361,6 +359,7 @@ class UserSessionsController < ApplicationController
   # Verifies captcha before proceeding to login process
   def check_recaptcha
     return unless session[:failed_count].to_i >= Settings.captcha_threshold.to_i
+
     unless verify_recaptcha(response: params[:user_session]['g-recaptcha-response'])
       @user_session = UserSession.new(params[:user_session].to_h)
       session[:failed_count] += 1
@@ -373,7 +372,6 @@ class UserSessionsController < ApplicationController
     session[:authenticated] = true
     session[:authenticated] = false if @user_session.user.is_duo_required?
     session[:authenticated] = false if @user_session.user.u2fs.any?
-    session[:authenticated] = false if @user_session.user.ssl_account(:default).sec_type.present?
   end
 
   def duo_api_host_name

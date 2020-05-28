@@ -1,7 +1,7 @@
 class SslAccountsController < ApplicationController
   before_action :require_user, only: %i[show edit edit_settings manage_reseller remove_reseller]
   before_action :find_ssl_account
-  skip_before_action :verify_duo_authentication, only: [:set_2fa_type, :register_duo]
+  skip_before_action :verify_duo_authentication, only: %i[set_2fa_type register_duo]
   filter_access_to :all, attribute_check: true
 
   # GET /ssl_account/
