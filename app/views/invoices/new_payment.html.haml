@@ -64,7 +64,7 @@
                 required: true
             
             -# Remaining Amount
-            .clearfix
+            .clearfix{ style: "text-align:left;" }
               %label{for: 'charge_amount'}
                 Total $:
                 %span.label_desc
@@ -72,7 +72,7 @@
               =f.hidden_field :charge_amount, value: remaining_amt, data: {charge_initial: remaining_amt.to_s}
               %span.lbl-usd#lbl-charge-amount
                 ="#{remaining_amt.format.gsub(/,/, '')}"
-          
+
     #button_container
       #auto_adjust
         =link_to image_tag("prev_bl.gif"), invoice_path(ssl_slug, @invoice.try(:reference_number))
