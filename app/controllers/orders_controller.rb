@@ -19,6 +19,8 @@ class OrdersController < ApplicationController
   before_action :global_set_row_page, only: [:index, :search, :filter_by_state, :visitor_trackings]
   before_action :get_team_tags, only: [:index, :search]
 
+  skip_before_action :verify_authenticity_token, only: [:add_cart]
+  
   def update_tags
     if @order
       @taggable = @order
