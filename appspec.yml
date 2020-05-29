@@ -10,6 +10,10 @@ permissions:
     group: app-ra
     mode: 755
 hooks:
+  BeforeInstall:
+    - location: script/clear_files.sh
+    - timeout: 300
+    - runas: app-ra
   AfterInstall:
     - location: script/install_dependencies.sh
       timeout: 300
