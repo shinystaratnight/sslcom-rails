@@ -32,13 +32,13 @@
                         ul
                           li
                             strong reseller administrator
-                          li name: #{[r.first_name, r.last_name].join(' ')} 
-                          li email: #{r.email} 
+                          li name: #{[r.first_name, r.last_name].join(' ')}
+                          li email: #{r.email}
                           li phone: #{r.phone}
                           -unless r.ext.blank?
                             li ext: #{r.ext}
                           -unless r.fax.blank?
-                            li fax: #{r.fax} 
+                            li fax: #{r.fax}
                           li=link_to 'edit', edit_ssl_account_path(ssl_slug || params[:ssl_slug])
                       .col-md-3
                         ul
@@ -59,7 +59,7 @@
                             li
                               strong billing and purchase
                             -if permitted_to?(:create, :funded_accounts)
-                              li available funds: #{ssl_account.funded_account.amount(true).format with_currency=false}
+                              li available funds: #{ssl_account.funded_account.amount(true).format with_currency: false}
                             -if permitted_to? :read, :orders
                               li=link_to "billing", is_sandbox? ? search_orders_path(search:'is_test:true') : orders_path(ssl_slug: ssl_slug)
                             li=link_to 'deposit funds', allocate_funds_url(ssl_slug: ssl_slug)
