@@ -12,8 +12,8 @@ permissions:
 hooks:
   BeforeInstall:
     - location: script/clear_files.sh
-    - timeout: 300
-    - runas: app-ra
+      timeout: 300
+      runas: app-ra
   AfterInstall:
     - location: script/install_dependencies.sh
       timeout: 300
