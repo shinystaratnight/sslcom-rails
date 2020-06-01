@@ -113,9 +113,12 @@ group :development do
   gem 'spring'
   gem 'active_record_doctor'
   gem 'lol_dba'
+  gem 'seed_dump'
+end
+
+group :development, :qa do
   gem 'memory_profiler'
   gem 'meta_request'
-  gem 'seed_dump'
 end
 
 group :development, :test do

@@ -2,12 +2,12 @@
 jQuery.noConflict();
 jQuery(function($) {
   $(document).ready(function() {
-    <%js_roles = CertificateContent::CONTACT_ROLES.dclone%>
+    <% js_roles = %w[administrative billing technical validation] %>;
     var form_types = ["<%=js_roles.map{|role|role.insert(0,"#certificate_content_")}.join("_form\", \"").html_safe%>_form"];
     var check_boxes = ["<%=(js_roles-%w(administrative)).join("_checkbox\", \"").html_safe%>_checkbox"];
     var epki_contact = "<%= (params[:epki_registrant] || @render_epki_registrant || "false") %>";
     var iv_contact = "<%= @contact && @contact.contact_iv? %>" == "true";
-    
+
     $(':checkbox[id*=checkbox]').click(function(){
       to = $(this).attr('id').length - '_checkbox'.length;
       form = $(this).attr('id').substring(0,to);

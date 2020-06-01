@@ -19,12 +19,13 @@
 #  index_shopping_carts_on_user_id  (user_id)
 #
 
-#li - number of licenses
-#q - quantity
-#do - domains
-#pr - product code
-#rn - renewal order
-#du - duration
+# li - number of licenses
+# q - quantity
+# do - domains
+# pr - product code
+# rn - renewal order
+# du - duration
+
 class ShoppingCart < ApplicationRecord
   belongs_to :user
 

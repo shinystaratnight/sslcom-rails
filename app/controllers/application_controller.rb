@@ -693,20 +693,7 @@ class ApplicationController < ActionController::Base
     md5_previous = Digest::MD5.hexdigest(request.referer) if request.referer
     cur = TrackedUrl.find_or_create_by_md5_and_url(md5_current, request.url)
     prev = request.referer ? TrackedUrl.find_or_create_by_md5_and_url(md5_previous, request.referer) : nil
-    Tracking.create(referer: prev, visitor_token: @visitor_token,
-                    tracked_url: cur, remote_ip: request.remote_ip)
-    #    output = cache(md5) { request.request_uri }
-    #    if @visitor
-    #      md5 = Digest::MD5.hexdigest(request.request_uri)
-    #      output = cache(md5) { request.request_uri }
-    #
-    #      @tracking = UUID.random_create
-    #      cookies[VisitorToken::GUID] = {:value=>guid, :path => "/", :expires => 2.years.from_now} unless cookies[VisitorToken::GUID]
-    #      @visitor_token = VisitorToken.find_or_build_by_guid(cookies[VisitorToken::GUID])
-    #      @visitor_token.user ||= current_user if current_user
-    #      @visitor_token.affiliate_id = cookies[ShoppingCart::AID] if cookies[ShoppingCart::AID] && token.affiliate_id != cookies[ShoppingCart::AID]
-    #      @visitor_token.save
-    #    end
+    Tracking.create(referer: prev, visitor_token: @visitor_token, tracked_url: cur, remote_ip: request.remote_ip)
   end
 
   # Surl related functions

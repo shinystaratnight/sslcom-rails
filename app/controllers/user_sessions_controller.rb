@@ -58,7 +58,7 @@ class UserSessionsController < ApplicationController
 
   def create
     if params["prev.x".intern]
-      #assume trying to login during checkout
+      # assume trying to login during checkout
       if params[:certificate_order]
         @certificate_order = CertificateOrder.new(params[:certificate_order])
         @certificate_order.has_csr = true
@@ -279,7 +279,7 @@ class UserSessionsController < ApplicationController
         @authenticated_user = Duo.verify_response(@duo_account ? @duo_account.duo_ikey : "", @duo_account ? @duo_account.duo_skey : "", @duo_account ? @duo_account.duo_akey : "", params['sig_response'])
       end
     end if current_user
-    
+
     if @authenticated_user
       session[:duo_auth] = true
       respond_to do |format|

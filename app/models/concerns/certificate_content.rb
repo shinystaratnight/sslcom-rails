@@ -12,10 +12,9 @@ module Concerns
       NOT_VALID_ISO_CODE = 'is not a valid 2 lettered ISO-3166 country code.'
 
       ADMINISTRATIVE_ROLE = 'administrative'
-      CONTACT_ROLES = %w[administrative billing technical validation].freeze
+      CONTACT_ROLES = %w[administrative billing technical validation]
 
-      RESELLER_FIELDS_TO_COPY = %w[first_name last_name
-                                   po_box address1 address2 address3 city state postal_code email phone ext fax].freeze
+      RESELLER_FIELDS_TO_COPY = %w[first_name last_name po_box address1 address2 address3 city state postal_code email phone ext fax].freeze
 
       # terms in this list that are submitted as domains for an ssl will be kicked back
       BARRED_SSL_TERMS = %w[\A\. \.onion\z \.local\z].freeze
