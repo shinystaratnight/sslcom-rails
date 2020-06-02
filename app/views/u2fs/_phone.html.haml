@@ -31,6 +31,6 @@
             = link_to 'Resend code to phone', '#', id: 'resend-otp-phone'
             %br
             = link_to 'Resend code to email', '#', id: 'resend-otp-email'
-            = hidden_field_tag 'otp_authy_user_id', @authy_user_id
+            = hidden_field_tag 'otp_authy_user', @authy_user
             .clearfix
             = button_tag "Verify Code", id: 'code_submit'

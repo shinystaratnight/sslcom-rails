@@ -12,7 +12,7 @@
             .col-md-6.offset-md-3
               %p.text-center Please enter the verification code
               = f.text_field :verification_code, class: "form-control", autofocus: true, label: 'adf'
-              = f.hidden_field 'authy_user_id', value: @authy_user_id
+              = f.hidden_field 'authy_user', value: @authy_user
 
               = submit_tag "Submit"
 

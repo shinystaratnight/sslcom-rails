@@ -13,7 +13,7 @@ describe OtpsController do
   let(:user_authy) do create(:user,
                              phone: '1234567891',
                              country: 'United States',
-                             authy_user_id: '261071388'
+                             authy_user: '261071388'
                             )
   end
   let(:country) { Country.find_by(name: 'United States') }
@@ -35,7 +35,7 @@ describe OtpsController do
 
     context 'when user is not registered with authy' do
       before do
-        login_as(create(:user, authy_user_id: nil))
+        login_as(create(:user, authy_user: nil))
         get :login
       end
 
@@ -52,7 +52,7 @@ describe OtpsController do
   describe '#verify_login', vcr: { cassette_name: 'authy_code_verify' } do
     context 'with invalid code'  do
       before do
-        params = { otp: { verification_code: '123456', authy_user_id: '261071388', phone: '1234567891', country: country&.id } }
+        params = { otp: { verification_code: '123456', authy_user: '261071388', phone: '1234567891', country: country&.id } }
         get :verify_login, params
       end
 
@@ -71,7 +71,7 @@ describe OtpsController do
 
     context 'with valid code' do
       before do
-        params = { otp: { verification_code: '1234567', authy_user_id: '261071388', phone: '1234567891', country: country&.id } }
+        params = { otp: { verification_code: '1234567', authy_user: '261071388', phone: '1234567891', country: country&.id } }
         get :verify_login, params
       end
 
@@ -89,7 +89,7 @@ describe OtpsController do
   describe '#email_login' do
     context 'without authy user' do
       before do
-        login_as(create(:user, authy_user_id: nil))
+        login_as(create(:user, authy_user: nil))
         get :email_login
       end
 
@@ -151,7 +151,7 @@ describe OtpsController do
         expect(JSON.parse(response.body)['error'].present?).to eq false
       end
 
-      it 'returns result with authy_user_id' do
+      it 'returns result with authy_user' do
         expected_result = { error: nil, id: '261071388' }.stringify_keys
         expect(JSON.parse(response.body)).to eq expected_result
       end
@@ -198,7 +198,7 @@ describe OtpsController do
   describe '#verify_add_phone', vcr: { cassette_name: 'authy_code_verify' } do
     context 'with invalid code'  do
       before do
-        params = { otp: { verification_code: '123456', authy_user_id: '261071388', phone: '1234567891', country: country&.id } }
+        params = { otp: { verification_code: '123456', authy_user: '261071388', phone: '1234567891', country: country&.id } }
         get :verify_add_phone, params
       end
 
@@ -227,7 +227,7 @@ describe OtpsController do
       end
 
       # Expect redirection (according to set_redirect method)
-      it 'returns result with authy_user_id' do
+      it 'returns result with authy_user' do
         expected_result = { error: nil, success: 'true' }.stringify_keys
         expect(JSON.parse(response.body)).to eq expected_result
       end
@@ -243,7 +243,7 @@ describe OtpsController do
 
     context 'with valid code and new values' do
       before do
-        params = { otp: { verification_code: '1234567', authy_user_id: '261071389', phone: '1234567892', country: country&.id } }
+        params = { otp: { verification_code: '1234567', authy_user: '261071389', phone: '1234567892', country: country&.id } }
         get :verify_add_phone, params
       end
 
@@ -256,9 +256,9 @@ describe OtpsController do
         expect(user_authy.phone).to eq '1234567892'
       end
 
-      it 'deletes old authy user if params otp has new authy_user_id' do
+      it 'deletes old authy user if params otp has new authy_user' do
         user_authy.reload
-        expect(user_authy.authy_user_id).to eq '261071389'
+        expect(user_authy.authy_user).to eq '261071389'
       end
     end
   end

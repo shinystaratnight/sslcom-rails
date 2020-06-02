@@ -53,7 +53,7 @@ describe 'User Sessions', type: :request do
       end
     end
 
-    context 'user with security key' do
+    context 'when user has security key' do
       before do
         post user_session_path, { user_session: { login: user_u2f.login,
                                                   password: user_u2f.password,
@@ -86,7 +86,7 @@ describe 'User Sessions', type: :request do
       end
 
       it 'is redirected to u2f' do
-        expect(response.headers['Location'] ).to eq new_u2f_url
+        expect(response.headers['Location']).to eq new_u2f_url
       end
     end
   end

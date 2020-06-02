@@ -47,7 +47,6 @@
 #  status              :string(255)
 #  created_at          :datetime
 #  updated_at          :datetime
-#  authy_user_id       :string(255)
 #  ssl_account_id      :integer
 #
 # Indexes
@@ -134,20 +133,20 @@ describe User do
 
   describe '#phone_verified?' do
     context 'returns false' do
-      it 'when user does not have authy_user_id attribute ' do
-        user = create(:user, authy_user_id: nil)
+      it 'when user does not have authy_user attribute ' do
+        user = create(:user, authy_user: nil)
         expect(user.phone_verified?).to eq false
       end
 
       it 'when user is not registered with authy' do
-        user = create(:user, authy_user_id: 261071388)
+        user = create(:user, authy_user: '261071388')
         VCR.use_cassette('authy_user_does_not_exist') do
           expect(user.phone_verified?).to eq false
         end
       end
 
       it 'when phone is different' do
-        user = create(:user, authy_user_id: 261071388, phone: '1234512345')
+        user = create(:user, authy_user: '261071388', phone: '1234512345')
         VCR.use_cassette('authy_user_exists') do
           expect(user.phone_verified?).to eq false
         end
@@ -156,7 +155,7 @@ describe User do
 
     context 'returns true' do
       it 'when user has the same phone number' do
-        user = create(:user, authy_user_id: 261071388, phone: '1234567891', country: 'United States')
+        user = create(:user, authy_user: '261071388', phone: '1234567891', country: 'United States')
         VCR.use_cassette('authy_user_exists') do
           expect(user.phone_verified?).to eq true
         end
@@ -166,7 +165,7 @@ describe User do
 
   describe '#requires_phone_verification?' do
     it 'returns false when user is registered with authy' do
-      user = create(:user, authy_user_id: 261071388, phone: '1234567891', country: 'United States')
+      user = create(:user, authy_user: '261071388', phone: '1234567891', country: 'United States')
       VCR.use_cassette('authy_user_exists') do
         expect(user.requires_phone_verification?).to eq false
       end
@@ -174,7 +173,7 @@ describe User do
 
     context 'returns true' do
       it 'when country changed' do
-        user = create(:user, authy_user_id: 261071388, phone: '1234567891', country: 'United States')
+        user = create(:user, authy_user: '261071388', phone: '1234567891', country: 'United States')
         VCR.use_cassette('authy_user_exists') do
           user.country = 'Greece'
           expect(user.requires_phone_verification?).to eq true
@@ -182,7 +181,7 @@ describe User do
       end
 
       it 'when phone number changed' do
-        user = create(:user, authy_user_id: 261071388, phone: '1234567891', country: 'United States')
+        user = create(:user, authy_user: '261071388', phone: '1234567891', country: 'United States')
         user.phone = '1234512345'
         VCR.use_cassette('authy_user_exists') do
           expect(user.requires_phone_verification?).to eq true
@@ -190,14 +189,14 @@ describe User do
       end
 
       it 'when phone not registered with authy' do
-        user = create(:user, authy_user_id: 261071388, phone: '1234567891', country: 'United States')
+        user = create(:user, authy_user: '261071388', phone: '1234567891', country: 'United States')
         VCR.use_cassette('authy_user_does_not_exist') do
           expect(user.requires_phone_verification?).to eq true
         end
       end
 
-      it 'when user.authy_user_id attribute is nil' do
-        user = create(:user, authy_user_id: nil)
+      it 'when user.authy_user attribute is nil' do
+        user = create(:user, authy_user: nil)
         VCR.use_cassette('authy_user_does_not_exist') do
           expect(user.requires_phone_verification?).to eq true
         end

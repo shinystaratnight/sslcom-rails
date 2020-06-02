@@ -45,7 +45,6 @@
 #  status              :string(255)
 #  created_at          :datetime
 #  updated_at          :datetime
-#  authy_user_id       :string(255)
 #  ssl_account_id      :integer
 #
 # Indexes
@@ -778,14 +777,14 @@ class User < ApplicationRecord
   # Check if user is registered with authy and
   # if the authy cellphone is the same as user's phone
   def phone_verified?
-    return false unless authy_user_id
+    return false unless authy_user
 
-    authy_user = Authy::API.user_status(id: authy_user_id)
-    return false unless authy_user['success'] == true
+    authy_user_result = Authy::API.user_status(id: authy_user)
+    return false unless authy_user_result['success'] == true
 
     user_country_code = Country.find_by(name: country)&.num_code
 
-    authy_user['status']['phone_number']&.last(4) == phone&.last(4) && authy_user['status']['country_code'] == user_country_code
+    authy_user_result['status']['phone_number']&.last(4) == phone&.last(4) && authy_user_result['status']['country_code'] == user_country_code
   end
 
   ##

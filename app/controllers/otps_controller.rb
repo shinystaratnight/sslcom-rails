@@ -6,18 +6,18 @@ class OtpsController < ApplicationController
 
   def login
     session[:authenticated] = false
-    unless current_user&.authy_user_id
+    unless current_user&.authy_user
       flash[:error] = 'No registered phone number'
       redirect_to u2fs_path and return
     end
     # Send SMS. Response:  {"success"=>true, "message"=>"SMS token was sent", "cellphone"=>"+12-123-123-3456"}
-    response = Authy::API.request_sms(id: current_user.authy_user_id)
-    @authy_user_id = current_user.authy_user_id.to_s
+    response = Authy::API.request_sms(id: current_user.authy_user)
+    @authy_user = current_user.authy_user.to_s
   end
 
   def verify_login
     session[:authenticated] = false
-    response = Authy::API.verify(id: current_user.authy_user_id,
+    response = Authy::API.verify(id: current_user.authy_user,
                                  token: otp_params['verification_code'])
     if response.ok?
       session[:authenticated] = true
@@ -31,14 +31,14 @@ class OtpsController < ApplicationController
   def email_login
     session[:authenticated] = false
 
-    if current_user&.authy_user_id.blank?
+    if current_user&.authy_user.blank?
       flash[:error] = 'Not registered for verification code!'
       redirect_to u2fs_path and return
     end
 
     begin
-      @authy_user_id = current_user.authy_user_id.to_s
-      response = send_email(@authy_user_id)
+      @authy_user = current_user.authy_user.to_s
+      response = send_email(@authy_user)
       # Raise error unless response success, so that we can log exact error
       raise 'Please try again.' unless response && response['success'] == 'success'
     rescue => e
@@ -62,15 +62,15 @@ class OtpsController < ApplicationController
 
     begin
       # Get existing authy_id of current_user, or register user with authy
-      authy_user_id = if current_user.authy_user_id.present?
-                        current_user.authy_user_id
-                      elsif authy_user = register_authy_user(current_user.email, phone, country.num_code)
-                        authy_user['id']
-                      end
+      authy_user = if current_user.authy_user.present?
+                     current_user.authy_user
+                   elsif authy_user = register_authy_user(current_user.email, phone, country.num_code)
+                     authy_user['id']
+                   end
 
-      result[:id] = authy_user_id if authy_user_id.present?
+      result[:id] = authy_user if authy_user.present?
 
-      response = send_email(authy_user_id)
+      response = send_email(authy_user)
       # Raise error unless response success, so that we can log exact error
       raise 'Please try again.' unless response && response['success'] == 'success'
     rescue => e
@@ -119,17 +119,17 @@ class OtpsController < ApplicationController
   # https://www.twilio.com/docs/authy/api/one-time-passwords#verify-a-one-time-password
   def verify_add_phone
     result = { error: nil, success: nil }
-    existing_authy_user_id = current_user&.authy_user_id
+    existing_authy_user = current_user&.authy_user
     current_user.phone = otp_params['phone']
     country_id = params[:otp][:country]
     current_user.country = Country.find_by(id: country_id)&.name
-    current_user.authy_user_id = otp_params['authy_user_id']
+    current_user.authy_user = otp_params['authy_user']
 
     begin
       # If user data are not valid
       raise 'Please submit the information again.' unless current_user.valid?
 
-      response = Authy::API.verify(id: current_user.authy_user_id,
+      response = Authy::API.verify(id: current_user.authy_user,
                                    token: otp_params['verification_code'].strip)
 
       # Failed code verification
@@ -141,11 +141,11 @@ class OtpsController < ApplicationController
       result[:success] = 'true'
       session[:authenticated] = true
       flash.now[:notice] = 'Phone number successfully verified.'
-      # Update user information (phone, country, authy_user_id) only after successful verification
+      # Update user information (phone, country, authy_user) only after successful verification
       current_user.save if current_user.phone && current_user.country && current_user.changed?
 
       # Remove previous authy user
-      delete_authy_user(existing_authy_user_id)
+      delete_authy_user(existing_authy_user)
     rescue => e
       # Log failed attempt to verify phone
       result[:error] = 'Something went wrong. ' + e.message
@@ -157,7 +157,7 @@ class OtpsController < ApplicationController
   private
 
   def otp_params
-    params.require(:otp).permit(:verification_code, :authy_user_id, :phone, :country)
+    params.require(:otp).permit(:verification_code, :authy_user, :phone, :country)
   end
 
   def register_authy_user(email, phone, country_code)
@@ -169,8 +169,8 @@ class OtpsController < ApplicationController
     authy_user
   end
 
-  def send_email(authy_user_id)
-    uri = URI.parse("https://api.authy.com/protected/json/email/#{authy_user_id}")
+  def send_email(authy_user)
+    uri = URI.parse("https://api.authy.com/protected/json/email/#{authy_user}")
     request = Net::HTTP::Post.new(uri)
     request['X-Authy-Api-Key'] = ENV['TWILIO_API_KEY']
 
@@ -184,9 +184,9 @@ class OtpsController < ApplicationController
     response.body
   end
 
-  def delete_authy_user(existing_authy_user_id)
-    return unless existing_authy_user_id
+  def delete_authy_user(existing_authy_user)
+    return unless existing_authy_user
 
-    Authy::API.delete_user(id: existing_authy_user_id) if existing_authy_user_id != current_user.authy_user_id
+    Authy::API.delete_user(id: existing_authy_user) if existing_authy_user != current_user.authy_user
   end
 end

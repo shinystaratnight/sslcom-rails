@@ -198,8 +198,8 @@ jQuery(function($) {
             $('#code-verification-fields').show();
             $('#send-otp').hide();
             $('#phone-error').hide(); // Hide in case there were errors before
-            // Value for authy_user_id in form hidden field, to be used in verification
-            $('#otp_authy_user_id').val(result['id']);
+            // Value for authy_user in form hidden field, to be used in verification
+            $('#otp_authy_user').val(result['id']);
           }
         }
       });
@@ -228,8 +228,8 @@ jQuery(function($) {
             $('#submit_phone_verification').hide();
             $('#otp-email').hide();
             $('#phone-error').hide(); // Hide in case there were errors before
-            // Value for authy_user_id in form hidden field, to be used in verification
-            $('#otp_authy_user_id').val(result['id']);
+            // Value for authy_user in form hidden field, to be used in verification
+            $('#otp_authy_user').val(result['id']);
           }
         }
       });
@@ -244,7 +244,7 @@ jQuery(function($) {
         data: {
           otp: {
             verification_code: $('#otp_verification_code').val(),
-            authy_user_id: $('#otp_authy_user_id').val(),
+            authy_user: $('#otp_authy_user').val(),
             phone: $('#user_phone').val(),
             country: $('#user_country_id').find(":selected").val()
           }
