@@ -1,7 +1,3 @@
-# frozen_string_literal: true
-
-# app/controllers/concerns/serializer_helper.rb
-
 require 'active_support/concern'
 
 module SerializerHelper

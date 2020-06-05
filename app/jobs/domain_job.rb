@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require 'airbrake/delayed_job'
 
 class DomainJob < Struct.new(:cc, :acc, :dcv_failure_action, :domains, :dcv_candidate_addresses)

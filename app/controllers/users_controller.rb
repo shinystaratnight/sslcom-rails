@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class UsersController < ApplicationController
   # fix for https://sslcom.airbrake.io/projects/128852/groups/2108774376847787256?resolved=any&tab=overview
   skip_before_action :require_no_authentication, only: [:duo_verify]

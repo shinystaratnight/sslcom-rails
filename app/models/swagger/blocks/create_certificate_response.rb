@@ -1,6 +1,3 @@
-# frozen_string_literal: true
-
-# app/models/swagger/blocks/create_certificate_response.rb
 module Swagger
   module Blocks
     class CreateCertificateResponse

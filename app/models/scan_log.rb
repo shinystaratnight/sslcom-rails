@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # == Schema Information
 #
 # Table name: scan_logs
@@ -19,7 +17,6 @@
 #  index_scan_logs_on_notification_group_id   (notification_group_id)
 #  index_scan_logs_on_scanned_certificate_id  (scanned_certificate_id)
 #
-
 
 class ScanLog < ApplicationRecord
   include Pagable

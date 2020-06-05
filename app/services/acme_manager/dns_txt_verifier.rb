@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module AcmeManager
   class DnsTxtVerifier < ApplicationService
     attr_reader :challenge_url, :thumbprint, :token

@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require 'airbrake/delayed_job'
 
 class WhoIsJob < Struct.new(:dname, :certificate_name)

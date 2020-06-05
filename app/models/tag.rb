@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # == Schema Information
 #
 # Table name: tags
@@ -17,7 +15,6 @@
 #  index_tags_on_ssl_account_id_and_name  (ssl_account_id,name)
 #  index_tags_on_taggings_count           (taggings_count)
 #
-
 
 class Tag < ApplicationRecord
   belongs_to :ssl_account

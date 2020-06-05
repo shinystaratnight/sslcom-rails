@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class SslAccountsController < ApplicationController
   before_action :require_user, only: %i[show edit edit_settings manage_reseller remove_reseller]
   before_action :find_ssl_account

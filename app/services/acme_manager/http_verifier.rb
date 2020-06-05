@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module AcmeManager
   class HttpVerifier < ApplicationService
     attr_reader :challenge_url, :parts, :acme_token, :thumbprint

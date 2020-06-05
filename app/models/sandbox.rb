@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # == Schema Information
 #
 # Table name: websites
@@ -17,7 +15,6 @@
 #  index_websites_on_db_id        (db_id)
 #  index_websites_on_id_and_type  (id,type)
 #
-
 
 class Sandbox < Website
   def self.exists?(domain = '')

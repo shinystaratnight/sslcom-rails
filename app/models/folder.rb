@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # == Schema Information
 #
 # Table name: folders
@@ -34,7 +32,6 @@
 #  index_folders_on_revoked                                         (revoked)
 #  index_folders_on_ssl_account_id                                  (ssl_account_id)
 #
-
 
 class Folder < ApplicationRecord
   extend Memoist

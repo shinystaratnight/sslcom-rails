@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # == Schema Information
 #
 # Table name: certificate_contents
@@ -45,7 +43,7 @@ class CertificateContent < ApplicationRecord
 
   serialize :domains
 
-  attr_accessor  :additional_domains #used to html format results to page
+  attr_accessor  :additional_domains # used to html format results to page
   attr_accessor  :ajax_check_csr
   attr_accessor  :rekey_certificate
   attr_accessor  :skip_validation
@@ -67,7 +65,7 @@ class CertificateContent < ApplicationRecord
   def validate_blocklist
     offenses = Pillar::Authority::BlocklistEntry.matches?(self, ssl_account&.id)
     valid = true
-    
+
     unless offenses.empty?
       offenses.each do |offense|
         if offense[:type] == "Pillar::Authority::BlocklistEntryTypes::Blacklist"
@@ -79,7 +77,7 @@ class CertificateContent < ApplicationRecord
       end
     end
 
-    return valid
+    valid
   end
 
   def pre_validation(options)
@@ -125,7 +123,7 @@ class CertificateContent < ApplicationRecord
   def certificate_names_from_domains(domains=nil)
     is_single = certificate&.is_single?
     csr_common_name=csr.try(:common_name)
-    
+
     unless (is_single || certificate&.is_wildcard?) && certificate_names.count.positive?
       domains ||= self.domains
       new_certificate_names=[]
@@ -142,9 +140,9 @@ class CertificateContent < ApplicationRecord
         CertificateName.destroy_all(certificate_content_id: self.id)
         new_certificate_names.each(&:save)
       end
-      
+
       cns=certificate_names.where(name: new_certificate_names.map(&:name))
-      
+
       unless cns.blank?
         cns.each do |cn|
           cn.candidate_email_addresses # start the queued job running
@@ -152,7 +150,7 @@ class CertificateContent < ApplicationRecord
         Delayed::Job.enqueue OtherDcvsSatisyJob.new(ssl_account, cns, self, 'dv_only') if ssl_account && certificate&.is_server?
       end
     end
-    
+
     # Auto adding domains in case of certificate order has been included into some groups.
     NotificationGroup.auto_manage_cert_name(self, 'create')
   end

@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # == Schema Information
 #
 # Table name: users
@@ -62,7 +60,6 @@
 #  index_users_on_status_and_login_and_email          (status,login,email)
 #  index_users_on_status_and_ssl_account_id           (id,ssl_account_id,status)
 #
-
 
 class UserSerializer < ActiveModel::Serializer
   attribute :standard_avatar_url do

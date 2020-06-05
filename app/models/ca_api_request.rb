@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # == Schema Information
 #
 # Table name: ca_api_requests
@@ -30,7 +28,6 @@
 #  index_ca_api_requests_on_type_and_username                        (type,username)
 #  index_ca_api_requests_on_username_and_approval_id                 (username,approval_id) UNIQUE
 #
-
 
 class CaApiRequest < ApplicationRecord
   belongs_to :api_requestable, polymorphic: true

@@ -1,5 +1,3 @@
-# frozen_string_literal: false
-
 require 'airbrake/delayed_job'
 
 # issuance_type - nil, "dv_only"

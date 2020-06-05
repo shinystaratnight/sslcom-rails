@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require 'acts_as_billable/lib/active_merchant_default_gateway'
 require 'acts_as_billable/lib/acts_as_sellable'
 require 'acts_as_billable/lib/acts_as_seller'

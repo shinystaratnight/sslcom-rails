@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # == Schema Information
 # Schema version: 20200311011643
 #

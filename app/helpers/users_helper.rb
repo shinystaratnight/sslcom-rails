@@ -1,5 +1,3 @@
-# frozen_string_literal: false
-
 module UsersHelper
   def user_status(user)
     result =

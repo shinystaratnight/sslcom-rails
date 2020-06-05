@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # == Schema Information
 #
 # Table name: cdns
@@ -23,7 +21,6 @@
 #
 #  fk_rails_...  (certificate_order_id => certificate_orders.id) ON DELETE => restrict ON UPDATE => restrict
 #
-
 
 class Cdn < ApplicationRecord
   include Pagable

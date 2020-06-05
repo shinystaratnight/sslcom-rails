@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # == Schema Information
 #
 # Table name: site_seals
@@ -16,7 +14,6 @@
 #  index_site_seals_ref             (ref)
 #  index_site_seals_workflow_state  (workflow_state)
 #
-
 
 class SiteSeal < ApplicationRecord
   include Pagable
@@ -46,7 +43,7 @@ class SiteSeal < ApplicationRecord
 
   ACTIVATE = 'activate'
   NEW_STATUS = 'site seal has not been activated yet'
-  FULLY_ACTIVATED_STATUS = "site seal has been fully activated with all features"
+  FULLY_ACTIVATED_STATUS = 'site seal has been fully activated with all features'
   CONDITIONALLY_ACTIVATED_STATUS = 'site seal has been partially activated, pending final approval'
   DEACTIVATED_STATUS = 'site seal has been temporarily deactivated'
   CANCELED_STATUS = 'site seal has been disabled pending investigation'

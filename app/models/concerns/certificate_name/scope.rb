@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module Concerns
   module CertificateName
     module Scope

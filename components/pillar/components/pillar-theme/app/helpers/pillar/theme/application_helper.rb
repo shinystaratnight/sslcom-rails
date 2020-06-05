@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require "webpacker/helper"
 require "pillar/theme/active_link_to"
 

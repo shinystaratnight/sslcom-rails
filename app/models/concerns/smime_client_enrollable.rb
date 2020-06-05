@@ -5,12 +5,12 @@ module SmimeClientEnrollable
     @sce_ssl = billable
     @sce_current_user = User.find current_user_id
     @sce_epki_registrant = @sce_ssl.epki_registrant
-    
+
     certificate_orders.includes(:certificate_contents).uniq.each do |co|
       @sce_co = co
       @sce_email = @sce_co.certificate_content.domains.first
       @sce_iv_exists = @sce_ssl.individual_validations.find_by(email: @sce_email)
-      
+
       if @sce_iv_exists && User.find_by(id: @sce_iv_exists.user_id)
         @sce_co.update_column(:assignee_id, @sce_iv_exists.user_id)
       else
@@ -28,7 +28,7 @@ module SmimeClientEnrollable
     user_exists = User.find_by(email: @sce_email)
     if user_exists
       user_exists_for_team = @sce_ssl.users.find_by(id: user_exists.id)
-      
+
       if user_exists_for_team
         @sce_iv_exists = @sce_ssl.individual_validations.find_by(email: user_exists_for_team.email)
         smime_client_enroll_sync_user_iv(user_exists_for_team.id)
@@ -44,7 +44,7 @@ module SmimeClientEnrollable
           user_id: user_exists.id
         )
       end
-      
+
       # Add user to team w/role individual_certificate
       unless user_exists_for_team
         user_exists.ssl_accounts << @sce_ssl

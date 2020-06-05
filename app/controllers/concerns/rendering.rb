@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require 'active_support/concern'
 module Rendering
   extend ActiveSupport::Concern

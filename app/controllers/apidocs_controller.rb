@@ -1,6 +1,4 @@
-# frozen_string_literal: true
 
-# app/controllers/apidocs_controller.rb
 class ApidocsController < ApplicationController
   include Swagger::Blocks
 

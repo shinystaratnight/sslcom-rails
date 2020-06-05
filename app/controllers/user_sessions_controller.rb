@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class UserSessionsController < ApplicationController
   before_action :require_no_user, only: [:new]
   before_action :find_dup_login, only: [:create]

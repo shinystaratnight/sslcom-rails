@@ -1,5 +1,3 @@
-# frozen_string_literal: false
-
 # == Schema Information
 #
 # Table name: billing_profiles

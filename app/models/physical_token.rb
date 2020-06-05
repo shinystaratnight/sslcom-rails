@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # == Schema Information
 #
 # Table name: physical_tokens
@@ -31,7 +29,7 @@
 class PhysicalToken < ApplicationRecord
   include Workflow
 
-  MAKE_AND_MODELS={Gemalto: %w(5100\ eToken), Yubico: %w(Yubikey\ FIPS\ 140-2)}
+  MAKE_AND_MODELS = { Gemalto: %w(5100\ eToken), Yubico: %w(Yubikey\ FIPS\ 140-2) }
   CARRIERS = ['Not Yet Shipped', 'FedEx', 'UPS', 'USPS', 'DHL', 'in-person'].freeze
 
   belongs_to :certificate_order
@@ -55,23 +53,23 @@ class PhysicalToken < ApplicationRecord
 
   workflow do
     state :new do
-      event :in_stay, :transitions_to => :not_yet_shipped
-      event :ship_token, :transitions_to => :in_transit
-      event :confirm_serial, :transitions_to => :in_possession
-      event :soft_delete, :transitions_to => :soft_deleted
+      event :in_stay, transitions_to: :not_yet_shipped
+      event :ship_token, transitions_to: :in_transit
+      event :confirm_serial, transitions_to: :in_possession
+      event :soft_delete, transitions_to: :soft_deleted
     end
 
     state :not_yet_shipped do
-      event :ship_token, :transitions_to => :in_transit
-      event :confirm_serial, :transitions_to => :in_possession
-      event :soft_delete, :transitions_to => :soft_deleted
+      event :ship_token, transitions_to: :in_transit
+      event :confirm_serial, transitions_to: :in_possession
+      event :soft_delete, transitions_to: :soft_deleted
     end
 
     state :in_transit do
-      event :in_stay, :transitions_to => :not_yet_shipped
-      event :shipping_recipient_confirmation, :transitions_to => :received
-      event :confirm_serial, :transitions_to => :in_possession
-      event :soft_delete, :transitions_to => :soft_deleted
+      event :in_stay, transitions_to: :not_yet_shipped
+      event :shipping_recipient_confirmation, transitions_to: :received
+      event :confirm_serial, transitions_to: :in_possession
+      event :soft_delete, transitions_to: :soft_deleted
     end
 
     state :received
@@ -80,7 +78,7 @@ class PhysicalToken < ApplicationRecord
   end
 
   def make_and_model
-    [manufacturer,model_number].join(" ")
+    [manufacturer, model_number].join(' ')
   end
 
   scope :active, ->{where{(workflow_state << ['soft_deleted'])}}

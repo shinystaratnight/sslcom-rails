@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class CertificatesController < ApplicationController
   before_action :find_tier
   before_action :require_user, only: %i[buy buy_renewal], if: -> { request.subdomain == Reseller::SUBDOMAIN }
