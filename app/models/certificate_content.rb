@@ -147,7 +147,7 @@ class CertificateContent < ApplicationRecord
         cns.each do |cn|
           cn.candidate_email_addresses # start the queued job running
         end
-        Delayed::Job.enqueue OtherDcvsSatisyJob.new(ssl_account, cns, self, 'dv_only') if ssl_account && certificate&.is_server?
+        Delayed::Job.enqueue OtherDcvsSatisfyJob.new(ssl_account, cns, self, 'dv_only') if ssl_account && certificate&.is_server?
       end
     end
 
