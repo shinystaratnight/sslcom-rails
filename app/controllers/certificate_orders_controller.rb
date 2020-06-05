@@ -19,7 +19,6 @@ class CertificateOrdersController < ApplicationController
   include OrdersHelper
   include CertificateOrdersHelper
 
-  caches_action :enrollment
   skip_before_action :verify_authenticity_token, only: [:parse_csr]
   filter_access_to :all, except: [:generate_cert]
   filter_access_to :read, :update, :delete, :show, :edit, :developer, :recipient
