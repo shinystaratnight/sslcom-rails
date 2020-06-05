@@ -1,7 +1,7 @@
 require 'airbrake/delayed_job'
 
 # issuance_type - nil, "dv_only"
-class OtherDcvsSatisyJob < Struct.new(:ssl_account, :new_certificate_names, :certificate_content, :issuance_type)
+class OtherDcvsSatisfyJob < Struct.new(:ssl_account, :new_certificate_names, :certificate_content, :issuance_type)
   def perform
     new_certificate_names = [new_certificate_names] if new_certificate_names.is_a?(CertificateName)
     ssl_account.other_dcvs_satisfy_domain(new_certificate_names, false)
