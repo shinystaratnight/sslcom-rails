@@ -50,21 +50,26 @@ class OtpsController < ApplicationController
   end
 
   def email
+    authy_user = ''
     # We must have values for country and phone to register user (prior to sending the email)
-    country_name = params['otp']['country'] || current_user.country if params['otp']
-    phone = params['otp']['phone'] || current_user.phone if params['otp']
-    unless phone && country_name
+    country_name = params['otp']['country'] if params['otp']
+    country_name ||= current_user&.country
+    country =  ISO3166::Country.find_country_by_name(country_name)
+
+    phone = params['otp']['phone'] if params['otp']
+    phone ||= current_user.phone
+
+    unless phone.present? && country
       render json: { error: 'Please complete your phone details' } and return
     end
 
     result = { id: nil, error: nil }
-    country = Country.find_by(name: country_name)
 
     begin
       # Get existing authy_id of current_user, or register user with authy
       authy_user = if current_user.authy_user.present?
                      current_user.authy_user
-                   elsif authy_user = register_authy_user(current_user.email, phone, country.num_code)
+                   elsif authy_user = register_authy_user(current_user.email, phone, country.country_code)
                      authy_user['id']
                    end
 
@@ -86,11 +91,12 @@ class OtpsController < ApplicationController
     result = { id: nil, error: nil }
 
     begin
-      raise 'Please try again.' unless params['otp']
+      raise 'Please try again.' unless params['otp'] && params['otp']['country'] && params['otp']['phone']
 
-      phone = params[:otp][:phone] || current_user&.phone
-      country = Country.find_by(id: params['otp']['country']) if params['otp']['country']
-      country ||= Country.find_by(name: current_user&.country )
+      phone = params['otp']['phone']
+      country_name = params['otp']['country']
+      country =  ISO3166::Country.find_country_by_name(country_name)
+
       # We must have form values for country and phone
       raise 'Please try again.' unless phone.present? && country.present?
 
@@ -98,7 +104,7 @@ class OtpsController < ApplicationController
       current_user.country = country.name
       raise 'Phone already verified!' unless current_user.requires_phone_verification?
 
-      authy_user = register_authy_user(current_user.email, phone, country.num_code)
+      authy_user = register_authy_user(current_user.email, phone, country.country_code)
 
       raise 'Please check the number you provided, and try again.' if authy_user['id'].blank?
 
@@ -121,10 +127,8 @@ class OtpsController < ApplicationController
     result = { error: nil, success: nil }
     existing_authy_user = current_user&.authy_user
     current_user.phone = otp_params['phone']
-    country_id = params[:otp][:country]
-    current_user.country = Country.find_by(id: country_id)&.name
+    current_user.country = otp_params['country']
     current_user.authy_user = otp_params['authy_user']
-
     begin
       # If user data are not valid
       raise 'Please submit the information again.' unless current_user.valid?
@@ -170,6 +174,8 @@ class OtpsController < ApplicationController
   end
 
   def send_email(authy_user)
+    return unless authy_user.present?
+
     uri = URI.parse("https://api.authy.com/protected/json/email/#{authy_user}")
     request = Net::HTTP::Post.new(uri)
     request['X-Authy-Api-Key'] = ENV['TWILIO_API_KEY']

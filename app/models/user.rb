@@ -782,9 +782,8 @@ class User < ApplicationRecord
     authy_user_result = Authy::API.user_status(id: authy_user)
     return false unless authy_user_result['success'] == true
 
-    user_country_code = Country.find_by(name: country)&.num_code
-
-    authy_user_result['status']['phone_number']&.last(4) == phone&.last(4) && authy_user_result['status']['country_code'] == user_country_code
+    user_country_code = ISO3166::Country.find_country_by_name(country)&.country_code
+    authy_user_result['status']['phone_number']&.last(4) == phone&.last(4) && authy_user_result['status']['country_code'].to_s == user_country_code.to_s
   end
 
   ##
