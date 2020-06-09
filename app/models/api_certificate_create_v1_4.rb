@@ -532,8 +532,9 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
         api_log_entry=options[:certificate_order].apply_for_certificate(mapping: cc.ca)
         if api_log_entry
           if api_log_entry.instance_of?(SslcomCaRequest) and api_log_entry.response=~/Check CAA/
+            invalid_domain = api_log_entry.response.scan(/Not allowed to issue certificate for dnsName (.*?+)\.\s/).flatten
             self.order_status =
-                "CAA validation failed. See https://#{Settings.portal_domain}/how-to/configure-caa-records-to-authorize-ssl-com/"
+              "CAA validation failed. Domains do not pass CAA check: #{invalid_domain.join(', ')}. See https://#{Settings.portal_domain}/how-to/configure-caa-records-to-authorize-ssl-com/"
           end
           cc.issue! unless api_log_entry.certificate_chain.blank?
         end
