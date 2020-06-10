@@ -1,6 +1,6 @@
 -cn=cn.gsub(/^\*\./, "").downcase
 %li
   %strong verify and troubleshoot
-%li=link_to "check ssl installation", "http://www.ssltools.com/certificate_lookup/#{cn}", target: "_blank"
+%li=link_to "check ssl installation", "https://www.sslshopper.com/ssl-checker.html?hostname=#{cn}", target: "_blank"
 %li=link_to "visit site with ssl", "https://#{cn}", target: "_blank"
 %li.category_border=link_to "visit site without ssl", "http://#{cn}", target: "_blank"
