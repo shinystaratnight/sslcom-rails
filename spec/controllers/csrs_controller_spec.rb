@@ -45,6 +45,120 @@ describe CsrsController do
   end
 
   describe 'verification_check' do
+    context 'domain validation' do
+      context 'http' do
+        it 'creates a dcv via http validation' do
+          domain = FactoryBot.create(:certificate_name)
+          certificate_content = domain.certificate_content
+          csr = certificate_content.csr
+          @user.ssl_accounts << certificate_content.certificate_order.ssl_account
+          CertificateName.any_instance.stubs(:dcv_verify).returns(true)
+          get :verification_check, team: @user.ssl_accounts.first.ssl_slug, id: "#{csr.id}", dcv_protocol: 'http', dcv: "certificate_name:#{domain.name}", new_name: "#{domain.name}", ref: "#{certificate_content.ref}", format: :json
+
+          dcv = DomainControlValidation.last
+          expect(DomainControlValidation.count).to eq 1
+          expect(dcv.identifier).to eq "#{csr.sha2_hash}\n#{csr.ca_tag}\n#{csr.unique_value}"
+          expect(dcv.address_to_find_identifier).to eq "http://#{domain.name}/.well-known/pki-validation/#{csr.md5_hash}.txt"
+          expect(dcv.validation_compliance_id).to eq 6
+          expect(dcv.identifier_found).to eq true
+          expect(dcv.workflow_state).to match /satisfied/
+        end
+
+        it 'does not create a dcv via http validation' do
+          domain = FactoryBot.create(:certificate_name)
+          certificate_content = domain.certificate_content
+          csr = certificate_content.csr
+          @user.ssl_accounts << certificate_content.certificate_order.ssl_account
+          CertificateName.any_instance.stubs(:dcv_verify).returns(nil)
+
+          get :verification_check, team: @user.ssl_accounts.first.ssl_slug, id: "#{csr.id}", dcv_protocol: 'http', dcv: "certificate_name:#{domain.name}", new_name: "#{domain.name}", ref: "#{certificate_content.ref}", format: :json
+          expect(DomainControlValidation.count).to eq 0
+        end
+      end
+
+      context 'https' do
+        it 'creates a dcv via https validation' do
+          domain = FactoryBot.create(:certificate_name)
+          certificate_content = domain.certificate_content
+          csr = certificate_content.csr
+          @user.ssl_accounts << certificate_content.certificate_order.ssl_account
+          CertificateName.any_instance.stubs(:dcv_verify).returns(true)
+          get :verification_check, team: @user.ssl_accounts.first.ssl_slug, id: "#{csr.id}", dcv_protocol: 'https', dcv: "certificate_name:#{domain.name}", new_name: "#{domain.name}", ref: "#{certificate_content.ref}", format: :json
+
+          dcv = DomainControlValidation.last
+          expect(DomainControlValidation.count).to eq 1
+          expect(dcv.identifier).to eq "#{csr.sha2_hash}\n#{csr.ca_tag}\n#{csr.unique_value}"
+          expect(dcv.address_to_find_identifier).to eq "https://#{domain.name}/.well-known/pki-validation/#{csr.md5_hash}.txt"
+          expect(dcv.validation_compliance_id).to eq 6
+          expect(dcv.identifier_found).to eq true
+          expect(dcv.workflow_state).to match /satisfied/
+        end
+
+        it 'does not create a dcv via https validation' do
+          domain = FactoryBot.create(:certificate_name)
+          certificate_content = domain.certificate_content
+          csr = certificate_content.csr
+          @user.ssl_accounts << certificate_content.certificate_order.ssl_account
+          CertificateName.any_instance.stubs(:dcv_verify).returns(nil)
+
+          get :verification_check, team: @user.ssl_accounts.first.ssl_slug, id: "#{csr.id}", dcv_protocol: 'https', dcv: "certificate_name:#{domain.name}", new_name: "#{domain.name}", ref: "#{certificate_content.ref}", format: :json
+          expect(DomainControlValidation.count).to eq 0
+        end
+      end
+
+      context 'cname' do
+        it 'creates a dcv via cname validation' do
+          domain = FactoryBot.create(:certificate_name)
+          certificate_content = domain.certificate_content
+          csr = certificate_content.csr
+          @user.ssl_accounts << certificate_content.certificate_order.ssl_account
+          CertificateName.any_instance.stubs(:dcv_verify).returns(true)
+          get :verification_check, team: @user.ssl_accounts.first.ssl_slug, id: "#{csr.id}", dcv_protocol: 'cname', dcv: "certificate_name:#{domain.name}", new_name: "#{domain.name}", ref: "#{certificate_content.ref}", format: :json
+
+          dcv = DomainControlValidation.last
+          expect(DomainControlValidation.count).to eq 1
+          expect(dcv.identifier).to eq "#{csr.dns_sha2_hash}.#{csr.ca_tag}"
+          expect(dcv.address_to_find_identifier).to eq "#{csr.dns_md5_hash}.#{domain.name}"
+          expect(dcv.validation_compliance_id).to eq 7
+          expect(dcv.identifier_found).to eq true
+          expect(dcv.workflow_state).to match /satisfied/
+        end
+
+        it 'does not create a dcv via cname validation' do
+          domain = FactoryBot.create(:certificate_name)
+          certificate_content = domain.certificate_content
+          csr = certificate_content.csr
+          @user.ssl_accounts << certificate_content.certificate_order.ssl_account
+          CertificateName.any_instance.stubs(:dcv_verify).returns(nil)
+
+          get :verification_check, team: @user.ssl_accounts.first.ssl_slug, id: "#{csr.id}", dcv_protocol: 'cname', dcv: "certificate_name:#{domain.name}", new_name: "#{domain.name}", ref: "#{certificate_content.ref}", format: :json
+          expect(DomainControlValidation.count).to eq 0
+        end
+      end
+
+      context 'with a preexisting domain control validation' do
+        it 'satisfies the previous dcv attempt' do
+          domain = FactoryBot.create(:certificate_name)
+          domain.domain_control_validations << create(:domain_control_validation, dcv_method: 'cname' )
+          certificate_content = domain.certificate_content
+          csr = certificate_content.csr
+          @user.ssl_accounts << certificate_content.certificate_order.ssl_account
+          CertificateName.any_instance.stubs(:dcv_verify).returns(true)
+
+          get :verification_check, team: @user.ssl_accounts.first.ssl_slug, id: "#{csr.id}", dcv_protocol: 'cname', dcv: "certificate_name:#{domain.name}", new_name: "#{domain.name}", ref: "#{certificate_content.ref}", format: :json
+
+          dcv = DomainControlValidation.last
+          expect(domain.domain_control_validations.count).to eq 1
+          expect(DomainControlValidation.count).to eq 1
+          expect(dcv.identifier).to eq "#{csr.dns_sha2_hash}.#{csr.ca_tag}"
+          expect(dcv.address_to_find_identifier).to eq "#{csr.dns_md5_hash}.#{domain.name}"
+          expect(dcv.validation_compliance_id).to eq 7
+          expect(dcv.identifier_found).to eq true
+          expect(dcv.workflow_state).to match /satisfied/
+        end
+      end
+    end
+
     context 'domain prevalidation' do
       context 'http' do
         it 'creates a dcv via http validation' do

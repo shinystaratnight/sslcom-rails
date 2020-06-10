@@ -130,7 +130,7 @@ describe CertificateName do
 
     before do
       cname.stubs(:fail_dcv).returns(false)
-      cname.stubs(:satify_dcv).returns(true)
+      cname.stubs(:satisfy_dcv).returns(true)
       cname.stubs(:sleep)
     end
 

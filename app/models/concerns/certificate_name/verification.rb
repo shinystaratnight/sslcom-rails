@@ -13,7 +13,7 @@ module Concerns
                    sleep 5 if attempts < 3
                  end
         if status == true
-          satify_dcv
+          satisfy_dcv
         else
           fail_dcv
         end
@@ -37,7 +37,7 @@ module Concerns
         end
       end
 
-      def satify_dcv
+      def satisfy_dcv
         domain_control_validation.satisfy! unless domain_control_validation.satisfied?
         true
       end

@@ -36,6 +36,7 @@ class CsrsController < ApplicationController
   def verification_check
     http_or_s = false
 
+    # Validation route via non email
     if params[:ref]
       if cc = CertificateContent.find_by_ref(params[:ref])
         cn = cc.certificate_names.find_by_name(params[:dcv].split(':')[1])
@@ -46,10 +47,11 @@ class CsrsController < ApplicationController
 
           if http_or_s
             dcv = cn.domain_control_validations.last
+
             if dcv && (dcv.dcv_method == params[:dcv_protocol])
               dcv.satisfy! unless dcv.satisfied?
             else
-              dcv = csr.domain_control_validations.create(
+              dcv = cn.domain_control_validations.create(
                   dcv_method: params[:dcv_protocol],
                   candidate_addresses: nil,
                   failure_action: 'ignore')
@@ -61,6 +63,7 @@ class CsrsController < ApplicationController
         end
       end
     else
+      # Prevalidation route via non email
       cn = CertificateName.includes(:domain_control_validations).find_by_id(params[:choose_cn])
       csr = Csr.find_by_id(params[:selected_csr])
 
