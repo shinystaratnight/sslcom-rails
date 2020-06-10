@@ -120,29 +120,30 @@ class CertificateContent < ApplicationRecord
     end
   end
 
-  def certificate_names_from_domains(domains=nil)
+  def certificate_names_from_domains(domains = nil)
     is_single = certificate&.is_single?
     csr_common_name=csr.try(:common_name)
 
     unless (is_single || certificate&.is_wildcard?) && certificate_names.count.positive?
-      domains ||= self.domains
-      new_certificate_names=[]
-
-      if is_single && common_name && !domains.include?(common_name)
-        domains << CertificateContent.non_wildcard_name(common_name, true)
+      domains ||= self.domains ? self.domains : csr.try(:all_domains)
+      new_certificate_names = []
+      
+      domains = domains.each do |domain| 
+        is_single ? CertificateContent.non_wildcard_name(domain, true) : domain.downcase
       end
+      
+      domains = domains.uniq
 
-      domains.uniq.each do |domain|
+      domains.each do |domain|
         new_certificate_names << certificate_names.new(name: domain, is_common_name: csr_common_name == domain)
       end
 
       ActiveRecord::Base.transaction do
         CertificateName.destroy_all(certificate_content_id: self.id)
-        new_certificate_names.each(&:save)
+        CertificateName.import new_certificate_names
       end
-
+      
       cns=certificate_names.where(name: new_certificate_names.map(&:name))
-
       unless cns.blank?
         cns.each do |cn|
           cn.candidate_email_addresses # start the queued job running
@@ -150,7 +151,6 @@ class CertificateContent < ApplicationRecord
         Delayed::Job.enqueue OtherDcvsSatisfyJob.new(ssl_account, cns, self, 'dv_only') if ssl_account && certificate&.is_server?
       end
     end
-
     # Auto adding domains in case of certificate order has been included into some groups.
     NotificationGroup.auto_manage_cert_name(self, 'create')
   end

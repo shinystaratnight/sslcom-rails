@@ -32,10 +32,12 @@ module Pillar
       end
 
       def self.matches?(certificate_content, account_id = nil)
+        certificate_content.certificate_names.reload
+        
         offenses = []
         subject_hash = {}
         subject_dn = certificate_content&.subject_dn
-        domains = certificate_content&.all_domains
+        domains = certificate_content&.certificate_names.map(&:name)
         registrant = certificate_content&.registrant || certificate_content&.certificate_order&.locked_recipient
 
         subject = OpenSSL::X509::Name.parse(subject_dn)
