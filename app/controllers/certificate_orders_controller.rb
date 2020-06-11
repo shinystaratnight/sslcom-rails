@@ -243,7 +243,6 @@ class CertificateOrdersController < ApplicationController
   # GET /certificate_orders/1/reprocess
   def reprocess
     @certificate_order = recert(CertificateOrder::REPROCESSING)
-    @certificate_order.unchain_comodo if @certificate_order.signed_certificate_duration_delta > 1
     @tier = find_tier
     unless @certificate_order.blank?
       if @certificate_order.certificate_content.workflow_state == 'pending_validation' &&
