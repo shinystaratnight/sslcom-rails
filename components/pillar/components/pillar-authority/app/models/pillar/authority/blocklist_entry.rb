@@ -40,6 +40,8 @@ module Pillar
         domains = certificate_content&.certificate_names.map(&:name)
         registrant = certificate_content&.registrant || certificate_content&.certificate_order&.locked_recipient
 
+        subject_dn = '' if subject_dn.nil?
+        
         subject = OpenSSL::X509::Name.parse(subject_dn)
         domains.delete(subject.try(:common_name))
 
