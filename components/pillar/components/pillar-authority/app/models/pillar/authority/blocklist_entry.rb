@@ -40,51 +40,52 @@ module Pillar
         domains = certificate_content&.certificate_names.map(&:name)
         registrant = certificate_content&.registrant || certificate_content&.certificate_order&.locked_recipient
 
-        subject_dn = '' if subject_dn.nil?
+        if subject_dn && subject_dn != ''
         
-        subject = OpenSSL::X509::Name.parse(subject_dn)
-        domains.delete(subject.try(:common_name))
+          subject = OpenSSL::X509::Name.parse(subject_dn)
+          domains.delete(subject.try(:common_name))
 
-        subject_hash = {
-          common_name: subject.try(:common_name),
-          organization: registrant&.company_name || subject.try(:organization),
-          organization_unit: registrant&.department || subject.try(:organizational_unit),
-          location: registrant&.city || subject.try(:locality),
-          state: registrant&.state || subject.try(:state),
-          country: registrant&.country || subject.try(:country),
-          san: domains.join(",") || nil
-        }
+          subject_hash = {
+            common_name: subject.try(:common_name),
+            organization: registrant&.company_name || subject.try(:organization),
+            organization_unit: registrant&.department || subject.try(:organizational_unit),
+            location: registrant&.city || subject.try(:locality),
+            state: registrant&.state || subject.try(:state),
+            country: registrant&.country || subject.try(:country),
+            san: domains.join(",") || nil
+          }
 
-        subject_hash.each_with_index do |(key, value), index|
-          if index == 0
-            @query = BlocklistEntry.where("? REGEXP LOWER(pattern) AND `#{key}` = ?", value&.downcase, true)
-          else
-            @query = @query.or("? REGEXP LOWER(pattern) AND `#{key}` = ?",  value&.downcase, true)
-          end      
-        end
-
-        puts "====> SUBJECT DN CHECK <===="
-        puts "\tSubjectDN => #{subject_dn.inspect}"
-        puts "\tDomains => #{domains.inspect}"
-        puts "\tSubjectHash => #{subject_hash.inspect}"
-        puts "\tQuery => #{@query.to_sql}"
-
-        @query.all.each do |row|
-          if account_id
-            exempt = row.blocklist_entry_exemptions.where(account_id: account_id).exists?
-          else
-            exempt = false
+          subject_hash.each_with_index do |(key, value), index|
+            if index == 0
+              @query = BlocklistEntry.where("? REGEXP LOWER(pattern) AND `#{key}` = ?", value&.downcase, true)
+            else
+              @query = @query.or("? REGEXP LOWER(pattern) AND `#{key}` = ?",  value&.downcase, true)
+            end      
           end
 
-          unless exempt
-            offense = {
-              type: row.type,
-              matches: build_match_array(subject_hash, row),
-              blocklist_entry_id: row.id,
-              blocklist_entry_pattern: row.pattern
-            }
+          puts "====> SUBJECT DN CHECK <===="
+          puts "\tSubjectDN => #{subject_dn.inspect}"
+          puts "\tDomains => #{domains.inspect}"
+          puts "\tSubjectHash => #{subject_hash.inspect}"
+          puts "\tQuery => #{@query.to_sql}"
 
-            offenses.push(offense)
+          @query.all.each do |row|
+            if account_id
+              exempt = row.blocklist_entry_exemptions.where(account_id: account_id).exists?
+            else
+              exempt = false
+            end
+
+            unless exempt
+              offense = {
+                type: row.type,
+                matches: build_match_array(subject_hash, row),
+                blocklist_entry_id: row.id,
+                blocklist_entry_pattern: row.pattern
+              }
+
+              offenses.push(offense)
+            end
           end
         end
 
