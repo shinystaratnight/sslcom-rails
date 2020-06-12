@@ -55,8 +55,7 @@ describe CsrsController do
           CertificateName.any_instance.stubs(:dcv_verify).returns(true)
           get :verification_check, team: @user.ssl_accounts.first.ssl_slug, id: "#{csr.id}", dcv_protocol: 'http', dcv: "certificate_name:#{domain.name}", new_name: "#{domain.name}", ref: "#{certificate_content.ref}", format: :json
 
-          dcv = DomainControlValidation.last
-          expect(DomainControlValidation.count).to eq 1
+          dcv = DomainControlValidation.where(workflow_state: 'satisfied').first
           expect(dcv.identifier).to eq "#{csr.sha2_hash}\n#{csr.ca_tag}\n#{csr.unique_value}"
           expect(dcv.address_to_find_identifier).to eq "http://#{domain.name}/.well-known/pki-validation/#{csr.md5_hash}.txt"
           expect(dcv.validation_compliance_id).to eq 6
@@ -72,7 +71,7 @@ describe CsrsController do
           CertificateName.any_instance.stubs(:dcv_verify).returns(nil)
 
           get :verification_check, team: @user.ssl_accounts.first.ssl_slug, id: "#{csr.id}", dcv_protocol: 'http', dcv: "certificate_name:#{domain.name}", new_name: "#{domain.name}", ref: "#{certificate_content.ref}", format: :json
-          expect(DomainControlValidation.count).to eq 0
+          expect(DomainControlValidation.satisfied).to be_empty
         end
       end
 
@@ -85,8 +84,7 @@ describe CsrsController do
           CertificateName.any_instance.stubs(:dcv_verify).returns(true)
           get :verification_check, team: @user.ssl_accounts.first.ssl_slug, id: "#{csr.id}", dcv_protocol: 'https', dcv: "certificate_name:#{domain.name}", new_name: "#{domain.name}", ref: "#{certificate_content.ref}", format: :json
 
-          dcv = DomainControlValidation.last
-          expect(DomainControlValidation.count).to eq 1
+          dcv = DomainControlValidation.where(workflow_state: 'satisfied').first
           expect(dcv.identifier).to eq "#{csr.sha2_hash}\n#{csr.ca_tag}\n#{csr.unique_value}"
           expect(dcv.address_to_find_identifier).to eq "https://#{domain.name}/.well-known/pki-validation/#{csr.md5_hash}.txt"
           expect(dcv.validation_compliance_id).to eq 6
@@ -102,7 +100,7 @@ describe CsrsController do
           CertificateName.any_instance.stubs(:dcv_verify).returns(nil)
 
           get :verification_check, team: @user.ssl_accounts.first.ssl_slug, id: "#{csr.id}", dcv_protocol: 'https', dcv: "certificate_name:#{domain.name}", new_name: "#{domain.name}", ref: "#{certificate_content.ref}", format: :json
-          expect(DomainControlValidation.count).to eq 0
+          expect(DomainControlValidation.satisfied).to be_empty
         end
       end
 
@@ -115,8 +113,7 @@ describe CsrsController do
           CertificateName.any_instance.stubs(:dcv_verify).returns(true)
           get :verification_check, team: @user.ssl_accounts.first.ssl_slug, id: "#{csr.id}", dcv_protocol: 'cname', dcv: "certificate_name:#{domain.name}", new_name: "#{domain.name}", ref: "#{certificate_content.ref}", format: :json
 
-          dcv = DomainControlValidation.last
-          expect(DomainControlValidation.count).to eq 1
+          dcv = DomainControlValidation.where(workflow_state: 'satisfied').first
           expect(dcv.identifier).to eq "#{csr.dns_sha2_hash}.#{csr.ca_tag}"
           expect(dcv.address_to_find_identifier).to eq "#{csr.dns_md5_hash}.#{domain.name}"
           expect(dcv.validation_compliance_id).to eq 7
@@ -132,7 +129,7 @@ describe CsrsController do
           CertificateName.any_instance.stubs(:dcv_verify).returns(nil)
 
           get :verification_check, team: @user.ssl_accounts.first.ssl_slug, id: "#{csr.id}", dcv_protocol: 'cname', dcv: "certificate_name:#{domain.name}", new_name: "#{domain.name}", ref: "#{certificate_content.ref}", format: :json
-          expect(DomainControlValidation.count).to eq 0
+          expect(DomainControlValidation.satisfied).to be_empty
         end
       end
 
@@ -147,9 +144,7 @@ describe CsrsController do
 
           get :verification_check, team: @user.ssl_accounts.first.ssl_slug, id: "#{csr.id}", dcv_protocol: 'cname', dcv: "certificate_name:#{domain.name}", new_name: "#{domain.name}", ref: "#{certificate_content.ref}", format: :json
 
-          dcv = DomainControlValidation.last
-          expect(domain.domain_control_validations.count).to eq 1
-          expect(DomainControlValidation.count).to eq 1
+          dcv = DomainControlValidation.where(workflow_state: 'satisfied').first
           expect(dcv.identifier).to eq "#{csr.dns_sha2_hash}.#{csr.ca_tag}"
           expect(dcv.address_to_find_identifier).to eq "#{csr.dns_md5_hash}.#{domain.name}"
           expect(dcv.validation_compliance_id).to eq 7
@@ -178,8 +173,7 @@ describe CsrsController do
           CertificateName.expects(:dcv_verify).with('http', dcv_options).returns(true)
           get :verification_check, team: ssl_slug, id: csr.id, dcv_protocol: 'http', choose_cn: "#{domain.id}", selected_csr: "#{csr.id}", format: :json
 
-          dcv = DomainControlValidation.last
-          expect(DomainControlValidation.count).to eq 1
+          dcv = DomainControlValidation.where(workflow_state: 'satisfied').first
           expect(dcv.identifier).to eq "#{csr.sha2_hash}\n#{csr.ca_tag}\n#{csr.unique_value}"
           expect(dcv.address_to_find_identifier).to eq "http://#{domain.name}/.well-known/pki-validation/#{csr.md5_hash}.txt"
           expect(dcv.validation_compliance_id).to eq 6
@@ -203,7 +197,7 @@ describe CsrsController do
           ssl_slug = @user.ssl_accounts.first.ssl_slug
           CertificateName.expects(:dcv_verify).with('http', dcv_options).returns(nil)
           get :verification_check, team: ssl_slug, id: csr.id, dcv_protocol: 'http', choose_cn: "#{domain.id}", selected_csr: "#{csr.id}", format: :json
-          expect(DomainControlValidation.count).to eq 0
+          expect(DomainControlValidation.satisfied).to be_empty
         end
       end
 
@@ -224,8 +218,8 @@ describe CsrsController do
           ssl_slug = @user.ssl_accounts.first.ssl_slug
           CertificateName.expects(:dcv_verify).with('https', dcv_options).returns(true)
           get :verification_check, team: ssl_slug, id: csr.id, dcv_protocol: 'https', choose_cn: "#{domain.id}", selected_csr: "#{csr.id}", format: :json
-          dcv = DomainControlValidation.last
-          expect(DomainControlValidation.count).to eq 1
+
+          dcv = DomainControlValidation.where(workflow_state: 'satisfied').first
           expect(dcv.identifier).to eq "#{csr.sha2_hash}\n#{csr.ca_tag}\n#{csr.unique_value}"
           expect(dcv.address_to_find_identifier).to eq "https://#{domain.name}/.well-known/pki-validation/#{csr.md5_hash}.txt"
           expect(dcv.validation_compliance_id).to eq 6
@@ -249,7 +243,7 @@ describe CsrsController do
           ssl_slug = @user.ssl_accounts.first.ssl_slug
           CertificateName.expects(:dcv_verify).with('https', dcv_options).returns(nil)
           get :verification_check, team: ssl_slug, id: csr.id, dcv_protocol: 'https', choose_cn: "#{domain.id}", selected_csr: "#{csr.id}", format: :json
-          expect(DomainControlValidation.count).to eq 0
+          expect(DomainControlValidation.satisfied).to be_empty
         end
       end
 
@@ -271,8 +265,7 @@ describe CsrsController do
           CertificateName.expects(:dcv_verify).with('cname', dcv_options).returns(true)
           get :verification_check, team: ssl_slug, id: csr.id, dcv_protocol: 'cname', choose_cn: "#{domain.id}", selected_csr: "#{csr.id}", format: :json
 
-          dcv = DomainControlValidation.last
-          expect(DomainControlValidation.count).to eq 1
+          dcv = DomainControlValidation.where(workflow_state: 'satisfied').first
           expect(dcv.identifier).to eq "#{csr.dns_sha2_hash}.#{csr.ca_tag}"
           expect(dcv.address_to_find_identifier).to eq "#{csr.dns_md5_hash}.#{domain.name}"
           expect(dcv.validation_compliance_id).to eq 7
@@ -298,7 +291,7 @@ describe CsrsController do
           CertificateName.expects(:dcv_verify).with('cname', dcv_options).returns(nil)
 
           get :verification_check, team: ssl_slug, id: csr.id, dcv_protocol: 'cname', choose_cn: "#{domain.id}", selected_csr: "#{csr.id}", format: :json
-          expect(DomainControlValidation.count).to eq 0
+          expect(DomainControlValidation.satisfied).to be_empty
         end
       end
     end

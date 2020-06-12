@@ -3,7 +3,8 @@
 
 = render :partial => 'index_scripts'
 = javascript_include_tag "promise.min", "webcrypto-liner.shim", "asmcrypto.min", "elliptic.min", "bundle.umd.min", "bundle.pkcs.umd.min"
-= stylesheet_link_tag 'bootstrap_style', :media => 'all'
+= stylesheet_link_tag 'bootstrap_fix', :media => 'all'
+
 %div{:style => 'width: 100%'}
   %h2.mt-5
     Generate Certificate Signing Request

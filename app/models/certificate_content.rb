@@ -120,29 +120,20 @@ class CertificateContent < ApplicationRecord
     end
   end
 
-  def certificate_names_from_domains(domains = nil)
+  def certificate_names_from_domains(domains=nil)
     is_single = certificate&.is_single?
     csr_common_name=csr.try(:common_name)
-
     unless (is_single || certificate&.is_wildcard?) && certificate_names.count.positive?
-      domains ||= self.domains ? self.domains : csr.try(:all_domains)
-      new_certificate_names = []
-      
-      domains = domains.each do |domain| 
-        is_single ? CertificateContent.non_wildcard_name(domain, true) : domain.downcase
+      domains ||= all_domains
+      domains = domains.each{|domain| is_single ? CertificateContent.non_wildcard_name(domain,true) :
+                                          domain.downcase}.uniq
+      new_certificate_names=[]
+      (domains-certificate_names.find_by_domains(domains).pluck(:name)).each do |domain|
+        unless domain=~/,/
+          new_certificate_names << certificate_names.new(name: domain, is_common_name: csr_common_name==domain)
+        end
       end
-      
-      domains = domains.uniq
-
-      domains.each do |domain|
-        new_certificate_names << certificate_names.new(name: domain, is_common_name: csr_common_name == domain)
-      end
-
-      ActiveRecord::Base.transaction do
-        CertificateName.destroy_all(certificate_content_id: self.id)
-        CertificateName.import new_certificate_names
-      end
-      
+      CertificateName.import new_certificate_names
       cns=certificate_names.where(name: new_certificate_names.map(&:name))
       unless cns.blank?
         cns.each do |cn|
