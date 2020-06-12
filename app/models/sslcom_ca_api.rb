@@ -13,7 +13,7 @@ class SslcomCaApi
   RESPONSE_TYPE={"zip"=>0,"netscape"=>1, "pkcs7"=>2, "individually"=>3}
   RESPONSE_ENCODING={"base64"=>0,"binary"=>1}
 
-  PRODUCTION_IP = '192.168.5.17'
+  PRODUCTION_IP = 'ejbca-g1a.int.ssl.com'
   STAGING_IP = '192.168.5.19'
   DEVELOPMENT_IP = 'calypso-dev-01.int.ssl.com'
 
