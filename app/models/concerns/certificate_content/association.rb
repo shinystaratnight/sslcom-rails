@@ -16,7 +16,7 @@ module Concerns
         has_one     :registrant, as: :contactable, dependent: :destroy
         has_one     :locked_registrant, as: :contactable
         has_many    :certificate_contacts, as: :contactable
-        has_many    :certificate_names, dependent: :destroy do # used for dcv of each domain in a UCC or multi domain ssl
+        has_many    :certificate_names do # used for dcv of each domain in a UCC or multi domain ssl
           def validated
             joins{ domain_control_validations }.where{ domain_control_validations.workflow_state == 'satisfied' }.uniq
           end

@@ -57,15 +57,15 @@ class Csr < ApplicationRecord
   include Pagable
 
   has_many    :whois_lookups, dependent: :destroy
-  has_many    :signed_certificates, -> { where(type: nil) }, dependent: :destroy, inverse_of: :csr
+  has_many    :signed_certificates, -> { where(type: nil) }, inverse_of: :csr
   has_one :signed_certificate, -> { where(type: nil).order 'signed_certificates.created_at desc' }, class_name: 'SignedCertificate'
   has_many    :shadow_certificates
-  has_many    :ca_certificate_requests, as: :api_requestable, dependent: :destroy
+  has_many    :ca_certificate_requests, as: :api_requestable
   has_many    :sslcom_ca_requests, as: :api_requestable
   has_many    :ca_api_requests, as: :api_requestable
-  has_many    :ca_dcv_requests, as: :api_requestable, dependent: :destroy
-  has_many    :ca_dcv_resend_requests, as: :api_requestable, dependent: :destroy
-  has_many    :domain_control_validations, dependent: :destroy do
+  has_many    :ca_dcv_requests, as: :api_requestable
+  has_many    :ca_dcv_resend_requests, as: :api_requestable
+  has_many    :domain_control_validations do
     def last_sent
       where{email_address !~ 'null'}.last
     end
@@ -78,7 +78,7 @@ class Csr < ApplicationRecord
       where{dcv_method >> ['http','https','email']}.last
     end
   end
-  has_many    :csr_unique_values, dependent: :destroy
+  has_many    :csr_unique_values
   has_one     :csr_override, inverse_of: :csr, dependent: :nullify # used for overriding csr fields - does not include a full csr
   belongs_to  :certificate_content, touch: true, foreign_key: :certificate_content_id, inverse_of: :csr
   belongs_to  :certificate_lookup, foreign_key: :certificate_lookup_id, inverse_of: :csrs

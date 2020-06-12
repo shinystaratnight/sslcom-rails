@@ -23,13 +23,13 @@ module Concerns
               if certificate_contents.count > 1
                 cc = certificate_contents.last
                 cc.preserve_certificate_contacts
-                cc.delete
+                cc.cancel!
               else
                 duration = certificate_content.duration
                 temp_cc = certificate_contents.create(duration: duration)
                 # Do not delete the last one
                 (certificate_contents - [temp_cc]).each do |cc|
-                  cc.delete if (cc.csr || cc.csr.try(:signed_certificate)) || complete
+                  cc.cancel! if (cc.csr || cc.csr.try(:signed_certificate)) || complete
                 end
               end
             end
