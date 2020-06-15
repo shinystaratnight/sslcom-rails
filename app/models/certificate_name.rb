@@ -31,7 +31,7 @@ class CertificateName < ApplicationRecord
   include Concerns::CertificateName::Scope
   include Concerns::CertificateName::Verification
 
-  after_initialize :generate_acme_token, if: -> { acme_token.nil? }
+  # after_initialize :generate_acme_token, if: -> { acme_token.nil? }
 
   def self.search_domains(term)
     matches = ransack(name_cont: term, email_cont: term, m: 'or')

@@ -780,8 +780,20 @@ class CertificateContent < ApplicationRecord
         dn << "1.3.6.1.4.1.311.60.2.1.3=#{locked_registrant.incorporation_country}"
       end
     end
+
     dn << options[:custom_fields] if options[:custom_fields]
-    dn.map{ |d| d.gsub(/\\/, '\\\\').gsub(',', '\,') }.join(',')
+    dn_array = dn.map{ |d| d.gsub(/\\/, '\\\\').gsub(',', '\,') }
+
+    if options[:format]=="hash"
+      {}.tap do |h|
+        dn_array.each do |member|
+          hash_member = member.split('=')
+          h.merge!(hash_member[0] => hash_member[1])
+        end
+      end
+    else
+      dn_array.join(',')
+    end
   end
 
   def cached_csr_public_key_sha1

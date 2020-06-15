@@ -36,22 +36,22 @@ module Pillar
         
         offenses = []
         subject_hash = {}
-        subject_dn = certificate_content&.subject_dn
+        subject_dn = certificate_content&.subject_dn(format: 'hash')
         domains = certificate_content&.certificate_names.map(&:name)
         registrant = certificate_content&.registrant || certificate_content&.certificate_order&.locked_recipient
 
         if subject_dn && subject_dn != ''
         
-          subject = OpenSSL::X509::Name.parse(subject_dn)
-          domains.delete(subject.try(:common_name))
+          subject = subject_dn
+          domains.delete(subject.try("CN"))
 
           subject_hash = {
-            common_name: subject.try(:common_name),
-            organization: registrant&.company_name || subject.try(:organization),
-            organization_unit: registrant&.department || subject.try(:organizational_unit),
-            location: registrant&.city || subject.try(:locality),
-            state: registrant&.state || subject.try(:state),
-            country: registrant&.country || subject.try(:country),
+            common_name: subject.try("CN"),
+            organization: registrant&.company_name || subject.try("O"),
+            organization_unit: registrant&.department || subject.try("OU"),
+            location: registrant&.city || subject.try("L"),
+            state: registrant&.state || subject.try("ST"),
+            country: registrant&.country || subject.try("C"),
             san: domains.join(",") || nil
           }
 

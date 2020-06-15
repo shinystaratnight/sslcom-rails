@@ -9,7 +9,7 @@ module Pillar
         private
 
         def authorized?
-          unless current_user&.is_system_admins?
+          unless current_user&.is_super_user?
             redirect_to main_app.root_path, flash: { error: "You don't have permission to view this page" }
           end
         end
