@@ -19,8 +19,10 @@ module Concerns
         end
       end
 
-      def dcv_verify_async(protocol = nil)
-        dcv_verify(protocol)
+      def dcv_verify_async(dcv)
+        if dcv_verify(dcv.dcv_method)
+          dcv.satisfy! unless dcv.satisfied?
+        end
       end
       handle_asynchronously :dcv_verify_async
 
@@ -38,14 +40,10 @@ module Concerns
       end
 
       def satisfy_dcv
-        domain_control_validation.satisfy! unless domain_control_validation.satisfied?
         true
       end
 
       def fail_dcv
-        return false if domain_control_validation.blank?
-
-        domain_control_validation.update(workflow_state: 'failed') if domain_control_validation.dcv_method.match? /^acme/i
         false
       end
 

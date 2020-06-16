@@ -360,7 +360,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
                       dcv.update_attribute(:identifier, identifier)
                     end
                   else
-                    cn.dcv_verify_async(dcv.dcv_method)
+                    cn.dcv_verify_async(dcv)
                   end
                 end
               end

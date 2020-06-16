@@ -107,21 +107,6 @@ describe CertificateName do
           .to_return(status: 200, body: ['------------', '------------', '------------'])
         expect{ certificate_name.dcv_verify }.not_to change { certificate_name.domain_control_validation.workflow_state }
       end
-
-      it 'updates workflow_state to failed for acme_http' do
-        certificate_name.domain_control_validation.update(dcv_method: 'acme_http')
-        body = [certificate_name.acme_token, '------------'].join('.')
-        AcmeManager::HttpVerifier.any_instance.stubs(:challenge).returns(body)
-        expect{ certificate_name.dcv_verify }.to change { certificate_name.domain_control_validation.workflow_state }.to('failed')
-      end
-
-      it 'updates workflow_state to failed for acme_dns_txt' do
-        certificate_name.domain_control_validation.update(dcv_method: 'acme_dns_txt')
-        body = Resolv::DNS::Resource::IN::TXT.new('------------')
-        AcmeManager::DnsTxtVerifier.any_instance.stubs(:challenge).returns(true)
-        AcmeManager::DnsTxtVerifier.any_instance.stubs(:token).returns(body.strings.last)
-        expect{ certificate_name.dcv_verify }.to change { certificate_name.domain_control_validation.workflow_state }.to('failed')
-      end
     end
   end
 
