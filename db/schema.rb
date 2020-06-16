@@ -1025,39 +1025,6 @@ ActiveRecord::Schema.define(version: 20200506155705) do
     t.string   "management_key",        :limit=>255
   end
 
-  create_table "pillar_authentication_account_users", force: :cascade do |t|
-    t.integer  "account_id", :limit=>4
-    t.integer  "user_id",    :limit=>4
-    t.text     "roles",      :limit=>65535
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "pillar_authentication_accounts", force: :cascade do |t|
-    t.string   "name",        :limit=>255
-    t.text     "description", :limit=>65535
-    t.string   "unique_id",   :limit=>255
-    t.integer  "owner_id",    :limit=>4
-    t.boolean  "default"
-    t.integer  "status",      :limit=>4
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "pillar_authentication_users", force: :cascade do |t|
-    t.string   "email",                  :limit=>255, :default=>"", :null=>false, :index=>{:name=>"index_pillar_authentication_users_on_email", :unique=>true, :using=>:btree}
-    t.string   "encrypted_password",     :limit=>255, :default=>"", :null=>false
-    t.string   "reset_password_token",   :limit=>255, :index=>{:name=>"index_pillar_authentication_users_on_reset_password_token", :unique=>true, :using=>:btree}
-    t.datetime "reset_password_sent_at"
-    t.datetime "remember_created_at"
-    t.string   "first_name",             :limit=>255
-    t.string   "last_name",              :limit=>255
-    t.string   "time_zone",              :limit=>255
-    t.integer  "invited_by_id",          :limit=>4
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
   create_table "pillar_authority_blocklist_entries", force: :cascade do |t|
     t.string   "pattern",           :limit=>255
     t.text     "description",       :limit=>65535
