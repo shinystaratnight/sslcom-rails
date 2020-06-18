@@ -1,5 +1,6 @@
 class Reminder < ApplicationMailer
   default from: 'reminder@ssl.com', bcc: ['info@ssl.com'], return_path: 'reminder@ssl.com'
+  track user: -> { User.find_by(email: message.to) }
 
   DO_NOT_SEND = %w(fiserv epsiia aturner@yisd.net cchavez@yisd.net gchavez@yisd.net ian@platinum.net d.riebeek@databaseonline.nl lsmith@patientplacement.com)
 

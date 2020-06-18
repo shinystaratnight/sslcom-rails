@@ -1,5 +1,6 @@
 class OtherPartyRequestMailer < ApplicationMailer
   default from: 'SSL.com Certificate Services <support@ssl.com>'
+  track user: -> { User.find_by(email: message.to) }
 
   def request_validation(other_party_validation_request)
     @opvr = other_party_validation_request

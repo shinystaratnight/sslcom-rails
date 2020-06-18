@@ -1,5 +1,6 @@
 class DuplicateV2UserMailer < ApplicationMailer
   default from: 'SSL.com Certificate Services <no-reply@ssl.com>'
+  track user: -> { User.find_by(email: message.to) }
 
   def duplicate_found(dup)
     @to = @opvr.email_addresses.join(', ')

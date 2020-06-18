@@ -1,6 +1,7 @@
 class OrderNotifier < ApplicationMailer
   include CertificateOrdersHelper
   helper CertificateOrdersHelper
+  track user: -> { User.find_by(email: message.to) }
 
   def test
     p(caller[0] =~ /`([^']*)'/) && $1

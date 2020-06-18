@@ -2,6 +2,7 @@ class UserNotifier < ApplicationMailer
   include ActionView::Helpers::TextHelper
   include ActionView::Helpers::SanitizeHelper
   extend  ActionView::Helpers::SanitizeHelper::ClassMethods
+  track user: -> { User.find_by(email: message.to) }
 
   def activation_instructions(user)
     @account_activation_url = register_url(user.perishable_token)
