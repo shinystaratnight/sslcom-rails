@@ -1,0 +1,148 @@
+env:
+  RUBY_VERSION: 2.6.5
+  RAILS_ENV: "test"
+  RACK_ENV: "test"
+
+name: "Build and Test"
+on: push
+
+jobs:
+  build-and-test:
+    name: "Build and Test"
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:5.7
+        ports:
+          - 13306:3306
+        env:
+          MYSQL_ROOT_PASSWORD: password
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=5
+    steps:
+      - name: "Checkout Code"
+        uses: actions/checkout@v2
+
+      - name: "Install Code Climate"
+        run: |
+          curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+          chmod +x ./cc-test-reporter
+      - name: "Create config/settings.yml"
+        run: |
+          cp config/settings/test.yml config/settings.yml
+          cp config/settings/test.yml config/settings.yml
+      - name: "Create config/local_env.yml"
+        run: |
+          mkdir -p config && echo "
+            AWS_ACCESS_KEY_ID: ''
+            AWS_SECRET_ACCESS_KEY: ''
+            S3_BUCKET_NAME: ''
+            S3_AVATAR_BUCKET_NAME: ''
+            AWS_DEFAULT_REGION: 'us-east-1'
+            DUO_INTEGRATION_KEY: '${{ secrets.DUO_INTEGRATION_KEY }}'
+            DUO_SECRET_KEY: '${{ secrets.DUO_SECRET_KEY }}'
+            DUO_APPLICATION_KEY: '${{ secrets.DUO_APPLICATION_KEY }}'
+            DUO_API_HOSTNAME: '${{ secrets.DUO_API_HOSTNAME }}'
+            DUO_SYSADMIN_INTEGRATION_KEY: '${{ secrets.DUO_INTEGRATION_KEY }}'
+            DUO_SYSADMIN_SECRET_KEY: '${{ secrets.DUO_SECRET_KEY }}'
+            DUO_SYSADMIN_APPLICATION_KEY: '${{ secrets.DUO_APPLICATION_KEY }}'
+            DUO_SYSADMIN_API_HOSTNAME: '${{ secrets.DUO_API_HOSTNAME }}'
+            GATEWAY: 'stripe'
+            STRIPE_TEST_PUBLISHABLE_KEY: '${{ secrets.STRIPE_TEST_PUBLISHABLE_KEY }}'
+            STRIPE_TEST_SECRET_KEY: '${{ secrets.STRIPE_TEST_SECRET_KEY }}'
+            STRIPE_PUBLISHABLE_KEY: '${{ secrets.STRIPE_PUBLISHABLE_KEY }}'
+            STRIPE_SECRET_KEY: '${{ secrets.STRIPE_SECRET_KEY }}'
+          " > config/local_env.yml
+      - name: "Create config/database.yml"
+        run: |
+          mkdir -p config && echo 'test:
+            adapter: mysql2
+            database: ssl_com_test
+            username: root
+            password: password
+            port: 13306
+            host: 127.0.0.1
+          ' > config/database.yml
+      - name: "Setup Ruby ${{ env.RUBY_VERSION }}"
+        uses: ruby/setup-ruby@master
+        with:
+          ruby-version: ${{ env.RUBY_VERSION }}
+
+      - name: "Setup Node.js ${{ matrix.node-version }}"
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: "Get Yarn Cache"
+        id: yarn-cache
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+
+      - name: "Cache Yarn"
+        uses: actions/cache@v1
+        with:
+          path: ${{ steps.yarn-cache.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      - name: "Cache Gems"
+        uses: actions/cache@v1
+        with:
+          path: vendor/bundle
+          key: ${{ runner.os }}-gem-${{ hashFiles('**/Gemfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-gem-
+      - name: "Cache Assets"
+        uses: actions/cache@v1
+        with:
+          path: public/assets
+          key: ${{ runner.os }}-assets
+          restore-keys: |
+            ${{ runner.os }}-assets-
+      - name: "Configure Bundler"
+        run: bundle config --local build.sassc --disable-march-tune-native
+
+      - name: Install dependencies
+        run: |
+          bundle install --path vendor/bundle --jobs 4 --retry 3
+          yarn install --frozen-lockfile
+      - name: "Configure Database"
+        run: |
+          bundle exec rake db:create --trace
+          bundle exec rake db:structure:load --trace
+          bundle exec rake db:migrate --trace
+      - name: "Precompile Assets"
+        run: |
+          WEBPACKER_PRECOMPILE=false bundle exec rake assets:precompile
+      - name: Run Tests
+        run: |
+          mkdir -p test-results/rspec test-artifacts
+          GIT_BRANCH=$GITHUB_REF GIT_COMMIT_SHA=$GITHUB_SHA ./cc-test-reporter before-build
+          bundle exec rspec --profile 10 \
+                              --color \
+                              --order random \
+                              --format RspecJunitFormatter \
+                              --out test-results/rspec/rspec.xml \
+                              --format progress
+      - name: "Code Climate Test Coverage"
+        run: |
+          GIT_BRANCH=$GITHUB_REF GIT_COMMIT_SHA=$GITHUB_SHA ./cc-test-reporter format-coverage -t simplecov -o "coverage/codeclimate.$CIRCLE_NODE_INDEX.json"
+      - name: "Upload Test Coverage"
+        uses: actions/upload-artifact@v1
+        with:
+          name: code-coverage
+          path: coverage
+
+      - name: "Upload Screenshots"
+        uses: actions/upload-artifact@v1
+        with:
+          name: screenshots
+          path: tmp/capybara
+        if: failure()
+
+      - name: Notify Slack
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          fields: repo,message,commit,author,message,ref
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        if: always()

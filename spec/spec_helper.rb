@@ -3,6 +3,27 @@
 require 'capybara/rspec'
 require 'capybara-screenshot/rspec'
 require 'webmock/rspec'
+require 'webdrivers'
+
+## GITHUB ACTIONS CONFIG START
+if ENV.fetch('CI')
+  Selenium::WebDriver::Chrome::Service.driver_path = "/usr/bin/chromedriver"
+
+  chrome_args = { args: %w[window-size=1280,1024 headless disable-gpu] }
+  selenium_options = Selenium::WebDriver::Chrome::Options.new(chrome_args)
+
+  Capybara.register_driver :chrome do |app|
+    Capybara::Selenium::Driver.new(
+      app,
+      browser: :chrome, options: selenium_options
+    )
+  end
+
+  driver = :chrome
+else
+  driver = :selenium_chrome_headless
+end
+## END ##
 
 RSpec.configure do |config|
   config.expect_with :rspec do |expectations|
@@ -48,7 +69,7 @@ RSpec.configure do |config|
 end
 
 Capybara.default_driver = :selenium_chrome
-Capybara.javascript_driver = :selenium_chrome
+Capybara.javascript_driver = driver
 Capybara.server = :puma, { Silent: true }
 Capybara.default_max_wait_time = ENV['CONTINUOS_INTEGRATION'] == true ? 10 : 5
 Capybara::Screenshot.prune_strategy = :keep_last_run
