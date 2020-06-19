@@ -151,3 +151,10 @@
                             =link_to "leave", remove_from_account_managed_user_path(u, slug_params.merge(ssl_account_id: ssl_account.id)),data:{confirm: "Remove #{u.login} from team #{ssl_account.company_name}?"}
                           ]
                         %li &nbsp;
+              - else
+                - if current_user == u && ssl_account.get_account_owner != u
+                  .full_width_box
+                    .adjust_status
+                      %ul
+                        %li
+                          =link_to "leave", remove_from_account_managed_user_path(u, slug_params.merge(ssl_account_id: ssl_account.id)),data:{confirm: "Remove #{u.login} from team #{ssl_account.company_name}?"}
