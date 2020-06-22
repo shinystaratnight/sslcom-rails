@@ -75,7 +75,9 @@ class UsersController < ApplicationController
       @users = @users.with_role(role).uniq if role
       @users = @users.search(search) if search.present?
     end
-    @users = @users.order('created_at desc').paginate(@p)
+    users_with_individual_certificate_ids = @users.collect{ |user| user.id if user.role_symbols(@ssl_account) == [:individual_certificate] }
+    @users = @users.where.not(id: users_with_individual_certificate_ids)
+                   .order('created_at desc').paginate(@p)
 
     respond_to do |format|
       format.html { render :index }
