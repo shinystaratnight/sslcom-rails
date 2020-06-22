@@ -28,6 +28,4 @@ Gem::Specification.new do |s|
   s.add_dependency "rails", rails_version
   s.add_dependency "ransack"
   s.add_dependency "responders"
-
-  s.add_development_dependency "pillar-testing"
 end
