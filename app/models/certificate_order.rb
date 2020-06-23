@@ -1550,26 +1550,26 @@ class CertificateOrder < ApplicationRecord
         Certificate::COMODO_BUNDLES.select do |k,v|
           if certificate.serial =~ /256sslcom/
             if signed_certificate.try('is_ev?'.to_sym)
-              %w(SSLcomPremiumEVCA.crt COMODOAddTrustServerCA.crt AddTrustExternalCARoot.crt).include? k
+              %w(SSLcomPremiumEVCA.crt COMODOAddTrustServerCA.crt AAACertificateServices.crt).include? k
             elsif signed_certificate.try('is_dv?'.to_sym)
-              %w(SSLcomAddTrustSSLCA.crt AddTrustExternalCARoot.crt).include? k
+              %w(SSLcomAddTrustSSLCA.crt AAACertificateServices.crt).include? k
             elsif signed_certificate.try('is_ov?'.to_sym)
-              %w(SSLcomHighAssuranceCA.crt AddTrustExternalCARoot.crt).include? k
+              %w(SSLcomHighAssuranceCA.crt AAACertificateServices.crt).include? k
             elsif certificate.is_ev?
-              %w(SSLcomPremiumEVCA.crt COMODOAddTrustServerCA.crt AddTrustExternalCARoot.crt).include? k
+              %w(SSLcomPremiumEVCA.crt COMODOAddTrustServerCA.crt AAACertificateServices.crt).include? k
             elsif certificate.is_essential_ssl?
-              %w(SSLcomAddTrustSSLCA.crt AddTrustExternalCARoot.crt).include? k
+              %w(SSLcomAddTrustSSLCA.crt AAACertificateServices.crt).include? k
             else
-              %w(SSLcomHighAssuranceCA.crt AddTrustExternalCARoot.crt).include? k
+              %w(SSLcomHighAssuranceCA.crt AAACertificateServices.crt).include? k
             end
           elsif [342, 343].include? certificate.comodo_product_id
-            %w(UTNAddTrustSGCCA.crt EssentialSSLCA_2.crt ComodoUTNSGCCA.crt AddTrustExternalCARoot.crt).include? k
+            %w(UTNAddTrustSGCCA.crt EssentialSSLCA_2.crt ComodoUTNSGCCA.crt AAACertificateServices.crt).include? k
           elsif certificate.comodo_product_id == 337 #also maybe 410 (evucc) we'll get there when we place that order
-            %w(COMODOExtendedValidationSecureServerCA.crt COMODOAddTrustServerCA.crt AddTrustExternalCARoot.crt).include? k
+            %w(COMODOExtendedValidationSecureServerCA.crt COMODOAddTrustServerCA.crt AAACertificateServices.crt).include? k
           elsif certificate.comodo_product_id == 361
             %w(EntrustSecureServerCA.crt USERTrustLegacySecureServerCA.crt).include? k
           else
-            %w(SSLcomHighAssuranceCA.crt AddTrustExternalCARoot.crt).include? k
+            %w(SSLcomHighAssuranceCA.crt AAACertificateServices.crt).include? k
           end
         end.map{ |k,v|k }
       end
