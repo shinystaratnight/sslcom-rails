@@ -26,6 +26,7 @@
 
 ## Code Review (To be filled in by the reviewer only)
 
+- [ ] Is the changelog updated?
 - [ ] Is the code of an acceptable quality?
 - [ ] Do the changes function as described and is it robust?
 - [ ] Have commits been squashed to a satisfactory level?
