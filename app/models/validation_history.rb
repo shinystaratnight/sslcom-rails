@@ -105,7 +105,7 @@ class ValidationHistory < ApplicationRecord
 
   def self.acceptable_file_types
     ValidationHistory::CONTENT_TYPES.transpose[1].map{|ct|ct.split(',')}.
-      flatten.join(', ').gsub('  ', ' ')
+      flatten.uniq.join(', ').gsub('  ', ' ')
   end
 
   def random_secret
