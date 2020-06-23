@@ -32,6 +32,7 @@ jobs:
         run: |
           curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
           chmod +x ./cc-test-reporter
+          GIT_BRANCH=$GITHUB_REF GIT_COMMIT_SHA=$GITHUB_SHA ./cc-test-reporter before-build
 
       - name: "Create config/settings.yml"
         run: |
@@ -131,7 +132,6 @@ jobs:
       - name: Run Tests
         run: |
           mkdir -p test-results/rspec test-artifacts
-          GIT_BRANCH=$GITHUB_REF GIT_COMMIT_SHA=$GITHUB_SHA ./cc-test-reporter before-build
           bundle exec rspec --profile 10 \
                               --color \
                               --order random \
@@ -141,19 +141,13 @@ jobs:
 
       - name: "Code Climate Test Coverage"
         run: |
-          GIT_BRANCH=$GITHUB_REF GIT_COMMIT_SHA=$GITHUB_SHA ./cc-test-reporter format-coverage -t simplecov -o "coverage/codeclimate.$CIRCLE_NODE_INDEX.json"
-
-      - name: "Upload Test Coverage"
-        uses: actions/upload-artifact@v1
-        with:
-          name: code-coverage
-          path: coverage
+          GIT_BRANCH=$GITHUB_REF GIT_COMMIT_SHA=$GITHUB_SHA ./cc-test-reporter after-build -r ${{secrets.CC_TEST_REPORTER_ID}}
 
       - name: "Upload Screenshots"
         uses: actions/upload-artifact@v1
         with:
           name: screenshots
-          path: tmp/capybara
+          path: ${{github.workspace}}/tmp/capybara
         if: failure()
 
       - name: Notify Slack
