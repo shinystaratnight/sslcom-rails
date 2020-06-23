@@ -8,6 +8,7 @@ on: [ push ]
 
 jobs:
   build-and-test:
+    if: github.event_name == 'push' && contains(toJson(github.event.commits), '***NO_CI***') == false && contains(toJson(github.event.commits), '[ci-skip]') == false && contains(toJson(github.event.commits), '[skip-ci]') == false
     name: "Build and Test"
     runs-on: ubuntu-latest
     services:
