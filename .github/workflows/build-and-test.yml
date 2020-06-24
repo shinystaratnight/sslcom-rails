@@ -130,10 +130,10 @@ jobs:
 
       - name: Run Tests
         run: |
-          GIT_BRANCH=$GITHUB_REF GIT_COMMIT_SHA=$GITHUB_SHA ./cc-test-reporter before-build
+          GIT_BRANCH=${GITHUB_REF#refs/heads/} GIT_COMMIT_SHA=$GITHUB_SHA ./cc-test-reporter before-build
           mkdir -p test-results/rspec test-artifacts
           bundle exec rspec
-          GIT_BRANCH=$GITHUB_REF GIT_COMMIT_SHA=$GITHUB_SHA ./cc-test-reporter after-build --prefix ${{github.workspace}} -r ${{secrets.CC_TEST_REPORTER_ID}}
+          GIT_BRANCH=${GITHUB_REF#refs/heads/} GIT_COMMIT_SHA=$GITHUB_SHA ./cc-test-reporter after-build --prefix ${{github.workspace}} -r ${{secrets.CC_TEST_REPORTER_ID}}
 
       - name: "Upload Screenshots"
         uses: actions/upload-artifact@v1
