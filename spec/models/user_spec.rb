@@ -66,6 +66,8 @@
 require 'rails_helper'
 
 describe User do
+  let!(:owner) { create(:user, :owner) }
+
   it_behaves_like 'it has roles'
 
   describe 'attributes' do
@@ -129,7 +131,6 @@ describe User do
   end
 
   describe 'ssl_account' do
-    let!(:owner) { create(:user, :owner) }
     let!(:invited) { create(:user, :owner) }
 
     before do
@@ -378,6 +379,26 @@ describe User do
       # it should pull 1 role from default ssl account,
       # ignore newly created (super_user) role for another ssl account
       assert_equal [:owner], owner.role_symbols
+    end
+
+    describe '#make_admin' do
+      it 'assigns sysadmin role' do
+        role_sysadmin = Role.find_by(name: Role::SYS_ADMIN)
+        owner.make_admin
+        owner.reload
+        expect(owner.roles.include?(role_sysadmin)).to eq true
+      end
+    end
+
+    describe '#remove_admin' do
+      it 'removes admin role' do
+        role_sysadmin = Role.find_by(name: Role::SYS_ADMIN)
+        owner.make_admin
+        owner.reload
+        owner.remove_admin
+        owner.reload
+        expect(owner.roles.include?(role_sysadmin)).to eq false
+      end
     end
   end
 
