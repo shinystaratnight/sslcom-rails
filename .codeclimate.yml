@@ -62,16 +62,16 @@ plugins:
         enabled: false
 
 exclude_patterns:
-  - "db/"
-  - "**/node_modules/"
-  - "**/vendor/"
-  - "*.md"
-  - ".*"
-  - 'vendor/**/*'
-  - 'tmp/**/*'
-  - 'lib/**/*'
-  - 'bin/*'
-  - 'db/**/*'
-  - 'script/'
-  - 'features/'
-  - 'Vagrantfile'
+- "db/"
+- "**/node_modules/"
+- "**/vendor/"
+- "*.md"
+- ".*"
+- 'vendor/**/*'
+- 'tmp/**/*'
+- 'lib/**/*'
+- 'bin/*'
+- 'db/**/*'
+- 'script/'
+- 'features/'
+- 'Vagrantfile'

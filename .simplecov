@@ -4,6 +4,7 @@ SimpleCov.start 'rails' do
   add_filter %r{^/.*declarative_authorization.*/}
   add_filter %r{^/.*lib/gems/.*/}
   add_filter %r{^/usr/}
+  add_filter %r{^/home/runner/}
   add_filter %r{^/config/}
   add_filter %r{^/db/}
   add_filter %r{^/vendor/}
