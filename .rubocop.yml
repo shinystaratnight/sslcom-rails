@@ -63,12 +63,12 @@ Style/DoubleNegation:
 Style/NestedTernaryOperator:
   Exclude:
     - 'app/controllers/application_controller.rb'
-Style/HashTransformValues:
-  Enabled: true
-Style/HashTransformKeys:
-  Enabled: true
-Style/HashEachMethods:
-  Enabled: true
+# Style/HashTransformValues:
+#   Enabled: true
+# Style/HashTransformKeys:
+#   Enabled: true
+# Style/HashEachMethods:
+#   Enabled: true
 Style/NilComparison:
   Enabled: false
 Security/Eval:
@@ -107,10 +107,10 @@ Lint/AssignmentInCondition:
   Enabled: false
 Lint/InterpolationCheck:
   Enabled: true
-Lint/StructNewOverride:
-  Enabled: true
-Lint/RaiseException:
-  Enabled: true
+# Lint/StructNewOverride:
+#   Enabled: true
+# Lint/RaiseException:
+#   Enabled: true
 Lint/UselessAccessModifier:
   MethodCreatingMethods:
     - 'def_matcher'

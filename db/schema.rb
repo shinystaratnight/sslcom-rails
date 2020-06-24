@@ -1265,14 +1265,15 @@ ActiveRecord::Schema.define(version: 20200506155705) do
   end
 
   create_table "sent_reminders", force: :cascade do |t|
-    t.text     "body",          :limit=>65535
-    t.string   "recipients",    :limit=>255, :index=>{:name=>"index_contacts_on_recipients_subject_trigger_value_expires_at", :with=>["subject", "trigger_value", "expires_at"], :using=>:btree}
-    t.string   "subject",       :limit=>255
-    t.string   "trigger_value", :limit=>255
+    t.integer  "signed_certificate_id", :limit=>4
+    t.text     "body",                  :limit=>65535
+    t.string   "recipients",            :limit=>255, :index=>{:name=>"index_contacts_on_recipients_subject_trigger_value_expires_at", :with=>["subject", "trigger_value", "expires_at"], :using=>:btree}
+    t.string   "subject",               :limit=>255
+    t.string   "trigger_value",         :limit=>255
     t.datetime "expires_at"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "reminder_type", :limit=>255
+    t.string   "reminder_type",         :limit=>255
   end
 
   create_table "server_softwares", force: :cascade do |t|
