@@ -96,8 +96,9 @@ class UserSessionsController < ApplicationController
           flash[:notice] = 'Your account has not been activated. %s'
           flash[:notice_item] = "Click here to have the activation email resent to #{@user_session.attempted_record.email}.",
                                 resend_activation_users_path(login: @user_session.attempted_record.login)
-          @user_session.errors[:base] << "please visit #{view_context.link_to(resend_activation_users_url(
-            login: @user_session.attempted_record.login), resend_activation_users_url( login: @user_session.attempted_record.login))} to have your activation notice resent!".html_safe
+          @user_session.errors[:base] << "please visit #{resend_activation_users_url(
+            login: @user_session.attempted_record.login
+          )} to have your activation notice resent"
 
           log_failed_attempt(@user_session.user, params, flash[:notice])
           format.html { render action: :new }
