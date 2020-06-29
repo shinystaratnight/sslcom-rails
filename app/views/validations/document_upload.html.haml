@@ -96,23 +96,23 @@
                         %li
                           %dt Simplified EV Authorization Form (#{link_to "click here to download form #{image_tag('pdf_icon.gif')}".html_safe, "https://support.ssl.com/index.php?_m=downloads&_a=downloadfile&downloaditemid=5"})
                           %dd This form should be used if one person is to act in all three roles, Certificate Requester, Certificate Approver and Contract (Subscriber Agreement) Signer.
-        - if co.certificate.requires_locked_registrant? and co.registrant and !co.certificate.follows_ev_guidelines?
-          - unless ["validated","epki_agreement"].include? co.registrant.status
+        - if co.certificate.is_iv? or (co.certificate.requires_locked_registrant? and co.registrant and !co.certificate.follows_ev_guidelines?)
+          - unless ["validated","epki_agreement"].include? co&.registrant&.status
             %p
               Please upload applicable documents for the following:
-            - if co.certificate.is_ov? || co.certificate.is_cs?
+            - if co.certificate.is_ov? || co.certificate.is_cs? || co.certificate.is_naesb?
               .clearfix
               %p
                 We will need to validate the organization "#{co.registrant.company_name}".
                 Applicable documents include articles of incorporation, online business listing, Duns and Bradstreet (or equivalent),
                 or any other document that proves the existence of the organization or company.
               = file_field_tag "ov_filedata[]", id: "ov_multi_upload"
-            - if co.certificate.is_smime_or_client?
-              .clearfix
-              %p
-                We will need to validate the individual "#{co.get_team_iv.first_name} #{co.get_team_iv.last_name}".
-                Applicable documents include an image of a passport, driver's license, or government issued identification.
-              = file_field_tag "iv_filedata[]", id: "iv_multi_upload"
+          - if co.certificate.is_iv?
+            .clearfix
+            %p
+              We will need to validate the individual "#{co.get_team_iv.first_name} #{co.get_team_iv.last_name}".
+              Applicable documents include an image of a passport, driver's license, or government issued identification.
+            = file_field_tag "iv_filedata[]", id: "iv_multi_upload"
     .clearfix
     %p
       Up to 5 files can be uploaded. Zipped documents can also be uploaded, and
