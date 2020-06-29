@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 ### PENDING RELEASE (TBD)
 
+### v1.3.1 (June 29, 2020)
+
+- Allow document upload on verified orders
+
 ### v1.3.0 (June 29, 2020)
 
 - Created changelog for tracking codebase changes
