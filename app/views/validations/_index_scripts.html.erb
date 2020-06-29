@@ -287,12 +287,7 @@ jQuery(function($) {
         alert('Approval status change successful!');
         form.reset();
 
-        if (data.is_validated == 'true') {
-          /*url = $('#link_to_generate_cert').val();
-          link_to_generate_cert(url);
-          $('form#send_certificate_order_token').show();*/
-          location.reload(true);
-        }
+        location.reload(true);
       }
     };
     $('form.edit_validation_ruling').ajaxForm(options);

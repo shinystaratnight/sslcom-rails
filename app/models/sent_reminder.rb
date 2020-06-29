@@ -15,7 +15,12 @@
 #
 # Indexes
 #
+#  fk_sent_reminders_signed_certificate_id                        (signed_certificate_id)
 #  index_contacts_on_recipients_subject_trigger_value_expires_at  (recipients,subject,trigger_value,expires_at)
+#
+# Foreign Keys
+#
+#  fk_sent_reminders_signed_certificate_id  (signed_certificate_id => signed_certificates.id) ON DELETE => restrict ON UPDATE => restrict
 #
 
 class SentReminder < ApplicationRecord

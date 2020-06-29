@@ -9,6 +9,7 @@
 #  address1            :string(255)
 #  address2            :string(255)
 #  address3            :string(255)
+#  authy_user          :string(255)
 #  avatar_content_type :string(255)
 #  avatar_file_name    :string(255)
 #  avatar_file_size    :integer

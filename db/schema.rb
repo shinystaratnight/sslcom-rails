@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200506155705) do
+ActiveRecord::Schema.define(version: 20200629152436) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        :limit=>255
@@ -56,17 +56,61 @@ ActiveRecord::Schema.define(version: 20200506155705) do
     t.datetime "updated_at"
   end
 
+  create_table "certificate_orders", force: :cascade do |t|
+    t.integer  "ssl_account_id",        :limit=>4, :index=>{:name=>"index_certificate_orders_on_ssl_account_id", :using=>:btree}
+    t.integer  "validation_id",         :limit=>4, :index=>{:name=>"index_certificate_orders_on_validation_id", :using=>:btree}
+    t.integer  "site_seal_id",          :limit=>4, :index=>{:name=>"index_certificate_orders_site_seal_id", :using=>:btree}
+    t.string   "workflow_state",        :limit=>255, :index=>{:name=>"index_certificate_orders_on_3_cols", :with=>["is_expired", "is_test"], :using=>:btree}
+    t.string   "ref",                   :limit=>255, :index=>{:name=>"index_certificate_orders_on_ref", :using=>:btree}
+    t.integer  "num_domains",           :limit=>4
+    t.integer  "server_licenses",       :limit=>4
+    t.integer  "line_item_qty",         :limit=>4
+    t.integer  "amount",                :limit=>4
+    t.text     "notes",                 :limit=>65535
+    t.datetime "created_at",            :index=>{:name=>"index_certificate_orders_on_created_at", :using=>:btree}
+    t.datetime "updated_at"
+    t.boolean  "is_expired",            :index=>{:name=>"index_certificate_orders_on_is_expired", :using=>:btree}
+    t.integer  "renewal_id",            :limit=>4, :index=>{:name=>"index_certificate_orders_on_renewal_id", :using=>:btree}
+    t.boolean  "is_test",               :index=>{:name=>"index_certificate_orders_on_is_test", :using=>:btree}
+    t.string   "auto_renew",            :limit=>255
+    t.string   "auto_renew_status",     :limit=>255
+    t.string   "ca",                    :limit=>255
+    t.string   "external_order_number", :limit=>255
+    t.string   "ext_customer_ref",      :limit=>255
+    t.string   "validation_type",       :limit=>255
+    t.string   "acme_account_id",       :limit=>255
+    t.integer  "wildcard_count",        :limit=>4
+    t.integer  "nonwildcard_count",     :limit=>4
+    t.integer  "folder_id",             :limit=>4, :index=>{:name=>"index_certificate_orders_on_folder_id", :using=>:btree}
+    t.integer  "assignee_id",           :limit=>4, :index=>{:name=>"index_certificate_orders_on_assignee_id", :using=>:btree}
+    t.datetime "expires_at"
+    t.string   "request_status",        :limit=>255
+  end
+  add_index "certificate_orders", ["id", "is_test"], :name=>"index_certificate_orders_on_test", :using=>:btree
+  add_index "certificate_orders", ["id", "ref", "ssl_account_id"], :name=>"index_certificate_orders_on_id_and_ref_and_ssl_account_id", :using=>:btree
+  add_index "certificate_orders", ["id", "workflow_state", "is_expired", "is_test"], :name=>"index_certificate_orders_on_id_ws_ie_it", :using=>:btree
+  add_index "certificate_orders", ["id", "workflow_state", "is_expired", "is_test"], :name=>"index_certificate_orders_on_workflow_state", :unique=>true, :using=>:btree
+  add_index "certificate_orders", ["ref", "external_order_number", "notes"], :name=>"index_certificate_orders_r_eon_n", :type=>:fulltext
+  add_index "certificate_orders", ["ssl_account_id", "workflow_state", "id"], :name=>"index_certificate_orders_on_3_cols(2)", :using=>:btree
+  add_index "certificate_orders", ["ssl_account_id", "workflow_state", "is_test", "updated_at"], :name=>"index_certificate_orders_on_4_cols", :using=>:btree
+  add_index "certificate_orders", ["workflow_state", "is_expired", "is_test"], :name=>"index_certificate_orders_on_ws_ie_it_ua", :using=>:btree
+  add_index "certificate_orders", ["workflow_state", "is_expired", "renewal_id"], :name=>"index_certificate_orders_on_ws_ie_ri", :using=>:btree
+  add_index "certificate_orders", ["workflow_state", "is_expired", "renewal_id"], :name=>"index_certificate_orders_on_ws_is_ri", :using=>:btree
+  add_index "certificate_orders", ["workflow_state", "is_expired"], :name=>"index_certificate_orders_on_workflow_state_and_is_expired", :using=>:btree
+  add_index "certificate_orders", ["workflow_state", "renewal_id"], :name=>"index_certificate_orders_on_workflow_state_and_renewal_id", :using=>:btree
+
   create_table "ahoy_messages", force: :cascade do |t|
-    t.integer  "user_id",    :limit=>4
-    t.string   "user_type",  :limit=>255
-    t.text     "to",         :limit=>65535
-    t.string   "mailer",     :limit=>255
-    t.text     "subject",    :limit=>65535
+    t.integer  "user_id",              :limit=>4
+    t.string   "user_type",            :limit=>255
+    t.text     "to",                   :limit=>65535
+    t.string   "mailer",               :limit=>255
+    t.text     "subject",              :limit=>65535
     t.datetime "sent_at"
-    t.string   "token",      :limit=>255, :index=>{:name=>"index_ahoy_messages_on_token", :using=>:btree}
+    t.string   "token",                :limit=>255, :index=>{:name=>"index_ahoy_messages_on_token", :using=>:btree}
     t.datetime "opened_at"
     t.datetime "clicked_at"
-    t.text     "content",    :limit=>65535
+    t.text     "content",              :limit=>65535
+    t.integer  "certificate_order_id", :limit=>4, :index=>{:name=>"fk_ahoy_messages_certificate_order_id", :using=>:btree}, :foreign_key=>{:references=>"certificate_orders", :name=>"fk_ahoy_messages_certificate_order_id", :on_update=>:restrict, :on_delete=>:restrict}
   end
 
   create_table "api_credentials", force: :cascade do |t|
@@ -151,17 +195,21 @@ ActiveRecord::Schema.define(version: 20200506155705) do
   end
 
   create_table "blocklists", force: :cascade do |t|
-    t.string   "type",        :limit=>255
-    t.string   "domain",      :limit=>255
-    t.integer  "validation",  :limit=>4
-    t.string   "status",      :limit=>255
-    t.string   "reason",      :limit=>255
-    t.string   "description", :limit=>255
-    t.text     "notes",       :limit=>65535
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.string  "pattern",            :limit=>255
+    t.boolean "regular_expression"
+    t.boolean "common_name"
+    t.boolean "organization"
+    t.boolean "organization_unit"
+    t.boolean "location"
+    t.boolean "state"
+    t.boolean "country"
+    t.boolean "san"
+    t.string  "type",               :limit=>255
+    t.string  "label",              :limit=>255
+    t.text    "description",        :limit=>65535
+    t.text    "notes",              :limit=>65535
+    t.text    "exempt",             :limit=>65535
   end
-  add_index "blocklists", ["id", "type"], :name=>"index_blocklists_on_id_and_type", :using=>:btree
 
   create_table "ca_api_requests", force: :cascade do |t|
     t.integer  "api_requestable_id",   :limit=>4, :index=>{:name=>"index_ca_api_requests_on_api_requestable", :with=>["api_requestable_type"], :using=>:btree}
@@ -223,49 +271,6 @@ ActiveRecord::Schema.define(version: 20200506155705) do
     t.integer  "ssl_account_id", :limit=>4, :index=>{:name=>"index_cas_certificates_on_ssl_account_id", :using=>:btree}
   end
   add_index "cas_certificates", ["certificate_id", "ca_id"], :name=>"index_cas_certificates_on_certificate_id_and_ca_id", :using=>:btree
-
-  create_table "certificate_orders", force: :cascade do |t|
-    t.integer  "ssl_account_id",        :limit=>4, :index=>{:name=>"index_certificate_orders_on_ssl_account_id", :using=>:btree}
-    t.integer  "validation_id",         :limit=>4, :index=>{:name=>"index_certificate_orders_on_validation_id", :using=>:btree}
-    t.integer  "site_seal_id",          :limit=>4, :index=>{:name=>"index_certificate_orders_site_seal_id", :using=>:btree}
-    t.string   "workflow_state",        :limit=>255, :index=>{:name=>"index_certificate_orders_on_3_cols", :with=>["is_expired", "is_test"], :using=>:btree}
-    t.string   "ref",                   :limit=>255, :index=>{:name=>"index_certificate_orders_on_ref", :using=>:btree}
-    t.integer  "num_domains",           :limit=>4
-    t.integer  "server_licenses",       :limit=>4
-    t.integer  "line_item_qty",         :limit=>4
-    t.integer  "amount",                :limit=>4
-    t.text     "notes",                 :limit=>65535
-    t.datetime "created_at",            :index=>{:name=>"index_certificate_orders_on_created_at", :using=>:btree}
-    t.datetime "updated_at"
-    t.boolean  "is_expired",            :index=>{:name=>"index_certificate_orders_on_is_expired", :using=>:btree}
-    t.integer  "renewal_id",            :limit=>4, :index=>{:name=>"index_certificate_orders_on_renewal_id", :using=>:btree}
-    t.boolean  "is_test",               :index=>{:name=>"index_certificate_orders_on_is_test", :using=>:btree}
-    t.string   "auto_renew",            :limit=>255
-    t.string   "auto_renew_status",     :limit=>255
-    t.string   "ca",                    :limit=>255
-    t.string   "external_order_number", :limit=>255
-    t.string   "ext_customer_ref",      :limit=>255
-    t.string   "validation_type",       :limit=>255
-    t.string   "acme_account_id",       :limit=>255
-    t.integer  "wildcard_count",        :limit=>4
-    t.integer  "nonwildcard_count",     :limit=>4
-    t.integer  "folder_id",             :limit=>4, :index=>{:name=>"index_certificate_orders_on_folder_id", :using=>:btree}
-    t.integer  "assignee_id",           :limit=>4, :index=>{:name=>"index_certificate_orders_on_assignee_id", :using=>:btree}
-    t.datetime "expires_at"
-    t.string   "request_status",        :limit=>255
-  end
-  add_index "certificate_orders", ["id", "is_test"], :name=>"index_certificate_orders_on_test", :using=>:btree
-  add_index "certificate_orders", ["id", "ref", "ssl_account_id"], :name=>"index_certificate_orders_on_id_and_ref_and_ssl_account_id", :using=>:btree
-  add_index "certificate_orders", ["id", "workflow_state", "is_expired", "is_test"], :name=>"index_certificate_orders_on_id_ws_ie_it", :using=>:btree
-  add_index "certificate_orders", ["id", "workflow_state", "is_expired", "is_test"], :name=>"index_certificate_orders_on_workflow_state", :unique=>true, :using=>:btree
-  add_index "certificate_orders", ["ref", "external_order_number", "notes"], :name=>"index_certificate_orders_r_eon_n", :type=>:fulltext
-  add_index "certificate_orders", ["ssl_account_id", "workflow_state", "id"], :name=>"index_certificate_orders_on_3_cols(2)", :using=>:btree
-  add_index "certificate_orders", ["ssl_account_id", "workflow_state", "is_test", "updated_at"], :name=>"index_certificate_orders_on_4_cols", :using=>:btree
-  add_index "certificate_orders", ["workflow_state", "is_expired", "is_test"], :name=>"index_certificate_orders_on_ws_ie_it_ua", :using=>:btree
-  add_index "certificate_orders", ["workflow_state", "is_expired", "renewal_id"], :name=>"index_certificate_orders_on_ws_ie_ri", :using=>:btree
-  add_index "certificate_orders", ["workflow_state", "is_expired", "renewal_id"], :name=>"index_certificate_orders_on_ws_is_ri", :using=>:btree
-  add_index "certificate_orders", ["workflow_state", "is_expired"], :name=>"index_certificate_orders_on_workflow_state_and_is_expired", :using=>:btree
-  add_index "certificate_orders", ["workflow_state", "renewal_id"], :name=>"index_certificate_orders_on_workflow_state_and_renewal_id", :using=>:btree
 
   create_table "cdns", force: :cascade do |t|
     t.integer  "ssl_account_id",       :limit=>4, :index=>{:name=>"index_cdns_on_ssl_account_id", :using=>:btree}
@@ -1006,6 +1011,16 @@ ActiveRecord::Schema.define(version: 20200506155705) do
   end
   add_index "permissions_roles", ["permission_id", "role_id"], :name=>"index_permissions_roles_on_permission_id_and_role_id", :using=>:btree
 
+  create_table "phone_call_back_logs", force: :cascade do |t|
+    t.string   "validated_by",         :limit=>255, :null=>false
+    t.string   "cert_order_ref",       :limit=>255, :null=>false
+    t.string   "phone_number",         :limit=>255, :null=>false
+    t.datetime "validated_at",         :null=>false
+    t.datetime "created_at",           :null=>false
+    t.datetime "updated_at",           :null=>false
+    t.integer  "certificate_order_id", :limit=>4, :index=>{:name=>"fk_phone_call_back_logs_certificate_order_id", :using=>:btree}, :foreign_key=>{:references=>"certificate_orders", :name=>"fk_phone_call_back_logs_certificate_order_id", :on_update=>:restrict, :on_delete=>:restrict}
+  end
+
   create_table "physical_tokens", force: :cascade do |t|
     t.integer  "certificate_order_id",  :limit=>4, :index=>{:name=>"index_physical_tokens_on_certificate_order_id", :using=>:btree}
     t.integer  "signed_certificate_id", :limit=>4, :index=>{:name=>"index_physical_tokens_on_signed_certificate_id", :using=>:btree}
@@ -1023,6 +1038,39 @@ ActiveRecord::Schema.define(version: 20200506155705) do
     t.string   "admin_pin",             :limit=>255
     t.string   "license",               :limit=>255
     t.string   "management_key",        :limit=>255
+  end
+
+  create_table "pillar_authentication_account_users", force: :cascade do |t|
+    t.integer  "account_id", :limit=>4
+    t.integer  "user_id",    :limit=>4
+    t.text     "roles",      :limit=>65535
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "pillar_authentication_accounts", force: :cascade do |t|
+    t.string   "name",        :limit=>255
+    t.text     "description", :limit=>65535
+    t.string   "unique_id",   :limit=>255
+    t.integer  "owner_id",    :limit=>4
+    t.boolean  "default"
+    t.integer  "status",      :limit=>4
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "pillar_authentication_users", force: :cascade do |t|
+    t.string   "email",                  :limit=>255, :default=>"", :null=>false, :index=>{:name=>"index_pillar_authentication_users_on_email", :unique=>true, :using=>:btree}
+    t.string   "encrypted_password",     :limit=>255, :default=>"", :null=>false
+    t.string   "reset_password_token",   :limit=>255, :index=>{:name=>"index_pillar_authentication_users_on_reset_password_token", :unique=>true, :using=>:btree}
+    t.datetime "reset_password_sent_at"
+    t.datetime "remember_created_at"
+    t.string   "first_name",             :limit=>255
+    t.string   "last_name",              :limit=>255
+    t.string   "time_zone",              :limit=>255
+    t.integer  "invited_by_id",          :limit=>4
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "pillar_authority_blocklist_entries", force: :cascade do |t|
@@ -1264,44 +1312,6 @@ ActiveRecord::Schema.define(version: 20200506155705) do
     t.datetime "updated_at"
   end
 
-  create_table "sent_reminders", force: :cascade do |t|
-    t.integer  "signed_certificate_id", :limit=>4
-    t.text     "body",                  :limit=>65535
-    t.string   "recipients",            :limit=>255, :index=>{:name=>"index_contacts_on_recipients_subject_trigger_value_expires_at", :with=>["subject", "trigger_value", "expires_at"], :using=>:btree}
-    t.string   "subject",               :limit=>255
-    t.string   "trigger_value",         :limit=>255
-    t.datetime "expires_at"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.string   "reminder_type",         :limit=>255
-  end
-
-  create_table "server_softwares", force: :cascade do |t|
-    t.string   "title",       :limit=>255, :null=>false
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.string   "support_url", :limit=>255
-  end
-
-  create_table "sessions", force: :cascade do |t|
-    t.string   "session_id", :limit=>191, :null=>false, :index=>{:name=>"index_sessions_on_session_id", :using=>:btree}
-    t.text     "data",       :limit=>65535
-    t.datetime "created_at", :null=>false
-    t.datetime "updated_at", :null=>false, :index=>{:name=>"index_sessions_on_updated_at", :using=>:btree}
-  end
-
-  create_table "shopping_carts", force: :cascade do |t|
-    t.integer  "user_id",          :limit=>4, :index=>{:name=>"index_shopping_carts_on_user_id", :using=>:btree}
-    t.string   "guid",             :limit=>255, :index=>{:name=>"index_shopping_carts_on_guid", :using=>:btree}
-    t.text     "content",          :limit=>65535
-    t.string   "token",            :limit=>255
-    t.string   "crypted_password", :limit=>255
-    t.string   "password_salt",    :limit=>255
-    t.string   "access",           :limit=>255
-    t.datetime "created_at",       :null=>false
-    t.datetime "updated_at",       :null=>false
-  end
-
   create_table "signed_certificates", force: :cascade do |t|
     t.integer  "csr_id",                    :limit=>4, :index=>{:name=>"index_signed_certificates_on_csr_id", :using=>:btree}
     t.integer  "parent_id",                 :limit=>4, :index=>{:name=>"index_signed_certificates_on_parent_id", :using=>:btree}
@@ -1342,6 +1352,44 @@ ActiveRecord::Schema.define(version: 20200506155705) do
   add_index "signed_certificates", ["common_name", "url", "body", "decoded", "ext_customer_ref", "ejbca_username"], :name=>"index_signed_certificates_cn_u_b_d_ecf_eu", :type=>:fulltext
   add_index "signed_certificates", ["csr_id", "type"], :name=>"index_signed_certificates_on_csr_id_and_type", :using=>:btree
   add_index "signed_certificates", ["id", "type"], :name=>"index_signed_certificates_on_id_and_type", :using=>:btree
+
+  create_table "sent_reminders", force: :cascade do |t|
+    t.text     "body",                  :limit=>65535
+    t.string   "recipients",            :limit=>255, :index=>{:name=>"index_contacts_on_recipients_subject_trigger_value_expires_at", :with=>["subject", "trigger_value", "expires_at"], :using=>:btree}
+    t.string   "subject",               :limit=>255
+    t.string   "trigger_value",         :limit=>255
+    t.datetime "expires_at"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "reminder_type",         :limit=>255
+    t.integer  "signed_certificate_id", :limit=>4, :index=>{:name=>"fk_sent_reminders_signed_certificate_id", :using=>:btree}, :foreign_key=>{:references=>"signed_certificates", :name=>"fk_sent_reminders_signed_certificate_id", :on_update=>:restrict, :on_delete=>:restrict}
+  end
+
+  create_table "server_softwares", force: :cascade do |t|
+    t.string   "title",       :limit=>255, :null=>false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "support_url", :limit=>255
+  end
+
+  create_table "sessions", force: :cascade do |t|
+    t.string   "session_id", :limit=>191, :null=>false, :index=>{:name=>"index_sessions_on_session_id", :using=>:btree}
+    t.text     "data",       :limit=>65535
+    t.datetime "created_at", :null=>false
+    t.datetime "updated_at", :null=>false, :index=>{:name=>"index_sessions_on_updated_at", :using=>:btree}
+  end
+
+  create_table "shopping_carts", force: :cascade do |t|
+    t.integer  "user_id",          :limit=>4, :index=>{:name=>"index_shopping_carts_on_user_id", :using=>:btree}
+    t.string   "guid",             :limit=>255, :index=>{:name=>"index_shopping_carts_on_guid", :using=>:btree}
+    t.text     "content",          :limit=>65535
+    t.string   "token",            :limit=>255
+    t.string   "crypted_password", :limit=>255
+    t.string   "password_salt",    :limit=>255
+    t.string   "access",           :limit=>255
+    t.datetime "created_at",       :null=>false
+    t.datetime "updated_at",       :null=>false
+  end
 
   create_table "site_checks", force: :cascade do |t|
     t.text     "url",                   :limit=>65535
@@ -1598,6 +1646,7 @@ ActiveRecord::Schema.define(version: 20200506155705) do
     t.string   "avatar_content_type", :limit=>255
     t.integer  "avatar_file_size",    :limit=>4
     t.datetime "avatar_updated_at"
+    t.string   "authy_user",          :limit=>255
   end
   add_index "users", ["id", "ssl_account_id", "status"], :name=>"index_users_on_status_and_ssl_account_id", :using=>:btree
   add_index "users", ["id", "status"], :name=>"index_users_on_status", :using=>:btree

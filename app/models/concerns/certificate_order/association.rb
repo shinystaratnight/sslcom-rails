@@ -61,6 +61,8 @@ module Concerns
         has_many    :managed_csrs, through: :certificate_order_managed_csrs
         has_many    :certificate_order_domains, dependent: :destroy
         has_many :managed_domains, through: :certificate_order_domains, source: :domain
+        has_many :phone_call_back_logs
+        has_many :messages, class_name: 'Ahoy::Message', dependent: :destroy
       end
     end
   end

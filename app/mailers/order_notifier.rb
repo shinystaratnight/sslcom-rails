@@ -320,6 +320,8 @@ class OrderNotifier < ApplicationMailer
   end
 
   def request_phone_number_approve(co, to_email)
+    track extra: { certificate_order_id: co.id }
+    
     @co_edit_page_path = edit_certificate_order_url(id: co.ref, registrant: false, approve_phone: true)
     @cert_order_ref = co.ref
 

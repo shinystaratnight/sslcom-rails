@@ -27,12 +27,11 @@
                               %ul
                                 %li
                                   %span.validation_attention contacts are required but are missing
-                      -elsif current_user.try("is_super_user?")
+                      -elsif current_user.is_super_user?
                         %li.rules_methods_block(class="admin_approve_#{i}" style='color:red')
                           =form_for v, :html=>{:alt=>"#{i}", :class=>'edit_validation_ruling'} do |f|
                             =hidden_field_tag 'certificate_order', co.id
-                            -#=hidden_field_tag 'link_to_generate_cert', generate_cert_certificate_order_path(@ssl_slug, co.ref)
-                            %em admin only:
+                            %em super user only:
                             -v.validation_rules.each_with_index do |vr, vri|
                               -vrl = v.validation_rulings.detect do |vrl| vrl.validation_rule == vr end
                               %ul
@@ -125,10 +124,7 @@
                           =render partial: 'validations/dcv', locals: {co: co}
                   -if @cert_order.locked_registrant
                     %li.send_callback_section
-                      -#-TODO: After add info_verified state to workflow on certificate content,
-                      -#-TODO: below if statement should be commented out and "perform callback" link should be inside if statement.
-                      -#- if @cert_order.certificate_content.info_verified?
-                      - if @cert_order.phone_verified?
+                      - if @cert_order.phone_verified? || @cert_order.phone_manually_verified?
                         - if @cert_order.locked_registrant.country_code.blank?
                           callback verification completed for #{'+1-' + @cert_order.locked_registrant.phone}
                         - else

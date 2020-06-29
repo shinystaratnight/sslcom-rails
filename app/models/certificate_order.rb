@@ -655,6 +655,10 @@ class CertificateOrder < ApplicationRecord
     ).first
   end
 
+  def phone_manually_verified?
+    phone_call_back_logs.present?
+  end
+
   def registrant
     certificate_content.registrant
   end
@@ -1582,7 +1586,7 @@ class CertificateOrder < ApplicationRecord
     elsif cc.validated? || cc.pending_validation?
       cc.pend_validation! if cc.validated?
     end
-    
+
     cc
   end
 

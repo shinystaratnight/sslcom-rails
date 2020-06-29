@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 - Update CertificateOrder.search_with_csr to include contacts
 - Move CertificateOrder scopes to a Concern
 - Lock Rubocop Version to match Code CodeClimate
+- Create a Dashboard for Phone Approval and Verification Management
 
 ### v1.2.0 (June 17, 2020)
 
