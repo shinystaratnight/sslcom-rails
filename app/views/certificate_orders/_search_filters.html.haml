@@ -90,15 +90,15 @@
         .filter_label
           .filter_cont.hidden{'data-type'=>'select-multi'}
             =select_tag :filter_status,
-            options_for_select([['Contacts Provided', 'contacts_provided'],
-              ['CSR Submitted', 'csr_submitted'],
-              ['Info Provided', 'info_provided'],
-              ['Issued', 'issued'],
-              ['New', 'new'],
-              ['Pending Validation', 'pending_validation'],
-              ['Validated', 'validated'],
-              ['Revoked', 'revoked'],              
-              ['Rejected', 'rejected']]),
+            options_for_select([['Contacts Provided','contacts_provided'],
+              ['CSR Submitted','csr_submitted'],
+              ['Info Provided','info_provided'],
+              ['Issued','issued'],
+              ['New','new'],
+              ['Pending Validation','pending_validation'],
+              ['Validated','validated'],
+              ['Revoked','revoked'],
+              ['Rejected','rejected']]),
             :class=>'filter_cont_slt slt-large', 'data-field'=>'status', :multiple=> true
       %div.filter_item
         .filter_evt.clearfix
