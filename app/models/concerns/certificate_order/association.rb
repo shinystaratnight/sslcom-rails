@@ -23,7 +23,7 @@ module Concerns
         has_many    :registrants, through: :certificate_contents
         has_many    :locked_registrants, through: :certificate_contents
         has_many    :certificate_contacts, through: :certificate_contents
-        has_many    :domain_control_validations, through: :certificate_names
+        has_many    :domain_control_validations, { :through => :certificate_names, :source => 'domain_control_validation'}
         has_many :csrs, through: :certificate_contents, source: 'csr'
         has_many    :csr_unique_values, through: :csrs
         has_many    :attestation_certificates, through: :certificate_contents
