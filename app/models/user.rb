@@ -7,6 +7,7 @@
 #  address1            :string(255)
 #  address2            :string(255)
 #  address3            :string(255)
+#  authy_user          :string(255)
 #  avatar_content_type :string(255)
 #  avatar_file_name    :string(255)
 #  avatar_file_size    :integer
@@ -91,15 +92,13 @@ class User < ApplicationRecord
   end
 
   after_create do |u|
-    if u.ssl_accounts.empty?
-      u.create_ssl_account
-      if u.as_reseller
-        u.ssl_account.add_role! 'new_reseller'
-        u.ssl_account.set_reseller_default_prefs
-        u.add_role(:reller, u.ssl_account)
-      else
-        u.set_roles_for_account(u.ssl_account, [Role.get_owner_id])
-      end
+    u.create_ssl_account if u.ssl_accounts.empty?
+    if u.as_reseller
+      u.ssl_account.add_role! 'new_reseller'
+      u.ssl_account.set_reseller_default_prefs
+      u.set_roles_for_account(u.ssl_account, [Role.get_reseller_id])
+    else
+      u.set_roles_for_account(u.ssl_account, [Role.get_owner_id])
     end
   end
 
@@ -286,14 +285,15 @@ class User < ApplicationRecord
     role_id ? assignments.where(role_id: role_id) : []
   end
 
-  def update_account_role(account, old_role, new_role)
-    old_role = assignments.where(
-      ssl_account_id: account, role_id: Role.get_role_id(old_role)
-    ).first
-    old_role&.update(role_id: Role.get_role_id(new_role)) unless duplicate_role?(new_role, account)
+  def update_account_role(account_id, old_role, new_role)
+    old_role = assignments.find_by(
+      ssl_account_id: account_id, role_id: Role.get_role_id(old_role)
+    )
+    old_role&.update(role_id: Role.get_role_id(new_role)) unless duplicate_role?(new_role, account_id)
   end
 
-  def duplicate_role?(role, target_ssl = nil)
+  def duplicate_role?(role, target_ssl_id = nil)
+    target_ssl = SslAccount.find_by(id: target_ssl_id)
     assignments.exists?(
       ssl_account_id: (target_ssl.nil? ? ssl_account : target_ssl).id,
       role_id: (role.is_a?(String) ? Role.get_role_id(role) : Role.find(role))
@@ -724,14 +724,14 @@ class User < ApplicationRecord
 
   def remove_admin
     sysadmin_roles = get_roles_by_name(Role::SYS_ADMIN)
+    return unless sysadmin_roles
 
-    if sysadmin_roles.any?
-      sysadmin_roles.each do |r|
-        if r.ssl_account_id.nil?
-          r.delete
-        else
-          update_account_role(r.ssl_account_id, Role::SYS_ADMIN, Role::OWNER)
-        end
+    sysadmin_roles.each do |r|
+      if r.ssl_account_id.nil?
+        r.delete
+      else
+        update_account_role(r.ssl_account_id, Role::SYS_ADMIN, Role::OWNER) unless duplicate_role?(Role::OWNER, r.ssl_account_id)
+        r.delete if duplicate_role?(Role::OWNER, r.ssl_account_id)
       end
     end
   end

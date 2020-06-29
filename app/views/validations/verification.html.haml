@@ -1,12 +1,14 @@
 -content_for :title, "Verify email verification code"
-= render :partial => 'verification_scripts'
+= javascript_include_tag 'https://cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.js'
 = javascript_include_tag "form.authy"
-= javascript_include_tag "jquery.timepicker.min"
 = javascript_include_tag "jstz.min"
-= stylesheet_link_tag "jquery.timepicker.min"
-= stylesheet_link_tag 'bootstrap_style', :media => 'all'
+= javascript_include_tag '//stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js'
+= stylesheet_link_tag 'bootstrap_fix'
 = stylesheet_link_tag 'form.authy'
 = stylesheet_link_tag 'flags.authy'
+= stylesheet_link_tag 'https://cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.css'
+= render partial: 'verification_scripts'
+
 - if @status
   %h2
     Callback Verification for Certificate Order
@@ -18,10 +20,10 @@
         = hidden_field_tag 'passed_token', @callback_type == 'none' ? nil : @certificate_order_token.passed_token
       .col-md-8
         .row.pt-3.phone-number-block
-          .col-md-5
+          .col-md-6
             .row.callback-number.pull-right
               Phone Number :
-          .col-md-4
+          .col-md-6
             = @mobile_number
           .col-md-3
         .row.pt-3.phone-callback-method-desc{:style=> @callback_type == 'none' ? 'display: none' : 'display: flex'}
@@ -78,9 +80,6 @@
                   .row.pull-right
                     = label_tag 'timezone', '* Timezone: '
                 .col-md-6
-                  -#= select_tag 'callback_time_zone', options_for_select(ActiveSupport::TimeZone.all.sort.map{|tz| [tz.to_s, tz.tzinfo.name]}), :class => 'form-control'
-                  -#= select_tag 'callback_time_zone', options_for_select(ActiveSupport::TimeZone.all.sort.map{|tz| [tz.to_s, tz.utc_offset / 3600]}), :class => 'form-control'
-                  -#= select_tag 'callback_time_zone', options_for_select(ActiveSupport::TimeZone.all.sort.map{|tz| [tz.to_s, tz.name]}), :class => 'form-control'
                   = select_tag 'callback_time_zone', options_for_select(@time_zones), :class => 'form-control'
               .row.pb-3.date-block
                 .col-md-6
@@ -110,39 +109,5 @@
           .col-md-5
             = text_field_tag 'phone_verification_code', nil, :class => 'form-control'
           .col-md-3
-            = button_tag 'Verify Phone', :type => 'button', :class => 'btn btn-phone-verification', :disabled => 'disabled'
-      .col-md-2
-
-
-
-    -#.row
-      .col-md-2
-      .col-md-8
-        .row.pt-3.email-verification-block
-          .col-md-3
-            Email Verification Code :
-          .col-md-7
-            = text_field_tag 'email_verification_code', nil
-          .col-md-2
-            = button_tag 'Verify Email', :type => 'button', :class => 'btn btn-email-verification', :disabled => 'disabled'
-        .row.pt-3.phone-call-block{:style => 'display: none'}
-          .col-md-6
-            = label_tag 'authy-countries',  'Country Code: '
-            = select_tag 'authy-countries', nil, name: 'country_code', 'data-show-as': 'number'
-          .col-md-4
-            .row.verification-method
-              = label_tag 'method_sms', 'SMS: '
-              = radio_button_tag 'method', 'sms'
-              = label_tag 'method_call',  'Call: '
-              = radio_button_tag 'method', 'call', true
-          .col-md-2
-            = hidden_field_tag 'passed_token', nil
-            = button_tag 'Call Now', :type => 'button', :class => 'btn btn-automated-callback btn-primary'
-        .row.pt-3.phone-verification-block{:style => 'display: none'}
-          .col-md-3
-            Phone Verification Code :
-          .col-md-7
-            = text_field_tag 'phone_verification_code', nil
-          .col-md-2
             = button_tag 'Verify Phone', :type => 'button', :class => 'btn btn-phone-verification', :disabled => 'disabled'
       .col-md-2

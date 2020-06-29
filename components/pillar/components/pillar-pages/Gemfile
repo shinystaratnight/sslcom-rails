@@ -10,7 +10,6 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 gem "pillar", path: "../.."
 gem "pillar-core", path: "../pillar-core"
 gem "pillar-theme", path: "../pillar-theme"
-gem "pillar-testing", path: "../pillar-testing"
 
 gemspec
 

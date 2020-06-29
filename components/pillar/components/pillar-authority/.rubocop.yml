@@ -1,3 +1,0 @@
-inherit_gem:
-  pillar-testing:
-    - config/base.yml

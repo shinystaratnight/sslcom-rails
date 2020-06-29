@@ -1,4 +1,5 @@
--content_for :title, "Validation for #{@certificate_order.ref}"
+-title = "Validation Documentation for #{@certificate_order.ref}"
+-content_for :title, title
 -co = @certificate_order
 -checkout_in_progress=co.validation_stage_checkout_in_progress?
 -i=adjusted_position(4, co)
@@ -17,7 +18,6 @@
         =render partial: 'refer_to_others', locals: {co: co, hide_options: !checkout_in_progress}
       -unless (co.certificate.is_dv_or_basic? && checkout_in_progress)
         #documents_upload_heading
-          .subheading Documentation
           .clearfix
             %label{:for=>"skip_validation"}
               *Validation documents:
@@ -32,8 +32,8 @@
     -unless (co.certificate.is_dv_or_basic? && checkout_in_progress)
       #documents_upload_section
         #documents_upload_instructions
-          %h2 Documents
-          -if co.certificate.is_ev? or co.certificate.is_evcs?
+          %h2  Upload #{co.certificate.description["certificate_type"]} Documents
+          -if co.certificate.follows_ev_guidelines?
             %p
               Please refer to
               =link_to "https://#{portal_domain}/faqs/ssl-ev-validation-requirements/", "https://#{portal_domain}/faqs/ssl-ev-validation-requirements/"
@@ -49,28 +49,20 @@
                     Please submit a signed copy of the #{link_to "EV Subscriber agreement #{image_tag('pdf_icon.gif')}".html_safe, Certificate::SSLCOM_EV_SUBSCRIBER_AGREEMENT}
                   %li
                     Please submit a signed copy of the #{link_to "EV Authorization Form #{image_tag('pdf_icon.gif')}".html_safe, Certificate::SSLCOM_EV_AUTHORIZATION}
-            %p
-              Lastly, please choose one of the following items to submit:
             %dl.listing
+              All of the following documents are also required for validating the organization:
               %dd
                 %ul
                   %li
-                    #{link_to "Sample Accountant Letter for EV #{image_tag('pdf_icon.gif')}".html_safe, "http://support.ssl.com/default_import/Knowledgebase/Article/View/24/0/sample-accountant-letter-for-ev"}
-            %p
-              OR
-            %dl.listing
-              %dd
-                %ul
+                    Articles of incorporation/registration (or name of incorporation/registration agency)
                   %li
-                    #{link_to "Sample Letter of Opinion for EV SSL #{image_tag('pdf_icon.gif')}".html_safe, "http://support.ssl.com/default_import/Knowledgebase/Article/View/23/0/sample-letter-of-opinion-for-ev-ssl"}
-            %p
-              OR
-            %dl.listing
-              %dd
-                %ul
+                    DUNS and Bradstreet Number (or equivalent)
                   %li
-                    (for government entities) #{link_to "Sample Legal Letter for Verifying a Government Organization #{image_tag('pdf_icon.gif')}".html_safe, "http://support.ssl.com/default_import/Knowledgebase/Article/View/25/0/sample-legal-letter-for-verifying-a-government-organization"}
-          -elsif !co.certificate.is_smime_or_client? and !co.certificate.is_code_signing?
+                    Preferred telephone callback time(s) and date(s) for Subscriber Agreement Signer/Certificate Approver/Requester
+            .clearfix
+            %p
+            = file_field_tag "filedata[]", id: "multi_upload"
+          -elsif co.certificate.is_server?
             -name = co.certificate.is_code_signing? ? co.registrant.company_name : co.all_domains.join(", ")
             %p
               If documents are required for this order, then #{community_name} will verify the existence of
@@ -104,28 +96,24 @@
                         %li
                           %dt Simplified EV Authorization Form (#{link_to "click here to download form #{image_tag('pdf_icon.gif')}".html_safe, "https://support.ssl.com/index.php?_m=downloads&_a=downloadfile&downloaditemid=5"})
                           %dd This form should be used if one person is to act in all three roles, Certificate Requester, Certificate Approver and Contract (Subscriber Agreement) Signer.
-        - if co.certificate.requires_locked_registrant? and co.registrant
-          #iv-ov-file-upload
-            - unless ["validated","epki_agreement"].include? co.registrant.status
+        - if co.certificate.requires_locked_registrant? and co.registrant and !co.certificate.follows_ev_guidelines?
+          - unless ["validated","epki_agreement"].include? co.registrant.status
+            %p
+              Please upload applicable documents for the following:
+            - if co.certificate.is_ov? || co.certificate.is_cs?
               .clearfix
-                %h3
-                  Organization Validation documents are related to validating the identity of the organization or company
-                  "#{co.registrant.company_name}" such as a utility bill, articles or incorporation or organization,
-                  or any other document that proves the existence of the organization or company.
-                %p Identifying Documents for Registrant #{co.registrant.company_name}:
-                = file_field_tag "ov_filedata[]", id: "ov_multi_upload"  
+              %p
+                We will need to validate the organization "#{co.registrant.company_name}".
+                Applicable documents include articles of incorporation, online business listing, Duns and Bradstreet (or equivalent),
+                or any other document that proves the existence of the organization or company.
+              = file_field_tag "ov_filedata[]", id: "ov_multi_upload"
             - if co.certificate.is_smime_or_client?
               .clearfix
-                %h3
-                  Individual Validation documents are related to validating the identity of the recipient
-                  "#{co.get_team_iv.first_name} #{co.get_team_iv.last_name}" such as a an image of a passport,
-                  driver's license, personal id, or a personal photo.
-                %p Identifying Documents for Recipient #{co.get_team_iv.first_name} #{co.get_team_iv.last_name}:
-                = file_field_tag "iv_filedata[]", id: "iv_multi_upload"
-          %br/
-        = file_field_tag "filedata[]", id: "multi_upload"
-
-
+              %p
+                We will need to validate the individual "#{co.get_team_iv.first_name} #{co.get_team_iv.last_name}".
+                Applicable documents include an image of a passport, driver's license, or government issued identification.
+              = file_field_tag "iv_filedata[]", id: "iv_multi_upload"
+    .clearfix
     %p
       Up to 5 files can be uploaded. Zipped documents can also be uploaded, and
       they will automatically be unpacked. The following file types are accepted:

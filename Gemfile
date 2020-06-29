@@ -135,7 +135,7 @@ group :development, :test do
   gem 'binding_of_caller'
   gem 'builder'
   gem 'bullet'
-  gem 'rubocop', require: false
+  gem 'rubocop', '0.79.0', require: false
   gem 'rubocop-rails', require: false
   gem 'rubocop-rspec', require: false
   gem 'rubocop-performance', require: false
@@ -167,7 +167,6 @@ gem 'ransack', '~> 1.8'
 gem 'activerecord-session_store'
 
 gem 'pillar', path: 'components/pillar'
-# gem 'pillar-testing', path: 'components/pillar/components/pillar-testing', group: :test
 gem 'pillar-authentication', path: 'components/pillar/components/pillar-authentication'
 gem 'pillar-authority', path: 'components/pillar/components/pillar-authority'
 gem 'pillar-core', path: 'components/pillar/components/pillar-core'

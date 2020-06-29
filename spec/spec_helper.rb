@@ -6,7 +6,7 @@ require 'webmock/rspec'
 require 'webdrivers'
 
 ## GITHUB ACTIONS CONFIG START
-if ENV.fetch('CI')
+if ENV.fetch('CI') { false }
   Selenium::WebDriver::Chrome::Service.driver_path = "/usr/bin/chromedriver"
 
   chrome_args = { args: %w[window-size=1280,1024 headless disable-gpu] }

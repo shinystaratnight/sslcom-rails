@@ -24,6 +24,4 @@ Gem::Specification.new do |s|
   s.add_dependency "mysql2"
   s.add_dependency "rails", rails_version
   s.add_dependency "webpacker"
-
-  s.add_development_dependency "pillar-testing"
 end

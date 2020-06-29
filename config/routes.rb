@@ -547,6 +547,13 @@ Rails.application.routes.draw do
     end
   end
 
+  scope '(/team/:ssl_slug)' do
+    resources :phone_callbacks, only: [:create] do
+      get 'approvals', on: :collection
+      get 'verifications', on: :collection
+    end
+  end
+
   match '/contacts/:id/admin_update' => 'contacts#admin_update', as: :admin_update_contact, via: %i[put post]
   match '/ssl_manager/:id/approve' => 'registered_agents#approve', :as => :approve_ssl_manager, via: [:get]
   match '/activate/:id' => 'activations#create', :as => :activate, via: %i[get post]

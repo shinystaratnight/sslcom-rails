@@ -135,7 +135,7 @@ class Certificate < ApplicationRecord
 
   # ssl_ca_bundle.txt is the same as COMODOHigh-AssuranceSecureServerCA.crt
   # file_name => description (as displayed in emails)
-  COMODO_BUNDLES = {"AddTrustExternalCARoot.crt"=>"Root CA Certificate",
+  COMODO_BUNDLES = {"AAACertificateServices.crt"=>"Root CA Certificate",
                     "UTNAddTrustServerCA.crt"=>"Intermediate CA Certificate",
                     "EssentialSSLCA_2.crt"=>"Intermediate CA Certificate",
                     "UTNAddTrustSGCCA.crt"=>"Intermediate CA Certificate",
@@ -169,7 +169,7 @@ class Certificate < ApplicationRecord
   # after configuring a ca file set, run Certificate.generate_ca_certificates on the set to create the bundles
 
   BUNDLES = {comodo: {SHA1_2012: {
-                        "AddTrustExternalCARoot.crt"=>"Root CA Certificate",
+                        "AAACertificateServices.crt"=>"Root CA Certificate",
                         "UTNAddTrustServerCA.crt"=>"Intermediate CA Certificate",
                         "EssentialSSLCA_2.crt"=>"Intermediate CA Certificate",
                         "UTNAddTrustSGCCA.crt"=>"Intermediate CA Certificate",
@@ -197,7 +197,7 @@ class Certificate < ApplicationRecord
                         "EntrustSecureServerCA.crt"=>"Root CA Certificate",
                         "USERTrustLegacySecureServerCA.crt"=>"Intermediate CA Certificate"},
                       sha1_sslcom_2014: {
-                        "AddTrustExternalCARoot.crt"=>"Root CA Certificate",
+                        "AAACertificateServices.crt"=>"Root CA Certificate",
                         "UTNAddTrustServerCA.crt"=>"Intermediate CA Certificate",
                         "EssentialSSLCA_2.crt"=>"Intermediate CA Certificate",
                         "UTNAddTrustSGCCA.crt"=>"Intermediate CA Certificate",
@@ -227,8 +227,8 @@ class Certificate < ApplicationRecord
                       sha2_sslcom_2014: {
                         dir: "sha2_sslcom_2014",
                         labels: {
-                          "AddTrustExternalCARoot.crt"=>"Root CA Certificate",
-                          "USERTrustRSAAddTrustCA.crt"=>"Intermediate CA Certificate",
+                          "AAACertificateServices.crt"=>"Root CA Certificate",
+                          "USERTrustRSAAAACA.crt"=>"Intermediate CA Certificate",
                           "USERTrustRSACertificationAuthority.crt"=>"Root CA Certificate",
                           "SSLcomClientAuthenticationandEmailCA_2.crt"=>"Intermediate CA Certificate",
                           "SSLcomPremiumEVCA_2.crt"=>"Intermediate CA Certificate",
@@ -244,20 +244,20 @@ class Certificate < ApplicationRecord
                           "sslcom_high_assurance_ca_bundle_amazon.txt"=>"High Assurance SSL.com CA Bundle",
                           "sslcom_ev_ca_bundle.txt_amazon"=>"EV SSL.com CA Bundle"},
                         contents: {
-                          "sslcom_dv.txt" => %w(AddTrustExternalCARoot.crt USERTrustRSAAddTrustCA.crt SSLcomDVCA_2.crt),
-                          "sslcom_ov.txt" => %w(AddTrustExternalCARoot.crt USERTrustRSAAddTrustCA.crt SSLcomHighAssuranceCA_2.crt),
-                          "sslcom_ev.txt" => %w(AddTrustExternalCARoot.crt USERTrustRSAAddTrustCA.crt SSLcomPremiumEVCA_2.crt),
-                          "sslcom_dv_amazon.txt" => %w(SSLcomDVCA_2.crt USERTrustRSAAddTrustCA.crt AddTrustExternalCARoot.crt),
-                          "sslcom_ov_amazon.txt" => %w(SSLcomHighAssuranceCA_2.crt USERTrustRSAAddTrustCA.crt AddTrustExternalCARoot.crt),
-                          "sslcom_ev_amazon.txt" => %w(SSLcomPremiumEVCA_2.crt USERTrustRSAAddTrustCA.crt AddTrustExternalCARoot.crt),
-                          "ssl_ca_bundle.txt"=>%w(USERTrustRSAAddTrustCA.crt SSLcomHighAssuranceCA_2.crt),
-                          "ssl_ca_bundle_amazon.txt"=>%w(SSLcomHighAssuranceCA_2.crt USERTrustRSAAddTrustCA.crt),
-                          "sslcom_addtrust_ca_bundle.txt"=>%w(USERTrustRSAAddTrustCA.crt SSLcomDVCA_2.crt),
-                          "sslcom_addtrust_ca_bundle_amazon.txt"=>%w(SSLcomDVCA_2.crt USERTrustRSAAddTrustCA.crt),
-                          "sslcom_high_assurance_ca_bundle.txt"=>%w(USERTrustRSAAddTrustCA.crt SSLcomHighAssuranceCA_2.crt),
-                          "sslcom_high_assurance_ca_bundle_amazon.txt"=>%w(SSLcomHighAssuranceCA_2.crt USERTrustRSAAddTrustCA.crt),
-                          "sslcom_ev_ca_bundle.txt"=>%w(USERTrustRSAAddTrustCA.crt SSLcomPremiumEVCA_2.crt),
-                          "sslcom_ev_ca_bundle.txt_amazon"=>%w(SSLcomPremiumEVCA_2.crt USERTrustRSAAddTrustCA.crt)}}}}
+                          "sslcom_dv.txt" => %w(AAACertificateServices.crt USERTrustRSAAAACA.crt SSLcomDVCA_2.crt),
+                          "sslcom_ov.txt" => %w(AAACertificateServices.crt USERTrustRSAAAACA.crt SSLcomHighAssuranceCA_2.crt),
+                          "sslcom_ev.txt" => %w(AAACertificateServices.crt USERTrustRSAAAACA.crt SSLcomPremiumEVCA_2.crt),
+                          "sslcom_dv_amazon.txt" => %w(SSLcomDVCA_2.crt USERTrustRSAAAACA.crt AAACertificateServices.crt),
+                          "sslcom_ov_amazon.txt" => %w(SSLcomHighAssuranceCA_2.crt USERTrustRSAAAACA.crt AAACertificateServices.crt),
+                          "sslcom_ev_amazon.txt" => %w(SSLcomPremiumEVCA_2.crt USERTrustRSAAAACA.crt AAACertificateServices.crt),
+                          "ssl_ca_bundle.txt"=>%w(USERTrustRSAAAACA.crt SSLcomHighAssuranceCA_2.crt),
+                          "ssl_ca_bundle_amazon.txt"=>%w(SSLcomHighAssuranceCA_2.crt USERTrustRSAAAACA.crt),
+                          "sslcom_addtrust_ca_bundle.txt"=>%w(USERTrustRSAAAACA.crt SSLcomDVCA_2.crt),
+                          "sslcom_addtrust_ca_bundle_amazon.txt"=>%w(SSLcomDVCA_2.crt USERTrustRSAAAACA.crt),
+                          "sslcom_high_assurance_ca_bundle.txt"=>%w(USERTrustRSAAAACA.crt SSLcomHighAssuranceCA_2.crt),
+                          "sslcom_high_assurance_ca_bundle_amazon.txt"=>%w(SSLcomHighAssuranceCA_2.crt USERTrustRSAAAACA.crt),
+                          "sslcom_ev_ca_bundle.txt"=>%w(USERTrustRSAAAACA.crt SSLcomPremiumEVCA_2.crt),
+                          "sslcom_ev_ca_bundle.txt_amazon"=>%w(SSLcomPremiumEVCA_2.crt USERTrustRSAAAACA.crt)}}}}
 
 
   scope :base_products, ->{where{reseller_tier_id == nil}}

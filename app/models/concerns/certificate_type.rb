@@ -13,6 +13,7 @@ module CertificateType
     end
   end
 
+  # need to carefully refactor to include Code Signing
   def is_ov?
     if is_a? SignedCertificate
       !!decoded.include?(SignedCertificate::OID_OV)
@@ -41,6 +42,10 @@ module CertificateType
     else
       (is_a?(ApiCertificateRequest) ? target_certificate : self).product =~ /\Aev-code-signing/
     end
+  end
+
+  def follows_ev_guidelines?
+    is_ev? || is_evcs?
   end
 
   # implies non EV

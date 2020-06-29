@@ -3,7 +3,15 @@
     .heading
       %strong Quick Links
     %ul
-      -unless current_user.is_system_admins?
+      -if current_user.is_system_admins?
+        -if current_user.can_manage_certificates?
+          %li=link_to "Certificate Mgmt", admin_index_certificates_path
+        %li=link_to 'Chargebacks', filter_by_state_orders_path(@ssl_slug, "charged_back")
+        %li=link_to 'Refunds', filter_by_state_orders_path(@ssl_slug, "fully_refunded")
+        - if current_user.is_super_user?
+          %li=link_to 'Phone Approvals', approvals_phone_callbacks_path(@ssl_slug)
+        %li=link_to 'Phone Verifications', verifications_phone_callbacks_path(@ssl_slug)
+      -else
         -if Folder.show_folders?(current_user)
           %li#lnk-folders-ql
             %i.fa.fa-folder-open
@@ -35,11 +43,7 @@
           %li Orders:
           %li=link_to 'Enrollment Links', enrollment_links_certificate_enrollment_requests_path(@ssl_slug)
           %li=link_to 'Enrollment Requests', certificate_enrollment_requests_path(@ssl_slug)
-      -else
-        -if current_user.can_manage_certificates?
-          %li=link_to "Certificate Mgmt", admin_index_certificates_path
-        %li=link_to 'Chargebacks', filter_by_state_orders_path(@ssl_slug, "charged_back")
-        %li=link_to 'Refunds', filter_by_state_orders_path(@ssl_slug, "fully_refunded")
+
       %li &nbsp;
       %li Filter Orders:
       -is_test=is_sandbox? ? " is_test:true" : ""

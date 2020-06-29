@@ -1,5 +1,4 @@
 # == Schema Information
-# Schema version: 20200311011643
 #
 # Table name: certificate_names
 #

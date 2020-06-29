@@ -150,7 +150,7 @@ GEM
       rake (>= 10.4, < 14.0)
     api-pagination (4.8.2)
     arel (6.0.4)
-    ast (2.4.0)
+    ast (2.4.1)
     attr_encrypted (3.1.0)
       encryptor (~> 3.0.0)
     authlogic (4.4.3)
@@ -440,9 +440,9 @@ GEM
       mime-types
       mimemagic (~> 0.3.0)
       terrapin (~> 0.6.0)
-    parallel (1.19.1)
-    parser (2.7.0.5)
-      ast (~> 2.4.0)
+    parallel (1.19.2)
+    parser (2.7.1.4)
+      ast (~> 2.4.1)
     polyamorous (1.1.0)
       activerecord (>= 3.0)
     popper_js (1.14.7)
@@ -532,7 +532,6 @@ GEM
     responders (2.4.1)
       actionpack (>= 4.2.0, < 6.0)
       railties (>= 4.2.0, < 6.0)
-    rexml (3.2.4)
     rspec-core (3.9.1)
       rspec-support (~> 3.9.1)
     rspec-expectations (3.9.1)
@@ -555,14 +554,13 @@ GEM
     rswag-ui (2.2.0)
       actionpack (>= 3.1, < 6.1)
       railties (>= 3.1, < 6.1)
-    rubocop (0.81.0)
+    rubocop (0.79.0)
       jaro_winkler (~> 1.5.1)
       parallel (~> 1.10)
       parser (>= 2.7.0.1)
       rainbow (>= 2.2.2, < 4.0)
-      rexml
       ruby-progressbar (~> 1.7)
-      unicode-display_width (>= 1.4.0, < 2.0)
+      unicode-display_width (>= 1.4.0, < 1.7)
     rubocop-performance (1.5.2)
       rubocop (>= 0.71.0)
     rubocop-rails (2.5.0)
@@ -731,7 +729,7 @@ GEM
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.7.6)
-    unicode-display_width (1.7.0)
+    unicode-display_width (1.6.1)
     uniform_notifier (1.13.0)
     universal_ruby_whois (1.2.10)
       activesupport (>= 1.4.4)
@@ -885,7 +883,7 @@ DEPENDENCIES
   rspec-rails
   rspec_junit_formatter
   rswag-ui
-  rubocop
+  rubocop (= 0.79.0)
   rubocop-performance
   rubocop-rails
   rubocop-rspec

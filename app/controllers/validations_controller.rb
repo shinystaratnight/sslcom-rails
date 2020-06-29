@@ -566,7 +566,7 @@ class ValidationsController < ApplicationController
           cc.validate! unless cc.validated?
           is_validated = true
         elsif params[:validation_complete]=="false"
-          cc.pend_validation! unless cc.validated?
+          cc.pend_validation! if cc.validated?
         else
           if vrs.all?(&:approved?)
             unless cc.validated?
@@ -1070,7 +1070,7 @@ class ValidationsController < ApplicationController
   def notify_customer(validation_rulings)
     recips = [@co.certificate_content.administrative_contact].compact
     recips << @co.certificate_content.validation_contact if @co&.certificate_content&.validation_contact&.email&.downcase != @co&.certificate_content&.administrative_contact&.email&.downcase
-    recips.each do |c|
+    recips.compact.each do |c|
       if validation_rulings.all?(&:approved?)
         OrderNotifier.validation_approve(c, @co).deliver
       else

@@ -4,10 +4,11 @@ env:
   RACK_ENV: "test"
 
 name: "Build and Test"
-on: push
+on: [ push ]
 
 jobs:
   build-and-test:
+    if: github.event_name == 'push' && contains(toJson(github.event.commits), '***NO_CI***') == false && contains(toJson(github.event.commits), '[ci-skip]') == false && contains(toJson(github.event.commits), '[skip-ci]') == false
     name: "Build and Test"
     runs-on: ubuntu-latest
     services:
@@ -19,6 +20,11 @@ jobs:
           MYSQL_ROOT_PASSWORD: password
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=5
     steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.4.0
+        with:
+          access_token: ${{ github.token }}
+
       - name: "Checkout Code"
         uses: actions/checkout@v2
 
@@ -26,10 +32,12 @@ jobs:
         run: |
           curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
           chmod +x ./cc-test-reporter
+
       - name: "Create config/settings.yml"
         run: |
           cp config/settings/test.yml config/settings.yml
           cp config/settings/test.yml config/settings.yml
+
       - name: "Create config/local_env.yml"
         run: |
           mkdir -p config && echo "
@@ -52,6 +60,7 @@ jobs:
             STRIPE_PUBLISHABLE_KEY: '${{ secrets.STRIPE_PUBLISHABLE_KEY }}'
             STRIPE_SECRET_KEY: '${{ secrets.STRIPE_SECRET_KEY }}'
           " > config/local_env.yml
+
       - name: "Create config/database.yml"
         run: |
           mkdir -p config && echo 'test:
@@ -62,6 +71,7 @@ jobs:
             port: 13306
             host: 127.0.0.1
           ' > config/database.yml
+
       - name: "Setup Ruby ${{ env.RUBY_VERSION }}"
         uses: ruby/setup-ruby@master
         with:
@@ -83,6 +93,7 @@ jobs:
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
+
       - name: "Cache Gems"
         uses: actions/cache@v1
         with:
@@ -90,6 +101,7 @@ jobs:
           key: ${{ runner.os }}-gem-${{ hashFiles('**/Gemfile.lock') }}
           restore-keys: |
             ${{ runner.os }}-gem-
+
       - name: "Cache Assets"
         uses: actions/cache@v1
         with:
@@ -97,6 +109,7 @@ jobs:
           key: ${{ runner.os }}-assets
           restore-keys: |
             ${{ runner.os }}-assets-
+
       - name: "Configure Bundler"
         run: bundle config --local build.sassc --disable-march-tune-native
 
@@ -104,38 +117,29 @@ jobs:
         run: |
           bundle install --path vendor/bundle --jobs 4 --retry 3
           yarn install --frozen-lockfile
+
       - name: "Configure Database"
         run: |
           bundle exec rake db:create --trace
           bundle exec rake db:structure:load --trace
           bundle exec rake db:migrate --trace
+
       - name: "Precompile Assets"
         run: |
           WEBPACKER_PRECOMPILE=false bundle exec rake assets:precompile
+
       - name: Run Tests
         run: |
+          GIT_BRANCH=${GITHUB_REF#refs/heads/} GIT_COMMIT_SHA=$GITHUB_SHA ./cc-test-reporter before-build
           mkdir -p test-results/rspec test-artifacts
-          GIT_BRANCH=$GITHUB_REF GIT_COMMIT_SHA=$GITHUB_SHA ./cc-test-reporter before-build
-          bundle exec rspec --profile 10 \
-                              --color \
-                              --order random \
-                              --format RspecJunitFormatter \
-                              --out test-results/rspec/rspec.xml \
-                              --format progress
-      - name: "Code Climate Test Coverage"
-        run: |
-          GIT_BRANCH=$GITHUB_REF GIT_COMMIT_SHA=$GITHUB_SHA ./cc-test-reporter format-coverage -t simplecov -o "coverage/codeclimate.$CIRCLE_NODE_INDEX.json"
-      - name: "Upload Test Coverage"
-        uses: actions/upload-artifact@v1
-        with:
-          name: code-coverage
-          path: coverage
+          bundle exec rspec
+          GIT_BRANCH=${GITHUB_REF#refs/heads/} GIT_COMMIT_SHA=$GITHUB_SHA ./cc-test-reporter after-build --prefix ${{github.workspace}} -r ${{secrets.CC_TEST_REPORTER_ID}}
 
       - name: "Upload Screenshots"
         uses: actions/upload-artifact@v1
         with:
           name: screenshots
-          path: tmp/capybara
+          path: ${{github.workspace}}/tmp/capybara
         if: failure()
 
       - name: Notify Slack

@@ -373,6 +373,7 @@ class CertificateOrdersController < ApplicationController
             params[:certificate_order][:certificate_contents_attributes]['0'][:registrant_attributes][:phone_number_approved] == '1'
           OrderNotifier.notify_phone_number_approve(@certificate_order, current_user.email).deliver
           flash[:notice] = "Phone number approved and notification sent to this certificate order's owner."
+          return redirect_to approvals_phone_callbacks_path
         end
 
         if is_smime_or_client

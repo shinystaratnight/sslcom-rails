@@ -1,0 +1,40 @@
+- content_for :title, "Phone Approval Management"
+= render partial: 'certificate_orders/quick_links'
+= render partial: 'certificate_orders/index_scripts'
+
+#search_bar
+  = form_tag '/phone_callbacks/approvals', method: :get do
+    = text_field_tag 'search', nil,  placeholder: 'Search by co-#'
+    = submit_tag 'Search'
+
+- if @certificate_orders.present?
+  #certificate_orders
+    %table(cellspacing="0")
+      %caption
+        Phone Approval Management
+      %tr.heading_row
+        %td
+        %th.name(scope="col") Subject
+        %th(scope="col") Phone Approval Status
+        %th(scope="col") Email Sent
+        - @certificate_orders.each do |co|
+          - registrant, cc, cert = co.registrant, co.certificate_content, co.certificate
+          %tr(alt="#{co.ref}")
+            %td.dropdown
+              -if !co.is_expired_credit? and permitted_to?(:index, co)
+                = image_tag 'expand.png'
+            %td
+              = render partial: 'certificate_orders/subject_column', locals: { certificate_order: co, certificate_content: cc, certificate: co.certificate }
+            %td
+              = link_to 'Needs Approval', edit_certificate_order_url(id: co.ref, registrant: false, approve_phone: true)
+            %td
+              #{co.messages.first.sent_at.strftime("%m-%d-%Y")} #{time_ago_in_words(co.messages.first.sent_at)} ago
+      %tfoot
+        %tr
+          %td.wrap_number_rows(colspan='2')
+            = form_tag(approvals_phone_callbacks_path)
+            = select_tag :number_rows, options_for_select([[5, 5], [10, 10], [20, 20], [50, 50], [100, 100]], @per_page), class: 'per_page'
+            = submit_tag 'submit'
+          %td(colspan='4')= will_paginate @certificate_orders
+          %td
+          %td(colspan='5')
