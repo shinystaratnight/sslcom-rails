@@ -44,13 +44,18 @@
                     = hidden_field :phone_callback_log, :cert_order_ref, value: co.ref
                     = hidden_field :phone_callback_log, :phone_number, value: "+ #{co.locked_registrant.country_code} #{co.locked_registrant.phone}"
                     %approve_submit
-                      = f.submit 'Complete Validation'
+                      = f.submit 'Complete Validation', data: { confirm: 'Do you wish to complete validation for this order?' }
       %tfoot
         %tr
           %td.wrap_number_rows(colspan='2')
-            = form_tag(verifications_phone_callbacks_path, method: :get)
+            = form_tag(verifications_phone_callbacks_path, method: :get, id: 'target')
             = select_tag :number_rows, options_for_select([[5, 5], [10, 10], [20, 20], [50, 50], [100, 100]], @per_page), class:'per_page'
-            = submit_tag 'submit'
+            = submit_tag 'submit', style: 'display: none;'
           %td(colspan='4')= will_paginate @certificate_orders
           %td
           %td(colspan='5')
+
+  = javascript_tag do
+    $('.per_page').change(function() {
+    $('#target').submit();
+    });
