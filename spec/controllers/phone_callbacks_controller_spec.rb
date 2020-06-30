@@ -29,7 +29,7 @@ describe PhoneCallbacksController do
       cert_order = CertificateOrder.joins{ sub_order_items.product_variant_item.product_variant_group.variantable(Certificate) }.first
       cert_order.certificate_order_tokens << create(:certificate_order_token, :manual)
       certificate_content = create(:certificate_content)
-      certificate_content.update(certificate_order_id: cert_order.id)
+      certificate_content.update(certificate_order_id: cert_order.id, workflow_state: 'contacts_provided')
       registrant = build(:locked_registrant)
       registrant.update(contactable_id: cert_order.certificate_content.id, contactable_type: 'CertificateContent')
 
@@ -47,7 +47,7 @@ describe PhoneCallbacksController do
       cert_order = CertificateOrder.joins{ sub_order_items.product_variant_item.product_variant_group.variantable(Certificate) }.first
       cert_order.certificate_order_tokens << create(:certificate_order_token, :manual)
       certificate_content = create(:certificate_content)
-      certificate_content.update(certificate_order_id: cert_order.id)
+      certificate_content.update(certificate_order_id: cert_order.id, workflow_state: 'contacts_provided')
       registrant = build(:locked_registrant)
       registrant.update(contactable_id: cert_order.certificate_content.id, contactable_type: 'CertificateContent')
 
@@ -87,7 +87,7 @@ describe PhoneCallbacksController do
     before do
       PhoneCallBackLog.destroy_all
     end
-    
+
     it 'creates a new phone callback log' do
       cert_order = create(:certificate_order_token).certificate_order
 
