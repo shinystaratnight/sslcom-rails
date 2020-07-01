@@ -33,11 +33,14 @@
             %td
               #{token.status}
             %td
-              + #{co.locked_registrant.country_code} #{co.locked_registrant.phone}
+              - if co.locked_registrant.present?
+                + #{co.locked_registrant.country_code} #{co.locked_registrant.phone}
+              - else
+                %p{ style: 'color: red;' }No Locked Registrant
             %td
               #{token.callback_datetime.strftime("%m-%d-%Y")} #{token.callback_datetime.strftime("at %I:%M%p")}
             %td
-              -if co.certificate.requires_locked_registrant?
+              -if co.certificate.requires_locked_registrant? && co.locked_registrant.present?
                 %validation_complete
                   = form_for :phone_callback_log, url: phone_callbacks_path do |f|
                     = hidden_field :phone_callback_log, :validated_by, value: current_user.login
@@ -45,6 +48,8 @@
                     = hidden_field :phone_callback_log, :phone_number, value: "+ #{co.locked_registrant.country_code} #{co.locked_registrant.phone}"
                     %approve_submit
                       = f.submit 'Complete Validation', data: { confirm: 'Do you wish to complete validation for this order?' }
+              - else
+                %p{ style: 'color: red;' } No Locked Registrant
       %tfoot
         %tr
           %td.wrap_number_rows(colspan='2')
