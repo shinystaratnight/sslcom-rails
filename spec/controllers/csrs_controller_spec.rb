@@ -46,6 +46,10 @@ describe CsrsController do
 
   describe 'verification_check' do
     context 'domain validation' do
+      before do
+        DomainControlValidation.destroy_all
+      end
+      
       context 'http' do
         it 'creates a dcv via http validation' do
           domain = FactoryBot.create(:certificate_name)
@@ -155,6 +159,10 @@ describe CsrsController do
     end
 
     context 'domain prevalidation' do
+      before do
+        DomainControlValidation.destroy_all
+      end
+
       context 'http' do
         it 'creates a dcv via http validation' do
           domain = FactoryBot.create(:domain, name: 'support.ssl.com')

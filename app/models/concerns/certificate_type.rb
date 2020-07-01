@@ -33,7 +33,11 @@ module CertificateType
   end
 
   def is_iv?
-    !!decoded.include?(SignedCertificate::OID_IV) if is_a? SignedCertificate
+    if is_a? SignedCertificate
+      !!decoded.include?(SignedCertificate::OID_IV)
+    else
+      is_client_pro? || is_client_business? || is_client_enterprise? || is_naesb?
+    end
   end
 
   def is_evcs?

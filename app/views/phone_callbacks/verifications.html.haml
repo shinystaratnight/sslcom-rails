@@ -1,0 +1,61 @@
+- content_for :title, "Phone Verifications Management"
+= render partial: 'certificate_orders/quick_links'
+= render partial: 'certificate_orders/index_scripts'
+
+#search_bar
+  = form_tag verifications_phone_callbacks_path do
+    = text_field_tag 'search', nil,  placeholder: 'Search by co-#'
+    = submit_tag 'Search'
+
+- if @certificate_orders.present?
+  #certificate_orders
+    %table(cellspacing="0")
+      %caption
+        Phone Verifications Management
+      %tr.heading_row
+        %td
+        %th.name(scope="col") Subject
+        %th(scope="col") Callback Status
+        %th(scope="col") Phone Number
+        %th(scope="col") Scheduled Time
+        %th(scope="col") Validated & Notified
+        - @certificate_orders.each do |co|
+          - token = co.certificate_order_tokens.first
+          - cc = co.certificate_content
+          - certificate = co.certificate
+          - validation = co.validation
+          %tr(alt="#{co.ref}")
+            %td.dropdown
+              -if !co.is_expired_credit? and permitted_to?(:index, co)
+                = image_tag 'expand.png'
+            %td
+              = render partial: 'certificate_orders/subject_column', locals: { certificate_order: co, certificate_content: cc, certificate: co.certificate }
+            %td
+              #{token.status}
+            %td
+              + #{co.locked_registrant.country_code} #{co.locked_registrant.phone}
+            %td
+              #{token.callback_datetime.strftime("%m-%d-%Y")} #{token.callback_datetime.strftime("at %I:%M%p")}
+            %td
+              -if co.certificate.requires_locked_registrant?
+                %validation_complete
+                  = form_for :phone_callback_log, url: phone_callbacks_path do |f|
+                    = hidden_field :phone_callback_log, :validated_by, value: current_user.login
+                    = hidden_field :phone_callback_log, :cert_order_ref, value: co.ref
+                    = hidden_field :phone_callback_log, :phone_number, value: "+ #{co.locked_registrant.country_code} #{co.locked_registrant.phone}"
+                    %approve_submit
+                      = f.submit 'Complete Validation', data: { confirm: 'Do you wish to complete validation for this order?' }
+      %tfoot
+        %tr
+          %td.wrap_number_rows(colspan='2')
+            = form_tag(verifications_phone_callbacks_path, method: :get, id: 'target')
+            = select_tag :number_rows, options_for_select([[5, 5], [10, 10], [20, 20], [50, 50], [100, 100]], @per_page), class:'per_page'
+            = submit_tag 'submit', style: 'display: none;'
+          %td(colspan='4')= will_paginate @certificate_orders
+          %td
+          %td(colspan='5')
+
+  = javascript_tag do
+    $('.per_page').change(function() {
+    $('#target').submit();
+    });

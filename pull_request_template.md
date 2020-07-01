@@ -1,10 +1,11 @@
 ### Description of work
 
-*Add your own description here. The aim is provide information to help the reviewer review the PR.*
+*Add your own description here. The aim is to provide information to help the reviewer review the PR.*
 
 ### Issue
 
 *If there is an associated issue, write 'Closes #XXX'*
+<!-- [TicketNumber](https://sslcom.atlassian.net/browse/SP-[TicketNumber]) -->
 
 ### Acceptance Criteria
 

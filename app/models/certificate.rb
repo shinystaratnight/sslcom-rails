@@ -460,10 +460,6 @@ class Certificate < ApplicationRecord
     product.include?('personal')
   end
 
-  def is_document_signing?
-    product.include?('document_signing')
-  end
-
   def is_premium_ssl?
     product =~ /\Apremiumssl/
   end

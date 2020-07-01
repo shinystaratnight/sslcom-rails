@@ -10,7 +10,7 @@
     - scoped_ssl     = @user.ssl_accounts.where('ssl_slug = ? || acct_number = ?', params[:ssl_slug], params[:ssl_slug]).first
     - ssl_label      = system_admin ? 'Ssl Account #' : 'Team(s)'
     - ssl_collection = system_admin ? @user.ssl_accounts : current_user.total_teams_can_manage_users
-    - ssl_select     = system_admin && scoped_ssl ? scoped_ssl.id : current_user.default_ssl_account
+    - ssl_select     = system_admin and scoped_ssl ? scoped_ssl.id : current_user.default_ssl_account
     = form.label  :ssl_account_ids, ssl_label
     = form.select :ssl_account_ids,
       options_from_collection_for_select(ssl_collection, :id, :get_team_name, ssl_select), {},

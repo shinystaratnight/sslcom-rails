@@ -67,12 +67,14 @@ FactoryBot.define do
   factory :user do
     first_name            { Faker::Name.first_name }
     last_name             { Faker::Name.last_name }
-    login                 { Faker::Internet.username(specifier: 8..15) }
     email                 { Faker::Internet.email }
     status                { 'enabled' }
     password              { 'Testing_ssl+1' }
     password_confirmation { 'Testing_ssl+1' }
     active                { true }
+    sequence :login do |n|
+      Faker::Internet.username(specifier: 8..15) + "#{n}"
+    end
 
     trait :with_avatar do
       avatar { File.new("#{Rails.root}/spec/support/fixtures/idris.jpg") }
