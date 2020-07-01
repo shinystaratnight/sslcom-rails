@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 
 ### v1.3.2 (July 1st, 2020)
 - Additional bug fix patch for sp-592 locked_registrant view
+
 ### v1.3.1 (June 29, 2020)
 
 - Allow document upload on verified orders
