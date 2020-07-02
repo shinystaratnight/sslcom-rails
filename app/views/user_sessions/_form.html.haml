@@ -1,7 +1,6 @@
 .clearfix.form_input
   = form.label :login, "Login".html_safe
-  = form.text_field :login, :size=>HTML_TEXT_FIELD_SIZE
+  = form.text_field :login, :size=>HTML_TEXT_FIELD_SIZE, autofocus: true
 .clearfix.form_input
   = form.label :password, "Password".html_safe
   = form.password_field :password, :size=>HTML_TEXT_FIELD_SIZE
-
