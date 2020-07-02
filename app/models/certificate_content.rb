@@ -442,7 +442,7 @@ class CertificateContent < ApplicationRecord
   end
 
   def expired?
-    csr.signed_certificate.expired? if csr.try(:signed_certificate)
+    signed_certificate&.expired?
   end
 
   def expiring?
