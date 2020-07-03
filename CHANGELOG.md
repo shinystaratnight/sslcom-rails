@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 ### PENDING RELEASE (TBD)
 
+### v1.3.3 (July 3rd, 2020)
+
+- Uncommented out code that checked for SMIME emailed token's expiration date
+
 ### v1.3.2 (July 1st, 2020)
 
 - Additional bug fix patch for sp-592 locked_registrant view
