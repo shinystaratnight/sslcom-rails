@@ -79,14 +79,10 @@ class CertificateOrdersController < ApplicationController
       if co_token.user != current_user and Settings.require_login_smime_claim==true
         is_expired = true
         flash[:error] = "Access to this page is denied. Please log in as the user assigned to this token."
-      elsif co_token.is_expired
+      elsif co_token.is_expired or (co_token.due_date < DateTime.now)
         is_expired = true
+        co_token.update_attribute(:is_expired, true) if co_token.due_date < DateTime.now
         flash[:error] = "The page has expired or is no longer valid."
-      # elsif co_token.due_date < DateTime.now
-      #   is_expired = true
-      #   # co_token.update_attribute(:is_expired, true)
-      #
-      #   flash[:error] = "The page has expired or is no longer valid."
       else
         @certificate_order = co_token.certificate_order
         @token = params[:token]
