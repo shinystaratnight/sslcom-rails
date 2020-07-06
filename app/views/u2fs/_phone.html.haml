@@ -1,36 +1,37 @@
-- selected_country = ISO3166::Country.find_country_by_name(current_user&.country) || ISO3166::Country.find_country_by_alpha2('US')
+= javascript_include_tag '//stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js'
+= stylesheet_link_tag 'bootstrap_style', media: 'all'
+= stylesheet_link_tag 'bootstrap_fix'
 
-.reseller_registration_profile
-  %h3
-    If you lose your security key, we will send you a code via email or SMS
-  #stylized.default_form
-    .settings_block
-      .u2f_block.u2f_info
-        = form_for 'user' do |f|
-          .u2f_device_info
-            = f.select :country_id, ISO3166::Country.all.sort.collect{ |country| ["#{country.name} (+#{country.country_code})", country.name]}, selected: selected_country
+.container
+  .row
+    .col-md-8.offset-md-2
+      - selected_country = ISO3166::Country.find_country_by_name(current_user&.country) || ISO3166::Country.find_country_by_alpha2('US')
+      %h3
+        If you lose your security key, we will send you a code via email or SMS
+  .row
+    .col-md-6.offset-md-3
+      = form_for 'user' do |f|
+        %label{ for: "phone" } Contact Number
+        .input-group
+          = f.select :country_id, ISO3166::Country.all.sort.collect{ |country| ["#{country.name} (+#{country.country_code})", country.name]}, selected: selected_country
+          = f.text_field :phone, value: current_user.phone
+        %span.clearfix
+          We will send you a code via SMS on this number
+        %span.clearfix
+          #phone-error
+      #send-otp
+        %br
+        = button_tag current_user.phone_verified? ? 'Save' : 'Save and Confirm number', id: 'submit_phone_verification', class: 'btn btn-secondary btn-lg'
+        = link_to 'Or send via email', email_otps_path, id: 'otp-email', remote: true
 
-          .u2f_device_info
-            %label{ for: "phone" } Contact Number
-            .input-group
-              = text_field_tag 'user[phone]', current_user.phone, class: 'form-control'
-            %span.clearfix
-              We will send you a code via SMS on this number
-            %span.clearfix
-              #phone-error
-        #send-otp
-          = button_tag current_user.phone_verified? ? 'Save' : 'Save and Confirm number', id: 'submit_phone_verification'
-          = link_to 'Or send via email', email_otps_path, id: 'otp-email', remote: true
-
-        .hidden#code-verification-fields
-          .u2f_device_info_block.clearfix
-            = text_field_tag 'otp_verification_code', nil, class: "form-control", autofocus: true
-            %span Enter verification code from SMS
-            %span.clearfix
-              #code-error
-            = link_to 'Resend code to phone', '#', id: 'resend-otp-phone'
-            %br
-            = link_to 'Resend code to email', '#', id: 'resend-otp-email'
-            = hidden_field_tag 'otp_authy_user', @authy_user
-            .clearfix
-            = button_tag "Verify Code", id: 'code_submit'
+      .hidden#code-verification-fields
+        = text_field_tag 'otp_verification_code', nil, class: "form-control", autofocus: true
+        %span Enter verification code from SMS
+        %span.clearfix
+          #code-error
+        = link_to 'Resend code to phone', '#', id: 'resend-otp-phone'
+        %br
+        = link_to 'Resend code to email', '#', id: 'resend-otp-email'
+        = hidden_field_tag 'otp_authy_user', @authy_user
+        .clearfix
+        = button_tag "Verify Code", id: 'code_submit'
