@@ -185,7 +185,7 @@ jQuery(function($) {
         data: {
           otp: {
             phone: $('#user_phone').val(),
-            country: $('#user_country_id').find(":selected").val()
+            phone_prefix: $('#country-code-0').val()
           }
         },
         type: 'GET',
@@ -214,7 +214,7 @@ jQuery(function($) {
         data: {
           otp: {
             phone: $('#user_phone').val(),
-            country: $('#user_country_id').find(":selected").val()
+            phone_prefix: $('#country-code-0').val()
           }
         },
         type: 'GET',
@@ -246,7 +246,7 @@ jQuery(function($) {
             verification_code: $('#otp_verification_code').val(),
             authy_user: $('#otp_authy_user').val(),
             phone: $('#user_phone').val(),
-            country: $('#user_country_id').find(":selected").val()
+            phone_prefix: $('#country-code-0').val()
           }
         },
         type: 'POST',

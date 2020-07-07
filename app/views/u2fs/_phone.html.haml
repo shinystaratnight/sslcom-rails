@@ -1,6 +1,8 @@
 = javascript_include_tag '//stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js'
 = stylesheet_link_tag 'bootstrap_style', media: 'all'
 = stylesheet_link_tag 'bootstrap_fix'
+= stylesheet_link_tag    'https://cdnjs.cloudflare.com/ajax/libs/authy-form-helpers/2.3/form.authy.min.css', media: 'all', 'data-turbolinks-track': 'reload'
+= javascript_include_tag 'https://cdnjs.cloudflare.com/ajax/libs/authy-form-helpers/2.3/form.authy.min.js', 'data-turbolinks-track': 'reload'
 
 .container
   .row
@@ -11,10 +13,9 @@
   .row
     .col-md-6.offset-md-3
       = form_for 'user' do |f|
-        %label{ for: "phone" } Contact Number
         .input-group
-          = f.select :country_id, ISO3166::Country.all.sort.collect{ |country| ["#{country.name} (+#{country.country_code})", country.name]}, selected: selected_country
-          = f.text_field :phone, value: current_user.phone
+          = select_tag "authy-countries", nil, name: 'country_code', 'data-show-as': 'number', 'data-value': selected_country.country_code
+          = f.text_field :phone, value: current_user.phone, autofocus: true
         %span.clearfix
           We will send you a code via SMS on this number
         %span.clearfix

@@ -783,17 +783,17 @@ class User < ApplicationRecord
     authy_user_result = Authy::API.user_status(id: authy_user)
     return false unless authy_user_result['success'] == true
 
-    user_country_code = ISO3166::Country.find_country_by_name(country)&.country_code
+    user_country_code = phone_prefix
     authy_user_result['status']['phone_number']&.last(4) == phone&.last(4) && authy_user_result['status']['country_code'].to_s == user_country_code.to_s
   end
 
   ##
   # Checks if the user needs to verify phone via OTP
-  # Verification is needed when there is a change for user's phone and/or country
-  # For pre-existing phone details (no changes to phone/country) that are not verified
+  # Verification is needed when there is a change for user's phone and/or phone_prefix
+  # For pre-existing phone details (no changes to phone/phone_prefix) that are not verified
   # register user with authy and verify phone, so that 2FA with OTP is possible
   def requires_phone_verification?
-    phone_changed? || country_changed? || !phone_verified?
+    phone_changed? || phone_prefix_changed? || !phone_verified?
   end
 
   private

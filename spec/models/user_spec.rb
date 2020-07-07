@@ -156,7 +156,7 @@ describe User do
 
     context 'returns true' do
       it 'when user has the same phone number' do
-        user = create(:user, authy_user: '261071388', phone: '1234567891', country: 'United States')
+        user = create(:user, authy_user: '261071388', phone: '1234567891', phone_prefix: '1')
         VCR.use_cassette('authy_user_exists') do
           expect(user.phone_verified?).to eq true
         end
@@ -166,23 +166,23 @@ describe User do
 
   describe '#requires_phone_verification?' do
     it 'returns false when user is registered with authy' do
-      user = create(:user, authy_user: '261071388', phone: '1234567891', country: 'United States')
+      user = create(:user, authy_user: '261071388', phone: '1234567891', phone_prefix: '1')
       VCR.use_cassette('authy_user_exists') do
         expect(user.requires_phone_verification?).to eq false
       end
     end
 
     context 'returns true' do
-      it 'when country changed' do
-        user = create(:user, authy_user: '261071388', phone: '1234567891', country: 'United States')
+      it 'when phone_prefix changed' do
+        user = create(:user, authy_user: '261071388', phone: '1234567891', phone_prefix: '1')
         VCR.use_cassette('authy_user_exists') do
-          user.country = 'Greece'
+          user.phone_prefix = 'Greece'
           expect(user.requires_phone_verification?).to eq true
         end
       end
 
       it 'when phone number changed' do
-        user = create(:user, authy_user: '261071388', phone: '1234567891', country: 'United States')
+        user = create(:user, authy_user: '261071388', phone: '1234567891', phone_prefix: '1')
         user.phone = '1234512345'
         VCR.use_cassette('authy_user_exists') do
           expect(user.requires_phone_verification?).to eq true
@@ -190,7 +190,7 @@ describe User do
       end
 
       it 'when phone not registered with authy' do
-        user = create(:user, authy_user: '261071388', phone: '1234567891', country: 'United States')
+        user = create(:user, authy_user: '261071388', phone: '1234567891', phone_prefix: '1')
         VCR.use_cassette('authy_user_does_not_exist') do
           expect(user.requires_phone_verification?).to eq true
         end
