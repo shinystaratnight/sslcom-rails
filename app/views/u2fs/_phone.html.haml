@@ -5,7 +5,7 @@
 .container
   .row
     .col-md-8.offset-md-2
-      - selected_country = ISO3166::Country.find_country_by_name(current_user&.country) || ISO3166::Country.find_country_by_alpha2('US')
+      - selected_country = ISO3166::Country.find_country_by_country_code(current_user&.phone_prefix) || ISO3166::Country.find_country_by_alpha2('US')
       %h3
         If you lose your security key, we will send you a code via email or SMS
   .row

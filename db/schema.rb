@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200624150727) do
+ActiveRecord::Schema.define(version: 20200707084902) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        :limit=>255
@@ -1647,6 +1647,7 @@ ActiveRecord::Schema.define(version: 20200624150727) do
     t.integer  "avatar_file_size",    :limit=>4
     t.datetime "avatar_updated_at"
     t.string   "authy_user",          :limit=>255
+    t.string   "phone_prefix",        :limit=>255
   end
   add_index "users", ["id", "ssl_account_id", "status"], :name=>"index_users_on_status_and_ssl_account_id", :using=>:btree
   add_index "users", ["id", "status"], :name=>"index_users_on_status", :using=>:btree

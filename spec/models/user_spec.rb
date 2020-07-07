@@ -40,6 +40,7 @@
 #  persist_notice      :boolean          default("0")
 #  persistence_token   :string(255)      not null
 #  phone               :string(255)
+#  phone_prefix        :string(255)
 #  po_box              :string(255)
 #  postal_code         :string(255)
 #  single_access_token :string(255)      not null
