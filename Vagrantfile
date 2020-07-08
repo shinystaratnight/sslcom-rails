@@ -73,4 +73,6 @@ Vagrant.configure('2') do |config|
     apt-get -y install memcached
     apt-get -y install xvfb libgtk-3-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2
   SHELL
+
+  config.vm.provision :shell, :inline => "sudo rm /etc/localtime && sudo ln -s /usr/share/zoneinfo/US/Pacific /etc/localtime", run: "always"
 end
