@@ -715,10 +715,10 @@ class User < ApplicationRecord
     end
   end
 
-  def make_admin
-    unless roles.map(&:name).include?(Role::SYS_ADMIN)
-      roles << Role.find_by(name: Role::SYS_ADMIN)
-      assignments << Assignment.new(ssl_account_id: ssl_account.id, role_id: Role.find_by(name: Role::SYS_ADMIN).id)
+  def elevate_role(role_symbol)
+    unless roles.map(&:name).include?(role_symbol)
+      roles << Role.find_by(name: role_symbol)
+      assignments << Assignment.new(ssl_account_id: ssl_account.id, role_id: Role.find_by(name: role_symbol).id)
     end
   end
 

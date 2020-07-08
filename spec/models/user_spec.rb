@@ -382,24 +382,27 @@ describe User do
       assert_equal [:owner], owner.role_symbols
     end
 
-    describe '#make_admin' do
-      it 'assigns sysadmin role' do
-        role_sysadmin = Role.find_by(name: Role::SYS_ADMIN)
-        owner.make_admin
-        owner.reload
-        expect(owner.roles.include?(role_sysadmin)).to eq true
-      end
+    it 'assigns sysadmin role' do
+      role_sysadmin = Role.find_by(name: Role::SYS_ADMIN)
+      owner.elevate_role(Role::SYS_ADMIN)
+      owner.reload
+      expect(owner.roles.include?(role_sysadmin)).to eq true
     end
 
-    describe '#remove_admin' do
-      it 'removes admin role' do
-        role_sysadmin = Role.find_by(name: Role::SYS_ADMIN)
-        owner.make_admin
-        owner.reload
-        owner.remove_admin
-        owner.reload
-        expect(owner.roles.include?(role_sysadmin)).to eq false
-      end
+    it 'assigns super_user role' do
+      role_super_user = Role.find_by(name: Role::SUPER_USER)
+      owner.elevate_role(Role::SUPER_USER)
+      owner.reload
+      expect(owner.roles.include?(role_super_user)).to eq true
+    end
+  
+    it 'removes admin role' do
+      role_sysadmin = Role.find_by(name: Role::SYS_ADMIN)
+      owner.elevate_role(Role::SYS_ADMIN)
+      owner.reload
+      owner.remove_admin
+      owner.reload
+      expect(owner.roles.include?(role_sysadmin)).to eq false
     end
   end
 
