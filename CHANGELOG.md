@@ -3,6 +3,8 @@ All notable changes to this project will be documented in this file.
 
 ### PENDING RELEASE (TBD)
 
+- Add ability to elevate a user to super_user or sys_admin programatically.
+
 ### v1.3.4 (July 6th, 2020)
 
 - Add rescue_from exception for Authlogic::Session::Activation::NotActivatedError

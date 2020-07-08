@@ -81,7 +81,15 @@ FactoryBot.define do
     end
 
     trait :sys_admin do
-      after(:create, &:make_admin)
+      after(:create) do |user|
+        user.elevate_role(Role::SYS_ADMIN)
+      end
+    end
+
+    trait :super_user do
+      after(:create) do |user|
+        user.elevate_role(Role::SUPER_USER)
+      end
     end
 
     Role::ALL.each do |role_name|
