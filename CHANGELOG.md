@@ -3,6 +3,14 @@ All notable changes to this project will be documented in this file.
 
 ### PENDING RELEASE (TBD)
 
+### v1.3.4 (July 6th, 2020)
+
+- Add rescue_from exception for Authlogic::Session::Activation::NotActivatedError
+
+### v1.3.3 (July 1st, 2020)
+
+- Revert certificate order search and find_certificate cache.
+
 ### v1.3.2 (July 1st, 2020)
 
 - Additional bug fix patch for sp-592 locked_registrant view
