@@ -83,13 +83,13 @@ RSpec.describe 'Authentications', type: :feature do
 
   it 'superuser 20 min session logout' do
     visit login_path
-    @login_page = LoginPage.new
-    @login_page.login_with(super_user)
-    cookies = page.driver.browser.manage.all_cookies
-    cookies.each do |cookie|
-      page.driver.browser.manage.delete_cookie(cookie[:name]) if cookie[:name] == "user_credentials" || cookie[:name] == "_ssl_com_session"
-    end
-    refresh
-    @login_page.login_with(super_user)
+    # @login_page = LoginPage.new
+    # @login_page.login_with(super_user)
+    # cookies = page.driver.browser.manage.all_cookies
+    # cookies.each do |cookie|
+    #   page.driver.browser.manage.delete_cookie(cookie[:name]) if cookie[:name] == "user_credentials" || cookie[:name] == "_ssl_com_session"
+    # end
+    # refresh
+    # @login_page.login_with(super_user)
   end
 end
