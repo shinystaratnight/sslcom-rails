@@ -1,5 +1,5 @@
 class LoginPage < SitePrism::Page
-  set_url '/login'
+  set_url '/'
 
   element :login, '#user_session_login'
   element :password, '#user_session_password'
