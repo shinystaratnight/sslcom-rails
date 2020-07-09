@@ -81,7 +81,7 @@ RSpec.describe 'Authentications', type: :feature do
     end
   end
 
-  scenario 'superuser 20 min session logout' do
+  it 'superuser 20 min session logout' do
     visit login_path
     @login_page = LoginPage.new
     @login_page.login_with(super_user)
