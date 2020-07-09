@@ -3,8 +3,9 @@ All notable changes to this project will be documented in this file.
 
 ### PENDING RELEASE (TBD)
 
-### v1.3.4 (July 6th, 2020)
+### v1.3.4 (July 10th, 2020)
 
+- Add automatic phone approval queueing for certificate orders
 - Add rescue_from exception for Authlogic::Session::Activation::NotActivatedError
 
 ### v1.3.3 (July 1st, 2020)
