@@ -154,6 +154,7 @@ group :test do
   gem 'shoulda-matchers', require: false
   gem 'webdrivers'
   gem 'formulaic'
+  gem 'site_prism'
 end
 
 gem 'httparty'

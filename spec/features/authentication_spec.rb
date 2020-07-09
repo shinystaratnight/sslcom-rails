@@ -2,6 +2,7 @@ require 'rails_helper'
 
 RSpec.describe 'Authentications', type: :feature do
   let!(:user) { create(:user, :owner) }
+  let!(:super_user) {create(:user, :super_user)}
 
   before do
     User.any_instance.stubs(:authenticated_avatar_url).returns('https://github.blog/wp-content/uploads/2012/03/codercat.jpg?fit=896%2C896')
@@ -78,5 +79,17 @@ RSpec.describe 'Authentications', type: :feature do
       visit certificate_order_path(ref: "co-10000")
       expect(page).to have_content("username: #{other.login}")
     end
+  end
+
+  scenario 'superuser 20 min session logout' do
+    @login_page = LoginPage.new
+    @login_page.load
+    @login_page.login_with(super_user)
+    cookies = page.driver.browser.manage.all_cookies
+    cookies.each do |cookie|
+      page.driver.browser.manage.delete_cookie(cookie[:name]) if cookie[:name] == "user_credentials" || cookie[:name] == "_ssl_com_session"
+    end
+    refresh
+    @login_page.login_with(super_user)
   end
 end
