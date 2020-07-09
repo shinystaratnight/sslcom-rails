@@ -82,8 +82,7 @@ RSpec.describe 'Authentications', type: :feature do
   end
 
   it 'superuser 20 min session logout', js: true do
-    @login_page = LoginPage.new
-    @login_page.load
+    visit login_path
     @login_page.login_with(super_user)
     cookies = page.driver.browser.manage.all_cookies
     cookies.each do |cookie|
