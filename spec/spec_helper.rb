@@ -38,6 +38,10 @@ RSpec.configure do |config|
     driven_by :selenium_chrome_headless
   end
 
+  config.before(:each, type: :feature, js: true) do
+    @login_page = LoginPage.new
+  end
+
   config.after(:each, type: :feature) do |example|
     screenshot_and_save_page if example.exception.present?
   end
