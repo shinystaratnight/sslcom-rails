@@ -3,7 +3,7 @@ require 'rails_helper'
 describe PhoneCallbacksController do
 
   before do
-    @user = FactoryBot.create(:user, :sys_admin)
+    @user = FactoryBot.create(:user)
     activate_authlogic
     login_as(@user)
   end
@@ -22,6 +22,7 @@ describe PhoneCallbacksController do
     end
 
     it 'displays pending certificate orders' do
+      @user.make_admin
       cert = create(:certificate, :codesigningssl)
 
       cert.product_variant_groups.first.product_variant_items.first.sub_order_item = create(:sub_order_item, product_variant_item_id: cert.product_variant_groups.first.product_variant_items.first.id)
@@ -40,6 +41,7 @@ describe PhoneCallbacksController do
     end
 
     it 'allows for searching for particular orders' do
+      @user.make_admin
       cert = create(:certificate, :codesigningssl)
 
       cert.product_variant_groups.first.product_variant_items.first.sub_order_item = create(:sub_order_item, product_variant_item_id: cert.product_variant_groups.first.product_variant_items.first.id)
@@ -68,6 +70,7 @@ describe PhoneCallbacksController do
     end
 
     it 'renders verifications if no match is found' do
+      @user.make_admin
       get :verifications, search: 'co-frghcd2e'
       expect(response).to render_template('verifications')
       expect(assigns(:certificate_orders)).to eq []

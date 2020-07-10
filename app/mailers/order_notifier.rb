@@ -319,7 +319,7 @@ class OrderNotifier < ApplicationMailer
          to: support_email
   end
 
-  def request_phone_number_approve(co, to_email)
+  def request_phone_number_approve(co, super_user_emails)
     track extra: { certificate_order_id: co.id }
     
     @co_edit_page_path = edit_certificate_order_url(id: co.ref, registrant: false, approve_phone: true)
@@ -327,7 +327,7 @@ class OrderNotifier < ApplicationMailer
 
     mail subject: 'Request for approving Phone Number',
          from: no_reply_email,
-         to: to_email
+         to: [super_user_emails]
   end
 
   def notify_phone_number_approve(co, _from_email)

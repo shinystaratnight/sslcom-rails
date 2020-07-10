@@ -10,7 +10,7 @@ class PhoneCallbacksController < ApplicationController
         .where(ref: params[:search])
         .joins{ sub_order_items.product_variant_item.product_variant_group.variantable(Certificate) }
         .where(registrants: { phone_number_approved: false })
-        .where(messages: { subject: 'Request for approving Phone Number', to: current_user.email } )
+        .where(messages: { subject: 'Request for approving Phone Number' } )
       if @certificate_orders.empty?
         render :approvals
       else
@@ -73,7 +73,7 @@ class PhoneCallbacksController < ApplicationController
     @certificate_orders = CertificateOrder.includes(:messages, :registrants, :certificate_contents)
       .joins{ sub_order_items.product_variant_item.product_variant_group.variantable(Certificate) }
       .where(registrants: { phone_number_approved: false })
-      .where(messages: { subject: 'Request for approving Phone Number', to: current_user.email } )
+      .where(messages: { subject: 'Request for approving Phone Number' } )
   end
 
   def find_pending_verifications
