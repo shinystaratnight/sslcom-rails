@@ -558,19 +558,39 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
 
   def apply_funds(options)
     order = options[:order]
+    no_limit = options[:ssl_account].no_limit
     if order.line_items.size > 0
       paid = if parameters_to_hash['billing_profile'].nil?
-               apply_to_funded_account(options)
+               if no_limit
+                 apply_to_nolimit_account(options)
+               else
+                 apply_to_funded_account(options)
+               end
              else
                apply_to_billing_profile(options)
              end
       if paid
         order.mark_paid!
         options[:certificate_order].pay!(true)
+      elsif no_limit
+        # For users with monthly unlimited amount, the orders are set to 'invoiced' state instead of 'paid'
+        options[:certificate_order].pay!(true)
       end
     end
   end
 
+  def apply_to_nolimit_account(options)
+    ssl_account_id = options[:ssl_account].id
+    order = options[:order]
+    order.update(
+        state: 'invoiced',
+        invoice_id: Invoice.get_or_create_for_team(ssl_account_id).try(:id),
+        approval: 'approved',
+        invoice_description: Order::SSL_CERTIFICATE
+    )
+
+    return false # not paid, just invoiced
+  end
   def apply_to_funded_account(options)
     applied = false
     order = options[:order]
