@@ -73,7 +73,7 @@ jQuery(function($) {
 
     // Remove key
     var ajaxRemoveU2fUrl = '/u2fs'; //u2fs#destroy
-    $(document).on('click', 'button[class=remove_u2f_device]', function() {
+    $(document).on('click', 'button[class*="remove_u2f_device"]', function() {
       if (confirm('Are you sure to remove this token?')) {
         var registerRequests = <%= @registration_requests.to_json.html_safe  %>;
 
@@ -259,12 +259,44 @@ jQuery(function($) {
             $('#phone-error').show();
             $('#phone-error').text('Verified!');
             $('#phone-error').css('color', 'green');
+            $('#phone-hint').hide();
             $('#code-verification-fields').hide();
             $('#u2f-new').prop('disabled', false);
           }
         }
       });
     })
+
+    $('.edit-description').click(function(event){
+      $(this).addClass('hidden');
+      id = $(this).data('id');
+      $('#u2f_nick_name_' + id ).prop('disabled', false);
+      $('#submit_' + id).removeClass('hidden');
+      $('#u2f_nick_name_' + id ).focus();
+    });
+
+    $('[id^=submit]').click(function(event){
+      url = $(this).data('url')
+      id = $(this).data('id')
+
+      $.ajax({
+        url: url,
+        data: {
+          u2f: {
+            nick_name: $('#u2f_nick_name_' + id).val()
+          }
+        },
+        type: 'PATCH',
+        success: function(data) {
+          $('#u2f_nick_name_' + id ).prop('disabled', true);
+          $('#submit_' + id).text(' Saved!');
+          setTimeout(function() {
+            $('#submit_' + id).addClass('hidden');
+            $('#submit_' + id).parent().children('.edit-description').removeClass('hidden')
+          }, 10000);
+        }
+      });
+    });
   });
 });
 </script>

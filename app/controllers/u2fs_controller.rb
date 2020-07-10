@@ -122,7 +122,7 @@ class U2fsController < ApplicationController
       flash.now[:warning] = 'Could not update'
     end
 
-    head :ok
+    render json: { result: 'success' }
   end
 
   def destroy
