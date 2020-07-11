@@ -580,10 +580,10 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
     ssl_account_id = options[:ssl_account].id
     order = options[:order]
     order.update(
-        state: 'invoiced',
-        invoice_id: Invoice.get_or_create_for_team(ssl_account_id).try(:id),
-        approval: 'approved',
-        invoice_description: Order::SSL_CERTIFICATE
+       state: 'invoiced',
+       invoice_id: Invoice.get_or_create_for_team(ssl_account_id).try(:id),
+       approval: 'approved',
+       invoice_description: Order::SSL_CERTIFICATE
     )
     options[:certificate_order].pay!(true)
     return false
