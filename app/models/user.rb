@@ -105,7 +105,7 @@ class User < ApplicationRecord
   delegate :tier_suffix, to: :ssl_account, prefix: false, allow_nil: true
 
   acts_as_authentic do |c|
-    c.logged_in_timeout = 30.minutes
+    c.logged_in_timeout = 20.minutes
     c.validate_email_field = false
     c.validate_login_field = false
     c.session_ids = [nil, :shadow]
