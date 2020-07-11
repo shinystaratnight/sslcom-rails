@@ -572,9 +572,6 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
       if paid
         order.mark_paid!
         options[:certificate_order].pay!(true)
-      elsif no_limit
-        # For users with monthly unlimited amount, the orders are set to 'invoiced' state instead of 'paid'
-        options[:certificate_order].pay!(true)
       end
     end
   end
@@ -588,9 +585,10 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
         approval: 'approved',
         invoice_description: Order::SSL_CERTIFICATE
     )
-
-    return false # not paid, just invoiced
+    options[:certificate_order].pay!(true)
+    return false
   end
+
   def apply_to_funded_account(options)
     applied = false
     order = options[:order]
