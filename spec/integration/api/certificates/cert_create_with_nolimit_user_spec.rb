@@ -61,12 +61,12 @@ class CertCreateWithNolimitUserTest < ActionDispatch::IntegrationTest
       assert_equal  1, @team.certificate_orders.count
       assert_equal  1, @team.orders.count
       assert_equal  1, @team.invoices.count
-      order             = @team.orders.first
+      order = @team.orders.first
       certificate_order = @team.certificate_orders.first
-      assert_equal  order.state, "invoiced"
-      assert_equal  order.status, "active"
-      assert_equal  order.approval, "approved"
-      assert_equal  certificate_order.workflow_state, "paid"
+      assert_equal  order.state, 'invoiced'
+      assert_equal  order.status, 'active'
+      assert_equal  order.approval, 'approved'
+      assert_equal  certificate_order.workflow_state, 'paid'
       assert_equal  order.cents, certificate_order.amount
     end
   end
