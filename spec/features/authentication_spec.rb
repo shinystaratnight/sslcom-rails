@@ -85,11 +85,9 @@ RSpec.describe 'Authentications', type: :feature do
   it 'superuser 20 min session logout', js: true do
     visit login_path
     login_page.login_with(super_user)
-    cookies = page.driver.browser.manage.all_cookies
-    cookies.each do |cookie|
-      page.driver.browser.manage.delete_cookie(cookie[:name]) if cookie[:name] == 'user_credentials' || cookie[:name] == '_ssl_com_session'
-    end
+    Timecop.travel(Time.now + 30.minutes)
     refresh
-    login_page.login_with(super_user)
+    expect(page).to have_content('You must be logged in to access this page')
+    expect(current_url).to include('/user_session/new')
   end
 end
