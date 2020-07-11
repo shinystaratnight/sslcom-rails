@@ -83,9 +83,8 @@ RSpec.describe 'Authentications', type: :feature do
   it 'superuser 20 min session logout', js: true do
     visit login_path
     login_page.login_with(super_user)
-    Timecop.travel(Time.now + 30.minutes)
+    Timecop.travel(Time.current + 30.minutes)
     refresh
-    expect(page).to have_content('You must be logged in to access this page')
     expect(current_url).to include('/user_session/new')
   end
 end
