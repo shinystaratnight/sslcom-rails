@@ -1040,39 +1040,6 @@ ActiveRecord::Schema.define(version: 20200707084902) do
     t.string   "management_key",        :limit=>255
   end
 
-  create_table "pillar_authentication_account_users", force: :cascade do |t|
-    t.integer  "account_id", :limit=>4
-    t.integer  "user_id",    :limit=>4
-    t.text     "roles",      :limit=>65535
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "pillar_authentication_accounts", force: :cascade do |t|
-    t.string   "name",        :limit=>255
-    t.text     "description", :limit=>65535
-    t.string   "unique_id",   :limit=>255
-    t.integer  "owner_id",    :limit=>4
-    t.boolean  "default"
-    t.integer  "status",      :limit=>4
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "pillar_authentication_users", force: :cascade do |t|
-    t.string   "email",                  :limit=>255, :default=>"", :null=>false, :index=>{:name=>"index_pillar_authentication_users_on_email", :unique=>true, :using=>:btree}
-    t.string   "encrypted_password",     :limit=>255, :default=>"", :null=>false
-    t.string   "reset_password_token",   :limit=>255, :index=>{:name=>"index_pillar_authentication_users_on_reset_password_token", :unique=>true, :using=>:btree}
-    t.datetime "reset_password_sent_at"
-    t.datetime "remember_created_at"
-    t.string   "first_name",             :limit=>255
-    t.string   "last_name",              :limit=>255
-    t.string   "time_zone",              :limit=>255
-    t.integer  "invited_by_id",          :limit=>4
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
   create_table "pillar_authority_blocklist_entries", force: :cascade do |t|
     t.string   "pattern",           :limit=>255
     t.text     "description",       :limit=>65535
@@ -1312,6 +1279,43 @@ ActiveRecord::Schema.define(version: 20200707084902) do
     t.datetime "updated_at"
   end
 
+  create_table "sent_reminders", force: :cascade do |t|
+    t.text     "body",          :limit=>65535
+    t.string   "recipients",    :limit=>255, :index=>{:name=>"index_contacts_on_recipients_subject_trigger_value_expires_at", :with=>["subject", "trigger_value", "expires_at"], :using=>:btree}
+    t.string   "subject",       :limit=>255
+    t.string   "trigger_value", :limit=>255
+    t.datetime "expires_at"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "reminder_type", :limit=>255
+  end
+
+  create_table "server_softwares", force: :cascade do |t|
+    t.string   "title",       :limit=>255, :null=>false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "support_url", :limit=>255
+  end
+
+  create_table "sessions", force: :cascade do |t|
+    t.string   "session_id", :limit=>191, :null=>false, :index=>{:name=>"index_sessions_on_session_id", :using=>:btree}
+    t.text     "data",       :limit=>65535
+    t.datetime "created_at", :null=>false
+    t.datetime "updated_at", :null=>false, :index=>{:name=>"index_sessions_on_updated_at", :using=>:btree}
+  end
+
+  create_table "shopping_carts", force: :cascade do |t|
+    t.integer  "user_id",          :limit=>4, :index=>{:name=>"index_shopping_carts_on_user_id", :using=>:btree}
+    t.string   "guid",             :limit=>255, :index=>{:name=>"index_shopping_carts_on_guid", :using=>:btree}
+    t.text     "content",          :limit=>65535
+    t.string   "token",            :limit=>255
+    t.string   "crypted_password", :limit=>255
+    t.string   "password_salt",    :limit=>255
+    t.string   "access",           :limit=>255
+    t.datetime "created_at",       :null=>false
+    t.datetime "updated_at",       :null=>false
+  end
+
   create_table "signed_certificates", force: :cascade do |t|
     t.integer  "csr_id",                    :limit=>4, :index=>{:name=>"index_signed_certificates_on_csr_id", :using=>:btree}
     t.integer  "parent_id",                 :limit=>4, :index=>{:name=>"index_signed_certificates_on_parent_id", :using=>:btree}
@@ -1352,44 +1356,6 @@ ActiveRecord::Schema.define(version: 20200707084902) do
   add_index "signed_certificates", ["common_name", "url", "body", "decoded", "ext_customer_ref", "ejbca_username"], :name=>"index_signed_certificates_cn_u_b_d_ecf_eu", :type=>:fulltext
   add_index "signed_certificates", ["csr_id", "type"], :name=>"index_signed_certificates_on_csr_id_and_type", :using=>:btree
   add_index "signed_certificates", ["id", "type"], :name=>"index_signed_certificates_on_id_and_type", :using=>:btree
-
-  create_table "sent_reminders", force: :cascade do |t|
-    t.text     "body",                  :limit=>65535
-    t.string   "recipients",            :limit=>255, :index=>{:name=>"index_contacts_on_recipients_subject_trigger_value_expires_at", :with=>["subject", "trigger_value", "expires_at"], :using=>:btree}
-    t.string   "subject",               :limit=>255
-    t.string   "trigger_value",         :limit=>255
-    t.datetime "expires_at"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.string   "reminder_type",         :limit=>255
-    t.integer  "signed_certificate_id", :limit=>4, :index=>{:name=>"fk_sent_reminders_signed_certificate_id", :using=>:btree}, :foreign_key=>{:references=>"signed_certificates", :name=>"fk_sent_reminders_signed_certificate_id", :on_update=>:restrict, :on_delete=>:restrict}
-  end
-
-  create_table "server_softwares", force: :cascade do |t|
-    t.string   "title",       :limit=>255, :null=>false
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.string   "support_url", :limit=>255
-  end
-
-  create_table "sessions", force: :cascade do |t|
-    t.string   "session_id", :limit=>191, :null=>false, :index=>{:name=>"index_sessions_on_session_id", :using=>:btree}
-    t.text     "data",       :limit=>65535
-    t.datetime "created_at", :null=>false
-    t.datetime "updated_at", :null=>false, :index=>{:name=>"index_sessions_on_updated_at", :using=>:btree}
-  end
-
-  create_table "shopping_carts", force: :cascade do |t|
-    t.integer  "user_id",          :limit=>4, :index=>{:name=>"index_shopping_carts_on_user_id", :using=>:btree}
-    t.string   "guid",             :limit=>255, :index=>{:name=>"index_shopping_carts_on_guid", :using=>:btree}
-    t.text     "content",          :limit=>65535
-    t.string   "token",            :limit=>255
-    t.string   "crypted_password", :limit=>255
-    t.string   "password_salt",    :limit=>255
-    t.string   "access",           :limit=>255
-    t.datetime "created_at",       :null=>false
-    t.datetime "updated_at",       :null=>false
-  end
 
   create_table "site_checks", force: :cascade do |t|
     t.text     "url",                   :limit=>65535
