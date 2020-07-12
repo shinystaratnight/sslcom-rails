@@ -80,7 +80,7 @@ RSpec.describe 'Authentications', type: :feature do
     end
   end
 
-  it 'superuser 20 min session logout', js: true do
+  scenario 'superuser 20 min session logout', authentication: true,  js: true do
     visit login_path
     login_page.login_with(super_user)
     Timecop.travel(Time.current + 20.minutes)
