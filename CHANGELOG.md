@@ -3,6 +3,9 @@ All notable changes to this project will be documented in this file.
 
 ### PENDING RELEASE (TBD)
 
+- Correct pagination display and certificate order rendering for phone
+  approval and verifications view.
+
 ### v1.3.4 (July 10th, 2020)
 
 - Add automatic phone approval queueing for certificate orders
