@@ -22,7 +22,7 @@ describe PhoneCallbacksController do
     end
 
     it 'displays pending certificate orders' do
-      @user.make_admin
+      @user.elevate_role(Role::SYS_ADMIN)
       cert = create(:certificate, :codesigningssl)
 
       cert.product_variant_groups.first.product_variant_items.first.sub_order_item = create(:sub_order_item, product_variant_item_id: cert.product_variant_groups.first.product_variant_items.first.id)
@@ -41,7 +41,7 @@ describe PhoneCallbacksController do
     end
 
     it 'allows for searching for particular orders' do
-      @user.make_admin
+      @user.elevate_role(Role::SYS_ADMIN)
       cert = create(:certificate, :codesigningssl)
 
       cert.product_variant_groups.first.product_variant_items.first.sub_order_item = create(:sub_order_item, product_variant_item_id: cert.product_variant_groups.first.product_variant_items.first.id)
@@ -70,7 +70,7 @@ describe PhoneCallbacksController do
     end
 
     it 'renders verifications if no match is found' do
-      @user.make_admin
+      @user.elevate_role(Role::SYS_ADMIN)
       get :verifications, search: 'co-frghcd2e'
       expect(response).to render_template('verifications')
       expect(assigns(:certificate_orders)).to eq []
