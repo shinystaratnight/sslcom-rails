@@ -19,6 +19,10 @@ if ENV.fetch('CI') { false }
     )
   end
 
+  Capybara::Screenshot.register_driver(:chrome) do |driver, path|
+    driver.browser.save_screenshot(path)
+  end
+
   driver = :chrome
 else
   driver = :selenium_chrome_headless
