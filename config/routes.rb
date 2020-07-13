@@ -485,6 +485,8 @@ Rails.application.routes.draw do
     concerns :teamable
   end
 
+  # User verifications, eg OTP
+  resources :verifications
   resources :otps do
     collection do
       get :email

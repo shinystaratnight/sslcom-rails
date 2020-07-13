@@ -77,6 +77,7 @@ class OtpsController < ApplicationController
       response = send_email(authy_user)
       # Raise error unless response success, so that we can log exact error
       raise 'Please try again.' unless response && response['success'] == 'success'
+      # current_user.verifications.create(email: current_user.email)
     rescue => e
       # log failure? response['message']
       flash[:error] = 'Something went wrong. ' + e.message
@@ -111,6 +112,7 @@ class OtpsController < ApplicationController
       raise 'Please try again.' unless response
 
       raise response['message'] unless response['success'] == true
+      # current_user.verifications.create(sms_number: phone, sms_prefix: phone_prefix)
     rescue => e
       # log failure?
       result[:error] = 'Something went wrong. ' + e.message

@@ -16,6 +16,8 @@ class U2fsController < ApplicationController
     @sign_requests = u2f.authentication_requests(key_handles)
     # Store challenges. We need them for the verification step
     session[:challenges] = @registration_requests.map(&:challenge)
+
+    redirect_to verifications_path unless current_user.authy_user && current_user.phone && current_user.phone_prefix
   end
 
   def new
@@ -69,7 +71,14 @@ class U2fsController < ApplicationController
 
       session[:authenticated] = true
       respond_to do |format|
-        format.html { set_redirect(user: @user) }
+        format.html {
+          # Check if user has verifications
+          if  current_user.authy_user && current_user.phone && current_user.phone_prefix
+            set_redirect(user: @user)
+          else
+            redirect_to verifications_path and return
+          end
+        }
       end
     rescue U2F::Error => e
       flash[:error] = 'Unable to authenticate with U2F: ' + e.class.name # unless params[:user]
@@ -80,6 +89,7 @@ class U2fsController < ApplicationController
       session.delete(:challenge)
     end
     session[:u2f_failed_count] = 0
+
   end
 
   def create
@@ -122,7 +132,7 @@ class U2fsController < ApplicationController
       flash.now[:warning] = 'Could not update'
     end
 
-    render json: { result: 'success' }
+    render json: { result: 'success', u2f_description: u2f.nick_name }
   end
 
   def destroy

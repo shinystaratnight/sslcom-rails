@@ -2,7 +2,7 @@
 = stylesheet_link_tag 'bootstrap_style', media: 'all'
 = stylesheet_link_tag 'bootstrap_fix'
 
-- @title = "2FA Settings"
+- @title = "Hardware Tokens"
 - content_for :title, @title
 = render partial: 'index_scripts'
 = javascript_include_tag 'u2f-api'
@@ -11,7 +11,7 @@
   .row
     .col-md-8.offset-md-2
       %h3
-        Security Keys
+        Hardware Tokens
       #stylized.default_form
         .u2f_settings
           .settings_block
@@ -19,25 +19,17 @@
               - if @u2fs.size > 0
                 - @u2fs.each do |u2f|
                   .u2f_device_info_block.clearfix{ id: "u2f_device_#{u2f.id}" }
-                    .u2f_device_info{ id: u2f.id }
-                      .input-group
-                        = text_field_tag :nick_name, u2f.nick_name, { disabled: true, id: "u2f_nick_name_#{u2f.id}" }
-                        .input-group-append
-                          %button.btn.btn-secondary.edit-description{ 'data-id': u2f.id, class: current_user.authy_user && current_user.phone ? '' : 'hidden' }
-                            Edit
-                          %button.btn.btn-success.fa.fa-check.hidden{ id: "submit_#{u2f.id}", 'data-url': u2f_path(u2f.id), 'data-id': u2f.id}
-                          %button.btn.btn-light.remove_u2f_device{ 'data-id': u2f.id }
-                            Remove
-
-                      %span registered on
-                      = u2f.created_at&.strftime("%b %d, %Y")
+                    .u2f_device_info#u2f_description
+                      = u2f.nick_name
+                      %span#u2f_description_hint
+                    .hidden#u2f_edit
+                      = text_field_tag :nick_name, u2f.nick_name, { id: "u2f_nick_name_#{u2f.id}" }
+                      %button.btn.btn-success.fa.fa-check{ id: "submit_#{u2f.id}", 'data-url': u2f_path(u2f.id), 'data-id': u2f.id }
+                    .u2f_device_info
+                      %span - registered on
+                      = u2f.created_at.strftime("%b %d, %Y")
                     .u2f_device_info.right
-            = render partial: 'add_key'
+                      = button_tag 'Edit', type: 'button', class: 'edit_u2f_device', 'data-id': u2f.id
+                      = button_tag 'Remove', :type=>'button', :class=>'remove_u2f_device', 'data-id'=>u2f.id
 
-:javascript
-  function editU2fName(id) {
-    $(this).addClass('hidden');
-    id = $(this).data('id');
-    $('#u2f_nick_name_' + id ).prop('disabled', false);
-    $('#submit_' + id).removeClass('hidden');
-  }
+            = render partial: 'add_key'

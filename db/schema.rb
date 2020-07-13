@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200707084902) do
+ActiveRecord::Schema.define(version: 20200710054852) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        :limit=>255
@@ -1719,6 +1719,17 @@ ActiveRecord::Schema.define(version: 20200707084902) do
     t.string   "domain",         :limit=>255
     t.datetime "created_at"
     t.datetime "updated_at"
+  end
+
+  create_table "verifications", force: :cascade do |t|
+    t.string   "sms_number",  :limit=>255
+    t.string   "sms_prefix",  :limit=>255
+    t.string   "call_number", :limit=>255
+    t.string   "call_prefix", :limit=>255
+    t.string   "email",       :limit=>255
+    t.integer  "user_id",     :limit=>4, :index=>{:name=>"fk_verifications_user_id", :using=>:btree}, :foreign_key=>{:references=>"users", :name=>"fk_verifications_user_id", :on_update=>:restrict, :on_delete=>:restrict}
+    t.datetime "created_at",  :null=>false
+    t.datetime "updated_at",  :null=>false
   end
 
   create_table "visitor_tokens", force: :cascade do |t|
