@@ -2,6 +2,8 @@ require 'rails_helper'
 
 RSpec.describe 'Authentications', type: :feature do
   let!(:user) { create(:user, :owner) }
+  let!(:super_user) {create(:user, :super_user)}
+  let!(:login_page) {LoginPage.new}
 
   before do
     User.any_instance.stubs(:authenticated_avatar_url).returns('https://github.blog/wp-content/uploads/2012/03/codercat.jpg?fit=896%2C896')
@@ -22,9 +24,7 @@ RSpec.describe 'Authentications', type: :feature do
 
   it 'allows existing user to login and logout', js: true do
     visit login_path
-    fill_in 'user_session_login', with: user.login
-    fill_in 'user_session_password', with: user.password
-    find('#btn_login').click
+    login_page.login_with(user)
     expect(page).to have_content("username: #{user.login}")
   end
 
@@ -78,5 +78,13 @@ RSpec.describe 'Authentications', type: :feature do
       visit certificate_order_path(ref: "co-10000")
       expect(page).to have_content("username: #{other.login}")
     end
+  end
+
+  scenario 'superuser 30 min session logout', authentication: true,  js: true do
+    visit login_path
+    login_page.login_with(super_user)
+    Timecop.travel(Time.current + 30.minutes)
+    refresh
+    expect(current_url).to include('/user_session/new')
   end
 end

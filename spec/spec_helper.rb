@@ -21,7 +21,7 @@ if ENV.fetch('CI') { false }
 
   driver = :chrome
 else
-  driver = :selenium_chrome_headless
+  driver = :selenium_chrome
 end
 ## END ##
 
