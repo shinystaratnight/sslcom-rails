@@ -924,9 +924,7 @@ class CertificateContent < ApplicationRecord
     is_wildcard = certificate_order.certificate.is_wildcard?
     is_ucc = certificate_order.certificate.is_ucc?
     is_server = certificate_order.certificate.is_server?
-    if csr.common_name.blank?
-      errors.add(:signing_request, 'is missing the common name (CN) field or is invalid and cannot be parsed')
-    elsif csr.is_weak_key?
+    if csr.is_weak_key?
       errors.add(:signing_request, 'is a rejected Debian weak key')
     elsif !csr.verify_signature
       errors.add(:signing_request, 'has an invalid signature')
