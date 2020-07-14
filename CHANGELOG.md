@@ -3,6 +3,7 @@ All notable changes to this project will be documented in this file.
 
 ### PENDING RELEASE (TBD)
 
+- Bug fix to ensure unlimited users can place as many orders as he/she wants.
 - Fix errors when saving screenshots on ci failure
 - Add ability to elevate a user to super_user or sys_admin programatically.
 
