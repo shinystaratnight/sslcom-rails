@@ -3,6 +3,7 @@ All notable changes to this project will be documented in this file.
 
 ### PENDING RELEASE (TBD)
 
+- Bug fix to ensure monthly billing users can place invoiced orders via API without checking funded_account or billing_profiles.
 - Fix errors when saving screenshots on ci failure
 - Add ability to elevate a user to super_user or sys_admin programatically.
 
