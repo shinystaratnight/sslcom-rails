@@ -3,6 +3,7 @@ All notable changes to this project will be documented in this file.
 
 ### PENDING RELEASE (TBD)
 
+- Uncommented out code that checked for SMIME emailed token's expiration date
 - Correct pagination display and certificate order rendering for phone
   approval and verifications view.
 - Fixed issue creating two teams for every new account and setting both of them to default.
