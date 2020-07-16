@@ -12,7 +12,7 @@ RSpec.describe 'Authentications', type: :feature do
     User.any_instance.stubs(:authenticated_avatar_url).returns('https://github.blog/wp-content/uploads/2012/03/codercat.jpg?fit=896%2C896')
   end
 
-  it 'logins in user who registers automatically', js: true do
+  scenario 'logins in user who registers automatically', authentication: true, js: true do
     registering = attributes_for(:user, :owner)
     visit login_path
     click_on 'Create a new account'
@@ -26,7 +26,7 @@ RSpec.describe 'Authentications', type: :feature do
   end
 
 
-  scenario 'allows existing user to login and logout' do
+  scenario 'allows existing user to login and logout', authentication: true, js: true do
     login_page.load
     login_page.login_with(user)
     expect(page).to have_content("username: #{user.login}")
@@ -34,41 +34,41 @@ RSpec.describe 'Authentications', type: :feature do
     expect(page).to have_content('Successfully logged out.')
   end
 
-  scenario 'fails gracefully when attempting to reset password with nonexistent login' do
+  scenario 'fails gracefully when attempting to reset password with nonexistent login', authentication: true, js: true do
     reset_password_page.load
     reset_password_page.login.set 'nonexistent'
     reset_password_page.submit.click
     expect(page).to have_content 'No user was found with that login'
   end
 
-  scenario 'allows existing user to reset password using login' do
+  scenario 'allows existing user to reset password using login', authentication: true, js: true do
     reset_password_page.load
     reset_password_page.login.set user.login
     reset_password_page.submit.click
     expect(page).to have_content 'Customer login'
   end
 
-  scenario 'allows existing user to reset password using email' do
+  scenario 'allows existing user to reset password using email', authentication: true, js: true do
     reset_password_page.load
     reset_password_page.email.set user.email
     reset_password_page.submit.click
     expect(page).to have_content 'Customer login'
   end
 
-  scenario 'fails gracefully when attempting to reset a password with nonexistent email' do
+  scenario 'fails gracefully when attempting to reset a password with nonexistent email', authentication: true, js: true do
     reset_password_page.load
     reset_password_page.email.set 'nonexistent@ssl.com'
     reset_password_page.submit.click
     expect(page).to have_content 'No user was found with that email'
   end
 
-  scenario 'requires Duo 2FA when logging in as super_user' do
+  scenario 'requires Duo 2FA when logging in as super_user', authentication: true,  js: true do
     login_page.load
     login_page.login_with(super_user)
     expect(page).to have_content 'Duo 2-factor authentication setup'
   end
 
-  xit 'disallows sysadmin to view "Send to SSL.com CA" page' do
+  xit 'disallows sysadmin to view "Send to SSL.com CA" page', authentication: true,  js: true do
     other = create(:user)
     as_user(create(:user, :sys_admin)) do
       visit certificate_order_path(ref: "co-10000")
@@ -85,7 +85,7 @@ RSpec.describe 'Authentications', type: :feature do
   end
 
   context 'when user visited cart' do
-    xit 'redirect to cart after login', js: true do
+    xit 'redirect to cart after login', authentication: true, js: true do
       # Cart checkout
       visit show_cart_orders_path
       find('a#add_items_img').click
