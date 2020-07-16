@@ -4,6 +4,7 @@ RSpec.describe 'Authentications', type: :feature do
   let!(:user) { create(:user, :owner) }
   let!(:super_user) {create(:user, :super_user)}
   let!(:login_page) {LoginPage.new}
+  let!(:registration_page) {RegistrationPage.new}
 
   before do
     User.any_instance.stubs(:authenticated_avatar_url).returns('https://github.blog/wp-content/uploads/2012/03/codercat.jpg?fit=896%2C896')
@@ -13,12 +14,12 @@ RSpec.describe 'Authentications', type: :feature do
     registering = attributes_for(:user, :owner)
     visit login_path
     click_on 'Create a new account'
-    fill_in 'user_login', with: registering[:login]
-    fill_in 'user_email', with: registering[:email]
-    fill_in 'user_password', with: registering[:password]
-    fill_in 'user_password_confirmation', with: registering[:password_confirmation]
-    find('input[name="tos"]').click
-    find('input[alt="Register"]').click
+    registration_page.login.set registering[:login]
+    registration_page.email.set registering[:email]
+    registration_page.password.set registering[:password]
+    registration_page.password_confirmation.set registering[:password_confirmation]
+    registration_page.terms_of_service.click
+    registration_page.register.click
     expect(page).to have_content('SSL.com Customer Dashboard')
   end
 
