@@ -20,6 +20,7 @@
         %th(scope="col") Email Sent
         - @certificate_orders.each do |co|
           - registrant, cc, cert = co.registrant, co.certificate_content, co.certificate
+          - message = co.messages.sort_by { |message| [message.mailer == 'OrderNotifier#request_phone_number_approve', message.sent_at] }.first
           %tr(alt="#{co.ref}")
             %td.dropdown
               -if !co.is_expired_credit? and permitted_to?(:index, co)
@@ -29,7 +30,7 @@
             %td
               = link_to 'Needs Approval', edit_certificate_order_url(id: co.ref, registrant: false, approve_phone: true)
             %td
-              #{co.messages.first.sent_at.strftime("%m-%d-%Y")} #{time_ago_in_words(co.messages.first.sent_at)} ago
+              #{message.sent_at.strftime("%m-%d-%Y")} #{time_ago_in_words(message.sent_at)} ago
       %tfoot
         %tr
           %td.wrap_number_rows(colspan='2')

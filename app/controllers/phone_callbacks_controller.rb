@@ -1,7 +1,7 @@
 class PhoneCallbacksController < ApplicationController
   before_action :require_user
-  before_action :check_if_super_user?, only: %i[approvals]
-  before_action :check_if_sys_admin?, only: %i[verifications]
+  before_action :check_if_super_user?, only: [:approvals]
+  before_action :check_if_sys_admin?, only: [:verifications]
   before_action :set_per_page
 
   def approvals
@@ -54,7 +54,10 @@ class PhoneCallbacksController < ApplicationController
   private
 
   def set_per_page
-    @per_page = params[:number_rows] || 10
+    preferred_row_count = current_user.try('preferred_cert_order_row_count')
+    @per_page = params[:number_rows] || preferred_row_count
+    CertificateOrder.per_page = @per_page if CertificateOrder.per_page != @per_page
+    current_user&.update_attribute('preferred_cert_order_row_count', @per_page) if @per_page != preferred_row_count
   end
 
   def phone_callback_log_params
@@ -74,7 +77,6 @@ class PhoneCallbacksController < ApplicationController
       .joins{ sub_order_items.product_variant_item.product_variant_group.variantable(Certificate) }
       .where(registrants: { phone_number_approved: false })
       .where(messages: { subject: 'Request for approving Phone Number' } )
-      .order('ahoy_messages.sent_at DESC')
   end
 
   def find_pending_verifications
