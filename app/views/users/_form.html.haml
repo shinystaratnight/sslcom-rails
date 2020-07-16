@@ -1,7 +1,7 @@
 -if @user.new_record?
   .clearfix
     = form.label :login, "Login<span class='label_desc'>desired username</span>".html_safe
-    = form.text_field :login, :size=>HTML_TEXT_FIELD_SIZE, required:true
+    = form.text_field :login, :size=>HTML_TEXT_FIELD_SIZE, required:true, autofocus: true
 .clearfix
   = form.label :email, "Email<span class='label_desc'>receives notification</span>".html_safe
   = form.text_field :email, :size=>HTML_TEXT_FIELD_SIZE, required:true

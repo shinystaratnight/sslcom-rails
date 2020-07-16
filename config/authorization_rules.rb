@@ -557,6 +557,19 @@ authorization do
       if_attribute ssl_account: is_in {user.ssl_accounts}
     end
     #
+    # U2f
+    #
+    has_permission_on :u2fs, to: %i[new create]
+    has_permission_on :u2fs, to: %i[
+      index
+      create
+      update
+      destroy
+      verify
+    ] do
+      if_attribute user_id: is {user.id}
+    end
+    #
     # CertificateOrder
     #
     has_permission_on :certificate_orders, :certificate_contents, to: :update_tags do
@@ -644,6 +657,7 @@ authorization do
     # CertificateEnrollmentRequests
     #
     has_permission_on :certificate_enrollment_requests, to: %i[create new enrollment_links]
+    has_permission_on :u2fs, to: %i[new create]
   end
 end
 
@@ -678,8 +692,6 @@ privileges do
     search
     update_company_name
     update_settings
-    register_u2f
-    remove_u2f
     register_duo
     duo_enable
     duo_own_used

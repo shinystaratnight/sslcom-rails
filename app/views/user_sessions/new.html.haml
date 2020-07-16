@@ -4,7 +4,7 @@
 =stylesheet_link_tag "bootstrap_fix", :media => 'all'
 =render :partial => 'index_scripts'
 = javascript_include_tag 'u2f-api'
--failed_count = @failed_count || 0
+-failed_count = session[:failed_count] || 0
 -limited_count = Settings.captcha_threshold
 .reseller_registration_profile
   =form_for @user_session, :url => user_session_path do |f|

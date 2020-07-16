@@ -87,4 +87,21 @@ RSpec.describe 'Authentications', type: :feature do
     refresh
     expect(current_url).to include('/user_session/new')
   end
+
+  context 'when user visited cart' do
+    xit 'redirect to cart after login', js: true do
+      # Cart checkout
+      visit show_cart_orders_path
+      find('a#add_items_img').click
+      first('img[alt="Buy sm bl"]').click
+      find('#next_submit').click
+      find('a#checkout_img').click
+      # Login
+      fill_in 'user_session_login', with: user.login
+      fill_in 'user_session_password', with: user.password
+      find('#btn_login').click
+
+      expect(page).to have_current_path new_order_path
+    end
+  end
 end

@@ -1,0 +1,31 @@
+.reseller_registration_profile
+  %h3.title
+    Phone Verification
+
+  #stylized.default_form
+    .settings_bloc
+      .u2f_bloc.u2f_inf
+        = form_for 'otp', url: verify_login_otps_path, method: "POST" do |f|
+          .row
+            .col-md-12
+          .row
+            .col-md-6.offset-md-3
+              %p.text-center Please enter the verification code
+              = f.text_field :verification_code, class: "form-control", autofocus: true, label: 'adf'
+              = f.hidden_field 'authy_user', value: @authy_user
+
+              = submit_tag "Submit"
+
+    #forgot_container
+      %p#forgot_username_or_password
+        Send code to phone?
+        = link_to 'Send SMS', login_otps_path
+      %p#forgot_username_or_password
+        Send code to email?
+        = link_to 'Send email', email_login_otps_path
+      %p#forgot_username_or_password
+        Use DUO?
+        = link_to 'DUO authentication', duo_user_session_path
+      %p#forgot_username_or_password
+        Use security key?
+        = link_to 'Security Key', u2fs_path
