@@ -43,6 +43,7 @@ class CertificateOrdersController < ApplicationController
 
   before_action :set_schedule_value, only: %i[edit reprocess]
   before_action :set_algorithm_and_size, only: [:generate_cert]
+  after_action :send_approval_request, only: [:update]
 
   NUM_ROWS_LIMIT = 2
 
@@ -354,8 +355,6 @@ class CertificateOrdersController < ApplicationController
                 cc.update_attribute(role+"_checkbox", true) unless
                   role==CertificateContent::ADMINISTRATIVE_ROLE
               end
-            else
-
             end
             unless @certificate_order.certificate.is_ev?
               cc.provide_contacts! if cc.valid?
@@ -1677,5 +1676,12 @@ class CertificateOrdersController < ApplicationController
         ['256', '256'],
         ['384', '384']
     ]
+  end
+
+  def send_approval_request
+    if @certificate_order.certificate.requires_locked_registrant?
+      super_users = User.search_super_user.map(&:email).uniq
+      OrderNotifier.request_phone_number_approve(@certificate_order, super_users).deliver_later
+    end
   end
 end

@@ -3,9 +3,19 @@ All notable changes to this project will be documented in this file.
 
 ### PENDING RELEASE (TBD)
 
-### v1.3.3 (July 3rd, 2020)
-
 - Uncommented out code that checked for SMIME emailed token's expiration date
+- Correct pagination display and certificate order rendering for phone
+  approval and verifications view.
+- Fixed issue creating two teams for every new account and setting both of them to default.
+
+### v1.3.4 (July 10th, 2020)
+
+- Add automatic phone approval queueing for certificate orders
+- Add rescue_from exception for Authlogic::Session::Activation::NotActivatedError
+
+### v1.3.3 (July 1st, 2020)
+
+- Revert certificate order search and find_certificate cache.
 
 ### v1.3.2 (July 1st, 2020)
 

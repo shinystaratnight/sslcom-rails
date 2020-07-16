@@ -1,7 +1,7 @@
 class PhoneCallbacksController < ApplicationController
   before_action :require_user
-  before_action :check_if_super_user?, only: %i[approvals]
-  before_action :check_if_sys_admin?, only: %i[verifications]
+  before_action :check_if_super_user?, only: [:approvals]
+  before_action :check_if_sys_admin?, only: [:verifications]
   before_action :set_per_page
 
   def approvals
@@ -10,14 +10,14 @@ class PhoneCallbacksController < ApplicationController
         .where(ref: params[:search])
         .joins{ sub_order_items.product_variant_item.product_variant_group.variantable(Certificate) }
         .where(registrants: { phone_number_approved: false })
-        .where(messages: { subject: 'Request for approving Phone Number', to: current_user.email } )
+        .where(messages: { subject: 'Request for approving Phone Number' } )
       if @certificate_orders.empty?
         render :approvals
       else
-        @certificate_orders = @certificate_orders.paginate(page: params[:page], per_page: @per_page || 10)
+        @certificate_orders = @certificate_orders.paginate(page: params[:page], per_page: @per_page)
       end
     else
-      @certificate_orders = find_pending_approvals.paginate(page: params[:page], per_page: @per_page || 10)
+      @certificate_orders = find_pending_approvals.paginate(page: params[:page], per_page: @per_page)
     end
   end
 
@@ -31,10 +31,10 @@ class PhoneCallbacksController < ApplicationController
       if @certificate_orders.empty?
         render :verifications
       else
-        @certificate_orders = @certificate_orders.paginate(page: params[:page], per_page: @per_page || 10)
+        @certificate_orders = @certificate_orders.paginate(page: params[:page], per_page: @per_page)
       end
     else
-      @certificate_orders = find_pending_verifications.paginate(page: params[:page], per_page: @per_page || 10)
+      @certificate_orders = find_pending_verifications.paginate(page: params[:page], per_page: @per_page)
     end
   end
 
@@ -54,7 +54,10 @@ class PhoneCallbacksController < ApplicationController
   private
 
   def set_per_page
-    @per_page = params[:number_rows]
+    preferred_row_count = current_user.try('preferred_cert_order_row_count')
+    @per_page = params[:number_rows] || preferred_row_count
+    CertificateOrder.per_page = @per_page if CertificateOrder.per_page != @per_page
+    current_user&.update_attribute('preferred_cert_order_row_count', @per_page) if @per_page != preferred_row_count
   end
 
   def phone_callback_log_params
@@ -73,7 +76,7 @@ class PhoneCallbacksController < ApplicationController
     @certificate_orders = CertificateOrder.includes(:messages, :registrants, :certificate_contents)
       .joins{ sub_order_items.product_variant_item.product_variant_group.variantable(Certificate) }
       .where(registrants: { phone_number_approved: false })
-      .where(messages: { subject: 'Request for approving Phone Number', to: current_user.email } )
+      .where(messages: { subject: 'Request for approving Phone Number' } )
   end
 
   def find_pending_verifications

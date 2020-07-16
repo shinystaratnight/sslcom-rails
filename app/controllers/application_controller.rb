@@ -10,6 +10,9 @@ class ApplicationController < ActionController::Base
   rescue_from ActiveRecord::RecordNotFound, with: :not_found
   rescue_from ActionController::RoutingError, with: :not_found
   rescue_from AbstractController::ActionNotFound, with: :not_found
+  rescue_from Authlogic::Session::Activation::NotActivatedError do |_exception|
+    redirect_to root_url
+  end
   helper :all # include all helpers, all the time
   protect_from_forgery # See ActionController::RequestForgeryProtection for details
   helper_method :current_user_session, :current_user, :is_reseller, :cookies, :current_website,
