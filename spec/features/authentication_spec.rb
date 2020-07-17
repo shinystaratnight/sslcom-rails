@@ -14,8 +14,8 @@ RSpec.describe 'Authentications', type: :feature do
 
   scenario 'logins in user who registers automatically', authentication: true, js: true do
     registering = attributes_for(:user, :owner)
-    visit login_path
-    click_on 'Create a new account'
+    login_page.load
+    login_page.create_a_new_account_link.click
     registration_page.login.set registering[:login]
     registration_page.email.set registering[:email]
     registration_page.password.set registering[:password]
@@ -77,7 +77,7 @@ RSpec.describe 'Authentications', type: :feature do
   end
 
   scenario 'superuser 30 min session logout', authentication: true,  js: true do
-    visit login_path
+    login_page.load
     login_page.login_with(super_user)
     Timecop.travel(Time.current + 30.minutes)
     refresh
