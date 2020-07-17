@@ -9,6 +9,11 @@ describe PhoneCallbacksController do
   end
 
   describe 'approvals' do
+    before do
+      PhoneCallBackLog.destroy_all
+      CertificateOrder.destroy_all
+    end
+
     it 'does not allow non super users to view' do
       get :approvals
       expect(response).to redirect_to(certificate_orders_path)

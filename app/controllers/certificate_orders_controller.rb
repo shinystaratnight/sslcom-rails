@@ -1685,7 +1685,7 @@ class CertificateOrdersController < ApplicationController
   def send_approval_request
     if @certificate_order.certificate.requires_locked_registrant?
       super_users = User.search_super_user.map(&:email).uniq
-      OrderNotifier.request_phone_number_approve(@certificate_order, super_users).deliver_later
+      OrderNotifier.request_phone_number_approve(@certificate_order, super_users).deliver
     end
   end
 end
