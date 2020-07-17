@@ -25,11 +25,9 @@ RSpec.describe 'Authentications', type: :feature do
     expect(page).to have_content('SSL.com Customer Dashboard')
   end
 
-
   scenario 'allows existing user to login and logout', authentication: true, js: true do
     login_page.load
     login_page.login_with(user)
-    expect(page).to have_content("username: #{user.login}")
     header.logout.click
     expect(page).to have_content('Successfully logged out.')
   end
