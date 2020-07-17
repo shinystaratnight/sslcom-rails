@@ -935,7 +935,7 @@ class CertificateContent < ApplicationRecord
           errors.add(:signing_request, "is wildcard certificate order, so it must begin with *.")
         elsif ((!(is_ucc && allow_wildcard_ucc) && !is_wildcard)) && asterisk_found
           errors.add(:signing_request, "cannot begin with *. since the order does not allow wildcards")
-        elsif !DomainNameValidator.valid?(csr.common_name)
+        elsif csr.common_name && !DomainNameValidator.valid?(csr.common_name)
           errors.add(:signing_request, "common name field is invalid")
         end
       end

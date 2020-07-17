@@ -22,6 +22,7 @@
 # Indexes
 #
 #  index_ca_api_requests_on_api_requestable                          (api_requestable_id,api_requestable_type)
+#  index_ca_api_requests_on_approval_id                              (approval_id)
 #  index_ca_api_requests_on_id_and_type                              (id,type)
 #  index_ca_api_requests_on_type_and_api_requestable                 (id,api_requestable_id,api_requestable_type,type) UNIQUE
 #  index_ca_api_requests_on_type_and_api_requestable_and_created_at  (id,api_requestable_id,api_requestable_type,type,created_at)
@@ -73,17 +74,6 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
       {in: ServerSoftware.pluck(:id).map(&:to_s),
       message: "needs to be one of the following: #{ServerSoftware.pluck(:id).map(&:to_s).join(', ')}"},
             if: lambda{|c|c.is_server? && c.csr && Settings.require_server_software_w_csr_submit}
-  validates :organization, presence: true, if: lambda{|c|c.csr && (!c.is_dv? && c.csr_obj.organization.blank?)}
-  validates :post_office_box, presence: {message: "is required if street_address_1 is not specified"},
-            if: lambda{|c|!c.is_dv? && c.street_address_1.blank? && c.csr} #|| c.parsed_field("POST_OFFICE_BOX").blank?}
-  validates :street_address_1, presence: {message: "is required if post_office_box is not specified"},
-            if: lambda{|c|!c.is_dv? && c.post_office_box.blank? &&c.csr} #|| c.parsed_field("STREET1").blank?}
-  validates :locality_name, presence: true, if: lambda{|c|c.csr && (!c.is_dv? && c.csr_obj.locality.blank?)}
-  validates :state_or_province_name, presence: true, if: lambda{|c|csr && (!c.is_dv? && c.csr_obj.state.blank?)}
-  validates :postal_code, presence: true, if: lambda{|c|c.csr && !c.is_dv?} #|| c.parsed_field("POSTAL_CODE").blank?}
-  validates :country, presence: true, inclusion:
-      {in: Country.accepted_countries, message: "needs to be one of the following: #{Country.accepted_countries.join(', ')}"},
-      if: lambda{|c| c.csr && c.csr_obj && c.csr_obj.country.try("blank?")}
   #validates :registered_country_name, :incorporation_date, if: lambda{|c|c.is_ev?}
   validates :dcv_method, inclusion: {in: ApiCertificateCreate::DCV_METHODS,
       message: "needs to one of the following: #{DCV_METHODS.join(', ')}"}, if: lambda{|c|c.dcv_method}
@@ -642,7 +632,8 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
     #if submitting domains, then a csr must have been submitted on this or a previous request
     if !csr.blank? || is_processing?
       self.dcv_candidate_addresses = {}
-      if self.domains.is_a?(Array)
+      if [Array,String].include?(self.domains.class)
+        self.domains = [self.domains] if self.domains.is_a?(String)
         values = Array.new(self.domains.count,"dcv"=>"HTTP_CSR_HASH")
         self.domains = (self.domains.zip(values)).to_h
       end

@@ -3,6 +3,9 @@ All notable changes to this project will be documented in this file.
 
 ### PENDING RELEASE (TBD)
 
+- return status 400 for failed API submits
+- added function to add weak keys
+- remove address information requirement for API submit 
 - remove validation check for presence of CN field in CSR
 - Bug fix for nil exception ApiCertificateCreate_v1_4#get_domains
 - Bug fix to ensure monthly billing users can place invoiced orders via API without checking funded_account or billing_profiles.
