@@ -4,6 +4,7 @@ RSpec.describe 'Authentications', type: :feature do
   let!(:user) { create(:user, :owner) }
   let!(:super_user) {create(:user, :super_user)}
   let!(:login_page) {LoginPage.new}
+  let!(:header) {Header.new}
   let!(:registration_page) {RegistrationPage.new}
 
   before do
@@ -26,6 +27,7 @@ RSpec.describe 'Authentications', type: :feature do
   it 'allows existing user to login and logout', js: true do
     visit login_path
     login_page.login_with(user)
+    header.wait_until_logout_visible(wait: 5)
     expect(page).to have_content("username: #{user.login}")
   end
 
