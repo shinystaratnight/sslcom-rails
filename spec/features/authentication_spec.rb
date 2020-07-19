@@ -28,6 +28,7 @@ RSpec.describe 'Authentications', type: :feature, authentication: true, js: true
   scenario 'allows existing user to login and logout' do
     login_page.load
     login_page.login_with(user)
+    header.wait_until_logout_visible(wait: 5)
     header.logout.click
     expect(page).to have_content('Successfully logged out.')
   end
