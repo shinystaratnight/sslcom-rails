@@ -83,7 +83,7 @@ RSpec.describe 'Authentications', type: :feature, authentication: true, js: true
   end
 
   context 'when user visited cart' do
-    xit 'redirect to cart after login'do
+    xit 'redirect to cart after login' do
       # Cart checkout
       visit show_cart_orders_path
       find('a#add_items_img').click
