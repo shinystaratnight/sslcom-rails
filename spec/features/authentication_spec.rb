@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe 'Authentications', type: :feature, authentication: true , js: true  do
+RSpec.describe 'Authentications', type: :feature, authentication: true, js: true  do
   let!(:user) { create(:user, :owner) }
   let!(:super_user) {create(:user, :super_user)}
   let!(:login_page) {LoginPage.new}
