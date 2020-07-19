@@ -3,14 +3,13 @@ require 'rails_helper'
 RSpec.describe 'User Assign Roles', type: :feature, js: true do
   let!(:user_owner) { create(:user, :owner) }
   let!(:user_sysadmin) { create(:user, :sys_admin) }
-  let!(:super_user) {create(:user, :super_user)}
   let!(:login_page) {LoginPage.new}
   let!(:header) {Header.new}
   let!(:users_page) {UsersPage.new}
   let!(:search) {Search.new}
   let!(:edit_user_roles_page) {EditUserRolesPage.new}
 
-  scenario 'User with sysadmin role can assign roles for any user without sysadmin or super_user role' do
+  it 'User with sysadmin role can assign roles for any user without sysadmin or super_user role' do
     login_page.load
     login_page.login_with(user_sysadmin)
     header.wait_until_logout_visible(wait: 5)
