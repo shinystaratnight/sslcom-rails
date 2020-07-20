@@ -1,0 +1,39 @@
+= stylesheet_link_tag    'https://cdnjs.cloudflare.com/ajax/libs/authy-form-helpers/2.3/form.authy.min.css', media: 'all', 'data-turbolinks-track': 'reload'
+= javascript_include_tag 'https://cdnjs.cloudflare.com/ajax/libs/authy-form-helpers/2.3/form.authy.min.js', 'data-turbolinks-track': 'reload'
+
+.container
+  .row
+    .col-md-8.offset-md-2
+      - selected_country = ISO3166::Country.find_country_by_country_code(current_user&.phone_prefix) || ISO3166::Country.find_country_by_alpha2('US')
+      %h4.text-center
+        If you lose your security key, we will send you a code via email or SMS
+  .row
+    .col-md-6.offset-md-3
+      = form_for 'user' do |f|
+        .input-group
+          = select_tag "authy-countries", nil, name: 'country_code', 'data-show-as': 'number', 'data-value': selected_country.country_code
+          = f.text_field :phone, value: current_user.phone, autofocus: true, disabled: current_user.phone.present?
+          = link_to "enablePhoneEdit()", class: 'btn btn-default' do
+            .fa.fa-edit
+
+        %span.clearfix#phone-hint
+          We will send you a code via SMS on this number
+        %span.clearfix
+          #phone-error
+      #send-otp
+        %br
+        = button_tag current_user.phone_verified? ? 'Save' : 'Save and Confirm number', id: 'submit_phone_verification', class: 'btn btn-secondary btn-lg'
+
+        %span{ style: 'vertical-align: middle' }= link_to 'Or send via email', email_otps_path, id: 'otp-email', remote: true, class: 'h4'
+
+      .hidden#code-verification-fields
+        = text_field_tag 'otp_verification_code', nil, class: "form-control", autofocus: true
+        %span Enter verification code from SMS
+        %span.clearfix
+          #code-error
+        = link_to 'Resend code to phone', '#', id: 'resend-otp-phone'
+        %br
+        = link_to 'Resend code to email', '#', id: 'resend-otp-email'
+        = hidden_field_tag 'otp_authy_user', @authy_user
+        .clearfix
+        = button_tag "Verify Code", id: 'code_submit'

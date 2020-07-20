@@ -1,0 +1,59 @@
+= javascript_include_tag '//stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js'
+= stylesheet_link_tag 'bootstrap_style', media: 'all'
+= stylesheet_link_tag 'bootstrap_fix'
+= stylesheet_link_tag    'https://cdnjs.cloudflare.com/ajax/libs/authy-form-helpers/2.3/form.authy.min.css', media: 'all', 'data-turbolinks-track': 'reload'
+= javascript_include_tag 'https://cdnjs.cloudflare.com/ajax/libs/authy-form-helpers/2.3/form.authy.min.js', 'data-turbolinks-track': 'reload'
+= render partial: 'index_scripts'
+- @title = "Verify Account"
+- content_for :title, @title
+
+.container
+  .row
+    .col-md-12
+      .page-header
+        %h4.text-center
+          Verify Account
+        %h4.text-center
+          If you lose your security key, we will send you a code via email or SMS
+        %hr
+  - selected_country = ISO3166::Country.find_country_by_country_code(current_user&.phone_prefix) || ISO3166::Country.find_country_by_alpha2('US')
+
+  .card
+    .card-body
+    .row
+      .col-md-2
+        %label
+          %h4.text-right Phone
+      .col-10
+        .input-group
+          = select_tag "authy-countries", nil, name: 'country_code', 'data-show-as': 'number', 'data-value': selected_country.country_code
+          = text_field_tag :phone, current_user&.phone, { id: 'user_phone', autofocus: true, disabled: current_user.phone.present? }
+          - if current_user.phone.present?
+            = button_tag 'Edit', type: 'button', id: 'edit-phone'
+
+      .col-md-10.offset-md-2
+        %h5#phone-hint
+          We will send you a code via SMS on this number
+        %span.clearfix
+          #phone-error
+        %p#send-otp
+          %br
+          = button_tag 'Save and Verify Phone Number', id: 'submit_phone_verification', class: 'btn btn-secondary btn-lg'
+          = link_to "Or send via email to #{current_user.email}", '#', id: 'otp-email'
+    .row.hidden#code-verification-fields
+      .col-md-2
+        %h4.text-right Enter verification code
+      .col-md-10
+        = text_field_tag 'otp_verification_code', nil, autofocus: true, class: 'col-3 form-control'
+        %span.clearfix
+          #code-error
+        %h4= link_to "Resend via SMS to #{current_user.phone}", '#', id: 'resend-otp-phone'
+        %h4= link_to "Resend via email to #{current_user.email}", '#', id: 'resend-otp-email'
+        = hidden_field_tag 'otp_authy_user', @authy_user
+        .clearfix
+        %h4= button_tag "Verify Code", id: 'code_submit', class: 'btn btn-lg btn-secondary'
+  .row
+    .col-12
+      %p= link_to 'Manage Hardware Tokens', u2fs_path, class: 'btn btn-light'
+
+// OTP creation should create user.verification

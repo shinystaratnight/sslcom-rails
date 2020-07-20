@@ -72,8 +72,15 @@ FactoryBot.define do
     password              { 'Testing_ssl+1' }
     password_confirmation { 'Testing_ssl+1' }
     active                { true }
+    phone                 { '1234567891' }
     sequence :login do |n|
       Faker::Internet.username(specifier: 8..15) + "#{n}"
+    end
+
+    trait :u2f do
+      after(:create) do |user|
+        u2f = create(:u2f, user: user)
+      end
     end
 
     trait :with_avatar do

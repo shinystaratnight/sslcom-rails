@@ -12,7 +12,6 @@
 # It's strongly recommended that you check this file into your version control system.
 
 ActiveRecord::Schema.define(version: 20200710154608) do
-
   create_table "services", force: :cascade do |t|
     t.string   "name",           :limit=>255, :null=>false
     t.string   "billing_cycle",  :limit=>255
@@ -40,7 +39,7 @@ ActiveRecord::Schema.define(version: 20200710154608) do
     t.datetime "updated_at"
     t.datetime "next_charging_at"
   end
-
+  
   create_table "addresses", force: :cascade do |t|
     t.string "name",        :limit=>255
     t.string "street1",     :limit=>255
@@ -1704,6 +1703,58 @@ ActiveRecord::Schema.define(version: 20200710154608) do
     t.datetime "updated_at",    :null=>false
   end
   add_index "user_groups_users", ["user_group_id", "user_id"], :name=>"index_user_groups_users_on_user_group_id_and_user_id", :using=>:btree
+
+  create_table "users", force: :cascade do |t|
+    t.integer  "ssl_account_id",      :limit=>4, :index=>{:name=>"index_users_on_ssl_acount_id", :using=>:btree}
+    t.string   "login",               :limit=>255, :null=>false, :index=>{:name=>"index_users_on_login", :using=>:btree}
+    t.string   "email",               :limit=>255, :null=>false, :index=>{:name=>"index_users_on_email", :using=>:btree}
+    t.string   "crypted_password",    :limit=>255
+    t.string   "password_salt",       :limit=>255
+    t.string   "persistence_token",   :limit=>255, :null=>false
+    t.string   "single_access_token", :limit=>255, :null=>false
+    t.string   "perishable_token",    :limit=>255, :null=>false, :index=>{:name=>"index_users_on_perishable_token", :using=>:btree}
+    t.string   "status",              :limit=>255, :index=>{:name=>"index_users_on_status_and_login_and_email", :with=>["login", "email"], :using=>:btree}
+    t.integer  "login_count",         :limit=>4, :default=>0, :null=>false
+    t.integer  "failed_login_count",  :limit=>4, :default=>0, :null=>false
+    t.datetime "last_request_at"
+    t.datetime "current_login_at"
+    t.datetime "last_login_at"
+    t.string   "current_login_ip",    :limit=>255
+    t.string   "last_login_ip",       :limit=>255
+    t.boolean  "active",              :default=>false, :null=>false
+    t.string   "openid_identifier",   :limit=>255
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "first_name",          :limit=>255
+    t.string   "last_name",           :limit=>255
+    t.string   "phone",               :limit=>255
+    t.string   "organization",        :limit=>255
+    t.string   "address1",            :limit=>255
+    t.string   "address2",            :limit=>255
+    t.string   "address3",            :limit=>255
+    t.string   "po_box",              :limit=>255
+    t.string   "postal_code",         :limit=>255
+    t.string   "city",                :limit=>255
+    t.string   "state",               :limit=>255
+    t.string   "country",             :limit=>255
+    t.boolean  "is_auth_token"
+    t.integer  "default_ssl_account", :limit=>4, :index=>{:name=>"index_users_on_default_ssl_account", :using=>:btree}
+    t.integer  "max_teams",           :limit=>4
+    t.integer  "main_ssl_account",    :limit=>4
+    t.boolean  "persist_notice",      :default=>false
+    t.string   "duo_enabled",         :limit=>255, :default=>"enabled"
+    t.string   "avatar_file_name",    :limit=>255
+    t.string   "avatar_content_type", :limit=>255
+    t.integer  "avatar_file_size",    :limit=>4
+    t.datetime "avatar_updated_at"
+    t.string   "authy_user",          :limit=>255
+    t.string   "phone_prefix",        :limit=>255
+  end
+  add_index "users", ["id", "ssl_account_id", "status"], :name=>"index_users_on_status_and_ssl_account_id", :using=>:btree
+  add_index "users", ["id", "status"], :name=>"index_users_on_status", :using=>:btree
+  add_index "users", ["login", "email"], :name=>"index_users_l_e", :type=>:fulltext
+  add_index "users", ["login", "email"], :name=>"index_users_on_login_and_email", :using=>:btree
+  add_index "users", ["ssl_account_id", "login", "email"], :name=>"index_users_on_ssl_account_id_and_login_and_email", :using=>:btree
 
   create_table "v2_migration_progresses", force: :cascade do |t|
     t.string   "source_table_name", :limit=>255

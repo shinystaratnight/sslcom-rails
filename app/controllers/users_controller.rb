@@ -121,29 +121,17 @@ class UsersController < ApplicationController
           @user.deliver_auto_activation_confirmation!
           notice = 'Your account has been created.'
           flash[:notice] = notice
-
-          # Auto Login after register
-          @user_session = UserSession.new(
-            login: params[:user][:login],
-            password: params[:user][:password],
-            failed_account: '0'
-          )
-          if @user_session.save
-            user = @user_session.user
-            set_cookie(:acct, user.ssl_account.acct_number)
-            flash[:notice] = 'Successfully logged in.'
-            redirect_to(account_path(user.ssl_account(:default_team) ? user.ssl_account(:default_team).to_slug : {})) && return
-          end
+          login_created_user
         else # Original Logic for activation by email.
           @user.deliver_activation_instructions!
           notice = "Your account has been created. Please check your
             e-mail at #{@user.email} for your account activation instructions!"
           flash[:notice] = notice
-        end
 
-        # in production heroku, requests coming FROM a subdomain will not transmit
-        # flash messages to the target page. works fine in dev though
-        redirect_to(request.subdomain == Reseller::SUBDOMAIN ? login_url(notice: notice) : login_url)
+          # in production heroku, requests coming FROM a subdomain will not transmit
+          # flash messages to the target page. works fine in dev though
+          redirect_to(request.subdomain == Reseller::SUBDOMAIN ? login_url(notice: notice) : login_url) and return
+        end
       else
         render :new
       end
@@ -657,4 +645,22 @@ end
 def redirect_back_w_team_slug(replace_slug)
   req = request.env['HTTP_REFERER']
   req.present? ? req.gsub(replace_slug, @ssl_slug) : account_path(ssl_slug: @ssl_slug)
+end
+
+private
+
+def login_created_user
+  # Auto Login after register
+  @user_session = UserSession.new(
+    login: params[:user][:login],
+    password: params[:user][:password],
+    failed_account: '0'
+  )
+  if @user_session.save
+    user = @user_session.user
+    set_cookie(:acct, user.ssl_account.acct_number)
+    session[:authenticated] = true
+    flash[:notice] = 'Successfully logged in.'
+    set_redirect(user: user)
+  end
 end

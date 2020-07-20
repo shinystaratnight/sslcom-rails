@@ -4,6 +4,7 @@ RSpec.describe 'Authentications', type: :feature do
   let!(:user) { create(:user, :owner) }
   let!(:super_user) {create(:user, :super_user)}
   let!(:login_page) {LoginPage.new}
+  let!(:registration_page) {RegistrationPage.new}
 
   before do
     User.any_instance.stubs(:authenticated_avatar_url).returns('https://github.blog/wp-content/uploads/2012/03/codercat.jpg?fit=896%2C896')
@@ -13,12 +14,12 @@ RSpec.describe 'Authentications', type: :feature do
     registering = attributes_for(:user, :owner)
     visit login_path
     click_on 'Create a new account'
-    fill_in 'user_login', with: registering[:login]
-    fill_in 'user_email', with: registering[:email]
-    fill_in 'user_password', with: registering[:password]
-    fill_in 'user_password_confirmation', with: registering[:password_confirmation]
-    find('input[name="tos"]').click
-    find('input[alt="Register"]').click
+    registration_page.login.set registering[:login]
+    registration_page.email.set registering[:email]
+    registration_page.password.set registering[:password]
+    registration_page.password_confirmation.set registering[:password_confirmation]
+    registration_page.terms_of_service.click
+    registration_page.register.click
     expect(page).to have_content('SSL.com Customer Dashboard')
   end
 
@@ -86,5 +87,22 @@ RSpec.describe 'Authentications', type: :feature do
     Timecop.travel(Time.current + 30.minutes)
     refresh
     expect(current_url).to include('/user_session/new')
+  end
+
+  context 'when user visited cart' do
+    xit 'redirect to cart after login', js: true do
+      # Cart checkout
+      visit show_cart_orders_path
+      find('a#add_items_img').click
+      first('img[alt="Buy sm bl"]').click
+      find('#next_submit').click
+      find('a#checkout_img').click
+      # Login
+      fill_in 'user_session_login', with: user.login
+      fill_in 'user_session_password', with: user.password
+      find('#btn_login').click
+
+      expect(page).to have_current_path new_order_path
+    end
   end
 end

@@ -5,29 +5,12 @@
     .settings_block#u2f_settings
       = radio_button_tag :sec_type, 'u2f', @ssl_account.sec_type == 'u2f'
       = label_tag :sec_type_u2f, "Use U2f"
-      .u2f_block.u2f_info
-        -if u2fs.size > 0
-          -u2fs.each do |u2f|
-            .u2f_device_info_block.clearfix{:id => "u2f_device_#{u2f.id}"}
-              .u2f_device_info
-                =u2f.nick_name
-              .u2f_device_info
-                %span - registered on
-                =u2f.created_at.strftime("%b %d, %Y")
-              .u2f_device_info.right
-                =button_tag 'Remove', :type=>'button', :class=>'remove_u2f_device', 'data-id'=>u2f.id
-        -else
-          .clearfix
-          .u2f_no_devices
-            %em no devices are currently registered
-      .u2f_block.add_nick_name.hidden
-        =text_field_tag 'u2f_device_name', nil, :size=>30, :class=>'left u2f_device_name', :placeholder=>'Enter a nickname for this security key.'
-        =button_tag 'Add', :type=>'button', :class=>'add_u2f_device disabled'
+
   -if Settings.duo_auto_enabled || Settings.duo_custom_enabled
-    .settings_block#duo_settings
+    .settings_block.clearfix#duo_settings
       = radio_button_tag :sec_type, 'duo', @ssl_account.sec_type == 'duo'
       = label_tag :sec_type_duo, "Use Duo"
-      .clearfix    
+      .clearfix
       .duo_block.duo_check
         .clearfix
           = check_box_tag :duo_login_enable, @ssl_account.id, @ssl_account.duo_enabled, :disabled => !(@ssl_account.sec_type == 'duo')
@@ -50,5 +33,6 @@
         .clearfix.duo_key
           = label_tag :duo_hostname, "Duo API Hostname".html_safe
           = text_field_tag :duo_hostname, duo ? duo.duo_hostname : "", :class => "click_to_select_all", :disabled => (Settings.duo_auto_enabled && !@ssl_account.duo_own_used) || !(@ssl_account.sec_type == 'duo')
-  ._2fa_block.register
-    =button_tag 'Register', :type=>'button', :class=>'register_2fa'
+        ._2fa_block.register.clearfix
+          -# Button needs to be disabled so that it shows up along with the above elements when JS code is triggered
+          = button_tag 'Register', type: 'button', class: 'register_2fa', disabled: (Settings.duo_auto_enabled && !@ssl_account.duo_own_used) || !(@ssl_account.sec_type == 'duo')

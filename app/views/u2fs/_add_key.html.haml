@@ -1,0 +1,17 @@
+.u2f_block.add_nick_name.hidden
+  = form_for U2f.new, remote: true do |f|
+    = text_field_tag 'u2f_device_name', nil, size: 30, class: 'left u2f_device_name', placeholder: 'Enter a nickname for this security key.'
+    = button_tag 'Add', type: 'button', class: 'add_u2f_device disabled'
+
+  .u2f_error_message
+-# This will show a dialog window informing the user to touch the security key
+#loading
+.u2f_block.register
+  .clearfix
+  = button_tag 'Register New Device', type: 'button', class: 'register_u2f', disabled: !current_user.authy_user, title: "#{'Please verify your phone!' unless current_user.authy_user }", id: 'u2f-new'
+  - unless current_user.authy_user && current_user.phone && current_user.phone_prefix
+    %br
+      %i Required: If you lose your security key, we will send you a code via email or SMS
+
+.clearfix#2fa-info{ style: 'display: none;' }
+  = render partial: 'shared/u2f_waiting_bar'

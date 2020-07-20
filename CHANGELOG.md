@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file.
 - Bug fix to ensure monthly billing users can place invoiced orders via API without checking funded_account or billing_profiles.
 - Fix errors when saving screenshots on ci failure
 - Add ability to elevate a user to super_user or sys_admin programatically.
+- Enable 2FA for all users (security key and OTP via twillio)
 
 ### v1.3.4 (July 10th, 2020)
 

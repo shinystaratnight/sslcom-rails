@@ -19,183 +19,6 @@ jQuery(function($) {
       $(this).val(slug);
     });
 
-    var appId = <%= @app_id.to_json.html_safe %>
-    var registerRequests = <%= @registration_requests.to_json.html_safe %>;
-    var signRequests = <%= @sign_requests.as_json.to_json.html_safe %>;
-
-    $('.register_u2f').click(function() {
-      $('.u2f_block.register').hide();
-      $('.u2f_device_name').val('');
-      $('.add_u2f_device').prop('disabled', true);
-      $('.u2f_block.add_nick_name').show();
-    });
-
-    $('.u2f_device_name').keyup(function() {
-      if ($(this).val().trim() == '') {
-        $('.add_u2f_device').prop('disabled', true);
-      } else {
-        $('.add_u2f_device').prop('disabled', false);
-      }
-    });
-    var ajaxRemoveU2fUrl = '<%= remove_u2f_ssl_account_path %>';
-    $(document).on('click', 'button[class=remove_u2f_device]', function() {
-      if (confirm('Are you sure to remove this token?')) {
-        $.ajax({
-          url: ajaxRemoveU2fUrl,
-          data: {
-            u2f_device_id: $(this).data('id'),
-          },
-          type: 'POST',
-          success: function (result) {
-            if (result['error']) {
-              if (result['error'] == '') {
-                location.reload(true);
-              } else {
-                var message_wrap_element = $('<div></div>');
-                message_wrap_element.attr('class', 'flash_message error');
-
-                var message_element = $('<span></span>');
-                message_element.append(result['error']);
-                message_wrap_element.append(message_element);
-
-                var btn_element = $('<small></small>');
-                var close_btn_element = $('<div></div>');
-                close_btn_element.attr('class', 'close_flash_message');
-
-                var close_sign_element = $('<span></span>');
-                close_sign_element.append('X');
-
-                close_btn_element.append(close_sign_element);
-                close_btn_element.append('close');
-
-                btn_element.append(close_btn_element);
-                message_wrap_element.append(btn_element);
-
-                if ($('#content').find('.inner').children().first().hasClass('flash_message')) {
-                  $('#content').find('.inner').children().first().remove();
-                }
-                message_wrap_element.insertBefore($('#content').find('.inner').children().first());
-              }
-            } else {
-              $('#u2f_device_' + result['u2f_device_id']).remove();
-            }
-          }
-        });
-      }
-    });
-
-    var ajaxRegisterU2fUrl = '<%= register_u2f_ssl_account_path %>';
-    $('.add_u2f_device').click(function() {
-      if (confirm('Insert your token and click \'OK\' to proceed')) {
-        u2f.register(appId, registerRequests, signRequests, function(registerResponse) {
-          if (registerResponse.errorCode) {
-            var message_wrap_element = $('<div></div>');
-            message_wrap_element.attr('class', 'flash_message error');
-
-            var message_element = $('<span></span>');
-            message_element.append('U2F Registration Error: ' + registerResponse.errorCode);
-            message_wrap_element.append(message_element);
-
-            var btn_element = $('<small></small>');
-            var close_btn_element = $('<div></div>');
-            close_btn_element.attr('class', 'close_flash_message');
-
-            var close_sign_element = $('<span></span>');
-            close_sign_element.append('X');
-
-            close_btn_element.append(close_sign_element);
-            close_btn_element.append('close');
-
-            btn_element.append(close_btn_element);
-            message_wrap_element.append(btn_element);
-
-            if ($('#content').find('.inner').children().first().hasClass('flash_message')) {
-              $('#content').find('.inner').children().first().remove();
-            }
-            message_wrap_element.insertBefore($('#content').find('.inner').children().first());
-
-            $('.u2f_block.register').show();
-            $('.u2f_block.add_nick_name').hide();
-          } else {
-            $.ajax({
-              url: ajaxRegisterU2fUrl,
-              data: {
-                nick_name: $('.u2f_device_name').val(),
-                u2f_response: JSON.stringify(registerResponse)
-              },
-              type: 'POST',
-              success: function(result) {
-                if (result['error']) {
-                  if (result['error'] == '') {
-                    location.reload(true);
-                  } else {
-                    var message_wrap_element = $('<div></div>');
-                    message_wrap_element.attr('class', 'flash_message error');
-
-                    var message_element = $('<span></span>');
-                    message_element.append(result['error']);
-                    message_wrap_element.append(message_element);
-
-                    var btn_element = $('<small></small>');
-                    var close_btn_element = $('<div></div>');
-                    close_btn_element.attr('class', 'close_flash_message');
-
-                    var close_sign_element = $('<span></span>');
-                    close_sign_element.append('X');
-
-                    close_btn_element.append(close_sign_element);
-                    close_btn_element.append('close');
-
-                    btn_element.append(close_btn_element);
-                    message_wrap_element.append(btn_element);
-
-                    if ($('#content').find('.inner').children().first().hasClass('flash_message')) {
-                      $('#content').find('.inner').children().first().remove();
-                    }
-                    message_wrap_element.insertBefore($('#content').find('.inner').children().first());
-                  }
-                } else {
-                  var infoBlockElement = $('<div></div>');
-                  infoBlockElement.attr('id', 'u2f_device_' + result['u2f_device_id']);
-                  infoBlockElement.attr('class', 'u2f_device_info_block clearfix');
-
-                  var infoElement = $('<div></div>');
-                  infoElement.attr('class', 'u2f_device_info');
-                  infoElement.append($('.u2f_device_name').val());
-                  infoBlockElement.append(infoElement);
-
-                  infoElement = $('<div></div>');
-                  infoElement.attr('class', 'u2f_device_info');
-                  var spanElement = $('<span></span>');
-                  spanElement.append(' - registered on' + result['created_at']);
-                  infoElement.append(spanElement);
-                  infoBlockElement.append(infoElement);
-
-                  var infoElement = $('<div></div>');
-                  infoElement.attr('class', 'u2f_device_info right');
-                  var btnElement = $('<button></button>');
-                  btnElement.attr('class', 'remove_u2f_device');
-                  btnElement.attr('type', 'button');
-                  btnElement.data('id', result['u2f_device_id']);
-                  btnElement.append('Remove');
-                  infoElement.append(btnElement);
-                  infoBlockElement.append(infoElement);
-
-                  $('.u2f_block.u2f_info').append(infoBlockElement);
-                }
-
-                $('.u2f_block.register').show();
-                $('.u2f_block.add_nick_name').hide();
-              }
-            });
-          }
-        });
-      } else {
-        $('.u2f_block.register').show();
-        $('.u2f_block.add_nick_name').hide();
-      }
-    });
-
     $('.edit_setting_btn').click(function() {
       if($('input[name*=processed_certificate_recipients]:checkbox').is(':checked'))
         $('input[name*=processed_certificate_recipients]:checkbox').val(
@@ -229,7 +52,8 @@ jQuery(function($) {
         },
         type: 'PUT',
         success: function(result) {
-          if(result['ssl_account'].sec_type==""){
+          // Result is the ssl_account record
+          if(result.sec_type==""){
             $('.duo_info :input').prop('disabled', true);
             $this.prop('checked', false);
             $('#duo_login_enable').prop('disabled', true);
@@ -249,7 +73,7 @@ jQuery(function($) {
         },
         type: 'PUT',
         success: function(result) {
-          
+
         }
       });
     });
@@ -299,9 +123,6 @@ jQuery(function($) {
       var u2f_checked = $('#sec_type_u2f').prop('checked');
       var duo_checked = $('#sec_type_duo').prop('checked');
       if(u2f_checked){
-        $('.u2f_device_name').val('');
-        $('.add_u2f_device').prop('disabled', true);
-        $('.u2f_block.add_nick_name').show();
       }
       else if(duo_checked) {
         var ikey = $('#duo_ikey').val();

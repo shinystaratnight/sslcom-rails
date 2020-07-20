@@ -23,6 +23,8 @@ class ApplicationController < ActionController::Base
   before_action :detect_recert, except: %i[renew reprocess]
   before_action :set_current_user
   before_action :verify_duo_authentication, except: %i[duo duo_verify login logout]
+  before_action :verify_u2f_authentication
+  before_action :use_2fa_authentication
   before_action :identify_visitor, :record_visit, if: -> { Settings.track_visitors }
   before_action :finish_reseller_signup, if: -> { current_user.present? }
   before_action :team_base, if: -> { params[:ssl_slug] && current_user }
@@ -71,6 +73,39 @@ class ApplicationController < ActionController::Base
     @user_session = UserSession.create(@user)
     @current_user_session = @user_session
     Authorization.current_user = @current_user = @user_session.record
+  end
+
+  def set_redirect(user: nil)
+    if session[:request_referrer] == 'checkout'
+      redirect_to new_order_path and return
+    else
+      ssl_account = {}
+      ssl_account = user.ssl_account(:default_team)&.to_slug
+      redirect_back_or_default account_path(ssl_account) and return
+    end
+  end
+
+  # Methods related to 2FA
+  # ===================================================
+
+  ##
+  # Require user to setup 2FA
+  # if users tries to access information for a team that requires users to have eanbled 2FA
+  def use_2fa_authentication
+    # if user tries to access team that has u2f enabled
+    # (the request, eg from link Orders, has param ssl_slug but its value is either the ssl_slug or the acct_number!!)
+    team = SslAccount.find_by(acct_number: params[:ssl_slug]) || SslAccount.find_by(ssl_slug: params[:ssl_slug])
+    if team&.sec_type && current_user&.u2fs&.empty?
+      flash[:error] = 'Please use 2FA'
+      redirect_to u2fs_path(current_user)
+    end
+  end
+
+  def verify_u2f_authentication
+    return unless current_user
+    return if session[:authenticated] || session[:duo_auth]
+
+    redirect_to new_u2f_path if current_user.u2fs.any?
   end
 
   def verify_duo_authentication
@@ -550,6 +585,10 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def user_account_path
+    account_path(current_user_default_team ? current_user_default_team.to_slug : {})
+  end
+
   def global_set_row_page
     klass, row_count, page_size = case params[:controller]
                                   when 'domains'
@@ -589,7 +628,7 @@ class ApplicationController < ActionController::Base
   end
 
   def require_no_user
-    if current_user
+    if current_user && session[:authenticated]
       store_location
       set_cookie(:acct, current_user.ssl_account.acct_number)
       flash[:notice] = "You must be logged out to access page '#{request.fullpath}'"

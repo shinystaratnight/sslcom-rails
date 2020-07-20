@@ -61,6 +61,7 @@
                             li=remote_login_link(user)
                           li=link_to 'edit email address', edit_email_user_url(user)
                           li=link_to 'change password', edit_password_user_url(user)
+                          li= link_to '2FA settings', u2fs_path(user)
                           -if permitted_to?(:edit, :billing_profiles) && !is_sandbox?
                             -unless current_user.is_affiliate?
                               li=link_to 'become a referral link partner', "https://affiliates.ssl.com"
