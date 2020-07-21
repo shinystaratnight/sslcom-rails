@@ -3,6 +3,9 @@ All notable changes to this project will be documented in this file.
 
 ### PENDING RELEASE (TBD)
 
+- Assign CA profile to Business Identity Enterprise product
+- Fix Url Callback function
+- Fix creating 2 SslAccount objects when creating a User account
 - Bug fix to ensure monthly billing users can place invoiced orders via API without checking funded_account or billing_profiles.
 - Fix errors when saving screenshots on ci failure
 - Add ability to elevate a user to super_user or sys_admin programatically.
