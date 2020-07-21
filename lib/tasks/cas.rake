@@ -941,7 +941,7 @@ namespace :cas do
           cert.cas_certificates.find_or_initialize_by(ca_id: ca.id).update_attributes(
             status: CasCertificate::STATUS[(ca.ref=="0033" and live.include?(cert) and default.blank?) ? :default : status],
                                        ssl_account_id: ssl_account_id)
-        elsif cert.is_client_business?
+        elsif cert.is_client_business? or cert.is_client_enterprise?
           cert.cas_certificates.find_or_initialize_by(ca_id: ca.id).update_attributes(
             status: CasCertificate::STATUS[(ca.ref=="0036" and live.include?(cert) and default.blank?) ? :default : status],
                                        ssl_account_id: ssl_account_id)
