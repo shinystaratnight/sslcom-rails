@@ -92,17 +92,6 @@ class User < ApplicationRecord
     u.max_teams = OWNED_MAX_TEAMS unless u.max_teams
   end
 
-  after_create do |u|
-    u.create_ssl_account if u.ssl_accounts.empty?
-    if u.as_reseller
-      u.ssl_account.add_role! 'new_reseller'
-      u.ssl_account.set_reseller_default_prefs
-      u.set_roles_for_account(u.ssl_account, [Role.get_reseller_id])
-    else
-      u.set_roles_for_account(u.ssl_account, [Role.get_owner_id])
-    end
-  end
-
   delegate :tier_suffix, to: :ssl_account, prefix: false, allow_nil: true
 
   acts_as_authentic do |c|

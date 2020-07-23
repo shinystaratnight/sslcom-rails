@@ -14,7 +14,7 @@ class CertCreateWithNolimitUserTest < ActionDispatch::IntegrationTest
       # Delayed::Worker.delay_jobs = !Rails.env.test?
       Delayed::Worker.delay_jobs = true
 
-      @user = create(:user)
+      @user = FactoryBot.create(:user)
       @team = @user.ssl_account
       @team.update(no_limit: true)
       assert @user.valid?

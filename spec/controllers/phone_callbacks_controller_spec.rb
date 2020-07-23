@@ -3,7 +3,7 @@ require 'rails_helper'
 describe PhoneCallbacksController do
 
   before do
-    @user = FactoryBot.create(:user)
+    @user = FactoryBot.create(:user, Role::SYS_ADMIN)
     activate_authlogic
     login_as(@user)
   end

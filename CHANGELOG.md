@@ -3,6 +3,7 @@ All notable changes to this project will be documented in this file.
 
 ### PENDING RELEASE (TBD)
 
+- Fix issue creating duplicate accounts on signup or invite
 - Show domain names that do not pass CAA check
 - Add product filtering option for phone callback approvals and verifications page.
 - Assign CA profile to Business Identity Enterprise product
