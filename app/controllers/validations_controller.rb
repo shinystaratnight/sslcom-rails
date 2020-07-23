@@ -113,7 +113,7 @@ class ValidationsController < ApplicationController
             if api_log_entry and api_log_entry.instance_of?(SslcomCaRequest) and api_log_entry.response=~/Check CAA/
               invalid_domain = api_log_entry.response.scan(/Not allowed to issue certificate for dnsName (.*?+)\.\s/).flatten
               flash[:error] =
-                "CAA validation failed. Domains do not pass CAA check: #{invalid_domain.join(', ')}. See https://#{Settings.portal_domain}/how-to/configure-caa-records-to-authorize-ssl-com/"
+                "CAA validation failed for the following domains: #{invalid_domain.join(', ')}. See https://#{Settings.portal_domain}/how-to/configure-caa-records-to-authorize-ssl-com/"
             end
           end
 
