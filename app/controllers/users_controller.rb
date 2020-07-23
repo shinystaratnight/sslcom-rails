@@ -108,9 +108,21 @@ class UsersController < ApplicationController
   end
 
   def create
-    @user.as_reseller = request.subdomain == Reseller::SUBDOMAIN
+    reseller = request.subdomain == Reseller::SUBDOMAIN
     User.transaction do
       if @user.signup!(params)
+        @user.create_ssl_account
+
+        if reseller
+          @user.ssl_account.add_role! 'new_reseller'
+          @user.ssl_account.set_reseller_default_prefs
+        end
+
+        @user.set_roles_for_account(
+          @user.ssl_account,
+          [Role.find_by(name: (reseller ? Role::RESELLER : Role::OWNER)).id]
+        )
+
         if Settings.require_signup_password
           # Check Code Signing Certificate Order for assign as assignee.
           CertificateOrder.unscoped.search_validated_not_assigned(params[:user][:email])&.each do |cert_order|

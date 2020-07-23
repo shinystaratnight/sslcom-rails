@@ -3,11 +3,13 @@ All notable changes to this project will be documented in this file.
 
 ### PENDING RELEASE (TBD)
 
+- Fix issue creating duplicate accounts on signup or invite
+- Show domain names that do not pass CAA check
 - return status 400 for failed API submits
 - added function to add weak keys
 - remove address information requirement for API submit 
 - remove validation check for presence of CN field in CSR
-- Bug fix for nil exception ApiCertificateCreate_v1_4#get_domains
+- Bug fix for nil exception ApiCertificateCreate_v1_4#get_domain
 - Add product filtering option for phone callback approvals and verifications page.
 - Assign CA profile to Business Identity Enterprise product
 - Fix Url Callback function
