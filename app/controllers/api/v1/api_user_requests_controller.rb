@@ -74,10 +74,11 @@ module Api
               @result = @obj # so that rabl can report errors
             end
           end
+          render_200_status
         else
           InvalidApiUserRequest.create parameters: params, response: @result.to_json
+          error(400, 400, @result.errors)
         end
-        render_200_status
       rescue StandardError => e
         render_500_error e
       end

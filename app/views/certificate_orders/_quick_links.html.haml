@@ -8,8 +8,8 @@
           %li=link_to "Certificate Mgmt", admin_index_certificates_path
         %li=link_to 'Chargebacks', filter_by_state_orders_path(@ssl_slug, "charged_back")
         %li=link_to 'Refunds', filter_by_state_orders_path(@ssl_slug, "fully_refunded")
-        - if current_user.is_super_user?
-          %li=link_to 'Phone Approvals', approvals_phone_callbacks_path(@ssl_slug)
+        
+        %li=link_to 'Phone Approvals', approvals_phone_callbacks_path(@ssl_slug)
         %li=link_to 'Phone Verifications', verifications_phone_callbacks_path(@ssl_slug)
       -else
         -if Folder.show_folders?(current_user)

@@ -4,6 +4,7 @@ class LoginPage < SitePrism::Page
   element :login, '#user_session_login'
   element :password, '#user_session_password'
   element :next_button, '#btn_login'
+  element :create_a_new_account_link, 'a', text: 'Create a new account.'
 
   expected_elements :login, :password, :next
 
