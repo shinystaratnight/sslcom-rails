@@ -2,10 +2,11 @@
 = render partial: 'certificate_orders/quick_links'
 = render partial: 'certificate_orders/index_scripts'
 
-
 #search_bar
-  = form_tag '/phone_callbacks/approvals', method: :get do
+  = form_tag approvals_phone_callbacks_path, id: 'search_form', method: :get do
+    = hidden_field_tag :number_rows, @per_page
     = text_field_tag 'search', nil,  placeholder: 'Search by co-#'
+    = select_tag 'filter', options_for_select(['Filter By', 'basicssl', 'premiumssl', 'high_assurance', 'wildcard',  'ucc', 'ev', 'evucc', 'code-signing' ,'ev-code-signing'], @filter), id: 'btn_cert_order_filter'
     = submit_tag 'Search'
 
 - if @certificate_orders.present?
@@ -20,6 +21,7 @@
         %th(scope="col") Email Sent
         - @certificate_orders.each do |co|
           - registrant, cc, cert = co.registrant, co.certificate_content, co.certificate
+          - message = co.messages.sort_by { |message| [message.mailer == 'OrderNotifier#request_phone_number_approve', message.sent_at] }.first
           %tr(alt="#{co.ref}")
             %td.dropdown
               -if !co.is_expired_credit? and permitted_to?(:index, co)
@@ -29,7 +31,7 @@
             %td
               = link_to 'Needs Approval', edit_certificate_order_url(id: co.ref, registrant: false, approve_phone: true)
             %td
-              #{co.messages.first.sent_at.strftime("%m-%d-%Y")} #{time_ago_in_words(co.messages.first.sent_at)} ago
+              #{message.sent_at.strftime("%m-%d-%Y")} #{time_ago_in_words(message.sent_at)} ago
       %tfoot
         %tr
           %td.wrap_number_rows(colspan='2')
