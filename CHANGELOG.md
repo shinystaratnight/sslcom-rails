@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 ### PENDING RELEASE (TBD)
 
 - Show domain names that do not pass CAA check
+- Add product filtering option for phone callback approvals and verifications page.
 - Assign CA profile to Business Identity Enterprise product
 - Fix Url Callback function
 - Fix creating 2 SslAccount objects when creating a User account
