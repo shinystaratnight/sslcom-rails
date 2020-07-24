@@ -48,7 +48,6 @@ class ApiUserCreate_v1_4 < ApiUserRequest
     }
     @user = User.create(params)
     if @user.errors.empty?
-      @user.create_ssl_account([Role.get_owner_id])
       @user.signup!({user: params})
       @user.activate!({user: params})
 
