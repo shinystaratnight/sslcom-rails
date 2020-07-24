@@ -352,8 +352,8 @@ class Csr < ApplicationRecord
   end
 
   def all_names(options={})
-    (subject_alternative_names and options[:san]) ? (subject_alternative_names.split(",") + [common_name]).flatten.uniq :
-        [common_name]
+    ((subject_alternative_names and options[:san]) ? (subject_alternative_names.split(",") + [common_name]).flatten.uniq :
+        [common_name]).compact
   end
 
   def whois_lookup

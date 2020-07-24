@@ -25,6 +25,12 @@ class SignedCertificatesController < ApplicationController
 
   def revoke
     @signed_certificate = SignedCertificate.find(params[:id])
+    SystemAudit.create(
+        owner: current_user,
+        target: @signed_certificate,
+        notes: "Revoked due to reason: #{params[:revoke_reason]}",
+        action: "Revoking signed certificate serial #{@signed_certificate.serial}"
+    )
     @signed_certificate.revoke!(params[:revoke_reason])
     
     if @signed_certificate.revoked?

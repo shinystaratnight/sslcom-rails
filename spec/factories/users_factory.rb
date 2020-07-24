@@ -72,8 +72,19 @@ FactoryBot.define do
     password              { 'Testing_ssl+1' }
     password_confirmation { 'Testing_ssl+1' }
     active                { true }
+    phone                 { '1234567891' }
     sequence :login do |n|
       Faker::Internet.username(specifier: 8..15) + "#{n}"
+    end
+
+    after(:create) do |user|
+      user.create_ssl_account
+    end
+
+    trait :u2f do
+      after(:create) do |user|
+        u2f = create(:u2f, user: user)
+      end
     end
 
     trait :with_avatar do
@@ -81,7 +92,21 @@ FactoryBot.define do
     end
 
     trait :sys_admin do
-      after(:create, &:make_admin)
+      after(:create) do |user|
+        user.set_roles_for_account(
+          user.ssl_account, [Role.find_by(name: 'sysadmin').id]
+        )
+        user.elevate_role(Role::SYS_ADMIN)
+      end
+    end
+
+    trait :super_user do
+      after(:create) do |user|
+        user.set_roles_for_account(
+          user.ssl_account, [Role.find_by(name: 'super_user').id]
+        )
+        user.elevate_role(Role::SUPER_USER)
+      end
     end
 
     Role::ALL.each do |role_name|

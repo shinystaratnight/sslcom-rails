@@ -11,6 +11,10 @@
 #  updated_at    :datetime         not null
 #  subject_id    :integer
 #
+# Indexes
+#
+#  index_permissions_on_subject_id  (subject_id)
+#
 
 class Permission < ApplicationRecord
   # attr_accessible :title, :body

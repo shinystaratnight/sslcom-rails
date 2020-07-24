@@ -24,6 +24,7 @@ gem 'airbrake'
 gem 'api-pagination'
 gem 'authlogic'
 gem 'authy'
+gem 'countries'
 gem 'protected_attributes'
 gem 'attr_encrypted'
 gem 'awesome_print'
@@ -154,6 +155,7 @@ group :test do
   gem 'shoulda-matchers', require: false
   gem 'webdrivers'
   gem 'formulaic'
+  gem 'site_prism'
 end
 
 gem 'httparty'

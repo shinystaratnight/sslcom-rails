@@ -38,6 +38,7 @@
 #  persist_notice      :boolean          default("0")
 #  persistence_token   :string(255)      not null
 #  phone               :string(255)
+#  phone_prefix        :string(255)
 #  po_box              :string(255)
 #  postal_code         :string(255)
 #  single_access_token :string(255)      not null
@@ -89,17 +90,6 @@ class User < ApplicationRecord
   before_create do |u|
     u.status = 'enabled'
     u.max_teams = OWNED_MAX_TEAMS unless u.max_teams
-  end
-
-  after_create do |u|
-    u.create_ssl_account if u.ssl_accounts.empty?
-    if u.as_reseller
-      u.ssl_account.add_role! 'new_reseller'
-      u.ssl_account.set_reseller_default_prefs
-      u.set_roles_for_account(u.ssl_account, [Role.get_reseller_id])
-    else
-      u.set_roles_for_account(u.ssl_account, [Role.get_owner_id])
-    end
   end
 
   delegate :tier_suffix, to: :ssl_account, prefix: false, allow_nil: true
@@ -715,10 +705,10 @@ class User < ApplicationRecord
     end
   end
 
-  def make_admin
-    unless roles.map(&:name).include?(Role::SYS_ADMIN)
-      roles << Role.find_by(name: Role::SYS_ADMIN)
-      assignments << Assignment.new(ssl_account_id: ssl_account.id, role_id: Role.find_by(name: Role::SYS_ADMIN).id)
+  def elevate_role(role_symbol)
+    unless roles.map(&:name).include?(role_symbol)
+      roles << Role.find_by(name: role_symbol)
+      assignments << Assignment.new(ssl_account_id: ssl_account.id, role_id: Role.find_by(name: role_symbol).id)
     end
   end
 
@@ -769,6 +759,30 @@ class User < ApplicationRecord
     expires_in = 10.minutes
     options.reverse_merge! expires_in: expires_in, use_ssl: true
     avatar.s3_object(options[:style]).presigned_url(:get, secure: true, expires_in: expires_in).to_s
+  end
+
+  # 2FA
+
+  ##
+  # Check if user is registered with authy and
+  # if the authy cellphone is the same as user's phone
+  def phone_verified?
+    return false unless authy_user
+
+    authy_user_result = Authy::API.user_status(id: authy_user)
+    return false unless authy_user_result['success'] == true
+
+    user_country_code = phone_prefix
+    authy_user_result['status']['phone_number']&.last(4) == phone&.last(4) && authy_user_result['status']['country_code'].to_s == user_country_code.to_s
+  end
+
+  ##
+  # Checks if the user needs to verify phone via OTP
+  # Verification is needed when there is a change for user's phone and/or phone_prefix
+  # For pre-existing phone details (no changes to phone/phone_prefix) that are not verified
+  # register user with authy and verify phone, so that 2FA with OTP is possible
+  def requires_phone_verification?
+    phone_changed? || phone_prefix_changed? || !phone_verified?
   end
 
   private

@@ -70,11 +70,12 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
             @result = @acr
           end
         end
+        render_200_status
       else
         InvalidApiCertificateRequest.create parameters: params, ca: ssl_ca_label
+        error(400, 400, @result.errors)
       end
     end
-    render_200_status
   rescue StandardError => e
     render_500_error e
   end

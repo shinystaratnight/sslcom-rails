@@ -1,0 +1,206 @@
+<script type="text/javascript">
+jQuery.noConflict();
+jQuery(function($) {
+  $(document).ready(function() {
+    var appId = <%= @app_id.to_json.html_safe %>
+    var signRequests = <%= @sign_requests.as_json.to_json.html_safe %>;
+    var registerRequests = <%= @registration_requests.to_json.html_safe  %>;
+    var u2f_error_message_element = $('.u2f_error_message');
+
+    var authenticated_session = <%= session[:authenticated] %>;
+
+    // Yubikey error codes for register
+    var errorMap_register = {
+      1: 'Unknown error, please try again or contact us',
+      2: "Bad request error, try again" ,
+      3: "This key isn't supported, please try another one",
+      4: 'The device is already registered.',
+      5: 'Authentication timed out. Please reload to try again.'
+    };
+
+    // Yubikey error codes for sign
+    var errorMap_sign = {
+      1: 'Unknown error, please try again or contact us',
+      2: "Bad request error, try again" ,
+      3: "This key isn't supported, please try another one",
+      4: 'Could not authenticate you. Please try again.',
+      5: 'Authentication timed out. Please try again.'
+    };
+
+    // We are here because our login requires 2FA
+    // as long as the session is not authenticated yet
+    // Authenticate with key
+    if (!authenticated_session) {
+      var challenge = <%= session[:challenge].to_json.html_safe %>;
+      $('#2fa-info').show();
+
+      var setError = function(code) {
+        //$waiting.style.display = 'none';
+        //$error.style.display = 'block';
+        //$error.innerHTML = errorMap[code];
+        $('#error_message').val(errorMap_sign[code])
+        var failed_count = parseInt($('.failed_count').val()) + 1;
+        $('.failed_count').val(failed_count);
+        $('.u2f_logout').val('true');
+      };
+
+      u2f.sign(appId, challenge, signRequests, function(signResponse) {
+        if (signResponse.errorCode) {
+          $('#2fa-info').hide();
+          setError(signResponse.errorCode);
+        }
+        $('.u2f_response').val(JSON.stringify(signResponse));
+        $('#verify-u2f').submit();
+      }, 60);
+    }
+
+    // Add key
+    $('.register_u2f').click(function() {
+      $('.u2f_block.register').hide();
+      $('.u2f_device_name').val('');
+      $('.add_u2f_device').prop('disabled', true);
+      $('.u2f_block.add_nick_name').show();
+      $('#u2f_device_name').focus();
+    });
+
+    $('.u2f_device_name').keyup(function() {
+      if ($(this).val().trim() == '') {
+        $('.add_u2f_device').prop('disabled', true);
+      } else {
+        $('.add_u2f_device').prop('disabled', false);
+      }
+    });
+
+    // Edit key description
+    $(document).on('click', 'button[class*="edit_u2f_device"]', function() {
+      id = $(this).data('id')
+      $('.u2f_device_info_block#u2f_device_' + id + ' #u2f_description').hide();
+      $('.u2f_device_info_block#u2f_device_' + id + ' #u2f_edit').removeClass('hidden');
+      $('.u2f_device_info_block#u2f_device_' + id + ' #u2f_edit input').focus();
+    });
+
+    // Remove key
+    var ajaxRemoveU2fUrl = '/u2fs'; //u2fs#destroy
+    $(document).on('click', 'button[class*="remove_u2f_device"]', function() {
+      if (confirm('Are you sure to remove this token?')) {
+        var registerRequests = <%= @registration_requests.to_json.html_safe  %>;
+
+        $.ajax({
+          url: "/u2fs/"+$(this).data('id'),
+          type: 'DELETE',
+          success: function (result) {
+            if (result['error']) {
+              if (result['error'] == '') {
+                location.reload(true);
+              } else {
+                var message_wrap_element = $('<div></div>');
+                message_wrap_element.attr('class', 'flash_message error');
+
+                var message_element = $('<span></span>');
+                message_element.append(result['error']);
+                message_wrap_element.append(message_element);
+
+                var btn_element = $('<small></small>');
+                var close_btn_element = $('<div></div>');
+                close_btn_element.attr('class', 'close_flash_message');
+
+                var close_sign_element = $('<span></span>');
+                close_sign_element.append('X');
+
+                close_btn_element.append(close_sign_element);
+                close_btn_element.append('close');
+
+                btn_element.append(close_btn_element);
+                message_wrap_element.append(btn_element);
+
+                if ($('#content').find('.inner').children().first().hasClass('flash_message')) {
+                  $('#content').find('.inner').children().first().remove();
+                }
+                message_wrap_element.insertBefore($('#content').find('.inner').children().first());
+              }
+            } else {
+              location.reload(true);
+            }
+          }
+        });
+      }
+    });
+
+    var ajaxRegisterU2fUrl = '<%= u2fs_path %>'; // u2fs#create
+    $('.add_u2f_device').click(function(event) {
+      u2f_error_message_element.hide();
+      $('#2fa-info').show();
+      u2f.register(appId, registerRequests, signRequests, function(registerResponse) {
+        if (registerResponse.errorCode) {
+          u2f_error_message_element.show();
+          u2f_error_message_element.text(errorMap_register[registerResponse.errorCode]);
+          u2f_error_message_element.css('color', 'red');
+          $('#2fa-info').hide();
+        } else {
+          $.ajax({
+            url: ajaxRegisterU2fUrl,
+            data: {
+              nick_name: $('.u2f_device_name').val(),
+              u2f_response: JSON.stringify(registerResponse)
+            },
+            type: 'POST',
+            success: function(result) {
+              if (result['error']) {
+                if (result['error'] == '') {
+                  location.reload(true);
+                } else {
+                  var message_wrap_element = $('<div></div>');
+                  message_wrap_element.attr('class', 'flash_message error');
+
+                  var message_element = $('<span></span>');
+                  message_element.append(result['error']);
+                  message_wrap_element.append(message_element);
+
+                  var btn_element = $('<small></small>');
+                  var close_btn_element = $('<div></div>');
+                  close_btn_element.attr('class', 'close_flash_message');
+
+                  var close_sign_element = $('<span></span>');
+                  close_sign_element.append('X');
+
+                  close_btn_element.append(close_sign_element);
+                  close_btn_element.append('close');
+
+                  btn_element.append(close_btn_element);
+                  message_wrap_element.append(btn_element);
+                  if ($('#content').find('.inner').children().first().hasClass('flash_message')) {
+                    $('#content').find('.inner').children().first().remove();
+                  }
+                  message_wrap_element.insertBefore($('#content').find('.inner').children().first());
+                }
+              } else {
+                location.reload(true);
+              }
+            }
+          });
+        }
+      });
+    });
+
+    $('[id^=submit]').click(function(event){
+      url = $(this).data('url')
+      id = $(this).data('id')
+
+      $.ajax({
+        url: url,
+        data: {
+          u2f: {
+            nick_name: $('#u2f_nick_name_' + id).val()
+          }
+        },
+        type: 'PATCH',
+        success: function(data) {
+          $('.u2f_device_info_block#u2f_device_' + id + ' #u2f_description').show();
+          $('.u2f_device_info_block#u2f_device_' + id + ' #u2f_description').text(data['u2f_description']);
+          $('.u2f_device_info_block#u2f_device_' + id + ' #u2f_edit').addClass('hidden');
+        }
+      });
+    });
+  });
+});
+</script>

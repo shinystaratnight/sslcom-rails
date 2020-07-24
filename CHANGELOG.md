@@ -3,6 +3,23 @@ All notable changes to this project will be documented in this file.
 
 ### PENDING RELEASE (TBD)
 
+### v1.4.0 (July 24, 2020)
+
+- Fix issue creating duplicate accounts on signup or invite
+- Show domain names that do not pass CAA check
+- return status 400 for failed API submits
+- added function to add weak keys
+- remove address information requirement for API submit 
+- remove validation check for presence of CN field in CSR
+- Bug fix for nil exception ApiCertificateCreate_v1_4#get_domain
+- Add product filtering option for phone callback approvals and verifications page.
+- Assign CA profile to Business Identity Enterprise product
+- Fix Url Callback function
+- Fix creating 2 SslAccount objects when creating a User account
+- Bug fix to ensure monthly billing users can place invoiced orders via API without checking funded_account or billing_profiles.
+- Fix errors when saving screenshots on ci failure
+- Add ability to elevate a user to super_user or sys_admin programatically.
+- Enable 2FA for all users (security key and OTP via twillio)
 - Uncommented out code that checked for SMIME emailed token's expiration date
 - Correct pagination display and certificate order rendering for phone
   approval and verifications view.
