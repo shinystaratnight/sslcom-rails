@@ -17,6 +17,10 @@
 #  updated_at            :datetime
 #  variantable_id        :integer
 #
+# Indexes
+#
+#  index_product_variant_groups_on_variantable_id  (variantable_id)
+#
 FactoryBot.define do
   factory :product_variant_group do
     title { 'Domains' }
