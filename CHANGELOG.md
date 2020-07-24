@@ -3,6 +3,8 @@ All notable changes to this project will be documented in this file.
 
 ### PENDING RELEASE (TBD)
 
+### v1.4.0 (July 24, 2020)
+
 - Fix issue creating duplicate accounts on signup or invite
 - Show domain names that do not pass CAA check
 - return status 400 for failed API submits
@@ -18,6 +20,10 @@ All notable changes to this project will be documented in this file.
 - Fix errors when saving screenshots on ci failure
 - Add ability to elevate a user to super_user or sys_admin programatically.
 - Enable 2FA for all users (security key and OTP via twillio)
+- Uncommented out code that checked for SMIME emailed token's expiration date
+- Correct pagination display and certificate order rendering for phone
+  approval and verifications view.
+- Fixed issue creating two teams for every new account and setting both of them to default.
 
 ### v1.3.4 (July 10th, 2020)
 
