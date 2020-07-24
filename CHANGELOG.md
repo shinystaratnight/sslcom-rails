@@ -3,6 +3,8 @@ All notable changes to this project will be documented in this file.
 
 ### PENDING RELEASE (TBD)
 
+### v1.4.0 (July 24, 2020)
+
 - Fix issue creating duplicate accounts on signup or invite
 - Show domain names that do not pass CAA check
 - return status 400 for failed API submits
