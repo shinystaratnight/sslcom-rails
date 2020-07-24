@@ -83,6 +83,7 @@ class PhoneCallbacksController < ApplicationController
 
   def find_pending_verifications
     cos = CertificateOrder.includes(:certificate_order_tokens, :registrants, :certificate_contents)
+      .joins{ sub_order_items.product_variant_item.product_variant_group.variantable(Certificate) }
       .where.not(contacts: { contactable_id: nil })
       .where.not(certificate_contents: { workflow_state: 'issued' })
       .where(certificate_order_tokens: { status: 'pending', callback_type: 'manual', callback_method: 'call' })
