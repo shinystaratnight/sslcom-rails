@@ -1,19 +1,14 @@
-production:
-  # Production depends on precompilation of packs prior to booting for performance.
-  compile: false
-
-  # Extract and emit a css file
-  extract_css: true
-
-  # Cache manifest.json for performance
-  cache_manifest: true
-
 development:
-  # Production depends on precompilation of packs prior to booting for performance.
   compile: true
-
-  # Extract and emit a css file
   extract_css: false
-
-  # Cache manifest.json for performance
   cache_manifest: false
+
+test:
+  compile: true
+  extract_css: false
+  cache_manifest: false
+
+production:
+  compile: false
+  extract_css: true
+  cache_manifest: true
