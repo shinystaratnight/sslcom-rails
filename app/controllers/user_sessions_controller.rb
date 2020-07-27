@@ -134,7 +134,7 @@ class UserSessionsController < ApplicationController
         end
       end
 
-      current_user ||= @user_session.user
+      current_user ||= @user_session&.user || current_user_session&.user
       if !session[:authenticated] && current_user.present?
         if params[:logout] == 'true'
           if current_user.is_admin?
@@ -252,6 +252,12 @@ class UserSessionsController < ApplicationController
   end
 
   def destroy
+    # Keep u2f authentication if this was user shadowing
+    unless current_user_session.id == :shadow
+      session[:pre_authenticated_user_id] = nil
+      session[:authenticated] = false
+    end
+
     if current_user.is_admin?
       cookies.delete(ResellerTier::TIER_KEY)
       cookies.delete(ShoppingCart::CART_GUID_KEY)
@@ -260,14 +266,20 @@ class UserSessionsController < ApplicationController
     cookies.delete(:acct)
     current_user_session.destroy
     Authorization.current_user = nil
-    session[:pre_authenticated_user_id] = nil
-    session[:authenticated] = false
+
     session[:request_referrer] = nil
     flash[:notice] = 'Successfully logged out.'
     session[:failed_count] = 0
     session[:u2f_failed_count] = 0
     respond_to do |format|
-      format.html { redirect_to new_user_session_url }
+      format.html {
+        redirect_path = if current_user_session.id == :shadow
+                          account_path
+                        else
+                          new_user_session_url
+                        end
+        redirect_to redirect_path
+      }
     end
   end
 
@@ -372,6 +384,8 @@ class UserSessionsController < ApplicationController
     session[:authenticated] = true
     session[:authenticated] = false if @user_session.user.is_duo_required?
     session[:authenticated] = false if @user_session.user.u2fs.any?
+    # u2f authentication is true by default for user being shadowed
+    session[:authenticated] = true if @user_session.id == :shadow
   end
 
   def duo_api_host_name
