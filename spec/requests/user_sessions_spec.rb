@@ -6,6 +6,7 @@ describe 'User Sessions', type: :request do
   let!(:user_owner) { create(:user, :owner) }
   let!(:user_u2f) { create(:user, :u2f) }
   let(:user_superuser) { create(:user, :super_user) }
+  let!(:sysadmin_user) { create(:user, :sysadmin) }
 
   ## Cases
   # 1. user is a super user, and must use DUO to login
@@ -87,6 +88,41 @@ describe 'User Sessions', type: :request do
 
       it 'is redirected to u2f' do
         expect(response.headers['Location']).to eq new_u2f_url
+      end
+    end
+
+    context 'when sysadmin shadows user' do
+      before do
+        post user_session_path, user_session: { login: sysadmin_user.login,
+                                                password: sysadmin_user.password }
+        # Shadow user that has added a security key
+        post user_session_path, login: user_u2f.login
+      end
+
+      it 'has shadow flag' do
+        expect(assigns(:user_session).id).to eq :shadow
+      end
+
+      it 'has logged in as the shadowed user' do
+        expect(assigns(:user_session).user).to eq user_u2f
+      end
+
+      it 'session is authenticate, if user uses u2f' do
+        expect(session[:authenticated]).to eq true
+      end
+    end
+
+    context 'when sysadmin shadows user, and then returns to own account' do
+      before do
+        post user_session_path, user_session: { login: sysadmin_user.login,
+                                                password: sysadmin_user.password }
+        # Shadow user that has added a security key
+        post user_session_path, login: user_u2f.login
+        get logout_path
+      end
+
+      it 'sysadmin can go back to own account' do
+        expect(response).to redirect_to account_path
       end
     end
   end
