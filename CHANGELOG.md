@@ -6,13 +6,16 @@ All notable changes to this project will be documented in this file.
 
 - Update config/webpacker.yml to fix webpacker fallback during testing.
 
+- Show clickable link for confirmation in flash message
+- Pre-select team when editing user roles
+
 ### v1.4.0 (July 24, 2020)
 
 - Fix issue creating duplicate accounts on signup or invite
 - Show domain names that do not pass CAA check
 - return status 400 for failed API submits
 - added function to add weak keys
-- remove address information requirement for API submit 
+- remove address information requirement for API submit
 - remove validation check for presence of CN field in CSR
 - Bug fix for nil exception ApiCertificateCreate_v1_4#get_domain
 - Add product filtering option for phone callback approvals and verifications page.
