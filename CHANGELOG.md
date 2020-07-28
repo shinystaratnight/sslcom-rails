@@ -3,6 +3,8 @@ All notable changes to this project will be documented in this file.
 
 ### PENDING RELEASE (TBD)
 
+- Update config/webpacker.yml to fix webpacker fallback during testing.
+
 ### v1.4.0 (July 24, 2020)
 
 - Fix issue creating duplicate accounts on signup or invite
