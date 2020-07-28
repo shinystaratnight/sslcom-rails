@@ -2,6 +2,7 @@
 All notable changes to this project will be documented in this file.
 
 ### PENDING RELEASE (TBD)
+- Fix CDN edit page looking so messy (it was all over place)
 
 - Update config/webpacker.yml to fix webpacker fallback during testing.
 
