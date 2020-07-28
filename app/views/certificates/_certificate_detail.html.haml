@@ -12,7 +12,7 @@
         get for
       #{pricing(c)}/yr
   .more_info
-    =link_to image_tag('more_info_sm_bl.gif', :title=>'click to see this certificate'), c.summary
+    =link_to image_tag('more_info_sm_bl.gif', :title=>'click to see this certificate'), certificate_url(c.product_root)
     -unless c.product_root=='free'
       =link_to image_tag('buy_sm_bl.gif', :title=>'click to buy this certificate'), buy_certificate_url(c.product_root)
     -else
