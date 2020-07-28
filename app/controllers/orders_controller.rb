@@ -20,7 +20,7 @@ class OrdersController < ApplicationController
   before_action :get_team_tags, only: [:index, :search]
 
   skip_before_action :verify_authenticity_token, only: [:add_cart]
-  
+
   def update_tags
     if @order
       @taggable = @order
@@ -31,11 +31,9 @@ class OrdersController < ApplicationController
       tags_list: @taggable.nil? ? [] : @taggable.tags.pluck(:name)
     }
   end
-  
-  def edit
-    
-  end
-  
+
+  def edit; end
+
   def update
     @order ||= Order.find(params[:id])
     if @order.update_attributes(params[:order])
@@ -53,7 +51,7 @@ class OrdersController < ApplicationController
     else
       current_user.ssl_accounts.find_by(acct_number: params[:target_team])
     end
-    
+
     if from_team && to_team
       if @order.is_deposit?
         SslAccount.migrate_deposit(from_team, to_team, @order, current_user)
@@ -108,7 +106,7 @@ class OrdersController < ApplicationController
     end
     setup_orders
   end
-  
+
   def add_cart
     cart = params[:cart]
     guid = cookies[ShoppingCart::CART_GUID_KEY]
@@ -242,7 +240,7 @@ class OrdersController < ApplicationController
       @line_item = ApplicationRecord.find_from_model_and_id(param)
       session[:cart_items].delete @line_item.model_and_id
     end
-    
+
     respond_to do |format|
       format.js { render :action => "remove_item.js.erb", :layout => false }
     end
@@ -251,7 +249,7 @@ class OrdersController < ApplicationController
   def empty_cart
     @item_classes = session[:cart_items].collect{|cart_item| cart_item.split(/_(?=\d+$)/)[0]}.uniq!
     session[:cart_items].clear
-    
+
     respond_to do |format|
       format.js { render :action => "cart_quantity.js.erb", :layout => false }
     end
@@ -270,20 +268,20 @@ class OrdersController < ApplicationController
         description: 'SSL.com Certificate Order'
       )
     end
-    
+
     filename = if @orders.any? && @orders.count == 1
-      "ssl.com_invoice_ref_#{@orders.first.reference_number}"
-    elsif invoices
-      "ssl.com_invoices_#{start.strftime('%F')}_#{finish.strftime('%F')}"
-    else
-      "ssl.com_invoices_#{Date.today.strftime('%F')}"
-    end
-    
+                 "ssl.com_invoice_ref_#{@orders.first.reference_number}"
+               elsif invoices
+                 "ssl.com_invoices_#{start.strftime('%F')}_#{finish.strftime('%F')}"
+               else
+                 "ssl.com_invoices_#{Date.today.strftime('%F')}"
+               end
+
     respond_to do |format|
       if @orders.any?
         format.html { render pdf: filename }
       else
-        flash[:error] = if invoices 
+        flash[:error] = if invoices
           'Zero orders found for this date range!'
         else
           'This order does not exist!'
@@ -292,25 +290,25 @@ class OrdersController < ApplicationController
       end
     end
   end
-  
+
   def update_invoice
     cur_invoice = params[:monthly_invoice] || params[:daily_invoice]
-    
+
     found = if cur_invoice
-      Invoice.find_by(reference_number: cur_invoice[:invoice_ref])
-    else
-      Invoice.find_by(order_id: @order.id) if @order
-    end
+              Invoice.find_by(reference_number: cur_invoice[:invoice_ref])
+            else
+              Invoice.find_by(order_id: @order.id) if @order
+            end
     update = found ? found : Invoice.new(params[:invoice])
-    
+
     no_errors = if found
-      update.update_attributes(
-        (cur_invoice ? cur_invoice : params[:invoice])
-          .keep_if {|k, v| !['order_id', 'invoice_ref'].include?(k)}
-      )
-    else
-      update.save
-    end
+                  update.update_attributes(
+                    (cur_invoice ? cur_invoice : params[:invoice])
+                      .keep_if {|k, v| !['order_id', 'invoice_ref'].include?(k)}
+                  )
+                else
+                  update.save
+                end
 
     respond_to do |format|
       if no_errors
@@ -336,12 +334,12 @@ class OrdersController < ApplicationController
   end
 
   def studio_orders
-    @yahoo_grid = "yui-t1"
+    @yahoo_grid = 'yui-t1'
     @line_items = @studio.line_items
   end
 
   def affiliate_orders
-    @yahoo_grid = "yui-t1"
+    @yahoo_grid = 'yui-t1'
     @affiliate = Affiliate.find(params[:affiliate_id])
     @line_items = @affiliate.line_items
   end
@@ -349,12 +347,12 @@ class OrdersController < ApplicationController
   def search
     index
   end
-  
+
   def revoke
     if params[:revoke_all]
       list = @order.cached_certificate_orders
       list.each {|co| co.revoke!(params[:revoke_reason], current_user)}
-      
+
       SystemAudit.create(
         owner: current_user,
         target: @order,
@@ -362,7 +360,7 @@ class OrdersController < ApplicationController
         action: "Revoke all #{list.count} items(s) for order."
       )
       flash[:notice] = "All #{list.count} order item(s) have been revoked."
-    else  
+    else
       co = CertificateOrder.unscoped.find_by(ref: params[:co_ref])
       co.revoke!(params[:revoke_reason], current_user) if co
       flash[:notice] = "Item ##{params[:co_ref]} has been revoked."
@@ -398,13 +396,13 @@ class OrdersController < ApplicationController
 
   def notify_ca(notes)
     @order.line_items.each { |li|
-      OrderNotifier.request_comodo_refund("refunds@ssl.com", li.sellable.external_order_number, notes).deliver if (defined? li.sellable.external_order_number)
-      OrderNotifier.request_comodo_refund("refunds@comodo.com", li.sellable.external_order_number,
+      OrderNotifier.request_comodo_refund('refunds@ssl.com', li.sellable.external_order_number, notes).deliver if (defined? li.sellable.external_order_number)
+      OrderNotifier.request_comodo_refund('refunds@comodo.com', li.sellable.external_order_number,
                                           notes).deliver if (defined?(li.sellable.external_order_number) && li.sellable.external_order_number)
-      OrderNotifier.request_comodo_refund("refunds@ssl.com", $1, notes).deliver if li.sellable.try(:notes) =~ /DV#(\d+)/
+      OrderNotifier.request_comodo_refund('refunds@ssl.com', $1, notes).deliver if li.sellable.try(:notes) =~ /DV#(\d+)/
     }
   end
-  
+
   def refund_merchant
     unless @order.blank?
       @refunds = @order.refunds
@@ -412,7 +410,7 @@ class OrdersController < ApplicationController
         if params[:cancel_cert_order]
           co = CertificateOrder.find(params[:cancel_cert_order].to_i)
         end
-        
+
         if params[:mo_ref]
           mo = if current_user.is_system_admins?
             Invoice.find_by(reference_number: params[:mo_ref])
@@ -436,10 +434,10 @@ class OrdersController < ApplicationController
       end
     end
   end
-    
+
   def refund_merchant_for_co(co, amount)
     funded = @order.make_available_funded(co)
-    
+
     co.refund!
     SystemAudit.create(
       owner:  current_user,
@@ -452,7 +450,7 @@ class OrdersController < ApplicationController
       flash[:notice] << " And made #{Money.new(funded).format} available to customer."
     end
   end
-  
+
   def refund_merchant_for_mo(mo, amount)
     if mo.merchant_refunded?
       mo.full_refund!
@@ -461,7 +459,7 @@ class OrdersController < ApplicationController
       mo.partial_refund!
       @order.partial_refund!
     end
-    
+
     SystemAudit.create(
       owner:  current_user,
       target: mo,
@@ -469,7 +467,7 @@ class OrdersController < ApplicationController
       action: "#{@order.billable.get_invoice_label.capitalize} Invoice ##{mo.reference_number}, merchant refund issued for #{amount.format}."
     )
   end
-  
+
   def change_state
     performed="order changed to #{params[:state]}"
     unless @order.blank?
@@ -588,7 +586,7 @@ class OrdersController < ApplicationController
         end
         @credit_card = @profile.build_credit_card
       end
-      apply_discounts(@order) #this needs to happen before the transaction but after the final incarnation of the order
+      apply_discounts(@order) # this needs to happen before the transaction but after the final incarnation of the order
       if (@user ? @user.valid? : true) && !too_many_declines &&
           order_reqs_valid? && purchase_successful?
         save_user unless current_user
@@ -613,15 +611,15 @@ class OrdersController < ApplicationController
         if too_many_declines
           flash[:error] = 'Too many failed attempts, please wait 1 minute to try again!'
         end
-        format.html { render :action => "new" }
+        format.html { render action: 'new' }
       end
     end
     rescue Payment::AuthorizationError => error
       flash.now[:error] = error.message
-      render :action => 'new'
+      render action: 'new'
   end
-  
-  # Order created for existing UCC certificate order on reprocess/rekey or renew, 
+
+  # Order created for existing UCC certificate order on reprocess/rekey or renew,
   # or initial CSR submit.
   def ucc_domains_adjust_create
     @reprocess_ucc  = params[:order][:reprocess_ucc]
@@ -642,7 +640,7 @@ class OrdersController < ApplicationController
       wildcard_amount:      params[:order][:wildcard_amount],
       non_wildcard_amount:  params[:order][:nonwildcard_amount],
     }
-    
+
     @order = @reprocess_ucc ? ReprocessCertificateOrder.new(order_params) : Order.new(order_params)
     @order.billable = @ssl_account
 
@@ -654,7 +652,7 @@ class OrdersController < ApplicationController
       domains_adjust_hybrid_payment(params)
     end
   end
-    
+
   def create_free_ssl
     @order = Order.new(params[:order])
     unless current_user
@@ -738,7 +736,7 @@ class OrdersController < ApplicationController
   end
 
   private
-  
+
   def single_cert_no_limit_order?
     ssl_account && ssl_account.no_limit && request.referer && request.referer.include?('certificates')
   end
@@ -768,7 +766,7 @@ class OrdersController < ApplicationController
     product = params[:certificate] || params[:smime_client_enrollment_order][:certificate]
     @certificate = Certificate.find_by(product: product)
     certificate_orders = smime_client_enrollment_items
-    
+
     @order = SmimeClientEnrollmentOrder.new(
       state: 'new',
       approval: 'approved',
@@ -782,18 +780,18 @@ class OrdersController < ApplicationController
 
   def smime_client_redirect_back
     redirect_to new_order_path(@ssl_slug,
-      emails: params[:emails],
-      certificate: params[:certificate],
-      smime_client_enrollment: true
-    )
+                               emails: params[:emails],
+                               certificate: params[:certificate],
+                               smime_client_enrollment: true
+                              )
   end
 
   def smime_client_enrollment_hybrid_payment
     if current_user && order_reqs_valid? && !@too_many_declines && purchase_successful?
-      save_billing_profile unless (params[:funding_source])
+      save_billing_profile unless params[:funding_source]
       if @order.invoiced?
         @order.invoice_denied_order(current_user.ssl_account)
-      else  
+      else
         @order.update(billing_profile_id: @profile.try(:id))
         withdraw_funded_account((@funded_amount * 100).to_i) if @funded_amount > 0
       end
@@ -817,9 +815,9 @@ class OrdersController < ApplicationController
     withdraw_amount = @order_amount < @funded_amount ? @order_amount : @funded_amount
     withdraw_amount = (withdraw_amount * 100).to_i
     withdraw_amount_str = Money.new(withdraw_amount).format
-    
+
     withdraw_funded_account(withdraw_amount)
-    
+
     if current_user && @order.valid? &&
       ((@ssl_account.funded_account.cents + withdraw_amount) == @funded_account_init)
       @order.update(
@@ -846,24 +844,27 @@ class OrdersController < ApplicationController
     redirect_to order_path(@ssl_slug, @order)
   end
   # ============================================================================
-  # UCC Certificate reprocess/rekey helper methods for 
+  # UCC Certificate reprocess/rekey helper methods for
   #   Invoiced Order:       will be added to monthly invoice to be charged later
   #   Free Order:           no additional domains, or fully covered by funded account credit
   #   Hybrid Payment Order: amount paid by BOTH funded account and (CC or Paypal)
   # ============================================================================
+
   def reprocess_ucc_redirect_back
     redirect_to new_order_path(@ssl_slug,
-      co_ref: @certificate_order.ref, cc_ref: @certificate_content.ref, reprocess_ucc: true
-    )
+                               co_ref: @certificate_order.ref,
+                               cc_ref: @certificate_content.ref,
+                               reprocess_ucc: true
+                              )
   end
-    
+
   def ucc_domains_adjust_funded(params)
     withdraw_amount     = @order_amount < @funded_amount ? @order_amount : @funded_amount
     withdraw_amount     = (withdraw_amount * 100).to_i
     withdraw_amount_str = Money.new(withdraw_amount).format
-    
+
     withdraw_funded_account(withdraw_amount)
-    
+
     if current_user && @order.valid? &&
       ((@ssl_account.funded_account.cents + withdraw_amount) == @funded_account_init)
       reprocess_ucc_order_free(params)
@@ -875,13 +876,13 @@ class OrdersController < ApplicationController
       reprocess_ucc_redirect_back
     end
   end
-    
+
   def domains_adjust_hybrid_payment(params)
     if current_user && order_reqs_valid? && !@too_many_declines && purchase_successful?
       save_billing_profile unless (params[:funding_source])
       if @order.invoiced?
         @order.invoice_denied_order(current_user.ssl_account)
-      else  
+      else
         @order.billing_profile = @profile
         @certificate_order.add_reproces_order @order
         withdraw_funded_account((@funded_amount * 100).to_i) if @funded_amount > 0
@@ -899,7 +900,7 @@ class OrdersController < ApplicationController
       flash[:error] = error.message
       reprocess_ucc_redirect_back
   end
-  
+
   def reprocess_ucc_order_free(params)
     # On UCC reprocess, order is FREE if
     #   fully covered by funded account, or
@@ -914,7 +915,7 @@ class OrdersController < ApplicationController
     # In case credits were used to cover the cost of order.
     ucc_update_domain_counts
   end
-  
+
   def create_no_limit_order
     single_certificate = single_cert_no_limit_order?
     ssl_account_id = ssl_account.id
@@ -946,7 +947,7 @@ class OrdersController < ApplicationController
       end
       clear_cart
     end
-    
+
     @order.update(
       state: 'invoiced',
       invoice_id: Invoice.get_or_create_for_team(ssl_account_id).try(:id),
@@ -967,7 +968,7 @@ class OrdersController < ApplicationController
   def add_to_payable_invoice(params)
     invoice = Invoice.get_or_create_for_team(@ssl_account)
     @order = current_order_reprocess_ucc if @reprocess_ucc
-    
+
     if @renew_ucc || @ucc_csr_submit
       @order        = @ssl_account.purchase(@certificate_order)
       @order.cents  = @amount * 100
@@ -981,37 +982,37 @@ class OrdersController < ApplicationController
     @order.invoice_description = params[:order_description]
     @order.wildcard_amount     = params[:wildcard_amount]
     @order.non_wildcard_amount = params[:nonwildcard_amount]
-    
+
     @certificate_order.add_reproces_order @order
     ucc_update_domain_counts
     record_order_visit(@order)
   end
-    
+
   def ucc_domains_adjust
     if current_user
       @certificate_order = if current_user.is_system_admins?
-        CertificateOrder.find_by(ref: params[:co_ref])
-      else
-        current_user.ssl_account.cached_certificate_orders.find_by(ref: params[:co_ref])
-      end
+                             CertificateOrder.find_by(ref: params[:co_ref])
+                           else
+                             current_user.ssl_account.cached_certificate_orders.find_by(ref: params[:co_ref])
+                           end
       @ssl_account = @certificate_order.try(:ssl_account)
       @certificate_content = @certificate_order.certificate_contents.find_by(ref: params[:cc_ref])
 
       @amount = if params[:renew_ucc] || params[:ucc_csr_submit]
-        params[:order_amount].to_f
-      else
-        @certificate_order.ucc_prorated_amount(@certificate_content, find_tier)
-      end
+                  params[:order_amount].to_f
+                else
+                  @certificate_order.ucc_prorated_amount(@certificate_content, find_tier)
+                end
       params[:reprocess_ucc] ? ucc_domains_adjust_reprocess : ucc_domains_adjust_other
     else
       redirect_to login_url and return
     end
   end
-  
+
   def ucc_domains_adjust_other
     @renew_ucc = params[:renew_ucc]
     @ucc_csr_submit = params[:ucc_csr_submit]
-    
+
     if @ssl_account.invoice_required? || @amount == 0
       if @ssl_account.invoice_required? && @amount > 0 # Invoice Order, do not charge
         add_to_payable_invoice(params)
@@ -1023,10 +1024,10 @@ class OrdersController < ApplicationController
       render 'ucc_domains_adjust'
     end
   end
-    
+
   def ucc_domains_adjust_reprocess
     @reprocess_ucc = true
-    
+
     if @ssl_account.invoice_required? || @amount == 0
       if @amount == 0 # Reprocess is free, no additional domains added
         @order = ReprocessCertificateOrder.new(
@@ -1038,9 +1039,9 @@ class OrdersController < ApplicationController
         )
         @order.billable = @ssl_account
         reprocess_ucc_order_free(params)
-        flash[:notice] = "This UCC certificate reprocess is free due to no additional domains."
+        flash[:notice] = 'This UCC certificate reprocess is free due to no additional domains.'
       end
-      
+
       if @ssl_account.invoice_required? && @amount > 0 # Invoice Order, do not charge
         add_to_payable_invoice(params)
         # flash[:notice] = "This UCC reprocess in the amount of #{Money.new(@amount).format}
@@ -1051,13 +1052,13 @@ class OrdersController < ApplicationController
       render 'ucc_domains_adjust'
     end
   end
-  
+
   # admin user refunds line item
   def refund_partial_amount(params)
     refund_amount = @order.make_available_line(@target)
     all_refunded  = @order.line_items.select{|li|li.sellable.try("refunded?")}.count == @order.line_items.count
     refund_amount_f = Money.new(refund_amount).format
-    
+
     add_cents_to_funded_account(refund_amount)
     @performed << " and made #{refund_amount_f} available to customer"
 
@@ -1065,7 +1066,7 @@ class OrdersController < ApplicationController
     if all_refunded || (@order.cents <= refund_amount)
       @order.full_refund!
     else
-      @order.partial_refund!(params["partial"], refund_amount)
+      @order.partial_refund!(params['partial'], refund_amount)
     end
     if (@target.is_a?(LineItem) && @target.sellable.refunded?) || (@target.is_a?(CertificateOrder) && @target.refunded?)
       flash[:notice] = "Line item was successfully credited for #{refund_amount_f}."
@@ -1074,10 +1075,10 @@ class OrdersController < ApplicationController
 
   # admin user cancels line item
   def refund_partial_cancel(params)
-    if @order.line_items.count == 1 #order has only one item, cencel entire order
+    if @order.line_items.count == 1 # order has only one item, cancel entire order
       @target = @order
       cancel_entire_order
-    else  
+    else
       @performed = "Cancelled partial order #{@target.sellable.ref}, credit or refund were NOT issued."
       @target.sellable.cancel! @target
     end
@@ -1093,8 +1094,8 @@ class OrdersController < ApplicationController
   end
 
   def certificate_order_steps
-    certificate_order=CertificateOrder.new(params[:certificate_order])
-    @certificate_order=Order.setup_certificate_order(certificate: @certificate, certificate_order: certificate_order)
+    certificate_order = CertificateOrder.new(params[:certificate_order])
+    @certificate_order = Order.setup_certificate_order(certificate: @certificate, certificate_order: certificate_order)
     determine_eligibility_to_buy(@certificate, certificate_order)
     if instance_variable_get("@#{CertificateOrder::RENEWING}")
       @certificate_order.renewal_id=instance_variable_get("@#{CertificateOrder::RENEWING}").id
@@ -1103,11 +1104,11 @@ class OrdersController < ApplicationController
   end
 
   def find_order
-    @order = Order.unscoped{Order.find_by_reference_number(params[:id])}
+    @order = Order.unscoped{Order.find_by(reference_number: params[:id])}
   end
 
   def find_scoped_order
-    @order = (current_user.is_system_admins? ? Order : current_user.orders).find_by_reference_number(params[:id])
+    @order = (current_user.is_system_admins? ? Order : current_user.orders).find_by(reference_number: params[:id])
   end
 
   def checkout_shopping_cart_content(content, cart)
