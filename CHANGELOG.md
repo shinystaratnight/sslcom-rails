@@ -9,6 +9,9 @@ All notable changes to this project will be documented in this file.
 - Show clickable link for confirmation in flash message
 - Pre-select team when editing user roles
 
+- Do not return SslAccount in API query if the user is a member with only role Role::INDIVIDUAL_CERTIFICATE
+- Fix email addresses return for dcv query (reversed Comodo/SSL.com look ups)
+
 ### v1.4.0 (July 24, 2020)
 
 - Fix issue creating duplicate accounts on signup or invite
