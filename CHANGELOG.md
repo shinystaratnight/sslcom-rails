@@ -3,6 +3,12 @@ All notable changes to this project will be documented in this file.
 
 ### PENDING RELEASE (TBD)
 
+
+
+### v1.4.1 (July 29, 2020)
+
+- Remove Olark chat and add HubSpot chat
+
 ### v1.4.0 (July 24, 2020)
 
 - Fix issue creating duplicate accounts on signup or invite
