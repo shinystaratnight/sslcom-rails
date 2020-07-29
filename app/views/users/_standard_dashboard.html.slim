@@ -22,7 +22,7 @@
                   td=user.created_at.strftime("%b %d, %Y")
                   td=user.updated_at.strftime("%b %d, %Y")
                   -if current_user.is_system_admins?
-                    td = link_to(user.last_login_ip, "http://www.infosniper.net/index.php?ip_address=#{user.last_login_ip}&map_source=1&overview_map=1&lang=1&map_type=1&zoom_level=7", target: "_blank") if user.last_login_ip 
+                    td = link_to(user.last_login_ip, "http://www.infosniper.net/index.php?ip_address=#{user.last_login_ip}&map_source=1&overview_map=1&lang=1&map_type=1&zoom_level=7", target: "_blank") if user.last_login_ip
             table(cellspacing="0")
               tbody
                 tr
@@ -61,7 +61,7 @@
                             li=remote_login_link(user)
                           li=link_to 'edit email address', edit_email_user_url(user)
                           li=link_to 'change password', edit_password_user_url(user)
-                          li= link_to '2FA settings', u2fs_path(user)
+                          li= link_to '2FA settings', u2fs_path(user) if Settings.u2f_enabled
                           -if permitted_to?(:edit, :billing_profiles) && !is_sandbox?
                             -unless current_user.is_affiliate?
                               li=link_to 'become a referral link partner', "https://affiliates.ssl.com"
