@@ -100,7 +100,7 @@
                             li=remote_login_link(user)
                           li=link_to 'edit email address', edit_email_user_url(user)
                           li=link_to 'change password', edit_password_user_url(user)
-                          li= link_to '2FA settings', u2fs_path(user)
+                          li= link_to '2FA settings', u2fs_path(user) if Settings.u2f_enabled
                           -permitted_to? :edit_settings, current_user.ssl_account do
                             li=link_to "settings", edit_settings_ssl_account_path(ssl_slug: ssl_slug)
                       .col-md-3

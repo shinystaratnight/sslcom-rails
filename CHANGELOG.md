@@ -14,6 +14,10 @@ All notable changes to this project will be documented in this file.
 
 
 
+### v1.4.2 (July 29, 2020)
+
+- Disable use of 2FA according to Settings.u2f_enabled
+
 ### v1.4.1 (July 29, 2020)
 
 - Remove Olark chat and add HubSpot chat
