@@ -17,11 +17,13 @@ module Rendering
 
   def render_200_status_noschema
     json = if @result.errors.empty?
+             status = :ok
              serialize_model(@result)['data']['attributes']
            else
+             status = 400
              { errors: @result.errors }
            end
-    render json: json, status: :ok
+    render json: json, status: status
   end
 
   def render_200_status

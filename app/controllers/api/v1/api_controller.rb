@@ -45,13 +45,14 @@ module Api
       end
 
       def api_access?
-        ak = params[:account_key]
-        sk = params[:secret_key]
-        return false if ak.blank? || sk.blank?
-
-        @team ||= SslAccount.joins(:api_credential)
-                            .where(api_credential: { account_key: ak, secret_key: sk }).last
-        !@team.nil?
+        ac = ApiCredential.find_by_account_key_and_secret_key(params[:account_key], params[:secret_key])
+        if ac.blank?
+          @result ||= ApiUserRequest.new
+          @result.errors[:login] << I18n.t('error.missing_account_key_or_secret_key')
+          render_200_status_noschema
+        else
+          @team ||= ac.ssl_account
+        end
       end
 
       def set_default_request_format
