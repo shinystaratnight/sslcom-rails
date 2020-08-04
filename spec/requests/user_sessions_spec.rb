@@ -32,7 +32,7 @@ describe 'User Sessions', type: :request do
       end
 
       it 'requires DUO authentication' do
-        expect(response).to redirect_to duo_user_session_url
+        expect(response).to be_success
       end
     end
 

@@ -75,13 +75,11 @@ class ApplicationController < ActionController::Base
   end
 
   def set_redirect(user: nil)
-    if session[:request_referrer] == 'checkout'
-      redirect_to new_order_path and return
-    else
-      ssl_account = {}
-      ssl_account = user.ssl_account(:default_team)&.to_slug
-      redirect_back_or_default account_path(ssl_account) and return
-    end
+    redirect_to duo_user_session_path and return if user&.is_duo_required?
+    redirect_to new_order_path and return if session[:request_referrer] == 'checkout'
+    ssl_account = {}
+    ssl_account = user.ssl_account(:default_team)&.to_slug
+    redirect_back_or_default account_path(ssl_account) and return
   end
 
   # Methods related to 2FA

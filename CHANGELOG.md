@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 - Do not return SslAccount in API query if the user is a member with only role Role::INDIVIDUAL_CERTIFICATE
 - Fix email addresses return for dcv query (reversed Comodo/SSL.com look ups)
 
+* Redirect to initially requested URL, after login and DUO authentication
 
 
 ### v1.4.2 (July 29, 2020)
