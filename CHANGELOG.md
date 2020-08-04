@@ -2,17 +2,15 @@
 All notable changes to this project will be documented in this file.
 
 ### PENDING RELEASE (TBD)
+
+### v1.5.0 (August 4, 2020)
+
 - Fix CDN edit page looking so messy (it was all over place)
-
 - Update config/webpacker.yml to fix webpacker fallback during testing.
-
 - Show clickable link for confirmation in flash message
 - Pre-select team when editing user roles
-
 - Do not return SslAccount in API query if the user is a member with only role Role::INDIVIDUAL_CERTIFICATE
 - Fix email addresses return for dcv query (reversed Comodo/SSL.com look ups)
-
-
 
 ### v1.4.2 (July 29, 2020)
 
