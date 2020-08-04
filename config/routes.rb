@@ -54,6 +54,9 @@ Rails.application.routes.draw do
         match '/teams/add_billing_profile' => 'teams#add_billing_profile', as: :api_team_add_billing_profile, via: :post
         match '/teams/saved_contacts' => 'teams#saved_contacts', as: :api_team_saved_contacts, via: :get
         match '/teams/saved_registrants' => 'teams#saved_registrants', as: :api_team_saved_registrants, via: :get
+        match '/teams/user' => 'teams#show_user', as: :api_team_user, via: :get
+        match '/teams/verify_user_by_id' => 'teams#verify_user_by_id', as: :api_team_verify_user_by_id, via: :get
+        match '/team' => 'teams#show_team', as: :api_team_team, via: :get
 
         # Signed Certificates
         match '/signed_certificates' => 'api_certificate_requests#retrieve_signed_certificates', as: :api_signed_certificates_retrieve, via: [:post]

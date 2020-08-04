@@ -155,6 +155,8 @@ module Api
             @results = []
             if @obj.is_a?(User) && @obj.errors.empty?
               @obj.ssl_accounts.uniq.each do |team|
+                next if @obj.role_symbols(team) == [Role::INDIVIDUAL_CERTIFICATE.to_sym] # skip if only SMIME
+
                 result = ApiUserListTeam_v1_4.new
                 result.acct_number = team.acct_number
                 result.roles = team.roles

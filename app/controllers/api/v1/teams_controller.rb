@@ -30,6 +30,31 @@ module Api
         render json: json, status: :ok
       end
 
+      def show_user
+        json = serialize_models(@team.users.where(login: params[:login]))
+        render json: json, status: :ok
+      end
+
+      def show_team
+        json = serialize_models(SslAccount.where(id: @team.id))
+        render json: json, status: :ok
+      end
+
+      def verify_user_by_id
+        @result ||= ApiUserRequest.new
+        if @team.id != params[:ssl_account_id].to_i
+          @result.errors[:ssl_account_id] = "not found"
+        else
+          user = @team.users.find_by(id: params[:user_id].to_i)
+          if user.blank?
+            @result.errors[:user_id] = "not found"
+          else
+            @result = user
+          end
+        end
+        render_200_status_noschema
+      end
+
       def saved_registrants
         json = serialize_models(@team.saved_registrants)
         render json: json, status: :ok
