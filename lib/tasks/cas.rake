@@ -677,7 +677,7 @@ namespace :cas do
       )
       Ca.find_or_initialize_by(ref: "0036").update_attributes(
           friendly_name: "SSL.com Business Identity RSA",
-          profile_name: "MYSSL_OV_RSA_SMIME_DOCSIGNING_CERT",
+          profile_name: "MYSSL_OV_RSA_DOCSIGNING_CERT",
           algorithm: "rsa",
           size: 4096,
           description: Ca::SSLCOM_CA,
@@ -687,11 +687,11 @@ namespace :cas do
           admin_host: "https://#{url}:8443",
           ca_name: "SSLcom-SubCA-clientCert-RSA-4096-R2",
           ekus: [Ca::EKUS[:client]],
-          end_entity: "MYSSL_OV_CERT_EE"
+          end_entity: "DOCSIGNING_OV_CERT_EE"
       )
       Ca.find_or_initialize_by(ref: "0037").update_attributes(
           friendly_name: "SSL.com Business Identity ECC",
-          profile_name: "MYSSL_OV_ECC_SMIME_DOCSIGNING_CERT",
+          profile_name: "MYSSL_OV_ECC_DOCSIGNING_CERT",
           algorithm: "ecc",
           size: 384,
           description: Ca::SSLCOM_CA,
@@ -701,7 +701,7 @@ namespace :cas do
           admin_host: "https://#{url}:8443",
           ca_name: "SSLcom-SubCA-clientCert-ECC-384-R2",
           ekus: [Ca::EKUS[:client]],
-          end_entity: "MYSSL_OV_CERT_EE"
+          end_entity: "DOCSIGNING_OV_CERT_EE"
       )
       # # Dev ejbca mappings
       # Ca.find_or_initialize_by(ref: "0013d").update_attributes(
