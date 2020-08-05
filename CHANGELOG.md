@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 - Update Code Deploy AWS configuration
 - Update doc signing calls to EJBCA to remove email addresses and use different EJBCA profiles
 - Redirect to initially requested URL, after login and DUO authentication
+- Fix button alignment on the registrant edit screen
 
 ### v1.5.0 (August 4, 2020)
 
