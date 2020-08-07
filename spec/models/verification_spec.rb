@@ -1,25 +1,3 @@
-# == Schema Information
-#
-# Table name: verifications
-#
-#  id          :integer          not null, primary key
-#  call_number :string(255)
-#  call_prefix :string(255)
-#  email       :string(255)
-#  sms_number  :string(255)
-#  sms_prefix  :string(255)
-#  created_at  :datetime         not null
-#  updated_at  :datetime         not null
-#  user_id     :integer
-#
-# Indexes
-#
-#  fk_verifications_user_id  (user_id)
-#
-# Foreign Keys
-#
-#  fk_verifications_user_id  (user_id => users.id) ON DELETE => restrict ON UPDATE => restrict
-#
 require 'rails_helper'
 
 describe Verification, type: :model do

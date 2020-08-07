@@ -1,23 +1,3 @@
-# == Schema Information
-#
-# Table name: assignments
-#
-#  id             :integer          not null, primary key
-#  created_at     :datetime
-#  updated_at     :datetime
-#  role_id        :integer
-#  ssl_account_id :integer
-#  user_id        :integer
-#
-# Indexes
-#
-#  index_assignments_on_role_id                                 (role_id)
-#  index_assignments_on_ssl_account_id                          (ssl_account_id)
-#  index_assignments_on_user_id                                 (user_id)
-#  index_assignments_on_user_id_and_ssl_account_id              (user_id,ssl_account_id)
-#  index_assignments_on_user_id_and_ssl_account_id_and_role_id  (user_id,ssl_account_id,role_id)
-#
-
 class Assignment < ApplicationRecord
   belongs_to  :user, touch: true
   belongs_to  :role

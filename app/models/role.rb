@@ -1,20 +1,3 @@
-# == Schema Information
-#
-# Table name: roles
-#
-#  id             :integer          not null, primary key
-#  description    :text(65535)
-#  name           :string(255)
-#  status         :string(255)
-#  created_at     :datetime
-#  updated_at     :datetime
-#  ssl_account_id :integer
-#
-# Indexes
-#
-#  index_roles_on_ssl_account_id  (ssl_account_id)
-#
-
 class Role < ApplicationRecord
   has_many                  :assignments, dependent: :destroy
   has_many                  :users, through: :assignments

@@ -1,22 +1,3 @@
-# == Schema Information
-#
-# Table name: trackings
-#
-#  id               :integer          not null, primary key
-#  remote_ip        :string(255)
-#  created_at       :datetime
-#  updated_at       :datetime
-#  referer_id       :integer
-#  tracked_url_id   :integer
-#  visitor_token_id :integer
-#
-# Indexes
-#
-#  index_trackings_on_referer_id        (referer_id)
-#  index_trackings_on_tracked_url_id    (tracked_url_id)
-#  index_trackings_on_visitor_token_id  (visitor_token_id)
-#
-
 class Tracking < ApplicationRecord
   belongs_to :visitor_token
   belongs_to :tracked_url

@@ -1,38 +1,3 @@
-# == Schema Information
-#
-# Table name: folders
-#
-#  id             :integer          not null, primary key
-#  active         :boolean          default("0")
-#  archived       :boolean          default("0"), not null
-#  default        :boolean          default("0"), not null
-#  description    :string(255)
-#  expired        :boolean          default("0")
-#  items_count    :integer          default("0")
-#  name           :string(255)      not null
-#  revoked        :boolean          default("0")
-#  created_at     :datetime         not null
-#  updated_at     :datetime         not null
-#  parent_id      :integer
-#  ssl_account_id :integer          not null
-#
-# Indexes
-#
-#  index_folder_statuses                                            (default,archived,name,ssl_account_id,expired,active,revoked)
-#  index_folders_on_active                                          (active)
-#  index_folders_on_archived                                        (archived)
-#  index_folders_on_archived_and_name_and_ssl_account_id            (archived,name,ssl_account_id)
-#  index_folders_on_default_and_name_and_ssl_account_id             (default,name,ssl_account_id)
-#  index_folders_on_expired                                         (expired)
-#  index_folders_on_name                                            (name)
-#  index_folders_on_name_and_ssl_account_id_and_active_and_revoked  (name,ssl_account_id,active,revoked)
-#  index_folders_on_name_and_ssl_account_id_and_expired             (name,ssl_account_id,expired)
-#  index_folders_on_name_and_ssl_account_id_and_revoked             (name,ssl_account_id,revoked)
-#  index_folders_on_parent_id                                       (parent_id)
-#  index_folders_on_revoked                                         (revoked)
-#  index_folders_on_ssl_account_id                                  (ssl_account_id)
-#
-
 class Folder < ApplicationRecord
   extend Memoist
 

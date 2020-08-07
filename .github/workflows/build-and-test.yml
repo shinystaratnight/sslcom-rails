@@ -111,7 +111,11 @@ jobs:
             ${{ runner.os }}-assets-
 
       - name: "Configure Bundler"
-        run: bundle config --local build.sassc --disable-march-tune-native
+        run: |
+          bundle config --local build.sassc --disable-march-tune-native
+          bundle config rubygems.pkg.github.com ruby-dev:${{ secrets.PKG_ORG_SECRET }}
+          bundle config github.com ${{ secrets.PKG_ORG_SECRET }}
+          bundle config GITHUB__COM x-access-token:${{ secrets.PKG_ORG_SECRET }}
 
       - name: Install dependencies
         run: |

@@ -1,4 +1,32 @@
 GIT
+  remote: https://github.com/SSLcom/registration_authority.git
+  revision: 883819a93d9248a6c7f0337a940f137d3cca823a
+  tag: v0.1.0
+  specs:
+    registration_authority (0.1.0)
+      audited (~> 4.9)
+      carrierwave
+      chartkick
+      draper
+      faraday
+      faraday_middleware
+      groupdate
+      haml-rails
+      kartograph
+      mysql2
+      pagy
+      paranoia (~> 2.2)
+      pry
+      rails (~> 4.2)
+      rails_or
+      ransack
+      resource_kit
+      responders
+      webpacker
+      workflow
+      workflow-activerecord
+
+GIT
   remote: https://github.com/xymist/declarative_authorization.git
   revision: 3cd79342d073b71cdda427745848abb461d454d6
   branch: allow_rails_5
@@ -6,66 +34,6 @@ GIT
     declarative_authorization (1.1.0.pre)
       rails (>= 4.1.0, < 6)
       ruby_parser (>= 3.6.6)
-
-PATH
-  remote: components/pillar/components/pillar-authentication
-  specs:
-    pillar-authentication (0.0.0)
-      mysql2
-      pillar-core
-      pillar-theme
-      rails (~> 4.2)
-
-PATH
-  remote: components/pillar/components/pillar-authority
-  specs:
-    pillar-authority (0.0.0)
-      mysql2
-      pillar-authentication
-      pillar-core
-      pillar-theme
-      rails (~> 4.2)
-      rails_or
-
-PATH
-  remote: components/pillar/components/pillar-core
-  specs:
-    pillar-core (0.0.0)
-      groupdate
-      haml-rails
-      mysql2
-      pagy
-      pillar
-      pry
-      rails (~> 4.2)
-      ransack
-      responders
-
-PATH
-  remote: components/pillar/components/pillar-pages
-  specs:
-    pillar-pages (0.0.0)
-      mysql2
-      pillar-core
-      pillar-theme
-      rails (~> 4.2)
-
-PATH
-  remote: components/pillar/components/pillar-theme
-  specs:
-    pillar-theme (0.0.0)
-      chartkick
-      mysql2
-      pillar-core
-      rails (~> 4.2)
-      webpacker
-
-PATH
-  remote: components/pillar
-  specs:
-    pillar (0.0.0)
-      mysql2
-      rails (~> 4.2)
 
 GEM
   remote: https://rubygems.org/
@@ -145,14 +113,13 @@ GEM
     akami (1.3.1)
       gyoku (>= 0.4.0)
       nokogiri
-    annotate (3.1.0)
-      activerecord (>= 3.2, < 7.0)
-      rake (>= 10.4, < 14.0)
     api-pagination (4.8.2)
     arel (6.0.4)
     ast (2.4.1)
     attr_encrypted (3.1.0)
       encryptor (~> 3.0.0)
+    audited (4.9.0)
+      activerecord (>= 4.2, < 6.1)
     authlogic (4.4.3)
       activerecord (>= 4.2, < 5.3)
       activesupport (>= 4.2, < 5.3)
@@ -215,7 +182,7 @@ GEM
       mime-types (>= 1.16)
     case_transform (0.2)
       activesupport
-    chartkick (3.3.1)
+    chartkick (3.4.0)
     childprocess (3.0.0)
     chronic (0.10.2)
     climate_control (0.2.0)
@@ -261,6 +228,8 @@ GEM
       delayed_job_active_record (>= 4.1)
     diff-lcs (1.3)
     docile (1.3.2)
+    domain_name (0.5.20190701)
+      unf (>= 0.0.5, < 1.0.0)
     draper (2.1.0)
       actionpack (>= 3.0)
       activemodel (>= 3.0)
@@ -320,6 +289,10 @@ GEM
       railties (>= 4.2.0)
     faker (2.2.1)
       i18n (>= 0.8)
+    faraday (1.0.1)
+      multipart-post (>= 1.2, < 3)
+    faraday_middleware (1.0.0)
+      faraday (~> 1.0)
     ffi (1.12.2)
     ffi-compiler (1.0.1)
       ffi (>= 1.0.0)
@@ -352,6 +325,9 @@ GEM
       haml (>= 4.0, < 6)
       nokogiri (>= 1.6.0)
       ruby_parser (~> 3.5)
+    http-accept (1.7.0)
+    http-cookie (1.0.3)
+      domain_name (~> 0.5)
     httparty (0.18.0)
       mime-types (~> 3.0)
       multi_xml (>= 0.5.2)
@@ -378,6 +354,7 @@ GEM
     jsonapi-renderer (0.2.2)
     jsonapi-serializers (1.0.1)
       activesupport
+    kartograph (0.2.8)
     key_struct (0.4.2)
     launchy (2.5.0)
       addressable (~> 2.7)
@@ -422,6 +399,7 @@ GEM
     msgpack (1.3.3)
     multi_json (1.14.1)
     multi_xml (0.6.0)
+    multipart-post (2.1.1)
     mysql2 (0.5.3)
     net-scp (2.0.0)
       net-ssh (>= 2.6.5, < 6.0.0)
@@ -430,6 +408,7 @@ GEM
     net-ssh (5.2.0)
     net-ssh-gateway (2.0.0)
       net-ssh (>= 4.0.0)
+    netrc (0.11.0)
     nio4r (2.5.2)
     nokogiri (1.10.9)
       mini_portile2 (~> 2.4.0)
@@ -437,7 +416,7 @@ GEM
     oauth (0.5.4)
     oj (3.10.5)
     openssl-extensions (1.2.1)
-    pagy (3.8.1)
+    pagy (3.8.3)
     paperclip (5.3.0)
       activemodel (>= 4.2.0)
       activesupport (>= 4.2.0)
@@ -445,6 +424,8 @@ GEM
       mimemagic (~> 0.3.0)
       terrapin (~> 0.6.0)
     parallel (1.19.2)
+    paranoia (2.4.2)
+      activerecord (>= 4.0, < 6.1)
     parser (2.7.1.4)
       ast (~> 2.4.1)
     polyamorous (1.1.0)
@@ -534,9 +515,16 @@ GEM
       actionpack (>= 2.1)
     request_store (1.5.0)
       rack (>= 1.4)
+    resource_kit (0.1.7)
+      addressable (>= 2.3.6, < 3.0.0)
     responders (2.4.1)
       actionpack (>= 4.2.0, < 6.0)
       railties (>= 4.2.0, < 6.0)
+    rest-client (2.1.0)
+      http-accept (>= 1.7.0, < 2.0)
+      http-cookie (>= 1.0.2, < 2.0)
+      mime-types (>= 1.16, < 4.0)
+      netrc (~> 0.8)
     rexml (3.2.4)
     rspec-core (3.9.1)
       rspec-support (~> 3.9.1)
@@ -745,7 +733,7 @@ GEM
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.7.6)
-    unicode-display_width (1.7.0)
+    unicode-display_width (1.6.1)
     unicode_utils (1.4.0)
     uniform_notifier (1.13.0)
     universal_ruby_whois (1.2.10)
@@ -771,7 +759,7 @@ GEM
       addressable (>= 2.3.6)
       crack (>= 0.3.2)
       hashdiff (>= 0.4.0, < 2.0.0)
-    webpacker (4.2.2)
+    webpacker (4.3.0)
       activesupport (>= 4.2)
       rack-proxy (>= 0.6.1)
       railties (>= 4.2)
@@ -786,6 +774,7 @@ GEM
       activesupport
     will_paginate (3.3.0)
     workflow (1.2.0)
+    workflow-activerecord (0.0.0)
     xml-simple (1.1.5)
     xpath (3.2.0)
       nokogiri (~> 1.8)
@@ -821,7 +810,6 @@ DEPENDENCIES
   acts_as_tree
   ahoy_email
   airbrake
-  annotate
   api-pagination
   attr_encrypted
   authlogic
@@ -885,12 +873,6 @@ DEPENDENCIES
   oj
   openssl-extensions
   paperclip (~> 5.3.0)
-  pillar!
-  pillar-authentication!
-  pillar-authority!
-  pillar-core!
-  pillar-pages!
-  pillar-theme!
   popper_js (~> 1.14.5)
   protected_attributes
   pry-nav
@@ -910,8 +892,10 @@ DEPENDENCIES
   ransack (~> 1.8)
   rb-inotify
   recaptcha
+  registration_authority!
   request_exception_handler
   responders (~> 2.0)
+  rest-client
   rspec-rails
   rspec_junit_formatter
   rswag-ui

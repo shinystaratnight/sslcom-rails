@@ -1,22 +1,3 @@
-# == Schema Information
-#
-# Table name: websites
-#
-#  id          :integer          not null, primary key
-#  api_host    :string(255)
-#  description :string(255)
-#  host        :string(255)
-#  name        :string(255)
-#  type        :string(255)
-#  db_id       :integer
-#
-# Indexes
-#
-#  index_websites_on_db_id        (db_id)
-#  index_websites_on_id_and_type  (id,type)
-#
-
-# This allows a reseller to white-label the RA portal. It allows for optional seperate db
 class Website < ApplicationRecord
   belongs_to :db
 

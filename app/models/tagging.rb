@@ -1,22 +1,3 @@
-# == Schema Information
-#
-# Table name: taggings
-#
-#  id            :integer          not null, primary key
-#  taggable_type :string(255)      not null
-#  created_at    :datetime         not null
-#  updated_at    :datetime         not null
-#  tag_id        :integer          not null
-#  taggable_id   :integer          not null
-#
-# Indexes
-#
-#  index_taggings_on_tag_id                         (tag_id)
-#  index_taggings_on_taggable_id_and_taggable_type  (taggable_id,taggable_type)
-#  index_taggings_on_taggable_type_and_taggable_id  (taggable_type,taggable_id)
-#  unique_taggings                                  (taggable_type,taggable_id,tag_id) UNIQUE
-#
-
 class Tagging < ApplicationRecord
   belongs_to :tag
   belongs_to :taggable, polymorphic: true

@@ -1,20 +1,3 @@
-# == Schema Information
-#
-# Table name: duplicate_v2_users
-#
-#  id         :integer          not null, primary key
-#  email      :string(255)
-#  login      :string(255)
-#  password   :string(255)
-#  created_at :datetime
-#  updated_at :datetime
-#  user_id    :integer
-#
-# Indexes
-#
-#  index_duplicate_v2_users_on_user_id  (user_id)
-#
-
 class DuplicateV2User < ApplicationRecord
   belongs_to  :user
   has_many    :legacy_v2_user_mappings, :as=>:user_mappable
