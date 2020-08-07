@@ -75,3 +75,7 @@ end
 every :day, at: '6:00am' do
   bundle_exec "NotificationGroupsManager.send_expiration_reminders('sandbox.ssl.com')"
 end
+
+every :day, at: '1:00am' do
+  bundle_exec "MonthlyInvoiceManager.auto_charges"
+end
