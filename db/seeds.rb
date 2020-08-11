@@ -540,6 +540,7 @@ ValidationRule.create!([
   next if  User.exists?(login: login)
 
   user = User.create!(login: login, email: "#{login}@ssl.com", password: "Password123!", password_confirmation: "Password123!", status: "enabled")
+  user.create_ssl_account
   user.elevate_role(Role::SYS_ADMIN)
   user.activate!(user: {password: "Password123!", password_confirmation: "Password123!"})
   user.deliver_auto_activation_confirmation!
