@@ -107,6 +107,9 @@ gem 'public_suffix'
 gem 'universal_ruby_whois'
 gem 'letter_opener_web'
 gem 'timecop'
+gem 'yabeda-rails'
+gem 'yabeda-prometheus'
+gem 'yabeda-puma-plugin'
 
 group :development do
   gem 'annotate'
@@ -136,7 +139,7 @@ group :development, :test do
   gem 'binding_of_caller'
   gem 'builder'
   gem 'bullet'
-  gem 'rubocop', '0.79.0', require: false
+  gem 'rubocop', require: false
   gem 'rubocop-rails', require: false
   gem 'rubocop-rspec', require: false
   gem 'rubocop-performance', require: false
