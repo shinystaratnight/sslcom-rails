@@ -3,29 +3,16 @@ os: linux
 files:
   - source: /
     destination: /srv/www/ra/sslcom-rails
-    owner: app-ra
-permissions:
-  - object: /srv/www/ra/sslcom-rails
-    owner: app-ra
-    group: app-ra
-    mode: 755
 hooks:
   BeforeInstall:
     - location: script/clear_files.sh
       timeout: 300
-      runas: app-ra
   AfterInstall:
+    - location: script/change_permissions.sh
+      timeout: 300
     - location: script/install_dependencies.sh
-      timeout: 300
-      runas: app-ra
-    - location: script/change_ownership.sh
-      timout: 300
-      runas: app-ra
   ApplicationStart:
-    - location: script/start_server.sh
+    - location: script/restart_server.sh
       timeout: 300
-      runas: app-ra
-  ApplicationStop:
-    - location: script/stop_server.sh
-      timeout: 300
-      runas: app-ra
+
+ 
