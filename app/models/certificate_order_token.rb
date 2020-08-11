@@ -48,7 +48,7 @@ class CertificateOrderToken < ApplicationRecord
     where{(status == PENDING_STATUS) &
         (callback_type == CALLBACK_SCHEDULE) &
         (is_callback_done == false) &
-        (callback_datetime < DateTime.current())
+        (callback_datetime <= DateTime.current())
     }
   }
 end
