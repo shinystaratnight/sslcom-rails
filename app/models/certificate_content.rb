@@ -924,8 +924,14 @@ class CertificateContent < ApplicationRecord
     is_wildcard = certificate_order.certificate.is_wildcard?
     is_ucc = certificate_order.certificate.is_ucc?
     is_server = certificate_order.certificate.is_server?
-    if csr.is_weak_key?
-      errors.add(:signing_request, 'is a rejected Debian weak key')
+    if csr.is_reject_key?
+      fingerprint = Digest::SHA1.hexdigest "Modulus=#{csr.public_key.n.to_s(16)}\n"
+      key = RejectKey.find_by({ fingerprint: fingerprint[20..-1], size: csr.public_key.n.num_bits })
+      if key.source == 'key-compromise'
+        errors.add(:signing_request, 'has been rejected due to compromised key')
+      elsif key.source == 'blacklist-openssl'
+        errors.add(:signing_request, 'has been denied due to rejected Debian weak key')
+      end
     elsif !csr.verify_signature
       errors.add(:signing_request, 'has an invalid signature')
     else

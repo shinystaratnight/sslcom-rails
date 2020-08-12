@@ -2,6 +2,7 @@
 All notable changes to this project will be documented in this file.
 
 ### PENDING RELEASE (TBD)
+- Rename Weak Keys to Reject Keys
 - Update Code Deploy AWS configuration
 - Update doc signing calls to EJBCA to remove email addresses and use different EJBCA profiles
 - Redirect to initially requested URL, after login and DUO authentication

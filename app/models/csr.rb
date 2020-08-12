@@ -135,32 +135,10 @@ class Csr < ApplicationRecord
     c&.certificate_order&.touch
   end
 
-  def is_weak_key?
+  def is_reject_key?
     return false unless public_key.instance_of? OpenSSL::PKey::RSA
-
     fingerprint = Digest::SHA1.hexdigest "Modulus=#{public_key.n.to_s(16)}\n"
-
-    # Check if the key is in the blacklist
-    WeakKey.where({sha1_hash: fingerprint[20..-1], size: public_key.n.num_bits}).present?
-  end
-
-  def self.find_weak_keys
-    Csr.find_each do |csr|
-      begin
-        weak_keys=[]
-        openssl_request=OpenSSL::X509::Request.new(csr.body)
-        if openssl_request.is_a?(OpenSSL::X509::Request)
-          public_key=openssl_request.public_key
-          if public_key.instance_of? OpenSSL::PKey::RSA
-            fingerprint = Digest::SHA1.hexdigest "Modulus=#{public_key.n.to_s(16)}\n"
-            # Check if the key is in the blacklist
-            weak_keys << csr.id if WeakKey.where({sha1_hash: fingerprint[20..-1], size: public_key.n.num_bits}).present?
-          end
-        end
-        Csr.find(weak_keys) unless weak_keys.empty?
-      rescue Exception=>e
-      end
-    end
+    RejectKey.exists?({ fingerprint: fingerprint[20..-1], size: public_key.n.num_bits })
   end
 
   def unique_value
@@ -185,7 +163,7 @@ class Csr < ApplicationRecord
 
   def csr_unique_value
     last_unique_value = csr_unique_values.last
-    #if unique_value is expired, then new unique_value should be generated
+    # if unique_value is expired, then new unique_value should be generated
     if last_unique_value.nil? or (Date.today-last_unique_value.created_at.to_date).to_i > 30
       last_unique_value = new_record? ?
                               csr_unique_values.build(unique_value: SecureRandom.hex(5)) :
@@ -253,6 +231,19 @@ class Csr < ApplicationRecord
         self[:sig_alg] = parsed[:sig_alg] unless parsed[:sig_alg].is_a? Hash
       end
     end
+  end
+
+  def self.find_compromised_csrs
+    reject_keys = []
+    find_each do |csr|
+      openssl_request = OpenSSL::X509::Request.new(csr.body)
+      public_key = openssl_request.public_key
+      if public_key.instance_of? OpenSSL::PKey::RSA
+        fingerprint = Digest::SHA1.hexdigest "Modulus=#{public_key.n.to_s(16)}\n"
+        reject_keys << csr.id if RejectKey.exists?({ fingerprint: fingerprint[20..-1], size: public_key.n.num_bits })
+      end
+    end
+    find(reject_keys) if reject_keys.present?
   end
 
   def self.remove_begin_end_tags(csr)

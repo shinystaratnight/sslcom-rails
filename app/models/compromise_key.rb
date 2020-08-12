@@ -1,0 +1,3 @@
+class CompromiseKey < RejectKey
+    
+end
