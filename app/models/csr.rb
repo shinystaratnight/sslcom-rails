@@ -392,7 +392,7 @@ class Csr < ApplicationRecord
   end
 
   def verify_signature
-    openssl_request.verify public_key if openssl_request
+    openssl_request.verify public_key if openssl_request.is_a?(OpenSSL::X509::Request)
   end
 
   def public_key_sha1
