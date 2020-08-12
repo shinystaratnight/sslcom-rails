@@ -2,15 +2,16 @@
 #
 # Table name: sent_reminders
 #
-#  id            :integer          not null, primary key
-#  body          :text(65535)
-#  expires_at    :datetime
-#  recipients    :string(255)
-#  reminder_type :string(255)
-#  subject       :string(255)
-#  trigger_value :string(255)
-#  created_at    :datetime
-#  updated_at    :datetime
+#  id                    :integer          not null, primary key
+#  body                  :text(65535)
+#  expires_at            :datetime
+#  recipients            :string(255)
+#  reminder_type         :string(255)
+#  subject               :string(255)
+#  trigger_value         :string(255)
+#  created_at            :datetime
+#  updated_at            :datetime
+#  signed_certificate_id :integer
 #
 # Indexes
 #
