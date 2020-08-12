@@ -26,7 +26,7 @@ RSpec.describe 'User Assign Roles', type: :feature, js: true do
     expect(page).to have_content("#{user_owner.email} roles have been updated for teams:")
   end
 
-  it 'User with sysadmin role can log in as any user without sysadmin or super_user role' do
+  it 'User with super_user role can assign roles for and user without super_user role' do
     login_page.load
     login_page.login_with(user_sysadmin)
     header.wait_until_logout_visible(wait: 5)

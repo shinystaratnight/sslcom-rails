@@ -22,7 +22,7 @@ class ApplicationController < ActionController::Base
   before_action :set_mailer_host
   before_action :detect_recert, except: %i[renew reprocess]
   before_action :set_current_user
-  before_action :verify_duo_authentication, except: %i[duo duo_verify login logout]
+  before_action :verify_duo_authentication, except: %i[duo duo_verify login logout] unless Rails.env.test?
   before_action :verify_u2f_authentication
   before_action :use_2fa_authentication
   before_action :identify_visitor, :record_visit, if: -> { Settings.track_visitors }
