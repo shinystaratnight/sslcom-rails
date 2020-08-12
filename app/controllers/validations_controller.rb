@@ -14,7 +14,7 @@ class ValidationsController < ApplicationController
   before_action :set_row_page, only: [:index, :search]
 
   filter_access_to :all
-  filter_access_to [:upload, :document_upload, :verification, :email_verification_check, :automated_call,
+  filter_access_to [:upload, :document_upload, :email_verification_check, :automated_call,
                     :phone_verification_check, :register_callback], :require=>:update
   filter_access_to :requirements, :send_dcv_email, :domain_control, :ev, :organization, require: :read
   filter_access_to :update, :new, :attribute_check=>true

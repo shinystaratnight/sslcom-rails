@@ -112,11 +112,59 @@ FactoryBot.define do
     strength { 2048 }
 
     ssl_account
+  
+    trait :body_2048 do
+      body do 
+        '-----BEGIN CERTIFICATE REQUEST-----
+        MIICrDCCAZQCAQAwZzELMAkGA1UEBhMCQ0ExHzAdBgNVBAoTFkxlIEJlcmdlciBJ
+        bmZvcm1hdGlxdWUxFTATBgNVBAMTDGxlYmVyZ2VyLmJpejEgMB4GCSqGSIb3DQEJ
+        ARYRaW5mb0BsZWJlcmdlci5iaXowggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEK
+        AoIBAQD5NgfntbNNN8BE2aj9XHz9MYcPvviJZtCiCVEf5EZ4WOCOgMaieChiv2MP
+        DBdzVDErfp+iMnnOYPEiy+f8KwhEGPVpYJa8miezgsZ+8QSadla7KFaV4srGZO+B
+        sVtUzIt77d+y4qOuS2e26GkrvkZeSlwSspL/doYVjdRswOnmqYZNl9ltdQA5MGrp
+        S+PpLLJ4avGtH7FEUBgKsHzSKUsvZeVn2GOpeB7uqGFLE/klhxUbgWvwG/CHOhD3
+        NXW10S5ToT6dmW8DqbhCbilAHIIwxEfYGioEvifVpHV8275Z1YcwLe5WarY/lZk2
+        xgqB1xxUyaUcZV9FuELXC4K3LhBTAgMBAAGgADANBgkqhkiG9w0BAQUFAAOCAQEA
+        M65yq2eoXXfsVZnHMXimgwI5+8yfcYPI6i79UCeEcwDjBSCFfvvrzcU3dNkQMBAI
+        z0S/Bc0dV+Se5NN5u/4x89/mi2jG4MyB6yN7gTwNy58NfFrcYi7x5pF2DgPylx3d
+        WnqHZE6bh+nYP6KQD2J4zJQAklE9xmpgD2Nw6UeuTIA2iQm9jy7Y/HHICksqXuCQ
+        MXbZTFDa6CzwxqjkSSFC7yVIuZHH3GmGEhqW7k2g+56a7N3/sYFTIkAI2nVbi3gf
+        hlc0LWTwcm+EogH/DorDv1Q8PSY/muebuRNaF8gno4STlDEjra/+mquns2SoxDi9
+        wbh0j99qg9e85ZMwwV6+FA==
+        -----END CERTIFICATE REQUEST-----'
+      end
+    end
 
-    after :create do |csr, _options|
-      SignedCertificate.any_instance.stubs(:after_save).returns(true)
-      SignedCertificate.any_instance.stubs(:after_create).returns(true)
-      csr.signed_certificates << create(:signed_certificate, csr_id: csr[:id], certificate_content_id: csr&.certificate_content&.id)
+    trait :body_4096 do
+      body do 
+        '-----BEGIN CERTIFICATE REQUEST-----
+        MIIErDCCApQCAQAwZzELMAkGA1UEBhMCVVMxETAPBgNVBAMMCHdlYWsuY29tMRQw
+        EgYDVQQHDAtTYW4gQW50b25pbzESMBAGA1UECgwJV2VhayBJbmMuMQ4wDAYDVQQI
+        DAVUZXhhczELMAkGA1UECwwCSVQwggIiMA0GCSqGSIb3DQEBAQUAA4ICDwAwggIK
+        AoICAQDAR0zr/cu+bwlnkfPb2FLHhdcwfLV2TTKqKI8ILDDohZH+ViAwrv7aa9Jw
+        dSGPRJHbC2Y3p2G9sdC1sxaskc3oUqehP2MW+iOHhStKYNuz9QsjvKzRK0OS3Aot
+        C/1KvTW8MDKigd7U4Ub46qk6CdPH789FAWIQatflQbNVxatt4UFk84TBXmtheS52
+        yOrfPoKzs8y0Hlm8EnIIY016M4Uhwk76iR8etp0xYnXmWcPNdzN7p+vjNZ7od7XC
+        oroMoST/22WEz8FnASyE4Ec8PgeqqgOS+mcyNYapPA0Te87TxhLSb2jkBBzbrSb1
+        riZBrQKTAtPn9HPZMYcSg00TwS84yN9aszYwgd/hBbWUzYO+0z0AxWS+N6hTazoI
+        0HRSQnqSPPhIG8hLoe6KzIqM9MJr5DtU94AYMUBUMAK7EnAKG98SwPPARYtnUdSy
+        fpf0f9j9OKfFsS61CBoWsiPRgNcngJXY7VUkyfUqGla40o3dgzXEXg/FrRI/fwnO
+        +b1GSbsWA2KVz1Pj7x4VvsdFn7v8PJi/S1X/EzX4qzx/AkyZmUs7fN1F2svoxdt8
+        1oR5o/9hu3gDvIRM8+8FnxaLRA7MwF8uOlRgUibMcLesC+yYQQBTK+5ldIjiE0Af
+        izAPG2uMde6F+AV3tu64sdClPZvhbkOPoRwMYG/q84libX2URwIDAQABoAAwDQYJ
+        KoZIhvcNAQELBQADggIBAAfLEFq4p7EZip4ckMrSy0iAkND09tkiLdzuVCviYLpi
+        6pR4Q3mMyZ6mNwAiqh4Y64kOzeuPLyu7s05JhoiFgzhNB0Q1v7HkKR82NgH009Md
+        twrRcLXPjk9713FRUimf/oz2pS9sBJJ442NWQmhErVQKa+GJoWaXJR0RRst60Yxe
+        JYHFqz8HrJH944BtMsNq9x7qaeYM+5DDWQAvw8zzE/XWHmlnYqJAWn8mQPDjb5+v
+        SyvxlnetYhZsEDN7J19Jv7mPcFK+M7kO5WwEnS+j5eHIv6+RbCHLOMtBnmHbS360
+        hMlF5XX4UV6kzJHSxkrlyD26nGvVD29QFxeKyTtgSleAvuW81BRbV0QI5LOotCLb
+        ICVIwYqQAy5xavsLoMdKeo1jWgLb8szyHKYUHWmIkoc7In4hGQIg9ZXwV4dd8Jve
+        bm+ihYlsFqE/WWoAhSTgNNtO3/gHPNXhBFUM2fHBPLKix9yc/8SKcPaDINhzUWUS
+        BuhEU2nji07ACdnvOoEoXl2Zh3Wu2M8shUGWvV93fgJXvXPApBCots5exXPs1vvn
+        gBOBYUdgSY+E/Hi3frcpOsyG7828bAzLJJr1HHfAdmqRCPogacyU+o+sGaVEa8i+
+        BajY7o0KCJ16Q1WFF3jjMsliL/Cl+ai62UA77/kr2o+hUdfmunRhhDO+KSapgTbr
+        -----END CERTIFICATE REQUEST-----'
+      end
     end
   end
 end

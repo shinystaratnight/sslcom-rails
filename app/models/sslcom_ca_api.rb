@@ -164,9 +164,9 @@ class SslcomCaApi
           ca_name: options[:ca_name] || ca_name(options),
           certificate_profile: certificate_profile(options),
           end_entity_profile: end_entity_profile(options),
-          subject_alt_name: subject_alt_name(options),
           duration: "#{[(options[:duration] || co.remaining_days+(carry_over || 0)).to_i,
               cert.max_duration].min.floor}:0:0"
+        dn.merge!(subject_alt_name: subject_alt_name(options)) unless subject_alt_name(options).blank?
         dn.merge!(email_address: options[:cc].certificate_order.get_recipient.email) if cert.is_smime?
       end
       dn.merge!(request_type: "public_key",request_data: public_key.to_pem) if

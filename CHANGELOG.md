@@ -3,6 +3,16 @@ All notable changes to this project will be documented in this file.
 
 ### PENDING RELEASE (TBD)
 
+### v1.6.0 (August 12, 2020)
+
+- Add Prometheus endpoints for metrics
+- Rename Weak Keys to Reject Keys
+- Update Code Deploy AWS configuration
+- Update doc signing calls to EJBCA to remove email addresses and use different EJBCA profiles
+- Redirect to initially requested URL, after login and DUO authentication
+- Fix button alignment on the registrant edit screen
+- fix csr verify signature
+
 ### v1.5.0 (August 4, 2020)
 
 - Fix CDN edit page looking so messy (it was all over place)

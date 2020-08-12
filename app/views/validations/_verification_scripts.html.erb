@@ -63,7 +63,7 @@
               } else if (data['status'] == 'incorrect-token') {
                 message_element.append('Verification attempted with the wrong token.');
               } else if (data['status'] == 'failed') {
-                message_element.append('Phone call attempt failed. Please try again.');
+                message_element.append('Phone verification code is incorrect. Please try with correct verification code.');
               } else if (data['status'] == 'reached_to_max') {
                 message_element.append('Too many attempts performed with this code. Please obtain a new email verification code.');
               }

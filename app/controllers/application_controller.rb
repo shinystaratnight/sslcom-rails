@@ -22,7 +22,7 @@ class ApplicationController < ActionController::Base
   before_action :set_mailer_host
   before_action :detect_recert, except: %i[renew reprocess]
   before_action :set_current_user
-  before_action :verify_duo_authentication, except: %i[duo duo_verify login logout]
+  before_action :verify_duo_authentication, except: %i[duo duo_verify login logout] unless Rails.env.test?
   before_action :verify_u2f_authentication
   before_action :use_2fa_authentication
   before_action :identify_visitor, :record_visit, if: -> { Settings.track_visitors }
@@ -75,13 +75,11 @@ class ApplicationController < ActionController::Base
   end
 
   def set_redirect(user: nil)
-    if session[:request_referrer] == 'checkout'
-      redirect_to new_order_path and return
-    else
-      ssl_account = {}
-      ssl_account = user.ssl_account(:default_team)&.to_slug
-      redirect_back_or_default account_path(ssl_account) and return
-    end
+    redirect_to duo_user_session_path and return if user&.is_duo_required?
+    redirect_to new_order_path and return if session[:request_referrer] == 'checkout'
+    ssl_account = {}
+    ssl_account = user.ssl_account(:default_team)&.to_slug
+    redirect_back_or_default account_path(ssl_account) and return
   end
 
   # Methods related to 2FA

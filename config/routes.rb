@@ -7,6 +7,7 @@ Rails.application.routes.draw do
   mount Delayed::Web::Engine, at: '/jobs', constraints: AdminConstraint.new
   mount LetterOpenerWeb::Engine, at: '/letter_opener' unless Rails.env.production?
   mount Pillar::Engine, at: '/pillar'
+  mount Yabeda::Prometheus::Exporter, at: '/metrics', constraints: ServiceConstraint.new
 
   resources :apidocs, only: [:index]
 

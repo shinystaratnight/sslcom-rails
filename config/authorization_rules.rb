@@ -652,7 +652,7 @@ authorization do
 
     # Ajax
     has_permission_on :certificate_orders, to: :ajax
-    has_permission_on :validations, to: :ajax
+    has_permission_on :validations, to: %i[ajax verification]
     #
     # CertificateEnrollmentRequests
     #

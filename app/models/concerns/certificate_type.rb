@@ -74,7 +74,7 @@ module CertificateType
     if is_a? SignedCertificate
       !!decoded.include?('E-mail Protection')
     else
-      is_client_basic? || is_client_pro? || is_client_business? || is_client_enterprise?
+      is_client_basic? || is_client_pro? 
     end
   end
 
