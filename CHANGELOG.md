@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 
 ### PENDING RELEASE (TBD)
+
+### v1.6.0 (August 12, 2020)
+
 - Add Prometheus endpoints for metrics
 - Rename Weak Keys to Reject Keys
 - Update Code Deploy AWS configuration
