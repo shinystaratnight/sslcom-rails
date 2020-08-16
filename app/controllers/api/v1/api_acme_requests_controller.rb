@@ -56,6 +56,39 @@ module Api
         end
       end
 
+      # Verify the External Account Binding (EAB) and check that the account is in good standing to issue certificates
+      # Good standing verification includes:
+      #   - account is not locked
+      #   - TO BE APPROVED: the step to verify that the account has a billing profile or enough account balance should be
+      #                     moved to acme/domain_preflight endpoint because no domain is passed to this endpoint.
+      def account_preflight
+        payload_data = Base64.urlsafe_decode64(JSON.parse(request.body)['payload'])
+        external_account = JSON.parse(payload_data)['externalAccountBinding']
+        kid = JSON.parse(Base64.urlsafe_decode64(external_account['protected']))['kid']
+
+        api_credential = ApiCredential.find_by(account_key: kid.to_s)
+        hmac = api_credential.hmac_key
+
+        decoded_key = Base64.urlsafe_decode64(hmac)
+        data = "#{external_account['protected']}.#{external_account['payload']}.#{external_account['signature']}"
+
+        begin
+          # Set true, in third argument, for verification
+          JWT.decode data, decoded_key, true
+        rescue StandardError => e
+          return { status: 'error', message: 'failed to verify eab.\n' + e.message }
+        end
+
+        ssl_account = api_credential.ssl_account
+        account_is_locked = ssl_account.ssl_account_users.map(&:user_enabled).include?(false)
+
+        if account_is_locked
+          { status: 'error', message: 'this account is locked.' }
+        else
+          { status: 'success' }
+        end
+      end
+
       private
 
       def certificate_names
