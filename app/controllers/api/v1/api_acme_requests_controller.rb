@@ -58,6 +58,8 @@ module Api
         end
       end
 
+      private
+
       # Verify the External Account Binding (EAB) and check that the account is in good standing to issue certificates
       def account_preflight(data)
         eab = data[:eab]
@@ -157,8 +159,6 @@ module Api
           { result: 'ok' }
         end
       end
-
-      private
 
       def find_certificate(product)
         Certificate.for_sale.find_by(product: product)
