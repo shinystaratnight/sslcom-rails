@@ -59,8 +59,8 @@ module Api
       end
 
       # Verify the External Account Binding (EAB) and check that the account is in good standing to issue certificates
-      def account_preflight(options)
-        eab = options[:eab]
+      def account_preflight(data)
+        eab = data[:eab]
 
         payload_data = Base64.urlsafe_decode64(JSON.parse(eab)['payload'])
         external_account = JSON.parse(payload_data)['externalAccountBinding']
@@ -93,11 +93,11 @@ module Api
       # Issuance criteria includes
       #   - billing profile or account balance checking
       #   - domain blacklist/high risk checking
-      def domain_preflight(options)
+      def domain_preflight(data)
         host_names = []
         domain_names = []
 
-        fqdns = options[:fqdns]
+        fqdns = data[:fqdns]
         fqdns.each do |fqdn|
           m = fqdn.match /(?<host>.*?)\.(?<domain>.+)/
           host_names.push(m[:host]) unless host_names.include?(m[:host])
@@ -108,7 +108,7 @@ module Api
         offenses = Pillar::Authority::BlocklistEntry.matches_by_domain?(domain_names)
         return { result: 'error', error_details: 'Domains are associated with blacklist or high risked.' } unless offenses.empty?
 
-        acme_account = AcmeAccount.find_by(acme_account: options['acme_account'])
+        acme_account = AcmeAccount.find_by(acme_account: data['acme_account'])
         ssl_account = acme_account.api_credential.ssl_account
 
         return { result: 'ok' } if ssl_account.no_limt || ssl_account.billing_profiles.present?
@@ -130,6 +130,29 @@ module Api
 
         if ssl_account.funded_account.cents < amount
           { result: 'error', error_details: 'Not enough funds in the account to complete this request' }
+        else
+          { result: 'ok' }
+        end
+      end
+
+      # Verify that CSR doesn't contain a public key associated with compromised key or Debian weak key.
+      def csr_preflight(data)
+        csr = data[:csr]
+        # acme_account = data[:acme_account]
+        # order = data[:order]
+
+        begin
+          openssl_request = OpenSSL::X509::Request.new(csr)
+        rescue Exception => e
+          return { result: 'error', error_details: e.message }
+        end
+
+        public_key = openssl_request.public_key
+        return { result: 'error', error_details: 'Invalid CSR' } unless public_key.instance_of? OpenSSL::PKey::RSA
+
+        fingerprint = Digest::SHA1.hexdigest "Modulus=#{public_key.n.to_s(16)}\n"
+        if RejectKey.exists?({ fingerprint: fingerprint[20..-1], size: public_key.n.num_bits })
+          { result: 'error', error_details: 'Public key is associated with Debian Weak key or Compromised key.' }
         else
           { result: 'ok' }
         end
