@@ -5,6 +5,8 @@ module Api
       before_action :set_database, if: -> { request.host=~/^sandbox/ || request.host=~/^sws-test/ || request.host=~/ssl.local$/ }
       before_action :set_test, :record_parameters
 
+      DURATION_ON_ACME_CERTIFICATE = 1  # 1 year certificate for all acme clients
+
       rescue_from Exception do |exception|
         render_500_error exception
       end
@@ -57,12 +59,10 @@ module Api
       end
 
       # Verify the External Account Binding (EAB) and check that the account is in good standing to issue certificates
-      # Good standing verification includes:
-      #   - account is not locked
-      #   - TO BE APPROVED: the step to verify that the account has a billing profile or enough account balance should be
-      #                     moved to acme/domain_preflight endpoint because no domain is passed to this endpoint.
-      def account_preflight
-        payload_data = Base64.urlsafe_decode64(JSON.parse(request.body)['payload'])
+      def account_preflight(options)
+        eab = options[:eab]
+
+        payload_data = Base64.urlsafe_decode64(JSON.parse(eab)['payload'])
         external_account = JSON.parse(payload_data)['externalAccountBinding']
         kid = JSON.parse(Base64.urlsafe_decode64(external_account['protected']))['kid']
 
@@ -76,20 +76,96 @@ module Api
           # Set true, in third argument, for verification
           JWT.decode data, decoded_key, true
         rescue StandardError => e
-          return { status: 'error', message: 'failed to verify eab.\n' + e.message }
+          return { result: 'error', error_details: 'Failed to verify eab.\n' + e.message }
         end
 
         ssl_account = api_credential.ssl_account
         account_is_locked = ssl_account.ssl_account_users.map(&:user_enabled).include?(false)
 
         if account_is_locked
-          { status: 'error', message: 'this account is locked.' }
+          { result: 'error', error_details: 'This account is locked.' }
         else
-          { status: 'success' }
+          { result: 'ok' }
+        end
+      end
+
+      # Verify that the certificate request doesn't conflict with any of our issuance criteria.
+      # Issuance criteria includes
+      #   - billing profile or account balance checking
+      #   - domain blacklist/high risk checking
+      def domain_preflight(options)
+        host_names = []
+        domain_names = []
+
+        fqdns = options[:fqdns]
+        fqdns.each do |fqdn|
+          m = fqdn.match /(?<host>.*?)\.(?<domain>.+)/
+          host_names.push(m[:host]) unless host_names.include?(m[:host])
+          domain_names.push(m[:domain]) unless domain_names.include?(m[:domain])
+        end
+
+        # Check if domain is blacklisted or high risked
+        offenses = Pillar::Authority::BlocklistEntry.matches_by_domain?(domain_names)
+        return { result: 'error', error_details: 'Domains are associated with blacklist or high risked.' } unless offenses.empty?
+
+        acme_account = AcmeAccount.find_by(acme_account: options['acme_account'])
+        ssl_account = acme_account.api_credential.ssl_account
+
+        return { result: 'ok' } if ssl_account.no_limt || ssl_account.billing_profiles.present?
+
+        # Deduce the type of certificate which the acme request should issue, based on domain & host names
+        product = if domain_names.length > 1
+                    "ucc"
+                  else
+                    if (host_names - ["www"]).blank?
+                      "basicssl"
+                    elsif host_names.include?("*")
+                      "wildcard"
+                    else
+                      "premiumssl"
+                    end
+                  end
+        certificate = find_certificate(product)
+        amount = get_amount_for_certificate(certificate, fqdns)
+
+        if ssl_account.funded_account.cents < amount
+          { result: 'error', error_details: 'Not enough funds in the account to complete this request' }
+        else
+          { result: 'ok' }
         end
       end
 
       private
+
+      def find_certificate(product)
+        Certificate.for_sale.find_by(product: product)
+      end
+
+      def get_amount_for_certificate(certificate, domains)
+        duration = certificate.duration_in_days(DURATION_ON_ACME_CERTIFICATE)
+        amount = 0
+
+        if certificate.is_ucc?
+          variants = certificate.items_by_domains.find_all { |item| item.value == duration.to_s }
+          additional_domains = (domains.try(:size) || 0) - Certificate::UCC_INITIAL_DOMAINS_BLOCK
+          amount += variants[0].amount * Certificate::UCC_INITIAL_DOMAINS_BLOCK
+
+          # calculate wildcards by subtracting their total from additional_domains
+          wildcards = 0
+          if certificate.allow_wildcard_ucc? and domains.present?
+            wildcards = domains.find_all{|d|d =~ /\A\*\./}.count
+            additional_domains -= wildcards
+          end
+
+          amount += variants[1].amount * additional_domains if additional_domains > 0
+          amount += variants[2].amount * wildcards if wildcards > 0
+        else
+          variant_item = certificate.items_by_duration.find { |item| item.value == duration.to_s }
+          amount = variant_item.amount
+        end
+
+        amount
+      end
 
       def certificate_names
         @result.certificate_order.certificate_content.certificate_names || CertificateName.none

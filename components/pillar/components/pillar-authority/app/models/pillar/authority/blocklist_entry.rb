@@ -86,6 +86,52 @@ module Pillar
         offenses
       end
 
+      def self.matches_by_domain?(domains, account_id = nil)
+        offenses = []
+        common_name = domain_list[0]
+        domains.delete(common_name)
+
+        subject_hash = {
+            common_name: common_name,
+            organization: nil,
+            organization_unit: nil,
+            location: nil,
+            state: nil,
+            country: nil,
+            san: domains.join(",") || nil
+        }
+
+        subject_hash.each_with_index do |(key, value), index|
+          if index == 0
+            @query = BlocklistEntry.where("? REGEXP LOWER(pattern) AND `#{key}` = ?", value&.downcase, true)
+          else
+            @query = @query.or("? REGEXP LOWER(pattern) AND `#{key}` = ?",  value&.downcase, true)
+          end
+        end
+
+        @query.all.each do |row|
+          if account_id
+            exempt = row.blocklist_entry_exemptions.where(account_id: account_id).exists?
+          else
+            exempt = false
+          end
+
+          unless exempt
+            offense = {
+                type: row.type,
+                matches: build_match_array(subject_hash, row),
+                blocklist_entry_id: row.id,
+                blocklist_entry_pattern: row.pattern
+            }
+
+            offenses.push(offense)
+          end
+        end
+
+        puts "\tOffenses => #{offenses.inspect}"
+        offenses
+      end
+
       private
 
       def self.build_match_array(subject_hash, row)
