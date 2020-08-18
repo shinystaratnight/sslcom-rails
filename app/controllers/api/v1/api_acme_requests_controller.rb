@@ -96,18 +96,10 @@ module Api
       #   - billing profile or account balance checking
       #   - domain blacklist/high risk checking
       def domain_preflight(data)
-        host_names = []
-        domain_names = []
-
-        fqdns = data[:fqdns]
-        fqdns.each do |fqdn|
-          m = fqdn.match /(?<host>.*?)\.(?<domain>.+)/
-          host_names.push(m[:host]) unless host_names.include?(m[:host])
-          domain_names.push(m[:domain]) unless domain_names.include?(m[:domain])
-        end
+        domains = data['domains']
 
         # Check if domain is blacklisted or high risked
-        offenses = Pillar::Authority::BlocklistEntry.matches_by_domain?(domain_names)
+        offenses = Pillar::Authority::BlocklistEntry.matches_by_domain?(domains)
         return { result: 'error', error_details: 'Domains are associated with blacklist or high risked.' } unless offenses.empty?
 
         acme_account = AcmeAccount.find_by(acme_account: data['acme_account'])
@@ -115,18 +107,7 @@ module Api
 
         return { result: 'ok' } if ssl_account.no_limt || ssl_account.billing_profiles.present?
 
-        # Deduce the type of certificate which the acme request should issue, based on domain & host names
-        product = if domain_names.length > 1
-                    "ucc"
-                  else
-                    if (host_names - ["www"]).blank?
-                      "basicssl"
-                    elsif host_names.include?("*")
-                      "wildcard"
-                    else
-                      "premiumssl"
-                    end
-                  end
+        product = certificate_product(domains)
         certificate = find_certificate(product)
         amount = get_amount_for_certificate(certificate, fqdns)
 
@@ -162,6 +143,32 @@ module Api
 
       def find_certificate(product)
         Certificate.for_sale.find_by(product: product)
+      end
+
+      # Decide the certificate product based on the array of domains
+      def certificate_product(domains)
+        host_names = []
+        domain_names = []
+        domains.each do |dn|
+          ps_domain = PublicSuffix.parse(dn)
+          trd = ps_domain.trd
+          domain = ps_domain.domain
+          host_names.push(trd) if trd && !host_names.include?(trd)
+          domain_names.push(domain) if domain && !domain_names.include?(domain)
+        end
+
+        product = if domain_names.count > 1
+                    "ucc"
+                  else
+                    if host_names.blank? || (host_names - ["www"]).blank?
+                      "basicssl"
+                    elsif host_names.include?("*")
+                      "wildcard"
+                    else
+                      "premiumssl"
+                    end
+                  end
+        product
       end
 
       def get_amount_for_certificate(certificate, domains)

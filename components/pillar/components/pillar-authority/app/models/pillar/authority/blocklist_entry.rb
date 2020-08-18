@@ -88,8 +88,10 @@ module Pillar
 
       def self.matches_by_domain?(domains, account_id = nil)
         offenses = []
-        common_name = domain_list[0]
-        domains.delete(common_name)
+        first_domain = domains[0]
+        domains.delete(first_domain)
+
+        common_name = PublicSuffix.domain(first_domain)
 
         subject_hash = {
             common_name: common_name,
