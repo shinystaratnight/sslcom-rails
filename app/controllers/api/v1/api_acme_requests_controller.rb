@@ -99,9 +99,17 @@ module Api
       def domain_preflight(data)
         domains = data['domains']
 
-        # Check if domain is blacklisted or high risked
-        offenses = Pillar::Authority::BlocklistEntry.matches_by_domain?(domains)
-        return { result: 'error', error_details: 'Domains are associated with blacklist or high risked.' } unless offenses.empty?
+        domain_names = []
+        domains.each do |dn|
+          domain = PublicSuffix.domain(dn)
+          domain_names.push(domain) if domain && !domain_names.include?(domain)
+        end
+
+        # Check if any domain is blacklisted or high risked
+        domain_names.each do |domain|
+          offenses = Pillar::Authority::BlocklistEntry.matches_by_domain?(domain)
+          return { result: 'error', error_details: 'Domains are associated with blacklist or high risked.' } unless offenses.empty?
+        end
 
         acme_account = AcmeAccount.find_by(acme_account: data['acme_account'])
         ssl_account = acme_account.api_credential.ssl_account

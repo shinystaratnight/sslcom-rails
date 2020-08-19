@@ -86,21 +86,17 @@ module Pillar
         offenses
       end
 
-      def self.matches_by_domain?(domains, account_id = nil)
+      def self.matches_by_domain?(domain, account_id = nil)
         offenses = []
-        first_domain = domains[0]
-        domains.delete(first_domain)
-
-        common_name = PublicSuffix.domain(first_domain)
 
         subject_hash = {
-            common_name: common_name,
+            common_name: domain,
             organization: nil,
             organization_unit: nil,
             location: nil,
             state: nil,
             country: nil,
-            san: domains.join(",") || nil
+            san: nil
         }
 
         subject_hash.each_with_index do |(key, value), index|
