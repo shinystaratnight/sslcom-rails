@@ -6,6 +6,7 @@ module Api
       before_action :set_test, :record_parameters
 
       DURATION_ON_ACME_CERTIFICATE = 1  # 1 year certificate for all acme clients
+      BEGIN_PKCS7_TAG = '-----BEGIN PKCS7-----'
 
       rescue_from Exception do |exception|
         render_500_error exception
@@ -141,6 +142,92 @@ module Api
         end
       end
 
+      # Create RA objects from the certificate
+      def order_complete(data)
+        acme_certificate = AcmeCertificate.find_by(acme_certificate_identifier: data['cert_id'])
+        csr = acme_certificate.csr
+        ssl_account = csr.ssl_account
+        signed_certificate = data[:certificate]
+        sans = get_sans(signed_certificate, data['cert_id'])
+
+        cert_product = certificate_product(sans)
+        certificate = find_certificate(cert_product)
+        duration = certificate.duration_in_days(DURATION_ON_ACME_CERTIFICATE)
+
+        co_params = { duration: duration}
+        co = ssl_account.certificate_orders.build(co_params)
+        certificate_content = CertificateContent.new(
+          domains: sans,
+          ca: certificate.cas.ssl_account_or_general_default(ssl_account).last
+        )
+        co.certificate_contents << certificate_content
+        certificate_order = Order.setup_certificate_order(
+          certificate: certificate,
+          certificate_order: co,
+          duration: duration / 365
+        )
+
+        order = ssl_account.purchase(certificate_order)
+        order.cents = certificate_order.attributes_before_type_cast['amount'].to_f
+
+        if certificate_content.valid?
+          applied = apply_funds(
+            certificate_order: certificate_order,
+            ssl_account: ssl_account,
+            order: order
+          )
+          return { result: 'error', error_details: 'Error occurred creating a certificate order.'} unless applied
+
+          order.save
+
+          # TODO: Change the workflow_state in certificate_content
+        end
+      end
+
+      def apply_funds(options)
+        order = options[:order]
+        no_limit = options[:ssl_account].no_limit
+        unless order.line_items.empty?
+          paid = if no_limit
+                   apply_to_monthly_account(options)
+                 else
+                   apply_to_funded_account(options)
+                 end
+          if paid
+            order.mark_paid!
+            options[:certificate_order].pay!(true)
+          end
+        end
+      end
+
+      def apply_to_monthly_account(options)
+        ssl_account_id = options[:ssl_account].id
+        order = options[:order]
+        order.update(
+          state: 'invoiced',
+          invoice_id: Invoice.get_or_create_for_team(ssl_account_id).try(:id),
+          approval: 'approved',
+          invoice_description: Order::SSL_CERTIFICATE
+        )
+        options[:certificate_order].pay!(true)
+        false
+      end
+
+      def apply_to_funded_account(options)
+        applied = false
+        order = options[:order]
+        funded_account = options[:ssl_account].funded_account
+        if funded_account.cents >= order.cents
+          funded_account.cents -= order.cents
+          funded_account.deduct_order = true
+          applied = true
+          Authorization::Maintenance::without_access_control do
+            funded_account.save
+          end
+        end
+        applied
+      end
+
       def find_certificate(product)
         Certificate.for_sale.find_by(product: product)
       end
@@ -158,19 +245,40 @@ module Api
         end
 
         product = if domain_names.count > 1
-                    "ucc"
+                    'ucc'
                   else
-                    if host_names.blank? || (host_names - ["www"]).blank?
-                      "basicssl"
-                    elsif host_names.include?("*")
-                      "wildcard"
+                    if host_names.blank? || (host_names - ['www']).blank?
+                      'basicssl'
+                    elsif host_names.include?('*')
+                      'wildcard'
                     else
-                      "premiumssl"
+                      'premiumssl'
                     end
                   end
         product
       end
 
+      # Retrieve SANs from the signed certificate. cert_id is acme_cert_id.
+      def get_sans(certificate, cert_id)
+        cert_type = certificate.starts_with?(BEGIN_PKCS7_TAG) ? 'PKCS#7' : 'X.509'
+        decoded = begin
+                    if cert_type == 'PKCS#7'
+                      sc_pem = "#{Rails.root}/tmp/sc_pem_#{cert_id}.cer"
+                      File.open(sc_pem, 'wb') do |f|
+                        f.write body + "\n"
+                      end
+                      CertUtil.decode_certificate sc_pem, 'pkcs7'
+                    else
+                      OpenSSL::X509::Certificate.new(certificate.strip)
+                    end
+                  rescue Exception
+                    # Do nothing here
+                    # because certificate is already pre-validated in the previous steps
+                  end
+        decoded.subject_alternative_names
+      end
+
+      # Deduce the amount of purchase based on certificate and array of domains to validate the account balance
       def get_amount_for_certificate(certificate, domains)
         duration = certificate.duration_in_days(DURATION_ON_ACME_CERTIFICATE)
         amount = 0
