@@ -1,5 +1,5 @@
 GIT
-  remote: https://github.com/SSLcom/registration_authority.git
+  remote: git@github.com:SSLcom/registration_authority.git
   revision: 883819a93d9248a6c7f0337a940f137d3cca823a
   tag: v0.1.0
   specs:
