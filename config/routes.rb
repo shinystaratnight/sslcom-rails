@@ -56,7 +56,7 @@ Rails.application.routes.draw do
         match '/teams/saved_contacts' => 'teams#saved_contacts', as: :api_team_saved_contacts, via: :get
         match '/teams/saved_registrants' => 'teams#saved_registrants', as: :api_team_saved_registrants, via: :get
         match '/teams/user' => 'teams#show_user', as: :api_team_user, via: :get
-        match '/teams/verify_user_by_id' => 'teams#verify_user_by_id', as: :api_team_verify_user_by_id, via: :get
+        match '/teams/verify_user_by_id' => 'teams#verify_user_by_id', as: :api_team_verify_user_by_id, via: %i[get post]
         match '/team' => 'teams#show_team', as: :api_team_team, via: :get
 
         # Signed Certificates
