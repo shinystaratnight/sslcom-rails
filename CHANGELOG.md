@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 ### PENDING RELEASE (TBD)
 
+- Remove annotate gem and cleaned up models.
+- Remove Pillar gem and replace with Registration Authority.
+- Add D&B lookups to locked registrant for OVCS, EVSSL & EVCS.
+
 ### v1.6.0 (August 12, 2020)
 
 - Add Prometheus endpoints for metrics

@@ -1,36 +1,3 @@
-# == Schema Information
-#
-# Table name: certificate_contents
-#
-#  id                   :integer          not null, primary key
-#  agreement            :boolean
-#  approval             :string(255)
-#  billing_checkbox     :boolean
-#  domains              :text(65535)
-#  duration             :integer
-#  ext_customer_ref     :string(255)
-#  label                :string(255)
-#  ref                  :string(255)
-#  signed_certificate   :text(65535)
-#  signing_request      :text(65535)
-#  technical_checkbox   :boolean
-#  validation_checkbox  :boolean
-#  workflow_state       :string(255)
-#  created_at           :datetime
-#  updated_at           :datetime
-#  ca_id                :integer
-#  certificate_order_id :integer          not null
-#  server_software_id   :integer
-#
-# Indexes
-#
-#  index_certificate_contents_on_ca_id                 (ca_id)
-#  index_certificate_contents_on_certificate_order_id  (certificate_order_id)
-#  index_certificate_contents_on_ref                   (ref)
-#  index_certificate_contents_on_server_software_id    (server_software_id)
-#  index_certificate_contents_on_workflow_state        (workflow_state)
-#
-
 class CertificateContent < ApplicationRecord
   extend Memoist
   include V2MigrationProgressAddon
@@ -63,12 +30,12 @@ class CertificateContent < ApplicationRecord
   validate :validate_blocklist, unless: Proc.new { |record| record.certificate_order.new_record? || record.skip_validation }
 
   def validate_blocklist
-    offenses = Pillar::Authority::BlocklistEntry.matches?(self, ssl_account&.id)
+    offenses = RegistrationAuthority::BlocklistEntry.matches?(self, ssl_account&.id)
     valid = true
 
     unless offenses.empty?
       offenses.each do |offense|
-        if offense[:type] == "Pillar::Authority::BlocklistEntryTypes::Blacklist"
+        if offense[:type] == "RegistrationAuthority::BlocklistEntryTypes::Blacklist"
           offense[:matches].each do |match|
             errors.add(:base, "The field #{match[:field]} with value #{match[:value]} matches an entry in our blacklist database")
             valid = false
@@ -239,7 +206,7 @@ class CertificateContent < ApplicationRecord
 
   # are any of the sub/domains trademarks?
   def infringement
-    Pillar::Authority::BlocklistEntry.matches?(self, ssl_account.id)
+    RegistrationAuthority::BlocklistEntry.matches?(self, ssl_account.id)
   end
 
   def self.infringers

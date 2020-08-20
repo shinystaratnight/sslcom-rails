@@ -1113,6 +1113,7 @@ class CertificateOrdersController < ApplicationController
   def setup_registrant_from_locked
     locked_registrant = @certificate_order.certificate_content.locked_registrant
     unless locked_registrant.blank?
+      @registrant.company_name = locked_registrant.company_name
       @registrant.assumed_name = locked_registrant.assumed_name
       @registrant.duns_number = locked_registrant.duns_number
       @registrant.department = locked_registrant.department

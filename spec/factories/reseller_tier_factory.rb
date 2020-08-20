@@ -1,19 +1,4 @@
 # frozen_string_literal: true
-
-# == Schema Information
-#
-# Table name: reseller_tiers
-#
-#  id           :integer          not null, primary key
-#  amount       :integer
-#  description  :string(255)
-#  label        :string(255)
-#  published_as :string(255)
-#  roles        :string(255)
-#  created_at   :datetime
-#  updated_at   :datetime
-#
-
 FactoryBot.define do
   factory :reseller_tier do
     published_as { 'live' }

@@ -1,17 +1,3 @@
-# == Schema Information
-#
-# Table name: unsubscribes
-#
-#  id         :integer          not null, primary key
-#  domain     :text(65535)
-#  email      :text(65535)
-#  enforce    :boolean
-#  ref        :text(65535)
-#  specs      :string(255)
-#  created_at :datetime
-#  updated_at :datetime
-#
-
 class Unsubscribe < ApplicationRecord
   validates :email, presence: true, email: true, :uniqueness=>
       {:scope=>[:domain]}, on: :create
