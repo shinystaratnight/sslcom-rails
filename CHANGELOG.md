@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 ### PENDING RELEASE (TBD)
 
 
+
 ### v1.6.1 (August 20, 2020)
 
 - Remove annotate gem and cleaned up models.
