@@ -171,4 +171,4 @@ gem 'mini_magick'
 gem 'ransack', '~> 1.8'
 gem 'activerecord-session_store'
 
-gem 'registration_authority', git: 'https://github.com/SSLcom/registration_authority.git', tag: 'v0.1.0'
+gem 'registration_authority', git: 'git@github.com:SSLcom/registration_authority.git', tag: 'v0.1.0'
